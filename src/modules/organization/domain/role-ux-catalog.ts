@@ -362,10 +362,37 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
 
 export const ROLE_UX_GROUP_LABEL: Record<RoleUxGroup, string> = {
   PLATFORM: "Nền tảng",
-  STORE: "Cửa hàng hoa",
-  FLOWER_NETWORK: "Mạng lưới điện hoa",
-  ONE_STORE: "Cửa hàng hoa",
-  CHAIN: "Mạng lưới điện hoa",
+  STORE: "Cơ sở kinh doanh",
+  FLOWER_NETWORK: "Mạng lưới / Chuỗi",
+  ONE_STORE: "Cơ sở kinh doanh",
+  CHAIN: "Mạng lưới / Chuỗi",
+}
+
+/**
+ * Trả về nhãn vai trò được bản địa hóa và linh hoạt theo ngành của tenant
+ */
+export function getRoleUxLabelByIndustry(roleKey: RoleUxKey, industryKey?: string | null): string {
+  if (roleKey === "florist") {
+    if (!industryKey || industryKey === "FLORAL") return "Thợ cắm hoa"
+    if (industryKey === "FASHION") return "Thợ may / Kỹ thuật cắt"
+    if (industryKey === "FNB") return "Đầu bếp / Pha chế"
+    if (industryKey === "CRAFT_GIFT") return "Nghệ nhân chế tác"
+    if (industryKey === "SERVICES") return "Kỹ thuật viên"
+    return "Thợ sản xuất / Thực hiện"
+  }
+  if (roleKey === "flower_network_admin") {
+    if (!industryKey || industryKey === "FLORAL") return "Điện hoa Admin"
+    return "Quản trị Chuỗi / Mạng lưới"
+  }
+  return getRoleUx(roleKey).label
+}
+
+export function getRoleGroupLabelByIndustry(group: RoleUxGroup, industryKey?: string | null): string {
+  if (industryKey === "FLORAL") {
+    if (group === "STORE" || group === "ONE_STORE") return "Cửa hàng hoa"
+    if (group === "FLOWER_NETWORK" || group === "CHAIN") return "Mạng lưới điện hoa"
+  }
+  return ROLE_UX_GROUP_LABEL[group]
 }
 
 export function getRoleUx(key: RoleUxKey): RoleUxDefinition {
