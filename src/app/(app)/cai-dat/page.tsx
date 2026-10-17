@@ -241,7 +241,7 @@ export default function CaiDatTiemPage() {
               {/* Tên cửa hàng */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-text flex items-center gap-1.5">
-                  <Store size={13} className="text-text-muted" /> Tên cửa hàng
+                  <Store size={13} className="text-text-muted" /> Tên cơ sở kinh doanh
                 </label>
                 <input
                   type="text"
@@ -251,10 +251,40 @@ export default function CaiDatTiemPage() {
                     setFormDirty(true)
                   }}
                   disabled={!canEdit || saving}
-                  placeholder="Ví dụ: Tiệm Hoa Nắng Sài Gòn"
+                  placeholder="Ví dụ: Tiệm Nắng Sài Gòn"
                   className="w-full px-3 py-2 text-xs rounded-xl border border-border bg-background text-text focus:outline-hidden focus:ring-1 focus:ring-primary disabled:opacity-60"
                   required
                 />
+              </div>
+
+              {/* Lĩnh vực hoạt động (Khóa & Phí mở khóa) */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Building2 size={13} className="text-text-muted" /> Lĩnh vực hoạt động
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-warning bg-warning/10 px-2 py-0.5 rounded-full border border-warning/20">
+                    🔒 Đang khóa
+                  </span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    disabled
+                    value="Hoa & Cây cảnh (Đã thiết lập ban đầu)"
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-border bg-surface-alt text-text-muted opacity-80 cursor-not-allowed"
+                  />
+                </div>
+                <div className="flex items-center justify-between pt-1 text-[11.5px]">
+                  <span className="text-text-muted">Chuyển đổi sang Thời trang, F&B hoặc Bán lẻ cần điều chỉnh dữ liệu.</span>
+                  <button
+                    type="button"
+                    onClick={() => alert("Yêu cầu chuyển đổi ngành nghề: Vui lòng thanh toán phí chuyển đổi hệ thống (500.000 VNĐ) để mở khóa chuyển ngành.")}
+                    className="font-bold text-primary hover:underline"
+                  >
+                    Mở khóa chuyển ngành (Có phí)
+                  </button>
+                </div>
               </div>
 
               {/* Hotline */}

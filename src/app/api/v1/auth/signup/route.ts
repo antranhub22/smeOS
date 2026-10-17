@@ -12,6 +12,7 @@ const schema = z.object({
   password: z.string(),
   name: z.string().nullish(),
   organization_name: z.string(),
+  industry_key: z.string().nullish(),
 })
 
 export const POST = handle(async (request) => {
@@ -23,6 +24,7 @@ export const POST = handle(async (request) => {
     password: parsed.data.password,
     name: parsed.data.name ?? null,
     organizationName: parsed.data.organization_name,
+    industryKey: parsed.data.industry_key ?? undefined,
     // Máy chủ thật: tiệm mới có hồ sơ trống, không mang hồ sơ mẫu "Tiệm Hoa Mộc Lan" (PO 08/10/2026)
     seedProfile: demoDataEnabled(process.env),
   })

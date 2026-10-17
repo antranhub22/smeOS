@@ -49,8 +49,24 @@ export class OrganizationRepository {
     slug: string
     type: organization_type
     credit_balance: number
+    settings?: Record<string, unknown>
   }): Promise<organizations> {
-    return this.db.organizations.create({ data: input })
+    const data: {
+      name: string
+      slug: string
+      type: organization_type
+      credit_balance: number
+      settings?: InputJsonValue
+    } = {
+      name: input.name,
+      slug: input.slug,
+      type: input.type,
+      credit_balance: input.credit_balance,
+    }
+    if (input.settings !== undefined) {
+      data.settings = input.settings as InputJsonValue
+    }
+    return this.db.organizations.create({ data })
   }
 
   /**

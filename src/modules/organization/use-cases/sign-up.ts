@@ -93,11 +93,16 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
     }
     if (!slug) throw conflict("Không sinh được định danh cho tên tổ chức này")
 
+    const chosenIndustry = input.industryKey || "FLORAL"
     const organization = await organizations.create({
       name: organizationName,
       slug,
       type: "EXPERIENCE",
       credit_balance: TRIAL_CREDIT_BALANCE,
+      settings: {
+        industry: chosenIndustry,
+        industry_locked: true, // Khóa đổi ngành ngay sau khi chọn ban đầu
+      },
     })
 
     const workspace = await workspaces.createForNewOrganization({

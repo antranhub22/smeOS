@@ -14,6 +14,7 @@ import { Suspense, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Eye, EyeOff, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { listAllIndustries, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 
 type CheDo = "dang-nhap" | "dang-ky"
 
@@ -25,9 +26,12 @@ export default function DangNhapPage() {
   const [password, setPassword] = useState("")
   const [ten, setTen] = useState("")
   const [tenToChuc, setTenToChuc] = useState("")
+  const [industryKey, setIndustryKey] = useState<string>(DEFAULT_INDUSTRY)
   const [loi, setLoi] = useState<string | null>(null)
   const [dangGui, setDangGui] = useState(false)
   const [hienThongBaoQuenMatKhau, setHienThongBaoQuenMatKhau] = useState(false)
+
+  const allIndustries = listAllIndustries()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -40,7 +44,7 @@ export default function DangNhapPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(
           dangKy
-            ? { email, password, name: ten || null, organization_name: tenToChuc }
+            ? { email, password, name: ten || null, organization_name: tenToChuc, industry_key: industryKey }
             : { email, password }
         ),
       })
@@ -72,9 +76,9 @@ export default function DangNhapPage() {
             <path d="M50,50 C47,40 33,26 50,14 C67,26 53,40 50,50 Z" fill="var(--color-flora-sage)" transform="rotate(140 50 50)" />
             <circle cx="50" cy="50" r="3" fill="var(--color-flora-green)" />
           </svg>
-          <div className="text-display-xl font-extrabold tracking-tight text-primary">FloraOS</div>
+          <div className="text-display-xl font-extrabold tracking-tight text-primary">smeOS</div>
           <div className="text-center text-body text-text-muted">
-            Nền tảng cho cửa hàng và chuỗi cửa hàng hoa
+            Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ
           </div>
         </div>
 
@@ -90,14 +94,34 @@ export default function DangNhapPage() {
 
           {cheDo === "dang-ky" && (
             <div>
-              <div className="mb-1.5 text-body-sm font-semibold">Tên cửa hàng / tổ chức</div>
+              <div className="mb-1.5 text-body-sm font-semibold">Tên doanh nghiệp / cửa hàng</div>
               <input
                 type="text"
                 value={tenToChuc}
                 onChange={(e) => setTenToChuc(e.target.value)}
-                placeholder="Tiệm hoa của bạn"
+                placeholder="Tên doanh nghiệp hoặc tiệm của bạn"
                 className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
               />
+            </div>
+          )}
+
+          {cheDo === "dang-ky" && (
+            <div>
+              <div className="mb-1.5 text-body-sm font-semibold">Lĩnh vực hoạt động</div>
+              <select
+                value={industryKey}
+                onChange={(e) => setIndustryKey(e.target.value)}
+                className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3 text-sm outline-none focus:border-primary"
+              >
+                {allIndustries.map((ind) => (
+                  <option key={ind.key} value={ind.key}>
+                    {ind.name}
+                  </option>
+                ))}
+              </select>
+              <div className="mt-1 text-[11.5px] text-text-muted">
+                Lưu ý: Lĩnh vực được chọn ban đầu sẽ áp dụng cho toàn bộ cấu hình. Việc đổi lĩnh vực sau này cần phí mở khóa.
+              </div>
             </div>
           )}
 
