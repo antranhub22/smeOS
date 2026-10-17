@@ -7,6 +7,7 @@
 
 import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"
 import { isRouteLocked } from "@/lib/feature-lock"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export type NavGroupKey =
   | "viec-chinh"
@@ -305,13 +306,46 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
 
 const RESERVED_MOBILE_HREFS = new Set(["/", "/duyet", "/job", "/tai-anh", "/them"])
 
+function getAdaptedNavEntries(industryKey?: string | null): readonly NavEntry[] {
+  if (!industryKey || industryKey === "FLORAL") {
+    return NAV_ENTRIES
+  }
+  const terms = getIndustryTerminology(industryKey)
+  return NAV_ENTRIES.map((entry) => {
+    if (entry.href === "/the-chao") {
+      return {
+        ...entry,
+        label: `Thẻ chào & ${terms.catalogTitle}`,
+        mobileLabel: terms.catalogTitle.slice(0, 8),
+      }
+    }
+    if (entry.href === "/san-pham/tao-moi") {
+      return {
+        ...entry,
+        label: terms.createButtonLabel,
+        mobileLabel: "Tạo mới",
+      }
+    }
+    if (entry.href === "/tai-anh") {
+      return {
+        ...entry,
+        label: terms.scanButtonLabel,
+        mobileLabel: "Quét ảnh",
+      }
+    }
+    return entry
+  })
+}
+
 /**
  * Lọc theo năng lực → gom "Việc chính" theo vai (03b §5) → trả nhóm, không trùng mục.
  */
 export function buildNav(
   can: (code: string) => boolean,
-  role: RoleUxDefinition | null
+  role: RoleUxDefinition | null,
+  industryKey?: string | null
 ): NavView {
+  const entries = getAdaptedNavEntries(industryKey)
   const isAccessible = (item: NavEntry) => !item.capability || can(item.capability)
 
   // Gom các mục Việc chính nếu vai có cấu hình navPriority
@@ -325,7 +359,7 @@ export function buildNav(
 
     for (const href of role.navPriority) {
       if (pinnedHrefs.has(href)) continue
-      const found = NAV_ENTRIES.find((entry) => entry.href === href)
+      const found = entries.find((entry) => entry.href === href)
       // Mục COMING_SOON không bao giờ vào "Việc chính" (tiêu chí T3.1)
       if (found && found.status !== "COMING_SOON" && !isRouteLocked(found.href) && isAccessible(found)) {
         viecChinhEntries.push(found)
@@ -352,7 +386,7 @@ export function buildNav(
   }
 
   for (const config of NAV_GROUP_CONFIG) {
-    const groupEntries = NAV_ENTRIES.filter(
+    const groupEntries = entries.filter(
       (entry) =>
         entry.group === config.key &&
         !pinnedHrefs.has(entry.href) &&
@@ -375,16 +409,18 @@ export function buildNav(
  */
 export function mobileSecondSlot(
   can: (code: string) => boolean,
-  role: RoleUxDefinition | null
+  role: RoleUxDefinition | null,
+  industryKey?: string | null
 ): NavEntry {
+  const entries = getAdaptedNavEntries(industryKey)
   const defaultEntry =
-    NAV_ENTRIES.find((e) => e.href === "/san-pham") ?? NAV_ENTRIES[0]!
+    entries.find((e) => e.href === "/san-pham") ?? entries[0]!
 
   if (!role || !role.navPriority) return defaultEntry
 
   for (const href of role.navPriority) {
     if (RESERVED_MOBILE_HREFS.has(href)) continue
-    const found = NAV_ENTRIES.find((entry) => entry.href === href)
+    const found = entries.find((entry) => entry.href === href)
     if (
       found &&
       found.status !== "COMING_SOON" && !isRouteLocked(found.href) &&
@@ -396,3 +432,4 @@ export function mobileSecondSlot(
 
   return defaultEntry
 }
+

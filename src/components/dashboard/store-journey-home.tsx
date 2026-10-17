@@ -1,20 +1,26 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles, SlidersHorizontal } from "lucide-react"
-import { STORE_JOURNEYS } from "@/modules/journey/domain/journey-catalog"
+import { getStoreJourneys } from "@/modules/journey/domain/journey-catalog"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { createJourneyState } from "@/modules/journey/domain/journey-state"
 import { ChoiceGrid } from "@/components/journey/choice-grid"
 import { JourneyShell } from "@/components/journey/journey-shell"
 import { WorkflowPreview } from "@/components/journey/workflow-preview"
+import { useSession } from "@/lib/session"
 import { StoreGrowthCenter } from "./store-growth-center"
 
 const STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_store"
 
 export function StoreJourneyHome() {
   const router = useRouter()
+  const { organization } = useSession()
+  const journeys = useMemo(
+    () => getStoreJourneys(organization?.industry),
+    [organization?.industry]
+  )
   const [isExpertMode, setIsExpertMode] = useState<boolean>(false)
   const [activeJourney, setActiveJourney] = useState<JourneyDefinition | null>(null)
   const [showComboPreview, setShowComboPreview] = useState<boolean>(false)
@@ -165,7 +171,7 @@ export function StoreJourneyHome() {
     <ChoiceGrid
       title="Hôm nay bạn muốn làm gì cho cửa hàng?"
       subtitle="Chọn một công việc bên dưới để bắt đầu."
-      journeys={STORE_JOURNEYS}
+      journeys={journeys}
       onSelectJourney={handleSelectJourney}
       onSwitchToExpertMode={() => handleToggleExpertMode(true)}
     />

@@ -104,4 +104,23 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     const sanPhamResults = filterByQuery("san pham")
     expect(sanPhamResults.map((r) => r.href)).toContain("/san-pham")
   })
+
+  it("8. Điều hướng thích ứng động theo ngành (Fashion, FNB...)", () => {
+    // Ngành Thời trang (FASHION)
+    const fashionNav = buildNav(() => true, null, "FASHION")
+    const fashionEntries = fashionNav.groups.flatMap((g) => g.entries)
+    const theChaoFashion = fashionEntries.find((e) => e.href === "/the-chao")
+    const taoMoiFashion = fashionEntries.find((e) => e.href === "/san-pham/tao-moi")
+    const quetAnhFashion = fashionEntries.find((e) => e.href === "/tai-anh")
+
+    expect(theChaoFashion?.label).toBe("Thẻ chào & Bộ sưu tập Lookbook")
+    expect(taoMoiFashion?.label).toBe("Thêm mẫu thiết kế")
+    expect(quetAnhFashion?.label).toBe("Quét mẫu trang phục")
+
+    // Ngành mặc định (FLORAL)
+    const floralNav = buildNav(() => true, null, "FLORAL")
+    const floralEntries = floralNav.groups.flatMap((g) => g.entries)
+    expect(floralEntries.find((e) => e.href === "/the-chao")?.label).toBe("Thẻ chào mẫu hoa")
+  })
 })
+

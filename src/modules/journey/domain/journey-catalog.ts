@@ -544,3 +544,6 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
     steps: [{ id: "step-1", label: "Đối soát hoa hồng", inputType: "NONE", isOptional: false, nextStepId: null }],
   },
 ]
+
+export { getStoreJourneys } from "./industry-journeys"
+

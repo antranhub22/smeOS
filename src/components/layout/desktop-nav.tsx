@@ -79,7 +79,7 @@ export function DesktopNav() {
   const orgId = organization?.id
   const { groupsKey, reportsKey } = useMemo(() => navStorageKeys(orgId), [orgId])
 
-  const navView = useMemo(() => buildNav(can, roleUx), [can, roleUx])
+  const navView = useMemo(() => buildNav(can, roleUx, organization?.industry), [can, roleUx, organization?.industry])
 
   const [searchQuery, setSearchQuery] = useState("")
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})

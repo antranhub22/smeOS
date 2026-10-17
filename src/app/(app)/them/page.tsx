@@ -67,7 +67,7 @@ const ICONS: Record<string, ComponentType<{ size?: number; className?: string; s
 
 export default function ThemPage() {
   const router = useRouter()
-  const { can, roleUx } = useSession()
+  const { can, roleUx, organization } = useSession()
   const coTheThemSanPham = can("L2")
 
   const [code, setCode] = useState("")
@@ -76,8 +76,14 @@ export default function ThemPage() {
   const [loi, setLoi] = useState<string | null>(null)
   const [dangGui, setDangGui] = useState(false)
 
-  const navView = useMemo(() => buildNav(can, roleUx), [can, roleUx])
-  const slot2 = useMemo(() => mobileSecondSlot(can, roleUx), [can, roleUx])
+  const navView = useMemo(
+    () => buildNav(can, roleUx, organization?.industry),
+    [can, roleUx, organization?.industry]
+  )
+  const slot2 = useMemo(
+    () => mobileSecondSlot(can, roleUx, organization?.industry),
+    [can, roleUx, organization?.industry]
+  )
   const canApprove = can("H3") || can("I2")
 
   // Các mục đã có trên thanh dưới bottom nav
