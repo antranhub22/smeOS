@@ -5,6 +5,7 @@ import { Printer, CheckSquare, Clock } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useI18n } from "@/lib/i18n"
 
 export interface FloristFlowerItem {
   flowerName: string
@@ -27,7 +28,7 @@ export interface FloristTicketCardProps {
 }
 
 /**
- * FloristTicketCard (Phiếu cắm hoa cho thợ xưởng M09)
+ * FloristTicketCard (Phiếu gia công cho thợ xưởng M09)
  */
 export function FloristTicketCard({
   orderCode,
@@ -41,11 +42,16 @@ export function FloristTicketCard({
   onPrint,
   onComplete,
 }: FloristTicketCardProps) {
+  const { ti } = useI18n()
+  const makerTitle = ti("makerTitle") || "Thợ phụ trách"
+  const makerAction = ti("makerAction") || "Gia công & Lên mẫu"
+  const recipeTitle = ti("productRecipe") || "Định mức vật tư bắt buộc"
+
   return (
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Đơn hàng Lệnh Cắm Hoa (Xưởng)</div>
+          <div className="text-xs font-semibold text-text-muted">Lệnh sản xuất: {makerAction} (Xưởng)</div>
           <div className="text-title font-extrabold text-text">Đơn #{orderCode}: {productName}</div>
         </div>
         <Badge tone="danger" className="gap-1 font-bold">
@@ -66,11 +72,11 @@ export function FloristTicketCard({
 
         <div className="flex-1 flex flex-col gap-2">
           <div className="text-xs text-text-muted">
-            Thợ phụ trách: <span className="font-bold text-text">{floristName}</span> • Kiểu gói: <span className="font-bold text-text">{wrapStyle}</span>
+            {makerTitle}: <span className="font-bold text-text">{floristName}</span> • Quy cách: <span className="font-bold text-text">{wrapStyle}</span>
           </div>
 
           <div className="rounded-lg border border-border bg-surface-alt/40 p-2.5">
-            <div className="text-xs font-bold text-text mb-1.5">Định lượng hoa bắt buộc:</div>
+            <div className="text-xs font-bold text-text mb-1.5">{recipeTitle}:</div>
             <div className="grid grid-cols-2 gap-1.5 text-xs">
               {items.map((it, idx) => (
                 <div key={idx} className="flex items-center justify-between text-text">
@@ -93,13 +99,13 @@ export function FloristTicketCard({
         {onPrint && (
           <Button variant="secondary" size="sm" onClick={onPrint} className="gap-1.5">
             <Printer size={14} />
-            In phiếu thợ
+            In lệnh {makerTitle.toLowerCase()}
           </Button>
         )}
         {onComplete && (
           <Button size="sm" onClick={onComplete} className="gap-1.5">
             <CheckSquare size={14} />
-            Báo cắm xong
+            Báo hoàn thành
           </Button>
         )}
       </div>
