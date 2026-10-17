@@ -10,7 +10,7 @@
 # Chạy một lần sau `docker compose up -d`, rồi quên nó đi.
 set -euo pipefail
 
-URL_TEST="${DATABASE_URL_TEST:-postgresql://floraos:floraos@localhost:5432/floraos_test}"
+URL_TEST="${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}"
 
 # Cắt query string rồi lấy phần sau dấu "/" cuối — tên database.
 KHONG_QUERY="${URL_TEST%%\?*}"
@@ -25,11 +25,11 @@ case "$TEN_DB" in
     ;;
 esac
 
-if docker compose exec -T db psql -U floraos -d postgres -tAc \
+if docker compose exec -T db psql -U smeos -d postgres -tAc \
      "SELECT 1 FROM pg_database WHERE datname='$TEN_DB'" | grep -q 1; then
   echo "Database $TEN_DB đã có."
 else
-  docker compose exec -T db psql -U floraos -d postgres -c "CREATE DATABASE \"$TEN_DB\""
+  docker compose exec -T db psql -U smeos -d postgres -c "CREATE DATABASE \"$TEN_DB\""
   echo "Đã tạo database $TEN_DB."
 fi
 
