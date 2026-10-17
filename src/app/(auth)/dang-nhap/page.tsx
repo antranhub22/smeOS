@@ -12,9 +12,9 @@
 
 import { Suspense, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Eye, EyeOff, Info } from "lucide-react"
+import { Eye, EyeOff, Info, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { listAllIndustries, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
+import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 
 type CheDo = "dang-nhap" | "dang-ky"
 
@@ -32,6 +32,25 @@ export default function DangNhapPage() {
   const [hienThongBaoQuenMatKhau, setHienThongBaoQuenMatKhau] = useState(false)
 
   const allIndustries = listAllIndustries()
+  const selectedIndDef = getIndustryDefinition(industryKey)
+
+  const getIndustryPlaceholder = (ind: string) => {
+    switch (ind) {
+      case "FASHION":
+        return "Ví dụ: Thời Trang Thiết Kế Lin Boutique"
+      case "FNB":
+        return "Ví dụ: Tiệm Bánh & Cà Phê Mùa Hạ"
+      case "CRAFT_GIFT":
+        return "Ví dụ: Gốm Mộc & Quà Tặng An Nhiên"
+      case "RETAIL_GENERAL":
+        return "Ví dụ: Siêu Thị Tiện Lợi Gia Hưng"
+      case "SERVICES":
+        return "Ví dụ: Spa & Viện Chăm Sóc Sắc Đẹp Mộc Lan"
+      case "FLORAL":
+      default:
+        return "Ví dụ: Tiệm Hoa Tươi Thảo Mộc"
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -63,13 +82,13 @@ export default function DangNhapPage() {
   }
 
   return (
-    <div className="relative flex min-h-dvh flex-col justify-center overflow-hidden bg-bg px-[30px] py-9">
+    <div className="relative flex min-h-dvh flex-col justify-center overflow-hidden bg-bg px-[20px] sm:px-[30px] py-9">
       <svg width="260" height="260" viewBox="0 0 260 260" className="pointer-events-none absolute -right-24 -top-24 opacity-50">
         <circle cx="130" cy="130" r="130" fill="var(--color-flora-leaf)" />
       </svg>
 
-      <div className="mx-auto flex w-full max-w-sm flex-col gap-9">
-        <div className="flex flex-col items-center gap-3.5">
+      <div className={`mx-auto flex w-full ${cheDo === "dang-ky" ? "max-w-xl" : "max-w-sm"} flex-col gap-8 transition-all duration-300`}>
+        <div className="flex flex-col items-center gap-3">
           <svg width="52" height="52" viewBox="0 0 100 100">
             <path d="M50,50 C48.5,45 41.5,38 50,32 C58.5,38 51.5,45 50,50 Z" fill="var(--color-flora-petal)" transform="rotate(258 50 50)" />
             <path d="M50,50 C47,40 33,26 50,14 C67,26 53,40 50,50 Z" fill="var(--color-flora-green)" />
@@ -78,7 +97,9 @@ export default function DangNhapPage() {
           </svg>
           <div className="text-display-xl font-extrabold tracking-tight text-primary">smeOS</div>
           <div className="text-center text-body text-text-muted">
-            Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ
+            {cheDo === "dang-ky"
+              ? "Đăng ký thiết lập không gian vận hành cho doanh nghiệp của bạn"
+              : "Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ"}
           </div>
         </div>
 
@@ -93,70 +114,105 @@ export default function DangNhapPage() {
           )}
 
           {cheDo === "dang-ky" && (
-            <div>
-              <div className="mb-1.5 text-body-sm font-semibold">Tên doanh nghiệp / cửa hàng</div>
-              <input
-                type="text"
-                value={tenToChuc}
-                onChange={(e) => setTenToChuc(e.target.value)}
-                placeholder="Tên doanh nghiệp hoặc tiệm của bạn"
-                className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
-              />
-            </div>
-          )}
+            <div className="rounded-2xl border-2 border-primary/20 bg-surface p-4 sm:p-5 shadow-xs space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-body-sm font-bold text-text">
+                    1. Chọn lĩnh vực hoạt động của bạn <span className="text-danger">*</span>
+                  </div>
+                  <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                    {selectedIndDef.name}
+                  </span>
+                </div>
+                <div className="text-caption text-text-muted mb-3">
+                  Giao diện, danh mục sản phẩm, mẫu in ấn và trợ lý AI sẽ tự động kích hoạt theo đúng ngành này khi bạn đăng nhập
+                </div>
 
-          {cheDo === "dang-ky" && (
-            <div>
-              <div className="mb-1.5 text-body-sm font-semibold">Lĩnh vực hoạt động</div>
-              <select
-                value={industryKey}
-                onChange={(e) => setIndustryKey(e.target.value)}
-                className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3 text-sm outline-none focus:border-primary"
-              >
-                {allIndustries.map((ind) => (
-                  <option key={ind.key} value={ind.key}>
-                    {ind.name}
-                  </option>
-                ))}
-              </select>
-              <div className="mt-1 text-[11.5px] text-text-muted">
-                Lưu ý: Lĩnh vực được chọn ban đầu sẽ áp dụng cho toàn bộ cấu hình. Việc đổi lĩnh vực sau này cần phí mở khóa.
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {allIndustries.map((ind) => {
+                    const isSelected = ind.key === industryKey
+                    return (
+                      <button
+                        key={ind.key}
+                        type="button"
+                        onClick={() => setIndustryKey(ind.key)}
+                        className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                          isSelected
+                            ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                            : "border-border bg-surface-alt/60 hover:border-primary/50"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between w-full mb-1">
+                          <span className="text-body-sm font-bold text-text">{ind.name}</span>
+                          {isSelected && <Check size={14} className="text-primary font-bold" />}
+                        </div>
+                        <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed">
+                          {ind.description}
+                        </p>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="border-t border-border pt-3 space-y-3">
+                <div className="text-body-sm font-bold text-text">
+                  2. Thông tin cơ sở kinh doanh
+                </div>
+
+                <div>
+                  <div className="mb-1.5 text-body-sm font-semibold">
+                    Tên cơ sở / thương hiệu <span className="text-danger">*</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={tenToChuc}
+                    onChange={(e) => setTenToChuc(e.target.value)}
+                    placeholder={getIndustryPlaceholder(industryKey)}
+                    required
+                    className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div>
+                  <div className="mb-1.5 text-body-sm font-semibold">Họ tên người điều hành (tuỳ chọn)</div>
+                  <input
+                    type="text"
+                    value={ten}
+                    onChange={(e) => setTen(e.target.value)}
+                    placeholder="Ví dụ: Nguyễn Văn A"
+                    className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
+                  />
+                </div>
               </div>
             </div>
           )}
 
-          {cheDo === "dang-ky" && (
-            <div>
-              <div className="mb-1.5 text-body-sm font-semibold">Họ tên (tuỳ chọn)</div>
-              <input
-                type="text"
-                value={ten}
-                onChange={(e) => setTen(e.target.value)}
-                placeholder="Tên của bạn"
-                className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
-              />
-            </div>
-          )}
-
           <div>
-            <div className="mb-1.5 text-body-sm font-semibold">Email</div>
+            <div className="mb-1.5 text-body-sm font-semibold">
+              Email đăng nhập <span className="text-danger">*</span>
+            </div>
             <input
-              type="text"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="ban@cuahang.vn"
+              required
               autoComplete="username"
               className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
             />
           </div>
           <div>
-            <div className="mb-1.5 text-body-sm font-semibold">Mật khẩu</div>
+            <div className="mb-1.5 text-body-sm font-semibold">
+              Mật khẩu <span className="text-danger">*</span>
+            </div>
             <div className="relative">
               <input
                 type={showPw ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Nhập mật khẩu"
+                placeholder="Nhập mật khẩu (tối thiểu 8 ký tự)"
+                required
                 autoComplete={cheDo === "dang-ky" ? "new-password" : "current-password"}
                 className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 pr-11 text-sm outline-none focus:border-primary"
               />
@@ -192,10 +248,10 @@ export default function DangNhapPage() {
           <Button type="submit" className="mt-1.5 w-full" disabled={dangGui}>
             {dangGui
               ? cheDo === "dang-ky"
-                ? "Đang đăng ký…"
+                ? "Đang khởi tạo không gian kinh doanh…"
                 : "Đang đăng nhập…"
               : cheDo === "dang-ky"
-                ? "Tạo tổ chức dùng thử"
+                ? `Đăng ký & Vào ngay không gian ${selectedIndDef.name}`
                 : "Đăng nhập"}
           </Button>
 
@@ -240,7 +296,7 @@ export default function DangNhapPage() {
       </div>
 
       <div className="pb-1 pt-9 text-center text-caption text-text-muted/70">
-        © FloraOS — nền tảng cho cửa hàng hoa
+        © smeOS — Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ
       </div>
     </div>
   )
