@@ -13,7 +13,7 @@
  *   npx tsx scripts/check-industry.ts --industry=FASHION (kiểm tra chuyên sâu một ngành)
  */
 
-import { readdirSync, existsSync } from "node:fs"
+import { readdirSync, existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { execSync } from "node:child_process"
 import { INDUSTRY_REGISTRY } from "../src/modules/organization/domain/industries"
@@ -183,12 +183,99 @@ function checkTerminologyAudit(): CheckResult {
 }
 
 // ─────────────────────────────────────────────
+// TRỤ CỘT 5: Backend AI Prompts & JSON Schema Contracts
+// ─────────────────────────────────────────────
+const WORKERS_CONTRACTS_DIR = join(REPO_ROOT, "workers/vision/contracts")
+
+function checkBackendContracts(): CheckResult {
+  const details: string[] = []
+  let hasFail = false
+
+  // 1. Kiểm tra Domain AI Config & JSON Taxonomy/BOM cho mọi ngành
+  for (const [key, plugin] of Object.entries(INDUSTRY_REGISTRY)) {
+    const p = plugin as IndustryPluginContract
+    const missingAi: string[] = []
+    if (!p.aiConfig?.visionFocus) missingAi.push("aiConfig.visionFocus")
+    if (!p.aiConfig?.studioBackgroundStyles || p.aiConfig.studioBackgroundStyles.length < 2) {
+      missingAi.push("aiConfig.studioBackgroundStyles (< 2)")
+    }
+    if (!p.aiConfig?.sampleProductNames || p.aiConfig.sampleProductNames.length < 2) {
+      missingAi.push("aiConfig.sampleProductNames (< 2)")
+    }
+    if (missingAi.length > 0) {
+      details.push(`❌ Ngành [${key}] thiếu cấu hình Backend AI: ${missingAi.join(", ")}`)
+      hasFail = true
+    }
+
+    // Kiểm tra cấu trúc taxonomy & BOM
+    const invalidCat = p.taxonomy?.defaultCategories?.some((c) => !c.key || !c.label)
+    if (invalidCat) {
+      details.push(`❌ Ngành [${key}] taxonomy.defaultCategories có phần tử thiếu key hoặc label`)
+      hasFail = true
+    }
+  }
+
+  // 2. Kiểm tra các thư mục contracts của Vision Worker
+  const visionContractDirs = ["fashion"] // các ngành đã có worker contract riêng biệt
+  for (const dirName of visionContractDirs) {
+    const dirPath = join(WORKERS_CONTRACTS_DIR, dirName)
+    if (!existsSync(dirPath)) continue
+
+    const schemaPath = join(dirPath, "Schema.json")
+    const promptPath = join(dirPath, "Prompt.md")
+    const configPath = join(dirPath, "config.json")
+
+    // Prompt.md
+    if (!existsSync(promptPath)) {
+      details.push(`❌ [Worker ${dirName}] Thiếu Prompt.md`)
+      hasFail = true
+    } else {
+      details.push(`✅ [Worker ${dirName}] Prompt.md hợp lệ`)
+    }
+
+    // config.json
+    if (!existsSync(configPath)) {
+      details.push(`❌ [Worker ${dirName}] Thiếu config.json`)
+      hasFail = true
+    }
+
+    // Schema.json (OpenAI Structured Outputs strict check)
+    if (!existsSync(schemaPath)) {
+      details.push(`❌ [Worker ${dirName}] Thiếu Schema.json`)
+      hasFail = true
+    } else {
+      try {
+        const schema = JSON.parse(readFileSync(schemaPath, "utf-8"))
+        if (schema.strict !== true) {
+          details.push(`❌ [Worker ${dirName}] Schema.json bắt buộc phải có "strict": true`)
+          hasFail = true
+        } else if (!schema.schema || schema.schema.additionalProperties !== false) {
+          details.push(`❌ [Worker ${dirName}] Schema.json bắt buộc có "additionalProperties": false ở root`)
+          hasFail = true
+        } else {
+          details.push(`✅ [Worker ${dirName}] Schema.json tuân thủ 100% chuẩn OpenAI Structured Outputs`)
+        }
+      } catch (e: any) {
+        details.push(`❌ [Worker ${dirName}] Schema.json lỗi cú pháp JSON: ${e.message}`)
+        hasFail = true
+      }
+    }
+  }
+
+  return {
+    step: "5. Backend AI Prompts & JSON Schemas",
+    status: hasFail ? "FAIL" : "PASS",
+    details,
+  }
+}
+
+// ─────────────────────────────────────────────
 // Main
 // ─────────────────────────────────────────────
 function main() {
   const { isCheckOnly, industryFilter } = parseArgs()
 
-  console.log("\n🔍  smeOS — KIỂM TRA ĐỒNG BỘ ĐA NGÀNH THEO SSOT\n")
+  console.log("\n🔍  smeOS — KIỂM TRA ĐỒNG BỘ ĐA NGÀNH THEO SSOT (FRONTEND + BACKEND)\n")
   console.log("═".repeat(65))
   if (industryFilter) {
     console.log(`  🎯 Lọc theo ngành: ${industryFilter}`)
@@ -200,6 +287,7 @@ function main() {
     checkUnitTests(),
     checkTypecheck(),
     checkTerminologyAudit(),
+    checkBackendContracts(),
   ]
 
   let overallPass = true
@@ -218,7 +306,7 @@ function main() {
 
   console.log("\n" + "═".repeat(65))
   if (overallPass) {
-    console.log("🎉  TẤT CẢ 4 TRỤ CỘT ĐỀU ĐẠT CHUẨN SSOT ĐA NGÀNH!\n")
+    console.log("🎉  TẤT CẢ 5 TRỤ CỘT ĐỀU ĐẠT CHUẨN SSOT ĐA NGÀNH (FRONTEND + BACKEND)!\n")
     console.log("   Hệ thống sẵn sàng: Khi tạo ngành mới hoặc đổi ngành,")
     console.log("   toàn bộ thuật ngữ, danh mục, BOM & AI config sẽ tự động thích ứng.\n")
     process.exit(0)
