@@ -17,8 +17,8 @@ const I18nContext = createContext<I18nContextValue | null>(null)
 
 export interface I18nProviderProps {
   children: React.ReactNode
-  initialLocale?: SupportedLocale
-  industryKey?: string
+  initialLocale?: SupportedLocale | undefined
+  industryKey?: string | undefined
 }
 
 export function I18nProvider({ children, initialLocale = DEFAULT_LOCALE, industryKey }: I18nProviderProps) {

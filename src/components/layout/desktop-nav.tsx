@@ -177,10 +177,10 @@ export function DesktopNav() {
           </div>
           <div className="flex flex-col min-w-0">
             <div className="text-body-sm font-extrabold text-primary leading-tight">
-              FloraOS
+              smeOS
             </div>
             <div className="truncate text-caption text-text-muted font-medium">
-              {(orgName || "Cửa hàng hoa").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
+              {(orgName || "Doanh nghiệp SME").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
             </div>
           </div>
         </div>

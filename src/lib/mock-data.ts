@@ -173,7 +173,12 @@ export type MockSession = {
   orgName: string
   workspaceKind: WorkspaceKind
   capabilities: string[]
-  organization?: { id: string; name?: string } | undefined
+  organization?: {
+    id: string
+    name?: string
+    industry?: string
+    industryLocked?: boolean
+  } | undefined
   /**
    * Khoá vai phân quyền (`roles.key`) của membership hiện tại — CHỈ dùng để
    * chọn khuôn trải nghiệm (`resolveRoleUx`, đặc tả 03b). Không bao giờ dùng

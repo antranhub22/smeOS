@@ -1,9 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Building2, Phone, Mail, MapPin, Globe, Clock, FileText, Check } from "lucide-react"
+import { Building2, Phone, Mail, MapPin, Globe, Clock, FileText, Check, Store, Lock, Unlock } from "lucide-react"
 import type { BusinessProfileDetail } from "@/modules/profiles/use-cases/get-business-profile"
 import type { UpsertBusinessProfileInput } from "@/modules/profiles/infra/business-profile-repository"
+import { useSession } from "@/lib/session"
+import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 import { AiRewriteInput } from "./ai-rewrite-input"
 
 export interface BusinessProfileFormProps {
@@ -13,6 +15,11 @@ export interface BusinessProfileFormProps {
 }
 
 export function BusinessProfileForm({ initialData, onSave, saving }: BusinessProfileFormProps) {
+  const { organization, capabilities } = useSession()
+  const isSuperAdmin = capabilities.includes("N1") || capabilities.includes("N12")
+  const [selectedIndustry, setSelectedIndustry] = useState<string>(organization?.industry || DEFAULT_INDUSTRY)
+  const [industrySaved, setIndustrySaved] = useState<boolean>(false)
+
   const [displayName, setDisplayName] = useState("")
   const [legalName, setLegalName] = useState("")
   const [phone, setPhone] = useState("")
@@ -29,6 +36,76 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
   const [zaloUrl, setZaloUrl] = useState("")
   const [instagramUrl, setInstagramUrl] = useState("")
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const currentIndDef = getIndustryDefinition(selectedIndustry)
+
+  const getIndustryPlaceholders = (ind: string) => {
+    switch (ind) {
+      case "FASHION":
+        return {
+          displayName: "Ví dụ: Thời Trang Thiết Kế Lin Boutique",
+          legalName: "Ví dụ: Công ty TNHH Thời Trang Lin Boutique",
+          description: "Chuyên may đo, thiết kế đầm tiệc, thời trang công sở và phụ kiện cao cấp",
+        }
+      case "FNB":
+        return {
+          displayName: "Ví dụ: Tiệm Bánh & Cafe Mùa Hạ",
+          legalName: "Ví dụ: Công ty CP Ẩm Thực Mùa Hạ",
+          description: "Chuyên cà phê pha máy, bánh ngọt tươi trong ngày và set quà teabreak sự kiện",
+        }
+      case "CRAFT_GIFT":
+        return {
+          displayName: "Ví dụ: Quà Tặng & Gốm Thủ Công An Nhiên",
+          legalName: "Ví dụ: Hộ kinh doanh Thủ công mỹ nghệ An Nhiên",
+          description: "Chuyên đồ gốm thủ công mộc, nến thơm nghệ thuật và quà tặng doanh nghiệp độc bản",
+        }
+      case "RETAIL_GENERAL":
+        return {
+          displayName: "Ví dụ: Siêu Thị Tiện Lợi Bách Hóa Gia Hưng",
+          legalName: "Ví dụ: Công ty TNHH Bách Hóa Gia Hưng",
+          description: "Chuyên cung cấp lẻ và sỉ hàng tiêu dùng, thực phẩm đóng gói và đồ gia dụng",
+        }
+      case "SERVICES":
+        return {
+          displayName: "Ví dụ: Spa & Viện Chăm Sóc Sắc Đẹp Mộc Lan",
+          legalName: "Ví dụ: Công ty TNHH Chăm Sóc Sắc Đẹp Mộc Lan",
+          description: "Dịch vụ trị liệu da chuyên sâu, thư giãn dưỡng sinh và chăm sóc sắc đẹp",
+        }
+      case "FLORAL":
+      default:
+        return {
+          displayName: "Ví dụ: Tiệm Hoa Tươi Thảo Mộc",
+          legalName: "Ví dụ: Công ty TNHH Hoa Tươi Việt Nam",
+          description: "Chuyên hoa sự kiện, hoa cưới, hoa sinh nhật thiết kế cao cấp",
+        }
+    }
+  }
+
+  const indPlaceholders = getIndustryPlaceholders(selectedIndustry)
+
+  const handleUpdateIndustry = async (newKey: string) => {
+    setSelectedIndustry(newKey)
+    try {
+      const res = await fetch("/api/v1/organizations/current", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          settings: {
+            industry: newKey,
+          },
+        }),
+      })
+      if (res.ok) {
+        setIndustrySaved(true)
+        setTimeout(() => {
+          setIndustrySaved(false)
+          window.location.reload()
+        }, 1000)
+      }
+    } catch {
+      // Bỏ qua lỗi mạng
+    }
+  }
 
   useEffect(() => {
     if (initialData) {
@@ -96,6 +173,93 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Khối 0: Ngành nghề kinh doanh & Lĩnh vực hoạt động */}
+      <div className="rounded-2xl border-2 border-primary/20 bg-surface p-5 sm:p-6 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <Store size={18} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-text">Lĩnh vực hoạt động / Ngành nghề</h3>
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  {currentIndDef.name}
+                </span>
+              </div>
+              <p className="text-xs text-text-muted mt-0.5">
+                Định hình giao diện, cấu trúc catalog, định lượng (BOM) và trợ lý AI phù hợp với mô hình kinh doanh
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            {isSuperAdmin ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning-bg text-warning border border-warning/20 text-caption font-bold">
+                <Unlock size={13} />
+                <span>SuperAdmin (Toàn quyền đổi ngành)</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-alt text-text-muted border border-border text-caption font-semibold">
+                <Lock size={13} />
+                <span>Đã cố định theo đăng ký ban đầu</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {listAllIndustries().map((ind) => {
+              const isSelected = ind.key === selectedIndustry
+              return (
+                <button
+                  key={ind.key}
+                  type="button"
+                  disabled={!isSuperAdmin && Boolean(organization?.industryLocked)}
+                  onClick={() => handleUpdateIndustry(ind.key)}
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                    isSelected
+                      ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
+                      : "border-border bg-surface hover:border-primary/40 opacity-80"
+                  } ${!isSuperAdmin && Boolean(organization?.industryLocked) ? "cursor-not-allowed" : "cursor-pointer"}`}
+                >
+                  <div className="flex items-center justify-between w-full mb-1">
+                    <span className="text-body-sm font-bold text-text">{ind.name}</span>
+                    {isSelected && <Check size={14} className="text-primary font-bold" />}
+                  </div>
+                  <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed">
+                    {ind.description}
+                  </p>
+                </button>
+              )
+            })}
+          </div>
+
+          {!isSuperAdmin && Boolean(organization?.industryLocked) && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-surface-alt border border-border mt-3">
+              <div className="flex items-center gap-2 text-caption text-text-muted">
+                <Lock size={14} className="text-warning shrink-0" />
+                <span>Ngành nghề được khóa để bảo vệ toàn vẹn dữ liệu mẫu sản phẩm và catalog đã tạo.</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => alert("Vui lòng liên hệ quản trị viên smeOS hoặc nâng cấp gói để chuyển đổi mô hình ngành nghề kinh doanh.")}
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/10 text-primary text-caption font-bold hover:bg-primary/20 transition-colors shrink-0"
+              >
+                <span>Mở khóa đổi ngành (Có phí)</span>
+              </button>
+            </div>
+          )}
+
+          {industrySaved && (
+            <p className="text-caption font-bold text-success animate-in fade-in">
+              ✓ Đã cập nhật ngành nghề thành công! Hệ thống đang tải lại...
+            </p>
+          )}
+        </div>
+      </div>
+
       {/* Khối 1: Thông tin cơ bản & Pháp lý */}
       <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-xs">
         <div className="flex items-center gap-2.5 pb-4 border-b border-border mb-5">
@@ -117,7 +281,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Ví dụ: Tiệm Hoa Tươi Thảo Mộc"
+              placeholder={indPlaceholders.displayName}
               className={`w-full rounded-xl border bg-surface px-3.5 py-2.5 text-xs sm:text-sm text-text transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
                 errors.displayName ? "border-danger ring-2 ring-danger/10" : "border-border focus:border-primary"
               }`}
@@ -135,7 +299,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
               type="text"
               value={legalName}
               onChange={(e) => setLegalName(e.target.value)}
-              placeholder="Ví dụ: Công ty TNHH Hoa Tươi Việt Nam"
+              placeholder={indPlaceholders.legalName}
               className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-xs sm:text-sm text-text transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
@@ -157,10 +321,10 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             <AiRewriteInput
               value={description}
               onChange={setDescription}
-              placeholder="Chuyên hoa sự kiện, hoa cưới, hoa sinh nhật thiết kế cao cấp"
+              placeholder={indPlaceholders.description}
               fieldType="description"
               label="Mô tả ngắn gọn về cửa hàng"
-              helperText="Được AI sử dụng làm bối cảnh chính để giới thiệu tiệm trên Landing Page và Catalog"
+              helperText="Được AI sử dụng làm bối cảnh chính để giới thiệu cơ sở trên Landing Page và Catalog"
             />
           </div>
         </div>
@@ -173,7 +337,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             <Phone size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text">Kênh liên hệ & Đặt hoa</h3>
+            <h3 className="text-sm font-bold text-text">Kênh liên hệ & Nhận đơn hàng</h3>
             <p className="text-xs text-text-muted">Tự động gắn vào Zalo scripts, Thẻ chào hàng A6 và nút bấm E-Catalog</p>
           </div>
         </div>

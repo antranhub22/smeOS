@@ -41,7 +41,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <SessionProvider session={session}>
-      <I18nProvider>
+      <I18nProvider industryKey={session.organization?.industry}>
         <LiveRegionProvider>
           <a
             href="#noi-dung-chinh"

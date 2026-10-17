@@ -72,8 +72,8 @@ export function ProfileJourneyWorkspace({
                 {readinessPercentage >= 75
                   ? "Đã đủ điều kiện tạo Landing Page, Digital Catalog và kích hoạt Video Studio"
                   : readinessPercentage >= 40
-                  ? "Đã sẵn sàng nhận đơn đặt hoa cơ bản — Hoàn tất thêm Logo & Màu để mở khóa E-Catalog"
-                  : "Vui lòng hoàn thành thiết lập nhanh để tiệm hoa sẵn sàng nhận đơn"}
+                  ? "Đã sẵn sàng nhận đơn đặt hàng cơ bản — Hoàn tất thêm Logo & Màu để mở khóa E-Catalog"
+                  : "Vui lòng hoàn thành thiết lập nhanh để cửa hàng sẵn sàng nhận đơn"}
               </p>
             </div>
           </div>
@@ -102,7 +102,7 @@ export function ProfileJourneyWorkspace({
             <div className="flex items-center gap-1.5 text-caption">
               <CheckCircle2 size={13} className={hasBasicInfo ? "text-success" : "text-text-muted"} />
               <span className={hasBasicInfo ? "text-text font-medium" : "text-text-muted"}>
-                Thông tin bán hoa ({hasBasicInfo ? "Đạt" : "Chưa đủ"})
+                Thông tin kinh doanh ({hasBasicInfo ? "Đạt" : "Chưa đủ"})
               </span>
             </div>
 

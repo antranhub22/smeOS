@@ -41,7 +41,7 @@ export function DesktopNavFooter() {
             <Bot size={13} />
           </span>
           <div>
-            <div className="text-caption font-bold text-text">FloraOS Copilot</div>
+            <div className="text-caption font-bold text-text">smeOS Copilot</div>
             <div className="text-caption text-text-muted font-medium">Trợ lý hỗ trợ 24/7</div>
           </div>
         </div>

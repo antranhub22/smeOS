@@ -37,8 +37,11 @@ export const resolveAppSession = cache(async function resolveAppSession(
 
   const described = await describeSession(resolved)
 
-  const rawOrgName = described.organization?.name ?? "FloraOS"
+  const rawOrgName = described.organization?.name ?? "smeOS"
   const cleanOrgName = rawOrgName.replace(/\s*\(\s*dev\s*\)/gi, "").trim()
+  const orgSettings = (described.organization?.settings as Record<string, unknown> | null) ?? null
+  const industry = typeof orgSettings?.industry === "string" ? orgSettings.industry : "FLORAL"
+  const industryLocked = Boolean(orgSettings?.industry_locked)
 
   return {
     userName: described.user.name ?? described.user.email,
@@ -47,7 +50,12 @@ export const resolveAppSession = cache(async function resolveAppSession(
     workspaceKind: (described.workspace?.kind as MockSession["workspaceKind"]) ?? "PRODUCTION",
     capabilities: described.capabilities,
     organization: described.organization
-      ? { id: described.organization.id, name: cleanOrgName }
+      ? {
+          id: described.organization.id,
+          name: cleanOrgName,
+          industry,
+          industryLocked,
+        }
       : undefined,
     // Đặc tả 03b (Role UX): khoá vai + loại tổ chức để chọn trang chủ/thứ tự
     // điều hướng theo vai. Đã có sẵn trong `describeSession` (GET /auth/me).

@@ -6,7 +6,13 @@ import type { ResolvedSession } from "./resolve-session"
 
 export type SessionDescription = {
   user: { id: string; name: string | null; email: string }
-  organization: { id: string; name: string; slug: string; type: string } | null
+  organization: {
+    id: string
+    name: string
+    slug: string
+    type: string
+    settings?: Record<string, unknown> | null
+  } | null
   workspace: { id: string; kind: string } | null
   membership: { role_key: string | null; branch_id: string | null } | null
   capabilities: string[]
@@ -54,6 +60,7 @@ export async function describeSession(
           name: organization.name,
           slug: organization.slug,
           type: organization.type,
+          settings: (organization.settings as Record<string, unknown> | null) ?? null,
         }
       : null,
     workspace: workspace ? { id: workspace.id, kind: workspace.kind } : null,
