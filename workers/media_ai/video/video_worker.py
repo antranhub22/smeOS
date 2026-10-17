@@ -199,7 +199,7 @@ def run_worker(db_url: Optional[str] = None):
                     dsn = line.split("=", 1)[1].strip("\"'")
                     break
     if not dsn:
-        dsn = "postgresql://floraos:floraos@127.0.0.1:5432/floraos?sslmode=disable"
+        dsn = "postgresql://smeos:smeos@127.0.0.1:5433/smeos?sslmode=disable"
 
     channel = notify_channel_for(FEATURE)
     print(f"🚀 [VideoWorker] Khởi động lắng nghe kênh: {channel}", flush=True)

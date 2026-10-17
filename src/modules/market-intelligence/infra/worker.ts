@@ -335,7 +335,7 @@ export async function startWorker(): Promise<void> {
   console.log("[MI-Worker] Đang khởi động Market Intelligence Research Worker...");
 
   const connectionString =
-    process.env.DATABASE_URL || "postgresql://floraos:floraos@localhost:5432/floraos";
+    process.env.DATABASE_URL || "postgresql://smeos:smeos@localhost:5433/smeos";
   const pgClient = new Client({ connectionString });
 
   try {
