@@ -21,6 +21,7 @@ import {
   type ProductFilterState,
   type SortOptionId,
 } from "./product-filter-types"
+import { useI18n } from "@/lib/i18n"
 
 export interface ProductSearchFilterBarProps {
   filters: ProductFilterState
@@ -34,12 +35,6 @@ export interface ProductSearchFilterBarProps {
 
 const DEFAULT_CATEGORIES = [
   "Tất cả",
-  "Bó hoa",
-  "Giỏ hoa",
-  "Kệ hoa khai trương",
-  "Hoa chia buồn",
-  "Hộp hoa",
-  "Bình hoa",
 ]
 
 export function ProductSearchFilterBar({
@@ -51,6 +46,8 @@ export function ProductSearchFilterBar({
   totalCount,
   availableCategories = DEFAULT_CATEGORIES,
 }: ProductSearchFilterBarProps) {
+  const { ti } = useI18n()
+  const sampleProductLower = ti("sampleProduct") ? ti("sampleProduct").toLowerCase() : "sản phẩm"
   const [showCustomPrice, setShowCustomPrice] = useState(filters.priceRange === "custom")
 
   const activeOccasionDef = OCCASIONS.find((o) => o.id === filters.occasion)
@@ -96,8 +93,8 @@ export function ProductSearchFilterBar({
               const val = e.target.value
               onChange((prev) => ({ ...prev, search: val }))
             }}
-            placeholder="Tìm theo tên hoặc mã mẫu hoa…"
-            aria-label="Tìm kiếm mẫu hoa"
+            placeholder={`Tìm theo tên hoặc mã ${sampleProductLower}…`}
+            aria-label={`Tìm kiếm ${sampleProductLower}`}
             className="h-10 w-full rounded-xl border border-border bg-surface pl-10 pr-9 text-body-sm text-text outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
           />
           {filters.search && (
@@ -241,7 +238,7 @@ export function ProductSearchFilterBar({
 
         {/* Tổng số sản phẩm hiển thị */}
         <div className="text-caption text-text-muted">
-          Tìm thấy <span className="font-extrabold text-foreground">{totalCount}</span> mẫu hoa
+          Tìm thấy <span className="font-extrabold text-foreground">{totalCount}</span> {sampleProductLower}
         </div>
       </div>
 
