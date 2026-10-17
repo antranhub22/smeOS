@@ -35,4 +35,6 @@ export interface I18nContextValue {
   setLocale: (locale: SupportedLocale) => void
   t: (key: TranslationKey, params?: InterpolationParams) => string
   dict: I18nDictionary
+  industryKey?: string | undefined
+  ti: (termKey: "makerTitle" | "makerAction" | "productRecipe" | "sampleProduct" | "rawMaterialItem" | "completedProductPhoto" | "printablesTitle") => string
 }
