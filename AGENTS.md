@@ -1,6 +1,6 @@
-# floraos-core — ngữ cảnh cho agent
+# smeOS — ngữ cảnh cho agent (Đa ngành SaaS)
 
-Nền tảng SaaS đa tenant cho cửa hàng hoa. `src/` (Next.js + Prisma/Postgres) → `workers/` (Python, xử lý ảnh) → Postgres dùng chung.
+Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nhỏ (Thời trang, F&B, Quà tặng/Thủ công, Bán lẻ tổng hợp, Dịch vụ, Hoa tươi). `src/` (Next.js + Prisma/Postgres) → `workers/` (Python, xử lý ảnh) → Postgres dùng chung.
 
 **Đọc trước khi làm (đọc ĐÚNG MỤC, không đọc cả tệp — ba tệp dưới đây cộng lại hơn 350 KB):** `docs/00-DOCUMENTATION-CONSTITUTION.md` (Hiến pháp tài liệu, 11 KB — đọc mục liên quan) · `docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` (Level 1 — `grep -n "^## "` rồi đọc mục cần, vd §5 đa tenant, §6 phân quyền, §15 lộ trình) · `docs/kien-truc/TRANG_THAI.md` (đang ở đâu — xem khối "Cách đọc tệp này" ở đầu tệp). Tra `docs/00-DOCUMENTATION-REGISTRY.yaml` bằng `grep` để xác định đúng SSOT trước khi sửa đổi tài liệu.
 
@@ -44,6 +44,24 @@ Nền tảng SaaS đa tenant cho cửa hàng hoa. `src/` (Next.js + Prisma/Postg
 - **Mã nghiệp vụ gọi một NĂNG LỰC, không gọi một nhà cung cấp** (D15). Mọi lời gọi AI đi qua cổng AI ở `src/core/ai/`; SDK của nhà cung cấp chỉ được xuất hiện trong `adapters/`. Mô hình là một hàng trong `ai_models`, không phải một hằng trong mã.
 - **Mô hình không vào production khi thiếu một trong bốn ô giấy phép** (D18): `license`, `commercial_use`, `territory`, `allowed_use`. Bộ lọc nằm ở `eligibleModels()`, nên mô hình thiếu ô không lộ ra cả trong danh sách để chọn.
 - **Sàn quyền riêng tư cắt sau cùng**, cùng tính chất với trần cứng của RBAC: lời gọi `SENSITIVE` không có đường nào ra nhà cung cấp ngoài, kể cả qua bước dự phòng.
+- **Quy chuẩn Thêm Ngành Mới (Industry Plugin SSOT Standard, PO 17/10/2026)**:
+  - Hệ thống `smeOS` vận hành theo cơ chế **Hợp đồng Đặc tả Ngành SSOT (Industry Plugin Contract)** để hỗ trợ đa ngành linh hoạt (Thời trang, F&B, Quà tặng thủ công, Bán lẻ tổng hợp, Dịch vụ, Hoa tươi và các ngành mới trong tương lai) mà **KHÔNG CẦN sửa đổi lược đồ CSDL hay can thiệp code rải rác**.
+  - **Tài liệu & Mã nguồn SSOT**:
+    - Hợp đồng Interface: `src/modules/organization/domain/industry-plugin-contract.ts` (`IndustryPluginContract`).
+    - Danh mục Plugins: `src/modules/organization/domain/industries/` (mỗi ngành 1 file độc lập).
+    - Registry trung tâm: `src/modules/organization/domain/industries/index.ts` (`INDUSTRY_REGISTRY`).
+    - Cầu nối tích hợp: `src/modules/organization/domain/industry-profile.ts` (`getIndustryPlugin()`, `listAllIndustryPlugins()`).
+    - Test kiểm chứng: `src/modules/organization/domain/industry-plugin-contract.test.ts`.
+  - **Quy trình 3 bước thêm một ngành mới vào smeOS**:
+    1. **Bước 1 — Tạo file đặc tả ngành**: Tạo tệp `src/modules/organization/domain/industries/<ten-nganh>.ts` xuất một hằng số kiểu `IndustryPluginContract` với đủ 6 khối thành phần:
+       - `identity`: mã `key` (UPPER_SNAKE_CASE, vd `PET_CARE`), `name`, `description`, `iconName` (từ lucide-react).
+       - `terminology`: các thuật ngữ UI cốt lõi (`makerTitle`, `makerAction`, `productRecipe`, `sampleProduct`, `rawMaterialItem`, `completedProductPhoto`, `printablesTitle`, `catalogTitle`, `createButtonLabel`, `scanButtonLabel`, `defaultMeasurementUnits`, `defaultComponentRoles`).
+       - `taxonomy`: danh mục phân loại chuẩn (`defaultCategories`), các sự kiện kích cầu (`occasions`), khoảng giá gợi ý (`priceRanges`).
+       - `bomSpec`: đơn vị đo lường (`measurementUnits`), danh sách vai trò thành phần nguyên vật liệu (`componentRoles` có `isRequired`).
+       - `templates`: mẫu ấn phẩm A6 in ấn (`printables` thuộc loại `TAG`, `CARD`, `MENU`, `WARRANTY`, `CARE_GUIDE`, `DISPATCH` kèm hướng dẫn mặc định).
+       - `aiConfig`: trọng tâm phân tích thị giác (`visionFocus`), bối cảnh ảnh Studio (`studioBackgroundStyles`), văn phong tiếp thị mẫu (`marketingToneExamples`), danh sách tên sản phẩm mẫu (`sampleProductNames`).
+    2. **Bước 2 — Đăng ký vào Registry**: Mở `src/modules/organization/domain/industries/index.ts`, import file vừa tạo và bổ sung vào `INDUSTRY_REGISTRY`. Đồng thời thêm key vào `IndustryKey` trong `industry-profile.ts`.
+    3. **Bước 3 — Xác nhận kiểm thử & Typecheck**: Chạy `npx vitest run src/modules/organization/domain/industry-plugin-contract.test.ts` và `npx tsc -p tsconfig.json --noEmit`. Toàn bộ giao diện Đăng ký, Hồ sơ cửa hàng, Bộ lọc danh mục sản phẩm, Định lượng BOM, Ấn phẩm in ấn và Trợ lý AI sẽ tự động thích ứng với ngành mới mà không cần chạm vào bất kỳ file UI nào.
 - **Tách biệt trường dữ liệu nguyên tử (Atomic Disaggregated Fields) để tối ưu khả năng chỉnh sửa (Editable)**:
   - Tuyệt đối không gộp chung văn bản và số lượng/đơn vị vào cùng một chuỗi tự do (ví dụ: cấm gộp `"Hồng đỏ 10 cành"` thành 1 ô text).
   - Bắt buộc phân rã thành các trường cấu trúc độc lập: tên hoa (text), số lượng (number), đơn vị (text), màu sắc (text), vai trò (select)... để người dùng có thể nhấp chuột sửa trực tiếp từng thông số mà không làm hỏng cấu trúc dữ liệu.
