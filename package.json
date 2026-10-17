@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3100",
+    "dev": "next dev -p 3200",
     "predev:all": "docker compose up -d && (which ollama >/dev/null && (curl -s http://127.0.0.1:11434/api/tags >/dev/null || (brew services start ollama 2>/dev/null || ollama serve >/dev/null 2>&1 &)) || true)",
     "dev:all": "concurrently -k -p \"[{name}]\" -n \"web,vision,media,video,socialflow,localbudd,marketintel\" -c \"cyan.bold,green.bold,magenta.bold,red.bold,yellow.bold,blue.bold,white.bold\" \"npm run dev\" \"npm run worker:vision\" \"npm run worker:media\" \"npm run worker:video\" \"npm run worker:socialflow\" \"npm run worker:localbudd\" \"npm run worker:market-intelligence\"",
     "dev:core": "concurrently -k -p \"[{name}]\" -n \"web,vision,media,video,marketintel\" -c \"cyan.bold,green.bold,magenta.bold,red.bold,white.bold\" \"npm run dev\" \"npm run worker:vision\" \"npm run worker:media\" \"npm run worker:video\" \"npm run worker:market-intelligence\"",
@@ -14,7 +14,7 @@
     "worker:localbudd": "if [ -d ../LocalBudd ]; then cd ../LocalBudd && npm run dev; else echo '[localbudd] Khong tim thay ../LocalBudd, bo qua worker nay.' && sleep 86400; fi",
     "worker:market-intelligence": "tsx --env-file-if-exists=.env src/modules/market-intelligence/jobs/worker.ts",
     "build": "next build",
-    "start": "next start -p 3100",
+    "start": "next start -p 3200",
     "lint": "eslint",
     "lint:ux": "tsx scripts/ux-lint.ts",
     "typecheck": "tsc --noEmit",
