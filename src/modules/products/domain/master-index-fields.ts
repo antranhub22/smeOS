@@ -49,15 +49,17 @@ export function readPrimaryColor(src: MasterIndexSource): string | null {
   return tone ?? fromAttrs ?? mauChuDao(analysis) ?? null
 }
 
-interface FlowerRow { name?: string | null; nhom_hoa?: string | null }
+import { extractComponentNames, normalizeProductBom } from "./bom"
 
-/** Tên các loại hoa trong công thức (BOM), theo thứ tự, không trùng. */
+/** Tên các thành phần / loại hoa trong công thức (BOM), theo thứ tự, không trùng. */
 export function readFlowerNames(src: MasterIndexSource): string[] {
   const { bom, attrsBom } = parts(src)
-  const rows = asArray<FlowerRow>(bom.flowers ?? attrsBom.flowers)
-  const names = rows.map((f) => (f.name ?? f.nhom_hoa ?? "").trim()).filter(Boolean)
-  return Array.from(new Set(names))
+  const targetBom = bom && Object.keys(bom).length > 0 ? bom : attrsBom
+  return extractComponentNames(targetBom)
 }
+
+/** Tên tổng quát cho Master Index đa ngành */
+export const readComponentNames = readFlowerNames
 
 interface WrapLayer { layer?: string | null; material?: string | null; color?: string | null }
 
