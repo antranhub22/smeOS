@@ -12,19 +12,19 @@
  */
 
 export interface ProductBomItem {
-  id?: string
+  id?: string | undefined
   name: string
   quantity: number
   unit: string
-  role?: string
-  costVnd?: number
-  note?: string
+  role?: string | undefined
+  costVnd?: number | undefined
+  note?: string | undefined
 }
 
 export interface GenericProductBom {
   components: ProductBomItem[]
-  packaging?: ProductBomItem[]
-  notes?: string
+  packaging?: ProductBomItem[] | undefined
+  notes?: string | undefined
 }
 
 /**

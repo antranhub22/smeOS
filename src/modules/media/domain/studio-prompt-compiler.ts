@@ -114,22 +114,31 @@ export function compileStudioPrompts(params: {
 }): CompiledStudioPrompts {
   const { productPassport, sceneConfig, visualStoryConfig } = params
 
-  // 1. Tổng hợp hoa & bao bì từ M01
-  const flowerDescriptions = productPassport.primaryFlowers.map((f) => {
-    return `${f.quantity} stems of ${f.color} ${f.name}`
-  })
-  const flowerSummary = flowerDescriptions.join(", ")
+  // 1. Tổng hợp thành phần & bao bì
+  const isFloral = !productPassport.industryKey || productPassport.industryKey === "FLORAL"
+  
+  let componentSummary = ""
+  if (productPassport.genericComponents && productPassport.genericComponents.length > 0) {
+    componentSummary = productPassport.genericComponents
+      .map((c) => `${c.quantity || 1} ${c.unit || "units"} of ${c.color ? c.color + " " : ""}${c.name}`)
+      .join(", ")
+  } else if (productPassport.primaryFlowers && productPassport.primaryFlowers.length > 0) {
+    const flowerDescriptions = productPassport.primaryFlowers.map((f) => {
+      return `${f.quantity} stems of ${f.color} ${f.name}`
+    })
+    componentSummary = flowerDescriptions.join(", ")
+  }
 
-  const formKey = productPassport.styleOccasion?.form ?? "bo_tron"
-  const englishForm = FORM_MAP[formKey] ?? "artisan floral bouquet"
+  const formKey = productPassport.styleOccasion?.form ?? (isFloral ? "bo_tron" : "standard_product")
+  const englishForm = FORM_MAP[formKey] ?? (productPassport.productName || (isFloral ? "artisan floral bouquet" : "commercial product"))
 
   let packagingText = ""
   if (productPassport.packaging) {
     const pkg = productPassport.packaging
     const wrapColor = pkg.wrapColor ? `${pkg.wrapColor} ` : ""
-    const wrapMat = pkg.wrapMaterial ? `${pkg.wrapMaterial} wrapping paper` : "artisan paper"
-    const ribbon = pkg.ribbonColor ? `tied with an elegant ${pkg.ribbonColor} ribbon bow` : ""
-    packagingText = `carefully wrapped in ${wrapColor}${wrapMat} ${ribbon}`.trim()
+    const wrapMat = pkg.wrapMaterial ? `${pkg.wrapMaterial} packaging` : "premium packaging"
+    const ribbon = pkg.ribbonColor ? `tied with an elegant ${pkg.ribbonColor} ribbon` : ""
+    packagingText = `carefully presented with ${wrapColor}${wrapMat} ${ribbon}`.trim()
   }
 
   // 2. Tổng hợp bối cảnh, mặt bàn & ánh sáng
@@ -153,15 +162,17 @@ export function compileStudioPrompts(params: {
   const humanKey = visualStoryConfig?.humanInteraction ?? "none"
   const humanText = HUMAN_INTERACTION_MAP[humanKey] || ""
 
+  const subjectNoun = isFloral ? "floral arrangement" : "commercial product"
+
   // 4. Lớp 1: System Prompt (Mệnh lệnh bảo toàn sản phẩm)
   const systemPrompt = [
     "You are a specialized commercial e-commerce product visual artist.",
     "CRITICAL CONSTRAINT - SUBJECT INTEGRITY MANDATE:",
-    "1. The floral arrangement in the foreground mask is an EXACT PHYSICAL PRODUCT sold by a flower boutique.",
-    "2. DO NOT change, recolor, repaint, add, remove, or distort ANY flower petals, stems, leaves, wrapping paper, or ribbon in the masked area.",
+    `1. The ${subjectNoun} in the foreground mask is an EXACT PHYSICAL PRODUCT sold by a boutique store.`,
+    `2. DO NOT change, recolor, repaint, add, remove, or distort ANY physical details, materials, texture, or parts in the masked area.`,
     "3. You must ONLY render the surrounding environment, placing the product naturally in the scene.",
-    humanText ? "4. Seamlessly incorporate the requested human presence without obscuring the floral arrangement." : "",
-    "5. Generate physically accurate ambient contact shadows beneath the floral base and soft light wrapping matching the scene lighting.",
+    humanText ? `4. Seamlessly incorporate the requested human presence without obscuring the ${subjectNoun}.` : "",
+    `5. Generate physically accurate ambient contact shadows beneath the product base and soft light wrapping matching the scene lighting.`,
     "6. The final output must look 100% photorealistic and commercially ready for high-end catalog display.",
   ]
     .filter(Boolean)
@@ -170,7 +181,8 @@ export function compileStudioPrompts(params: {
   // 5. Lớp 2: Positive Prompt
   const positivePrompt = [
     `Professional commercial catalog photography of an authentic ${englishForm},`,
-    `featuring ${flowerSummary}, ${packagingText}.`,
+    componentSummary ? `featuring ${componentSummary},` : "",
+    packagingText ? `${packagingText}.` : "",
     humanText ? `HUMAN INTERACTION: ${humanText}.` : "",
     `ENVIRONMENT: Resting naturally and firmly on a ${surface}, placed in a ${environment}.`,
     `LIGHTING & SHADOWS: Illuminated by ${lighting}, casting delicate, physically accurate contact shadows and subtle soft ambient occlusion.`,

@@ -67,8 +67,20 @@ export interface StyleOccasionPassport {
   readonly intendedOccasion?: string
 }
 
+export interface GenericComponentPassport {
+  readonly name: string
+  readonly quantity?: number
+  readonly unit?: string
+  readonly color?: string
+  readonly role?: string
+}
+
 export interface ProductPassportInput {
+  readonly productName?: string
+  readonly category?: string
+  readonly industryKey?: string
   readonly primaryFlowers: readonly PrimaryFlowerPassport[]
+  readonly genericComponents?: readonly GenericComponentPassport[]
   readonly foliage?: readonly FoliagePassport[]
   readonly packaging?: PackagingPassport
   readonly colorPalette?: readonly string[]

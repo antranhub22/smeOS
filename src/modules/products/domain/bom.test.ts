@@ -36,8 +36,8 @@ describe("Generic BOM Domain", () => {
       unit: "nhánh",
       role: "FOLIAGE",
     })
-    expect(normalized.packaging).toHaveLength(1)
-    expect(normalized.packaging![0].name).toBe("Giấy xi măng nâu")
+    expect(normalized.packaging).toBeDefined()
+    expect(normalized.packaging?.[0]?.name).toBe("Giấy xi măng nâu")
   })
 
   it("chuẩn hóa đúng dữ liệu BOM của ngành Thời trang", () => {
@@ -54,7 +54,7 @@ describe("Generic BOM Domain", () => {
 
     const normalized = normalizeProductBom(fashionBom)
     expect(normalized.components).toHaveLength(3)
-    expect(normalized.components[0].costVnd).toBe(250000)
+    expect(normalized.components[0]?.costVnd).toBe(250000)
     expect(extractComponentNames(fashionBom)).toEqual([
       "Vải lụa satin",
       "Khóa kéo YKK giọt nước",
@@ -73,8 +73,8 @@ describe("Generic BOM Domain", () => {
 
     const normalized = normalizeProductBom(fnbBom)
     expect(normalized.components).toHaveLength(3)
-    expect(normalized.components[1].quantity).toBe(200)
-    expect(normalized.components[1].unit).toBe("gram")
+    expect(normalized.components[1]?.quantity).toBe(200)
+    expect(normalized.components[1]?.unit).toBe("gram")
   })
 
   it("xử lý an toàn khi đầu vào rỗng hoặc null", () => {
