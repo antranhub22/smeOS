@@ -1,5 +1,98 @@
 # Nợ kỹ thuật
 
+## Nợ Lộ trình Ngành nghề (TD-INDUSTRY) — 89 ngành chưa triển khai IndustryPluginContract
+
+Nguồn: `src/modules/organization/domain/industry-roadmap.ts` — Lộ trình 95 ngành.
+Đã ACTIVE: 6 ngành (`FLORAL`, `FASHION`, `FNB`, `CRAFT_GIFT`, `RETAIL_GENERAL`, `SERVICES`).
+Chưa xây: 89 ngành dưới đây. Mỗi ngành cần triển khai theo quy trình 3 bước trong `AGENTS.md`.
+
+**Ưu tiên triển khai (đề xuất theo nhóm ngành có tiềm năng cao):**
+
+| Mã nợ | Ngành | Nhóm | Ưu tiên | Ghi chú |
+|---|---|---|---|---|
+| TD-INDUSTRY-002 | Hoa sáp, hoa khô | A – Hoa & quà tặng | 🔴 Cao | Mở rộng plugin FLORAL, BOM khác (không héo) |
+| TD-INDUSTRY-005 | Quà tặng doanh nghiệp | A – Hoa & quà tặng | 🔴 Cao | Mở rộng CRAFT_GIFT, thêm template báo giá B2B |
+| TD-INDUSTRY-006 | Gấu bông | A – Hoa & quà tặng | 🟡 Trung | Gần với CRAFT_GIFT, thêm size/màu vào BOM |
+| TD-INDUSTRY-007 | Quà lưu niệm | A – Hoa & quà tặng | 🟡 Trung | Mở rộng CRAFT_GIFT |
+| TD-INDUSTRY-008 | Bóng bay, phụ kiện sinh nhật | A – Hoa & quà tặng | 🟡 Trung | Thêm taxonomy sự kiện |
+| TD-INDUSTRY-009 | Thiệp chúc mừng | A – Hoa & quà tặng | 🟡 Trung | Liên kết greeting-card module |
+| TD-INDUSTRY-012 | Bánh handmade | B – Bánh & thực phẩm | 🔴 Cao | Mở rộng FNB, BOM nguyên liệu, template hương vị |
+| TD-INDUSTRY-013 | Chocolate, kẹo | B – Bánh & thực phẩm | 🟡 Trung | Mở rộng FNB |
+| TD-INDUSTRY-014 | Trái cây | B – Bánh & thực phẩm | 🟡 Trung | Mới hoàn toàn (trọng lượng, độ tươi) |
+| TD-INDUSTRY-015 | Giỏ trái cây | B – Bánh & thực phẩm | 🟡 Trung | Kết hợp FNB + CRAFT_GIFT |
+| TD-INDUSTRY-016 | Đặc sản vùng miền | B – Bánh & thực phẩm | 🟢 Thấp | Gần RETAIL_GENERAL |
+| TD-INDUSTRY-017 | Thực phẩm sạch | B – Bánh & thực phẩm | 🟢 Thấp | Gần RETAIL_GENERAL |
+| TD-INDUSTRY-018 | Thực phẩm nhập khẩu | B – Bánh & thực phẩm | 🟢 Thấp | Gần RETAIL_GENERAL |
+| TD-INDUSTRY-019 | Đồ ăn chế biến sẵn | B – Bánh & thực phẩm | 🟢 Thấp | Gần FNB |
+| TD-INDUSTRY-020 | Kính mắt | C – Thời trang & phụ kiện | 🟡 Trung | Mở rộng FASHION, thêm số đo mắt |
+| TD-INDUSTRY-022 | Giày dép | C – Thời trang & phụ kiện | 🔴 Cao | Mở rộng FASHION, BOM size/màu |
+| TD-INDUSTRY-023 | Túi xách | C – Thời trang & phụ kiện | 🔴 Cao | Mở rộng FASHION |
+| TD-INDUSTRY-024 | Đồng hồ | C – Thời trang & phụ kiện | 🟡 Trung | Thêm BOM chất liệu dây/mặt |
+| TD-INDUSTRY-025 | Trang sức | C – Thời trang & phụ kiện | 🟡 Trung | Thêm BOM vật liệu quý |
+| TD-INDUSTRY-027 | Ví, thắt lưng | C – Thời trang & phụ kiện | 🟡 Trung | Mở rộng FASHION |
+| TD-INDUSTRY-028 | Nước hoa | C – Thời trang & phụ kiện | 🟡 Trung | Thêm BOM dung tích, nồng độ |
+| TD-INDUSTRY-029 | Mỹ phẩm | C – Thời trang & phụ kiện | 🔴 Cao | Mở rộng SERVICES, thêm BOM thành phần |
+| TD-INDUSTRY-030 | Đồ da | C – Thời trang & phụ kiện | 🟢 Thấp | Mở rộng FASHION |
+| TD-INDUSTRY-031 | Đồ chơi trẻ em | D – Trẻ em & đồ chơi | 🟡 Trung | Mới hoàn toàn, thêm độ tuổi/an toàn |
+| TD-INDUSTRY-032 | Đồ chơi giáo dục | D – Trẻ em & đồ chơi | 🟡 Trung | Plugin con của đồ chơi |
+| TD-INDUSTRY-033 | Đồ chơi mô hình | D – Trẻ em & đồ chơi | 🟢 Thấp | |
+| TD-INDUSTRY-034 | Đồ chơi lắp ráp | D – Trẻ em & đồ chơi | 🟢 Thấp | |
+| TD-INDUSTRY-035 | Quần áo trẻ em | D – Trẻ em & đồ chơi | 🟡 Trung | Mở rộng FASHION, thêm size trẻ em |
+| TD-INDUSTRY-036 | Đồ dùng trẻ sơ sinh | D – Trẻ em & đồ chơi | 🟡 Trung | Mới hoàn toàn |
+| TD-INDUSTRY-037 | Sản phẩm mẹ và bé | D – Trẻ em & đồ chơi | 🟡 Trung | Kết hợp SERVICES + đồ dùng |
+| TD-INDUSTRY-039 | Đồ trang trí sinh nhật | E – Nhà cửa & trang trí | 🟡 Trung | Gần CRAFT_GIFT |
+| TD-INDUSTRY-040 | Đồ trang trí sự kiện | E – Nhà cửa & trang trí | 🟡 Trung | Gần CRAFT_GIFT |
+| TD-INDUSTRY-042 | Chậu cây, tiểu cảnh | E – Nhà cửa & trang trí | 🟡 Trung | Mở rộng FLORAL |
+| TD-INDUSTRY-044 | Tranh treo tường | E – Nhà cửa & trang trí | 🟢 Thấp | |
+| TD-INDUSTRY-045 | Đèn trang trí | E – Nhà cửa & trang trí | 🟢 Thấp | |
+| TD-INDUSTRY-047 | Rèm cửa | E – Nhà cửa & trang trí | 🟢 Thấp | |
+| TD-INDUSTRY-049 | Đồ dùng nhà bếp | E – Nhà cửa & trang trí | 🟢 Thấp | |
+| TD-INDUSTRY-050 | Chăn ga gối đệm | E – Nhà cửa & trang trí | 🟢 Thấp | |
+| TD-INDUSTRY-051 | Nội thất | E – Nhà cửa & trang trí | 🟢 Thấp | Thêm BOM kích thước/chất liệu phức tạp |
+| TD-INDUSTRY-052 | In ảnh | F – In ấn & cá nhân hóa | 🔴 Cao | Mới hoàn toàn, in ấn theo yêu cầu |
+| TD-INDUSTRY-053 | In áo | F – In ấn & cá nhân hóa | 🔴 Cao | Mở rộng FASHION, thêm BOM in ấn |
+| TD-INDUSTRY-054 | In cốc, bình nước | F – In ấn & cá nhân hóa | 🟡 Trung | |
+| TD-INDUSTRY-056 | Thiệp cưới, thiệp mời | F – In ấn & cá nhân hóa | 🟡 Trung | |
+| TD-INDUSTRY-057 | Hộp quà thiết kế riêng | F – In ấn & cá nhân hóa | 🟡 Trung | |
+| TD-INDUSTRY-059 | Phụ kiện điện thoại in theo yêu cầu | F – In ấn & cá nhân hóa | 🟢 Thấp | |
+| TD-INDUSTRY-061 | Phụ kiện điện thoại | G – Điện tử | 🟡 Trung | Gần RETAIL_GENERAL |
+| TD-INDUSTRY-062 | Máy tính, laptop | G – Điện tử | 🟢 Thấp | |
+| TD-INDUSTRY-063 | Phụ kiện máy tính | G – Điện tử | 🟢 Thấp | |
+| TD-INDUSTRY-064 | Thiết bị âm thanh | G – Điện tử | 🟢 Thấp | |
+| TD-INDUSTRY-065 | Thiết bị gia dụng điện | G – Điện tử | 🟢 Thấp | |
+| TD-INDUSTRY-066 | Camera, thiết bị an ninh | G – Điện tử | 🟢 Thấp | |
+| TD-INDUSTRY-067 | Quần áo thể thao | H – Thể thao | 🟡 Trung | Mở rộng FASHION |
+| TD-INDUSTRY-068 | Giày thể thao | H – Thể thao | 🟡 Trung | Mở rộng FASHION |
+| TD-INDUSTRY-069 | Dụng cụ thể thao | H – Thể thao | 🟢 Thấp | |
+| TD-INDUSTRY-070 | Phụ kiện tập gym | H – Thể thao | 🟢 Thấp | |
+| TD-INDUSTRY-071 | Dụng cụ cắm trại | H – Thể thao | 🟢 Thấp | |
+| TD-INDUSTRY-072 | Xe đạp và phụ kiện | H – Thể thao | 🟢 Thấp | |
+| TD-INDUSTRY-073 | Thức ăn thú cưng | I – Thú cưng | 🔴 Cao | Mới hoàn toàn, thêm BOM loài/trọng lượng |
+| TD-INDUSTRY-074 | Phụ kiện thú cưng | I – Thú cưng | 🟡 Trung | |
+| TD-INDUSTRY-075 | Đồ chơi thú cưng | I – Thú cưng | 🟢 Thấp | |
+| TD-INDUSTRY-076 | Quần áo thú cưng | I – Thú cưng | 🟢 Thấp | |
+| TD-INDUSTRY-077 | Sản phẩm vệ sinh thú cưng | I – Thú cưng | 🟢 Thấp | |
+| TD-INDUSTRY-079 | Sách | J – Văn phòng | 🟡 Trung | |
+| TD-INDUSTRY-080 | Đồ dùng học tập | J – Văn phòng | 🟢 Thấp | |
+| TD-INDUSTRY-081 | Ba lô, cặp sách | J – Văn phòng | 🟢 Thấp | |
+| TD-INDUSTRY-083 | Phụ kiện ô tô | K – Xe cộ | 🟢 Thấp | |
+| TD-INDUSTRY-084 | Phụ kiện xe máy | K – Xe cộ | 🟢 Thấp | |
+| TD-INDUSTRY-085 | Mũ bảo hiểm | K – Xe cộ | 🟢 Thấp | |
+| TD-INDUSTRY-086 | Đồ chăm sóc xe | K – Xe cộ | 🟢 Thấp | |
+| TD-INDUSTRY-087 | Đồ phong thủy | L – Bán lẻ chuyên biệt | 🟡 Trung | Thêm taxonomy phong thủy |
+| TD-INDUSTRY-088 | Đồ thờ cúng | L – Bán lẻ chuyên biệt | 🟡 Trung | |
+| TD-INDUSTRY-089 | Vật phẩm tôn giáo | L – Bán lẻ chuyên biệt | 🟢 Thấp | |
+| TD-INDUSTRY-092 | Nguyên liệu làm bánh | L – Bán lẻ chuyên biệt | 🟡 Trung | Mở rộng FNB |
+| TD-INDUSTRY-094 | Vải và phụ liệu may mặc | L – Bán lẻ chuyên biệt | 🟡 Trung | Mở rộng FASHION |
+| TD-INDUSTRY-095 | Thiết bị và dụng cụ làm vườn | L – Bán lẻ chuyên biệt | 🟢 Thấp | |
+
+**Quy trình triển khai 3 bước cho mỗi ngành:**
+1. Tạo `src/modules/organization/domain/industries/<ten-nganh>.ts` với `IndustryPluginContract`
+2. Đăng ký vào `INDUSTRY_REGISTRY` trong `industries/index.ts` + thêm key vào `IndustryKey`
+3. Cập nhật `industry-roadmap.ts`: đổi `status: "COMING_SOON"` → `status: "ACTIVE"`, thêm `industryKey`
+
+---
+
 | # | Nợ | Vì sao chấp nhận | Trả khi nào |
 |---|---|---|---|
 | 2 | `bom.wrapping` chưa có trường `quantity`, nhưng quy ước đếm yêu cầu đếm số lớp giấy gói | Hợp đồng Vision chỉ được thêm trường; việc thêm thuộc phạm vi M01 | P5 |
