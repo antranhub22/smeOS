@@ -1,7 +1,6 @@
 "use client"
 
 import type { ReactNode } from "react"
-
 import { ArrowRight, BookOpen, Check, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -9,6 +8,7 @@ import { InlineError } from "@/components/ui/inline-error"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CatalogProductPicker } from "@/components/greeting-card/catalog/catalog-product-picker"
 import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
 import { catalogPublicPath, type CatalogOption } from "./use-journey-catalogs"
 
 interface StepCatalogProps {
@@ -24,23 +24,24 @@ interface StepCatalogProps {
   onItemCountChange: (count: number) => void
   onNext: () => void
   onQuickGenerate?: () => void
-  /** Phần chọn giao diện khách xem, hiển thị dưới danh sách mẫu hoa. */
   templateSlot?: ReactNode
-  /** Không sửa được mẫu/giao diện của bộ sưu tập dùng chung (Sale chỉ chọn — PO 08/10/2026) */
   readOnly?: boolean
 }
 
 export function StepCatalog(props: StepCatalogProps) {
   const { catalogs, orgSlug, loading, loadError, selectedId, itemCount } = props
+  const { ti } = useI18n()
 
   return (
     <section aria-labelledby="step-catalog-title" className="flex flex-col gap-5">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 id="step-catalog-title" className="text-title font-bold text-foreground">
-            Chọn bộ sưu tập mẫu hoa
+            Chọn {ti("catalogTitle").toLowerCase()}
           </h2>
-          <p className="mt-1 text-body-sm text-text-muted">Khách sẽ lướt xem các mẫu hoa trong bộ sưu tập bạn chọn.</p>
+          <p className="mt-1 text-body-sm text-text-muted">
+            Khách sẽ lướt xem các {ti("sampleProduct").toLowerCase()} trong bộ sưu tập bạn chọn.
+          </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {props.onQuickGenerate && (
@@ -74,7 +75,7 @@ export function StepCatalog(props: StepCatalogProps) {
         <EmptyState
           icon={BookOpen}
           title="Chưa có bộ sưu tập nào"
-          reason="Tạo bộ sưu tập theo dịp (20/10, sinh nhật, khai trương…) rồi thêm mẫu hoa để gửi khách."
+          reason={`Tạo bộ sưu tập theo dịp (ưu đãi, sự kiện…) rồi thêm ${ti("sampleProduct").toLowerCase()} để gửi khách.`}
           action={{ label: "Tạo bộ sưu tập đầu tiên", onClick: props.onCreate }}
           className="rounded-2xl border border-dashed border-border py-10"
         />
@@ -105,7 +106,9 @@ export function StepCatalog(props: StepCatalogProps) {
                       cat.itemCount > 0 ? "bg-success-bg text-success" : "bg-warning-bg text-warning",
                     )}
                   >
-                    {cat.itemCount > 0 ? `${cat.itemCount} mẫu hoa` : "Chưa có mẫu hoa"}
+                    {cat.itemCount > 0
+                      ? `${cat.itemCount} ${ti("sampleProduct").toLowerCase()}`
+                      : `Chưa có ${ti("sampleProduct").toLowerCase()}`}
                   </span>
                 </span>
                 <span
@@ -136,7 +139,7 @@ export function StepCatalog(props: StepCatalogProps) {
           <p className="text-body-sm text-text-muted">
             {itemCount > 0
               ? "Muốn gửi kèm lời chào riêng cho từng khách? Tiếp tục sang bước 2."
-              : "Thêm ít nhất 1 mẫu hoa để tiếp tục."}
+              : `Thêm ít nhất 1 ${ti("sampleProduct").toLowerCase()} để tiếp tục.`}
           </p>
           <Button size="sm" disabled={!selectedId || itemCount === 0} onClick={props.onNext} className="gap-1.5">
             Gửi riêng cho khách
