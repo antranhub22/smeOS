@@ -263,7 +263,7 @@ export default function CaiDatTiemPage() {
                   <span className="flex items-center gap-1.5">
                     <Building2 size={13} className="text-text-muted" /> Lĩnh vực hoạt động
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-warning bg-warning/10 px-2 py-0.5 rounded-full border border-warning/20">
+                  <span className="inline-flex items-center gap-1 text-caption font-semibold text-warning bg-warning/10 px-2 py-0.5 rounded-full border border-warning/20">
                     🔒 Đang khóa
                   </span>
                 </label>
@@ -275,7 +275,7 @@ export default function CaiDatTiemPage() {
                     className="w-full px-3 py-2 text-xs rounded-xl border border-border bg-surface-alt text-text-muted opacity-80 cursor-not-allowed"
                   />
                 </div>
-                <div className="flex items-center justify-between pt-1 text-[11.5px]">
+                <div className="flex items-center justify-between pt-1 text-caption">
                   <span className="text-text-muted">Chuyển đổi sang Thời trang, F&B hoặc Bán lẻ cần điều chỉnh dữ liệu.</span>
                   <button
                     type="button"

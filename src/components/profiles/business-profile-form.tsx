@@ -183,12 +183,12 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold text-text">Lĩnh vực hoạt động / Ngành nghề</h3>
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                <span className="text-caption font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                   {currentIndDef.name}
                 </span>
               </div>
               <p className="text-xs text-text-muted mt-0.5">
-                Định hình giao diện, cấu trúc catalog, định lượng (BOM) và trợ lý AI phù hợp với mô hình kinh doanh
+                Định hình giao diện, cấu trúc catalog, định mức nguyên liệu và trợ lý AI phù hợp với mô hình kinh doanh
               </p>
             </div>
           </div>
@@ -228,7 +228,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
                     <span className="text-body-sm font-bold text-text">{ind.name}</span>
                     {isSelected && <Check size={14} className="text-primary font-bold" />}
                   </div>
-                  <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed">
+                  <p className="text-caption text-text-muted line-clamp-2 leading-relaxed">
                     {ind.description}
                   </p>
                 </button>
