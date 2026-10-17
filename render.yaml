@@ -1,4 +1,4 @@
-# render.yaml — FloraOS Core Infrastructure as Code
+# render.yaml — smeOS Infrastructure as Code
 # Docs: https://render.com/docs/infrastructure-as-code
 
 services:
@@ -6,7 +6,7 @@ services:
   # 1. WEB SERVICE — Next.js App
   # ══════════════════════════════════════════════
   - type: web
-    name: floraos-web
+    name: smeos-web
     runtime: node
     region: singapore
     plan: starter
@@ -18,12 +18,10 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: floraos-postgres
+          name: smeos-postgres
           property: connectionString
       - key: NODE_ENV
         value: production
-      # PO 08/10/2026: máy chủ thật SẠCH — không nạp "Tiệm Hoa Mộc Lan" mỗi lần triển khai, tiệm mới
-      # không mang hồ sơ mẫu. Giữ khoá với "false" (không xoá) để Render ghi đè giá trị "true" cũ.
       - key: SEED_DEV_DATA
         value: "false"
       - key: NODE_OPTIONS
@@ -34,11 +32,11 @@ services:
         generateValue: true
       - key: INTEGRATION_TOKEN_SECRET
         generateValue: true
-      # Redis dùng chung cho giới hạn tần suất endpoint công khai (Thẻ chào)
+      # Redis dùng chung cho giới hạn tần suất endpoint công khai
       - key: REDIS_URL
         fromService:
           type: keyvalue
-          name: floraos-redis
+          name: smeos-redis
           property: connectionString
       - key: OPENAI_API_KEY
         sync: false
@@ -84,19 +82,12 @@ services:
         value: cpu
       - key: GREETING_CARD_ENABLED
         value: "true"
-      # SOCIALFLOW_URL và LOCALBUDD_URL để undefined (không set) thay vì ""
-      # vì Zod schema dùng .url().optional() — chấp nhận undefined nhưng
-      # reject empty string. Điền URL thật sau khi deploy SocialFlow/LocalBudd.
-      # - key: SOCIALFLOW_URL
-      # - key: LOCALBUDD_URL
-      # - key: NEXT_PUBLIC_SOCIALFLOW_URL
-      # - key: NEXT_PUBLIC_LOCALBUDD_URL
 
   # ══════════════════════════════════════════════
   # 2. BACKGROUND WORKER — Media AI
   # ══════════════════════════════════════════════
   - type: worker
-    name: floraos-worker-media
+    name: smeos-worker-media
     runtime: python
     region: singapore
     plan: starter
@@ -108,7 +99,7 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: floraos-postgres
+          name: smeos-postgres
           property: connectionString
       - key: OPENAI_API_KEY
         sync: false
@@ -143,7 +134,7 @@ services:
   # 3. BACKGROUND WORKER — Video AI
   # ══════════════════════════════════════════════
   - type: worker
-    name: floraos-worker-video
+    name: smeos-worker-video
     runtime: python
     region: singapore
     plan: starter
@@ -155,7 +146,7 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: floraos-postgres
+          name: smeos-postgres
           property: connectionString
       - key: OPENAI_API_KEY
         sync: false
@@ -178,7 +169,7 @@ services:
   # 4. BACKGROUND WORKER — Vision AI
   # ══════════════════════════════════════════════
   - type: worker
-    name: floraos-worker-vision
+    name: smeos-worker-vision
     runtime: python
     region: singapore
     plan: starter
@@ -190,7 +181,7 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: floraos-postgres
+          name: smeos-postgres
           property: connectionString
       - key: OPENAI_API_KEY
         sync: false
@@ -211,7 +202,7 @@ services:
   # KEY VALUE (Redis) — bộ đếm giới hạn tần suất dùng chung các instance
   # ══════════════════════════════════════════════
   - type: keyvalue
-    name: floraos-redis
+    name: smeos-redis
     region: singapore
     plan: free
     maxmemoryPolicy: allkeys-lru
@@ -221,8 +212,8 @@ services:
 # DATABASE — PostgreSQL 16
 # ══════════════════════════════════════════════
 databases:
-  - name: floraos-postgres
-    databaseName: floraos
-    user: floraos
+  - name: smeos-postgres
+    databaseName: smeos
+    user: smeos
     region: singapore
     plan: basic-256mb
