@@ -25,6 +25,7 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   // Có chủ đích: chưa có phiên/tổ chức, hoặc gác bằng cơ chế khác.
   "auth/login": "đăng nhập — chưa có phiên",
   "auth/signup": "đăng ký — chưa có phiên",
+  "auth/instant-trial": "dùng thử tức thì không cần mật khẩu — chưa có phiên",
   "auth/logout": "đăng xuất phiên của chính mình",
   "auth/me": "đọc phiên của chính mình",
   "auth/session-status": "kiểm phiên của chính mình còn sống (cảnh báo đăng nhập nơi khác)",
