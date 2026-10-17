@@ -1,4 +1,5 @@
 import type { VideoEvidenceSnippet } from "@/core/ports/trend-provider";
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile";
 import { marketIntelligenceRepo } from "../infra/market-intelligence-repository";
 import { getTopicDualRealVideoEvidence } from "../domain/video-evidence-catalog";
 import {
@@ -50,10 +51,15 @@ export async function personalizeOpportunitiesForTenants(
     const audienceProxy =
       vipCount > 5 ? "Khách hàng doanh nghiệp & quà tặng VIP" : "Khách hàng cá nhân, sinh nhật & sự kiện";
 
-    const tone = org.brand_profile?.tone_of_voice ?? "Trang nhã, tinh tế, chân thành";
+    const orgSettings = (org.settings && typeof org.settings === "object" ? org.settings : {}) as Record<string, unknown>;
+    const industryKey = typeof orgSettings.industry === "string" ? orgSettings.industry : "FLORAL";
+    const plugin = getIndustryPlugin(industryKey);
+    const defaultTone = plugin.aiConfig.marketingToneExamples[0] ?? "Trang nhã, tinh tế, chân thành";
+    const tone = org.brand_profile?.tone_of_voice ?? defaultTone;
+    const defaultTag = `#${industryKey.toLowerCase()}`;
     const hashtags = Array.isArray(org.brand_profile?.hashtags)
       ? (org.brand_profile.hashtags as string[])
-      : ["#hoatuoi", "#flower", `#${org.name.replace(/\s+/g, "").toLowerCase()}`];
+      : [defaultTag, `#${org.name.replace(/\s+/g, "").toLowerCase()}`];
 
     for (const topic of topics) {
       const context = estimateTopicContextMetrics(topic.canonical_name, {

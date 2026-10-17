@@ -85,3 +85,60 @@ class TestReconcileQuantity:
         # không được ném lỗi khi lượt hai thiếu thành phần so với lượt một
         _reconcile_quantity(a, b)
         assert a["bom"]["flowers"][0]["quantity"] == 10
+
+
+class TestIndustryContracts:
+    def test_nap_hop_dong_hoa_va_thoi_trang(self):
+        from vision.providers.openai_structured import _contract_singleton
+
+        c_floral = _contract_singleton("floral")
+        assert c_floral.name == "PhanTichSanPhamHoa"
+        assert "Senior Florist" in c_floral.prompt
+
+        c_fashion = _contract_singleton("fashion")
+        assert c_fashion.name == "PhanTichSanPhamThoiTrang"
+        assert "Thiết kế Thời trang" in c_fashion.prompt
+        assert c_fashion.schema["strict"] is True
+
+    def test_reconcile_quantity_da_nganh_fashion(self):
+        a = {
+            "confidence": 80,
+            "bom": {
+                "hardware": [{"name": "Cúc mạ vàng", "quantity": 6, "confidence": 85}],
+            },
+        }
+        b = {
+            "confidence": 70,
+            "bom": {
+                "hardware": [{"name": "Cúc mạ vàng", "quantity": 8, "confidence": 80}],
+            },
+        }
+        _reconcile_quantity(a, b)
+        assert a["confidence"] == 75
+        assert a["bom"]["hardware"][0]["quantity"] == 7
+
+    def test_min_bom_confidence_da_nganh(self):
+        res = {
+            "confidence": 90,
+            "bom": {
+                "primary_materials": [{"name": "Lụa tơ tằm", "confidence": 88}],
+                "hardware": [{"name": "Khóa kéo YKK", "confidence": 65}],
+            },
+        }
+        assert _min_bom_confidence(res) == 65
+
+    def test_reference_block_da_nganh(self):
+        from vision.providers.openai_structured import _reference_block
+
+        ref = {
+            "identity": {"category": "Đầm & Váy thiết kế", "silhouette": "Dáng xòe chữ A"},
+            "bom": {
+                "primary_materials": [{"name": "Lụa tơ tằm", "color": "Đỏ rượu"}],
+                "hardware": [{"name": "Cúc kim loại", "color": "Vàng kim", "quantity": 4}],
+            },
+        }
+        block = _reference_block(ref)
+        assert "Đầm & Váy thiết kế" in block
+        assert "Dáng xòe chữ A" in block
+        assert "Lụa tơ tằm" in block
+        assert "Cúc kim loại" in block

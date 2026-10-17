@@ -182,6 +182,7 @@ export class MarketIntelligenceRepository {
         id: true,
         name: true,
         type: true,
+        settings: true,
         brand_profile: {
           select: {
             tone_of_voice: true,

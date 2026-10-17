@@ -135,6 +135,7 @@ def _insert_analysis(
     product_id: str | None,
     provider: Any,
     raw: dict,
+    contract_name: str = "PhanTichSanPhamHoa",
 ) -> None:
     with conn.cursor() as cur:
         cur.execute(
@@ -157,7 +158,7 @@ def _insert_analysis(
                 "provider": provider.name,
                 "model": provider.model_version,
                 "model_version": provider.model_version,
-                "contract_name": "PhanTichSanPhamHoa",
+                "contract_name": contract_name,
                 "contract_version": CONTRACT_VERSION,
                 "raw": json.dumps(raw),
             },
@@ -190,6 +191,19 @@ def process_job(conn: psycopg.Connection, job: dict[str, Any], provider: Any = N
             )
 
     lowest_confidence = 100
+    industry = payload.get("industry") or payload.get("industry_key")
+    if not industry and not hasattr(conn, "fetchone_queue"):
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT settings->>'industry' FROM organizations WHERE id = %s", (organization_id,))
+                row = cur.fetchone()
+                if row and row[0]:
+                    industry = row[0]
+        except Exception:
+            pass
+    industry = industry or "FLORAL"
+    contract_name = f"PhanTichSanPham_{industry.capitalize()}" if industry.upper() != "FLORAL" else "PhanTichSanPhamHoa"
+
     try:
         _emit_event(conn, job["id"], "stage", {"stage": "DETECTING"})
         with conn.cursor() as cur:
@@ -218,6 +232,7 @@ def process_job(conn: psycopg.Connection, job: dict[str, Any], provider: Any = N
                         "organization_id": organization_id,
                         "product_id": product_id,
                         "asset_id": asset_id,
+                        "industry": industry,
                     },
                 )
             except Exception:
@@ -257,7 +272,7 @@ def process_job(conn: psycopg.Connection, job: dict[str, Any], provider: Any = N
                 **_so_do_chi_phi(provider),
             )
 
-            _insert_analysis(conn, job, asset_id, product_id, provider, raw)
+            _insert_analysis(conn, job, asset_id, product_id, provider, raw, contract_name=contract_name)
             _emit_event(
                 conn,
                 job["id"],
