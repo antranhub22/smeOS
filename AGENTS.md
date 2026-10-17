@@ -61,7 +61,11 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
        - `templates`: mẫu ấn phẩm A6 in ấn (`printables` thuộc loại `TAG`, `CARD`, `MENU`, `WARRANTY`, `CARE_GUIDE`, `DISPATCH` kèm hướng dẫn mặc định).
        - `aiConfig`: trọng tâm phân tích thị giác (`visionFocus`), bối cảnh ảnh Studio (`studioBackgroundStyles`), văn phong tiếp thị mẫu (`marketingToneExamples`), danh sách tên sản phẩm mẫu (`sampleProductNames`).
     2. **Bước 2 — Đăng ký vào Registry**: Mở `src/modules/organization/domain/industries/index.ts`, import file vừa tạo và bổ sung vào `INDUSTRY_REGISTRY`. Đồng thời thêm key vào `IndustryKey` trong `industry-profile.ts`.
-    3. **Bước 3 — Xác nhận kiểm thử & Typecheck**: Chạy `npx vitest run src/modules/organization/domain/industry-plugin-contract.test.ts` và `npx tsc -p tsconfig.json --noEmit`. Toàn bộ giao diện Đăng ký, Hồ sơ cửa hàng, Bộ lọc danh mục sản phẩm, Định lượng BOM, Ấn phẩm in ấn và Trợ lý AI sẽ tự động thích ứng với ngành mới mà không cần chạm vào bất kỳ file UI nào.
+    3. **Bước 3 — Xác nhận kiểm thử & Typecheck**: Chạy `npm run check:industry` (hoặc `npx vitest run src/modules/organization/domain/industry-plugin-contract.test.ts` và `npx tsc -p tsconfig.json --noEmit`). Toàn bộ giao diện Đăng ký, Hồ sơ cửa hàng, Bộ lọc danh mục sản phẩm, Định lượng BOM, Ấn phẩm in ấn và Trợ lý AI sẽ tự động thích ứng với ngành mới mà không cần chạm vào bất kỳ file UI nào.
+    4. **Công cụ tự động hóa**:
+       - `npm run new:industry`: Wizard tạo ngành mới tự động làm cả 3 bước (sinh file, đăng ký registry, chạy bộ test tự động).
+       - `npm run check:industry`: Tự động kiểm tra 4 trụ cột SSOT Đa ngành (Registry & Files, Unit Test, TypeScript Typecheck, Terminology Ratchet Audit). Đã gắn sẵn vào Git Pre-Commit Hook (`.git/hooks/pre-commit`).
+       - `npm run audit:industry`: Rà soát các từ ngữ chuyên ngành hardcode trên toàn bộ UI kèm gợi ý fix SSOT `ti.<term>`.
 - **Tách biệt trường dữ liệu nguyên tử (Atomic Disaggregated Fields) để tối ưu khả năng chỉnh sửa (Editable)**:
   - Tuyệt đối không gộp chung văn bản và số lượng/đơn vị vào cùng một chuỗi tự do (ví dụ: cấm gộp `"Hồng đỏ 10 cành"` thành 1 ô text).
   - Bắt buộc phân rã thành các trường cấu trúc độc lập: tên hoa (text), số lượng (number), đơn vị (text), màu sắc (text), vai trò (select)... để người dùng có thể nhấp chuột sửa trực tiếp từng thông số mà không làm hỏng cấu trúc dữ liệu.

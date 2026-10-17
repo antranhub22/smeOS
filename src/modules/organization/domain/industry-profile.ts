@@ -24,6 +24,15 @@ export type IndustryKey =
   | "RETAIL_GENERAL"  // Bán lẻ tổng hợp, siêu thị mini, tạp hóa
   | "SERVICES"        // Dịch vụ, salon, spa, sửa chữa
 
+export const ALL_INDUSTRY_KEYS = [
+  "FLORAL",
+  "FASHION",
+  "FNB",
+  "CRAFT_GIFT",
+  "RETAIL_GENERAL",
+  "SERVICES",
+] as const
+
 export const DEFAULT_INDUSTRY: IndustryKey = "FLORAL"
 
 export type IndustryTerminology = PluginTerminology
