@@ -10,7 +10,7 @@
 // phục thật ở bản này (P12, xem TECHNICAL_DEBT.md) — bấm vào hiện thông báo
 // rõ ràng thay vì im lặng không làm gì.
 
-import { Suspense, useState } from "react"
+import { Suspense, useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Eye, EyeOff, Info, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -33,6 +33,15 @@ export default function DangNhapPage() {
 
   const allIndustries = listAllIndustries()
   const selectedIndDef = getIndustryDefinition(industryKey)
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search)
+      if (p.get("che-do") === "dang-ky" || p.get("mode") === "register" || p.get("dang-ky") === "true") {
+        setCheDo("dang-ky")
+      }
+    }
+  }, [])
 
   const getIndustryPlaceholder = (ind: string) => {
     switch (ind) {
@@ -101,6 +110,38 @@ export default function DangNhapPage() {
               ? "Đăng ký thiết lập không gian vận hành cho doanh nghiệp của bạn"
               : "Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ"}
           </div>
+        </div>
+
+        {/* Tab chuyển đổi Đăng nhập / Đăng ký trực quan */}
+        <div className="grid grid-cols-2 rounded-2xl border border-border bg-surface-alt/80 p-1 shadow-xs">
+          <button
+            type="button"
+            onClick={() => {
+              setCheDo("dang-nhap")
+              setLoi(null)
+            }}
+            className={`py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+              cheDo === "dang-nhap"
+                ? "bg-surface text-primary shadow-xs border border-border/60"
+                : "text-text-muted hover:text-text"
+            }`}
+          >
+            Đăng nhập
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setCheDo("dang-ky")
+              setLoi(null)
+            }}
+            className={`py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+              cheDo === "dang-ky"
+                ? "bg-surface text-primary shadow-xs border border-border/60"
+                : "text-text-muted hover:text-text"
+            }`}
+          >
+            Đăng ký tài khoản mới
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
