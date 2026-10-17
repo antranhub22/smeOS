@@ -30,6 +30,7 @@ export type SignUpInput = {
   password: string
   name?: string | null
   organizationName: string
+  industryKey?: string | undefined
   seedProfile?: boolean | undefined
 }
 
