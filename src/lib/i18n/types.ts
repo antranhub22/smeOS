@@ -28,6 +28,8 @@ type NestedKeyOf<ObjectType extends object> = {
     : `${Key}`
 }[keyof ObjectType & (string | number)]
 
+import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
+
 export type TranslationKey = NestedKeyOf<I18nDictionary>
 
 export interface I18nContextValue {
@@ -36,5 +38,6 @@ export interface I18nContextValue {
   t: (key: TranslationKey, params?: InterpolationParams) => string
   dict: I18nDictionary
   industryKey?: string | undefined
-  ti: (termKey: "makerTitle" | "makerAction" | "productRecipe" | "sampleProduct" | "rawMaterialItem" | "completedProductPhoto" | "printablesTitle") => string
+  industry?: IndustryPluginContract | undefined
+  ti: (termKey: "makerTitle" | "makerAction" | "productRecipe" | "sampleProduct" | "rawMaterialItem" | "completedProductPhoto" | "printablesTitle" | "catalogTitle" | "createButtonLabel" | "scanButtonLabel") => string
 }

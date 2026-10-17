@@ -9,7 +9,7 @@ import { getDictionary, translate, interpolate } from "./server"
 import type { SupportedLocale, I18nContextValue, TranslationKey, InterpolationParams } from "./types"
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "./types"
 
-import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
 const STORAGE_KEY = "floraos_locale"
 
@@ -54,13 +54,13 @@ export function I18nProvider({ children, initialLocale = DEFAULT_LOCALE, industr
     [locale]
   )
 
-  const industryTerms = useMemo(() => getIndustryTerminology(industryKey), [industryKey])
+  const industryPlugin = useMemo(() => getIndustryPlugin(industryKey), [industryKey])
 
   const ti = useCallback(
-    (termKey: "makerTitle" | "makerAction" | "productRecipe" | "sampleProduct" | "rawMaterialItem" | "completedProductPhoto" | "printablesTitle"): string => {
-      return industryTerms[termKey] || ""
+    (termKey: "makerTitle" | "makerAction" | "productRecipe" | "sampleProduct" | "rawMaterialItem" | "completedProductPhoto" | "printablesTitle" | "catalogTitle" | "createButtonLabel" | "scanButtonLabel"): string => {
+      return industryPlugin.terminology[termKey] || ""
     },
-    [industryTerms]
+    [industryPlugin]
   )
 
   const value = useMemo<I18nContextValue>(
@@ -70,9 +70,10 @@ export function I18nProvider({ children, initialLocale = DEFAULT_LOCALE, industr
       t,
       dict,
       industryKey,
+      industry: industryPlugin,
       ti,
     }),
-    [locale, setLocale, t, dict, industryKey, ti]
+    [locale, setLocale, t, dict, industryKey, industryPlugin, ti]
   )
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
@@ -80,20 +81,21 @@ export function I18nProvider({ children, initialLocale = DEFAULT_LOCALE, industr
 
 /**
  * Hook đa ngôn ngữ dùng trong mọi React component:
- * const { t, ti } = useI18n()
+ * const { t, ti, industry } = useI18n()
  * <h1>{ti('makerTitle')}</h1>
  */
 export function useI18n(): I18nContextValue {
   const context = useContext(I18nContext)
   if (!context) {
-    const fallbackTerms = getIndustryTerminology()
+    const fallbackPlugin = getIndustryPlugin()
     return {
       locale: DEFAULT_LOCALE,
       setLocale: () => {},
       t: (key: TranslationKey, params?: InterpolationParams) => translate(DEFAULT_LOCALE, key, params),
       dict: getDictionary(DEFAULT_LOCALE),
       industryKey: "FLORAL",
-      ti: (termKey) => fallbackTerms[termKey] || "",
+      industry: fallbackPlugin,
+      ti: (termKey) => fallbackPlugin.terminology[termKey] || "",
     }
   }
   return context
