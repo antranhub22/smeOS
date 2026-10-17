@@ -169,6 +169,7 @@ export const FEATURES: FeatureItem[] = [
 
 export type MockSession = {
   userName: string
+  userEmail?: string | undefined
   userInitials: string
   orgName: string
   workspaceKind: WorkspaceKind
