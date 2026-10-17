@@ -22,6 +22,8 @@ import { Badge } from "@/components/ui/badge"
 import type { FlowerBomItem, FoliageBomItem, WrappingLayer, AccessoryBomItem, StructuredAddress } from "@/modules/products/domain/product-master-index"
 import type { VisibleCustomField } from "@/components/coordinator/custom-fields-section"
 import { FloristJobBom, formatAddress, maskPhoneNumber } from "./florist-job-bom"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface FloristJobCardProps {
   orderCode: string
@@ -74,6 +76,8 @@ export function FloristJobCard({
   const [maskPhone, setMaskPhone] = useState(true)
   const [copiedImage, setCopiedImage] = useState(false)
   const [copiedText, setCopiedText] = useState(false)
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
 
   const handleCopyText = async () => {
     const phoneDisplay = maskPhone ? maskPhoneNumber(recipientPhone) : recipientPhone || "Chưa có"
@@ -263,7 +267,7 @@ export function FloristJobCard({
             <div className="flex items-center justify-between font-bold text-text">
               <span className="flex items-center gap-1.5">
                 <MapPin size={13} className="text-primary" />
-                <span>Thông tin giao nhận cho bộ phận cắm hoa:</span>
+                <span>Thông tin giao nhận cho bộ phận {ti.makerTitle}:</span>
               </span>
               <button
                 type="button"

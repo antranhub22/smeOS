@@ -20,6 +20,7 @@ import { useSession } from "@/lib/session"
 import { ApprovedAnalysesSelector } from "./ApprovedAnalysesSelector"
 import { AccountStorageHub, type RawAssetItem, type ApprovedAnalysisItem } from "@/components/storage/account-storage-hub"
 import { TabActionHeader, type TabItem, type TabAction } from "@/components/ui/tab-header"
+import { useI18n } from "@/lib/i18n"
 import {
   M01aGuidanceCard,
   M01bGuidanceCard,
@@ -74,7 +75,7 @@ function mapSalesFields(raw: Record<string, unknown>): ResultField[] {
   const identity = (raw.identity as Record<string, unknown> | undefined) ?? {}
   return [
     { key: "name", label: "Tên sản phẩm", type: "text", editable: true, value: (raw.product_name as string) ?? (identity.category as string) ?? "—" },
-    { key: "desc", label: "Mô tả bó hoa", type: "textarea", editable: true, value: (raw.description as string) ?? "" },
+    { key: "desc", label: "Mô tả sản phẩm", type: "textarea", editable: true, value: (raw.description as string) ?? "" },
     { key: "tags", label: "Thẻ phân loại", type: "list", editable: true, value: [], confidence: null, placeholder: "Thêm thẻ..." },
     { key: "tones", label: "Tone màu dạng nhãn bán hàng", type: "list", editable: true, value: [], confidence: null, placeholder: "Thêm tone..." },
     { key: "style", label: "Phong cách thiết kế", type: "text", editable: true, value: (raw.style as string) ?? "—" },
@@ -117,7 +118,7 @@ function mapProductCopyToFields2(copy: Record<string, unknown>, analysisRaw: Rec
     { key: "suggested_name", label: "Tên sản phẩm gợi ý", type: "text", editable: true, value: (copy.suggested_name as string) ?? (identity.category as string) ?? "—" },
     { key: "short_headline", label: "Slogan / Tagline", type: "text", editable: true, value: (copy.short_headline as string) ?? "" },
     { key: "suggested_description", label: "Mô tả sản phẩm", type: "textarea", editable: true, value: (copy.suggested_description as string) ?? "" },
-    { key: "flower_meaning_story", label: "Ý nghĩa câu chuyện hoa", type: "textarea", editable: true, value: (copy.flower_meaning_story as string) ?? "" },
+    { key: "flower_meaning_story", label: "Câu chuyện & cảm hứng sản phẩm", type: "textarea", editable: true, value: (copy.flower_meaning_story as string) ?? "" },
     { key: "key_selling_points", label: "Điểm bán hàng nổi bật (USP)", type: "list", editable: true, value: keyPoints, placeholder: "Thêm USP..." },
     { key: "suggested_style", label: "Phong cách thiết kế", type: "text", editable: true, value: (copy.suggested_style as string) ?? (identity.phong_cach as string) ?? "—" },
     { key: "suggested_tags", label: "Thẻ phân loại / SEO", type: "list", editable: true, value: tags, confidence: null, placeholder: "Thêm thẻ..." },
@@ -140,7 +141,7 @@ function mapProductCopyToFields2(copy: Record<string, unknown>, analysisRaw: Rec
 // ============================================================
 
 const FLOW_M01: FlowStep[] = [
-  { key: "detect", label: "Nhận diện loại hoa" },
+  { key: "detect", label: "Nhận diện cấu phần & chi tiết" },
   { key: "count", label: "Đếm số lượng" },
   { key: "color", label: "Phân tích màu sắc" },
   { key: "style", label: "Nhận diện phong cách" },
@@ -171,6 +172,7 @@ function newAnalysisIdempotencyKey(): string {
 export default function TaiAnhPage() {
   const router = useRouter()
   const session = useSession()
+  const { ti } = useI18n()
 
   const [activeTab, setActiveTab] = useState<"m01a" | "m01b" | "m01c" | "storage">("m01a")
   const [pitchOverrides, setPitchOverrides] = useState<SalesPitchOverrides | undefined>(undefined)
@@ -1219,8 +1221,8 @@ export default function TaiAnhPage() {
       {/* Header */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div>
-          <div className="text-caption text-text-muted">Kho mẫu hoa</div>
-          <h1 className="text-title font-extrabold text-primary">Quét ảnh hoa</h1>
+          <div className="text-caption text-text-muted">{ti("catalogTitle") || "Kho mẫu sản phẩm"}</div>
+          <h1 className="text-title font-extrabold text-primary">{ti("scanButtonLabel") || "Quét ảnh sản phẩm"}</h1>
         </div>
         <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
           <ArrowLeft size={16} strokeWidth={2} />
@@ -1249,7 +1251,7 @@ export default function TaiAnhPage() {
               ? [
                   {
                     id: "change-product",
-                    label: "Chọn mẫu hoa khác trong kho",
+                    label: `Chọn ${ti("sampleProduct").toLowerCase() || "mẫu"} khác trong kho`,
                     icon: ImageIcon,
                     variant: "secondary" as const,
                     onClick: () => {
@@ -1916,10 +1918,10 @@ export default function TaiAnhPage() {
 }
 
 const MOCK_FIELDS_RESULT1_PLACEHOLDER: ResultField[] = [
-  { key: "flowers", label: "Danh sách loại hoa", type: "list", editable: true, value: [], confidence: 94, placeholder: "Thêm loại hoa..." },
-  { key: "foliage", label: "Lá, cành phụ", type: "list", editable: true, value: [], confidence: 91, placeholder: "Thêm lá/cành phụ..." },
-  { key: "accessories", label: "Phụ kiện & Nơ", type: "list", editable: true, value: [], confidence: 88, placeholder: "Thêm phụ kiện..." },
-  { key: "wrapping", label: "Vật liệu gói & Bao bì", type: "list", editable: true, value: [], confidence: 88, placeholder: "Thêm giấy gói/bao bì..." },
+  { key: "flowers", label: "Danh sách thành phần", type: "list", editable: true, value: [], confidence: 94, placeholder: "Thêm thành phần..." },
+  { key: "foliage", label: "Chi tiết phụ", type: "list", editable: true, value: [], confidence: 91, placeholder: "Thêm chi tiết phụ..." },
+  { key: "accessories", label: "Phụ kiện & Khóa/Cúc", type: "list", editable: true, value: [], confidence: 88, placeholder: "Thêm phụ kiện..." },
+  { key: "wrapping", label: "Vật liệu gói & Bao bì", type: "list", editable: true, value: [], confidence: 88, placeholder: "Thêm bao bì..." },
   { key: "colors", label: "Màu sắc & Phân bổ bảng màu", type: "list", editable: true, value: [], confidence: 96, placeholder: "Thêm tone màu..." },
   { key: "category", label: "Phân loại sản phẩm", type: "text", editable: true, value: "—", confidence: null },
   { key: "shape", label: "Hình dáng thiết kế", type: "text", editable: true, value: "—", confidence: null },
@@ -1930,7 +1932,7 @@ const MOCK_FIELDS_RESULT1_PLACEHOLDER: ResultField[] = [
   { key: "so_tang_lop", label: "Cấu trúc sản xuất", type: "readonly", editable: false, value: "—" },
   { key: "materials_note", label: "Ghi chú vật liệu", type: "text", editable: true, value: "—", confidence: null },
   { key: "checklist", label: "Checklist 10 cấu phần tiêu chuẩn", type: "list", editable: false, value: [] },
-  { key: "totals", label: "Tổng số cành / hoa", type: "readonly", editable: false, value: "—" },
+  { key: "totals", label: "Tổng số lượng thành phần", type: "readonly", editable: false, value: "—" },
   { key: "totals-bud", label: "Tổng số nụ", type: "readonly", editable: false, value: "—" },
   { key: "totals-damaged", label: "Tổng số cành hỏng", type: "readonly", editable: false, value: "—" },
   { key: "confidence", label: "Độ tin cậy tổng thể", type: "readonly", editable: false, value: "—" },
@@ -1938,7 +1940,7 @@ const MOCK_FIELDS_RESULT1_PLACEHOLDER: ResultField[] = [
 
 const MOCK_COPY_FIELDS_PLACEHOLDER: ResultField[] = [
   { key: "name", label: "Tên sản phẩm", type: "text", editable: true, value: "—" },
-  { key: "desc", label: "Mô tả bó hoa", type: "textarea", editable: true, value: "" },
+  { key: "desc", label: "Mô tả sản phẩm", type: "textarea", editable: true, value: "" },
   { key: "tags", label: "Thẻ phân loại", type: "list", editable: true, value: [], confidence: null, placeholder: "Thêm thẻ..." },
   { key: "tones", label: "Tone màu dạng nhãn bán hàng", type: "list", editable: true, value: [], confidence: null, placeholder: "Thêm tone..." },
   { key: "style", label: "Phong cách thiết kế", type: "text", editable: true, value: "—" },

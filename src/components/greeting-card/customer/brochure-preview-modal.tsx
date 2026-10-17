@@ -11,7 +11,7 @@ interface BrochurePreviewModalProps {
 
 export function BrochurePreviewModal({
   url,
-  title = "Xem trước Thẻ Chào Mẫu Hoa",
+  title = "Xem trước Thẻ Chào & Bộ Sưu Tập",
   onClose,
 }: BrochurePreviewModalProps) {
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile")

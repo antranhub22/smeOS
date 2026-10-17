@@ -57,11 +57,11 @@ export function OrderNotesFields({
 
       <div>
         <label htmlFor={id("senderNote")} className={LABEL}>
-          Ghi chú cho cửa hàng / thợ cắm hoa
+          Ghi chú cho xưởng / bộ phận gia công
         </label>
         <input
           type="text"
-          placeholder="VD: Gói giấy tông hồng, không dùng hoa ly"
+          placeholder="VD: Lưu ý quy cách, đóng gói hoặc chi tiết phụ kiện"
           value={value.senderNote}
           maxLength={ORDER_FIELD_MAX.senderNote}
           id={id("senderNote")}
@@ -72,7 +72,7 @@ export function OrderNotesFields({
 
       <div>
         <label htmlFor={id("deliveryNote")} className={LABEL}>
-          Ghi chú cho người giao hoa
+          Ghi chú cho người giao hàng
         </label>
         <input
           type="text"

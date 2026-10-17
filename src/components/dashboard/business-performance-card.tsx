@@ -19,6 +19,8 @@ import {
   generateReportCsvContent,
   type OrderReportingItem,
 } from "@/modules/orders/domain/business-reporting"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface BusinessPerformanceCardProps {
   orders: OrderReportingItem[]
@@ -36,6 +38,8 @@ export function BusinessPerformanceCard({
   shopName,
 }: BusinessPerformanceCardProps) {
   const [downloading, setDownloading] = useState(false)
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
 
   const report = computeBusinessReport(orders, aiCreditUsed)
 
@@ -171,7 +175,7 @@ export function BusinessPerformanceCard({
 
         {report.topSellingItems.length === 0 ? (
           <div className="p-6 rounded-xl border border-dashed border-border text-center text-caption text-text-muted">
-            Chưa có đủ dữ liệu đơn hàng để xếp hạng mẫu hoa bán chạy
+            Chưa có đủ dữ liệu đơn hàng để xếp hạng {ti.sampleProduct} bán chạy
           </div>
         ) : (
           <div className="space-y-2">

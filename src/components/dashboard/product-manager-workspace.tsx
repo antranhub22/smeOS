@@ -14,6 +14,7 @@ import {
   Layers,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { UserMenu } from "@/components/layout/user-menu"
@@ -40,7 +41,8 @@ async function layJson<T>(url: string): Promise<T | null> {
 
 export function ProductManagerWorkspace() {
   const router = useRouter()
-  const { orgName, userInitials, roleUx, can } = useSession()
+  const { orgName, userInitials, roleUx, can, organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
 
   const [products, setProducts] = useState<ProductReadinessInput[] | null>(null)
   const [daTai, setDaTai] = useState(false)
@@ -106,9 +108,9 @@ export function ProductManagerWorkspace() {
           id="product_manager_workspace_guidance"
           badgeLabel="HƯỚNG DẪN QUẢN LÝ SẢN PHẨM"
           title="Tổng quan Sẵn sàng Sản phẩm & Danh mục"
-          description="Theo dõi mức độ hoàn thiện dữ liệu sản phẩm, phát hiện ngay các mẫu hoa thiếu ảnh, thiếu giá hoặc thiếu công thức trước khi chào bán cho khách."
+          description={`Theo dõi mức độ hoàn thiện dữ liệu sản phẩm, phát hiện ngay các ${ti.sampleProduct} thiếu ảnh, thiếu giá hoặc thiếu công thức trước khi chào bán cho khách.`}
           tips={[
-            "Kiểm tra lý do thiếu để bổ sung ảnh hoặc công thức cành hoa",
+            `Kiểm tra lý do thiếu để bổ sung ảnh hoặc công thức ${ti.rawMaterialItem}`,
             "Chuyển trạng thái sang ACTIVE khi hoàn tất để mở bán trên toàn hệ thống",
             "Đồng bộ giá chào và danh mục để hỗ trợ đội ngũ Sales tư vấn",
           ]}

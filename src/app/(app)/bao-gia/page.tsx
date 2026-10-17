@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 type ProductItem = {
   id: string
@@ -82,6 +84,8 @@ const SAMPLE_PRODUCTS: ProductItem[] = [
 
 export default function BaoGiaPage() {
   const router = useRouter()
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const [activeTab, setActiveTab] = useState<"CUSTOMER" | "PARTNER">("CUSTOMER")
   const [dangTai, setDangTai] = useState(true)
   const [products, setProducts] = useState<ProductItem[]>([])
@@ -286,7 +290,7 @@ export default function BaoGiaPage() {
 
         <span className="text-caption text-text-muted hidden sm:inline-block">
           {activeTab === "CUSTOMER"
-            ? "Đã chọn " + selectedProducts.length + " mẫu hoa vào bảng giá"
+            ? `Đã chọn ${selectedProducts.length} ${ti.sampleProduct} vào bảng giá`
             : "Chế độ giao việc cho Shop gia công điện hoa"}
         </span>
       </div>
@@ -353,7 +357,7 @@ export default function BaoGiaPage() {
                     >
                       <UploadCloud className="w-8 h-8 text-primary" aria-hidden="true" />
                       <div className="text-body-sm font-bold text-text">
-                        Bấm để tải ảnh mẫu hoa hoặc kéo thả vào đây
+                        Bấm để tải ảnh {ti.sampleProduct} hoặc kéo thả vào đây
                       </div>
                       <div className="text-caption text-text-muted">
                         Hỗ trợ ảnh chụp điện thoại (JPG, PNG, WebP)
@@ -438,7 +442,7 @@ export default function BaoGiaPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-body-sm font-semibold text-text">
                         <Filter className="w-4 h-4 text-primary" aria-hidden="true" />
-                        <span>Lọc mẫu hoa theo nhu cầu của khách</span>
+                        <span>Lọc {ti.sampleProduct} theo nhu cầu của khách</span>
                       </div>
                       <span className="text-caption text-text-muted">
                         {filteredProducts.length} mẫu phù hợp
@@ -477,7 +481,7 @@ export default function BaoGiaPage() {
                       <span className="text-caption text-text-muted block mb-1.5">Loại sản phẩm:</span>
                       <div className="flex flex-wrap gap-1.5">
                         {[
-                          { id: "ALL", label: "Tất cả loại hoa" },
+                          { id: "ALL", label: `Tất cả ${ti.catalogTitle}` },
                           { id: "Bó hoa", label: "Bó hoa" },
                           { id: "Giỏ hoa", label: "Giỏ hoa" },
                           { id: "Hộp hoa", label: "Hộp hoa" },
@@ -566,7 +570,7 @@ export default function BaoGiaPage() {
                 <div className="rounded-xl border-2 border-dashed border-border p-4 bg-surface-alt space-y-4">
                   <div className="text-center pb-2 border-b border-border">
                     <div className="text-title-sm font-extrabold text-primary tracking-wide uppercase">
-                      BỘ MẪU HOA GỢI Ý
+                      BỘ {ti.sampleProduct.toUpperCase()} GỢI Ý
                     </div>
                     <div className="text-caption text-text-muted mt-0.5">
                       Gợi ý theo ngân sách và dịp tặng của quý khách
@@ -575,7 +579,7 @@ export default function BaoGiaPage() {
 
                   {selectedProducts.length === 0 ? (
                     <div className="py-8 text-center text-text-muted text-caption">
-                      Chưa có mẫu hoa nào được chọn. Hãy bấm chọn mẫu hoa bên trái hoặc tải ảnh mới để đưa vào bảng giá.
+                      Chưa có {ti.sampleProduct} nào được chọn. Hãy bấm chọn {ti.sampleProduct} bên trái hoặc tải ảnh mới để đưa vào bảng giá.
                     </div>
                   ) : (
                     <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
@@ -707,10 +711,10 @@ export default function BaoGiaPage() {
                   >
                     <UploadCloud className="w-6 h-6 text-primary" aria-hidden="true" />
                     <span className="text-body-sm font-bold text-text">
-                      Tải ảnh mẫu hoa khách yêu cầu để phân tích thành phần cành
+                      Tải ảnh {ti.sampleProduct} khách yêu cầu để phân tích thành phần
                     </span>
                     <span className="text-caption text-text-muted">
-                      Hệ thống tự động trích xuất loại hoa và gợi ý giá gia công
+                      Hệ thống tự động trích xuất thành phần và gợi ý giá gia công
                     </span>
                   </label>
                 </div>
@@ -739,7 +743,7 @@ export default function BaoGiaPage() {
               <Card className="p-4 bg-surface border-border space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-caption font-semibold text-text">
-                    Chọn nhanh mẫu hoa từ kho để điền thông số:
+                    Chọn nhanh {ti.sampleProduct} từ kho để điền thông số:
                   </span>
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-1">
@@ -771,7 +775,7 @@ export default function BaoGiaPage() {
                 </div>
                 <div>
                   <h2 className="text-title-sm font-bold text-text">
-                    Thông tin Thẻ báo giá cho Shop đối tác (Gia công cắm hoa)
+                    Thông tin Thẻ báo giá cho Shop đối tác (Gia công {ti.makerAction})
                   </h2>
                   <p className="text-caption text-text-muted">
                     Áp dụng cho các đơn giao việc trong mạng lưới điều phối điện hoa
@@ -782,7 +786,7 @@ export default function BaoGiaPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label htmlFor="partner-item-name" className="text-caption font-semibold text-text">
-                    Tên mẫu hoa cần gia công
+                    Tên {ti.sampleProduct} cần gia công
                   </label>
                   <input
                     id="partner-item-name"

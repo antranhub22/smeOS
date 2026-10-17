@@ -7,6 +7,8 @@ import { useApi } from "@/components/greeting-card/greeting-api"
 import type { OrderDetailModalTarget } from "./brochure-order-detail-modal"
 import { coordinatorAcceptanceBlocker } from "@/modules/greeting-card/domain/brochure-commerce-rules"
 import { CoordinatorAcceptRejectModal } from "./coordinator/coordinator-accept-reject-modal"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface BrochureFloristJobTabProps {
   target: OrderDetailModalTarget
@@ -26,6 +28,8 @@ export function BrochureFloristJobTab({
   onAcceptedOrRejected,
 }: BrochureFloristJobTabProps) {
   const cardRef = useRef<HTMLDivElement>(null)
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
   // Giá gia công tính trên giá trước VAT — VAT không làm tăng tiền công thợ
   const { data: vatData } = useApi<{ data: { subtotalVnd: number } }>(target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/vat` : null)
   const defaultFee = Math.round((vatData?.data.subtotalVnd ?? target.totalVnd ?? 0) * 0.5)
@@ -50,12 +54,12 @@ export function BrochureFloristJobTab({
     const phoneDisplay = maskPhone ? maskPhoneNumber(target.recipientPhone) : target.recipientPhone || "Chưa có"
     const textBrief = [
       `📋 THẺ GIA CÔNG — ĐƠN #${target.orderCode || target.sendCode || "---"}`,
-      `🌸 Mẫu: ${target.productName || "Hoa tươi theo mẫu"}`,
+      `🌸 Mẫu: ${target.productName || `${terms.sampleProduct} theo mẫu`}`,
       `⏰ Hạn giao: ${target.deliveryTimeSlot || "Trong ngày"}${target.deliveryDate ? ` · Ngày ${target.deliveryDate}` : ""}`,
       `💰 Giá gia công: ${suggestedCraftFee.toLocaleString("vi-VN")} VNĐ`,
-      `🌿 Nguyên phụ liệu: ${target.flowersSummary || "Theo mẫu hoa chuẩn"}`,
+      `🌿 Nguyên phụ liệu: ${target.flowersSummary || `Theo ${terms.sampleProduct.toLowerCase()} chuẩn`}`,
       target.cardMessage ? `💌 Thiệp: "${target.cardMessage}"` : "",
-      floristNote.trim() ? `📝 Lưu ý cắm: ${floristNote.trim()}` : "",
+      floristNote.trim() ? `📝 Lưu ý: ${floristNote.trim()}` : "",
       `📍 Giao tới: ${target.recipientName || target.customerName || "Khách nhận"} · ${phoneDisplay} · ${target.deliveryAddress || "Chưa có địa chỉ"}`,
     ].filter(Boolean).join("\n")
 
@@ -120,14 +124,14 @@ export function BrochureFloristJobTab({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-caption font-extrabold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                Thẻ Gia Công Cắm Hoa
+                Thẻ Gia Công & {terms.makerAction}
               </span>
               <span className="text-caption font-bold text-text-muted">
                 #{target.orderCode || target.sendCode}
               </span>
             </div>
             <h3 className="text-body font-extrabold text-foreground mt-1 break-words [overflow-wrap:anywhere] line-clamp-2">
-              {target.productName || "Hoa tươi theo mẫu"}
+              {target.productName || `${terms.sampleProduct} theo mẫu`}
             </h3>
           </div>
 
@@ -164,7 +168,7 @@ export function BrochureFloristJobTab({
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary font-extrabold text-caption uppercase tracking-wider">
                 <Sparkles size={12} />
-                Thẻ Gia Công Cắm Hoa
+                Thẻ Gia Công & {terms.makerAction}
               </span>
               <span className="text-body-sm font-extrabold text-foreground">
                 #{target.orderCode || target.sendCode}
@@ -243,10 +247,10 @@ export function BrochureFloristJobTab({
               <div className="p-4 rounded-2xl bg-surface-alt/70 border border-border text-caption flex flex-col gap-1.5">
                 <span className="font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Layers size={14} className="text-primary" />
-                  Nguyên phụ liệu & Phong cách cắm:
+                  Nguyên phụ liệu & Phong cách chế tác:
                 </span>
                 <p className="text-body-sm text-foreground font-semibold leading-relaxed">
-                  {target.flowersSummary || "Cắm hoa tươi phối theo chuẩn mẫu ảnh tham chiếu."}
+                  {target.flowersSummary || `Gia công phối theo chuẩn mẫu ảnh tham chiếu.`}
                 </p>
               </div>
 
@@ -264,14 +268,14 @@ export function BrochureFloristJobTab({
               {/* Florist Custom Note / Message */}
               <div className="p-3.5 rounded-2xl bg-surface-alt/50 border border-border/80 text-caption flex flex-col gap-1.5">
                 <label htmlFor="florist-custom-note" className="font-bold text-foreground flex items-center gap-1.5">
-                  <span>📝 Lưu ý & Ghi chú cho thợ cắm hoa:</span>
+                  <span>📝 Lưu ý & Ghi chú cho {terms.makerTitle.toLowerCase()}:</span>
                 </label>
                 <textarea
                   id="florist-custom-note"
                   rows={2}
                   value={floristNote}
                   onChange={(e) => setFloristNote(e.target.value)}
-                  placeholder="VD: Cắm hoa xòe tự nhiên, giữ form tròn, nở 70%, chọn cúc vàng to làm tâm..."
+                  placeholder={`VD: ${terms.makerAction} theo form chuẩn, tỉ mỉ đường may và độ hoàn thiện...`}
                   className="w-full p-2.5 rounded-xl border border-border bg-surface text-foreground text-body-sm font-medium resize-none focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed"
                 />
               </div>
@@ -313,7 +317,7 @@ export function BrochureFloristJobTab({
         {/* Bottom Actions Bar */}
         {canDecide && target.orderId && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-dashed border-border">
-            <div className="text-caption text-text-muted">Gửi Thẻ Gia công cho bộ phận cắm hoa. Sau khi chốt xong, bấm Xác nhận nhận đơn.</div>
+            <div className="text-caption text-text-muted">Gửi Thẻ Gia công cho bộ phận {terms.makerAction.toLowerCase()}. Sau khi chốt xong, bấm Xác nhận nhận đơn.</div>
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <Button type="button" variant="outline" size="sm" onClick={() => setModalMode("reject")} className="text-caption h-8 text-danger border-danger/30 hover:bg-danger/10 gap-1.5 font-bold">
                 <XCircle size={13} />

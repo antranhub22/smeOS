@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { FlowerBomItem, FoliageBomItem, WrappingLayer, AccessoryBomItem } from "@/modules/products/domain/product-master-index"
 import type { VisibleCustomField } from "@/components/coordinator/custom-fields-section"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface PartnerProductionCardProps {
   orderCode: string
@@ -48,24 +50,26 @@ export function PartnerProductionCard({
   onMarkReady,
   onPrint,
 }: PartnerProductionCardProps) {
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   return (
     <Card className="rounded-2xl border border-border bg-surface p-6 shadow-sm flex flex-col gap-5">
       <div className="flex items-center justify-between border-b border-dashed border-border pb-4">
         <div>
           <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
-            Lệnh Cắm Hoa & Phiếu Xưởng (T07)
+            Lệnh {ti.makerAction} & Phiếu Xưởng (T07)
           </div>
           <h3 className="text-lg font-extrabold text-text">
             Đơn #{orderCode}: {recipeTitle}
           </h3>
           {partnerName && (
-            <div className="text-xs text-text-muted mt-0.5">Đối tác / Thợ cắm: <strong className="text-text">{partnerName}</strong></div>
+            <div className="text-xs text-text-muted mt-0.5">Đối tác / {ti.makerTitle}: <strong className="text-text">{partnerName}</strong></div>
           )}
         </div>
         <div className="flex flex-col items-end gap-1.5">
           <Badge tone="danger" className="gap-1 font-bold px-3 py-1 text-xs">
             <Clock size={13} />
-            Hạn cắm xong: {targetReadyTime}
+            Hạn {ti.makerAction} xong: {targetReadyTime}
           </Badge>
           {onPrint && (
             <Button variant="ghost" size="sm" onClick={onPrint} className="h-7 text-xs gap-1 text-text-muted">
@@ -81,7 +85,7 @@ export function PartnerProductionCard({
           <div className="flex flex-col gap-2">
             <span className="text-xs font-bold text-text-muted">ẢNH MẪU THAM CHIẾU</span>
             <div className="relative aspect-square w-full rounded-xl overflow-hidden border border-border bg-surface-alt">
-              <img src={sampleImageUrl} alt="Mẫu cắm hoa" className="h-full w-full object-cover" />
+              <img src={sampleImageUrl} alt={`Mẫu ${ti.sampleProduct}`} className="h-full w-full object-cover" />
             </div>
           </div>
         )}
@@ -90,7 +94,7 @@ export function PartnerProductionCard({
           <div>
             <div className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <Layers size={13} className="text-alert-600" />
-              <span>CÔNG THỨC HOA & ĐỊNH LƯỢNG CHI TIẾT</span>
+              <span>CÔNG THỨC & ĐỊNH LƯỢNG CHI TIẾT</span>
             </div>
             <div className="rounded-xl border border-border overflow-hidden">
               <table className="w-full text-left text-xs">
@@ -225,7 +229,7 @@ export function PartnerProductionCard({
         {onMarkReady && (
           <Button onClick={onMarkReady} className="bg-mint-600 hover:bg-mint-700 text-white gap-1.5">
             <CheckCircle2 size={15} />
-            <span>Hoàn tất cắm hoa & Chuyển QC</span>
+            <span>Hoàn tất {ti.makerAction} & Chuyển QC</span>
           </Button>
         )}
       </div>

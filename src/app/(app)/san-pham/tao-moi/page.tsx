@@ -18,6 +18,8 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 type FlowerItem = {
   id: string
@@ -53,6 +55,8 @@ const FLOWER_ROLES = ["Chủ đạo", "Phụ", "Điểm nhấn", "Lấp đầy"]
 
 export default function CreateProductPage() {
   const router = useRouter()
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Form states
@@ -149,11 +153,11 @@ export default function CreateProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) {
-      setErrorMsg("Vui lòng nhập tên mẫu hoa.")
+      setErrorMsg(`Vui lòng nhập tên ${ti.sampleProduct}.`)
       return
     }
     if (!code.trim()) {
-      setErrorMsg("Vui lòng nhập mã mẫu hoa.")
+      setErrorMsg(`Vui lòng nhập mã ${ti.sampleProduct}.`)
       return
     }
 
@@ -281,8 +285,8 @@ export default function CreateProductPage() {
             <ArrowLeft size={16} />
           </button>
           <div>
-            <div className="text-caption text-text-muted">Kho mẫu hoa</div>
-            <h1 className="text-title font-extrabold text-primary">Tạo mẫu hoa mới</h1>
+            <div className="text-caption text-text-muted">{ti.catalogTitle}</div>
+            <h1 className="text-title font-extrabold text-primary">{ti.createButtonLabel}</h1>
           </div>
         </div>
 
