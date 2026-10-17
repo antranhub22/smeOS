@@ -1,6 +1,9 @@
+"use client"
+
 import React from "react"
 import { CheckCircle2, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/lib/i18n"
 
 export interface BrochurePaymentConfirmedBannerProps {
   isPaymentConfirmed: boolean
@@ -15,6 +18,8 @@ export function BrochurePaymentConfirmedBanner({
   depositOnly,
   onGoToTracking,
 }: BrochurePaymentConfirmedBannerProps) {
+  const { ti } = useI18n()
+
   const title =
     isPaymentConfirmed && isOrderAccepted
       ? depositOnly
@@ -28,19 +33,19 @@ export function BrochurePaymentConfirmedBanner({
 
   const subtitle =
     isPaymentConfirmed && isOrderAccepted
-      ? "Cửa hàng đã xác nhận thanh toán và xưởng đang tiến hành cắm hoa."
+      ? `Cửa hàng đã xác nhận thanh toán và xưởng đang tiến hành ${ti("makerAction").toLowerCase()}.`
       : isPaymentConfirmed
       ? "Cửa hàng sẽ xác nhận đơn hàng trong vòng 30’"
-      : "Xưởng đã tiếp nhận đơn và đang chuẩn bị cắm hoa"
+      : `Xưởng đã tiếp nhận đơn và đang chuẩn bị ${ti("makerAction").toLowerCase()}`
 
   const description =
     isPaymentConfirmed && isOrderAccepted
-      ? "Bạn có thể theo dõi tiến độ cắm hoa và ảnh thành phẩm theo thời gian thực."
+      ? `Bạn có thể theo dõi tiến độ ${ti("makerAction").toLowerCase()} và ${ti("completedProductPhoto").toLowerCase()} theo thời gian thực.`
       : isPaymentConfirmed
-      ? `Bộ phận Điều phối đang kiểm tra để xác nhận tiếp nhận đơn. Nếu tiệm không thể đáp ứng mẫu hoa hoặc lịch giao, cửa hàng sẽ liên hệ và hoàn tiền 100% cho bạn.${
-          depositOnly ? " Phần còn lại bạn sẽ thanh toán sau khi duyệt ảnh hoa hoàn thiện." : ""
+      ? `Bộ phận Điều phối đang kiểm tra để xác nhận tiếp nhận đơn. Nếu tiệm không thể đáp ứng ${ti("sampleProduct").toLowerCase()} hoặc lịch giao, cửa hàng sẽ liên hệ và hoàn tiền 100% cho bạn.${
+          depositOnly ? ` Phần còn lại bạn sẽ thanh toán sau khi duyệt ${ti("completedProductPhoto").toLowerCase()}.` : ""
         }`
-      : "Bộ phận kế toán đang hoàn tất đối soát chuyển khoản. Bạn có thể theo dõi tiến độ cắm hoa ngay bây giờ."
+      : `Bộ phận kế toán đang hoàn tất đối soát chuyển khoản. Bạn có thể theo dõi tiến độ ${ti("makerAction").toLowerCase()} ngay bây giờ.`
 
   return (
     <div className="w-full flex flex-col gap-3.5">

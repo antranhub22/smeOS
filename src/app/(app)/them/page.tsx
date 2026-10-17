@@ -38,6 +38,7 @@ import {
   mobileSecondSlot,
   type NavEntry,
 } from "@/components/layout/nav-model"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 const ICONS: Record<string, ComponentType<{ size?: number; className?: string; strokeWidth?: number }>> = {
   Users,
@@ -68,6 +69,7 @@ const ICONS: Record<string, ComponentType<{ size?: number; className?: string; s
 export default function ThemPage() {
   const router = useRouter()
   const { can, roleUx, organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const coTheThemSanPham = can("L2")
 
   const [code, setCode] = useState("")
@@ -244,7 +246,7 @@ export default function ThemPage() {
                 <input
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  placeholder="VD: Bó hoa"
+                  placeholder={`VD: ${ti.sampleProduct}`}
                   className="h-11 w-full rounded-xl border border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
                 />
               </div>

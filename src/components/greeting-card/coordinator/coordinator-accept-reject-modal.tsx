@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { CheckCircle2, ShieldCheck, X, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
+import { useI18n } from "@/lib/i18n"
 
 interface CoordinatorAcceptRejectModalProps {
   mode: "accept" | "reject"
@@ -14,14 +15,14 @@ interface CoordinatorAcceptRejectModalProps {
 }
 
 const COMMON_REJECT_REASONS = [
-  "Hết loại hoa theo yêu cầu của khách",
-  "Xưởng quá tải khung giờ, không kịp cắm hoa",
+  "Hết nguyên phụ liệu theo yêu cầu của khách",
+  "Xưởng quá tải khung giờ, không kịp gia công hoàn thiện",
   "Địa chỉ giao nằm ngoài khu vực hỗ trợ",
 ]
 
 /**
  * Hộp thoại Điều phối xác nhận nhận đơn hoặc từ chối đơn hàng.
- * - Nhận đơn: chuyển đơn sang CONFIRMED để tiếp tục cắm hoa.
+ * - Nhận đơn: chuyển đơn sang CONFIRMED để tiếp tục xử lý sản phẩm.
  * - Từ chối: huỷ đơn và kích hoạt quy trình hoàn tiền cho khách hàng.
  */
 export function CoordinatorAcceptRejectModal({
@@ -31,6 +32,7 @@ export function CoordinatorAcceptRejectModal({
   onClose,
   onDone,
 }: CoordinatorAcceptRejectModalProps) {
+  const { ti } = useI18n()
   const isAccept = mode === "accept"
   const [note, setNote] = useState("")
   const [reason, setReason] = useState("")
@@ -102,7 +104,7 @@ export function CoordinatorAcceptRejectModal({
 
         <p className="text-body-sm text-text-muted leading-relaxed">
           {isAccept
-            ? "Xác nhận xưởng có đầy đủ hoa và nhân lực để hoàn thành đơn hàng. Đơn sẽ chuyển sang trạng thái Đã xác nhận để tiếp tục phân công Florist cắm hoa."
+            ? `Xác nhận xưởng có đầy đủ vật tư và nhân lực để hoàn thành đơn hàng. Đơn sẽ chuyển sang trạng thái Đã xác nhận để tiếp tục phân công ${ti("makerTitle").toLowerCase()} thực hiện.`
             : "Đề xuất không nhận đơn sẽ được gửi lên Điều hành phê duyệt hủy & hoàn tiền cho khách. Nếu Điều hành không duyệt trong vòng 15 phút, đơn sẽ tự động hủy theo đề xuất."}
         </p>
 
@@ -115,7 +117,7 @@ export function CoordinatorAcceptRejectModal({
               id="coordinator-accept-note"
               rows={3}
               maxLength={500}
-              placeholder="Vd: Chuẩn bị hoa sớm, khách yêu cầu thêm thiệp chúc mừng..."
+              placeholder="Vd: Chuẩn bị nguyên liệu sớm, kiểm tra kỹ phụ kiện kèm theo..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"

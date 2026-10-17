@@ -19,8 +19,8 @@ export const POST = handle(async (request) => {
     throw validationFailed({ issues: parsed.error.issues });
   }
 
-  const productName = parsed.data.product_name ?? "Bó hoa tươi phong cách lãng mạn";
-  const imageUrl = parsed.data.image_url ?? "/images/sample-flower.jpg";
+  const productName = parsed.data.product_name ?? "Sản phẩm mẫu phong cách thanh lịch";
+  const imageUrl = parsed.data.image_url ?? "/images/sample-product.jpg";
 
   const result = await analyzeProductIntelligence({
     organizationId: ctx.organizationId,

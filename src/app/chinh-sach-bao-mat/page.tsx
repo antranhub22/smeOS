@@ -17,8 +17,8 @@ const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: "2. Mục đích sử dụng",
     body: [
-      "Thông tin chỉ dùng để xác nhận đơn, thu tiền, cắm hoa, giao hoa và báo tiến độ đơn cho bạn.",
-      "Cửa hàng không dùng thông tin này để quảng cáo và không bán hay chia sẻ cho bên khác, trừ đơn vị giao hàng khi cần giao hoa.",
+      "Thông tin chỉ dùng để xác nhận đơn, thu tiền, gia công đơn hàng, giao nhận và báo tiến độ đơn cho bạn.",
+      "Cửa hàng không dùng thông tin này để quảng cáo và không bán hay chia sẻ cho bên khác, trừ đơn vị giao hàng khi cần giao nhận.",
     ],
   },
   {

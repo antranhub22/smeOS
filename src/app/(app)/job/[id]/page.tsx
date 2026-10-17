@@ -9,6 +9,9 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FlowSteps, type FlowStep, type FlowStepStatus } from "@/components/flow/flow-steps"
 import { NHAN_TINH_NANG } from "@/lib/feature-labels"
 
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, type IndustryTerminology } from "@/modules/organization/domain/industry-profile"
+
 type JobDetail = {
   id: string
   feature: string
@@ -35,13 +38,13 @@ function dinhDangGio(iso: string | null): string {
   return new Date(iso).toLocaleString("vi-VN")
 }
 
-function layCacBuocTheoTinhNang(feature: string): FlowStep[] {
+function layCacBuocTheoTinhNang(feature: string, ti: IndustryTerminology): FlowStep[] {
   if (feature === "vision.analyze") {
     return [
-      { key: "detect", label: "Nhận diện cấu phần hoa" },
-      { key: "count", label: "Đếm hoa & cành" },
-      { key: "palette", label: "Phân tích bảng màu & cụm hoa" },
-      { key: "style", label: "Xác định phong cách cắm hoa" },
+      { key: "detect", label: `Nhận diện cấu phần ${ti.sampleProduct}` },
+      { key: "count", label: `Đếm cấu phần & định lượng` },
+      { key: "palette", label: "Phân tích bảng màu & cụm phối" },
+      { key: "style", label: `Xác định phong cách ${ti.makerAction}` },
     ]
   }
   if (feature === "media.optimize" || feature === "media.variant.cloud") {
@@ -54,7 +57,7 @@ function layCacBuocTheoTinhNang(feature: string): FlowStep[] {
   }
   if (feature === "copy.generate") {
     return [
-      { key: "parse", label: "Đọc cấu trúc hoa" },
+      { key: "parse", label: `Đọc cấu trúc ${ti.sampleProduct}` },
       { key: "position", label: "Định vị thương mại & dịp" },
       { key: "draft", label: "Soạn thảo kịch bản & caption" },
       { key: "brand_check", label: "Kiểm chuẩn thương hiệu" },
@@ -88,6 +91,8 @@ function layTrangThaiCacBuoc(steps: FlowStep[], job: JobDetail): FlowStepStatus[
 
 export default function JobDetailPage() {
   const router = useRouter()
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const params = useParams<{ id: string }>()
   const jobId = params.id
 
@@ -151,7 +156,7 @@ export default function JobDetailPage() {
     }
   }
 
-  const steps = job ? layCacBuocTheoTinhNang(job.feature) : []
+  const steps = job ? layCacBuocTheoTinhNang(job.feature, ti) : []
   const statuses = job ? layTrangThaiCacBuoc(steps, job) : []
   const currentStepKey = job?.stage ?? steps[0]?.key ?? "init"
 

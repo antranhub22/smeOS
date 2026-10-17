@@ -14,7 +14,7 @@ export const POST = handle<[{ params: Promise<{ sendCode: string }> }]>(async (r
   const { sendCode } = await context.params
   await assertBrochureOwner(request, sendCode)
   const parsed = bodySchema.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ productId: "Thiếu thông tin mẫu hoa" })
+  if (!parsed.success) throw validationFailed({ productId: "Thiếu thông tin sản phẩm" })
   const snapshot = await selectBrochureProduct(sendCode, parsed.data.productId)
   return jsonResponse({ success: true, snapshot })
 })

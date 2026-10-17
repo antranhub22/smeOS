@@ -11,10 +11,12 @@ import { CustomerDetailModal } from "@/components/crm/customer-detail-modal"
 import { OccasionCarePanel } from "@/components/crm/occasion-care-panel"
 import { ExportCustomersButton } from "@/components/crm/export-customers-button"
 import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { CustomerMasterIndex, OccasionReminder } from "@/modules/crm/domain/customer-master-index"
 
 export default function CRMPage() {
-  const { orgName, can } = useSession()
+  const { orgName, can, organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const [customers, setCustomers] = useState<CustomerMasterIndex[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
@@ -120,7 +122,7 @@ export default function CRMPage() {
           description="Lưu trữ hồ sơ khách hàng toàn diện từ lịch sử đơn hàng, tự động phân hạng RFM (VIP/Vàng/Bạc/Đồng) và bảo vệ tuyệt đối quyền riêng tư khi gửi tin tiếp thị (Consent Engine)."
           tips={[
             { icon: "💎", text: "Phân tầng tự động: Dựa trên tổng chi tiêu và số đơn hàng thật của khách" },
-            { icon: "🎂", text: "Lưu ngày kỷ niệm: Nhắc trước 7-14 ngày để tư vấn mẫu hoa và lời nhắn thiệp" },
+            { icon: "🎂", text: `Lưu ngày kỷ niệm: Nhắc trước 7-14 ngày để tư vấn ${ti.sampleProduct} và lời nhắn thiệp` },
             { icon: "🛡️", text: "Bảo vệ Consent: Chỉ gửi tin nhắn qua Zalo/SMS khi khách đã đồng ý" },
           ]}
         />
@@ -129,7 +131,7 @@ export default function CRMPage() {
         {showReminders && (
           <OccasionCarePanel
             reminders={reminders}
-            shopName={orgName || "Tiệm Hoa của bạn"}
+            shopName={orgName || "Cửa hàng của bạn"}
             onClose={() => setShowReminders(false)}
             onViewCustomer={(id) => setSelectedCustomerId(id)}
           />

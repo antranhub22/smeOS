@@ -11,6 +11,8 @@ import { CatalogJourneyEntry, type CatalogExecutionMode } from "./catalog-journe
 import { DualModeHeader } from "./dual-mode-header"
 import { SmartInputDropzone, type SmartInputData } from "./smart-input-dropzone"
 import { JourneyProcessingState, type ProcessingStep } from "./journey-processing-state"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { CatalogStyleVariant } from "@/modules/content-engine/domain/catalog-content-generator"
 
 export interface CatalogProduct {
@@ -40,6 +42,8 @@ export function CatalogManagementTab({
   catalogLinks,
   onRefresh,
 }: CatalogManagementTabProps) {
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   // Chế độ: 'wizard' (Hành trình 4 bước tạo Catalog) hoặc 'manage' (Chế độ chuyên gia)
   const [viewMode, setViewMode] = useState<"wizard" | "manage">("wizard")
   // Spec §12 J1: chọn mode TRƯỚC khi nhập input
@@ -91,7 +95,7 @@ export function CatalogManagementTab({
 
   const [catalogAiSteps, setCatalogAiSteps] = useState<ProcessingStep[]>([
     { id: "analyze", label: "Phân tích yêu cầu & sự kiện", status: "pending" },
-    { id: "select", label: "Tuyển chọn các mẫu hoa phù hợp nhất", status: "pending" },
+    { id: "select", label: `Tuyển chọn các ${ti.sampleProduct} phù hợp nhất`, status: "pending" },
     { id: "intro", label: "Sinh lời chào & tiêu đề Catalog bằng AI", status: "pending" },
     { id: "layout", label: "Hoàn thiện cấu hình bộ sưu tập", status: "pending" },
   ])
@@ -100,7 +104,7 @@ export function CatalogManagementTab({
     setIsAiAnalyzing(true)
     setCatalogAiSteps([
       { id: "analyze", label: "Phân tích yêu cầu & sự kiện", status: "running" },
-      { id: "select", label: "Tuyển chọn các mẫu hoa phù hợp nhất", status: "pending" },
+      { id: "select", label: `Tuyển chọn các ${ti.sampleProduct} phù hợp nhất`, status: "pending" },
       { id: "intro", label: "Sinh lời chào & tiêu đề Catalog bằng AI", status: "pending" },
       { id: "layout", label: "Hoàn thiện cấu hình bộ sưu tập", status: "pending" },
     ])
@@ -164,10 +168,10 @@ export function CatalogManagementTab({
           const json = await res.json()
           if (json.data?.description) setPrefilledDesc(json.data.description)
         } else {
-          setPrefilledDesc(`Tuyển chọn ${chosenIds.length} mẫu hoa tươi nghệ thuật được thiết kế tinh tế nhất dành riêng cho bạn.`)
+          setPrefilledDesc(`Tuyển chọn ${chosenIds.length} ${ti.sampleProduct} nghệ thuật được thiết kế tinh tế nhất dành riêng cho bạn.`)
         }
       } catch {
-        setPrefilledDesc(`Tuyển chọn ${chosenIds.length} mẫu hoa tươi nghệ thuật được thiết kế tinh tế nhất dành riêng cho bạn.`)
+        setPrefilledDesc(`Tuyển chọn ${chosenIds.length} ${ti.sampleProduct} nghệ thuật được thiết kế tinh tế nhất dành riêng cho bạn.`)
       }
 
       // Step 3 done
@@ -307,7 +311,7 @@ export function CatalogManagementTab({
       <div>
         <div className="flex items-center justify-between mb-3">
           <div className="text-body-sm font-bold text-text flex items-center gap-2">
-            <span>Mẫu hoa sẵn sàng trong kho ({filteredProducts.length})</span>
+            <span>{ti.sampleProduct} sẵn sàng trong kho ({filteredProducts.length})</span>
             {selectedIds.length > 0 && <Badge tone="accent">Đã chọn {selectedIds.length}</Badge>}
           </div>
           <Button variant="ghost" size="sm" onClick={selectAll} className="text-caption h-8">

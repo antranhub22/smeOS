@@ -12,7 +12,7 @@ interface PageProps {
 /** Ảnh và tiêu đề xem trước khi dán link vào Zalo/Facebook — giống link bộ sưu tập gốc. */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const preview = await shareLinkPreview((await params).code.toUpperCase())
-  if (!preview) return { title: "Bộ Sưu Tập Mẫu Hoa" }
+  if (!preview) return { title: "Bộ Sưu Tập Sản Phẩm" }
   // Cùng tiêu đề/mô tả với link /b/: tên bộ sưu tập · tên tiệm, số mẫu và giá thấp nhất
   const data = await getPublicGreetingCatalog(preview.catalogId)
   const active = data.status === "ACTIVE" ? data : null
