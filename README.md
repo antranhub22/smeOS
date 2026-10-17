@@ -1,6 +1,6 @@
-# floraos-core
+# smeOS
 
-Nền tảng SaaS đa tenant cho cửa hàng và chuỗi cửa hàng hoa.
+Nền tảng quản trị và vận hành doanh nghiệp vừa và nhỏ (SME OS).
 
 ```
 src/       Next.js + TypeScript — core web và API /api/v1
