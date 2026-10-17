@@ -4,24 +4,20 @@ services:
       context: ./docker
       dockerfile: postgres-pgcron.Dockerfile
     container_name: smeos-db
-    # pg_cron (D-MI3, Market Intelligence Engine) cần shared_preload_libraries
-    # bật từ lúc khởi động server — không bật được bằng CREATE EXTENSION đơn
-    # thuần. cron.database_name trỏ đúng DB "floraos" (mặc định pg_cron là
-    # "postgres", sẽ sai nếu để nguyên).
-    command: ["postgres", "-c", "shared_preload_libraries=pg_cron", "-c", "cron.database_name=floraos"]
+    command: ["postgres", "-c", "shared_preload_libraries=pg_cron", "-c", "cron.database_name=smeos"]
     environment:
-      POSTGRES_USER: floraos
-      POSTGRES_PASSWORD: floraos
-      POSTGRES_DB: floraos
+      POSTGRES_USER: smeos
+      POSTGRES_PASSWORD: smeos
+      POSTGRES_DB: smeos
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - smeos-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U floraos"]
+      test: ["CMD-SHELL", "pg_isready -U smeos"]
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
-  db-data:
+  smeos-db-data:
