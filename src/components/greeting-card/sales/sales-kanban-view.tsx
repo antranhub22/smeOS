@@ -12,6 +12,8 @@ import { StaffNametagGroup } from "@/components/greeting-card/staff-nametag"
 import { classifyOrderTimeTier, type OrderTimeTier } from "@/modules/greeting-card/domain/order-time-tier"
 import { TierCollapsibleSection } from "@/components/greeting-card/coordinator/tier-collapsible-section"
 import { isUrgentOrder } from "@/modules/greeting-card/domain/brochure-workflow-policy"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 interface Props {
   items: TrackingPipelineItem[]
@@ -28,6 +30,9 @@ const ACTION = "inline-flex h-8 items-center gap-1 rounded-lg border border-bord
 
 /** Kanban của Sale: 9 cột = 9 bước của quy trình, phân tầng hiển thị theo thời gian. */
 export function SalesKanbanView({ items, now, onOpenNotes, showSale, doneHidden }: Props) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
   const [detailTarget, setDetailTarget] = useState<OrderDetailModalTarget | null>(null)
   const columns = groupSaleKanban(items)
 
@@ -194,6 +199,9 @@ function SaleKanbanCard({
   showSale: boolean
   onOpenDetail: () => void
 }) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
   const mine = item.stuck?.owner === "SALE"
   const waited = Math.max(0, Math.floor((now - Date.parse(item.stepStartedAt)) / 60_000))
   const isUrgent = isUrgentOrder({
@@ -258,7 +266,7 @@ function SaleKanbanCard({
           >
             <Clock size={13} className="shrink-0" />
             <span className="truncate">
-              Giao: {item.deliveryTimeSlot || "Trong ngày"}
+              Lịch: {item.deliveryTimeSlot || orderTerms.fallbackTimeSlotText}
               {item.deliveryDate ? ` · ${item.deliveryDate}` : ""}
             </span>
           </div>
@@ -314,7 +322,9 @@ function SaleKanbanCard({
             type="button"
             onClick={() => {
               const url = typeof window !== "undefined" ? `${window.location.origin}/b/${item.sendCode}` : ""
-              const msg = `Dạ chào anh/chị, hoa cho đơn #${item.orderCode || item.sendCode} đã cắm xong hoàn thiện ạ! Anh/chị mở link kiểm tra ảnh hoa và thanh toán phần còn lại ${item.balanceVnd.toLocaleString("vi-VN")} đ để cửa hàng giao nhé:${url ? ` ${url}` : ""}`
+              const msg = organization?.industry === "HOMESTAY"
+                ? `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${item.orderCode || item.sendCode} đã sẵn sàng đón tiếp ạ! Anh/chị mở link kiểm tra thông tin và thanh toán phần còn lại ${item.balanceVnd.toLocaleString("vi-VN")} đ để hoàn tất thủ tục nhé:${url ? ` ${url}` : ""}`
+                : `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${item.orderCode || item.sendCode} đã ${terms.makerAction.toLowerCase()} hoàn tất ạ! Anh/chị mở link kiểm tra ${terms.completedProductPhoto.toLowerCase()} và thanh toán phần còn lại ${item.balanceVnd.toLocaleString("vi-VN")} đ để cửa hàng giao nhé:${url ? ` ${url}` : ""}`
               if (typeof navigator !== "undefined") void navigator.clipboard.writeText(msg)
             }}
             className="inline-flex h-8 items-center gap-1 rounded-lg border border-warning/40 bg-warning-bg/40 px-2 text-caption font-bold text-warning-text hover:bg-warning-bg transition-colors"

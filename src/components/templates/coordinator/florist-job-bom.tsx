@@ -38,15 +38,15 @@ export function FloristJobBom({
     <div>
       <div className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
         <Layers size={13} className="text-primary" />
-        <span>NGUYÊN PHỤ LIỆU CẮM HOA CHI TIẾT</span>
+        <span>DANH MỤC NGUYÊN PHỤ LIỆU & VẬT TƯ CHI TIẾT</span>
       </div>
       <div className="rounded-xl border border-border overflow-hidden">
         <table className="w-full text-left text-xs">
           <thead className="bg-surface-alt border-b border-border text-text-muted font-bold">
             <tr>
-              <th className="px-3 py-2">Loài hoa</th>
+              <th className="px-3 py-2">Tên vật tư / nguyên liệu</th>
               <th className="px-3 py-2">Số lượng</th>
-              <th className="px-3 py-2">Màu sắc</th>
+              <th className="px-3 py-2">Màu sắc / Phân loại</th>
               <th className="px-3 py-2">Vai trò</th>
             </tr>
           </thead>

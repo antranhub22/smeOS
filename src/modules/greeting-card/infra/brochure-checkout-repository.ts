@@ -23,6 +23,7 @@ export interface CreateBrochureOrderData {
   /** 5 ô địa chỉ (form mới) — lưu kèm để in phiếu/lọc theo phường, tỉnh */
   addressParts?: AddressParts | null | undefined
   deliveryDate: string
+  checkOutDate?: string | null | undefined
   deliveryTimeSlot: string
   cardMessage?: string | null | undefined
   /** Ghi chú cho người giao + link bản đồ — gộp vào `delivery_address` */
@@ -220,7 +221,11 @@ export class BrochureCheckoutRepository {
           pricing_rule_ref: { source: "BROCHURE_QUOTE", ...quote, policies: data.policies ?? null } as unknown as Prisma.InputJsonValue,
           card_message: data.cardMessage ?? null,
           internal_note: data.note ?? null,
-          delivery_window: { date: data.deliveryDate, timeSlot: data.deliveryTimeSlot },
+          delivery_window: {
+            date: data.deliveryDate,
+            timeSlot: data.deliveryTimeSlot,
+            ...(data.checkOutDate ? { checkOutDate: data.checkOutDate } : {}),
+          },
           delivery_address: {
             recipientName: data.recipientName,
             phone: data.recipientPhone,

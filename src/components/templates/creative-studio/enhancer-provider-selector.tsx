@@ -49,7 +49,7 @@ export const ENHANCER_PROVIDERS: EnhancerProviderOption[] = [
   {
     id: "imagen",
     name: "Google Gemini Image",
-    desc: "Gemini dựng phông studio và chỉnh sáng theo mô tả; bó hoa được FloraOS đo lại. Không xoá watermark.",
+    desc: "Gemini dựng phông studio và chỉnh sáng theo mô tả; sản phẩm được SME đo đạc lại độ nguyên vẹn. Không xoá watermark.",
     badge: "Cloud AI",
     tone: "accent",
     icon: Cloud,

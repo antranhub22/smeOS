@@ -5,6 +5,7 @@ import { Plus, Trash2, Calendar, User, Wrench, ChevronLeft, ChevronRight } from 
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 import { ManualBlockModal } from "./manual-block-modal"
+import { BookingDetailModal } from "./booking-detail-modal"
 
 export interface HomestayCalendarMatrixProps {
   products: AvailabilityBoardProduct[]
@@ -37,6 +38,7 @@ export function HomestayCalendarMatrix({
   const [selectedProductId, setSelectedProductId] = useState<string | undefined>()
   const [selectedDate, setSelectedDate] = useState<string | undefined>()
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [selectedBooking, setSelectedBooking] = useState<ProductBookingRecord | null>(null)
 
   function openBlockModal(productId?: string, date?: string) {
     setSelectedProductId(productId)
@@ -197,28 +199,22 @@ export function HomestayCalendarMatrix({
                               isBlocked ? "bg-warning/15" : "bg-primary/15"
                             }`}
                           >
-                            <div
+                            <button
+                              type="button"
+                              onClick={() => setSelectedBooking(booking)}
                               title={
                                 isBlocked
-                                  ? `Đã khóa: ${booking.note || "Bảo trì"}`
-                                  : `Đơn: ${booking.orderCode || "Online"} - Khách: ${booking.customerName || "Khách lẻ"}`
+                                  ? `Đã khóa: ${booking.note || "Bảo trì"} (Bấm để xem chi tiết)`
+                                  : `Đơn: ${booking.orderCode || "Online"} - Khách: ${booking.customerName || "Khách lẻ"} (Bấm để xem chi tiết)`
                               }
-                              className={`group relative flex flex-col items-center justify-center rounded-lg p-1 text-[10px] font-bold ${
-                                isBlocked ? "text-warning" : "text-primary"
+                              className={`group relative flex w-full flex-col items-center justify-center rounded-lg p-1 text-caption font-bold hover:opacity-85 transition-opacity ${
+                                isBlocked ? "text-warning hover:bg-warning/20" : "text-primary hover:bg-primary/20"
                               }`}
                             >
                               {isBlocked ? (
-                                <div className="flex items-center gap-0.5">
-                                  <Wrench size={10} />
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRemoveBlock(booking.id)}
-                                    disabled={deletingId === booking.id}
-                                    title="Mở khóa ngày này"
-                                    className="hidden group-hover:inline-flex text-danger hover:scale-110 ml-0.5"
-                                  >
-                                    <Trash2 size={10} />
-                                  </button>
+                                <div className="flex items-center gap-1">
+                                  <Wrench size={10} className="shrink-0" />
+                                  <span className="truncate max-w-[28px]">{booking.note?.slice(0, 3) || "KHÓA"}</span>
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-0.5 truncate max-w-[36px]">
@@ -226,7 +222,7 @@ export function HomestayCalendarMatrix({
                                   <span className="truncate">{booking.customerName?.slice(0, 3) || "ĐẶT"}</span>
                                 </div>
                               )}
-                            </div>
+                            </button>
                           </td>
                         )
                       }
@@ -234,13 +230,16 @@ export function HomestayCalendarMatrix({
                       return (
                         <td
                           key={day}
-                          onClick={() => openBlockModal(prod.id, day)}
-                          className="group p-1 text-center border-l border-border/50 hover:bg-primary/5 cursor-pointer transition-colors"
-                          title={`Bấm để khóa ngày ${day}`}
+                          className="group p-1 text-center border-l border-border/50 hover:bg-primary/5 transition-colors"
                         >
-                          <div className="flex h-7 items-center justify-center opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary transition-opacity">
+                          <button
+                            type="button"
+                            onClick={() => openBlockModal(prod.id, day)}
+                            title={`Bấm để khóa ngày ${day}`}
+                            className="flex h-7 w-full items-center justify-center opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary transition-opacity"
+                          >
                             <Plus size={12} />
-                          </div>
+                          </button>
                         </td>
                       )
                     })}
@@ -259,6 +258,17 @@ export function HomestayCalendarMatrix({
         products={products}
         preselectedProductId={selectedProductId}
         preselectedDate={selectedDate}
+      />
+
+      <BookingDetailModal
+        isOpen={Boolean(selectedBooking)}
+        booking={selectedBooking}
+        onClose={() => setSelectedBooking(null)}
+        onRemoveBlock={async (id) => {
+          await handleRemoveBlock(id)
+          setSelectedBooking(null)
+        }}
+        isRemoving={deletingId === selectedBooking?.id}
       />
     </div>
   )

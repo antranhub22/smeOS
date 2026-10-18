@@ -135,7 +135,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
         // Chỉ đọc khoá cấu hình hiển thị trong settings (xem toPublicCatalogFilters) — không gửi nguyên ra ngoài
         organization: { select: { settings: true } },
         catalog: { include: CATALOG_ITEMS_INCLUDE },
-        order: true,
+        order: { include: { items: { select: { product_id: true } } } },
       },
       take: 2,
     })

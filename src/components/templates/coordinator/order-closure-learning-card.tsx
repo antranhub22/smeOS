@@ -37,7 +37,7 @@ export function OrderClosureLearningCard({
   onConfirmClosure,
 }: OrderClosureLearningCardProps) {
   const [rating, setRating] = useState<number>(initialPartnerRating)
-  const [reviewNote, setReviewNote] = useState("Hoa cắm đúng mẫu Master Index, giao đúng hẹn.")
+  const [reviewNote, setReviewNote] = useState("Sản phẩm gia công đúng mẫu quy chuẩn, giao đúng hẹn.")
   const isOntime = varianceMinutes <= 0
 
   const handleComplete = () => {
@@ -72,7 +72,7 @@ export function OrderClosureLearningCard({
         <div className="p-3.5 rounded-xl bg-surface border border-border flex flex-col gap-1">
           <span className="text-text-muted font-medium flex items-center gap-1">
             <CheckCircle2 size={12} className="text-mint-600" />
-            Thực tế giao hoa:
+            Thực tế giao hàng:
           </span>
           <span className="font-extrabold text-mint-800">{actualDeliveryTime}</span>
         </div>
@@ -88,7 +88,7 @@ export function OrderClosureLearningCard({
 
       <div className="p-4 rounded-xl bg-surface border border-border flex flex-col gap-3 text-xs">
         <div className="flex items-center justify-between">
-          <span className="font-bold text-text">Đánh giá chất lượng cắm hoa của đối tác ({partnerName}):</span>
+          <span className="font-bold text-text">Đánh giá chất lượng thực hiện của đối tác ({partnerName}):</span>
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <button

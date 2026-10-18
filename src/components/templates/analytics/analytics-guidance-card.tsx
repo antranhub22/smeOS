@@ -3,8 +3,13 @@
 import React from "react"
 import { BarChart3 } from "lucide-react"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
+import { useI18n } from "@/lib/i18n"
 
 export function AnalyticsGuidanceCard() {
+  const { ti } = useI18n()
+  const sampleProduct = ti("sampleProduct") || "sản phẩm"
+  const makerTitle = ti("makerTitle") || "thợ sản xuất"
+
   return (
     <FeatureGuidanceCard
       tag="HƯỚNG DẪN BÁO CÁO & GIÁM SÁT AI M11"
@@ -12,9 +17,9 @@ export function AnalyticsGuidanceCard() {
       title="Giám sát doanh thu & Kiểm soát hạn mức AI"
       description="Thống kê trực quan hiệu quả bán hàng, tỷ lệ chuyển đổi đơn từ các kênh và giám sát chi tiêu token AI của từng chi nhánh/tổ chức."
       tips={[
-        "📈 Báo cáo tỷ lệ chốt đơn theo từng mẫu hoa và từng góc tiếp cận bài viết",
+        `📈 Báo cáo tỷ lệ chốt đơn theo từng ${sampleProduct} và từng góc tiếp cận bài viết`,
         "🛡️ Cơ chế Aegis Protection tự động cảnh báo khi chi phí token AI vượt 80% hạn mức tháng",
-        "💵 Phân tích biên lợi nhuận ròng thực tế sau khi trừ chi phí hoa tươi và công thợ",
+        `💵 Phân tích biên lợi nhuận ròng thực tế sau khi trừ chi phí nguyên phụ liệu và công ${makerTitle}`,
       ]}
     />
   )

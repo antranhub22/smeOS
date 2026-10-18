@@ -176,7 +176,7 @@ export function ConfirmCraftAcceptanceModal({
           <div className="p-3 rounded-xl bg-warning/10 border border-warning/20 text-warning flex items-start gap-2">
             <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning" />
             <div className="text-caption leading-relaxed">
-              <strong>Cảnh báo biên lợi nhuận:</strong> Giá gia công chiếm {feeRatio.toFixed(1)}% giá bán (vượt ngưỡng thông thường 60%). Vui lòng kiểm tra kỹ chi phí phụ cấp hoặc hoa cắm kèm.
+              <strong>Cảnh báo biên lợi nhuận:</strong> Giá gia công chiếm {feeRatio.toFixed(1)}% giá bán (vượt ngưỡng thông thường 60%). Vui lòng kiểm tra kỹ chi phí phụ cấp hoặc nguyên vật liệu phát sinh.
             </div>
           </div>
         )}
@@ -194,7 +194,7 @@ export function ConfirmCraftAcceptanceModal({
             rows={2}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Ví dụ: Đã chốt phụ thu hoa nhập 50k, giao hoa đúng 15h..."
+            placeholder="Ví dụ: Đã chốt phụ thu nguyên liệu cao cấp 50k, bàn giao đúng 15h..."
             className="w-full px-3 py-1.5 rounded-xl border border-border bg-surface text-text text-xs focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>

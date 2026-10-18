@@ -13,9 +13,9 @@ export interface AppliedChangesBreakdownProps {
 const DEFAULT_CHANGES = [
   "Đã tách nền và chuyển sang phông Studio Ambiance ánh sáng dịu",
   "Đã xóa sạch watermark, số điện thoại và logo đóng dấu trên ảnh",
-  "Đã tăng nét siêu phân giải 2x & làm rõ từng đường vân cánh hoa",
+  "Đã tăng nét siêu phân giải 2x & làm rõ từng đường vân chi tiết sản phẩm",
   "Đã cân bằng dải sáng và nâng cấp độ tương phản studio mềm mại",
-  "Đã tạo 4 tỷ lệ chuẩn (1:1, 4:5, 9:16, 16:9) bảo toàn 100% bó hoa",
+  "Đã tạo 4 tỷ lệ chuẩn (1:1, 4:5, 9:16, 16:9) bảo toàn 100% chủ thể sản phẩm",
 ]
 
 export const AppliedChangesBreakdown: React.FC<AppliedChangesBreakdownProps> = ({

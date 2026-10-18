@@ -4,6 +4,7 @@ import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import type { AddressParts } from "@/modules/greeting-card/domain/delivery-address"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 import { ViDateInput } from "./vi-date-input"
 import { DeliveryTimePicker } from "./delivery-time-picker"
 import { AddressFields } from "./address-fields"
@@ -65,9 +66,9 @@ export function StandardOrderFields({
   onAddressPartsChange,
   onNotesChange,
 }: StandardOrderFieldsProps) {
-  const isFloral = !industryKey || industryKey === "FLORAL"
-  const recipientLabel = isFloral ? "người nhận hoa" : "người nhận hàng"
-  const dateLabel = isFloral ? "Ngày giao hoa" : "Ngày nhận hàng"
+  const orderTerms = getIndustryOrderTerms(industryKey)
+  const recipientLabel = orderTerms.recipientShortLabel
+  const dateLabel = orderTerms.deliveryDateLabel
 
   return (
     <div className="flex flex-col gap-4">

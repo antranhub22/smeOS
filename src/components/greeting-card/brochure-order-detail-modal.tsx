@@ -13,6 +13,9 @@ import { OrderDetailInfoTab } from "./order-detail-info-tab"
 import { BrochureFloristJobTab } from "./brochure-florist-job-tab"
 import { BrochureCustomerOrderTab } from "./brochure-customer-order-tab"
 
+import { useSession } from "@/lib/session"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+
 export interface OrderDetailModalTarget {
   orderId?: string | null | undefined
   sessionId?: string | null | undefined
@@ -69,17 +72,20 @@ export interface BrochureOrderDetailModalProps {
 }
 
 type DetailTab = "info" | "timeline" | "customer" | "florist"
-const TABS: { key: DetailTab; label: string }[] = [
-  { key: "info", label: "Thông tin đơn hàng" },
-  { key: "timeline", label: "Lịch sử đơn hàng" },
-  { key: "customer", label: "Thẻ đơn khách hàng" },
-  { key: "florist", label: "Thẻ gia công" },
-]
 
 export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenNotes, onCancellationProposed }: BrochureOrderDetailModalProps) {
+  const { organization } = useSession()
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
   const [activeTab, setActiveTab] = useState<"info" | "timeline" | "customer" | "florist">("info")
   // Sale vừa ghi tên khách lên link → hiện ngay, không chờ tải lại danh sách
   const [savedCustomer, setSavedCustomer] = useState<{ key: string; customerName: string; customerPhone: string | null } | null>(null)
+
+  const tabs: { key: DetailTab; label: string }[] = [
+    { key: "info", label: "Thông tin đơn hàng" },
+    { key: "timeline", label: "Lịch sử đơn hàng" },
+    { key: "customer", label: "Thẻ đơn khách hàng" },
+    { key: "florist", label: orderTerms.makerTabLabel },
+  ]
   useEffect(() => {
     if (!inputTarget) return
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
@@ -148,17 +154,17 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
           </button>
         </header>
 
-        {/* MỐC THỜI GIAN GIAO HÀNG TO NỔI BẬT */}
+        {/* MỐC THỜI GIAN GIAO HÀNG / LƯU TRÚ TO NỔI BẬT */}
         <div className="border-b border-border bg-primary/5 px-5 py-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-primary">
               <Clock size={20} className="shrink-0" />
               <div>
                 <span className="text-caption font-bold uppercase tracking-wider text-text-muted block">
-                  Khung giờ giao hàng
+                  {orderTerms.deliveryTimeLabel}
                 </span>
                 <span className="text-body font-black text-primary">
-                  {target.deliveryTimeSlot || "Trong ngày"}
+                  {target.deliveryTimeSlot || orderTerms.fallbackTimeSlotText}
                   {target.deliveryDate ? ` · Ngày ${target.deliveryDate}` : ""}
                 </span>
               </div>
@@ -172,9 +178,9 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
           </div>
         </div>
 
-        {/* Tab switcher: Chi tiết · Lịch sử · Thẻ đơn khách · Thẻ gia công — mọi tab cùng khung, không co/đè chữ */}
+        {/* Tab switcher: Chi tiết · Lịch sử · Thẻ đơn khách · Thẻ gia công/chuẩn bị */}
         <div role="tablist" className="flex shrink-0 items-stretch gap-1 overflow-x-auto border-b border-border px-5">
-          {TABS.filter((t) => t.key !== "florist" || canShowFloristJob).map((t) => (
+          {tabs.filter((t) => t.key !== "florist" || canShowFloristJob).map((t) => (
             <button
               key={t.key}
               type="button"

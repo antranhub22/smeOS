@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, Clock, XCircle, ShieldCheck, Flower2 } from "lucide-react"
+import { CheckCircle2, Clock, XCircle, ShieldCheck, Sparkles } from "lucide-react"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 export interface OrderParallelStagesProps {
   isPaid?: boolean
@@ -10,6 +11,7 @@ export interface OrderParallelStagesProps {
   orderStatus: string
   productionStatus: string
   cancelledReason?: string | null | undefined
+  industryKey?: string | null | undefined
 }
 
 /**
@@ -24,6 +26,7 @@ export function OrderParallelStagesCard({
   orderStatus,
   productionStatus,
   cancelledReason,
+  industryKey,
 }: OrderParallelStagesProps) {
   // Chỉ hiện khi đơn chưa hoàn thành và chưa giao xong
   if (orderStatus === "COMPLETED") return null
@@ -34,6 +37,8 @@ export function OrderParallelStagesCard({
   const hasMoney = paidVnd > 0 || legacyIsPaid === true
   const isFullyPaid = (totalVnd > 0 && paidVnd >= totalVnd) || (legacyIsPaid && totalVnd <= 0)
   const isDeposit = totalVnd > 0 && paidVnd > 0 && paidVnd < totalVnd
+
+  const ot = getIndustryOrderTerms(industryKey)
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
@@ -61,7 +66,7 @@ export function OrderParallelStagesCard({
         </div>
         <p className="text-caption text-text-muted leading-relaxed">
           {isDeposit
-            ? `Cửa hàng đã nhận ${paidVnd.toLocaleString("vi-VN")} đ tiền cọc. Phần còn lại ${(totalVnd - paidVnd).toLocaleString("vi-VN")} đ thanh toán sau khi duyệt ảnh hoa hoàn thành.`
+            ? `Cửa hàng đã nhận ${paidVnd.toLocaleString("vi-VN")} đ tiền cọc. Phần còn lại ${(totalVnd - paidVnd).toLocaleString("vi-VN")} đ thanh toán sau khi duyệt thành phẩm.`
             : hasMoney
             ? "Cửa hàng đã nhận đủ tiền chuyển khoản thành công."
             : "Thời gian xác nhận trong vòng 15’ (tối đa). Hệ thống tự động duyệt sau 15’ khi có ảnh bill."}
@@ -82,7 +87,7 @@ export function OrderParallelStagesCard({
           {isRejected ? (
             <XCircle size={18} className="text-danger shrink-0" />
           ) : isAccepted ? (
-            <Flower2 size={18} className="text-success shrink-0" />
+            <Sparkles size={18} className="text-success shrink-0" />
           ) : (
             <Clock size={18} className="text-info shrink-0" />
           )}
@@ -98,7 +103,7 @@ export function OrderParallelStagesCard({
           {isRejected
             ? `Rất tiếc tiệm chưa thể phục vụ${cancelledReason ? `: ${cancelledReason}` : ""}. Đang tiến hành hoàn tiền 100% cho bạn.`
             : isAccepted
-            ? "Điều phối đã duyệt đơn. Nghệ nhân hoa đang chuẩn bị nguyên liệu cắm hoa."
+            ? `Điều phối đã duyệt đơn. Đang chuẩn bị để ${ot.productionStepLabel.toLowerCase()}.`
             : "Điều phối sẽ xác nhận trong vòng 30’ (tối đa). Nếu không thể phục vụ, tiệm hoàn tiền 100%."}
         </p>
       </div>

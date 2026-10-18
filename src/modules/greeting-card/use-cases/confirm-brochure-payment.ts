@@ -12,6 +12,7 @@ import { loadPublicSession } from "./brochure-session-access"
 import { queueOrderNotification } from "./notify-customer"
 import { paymentNotifyEvent } from "../domain/customer-notifications"
 import { assertOrderInScope } from "./order-scope"
+import { ensureHomestayOrderBooking } from "@/modules/availability/use-cases/bind-order-booking"
 
 /**
  * Khách bấm "Tôi đã chuyển khoản". Chỉ hợp lệ khi đã có đơn; không kéo lùi phiên
@@ -62,6 +63,13 @@ export async function reportCustomerPayment(
       ...(proofAssetId ? { proofAssetId } : {}),
       reportedAt: new Date().toISOString(),
     })
+  }
+
+  // Khóa phòng trên Lịch phòng & Khả dụng cho đơn Homestay khi khách đã báo chuyển khoản
+  const orgSettings = session.organization?.settings as Record<string, unknown> | null
+  const isHomestay = orgSettings?.industry === "HOMESTAY" || orgSettings?.industryKey === "HOMESTAY"
+  if (isHomestay && session.order) {
+    await ensureHomestayOrderBooking(session.order).catch(() => null)
   }
 
   return { success: true, message: "Đã ghi nhận thông báo chuyển khoản của bạn" }

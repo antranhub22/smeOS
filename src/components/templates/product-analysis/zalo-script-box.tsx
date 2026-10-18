@@ -84,7 +84,7 @@ export function ZaloScriptBox({
         <div className="flex items-center justify-between border-b border-border bg-surface-alt/60 px-4 py-2.5 text-xs text-text-muted">
           <span className="flex items-center gap-1.5 font-medium">
             <Sparkles size={13} className="text-primary" />
-            Tự động điền thông số hoa, giá ưu đãi & quà tặng
+            Tự động điền thông số sản phẩm, giá ưu đãi & quà tặng
           </span>
           <span className="text-caption font-mono text-text-muted/80">
             {script.length} ký tự

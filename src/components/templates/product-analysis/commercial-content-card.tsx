@@ -5,6 +5,7 @@ import { ArrowLeft, Sparkles, CheckCircle2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ResultCard, type ResultField, type ResultFieldItem, type JudgmentState } from "@/components/result/result-card"
+import { useI18n } from "@/lib/i18n"
 
 export interface CommercialContentCardProps {
   fields: ResultField[]
@@ -51,6 +52,7 @@ export function CommercialContentCard({
   onFieldRemove,
   onItemChange,
 }: CommercialContentCardProps) {
+  const { ti } = useI18n()
   const images = imageUrl ? [{ src: imageUrl, alt: "Ảnh sản phẩm" }] : []
 
   return (
@@ -73,7 +75,7 @@ export function CommercialContentCard({
               <Sparkles size={17} strokeWidth={2} />
             </div>
             <div>
-              <div className="text-caption font-semibold text-text-muted">Gợi ý tên và câu chuyện cho mẫu hoa</div>
+              <div className="text-caption font-semibold text-text-muted">Gợi ý tên và câu chuyện cho {ti("sampleProduct") || "sản phẩm"}</div>
               <div className="text-title font-extrabold text-text leading-tight">Bài giới thiệu</div>
             </div>
           </div>

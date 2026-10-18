@@ -137,6 +137,7 @@ const WHITELIST_PATH_PATTERNS: RegExp[] = [
   // Industry plugin files — đây là SSOT định nghĩa terms, không phải hardcode
   /src\/modules\/organization\/domain\/industries\/floral/,
   /src\/modules\/organization\/domain\/industry-plugin-contract/,
+  /src\/modules\/organization\/domain\/industry-profile/,
   // Preview data (mock)
   /kho-templates\/preview-data/,
   // Test files

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { StructuredAddress } from "@/modules/products/domain/product-master-index"
+import { useI18n } from "@/lib/i18n"
 
 export interface DeliveryPODCardProps {
   orderCode: string
@@ -34,6 +35,7 @@ export function DeliveryPODCard({
   recipientSignatureName,
   onConfirmComplete,
 }: DeliveryPODCardProps) {
+  const { ti } = useI18n()
   return (
     <Card className="rounded-2xl border border-border bg-surface p-6 shadow-sm flex flex-col gap-5">
       <div className="flex items-center justify-between border-b border-dashed border-border pb-4">
@@ -66,7 +68,7 @@ export function DeliveryPODCard({
         <div className="p-3.5 rounded-xl bg-surface-alt border border-border flex flex-col gap-2">
           <div className="font-bold text-text flex items-center gap-1.5">
             <User size={14} className="text-blush-600" />
-            <span>Người nhận hoa:</span>
+            <span>Người nhận hàng:</span>
           </div>
           <div className="text-text font-semibold">{recipientName} ({recipientPhone})</div>
           <div className="text-text-muted flex items-start gap-1">
@@ -99,14 +101,14 @@ export function DeliveryPODCard({
         <div className="flex flex-col gap-2">
           <span className="text-xs font-bold text-text-muted flex items-center gap-1">
             <ImageIcon size={13} />
-            <span>ẢNH CHỤP BẰNG CHỨNG TRAO HOA TẬN TAY (POD):</span>
+            <span>ẢNH CHỤP BẰNG CHỨNG GIAO HÀNG TẬN TAY (POD):</span>
           </span>
           <div className="relative aspect-video w-full max-w-md rounded-xl overflow-hidden border border-border bg-surface-alt">
             <img src={podImageUrl} alt="Bằng chứng giao hàng POD" className="h-full w-full object-cover" />
           </div>
           {deliveredAt && (
             <div className="text-xs text-mint-800 font-semibold mt-1">
-              Đã trao hoa lúc: {deliveredAt} {recipientSignatureName ? `(Ký nhận: ${recipientSignatureName})` : ""}
+              Đã giao hàng lúc: {deliveredAt} {recipientSignatureName ? `(Ký nhận: ${recipientSignatureName})` : ""}
             </div>
           )}
         </div>

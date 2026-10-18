@@ -3,6 +3,7 @@
 import React from "react"
 import { Heart, Award, Tag, Sparkles } from "lucide-react"
 import { Card } from "@/components/ui/card"
+import { useI18n } from "@/lib/i18n"
 
 export type ContentAngle = "emotional" | "technical" | "promotional"
 
@@ -18,6 +19,7 @@ export function AngleSelectorCard({
   selectedAngle,
   onSelectAngle,
 }: AngleSelectorCardProps) {
+  const { ti } = useI18n()
   const angles = [
     {
       id: "emotional" as ContentAngle,
@@ -29,7 +31,7 @@ export function AngleSelectorCard({
       id: "technical" as ContentAngle,
       icon: Award,
       title: "Tay nghề & Đẳng cấp",
-      description: "Làm nổi bật kỹ thuật cắm hoa nghệ thuật, độ tươi của hoa nhập và phối màu sang trọng.",
+      description: `Làm nổi bật kỹ thuật ${ti("makerAction") || "chế tác"} chuyên nghiệp, chất lượng ${ti("rawMaterialItem") || "nguyên vật liệu"} và phối màu sang trọng.`,
     },
     {
       id: "promotional" as ContentAngle,

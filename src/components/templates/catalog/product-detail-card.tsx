@@ -5,6 +5,7 @@ import { Share2, Tag, Layers } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useI18n } from "@/lib/i18n"
 
 export interface ProductDetailCardProps {
   code: string
@@ -34,6 +35,10 @@ export function ProductDetailCard({
   onShareLink,
   onOrderNow,
 }: ProductDetailCardProps) {
+  const { ti } = useI18n()
+  const rawMaterial = ti("rawMaterialItem") || "thành phần"
+  const printables = ti("printablesTitle") || "quà tặng kèm"
+
   return (
     <Card className="overflow-hidden rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -64,12 +69,12 @@ export function ProductDetailCard({
             {stemCount && (
               <span className="flex items-center gap-1 rounded bg-surface-alt px-2 py-0.5 font-medium">
                 <Layers size={12} />
-                {stemCount} cành hoa
+                {stemCount} {rawMaterial}
               </span>
             )}
             <span className="flex items-center gap-1 rounded bg-surface-alt px-2 py-0.5 font-medium">
               <Tag size={12} />
-              Bao gồm thiệp + banner
+              Bao gồm {printables}
             </span>
           </div>
         </div>

@@ -20,10 +20,10 @@ export interface AiQcInspectionModalProps {
 }
 
 const CHECKS: Array<{ key: string; label: string }> = [
-  { key: "flowerMatch", label: "Đúng loại hoa và số cành theo BOM" },
-  { key: "colorTone", label: "Đúng tông màu" },
-  { key: "wrapping", label: "Đúng giấy gói / nơ / phụ kiện" },
-  { key: "cardMessage", label: "Thiệp đúng nguyên văn lời chúc" },
+  { key: "flowerMatch", label: "Đúng nguyên phụ liệu và số lượng theo BOM" },
+  { key: "colorTone", label: "Đúng tông màu & thiết kế" },
+  { key: "wrapping", label: "Đúng đóng gói / bao bì / phụ kiện" },
+  { key: "cardMessage", label: "Đúng ấn phẩm / thiệp / nội dung đi kèm" },
 ]
 
 export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcInspectionModalProps) {

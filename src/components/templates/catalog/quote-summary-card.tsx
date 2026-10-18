@@ -4,6 +4,7 @@ import React from "react"
 import { Calculator, CheckCircle2 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useI18n } from "@/lib/i18n"
 
 export interface CostBreakdownItem {
   name: string
@@ -34,6 +35,10 @@ export function QuoteSummaryCard({
   suggestedPrice,
   marginPercent = 45,
 }: QuoteSummaryCardProps) {
+  const { ti } = useI18n()
+  const makerTitle = ti("makerTitle") || "thợ gia công"
+  const makerAction = ti("makerAction") || "gia công"
+
   return (
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -67,11 +72,11 @@ export function QuoteSummaryCard({
               </tr>
             ))}
             <tr className="bg-surface-alt/30">
-              <td colSpan={3} className="p-2.5 text-text-muted">Công thợ cắm hoa</td>
+              <td colSpan={3} className="p-2.5 text-text-muted">Chi phí công {makerTitle} ({makerAction})</td>
               <td className="p-2.5 text-right font-semibold text-text">{laborCost}</td>
             </tr>
             <tr className="bg-surface-alt/30">
-              <td colSpan={3} className="p-2.5 text-text-muted">Giấy gói, ruy băng & phụ liệu</td>
+              <td colSpan={3} className="p-2.5 text-text-muted">Bao bì đóng gói & phụ liệu kèm theo</td>
               <td className="p-2.5 text-right font-semibold text-text">{wrappingCost}</td>
             </tr>
           </tbody>

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest"
 import { getAvailabilityBoard } from "../use-cases/get-availability-board"
-import { bindOrderBooking, releaseOrderBooking } from "../use-cases/bind-order-booking"
+import { bindOrderBooking, ensureHomestayOrderBooking, releaseOrderBooking } from "../use-cases/bind-order-booking"
 import { createManualBlock, removeManualBlock } from "../use-cases/manage-manual-block"
 import type { AvailabilityRepository } from "../infra/availability-repository"
 
@@ -53,6 +53,7 @@ describe("Availability Module Use-Cases", () => {
 
   it("bindOrderBooking validates inputs and calls repo", async () => {
     const mockRepo = {
+      findBookingByOrderId: vi.fn().mockResolvedValue(null),
       createBooking: vi.fn().mockResolvedValue("booking-new"),
     } as unknown as AvailabilityRepository
 
@@ -137,4 +138,40 @@ describe("Availability Module Use-Cases", () => {
       }, mockRepo)
     ).rejects.toThrow()
   })
+
+  it("ensureHomestayOrderBooking recovers checkOutDate from internal_note and persists it", async () => {
+    const mockRepo = {
+      findBookingByOrderId: vi.fn().mockResolvedValue(null),
+      createBooking: vi.fn().mockResolvedValue("booking-recovered"),
+      updateOrderDeliveryWindow: vi.fn().mockResolvedValue(undefined),
+    } as unknown as AvailabilityRepository
+
+    const res = await ensureHomestayOrderBooking(
+      {
+        id: "order-99",
+        code: "DH261018-TEST",
+        organization_id: "org-1",
+        delivery_window: { date: "2026-10-25" }, // missing checkOutDate
+        internal_note: "Lưu trú: 3 đêm (2026-10-25 ➔ 2026-10-28)",
+        items: [{ product_id: "prod-1", quantity: 3 }],
+      },
+      mockRepo,
+    )
+
+    expect(res).toBe("booking-recovered")
+    expect(mockRepo.updateOrderDeliveryWindow).toHaveBeenCalledWith(
+      "org-1",
+      "order-99",
+      { date: "2026-10-25", checkOutDate: "2026-10-28" },
+    )
+    expect(mockRepo.createBooking).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        productId: "prod-1",
+        checkInDate: "2026-10-25",
+        checkOutDate: "2026-10-28",
+      }),
+    )
+  })
 })
+

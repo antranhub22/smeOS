@@ -109,7 +109,7 @@ export function useBrochureOrderSubmit(params: UseBrochureOrderSubmitParams) {
         recipientPhone: effectiveRecipientPhone,
         deliveryDate: params.deliveryDate,
         checkOutDate: params.checkOutDate,
-        deliveryTimeSlot: params.deliveryTimeSlot,
+        deliveryTimeSlot: params.deliveryTimeSlot?.trim() || "14:00 - 16:00 (Tiêu chuẩn)",
         deliveryAddress: effectiveAddress,
         senderNote: combinedNote,
         quantity: nights,

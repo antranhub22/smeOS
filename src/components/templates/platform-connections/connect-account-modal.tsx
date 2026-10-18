@@ -136,7 +136,7 @@ export function ConnectAccountModal({
               platformId === "linkedin"
                 ? "tuans2@gmail.com"
                 : platformId === "instagram"
-                ? "tiemhoa_floraos"
+                ? "cuahang_official"
                 : "taikhoan@gmail.com"
             }
             required

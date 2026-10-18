@@ -63,7 +63,7 @@ export function FloristTicketCard({
       <div className="flex flex-col sm:flex-row gap-4">
         {sampleImageUrl && (
           <div className="relative aspect-square w-32 h-32 shrink-0 overflow-hidden rounded-xl border border-border bg-surface-alt">
-            <img src={sampleImageUrl} alt="Mẫu cắm" className="h-full w-full object-cover" />
+            <img src={sampleImageUrl} alt="Ảnh mẫu sản phẩm" className="h-full w-full object-cover" />
             <div className="absolute bottom-1 left-1 rounded bg-black/60 px-1 py-0.5 text-caption font-bold text-white">
               Ảnh mẫu
             </div>

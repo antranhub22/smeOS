@@ -100,7 +100,7 @@ export function PartnerProductionCard({
               <table className="w-full text-left text-xs">
                 <thead className="bg-surface-alt border-b border-border text-text-muted font-bold">
                   <tr>
-                    <th className="px-3 py-2">Loài hoa</th>
+                    <th className="px-3 py-2">Tên vật tư / nguyên liệu</th>
                     <th className="px-3 py-2">Số lượng</th>
                     <th className="px-3 py-2">Màu sắc / Tông</th>
                     <th className="px-3 py-2">Vai trò</th>

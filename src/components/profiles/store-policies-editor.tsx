@@ -9,30 +9,35 @@ import {
   type PromotionItem,
   type CommitmentItem,
   type AgreementItem,
-  DEFAULT_PROMOTIONS,
-  DEFAULT_COMMITMENTS,
-  DEFAULT_AGREEMENTS,
+  getIndustryDefaultPromotions,
+  getIndustryDefaultCommitments,
+  getIndustryDefaultAgreements,
 } from "@/modules/greeting-card/domain/store-policy"
 
 interface Props {
   initialPolicies?: StorePoliciesConfig | null
   onSave: (policies: StorePoliciesConfig) => Promise<boolean>
   saving: boolean
+  industryKey?: string | null | undefined
 }
 
-export function StorePoliciesEditor({ initialPolicies, onSave, saving }: Props) {
-  const [promotions, setPromotions] = useState<PromotionItem[]>(initialPolicies?.promotions ?? DEFAULT_PROMOTIONS)
-  const [commitments, setCommitments] = useState<CommitmentItem[]>(initialPolicies?.commitments ?? DEFAULT_COMMITMENTS)
-  const [agreements, setAgreements] = useState<AgreementItem[]>(initialPolicies?.agreements ?? DEFAULT_AGREEMENTS)
+export function StorePoliciesEditor({ initialPolicies, onSave, saving, industryKey }: Props) {
+  const defaultPromos = getIndustryDefaultPromotions(industryKey)
+  const defaultCommits = getIndustryDefaultCommitments(industryKey)
+  const defaultAgrees = getIndustryDefaultAgreements(industryKey)
+
+  const [promotions, setPromotions] = useState<PromotionItem[]>(initialPolicies?.promotions ?? defaultPromos)
+  const [commitments, setCommitments] = useState<CommitmentItem[]>(initialPolicies?.commitments ?? defaultCommits)
+  const [agreements, setAgreements] = useState<AgreementItem[]>(initialPolicies?.agreements ?? defaultAgrees)
   const [intakeCta, setIntakeCta] = useState(() => initialPolicies?.intakePromotionCta ?? { enabled: true, percent: 10 })
   const [activeSection, setActiveSection] = useState<"promo" | "commit" | "agree">("promo")
   const [saveSuccess, setSaveSuccess] = useState(false)
 
   const handleResetDefaults = () => {
-    if (!window.confirm("Khôi phục danh sách Ưu đãi, Cam kết và Thỏa thuận về mặc định ban đầu?")) return
-    setPromotions(DEFAULT_PROMOTIONS)
-    setCommitments(DEFAULT_COMMITMENTS)
-    setAgreements(DEFAULT_AGREEMENTS)
+    if (!window.confirm("Khôi phục danh sách Ưu đãi, Cam kết và Thỏa thuận về mặc định theo ngành?")) return
+    setPromotions(defaultPromos)
+    setCommitments(defaultCommits)
+    setAgreements(defaultAgrees)
     setIntakeCta({ enabled: true, percent: 10 })
   }
 

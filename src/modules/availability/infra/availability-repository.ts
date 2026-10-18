@@ -1,4 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import type { Prisma } from "@/generated/prisma/client"
 import type { ProductBookingRecord } from "../domain/availability-mode"
 
 type Db = typeof prisma
@@ -81,17 +82,41 @@ export class AvailabilityRepository {
       .map((r) => r.order_id)
       .filter((id): id is string => Boolean(id))
 
-    const orderMap = new Map<string, { code: string; customerName: string; customerPhone: string }>()
+    const orderMap = new Map<
+      string,
+      {
+        code: string
+        customerName: string
+        customerPhone: string
+        orderStatus: string
+        totalVnd: number
+        paidVnd: number
+        checkInTimeSlot: string | null
+      }
+    >()
     if (orderIds.length > 0) {
       const orders = await this.db.orders.findMany({
         where: { organization_id: organizationId, id: { in: orderIds } },
-        select: { id: true, code: true, customer: { select: { name: true, phone: true } } },
+        select: {
+          id: true,
+          code: true,
+          status: true,
+          total_vnd: true,
+          paid_vnd: true,
+          delivery_window: true,
+          customer: { select: { name: true, phone: true } },
+        },
       })
       for (const o of orders) {
+        const win = (o.delivery_window as Record<string, string> | null) || {}
         orderMap.set(o.id, {
           code: o.code,
           customerName: o.customer?.name ?? "",
           customerPhone: o.customer?.phone ?? "",
+          orderStatus: o.status,
+          totalVnd: Number(o.total_vnd),
+          paidVnd: Number(o.paid_vnd),
+          checkInTimeSlot: win.timeSlot || null,
         })
       }
     }
@@ -106,6 +131,10 @@ export class AvailabilityRepository {
         orderCode: ord?.code ?? null,
         customerName: ord?.customerName ?? null,
         customerPhone: ord?.customerPhone ?? null,
+        orderStatus: ord?.orderStatus ?? null,
+        totalVnd: ord?.totalVnd ?? null,
+        paidVnd: ord?.paidVnd ?? null,
+        checkInTimeSlot: ord?.checkInTimeSlot ?? null,
         checkInDate: r.check_in_date,
         checkOutDate: r.check_out_date,
         note: r.note,
@@ -161,6 +190,24 @@ export class AvailabilityRepository {
       WHERE organization_id = ${organizationId} AND id = ${blockId} AND order_id IS NULL
     `
     return count > 0
+  }
+
+  /** Tìm booking theo orderId */
+  async findBookingByOrderId(organizationId: string, orderId: string): Promise<{ id: string; status: string } | null> {
+    if (this.db.product_bookings) {
+      const row = await this.db.product_bookings.findFirst({
+        where: { organization_id: organizationId, order_id: orderId },
+        select: { id: true, status: true },
+      })
+      return row ?? null
+    }
+
+    const rows = await this.db.$queryRaw<Array<{ id: string; status: string }>>`
+      SELECT id, status FROM product_bookings
+      WHERE organization_id = ${organizationId} AND order_id = ${orderId}
+      LIMIT 1
+    `
+    return rows[0] ?? null
   }
 
   /** Hủy booking tự động khi đơn hàng bị hủy */
@@ -252,4 +299,17 @@ export class AvailabilityRepository {
       }))
     }
   }
+
+  /** Cập nhật delivery_window của đơn hàng (dùng khi tự phục hồi checkOutDate cho đơn Homestay) */
+  async updateOrderDeliveryWindow(
+    organizationId: string,
+    orderId: string,
+    deliveryWindow: Record<string, unknown>,
+  ): Promise<void> {
+    await this.db.orders.updateMany({
+      where: { organization_id: organizationId, id: orderId },
+      data: { delivery_window: deliveryWindow as Prisma.InputJsonValue },
+    })
+  }
 }
+

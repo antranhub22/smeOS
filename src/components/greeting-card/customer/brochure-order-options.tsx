@@ -6,6 +6,7 @@ import type { ShippingConfig, BrochureQuote } from "@/modules/greeting-card/doma
 import { MAX_ORDER_QUANTITY } from "@/modules/greeting-card/domain/brochure-pricing"
 import type { QuoteSelection } from "./use-brochure-quote"
 import { PaymentCodeField, PaymentDueRows } from "./payment-code-field"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 interface Props {
   variants: Array<{ id: string; name: string; priceVnd: number }>
@@ -26,30 +27,10 @@ const vnd = (n: number) => `${n.toLocaleString("vi-VN")} đ`
 export function BrochureOrderOptions({ variants, basePrice, shipping, selection, onChange, quote, errors, loading, industryKey }: Props) {
   const [voucherInput, setVoucherInput] = useState(selection.voucherCode)
   const isHomestay = industryKey === "HOMESTAY"
-  const isServices = industryKey === "SERVICES"
-  const isFloral = !industryKey || industryKey === "FLORAL"
-
-  const shippingFeeLabel = isHomestay
-    ? "Phí dịch vụ & dọn dẹp"
-    : isServices
-    ? "Phí dịch vụ"
-    : isFloral
-    ? "Phí giao hoa"
-    : "Phí vận chuyển"
-
-  const shippingZoneLabel = isHomestay
-    ? "Khu vực lưu trú"
-    : isServices
-    ? "Khu vực phục vụ"
-    : isFloral
-    ? "Khu vực giao hoa"
-    : "Khu vực giao hàng"
-
-  const freeShippingText = isHomestay
-    ? "Nhận phòng tại chỗ (Không tính phí vận chuyển)"
-    : isFloral
-    ? "Miễn phí giao hoa cho mọi đơn"
-    : "Miễn phí giao hàng cho mọi đơn"
+  const orderTerms = getIndustryOrderTerms(industryKey)
+  const shippingFeeLabel = orderTerms.shippingFeeLabel
+  const shippingZoneLabel = orderTerms.shippingZoneLabel
+  const freeShippingText = orderTerms.freeShippingText
 
   return (
     <>

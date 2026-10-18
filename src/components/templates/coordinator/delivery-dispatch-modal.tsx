@@ -190,7 +190,7 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
               <div className="flex-1 flex flex-col gap-2">
                 <input type="file" ref={fileRef} accept="image/*" className="hidden" onChange={handleUpload} />
                 <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => fileRef.current?.click()} className="gap-1.5 w-fit">
-                  <Upload size={13} /> Tải ảnh trao hoa
+                  <Upload size={13} /> Tải ảnh trao hàng
                 </Button>
                 <input
                   className={input}

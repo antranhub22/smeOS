@@ -35,6 +35,8 @@ export interface CustomerOrderSlipInput {
   customerLabel?: string | null | undefined
   recipientLabel?: string | null | undefined
   addressLabel?: string | null | undefined
+  customerNoteLabel?: string | null | undefined
+  deliveryNoteLabel?: string | null | undefined
 }
 
 export interface CustomerOrderSlipLine {
@@ -105,8 +107,8 @@ export function buildCustomerOrderSlipLines(input: CustomerOrderSlipInput): Cust
     ],
   ]
   const notes: CustomerOrderSlipLine[] = [
-    { label: "Ghi chú cho cơ sở/tiệm", value: input.customerNote?.trim() ?? "" },
-    { label: "Ghi chú giao nhận/lưu trú", value: input.deliveryNote?.trim() ?? "" },
+    { label: input.customerNoteLabel || "Ghi chú cho tiệm", value: input.customerNote?.trim() ?? "" },
+    { label: input.deliveryNoteLabel || "Ghi chú giao hàng", value: input.deliveryNote?.trim() ?? "" },
   ].filter((l) => l.value)
   if (notes.length > 0) groups.push(notes)
   if (vat > 0) {

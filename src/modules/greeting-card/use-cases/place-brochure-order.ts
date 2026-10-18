@@ -102,6 +102,7 @@ export async function placeBrochureOrder(
       deliveryAddress: input.deliveryAddress.trim(),
       addressParts: input.addressParts ?? null,
       deliveryDate: input.deliveryDate.trim(),
+      checkOutDate: input.checkOutDate?.trim() || null,
       deliveryTimeSlot: input.deliveryTimeSlot?.trim() || DEFAULT_TIME_SLOT,
       cardMessage: input.cardMessage?.trim() || null,
       delivery: deliveryNoteFields(input),

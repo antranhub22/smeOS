@@ -52,7 +52,7 @@ export interface StorePoliciesConfig {
 export const DEFAULT_PROMOTIONS: PromotionItem[] = [
   { id: "promo-discount-10", title: "Giảm 10%", description: "Giảm 10% trên tổng giá trị đơn hàng.", kind: "PERCENT_OFF", config: { percent: 10 } },
   { id: "promo-free-card", title: "Tặng thiệp", description: "Tặng 01 thiệp chúc mừng kèm lời nhắn của bạn.", kind: "GIFT" },
-  { id: "promo-accessory", title: "Thêm phụ kiện", description: "Thêm phụ kiện trang trí cao cấp cho sản phẩm.", kind: "GIFT" },
+  { id: "promo-accessory", title: "Thêm phụ liệu", description: "Thêm phụ kiện trang trí cao cấp cho sản phẩm.", kind: "GIFT" },
 ]
 
 export function getIndustryDefaultPromotions(industryKey?: string | null): PromotionItem[] {
@@ -100,7 +100,43 @@ export const DEFAULT_COMMITMENTS: CommitmentItem[] = [
   { id: "commit-support", title: "Cửa hàng chịu trách nhiệm đến cùng", customerText: "Mọi phản hồi về sản phẩm hoặc giao hàng đều được cửa hàng tiếp nhận và phối hợp xử lý nhanh chóng.", internalText: "Chăm sóc sau giao trong vòng 24h." },
 ]
 
-/** 7 Thỏa thuận minh bạch với khách hàng — nội dung PO chốt 08/10/2026; tiệm được sửa như Cam kết. */
+export function getIndustryDefaultCommitments(industryKey?: string | null): CommitmentItem[] {
+  if (industryKey === "HOMESTAY") {
+    return [
+      { id: "commit-room-clean", title: "Phòng sạch sẽ – khử khuẩn 100%", customerText: "Phòng ốc luôn được vệ sinh kỹ lưỡng, thay mới toàn bộ chăn ga gối đệm và khử khuẩn trước giờ quý khách nhận phòng.", internalText: "Bộ phận buồng phòng kiểm tra checklist vệ sinh 12 bước trước khi bàn giao chìa khóa." },
+      { id: "commit-exact-amenities", title: "Đúng tiện nghi – đúng mô tả", customerText: "Cơ sở lưu trú cam kết cung cấp đầy đủ các tiện ích, trang thiết bị đúng như hình ảnh và thông tin đã công bố.", internalText: "Kiểm tra hoạt động của điều hòa, nước nóng, wifi và đồ dùng trước khi khách check-in." },
+      { id: "commit-safe-quiet", title: "Không gian an ninh & riêng tư", customerText: "Đảm bảo sự yên tĩnh, an ninh và tôn trọng quyền riêng tư tuyệt đối cho kỳ nghỉ của quý khách.", internalText: "Giám sát an ninh khu vực công cộng, hỗ trợ khóa thông minh hoặc bảo vệ 24/7." },
+      { id: "commit-ready-on-time", title: "Sẵn sàng đón tiếp đúng giờ", customerText: "Phòng luôn trong trạng thái sẵn sàng đón tiếp theo khung giờ nhận phòng tiêu chuẩn hoặc theo thỏa thuận.", internalText: "Bật sẵn điều hòa và chuẩn bị phòng đón tiếp trước 30 phút." },
+      { id: "commit-host-support", title: "Quản gia & Chủ nhà hỗ trợ 24/7", customerText: "Đội ngũ quản gia luôn sẵn sàng giải đáp thắc mắc, hướng dẫn chỉ đường và hỗ trợ trong suốt thời gian lưu trú.", internalText: "Trực hotline hỗ trợ khách lưu trú, xử lý sự cố phát sinh trong vòng 15 phút." },
+      { id: "commit-transparent-pricing", title: "Minh bạch giá – không phụ phí ẩn", customerText: "Mọi chi phí dịch vụ, tiền cọc và quy định phụ thu đều được thông báo rõ ràng trước khi quý khách xác nhận đặt phòng.", internalText: "Hóa đơn và phiếu thu đặt phòng rõ ràng, không tự ý thu thêm phí." },
+    ]
+  }
+  if (industryKey === "FNB") {
+    return [
+      { id: "commit-food-safety", title: "Vệ sinh an toàn thực phẩm 100%", customerText: "Toàn bộ nguyên liệu chế biến tươi ngon mỗi ngày, có nguồn gốc rõ ràng và đạt tiêu chuẩn an toàn thực phẩm.", internalText: "Kiểm tra hạn sử dụng và lưu mẫu thực phẩm theo quy chuẩn của bếp." },
+      { id: "commit-exact-recipe", title: "Đúng định lượng & Chuẩn vị món ăn", customerText: "Món ăn và thức uống được chế biến đúng công thức chuẩn, đảm bảo hương vị và định lượng đã niêm yết.", internalText: "Bếp trưởng kiểm tra thành phẩm đĩa ăn trước khi chuyển phục vụ." },
+      { id: "commit-serve-on-time", title: "Phục vụ nhanh chóng – Đúng giờ hẹn", customerText: "Cửa hàng chuẩn bị bàn tiệc và lên món đúng thời gian đã xác nhận với quý khách.", internalText: "Bếp và bàn phối hợp điều phối món theo đúng tiến độ thời gian đặt bàn." },
+      { id: "commit-support", title: "Lắng nghe & Chăm sóc tận tâm", customerText: "Mọi phản hồi về chất lượng món ăn và dịch vụ đều được quản lý tiếp nhận và xử lý ngay tại bàn.", internalText: "Quản lý ca trực giải quyết phản hồi của khách trong vòng 5 phút." },
+    ]
+  }
+  if (industryKey === "SERVICES") {
+    return [
+      { id: "commit-service-quality", title: "Kỹ thuật chuyên môn – Đúng tiêu chuẩn", customerText: "Dịch vụ được thực hiện bởi đội ngũ kỹ thuật viên lành nghề, đúng quy trình kỹ thuật tiêu chuẩn.", internalText: "Tuân thủ checklist quy trình kỹ thuật nghiệm thu dịch vụ." },
+      { id: "commit-on-time", title: "Đúng lịch hẹn – Đúng tiến độ", customerText: "Kỹ thuật viên có mặt đúng giờ và hoàn thành công việc theo đúng tiến độ đã cam kết.", internalText: "Liên hệ xác nhận với khách trước 30 phút khi di chuyển tới địa điểm." },
+      { id: "commit-warranty", title: "Bảo hành trách nhiệm rõ ràng", customerText: "Cam kết bảo hành chất lượng dịch vụ và hỗ trợ kỹ thuật nhanh chóng sau khi nghiệm thu.", internalText: "Ghi nhận phiếu bảo hành và chăm sóc khách hàng định kỳ." },
+    ]
+  }
+  if (industryKey === "FASHION" || industryKey === "RETAIL_GENERAL" || industryKey === "CRAFT_GIFT") {
+    return [
+      { id: "commit-match-sample", title: "Đúng mẫu – đúng chất liệu", customerText: "Sản phẩm thực tế đúng kiểu dáng, màu sắc và chất liệu tiêu chuẩn như mô tả và hình ảnh.", internalText: "Kiểm tra đường may, phụ liệu và đối chiếu mẫu trước khi đóng gói." },
+      { id: "commit-quality-check", title: "Kiểm tra kỹ lưỡng trước khi giao", customerText: "Mọi sản phẩm đều được kiểm định chất lượng kỹ càng, không lỗi chỉ hay trầy xước trước khi xuất kho.", internalText: "Soát lỗi thành phẩm và dán tem niêm phong chất lượng." },
+      { id: "commit-exchange-policy", title: "Đổi trả linh hoạt nếu có lỗi", customerText: "Hỗ trợ đổi size hoặc đổi sản phẩm mới nếu phát sinh lỗi từ nhà sản xuất trong vòng 48h.", internalText: "Tiếp nhận và xử lý đổi trả trong vòng 24h làm việc." },
+      { id: "commit-delivery-time", title: "Đóng gói cẩn thận – Giao đúng hẹn", customerText: "Hàng được đóng gói quy chuẩn bảo vệ sản phẩm tối đa và giao tới quý khách đúng thời gian cam kết.", internalText: "Bàn giao đơn vị vận chuyển đúng lịch hẹn điều phối." },
+    ]
+  }
+  return DEFAULT_COMMITMENTS
+}
+
 export const DEFAULT_AGREEMENTS: AgreementItem[] = [
   { id: "agree-substitute-flowers", title: "Hoa phụ có thể thay tương đương", customerText: "Nếu hoa phụ hoặc phụ kiện không có sẵn hay chưa đạt độ đẹp tại thời điểm thực hiện, cửa hàng có thể thay bằng loại tương đương, giữ nguyên tone màu, phong cách và tổng thể thiết kế.", internalText: "Chỉ thay hoa phụ/phụ kiện có màu sắc tương đồng." },
   { id: "agree-color-variation", title: "Màu sắc có thể khác nhẹ", customerText: "Hoa tươi là sản phẩm tự nhiên nên màu sắc, kích thước và độ nở từng bông có thể khác nhẹ so với hình ảnh trên màn hình. Cửa hàng ưu tiên giữ đúng tone màu tổng thể của mẫu.", internalText: "Giải thích rõ yếu tố tự nhiên nếu khách thắc mắc." },
@@ -110,6 +146,42 @@ export const DEFAULT_AGREEMENTS: AgreementItem[] = [
   { id: "agree-order-change", title: "Thay đổi thông tin đơn hàng", customerText: "Sau khi đơn đã được xác nhận hoặc bắt đầu thực hiện, việc đổi mẫu, địa chỉ, giờ giao hay nội dung đơn có thể ảnh hưởng đến chi phí và thời gian giao. Cửa hàng sẽ thông báo trước khi áp dụng.", internalText: "Báo khách chi phí/thời gian phát sinh và chờ khách đồng ý trước khi áp dụng thay đổi." },
   { id: "agree-cancellation-policy", title: "Hủy đơn và hoàn tiền", customerText: "Quý khách có thể yêu cầu hủy đơn trước khi cửa hàng bắt đầu thực hiện. Sau khi đơn đã được chuẩn bị hoặc hoàn thiện, việc hủy hoặc hoàn tiền sẽ được giải quyết theo tình trạng thực tế của đơn.", internalText: "Áp dụng theo workflow duyệt của Điều hành." },
 ]
+
+export function getIndustryDefaultAgreements(industryKey?: string | null): AgreementItem[] {
+  if (industryKey === "HOMESTAY") {
+    return [
+      { id: "agree-checkin-checkout", title: "Giờ nhận & trả phòng tiêu chuẩn", customerText: "Thời gian nhận phòng (Check-in) từ 14:00 và trả phòng (Check-out) trước 12:00. Nếu quý khách có nhu cầu nhận sớm hoặc trả muộn, xin vui lòng liên hệ trước để được hỗ trợ tùy thuộc vào tình trạng phòng.", internalText: "Áp dụng biểu phí nhận sớm/trả muộn theo quy định cơ sở lưu trú." },
+      { id: "agree-id-registration", title: "Xuất trình giấy tờ tùy thân", customerText: "Quý khách vui lòng xuất trình CMND/CCCD hoặc Hộ chiếu còn hạn của tất cả các thành viên lưu trú để làm thủ tục đăng ký tạm trú theo quy định pháp luật.", internalText: "Chụp ảnh giấy tờ và khai báo tạm trú qua cổng dịch vụ công." },
+      { id: "agree-quiet-hours", title: "Giữ gìn trật tự & Giờ yên tĩnh", customerText: "Xin vui lòng giữ trật tự chung sau 22:00 để không làm ảnh hưởng đến các phòng xung quanh và cư dân lân cận. Không tổ chức tiệc tùng gây ồn ào quá mức quy định.", internalText: "Nhắc nhở nhẹ nhàng khách giữ trật tự sau 22:00." },
+      { id: "agree-guest-capacity", title: "Số lượng khách lưu trú tối đa", customerText: "Số lượng khách lưu trú thực tế không vượt quá số lượng đã xác nhận khi đặt phòng. Cơ sở có thể phụ thu nếu phát sinh thêm người lưu trú ngoài thỏa thuận.", internalText: "Thu phụ phí khách phát sinh theo bảng giá niêm yết." },
+      { id: "agree-amenities-care", title: "Giữ gìn tài sản & Tiện nghi phòng", customerText: "Quý khách vui lòng sử dụng cẩn thận các trang thiết bị trong phòng. Trường hợp làm mất mát, hỏng hóc hoặc làm bẩn không thể tẩy rửa, chi phí bồi thường sẽ được tính theo giá trị thực tế.", internalText: "Kiểm tra phòng khi khách check-out trước khi hoàn cọc." },
+      { id: "agree-no-smoking", title: "Quy định cấm hút thuốc trong phòng", customerText: "Nghiêm cấm hút thuốc lá/thuốc lá điện tử bên trong không gian phòng kín. Quý khách có thể hút thuốc tại khu vực ban công hoặc sân vườn ngoài trời được phép.", internalText: "Phụ thu phí khử mùi nếu khách vi phạm quy định hút thuốc trong phòng." },
+      { id: "agree-cancellation-policy", title: "Chính sách hủy phòng & Hoàn cọc", customerText: "Quý khách có thể yêu cầu đổi lịch hoặc hủy phòng theo chính sách thông báo trước thời gian nhận phòng. Sau mốc quy định, tiền đặt cọc có thể không được hoàn lại tùy theo quy định của cơ sở.", internalText: "Giải quyết hoàn tiền hoặc bảo lưu kỳ nghỉ theo thỏa thuận đặt phòng." },
+    ]
+  }
+  if (industryKey === "FNB") {
+    return [
+      { id: "agree-fresh-ingredients", title: "Nguyên liệu theo mùa vụ", customerText: "Một số nguyên liệu tươi sống đặc thù theo mùa có thể hết hoặc được thay thế bằng loại tương đương với sự đồng ý của quý khách.", internalText: "Báo trước cho khách nếu món ăn có thay đổi nguyên liệu phụ." },
+      { id: "agree-serving-time", title: "Thời gian giữ bàn & Lên món", customerText: "Bàn đặt trước sẽ được giữ trong vòng 15–20 phút so với giờ hẹn. Quý khách vui lòng thông báo nếu đến muộn để nhà hàng sắp xếp chu đáo nhất.", internalText: "Gọi nhắc khách trước 15 phút so với giờ đặt bàn." },
+      { id: "agree-cancellation-policy", title: "Chính sách thay đổi & Hủy đặt bàn", customerText: "Quý khách có thể thay đổi số lượng khách hoặc hủy đặt bàn trước 2 tiếng so với giờ hẹn để nhà hàng hỗ trợ hoàn cọc nếu có.", internalText: "Cập nhật lại sơ đồ bàn khi khách báo đổi lịch." },
+    ]
+  }
+  if (industryKey === "SERVICES") {
+    return [
+      { id: "agree-site-condition", title: "Điều kiện mặt bằng & Hiện trạng", customerText: "Quý khách tạo điều kiện về mặt bằng và nguồn điện/nước cần thiết để kỹ thuật viên tiến hành dịch vụ thuận lợi.", internalText: "Khảo sát hiện trạng trước khi tiến hành thi công/sửa chữa." },
+      { id: "agree-reschedule", title: "Thay đổi lịch hẹn dịch vụ", customerText: "Quý khách có thể yêu cầu dời lịch hẹn trước tối thiểu 02 tiếng. Trường hợp phát sinh sự cố bất khả kháng, hai bên sẽ cùng thống nhất lịch hẹn mới.", internalText: "Cập nhật điều phối lịch làm việc của kỹ thuật viên." },
+      { id: "agree-payment-terms", title: "Nghiệm thu & Thanh toán", customerText: "Quý khách kiểm tra nghiệm thu kết quả dịch vụ cùng kỹ thuật viên trước khi hoàn tất thanh toán phần còn lại.", internalText: "Ký biên bản nghiệm thu trước khi nhận thanh toán." },
+    ]
+  }
+  if (industryKey === "FASHION" || industryKey === "RETAIL_GENERAL" || industryKey === "CRAFT_GIFT") {
+    return [
+      { id: "agree-handmade-variance", title: "Đặc tính thủ công / Tự nhiên", customerText: "Sản phẩm thủ công hoặc vật liệu tự nhiên có thể có sự khác biệt nhỏ về hoa văn hoặc độ đậm nhạt màu sắc so với ảnh chụp trên màn hình.", internalText: "Tôn trọng đặc tính độc bản của sản phẩm thủ công." },
+      { id: "agree-delivery-adjustment", title: "Thời gian giao hàng linh hoạt", customerText: "Thời gian giao hàng có thể xê dịch nhẹ tùy theo điều kiện thời tiết hoặc lộ trình của đơn vị vận chuyển. Cửa hàng sẽ chủ động cập nhật lộ trình đơn hàng.", internalText: "Cung cấp mã vận đơn để khách tiện theo dõi trực tuyến." },
+      { id: "agree-exchange-condition", title: "Điều kiện đổi trả sản phẩm", customerText: "Sản phẩm đổi trả cần giữ nguyên tem mác, bao bì và chưa qua sử dụng trong vòng quy định của cửa hàng.", internalText: "Kiểm tra tình trạng hàng trả trước khi xuất đổi hoặc hoàn tiền." },
+    ]
+  }
+  return DEFAULT_AGREEMENTS
+}
 
 export const STORE_POLICIES_SETTINGS_KEY = "store_policies"
 
@@ -127,8 +199,8 @@ export function parseStorePolicies(settings: unknown, industryKey?: string | nul
   }
   return {
     promotions: promotions.length > 0 ? promotions : getIndustryDefaultPromotions(industry),
-    commitments: commitments.length > 0 ? commitments : DEFAULT_COMMITMENTS,
-    agreements: agreements.length > 0 ? agreements : DEFAULT_AGREEMENTS,
+    commitments: commitments.length > 0 ? commitments : getIndustryDefaultCommitments(industry),
+    agreements: agreements.length > 0 ? agreements : getIndustryDefaultAgreements(industry),
     intakePromotionCta,
   }
 }

@@ -40,15 +40,15 @@ export const STUDIO_SCENE_PRESETS: StudioScenePreset[] = [
   },
   {
     id: "wood_warm",
-    name: "Studio Gỗ Ấm (Vintage Florist)",
-    desc: "Tông màu gỗ sồi và nắng ấm dịu nhẹ, phong cách tiệm hoa nghệ thuật thủ công.",
+    name: "Studio Gỗ Ấm (Vintage Warm)",
+    desc: "Tông màu gỗ sồi và nắng ấm dịu nhẹ, phong cách xưởng chế tác nghệ thuật thủ công.",
     badge: "Ấm cúng",
     colorPreview: "linear-gradient(135deg, #f7efe6 0%, #e0d0be 100%)",
     icon: TreePine,
   },
   {
     id: "boutique_bokeh",
-    name: "Không Gian Bokeh (Tiệm Hoa)",
+    name: "Không Gian Bokeh (Boutique Showroom)",
     desc: "Hiệu ứng xóa phông Bokeh quang học f/1.8 với ánh sáng ấm áp, phong cách nghệ thuật.",
     badge: "Nhiếp ảnh f/1.8",
     colorPreview: "linear-gradient(135deg, #fbf4ec 0%, #d8c3ad 100%)",

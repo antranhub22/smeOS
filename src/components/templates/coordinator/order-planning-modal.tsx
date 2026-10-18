@@ -45,7 +45,7 @@ export function OrderPlanningModal({
       : String(addr ?? "")
 
   const handleConfirm = async () => {
-    const plan = `Cắm xong ${productionTargetTime}, shipper lấy ${pickupTargetTime}${planningNotes.trim() ? ` — ${planningNotes.trim()}` : ""}`
+    const plan = `Sản xuất xong ${productionTargetTime}, shipper lấy ${pickupTargetTime}${planningNotes.trim() ? ` — ${planningNotes.trim()}` : ""}`
     setBusy(true)
     setError(null)
     try {
@@ -209,7 +209,7 @@ export function OrderPlanningModal({
             </label>
             <textarea
               rows={2}
-              placeholder="Ví dụ: Hoa cắm xòe dáng tự nhiên phong cách Hàn Quốc, thiệp in máy chuẩn chữ đẹp, nơ thắt 2 tầng..."
+              placeholder="Ví dụ: Gia công tỉ mỉ theo mẫu thiết kế, đóng gói quy chuẩn chống va đập, thiệp in chuẩn chữ đẹp..."
               value={planningNotes}
               onChange={(e) => setPlanningNotes(e.target.value)}
               className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"

@@ -8,6 +8,8 @@ import { OrderVatForm, type OrderVatData } from "./order-vat-form"
 import { CopyProductImageButton } from "./copy-product-image-button"
 import type { OrderSlipExtras } from "@/modules/greeting-card/domain/order-slip-extras"
 import type { OrderDetailModalTarget } from "./brochure-order-detail-modal"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 import {
   buildCustomerOrderSlipLines,
   buildCustomerOrderSlipText,
@@ -15,6 +17,9 @@ import {
 
 /** Thẻ Đơn Khách hàng — phiếu xác nhận đơn gửi khách (có giá bán, đã thu, còn lại). */
 export function BrochureCustomerOrderTab({ target }: { target: OrderDetailModalTarget }) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
   const [copied, setCopied] = useState(false)
   const { data, mutate } = useApi<{ data: OrderVatData & Partial<OrderSlipExtras> }>(target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/vat` : null)
   const vat = data?.data
@@ -35,11 +40,20 @@ export function BrochureCustomerOrderTab({ target }: { target: OrderDetailModalT
         deliveryNote: vat.deliveryNote,
       }
     : target
-  const groups = buildCustomerOrderSlipLines(slip)
+  const slipInput = {
+    ...slip,
+    sampleProductLabel: terms.sampleProduct,
+    printablesTitle: terms.printablesTitle,
+    deliveryTimeLabel: orderTerms.deliveryTimeLabel,
+    customerLabel: orderTerms.customerRoleLabel,
+    recipientLabel: orderTerms.recipientRoleLabel,
+    addressLabel: orderTerms.addressLabel,
+  }
+  const groups = buildCustomerOrderSlipLines(slipInput)
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(buildCustomerOrderSlipText(slip))
+      await navigator.clipboard.writeText(buildCustomerOrderSlipText(slipInput))
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)
     } catch { /* Trình duyệt chặn clipboard — người dùng chép tay */ }
@@ -52,7 +66,7 @@ export function BrochureCustomerOrderTab({ target }: { target: OrderDetailModalT
           <span className="text-caption font-extrabold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
             Thẻ Đơn Khách hàng
           </span>
-          <p className="mt-1 text-caption text-text-muted">Gửi khách để xác nhận lại đơn, giá và lịch giao.</p>
+          <p className="mt-1 text-caption text-text-muted">Gửi khách để xác nhận lại đơn, giá và lịch hẹn/giao.</p>
         </div>
         <div className="flex flex-wrap gap-2">
         <CopyProductImageButton imageUrl={vat?.productImageUrl ?? target.productImageUrl} driveLink={vat?.productDriveLink} />

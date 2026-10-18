@@ -85,7 +85,7 @@ export function CustomerProfileCard({
           ))}
           {preferredFlowers.map((flw, idx) => (
             <span key={idx} className="rounded-full bg-secondary/15 border border-secondary/25 px-2 py-0.5 text-caption text-secondary-text font-medium">
-              Hoa {flw}
+              {flw}
             </span>
           ))}
         </div>

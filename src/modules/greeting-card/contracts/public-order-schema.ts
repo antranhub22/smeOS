@@ -17,6 +17,7 @@ export const publicOrderBodySchema = z.object({
   recipientName: z.string().max(ORDER_FIELD_MAX.name),
   recipientPhone: z.string().max(20),
   deliveryDate: z.string().max(10),
+  checkOutDate: z.string().max(10).optional(),
   deliveryTimeSlot: z.string().max(ORDER_FIELD_MAX.timeSlot).optional(),
   deliveryAddress: z.string().max(ORDER_FIELD_MAX.address),
   addressParts: z

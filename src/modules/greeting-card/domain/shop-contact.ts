@@ -104,7 +104,7 @@ export function toShopContact(raw: {
     zaloQrUrl: raw.zaloQrUrl ?? null,
     address: raw.address?.trim() || null,
     logoUrl: raw.logoUrl,
-    industry: raw.industry ?? null,
+    ...(raw.industry !== undefined ? { industry: raw.industry ?? null } : {}),
     ...(raw.email !== undefined ? { email: safeEmail(raw.email) } : {}),
     ...(raw.website !== undefined || raw.socialLinks !== undefined
       ? { websites: shopWebsites(raw.website, raw.socialLinks), socialLinks: shopSocialLinks(raw.socialLinks) }

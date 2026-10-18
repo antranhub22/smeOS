@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { SalesPitchData } from "@/modules/products/domain/sales-pitch-template"
 import { formatCurrencyVnd } from "@/core/templates/domain/variable-catalog"
+import { useI18n } from "@/lib/i18n"
 
 export interface SalesPitchCardA6Props {
   activePitch: SalesPitchData
@@ -25,6 +26,7 @@ export interface SalesPitchCardA6Props {
  */
 export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props>(
   function SalesPitchCardA6({ activePitch, status = "DRAFT", className }, ref) {
+    const { ti } = useI18n()
     return (
       <Card
         ref={ref}
@@ -119,7 +121,7 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
           {/* Composition / BOM Table */}
           <div className="rounded-xl bg-surface-alt p-3.5 border border-border/60">
             <div className="text-caption font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center justify-between">
-              <span>Cấu phần hoa & vật liệu</span>
+              <span>Cấu phần {ti("rawMaterialItem") || "nguyên vật liệu"}</span>
               <span className="text-caption font-normal text-text-muted">{activePitch.container}</span>
             </div>
 

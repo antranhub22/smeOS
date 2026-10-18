@@ -73,7 +73,7 @@ export function ProductionUpdateModal({
   const handleSave = async () => {
     const action = isReportingIssue ? "REPORT_MATERIAL_ISSUE" : progress === 100 ? "MARK_READY" : "UPDATE_PROGRESS"
     if (action === "MARK_READY" && !finishedAssetId) {
-      setError("Báo cắm xong phải tải lên ít nhất một ảnh thành phẩm thật để QC.")
+      setError("Báo hoàn thành phải tải lên ít nhất một ảnh thành phẩm thật để QC.")
       return
     }
     setError(null)
@@ -129,7 +129,7 @@ export function ProductionUpdateModal({
           {/* Thanh trượt tiến độ */}
           <div className="p-4 rounded-xl border border-border bg-surface-alt flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label className="font-bold text-text">Tiến độ hoàn thiện mẫu cắm:</label>
+              <label className="font-bold text-text">Tiến độ hoàn thiện sản phẩm:</label>
               <span className="font-extrabold text-alert-700 text-base">{progress}%</span>
             </div>
             <input
@@ -193,7 +193,7 @@ export function ProductionUpdateModal({
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={finishedImageUrl}
-                        alt="Ảnh hoa thành phẩm"
+                        alt="Ảnh thành phẩm"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
@@ -253,7 +253,7 @@ export function ProductionUpdateModal({
                       className="text-xs h-7 gap-1 border-mint-300 text-mint-800 bg-mint-100 hover:bg-mint-200 font-bold"
                     >
                       <Upload size={12} />
-                      <span>Tải ảnh hoa thợ cắm lên</span>
+                      <span>Tải ảnh thành phẩm thợ gửi</span>
                     </Button>
                   </div>
                 </div>
@@ -308,7 +308,7 @@ export function ProductionUpdateModal({
               className="bg-mint-600 hover:bg-mint-700 text-white font-bold gap-1.5 shadow-sm"
             >
               <CheckCircle2 size={14} />
-              <span>Cắm Xong ➔ Gửi Kiểm Định AI QC (P5)</span>
+              <span>Gia Công Xong ➔ Gửi Kiểm Định AI QC (P5)</span>
               <ArrowRight size={14} />
             </Button>
           ) : (

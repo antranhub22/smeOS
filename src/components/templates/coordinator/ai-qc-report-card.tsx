@@ -54,7 +54,7 @@ export function AIQCReportCard({
             tone={isPassed ? "success" : isRework ? "warning" : "neutral"}
             className="font-bold px-3 py-1 text-xs"
           >
-            {isPassed ? "ĐẠT CHUẨN (PASS)" : isRework ? "YÊU CẦU CẮM LẠI" : "CHỜ KIỂM ĐỊNH"}
+            {isPassed ? "ĐẠT CHUẨN (PASS)" : isRework ? "YÊU CẦU LÀM LẠI" : "CHỜ KIỂM ĐỊNH"}
           </Badge>
           {aiScore !== null && aiScore !== undefined && (
             <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-mint-50 border border-mint-200 text-mint-800 font-extrabold text-xs">
@@ -67,12 +67,12 @@ export function AIQCReportCard({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="flex flex-col gap-3">
-          <span className="text-xs font-bold text-text-muted">ẢNH HOA THÀNH PHẨM (THỢ GỬI)</span>
+          <span className="text-xs font-bold text-text-muted">ẢNH THÀNH PHẨM (THỢ GỬI)</span>
           {finishedImageUrls.length > 0 ? (
             <div className="grid grid-cols-2 gap-2">
               {finishedImageUrls.map((url, i) => (
                 <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-border bg-surface-alt">
-                  <img src={url} alt={`Hoa thành phẩm ${i + 1}`} className="h-full w-full object-cover" />
+                  <img src={url} alt={`Thành phẩm ${i + 1}`} className="h-full w-full object-cover" />
                 </div>
               ))}
             </div>
@@ -88,21 +88,21 @@ export function AIQCReportCard({
             <span className="text-xs font-bold text-text-muted block mb-2">TIÊU CHÍ ĐỐI CHIẾU MẪU CHUẨN</span>
             <div className="rounded-xl border border-border bg-surface-alt p-3.5 space-y-2.5 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-text font-medium">Khớp loài hoa & số lượng cành:</span>
+                <span className="text-text font-medium">Khớp nguyên phụ liệu & số lượng định mức:</span>
                 <span className="font-bold text-mint-700 flex items-center gap-1">
                   <Check size={14} />
                   {checklist?.flowerMatchScore || 95}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-text font-medium">Đúng tone màu & ánh sắc:</span>
+                <span className="text-text font-medium">Đúng tone màu & phong cách:</span>
                 <span className="font-bold text-mint-700 flex items-center gap-1">
                   <Check size={14} />
                   {checklist?.colorToneMatch !== false ? "Đạt" : "Lệch tone"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-text font-medium">Đúng chất liệu giấy gói & nơ:</span>
+                <span className="text-text font-medium">Đúng quy cách đóng gói & phụ kiện:</span>
                 <span className="font-bold text-mint-700 flex items-center gap-1">
                   <Check size={14} />
                   {checklist?.wrappingMatch !== false ? "Đạt" : "Sai loại giấy"}
@@ -129,7 +129,7 @@ export function AIQCReportCard({
             <div className="p-3.5 rounded-xl bg-sand-50 border border-sand-200 text-xs text-sand-900">
               <span className="font-bold block mb-1 flex items-center gap-1 text-sand-950">
                 <AlertTriangle size={14} className="text-sand-600" />
-                Hướng dẫn chỉnh sửa / cắm lại:
+                Hướng dẫn chỉnh sửa / làm lại:
               </span>
               <p>{reworkInstructions}</p>
             </div>
@@ -141,7 +141,7 @@ export function AIQCReportCard({
         {onRequestRework && (
           <Button variant="outline" size="sm" onClick={onRequestRework} className="gap-1.5 text-sand-800 border-sand-300 hover:bg-sand-50">
             <RotateCcw size={14} />
-            <span>Yêu cầu sửa / Cắm lại</span>
+            <span>Yêu cầu sửa / Làm lại</span>
           </Button>
         )}
         {onApprove && (

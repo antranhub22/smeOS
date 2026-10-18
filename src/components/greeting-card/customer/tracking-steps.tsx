@@ -1,16 +1,11 @@
 "use client"
 
 import React from "react"
-import { BadgeCheck, Clock, Flower2, Gift, Truck } from "lucide-react"
+import { BadgeCheck, Clock, Gift, Truck, Flower2 } from "lucide-react"
 import { TRACKING_STEP_COUNT } from "@/modules/greeting-card/domain/greeting-card-rules"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
-const STEPS = [
-  { label: "Tiếp nhận", icon: Clock },
-  { label: "Xác nhận", icon: BadgeCheck },
-  { label: "Cắm hoa", icon: Gift },
-  { label: "Đang giao", icon: Truck },
-  { label: "Hoàn tất", icon: Flower2 },
-] as const
+const STEP_ICONS = [Clock, BadgeCheck, Gift, Truck, Flower2] as const
 
 function clock(iso: string): string {
   const dt = new Date(iso)
@@ -18,26 +13,36 @@ function clock(iso: string): string {
 }
 
 /**
- * Dải 5 bước trên trang theo dõi (Spec #12): Tiếp nhận hiện giờ thực tế; Cắm hoa và Đang giao
- * hiện khoảng thời gian dự kiến theo lịch giao.
+ * Dải 5 bước trên trang theo dõi (Spec #12): Tiếp nhận hiện giờ thực tế; bước 3 (sản xuất) và Đang giao
+ * hiện khoảng thời gian dự kiến theo lịch giao. Nhãn bước 3 thích ứng theo ngành SSOT.
  */
 export function TrackingSteps({
   stepIndex,
   createdAt,
   timeline,
+  industryKey,
 }: {
   /** 1–5; -1 = đơn đã huỷ (không bước nào sáng) */
   stepIndex: number
   createdAt: string
   timeline?: { arranging?: { displayRange: string }; delivering?: { displayRange: string } } | null | undefined
+  industryKey?: string | null | undefined
 }) {
+  const orderTerms = getIndustryOrderTerms(industryKey)
+  const steps = [
+    { label: "Tiếp nhận" },
+    { label: "Xác nhận" },
+    { label: orderTerms.productionStepLabel },
+    { label: orderTerms.trackingDeliveryStepLabel },
+    { label: "Hoàn tất" },
+  ]
   // "17:30 - 19:30" → "17:30–19:30": gọn để nằm trên một dòng trong cột hẹp
   const range = (r: string | undefined) => (r ?? "").replace(/\s*-\s*/g, "–")
   const timeLabels = [clock(createdAt), "", range(timeline?.arranging?.displayRange), range(timeline?.delivering?.displayRange), ""]
   return (
     <ol className="grid grid-cols-5 gap-1 sm:gap-2 mt-2">
-      {STEPS.map((s, idx) => {
-        const Icon = s.icon
+      {steps.map((s, idx) => {
+        const Icon = STEP_ICONS[idx]!
         const step = idx + 1
         const isCompleted = stepIndex > step || stepIndex === TRACKING_STEP_COUNT
         const isCurrent = stepIndex === step && stepIndex !== TRACKING_STEP_COUNT

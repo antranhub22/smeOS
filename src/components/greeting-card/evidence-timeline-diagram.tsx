@@ -7,6 +7,9 @@ import { useApi } from "@/components/greeting-card/greeting-api"
 import { OrderEvidencePrint } from "./order-evidence-print"
 import type { TimelineEvent, StepSegment } from "@/modules/greeting-card/domain/tracking-timeline"
 
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+
 interface EvidenceTimelineProps {
   orderId?: string | null | undefined
   sessionId?: string | null | undefined
@@ -55,6 +58,9 @@ export function EvidenceTimelineDiagram({
   recipientName, recipientPhone, deliveryAddress, deliveryTimeSlot,
   productName, totalVnd, paidVnd,
 }: EvidenceTimelineProps) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
   const [copied, setCopied] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
   const qs = orderId ? `orderId=${encodeURIComponent(orderId)}` : `sessionId=${encodeURIComponent(sessionId ?? "")}`
@@ -71,13 +77,13 @@ export function EvidenceTimelineDiagram({
 
   function handleCopyEvidence() {
     const lines: string[] = [
-      `=== BẰNG CHỨNG ĐỐI SOÁT ĐƠN HÀNG FLORAOS ===`,
+      `=== BẰNG CHỨNG ĐỐI SOÁT ĐƠN HÀNG SMEOS ===`,
       `Mã đơn: #${orderCode || "---"}`,
-      `Khách hàng: ${customerName || "---"} (${customerPhone || "---"})`,
-      `Người nhận: ${recipientName || "---"} (${recipientPhone || "---"})`,
-      `Địa chỉ giao: ${deliveryAddress || "---"}`,
-      `Khung giờ hẹn giao: ${deliveryTimeSlot || "Trong ngày"}`,
-      `Mẫu hoa: ${productName || "---"}`,
+      `${orderTerms.customerRoleLabel}: ${customerName || "---"} (${customerPhone || "---"})`,
+      `${orderTerms.recipientRoleLabel}: ${recipientName || "---"} (${recipientPhone || "---"})`,
+      `${orderTerms.addressLabel}: ${deliveryAddress || "---"}`,
+      `${orderTerms.deliveryTimeLabel}: ${deliveryTimeSlot || orderTerms.fallbackTimeSlotText}`,
+      `${terms.sampleProduct}: ${productName || "---"}`,
       `Giá trị: ${(totalVnd ?? 0).toLocaleString("vi-VN")} đ | Đã thanh toán: ${(paidVnd ?? 0).toLocaleString("vi-VN")} đ`,
       ``,
       `--- LỊCH SỬ DIỄN TIẾN & MỐC BẰNG CHỨNG ---`,
@@ -90,7 +96,7 @@ export function EvidenceTimelineDiagram({
       }
     }
     lines.push(``)
-    lines.push(`Hệ thống đối soát xác nhận tự động · FloraOS Core`)
+    lines.push(`Hệ thống đối soát xác nhận tự động · smeOS Core`)
     void navigator.clipboard.writeText(lines.join("\n")).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)

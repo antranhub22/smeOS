@@ -84,10 +84,10 @@ export function FloristJobCard({
     const flowerSummary = flowers.map((f) => `${f.flowerName} (${f.quantity} ${f.unit})`).join(", ")
     const textBrief = [
       `📋 THẺ GIA CÔNG — ĐƠN #${orderCode}`,
-      `🌸 Mẫu: ${recipeTitle}`,
-      `⏰ Hạn cắm xong: ${targetReadyTime}${deliveryTargetTime ? ` (Giao lúc: ${deliveryTargetTime})` : ""}`,
+      `✨ Mẫu: ${recipeTitle}`,
+      `⏰ Hạn ${ti.makerAction.toLowerCase()} xong: ${targetReadyTime}${deliveryTargetTime ? ` (Giao lúc: ${deliveryTargetTime})` : ""}`,
       `💰 Giá gia công: ${suggestedCraftFee.toLocaleString("vi-VN")}đ`,
-      `🌿 Hoa chính: ${flowerSummary || "Theo mẫu"}`,
+      `🌿 ${ti.rawMaterialItem} chính: ${flowerSummary || "Theo mẫu"}`,
       cardMessage ? `💌 Thiệp: "${cardMessage}"` : "",
       `📍 Giao tới: ${recipientName} · ${phoneDisplay} · ${formatAddress(deliveryAddress)}`,
       partnerInstruction ? `⚠️ Lưu ý: ${partnerInstruction}` : "",
@@ -211,7 +211,7 @@ export function FloristJobCard({
             </span>
             <div className="relative aspect-square w-full rounded-xl overflow-hidden border border-border bg-surface-alt">
               {sampleImageUrl ? (
-                <img src={sampleImageUrl} alt="Mẫu hoa" crossOrigin="anonymous" className="h-full w-full object-cover" />
+                <img src={sampleImageUrl} alt={ti.sampleProduct} crossOrigin="anonymous" className="h-full w-full object-cover" />
               ) : (
                 <div className="h-full w-full flex items-center justify-center text-text-muted text-xs">
                   Chưa có ảnh mẫu

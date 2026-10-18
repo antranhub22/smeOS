@@ -212,7 +212,7 @@ export function ScheduleConfirmModal({
                 </div>
                 <div>
                   <div className="text-body-sm font-bold text-text">Giờ tối vàng (19:30)</div>
-                  <div className="text-caption text-text-muted">Thời điểm mua sắm, đặt hoa tặng và thư giãn</div>
+                  <div className="text-caption text-text-muted">Thời điểm mua sắm, đặt hàng và thư giãn</div>
                 </div>
               </div>
               {mode === "evening" && <CheckCircle2 size={16} className="text-primary" />}

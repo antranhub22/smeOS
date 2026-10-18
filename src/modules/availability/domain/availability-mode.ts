@@ -27,6 +27,10 @@ export interface ProductBookingRecord {
   note?: string | null
   status: "ACTIVE" | "CANCELLED"
   createdAt: string
+  orderStatus?: string | null
+  totalVnd?: number | null
+  paidVnd?: number | null
+  checkInTimeSlot?: string | null
 }
 
 export interface DayAvailabilitySummary {
