@@ -35,6 +35,23 @@ export const LIST_COLUMNS = [
 export type ListColumn = (typeof LIST_COLUMNS)[number]["id"]
 export const DEFAULT_COLUMNS: ListColumn[] = ["code", "customer", "sale", "step", "age", "sla", "total", "delivery"]
 
+export function getIndustryListColumns(industryKey?: string | null): Array<{ id: ListColumn; label: string }> {
+  const isStay = getIndustryOrderTerms(industryKey).fulfillmentFlow === "CALENDAR_STAY"
+  return [
+    { id: "code", label: "Mã đơn/link" },
+    { id: "customer", label: "Khách" },
+    { id: "sale", label: "Nhân sự phụ trách" },
+    { id: "step", label: "Bước hiện tại" },
+    { id: "age", label: "Ở bước" },
+    { id: "sla", label: "Thời gian chuẩn" },
+    { id: "total", label: "Giá trị" },
+    { id: "delivery", label: isStay ? "Nhận phòng" : "Giao" },
+    { id: "product", label: isStay ? "Hạng phòng" : "Mẫu sản phẩm" },
+    { id: "channel", label: "Kênh" },
+    { id: "phone", label: "SĐT khách" },
+  ]
+}
+
 export interface TrackingViewState {
   view: ViewKind
   q: string

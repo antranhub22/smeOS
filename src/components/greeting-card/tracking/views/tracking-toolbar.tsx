@@ -19,7 +19,8 @@ import {
 } from "lucide-react"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { useSession } from "@/lib/session"
-import { TRACKING_CATEGORIES } from "@/modules/greeting-card/domain/tracking-filters"
+import { TRACKING_CATEGORIES, getIndustryTrackingCategories } from "@/modules/greeting-card/domain/tracking-filters"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 import {
   VIEW_TABS,
   loadSavedViews,
@@ -123,7 +124,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             className={SELECT}
           >
             <option value="">Mọi bước</option>
-            {TRACKING_CATEGORIES.filter((c) => c.id !== "ALL").map((c) => (
+            {getIndustryTrackingCategories(organization?.industry).filter((c) => c.id !== "ALL").map((c) => (
               <option key={c.id} value={c.id}>
                 {c.label}
               </option>
@@ -269,13 +270,13 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
           </select>
 
           <label className="flex items-center gap-1.5 text-caption text-text-muted">
-            <span>Giao từ</span>
-            <ViDateInput compact ariaLabel="Giao từ ngày" value={state.deliveryFrom} onChange={(v) => onChange({ deliveryFrom: v })} wrapperClassName="flex-1" className={SELECT} />
+            <span>{getIndustryOrderTerms(organization?.industry).fulfillmentFlow === "CALENDAR_STAY" ? "Nhận phòng từ" : "Giao từ"}</span>
+            <ViDateInput compact ariaLabel={getIndustryOrderTerms(organization?.industry).fulfillmentFlow === "CALENDAR_STAY" ? "Nhận phòng từ ngày" : "Giao từ ngày"} value={state.deliveryFrom} onChange={(v) => onChange({ deliveryFrom: v })} wrapperClassName="flex-1" className={SELECT} />
           </label>
 
           <label className="flex items-center gap-1.5 text-caption text-text-muted">
             <span>đến</span>
-            <ViDateInput compact ariaLabel="Giao đến ngày" value={state.deliveryTo} onChange={(v) => onChange({ deliveryTo: v })} wrapperClassName="flex-1" className={SELECT} />
+            <ViDateInput compact ariaLabel={getIndustryOrderTerms(organization?.industry).fulfillmentFlow === "CALENDAR_STAY" ? "Đến ngày" : "Giao đến ngày"} value={state.deliveryTo} onChange={(v) => onChange({ deliveryTo: v })} wrapperClassName="flex-1" className={SELECT} />
           </label>
 
           <select

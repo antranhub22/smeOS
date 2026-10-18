@@ -21,11 +21,18 @@ import { defaultTheChaoView } from "@/components/greeting-card/default-view"
 import { DismissProposalModal } from "./views/dismiss-proposal-modal"
 import { canDecideDismissal } from "@/modules/greeting-card/domain/dismissal-policy"
 
+import { useSession } from "@/lib/session"
+import { getIndustryOrderTerms, getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+
 /**
  * Tab Theo dõi tiến độ — nhiều cách xem trên CÙNG một tập đơn/link: Kanban, Danh sách, Lịch,
  * Timeline, Công việc, Dashboard. Bộ lọc và phạm vi dùng chung; máy chủ lọc/nhóm/phân trang.
  */
 export function BrochureOrderTrackingTab() {
+  const { organization } = useSession()
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
+  const terms = getIndustryTerminology(organization?.industry)
+  const isStay = orderTerms.fulfillmentFlow === "CALENDAR_STAY"
   const me = useApi<{ user: { id: string }; capabilities: string[] }>("/api/v1/auth/me")
   const { mutate } = useSWRConfig()
   const [picked, setPicked] = useState<TrackingViewState | null>(null)
@@ -58,7 +65,11 @@ export function BrochureOrderTrackingTab() {
       <TrackingToolbar state={state} onChange={change} onApplyView={applyView} onRefresh={refresh} />
       {state.owner === "COORDINATOR" && (
         <div className="flex items-center gap-2 text-caption text-text-muted">
-          <span>Đang xem việc của Điều phối (nhận đơn, cắm hoa, giao hàng).</span>
+          <span>
+            {isStay
+              ? "Đang xem việc của Điều phối (nhận đơn, chuẩn bị phòng, đón khách)."
+              : `Đang xem việc của Điều phối (nhận đơn, ${terms.makerAction.toLowerCase()}, giao hàng).`}
+          </span>
           <button type="button" onClick={() => change({ owner: "" })}
             className="inline-flex h-8 items-center gap-1 rounded-xl border border-border px-2.5 font-bold text-foreground hover:bg-surface-muted">
             <X size={13} aria-hidden="true" /> Xem tất cả đơn và link

@@ -5,8 +5,9 @@ import { ArrowDown, ArrowUp } from "lucide-react"
 import { usePagedList } from "@/components/greeting-card/greeting-api"
 import { formatMinutes } from "@/modules/greeting-card/domain/step-sla"
 import type { SortField, TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"
-import { LIST_COLUMNS, type ListColumn, type TrackingViewState } from "./tracking-view-state"
+import { LIST_COLUMNS, getIndustryListColumns, type ListColumn, type TrackingViewState } from "./tracking-view-state"
 import { SlaBadge, ViewState, codeOf, vnd, StaffNametagGroup } from "./tracking-bits"
+import { useSession } from "@/lib/session"
 
 const SORTABLE: Partial<Record<ListColumn, SortField>> = { customer: "customerName", step: "step", age: "age", sla: "urgency", total: "totalVnd", delivery: "deliveryDate" }
 
@@ -32,8 +33,10 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
   onDetail?: ((i: TrackingViewItem) => void) | undefined
   view?: "list" | "queue"
 }) {
+  const { organization } = useSession()
+  const listColumns = getIndustryListColumns(organization?.industry)
   const list = usePagedList<TrackingViewItem>(`/api/v1/greeting-card/tracking?view=${view}&${qs}`, 25)
-  const cols = LIST_COLUMNS.filter((c) => state.columns.includes(c.id))
+  const cols = listColumns.filter((c) => state.columns.includes(c.id))
   const toggleSort = (f: SortField) => onChange(state.sort === f ? { dir: state.dir === "asc" ? "desc" : "asc" } : { sort: f, dir: "desc" })
   return (
     <div className="flex flex-col gap-3">
@@ -41,7 +44,7 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
         <details className="text-body-sm">
           <summary className="cursor-pointer font-semibold text-text-muted">Cột hiển thị</summary>
           <div className="mt-2 flex flex-wrap gap-3">
-            {LIST_COLUMNS.map((c) => (
+            {listColumns.map((c) => (
               <label key={c.id} className="flex items-center gap-1.5">
                 <input type="checkbox" checked={state.columns.includes(c.id)}
                   onChange={(e) => onChange({ columns: e.target.checked ? [...state.columns, c.id] : state.columns.filter((x) => x !== c.id) })} />

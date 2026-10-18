@@ -29,6 +29,9 @@ function fmtCountdown(ms: number): string {
   return `${String(m).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`
 }
 
+import { useSession } from "@/lib/session"
+import { getIndustryOrderTerms, getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+
 /** Thẻ đơn hàng/phiên trong Kanban: trực quan, tối giản, hỗ trợ thu gọn riêng từng đơn. */
 export function KanbanCard({
   item,
@@ -40,6 +43,10 @@ export function KanbanCard({
   onRestore,
   defaultCollapsed = false,
 }: KanbanCardProps) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
+  const isStay = orderTerms.fulfillmentFlow === "CALENDAR_STAY"
   const [collapsed, setCollapsed] = useState(defaultCollapsed)
   const [copied, setCopied] = useState(false)
   // Đếm ngược tự duyệt (5 phút): chỉ đồng hồ đổi trong effect, số còn lại tính khi render
@@ -201,18 +208,20 @@ export function KanbanCard({
             onClick={() => onOpen(item)}
             className="flex w-full flex-col gap-1.5 text-left cursor-pointer"
           >
-            {/* Mẫu hoa thu nhỏ & Giá tiền */}
+            {/* Ảnh sản phẩm / hạng phòng & Giá tiền */}
             <div className="flex items-center gap-2 rounded-lg bg-surface-muted/40 p-1.5 w-full">
               <FlowerImage
                 src={item.productImageUrl}
-                alt={item.productName || "Mẫu hoa"}
+                alt={item.productName || terms.sampleProduct}
                 sizes="36px"
                 fallback="icon"
                 className="h-9 w-9 shrink-0 rounded-md border border-border/70 bg-surface object-cover"
               />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold text-foreground text-caption" title={item.productName}>
-                  {item.productName === "Chưa chốt mẫu" ? "Chưa chốt mẫu hoa" : item.productName}
+                  {item.productName === "Chưa chốt mẫu"
+                    ? (isStay ? "Chưa chốt phòng" : `Chưa chốt ${terms.sampleProduct.toLowerCase()}`)
+                    : item.productName}
                 </p>
                 <p className="truncate text-caption">
                   {item.totalVnd > 0 ? (
@@ -224,12 +233,12 @@ export function KanbanCard({
               </div>
             </div>
 
-            {/* Mốc hẹn giao hoa */}
+            {/* Mốc hẹn giao / nhận phòng */}
             {(item.deliveryTimeSlot || item.deliveryDate) && (
               <div className="flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-caption font-semibold text-primary w-full">
                 <Clock size={11} className="shrink-0" aria-hidden="true" />
                 <span className="truncate">
-                  Giao: {item.deliveryTimeSlot || "Trong ngày"}{item.deliveryDate ? ` · ${item.deliveryDate}` : ""}
+                  {isStay ? "Nhận phòng" : "Giao"}: {item.deliveryTimeSlot || "Trong ngày"}{item.deliveryDate ? ` · ${item.deliveryDate}` : ""}
                 </span>
               </div>
             )}
