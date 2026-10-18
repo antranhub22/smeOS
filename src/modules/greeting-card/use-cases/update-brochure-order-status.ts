@@ -6,6 +6,7 @@ import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, type Coordinato
 import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payment-policy"
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
+import { queueStaffNotification } from "./notify-staff"
 import {
   DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason,
 } from "../domain/delivery-failure"
@@ -112,6 +113,12 @@ export async function uploadBrochureProductPhoto(
       noteAppend: `[Bỏ qua ảnh thành phẩm] ${input.skipReason?.trim() || "Giao gấp theo yêu cầu"}`,
     })
     queueOrderNotification(ctx.organizationId, order.id, "READY")
+    queueStaffNotification(ctx.organizationId, "READY", {
+      orderId: order.id,
+      orderCode: order.code,
+      amountVnd: Number(order.total_vnd),
+      assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+    })
     return result
   }
   const assetIds = await ownedMediaIds(ctx, input, repo)
@@ -121,6 +128,12 @@ export async function uploadBrochureProductPhoto(
     qcAssetIds: assetIds,
   })
   queueOrderNotification(ctx.organizationId, order.id, "READY")
+  queueStaffNotification(ctx.organizationId, "READY", {
+    orderId: order.id,
+    orderCode: order.code,
+    amountVnd: Number(order.total_vnd),
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
   return result
 }
 
@@ -192,6 +205,13 @@ export async function markBrochureDeliveryFailed(
     feeVnd,
   })
   queueOrderNotification(ctx.organizationId, order.id, "DELIVERY_FAILED")
+  queueStaffNotification(ctx.organizationId, "DELIVERY_FAILED", {
+    orderId: order.id,
+    orderCode: order.code,
+    amountVnd: Number(order.total_vnd),
+    reason: DELIVERY_FAILURE_LABEL[input.reason] || input.reason,
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
   return result
 }
 
@@ -281,6 +301,15 @@ export async function coordinatorRejectBrochureOrder(
       note: "Điều phối xác định không thể cung ứng đơn hàng theo yêu cầu khách.",
     },
   })
+
+  queueStaffNotification(ctx.organizationId, "CANCELLATION_REQUESTED", {
+    orderId: order.id,
+    orderCode: order.code,
+    amountVnd: Number(order.total_vnd),
+    reason: `[Điều phối từ chối nhận đơn] ${reasonText}`,
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
+
   return {
     success: true,
     message: "Đã gửi yêu cầu từ chối nhận đơn và hoàn tiền tới Điều hành xét duyệt.",

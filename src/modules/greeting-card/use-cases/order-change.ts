@@ -23,6 +23,7 @@ import { isBrochureOwner } from "./brochure-owner"
 import { holidayOn, holidaySurcharge, parseHolidayPolicy } from "../domain/holiday-policy"
 import { assertHolidayCapacity } from "./holiday-capacity"
 import { assertSlotOpen } from "./slot-availability"
+import { queueStaffNotification } from "./notify-staff"
 
 /** Cách khách chứng minh là người đặt: mở từ chính link của đơn (cookie chủ phiên) hoặc 4 số cuối SĐT. */
 export interface ChangeProof {
@@ -93,6 +94,17 @@ export async function submitOrderChange(
   }
   const body = `Khách xin đổi: ${built.changes.map((c) => c.label).join(", ")}${built.note ? ` — "${built.note}"` : ""}`
   const created = await repo.createFromCustomer(order, payload, body)
+
+  queueStaffNotification(order.organization_id, "CHANGE_REQUESTED", {
+    orderId: order.id,
+    orderCode: order.code,
+    customerName: before.recipientName || "Khách hàng",
+    customerPhone: order.customer?.phone ?? null,
+    amountVnd: Number(order.total_vnd),
+    reason: body,
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
+
   return { id: created.id, status: "PENDING" as const, changes: changesForCustomer(built.changes), expectedFeeDeltaVnd }
 }
 

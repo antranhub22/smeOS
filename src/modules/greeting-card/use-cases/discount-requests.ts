@@ -6,6 +6,7 @@ import { GreetingMessageRepository } from "../infra/greeting-message-repository"
 import { discountError, discountVndOf, parseMaxDiscountPercent, type DiscountAsk } from "../domain/discount-request"
 import { roleOf } from "../domain/internal-message"
 import { visibleTarget } from "./internal-messages"
+import { queueStaffNotification } from "./notify-staff"
 
 async function maxPercent(ctx: TenantContext) {
   return parseMaxDiscountPercent((await getCurrentOrganization(ctx))?.settings)
@@ -31,6 +32,15 @@ export async function requestDiscount(
     orderId: order.id, senderRole: roleOf(ctx.capabilities) ?? "SALE", reason,
     payload: { status: "PENDING", baseTotalVnd: order.baseTotalVnd, requestedVnd: discountVndOf(input.ask, order.baseTotalVnd), ...input.ask },
   })
+
+  queueStaffNotification(ctx.organizationId, "DISCOUNT_REQUESTED", {
+    orderId: order.id,
+    orderCode: order.code ?? null,
+    amountVnd: discountVndOf(input.ask, order.baseTotalVnd),
+    reason,
+    assignedSaleId: ctx.userId,
+  })
+
   return { id: created.id, createdAt: created.created_at.toISOString() }
 }
 

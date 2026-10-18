@@ -88,6 +88,7 @@ model users {
   password_hash String?
   name          String?
   avatar_url    String?
+  phone         String?
   locale        String   @default("vi")
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
@@ -193,6 +194,7 @@ model organizations {
   greeting_messages       greeting_messages[]
   greeting_share_links    greeting_share_links[]
   greeting_message_reads  greeting_message_reads[]
+  staff_notifications     staff_notifications[]
 }
 
 model workspaces {
@@ -2733,6 +2735,10 @@ model greeting_integrations {
   notify_enabled           Boolean  @default(false)
   notify_config_encrypted  String?
   notify_templates         Json? // mã mẫu tin theo sự kiện — không bí mật
+  staff_notify_enabled          Boolean  @default(false)
+  staff_notify_channels         Json? // Mảng kênh đã bật: ["TELEGRAM", "ZALO", ...]
+  staff_notify_config_encrypted String? // Thông tin kết nối mã hoá (Bot Token, Chat ID, App Secret...)
+  staff_notify_events           Json? // Bật/tắt theo sự kiện
   created_at               DateTime @default(now())
   updated_at               DateTime @updatedAt
 
@@ -2783,6 +2789,29 @@ model greeting_notifications {
 
   @@unique([organization_id, order_id, event_key])
   @@index([organization_id, order_id])
+}
+
+/// Nhật ký thông báo nhân viên Thẻ Chào (Đa kênh: APP_INBOX, ZALO, TELEGRAM, WHATSAPP, MESSENGER, SMS)
+model staff_notifications {
+  id              String   @id @default(uuid())
+  organization_id String
+  order_id        String?
+  event_key       String
+  channel         String // APP_INBOX | ZALO | SMS | TELEGRAM | WHATSAPP | MESSENGER
+  recipient_role  String? // ADMIN | SALE | COORDINATOR
+  recipient_id    String? // user_id hoặc null nếu broadcast toàn bộ vai trò
+  recipient_info  String? // SĐT, Telegram Chat ID, Zalo User ID...
+  title           String?
+  message         String?
+  status          String   @default("SENT") // SENT | FAILED | SKIPPED
+  provider_msg_id String?
+  error           String?
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id, event_key])
+  @@index([organization_id, recipient_id])
 }
 
 /// Ghi nhật ký hành trình tương tác của khách trên Thẻ chào (Swipe, Select, Checkout...)

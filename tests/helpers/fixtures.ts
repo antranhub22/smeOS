@@ -1,4 +1,5 @@
 import type { TenantContext } from "@/core/tenancy"
+import { SESSION_COOKIE } from "@/core/http/cookies"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { signUp } from "@/modules/organization/use-cases/sign-up"
 import { SSO_HEADER } from "@/modules/integration/domain/integration-credential"
@@ -45,7 +46,7 @@ export async function createTenant(label: string): Promise<Tenant> {
 
 export function withSession(url: string, token: string, init?: RequestInit): Request {
   const headers = new Headers(init?.headers)
-  headers.set("cookie", `floraos_session=${encodeURIComponent(token)}`)
+  headers.set("cookie", `${SESSION_COOKIE}=${encodeURIComponent(token)}`)
   if (init?.body) headers.set("content-type", "application/json")
   return new Request(url, { ...init, headers })
 }

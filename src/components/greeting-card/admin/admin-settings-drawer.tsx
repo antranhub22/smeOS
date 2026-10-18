@@ -15,6 +15,7 @@ import { BrochurePolicySettings } from "./brochure-policy-settings"
 import { BrochureShippingSettings } from "./brochure-shipping-settings"
 import { BrochureHolidaySettings } from "./brochure-holiday-settings"
 import { BrochureNotifySettings } from "./brochure-notify-settings"
+import { StaffNotifySettings } from "./staff-notify-settings"
 
 /** Ngăn Cài đặt của Điều hành — tách khỏi hộp việc để tab chỉ còn việc cần quyết. */
 export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
@@ -48,6 +49,7 @@ export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
           <BrochureShippingSettings />
           <BrochureHolidaySettings />
           <BrochureNotifySettings />
+          <StaffNotifySettings />
         </div>
       </div>
     </div>

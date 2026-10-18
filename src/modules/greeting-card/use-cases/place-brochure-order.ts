@@ -1,4 +1,5 @@
 import { queueOrderNotification } from "./notify-customer"
+import { queueStaffNotification } from "./notify-staff"
 import { AppError, validationFailed } from "@/core/http/errors"
 import { MAX_ORDERS_PER_PHONE_PER_HOUR, TOO_MANY_ORDERS_MESSAGE } from "../domain/order-guard"
 import { generateBrochureOrderCode, normalizePhone } from "../domain/greeting-card-rules"
@@ -47,7 +48,7 @@ export async function assertPhoneQuota(organizationId: string, phone: string, ch
 export async function placeBrochureOrder(
   params: {
     organizationId: string
-    session: { id: string; send_code: string }
+    session: { id: string; send_code: string; sale_id?: string | null | undefined }
     product: GreetingCatalogProduct
     input: CustomerOrderSubmitInput
     notePrefix: string
@@ -132,6 +133,15 @@ export async function placeBrochureOrder(
 
   // Tin "Đã nhận đơn" kèm link theo dõi — chạy nền, lỗi gửi tin không ảnh hưởng đơn
   queueOrderNotification(organizationId, order.id, "ORDER_RECEIVED")
+  queueStaffNotification(organizationId, "ORDER_RECEIVED", {
+    orderId: order.id,
+    orderCode: order.code,
+    customerName: input.customerName,
+    customerPhone: input.customerPhone,
+    productName: product.name,
+    amountVnd: priced.quote.totalVnd,
+    assignedSaleId: session.sale_id ?? null,
+  })
 
   return {
     sendCode: session.send_code,

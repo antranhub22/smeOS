@@ -122,21 +122,21 @@ async function priceProduct(
 
   const unitPriceVnd = variant?.priceVnd ?? product.price
   const quantity = req.quantity ?? 1
-  // Luôn hỗ trợ mã ưu đãi gửi lên cho mọi ngành
-  const code = req.voucherCode?.trim() || undefined
+  // Tiệm tắt mã giảm giá (mặc định): ô nhập bị ẩn, mã gửi thẳng API cũng bị bỏ qua
+  const code = shipping.vouchersEnabled ? req.voucherCode?.trim() : undefined
   if (unitPriceVnd === null) {
     // Mẫu chưa niêm yết giá: nhận đơn, cửa hàng báo giá trọn gói sau (ưu đãi trừ lúc báo giá)
-    if (code) errors.voucherCode = "Mẫu này chưa niêm yết giá nên chưa áp dụng được mã ưu đãi"
+    if (code) errors.voucherCode = "Mẫu này chưa niêm yết giá nên chưa áp dụng được mã giảm giá"
     return { quote: awaitingQuote(quantity, zone), variant, voucher: null, errors }
   }
   let voucher: VoucherFacts | null = null
   if (code) {
     const found = await checkout.findVoucher(organizationId, code)
     if (!found) {
-      // Mã đặt cọc (DC30…) không phải mã ưu đãi — chỉ khách sang đúng ô
+      // Mã đặt cọc (DC30…) không phải mã giảm giá — chỉ khách sang đúng ô
       errors.voucherCode = findPaymentCode(parsePaymentPlans(shopSettings), code)
         ? "Đây là mã áp dụng đặt cọc — vui lòng nhập ở ô Mã áp dụng đặt cọc"
-        : "Mã ưu đãi không tồn tại"
+        : "Mã giảm giá không tồn tại"
     } else {
       const customerId = await checkout.findCustomerIdByPhone(organizationId, normalizePhone(req.customerPhone))
       const blocker = voucherBlocker(found, unitPriceVnd * quantity, customerId)

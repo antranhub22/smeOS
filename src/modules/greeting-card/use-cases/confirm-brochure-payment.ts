@@ -10,6 +10,7 @@ import { depositAmountVnd } from "../domain/payment-schedule"
 import { balanceCollectionBlocker } from "../domain/balance-collection"
 import { loadPublicSession } from "./brochure-session-access"
 import { queueOrderNotification } from "./notify-customer"
+import { queueStaffNotification } from "./notify-staff"
 import { paymentNotifyEvent } from "../domain/customer-notifications"
 import { assertOrderInScope } from "./order-scope"
 import { ensureHomestayOrderBooking } from "@/modules/availability/use-cases/bind-order-booking"
@@ -146,6 +147,12 @@ export async function adminConfirmBrochurePayment(
     evidenceAssetId,
   })
   queueOrderNotification(ctx.organizationId, orderId, paymentNotifyEvent(result.balanceVnd))
+  queueStaffNotification(ctx.organizationId, "PAYMENT_CONFIRMED", {
+    orderId,
+    orderCode: order.code,
+    amountVnd,
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
   return result
 }
 

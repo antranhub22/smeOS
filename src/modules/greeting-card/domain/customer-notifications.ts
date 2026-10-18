@@ -138,7 +138,7 @@ export function customerSecondPaymentReminderMessage(p: {
   const deliveryAction = p.deliveryActionTerm || "tiến hành giao hoa"
 
   const head = p.skippedPhoto
-    ? `Dạ chào anh/chị, ${item} cho đơn ${p.orderCode} đã hoàn thành và đang chuẩn bị sẵn sàng ạ!`
+    ? `Dạ chào anh/chị, ${item} cho đơn ${p.orderCode} đã hoàn thành và đang chuẩn bị giao gấp ạ!`
     : `Dạ chào anh/chị, ${item} cho đơn ${p.orderCode} đã ${makerAction} ạ!`
   const body = p.skippedPhoto
     ? `Anh/chị mở link thanh toán số tiền còn lại là ${money} để cửa hàng ${deliveryAction} nhé ạ:`
