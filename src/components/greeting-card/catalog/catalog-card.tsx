@@ -3,6 +3,7 @@
 import React from "react"
 import { Check, ChevronRight, Copy, Download, Edit2, Eye, Loader2, Package, RotateCcw, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/lib/i18n"
 
 export type CatalogItem = {
   id: string
@@ -34,6 +35,9 @@ type Props = {
 export function CatalogCard({
   catalog, canManageState, copied, deleting, restoring, onSelect, onPreview, onCopy, onDelete, onRestore,
 }: Props) {
+  const { ti } = useI18n()
+  const itemLabel = (ti("sampleProduct") || "mẫu hoa").replace(/ chuẩn$/i, "").toLowerCase()
+
   return (
     <div
       className="bg-surface rounded-2xl border border-border p-5 flex flex-col gap-4 hover:border-primary/40 hover:shadow-md transition-all duration-200"
@@ -61,7 +65,7 @@ export function CatalogCard({
         <div className="flex items-center gap-1.5 text-caption text-text-muted">
           <Package size={13} />
           <span>
-            <strong className="text-foreground">{catalog._count.items}</strong> mẫu hoa
+            <strong className="text-foreground">{catalog._count.items}</strong> {itemLabel}
           </span>
         </div>
         <div className="flex items-center gap-1.5 text-caption text-text-muted">
@@ -88,7 +92,7 @@ export function CatalogCard({
           className="basis-full whitespace-nowrap text-caption gap-1.5 h-8"
         >
           <Edit2 size={12} />
-          <span>Quản lý mẫu hoa</span>
+          <span>Quản lý {itemLabel}</span>
         </Button>
         <button
           type="button"

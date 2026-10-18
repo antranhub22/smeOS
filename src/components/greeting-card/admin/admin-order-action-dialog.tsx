@@ -14,6 +14,8 @@ import { AlertTriangle, Info } from "lucide-react"
 import { useNow } from "@/components/greeting-card/work/use-worklist"
 import { OrderPaymentProofView } from "@/components/greeting-card/order-payment-proof-view"
 import { balanceCollectionBlocker } from "@/modules/greeting-card/domain/balance-collection"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground"
 
@@ -38,6 +40,8 @@ export function AdminOrderActionDialog({
 }) {
   const { order, type } = action
   const now = useNow()
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
 
   const plan = readPaymentPlan(order.pricing_rule_ref)
   const pct = plan?.depositPercent ?? policy.depositPercent
@@ -214,7 +218,7 @@ export function AdminOrderActionDialog({
         {type === "collect" && isDepositOrder && !isDepositPaid && (
           <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-body-sm text-primary flex items-start gap-2">
             <Info size={16} className="shrink-0 mt-0.5 text-primary" aria-hidden="true" />
-            <span>Đơn áp dụng đặt cọc {pct}%. Xác nhận tiền cọc để chuyển đơn sang xưởng bắt đầu cắm hoa.</span>
+            <span>Đơn áp dụng đặt cọc {pct}%. Xác nhận tiền cọc để chuyển đơn sang xưởng bắt đầu {terms.makerAction.toLowerCase()}.</span>
           </div>
         )}
 

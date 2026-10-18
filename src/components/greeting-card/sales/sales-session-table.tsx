@@ -5,7 +5,8 @@ import { markPersonalLinkCopied } from "@/components/greeting-card/share/tracked
 import { Check, Copy, ExternalLink, Ban, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
-import { SESSION_STATUS_BADGE, type SessionRow } from "./sales-types"
+import { getSessionStatusBadge, SESSION_STATUS_BADGE, type SessionRow } from "./sales-types"
+import { useI18n } from "@/lib/i18n"
 
 interface Props {
   sessions: SessionRow[]
@@ -25,6 +26,7 @@ function formatDate(iso: string | null): string {
 
 /** Bảng link đã gửi: trạng thái khách, hạn dùng, đơn, sao chép/thu hồi link. */
 export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore, onChanged, emptyState }: Props) {
+  const { ti } = useI18n()
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [revokingId, setRevokingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -60,7 +62,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
           <thead className="bg-surface-muted text-text-muted text-caption uppercase border-b border-border">
             <tr>
               <th className="px-4 py-3">Mã gửi</th>
-              <th className="px-4 py-3">Bộ sưu tập</th>
+              <th className="px-4 py-3">{ti("catalogTitle")}</th>
               <th className="px-4 py-3">Khách hàng</th>
               <th className="px-4 py-3">Trạng thái</th>
               <th className="px-4 py-3">Đơn hàng</th>
@@ -69,7 +71,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
           </thead>
           <tbody className="divide-y divide-border">
             {sessions.map((row) => {
-              const badge = SESSION_STATUS_BADGE[row.status] ?? { label: row.status, className: "bg-surface-muted" }
+              const badge = getSessionStatusBadge(row.status, ti("sampleProduct"))
               const active = row.link_state === "ACTIVE"
               return (
                 <tr key={row.id} className="hover:bg-surface-muted/50 transition-colors">

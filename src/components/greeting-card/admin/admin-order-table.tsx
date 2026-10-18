@@ -14,6 +14,8 @@ import type { BrochurePaymentPolicy } from "@/modules/greeting-card/domain/broch
 import { PaymentProofBadge } from "./payment-proof-badge"
 import { useNow } from "@/components/greeting-card/work/use-worklist"
 import { balanceCollectionBlocker } from "@/modules/greeting-card/domain/balance-collection"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   DRAFT: { label: "Chờ thanh toán", className: "bg-warning-bg text-warning" },
@@ -39,6 +41,9 @@ export function AdminOrderTable({
 }) {
   // Mốc tự duyệt ảnh sau 10 phút — đồng hồ cập nhật mỗi phút, không gọi Date.now() lúc render
   const now = useNow()
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const makerActionLower = terms.makerAction.toLowerCase()
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-body-sm">
@@ -129,7 +134,7 @@ export function AdminOrderTable({
                   <ProductCell order={o} />
                 </td>
                 <td className="px-4 py-3">
-                  <div className="font-semibold text-foreground">{o.customer?.name || "Khách đặt hoa"}</div>
+                  <div className="font-semibold text-foreground">{o.customer?.name || "Khách hàng"}</div>
                   <div className="text-caption text-text-muted">{o.customer?.phone ?? ""}</div>
                 </td>
                 <td className="px-4 py-3 text-right font-extrabold">
@@ -201,12 +206,12 @@ export function AdminOrderTable({
                             ⏳ {coordinatorPayment ? "Đ/P đã duyệt cọc" : "Đã cọc"} · Chờ duyệt ảnh
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-semibold bg-success/10 text-success border border-success/30" title="Đã nhận tiền cọc thành công. Chờ xưởng cắm hoa xong mới thu lần 2.">
-                            ✓ {coordinatorPayment ? "Đ/P đã duyệt cọc" : "Đã cọc"} · Chờ hoa xong
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-semibold bg-success/10 text-success border border-success/30" title={`Đã nhận tiền cọc thành công. Chờ ${makerActionLower} xong mới thu lần 2.`}>
+                            ✓ {coordinatorPayment ? "Đ/P đã duyệt cọc" : "Đã cọc"} · Chờ {makerActionLower} xong
                           </span>
                         )
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-semibold bg-info/10 text-info border border-info/30" title="Đã nhận tiền cọc. Phần còn lại sẽ thu sau khi giao hoa thành công.">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-semibold bg-info/10 text-info border border-info/30" title="Đã nhận tiền cọc. Phần còn lại sẽ thu sau khi hoàn tất thành công.">
                           ✓ {coordinatorPayment ? "Đ/P đã duyệt cọc" : "Đã cọc"} · Thu sau giao
                         </span>
                       )

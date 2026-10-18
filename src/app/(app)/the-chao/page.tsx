@@ -105,8 +105,14 @@ export default function TheChaoPage() {
     payment: can("R11"),
     coordinator: can("R3") || can("R4") || can("R5"),
   }
+  const catalogTabLabel = ti("catalogTitle").toLowerCase().includes("phòng")
+    ? "Danh sách phòng"
+    : ti("catalogTitle").toLowerCase().includes("thực đơn")
+    ? "Thực đơn món"
+    : dict.greetingCard.tabs.catalogs
+
   const tabs: TabItem[] = ([
-    { id: "catalog", icon: BookOpen, label: dict.greetingCard.tabs.catalogs, ...(catalogCount !== null ? { badge: catalogCount } : {}) },
+    { id: "catalog", icon: BookOpen, label: catalogTabLabel, ...(catalogCount !== null ? { badge: catalogCount } : {}) },
     { id: "tracking", icon: GitMerge, label: dict.greetingCard.tabs.tracking },
     { id: "sales", icon: Send, label: dict.greetingCard.tabs.sales, ...(sessionCount !== null ? { badge: sessionCount } : {}) },
     { id: "payment", icon: ShieldCheck, label: dict.greetingCard.tabs.operation, ...(pendingCancelCount !== null ? { badge: pendingCancelCount } : {}) },
@@ -137,7 +143,7 @@ export default function TheChaoPage() {
           </h1>
           <p className="mt-1 max-w-2xl text-body-sm text-text-muted">
             {ti("sampleProduct")
-              ? `Gửi khách ${ti("catalogTitle").toLowerCase()} để xem, chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.`
+              ? `Gửi khách ${ti("catalogTitle").toLowerCase()} để xem, ${ti("makerAction").toLowerCase().includes("phòng") ? "chọn phòng, đặt phòng" : "chọn mẫu, đặt hàng"} và thanh toán ngay trên điện thoại.`
               : dict.greetingCard.header.description}
           </p>
         </div>

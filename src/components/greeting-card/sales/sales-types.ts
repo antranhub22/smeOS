@@ -18,11 +18,25 @@ export interface SessionRow {
   order: { id: string; code: string; status: string; total_vnd: number; paid_vnd: number } | null
 }
 
+export function getSessionStatusBadge(status: string, sampleProductTerm?: string): { label: string; className: string } {
+  const itemLabel = (sampleProductTerm || "mẫu hoa").replace(/ chuẩn$/i, "").toLowerCase()
+  const badges: Record<string, { label: string; className: string }> = {
+    CREATED: { label: "Chưa mở link", className: "bg-surface-muted text-text-muted" },
+    OPENED: { label: `Đang xem ${itemLabel}`, className: "bg-warning/15 text-warning" },
+    BROWSING: { label: `Đang xem ${itemLabel}`, className: "bg-warning/15 text-warning" },
+    SELECTED: { label: `Đã chọn ${itemLabel}`, className: "bg-primary/10 text-primary" },
+    ORDER_SUBMITTED: { label: "Đã tạo đơn hàng", className: "bg-info-bg text-info" },
+    PAYMENT_REPORTED: { label: "Khách báo đã chuyển tiền", className: "bg-warning-bg text-warning" },
+    COMPLETED: { label: "Đã xác nhận thanh toán", className: "bg-success-bg text-success" },
+  }
+  return badges[status] ?? { label: status, className: "bg-surface-muted" }
+}
+
 export const SESSION_STATUS_BADGE: Record<string, { label: string; className: string }> = {
   CREATED: { label: "Chưa mở link", className: "bg-surface-muted text-text-muted" },
-  OPENED: { label: "Đang xem mẫu hoa", className: "bg-warning/15 text-warning" },
-  BROWSING: { label: "Đang xem mẫu hoa", className: "bg-warning/15 text-warning" },
-  SELECTED: { label: "Đã chọn mẫu hoa", className: "bg-primary/10 text-primary" },
+  OPENED: { label: "Đang xem mẫu", className: "bg-warning/15 text-warning" },
+  BROWSING: { label: "Đang xem mẫu", className: "bg-warning/15 text-warning" },
+  SELECTED: { label: "Đã chọn mẫu", className: "bg-primary/10 text-primary" },
   ORDER_SUBMITTED: { label: "Đã tạo đơn hàng", className: "bg-info-bg text-info" },
   PAYMENT_REPORTED: { label: "Khách báo đã chuyển tiền", className: "bg-warning-bg text-warning" },
   COMPLETED: { label: "Đã xác nhận thanh toán", className: "bg-success-bg text-success" },

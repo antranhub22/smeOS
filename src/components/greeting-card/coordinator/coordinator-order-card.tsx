@@ -20,6 +20,9 @@ import {
   isUrgentOrder,
   type BrochureWorkflowPolicy,
 } from "@/modules/greeting-card/domain/brochure-workflow-policy"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, getIndustryOrderTerms, type IndustryTerminology, type IndustryOrderTerminology } from "@/modules/organization/domain/industry-profile"
+
 
 export interface BrochureOrder {
   id: string
@@ -59,17 +62,36 @@ export type ModalState =
   | { type: "confirm-deposit"; orderId: string; orderCode: string; depositVnd: number | null; proofUrl: string | null }
   | { type: "detail"; order: BrochureOrder }
 
-const PRODUCTION_LABELS: Record<string, string> = {
-  WAITING: "Chờ cắm hoa", ASSIGNED: "Đã phân công", ARRANGING: "Đang cắm hoa",
-  QUALITY_CHECK: "Đang kiểm tra", READY: "Hoa đã hoàn thiện", DONE: "Đã xong",
-}
 const DELIVERY_LABELS: Record<string, string> = {
   PENDING: "Chưa giao", DELIVERING: "Đang giao", DISPATCHED: "Đã bàn giao Ship",
   DELIVERED: "Giao thành công", FAILED: "Giao thất bại",
 }
 
-function productionLabel(s: string) { return PRODUCTION_LABELS[s] ?? s }
-function deliveryLabel(s: string) { return DELIVERY_LABELS[s] ?? s }
+function productionLabel(s: string, terms?: IndustryTerminology) {
+  if (terms) {
+    if (s === "WAITING") return `Chờ ${terms.makerAction.toLowerCase()}`
+    if (s === "ASSIGNED") return "Đã phân công"
+    if (s === "ARRANGING") return `Đang ${terms.makerAction.toLowerCase()}`
+    if (s === "QUALITY_CHECK") return "Đang kiểm tra"
+    if (s === "READY") return `${terms.sampleProduct.replace(/ chuẩn$/i, "")} hoàn thiện`
+    if (s === "DONE") return "Đã xong"
+  }
+  const fallback: Record<string, string> = {
+    WAITING: "Chờ cắm hoa", ASSIGNED: "Đã phân công", ARRANGING: "Đang cắm hoa",
+    QUALITY_CHECK: "Đang kiểm tra", READY: "Hoa đã hoàn thiện", DONE: "Đã xong",
+  }
+  return fallback[s] ?? s
+}
+
+function deliveryLabel(s: string, orderTerms?: IndustryOrderTerminology) {
+  if (orderTerms?.fulfillmentFlow === "CALENDAR_STAY") {
+    if (s === "PENDING") return "Chờ nhận phòng"
+    if (s === "DELIVERING" || s === "DISPATCHED") return "Đang lưu trú"
+    if (s === "DELIVERED") return "Đã trả phòng"
+    if (s === "FAILED") return "Huỷ / Không đến"
+  }
+  return DELIVERY_LABELS[s] ?? s
+}
 
 export function CoordinatorOrderCard({
   order,
@@ -86,16 +108,21 @@ export function CoordinatorOrderCard({
   now: number
   workflowPolicy?: BrochureWorkflowPolicy | undefined
 }) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
+  const isStay = orderTerms.fulfillmentFlow === "CALENDAR_STAY"
+
   const session = order.greeting_sessions[0]
   const { product } = order
-  const recipient = order.delivery_address?.recipientName || "Khách nhận"
+  const recipient = order.delivery_address?.recipientName || (isStay ? "Khách lưu trú" : "Khách nhận")
   const phone = order.delivery_address?.phone || ""
   const address = order.delivery_address?.street || ""
   const delivery = readDeliveryNote(order.delivery_address)
   const failures = readDeliveryFailures(order.delivery_window)
   const lastFailure = order.delivery_status === "FAILED" ? failures.at(-1) : undefined
   const date = order.delivery_window?.date || ""
-  const timeSlot = order.delivery_window?.timeSlot || "Trong ngày"
+  const timeSlot = order.delivery_window?.timeSlot || orderTerms.fallbackTimeSlotText
   const awaitingQuote = order.total_vnd <= 0
   const isPaid = !awaitingQuote && order.paid_vnd >= order.total_vnd
   const isDeposit = !awaitingQuote && !isPaid && order.paid_vnd > 0
@@ -164,16 +191,16 @@ export function CoordinatorOrderCard({
           className="w-20 h-20 rounded-xl border border-border shrink-0"
         />
         <div className="flex-1 min-w-0 flex flex-col gap-1">
-          <div className="text-caption text-text-muted font-medium">Mẫu khách chọn:</div>
+          <div className="text-caption text-text-muted font-medium">{terms.sampleProduct.replace(/ chuẩn$/i, "")} khách chọn:</div>
           <div className="text-body font-bold text-foreground truncate">
             {product.name}
           </div>
           <div className="flex flex-wrap gap-2 mt-0.5">
             <span className="text-caption px-2 py-0.5 rounded-full bg-surface-muted text-text-muted border border-border">
-              SX: {productionLabel(order.production_status)}
+              SX: {productionLabel(order.production_status, terms)}
             </span>
             <span className="text-caption px-2 py-0.5 rounded-full bg-surface-muted text-text-muted border border-border">
-              Ship: {deliveryLabel(order.delivery_status)}
+              {isStay ? "Tiến độ: " : "Ship: "}{deliveryLabel(order.delivery_status, orderTerms)}
             </span>
           </div>
         </div>
@@ -189,7 +216,7 @@ export function CoordinatorOrderCard({
       <div className="bg-surface-muted rounded-xl p-3 flex flex-col gap-2 text-body-sm text-text-muted">
         <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-1.5 text-body-sm font-extrabold text-primary">
           <Calendar size={16} className="text-primary shrink-0" />
-          <span>Khung giờ giao: {timeSlot || "Trong ngày"}{date ? ` · ${date}` : ""}</span>
+          <span>{orderTerms.deliveryTimeLabel}: {timeSlot}{date ? ` · ${date}` : ""}</span>
         </div>
         <div className="flex items-center gap-2">
           <MapPin size={14} className="text-primary shrink-0" />
@@ -197,7 +224,7 @@ export function CoordinatorOrderCard({
         </div>
         {(delivery.note || delivery.mapUrl) && (
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-text">
-            {delivery.note && <span><span className="font-bold">Người giao lưu ý:</span> {delivery.note}</span>}
+            {delivery.note && <span><span className="font-bold">{isStay ? "Quản gia lưu ý:" : "Người giao lưu ý:"}</span> {delivery.note}</span>}
             {delivery.mapUrl && (
               <a href={delivery.mapUrl} target="_blank" rel="noopener noreferrer nofollow" className="inline-flex items-center gap-1 font-bold text-primary hover:underline">
                 <ExternalLink size={12} aria-hidden="true" /> Mở bản đồ

@@ -24,7 +24,7 @@ export interface StepDefinition {
   orderIndex: number
 }
 
-export const PIPELINE_STEPS: StepDefinition[] = [
+const BASE_PIPELINE_STEPS: StepDefinition[] = [
   {
     id: "STEP_1_OPENED",
     title: "Khách mở link chào",
@@ -89,6 +89,75 @@ export const PIPELINE_STEPS: StepDefinition[] = [
     orderIndex: 9,
   },
 ]
+
+const INDUSTRY_STEP_OVERRIDES: Record<
+  string,
+  Partial<Record<TrackingPipelineStepId, { title?: string; shortTitle?: string; roleResponsible?: string }>>
+> = {
+  HOMESTAY: {
+    STEP_1_OPENED: { roleResponsible: "Khách hàng / Quản gia" },
+    STEP_2_CHOOSING: { title: "Đang lướt xem hạng phòng", shortTitle: "Chọn phòng", roleResponsible: "Khách hàng / Quản gia" },
+    STEP_3_FILLING_FORM: { title: "Đang nhập thông tin đặt phòng", shortTitle: "Nhập thông tin", roleResponsible: "Khách hàng / Quản gia" },
+    STEP_4_PAYMENT_PENDING: { title: "Đã gửi đơn & Báo chuyển cọc", shortTitle: "Chờ cọc", roleResponsible: "Khách hàng" },
+    STEP_6_ARRANGING: { title: "Đang chuẩn bị phòng & đón tiếp", shortTitle: "Chuẩn bị phòng", roleResponsible: "Quản gia / Lễ tân" },
+    STEP_7_READY_QC: { title: "Phòng hoàn thiện & Sẵn sàng đón tiếp", shortTitle: "Phòng sẵn sàng", roleResponsible: "Quản gia / Lễ tân" },
+    STEP_8_DELIVERING: { title: "Khách nhận phòng & Lưu trú", shortTitle: "Nhận phòng", roleResponsible: "Lễ tân / Quản gia" },
+    STEP_9_COMPLETED: { title: "Hoàn tất kỳ lưu trú & Trả phòng", shortTitle: "Hoàn tất", roleResponsible: "Quản gia / Toàn bộ" },
+  },
+  FASHION: {
+    STEP_2_CHOOSING: { title: "Đang lướt chọn mẫu thiết kế", shortTitle: "Chọn mẫu", roleResponsible: "Khách hàng / Sale" },
+    STEP_6_ARRANGING: { title: "Xưởng đang may đo & lên mẫu", shortTitle: "May đo", roleResponsible: "Điều phối / Thợ may" },
+    STEP_7_READY_QC: { title: "Trang phục hoàn thiện & Duyệt mẫu", shortTitle: "May xong", roleResponsible: "Thợ may / Điều phối" },
+    STEP_8_DELIVERING: { title: "Đang giao hàng đến người nhận", shortTitle: "Đang giao", roleResponsible: "Shipper / Điều phối" },
+  },
+  FNB: {
+    STEP_1_OPENED: { roleResponsible: "Khách hàng / Phục vụ" },
+    STEP_2_CHOOSING: { title: "Đang xem thực đơn món", shortTitle: "Chọn món", roleResponsible: "Khách hàng / Phục vụ" },
+    STEP_6_ARRANGING: { title: "Bếp đang chế biến & chuẩn bị", shortTitle: "Chế biến", roleResponsible: "Bếp / Pha chế" },
+    STEP_7_READY_QC: { title: "Món ra đĩa & Hoàn tất chế biến", shortTitle: "Món sẵn sàng", roleResponsible: "Bếp / Phục vụ" },
+    STEP_8_DELIVERING: { title: "Đang giao món / Phục vụ tại bàn", shortTitle: "Đang phục vụ", roleResponsible: "Shipper / Phục vụ" },
+  },
+  CRAFT_GIFT: {
+    STEP_2_CHOOSING: { title: "Đang chọn mẫu quà tặng & thủ công", shortTitle: "Chọn mẫu", roleResponsible: "Khách hàng / Sale" },
+    STEP_6_ARRANGING: { title: "Nghệ nhân đang chế tác & gia công", shortTitle: "Chế tác", roleResponsible: "Điều phối / Nghệ nhân" },
+    STEP_7_READY_QC: { title: "Sản phẩm hoàn thiện & Duyệt mẫu", shortTitle: "Đã hoàn thành", roleResponsible: "Nghệ nhân / Điều phối" },
+    STEP_8_DELIVERING: { title: "Đang giao quà đến người nhận", shortTitle: "Đang giao", roleResponsible: "Shipper / Điều phối" },
+  },
+  RETAIL_GENERAL: {
+    STEP_2_CHOOSING: { title: "Đang xem danh mục sản phẩm", shortTitle: "Chọn sản phẩm", roleResponsible: "Khách hàng / Sale" },
+    STEP_6_ARRANGING: { title: "Đang soạn hàng & đóng gói", shortTitle: "Soạn hàng", roleResponsible: "Kho / Đóng gói" },
+    STEP_7_READY_QC: { title: "Đóng gói hoàn tất & Sẵn sàng giao", shortTitle: "Đã đóng gói", roleResponsible: "Kho / Điều phối" },
+    STEP_8_DELIVERING: { title: "Đang giao hàng đến người nhận", shortTitle: "Đang giao", roleResponsible: "Shipper / Điều phối" },
+  },
+  SERVICES: {
+    STEP_1_OPENED: { roleResponsible: "Khách hàng / Chuyên viên" },
+    STEP_2_CHOOSING: { title: "Đang chọn gói dịch vụ", shortTitle: "Chọn dịch vụ", roleResponsible: "Khách hàng / Chuyên viên" },
+    STEP_6_ARRANGING: { title: "Đang chuẩn bị triển khai dịch vụ", shortTitle: "Chuẩn bị", roleResponsible: "Kỹ thuật viên / Chuyên viên" },
+    STEP_7_READY_QC: { title: "Hoàn tất triển khai & Nghiệm thu", shortTitle: "Nghiệm thu", roleResponsible: "Kỹ thuật viên / Chuyên viên" },
+    STEP_8_DELIVERING: { title: "Đang thực hiện dịch vụ", shortTitle: "Thực hiện", roleResponsible: "Kỹ thuật viên" },
+  },
+}
+
+/**
+ * Trả về 9 bước tiến độ được điều chỉnh nhãn và vai trò phù hợp với từng ngành SSOT.
+ */
+export function getIndustryPipelineSteps(industryKey?: string | null): StepDefinition[] {
+  const overrides = INDUSTRY_STEP_OVERRIDES[(industryKey ?? "").toUpperCase()]
+  if (!overrides) return BASE_PIPELINE_STEPS
+
+  return BASE_PIPELINE_STEPS.map((step) => {
+    const patch = overrides[step.id]
+    if (!patch) return step
+    return {
+      ...step,
+      ...(patch.title ? { title: patch.title } : {}),
+      ...(patch.shortTitle ? { shortTitle: patch.shortTitle } : {}),
+      ...(patch.roleResponsible ? { roleResponsible: patch.roleResponsible } : {}),
+    }
+  })
+}
+
+export const PIPELINE_STEPS: StepDefinition[] = BASE_PIPELINE_STEPS
 
 
 

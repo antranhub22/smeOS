@@ -12,35 +12,11 @@ import { SubstituteProposalModal } from "./substitute-proposal-modal"
 import { CoordinatorAcceptRejectModal } from "./coordinator-accept-reject-modal"
 import { CoordinatorConfirmBalanceModal } from "./coordinator-confirm-balance-modal"
 import { CoordinatorConfirmDepositModal } from "./coordinator-confirm-deposit-modal"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 type ActiveModal = Exclude<ModalState, { type: "none" | "detail" }>
 
-const CONFIG = {
-  florist: {
-    icon: UserCheck,
-    title: "Giao Florist",
-    description: <>Ghi chú phân công florist (tên thợ, yêu cầu đặc biệt). Trạng thái sẽ chuyển sang <strong>Đang cắm hoa</strong>.</>,
-    note: { path: "assign-florist", field: "floristNote", placeholder: "Vd: Giao cho Thợ Mai — ưu tiên hoa hồng đỏ tươi", confirm: "Xác nhận Giao Florist" },
-  },
-  "product-photo": {
-    icon: Camera,
-    title: "Ảnh Thành Phẩm",
-    description: null,
-    photo: { endpoint: "product-photo", label: "Ảnh hoa thành phẩm" },
-  },
-  dispatch: {
-    icon: Truck,
-    title: "Giao Ship",
-    description: <>Nhập thông tin shipper / mã vận đơn. Trạng thái sẽ chuyển sang <strong>Đang giao hoa</strong>.</>,
-    note: { path: "dispatch-shipping", field: "trackingNote", placeholder: "Vd: Anh Hùng GHN · 0912345678 · Mã VĐ: GHNXXX", confirm: "Xác nhận Giao Ship" },
-  },
-  "recipient-photo": {
-    icon: ImageIcon,
-    title: "Ảnh Người Nhận",
-    description: <>Upload ảnh chụp trao hoa. Đơn sẽ chuyển sang <strong>Giao thành công · Hoàn tất</strong>.</>,
-    photo: { endpoint: "recipient-photo", label: "Ảnh giao hoa thành công" },
-  },
-} as const
 
 /** Hộp thoại một tác vụ xưởng: ghi chú (florist, ship), tải ảnh (thành phẩm, người nhận), hoặc đề xuất hủy đơn. */
 export function CoordinatorActionModal({ modal, onClose, onDone, allowSkipPhoto }: {
@@ -110,7 +86,60 @@ function CoordinatorTaskModal({
   onDone: () => void
   allowSkipPhoto?: Record<"product-photo" | "recipient-photo", boolean> | undefined
 }) {
-  const cfg = CONFIG[modal.type]
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
+  const isStay = orderTerms.fulfillmentFlow === "CALENDAR_STAY"
+  const makerTitleShort = terms.makerTitle.split("/")[0]?.trim() || "Florist"
+
+  const getDynamicConfig = () => {
+    if (modal.type === "florist") {
+      return {
+        icon: UserCheck,
+        title: `Giao ${makerTitleShort}`,
+        description: <>Ghi chú phân công {terms.makerTitle.toLowerCase()} (tên nhân sự, yêu cầu). Trạng thái sẽ chuyển sang <strong>Đang {terms.makerAction.toLowerCase()}</strong>.</>,
+        note: {
+          path: "assign-florist",
+          field: "floristNote",
+          placeholder: `Vd: Phân công ${makerTitleShort} phụ trách — lưu ý yêu cầu đặc biệt của khách`,
+          confirm: `Xác nhận Giao ${makerTitleShort}`,
+        },
+      }
+    }
+    if (modal.type === "product-photo") {
+      return {
+        icon: Camera,
+        title: terms.completedProductPhoto,
+        description: null,
+        photo: { endpoint: "product-photo" as const, label: terms.completedProductPhoto },
+      }
+    }
+    if (modal.type === "dispatch") {
+      return {
+        icon: Truck,
+        title: isStay ? "Đón tiếp & Bàn giao" : "Giao Ship",
+        description: isStay
+          ? <>Nhập thông tin nhân sự đón tiếp hoặc lưu ý nhận phòng. Trạng thái sẽ chuyển sang <strong>Đang lưu trú</strong>.</>
+          : <>Nhập thông tin shipper / mã vận đơn. Trạng thái sẽ chuyển sang <strong>Đang giao hàng</strong>.</>,
+        note: {
+          path: "dispatch-shipping",
+          field: "trackingNote",
+          placeholder: isStay ? "Vd: Quản gia Tuấn đón tiếp · SĐT: 0912345678 · Phòng 201" : "Vd: Anh Hùng GHN · 0912345678 · Mã VĐ: GHNXXX",
+          confirm: isStay ? "Xác nhận Đón tiếp" : "Xác nhận Giao Ship",
+        },
+      }
+    }
+    return {
+      icon: ImageIcon,
+      title: isStay ? "Ảnh Khách Check-in / Đón tiếp" : "Ảnh Người Nhận",
+      description: isStay
+        ? <>Upload ảnh đón tiếp khách hoặc nhận phòng. Đơn sẽ chuyển sang <strong>Hoàn tất</strong>.</>
+        : <>Upload ảnh chụp trao hàng. Đơn sẽ chuyển sang <strong>Giao thành công · Hoàn tất</strong>.</>,
+      photo: { endpoint: "recipient-photo" as const, label: isStay ? "Ảnh đón tiếp / check-in" : "Ảnh giao hàng thành công" },
+    }
+  }
+
+  const cfg = getDynamicConfig()
   const Icon = cfg.icon
   const [note, setNote] = useState("")
   const [busy, setBusy] = useState(false)

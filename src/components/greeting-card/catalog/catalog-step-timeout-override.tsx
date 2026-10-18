@@ -114,7 +114,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
                 </span>
               </li>
               <li>
-                Duyệt ảnh hoa thành phẩm:{" "}
+                Duyệt ảnh thành phẩm:{" "}
                 <span className="font-bold text-foreground">
                   {storePolicy.autoApprovePhotoOnTimeout
                     ? `Tự duyệt sau ${storePolicy.photoReviewTimeoutMinutes} phút`
@@ -223,7 +223,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
                 onChange={(e) => setField("autoApprovePhotoOnTimeout", e.target.checked)}
                 className="rounded border-border text-primary focus:ring-primary"
               />
-              <span>4. Tự duyệt ảnh hoa nếu khách im lặng</span>
+              <span>4. Tự duyệt ảnh thành phẩm nếu khách im lặng</span>
             </label>
             <div className="flex items-center gap-1.5 shrink-0">
               <input

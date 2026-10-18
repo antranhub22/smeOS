@@ -6,7 +6,7 @@ import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { zaloHref } from "@/components/greeting-card/work/work-item-card"
 import { groupSaleKanban } from "@/modules/greeting-card/domain/sale-kanban"
 import { STEP_OWNER_LABEL, formatMinutes } from "@/modules/greeting-card/domain/step-sla"
-import type { TrackingPipelineItem, TrackingPipelineStepId } from "@/modules/greeting-card/domain/tracking-pipeline-types"
+import { getIndustryPipelineSteps, type TrackingPipelineItem, type TrackingPipelineStepId } from "@/modules/greeting-card/domain/tracking-pipeline-types"
 import { BrochureOrderDetailModal, type OrderDetailModalTarget } from "@/components/greeting-card/brochure-order-detail-modal"
 import { StaffNametagGroup } from "@/components/greeting-card/staff-nametag"
 import { classifyOrderTimeTier, type OrderTimeTier } from "@/modules/greeting-card/domain/order-time-tier"
@@ -34,7 +34,8 @@ export function SalesKanbanView({ items, now, onOpenNotes, showSale, doneHidden 
   const terms = getIndustryTerminology(organization?.industry)
   const orderTerms = getIndustryOrderTerms(organization?.industry)
   const [detailTarget, setDetailTarget] = useState<OrderDetailModalTarget | null>(null)
-  const columns = groupSaleKanban(items)
+  const pipelineSteps = getIndustryPipelineSteps(organization?.industry)
+  const columns = groupSaleKanban(items, pipelineSteps)
 
   const buildDetailTarget = (item: TrackingPipelineItem): OrderDetailModalTarget => ({
     orderId: item.orderId,

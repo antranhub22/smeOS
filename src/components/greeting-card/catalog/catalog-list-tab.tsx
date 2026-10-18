@@ -12,6 +12,7 @@ import { useSession } from "@/lib/session"
 import { CatalogCreateModal } from "./catalog-create-modal"
 import { CatalogCard, type CatalogItem } from "./catalog-card"
 import { CatalogListFilters, type CatalogDaysFilter, type CatalogStatusFilter } from "./catalog-list-filters"
+import { useI18n } from "@/lib/i18n"
 
 type Props = {
   onSelectCatalog: (catalog: CatalogItem) => void
@@ -19,6 +20,13 @@ type Props = {
 
 export function CatalogListTab({ onSelectCatalog }: Props) {
   const { can } = useSession()
+  const { ti } = useI18n()
+  const rawCatalogTitle = ti("catalogTitle") || "Bộ sưu tập"
+  const isHomestay = rawCatalogTitle.toLowerCase().includes("phòng")
+  const isFnb = rawCatalogTitle.toLowerCase().includes("thực đơn")
+  const catalogHeading = isHomestay ? "danh sách phòng" : isFnb ? "thực đơn món" : rawCatalogTitle.toLowerCase()
+  const createBtnText = isHomestay ? "Tạo danh sách phòng" : isFnb ? "Tạo thực đơn" : "Tạo bộ sưu tập"
+
   const me = useApi<{ user: { id: string; name: string | null } }>("/api/v1/auth/me")
   const currentUserId = me.data?.user.id ?? null
   // L4 product.archive — được ẩn/khôi phục catalog của người khác (khớp server: delete-greeting-catalog.ts)
@@ -139,10 +147,10 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
         <div>
           <h2 className="text-title font-extrabold text-foreground flex items-center gap-2">
             <BookOpen size={20} />
-            <span>Quản lý bộ sưu tập</span>
+            <span className="capitalize">Quản lý {catalogHeading}</span>
           </h2>
           <p className="text-body-sm text-text-muted mt-1">
-            Tạo và chỉnh sửa các bộ sưu tập mẫu hoa để gửi cho khách hàng.
+            Tạo và chỉnh sửa các {catalogHeading} để gửi cho khách hàng.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -163,7 +171,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
             className="bg-primary hover:bg-primary-dark text-white font-bold gap-1.5 text-body-sm h-9 shadow-sm"
           >
             <Plus size={16} />
-            <span>Tạo bộ sưu tập</span>
+            <span>{createBtnText}</span>
           </Button>
         </div>
       </div>
@@ -199,7 +207,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
       ) : catalogs.length === 0 && isFiltered ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Không có bộ sưu tập nào khớp bộ lọc</p>
+            <p className="text-title-sm font-bold text-foreground">Không có {catalogHeading} nào khớp bộ lọc</p>
             <p className="text-body-sm text-text-muted mt-1">
               Thử xem tất cả thời gian, tất cả nhân sự hoặc mục đang hoạt động
             </p>
@@ -214,9 +222,9 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
             <BookOpen size={28} className="text-text-muted" />
           </div>
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Chưa có bộ sưu tập nào</p>
+            <p className="text-title-sm font-bold text-foreground">Chưa có {catalogHeading} nào</p>
             <p className="text-body-sm text-text-muted mt-1">
-              Tạo bộ sưu tập đầu tiên để bắt đầu gửi Thẻ Chào cho khách
+              Tạo {catalogHeading} đầu tiên để bắt đầu gửi Thẻ Chào cho khách
             </p>
           </div>
           <Button
@@ -226,7 +234,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
             className="gap-2 mt-2"
           >
             <Plus size={16} />
-            Tạo Bộ Sưu Tập Đầu Tiên
+            <span className="capitalize">{createBtnText}</span>
           </Button>
         </div>
       ) : (

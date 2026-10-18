@@ -126,13 +126,23 @@ export function customerSecondPaymentReminderMessage(p: {
   balanceVnd: number
   trackingUrl: string | null
   skippedPhoto?: boolean
+  sampleProductTerm?: string
+  makerActionTerm?: string
+  completedPhotoTerm?: string
+  deliveryActionTerm?: string
 }): string {
   const money = `${p.balanceVnd.toLocaleString("vi-VN")} đ`
+  const item = (p.sampleProductTerm || "hoa").replace(/ chuẩn$/i, "").toLowerCase()
+  const makerAction = p.makerActionTerm ? `${p.makerActionTerm.toLowerCase()} hoàn tất` : "cắm xong hoàn thiện"
+  const photoText = p.completedPhotoTerm ? p.completedPhotoTerm.toLowerCase() : "ảnh hoa thực tế"
+  const deliveryAction = p.deliveryActionTerm || "tiến hành giao hoa"
+
   const head = p.skippedPhoto
-    ? `Dạ chào anh/chị, hoa cho đơn ${p.orderCode} đã hoàn thành và đang chuẩn bị giao gấp ạ!`
-    : `Dạ chào anh/chị, hoa cho đơn ${p.orderCode} đã cắm xong hoàn thiện ạ!`
+    ? `Dạ chào anh/chị, ${item} cho đơn ${p.orderCode} đã hoàn thành và đang chuẩn bị sẵn sàng ạ!`
+    : `Dạ chào anh/chị, ${item} cho đơn ${p.orderCode} đã ${makerAction} ạ!`
   const body = p.skippedPhoto
-    ? `Anh/chị mở link thanh toán số tiền còn lại là ${money} để cửa hàng tiến hành giao hoa nhé ạ:`
-    : `Anh/chị mở link kiểm tra ảnh hoa thực tế và thanh toán số tiền còn lại là ${money} để cửa hàng tiến hành giao hoa nhé ạ:`
+    ? `Anh/chị mở link thanh toán số tiền còn lại là ${money} để cửa hàng ${deliveryAction} nhé ạ:`
+    : `Anh/chị mở link kiểm tra ${photoText} và thanh toán số tiền còn lại là ${money} để cửa hàng ${deliveryAction} nhé ạ:`
   return p.trackingUrl ? `${head} ${body} ${p.trackingUrl}` : `${head} ${body}`
 }
+

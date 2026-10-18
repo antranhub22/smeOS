@@ -212,7 +212,7 @@ export function BrochureWorkflowSettings() {
                   Bắt buộc chụp Ảnh thành phẩm QC (Gate 3)
                 </label>
                 <p className="text-caption text-text-muted">
-                  Bật: Phải có ảnh hoa đã cắm xong mới cho xuất giao. Tắt: Cho phép bấm &quot;Bỏ qua ảnh&quot; với đơn gấp hoặc khách quen.
+                  Bật: Phải có ảnh thành phẩm hoàn chỉnh mới cho xuất giao. Tắt: Cho phép bấm &quot;Bỏ qua ảnh&quot; với đơn gấp hoặc khách quen.
                 </p>
               </div>
               <input
@@ -268,7 +268,7 @@ export function BrochureWorkflowSettings() {
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
                 <label className="text-body-sm font-bold text-foreground block">
-                  Bắt buộc chụp Ảnh người nhận hoa (Gate 6)
+                  Bắt buộc chụp Ảnh người nhận (Gate 6)
                 </label>
                 <p className="text-caption text-text-muted">
                   Bật: Shipper phải tải ảnh người nhận mới bấm Hoàn tất. Tắt: Cho phép bấm hoàn tất trực tiếp 1 click.

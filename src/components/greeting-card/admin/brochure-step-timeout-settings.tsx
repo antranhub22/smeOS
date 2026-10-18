@@ -164,7 +164,7 @@ export function BrochureStepTimeoutSettings() {
                 <span>3. Tự động hủy nếu khách chưa cọc / thanh toán</span>
               </label>
               <p className="text-caption text-text-muted">
-                Tính từ lúc đặt đơn. Hết hạn mà chưa nhận được tiền và khách chưa báo chuyển, đơn tự hủy để giải phóng hoa.
+                Tính từ lúc đặt đơn. Hết hạn mà chưa nhận được tiền và khách chưa báo chuyển, đơn tự hủy để giải phóng chỗ thực hiện.
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -201,10 +201,10 @@ export function BrochureStepTimeoutSettings() {
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />
-                <span>4. Tự động duyệt ảnh hoa nếu khách không phản hồi</span>
+                <span>4. Tự động duyệt ảnh thành phẩm nếu khách không phản hồi</span>
               </label>
               <p className="text-caption text-text-muted">
-                Tính từ lúc thợ hoa tải ảnh thành phẩm. Hết thời gian này hệ thống tự duyệt để kịp giờ giao hoa.
+                Tính từ lúc người làm tải ảnh thành phẩm. Hết thời gian này hệ thống tự duyệt để kịp giờ hoàn tất đơn.
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">

@@ -6,6 +6,7 @@
 import type { SlaState, SortField } from "@/modules/greeting-card/domain/tracking-views"
 import type { TrackingCategory } from "@/modules/greeting-card/domain/tracking-filters"
 import type { StepOwner } from "@/modules/greeting-card/domain/step-sla"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 export type ViewKind = "kanban" | "list" | "calendar" | "timeline" | "queue" | "dashboard"
 
@@ -81,11 +82,13 @@ const today = () => new Date(Date.now() + 7 * 3_600_000).toISOString().slice(0, 
 export const COORDINATOR_DEFAULT: Partial<TrackingViewState> = { view: "kanban", owner: "COORDINATOR" }
 
 /** View mẫu có sẵn. "Đơn của Sale X" = chọn sale ở bộ lọc rồi lưu thành view riêng. */
-export function presetViews(): SavedView[] {
+export function presetViews(industryKey?: string | null): SavedView[] {
   const d = today()
+  const orderTerms = getIndustryOrderTerms(industryKey)
+  const todayLabel = orderTerms.fulfillmentFlow === "CALENDAR_STAY" ? "Nhận phòng hôm nay" : "Đơn giao hôm nay"
   return [
     { id: "mine", name: "Đơn của tôi", scope: "me", state: { view: "list" } },
-    { id: "today", name: "Đơn giao hôm nay", state: { view: "calendar", deliveryFrom: d, deliveryTo: d } },
+    { id: "today", name: todayLabel, state: { view: "calendar", deliveryFrom: d, deliveryTo: d } },
     { id: "stuck", name: "Đơn đang kẹt", state: { view: "list", category: "STUCK", sort: "urgency", dir: "desc" } },
     { id: "overdue", name: "Đơn quá thời gian chuẩn", state: { view: "list", sla: "OVERDUE", sort: "age", dir: "desc" } },
     { id: "todo", name: "Đơn cần xử lý", state: { view: "queue" } },

@@ -211,7 +211,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
       {/* HÀNG PRESET VIEW NHANH (Bookmark) */}
       <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/40 text-caption">
         <Bookmark size={13} className="text-text-muted shrink-0 ml-1" />
-        {[...presetViews(), ...saved].map((v) => (
+        {[...presetViews(organization?.industry), ...saved].map((v) => (
           <span key={v.id} className="inline-flex items-center rounded-lg border border-border bg-surface-alt">
             <button
               type="button"

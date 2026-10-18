@@ -17,6 +17,8 @@ import {
   isUrgentOrder,
   type BrochureWorkflowPolicy,
 } from "@/modules/greeting-card/domain/brochure-workflow-policy"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 interface CoordinatorKanbanCardProps {
   order: BrochureOrder
@@ -42,6 +44,13 @@ export function CoordinatorKanbanCard({
   workflowPolicy,
   now,
 }: CoordinatorKanbanCardProps) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
+  const isStay = orderTerms.fulfillmentFlow === "CALENDAR_STAY"
+  const dateLabel = orderTerms.deliveryDateLabel.replace(/^(Ngày|Thời gian)\s+/i, "")
+  const makerTitleShort = terms.makerTitle.split("/")[0]?.trim() || "Florist"
+
   const { product } = o
   const isStuck = work?.stuck?.owner === "COORDINATOR"
 
@@ -133,7 +142,7 @@ export function CoordinatorKanbanCard({
         >
           <Clock size={13} className="shrink-0" />
           <span className="truncate">
-            Giao: {o.delivery_window?.timeSlot || "Trong ngày"}
+            {dateLabel}: {o.delivery_window?.timeSlot || orderTerms.fallbackTimeSlotText}
             {o.delivery_window?.date ? ` · ${o.delivery_window.date}` : ""}
           </span>
         </div>
@@ -151,7 +160,7 @@ export function CoordinatorKanbanCard({
               {product.name}
             </p>
             <p className="text-caption text-text-muted truncate">
-              Nhận: {o.delivery_address?.recipientName || "Khách nhận"}
+              {isStay ? "Khách: " : "Nhận: "}{o.delivery_address?.recipientName || (isStay ? "Khách lưu trú" : "Khách nhận")}
             </p>
           </div>
         </div>
@@ -177,7 +186,7 @@ export function CoordinatorKanbanCard({
                 className="h-7 text-caption gap-1 px-2 flex-1"
               >
                 <UserCheck size={12} />
-                Giao Florist
+                Giao {makerTitleShort}
               </Button>
             )
             return (
@@ -215,7 +224,7 @@ export function CoordinatorKanbanCard({
               className="h-7 text-caption gap-1 px-2 flex-1"
             >
               <Camera size={12} />
-              Ảnh TP
+              {isStay ? "Ảnh phòng" : terms.completedProductPhoto.includes("món") ? "Ảnh món" : "Ảnh TP"}
             </Button>
           )}
           {col.id === "READY" && (() => {
@@ -234,7 +243,7 @@ export function CoordinatorKanbanCard({
                 className={`h-7 text-caption gap-1 px-2 flex-1 ${isWaitingSecondPayment ? "border-warning/50 text-warning bg-warning-bg/30" : ""}`}
               >
                 <Truck size={12} />
-                {isWaitingSecondPayment ? "Chờ TT lần 2" : "Giao Ship"}
+                {isWaitingSecondPayment ? "Chờ TT lần 2" : isStay ? "Đón tiếp" : "Giao Ship"}
               </Button>
             )
           })()}
@@ -248,7 +257,7 @@ export function CoordinatorKanbanCard({
               className="h-7 text-caption gap-1 px-2 flex-1"
             >
               <CheckCircle2 size={12} />
-              Ảnh nhận
+              {isStay ? "Ảnh đón tiếp" : "Ảnh nhận"}
             </Button>
           )}
         </div>

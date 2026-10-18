@@ -10,6 +10,7 @@ import { linkFactsOf, pendingLinkTitle, type LinkFacts } from "../domain/link-ow
 import { defaultOwnerOf } from "./share-links"
 import {
   PIPELINE_STEPS,
+  getIndustryPipelineSteps,
   type TrackingPipelineItem,
   type TrackingPipelineStepId,
   type TrackingStepState,
@@ -20,15 +21,8 @@ import { resolveCoordinatorId } from "../domain/coordinator-owner"
 
 /** Trường JSON lỏng (ảnh chụp mẫu, địa chỉ, khung giờ, metadata ghi chú) — đọc phòng thủ, không `any`. */
 type LooseJson = {
-  name?: string
-  price?: number
-  imageUrl?: string
-  recipientName?: string
-  phone?: string
-  street?: string
-  date?: string
-  timeSlot?: string
-  zone?: string
+  name?: string; price?: number; imageUrl?: string; recipientName?: string
+  phone?: string; street?: string; date?: string; timeSlot?: string; zone?: string
 }
 
 function loose(value: unknown): LooseJson {
@@ -92,7 +86,7 @@ export async function loadTrackingDataset(
   ctx: TenantContext,
   repo = new TrackingPipelineRepository(),
   now = new Date(), opts: { ordersOnly?: boolean } = {} // ordersOnly: bảng Điều phối không cần link chưa có đơn
-): Promise<{ items: TrackingPipelineItem[]; sla: ReturnType<typeof parseStepSla> }> {
+): Promise<{ items: TrackingPipelineItem[]; sla: ReturnType<typeof parseStepSla>; industryKey: string }> {
   const saleId = await resolveSaleScope(ctx)
   const [orders, activeSessions, org, fallbackOwner] = await Promise.all([
     repo.listBrochureOrders(ctx, saleId, now),
@@ -100,6 +94,8 @@ export async function loadTrackingDataset(
     getCurrentOrganization(ctx),
     defaultOwnerOf(ctx.organizationId),
   ])
+  const industryKey = ((org?.settings as Record<string, unknown> | null)?.industry as string) || "FLORAL"
+  const pipelineSteps = getIndustryPipelineSteps(industryKey)
   // Đơn/link cũ (trước khi có nút "Sao chép link mang tên bạn") → người phụ trách mặc định
   const ownerOf = (id: string | undefined) => (id === "public" ? fallbackOwner ?? undefined : id)
   const sla = parseStepSla(org?.settings)
@@ -110,7 +106,7 @@ export async function loadTrackingDataset(
       : facts?.kind === "SHARED" ? `Link bộ sưu tập · ${channelLabel(facts.shareChannel ?? "")}`
       : `Link chung · ${channelLabel(orderId ? channels.get(orderId) ?? "" : "")}`
 
-  const stepMap = new Map(PIPELINE_STEPS.map((s) => [s.id, s]))
+  const stepMap = new Map(pipelineSteps.map((s) => [s.id, s]))
   const saleIds = [
     ...orders.map((o) => ownerOf(o.greeting_sessions[0]?.sale_id) ?? ""),
     ...activeSessions.map((s) => ownerOf(s.sale_id) ?? ""),
@@ -163,7 +159,7 @@ export async function loadTrackingDataset(
       sessionStatus: session?.status,
     })
 
-    const currentStepDef = stepMap.get(currentStepId) ?? PIPELINE_STEPS[0]!
+    const currentStepDef = stepMap.get(currentStepId) ?? pipelineSteps[0]!
     const currentIndex = currentStepDef.orderIndex
 
     const inCoordination =
@@ -180,7 +176,7 @@ export async function loadTrackingDataset(
         ? "Chưa gán"
         : null
 
-    const steps: TrackingStepState[] = PIPELINE_STEPS.map((def) => {
+    const steps: TrackingStepState[] = pipelineSteps.map((def) => {
       let status: "completed" | "current" | "pending" = "pending"
       if (def.orderIndex < currentIndex) status = "completed"
       else if (def.orderIndex === currentIndex) status = "current"
@@ -267,10 +263,10 @@ export async function loadTrackingDataset(
       status: session.status,
       opened_at: session.opened_at,
     })
-    const currentStepDef = stepMap.get(currentStepId) ?? PIPELINE_STEPS[0]!
+    const currentStepDef = stepMap.get(currentStepId) ?? pipelineSteps[0]!
     const currentIndex = currentStepDef.orderIndex
 
-    const steps: TrackingStepState[] = PIPELINE_STEPS.map((def) => {
+    const steps: TrackingStepState[] = pipelineSteps.map((def) => {
       let status: "completed" | "current" | "pending" = "pending"
       if (def.orderIndex < currentIndex) status = "completed"
       else if (def.orderIndex === currentIndex) status = "current"
@@ -347,5 +343,5 @@ export async function loadTrackingDataset(
   const items = [...orderItems, ...sessionItems].sort(
     (a, b) => new Date(b.lastActiveAt).getTime() - new Date(a.lastActiveAt).getTime()
   )
-  return { items, sla }
+  return { items, sla, industryKey }
 }
