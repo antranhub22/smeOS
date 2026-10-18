@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import type { TerminologyGetter } from "./create-product-types"
 import { SingleSelectCustom } from "./single-select-custom"
+import { NormalizeImageButton } from "./normalize-image-button"
 
 interface CreateGeneralCardProps {
   ti: TerminologyGetter
@@ -22,8 +23,10 @@ interface CreateGeneralCardProps {
   status: "ACTIVE" | "DRAFT"
   setStatus: (v: "ACTIVE" | "DRAFT") => void
   imagePreview: string | null
+  imageFile?: File | null
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onRemoveImage: () => void
+  onAcceptNormalizedImage?: (url: string) => void
   fileInputRef?: React.RefObject<HTMLInputElement | null>
   industryPrefix?: string
   driveLink?: string | null | undefined
@@ -44,8 +47,10 @@ export function CreateGeneralCard({
   status,
   setStatus,
   imagePreview,
+  imageFile,
   onFileChange,
   onRemoveImage,
+  onAcceptNormalizedImage,
   fileInputRef,
   industryPrefix,
   driveLink,
@@ -127,6 +132,12 @@ export function CreateGeneralCard({
             accept="image/*"
             onChange={onFileChange}
             className="hidden"
+          />
+          {/* Nút chuẩn hóa ảnh — luôn hiển thị, disabled khi chưa có ảnh */}
+          <NormalizeImageButton
+            {...(imageFile != null ? { imageFile } : {})}
+            industry={industry}
+            {...(onAcceptNormalizedImage != null ? { onAccept: onAcceptNormalizedImage } : {})}
           />
         </div>
 

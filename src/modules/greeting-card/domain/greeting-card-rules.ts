@@ -123,17 +123,21 @@ export function todayInVietnam(now: Date = new Date()): string {
   return new Date(now.getTime() + VN_OFFSET_MS).toISOString().slice(0, 10)
 }
 
-/** Trả thông báo lỗi tiếng Việt, hoặc `null` nếu ngày giao hợp lệ. */
-export function validateDeliveryDate(value: string | undefined, now: Date = new Date()): string | null {
+/** Trả thông báo lỗi tiếng Việt, hoặc `null` nếu ngày giao/nhận hợp lệ. */
+export function validateDeliveryDate(
+  value: string | undefined,
+  now: Date = new Date(),
+  dateLabel = "ngày nhận"
+): string | null {
   const date = (value ?? "").trim()
-  if (!date) return "Vui lòng chọn ngày giao hoa"
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return "Ngày giao hoa không hợp lệ"
+  if (!date) return `Vui lòng chọn ${dateLabel}`
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return `${dateLabel} không hợp lệ`
   const parsed = new Date(`${date}T00:00:00Z`)
   if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) {
-    return "Ngày giao hoa không hợp lệ"
+    return `${dateLabel} không hợp lệ`
   }
   const today = todayInVietnam(now)
-  if (date < today) return "Ngày giao hoa không được ở trong quá khứ"
+  if (date < today) return `${dateLabel} không được ở trong quá khứ`
   const max = new Date(`${today}T00:00:00Z`)
   max.setUTCDate(max.getUTCDate() + MAX_DELIVERY_LEAD_DAYS)
   if (parsed > max) return `Chỉ nhận đặt trước tối đa ${MAX_DELIVERY_LEAD_DAYS} ngày`
@@ -142,16 +146,20 @@ export function validateDeliveryDate(value: string | undefined, now: Date = new 
 
 export function validateCustomerOrderInput(
   input: CustomerOrderSubmitInput,
-  now: Date = new Date()
+  now: Date = new Date(),
+  industryKey?: string | null
 ): {
   valid: boolean
   errors: Record<string, string>
 } {
   const errors: Record<string, string> = {}
+  const isHomestay = industryKey === "HOMESTAY"
 
   const customerName = input.customerName?.trim() ?? ""
   if (!customerName) {
-    errors.customerName = "Vui lòng nhập họ tên người đặt hoa"
+    errors.customerName = isHomestay
+      ? "Vui lòng nhập họ tên người đặt phòng"
+      : "Vui lòng nhập họ tên người đặt hàng"
   } else if (customerName.length > ORDER_FIELD_MAX.name) {
     errors.customerName = `Họ tên tối đa ${ORDER_FIELD_MAX.name} ký tự`
   }
@@ -167,23 +175,38 @@ export function validateCustomerOrderInput(
 
   const recipientName = input.recipientName?.trim() ?? ""
   if (!recipientName) {
-    errors.recipientName = "Vui lòng nhập họ tên người nhận hoa"
+    errors.recipientName = isHomestay
+      ? "Vui lòng nhập họ tên người nhận phòng"
+      : "Vui lòng nhập họ tên người nhận hàng"
   } else if (recipientName.length > ORDER_FIELD_MAX.name) {
     errors.recipientName = `Họ tên tối đa ${ORDER_FIELD_MAX.name} ký tự`
   }
 
   if (!VN_PHONE_REGEX.test(normalizePhone(input.recipientPhone))) {
-    errors.recipientPhone = "Số điện thoại người nhận không hợp lệ (10 số)"
+    errors.recipientPhone = isHomestay
+      ? "Số điện thoại người nhận phòng không hợp lệ (10 số)"
+      : "Số điện thoại người nhận không hợp lệ (10 số)"
   }
 
-  const dateError = validateDeliveryDate(input.deliveryDate, now)
+  const dateError = validateDeliveryDate(
+    input.deliveryDate,
+    now,
+    isHomestay ? "ngày nhận phòng" : "ngày nhận hàng"
+  )
   if (dateError) errors.deliveryDate = dateError
 
   const address = input.deliveryAddress?.trim() ?? ""
-  if (address.length < 5) {
-    errors.deliveryAddress = "Vui lòng nhập địa chỉ giao hoa chi tiết (tối thiểu 5 ký tự)"
-  } else if (address.length > ORDER_FIELD_MAX.address) {
-    errors.deliveryAddress = `Địa chỉ tối đa ${ORDER_FIELD_MAX.address} ký tự`
+  if (isHomestay) {
+    // Ngành homestay địa chỉ là nơi lưu trú, chỉ cần tối thiểu thông tin
+    if (address.length < 3) {
+      errors.deliveryAddress = "Vui lòng chọn cơ sở lưu trú"
+    }
+  } else {
+    if (address.length < 5) {
+      errors.deliveryAddress = "Vui lòng nhập địa chỉ giao hàng chi tiết (tối thiểu 5 ký tự)"
+    } else if (address.length > ORDER_FIELD_MAX.address) {
+      errors.deliveryAddress = `Địa chỉ tối đa ${ORDER_FIELD_MAX.address} ký tự`
+    }
   }
 
   if ((input.cardMessage?.length ?? 0) > ORDER_FIELD_MAX.cardMessage) {

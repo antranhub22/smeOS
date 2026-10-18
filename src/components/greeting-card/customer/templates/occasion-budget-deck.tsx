@@ -40,9 +40,9 @@ export function OccasionBudgetDeck({ products, catalogName, onSelectProduct }: O
   if (products.length === 0) return <EmptyCatalog />
 
   return (
-    <AuxPage eyebrow="Gợi ý cho bạn" title={catalogName} subtitle="Trả lời nhanh để xem những mẫu hoa hợp nhất.">
+    <AuxPage eyebrow="Gợi ý cho bạn" title={catalogName} subtitle="Trả lời nhanh để xem những sản phẩm phù hợp nhất.">
       {occasions.length > 1 && (
-        <Question n={++q} title="Bạn tặng hoa nhân dịp gì?">
+        <Question n={++q} title="Bạn tìm sản phẩm cho dịp gì?">
           <Chip active={occasion === null} onClick={() => setOccasion(null)}>Dịp nào cũng được</Chip>
           {occasions.map((o) => (
             <Chip key={o} active={occasion === o} onClick={() => setOccasion(o)}>{o}</Chip>

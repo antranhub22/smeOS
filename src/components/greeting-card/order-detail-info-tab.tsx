@@ -8,6 +8,8 @@ import { OrderPaymentProofView } from "./order-payment-proof-view"
 import type { OrderDetailModalTarget } from "./brochure-order-detail-modal"
 import { LinkCustomerCard } from "./link-customer-card"
 import { DEPOSIT_PENDING_APPROVAL_NOTE, isDepositPendingApproval } from "@/modules/greeting-card/domain/deposit-acknowledgement"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface OrderDetailInfoTabProps {
   target: OrderDetailModalTarget
@@ -15,6 +17,8 @@ export interface OrderDetailInfoTabProps {
 }
 
 export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoTabProps) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
   const isPaid = (target.paidVnd ?? 0) >= (target.totalVnd ?? 0) && (target.totalVnd ?? 0) > 0
   const isDeposit = (target.paidVnd ?? 0) > 0 && !isPaid
   const depositPendingApproval = isDepositPendingApproval({
@@ -75,37 +79,37 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
       </div>
       )}
 
-      {/* Khối Mẫu hoa & Thiệp */}
+      {/* Khối Sản phẩm & Ấn phẩm đính kèm */}
       <div className="rounded-2xl border border-border bg-surface p-4 flex flex-col gap-3">
         <span className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1">
-          <Flower2 size={13} /> Mẫu hoa đã chọn
+          <Flower2 size={13} /> {terms.sampleProduct} đã chọn
         </span>
         <div className="flex items-center gap-3">
           <FlowerImage
             src={target.productImageUrl}
-            alt={target.productName || "Mẫu"}
+            alt={target.productName || terms.sampleProduct}
             sizes="60px"
             fallback="icon"
             className="h-16 w-16 shrink-0 rounded-xl border border-border object-cover"
           />
           <div className="min-w-0 flex-1">
-            <h4 className="text-body font-bold text-foreground truncate">{target.productName || "Hoa tươi theo mẫu"}</h4>
+            <h4 className="text-body font-bold text-foreground truncate">{target.productName || `${terms.sampleProduct} theo mẫu`}</h4>
             <p className="text-body-sm font-extrabold text-primary mt-0.5">
               {(target.totalVnd ?? 0) > 0 ? `${(target.totalVnd ?? 0).toLocaleString("vi-VN")} đ` : "Chưa có giá"}
             </p>
           </div>
         </div>
 
-        {/* Thiệp chúc mừng */}
+        {/* Ấn phẩm đính kèm / Thiệp */}
         {target.cardMessage ? (
           <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 flex flex-col gap-1 mt-1">
             <span className="text-caption font-bold text-warning-text flex items-center gap-1">
-              💌 Lời chúc trên thiệp mừng:
+              💌 Lời chúc trên {terms.printablesTitle.toLowerCase()}:
             </span>
             <p className="text-body-sm italic text-foreground">&ldquo;{target.cardMessage}&rdquo;</p>
           </div>
         ) : (
-          <p className="text-caption text-text-muted italic">Không kèm nội dung thiệp.</p>
+          <p className="text-caption text-text-muted italic">Không kèm nội dung {terms.printablesTitle.toLowerCase()}.</p>
         )}
       </div>
 

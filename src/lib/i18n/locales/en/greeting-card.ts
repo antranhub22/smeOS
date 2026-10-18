@@ -6,7 +6,7 @@ export const greetingCardEn = {
   header: {
     breadcrumb: "Orders",
     title: "Showcase Card",
-    description: "Send flower catalogs for customers to browse, select, order, and pay directly on mobile.",
+    description: "Send product catalogs for customers to browse, select, order, and pay directly on mobile.",
     guideButton: "Showcase Guide",
     todoButton: "Action Items",
     modes: {
@@ -29,7 +29,7 @@ export const greetingCardEn = {
   },
   catalogs: {
     title: "Catalog Management",
-    description: "Create and customize flower catalogs to share with customers.",
+    description: "Create and customize product catalogs to share with customers.",
     createButton: "New Catalog",
     copyChannelLabel: "Copy link for channel",
     channelNote: "This link is tied to your account. Orders placed will be credited to you.",
@@ -37,9 +37,9 @@ export const greetingCardEn = {
   },
   guideModal: {
     title: "How to Use Showcase Cards",
-    step1: "Create a curated flower catalog for seasonal events or holidays",
+    step1: "Create a curated catalog for seasonal events or customer needs",
     step2: "Copy and share the link via messaging apps",
-    step3: "Customers browse designs, write greeting cards, and place orders directly",
-    step4: "Orders route automatically to the florist workshop for preparation",
+    step3: "Customers browse designs, write card notes or instructions, and place orders directly",
+    step4: "Orders route automatically to the production workshop for preparation",
   },
 } as const

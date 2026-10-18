@@ -39,7 +39,7 @@ export function CustomerThankYouCard({
         </h3>
 
         <p className="mt-2 max-w-md text-body-sm text-text-muted leading-relaxed">
-          Đơn hoa <strong className="text-foreground">#{orderCode}</strong> đã được trao gửi trọn vẹn yêu thương đến người nhận. Sự hài lòng của bạn là niềm vinh hạnh lớn nhất của tiệm hoa.
+          Đơn hàng <strong className="text-foreground">#{orderCode}</strong> đã được trao gửi trọn vẹn và chu đáo đến người nhận. Sự hài lòng của bạn là niềm vinh hạnh lớn nhất của chúng tôi.
         </p>
 
         {/* 3 Nút Tác vụ chính */}

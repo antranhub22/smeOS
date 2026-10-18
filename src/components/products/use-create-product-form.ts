@@ -195,6 +195,18 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
 
+  /** Nhận URL ảnh đã chuẩn hóa studio (từ NormalizeImageButton) để dùng làm ảnh đại diện */
+  const handleAcceptNormalizedImage = (url: string) => {
+    // Revoke blob cũ nếu có
+    if (imagePreview && imagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreview)
+    }
+    // Dùng URL trả về từ kết quả normalize làm preview mới
+    setImagePreview(url)
+    // Xóa imageFile để submit biết dùng URL này thay vì upload lại
+    setImageFile(null)
+  }
+
   const handleAddBomItem = () => {
     const bomCfg = getIndustryBomFieldsConfig(activeIndustry.identity.key)
     const defaultUnit = activeIndustry.bomSpec?.measurementUnits?.[0] || "cái"
@@ -366,6 +378,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
     status,
     setStatus,
     imagePreview,
+    imageFile,
     submitting,
     errorMsg,
     bomItems,
@@ -373,6 +386,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
     industryPrefix,
     handleFileChange,
     handleRemoveImage,
+    handleAcceptNormalizedImage,
     handleAddBomItem,
     handleUpdateBomItem,
     handleRemoveBomItem,

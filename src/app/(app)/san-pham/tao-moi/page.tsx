@@ -90,8 +90,10 @@ export default function CreateProductPage() {
               status={form.status}
               setStatus={form.setStatus}
               imagePreview={form.imagePreview}
+              imageFile={form.imageFile}
               onFileChange={form.handleFileChange}
               onRemoveImage={form.handleRemoveImage}
+              onAcceptNormalizedImage={form.handleAcceptNormalizedImage}
               fileInputRef={form.fileInputRef}
               industryPrefix={form.industryPrefix}
             />

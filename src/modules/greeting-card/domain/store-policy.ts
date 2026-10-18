@@ -52,8 +52,40 @@ export interface StorePoliciesConfig {
 export const DEFAULT_PROMOTIONS: PromotionItem[] = [
   { id: "promo-discount-10", title: "Giảm 10%", description: "Giảm 10% trên tổng giá trị đơn hàng.", kind: "PERCENT_OFF", config: { percent: 10 } },
   { id: "promo-free-card", title: "Tặng thiệp", description: "Tặng 01 thiệp chúc mừng kèm lời nhắn của bạn.", kind: "GIFT" },
-  { id: "promo-accessory", title: "Thêm phụ liệu", description: "Thêm phụ liệu trang trí để bó hoa đẹp hơn.", kind: "GIFT" },
+  { id: "promo-accessory", title: "Thêm phụ kiện", description: "Thêm phụ kiện trang trí cao cấp cho sản phẩm.", kind: "GIFT" },
 ]
+
+export function getIndustryDefaultPromotions(industryKey?: string | null): PromotionItem[] {
+  if (industryKey === "HOMESTAY") {
+    return [
+      { id: "promo-discount-10", title: "Giảm 10%", description: "Giảm 10% trên tổng giá trị đặt phòng.", kind: "PERCENT_OFF", config: { percent: 10 } },
+      { id: "promo-welcome-drink", title: "Set đón tiếp", description: "Tặng set trà, cà phê và bánh chào mừng tại phòng.", kind: "GIFT" },
+      { id: "promo-early-checkin", title: "Nhận phòng sớm", description: "Hỗ trợ nhận phòng sớm hoặc trả phòng muộn linh hoạt.", kind: "GIFT" },
+    ]
+  }
+  if (industryKey === "FNB") {
+    return [
+      { id: "promo-discount-10", title: "Giảm 10%", description: "Giảm 10% trên tổng giá trị hóa đơn.", kind: "PERCENT_OFF", config: { percent: 10 } },
+      { id: "promo-dessert", title: "Món tráng miệng", description: "Tặng 01 phần tráng miệng hoặc đồ uống chào mừng.", kind: "GIFT" },
+      { id: "promo-greeting-card", title: "Thẻ chúc mừng", description: "Tặng thiệp chúc mừng bàn tiệc kèm lời chúc ý nghĩa.", kind: "GIFT" },
+    ]
+  }
+  if (industryKey === "SERVICES") {
+    return [
+      { id: "promo-discount-10", title: "Giảm 10%", description: "Giảm 10% trên tổng chi phí dịch vụ.", kind: "PERCENT_OFF", config: { percent: 10 } },
+      { id: "promo-consultation", title: "Tư vấn miễn phí", description: "Miễn phí kiểm tra, đo đạc hoặc tư vấn giải pháp chi tiết.", kind: "GIFT" },
+      { id: "promo-warranty", title: "Gia hạn bảo hành", description: "Tặng thêm 01 tháng bảo hành và hỗ trợ kỹ thuật tận nơi.", kind: "GIFT" },
+    ]
+  }
+  if (industryKey === "FASHION" || industryKey === "RETAIL_GENERAL" || industryKey === "CRAFT_GIFT") {
+    return [
+      { id: "promo-discount-10", title: "Giảm 10%", description: "Giảm 10% trên tổng giá trị đơn hàng.", kind: "PERCENT_OFF", config: { percent: 10 } },
+      { id: "promo-gift-wrap", title: "Hộp quà & Thiệp", description: "Tặng hộp quà cao cấp kèm thiệp chúc mừng gửi kèm.", kind: "GIFT" },
+      { id: "promo-free-shipping", title: "Freeship", description: "Miễn phí giao hàng tiêu chuẩn trên toàn quốc.", kind: "GIFT" },
+    ]
+  }
+  return DEFAULT_PROMOTIONS
+}
 
 /**
  * 6 Cam kết cốt lõi — nội dung PO chốt 08/10/2026. Chỉ là mặc định: tiệm sửa/thêm/xóa trong
@@ -81,8 +113,9 @@ export const DEFAULT_AGREEMENTS: AgreementItem[] = [
 
 export const STORE_POLICIES_SETTINGS_KEY = "store_policies"
 
-export function parseStorePolicies(settings: unknown): StorePoliciesConfig {
+export function parseStorePolicies(settings: unknown, industryKey?: string | null): StorePoliciesConfig {
   const root = settings && typeof settings === "object" ? (settings as Record<string, unknown>) : {}
+  const industry = industryKey || (typeof root.industry === "string" ? root.industry : null)
   const raw = root[STORE_POLICIES_SETTINGS_KEY] as Partial<StorePoliciesConfig> | undefined
   const promotions = cleanItems<PromotionItem>(raw?.promotions, "description")
   const commitments = cleanItems<CommitmentItem>(raw?.commitments, "customerText")
@@ -93,7 +126,7 @@ export function parseStorePolicies(settings: unknown): StorePoliciesConfig {
     percent: typeof rawCta?.percent === "number" && rawCta.percent > 0 && rawCta.percent <= 100 ? rawCta.percent : 10,
   }
   return {
-    promotions: promotions.length > 0 ? promotions : DEFAULT_PROMOTIONS,
+    promotions: promotions.length > 0 ? promotions : getIndustryDefaultPromotions(industry),
     commitments: commitments.length > 0 ? commitments : DEFAULT_COMMITMENTS,
     agreements: agreements.length > 0 ? agreements : DEFAULT_AGREEMENTS,
     intakePromotionCta,
@@ -125,8 +158,9 @@ export type PublicAppliedPolicies = {
 export function resolveAppliedPolicies(
   catalogFilters: unknown,
   orgSettings: unknown,
+  industryKey?: string | null,
 ): PublicAppliedPolicies {
-  const all = parseStorePolicies(orgSettings)
+  const all = parseStorePolicies(orgSettings, industryKey)
   const filters = catalogFilters && typeof catalogFilters === "object" ? (catalogFilters as Record<string, unknown>) : {}
   const applied = filters.appliedPolicies as {
     promotionIds?: string[]

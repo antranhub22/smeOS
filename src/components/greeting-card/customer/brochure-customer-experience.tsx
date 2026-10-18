@@ -267,6 +267,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
                 | undefined
             }
             quoteUrl={`/api/v1/public/brochure/${session.sendCode}/quote`}
+            industryKey={shop.industry}
             onBack={() => setStep("SWIPING")}
             onSubmit={handleSubmitOrder}
           />

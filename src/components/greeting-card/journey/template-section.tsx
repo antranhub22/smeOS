@@ -7,6 +7,7 @@ import { useAnnounce } from "@/components/ui/live-region"
 import { TemplateSelectorSplitPane } from "@/components/greeting-card/customer/templates/template-selector-split-pane"
 import { cn } from "@/lib/utils"
 import { useJourneyFocus } from "./journey-focus-context"
+import { useSession } from "@/lib/session"
 import {
   GREETING_TEMPLATES,
   resolveGreetingTemplateId,
@@ -38,6 +39,7 @@ interface TemplateSectionProps {
 
 /** Bước 1b: chọn giao diện khách sẽ lướt xem — lưu ngay khi bấm "Chọn mẫu". */
 export function TemplateSection({ catalog, onSave, canEditSharedDisplay = true }: TemplateSectionProps) {
+  const { organization } = useSession()
   const [pendingId, setPendingId] = useState<GreetingTemplateId | null>(null)
   const [error, setError] = useState<string | null>(null)
   const { announce } = useAnnounce()
@@ -83,6 +85,7 @@ export function TemplateSection({ catalog, onSave, canEditSharedDisplay = true }
         catalogId={catalog.id}
         displaySettings={display.settings}
         onOpenDisplaySettings={canEditSharedDisplay ? setSettingsFor : undefined}
+        industryKey={organization?.industry}
       />
       {error && <InlineError message={error} />}
       {settingsFor && (

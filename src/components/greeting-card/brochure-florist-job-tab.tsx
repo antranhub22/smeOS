@@ -58,7 +58,7 @@ export function BrochureFloristJobTab({
       `⏰ Hạn giao: ${target.deliveryTimeSlot || "Trong ngày"}${target.deliveryDate ? ` · Ngày ${target.deliveryDate}` : ""}`,
       `💰 Giá gia công: ${suggestedCraftFee.toLocaleString("vi-VN")} VNĐ`,
       `🌿 Nguyên phụ liệu: ${target.flowersSummary || `Theo ${terms.sampleProduct.toLowerCase()} chuẩn`}`,
-      target.cardMessage ? `💌 Thiệp: "${target.cardMessage}"` : "",
+      target.cardMessage ? `💌 ${terms.printablesTitle}: "${target.cardMessage}"` : "",
       floristNote.trim() ? `📝 Lưu ý: ${floristNote.trim()}` : "",
       `📍 Giao tới: ${target.recipientName || target.customerName || "Khách nhận"} · ${phoneDisplay} · ${target.deliveryAddress || "Chưa có địa chỉ"}`,
     ].filter(Boolean).join("\n")
@@ -239,7 +239,7 @@ export function BrochureFloristJobTab({
                   Mẫu sản phẩm thực hiện
                 </span>
                 <h3 className="text-body font-black text-foreground break-words [overflow-wrap:anywhere]">
-                  {target.productName || "Hoa tươi theo mẫu"}
+                  {target.productName || `${terms.sampleProduct} theo mẫu`}
                 </h3>
               </div>
 
@@ -259,7 +259,7 @@ export function BrochureFloristJobTab({
                 <div className="p-4 rounded-2xl bg-warning-bg/50 border border-warning/30 text-caption flex flex-col gap-1">
                   <div className="font-bold text-warning-text flex items-center gap-1.5">
                     <MessageSquare size={14} />
-                    <span>Nội dung thiệp / Banner (In nguyên văn):</span>
+                    <span>Nội dung {terms.printablesTitle.toLowerCase()} (In nguyên văn):</span>
                   </div>
                   <p className="text-body-sm italic text-foreground font-semibold">&ldquo;{target.cardMessage}&rdquo;</p>
                 </div>

@@ -127,7 +127,7 @@ export function SwipeBrochureEngine({
   if (products.length === 0) {
     return (
       <div className={`flex ${rootHeight(embedded)} w-full items-center justify-center p-6 text-center`} style={stageStyle}>
-        <p className="text-body">Bộ sưu tập này chưa có mẫu hoa nào.</p>
+        <p className="text-body">Bộ sưu tập này chưa có sản phẩm nào.</p>
       </div>
     )
   }

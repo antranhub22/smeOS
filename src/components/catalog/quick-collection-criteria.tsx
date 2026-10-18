@@ -4,8 +4,10 @@ import React from "react"
 import { DollarSign, Sparkles, User } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { GREETING_TEMPLATE_LIST } from "@/modules/greeting-card/domain/greeting-template-registry"
-import { COMMON_CATEGORIES, COMMON_COLORS, COMMON_FLOWERS, COMMON_OCCASIONS } from "./quick-collection-options"
+import { getIndustryQuickCollectionOptions } from "./quick-collection-options"
 import { usePriceBudgets } from "./use-price-budgets"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface QuickCollectionCriteriaState {
   customerName: string
@@ -29,6 +31,9 @@ export function QuickCollectionCriteriaPanel({
   value: QuickCollectionCriteriaState
   onChange: (patch: Partial<QuickCollectionCriteriaState>) => void
 }) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const options = getIndustryQuickCollectionOptions(organization?.industry)
   const priceBudgets = usePriceBudgets()
   const { customerName, customerPhone, occasion, category, flowerType, colorTone, selectedBudgetIds, priceMin, priceMax, productLimit, templateId } = value
   const handleToggleBudget = (id: string) =>
@@ -123,13 +128,13 @@ export function QuickCollectionCriteriaPanel({
         </div>
       </div>
 
-      {/* Dịp tặng */}
+      {/* Dịp / Sự kiện */}
       <div>
         <label className="block text-caption font-bold text-text mb-1.5">
-          Dịp tặng
+          Dịp & Nhu cầu
         </label>
         <div className="flex flex-wrap gap-1.5">
-          {COMMON_OCCASIONS.map((occ) => (
+          {options.occasions.map((occ) => (
             <button
               type="button"
               key={occ}
@@ -146,14 +151,14 @@ export function QuickCollectionCriteriaPanel({
         </div>
       </div>
 
-      {/* Dáng hoa & Loại hoa */}
+      {/* Phân loại & Nguyên phụ liệu */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-caption font-bold text-text mb-1.5">
-            Dáng hoa
+            Phân loại {terms.sampleProduct.toLowerCase()}
           </label>
           <div className="flex flex-wrap gap-1.5">
-            {COMMON_CATEGORIES.map((cat) => (
+            {options.categories.map((cat) => (
               <button
                 type="button"
                 key={cat}
@@ -172,21 +177,21 @@ export function QuickCollectionCriteriaPanel({
 
         <div>
           <label className="block text-caption font-bold text-text mb-1.5">
-            Loại hoa
+            {terms.rawMaterialItem}
           </label>
           <div className="flex flex-wrap gap-1.5">
-            {COMMON_FLOWERS.map((fl) => (
+            {options.materials.map((mat) => (
               <button
                 type="button"
-                key={fl}
-                onClick={() => onChange({ flowerType: flowerType === fl ? "" : fl })}
+                key={mat}
+                onClick={() => onChange({ flowerType: flowerType === mat ? "" : mat })}
                 className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
-                  flowerType === fl
+                  flowerType === mat
                     ? "border-primary bg-primary/10 text-primary font-bold"
                     : "border-border bg-surface text-text hover:border-primary/40"
                 }`}
               >
-                {fl}
+                {mat}
               </button>
             ))}
           </div>
@@ -200,7 +205,7 @@ export function QuickCollectionCriteriaPanel({
             Tone màu
           </label>
           <div className="flex flex-wrap gap-1.5">
-            {COMMON_COLORS.map((col) => (
+            {options.colors.map((col) => (
               <button
                 type="button"
                 key={col}

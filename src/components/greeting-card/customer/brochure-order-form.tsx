@@ -3,7 +3,7 @@
 import React, { useId, useState } from "react"
 import { ArrowLeft, Send, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ORDER_FIELD_MAX, MAX_DELIVERY_LEAD_DAYS, validateCustomerOrderInput } from "@/modules/greeting-card/domain/greeting-card-rules"
+import { ORDER_FIELD_MAX, MAX_DELIVERY_LEAD_DAYS } from "@/modules/greeting-card/domain/greeting-card-rules"
 import type { ProductSnapshot, CustomerOrderSubmitInput } from "@/modules/greeting-card/domain/greeting-card-types"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import { BrochureOrderOptions } from "./brochure-order-options"
@@ -11,32 +11,29 @@ import { useBrochureQuote } from "./use-brochure-quote"
 import { OrderReview } from "./order-review"
 import { useOrderDraft } from "./use-order-draft"
 import { useSavedState } from "./use-saved-state"
-import { AddressFields } from "./address-fields"
 import { HoneypotField } from "./honeypot-field"
-import { composeAddress, validateAddressParts } from "@/modules/greeting-card/domain/delivery-address"
-import { deliveryScheduleError, earliestDeliveryDate } from "@/modules/greeting-card/domain/delivery-schedule"
-import { DeliveryTimePicker } from "./delivery-time-picker"
+import { earliestDeliveryDate } from "@/modules/greeting-card/domain/delivery-schedule"
 import { PromotionPicker } from "./promotion-picker"
-import { customerChoosesPromotion, PROMOTION_CHOICE_MISSING } from "@/modules/greeting-card/domain/order-policies"
+import { customerChoosesPromotion } from "@/modules/greeting-card/domain/order-policies"
 import { SelectedProductHeader } from "./selected-product-header"
-import { OrderNotesFields } from "./order-notes-fields"
-import { ViDateInput } from "./vi-date-input"
 import type { PublicAppliedPolicies } from "@/modules/greeting-card/domain/store-policy"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { HomestayOrderFields, calculateNights } from "./homestay-order-fields"
+import { StandardOrderFields } from "./standard-order-fields"
+import { useBrochureOrderSubmit } from "./use-brochure-order-submit"
 
 interface BrochureOrderFormProps {
   productSnapshot: ProductSnapshot
-  /** Size/biến thể bán online của mẫu đã chọn. */
   variants: Array<{ id: string; name: string; priceVnd: number }>
   shipping: ShippingConfig
   appliedPolicies?: PublicAppliedPolicies | null | undefined
-  /** Endpoint báo giá + phần thân cố định (vd. `productId` ở link công khai). */
   quoteUrl: string
   quoteExtraBody?: Record<string, string> | undefined
+  industryKey?: string | null | undefined
   onBack: () => void
   onSubmit: (input: CustomerOrderSubmitInput) => Promise<void>
 }
 
-// Chữ khách gõ ≥ 16px (`text-title`) để iPhone không tự phóng to; chữ gợi ý nhỏ, nhạt hơn cho đỡ rối mắt
 const INPUT =
   "w-full min-w-0 h-11 px-3 rounded-lg border border-border bg-background text-title font-normal text-foreground placeholder:text-body placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
 
@@ -47,9 +44,12 @@ export function BrochureOrderForm({
   appliedPolicies,
   quoteUrl,
   quoteExtraBody = {},
+  industryKey,
   onBack,
   onSubmit,
 }: BrochureOrderFormProps) {
+  const terms = getIndustryTerminology(industryKey)
+  const isHomestay = industryKey === "HOMESTAY"
   const uid = useId()
   const {
     customerName, customerPhone, customerEmail, recipientName, recipientPhone, deliveryDate, deliveryTimeSlot, addressParts,
@@ -57,96 +57,63 @@ export function BrochureOrderForm({
     setCustomerName, setCustomerPhone, setCustomerEmail, setRecipientName, setRecipientPhone, setDeliveryDate, setDeliveryTimeSlot, setAddressParts,
     setNotes, clearDraft,
   } = useOrderDraft()
-  const deliveryAddress = composeAddress(addressParts)
 
-  const [selectedPromotionId, setSelectedPromotionId] = useState<string>(appliedPolicies && !customerChoosesPromotion(appliedPolicies) ? appliedPolicies.promotions[0]?.id ?? "" : "")
-  const [loading, setLoading] = useState(false)
-  // Ngày giao đi kèm báo giá: máy chủ báo khung giờ đã kín và tính phụ phí ngày lễ (nếu bộ sưu tập áp dụng)
-  const quoteBody = { ...quoteExtraBody, ...(selectedPromotionId ? { selectedPromotionId } : {}), ...(deliveryDate ? { deliveryDate } : {}) }
+  const [checkOutDate, setCheckOutDate] = useState(() => {
+    if (!deliveryDate) return ""
+    return new Date(new Date(`${deliveryDate}T00:00:00Z`).getTime() + 86_400_000).toISOString().slice(0, 10)
+  })
+  const [isSelfBooking, setIsSelfBooking] = useState(true)
+  const [adultsCount, setAdultsCount] = useState(2)
+  const [childrenCount, setChildrenCount] = useState(0)
+  const [transitMethod, setTransitMethod] = useState("")
+  const [specialRequests, setSpecialRequests] = useState("")
+
+  const [selectedPromotionId, setSelectedPromotionId] = useState<string>(
+    appliedPolicies && !customerChoosesPromotion(appliedPolicies) ? appliedPolicies.promotions[0]?.id ?? "" : ""
+  )
+  const quoteBody = {
+    ...quoteExtraBody,
+    ...(selectedPromotionId ? { selectedPromotionId } : {}),
+    ...(deliveryDate ? { deliveryDate } : {}),
+  }
   const pricing = useBrochureQuote(quoteUrl, quoteBody, customerPhone, { id: productSnapshot.id, variantIds: variants.map((v) => v.id) })
   const minDate = earliestDeliveryDate(shipping)
   const maxDate = new Date(Date.parse(`${minDate}T00:00:00Z`) + MAX_DELIVERY_LEAD_DAYS * 86_400_000).toISOString().slice(0, 10)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  // Bước "Xem lại đơn" nhớ trên máy: rời trang lúc đang xem lại thì quay về đúng bước này
   const [review, setReview, clearReview] = useSavedState<CustomerOrderSubmitInput | null>(`order-review:${productSnapshot.id}`, null)
   const [website, setWebsite] = useState("")
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setErrorMessage(null)
-
-    // Cùng bộ luật với server (SĐT, ngày giao theo giờ VN, độ dài) — báo lỗi ngay, đỡ một vòng mạng.
-    const check = validateCustomerOrderInput({
-      customerName, customerPhone, customerEmail, recipientName, recipientPhone,
-      deliveryDate, deliveryTimeSlot, deliveryAddress, cardMessage, senderNote, deliveryNote, mapUrl,
-    })
-    const scheduleError = !deliveryDate ? null
-      : deliveryTimeSlot.trim() ? deliveryScheduleError(deliveryDate, deliveryTimeSlot, shipping) : "Vui lòng chọn khung giờ giao hoa"
-    if (scheduleError) {
-      check.errors.deliveryDate = scheduleError
-      check.valid = false
-    }
-    const addressErrors = validateAddressParts(addressParts)
-    if (Object.keys(addressErrors).length > 0) {
-      delete check.errors.deliveryAddress // báo đúng ô còn thiếu thay vì "địa chỉ chung"
-      Object.assign(check.errors, addressErrors)
-      check.valid = false
-    }
-    // Có ≥ 2 ưu đãi cho khách chọn → không chọn sẵn, khách phải tự chọn (PO 08/10/2026)
-    if (appliedPolicies && customerChoosesPromotion(appliedPolicies) && !selectedPromotionId) {
-      check.errors.selectedPromotionId = PROMOTION_CHOICE_MISSING
-      check.valid = false
-    }
-    if (shipping.zones.length > 0 && !pricing.selection.shippingZoneId) {
-      check.errors.shippingZoneId = "Vui lòng chọn khu vực giao hoa"
-      check.valid = false
-    }
-    if (!check.valid) {
-      setErrorMessage(Object.values(check.errors)[0] ?? "Thông tin đặt hàng chưa hợp lệ")
-      return
-    }
-
-    // Sang bước "Xem lại đơn"; chỉ gửi khi khách bấm xác nhận
-    window.scrollTo({ top: 0 })
-    setReview({
-      customerName,
-      customerPhone,
-      customerEmail: customerEmail.trim() || undefined,
-      recipientName,
-      recipientPhone,
-      deliveryDate,
-      deliveryTimeSlot,
-      deliveryAddress,
-      addressParts,
-      cardMessage,
-      senderNote,
-      deliveryNote,
-      mapUrl,
-      website,
-      quantity: pricing.selection.quantity,
-      selectedPromotionId: selectedPromotionId || undefined,
-      ...(pricing.selection.variantId ? { variantId: pricing.selection.variantId } : {}),
-      ...(pricing.selection.shippingZoneId ? { shippingZoneId: pricing.selection.shippingZoneId } : {}),
-      ...(pricing.selection.voucherCode ? { voucherCode: pricing.selection.voucherCode } : {}),
-      // Mã thanh toán bị máy chủ từ chối không gửi kèm đơn — đơn theo cách thu mặc định
-      ...(pricing.selection.paymentCode && !pricing.errors.paymentCode ? { paymentCode: pricing.selection.paymentCode } : {}),
-    })
-  }
-
-  async function handleConfirm(confirmedTerms: boolean) {
-    if (!review) return
-    setErrorMessage(null)
-    setLoading(true)
-    try {
-      await onSubmit({ ...review, confirmedTerms })
-      clearDraft()
-      clearReview()
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Đã có lỗi xảy ra khi đặt hoa")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { errorMessage, loading, handleSubmit, handleConfirm } = useBrochureOrderSubmit({
+    isHomestay,
+    industryKey,
+    customerName,
+    customerPhone,
+    customerEmail,
+    recipientName,
+    recipientPhone,
+    deliveryDate,
+    deliveryTimeSlot,
+    addressParts,
+    cardMessage,
+    senderNote,
+    deliveryNote,
+    mapUrl,
+    website,
+    checkOutDate,
+    isSelfBooking,
+    adultsCount,
+    childrenCount,
+    transitMethod,
+    specialRequests,
+    selectedPromotionId,
+    appliedPolicies,
+    shipping,
+    pricingSelection: pricing.selection,
+    pricingErrors: pricing.errors,
+    onSetReview: setReview,
+    onSubmit,
+    onClearDraft: clearDraft,
+    onClearReview: clearReview,
+  })
 
   if (review) {
     return (
@@ -157,10 +124,11 @@ export function BrochureOrderForm({
           input={review}
           quote={pricing.quote}
           appliedPolicies={appliedPolicies}
+          industryKey={industryKey}
           submitting={loading}
           error={errorMessage}
           onEdit={() => setReview(null)}
-          onConfirm={(agreed) => void handleConfirm(agreed)}
+          onConfirm={(agreed) => void handleConfirm(review, agreed)}
         />
       </div>
     )
@@ -177,10 +145,10 @@ export function BrochureOrderForm({
           className="gap-1.5 text-text-muted hover:text-foreground text-caption"
         >
           <ArrowLeft size={16} />
-          <span>Đổi mẫu hoa</span>
+          <span>Đổi {terms.sampleProduct.toLowerCase()}</span>
         </Button>
         <span className="text-caption font-bold uppercase tracking-wider text-primary">
-          Điền đơn đặt hoa
+          Điền đơn đặt {terms.sampleProduct.toLowerCase()}
         </span>
       </div>
 
@@ -189,9 +157,9 @@ export function BrochureOrderForm({
       {errorMessage && (
         <div
           role="alert"
-          // Form dài trên điện thoại: đưa thông báo lỗi vào tầm nhìn ngay khi nó xuất hiện
           ref={(el) => el?.scrollIntoView({ behavior: "smooth", block: "center" })}
-          className="mb-5 p-3 rounded-xl bg-danger-bg border border-danger/30 text-danger text-body-sm flex items-start gap-2">
+          className="mb-5 p-3 rounded-xl bg-danger-bg border border-danger/30 text-danger text-body-sm flex items-start gap-2"
+        >
           <AlertCircle size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
           <span>{errorMessage}</span>
         </div>
@@ -199,6 +167,7 @@ export function BrochureOrderForm({
 
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <HoneypotField value={website} onChange={setWebsite} />
+
         <BrochureOrderOptions
           variants={variants}
           basePrice={productSnapshot.price}
@@ -208,22 +177,29 @@ export function BrochureOrderForm({
           quote={pricing.quote}
           errors={pricing.errors}
           loading={pricing.loading}
+          industryKey={industryKey}
         />
 
         {appliedPolicies && (
           <PromotionPicker policies={appliedPolicies} value={selectedPromotionId} onChange={setSelectedPromotionId} />
         )}
 
-        {/* Người đặt */}
+        {/* Khối Người đặt (chung cho mọi ngành) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label htmlFor={`${uid}-customerName`} className="block text-body-sm font-bold text-foreground mb-1">
               Họ tên của bạn <span className="text-danger">*</span>
             </label>
             <input
-              type="text" required placeholder="VD: Nguyễn Văn A" value={customerName}
-              maxLength={ORDER_FIELD_MAX.name} id={`${uid}-customerName`} autoComplete="name"
-              onChange={(e) => setCustomerName(e.target.value)} className={INPUT}
+              type="text"
+              required
+              placeholder="VD: Nguyễn Văn A"
+              value={customerName}
+              maxLength={ORDER_FIELD_MAX.name}
+              id={`${uid}-customerName`}
+              autoComplete="name"
+              onChange={(e) => setCustomerName(e.target.value)}
+              className={INPUT}
             />
           </div>
           <div>
@@ -231,9 +207,16 @@ export function BrochureOrderForm({
               Số điện thoại của bạn <span className="text-danger">*</span>
             </label>
             <input
-              type="tel" required placeholder="VD: 0901234567" value={customerPhone}
-              maxLength={15} id={`${uid}-customerPhone`} autoComplete="tel" inputMode="tel"
-              onChange={(e) => setCustomerPhone(e.target.value)} className={INPUT}
+              type="tel"
+              required
+              placeholder="VD: 0901234567"
+              value={customerPhone}
+              maxLength={15}
+              id={`${uid}-customerPhone`}
+              autoComplete="tel"
+              inputMode="tel"
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              className={INPUT}
             />
           </div>
           <div>
@@ -241,84 +224,84 @@ export function BrochureOrderForm({
               Email <span className="text-caption font-normal text-text-muted">(tùy chọn)</span>
             </label>
             <input
-              type="email" placeholder="VD: email@example.com" value={customerEmail}
-              maxLength={100} id={`${uid}-customerEmail`} autoComplete="email"
-              onChange={(e) => setCustomerEmail(e.target.value)} className={INPUT}
-            />
-          </div>
-        </div>
-
-        {/* Người nhận */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label htmlFor={`${uid}-recipientName`} className="block text-body-sm font-bold text-foreground mb-1">
-              Họ tên người nhận hoa <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="VD: Trần Thị B"
-              value={recipientName}
-              maxLength={ORDER_FIELD_MAX.name}
-              id={`${uid}-recipientName`} autoComplete="off" onChange={(e) => setRecipientName(e.target.value)}
-              className={INPUT}
-            />
-          </div>
-          <div>
-            <label htmlFor={`${uid}-recipientPhone`} className="block text-body-sm font-bold text-foreground mb-1">
-              Số điện thoại người nhận <span className="text-danger">*</span>
-            </label>
-            <input
-              type="tel"
-              required
-              placeholder="VD: 0912345678"
-              value={recipientPhone}
-              maxLength={15}
-              id={`${uid}-recipientPhone`} autoComplete="off" inputMode="tel" onChange={(e) => setRecipientPhone(e.target.value)}
+              type="email"
+              placeholder="VD: email@example.com"
+              value={customerEmail}
+              maxLength={100}
+              id={`${uid}-customerEmail`}
+              autoComplete="email"
+              onChange={(e) => setCustomerEmail(e.target.value)}
               className={INPUT}
             />
           </div>
         </div>
 
-        {/* Ngày & Giờ giao */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label htmlFor={`${uid}-deliveryDate`} className="block text-body-sm font-bold text-foreground mb-1">
-              Ngày giao hoa <span className="text-danger">*</span>
-            </label>
-            <ViDateInput
-              id={`${uid}-deliveryDate`}
-              required
-              min={minDate}
-              max={maxDate}
-              value={deliveryDate}
-              onChange={setDeliveryDate}
-              className={INPUT}
-            />
-          </div>
-          <div>
-            <label htmlFor={`${uid}-deliveryTimeSlot`} className="block text-body-sm font-bold text-foreground mb-1">
-              Khung giờ mong muốn
-            </label>
-            <DeliveryTimePicker
-              id={`${uid}-deliveryTimeSlot`}
-              date={deliveryDate}
-              value={deliveryTimeSlot}
-              shipping={shipping} fullSlots={pricing.fullSlots}
-              inputClassName={INPUT}
-              onChange={setDeliveryTimeSlot}
-            />
-          </div>
-        </div>
-
-        <AddressFields idPrefix={uid} value={addressParts} inputClassName={INPUT} onChange={setAddressParts} />
-
-        <OrderNotesFields
-          idPrefix={uid}
-          value={{ cardMessage, senderNote, deliveryNote, mapUrl }}
-          inputClassName={INPUT}
-          onChange={setNotes}
-        />
+        {/* Chuyển đổi linh hoạt giữa giao diện Homestay và giao diện Giao hàng Tiêu chuẩn */}
+        {isHomestay ? (
+          <HomestayOrderFields
+            idPrefix={uid}
+            inputClassName={INPUT}
+            checkInDate={deliveryDate}
+            checkOutDate={checkOutDate}
+            minDate={minDate}
+            maxDate={maxDate}
+            checkInTimeSlot={deliveryTimeSlot}
+            customerName={customerName}
+            customerPhone={customerPhone}
+            recipientName={recipientName}
+            recipientPhone={recipientPhone}
+            isSelfBooking={isSelfBooking}
+            adultsCount={adultsCount}
+            childrenCount={childrenCount}
+            transitMethod={transitMethod}
+            specialRequests={specialRequests}
+            homestayAddress={undefined}
+            homestayName={terms.sampleProduct}
+            onCheckInChange={(d) => {
+              setDeliveryDate(d)
+              const n = calculateNights(d, checkOutDate)
+              pricing.update({ quantity: n })
+            }}
+            onCheckOutChange={(d) => {
+              setCheckOutDate(d)
+              const n = calculateNights(deliveryDate, d)
+              pricing.update({ quantity: n })
+            }}
+            onTimeSlotChange={setDeliveryTimeSlot}
+            onRecipientNameChange={setRecipientName}
+            onRecipientPhoneChange={setRecipientPhone}
+            onSelfBookingToggle={setIsSelfBooking}
+            onAdultsChange={setAdultsCount}
+            onChildrenChange={setChildrenCount}
+            onTransitChange={setTransitMethod}
+            onSpecialRequestsChange={setSpecialRequests}
+          />
+        ) : (
+          <StandardOrderFields
+            idPrefix={uid}
+            inputClassName={INPUT}
+            industryKey={industryKey}
+            recipientName={recipientName}
+            recipientPhone={recipientPhone}
+            deliveryDate={deliveryDate}
+            deliveryTimeSlot={deliveryTimeSlot}
+            minDate={minDate}
+            maxDate={maxDate}
+            shipping={shipping}
+            fullSlots={pricing.fullSlots}
+            addressParts={addressParts}
+            cardMessage={cardMessage}
+            senderNote={senderNote}
+            deliveryNote={deliveryNote}
+            mapUrl={mapUrl}
+            onRecipientNameChange={setRecipientName}
+            onRecipientPhoneChange={setRecipientPhone}
+            onDeliveryDateChange={setDeliveryDate}
+            onDeliveryTimeSlotChange={setDeliveryTimeSlot}
+            onAddressPartsChange={setAddressParts}
+            onNotesChange={setNotes}
+          />
+        )}
 
         {/* Submit Button */}
         <Button
@@ -327,7 +310,7 @@ export function BrochureOrderForm({
           className="mt-2 w-full h-12 bg-primary hover:bg-primary-dark text-white font-extrabold text-body flex items-center justify-center gap-2 rounded-xl shadow-md"
         >
           <Send size={18} aria-hidden="true" />
-          <span>{loading ? "Đang gửi đơn hàng..." : "Xem lại đơn"}</span>
+          <span>{loading ? "Đang gửi đơn..." : isHomestay ? "Xem lại thông tin đặt phòng" : "Xem lại đơn"}</span>
         </Button>
       </form>
     </div>

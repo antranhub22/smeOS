@@ -6,7 +6,9 @@ import { enabledFieldsFor, type DisplaySettings, type OptionalDisplayField } fro
 import {
   GreetingTemplateId,
   GREETING_TEMPLATE_LIST,
+  getIndustryGreetingTemplateList,
 } from "@/modules/greeting-card/domain/greeting-template-registry"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { GreetingTemplateRenderer } from "./greeting-template-renderer"
 import { TemplateThumb } from "./template-thumb"
@@ -47,6 +49,8 @@ interface TemplateSelectorSplitPaneProps {
   displaySettings?: DisplaySettings | undefined
   /** Mở cài đặt bật/tắt trường cho một mẫu */
   onOpenDisplaySettings?: ((id: GreetingTemplateId) => void) | undefined
+  /** Mã ngành để chuyên biệt hóa văn phong và gợi ý mẫu */
+  industryKey?: string | null | undefined
 }
 
 // ---------------------------------------------------------------------------
@@ -230,6 +234,7 @@ function LivePreviewPane({
   onSelect,
   displayFields,
   onOpenSettings,
+  industryKey,
 }: {
   tpl: (typeof GREETING_TEMPLATE_LIST)[number]
   products: GreetingCatalogProduct[]
@@ -239,7 +244,9 @@ function LivePreviewPane({
   onSelect: () => void
   displayFields: readonly OptionalDisplayField[]
   onOpenSettings?: (() => void) | undefined
+  industryKey?: string | null | undefined
 }) {
+  const terms = getIndustryTerminology(industryKey)
   const [productIdx, setProductIdx] = useState(0)
   const [prevTplId, setPrevTplId] = useState(tpl.id)
   const [fadeKey, setFadeKey] = useState(0)
@@ -342,7 +349,7 @@ function LivePreviewPane({
             </div>
             <p className="text-caption text-text-muted">
               {safeIdx + 1} / {products.length}
-              {isRealData ? <span className="text-primary font-semibold"> · Thật</span> : <span className="block text-text-muted">Ảnh minh hoạ — thêm mẫu hoa để xem ảnh thật</span>}
+              {isRealData ? <span className="text-primary font-semibold"> · Thật</span> : <span className="block text-text-muted">Ảnh minh hoạ — thêm {terms.sampleProduct.toLowerCase()} để xem ảnh thật</span>}
             </p>
           </div>
         )}
@@ -389,7 +396,9 @@ export function TemplateSelectorSplitPane({
   previewProducts,
   displaySettings,
   onOpenDisplaySettings,
+  industryKey,
 }: TemplateSelectorSplitPaneProps) {
+  const templateList = getIndustryGreetingTemplateList(industryKey)
   const [activeId, setActiveId] = useState<GreetingTemplateId>(selectedTemplateId)
   const [activeFilter, setActiveFilter] = useState<"all" | "swipe-style" | "interactive-deck">("swipe-style")
 
@@ -401,17 +410,17 @@ export function TemplateSelectorSplitPane({
     setActiveId(selectedTemplateId)
   }
 
-  const swipeStyles = GREETING_TEMPLATE_LIST.filter((t) => t.category === "swipe-style" && t.styleNumber)
-  const auxDecks = GREETING_TEMPLATE_LIST.filter((t) => t.category !== "swipe-style" || !t.styleNumber)
+  const swipeStyles = templateList.filter((t) => t.category === "swipe-style" && t.styleNumber)
+  const auxDecks = templateList.filter((t) => t.category !== "swipe-style" || !t.styleNumber)
 
   const displayed =
     activeFilter === "swipe-style"
       ? swipeStyles
       : activeFilter === "interactive-deck"
         ? auxDecks
-        : GREETING_TEMPLATE_LIST
+        : templateList
 
-  const activeTpl = GREETING_TEMPLATE_LIST.find((t) => t.id === activeId) ?? GREETING_TEMPLATE_LIST[0]!
+  const activeTpl = templateList.find((t) => t.id === activeId) ?? templateList[0]!
 
   return (
     <>
@@ -494,6 +503,7 @@ export function TemplateSelectorSplitPane({
                 onSelect={() => onSelectTemplate(activeTpl.id)}
                 displayFields={enabledFieldsFor(displaySettings ?? {}, activeTpl.id)}
                 onOpenSettings={onOpenDisplaySettings ? () => onOpenDisplaySettings(activeTpl.id) : undefined}
+                industryKey={industryKey}
               />
             )}
           </div>

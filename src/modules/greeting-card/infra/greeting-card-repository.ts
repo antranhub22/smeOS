@@ -182,7 +182,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       select: { name: true, settings: true, business_profile: { select: { display_name: true, phone: true } } },
     })
     return {
-      name: org?.business_profile?.display_name || org?.name || "Tiệm hoa",
+      name: org?.business_profile?.display_name || org?.name || "Cửa hàng",
       phone: org?.business_profile?.phone ?? null,
       settings: org?.settings ?? null,
     }

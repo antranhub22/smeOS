@@ -66,6 +66,14 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
        - `npm run new:industry`: Wizard tạo ngành mới tự động làm cả 3 bước (sinh file, đăng ký registry, chạy bộ test tự động).
        - `npm run check:industry`: Tự động kiểm tra 4 trụ cột SSOT Đa ngành (Registry & Files, Unit Test, TypeScript Typecheck, Terminology Ratchet Audit). Đã gắn sẵn vào Git Pre-Commit Hook (`.git/hooks/pre-commit`).
        - `npm run audit:industry`: Rà soát các từ ngữ chuyên ngành hardcode trên toàn bộ UI kèm gợi ý fix SSOT `ti.<term>`.
+- **Kiến trúc Form Đặt Hàng Đa Ngành (Order Form Architecture, PO 18/10/2026)**:
+  - **`BrochureOrderOptions`** (tại `src/components/greeting-card/customer/brochure-order-options.tsx`) là khối **chứa cả 2 ô mã bắt buộc cho MỌI NGÀNH** — luôn hiển thị, không điều kiện:
+    - 🏷️ **Mã ưu đãi** (`voucherCode`) — khách nhập mã giảm giá do tiệm cấp, kết nối `QuoteSelection.voucherCode` → server validate → hiện kết quả giảm giá.
+    - 🏦 **Mã thanh toán** (`paymentCode`) — khách nhập mã đặt cọc do tiệm cấp, kết nối `QuoteSelection.paymentCode` → server validate → hiện tỷ lệ đặt cọc / thanh toán trước.
+  - **Cả hai mã được cài đặt trong Hồ sơ tiệm** (payment_plans / store_policies). Server đọc qua `brochure-quote.ts` → trả `BrochureQuote.paymentPlan`. **Tuyệt đối cấm** tạo ô input mã mới trong `BrochureOrderForm` hoặc bất kỳ `*OrderFields` nào — đó là duplicate giả không kết nối server.
+  - **Placeholder của 2 ô mã phải để trống** — không ghi ví dụ mã cụ thể. Sub-label phụ nếu có phải là thuật ngữ trung lập (không hardcode tên ngành).
+  - **Khi nào tạo `*OrderFields` mới cho ngành**: Chỉ tạo khi ngành có **trường dữ liệu cấu trúc hoàn toàn khác** không thể diễn đạt bằng `StandardOrderFields` (ví dụ: Homestay cần `checkInDate` / `checkOutDate` / `numberOfNights` / `adultsCount` nên tạo `HomestayOrderFields`). Tạo file `<industry-key>-order-fields.tsx`, thêm điều kiện `isXxx` trong `BrochureOrderForm`, KHÔNG đặt lại ô mã ưu đãi / mã thanh toán (đã có trong `BrochureOrderOptions` ở trên form).
+  - **Luồng dữ liệu chuẩn**: `QuoteSelection` (client state) → `useBrochureQuote` (SWR) → `POST /api/v1/public/[catalog]/quote` → `brochure-quote.ts` (use-case) → trả `BrochureQuote.paymentPlan` → `PaymentCodeField` hiện kết quả.
 - **Tách biệt trường dữ liệu nguyên tử (Atomic Disaggregated Fields) để tối ưu khả năng chỉnh sửa (Editable)**:
   - Tuyệt đối không gộp chung văn bản và số lượng/đơn vị vào cùng một chuỗi tự do (ví dụ: cấm gộp `"Hồng đỏ 10 cành"` thành 1 ô text).
   - Bắt buộc phân rã thành các trường cấu trúc độc lập: tên hoa (text), số lượng (number), đơn vị (text), màu sắc (text), vai trò (select)... để người dùng có thể nhấp chuột sửa trực tiếp từng thông số mà không làm hỏng cấu trúc dữ liệu.
