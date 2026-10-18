@@ -67,8 +67,8 @@ async function apiFetchWithAuth(path: string, options?: RequestInit) {
 // FIELD MAPPER — raw analysis → ResultField[]
 // ============================================================
 
-function mapAnalysisToFields1(raw: Record<string, unknown>): ResultField[] {
-  return mapAnalysisFromSchema(raw)
+function mapAnalysisToFields1(raw: Record<string, unknown>, industryKey?: string): ResultField[] {
+  return mapAnalysisFromSchema(raw, industryKey)
 }
 
 function mapSalesFields(raw: Record<string, unknown>): ResultField[] {
@@ -172,7 +172,7 @@ function newAnalysisIdempotencyKey(): string {
 export default function TaiAnhPage() {
   const router = useRouter()
   const session = useSession()
-  const { ti } = useI18n()
+  const { ti, industryKey } = useI18n()
 
   const [activeTab, setActiveTab] = useState<"m01a" | "m01b" | "m01c" | "storage">("m01a")
   const [pitchOverrides, setPitchOverrides] = useState<SalesPitchOverrides | undefined>(undefined)
@@ -1213,7 +1213,7 @@ export default function TaiAnhPage() {
 
   // --- Render ---
   const fields1 = analysisData && typeof analysisData === "object"
-    ? mapAnalysisToFields1(analysisData as Record<string, unknown>)
+    ? mapAnalysisToFields1(analysisData as Record<string, unknown>, industryKey)
     : MOCK_FIELDS_RESULT1_PLACEHOLDER
 
   return (

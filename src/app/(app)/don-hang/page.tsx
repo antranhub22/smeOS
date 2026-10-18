@@ -23,7 +23,7 @@ type ActiveMainTab = "kanban" | "brochure_sales" | "brochure_payment"
 export default function DonHangPage() {
   const router = useRouter()
   const session = useSession()
-  const { t } = useI18n()
+  const { t, ti } = useI18n()
   // Tab xác nhận tiền Thẻ chào chỉ dành cho Điều hành (R11 — PO 08/10/2026); máy chủ vẫn kiểm ở mọi endpoint
   const canConfirmTransfer = session.can("R11")
   const canExport = session.can("R1")
@@ -165,7 +165,7 @@ export default function DonHangPage() {
           }`}
         >
           <Send size={16} />
-          <span>{t("orders.tabs.brochureLinks")}</span>
+          <span>{ti("sampleProduct") ? `Link đặt ${ti("sampleProduct").toLowerCase()}` : t("orders.tabs.brochureLinks")}</span>
         </button>
 
         {canConfirmTransfer && <button
@@ -212,7 +212,7 @@ export default function DonHangPage() {
               {[
                 { id: "all" as const, label: t("orders.filters.mobile.all"), count: filteredOrders.length },
                 { id: "new" as const, label: t("orders.filters.mobile.new"), count: colNew.length },
-                { id: "arranging" as const, label: t("orders.filters.mobile.arranging"), count: colArranging.length },
+                { id: "arranging" as const, label: ti("makerAction") ? `Đang ${ti("makerAction").toLowerCase()}` : t("orders.filters.mobile.arranging"), count: colArranging.length },
                 { id: "delivery" as const, label: t("orders.filters.mobile.delivering"), count: colDelivery.length },
                 { id: "completed" as const, label: t("orders.filters.mobile.completed"), count: colCompleted.length },
               ].map((tab) => (
@@ -279,7 +279,9 @@ export default function DonHangPage() {
                 <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden="true" />
-                    <span className="font-bold text-caption uppercase text-text">{t("orders.columns.inProduction")}</span>
+                    <span className="font-bold text-caption uppercase text-text">
+                      {ti("makerAction") ? `Đang ${ti("makerAction").toLowerCase()}` : t("orders.columns.inProduction")}
+                    </span>
                   </div>
                   <Badge tone="neutral" className="text-caption font-bold">
                     {colArranging.length}

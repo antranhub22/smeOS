@@ -6,6 +6,7 @@ import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { usePriceBudgets } from "@/components/catalog/use-price-budgets"
+import { useI18n } from "@/lib/i18n"
 import {
   matchProductsByBudget,
   type BudgetMatchCriteria,
@@ -108,6 +109,10 @@ export function BudgetMatchingModal({
     }
   }
 
+  const { ti } = useI18n()
+  const sampleProd = ti("sampleProduct")
+  const modalTitle = sampleProd ? `Tìm ${sampleProd.toLowerCase()} theo ngân sách & Gợi ý Upsell` : "Tìm theo ngân sách & Gợi ý Upsell"
+
   return (
     <Dialog
       open={open}
@@ -115,7 +120,7 @@ export function BudgetMatchingModal({
       title={
         <div className="flex items-center justify-between gap-3 pr-6">
           <div className="flex items-center gap-2">
-            <span className="text-primary font-semibold">Tìm hoa theo ngân sách & Gợi ý Upsell</span>
+            <span className="text-primary font-semibold">{modalTitle}</span>
             <Badge tone="accent" className="text-caption">Độ khớp AI</Badge>
           </div>
           <span className="text-caption text-muted">Tư vấn chốt đơn 1-chạm</span>

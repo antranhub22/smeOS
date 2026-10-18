@@ -36,6 +36,7 @@ import {
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { TemplatePreviewModal } from "./template-preview-modal"
 import { TEMPLATE_PREVIEW_REGISTRY, SELF_MODAL_TEMPLATE_FILES } from "./preview-registry"
+import { useI18n } from "@/lib/i18n/context"
 
 type TemplateFile = {
   file: string
@@ -230,13 +231,40 @@ const CATEGORIES: TemplateCategory[] = [
 const TOTAL_FILES = CATEGORIES.reduce((sum, c) => sum + c.files.length, 0)
 
 export default function KhoTemplatesPage() {
+  const { ti } = useI18n()
   const [query, setQuery] = useState("")
   const [selectedFile, setSelectedFile] = useState<{ file: TemplateFile; category: TemplateCategory } | null>(null)
 
+  // Override mô tả các category có thuật ngữ ngành
+  const categoriesWithTerminology = useMemo(() => CATEGORIES.map((cat) => {
+    if (cat.id === "product-analysis") {
+      return {
+        ...cat,
+        description: `Tải ảnh ${ti("sampleProduct")}, AI nhận diện ${ti("rawMaterialItem")} & sinh nội dung bán hàng, tạo thẻ chào khách A6 và kịch bản tư vấn Zalo.`,
+        files: cat.files.map((f) => {
+          if (f.file === "m01a-guidance-card.tsx") return { ...f, purpose: `Hướng dẫn tải ảnh chụp ${ti("sampleProduct")} & nhận diện ${ti("rawMaterialItem")}.` }
+          if (f.file === "commercial-content-card.tsx") return { ...f, purpose: `Thẻ nội dung bán hàng: tên gợi ý, câu chuyện ${ti("sampleProduct")}, phân khúc giá, lưu kho đã duyệt.` }
+          return f
+        }),
+      }
+    }
+    if (cat.id === "creative-studio") {
+      return {
+        ...cat,
+        description: `Tách nền ảnh ${ti("sampleProduct")}, ghép bối cảnh studio AI, chọn nhà cung cấp & chế độ tối ưu ảnh sản phẩm.`,
+        files: cat.files.map((f) => {
+          if (f.file === "creative-guidance-card.tsx") return { ...f, purpose: `Hướng dẫn tách nền ${ti("sampleProduct")} và ghép bối cảnh studio.` }
+          return f
+        }),
+      }
+    }
+    return cat
+  }), [ti])
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return CATEGORIES
-    return CATEGORIES.map((cat) => {
+    if (!q) return categoriesWithTerminology
+    return categoriesWithTerminology.map((cat) => {
       const catMatches =
         cat.title.toLowerCase().includes(q) || cat.description.toLowerCase().includes(q)
       const files = catMatches
@@ -249,7 +277,7 @@ export default function KhoTemplatesPage() {
           )
       return { ...cat, files }
     }).filter((cat) => cat.files.length > 0)
-  }, [query])
+  }, [query, categoriesWithTerminology])
 
   return (
     <div className="h-full overflow-y-auto">

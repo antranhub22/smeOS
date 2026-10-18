@@ -9,9 +9,9 @@ import {
 } from "./industry-profile"
 
 describe("IndustryProfile Domain", () => {
-  it("trả về đúng số lượng 6 ngành chính đã khai báo", () => {
+  it("trả về đúng số lượng 7 ngành chính đã khai báo", () => {
     const all = listAllIndustries()
-    expect(all.length).toBe(6)
+    expect(all.length).toBe(7)
     expect(all.map((i) => i.key)).toEqual([
       "FLORAL",
       "FASHION",
@@ -19,6 +19,7 @@ describe("IndustryProfile Domain", () => {
       "CRAFT_GIFT",
       "RETAIL_GENERAL",
       "SERVICES",
+      "HOMESTAY",
     ])
   })
 

@@ -11,7 +11,7 @@ import { CustomerDetailModal } from "@/components/crm/customer-detail-modal"
 import { OccasionCarePanel } from "@/components/crm/occasion-care-panel"
 import { ExportCustomersButton } from "@/components/crm/export-customers-button"
 import { useSession } from "@/lib/session"
-import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { getIndustryPlugin, getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { CustomerMasterIndex, OccasionReminder } from "@/modules/crm/domain/customer-master-index"
 
 export default function CRMPage() {
@@ -72,16 +72,18 @@ export default function CRMPage() {
     NEW: "neutral",
   }
 
+  const industryPlugin = getIndustryPlugin(organization?.industry)
+  const industryName = industryPlugin?.identity?.name || "Cửa hàng"
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* 1. Header chuẩn có Top-Right Action Header */}
       {/* 1. Header chuẩn có Top-Right Action Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-4 sm:px-6 py-4 backdrop-blur-sm">
         <div>
           <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
             Quản lý quan hệ khách hàng & Chăm sóc
           </div>
-          <h1 className="text-title font-extrabold text-foreground">CRM & Khách Hàng Ngành Hoa</h1>
+          <h1 className="text-title font-extrabold text-foreground">CRM & Khách Hàng — {industryName}</h1>
           <p className="text-caption text-text-muted mt-0.5">
             Hồ sơ khách hàng hợp nhất · Phân tầng RFM tự động · Nhắc hẹn ngày kỷ niệm
           </p>
@@ -191,7 +193,7 @@ export default function CRMPage() {
                 <th className="px-4 py-3">Tổng chi tiêu</th>
                 <th className="px-4 py-3">Số đơn</th>
                 <th className="px-4 py-3">Dịp kỷ niệm</th>
-                <th className="px-4 py-3">Gu hoa ưa thích</th>
+                <th className="px-4 py-3">Sở thích & Gu chọn</th>
                 <th className="px-4 py-3 text-right">Thao tác</th>
               </tr>
             </thead>

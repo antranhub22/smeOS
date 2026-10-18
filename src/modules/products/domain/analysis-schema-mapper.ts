@@ -61,6 +61,47 @@ export const CHECKLIST_LABELS: Record<string, string> = {
   ruy_bang: "Ruy băng",
   thiep_bien_chu: "Thiệp / Biển chữ",
   phu_kien_trang_tri: "Phụ kiện trang trí",
+  // Homestay checklist
+  giuong_ga_goi_sach: "Giường, ga & gối sạch sẽ",
+  anh_sang_tu_nhien: "Ánh sáng tự nhiên / Cửa sổ",
+  phong_ngu_sach_gon: "Phòng ngủ gọn gàng, ngăn nắp",
+  noi_that_dong_bo: "Nội thất đồng bộ & Hài hòa",
+  dieu_hoa_hoat_dong: "Điều hòa / Quạt thông gió",
+  view_dep_ben_ngoai: "Tầm nhìn / View thoáng đẹp",
+  thiet_bi_ve_sinh_du: "Khu vệ sinh sạch & Đầy đủ tiện ích",
+  dieu_kien_an_toan: "Đảm bảo an toàn & Tiêu chuẩn đón khách",
+}
+
+/**
+ * Bản đồ nhãn tuỳ biến theo từng ngành công nghiệp (SSOT)
+ */
+const INDUSTRY_FIELD_OVERRIDES: Record<string, Partial<Record<string, string>>> = {
+  HOMESTAY: {
+    flowers: "Tiện nghi phòng nhìn thấy",
+    foliage: "Vật liệu bề mặt & Cấu trúc",
+    accessories: "Đồ trang trí & Điểm nhấn",
+    wrapping: "Chăn ga gối & Đồ vải",
+    card_printed_text: "Bảng biển / Nội quy / Thẻ phòng (OCR)",
+    materials_note: "Ghi chú tiện ích & Hiện trạng phòng",
+    category: "Hạng phòng / Loại hình lưu trú",
+    shape: "Bố cục & Không gian phòng",
+    facing: "Hướng nhìn (View phòng)",
+    container: "Loại giường / Sức chứa",
+    phong_cach: "Phong cách thiết kế nội thất",
+    dip_su_dung: "Mục đích lưu trú phù hợp",
+    so_tang_lop: "Đẳng cấp & Tiêu chuẩn phòng",
+    palette_accounting: "Bảng màu không gian phòng",
+    checklist: "Checklist 8 tiêu chuẩn kiểm phòng",
+    totals: "Tổng tiện nghi phòng",
+    "totals-bud": "Tiện nghi đạt chuẩn",
+    "totals-damaged": "Điểm cần xử lý / Khắc phục",
+  },
+}
+
+export function resolveFieldLabels(industryKey?: string): Record<string, string> {
+  const normalizedKey = (industryKey ?? "").toUpperCase()
+  const overrides = INDUSTRY_FIELD_OVERRIDES[normalizedKey] ?? {}
+  return Object.assign({}, FIELD_LABELS, overrides) as Record<string, string>
 }
 
 /**
@@ -68,7 +109,11 @@ export const CHECKLIST_LABELS: Record<string, string> = {
  * Đảm bảo 100% các trường trong Schema.json đều được hiển thị.
  * Bất kỳ trường nào rỗng / null / chưa có đều nhận giá trị "N/A".
  */
-export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | undefined): ResultField[] {
+export function mapAnalysisFromSchema(
+  raw: Record<string, unknown> | null | undefined,
+  industryKey?: string
+): ResultField[] {
+  const activeLabels = resolveFieldLabels(industryKey)
   const data = raw ?? {}
   const bom = (data.bom as Record<string, unknown> | undefined) ?? {}
   const identity = (data.identity as Record<string, unknown> | undefined) ?? {}
@@ -324,7 +369,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
   return [
     {
       key: "flowers",
-      label: FIELD_LABELS.flowers ?? "Danh sách loại hoa",
+      label: activeLabels.flowers ?? "Danh sách loại hoa",
       type: "list",
       editable: true,
       value: flowers,
@@ -333,7 +378,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "foliage",
-      label: FIELD_LABELS.foliage ?? "Lá, cành phụ",
+      label: activeLabels.foliage ?? "Lá, cành phụ",
       type: "list",
       editable: true,
       value: foliage,
@@ -342,7 +387,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "accessories",
-      label: FIELD_LABELS.accessories ?? "Phụ kiện & Nơ",
+      label: activeLabels.accessories ?? "Phụ kiện & Nơ",
       type: "list",
       editable: true,
       value: accessories,
@@ -351,7 +396,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "wrapping",
-      label: FIELD_LABELS.wrapping ?? "Vật liệu gói & Bao bì",
+      label: activeLabels.wrapping ?? "Vật liệu gói & Bao bì",
       type: "list",
       editable: true,
       value: wrapping,
@@ -360,7 +405,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "card_printed_text",
-      label: FIELD_LABELS.card_printed_text ?? "Nội dung chữ trên thiệp (OCR)",
+      label: activeLabels.card_printed_text ?? "Nội dung chữ trên thiệp (OCR)",
       type: "text",
       editable: true,
       value: cardPrintedText != null && String(cardPrintedText).trim() !== "" ? String(cardPrintedText) : "N/A",
@@ -369,7 +414,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "palette_accounting",
-      label: FIELD_LABELS.palette_accounting ?? "Bảng màu & Cụm màu",
+      label: activeLabels.palette_accounting ?? "Bảng màu & Cụm màu",
       type: "list",
       editable: true,
       value: paletteItems,
@@ -378,7 +423,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "category",
-      label: FIELD_LABELS.category ?? "Phân loại sản phẩm",
+      label: activeLabels.category ?? "Phân loại sản phẩm",
       type: "text",
       editable: true,
       value: idVal("category"),
@@ -387,7 +432,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "shape",
-      label: FIELD_LABELS.shape ?? "Hình dáng thiết kế",
+      label: activeLabels.shape ?? "Hình dáng thiết kế",
       type: "text",
       editable: true,
       value: idVal("shape"),
@@ -396,7 +441,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "facing",
-      label: FIELD_LABELS.facing ?? "Hướng nhìn / Mặt hoa",
+      label: activeLabels.facing ?? "Hướng nhìn / Mặt hoa",
       type: "text",
       editable: true,
       value: idVal("facing"),
@@ -405,7 +450,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "container",
-      label: FIELD_LABELS.container ?? "Vật chứa",
+      label: activeLabels.container ?? "Vật chứa",
       type: "text",
       editable: true,
       value: idVal("container"),
@@ -414,7 +459,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "phong_cach",
-      label: FIELD_LABELS.phong_cach ?? "Phong cách thiết kế",
+      label: activeLabels.phong_cach ?? "Phong cách thiết kế",
       type: "text",
       editable: true,
       value: idVal("phong_cach"),
@@ -423,7 +468,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "dip_su_dung",
-      label: FIELD_LABELS.dip_su_dung ?? "Dịp sử dụng đề xuất",
+      label: activeLabels.dip_su_dung ?? "Dịp sử dụng đề xuất",
       type: "text",
       editable: true,
       value: idVal("dip_su_dung"),
@@ -434,7 +479,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
       // Sửa được: máy đọc số tầng lớp từ ảnh, và một bó chụp nghiêng thì nó
       // đếm hụt. Người soát nhìn bó hoa thật nên họ mới là nguồn đúng.
       key: "so_tang_lop",
-      label: FIELD_LABELS.so_tang_lop ?? "Cấu trúc sản xuất",
+      label: activeLabels.so_tang_lop ?? "Cấu trúc sản xuất",
       type: "number",
       editable: true,
       value: soTangLop ?? 0,
@@ -442,7 +487,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "materials_note",
-      label: FIELD_LABELS.materials_note ?? "Ghi chú vật liệu",
+      label: activeLabels.materials_note ?? "Ghi chú vật liệu",
       type: "text",
       editable: true,
       value: bom.materials_note != null && String(bom.materials_note).trim() !== "" ? String(bom.materials_note) : "N/A",
@@ -451,7 +496,7 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     },
     {
       key: "checklist",
-      label: FIELD_LABELS.checklist ?? "Checklist 10 cấu phần tiêu chuẩn",
+      label: activeLabels.checklist ?? "Checklist 10 cấu phần tiêu chuẩn",
       type: "list",
       editable: false,
       value: checklistItems,
@@ -472,28 +517,28 @@ export function mapAnalysisFromSchema(raw: Record<string, unknown> | null | unde
     })),
     {
       key: "totals",
-      label: FIELD_LABELS.totals ?? "Tổng số cành / hoa",
+      label: activeLabels.totals ?? "Tổng số cành / hoa",
       type: "readonly",
       editable: false,
       value: flowerCount != null ? `${flowerCount} cành` : "N/A",
     },
     {
       key: "totals-bud",
-      label: FIELD_LABELS["totals-bud"] ?? "Tổng số nụ",
+      label: activeLabels["totals-bud"] ?? "Tổng số nụ",
       type: "readonly",
       editable: false,
       value: budCount != null ? `${budCount} nụ` : "N/A",
     },
     {
       key: "totals-damaged",
-      label: FIELD_LABELS["totals-damaged"] ?? "Tổng số cành hỏng",
+      label: activeLabels["totals-damaged"] ?? "Tổng số cành hỏng",
       type: "readonly",
       editable: false,
       value: damagedCount != null ? `${damagedCount} cành` : "N/A",
     },
     {
       key: "confidence",
-      label: FIELD_LABELS.confidence ?? "Độ tin cậy tổng thể",
+      label: activeLabels.confidence ?? "Độ tin cậy tổng thể",
       type: "readonly",
       editable: false,
       value: confidenceNum != null ? `${confidenceNum}%` : "N/A",

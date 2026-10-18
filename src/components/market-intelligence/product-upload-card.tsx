@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Upload, Image as ImageIcon, Sparkles, Check, Flower2, Library, Loader2, X } from "lucide-react";
+import { useI18n } from "@/lib/i18n/context";
 
 interface ProductUploadCardProps {
   selectedImage: string;
@@ -13,23 +14,50 @@ interface ProductUploadCardProps {
   isAnalyzing: boolean;
 }
 
-const DEMO_FLOWERS = [
-  {
-    name: "Bó hoa hồng pastel phong cách Hàn Quốc",
-    url: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80",
-    style: "Romantic & Tinh tế",
-  },
-  {
-    name: "Bó hoa tulip tone cam cháy vintage",
-    url: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80",
-    style: "Vintage Cổ điển",
-  },
-  {
-    name: "Giỏ hoa sinh nhật hoa mẫu đơn & cúc mẫu đơn",
-    url: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=600&q=80",
-    style: "Sang trọng & Quý phái",
-  },
-];
+interface DemoItem {
+  name: string;
+  url: string;
+  style: string;
+}
+
+/** Ảnh minh hoạ mẫu theo ngành — 3 mục khớp với aiConfig.sampleProductNames */
+const DEMO_IMAGES_BY_INDUSTRY: Record<string, DemoItem[]> = {
+  FLORAL: [
+    { name: "", url: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80", style: "Romantic & Tinh tế" },
+    { name: "", url: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80", style: "Vintage Cổ điển" },
+    { name: "", url: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=600&q=80", style: "Sang trọng & Quý phái" },
+  ],
+  HOMESTAY: [
+    { name: "", url: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80", style: "Phòng Deluxe hiện đại" },
+    { name: "", url: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80", style: "Căn hộ ấm cúng gia đình" },
+    { name: "", url: "https://images.unsplash.com/photo-1416949929422-a1d9c8fe84af?auto=format&fit=crop&w=600&q=80", style: "Villa sân vườn BBQ" },
+  ],
+  FASHION: [
+    { name: "", url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80", style: "Thời trang đường phố" },
+    { name: "", url: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=600&q=80", style: "Phong cách tối giản" },
+    { name: "", url: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80", style: "Vintage Retro" },
+  ],
+  FNB: [
+    { name: "", url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80", style: "Món chính đặc sắc" },
+    { name: "", url: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=600&q=80", style: "Tráng miệng tinh tế" },
+    { name: "", url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80", style: "Đồ uống & Coffee" },
+  ],
+  CRAFT_GIFT: [
+    { name: "", url: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80", style: "Quà tặng handmade" },
+    { name: "", url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80", style: "Thủ công mỹ nghệ" },
+    { name: "", url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=600&q=80", style: "Hộp quà cao cấp" },
+  ],
+  RETAIL_GENERAL: [
+    { name: "", url: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=600&q=80", style: "Sản phẩm bán lẻ" },
+    { name: "", url: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80", style: "Trưng bày cửa hàng" },
+    { name: "", url: "https://images.unsplash.com/photo-1560472355-536de3962603?auto=format&fit=crop&w=600&q=80", style: "Combo sản phẩm" },
+  ],
+  SERVICES: [
+    { name: "", url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80", style: "Dịch vụ chuyên nghiệp" },
+    { name: "", url: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=600&q=80", style: "Hỗ trợ kỹ thuật" },
+    { name: "", url: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80", style: "Tư vấn & Giải pháp" },
+  ],
+};
 
 interface CatalogProductItem {
   id: string;
@@ -57,11 +85,19 @@ export function ProductUploadCard({
   onAnalyze,
   isAnalyzing,
 }: ProductUploadCardProps) {
+  const { ti, industry, industryKey } = useI18n();
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
   const [catalogProducts, setCatalogProducts] = useState<CatalogProductItem[]>([]);
   const [loadingCatalog, setLoadingCatalog] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const demoImagesArr: DemoItem[] = DEMO_IMAGES_BY_INDUSTRY[industryKey ?? "FLORAL"] ?? DEMO_IMAGES_BY_INDUSTRY.FLORAL ?? [];
+  const demoItems: DemoItem[] = ((industry?.aiConfig?.sampleProductNames) ?? []).map((name, i) => ({
+    name,
+    url: demoImagesArr[i]?.url ?? demoImagesArr[0]?.url ?? "",
+    style: demoImagesArr[i]?.style ?? "",
+  }));
 
   // 25/09/2026: kiểm TỪNG bước (xin URL → PUT kho → đăng ký asset). Bản trước
   // nuốt mọi lỗi và vẫn chọn ảnh — Chặng 02 rồi chạy trên một asset trỏ tới tệp
@@ -118,16 +154,16 @@ export function ProductUploadCard({
     }
   };
 
-  const handleSelectDemo = async (item: typeof DEMO_FLOWERS[0]) => {
+  const handleSelectDemo = async (item: DemoItem) => {
     onUpdateProductTitle(item.name);
     try {
       const res = await fetch(item.url);
       if (!res.ok) throw new Error(`Không tải được ảnh mẫu (HTTP ${res.status})`);
       const blob = await res.blob();
-      const file = new File([blob], "demo-flower.jpg", { type: blob.type || "image/jpeg" });
+      const file = new File([blob], "demo-product.jpg", { type: blob.type || "image/jpeg" });
       await uploadFileAsset(file, item.url, item.name);
     } catch (e) {
-      setUploadError(e instanceof Error ? e.message : "Không tải được ảnh mẫu — hãy tải ảnh của tiệm.");
+      setUploadError(e instanceof Error ? e.message : `Không tải được ảnh mẫu — hãy tải ảnh ${ti("sampleProduct")} của tiệm.`);
     }
   };
 
@@ -161,7 +197,7 @@ export function ProductUploadCard({
     reader.onload = async (e) => {
       const dataUrl = (e.target?.result as string) || URL.createObjectURL(file);
       const rawName = file.name.replace(/\.[^/.]+$/, "");
-      const title = rawName.length > 3 ? rawName : "Mẫu hoa đang nhận diện";
+      const title = rawName.length > 3 ? rawName : `${ti("sampleProduct")} đang nhận diện`;
       onUpdateProductTitle(title);
       await uploadFileAsset(file, dataUrl, title);
     };
@@ -176,7 +212,7 @@ export function ProductUploadCard({
             <Flower2 size={18} />
           </span>
           <div>
-            <h2 className="text-sm font-bold text-cool-900">1. Tải ảnh & Nhận diện Sản phẩm hoa (Chặng 01 & 02)</h2>
+            <h2 className="text-sm font-bold text-cool-900">1. Tải ảnh & Nhận diện {ti("sampleProduct")} (Chặng 01 & 02)</h2>
             <p className="text-caption text-cool-500">
               Tải ảnh thực tế của tiệm, chọn mẫu từ Catalog hoặc thử nghiệm nhanh mẫu tiêu biểu
             </p>
@@ -197,13 +233,13 @@ export function ProductUploadCard({
         {/* Upload Box */}
         <div className="md:col-span-2 space-y-3">
           <label className="text-xs font-bold text-cool-800 block">
-            Tên sản phẩm / Bó hoa đang nghiên cứu
+            Tên {ti("sampleProduct")} đang nghiên cứu
           </label>
           <input
             type="text"
             value={productTitle}
             onChange={(e) => onUpdateProductTitle(e.target.value)}
-            placeholder="VD: Bó hoa kem dâu 20 bông tặng sinh nhật..."
+            placeholder={`VD: ${demoItems[0]?.name ?? ti("sampleProduct")}...`}
             className="h-10 w-full rounded-xl border border-cool-200 bg-cool-50/50 px-3 text-xs text-cool-900 outline-none focus:border-blush-500 focus:bg-white transition"
           />
 
@@ -228,7 +264,7 @@ export function ProductUploadCard({
                   "Đang đồng bộ hóa ảnh lên hệ thống..."
                 ) : (
                   <>
-                    Kéo thả ảnh hoa vào đây, hoặc <span className="text-blush-600 underline">chọn tệp từ máy</span>
+                    Kéo thả ảnh vào đây, hoặc <span className="text-blush-600 underline">chọn tệp từ máy</span>
                   </>
                 )}
               </p>
@@ -239,10 +275,10 @@ export function ProductUploadCard({
           {/* Quick Demo Selector */}
           <div>
             <span className="text-caption font-bold text-cool-500 block mb-1.5">
-              Hoặc thử nghiệm nhanh với mẫu hoa tiêu biểu:
+              Hoặc thử nghiệm nhanh với mẫu {ti("sampleProduct")} tiêu biểu:
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              {DEMO_FLOWERS.map((flower) => {
+              {demoItems.map((flower) => {
                 const isSelected = selectedImage === flower.url;
                 return (
                   <button
@@ -275,7 +311,7 @@ export function ProductUploadCard({
         {/* Selected Image Preview & Trigger Button */}
         <div className="flex flex-col justify-between rounded-xl border border-cool-100 bg-cool-50/50 p-3.5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-cool-700">Ảnh hoa đã chọn</span>
+            <span className="text-xs font-bold text-cool-700">Ảnh {ti("sampleProduct")} đã chọn</span>
             {selectedAssetId && (
               <span className="text-caption font-bold px-2 py-0.5 rounded bg-mint-50 text-mint-700 border border-mint-200">
                 Asset Đã Đăng Ký
@@ -315,7 +351,7 @@ export function ProductUploadCard({
             ) : (
               <>
                 <Sparkles size={15} />
-                <span>Bóc tách Cấu trúc Hoa (Vision AI · 1 credit)</span>
+                <span>{ti("scanButtonLabel")} (Vision AI · 1 credit)</span>
               </>
             )}
           </button>
@@ -329,7 +365,7 @@ export function ProductUploadCard({
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <Library className="h-5 w-5 text-blush-600" />
-                <h3 className="text-sm font-bold text-cool-900">Chọn mẫu hoa từ Catalog của tiệm</h3>
+                <h3 className="text-sm font-bold text-cool-900">Chọn {ti("sampleProduct")} từ Catalog của tiệm</h3>
               </div>
               <button
               aria-label="Đóng"
@@ -349,7 +385,7 @@ export function ProductUploadCard({
                 </div>
               ) : catalogProducts.length === 0 ? (
                 <div className="text-center py-12 text-cool-400 text-xs">
-                  Chưa có sản phẩm nào trong Catalog. Bạn có thể kéo thả ảnh hoa mới từ máy tính.
+                  Chưa có {ti("sampleProduct")} nào trong Catalog. Bạn có thể kéo thả ảnh mới từ máy tính.
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">

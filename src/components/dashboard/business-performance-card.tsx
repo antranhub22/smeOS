@@ -168,7 +168,7 @@ export function BusinessPerformanceCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-body-sm font-bold text-text">
             <Award size={15} className="text-primary" />
-            <span>Top Mẫu Hoa &amp; Sản Phẩm Doanh Thu Cao</span>
+            <span>Top {ti.sampleProduct} &amp; Sản Phẩm Doanh Thu Cao</span>
           </div>
           <span className="text-caption text-text-muted">Top 5 nổi bật</span>
         </div>

@@ -14,6 +14,7 @@ import { FNB_INDUSTRY } from "./fnb"
 import { CRAFT_GIFT_INDUSTRY } from "./craft-gift"
 import { RETAIL_GENERAL_INDUSTRY } from "./retail-general"
 import { SERVICES_INDUSTRY } from "./services"
+import { HOMESTAY_INDUSTRY } from "./homestay"
 
 export const INDUSTRY_REGISTRY: Record<string, IndustryPluginContract> = {
   FLORAL: FLORAL_INDUSTRY,
@@ -22,6 +23,7 @@ export const INDUSTRY_REGISTRY: Record<string, IndustryPluginContract> = {
   CRAFT_GIFT: CRAFT_GIFT_INDUSTRY,
   RETAIL_GENERAL: RETAIL_GENERAL_INDUSTRY,
   SERVICES: SERVICES_INDUSTRY,
+  HOMESTAY: HOMESTAY_INDUSTRY,
 }
 
 export {
@@ -31,4 +33,5 @@ export {
   CRAFT_GIFT_INDUSTRY,
   RETAIL_GENERAL_INDUSTRY,
   SERVICES_INDUSTRY,
+  HOMESTAY_INDUSTRY,
 }

@@ -23,6 +23,7 @@ export type IndustryKey =
   | "CRAFT_GIFT"      // Quà tặng, đồ thủ công, đồ trang trí
   | "RETAIL_GENERAL"  // Bán lẻ tổng hợp, siêu thị mini, tạp hóa
   | "SERVICES"        // Dịch vụ, salon, spa, sửa chữa
+  | "HOMESTAY"        // Homestay, lưu trú, villa, căn hộ dịch vụ
 
 export const ALL_INDUSTRY_KEYS = [
   "FLORAL",
@@ -31,6 +32,7 @@ export const ALL_INDUSTRY_KEYS = [
   "CRAFT_GIFT",
   "RETAIL_GENERAL",
   "SERVICES",
+  "HOMESTAY",
 ] as const
 
 export const DEFAULT_INDUSTRY: IndustryKey = "FLORAL"

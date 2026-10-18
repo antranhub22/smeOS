@@ -29,7 +29,7 @@ export function ShopProfileReadiness() {
           Mở hồ sơ cửa hàng
         </Link>
       ) : (
-        <span className="shrink-0 text-caption text-text-muted">Hồ sơ cửa hàng chưa đủ thông tin. Hãy báo Điều hành cập nhật để tạo link đặt hoa.</span>
+        <span className="shrink-0 text-caption text-text-muted">Hồ sơ cửa hàng chưa đủ thông tin. Hãy báo Điều hành cập nhật để tạo link gửi khách.</span>
       )}
     </div>
   )

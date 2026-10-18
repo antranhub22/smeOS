@@ -216,7 +216,7 @@ function checkBackendContracts(): CheckResult {
   }
 
   // 2. Kiểm tra các thư mục contracts của Vision Worker
-  const visionContractDirs = ["fashion"] // các ngành đã có worker contract riêng biệt
+  const visionContractDirs = ["fashion", "homestay"] // các ngành đã có worker contract riêng biệt
   for (const dirName of visionContractDirs) {
     const dirPath = join(WORKERS_CONTRACTS_DIR, dirName)
     if (!existsSync(dirPath)) continue

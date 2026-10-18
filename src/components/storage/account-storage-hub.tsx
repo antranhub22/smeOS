@@ -37,6 +37,7 @@ import {
   type TabOverflowAction,
 } from "@/components/ui/tab-header"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import {
   type SalesPitchData,
   generateZaloPitchScript,
@@ -128,6 +129,7 @@ export function AccountStorageHub({
 }: AccountStorageHubProps) {
   const router = useRouter()
   const session = useSession()
+  const { dict, ti } = useI18n()
   const [activeTab, setActiveTab] = useState<StorageTab>(initialTab)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -390,7 +392,7 @@ export function AccountStorageHub({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm theo tên hoa, mã mẫu hoa, dịp tặng hoặc thành phần…"
+              placeholder={dict.storage.filters.searchPlaceholder}
               className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-border bg-surface-alt text-body-sm outline-none focus:border-primary transition-colors"
             />
           </div>
@@ -634,7 +636,7 @@ export function AccountStorageHub({
               <Layers size={32} className="mx-auto text-text-muted mb-2 opacity-50" />
               <div className="text-sm font-bold text-text">Chưa có phân tích nào được phê duyệt</div>
               <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto">
-                Hãy chuyển sang trang Quét ảnh hoa để nhận diện và duyệt ảnh trước khi tạo bài giới thiệu và tư vấn.
+                Hãy chuyển sang trang {ti("scanButtonLabel") || "Quét ảnh"} để nhận diện và duyệt ảnh trước khi tạo bài giới thiệu và tư vấn.
               </p>
             </Card>
           )}
