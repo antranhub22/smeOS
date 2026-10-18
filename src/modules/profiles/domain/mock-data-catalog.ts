@@ -33,7 +33,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
     products: [
       {
         name: "Bó hoa hồng đỏ tình yêu 30 bông",
-        image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=800&q=90",
+        image: "/mock-data/floral/p1.jpg",
         price: 450000,
         originalPrice: 550000,
         category: "BIRTHDAY",
@@ -41,7 +41,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Hộp hoa sinh nhật pastel mix",
-        image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=90",
+        image: "/mock-data/floral/p2.jpg",
         price: 650000,
         originalPrice: 780000,
         category: "BIRTHDAY",
@@ -49,7 +49,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Kệ hoa khai trương sự kiện",
-        image: "https://images.unsplash.com/photo-1487530811015-780f43d93d48?w=800&q=90",
+        image: "/mock-data/floral/p3.jpg",
         price: 1200000,
         originalPrice: 1500000,
         category: "EVENT",
@@ -57,7 +57,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Bình hoa cưới trang trí bàn tiệc",
-        image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=90",
+        image: "/mock-data/floral/p4.jpg",
         price: 380000,
         originalPrice: 450000,
         category: "WEDDING",
@@ -72,7 +72,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
     products: [
       {
         name: "Đầm dự tiệc lụa xéo vai off-shoulder",
-        image: "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=800&q=90",
+        image: "/mock-data/fashion/p1.jpg",
         price: 2800000,
         originalPrice: 3500000,
         category: "EVENING_DRESS",
@@ -80,7 +80,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Vest công sở nữ slim-fit vải tweed",
-        image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=90",
+        image: "/mock-data/fashion/p2.jpg",
         price: 1900000,
         originalPrice: 2400000,
         category: "BUSINESS_WEAR",
@@ -88,7 +88,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Áo dài cách tân vải gấm thêu hoa",
-        image: "https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=800&q=90",
+        image: "/mock-data/fashion/p3.jpg",
         price: 3200000,
         originalPrice: 4000000,
         category: "AO_DAI",
@@ -107,31 +107,47 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
 
   HOMESTAY: {
     logo: "/mock-data/homestay/logo.jpg",
-    storeBanner: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&q=90",
+    storeBanner: "/mock-data/homestay/store.jpg",
     products: [
       {
         name: "Phòng Studio Deluxe ban công view thung lũng",
-        image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=90",
+        image: "/mock-data/homestay/p1.jpg",
         price: 890000,
         originalPrice: 1100000,
         category: "STUDIO_ROOM",
         description: "Phòng studio 30m² ban công tầng 3 view thung lũng xanh mướt, giường king-size, minibar, Smart TV 43\", tắm vòi sen rain shower",
       },
       {
-        name: "Căn hộ nghỉ dưỡng 2 phòng ngủ gia đình",
-        image: "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800&q=90",
+        name: "Phòng đôi Superior giường King hướng vườn",
+        image: "/mock-data/homestay/p2.jpg",
+        price: 1150000,
+        originalPrice: 1400000,
+        category: "STUDIO_ROOM",
+        description: "Phòng đôi 35m² view sân vườn nhiệt đới thoáng mát, bồn tắm nằm cao cấp, ban công thư giãn thưởng trà sáng sớm",
+      },
+      {
+        name: "Căn hộ nghỉ dưỡng 2 phòng ngủ ấm cúng gia đình",
+        image: "/mock-data/homestay/p3.jpg",
         price: 1800000,
         originalPrice: 2200000,
         category: "FAMILY_ROOM",
         description: "Căn hộ 2 phòng ngủ 65m², phòng khách riêng, bếp nhỏ tiện nghi, ban công ngắm rừng, phù hợp gia đình 4–6 người, tặng bữa sáng",
       },
       {
-        name: "Villa nguyên căn sân vườn BBQ ngoài trời",
-        image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=90",
+        name: "Bungalow gỗ mộc sân vườn view thiên nhiên",
+        image: "/mock-data/homestay/p4.jpg",
+        price: 1350000,
+        originalPrice: 1650000,
+        category: "BUNGALOW",
+        description: "Bungalow biệt lập xây dựng từ gỗ thông tự nhiên, hiên nhà rộng rãi, không gian yên tĩnh thư giãn giữa cỏ cây hoa lá",
+      },
+      {
+        name: "Villa nguyên căn sân vườn hồ bơi tiệc nướng BBQ",
+        image: "/mock-data/homestay/p5.jpg",
         price: 4500000,
         originalPrice: 5500000,
         category: "ENTIRE_VILLA",
-        description: "Villa nguyên căn 120m² + sân vườn 200m², bể bơi vô cực, khu BBQ ngoài trời, 3 phòng ngủ, không gian riêng tư lý tưởng cho nhóm bạn",
+        description: "Villa nguyên căn 120m² + sân vườn 200m², bể bơi vô cực, khu BBQ ngoài trời, 3 phòng ngủ, không gian riêng tư lý tưởng cho đoàn khách",
       },
     ],
   },

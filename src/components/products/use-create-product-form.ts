@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import {
   getDesignFieldsConfig,
+  getIndustryBomFieldsConfig,
   type BomItem,
   type TerminologyGetter,
 } from "./create-product-types"
@@ -24,12 +25,14 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
         return "FS"
       case "FNB":
         return "FB"
-      case "HANDMADE_CRAFT":
-        return "HC"
-      case "GENERAL_RETAIL":
-        return "GR"
+      case "CRAFT_GIFT":
+        return "CG"
+      case "RETAIL_GENERAL":
+        return "RG"
       case "SERVICES":
         return "SV"
+      case "HOMESTAY":
+        return "HS"
       case "FLORAL":
       default:
         return "FL"
@@ -49,7 +52,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
   const [code, setCode] = useState("")
   const [category, setCategory] = useState(categories[0] || "")
   const [shape, setShape] = useState(designConfig.shapeOptions[0] || "")
-  const [facing, setFacing] = useState(designConfig.facingOptions[0] || "")
+  const [facing, setFacing] = useState(designConfig.facingMultiple ? "" : (designConfig.facingOptions[0] || ""))
   const [container, setContainer] = useState("")
   const [priceVnd, setPriceVnd] = useState("")
   const [primaryColor, setPrimaryColor] = useState("")
@@ -65,21 +68,19 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
   // BOM items
   const [bomItems, setBomItems] = useState<BomItem[]>([])
 
-  // Reset / sync categories and design config when industry changes
-  useEffect(() => {
-    if (categories.length > 0 && !categories.includes(category)) {
-      setCategory(categories[0] ?? "")
-    }
-  }, [categories, category])
+  // Giữ track ngành trước đó để chỉ reset khi thực sự đổi ngành
+  const prevIndustryRef = useRef(activeIndustry.identity.key)
 
   useEffect(() => {
-    if (designConfig.shapeOptions.length > 0 && !designConfig.shapeOptions.includes(shape)) {
+    if (prevIndustryRef.current !== activeIndustry.identity.key) {
+      prevIndustryRef.current = activeIndustry.identity.key
+      setCategory(categories[0] ?? "")
       setShape(designConfig.shapeOptions[0] ?? "")
+      // Nếu là multi-select thì khởi tạo rỗng để user tự chọn, single select thì lấy cái đầu
+      setFacing(designConfig.facingMultiple ? "" : (designConfig.facingOptions[0] ?? ""))
+      setContainer("")
     }
-    if (designConfig.facingOptions.length > 0 && !designConfig.facingOptions.includes(facing)) {
-      setFacing(designConfig.facingOptions[0] ?? "")
-    }
-  }, [designConfig, shape, facing])
+  }, [activeIndustry.identity.key, categories, designConfig])
 
   // Auto-generate code if empty
   useEffect(() => {
@@ -89,29 +90,82 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
     }
   }, [code, industryPrefix])
 
-  // Initial BOM item based on industry
+  // Initial BOM items based on industry — multi-item template per industry
   useEffect(() => {
-    const defaultUnit = activeIndustry.bomSpec?.measurementUnits?.[0] || "cái"
-    const defaultRole = activeIndustry.bomSpec?.componentRoles?.[0]?.label || "Chủ đạo"
-    const defaultName =
-      activeIndustry.identity.key === "FASHION"
-        ? "Vải chính (Cotton / Lụa)"
-        : activeIndustry.identity.key === "FNB"
-        ? "Nguyên liệu chính"
-        : "Hoa hồng đỏ"
+    const bomCfg = getIndustryBomFieldsConfig(activeIndustry.identity.key)
+    const roles = activeIndustry.bomSpec?.componentRoles ?? []
+    const units = activeIndustry.bomSpec?.measurementUnits ?? ["cái"]
+
+    const makeItem = (
+      idSuffix: string,
+      name: string,
+      quantity: number,
+      unitIdx = 0,
+      roleIdx = 0,
+      color = "",
+      notes = ""
+    ): BomItem => ({
+      id: `init-${idSuffix}`,
+      name,
+      quantity,
+      unit: units[unitIdx] ?? "cái",
+      color,
+      role: roles[roleIdx]?.label ?? "Chủ đạo",
+      ...(notes ? { notes } : {}),
+    })
+
+
+    const defaultItems: BomItem[] = (() => {
+      switch (activeIndustry.identity.key) {
+        case "FLORAL":
+          return [
+            makeItem("1", "Hồng Ecuador", 10, 0, 0, "Đỏ"),
+            makeItem("2", "Cúc Trắng Fiji", 5, 0, 1, "Trắng"),
+            makeItem("3", "Lá xanh trường sinh", 8, 6, 2, "Xanh"),
+          ]
+        case "FASHION":
+          return [
+            makeItem("1", "Vải lụa satin 100% silk", 2, 2, 0, "Trắng ngà", "SAT-001 / 150cm"),
+            makeItem("2", "Vải lót cotton mềm", 2, 2, 1, "Trắng", "COT-002 / 140cm"),
+            makeItem("3", "Khóa kéo YKK 25cm", 2, 4, 2, "Bạc", ""),
+          ]
+        case "FNB":
+          return [
+            makeItem("1", "Thịt bò Wagyu lòng bàn tay", 200, 0, 0, "", "Nhập khẩu Úc"),
+            makeItem("2", "Sốt Teriyaki thượng hạng", 50, 1, 1, "", "Nhập khẩu Nhật"),
+            makeItem("3", "Cơm gạo Nhật Koshi Hikari", 150, 0, 0, "", "Nhập khẩu Nhật"),
+          ]
+        case "HOMESTAY":
+          return [
+            makeItem("1", "Bộ chăn ga gối tiêu chuẩn (4 món)", 1, 0, 0, "", "Hanvico / Mới 100%"),
+            makeItem("2", "Khăn tắm cotton 500gsm", 2, 2, 1, "", "Khaisilk / Mới"),
+            makeItem("3", "Bộ dầu gội – sữa tắm", 1, 2, 1, "", "Dove / Mới"),
+          ]
+        case "CRAFT_GIFT":
+          return [
+            makeItem("1", "Sáp đậu nho (Soy Wax) thượng hạng", 200, 4, 0, "Trắng kem", "Nhập khẩu Mỹ"),
+            makeItem("2", "Thính hương linh tùng & Lavender", 20, 4, 2, "Không màu", "FDA-approved"),
+            makeItem("3", "Hộp nhựa kính mụ cưỡc thiết kế riêng", 1, 0, 2, "Tróng suốt", "Sản xuất nội"),
+          ]
+        case "RETAIL_GENERAL":
+          return [
+            makeItem("1", "Sản phẩm chính", 1, 0, 0, "", ""),
+          ]
+        case "SERVICES":
+          return [
+            makeItem("1", "Nội dung dịch vụ chính", 1, 0, 0, "", ""),
+            makeItem("2", "Vật tư tiêu hao", 1, 0, 1, "", ""),
+          ]
+        default:
+          return [
+            makeItem("1", "Hồng Ecuador", bomCfg.defaultQuantity, 0, 0, "Đỏ"),
+          ]
+      }
+    })()
 
     setBomItems((prev) => {
       if (prev.length > 0) return prev
-      return [
-        {
-          id: "init-1",
-          name: defaultName,
-          quantity: activeIndustry.identity.key === "FASHION" ? 2 : 10,
-          unit: defaultUnit,
-          color: "Tiêu chuẩn",
-          role: defaultRole,
-        },
-      ]
+      return defaultItems
     })
   }, [activeIndustry])
 
@@ -142,6 +196,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
   }
 
   const handleAddBomItem = () => {
+    const bomCfg = getIndustryBomFieldsConfig(activeIndustry.identity.key)
     const defaultUnit = activeIndustry.bomSpec?.measurementUnits?.[0] || "cái"
     const defaultRole =
       activeIndustry.bomSpec?.componentRoles?.[1]?.label ||
@@ -153,13 +208,14 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
       {
         id: `bom-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
         name: "",
-        quantity: 1,
+        quantity: bomCfg.defaultQuantity,
         unit: defaultUnit,
         color: "",
         role: defaultRole,
       },
     ])
   }
+
 
   const handleUpdateBomItem = (id: string, field: keyof BomItem, value: string | number) => {
     setBomItems((prev) =>

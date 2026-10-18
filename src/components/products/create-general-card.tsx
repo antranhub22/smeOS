@@ -5,6 +5,7 @@ import { Upload, Image as ImageIcon, X } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import type { TerminologyGetter } from "./create-product-types"
+import { SingleSelectCustom } from "./single-select-custom"
 
 interface CreateGeneralCardProps {
   ti: TerminologyGetter
@@ -23,8 +24,9 @@ interface CreateGeneralCardProps {
   imagePreview: string | null
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onRemoveImage: () => void
-  fileInputRef: React.RefObject<HTMLInputElement | null>
-  industryPrefix: string
+  fileInputRef?: React.RefObject<HTMLInputElement | null>
+  industryPrefix?: string
+  driveLink?: string | null | undefined
 }
 
 export function CreateGeneralCard({
@@ -46,14 +48,22 @@ export function CreateGeneralCard({
   onRemoveImage,
   fileInputRef,
   industryPrefix,
+  driveLink,
 }: CreateGeneralCardProps) {
+  const localInputRef = React.useRef<HTMLInputElement>(null)
+  const effectiveRef = fileInputRef ?? localInputRef
   const sampleName = industry.aiConfig.sampleProductNames[0] || "Sản phẩm mới"
 
   return (
     <Card className="p-5 sm:p-6 space-y-5">
-      <div className="flex items-center gap-2 text-title-sm font-bold text-text">
-        <ImageIcon size={18} className="text-primary" />
-        <span>Ảnh đại diện và thông tin chung</span>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 pb-3 border-b border-border">
+        <div className="flex items-center gap-2 text-title-sm font-bold text-text">
+          <ImageIcon size={18} className="text-primary" />
+          <span>Ảnh đại diện & Thông tin cam kết niêm yết</span>
+        </div>
+        <span className="inline-flex items-center gap-1 self-start sm:self-auto px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger border border-danger/30">
+          Cam kết giao kèo bắt buộc *
+        </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -78,9 +88,26 @@ export function CreateGeneralCard({
                 <X size={16} />
               </button>
             </div>
+          ) : driveLink ? (
+            <div className="relative aspect-square w-full rounded-2xl border border-border bg-surface-alt overflow-hidden group">
+              <img
+                src={driveLink.includes("lh3.googleusercontent.com") ? driveLink : driveLink}
+                alt={`Preview ${ti("sampleProduct").toLowerCase()}`}
+                className="h-full w-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={onRemoveImage}
+                aria-label="Xoá ảnh đã chọn"
+                className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
           ) : (
-            <div
-              onClick={() => fileInputRef.current?.click()}
+            <button
+              type="button"
+              onClick={() => effectiveRef.current?.click()}
               className="flex aspect-square w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface-alt/50 p-4 text-center transition-colors hover:border-primary/50 hover:bg-surface-alt"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -92,10 +119,10 @@ export function CreateGeneralCard({
               <div className="text-caption text-text-muted">
                 Hỗ trợ JPG, PNG, WebP, tối đa 15 MB
               </div>
-            </div>
+            </button>
           )}
           <input
-            ref={fileInputRef}
+            ref={effectiveRef}
             type="file"
             accept="image/*"
             onChange={onFileChange}
@@ -136,7 +163,7 @@ export function CreateGeneralCard({
 
             <div>
               <label className="block text-caption font-semibold text-text mb-1">
-                Giá niêm yết (₫)
+                Giá niêm yết (₫) <span className="text-danger">*</span>
               </label>
               <input
                 type="text"
@@ -156,17 +183,13 @@ export function CreateGeneralCard({
               <label className="block text-caption font-semibold text-text mb-1">
                 Danh mục
               </label>
-              <select
+              <SingleSelectCustom
+                options={categories}
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
-              >
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+                onChange={setCategory}
+                placeholder="Chọn danh mục..."
+                customPlaceholder="Nhập danh mục mới..."
+              />
             </div>
 
             <div>

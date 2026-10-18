@@ -15,6 +15,8 @@ import type {
   ProductInferredContext,
   ProductCardAccessory,
 } from "../domain/product-intelligence-types";
+import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract";
+import { INDUSTRY_REGISTRY } from "@/modules/organization/domain/industries";
 
 /** Một dòng hoa / lá / phụ kiện trong JSON mô hình Vision trả về (chưa kiểm dạng). */
 interface VisionBomItem {
@@ -87,53 +89,150 @@ Nhiệm vụ của bạn là quan sát thật kỹ bức ảnh sản phẩm hoa 
   "confidence": 0.9 // Độ tin cậy mô hình tự đánh giá (0–1), KHÔNG làm tròn lên
 }`;
 
-export function productVisionUserText(productTitle?: string | undefined): string {
-  return `Hãy quan sát thật kỹ và bóc tách toàn diện sản phẩm hoa trong bức ảnh này.${
-    productTitle ? ` Gợi ý tiêu đề ban đầu: ${productTitle}.` : ""
-  } Đặc biệt chú ý:
+export function getProductVisionSystemPrompt(industryPlugin?: IndustryPluginContract): string {
+  const plugin = industryPlugin || INDUSTRY_REGISTRY.FLORAL!;
+  const terms = plugin.terminology;
+  const isFloral = plugin.identity.key === "FLORAL";
+
+  if (isFloral) {
+    return PRODUCT_VISION_SYSTEM_PROMPT;
+  }
+
+  const visionFocus = plugin.aiConfig?.visionFocus || "";
+  const sampleProducts = plugin.aiConfig?.sampleProductNames?.slice(0, 3).join(", ") || "";
+  const units = terms.defaultMeasurementUnits?.slice(0, 5).join(", ") || "cái, món";
+
+  return `Bạn là chuyên gia thẩm định thị giác sản phẩm và dịch vụ ngành "${plugin.identity.name}" của hệ thống smeOS.
+Nhiệm vụ của bạn là quan sát kỹ bức ảnh được cung cấp, nhận diện chính xác các thành phần, cấu trúc, vật tư, tiện nghi, đặc tính và định tính thương mại theo đặc thù ngành.
+Trọng tâm quan sát: ${visionFocus}
+
+Xuất ra định dạng JSON thuần túy (không markdown, không giải thích ngoài JSON) theo đúng cấu trúc sau:
+{
+  "product_name": "Tên thương mại cuốn hút cho sản phẩm/không gian (gợi ý: ${sampleProducts})",
+  "components": [
+    {
+      "name": "Tên thành phần / vật tư / tiện nghi / chi tiết nhận diện được trong ảnh",
+      "count": 1, // số lượng ước tính quan sát thấy
+      "unit": "đơn vị phù hợp (${units})",
+      "role": "dominant" // "dominant" cho thành phần chính/nổi bật, "supporting" cho thành phần phụ/tiện ích đi kèm
+    }
+  ],
+  "dominant_colors": ["Tone màu chủ đạo 1", "Tone màu chủ đạo 2"],
+  "secondary_colors": ["Tone màu phụ"],
+  "style": "Phong cách thiết kế / bài trí (ví dụ: Tối giản Hiện đại, Vintage Cổ điển, Sang trọng Tinh tế...)",
+  "shape": "Bố cục / Dáng sản phẩm / Loại không gian",
+  "size": "Kích thước / Quy mô ước tính",
+  "wrapping_material": "Chất liệu bao bì hoặc hoàn thiện chính",
+  "occasions": ["Dịp / Nhu cầu sử dụng phù hợp 1", "Dịp / Nhu cầu sử dụng phù hợp 2"],
+  "audience": "Mô tả tệp khách hàng tiềm năng phù hợp nhất",
+  "suggested_price": 500000, // Giá bán / giá thuê đề xuất ước tính thực tế (VND)
+  "confidence": 0.9 // Độ tin cậy mô hình tự đánh giá (0–1)
+}`;
+}
+
+export function productVisionUserText(productTitle?: string | undefined, industryPlugin?: IndustryPluginContract): string {
+  const plugin = industryPlugin || INDUSTRY_REGISTRY.FLORAL!;
+  if (plugin.identity.key === "FLORAL") {
+    return `Hãy quan sát thật kỹ và bóc tách toàn diện sản phẩm hoa trong bức ảnh này.${
+      productTitle ? ` Gợi ý tiêu đề ban đầu: ${productTitle}.` : ""
+    } Đặc biệt chú ý:
 1. Nhận diện các loại hoa chính, hoa phụ và cả LÁ PHỤ ĐỆM (foliage).
 2. Soi kỹ mặt trước, chân bó và vùng nơ xem CÓ THIỆP / BIỂN CHỮ KHÔNG, đọc chính xác nội dung chữ in/viết trên thiệp (OCR).
 3. Bóc tách chi tiết chất liệu giấy gói, màu ruy băng và phụ kiện trang trí đi kèm.`;
+  }
+
+  return `Hãy quan sát thật kỹ và bóc tách toàn diện cấu trúc sản phẩm / dịch vụ thuộc ngành "${plugin.identity.name}" trong bức ảnh này.${
+    productTitle ? ` Gợi ý tiêu đề ban đầu: ${productTitle}.` : ""
+  } Đặc biệt chú ý:
+1. Bóc tách danh sách thành phần, tiện nghi, vật tư hoặc chi tiết cấu thành (${plugin.terminology.rawMaterialItem}).
+2. Nhận diện tone màu chủ đạo, phong cách bài trí/thiết kế, đối tượng khách hàng và các dịp/nhu cầu sử dụng thích hợp.`;
 }
 
-/** Đọc JSON mô hình trả về → kiểu miền. Không đọc được / không có thành phần hoa → `null`. */
-export function parseProductVisionJson(content: string, productTitle?: string | undefined): VisionExtractionResult | null {
+/** Đọc JSON mô hình trả về → kiểu miền. Không đọc được → `null`. Hỗ trợ cả Floral và các ngành Đa ngành SME. */
+export function parseProductVisionJson(
+  content: string,
+  productTitle?: string | undefined,
+  industryPlugin?: IndustryPluginContract
+): VisionExtractionResult | null {
   try {
     const parsed = JSON.parse(content);
+    const plugin = industryPlugin || INDUSTRY_REGISTRY.FLORAL!;
+    const defaultUnit = plugin.terminology.defaultMeasurementUnits[0] || "cái";
 
     const components: ProductFlowerComponent[] = [];
+
+    // 1. Mảng components tổng quát (Đa ngành)
+    if (Array.isArray(parsed.components)) {
+      parsed.components.forEach((c: VisionBomItem, idx: number) => {
+        if (!c.name && !c.role) return;
+        components.push({
+          id: `comp-${idx}`,
+          flowerType: c.name || `Thành phần #${idx + 1}`,
+          quantityEstimate: parseInt(String(c.count ?? c.quantity)) || 1,
+          unit: c.unit || defaultUnit,
+          role: c.role === "supporting" ? "supporting" : "dominant",
+          color: c.color,
+        });
+      });
+    }
+
+    // 2. Mảng flowers (Ngành hoa)
     if (Array.isArray(parsed.flowers)) {
       parsed.flowers.forEach((f: VisionBomItem, idx: number) => {
         components.push({
           id: `flower-${idx}`,
           flowerType: f.name || `Hoa tươi #${idx + 1}`,
-          quantityEstimate: parseInt(String(f.count)) || 0,
+          quantityEstimate: parseInt(String(f.count ?? f.quantity)) || 0,
           unit: f.unit || "cành",
           role: f.role === "supporting" ? "supporting" : "dominant",
+          color: f.color,
         });
       });
     }
 
+    // 3. Mảng foliage (Lá đệm hoa)
     if (Array.isArray(parsed.foliage)) {
       parsed.foliage.forEach((fol: VisionBomItem, idx: number) => {
         components.push({
           id: `foliage-${idx}`,
           flowerType: fol.name || "Lá phụ trang trí",
-          quantityEstimate: parseInt(String(fol.count)) || 0,
+          quantityEstimate: parseInt(String(fol.count ?? fol.quantity)) || 0,
           unit: fol.unit || "cành",
           role: "foliage",
+          color: fol.color,
         });
       });
     }
 
-    if (components.length === 0) {
+    // 4. Mảng vật tư phụ / tiện nghi khác
+    const extraItems = Array.isArray(parsed.materials)
+      ? parsed.materials
+      : Array.isArray(parsed.amenities)
+      ? parsed.amenities
+      : Array.isArray(parsed.items)
+      ? parsed.items
+      : [];
+    if (extraItems.length > 0 && components.length === 0) {
+      extraItems.forEach((it: VisionBomItem, idx: number) => {
+        components.push({
+          id: `item-${idx}`,
+          flowerType: it.name || `Chi tiết #${idx + 1}`,
+          quantityEstimate: parseInt(String(it.count ?? it.quantity)) || 1,
+          unit: it.unit || defaultUnit,
+          role: it.role === "supporting" ? "supporting" : "dominant",
+          color: it.color,
+        });
+      });
+    }
+
+    // Không có thành phần, không có màu sắc, không có phong cách và tên -> không đọc được ảnh
+    const dominantColors = Array.isArray(parsed.dominant_colors) ? parsed.dominant_colors : [];
+    if (components.length === 0 && dominantColors.length === 0 && !parsed.style && !parsed.product_name) {
       return null;
     }
 
     const attributes: ProductVisualAttributes = {
-      mainColors: Array.isArray(parsed.dominant_colors) && parsed.dominant_colors.length > 0
-        ? parsed.dominant_colors
-        : [],
+      mainColors: dominantColors,
       secondaryColors: Array.isArray(parsed.secondary_colors) ? parsed.secondary_colors : [],
       style: parsed.style || "",
       shape: parsed.shape || "",

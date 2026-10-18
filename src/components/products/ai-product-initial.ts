@@ -1,11 +1,6 @@
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"
-import {
-  CATEGORIES,
-  SHAPES,
-  FACINGS,
-  type ProductFormValues,
-  type FlowerItem,
-} from "./ai-product-helpers"
+import type { BomItem } from "./create-product-types"
+import type { ProductFormValues } from "./ai-product-helpers"
 
 export interface InitialProductInput {
   id: string
@@ -25,25 +20,41 @@ export interface InitialProductInput {
 /**
  * Trích xuất các giá trị form ban đầu từ dữ liệu sản phẩm CSDL
  * Hỗ trợ nhận diện đầy đủ: storage image, imageUrl, và link Google Drive.
+ * Đọc BOM linh hoạt từ cả `attributes.bom.materials` (chuẩn mới) lẫn `attributes.bom.flowers` (kế thừa).
  */
-export function extractInitialFormValues(product: InitialProductInput): {
+export function extractInitialFormValues(
+  product: InitialProductInput,
+  defaultCategory?: string,
+  defaultShape?: string,
+  defaultFacing?: string
+): {
   values: ProductFormValues
   previewUrl: string | null
 } {
   const attrs = (product.attributes as Record<string, unknown> | null) ?? {}
   const rawBom = (attrs.bom as Record<string, unknown> | undefined) ?? {}
-  const rawFlowers = Array.isArray(rawBom.flowers) ? rawBom.flowers : []
+  
+  // Đọc từ materials trước, nếu không có thì đọc flowers
+  const rawList = Array.isArray(rawBom.materials)
+    ? rawBom.materials
+    : Array.isArray(rawBom.flowers)
+    ? rawBom.flowers
+    : []
 
-  const flowers: FlowerItem[] = rawFlowers.map((f: unknown, i: number) => {
+  const bomItems: BomItem[] = rawList.map((f: unknown, i: number) => {
     const row = (f as Record<string, unknown>) ?? {}
-    return {
-      id: `flower-init-${i}-${Date.now()}`,
+    const item: BomItem = {
+      id: `bom-init-${i}-${Date.now()}`,
       name: String(row.name ?? ""),
       quantity: Number(row.quantity ?? 1),
-      unit: String(row.unit ?? "cành"),
-      color: String(row.color ?? "Tiêu chuẩn"),
+      unit: String(row.unit ?? "cái"),
+      color: String(row.color ?? ""),
       role: String(row.role ?? "Chủ đạo"),
     }
+    if (typeof row.notes === "string" && row.notes) {
+      item.notes = row.notes
+    }
+    return item
   })
 
   const initialPrice =
@@ -63,17 +74,15 @@ export function extractInitialFormValues(product: InitialProductInput): {
   const values: ProductFormValues = {
     name: product.name || "",
     code: product.code || "",
-    category: product.category || CATEGORIES[0] || "Bó hoa",
-    shape: product.shape || SHAPES[0] || "Tròn",
-    facing: product.facing || FACINGS[0] || "Một mặt",
+    category: product.category || defaultCategory || "",
+    shape: product.shape || defaultShape || "",
+    facing: product.facing || defaultFacing || "",
     container: product.container || "",
     priceVnd: initialPrice,
     primaryColor: (attrs.color as string) || "",
     description: (attrs.description as string) || "",
     status: product.status === "DRAFT" ? "DRAFT" : "ACTIVE",
-    flowers: flowers.length > 0 ? flowers : [
-      { id: "init-1", name: "", quantity: 1, unit: "cành", color: "", role: "Chủ đạo" },
-    ],
+    flowers: bomItems.length > 0 ? bomItems : [],
     imageAssetId: assetId,
     imageUrl: existingUrl,
     driveLink,

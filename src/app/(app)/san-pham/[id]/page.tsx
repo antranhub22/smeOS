@@ -68,7 +68,11 @@ export default function ProductDetailPage() {
 
   const attrs = (product?.attributes as Record<string, unknown> | null) ?? {}
   const rawBom = (attrs.bom as Record<string, unknown> | undefined) ?? {}
-  const rawFlowers = Array.isArray(rawBom.flowers) ? rawBom.flowers : []
+  const rawFlowers = Array.isArray(rawBom.materials)
+    ? rawBom.materials
+    : Array.isArray(rawBom.flowers)
+    ? rawBom.flowers
+    : []
   const primaryColor = (attrs.color as string) || null
   const description = (attrs.description as string) || null
   const priceVnd =
