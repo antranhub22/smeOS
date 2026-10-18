@@ -17,6 +17,7 @@ import { promotionNote, resolveOrderPolicies } from "../domain/order-policies"
 import { snapshotOf } from "./brochure-product-mapper"
 import { deliveryNoteFields } from "../domain/delivery-note"
 import { slotGuardFor } from "./slot-availability"
+import { bindOrderBooking } from "@/modules/availability/use-cases/bind-order-booking"
 
 export const DEFAULT_TIME_SLOT = "Trong ngày"
 
@@ -115,6 +116,19 @@ export async function placeBrochureOrder(
     },
     customerId
   )
+
+  // Tự động tạo booking khóa ngày nếu là đơn Homestay / Lưu trú
+  if (input.checkOutDate && input.deliveryDate && input.checkOutDate > input.deliveryDate) {
+    await bindOrderBooking({
+      organizationId,
+      productId: product.id,
+      orderId: order.id,
+      checkInDate: input.deliveryDate,
+      checkOutDate: input.checkOutDate,
+      note: `Đặt từ Thẻ chào / Mã đơn ${order.code}`,
+    }).catch(() => null)
+  }
+
   // Tin "Đã nhận đơn" kèm link theo dõi — chạy nền, lỗi gửi tin không ảnh hưởng đơn
   queueOrderNotification(organizationId, order.id, "ORDER_RECEIVED")
 

@@ -109,6 +109,14 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Sản phẩm",
   },
   {
+    href: "/san-pham/kha-dung",
+    label: "Khả dụng & Lịch",
+    group: "san-pham",
+    iconKey: "CalendarCheck",
+    capability: "L1",
+    mobileLabel: "Khả dụng",
+  },
+  {
     href: "/san-pham/tao-moi",
     label: "Tạo mẫu hoa mới",
     group: "san-pham",
@@ -331,6 +339,34 @@ function getAdaptedNavEntries(industryKey?: string | null): readonly NavEntry[] 
         ...entry,
         label: terms.scanButtonLabel,
         mobileLabel: "Quét ảnh",
+      }
+    }
+    if (entry.href === "/san-pham/kha-dung") {
+      if (industryKey === "HOMESTAY") {
+        return {
+          ...entry,
+          label: "Lịch phòng & Khả dụng",
+          mobileLabel: "Lịch phòng",
+        }
+      }
+      if (industryKey === "FNB") {
+        return {
+          ...entry,
+          label: "Lịch phục vụ & Khung giờ",
+          mobileLabel: "Lịch bàn",
+        }
+      }
+      if (industryKey === "SERVICES") {
+        return {
+          ...entry,
+          label: "Lịch ca & Đặt hẹn",
+          mobileLabel: "Lịch hẹn",
+        }
+      }
+      return {
+        ...entry,
+        label: "Khả dụng & Tồn kho",
+        mobileLabel: "Khả dụng",
       }
     }
     return entry

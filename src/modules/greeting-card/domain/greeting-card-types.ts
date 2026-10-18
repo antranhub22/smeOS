@@ -110,6 +110,7 @@ export interface CustomerOrderSubmitInput {
   recipientName: string
   recipientPhone: string
   deliveryDate: string // YYYY-MM-DD
+  checkOutDate?: string | undefined // YYYY-MM-DD (cho Homestay / BOOKING_CALENDAR)
   deliveryTimeSlot?: string | undefined
   deliveryAddress: string
   /** Địa chỉ tách 5 ô (form mới); `deliveryAddress` là dòng ghép đầy đủ để tương thích */

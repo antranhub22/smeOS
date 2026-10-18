@@ -1,0 +1,265 @@
+"use client"
+
+import { useState } from "react"
+import { Plus, Trash2, Calendar, User, Wrench, ChevronLeft, ChevronRight } from "lucide-react"
+import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
+import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
+import { ManualBlockModal } from "./manual-block-modal"
+
+export interface HomestayCalendarMatrixProps {
+  products: AvailabilityBoardProduct[]
+  bookings: ProductBookingRecord[]
+  days: string[]
+  currentMonth: string
+  onMonthChange: (month: string) => void
+  onRefresh: () => void
+}
+
+function getDayOfWeek(dateStr: string): string {
+  const d = new Date(dateStr)
+  const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
+  return days[d.getDay()] || ""
+}
+
+export function HomestayCalendarMatrix({
+  products,
+  bookings,
+  days,
+  currentMonth,
+  onMonthChange,
+  onRefresh,
+}: HomestayCalendarMatrixProps) {
+  const safeDays = Array.isArray(days) ? days : []
+  const safeProducts = Array.isArray(products) ? products : []
+  const safeBookings = Array.isArray(bookings) ? bookings : []
+
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState<string | undefined>()
+  const [selectedDate, setSelectedDate] = useState<string | undefined>()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  function openBlockModal(productId?: string, date?: string) {
+    setSelectedProductId(productId)
+    setSelectedDate(date)
+    setModalOpen(true)
+  }
+
+  async function handleRemoveBlock(bookingId: string) {
+    if (!confirm("Bạn có chắc chắn muốn mở khóa ngày này?")) return
+    try {
+      setDeletingId(bookingId)
+      const res = await fetch(`/api/v1/availability/blocks/${bookingId}`, {
+        method: "DELETE",
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error?.message || "Không thể mở khóa")
+      }
+      onRefresh()
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Đã có lỗi xảy ra")
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  function handlePrevMonth() {
+    const [yStr, mStr] = currentMonth.split("-")
+    let y = parseInt(yStr!, 10)
+    let m = parseInt(mStr!, 10) - 1
+    if (m < 1) {
+      m = 12
+      y -= 1
+    }
+    onMonthChange(`${y}-${String(m).padStart(2, "0")}`)
+  }
+
+  function handleNextMonth() {
+    const [yStr, mStr] = currentMonth.split("-")
+    let y = parseInt(yStr!, 10)
+    let m = parseInt(mStr!, 10) + 1
+    if (m > 12) {
+      m = 1
+      y += 1
+    }
+    onMonthChange(`${y}-${String(m).padStart(2, "0")}`)
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Header Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4 shadow-xs">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handlePrevMonth}
+            aria-label="Tháng trước"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <div className="flex items-center gap-2 px-2">
+            <Calendar size={18} className="text-primary" />
+            <span className="text-base font-bold text-text">
+              Tháng {currentMonth.split("-")[1]}/{currentMonth.split("-")[0]}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleNextMonth}
+            aria-label="Tháng sau"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 text-xs text-text-muted mr-2">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm bg-primary/20 border border-primary/40" />
+              Khách đặt
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm bg-warning/20 border border-warning/40" />
+              Bảo trì / Đã khóa
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-3 w-3 rounded-sm bg-surface-alt border border-border" />
+              Trống / Khả dụng
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => openBlockModal()}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:opacity-95 transition-all"
+          >
+            <Plus size={14} />
+            <span>Khóa ngày phòng</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Matrix Table */}
+      <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-xs">
+        <table className="w-full border-collapse text-left text-xs">
+          <thead>
+            <tr className="border-b border-border bg-surface-alt">
+              <th className="sticky left-0 z-10 min-w-[180px] bg-surface-alt p-3 font-bold text-text">
+                Phòng / Chỗ nghỉ
+              </th>
+              {safeDays.map((day) => {
+                const dayNum = day.slice(8)
+                const dayOfWeek = getDayOfWeek(day)
+                const isWeekend = dayOfWeek === "CN" || dayOfWeek === "T7"
+                return (
+                  <th
+                    key={day}
+                    className={`min-w-[46px] p-2 text-center border-l border-border/50 ${
+                      isWeekend ? "bg-surface-alt/80 font-bold text-primary" : "text-text"
+                    }`}
+                  >
+                    <div className="text-[10px] text-text-muted uppercase">{dayOfWeek}</div>
+                    <div className="text-xs font-semibold">{dayNum}</div>
+                  </th>
+                )
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {safeProducts.length === 0 ? (
+              <tr>
+                <td colSpan={safeDays.length + 1} className="p-8 text-center text-text-muted">
+                  Chưa có phòng hoặc sản phẩm nào trong hệ thống.
+                </td>
+              </tr>
+            ) : (
+              safeProducts.map((prod) => {
+                return (
+                  <tr key={prod.id} className="border-b border-border hover:bg-surface-alt/40 transition-colors">
+                    <td className="sticky left-0 z-10 bg-surface p-3 border-r border-border font-medium">
+                      <div className="truncate font-semibold text-text text-sm">{prod.name}</div>
+                      <div className="text-[11px] text-text-muted">Mã: {prod.code}</div>
+                    </td>
+                    {safeDays.map((day) => {
+                      const matchedBookings = safeBookings.filter(
+                        (b) => b.productId === prod.id && day >= b.checkInDate && day < b.checkOutDate
+                      )
+
+                      if (matchedBookings.length > 0) {
+                        const booking = matchedBookings[0]!
+                        const isBlocked = !booking.orderId
+                        return (
+                          <td
+                            key={day}
+                            className={`p-1 text-center border-l border-border/50 align-middle ${
+                              isBlocked ? "bg-warning/15" : "bg-primary/15"
+                            }`}
+                          >
+                            <div
+                              title={
+                                isBlocked
+                                  ? `Đã khóa: ${booking.note || "Bảo trì"}`
+                                  : `Đơn: ${booking.orderCode || "Online"} - Khách: ${booking.customerName || "Khách lẻ"}`
+                              }
+                              className={`group relative flex flex-col items-center justify-center rounded-lg p-1 text-[10px] font-bold ${
+                                isBlocked ? "text-warning" : "text-primary"
+                              }`}
+                            >
+                              {isBlocked ? (
+                                <div className="flex items-center gap-0.5">
+                                  <Wrench size={10} />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveBlock(booking.id)}
+                                    disabled={deletingId === booking.id}
+                                    title="Mở khóa ngày này"
+                                    className="hidden group-hover:inline-flex text-danger hover:scale-110 ml-0.5"
+                                  >
+                                    <Trash2 size={10} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-0.5 truncate max-w-[36px]">
+                                  <User size={10} className="shrink-0" />
+                                  <span className="truncate">{booking.customerName?.slice(0, 3) || "ĐẶT"}</span>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        )
+                      }
+
+                      return (
+                        <td
+                          key={day}
+                          onClick={() => openBlockModal(prod.id, day)}
+                          className="group p-1 text-center border-l border-border/50 hover:bg-primary/5 cursor-pointer transition-colors"
+                          title={`Bấm để khóa ngày ${day}`}
+                        >
+                          <div className="flex h-7 items-center justify-center opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary transition-opacity">
+                            <Plus size={12} />
+                          </div>
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <ManualBlockModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSuccess={onRefresh}
+        products={products}
+        preselectedProductId={selectedProductId}
+        preselectedDate={selectedDate}
+      />
+    </div>
+  )
+}

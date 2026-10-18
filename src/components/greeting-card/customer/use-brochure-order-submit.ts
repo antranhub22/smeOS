@@ -108,6 +108,7 @@ export function useBrochureOrderSubmit(params: UseBrochureOrderSubmitParams) {
         recipientName: effectiveRecipientName,
         recipientPhone: effectiveRecipientPhone,
         deliveryDate: params.deliveryDate,
+        checkOutDate: params.checkOutDate,
         deliveryTimeSlot: params.deliveryTimeSlot,
         deliveryAddress: effectiveAddress,
         senderNote: combinedNote,

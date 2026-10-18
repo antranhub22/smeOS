@@ -50,6 +50,7 @@ export type UpdateProductInput = {
   status?: product_status | undefined
   attributes?: Record<string, unknown> | null | undefined
   imageAssetId?: string | null | undefined
+  availabilityConfig?: unknown | undefined
 }
 
 export type ListProductsFilters = {
@@ -305,6 +306,9 @@ export class ProductRepository {
         ...(input.status !== undefined ? { status: input.status } : {}),
         ...(input.attributes !== undefined
           ? { attributes: input.attributes as InputJsonValue }
+          : {}),
+        ...(input.availabilityConfig !== undefined
+          ? { availability_config: input.availabilityConfig as InputJsonValue }
           : {}),
       },
     })

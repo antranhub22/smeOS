@@ -143,6 +143,7 @@ model organizations {
   product_images            product_images[]
   product_analyses          product_analyses[]
   product_inventory         product_inventory[]
+  product_bookings          product_bookings[]
   pricing_rules             pricing_rules[]
   integration_tokens        integration_tokens[]
   ai_policies               ai_policies[]
@@ -616,25 +617,28 @@ enum approval_state {
 }
 
 model products {
-  id              String         @id @default(uuid())
-  organization_id String
-  branch_id       String?
-  code            String
-  name            String
-  category        String? // enum identity.category của hợp đồng Vision — Schema.json, không khai lại tay
-  shape           String?
-  facing          String?
-  container       String?
-  status          product_status @default(DRAFT)
-  attributes      Json?
-  created_at      DateTime       @default(now())
-  updated_at      DateTime       @updatedAt
+  id                  String         @id @default(uuid())
+  organization_id     String
+  branch_id           String?
+  code                String
+  name                String
+  category            String? // enum identity.category của hợp đồng Vision — Schema.json, không khai lại tay
+  shape               String?
+  facing              String?
+  container           String?
+  status              product_status @default(DRAFT)
+  attributes          Json?
+  /** Cấu hình kiểm tra khả dụng theo ngành (PO 18/10/2026). Xem product-availability-config.ts. */
+  availability_config Json?
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @updatedAt
 
   organization              organizations               @relation(fields: [organization_id], references: [id])
   variants                  product_variants[]
   images                    product_images[]
   analyses                  product_analyses[]
   inventory                 product_inventory[]
+  bookings                  product_bookings[]
   greeting_catalog_products greeting_catalog_products[]
 
   @@unique([organization_id, code])
@@ -694,6 +698,30 @@ model product_inventory {
 
   @@unique([organization_id, product_id, branch_id])
   @@index([organization_id, branch_id])
+}
+
+/**
+ * Lịch đặt chỗ theo ngành Homestay (BOOKING_CALENDAR mode) và các ngành có không gian theo
+ * khoảng ngày. Mỗi dòng tương ứng một kỳ nghỉ / đặt chỗ / block thủ công.
+ * `order_id = null` = admin block thủ công (bảo trì, dọ phòng...).
+ */
+model product_bookings {
+  id              String   @id @default(uuid())
+  organization_id String
+  product_id      String
+  order_id        String?  // null = admin block thủ công
+  check_in_date   String   // "YYYY-MM-DD"
+  check_out_date  String   // "YYYY-MM-DD" (exclusive — ngày check-out không được tính)
+  note            String?  // "Bảo trì", "Sựa chữa", null = đặt từ đơn khách
+  status          String   @default("ACTIVE") // ACTIVE | CANCELLED
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id])
+
+  @@index([organization_id, product_id, check_in_date])
+  @@index([organization_id, product_id, status])
+  @@index([organization_id, order_id])
 }
 
 /**

@@ -16,6 +16,14 @@ import { env } from "@/lib/env"
  */
 const globalForPrisma = globalThis as unknown as {
   floraosPrisma?: PrismaClient
+  schemaVersion?: string
+}
+
+const CURRENT_SCHEMA_VERSION = "2026-10-18-availability-v1"
+if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
+  globalForPrisma.floraosPrisma?.$disconnect?.().catch(() => {})
+  delete globalForPrisma.floraosPrisma
+  globalForPrisma.schemaVersion = CURRENT_SCHEMA_VERSION
 }
 
 export const prisma: PrismaClient =

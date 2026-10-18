@@ -19,6 +19,7 @@ import {
   ProductBomCard,
   ProductStoryCard,
 } from "@/components/products/product-detail-cards"
+import { ProductAvailabilityCard } from "@/components/products/product-availability-card"
 
 type ProductDetail = {
   id: string
@@ -30,6 +31,7 @@ type ProductDetail = {
   container: string | null
   status: "DRAFT" | "ACTIVE" | "ARCHIVED"
   attributes: Record<string, unknown> | null
+  availability_config?: unknown
   masterImageUrl?: string
   price_vnd?: number | null
   driveLink?: string
@@ -223,6 +225,15 @@ export default function ProductDetailPage() {
             <ProductReminderOverrideCard
               productId={productId}
               canEdit={can("R12")}
+            />
+
+            {/* Nhóm 7: Cấu hình Khả dụng & Cơ chế Đặt hàng theo ngành */}
+            <ProductAvailabilityCard
+              productId={productId}
+              initialConfig={product.availability_config}
+              industryKey={activeIndustry?.identity.key}
+              canEdit={canEdit}
+              onUpdated={napLai}
             />
 
             {/* Nhóm 6: Lối tắt tác vụ AI */}

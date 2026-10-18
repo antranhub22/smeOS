@@ -3,41 +3,19 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  Home,
-  Package,
   Camera,
-  CheckCircle2,
   Plus,
-  Radio,
-  ShoppingBag,
-  Users,
-  Bot,
   Tag,
+  Home,
+  CheckCircle2,
   Clock,
-  Sparkles,
-  TrendingUp,
-  Folder,
+  Package,
   type LucideIcon,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { mobileSecondSlot, NAV_ENTRIES, type NavEntry } from "./nav-model"
-
-const ICONS: Record<string, LucideIcon> = {
-  Home,
-  Users,
-  ShoppingBag,
-  Bot,
-  Tag,
-  Camera,
-  Folder,
-  TrendingUp,
-  Sparkles,
-  Radio,
-  Clock,
-  CheckCircle2,
-  Package,
-}
+import { NAV_ICONS as ICONS } from "./nav-icons"
 
 export function BottomNav() {
   const pathname = usePathname()

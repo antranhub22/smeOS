@@ -21,6 +21,7 @@ import { getIndustryTerminology } from "@/modules/organization/domain/industry-p
 import { HomestayOrderFields, calculateNights } from "./homestay-order-fields"
 import { StandardOrderFields } from "./standard-order-fields"
 import { useBrochureOrderSubmit } from "./use-brochure-order-submit"
+import { useProductAvailability } from "./use-product-availability"
 
 interface BrochureOrderFormProps {
   productSnapshot: ProductSnapshot
@@ -77,6 +78,17 @@ export function BrochureOrderForm({
     ...(deliveryDate ? { deliveryDate } : {}),
   }
   const pricing = useBrochureQuote(quoteUrl, quoteBody, customerPhone, { id: productSnapshot.id, variantIds: variants.map((v) => v.id) })
+  const availabilityUrl = quoteUrl ? quoteUrl.replace(/\/quote$/, "/check-availability") : null
+  const availability = useProductAvailability(availabilityUrl, {
+    productId: productSnapshot.id,
+    industryKey,
+    checkInDate: isHomestay ? deliveryDate : undefined,
+    checkOutDate: isHomestay ? checkOutDate : undefined,
+    deliveryDate: !isHomestay ? deliveryDate : undefined,
+    deliveryTimeSlot,
+    variantId: pricing.selection.variantId,
+    quantity: pricing.selection.quantity,
+  })
   const minDate = earliestDeliveryDate(shipping)
   const maxDate = new Date(Date.parse(`${minDate}T00:00:00Z`) + MAX_DELIVERY_LEAD_DAYS * 86_400_000).toISOString().slice(0, 10)
   const [review, setReview, clearReview] = useSavedState<CustomerOrderSubmitInput | null>(`order-review:${productSnapshot.id}`, null)
@@ -275,6 +287,7 @@ export function BrochureOrderForm({
             onChildrenChange={setChildrenCount}
             onTransitChange={setTransitMethod}
             onSpecialRequestsChange={setSpecialRequests}
+            availability={availability}
           />
         ) : (
           <StandardOrderFields
@@ -294,6 +307,7 @@ export function BrochureOrderForm({
             senderNote={senderNote}
             deliveryNote={deliveryNote}
             mapUrl={mapUrl}
+            availability={availability}
             onRecipientNameChange={setRecipientName}
             onRecipientPhoneChange={setRecipientPhone}
             onDeliveryDateChange={setDeliveryDate}
@@ -306,11 +320,19 @@ export function BrochureOrderForm({
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={loading}
-          className="mt-2 w-full h-12 bg-primary hover:bg-primary-dark text-white font-extrabold text-body flex items-center justify-center gap-2 rounded-xl shadow-md"
+          disabled={loading || availability.available === false}
+          className="mt-2 w-full h-12 bg-primary hover:bg-primary-dark text-white font-extrabold text-body flex items-center justify-center gap-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Send size={18} aria-hidden="true" />
-          <span>{loading ? "Đang gửi đơn..." : isHomestay ? "Xem lại thông tin đặt phòng" : "Xem lại đơn"}</span>
+          <span>
+            {loading
+              ? "Đang gửi đơn..."
+              : availability.available === false
+              ? (availability.message || "Tạm không khả dụng")
+              : isHomestay
+              ? "Xem lại thông tin đặt phòng"
+              : "Xem lại đơn"}
+          </span>
         </Button>
       </form>
     </div>

@@ -35,6 +35,7 @@ export async function getProduct(ctx: TenantContext, id: string): Promise<Produc
       masterImageUrl: (product.attributes as Record<string, unknown> | null)?.imageUrl as string | undefined,
       price_vnd: null,
       attributes: (product.attributes as Record<string, unknown>) ?? null,
+      availability_config: product.availability_config,
     },
     pricingRuleRows,
     { canReadPricing, branchId: ctx.branchId }

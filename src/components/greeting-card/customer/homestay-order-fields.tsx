@@ -1,8 +1,21 @@
 "use client"
 
 import React, { useId } from "react"
-import { Calendar, Users, Home, Clock, Car, Bike, Plane, CheckCircle2 } from "lucide-react"
+import { Calendar, Home, Clock, Car, Bike, Plane, CheckCircle2 } from "lucide-react"
 import { ViDateInput } from "./vi-date-input"
+import { HomestayGuestFields } from "./homestay-guest-fields"
+import { AvailabilityIndicator } from "./availability-indicator"
+import type { AvailabilityMode } from "@/modules/greeting-card/domain/product-availability-config"
+
+export interface HomestayAvailabilityState {
+  available: boolean | null
+  mode?: AvailabilityMode | null
+  message?: string | null
+  nextAvailableDate?: string | null
+  remainingQuantity?: number | null
+  loading?: boolean
+  unavailableDates?: string[]
+}
 
 interface HomestayOrderFieldsProps {
   idPrefix?: string | undefined
@@ -12,8 +25,8 @@ interface HomestayOrderFieldsProps {
   minDate: string
   maxDate: string
   checkInTimeSlot: string
-  customerName: string
-  customerPhone: string
+  customerName?: string | undefined
+  customerPhone?: string | undefined
   recipientName: string
   recipientPhone: string
   isSelfBooking: boolean
@@ -23,6 +36,7 @@ interface HomestayOrderFieldsProps {
   specialRequests: string
   homestayAddress?: string | null | undefined
   homestayName?: string | null | undefined
+  availability?: HomestayAvailabilityState | undefined
   onCheckInChange: (date: string) => void
   onCheckOutChange: (date: string) => void
   onTimeSlotChange: (slot: string) => void
@@ -73,6 +87,7 @@ export function HomestayOrderFields({
   specialRequests,
   homestayAddress,
   homestayName,
+  availability,
   onCheckInChange,
   onCheckOutChange,
   onTimeSlotChange,
@@ -119,7 +134,6 @@ export function HomestayOrderFields({
               value={checkInDate}
               onChange={(val) => {
                 onCheckInChange(val)
-                // Tự động đẩy checkOutDate nếu đang nhỏ hơn hoặc bằng checkIn
                 if (!checkOutDate || checkOutDate <= val) {
                   const nextDay = new Date(new Date(`${val}T00:00:00Z`).getTime() + 86_400_000)
                     .toISOString()
@@ -149,6 +163,19 @@ export function HomestayOrderFields({
           </div>
         </div>
 
+        {/* Báo cáo trạng thái khả dụng phòng real-time */}
+        {availability && (
+          <AvailabilityIndicator
+            available={availability.available}
+            mode={availability.mode}
+            message={availability.message}
+            nextAvailableDate={availability.nextAvailableDate}
+            remainingQuantity={availability.remainingQuantity}
+            loading={availability.loading}
+            onSelectDate={onCheckInChange}
+          />
+        )}
+
         {/* Khung giờ nhận phòng */}
         <div>
           <label htmlFor={`${uid}-checkInTime`} className="block text-caption font-bold text-foreground mb-1">
@@ -173,107 +200,21 @@ export function HomestayOrderFields({
         </div>
       </div>
 
-      {/* 2. KHỐI THÔNG TIN KHÁCH LƯU TRÚ */}
-      <div className="p-4 rounded-xl border border-border bg-surface-muted/40 flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <div className="text-body-sm font-extrabold text-foreground flex items-center gap-2">
-            <Users size={17} className="text-primary" />
-            <span>Khách lưu trú & Người nhận phòng</span>
-          </div>
-
-          <label className="flex items-center gap-1.5 cursor-pointer text-caption font-bold text-primary">
-            <input
-              type="checkbox"
-              checked={isSelfBooking}
-              onChange={(e) => onSelfBookingToggle(e.target.checked)}
-              className="accent-primary rounded-sm"
-            />
-            <span>Tôi là người nhận phòng</span>
-          </label>
-        </div>
-
-        {!isSelfBooking && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-border">
-            <div>
-              <label htmlFor={`${uid}-guestName`} className="block text-caption font-bold text-foreground mb-1">
-                Người đại diện nhận phòng <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                id={`${uid}-guestName`}
-                value={recipientName}
-                placeholder="VD: Trần Thị B"
-                onChange={(e) => onRecipientNameChange(e.target.value)}
-                className={inputClassName}
-              />
-            </div>
-            <div>
-              <label htmlFor={`${uid}-guestPhone`} className="block text-caption font-bold text-foreground mb-1">
-                Số điện thoại người nhận phòng <span className="text-danger">*</span>
-              </label>
-              <input
-                type="tel"
-                required
-                id={`${uid}-guestPhone`}
-                value={recipientPhone}
-                placeholder="VD: 0912345678"
-                onChange={(e) => onRecipientPhoneChange(e.target.value)}
-                className={inputClassName}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Số lượng khách */}
-        <div className="grid grid-cols-2 gap-3 pt-1 border-t border-border">
-          <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-background">
-            <span className="text-caption font-bold text-foreground">Người lớn</span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                disabled={adultsCount <= 1}
-                onClick={() => onAdultsChange(Math.max(1, adultsCount - 1))}
-                className="h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
-              >
-                −
-              </button>
-              <span className="font-extrabold text-body-sm w-5 text-center">{adultsCount}</span>
-              <button
-                type="button"
-                disabled={adultsCount >= 30}
-                onClick={() => onAdultsChange(adultsCount + 1)}
-                className="h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-background">
-            <span className="text-caption font-bold text-foreground">Trẻ em (&lt;12t)</span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                disabled={childrenCount <= 0}
-                onClick={() => onChildrenChange(Math.max(0, childrenCount - 1))}
-                className="h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
-              >
-                −
-              </button>
-              <span className="font-extrabold text-body-sm w-5 text-center">{childrenCount}</span>
-              <button
-                type="button"
-                disabled={childrenCount >= 20}
-                onClick={() => onChildrenChange(childrenCount + 1)}
-                className="h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
-              >
-                +
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* 2. KHỐI THÔNG TIN KHÁCH LƯU TRÚ (Đã tách thành sub-component HomestayGuestFields) */}
+      <HomestayGuestFields
+        uid={uid}
+        inputClassName={inputClassName}
+        isSelfBooking={isSelfBooking}
+        recipientName={recipientName}
+        recipientPhone={recipientPhone}
+        adultsCount={adultsCount}
+        childrenCount={childrenCount}
+        onSelfBookingToggle={onSelfBookingToggle}
+        onRecipientNameChange={onRecipientNameChange}
+        onRecipientPhoneChange={onRecipientPhoneChange}
+        onAdultsChange={onAdultsChange}
+        onChildrenChange={onChildrenChange}
+      />
 
       {/* 3. KHỐI ĐỊA ĐIỂM HOMESTAY & PHƯƠNG TIỆN */}
       <div className="p-4 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-3">

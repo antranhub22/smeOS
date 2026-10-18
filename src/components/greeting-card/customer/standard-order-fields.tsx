@@ -9,6 +9,9 @@ import { DeliveryTimePicker } from "./delivery-time-picker"
 import { AddressFields } from "./address-fields"
 import { OrderNotesFields } from "./order-notes-fields"
 
+import { AvailabilityIndicator } from "./availability-indicator"
+import type { HomestayAvailabilityState } from "./homestay-order-fields"
+
 import type { OrderNotesValue } from "./order-notes-fields"
 
 interface StandardOrderFieldsProps {
@@ -28,6 +31,7 @@ interface StandardOrderFieldsProps {
   senderNote?: string | undefined
   deliveryNote?: string | undefined
   mapUrl?: string | undefined
+  availability?: HomestayAvailabilityState | undefined
   onRecipientNameChange: (val: string) => void
   onRecipientPhoneChange: (val: string) => void
   onDeliveryDateChange: (val: string) => void
@@ -53,6 +57,7 @@ export function StandardOrderFields({
   senderNote,
   deliveryNote,
   mapUrl,
+  availability,
   onRecipientNameChange,
   onRecipientPhoneChange,
   onDeliveryDateChange,
@@ -134,6 +139,18 @@ export function StandardOrderFields({
           />
         </div>
       </div>
+
+      {availability && (
+        <AvailabilityIndicator
+          available={availability.available}
+          mode={availability.mode}
+          message={availability.message}
+          nextAvailableDate={availability.nextAvailableDate}
+          remainingQuantity={availability.remainingQuantity}
+          loading={availability.loading}
+          onSelectDate={onDeliveryDateChange}
+        />
+      )}
 
       <AddressFields idPrefix={idPrefix} value={addressParts} inputClassName={inputClassName} onChange={onAddressPartsChange} />
 
