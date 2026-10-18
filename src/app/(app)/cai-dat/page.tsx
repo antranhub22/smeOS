@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { DispatchReminderPolicyCard } from "@/components/coordinator/dispatch-reminder-policy-card"
+import { LoadMockDataButton } from "@/components/profiles/load-mock-data-button"
 import { useI18n } from "@/lib/i18n"
 import type { Route } from "next"
 
@@ -222,13 +223,20 @@ export default function CaiDatTiemPage() {
 
       {/* 3. Form chỉnh sửa nhanh thông số cơ bản tại chỗ */}
       <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-        <div className="mb-4">
-          <h2 className="text-base font-extrabold text-text flex items-center gap-2">
-            <Store size={18} className="text-primary" /> Thông tin cơ bản của cửa hàng
-          </h2>
-          <p className="text-xs text-text-muted mt-0.5">
-            Các trường thông tin dưới đây áp dụng tức thì cho hóa đơn, phiếu cắm hoa và kịch bản tư vấn.
-          </p>
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 className="text-base font-extrabold text-text flex items-center gap-2">
+              <Store size={18} className="text-primary" /> Thông tin cơ bản của cửa hàng
+            </h2>
+            <p className="text-xs text-text-muted mt-0.5">
+              Các trường thông tin dưới đây áp dụng tức thì cho hóa đơn, phiếu cắm hoa và kịch bản tư vấn.
+            </p>
+          </div>
+          {canEdit && (
+            <div className="shrink-0">
+              <LoadMockDataButton />
+            </div>
+          )}
         </div>
 
         {loading ? (

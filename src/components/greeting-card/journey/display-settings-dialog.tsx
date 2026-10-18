@@ -5,8 +5,10 @@ import { Loader2, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { InlineError } from "@/components/ui/inline-error"
+import { useI18n } from "@/lib/i18n"
 import {
   OPTIONAL_DISPLAY_FIELDS,
+  getOptionalDisplayFields,
   enabledFieldsFor,
   type DisplaySettings,
   type OptionalDisplayField,
@@ -76,6 +78,9 @@ export function DisplaySettingsDialog({ open, onOpenChange, templateId, settings
     }
   }
 
+  const { industry } = useI18n()
+  const displayFields = getOptionalDisplayFields(industry?.identity?.key)
+
   return (
     <Dialog
       open={open}
@@ -104,7 +109,7 @@ export function DisplaySettingsDialog({ open, onOpenChange, templateId, settings
             </span>
           </li>
         ))}
-        {OPTIONAL_DISPLAY_FIELDS.map((f) => {
+        {displayFields.map((f) => {
           const on = fields.includes(f.key)
           return (
             <li key={f.key} className="flex items-center justify-between py-3 text-body-sm">

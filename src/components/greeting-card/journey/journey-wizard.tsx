@@ -19,6 +19,8 @@ import { canEditAnyCatalog, canEditCatalog as canEditCatalogPolicy } from "@/mod
 import type { QuickCollectionCandidate } from "@/modules/catalog-links/domain/quick-collection-engine"
 import { toQuickCollectionCandidate, type QuickCollectionProductRow } from "@/modules/catalog-links/domain/quick-collection-candidate"
 
+import { JourneyFocusProvider } from "./journey-focus-context"
+
 interface JourneyWizardProps {
   onFinish?: () => void
 }
@@ -99,97 +101,95 @@ export function JourneyWizard({ onFinish }: JourneyWizardProps) {
   }
 
   return (
-    <div className="flex w-full flex-col gap-6">
-      <div className="rounded-2xl border border-border bg-surface px-3 py-1 sm:px-4">
-        <JourneyStepper step={step} onStepClick={setStep} />
-      </div>
+    <JourneyFocusProvider>
+      <div className="flex w-full flex-col gap-6">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="min-w-0 rounded-2xl border border-border bg-surface p-5 sm:p-6">
+            {step === 1 && (
+              <StepCatalog
+                catalogs={catalogs}
+                orgSlug={orgSlug}
+                loading={data.loading}
+                loadError={data.loadError}
+                selectedId={selectedId}
+                itemCount={itemCount}
+                onRetry={() => void data.reload()}
+                onSelect={selectCatalog}
+                onCreate={() => setDialog("create")}
+                onQuickGenerate={() => setIsQuickModalOpen(true)}
+                onItemCountChange={handleItemCountChange}
+                onNext={() => setStep(2)}
+                readOnly={!canEditCatalog}
+                templateSlot={selected && canEditCatalog && <TemplateSection catalog={selected} onSave={data.saveTemplate} canEditSharedDisplay={canEditAnyCatalog(can)} />}
+              />
+            )}
+            {step === 2 && selected && (
+              <StepCustomer
+                catalogName={selected.name}
+                customerName={customerName}
+                customerPhone={customerPhone}
+                onNameChange={setCustomerName}
+                onPhoneChange={setCustomerPhone}
+                onBack={() => setStep(1)}
+                onSubmit={handleCreateLink}
+              />
+            )}
+            {step === 3 && sent && (
+              <StepResult
+                shareUrl={sent.shareUrl}
+                sendCode={sent.sendCode}
+                customerName={customerName}
+                copied={copiedKey === "send"}
+                copyError={copyError}
+                onCopy={() => {
+                  void copy("send", sent.shareUrl)
+                  markPersonalLinkCopied(sent.sendCode)
+                }}
+                onPreview={() => setPreview({ url: sent.shareUrl, title: `Xem trước thẻ gửi ${customerName || "khách"}` })}
+                onCreateAnother={resetForAnother}
+                onFinish={onFinish}
+              />
+            )}
+          </div>
 
-      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="min-w-0 rounded-2xl border border-border bg-surface p-5 sm:p-6">
-          {step === 1 && (
-            <StepCatalog
-              catalogs={catalogs}
-              orgSlug={orgSlug}
-              loading={data.loading}
-              loadError={data.loadError}
-              selectedId={selectedId}
-              itemCount={itemCount}
-              onRetry={() => void data.reload()}
-              onSelect={selectCatalog}
-              onCreate={() => setDialog("create")}
-              onQuickGenerate={() => setIsQuickModalOpen(true)}
-              onItemCountChange={handleItemCountChange}
-              onNext={() => setStep(2)}
-              readOnly={!canEditCatalog}
-              templateSlot={selected && canEditCatalog && <TemplateSection catalog={selected} onSave={data.saveTemplate} canEditSharedDisplay={canEditAnyCatalog(can)} />}
-            />
-          )}
-          {step === 2 && selected && (
-            <StepCustomer
-              catalogName={selected.name}
-              customerName={customerName}
-              customerPhone={customerPhone}
-              onNameChange={setCustomerName}
-              onPhoneChange={setCustomerPhone}
-              onBack={() => setStep(1)}
-              onSubmit={handleCreateLink}
-            />
-          )}
-          {step === 3 && sent && (
-            <StepResult
-              shareUrl={sent.shareUrl}
-              sendCode={sent.sendCode}
-              customerName={customerName}
-              copied={copiedKey === "send"}
-              copyError={copyError}
-              onCopy={() => {
-                void copy("send", sent.shareUrl)
-                markPersonalLinkCopied(sent.sendCode)
-              }}
-              onPreview={() => setPreview({ url: sent.shareUrl, title: `Xem trước thẻ gửi ${customerName || "khách"}` })}
-              onCreateAnother={resetForAnother}
-              onFinish={onFinish}
-            />
-          )}
+          <ShareSummaryPanel
+            catalog={selected}
+            templateLabel={selected ? templateName(catalogTemplateId(selected)) : null}
+            itemCount={itemCount}
+            copied={copiedKey === "public"}
+            copyError={copyError}
+            copyFallback={copyFallback}
+            onCopy={() => selected && void copy("public", () => createShareUrl(selected.id))}
+            onPreview={() => selected && setPreview({ url: publicUrl, title: `Xem trước: ${selected.name}` })}
+            onClone={() => setDialog("clone")}
+          />
         </div>
 
-        <ShareSummaryPanel
-          catalog={selected}
-          templateLabel={selected ? templateName(catalogTemplateId(selected)) : null}
-          itemCount={itemCount}
-          copied={copiedKey === "public"}
-          copyError={copyError}
-          copyFallback={copyFallback}
-          onCopy={() => selected && void copy("public", () => createShareUrl(selected.id))}
-          onPreview={() => selected && setPreview({ url: publicUrl, title: `Xem trước: ${selected.name}` })}
-          onClone={() => setDialog("clone")}
+        <CatalogFormDialog
+          key={dialog ?? "closed"}
+          open={dialog !== null}
+          onOpenChange={(open) => !open && setDialog(null)}
+          mode={dialog ?? "create"}
+          orgSlug={orgSlug}
+          cloneItemCount={itemCount}
+          initialName={dialog === "clone" && selected ? `${selected.name} – kênh 2` : ""}
+          initialCode={dialog === "clone" && selected ? normalizeLinkCode(`${selected.code}-kenh-2`) : ""}
+          onSubmit={handleDialogSubmit}
+        />
+
+        {preview && <BrochurePreviewModal url={preview.url} title={preview.title} onClose={() => setPreview(null)} />}
+
+        <QuickCollectionModal
+          open={isQuickModalOpen}
+          onOpenChange={setIsQuickModalOpen}
+          products={quickCandidates}
+          onCreatedLink={() => void data.reload()}
+          onCreatedGreetingCatalog={(newCatId) => {
+            setPickedId(newCatId)
+            void data.reload()
+          }}
         />
       </div>
-
-      <CatalogFormDialog
-        key={dialog ?? "closed"}
-        open={dialog !== null}
-        onOpenChange={(open) => !open && setDialog(null)}
-        mode={dialog ?? "create"}
-        orgSlug={orgSlug}
-        cloneItemCount={itemCount}
-        initialName={dialog === "clone" && selected ? `${selected.name} – kênh 2` : ""}
-        initialCode={dialog === "clone" && selected ? normalizeLinkCode(`${selected.code}-kenh-2`) : ""}
-        onSubmit={handleDialogSubmit}
-      />
-
-      {preview && <BrochurePreviewModal url={preview.url} title={preview.title} onClose={() => setPreview(null)} />}
-
-      <QuickCollectionModal
-        open={isQuickModalOpen}
-        onOpenChange={setIsQuickModalOpen}
-        products={quickCandidates}
-        onCreatedLink={() => void data.reload()}
-        onCreatedGreetingCatalog={(newCatId) => {
-          setPickedId(newCatId)
-          void data.reload()
-        }}
-      />
-    </div>
+    </JourneyFocusProvider>
   )
 }

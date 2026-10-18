@@ -3,6 +3,7 @@
 import type { CSSProperties, ReactNode } from "react"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
 import { toProductDisplay } from "./product-display"
 import { useDisplayFields } from "./display-fields-context"
 
@@ -40,7 +41,6 @@ interface ProductInfoProps {
 
 const TITLE_SIZE: Record<ProductInfoSize, string> = { sm: "text-body-sm", md: "text-title-sm", lg: "text-title" }
 const PRICE_SIZE: Record<ProductInfoSize, string> = { sm: "text-body-sm", md: "text-title-sm", lg: "text-title-sm" }
-
 export function ProductInfo({
   product,
   level = "standard",
@@ -56,7 +56,8 @@ export function ProductInfo({
   id,
   className,
 }: ProductInfoProps) {
-  const d = toProductDisplay(product, useDisplayFields())
+  const { industry } = useI18n()
+  const d = toProductDisplay(product, useDisplayFields(), industry?.identity?.key)
   const mutedStyle = muted ? { color: muted } : undefined
 
   return (

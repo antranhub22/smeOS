@@ -109,6 +109,17 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 - **Cấm mã kỹ thuật trên giao diện (UX Lint R8, PO 29/09/2026)**: Không hiển thị `M01a`, `Khu vực D`, `SSOT`, `Chặng 05`, `P2`… trên label/text mà người dùng cửa hàng hoa nhìn thấy. Chỉ dùng trong `data-testid`, `title` cho dev, hoặc comment code. Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R8.
 - **Cấm `onClick` trên phần tử phi tương tác (UX Lint R5 / WCAG 2.1.1, PO 29/09/2026)**: Không đặt `onClick` lên `<div>`, `<span>`, `<li>`, `<tr>`, `<td>`, `<img>`. Dùng `<button type="button">` thay thế. Nếu bất khả kháng (modal backdrop) thì PHẢI có `role="button"` + `tabIndex={0}` + `onKeyDown`. Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R5.
 - **Chuẩn UX toàn cục (03a)**: Bất kỳ màn hình mới nào hoặc màn hình bị sửa đổi bố cục/thứ bậc/luồng bắt buộc phải có Screen Contract lưu tại `docs/dac-ta/screen-contracts/` + vượt qua QA Matrix 03a §34 (không có chỉ số FAIL) + `npm run lint:ux -- --check` không tăng vi phạm (từ T2.3).
+- **Quy chuẩn Tiêu Điểm Khối Tương Tác (Active Block Spotlight Standard / Focus-First Block UX, PO 18/10/2026)**:
+  - **Mục tiêu UX**: Tránh quá tải nhận thức thị giác (Cognitive Overload) khi hiển thị nhiều khối tính năng hoặc các bước tác vụ trên cùng một màn hình (như Wizard cấu hình, Tạo bộ sưu tập, Thiết lập chiến dịch).
+  - **Cơ chế hoạt động**:
+    1. **Khối đang chọn (Active Block - Nổi bật / Spotlight)**:
+       - Nền sáng rõ `bg-surface`, viền nổi bật `border-primary/50`, vòng sáng nhẹ `ring-2 ring-primary/20`, đổ bóng `shadow-sm`.
+       - Độ mờ `opacity-100`, huy hiệu số thứ tự hoặc tiêu đề mang màu thương hiệu `bg-primary text-white`.
+    2. **Các khối còn lại (Inactive Blocks - Chìm xuống / Dimmed)**:
+       - Độ mờ giảm xuống `opacity-60` (hoặc `opacity-50`), nền dịu hơn `bg-surface/80`.
+       - Hiệu ứng tương tác: Rê chuột qua (hover) tự động sáng nhẹ lên `hover:opacity-95`.
+       - Nhấp chuột (Click / Focus) vào bất kỳ vị trí nào của khối đó ➔ Vị trí Spotlight tự động chuyển tiêu điểm sang khối đó mượt mà qua chuyển động `transition-all duration-300`.
+  - **Hạ tầng chuẩn hóa**: Sử dụng React Context chia sẻ trạng thái tập trung (mẫu chuẩn: `JourneyFocusContext` / `useJourneyFocus` tại `src/components/greeting-card/journey/journey-focus-context.tsx`).
 - **Chuẩn Kiến trúc Trải nghiệm Người dùng Hành trình Trước (Journey-First UX Architecture Standard, PO 30/09/2026)**:
   - **Tài liệu SSOT**: `docs/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md`, Kế hoạch thực thi `docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md` (`PLAN-2026-JOURNEY-UX-01`), và quyết định `D-JUX` trong `docs/dac-ta/03b-role-ux.md`.
   - **Phạm vi áp dụng**: BẮT BUỘC áp dụng cho toàn bộ hệ thống giao diện, dashboard, trang chủ và quy trình tác vụ của FloraOS.

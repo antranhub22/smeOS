@@ -3,35 +3,91 @@
 import { useState, useEffect } from "react"
 import { catalogItemToProduct } from "@/modules/greeting-card/domain/catalog-product-price"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
+import { useI18n } from "@/lib/i18n"
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
-const SAMPLE_PRODUCTS: GreetingCatalogProduct[] = [
-  {
-    id: "sample-1",
-    name: "Bó Hoa Hồng Red Naomi Ecuador",
-    code: "HH-01",
-    price: 850000,
-    imageUrl:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80",
-    description: "Hoa hồng đỏ nhung Ecuador tuyển chọn, phối cành lá bạc bạch đàn.",
-    flowersSummary: "12 cành hoa hồng Red Naomi Ecuador, lá bạc thơm, giấy gói lụa cao cấp",
-    style: "Sang Trọng",
-    meaning: "Tình yêu mãnh liệt, đam mê và sự gắn kết trường tồn",
-    sortOrder: 1,
-  },
-  {
-    id: "sample-2",
-    name: "Giỏ Hoa Mẫu Đơn & Tulip Mùa Xuân",
-    code: "GH-02",
-    price: 1450000,
-    imageUrl:
-      "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=800&auto=format&fit=crop&q=80",
-    description: "Mẫu đơn Sarah Bernhardt phối cùng tulip pastel Hà Lan trong giỏ mây tự nhiên.",
-    flowersSummary: "5 bông mẫu đơn hồng, 10 cành tulip, hoa thanh liễu",
-    style: "Thơ Mộng",
-    meaning: "Sự thịnh vượng, thanh nhã và niềm vui trọn vẹn",
-    sortOrder: 2,
-  },
-]
+const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
+  HOMESTAY: [
+    {
+      id: "sample-homestay-1",
+      name: "Phòng Studio Deluxe Ban Công View Thung Lũng",
+      code: "ST-01",
+      price: 850000,
+      imageUrl: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&auto=format&fit=crop&q=80",
+      description: "Không gian phòng thoáng đãng đón trọn ánh nắng sớm, ban công rộng view núi và thung lũng mây mộng mơ.",
+      flowersSummary: "1 Giường đôi Queen, Bồn tắm ngâm thảo mộc, Bữa sáng địa phương, Wi-Fi tốc độ cao",
+      style: "Thư Giãn",
+      meaning: "Tận hưởng không gian nghỉ dưỡng bình yên và tái tạo năng lượng",
+      sortOrder: 1,
+    },
+    {
+      id: "sample-homestay-2",
+      name: "Villa Sân Vườn Tiệc Nướng BBQ Hoàng Hôn",
+      code: "VL-02",
+      price: 2500000,
+      imageUrl: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop&q=80",
+      description: "Nguyên căn 3 phòng ngủ tiện nghi chuẩn gia đình, bếp riêng và sân vườn tiệc nướng chill ngắm hoàng hôn.",
+      flowersSummary: "3 Phòng ngủ lớn, Bếp nấu trang bị đầy đủ, Sân BBQ ngoài trời, Hồ bơi thư giãn",
+      style: "Ấm Cúng",
+      meaning: "Gắn kết kỷ niệm trọn vẹn bên gia đình và những người thân yêu",
+      sortOrder: 2,
+    },
+  ],
+  FASHION: [
+    {
+      id: "sample-fashion-1",
+      name: "Đầm Lụa Tơ Tằm Cổ Yếm Dáng Suông",
+      code: "DR-01",
+      price: 1250000,
+      imageUrl: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&auto=format&fit=crop&q=80",
+      description: "Chất liệu lụa satin tơ tằm dệt cao cấp, đường may tinh xảo tôn vinh vóc dáng người phụ nữ hiện đại.",
+      flowersSummary: "Lụa tơ tằm cao cấp, lót habutai mềm mát, cúc ngọc trai mạ vàng",
+      style: "Thanh Lịch",
+      meaning: "Khẳng định khí chất và sự tự tin tinh tế trong mọi buổi tiệc",
+      sortOrder: 1,
+    },
+  ],
+  FNB: [
+    {
+      id: "sample-fnb-1",
+      name: "Set Bò Fuji Nướng Sốt Tiêu Đen & Salad",
+      code: "FB-01",
+      price: 320000,
+      imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80",
+      description: "Thịt bò nướng mềm mọng nước hòa quyện sốt tiêu đen đậm đà kèm rau rocket tươi giòn.",
+      flowersSummary: "Bò thượng hạng 200g, Sốt tiêu đen đặc chế, Salad hữu cơ, Bánh mì bơ tỏi",
+      style: "Đậm Đà",
+      meaning: "Đánh thức mọi giác quan qua trải nghiệm ẩm thực thượng lưu",
+      sortOrder: 1,
+    },
+  ],
+  FLORAL: [
+    {
+      id: "sample-1",
+      name: "Bó Hoa Hồng Red Naomi Ecuador",
+      code: "HH-01",
+      price: 850000,
+      imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80",
+      description: "Hoa hồng đỏ nhung Ecuador tuyển chọn, phối cành lá bạc bạch đàn.",
+      flowersSummary: "12 cành hoa hồng Red Naomi Ecuador, lá bạc thơm, giấy gói lụa cao cấp",
+      style: "Sang Trọng",
+      meaning: "Tình yêu mãnh liệt, đam mê và sự gắn kết trường tồn",
+      sortOrder: 1,
+    },
+    {
+      id: "sample-2",
+      name: "Giỏ Hoa Mẫu Đơn & Tulip Mùa Xuân",
+      code: "GH-02",
+      price: 1450000,
+      imageUrl: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=800&auto=format&fit=crop&q=80",
+      description: "Mẫu đơn Sarah Bernhardt phối cùng tulip pastel Hà Lan trong giỏ mây tự nhiên.",
+      flowersSummary: "5 bông mẫu đơn hồng, 10 cành tulip, hoa thanh liễu",
+      style: "Thơ Mộng",
+      meaning: "Sự thịnh vượng, thanh nhã và niềm vui trọn vẹn",
+      sortOrder: 2,
+    },
+  ],
+}
 
 interface UseCatalogProductsResult {
   products: GreetingCatalogProduct[]
@@ -40,7 +96,7 @@ interface UseCatalogProductsResult {
 }
 
 /**
- * Fetches real products for a catalog, falls back to sample data.
+ * Fetches real products for a catalog, falls back to sample data theo ngành.
  * Pass `previewProducts` to skip the network request entirely.
  */
 export function useCatalogProducts(
@@ -82,6 +138,12 @@ export function useCatalogProducts(
     }
   }, [catalogId, hasPreview])
 
+  const { industry } = useI18n()
+  const activeIndustry = industry || getIndustryPlugin()
+  const defaultIndustrySamples =
+    SAMPLE_PRODUCTS_BY_INDUSTRY[activeIndustry.identity.key] ||
+    SAMPLE_PRODUCTS_BY_INDUSTRY.FLORAL!
+
   const products =
     hasPreview && previewProducts
       ? previewProducts
@@ -89,7 +151,7 @@ export function useCatalogProducts(
         ? loadedProducts
         : previewProducts && previewProducts.length > 0
         ? previewProducts
-        : SAMPLE_PRODUCTS
+        : defaultIndustrySamples
 
   return {
     products,

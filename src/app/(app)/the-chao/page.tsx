@@ -186,6 +186,7 @@ export default function TheChaoPage() {
               extraParams={{ source: "BROCHURE" }}
               filename="the-chao-don-hang.xlsx"
               label="Xuất file Excel"
+              iconOnly
             />
           )}
         </div>

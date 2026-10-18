@@ -2,6 +2,8 @@
 
 import { Check, CheckCircle2, Circle, Copy, CopyPlus, Eye, Link as LinkIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/lib/i18n"
+import { useJourneyFocus } from "./journey-focus-context"
 import { cn } from "@/lib/utils"
 import type { CatalogOption } from "./use-journey-catalogs"
 
@@ -32,38 +34,36 @@ function ChecklistRow({ done, label }: { done: boolean; label: string }) {
 /** Cột tóm tắt: trạng thái sẵn sàng + link dùng chung (một nơi duy nhất cho thao tác chia sẻ). */
 export function ShareSummaryPanel(props: ShareSummaryPanelProps) {
   const { catalog, templateLabel, itemCount, copied, copyError, copyFallback, onCopy, onPreview, onClone } = props
+  const { ti } = useI18n()
+  const { activeBlock, setActiveBlock } = useJourneyFocus()
+  const isBlock3Active = activeBlock === 3
   const ready = Boolean(catalog) && itemCount > 0
 
   return (
     <aside aria-label="Tóm tắt và chia sẻ" className="flex flex-col gap-4 lg:sticky lg:top-6">
-      <section className="rounded-2xl border border-border bg-surface p-5">
-        <h2 className="text-caption font-bold uppercase tracking-wider text-text-muted">Đang chuẩn bị</h2>
-        <p className="mt-1.5 truncate text-title-sm font-bold text-foreground" title={catalog?.name}>
-          {catalog?.name ?? "Chưa chọn bộ sưu tập"}
-        </p>
-        <ul className="mt-4 flex flex-col gap-2">
-          <ChecklistRow done={Boolean(catalog)} label="Đã chọn bộ sưu tập" />
-          <ChecklistRow done={itemCount > 0} label={itemCount > 0 ? `Có ${itemCount} mẫu hoa` : "Thêm ít nhất 1 mẫu hoa"} />
-        </ul>
-        {templateLabel && (
-          <p className="mt-4 border-t border-border pt-3 text-body-sm text-text-muted">
-            Giao diện: <span className="font-semibold text-foreground">{templateLabel}</span>
-          </p>
-        )}
-      </section>
-
       <section
+        onClick={() => setActiveBlock(3)}
         className={cn(
-          "rounded-2xl border p-5 transition-colors",
-          ready ? "border-primary/30 bg-primary/5" : "border-dashed border-border bg-surface",
+          "rounded-2xl border p-5 transition-all duration-300 cursor-pointer",
+          isBlock3Active
+            ? "border-primary/50 bg-surface shadow-sm ring-2 ring-primary/20 opacity-100"
+            : "border-border/60 bg-surface/80 opacity-60 hover:opacity-95",
         )}
       >
-        <div className="flex items-center gap-2">
-          <LinkIcon size={16} aria-hidden="true" className="text-primary" />
-          <h2 className="text-body font-bold text-foreground">Link dùng chung</h2>
+        <div className="flex items-center gap-2.5">
+          <span className={cn(
+            "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-caption font-bold shadow-xs transition-colors",
+            isBlock3Active ? "bg-primary text-white" : "bg-primary/15 text-primary"
+          )}>
+            3
+          </span>
+          <div className="flex items-center gap-1.5">
+            <LinkIcon size={16} aria-hidden="true" className="text-primary" />
+            <h2 className="text-body font-bold text-foreground">Link dùng chung</h2>
+          </div>
         </div>
         <p className="mt-1 text-body-sm text-text-muted">
-          Đăng lên Fanpage, Zalo, bio hoặc quảng cáo. Ai mở link cũng xem được mẫu hoa và tự đặt, thanh toán qua mã QR.
+          Đăng lên Fanpage, Zalo, bio hoặc quảng cáo. Ai mở link cũng xem được {ti("sampleProduct").toLowerCase()} và tự đặt, thanh toán qua mã QR.
         </p>
 
         {ready ? (
@@ -102,7 +102,7 @@ export function ShareSummaryPanel(props: ShareSummaryPanelProps) {
           </>
         ) : (
           <p className="mt-4 rounded-xl bg-surface-alt px-3 py-2.5 text-body-sm text-text-muted">
-            Link sẽ xuất hiện khi bộ sưu tập có ít nhất 1 mẫu hoa.
+            Link sẽ xuất hiện khi bộ sưu tập có ít nhất 1 {ti("sampleProduct").toLowerCase()}.
           </p>
         )}
       </section>

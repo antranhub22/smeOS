@@ -141,11 +141,17 @@ Trang **Thẻ Chào Mẫu Hoa** (`/the-chao`) là kênh bán hàng di động v�
 
 ### 3. Hướng dẫn thao tác từng bước & 4. Kết quả sau mỗi thao tác
 
-#### A. Chế độ "Gửi nhanh" (JourneyWizard)
-* **Bước 1**: Nhấp chọn nút **"Gửi nhanh"** (icon `Wand2`) trên Header. -> *Kết quả*: Hiển thị luồng 3 bước.
-* **Bước 2**: Chọn Bộ sưu tập/Mẫu hoa (Sinh nhật, Khai trương...). -> *Kết quả*: Danh sách mẫu hoa xuất hiện.
-* **Bước 3**: Nhập tên khách hàng và lời đề tặng riêng của tiệm. -> *Kết quả*: Cá nhân hóa thông điệp chào hàng.
-* **Bước 4**: Nhấp nút **"Tạo link"** `[CẦN XÁC MINH nhãn nút]`. -> *Kết quả*: Hệ thống sinh ra đường link di động kèm mã VietQR động, Sale copy gửi Zalo cho khách.
+#### A. Chế độ "Gửi nhanh" (JourneyWizard — Trải nghiệm Tiêu điểm Khối & Đa ngành)
+* **Khối 1: Chọn Bộ sưu tập & Danh mục sản phẩm**:
+  * Nhấp chọn bộ sưu tập mong muốn (hoặc tạo bộ sưu tập mới). Danh sách sản phẩm (hoa, phòng homestay, trang phục thời trang...) tự động thích ứng với cấu hình ngành của cửa hàng.
+  * Nhân viên có thể linh hoạt chọn sản phẩm, thay đổi số lượng, hoặc cấu hình hiển thị chi tiết (giá, đơn vị tính, tiện ích/chất liệu/thành phần).
+* **Khối 2: Chọn Giao diện khách xem**:
+  * Lựa chọn template trình diễn ấn phẩm trực tuyến phù hợp phong cách (Thanh lịch, Sang trọng, Hiện đại...).
+  * Bản xem trước tự động hiển thị sản phẩm mẫu theo đúng chuyên ngành của cửa hàng (Homestay hiển thị phòng & tiện ích, Thời trang hiển thị bộ sưu tập quần áo...).
+* **Khối 3: Gửi riêng cho khách & Link dùng chung**:
+  * **Nhánh gửi riêng**: Nhập tên khách hàng và ghi chú cá nhân hóa -> Bấm **"Tạo link"** -> Sinh đường link kèm mã VietQR cá nhân hóa gửi Zalo/Facebook.
+  * **Nhánh link dùng chung**: Sao chép trực tiếp đường link công khai của bộ sưu tập kèm mã QR dùng chung dán lên Fanpage/Website.
+* *Cơ chế Tiêu điểm khối (Active Block Spotlight)*: Khi nhấp vào thao tác ở khối nào, khối đó sẽ tự động sáng rõ và nổi bật lên, trong khi các khối còn lại mờ nhẹ để nhân viên tập trung tối đa mà không bị xao nhãng.
 
 #### B. Chế độ "Quản lý" (5 Tab chuyên sâu)
 * **Bước 1**: Nhấp chọn nút **"Quản lý"** (icon `LayoutList`).

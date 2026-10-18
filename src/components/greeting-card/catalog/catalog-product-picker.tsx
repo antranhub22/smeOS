@@ -245,15 +245,24 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               })}
             </div>
 
-            {/* 4. Cấu phần / Chất liệu & Tone màu */}
+            {/* 4. Cấu phần / Tiện ích / Chất liệu & Tone màu */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-border">
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="text-caption text-text-muted shrink-0 w-16">
-                  {activeIndustry.identity.key === "FASHION" ? "Chất liệu:" : "Cấu phần:"}
+                  {activeIndustry.identity.key === "FASHION"
+                    ? "Chất liệu:"
+                    : activeIndustry.identity.key === "HOMESTAY"
+                    ? "Tiện ích:"
+                    : "Cấu phần:"}
                 </span>
-                {(activeIndustry.identity.key === "FASHION"
-                  ? ["Lụa", "Dạ Tweed", "Cotton", "Lanh / Đũi"]
-                  : ["Hoa hồng", "Lan hồ điệp", "Hướng dương", "Baby"]
+                {(
+                  activeIndustry.identity.key === "FASHION"
+                    ? ["Lụa", "Dạ Tweed", "Cotton", "Lanh / Đũi"]
+                    : activeIndustry.identity.key === "HOMESTAY"
+                    ? (activeIndustry.terminology?.defaultComponentRoles?.map((r) => r.label) || ["Tiện nghi phòng", "Chăn ga", "Vệ sinh", "Chào mừng"])
+                    : activeIndustry.identity.key === "FLORAL"
+                    ? ["Hoa hồng", "Lan hồ điệp", "Hướng dương", "Baby"]
+                    : (activeIndustry.terminology?.defaultComponentRoles?.map((r) => r.label) || ["Chính", "Phụ", "Kèm theo"])
                 ).map((fl) => {
                   const isSelected = ci.filterFlowerType === fl
                   return (
@@ -273,26 +282,29 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                 })}
               </div>
 
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-caption text-text-muted shrink-0 w-16">Tone màu:</span>
-                {["Pastel", "Đỏ", "Vàng", "Hồng", "Trắng"].map((col) => {
-                  const isSelected = ci.filterColorTone === col
-                  return (
-                    <button
-                      type="button"
-                      key={col}
-                      onClick={() => ci.setFilterColorTone(isSelected ? "" : col)}
-                      className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
-                        isSelected
-                          ? "border-primary bg-primary/10 text-primary font-bold"
-                          : "border-border bg-surface text-text-muted hover:border-primary/40"
-                      }`}
-                    >
-                      {col}
-                    </button>
-                  )
-                })}
-              </div>
+              {/* Chỉ hiện tone màu cho các ngành có định hướng màu sắc rõ nét như HOA hoặc THỜI TRANG */}
+              {(activeIndustry.identity.key === "FLORAL" || activeIndustry.identity.key === "FASHION" || activeIndustry.identity.key === "CRAFT_GIFT") ? (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-caption text-text-muted shrink-0 w-16">Tone màu:</span>
+                  {["Pastel", "Đỏ", "Vàng", "Hồng", "Trắng"].map((col) => {
+                    const isSelected = ci.filterColorTone === col
+                    return (
+                      <button
+                        type="button"
+                        key={col}
+                        onClick={() => ci.setFilterColorTone(isSelected ? "" : col)}
+                        className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                          isSelected
+                            ? "border-primary bg-primary/10 text-primary font-bold"
+                            : "border-border bg-surface text-text-muted hover:border-primary/40"
+                        }`}
+                      >
+                        {col}
+                      </button>
+                    )
+                  })}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -301,13 +313,15 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
             {loadingProducts ? (
               <div className="flex items-center justify-center py-8 text-text-muted gap-2">
                 <Loader2 size={16} className="animate-spin" />
-                <span className="text-body-sm">Đang tải kho sản phẩm...</span>
+                <span className="text-body-sm">Đang tải danh sách {ti("sampleProduct").toLowerCase()}...</span>
               </div>
             ) : ci.available.length === 0 ? (
               <p className="text-body-sm text-text-muted text-center py-8">
                 {ci.searchQuery || ci.hasActiveFilters
-                  ? "Không tìm thấy sản phẩm phù hợp tiêu chí lọc"
-                  : "Tất cả sản phẩm đã được thêm vào bộ sưu tập"}
+                  ? `Không tìm thấy ${ti("sampleProduct").toLowerCase()} phù hợp tiêu chí lọc`
+                  : ci.totalWarehouseCount === 0
+                  ? `Kho chưa có ${ti("sampleProduct").toLowerCase()} nào. Vui lòng tạo ${ti("sampleProduct").toLowerCase()} mới trước.`
+                  : `Tất cả ${ti("sampleProduct").toLowerCase()} đã được thêm vào bộ sưu tập`}
               </p>
             ) : (
               ci.available.map((product) => (

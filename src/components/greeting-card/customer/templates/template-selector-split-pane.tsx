@@ -425,14 +425,19 @@ export function TemplateSelectorSplitPane({
       <div className="space-y-3">
         {/* Header row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <label className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
-              <Layers size={15} className="text-primary" />
-              <span>Giao diện khách xem</span>
-            </label>
-            <p className="text-caption text-text-muted mt-0.5">
-              Bấm một mẫu để xem trước, rồi bấm “Chọn mẫu” để áp dụng cho bộ sưu tập
-            </p>
+          <div className="flex items-start gap-2.5">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-white text-caption font-bold shadow-xs mt-0.5">
+              2
+            </span>
+            <div>
+              <label className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+                <Layers size={15} className="text-primary" />
+                <span>Giao diện khách xem</span>
+              </label>
+              <p className="text-caption text-text-muted mt-0.5">
+                Bấm một mẫu để xem trước, rồi bấm “Chọn mẫu” để áp dụng cho bộ sưu tập
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-1 p-1 bg-surface-muted rounded-xl self-start sm:self-auto shrink-0">
