@@ -97,4 +97,7 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
       "Kệ hoa khai trương Đại Cát Đại Lợi 2 tầng",
     ],
   },
+  navigation: {
+    hiddenNavKeys: [],
+  },
 }

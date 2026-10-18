@@ -92,4 +92,7 @@ export const RETAIL_GENERAL_INDUSTRY: IndustryPluginContract = {
       "Hộp viên giặt xả 3 trong 1 hương hoa thảo mộc",
     ],
   },
+  navigation: {
+    hiddenNavKeys: [],
+  },
 }

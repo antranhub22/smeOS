@@ -241,6 +241,9 @@ ${occs}
 ${sampleNames}
     ],
   },
+  navigation: {
+    hiddenNavKeys: [],
+  },
 }
 `
 }

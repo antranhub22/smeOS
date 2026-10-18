@@ -97,4 +97,7 @@ export const FASHION_INDUSTRY: IndustryPluginContract = {
       "Set vest công sở cao cấp chuẩn phom âu",
     ],
   },
+  navigation: {
+    hiddenNavKeys: [],
+  },
 }

@@ -8,6 +8,7 @@
 import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"
 import { isRouteLocked } from "@/lib/feature-lock"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { HREF_TO_NAV_KEY, getHiddenNavKeys } from "./nav-matrix"
 
 export type NavGroupKey =
   | "viec-chinh"
@@ -22,6 +23,7 @@ export interface NavEntry {
   label: string
   group: Exclude<NavGroupKey, "viec-chinh">
   iconKey: string
+  navKey: string
   capability?: string
   status?: "READY" | "COMING_SOON"
   mobileLabel?: string
@@ -42,6 +44,7 @@ export const HOME_ENTRY: NavEntry = {
   label: "Trang chủ",
   group: "ban-hang",
   iconKey: "Home",
+  navKey: "home",
   mobileLabel: "Trang chủ",
 }
 
@@ -63,6 +66,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Khách hàng",
     group: "ban-hang",
     iconKey: "Users",
+    navKey: "customers",
     capability: "Q1",
     mobileLabel: "Khách hàng",
   },
@@ -71,6 +75,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Đơn hàng",
     group: "ban-hang",
     iconKey: "ShoppingBag",
+    navKey: "orders",
     capability: "R1",
     mobileLabel: "Đơn hàng",
   },
@@ -79,6 +84,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Hội thoại",
     group: "ban-hang",
     iconKey: "Bot",
+    navKey: "chat",
     capability: "T1",
     mobileLabel: "Hội thoại",
   },
@@ -87,6 +93,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Catalog & QR",
     group: "ban-hang",
     iconKey: "Globe",
+    navKey: "catalog",
     capability: "J1",
     mobileLabel: "Catalog",
   },
@@ -95,6 +102,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Thẻ chào mẫu hoa",
     group: "ban-hang",
     iconKey: "Sparkles",
+    navKey: "greeting-card",
     capability: "R1",
     mobileLabel: "Thẻ chào",
   },
@@ -105,6 +113,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Sản phẩm & Giá",
     group: "san-pham",
     iconKey: "Tag",
+    navKey: "products",
     capability: "L1",
     mobileLabel: "Sản phẩm",
   },
@@ -113,6 +122,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Khả dụng & Lịch",
     group: "san-pham",
     iconKey: "CalendarCheck",
+    navKey: "availability",
     capability: "L1",
     mobileLabel: "Khả dụng",
   },
@@ -121,6 +131,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Tạo mẫu hoa mới",
     group: "san-pham",
     iconKey: "Sparkles",
+    navKey: "create-product",
     capability: "L2",
     mobileLabel: "Tạo mẫu",
   },
@@ -129,6 +140,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Nhập từ Excel & Ảnh",
     group: "san-pham",
     iconKey: "FileSpreadsheet",
+    navKey: "bulk-import",
     capability: "L2",
     mobileLabel: "Nhập Excel",
   },
@@ -137,6 +149,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Quét ảnh hoa",
     group: "san-pham",
     iconKey: "Camera",
+    navKey: "scan-photo",
     capability: "H1",
     mobileLabel: "Tải ảnh",
   },
@@ -145,6 +158,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Kho dữ liệu",
     group: "san-pham",
     iconKey: "Folder",
+    navKey: "storage",
     capability: "G1",
     mobileLabel: "Kho dữ liệu",
   },
@@ -153,6 +167,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Tính giá",
     group: "san-pham",
     iconKey: "WalletCards",
+    navKey: "pricing",
     capability: "L6",
     mobileLabel: "Tính giá",
   },
@@ -163,6 +178,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Nghiên cứu thị trường",
     group: "noi-dung",
     iconKey: "TrendingUp",
+    navKey: "market-intel",
     capability: "V2",
     mobileLabel: "Thị trường",
   },
@@ -171,6 +187,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Creative Studio",
     group: "noi-dung",
     iconKey: "Sparkles",
+    navKey: "creative-studio",
     capability: "I1",
     mobileLabel: "Studio",
   },
@@ -179,6 +196,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Ảnh marketing",
     group: "noi-dung",
     iconKey: "Wand2",
+    navKey: "marketing-photo",
     capability: "I4",
     mobileLabel: "Ảnh mẫu",
   },
@@ -187,6 +205,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Video",
     group: "noi-dung",
     iconKey: "Video",
+    navKey: "video",
     capability: "I1",
     mobileLabel: "Video",
   },
@@ -195,6 +214,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Viết nội dung",
     group: "noi-dung",
     iconKey: "FileText",
+    navKey: "content",
     capability: "I1",
     mobileLabel: "Nội dung",
   },
@@ -203,6 +223,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Lịch đăng",
     group: "noi-dung",
     iconKey: "Share2",
+    navKey: "schedule",
     mobileLabel: "Lịch đăng",
   },
   {
@@ -210,6 +231,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Kho mẫu",
     group: "noi-dung",
     iconKey: "LayoutTemplate",
+    navKey: "templates",
     mobileLabel: "Kho mẫu",
   },
 
@@ -219,6 +241,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Điều phối",
     group: "van-hanh",
     iconKey: "Radio",
+    navKey: "coordinator",
     capability: "C23",
     mobileLabel: "Điều phối",
   },
@@ -227,6 +250,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Job",
     group: "van-hanh",
     iconKey: "Clock",
+    navKey: "jobs",
     capability: "G4",
     mobileLabel: "Job",
   },
@@ -235,6 +259,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Hàng chờ duyệt",
     group: "van-hanh",
     iconKey: "CheckCircle2",
+    navKey: "approval",
     capability: "H3",
     mobileLabel: "Duyệt",
   },
@@ -243,6 +268,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Số liệu",
     group: "van-hanh",
     iconKey: "BarChart3",
+    navKey: "stats",
     capability: "U3",
     mobileLabel: "Số liệu",
   },
@@ -251,6 +277,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Mức dùng",
     group: "van-hanh",
     iconKey: "WalletCards",
+    navKey: "usage",
     capability: "G8",
     mobileLabel: "Mức dùng",
   },
@@ -259,6 +286,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Nhật ký kiểm toán",
     group: "van-hanh",
     iconKey: "ShieldCheck",
+    navKey: "audit",
     capability: "G9",
     mobileLabel: "Kiểm toán",
   },
@@ -269,6 +297,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Hồ sơ cửa hàng",
     group: "thiet-lap",
     iconKey: "Settings2",
+    navKey: "profile",
     capability: "F1",
     mobileLabel: "Hồ sơ",
   },
@@ -277,6 +306,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Tri thức",
     group: "thiet-lap",
     iconKey: "BookOpen",
+    navKey: "knowledge",
     mobileLabel: "Tri thức",
   },
   {
@@ -284,6 +314,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Chính sách AI",
     group: "thiet-lap",
     iconKey: "Cpu",
+    navKey: "ai-policy",
     capability: "U1",
     mobileLabel: "Chính sách AI",
   },
@@ -292,6 +323,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Kết nối kênh",
     group: "thiet-lap",
     iconKey: "Share2",
+    navKey: "channels",
     mobileLabel: "Kết nối",
   },
   {
@@ -299,6 +331,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Bộ máy phân tích ảnh",
     group: "thiet-lap",
     iconKey: "Cpu",
+    navKey: "engine",
     capability: "H4",
     mobileLabel: "Bộ máy",
   },
@@ -307,6 +340,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: "Cài đặt",
     group: "thiet-lap",
     iconKey: "Settings2",
+    navKey: "settings",
     capability: "F1",
     mobileLabel: "Cài đặt",
   },
@@ -315,11 +349,17 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
 const RESERVED_MOBILE_HREFS = new Set(["/", "/duyet", "/job", "/tai-anh", "/them"])
 
 function getAdaptedNavEntries(industryKey?: string | null): readonly NavEntry[] {
+  // Lớp 1: Lọc theo Industry Navigation Matrix (Admin SaaS quyết định)
+  const hiddenKeys = getHiddenNavKeys(industryKey)
+  const visibleEntries = hiddenKeys.size > 0
+    ? NAV_ENTRIES.filter((entry) => !hiddenKeys.has(entry.navKey))
+    : NAV_ENTRIES
+
   if (!industryKey || industryKey === "FLORAL") {
-    return NAV_ENTRIES
+    return visibleEntries
   }
   const terms = getIndustryTerminology(industryKey)
-  return NAV_ENTRIES.map((entry) => {
+  return visibleEntries.map((entry) => {
     if (entry.href === "/the-chao") {
       return {
         ...entry,

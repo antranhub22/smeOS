@@ -94,4 +94,7 @@ export const HOMESTAY_INDUSTRY: IndustryPluginContract = {
       "Villa nguyên căn sân vườn tiệc nướng BBQ ngoài trời",
     ],
   },
+  navigation: {
+    hiddenNavKeys: [],
+  },
 }

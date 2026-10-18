@@ -13,10 +13,12 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 
 import { resolvePlatformSession } from "@/modules/platform/use-cases/resolve-platform-session"
+import { SessionProvider } from "@/lib/session"
 
 const MUC: Array<{ href: string; nhan: string }> = [
   { href: "/van-hanh", nhan: "Tổng quan" },
   { href: "/van-hanh/to-chuc", nhan: "Tổ chức" },
+  { href: "/van-hanh/nganh", nhan: "Ma trận ngành" },
   { href: "/van-hanh/truong-du-lieu", nhan: "Trường dữ liệu" },
   { href: "/van-hanh/muc-dung", nhan: "Mức dùng" },
   { href: "/van-hanh/suc-khoe", nhan: "Sức khoẻ hệ thống" },
@@ -34,26 +36,36 @@ export default async function PlatformLayout({ children }: { children: React.Rea
   const pctx = await resolvePlatformSession(request)
   if (!pctx) redirect("/")
 
+  const platformSession = {
+    userName: "Quản trị Nền tảng",
+    userInitials: "AD",
+    orgName: "Vận hành Nền tảng",
+    workspaceKind: "PRODUCTION" as const,
+    capabilities: Array.from(pctx.capabilities),
+  }
+
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col">
-      <header className="flex flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">Vận hành nền tảng</p>
-          <p className="text-body-sm text-text-muted">Xuyên tổ chức — không phải màn của một tổ chức nào</p>
-        </div>
-        <nav className="flex flex-wrap gap-1">
-          {MUC.map((m) => (
-            <Link
-              key={m.href}
-              href={m.href as never}
-              className="rounded-lg px-3 py-1.5 text-body-sm font-medium text-text hover:bg-surface-alt"
-            >
-              {m.nhan}
-            </Link>
-          ))}
-        </nav>
-      </header>
-      <main className="min-h-0 flex-1 overflow-auto p-4">{children}</main>
-    </div>
+    <SessionProvider session={platformSession}>
+      <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col">
+        <header className="flex flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">Vận hành nền tảng</p>
+            <p className="text-body-sm text-text-muted">Xuyên tổ chức — không phải màn của một tổ chức nào</p>
+          </div>
+          <nav className="flex flex-wrap gap-1">
+            {MUC.map((m) => (
+              <Link
+                key={m.href}
+                href={m.href as never}
+                className="rounded-lg px-3 py-1.5 text-body-sm font-medium text-text hover:bg-surface-alt"
+              >
+                {m.nhan}
+              </Link>
+            ))}
+          </nav>
+        </header>
+        <main className="min-h-0 flex-1 overflow-auto p-4">{children}</main>
+      </div>
+    </SessionProvider>
   )
 }

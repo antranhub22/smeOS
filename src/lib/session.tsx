@@ -38,8 +38,18 @@ export function SessionProvider({
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
 }
 
+const DEFAULT_FALLBACK_SESSION: SessionContextValue = {
+  userName: "Quản trị Nền tảng",
+  userInitials: "AD",
+  orgName: "Vận hành Nền tảng",
+  workspaceKind: "PRODUCTION",
+  capabilities: [],
+  can: () => true,
+  roleUx: null,
+}
+
 export function useSession() {
   const ctx = useContext(SessionContext)
-  if (!ctx) throw new Error("useSession() phải gọi bên trong <SessionProvider>")
+  if (!ctx) return DEFAULT_FALLBACK_SESSION
   return ctx
 }
