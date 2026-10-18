@@ -8,7 +8,7 @@ import type { OrderDetailModalTarget } from "./brochure-order-detail-modal"
 import { coordinatorAcceptanceBlocker } from "@/modules/greeting-card/domain/brochure-commerce-rules"
 import { CoordinatorAcceptRejectModal } from "./coordinator/coordinator-accept-reject-modal"
 import { useSession } from "@/lib/session"
-import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 export interface BrochureFloristJobTabProps {
   target: OrderDetailModalTarget
@@ -30,6 +30,7 @@ export function BrochureFloristJobTab({
   const cardRef = useRef<HTMLDivElement>(null)
   const { organization } = useSession()
   const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
   // Giá gia công tính trên giá trước VAT — VAT không làm tăng tiền công thợ
   const { data: vatData } = useApi<{ data: { subtotalVnd: number } }>(target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/vat` : null)
   const defaultFee = Math.round((vatData?.data.subtotalVnd ?? target.totalVnd ?? 0) * 0.5)
@@ -53,14 +54,14 @@ export function BrochureFloristJobTab({
   const handleCopyText = async () => {
     const phoneDisplay = maskPhone ? maskPhoneNumber(target.recipientPhone) : target.recipientPhone || "Chưa có"
     const textBrief = [
-      `📋 THẺ GIA CÔNG — ĐƠN #${target.orderCode || target.sendCode || "---"}`,
-      `🌸 Mẫu: ${target.productName || `${terms.sampleProduct} theo mẫu`}`,
-      `⏰ Hạn giao: ${target.deliveryTimeSlot || "Trong ngày"}${target.deliveryDate ? ` · Ngày ${target.deliveryDate}` : ""}`,
+      `📋 THẺ GIA CÔNG & ${terms.makerAction.toUpperCase()} — ĐƠN #${target.orderCode || target.sendCode || "---"}`,
+      `📌 Mẫu: ${target.productName || `${terms.sampleProduct} theo mẫu`}`,
+      `⏰ ${orderTerms.readyDeadlineLabel}: ${target.deliveryTimeSlot || orderTerms.fallbackTimeSlotText}${target.deliveryDate ? ` · Ngày ${target.deliveryDate}` : ""}`,
       `💰 Giá gia công: ${suggestedCraftFee.toLocaleString("vi-VN")} VNĐ`,
-      `🌿 Nguyên phụ liệu: ${target.flowersSummary || `Theo ${terms.sampleProduct.toLowerCase()} chuẩn`}`,
+      `🌿 ${terms.rawMaterialItem}: ${target.flowersSummary || `Theo ${terms.sampleProduct.toLowerCase()} chuẩn`}`,
       target.cardMessage ? `💌 ${terms.printablesTitle}: "${target.cardMessage}"` : "",
       floristNote.trim() ? `📝 Lưu ý: ${floristNote.trim()}` : "",
-      `📍 Giao tới: ${target.recipientName || target.customerName || "Khách nhận"} · ${phoneDisplay} · ${target.deliveryAddress || "Chưa có địa chỉ"}`,
+      `📍 ${orderTerms.addressLabel}: ${target.recipientName || target.customerName || "Khách nhận"} · ${phoneDisplay} · ${target.deliveryAddress || "Chưa có địa chỉ"}`,
     ].filter(Boolean).join("\n")
 
     try {
@@ -124,7 +125,7 @@ export function BrochureFloristJobTab({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-caption font-extrabold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                Thẻ Gia Công & {terms.makerAction}
+                {orderTerms.makerTabLabel}
               </span>
               <span className="text-caption font-bold text-text-muted">
                 #{target.orderCode || target.sendCode}
@@ -168,7 +169,7 @@ export function BrochureFloristJobTab({
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary font-extrabold text-caption uppercase tracking-wider">
                 <Sparkles size={12} />
-                Thẻ Gia Công & {terms.makerAction}
+                {orderTerms.makerTabLabel}
               </span>
               <span className="text-body-sm font-extrabold text-foreground">
                 #{target.orderCode || target.sendCode}
@@ -183,7 +184,7 @@ export function BrochureFloristJobTab({
                 {target.productImageUrl ? (
                   <img
                     src={target.productImageUrl}
-                    alt={target.productName || "Mẫu hoa"}
+                    alt={target.productName || terms.sampleProduct}
                     crossOrigin="anonymous"
                     className="h-full w-full object-cover"
                   />
@@ -193,7 +194,7 @@ export function BrochureFloristJobTab({
                   </div>
                 )}
                 <div className="absolute bottom-2 left-2 rounded-lg bg-black/65 px-2 py-0.5 text-caption font-bold text-white backdrop-blur-xs">
-                  Ảnh Mẫu Chuẩn
+                  {orderTerms.referencePhotoLabel}
                 </div>
               </div>
 
@@ -201,10 +202,10 @@ export function BrochureFloristJobTab({
               <div className="p-3 rounded-2xl bg-danger-bg/60 border border-danger/25 flex items-center justify-between text-caption">
                 <span className="font-bold text-danger flex items-center gap-1.5 shrink-0 whitespace-nowrap">
                   <Clock size={15} />
-                  Hạn cắm xong:
+                  {orderTerms.readyDeadlineLabel}:
                 </span>
                 <span className="font-extrabold text-danger text-body-sm text-right">
-                  {target.deliveryTimeSlot || "Trong ngày"}
+                  {target.deliveryTimeSlot || orderTerms.fallbackTimeSlotText}
                   {target.deliveryDate ? ` · ${target.deliveryDate}` : ""}
                 </span>
               </div>
@@ -236,7 +237,7 @@ export function BrochureFloristJobTab({
               {/* Product Title */}
               <div className="p-3.5 rounded-2xl bg-surface-alt/50 border border-border/80">
                 <span className="text-caption font-bold text-text-muted uppercase tracking-wider block mb-1">
-                  Mẫu sản phẩm thực hiện
+                  {terms.sampleProduct}
                 </span>
                 <h3 className="text-body font-black text-foreground break-words [overflow-wrap:anywhere]">
                   {target.productName || `${terms.sampleProduct} theo mẫu`}
@@ -247,10 +248,10 @@ export function BrochureFloristJobTab({
               <div className="p-4 rounded-2xl bg-surface-alt/70 border border-border text-caption flex flex-col gap-1.5">
                 <span className="font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Layers size={14} className="text-primary" />
-                  Nguyên phụ liệu & Phong cách chế tác:
+                  {orderTerms.rawMaterialLabel}
                 </span>
                 <p className="text-body-sm text-foreground font-semibold leading-relaxed">
-                  {target.flowersSummary || `Gia công phối theo chuẩn mẫu ảnh tham chiếu.`}
+                  {target.flowersSummary || `${terms.makerAction} theo chuẩn mẫu ảnh tham chiếu.`}
                 </p>
               </div>
 
@@ -285,7 +286,7 @@ export function BrochureFloristJobTab({
                 <div className="flex items-center justify-between font-bold text-foreground pb-1 border-b border-border/40">
                   <div className="flex items-center gap-1.5">
                     <MapPin size={14} className="text-primary shrink-0" />
-                    <span>Thông tin người nhận:</span>
+                    <span>{orderTerms.recipientInfoLabel}</span>
                   </div>
                   <button
                     type="button"
@@ -298,7 +299,7 @@ export function BrochureFloristJobTab({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-foreground text-body-sm">
                   <div>
-                    <span className="text-text-muted font-medium text-caption block">Người nhận:</span>
+                    <span className="text-text-muted font-medium text-caption block">{orderTerms.recipientRoleLabel}:</span>
                     <strong className="text-foreground">{target.recipientName || target.customerName || "Khách lẻ"}</strong>
                   </div>
                   <div>
@@ -307,7 +308,7 @@ export function BrochureFloristJobTab({
                   </div>
                 </div>
                 <div className="pt-1.5 border-t border-border/50 text-foreground">
-                  <span className="text-text-muted font-medium text-caption block">Địa chỉ giao hàng:</span>
+                  <span className="text-text-muted font-medium text-caption block">{orderTerms.addressLabel}:</span>
                   <span className="font-medium text-body-sm">{target.deliveryAddress || "Chưa có địa chỉ chi tiết"}</span>
                 </div>
               </div>
@@ -317,7 +318,7 @@ export function BrochureFloristJobTab({
         {/* Bottom Actions Bar */}
         {canDecide && target.orderId && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-dashed border-border">
-            <div className="text-caption text-text-muted">Gửi Thẻ Gia công cho bộ phận {terms.makerAction.toLowerCase()}. Sau khi chốt xong, bấm Xác nhận nhận đơn.</div>
+            <div className="text-caption text-text-muted">Gửi Thẻ cho bộ phận {terms.makerTitle.toLowerCase()} / {terms.makerAction.toLowerCase()}. Sau khi chốt xong, bấm Xác nhận nhận đơn.</div>
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <Button type="button" variant="outline" size="sm" onClick={() => setModalMode("reject")} className="text-caption h-8 text-danger border-danger/30 hover:bg-danger/10 gap-1.5 font-bold">
                 <XCircle size={13} />

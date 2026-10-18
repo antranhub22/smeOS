@@ -29,6 +29,12 @@ export interface CustomerOrderSlipInput {
   vatTaxCode?: string | null | undefined
   vatCompanyAddress?: string | null | undefined
   vatEmail?: string | null | undefined
+  sampleProductLabel?: string | null | undefined
+  printablesTitle?: string | null | undefined
+  deliveryTimeLabel?: string | null | undefined
+  customerLabel?: string | null | undefined
+  recipientLabel?: string | null | undefined
+  addressLabel?: string | null | undefined
 }
 
 export interface CustomerOrderSlipLine {
@@ -80,14 +86,27 @@ export function buildCustomerOrderSlipLines(input: CustomerOrderSlipInput): Cust
       { label: "Còn lại", value: formatCompactVnd(balance) },
     ],
     [
-      { label: "Mẫu", value: [input.productName || "Hoa tươi theo mẫu", input.flowersSummary ? `(${input.flowersSummary})` : null].filter(Boolean).join(" ") },
+      {
+        label: "Mẫu",
+        value: [
+          input.productName || `${input.sampleProductLabel || "Sản phẩm"} theo mẫu`,
+          input.flowersSummary ? `(${input.flowersSummary})` : null,
+        ]
+          .filter(Boolean)
+          .join(" "),
+      },
       { label: "Mã sản phẩm", value: input.productCode?.trim() || "Chưa có" },
     ],
-    [{ label: "Nội dung thiệp", value: input.cardMessage?.trim() || "gửi sau" }],
+    [
+      {
+        label: input.printablesTitle ? `Nội dung ${input.printablesTitle.toLowerCase()}` : "Nội dung thiệp",
+        value: input.cardMessage?.trim() || "gửi sau",
+      },
+    ],
   ]
   const notes: CustomerOrderSlipLine[] = [
-    { label: "Ghi chú cho tiệm", value: input.customerNote?.trim() ?? "" },
-    { label: "Ghi chú giao hàng", value: input.deliveryNote?.trim() ?? "" },
+    { label: "Ghi chú cho cơ sở/tiệm", value: input.customerNote?.trim() ?? "" },
+    { label: "Ghi chú giao nhận/lưu trú", value: input.deliveryNote?.trim() ?? "" },
   ].filter((l) => l.value)
   if (notes.length > 0) groups.push(notes)
   if (vat > 0) {
@@ -102,11 +121,11 @@ export function buildCustomerOrderSlipLines(input: CustomerOrderSlipInput): Cust
   const created = formatDayMonth(input.createdAt)
   if (created) groups.push([{ label: "Ngày tạo đơn", value: created }])
   groups.push(
-    [{ label: "Ngày giao hàng", value: delivery || "Chưa hẹn" }],
-    [{ label: "Địa chỉ", value: input.deliveryAddress || "Chưa có địa chỉ" }],
+    [{ label: input.deliveryTimeLabel || "Ngày giao hàng", value: delivery || "Chưa hẹn" }],
+    [{ label: input.addressLabel || "Địa chỉ", value: input.deliveryAddress || "Chưa có địa chỉ" }],
     [
-      { label: "Người nhận", value: input.recipientName || "Chưa có" },
-      { label: "Người gửi", value: input.customerName || "Chưa có" },
+      { label: input.recipientLabel || "Người nhận", value: input.recipientName || "Chưa có" },
+      { label: input.customerLabel || "Người gửi / đặt", value: input.customerName || "Chưa có" },
     ],
   )
   return groups
