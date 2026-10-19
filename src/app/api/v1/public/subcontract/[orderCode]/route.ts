@@ -11,7 +11,7 @@ import {
 import { commitSubcontractOrder } from "@/modules/greeting-card/domain/subcontract-order"
 import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
+import { formatDeliveryAddress, extractRecipientInfo } from "@/modules/greeting-card/domain/delivery-address"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { TenantContext } from "@/core/tenancy"
@@ -62,6 +62,12 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
 
   const deliveryWindow = (order.delivery_window as Record<string, unknown> | null) ?? {}
   const deliveryAddress = formatDeliveryAddress(order.delivery_address)
+  const recipientInfo = extractRecipientInfo(order.delivery_address)
+  const isReadyForDelivery =
+    order.production_status === "READY" ||
+    order.delivery_status === "DELIVERING" ||
+    order.delivery_status === "DELIVERED"
+  const recipientPhone = isReadyForDelivery ? recipientInfo.phone : recipientInfo.maskedPhone
   const deliveryTime = typeof deliveryWindow.timeSlot === "string" && typeof deliveryWindow.date === "string"
     ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
     : "Giao trong ngày"
@@ -101,6 +107,9 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       },
       deliveryAddress,
       deliveryTime,
+      recipientName: recipientInfo.recipientName,
+      recipientPhone,
+      isPhoneMasked: !isReadyForDelivery,
       cardMessage: order.card_message ?? null,
       specialNotes: order.internal_note ?? null,
       subcontractPriceVnd,

@@ -126,6 +126,9 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         product={orderData.product}
         deliveryAddress={orderData.deliveryAddress}
         deliveryTime={orderData.deliveryTime}
+        recipientName={orderData.recipientName}
+        recipientPhone={orderData.recipientPhone}
+        isPhoneMasked={orderData.isPhoneMasked}
         cardMessage={orderData.cardMessage}
         specialNotes={orderData.specialNotes}
         subcontractPriceVnd={orderData.subcontractPriceVnd}

@@ -17,6 +17,10 @@ import {
   ImageIcon,
   Loader2,
   Trash2,
+  Phone,
+  Lock,
+  Eye,
+  User,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -38,6 +42,9 @@ export interface SubcontractClaimCardProps {
   product: SubcontractCardProduct
   deliveryAddress: string
   deliveryTime: string
+  recipientName?: string | null | undefined
+  recipientPhone?: string | null | undefined
+  isPhoneMasked?: boolean | undefined
   cardMessage?: string | null | undefined
   specialNotes?: string | null | undefined
   subcontractPriceVnd: number
@@ -60,6 +67,9 @@ export function SubcontractClaimCard({
   product,
   deliveryAddress,
   deliveryTime,
+  recipientName,
+  recipientPhone,
+  isPhoneMasked,
   cardMessage,
   specialNotes,
   subcontractPriceVnd,
@@ -497,7 +507,7 @@ export function SubcontractClaimCard({
           )}
         </div>
 
-        {/* Địa chỉ & Thời gian giao */}
+        {/* Địa chỉ & Người nhận & Thời gian giao */}
         <div className="flex flex-col gap-2 text-body-sm">
           <div className="flex items-start gap-2">
             <MapPin size={16} className="text-primary mt-0.5 shrink-0" />
@@ -506,6 +516,49 @@ export function SubcontractClaimCard({
               <span className="text-foreground font-semibold">{deliveryAddress}</span>
             </div>
           </div>
+
+          {(recipientName || recipientPhone) && (
+            <div className="flex items-start gap-2">
+              <Phone size={16} className="text-primary mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <span className="text-caption text-text-muted block">Người nhận hàng:</span>
+                <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                  {recipientName && (
+                    <span className="text-foreground font-semibold flex items-center gap-1">
+                      <User size={13} className="text-text-muted" /> {recipientName}
+                    </span>
+                  )}
+                  {recipientPhone && (
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-surface-muted border border-border">
+                      {isPhoneMasked ? (
+                        <>
+                          <Lock size={12} className="text-warning" />
+                          <span className="font-mono text-caption font-bold text-foreground tracking-wider">
+                            {recipientPhone}
+                          </span>
+                          <span className="text-[10px] text-text-muted italic">
+                            (Mở khi hoàn thành ảnh QC)
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <a
+                            href={`tel:${recipientPhone}`}
+                            className="font-mono text-caption font-black text-primary hover:underline flex items-center gap-1"
+                          >
+                            <Phone size={11} /> {recipientPhone}
+                          </a>
+                          <span className="text-[10px] font-bold text-success">
+                            ✓ Đã mở khóa liên hệ
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="flex items-start gap-2">
             <Calendar size={16} className="text-primary mt-0.5 shrink-0" />

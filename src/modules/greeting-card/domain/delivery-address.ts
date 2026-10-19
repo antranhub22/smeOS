@@ -89,3 +89,43 @@ export function formatDeliveryAddress(raw: unknown): string {
 
   return "Theo thỏa thuận"
 }
+
+/**
+ * Che 4 chữ số cuối của số điện thoại (ví dụ: "0912121212" -> "091212****").
+ */
+export function maskPhoneNumber(phone?: string | null): string {
+  if (!phone) return ""
+  const clean = phone.trim()
+  if (clean.length <= 4) return "****"
+  return clean.slice(0, -4) + "****"
+}
+
+export interface RecipientInfo {
+  recipientName: string | null
+  phone: string | null
+  maskedPhone: string | null
+}
+
+/**
+ * Trích xuất Họ tên và Số điện thoại người nhận từ trường `delivery_address`.
+ */
+export function extractRecipientInfo(raw: unknown): RecipientInfo {
+  if (!raw || typeof raw !== "object") {
+    return { recipientName: null, phone: null, maskedPhone: null }
+  }
+
+  const obj = raw as Record<string, unknown>
+  const recipientName = typeof obj.recipientName === "string" && obj.recipientName.trim()
+    ? obj.recipientName.trim()
+    : (typeof obj.name === "string" && obj.name.trim() ? obj.name.trim() : null)
+
+  const phone = typeof obj.phone === "string" && obj.phone.trim()
+    ? obj.phone.trim()
+    : (typeof obj.recipientPhone === "string" && obj.recipientPhone.trim() ? obj.recipientPhone.trim() : null)
+
+  return {
+    recipientName,
+    phone,
+    maskedPhone: phone ? maskPhoneNumber(phone) : null,
+  }
+}
