@@ -12,6 +12,11 @@ import {
   Layers,
   ArrowRight,
   ShieldCheck,
+  Camera,
+  UploadCloud,
+  ImageIcon,
+  Loader2,
+  Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -40,9 +45,12 @@ export interface SubcontractClaimCardProps {
   claimedByBranchId?: string | null | undefined
   claimedBranchName?: string | null | undefined
   graceExpiresAt?: string | null | undefined
+  productionStatus?: string | null | undefined
+  qcPhotos?: string[] | undefined
   onClaim: () => Promise<void>
   onCancelClaim: () => Promise<void>
   onCommitEarly?: (() => Promise<void>) | undefined
+  onQcUploaded?: (() => void) | undefined
 }
 
 export function SubcontractClaimCard({
@@ -59,15 +67,121 @@ export function SubcontractClaimCard({
   claimedByBranchId,
   claimedBranchName,
   graceExpiresAt,
+  productionStatus,
+  qcPhotos,
   onClaim,
   onCancelClaim,
   onCommitEarly,
+  onQcUploaded,
 }: SubcontractClaimCardProps) {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [graceSeconds, setGraceSeconds] = useState(() =>
     getGraceSecondsRemaining(graceExpiresAt ?? null)
   )
+
+  // Quản lý upload ảnh thành phẩm QC từ máy
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [uploadingQc, setUploadingQc] = useState(false)
+  const [qcSuccessMsg, setQcSuccessMsg] = useState<string | null>(null)
+  const [currentQcPhotos, setCurrentQcPhotos] = useState<string[]>(qcPhotos ?? [])
+
+  useEffect(() => {
+    if (qcPhotos) setCurrentQcPhotos(qcPhotos)
+  }, [qcPhotos])
+
+  function handleTriggerFileInput() {
+    setErrorMsg(null)
+    setQcSuccessMsg(null)
+    fileInputRef.current?.click()
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith("image/")) {
+      setErrorMsg("Vui lòng chọn tệp hình ảnh (JPG, PNG, WebP).")
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrorMsg("Kích thước ảnh vượt quá giới hạn 10MB.")
+      return
+    }
+
+    setSelectedFile(file)
+    const url = URL.createObjectURL(file)
+    setPreviewUrl(url)
+    setErrorMsg(null)
+  }
+
+  function handleCancelPreview() {
+    setSelectedFile(null)
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
+      setPreviewUrl(null)
+    }
+  }
+
+  async function handleUploadQcPhoto() {
+    if (!selectedFile) return
+    setUploadingQc(true)
+    setErrorMsg(null)
+    setQcSuccessMsg(null)
+
+    try {
+      const formData = new FormData()
+      formData.append("file", selectedFile)
+      formData.append("branchId", branchId)
+
+      const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/upload-qc`, {
+        method: "POST",
+        body: formData,
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(json?.error?.message || json?.message || "Không thể tải ảnh thành phẩm lên máy chủ")
+      }
+
+      const uploadedUrl = json?.data?.photoUrl || previewUrl
+      setCurrentQcPhotos((prev) => [...prev, uploadedUrl])
+      setQcSuccessMsg(json?.data?.message || "Đã tải ảnh thành phẩm lên thành công và AI đã xác thực!")
+      handleCancelPreview()
+      onQcUploaded?.()
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Lỗi khi tải ảnh lên")
+    } finally {
+      setUploadingQc(false)
+    }
+  }
+
+  async function handleDeleteQcPhoto(photoUrl: string) {
+    if (!confirm("Bạn có chắc chắn muốn xóa ảnh thành phẩm này không?")) return
+    setErrorMsg(null)
+    try {
+      const res = await fetch(`/api/v1/public/subcontract/${orderCode}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "DELETE_QC",
+          branchId,
+          photoUrl,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        throw new Error(json?.error?.message || "Lỗi khi xóa ảnh")
+      }
+      setCurrentQcPhotos((prev) => prev.filter((p) => p !== photoUrl))
+      onQcUploaded?.()
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Lỗi khi xóa ảnh")
+    }
+  }
 
   const isMyClaim = claimedByBranchId === branchId
   const isClaimedByOther =
@@ -189,6 +303,159 @@ export function SubcontractClaimCard({
                 </Button>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Trạng thái ĐÃ CHỐT SẢN XUẤT CHÍNH THỨC (COMMITTED) */}
+        {dispatchStatus === "COMMITTED" && isMyClaim && (
+          <div className="p-4 rounded-xl bg-success/10 border border-success/30 flex flex-col gap-2 text-center items-center">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/20 text-success text-caption font-extrabold uppercase">
+              <ShieldCheck size={14} /> Đơn hàng đã chốt vào sản xuất
+            </div>
+            <h4 className="text-body font-extrabold text-foreground">
+              Chi nhánh của bạn đang thực hiện đơn hàng này
+            </h4>
+            <p className="text-caption text-text-muted max-w-sm">
+              Hệ thống đã gửi thông báo bắt đầu chế tác và sẽ tự động gửi tin nhắn Telegram nhắc gửi ảnh QC và bàn giao shipper theo đúng tiến độ.
+            </p>
+          </div>
+        )}
+
+        {/* Khối Tải ảnh thành phẩm kiểm định (QC) khi đã chốt đơn */}
+        {dispatchStatus === "COMMITTED" && isMyClaim && (
+          <div
+            id="qc-upload-section"
+            className="p-4 rounded-xl bg-surface border-2 border-primary/40 shadow-sm flex flex-col gap-3"
+          >
+            <div className="flex items-center justify-between border-b border-border pb-2.5">
+              <span className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+                <Camera size={18} className="text-primary" /> ẢNH THÀNH PHẨM KIỂM ĐỊNH (QC)
+              </span>
+              {currentQcPhotos.length > 0 ? (
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-success/20 text-success flex items-center gap-1">
+                  <CheckCircle2 size={12} /> Đã có {currentQcPhotos.length} ảnh
+                </span>
+              ) : (
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-warning/20 text-warning flex items-center gap-1">
+                  <Clock size={12} /> Chưa có ảnh
+                </span>
+              )}
+            </div>
+
+            {qcSuccessMsg && (
+              <div className="p-2.5 rounded-lg bg-success/15 border border-success/30 text-success text-body-sm flex items-center gap-2">
+                <CheckCircle2 size={16} className="shrink-0" />
+                <span>{qcSuccessMsg}</span>
+              </div>
+            )}
+
+            {/* Input file ẩn bắt sự kiện camera / file picker của máy */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+
+            {/* Xem trước ảnh vừa chọn từ máy */}
+            {previewUrl ? (
+              <div className="flex flex-col gap-3 p-3 rounded-xl bg-surface-muted border border-border">
+                <div className="relative w-full h-56 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center">
+                  <img
+                    src={previewUrl}
+                    alt="Xem trước ảnh chụp"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="flex items-center justify-between text-caption text-text-muted">
+                  <span className="truncate max-w-[200px]">{selectedFile?.name}</span>
+                  <span>{selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB` : ""}</span>
+                </div>
+                <div className="flex items-center gap-2 pt-1">
+                  <Button
+                    variant="outline"
+                    disabled={uploadingQc}
+                    onClick={handleCancelPreview}
+                    className="flex-1 h-11 text-caption font-bold"
+                  >
+                    <Trash2 size={15} className="mr-1 text-danger" /> Chọn ảnh khác
+                  </Button>
+                  <Button
+                    variant="primary"
+                    disabled={uploadingQc}
+                    onClick={handleUploadQcPhoto}
+                    className="flex-1 h-11 text-caption font-extrabold shadow-md"
+                  >
+                    {uploadingQc ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin mr-1.5" /> Đang tải lên...
+                      </>
+                    ) : (
+                      <>
+                        <UploadCloud size={16} className="mr-1.5" /> GỬI DUYỆT ẢNH QC
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              /* Nút bấm lớn kích hoạt Camera / Bộ chọn tệp từ máy */
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleTriggerFileInput}
+                  className="w-full h-20 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
+                    <Camera size={20} />
+                    <span>CHỤP ẢNH TỪ CAMERA HOẶC CHỌN TỪ MÁY</span>
+                  </div>
+                  <span className="text-caption text-text-muted">
+                    Nhấp vào đây để mở Camera hoặc thư viện ảnh trên thiết bị của bạn
+                  </span>
+                </Button>
+              </div>
+            )}
+
+            {/* Danh sách các ảnh QC đã tải lên trước đó */}
+            {currentQcPhotos.length > 0 && !previewUrl && (
+              <div className="flex flex-col gap-1.5 pt-2 border-t border-border">
+                <span className="text-caption font-bold text-text-muted flex items-center gap-1">
+                  <ImageIcon size={13} /> Các ảnh thành phẩm đã tải lên:
+                </span>
+                <div className="grid grid-cols-3 gap-2">
+                  {currentQcPhotos.map((url, idx) => {
+                    const imgSrc = url.startsWith("http") || url.startsWith("data:") || url.startsWith("/api/v1/storage/")
+                      ? url
+                      : (url.startsWith("org/") ? `/api/v1/storage/${url}` : url)
+
+                    return (
+                      <div
+                        key={idx}
+                        className="relative h-24 rounded-lg overflow-hidden border border-border bg-surface-muted shadow-sm group"
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={`Ảnh QC #${idx + 1}`}
+                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteQcPhoto(url)}
+                          title="Xóa ảnh này"
+                          className="absolute top-1 right-1 p-1 rounded-md bg-black/60 hover:bg-danger text-white transition-colors opacity-80 hover:opacity-100"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

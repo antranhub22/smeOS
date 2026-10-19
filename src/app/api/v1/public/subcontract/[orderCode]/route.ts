@@ -9,11 +9,16 @@ import {
   claimSubcontractUseCase,
 } from "@/modules/greeting-card/use-cases/handle-subcontract-claim"
 import { commitSubcontractOrder } from "@/modules/greeting-card/domain/subcontract-order"
+import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greeting-card/domain/chain-dispatch-policy"
+import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { prisma } from "@/core/tenancy/infra/prisma"
+import type { Prisma } from "@/generated/prisma/client"
 import type { TenantContext } from "@/core/tenancy"
 
 const actionSchema = z.object({
-  action: z.enum(["CLAIM", "CANCEL", "COMMIT"]),
+  action: z.enum(["CLAIM", "CANCEL", "COMMIT", "DELETE_QC"]),
   branchId: z.string().min(1),
+  photoUrl: z.string().optional(),
 })
 
 /**
@@ -63,6 +68,35 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
     ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
     : "Giao trong ngày"
 
+
+  const rawQcPhotos = Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
+  const storage = getStorageProvider()
+  const resolvedQcPhotos = await Promise.all(
+    rawQcPhotos.map(async (photo) => {
+      if (!photo) return photo
+      // Nếu là đường dẫn key nội bộ org/... -> Ký signedUrl 7 ngày để client hiển thị
+      if (photo.startsWith("org/")) {
+        try {
+          return await storage.signedUrl(photo, 604800, "GET")
+        } catch {
+          return photo
+        }
+      }
+      // Nếu là signedUrl cũ bị lỗi X-Amz-Expires > 604800 trên R2 -> Ký lại bằng key
+      if (photo.includes(".r2.cloudflarestorage.com/") && photo.includes("/org/")) {
+        try {
+          const keyMatch = photo.match(/floraos-core\/(org\/[^?]+)/)
+          if (keyMatch?.[1]) {
+            return await storage.signedUrl(keyMatch[1], 604800, "GET")
+          }
+        } catch {
+          return photo
+        }
+      }
+      return photo
+    })
+  )
+
   return jsonResponse({
     data: {
       orderId: order.id,
@@ -83,6 +117,10 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       claimedByBranchId: subState?.claimedBranchId ?? null,
       claimedBranchName: subState?.claimedBranchName ?? null,
       graceExpiresAt: subState?.graceExpiresAt ?? null,
+      productionStatus: order.production_status,
+      qcPhotos: resolvedQcPhotos,
+      lastAiVerification: coordMeta.last_ai_verification ?? null,
+      autoBypassedCoordinator: Boolean(coordMeta.auto_bypassed_coordinator),
     },
   })
 })
@@ -153,7 +191,25 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       { orderId: order.id, branchId: branch.id },
       repo
     )
-    return jsonResponse({ data: result })
+
+    // Đánh giá chất lượng dịch vụ: Trừ điểm KPI chi nhánh vì đã hủy nhận đơn
+    const penalty = await repo.recordBranchCancellationPenalty(
+      order.organization_id,
+      branch.id,
+      `Hủy nhận đơn #${order.code} trong hạn kiểm tra kho (Kho thiếu hoa/nguyên liệu)`
+    )
+
+    return jsonResponse({
+      data: {
+        ...result,
+        penalty: {
+          penalized: true,
+          scoreDeducted: 2,
+          currentQualityScore: penalty.newQualityScore,
+          totalCancellations: penalty.cancellationCount,
+        },
+      },
+    })
   }
 
   if (action === "COMMIT") {
@@ -162,8 +218,126 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       throw unprocessable("Không thể chốt đơn khi bạn chưa tiếp nhận.")
     }
     const nextState = commitSubcontractOrder(currentState)
-    await repo.saveSubcontractState(ctx, nextState)
-    return jsonResponse({ data: { success: true, dispatchStatus: nextState.dispatchStatus } })
+
+    // Bắn tin nhắn M1: Bắt đầu chế tác cho chi nhánh vừa chốt
+    const policy = parseChainDispatchPolicy(org?.settings as Record<string, unknown> | null | undefined)
+    const deliveryWindow = (order.delivery_window as Record<string, unknown> | null) ?? {}
+    const deliveryTime = typeof deliveryWindow.timeSlot === "string" && typeof deliveryWindow.date === "string"
+      ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
+      : "Giao trong ngày"
+
+    const prepMsg = renderDispatchMessage(policy.messageTemplates.prepReminder, {
+      orderCode: order.code,
+      branchName: branch.name,
+      deliveryTime,
+      claimUrl: `${request.headers.get("origin") || ""}/subcontract/${order.code}?branch=${encodeURIComponent(branch.id)}`,
+    })
+
+    const branchCandidate = {
+      branchId: branch.id,
+      branchName: branch.name,
+      qualityScore: 100,
+      activeJobsCount: 0,
+      maxConcurrentJobs: 10,
+      isActive: true,
+      channels: {
+        telegramChatId: (org?.settings as Record<string, unknown> | null)?.["chain_branches"]
+          ? (
+              ((org?.settings as Record<string, unknown> | null)?.["chain_branches"] as Array<{
+                branchId: string
+                channels?: { telegramChatId?: string; phone?: string; zaloPhone?: string }
+              }>).find((b) => b.branchId === branch.id)?.channels?.telegramChatId
+            )
+          : undefined,
+      },
+    }
+
+    await notifier.sendSubcontractInvite(ctx, {
+      branch: branchCandidate,
+      orderCode: order.code,
+      messageText: prepMsg,
+      claimUrl: "",
+    })
+
+    // Tự động gửi tin nhắn thông báo xác nhận đơn cho Khách hàng
+    const customerPhone = order.customer?.phone || (order.greeting_sessions?.[0] as Record<string, unknown> | undefined)?.customer_phone as string | undefined
+    const customerName = order.customer?.name || (order.greeting_sessions?.[0] as Record<string, unknown> | undefined)?.customer_name as string | undefined || "Quý khách"
+
+    const customerNoticeText = `🌸 [SMEOS] Xin chào ${customerName}!\nĐơn hàng #${order.code} của bạn đã được ${branch.name} chính thức tiếp nhận và đang tiến hành chế tác.\n⏰ Hẹn giao: ${deliveryTime}.\nCảm ơn bạn đã tin tưởng dịch vụ!`
+
+    if (customerPhone) {
+      // Gửi thông báo cho khách hàng qua kênh notifier đa kênh
+      await notifier.sendSubcontractInvite(ctx, {
+        branch: {
+          branchId: `cust_${customerPhone}`,
+          branchName: customerName,
+          qualityScore: 100,
+          activeJobsCount: 0,
+          maxConcurrentJobs: 1,
+          isActive: true,
+          channels: {
+            phone: customerPhone,
+            zaloPhone: customerPhone,
+          },
+        },
+        orderCode: order.code,
+        messageText: customerNoticeText,
+        claimUrl: "",
+      }).catch(() => { /* Không chặn luồng nếu khách không có Zalo */ })
+    }
+
+    const finalState = {
+      ...nextState,
+      remindersSent: {
+        ...(nextState.remindersSent ?? {}),
+        M1_PREP: new Date().toISOString(),
+        CUSTOMER_CONFIRMATION: new Date().toISOString(),
+      },
+    }
+
+    await repo.saveSubcontractState(ctx, finalState)
+    return jsonResponse({ data: { success: true, dispatchStatus: finalState.dispatchStatus } })
+  }
+
+  if (action === "DELETE_QC") {
+    const photoToDelete = parsed.data.photoUrl
+    if (!photoToDelete) {
+      throw validationFailed({ photoUrl: "Thiếu thông tin ảnh cần xóa" })
+    }
+
+    const coord = await prisma.order_coordinations.findUnique({
+      where: { order_id: order.id },
+    })
+    const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+    const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
+
+    // Loại bỏ ảnh khớp theo URL hoặc theo storage key
+    const filteredQcPhotos = existingQcPhotos.filter((p) => {
+      if (p === photoToDelete) return false
+      // Nếu p là key và photoToDelete chứa key đó
+      if (photoToDelete.includes(p)) return false
+      // Nếu p chứa key trong photoToDelete
+      const keyMatch = photoToDelete.match(/floraos-core\/(org\/[^?]+)/)
+      if (keyMatch?.[1] && p.includes(keyMatch[1])) return false
+      return true
+    })
+
+    await prisma.order_coordinations.update({
+      where: { order_id: order.id },
+      data: {
+        metadata: {
+          ...existingMeta,
+          qc_photos: filteredQcPhotos,
+        } as unknown as Prisma.InputJsonValue,
+      },
+    })
+
+    return jsonResponse({
+      data: {
+        success: true,
+        remainingCount: filteredQcPhotos.length,
+      },
+    })
   }
 
   throw unprocessable("Hành động không hợp lệ.")
