@@ -11,6 +11,7 @@ export interface StaffChannelMessage {
   recipientPhone: string | null
   title: string
   message: string
+  imageUrl?: string | null | undefined
   channelConfig?: Record<string, unknown>
   actions?: StaffChannelAction[]
 }

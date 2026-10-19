@@ -47,6 +47,7 @@ export interface ProcessOrderReminderInput {
   coordinatorChannel?: { phone?: string; telegramChatId?: string } | undefined
   baseUrl?: string | undefined
   forceStep?: ReminderStep | undefined
+  productImageUrl?: string | null | undefined
 }
 
 export interface ReminderStepExecutionResult {
@@ -117,6 +118,7 @@ export async function processOrderDispatchReminders(
       claimUrl,
       title: `🔔 [BẮT ĐẦU CHẾ TÁC #${input.orderCode}]`,
       actions: [{ text: "📋 Xem Thẻ Gia Công", url: claimUrl }],
+      imageUrl: input.productImageUrl,
     })
 
     if (sendRes.sent) {
@@ -148,6 +150,7 @@ export async function processOrderDispatchReminders(
       claimUrl,
       title: `📸 [NHẮC CHỤP ẢNH THÀNH PHẨM #${input.orderCode}]`,
       actions: [{ text: "📸 Chụp & Tải ảnh thành phẩm", url: uploadQcUrl }],
+      imageUrl: input.productImageUrl,
     })
 
     if (sendRes.sent) {
@@ -183,6 +186,7 @@ export async function processOrderDispatchReminders(
         claimUrl,
         title: `⚠️ [NHẮC LẦN 2 - KHẨN CẤP #${input.orderCode}]`,
         actions: [{ text: "🚨 TẢI ẢNH THÀNH PHẨM NGAY (LẦN 2)", url: uploadQcUrl }],
+        imageUrl: input.productImageUrl,
       })
 
       if (sendRes.sent) {
@@ -235,6 +239,7 @@ export async function processOrderDispatchReminders(
         claimUrl,
         title: `🚨 [BÁO ĐỘNG ĐIỀU PHỐI #${input.orderCode}]`,
         actions: escalationActions,
+        imageUrl: input.productImageUrl,
       })
 
       if (sendRes.sent) {

@@ -101,7 +101,7 @@ export const POST = handle(async (request) => {
   })
   const orgMap = new Map(orgs.map((o) => [o.id, o]))
 
-  // 3. Lấy thông tin đơn hàng (delivery_window) theo batch
+  // 3. Lấy thông tin đơn hàng (delivery_window, items) theo batch
   const orderIds = activeCoords.map((c) => c.order_id)
   const orders = await prisma.orders.findMany({
     where: { id: { in: orderIds } },
@@ -111,6 +111,12 @@ export const POST = handle(async (request) => {
       delivery_window: true,
       delivery_status: true,
       production_status: true,
+      items: {
+        select: {
+          description: true,
+          metadata: true,
+        },
+      },
     },
   })
   const orderMap = new Map(orders.map((o) => [o.id, o]))
@@ -211,6 +217,13 @@ export const POST = handle(async (request) => {
         })
       }
 
+      // Xác định ảnh sản phẩm (Ưu tiên ảnh QC nếu có, fallback ảnh mẫu trong items)
+      const coordMeta = (coord.metadata as Record<string, unknown> | null) ?? {}
+      const qcPhotos = Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
+      const firstItemMeta = (order.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
+      const sampleImageUrl = (firstItemMeta.imageUrl as string | undefined) || (firstItemMeta.image as string | undefined) || null
+      const productImageUrl = qcPhotos.length > 0 ? qcPhotos[0] : sampleImageUrl
+
       const results = await processOrderDispatchReminders(
         ctx,
         {
@@ -229,6 +242,7 @@ export const POST = handle(async (request) => {
           coordinatorChannel,
           baseUrl: url.origin,
           forceStep: forceStep ?? undefined,
+          productImageUrl,
         },
         stateRepo,
         notifier,

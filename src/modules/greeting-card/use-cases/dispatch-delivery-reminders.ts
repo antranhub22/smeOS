@@ -71,6 +71,7 @@ export async function evaluateDeliveryMilestones({
       claimUrl: submitDeliveryUrl,
       title: `📸 [NHẮC BÀN GIAO & POD #${input.orderCode}]`,
       actions: [{ text: "📸 Tải Ảnh Giao Hàng (POD)", url: submitDeliveryUrl }],
+      imageUrl: input.productImageUrl,
     })
 
     if (sendRes.sent) {
@@ -106,6 +107,7 @@ export async function evaluateDeliveryMilestones({
         claimUrl: submitDeliveryUrl,
         title: `⚠️ [NHẮC LẦN 2 - GIAO HÀNG KHẨN #${input.orderCode}]`,
         actions: [{ text: "📸 Tải Ảnh Giao Hàng Ngay", url: submitDeliveryUrl }],
+        imageUrl: input.productImageUrl,
       })
 
       if (sendRes.sent) {
@@ -146,6 +148,7 @@ export async function evaluateDeliveryMilestones({
           { text: "📞 Gọi Cửa Hàng Ngay", url: `tel:${branchPhone.replace(/\s+/g, "")}` },
           { text: "👁️ Xem Thẻ Đơn", url: submitDeliveryUrl },
         ],
+        imageUrl: input.productImageUrl,
       })
 
       if (sendRes.sent) {

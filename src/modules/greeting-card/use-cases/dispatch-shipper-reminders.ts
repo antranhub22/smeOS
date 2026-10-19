@@ -71,6 +71,7 @@ export async function evaluateShipperMilestones({
       claimUrl: submitShipperUrl,
       title: `🛵 [YÊU CẦU SHIPPER #${input.orderCode}]`,
       actions: [{ text: "🛵 Nhập Thông Tin Shipper", url: submitShipperUrl }],
+      imageUrl: input.productImageUrl,
     })
 
     if (sendRes.sent) {
@@ -106,6 +107,7 @@ export async function evaluateShipperMilestones({
         claimUrl: submitShipperUrl,
         title: `⚠️ [NHẮC LẦN 2 - KHẨN CẤP #${input.orderCode}]`,
         actions: [{ text: "🚨 NHẬP THÔNG TIN SHIPPER NGAY (LẦN 2)", url: submitShipperUrl }],
+        imageUrl: input.productImageUrl,
       })
 
       if (sendRes.sent) {
@@ -159,6 +161,7 @@ export async function evaluateShipperMilestones({
         claimUrl: submitShipperUrl,
         title: `🚨 [CẢNH BÁO ĐỎ - THIẾU SHIPPER #${input.orderCode}]`,
         actions: escalationActions,
+        imageUrl: input.productImageUrl,
       })
 
       if (sendRes.sent) {

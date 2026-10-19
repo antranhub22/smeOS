@@ -41,6 +41,7 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
                 defaultChatId: channels.telegramChatId,
               },
               actions,
+              imageUrl: target.imageUrl,
             })
             if (res.sent) {
               return { sent: true }

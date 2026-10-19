@@ -35,6 +35,7 @@ export interface DispatchNotificationTarget {
   claimUrl: string
   title?: string | undefined
   actions?: Array<{ text: string; url: string }> | undefined
+  imageUrl?: string | null | undefined
 }
 
 export interface IDispatchNotifier {

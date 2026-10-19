@@ -163,6 +163,10 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const notifier = new MultiChannelDispatchNotifier()
 
   if (action === "CLAIM") {
+    const firstItemMeta = (order.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
+    const sampleImageUrl = (firstItemMeta.imageUrl as string | undefined) || (firstItemMeta.image as string | undefined) || null
+
+    const reqUrl = new URL(request.url)
     const result = await claimSubcontractUseCase(
       ctx,
       {
@@ -170,6 +174,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         branchId: branch.id,
         branchName: branch.name,
         shopSettings: org?.settings,
+        baseUrl: reqUrl.origin,
+        productImageUrl: sampleImageUrl,
       },
       repo,
       notifier,

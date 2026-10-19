@@ -131,6 +131,12 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       delivery_address: true,
       delivery_window: true,
       total_vnd: true,
+      items: {
+        select: {
+          description: true,
+          metadata: true,
+        },
+      },
     },
   })
   if (!order) throw notFound()
@@ -202,11 +208,17 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       branchName: branch.branchName,
     })
 
+    const firstItemMeta = (order.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
+    const sampleImageUrl = (firstItemMeta.imageUrl as string | undefined) || (firstItemMeta.image as string | undefined) || null
+
     const sendResult = await notifier.sendSubcontractInvite(ctx, {
       branch,
       orderCode: order.code,
       messageText,
       claimUrl,
+      title: `🌸 [ĐƠN GIA CÔNG #${order.code}]`,
+      actions: [{ text: "👉 Nhận đơn ngay", url: claimUrl }],
+      imageUrl: sampleImageUrl,
     })
 
     const channel = branch.channels?.telegramChatId ? "TELEGRAM"

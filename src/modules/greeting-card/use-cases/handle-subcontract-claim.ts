@@ -27,6 +27,8 @@ export interface ClaimSubcontractInput {
   branchId: string
   branchName: string
   shopSettings: unknown
+  baseUrl?: string | undefined
+  productImageUrl?: string | null | undefined
 }
 
 export interface ClaimSubcontractResponse {
@@ -85,11 +87,15 @@ export async function claimSubcontractUseCase(
       graceMinutes: policy.cancellationGraceMinutes,
     })
 
+    const claimUrl = `${input.baseUrl || "http://localhost:3200"}/subcontract/${state.orderCode}?branch=${encodeURIComponent(claimingBranch.branchId)}`
     await notifier.sendSubcontractInvite(ctx, {
       branch: claimingBranch,
       orderCode: state.orderCode,
       messageText: successMsg,
-      claimUrl: "",
+      claimUrl,
+      title: `🔔 [BẮT ĐẦU CHẾ TÁC #${state.orderCode}]`,
+      actions: [{ text: "🔍 Xem Thẻ Chế Tác", url: claimUrl }],
+      imageUrl: input.productImageUrl,
     })
   }
 
