@@ -164,7 +164,7 @@ describe("inboxActions — cơ chế thanh toán lần 2 và thu nợ sau giao",
       const actions = inboxActions([step5Order], "COORDINATOR", "coord-1")
       const assign = actions.find((a) => a.kind === "ASSIGN")
       expect(assign).toBeDefined()
-      expect(assign?.title).toContain("Phân công thợ cắm hoa")
+      expect(assign?.title).toContain("Phân công sản xuất")
       expect(assign?.tab).toBe("coordinator")
     })
 

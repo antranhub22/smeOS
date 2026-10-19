@@ -61,10 +61,9 @@ describe("customer notifications", () => {
     expect(msg).toContain("15’")
     expect(msg).toContain("DH123")
   })
-  it("tin nhắn báo khách sau khi nhận tiền cam kết Điều phối duyệt trong 30 phút hoặc hoàn tiền", () => {
+  it("tin nhắn báo khách sau khi nhận tiền cam kết chuẩn bị trong 30 phút hoặc hoàn tiền", () => {
     const msg = customerPaymentMessage({ orderCode: "DH123", amountVnd: 500_000, balanceVnd: 0, trackingUrl: "https://x.vn/b/T1" })
-    expect(msg).toContain("30’")
-    expect(msg).toContain("Điều phối")
+    expect(msg).toContain("30 phút")
     expect(msg).toContain("hoàn tiền")
   })
   it("thu chưa đủ là cọc, thu đủ là hoàn tất", () => {

@@ -16,6 +16,7 @@ import { BrochureShippingSettings } from "./brochure-shipping-settings"
 import { BrochureHolidaySettings } from "./brochure-holiday-settings"
 import { BrochureNotifySettings } from "./brochure-notify-settings"
 import { StaffNotifySettings } from "./staff-notify-settings"
+import { ChainDispatchSettings } from "./chain-dispatch-settings"
 
 /** Ngăn Cài đặt của Điều hành — tách khỏi hộp việc để tab chỉ còn việc cần quyết. */
 export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
@@ -50,6 +51,7 @@ export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
           <BrochureHolidaySettings />
           <BrochureNotifySettings />
           <StaffNotifySettings />
+          <ChainDispatchSettings />
         </div>
       </div>
     </div>
