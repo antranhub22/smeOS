@@ -543,5 +543,139 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
       })
     )
   })
+
+  it("Mốc M4 Giao hàng (M4_DELIVERY): Đến/quá giờ hẹn giao mà chưa có ảnh POD -> Nhắc lần 1 tải ảnh giao hàng", async () => {
+    const mockStore: ISubcontractStateStore = {
+      saveSubcontractState: vi.fn().mockResolvedValue(undefined),
+      loadSubcontractState: vi.fn().mockResolvedValue(null),
+    }
+    const mockNotifier: IDispatchNotifier = {
+      sendSubcontractInvite: vi.fn().mockResolvedValue({ sent: true }),
+    }
+
+    // Giờ giao: 10:30:00Z, Hiện tại: 10:31:00Z (đã qua giờ giao 1 phút)
+    const deliveryMs = new Date("2026-10-20T10:30:00Z").getTime()
+    const now = new Date("2026-10-20T10:31:00Z")
+
+    const results = await processOrderDispatchReminders(
+      ctx,
+      {
+        orderId: "order-1",
+        orderCode: "DH-100",
+        deliveryTimeStr: "10:30",
+        deliveryTimestampMs: deliveryMs,
+        hasQcPhoto: true,
+        hasShipperInfo: true,
+        hasDeliveryProof: false,
+        deliveryStatus: "DELIVERING",
+        state: {
+          orderId: "order-1",
+          orderCode: "DH-100",
+          dispatchStatus: "COMMITTED",
+          currentRound: 1,
+          claimedBranchId: "CN-HOANKIEM",
+          claimedBranchName: "Chi nhánh Hoàn Kiếm",
+          claimedAt: "2026-10-20T08:00:00Z",
+          graceExpiresAt: null,
+          roundExpiresAt: null,
+          declinedBranchIds: [],
+          invitedBranchIds: ["CN-HOANKIEM"],
+          remindersSent: {
+            M1_PREP: "2026-10-20T08:00:00Z",
+            M3_SHIPPER: "2026-10-20T10:00:00Z",
+          },
+        },
+        branch,
+        shopSettings: {},
+      },
+      mockStore,
+      mockNotifier,
+      now
+    )
+
+    expect(results).toHaveLength(1)
+    expect(results[0]?.step).toBe("M4_DELIVERY")
+    expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
+      ctx,
+      expect.objectContaining({
+        title: expect.stringContaining("NHẮC BÀN GIAO & POD"),
+        messageText: expect.stringContaining("tải ảnh xác nhận giao hàng (POD)"),
+        actions: expect.arrayContaining([
+          expect.objectContaining({ text: "📸 Tải Ảnh Giao Hàng (POD)" }),
+        ]),
+      })
+    )
+    expect(mockStore.saveSubcontractState).toHaveBeenCalledWith(
+      ctx,
+      expect.objectContaining({
+        remindersSent: expect.objectContaining({ M4_DELIVERY: expect.any(String) }),
+      })
+    )
+  })
+
+  it("Mốc M4 Giao hàng (M4_DELIVERY_ESCALATION): Quá hạn 2 lần nhắc chưa có ảnh POD -> Cảnh báo đỏ Điều phối", async () => {
+    const mockStore: ISubcontractStateStore = {
+      saveSubcontractState: vi.fn().mockResolvedValue(undefined),
+      loadSubcontractState: vi.fn().mockResolvedValue(null),
+    }
+    const mockNotifier: IDispatchNotifier = {
+      sendSubcontractInvite: vi.fn().mockResolvedValue({ sent: true }),
+    }
+
+    const deliveryMs = new Date("2026-10-20T10:30:00Z").getTime()
+    // Lần 2 đã gửi lúc 10:36:00Z, hiện tại 10:42:00Z (qua 6 phút >= 5 phút)
+    const now = new Date("2026-10-20T10:42:00Z")
+
+    const results = await processOrderDispatchReminders(
+      ctx,
+      {
+        orderId: "order-1",
+        orderCode: "DH-100",
+        deliveryTimeStr: "10:30",
+        deliveryTimestampMs: deliveryMs,
+        hasQcPhoto: true,
+        hasShipperInfo: true,
+        hasDeliveryProof: false,
+        deliveryStatus: "DELIVERING",
+        state: {
+          orderId: "order-1",
+          orderCode: "DH-100",
+          dispatchStatus: "COMMITTED",
+          currentRound: 1,
+          claimedBranchId: "CN-HOANKIEM",
+          claimedBranchName: "Chi nhánh Hoàn Kiếm",
+          claimedAt: "2026-10-20T08:00:00Z",
+          graceExpiresAt: null,
+          roundExpiresAt: null,
+          declinedBranchIds: [],
+          invitedBranchIds: ["CN-HOANKIEM"],
+          remindersSent: {
+            M1_PREP: "2026-10-20T08:00:00Z",
+            M4_DELIVERY: "2026-10-20T10:31:00Z",
+            M4_DELIVERY_RETRY: "2026-10-20T10:36:00Z",
+            M4_OVERDUE: "2026-10-20T10:36:00Z",
+          },
+        },
+        branch,
+        shopSettings: {},
+      },
+      mockStore,
+      mockNotifier,
+      now
+    )
+
+    expect(results).toHaveLength(1)
+    expect(results[0]?.step).toBe("M4_DELIVERY_ESCALATION")
+    expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
+      ctx,
+      expect.objectContaining({
+        title: expect.stringContaining("CẢNH BÁO ĐỎ - CHƯA GIAO HÀNG"),
+        messageText: expect.stringContaining("đã quá hạn giao nhưng chưa có ảnh xác nhận"),
+        actions: expect.arrayContaining([
+          expect.objectContaining({ text: "📞 Gọi Cửa Hàng Ngay" }),
+        ]),
+      })
+    )
+  })
 })
 

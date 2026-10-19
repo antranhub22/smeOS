@@ -9,18 +9,24 @@ import {
   type SubcontractClaimCardProps,
 } from "@/components/greeting-card/subcontract/subcontract-claim-card"
 import { ShipperSubmitCard } from "@/components/greeting-card/subcontract/shipper-submit-card"
+import {
+  DeliveryProofCard,
+  type DeliveryProofInfo,
+} from "@/components/greeting-card/subcontract/delivery-proof-card"
 
 interface PageProps {
   params: Promise<{ orderCode: string }>
 }
 
 interface SubcontractPageData extends SubcontractClaimCardProps {
+  orderStatus?: string | null
   deliveryStatus?: string | null
   shipperInfo?: {
     shipperName: string
     shipperPhone: string
     submittedAt: string
   } | null
+  deliveryProof?: DeliveryProofInfo | null
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => {
@@ -143,6 +149,19 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         deliveryStatus={orderData.deliveryStatus ?? undefined}
         existingShipperInfo={orderData.shipperInfo ?? null}
         onSubmitted={() => {
+          void mutate()
+        }}
+      />
+
+      {/* Xác nhận hoàn thành giao hàng (Bằng chứng giao hàng POD) */}
+      <DeliveryProofCard
+        orderCode={orderData.orderCode}
+        branchId={branchId}
+        productionStatus={orderData.productionStatus}
+        deliveryStatus={orderData.deliveryStatus}
+        orderStatus={orderData.orderStatus}
+        existingDeliveryProof={orderData.deliveryProof ?? null}
+        onDelivered={() => {
           void mutate()
         }}
       />

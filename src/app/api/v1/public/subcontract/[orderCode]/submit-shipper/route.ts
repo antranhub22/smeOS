@@ -8,6 +8,10 @@ import { log } from "@/core/observability/log"
 import type { Prisma } from "@/generated/prisma/client"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
+import {
+  cancelSubcontractReminderSteps,
+  getMilestoneSteps,
+} from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 
 const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
 
@@ -123,6 +127,20 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     amountVnd: Number(order.total_vnd),
     assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
     extraNote: `🚗 Shipper: ${shipperName} — ${shipperPhone}`,
+  })
+
+  // ✅ First-Wins Mutex (Store-Stream): Hủy toàn bộ M3 reminders vì cửa hàng đã điền qua link
+  cancelSubcontractReminderSteps({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    steps: getMilestoneSteps("M3"),
+    reason: "store_action_via_link",
+    actorId: `branch_${branchId}`,
+  }).catch((err) => {
+    log.warn("subcontract.cancel_m3_reminders_failed", {
+      orderCode: order.code,
+      error: err instanceof Error ? err.message : String(err),
+    })
   })
 
   log.info("subcontract.shipper_submitted", {

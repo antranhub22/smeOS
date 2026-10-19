@@ -13,6 +13,11 @@ import type { IDispatchNotifier } from "./dispatch-subcontract-order"
 import type { BranchCandidate } from "../domain/chain-dispatch-engine"
 import type { ProcessOrderReminderInput, ReminderStepExecutionResult } from "./process-dispatch-reminders"
 
+/** First-Wins Mutex: ISO timestamp (sent) hoặc CANCELLED_BY_* (cancelled) đều coi là "đã xử lý" */
+function isStepHandled(remindersSent: Record<string, string>, step: string): boolean {
+  return Boolean(remindersSent[step])
+}
+
 export interface ShipperMilestoneParams {
   ctx: TenantContext
   input: ProcessOrderReminderInput
@@ -50,7 +55,7 @@ export async function evaluateShipperMilestones({
       input.hasQcPhoto !== false)
 
   // 3a. Nhắc lần 1 (M3_SHIPPER): Kích hoạt khi đến mốc N phút và cửa hàng chưa có thông tin shipper
-  if (isShipperDue && !remindersSent["M3_SHIPPER"] && !input.hasShipperInfo) {
+  if (isShipperDue && !isStepHandled(remindersSent, "M3_SHIPPER") && !input.hasShipperInfo) {
     const text = renderDispatchMessage(policy.messageTemplates.shipperReminder, {
       orderCode: input.orderCode,
       branchName: branch.branchName,
@@ -76,9 +81,10 @@ export async function evaluateShipperMilestones({
 
   // 3b. Nhắc lần 2 (M3_SHIPPER_RETRY): Cách lần 1 đúng 5 phút nếu cửa hàng chưa phản hồi (tối đa 2 lần nhắc)
   const m3SentIso = remindersSent["M3_SHIPPER"]
+  const m3SentReal = m3SentIso && !m3SentIso.startsWith("CANCELLED_")
   const m3RetrySentIso = remindersSent["M3_SHIPPER_RETRY"]
-  if (m3SentIso && !m3RetrySentIso && !input.hasShipperInfo) {
-    const m3SentTime = new Date(m3SentIso).getTime()
+  if (m3SentReal && !isStepHandled(remindersSent, "M3_SHIPPER_RETRY") && !input.hasShipperInfo) {
+    const m3SentTime = new Date(m3SentIso!).getTime()
     const minutesSinceM3 = Math.round((nowMs - m3SentTime) / (60 * 1000))
     const isRetryDue =
       input.forceStep === "M3_SHIPPER_RETRY" ||
@@ -111,8 +117,9 @@ export async function evaluateShipperMilestones({
 
   // 3c. Báo động đỏ Điều phối viên (M3_SHIPPER_ESCALATED): Sau lần 2 đúng 5 phút nếu vẫn không nhận được phản hồi
   const m3EscalatedIso = remindersSent["M3_SHIPPER_ESCALATED"]
-  if (remindersSent["M3_SHIPPER_RETRY"] && !m3EscalatedIso && !input.hasShipperInfo) {
-    const retrySentTime = new Date(remindersSent["M3_SHIPPER_RETRY"]).getTime()
+  const m3RetryReal = m3RetrySentIso && !m3RetrySentIso.startsWith("CANCELLED_")
+  if (m3RetryReal && !isStepHandled(remindersSent, "M3_SHIPPER_ESCALATED") && !input.hasShipperInfo) {
+    const retrySentTime = new Date(m3RetrySentIso!).getTime()
     const minutesSinceRetry = Math.round((nowMs - retrySentTime) / (60 * 1000))
     const isEscalateDue =
       input.forceStep === "M3_SHIPPER_ESCALATED" ||

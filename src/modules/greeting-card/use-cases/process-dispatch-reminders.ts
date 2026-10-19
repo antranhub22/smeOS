@@ -15,6 +15,7 @@ import type { SubcontractOrderState } from "../domain/subcontract-order"
 import type { BranchCandidate } from "../domain/chain-dispatch-engine"
 import type { IDispatchNotifier, ISubcontractStateStore } from "./dispatch-subcontract-order"
 import { evaluateShipperMilestones } from "./dispatch-shipper-reminders"
+import { evaluateDeliveryMilestones } from "./dispatch-delivery-reminders"
 
 export type ReminderStep =
   | "M1_PREP"
@@ -25,6 +26,9 @@ export type ReminderStep =
   | "M3_SHIPPER_RETRY"
   | "M3_SHIPPER_ESCALATED"
   | "M3_DISPATCH"
+  | "M4_DELIVERY"
+  | "M4_DELIVERY_RETRY"
+  | "M4_DELIVERY_ESCALATION"
   | "M4_OVERDUE"
 
 export interface ProcessOrderReminderInput {
@@ -38,6 +42,8 @@ export interface ProcessOrderReminderInput {
   shopSettings: unknown
   hasQcPhoto?: boolean | undefined
   hasShipperInfo?: boolean | undefined
+  hasDeliveryProof?: boolean | undefined
+  deliveryStatus?: string | undefined
   coordinatorChannel?: { phone?: string; telegramChatId?: string } | undefined
   baseUrl?: string | undefined
   forceStep?: ReminderStep | undefined
@@ -48,6 +54,15 @@ export interface ReminderStepExecutionResult {
   triggered: boolean
   sent: boolean
   message?: string | undefined
+}
+
+/**
+ * Kiểm tra xem một reminder step đã được xử lý (gửi thật hoặc bị cancel bởi Coordinator/Store).
+ * First-Wins Mutex: cả "đã gửi thật" và "CANCELLED_BY_*" đều → skip.
+ */
+function isStepHandled(remindersSent: Record<string, string>, step: string): boolean {
+  const val = remindersSent[step]
+  return Boolean(val) // ISO timestamp (sent) hoặc "CANCELLED_BY_*" (cancelled) → đều truthy → skip
 }
 
 /**
@@ -81,12 +96,13 @@ export async function processOrderDispatchReminders(
   const claimUrl = `${base}/subcontract/${input.orderCode}?branch=${encodeURIComponent(branch.branchId)}`
   const uploadQcUrl = `${claimUrl}&action=upload_qc`
   const submitShipperUrl = `${claimUrl}&action=submit_shipper`
+  const submitDeliveryUrl = `${claimUrl}&action=submit_delivery`
 
   // 1. Mốc M1: Nhắc bắt đầu chế tác (ngay khi đơn chốt COMMITTED)
   const isPrepDue = input.forceStep
     ? input.forceStep === "M1_PREP"
     : Boolean(policy.milestoneReminders.prepAlert && state.dispatchStatus === "COMMITTED")
-  if (isPrepDue && !remindersSent["M1_PREP"]) {
+  if (isPrepDue && !isStepHandled(remindersSent, "M1_PREP")) {
     const text = renderDispatchMessage(policy.messageTemplates.prepReminder, {
       orderCode: input.orderCode,
       branchName: branch.branchName,
@@ -116,7 +132,7 @@ export async function processOrderDispatchReminders(
     : (qcThresholdMinutes > 0 &&
       minutesUntilDelivery <= qcThresholdMinutes &&
       minutesUntilDelivery > 0)
-  if (isQcDue && !remindersSent["M2_QC"] && !input.hasQcPhoto) {
+  if (isQcDue && !isStepHandled(remindersSent, "M2_QC") && !input.hasQcPhoto) {
     const text = renderDispatchMessage(policy.messageTemplates.qcReminder, {
       orderCode: input.orderCode,
       branchName: branch.branchName,
@@ -141,9 +157,11 @@ export async function processOrderDispatchReminders(
   }
 
   // 2b. Mốc M2_QC_RETRY: Nhắc chụp ảnh QC lần 2 (Sau N phút nếu cửa hàng chưa gửi ảnh)
+  // First-Wins: chỉ retry nếu lần 1 đã gửi THẬT (ISO timestamp), không retry nếu bị CANCELLED
   const m2SentIso = remindersSent["M2_QC"]
+  const m2SentReal = m2SentIso && !m2SentIso.startsWith("CANCELLED_")
   const m2RetrySentIso = remindersSent["M2_QC_RETRY"]
-  if (m2SentIso && !m2RetrySentIso && !input.hasQcPhoto) {
+  if (m2SentReal && !isStepHandled(remindersSent, "M2_QC_RETRY") && !input.hasQcPhoto) {
     const m2SentTime = new Date(m2SentIso).getTime()
     const minutesSinceM2 = Math.round((nowMs - m2SentTime) / (60 * 1000))
     const isRetryDue = input.forceStep
@@ -176,8 +194,9 @@ export async function processOrderDispatchReminders(
 
   // 2c. Mốc M2_QC_ESCALATED: Báo động Điều phối viên (Sau lần 2 thêm M phút nếu vẫn chưa có ảnh)
   const m2EscalatedIso = remindersSent["M2_QC_ESCALATED"]
-  if (remindersSent["M2_QC_RETRY"] && !m2EscalatedIso && !input.hasQcPhoto) {
-    const retrySentTime = new Date(remindersSent["M2_QC_RETRY"]).getTime()
+  const m2RetryReal = m2RetrySentIso && !m2RetrySentIso.startsWith("CANCELLED_")
+  if (m2RetryReal && !isStepHandled(remindersSent, "M2_QC_ESCALATED") && !input.hasQcPhoto) {
+    const retrySentTime = new Date(m2RetrySentIso!).getTime()
     const minutesSinceRetry = Math.round((nowMs - retrySentTime) / (60 * 1000))
     const isEscalateDue = input.forceStep
       ? input.forceStep === "M2_QC_ESCALATED"
@@ -239,12 +258,26 @@ export async function processOrderDispatchReminders(
   })
   results.push(...shipperResults)
 
-  // 4. Mốc M4: Cảnh báo quá hạn (Overdue Alert)
+  // 4. Mốc M4: Nhắc hoàn thành giao hàng & tải ảnh POD (Lần 1, Lần 2, Báo động đỏ Điều phối)
+  const deliveryResults = await evaluateDeliveryMilestones({
+    ctx,
+    input,
+    policy,
+    branch,
+    remindersSent,
+    minutesUntilDelivery,
+    submitDeliveryUrl,
+    notifier,
+    now,
+  })
+  results.push(...deliveryResults)
+
+  // 5. Cảnh báo quá hạn (Overdue Alert)
   const overdueThreshold = policy.milestoneReminders.overdueWarningMinutes
   const isOverdueDue = input.forceStep
     ? input.forceStep === "M4_OVERDUE"
     : minutesUntilDelivery < -overdueThreshold
-  if (isOverdueDue && !remindersSent["M4_OVERDUE"]) {
+  if (isOverdueDue && !isStepHandled(remindersSent, "M4_OVERDUE")) {
     const text = renderDispatchMessage(policy.messageTemplates.overdueAlert, {
       orderCode: input.orderCode,
       branchName: branch.branchName,

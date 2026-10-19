@@ -24,6 +24,7 @@ import { parseChainDispatchPolicy } from "@/modules/greeting-card/domain/chain-d
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import { processOrderDispatchReminders } from "@/modules/greeting-card/use-cases/process-dispatch-reminders"
+import { evaluateCustomerApproval } from "@/modules/greeting-card/use-cases/evaluate-customer-approval"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 import type { TenantContext } from "@/core/tenancy"
@@ -186,10 +187,29 @@ export const POST = handle(async (request) => {
       const hasQcPhoto = order.production_status === "QUALITY_CHECK" || order.production_status === "READY"
       const subDispatchMeta = (coord.metadata as Record<string, unknown> | null)?.subcontract_dispatch as Record<string, unknown> | undefined
       const hasShipperInfo = Boolean(subDispatchMeta?.shipper_info) || order.delivery_status === "DELIVERING" || order.delivery_status === "DELIVERED"
+      const hasDeliveryProof = Boolean((coord.metadata as Record<string, unknown> | null)?.delivery_proof) || order.delivery_status === "DELIVERED"
 
       const coordinatorChannel = settings.coordinator_channel as
         | { phone?: string; telegramChatId?: string }
         | undefined
+
+      // M2b: Đánh giá Customer Approval Timer (auto-approve nếu khách không phản hồi)
+      if (order.production_status === "READY") {
+        const policy = parseChainDispatchPolicy(org.settings)
+        const autoApproveMinutes = policy.milestoneReminders.qcRetryIntervalMinutes ?? 30
+        await evaluateCustomerApproval(
+          {
+            organizationId: coord.organization_id,
+            orderId: coord.order_id,
+            orderCode: order.code,
+            productionStatus: order.production_status,
+            autoApproveAfterMinutes: autoApproveMinutes,
+          },
+          now
+        ).catch((err) => {
+          log.warn("chain_dispatch_sweep.m2b_eval_failed", { orderId: coord.order_id, error: err instanceof Error ? err.message : String(err) })
+        })
+      }
 
       const results = await processOrderDispatchReminders(
         ctx,
@@ -204,6 +224,8 @@ export const POST = handle(async (request) => {
           shopSettings: org.settings,
           hasQcPhoto,
           hasShipperInfo,
+          hasDeliveryProof,
+          deliveryStatus: order.delivery_status ?? undefined,
           coordinatorChannel,
           baseUrl: url.origin,
           forceStep: forceStep ?? undefined,

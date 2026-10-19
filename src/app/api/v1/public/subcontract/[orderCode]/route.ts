@@ -68,34 +68,27 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
     ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
     : "Giao trong ngày"
 
+  const storage = getStorageProvider()
+  const resolveKey = async (photo: string) => {
+    if (!photo) return photo
+    if (photo.startsWith("org/")) {
+      try { return await storage.signedUrl(photo, 604800, "GET") } catch { return photo }
+    }
+    const keyMatch = photo.match(/floraos-core\/(org\/[^?]+)/)
+    if (keyMatch?.[1]) {
+      try { return await storage.signedUrl(keyMatch[1], 604800, "GET") } catch { return photo }
+    }
+    return photo
+  }
 
   const rawQcPhotos = Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
-  const storage = getStorageProvider()
-  const resolvedQcPhotos = await Promise.all(
-    rawQcPhotos.map(async (photo) => {
-      if (!photo) return photo
-      // Nếu là đường dẫn key nội bộ org/... -> Ký signedUrl 7 ngày để client hiển thị
-      if (photo.startsWith("org/")) {
-        try {
-          return await storage.signedUrl(photo, 604800, "GET")
-        } catch {
-          return photo
-        }
-      }
-      // Nếu là signedUrl cũ bị lỗi X-Amz-Expires > 604800 trên R2 -> Ký lại bằng key
-      if (photo.includes(".r2.cloudflarestorage.com/") && photo.includes("/org/")) {
-        try {
-          const keyMatch = photo.match(/floraos-core\/(org\/[^?]+)/)
-          if (keyMatch?.[1]) {
-            return await storage.signedUrl(keyMatch[1], 604800, "GET")
-          }
-        } catch {
-          return photo
-        }
-      }
-      return photo
-    })
-  )
+  const rawPodPhotos = Array.isArray(coordMeta.pod_photos) ? (coordMeta.pod_photos as string[]) : []
+  const resolvedQcPhotos = await Promise.all(rawQcPhotos.map(resolveKey))
+  const resolvedPodPhotos = await Promise.all(rawPodPhotos.map(resolveKey))
+
+  const rawPodProof = coordMeta.delivery_proof as
+    | { note?: string; deliveredAt?: string; deliveredByBranch?: string }
+    | undefined
 
   return jsonResponse({
     data: {
@@ -119,11 +112,19 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       graceExpiresAt: subState?.graceExpiresAt ?? null,
       productionStatus: order.production_status,
       deliveryStatus: order.delivery_status,
+      orderStatus: order.status,
       qcPhotos: resolvedQcPhotos,
       lastAiVerification: coordMeta.last_ai_verification ?? null,
       autoBypassedCoordinator: Boolean(coordMeta.auto_bypassed_coordinator),
-      // Thông tin shipper (nếu đã cung cấp)
       shipperInfo: (coordMeta.shipper_info as { shipperName: string; shipperPhone: string; submittedAt: string } | undefined) ?? null,
+      deliveryProof: rawPodProof
+        ? {
+            photoUrls: resolvedPodPhotos,
+            note: rawPodProof.note || null,
+            deliveredAt: rawPodProof.deliveredAt || null,
+            deliveredByBranch: rawPodProof.deliveredByBranch || null,
+          }
+        : null,
     },
   })
 })
@@ -138,9 +139,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   const body = await request.json().catch(() => ({}))
   const parsed = actionSchema.safeParse(body)
-  if (!parsed.success) {
-    throw validationFailed({ issues: parsed.error.issues })
-  }
+  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const { action, branchId } = parsed.data
   const repo = new SubcontractOrderRepository()
@@ -149,9 +148,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   // Xác thực chi nhánh hợp lệ thuộc tổ chức
   const branch = await repo.findBranchInOrganization(branchId, order.organization_id)
-  if (!branch) {
-    throw unprocessable("Chi nhánh không hợp lệ hoặc không thuộc hệ thống.")
-  }
+  if (!branch) throw unprocessable("Chi nhánh không hợp lệ hoặc không thuộc hệ thống.")
 
   const org = await repo.findOrganizationSettings(order.organization_id)
 

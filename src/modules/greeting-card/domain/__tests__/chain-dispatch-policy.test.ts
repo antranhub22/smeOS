@@ -105,6 +105,9 @@ describe("chain-dispatch-policy", () => {
         dispatchReminderMinutesBefore: 15,
         shipperRetryIntervalMinutes: 5,
         shipperEscalateAfterMinutes: 5,
+        deliveryReminderMinutesAfter: 2,
+        deliveryRetryIntervalMinutes: 4,
+        deliveryEscalateAfterMinutes: 3,
         overdueWarningMinutes: 8,
       },
       messageTemplates: {

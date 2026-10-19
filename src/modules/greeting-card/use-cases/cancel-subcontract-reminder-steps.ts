@@ -1,0 +1,125 @@
+/**
+ * cancel-subcontract-reminder-steps.ts
+ *
+ * First-Wins Mutex Utility — Hủy các bước nhắc việc đang pending khi một trong hai luồng
+ * (Auto-Stream hoặc Coordinator-Stream) hoàn thành trước.
+ *
+ * Nguyên tắc: Khi coordinator trực tiếp thực hiện hành động (upload ảnh, điền shipper,
+ * xác nhận giao hàng), các reminder timer tương ứng phải bị cancel ngay lập tức
+ * để không gửi tin nhắn thừa cho cửa hàng.
+ *
+ * Giá trị đặc biệt: "CANCELLED_BY_COORDINATOR:<ISO_TIMESTAMP>"
+ * → Sweep engine sẽ nhận ra và skip, không phân biệt với trường hợp đã gửi thật.
+ */
+
+import { prisma } from "@/core/tenancy/infra/prisma"
+import type { Prisma } from "@/generated/prisma/client"
+import { log } from "@/core/observability/log"
+import type { ReminderStep } from "./process-dispatch-reminders"
+
+export type CancelReason = "coordinator_action" | "store_action_via_link"
+
+export interface CancelReminderStepsInput {
+  organizationId: string
+  orderId: string
+  /** Các reminder steps cần hủy */
+  steps: ReminderStep[]
+  /** Lý do hủy */
+  reason: CancelReason
+  /** Ai thực hiện hành động triệt tiêu */
+  actorId: string
+}
+
+export interface CancelReminderStepsResult {
+  orderId: string
+  cancelledSteps: ReminderStep[]
+  alreadyDoneSteps: ReminderStep[]
+}
+
+/**
+ * Đánh dấu các reminder steps là đã bị hủy bởi coordinator hoặc store.
+ * Sweep engine đọc `remindersSent[step]` — nếu có giá trị (kể cả "CANCELLED_...") thì skip.
+ *
+ * Thread-safe: dùng JSON merge patch — không overwrite toàn bộ metadata.
+ */
+export async function cancelSubcontractReminderSteps(
+  input: CancelReminderStepsInput
+): Promise<CancelReminderStepsResult> {
+  const { organizationId, orderId, steps, reason, actorId } = input
+  const now = new Date()
+  const cancelMarker = `CANCELLED_BY_${reason.toUpperCase()}:${now.toISOString()}`
+
+  const coord = await prisma.order_coordinations.findFirst({
+    where: { order_id: orderId, organization_id: organizationId },
+    select: { id: true, metadata: true },
+  })
+
+  if (!coord) {
+    log.warn("cancel_reminder_steps.coord_not_found", { orderId, organizationId })
+    return { orderId, cancelledSteps: [], alreadyDoneSteps: [] }
+  }
+
+  const existingMeta = (coord.metadata as Record<string, unknown> | null) ?? {}
+  const subState = existingMeta.subcontract_dispatch as Record<string, unknown> | undefined
+  const existingRemindersSent = (subState?.remindersSent as Record<string, string> | undefined) ?? {}
+
+  const cancelledSteps: ReminderStep[] = []
+  const alreadyDoneSteps: ReminderStep[] = []
+
+  const newRemindersSent = { ...existingRemindersSent }
+
+  for (const step of steps) {
+    const existing = existingRemindersSent[step]
+    if (existing && !existing.startsWith("CANCELLED_")) {
+      // Step đã được gửi thật (ISO timestamp) → đây là "đã xong" không phải "đang pending"
+      alreadyDoneSteps.push(step)
+    } else {
+      // Step chưa gửi hoặc đã cancelled trước → đánh dấu cancelled
+      newRemindersSent[step] = cancelMarker
+      cancelledSteps.push(step)
+    }
+  }
+
+  if (cancelledSteps.length === 0) {
+    return { orderId, cancelledSteps: [], alreadyDoneSteps }
+  }
+
+  // Cập nhật patch nhỏ — chỉ thay đổi remindersSent trong subcontract_dispatch
+  const updatedSubState = {
+    ...(subState ?? {}),
+    remindersSent: newRemindersSent,
+  }
+
+  await prisma.order_coordinations.update({
+    where: { id: coord.id },
+    data: {
+      metadata: {
+        ...existingMeta,
+        subcontract_dispatch: updatedSubState,
+      } as unknown as Prisma.InputJsonValue,
+    },
+  })
+
+  log.info("cancel_reminder_steps.done", {
+    orderId,
+    actorId,
+    reason,
+    cancelledSteps,
+    alreadyDoneSteps,
+  })
+
+  return { orderId, cancelledSteps, alreadyDoneSteps }
+}
+
+/**
+ * Helper: lấy danh sách steps liên quan đến một milestone để cancel toàn bộ.
+ * Ví dụ: cancelMilestoneSteps("M2") → ["M2_QC", "M2_QC_RETRY", "M2_QC_ESCALATED"]
+ */
+export function getMilestoneSteps(milestone: "M2" | "M3" | "M4"): ReminderStep[] {
+  const map: Record<string, ReminderStep[]> = {
+    M2: ["M2_QC", "M2_QC_RETRY", "M2_QC_ESCALATED"],
+    M3: ["M3_SHIPPER", "M3_SHIPPER_RETRY", "M3_SHIPPER_ESCALATED", "M3_DISPATCH"],
+    M4: ["M4_DELIVERY", "M4_DELIVERY_RETRY", "M4_DELIVERY_ESCALATION", "M4_OVERDUE"],
+  }
+  return map[milestone] ?? []
+}

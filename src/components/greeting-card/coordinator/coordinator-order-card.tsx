@@ -15,6 +15,7 @@ import { readDeliveryFailures } from "@/modules/greeting-card/domain/delivery-fa
 import { StaffNametagGroup } from "@/components/greeting-card/staff-nametag"
 import { CoordinatorCardDecisionBlocks } from "./coordinator-card-decision-blocks"
 import { CoordinatorCardActions } from "./coordinator-card-actions"
+import { CoordinatorSubcontractActionsPanel } from "./coordinator-subcontract-actions-panel"
 import { DEPOSIT_PENDING_APPROVAL_NOTE, isDepositPendingApproval } from "@/modules/greeting-card/domain/deposit-acknowledgement"
 import {
   isUrgentOrder,
@@ -45,6 +46,17 @@ export interface BrochureOrder {
   product: OrderProductView
   /** Chờ khách duyệt ảnh thành phẩm trước khi giao ship */
   photo_approval?: PhotoApprovalState | null
+  /**
+   * Trạng thái Gate 2 chain dispatch (có khi đơn đang trong luồng gia công chuỗi).
+   * Khi có trường này: hiển thị panel Coordinator-Stream actions.
+   */
+  gate2?: {
+    claimedBranchId?: string | null
+    hasQcPhoto?: boolean
+    hasShipperInfo?: boolean
+    hasDeliveryProof?: boolean
+    shipperInfo?: { shipperName: string; shipperPhone: string; submittedAt: string } | null
+  } | null
 }
 
 export type ModalState =
@@ -262,6 +274,27 @@ export function CoordinatorOrderCard({
 
       {/* Khối quyết định của Điều phối & Xác nhận/Nhắc thanh toán lần 2 */}
       <CoordinatorCardDecisionBlocks order={order} policy={policy} work={work} onOpen={onOpen} workflowPolicy={workflowPolicy} />
+
+      {/* Gate 2 Coordinator-Stream Panel: chỉ hiện khi có chain dispatch đang active */}
+      {order.gate2?.claimedBranchId && !isDelivered && (
+        <CoordinatorSubcontractActionsPanel
+          gate2={{
+            orderId: order.id,
+            orderCode: order.code,
+            productionStatus: order.production_status,
+            deliveryStatus: order.delivery_status,
+            orderStatus: order.status,
+            hasQcPhoto: order.gate2.hasQcPhoto ?? false,
+            hasShipperInfo: order.gate2.hasShipperInfo ?? false,
+            hasDeliveryProof: order.gate2.hasDeliveryProof ?? false,
+            shipperInfo: order.gate2.shipperInfo,
+          }}
+          onActionDone={() => {
+            // Trigger re-render của parent list (coordinator board sẽ mutate SWR)
+            window.dispatchEvent(new CustomEvent("coordinator:gate2:action", { detail: { orderId: order.id } }))
+          }}
+        />
+      )}
 
       {/* Tác vụ của bước hiện tại (PO 16/10/2026) */}
       {!isDelivered && (

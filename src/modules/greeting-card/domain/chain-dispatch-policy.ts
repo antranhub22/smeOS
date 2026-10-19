@@ -32,6 +32,12 @@ export interface DispatchMilestoneReminders {
   shipperRetryIntervalMinutes: number
   /** Thời gian sau lần 2 để báo động đỏ cho Điều phối gọi trực tiếp nếu vẫn chưa có Shipper (Số phút, mặc định: 5) */
   shipperEscalateAfterMinutes: number
+  /** Nhắc hoàn thành giao hàng / tải ảnh POD sau giờ giao dự kiến (Số phút, mặc định: 0) */
+  deliveryReminderMinutesAfter: number
+  /** Khoảng cách gửi nhắc hoàn thành giao hàng lần 2 (Số phút, mặc định: 5) */
+  deliveryRetryIntervalMinutes: number
+  /** Thời gian sau lần 2 để báo động đỏ Điều phối gọi can thiệp nếu chưa hoàn thành (Số phút, mặc định: 5) */
+  deliveryEscalateAfterMinutes: number
   /** Cảnh báo vi phạm SLA nếu trễ hạn (Số phút quá hạn, vd: 5) */
   overdueWarningMinutes: number
 }
@@ -57,6 +63,12 @@ export interface DispatchMessageTemplates {
   shipperReminderSecond: string
   /** Tin nhắn cảnh báo đỏ Điều phối khi quá hạn nhắc Shipper lần 2 */
   shipperEscalationAlert: string
+  /** Tin nhắn nhắc hoàn thành giao hàng / tải ảnh POD lần 1 */
+  deliveryReminder: string
+  /** Tin nhắn nhắc hoàn thành giao hàng / tải ảnh POD lần 2 (khẩn cấp) */
+  deliveryReminderSecond: string
+  /** Tin nhắn cảnh báo đỏ Điều phối khi quá hạn hoàn thành giao hàng */
+  deliveryEscalationAlert: string
   /** Tin nhắn cảnh báo trễ hạn SLA */
   overdueAlert: string
 }
@@ -111,6 +123,12 @@ export const DEFAULT_DISPATCH_MESSAGE_TEMPLATES: Readonly<DispatchMessageTemplat
     "⚠️ [NHẮC LẦN 2 - KHẨN] Đơn #{{orderCode}} chỉ còn {{minutesUntilDelivery}} phút là đến giờ giao nhưng hệ thống CHƯA CÓ THÔNG TIN SHIPPER! Chi nhánh vui lòng nhập ngay: {{claimUrl}}",
   shipperEscalationAlert:
     "🚨 [CẢNH BÁO ĐỎ - THIẾU SHIPPER] Đơn #{{orderCode}} tại {{branchName}} đã nhắc 2 lần nhưng CHƯA CUNG CẤP SHIPPER! Còn {{minutesUntilDelivery}} phút đến giờ giao. Điều phối gọi ngay: {{branchPhone}}",
+  deliveryReminder:
+    "⏰ [NHẮC BÀN GIAO & POD] Đơn #{{orderCode}} đã đến giờ giao ({{deliveryTime}}). Chi nhánh {{branchName}} vui lòng tải ảnh xác nhận giao hàng (POD) để hoàn tất đơn: {{claimUrl}}",
+  deliveryReminderSecond:
+    "⚠️ [NHẮC LẦN 2 - GIAO HÀNG KHẨN] Đơn #{{orderCode}} đã quá giờ giao {{overdueMinutes}} phút nhưng chưa có ảnh xác nhận giao hàng! Vui lòng cập nhật ngay: {{claimUrl}}",
+  deliveryEscalationAlert:
+    "🚨 [CẢNH BÁO ĐỎ - CHƯA GIAO HÀNG] Đơn #{{orderCode}} tại {{branchName}} đã quá hạn giao nhưng chưa có ảnh xác nhận! Điều phối gọi can thiệp gấp: {{branchPhone}}",
   overdueAlert:
     "⚠️ [CẢNH BÁO TRỄ HẠN] Đơn #{{orderCode}} đã quá hạn {{overdueMinutes}} phút mà chưa hoàn tất! Điều phối chuỗi đang theo dõi.",
 })
@@ -138,6 +156,9 @@ export const DEFAULT_CHAIN_DISPATCH_POLICY: Readonly<ChainDispatchPolicy> = Obje
     dispatchReminderMinutesBefore: 30,
     shipperRetryIntervalMinutes: 5,
     shipperEscalateAfterMinutes: 5,
+    deliveryReminderMinutesAfter: 0,
+    deliveryRetryIntervalMinutes: 5,
+    deliveryEscalateAfterMinutes: 5,
     overdueWarningMinutes: 5,
   }),
   messageTemplates: DEFAULT_DISPATCH_MESSAGE_TEMPLATES,
@@ -200,6 +221,9 @@ export function parseChainDispatchPolicy(settings: unknown): ChainDispatchPolicy
       dispatchReminderMinutesBefore: clampInt(reminders?.dispatchReminderMinutesBefore ?? reminders?.dispatch_reminder_minutes_before, 5, 120, DEFAULT_CHAIN_DISPATCH_POLICY.milestoneReminders.dispatchReminderMinutesBefore),
       shipperRetryIntervalMinutes: clampInt(reminders?.shipperRetryIntervalMinutes ?? reminders?.shipper_retry_interval_minutes, 1, 60, DEFAULT_CHAIN_DISPATCH_POLICY.milestoneReminders.shipperRetryIntervalMinutes),
       shipperEscalateAfterMinutes: clampInt(reminders?.shipperEscalateAfterMinutes ?? reminders?.shipper_escalate_after_minutes, 1, 60, DEFAULT_CHAIN_DISPATCH_POLICY.milestoneReminders.shipperEscalateAfterMinutes),
+      deliveryReminderMinutesAfter: clampInt(reminders?.deliveryReminderMinutesAfter ?? reminders?.delivery_reminder_minutes_after, 0, 120, DEFAULT_CHAIN_DISPATCH_POLICY.milestoneReminders.deliveryReminderMinutesAfter),
+      deliveryRetryIntervalMinutes: clampInt(reminders?.deliveryRetryIntervalMinutes ?? reminders?.delivery_retry_interval_minutes, 1, 60, DEFAULT_CHAIN_DISPATCH_POLICY.milestoneReminders.deliveryRetryIntervalMinutes),
+      deliveryEscalateAfterMinutes: clampInt(reminders?.deliveryEscalateAfterMinutes ?? reminders?.delivery_escalate_after_minutes, 1, 60, DEFAULT_CHAIN_DISPATCH_POLICY.milestoneReminders.deliveryEscalateAfterMinutes),
       overdueWarningMinutes: clampInt(reminders?.overdueWarningMinutes ?? reminders?.overdue_warning_minutes, 1, 60, DEFAULT_CHAIN_DISPATCH_POLICY.milestoneReminders.overdueWarningMinutes),
     },
     messageTemplates: {
@@ -233,6 +257,15 @@ export function parseChainDispatchPolicy(settings: unknown): ChainDispatchPolicy
       shipperEscalationAlert: typeof templates?.shipperEscalationAlert === "string" && templates.shipperEscalationAlert.trim()
         ? templates.shipperEscalationAlert
         : (typeof templates?.shipper_escalation_alert === "string" && templates.shipper_escalation_alert.trim() ? templates.shipper_escalation_alert : DEFAULT_DISPATCH_MESSAGE_TEMPLATES.shipperEscalationAlert),
+      deliveryReminder: typeof templates?.deliveryReminder === "string" && templates.deliveryReminder.trim()
+        ? templates.deliveryReminder
+        : (typeof templates?.delivery_reminder === "string" && templates.delivery_reminder.trim() ? templates.delivery_reminder : DEFAULT_DISPATCH_MESSAGE_TEMPLATES.deliveryReminder),
+      deliveryReminderSecond: typeof templates?.deliveryReminderSecond === "string" && templates.deliveryReminderSecond.trim()
+        ? templates.deliveryReminderSecond
+        : (typeof templates?.delivery_reminder_second === "string" && templates.delivery_reminder_second.trim() ? templates.delivery_reminder_second : DEFAULT_DISPATCH_MESSAGE_TEMPLATES.deliveryReminderSecond),
+      deliveryEscalationAlert: typeof templates?.deliveryEscalationAlert === "string" && templates.deliveryEscalationAlert.trim()
+        ? templates.deliveryEscalationAlert
+        : (typeof templates?.delivery_escalation_alert === "string" && templates.delivery_escalation_alert.trim() ? templates.delivery_escalation_alert : DEFAULT_DISPATCH_MESSAGE_TEMPLATES.deliveryEscalationAlert),
       overdueAlert: typeof templates?.overdueAlert === "string" && templates.overdueAlert.trim()
         ? templates.overdueAlert
         : (typeof templates?.overdue_alert === "string" && templates.overdue_alert.trim() ? templates.overdue_alert : DEFAULT_DISPATCH_MESSAGE_TEMPLATES.overdueAlert),
@@ -267,6 +300,9 @@ export function serializeChainDispatchPolicy(policy: ChainDispatchPolicy): Recor
       dispatch_reminder_minutes_before: policy.milestoneReminders.dispatchReminderMinutesBefore,
       shipper_retry_interval_minutes: policy.milestoneReminders.shipperRetryIntervalMinutes,
       shipper_escalate_after_minutes: policy.milestoneReminders.shipperEscalateAfterMinutes,
+      delivery_reminder_minutes_after: policy.milestoneReminders.deliveryReminderMinutesAfter,
+      delivery_retry_interval_minutes: policy.milestoneReminders.deliveryRetryIntervalMinutes,
+      delivery_escalate_after_minutes: policy.milestoneReminders.deliveryEscalateAfterMinutes,
       overdue_warning_minutes: policy.milestoneReminders.overdueWarningMinutes,
     },
     message_templates: {
@@ -280,6 +316,9 @@ export function serializeChainDispatchPolicy(policy: ChainDispatchPolicy): Recor
       shipper_reminder: policy.messageTemplates.shipperReminder,
       shipper_reminder_second: policy.messageTemplates.shipperReminderSecond,
       shipper_escalation_alert: policy.messageTemplates.shipperEscalationAlert,
+      delivery_reminder: policy.messageTemplates.deliveryReminder,
+      delivery_reminder_second: policy.messageTemplates.deliveryReminderSecond,
+      delivery_escalation_alert: policy.messageTemplates.deliveryEscalationAlert,
       overdue_alert: policy.messageTemplates.overdueAlert,
     },
   }

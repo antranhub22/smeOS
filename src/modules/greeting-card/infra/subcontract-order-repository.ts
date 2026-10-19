@@ -119,6 +119,21 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
   }
 
   /**
+   * Tìm đơn hàng gia công theo ID (dùng cho Coordinator-Stream APIs nội bộ, có scope tenant).
+   */
+  async findSubcontractById(orderId: string, organizationId: string) {
+    return this.db.orders.findFirst({
+      where: { id: orderId, organization_id: organizationId },
+      include: {
+        coordination: true,
+        items: true,
+        greeting_sessions: true,
+        customer: true,
+      },
+    })
+  }
+
+  /**
    * Tra cứu chi nhánh trong phạm vi tổ chức cho màn hình Thẻ Gia Công công khai.
    * Hỗ trợ tìm trong cả bảng branches lẫn danh sách chain_branches được import qua Excel vào settings.
    */
