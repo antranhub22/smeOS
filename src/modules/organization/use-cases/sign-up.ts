@@ -31,6 +31,7 @@ export type SignUpInput = {
   name?: string | null
   organizationName: string
   industryKey?: string | undefined
+  organizationType?: "SINGLE" | "CHAIN" | undefined
   seedProfile?: boolean | undefined
 }
 
@@ -94,14 +95,20 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
     if (!slug) throw conflict("Không sinh được định danh cho tên tổ chức này")
 
     const chosenIndustry = input.industryKey || "FLORAL"
+    const chosenType = input.organizationType === "CHAIN" ? "CHAIN" : "SINGLE"
+    const isChain = chosenType === "CHAIN"
+
     const organization = await organizations.create({
       name: organizationName,
       slug,
-      type: "EXPERIENCE",
+      type: chosenType,
       credit_balance: TRIAL_CREDIT_BALANCE,
       settings: {
         industry: chosenIndustry,
         industry_locked: true, // Khóa đổi ngành ngay sau khi chọn ban đầu
+        brochure_workflow_policy: {
+          require_coordinator_acceptance: isChain,
+        },
       },
     })
 

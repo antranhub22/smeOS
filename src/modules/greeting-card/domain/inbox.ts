@@ -243,12 +243,17 @@ export function inboxActions(items: PipelineLike[], role: MessageRole, userId: s
           urgency: 950,
         })
       } else if (i.currentStepId === "STEP_5_PAYMENT_CONFIRMED" || (i.currentStepId === "STEP_4_PAYMENT_PENDING" && isReported)) {
+        const isWaitingAcceptance = i.productionStatus === "WAITING"
         out.push({
           ...base,
           id: `assign:${i.id}`,
           kind: "ASSIGN",
-          title: "Phân công thợ cắm hoa — Thẩm định nhận đơn",
-          detail: `${code(i)} · ${i.productName} · Đã có bill chuyển khoản · Nhận đơn hoặc từ chối hoàn tiền`,
+          title: isWaitingAcceptance
+            ? "Thẩm định nhận đơn (Liên hệ chuỗi)"
+            : "Phân công sản xuất",
+          detail: isWaitingAcceptance
+            ? `${code(i)} · ${i.productName} · Cần liên hệ cửa hàng trong chuỗi để nhận đơn hoặc từ chối hoàn tiền`
+            : `${code(i)} · ${i.productName} · Đơn đã tiếp nhận · Sẵn sàng phân công sản xuất`,
           tab: "coordinator",
           urgency: 750,
         })

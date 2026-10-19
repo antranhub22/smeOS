@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Ban, Check, RotateCcw, Tag } from "lucide-react"
+import { Ban, Check, ClipboardCheck, RotateCcw, Tag, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { paymentCheckOf } from "@/modules/greeting-card/domain/payment-check"
@@ -72,6 +72,10 @@ export function AdminOrderTable({
             const isDepositPaid = isDepositOrder && o.paid_vnd >= depositAmount
             const isFullyPaid = o.total_vnd > 0 && o.paid_vnd >= o.total_vnd
             const requireFull = policy?.requireFullBeforeDispatch !== false
+            const canAdminConfirmOrder =
+              o.status === "CONFIRMED" &&
+              (o.production_status === "WAITING" || !o.production_status) &&
+              o.delivery_status !== "DELIVERED"
 
             // Thu lần 2: cùng luật với máy chủ (`balanceCollectionBlocker`) để nút không lệch điều máy chủ cho phép
             const isReady = o.production_status === "READY"
@@ -145,6 +149,11 @@ export function AdminOrderTable({
                 </td>
                 <td className="px-4 py-3">
                   <span className={`px-2.5 py-0.5 rounded-full text-caption font-bold ${badge.className}`}>{badge.label}</span>
+                  {canAdminConfirmOrder && (
+                    <div className="mt-1 text-caption font-bold text-warning bg-warning-bg px-2 py-0.5 rounded-md border border-warning/30 inline-flex items-center gap-1">
+                      📋 Chờ xác nhận đơn
+                    </div>
+                  )}
                   {balance > 0 && o.status !== "CANCELLED" && o.greeting_sessions[0]?.status === "PAYMENT_REPORTED" && (
                     <div className="mt-1 text-caption font-bold text-info">Khách báo đã chuyển</div>
                   )}
@@ -184,6 +193,32 @@ export function AdminOrderTable({
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-bold bg-success/15 text-success">
                         <Check size={12} /> {coordinatorPayment ? "Đã thu đủ (Đ/P duyệt)" : "Đã thu đủ"}
                       </span>
+                    )}
+
+                    {/* Gate 1b: Xác nhận đơn hàng (Điều hành) */}
+                    {canAdminConfirmOrder && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => onAction({ type: "confirm-order", order: o })}
+                          className="h-8 bg-success hover:bg-success/90 text-white text-caption font-extrabold gap-1 shadow-sm ring-2 ring-success/30"
+                          title="Xác nhận cửa hàng nhận thực hiện đơn (chuyển sang sản xuất & thông báo khách)"
+                        >
+                          <ClipboardCheck size={13} /> Xác nhận đơn
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => onAction({ type: "reject-order", order: o })}
+                          className="h-8 border-danger/40 text-danger hover:bg-danger-bg text-caption font-bold gap-1"
+                          title="Từ chối đơn & hoàn tiền cho khách"
+                        >
+                          <XCircle size={13} /> Từ chối
+                        </Button>
+                      </>
                     )}
 
                     {/* 2. Nút thu tiền duy nhất khi đủ điều kiện */}

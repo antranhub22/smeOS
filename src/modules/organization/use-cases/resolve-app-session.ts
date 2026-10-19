@@ -63,5 +63,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
     // điều hướng theo vai. Đã có sẵn trong `describeSession` (GET /auth/me).
     roleKey: described.membership?.role_key ?? null,
     organizationType: described.organization?.type ?? null,
+    pendingModelChange:
+      (orgSettings?.pending_model_change as MockSession["pendingModelChange"]) ?? null,
   }
 })

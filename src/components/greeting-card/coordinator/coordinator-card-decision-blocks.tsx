@@ -41,6 +41,7 @@ export function CoordinatorCardDecisionBlocks({
   const acceptBlocker = coordinatorAcceptanceBlocker(
     { status: order.status, productionStatus: order.production_status, deliveryStatus: order.delivery_status },
     { paidVnd: order.paid_vnd, paymentProofUrl },
+    workflowPolicy,
   )
 
   const isDepositOrder = order.paid_vnd > 0 && order.paid_vnd < order.total_vnd
@@ -57,13 +58,15 @@ export function CoordinatorCardDecisionBlocks({
       })
     : null
 
+  const isChain = workflowPolicy?.requireCoordinatorAcceptance === true
+
   return (
     <>
-      {acceptBlocker === null && (
+      {isChain && acceptBlocker === null && (
         <div className="flex flex-col gap-2 p-3 rounded-xl border-2 border-dashed border-success/40 bg-success-bg/30">
           <p className="text-body-sm font-bold text-success text-center flex items-center justify-center gap-1.5">
             <ShieldCheck size={16} />
-            Đơn hàng chờ Điều phối xác nhận nhận đơn
+            Đơn hàng chờ Điều phối liên hệ chuỗi & Xác nhận nhận đơn
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Button
@@ -75,6 +78,38 @@ export function CoordinatorCardDecisionBlocks({
             >
               <CheckCircle2 size={15} />
               Xác nhận Nhận đơn
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onOpen({ type: "reject-order", orderId: order.id, orderCode: order.code })}
+              className="h-9 text-body-sm font-bold gap-1.5 border-danger/40 text-danger hover:bg-danger-bg"
+            >
+              <XCircle size={15} />
+              Từ chối (Hoàn tiền)
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* 1 Cửa hàng: Đơn chờ Điều hành xác nhận đơn (Gate 1b) */}
+      {!isChain && order.status === "CONFIRMED" && (order.production_status === "WAITING" || !order.production_status) && (
+        <div className="flex flex-col gap-2 p-3 rounded-xl border-2 border-dashed border-warning/40 bg-warning-bg">
+          <p className="text-body-sm font-bold text-warning text-center flex items-center justify-center gap-1.5">
+            <ShieldCheck size={16} />
+            Đơn hàng chờ Điều hành xác nhận đơn
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              onClick={() => onOpen({ type: "accept-order", orderId: order.id, orderCode: order.code })}
+              className="h-9 text-body-sm font-extrabold gap-1.5 bg-success hover:bg-success/90 text-white"
+            >
+              <CheckCircle2 size={15} />
+              Xác nhận Đơn
             </Button>
             <Button
               type="button"

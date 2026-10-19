@@ -8,7 +8,7 @@ import { apiSend } from "@/components/greeting-card/greeting-api"
 import { type BrochurePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
 import { readPaymentPlan } from "@/modules/greeting-card/domain/payment-plan"
 import { depositAmountVnd } from "@/modules/greeting-card/domain/payment-schedule"
-import { vnd, type ActionResult, type OrderAction } from "./admin-order-types"
+import { vnd, type ActionResult, type AdminOrderDialogAction } from "./admin-order-types"
 import { customerPaymentMessage } from "@/modules/greeting-card/domain/customer-notifications"
 import { AlertTriangle, Info } from "lucide-react"
 import { useNow } from "@/components/greeting-card/work/use-worklist"
@@ -33,7 +33,7 @@ export function AdminOrderActionDialog({
   onClose,
   onDone,
 }: {
-  action: OrderAction
+  action: AdminOrderDialogAction
   policy: BrochurePaymentPolicy
   onClose: () => void
   onDone: (result: ActionResult) => void

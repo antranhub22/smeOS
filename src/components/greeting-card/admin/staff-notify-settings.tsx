@@ -134,7 +134,7 @@ export function StaffNotifySettings() {
                   >
                     <div>
                       <div className="text-body-sm font-semibold">{STAFF_NOTIFY_CHANNEL_LABELS[ch]}</div>
-                      {!isAllowed && <div className="text-[10px] text-danger">Chưa cấp phép SaaS</div>}
+                      {!isAllowed && <div className="text-caption text-danger">Chưa cấp phép SaaS</div>}
                     </div>
                     {isChecked && <ShieldCheck size={16} className="text-primary" />}
                   </button>

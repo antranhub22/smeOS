@@ -28,13 +28,13 @@ import {
 } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 
 export function BrochureWorkflowSettings() {
-  const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
+  const org = useApi<{ type?: string; settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const [draft, setDraft] = useState<BrochureWorkflowPolicy | null>(null)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
 
-  const policy = draft ?? (org.data ? parseBrochureWorkflowPolicy(org.data.settings) : null)
+  const policy = draft ?? (org.data ? parseBrochureWorkflowPolicy(org.data.settings, org.data.type) : null)
 
   const handleApplyPreset = (preset: "LEAN" | "STANDARD" | "STRICT") => {
     let newPolicy: BrochureWorkflowPolicy
@@ -96,27 +96,9 @@ export function BrochureWorkflowSettings() {
   }
 
   const PRESETS: Array<{ id: WorkflowPreset; title: string; subtitle: string; desc: string; icon: React.ReactNode }> = [
-    {
-      id: "LEAN",
-      title: "Tinh Gọn (Tốc Độ)",
-      subtitle: "Tiệm 1–3 người",
-      desc: "3 chạm là giao. Bỏ chặn duyệt cọc, ảnh thành phẩm tùy chọn, giao trước thu COD sau.",
-      icon: <Zap size={18} className="text-warning" />,
-    },
-    {
-      id: "STANDARD",
-      title: "Tiêu Chuẩn",
-      subtitle: "Tiệm vừa 4–10 người",
-      desc: "Mặc định an toàn. Điều hành duyệt cọc, ảnh thành phẩm chờ khách duyệt 10 phút (được bỏ qua ảnh khi cần), thu đủ trước khi giao.",
-      icon: <ShieldCheck size={18} className="text-primary" />,
-    },
-    {
-      id: "STRICT",
-      title: "Nghiêm Ngặt",
-      subtitle: "Chuỗi lớn & Cao cấp",
-      desc: "Kiểm soát tuyệt đối. Bắt buộc Điều hành duyệt tiền, bắt buộc 2 lần ảnh (thành phẩm + người nhận, không có nút bỏ qua), chờ khách duyệt ảnh tối đa 30 phút.",
-      icon: <Building2 size={18} className="text-foreground" />,
-    },
+    { id: "LEAN", title: "Tinh Gọn (Tốc Độ)", subtitle: "Tiệm 1–3 người", desc: "3 chạm là giao. Bỏ chặn duyệt cọc, tự động nhận đơn sản xuất, ảnh tùy chọn, giao trước thu COD sau.", icon: <Zap size={18} className="text-warning" /> },
+    { id: "STANDARD", title: "Tiêu Chuẩn", subtitle: "Tiệm vừa 4–10 người", desc: "Mặc định 1 cửa hàng. Điều hành duyệt cọc & tự động nhận đơn, ảnh thành phẩm đếm ngược 10p, thu đủ trước khi giao.", icon: <ShieldCheck size={18} className="text-primary" /> },
+    { id: "STRICT", title: "Nghiêm Ngặt", subtitle: "Chuỗi lớn & Cao cấp", desc: "Kiểm soát tuyệt đối. Bắt buộc Điều hành duyệt tiền, Điều phối liên hệ chuỗi nhận đơn, bắt buộc 2 lần ảnh.", icon: <Building2 size={18} className="text-foreground" /> },
   ]
 
   return (
@@ -201,6 +183,24 @@ export function BrochureWorkflowSettings() {
                 type="checkbox"
                 checked={policy.requireAdminDepositApproval}
                 onChange={(e) => handleToggle("requireAdminDepositApproval", e.target.checked)}
+                className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
+              />
+            </div>
+
+            {/* Gate 2: Bắt buộc Điều phối thẩm định & Nhận đơn (Chuỗi vs 1 Cửa hàng) */}
+            <div className="flex items-start justify-between gap-3 pt-3">
+              <div>
+                <label className="text-body-sm font-bold text-foreground block">
+                  Bắt buộc Điều phối thẩm định & Nhận đơn (Gate 2 — Chuỗi cửa hàng)
+                </label>
+                <p className="text-caption text-text-muted">
+                  Bật (Chuỗi): Điều phối phải liên hệ các cửa hàng trong chuỗi và bấm Nhận đơn mới vào sản xuất. Tắt (1 Cửa hàng): Duyệt tiền là tự động nhận đơn vào sản xuất ngay.
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={policy.requireCoordinatorAcceptance}
+                onChange={(e) => handleToggle("requireCoordinatorAcceptance", e.target.checked)}
                 className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
               />
             </div>

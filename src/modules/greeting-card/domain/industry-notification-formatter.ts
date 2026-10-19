@@ -30,6 +30,11 @@ export function formatIndustryStaffNotificationText(
           title: `🏡 ${code} Có lượt đặt phòng lưu trú mới!`,
           message: `${customer}${item}${amount}${dates}. Quản gia/Lễ tân kiểm tra phòng và chuẩn bị đón tiếp.${note}`,
         }
+      case "ORDER_ACCEPTED":
+        return {
+          title: `✅ ${code} Đơn lưu trú đã được tiếp nhận!`,
+          message: `${customer}${item}${amount}${dates}. Phòng đã được xác nhận — Quản gia bắt đầu chuẩn bị phòng đón khách.${note}`,
+        }
       case "PAYMENT_REPORTED":
         return {
           title: `${code} Khách báo đã chuyển khoản tiền phòng`,
@@ -86,6 +91,11 @@ export function formatIndustryStaffNotificationText(
           title: `🍲 ${code} Có đơn gọi món mới!`,
           message: `${customer}${item}${amount}. Bếp tiếp nhận đơn và bắt đầu chế biến.${note}`,
         }
+      case "ORDER_ACCEPTED":
+        return {
+          title: `✅ ${code} Đơn đã được tiếp nhận!`,
+          message: `${customer}${item}${amount}. Bếp xác nhận thực hiện được đơn — bắt đầu chuẩn bị.${note}`,
+        }
       case "PAYMENT_CONFIRMED":
         return {
           title: `${code} Thanh toán thành công, Bếp tiếp nhận làm món`,
@@ -112,6 +122,11 @@ export function formatIndustryStaffNotificationText(
           title: `👗 ${code} Có đơn may đo / mua sắm mới!`,
           message: `${customer}${item}${amount}. Thợ may & Kho tiếp nhận yêu cầu.${note}`,
         }
+      case "ORDER_ACCEPTED":
+        return {
+          title: `✅ ${code} Đơn may đo đã được xác nhận!`,
+          message: `${customer}${item}${amount}. Thợ may tiếp nhận đơn — bắt đầu cắt may.${note}`,
+        }
       case "READY":
         return {
           title: `✨ ${code} Trang phục đã may đo hoàn thiện & QC`,
@@ -128,6 +143,11 @@ export function formatIndustryStaffNotificationText(
           title: `💆 ${code} Có lịch hẹn dịch vụ mới!`,
           message: `${customer}${item}${amount}. Kỹ thuật viên tiếp nhận lịch phục vụ.${note}`,
         }
+      case "ORDER_ACCEPTED":
+        return {
+          title: `✅ ${code} Lịch dịch vụ đã được tiếp nhận!`,
+          message: `${customer}${item}${amount}. Kỹ thuật viên xác nhận được lịch — chuẩn bị dụng cụ và đến đúng giờ.${note}`,
+        }
       case "READY":
         return {
           title: `${code} Dịch vụ đã chuẩn bị sẵn sàng`,
@@ -142,6 +162,11 @@ export function formatIndustryStaffNotificationText(
       return {
         title: `${code} Có đơn hàng mới!`,
         message: `${customer}${item}${amount}. Kiểm tra và xác nhận đơn ngay.${note}`,
+      }
+    case "ORDER_ACCEPTED":
+      return {
+        title: `✅ ${code} Đơn hàng đã được tiếp nhận!`,
+        message: `${customer}${item}${amount}. Điều hành xác nhận đơn — Bắt đầu chuẩn bị sản phẩm và giao hàng.${note}`,
       }
     case "PAYMENT_REPORTED":
       return {

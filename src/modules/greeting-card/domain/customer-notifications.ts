@@ -70,8 +70,8 @@ export function smsText(event: NotifyEvent, p: NotifyParams, options?: { isBalan
     ORDER_ACCEPTED: `${p.shop_name}: Da xac nhan nhan don ${p.order_code}. Xuong hoa da tiep nhan va dang chuan bi cam hoa.`,
     QUOTED: `${p.shop_name}: Don ${p.order_code} da co gia ${p.amount}. Mo link de xem ma QR thanh toan.`,
     PAYMENT_REMINDER: `${p.shop_name}: Don ${p.order_code} dang cho chuyen khoan ${p.amount}. Mo link de xem ma QR.`,
-    DEPOSIT_RECEIVED: `${p.shop_name}: Chuyen khoan thanh cong! Da nhan tien coc ${p.amount} cho don ${p.order_code}. Cua hang se xac nhan don trong vong 30' (hoan tien neu khong the phuc vu).`,
-    PAYMENT_COMPLETED: `${p.shop_name}: Chuyen khoan thanh cong! Da nhan du ${p.amount} cho don ${p.order_code}. Cua hang se xac nhan don trong vong 30' (hoan tien neu khong the phuc vu).`,
+    DEPOSIT_RECEIVED: `${p.shop_name}: Chuyen khoan thanh cong! Da nhan tien coc ${p.amount} cho don ${p.order_code}. Cua hang se xac nhan don va bat dau chuan bi trong vong 30' (hoan tien neu khong the phuc vu).`,
+    PAYMENT_COMPLETED: `${p.shop_name}: Chuyen khoan thanh cong! Da nhan du ${p.amount} cho don ${p.order_code}. Cua hang se xac nhan don va bat dau chuan bi trong vong 30' (hoan tien neu khong the phuc vu).`,
     SUBSTITUTE_PROPOSED: `${p.shop_name}: Mau hoa don ${p.order_code} tam thoi khong lam duoc. Mo link de chon mau thay the hoac phan hoi cua hang.`,
     READY: readyText,
     DISPATCHED: `${p.shop_name}: Don ${p.order_code} dang duoc giao den nguoi nhan.`,
@@ -97,8 +97,8 @@ export function customerPaymentMessage(p: { orderCode: string; amountVnd: number
   const head = p.balanceVnd > 0
     ? `Cửa hàng xác nhận: Chuyển khoản thành công! Đã nhận ${money(p.amountVnd)} (tiền cọc) cho đơn hoa ${p.orderCode}, còn ${money(p.balanceVnd)}.`
     : `Cửa hàng xác nhận: Chuyển khoản thành công! Đã nhận đủ ${money(p.amountVnd)} cho đơn hoa ${p.orderCode}.`
-  const confirmText = `Cửa hàng sẽ xác nhận đơn hàng trong vòng 30’ (Điểm Điều phối kiểm tra nhận đơn hoặc hoàn tiền cho khách nếu không thể phục vụ).`
-  return p.trackingUrl ? `${head} ${confirmText} Theo dõi đơn và ảnh hoa tại: ${p.trackingUrl}` : `${head} ${confirmText}`
+  const confirmText = `Cửa hàng sẽ xác nhận đơn và bắt đầu chuẩn bị trong vòng 30 phút (hoàn tiền nếu không thể phục vụ).`
+  return p.trackingUrl ? `${head} ${confirmText} Theo dõi tiến độ tại: ${p.trackingUrl}` : `${head} ${confirmText}`
 }
 
 /**

@@ -179,11 +179,12 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
   async getShopProfile(organizationId: string) {
     const org = await this.db.organizations.findUnique({
       where: { id: organizationId },
-      select: { name: true, settings: true, business_profile: { select: { display_name: true, phone: true } } },
+      select: { name: true, type: true, settings: true, business_profile: { select: { display_name: true, phone: true } } },
     })
     return {
       name: org?.business_profile?.display_name || org?.name || "Cửa hàng",
       phone: org?.business_profile?.phone ?? null,
+      type: org?.type ?? "SINGLE",
       settings: org?.settings ?? null,
     }
   }

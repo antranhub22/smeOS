@@ -6,6 +6,7 @@ import type { MessageRole } from "./internal-message"
 
 export const STAFF_NOTIFY_EVENTS = [
   "ORDER_RECEIVED",
+  "ORDER_ACCEPTED",
   "PAYMENT_REPORTED",
   "PAYMENT_CONFIRMED",
   "CANCELLATION_REQUESTED",
@@ -21,6 +22,7 @@ export type StaffNotifyEvent = (typeof STAFF_NOTIFY_EVENTS)[number]
 
 export const STAFF_NOTIFY_EVENT_LABELS: Record<StaffNotifyEvent, string> = {
   ORDER_RECEIVED: "Có đơn hàng mới",
+  ORDER_ACCEPTED: "Đơn hàng đã được tiếp nhận — bắt đầu sản xuất",
   PAYMENT_REPORTED: "Khách báo đã chuyển khoản (Lần 1)",
   PAYMENT_CONFIRMED: "Xác nhận chuyển khoản thành công",
   CANCELLATION_REQUESTED: "Khách yêu cầu huỷ đơn hàng",

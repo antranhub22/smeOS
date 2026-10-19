@@ -226,13 +226,18 @@ export async function coordinatorAcceptBrochureOrder(
   repo = new BrochureOrderRepository(),
   shops = new GreetingCardRepository()
 ) {
-  const order = await repo.findBrochureOrder(ctx, orderId)
+  const [order, shop] = await Promise.all([
+    repo.findBrochureOrder(ctx, orderId),
+    shops.getShopProfile(ctx.organizationId),
+  ])
   if (!order) throw notFound()
+  const workflow = parseBrochureWorkflowPolicy(shop.settings, shop.type)
   // Cùng luật với nút trên giao diện: đơn đã huỷ/đã giao/đã tiếp nhận/đã vào sản xuất, hoặc chưa có
   // thông tin chuyển khoản nào → không tiếp nhận (gọi thẳng API cũng bị chặn)
   const acceptBlocker = coordinatorAcceptanceBlocker(
     { status: order.status, productionStatus: order.production_status, deliveryStatus: order.delivery_status },
-    { paidVnd: Number(order.paid_vnd), paymentProofUrl: order.greeting_sessions?.[0]?.payment_proof_asset_id ?? null }
+    { paidVnd: Number(order.paid_vnd), paymentProofUrl: order.greeting_sessions?.[0]?.payment_proof_asset_id ?? null },
+    workflow
   )
   if (acceptBlocker) throw conflict(acceptBlocker)
 
@@ -244,10 +249,8 @@ export async function coordinatorAcceptBrochureOrder(
   const hasProofOrReported = Boolean(session?.payment_proof_asset_id || session?.status === "PAYMENT_REPORTED")
 
   // Ghi nhận cọc khi người bấm là Điều hành (R11), hoặc chính sách tiệm cho Điều phối duyệt cọc (như /confirm-deposit)
-  const shop = await shops.getShopProfile(ctx.organizationId)
   const deliveryWindow = order.delivery_window as { date?: string; timeSlot?: string } | null
   const minutesWaiting = Math.floor((Date.now() - new Date(order.created_at).getTime()) / 60_000)
-  const workflow = parseBrochureWorkflowPolicy(shop.settings)
   const mayConfirmDeposit = canRoleApproveDeposit(depositApproverRole(hasCapability(ctx, GREETING_CARD_CAPABILITY.paymentRecord)), workflow, {
     isUrgent: isUrgentOrder({ deliveryDate: deliveryWindow?.date, deliveryTimeSlot: deliveryWindow?.timeSlot }),
     isOverdueSla: minutesWaiting >= workflow.slaEscalationMinutes,

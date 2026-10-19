@@ -52,11 +52,11 @@ export function MatrixGrid({
                   <div className="space-y-1">
                     <p className="font-bold text-text truncate">{industry.name}</p>
                     <div className="flex items-center justify-center gap-1">
-                      <Badge tone={hiddenCount === 0 ? "success" : "neutral"} className="text-[10px]">
+                      <Badge tone={hiddenCount === 0 ? "success" : "neutral"} className="text-caption">
                         {hiddenCount === 0 ? "Hiện 100%" : `Ẩn ${hiddenCount}`}
                       </Badge>
                     </div>
-                    <div className="flex items-center justify-center gap-1 pt-1 text-[11px] text-text-muted">
+                    <div className="flex items-center justify-center gap-1 pt-1 text-caption text-text-muted">
                       <button
                         type="button"
                         onClick={() => onSetColumnAll(industry.key, true)}
@@ -105,11 +105,11 @@ export function MatrixGrid({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-text">{item.label}</span>
-                        <span className="text-[10px] text-text-muted font-mono bg-surface-alt px-1.5 py-0.5 rounded">
+                        <span className="text-caption text-text-muted font-mono bg-surface-alt px-1.5 py-0.5 rounded">
                           {item.navKey}
                         </span>
                       </div>
-                      <p className="text-[11px] text-text-muted font-mono">{item.href}</p>
+                      <p className="text-caption text-text-muted font-mono">{item.href}</p>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 sm:opacity-70">
                       <button

@@ -31,6 +31,22 @@ export const STAFF_NOTIFY_MATRIX: Record<StaffNotifyEvent, StaffRecipientTarget[
     },
   ],
 
+  /** Gate 1b: Điều hành xác nhận đơn (1 Cửa hàng) hoặc Điều phối nhận đơn (Chuỗi) */
+  ORDER_ACCEPTED: [
+    {
+      role: "COORDINATOR",
+      dispatchMode: "BROADCAST",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM"],
+      priority: "URGENT",
+    },
+    {
+      role: "SALE",
+      dispatchMode: "OWNER",
+      channels: ["APP_INBOX"],
+      priority: "NORMAL",
+    },
+  ],
+
   PAYMENT_REPORTED: [
     {
       role: "ADMIN",

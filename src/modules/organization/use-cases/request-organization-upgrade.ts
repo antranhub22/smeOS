@@ -16,28 +16,51 @@ export type RequestOrganizationUpgradeInput = {
   note?: string | null
 }
 
+export type PendingModelChange = {
+  requested_type: RequestedOrganizationType
+  requested_at: string
+  requested_by: string
+  note: string | null
+}
+
 /**
- * Ghi lại yêu cầu chuyển từ tổ chức Trải nghiệm sang tổ chức thật (1 cửa
- * hàng hoặc Chuỗi cửa hàng) — nhánh "Chuyển sang tổ chức thật" ở Experience
- * Grid (đặc tả 03 mục 6).
+ * Ghi lại yêu cầu chuyển đổi mô hình tổ chức (1 cửa hàng ↔ Chuỗi, hoặc từ Trải nghiệm lên thật).
  *
- * KHÔNG tự đổi `organizations.type`/`workspaces.kind` ngay lập tức: cùng
- * nguyên tắc đã chốt với việc nạp credit
- * (`OrganizationRepository.topUpCredit` — "chưa có khái niệm quản trị nền
- * tảng qua API", chỉ chạy tay qua `scripts/nap-credit.ts`). Chuyển đổi tổ
- * chức kéo theo thu phí/xuất hoá đơn, đang ngoài phạm vi giai đoạn này (PRD
- * mục 4). Ghi vào `audit_logs` — hạ tầng đã có sẵn (dùng lại thay vì dựng
- * bảng riêng) — để người vận hành nền tảng thấy yêu cầu và xử lý thủ công.
+ * KHÔNG tự đổi `organizations.type` ngay lập tức: Việc chuyển đổi mô hình làm thay đổi
+ * luồng duyệt đơn (Gate 2), số chi nhánh và quy mô vận hành, BẮT BUỘC phải được Quản trị viên
+ * SaaS (Admin) thẩm định và phê duyệt.
+ *
+ * Yêu cầu được lưu vào `settings.pending_model_change` để hiển thị trạng thái chờ duyệt trên UI,
+ * đồng thời ghi vết vào `audit_logs` để Admin SaaS theo dõi và xử lý tại Console Vận hành.
  */
 export async function requestOrganizationUpgrade(
   ctx: TenantContext,
   input: RequestOrganizationUpgradeInput
-): Promise<{ recorded: true }> {
-  const organization = await new OrganizationRepository().current(ctx)
+): Promise<{ recorded: true; pendingChange: PendingModelChange }> {
+  const orgRepo = new OrganizationRepository()
+  const organization = await orgRepo.current(ctx)
   if (!organization) throw validationFailed({ organization: "Không tìm thấy tổ chức" })
-  if (organization.type !== "EXPERIENCE") {
-    throw conflict("Tổ chức của bạn không còn ở trạng thái dùng thử")
+
+  if (organization.type === input.requestedType) {
+    throw conflict("Tổ chức của bạn hiện đã ở mô hình này")
   }
+
+  const currentSettings =
+    organization.settings && typeof organization.settings === "object"
+      ? (organization.settings as Record<string, unknown>)
+      : {}
+
+  const pendingChange: PendingModelChange = {
+    requested_type: input.requestedType,
+    requested_at: new Date().toISOString(),
+    requested_by: ctx.userId,
+    note: input.note ?? null,
+  }
+
+  await orgRepo.updateSettings(ctx, {
+    ...currentSettings,
+    pending_model_change: pendingChange,
+  })
 
   await recordAuditLog(ctx, {
     action: "organization.upgrade_requested",
@@ -47,5 +70,6 @@ export async function requestOrganizationUpgrade(
     after: { requested_type: input.requestedType, note: input.note ?? null },
   })
 
-  return { recorded: true }
+  return { recorded: true, pendingChange }
 }
+

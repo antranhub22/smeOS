@@ -72,17 +72,26 @@ export interface OrderProgressState {
 /**
  * Đơn cần Điều phối xác nhận nhận đơn? Trả `null` nếu nút Xác nhận nên hiện,
  * hoặc lý do chặn nếu đơn không ở trạng thái chờ xác nhận.
- * Điều kiện: đơn DRAFT + đã có ảnh chuyển khoản hoặc đã nhận tiền + production chưa bắt đầu.
+ * - Mô hình 1 Cửa hàng (requireCoordinatorAcceptance = false): Điều hành duyệt tiền là đơn vào sản xuất, không chờ Điều phối.
+ * - Mô hình Chuỗi (requireCoordinatorAcceptance = true): Dù đã CONFIRMED tiền, Điều phối vẫn cần liên hệ chi nhánh và bấm Nhận đơn khi productionStatus = WAITING.
  */
 export function coordinatorAcceptanceBlocker(
   s: OrderProgressState,
   payment: { paidVnd: number; paymentProofUrl?: string | null | undefined },
+  workflowPolicy?: { requireCoordinatorAcceptance?: boolean } | undefined
 ): string | null {
   if (s.status === "CANCELLED") return "Đơn hàng đã huỷ"
   if (s.status === "COMPLETED" || s.deliveryStatus === "DELIVERED") return "Đơn hàng đã giao xong"
-  if (s.status === "CONFIRMED" || s.status === "PROCESSING") return "Đơn đã được xác nhận nhận đơn"
   if (s.productionStatus === "ASSIGNED" || s.productionStatus === "ARRANGING" || s.productionStatus === "READY") {
     return "Đơn đã vào sản xuất"
+  }
+  // Với 1 Cửa hàng: Khi đã CONFIRMED tiền thì không cần Điều phối nhận đơn riêng
+  if (workflowPolicy?.requireCoordinatorAcceptance === false && (s.status === "CONFIRMED" || s.status === "PROCESSING")) {
+    return "Đơn đã được xác nhận nhận đơn"
+  }
+  // Tương thích ngược: Nếu không truyền workflowPolicy và đã CONFIRMED/PROCESSING
+  if (workflowPolicy === undefined && (s.status === "CONFIRMED" || s.status === "PROCESSING")) {
+    return "Đơn đã được xác nhận nhận đơn"
   }
   const hasProof = Boolean(payment.paymentProofUrl)
   if (payment.paidVnd <= 0 && !hasProof) return "Chưa có thông tin chuyển khoản từ khách"

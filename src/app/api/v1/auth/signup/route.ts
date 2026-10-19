@@ -13,6 +13,7 @@ const schema = z.object({
   name: z.string().nullish(),
   organization_name: z.string(),
   industry_key: z.string().nullish(),
+  organization_type: z.enum(["SINGLE", "CHAIN"]).default("SINGLE"),
 })
 
 export const POST = handle(async (request) => {
@@ -25,6 +26,7 @@ export const POST = handle(async (request) => {
     name: parsed.data.name ?? null,
     organizationName: parsed.data.organization_name,
     industryKey: parsed.data.industry_key ?? undefined,
+    organizationType: parsed.data.organization_type,
     // PO 08/10/2026: Đăng ký thật luôn để hồ sơ trống — không seed mock data bất kể môi trường.
     // Chỉ luồng instant-trial (dùng thử) mới seed hồ sơ mẫu theo ngành.
     seedProfile: false,

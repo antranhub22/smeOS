@@ -10,6 +10,7 @@ import type { ModalState } from "./coordinator-order-card"
 import { DeliveryFailedModal } from "./delivery-failed-modal"
 import { SubstituteProposalModal } from "./substitute-proposal-modal"
 import { CoordinatorAcceptRejectModal } from "./coordinator-accept-reject-modal"
+import { AdminConfirmOrderModal } from "./admin-confirm-order-modal"
 import { CoordinatorConfirmBalanceModal } from "./coordinator-confirm-balance-modal"
 import { CoordinatorConfirmDepositModal } from "./coordinator-confirm-deposit-modal"
 import { useSession } from "@/lib/session"
@@ -26,6 +27,8 @@ export function CoordinatorActionModal({ modal, onClose, onDone, allowSkipPhoto 
   /** Gói Nghiêm ngặt bắt buộc ảnh → ẩn "Bỏ qua ảnh" (máy chủ cũng chặn) */
   allowSkipPhoto?: Record<"product-photo" | "recipient-photo", boolean> | undefined
 }) {
+  const { organizationType } = useSession()
+
   if (modal.type === "cancel-proposal") {
     return (
       <CancellationProposalModal
@@ -46,7 +49,26 @@ export function CoordinatorActionModal({ modal, onClose, onDone, allowSkipPhoto 
     return <SubstituteProposalModal orderId={modal.orderId} orderCode={modal.orderCode} onClose={onClose} onDone={onDone} />
   }
   if (modal.type === "accept-order" || modal.type === "reject-order") {
-    return <CoordinatorAcceptRejectModal mode={modal.type === "accept-order" ? "accept" : "reject"} orderId={modal.orderId} orderCode={modal.orderCode} onClose={onClose} onDone={onDone} />
+    if (organizationType === "CHAIN") {
+      return (
+        <CoordinatorAcceptRejectModal
+          mode={modal.type === "accept-order" ? "accept" : "reject"}
+          orderId={modal.orderId}
+          orderCode={modal.orderCode}
+          onClose={onClose}
+          onDone={onDone}
+        />
+      )
+    }
+    return (
+      <AdminConfirmOrderModal
+        mode={modal.type === "accept-order" ? "confirm" : "reject"}
+        orderId={modal.orderId}
+        orderCode={modal.orderCode}
+        onClose={onClose}
+        onDone={onDone}
+      />
+    )
   }
   if (modal.type === "confirm-balance") {
     return (
