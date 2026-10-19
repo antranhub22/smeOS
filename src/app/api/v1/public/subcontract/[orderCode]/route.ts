@@ -11,6 +11,7 @@ import {
 import { commitSubcontractOrder } from "@/modules/greeting-card/domain/subcontract-order"
 import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { TenantContext } from "@/core/tenancy"
@@ -60,10 +61,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   const productImageUrl = (snapshot.image_url as string | undefined) || (snapshot.imageUrl as string | undefined) || null
 
   const deliveryWindow = (order.delivery_window as Record<string, unknown> | null) ?? {}
-  const deliveryAddressObj = (order.delivery_address as Record<string, unknown> | null) ?? {}
-  const deliveryAddress = typeof deliveryAddressObj.address === "string"
-    ? deliveryAddressObj.address
-    : (typeof deliveryAddressObj.full_address === "string" ? deliveryAddressObj.full_address : "Theo thỏa thuận")
+  const deliveryAddress = formatDeliveryAddress(order.delivery_address)
   const deliveryTime = typeof deliveryWindow.timeSlot === "string" && typeof deliveryWindow.date === "string"
     ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
     : "Giao trong ngày"

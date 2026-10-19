@@ -65,3 +65,27 @@ export function normalizeOrderAddress<T extends { deliveryAddress: string; addre
   }
   return { input: { ...input, addressParts: parts, deliveryAddress: composeAddress(parts) }, errors }
 }
+
+/**
+ * Trích xuất chuỗi địa chỉ giao hàng hoàn chỉnh từ trường `delivery_address` trong CSDL.
+ * Hỗ trợ mọi cấu trúc: string, { street }, { full_address }, { fullAddress }, { address }, hoặc { parts }.
+ */
+export function formatDeliveryAddress(raw: unknown): string {
+  if (!raw) return "Theo thỏa thuận"
+  if (typeof raw === "string") return raw.trim() || "Theo thỏa thuận"
+
+  if (typeof raw === "object") {
+    const obj = raw as Record<string, unknown>
+    if (typeof obj.street === "string" && obj.street.trim()) return obj.street.trim()
+    if (typeof obj.full_address === "string" && obj.full_address.trim()) return obj.full_address.trim()
+    if (typeof obj.fullAddress === "string" && obj.fullAddress.trim()) return obj.fullAddress.trim()
+    if (typeof obj.address === "string" && obj.address.trim()) return obj.address.trim()
+
+    if (obj.parts && typeof obj.parts === "object") {
+      const composed = composeAddress(obj.parts as Partial<AddressParts>)
+      if (composed) return composed
+    }
+  }
+
+  return "Theo thỏa thuận"
+}

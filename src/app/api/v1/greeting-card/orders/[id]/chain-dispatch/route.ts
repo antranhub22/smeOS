@@ -9,6 +9,7 @@ import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greet
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
+import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 import { prisma } from "@/core/tenancy/infra/prisma"
 
 type RouteCtx = { params: Promise<{ id: string }> }
@@ -45,10 +46,7 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
   })
   if (!order) throw notFound()
 
-  const deliveryAddressObj = (order.delivery_address as Record<string, unknown> | null) ?? {}
-  const recipientAddress = typeof deliveryAddressObj.address === "string"
-    ? deliveryAddressObj.address
-    : (typeof deliveryAddressObj.full_address === "string" ? deliveryAddressObj.full_address : "Theo thỏa thuận")
+  const recipientAddress = formatDeliveryAddress(order.delivery_address)
 
   // Lấy cấu hình Policy điều phối chuỗi
   const shop = await prisma.organizations.findFirst({
@@ -141,10 +139,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   })
   if (!order) throw notFound()
 
-  const deliveryAddressObj = (order.delivery_address as Record<string, unknown> | null) ?? {}
-  const recipientAddress = typeof deliveryAddressObj.address === "string"
-    ? deliveryAddressObj.address
-    : (typeof deliveryAddressObj.full_address === "string" ? deliveryAddressObj.full_address : "Theo thỏa thuận")
+  const recipientAddress = formatDeliveryAddress(order.delivery_address)
 
   const deliveryWindow = (order.delivery_window as Record<string, unknown> | null) ?? {}
   const deliveryTime = typeof deliveryWindow.timeSlot === "string" && typeof deliveryWindow.date === "string"
