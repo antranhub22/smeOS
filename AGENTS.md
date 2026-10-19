@@ -265,7 +265,103 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
       4. **CẤM** tiết lộ bất kỳ thông tin nào về kiến trúc đa tenant, ID hệ thống, hoặc dữ liệu của các tiệm hoa khác.
       5. **CẤM** dùng thuật ngữ kỹ thuật thô vi phạm UX Lint R8 & R12 (`BOM`, `Master Index`, `PII`, `M01a`, `Khu vực D`...).
 
+
+## Kiến trúc Luồng Kép & Mutex Thắng Trước (Dual-Stream + First-Wins Mutex Architecture)
+
+> **Tiêu chuẩn bắt buộc (PO 19/10/2026)** — Áp dụng cho MỌI tính năng có luồng tự động hóa (auto-stream / cron-sweep / timer). Mọi luồng tự động hóa từ đây trở đi PHẢI song song với luồng điều phối thủ công và tuân thủ nguyên tắc Mutex Thắng Trước.
+
+### A. Nguyên tắc cốt lõi
+
+1. **Dual-Stream (Luồng Kép)**: Mọi node/mốc trong một quy trình tự động phải có đúng **2 luồng xử lý chạy song song**:
+   - **Auto-Stream**: Timer / Cron-Sweep đánh giá định kỳ theo số N phút cấu hình được (`ChainDispatchPolicy`, `BrochureWorkflowPolicy` hoặc tương đương). Gửi nhắc, leo thang, escalate sau các mốc thời gian cố định.
+   - **Coordinator-Stream (Human-in-the-Loop)**: Điều phối viên (hoặc nhân viên được ủy quyền) có thể **can thiệp trực tiếp** vào bất kỳ node nào bất cứ lúc nào qua API nội bộ xác thực. Mục đích: khi tự động hóa chờ không kịp → người thực hiện ngay mà không mất tính ghi nhận lịch sử.
+
+2. **First-Wins Mutex (Mutex Thắng Trước)**: Luồng nào hành động trước thì **triệt tiêu** (cancel) tất cả hành động còn lại của luồng kia cho cùng node đó. Không có "gửi trùng", không có "nhắc thừa", không có "xung đột 2 luồng cùng thành công".
+
+3. **Link-Only Structured Input**: Hành động của store/cửa hàng chỉ được chấp nhận qua **form/upload trong link có chữ ký** do hệ thống gửi. Không chấp nhận nội dung text nhắn tin tự do. Nguyên tắc này đảm bảo dữ liệu có cấu trúc, có thể validate và kiểm toán.
+
+### B. Cơ chế triển khai chuẩn
+
+#### B1. Marker trạng thái (State Marker)
+Mỗi node của auto-stream lưu trạng thái vào một `remindersSent` (hoặc `stepsSent`) trong `metadata` CSDL theo format:
+- `"M2_QC": "2026-10-19T10:00:00.000Z"` → Node đã được xử lý bởi Auto-Stream (gửi nhắc thật)
+- `"M2_QC": "CANCELLED_BY_COORDINATOR_ACTION:2026-10-19T10:05:00.000Z"` → Node bị cancel bởi Coordinator-Stream
+- `"M2_QC": "CANCELLED_BY_STORE_ACTION_VIA_LINK:2026-10-19T10:03:00.000Z"` → Node bị cancel bởi Store-Stream
+
+Hàm kiểm tra dùng chung (cần tái sử dụng, không viết lại):
+```typescript
+// Cả ISO timestamp (sent) lẫn CANCELLED_BY_* (cancelled) đều → "đã xử lý" → skip
+function isStepHandled(stepsSent: Record<string, string>, step: string): boolean {
+  return Boolean(stepsSent[step])
+}
+```
+
+#### B2. Cascade guard trong Auto-Stream
+Khi một node trong chuỗi RETRY/ESCALATE, **chỉ chain tiếp nếu node trước đó được gửi THẬT** (không phải CANCELLED):
+```typescript
+// ✅ Đúng: chỉ RETRY nếu lần 1 gửi thật
+const m2SentReal = m2SentIso && !m2SentIso.startsWith("CANCELLED_")
+if (m2SentReal && !isStepHandled(stepsSent, "M2_RETRY") && ...) { ... }
+
+// ❌ Sai: RETRY cả khi lần 1 bị CANCELLED → logic vô nghĩa
+if (stepsSent["M2"] && !stepsSent["M2_RETRY"] && ...) { ... }
+```
+
+#### B3. Coordinator-Stream API (pattern chuẩn)
+```
+POST /api/v1/coordinator/[domain]/[id]/[action]
+```
+- Xác thực: `requireTenantContext` + `requireCapability`
+- Thực hiện hành động nghiệp vụ (upload, submit, confirm...)
+- Gọi `cancelSteps({ steps: getMilestoneSteps("M2"), reason: "coordinator_action", actorId })` → Mutex
+- Trả về `{ success, cancelledReminders, ... }`
+
+#### B4. Store-Stream endpoint (pattern chuẩn)
+```
+POST /api/v1/public/[domain]/[token]/[action]
+```
+- Validate signed token (không cần đăng nhập)
+- Chỉ nhận input qua form/upload, reject text input thuần
+- Sau khi lưu thành công: gọi `cancelSteps({ steps, reason: "store_action_via_link" })` → Mutex
+- Fire-and-forget (`.catch(log.warn)`) để không block response
+
+### C. Danh sách tính năng auto-stream BẮT BUỘC áp dụng pattern này
+
+| Tính năng | Auto-Stream | Coordinator-Stream | Trạng thái |
+|---|---|---|---|
+| **Gate 2 — Gia công chuỗi** (M1→M4) | `chain-dispatch-sweep` | `coordinator/orders/[id]/upload-qc-subcontract`, `set-shipper`, `confirm-delivery` | ✅ Đã triển khai (19/10/2026) |
+| **Nhắc thanh toán khách hàng** | Timer nhắc cọc/thanh toán đủ | Điều phối xác nhận thủ công | ⏳ Cần audit |
+| **Nhắc phê duyệt đơn** (PENDING → CONFIRMED) | Auto-confirm sau N phút | Điều phối accept/reject | ⏳ Cần audit |
+| **Nhắc tải ảnh thành phẩm** (M2) | Cron nhắc 1→2→escalate | Coordinator upload thay | ✅ Đã triển khai |
+| **Chat/Tư vấn tự động** (M08) | AI reply auto | Nhân viên take over | ⏳ Cần audit |
+
+### D. Anti-patterns nghiêm cấm
+
+| # | Anti-Pattern | Rủi ro |
+|---|---|---|
+| DS1 | Chỉ có 1 luồng (chỉ auto hoặc chỉ manual) | Hệ thống bị block khi 1 bên không phản hồi |
+| DS2 | Không cancel reminder khi luồng kia thắng | Cửa hàng nhận tin nhắn thừa, mất lòng tin |
+| DS3 | Chain RETRY từ CANCELLED node | Logic vô nghĩa — ESCALATE khi chưa gửi lần 1 |
+| DS4 | Coordinator-Stream không gọi cancel → không Mutex | Xung đột 2 luồng hoàn thành cùng 1 node |
+| DS5 | Store nhắn text tự do được chấp nhận (vi phạm Link-Only) | Mất audit trail, dữ liệu không cấu trúc |
+| DS6 | Nhúng logic Mutex vào DB trigger | Không thể test, vi phạm Clean Architecture |
+
+### E. Checklist khi viết một tính năng auto-stream mới
+
+- [ ] Có `stepsSent` (hoặc tương đương) trong `metadata` CSDL để track state?
+- [ ] Hàm sweep dùng `isStepHandled()` (hoặc tương đương) cho mọi node check?
+- [ ] RETRY/ESCALATE chỉ chain từ "real sent" (không phải CANCELLED)?
+- [ ] Có API Coordinator-Stream cho mọi node quan trọng?
+- [ ] Mỗi Coordinator-Stream API gọi `cancelSteps()` sau khi thành công?
+- [ ] Mỗi Store-Stream endpoint gọi `cancelSteps()` sau khi thành công?
+- [ ] Coordinator-Stream API có xác thực `requireTenantContext` + `requireCapability`?
+- [ ] Store-Stream endpoint validate signed token, reject text input thuần?
+- [ ] UI dashboard Coordinator hiển thị trạng thái từng node và disable nút khi node đã done?
+
+**Tham chiếu triển khai SSOT**: `src/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps.ts` · `src/modules/greeting-card/use-cases/evaluate-customer-approval.ts` · `src/app/api/v1/coordinator/orders/[id]/` · Gate 2 audit report tại `gate2_audit_report.md`.
+
 ## Thứ tự pha — điều kiện chặn
+
 
 Lộ trình P0–P12 ở `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 15.
 
