@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Building2, Phone, Mail, MapPin, Globe, Clock, FileText, Check, Store, Lock, Unlock } from "lucide-react"
+import { Building2, Phone, Mail, MapPin, Globe, Clock, FileText, Check, Store, Lock, Unlock, Sparkles, Database } from "lucide-react"
 import type { BusinessProfileDetail } from "@/modules/profiles/use-cases/get-business-profile"
 import type { UpsertBusinessProfileInput } from "@/modules/profiles/infra/business-profile-repository"
 import { useSession } from "@/lib/session"
@@ -24,6 +24,9 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
   const isUnlocked = isSuperAdmin || !Boolean(organization?.industryLocked)
   const [selectedIndustry, setSelectedIndustry] = useState<string>(organization?.industry || DEFAULT_INDUSTRY)
   const [industrySaved, setIndustrySaved] = useState<boolean>(false)
+  const [loadingMockKey, setLoadingMockKey] = useState<string | null>(null)
+  const [autoSeedMockData, setAutoSeedMockData] = useState<boolean>(true)
+  const [mockSuccessMsg, setMockSuccessMsg] = useState<string | null>(null)
 
   const [displayName, setDisplayName] = useState("")
   const [legalName, setLegalName] = useState("")
@@ -76,6 +79,12 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
           legalName: "Ví dụ: Công ty TNHH Chăm Sóc Sắc Đẹp Mộc Lan",
           description: "Dịch vụ trị liệu da chuyên sâu, thư giãn dưỡng sinh và chăm sóc sắc đẹp",
         }
+      case "HOMESTAY":
+        return {
+          displayName: "Ví dụ: Homestay Villa Mây Sơn",
+          legalName: "Ví dụ: Hộ kinh doanh Du lịch Mây Sơn",
+          description: "Homestay nguyên căn sân vườn view thung lũng, không gian yên tĩnh nghỉ dưỡng",
+        }
       case "FLORAL":
       default:
         return {
@@ -87,6 +96,32 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
   }
 
   const indPlaceholders = getIndustryPlaceholders(selectedIndustry)
+
+  const handleApplyMockData = async (industryKey: string) => {
+    setLoadingMockKey(industryKey)
+    setMockSuccessMsg(null)
+    try {
+      const res = await fetch("/api/v1/business-profile/mock-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ industry_key: industryKey }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.message || "Không thể nạp dữ liệu mẫu")
+      }
+      const json = await res.json()
+      setSelectedIndustry(industryKey)
+      setMockSuccessMsg(`Đã nạp thành công Mock Data ngành ${json.data?.industryName || industryKey} (${json.data?.businessName})!`)
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Lỗi khi nạp dữ liệu mẫu")
+    } finally {
+      setLoadingMockKey(null)
+    }
+  }
 
   const handleUpdateIndustry = async (newKey: string) => {
     setSelectedIndustry(newKey)
@@ -109,6 +144,14 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
       }
     } catch {
       // Bỏ qua lỗi mạng
+    }
+  }
+
+  const handleSelectIndustry = async (newKey: string) => {
+    if (isSuperAdmin && autoSeedMockData) {
+      await handleApplyMockData(newKey)
+    } else {
+      await handleUpdateIndustry(newKey)
     }
   }
 
@@ -214,29 +257,91 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
         </div>
 
         <div className="space-y-3">
+          {/* Thanh công cụ Mock Data dành cho SuperAdmin */}
+          {isSuperAdmin && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl bg-primary/5 border border-primary/20">
+              <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-text select-none">
+                <input
+                  type="checkbox"
+                  checked={autoSeedMockData}
+                  onChange={(e) => setAutoSeedMockData(e.target.checked)}
+                  className="rounded border-border text-primary focus:ring-primary/20 w-4 h-4 cursor-pointer"
+                />
+                <span>Tự động nạp Mock Data chuẩn (Tên shop, logo, sản phẩm mẫu) khi click đổi ngành</span>
+              </label>
+
+              <button
+                type="button"
+                disabled={loadingMockKey !== null}
+                onClick={() => handleApplyMockData(selectedIndustry)}
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors shrink-0 cursor-pointer shadow-xs disabled:opacity-60"
+                title={`Nạp đồng bộ toàn bộ tên shop, logo và sản phẩm mẫu cho ngành ${currentIndDef.name}`}
+              >
+                <Database size={13} className={loadingMockKey === selectedIndustry ? "animate-spin" : ""} />
+                <span>
+                  {loadingMockKey === selectedIndustry
+                    ? "Đang đồng bộ..."
+                    : `Đồng bộ Mock Data ${currentIndDef.name}`}
+                </span>
+              </button>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             {listAllIndustries().map((ind) => {
               const isSelected = ind.key === selectedIndustry
+              const isLoadingThis = loadingMockKey === ind.key
+
               return (
-                <button
+                <div
                   key={ind.key}
-                  type="button"
-                  disabled={!isUnlocked}
-                  onClick={() => handleUpdateIndustry(ind.key)}
-                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                  role="button"
+                  tabIndex={isUnlocked ? 0 : -1}
+                  onClick={() => {
+                    if (isUnlocked && loadingMockKey === null) {
+                      handleSelectIndustry(ind.key)
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if ((e.key === "Enter" || e.key === " ") && isUnlocked && loadingMockKey === null) {
+                      handleSelectIndustry(ind.key)
+                    }
+                  }}
+                  className={`flex flex-col justify-between p-3 rounded-xl border text-left transition-all ${
                     isSelected
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
                       : "border-border bg-surface hover:border-primary/40 opacity-80"
                   } ${!isUnlocked ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
                 >
-                  <div className="flex items-center justify-between w-full mb-1">
-                    <span className="text-body-sm font-bold text-text">{ind.name}</span>
-                    {isSelected && <Check size={14} className="text-primary font-bold" />}
+                  <div>
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="text-body-sm font-bold text-text">{ind.name}</span>
+                      {isSelected && <Check size={14} className="text-primary font-bold" />}
+                    </div>
+                    <p className="text-caption text-text-muted line-clamp-2 leading-relaxed">
+                      {ind.description}
+                    </p>
                   </div>
-                  <p className="text-caption text-text-muted line-clamp-2 leading-relaxed">
-                    {ind.description}
-                  </p>
-                </button>
+
+                  {isUnlocked && (
+                    <div
+                      className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between w-full gap-1.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <span className="text-[11px] text-text-muted font-medium">Mock Data</span>
+                      <button
+                        type="button"
+                        disabled={loadingMockKey !== null}
+                        onClick={() => handleApplyMockData(ind.key)}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 transition-all cursor-pointer disabled:opacity-60"
+                        title={`Nạp dữ liệu mẫu cho ngành ${ind.name}`}
+                      >
+                        <Sparkles size={11} className={isLoadingThis ? "animate-spin" : "text-primary"} />
+                        <span>{isLoadingThis ? "Đang nạp..." : "Dùng Mock Data"}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               )
             })}
           </div>
@@ -257,7 +362,13 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             </div>
           )}
 
-          {industrySaved && (
+          {mockSuccessMsg && (
+            <p className="text-caption font-bold text-success animate-in fade-in">
+              ✓ {mockSuccessMsg} Đang làm mới trang...
+            </p>
+          )}
+
+          {industrySaved && !mockSuccessMsg && (
             <p className="text-caption font-bold text-success animate-in fade-in">
               ✓ Đã cập nhật ngành nghề thành công! Hệ thống đang tải lại...
             </p>

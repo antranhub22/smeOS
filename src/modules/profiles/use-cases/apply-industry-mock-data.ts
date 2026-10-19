@@ -36,6 +36,19 @@ export async function applyIndustryMockData(
     targetIndustryKey ||
     (typeof orgSettings.industry === "string" ? orgSettings.industry : "FLORAL")
 
+  // 0. Cập nhật ngành trong organization settings nếu đổi sang ngành mới
+  if (targetIndustryKey && orgSettings.industry !== targetIndustryKey) {
+    await prisma.organizations.update({
+      where: { id: ctx.organizationId },
+      data: {
+        settings: {
+          ...orgSettings,
+          industry: targetIndustryKey,
+        },
+      },
+    })
+  }
+
   const plugin = getIndustryPlugin(industryKey)
   const seedProfiles = getIndustrySeedProfiles(industryKey)
   const mockAssets = getMockAssetsForIndustry(industryKey)
@@ -66,6 +79,18 @@ export async function applyIndustryMockData(
 
   if (existingSamples.length > 0) {
     const ids = existingSamples.map((s) => s.id)
+    await prisma.product_bookings.deleteMany({
+      where: { product_id: { in: ids } },
+    })
+    await prisma.product_inventory.deleteMany({
+      where: { product_id: { in: ids } },
+    })
+    await prisma.product_images.deleteMany({
+      where: { product_id: { in: ids } },
+    })
+    await prisma.product_analyses.deleteMany({
+      where: { product_id: { in: ids } },
+    })
     await prisma.product_variants.deleteMany({
       where: { product_id: { in: ids } },
     })

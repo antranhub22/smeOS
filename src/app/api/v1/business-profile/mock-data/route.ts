@@ -12,8 +12,10 @@ const requestSchema = z
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
-  // Chỉ cho phép người dùng có quyền F2 (Sửa hồ sơ) hoặc H4 (Toàn quyền điều hành)
-  requireCapability(ctx, "F2")
+  // Cho phép người dùng có quyền F2 (Sửa hồ sơ), H4 (Toàn quyền điều hành) hoặc N1/N12 (SuperAdmin / Vận hành)
+  if (!ctx.capabilities.has("F2") && !ctx.capabilities.has("H4") && !ctx.capabilities.has("N1") && !ctx.capabilities.has("N12")) {
+    requireCapability(ctx, "F2")
+  }
 
   const body = await request.json().catch(() => ({}))
   const parsed = requestSchema?.safeParse(body)
