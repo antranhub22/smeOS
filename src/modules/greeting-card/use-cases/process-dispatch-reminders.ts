@@ -91,8 +91,8 @@ export async function processOrderDispatchReminders(
   const deliveryMs = input.deliveryTimestampMs
   const minutesUntilDelivery = Math.round((deliveryMs - nowMs) / (60 * 1000))
 
-  // Telegram Bot API bắt buộc inline_keyboard URL phải là https:// hợp lệ
-  const base = input.baseUrl?.startsWith("https://") ? input.baseUrl : "https://app.smeos.vn"
+  // Dùng baseUrl cấu hình (local dev: http://localhost:3200, prod: https://...)
+  const base = input.baseUrl || "http://localhost:3200"
   const claimUrl = `${base}/subcontract/${input.orderCode}?branch=${encodeURIComponent(branch.branchId)}`
   const uploadQcUrl = `${claimUrl}&action=upload_qc`
   const submitShipperUrl = `${claimUrl}&action=submit_shipper`
