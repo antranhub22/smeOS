@@ -118,9 +118,12 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       claimedBranchName: subState?.claimedBranchName ?? null,
       graceExpiresAt: subState?.graceExpiresAt ?? null,
       productionStatus: order.production_status,
+      deliveryStatus: order.delivery_status,
       qcPhotos: resolvedQcPhotos,
       lastAiVerification: coordMeta.last_ai_verification ?? null,
       autoBypassedCoordinator: Boolean(coordMeta.auto_bypassed_coordinator),
+      // Thông tin shipper (nếu đã cung cấp)
+      shipperInfo: (coordMeta.shipper_info as { shipperName: string; shipperPhone: string; submittedAt: string } | undefined) ?? null,
     },
   })
 })

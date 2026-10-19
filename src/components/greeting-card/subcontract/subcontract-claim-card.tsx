@@ -332,11 +332,11 @@ export function SubcontractClaimCard({
                 <Camera size={18} className="text-primary" /> ẢNH THÀNH PHẨM KIỂM ĐỊNH (QC)
               </span>
               {currentQcPhotos.length > 0 ? (
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-success/20 text-success flex items-center gap-1">
+                <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-success/20 text-success flex items-center gap-1">
                   <CheckCircle2 size={12} /> Đã có {currentQcPhotos.length} ảnh
                 </span>
               ) : (
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-warning/20 text-warning flex items-center gap-1">
+                <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-warning/20 text-warning flex items-center gap-1">
                   <Clock size={12} /> Chưa có ảnh
                 </span>
               )}
@@ -383,7 +383,7 @@ export function SubcontractClaimCard({
                     <Trash2 size={15} className="mr-1 text-danger" /> Chọn ảnh khác
                   </Button>
                   <Button
-                    variant="primary"
+                    variant="secondary"
                     disabled={uploadingQc}
                     onClick={handleUploadQcPhoto}
                     className="flex-1 h-11 text-caption font-extrabold shadow-md"

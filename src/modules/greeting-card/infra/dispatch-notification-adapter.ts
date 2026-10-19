@@ -7,22 +7,21 @@
 
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
-import type { IDispatchNotifier } from "../use-cases/dispatch-subcontract-order"
+import type { IDispatchNotifier, DispatchNotificationTarget } from "../use-cases/dispatch-subcontract-order"
 import type { BranchCandidate } from "../domain/chain-dispatch-engine"
 import { getStaffChannelProvider } from "../adapters/staff-channels"
 
 export class MultiChannelDispatchNotifier implements IDispatchNotifier {
   async sendSubcontractInvite(
     ctx: TenantContext,
-    target: {
-      branch: BranchCandidate
-      orderCode: string
-      messageText: string
-      claimUrl: string
-    }
+    target: DispatchNotificationTarget
   ): Promise<{ sent: boolean; error?: string | null }> {
     const branch = target.branch
     const channels = branch.channels
+
+    const actions = target.actions && target.actions.length > 0
+      ? target.actions
+      : [{ text: "👉 Nhận đơn ngay", url: target.claimUrl }]
 
     // 1. Nếu có Telegram Chat ID -> gửi qua Telegram Bot
     if (channels?.telegramChatId) {
@@ -35,12 +34,13 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
               recipientId: branch.branchId,
               recipientName: branch.branchName,
               recipientPhone: channels.phone ?? null,
-              title: `🌸 [ĐƠN GIA CÔNG #${target.orderCode}]`,
+              title: target.title ?? `🌸 [ĐƠN GIA CÔNG #${target.orderCode}]`,
               message: target.messageText,
               channelConfig: {
                 botToken,
                 defaultChatId: channels.telegramChatId,
               },
+              actions,
             })
             if (res.sent) {
               return { sent: true }

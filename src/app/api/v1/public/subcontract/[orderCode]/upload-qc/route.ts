@@ -10,6 +10,7 @@ import { log } from "@/core/observability/log"
 import { verifyQcPhotoWithAi } from "@/modules/greeting-card/use-cases/verify-qc-photo-ai"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
+import { notifyShipperRequest } from "@/modules/greeting-card/use-cases/notify-shipper-request"
 import type { TenantContext } from "@/core/tenancy"
 
 const MAX_QC_PHOTO_BYTES = 10 * 1024 * 1024 // 10 MB
@@ -262,6 +263,25 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         })
       })
     }
+
+    // 3. Gửi yêu cầu thông tin shipper cho chi nhánh + lập lịch nhắc 1 lần
+    const subMeta = (order.coordination?.metadata as Record<string, unknown> | null)?.subcontract_dispatch as Record<string, unknown> | undefined
+    const branchChannels = subMeta?.channels as Record<string, unknown> | undefined
+    notifyShipperRequest({
+      organizationId: order.organization_id,
+      orderId: order.id,
+      orderCode: order.code,
+      branchId,
+      branchPhone: (branchChannels?.phone ?? branchChannels?.zaloPhone) as string | undefined,
+      branchTelegramChatId: branchChannels?.telegramChatId as string | undefined,
+      branchName: subMeta?.claimedBranchName as string | undefined,
+      reminderMinutes: 30,
+    }).catch((err) => {
+      log.warn("subcontract.shipper_request_failed", {
+        orderCode: order.code,
+        error: err instanceof Error ? err.message : String(err),
+      })
+    })
   }
 
   log.info("subcontract.qc_photo_uploaded", {

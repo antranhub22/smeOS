@@ -21,18 +21,59 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
     }
 
     try {
-      const text = `<b>${msg.title}</b>\n\n${msg.message}`
-      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text,
-          parse_mode: "HTML",
-        }),
+      let text = `<b>${msg.title}</b>\n\n${msg.message}`
+      const bodyPayload: Record<string, unknown> = {
+        chat_id: chatId,
+        text,
+        parse_mode: "HTML",
+      }
+
+      // Telegram Bot API yêu cầu button URL phải là https hoặc domain công khai (cấm localhost/127.0.0.1)
+      const validButtonActions = (msg.actions ?? []).filter((act) => {
+        try {
+          const parsed = new URL(act.url)
+          return parsed.protocol === "https:" || (parsed.protocol === "http:" && !["localhost", "127.0.0.1"].includes(parsed.hostname))
+        } catch {
+          return false
+        }
       })
 
-      const data = (await res.json()) as { ok: boolean; result?: { message_id: number }; description?: string }
+      // Với các link localhost (môi trường dev/test), chèn link trực tiếp vào text để nhận được trong Telegram
+      const textOnlyActions = (msg.actions ?? []).filter((act) => !validButtonActions.includes(act))
+      if (textOnlyActions.length > 0) {
+        text += "\n\n" + textOnlyActions.map((a) => `👉 <b>${a.text}</b>:\n${a.url}`).join("\n")
+        bodyPayload.text = text
+      }
+
+      if (validButtonActions.length > 0) {
+        bodyPayload.reply_markup = {
+          inline_keyboard: [
+            validButtonActions.map((act) => ({
+              text: act.text,
+              url: act.url,
+            })),
+          ],
+        }
+      }
+
+      let res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyPayload),
+      })
+
+      let data = (await res.json()) as { ok: boolean; result?: { message_id: number }; description?: string }
+      if (!data.ok && data.description?.includes("Wrong HTTP URL") && bodyPayload.reply_markup) {
+        delete bodyPayload.reply_markup
+        bodyPayload.text = text + "\n\n" + (msg.actions ?? []).map((a) => `👉 <b>${a.text}</b>:\n${a.url}`).join("\n")
+        res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodyPayload),
+        })
+        data = (await res.json()) as { ok: boolean; result?: { message_id: number }; description?: string }
+      }
+
       if (!data.ok) {
         log.warn("staff_notify.telegram_failed", { error: data.description })
         return { sent: false, error: data.description || "Lỗi gửi Telegram" }

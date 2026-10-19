@@ -28,15 +28,19 @@ export interface DispatchOrderInput {
   baseUrl?: string | undefined
 }
 
+export interface DispatchNotificationTarget {
+  branch: BranchCandidate
+  orderCode: string
+  messageText: string
+  claimUrl: string
+  title?: string | undefined
+  actions?: Array<{ text: string; url: string }> | undefined
+}
+
 export interface IDispatchNotifier {
   sendSubcontractInvite(
     ctx: TenantContext,
-    target: {
-      branch: BranchCandidate
-      orderCode: string
-      messageText: string
-      claimUrl: string
-    }
+    target: DispatchNotificationTarget
   ): Promise<{ sent: boolean; error?: string | null }>
 }
 

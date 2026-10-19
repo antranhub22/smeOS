@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { Camera, Image as ImageIcon, Truck, UserCheck, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { apiSend } from "@/components/greeting-card/greeting-api"
+import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { CoordinatorImageUpload } from "./coordinator-image-upload"
 import { CancellationProposalModal } from "@/components/greeting-card/inbox/cancellation-proposal-modal"
 import type { ModalState } from "./coordinator-order-card"
@@ -28,6 +28,16 @@ export function CoordinatorActionModal({ modal, onClose, onDone, allowSkipPhoto 
   allowSkipPhoto?: Record<"product-photo" | "recipient-photo", boolean> | undefined
 }) {
   const { organizationType } = useSession()
+
+  // Lấy tên chi nhánh đã nhận đơn (chain-dispatch) để hiển thị trong ghi chú nội bộ
+  const isAcceptReject = modal.type === "accept-order" || modal.type === "reject-order"
+  const { data: dispatchData } = useApi<{ data: { dispatchState?: { claimedBranchName?: string | null; claimedBranchId?: string | null } } }>(
+    isAcceptReject ? `/api/v1/greeting-card/orders/${modal.orderId}/chain-dispatch` : null
+  )
+  const resolvedBranchName = (isAcceptReject ? modal.branchName : null)
+    ?? dispatchData?.data.dispatchState?.claimedBranchName
+    ?? dispatchData?.data.dispatchState?.claimedBranchId
+    ?? null
 
   if (modal.type === "cancel-proposal") {
     return (
@@ -55,6 +65,7 @@ export function CoordinatorActionModal({ modal, onClose, onDone, allowSkipPhoto 
           mode={modal.type === "accept-order" ? "accept" : "reject"}
           orderId={modal.orderId}
           orderCode={modal.orderCode}
+          defaultBranchName={resolvedBranchName}
           onClose={onClose}
           onDone={onDone}
         />
@@ -65,6 +76,7 @@ export function CoordinatorActionModal({ modal, onClose, onDone, allowSkipPhoto 
         mode={modal.type === "accept-order" ? "confirm" : "reject"}
         orderId={modal.orderId}
         orderCode={modal.orderCode}
+        defaultBranchName={resolvedBranchName}
         onClose={onClose}
         onDone={onDone}
       />

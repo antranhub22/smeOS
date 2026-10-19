@@ -90,6 +90,7 @@ describe("chain-dispatch-policy", () => {
       maxRadiusKm: 18,
       maxRounds: 2,
       autoEscalateToCoordinator: true,
+      autoConfirmOnBranchCommit: false,
       scoringWeights: {
         distance: 60,
         qualityScore: 25,
@@ -99,7 +100,11 @@ describe("chain-dispatch-policy", () => {
         enabled: true,
         prepAlert: false,
         qcReminderMinutesBefore: 40,
+        qcRetryIntervalMinutes: 6,
+        qcEscalateAfterMinutes: 4,
         dispatchReminderMinutesBefore: 15,
+        shipperRetryIntervalMinutes: 5,
+        shipperEscalateAfterMinutes: 5,
         overdueWarningMinutes: 8,
       },
       messageTemplates: {

@@ -10,6 +10,7 @@ interface CoordinatorAcceptRejectModalProps {
   mode: "accept" | "reject"
   orderId: string
   orderCode: string
+  defaultBranchName?: string | null | undefined
   onClose: () => void
   onDone: () => void
 }
@@ -29,12 +30,14 @@ export function CoordinatorAcceptRejectModal({
   mode,
   orderId,
   orderCode,
+  defaultBranchName,
   onClose,
   onDone,
 }: CoordinatorAcceptRejectModalProps) {
   const { ti } = useI18n()
   const isAccept = mode === "accept"
-  const [note, setNote] = useState("")
+  const defaultNote = defaultBranchName ? `Cửa hàng đã nhận: ${defaultBranchName}` : ""
+  const [note, setNote] = useState(defaultNote)
   const [reason, setReason] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -110,14 +113,21 @@ export function CoordinatorAcceptRejectModal({
 
         {isAccept ? (
           <div className="flex flex-col gap-2">
-            <label htmlFor="coordinator-accept-note" className="text-body-sm font-semibold text-foreground">
-              Ghi chú xưởng (tùy chọn)
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="coordinator-accept-note" className="text-body-sm font-semibold text-foreground">
+                Ghi chú nội bộ (tùy chọn)
+              </label>
+              {defaultBranchName && (
+                <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-success/15 text-success">
+                  🏪 {defaultBranchName}
+                </span>
+              )}
+            </div>
             <textarea
               id="coordinator-accept-note"
               rows={3}
               maxLength={500}
-              placeholder="Vd: Chuẩn bị nguyên liệu sớm, kiểm tra kỹ phụ kiện kèm theo..."
+              placeholder={defaultBranchName ? `Vd: Đã xác nhận với ${defaultBranchName}, xưởng đủ điều kiện thực hiện...` : "Vd: Đã kiểm tra kho nguyên liệu, đủ điều kiện thực hiện đơn..."}
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"

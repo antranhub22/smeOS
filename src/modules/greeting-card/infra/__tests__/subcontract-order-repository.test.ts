@@ -40,6 +40,9 @@ describe("SubcontractOrderRepository", () => {
         updateMany: vi.fn(),
         findFirst: vi.fn(),
       },
+      branches: {
+        findFirst: vi.fn().mockResolvedValue({ id: "branch-abc" }),
+      },
     }
     repo = new SubcontractOrderRepository(mockDb)
   })
@@ -75,7 +78,6 @@ describe("SubcontractOrderRepository", () => {
     expect(mockDb.order_coordinations.update).toHaveBeenCalledWith({
       where: { id: "coord-1" },
       data: expect.objectContaining({
-        partner_id: "branch-abc",
         metadata: expect.objectContaining({
           other_field: "value",
           subcontract_dispatch: sampleState,
@@ -105,7 +107,6 @@ describe("SubcontractOrderRepository", () => {
         id: "coord_ord-123",
         organization_id: "org-1",
         order_id: "ord-123",
-        partner_id: null,
       }),
     })
 
@@ -124,6 +125,7 @@ describe("SubcontractOrderRepository", () => {
         coordination: true,
         items: true,
         greeting_sessions: true,
+        customer: true,
       },
     })
     expect(order?.code).toBe("DH123")

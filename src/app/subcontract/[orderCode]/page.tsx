@@ -1,6 +1,6 @@
 "use client"
 
-import React, { use, useState } from "react"
+import React, { use, useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { Sparkles, Shield, AlertCircle } from "lucide-react"
@@ -8,9 +8,19 @@ import {
   SubcontractClaimCard,
   type SubcontractClaimCardProps,
 } from "@/components/greeting-card/subcontract/subcontract-claim-card"
+import { ShipperSubmitCard } from "@/components/greeting-card/subcontract/shipper-submit-card"
 
 interface PageProps {
   params: Promise<{ orderCode: string }>
+}
+
+interface SubcontractPageData extends SubcontractClaimCardProps {
+  deliveryStatus?: string | null
+  shipperInfo?: {
+    shipperName: string
+    shipperPhone: string
+    submittedAt: string
+  } | null
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => {
@@ -24,11 +34,25 @@ export default function SubcontractClaimPage({ params }: PageProps) {
   const branchId = searchParams.get("branch") ?? ""
 
   const apiUrl = `/api/v1/public/subcontract/${encodeURIComponent(orderCode)}?branch=${encodeURIComponent(branchId)}`
-  const { data, error, mutate, isLoading } = useSWR<{ data: SubcontractClaimCardProps }>(apiUrl, fetcher, {
+  const { data, error, mutate, isLoading } = useSWR<{ data: SubcontractPageData }>(apiUrl, fetcher, {
     refreshInterval: 10_000,
   })
 
   const [actionError, setActionError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const action = searchParams.get("action")
+    if (action === "upload_qc") {
+      setTimeout(() => {
+        document.getElementById("qc-upload-section")?.scrollIntoView({ behavior: "smooth" })
+      }, 500)
+    }
+    if (action === "submit_shipper") {
+      setTimeout(() => {
+        document.getElementById("shipper-submit-section")?.scrollIntoView({ behavior: "smooth" })
+      }, 500)
+    }
+  }, [searchParams])
 
   async function handleAction(action: "CLAIM" | "CANCEL" | "COMMIT") {
     setActionError(null)
@@ -103,9 +127,24 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         claimedByBranchId={orderData.claimedByBranchId}
         claimedBranchName={orderData.claimedBranchName}
         graceExpiresAt={orderData.graceExpiresAt}
+        productionStatus={orderData.productionStatus}
+        qcPhotos={orderData.qcPhotos}
         onClaim={() => handleAction("CLAIM")}
         onCancelClaim={() => handleAction("CANCEL")}
         onCommitEarly={() => handleAction("COMMIT")}
+        onQcUploaded={() => mutate()}
+      />
+
+      {/* Form nhập thông tin Shipper — hiển thị khi READY (ảnh TP đã pass AI) */}
+      <ShipperSubmitCard
+        orderCode={orderData.orderCode}
+        branchId={branchId}
+        productionStatus={orderData.productionStatus ?? ""}
+        deliveryStatus={orderData.deliveryStatus ?? undefined}
+        existingShipperInfo={orderData.shipperInfo ?? null}
+        onSubmitted={() => {
+          void mutate()
+        }}
       />
     </div>
   )

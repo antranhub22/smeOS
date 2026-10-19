@@ -27,6 +27,11 @@ export interface SubcontractOrderState {
   /** Danh sách các chi nhánh đã được gửi lời mời ở vòng hiện tại */
   invitedBranchIds: string[]
   roundExpiresAt: string | null
+  /**
+   * Lưu vết thời điểm đã gửi các tin nhắn nhắc việc theo mốc JSON (Tránh gửi trùng hoặc bỏ sót)
+   * Key: mã mốc (vd: M1_PREP, M2_QC, M3_DISPATCH, M4_OVERDUE) -> Value: ISO timestamp
+   */
+  remindersSent?: Record<string, string> | undefined
 }
 
 export type ClaimResult =

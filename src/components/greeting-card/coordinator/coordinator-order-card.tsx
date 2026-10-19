@@ -55,8 +55,8 @@ export type ModalState =
   | { type: "recipient-photo"; orderId: string; orderCode: string }
   | { type: "delivery-failed"; orderId: string; orderCode: string }
   | { type: "substitute"; orderId: string; orderCode: string }
-  | { type: "accept-order"; orderId: string; orderCode: string }
-  | { type: "reject-order"; orderId: string; orderCode: string }
+  | { type: "accept-order"; orderId: string; orderCode: string; branchName?: string | null | undefined }
+  | { type: "reject-order"; orderId: string; orderCode: string; branchName?: string | null | undefined }
   | { type: "cancel-proposal"; orderId: string; orderCode: string; totalVnd: number; paidVnd: number; deliveryStatus?: string }
   | { type: "confirm-balance"; orderId: string; orderCode: string; balanceVnd: number; proofUrl: string | null }
   | { type: "confirm-deposit"; orderId: string; orderCode: string; depositVnd: number | null; proofUrl: string | null }

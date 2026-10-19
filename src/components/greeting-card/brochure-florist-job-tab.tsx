@@ -9,6 +9,7 @@ import { coordinatorAcceptanceBlocker } from "@/modules/greeting-card/domain/bro
 import { CoordinatorAcceptRejectModal } from "./coordinator/coordinator-accept-reject-modal"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+import { ChainDispatchPanel } from "./subcontract/chain-dispatch-panel"
 
 export interface BrochureFloristJobTabProps {
   target: OrderDetailModalTarget
@@ -33,6 +34,10 @@ export function BrochureFloristJobTab({
   const orderTerms = getIndustryOrderTerms(organization?.industry)
   // Giá gia công tính trên giá trước VAT — VAT không làm tăng tiền công thợ
   const { data: vatData } = useApi<{ data: { subtotalVnd: number } }>(target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/vat` : null)
+  const { data: dispatchData } = useApi<{ data: { dispatchState?: { claimedBranchName?: string | null; claimedBranchId?: string | null } } }>(
+    target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/chain-dispatch` : null
+  )
+  const claimedBranchName = dispatchData?.data.dispatchState?.claimedBranchName || dispatchData?.data.dispatchState?.claimedBranchId || null
   const defaultFee = Math.round((vatData?.data.subtotalVnd ?? target.totalVnd ?? 0) * 0.5)
   const [feeOverride, setSuggestedCraftFee] = useState<number | null>(null)
   const suggestedCraftFee = feeOverride ?? defaultFee
@@ -157,6 +162,15 @@ export function BrochureFloristJobTab({
             </Button>
           </div>
         </div>
+
+        {/* Khối Điều Phối Chuỗi Tự Động (Matching Engine & Phát Lệnh Gửi Riêng) */}
+        {target.orderId && (
+          <ChainDispatchPanel
+            orderId={target.orderId}
+            orderCode={target.orderCode || target.sendCode || ""}
+            suggestedCraftFee={suggestedCraftFee}
+          />
+        )}
 
         {/* Khung Thẻ Gia Công gửi cho Thợ (Chỉ chụp vùng này từ Ảnh mẫu tham chiếu trở xuống) */}
         <div
@@ -339,6 +353,7 @@ export function BrochureFloristJobTab({
           mode={modalMode}
           orderId={target.orderId}
           orderCode={target.orderCode || target.sendCode || ""}
+          defaultBranchName={claimedBranchName}
           onClose={() => setModalMode(null)}
           onDone={() => { setModalMode(null); onClose(); onAcceptedOrRejected?.() }}
         />

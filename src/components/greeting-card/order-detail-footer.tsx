@@ -10,6 +10,7 @@ import { CoordinatorAcceptRejectModal } from "./coordinator/coordinator-accept-r
 import { CoordinatorConfirmBalanceModal } from "./coordinator/coordinator-confirm-balance-modal"
 import { CoordinatorConfirmDepositModal } from "./coordinator/coordinator-confirm-deposit-modal"
 import type { OrderDetailModalTarget, BrochureOrderDetailModalProps } from "./brochure-order-detail-modal"
+import { useApi } from "./greeting-api"
 
 /** Footer action bar + cancellation proposal modal — tách riêng khỏi BrochureOrderDetailModal để tuân thủ giới hạn SRP 350 dòng. */
 export function OrderDetailFooter({
@@ -20,6 +21,10 @@ export function OrderDetailFooter({
 }: Omit<BrochureOrderDetailModalProps, "target"> & { target: OrderDetailModalTarget }) {
   const { can } = useSession()
   const { mutate } = useSWRConfig()
+  const { data: dispatchData } = useApi<{ data: { dispatchState?: { claimedBranchName?: string | null; claimedBranchId?: string | null } } }>(
+    target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/chain-dispatch` : null
+  )
+  const claimedBranchName = dispatchData?.data.dispatchState?.claimedBranchName || dispatchData?.data.dispatchState?.claimedBranchId || null
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [showAcceptRejectModal, setShowAcceptRejectModal] = useState<"accept" | "reject" | null>(null)
   const [showConfirmBalanceModal, setShowConfirmBalanceModal] = useState(false)
@@ -244,6 +249,7 @@ export function OrderDetailFooter({
           mode={showAcceptRejectModal}
           orderId={target.orderId}
           orderCode={target.orderCode ?? "---"}
+          defaultBranchName={claimedBranchName}
           onClose={() => setShowAcceptRejectModal(null)}
           onDone={() => {
             setShowAcceptRejectModal(null)

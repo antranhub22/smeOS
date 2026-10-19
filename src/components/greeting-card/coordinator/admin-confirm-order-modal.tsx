@@ -9,6 +9,7 @@ interface AdminConfirmOrderModalProps {
   mode: "confirm" | "reject"
   orderId: string
   orderCode: string
+  defaultBranchName?: string | null | undefined
   onClose: () => void
   onDone: () => void
 }
@@ -21,7 +22,7 @@ const COMMON_REJECT_REASONS = [
 ]
 
 /**
- * Hộp thoại Điều hành xác nhận đơn (Gate 1b) — mô hình 1 Cửa hàng.
+ * Hộp thoại Điều hành xác nhận đơn (Gate 1b) — mô hình 1 Cửa hàng hoặc Điều phối xác nhận đơn.
  *
  * - Xác nhận đơn: chuyển productionStatus WAITING → ASSIGNED, ⏱️ SLA bắt đầu chạy,
  *   thông báo khách "Đang chuẩn bị sản phẩm".
@@ -34,11 +35,13 @@ export function AdminConfirmOrderModal({
   mode,
   orderId,
   orderCode,
+  defaultBranchName,
   onClose,
   onDone,
 }: AdminConfirmOrderModalProps) {
   const isConfirm = mode === "confirm"
-  const [note, setNote] = useState("")
+  const defaultNote = defaultBranchName ? `Cửa hàng đã nhận: ${defaultBranchName}` : ""
+  const [note, setNote] = useState(defaultNote)
   const [reason, setReason] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -137,14 +140,25 @@ export function AdminConfirmOrderModal({
         {/* Input */}
         {isConfirm ? (
           <div className="flex flex-col gap-2">
-            <label htmlFor="admin-confirm-order-note" className="text-body-sm font-semibold text-foreground">
-              Ghi chú nội bộ (tùy chọn)
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="admin-confirm-order-note" className="text-body-sm font-semibold text-foreground">
+                Ghi chú nội bộ (tùy chọn)
+              </label>
+              {defaultBranchName && (
+                <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-success/15 text-success">
+                  🏪 {defaultBranchName}
+                </span>
+              )}
+            </div>
             <textarea
               id="admin-confirm-order-note"
               rows={3}
               maxLength={500}
-              placeholder="Vd: Đã kiểm tra kho nguyên liệu, đủ điều kiện thực hiện đơn..."
+              placeholder={
+                defaultBranchName
+                  ? `Vd: Đã xác nhận với ${defaultBranchName}, cửa hàng đủ điều kiện thực hiện...`
+                  : "Vd: Đã kiểm tra kho nguyên liệu, đủ điều kiện thực hiện đơn..."
+              }
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-success/40"

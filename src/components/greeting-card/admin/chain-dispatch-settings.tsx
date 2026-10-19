@@ -145,6 +145,29 @@ export function ChainDispatchSettings() {
         />
       </div>
 
+      {/* Cơ Chế Xác Nhận Đơn Hàng (Gate 2) */}
+      <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 border border-primary/20">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-body font-bold text-foreground block">
+              Tự động duyệt xác nhận đơn khi Chi nhánh chốt nhận
+            </span>
+            <span className="text-caption font-bold px-1.5 py-0.5 rounded bg-primary/20 text-primary uppercase">
+              Mặc định
+            </span>
+          </div>
+          <span className="text-caption text-text-muted">
+            Khi bật (Khuyên dùng): Ngay khi Shop bấm nhận đơn, hệ thống tự động xác nhận đơn và chuyển thẳng sang sản xuất (Điều phối không cần bấm duyệt tay). Tắt đi nếu muốn Điều phối phải kiểm duyệt lại một lần nữa.
+          </span>
+        </div>
+        <input
+          type="checkbox"
+          checked={policy.autoConfirmOnBranchCommit}
+          onChange={(e) => handleUpdate("autoConfirmOnBranchCommit", e.target.checked)}
+          className="w-5 h-5 accent-primary cursor-pointer rounded"
+        />
+      </div>
+
       {/* Cấu Hình Tiêu Chuẩn Lọc & Thời Gian */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 rounded-xl border border-border bg-surface flex flex-col gap-3">
