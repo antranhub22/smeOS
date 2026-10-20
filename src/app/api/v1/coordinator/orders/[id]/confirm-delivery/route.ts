@@ -95,6 +95,44 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     if (!sniffed) throw validationFailed({ file: "Định dạng không hợp lệ (JPG/PNG/WebP)" })
 
     const storage = getStorageProvider()
+
+    // AI kiểm định ảnh giao hàng POD đối chiếu với mẫu và thành phẩm QC
+    const snapshot = (order.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
+    const productName = order.items[0]?.description || (snapshot.name as string) || "Sản phẩm gia công"
+    let sampleImageUrl = (snapshot.image_url || snapshot.imageUrl) as string | undefined
+    if (sampleImageUrl?.startsWith("org/")) {
+      sampleImageUrl = await storage.signedUrl(sampleImageUrl, 3600, "GET").catch(() => sampleImageUrl)
+    }
+
+    const coordExisting = await prisma.order_coordinations.findUnique({ where: { order_id: order.id } })
+    const existingQcPhotos = Array.isArray((coordExisting?.metadata as Record<string, unknown> | null)?.qc_photos)
+      ? ((coordExisting?.metadata as Record<string, unknown>).qc_photos as string[])
+      : []
+    const latestQcKey = existingQcPhotos[existingQcPhotos.length - 1]
+    let qcImageUrl: string | undefined
+    if (latestQcKey) {
+      if (latestQcKey.startsWith("http://") || latestQcKey.startsWith("https://") || latestQcKey.startsWith("data:")) {
+        qcImageUrl = latestQcKey
+      } else {
+        qcImageUrl = await storage.signedUrl(latestQcKey, 3600, "GET").catch(() => undefined)
+      }
+    }
+
+    const { verifyPodPhotoWithAi } = await import("@/modules/greeting-card/use-cases/verify-pod-photo-ai")
+    const aiVerify = await verifyPodPhotoWithAi({
+      productName,
+      sampleImageUrl,
+      qcImageUrl,
+      podPhotoBytes: bytes,
+      podPhotoMimeType: sniffed.mimeType,
+    })
+
+    if (!aiVerify.isMatch) {
+      throw unprocessable(
+        `❌ AI phát hiện ảnh giao hàng không hợp lệ: ${aiVerify.reason} (${aiVerify.confidenceScore}%). Vui lòng kiểm tra lại ảnh chụp!`
+      )
+    }
+
     const assetId = randomUUID()
     podPhotoStorageKey = `org/${order.organization_id}/subcontract/${order.id}/coord-pod-${assetId}.${sniffed.ext}`
     await storage.put(podPhotoStorageKey, Buffer.from(bytes), sniffed.mimeType)

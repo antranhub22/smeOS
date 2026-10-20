@@ -103,16 +103,72 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   const storage = getStorageProvider()
+
+  // 1. Lấy thông tin sản phẩm và ảnh mẫu gốc ban đầu
+  const snapshot = (order.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
+  const itemMeta = (order.items[0]?.metadata as Record<string, unknown> | null) ?? {}
+  const productName = order.items[0]?.description || (snapshot.name as string | undefined) || (itemMeta.name as string | undefined) || "Sản phẩm đặt gia công"
+  const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
+  const samplePhotoUrl = await resolveSubcontractSamplePhoto(order)
+  let sampleImageUrl = samplePhotoUrl || (snapshot.image_url || snapshot.imageUrl || itemMeta.imageUrl || itemMeta.image_url) as string | undefined
+
+  if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/"))) {
+    try {
+      const key = sampleImageUrl.startsWith("org/")
+        ? sampleImageUrl
+        : sampleImageUrl.match(/floraos-core\/(org\/[^?]+)/)?.[1]
+      if (key) {
+        sampleImageUrl = await storage.signedUrl(key, 604800, "GET").catch(() => sampleImageUrl)
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // 2. Lấy ảnh thành phẩm QC đã upload trước đó để AI đối chiếu chéo
+  const coord = await prisma.order_coordinations.findUnique({
+    where: { order_id: order.id },
+  })
+  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
+  const latestQcKey = existingQcPhotos[existingQcPhotos.length - 1]
+  let qcImageUrl: string | undefined
+  if (latestQcKey) {
+    if (latestQcKey.startsWith("http://") || latestQcKey.startsWith("https://") || latestQcKey.startsWith("data:")) {
+      qcImageUrl = latestQcKey
+    } else {
+      qcImageUrl = await storage.signedUrl(latestQcKey, 3600, "GET").catch(() => undefined)
+    }
+  }
+
+  // 3. AI Vision kiểm định ảnh bàn giao hàng POD
+  const { verifyPodPhotoWithAi } = await import("@/modules/greeting-card/use-cases/verify-pod-photo-ai")
+  const aiVerify = await verifyPodPhotoWithAi({
+    productName,
+    sampleImageUrl,
+    qcImageUrl,
+    podPhotoBytes: bytes,
+    podPhotoMimeType: sniffed.mimeType,
+  })
+
+  if (!aiVerify.isMatch) {
+    log.warn("subcontract.pod_photo_rejected_by_ai", {
+      orderId: order.id,
+      orderCode: order.code,
+      branchId,
+      aiVerify,
+    })
+    throw unprocessable(
+      `❌ Ảnh giao hàng không hợp lệ: ${aiVerify.reason} (Độ tin cậy: ${aiVerify.confidenceScore}%). Vui lòng chụp rõ người nhận hoặc kiện hàng tại điểm giao!`
+    )
+  }
+
   const assetId = randomUUID()
   const storageKey = `org/${order.organization_id}/subcontract/${order.id}/pod-${assetId}.${sniffed.ext}`
   await storage.put(storageKey, Buffer.from(bytes), sniffed.mimeType)
   const publicPhotoUrl = await storage.signedUrl(storageKey, 604800, "GET")
 
   const deliveredAt = new Date().toISOString()
-  const coord = await prisma.order_coordinations.findUnique({
-    where: { order_id: order.id },
-  })
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
   const existingPodPhotos = Array.isArray(existingMeta.pod_photos) ? (existingMeta.pod_photos as string[]) : []
   const updatedPodPhotos = [...existingPodPhotos, storageKey]
 
