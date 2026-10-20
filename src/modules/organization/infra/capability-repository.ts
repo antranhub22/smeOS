@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto"
+
 import type { capability_overrides, capability_scope, role_capabilities, roles } from "./entities"
 
 import { prisma } from "@/core/tenancy/infra/prisma"
@@ -88,6 +90,7 @@ export class CapabilityRepository {
     if (codes.length === 0) return
     await this.db.role_capabilities.createMany({
       data: codes.map((code) => ({
+        id: randomUUID(),
         role_id: roleId,
         capability_code: code,
         scope: "ORGANIZATION" as const,
@@ -123,10 +126,12 @@ export class CapabilityRepository {
         },
       },
       create: scopedData(ctx, {
+        id: randomUUID(),
         role_id: input.roleId,
         capability_code: input.capabilityCode,
         allowed: input.allowed,
         updated_by: input.updatedBy,
+        updated_at: new Date(),
       }),
       update: { allowed: input.allowed, updated_by: input.updatedBy },
     })
