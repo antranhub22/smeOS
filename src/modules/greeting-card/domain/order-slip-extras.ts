@@ -30,6 +30,22 @@ export function customerNoteOf(internalNote: string | null | undefined): string 
   return note || null
 }
 
+/**
+ * Lọc ghi chú dành riêng cho Xưởng / Chi nhánh gia công:
+ * Loại bỏ các thông tin nội bộ của khách hàng bán lẻ (ví dụ: "[Thẻ chào ...]", "[Ưu đãi: ...]", "[Chờ báo giá]")
+ * để chỉ giữ lại các yêu cầu nghiệp vụ chế tác thực sự (ví dụ ghi chú của khách gửi tiệm / lưu ý cắm hoa).
+ */
+export function workshopNoteOf(internalNote: string | null | undefined): string | null {
+  if (!internalNote) return null
+  const clean = internalNote
+    .replace(/\[Thẻ chào\s+[^\]]+\]/gi, "")
+    .replace(/\[Đặt từ\s+[^\]]+\]/gi, "")
+    .replace(/\[Ưu đãi:[^\]]+\]/gi, "")
+    .replace(/\[Chờ báo giá\]/gi, "")
+    .trim()
+  return clean || null
+}
+
 export function deliveryNoteOf(deliveryAddress: unknown): string | null {
   if (!deliveryAddress || typeof deliveryAddress !== "object") return null
   const notes = (deliveryAddress as { notes?: unknown }).notes

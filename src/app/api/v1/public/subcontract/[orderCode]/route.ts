@@ -56,9 +56,15 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   const firstItem = order.items[0]
   const session = order.greeting_sessions[0]
   const snapshot = (session?.product_snapshot as Record<string, unknown> | null) ?? {}
+  const firstItemMeta = (firstItem?.metadata as Record<string, unknown> | null) ?? {}
 
   const productName = firstItem?.description || (snapshot.name as string | undefined) || "Sản phẩm đặt gia công"
-  const productImageUrl = (snapshot.image_url as string | undefined) || (snapshot.imageUrl as string | undefined) || null
+  const rawProductImageUrl =
+    (snapshot.image_url as string | undefined) ||
+    (snapshot.imageUrl as string | undefined) ||
+    (firstItemMeta.imageUrl as string | undefined) ||
+    (firstItemMeta.image as string | undefined) ||
+    null
 
   const deliveryWindow = (order.delivery_window as Record<string, unknown> | null) ?? {}
   const deliveryAddress = formatDeliveryAddress(order.delivery_address)
@@ -85,6 +91,8 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
     return photo
   }
 
+  const productImageUrl = rawProductImageUrl ? await resolveKey(rawProductImageUrl) : null
+
   const rawQcPhotos = Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
   const rawPodPhotos = Array.isArray(coordMeta.pod_photos) ? (coordMeta.pod_photos as string[]) : []
   const resolvedQcPhotos = await Promise.all(rawQcPhotos.map(resolveKey))
@@ -93,6 +101,9 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   const rawPodProof = coordMeta.delivery_proof as
     | { note?: string; deliveredAt?: string; deliveredByBranch?: string }
     | undefined
+
+  const { workshopNoteOf } = await import("@/modules/greeting-card/domain/order-slip-extras")
+  const specialNotes = workshopNoteOf(order.internal_note)
 
   return jsonResponse({
     data: {
@@ -111,7 +122,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       recipientPhone,
       isPhoneMasked: !isReadyForDelivery,
       cardMessage: order.card_message ?? null,
-      specialNotes: order.internal_note ?? null,
+      specialNotes,
       subcontractPriceVnd,
       dispatchStatus: subState?.dispatchStatus ?? "OPEN",
       claimedByBranchId: subState?.claimedBranchId ?? null,

@@ -131,9 +131,16 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       total_vnd: true,
       items: {
         select: {
+          product_id: true,
           description: true,
           metadata: true,
         },
+      },
+      greeting_sessions: {
+        select: {
+          product_snapshot: true,
+        },
+        take: 1,
       },
     },
   })
@@ -204,7 +211,28 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
     })
 
     const firstItemMeta = (order.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
-    const sampleImageUrl = (firstItemMeta.imageUrl as string | undefined) || (firstItemMeta.image as string | undefined) || null
+    const snapshot = (order.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
+    let sampleImageUrl =
+      (snapshot.image_url as string | undefined) ||
+      (snapshot.imageUrl as string | undefined) ||
+      (firstItemMeta.imageUrl as string | undefined) ||
+      (firstItemMeta.image as string | undefined) ||
+      null
+
+    if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/"))) {
+      try {
+        const { getStorageProvider } = await import("@/modules/assets/adapters/storage-provider-factory")
+        const storage = getStorageProvider()
+        const key = sampleImageUrl.startsWith("org/")
+          ? sampleImageUrl
+          : sampleImageUrl.match(/floraos-core\/(org\/[^?]+)/)?.[1]
+        if (key) {
+          sampleImageUrl = await storage.signedUrl(key, 604800, "GET").catch(() => sampleImageUrl)
+        }
+      } catch {
+        // Fallback to original URL
+      }
+    }
 
     const sendResult = await notifier.sendSubcontractInvite(ctx, {
       branch,
