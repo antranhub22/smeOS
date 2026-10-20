@@ -118,26 +118,6 @@ export async function resolveSubcontractSamplePhoto(
     }
   }
 
-  // Fallback 3: Nếu vẫn chưa có ảnh, tìm bất kỳ ảnh sản phẩm nào có sẵn trong tổ chức làm ảnh đại diện mẫu
-  if (!rawImageUrl) {
-    try {
-      const anyAsset = await prisma.assets.findFirst({
-        where: {
-          organization_id: order.organization_id,
-          mime_type: { startsWith: "image/" },
-        },
-        orderBy: { created_at: "desc" },
-        select: { storage_key: true },
-      })
-      if (anyAsset?.storage_key) {
-        const storage = getStorageProvider()
-        rawImageUrl = await storage.signedUrl(anyAsset.storage_key, 604800, "GET").catch(() => null)
-      }
-    } catch {
-      // fallback
-    }
-  }
-
   if (!rawImageUrl) return null
 
   // Chuẩn hóa thành absolute URL hoặc thay localhost bằng baseUrl hiện tại

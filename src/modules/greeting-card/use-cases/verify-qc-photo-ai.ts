@@ -65,34 +65,39 @@ export async function verifyQcPhotoWithAi(input: VerifyQcPhotoInput): Promise<Ve
     > = [
       {
         type: "text",
-        text: `Bạn là Chuyên gia Kiểm định Chất lượng (Quality Control Inspector) của nền tảng quản lý đơn hàng chuỗi smeOS.
-Nhiệm vụ của bạn là kiểm tra ảnh chụp thành phẩm do cửa hàng vừa tải lên xem có ĐÚNG là sản phẩm của đơn hàng hay không.
+        text: `Bạn là Chuyên gia Kiểm định Chất lượng (Quality Control Inspector) cao cấp của nền tảng quản lý chuỗi smeOS.
+Nhiệm vụ của bạn là kiểm tra đối chiếu trực quan cực kỳ khắt khe giữa Ảnh mẫu gốc và Ảnh thành phẩm do cửa hàng chụp gửi lên.
 
-Thông tin đơn hàng cần làm:
+Thông tin đơn hàng:
 - Tên sản phẩm khách đặt: "${input.productName}"
-${sampleDataUri ? "- Đơn hàng có đính kèm Ảnh [1] là Mẫu Sản Phẩm Gốc để đối chiếu." : "- Không có ảnh mẫu gốc, hãy đối chiếu ảnh thành phẩm với Tên sản phẩm trên."}
+${sampleDataUri ? "- Đơn hàng có đính kèm Ảnh [1] là Mẫu Sản Phẩm Gốc do khách đặt để so sánh." : "- Đơn hàng không có ảnh mẫu gốc, hãy đối chiếu ảnh thành phẩm với Tên sản phẩm và yêu cầu chủng loại."}
 
-YÊU CẦU KIỂM DUYỆT RẤT NGHIÊM NGẶT & CHI TIẾT:
-1. Đối chiếu chủng loại & loài hoa/sản phẩm chính:
-   - Nếu đơn hàng đặt loài hoa cụ thể (ví dụ: hoa Tulip, hoa Hồng, hoa Hướng Dương, hoa Cúc...) thì ảnh thành phẩm BẮT BUỘC phải là loài hoa đó.
-   - TUYỆT ĐỐI KHÔNG CHẤP NHẬN: Bó hoa hồng/cúc nhưng đơn đặt là Bó hoa tulip (hoặc ngược lại). Nếu loài hoa chính không khớp -> BẮT BUỘC trả về isMatch = false và verdict = "MISMATCH".
-2. Nếu có ảnh mẫu gốc [Ảnh 1]:
-   - So sánh tông màu chủ đạo (ví dụ: mẫu màu trắng nhưng làm màu hồng/đỏ -> MISMATCH).
-   - So sánh kiểu dáng bó/lẵng/hộp hoa và phong cách cắm.
-   - Nếu khác biệt rõ rệt về loài hoa hoặc màu sắc -> BẮT BUỘC verdict = "MISMATCH".
-3. TUYỆT ĐỐI TỪ CHỐI các ảnh rác, ảnh tài liệu, chụp màn hình, ảnh tự sướng, hoặc sản phẩm của ngành hàng khác.
+QUY TẮC PHÊ DUYỆT BẮT BUỘC (ZERO TOLERANCE CHO SẢN PHẨM SAI):
+1. SO SÁNH TRỰC QUAN NẾU CÓ ẢNH [1] (ẢNH MẪU GỐC):
+   - So sánh trực tiếp Ảnh [1] (Mẫu) và Ảnh [2] (Thành phẩm):
+   - Chủng loại thành phần chính: Nếu Ảnh [1] là hoa cúc mẫu đơn, tulip, baby... mà Ảnh [2] là hoa hồng (hoặc ngược lại) -> BẮT BUỘC isMatch = false, verdict = "MISMATCH".
+   - Tông màu chủ đạo: Nếu Ảnh [1] tone màu vàng/trắng/cam nhưng Ảnh [2] tone màu hồng/đỏ -> BẮT BUỘC isMatch = false, verdict = "MISMATCH".
+   - Kiểu dáng thiết kế: Nếu Ảnh [1] là dạng cắm tròn/dài nhưng Ảnh [2] là lẵng/giỏ/hộp (hoặc ngược lại) -> BẮT BUỘC isMatch = false, verdict = "MISMATCH".
+   - KHÔNG ĐƯỢC CHẤP NHẬN: "Cùng ngành hàng nhưng khác chủng loại", "Cùng dáng nhưng khác màu hoàn toàn". Bất kỳ khác biệt lớn nào về chất liệu, chủng loại hoặc màu sắc -> BẮT BUỘC verdict = "MISMATCH".
+
+2. ĐỐI CHIẾU VỚI TÊN SẢN PHẨM:
+   - Nếu trong tên sản phẩm có loài hoa cụ thể (ví dụ: "Tulip", "Hồng đỏ", "Baby", "Lan hồ điệp"...), Ảnh [2] bắt buộc phải đúng loài hoa đó.
+
+3. ĐỘ TIN CẬY (confidenceScore):
+   - Chỉ trả isMatch = true khi thực sự tương đồng ít nhất 85% về loài hoa chính, màu sắc và kiểu dáng.
+   - Nếu nghi ngờ hoặc khác biệt rõ rệt -> isMatch = false, verdict = "MISMATCH", confidenceScore < 50.
 
 Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markdown hay backticks):
 {
   "isMatch": boolean,
   "confidenceScore": number, // 0 - 100
   "verdict": "MATCH" | "MISMATCH",
-  "reason": "Giải thích ngắn gọn 1-2 câu tiếng Việt lý do đánh giá (nêu rõ nếu loài hoa hoặc màu sắc không khớp)"
+  "reason": "Giải thích chi tiết 1-2 câu tiếng Việt (chỉ rõ sự khác biệt cụ thể về loài hoa, màu sắc hoặc kiểu dáng nếu không khớp)"
 }`,
       },
     ]
 
-    // Thêm ảnh mẫu sản phẩm ban đầu nếu có
+    // Thêm ảnh mẫu sản phẩm ban đầu nếu có (độ nét cao detail: high)
     if (sampleDataUri) {
       messagesContent.push({
         type: "text",
@@ -100,7 +105,7 @@ Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markd
       })
       messagesContent.push({
         type: "image_url",
-        image_url: { url: sampleDataUri, detail: "low" },
+        image_url: { url: sampleDataUri, detail: "high" },
       })
     }
 
@@ -110,7 +115,7 @@ Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markd
     })
     messagesContent.push({
       type: "image_url",
-      image_url: { url: qcDataUri, detail: "low" },
+      image_url: { url: qcDataUri, detail: "high" },
     })
 
     const controller = new AbortController()
