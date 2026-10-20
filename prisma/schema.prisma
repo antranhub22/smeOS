@@ -22,7 +22,7 @@ model ai_capabilities {
 }
 
 model ai_evaluations {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   capability_code String
   entity_type     String
@@ -63,7 +63,7 @@ model ai_models {
 }
 
 model ai_policies {
-  id              String           @id
+  id              String           @id @default(uuid())
   organization_id String
   capability_code String
   allowed_models  Json
@@ -80,7 +80,7 @@ model ai_policies {
 }
 
 model ai_requests {
-  id               String        @id
+  id               String        @id @default(uuid())
   organization_id  String
   job_id           String?
   capability_code  String
@@ -107,7 +107,7 @@ model ai_requests {
 }
 
 model assets {
-  id               String         @id
+  id               String         @id @default(uuid())
   organization_id  String
   product_id       String?
   parent_asset_id  String?
@@ -149,7 +149,7 @@ model assets {
 }
 
 model audit_logs {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   user_id         String
   action          String
@@ -170,7 +170,7 @@ model audit_logs {
 }
 
 model branches {
-  id                String              @id
+  id                String              @id @default(uuid())
   organization_id   String
   name              String
   code              String
@@ -185,7 +185,7 @@ model branches {
 }
 
 model brand_profiles {
-  id               String        @id
+  id               String        @id @default(uuid())
   organization_id  String        @unique
   primary_color    String?
   secondary_color  String?
@@ -207,7 +207,7 @@ model brand_profiles {
 }
 
 model business_profiles {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String        @unique
   legal_name      String?
   display_name    String
@@ -225,7 +225,7 @@ model business_profiles {
 }
 
 model campaign_packages {
-  id                String        @id
+  id                String        @id @default(uuid())
   organization_id   String
   product_id        String?
   master_asset_id   String
@@ -254,7 +254,7 @@ model campaign_packages {
 }
 
 model capability_overrides {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   role_id         String
   capability_code String
@@ -268,7 +268,7 @@ model capability_overrides {
 }
 
 model catalog_links {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   slug            String        @unique
   name            String
@@ -287,7 +287,7 @@ model catalog_links {
 }
 
 model chat_channel_integrations {
-  id                      String        @id
+  id                      String        @id @default(uuid())
   organization_id         String
   channel                 chat_channel
   is_enabled              Boolean       @default(false)
@@ -302,7 +302,7 @@ model chat_channel_integrations {
 }
 
 model chat_conversations {
-  id              String          @id
+  id              String          @id @default(uuid())
   organization_id String
   customer_id     String?
   title           String          @default("Hội thoại tư vấn hoa")
@@ -319,7 +319,7 @@ model chat_conversations {
 }
 
 model chat_messages {
-  id                 String             @id
+  id                 String             @id @default(uuid())
   organization_id    String
   conversation_id    String
   sender_type        chat_sender_type
@@ -333,7 +333,7 @@ model chat_messages {
 }
 
 model content_drafts {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   asset_id        String
   topic_id        String
@@ -351,7 +351,7 @@ model content_drafts {
 }
 
 model content_generations {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   job_id          String?
   origin          String
@@ -382,7 +382,7 @@ model content_generations {
 }
 
 model content_metrics {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   platform        String
   content_id      String
@@ -403,7 +403,7 @@ model content_metrics {
 }
 
 model content_opportunities {
-  id                        String        @id
+  id                        String        @id @default(uuid())
   organization_id           String
   topic_id                  String
   audience                  String?
@@ -428,7 +428,7 @@ model content_opportunities {
 }
 
 model customer_consents {
-  id              String          @id
+  id              String          @id @default(uuid())
   organization_id String
   customer_id     String
   channel         consent_channel
@@ -444,7 +444,7 @@ model customer_consents {
 }
 
 model customer_occasions {
-  id                   String        @id
+  id                   String        @id @default(uuid())
   organization_id      String
   customer_id          String
   name                 String
@@ -462,7 +462,7 @@ model customer_occasions {
 }
 
 model customers {
-  id                 String               @id
+  id                 String               @id @default(uuid())
   organization_id    String
   code               String
   name               String
@@ -503,7 +503,7 @@ model decision_registry {
 }
 
 model field_catalog_values {
-  id             String         @id
+  id             String         @id @default(uuid())
   catalog_key    String
   code           String
   label          String
@@ -521,7 +521,7 @@ model field_catalog_values {
 }
 
 model field_catalogs {
-  id                   String                   @id
+  id                   String                   @id @default(uuid())
   key                  String                   @unique
   label                String
   governance           field_catalog_governance @default(OPEN)
@@ -532,7 +532,7 @@ model field_catalogs {
 }
 
 model field_config_overrides {
-  id              String                   @id
+  id              String                   @id @default(uuid())
   organization_id String
   target          field_override_target
   override_key    String
@@ -551,7 +551,7 @@ model field_config_overrides {
 }
 
 model field_definitions {
-  id                  String                  @id
+  id                  String                  @id @default(uuid())
   key                 String                  @unique
   entity              String
   origin              field_origin            @default(CORE)
@@ -621,7 +621,7 @@ model flower_taxonomy {
 }
 
 model generation_jobs {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   workspace_id    String
   branch_id       String?
@@ -652,7 +652,7 @@ model generation_jobs {
 }
 
 model greeting_catalog_events {
-  id                String            @id
+  id                String            @id @default(uuid())
   organization_id   String
   catalog_id        String
   channel           String
@@ -670,7 +670,7 @@ model greeting_catalog_events {
 }
 
 model greeting_catalog_products {
-  id                String            @id
+  id                String            @id @default(uuid())
   organization_id   String
   catalog_id        String
   product_id        String
@@ -686,7 +686,7 @@ model greeting_catalog_products {
 }
 
 model greeting_catalogs {
-  id                        String                      @id
+  id                        String                      @id @default(uuid())
   organization_id           String
   code                      String
   name                      String
@@ -708,7 +708,7 @@ model greeting_catalogs {
 }
 
 model greeting_integrations {
-  id                            String        @id
+  id                            String        @id @default(uuid())
   organization_id               String        @unique
   payment_provider              String?
   payment_webhook_key_hash      String?       @unique
@@ -730,7 +730,7 @@ model greeting_integrations {
 }
 
 model greeting_journey_events {
-  id                String            @id
+  id                String            @id @default(uuid())
   organization_id   String
   session_id        String
   event_type        String
@@ -743,7 +743,7 @@ model greeting_journey_events {
 }
 
 model greeting_message_reads {
-  id                String            @id
+  id                String            @id @default(uuid())
   organization_id   String
   message_id        String
   user_id           String
@@ -756,7 +756,7 @@ model greeting_message_reads {
 }
 
 model greeting_messages {
-  id                     String                   @id
+  id                     String                   @id @default(uuid())
   organization_id        String
   order_id               String?
   session_id             String?
@@ -780,7 +780,7 @@ model greeting_messages {
 }
 
 model greeting_notifications {
-  id                  String        @id
+  id                  String        @id @default(uuid())
   organization_id     String
   order_id            String
   event_key           String
@@ -798,7 +798,7 @@ model greeting_notifications {
 }
 
 model greeting_payment_events {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   provider        String
   external_id     String
@@ -818,7 +818,7 @@ model greeting_payment_events {
 }
 
 model greeting_sessions {
-  id                             String                    @id
+  id                             String                    @id @default(uuid())
   organization_id                String
   catalog_id                     String
   send_code                      String
@@ -851,7 +851,7 @@ model greeting_sessions {
 }
 
 model greeting_share_links {
-  id                String            @id
+  id                String            @id @default(uuid())
   organization_id   String
   code              String            @unique
   catalog_id        String
@@ -867,7 +867,7 @@ model greeting_share_links {
 }
 
 model integration_tokens {
-  id              String             @id
+  id              String             @id @default(uuid())
   organization_id String
   client          integration_client
   token_hash      String             @unique
@@ -883,7 +883,7 @@ model integration_tokens {
 }
 
 model job_events {
-  id              String          @id
+  id              String          @id @default(uuid())
   job_id          String
   seq             Int
   event           String
@@ -896,7 +896,7 @@ model job_events {
 }
 
 model journey_runs {
-  id               String        @id
+  id               String        @id @default(uuid())
   organization_id  String
   workspace_id     String?
   manifest_id      String
@@ -915,7 +915,7 @@ model journey_runs {
 }
 
 model market_sources {
-  id              String               @id
+  id              String               @id @default(uuid())
   provider        String
   platform        String
   source_type     String
@@ -931,7 +931,7 @@ model market_sources {
 }
 
 model memberships {
-  id              String            @id
+  id              String            @id @default(uuid())
   organization_id String
   user_id         String
   role_id         String
@@ -948,7 +948,7 @@ model memberships {
 }
 
 model music_tracks {
-  id               String        @id
+  id               String        @id @default(uuid())
   organization_id  String
   title            String
   mood             String
@@ -969,7 +969,7 @@ model music_tracks {
 }
 
 model occasions {
-  id              String            @id
+  id              String            @id @default(uuid())
   organization_id String
   code            String
   name            String
@@ -985,7 +985,7 @@ model occasions {
 }
 
 model order_assignments {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   order_id        String
   assignee_id     String
@@ -1001,7 +1001,7 @@ model order_assignments {
 }
 
 model order_change_requests {
-  id                 String                      @id
+  id                 String                      @id @default(uuid())
   organization_id    String
   order_id           String
   requested_by       String
@@ -1033,7 +1033,7 @@ model order_change_requests {
 }
 
 model order_coordinations {
-  id                            String                  @id
+  id                            String                  @id @default(uuid())
   organization_id               String
   order_id                      String                  @unique
   partner_id                    String?
@@ -1104,7 +1104,7 @@ model order_coordinations {
 }
 
 model order_events {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   order_id        String
   axis            String
@@ -1120,7 +1120,7 @@ model order_events {
 }
 
 model order_exceptions {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   order_id        String
   code            String
@@ -1143,7 +1143,7 @@ model order_exceptions {
 }
 
 model order_info_requests {
-  id                   String                    @id
+  id                   String                    @id @default(uuid())
   organization_id      String
   order_id             String
   missing_field        String
@@ -1171,7 +1171,7 @@ model order_info_requests {
 }
 
 model order_items {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   order_id        String
   product_id      String?
@@ -1187,7 +1187,7 @@ model order_items {
 }
 
 model order_payments {
-  id                String             @id
+  id                String             @id @default(uuid())
   organization_id   String
   order_id          String
   kind              order_payment_kind
@@ -1207,7 +1207,7 @@ model order_payments {
 }
 
 model order_qc_records {
-  id               String           @id
+  id               String           @id @default(uuid())
   organization_id  String
   order_id         String
   inspector_id     String?
@@ -1226,7 +1226,7 @@ model order_qc_records {
 }
 
 model orders {
-  id                    String                  @id
+  id                    String                  @id @default(uuid())
   organization_id       String
   branch_id             String?
   code                  String
@@ -1275,7 +1275,7 @@ model orders {
 }
 
 model organizations {
-  id                        String                      @id
+  id                        String                      @id @default(uuid())
   name                      String
   slug                      String                      @unique
   type                      organization_type           @default(SINGLE)
@@ -1354,7 +1354,7 @@ model organizations {
 }
 
 model partners {
-  id                  String                @id
+  id                  String                @id @default(uuid())
   organization_id     String
   code                String
   name                String
@@ -1377,7 +1377,7 @@ model partners {
 }
 
 model platform_audit_logs {
-  id          String   @id
+  id          String   @id @default(uuid())
   user_id     String
   action      String
   entity_type String
@@ -1393,7 +1393,7 @@ model platform_audit_logs {
 }
 
 model platform_operators {
-  id                         String                       @id
+  id                         String                       @id @default(uuid())
   user_id                    String                       @unique
   granted_by                 String?
   created_at                 DateTime                     @default(now())
@@ -1405,7 +1405,7 @@ model platform_operators {
 }
 
 model platform_role_capabilities {
-  id                 String             @id
+  id                 String             @id @default(uuid())
   operator_id        String
   capability_code    String
   platform_operators platform_operators @relation(fields: [operator_id], references: [id], onDelete: Cascade)
@@ -1414,7 +1414,7 @@ model platform_role_capabilities {
 }
 
 model pricing_rules {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   branch_id       String?
   key             String
@@ -1427,7 +1427,7 @@ model pricing_rules {
 }
 
 model product_analyses {
-  id               String         @id
+  id               String         @id @default(uuid())
   organization_id  String
   product_id       String?
   asset_id         String
@@ -1453,7 +1453,7 @@ model product_analyses {
 }
 
 model product_analysis_runs {
-  id                 String        @id
+  id                 String        @id @default(uuid())
   organization_id    String
   asset_id           String
   product_name       String
@@ -1469,7 +1469,7 @@ model product_analysis_runs {
 }
 
 model product_bookings {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   product_id      String
   order_id        String?
@@ -1487,7 +1487,7 @@ model product_bookings {
 }
 
 model product_copies {
-  id              String         @id
+  id              String         @id @default(uuid())
   organization_id String
   analysis_id     String         @unique
   product_id      String?
@@ -1512,7 +1512,7 @@ model product_copies {
 }
 
 model product_images {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   product_id      String
   asset_id        String
@@ -1526,7 +1526,7 @@ model product_images {
 }
 
 model product_inventory {
-  id                 String        @id
+  id                 String        @id @default(uuid())
   organization_id    String
   product_id         String
   branch_id          String
@@ -1542,7 +1542,7 @@ model product_inventory {
 }
 
 model product_variants {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   product_id      String
   name            String
@@ -1556,7 +1556,7 @@ model product_variants {
 }
 
 model products {
-  id                        String                      @id
+  id                        String                      @id @default(uuid())
   organization_id           String
   branch_id                 String?
   code                      String
@@ -1583,7 +1583,7 @@ model products {
 }
 
 model provider_health {
-  id              String                 @id
+  id              String                 @id @default(uuid())
   provider        String                 @unique
   status          provider_health_status @default(HEALTHY)
   latency_ms      Int?
@@ -1595,7 +1595,7 @@ model provider_health {
 }
 
 model research_runs {
-  id                    String              @id
+  id                    String              @id @default(uuid())
   run_type              research_run_type   @default(DAILY_DEEP)
   status                research_run_status @default(PENDING)
   started_at            DateTime?
@@ -1613,7 +1613,7 @@ model research_runs {
 }
 
 model role_capabilities {
-  id              String           @id
+  id              String           @id @default(uuid())
   role_id         String
   capability_code String
   scope           capability_scope @default(ORGANIZATION)
@@ -1623,7 +1623,7 @@ model role_capabilities {
 }
 
 model roles {
-  id                String              @id
+  id                String              @id @default(uuid())
   organization_id   String?
   key               String
   name              String
@@ -1636,7 +1636,7 @@ model roles {
 }
 
 model sessions {
-  id              String    @id
+  id              String    @id @default(uuid())
   user_id         String
   token_hash      String    @unique
   organization_id String?
@@ -1649,7 +1649,7 @@ model sessions {
 }
 
 model staff_notifications {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   order_id        String?
   event_key       String
@@ -1670,7 +1670,7 @@ model staff_notifications {
 }
 
 model template_overrides {
-  id              String          @id
+  id              String          @id @default(uuid())
   organization_id String
   template_family template_family
   template_key    String
@@ -1686,7 +1686,7 @@ model template_overrides {
 }
 
 model topic_scores {
-  id                        String   @id
+  id                        String   @id @default(uuid())
   topic_id                  String
   geo_scope                 String   @default("VN")
   industry                  String   @default("florist")
@@ -1706,7 +1706,7 @@ model topic_scores {
 }
 
 model topic_signals {
-  id                 String         @id
+  id                 String         @id @default(uuid())
   topic_id           String
   source_id          String
   external_reference String?
@@ -1721,7 +1721,7 @@ model topic_signals {
 }
 
 model topics {
-  id                    String                  @id
+  id                    String                  @id @default(uuid())
   canonical_name        String
   description           String?
   language              String                  @default("vi")
@@ -1741,7 +1741,7 @@ model topics {
 }
 
 model trend_signals {
-  id             String         @id
+  id             String         @id @default(uuid())
   source_id      String
   platform       String
   country_code   String         @default("VN")
@@ -1765,7 +1765,7 @@ model trend_signals {
 }
 
 model trend_timeseries {
-  id           String   @id
+  id           String   @id @default(uuid())
   topic_id     String
   platform     String
   geo_scope    String   @default("VN")
@@ -1783,7 +1783,7 @@ model trend_timeseries {
 }
 
 model usage {
-  id              String        @id
+  id              String        @id @default(uuid())
   organization_id String
   workspace_id    String
   user_id         String
@@ -1802,7 +1802,7 @@ model usage {
 }
 
 model users {
-  id                 String              @id
+  id                 String              @id @default(uuid())
   email              String              @unique
   password_hash      String?
   name               String?
@@ -1817,7 +1817,7 @@ model users {
 }
 
 model video_jobs {
-  id                  String         @id
+  id                  String         @id @default(uuid())
   organization_id     String
   product_id          String?
   title               String
@@ -1857,7 +1857,7 @@ model video_jobs {
 }
 
 model video_scenes {
-  id                String     @id
+  id                String     @id @default(uuid())
   video_job_id      String
   scene_index       Int
   duration_seconds  Float      @default(3.0)
@@ -1874,7 +1874,7 @@ model video_scenes {
 }
 
 model voice_clones {
-  id                 String        @id
+  id                 String        @id @default(uuid())
   organization_id    String
   name               String
   provider           String        @default("elevenlabs")
@@ -1897,7 +1897,7 @@ model voice_clones {
 }
 
 model vouchers {
-  id               String                @id
+  id               String                @id @default(uuid())
   organization_id  String
   customer_id      String?
   code             String
@@ -1918,7 +1918,7 @@ model vouchers {
 }
 
 model workspaces {
-  id              String         @id
+  id              String         @id @default(uuid())
   organization_id String
   name            String
   kind            workspace_kind @default(PRODUCTION)
