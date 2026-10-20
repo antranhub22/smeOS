@@ -21,10 +21,18 @@ export const SUBCONTRACT_STEPS: SubcontractStepMeta[] = [
   { id: 4, number: 4, shortTitle: "Đã giao (POD)", fullTitle: "Bằng chứng POD", hint: "Nghiệm thu hoàn tất" },
 ]
 
+export interface SubcontractStepDeadlinesMap {
+  1?: string | null | undefined
+  2?: number | null | undefined
+  3?: number | null | undefined
+  4?: number | null | undefined
+}
+
 interface SubcontractSpotlightStepperProps {
   activeStep: SubcontractStepId
   completedSteps: SubcontractStepId[]
   unlockedSteps: SubcontractStepId[]
+  deadlines?: SubcontractStepDeadlinesMap | undefined
   onSelectStep: (step: SubcontractStepId) => void
 }
 
@@ -32,6 +40,7 @@ export function SubcontractSpotlightStepper({
   activeStep,
   completedSteps,
   unlockedSteps,
+  deadlines,
   onSelectStep,
 }: SubcontractSpotlightStepperProps) {
   return (
@@ -94,6 +103,23 @@ export function SubcontractSpotlightStepper({
                   >
                     {step.shortTitle}
                   </span>
+                  {/* Mốc thời hạn ngắn gọn nếu có */}
+                  {step.id > 1 && typeof deadlines?.[step.id] === "number" && (
+                    <span
+                      className={cn(
+                        "block truncate text-caption font-medium leading-none mt-0.5",
+                        isCompleted
+                          ? "text-success/70"
+                          : isActive
+                          ? "text-primary/90 font-bold"
+                          : "text-text-muted/70"
+                      )}
+                    >
+                      {new Date(deadlines[step.id] as number + 7 * 3600_000)
+                        .toISOString()
+                        .substring(11, 16)}
+                    </span>
+                  )}
                 </div>
               </button>
             </li>

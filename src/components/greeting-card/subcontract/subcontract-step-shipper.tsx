@@ -15,6 +15,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+import { useStepCountdown } from "./use-step-countdown"
+import { StepCountdownBadge } from "./step-countdown-badge"
+
 export interface ExistingShipperInfo {
   shipperName: string
   shipperPhone: string
@@ -26,6 +29,7 @@ export interface SubcontractStepShipperProps {
   branchId: string
   existingShipperInfo?: ExistingShipperInfo | null | undefined
   deliveryStatus?: string | null | undefined
+  deadlineMs?: number | null | undefined
   isActive: boolean
   isCompleted: boolean
   isUnlocked: boolean
@@ -40,12 +44,14 @@ export function SubcontractStepShipper({
   branchId,
   existingShipperInfo,
   deliveryStatus,
+  deadlineMs,
   isActive,
   isCompleted,
   isUnlocked,
   onActivate,
   onSubmitted,
 }: SubcontractStepShipperProps) {
+  const countdown = useStepCountdown(isUnlocked && !isCompleted ? deadlineMs : null)
   const [shipperName, setShipperName] = useState("")
   const [shipperPhone, setShipperPhone] = useState("")
   const [shipperNote, setShipperNote] = useState("")
@@ -150,9 +156,13 @@ export function SubcontractStepShipper({
               <CheckCircle2 size={12} /> Đã bàn giao
             </span>
           ) : isUnlocked ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
-              <Clock size={12} /> Chờ thông tin
-            </span>
+            countdown ? (
+              <StepCountdownBadge countdown={countdown} labelPrefix="Giao trước" />
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
+                <Clock size={12} /> Chờ thông tin
+              </span>
+            )
           ) : (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-muted text-text-muted text-caption font-bold">
               <Lock size={12} /> Khóa
@@ -170,6 +180,28 @@ export function SubcontractStepShipper({
 
       {/* Thân chi tiết Bước 3 */}
       <div className={cn("p-4 sm:p-5 flex flex-col gap-4", !isActive && "hidden")}>
+        {/* Banner đếm ngược hạn chót bàn giao shipper khi mở bước */}
+        {countdown && !isCompleted && !existingShipperInfo && (
+          <div
+            className={cn(
+              "p-3 rounded-xl border flex items-center justify-between gap-2 text-caption",
+              countdown.isOverdue
+                ? "bg-danger-bg border-danger/30 text-danger font-bold"
+                : "bg-primary/5 border-primary/20 text-foreground"
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <Clock size={16} className={countdown.isOverdue ? "text-danger" : "text-primary"} />
+              <span>
+                Hạn bàn giao cho Shipper: <strong>{countdown.targetTimeStr || "Đang tính"}</strong>
+              </span>
+            </div>
+            <strong className={cn("text-body-sm font-black", countdown.isOverdue ? "text-danger" : "text-primary")}>
+              {countdown.formatted}
+            </strong>
+          </div>
+        )}
+
         {!isUnlocked ? (
           <div className="p-4 rounded-xl bg-surface-muted text-center flex flex-col items-center gap-2 text-text-muted">
             <Lock size={24} className="opacity-50" />

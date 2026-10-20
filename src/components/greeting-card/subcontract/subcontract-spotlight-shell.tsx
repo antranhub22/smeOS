@@ -17,6 +17,8 @@ import {
 import type { SubcontractCardProduct } from "./subcontract-claim-card"
 import type { DeliveryProofInfo } from "./delivery-proof-card"
 
+import type { StepMilestoneDeadlines } from "@/modules/greeting-card/domain/subcontract-countdown"
+
 export interface SubcontractSpotlightShellProps {
   orderCode: string
   branchId: string
@@ -24,6 +26,8 @@ export interface SubcontractSpotlightShellProps {
   product: SubcontractCardProduct
   deliveryAddress: string
   deliveryTime: string
+  deliveryTimestampMs?: number | null | undefined
+  stepDeadlines?: StepMilestoneDeadlines | null | undefined
   recipientName?: string | null | undefined
   recipientPhone?: string | null | undefined
   isPhoneMasked?: boolean | undefined
@@ -60,6 +64,8 @@ export function SubcontractSpotlightShell({
   product,
   deliveryAddress,
   deliveryTime,
+  deliveryTimestampMs,
+  stepDeadlines,
   recipientName,
   recipientPhone,
   isPhoneMasked,
@@ -177,6 +183,12 @@ export function SubcontractSpotlightShell({
           activeStep={activeStep}
           completedSteps={completedSteps}
           unlockedSteps={unlockedSteps}
+          deadlines={{
+            1: stepDeadlines?.step1GraceExpiresAt,
+            2: stepDeadlines?.step2QcDeadlineMs,
+            3: stepDeadlines?.step3ShipperDeadlineMs,
+            4: stepDeadlines?.step4DeliveryDeadlineMs,
+          }}
           onSelectStep={(step) => setActiveStep(step)}
         />
 
@@ -210,6 +222,7 @@ export function SubcontractSpotlightShell({
           isPhoneMasked={isPhoneMasked}
           qcPhotos={qcPhotos}
           productionStatus={productionStatus}
+          deadlineMs={stepDeadlines?.step2QcDeadlineMs}
           isActive={activeStep === 2}
           isCompleted={isStep2Completed}
           isUnlocked={unlockedSteps.includes(2)}
@@ -223,6 +236,7 @@ export function SubcontractSpotlightShell({
           branchId={branchId}
           existingShipperInfo={shipperInfo}
           deliveryStatus={deliveryStatus}
+          deadlineMs={stepDeadlines?.step3ShipperDeadlineMs}
           isActive={activeStep === 3}
           isCompleted={isStep3Completed}
           isUnlocked={unlockedSteps.includes(3)}
@@ -238,6 +252,7 @@ export function SubcontractSpotlightShell({
           deliveryStatus={deliveryStatus}
           orderStatus={orderStatus}
           subcontractPriceVnd={subcontractPriceVnd}
+          deadlineMs={stepDeadlines?.step4DeliveryDeadlineMs}
           isActive={activeStep === 4}
           isCompleted={isStep4Completed}
           isUnlocked={unlockedSteps.includes(4)}

@@ -14,7 +14,10 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { SubcontractQcGallery } from "./subcontract-qc-gallery"
+import { SubcontractQcPreview } from "./subcontract-qc-preview"
 import { SubcontractRecipientContact } from "./subcontract-recipient-contact"
+import { useStepCountdown } from "./use-step-countdown"
+import { StepCountdownBadge } from "./step-countdown-badge"
 
 export interface SubcontractStepQcProps {
   orderCode: string
@@ -24,6 +27,7 @@ export interface SubcontractStepQcProps {
   isPhoneMasked?: boolean | undefined
   qcPhotos?: string[] | undefined
   productionStatus?: string | null | undefined
+  deadlineMs?: number | null | undefined
   isActive: boolean
   isCompleted: boolean
   isUnlocked: boolean
@@ -39,6 +43,7 @@ export function SubcontractStepQc({
   isPhoneMasked,
   qcPhotos = [],
   productionStatus,
+  deadlineMs,
   isActive,
   isCompleted,
   isUnlocked,
@@ -46,6 +51,7 @@ export function SubcontractStepQc({
   onQcUploaded,
 }: SubcontractStepQcProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const countdown = useStepCountdown(isUnlocked && !isCompleted ? deadlineMs : null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [uploadingQc, setUploadingQc] = useState(false)
@@ -201,9 +207,13 @@ export function SubcontractStepQc({
               <CheckCircle2 size={12} /> Đã có {currentQcPhotos.length} ảnh
             </span>
           ) : isUnlocked ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
-              <Clock size={12} /> Cần ảnh QC
-            </span>
+            countdown ? (
+              <StepCountdownBadge countdown={countdown} labelPrefix="QC trước" />
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
+                <Clock size={12} /> Cần ảnh QC
+              </span>
+            )
           ) : (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-muted text-text-muted text-caption font-bold">
               <Lock size={12} /> Khóa
@@ -230,6 +240,27 @@ export function SubcontractStepQc({
           </div>
         ) : (
           <>
+            {/* Banner đếm ngược hạn chót nổi bật khi mở bước */}
+            {countdown && !isCompleted && (
+              <div
+                className={cn(
+                  "p-3 rounded-xl border flex items-center justify-between gap-2 text-caption",
+                  countdown.isOverdue
+                    ? "bg-danger-bg border-danger/30 text-danger font-bold"
+                    : "bg-primary/5 border-primary/20 text-foreground"
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Clock size={16} className={countdown.isOverdue ? "text-danger" : "text-primary"} />
+                  <span>
+                    Hạn hoàn tất kiểm định QC: <strong>{countdown.targetTimeStr || "Đang tính"}</strong>
+                  </span>
+                </div>
+                <strong className={cn("text-body-sm font-black", countdown.isOverdue ? "text-danger" : "text-primary")}>
+                  {countdown.formatted}
+                </strong>
+              </div>
+            )}
             {errorMsg && (
               <div className="p-3 rounded-xl bg-danger-bg border border-danger/30 text-danger text-body-sm">
                 {errorMsg}
@@ -255,45 +286,13 @@ export function SubcontractStepQc({
 
             {/* Xem trước ảnh vừa chọn từ máy */}
             {previewUrl ? (
-              <div className="flex flex-col gap-3 p-3 rounded-xl bg-surface-muted border border-border">
-                <div className="relative w-full h-56 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center">
-                  <img
-                    src={previewUrl}
-                    alt="Xem trước ảnh chụp"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="flex items-center justify-between text-caption text-text-muted">
-                  <span className="truncate max-w-[200px]">{selectedFile?.name}</span>
-                  <span>{selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB` : ""}</span>
-                </div>
-                <div className="flex items-center gap-2 pt-1">
-                  <Button
-                    variant="outline"
-                    disabled={uploadingQc}
-                    onClick={handleCancelPreview}
-                    className="flex-1 h-11 text-caption font-bold"
-                  >
-                    <Trash2 size={15} className="mr-1 text-danger" /> Chọn ảnh khác
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    disabled={uploadingQc}
-                    onClick={handleUploadQcPhoto}
-                    className="flex-1 h-11 text-caption font-extrabold shadow-md"
-                  >
-                    {uploadingQc ? (
-                      <>
-                        <Loader2 size={16} className="animate-spin mr-1.5" /> Đang tải lên...
-                      </>
-                    ) : (
-                      <>
-                        <UploadCloud size={16} className="mr-1.5" /> GỬI DUYỆT ẢNH QC
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
+              <SubcontractQcPreview
+                previewUrl={previewUrl}
+                selectedFile={selectedFile}
+                uploadingQc={uploadingQc}
+                onCancel={handleCancelPreview}
+                onUpload={handleUploadQcPhoto}
+              />
             ) : (
               /* Nút mở Camera / Thư viện ảnh */
               <Button

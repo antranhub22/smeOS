@@ -13,9 +13,13 @@ interface PageProps {
   params: Promise<{ orderCode: string }>
 }
 
+import type { StepMilestoneDeadlines } from "@/modules/greeting-card/domain/subcontract-countdown"
+
 interface SubcontractPageData extends SubcontractClaimCardProps {
   orderStatus?: string | null
   deliveryStatus?: string | null
+  deliveryTimestampMs?: number | null
+  stepDeadlines?: StepMilestoneDeadlines | null
   shipperInfo?: {
     shipperName: string
     shipperPhone: string
@@ -113,6 +117,8 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         product={orderData.product}
         deliveryAddress={orderData.deliveryAddress}
         deliveryTime={orderData.deliveryTime}
+        deliveryTimestampMs={orderData.deliveryTimestampMs}
+        stepDeadlines={orderData.stepDeadlines}
         recipientName={orderData.recipientName}
         recipientPhone={orderData.recipientPhone}
         isPhoneMasked={orderData.isPhoneMasked}

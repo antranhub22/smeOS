@@ -17,6 +17,10 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { DeliveryProofInfo } from "./delivery-proof-card"
+import { SubcontractPodPreview } from "./subcontract-pod-preview"
+import { SubcontractPodSuccess } from "./subcontract-pod-success"
+import { useStepCountdown } from "./use-step-countdown"
+import { StepCountdownBadge } from "./step-countdown-badge"
 
 export interface SubcontractStepProofProps {
   orderCode: string
@@ -25,6 +29,7 @@ export interface SubcontractStepProofProps {
   deliveryStatus?: string | null | undefined
   orderStatus?: string | null | undefined
   subcontractPriceVnd: number
+  deadlineMs?: number | null | undefined
   isActive: boolean
   isCompleted: boolean
   isUnlocked: boolean
@@ -39,6 +44,7 @@ export function SubcontractStepProof({
   deliveryStatus,
   orderStatus,
   subcontractPriceVnd,
+  deadlineMs,
   isActive,
   isCompleted,
   isUnlocked,
@@ -59,6 +65,8 @@ export function SubcontractStepProof({
     orderStatus === "COMPLETED" ||
     Boolean(existingDeliveryProof?.deliveredAt) ||
     successJustSubmitted
+
+  const countdown = useStepCountdown(isUnlocked && !isActuallyDelivered ? deadlineMs : null)
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -184,9 +192,13 @@ export function SubcontractStepProof({
               <CheckCircle2 size={12} /> Hoàn tất 100%
             </span>
           ) : isUnlocked ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
-              <Clock size={12} /> Chờ ảnh POD
-            </span>
+            countdown ? (
+              <StepCountdownBadge countdown={countdown} labelPrefix="Giao trước" />
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
+                <Clock size={12} /> Chờ ảnh POD
+              </span>
+            )
           ) : (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-muted text-text-muted text-caption font-bold">
               <Lock size={12} /> Khóa
@@ -204,6 +216,28 @@ export function SubcontractStepProof({
 
       {/* Thân chi tiết Bước 4 */}
       <div className={cn("p-4 sm:p-5 flex flex-col gap-4", !isActive && "hidden")}>
+        {/* Banner đếm ngược hạn chót giao hàng POD khi mở bước */}
+        {countdown && !isActuallyDelivered && (
+          <div
+            className={cn(
+              "p-3 rounded-xl border flex items-center justify-between gap-2 text-caption",
+              countdown.isOverdue
+                ? "bg-danger-bg border-danger/30 text-danger font-bold"
+                : "bg-primary/5 border-primary/20 text-foreground"
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <Clock size={16} className={countdown.isOverdue ? "text-danger" : "text-primary"} />
+              <span>
+                Hạn chót giao hàng (POD): <strong>{countdown.targetTimeStr || "Đang tính"}</strong>
+              </span>
+            </div>
+            <strong className={cn("text-body-sm font-black", countdown.isOverdue ? "text-danger" : "text-primary")}>
+              {countdown.formatted}
+            </strong>
+          </div>
+        )}
+
         {!isUnlocked ? (
           <div className="p-4 rounded-xl bg-surface-muted text-center flex flex-col items-center gap-2 text-text-muted">
             <Lock size={24} className="opacity-50" />
@@ -212,40 +246,10 @@ export function SubcontractStepProof({
             </p>
           </div>
         ) : isActuallyDelivered ? (
-          <div className="p-4 rounded-xl bg-success/10 border border-success/30 flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-full bg-success/20">
-                <CheckCircle2 size={20} className="text-success" />
-              </div>
-              <div>
-                <span className="text-body-sm font-extrabold text-success block">
-                  Đơn hàng đã giao thành công & Nghiệm thu hoàn tất
-                </span>
-                <span className="text-caption text-text-muted">
-                  Thù lao gia công {subcontractPriceVnd.toLocaleString("vi-VN")} đ đã được ghi nhận vào tài khoản của chi nhánh.
-                </span>
-              </div>
-            </div>
-
-            {existingDeliveryProof?.photoUrls && existingDeliveryProof.photoUrls.length > 0 && (
-              <div className="flex flex-col gap-1.5 pt-2 border-t border-success/20">
-                <span className="text-caption font-bold text-text-muted flex items-center gap-1">
-                  <ImageIcon size={13} /> Ảnh bằng chứng giao hàng (POD):
-                </span>
-                <div className="grid grid-cols-3 gap-2">
-                  {existingDeliveryProof.photoUrls.map((url, idx) => (
-                    <div key={idx} className="relative h-24 rounded-lg overflow-hidden border border-border shadow-xs">
-                      <img
-                        src={url.startsWith("http") || url.startsWith("/api/v1/storage/") ? url : `/api/v1/storage/${url}`}
-                        alt={`Ảnh POD #${idx + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <SubcontractPodSuccess
+            existingDeliveryProof={existingDeliveryProof}
+            subcontractPriceVnd={subcontractPriceVnd}
+          />
         ) : (
           <div className="flex flex-col gap-3">
             {errorMsg && (
@@ -264,25 +268,11 @@ export function SubcontractStepProof({
             />
 
             {previewUrl ? (
-              <div className="flex flex-col gap-3 p-3 rounded-xl bg-surface-muted border border-border">
-                <div className="relative w-full h-56 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center">
-                  <img
-                    src={previewUrl}
-                    alt="Xem trước ảnh POD"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    disabled={submitting}
-                    onClick={handleCancelPreview}
-                    className="flex-1 h-10 text-caption font-bold"
-                  >
-                    <Trash2 size={15} className="mr-1 text-danger" /> Chọn ảnh khác
-                  </Button>
-                </div>
-              </div>
+              <SubcontractPodPreview
+                previewUrl={previewUrl}
+                submitting={submitting}
+                onCancel={handleCancelPreview}
+              />
             ) : (
               <Button
                 variant="outline"

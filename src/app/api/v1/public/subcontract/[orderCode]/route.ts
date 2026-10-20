@@ -102,6 +102,20 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
 
   const { workshopNoteOf } = await import("@/modules/greeting-card/domain/order-slip-extras")
   const specialNotes = workshopNoteOf(order.internal_note)
+  const {
+    parseDeliveryTimestampMs,
+    calculateStepMilestoneDeadlines,
+  } = await import("@/modules/greeting-card/domain/subcontract-countdown")
+
+  const deliveryTimestampMs = parseDeliveryTimestampMs(
+    typeof deliveryWindow.date === "string" ? deliveryWindow.date : null,
+    typeof deliveryWindow.timeSlot === "string" ? deliveryWindow.timeSlot : null
+  )
+
+  const stepDeadlines = calculateStepMilestoneDeadlines({
+    deliveryTimestampMs,
+    graceExpiresAt: subState?.graceExpiresAt as string | undefined,
+  })
 
   return jsonResponse({
     data: {
@@ -116,6 +130,8 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       },
       deliveryAddress,
       deliveryTime,
+      deliveryTimestampMs,
+      stepDeadlines,
       recipientName: recipientInfo.recipientName,
       recipientPhone,
       isPhoneMasked: !isReadyForDelivery,
