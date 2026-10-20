@@ -472,12 +472,17 @@ export function SubcontractClaimCard({
         {/* Chi tiết sản phẩm & Định mức nguyên vật liệu */}
         <div className="bg-surface-muted rounded-xl p-3.5 border border-border flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            {product.imageUrl && (
+            {product.imageUrl ? (
               <img
                 src={product.imageUrl}
                 alt={product.name}
-                className="w-16 h-16 rounded-lg object-cover border border-border"
+                className="w-16 h-16 rounded-lg object-cover border border-border shadow-sm shrink-0"
               />
+            ) : (
+              <div className="w-16 h-16 rounded-lg bg-surface border border-border flex flex-col items-center justify-center text-text-muted shrink-0">
+                <ImageIcon size={22} className="opacity-50" />
+                <span className="text-[10px] mt-0.5 font-medium">Theo mẫu</span>
+              </div>
             )}
             <div className="min-w-0 flex-1">
               <span className="text-caption text-text-muted block">Mẫu sản phẩm</span>

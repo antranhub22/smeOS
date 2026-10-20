@@ -94,10 +94,13 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
           }
         } else {
           const rel = img.startsWith("/") ? img.slice(1) : img
+          const cleanKey = (rel.replace(/^api\/v1\/storage\//, "").replace(/^storage\//, "").split("?")[0]) || rel
           const possiblePaths = [
+            path.join(process.cwd(), "var", "storage", cleanKey),
             path.join(process.cwd(), "public", rel),
             path.join(process.cwd(), rel),
             path.join(process.cwd(), "storage", rel),
+            path.join(process.cwd(), "var", "storage", rel),
           ]
           for (const p of possiblePaths) {
             if (fs.existsSync(p)) {

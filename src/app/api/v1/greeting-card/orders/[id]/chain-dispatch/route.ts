@@ -212,7 +212,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
     })
 
     const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
-    const sampleImageUrl = await resolveSubcontractSamplePhoto(order)
+    const sampleImageUrl = await resolveSubcontractSamplePhoto(order, { baseUrl: claimBaseUrl })
 
     const sendResult = await notifier.sendSubcontractInvite(ctx, {
       branch,

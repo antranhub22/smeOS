@@ -60,7 +60,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
 
   const productName = firstItem?.description || (snapshot.name as string | undefined) || "Sản phẩm đặt gia công"
   const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
-  const productImageUrl = await resolveSubcontractSamplePhoto(order)
+  const productImageUrl = await resolveSubcontractSamplePhoto(order, { baseUrl: url.origin })
 
   const deliveryWindow = (order.delivery_window as Record<string, unknown> | null) ?? {}
   const deliveryAddress = formatDeliveryAddress(order.delivery_address)
