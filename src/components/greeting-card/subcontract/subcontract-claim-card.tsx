@@ -98,6 +98,7 @@ export function SubcontractClaimCard({
   const [uploadingQc, setUploadingQc] = useState(false)
   const [qcSuccessMsg, setQcSuccessMsg] = useState<string | null>(null)
   const [currentQcPhotos, setCurrentQcPhotos] = useState<string[]>(qcPhotos ?? [])
+  const [brokenQcPhotos, setBrokenQcPhotos] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (qcPhotos) setCurrentQcPhotos(qcPhotos)
@@ -438,26 +439,47 @@ export function SubcontractClaimCard({
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   {currentQcPhotos.map((url, idx) => {
-                    const imgSrc = url.startsWith("http") || url.startsWith("data:") || url.startsWith("/api/v1/storage/")
+                    let imgSrc = url.startsWith("http") || url.startsWith("data:") || url.startsWith("/api/v1/storage/")
                       ? url
                       : (url.startsWith("org/") ? `/api/v1/storage/${url}` : url)
+
+                    // Chuẩn hóa nếu URL trỏ nhầm localhost lúc chạy trên remote
+                    if (typeof window !== "undefined" && (imgSrc.includes("localhost:") || imgSrc.includes("127.0.0.1:"))) {
+                      try {
+                        const parsed = new URL(imgSrc)
+                        imgSrc = `${window.location.origin}${parsed.pathname}${parsed.search}`
+                      } catch {
+                        // ignore
+                      }
+                    }
+
+                    const isBroken = Boolean(brokenQcPhotos[url])
 
                     return (
                       <div
                         key={idx}
                         className="relative h-24 rounded-lg overflow-hidden border border-border bg-surface-muted shadow-sm group"
                       >
-                        <img
-                          src={imgSrc}
-                          alt={`Ảnh QC #${idx + 1}`}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                          loading="lazy"
-                        />
+                        {!isBroken ? (
+                          <img
+                            src={imgSrc}
+                            alt={`Ảnh QC #${idx + 1}`}
+                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                            loading="lazy"
+                            onError={() => setBrokenQcPhotos((prev) => ({ ...prev, [url]: true }))}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center bg-surface-subtle text-text-muted p-1 text-center">
+                            <ImageIcon size={18} className="opacity-40 mb-1" />
+                            <span className="text-[10px] leading-tight text-text-muted font-medium">Ảnh QC #{idx + 1}</span>
+                            <span className="text-[9px] text-danger/80">Không tải được</span>
+                          </div>
+                        )}
                         <button
                           type="button"
                           onClick={() => handleDeleteQcPhoto(url)}
                           title="Xóa ảnh này"
-                          className="absolute top-1 right-1 p-1 rounded-md bg-black/60 hover:bg-danger text-white transition-colors opacity-80 hover:opacity-100"
+                          className="absolute top-1 right-1 p-1 rounded-md bg-black/60 hover:bg-danger text-white transition-colors opacity-80 hover:opacity-100 z-10"
                         >
                           <Trash2 size={13} />
                         </button>
@@ -473,14 +495,25 @@ export function SubcontractClaimCard({
         {/* Chi tiết sản phẩm & Định mức nguyên vật liệu */}
         <div className="bg-surface-muted rounded-xl p-3.5 border border-border flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            {product.imageUrl && !imageError ? (
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                onError={() => setImageError(true)}
-                className="w-16 h-16 rounded-lg object-cover border border-border shadow-sm shrink-0"
-              />
-            ) : (
+            {product.imageUrl && !imageError ? (() => {
+              let sampleSrc = product.imageUrl
+              if (typeof window !== "undefined" && (sampleSrc.includes("localhost:") || sampleSrc.includes("127.0.0.1:"))) {
+                try {
+                  const parsed = new URL(sampleSrc)
+                  sampleSrc = `${window.location.origin}${parsed.pathname}${parsed.search}`
+                } catch {
+                  // ignore
+                }
+              }
+              return (
+                <img
+                  src={sampleSrc}
+                  alt={product.name}
+                  onError={() => setImageError(true)}
+                  className="w-16 h-16 rounded-lg object-cover border border-border shadow-sm shrink-0"
+                />
+              )
+            })() : (
               <div className="w-16 h-16 rounded-lg bg-surface border border-border flex flex-col items-center justify-center text-text-muted shrink-0">
                 <ImageIcon size={22} className="opacity-50" />
                 <span className="text-[10px] mt-0.5 font-medium">Theo mẫu</span>

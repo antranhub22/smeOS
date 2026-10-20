@@ -140,10 +140,21 @@ export async function resolveSubcontractSamplePhoto(
 
   if (!rawImageUrl) return null
 
-  // Chuẩn hóa thành absolute URL nếu có baseUrl và rawImageUrl là relative path (/api/v1/...)
-  if (rawImageUrl.startsWith("/") && options?.baseUrl) {
+  // Chuẩn hóa thành absolute URL hoặc thay localhost bằng baseUrl hiện tại
+  if (options?.baseUrl) {
     const origin = options.baseUrl.replace(/\/+$/, "")
-    return `${origin}${rawImageUrl}`
+    if (rawImageUrl.startsWith("/")) {
+      return `${origin}${rawImageUrl}`
+    }
+    // Nếu URL cũ từng bị lưu cứng http://localhost:3200 hoặc http://localhost:3000 -> chuyển sang baseOrigin
+    if (rawImageUrl.includes("localhost:") || rawImageUrl.includes("127.0.0.1:")) {
+      try {
+        const parsed = new URL(rawImageUrl)
+        return `${origin}${parsed.pathname}${parsed.search}`
+      } catch {
+        // ignore
+      }
+    }
   }
 
   return rawImageUrl

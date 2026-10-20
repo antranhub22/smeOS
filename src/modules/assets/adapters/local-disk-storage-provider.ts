@@ -34,7 +34,15 @@ export class LocalDiskStorageProvider implements StorageProvider {
   }
 
   async get(key: string): Promise<Uint8Array> {
-    return readFile(absolutePathFor(key))
+    try {
+      return await readFile(absolutePathFor(key))
+    } catch (err: unknown) {
+      if ((err as NodeJS.ErrnoException)?.code === "ENOENT") {
+        const { StorageFileNotFoundError } = await import("./s3-storage-provider")
+        throw new StorageFileNotFoundError(key)
+      }
+      throw err
+    }
   }
 
   /** `_method` bỏ qua: route `/api/v1/storage/[...key]` nhận cả PUT lẫn GET
