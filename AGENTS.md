@@ -44,6 +44,36 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 - **Mã nghiệp vụ gọi một NĂNG LỰC, không gọi một nhà cung cấp** (D15). Mọi lời gọi AI đi qua cổng AI ở `src/core/ai/`; SDK của nhà cung cấp chỉ được xuất hiện trong `adapters/`. Mô hình là một hàng trong `ai_models`, không phải một hằng trong mã.
 - **Mô hình không vào production khi thiếu một trong bốn ô giấy phép** (D18): `license`, `commercial_use`, `territory`, `allowed_use`. Bộ lọc nằm ở `eligibleModels()`, nên mô hình thiếu ô không lộ ra cả trong danh sách để chọn.
 - **Sàn quyền riêng tư cắt sau cùng**, cùng tính chất với trần cứng của RBAC: lời gọi `SENSITIVE` không có đường nào ra nhà cung cấp ngoài, kể cả qua bước dự phòng.
+- **Mô hình Single Living Dashboard Card — Tích hợp Kênh Thông Báo Ngoài (PO 20/10/2026)**:
+  Đây là **mô hình chuẩn bắt buộc** khi tích hợp smeOS với bất kỳ kênh thông báo đối tác/khách hàng bên ngoài nào (Telegram Bot, Zalo OA, Messenger, WhatsApp, Webhook đối tác...) để theo dõi tiến độ xử lý một thực thể nghiệp vụ (đơn hàng, yêu cầu, ca làm việc, v.v.).
+
+  **Nguyên tắc cốt lõi**: Mỗi thực thể nghiệp vụ chỉ có **DUY NHẤT MỘT TIN NHẮN / THẺ THÔNG BÁO** trên kênh ngoài. Tất cả cập nhật trạng thái tiếp theo đều **chỉnh sửa (EDIT) tin nhắn đó tại chỗ**, không bao giờ tạo tin mới. Khi có mốc hành động cần phản hồi ngay, hệ thống gửi **notification ping riêng** (thông báo đẩy) kèm nút dẫn vào thẻ đang tồn tại — không gửi thêm thẻ.
+
+  **Lý do bắt buộc**: Spam tin nhắn mới làm mất ngữ cảnh, cửa hàng/đối tác phải cuộn ngược để biết đơn đang ở bước nào; thẻ duy nhất giữ toàn bộ lịch sử tiến độ có thể nhìn một lần và hành động ngay.
+
+  **Kiến trúc triển khai (SSOT: `src/modules/greeting-card/`):**
+
+  | Lớp | File | Trách nhiệm |
+  |-----|------|-------------|
+  | Domain | `domain/subcontract-order.ts` | State chứa `telegramMsgId` + `telegramChatId` để theo dõi thẻ đang sống |
+  | Port Interface | `adapters/staff-channels/channel-provider.interface.ts` | `editMessage?(payload: EditMessagePayload)` — optional method; `providerChatId` trong `ChannelSendResult` |
+  | Adapter | `adapters/staff-channels/telegram-adapter.ts` | `sendMessage()` trả `providerChatId`; `editMessage()` gọi `editMessageText`/`editMessageCaption` Telegram API |
+  | Use-Case Contract | `use-cases/dispatch-subcontract-order.ts` | `existingTelegramCard?: { msgId, chatId, isCaption? }` trong `DispatchNotificationTarget`; `LiveCardSendResult` |
+  | Infra Adapter | `infra/dispatch-notification-adapter.ts` | **EDIT MODE** nếu `existingTelegramCard` có giá trị; **SEND MODE** nếu chưa có → trả `telegramMsgId` + `telegramChatId` để caller lưu |
+  | Use-Cases | `use-cases/handle-subcontract-claim.ts`, `process-dispatch-reminders.ts` | Sau lần gửi đầu lưu msgId vào state; mọi milestone tiếp theo truyền `existingTelegramCard` |
+
+  **Quy trình 3 bước khi áp dụng cho module/kênh mới:**
+  1. **Bước 1 — Mở rộng State**: Thêm `<channel>MsgId` + `<channel>ChatId` vào domain state của thực thể (vd `telegramMsgId`, `zaLoMsgId`).
+  2. **Bước 2 — Implement editMessage()**: Adapter của kênh (Telegram, Zalo...) implement `editMessage()` theo interface `IStaffNotificationProvider`. Trả về `providerChatId` trong tất cả nhánh `sendMessage()`.
+  3. **Bước 3 — Wiring trong Use-Cases**: Sau lần gửi đầu → lưu msgId vào state. Mọi trigger tiếp theo → nạp `existingTelegramCard` từ state → truyền vào `sendSubcontractInvite()` → adapter tự EDIT thay vì SEND.
+
+  **Quy tắc bất biến:**
+  - **TUYỆT ĐỐI CẤM** gửi tin nhắn mới cho cùng một thực thể khi đã có `msgId` trong state — trừ trường hợp `editMessage` thất bại (fallback an toàn cho phép gửi mới nhưng phải log lý do).
+  - `msgId` **PHẢI** được lưu vào DB state (không giữ trong memory) để tồn tại qua khởi động lại server.
+  - **Notification ping** (nếu cần thiết) phải là tin nhắn phụ riêng, không được lẫn vào thẻ chính; và chỉ gửi khi cần cửa hàng hành động ngay (upload ảnh, xác nhận shipper...).
+  - Kênh không hỗ trợ edit (Zalo OA, SMS): fallback gửi mới — ghi rõ nợ kỹ thuật trong `docs/kien-truc/TRANG_THAI.md`.
+  - **Không tạo thẻ mới cho mỗi milestone** — đây là anti-pattern đã bị thay thế bởi mô hình này.
+
 - **Quy chuẩn Thêm Ngành Mới (Industry Plugin SSOT Standard, PO 17/10/2026)**:
   - Hệ thống `smeOS` vận hành theo cơ chế **Hợp đồng Đặc tả Ngành SSOT (Industry Plugin Contract)** để hỗ trợ đa ngành linh hoạt (Thời trang, F&B, Quà tặng thủ công, Bán lẻ tổng hợp, Dịch vụ, Hoa tươi và các ngành mới trong tương lai) mà **KHÔNG CẦN sửa đổi lược đồ CSDL hay can thiệp code rải rác**.
   - **Tài liệu & Mã nguồn SSOT**:
