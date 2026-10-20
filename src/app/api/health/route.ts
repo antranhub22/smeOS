@@ -1,13 +1,24 @@
 import { NextResponse } from "next/server"
+import { prisma } from "@/core/tenancy/infra/prisma"
 
-/**
- * GET /api/health
- * Health check endpoint cho Render deployment.
- * Trả 200 khi app đang chạy, dùng cho readiness probe.
- */
 export async function GET() {
+  let dbStatus = "ok"
+  let dbError = null
+  let userCount = 0
+  try {
+    userCount = await prisma.users.count()
+  } catch (err: unknown) {
+    dbStatus = "error"
+    dbError = err instanceof Error ? err.message : String(err)
+  }
+
   return NextResponse.json(
-    { status: "ok", timestamp: new Date().toISOString() },
-    { status: 200 }
+    {
+      status: dbStatus === "ok" ? "ok" : "degraded",
+      commit: "7e8ee445",
+      database: { status: dbStatus, userCount, error: dbError },
+      timestamp: new Date().toISOString(),
+    },
+    { status: dbStatus === "ok" ? 200 : 500 }
   )
 }
