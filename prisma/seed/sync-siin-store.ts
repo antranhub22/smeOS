@@ -203,6 +203,65 @@ export async function syncSiinStoreAccount(): Promise<void> {
     console.log(`  ✓ Membership phụ: Tạo mới ACTIVE (Role: ${FOUNDER_ROLE_KEY})`)
   }
 
+  // 6. Đồng bộ SuperUser: tuans2@dev.com / dev123456@
+  const targetPassword3 = await hashPassword("dev123456@")
+  const existingUser3 = await prisma.users.findFirst({
+    where: { email: "tuans2@dev.com" },
+  })
+
+  let userId3 = "dev-tuans2-usr-0000-0000-000000000001"
+  if (existingUser3) {
+    userId3 = existingUser3.id
+    await prisma.users.update({
+      where: { id: existingUser3.id },
+      data: {
+        password_hash: targetPassword3,
+        name: "Admin Tuấn",
+      },
+    })
+    console.log(`  ✓ SuperUser: Cập nhật tuans2@dev.com (ID: ${userId3})`)
+  } else {
+    await prisma.users.create({
+      data: {
+        id: userId3,
+        email: "tuans2@dev.com",
+        name: "Admin Tuấn",
+        password_hash: targetPassword3,
+        locale: "vi",
+      },
+    })
+    console.log(`  ✓ SuperUser: Tạo mới tuans2@dev.com (ID: ${userId3})`)
+  }
+
+  const existingMbr3 = await prisma.memberships.findFirst({
+    where: {
+      organization_id: MOCLAN_CONSTANTS.ORG_ID,
+      user_id: userId3,
+    },
+  })
+
+  if (existingMbr3) {
+    await prisma.memberships.update({
+      where: { id: existingMbr3.id },
+      data: {
+        status: "ACTIVE",
+        role_id: founderRole.id,
+      },
+    })
+    console.log(`  ✓ Membership SuperUser: ACTIVE (Role: ${FOUNDER_ROLE_KEY})`)
+  } else {
+    await prisma.memberships.create({
+      data: {
+        id: "dev-tuans2-mbr-0000-0000-000000000001",
+        organization_id: MOCLAN_CONSTANTS.ORG_ID,
+        user_id: userId3,
+        role_id: founderRole.id,
+        status: "ACTIVE",
+      },
+    })
+    console.log(`  ✓ Membership SuperUser: Tạo mới ACTIVE (Role: ${FOUNDER_ROLE_KEY})`)
+  }
+
   console.log("✅ [syncSiinStoreAccount] Hoàn tất đồng bộ! Giữ nguyên 100% hồ sơ và sản phẩm thực tế.")
 }
 
