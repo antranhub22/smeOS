@@ -112,11 +112,23 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const snapshot = (order.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
   const itemMeta = (order.items[0]?.metadata as Record<string, unknown> | null) ?? {}
   const productName = order.items[0]?.description || (snapshot.name as string | undefined) || (itemMeta.name as string | undefined) || "Sản phẩm đặt gia công"
-  let sampleImageUrl = (snapshot.image_url || snapshot.imageUrl || itemMeta.imageUrl || itemMeta.image_url) as string | undefined
+  // Sử dụng SSOT use-case resolveSubcontractSamplePhoto để nạp ảnh mẫu chuẩn của đơn hàng
+  const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
+  const samplePhotoUrl = await resolveSubcontractSamplePhoto(order)
+  let sampleImageUrl = samplePhotoUrl || (snapshot.image_url || snapshot.imageUrl || itemMeta.imageUrl || itemMeta.image_url) as string | undefined
 
   // Nếu sampleImageUrl là key nội bộ dạng org/... -> ký URL còn hạn
-  if (sampleImageUrl && sampleImageUrl.startsWith("org/")) {
-    sampleImageUrl = await storage.signedUrl(sampleImageUrl, 604800, "GET").catch(() => sampleImageUrl)
+  if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/"))) {
+    try {
+      const key = sampleImageUrl.startsWith("org/")
+        ? sampleImageUrl
+        : sampleImageUrl.match(/floraos-core\/(org\/[^?]+)/)?.[1]
+      if (key) {
+        sampleImageUrl = await storage.signedUrl(key, 604800, "GET").catch(() => sampleImageUrl)
+      }
+    } catch {
+      // ignore
+    }
   } else if (sampleImageUrl && sampleImageUrl.startsWith("/")) {
     // Nếu là file tĩnh cục bộ (ví dụ: /mock-data/...) -> đọc file và chuyển thành data URI
     try {

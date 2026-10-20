@@ -38,6 +38,27 @@ export async function verifyQcPhotoWithAi(input: VerifyQcPhotoInput): Promise<Ve
     const qcBase64 = Buffer.from(input.qcPhotoBytes).toString("base64")
     const qcDataUri = `data:${input.qcPhotoMimeType};base64,${qcBase64}`
 
+    // Nếu có ảnh mẫu sản phẩm ban đầu:
+    // Đảm bảo truyền ảnh dạng data URI để OpenAI không bị lỗi fetch khi URL nằm ở domain nội bộ/mạng riêng
+    let sampleDataUri: string | null = null
+    if (input.sampleImageUrl) {
+      if (input.sampleImageUrl.startsWith("data:")) {
+        sampleDataUri = input.sampleImageUrl
+      } else if (input.sampleImageUrl.startsWith("http://") || input.sampleImageUrl.startsWith("https://")) {
+        try {
+          const sampleRes = await fetch(input.sampleImageUrl, { signal: AbortSignal.timeout(5000) })
+          if (sampleRes.ok) {
+            const buf = await sampleRes.arrayBuffer()
+            const mime = sampleRes.headers.get("content-type") || "image/jpeg"
+            sampleDataUri = `data:${mime};base64,${Buffer.from(buf).toString("base64")}`
+          }
+        } catch {
+          // fallback giữ URL gốc nếu fetch thất bại
+          sampleDataUri = input.sampleImageUrl
+        }
+      }
+    }
+
     const messagesContent: Array<
       | { type: "text"; text: string }
       | { type: "image_url"; image_url: { url: string; detail?: "low" | "high" | "auto" } }
@@ -45,18 +66,20 @@ export async function verifyQcPhotoWithAi(input: VerifyQcPhotoInput): Promise<Ve
       {
         type: "text",
         text: `Bạn là Chuyên gia Kiểm định Chất lượng (Quality Control Inspector) của nền tảng quản lý đơn hàng chuỗi smeOS.
-Nhiệm vụ của bạn là kiểm tra ảnh chụp thành phẩm do cửa hàng/chi nhánh vừa tải lên xem có ĐÚNG là sản phẩm của đơn hàng hay bị chụp NHẦM ẢNH (ví dụ: chụp nhầm hóa đơn, ảnh rác, ảnh người selfie, hoặc sản phẩm hoàn toàn khác biệt).
+Nhiệm vụ của bạn là kiểm tra ảnh chụp thành phẩm do cửa hàng vừa tải lên xem có ĐÚNG là sản phẩm của đơn hàng hay không.
 
-Thông tin đơn hàng:
+Thông tin đơn hàng cần làm:
 - Tên sản phẩm đặt: "${input.productName}"
-${input.sampleImageUrl ? "- Ảnh mẫu gốc của đơn hàng được đính kèm bên dưới để đối chiếu." : "- Không có ảnh mẫu gốc, hãy đối chiếu ảnh thực tế với tên sản phẩm trên."}
+${sampleDataUri ? "- Đơn hàng có đính kèm Ảnh [1] là Mẫu Sản Phẩm Gốc để đối chiếu." : "- Không có ảnh mẫu gốc, hãy đối chiếu ảnh thành phẩm với Tên sản phẩm trên."}
 
-Yêu cầu đánh giá:
-1. Ảnh chụp thành phẩm có thể hiện đúng loại sản phẩm/dịch vụ này không?
-2. Có phải bị chụp nhầm ảnh (ví dụ: chụp nhầm tài liệu, chụp màn hình điện thoại, ảnh không liên quan)?
-3. Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không bọc trong markdown hay backticks):
+YÊU CẦU KIỂM DUYỆT RẤT NGHIÊM NGẶT:
+1. Xác định chủng loại ngành hàng: Ví dụ đơn đặt sản phẩm theo tên trên thì ảnh thành phẩm BẮT BUỘC phải thể hiện đúng kiểu dáng, sản phẩm thực tế theo yêu cầu. TUYỆT ĐỐI KHÔNG CHẤP NHẬN ảnh quần áo (nếu đơn không phải thời trang), tài liệu, chụp màn hình, ảnh selfie hay đồ vật hoàn toàn khác biệt.
+2. Nếu có ảnh mẫu gốc [Ảnh 1]: So sánh tính tương đồng về hình dáng, màu sắc chủ đạo, chi tiết cấu thành so với ảnh thành phẩm [Ảnh 2].
+3. Nếu ảnh thành phẩm [Ảnh 2] sai chủng loại, khác biệt hoàn toàn với đơn hàng hoặc là ảnh rác/ảnh chụp chơi: BẮT BUỘC trả về isMatch = false và verdict = "MISMATCH".
+
+Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markdown hay backticks):
 {
-  "isMatch": boolean, // true nếu đúng là sản phẩm của đơn hàng, false nếu nhầm ảnh/ảnh rác/sai sản phẩm
+  "isMatch": boolean,
   "confidenceScore": number, // 0 - 100
   "verdict": "MATCH" | "MISMATCH",
   "reason": "Giải thích ngắn gọn 1-2 câu tiếng Việt lý do đánh giá"
@@ -64,15 +87,15 @@ Yêu cầu đánh giá:
       },
     ]
 
-    // Nếu có ảnh mẫu sản phẩm ban đầu, thêm vào để đối chiếu song song
-    if (input.sampleImageUrl && (input.sampleImageUrl.startsWith("http") || input.sampleImageUrl.startsWith("data:"))) {
+    // Thêm ảnh mẫu sản phẩm ban đầu nếu có
+    if (sampleDataUri) {
       messagesContent.push({
         type: "text",
         text: "Ảnh [1] — Ảnh Mẫu Sản Phẩm Khách Đặt Ban Đầu:",
       })
       messagesContent.push({
         type: "image_url",
-        image_url: { url: input.sampleImageUrl, detail: "low" },
+        image_url: { url: sampleDataUri, detail: "low" },
       })
     }
 
