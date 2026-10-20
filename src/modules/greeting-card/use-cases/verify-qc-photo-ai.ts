@@ -23,14 +23,15 @@ export interface VerifyQcPhotoResult {
 export async function verifyQcPhotoWithAi(input: VerifyQcPhotoInput): Promise<VerifyQcPhotoResult> {
   const apiKey = process.env.OPENAI_API_KEY
 
-  // Nếu không có API Key trong môi trường, fallback an toàn cho môi trường test
+  // Nếu không có API Key trong môi trường: KHÔNG được tự ý phê duyệt là MATCH!
+  // Trả về UNCERTAIN để đưa về hàng đợi Điều Phối Viên duyệt thủ công, bảo vệ chất lượng đơn hàng.
   if (!apiKey) {
     log.warn("ai_qc_verify.no_api_key", { productName: input.productName })
     return {
-      isMatch: true,
-      confidenceScore: 85,
-      verdict: "MATCH",
-      reason: "Hệ thống kiểm định an toàn nội bộ (Chế độ tự động)",
+      isMatch: false,
+      confidenceScore: 50,
+      verdict: "UNCERTAIN",
+      reason: "Chưa cấu hình API Key kiểm định AI. Đơn cần Điều phối viên kiểm tra ảnh thủ công.",
     }
   }
 
@@ -38,15 +39,14 @@ export async function verifyQcPhotoWithAi(input: VerifyQcPhotoInput): Promise<Ve
     const qcBase64 = Buffer.from(input.qcPhotoBytes).toString("base64")
     const qcDataUri = `data:${input.qcPhotoMimeType};base64,${qcBase64}`
 
-    // Nếu có ảnh mẫu sản phẩm ban đầu:
-    // Đảm bảo truyền ảnh dạng data URI để OpenAI không bị lỗi fetch khi URL nằm ở domain nội bộ/mạng riêng
+    // Đảm bảo nạp ảnh mẫu sản phẩm ban đầu thành data URI
     let sampleDataUri: string | null = null
     if (input.sampleImageUrl) {
       if (input.sampleImageUrl.startsWith("data:")) {
         sampleDataUri = input.sampleImageUrl
       } else if (input.sampleImageUrl.startsWith("http://") || input.sampleImageUrl.startsWith("https://")) {
         try {
-          const sampleRes = await fetch(input.sampleImageUrl, { signal: AbortSignal.timeout(5000) })
+          const sampleRes = await fetch(input.sampleImageUrl, { signal: AbortSignal.timeout(6000) })
           if (sampleRes.ok) {
             const buf = await sampleRes.arrayBuffer()
             const mime = sampleRes.headers.get("content-type") || "image/jpeg"
@@ -69,20 +69,25 @@ export async function verifyQcPhotoWithAi(input: VerifyQcPhotoInput): Promise<Ve
 Nhiệm vụ của bạn là kiểm tra ảnh chụp thành phẩm do cửa hàng vừa tải lên xem có ĐÚNG là sản phẩm của đơn hàng hay không.
 
 Thông tin đơn hàng cần làm:
-- Tên sản phẩm đặt: "${input.productName}"
+- Tên sản phẩm khách đặt: "${input.productName}"
 ${sampleDataUri ? "- Đơn hàng có đính kèm Ảnh [1] là Mẫu Sản Phẩm Gốc để đối chiếu." : "- Không có ảnh mẫu gốc, hãy đối chiếu ảnh thành phẩm với Tên sản phẩm trên."}
 
-YÊU CẦU KIỂM DUYỆT RẤT NGHIÊM NGẶT:
-1. Xác định chủng loại ngành hàng: Ví dụ đơn đặt sản phẩm theo tên trên thì ảnh thành phẩm BẮT BUỘC phải thể hiện đúng kiểu dáng, sản phẩm thực tế theo yêu cầu. TUYỆT ĐỐI KHÔNG CHẤP NHẬN ảnh quần áo (nếu đơn không phải thời trang), tài liệu, chụp màn hình, ảnh selfie hay đồ vật hoàn toàn khác biệt.
-2. Nếu có ảnh mẫu gốc [Ảnh 1]: So sánh tính tương đồng về hình dáng, màu sắc chủ đạo, chi tiết cấu thành so với ảnh thành phẩm [Ảnh 2].
-3. Nếu ảnh thành phẩm [Ảnh 2] sai chủng loại, khác biệt hoàn toàn với đơn hàng hoặc là ảnh rác/ảnh chụp chơi: BẮT BUỘC trả về isMatch = false và verdict = "MISMATCH".
+YÊU CẦU KIỂM DUYỆT RẤT NGHIÊM NGẶT & CHI TIẾT:
+1. Đối chiếu chủng loại & loài hoa/sản phẩm chính:
+   - Nếu đơn hàng đặt loài hoa cụ thể (ví dụ: hoa Tulip, hoa Hồng, hoa Hướng Dương, hoa Cúc...) thì ảnh thành phẩm BẮT BUỘC phải là loài hoa đó.
+   - TUYỆT ĐỐI KHÔNG CHẤP NHẬN: Bó hoa hồng/cúc nhưng đơn đặt là Bó hoa tulip (hoặc ngược lại). Nếu loài hoa chính không khớp -> BẮT BUỘC trả về isMatch = false và verdict = "MISMATCH".
+2. Nếu có ảnh mẫu gốc [Ảnh 1]:
+   - So sánh tông màu chủ đạo (ví dụ: mẫu màu trắng nhưng làm màu hồng/đỏ -> MISMATCH).
+   - So sánh kiểu dáng bó/lẵng/hộp hoa và phong cách cắm.
+   - Nếu khác biệt rõ rệt về loài hoa hoặc màu sắc -> BẮT BUỘC verdict = "MISMATCH".
+3. TUYỆT ĐỐI TỪ CHỐI các ảnh rác, ảnh tài liệu, chụp màn hình, ảnh tự sướng, hoặc sản phẩm của ngành hàng khác.
 
 Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markdown hay backticks):
 {
   "isMatch": boolean,
   "confidenceScore": number, // 0 - 100
   "verdict": "MATCH" | "MISMATCH",
-  "reason": "Giải thích ngắn gọn 1-2 câu tiếng Việt lý do đánh giá"
+  "reason": "Giải thích ngắn gọn 1-2 câu tiếng Việt lý do đánh giá (nêu rõ nếu loài hoa hoặc màu sắc không khớp)"
 }`,
       },
     ]
@@ -109,7 +114,7 @@ Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markd
     })
 
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 12000) // Timeout 12s
+    const timeoutId = setTimeout(() => controller.abort(), 15000)
 
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -122,7 +127,7 @@ Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markd
         messages: [{ role: "user", content: messagesContent }],
         response_format: { type: "json_object" },
         max_tokens: 300,
-        temperature: 0.2,
+        temperature: 0.1,
       }),
       signal: controller.signal,
     })
@@ -132,12 +137,11 @@ Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markd
     if (!res.ok) {
       const errText = await res.text().catch(() => "")
       log.warn("ai_qc_verify.api_error", { status: res.status, error: errText })
-      // Fallback an toàn khi API AI lỗi
       return {
-        isMatch: true,
-        confidenceScore: 80,
-        verdict: "MATCH",
-        reason: "Kiểm tra cơ bản thành công (Chế độ dự phòng khi AI bận)",
+        isMatch: false,
+        confidenceScore: 50,
+        verdict: "UNCERTAIN",
+        reason: `Dịch vụ kiểm định AI tạm thời gián đoạn (${res.status}). Đơn cần Điều phối viên kiểm tra ảnh thủ công.`,
       }
     }
 
@@ -155,7 +159,9 @@ Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markd
     const isMatch = Boolean(parsed.isMatch)
     const confidenceScore = typeof parsed.confidenceScore === "number" ? parsed.confidenceScore : 85
     const verdict = parsed.verdict === "MISMATCH" ? "MISMATCH" : isMatch ? "MATCH" : "MISMATCH"
-    const reason = parsed.reason || (isMatch ? "Ảnh thành phẩm phù hợp với mẫu sản phẩm." : "Ảnh thành phẩm không khớp với mẫu.")
+    const reason =
+      parsed.reason ||
+      (isMatch ? "Ảnh thành phẩm phù hợp với mẫu sản phẩm." : "Ảnh thành phẩm không khớp với mẫu đơn hàng.")
 
     log.info("ai_qc_verify.completed", {
       productName: input.productName,
@@ -174,12 +180,11 @@ Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markd
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err)
     log.warn("ai_qc_verify.exception", { error: errorMsg })
-    // Fallback an toàn không chặn luồng sản xuất
     return {
-      isMatch: true,
-      confidenceScore: 75,
-      verdict: "MATCH",
-      reason: "Hệ thống kiểm định nội bộ xác nhận hợp lệ.",
+      isMatch: false,
+      confidenceScore: 50,
+      verdict: "UNCERTAIN",
+      reason: "Hệ thống kiểm định AI gặp sự cố kết nối. Đơn cần Điều phối viên kiểm tra ảnh thủ công.",
     }
   }
 }

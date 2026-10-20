@@ -14,7 +14,7 @@ describe("verifyQcPhotoWithAi", () => {
     global.fetch = originalFetch
   })
 
-  it("trả về fallback an toàn (isMatch=true) khi không có OPENAI_API_KEY", async () => {
+  it("trả về UNCERTAIN (isMatch=false) để Điều phối viên duyệt thủ công khi không có OPENAI_API_KEY", async () => {
     delete process.env.OPENAI_API_KEY
 
     const dummyBytes = new Uint8Array([1, 2, 3, 4])
@@ -25,10 +25,9 @@ describe("verifyQcPhotoWithAi", () => {
       qcPhotoMimeType: "image/jpeg",
     })
 
-    expect(result.isMatch).toBe(true)
-    expect(result.verdict).toBe("MATCH")
-    expect(result.confidenceScore).toBe(85)
-    expect(result.reason).toContain("Hệ thống kiểm định an toàn nội bộ")
+    expect(result.isMatch).toBe(false)
+    expect(result.verdict).toBe("UNCERTAIN")
+    expect(result.reason).toContain("Chưa cấu hình API Key kiểm định AI")
   })
 
   it("trả về MATCH khi OpenAI xác nhận ảnh khớp với sản phẩm", async () => {
@@ -139,9 +138,9 @@ describe("verifyQcPhotoWithAi", () => {
       qcPhotoMimeType: "image/jpeg",
     })
 
-    expect(result.isMatch).toBe(true)
-    expect(result.verdict).toBe("MATCH")
-    expect(result.reason).toContain("Chế độ dự phòng khi AI bận")
+    expect(result.isMatch).toBe(false)
+    expect(result.verdict).toBe("UNCERTAIN")
+    expect(result.reason).toContain("Dịch vụ kiểm định AI tạm thời gián đoạn")
   })
 
   it("xử lý an toàn khi fetch ném ngoại lệ (Network Error)", async () => {
@@ -157,8 +156,8 @@ describe("verifyQcPhotoWithAi", () => {
       qcPhotoMimeType: "image/jpeg",
     })
 
-    expect(result.isMatch).toBe(true)
-    expect(result.verdict).toBe("MATCH")
-    expect(result.reason).toContain("Hệ thống kiểm định nội bộ xác nhận hợp lệ")
+    expect(result.isMatch).toBe(false)
+    expect(result.verdict).toBe("UNCERTAIN")
+    expect(result.reason).toContain("Hệ thống kiểm định AI gặp sự cố kết nối")
   })
 })

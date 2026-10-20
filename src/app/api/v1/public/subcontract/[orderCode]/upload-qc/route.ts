@@ -21,34 +21,13 @@ const MAX_QC_PHOTO_BYTES = 10 * 1024 * 1024 // 10 MB
 
 function sniffImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; mimeType: string } | null {
   if (bytes.length < 12) return null
-  // JPEG: FF D8 FF
   if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
     return { ext: "jpg", mimeType: "image/jpeg" }
   }
-  // PNG: 89 50 4E 47 0D 0A 1A 0A
-  if (
-    bytes[0] === 0x89 &&
-    bytes[1] === 0x50 &&
-    bytes[2] === 0x4e &&
-    bytes[3] === 0x47 &&
-    bytes[4] === 0x0d &&
-    bytes[5] === 0x0a &&
-    bytes[6] === 0x1a &&
-    bytes[7] === 0x0a
-  ) {
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
     return { ext: "png", mimeType: "image/png" }
   }
-  // WebP: RIFF .... WEBP
-  if (
-    bytes[0] === 0x52 &&
-    bytes[1] === 0x49 &&
-    bytes[2] === 0x46 &&
-    bytes[3] === 0x46 &&
-    bytes[8] === 0x57 &&
-    bytes[9] === 0x45 &&
-    bytes[10] === 0x42 &&
-    bytes[11] === 0x50
-  ) {
+  if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45) {
     return { ext: "webp", mimeType: "image/webp" }
   }
   return null
@@ -112,37 +91,48 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const snapshot = (order.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
   const itemMeta = (order.items[0]?.metadata as Record<string, unknown> | null) ?? {}
   const productName = order.items[0]?.description || (snapshot.name as string | undefined) || (itemMeta.name as string | undefined) || "Sản phẩm đặt gia công"
+
+  const forwardedHost = request.headers.get("x-forwarded-host") || request.headers.get("host") || "localhost"
+  const forwardedProto = request.headers.get("x-forwarded-proto") || (forwardedHost.includes("localhost") ? "http" : "https")
+  const baseOrigin = `${forwardedProto}://${forwardedHost}`
+
   // Sử dụng SSOT use-case resolveSubcontractSamplePhoto để nạp ảnh mẫu chuẩn của đơn hàng
   const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
-  const samplePhotoUrl = await resolveSubcontractSamplePhoto(order)
+  const samplePhotoUrl = await resolveSubcontractSamplePhoto(order, { baseUrl: baseOrigin })
   let sampleImageUrl = samplePhotoUrl || (snapshot.image_url || snapshot.imageUrl || itemMeta.imageUrl || itemMeta.image_url) as string | undefined
 
-  // Nếu sampleImageUrl là key nội bộ dạng org/... -> ký URL còn hạn
+  // Nếu sampleImageUrl là key nội bộ dạng org/... -> đọc trực tiếp bytes từ storage biến thành data URI
   if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/"))) {
     try {
       const key = sampleImageUrl.startsWith("org/")
         ? sampleImageUrl
         : sampleImageUrl.match(/floraos-core\/(org\/[^?]+)/)?.[1]
       if (key) {
-        sampleImageUrl = await storage.signedUrl(key, 604800, "GET").catch(() => sampleImageUrl)
+        const fileBytes = await storage.get(key)
+        const ext = key.split(".").pop()?.toLowerCase() || "jpg"
+        const mime = ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg"
+        sampleImageUrl = `data:${mime};base64,${Buffer.from(fileBytes).toString("base64")}`
       }
     } catch {
-      // ignore
+      // fallback
     }
   } else if (sampleImageUrl && sampleImageUrl.startsWith("/")) {
-    // Nếu là file tĩnh cục bộ (ví dụ: /mock-data/...) -> đọc file và chuyển thành data URI
+    // Nếu là file tĩnh cục bộ (ví dụ: /mock-data/... hoặc /images/...) -> đọc file và chuyển thành data URI
     try {
       const fs = await import("fs")
       const path = await import("path")
       const localFilePath = path.join(process.cwd(), "public", sampleImageUrl.replace(/^\//, ""))
       if (fs.existsSync(localFilePath)) {
         const fileBytes = fs.readFileSync(localFilePath)
-        const ext = path.extname(localFilePath).toLowerCase()
-        const mime = ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg"
+        const ext = path.extname(localFilePath).toLowerCase().replace(".", "")
+        const mime = ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg"
         sampleImageUrl = `data:${mime};base64,${fileBytes.toString("base64")}`
+      } else {
+        // Nếu không có file vật lý trên disk -> chuyển thành URL đầy đủ kèm domain
+        sampleImageUrl = `${baseOrigin}${sampleImageUrl}`
       }
     } catch {
-      // bỏ qua fallback
+      sampleImageUrl = `${baseOrigin}${sampleImageUrl}`
     }
   }
 
