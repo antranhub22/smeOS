@@ -14,6 +14,7 @@ interface PageProps {
 }
 
 import type { StepMilestoneDeadlines } from "@/modules/greeting-card/domain/subcontract-countdown"
+import type { StepBypassRequestInfo } from "@/components/greeting-card/subcontract/subcontract-bypass-control"
 
 interface SubcontractPageData extends SubcontractClaimCardProps {
   orderStatus?: string | null
@@ -26,6 +27,7 @@ interface SubcontractPageData extends SubcontractClaimCardProps {
     submittedAt: string
   } | null
   deliveryProof?: DeliveryProofInfo | null
+  bypassRequests?: Record<string, StepBypassRequestInfo> | null
 }
 
 const fetcher = (url: string) =>
@@ -135,6 +137,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         orderStatus={orderData.orderStatus}
         shipperInfo={orderData.shipperInfo}
         deliveryProof={orderData.deliveryProof}
+        bypassRequests={orderData.bypassRequests}
         initialStep={initialStep}
         onClaim={() => handleAction("CLAIM")}
         onCancelClaim={() => handleAction("CANCEL")}
@@ -142,6 +145,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         onQcUploaded={() => mutate()}
         onShipperSubmitted={() => mutate()}
         onDelivered={() => mutate()}
+        onBypassRequested={() => mutate()}
       />
     </div>
   )

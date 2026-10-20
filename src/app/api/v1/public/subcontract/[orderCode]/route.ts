@@ -148,6 +148,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       qcPhotos: resolvedQcPhotos,
       lastAiVerification: coordMeta.last_ai_verification ?? null,
       autoBypassedCoordinator: Boolean(coordMeta.auto_bypassed_coordinator),
+      bypassRequests: (coordMeta.bypass_requests as Record<string, unknown> | undefined) ?? null,
       shipperInfo: (coordMeta.shipper_info as { shipperName: string; shipperPhone: string; submittedAt: string } | undefined) ?? null,
       deliveryProof: rawPodProof
         ? {

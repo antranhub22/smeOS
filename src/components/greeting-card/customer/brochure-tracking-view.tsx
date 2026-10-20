@@ -70,6 +70,11 @@ type TrackingData = {
     }
     industryKey?: string | null | undefined
     createdAt: string
+    bypassNotices?: {
+      qc?: string | null
+      shipper?: string | null
+      pod?: string | null
+    } | null
     timeline?: {
       arranging?: { displayRange: string }
       readyQc?: { displayRange: string }
@@ -209,6 +214,19 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
 
       {/* Ảnh thành phẩm và ảnh người nhận: hai mục riêng, chỉ hiện ở luồng sản xuất chế tác */}
       <div id={THANK_YOU_TARGET.progress} className="flex flex-col gap-4">
+      {/* Thông báo trường hợp bất khả kháng được Điều phối duyệt bỏ qua ảnh QC */}
+      {!isHomestayStay && productPhotos.length === 0 && order.bypassNotices?.qc && (
+        <section className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex flex-col gap-1.5 text-body-sm">
+          <div className="flex items-center gap-2 text-primary font-bold text-caption">
+            <Camera size={15} />
+            <span>Thông tin từ Cửa hàng</span>
+          </div>
+          <p className="text-foreground text-caption leading-relaxed">
+            {order.bypassNotices.qc}
+          </p>
+        </section>
+      )}
+
       {!isHomestayStay && productPhotos.length > 0 && (
         <section className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-muted border border-border">
           <div className="flex items-center justify-between">
@@ -259,6 +277,17 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
           </h3>
           <MediaGallery urls={recipientPhotos} label={`Ảnh ${getIndustryOrderTerms(order.industryKey).recipientShortLabel}`} />
           <p className="text-caption text-text-muted">Đã được trao tận tay {getIndustryOrderTerms(order.industryKey).recipientShortLabel}.</p>
+        </section>
+      )}
+      {recipientPhotos.length === 0 && order.bypassNotices?.pod && (
+        <section className="p-4 rounded-2xl bg-success/10 border border-success/20 flex flex-col gap-1.5 text-body-sm">
+          <div className="flex items-center gap-2 text-success font-bold text-caption">
+            <CheckCircle2 size={15} />
+            <span>Xác nhận giao hàng trực tiếp</span>
+          </div>
+          <p className="text-foreground text-caption leading-relaxed">
+            {order.bypassNotices.pod}
+          </p>
         </section>
       )}
       </div>

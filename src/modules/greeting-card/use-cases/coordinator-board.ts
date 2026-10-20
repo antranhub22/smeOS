@@ -7,6 +7,7 @@ import { withOrderProduct } from "./order-product-views"
 import { resolveSaleScope } from "./order-scope"
 import { orderPhotoApproval } from "../domain/photo-approval"
 import { parsePaymentPolicy } from "../domain/brochure-payment-policy"
+import { extractGate2State } from "../domain/subcontract-gate2-extractor"
 
 /**
  * `GET /greeting-card/coordinator-board` — toàn bộ đơn còn việc cho bảng Điều phối, xếp theo ngày +
@@ -40,6 +41,7 @@ export async function getCoordinatorBoard(ctx: TenantContext, input: { date?: st
   const rowsWithProof = rows.map((o) => ({
     ...o,
     photo_approval: orderPhotoApproval(o, shopSettings, reviewMinutes, now),
+    gate2: extractGate2State(o.coordination),
     payment_proof_url: o.greeting_sessions[0]?.payment_proof_asset_id
       ? (proofUrls.get(o.greeting_sessions[0].payment_proof_asset_id) ?? null)
       : null,

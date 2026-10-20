@@ -18,6 +18,7 @@ import { SubcontractQcPreview } from "./subcontract-qc-preview"
 import { SubcontractRecipientContact } from "./subcontract-recipient-contact"
 import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
+import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
 
 export interface SubcontractStepQcProps {
   orderCode: string
@@ -28,11 +29,13 @@ export interface SubcontractStepQcProps {
   qcPhotos?: string[] | undefined
   productionStatus?: string | null | undefined
   deadlineMs?: number | null | undefined
+  bypassRequest?: StepBypassRequestInfo | null | undefined
   isActive: boolean
   isCompleted: boolean
   isUnlocked: boolean
   onActivate: () => void
   onQcUploaded?: (() => void) | undefined
+  onBypassRequested?: (() => void) | undefined
 }
 
 export function SubcontractStepQc({
@@ -44,11 +47,13 @@ export function SubcontractStepQc({
   qcPhotos = [],
   productionStatus,
   deadlineMs,
+  bypassRequest,
   isActive,
   isCompleted,
   isUnlocked,
   onActivate,
   onQcUploaded,
+  onBypassRequested,
 }: SubcontractStepQcProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const countdown = useStepCountdown(isUnlocked && !isCompleted ? deadlineMs : null)
@@ -324,6 +329,17 @@ export function SubcontractStepQc({
               recipientName={recipientName}
               recipientPhone={recipientPhone}
               isPhoneMasked={isPhoneMasked}
+            />
+
+            {/* Khối xin bỏ qua bằng chứng QC */}
+            <SubcontractBypassControl
+              orderCode={orderCode}
+              branchId={branchId}
+              stepKey="QC"
+              stepTitle="Chế tác & Kiểm định QC"
+              existingRequest={bypassRequest}
+              isCompleted={isCompleted}
+              onBypassRequested={onBypassRequested}
             />
           </>
         )}

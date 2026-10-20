@@ -63,7 +63,7 @@ export class BrochureOrderRepository {
         customer: { select: { id: true, code: true, name: true, phone: true } },
         items: true,
         greeting_sessions: { select: { id: true, send_code: true, status: true, product_snapshot: true, selected_product_id: true, sale_id: true, payment_proof_asset_id: true, payment_proof_balance_asset_id: true, catalog: { select: { filters: true } } } },
-        coordination: { select: { coordinator_id: true } },
+        coordination: { select: { coordinator_id: true, metadata: true } },
         assignments: { take: 1, select: { assignee_id: true, assigned_by: true }, orderBy: { assigned_at: "desc" as const } },
         events: { select: { axis: true, created_at: true, actor_id: true, reason: true }, orderBy: { created_at: "desc" as const } },
         qc_records: { select: { inspector_id: true, notes: true, created_at: true } },
@@ -221,6 +221,9 @@ export class BrochureOrderRepository {
         },
         organization: {
           select: { settings: true },
+        },
+        coordination: {
+          select: { metadata: true },
         },
       },
       take: 2,

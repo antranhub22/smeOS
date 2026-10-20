@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils"
 import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
 
+import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
+
 export interface ExistingShipperInfo {
   shipperName: string
   shipperPhone: string
@@ -30,11 +32,13 @@ export interface SubcontractStepShipperProps {
   existingShipperInfo?: ExistingShipperInfo | null | undefined
   deliveryStatus?: string | null | undefined
   deadlineMs?: number | null | undefined
+  bypassRequest?: StepBypassRequestInfo | null | undefined
   isActive: boolean
   isCompleted: boolean
   isUnlocked: boolean
   onActivate: () => void
   onSubmitted?: (() => void) | undefined
+  onBypassRequested?: (() => void) | undefined
 }
 
 const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
@@ -45,11 +49,13 @@ export function SubcontractStepShipper({
   existingShipperInfo,
   deliveryStatus,
   deadlineMs,
+  bypassRequest,
   isActive,
   isCompleted,
   isUnlocked,
   onActivate,
   onSubmitted,
+  onBypassRequested,
 }: SubcontractStepShipperProps) {
   const countdown = useStepCountdown(isUnlocked && !isCompleted ? deadlineMs : null)
   const [shipperName, setShipperName] = useState("")
@@ -313,6 +319,17 @@ export function SubcontractStepShipper({
             </Button>
           </form>
         )}
+
+        {/* Khối xin bỏ qua thông tin Shipper */}
+        <SubcontractBypassControl
+          orderCode={orderCode}
+          branchId={branchId}
+          stepKey="SHIPPER"
+          stepTitle="Bàn giao Shipper"
+          existingRequest={bypassRequest}
+          isCompleted={isCompleted}
+          onBypassRequested={onBypassRequested}
+        />
       </div>
     </section>
   )

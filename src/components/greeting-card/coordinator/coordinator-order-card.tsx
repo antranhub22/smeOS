@@ -25,6 +25,8 @@ import { useSession } from "@/lib/session"
 import { getIndustryTerminology, getIndustryOrderTerms, type IndustryTerminology, type IndustryOrderTerminology } from "@/modules/organization/domain/industry-profile"
 
 
+import { CoordinatorBypassReviewBanner, type StepBypassRecord } from "./coordinator-bypass-review-banner"
+
 export interface BrochureOrder {
   id: string
   code: string
@@ -56,6 +58,7 @@ export interface BrochureOrder {
     hasShipperInfo?: boolean
     hasDeliveryProof?: boolean
     shipperInfo?: { shipperName: string; shipperPhone: string; submittedAt: string } | null
+    bypassRequests?: Record<string, StepBypassRecord> | null
   } | null
 }
 
@@ -274,6 +277,18 @@ export function CoordinatorOrderCard({
 
       {/* Khối quyết định của Điều phối & Xác nhận/Nhắc thanh toán lần 2 */}
       <CoordinatorCardDecisionBlocks order={order} policy={policy} work={work} onOpen={onOpen} workflowPolicy={workflowPolicy} />
+
+      {/* Yêu cầu Bỏ qua bằng chứng từ Chi nhánh đang chờ Điều phối duyệt */}
+      {order.gate2?.bypassRequests && !isDelivered && (
+        <CoordinatorBypassReviewBanner
+          orderId={order.id}
+          orderCode={order.code}
+          bypassRequests={order.gate2.bypassRequests}
+          onDecisionComplete={() => {
+            window.dispatchEvent(new CustomEvent("coordinator:gate2:action", { detail: { orderId: order.id } }))
+          }}
+        />
+      )}
 
       {/* Gate 2 Coordinator-Stream Panel: chỉ hiện khi có chain dispatch đang active */}
       {order.gate2?.claimedBranchId && !isDelivered && (

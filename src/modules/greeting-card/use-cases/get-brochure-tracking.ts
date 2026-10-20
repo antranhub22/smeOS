@@ -169,6 +169,20 @@ export async function getBrochureTracking(
       createdAt: order.created_at.toISOString(),
       updatedAt: order.updated_at.toISOString(),
       timeline,
+      /** Thông báo bất khả kháng khi cửa hàng được Điều phối duyệt bỏ qua bằng chứng ảnh/shipper */
+      bypassNotices: (() => {
+        const coordMeta = ((order as unknown as { coordination?: { metadata?: unknown } }).coordination?.metadata as Record<string, unknown> | null) ?? {}
+        const bypassRequests = (coordMeta.bypass_requests as Record<string, unknown> | undefined) ?? {}
+        const qcApproved = Boolean(coordMeta.bypass_qc_approved) || (bypassRequests.QC as Record<string, unknown> | undefined)?.status === "APPROVED"
+        const shipperApproved = Boolean(coordMeta.bypass_shipper_approved) || (bypassRequests.SHIPPER as Record<string, unknown> | undefined)?.status === "APPROVED"
+        const podApproved = Boolean(coordMeta.bypass_pod_approved) || (bypassRequests.POD as Record<string, unknown> | undefined)?.status === "APPROVED"
+
+        return {
+          qc: qcApproved ? "Do điều kiện chế tác & tiến độ giao gấp, tiệm xin phép không cập nhật ảnh chụp trước khi giao. Sản phẩm vẫn được kiểm định cẩn thận theo đúng mẫu bạn đã chọn." : null,
+          shipper: shipperApproved ? "Đơn hàng đang được shipper chuyên trách của chuỗi vận chuyển trực tiếp đến bạn." : null,
+          pod: podApproved ? "Đơn hàng đã được bàn giao thành công trực tiếp theo thỏa thuận giao nhận." : null,
+        }
+      })(),
       /** Kế hoạch + các đợt thanh toán; khi hoa đã xong mà còn nợ: mã QR trả phần còn lại.
        *  Thu trước giao: QR chỉ hiện SAU KHI khách xác nhận ảnh (hoặc hết hạn tự xác nhận) —
        *  không hiện cùng lúc với khung duyệt ảnh (PO 09/10/2026). */

@@ -18,6 +18,7 @@ import type { SubcontractCardProduct } from "./subcontract-claim-card"
 import type { DeliveryProofInfo } from "./delivery-proof-card"
 
 import type { StepMilestoneDeadlines } from "@/modules/greeting-card/domain/subcontract-countdown"
+import type { StepBypassRequestInfo } from "./subcontract-bypass-control"
 
 export interface SubcontractSpotlightShellProps {
   orderCode: string
@@ -48,6 +49,7 @@ export interface SubcontractSpotlightShellProps {
     submittedAt: string
   } | null | undefined
   deliveryProof?: DeliveryProofInfo | null | undefined
+  bypassRequests?: Record<string, StepBypassRequestInfo> | null | undefined
   initialStep?: SubcontractStepId | undefined
   onClaim: () => Promise<void>
   onCancelClaim: () => Promise<void>
@@ -55,6 +57,7 @@ export interface SubcontractSpotlightShellProps {
   onQcUploaded?: (() => void) | undefined
   onShipperSubmitted?: (() => void) | undefined
   onDelivered?: (() => void) | undefined
+  onBypassRequested?: (() => void) | undefined
 }
 
 export function SubcontractSpotlightShell({
@@ -82,6 +85,7 @@ export function SubcontractSpotlightShell({
   orderStatus,
   shipperInfo,
   deliveryProof,
+  bypassRequests,
   initialStep,
   onClaim,
   onCancelClaim,
@@ -89,6 +93,7 @@ export function SubcontractSpotlightShell({
   onQcUploaded,
   onShipperSubmitted,
   onDelivered,
+  onBypassRequested,
 }: SubcontractSpotlightShellProps) {
   const isMyClaim = claimedByBranchId === branchId
   const isClaimedByOther =
@@ -110,18 +115,26 @@ export function SubcontractSpotlightShell({
     return () => clearInterval(timer)
   }, [dispatchStatus, graceExpiresAt])
 
-  // Xác định trạng thái hoàn thành và mở khóa của 4 bước
+  // Xác định trạng thái hoàn thành và mở khóa của 4 bước (có tính đến bypass đã duyệt)
+  const isQcBypassed = bypassRequests?.QC?.status === "APPROVED"
+  const isShipperBypassed = bypassRequests?.SHIPPER?.status === "APPROVED"
+  const isPodBypassed = bypassRequests?.POD?.status === "APPROVED"
+
   const isStep1Completed = dispatchStatus === "COMMITTED"
   const isStep2Completed =
-    productionStatus === "READY" || (Boolean(qcPhotos) && qcPhotos.length > 0)
+    productionStatus === "READY" ||
+    (Boolean(qcPhotos) && qcPhotos.length > 0) ||
+    isQcBypassed
   const isStep3Completed =
     Boolean(shipperInfo) ||
     deliveryStatus === "DELIVERING" ||
-    deliveryStatus === "DELIVERED"
+    deliveryStatus === "DELIVERED" ||
+    isShipperBypassed
   const isStep4Completed =
     deliveryStatus === "DELIVERED" ||
     orderStatus === "COMPLETED" ||
-    Boolean(deliveryProof?.deliveredAt)
+    Boolean(deliveryProof?.deliveredAt) ||
+    isPodBypassed
 
   const completedSteps = useMemo<SubcontractStepId[]>(() => {
     const list: SubcontractStepId[] = []
@@ -223,11 +236,13 @@ export function SubcontractSpotlightShell({
           qcPhotos={qcPhotos}
           productionStatus={productionStatus}
           deadlineMs={stepDeadlines?.step2QcDeadlineMs}
+          bypassRequest={bypassRequests?.QC}
           isActive={activeStep === 2}
           isCompleted={isStep2Completed}
           isUnlocked={unlockedSteps.includes(2)}
           onActivate={() => setActiveStep(2)}
           onQcUploaded={onQcUploaded}
+          onBypassRequested={onBypassRequested}
         />
 
         {/* Khối Bước 3: Bàn giao Shipper & Vận chuyển */}
@@ -237,11 +252,13 @@ export function SubcontractSpotlightShell({
           existingShipperInfo={shipperInfo}
           deliveryStatus={deliveryStatus}
           deadlineMs={stepDeadlines?.step3ShipperDeadlineMs}
+          bypassRequest={bypassRequests?.SHIPPER}
           isActive={activeStep === 3}
           isCompleted={isStep3Completed}
           isUnlocked={unlockedSteps.includes(3)}
           onActivate={() => setActiveStep(3)}
           onSubmitted={onShipperSubmitted}
+          onBypassRequested={onBypassRequested}
         />
 
         {/* Khối Bước 4: Bằng chứng giao hàng & Nghiệm thu (POD) */}
@@ -253,11 +270,13 @@ export function SubcontractSpotlightShell({
           orderStatus={orderStatus}
           subcontractPriceVnd={subcontractPriceVnd}
           deadlineMs={stepDeadlines?.step4DeliveryDeadlineMs}
+          bypassRequest={bypassRequests?.POD}
           isActive={activeStep === 4}
           isCompleted={isStep4Completed}
           isUnlocked={unlockedSteps.includes(4)}
           onActivate={() => setActiveStep(4)}
           onDelivered={onDelivered}
+          onBypassRequested={onBypassRequested}
         />
       </div>
     </div>

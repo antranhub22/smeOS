@@ -22,6 +22,8 @@ import { SubcontractPodSuccess } from "./subcontract-pod-success"
 import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
 
+import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
+
 export interface SubcontractStepProofProps {
   orderCode: string
   branchId: string
@@ -30,11 +32,13 @@ export interface SubcontractStepProofProps {
   orderStatus?: string | null | undefined
   subcontractPriceVnd: number
   deadlineMs?: number | null | undefined
+  bypassRequest?: StepBypassRequestInfo | null | undefined
   isActive: boolean
   isCompleted: boolean
   isUnlocked: boolean
   onActivate: () => void
   onDelivered?: (() => void) | undefined
+  onBypassRequested?: (() => void) | undefined
 }
 
 export function SubcontractStepProof({
@@ -45,11 +49,13 @@ export function SubcontractStepProof({
   orderStatus,
   subcontractPriceVnd,
   deadlineMs,
+  bypassRequest,
   isActive,
   isCompleted,
   isUnlocked,
   onActivate,
   onDelivered,
+  onBypassRequested,
 }: SubcontractStepProofProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -321,6 +327,17 @@ export function SubcontractStepProof({
             </Button>
           </div>
         )}
+
+        {/* Khối xin bỏ qua bằng chứng giao hàng POD */}
+        <SubcontractBypassControl
+          orderCode={orderCode}
+          branchId={branchId}
+          stepKey="POD"
+          stepTitle="Bằng chứng giao hàng (POD)"
+          existingRequest={bypassRequest}
+          isCompleted={isActuallyDelivered}
+          onBypassRequested={onBypassRequested}
+        />
       </div>
     </section>
   )

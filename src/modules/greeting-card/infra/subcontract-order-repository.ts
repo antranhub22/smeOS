@@ -231,4 +231,61 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
 
     return { newQualityScore, cancellationCount }
   }
+
+  /**
+   * Trừ 2 điểm chất lượng KPI của chi nhánh khi xin bỏ qua bằng chứng (QC, Shipper, POD).
+   * Điểm này trực tiếp làm giảm tỷ lệ trúng đơn gia công ở các vòng phân bổ sau.
+   */
+  async recordBranchBypassPenalty(
+    orgId: string,
+    branchId: string,
+    reason: string
+  ): Promise<{ newQualityScore: number; bypassCount: number }> {
+    const org = await this.db.organizations.findUnique({
+      where: { id: orgId },
+      select: { settings: true },
+    })
+    const settings = (org?.settings as Record<string, unknown> | null) ?? {}
+    const rawBranches = settings.chain_branches
+    const chainBranches = Array.isArray(rawBranches) ? [...(rawBranches as Array<Record<string, unknown>>)] : []
+
+    let newQualityScore = 90
+    let bypassCount = 1
+
+    const updatedBranches = chainBranches.map((b) => {
+      if (b.branchId === branchId) {
+        const currentScore = typeof b.qualityScore === "number" ? b.qualityScore : 90
+        const currentBypasses = typeof b.bypassCount === "number" ? b.bypassCount : 0
+        newQualityScore = Math.max(10, currentScore - 2)
+        bypassCount = currentBypasses + 1
+
+        const history = Array.isArray(b.bypassHistory) ? [...b.bypassHistory] : []
+        history.unshift({
+          timestamp: new Date().toISOString(),
+          reason,
+          penalty: -2,
+        })
+
+        return {
+          ...b,
+          qualityScore: newQualityScore,
+          bypassCount,
+          bypassHistory: history.slice(0, 50),
+        }
+      }
+      return b
+    })
+
+    await this.db.organizations.update({
+      where: { id: orgId },
+      data: {
+        settings: {
+          ...settings,
+          chain_branches: updatedBranches,
+        } as unknown as Prisma.InputJsonValue,
+      },
+    })
+
+    return { newQualityScore, bypassCount }
+  }
 }
