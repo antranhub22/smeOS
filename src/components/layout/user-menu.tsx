@@ -5,7 +5,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { KeyRound, LogOut, UserRound } from "lucide-react"
+import { KeyRound, LogOut, ShieldCheck, UserRound } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { ChangePasswordDialog } from "./change-password-dialog"
@@ -22,7 +22,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
   const [dangXuat, setDangXuat] = useState(false)
   const [doiMatKhau, setDoiMatKhau] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const { roleUx, userName, orgName, can } = useSession()
+  const { roleUx, userName, userEmail, orgName, can } = useSession()
 
   useEffect(() => {
     if (!mo) return
@@ -47,6 +47,8 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
       router.refresh()
     }
   }
+
+  const isSuperUser = userEmail === "tuans2@dev.com" || Boolean(userEmail?.endsWith("@dev.com"))
 
   return (
     <div className="relative">
@@ -91,6 +93,26 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                 {roleUx?.label ?? (orgName || "").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
               </div>
             </div>
+
+            {/* Lối tắt vào Console Vận hành dành riêng cho Super Admin / Operator */}
+            {isSuperUser && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMo(false)
+                  router.push("/van-hanh" as never)
+                }}
+                className="flex w-full items-center gap-2 border-b border-border bg-primary/5 px-3.5 py-2.5 text-left text-body-sm font-semibold text-primary hover:bg-primary/10 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+              >
+                <ShieldCheck size={16} strokeWidth={2} className="text-primary shrink-0" aria-hidden="true" />
+                <span className="min-w-0">
+                  <span className="block font-bold">Console Vận hành</span>
+                  <span className="block truncate text-[11px] font-medium text-text-muted">
+                    Quản trị SaaS nền tảng
+                  </span>
+                </span>
+              </button>
+            )}
 
             {/* Vai trải nghiệm hiện tại + danh mục 14 vai (đặc tả 03b §3) */}
             <button
