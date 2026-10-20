@@ -40,7 +40,7 @@ model ai_evaluations {
 }
 
 model ai_models {
-  id             String           @id
+  id             String           @id @default(uuid())
   key            String           @unique
   display_name   String
   provider       String
