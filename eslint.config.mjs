@@ -12,6 +12,7 @@ const config = [
       "node_modules/**",
       "src/generated/**",
       "workers/**",
+      "docker/**",
       "next-env.d.ts",
       // Thu hoạch R2, chép nguyên vẹn — `npm run test:harvest` giữ nó xanh
       // không sửa một dòng (`YC-Q1`). Lint theo cấu hình của floraos-core

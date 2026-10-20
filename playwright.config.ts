@@ -1,9 +1,7 @@
 import { defineConfig } from "@playwright/test"
 
-// Cổng 3100 — đúng `npm run dev`/`npm run start` (bản trước trỏ 3000 nên
-// `npm run test:e2e` chờ một máy chủ không bao giờ lên). E2E_WEB_COMMAND cho
-// phép chạy trên bản dựng production: `E2E_WEB_COMMAND="npm run start"`.
-const PORT = 3100
+// Cổng 3200 — đúng `npm run dev`/`npm run start` (package.json: -p 3200)
+const PORT = 3200
 
 export default defineConfig({
   testDir: "./tests/e2e",
