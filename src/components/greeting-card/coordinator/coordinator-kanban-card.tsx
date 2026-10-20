@@ -5,6 +5,7 @@ import React from "react"
 import { Clock, UserCheck, Camera, Truck, CheckCircle2, ShieldCheck, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { BrochureOrder, ModalState } from "./coordinator-order-card"
+import { CoordinatorBypassReviewBanner } from "./coordinator-bypass-review-banner"
 import type { BrochurePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
 import type { TrackingPipelineItem } from "@/modules/greeting-card/domain/tracking-pipeline-types"
 import type { OrderTimeTier } from "@/modules/greeting-card/domain/order-time-tier"
@@ -165,6 +166,20 @@ export function CoordinatorKanbanCard({
           </div>
         </div>
       </button>
+
+      {/* Yêu cầu Bỏ qua bằng chứng từ Chi nhánh đang chờ Điều phối duyệt */}
+      {o.gate2?.bypassRequests && (
+        <div className="w-full">
+          <CoordinatorBypassReviewBanner
+            orderId={o.id}
+            orderCode={o.code}
+            bypassRequests={o.gate2.bypassRequests}
+            onDecisionComplete={() => {
+              window.dispatchEvent(new CustomEvent("coordinator:gate2:action", { detail: { orderId: o.id } }))
+            }}
+          />
+        </div>
+      )}
 
       <PhotoApprovalNote approval={o.photo_approval} now={now} />
       {/* Quick Action buttons depending on state */}

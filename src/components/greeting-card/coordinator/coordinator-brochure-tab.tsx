@@ -48,7 +48,16 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
   const work = useCoordinatorWork()
   const now = useNow()
   const workOf = new Map(work.items.filter((i) => i.orderId).map((i) => [i.orderId as string, i]))
+  const hasPendingBypass = (o: BrochureOrder): boolean => {
+    const reqs = o.gate2?.bypassRequests
+    if (!reqs) return false
+    return Object.values(reqs).some((r) => r && r.status === "PENDING")
+  }
+
   const bucketOf = (o: BrochureOrder): WorkBucket => {
+    // Đơn có yêu cầu bỏ qua bằng chứng đang chờ duyệt -> BẮT BUỘC lên nhóm "Cần tôi làm" (ACTION)
+    if (hasPendingBypass(o)) return "ACTION"
+
     const w = workOf.get(o.id)
     const b = w ? workBucket(w, "COORDINATOR") : "IN_PROGRESS"
     return b === "WAITING_CUSTOMER" ? "IN_PROGRESS" : b

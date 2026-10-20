@@ -73,8 +73,16 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const org = await repo.findOrganizationSettings(order.organization_id)
   const settings = (org?.settings as Record<string, unknown> | null) ?? {}
   const coordChannel = settings.coordinator_channel as { telegramChatId?: string; phone?: string } | undefined
+  const chainBranches = (settings.chain_branches as Array<{ channels?: { telegramChatId?: string; phone?: string } }>) || []
+  const branchWithTelegram = chainBranches.find((b) => b.channels?.telegramChatId)
 
-  if (coordChannel?.telegramChatId) {
+  const targetChatId =
+    coordChannel?.telegramChatId ||
+    process.env.TELEGRAM_COORDINATOR_CHAT_ID ||
+    branchWithTelegram?.channels?.telegramChatId ||
+    process.env.TELEGRAM_DEFAULT_CHAT_ID
+
+  if (targetChatId) {
     const notifier = new MultiChannelDispatchNotifier()
     const ctx: TenantContext = {
       organizationId: order.organization_id,
@@ -96,14 +104,14 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         maxConcurrentJobs: 1,
         isActive: true,
         channels: {
-          telegramChatId: coordChannel.telegramChatId,
-          phone: coordChannel.phone,
+          telegramChatId: targetChatId,
+          phone: coordChannel?.phone || branchWithTelegram?.channels?.phone,
         },
       },
       orderCode: order.code,
       title: `⚠️ [XIN BỎ QUA BẰNG CHỨNG #${order.code}]`,
       messageText: alertMsg,
-      claimUrl: `${request.headers.get("origin") || ""}/van-hanh`,
+      claimUrl: `${request.headers.get("origin") || ""}/the-chao`,
     }).catch(() => {})
   }
 
