@@ -17,7 +17,7 @@ model ai_capabilities {
   accept_threshold Float?
   measure_channels Json
   enabled          Boolean          @default(true)
-  updated_at       DateTime
+  updated_at       DateTime  @updatedAt
   ai_policies      ai_policies[]
 }
 
@@ -59,7 +59,7 @@ model ai_models {
   version        String
   registered_by  String?
   created_at     DateTime         @default(now())
-  updated_at     DateTime
+  updated_at     DateTime  @updatedAt
 }
 
 model ai_policies {
@@ -71,7 +71,7 @@ model ai_policies {
   cost_ceiling    Int?
   privacy_floor   ai_privacy_level
   updated_by      String
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   ai_capabilities ai_capabilities  @relation(fields: [capability_code], references: [code])
   organizations   organizations    @relation(fields: [organization_id], references: [id])
 
@@ -202,7 +202,7 @@ model brand_profiles {
   forbidden_styles Json?
   brand_assets     Json?
   created_at       DateTime      @default(now())
-  updated_at       DateTime
+  updated_at       DateTime  @updatedAt
   organizations    organizations @relation(fields: [organization_id], references: [id])
 }
 
@@ -220,7 +220,7 @@ model business_profiles {
   description     String?
   operating_hours Json?
   created_at      DateTime      @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations @relation(fields: [organization_id], references: [id])
 }
 
@@ -245,7 +245,7 @@ model campaign_packages {
   launch_plan       Json?
   created_by        String
   created_at        DateTime      @default(now())
-  updated_at        DateTime
+  updated_at        DateTime  @updatedAt
   organizations     organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, created_at])
@@ -260,7 +260,7 @@ model capability_overrides {
   capability_code String
   allowed         Boolean
   updated_by      String
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations @relation(fields: [organization_id], references: [id])
 
   @@unique([organization_id, role_id, capability_code])
@@ -279,7 +279,7 @@ model catalog_links {
   revoked_by      String?
   created_by      String
   created_at      DateTime      @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations @relation(fields: [organization_id], references: [id])
 
   @@index([organization_id])
@@ -294,7 +294,7 @@ model chat_channel_integrations {
   config                  Json          @default("{}")
   subscription_expires_at DateTime?
   created_at              DateTime      @default(now())
-  updated_at              DateTime
+  updated_at              DateTime  @updatedAt
   organizations           organizations @relation(fields: [organization_id], references: [id])
 
   @@unique([organization_id, channel])
@@ -309,7 +309,7 @@ model chat_conversations {
   channel         chat_channel    @default(WEB_WIDGET)
   status          String          @default("ACTIVE")
   created_at      DateTime        @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   customers       customers?      @relation(fields: [customer_id], references: [id])
   organizations   organizations   @relation(fields: [organization_id], references: [id])
   chat_messages   chat_messages[]
@@ -343,7 +343,7 @@ model content_drafts {
   created_by      String
   updated_by      String
   created_at      DateTime      @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@unique([organization_id, asset_id, topic_id, mode])
@@ -374,7 +374,7 @@ model content_generations {
   created_by      String
   approved_by     String?
   created_at      DateTime      @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, asset_id, topic_id, mode])
@@ -394,7 +394,7 @@ model content_metrics {
   conversions     Int?
   spend_usd       Float?
   created_at      DateTime      @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations @relation(fields: [organization_id], references: [id])
 
   @@unique([organization_id, platform, content_id, metric_date])
@@ -418,7 +418,7 @@ model content_opportunities {
   confidence                Float         @default(1.0)
   expires_at                DateTime?
   created_at                DateTime      @default(now())
-  updated_at                DateTime
+  updated_at                DateTime  @updatedAt
   organizations             organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   topics                    topics        @relation(fields: [topic_id], references: [id], onDelete: Cascade)
 
@@ -478,7 +478,7 @@ model customers {
   order_count        Int                  @default(0)
   last_order_at      DateTime?
   created_at         DateTime             @default(now())
-  updated_at         DateTime
+  updated_at         DateTime  @updatedAt
   chat_conversations chat_conversations[]
   customer_consents  customer_consents[]
   customer_occasions customer_occasions[]
@@ -499,7 +499,7 @@ model decision_registry {
   description String
   spec_ref    String?
   created_at  DateTime @default(now())
-  updated_at  DateTime
+  updated_at  DateTime  @updatedAt
 }
 
 model field_catalog_values {
@@ -513,7 +513,7 @@ model field_catalog_values {
   behavior       String?
   params         Json?
   created_at     DateTime       @default(now())
-  updated_at     DateTime
+  updated_at     DateTime  @updatedAt
   field_catalogs field_catalogs @relation(fields: [catalog_key], references: [key], onDelete: Cascade)
 
   @@unique([catalog_key, code])
@@ -527,7 +527,7 @@ model field_catalogs {
   governance           field_catalog_governance @default(OPEN)
   behavior_kind        String?
   created_at           DateTime                 @default(now())
-  updated_at           DateTime
+  updated_at           DateTime  @updatedAt
   field_catalog_values field_catalog_values[]
 }
 
@@ -543,7 +543,7 @@ model field_config_overrides {
   created_by      String?
   updated_by      String?
   created_at      DateTime                 @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations            @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@unique([organization_id, target, override_key])
@@ -572,7 +572,7 @@ model field_definitions {
   created_by          String?
   updated_by          String?
   created_at          DateTime                @default(now())
-  updated_at          DateTime
+  updated_at          DateTime  @updatedAt
 
   @@index([catalog_key])
   @@index([entity])
@@ -612,7 +612,7 @@ model flower_taxonomy {
   mua_vu                                                                     String?
   trang_thai                                                                 String                    @default("Đang dùng")
   created_at                                                                 DateTime                  @default(now())
-  updated_at                                                                 DateTime
+  updated_at                                                                 DateTime  @updatedAt
   flower_confusable_pairs_flower_confusable_pairs_ma_loai_aToflower_taxonomy flower_confusable_pairs[] @relation("flower_confusable_pairs_ma_loai_aToflower_taxonomy")
   flower_confusable_pairs_flower_confusable_pairs_ma_loai_bToflower_taxonomy flower_confusable_pairs[] @relation("flower_confusable_pairs_ma_loai_bToflower_taxonomy")
 
@@ -696,7 +696,7 @@ model greeting_catalogs {
   is_active                 Boolean                     @default(true)
   created_by                String
   created_at                DateTime                    @default(now())
-  updated_at                DateTime
+  updated_at                DateTime  @updatedAt
   greeting_catalog_events   greeting_catalog_events[]
   greeting_catalog_products greeting_catalog_products[]
   organizations             organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
@@ -719,7 +719,7 @@ model greeting_integrations {
   notify_config_encrypted       String?
   notify_templates              Json?
   created_at                    DateTime      @default(now())
-  updated_at                    DateTime
+  updated_at                    DateTime  @updatedAt
   staff_notify_channels         Json?
   staff_notify_config_encrypted String?
   staff_notify_enabled          Boolean       @default(false)
@@ -790,7 +790,7 @@ model greeting_notifications {
   provider_message_id String?
   error               String?
   created_at          DateTime      @default(now())
-  updated_at          DateTime
+  updated_at          DateTime  @updatedAt
   organizations       organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@unique([organization_id, order_id, event_key])
@@ -838,7 +838,7 @@ model greeting_sessions {
   revoked_by                     String?
   last_active_at                 DateTime                  @default(now())
   created_at                     DateTime                  @default(now())
-  updated_at                     DateTime
+  updated_at                     DateTime  @updatedAt
   greeting_journey_events        greeting_journey_events[]
   greeting_catalogs              greeting_catalogs         @relation(fields: [catalog_id], references: [id], onDelete: Cascade)
   orders                         orders?                   @relation(fields: [order_id], references: [id])
@@ -907,7 +907,7 @@ model journey_runs {
   degraded_steps   Json?
   created_by       String
   created_at       DateTime      @default(now())
-  updated_at       DateTime
+  updated_at       DateTime  @updatedAt
   organizations    organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, manifest_id])
@@ -923,7 +923,7 @@ model market_sources {
   last_success_at DateTime?
   last_error_at   DateTime?
   created_at      DateTime             @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   topic_signals   topic_signals[]
   trend_signals   trend_signals[]
 
@@ -977,7 +977,7 @@ model occasions {
   is_active       Boolean           @default(true)
   register        occasion_register @default(FESTIVE)
   created_at      DateTime          @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations     @relation(fields: [organization_id], references: [id])
 
   @@unique([organization_id, code])
@@ -1024,7 +1024,7 @@ model order_change_requests {
   status             order_change_request_status @default(PENDING)
   rejected_reason    String?
   created_at         DateTime                    @default(now())
-  updated_at         DateTime
+  updated_at         DateTime  @updatedAt
   orders             orders                      @relation(fields: [order_id], references: [id], onDelete: Cascade)
   organizations      organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -1094,7 +1094,7 @@ model order_coordinations {
   partner_selection_deadline_at DateTime?
   technical_instruction         String?
   created_at                    DateTime                @default(now())
-  updated_at                    DateTime
+  updated_at                    DateTime  @updatedAt
   orders                        orders                  @relation(fields: [order_id], references: [id], onDelete: Cascade)
   organizations                 organizations           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   partners                      partners?               @relation(fields: [partner_id], references: [id])
@@ -1133,7 +1133,7 @@ model order_exceptions {
   resolved_by     String?
   resolved_at     DateTime?
   created_at      DateTime      @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   orders          orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
   organizations   organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -1162,7 +1162,7 @@ model order_info_requests {
   status               order_info_request_status @default(OPEN)
   cancelled_reason     String?
   created_at           DateTime                  @default(now())
-  updated_at           DateTime
+  updated_at           DateTime  @updatedAt
   orders               orders                    @relation(fields: [order_id], references: [id], onDelete: Cascade)
   organizations        organizations             @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -1218,7 +1218,7 @@ model order_qc_records {
   checklist_result Json?
   notes            String?
   created_at       DateTime         @default(now())
-  updated_at       DateTime
+  updated_at       DateTime  @updatedAt
   orders           orders           @relation(fields: [order_id], references: [id], onDelete: Cascade)
   organizations    organizations    @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -1252,7 +1252,7 @@ model orders {
   vat_email             String?
   created_by            String
   created_at            DateTime                @default(now())
-  updated_at            DateTime
+  updated_at            DateTime  @updatedAt
   source                String?                 @default("MANUAL")
   source_session_id     String?
   greeting_sessions     greeting_sessions[]
@@ -1284,7 +1284,7 @@ model organizations {
   settings                  Json?
   data_region               String?                     @default("vn")
   created_at                DateTime                    @default(now())
-  updated_at                DateTime
+  updated_at                DateTime  @updatedAt
   ai_evaluations            ai_evaluations[]
   ai_policies               ai_policies[]
   ai_requests               ai_requests[]
@@ -1368,7 +1368,7 @@ model partners {
   is_active           Boolean               @default(true)
   custom_fields       Json?
   created_at          DateTime              @default(now())
-  updated_at          DateTime
+  updated_at          DateTime  @updatedAt
   order_coordinations order_coordinations[]
   organizations       organizations         @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -1532,7 +1532,7 @@ model product_inventory {
   branch_id          String
   status             stock_status  @default(IN_STOCK)
   quantity_available Int?
-  updated_at         DateTime
+  updated_at         DateTime  @updatedAt
   branches           branches      @relation(fields: [branch_id], references: [id])
   organizations      organizations @relation(fields: [organization_id], references: [id])
   products           products      @relation(fields: [product_id], references: [id])
@@ -1568,7 +1568,7 @@ model products {
   status                    product_status              @default(DRAFT)
   attributes                Json?
   created_at                DateTime                    @default(now())
-  updated_at                DateTime
+  updated_at                DateTime  @updatedAt
   availability_config       Json?
   greeting_catalog_products greeting_catalog_products[]
   product_analyses          product_analyses[]
@@ -1678,7 +1678,7 @@ model template_overrides {
   value           String
   updated_by      String
   created_at      DateTime        @default(now())
-  updated_at      DateTime
+  updated_at      DateTime  @updatedAt
   organizations   organizations   @relation(fields: [organization_id], references: [id])
 
   @@unique([organization_id, template_key, field_key])
@@ -1809,7 +1809,7 @@ model users {
   avatar_url         String?
   locale             String              @default("vi")
   created_at         DateTime            @default(now())
-  updated_at         DateTime
+  updated_at         DateTime  @updatedAt
   phone              String?
   memberships        memberships[]
   platform_operators platform_operators?
@@ -1845,7 +1845,7 @@ model video_jobs {
   cost_credits        Int            @default(0)
   error_message       String?
   created_at          DateTime       @default(now())
-  updated_at          DateTime
+  updated_at          DateTime  @updatedAt
   organizations       organizations  @relation(fields: [organization_id], references: [id])
   video_scenes        video_scenes[]
 
@@ -1889,7 +1889,7 @@ model voice_clones {
   job_id             String?
   error              String?
   created_at         DateTime      @default(now())
-  updated_at         DateTime
+  updated_at         DateTime  @updatedAt
   deleted_at         DateTime?
   organizations      organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
