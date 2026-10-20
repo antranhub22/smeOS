@@ -3,6 +3,7 @@ import path from "path"
 import { log } from "@/core/observability/log"
 import type {
   ChannelSendResult,
+  EditMessagePayload,
   IStaffNotificationProvider,
   StaffChannelMessage,
 } from "./channel-provider.interface"
@@ -124,6 +125,7 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
             return {
               sent: true,
               providerMsgId: photoData.result?.message_id ? String(photoData.result.message_id) : null,
+              providerChatId: chatId,
             }
           }
           log.warn("staff_notify.telegram_photo_failed, fallback to sendMessage", { error: photoData.description })
@@ -151,6 +153,7 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
             return {
               sent: true,
               providerMsgId: photoData.result?.message_id ? String(photoData.result.message_id) : null,
+              providerChatId: chatId,
             }
           }
           log.warn("staff_notify.telegram_remote_photo_failed, fallback to sendMessage", { error: photoData.description })
@@ -183,11 +186,56 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
       return {
         sent: true,
         providerMsgId: data.result?.message_id ? String(data.result.message_id) : null,
+        providerChatId: chatId,
       }
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : String(error)
       log.error("staff_notify.telegram_exception", { error: errMsg })
       return { sent: false, error: errMsg }
+    }
+  }
+
+  /**
+   * Chỉnh sửa nội dung Thẻ Tiến Độ (Live Dashboard Card) thay vì gửi tin mới.
+   * Sử dụng editMessageCaption (nếu là nhắn kèm ảnh) hoặc editMessageText (nếu là text thuần).
+   */
+  async editMessage(payload: EditMessagePayload): Promise<{ ok: boolean; error?: string }> {
+    const config = payload.channelConfig as { botToken?: string } | undefined
+    const botToken = config?.botToken
+    if (!botToken) return { ok: false, error: "Missing botToken" }
+
+    const inlineButtons = (payload.actions ?? [])
+      .filter((act) => Boolean(act.url?.trim()))
+      .map((act) => ({ text: act.text, url: normalizeTelegramButtonUrl(act.url) }))
+    const replyMarkup = inlineButtons.length > 0 ? { inline_keyboard: [inlineButtons] } : undefined
+
+    const endpoint = payload.isCaption ? "editMessageCaption" : "editMessageText"
+    const bodyKey = payload.isCaption ? "caption" : "text"
+
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: payload.chatId,
+          message_id: Number(payload.messageId),
+          [bodyKey]: payload.text.slice(0, payload.isCaption ? 1024 : 4096),
+          parse_mode: "HTML",
+          ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
+        }),
+      })
+      const data = (await res.json()) as { ok: boolean; description?: string }
+      if (!data.ok) {
+        log.warn("staff_notify.telegram_edit_failed", { error: data.description })
+        const result: { ok: boolean; error?: string } = { ok: false }
+        if (data.description) result.error = data.description
+        return result
+      }
+      return { ok: true }
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      log.error("staff_notify.telegram_edit_exception", { error: errMsg })
+      return { ok: false, error: errMsg }
     }
   }
 }

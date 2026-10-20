@@ -32,6 +32,13 @@ export interface SubcontractOrderState {
    * Key: mã mốc (vd: M1_PREP, M2_QC, M3_DISPATCH, M4_OVERDUE) -> Value: ISO timestamp
    */
   remindersSent?: Record<string, string> | undefined
+  /**
+   * Live Dashboard Card — Telegram message ID của thẻ tiến độ duy nhất trên Telegram.
+   * Tất cả cập nhật tiếp theo sẽ EDIT tin nhắn này thay vì gửi mới.
+   */
+  telegramMsgId?: string | null | undefined
+  /** Chat ID (group/DM) nơi thẻ tiến độ đang hiển thị */
+  telegramChatId?: string | null | undefined
 }
 
 export type ClaimResult =

@@ -99,6 +99,15 @@ export async function processOrderDispatchReminders(
   const submitShipperUrl = `${claimUrl}&action=submit_shipper`
   const submitDeliveryUrl = `${claimUrl}&action=submit_delivery`
 
+  // Thẻ Tiến Độ (Live Dashboard Card): dùng để EDIT tin nhắn cũ thay vì gửi mới
+  const existingCard =
+    state.telegramMsgId && state.telegramChatId
+      ? { msgId: state.telegramMsgId, chatId: state.telegramChatId }
+      : null
+  // Nếu lần này gửi lần đầu (chưa có thẻ), lưu msgId trả về vào state
+  let capturedTelegramMsgId: string | null = null
+  let capturedTelegramChatId: string | null = null
+
   // 1. Mốc M1: Nhắc bắt đầu chế tác (ngay khi đơn chốt COMMITTED)
   const isPrepDue = input.forceStep
     ? input.forceStep === "M1_PREP"
@@ -119,13 +128,19 @@ export async function processOrderDispatchReminders(
       title: `🔔 [BẮT ĐẦU CHẾ TÁC #${input.orderCode}]`,
       actions: [{ text: "📋 Xem Thẻ Gia Công", url: claimUrl }],
       imageUrl: input.productImageUrl,
+      existingTelegramCard: existingCard,
     })
 
     if (sendRes.sent) {
+      if (!existingCard && sendRes.telegramMsgId) {
+        capturedTelegramMsgId = sendRes.telegramMsgId
+        capturedTelegramChatId = sendRes.telegramChatId ?? null
+      }
       remindersSent["M1_PREP"] = now.toISOString()
       results.push({ step: "M1_PREP", triggered: true, sent: true, message: text })
     }
   }
+
 
   // 2. Mốc M2: Nhắc chụp ảnh QC lần 1 (trước giờ giao X phút)
   const qcThresholdMinutes = policy.milestoneReminders.qcReminderMinutesBefore
@@ -151,9 +166,14 @@ export async function processOrderDispatchReminders(
       title: `📸 [NHẮC CHỤP ẢNH THÀNH PHẨM #${input.orderCode}]`,
       actions: [{ text: "📸 Chụp & Tải ảnh thành phẩm", url: uploadQcUrl }],
       imageUrl: input.productImageUrl,
+      existingTelegramCard: existingCard,
     })
 
     if (sendRes.sent) {
+      if (!existingCard && sendRes.telegramMsgId) {
+        capturedTelegramMsgId = sendRes.telegramMsgId
+        capturedTelegramChatId = sendRes.telegramChatId ?? null
+      }
       remindersSent["M2_QC"] = now.toISOString()
       results.push({ step: "M2_QC", triggered: true, sent: true, message: text })
     }
@@ -187,9 +207,14 @@ export async function processOrderDispatchReminders(
         title: `⚠️ [NHẮC LẦN 2 - KHẨN CẤP #${input.orderCode}]`,
         actions: [{ text: "🚨 TẢI ẢNH THÀNH PHẨM NGAY (LẦN 2)", url: uploadQcUrl }],
         imageUrl: input.productImageUrl,
+        existingTelegramCard: existingCard,
       })
 
       if (sendRes.sent) {
+        if (!existingCard && sendRes.telegramMsgId) {
+          capturedTelegramMsgId = sendRes.telegramMsgId
+          capturedTelegramChatId = sendRes.telegramChatId ?? null
+        }
         remindersSent["M2_QC_RETRY"] = now.toISOString()
         results.push({ step: "M2_QC_RETRY", triggered: true, sent: true, message: text })
       }
@@ -240,9 +265,14 @@ export async function processOrderDispatchReminders(
         title: `🚨 [BÁO ĐỘNG ĐIỀU PHỐI #${input.orderCode}]`,
         actions: escalationActions,
         imageUrl: input.productImageUrl,
+        existingTelegramCard: existingCard,
       })
 
       if (sendRes.sent) {
+        if (!existingCard && sendRes.telegramMsgId) {
+          capturedTelegramMsgId = sendRes.telegramMsgId
+          capturedTelegramChatId = sendRes.telegramChatId ?? null
+        }
         remindersSent["M2_QC_ESCALATED"] = now.toISOString()
         results.push({ step: "M2_QC_ESCALATED", triggered: true, sent: true, message: text })
       }
@@ -297,9 +327,14 @@ export async function processOrderDispatchReminders(
       claimUrl,
       title: `⚠️ [CẢNH BÁO TRỄ HẠN #${input.orderCode}]`,
       actions: [{ text: "🚨 Xem đơn trễ hạn", url: claimUrl }],
+      existingTelegramCard: existingCard,
     })
 
     if (sendRes.sent) {
+      if (!existingCard && sendRes.telegramMsgId) {
+        capturedTelegramMsgId = sendRes.telegramMsgId
+        capturedTelegramChatId = sendRes.telegramChatId ?? null
+      }
       remindersSent["M4_OVERDUE"] = now.toISOString()
       results.push({ step: "M4_OVERDUE", triggered: true, sent: true, message: text })
     }
@@ -310,6 +345,10 @@ export async function processOrderDispatchReminders(
     const nextState: SubcontractOrderState = {
       ...state,
       remindersSent,
+      // Lưu Live Card ID nếu mới capture được lần đầu
+      ...(capturedTelegramMsgId
+        ? { telegramMsgId: capturedTelegramMsgId, telegramChatId: capturedTelegramChatId }
+        : {}),
     }
     await store.saveSubcontractState(ctx, nextState)
   }

@@ -88,7 +88,14 @@ export async function claimSubcontractUseCase(
     })
 
     const claimUrl = `${input.baseUrl || "http://localhost:3200"}/subcontract/${state.orderCode}?branch=${encodeURIComponent(claimingBranch.branchId)}`
-    await notifier.sendSubcontractInvite(ctx, {
+
+    // Truyền existingTelegramCard nếu đã có thẻ từ lần gửi trước (grace period re-use)
+    const existingCard =
+      claimResult.nextState.telegramMsgId && claimResult.nextState.telegramChatId
+        ? { msgId: claimResult.nextState.telegramMsgId, chatId: claimResult.nextState.telegramChatId }
+        : null
+
+    const notifyRes = await notifier.sendSubcontractInvite(ctx, {
       branch: claimingBranch,
       orderCode: state.orderCode,
       messageText: successMsg,
@@ -96,7 +103,18 @@ export async function claimSubcontractUseCase(
       title: `🔔 [BẮT ĐẦU CHẾ TÁC #${state.orderCode}]`,
       actions: [{ text: "🔍 Xem Thẻ Chế Tác", url: claimUrl }],
       imageUrl: input.productImageUrl,
+      existingTelegramCard: existingCard,
     })
+
+    // Lưu telegramMsgId vào state nếu đây là lần gửi đầu tiên (card mới tạo)
+    if (notifyRes.sent && notifyRes.telegramMsgId) {
+      const stateWithCard: SubcontractOrderState = {
+        ...claimResult.nextState,
+        telegramMsgId: notifyRes.telegramMsgId,
+        telegramChatId: notifyRes.telegramChatId ?? null,
+      }
+      await store.saveSubcontractState(ctx, stateWithCard)
+    }
   }
 
   return {

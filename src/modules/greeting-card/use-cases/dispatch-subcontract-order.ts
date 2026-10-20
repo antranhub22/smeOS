@@ -36,13 +36,32 @@ export interface DispatchNotificationTarget {
   title?: string | undefined
   actions?: Array<{ text: string; url: string }> | undefined
   imageUrl?: string | null | undefined
+  /**
+   * Nếu có: đây là bản cập nhật — adapter sẽ EDIT tin nhắn cũ thay vì gửi mới.
+   * Nếu không có: gửi mới và trả về telegramMsgId để caller lưu lại.
+   */
+  existingTelegramCard?: { msgId: string; chatId: string; isCaption?: boolean } | null | undefined
+}
+
+export interface LiveCardSendResult {
+  sent: boolean
+  /** Message ID của thẻ Telegram vừa gửi (chỉ có khi gửi mới, không edit) */
+  telegramMsgId?: string | null
+  /** Chat ID tương ứng — cần lưu cùng msgId */
+  telegramChatId?: string | null
+  error?: string | null
 }
 
 export interface IDispatchNotifier {
+  /**
+   * Gửi thẻ gia công hoặc cập nhật Thẻ Tiến Độ (Live Dashboard Card) trên Telegram.
+   * - Nếu target.existingTelegramCard có giá trị: EDIT tin nhắn cũ (không gửi mới).
+   * - Nếu không: Gửi tin mới và trả về telegramMsgId + telegramChatId để lưu vào state.
+   */
   sendSubcontractInvite(
     ctx: TenantContext,
     target: DispatchNotificationTarget
-  ): Promise<{ sent: boolean; error?: string | null }>
+  ): Promise<LiveCardSendResult>
 }
 
 export interface ISubcontractStateStore {
