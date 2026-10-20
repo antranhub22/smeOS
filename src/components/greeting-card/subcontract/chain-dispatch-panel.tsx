@@ -216,6 +216,74 @@ export function ChainDispatchPanel({
         </div>
       )}
 
+      {/* Trạng thái ĐÃ PHÁT LỆNH nhưng chưa chi nhánh nào nhận (DISPATCHED/PENDING) */}
+      {data?.data?.dispatchState && data.data.dispatchState.status !== "COMMITTED" && data.data.dispatchState.status !== "CLAIMED_GRACE" && !dispatchResult && (
+        <div className="p-3.5 rounded-xl bg-warning-bg/60 border border-warning/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span className="p-1.5 rounded-lg bg-warning/20 text-warning">
+              <Clock size={16} />
+            </span>
+            <div>
+              <p className="text-caption font-bold text-foreground">
+                Đã phát lệnh — đang chờ chi nhánh nhận
+              </p>
+              <p className="text-caption text-text-muted">
+                Trạng thái: <strong>{data.data.dispatchState.status}</strong>. Nếu chưa nhận được tin nhắn Telegram, bấm &ldquo;Gửi lại thông báo&rdquo;.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                setIsSubmitting(true)
+                setDispatchError(null)
+                try {
+                  const res = await apiSend<ChainDispatchPostResponse>(
+                    `/api/v1/greeting-card/orders/${orderId}/chain-dispatch`,
+                    "POST",
+                    {
+                      approvedBranchIds: selectedBranchIds.length > 0
+                        ? selectedBranchIds
+                        : topBranches.slice(0, policy?.topN || 3).map((b) => b.branchId),
+                      subcontractPriceVnd: suggestedCraftFee,
+                    },
+                    "Không thể gửi lại thông báo"
+                  )
+                  setDispatchResult(res.data)
+                  onDispatched?.()
+                } catch (err) {
+                  setDispatchError(err instanceof Error ? err.message : "Lỗi khi gửi lại")
+                } finally {
+                  setIsSubmitting(false)
+                }
+              }}
+              disabled={isSubmitting}
+              className="text-caption h-8 font-bold border-warning/50 text-warning hover:bg-warning/10"
+            >
+              {isSubmitting ? <Loader2 size={12} className="animate-spin mr-1" /> : <Send size={12} className="mr-1" />}
+              Gửi lại thông báo
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                if (window.confirm("Hủy lệnh hiện tại và chọn lại chi nhánh?")) {
+                  setDispatchResult(null)
+                  mutate()
+                }
+              }}
+              className="text-caption h-8 font-bold text-text-muted hover:bg-surface-alt"
+            >
+              <RotateCcw size={12} className="mr-1" /> Hủy & Phát lại
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Kết quả phát lệnh nếu đã gửi thành công */}
       {dispatchResult && !data?.data?.dispatchState?.status && (
         <div className="p-3 rounded-xl bg-success/10 border border-success/30 flex flex-col gap-2">
