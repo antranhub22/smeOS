@@ -213,7 +213,7 @@ class OpenAIStructuredProvider:
         muc_suy_luan_luot_hai: str | None = None,
     ) -> None:
         contract = _contract_singleton()
-        self._client = client or OpenAI(timeout=TIMEOUT_GOI_GIAY, max_retries=SO_LAN_THU_LAI)
+        self._client = client
         self._model = model or contract.tham_so("model", "gpt-4o")
         self._canh_dai_px = int(contract.tham_so("anh_canh_dai_px", CANH_DAI_MAC_DINH_PX))
         # Với mô hình suy luận, lượt hai KHÔNG còn là "lắc nhiệt độ rồi lấy
@@ -230,8 +230,15 @@ class OpenAIStructuredProvider:
         self.canh_bao_tham_so: list[str] = []
 
     @property
+    def client(self) -> OpenAI:
+        if self._client is None:
+            self._client = OpenAI(timeout=TIMEOUT_GOI_GIAY, max_retries=SO_LAN_THU_LAI)
+        return self._client
+
+    @property
     def model_version(self) -> str:
         return self._model
+
 
     def analyze(self, image: bytes, context: dict[str, Any]) -> dict:
         nganh = context.get("industry") or context.get("industry_key") or "floral"
@@ -287,7 +294,7 @@ class OpenAIStructuredProvider:
         muc_suy_luan: str | None = None,
     ) -> dict:
         response, canh_bao = goi_co_du_phong(
-            self._client,
+            self.client,
             model=self._model,
             **tham_so_goi(self._model, temperature, muc_suy_luan),
             response_format={"type": "json_schema", "json_schema": contract.schema},

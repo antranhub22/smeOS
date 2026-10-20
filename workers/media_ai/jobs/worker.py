@@ -40,6 +40,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import signal
 import time
 import uuid
 from pathlib import Path
@@ -444,6 +445,19 @@ def _clean_database_url(url: str) -> str:
     return cleaned
 
 
+class _CoDungLai:
+    """SIGTERM/SIGINT không cắt ngang giữa một job."""
+
+    def __init__(self) -> None:
+        self.dung = False
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            signal.signal(sig, self._nhan)
+
+    def _nhan(self, *_: Any) -> None:
+        print("[media] Nhận tín hiệu dừng — kết thúc job đang chạy rồi thoát", flush=True)
+        self.dung = True
+
+
 def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
     from vision.providers.openai_structured import OpenAIStructuredProvider
 
@@ -470,72 +484,80 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
     voice_clone_channel = notify_channel_for(voice_clone_feature)
 
     cleaned_url = _clean_database_url(database_url)
-    with psycopg.connect(cleaned_url, autocommit=True) as conn:
-        with conn.cursor() as cur:
-            cur.execute(f"LISTEN {channel}")
-            cur.execute(f"LISTEN {video_channel}")
-            cur.execute(f"LISTEN {variant_channel}")
-            cur.execute(f"LISTEN {variant_cloud_channel}")
-            cur.execute(f"LISTEN {audio_channel}")
-            cur.execute(f"LISTEN {voice_clone_channel}")
+    co = _CoDungLai()
+    backoff = 1.0
 
-        while True:
-            # Thứ tự ưu tiên là thứ tự người dùng chờ: M04a đứng trước M04b vì
-            # không có Master Image thì không có biến thể nào để dựng.
-            # 1. Xử lý tác vụ tối ưu ảnh M04a
-            job = claim_next(conn, FEATURE)
-            if job is not None:
-                process_job(conn, job, verifier, enhancer, reframer)
-                continue
+    while not co.dung:
+        try:
+            with psycopg.connect(cleaned_url, autocommit=True) as conn:
+                print(f"[media] Worker {FEATURE} đã kết nối CSDL, đang lắng nghe...", flush=True)
+                backoff = 1.0
+                with conn.cursor() as cur:
+                    cur.execute(f"LISTEN {channel}")
+                    cur.execute(f"LISTEN {video_channel}")
+                    cur.execute(f"LISTEN {variant_channel}")
+                    cur.execute(f"LISTEN {variant_cloud_channel}")
+                    cur.execute(f"LISTEN {audio_channel}")
+                    cur.execute(f"LISTEN {voice_clone_channel}")
 
-            # 2. Xử lý tác vụ dựng biến thể marketing M04b
-            variant_job = claim_next(conn, variant_feature)
-            if variant_job is not None:
-                from media_ai.jobs.variant_worker import process_variant_job
-                process_variant_job(conn, variant_job)
-                continue
+                while not co.dung:
+                    # Thứ tự ưu tiên là thứ tự người dùng chờ: M04a đứng trước M04b vì
+                    # không có Master Image thì không có biến thể nào để dựng.
+                    # 1. Xử lý tác vụ tối ưu ảnh M04a
+                    job = claim_next(conn, FEATURE)
+                    if job is not None:
+                        process_job(conn, job, verifier, enhancer, reframer)
+                        continue
 
-            # 2b. Biến thể M04b nhánh Cloud (hậu cảnh do nhà cung cấp sinh)
-            variant_cloud_job = claim_next(conn, variant_cloud_feature)
-            if variant_cloud_job is not None:
-                from media_ai.jobs.variant_worker import process_variant_job
-                process_variant_job(conn, variant_cloud_job)
-                continue
+                    # 2. Xử lý tác vụ dựng biến thể marketing M04b
+                    variant_job = claim_next(conn, variant_feature)
+                    if variant_job is not None:
+                        from media_ai.jobs.variant_worker import process_variant_job
+                        process_variant_job(conn, variant_job)
+                        continue
 
-            # 2c. Audio Studio — voiceover + nhạc nền (Khu vực C)
-            audio_job = claim_next(conn, audio_feature)
-            if audio_job is not None:
-                from media_ai.audio.audio_worker import process_audio_generation_job
-                process_audio_generation_job(conn, audio_job)
-                continue
+                    # 2b. Biến thể M04b nhánh Cloud (hậu cảnh do nhà cung cấp sinh)
+                    variant_cloud_job = claim_next(conn, variant_cloud_feature)
+                    if variant_cloud_job is not None:
+                        from media_ai.jobs.variant_worker import process_variant_job
+                        process_variant_job(conn, variant_cloud_job)
+                        continue
 
-            # 2d. Nhân bản giọng (Khu vực C — Voice Clone)
-            voice_clone_job = claim_next(conn, voice_clone_feature)
-            if voice_clone_job is not None:
-                from media_ai.audio.voice_clone_worker import process_voice_clone_job
-                process_voice_clone_job(conn, voice_clone_job)
-                continue
+                    # 2c. Audio Studio — voiceover + nhạc nền (Khu vực C)
+                    audio_job = claim_next(conn, audio_feature)
+                    if audio_job is not None:
+                        from media_ai.audio.audio_worker import process_audio_generation_job
+                        process_audio_generation_job(conn, audio_job)
+                        continue
 
-            # 3. Xử lý tác vụ dựng video M04c
-            video_job = claim_next(conn, video_feature)
-            if video_job is not None:
-                from media_ai.video.video_worker import process_video_job
-                process_video_job(conn, video_job)
-                continue
+                    # 2d. Nhân bản giọng (Khu vực C — Voice Clone)
+                    voice_clone_job = claim_next(conn, voice_clone_feature)
+                    if voice_clone_job is not None:
+                        from media_ai.audio.voice_clone_worker import process_voice_clone_job
+                        process_voice_clone_job(conn, voice_clone_job)
+                        continue
 
-            for _notify in conn.notifies(timeout=poll_interval_seconds):
+                    # 3. Xử lý tác vụ dựng video M04c
+                    video_job = claim_next(conn, video_feature)
+                    if video_job is not None:
+                        from media_ai.video.video_worker import process_video_job
+                        process_video_job(conn, video_job)
+                        continue
+
+                    for _notify in conn.notifies(timeout=poll_interval_seconds):
+                        break
+        except Exception as exc:
+            if co.dung:
                 break
+            print(f"[media] Mất kết nối CSDL ({exc}), thử lại sau {backoff:.0f}s...", flush=True)
+            time.sleep(backoff)
+            backoff = min(backoff * 2, 60.0)
+
+    print(f"[media] Worker {FEATURE} đã dừng.", flush=True)
 
 
 def _canh_bao_moi_truong() -> None:
-    """Cảnh báo sớm khi Python của worker sai phiên bản (24/09/2026).
-
-    `workers/.venv` từng được tạo bằng Python 3.9 của Command Line Tools
-    (LibreSSL 2.8, không có TLS 1.3) trong khi `pyproject.toml` yêu cầu ≥ 3.11:
-    mọi lượt gọi Stability hỏng với `TLSV1_ALERT_PROTOCOL_VERSION` và ảnh chỉ
-    còn phông trơn cục bộ. Không chặn worker (nhánh cục bộ vẫn chạy được) —
-    chỉ nói rõ ngay khi khởi động.
-    """
+    """Cảnh báo sớm khi Python của worker sai phiên bản hoặc thiếu cấu hình."""
     import platform
     import ssl
     import sys
@@ -549,6 +571,14 @@ def _canh_bao_moi_truong() -> None:
             flush=True,
         )
 
+    if not os.environ.get("OPENAI_API_KEY"):
+        print(
+            "[media] CẢNH BÁO: Chưa tìm thấy biến môi trường OPENAI_API_KEY. "
+            "Worker vẫn khởi động và phục vụ các tác vụ cục bộ/nhà cung cấp khác, "
+            "nhưng Identity Guard & OpenAI Enhancer sẽ cần API key này khi có lượt gọi.",
+            flush=True,
+        )
+
 
 def main() -> None:
     _canh_bao_moi_truong()
@@ -557,3 +587,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
