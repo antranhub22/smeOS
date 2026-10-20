@@ -49,6 +49,8 @@ export interface LiveCardSendResult {
   telegramMsgId?: string | null
   /** Chat ID tương ứng — cần lưu cùng msgId */
   telegramChatId?: string | null
+  /** Thẻ được gửi dạng caption của ảnh hay text thuần */
+  isCaption?: boolean
   error?: string | null
 }
 

@@ -99,6 +99,7 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
               sent: true,
               telegramMsgId: res.providerMsgId ?? null,
               telegramChatId: res.providerChatId ?? channels.telegramChatId,
+              isCaption: res.isCaption ?? false,
             }
           }
         } catch (err) {

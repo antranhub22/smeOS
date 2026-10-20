@@ -59,12 +59,8 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   const firstItemMeta = (firstItem?.metadata as Record<string, unknown> | null) ?? {}
 
   const productName = firstItem?.description || (snapshot.name as string | undefined) || "Sản phẩm đặt gia công"
-  const rawProductImageUrl =
-    (snapshot.image_url as string | undefined) ||
-    (snapshot.imageUrl as string | undefined) ||
-    (firstItemMeta.imageUrl as string | undefined) ||
-    (firstItemMeta.image as string | undefined) ||
-    null
+  const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
+  const productImageUrl = await resolveSubcontractSamplePhoto(order)
 
   const deliveryWindow = (order.delivery_window as Record<string, unknown> | null) ?? {}
   const deliveryAddress = formatDeliveryAddress(order.delivery_address)
@@ -90,8 +86,6 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
     }
     return photo
   }
-
-  const productImageUrl = rawProductImageUrl ? await resolveKey(rawProductImageUrl) : null
 
   const rawQcPhotos = Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
   const rawPodPhotos = Array.isArray(coordMeta.pod_photos) ? (coordMeta.pod_photos as string[]) : []
@@ -181,8 +175,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const notifier = new MultiChannelDispatchNotifier()
 
   if (action === "CLAIM") {
-    const firstItemMeta = (order.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
-    const sampleImageUrl = (firstItemMeta.imageUrl as string | undefined) || (firstItemMeta.image as string | undefined) || null
+    const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
+    const sampleImageUrl = await resolveSubcontractSamplePhoto(order)
 
     const reqUrl = new URL(request.url)
     const result = await claimSubcontractUseCase(

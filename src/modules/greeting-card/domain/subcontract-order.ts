@@ -39,6 +39,8 @@ export interface SubcontractOrderState {
   telegramMsgId?: string | null | undefined
   /** Chat ID (group/DM) nơi thẻ tiến độ đang hiển thị */
   telegramChatId?: string | null | undefined
+  /** Thẻ được gửi kèm ảnh (sendPhoto -> caption) hay text thuần */
+  isCaption?: boolean | undefined
 }
 
 export type ClaimResult =

@@ -35,6 +35,8 @@ export interface ChannelSendResult {
   providerMsgId?: string | null
   /** Chat ID đã gửi — cần lưu để edit sau */
   providerChatId?: string | null
+  /** Đã gửi dạng caption của ảnh hay text thuần */
+  isCaption?: boolean
   error?: string | null
 }
 

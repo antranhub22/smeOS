@@ -102,11 +102,16 @@ export async function processOrderDispatchReminders(
   // Thẻ Tiến Độ (Live Dashboard Card): dùng để EDIT tin nhắn cũ thay vì gửi mới
   const existingCard =
     state.telegramMsgId && state.telegramChatId
-      ? { msgId: state.telegramMsgId, chatId: state.telegramChatId }
+      ? {
+          msgId: state.telegramMsgId,
+          chatId: state.telegramChatId,
+          isCaption: state.isCaption ?? false,
+        }
       : null
   // Nếu lần này gửi lần đầu (chưa có thẻ), lưu msgId trả về vào state
   let capturedTelegramMsgId: string | null = null
   let capturedTelegramChatId: string | null = null
+  let capturedIsCaption: boolean = false
 
   // 1. Mốc M1: Nhắc bắt đầu chế tác (ngay khi đơn chốt COMMITTED)
   const isPrepDue = input.forceStep
@@ -135,6 +140,7 @@ export async function processOrderDispatchReminders(
       if (!existingCard && sendRes.telegramMsgId) {
         capturedTelegramMsgId = sendRes.telegramMsgId
         capturedTelegramChatId = sendRes.telegramChatId ?? null
+        capturedIsCaption = sendRes.isCaption ?? false
       }
       remindersSent["M1_PREP"] = now.toISOString()
       results.push({ step: "M1_PREP", triggered: true, sent: true, message: text })
@@ -334,6 +340,7 @@ export async function processOrderDispatchReminders(
       if (!existingCard && sendRes.telegramMsgId) {
         capturedTelegramMsgId = sendRes.telegramMsgId
         capturedTelegramChatId = sendRes.telegramChatId ?? null
+        capturedIsCaption = sendRes.isCaption ?? false
       }
       remindersSent["M4_OVERDUE"] = now.toISOString()
       results.push({ step: "M4_OVERDUE", triggered: true, sent: true, message: text })
@@ -347,7 +354,11 @@ export async function processOrderDispatchReminders(
       remindersSent,
       // Lưu Live Card ID nếu mới capture được lần đầu
       ...(capturedTelegramMsgId
-        ? { telegramMsgId: capturedTelegramMsgId, telegramChatId: capturedTelegramChatId }
+        ? {
+            telegramMsgId: capturedTelegramMsgId,
+            telegramChatId: capturedTelegramChatId,
+            isCaption: capturedIsCaption,
+          }
         : {}),
     }
     await store.saveSubcontractState(ctx, nextState)

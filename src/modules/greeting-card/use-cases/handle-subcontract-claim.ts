@@ -92,7 +92,11 @@ export async function claimSubcontractUseCase(
     // Truyền existingTelegramCard nếu đã có thẻ từ lần gửi trước (grace period re-use)
     const existingCard =
       claimResult.nextState.telegramMsgId && claimResult.nextState.telegramChatId
-        ? { msgId: claimResult.nextState.telegramMsgId, chatId: claimResult.nextState.telegramChatId }
+        ? {
+            msgId: claimResult.nextState.telegramMsgId,
+            chatId: claimResult.nextState.telegramChatId,
+            isCaption: claimResult.nextState.isCaption ?? false,
+          }
         : null
 
     const notifyRes = await notifier.sendSubcontractInvite(ctx, {
@@ -112,6 +116,7 @@ export async function claimSubcontractUseCase(
         ...claimResult.nextState,
         telegramMsgId: notifyRes.telegramMsgId,
         telegramChatId: notifyRes.telegramChatId ?? null,
+        isCaption: notifyRes.isCaption ?? false,
       }
       await store.saveSubcontractState(ctx, stateWithCard)
     }

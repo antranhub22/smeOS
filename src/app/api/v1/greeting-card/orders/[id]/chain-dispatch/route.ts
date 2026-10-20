@@ -125,6 +125,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
     where: { id, organization_id: ctx.organizationId },
     select: {
       id: true,
+      organization_id: true,
       code: true,
       delivery_address: true,
       delivery_window: true,
@@ -210,29 +211,8 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       branchName: branch.branchName,
     })
 
-    const firstItemMeta = (order.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
-    const snapshot = (order.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
-    let sampleImageUrl =
-      (snapshot.image_url as string | undefined) ||
-      (snapshot.imageUrl as string | undefined) ||
-      (firstItemMeta.imageUrl as string | undefined) ||
-      (firstItemMeta.image as string | undefined) ||
-      null
-
-    if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/"))) {
-      try {
-        const { getStorageProvider } = await import("@/modules/assets/adapters/storage-provider-factory")
-        const storage = getStorageProvider()
-        const key = sampleImageUrl.startsWith("org/")
-          ? sampleImageUrl
-          : sampleImageUrl.match(/floraos-core\/(org\/[^?]+)/)?.[1]
-        if (key) {
-          sampleImageUrl = await storage.signedUrl(key, 604800, "GET").catch(() => sampleImageUrl)
-        }
-      } catch {
-        // Fallback to original URL
-      }
-    }
+    const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
+    const sampleImageUrl = await resolveSubcontractSamplePhoto(order)
 
     const sendResult = await notifier.sendSubcontractInvite(ctx, {
       branch,
@@ -243,6 +223,13 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       actions: [{ text: "👉 Nhận đơn ngay", url: claimUrl }],
       imageUrl: sampleImageUrl,
     })
+
+    if (sendResult.sent && sendResult.telegramMsgId) {
+      subcontractState.telegramMsgId = sendResult.telegramMsgId
+      subcontractState.telegramChatId = sendResult.telegramChatId ?? null
+      subcontractState.isCaption = sendResult.isCaption ?? false
+      await stateRepo.saveSubcontractState(ctx, subcontractState)
+    }
 
     const channel = branch.channels?.telegramChatId ? "TELEGRAM"
       : branch.channels?.zaloPhone ? "ZALO"

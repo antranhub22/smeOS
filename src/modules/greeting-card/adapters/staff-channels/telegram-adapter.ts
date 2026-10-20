@@ -64,19 +64,30 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
       if (msg.imageUrl) {
         const img = msg.imageUrl.trim()
         if (img.startsWith("http://") || img.startsWith("https://")) {
-          if (img.includes("localhost") || img.includes("127.0.0.1")) {
+          if (img.includes("localhost") || img.includes("127.0.0.1") || img.includes(".onrender.com") || img.includes("/api/v1/storage/")) {
+            // Thử fetch trực tiếp buffer nếu là endpoint của chính app nội bộ
             try {
-              const u = new URL(img)
-              const rel = u.pathname.startsWith("/") ? u.pathname.slice(1) : u.pathname
-              const localPath = path.join(process.cwd(), "public", rel)
-              if (fs.existsSync(localPath)) {
-                const buf = fs.readFileSync(localPath)
-                const ext = path.extname(localPath).toLowerCase()
-                const mime = ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg"
-                localPhotoBlob = new Blob([buf], { type: mime })
+              const fetchRes = await fetch(img, { signal: AbortSignal.timeout(6000) })
+              if (fetchRes.ok) {
+                const arrayBuf = await fetchRes.arrayBuffer()
+                const contentType = fetchRes.headers.get("content-type") || "image/jpeg"
+                localPhotoBlob = new Blob([arrayBuf], { type: contentType })
               }
             } catch {
-              // fallback
+              // fallback thử đọc từ đĩa cục bộ
+              try {
+                const u = new URL(img)
+                const rel = u.pathname.startsWith("/") ? u.pathname.slice(1) : u.pathname
+                const localPath = path.join(process.cwd(), "public", rel)
+                if (fs.existsSync(localPath)) {
+                  const buf = fs.readFileSync(localPath)
+                  const ext = path.extname(localPath).toLowerCase()
+                  const mime = ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg"
+                  localPhotoBlob = new Blob([buf], { type: mime })
+                }
+              } catch {
+                // fallback
+              }
             }
           } else {
             remotePhotoUrl = img
@@ -126,6 +137,7 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
               sent: true,
               providerMsgId: photoData.result?.message_id ? String(photoData.result.message_id) : null,
               providerChatId: chatId,
+              isCaption: true,
             }
           }
           log.warn("staff_notify.telegram_photo_failed, fallback to sendMessage", { error: photoData.description })
@@ -154,6 +166,7 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
               sent: true,
               providerMsgId: photoData.result?.message_id ? String(photoData.result.message_id) : null,
               providerChatId: chatId,
+              isCaption: true,
             }
           }
           log.warn("staff_notify.telegram_remote_photo_failed, fallback to sendMessage", { error: photoData.description })
