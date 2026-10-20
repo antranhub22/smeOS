@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { AlertTriangle, Cpu, TrendingUp, Sparkles, ShoppingBag, ArrowRight } from "lucide-react"
 import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -55,7 +56,8 @@ async function layJson<T>(url: string): Promise<T | null> {
 }
 
 export function StoreGrowthCenter() {
-  const { orgName, userInitials, roleUx } = useSession()
+  const { orgName, userInitials, roleUx, organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const router = useRouter()
   const { announce } = useAnnounce()
 
@@ -276,7 +278,7 @@ export function StoreGrowthCenter() {
               <EmptyState
                 icon={ShoppingBag}
                 title="Chưa có sản phẩm"
-                reason="Tải ảnh mẫu hoa đầu tiên để bắt đầu bán hàng"
+                reason={`Tải ảnh ${ti.sampleProduct} đầu tiên để bắt đầu bán hàng`}
                 action={{
                   label: "Tải ảnh ngay",
                   onClick: () => router.push("/tai-anh" as never),

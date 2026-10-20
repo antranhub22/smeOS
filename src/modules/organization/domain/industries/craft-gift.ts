@@ -94,4 +94,7 @@ export const CRAFT_GIFT_INDUSTRY: IndustryPluginContract = {
       "Hộp quà tặng Trà hoa vàng & Mật ong hoa rừng",
     ],
   },
+  navigation: {
+    hiddenNavKeys: [],
+  },
 }

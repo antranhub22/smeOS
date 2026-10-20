@@ -34,9 +34,9 @@ const CAMERA_ANGLES: Array<{
   icon: React.ElementType
 }> = [
   { id: "front_view", label: "Trực diện 0°", desc: "Ngang tầm mắt, bố cục chuẩn mực", icon: Eye },
-  { id: "three_quarter_45", label: "Góc nghiêng 45°", desc: "Tôn chiều sâu & nếp giấy gói", icon: RotateCcw },
+  { id: "three_quarter_45", label: "Góc nghiêng 45°", desc: "Tôn chiều sâu & nếp gấp vật liệu", icon: RotateCcw },
   { id: "flat_lay_topdown", label: "Flat-lay 90°", desc: "Từ trên xuống cùng phụ kiện vintage", icon: LayoutGrid },
-  { id: "macro_closeup", label: "Cận cảnh Macro", desc: "Chi tiết cánh hoa & giọt sương mai", icon: ZoomIn },
+  { id: "macro_closeup", label: "Cận cảnh Macro", desc: "Chi tiết bề mặt & đường vân nghệ thuật", icon: ZoomIn },
 ]
 
 const HUMAN_INTERACTIONS: Array<{
@@ -46,18 +46,18 @@ const HUMAN_INTERACTIONS: Array<{
   badge: string
   icon: React.ElementType
 }> = [
-  { id: "none", label: "Chỉ hoa tươi", desc: "Tập trung 100% vào bó hoa", badge: "Chuẩn Catalog", icon: Camera },
-  { id: "female_holding", label: "Mẫu nữ ôm hoa", desc: "Nữ thanh lịch ôm ngang ngực", badge: "Định cỡ hoa", icon: User },
-  { id: "male_holding", label: "Mẫu nam cầm hoa", desc: "Nam lịch lãm chuẩn bị tặng", badge: "Quà tặng", icon: User },
-  { id: "florist_artisan_hands", label: "Bàn tay thợ hoa", desc: "Thắt nơ lụa tỉ mỉ tại xưởng", badge: "Thủ công", icon: Sparkles },
-  { id: "gifting_moment", label: "Khoảnh khắc tặng", desc: "Trao hoa đong đầy nụ cười", badge: "Cảm xúc", icon: Users },
+  { id: "none", label: "Chỉ sản phẩm", desc: "Tập trung 100% vào sản phẩm chính", badge: "Chuẩn Catalog", icon: Camera },
+  { id: "female_holding", label: "Mẫu nữ cầm tay", desc: "Nữ thanh lịch cầm ngang ngực", badge: "Định cỡ sản phẩm", icon: User },
+  { id: "male_holding", label: "Mẫu nam cầm tay", desc: "Nam lịch lãm chuẩn bị tặng", badge: "Quà tặng", icon: User },
+  { id: "florist_artisan_hands", label: "Bàn tay nghệ nhân", desc: "Chăm chút tỉ mỉ từng chi tiết tại xưởng", badge: "Thủ công", icon: Sparkles },
+  { id: "gifting_moment", label: "Khoảnh khắc tặng", desc: "Trao gửi đong đầy nụ cười", badge: "Cảm xúc", icon: Users },
 ]
 
 const STORY_CHAPTERS = [
-  { step: 1, title: "1. The Craft (Chế tác)", desc: "Bàn tay thợ cắm hoa tỉ mỉ tại xưởng" },
-  { step: 2, title: "2. The Masterpiece (Kiệt tác)", desc: "Bó hoa chân dung sang trọng trong Studio" },
-  { step: 3, title: "3. The Surprise (Đón nhận)", desc: "Mẫu nữ ôm hoa rạng rỡ tại quán cafe" },
-  { step: 4, title: "4. The Living Memory (Tổ ấm)", desc: "Bó hoa tỏa sáng trong phòng khách" },
+  { step: 1, title: "1. The Craft (Chế tác)", desc: "Bàn tay người thợ tỉ mỉ tại xưởng" },
+  { step: 2, title: "2. The Masterpiece (Kiệt tác)", desc: "Chân dung sản phẩm sang trọng trong Studio" },
+  { step: 3, title: "3. The Surprise (Đón nhận)", desc: "Mẫu tươi tắn rạng rỡ khi nhận quà" },
+  { step: 4, title: "4. The Living Memory (Tổ ấm)", desc: "Sản phẩm tỏa sáng trong không gian sống" },
 ]
 
 export function VisualStorytellingControls({

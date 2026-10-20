@@ -17,6 +17,8 @@ import { aiGatewayDeps } from "@/core/ai/wiring";
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider";
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences";
 import { createProductVisionAdapter } from "../adapters/product-vision-ai-adapter";
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository";
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile";
 import type {
   ProductFlowerComponent,
   ProductVisualAttributes,
@@ -101,6 +103,11 @@ export async function analyzeProductVision(
   await jobRepo.startInline(ctx, enq.job.id, new Date());
   try {
     const bytes = await storage.get(asset.storage_key);
+    const org = await new OrganizationRepository().current(ctx);
+    const orgSettings = (org?.settings as Record<string, unknown>) || {};
+    const industryKey = typeof orgSettings.industry === "string" ? orgSettings.industry : "FLORAL";
+    const industryPlugin = getIndustryPlugin(industryKey);
+
     // Qua cổng AI (nợ #155): nhà cung cấp theo thứ tự ưu tiên của tiệm, bên hỏng
     // thì sang bên kế tiếp; `ai_requests` ghi mô hình, chi phí, độ trễ từng lượt.
     const aiResult = await callCapability(
@@ -113,7 +120,11 @@ export async function analyzeProductVision(
       },
       createProductVisionAdapter(
         createContentLLM(),
-        { image: { mimeType: asset.mime_type || "image/jpeg", base64: Buffer.from(bytes).toString("base64") }, productTitle },
+        {
+          image: { mimeType: asset.mime_type || "image/jpeg", base64: Buffer.from(bytes).toString("base64") },
+          productTitle,
+          industryPlugin,
+        },
         ctx.organizationId
       ),
       aiGatewayDeps(ctx)

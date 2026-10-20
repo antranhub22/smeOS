@@ -42,6 +42,7 @@ export async function executeSingleRun(runId: string, runType: string): Promise<
   let targetGeo = "VN";
   let targetTimeframe = "now 7-d";
   let targetChannel = "omnichannel";
+  let targetIndustry = "florist";
 
   if (runRecord?.error_summary?.startsWith("PARAMS:")) {
     try {
@@ -65,6 +66,11 @@ export async function executeSingleRun(runId: string, runType: string): Promise<
       }
       if (parsed.channel && typeof parsed.channel === "string") {
         targetChannel = parsed.channel;
+      }
+      if (parsed.industry && typeof parsed.industry === "string") {
+        targetIndustry = parsed.industry.toLowerCase();
+      } else if (parsed.industryKey && typeof parsed.industryKey === "string") {
+        targetIndustry = parsed.industryKey.toUpperCase() === "FLORAL" ? "florist" : parsed.industryKey.toLowerCase();
       }
     } catch {
       // Dùng fallback mặc định
@@ -99,7 +105,7 @@ export async function executeSingleRun(runId: string, runType: string): Promise<
           geo: targetGeo,
           timeframe: targetTimeframe,
           channel: targetChannel,
-          industry: "florist",
+          industry: targetIndustry,
         });
 
         if (signals.length > 0) {
@@ -229,7 +235,7 @@ export async function executeSingleRun(runId: string, runType: string): Promise<
               data: {
                 topic_id: topic.id,
                 geo_scope: targetGeo,
-                industry: "florist",
+                industry: targetIndustry,
                 period: "7d",
                 trend_score: trendScore,
                 viral_score: viralScore,

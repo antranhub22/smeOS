@@ -56,16 +56,17 @@ NGUONG_CHAY_LUOT_HAI_THANH_PHAN = 60  # hoặc một thành phần bom có confi
 
 
 class _Contract:
-    """Nạp một lần, dùng lại cho mọi lượt gọi — không đọc đĩa mỗi request."""
+    """Nạp một lần theo từng ngành, dùng lại cho mọi lượt gọi — không đọc đĩa mỗi request."""
 
-    def __init__(self) -> None:
-        self.schema = nap_json("Schema.json")
-        self.prompt = nap_text("Prompt.md")
-        self.config = nap_json("config.json")
+    def __init__(self, nganh: str = "floral") -> None:
+        self.nganh = nganh.lower() if nganh else "floral"
+        self.schema = nap_json("Schema.json", self.nganh)
+        self.prompt = nap_text("Prompt.md", self.nganh)
+        self.config = nap_json("config.json", self.nganh)
 
     @property
     def name(self) -> str:
-        return self.schema["name"]
+        return self.schema.get("name", "PhanTichSanPham")
 
     def tham_so(self, khoa: str, mac_dinh: Any) -> Any:
         """`config.json` là nơi chỉnh tham số vận hành — chính tệp đó khai
@@ -75,14 +76,14 @@ class _Contract:
         return mac_dinh if gia_tri is None else gia_tri
 
 
-_contract: _Contract | None = None
+_contracts: dict[str, _Contract] = {}
 
 
-def _contract_singleton() -> _Contract:
-    global _contract
-    if _contract is None:
-        _contract = _Contract()
-    return _contract
+def _contract_singleton(nganh: str = "floral") -> _Contract:
+    key = nganh.lower() if nganh else "floral"
+    if key not in _contracts:
+        _contracts[key] = _Contract(key)
+    return _contracts[key]
 
 
 def _measured_palette_block(palette_result: dict) -> str:
@@ -108,7 +109,8 @@ def _reference_block(ref: dict | None) -> str:
     """Tạo khối hệ quy chiếu từ phân tích ảnh gốc (Ground-Truth Schema).
 
     Dùng trong quy trình kiểm duyệt (Identity Guard) để cố định thuật ngữ định danh,
-    chủng loại hoa và phụ liệu, ngăn AI sinh từ đồng nghĩa hoặc đếm lệch ngẫu nhiên.
+    chủng loại vật tư/nguyên liệu, ngăn AI sinh từ đồng nghĩa hoặc đếm lệch ngẫu nhiên.
+    Tương thích đa ngành (Hoa tươi, Thời trang, F&B, v.v.).
     """
     if not isinstance(ref, dict) or not ref:
         return ""
@@ -116,27 +118,23 @@ def _reference_block(ref: dict | None) -> str:
     identity = ref.get("identity") or {}
     bom = ref.get("bom") or {}
 
-    cat = identity.get("category")
-    shape = identity.get("shape")
-    container = identity.get("container")
-    if any((cat, shape, container)):
-        lines.append(f"  Định danh: {cat or '—'} | Dáng khối: {shape or '—'} | Vật chứa: {container or '—'}")
+    id_parts = []
+    for k in ("category", "shape", "container", "silhouette", "fit", "material"):
+        v = identity.get(k)
+        if v:
+            id_parts.append(f"{k}: {v}")
+    if id_parts:
+        lines.append("  Định danh: " + " | ".join(id_parts))
 
-    flowers = bom.get("flowers") or []
-    for f in flowers:
-        lines.append(f"  - Hoa: {f.get('name') or 'Hoa'} (Màu: {f.get('color') or '—'}, Số lượng: {f.get('quantity') or '—'})")
-
-    foliage = bom.get("foliage") or []
-    for fo in foliage:
-        lines.append(f"  - Lá/phụ kiện xanh: {fo.get('name') or 'Lá'} (Màu: {fo.get('color') or '—'})")
-
-    accessories = bom.get("accessories") or []
-    for a in accessories:
-        lines.append(f"  - Phụ kiện/dây nơ: {a.get('name') or 'Phụ kiện'} (Màu: {a.get('color') or '—'})")
-
-    wrapping = bom.get("wrapping") or []
-    for w in wrapping:
-        lines.append(f"  - Vật liệu gói: {w.get('material') or w.get('name') or 'Gói'} (Màu: {w.get('color') or '—'})")
+    for group_name, items in bom.items():
+        if isinstance(items, list):
+            for item in items:
+                if isinstance(item, dict):
+                    name = item.get("name") or item.get("material") or group_name
+                    color = item.get("color") or "—"
+                    qty = item.get("quantity")
+                    qty_str = f", Số lượng: {qty}" if qty is not None else ""
+                    lines.append(f"  - {group_name}: {name} (Màu: {color}{qty_str})")
 
     lines.append("YÊU CẦU: Duy trì tính nhất quán cao nhất về thuật ngữ định danh, chủng loại và màu sắc đã xác thực ở hệ quy chiếu trên.")
     return "\n".join(lines)
@@ -150,11 +148,13 @@ def _overall_confidence(result: dict) -> int:
 def _min_bom_confidence(result: dict) -> int:
     bom = result.get("bom") or {}
     values = []
-    for key in ("flowers", "foliage", "accessories", "wrapping"):
-        for item in bom.get(key) or []:
-            c = item.get("confidence")
-            if isinstance(c, int):
-                values.append(c)
+    for _key, items in bom.items():
+        if isinstance(items, list):
+            for item in items:
+                if isinstance(item, dict):
+                    c = item.get("confidence")
+                    if isinstance(c, int):
+                        values.append(c)
     return min(values) if values else 100
 
 
@@ -169,18 +169,26 @@ def _reconcile_quantity(a: dict, b: dict) -> None:
     """Trung vị `quantity` từng thành phần và `confidence` tổng giữa hai
     lượt — sửa `a` tại chỗ, theo đúng vị trí (`bom` không đổi thứ tự phần tử
     giữa hai lượt vì cùng một ảnh, cùng prompt, chỉ khác nhiệt độ).
+    Hoạt động đa ngành cho bất kỳ danh mục thành phần nào trong `bom`.
     """
     confidence_median = trung_vi([_overall_confidence(a), _overall_confidence(b)])
     if confidence_median is not None:
         a["confidence"] = int(round(confidence_median))
 
     bom_a, bom_b = a.get("bom") or {}, b.get("bom") or {}
-    for key in ("flowers", "foliage"):
-        items_a, items_b = bom_a.get(key) or [], bom_b.get(key) or []
+    for key, items_a in bom_a.items():
+        if not isinstance(items_a, list):
+            continue
+        items_b = bom_b.get(key) or []
+        if not isinstance(items_b, list):
+            continue
         for i, item_a in enumerate(items_a):
             if i >= len(items_b):
                 break
-            qa, qb = item_a.get("quantity"), items_b[i].get("quantity")
+            item_b = items_b[i]
+            if not isinstance(item_a, dict) or not isinstance(item_b, dict):
+                continue
+            qa, qb = item_a.get("quantity"), item_b.get("quantity")
             if isinstance(qa, int) and isinstance(qb, int):
                 # Schema.json khai `quantity`/`confidence` là "integer" — trung_vi
                 # trả float (np.median), phải làm tròn về int để không phá kiểu
@@ -226,7 +234,8 @@ class OpenAIStructuredProvider:
         return self._model
 
     def analyze(self, image: bytes, context: dict[str, Any]) -> dict:
-        contract = _contract_singleton()
+        nganh = context.get("industry") or context.get("industry_key") or "floral"
+        contract = _contract_singleton(nganh)
 
         # Bảng màu đo trên ảnh GỐC, không đo trên bản đã thu nhỏ: tỷ lệ diện
         # tích từng cụm là số đưa vào prompt và số đó phải nói về ảnh thật.

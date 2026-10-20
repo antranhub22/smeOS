@@ -5,7 +5,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { assignFlorist } from "@/modules/orders/use-cases/assign-florist"
 
 const assignSchema = z.object({
-  assigneeId: z.string().min(1, "Bắt buộc phải chọn thợ cắm hoa"),
+  assigneeId: z.string().min(1, "Bắt buộc phải chọn nhân sự thực hiện"),
   difficulty: z.enum(["co_ban", "trung_binh", "kho", "vip"]).optional(),
 })
 

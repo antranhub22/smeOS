@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 export type JourneyStep = 1 | 2 | 3
 
 const STEPS: { id: JourneyStep; short: string; title: string; hint: string }[] = [
-  { id: 1, short: "Bộ sưu tập", title: "Chọn bộ sưu tập", hint: "Mẫu hoa khách sẽ xem" },
+  { id: 1, short: "Bộ sưu tập", title: "Chọn bộ sưu tập", hint: "Sản phẩm khách sẽ xem" },
   { id: 2, short: "Khách", title: "Thông tin khách", hint: "Lời chào riêng, theo dõi đơn" },
   { id: 3, short: "Gửi link", title: "Gửi link", hint: "Sao chép và gửi qua Zalo" },
 ]

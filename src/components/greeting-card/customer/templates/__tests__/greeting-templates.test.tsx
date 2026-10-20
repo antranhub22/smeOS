@@ -141,7 +141,7 @@ describe("Greeting Card 12 Visual Swipe Styles & Engine Tests", () => {
         })
       )
 
-      expect(html).toContain("chưa có mẫu hoa")
+      expect(html).toContain("chưa có sản phẩm")
     }
   })
 

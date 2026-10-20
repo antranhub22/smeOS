@@ -97,7 +97,7 @@ export function ProductDesignCard({
           <div className="text-body-sm font-semibold text-text mt-0.5">{shape ?? "—"}</div>
         </div>
         <div className="rounded-xl bg-surface-alt p-3">
-          <div className="text-caption text-text-muted">Mặt hoa / Hướng nhìn</div>
+          <div className="text-caption text-text-muted">Mặt nhìn / Hướng nhìn</div>
           <div className="text-body-sm font-semibold text-text mt-0.5">{facing ?? "—"}</div>
         </div>
         <div className="rounded-xl bg-surface-alt p-3">
@@ -130,7 +130,7 @@ export function ProductBomCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-caption font-bold uppercase tracking-wider text-text-muted">
           <Flower2 size={14} aria-hidden="true" />
-          Thành phần hoa cấu thành
+          Định mức vật tư & Thành phần cấu thành
         </div>
         {flowers.length === 0 && (
           <button
@@ -158,14 +158,14 @@ export function ProductBomCard({
                 </div>
               </div>
               <span className="rounded-lg bg-surface px-2 py-1 text-caption font-bold text-primary border border-border">
-                {item.quantity} {item.unit || "cành"}
+                {item.quantity} {item.unit || "cái"}
               </span>
             </div>
           ))}
         </div>
       ) : (
         <div className="rounded-xl border border-dashed border-border bg-surface-alt/30 p-4 text-center">
-          <p className="text-body-sm text-text-muted">Sản phẩm chưa có dữ liệu thành phần hoa chi tiết.</p>
+          <p className="text-body-sm text-text-muted">Sản phẩm chưa có dữ liệu định mức vật tư chi tiết.</p>
           <Button
             type="button"
             variant="outline"
@@ -194,7 +194,7 @@ export function ProductStoryCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-caption font-bold uppercase tracking-wider text-text-muted">
           <FileText size={14} aria-hidden="true" />
-          Câu chuyện và thông điệp mẫu hoa
+          Câu chuyện và thông điệp sản phẩm
         </div>
         {!description && (
           <button
@@ -215,7 +215,7 @@ export function ProductStoryCard({
       ) : (
         <div className="rounded-xl border border-dashed border-border bg-surface-alt/30 p-4 text-center">
           <p className="text-body-sm text-text-muted">
-            Chưa có câu chuyện và thông điệp tiếp thị cho mẫu hoa này.
+            Chưa có câu chuyện và thông điệp tiếp thị cho sản phẩm này.
           </p>
           <Button
             type="button"

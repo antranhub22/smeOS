@@ -6,6 +6,7 @@ import type { ShippingConfig, BrochureQuote } from "@/modules/greeting-card/doma
 import { MAX_ORDER_QUANTITY } from "@/modules/greeting-card/domain/brochure-pricing"
 import type { QuoteSelection } from "./use-brochure-quote"
 import { PaymentCodeField, PaymentDueRows } from "./payment-code-field"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 interface Props {
   variants: Array<{ id: string; name: string; priceVnd: number }>
@@ -16,14 +17,20 @@ interface Props {
   quote: BrochureQuote | null
   errors: Record<string, string>
   loading: boolean
+  industryKey?: string | null | undefined
 }
 
 const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
 const vnd = (n: number) => `${n.toLocaleString("vi-VN")} đ`
 
 /** Size, số lượng, khu vực giao, mã giảm giá (khi tiệm bật), mã thanh toán (khi tiệm có mã) + bảng tổng tiền do server tính (đã trừ ưu đãi). */
-export function BrochureOrderOptions({ variants, basePrice, shipping, selection, onChange, quote, errors, loading }: Props) {
+export function BrochureOrderOptions({ variants, basePrice, shipping, selection, onChange, quote, errors, loading, industryKey }: Props) {
   const [voucherInput, setVoucherInput] = useState(selection.voucherCode)
+  const isHomestay = industryKey === "HOMESTAY"
+  const orderTerms = getIndustryOrderTerms(industryKey)
+  const shippingFeeLabel = orderTerms.shippingFeeLabel
+  const shippingZoneLabel = orderTerms.shippingZoneLabel
+  const freeShippingText = orderTerms.freeShippingText
 
   return (
     <>
@@ -69,7 +76,7 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
 
       {shipping.zones.length > 0 && (
         <label className="flex flex-col gap-1">
-          <span className="text-caption font-bold text-foreground">Khu vực giao hoa <span className="text-danger">*</span></span>
+          <span className="text-caption font-bold text-foreground">{shippingZoneLabel} <span className="text-danger">*</span></span>
           <select value={selection.shippingZoneId} onChange={(e) => onChange({ shippingZoneId: e.target.value })} className={FIELD}>
             <option value="">— Chọn khu vực —</option>
             {shipping.zones.map((z) => (
@@ -77,39 +84,44 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
             ))}
           </select>
           {shipping.freeShippingAll ? (
-            <span className="text-caption text-success">Miễn phí giao hoa cho mọi đơn</span>
+            <span className="text-caption text-success">{freeShippingText}</span>
           ) : shipping.freeShippingOverVnd !== null && (
             <span className="text-caption text-text-muted">Miễn phí giao cho đơn từ {vnd(shipping.freeShippingOverVnd)}</span>
           )}
         </label>
       )}
 
-      {shipping.vouchersEnabled && <div className="flex flex-col gap-1">
-        <span className="text-caption font-bold text-foreground">Mã giảm giá</span>
+      {/* Khối Mã ưu đãi — luôn có cho mọi ngành */}
+      <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30">
+        <div className="flex items-center justify-between">
+          <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
+            <Ticket size={14} className="text-primary" />
+            Mã ưu đãi
+          </span>
+        </div>
         <div className="flex gap-2">
           <input
             type="text"
             value={voucherInput}
             maxLength={40}
-            placeholder="VD: FLORA10"
+            placeholder=""
             onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
             className={FIELD}
           />
           <button
             type="button"
             onClick={() => onChange({ voucherCode: voucherInput.trim() })}
-            className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5"
+            className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
           >
             <Ticket size={14} /> Áp dụng
           </button>
         </div>
         {errors.voucherCode && <span className="text-caption text-danger">{errors.voucherCode}</span>}
-      </div>}
-
+      </div>
 
       {quote?.awaitingQuote ? (
         <p role="status" className="text-body-sm text-text-muted border-t border-border pt-2">
-          Mẫu này chưa niêm yết giá. Cửa hàng sẽ báo giá trọn gói (gồm phí giao) sau khi nhận đơn — bạn chưa cần thanh toán lúc này.
+          Mẫu này chưa niêm yết giá. Cửa hàng sẽ báo giá trọn gói sau khi nhận đơn — bạn chưa cần thanh toán lúc này.
         </p>
       ) : (
         <dl className="flex flex-col gap-1 text-body-sm border-t border-border pt-2" aria-busy={loading}>
@@ -118,8 +130,8 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
             <div className="flex justify-between text-success"><dt>Giảm giá ({quote.voucherCode})</dt><dd>−{vnd(quote.discountVnd)}</dd></div>
           )}
           <div className="flex justify-between">
-            <dt className="text-text-muted">Phí giao hoa</dt>
-            <dd>{shipping.freeShippingAll ? "Miễn phí" : shipping.zones.length === 0 ? "Cửa hàng báo sau" : quote?.shippingZone ? (quote.shippingFeeVnd > 0 ? vnd(quote.shippingFeeVnd) : "Miễn phí") : "—"}</dd>
+            <dt className="text-text-muted">{shippingFeeLabel}</dt>
+            <dd>{shipping.freeShippingAll ? "Miễn phí" : shipping.zones.length === 0 ? (isHomestay ? "Bao gồm" : "Cửa hàng báo sau") : quote?.shippingZone ? (quote.shippingFeeVnd > 0 ? vnd(quote.shippingFeeVnd) : "Miễn phí") : "—"}</dd>
           </div>
           {quote?.promotionDiscountVnd ? (
             <div className="flex justify-between text-success"><dt>Ưu đãi</dt><dd>−{vnd(quote.promotionDiscountVnd)}</dd></div>
@@ -135,10 +147,14 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
         </dl>
       )}
     </div>
-    {/* Mã thanh toán: khối riêng, không lẫn với mã giảm giá */}
-    {shipping.paymentCodesEnabled && (
-      <PaymentCodeField value={selection.paymentCode} onApply={(code) => onChange({ paymentCode: code })} quote={quote} error={errors.paymentCode} />
-    )}
+
+    {/* Khối Mã áp dụng đặt cọc — luôn có cho mọi ngành */}
+    <PaymentCodeField
+      value={selection.paymentCode}
+      onApply={(code) => onChange({ paymentCode: code })}
+      quote={quote}
+      error={errors.paymentCode}
+    />
     </>
   )
 }

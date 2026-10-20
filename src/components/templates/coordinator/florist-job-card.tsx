@@ -22,6 +22,8 @@ import { Badge } from "@/components/ui/badge"
 import type { FlowerBomItem, FoliageBomItem, WrappingLayer, AccessoryBomItem, StructuredAddress } from "@/modules/products/domain/product-master-index"
 import type { VisibleCustomField } from "@/components/coordinator/custom-fields-section"
 import { FloristJobBom, formatAddress, maskPhoneNumber } from "./florist-job-bom"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface FloristJobCardProps {
   orderCode: string
@@ -74,16 +76,18 @@ export function FloristJobCard({
   const [maskPhone, setMaskPhone] = useState(true)
   const [copiedImage, setCopiedImage] = useState(false)
   const [copiedText, setCopiedText] = useState(false)
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
 
   const handleCopyText = async () => {
     const phoneDisplay = maskPhone ? maskPhoneNumber(recipientPhone) : recipientPhone || "Chưa có"
     const flowerSummary = flowers.map((f) => `${f.flowerName} (${f.quantity} ${f.unit})`).join(", ")
     const textBrief = [
       `📋 THẺ GIA CÔNG — ĐƠN #${orderCode}`,
-      `🌸 Mẫu: ${recipeTitle}`,
-      `⏰ Hạn cắm xong: ${targetReadyTime}${deliveryTargetTime ? ` (Giao lúc: ${deliveryTargetTime})` : ""}`,
+      `✨ Mẫu: ${recipeTitle}`,
+      `⏰ Hạn ${ti.makerAction.toLowerCase()} xong: ${targetReadyTime}${deliveryTargetTime ? ` (Giao lúc: ${deliveryTargetTime})` : ""}`,
       `💰 Giá gia công: ${suggestedCraftFee.toLocaleString("vi-VN")}đ`,
-      `🌿 Hoa chính: ${flowerSummary || "Theo mẫu"}`,
+      `🌿 ${ti.rawMaterialItem} chính: ${flowerSummary || "Theo mẫu"}`,
       cardMessage ? `💌 Thiệp: "${cardMessage}"` : "",
       `📍 Giao tới: ${recipientName} · ${phoneDisplay} · ${formatAddress(deliveryAddress)}`,
       partnerInstruction ? `⚠️ Lưu ý: ${partnerInstruction}` : "",
@@ -207,7 +211,7 @@ export function FloristJobCard({
             </span>
             <div className="relative aspect-square w-full rounded-xl overflow-hidden border border-border bg-surface-alt">
               {sampleImageUrl ? (
-                <img src={sampleImageUrl} alt="Mẫu hoa" crossOrigin="anonymous" className="h-full w-full object-cover" />
+                <img src={sampleImageUrl} alt={ti.sampleProduct} crossOrigin="anonymous" className="h-full w-full object-cover" />
               ) : (
                 <div className="h-full w-full flex items-center justify-center text-text-muted text-xs">
                   Chưa có ảnh mẫu
@@ -263,7 +267,7 @@ export function FloristJobCard({
             <div className="flex items-center justify-between font-bold text-text">
               <span className="flex items-center gap-1.5">
                 <MapPin size={13} className="text-primary" />
-                <span>Thông tin giao nhận cho bộ phận cắm hoa:</span>
+                <span>Thông tin giao nhận cho bộ phận {ti.makerTitle}:</span>
               </span>
               <button
                 type="button"

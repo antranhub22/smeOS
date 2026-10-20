@@ -34,8 +34,13 @@ export async function submitBrochureOrder(
   const existing = await existingOrderResult(session, shop.settings, orders)
   if (existing) return existing
 
+  // Đọc ngành từ settings để bỏ qua kiểm tra khung giờ giao cho HOMESTAY/FNB/SERVICES
+  const industryKey = typeof (shop.settings as Record<string, unknown> | null)?.industry === "string"
+    ? (shop.settings as Record<string, unknown>).industry as string
+    : null
+
   // Giờ chốt đơn / thời gian chuẩn bị của tiệm — chặn cả khi khách gửi thẳng API
-  const scheduleError = orderScheduleError(input.deliveryDate, input.deliveryTimeSlot, shop.settings)
+  const scheduleError = orderScheduleError(input.deliveryDate, input.deliveryTimeSlot, shop.settings, new Date(), industryKey)
   if (scheduleError) throw validationFailed({ deliveryDate: scheduleError })
 
   await assertHolidayCapacity(session.organization_id, input.deliveryDate, shop.settings)

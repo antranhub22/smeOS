@@ -12,7 +12,7 @@ export function VideoGuidanceCard() {
       title="Tạo video ngắn sản phẩm tự động"
       description="Tự động biên tập video dọc chuẩn TikTok / Reels / Shorts từ ảnh sản phẩm, kịch bản thuyết minh và nhạc nền bản quyền."
       tips={[
-        "🎬 AI tự động sinh kịch bản phân cảnh 3 nhịp: Mở đầu ấn tượng - Cận cảnh hoa - Lời kêu gọi",
+        "🎬 AI tự động sinh kịch bản phân cảnh 3 nhịp: Mở đầu ấn tượng - Cận cảnh sản phẩm - Lời kêu gọi",
         "🎵 Tích hợp kho nhạc nền cảm xúc phù hợp với từng dịp tặng",
         "⏱️ Khuyến nghị độ dài tối ưu: 15s đến 30s để đạt tỷ lệ giữ chân khách cao nhất",
       ]}

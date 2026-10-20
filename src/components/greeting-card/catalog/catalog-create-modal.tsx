@@ -4,11 +4,23 @@ import React, { useState } from "react"
 import { Check, Loader2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
+import { useI18n } from "@/lib/i18n"
 
 type CreateForm = { code: string; name: string; type: "STANDARD" | "CLIENT"; description: string }
 
 /** Hộp thoại tạo bộ sưu tập mới (mã trùng → báo lỗi 409 từ server). */
 export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
+  const { ti } = useI18n()
+  const rawCatalogTitle = ti("catalogTitle") || "Bộ sưu tập"
+  const isHomestay = rawCatalogTitle.toLowerCase().includes("phòng")
+  const isFnb = rawCatalogTitle.toLowerCase().includes("thực đơn")
+  const catalogHeading = isHomestay ? "Danh Sách Phòng" : isFnb ? "Thực Đơn Món" : "Bộ Sưu Tập"
+  const placeholderName = isHomestay
+    ? "VD: Danh Sách Phòng Cuối Tuần View Thung Lũng"
+    : isFnb
+    ? "VD: Thực Đơn Tiệc Mùa Thu"
+    : "VD: Bộ Hoa 20/10 Phổ Thông"
+
   const [createForm, setCreateForm] = useState<CreateForm>({ code: "", name: "", type: "STANDARD", description: "" })
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,7 +54,7 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-background rounded-2xl shadow-2xl border border-border w-full max-w-md mx-4 p-6 flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-title-sm font-extrabold text-foreground">Tạo Bộ Sưu Tập Mới</h3>
+          <h3 className="text-title-sm font-extrabold text-foreground">Tạo {catalogHeading} Mới</h3>
           <button
             type="button"
             onClick={onClose}
@@ -66,10 +78,10 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
             />
           </div>
           <div>
-            <label className="block text-caption font-bold text-foreground mb-1">Tên bộ sưu tập *</label>
+            <label className="block text-caption font-bold text-foreground mb-1">Tên {catalogHeading.toLowerCase()} *</label>
             <input
               type="text"
-              placeholder="VD: Bộ Hoa 20/10 Phổ Thông"
+              placeholder={placeholderName}
               value={createForm.name}
               onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
               className="w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground"

@@ -92,7 +92,7 @@ function formatAddress(addr: StructuredAddress | string): string {
 
 export function buildZaloText(props: PartnerProductCardProps): string {
   const lines: string[] = [
-    `🌸 PHIẾU ĐẶT HOA — ĐƠN #${props.orderCode}`,
+    `📦 PHIẾU ĐẶT HÀNG GIA CÔNG — ĐƠN #${props.orderCode}`,
     `━━━━━━━━━━━━━━━━━━━━`,
     ``,
     `📋 Sản phẩm: ${props.productTitle}`,
@@ -104,7 +104,7 @@ export function buildZaloText(props: PartnerProductCardProps): string {
 
   if (props.flowers.length > 0) {
     lines.push(``)
-    lines.push(`🌿 Công thức cành hoa (BOM):`)
+    lines.push(`🌿 Công thức định lượng (BOM):`)
     props.flowers.forEach((fl) => {
       lines.push(`   • ${fl.quantity} ${fl.unit} ${fl.flowerName} (${fl.color})`)
     })
@@ -234,7 +234,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
           <span className="px-2.5 py-0.5 rounded-md bg-primary-muted text-primary text-caption font-black uppercase border border-primary-border tracking-wider">
             T02 • PRODUCT CARD
           </span>
-          <span className="text-xs font-bold text-text-muted">PHIẾU ĐẶT HOA GỬI ĐỐI TÁC</span>
+          <span className="text-xs font-bold text-text-muted">PHIẾU ĐẶT HÀNG GỬI ĐỐI TÁC</span>
           <span className="text-sm font-extrabold text-text">#{orderCode}</span>
         </div>
 
@@ -486,7 +486,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             {/* Người nhận */}
             <div className="p-3 rounded-xl bg-surface-alt border border-border flex flex-col gap-1.5">
               <div className="flex items-center gap-1.5">
-                <span className="text-caption font-bold text-text-muted uppercase">👤 Người nhận hoa</span>
+                <span className="text-caption font-bold text-text-muted uppercase">👤 Người nhận hàng</span>
               </div>
               <div className="text-xs font-bold text-text">
                 {recipientName}

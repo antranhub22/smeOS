@@ -18,6 +18,7 @@ import {
   formatTimeoutDuration,
 } from "../domain/step-timeout-policy"
 import { notifyOrderEvent, queueOrderNotification } from "./notify-customer"
+import { queueStaffNotification } from "./notify-staff"
 import { adminConfirmBrochurePayment } from "./confirm-brochure-payment"
 
 const HOLD_LOOKBACK_MS = 7 * 86_400_000
@@ -159,7 +160,13 @@ export async function runBackgroundSweep(
         if (now >= threshold) {
           const decided = await cancellationRepo.autoApproveExpired(req.organization_id, req.id, timeoutMinutes)
           // Báo khách như khi Điều hành tự bấm duyệt huỷ
-          if (decided.orderStatus === "CANCELLED") queueOrderNotification(req.organization_id, decided.orderId, "CANCELLED")
+          if (decided.orderStatus === "CANCELLED") {
+            queueOrderNotification(req.organization_id, decided.orderId, "CANCELLED")
+            queueStaffNotification(req.organization_id, "STUCK_DETECTED", {
+              orderId: decided.orderId,
+              reason: "Đơn bị kẹt quá thời gian duyệt hủy và đã được hệ thống tự động xử lý",
+            })
+          }
           result.cancelled += 1
           log.info("greeting_card.cancellation_auto_approved_timeout", {
             organizationId: req.organization_id,

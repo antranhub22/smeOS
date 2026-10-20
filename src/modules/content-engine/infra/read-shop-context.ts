@@ -56,7 +56,7 @@ export async function readShopContext(ctx: TenantContext): Promise<RawShopInput>
     new BusinessProfileRepository().current(ctx),
   ])
 
-  const displayName = business?.display_name?.trim() || business?.legal_name?.trim() || "Tiệm hoa"
+  const displayName = business?.display_name?.trim() || business?.legal_name?.trim() || "Cửa hàng"
 
   return {
     displayName,

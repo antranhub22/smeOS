@@ -27,21 +27,28 @@ export function PaymentCodeField({
   const applied = !error && plan?.source === "PAYMENT_CODE" && plan.paymentCode ? plan : null
 
   return (
-    <section aria-label="Mã thanh toán" className="flex flex-col gap-1">
+    <section aria-label="Mã áp dụng đặt cọc" className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30">
+      <div className="flex items-center justify-between">
+        <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
+          <Wallet size={14} className="text-primary" />
+          Mã áp dụng đặt cọc
+        </span>
+        <span className="text-caption text-text-muted">Mã thanh toán</span>
+      </div>
       <div className="flex gap-2">
         <input
           type="text"
           value={input}
           maxLength={40}
-          placeholder="Nhập mã cửa hàng gửi bạn"
-          aria-label="Mã thanh toán"
+          placeholder=""
+          aria-label="Mã áp dụng đặt cọc"
           onChange={(e) => setInput(e.target.value.toUpperCase())}
           className={FIELD}
         />
         <button
           type="button"
           onClick={() => onApply(input.trim())}
-          className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5"
+          className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
         >
           <Wallet size={14} /> Áp dụng
         </button>
@@ -64,12 +71,11 @@ export function PaymentCodeField({
           <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
           <div>
             <p className="font-bold">
-              {applied.depositPercent > 0 ? `Đã áp dụng mã đặt cọc ${applied.depositPercent}%` : "Đã áp dụng mã thanh toán"}
+              {applied.depositPercent > 0 ? `Đã áp dụng mã đặt cọc ${applied.depositPercent}%` : "Đã áp dụng mã đặt cọc"}
             </p>
             {applied.depositPercent > 0 && applied.dueLaterVnd > 0 && (
               <p className="text-foreground">
-                Bạn thanh toán {applied.depositPercent}% hôm nay. {100 - applied.depositPercent}% còn lại sẽ được thanh toán sau khi
-                sản phẩm hoàn thành và cửa hàng gửi ảnh xác nhận. Tổng đơn hàng không thay đổi.
+                Bạn thanh toán {applied.depositPercent}% hôm nay. {100 - applied.depositPercent}% còn lại sẽ được thanh toán khi nhận phòng hoặc nhận bàn giao sản phẩm/dịch vụ. Tổng đơn hàng không thay đổi.
               </p>
             )}
           </div>
@@ -98,7 +104,7 @@ export function PaymentDueRows({ quote }: { quote: BrochureQuote | null }) {
         <dd className="text-primary">{vnd(plan.dueNowVnd)}</dd>
       </div>
       <div className="flex justify-between">
-        <dt className="text-text-muted">Thanh toán sau khi hoa hoàn thành</dt>
+        <dt className="text-text-muted">Thanh toán khi nhận phòng / nhận hàng</dt>
         <dd>{vnd(plan.dueLaterVnd)}</dd>
       </div>
     </>

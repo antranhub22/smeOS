@@ -121,7 +121,7 @@ export function CoordinatorOrderBriefCard({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={sampleImageUrl}
-                  alt={productTitle || "Mẫu hoa đầu vào"}
+                  alt={productTitle || "Mẫu sản phẩm đầu vào"}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -136,11 +136,11 @@ export function CoordinatorOrderBriefCard({
                   Mẫu Input
                 </span>
                 <span className="font-extrabold text-text text-xs truncate">
-                  {productTitle || "Bó hoa nghệ thuật"}
+                  {productTitle || "Sản phẩm thiết kế"}
                 </span>
               </div>
               <span className="text-caption text-text-muted mt-0.5 block truncate">
-                Chuẩn đối chiếu AI QC & Thợ cắm
+                Chuẩn đối chiếu AI QC & Thợ gia công
               </span>
             </div>
           </div>

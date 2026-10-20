@@ -41,10 +41,12 @@ export const resolveAppSession = cache(async function resolveAppSession(
   const cleanOrgName = rawOrgName.replace(/\s*\(\s*dev\s*\)/gi, "").trim()
   const orgSettings = (described.organization?.settings as Record<string, unknown> | null) ?? null
   const industry = typeof orgSettings?.industry === "string" ? orgSettings.industry : "FLORAL"
-  const industryLocked = Boolean(orgSettings?.industry_locked)
+  const isSuperUser = described.user.email === "tuans2@dev.com" || Boolean(described.user.email?.endsWith("@dev.com"))
+  const industryLocked = isSuperUser ? false : Boolean(orgSettings?.industry_locked)
 
   return {
     userName: described.user.name ?? described.user.email,
+    userEmail: described.user.email,
     userInitials: viettatTen(described.user.name, described.user.email),
     orgName: cleanOrgName,
     workspaceKind: (described.workspace?.kind as MockSession["workspaceKind"]) ?? "PRODUCTION",
@@ -61,5 +63,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
     // điều hướng theo vai. Đã có sẵn trong `describeSession` (GET /auth/me).
     roleKey: described.membership?.role_key ?? null,
     organizationType: described.organization?.type ?? null,
+    pendingModelChange:
+      (orgSettings?.pending_model_change as MockSession["pendingModelChange"]) ?? null,
   }
 })

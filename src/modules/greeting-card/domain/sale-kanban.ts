@@ -21,7 +21,10 @@ interface KanbanItem {
   deliveryTimeSlot?: string | null | undefined
 }
 
-export function groupSaleKanban<T extends KanbanItem>(items: T[]): SaleKanbanColumn<T>[] {
+export function groupSaleKanban<T extends KanbanItem>(
+  items: T[],
+  steps: StepDefinition[] = PIPELINE_STEPS
+): SaleKanbanColumn<T>[] {
   const sorted = [...items].sort((a, b) => {
     // 1. Việc kẹt của Sale lên đầu, kẹt lâu hơn đứng trước
     const am = a.stuck?.owner === "SALE" ? a.stuck.overdueMinutes : -1
@@ -38,7 +41,7 @@ export function groupSaleKanban<T extends KanbanItem>(items: T[]): SaleKanbanCol
     return Date.parse(b.stepStartedAt) - Date.parse(a.stepStartedAt)
   })
 
-  return [...PIPELINE_STEPS]
+  return [...steps]
     .sort((a, b) => a.orderIndex - b.orderIndex)
     .map((step) => {
       const colItems = sorted.filter((i) => i.currentStepId === step.id)

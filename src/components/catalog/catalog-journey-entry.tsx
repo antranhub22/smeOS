@@ -3,6 +3,8 @@
 import React from "react"
 import { Sparkles, SlidersHorizontal, Zap, ArrowRight } from "lucide-react"
 
+import { useI18n } from "@/lib/i18n"
+
 export type CatalogExecutionMode = "autonomous" | "guided"
 
 interface CatalogJourneyEntryProps {
@@ -10,20 +12,23 @@ interface CatalogJourneyEntryProps {
 }
 
 export function CatalogJourneyEntry({ onSelectMode }: CatalogJourneyEntryProps) {
+  const { ti, industry } = useI18n()
+  const sampleName = industry?.aiConfig?.sampleProductNames?.[0] || `${ti("sampleProduct")} đặc trưng`
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[420px] py-8 px-4 space-y-8">
       {/* Header */}
       <div className="text-center space-y-2 max-w-lg">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-muted text-primary text-caption font-bold uppercase tracking-wider mb-2">
           <Zap className="h-3.5 w-3.5" />
-          <span>Tạo Catalog Số trực tuyến</span>
+          <span>Tạo {ti("catalogTitle")} trực tuyến</span>
         </div>
         <h2 className="text-display font-extrabold text-text">
-          Bạn muốn FloraOS thực hiện như thế nào?
+          Bạn muốn hệ thống thực hiện như thế nào?
         </h2>
         <p className="text-body-sm text-text-muted leading-relaxed">
-          Tạo catalog hoa online để khách xem và đặt hàng dễ dàng.
-          AI tự chọn sản phẩm và tạo layout — hoặc bạn tự tùy chỉnh từng bước.
+          Tạo {ti("catalogTitle")} online để khách xem và đặt hàng dễ dàng.
+          AI tự chọn {ti("sampleProduct")} và tạo layout — hoặc bạn tự tùy chỉnh từng bước.
         </p>
       </div>
 
@@ -45,8 +50,8 @@ export function CatalogJourneyEntry({ onSelectMode }: CatalogJourneyEntryProps) 
           <div className="space-y-1.5">
             <div className="text-title font-extrabold text-text">⚡ AI làm cho tôi</div>
             <p className="text-body-sm text-text-muted leading-relaxed">
-              Gõ một dòng ghi chú — ví dụ "hoa 20/10 dưới 1 triệu".
-              AI tự lọc, nhóm sản phẩm, chọn phong cách và tạo catalog hoàn chỉnh.
+              Gõ một dòng ghi chú — ví dụ "{sampleName}".
+              AI tự lọc, nhóm {ti("sampleProduct")}, chọn phong cách và tạo danh mục hoàn chỉnh.
             </p>
           </div>
 

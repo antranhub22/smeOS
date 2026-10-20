@@ -76,6 +76,7 @@ describe("Brochure Workflow Policy Domain Tests", () => {
       const custom: BrochureWorkflowPolicy = {
         preset: "CUSTOM",
         requireAdminDepositApproval: false,
+        requireCoordinatorAcceptance: false,
         requireFinishedPhoto: false,
         customerApprovalMode: "BYPASS",
         requireFullPaymentBeforeDispatch: true,
@@ -86,6 +87,17 @@ describe("Brochure Workflow Policy Domain Tests", () => {
       const serialized = serializeWorkflowPolicy(custom)
       const parsed = parseBrochureWorkflowPolicy({ [BROCHURE_WORKFLOW_POLICY_KEY]: serialized })
       expect(parsed).toEqual(custom)
+    })
+
+    it("phân định mặc định requireCoordinatorAcceptance theo loại tổ chức (1 Cửa hàng vs Chuỗi)", () => {
+      // 1 Cửa hàng (SINGLE / STORE / null): mặc định false (tự động nhận đơn khi duyệt tiền)
+      expect(parseBrochureWorkflowPolicy({}, "SINGLE").requireCoordinatorAcceptance).toBe(false)
+      expect(parseBrochureWorkflowPolicy({}, "STORE").requireCoordinatorAcceptance).toBe(false)
+      expect(parseBrochureWorkflowPolicy({}, null).requireCoordinatorAcceptance).toBe(false)
+
+      // Chuỗi (CHAIN / FLOWER_NETWORK): mặc định true (cần điều phối liên hệ chuỗi & nhận đơn)
+      expect(parseBrochureWorkflowPolicy({}, "CHAIN").requireCoordinatorAcceptance).toBe(true)
+      expect(parseBrochureWorkflowPolicy({}, "FLOWER_NETWORK").requireCoordinatorAcceptance).toBe(true)
     })
   })
 

@@ -119,12 +119,14 @@ export class S3StorageProvider implements StorageProvider {
     expiresInSeconds: number,
     method: StorageMethod = "GET"
   ): Promise<string> {
+    // AWS SigV4 / Cloudflare R2 giới hạn X-Amz-Expires tối đa 7 ngày (604800 giây)
+    const maxS3Expires = Math.min(expiresInSeconds, 604800)
     return urlKySan({
       info: this.info,
       method,
       host: this.host,
       canonicalUri: this.duongDan(key),
-      expiresInSeconds,
+      expiresInSeconds: maxS3Expires,
       now: new Date(),
       protocol: this.protocol,
     })

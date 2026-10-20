@@ -9,6 +9,8 @@ import { shouldBlockDispatchForBalance, type BrochureWorkflowPolicy } from "@/mo
 import { noActionReason, visibleCoordinatorActions } from "@/modules/greeting-card/domain/coordinator-card-actions"
 import { substituteLockReason } from "@/modules/greeting-card/domain/substitute-proposal"
 import type { BrochureOrder, ModalState } from "./coordinator-order-card"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 const ACTION_VIEW: Record<CoordinatorAction, { label: string; icon: typeof Truck; modal: "florist" | "product-photo" | "dispatch" | "recipient-photo" | "delivery-failed" }> = {
   "assign-florist": { label: "Giao Florist", icon: UserCheck, modal: "florist" },
@@ -32,6 +34,12 @@ export function CoordinatorCardActions({
   blockerOf: (action: CoordinatorAction) => string | null
   onOpen: (m: ModalState) => void
 }) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
+  const isStay = orderTerms.fulfillmentFlow === "CALENDAR_STAY"
+  const makerTitleShort = terms.makerTitle.split("/")[0]?.trim() || "Florist"
+
   const actions = visibleCoordinatorActions(blockerOf, { status: order.status, productionStatus: order.production_status, deliveryStatus: order.delivery_status })
   const substituteLock = substituteLockReason({ status: order.status, deliveryStatus: order.delivery_status })
   const isBlockedByBalance = workflowPolicy
@@ -39,9 +47,19 @@ export function CoordinatorCardActions({
     : policy.requireFullBeforeDispatch
   const isWaitingSecondPayment = order.paid_vnd > 0 && order.paid_vnd < order.total_vnd && isBlockedByBalance &&
     (order.production_status === "READY" || order.production_status === "DONE")
-  const label = (a: CoordinatorAction) =>
-    a === "dispatch-shipping" && order.delivery_status === "FAILED" ? "Giao lại"
-      : a === "dispatch-shipping" && isWaitingSecondPayment ? "Chờ TT lần 2" : ACTION_VIEW[a].label
+
+  const label = (a: CoordinatorAction) => {
+    if (a === "assign-florist") return `Giao ${makerTitleShort}`
+    if (a === "product-photo") return isStay ? "Chụp phòng" : terms.completedProductPhoto.includes("món") ? "Chụp ảnh món" : "Chụp thành phẩm"
+    if (a === "dispatch-shipping") {
+      if (order.delivery_status === "FAILED") return isStay ? "Đón tiếp lại" : "Giao lại"
+      if (isWaitingSecondPayment) return "Chờ TT lần 2"
+      return isStay ? "Đón tiếp" : "Giao Ship"
+    }
+    if (a === "recipient-photo") return isStay ? "Ảnh đón tiếp" : "Ảnh người nhận"
+    if (a === "delivery-failed") return isStay ? "Khách không đến" : "Giao không thành công"
+    return ACTION_VIEW[a as CoordinatorAction].label
+  }
 
   return (
     <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border">
@@ -75,12 +93,12 @@ export function CoordinatorCardActions({
           type="button"
           variant="outline"
           size="sm"
-          title="Không làm được mẫu khách chọn — gửi khách mẫu khác để chọn"
+          title="Không làm được mẫu khách chọn — gửi khách lựa chọn khác"
           onClick={() => onOpen({ type: "substitute", orderId: order.id, orderCode: order.code })}
           className="col-span-2 text-caption gap-1.5 h-8"
         >
           <Shuffle size={13} />
-          Đề xuất mẫu khác
+          Đề xuất {terms.sampleProduct.replace(/ chuẩn$/i, "").toLowerCase()} khác
         </Button>
       )}
 

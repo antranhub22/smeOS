@@ -129,7 +129,7 @@ export function PartnerAssignmentModal({
               <Users size={18} />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-text">Phân Công Đối Tác / Thợ Cắm (Template T06)</h2>
+              <h2 className="text-base font-extrabold text-text">Phân Công Đối Tác / Thợ Chế Tác (Template T06)</h2>
               <p className="text-caption text-text-muted">
                 Đơn #{orderCode}: {recipeTitle} · Hẹn giao: {deliveryTargetTime}
               </p>
@@ -233,7 +233,7 @@ export function PartnerAssignmentModal({
             <label className="font-bold text-text block mb-1">Lời nhắn giao việc cho đối tác:</label>
             <input
               type="text"
-              placeholder="Ví dụ: tuyển hoa búp đẹp, gửi ảnh thành phẩm trước 16:15"
+              placeholder="Ví dụ: kiểm tra kỹ chất lượng nguyên vật liệu, gửi ảnh thành phẩm trước 16:15"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className={`w-full ${input}`}

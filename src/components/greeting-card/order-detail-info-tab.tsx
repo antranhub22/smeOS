@@ -1,13 +1,15 @@
 "use client"
 
 import React from "react"
-import { User, Phone, MapPin, Flower2, CheckCircle2 } from "lucide-react"
+import { User, Phone, MapPin, Flower2, CheckCircle2, Home, Utensils, Shirt, Sparkles } from "lucide-react"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { zaloHref } from "@/components/greeting-card/work/work-item-card"
 import { OrderPaymentProofView } from "./order-payment-proof-view"
 import type { OrderDetailModalTarget } from "./brochure-order-detail-modal"
 import { LinkCustomerCard } from "./link-customer-card"
 import { DEPOSIT_PENDING_APPROVAL_NOTE, isDepositPendingApproval } from "@/modules/greeting-card/domain/deposit-acknowledgement"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 export interface OrderDetailInfoTabProps {
   target: OrderDetailModalTarget
@@ -15,6 +17,9 @@ export interface OrderDetailInfoTabProps {
 }
 
 export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoTabProps) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
+  const orderTerms = getIndustryOrderTerms(organization?.industry)
   const isPaid = (target.paidVnd ?? 0) >= (target.totalVnd ?? 0) && (target.totalVnd ?? 0) > 0
   const isDeposit = (target.paidVnd ?? 0) > 0 && !isPaid
   const depositPendingApproval = isDepositPendingApproval({
@@ -32,7 +37,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-border bg-surface-alt p-3.5 flex flex-col gap-1.5">
           <span className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1">
-            <User size={13} /> Người đặt hoa
+            <User size={13} /> {orderTerms.customerRoleLabel}
           </span>
           <p className="text-body-sm font-bold text-foreground">{target.customerName || "Khách lẻ"}</p>
           {target.customerPhone && (
@@ -57,7 +62,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
 
         <div className="rounded-2xl border border-border bg-surface-alt p-3.5 flex flex-col gap-1.5">
           <span className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1">
-            <MapPin size={13} /> Người nhận hoa
+            <MapPin size={13} /> {orderTerms.recipientRoleLabel}
           </span>
           <p className="text-body-sm font-bold text-foreground">{target.recipientName || target.customerName || "Chưa có tên"}</p>
           {target.recipientPhone && (
@@ -69,43 +74,53 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
             </a>
           )}
           <p className="text-caption text-text-muted mt-1 leading-relaxed">
-            {target.deliveryAddress || "Chưa có địa chỉ giao hàng cụ thể"}
+            {target.deliveryAddress || orderTerms.emptyAddressText}
           </p>
         </div>
       </div>
       )}
 
-      {/* Khối Mẫu hoa & Thiệp */}
+      {/* Khối Sản phẩm & Ấn phẩm đính kèm */}
       <div className="rounded-2xl border border-border bg-surface p-4 flex flex-col gap-3">
         <span className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1">
-          <Flower2 size={13} /> Mẫu hoa đã chọn
+          {organization?.industry === "HOMESTAY" ? (
+            <Home size={13} />
+          ) : organization?.industry === "FNB" ? (
+            <Utensils size={13} />
+          ) : organization?.industry === "FASHION" ? (
+            <Shirt size={13} />
+          ) : organization?.industry === "SERVICES" ? (
+            <Sparkles size={13} />
+          ) : (
+            <Flower2 size={13} />
+          )} {terms.sampleProduct} đã chọn
         </span>
         <div className="flex items-center gap-3">
           <FlowerImage
             src={target.productImageUrl}
-            alt={target.productName || "Mẫu"}
+            alt={target.productName || terms.sampleProduct}
             sizes="60px"
             fallback="icon"
             className="h-16 w-16 shrink-0 rounded-xl border border-border object-cover"
           />
           <div className="min-w-0 flex-1">
-            <h4 className="text-body font-bold text-foreground truncate">{target.productName || "Hoa tươi theo mẫu"}</h4>
+            <h4 className="text-body font-bold text-foreground truncate">{target.productName || `${terms.sampleProduct} theo mẫu`}</h4>
             <p className="text-body-sm font-extrabold text-primary mt-0.5">
               {(target.totalVnd ?? 0) > 0 ? `${(target.totalVnd ?? 0).toLocaleString("vi-VN")} đ` : "Chưa có giá"}
             </p>
           </div>
         </div>
 
-        {/* Thiệp chúc mừng */}
+        {/* Ấn phẩm đính kèm / Thiệp */}
         {target.cardMessage ? (
           <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 flex flex-col gap-1 mt-1">
             <span className="text-caption font-bold text-warning-text flex items-center gap-1">
-              💌 Lời chúc trên thiệp mừng:
+              💌 Lời nhắn gửi trên {terms.printablesTitle.toLowerCase()}:
             </span>
             <p className="text-body-sm italic text-foreground">&ldquo;{target.cardMessage}&rdquo;</p>
           </div>
         ) : (
-          <p className="text-caption text-text-muted italic">Không kèm nội dung thiệp.</p>
+          <p className="text-caption text-text-muted italic">Không kèm nội dung {terms.printablesTitle.toLowerCase()}.</p>
         )}
       </div>
 
@@ -155,7 +170,9 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
               type="button"
               onClick={() => {
                 const url = target.sendCode ? `${window.location.origin}/b/${target.sendCode}` : ""
-                const msg = `Dạ chào anh/chị, hoa cho đơn #${target.orderCode || target.sendCode} đã cắm xong hoàn thiện ạ! Anh/chị mở link kiểm tra ảnh hoa và thanh toán phần còn lại ${(target.balanceVnd ?? 0).toLocaleString("vi-VN")} đ để cửa hàng tiến hành giao hoa nhé ạ:${url ? ` ${url}` : ""}`
+                const msg = organization?.industry === "HOMESTAY"
+                  ? `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${target.orderCode || target.sendCode} đã sẵn sàng đón tiếp ạ! Anh/chị mở link kiểm tra thông tin nhận phòng và thanh toán phần còn lại ${(target.balanceVnd ?? 0).toLocaleString("vi-VN")} đ để hoàn tất thủ tục nhé ạ:${url ? ` ${url}` : ""}`
+                  : `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${target.orderCode || target.sendCode} đã ${terms.makerAction.toLowerCase()} hoàn tất ạ! Anh/chị mở link kiểm tra ${terms.completedProductPhoto.toLowerCase()} và thanh toán phần còn lại ${(target.balanceVnd ?? 0).toLocaleString("vi-VN")} đ để cửa hàng tiến hành bàn giao nhé ạ:${url ? ` ${url}` : ""}`
                 void navigator.clipboard.writeText(msg)
               }}
               className="rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-foreground hover:bg-surface-muted transition-colors"

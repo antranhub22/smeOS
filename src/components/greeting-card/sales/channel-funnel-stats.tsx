@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Share2 } from "lucide-react"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import type { ChannelFunnelRow } from "@/modules/greeting-card/domain/catalog-channel"
+import { useI18n } from "@/lib/i18n"
 
 interface ChannelResponse {
   data: { days: number; rows: ChannelFunnelRow[] }
@@ -13,6 +14,9 @@ const PERIODS = [7, 30, 90] as const
 
 /** Phễu link bộ sưu tập theo kênh chia sẻ: xem → xem chi tiết → mở form → đặt đơn. */
 export function ChannelFunnelStats() {
+  const { ti } = useI18n()
+  const catalogTitle = ti("catalogTitle") || "Bộ sưu tập"
+  const sampleProduct = (ti("sampleProduct") || "mẫu").replace(/ chuẩn$/i, "")
   const [days, setDays] = useState<(typeof PERIODS)[number]>(30)
   const { data, error, isLoading } = useApi<ChannelResponse>(`/api/v1/greeting-card/stats/channels?days=${days}`)
   const rows = data?.data.rows
@@ -22,7 +26,7 @@ export function ChannelFunnelStats() {
       <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-body font-extrabold text-foreground flex items-center gap-2">
           <Share2 size={18} className="text-primary" aria-hidden="true" />
-          Hiệu quả bộ sưu tập theo kênh
+          Hiệu quả {catalogTitle.toLowerCase()} theo kênh
         </h3>
         <div role="group" aria-label="Khoảng thời gian" className="flex gap-1">
           {PERIODS.map((p) => (
@@ -51,7 +55,7 @@ export function ChannelFunnelStats() {
         </div>
       ) : rows.length === 0 ? (
         <p className="p-6 text-center text-body-sm text-text-muted">
-          Chưa có lượt xem nào trong {days} ngày qua. Chọn kênh trước khi sao chép link bộ sưu tập để theo dõi.
+          Chưa có lượt xem nào trong {days} ngày qua. Chọn kênh trước khi sao chép link {catalogTitle.toLowerCase()} để theo dõi.
         </p>
       ) : (
         <div className="overflow-x-auto">
@@ -60,7 +64,7 @@ export function ChannelFunnelStats() {
               <tr>
                 <th className="px-4 py-2.5">Kênh</th>
                 <th className="px-4 py-2.5 text-right">Khách xem</th>
-                <th className="px-4 py-2.5 text-right">Xem mẫu</th>
+                <th className="px-4 py-2.5 text-right">Xem {sampleProduct.toLowerCase()}</th>
                 <th className="px-4 py-2.5 text-right">Mở form</th>
                 <th className="px-4 py-2.5 text-right">Đặt đơn</th>
               </tr>

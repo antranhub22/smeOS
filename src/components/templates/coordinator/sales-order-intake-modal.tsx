@@ -330,7 +330,7 @@ export function SalesOrderIntakeModal({
       deliveryAddress,
       deliveryTargetTime: `${deliveryTime} ngày ${deliveryDate}`,
       ...(Number.isNaN(target.getTime()) ? {} : { deliveryTargetAt: target.toISOString() }),
-      productTitle: productTitle.trim() || "Bó hoa tươi nghệ thuật",
+      productTitle: productTitle.trim() || "Sản phẩm thiết kế nghệ thuật",
       ...(sampleAssetId ? { sampleAssetId } : isStoredUrl ? { sampleImageUrl } : {}),
       unitPriceVnd: Number(unitPriceVnd) || 0,
       flowers: flowers
@@ -539,7 +539,7 @@ export function SalesOrderIntakeModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="font-bold text-text block mb-1">Tên người nhận hoa *</label>
+                <label className="font-bold text-text block mb-1">Tên người nhận hàng *</label>
                 <input
                   type="text"
                   required
@@ -718,7 +718,7 @@ export function SalesOrderIntakeModal({
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={sampleImageUrl}
-                        alt="Ảnh mẫu hoa đầu vào"
+                        alt="Ảnh mẫu sản phẩm đầu vào"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
@@ -766,7 +766,7 @@ export function SalesOrderIntakeModal({
                   <div className="flex items-center justify-between mb-1">
                     <label className="font-bold text-text text-xs flex items-center gap-1.5">
                       <Camera size={13} className="text-alert-600" />
-                      <span>Ảnh Mẫu Hoa Tiêu Chuẩn Đầu Vào (Master Image Spec) *</span>
+                      <span>Ảnh Mẫu Sản Phẩm Tiêu Chuẩn Đầu Vào (Master Image Spec) *</span>
                     </label>
                     <span className="text-caption text-text-muted">Dùng cho AI QC đối chiếu Chặng 05</span>
                   </div>
@@ -774,7 +774,7 @@ export function SalesOrderIntakeModal({
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
-                      placeholder="Dán URL link ảnh hoa mẫu (Zalo, Facebook, Web...)..."
+                      placeholder="Dán URL link ảnh mẫu sản phẩm (Zalo, Facebook, Web...)..."
                       value={sampleAssetId ? "(ảnh đã tải lên kho của tiệm)" : sampleImageUrl}
                       readOnly={Boolean(sampleAssetId)}
                       onChange={(e) => {
@@ -835,18 +835,18 @@ export function SalesOrderIntakeModal({
                 </div>
 
                 <div className="p-2 rounded-lg bg-surface/80 border border-border text-caption text-text-muted leading-relaxed">
-                  💡 <strong>Tiêu chuẩn nghiệp vụ:</strong> Ảnh sản phẩm mẫu là căn cứ kỹ thuật bắt buộc của toàn bộ hành trình điều phối: làm tài liệu cho Thợ/Xưởng cắm hoa đúng mẫu (Chặng 04), làm dữ liệu đối trọng để <strong>AI QC so sánh độ tương đồng thị giác (Visual Similarity Score)</strong> tại Chặng 05, và lưu vào hồ sơ bàn giao nghiệm thu.
+                  💡 <strong>Tiêu chuẩn nghiệp vụ:</strong> Ảnh sản phẩm mẫu là căn cứ kỹ thuật bắt buộc của toàn bộ hành trình điều phối: làm tài liệu cho Thợ/Xưởng chế tác gia công đúng mẫu (Chặng 04), làm dữ liệu đối trọng để <strong>AI QC so sánh độ tương đồng thị giác (Visual Similarity Score)</strong> tại Chặng 05, và lưu vào hồ sơ bàn giao nghiệm thu.
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="sm:col-span-2">
-                <label className="font-bold text-text block mb-1">Tên mẫu hoa / Sản phẩm *</label>
+                <label className="font-bold text-text block mb-1">Tên mẫu sản phẩm *</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ví dụ: Bó Hồng Ohara Kem Sang Trọng"
+                  placeholder="Ví dụ: Sản phẩm thiết kế nghệ thuật cao cấp"
                   value={productTitle}
                   onChange={(e) => setProductTitle(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
@@ -896,10 +896,10 @@ export function SalesOrderIntakeModal({
             {/* Atomic Flowers Table */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="font-bold text-text">Công thức cành hoa chi tiết:</label>
+                <label className="font-bold text-text">Công thức định lượng chi tiết (BOM):</label>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddFlower} className="h-6 text-caption gap-1">
                   <Plus size={11} />
-                  Thêm cành hoa
+                  Thêm nguyên phụ liệu
                 </Button>
               </div>
 
@@ -907,7 +907,7 @@ export function SalesOrderIntakeModal({
                 <table className="w-full text-left text-xs">
                   <thead className="bg-surface-alt border-b border-border font-bold text-text-muted">
                     <tr>
-                      <th className="px-3 py-2">Tên hoa</th>
+                      <th className="px-3 py-2">Tên nguyên phụ liệu</th>
                       <th className="px-3 py-2 w-20">Số lượng</th>
                       <th className="px-3 py-2 w-24">Đơn vị</th>
                       <th className="px-3 py-2">Màu sắc</th>
@@ -922,7 +922,7 @@ export function SalesOrderIntakeModal({
                           <input
                             type="text"
                             required
-                            placeholder="Tên loài hoa..."
+                            placeholder="Tên nguyên vật liệu / thành phần..."
                             value={fl.flowerName}
                             onChange={(e) => handleFlowerChange(idx, "flowerName", e.target.value)}
                             className="w-full px-2 py-1 rounded-lg border border-border bg-surface text-text"
@@ -1166,10 +1166,10 @@ export function SalesOrderIntakeModal({
             </div>
 
             <div>
-              <label className="font-bold text-text block mb-1">Ghi chú nội bộ cho thợ cắm:</label>
+              <label className="font-bold text-text block mb-1">Ghi chú nội bộ cho thợ gia công:</label>
               <input
                 type="text"
-                placeholder="Ví dụ: Gói giấy lụa mờ, nơ đỏ, kiểm tra kỹ hoa nở..."
+                placeholder="Ví dụ: Gói cẩn thận chống trầy xước, thắt nơ tinh tế, kiểm tra kỹ thành phẩm..."
                 value={internalNote}
                 onChange={(e) => setInternalNote(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
@@ -1241,7 +1241,7 @@ export function SalesOrderIntakeModal({
                   : "bg-surface text-text-muted border-border"
               }`}>
                 <span>{productTitle && unitPriceVnd > 0 ? "✓" : "○"}</span>
-                <span className="truncate">5. Mẫu hoa & Giá bán</span>
+                <span className="truncate">5. Mẫu SP & Giá bán</span>
               </div>
 
               <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border font-semibold ${
@@ -1250,7 +1250,7 @@ export function SalesOrderIntakeModal({
                   : "bg-sand-50 text-sand-800 border-sand-200"
               }`}>
                 <span>{flowers.length > 0 ? "✓" : "!"}</span>
-                <span className="truncate">6. Công thức cành hoa</span>
+                <span className="truncate">6. Công thức BOM</span>
               </div>
 
               <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border font-semibold ${

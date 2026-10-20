@@ -3,6 +3,7 @@
 import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
 import { DELIVERY_NOTE_MAX, MAP_URL_MAX } from "@/modules/greeting-card/domain/delivery-note"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface OrderNotesValue {
   cardMessage: string
@@ -13,32 +14,61 @@ export interface OrderNotesValue {
 
 const LABEL = "block text-body-sm font-bold text-foreground mb-1"
 
+function getCardPlaceholder(industryKey?: string | null): string {
+  switch (industryKey) {
+    case "FASHION":
+      return "VD: Lời nhắn gửi kèm trang phục, yêu cầu ghi chú thẻ cảm ơn..."
+    case "HOMESTAY":
+      return "VD: Giờ check-in dự kiến, yêu cầu chuẩn bị phòng đón tiếp..."
+    case "FNB":
+      return "VD: Lời chúc mừng sinh nhật tiệc, khẩu vị ít đường / không đá..."
+    case "CRAFT_GIFT":
+      return "VD: Lời chúc gửi kèm tác phẩm thủ công, thông điệp người tặng..."
+    case "SERVICES":
+      return "VD: Yêu cầu đặc biệt về chuyên viên hoặc thời gian liệu trình..."
+    case "RETAIL_GENERAL":
+      return "VD: Lời nhắn gửi người nhận, ghi chú đóng gói quà tặng..."
+    case "FLORAL":
+    default:
+      return "VD: Chúc mừng ngày 20/10 người phụ nữ tuyệt vời của anh..."
+  }
+}
+
 /**
- * Ba loại ghi chú tách riêng để không lẫn: lời nhắn in lên thiệp (người nhận đọc), ghi chú cho
- * cửa hàng / thợ cắm hoa, ghi chú cho người giao hoa (+ link Google Maps nếu khách có).
+ * Ba loại ghi chú tách riêng để không lẫn: lời nhắn in lên thiệp/thẻ bài (người nhận đọc), ghi chú cho
+ * cửa hàng / thợ gia công, ghi chú cho người giao hàng (+ link Google Maps nếu khách có).
  */
 export function OrderNotesFields({
   idPrefix,
   value,
   inputClassName,
+  industryKey,
   onChange,
 }: {
   idPrefix: string
   value: OrderNotesValue
   inputClassName: string
+  industryKey?: string | null | undefined
   onChange: (patch: Partial<OrderNotesValue>) => void
 }) {
+  const terms = getIndustryTerminology(industryKey)
   const id = (k: keyof OrderNotesValue) => `${idPrefix}-${k}`
   const cardLength = value.cardMessage.length
+  const cardLabel = terms.printablesTitle ? `${terms.printablesTitle} / Lời nhắn` : "Nội dung thiệp mừng / băng rôn"
+  const cardPlaceholder = getCardPlaceholder(industryKey)
+  const makerNoteLabel = terms.makerTitle
+    ? `Ghi chú cho bộ phận gia công / ${terms.makerTitle.toLowerCase()}`
+    : "Ghi chú cho xưởng / bộ phận gia công"
+
   return (
     <>
       <div>
         <label htmlFor={id("cardMessage")} className={LABEL}>
-          Nội dung thiệp mừng / băng rôn
+          {cardLabel}
         </label>
         <textarea
           rows={2}
-          placeholder="VD: Chúc mừng ngày 20/10 người phụ nữ tuyệt vời của anh..."
+          placeholder={cardPlaceholder}
           value={value.cardMessage}
           maxLength={ORDER_FIELD_MAX.cardMessage}
           id={id("cardMessage")}
@@ -57,11 +87,11 @@ export function OrderNotesFields({
 
       <div>
         <label htmlFor={id("senderNote")} className={LABEL}>
-          Ghi chú cho cửa hàng / thợ cắm hoa
+          {makerNoteLabel}
         </label>
         <input
           type="text"
-          placeholder="VD: Gói giấy tông hồng, không dùng hoa ly"
+          placeholder="VD: Lưu ý quy cách, đóng gói hoặc chi tiết phụ kiện"
           value={value.senderNote}
           maxLength={ORDER_FIELD_MAX.senderNote}
           id={id("senderNote")}
@@ -72,7 +102,7 @@ export function OrderNotesFields({
 
       <div>
         <label htmlFor={id("deliveryNote")} className={LABEL}>
-          Ghi chú cho người giao hoa
+          Ghi chú cho người giao hàng
         </label>
         <input
           type="text"

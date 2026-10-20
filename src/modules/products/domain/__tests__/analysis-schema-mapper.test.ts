@@ -184,4 +184,24 @@ describe("analysis-schema-mapper (Khóa hợp đồng Schema.json ra UI)", () =>
     expect(accItems[0]?.value).toContain('In: "Mừng sinh nhật mẹ"')
     expect(accItems[1]?.value).toContain("🎀")
   })
+
+  it("khi industryKey là HOMESTAY, các nhãn hiển thị được override chuẩn xác theo ngành lưu trú", () => {
+    const fields = mapAnalysisFromSchema(null, "HOMESTAY")
+
+    const flowersField = fields.find((f) => f.key === "flowers")
+    expect(flowersField?.label).toBe("Tiện nghi phòng nhìn thấy")
+
+    const categoryField = fields.find((f) => f.key === "category")
+    expect(categoryField?.label).toBe("Hạng phòng / Loại hình lưu trú")
+
+    const checklistField = fields.find((f) => f.key === "checklist")
+    expect(checklistField?.label).toBe("Checklist 8 tiêu chuẩn kiểm phòng")
+
+    const paletteField = fields.find((f) => f.key === "palette_accounting")
+    expect(paletteField?.label).toBe("Bảng màu không gian phòng")
+
+    const cardField = fields.find((f) => f.key === "card_printed_text")
+    expect(cardField?.label).toBe("Bảng biển / Nội quy / Thẻ phòng (OCR)")
+  })
 })
+

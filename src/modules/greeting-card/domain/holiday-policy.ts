@@ -101,8 +101,26 @@ export function holidaySurcharge(holiday: HolidayDay | null, catalogFilters: unk
   return { vnd: holiday.surchargeVnd, name: holiday.name }
 }
 
-/** Kiểm ngày/khung giờ giao theo cài đặt tiệm, có tính giờ chốt riêng của ngày lễ. `null` = hợp lệ. */
-export function orderScheduleError(date: string, slot: string | undefined, shopSettings: unknown, now: Date = new Date()): string | null {
+/**
+ * Các ngành dùng lịch đặt phòng hoặc khung giờ riêng (không phải giao hàng tận nơi)
+ * không cần kiểm tra delivery time slot theo cơ chế của hoa tươi.
+ * HOMESTAY → BOOKING_CALENDAR; FNB/SERVICES → SCHEDULE_SLOTS riêng.
+ */
+const INDUSTRIES_WITHOUT_DELIVERY_SLOT = new Set(["HOMESTAY", "FNB", "SERVICES"])
+
+/**
+ * Kiểm ngày/khung giờ giao theo cài đặt tiệm, có tính giờ chốt riêng của ngày lễ.
+ * `null` = hợp lệ. Bỏ qua cho các ngành không dùng delivery time slot (HOMESTAY, FNB, SERVICES).
+ */
+export function orderScheduleError(
+  date: string,
+  slot: string | undefined,
+  shopSettings: unknown,
+  now: Date = new Date(),
+  industryKey?: string | null,
+): string | null {
+  // Ngành không giao hàng tận nơi → không áp dụng kiểm tra khung giờ giao
+  if (industryKey && INDUSTRIES_WITHOUT_DELIVERY_SLOT.has(industryKey)) return null
   const holiday = holidayOn(date.trim(), parseHolidayPolicy(shopSettings))
   return deliveryScheduleError(date, slot, scheduleForDate(parseShippingConfig(shopSettings), holiday), now)
 }

@@ -29,7 +29,7 @@ export function ColorMoodboardDeck({ products, catalogName, selectedProductId, o
     <AuxPage
       eyebrow="Bảng màu"
       title={catalogName}
-      subtitle={moods.length > 1 ? "Chọn tông màu bạn thích để xem các mẫu cùng tông." : `${products.length} mẫu hoa`}
+      subtitle={moods.length > 1 ? "Chọn tông màu bạn thích để xem các mẫu cùng tông." : `${products.length} sản phẩm`}
     >
       {moods.length > 1 && (
         <div className="-mx-4 mb-6 flex gap-4 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" role="group" aria-label="Lọc theo tông màu">
@@ -56,7 +56,7 @@ export function ColorMoodboardDeck({ products, catalogName, selectedProductId, o
 
       {moods.length > 1 && (
         <p className="mb-3 text-body-sm text-text-muted" aria-live="polite">
-          {mood ? `${visible.length} mẫu tông ${mood.label.toLowerCase()}` : `${products.length} mẫu hoa`}
+          {mood ? `${visible.length} mẫu tông ${mood.label.toLowerCase()}` : `${products.length} sản phẩm`}
         </p>
       )}
       <div className="grid grid-cols-2 gap-x-3 gap-y-6">

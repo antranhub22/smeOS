@@ -129,7 +129,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
         <div>
           <h3 className="text-body font-bold text-foreground">Chính sách & Cam kết áp dụng cho Bộ sưu tập</h3>
           <p className="text-caption text-text-muted">
-            Chọn các ưu đãi, cam kết và thỏa thuận áp dụng khi khách xem và đặt hoa trong bộ sưu tập này.
+            Chọn các ưu đãi, cam kết và thỏa thuận áp dụng khi khách xem và đặt hàng trong bộ sưu tập này.
           </p>
         </div>
         <Button type="button" size="sm" onClick={handleSave} disabled={saving} className="gap-1.5 font-bold h-9">
@@ -152,7 +152,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
               onChange={(e) => setAllowPromoChoice(e.target.checked)}
               className="rounded border-border text-primary focus:ring-primary"
             />
-            <span>Cho phép khách chọn 01 ưu đãi khi đặt hoa</span>
+            <span>Cho phép khách chọn 01 ưu đãi khi đặt hàng</span>
           </label>
         </div>
 
@@ -277,7 +277,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
             className="w-24 h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground font-bold"
           />
           <p className="text-caption text-text-muted">
-            Thời gian đếm ngược khi thợ/điều phối tải ảnh lên. Hết thời gian này hệ thống sẽ tự động coi như khách đã duyệt để chuẩn bị giao hoa. (Mặc định: 10 phút)
+            Thời gian đếm ngược khi thợ/điều phối tải ảnh lên. Hết thời gian này hệ thống sẽ tự động coi như khách đã duyệt để chuẩn bị giao hàng hoặc đón tiếp. (Mặc định: 10 phút)
           </p>
         </div>
       </div>

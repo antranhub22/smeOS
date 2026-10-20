@@ -12,6 +12,7 @@ const TENANT_TABLES = [
   // Journey Engine — chưa có đường ghi, dọn sẵn để ca thử tương lai không sót dữ liệu
   "journey_runs",
   // Thẻ Chào / Swipe Brochure — 03/10/2026 (+ tích hợp/đối soát/thông báo 05/10/2026)
+  "staff_notifications",
   "greeting_notifications",
   "greeting_payment_events",
   "greeting_integrations",

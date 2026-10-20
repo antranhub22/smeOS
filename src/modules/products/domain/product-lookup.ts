@@ -45,6 +45,7 @@ export interface ProductLookupRaw {
    */
   driveLink?: string | undefined
   attributes?: Record<string, unknown> | null
+  availability_config?: unknown
 }
 
 export interface ProductPricingSummary {
@@ -75,6 +76,7 @@ export interface ProductLookupResult {
   /** Kê tên khối bị cắt, để giao diện viết đúng câu — tương ứng `bi_cat` bản gốc. */
   redacted_fields: string[]
   attributes?: Record<string, unknown> | null | undefined
+  availability_config?: unknown
 }
 
 /**
@@ -136,5 +138,6 @@ export function filterProductLookup(
     attributes,
     pricing,
     redacted_fields: redactedFields,
+    availability_config: product.availability_config,
   }
 }

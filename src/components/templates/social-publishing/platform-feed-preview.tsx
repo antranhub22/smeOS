@@ -55,14 +55,15 @@ function parsePostContent(rawContent: string, title?: string) {
       l.toLowerCase().includes("inbox") ||
       l.toLowerCase().includes("liên hệ") ||
       l.toLowerCase().includes("hotline") ||
-      l.toLowerCase().includes("đặt hoa")
+      l.toLowerCase().includes("đặt hàng") ||
+      l.toLowerCase().includes("đặt mua")
   )
   if (ctaLine) {
     cta = ctaLine.replace(/^👉\s*/, "")
   }
 
   // Tiêu đề
-  const headline = title || lines[0] || "Bài đăng hoa tươi"
+  const headline = title || lines[0] || "Bài đăng giới thiệu sản phẩm"
 
   // Thân bài (lọc bỏ tiêu đề trùng lặp và các ký tự phân cách như ---)
   let bodyLines = lines
@@ -76,8 +77,8 @@ function parsePostContent(rawContent: string, title?: string) {
   return {
     headline,
     bodyText,
-    hashtags: foundTags.length > 0 ? foundTags : ["#HoaTuoiFloraOS", "#ThietKeDocBan", "#HoaTuoiMoiNgay"],
-    cta: cta || "Nhắn tin đặt hoa tươi thiết kế giao nhanh tận nơi!",
+    hashtags: foundTags.length > 0 ? foundTags : ["#SanPhamChinhHang", "#ThietKeDocBan", "#UuDaiTrongNgay"],
+    cta: cta || "Nhắn tin đặt hàng ngay để nhận ưu đãi tốt nhất!",
   }
 }
 
@@ -94,7 +95,7 @@ function resolvePlatform(p?: string | null): PlatformKey {
 
 export function PlatformFeedPreview({
   post,
-  shopName = "Tiệm Hoa Tươi FloraOS",
+  shopName = "Cửa Hàng Trải Nghiệm smeOS",
   fallbackImageUrl = "/images/sample-flower.jpg",
 }: PlatformFeedPreviewProps) {
   const [platformOverride, setPlatformOverride] = useState<{
@@ -145,9 +146,9 @@ export function PlatformFeedPreview({
     cta,
     script: {
       hook: headline,
-      audio_suggestion: "Nhạc Lofi nhẹ nhàng du dương · Tiệm hoa FloraOS",
+      audio_suggestion: `Nhạc nhẹ nhàng du dương · ${shopName}`,
       duration: "30-45 giây",
-      visual_cues: ["Cận cảnh hoa tươi nghệ thuật", "Toàn cảnh góc cắm tinh tế", "Banner hotline & ưu đãi"],
+      visual_cues: ["Cận cảnh sản phẩm nghệ thuật", "Toàn cảnh góc quay tinh tế", "Banner hotline & ưu đãi"],
     },
   }
 
@@ -210,7 +211,7 @@ export function PlatformFeedPreview({
 
         <SocialPostPreview
           post={previewItem}
-          productName={post.product_name || post.title || "Bó hoa tươi thiết kế"}
+          productName={post.product_name || post.title || "Sản phẩm thiết kế"}
           productImageUrl={effectiveImageUrl}
           shopName={shopName}
         />

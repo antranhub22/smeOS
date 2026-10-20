@@ -4,14 +4,14 @@ import { COLLAGE_SIZE, renderCatalogCollage } from "@/components/greeting-card/o
 
 export const size = COLLAGE_SIZE
 export const contentType = "image/png"
-export const alt = "Bộ sưu tập mẫu hoa"
+export const alt = "Bộ sưu tập sản phẩm"
 
-/** Ảnh xem trước khi dán link /s/... vào Zalo/Messenger/Facebook: ghép các mẫu hoa nổi bật. */
+/** Ảnh xem trước khi dán link /s/... vào Zalo/Messenger/Facebook: ghép các hình ảnh sản phẩm nổi bật. */
 export default async function Image({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params
   const preview = await shareLinkPreview(code.toUpperCase())
   if (!preview) {
-    return renderCatalogCollage({ catalogName: "Bộ Sưu Tập Mẫu Hoa", shopName: null, priceLabel: null, logo: null, productCount: 0, images: [] })
+    return renderCatalogCollage({ catalogName: "Bộ Sưu Tập Sản Phẩm", shopName: null, priceLabel: null, logo: null, productCount: 0, images: [] })
   }
   const data = await catalogCollageById(preview.catalogId)
   return renderCatalogCollage(data ?? { catalogName: preview.name, shopName: null, priceLabel: null, logo: null, productCount: 0, images: [] })

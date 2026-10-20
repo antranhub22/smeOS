@@ -6,6 +6,7 @@ import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, type Coordinato
 import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payment-policy"
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
+import { queueStaffNotification } from "./notify-staff"
 import {
   DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason,
 } from "../domain/delivery-failure"
@@ -17,6 +18,10 @@ import { coordinatorConfirmDepositPayment } from "./confirm-brochure-payment"
 import { canBypassDeliveryPhoto, canBypassFinishedPhoto, canRoleApproveDeposit, depositApproverRole, isUrgentOrder, parseBrochureWorkflowPolicy } from "../domain/brochure-workflow-policy"
 import { hasCapability } from "@/core/rbac/capabilities"
 import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
+import { verifyQcPhotoWithAi } from "./verify-qc-photo-ai"
+import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { prisma } from "@/core/tenancy/infra/prisma"
+import { log } from "@/core/observability/log"
 
 /** Đơn của tổ chức + kiểm đúng thứ tự tác vụ xưởng (409 nếu sai bước). */
 async function loadForAction(
@@ -112,15 +117,108 @@ export async function uploadBrochureProductPhoto(
       noteAppend: `[Bỏ qua ảnh thành phẩm] ${input.skipReason?.trim() || "Giao gấp theo yêu cầu"}`,
     })
     queueOrderNotification(ctx.organizationId, order.id, "READY")
+    queueStaffNotification(ctx.organizationId, "READY", {
+      orderId: order.id,
+      orderCode: order.code,
+      amountVnd: Number(order.total_vnd),
+      assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+    })
     return result
   }
+
   const assetIds = await ownedMediaIds(ctx, input, repo)
+
+  // AI Vision: Đối chiếu ảnh thành phẩm với mẫu sản phẩm của đơn hàng
+  const aiVerify = await (async () => {
+    try {
+      // Lấy storage_key của ảnh đầu tiên để sign URL gửi AI
+      const firstImageId = assetIds[0]
+      const assetRow = firstImageId
+        ? await prisma.assets.findFirst({
+            where: { id: firstImageId, organization_id: ctx.organizationId },
+            select: { storage_key: true, mime_type: true },
+          })
+        : null
+
+      // Lấy ảnh mẫu gốc: query riêng vì findBrochureOrder không include items/product_snapshot
+      const orderDetail = await prisma.orders.findFirst({
+        where: { id: orderId, organization_id: ctx.organizationId },
+        select: {
+          items: { select: { description: true, metadata: true }, take: 1 },
+          greeting_sessions: { select: { product_snapshot: true }, take: 1 },
+        },
+      })
+      const snapshot = (orderDetail?.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
+      const itemMeta = (orderDetail?.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
+      const productName = orderDetail?.items?.[0]?.description || (snapshot.name as string | undefined) || "Sản phẩm"
+      let sampleImageUrl = (snapshot.image_url || snapshot.imageUrl || itemMeta.imageUrl || itemMeta.image_url) as string | undefined
+
+      // Sign URL ảnh mẫu nếu là key nội bộ
+      const storage = getStorageProvider()
+      if (sampleImageUrl?.startsWith("org/")) {
+        sampleImageUrl = await storage.signedUrl(sampleImageUrl, 604800, "GET").catch(() => sampleImageUrl)
+      }
+
+      // Sign URL ảnh QC vừa upload
+      let qcImageUrl: string | undefined
+      if (assetRow?.storage_key) {
+        qcImageUrl = await storage.signedUrl(assetRow.storage_key, 3600, "GET").catch(() => undefined)
+      }
+
+      if (!qcImageUrl) return null // Không có URL → bỏ qua AI, cho phép tiếp tục
+
+      // Fetch bytes của ảnh QC (signed URL → raw bytes → AI)
+      const qcRes = await fetch(qcImageUrl, { signal: AbortSignal.timeout(8000) }).catch(() => null)
+      if (!qcRes?.ok) return null
+
+      const qcBytes = new Uint8Array(await qcRes.arrayBuffer())
+      const qcMimeType = assetRow?.mime_type || "image/jpeg"
+
+      return await verifyQcPhotoWithAi({
+        productName,
+        sampleImageUrl,
+        qcPhotoBytes: qcBytes,
+        qcPhotoMimeType: qcMimeType,
+      })
+    } catch (err) {
+      log.warn("coordinator.product_photo.ai_verify_error", {
+        orderId,
+        error: err instanceof Error ? err.message : String(err),
+      })
+      return null // Lỗi AI → không chặn luồng điều phối viên
+    }
+  })()
+
+  // Nếu AI xác nhận ảnh SAI sản phẩm → chặn ngay lập tức
+  if (aiVerify && !aiVerify.isMatch) {
+    log.warn("coordinator.product_photo.ai_rejected", {
+      orderId,
+      orderCode: order.code,
+      confidenceScore: aiVerify.confidenceScore,
+      reason: aiVerify.reason,
+    })
+    throw conflict(
+      `❌ AI kiểm định phát hiện ảnh thành phẩm không khớp với mẫu sản phẩm: ${aiVerify.reason} (Độ tin cậy: ${aiVerify.confidenceScore}%). Vui lòng kiểm tra và chụp đúng sản phẩm của đơn hàng này!`
+    )
+  }
+
+  const aiNote = aiVerify
+    ? `[AI ✅ ${aiVerify.confidenceScore}%] ${aiVerify.reason}`
+    : `[AI Bỏ qua — lỗi kết nối]`
+
   const result = await repo.applyProgress(ctx, order, {
     eventType: "PRODUCT_PHOTO_UPLOADED",
     productionStatus: "READY",
     qcAssetIds: assetIds,
+    noteAppend: aiNote,
   })
   queueOrderNotification(ctx.organizationId, order.id, "READY")
+  queueStaffNotification(ctx.organizationId, "READY", {
+    orderId: order.id,
+    orderCode: order.code,
+    amountVnd: Number(order.total_vnd),
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
   return result
 }
 
@@ -192,6 +290,13 @@ export async function markBrochureDeliveryFailed(
     feeVnd,
   })
   queueOrderNotification(ctx.organizationId, order.id, "DELIVERY_FAILED")
+  queueStaffNotification(ctx.organizationId, "DELIVERY_FAILED", {
+    orderId: order.id,
+    orderCode: order.code,
+    amountVnd: Number(order.total_vnd),
+    reason: DELIVERY_FAILURE_LABEL[input.reason] || input.reason,
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
   return result
 }
 
@@ -206,13 +311,18 @@ export async function coordinatorAcceptBrochureOrder(
   repo = new BrochureOrderRepository(),
   shops = new GreetingCardRepository()
 ) {
-  const order = await repo.findBrochureOrder(ctx, orderId)
+  const [order, shop] = await Promise.all([
+    repo.findBrochureOrder(ctx, orderId),
+    shops.getShopProfile(ctx.organizationId),
+  ])
   if (!order) throw notFound()
+  const workflow = parseBrochureWorkflowPolicy(shop.settings, shop.type)
   // Cùng luật với nút trên giao diện: đơn đã huỷ/đã giao/đã tiếp nhận/đã vào sản xuất, hoặc chưa có
   // thông tin chuyển khoản nào → không tiếp nhận (gọi thẳng API cũng bị chặn)
   const acceptBlocker = coordinatorAcceptanceBlocker(
     { status: order.status, productionStatus: order.production_status, deliveryStatus: order.delivery_status },
-    { paidVnd: Number(order.paid_vnd), paymentProofUrl: order.greeting_sessions?.[0]?.payment_proof_asset_id ?? null }
+    { paidVnd: Number(order.paid_vnd), paymentProofUrl: order.greeting_sessions?.[0]?.payment_proof_asset_id ?? null },
+    workflow
   )
   if (acceptBlocker) throw conflict(acceptBlocker)
 
@@ -224,10 +334,8 @@ export async function coordinatorAcceptBrochureOrder(
   const hasProofOrReported = Boolean(session?.payment_proof_asset_id || session?.status === "PAYMENT_REPORTED")
 
   // Ghi nhận cọc khi người bấm là Điều hành (R11), hoặc chính sách tiệm cho Điều phối duyệt cọc (như /confirm-deposit)
-  const shop = await shops.getShopProfile(ctx.organizationId)
   const deliveryWindow = order.delivery_window as { date?: string; timeSlot?: string } | null
   const minutesWaiting = Math.floor((Date.now() - new Date(order.created_at).getTime()) / 60_000)
-  const workflow = parseBrochureWorkflowPolicy(shop.settings)
   const mayConfirmDeposit = canRoleApproveDeposit(depositApproverRole(hasCapability(ctx, GREETING_CARD_CAPABILITY.paymentRecord)), workflow, {
     isUrgent: isUrgentOrder({ deliveryDate: deliveryWindow?.date, deliveryTimeSlot: deliveryWindow?.timeSlot }),
     isOverdueSla: minutesWaiting >= workflow.slaEscalationMinutes,
@@ -281,6 +389,15 @@ export async function coordinatorRejectBrochureOrder(
       note: "Điều phối xác định không thể cung ứng đơn hàng theo yêu cầu khách.",
     },
   })
+
+  queueStaffNotification(ctx.organizationId, "CANCELLATION_REQUESTED", {
+    orderId: order.id,
+    orderCode: order.code,
+    amountVnd: Number(order.total_vnd),
+    reason: `[Điều phối từ chối nhận đơn] ${reasonText}`,
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
+
   return {
     success: true,
     message: "Đã gửi yêu cầu từ chối nhận đơn và hoàn tiền tới Điều hành xét duyệt.",

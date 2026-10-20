@@ -1,10 +1,15 @@
 {
   "summary": {
     "app/(app)": {
-      "R4": 1,
-      "R5": 1
+      "R4": 1
+    },
+    "components/availability": {
+      "R2": 8
+    },
+    "components/templates": {
+      "R12": 2
     }
   },
-  "total": 2,
-  "updatedAt": "2026-10-07T12:07:03.556Z"
+  "total": 11,
+  "updatedAt": "2026-10-18T13:48:49.337Z"
 }

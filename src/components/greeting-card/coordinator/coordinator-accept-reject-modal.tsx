@@ -4,35 +4,40 @@ import React, { useState } from "react"
 import { CheckCircle2, ShieldCheck, X, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
+import { useI18n } from "@/lib/i18n"
 
 interface CoordinatorAcceptRejectModalProps {
   mode: "accept" | "reject"
   orderId: string
   orderCode: string
+  defaultBranchName?: string | null | undefined
   onClose: () => void
   onDone: () => void
 }
 
 const COMMON_REJECT_REASONS = [
-  "Hết loại hoa theo yêu cầu của khách",
-  "Xưởng quá tải khung giờ, không kịp cắm hoa",
+  "Hết nguyên phụ liệu theo yêu cầu của khách",
+  "Xưởng quá tải khung giờ, không kịp gia công hoàn thiện",
   "Địa chỉ giao nằm ngoài khu vực hỗ trợ",
 ]
 
 /**
  * Hộp thoại Điều phối xác nhận nhận đơn hoặc từ chối đơn hàng.
- * - Nhận đơn: chuyển đơn sang CONFIRMED để tiếp tục cắm hoa.
+ * - Nhận đơn: chuyển đơn sang CONFIRMED để tiếp tục xử lý sản phẩm.
  * - Từ chối: huỷ đơn và kích hoạt quy trình hoàn tiền cho khách hàng.
  */
 export function CoordinatorAcceptRejectModal({
   mode,
   orderId,
   orderCode,
+  defaultBranchName,
   onClose,
   onDone,
 }: CoordinatorAcceptRejectModalProps) {
+  const { ti } = useI18n()
   const isAccept = mode === "accept"
-  const [note, setNote] = useState("")
+  const defaultNote = defaultBranchName ? `Cửa hàng đã nhận: ${defaultBranchName}` : ""
+  const [note, setNote] = useState(defaultNote)
   const [reason, setReason] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -102,20 +107,27 @@ export function CoordinatorAcceptRejectModal({
 
         <p className="text-body-sm text-text-muted leading-relaxed">
           {isAccept
-            ? "Xác nhận xưởng có đầy đủ hoa và nhân lực để hoàn thành đơn hàng. Đơn sẽ chuyển sang trạng thái Đã xác nhận để tiếp tục phân công Florist cắm hoa."
+            ? `Xác nhận xưởng có đầy đủ vật tư và nhân lực để hoàn thành đơn hàng. Đơn sẽ chuyển sang trạng thái Đã xác nhận để tiếp tục phân công ${ti("makerTitle").toLowerCase()} thực hiện.`
             : "Đề xuất không nhận đơn sẽ được gửi lên Điều hành phê duyệt hủy & hoàn tiền cho khách. Nếu Điều hành không duyệt trong vòng 15 phút, đơn sẽ tự động hủy theo đề xuất."}
         </p>
 
         {isAccept ? (
           <div className="flex flex-col gap-2">
-            <label htmlFor="coordinator-accept-note" className="text-body-sm font-semibold text-foreground">
-              Ghi chú xưởng (tùy chọn)
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="coordinator-accept-note" className="text-body-sm font-semibold text-foreground">
+                Ghi chú nội bộ (tùy chọn)
+              </label>
+              {defaultBranchName && (
+                <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-success/15 text-success">
+                  🏪 {defaultBranchName}
+                </span>
+              )}
+            </div>
             <textarea
               id="coordinator-accept-note"
               rows={3}
               maxLength={500}
-              placeholder="Vd: Chuẩn bị hoa sớm, khách yêu cầu thêm thiệp chúc mừng..."
+              placeholder={defaultBranchName ? `Vd: Đã xác nhận với ${defaultBranchName}, xưởng đủ điều kiện thực hiện...` : "Vd: Đã kiểm tra kho nguyên liệu, đủ điều kiện thực hiện đơn..."}
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"

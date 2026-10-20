@@ -22,8 +22,8 @@ export interface VideoPlayerCardProps {
 export function VideoPlayerCard({
   videoUrl,
   posterUrl,
-  title = "Video ngắn giới thiệu bó hoa",
-  productName = "Bó Hoa Nắng Mai",
+  title = "Video ngắn giới thiệu sản phẩm",
+  productName = "Sản phẩm thiết kế",
   price = "450.000đ",
   onDownload,
   onShare,

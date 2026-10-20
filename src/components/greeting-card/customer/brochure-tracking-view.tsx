@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button"
 import { OrderParallelStagesCard } from "./order-parallel-stages-card"
 import { BalancePaymentBanner } from "./balance-payment-banner"
 import { PhotoApprovalCard } from "./photo-approval-card"
+import { HomestayBookingSuccessCard } from "./homestay-booking-success-card"
+import { getIndustryTerminology, getIndustryOrderTerms, getIndustryFulfillmentFlow } from "@/modules/organization/domain/industry-profile"
 
 interface BrochureTrackingViewProps {
   orderCode: string
@@ -52,6 +54,11 @@ type TrackingData = {
     cancellationNotice?: CancellationNoticeData | null
     recipientName: string
     deliveryAddress: string
+    deliveryDate?: string | null
+    deliveryTimeSlot?: string | null
+    checkOutDate?: string | null
+    customerReportedPayment?: boolean
+    productSnapshot?: { name?: string; imageUrl?: string | null } | null
     finishedImageUrl?: string | null
     productPhotoUrls?: string[]
     recipientPhotoUrls?: string[]
@@ -61,6 +68,7 @@ type TrackingData = {
       countdownMinutes: number
       approvedAt: string | null
     }
+    industryKey?: string | null | undefined
     createdAt: string
     timeline?: {
       arranging?: { displayRange: string }
@@ -116,6 +124,9 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
   const recipientPhotos = order.recipientPhotoUrls ?? []
   const awaitingQuote = order.totalVnd <= 0
   const isPaid = !awaitingQuote && order.paidVnd >= order.totalVnd
+  const fulfillmentFlow = getIndustryFulfillmentFlow(order.industryKey)
+  const isHomestayStay = fulfillmentFlow === "CALENDAR_STAY"
+  const hasPaymentCommitment = isPaid || order.paidVnd > 0 || order.customerReportedPayment === true
 
   return (
     <div className="w-full max-w-xl lg:max-w-2xl mx-auto bg-surface rounded-2xl border border-border p-5 sm:p-7 shadow-sm flex flex-col gap-6">
@@ -123,10 +134,10 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       <div className="flex items-start justify-between gap-3 pb-4 border-b border-border">
         <div className="min-w-0">
           <span className="text-caption font-bold uppercase tracking-wider text-primary">
-            Theo dõi tiến độ Đơn hàng
+            {isHomestayStay ? "Thông tin đặt phòng & Lưu trú" : "Theo dõi tiến độ Đơn hàng"}
           </span>
           <h2 className="text-title font-extrabold text-foreground">
-            Đơn hàng <span className="whitespace-nowrap">#{order.code}</span>
+            {isHomestayStay ? "Mã đặt phòng" : "Đơn hàng"} <span className="whitespace-nowrap">#{order.code}</span>
           </h2>
         </div>
         <Button
@@ -145,10 +156,15 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       {order.cancellationNotice && <OrderCancelledNotice orderCode={order.code} notice={order.cancellationNotice} />}
 
       {/* Đơn đã hoàn tất: lời cảm ơn + xem lại đơn, tiến độ, đặt đơn mới */}
-      {isTrackingCompleted(order.status, order.deliveryStatus) && <CustomerThankYouCard orderCode={order.code} sendCode={sendCode} />}
+      {!isHomestayStay && isTrackingCompleted(order.status, order.deliveryStatus) && <CustomerThankYouCard orderCode={order.code} sendCode={sendCode} />}
 
-      {/* Progress Bar & Current Status Card — đơn đã có thông báo huỷ thì không cần */}
-      {!order.cancellationNotice && <>
+      {/* HOMESTAY/LƯU TRÚ: Khi khách đã báo chuyển khoản hoặc thanh toán → Hiện Thẻ xác nhận đặt phòng & Khóa lịch hẹn */}
+      {isHomestayStay && hasPaymentCommitment && !order.cancellationNotice && (
+        <HomestayBookingSuccessCard order={order} isPaid={isPaid} />
+      )}
+
+      {/* Progress Bar & Current Status Card (Chỉ hiện cho luồng sản xuất chế tác/giao hàng hoặc Homestay chưa báo chuyển khoản) */}
+      {!order.cancellationNotice && (!isHomestayStay || !hasPaymentCommitment) && <>
       <div className="bg-primary/5 rounded-2xl p-4 border border-primary/20 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="text-body font-extrabold text-primary">
@@ -163,7 +179,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
           {trackingStep.description}
         </p>
 
-        <TrackingSteps stepIndex={trackingStep.stepIndex} createdAt={order.createdAt} timeline={order.timeline} />
+        <TrackingSteps stepIndex={trackingStep.stepIndex} createdAt={order.createdAt} timeline={order.timeline} industryKey={order.industryKey} />
       </div>
 
       <OrderParallelStagesCard
@@ -173,29 +189,32 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
         orderStatus={order.status}
         productionStatus={order.productionStatus}
         cancelledReason={order.status === "CANCELLED" ? "Cửa hàng không thể nhận đơn" : null}
+        industryKey={order.industryKey}
       />
       </>}
 
-      <BalancePaymentBanner
-        totalVnd={order.totalVnd}
-        paidVnd={order.paidVnd}
-        productionStatus={order.productionStatus}
-        deliveryStatus={order.deliveryStatus}
-        photoApprovalStatus={order.photoApproval?.status}
-        hasProductPhotos={productPhotos.length > 0}
-        onScrollToPayment={() => {
-          document.getElementById("tracking-payment-title")?.scrollIntoView({ behavior: "smooth" })
-        }}
-      />
+      {!isHomestayStay && (
+        <BalancePaymentBanner
+          totalVnd={order.totalVnd}
+          paidVnd={order.paidVnd}
+          productionStatus={order.productionStatus}
+          deliveryStatus={order.deliveryStatus}
+          photoApprovalStatus={order.photoApproval?.status}
+          hasProductPhotos={productPhotos.length > 0}
+          onScrollToPayment={() => {
+            document.getElementById("tracking-payment-title")?.scrollIntoView({ behavior: "smooth" })
+          }}
+        />
+      )}
 
-      {/* Ảnh thành phẩm và ảnh người nhận: hai mục riêng, ảnh sau không đè ảnh trước */}
+      {/* Ảnh thành phẩm và ảnh người nhận: hai mục riêng, chỉ hiện ở luồng sản xuất chế tác */}
       <div id={THANK_YOU_TARGET.progress} className="flex flex-col gap-4">
-      {productPhotos.length > 0 && (
+      {!isHomestayStay && productPhotos.length > 0 && (
         <section className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-muted border border-border">
           <div className="flex items-center justify-between">
             <h3 className="flex items-center gap-2 text-foreground font-extrabold text-body">
               <Camera size={18} className="text-primary" aria-hidden="true" />
-              Ảnh hoa thành phẩm
+              {getIndustryOrderTerms(order.industryKey).completedPhotoSectionTitle}
             </h3>
             {order.photoApproval?.status === "APPROVED" && (
               <span className="text-caption font-bold text-success bg-success/15 px-2.5 py-0.5 rounded-full flex items-center gap-1">
@@ -209,8 +228,8 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
             )}
           </div>
 
-          <MediaGallery urls={productPhotos} label="Ảnh hoa thành phẩm" />
-          <p className="text-caption text-text-muted">Hoa được chụp nghiệm thu trước khi giao.</p>
+          <MediaGallery urls={productPhotos} label={getIndustryOrderTerms(order.industryKey).completedPhotoSectionTitle} />
+          <p className="text-caption text-text-muted">Được chụp nghiệm thu trước khi giao.</p>
 
           {/* KHUNG XÁC NHẬN HÌNH ẢNH SẢN PHẨM & ĐỒNG HỒ ĐẾM NGƯỢC (SPEC #3) */}
           {sendCode && order.photoApproval?.status === "PENDING" && order.photoApproval.uploadedAt && (
@@ -236,16 +255,18 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
         <section className="flex flex-col gap-2 p-4 rounded-2xl bg-surface-muted border border-border">
           <h3 className="flex items-center gap-2 text-foreground font-extrabold text-body">
             <Camera size={18} className="text-success" aria-hidden="true" />
-            Ảnh người nhận
+            Ảnh {getIndustryOrderTerms(order.industryKey).recipientShortLabel}
           </h3>
-          <MediaGallery urls={recipientPhotos} label="Ảnh người nhận" />
-          <p className="text-caption text-text-muted">Hoa đã được trao tận tay người nhận.</p>
+          <MediaGallery urls={recipientPhotos} label={`Ảnh ${getIndustryOrderTerms(order.industryKey).recipientShortLabel}`} />
+          <p className="text-caption text-text-muted">Đã được trao tận tay {getIndustryOrderTerms(order.industryKey).recipientShortLabel}.</p>
         </section>
       )}
       </div>
 
       {/* Thu trước giao: ẩn thẻ thanh toán lần 2 khi đang chờ khách duyệt ảnh (PO 09/10/2026) */}
-      {order.payment && !paymentFailed && order.photoApproval?.status !== "PENDING" && <TrackingPaymentCard payment={order.payment} sendCode={sendCode} />}
+      {order.payment && !paymentFailed && order.photoApproval?.status !== "PENDING" && (
+        <TrackingPaymentCard payment={order.payment} sendCode={sendCode} industryKey={order.industryKey} />
+      )}
       {order.verified === false && <TrackingVerifyForm orderCode={orderCode} onVerified={setLast4} />}
       {order.deliveryFailure && (
         <div role="status" className="rounded-2xl border border-warning/30 bg-warning-bg p-4 flex flex-col gap-1 text-body-sm">

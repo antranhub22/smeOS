@@ -181,6 +181,8 @@ export function useCatalogItems<TDetail extends { items: Array<{ product: { id: 
     excludeLoading: excluded.loading,
     /** Số mẫu bị ẩn vì đã có trong bộ sưu tập user chọn tránh trùng */
     excludedHiddenCount: notInCatalog.length - rawAvailable.length,
+    /** Tổng số sản phẩm trong kho (chưa lọc theo BST hay bộ lọc) */
+    totalWarehouseCount: (products.data?.data ?? []).length,
     /** Sản phẩm sau khi lọc qua SSOT product-filter engine */
     available: filteredAvailable,
     rawCount: rawAvailable.length,

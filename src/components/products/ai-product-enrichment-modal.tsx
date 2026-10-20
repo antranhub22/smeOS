@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { Sparkles, CheckCircle2, AlertCircle, X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/lib/i18n"
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"
 import {
   type ProductFormValues,
@@ -11,10 +12,8 @@ import {
   callContentEngineMarketing,
   applyVisionToForm,
   buildProductPatchPayload,
-  CATEGORIES,
-  SHAPES,
-  FACINGS,
 } from "./ai-product-helpers"
+import { getDesignFieldsConfig } from "./create-product-types"
 import { AiProductFormFields } from "./ai-product-form-fields"
 import { extractInitialFormValues, type InitialProductInput } from "./ai-product-initial"
 
@@ -33,12 +32,18 @@ export function AiProductEnrichmentModal({
   initialProduct,
   onSuccess,
 }: AiProductEnrichmentModalProps) {
+  const { ti, industry } = useI18n()
+  const designConfig = getDesignFieldsConfig(industry.identity.key)
+  const defaultCategory = industry.taxonomy.defaultCategories[0]?.label || ""
+  const defaultShape = designConfig.shapeOptions[0] || ""
+  const defaultFacing = designConfig.facingMultiple ? "" : (designConfig.facingOptions[0] || "")
+
   const [values, setValues] = useState<ProductFormValues>({
     name: "",
     code: "",
-    category: CATEGORIES[0] ?? "Bó hoa",
-    shape: SHAPES[0] ?? "Tròn",
-    facing: FACINGS[0] ?? "Một mặt",
+    category: defaultCategory,
+    shape: defaultShape,
+    facing: defaultFacing,
     container: "",
     priceVnd: "",
     primaryColor: "",
@@ -59,15 +64,19 @@ export function AiProductEnrichmentModal({
 
   useEffect(() => {
     if (!isOpen) return
-    const { values: initValues, previewUrl } = extractInitialFormValues(initialProduct)
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- nạp lại form từ sản phẩm (props) mỗi lần mở hộp thoại, chủ đích
+    const { values: initValues, previewUrl } = extractInitialFormValues(
+      initialProduct,
+      defaultCategory,
+      defaultShape,
+      defaultFacing
+    )
     setValues(initValues)
     setImagePreview(previewUrl)
     setImageFile(null)
     setNotice(null)
     setErrorMsg(null)
     setContentSuggestions([])
-  }, [isOpen, initialProduct])
+  }, [isOpen, initialProduct, defaultCategory, defaultShape, defaultFacing])
 
   if (!isOpen) return null
 
@@ -102,7 +111,6 @@ export function AiProductEnrichmentModal({
         handleFieldChange("imageUrl", uploaded.viewUrl)
         setUploadingImage(false)
       } else if (!assetId && (values.imageUrl || values.driveLink)) {
-        // Tải ảnh từ đường dẫn hiện có (Proxy/Drive) lên kho lưu trữ để Vision AI phân tích
         setUploadingImage(true)
         const fetchUrl = values.imageUrl || (values.driveLink ? driveThumbProxySrc(values.driveLink) : null)
         if (fetchUrl) {
@@ -126,7 +134,7 @@ export function AiProductEnrichmentModal({
       }
 
       if (!assetId) {
-        throw new Error("Vui lòng tải ảnh lên hoặc chọn mẫu hoa có ảnh trước khi bấm Phân tích AI.")
+        throw new Error(`Vui lòng tải ảnh lên hoặc chọn ${ti("sampleProduct").toLowerCase()} có ảnh trước khi bấm Phân tích AI.`)
       }
 
       const vision = await callVisionExtract(assetId)
@@ -134,19 +142,17 @@ export function AiProductEnrichmentModal({
       setValues(updated)
 
       setIsGeneratingContent(true)
-      const flowersList = updated.flowers.filter((f) => f.name.trim()).map((f) => f.name).join(", ")
-      const summaryContext = `Mẫu hoa ${updated.name || updated.category}, phối từ ${flowersList || "các loài hoa tươi tuyển chọn"}. Tông màu ${updated.primaryColor || "hài hòa"}. Kiểu dáng ${updated.shape}.`
+      const itemsList = updated.flowers.filter((f) => f.name.trim()).map((f) => f.name).join(", ")
+      const summaryContext = `${ti("sampleProduct")} ${updated.name || updated.category}, cấu thành từ ${itemsList || "vật liệu tuyển chọn"}. Tông màu ${updated.primaryColor || "hài hòa"}. Quy cách ${updated.shape}.`
       const suggestions = await callContentEngineMarketing(summaryContext, "luxurious")
       setContentSuggestions(suggestions)
 
       if (suggestions[0] && !updated.description.trim()) {
-        updated.description = suggestions[0]
-        setValues({ ...updated })
+        setValues((v) => ({ ...v, description: suggestions[0] ?? "" }))
       }
-      setIsGeneratingContent(false)
 
       setNotice(
-        `Phân tích hoàn tất! Đã tự động điền ${filledFieldsCount} trường còn thiếu và tạo câu chuyện tiếp thị từ Content Engine.`
+        `Phân tích AI thành công! Đã tự động cập nhật ${filledFieldsCount} trường dữ liệu và gợi ý mô tả phù hợp cho ${ti("sampleProduct").toLowerCase()}.`
       )
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Đã xảy ra lỗi khi phân tích AI.")
@@ -160,8 +166,8 @@ export function AiProductEnrichmentModal({
   const handleCallContentEngine = async (style: "luxurious" | "sweet" | "creative" | "concise") => {
     setIsGeneratingContent(true)
     try {
-      const flowersList = values.flowers.filter((f) => f.name.trim()).map((f) => f.name).join(", ")
-      const baseText = values.description.trim() || `Mẫu hoa ${values.name || values.category}, gồm ${flowersList || "hoa tươi"}.`
+      const itemsList = values.flowers.filter((f) => f.name.trim()).map((f) => f.name).join(", ")
+      const baseText = values.description.trim() || `${ti("sampleProduct")} ${values.name || values.category}, gồm ${itemsList || "thành phần chọn lọc"}.`
       const suggestions = await callContentEngineMarketing(baseText, style)
       setContentSuggestions(suggestions)
       if (suggestions[0] && !values.description.trim()) {
@@ -174,14 +180,13 @@ export function AiProductEnrichmentModal({
 
   const handleSubmit = async () => {
     if (!values.name.trim()) {
-      setErrorMsg("Vui lòng nhập tên mẫu hoa.")
+      setErrorMsg(`Vui lòng nhập tên ${ti("sampleProduct").toLowerCase()}.`)
       return
     }
     if (!values.code.trim()) {
-      setErrorMsg("Vui lòng nhập mã sản phẩm (SKU).")
+      setErrorMsg(`Vui lòng nhập mã ${ti("sampleProduct").toLowerCase()} (SKU).`)
       return
     }
-
 
     setIsSubmitting(true)
     setErrorMsg(null)
@@ -207,7 +212,13 @@ export function AiProductEnrichmentModal({
       const responseBody = await res.json().catch(() => null)
 
       if (!res.ok) {
-        throw new Error(responseBody?.error?.message || "Không lưu được sản phẩm, vui lòng kiểm tra lại thông tin và thử lại")
+        let msg = responseBody?.error?.message || `Không lưu được ${ti("sampleProduct").toLowerCase()}, vui lòng kiểm tra lại thông tin và thử lại`
+        const issues = responseBody?.error?.details?.issues
+        if (Array.isArray(issues) && issues.length > 0) {
+          const issueMsgs = issues.map((it: { path?: string[]; message?: string }) => `${it.path?.join(".") || "trường"}: ${it.message || "không hợp lệ"}`).join(", ")
+          msg = `${msg} (${issueMsgs})`
+        }
+        throw new Error(msg)
       }
 
       await new Promise((r) => setTimeout(r, 400))
@@ -215,12 +226,11 @@ export function AiProductEnrichmentModal({
       onSuccess()
       onClose()
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Đã xảy ra lỗi khi lưu sản phẩm.")
+      setErrorMsg(err instanceof Error ? err.message : `Đã xảy ra lỗi khi lưu ${ti("sampleProduct").toLowerCase()}.`)
     } finally {
       setIsSubmitting(false)
     }
   }
-
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
@@ -232,7 +242,7 @@ export function AiProductEnrichmentModal({
               <Sparkles size={18} />
             </div>
             <div>
-              <h2 className="text-title-sm font-bold text-text">Bảng thông số sản phẩm & Phân tích AI</h2>
+              <h2 className="text-title-sm font-bold text-text">Bảng thông số {ti("sampleProduct").toLowerCase()} & Phân tích AI</h2>
               <p className="text-caption text-text-muted">Xem thông số và dùng AI để sinh đầy đủ nội dung còn thiếu</p>
             </div>
           </div>
@@ -250,7 +260,7 @@ export function AiProductEnrichmentModal({
               ) : (
                 <Sparkles size={15} className="text-primary" />
               )}
-              <span>{isAnalyzing ? "Đang phân tích..." : "Phân tích thông số sản phẩm bằng AI"}</span>
+              <span>{isAnalyzing ? "Đang phân tích..." : `Phân tích ${ti("sampleProduct").toLowerCase()} bằng AI`}</span>
             </Button>
             <button
               type="button"
@@ -280,6 +290,8 @@ export function AiProductEnrichmentModal({
         {/* Thân Form */}
         <div className="flex-1 overflow-y-auto p-5">
           <AiProductFormFields
+            ti={ti}
+            industry={industry}
             values={values}
             onChange={handleFieldChange}
             onImageFileSelected={handleImageFileSelected}

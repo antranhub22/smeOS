@@ -5,6 +5,9 @@ import { InlineError } from "@/components/ui/inline-error"
 import { DisplaySettingsDialog, useDisplaySettings } from "./display-settings-dialog"
 import { useAnnounce } from "@/components/ui/live-region"
 import { TemplateSelectorSplitPane } from "@/components/greeting-card/customer/templates/template-selector-split-pane"
+import { cn } from "@/lib/utils"
+import { useJourneyFocus } from "./journey-focus-context"
+import { useSession } from "@/lib/session"
 import {
   GREETING_TEMPLATES,
   resolveGreetingTemplateId,
@@ -36,6 +39,7 @@ interface TemplateSectionProps {
 
 /** Bước 1b: chọn giao diện khách sẽ lướt xem — lưu ngay khi bấm "Chọn mẫu". */
 export function TemplateSection({ catalog, onSave, canEditSharedDisplay = true }: TemplateSectionProps) {
+  const { organization } = useSession()
   const [pendingId, setPendingId] = useState<GreetingTemplateId | null>(null)
   const [error, setError] = useState<string | null>(null)
   const { announce } = useAnnounce()
@@ -57,15 +61,31 @@ export function TemplateSection({ catalog, onSave, canEditSharedDisplay = true }
     }
   }
 
+  const { activeBlock, setActiveBlock } = useJourneyFocus()
+  const isBlock2Active = activeBlock === 2
+
   return (
-    <section aria-label="Giao diện khách xem" className="flex flex-col gap-3">
+    <section
+      aria-label="Giao diện khách xem"
+      onClick={() => setActiveBlock(2)}
+      className={cn(
+        "flex flex-col gap-3 rounded-2xl p-4 sm:p-5 border transition-all duration-300 cursor-pointer",
+        isBlock2Active
+          ? "border-primary/50 bg-surface shadow-sm ring-2 ring-primary/20 opacity-100"
+          : "border-border/60 bg-surface/80 opacity-60 hover:opacity-95"
+      )}
+    >
       <TemplateSelectorSplitPane
         key={previewPaneKey(catalog)}
         selectedTemplateId={pendingId ?? savedId}
-        onSelectTemplate={(id) => void handleSelect(id)}
+        onSelectTemplate={(id) => {
+          setActiveBlock(2)
+          void handleSelect(id)
+        }}
         catalogId={catalog.id}
         displaySettings={display.settings}
         onOpenDisplaySettings={canEditSharedDisplay ? setSettingsFor : undefined}
+        industryKey={organization?.industry}
       />
       {error && <InlineError message={error} />}
       {settingsFor && (

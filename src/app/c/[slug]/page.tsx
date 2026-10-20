@@ -12,8 +12,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (data.status !== "ACTIVE") {
     return {
-      title: "Catalog Mẫu Hoa",
-      description: "Xem bộ sưu tập hoa tươi trực tuyến.",
+      title: "Bộ Sưu Tập Sản Phẩm",
+      description: "Xem bộ sưu tập sản phẩm trực tuyến.",
     }
   }
 
@@ -21,10 +21,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${data.catalog.name} — ${data.shop.name}`,
-    description: data.catalog.description || `Xem bộ sưu tập hoa tươi mới nhất từ ${data.shop.name}`,
+    description: data.catalog.description || `Xem bộ sưu tập sản phẩm mới nhất từ ${data.shop.name}`,
     openGraph: {
       title: `${data.catalog.name} — ${data.shop.name}`,
-      description: data.catalog.description || `Xem bộ sưu tập hoa tươi mới nhất từ ${data.shop.name}`,
+      description: data.catalog.description || `Xem bộ sưu tập sản phẩm mới nhất từ ${data.shop.name}`,
       type: "website",
       images: firstImage ? [{ url: firstImage }] : [],
     },

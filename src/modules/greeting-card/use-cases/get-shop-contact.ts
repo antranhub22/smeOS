@@ -1,5 +1,12 @@
 import { conflict } from "@/core/http/errors"
-import { DEMO_SHOP_PROFILE_MESSAGE, isDemoShopContact, toShopContact, type ShopContact } from "../domain/shop-contact"
+import {
+  DEMO_SHOP_PROFILE_MESSAGE,
+  demoShopContactGap,
+  isConfirmedDemoContact,
+  isDemoShopContact,
+  toShopContact,
+  type ShopContact,
+} from "../domain/shop-contact"
 import { ShopContactRepository } from "../infra/shop-contact-repository"
 import { parseStorePolicies } from "../domain/store-policy"
 
@@ -22,8 +29,15 @@ export async function getShopContactBySlug(
   return id ? getShopContact(id, repo) : null
 }
 
-/** Chặn gửi link cho khách khi hồ sơ tiệm còn là dữ liệu mẫu (PO 08/10/2026) — 409 kèm việc cần làm. */
+/** Chặn gửi link cho khách khi hồ sơ tiệm còn là dữ liệu mẫu và chưa xác nhận (PO 08/10/2026) — 409 kèm việc cần làm. */
 export async function assertShopReadyForCustomers(organizationId: string, repo = new ShopContactRepository()): Promise<void> {
-  const contact = await getShopContact(organizationId, repo)
-  if (contact && isDemoShopContact(contact)) throw conflict(DEMO_SHOP_PROFILE_MESSAGE)
+  const raw = await repo.findByOrganizationId(organizationId)
+  if (!raw) return
+  const isConfirmed = isConfirmedDemoContact(raw.settings)
+  const contact = toShopContact({ ...raw, commitments: parseStorePolicies(raw.settings).commitments })
+  if (contact && isDemoShopContact(contact, isConfirmed)) {
+    const message = demoShopContactGap(contact) || DEMO_SHOP_PROFILE_MESSAGE
+    throw conflict(message)
+  }
 }
+

@@ -100,7 +100,7 @@ export function ApprovedAnalysesSelector({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tìm theo mã sản phẩm, loại hoa, phong cách..."
+            placeholder="Tìm theo mã sản phẩm, thành phần, phong cách..."
             className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-border bg-surface text-body-sm outline-none focus:border-primary transition-colors"
           />
         </div>
@@ -157,7 +157,7 @@ export function ApprovedAnalysesSelector({
             .slice(0, 3)
             .map((f) => {
               const qty = f.quantity ?? f.count
-              return `${f.name ?? "Hoa"}${qty ? ` (${qty} ${f.dvt_dem?.toLowerCase() ?? "cành"})` : ""}`
+              return `${f.name ?? "Nguyên liệu"}${qty ? ` (${qty} ${f.dvt_dem?.toLowerCase() ?? "đơn vị"})` : ""}`
             })
             .join(", ")
           const moreFlowersCount = flowers.length > 3 ? flowers.length - 3 : 0
@@ -220,7 +220,7 @@ export function ApprovedAnalysesSelector({
                   <div className="flex items-start gap-1.5">
                     <span className="text-text-muted min-w-[70px]">Thành phần:</span>
                     <span className="font-medium text-text line-clamp-2">
-                      {flowerSummary || "Chưa có chi tiết hoa"}
+                      {flowerSummary || "Chưa có chi tiết thành phần"}
                       {moreFlowersCount > 0 && ` +${moreFlowersCount} loại khác`}
                     </span>
                   </div>

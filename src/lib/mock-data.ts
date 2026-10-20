@@ -169,6 +169,7 @@ export const FEATURES: FeatureItem[] = [
 
 export type MockSession = {
   userName: string
+  userEmail?: string | undefined
   userInitials: string
   orgName: string
   workspaceKind: WorkspaceKind
@@ -187,6 +188,13 @@ export type MockSession = {
   roleKey?: string | null | undefined
   /** `organizations.type` — EXPERIENCE · SINGLE · CHAIN. */
   organizationType?: string | null | undefined
+  /** Yêu cầu chuyển đổi mô hình đang chờ Admin SaaS duyệt (nếu có) */
+  pendingModelChange?: {
+    requested_type: string
+    requested_at: string
+    requested_by?: string
+    note?: string | null
+  } | null | undefined
 }
 
 export const MOCK_SESSION: MockSession = {

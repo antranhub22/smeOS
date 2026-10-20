@@ -20,11 +20,15 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { Route } from "next"
 import type { ChatConversation, ChatMessage } from "@/modules/chat-assistant/domain/chat-types"
 
 export default function ChatAssistantPage() {
   const router = useRouter()
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const [conversations, setConversations] = useState<ChatConversation[]>([])
   const [selectedConvId, setSelectedConvId] = useState<string | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -182,12 +186,12 @@ export default function ChatAssistantPage() {
         <FeatureGuidanceCard
           badgeLabel="HƯỚNG DẪN AI CHAT ASSISTANT"
           badgeIcon={Bot}
-          title="Trợ Lý Tư Vấn Hoa Tươi & Tự Động Hóa Chốt Đơn"
-          description="Hệ thống tích hợp AI đàm thoại chuyên sâu, tự động liên kết dữ liệu mẫu hoa, công thức định lượng cành và lịch sử khách hàng để gợi ý chuẩn xác và đẩy đơn nháp 1-chạm sang xưởng hoa."
+          title={`Trợ Lý Tư Vấn ${ti.sampleProduct} & Tự Động Hóa Chốt Đơn`}
+          description={`Hệ thống tích hợp AI đàm thoại chuyên sâu, tự động liên kết dữ liệu ${ti.sampleProduct}, công thức định lượng ${ti.rawMaterialItem} và lịch sử khách hàng để gợi ý chuẩn xác và đẩy đơn nháp 1-chạm sang xưởng.`}
           tips={[
-            { icon: "⚡", text: "1-chạm chốt đơn: Bấm 'Chốt đơn mẫu này' để tạo ngay đơn nháp sang xưởng hoa" },
+            { icon: "⚡", text: "1-chạm chốt đơn: Bấm 'Chốt đơn mẫu này' để tạo ngay đơn nháp sang xưởng" },
             { icon: "🎯", text: "Nhận diện ngân sách & dịp: AI tự bóc tách số tiền và ngày lễ (sinh nhật, khai trương)" },
-            { icon: "💎", text: "Master Index: Mẫu hoa gợi ý luôn có ảnh thật, BOM cành hoa và giá chuẩn" },
+            { icon: "💎", text: `Danh mục sản phẩm: ${ti.sampleProduct} gợi ý luôn có ảnh thật, công thức định lượng ${ti.rawMaterialItem} và giá chuẩn` },
           ]}
         />
 
@@ -280,13 +284,13 @@ export default function ChatAssistantPage() {
                 <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground">
                   <Bot className="h-10 w-10 text-primary/60" />
                   <p className="max-w-md">
-                    Chào bạn! Tôi là trợ lý AI am hiểu hoa tươi. Hãy thử hỏi về ngân sách, dịp tặng hoặc phong cách cắm hoa yêu thích!
+                    Xin chào! Tôi là trợ lý AI chuyên tư vấn {ti.sampleProduct}. Hãy thử hỏi về ngân sách, dịp tặng hoặc phong cách thiết kế bạn muốn!
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 pt-2">
                     {[
-                      "Bó hoa hồng tặng bạn gái tầm 500k",
-                      "Kệ hoa khai trương 1 triệu tone đỏ",
-                      "Tư vấn hoa sinh nhật mẹ sang trọng",
+                      `${ti.sampleProduct} tặng người thân tầm 500k`,
+                      `Sản phẩm khai trương 1 triệu tone đỏ`,
+                      `Tư vấn ${ti.sampleProduct} sinh nhật sang trọng`,
                     ].map((sample, idx) => (
                       <button
                         key={idx}
@@ -413,7 +417,7 @@ export default function ChatAssistantPage() {
               >
                 <input
                   type="text"
-                  placeholder="Hỏi về ngân sách, dịp tặng, màu sắc hoặc mẫu hoa..."
+                  placeholder={`Hỏi về ngân sách, dịp tặng, màu sắc hoặc ${ti.sampleProduct}...`}
                   className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-xs focus:ring-1 focus:ring-primary"
                   value={inputQuery}
                   onChange={(e) => setInputQuery(e.target.value)}

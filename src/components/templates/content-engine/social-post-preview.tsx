@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import type { MultichannelPostItem } from "./multichannel-post-card"
 import { LinkedInPreview } from "./linkedin-post-preview"
+import { useI18n } from "@/lib/i18n"
 
 export interface SocialPostPreviewProps {
   post: MultichannelPostItem
@@ -29,17 +30,21 @@ export interface SocialPostPreviewProps {
  */
 export function SocialPostPreview({
   post,
-  productName = "Sản phẩm hoa tươi",
+  productName,
   productImageUrl,
-  shopName = "Tiệm Hoa Tươi FloraOS",
+  shopName,
 }: SocialPostPreviewProps) {
+  const { ti } = useI18n()
+  const displayProductName = productName || ti("sampleProduct") || "Sản phẩm chính"
+  const displayShopName = shopName || "Cửa hàng trực tuyến"
+
   if (post.channel === "facebook") {
     return (
       <FacebookPreview
         post={post}
-        productName={productName}
+        productName={displayProductName}
         productImageUrl={productImageUrl}
-        shopName={shopName}
+        shopName={displayShopName}
       />
     )
   }
@@ -158,7 +163,7 @@ function FacebookPreview({
             <span className="text-5xl">💐</span>
             <div className="font-extrabold text-sm text-blush-950 dark:text-blush-200">{productName}</div>
             <span className="text-caption font-semibold text-primary bg-white/80 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-xs border border-primary-muted/50">
-              Thiết kế hoa tươi độc bản · Tiệm Hoa FloraOS
+              {shopName || "Cửa hàng chính hãng"}
             </span>
           </div>
         )}
@@ -400,7 +405,7 @@ function TikTokPreview({
         <div className="flex items-center gap-2 text-caption text-cool-300 mt-2">
           <Music size={12} className="animate-pulse" />
           <span className="truncate">
-            {post.script?.audio_suggestion || "Nhạc nền hoa tươi nhẹ nhàng - Trending Sound"}
+            {post.script?.audio_suggestion || "Nhạc nền thịnh hành - Trending Sound"}
           </span>
         </div>
       </div>
@@ -471,7 +476,7 @@ function ZaloOAPreview({
               <div className="flex flex-col items-center gap-1">
                 <span className="text-3xl">💐</span>
                 <span className="text-xs font-bold text-cool-800 dark:text-cool-200">{productName}</span>
-                <span className="text-caption text-text-muted">Mẫu hoa tươi thiết kế trong ngày</span>
+                <span className="text-caption text-text-muted">Mẫu sản phẩm mới nhất</span>
               </div>
             )}
           </div>

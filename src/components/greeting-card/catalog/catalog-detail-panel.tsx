@@ -10,6 +10,7 @@ import { CatalogHeartsPanel } from "./catalog-hearts-panel"
 import { CatalogPoliciesSettings } from "./catalog-policies-settings"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { canEditCatalog } from "@/modules/greeting-card/domain/catalog-edit-policy"
+import { useI18n } from "@/lib/i18n"
 
 type ProductVariant = { id: string; price_vnd: number; name: string }
 type CatalogProduct = {
@@ -42,6 +43,7 @@ type Props = {
 }
 
 export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
+  const { ti } = useI18n()
   const [showPolicies, setShowPolicies] = useState(false)
   // Chính sách theo bộ sưu tập ghi đè chính sách tiệm → chỉ người sửa được cấu hình tiệm (máy chủ cũng kiểm)
   const { can } = useSession()
@@ -92,7 +94,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             <h2 className="text-title font-extrabold text-foreground">{catalogName}</h2>
             <p className="text-body-sm text-text-muted">
               {catalog?._count.sessions ?? 0} link đã gửi ·{" "}
-              {catalog?.items.length ?? 0} mẫu hoa trong bộ sưu tập
+              {catalog?.items.length ?? 0} {ti("sampleProduct").toLowerCase()} trong bộ sưu tập
             </p>
           </div>
         </div>
@@ -106,7 +108,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             className="gap-1.5 font-bold text-body-sm h-9"
           >
             <ShieldCheck size={16} />
-            <span>{showPolicies ? "Xem Mẫu Hoa" : "Chính sách & Cam kết"}</span>
+            <span>{showPolicies ? `Xem ${ti("sampleProduct")}` : "Chính sách & Cam kết"}</span>
           </Button>
           )}
           {canEdit && (
@@ -117,7 +119,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             className="bg-primary hover:bg-primary-dark text-white font-bold gap-1.5 text-body-sm h-9 shadow-sm"
           >
             <Plus size={16} />
-            <span>Thêm Mẫu Hoa</span>
+            <span>Thêm {ti("sampleProduct")}</span>
           </Button>
           )}
         </div>
@@ -144,11 +146,11 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-background rounded-2xl shadow-2xl border border-border w-full max-w-lg mx-4 p-5 flex flex-col gap-4 max-h-[80vh]">
             <div className="flex items-center justify-between">
-              <h3 className="text-title-sm font-extrabold text-foreground">Chọn mẫu hoa thêm vào bộ sưu tập</h3>
+              <h3 className="text-title-sm font-extrabold text-foreground">Chọn {ti("sampleProduct").toLowerCase()} thêm vào bộ sưu tập</h3>
               <button
                 type="button"
                 onClick={() => { setIsAddOpen(false); setProductSearch("") }}
-                aria-label="Đóng modal chọn mẫu hoa"
+                aria-label={`Đóng modal chọn ${ti("sampleProduct").toLowerCase()}`}
                 className="p-1.5 rounded-lg hover:bg-surface text-text-muted"
               >
                 <X size={18} />
@@ -223,9 +225,9 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             <Package size={28} className="text-text-muted" />
           </div>
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Bộ sưu tập chưa có mẫu hoa</p>
+            <p className="text-title-sm font-bold text-foreground">Bộ sưu tập chưa có {ti("sampleProduct").toLowerCase()}</p>
             <p className="text-body-sm text-text-muted mt-1">
-              Thêm mẫu hoa từ danh mục sản phẩm để khách có thể vuốt chọn
+              Thêm {ti("sampleProduct").toLowerCase()} từ danh mục sản phẩm để khách có thể vuốt chọn
             </p>
           </div>
           {canEdit && <Button
@@ -235,7 +237,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             className="gap-2 mt-2 font-bold"
           >
             <Plus size={16} />
-            Thêm Mẫu Hoa Đầu Tiên
+            Thêm {ti("sampleProduct")} Đầu Tiên
           </Button>}
         </div>
       ) : (
@@ -298,7 +300,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
         <div className="flex items-center gap-2 p-3 rounded-xl bg-success-bg border border-success/20 text-success">
           <CheckCircle size={16} />
           <p className="text-caption font-bold">
-            Bộ sưu tập sẵn sàng — {catalog.items.length} mẫu hoa, {catalog._count.sessions} link đã gửi tới khách
+            Bộ sưu tập sẵn sàng — {catalog.items.length} {ti("sampleProduct").toLowerCase()}, {catalog._count.sessions} link đã gửi tới khách
           </p>
         </div>
       )}

@@ -14,6 +14,7 @@ import { QuickCollectionModal } from "@/components/catalog/quick-collection-moda
 import type { ProductMatchCandidate } from "@/modules/products/domain/budget-flower-matcher"
 import type { QuickCollectionCandidate } from "@/modules/catalog-links/domain/quick-collection-engine"
 import { toQuickCollectionCandidate } from "@/modules/catalog-links/domain/quick-collection-candidate"
+import { useI18n } from "@/lib/i18n"
 
 /**
  * Trang Catalog & Website.
@@ -198,6 +199,10 @@ function PageHeader({
   onOpenQuickCollection?: (() => void) | undefined
   onOpenBudgetMatcher?: (() => void) | undefined
 }) {
+  const { ti } = useI18n()
+  const sampleProd = ti("sampleProduct")
+  const budgetBtnLabel = sampleProd ? `Tìm ${sampleProd.toLowerCase()} theo ngân sách` : "Tìm theo ngân sách"
+
   return (
     <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-[18px] py-4">
       <div className="text-title font-extrabold text-primary">Catalog & Website</div>
@@ -219,7 +224,7 @@ function PageHeader({
             onClick={onOpenBudgetMatcher}
             className="flex items-center gap-1.5 text-xs"
           >
-            Tìm hoa theo ngân sách
+            {budgetBtnLabel}
           </Button>
         )}
         <Button variant="ghost" onClick={onBack} className="flex items-center gap-1.5">

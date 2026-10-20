@@ -24,45 +24,53 @@ import {
   type SaaSAdminCriteriaConfig,
 } from "@/components/market-intelligence/saas-admin-criteria-modal";
 import { useMarketIntelligenceData } from "@/components/market-intelligence/use-market-intelligence-data";
+import { useSession } from "@/lib/session";
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile";
+import type { IndustryTerminology } from "@/modules/organization/domain/industry-profile";
 
-const GUIDANCE_MAP: Record<FeatureKey, { badge: string; title: string; description: string; tips: string[] }> = {
-  market: {
-    badge: "HƯỚNG DẪN XU HƯỚNG THỊ TRƯỜNG TOÀN CẢNH",
-    title: "Báo Cáo Nhịp Đập & Cơ Hội Kinh Doanh Vĩ Mô Toàn Ngành",
-    description:
-      "Bức tranh toàn cảnh về nhu cầu hoa tươi, phong cách phối màu và dịp lễ đang lên ngôi trên cả nước. Cài đặt lịch quét tự động vĩ mô mỗi sáng và biểu mẫu dữ liệu trong nút Cài Đặt.",
-    tips: [
-      "Bản đồ nhịp đập 4 chỉ số giúp chủ tiệm scan nhanh các cơ hội quan trọng nhất.",
-      "Nhấp vào từng thẻ cơ hội để mở ngăn kéo Micro Story xem câu chuyện và kịch bản hook.",
-      "Dễ dàng cấu hình giờ chạy tự động và biểu mẫu dữ liệu trong nút Cài Đặt góc trên.",
-    ],
-  },
-  keyword: {
-    badge: "HƯỚNG DẪN QUÉT THEO TỪ KHÓA RIÊNG CỦA TIỆM",
-    title: "Thẩm Định Nhu Cầu Theo Chủ Đề Hoa Ngách & Dòng Sản Phẩm Của Tiệm",
-    description:
-      "Chủ động nhập từ khóa, chủ đề hoa hoặc bộ sưu tập tiệm định làm để nhận ngay lời khuyên thương mại, kịch bản video và dẫn chứng thực tế. Cài đặt danh sách từ khóa ghim tự động mỗi sáng trong Settings.",
-    tips: [
-      "Nhập từ khóa hoa cụ thể để thử nghiệm ý tưởng trước khi nhập hoa về cắm.",
-      "Tận dụng nút 'Tùy chỉnh nâng cao' để lọc chuẩn xác theo khu vực địa lý và khung thời gian.",
-      "Ghim sẵn 3–5 loài hoa chủ lực của tiệm trong Settings để AI tự động quét mỗi sáng lúc mở cửa.",
-    ],
-  },
-  product: {
-    badge: "HƯỚNG DẪN QUÉT THEO ẢNH MẪU HOA (VISION AI)",
-    title: "Bóc Tách Ảnh Bình/Bó Hoa Tiệm Tự Cắm & Đối Soát Trend Fit",
-    description:
-      "Đưa ảnh thật mẫu hoa của tiệm vào. Vision AI bóc tách cấu trúc hoa nguyên tử, chấm điểm khớp xu hướng và chỉ rõ chỉ dẫn 3 vùng: GIỮ hoa đẹp / CẢI TIẾN giấy gói, nơ / THỬ NGHIỆM biến thể mới. Cấu hình tiêu chí trong Settings.",
-    tips: [
-      "Khác biệt cốt lõi: Đưa ảnh thật của mẫu hoa vào thay vì chỉ gõ từ khóa.",
-      "Bóc tách nguyên tử từng loại hoa/lá/phụ kiện cho phép thợ hoa nhấp chuột sửa trực tiếp.",
-      "Tùy chỉnh ngưỡng điểm Trend Fit và các thành phần bóc tách mong muốn trong nút Cài Đặt.",
-    ],
-  },
-};
+function buildGuidanceMap(ti: IndustryTerminology): Record<FeatureKey, { badge: string; title: string; description: string; tips: string[] }> {
+  return {
+    market: {
+      badge: "HƯỚNG DẪN XU HƯỚNG THỊ TRƯỜNG TOÀN CẢNH",
+      title: "Báo Cáo Nhịp Đập & Cơ Hội Kinh Doanh Vĩ Mô Toàn Ngành",
+      description:
+        `Bức tranh toàn cảnh về nhu cầu ${ti.sampleProduct}, phong cách thiết kế và dịp lễ đang lên ngôi trên cả nước. Cài đặt lịch quét tự động vĩ mô mỗi sáng và biểu mẫu dữ liệu trong nút Cài Đặt.`,
+      tips: [
+        "Bản đồ nhịp đập 4 chỉ số giúp chủ tiệm scan nhanh các cơ hội quan trọng nhất.",
+        "Nhấp vào từng thẻ cơ hội để mở ngăn kéo Micro Story xem câu chuyện và kịch bản hook.",
+        "Dễ dàng cấu hình giờ chạy tự động và biểu mẫu dữ liệu trong nút Cài Đặt góc trên.",
+      ],
+    },
+    keyword: {
+      badge: "HƯỚNG DẪN QUÉT THEO TỪ KHÓA RIÊNG CỦA TIỆM",
+      title: `Thẩm Định Nhu Cầu Theo Chủ Đề ${ti.sampleProduct} Ngách & Dòng Sản Phẩm`,
+      description:
+        `Chủ động nhập từ khóa, chủ đề ${ti.sampleProduct} hoặc bộ sưu tập định làm để nhận ngay lời khuyên thương mại, kịch bản video và dẫn chứng thực tế. Cài đặt danh sách từ khóa ghim tự động mỗi sáng trong Settings.`,
+      tips: [
+        `Nhập từ khóa ${ti.sampleProduct} cụ thể để thử nghiệm ý tưởng trước khi sản xuất.`,
+        "Tận dụng nút 'Tùy chỉnh nâng cao' để lọc chuẩn xác theo khu vực địa lý và khung thời gian.",
+        `Ghim sẵn 3–5 dòng ${ti.sampleProduct} chủ lực trong Settings để AI tự động quét mỗi sáng lúc mở cửa.`,
+      ],
+    },
+    product: {
+      badge: `HƯỚNG DẪN QUÉT THEO ẢNH MẪU SẢN PHẨM (VISION AI)`,
+      title: `Bóc Tách Ảnh ${ti.sampleProduct} Tiệm Tự Thiết Kế & Đối Soát Trend Fit`,
+      description:
+        `Đưa ảnh thật ${ti.sampleProduct} của tiệm vào. Vision AI bóc tách cấu trúc nguyên tử, chấm điểm khớp xu hướng và chỉ rõ chỉ dẫn 3 vùng: GIỮ tốt / CẢI TIẾN bao bì, phụ kiện / THỬ NGHIỆM biến thể mới. Cấu hình tiêu chí trong Settings.`,
+      tips: [
+        `Khác biệt cốt lõi: Đưa ảnh thật của ${ti.sampleProduct} vào thay vì chỉ gõ từ khóa.`,
+        `Bóc tách nguyên tử từng ${ti.rawMaterialItem}/phụ kiện cho phép nhấp chuột sửa trực tiếp.`,
+        "Tùy chỉnh ngưỡng điểm Trend Fit và các thành phần bóc tách mong muốn trong nút Cài Đặt.",
+      ],
+    },
+  };
+}
 
 export default function MarketIntelligencePage() {
   const router = useRouter();
+  const { organization } = useSession();
+  const ti = getIndustryTerminology(organization?.industry);
+  const GUIDANCE_MAP = buildGuidanceMap(ti);
   const [activeTab, setActiveTab] = useState<FeatureKey>("market");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);

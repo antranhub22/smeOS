@@ -17,9 +17,9 @@ import type { SocialPostPreviewProps } from "./social-post-preview"
  */
 export function LinkedInPreview({
   post,
-  productName = "Hoa tươi quà tặng doanh nghiệp",
+  productName = "Sản phẩm quà tặng cao cấp",
   productImageUrl,
-  shopName = "FloraOS Corporate Flowers",
+  shopName = "smeOS Business Solutions",
 }: SocialPostPreviewProps) {
   return (
     <div className="max-w-md mx-auto rounded-xl border border-cool-200 dark:border-cool-800 bg-white dark:bg-cool-900 shadow-md overflow-hidden text-cool-900 dark:text-cool-100 font-sans">

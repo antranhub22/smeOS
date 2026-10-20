@@ -2,7 +2,14 @@ import type { AdapterRun } from "@/core/ai/gateway"
 import { extractJsonText } from "@/core/ai/adapters/llm-json"
 import type { LLMProvider } from "@/core/ports/llm-provider"
 
-import { parseProductVisionJson, PRODUCT_VISION_SYSTEM_PROMPT, productVisionUserText, type VisionExtractionResult } from "./product-vision-prompt"
+import {
+  getProductVisionSystemPrompt,
+  parseProductVisionJson,
+  PRODUCT_VISION_SYSTEM_PROMPT,
+  productVisionUserText,
+  type VisionExtractionResult,
+} from "./product-vision-prompt"
+import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 
 /** 60 giây: một ảnh + ~1.500 token JSON. Hết hạn thì cổng AI chuyển nhà cung cấp kế tiếp. */
 const VISION_TIMEOUT_MS = 60_000
@@ -14,24 +21,33 @@ const VISION_TIMEOUT_MS = 60_000
  */
 export function createProductVisionAdapter(
   llm: LLMProvider,
-  input: { image: { mimeType: string; base64: string }; productTitle?: string | undefined },
+  input: {
+    image: { mimeType: string; base64: string }
+    productTitle?: string | undefined
+    industryPlugin?: IndustryPluginContract | undefined
+  },
   organizationId: string
 ): AdapterRun<VisionExtractionResult> {
   return async (model) => {
     const batDau = Date.now()
     try {
+      const systemPrompt = input.industryPlugin
+        ? getProductVisionSystemPrompt(input.industryPlugin)
+        : PRODUCT_VISION_SYSTEM_PROMPT
+      const userPrompt = productVisionUserText(input.productTitle, input.industryPlugin)
+
       const res = await llm.complete({
         organizationId,
         model: model.key,
-        system: PRODUCT_VISION_SYSTEM_PROMPT,
-        prompt: productVisionUserText(input.productTitle),
+        system: systemPrompt,
+        prompt: userPrompt,
         images: [input.image],
         jsonSchema: { type: "object" },
         maxTokens: 1500,
         timeoutMs: VISION_TIMEOUT_MS,
       })
-      const output = parseProductVisionJson(extractJsonText(res.text), input.productTitle)
-      if (!output) return { ok: false, message: "Mô hình không trả JSON đọc được hoặc không có thành phần hoa" }
+      const output = parseProductVisionJson(extractJsonText(res.text), input.productTitle, input.industryPlugin)
+      if (!output) return { ok: false, message: "Mô hình không trả JSON đọc được hoặc không có thành phần sản phẩm" }
       return {
         ok: true,
         output,

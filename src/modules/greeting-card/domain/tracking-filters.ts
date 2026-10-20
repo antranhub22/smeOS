@@ -1,6 +1,7 @@
 /** Nhóm lọc nhanh cho tab Theo dõi tiến độ (toàn tiệm, chỉ xem). Pure TypeScript. */
 import type { StuckInfo } from "./step-sla"
 import type { TrackingPipelineStepId } from "./tracking-pipeline-types"
+import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 
 export type TrackingCategory = "ALL" | "STUCK" | "BROWSING" | "PAYMENT" | "ARRANGING" | "DELIVERING" | "COMPLETED"
 
@@ -9,10 +10,38 @@ export const TRACKING_CATEGORIES: Array<{ id: TrackingCategory; label: string; s
   { id: "STUCK", label: "Đang kẹt" },
   { id: "BROWSING", label: "Khách đang chọn", steps: ["STEP_1_OPENED", "STEP_2_CHOOSING", "STEP_3_FILLING_FORM"] },
   { id: "PAYMENT", label: "Chờ xác nhận tiền", steps: ["STEP_4_PAYMENT_PENDING"] },
-  { id: "ARRANGING", label: "Đang làm hoa", steps: ["STEP_5_PAYMENT_CONFIRMED", "STEP_6_ARRANGING", "STEP_7_READY_QC"] },
+  { id: "ARRANGING", label: "Đang thực hiện", steps: ["STEP_5_PAYMENT_CONFIRMED", "STEP_6_ARRANGING", "STEP_7_READY_QC"] },
   { id: "DELIVERING", label: "Đang giao", steps: ["STEP_8_DELIVERING"] },
   { id: "COMPLETED", label: "Hoàn tất", steps: ["STEP_9_COMPLETED"] },
 ]
+
+export function getIndustryTrackingCategories(
+  industryKey?: string | null
+): Array<{ id: TrackingCategory; label: string; steps?: TrackingPipelineStepId[] }> {
+  const orderTerms = getIndustryOrderTerms(industryKey)
+  const isStay = orderTerms.fulfillmentFlow === "CALENDAR_STAY"
+  return [
+    { id: "ALL", label: "Tất cả" },
+    { id: "STUCK", label: "Đang kẹt" },
+    {
+      id: "BROWSING",
+      label: isStay ? "Khách đang chọn phòng" : "Khách đang chọn",
+      steps: ["STEP_1_OPENED", "STEP_2_CHOOSING", "STEP_3_FILLING_FORM"],
+    },
+    { id: "PAYMENT", label: "Chờ xác nhận tiền", steps: ["STEP_4_PAYMENT_PENDING"] },
+    {
+      id: "ARRANGING",
+      label: orderTerms.productionStepLabel ? `Đang ${orderTerms.productionStepLabel.toLowerCase()}` : "Đang thực hiện",
+      steps: ["STEP_5_PAYMENT_CONFIRMED", "STEP_6_ARRANGING", "STEP_7_READY_QC"],
+    },
+    {
+      id: "DELIVERING",
+      label: isStay ? "Nhận phòng / Lưu trú" : orderTerms.trackingDeliveryStepLabel || "Đang giao",
+      steps: ["STEP_8_DELIVERING"],
+    },
+    { id: "COMPLETED", label: "Hoàn tất", steps: ["STEP_9_COMPLETED"] },
+  ]
+}
 
 interface Filterable {
   currentStepId: TrackingPipelineStepId

@@ -3,6 +3,7 @@ import { conflict, validationFailed, unprocessable } from "@/core/http/errors"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { loadPublicSession } from "./brochure-session-access"
+import { queueStaffNotification } from "./notify-staff"
 
 const MAX_PAYMENT_PROOF_BYTES = 5 * 1024 * 1024 // 5 MB
 
@@ -103,6 +104,17 @@ export async function uploadPaymentProof(
   } else {
     await repo.updateSession(session.id, { paymentProofAssetId: assetId })
   }
+
+  const staffEvent = purpose === "BALANCE" ? "SECOND_PAYMENT_REPORTED" : "PAYMENT_REPORTED"
+  queueStaffNotification(session.organization_id, staffEvent, {
+    orderId: order?.id ?? null,
+    orderCode: order?.code ?? null,
+    sessionId: session.id,
+    customerName: session.customer_name ?? "Khách hàng",
+    customerPhone: session.customer_phone ?? null,
+    amountVnd: total,
+    assignedSaleId: session.sale_id ?? null,
+  })
 
   // Chạy ngầm AI Vision bóc tách và đối soát bill (fire-and-forget, không chờ kết quả để không làm nghẽn khách)
   import("./process-payment-proof-job")

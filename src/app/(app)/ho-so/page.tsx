@@ -216,7 +216,8 @@ export default function ProfilePage() {
 function StorePoliciesSection() {
   const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const [saving, setSaving] = useState(false)
-  const policies = org.data ? parseStorePolicies(org.data.settings) : null
+  const industryKey = typeof org.data?.settings?.industry === "string" ? org.data.settings.industry : null
+  const policies = org.data ? parseStorePolicies(org.data.settings, industryKey) : null
 
   async function handleSave(updatedPolicies: StorePoliciesConfig): Promise<boolean> {
     setSaving(true)
@@ -247,6 +248,7 @@ function StorePoliciesSection() {
       initialPolicies={policies}
       onSave={handleSave}
       saving={saving || org.isLoading}
+      industryKey={industryKey}
     />
   )
 }

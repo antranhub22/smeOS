@@ -16,18 +16,18 @@ const requestSchema = z.object({
 })
 
 const STYLE_PROMPTS: Record<string, string> = {
-  luxurious: "Sang trọng, đẳng cấp, tinh tế chuẩn boutique hoa cao cấp.",
-  sweet: "Ngọt ngào, ấm áp, truyền cảm hứng và chạm đến cảm xúc người nhận hoa.",
+  luxurious: "Sang trọng, đẳng cấp, tinh tế chuẩn boutique cao cấp.",
+  sweet: "Ngọt ngào, ấm áp, truyền cảm hứng và chạm đến cảm xúc người nhận.",
   concise: "Ngắn gọn, súc tích, trực diện, kích thích hành động nhanh.",
-  creative: "Sáng tạo, độc đáo, mang đậm dấu ấn nghệ nhân cắm hoa nghệ thuật.",
+  creative: "Sáng tạo, độc đáo, mang đậm dấu ấn nghệ nhân thủ công sáng tạo.",
 }
 
 const FIELD_GUIDES: Record<string, string> = {
-  gift: "Đây là một ĐẶC QUYỀN / QUÀ TẶNG KÈM khi mua hoa tươi (ví dụ: thiệp tay cao cấp, gói hoa vintage, voucher...). Hãy diễn đạt hấp dẫn, làm nổi bật giá trị tặng thêm.",
-  guarantee: "Đây là một CAM KẾT CHẤT LƯỢNG / DỊCH VỤ / BẢO HIỂM HOA (ví dụ: bảo hành tươi 3 ngày, gửi ảnh duyệt trước, giao hỏa tốc...). Hãy diễn đạt tạo niềm tin vững chắc, an tâm tuyệt đối.",
-  cta: "Đây là một CÂU KÊU GỌI HÀNH ĐỘNG (CTA) cho khách mua hoa. Hãy kích thích khách nhắn tin/đặt ngay.",
-  description: "Đây là câu GIỚI THIỆU / MÔ TẢ tiệm hoa. Hãy diễn đạt chuyên nghiệp và cuốn hút.",
-  general: "Hãy trau chuốt câu từ ngành hoa tươi để nghe chuyên nghiệp, hấp dẫn và tinh tế hơn.",
+  gift: "Đây là một ĐẶC QUYỀN / QUÀ TẶNG KÈM khi mua sản phẩm (ví dụ: thiệp tay cao cấp, hộp quà vintage, voucher...). Hãy diễn đạt hấp dẫn, làm nổi bật giá trị tặng thêm.",
+  guarantee: "Đây là một CAM KẾT CHẤT LƯỢNG / DỊCH VỤ / BẢO HÀNH SẢN PHẨM (ví dụ: cam kết chuẩn mô tả, gửi ảnh duyệt trước, giao hỏa tốc...). Hãy diễn đạt tạo niềm tin vững chắc, an tâm tuyệt đối.",
+  cta: "Đây là một CÂU KÊU GỌI HÀNH ĐỘNG (CTA) cho khách mua hàng. Hãy kích thích khách nhắn tin/đặt ngay.",
+  description: "Đây là câu GIỚI THIỆU / MÔ TẢ thương hiệu hoặc cửa hàng. Hãy diễn đạt chuyên nghiệp và cuốn hút.",
+  general: "Hãy trau chuốt câu từ thương mại để nghe chuyên nghiệp, hấp dẫn và tinh tế hơn.",
 }
 
 export interface RewriteResultOutput {
@@ -51,11 +51,11 @@ export const POST = handle(async (request) => {
     getBrandProfile(ctx).catch(() => null),
   ])
 
-  const shopName = bizProfile?.display_name || "Tiệm hoa tươi"
+  const shopName = bizProfile?.display_name || "Cửa hàng"
   const shopTone = brandProfile?.tone_of_voice || "romantic"
 
-  const prompt = `Bạn là cố vấn thương hiệu và chuyên gia viết nội dung cao cấp cho cửa hàng hoa tươi Việt Nam ("${shopName}").
-Nhiệm vụ: Viết lại và nâng cấp câu văn của chủ tiệm hoa sau đây để trở nên chuyên nghiệp, giàu sức hút bán lẻ hoa tươi hơn.
+  const prompt = `Bạn là cố vấn thương hiệu và chuyên gia viết nội dung cao cấp cho thương hiệu bán lẻ Việt Nam ("${shopName}").
+Nhiệm vụ: Viết lại và nâng cấp câu văn của chủ cửa hàng sau đây để trở nên chuyên nghiệp, giàu sức hút thương mại hơn.
 
 Văn bản gốc của chủ tiệm:
 "${text}"
@@ -108,7 +108,7 @@ Chỉ trả về JSON thuần túy, không kèm giải thích ngoài lề.`
           suggestions: [
             `${text} (Được tuyển chọn & thực hiện thủ công)`,
             `Tặng kèm ${text.toLowerCase()} thiết kế độc quyền`,
-            `${text} — Cam kết chất lượng dịch vụ hoa tươi`,
+            `${text} — Cam kết chất lượng dịch vụ uy tín`,
           ],
         },
         scores: { factual: 0.8, brand: 0.8 },

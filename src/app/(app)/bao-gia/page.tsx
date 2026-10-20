@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 type ProductItem = {
   id: string
@@ -35,53 +37,55 @@ type ProductItem = {
 const SAMPLE_PRODUCTS: ProductItem[] = [
   {
     id: "p1",
-    title: "Bó Hoa Hồng Đỏ Lãng Mạn",
+    title: "Sản phẩm mẫu 01",
     price: 599000,
-    category: "Bó hoa",
+    category: "Danh mục A",
     image_url: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80",
-    description: "Hồng đỏ Đà Lạt tuyển chọn kết hợp lá bạc nhập khẩu",
-    composition: ["15 cành hồng đỏ", "Lá bạc nhập", "Giấy gói cao cấp"],
+    description: "Nguyên liệu cao cấp tuyển chọn, tinh tế từng chi tiết",
+    composition: ["Thành phần chính", "Phụ liệu nhập", "Bao bì cao cấp"],
   },
   {
     id: "p2",
-    title: "Giỏ Hoa Khai Trương Hồng Phát",
+    title: "Sản phẩm mẫu 02",
     price: 850000,
-    category: "Giỏ hoa",
+    category: "Danh mục B",
     image_url: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=600&q=80",
-    description: "Tone vàng cam rực rỡ mang tài lộc và may mắn",
-    composition: ["Hoa đồng tiền vàng", "Lan vũ nữ", "Hồng cam spirit", "Giỏ mây"],
+    description: "Tone màu nổi bật, sang trọng và ý nghĩa",
+    composition: ["Nguyên liệu chính", "Phụ liệu trang trí", "Bao bì"],
   },
   {
     id: "p3",
-    title: "Bó Hoa Cẩm Tú Cầu Xanh Lam",
+    title: "Sản phẩm mẫu 03",
     price: 649000,
-    category: "Bó hoa",
+    category: "Danh mục A",
     image_url: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80",
-    description: "Cẩm tú cầu Đà Lạt nở rộ phối cùng baby trắng tinh khôi",
-    composition: ["3 bông cẩm tú cầu", "Hoa baby trắng", "Lá khuynh diệp"],
+    description: "Phối hợp hài hòa, tinh tế và thanh lịch",
+    composition: ["Nguyên liệu chính", "Phụ liệu", "Trang trí"],
   },
   {
     id: "p4",
-    title: "Hộp Hoa Sinh Nhật Ngọt Ngào",
+    title: "Sản phẩm mẫu 04",
     price: 699000,
-    category: "Hộp hoa",
+    category: "Danh mục C",
     image_url: "https://images.unsplash.com/photo-1533616688419-b7a585564566?auto=format&fit=crop&w=600&q=80",
-    description: "Hộp hoa tròn tone hồng pastel thanh lịch và nữ tính",
-    composition: ["Hồng kem dâu", "Cát tường trắng", "Cúc tana", "Hộp quà"],
+    description: "Thiết kế thanh lịch, nữ tính và phong cách",
+    composition: ["Nguyên liệu A", "Nguyên liệu B", "Trang trí", "Hộp quà"],
   },
   {
     id: "p5",
-    title: "Bình Hoa Sen Trắng Thanh Nhã",
+    title: "Sản phẩm mẫu 05",
     price: 1200000,
-    category: "Bình hoa",
+    category: "Danh mục D",
     image_url: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=600&q=80",
-    description: "Hoa sen quan âm trắng thuần khiết phối gương sen",
-    composition: ["10 bông sen quan âm", "Gương sen", "Lá sen non", "Bình gốm"],
+    description: "Tinh tế, sang trọng và đẳng cấp",
+    composition: ["Nguyên liệu chính", "Phụ liệu", "Trang trí", "Bình/Hộp đựng"],
   },
 ]
 
 export default function BaoGiaPage() {
   const router = useRouter()
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const [activeTab, setActiveTab] = useState<"CUSTOMER" | "PARTNER">("CUSTOMER")
   const [dangTai, setDangTai] = useState(true)
   const [products, setProducts] = useState<ProductItem[]>([])
@@ -98,12 +102,12 @@ export default function BaoGiaPage() {
   const [analyzing, setAnalyzing] = useState(false)
   const [analyzedSuccess, setAnalyzedSuccess] = useState(false)
   const [uploadedPreview, setUploadedPreview] = useState<string | null>(null)
-  const [analyzedTitle, setAnalyzedTitle] = useState("Bó hoa hướng dương rực rỡ")
+  const [analyzedTitle, setAnalyzedTitle] = useState("Sản phẩm vừa phân tích")
   const [analyzedPrice, setAnalyzedPrice] = useState("680000")
   const [analyzedComposition, setAnalyzedComposition] = useState("7 cành hướng dương, hoa mõm sói trắng, lá bạc")
 
   // Partner form state
-  const [partnerItemName, setPartnerItemName] = useState("Bó hoa hồng đỏ 15 cành")
+  const [partnerItemName, setPartnerItemName] = useState("Sản phẩm đặt hàng")
   const [partnerPrice, setPartnerPrice] = useState("450000")
   const [deliveryFee, setDeliveryFee] = useState("30000")
   const [deadlineTime, setDeadlineTime] = useState("14:30 hôm nay")
@@ -117,12 +121,12 @@ export default function BaoGiaPage() {
         if (rawList.length > 0) {
           const mapped: ProductItem[] = rawList.map((item: Record<string, unknown>, idx: number) => ({
             id: String(item.id || `prod-${idx}`),
-            title: String(item.title || item.name || "Mẫu hoa tươi"),
+            title: String(item.title || item.name || ti.sampleProduct),
             price: Number(item.price || 500000),
-            category: String(item.category || "Bó hoa"),
+            category: String(item.category || ti.catalogTitle),
             image_url: String(item.thumbnail_url || item.image_url || (SAMPLE_PRODUCTS[idx % SAMPLE_PRODUCTS.length]?.image_url ?? "")),
-            description: String(item.description || "Hoa tươi tuyển chọn"),
-            composition: Array.isArray(item.composition) ? (item.composition as string[]) : ["Hoa chính", "Lá phụ", "Phụ liệu"],
+            description: String(item.description || `${ti.sampleProduct} tuyển chọn`),
+            composition: Array.isArray(item.composition) ? (item.composition as string[]) : ["Nguyên liệu chính", "Phụ liệu", "Trang trí"],
           }))
           setProducts(mapped)
           return
@@ -174,7 +178,7 @@ export default function BaoGiaPage() {
       setTimeout(() => {
         setAnalyzing(false)
         setAnalyzedSuccess(true)
-        setAnalyzedTitle("Bó hoa tươi nghệ thuật mới")
+        setAnalyzedTitle(`${ti.sampleProduct} nghệ thuật mới`)
         setAnalyzedPrice("720000")
         setAnalyzedComposition("Hoa hồng Ohara nhập, baby trắng, lá bạc cao cấp")
       }, 1200)
@@ -188,9 +192,10 @@ export default function BaoGiaPage() {
       id: newId,
       title: analyzedTitle,
       price: Number(analyzedPrice) || 700000,
-      category: "Bó hoa",
+      category: ti.catalogTitle,
       image_url: uploadedPreview || (SAMPLE_PRODUCTS[0]?.image_url ?? ""),
-      description: "Mẫu hoa tươi vừa phân tích từ ảnh",
+      description: `${ti.sampleProduct} vừa phân tích từ ảnh`,
+
       composition: analyzedComposition.split(",").map((s) => s.trim()),
     }
     setProducts((prev) => [newItem, ...prev])
@@ -214,7 +219,7 @@ export default function BaoGiaPage() {
       )
       .join("\n\n")
 
-    navigator.clipboard.writeText(`BẢNG BÁO GIÁ HOA TƯƠI\n\n${text}\n\nLiên hệ đặt hoa: Hotline của Tiệm`)
+    navigator.clipboard.writeText(`BẢNG BÁO GIÁ SẢN PHẨM\n\n${text}\n\nLiên hệ đặt hàng: Hotline của Cửa hàng`)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -269,7 +274,7 @@ export default function BaoGiaPage() {
                 : "bg-surface border border-border text-text hover:bg-surface-alt"
             }`}
           >
-            Gửi khách mua hoa (Store Admin)
+            Gửi khách mua (Store Admin)
           </button>
           <button
             type="button"
@@ -280,13 +285,13 @@ export default function BaoGiaPage() {
                 : "bg-surface border border-border text-text hover:bg-surface-alt"
             }`}
           >
-            Báo giá đối tác Shop (Điện Hoa)
+            Báo giá đối tác Shop
           </button>
         </div>
 
         <span className="text-caption text-text-muted hidden sm:inline-block">
           {activeTab === "CUSTOMER"
-            ? "Đã chọn " + selectedProducts.length + " mẫu hoa vào bảng giá"
+            ? `Đã chọn ${selectedProducts.length} ${ti.sampleProduct} vào bảng giá`
             : "Chế độ giao việc cho Shop gia công điện hoa"}
         </span>
       </div>
@@ -335,7 +340,7 @@ export default function BaoGiaPage() {
                   <div className="flex items-center justify-between border-b border-border pb-2">
                     <div className="flex items-center gap-2 text-body-sm font-semibold text-text">
                       <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
-                      <span>Tải ảnh hoa mới để hệ thống nhận diện & tạo thẻ báo giá</span>
+                      <span>Tải ảnh {ti.sampleProduct} mới để hệ thống nhận diện & tạo thẻ báo giá</span>
                     </div>
                   </div>
 
@@ -353,7 +358,7 @@ export default function BaoGiaPage() {
                     >
                       <UploadCloud className="w-8 h-8 text-primary" aria-hidden="true" />
                       <div className="text-body-sm font-bold text-text">
-                        Bấm để tải ảnh mẫu hoa hoặc kéo thả vào đây
+                        Bấm để tải ảnh {ti.sampleProduct} hoặc kéo thả vào đây
                       </div>
                       <div className="text-caption text-text-muted">
                         Hỗ trợ ảnh chụp điện thoại (JPG, PNG, WebP)
@@ -438,7 +443,7 @@ export default function BaoGiaPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-body-sm font-semibold text-text">
                         <Filter className="w-4 h-4 text-primary" aria-hidden="true" />
-                        <span>Lọc mẫu hoa theo nhu cầu của khách</span>
+                        <span>Lọc {ti.sampleProduct} theo nhu cầu của khách</span>
                       </div>
                       <span className="text-caption text-text-muted">
                         {filteredProducts.length} mẫu phù hợp
@@ -477,11 +482,11 @@ export default function BaoGiaPage() {
                       <span className="text-caption text-text-muted block mb-1.5">Loại sản phẩm:</span>
                       <div className="flex flex-wrap gap-1.5">
                         {[
-                          { id: "ALL", label: "Tất cả loại hoa" },
-                          { id: "Bó hoa", label: "Bó hoa" },
-                          { id: "Giỏ hoa", label: "Giỏ hoa" },
-                          { id: "Hộp hoa", label: "Hộp hoa" },
-                          { id: "Bình hoa", label: "Bình hoa" },
+                          { id: "ALL", label: `Tất cả ${ti.catalogTitle}` },
+                          { id: "Danh mục A", label: "Danh mục A" },
+                          { id: "Danh mục B", label: "Danh mục B" },
+                          { id: "Danh mục C", label: "Danh mục C" },
+                          { id: "Danh mục D", label: "Danh mục D" },
                         ].map((c) => (
                           <button
                             key={c.id}
@@ -566,7 +571,7 @@ export default function BaoGiaPage() {
                 <div className="rounded-xl border-2 border-dashed border-border p-4 bg-surface-alt space-y-4">
                   <div className="text-center pb-2 border-b border-border">
                     <div className="text-title-sm font-extrabold text-primary tracking-wide uppercase">
-                      BỘ MẪU HOA GỢI Ý
+                      BỘ {ti.sampleProduct.toUpperCase()} GỢI Ý
                     </div>
                     <div className="text-caption text-text-muted mt-0.5">
                       Gợi ý theo ngân sách và dịp tặng của quý khách
@@ -575,7 +580,7 @@ export default function BaoGiaPage() {
 
                   {selectedProducts.length === 0 ? (
                     <div className="py-8 text-center text-text-muted text-caption">
-                      Chưa có mẫu hoa nào được chọn. Hãy bấm chọn mẫu hoa bên trái hoặc tải ảnh mới để đưa vào bảng giá.
+                      Chưa có {ti.sampleProduct} nào được chọn. Hãy bấm chọn {ti.sampleProduct} bên trái hoặc tải ảnh mới để đưa vào bảng giá.
                     </div>
                   ) : (
                     <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
@@ -707,10 +712,10 @@ export default function BaoGiaPage() {
                   >
                     <UploadCloud className="w-6 h-6 text-primary" aria-hidden="true" />
                     <span className="text-body-sm font-bold text-text">
-                      Tải ảnh mẫu hoa khách yêu cầu để phân tích thành phần cành
+                      Tải ảnh {ti.sampleProduct} khách yêu cầu để phân tích thành phần
                     </span>
                     <span className="text-caption text-text-muted">
-                      Hệ thống tự động trích xuất loại hoa và gợi ý giá gia công
+                      Hệ thống tự động trích xuất thành phần và gợi ý giá gia công
                     </span>
                   </label>
                 </div>
@@ -739,7 +744,7 @@ export default function BaoGiaPage() {
               <Card className="p-4 bg-surface border-border space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-caption font-semibold text-text">
-                    Chọn nhanh mẫu hoa từ kho để điền thông số:
+                    Chọn nhanh {ti.sampleProduct} từ kho để điền thông số:
                   </span>
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-1">
@@ -771,7 +776,7 @@ export default function BaoGiaPage() {
                 </div>
                 <div>
                   <h2 className="text-title-sm font-bold text-text">
-                    Thông tin Thẻ báo giá cho Shop đối tác (Gia công cắm hoa)
+                    Thông tin Thẻ báo giá cho Shop đối tác (Gia công {ti.makerAction})
                   </h2>
                   <p className="text-caption text-text-muted">
                     Áp dụng cho các đơn giao việc trong mạng lưới điều phối điện hoa
@@ -782,7 +787,7 @@ export default function BaoGiaPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label htmlFor="partner-item-name" className="text-caption font-semibold text-text">
-                    Tên mẫu hoa cần gia công
+                    Tên {ti.sampleProduct} cần gia công
                   </label>
                   <input
                     id="partner-item-name"

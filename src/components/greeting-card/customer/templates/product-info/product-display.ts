@@ -2,6 +2,7 @@ import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/gree
 import {
   DEFAULT_ENABLED_FIELDS,
   OPTIONAL_DISPLAY_FIELDS,
+  getOptionalDisplayFields,
   type OptionalDisplayField,
 } from "@/modules/greeting-card/domain/display-fields"
 
@@ -53,10 +54,13 @@ export interface ProductDisplay {
 export function toProductDisplay(
   p: GreetingCatalogProduct,
   enabled: readonly OptionalDisplayField[] = DEFAULT_ENABLED_FIELDS,
+  industryKey?: string,
 ): ProductDisplay {
   const on = new Set(enabled)
   const value = (k: OptionalDisplayField) => (on.has(k) ? FIELD_VALUE[k](p) : null)
   const priceLabel = formatVnd(p.price)
+  const displayFields = getOptionalDisplayFields(industryKey)
+
   return {
     title: p.name,
     code: p.code,
@@ -64,7 +68,8 @@ export function toProductDisplay(
     summary: value("flowers"),
     tags: TAG_FIELDS.map(value).filter((v): v is string => Boolean(v)),
     story: value("description"),
-    specs: OPTIONAL_DISPLAY_FIELDS.filter((f) => f.key !== "description")
+    specs: displayFields
+      .filter((f) => on.has(f.key) && f.key !== "description")
       .map((f): { label: string; value: string | null } => ({ label: f.label, value: value(f.key) }))
       .filter((r): r is { label: string; value: string } => r.value !== null),
     ariaLabel: `${p.name}, mã ${p.code}, ${priceLabel}`,
@@ -72,12 +77,16 @@ export function toProductDisplay(
 }
 
 /** Dòng so sánh: trường bắt buộc + mọi trường đang bật, cùng thứ tự với bảng thông số. */
-export function comparisonRows(enabled: readonly OptionalDisplayField[] = DEFAULT_ENABLED_FIELDS) {
+export function comparisonRows(
+  enabled: readonly OptionalDisplayField[] = DEFAULT_ENABLED_FIELDS,
+  industryKey?: string,
+) {
   const on = new Set(enabled)
+  const displayFields = getOptionalDisplayFields(industryKey)
   return [
-    { label: "Giá", get: (p: GreetingCatalogProduct) => formatVnd(p.price) },
-    { label: "Mã mẫu", get: (p: GreetingCatalogProduct) => p.code },
-    ...OPTIONAL_DISPLAY_FIELDS.filter((f) => on.has(f.key) && f.key !== "description").map((f) => ({
+    { label: industryKey === "HOMESTAY" ? "Giá phòng / đêm" : "Giá", get: (p: GreetingCatalogProduct) => formatVnd(p.price) },
+    { label: industryKey === "HOMESTAY" ? "Mã phòng" : "Mã mẫu", get: (p: GreetingCatalogProduct) => p.code },
+    ...displayFields.filter((f) => on.has(f.key) && f.key !== "description").map((f) => ({
       label: f.label,
       get: (p: GreetingCatalogProduct) => FIELD_VALUE[f.key](p),
     })),

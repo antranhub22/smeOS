@@ -23,8 +23,14 @@ export class ShopContactRepository {
     const logoId = org.brand_profile?.logo_asset_id ?? null
     const logoUrl = logoId ? await this.assets.getAssetStorageUrl(organizationId, logoId) : null
     const zaloQrUrl = zaloQrUrlFromBrandAssets(org.brand_profile?.brand_assets)
+    const settingsObj =
+      org.settings && typeof org.settings === "object" && !Array.isArray(org.settings)
+        ? (org.settings as Record<string, unknown>)
+        : null
+    const industry = typeof settingsObj?.industry === "string" ? settingsObj.industry : null
     return {
-      name: org.business_profile?.display_name || org.name || "Tiệm hoa",
+      name: org.business_profile?.display_name || org.name || "Cửa hàng",
+      industry,
       phone: org.business_profile?.phone ?? null,
       address: org.business_profile?.address ?? null,
       email: org.business_profile?.email ?? null,

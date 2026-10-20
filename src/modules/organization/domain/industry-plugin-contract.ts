@@ -72,6 +72,17 @@ export interface IndustryAiConfig {
   readonly sampleProductNames: readonly string[]
 }
 
+/**
+ * Cấu hình điều hướng sidebar theo ngành.
+ *
+ * Lớp 1 trong chuỗi lọc 3 lớp: Industry Nav Matrix → RBAC → Feature Lock.
+ * Admin SaaS quyết định tại Console `/van-hanh`, tổ chức không biết/không thấy.
+ */
+export interface IndustryNavConfig {
+  /** Danh sách navKey bị ẩn khỏi sidebar cho ngành này (mặc định [] = hiện tất cả). */
+  readonly hiddenNavKeys: readonly string[]
+}
+
 export interface IndustryPluginContract {
   readonly identity: IndustryIdentity
   readonly terminology: IndustryTerminology
@@ -79,4 +90,5 @@ export interface IndustryPluginContract {
   readonly bomSpec: IndustryBomSpec
   readonly templates: IndustryTemplatesSpec
   readonly aiConfig: IndustryAiConfig
+  readonly navigation: IndustryNavConfig
 }

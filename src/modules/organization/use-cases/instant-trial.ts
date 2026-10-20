@@ -19,6 +19,7 @@ import { UserRepository } from "@/modules/organization/infra/user-repository"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { seedExperienceMasterProfile } from "@/modules/profiles/use-cases/seed-experience-profile"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
+import { getMockAssetsForIndustry } from "@/modules/profiles/domain/mock-data-catalog"
 import crypto from "crypto"
 
 export type InstantTrialInput = {
@@ -162,14 +163,55 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
 }
 
 /**
- * Nạp 3 sản phẩm mẫu sống động cho ngành vào bảng products
+ * Nạp 3-4 sản phẩm mẫu sống động cho ngành vào bảng products (kèm ảnh và giá chuẩn)
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function seedSampleProductsForIndustry(tx: any, organizationId: string, industryKey: string) {
   const plugin = getIndustryPlugin(industryKey)
-  const sampleNames = plugin.aiConfig.sampleProductNames.slice(0, 3)
+  const mockAssets = getMockAssetsForIndustry(industryKey)
   const categories = plugin.taxonomy.defaultCategories
 
+  if (mockAssets && mockAssets.products.length > 0) {
+    for (let i = 0; i < mockAssets.products.length; i++) {
+      const p = mockAssets.products[i]!
+      const code = `DEMO-${industryKey.slice(0, 3)}-${String(i + 1).padStart(3, "0")}`
+
+      const product = await tx.products.create({
+        data: {
+          organization_id: organizationId,
+          code,
+          name: p.name,
+          category: p.category,
+          status: "ACTIVE",
+          attributes: {
+            sample: true,
+            imageUrl: p.image,
+            price: p.price,
+            original_price: p.originalPrice,
+            description: p.description,
+            unit: categories[0]?.defaultUnit || "món",
+          },
+        },
+      })
+
+      await tx.product_variants.create({
+        data: {
+          organization_id: organizationId,
+          product_id: product.id,
+          name: "Tiêu chuẩn",
+          multiplier: 1.0,
+          attributes: {
+            price: p.price,
+            original_price: p.originalPrice,
+          },
+        },
+      })
+    }
+    return
+  }
+
+  // Fallback nếu ngành chưa có mock assets catalog
+  const sampleNames = plugin.aiConfig.sampleProductNames.slice(0, 3)
   for (let i = 0; i < sampleNames.length; i++) {
     const name = sampleNames[i]!
     const cat = categories[i % categories.length]
@@ -190,7 +232,6 @@ async function seedSampleProductsForIndustry(tx: any, organizationId: string, in
       },
     })
 
-    // Tạo biến thể giá bán mặc định
     await tx.product_variants.create({
       data: {
         organization_id: organizationId,

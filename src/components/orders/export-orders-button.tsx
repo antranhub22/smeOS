@@ -16,6 +16,8 @@ interface ExportOrdersButtonProps {
   apiPath?: string
   label?: string
   filename?: string
+  /** Chỉ hiển thị icon Excel nhỏ gọn */
+  iconOnly?: boolean
   /** Bộ lọc cố định thêm vào query string (vd: source=BROCHURE) */
   extraParams?: Record<string, string>
 }
@@ -40,6 +42,7 @@ function ExportOrdersButtonInner({
   apiPath = "/api/v1/orders/export",
   label = "Xuất Excel",
   filename = "don-hang.xlsx",
+  iconOnly = false,
   extraParams = {},
 }: ExportOrdersButtonProps) {
   const [open, setOpen] = useState(false)
@@ -103,19 +106,33 @@ function ExportOrdersButtonInner({
 
   return (
     <div ref={dropdownRef} className="relative">
-      <Button
-        id="export-orders-btn"
-        variant="outline"
-        size="sm"
-        className="gap-1.5 text-body-sm"
-        aria-label="Xuất danh sách đơn hàng ra Excel"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <Download className="h-4 w-4" />
-        {label}
-        <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
-      </Button>
+      {iconOnly ? (
+        <button
+          id="export-orders-btn"
+          type="button"
+          aria-label={label}
+          title={label}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-foreground active:bg-surface active:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          <Download className="h-4 w-4" />
+        </button>
+      ) : (
+        <Button
+          id="export-orders-btn"
+          variant="outline"
+          size="sm"
+          className="gap-1.5 text-body-sm"
+          aria-label="Xuất danh sách đơn hàng ra Excel"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <Download className="h-4 w-4" />
+          {label}
+          <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+        </Button>
+      )}
 
       {open && (
         <div

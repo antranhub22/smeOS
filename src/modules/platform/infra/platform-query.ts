@@ -47,6 +47,12 @@ export async function listAllOrganizations(
 export type PlatformOrganizationDetail = PlatformOrganizationSummary & {
   branchCount: number
   workspaceKinds: string[]
+  pendingModelChange?: {
+    requested_type: string
+    requested_at: string
+    requested_by?: string
+    note?: string | null
+  } | null | undefined
 }
 
 export async function getAnyOrganization(
@@ -71,6 +77,10 @@ export async function getAnyOrganization(
     memberCount: org._count.memberships,
     branchCount: org._count.branches,
     workspaceKinds: org.workspaces.map((w) => w.kind),
+    pendingModelChange:
+      ((org.settings as Record<string, unknown> | null)?.pending_model_change as
+        | PlatformOrganizationDetail["pendingModelChange"]
+        | undefined) ?? null,
   }
 }
 

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { useCatalogItems } from "./use-catalog-items"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { ExcludeCatalogsFilter } from "./exclude-catalogs-filter"
+import { useI18n } from "@/lib/i18n"
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
 type CatalogItem = {
   id: string
@@ -24,6 +26,8 @@ interface Props {
 }
 
 export function CatalogProductPicker({ catalogId, compact = false, onItemCountChange, readOnly = false }: Props) {
+  const { ti, industry } = useI18n()
+  const activeIndustry = industry || getIndustryPlugin()
   const ci = useCatalogItems<{ items: CatalogItem[] }>(catalogId, onItemCountChange)
   const items = ci.catalog?.items ?? []
   const loadingItems = ci.loading
@@ -56,8 +60,8 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
         <div>
           <p className="text-body-sm font-bold text-text">
             {items.length > 0
-              ? `${items.length} mẫu hoa trong bộ sưu tập`
-              : "Bộ sưu tập chưa có mẫu hoa nào"}
+              ? `${items.length} ${ti("sampleProduct").toLowerCase()} trong bộ sưu tập`
+              : `Bộ sưu tập chưa có ${ti("sampleProduct").toLowerCase()} nào`}
           </p>
           {items.length === 0 && (
             <p className="text-caption text-text-muted mt-0.5">
@@ -72,7 +76,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
           className="gap-1.5 font-bold text-body-sm h-9 shadow-sm"
         >
           <Plus size={15} />
-          Thêm mẫu hoa
+          Thêm {ti("sampleProduct").toLowerCase()}
         </Button>}
       </div>
 
@@ -121,7 +125,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
         <div className="flex items-center gap-2 p-2.5 rounded-xl bg-success-bg border border-success/20 text-success">
           <CheckCircle size={14} />
           <span className="text-caption font-bold">
-            Bộ sưu tập sẵn sàng — {items.length} mẫu hoa đã thêm
+            Bộ sưu tập sẵn sàng — {items.length} {ti("sampleProduct").toLowerCase()} đã thêm
           </span>
         </div>
       )}
@@ -152,11 +156,11 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
           </div>
 
           <ExcludeCatalogsFilter currentCatalogId={catalogId} selected={ci.excludedCatalogIds} onChange={ci.setExcludedCatalogIds} loading={ci.excludeLoading} hiddenCount={ci.excludedHiddenCount} />
-          {/* Quick Search Filters (Khoảng giá, Dịp tặng, Dáng hoa, Loại hoa, Tone màu) */}
+          {/* Quick Search Filters (Khoảng giá, Dịp tặng, Phân loại, Chất liệu / Cấu phần, Tone màu) */}
           <div className="p-2.5 rounded-xl border border-border bg-surface space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-caption font-bold text-text flex items-center gap-1">
-                ⚡ Lọc nhanh mẫu hoa
+                ⚡ Lọc nhanh {ti("sampleProduct").toLowerCase()}
               </span>
               {ci.hasActiveFilters && (
                 <button
@@ -197,10 +201,10 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               })}
             </div>
 
-            {/* 2. Dịp tặng */}
+            {/* 2. Dịp / Mục đích */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-caption text-text-muted shrink-0 w-16">Dịp tặng:</span>
-              {["Sinh nhật", "Khai trương", "Kỷ niệm", "Chúc mừng", "Chia buồn"].map((occ) => {
+              <span className="text-caption text-text-muted shrink-0 w-16">Dịp sử dụng:</span>
+              {(activeIndustry.taxonomy?.occasions?.map((o) => o.label) || ["Dự tiệc", "Hằng ngày", "Quà tặng", "Khai trương"]).map((occ) => {
                 const isSelected = ci.filterOccasion === occ
                 return (
                   <button
@@ -219,10 +223,10 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               })}
             </div>
 
-            {/* 3. Dáng hoa */}
+            {/* 3. Phân loại sản phẩm */}
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-caption text-text-muted shrink-0 w-16">Dáng hoa:</span>
-              {["Bó hoa", "Giỏ hoa", "Kệ hoa", "Lẵng hoa", "Hộp hoa", "Bình hoa"].map((cat) => {
+              <span className="text-caption text-text-muted shrink-0 w-16">Phân loại:</span>
+              {(activeIndustry.taxonomy?.defaultCategories?.map((c) => c.label) || ["Tiêu chuẩn", "Đặc biệt"]).map((cat) => {
                 const isSelected = ci.filterCategory === cat
                 return (
                   <button
@@ -241,11 +245,25 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               })}
             </div>
 
-            {/* 4. Loại hoa & Tone màu */}
+            {/* 4. Cấu phần / Tiện ích / Chất liệu & Tone màu */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-border">
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-caption text-text-muted shrink-0 w-16">Loại hoa:</span>
-                {["Hoa hồng", "Lan hồ điệp", "Hướng dương", "Baby"].map((fl) => {
+                <span className="text-caption text-text-muted shrink-0 w-16">
+                  {activeIndustry.identity.key === "FASHION"
+                    ? "Chất liệu:"
+                    : activeIndustry.identity.key === "HOMESTAY"
+                    ? "Tiện ích:"
+                    : "Cấu phần:"}
+                </span>
+                {(
+                  activeIndustry.identity.key === "FASHION"
+                    ? ["Lụa", "Dạ Tweed", "Cotton", "Lanh / Đũi"]
+                    : activeIndustry.identity.key === "HOMESTAY"
+                    ? (activeIndustry.terminology?.defaultComponentRoles?.map((r) => r.label) || ["Tiện nghi phòng", "Chăn ga", "Vệ sinh", "Chào mừng"])
+                    : activeIndustry.identity.key === "FLORAL"
+                    ? ["Hoa hồng", "Lan hồ điệp", "Hướng dương", "Baby"]
+                    : (activeIndustry.terminology?.defaultComponentRoles?.map((r) => r.label) || ["Chính", "Phụ", "Kèm theo"])
+                ).map((fl) => {
                   const isSelected = ci.filterFlowerType === fl
                   return (
                     <button
@@ -264,26 +282,29 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                 })}
               </div>
 
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-caption text-text-muted shrink-0 w-16">Tone màu:</span>
-                {["Pastel", "Đỏ", "Vàng", "Hồng", "Trắng"].map((col) => {
-                  const isSelected = ci.filterColorTone === col
-                  return (
-                    <button
-                      type="button"
-                      key={col}
-                      onClick={() => ci.setFilterColorTone(isSelected ? "" : col)}
-                      className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
-                        isSelected
-                          ? "border-primary bg-primary/10 text-primary font-bold"
-                          : "border-border bg-surface text-text-muted hover:border-primary/40"
-                      }`}
-                    >
-                      {col}
-                    </button>
-                  )
-                })}
-              </div>
+              {/* Chỉ hiện tone màu cho các ngành có định hướng màu sắc rõ nét như HOA hoặc THỜI TRANG */}
+              {(activeIndustry.identity.key === "FLORAL" || activeIndustry.identity.key === "FASHION" || activeIndustry.identity.key === "CRAFT_GIFT") ? (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-caption text-text-muted shrink-0 w-16">Tone màu:</span>
+                  {["Pastel", "Đỏ", "Vàng", "Hồng", "Trắng"].map((col) => {
+                    const isSelected = ci.filterColorTone === col
+                    return (
+                      <button
+                        type="button"
+                        key={col}
+                        onClick={() => ci.setFilterColorTone(isSelected ? "" : col)}
+                        className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                          isSelected
+                            ? "border-primary bg-primary/10 text-primary font-bold"
+                            : "border-border bg-surface text-text-muted hover:border-primary/40"
+                        }`}
+                      >
+                        {col}
+                      </button>
+                    )
+                  })}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -292,13 +313,15 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
             {loadingProducts ? (
               <div className="flex items-center justify-center py-8 text-text-muted gap-2">
                 <Loader2 size={16} className="animate-spin" />
-                <span className="text-body-sm">Đang tải kho sản phẩm...</span>
+                <span className="text-body-sm">Đang tải danh sách {ti("sampleProduct").toLowerCase()}...</span>
               </div>
             ) : ci.available.length === 0 ? (
               <p className="text-body-sm text-text-muted text-center py-8">
                 {ci.searchQuery || ci.hasActiveFilters
-                  ? "Không tìm thấy sản phẩm phù hợp tiêu chí lọc"
-                  : "Tất cả sản phẩm đã được thêm vào bộ sưu tập"}
+                  ? `Không tìm thấy ${ti("sampleProduct").toLowerCase()} phù hợp tiêu chí lọc`
+                  : ci.totalWarehouseCount === 0
+                  ? `Kho chưa có ${ti("sampleProduct").toLowerCase()} nào. Vui lòng tạo ${ti("sampleProduct").toLowerCase()} mới trước.`
+                  : `Tất cả ${ti("sampleProduct").toLowerCase()} đã được thêm vào bộ sưu tập`}
               </p>
             ) : (
               ci.available.map((product) => (

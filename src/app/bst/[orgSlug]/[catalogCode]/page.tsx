@@ -13,10 +13,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { orgSlug, catalogCode } = await params
   const data = await getPublicGreetingCatalogBySlug(orgSlug, catalogCode)
   if (data.status !== "ACTIVE") {
-    return { title: "Bộ Sưu Tập Mẫu Hoa" }
+    return { title: "Bộ Sưu Tập Sản Phẩm" }
   }
-  const title = `${data.catalog.name} — Bộ Sưu Tập Mẫu Hoa`
-  const description = data.catalog.description ?? `Xem bộ sưu tập hoa tươi ${data.catalog.name}`
+  const title = `${data.catalog.name} — Bộ Sưu Tập Sản Phẩm`
+  const description = data.catalog.description ?? `Xem bộ sưu tập sản phẩm ${data.catalog.name}`
   return {
     title,
     description,
@@ -46,7 +46,7 @@ export default async function PublicGreetingCatalogSlugPage({ params }: PageProp
     return (
       <LinkUnavailable
         title="Link không tồn tại hoặc đã hết hạn"
-        message="Bộ sưu tập mẫu hoa này không còn hiệu lực. Vui lòng liên hệ cửa hàng để nhận link mới."
+        message="Bộ sưu tập này không còn hiệu lực. Vui lòng liên hệ cửa hàng để nhận link mới."
       />
     )
   }

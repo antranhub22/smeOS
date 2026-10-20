@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SocialPostPreview } from "./social-post-preview"
+import { useI18n } from "@/lib/i18n"
 
 export interface MultichannelPostItem {
   postId?: string
@@ -41,13 +42,15 @@ export interface MultichannelPostCardProps {
  */
 export function MultichannelPostCard({
   posts,
-  productName = "Sản phẩm hoa tươi",
+  productName,
   productImageUrl,
   modelInfo,
   criticScore,
   onSchedulePost,
   onUpdatePost,
 }: MultichannelPostCardProps) {
+  const { ti } = useI18n()
+  const displayProductName = productName || ti("sampleProduct") || "Sản phẩm chính"
   const [selectedChannel, setSelectedChannel] = useState<string>(posts[0]?.channel || "facebook")
   const [copied, setCopied] = useState(false)
   const [copiedZalo, setCopiedZalo] = useState(false)
@@ -195,7 +198,7 @@ export function MultichannelPostCard({
 
           <SocialPostPreview
             post={currentPost}
-            productName={productName}
+            productName={displayProductName}
             productImageUrl={productImageUrl}
           />
         </div>
@@ -278,7 +281,7 @@ export function MultichannelPostCard({
             />
           ) : (
             <div className="text-xs font-medium text-primary italic">
-              {currentPost.cta || "Nhắn tin cho tiệm để được tư vấn thiết kế hoa riêng nhé!"}
+              {currentPost.cta || "Nhắn tin cho tiệm để được tư vấn và nhận ưu đãi riêng nhé!"}
             </div>
           )}
         </div>

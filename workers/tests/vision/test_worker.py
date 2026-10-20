@@ -244,3 +244,31 @@ class TestProcessJob:
 
         assert conn.sql_containing("SET status = 'FAILED'")
         assert provider.calls == []  # chưa từng gọi provider vì asset bị chặn trước
+
+    def test_process_job_nganh_fashion(self, monkeypatch):
+        monkeypatch.setattr(worker, "_read_asset_bytes", lambda key: b"anh-gia")
+        conn = FakeConnection(fetchone_queue=[("storage-key-1",)])
+        provider = FakeProvider(result={"confidence": 92})
+
+        job = {
+            "id": "job-fashion-1",
+            "organization_id": "org-fashion",
+            "payload": {
+                "asset_ids": ["asset-f1"],
+                "product_id": "prod-f1",
+                "industry": "FASHION",
+            },
+        }
+
+        worker.process_job(conn, job, provider)
+
+        # Context passed to provider has industry
+        assert len(provider.calls) == 1
+        _img, ctx = provider.calls[0]
+        assert ctx["industry"] == "FASHION"
+
+        # Analysis insert has contract_name PhanTichSanPham_Fashion
+        insert_params = [
+            p for sql, p in conn.executed if "INSERT INTO product_analyses" in sql
+        ][0]
+        assert insert_params["contract_name"] == "PhanTichSanPham_Fashion"

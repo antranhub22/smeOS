@@ -271,7 +271,10 @@ export interface ProductPatchAttributes extends Record<string, unknown> {
   price_vnd: number | null
   description: string | null
   color: string | null
-  bom: { flowers: Array<{ name: string; quantity: number; unit: string; color: string; role: string }> }
+  bom: {
+    flowers: Array<{ name: string; quantity: number; unit: string; color: string; role: string }>
+    materials?: Array<{ name: string; quantity: number; unit: string; color: string; role: string }>
+  }
   image_asset_id?: string
   imageUrl?: string
   drive_link?: string
@@ -280,9 +283,9 @@ export interface ProductPatchAttributes extends Record<string, unknown> {
 export interface ProductPatchPayload {
   name: string
   code: string
-  category: string
-  shape: string
-  facing: string
+  category: string | null
+  shape: string | null
+  facing: string | null
   container: string | null
   status: "ACTIVE" | "DRAFT"
   attributes: ProductPatchAttributes
@@ -318,7 +321,10 @@ export function buildProductPatchPayload(
     price_vnd: parsedPrice,
     description: values.description.trim() || null,
     color: values.primaryColor.trim() || null,
-    bom: { flowers: validFlowers },
+    bom: {
+      flowers: validFlowers,
+      materials: validFlowers,
+    },
     // Bảo toàn image_asset_id trong attributes
     ...(preservedAssetId ? { image_asset_id: preservedAssetId } : {}),
     // Bảo toàn imageUrl (storage URL hoặc URL cũ)
@@ -330,10 +336,10 @@ export function buildProductPatchPayload(
   const payload: ProductPatchPayload = {
     name: values.name.trim(),
     code: values.code.trim(),
-    category: values.category,
-    shape: values.shape,
-    facing: values.facing,
-    container: values.container.trim() || null,
+    category: values.category?.trim() || null,
+    shape: values.shape?.trim() || null,
+    facing: values.facing?.trim() || null,
+    container: values.container?.trim() || null,
     status: values.status === "DRAFT" ? "DRAFT" : "ACTIVE",
     attributes: mergedAttributes,
   }

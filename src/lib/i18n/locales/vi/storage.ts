@@ -15,7 +15,7 @@ export const storageVi = {
     trash: "Thùng rác (30 ngày)",
   },
   filters: {
-    searchPlaceholder: "Tìm theo tên hoa, mã mẫu hoa, dịp tặng hoặc thành phần…",
+    searchPlaceholder: "Tìm theo tên, mã sản phẩm, dịp hoặc thành phần…",
   },
   actions: {
     analyzePhoto: "Phân tích ảnh",

@@ -29,6 +29,7 @@ const patchSchema = z.object({
   status: z.enum(PRODUCT_STATUS).optional(),
   attributes: z.record(z.string(), z.unknown()).nullable().optional(),
   image_asset_id: z.string().min(1).nullable().optional(),
+  availability_config: z.unknown().optional(),
 })
 
 /**
@@ -59,6 +60,7 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
     status: parsed.data.status,
     attributes: parsed.data.attributes,
     imageAssetId: parsed.data.image_asset_id,
+    availabilityConfig: parsed.data.availability_config,
   })
 
   return jsonResponse(updated)

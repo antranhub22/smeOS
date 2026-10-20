@@ -36,7 +36,7 @@ export function LookbookGridDeck({ products, catalogName, selectedProductId, onS
   if (products.length === 0) return <EmptyCatalog />
 
   return (
-    <AuxPage eyebrow="Lookbook" title={catalogName} subtitle={`${products.length} mẫu hoa · chạm vào ảnh để xem chi tiết`}>
+    <AuxPage eyebrow="Lookbook" title={catalogName} subtitle={`${products.length} sản phẩm · chạm vào ảnh để xem chi tiết`}>
       {filters.length > 2 && (
         <div className="-mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" role="group" aria-label="Lọc theo giá">
           {filters.map((f) => (

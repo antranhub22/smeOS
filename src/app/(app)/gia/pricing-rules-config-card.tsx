@@ -172,7 +172,7 @@ export function PricingRulesConfigCard({
       </div>
 
       <div className="rounded-xl bg-surface-alt p-3 text-caption text-text-muted leading-relaxed">
-        Danh mục phụ phí (Hỗ trợ ship, Phụ phí cắm hoa gấp…) được thiết lập tập trung từ hệ thống — máy tính giá luôn sử dụng danh sách nhóm đã cấu hình sẵn.
+        Danh mục phụ phí (Hỗ trợ ship/giao nhận, Phụ phí xử lý gấp…) được thiết lập tập trung từ hệ thống — máy tính giá luôn sử dụng danh sách nhóm đã cấu hình sẵn.
       </div>
 
       {canEdit ? (

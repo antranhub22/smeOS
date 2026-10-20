@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input"
 import { Dialog } from "@/components/ui/dialog"
 import { generateQRCodeDataUrl, triggerDownload } from "@/core/media/qr-engine"
 import { ShareCatalogModal } from "./share-catalog-modal"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import {
   CATALOG_STYLE_OPTIONS,
   type CatalogStyleVariant,
@@ -149,6 +151,8 @@ interface CreateCatalogModalProps {
 }
 
 export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCatalogModalProps) {
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const [name, setName] = useState("")
   const [desc, setDesc] = useState("")
   const [styleVariant, setStyleVariant] = useState<CatalogStyleVariant>("MODERN_SHOWROOM")
@@ -263,7 +267,7 @@ export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCa
 
         <div>
           <label className="block text-xs font-semibold text-text mb-1.5">Tên Catalog / Bộ sưu tập *</label>
-          <Input required placeholder="VD: Mẫu Hoa Khai Trương 2026" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input required placeholder={`VD: ${ti.sampleProduct} Tuyển Chọn 2026`} value={name} onChange={(e) => setName(e.target.value)} />
         </div>
 
         <div>
@@ -281,7 +285,7 @@ export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCa
           </div>
           <textarea
             rows={3}
-            placeholder="Lời tựa mở đầu cho bộ sưu tập hoa..."
+            placeholder={`Lời tựa mở đầu cho bộ sưu tập ${ti.sampleProduct}...`}
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
             className="w-full rounded-xl border border-border p-3 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
@@ -290,8 +294,8 @@ export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCa
 
         <div className="p-3 rounded-xl bg-surface border text-xs text-text-muted">
           {selectedIds.length > 0
-            ? <span>Đang chọn <strong>{selectedIds.length}</strong> mẫu hoa cho catalog này.</span>
-            : <span>Tất cả mẫu hoa đang hoạt động sẽ tự động hiển thị.</span>}
+            ? <span>Đang chọn <strong>{selectedIds.length}</strong> {ti.sampleProduct} cho catalog này.</span>
+            : <span>Tất cả {ti.sampleProduct} đang hoạt động sẽ tự động hiển thị.</span>}
         </div>
       </div>
     </Dialog>

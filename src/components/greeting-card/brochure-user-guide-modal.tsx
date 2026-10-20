@@ -1,15 +1,17 @@
 "use client"
 
 import React, { useState } from "react"
-import { HelpCircle, X, BookOpen, CheckCircle2, Shield, Users, Sparkles, Clock, AlertTriangle, FileText } from "lucide-react"
+import { HelpCircle, X, BookOpen, Shield, Users, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
 
 type RoleGuideTab = "admin" | "sales" | "coordinator"
 
 export function BrochureUserGuideModal() {
   const [open, setOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<RoleGuideTab>("admin")
+  const { ti } = useI18n()
 
   return (
     <>
@@ -47,7 +49,7 @@ export function BrochureUserGuideModal() {
               <div className="flex items-center gap-2">
                 <BookOpen size={20} className="text-primary" />
                 <h2 id="guide-modal-title" className="text-title-sm font-extrabold text-foreground">
-                  Hướng dẫn dùng Thẻ chào mẫu hoa
+                  Hướng dẫn Thẻ chào & {ti("sampleProduct")}
                 </h2>
               </div>
               <button
@@ -96,7 +98,7 @@ export function BrochureUserGuideModal() {
                 }`}
               >
                 <Sparkles size={16} />
-                <span>Điều phối và thợ cắm hoa</span>
+                <span>Điều phối & {ti("makerTitle")}</span>
               </button>
             </div>
 
@@ -109,16 +111,16 @@ export function BrochureUserGuideModal() {
                       <Shield size={16} /> Quản trị tài chính & Kiểm soát thanh toán
                     </h4>
                     <p className="text-caption text-text-muted leading-relaxed">
-                      Cổng thanh toán là chốt chặn cứng: Khi khách gửi đơn và báo chuyển khoản, nút &quot;Theo dõi tiến độ&quot; trên màn hình khách sẽ ở trạng thái vô hiệu hóa (deactivated). Chỉ khi Điều hành kiểm tra tài khoản và bấm <strong>&quot;Xác nhận tiền về&quot;</strong>, nút này mới được kích hoạt sáng lên cho khách.
+                      Cổng thanh toán là chốt chặn cứng: Khi khách gửi đơn và báo chuyển khoản, nút &quot;Theo dõi tiến độ&quot; trên màn hình khách sẽ ở trạng thái vô hiệu hóa. Chỉ khi Điều hành kiểm tra tài khoản và bấm <strong>&quot;Xác nhận tiền về&quot;</strong>, nút này mới được kích hoạt sáng lên cho khách.
                     </p>
                   </div>
 
                   <div className="rounded-2xl border border-border bg-surface-alt p-4 flex flex-col gap-2">
                     <h4 className="font-extrabold text-foreground">Quy trình Điều hành cần nắm:</h4>
                     <ul className="list-disc list-inside space-y-1.5 text-caption sm:text-body-sm text-text-muted">
-                      <li><strong>Duyệt thanh toán tiền về:</strong> Vào tab Điều hành để đối soát các đơn khách báo chuyển khoản. Bấm xác nhận để đơn tự động chuyển vào hàng đợi cắm hoa của xưởng.</li>
+                      <li><strong>Duyệt thanh toán tiền về:</strong> Vào tab Điều hành để đối soát các đơn khách báo chuyển khoản. Bấm xác nhận để đơn tự động chuyển vào hàng đợi {ti("makerAction").toLowerCase()} của xưởng.</li>
                       <li><strong>Xử lý đề xuất Hủy / Hoàn tiền:</strong> Sale hoặc Điều phối chỉ có quyền đề xuất; Điều hành là người quyết định cuối cùng (Approve/Reject). Hệ thống lưu vết đầy đủ lý do và người duyệt.</li>
-                      <li><strong>Giải quyết tranh chấp nhờ Lịch sử đơn hàng:</strong> Nhấp vào bất kỳ đơn hàng nào để mở cửa sổ chi tiết → chọn tab <em>&quot;Lịch sử đơn hàng&quot;</em>. Tại đây có đủ thời điểm khách chọn mẫu, chấp nhận thỏa thuận, ảnh thành phẩm khách duyệt, ảnh giao hoa tận tay. Bấm <em>&quot;Sao chép tóm tắt đối soát&quot;</em> để gửi khách qua Zalo.</li>
+                      <li><strong>Giải quyết tranh chấp nhờ Lịch sử đơn hàng:</strong> Nhấp vào bất kỳ đơn hàng nào để mở cửa sổ chi tiết → chọn tab <em>&quot;Lịch sử đơn hàng&quot;</em>. Tại đây có đủ thời điểm khách chọn mẫu, chấp nhận thỏa thuận, ảnh thành phẩm khách duyệt, ảnh giao nhận tận tay. Bấm <em>&quot;Sao chép tóm tắt đối soát&quot;</em> để gửi khách qua Zalo.</li>
                     </ul>
                   </div>
                 </div>
@@ -139,7 +141,7 @@ export function BrochureUserGuideModal() {
                     <h4 className="font-extrabold text-foreground">Kỹ năng vận hành cho Sale:</h4>
                     <ul className="list-disc list-inside space-y-1.5 text-caption sm:text-body-sm text-text-muted">
                       <li><strong>Xem nhanh mốc giờ giao hàng:</strong> Mỗi thẻ đơn trên Kanban hiển thị khung giờ giao to, đậm (ví dụ: <em>10:00 - 12:00</em>) và được sắp xếp ưu tiên đơn giao sớm nhất lên đầu để bạn dễ theo sát.</li>
-                      <li><strong>Click vào thẻ đơn để xem toàn bộ thông tin:</strong> Xem người đặt, người nhận, số điện thoại, địa chỉ cụ thể, lời chúc thiệp mừng và mẫu hoa đã chọn mà không cần hỏi lại khách.</li>
+                      <li><strong>Click vào thẻ đơn để xem toàn bộ thông tin:</strong> Xem người đặt, người nhận, số điện thoại, địa chỉ cụ thể, lời nhắn và {ti("sampleProduct").toLowerCase()} đã chọn mà không cần hỏi lại khách.</li>
                       <li><strong>Chủ động gỡ kẹt:</strong> Thẻ có huy hiệu đỏ &quot;Cần bạn&quot; (khách mở link chưa chọn, bỏ dở điền form, chưa chuyển khoản) cần bạn bấm nút <em>Gọi</em> hoặc <em>Zalo</em> ngay trên thẻ để hỗ trợ khách kịp thời.</li>
                     </ul>
                   </div>
@@ -150,7 +152,7 @@ export function BrochureUserGuideModal() {
                 <div className="flex flex-col gap-3">
                   <div className="rounded-2xl border border-success/20 bg-success-bg/10 p-4 flex flex-col gap-1.5">
                     <h4 className="font-extrabold text-success flex items-center gap-1.5">
-                      <Sparkles size={16} /> Vận hành xưởng hoa & Nghiệm thu chất lượng
+                      <Sparkles size={16} /> Vận hành chế tác & Nghiệm thu chất lượng
                     </h4>
                     <p className="text-caption text-text-muted leading-relaxed">
                       Bảng Kanban Điều phối phân nhóm 6 cột công đoạn xưởng, tự động sắp xếp đơn có giờ giao sớm nhất lên đầu để thợ ưu tiên hoàn thiện kịp hẹn cho khách.
@@ -160,10 +162,10 @@ export function BrochureUserGuideModal() {
                   <div className="rounded-2xl border border-border bg-surface-alt p-4 flex flex-col gap-2">
                     <h4 className="font-extrabold text-foreground">Quy trình xưởng & Bàn giao:</h4>
                     <ul className="list-disc list-inside space-y-1.5 text-caption sm:text-body-sm text-text-muted">
-                      <li><strong>Xem chi tiết công thức cắm hoa:</strong> Click vào thẻ đơn hàng trên Kanban để xem ảnh mẫu hoa to rõ, ghi chú đơn và lời chúc thiệp để chuẩn bị đúng kích thước và phụ kiện.</li>
-                      <li><strong>Nghiệm thu ảnh & Đồng hồ đếm ngược:</strong> Khi hoa cắm xong, tải ảnh hoa thành phẩm lên hệ thống. Khách có 10 phút đếm ngược trực tiếp trên link để duyệt ảnh. Hết 10 phút hệ thống tự động xác nhận để bạn bàn giao cho shipper kịp giờ.</li>
+                      <li><strong>Xem chi tiết {ti("productRecipe").toLowerCase()}:</strong> Click vào thẻ đơn hàng trên Kanban để xem ảnh {ti("sampleProduct").toLowerCase()} to rõ, ghi chú đơn và lời nhắn để chuẩn bị đúng quy cách và phụ liệu.</li>
+                      <li><strong>Nghiệm thu ảnh & Đồng hồ đếm ngược:</strong> Khi {ti("makerAction").toLowerCase()} xong, tải {ti("completedProductPhoto").toLowerCase()} lên hệ thống. Khách có 10 phút đếm ngược trực tiếp trên link để duyệt ảnh. Hết 10 phút hệ thống tự động xác nhận để bạn bàn giao cho shipper kịp giờ.</li>
                       <li><strong>Xử lý khẩn cấp (Giao gấp):</strong> Trường hợp khách cần gấp hoặc sự kiện diễn ra ngay, Điều phối có thể bấm <em>&quot;Bỏ qua ảnh&quot;</em> để chuyển thẳng sang giao hàng. Hệ thống sẽ ghi nhận trạng thái &quot;Skipped&quot; minh bạch.</li>
-                      <li><strong>Hoàn tất & Màn hình Cảm ơn:</strong> Khi shipper giao hoa thành công và tải ảnh người nhận, đơn chuyển sang trạng thái Hoàn tất. Khách hàng sẽ thấy Màn hình Cảm ơn với các nút Xem lại đơn, Xem bằng chứng tiến độ và Đặt đơn mới.</li>
+                      <li><strong>Hoàn tất & Màn hình Cảm ơn:</strong> Khi shipper giao hàng thành công và tải ảnh người nhận, đơn chuyển sang trạng thái Hoàn tất. Khách hàng sẽ thấy Màn hình Cảm ơn với các nút Xem lại đơn, Xem bằng chứng tiến độ và Đặt đơn mới.</li>
                     </ul>
                   </div>
                 </div>
@@ -173,7 +175,7 @@ export function BrochureUserGuideModal() {
             {/* Footer */}
             <footer className="flex items-center justify-between border-t border-border bg-surface-alt p-4">
               <span className="text-caption text-text-muted">
-                Hệ thống Thẻ Chào Mẫu Hoa · Chuẩn hóa quy trình FloraOS
+                Hệ thống Ấn phẩm & {ti("sampleProduct")} · Chuẩn hóa quy trình smeOS
               </span>
               <Button type="button" onClick={() => setOpen(false)} className="h-9 px-5 text-caption font-bold">
                 Đã hiểu

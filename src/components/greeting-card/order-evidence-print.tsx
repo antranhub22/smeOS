@@ -61,24 +61,24 @@ export function OrderEvidencePrint({
         </div>
         <div style={{ textAlign: "right", fontSize: 10, color: "#666" }}>
           <div>In lúc: {printedAt}</div>
-          <div style={{ marginTop: 4, fontSize: 9 }}>FloraOS · Hệ thống quản lý cửa hàng hoa</div>
+          <div style={{ marginTop: 4, fontSize: 9 }}>smeOS · Nền tảng quản trị bán hàng đa ngành</div>
         </div>
       </div>
 
       {/* Thông tin đơn hàng */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
         <div style={{ border: "1px solid #ddd", borderRadius: 6, padding: 10 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: "#888", marginBottom: 4 }}>Người đặt hoa</div>
+          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: "#888", marginBottom: 4 }}>Người đặt hàng</div>
           <div style={{ fontSize: 13, fontWeight: 700 }}>{customerName ?? "—"}</div>
           {customerPhone && <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>{customerPhone}</div>}
         </div>
         <div style={{ border: "1px solid #ddd", borderRadius: 6, padding: 10 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: "#888", marginBottom: 4 }}>Người nhận hoa</div>
+          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: "#888", marginBottom: 4 }}>Người nhận hàng</div>
           <div style={{ fontSize: 13, fontWeight: 700 }}>{recipientName ?? customerName ?? "—"}</div>
           {deliveryAddress && <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>{deliveryAddress}</div>}
         </div>
         <div style={{ border: "1px solid #ddd", borderRadius: 6, padding: 10 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: "#888", marginBottom: 4 }}>Mẫu hoa</div>
+          <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: "#888", marginBottom: 4 }}>Mẫu sản phẩm</div>
           <div style={{ fontSize: 13, fontWeight: 700 }}>{productName ?? "—"}</div>
           {deliveryTimeSlot && <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>Giao: {deliveryTimeSlot}</div>}
         </div>

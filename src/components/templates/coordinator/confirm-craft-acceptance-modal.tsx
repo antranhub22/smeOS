@@ -5,6 +5,8 @@ import { CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import type { CoordinationPartner } from "@/components/coordinator/coordinator-api"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface ConfirmCraftAcceptanceModalProps {
   open: boolean
@@ -34,6 +36,8 @@ export function ConfirmCraftAcceptanceModal({
   const [notes, setNotes] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
 
   const activePartners = partners.filter((p) => p.isActive)
   const feeRatio = unitPriceVnd > 0 ? (agreedFee / unitPriceVnd) * 100 : 0
@@ -41,7 +45,7 @@ export function ConfirmCraftAcceptanceModal({
 
   const handleConfirm = async () => {
     if (!partnerId) {
-      setError("Vui lòng chọn bộ phận hoặc đối tác cắm hoa.")
+      setError(`Vui lòng chọn bộ phận hoặc đối tác ${ti.makerTitle}.`)
       return
     }
     if (agreedFee < 0) {
@@ -101,14 +105,14 @@ export function ConfirmCraftAcceptanceModal({
 
         <div className="space-y-1.5">
           <label className="font-bold text-text block">
-            Bộ phận / Thợ cắm hoa phụ trách <span className="text-danger">*</span>
+            Bộ phận / {ti.makerTitle} phụ trách <span className="text-danger">*</span>
           </label>
           <select
             value={partnerId}
             onChange={(e) => setPartnerId(e.target.value)}
             className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-body-sm focus:outline-none focus:ring-1 focus:ring-primary"
           >
-            <option value="">-- Chọn xưởng / thợ cắm hoa --</option>
+            <option value="">-- Chọn xưởng / {ti.makerTitle} --</option>
             {activePartners.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name} {p.district ? `(${p.district}, ${p.province})` : ""} - Công suất: {p.capacityDaily} đơn/ngày
@@ -172,7 +176,7 @@ export function ConfirmCraftAcceptanceModal({
           <div className="p-3 rounded-xl bg-warning/10 border border-warning/20 text-warning flex items-start gap-2">
             <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning" />
             <div className="text-caption leading-relaxed">
-              <strong>Cảnh báo biên lợi nhuận:</strong> Giá gia công chiếm {feeRatio.toFixed(1)}% giá bán (vượt ngưỡng thông thường 60%). Vui lòng kiểm tra kỹ chi phí phụ cấp hoặc hoa cắm kèm.
+              <strong>Cảnh báo biên lợi nhuận:</strong> Giá gia công chiếm {feeRatio.toFixed(1)}% giá bán (vượt ngưỡng thông thường 60%). Vui lòng kiểm tra kỹ chi phí phụ cấp hoặc nguyên vật liệu phát sinh.
             </div>
           </div>
         )}
@@ -180,17 +184,17 @@ export function ConfirmCraftAcceptanceModal({
         <div className="p-3 rounded-xl bg-surface-alt/60 border border-border text-caption flex items-start gap-2 text-text-muted">
           <ShieldCheck size={14} className="shrink-0 mt-0.5 text-primary" />
           <span>
-            Số tiền này sẽ được tự động ghi nhận vào sổ đối soát tài chính và giá vốn sản xuất của đơn hàng để thanh toán cho thợ cắm hoa.
+            Số tiền này sẽ được tự động ghi nhận vào sổ đối soát tài chính và giá vốn sản xuất của đơn hàng để thanh toán cho {ti.makerTitle}.
           </span>
         </div>
 
         <div className="space-y-1">
-          <label className="font-semibold text-text block">Ghi chú bổ sung cho thợ cắm (nếu có)</label>
+          <label className="font-semibold text-text block">Ghi chú bổ sung cho {ti.makerTitle} (nếu có)</label>
           <textarea
             rows={2}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Ví dụ: Đã chốt phụ thu hoa nhập 50k, giao hoa đúng 15h..."
+            placeholder="Ví dụ: Đã chốt phụ thu nguyên liệu cao cấp 50k, bàn giao đúng 15h..."
             className="w-full px-3 py-1.5 rounded-xl border border-border bg-surface text-text text-xs focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>

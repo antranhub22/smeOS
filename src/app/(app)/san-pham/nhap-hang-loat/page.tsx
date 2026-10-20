@@ -12,6 +12,9 @@ import { parseProductWorkbook } from "@/components/products/bulk-import/parse-pr
 import { runBulkImport } from "@/components/products/bulk-import/run-bulk-import"
 import { useDriveThumbs } from "@/components/products/bulk-import/use-drive-thumbs"
 import type { ImportProgress, ImportResult, ParsedProductRow } from "@/components/products/bulk-import/types"
+import { BranchImportPanel } from "@/components/products/bulk-import/branch-import-panel"
+
+type ActiveTab = "products" | "branches"
 
 const TEMPLATE_PATH = "/templates/FloraOS_Template_Master_Kho_San_Pham.xlsx"
 
@@ -29,8 +32,8 @@ function matchImages(rows: ParsedProductRow[], images: Map<string, File>): Parse
 
 export default function BulkImportProductsPage() {
   const router = useRouter()
-  // organization_id cô lập dữ liệu tạm theo tổ chức (bug #T001)
   const orgId = useSession().organization?.id
+  const [activeTab, setActiveTab] = useState<ActiveTab>("products")
 
   const [excelFile, setExcelFile] = useState<File | null>(null)
   const [excelFileName, setExcelFileName] = useState("")
@@ -138,32 +141,40 @@ export default function BulkImportProductsPage() {
         onClearRestored={resetAll}
         onDownloadTemplate={downloadTemplate}
         onImport={() => void handleExecuteImport()}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
       <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-w-6xl mx-auto w-full">
-        {importResult && (
-          <ImportResultPanel result={importResult} onBack={() => router.push("/san-pham" as never)} onReset={resetAll} />
+        {activeTab === "branches" ? (
+          <BranchImportPanel />
+        ) : (
+          <>
+            {importResult && (
+              <ImportResultPanel result={importResult} onBack={() => router.push("/san-pham" as never)} onReset={resetAll} />
+            )}
+            {parsingError && (
+              <div role="alert" className="rounded-xl border border-danger/30 bg-danger-bg/40 p-3 text-body-sm text-danger">
+                {parsingError}
+              </div>
+            )}
+            <ImportDropzones
+              excelFile={excelFile}
+              excelFileName={excelFileName}
+              imageCount={imageFiles.size}
+              isImporting={isImporting}
+              onDownloadTemplate={downloadTemplate}
+              onExcelChange={handleExcelUpload}
+              onImagesChange={handleImagesUpload}
+            />
+            <ImportPreview
+              rows={parsedRows}
+              stats={stats}
+              isImporting={isImporting}
+              progressPhase={importProgress.phase}
+              driveThumbs={driveThumbs}
+            />
+          </>
         )}
-        {parsingError && (
-          <div role="alert" className="rounded-xl border border-danger/30 bg-danger-bg/40 p-3 text-body-sm text-danger">
-            {parsingError}
-          </div>
-        )}
-        <ImportDropzones
-          excelFile={excelFile}
-          excelFileName={excelFileName}
-          imageCount={imageFiles.size}
-          isImporting={isImporting}
-          onDownloadTemplate={downloadTemplate}
-          onExcelChange={handleExcelUpload}
-          onImagesChange={handleImagesUpload}
-        />
-        <ImportPreview
-          rows={parsedRows}
-          stats={stats}
-          isImporting={isImporting}
-          progressPhase={importProgress.phase}
-          driveThumbs={driveThumbs}
-        />
       </main>
     </div>
   )

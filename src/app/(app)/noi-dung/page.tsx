@@ -25,6 +25,8 @@ import {
   type MultichannelPostItem,
 } from "@/components/templates/content-engine"
 import { FlowerContentStudioModal } from "@/components/content/flower-content-studio-modal"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 /** Hình dạng thô một dòng `GET /api/v1/products` — chỉ các trường trang này đọc. */
 interface RawProductRow {
@@ -55,7 +57,7 @@ const CHANNELS_CONFIG = [
     label: "Facebook Fanpage",
     icon: "📘",
     tag: "Album & Bài viết",
-    description: "Kể chuyện cảm xúc, thông điệp ý nghĩa & album ảnh mẫu hoa",
+    description: "Kể chuyện cảm xúc, thông điệp ý nghĩa & album ảnh sản phẩm",
   },
   {
     id: "instagram",
@@ -89,6 +91,8 @@ const FLOW_STEPS: FlowStep[] = [
 function ContentEngineContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const catalogSlug = searchParams.get("catalog_slug")
   const catalogName = searchParams.get("catalog_name")
 
@@ -159,7 +163,7 @@ function ContentEngineContent() {
               name: p.name,
               code: p.code,
               price: p.pricing?.selling_price || 0,
-              flowers: p.category ? `Danh mục: ${p.category}` : (p.shape || "Hoa tươi thiết kế"),
+              flowers: p.category ? `Danh mục: ${p.category}` : (p.shape || ti.sampleProduct),
               color: p.shape || "Tiêu chuẩn",
               imageUrl:
                 imageMap[p.id] ||
@@ -240,7 +244,7 @@ function ContentEngineContent() {
         if (catalogSlug && typeof window !== "undefined") {
           const linkUrl = `${window.location.origin}/c/${catalogSlug}`
           if (!bodyText.includes(`/c/${catalogSlug}`)) {
-            bodyText = `${bodyText}\n\n👉 Xem trọn bộ mẫu hoa & đặt trực tuyến tại:\n${linkUrl}`
+            bodyText = `${bodyText}\n\n👉 Xem trọn bộ ${ti.sampleProduct} & đặt trực tuyến tại:\n${linkUrl}`
           }
         }
 
@@ -248,7 +252,7 @@ function ContentEngineContent() {
           channel: p.channel,
           channelLabel:
             CHANNELS_CONFIG.find((c) => c.id === p.channel)?.label || String(p.channel).toUpperCase(),
-          headline: `Bó hoa ${selectedProduct.name}`,
+          headline: `${ti.sampleProduct} ${selectedProduct.name}`,
           bodyText,
           hashtags: p.hashtags || [],
         })
@@ -463,7 +467,7 @@ function ContentEngineContent() {
                           </div>
                           <div className="text-xs font-bold text-text line-clamp-1">{prod.name}</div>
                           <div className="text-caption text-text-muted line-clamp-1">
-                            {prod.flowers || "Hoa tươi nghệ thuật"}
+                            {prod.flowers || ti.sampleProduct}
                           </div>
                         </div>
                       </button>
@@ -636,7 +640,7 @@ function ContentEngineContent() {
             {/* Thẻ hiển thị đa kênh kèm Live Preview & Atomic Fields */}
             <MultichannelPostCard
               posts={generatedPosts}
-              productName={selectedProduct?.name || "Sản phẩm hoa tươi"}
+              productName={selectedProduct?.name || ti.sampleProduct}
               productImageUrl={selectedProduct?.imageUrl}
               modelInfo={modelInfo}
               criticScore={criticScore ?? undefined}

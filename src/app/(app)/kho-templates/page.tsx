@@ -36,6 +36,7 @@ import {
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { TemplatePreviewModal } from "./template-preview-modal"
 import { TEMPLATE_PREVIEW_REGISTRY, SELF_MODAL_TEMPLATE_FILES } from "./preview-registry"
+import { useI18n } from "@/lib/i18n/context"
 
 type TemplateFile = {
   file: string
@@ -63,10 +64,10 @@ const CATEGORIES: TemplateCategory[] = [
     description:
       "Tải ảnh hoa, AI nhận diện cấu phần & sinh nội dung bán hàng, tạo thẻ chào khách A6 và kịch bản tư vấn Zalo.",
     files: [
-      { file: "m01a-guidance-card.tsx", type: "Guidance", purpose: "Hướng dẫn tải ảnh chụp hoa & nhận diện cành hoa." },
+      { file: "m01a-guidance-card.tsx", type: "Guidance", purpose: "Hướng dẫn tải ảnh chụp sản phẩm & nhận diện cấu phần nguyên liệu." },
       { file: "m01b-guidance-card.tsx", type: "Guidance", purpose: "Hướng dẫn sinh tên thương mại & mô tả SEO." },
       { file: "m01c-guidance-card.tsx", type: "Guidance", purpose: "Hướng dẫn tạo thẻ chào khách A6 & kịch bản Zalo." },
-      { file: "analysis-result-card.tsx", type: "Kết quả", purpose: "Thẻ kết quả phân tích cấu phần hoa, độ tin cậy AI, danh sách cành hoa, duyệt/từ chối." },
+      { file: "analysis-result-card.tsx", type: "Kết quả", purpose: "Thẻ kết quả phân tích cấu phần, độ tin cậy AI, danh sách nguyên liệu, duyệt/từ chối." },
       { file: "commercial-content-card.tsx", type: "Nội dung", purpose: "Thẻ nội dung bán hàng: tên gợi ý, câu chuyện hoa, phân khúc giá, lưu kho đã duyệt." },
       { file: "sales-pitch-card-a6.tsx", type: "Thẻ in A6", purpose: "Thẻ chào khách chuẩn A6 (105×148mm) tối ưu in ấn & chia sẻ, kèm bảng giá và quà tặng." },
       { file: "zalo-script-box.tsx", type: "Tư vấn", purpose: "Hộp kịch bản tư vấn Zalo sao chép 1-chạm, kèm cấu phần chi tiết." },
@@ -166,7 +167,7 @@ const CATEGORIES: TemplateCategory[] = [
       "Hồ sơ khách hàng VIP, gu màu sắc & lịch sử mua, nhắc ngày sinh nhật/kỷ niệm để chăm sóc chủ động.",
     files: [
       { file: "crm-guidance-card.tsx", type: "Guidance", purpose: "Hướng dẫn quản lý sở thích khách hàng và ngày kỷ niệm." },
-      { file: "customer-profile-card.tsx", type: "Hồ sơ", purpose: "Thẻ hồ sơ khách hàng VIP: gu màu sắc, loại hoa ưa thích, lịch sử mua." },
+      { file: "customer-profile-card.tsx", type: "Hồ sơ", purpose: "Thẻ hồ sơ khách hàng VIP: gu màu sắc, sản phẩm ưa thích, lịch sử mua." },
       { file: "event-reminder-card.tsx", type: "Nhắc lịch", purpose: "Thẻ nhắc ngày sinh nhật / kỷ niệm sắp tới kèm nút nhắn Zalo chăm sóc." },
     ],
   },
@@ -177,10 +178,10 @@ const CATEGORIES: TemplateCategory[] = [
     route: "/don-hang",
     icon: ShoppingBag,
     description:
-      "Phiếu lệnh cắm hoa cho thợ và phiếu giao hàng A6 cho shipper, chuẩn hoá bàn giao từ đơn tới tận tay khách.",
+      "Phiếu lệnh gia công sản phẩm cho thợ và phiếu giao hàng A6 cho shipper, chuẩn hoá bàn giao từ đơn tới tận tay khách.",
     files: [
       { file: "order-guidance-card.tsx", type: "Guidance", purpose: "Hướng dẫn quy trình xử lý đơn hàng và bàn giao lệnh xưởng." },
-      { file: "florist-ticket-card.tsx", type: "Phiếu xưởng", purpose: "Phiếu lệnh cắm hoa cho thợ: định lượng hoa bắt buộc, ảnh mẫu, hạn giao." },
+      { file: "florist-ticket-card.tsx", type: "Phiếu xưởng", purpose: "Phiếu lệnh gia công sản phẩm cho thợ: định lượng nguyên liệu bắt buộc, ảnh mẫu, hạn giao." },
       { file: "delivery-receipt-card.tsx", type: "Phiếu in A6", purpose: "Phiếu giao hàng A6 cho shipper kèm thiệp chúc mừng in hoa mỹ." },
     ],
   },
@@ -191,9 +192,9 @@ const CATEGORIES: TemplateCategory[] = [
     route: "/hoi-thoai",
     icon: Bot,
     description:
-      "AI tự động tư vấn mẫu hoa và chốt đơn 24/7, kèm cảnh báo chuyển nhân viên xử lý khi khách khiếu nại.",
+      "AI tự động tư vấn sản phẩm và chốt đơn 24/7, kèm cảnh báo chuyển nhân viên xử lý khi khách khiếu nại.",
     files: [
-      { file: "chat-guidance-card.tsx", type: "Guidance", purpose: "Hướng dẫn trợ lý AI tự động tư vấn mẫu hoa và chốt đơn 24/7." },
+      { file: "chat-guidance-card.tsx", type: "Guidance", purpose: "Hướng dẫn trợ lý AI tự động tư vấn sản phẩm và chốt đơn 24/7." },
       { file: "chat-thread-card.tsx", type: "Hội thoại", purpose: "Khung hiển thị hội thoại khách - AI kèm thẻ gợi ý sản phẩm và nhập liệu." },
       { file: "human-takeover-banner.tsx", type: "Cảnh báo", purpose: "Banner cảnh báo nhân viên can thiệp xử lý khi khách khiếu nại." },
     ],
@@ -230,13 +231,40 @@ const CATEGORIES: TemplateCategory[] = [
 const TOTAL_FILES = CATEGORIES.reduce((sum, c) => sum + c.files.length, 0)
 
 export default function KhoTemplatesPage() {
+  const { ti } = useI18n()
   const [query, setQuery] = useState("")
   const [selectedFile, setSelectedFile] = useState<{ file: TemplateFile; category: TemplateCategory } | null>(null)
 
+  // Override mô tả các category có thuật ngữ ngành
+  const categoriesWithTerminology = useMemo(() => CATEGORIES.map((cat) => {
+    if (cat.id === "product-analysis") {
+      return {
+        ...cat,
+        description: `Tải ảnh ${ti("sampleProduct")}, AI nhận diện ${ti("rawMaterialItem")} & sinh nội dung bán hàng, tạo thẻ chào khách A6 và kịch bản tư vấn Zalo.`,
+        files: cat.files.map((f) => {
+          if (f.file === "m01a-guidance-card.tsx") return { ...f, purpose: `Hướng dẫn tải ảnh chụp ${ti("sampleProduct")} & nhận diện ${ti("rawMaterialItem")}.` }
+          if (f.file === "commercial-content-card.tsx") return { ...f, purpose: `Thẻ nội dung bán hàng: tên gợi ý, câu chuyện ${ti("sampleProduct")}, phân khúc giá, lưu kho đã duyệt.` }
+          return f
+        }),
+      }
+    }
+    if (cat.id === "creative-studio") {
+      return {
+        ...cat,
+        description: `Tách nền ảnh ${ti("sampleProduct")}, ghép bối cảnh studio AI, chọn nhà cung cấp & chế độ tối ưu ảnh sản phẩm.`,
+        files: cat.files.map((f) => {
+          if (f.file === "creative-guidance-card.tsx") return { ...f, purpose: `Hướng dẫn tách nền ${ti("sampleProduct")} và ghép bối cảnh studio.` }
+          return f
+        }),
+      }
+    }
+    return cat
+  }), [ti])
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return CATEGORIES
-    return CATEGORIES.map((cat) => {
+    if (!q) return categoriesWithTerminology
+    return categoriesWithTerminology.map((cat) => {
       const catMatches =
         cat.title.toLowerCase().includes(q) || cat.description.toLowerCase().includes(q)
       const files = catMatches
@@ -249,7 +277,7 @@ export default function KhoTemplatesPage() {
           )
       return { ...cat, files }
     }).filter((cat) => cat.files.length > 0)
-  }, [query])
+  }, [query, categoriesWithTerminology])
 
   return (
     <div className="h-full overflow-y-auto">

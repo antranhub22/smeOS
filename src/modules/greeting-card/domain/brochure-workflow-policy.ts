@@ -16,6 +16,8 @@ export interface BrochureWorkflowPolicy {
   preset: WorkflowPreset
   /** Gate 1: Bắt buộc Điều hành duyệt tiền cọc (false = cho phép Điều phối/Sale xác nhận cọc khi có bill) */
   requireAdminDepositApproval: boolean
+  /** Gate 2: Bắt buộc Điều phối thẩm định các cửa hàng trong chuỗi & nhận đơn (true = Chuỗi; false = 1 Cửa hàng, tự động nhận khi duyệt tiền) */
+  requireCoordinatorAcceptance: boolean
   /** Gate 3: Bắt buộc chụp Ảnh thành phẩm trước khi giao (false = tùy chọn, có nút bỏ qua ảnh) */
   requireFinishedPhoto: boolean
   /** Gate 4: Cơ chế khách duyệt ảnh thành phẩm (Bỏ qua / Tự động duyệt sau 10p / Bắt buộc khách bấm duyệt) */
@@ -34,6 +36,7 @@ export interface BrochureWorkflowPolicy {
 export const LEAN_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object.freeze({
   preset: "LEAN",
   requireAdminDepositApproval: false,
+  requireCoordinatorAcceptance: false,
   requireFinishedPhoto: false,
   customerApprovalMode: "BYPASS",
   requireFullPaymentBeforeDispatch: false,
@@ -46,6 +49,7 @@ export const LEAN_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object.fre
 export const STANDARD_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object.freeze({
   preset: "STANDARD",
   requireAdminDepositApproval: true,
+  requireCoordinatorAcceptance: false,
   // PO 15/10/2026: mặc định Điều phối được bỏ qua ảnh — chỉ gói Nghiêm ngặt bắt buộc ảnh
   requireFinishedPhoto: false,
   customerApprovalMode: "AUTO_PASS_10M",
@@ -59,6 +63,7 @@ export const STANDARD_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object
 export const STRICT_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object.freeze({
   preset: "STRICT",
   requireAdminDepositApproval: true,
+  requireCoordinatorAcceptance: true,
   requireFinishedPhoto: true,
   customerApprovalMode: "REQUIRE_CUSTOMER",
   requireFullPaymentBeforeDispatch: true,
@@ -71,6 +76,7 @@ export const STRICT_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object.f
 export function detectWorkflowPreset(policy: Omit<BrochureWorkflowPolicy, "preset">): WorkflowPreset {
   const isMatch = (target: BrochureWorkflowPolicy) =>
     target.requireAdminDepositApproval === policy.requireAdminDepositApproval &&
+    target.requireCoordinatorAcceptance === policy.requireCoordinatorAcceptance &&
     target.requireFinishedPhoto === policy.requireFinishedPhoto &&
     target.customerApprovalMode === policy.customerApprovalMode &&
     target.requireFullPaymentBeforeDispatch === policy.requireFullPaymentBeforeDispatch &&
@@ -84,9 +90,12 @@ export function detectWorkflowPreset(policy: Omit<BrochureWorkflowPolicy, "prese
 }
 
 /** Đọc cấu hình từ settings của tổ chức, bảo đảm tương thích ngược 100% với cài đặt cũ */
-export function parseBrochureWorkflowPolicy(settings: unknown): BrochureWorkflowPolicy {
+export function parseBrochureWorkflowPolicy(settings: unknown, orgType?: string | null): BrochureWorkflowPolicy {
   const root = settings && typeof settings === "object" ? (settings as Record<string, unknown>) : {}
   const raw = root[BROCHURE_WORKFLOW_POLICY_KEY] as Record<string, unknown> | undefined
+
+  // Nếu là tổ chức Chuỗi / Mạng lưới (CHAIN, FLOWER_NETWORK): mặc định cần điều phối nhận đơn
+  const defaultForOrg = orgType === "CHAIN" || orgType === "FLOWER_NETWORK"
 
   // Nếu chưa có cài đặt workflow mới, kế thừa thông minh từ brochure_policy cũ nếu có
   if (!raw || typeof raw !== "object") {
@@ -98,6 +107,7 @@ export function parseBrochureWorkflowPolicy(settings: unknown): BrochureWorkflow
       const partial: Omit<BrochureWorkflowPolicy, "preset"> = {
         // PO 14/10/2026: mặc định mọi tiệm chỉ Điều hành duyệt cọc — cấu hình cũ không nới quyền này
         requireAdminDepositApproval: true,
+        requireCoordinatorAcceptance: defaultForOrg,
         // Tiệm cũ chưa từng chọn gói Nghiêm ngặt → được bỏ qua ảnh (PO 15/10/2026)
         requireFinishedPhoto: false,
         customerApprovalMode: requirePhotoQC ? "AUTO_PASS_10M" : "BYPASS",
@@ -111,7 +121,9 @@ export function parseBrochureWorkflowPolicy(settings: unknown): BrochureWorkflow
         preset: detectWorkflowPreset(partial),
       }
     }
-    return { ...STANDARD_WORKFLOW_POLICY }
+    return defaultForOrg
+      ? { ...STRICT_WORKFLOW_POLICY }
+      : { ...STANDARD_WORKFLOW_POLICY }
   }
 
   const approvalMode: CustomerApprovalMode =
@@ -131,6 +143,10 @@ export function parseBrochureWorkflowPolicy(settings: unknown): BrochureWorkflow
 
   const partial: Omit<BrochureWorkflowPolicy, "preset"> = {
     requireAdminDepositApproval: raw.require_admin_deposit_approval !== false,
+    requireCoordinatorAcceptance:
+      typeof raw.require_coordinator_acceptance === "boolean"
+        ? raw.require_coordinator_acceptance
+        : defaultForOrg,
     requireFinishedPhoto: raw.require_finished_photo === true,
     customerApprovalMode: approvalMode,
     requireFullPaymentBeforeDispatch: raw.require_full_payment_before_dispatch !== false,
@@ -144,6 +160,7 @@ export function parseBrochureWorkflowPolicy(settings: unknown): BrochureWorkflow
   // Tiêu chuẩn trước 15/10/2026 (khi gói này còn bắt buộc ảnh) không bị khoá nút "Bỏ qua ảnh"
   const named = requestedPreset === "LEAN" ? LEAN_WORKFLOW_POLICY : requestedPreset === "STANDARD" ? STANDARD_WORKFLOW_POLICY : requestedPreset === "STRICT" ? STRICT_WORKFLOW_POLICY : null
   if (named) {
+    partial.requireCoordinatorAcceptance = named.requireCoordinatorAcceptance
     partial.requireFinishedPhoto = named.requireFinishedPhoto
     partial.requireDeliveryProofPhoto = named.requireDeliveryProofPhoto
   }
@@ -161,6 +178,7 @@ export function serializeWorkflowPolicy(policy: BrochureWorkflowPolicy): Record<
   return {
     preset: policy.preset,
     require_admin_deposit_approval: policy.requireAdminDepositApproval,
+    require_coordinator_acceptance: policy.requireCoordinatorAcceptance,
     require_finished_photo: policy.requireFinishedPhoto,
     customer_approval_mode: policy.customerApprovalMode,
     require_full_payment_before_dispatch: policy.requireFullPaymentBeforeDispatch,

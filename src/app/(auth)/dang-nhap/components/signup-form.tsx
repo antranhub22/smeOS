@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Check } from "lucide-react"
+import { Eye, EyeOff, Check, Store, Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 
@@ -18,6 +18,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
   const [ten, setTen] = useState("")
   const [tenToChuc, setTenToChuc] = useState("")
   const [industryKey, setIndustryKey] = useState<string>(DEFAULT_INDUSTRY)
+  const [organizationType, setOrganizationType] = useState<"SINGLE" | "CHAIN">("SINGLE")
   const [loi, setLoi] = useState<string | null>(null)
   const [dangGui, setDangGui] = useState(false)
 
@@ -38,7 +39,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
         return "Ví dụ: Spa & Viện Chăm Sóc Sắc Đẹp Mộc Lan"
       case "FLORAL":
       default:
-        return "Ví dụ: Tiệm Hoa Tươi Thảo Mộc"
+        return "Ví dụ: Cửa Hàng Thảo Mộc Xanh"
     }
   }
 
@@ -56,6 +57,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
           name: ten || null,
           organization_name: tenToChuc,
           industry_key: industryKey,
+          organization_type: organizationType,
         }),
       })
       const data = await res.json().catch(() => null)
@@ -121,9 +123,67 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
           </div>
         </div>
 
+        <div className="border-t border-border pt-3 space-y-2.5">
+          <div className="flex items-center justify-between mb-0.5">
+            <div className="text-body-sm font-bold text-text">
+              2. Chọn mô hình vận hành <span className="text-danger">*</span>
+            </div>
+            <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+              {organizationType === "SINGLE" ? "1 Cửa hàng độc lập" : "Chuỗi nhiều chi nhánh"}
+            </span>
+          </div>
+          <div className="text-caption text-text-muted">
+            Quy trình duyệt đơn sẽ tự động áp dụng tương ứng (có thể xin chuyển đổi sau với Admin SaaS)
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <button
+              type="button"
+              onClick={() => setOrganizationType("SINGLE")}
+              className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                organizationType === "SINGLE"
+                  ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                  : "border-border bg-surface-alt/60 hover:border-primary/50"
+              }`}
+            >
+              <div className="flex items-center justify-between w-full mb-1">
+                <span className="text-body-sm font-bold text-text flex items-center gap-1.5">
+                  <Store size={15} className="text-primary shrink-0" />
+                  <span>1 Cửa hàng độc lập</span>
+                </span>
+                {organizationType === "SINGLE" && <Check size={14} className="text-primary font-bold" />}
+              </div>
+              <p className="text-caption text-text-muted leading-relaxed">
+                Một cơ sở duy nhất. Điều hành duyệt thanh toán là tự động tiếp nhận sản xuất ngay.
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setOrganizationType("CHAIN")}
+              className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                organizationType === "CHAIN"
+                  ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                  : "border-border bg-surface-alt/60 hover:border-primary/50"
+              }`}
+            >
+              <div className="flex items-center justify-between w-full mb-1">
+                <span className="text-body-sm font-bold text-text flex items-center gap-1.5">
+                  <Building2 size={15} className="text-primary shrink-0" />
+                  <span>Chuỗi cửa hàng</span>
+                </span>
+                {organizationType === "CHAIN" && <Check size={14} className="text-primary font-bold" />}
+              </div>
+              <p className="text-caption text-text-muted leading-relaxed">
+                Hệ thống nhiều chi nhánh. Điều phối cần liên hệ xác nhận chi nhánh nhận đơn.
+              </p>
+            </button>
+          </div>
+        </div>
+
         <div className="border-t border-border pt-3 space-y-3">
           <div className="text-body-sm font-bold text-text">
-            2. Thông tin cơ sở kinh doanh
+            3. Thông tin cơ sở kinh doanh
           </div>
 
           <div>

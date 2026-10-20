@@ -9,9 +9,10 @@ import { UnmatchedPaymentsPanel } from "./unmatched-payments-panel"
 import { AdminOrderTable } from "./admin-order-table"
 import { AdminOrderActionDialog } from "./admin-order-action-dialog"
 import { AdminSettingsDrawer } from "./admin-settings-drawer"
-import { ORDER_FILTERS, type ActionResult, type AdminOrder, type OrderAction, type OrderFilterId } from "./admin-order-types"
+import { ORDER_FILTERS, type ActionResult, type AdminOrder, type AdminOrderDialogAction, type OrderAction, type OrderFilterId } from "./admin-order-types"
 import { CopyCustomerMessage } from "./copy-customer-message"
 import { PendingCancellationPanel } from "./pending-cancellation-panel"
+import { AdminConfirmOrderModal } from "@/components/greeting-card/coordinator/admin-confirm-order-modal"
 
 /** Tab Điều hành: việc cần chủ tiệm quyết (thu tiền, báo giá, tiền chưa khớp); cài đặt nằm trong ngăn riêng. */
 export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: { focusOrderId?: string | null; onClearFocus?: () => void } = {}) {
@@ -133,9 +134,27 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
 
       {settingsOpen && <AdminSettingsDrawer onClose={() => setSettingsOpen(false)} />}
 
-      {action && (
+      {action && (action.type === "confirm-order" || action.type === "reject-order") && (
+        <AdminConfirmOrderModal
+          mode={action.type === "confirm-order" ? "confirm" : "reject"}
+          orderId={action.order.id}
+          orderCode={action.order.code}
+          onClose={() => setAction(null)}
+          onDone={() => {
+            const isConfirm = action.type === "confirm-order"
+            setAction(null)
+            setNotice({
+              message: isConfirm
+                ? `Đã xác nhận đơn hàng ${action.order.code}. Đơn đã chuyển vào sản xuất.`
+                : `Đã từ chối đơn hàng ${action.order.code} và kích hoạt quy trình hoàn tiền.`,
+            })
+            void orders.refresh()
+          }}
+        />
+      )}
+      {action && action.type !== "confirm-order" && action.type !== "reject-order" && (
         <AdminOrderActionDialog
-          action={action}
+          action={action as AdminOrderDialogAction}
           policy={policy}
           onClose={() => setAction(null)}
           onDone={(result) => {

@@ -36,7 +36,7 @@ const MODES: { id: ViewMode; label: string; icon: typeof Wand2 }[] = [
 export default function TheChaoPage() {
   const router = useRouter()
   const { can } = useSession()
-  const { dict } = useI18n()
+  const { dict, ti } = useI18n()
   // "wizard": luồng 3 bước gửi thẻ · "manager": bảng quản lý chi tiết — mở theo vai (Điều hành/Điều phối/Sale)
   const [viewMode, setViewMode] = useState<ViewMode>(() => defaultTheChaoView(can).viewMode)
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => defaultTheChaoView(can).activeTab)
@@ -105,8 +105,14 @@ export default function TheChaoPage() {
     payment: can("R11"),
     coordinator: can("R3") || can("R4") || can("R5"),
   }
+  const catalogTabLabel = ti("catalogTitle").toLowerCase().includes("phòng")
+    ? "Danh sách phòng"
+    : ti("catalogTitle").toLowerCase().includes("thực đơn")
+    ? "Thực đơn món"
+    : dict.greetingCard.tabs.catalogs
+
   const tabs: TabItem[] = ([
-    { id: "catalog", icon: BookOpen, label: dict.greetingCard.tabs.catalogs, ...(catalogCount !== null ? { badge: catalogCount } : {}) },
+    { id: "catalog", icon: BookOpen, label: catalogTabLabel, ...(catalogCount !== null ? { badge: catalogCount } : {}) },
     { id: "tracking", icon: GitMerge, label: dict.greetingCard.tabs.tracking },
     { id: "sales", icon: Send, label: dict.greetingCard.tabs.sales, ...(sessionCount !== null ? { badge: sessionCount } : {}) },
     { id: "payment", icon: ShieldCheck, label: dict.greetingCard.tabs.operation, ...(pendingCancelCount !== null ? { badge: pendingCancelCount } : {}) },
@@ -132,9 +138,13 @@ export default function TheChaoPage() {
             <ArrowLeft size={14} aria-hidden="true" />
             {dict.greetingCard.header.breadcrumb}
           </Link>
-          <h1 className="text-title font-bold text-foreground">{dict.greetingCard.header.title}</h1>
+          <h1 className="text-title font-bold text-foreground">
+            {ti("sampleProduct") ? `Thẻ chào & ${ti("sampleProduct")}` : dict.greetingCard.header.title}
+          </h1>
           <p className="mt-1 max-w-2xl text-body-sm text-text-muted">
-            {dict.greetingCard.header.description}
+            {ti("sampleProduct")
+              ? `Gửi khách ${ti("catalogTitle").toLowerCase()} để xem, ${ti("makerAction").toLowerCase().includes("phòng") ? "chọn phòng, đặt phòng" : "chọn mẫu, đặt hàng"} và thanh toán ngay trên điện thoại.`
+              : dict.greetingCard.header.description}
           </p>
         </div>
 
@@ -182,6 +192,7 @@ export default function TheChaoPage() {
               extraParams={{ source: "BROCHURE" }}
               filename="the-chao-don-hang.xlsx"
               label="Xuất file Excel"
+              iconOnly
             />
           )}
         </div>

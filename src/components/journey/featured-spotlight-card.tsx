@@ -4,6 +4,8 @@ import React from "react"
 import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react"
 import { COMING_SOON_LABEL } from "@/lib/feature-lock"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 interface FeaturedSpotlightCardProps {
   journey: JourneyDefinition
@@ -16,6 +18,8 @@ export function FeaturedSpotlightCard({
   onSelect,
   disabled = false,
 }: FeaturedSpotlightCardProps) {
+  const { organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
   return (
     <button
       type="button"
@@ -74,7 +78,7 @@ export function FeaturedSpotlightCard({
             </div>
             <div className="flex items-center gap-2 text-body-sm font-medium text-text">
               <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
-              <span>Đơn vào hệ thống và giao việc cho thợ</span>
+              <span>Đơn vào hệ thống và giao việc cho {terms.makerTitle.toLowerCase()}</span>
             </div>
           </div>
         </div>
@@ -82,7 +86,13 @@ export function FeaturedSpotlightCard({
         {/* Khối Call-To-Action bên phải */}
         <div className="flex lg:flex-col items-center lg:items-end justify-between lg:justify-center gap-3 pt-3 lg:pt-0 border-t lg:border-t-0 border-border">
           <div className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary group-hover:bg-primary-dark text-surface text-body-sm font-bold shadow-md group-hover:shadow-lg transition-all duration-200">
-            <span>{disabled ? COMING_SOON_LABEL : "Tạo link đặt hoa"}</span>
+            <span>
+              {disabled
+                ? COMING_SOON_LABEL
+                : organization?.industry && organization.industry !== "FLORAL"
+                ? `Tạo link ${terms.catalogTitle.toLowerCase()}`
+                : "Tạo link đặt hoa"}
+            </span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </div>
           <span className="text-caption font-medium text-text-muted">

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Clock, UserCheck, Flower2, Camera, Truck, CheckCircle2 } from "lucide-react"
+import { Clock, UserCheck, Flower2, Camera, Truck, CheckCircle2, Home, Bed, Utensils, Scissors, Package, Sparkles } from "lucide-react"
 import type { BrochureOrder, ModalState } from "./coordinator-order-card"
 import type { BrochurePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
 import type { TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"
@@ -10,6 +10,7 @@ import { BrochureOrderDetailModal, type OrderDetailModalTarget } from "@/compone
 import { classifyOrderTimeTier, type OrderTimeTier } from "@/modules/greeting-card/domain/order-time-tier"
 import { TierCollapsibleSection } from "./tier-collapsible-section"
 import { CoordinatorKanbanCard } from "./coordinator-kanban-card"
+import { useSession } from "@/lib/session"
 
 export type CoordinatorKanbanColId =
   | "PENDING"
@@ -33,6 +34,71 @@ export const COORDINATOR_KANBAN_COLS: readonly CoordinatorKanbanColDef[] = [
   { id: "DELIVERING", label: "Đang giao", icon: Truck },
   { id: "DELIVERED", label: "Đã giao", icon: CheckCircle2 },
 ]
+
+export function getCoordinatorKanbanCols(industryKey?: string | null): readonly CoordinatorKanbanColDef[] {
+  const ind = (industryKey ?? "").toUpperCase()
+  if (ind === "HOMESTAY") {
+    return [
+      { id: "PENDING", label: "Chờ xử lý", icon: Clock },
+      { id: "ASSIGNED", label: "Đã phân công", icon: UserCheck },
+      { id: "ARRANGING", label: "Chuẩn bị phòng", icon: Home },
+      { id: "READY", label: "Phòng sẵn sàng", icon: Sparkles },
+      { id: "DELIVERING", label: "Đang lưu trú", icon: Bed },
+      { id: "DELIVERED", label: "Đã trả phòng", icon: CheckCircle2 },
+    ]
+  }
+  if (ind === "FASHION") {
+    return [
+      { id: "PENDING", label: "Chờ xử lý", icon: Clock },
+      { id: "ASSIGNED", label: "Đã phân công", icon: UserCheck },
+      { id: "ARRANGING", label: "Đang may đo", icon: Scissors },
+      { id: "READY", label: "May xong", icon: Camera },
+      { id: "DELIVERING", label: "Đang giao", icon: Truck },
+      { id: "DELIVERED", label: "Đã giao", icon: CheckCircle2 },
+    ]
+  }
+  if (ind === "FNB") {
+    return [
+      { id: "PENDING", label: "Chờ xử lý", icon: Clock },
+      { id: "ASSIGNED", label: "Đã phân công", icon: UserCheck },
+      { id: "ARRANGING", label: "Đang chế biến", icon: Utensils },
+      { id: "READY", label: "Món sẵn sàng", icon: Camera },
+      { id: "DELIVERING", label: "Đang phục vụ", icon: Truck },
+      { id: "DELIVERED", label: "Đã hoàn tất", icon: CheckCircle2 },
+    ]
+  }
+  if (ind === "CRAFT_GIFT") {
+    return [
+      { id: "PENDING", label: "Chờ xử lý", icon: Clock },
+      { id: "ASSIGNED", label: "Đã phân công", icon: UserCheck },
+      { id: "ARRANGING", label: "Đang chế tác", icon: Sparkles },
+      { id: "READY", label: "Đã hoàn thành", icon: Camera },
+      { id: "DELIVERING", label: "Đang giao", icon: Truck },
+      { id: "DELIVERED", label: "Đã giao", icon: CheckCircle2 },
+    ]
+  }
+  if (ind === "RETAIL_GENERAL") {
+    return [
+      { id: "PENDING", label: "Chờ xử lý", icon: Clock },
+      { id: "ASSIGNED", label: "Đã phân công", icon: UserCheck },
+      { id: "ARRANGING", label: "Đang đóng gói", icon: Package },
+      { id: "READY", label: "Đã đóng gói", icon: Camera },
+      { id: "DELIVERING", label: "Đang giao", icon: Truck },
+      { id: "DELIVERED", label: "Đã giao", icon: CheckCircle2 },
+    ]
+  }
+  if (ind === "SERVICES") {
+    return [
+      { id: "PENDING", label: "Chờ xử lý", icon: Clock },
+      { id: "ASSIGNED", label: "Đã phân công", icon: UserCheck },
+      { id: "ARRANGING", label: "Đang thực hiện", icon: Sparkles },
+      { id: "READY", label: "Đã nghiệm thu", icon: Camera },
+      { id: "DELIVERING", label: "Đang triển khai", icon: Truck },
+      { id: "DELIVERED", label: "Hoàn tất dịch vụ", icon: CheckCircle2 },
+    ]
+  }
+  return COORDINATOR_KANBAN_COLS
+}
 
 export function getCoordinatorOrderStage(o: BrochureOrder): CoordinatorKanbanColId {
   if (o.delivery_status === "DELIVERED" || o.status === "COMPLETED") return "DELIVERED"
@@ -62,9 +128,11 @@ export function CoordinatorKanbanView({
   onRefresh,
   workflowPolicy,
 }: CoordinatorKanbanViewProps) {
+  const { organization } = useSession()
+  const kanbanCols = getCoordinatorKanbanCols(organization?.industry)
   const [detailTarget, setDetailTarget] = useState<OrderDetailModalTarget | null>(null)
   const grouped = new Map<CoordinatorKanbanColId, BrochureOrder[]>()
-  for (const col of COORDINATOR_KANBAN_COLS) grouped.set(col.id, [])
+  for (const col of kanbanCols) grouped.set(col.id, [])
 
   for (const o of orders) {
     const stage = getCoordinatorOrderStage(o)
@@ -109,7 +177,7 @@ export function CoordinatorKanbanView({
   return (
     <>
       <div className="flex gap-3 overflow-x-auto pb-4 pt-1" aria-label="Bảng Kanban Điều phối">
-        {COORDINATOR_KANBAN_COLS.map((col) => {
+        {kanbanCols.map((col) => {
           const Icon = col.icon
           const colOrders = sortByDelivery(grouped.get(col.id) ?? [])
 

@@ -5,13 +5,16 @@ import { BrochureOrderRepository } from "../infra/brochure-order-repository"
 import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
 import { CancellationFollowUpRepository } from "../infra/cancellation-follow-up-repository"
 import { expectedPayment, parsePaymentPolicy, resolveRequirePaymentProof } from "../domain/brochure-payment-policy"
+import { parseBrochureWorkflowPolicy } from "../domain/brochure-workflow-policy"
 import { policyForOrder, readPaymentPlan } from "../domain/payment-plan"
 import { depositAmountVnd } from "../domain/payment-schedule"
 import { balanceCollectionBlocker } from "../domain/balance-collection"
 import { loadPublicSession } from "./brochure-session-access"
 import { queueOrderNotification } from "./notify-customer"
+import { queueStaffNotification } from "./notify-staff"
 import { paymentNotifyEvent } from "../domain/customer-notifications"
 import { assertOrderInScope } from "./order-scope"
+import { ensureHomestayOrderBooking } from "@/modules/availability/use-cases/bind-order-booking"
 
 /**
  * Khách bấm "Tôi đã chuyển khoản". Chỉ hợp lệ khi đã có đơn; không kéo lùi phiên
@@ -62,6 +65,13 @@ export async function reportCustomerPayment(
       ...(proofAssetId ? { proofAssetId } : {}),
       reportedAt: new Date().toISOString(),
     })
+  }
+
+  // Khóa phòng trên Lịch phòng & Khả dụng cho đơn Homestay khi khách đã báo chuyển khoản
+  const orgSettings = session.organization?.settings as Record<string, unknown> | null
+  const isHomestay = orgSettings?.industry === "HOMESTAY" || orgSettings?.industryKey === "HOMESTAY"
+  if (isHomestay && session.order) {
+    await ensureHomestayOrderBooking(session.order).catch(() => null)
   }
 
   return { success: true, message: "Đã ghi nhận thông báo chuyển khoản của bạn" }
@@ -130,14 +140,26 @@ export async function adminConfirmBrochurePayment(
     ? "Hệ thống tự động xác nhận chuyển khoản sau 15 phút (có ảnh bill hợp lệ)"
     : "Xác nhận chuyển khoản qua Thẻ chào (Điều hành duyệt)"
 
+  const workflow = parseBrochureWorkflowPolicy(shop.settings, shop.type)
+
   const result = await payments.recordIncomingPayment(ctx, orderId, {
     amountVnd,
     method: "BANK_TRANSFER",
     reference: input.reference?.trim() || defaultRef,
     note: input.note?.trim() || defaultNote,
     evidenceAssetId,
+    // Gate 1 (xác nhận tiền) KHÔNG tự nhận đơn.
+    // Gate 1b (adminConfirmBrochureOrder) là bước riêng — Điều hành xác nhận đơn sau khi xác nhận tiền.
+    // Với Chuỗi: coordinatorAcceptBrochureOrder đóng vai trò Gate 2 tương đương.
+    autoAcceptProduction: false,
   })
   queueOrderNotification(ctx.organizationId, orderId, paymentNotifyEvent(result.balanceVnd))
+  queueStaffNotification(ctx.organizationId, "PAYMENT_CONFIRMED", {
+    orderId,
+    orderCode: order.code,
+    amountVnd,
+    assignedSaleId: order.greeting_sessions?.[0]?.sale_id ?? null,
+  })
   return result
 }
 
@@ -254,6 +276,9 @@ export async function coordinatorConfirmDepositPayment(
     }
   }
 
+  const workflow = parseBrochureWorkflowPolicy(shop.settings, shop.type)
+  const isSingleStore = !workflow.requireCoordinatorAcceptance
+
   const noteText = input.note?.trim() || `[Điều phối xác nhận] Đã duyệt tiền ${isDepositOrder ? `cọc ${pct}%` : "100%"} (qua ảnh bill)`
   const result = await payments.recordIncomingPayment(ctx, orderId, {
     amountVnd,
@@ -261,8 +286,12 @@ export async function coordinatorConfirmDepositPayment(
     reference: `COORDINATOR-DEPOSIT-${orderId.slice(0, 8)}`,
     note: noteText,
     evidenceAssetId,
+    autoAcceptProduction: isSingleStore,
   })
   queueOrderNotification(ctx.organizationId, orderId, paymentNotifyEvent(result.balanceVnd))
+  if (result.autoAccepted) {
+    queueOrderNotification(ctx.organizationId, orderId, "ORDER_ACCEPTED")
+  }
   return result
 }
 

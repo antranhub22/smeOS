@@ -23,6 +23,13 @@ export class OrganizationRepository {
   }
 
   /**
+   * Đọc tổ chức theo ID — dành cho người vận hành nền tảng (Platform Operator).
+   */
+  findById(organizationId: string): Promise<organizations | null> {
+    return this.db.organizations.findUnique({ where: { id: organizationId } })
+  }
+
+  /**
    * Sửa hồ sơ tổ chức hiện tại — nguồn của `PATCH /organizations/current`
    * (`F2`). Lọc theo `ctx.organizationId`, không theo id truyền vào — không
    * đường nào sửa được tổ chức khác dù có đoán đúng id.
@@ -140,4 +147,30 @@ export class OrganizationRepository {
       orderBy: { created_at: "asc" },
     })
   }
+
+  /** Cập nhật trường settings cho tổ chức hiện tại */
+  async updateSettings(ctx: TenantContext, settings: Record<string, unknown>): Promise<void> {
+    await this.db.organizations.update({
+      where: { id: ctx.organizationId },
+      data: { settings: settings as InputJsonValue },
+    })
+  }
+
+  /**
+   * Cập nhật loại tổ chức và settings — dành cho Admin SaaS phê duyệt nâng cấp/chuyển đổi mô hình.
+   */
+  async updateTypeAndSettings(
+    organizationId: string,
+    type: organization_type,
+    settings: Record<string, unknown>
+  ): Promise<organizations> {
+    return this.db.organizations.update({
+      where: { id: organizationId },
+      data: {
+        type,
+        settings: settings as InputJsonValue,
+      },
+    })
+  }
 }
+

@@ -15,6 +15,7 @@ import { orderPaymentSummary } from "../domain/payment-summary"
 import { paymentInstructionsFor } from "./payment-instructions"
 import { customerVisiblePaidVnd } from "../domain/deposit-acknowledgement"
 import { customerCancellationNotice } from "../domain/customer-cancellation-notice"
+import { ensureHomestayOrderBooking } from "@/modules/availability/use-cases/bind-order-booking"
 
 const ORDER_CODE_REGEX = /^[A-Z0-9-]{4,40}$/
 
@@ -113,6 +114,32 @@ export async function getBrochureTracking(
   // Khách đã chuyển khoản mà tiệm chưa kịp ghi nhận → vẫn báo sẽ hoàn tiền
   const cancellationNotice = notice ? { ...notice, refundToConfirm: notice.refundVnd === 0 && ledgerPaidVnd === 0 && customerReported } : null
 
+  let checkOutDate = deliveryWindow.checkOutDate || null
+  if (!checkOutDate && deliveryWindow.date) {
+    const match = order.internal_note?.match(/➔\s*(\d{4}-\d{2}-\d{2})/)
+    if (match?.[1] && match[1] > deliveryWindow.date) {
+      checkOutDate = match[1]
+    } else if (firstItem?.quantity && firstItem.quantity >= 1) {
+      const inMs = Date.parse(`${deliveryWindow.date}T00:00:00Z`)
+      if (!Number.isNaN(inMs)) {
+        checkOutDate = new Date(inMs + firstItem.quantity * 86_400_000).toISOString().slice(0, 10)
+      }
+    }
+  }
+
+  const industryKey = (orgSettings as Record<string, unknown> | null)?.industry ?? (orgSettings as Record<string, unknown> | null)?.industryKey ?? "FLORAL"
+
+  if (industryKey === "HOMESTAY" && order.status !== "CANCELLED" && firstItem?.product_id) {
+    ensureHomestayOrderBooking({
+      id: order.id,
+      code: order.code,
+      organization_id: order.organization_id,
+      delivery_window: { ...deliveryWindow, checkOutDate },
+      internal_note: order.internal_note,
+      items: order.items.map((i) => ({ product_id: i.product_id, quantity: i.quantity })),
+    }).catch(() => null)
+  }
+
   return {
     status: "FOUND" as const,
     order: {
@@ -130,12 +157,15 @@ export async function getBrochureTracking(
       deliveryAddress: verified ? address.street || "" : areaOnly(address),
       deliveryDate: deliveryWindow.date || null,
       deliveryTimeSlot: deliveryWindow.timeSlot || null,
+      checkOutDate,
+      customerReportedPayment: customerReported,
       productSnapshot: snapshot,
       /** Giữ cho client cũ: ảnh thành phẩm mới nhất */
       finishedImageUrl: productPhotoUrls[0] ?? null,
       productPhotoUrls,
       recipientPhotoUrls,
       photoApproval,
+      industryKey,
       createdAt: order.created_at.toISOString(),
       updatedAt: order.updated_at.toISOString(),
       timeline,

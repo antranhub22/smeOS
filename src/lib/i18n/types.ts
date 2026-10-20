@@ -38,6 +38,6 @@ export interface I18nContextValue {
   t: (key: TranslationKey, params?: InterpolationParams) => string
   dict: I18nDictionary
   industryKey?: string | undefined
-  industry?: IndustryPluginContract | undefined
+  industry: IndustryPluginContract
   ti: (termKey: "makerTitle" | "makerAction" | "productRecipe" | "sampleProduct" | "rawMaterialItem" | "completedProductPhoto" | "printablesTitle" | "catalogTitle" | "createButtonLabel" | "scanButtonLabel") => string
 }

@@ -16,6 +16,11 @@ import { parsePaymentPolicy, resolveRequirePaymentProof } from "./brochure-payme
 
 export type { GreetingTemplateId, GreetingCardTemplateDef, TemplateCategory }
 export { GREETING_TEMPLATES }
+export {
+  getIndustryGreetingTemplate,
+  getIndustryGreetingTemplates,
+  getIndustryGreetingTemplateList,
+} from "./industry-greeting-templates"
 
 export const GREETING_TEMPLATE_LIST: GreetingCardTemplateDef[] = Object.values(GREETING_TEMPLATES)
 
@@ -43,6 +48,7 @@ export function resolveGreetingTemplateId(candidate?: string | null): GreetingTe
 export function toPublicCatalogFilters(
   raw: unknown,
   orgSettings?: unknown,
+  industryKey?: string | null,
 ): {
   templateId: string
   displayFields: OptionalDisplayField[]
@@ -52,7 +58,9 @@ export function toPublicCatalogFilters(
   const rawId = raw && typeof raw === "object" ? (raw as Record<string, unknown>).templateId : undefined
   const templateId = resolveGreetingTemplateId(typeof rawId === "string" ? rawId : null)
   const displayFields = enabledFieldsFor(readDisplaySettings(orgSettings), templateId)
-  const appliedPolicies = resolveAppliedPolicies(raw, orgSettings)
+  const settingsObj = orgSettings && typeof orgSettings === "object" ? (orgSettings as Record<string, unknown>) : {}
+  const industry = industryKey || (typeof settingsObj.industry === "string" ? settingsObj.industry : null)
+  const appliedPolicies = resolveAppliedPolicies(raw, orgSettings, industry)
   const paymentPolicy = parsePaymentPolicy(orgSettings)
   const requirePaymentProof = resolveRequirePaymentProof(paymentPolicy, raw)
   if (typeof rawId !== "string" && orgSettings === undefined) return null

@@ -92,4 +92,7 @@ export const SERVICES_INDUSTRY: IndustryPluginContract = {
       "Thẻ hội viên 10 buổi massage thư giãn toàn thân",
     ],
   },
+  navigation: {
+    hiddenNavKeys: [],
+  },
 }

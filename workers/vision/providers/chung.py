@@ -30,11 +30,19 @@ SO_LAN_THU_LAI = 2
 CANH_DAI_MAC_DINH_PX = 1400
 
 
-def nap_json(ten: str) -> dict:
+def nap_json(ten: str, nganh: str | None = None) -> dict:
+    if nganh:
+        duong_dan_nganh = CONTRACTS_DIR / nganh.lower() / ten
+        if duong_dan_nganh.is_file():
+            return json.loads(duong_dan_nganh.read_text(encoding="utf-8"))
     return json.loads((CONTRACTS_DIR / ten).read_text(encoding="utf-8"))
 
 
-def nap_text(ten: str) -> str:
+def nap_text(ten: str, nganh: str | None = None) -> str:
+    if nganh:
+        duong_dan_nganh = CONTRACTS_DIR / nganh.lower() / ten
+        if duong_dan_nganh.is_file():
+            return duong_dan_nganh.read_text(encoding="utf-8")
     return (CONTRACTS_DIR / ten).read_text(encoding="utf-8")
 
 

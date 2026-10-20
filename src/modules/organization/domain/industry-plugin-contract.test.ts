@@ -6,9 +6,9 @@ import {
 } from "./industry-profile"
 
 describe("IndustryPluginContract SSOT Verification", () => {
-  it("đăng ký đầy đủ 6 ngành trong INDUSTRY_REGISTRY", () => {
+  it("đăng ký đầy đủ 7 ngành trong INDUSTRY_REGISTRY", () => {
     const plugins = listAllIndustryPlugins()
-    expect(plugins.length).toBe(6)
+    expect(plugins.length).toBe(7)
     const keys = plugins.map((p) => p.identity.key)
     expect(keys).toContain("FLORAL")
     expect(keys).toContain("FASHION")
@@ -16,6 +16,7 @@ describe("IndustryPluginContract SSOT Verification", () => {
     expect(keys).toContain("CRAFT_GIFT")
     expect(keys).toContain("RETAIL_GENERAL")
     expect(keys).toContain("SERVICES")
+    expect(keys).toContain("HOMESTAY")
   })
 
   it("mỗi ngành tuân thủ tuyệt đối 6 khối thành phần chuẩn mực", () => {

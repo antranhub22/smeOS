@@ -4,7 +4,7 @@ export default function CatalogSlugNotFound() {
   return (
     <LinkUnavailable
       title="Link không tồn tại hoặc đã hết hạn"
-      message="Bộ sưu tập mẫu hoa này không còn hiệu lực. Vui lòng liên hệ cửa hàng để nhận link mới."
+      message="Bộ sưu tập này không còn hiệu lực. Vui lòng liên hệ cửa hàng để nhận link mới."
     />
   )
 }

@@ -31,7 +31,7 @@ export const MOC_LAN_BRAND_PROFILE = {
   text_color: "#111827",
   font_heading: "Playfair Display",
   font_body: "Inter",
-  logo_asset_id: "/brand/siin-store-logo.jpg",
+  logo_asset_id: "/mock-data/floral/logo.jpg",
   tone_of_voice: "romantic",
   hashtags: {
     default: ["#siinstore", "#hoatuoisaigon", "#hoathietke", "#hoasinhnhat", "#hoatinhyeu"],
@@ -79,6 +79,7 @@ export function getIndustrySeedProfiles(industryKey?: string | null) {
           text_color: "#0f172a",
           font_heading: "Playfair Display",
           font_body: "Inter",
+          logo_asset_id: "/mock-data/fashion/logo.jpg",
           tone_of_voice: "elegant",
           hashtags: { default: ["#linboutique", "#thoitrangthietke", "#damdutiec", "#lookbook"] },
           cta_templates: {
@@ -215,6 +216,39 @@ export function getIndustrySeedProfiles(industryKey?: string | null) {
             guarantees: ["Kỹ thuật viên tay nghề cao đào tạo bài bản", "Dược mỹ phẩm nhập khẩu chính hãng", "Không chèo kéo phát sinh chi phí"],
           },
           forbidden_styles: { banned_words: ["chặt chém", "kem trộn", "thuốc rởm"] },
+        },
+      }
+    case "HOMESTAY":
+      return {
+        business: {
+          display_name: "Homestay Villa Mây Sơn",
+          legal_name: "Hộ kinh doanh Du lịch Mây Sơn",
+          phone: "0900 123 456",
+          email: "booking@villaMaySon.vn",
+          address: "Thôn Mây Sơn, Xã Cẩm Thanh, Hội An, Quảng Nam",
+          website: "https://villaMaySon.vn",
+          tax_code: "0318999886",
+          description: "Villa Mây Sơn — Homestay nguyên căn sân vườn view thung lũng, không gian yên tĩnh lý tưởng cho kỳ nghỉ gia đình và trăng mật",
+          operating_hours: { open: "07:00", close: "22:00" },
+          social_links: { facebook: "https://facebook.com/villamayson", zalo: "https://zalo.me/0900123456" },
+        },
+        brand: {
+          primary_color: "#065f46",
+          secondary_color: "#d1fae5",
+          accent_color: "#b45309",
+          background_color: "#f0fdf4",
+          text_color: "#052e16",
+          font_heading: "Playfair Display",
+          font_body: "Inter",
+          logo_asset_id: "/mock-data/homestay/logo.jpg",
+          tone_of_voice: "warm",
+          hashtags: { default: ["#villamayson", "#homestayhoian", "#nghiduong", "#villaviewthunglung", "#homstayvietnam"] },
+          cta_templates: {
+            default: "Nhắn tin Zalo hoặc gọi Hotline để đặt phòng và được hỗ trợ lên lịch trình nghỉ dưỡng trọn vẹn!",
+            free_gifts: ["Tặng bữa sáng đặc sản địa phương", "Setup phòng đặc biệt cho trăng mật & sinh nhật", "Hỗ trợ đặt xe đón sân bay miễn phí"],
+            guarantees: ["100% không gian sạch sẽ đạt chuẩn kiểm tra trước mỗi lượt khách", "Ảnh phòng thực tế 100% không chỉnh sửa quá mức", "Hoàn tiền đầy đủ nếu hủy trước 72 giờ"],
+          },
+          forbidden_styles: { banned_words: ["phòng bẩn", "không đúng mô tả", "lừa đảo"] },
         },
       }
     case "FLORAL":

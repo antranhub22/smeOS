@@ -8,6 +8,7 @@ import { FloristTicketCard } from "@/components/templates/orders/florist-ticket-
 import { DeliveryReceiptCard } from "@/components/templates/orders/delivery-receipt-card"
 import { OrderCancelDialog } from "./order-cancel-dialog"
 import { OrderActionButtons } from "./order-action-buttons"
+import { useI18n } from "@/lib/i18n"
 import type { OrderItemRecord, OrderRecord, OrderSlaCalculation } from "@/modules/orders/domain/order-types"
 
 /**
@@ -41,6 +42,10 @@ interface OrderDetailModalProps {
 }
 
 export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailModalProps) {
+  const { ti } = useI18n()
+  const makerTitle = ti("makerTitle") || "Thợ gia công"
+  const sampleProductTitle = ti("sampleProduct") || "Sản phẩm hoàn thiện"
+
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<OrderDetailBody | null>(null)
   const [activeTab, setActiveTab] = useState<"overview" | "florist" | "delivery">("overview")
@@ -110,22 +115,22 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
         color: f.color ?? "Chưa rõ màu",
       }))
     }
-    return [{ flowerName: it?.description ?? "Mẫu hoa", quantity: it?.quantity ?? 1, unit: "xem ghi chú", color: "Chưa có BOM chi tiết — xem ghi chú thợ" }]
+    return [{ flowerName: it?.description ?? sampleProductTitle, quantity: it?.quantity ?? 1, unit: "xem ghi chú", color: `Chưa có BOM chi tiết — xem ghi chú ${makerTitle.toLowerCase()}` }]
   })
 
   const wrapStyleText = (() => {
     const parts = items.map((it) => [it?.metadata?.wrapStyle, it?.metadata?.ribbon].filter(Boolean).join(" + ")).filter(Boolean)
-    return parts.length > 0 ? Array.from(new Set(parts)).join(" | ") : "Chưa rõ kiểu gói — xem ghi chú thợ"
+    return parts.length > 0 ? Array.from(new Set(parts)).join(" | ") : `Chưa rõ quy cách — xem ghi chú ${makerTitle.toLowerCase()}`
   })()
 
-  const productNameText = items.map((it) => it?.description).filter(Boolean).join(", ") || "Bó hoa đặt cắm"
+  const productNameText = items.map((it) => it?.description).filter(Boolean).join(", ") || sampleProductTitle
 
   const tabNav = (
     <div className="flex gap-2 px-5 pt-2 sm:px-6 text-caption font-semibold bg-surface-raised/30">
       {([
         { key: "overview", label: "Tổng quan & Điều hành", icon: <Layers className="h-3.5 w-3.5" /> },
-        { key: "florist", label: "Thợ cắm hoa (Ẩn giá)", icon: <Flower2 className="h-3.5 w-3.5" /> },
-        { key: "delivery", label: "Giao vận & Thiệp A6", icon: <Truck className="h-3.5 w-3.5" /> },
+        { key: "florist", label: `${makerTitle} (Ẩn giá)`, icon: <Flower2 className="h-3.5 w-3.5" /> },
+        { key: "delivery", label: "Giao vận & Ấn phẩm A6", icon: <Truck className="h-3.5 w-3.5" /> },
       ] as const).map(({ key, label, icon }) => (
         <button
           key={key}

@@ -3,6 +3,7 @@
 import React from "react"
 import { BookOpen, Send, Sparkles, ArrowRight, ShieldCheck, Plus, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/lib/i18n"
 
 interface JourneyActionCardsProps {
   catalogCount: number
@@ -21,6 +22,7 @@ export function JourneyActionCards({
   onViewPayments,
   onSwitchToExpertMode,
 }: JourneyActionCardsProps) {
+  const { ti } = useI18n()
   const hasNoCatalog = catalogCount === 0
 
   return (
@@ -35,14 +37,14 @@ export function JourneyActionCards({
             <div>
               <div className="flex items-center gap-2">
                 <h4 className="text-body font-extrabold text-foreground">
-                  Cửa hàng chưa có Bộ Sưu Tập Mẫu Hoa
+                  Cửa hàng chưa có {ti("catalogTitle")}
                 </h4>
                 <span className="px-2 py-0.5 rounded-full bg-warning/20 text-warning-text text-caption font-bold">
                   Khởi đầu cần thiết
                 </span>
               </div>
               <p className="text-body-sm text-text-muted mt-1 leading-relaxed max-w-2xl">
-                Khách hàng sẽ lướt xem các mẫu hoa theo bộ sưu tập (Catalog). Hãy tạo bộ sưu tập mẫu hoa đầu tiên trước khi sinh link gửi chào hàng cho khách.
+                Khách hàng sẽ lướt xem các {ti("sampleProduct").toLowerCase()} theo bộ sưu tập. Hãy tạo bộ sưu tập đầu tiên trước khi sinh link gửi chào hàng cho khách.
               </p>
             </div>
           </div>
@@ -108,11 +110,11 @@ export function JourneyActionCards({
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-caption font-mono font-bold text-primary">BƯỚC 1</span>
               <h3 className="text-body font-extrabold text-foreground group-hover:text-primary transition-colors">
-                Bộ Sưu Tập Mẫu Hoa
+                {ti("catalogTitle")}
               </h3>
             </div>
             <p className="text-body-sm text-text-muted leading-relaxed">
-              Tạo danh mục các mẫu hoa theo sự kiện (20/10, Sinh nhật, Khai trương...) để làm kho hoa cho khách vuốt chọn.
+              Tạo danh mục các {ti("sampleProduct").toLowerCase()} theo sự kiện và phong cách để khách vuốt chọn.
             </p>
           </div>
 
@@ -122,7 +124,7 @@ export function JourneyActionCards({
               onClick={onStartCreateCatalog}
               className="text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
             >
-              <span>{catalogCount === 0 ? "Tạo bộ sưu tập đầu tiên" : "Quản lý & Thêm mẫu hoa"}</span>
+              <span>{catalogCount === 0 ? "Tạo bộ sưu tập đầu tiên" : `Quản lý & Thêm ${ti("sampleProduct").toLowerCase()}`}</span>
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </button>
             {catalogCount > 0 && (
@@ -202,7 +204,7 @@ export function JourneyActionCards({
               </h3>
             </div>
             <p className="text-body-sm text-text-muted leading-relaxed">
-              Theo dõi khách lướt chọn mẫu hoa trực tiếp và 1-click đối soát xác nhận chuyển khoản ngân hàng VietQR.
+              Theo dõi khách lướt chọn {ti("sampleProduct").toLowerCase()} trực tiếp và 1-click đối soát xác nhận chuyển khoản ngân hàng VietQR.
             </p>
           </div>
 

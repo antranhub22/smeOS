@@ -23,15 +23,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (data.status === "UNAVAILABLE") {
     return {
-      title: `Thẻ Chào Mẫu Hoa — ${data.shop.name}`,
-      description: `Bộ sưu tập hoa tươi từ ${data.shop.name}.`,
+      title: `Bộ Sưu Tập Sản Phẩm — ${data.shop.name}`,
+      description: `Bộ sưu tập sản phẩm tuyển chọn từ ${data.shop.name}.`,
     }
   }
 
   if (data.status !== "ACTIVE") {
     return {
-      title: "Thẻ Chào Mẫu Hoa",
-      description: "Xem bộ sưu tập hoa tươi trực tuyến.",
+      title: "Bộ Sưu Tập Sản Phẩm",
+      description: "Xem bộ sưu tập sản phẩm trực tuyến.",
     }
   }
 
@@ -69,7 +69,7 @@ export default async function PublicBrochurePage({ params, searchParams }: PageP
     return (
       <LinkUnavailable
         title="Link không tồn tại hoặc đã hết hạn"
-        message="Link xem mẫu hoa này không còn hiệu lực hoặc đã hết thời gian sử dụng. Vui lòng liên hệ người gửi hoặc cửa hàng để nhận link mới."
+        message="Link xem bộ sưu tập này không còn hiệu lực hoặc đã hết thời gian sử dụng. Vui lòng liên hệ người gửi hoặc cửa hàng để nhận link mới."
       />
     )
   }
@@ -117,7 +117,7 @@ function UnavailableLink({ reason, shop }: { reason: "EXPIRED" | "CLOSED"; shop:
     <LinkUnavailable
       shop={shop}
       title="Link đã hết hạn"
-      message={`Link xem mẫu hoa này đã hết thời gian sử dụng. Vui lòng liên hệ ${shop.name} để nhận link mới.`}
+      message={`Link xem bộ sưu tập này đã hết thời gian sử dụng. Vui lòng liên hệ ${shop.name} để nhận link mới.`}
     />
   )
 }

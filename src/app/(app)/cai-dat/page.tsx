@@ -1,23 +1,16 @@
 "use client"
 
 import { useEffect, useState, type FormEvent } from "react"
-import Link from "next/link"
 import {
   Settings,
   Building2,
-  Cpu,
-  Share2,
-  Server,
-  ArrowRight,
   CheckCircle2,
   AlertCircle,
   Clock,
   Phone,
   MapPin,
   Store,
-  Sparkles,
   Save,
-  Users,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
@@ -25,8 +18,10 @@ import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { DispatchReminderPolicyCard } from "@/components/coordinator/dispatch-reminder-policy-card"
+import { LoadMockDataButton } from "@/components/profiles/load-mock-data-button"
+import { SettingsSubsystemGrid } from "@/components/organization/settings-subsystem-grid"
+import { ModelChangeCard } from "@/components/organization/model-change-card"
 import { useI18n } from "@/lib/i18n"
-import type { Route } from "next"
 
 export default function CaiDatTiemPage() {
   const { orgName, can } = useSession()
@@ -112,123 +107,25 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* 2. Lưới liên kết sâu đến 4 phân hệ thiết lập */}
-      <div>
-        <h2 className="text-sm font-bold text-text uppercase tracking-wider mb-3">
-          Liên Kết Thiết Lập Chuyên Sâu
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
-          <Link
-            href={"/ho-so" as Route}
-            className="p-4 rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-xs transition-all flex flex-col justify-between group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <div className="space-y-2">
-              <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <Building2 size={18} />
-              </div>
-              <div className="text-sm font-bold text-text group-hover:text-primary transition-colors">
-                Hồ sơ và thương hiệu
-              </div>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Logo, màu sắc thương hiệu, chính sách cọc, cam kết và dịp lễ.
-              </p>
-            </div>
-            <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-primary pt-2 border-t border-border/60">
-              <span>Mở hồ sơ</span> <ArrowRight size={13} />
-            </div>
-          </Link>
-
-          <Link
-            href={"/cai-dat-ai" as Route}
-            className="p-4 rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-xs transition-all flex flex-col justify-between group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <div className="space-y-2">
-              <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
-                <Cpu size={18} />
-              </div>
-              <div className="text-sm font-bold text-text group-hover:text-accent transition-colors">
-                Thiết lập AI
-              </div>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Bảo vệ thông tin khách hàng, giới hạn chi phí dùng AI và chọn nhà cung cấp AI.
-              </p>
-            </div>
-            <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-accent pt-2 border-t border-border/60">
-              <span>Thiết lập AI</span> <ArrowRight size={13} />
-            </div>
-          </Link>
-
-          <Link
-            href={"/ket-noi" as Route}
-            className="p-4 rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-xs transition-all flex flex-col justify-between group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <div className="space-y-2">
-              <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
-                <Share2 size={18} />
-              </div>
-              <div className="text-sm font-bold text-text group-hover:text-accent transition-colors">
-                Kết nối mạng xã hội
-              </div>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Kết nối Facebook, Instagram, TikTok và Zalo OA.
-              </p>
-            </div>
-            <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-accent pt-2 border-t border-border/60">
-              <span>Kết nối kênh</span> <ArrowRight size={13} />
-            </div>
-          </Link>
-
-          <Link
-            href={"/bo-may" as Route}
-            className="p-4 rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-xs transition-all flex flex-col justify-between group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <div className="space-y-2">
-              <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <Server size={18} />
-              </div>
-              <div className="text-sm font-bold text-text group-hover:text-primary transition-colors">
-                Phân tích ảnh hoa
-              </div>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Chọn cách AI nhận diện ảnh hoa cho toàn bộ cửa hàng.
-              </p>
-            </div>
-            <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-primary pt-2 border-t border-border/60">
-              <span>Thiết lập nhận diện</span> <ArrowRight size={13} />
-            </div>
-          </Link>
-
-          <Link
-            href={"/cai-dat/thanh-vien" as Route}
-            className="p-4 rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-xs transition-all flex flex-col justify-between group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <div className="space-y-2">
-              <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <Users size={18} />
-              </div>
-              <div className="text-sm font-bold text-text group-hover:text-primary transition-colors">
-                Thành viên và phân quyền
-              </div>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Mời thành viên mới, phân vai trò và chi nhánh làm việc.
-              </p>
-            </div>
-            <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-primary pt-2 border-t border-border/60">
-              <span>Quản lý thành viên</span> <ArrowRight size={13} />
-            </div>
-          </Link>
-        </div>
-      </div>
+      {/* 2. Lưới liên kết sâu đến các phân hệ thiết lập */}
+      <SettingsSubsystemGrid />
 
       {/* 3. Form chỉnh sửa nhanh thông số cơ bản tại chỗ */}
       <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-        <div className="mb-4">
-          <h2 className="text-base font-extrabold text-text flex items-center gap-2">
-            <Store size={18} className="text-primary" /> Thông tin cơ bản của cửa hàng
-          </h2>
-          <p className="text-xs text-text-muted mt-0.5">
-            Các trường thông tin dưới đây áp dụng tức thì cho hóa đơn, phiếu cắm hoa và kịch bản tư vấn.
-          </p>
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 className="text-base font-extrabold text-text flex items-center gap-2">
+              <Store size={18} className="text-primary" /> Thông tin cơ bản của cửa hàng
+            </h2>
+            <p className="text-xs text-text-muted mt-0.5">
+              Các trường thông tin dưới đây áp dụng tức thì cho hóa đơn, phiếu cắm hoa và kịch bản tư vấn.
+            </p>
+          </div>
+          {canEdit && (
+            <div className="shrink-0">
+              <LoadMockDataButton />
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -361,7 +258,10 @@ export default function CaiDatTiemPage() {
         )}
       </div>
 
-      {/* 4. Nhắc Nghiệp Vụ Điều Phối (M0..M5) */}
+      {/* 4. Mô hình vận hành doanh nghiệp (1 Cửa hàng vs Chuỗi) */}
+      <ModelChangeCard />
+
+      {/* 5. Nhắc Nghiệp Vụ Điều Phối (M0..M5) */}
       <DispatchReminderPolicyCard canEdit={can("R12")} />
     </div>
   )

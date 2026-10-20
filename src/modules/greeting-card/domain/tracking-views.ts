@@ -6,7 +6,7 @@
  */
 import { STEP_SLA_RULES, type StepOwner, type StepSlaSetting } from "./step-sla"
 import { inCategory, type TrackingCategory } from "./tracking-filters"
-import { PIPELINE_STEPS, type TrackingPipelineItem, type TrackingPipelineStepId } from "./tracking-pipeline-types"
+import { PIPELINE_STEPS, type StepDefinition, type TrackingPipelineItem, type TrackingPipelineStepId } from "./tracking-pipeline-types"
 import { classifyOrderTimeTier } from "./order-time-tier"
 
 export type SlaState = "NONE" | "ON_TRACK" | "DUE_SOON" | "OVERDUE"
@@ -167,8 +167,14 @@ export type KanbanColumnLimits = Partial<Record<TrackingPipelineStepId, number>>
  * Nhóm theo 9 bước; mỗi cột trả `perColumn` thẻ gấp nhất, hoặc số riêng của cột trong
  * `columnLimits` (nút "Xem thêm" của cột). Đếm và số quá hạn/sắp hạn vẫn tính trên cả cột.
  */
-export function kanbanColumns(items: TrackingViewItem[], perColumn: number, columnLimits: KanbanColumnLimits = {}, nowMs = Date.now()): KanbanColumn[] {
-  return PIPELINE_STEPS.map((step) => {
+export function kanbanColumns(
+  items: TrackingViewItem[],
+  perColumn: number,
+  columnLimits: KanbanColumnLimits = {},
+  nowMs = Date.now(),
+  steps: StepDefinition[] = PIPELINE_STEPS
+): KanbanColumn[] {
+  return steps.map((step) => {
     const inStep = items.filter((i) => i.currentStepId === step.id).sort((a, b) => compareItems(a, b, { field: "urgency", dir: "desc" }))
     const ages = inStep.map((i) => i.sla.ageMinutes)
     const limit = Math.min(KANBAN_MAX_PER_COLUMN, Math.max(perColumn, columnLimits[step.id] ?? 0))
@@ -236,7 +242,7 @@ export interface TrackingDashboard {
   progress: { paidOrBeyondRate: number; completedRate: number }
 }
 
-export function dashboardOf(items: TrackingViewItem[]): TrackingDashboard {
+export function dashboardOf(items: TrackingViewItem[], steps: StepDefinition[] = PIPELINE_STEPS): TrackingDashboard {
   const orders = items.filter((i) => i.type === "ORDER")
   const rate = (n: number, d: number) => (d > 0 ? Math.round((n / d) * 1000) / 10 : 0)
   const idx = (i: TrackingViewItem) => STEP_INDEX.get(i.currentStepId) ?? 0
@@ -248,7 +254,7 @@ export function dashboardOf(items: TrackingViewItem[]): TrackingDashboard {
     dueSoon: items.filter((i) => i.sla.state === "DUE_SOON").length,
     completed: items.filter((i) => i.currentStepId === "STEP_9_COMPLETED").length,
     outstandingVnd: orders.reduce((s, i) => s + Math.max(0, i.balanceVnd), 0),
-    byStep: PIPELINE_STEPS.map((s) => {
+    byStep: steps.map((s) => {
       const inStep = items.filter((i) => i.currentStepId === s.id)
       return { stepId: s.id, title: s.shortTitle, count: inStep.length, overdue: inStep.filter((i) => i.sla.state === "OVERDUE").length, totalVnd: inStep.reduce((t, i) => t + i.totalVnd, 0) }
     }),

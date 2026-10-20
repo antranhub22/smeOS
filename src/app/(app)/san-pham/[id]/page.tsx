@@ -9,13 +9,17 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
 import { ProductReminderOverrideCard } from "@/components/coordinator/product-reminder-override-card"
+import { NormalizeImageButton } from "@/components/products/normalize-image-button"
 import { useSession } from "@/lib/session"
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
+import { useI18n } from "@/lib/i18n"
 import {
   ProductOverviewCard,
   ProductDesignCard,
   ProductBomCard,
   ProductStoryCard,
 } from "@/components/products/product-detail-cards"
+import { ProductAvailabilityCard } from "@/components/products/product-availability-card"
 
 type ProductDetail = {
   id: string
@@ -27,6 +31,7 @@ type ProductDetail = {
   container: string | null
   status: "DRAFT" | "ACTIVE" | "ARCHIVED"
   attributes: Record<string, unknown> | null
+  availability_config?: unknown
   masterImageUrl?: string
   price_vnd?: number | null
   driveLink?: string
@@ -44,6 +49,10 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<ProductDetail | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  /** URL ảnh sau khi chuẩn hóa (user chấp nhận) — ghi đè displayImageUrl tạm thời */
+  const [normalizedDisplayUrl, setNormalizedDisplayUrl] = useState<string | null>(null)
+  const { industry: industryFromSession } = useI18n()
+  const activeIndustry = industryFromSession || getIndustryPlugin()
 
   const napLai = useCallback(async () => {
     try {
@@ -68,7 +77,11 @@ export default function ProductDetailPage() {
 
   const attrs = (product?.attributes as Record<string, unknown> | null) ?? {}
   const rawBom = (attrs.bom as Record<string, unknown> | undefined) ?? {}
-  const rawFlowers = Array.isArray(rawBom.flowers) ? rawBom.flowers : []
+  const rawFlowers = Array.isArray(rawBom.materials)
+    ? rawBom.materials
+    : Array.isArray(rawBom.flowers)
+    ? rawBom.flowers
+    : []
   const primaryColor = (attrs.color as string) || null
   const description = (attrs.description as string) || null
   const priceVnd =
@@ -79,10 +92,12 @@ export default function ProductDetailPage() {
       : null
 
   const driveLink = product?.driveLink || (typeof attrs.drive_link === "string" ? attrs.drive_link : null)
-  const displayImageUrl =
+  const rawDisplayImageUrl =
     product?.masterImageUrl ||
     (typeof attrs.imageUrl === "string" ? attrs.imageUrl : null) ||
     (driveLink ? driveThumbProxySrc(driveLink) : null)
+  // Ảnh hiển thị: ưu tiên ảnh đã chuẩn hóa nếu user vừa chấp nhận
+  const displayImageUrl = normalizedDisplayUrl ?? rawDisplayImageUrl
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -152,6 +167,25 @@ export default function ProductDetailPage() {
               displayImageUrl={displayImageUrl}
             />
 
+            {/* Chuẩn hóa ảnh studio — chỉ hiện khi có ảnh và có quyền sửa */}
+            {rawDisplayImageUrl && canEdit && (
+              <Card className="p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div>
+                    <div className="text-body-sm font-bold text-text">Chuẩn hóa ảnh marketing</div>
+                    <div className="text-caption text-text-muted mt-0.5">
+                      Biến ảnh sản phẩm hiện tại thành ảnh studio chuyên nghiệp, giữ nguyên hình dáng sản phẩm.
+                    </div>
+                  </div>
+                  <NormalizeImageButton
+                    imageUrl={rawDisplayImageUrl}
+                    industry={activeIndustry}
+                    onAccept={(url) => setNormalizedDisplayUrl(url)}
+                  />
+                </div>
+              </Card>
+            )}
+
             {/* Nhóm 2: Định dạng thiết kế hoa */}
             <ProductDesignCard
               shape={product.shape}
@@ -191,6 +225,15 @@ export default function ProductDetailPage() {
             <ProductReminderOverrideCard
               productId={productId}
               canEdit={can("R12")}
+            />
+
+            {/* Nhóm 7: Cấu hình Khả dụng & Cơ chế Đặt hàng theo ngành */}
+            <ProductAvailabilityCard
+              productId={productId}
+              initialConfig={product.availability_config}
+              industryKey={activeIndustry?.identity.key}
+              canEdit={canEdit}
+              onUpdated={napLai}
             />
 
             {/* Nhóm 6: Lối tắt tác vụ AI */}

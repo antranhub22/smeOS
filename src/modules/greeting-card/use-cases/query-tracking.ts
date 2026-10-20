@@ -1,6 +1,7 @@
 import type { TenantContext } from "@/core/tenancy"
 import { loadTrackingDataset } from "./get-tracking-pipeline"
 import { TrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
+import { getIndustryPipelineSteps } from "../domain/tracking-pipeline-types"
 import {
   calendarDays, dashboardOf, filterAndSort, kanbanColumns, paginate, slaStatusOf,
   type KanbanColumnLimits, type TrackingFilter, type TrackingSort, type TrackingViewItem,
@@ -29,7 +30,8 @@ export interface TrackingQueryParams {
  * cột rút gọn, một khoảng lịch hoặc số tổng hợp — không nhận cả tập.
  */
 export async function queryTracking(ctx: TenantContext, p: TrackingQueryParams, now = new Date(), repo = new TrackingPipelineRepository()) {
-  const { items, sla } = await loadTrackingDataset(ctx, repo, now)
+  const { items, sla, industryKey } = await loadTrackingDataset(ctx, repo, now)
+  const steps = getIndustryPipelineSteps(industryKey)
   const enriched: TrackingViewItem[] = items.map((i) => ({ ...i, sla: slaStatusOf(i, sla, now) }))
 
   switch (p.view) {
@@ -38,7 +40,7 @@ export async function queryTracking(ctx: TenantContext, p: TrackingQueryParams, 
     case "kanban": {
       // Bộ lọc bước không áp cho Kanban — cột chính là bước
       const rows = filterAndSort(enriched, { ...p.filter, steps: undefined, category: undefined }, p.sort)
-      return { view: p.view, columns: kanbanColumns(rows, p.limit, p.columnLimits, now.getTime()), total: rows.length }
+      return { view: p.view, columns: kanbanColumns(rows, p.limit, p.columnLimits, now.getTime(), steps), total: rows.length }
     }
     case "calendar": {
       const from = p.from ?? p.filter.deliveryFrom ?? now.toISOString().slice(0, 10)
@@ -51,6 +53,6 @@ export async function queryTracking(ctx: TenantContext, p: TrackingQueryParams, 
       return { view: p.view, ...paginate(rows, p.limit, p.cursor) }
     }
     case "dashboard":
-      return { view: p.view, ...dashboardOf(filterAndSort(enriched, p.filter, p.sort)) }
+      return { view: p.view, ...dashboardOf(filterAndSort(enriched, p.filter, p.sort), steps) }
   }
 }

@@ -61,7 +61,19 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
        - `templates`: mẫu ấn phẩm A6 in ấn (`printables` thuộc loại `TAG`, `CARD`, `MENU`, `WARRANTY`, `CARE_GUIDE`, `DISPATCH` kèm hướng dẫn mặc định).
        - `aiConfig`: trọng tâm phân tích thị giác (`visionFocus`), bối cảnh ảnh Studio (`studioBackgroundStyles`), văn phong tiếp thị mẫu (`marketingToneExamples`), danh sách tên sản phẩm mẫu (`sampleProductNames`).
     2. **Bước 2 — Đăng ký vào Registry**: Mở `src/modules/organization/domain/industries/index.ts`, import file vừa tạo và bổ sung vào `INDUSTRY_REGISTRY`. Đồng thời thêm key vào `IndustryKey` trong `industry-profile.ts`.
-    3. **Bước 3 — Xác nhận kiểm thử & Typecheck**: Chạy `npx vitest run src/modules/organization/domain/industry-plugin-contract.test.ts` và `npx tsc -p tsconfig.json --noEmit`. Toàn bộ giao diện Đăng ký, Hồ sơ cửa hàng, Bộ lọc danh mục sản phẩm, Định lượng BOM, Ấn phẩm in ấn và Trợ lý AI sẽ tự động thích ứng với ngành mới mà không cần chạm vào bất kỳ file UI nào.
+    3. **Bước 3 — Xác nhận kiểm thử & Typecheck**: Chạy `npm run check:industry` (hoặc `npx vitest run src/modules/organization/domain/industry-plugin-contract.test.ts` và `npx tsc -p tsconfig.json --noEmit`). Toàn bộ giao diện Đăng ký, Hồ sơ cửa hàng, Bộ lọc danh mục sản phẩm, Định lượng BOM, Ấn phẩm in ấn và Trợ lý AI sẽ tự động thích ứng với ngành mới mà không cần chạm vào bất kỳ file UI nào.
+    4. **Công cụ tự động hóa**:
+       - `npm run new:industry`: Wizard tạo ngành mới tự động làm cả 3 bước (sinh file, đăng ký registry, chạy bộ test tự động).
+       - `npm run check:industry`: Tự động kiểm tra 4 trụ cột SSOT Đa ngành (Registry & Files, Unit Test, TypeScript Typecheck, Terminology Ratchet Audit). Đã gắn sẵn vào Git Pre-Commit Hook (`.git/hooks/pre-commit`).
+       - `npm run audit:industry`: Rà soát các từ ngữ chuyên ngành hardcode trên toàn bộ UI kèm gợi ý fix SSOT `ti.<term>`.
+- **Kiến trúc Form Đặt Hàng Đa Ngành (Order Form Architecture, PO 18/10/2026)**:
+  - **`BrochureOrderOptions`** (tại `src/components/greeting-card/customer/brochure-order-options.tsx`) là khối **chứa cả 2 ô mã bắt buộc cho MỌI NGÀNH** — luôn hiển thị, không điều kiện:
+    - 🏷️ **Mã ưu đãi** (`voucherCode`) — khách nhập mã giảm giá do tiệm cấp, kết nối `QuoteSelection.voucherCode` → server validate → hiện kết quả giảm giá.
+    - 🏦 **Mã thanh toán** (`paymentCode`) — khách nhập mã đặt cọc do tiệm cấp, kết nối `QuoteSelection.paymentCode` → server validate → hiện tỷ lệ đặt cọc / thanh toán trước.
+  - **Cả hai mã được cài đặt trong Hồ sơ tiệm** (payment_plans / store_policies). Server đọc qua `brochure-quote.ts` → trả `BrochureQuote.paymentPlan`. **Tuyệt đối cấm** tạo ô input mã mới trong `BrochureOrderForm` hoặc bất kỳ `*OrderFields` nào — đó là duplicate giả không kết nối server.
+  - **Placeholder của 2 ô mã phải để trống** — không ghi ví dụ mã cụ thể. Sub-label phụ nếu có phải là thuật ngữ trung lập (không hardcode tên ngành).
+  - **Khi nào tạo `*OrderFields` mới cho ngành**: Chỉ tạo khi ngành có **trường dữ liệu cấu trúc hoàn toàn khác** không thể diễn đạt bằng `StandardOrderFields` (ví dụ: Homestay cần `checkInDate` / `checkOutDate` / `numberOfNights` / `adultsCount` nên tạo `HomestayOrderFields`). Tạo file `<industry-key>-order-fields.tsx`, thêm điều kiện `isXxx` trong `BrochureOrderForm`, KHÔNG đặt lại ô mã ưu đãi / mã thanh toán (đã có trong `BrochureOrderOptions` ở trên form).
+  - **Luồng dữ liệu chuẩn**: `QuoteSelection` (client state) → `useBrochureQuote` (SWR) → `POST /api/v1/public/[catalog]/quote` → `brochure-quote.ts` (use-case) → trả `BrochureQuote.paymentPlan` → `PaymentCodeField` hiện kết quả.
 - **Tách biệt trường dữ liệu nguyên tử (Atomic Disaggregated Fields) để tối ưu khả năng chỉnh sửa (Editable)**:
   - Tuyệt đối không gộp chung văn bản và số lượng/đơn vị vào cùng một chuỗi tự do (ví dụ: cấm gộp `"Hồng đỏ 10 cành"` thành 1 ô text).
   - Bắt buộc phân rã thành các trường cấu trúc độc lập: tên hoa (text), số lượng (number), đơn vị (text), màu sắc (text), vai trò (select)... để người dùng có thể nhấp chuột sửa trực tiếp từng thông số mà không làm hỏng cấu trúc dữ liệu.
@@ -105,6 +117,17 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 - **Cấm mã kỹ thuật trên giao diện (UX Lint R8, PO 29/09/2026)**: Không hiển thị `M01a`, `Khu vực D`, `SSOT`, `Chặng 05`, `P2`… trên label/text mà người dùng cửa hàng hoa nhìn thấy. Chỉ dùng trong `data-testid`, `title` cho dev, hoặc comment code. Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R8.
 - **Cấm `onClick` trên phần tử phi tương tác (UX Lint R5 / WCAG 2.1.1, PO 29/09/2026)**: Không đặt `onClick` lên `<div>`, `<span>`, `<li>`, `<tr>`, `<td>`, `<img>`. Dùng `<button type="button">` thay thế. Nếu bất khả kháng (modal backdrop) thì PHẢI có `role="button"` + `tabIndex={0}` + `onKeyDown`. Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R5.
 - **Chuẩn UX toàn cục (03a)**: Bất kỳ màn hình mới nào hoặc màn hình bị sửa đổi bố cục/thứ bậc/luồng bắt buộc phải có Screen Contract lưu tại `docs/dac-ta/screen-contracts/` + vượt qua QA Matrix 03a §34 (không có chỉ số FAIL) + `npm run lint:ux -- --check` không tăng vi phạm (từ T2.3).
+- **Quy chuẩn Tiêu Điểm Khối Tương Tác (Active Block Spotlight Standard / Focus-First Block UX, PO 18/10/2026)**:
+  - **Mục tiêu UX**: Tránh quá tải nhận thức thị giác (Cognitive Overload) khi hiển thị nhiều khối tính năng hoặc các bước tác vụ trên cùng một màn hình (như Wizard cấu hình, Tạo bộ sưu tập, Thiết lập chiến dịch).
+  - **Cơ chế hoạt động**:
+    1. **Khối đang chọn (Active Block - Nổi bật / Spotlight)**:
+       - Nền sáng rõ `bg-surface`, viền nổi bật `border-primary/50`, vòng sáng nhẹ `ring-2 ring-primary/20`, đổ bóng `shadow-sm`.
+       - Độ mờ `opacity-100`, huy hiệu số thứ tự hoặc tiêu đề mang màu thương hiệu `bg-primary text-white`.
+    2. **Các khối còn lại (Inactive Blocks - Chìm xuống / Dimmed)**:
+       - Độ mờ giảm xuống `opacity-60` (hoặc `opacity-50`), nền dịu hơn `bg-surface/80`.
+       - Hiệu ứng tương tác: Rê chuột qua (hover) tự động sáng nhẹ lên `hover:opacity-95`.
+       - Nhấp chuột (Click / Focus) vào bất kỳ vị trí nào của khối đó ➔ Vị trí Spotlight tự động chuyển tiêu điểm sang khối đó mượt mà qua chuyển động `transition-all duration-300`.
+  - **Hạ tầng chuẩn hóa**: Sử dụng React Context chia sẻ trạng thái tập trung (mẫu chuẩn: `JourneyFocusContext` / `useJourneyFocus` tại `src/components/greeting-card/journey/journey-focus-context.tsx`).
 - **Chuẩn Kiến trúc Trải nghiệm Người dùng Hành trình Trước (Journey-First UX Architecture Standard, PO 30/09/2026)**:
   - **Tài liệu SSOT**: `docs/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md`, Kế hoạch thực thi `docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md` (`PLAN-2026-JOURNEY-UX-01`), và quyết định `D-JUX` trong `docs/dac-ta/03b-role-ux.md`.
   - **Phạm vi áp dụng**: BẮT BUỘC áp dụng cho toàn bộ hệ thống giao diện, dashboard, trang chủ và quy trình tác vụ của FloraOS.
@@ -242,7 +265,103 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
       4. **CẤM** tiết lộ bất kỳ thông tin nào về kiến trúc đa tenant, ID hệ thống, hoặc dữ liệu của các tiệm hoa khác.
       5. **CẤM** dùng thuật ngữ kỹ thuật thô vi phạm UX Lint R8 & R12 (`BOM`, `Master Index`, `PII`, `M01a`, `Khu vực D`...).
 
+
+## Kiến trúc Luồng Kép & Mutex Thắng Trước (Dual-Stream + First-Wins Mutex Architecture)
+
+> **Tiêu chuẩn bắt buộc (PO 19/10/2026)** — Áp dụng cho MỌI tính năng có luồng tự động hóa (auto-stream / cron-sweep / timer). Mọi luồng tự động hóa từ đây trở đi PHẢI song song với luồng điều phối thủ công và tuân thủ nguyên tắc Mutex Thắng Trước.
+
+### A. Nguyên tắc cốt lõi
+
+1. **Dual-Stream (Luồng Kép)**: Mọi node/mốc trong một quy trình tự động phải có đúng **2 luồng xử lý chạy song song**:
+   - **Auto-Stream**: Timer / Cron-Sweep đánh giá định kỳ theo số N phút cấu hình được (`ChainDispatchPolicy`, `BrochureWorkflowPolicy` hoặc tương đương). Gửi nhắc, leo thang, escalate sau các mốc thời gian cố định.
+   - **Coordinator-Stream (Human-in-the-Loop)**: Điều phối viên (hoặc nhân viên được ủy quyền) có thể **can thiệp trực tiếp** vào bất kỳ node nào bất cứ lúc nào qua API nội bộ xác thực. Mục đích: khi tự động hóa chờ không kịp → người thực hiện ngay mà không mất tính ghi nhận lịch sử.
+
+2. **First-Wins Mutex (Mutex Thắng Trước)**: Luồng nào hành động trước thì **triệt tiêu** (cancel) tất cả hành động còn lại của luồng kia cho cùng node đó. Không có "gửi trùng", không có "nhắc thừa", không có "xung đột 2 luồng cùng thành công".
+
+3. **Link-Only Structured Input**: Hành động của store/cửa hàng chỉ được chấp nhận qua **form/upload trong link có chữ ký** do hệ thống gửi. Không chấp nhận nội dung text nhắn tin tự do. Nguyên tắc này đảm bảo dữ liệu có cấu trúc, có thể validate và kiểm toán.
+
+### B. Cơ chế triển khai chuẩn
+
+#### B1. Marker trạng thái (State Marker)
+Mỗi node của auto-stream lưu trạng thái vào một `remindersSent` (hoặc `stepsSent`) trong `metadata` CSDL theo format:
+- `"M2_QC": "2026-10-19T10:00:00.000Z"` → Node đã được xử lý bởi Auto-Stream (gửi nhắc thật)
+- `"M2_QC": "CANCELLED_BY_COORDINATOR_ACTION:2026-10-19T10:05:00.000Z"` → Node bị cancel bởi Coordinator-Stream
+- `"M2_QC": "CANCELLED_BY_STORE_ACTION_VIA_LINK:2026-10-19T10:03:00.000Z"` → Node bị cancel bởi Store-Stream
+
+Hàm kiểm tra dùng chung (cần tái sử dụng, không viết lại):
+```typescript
+// Cả ISO timestamp (sent) lẫn CANCELLED_BY_* (cancelled) đều → "đã xử lý" → skip
+function isStepHandled(stepsSent: Record<string, string>, step: string): boolean {
+  return Boolean(stepsSent[step])
+}
+```
+
+#### B2. Cascade guard trong Auto-Stream
+Khi một node trong chuỗi RETRY/ESCALATE, **chỉ chain tiếp nếu node trước đó được gửi THẬT** (không phải CANCELLED):
+```typescript
+// ✅ Đúng: chỉ RETRY nếu lần 1 gửi thật
+const m2SentReal = m2SentIso && !m2SentIso.startsWith("CANCELLED_")
+if (m2SentReal && !isStepHandled(stepsSent, "M2_RETRY") && ...) { ... }
+
+// ❌ Sai: RETRY cả khi lần 1 bị CANCELLED → logic vô nghĩa
+if (stepsSent["M2"] && !stepsSent["M2_RETRY"] && ...) { ... }
+```
+
+#### B3. Coordinator-Stream API (pattern chuẩn)
+```
+POST /api/v1/coordinator/[domain]/[id]/[action]
+```
+- Xác thực: `requireTenantContext` + `requireCapability`
+- Thực hiện hành động nghiệp vụ (upload, submit, confirm...)
+- Gọi `cancelSteps({ steps: getMilestoneSteps("M2"), reason: "coordinator_action", actorId })` → Mutex
+- Trả về `{ success, cancelledReminders, ... }`
+
+#### B4. Store-Stream endpoint (pattern chuẩn)
+```
+POST /api/v1/public/[domain]/[token]/[action]
+```
+- Validate signed token (không cần đăng nhập)
+- Chỉ nhận input qua form/upload, reject text input thuần
+- Sau khi lưu thành công: gọi `cancelSteps({ steps, reason: "store_action_via_link" })` → Mutex
+- Fire-and-forget (`.catch(log.warn)`) để không block response
+
+### C. Danh sách tính năng auto-stream BẮT BUỘC áp dụng pattern này
+
+| Tính năng | Auto-Stream | Coordinator-Stream | Trạng thái |
+|---|---|---|---|
+| **Gate 2 — Gia công chuỗi** (M1→M4) | `chain-dispatch-sweep` | `coordinator/orders/[id]/upload-qc-subcontract`, `set-shipper`, `confirm-delivery` | ✅ Đã triển khai (19/10/2026) |
+| **Nhắc thanh toán khách hàng** | Timer nhắc cọc/thanh toán đủ | Điều phối xác nhận thủ công | ⏳ Cần audit |
+| **Nhắc phê duyệt đơn** (PENDING → CONFIRMED) | Auto-confirm sau N phút | Điều phối accept/reject | ⏳ Cần audit |
+| **Nhắc tải ảnh thành phẩm** (M2) | Cron nhắc 1→2→escalate | Coordinator upload thay | ✅ Đã triển khai |
+| **Chat/Tư vấn tự động** (M08) | AI reply auto | Nhân viên take over | ⏳ Cần audit |
+
+### D. Anti-patterns nghiêm cấm
+
+| # | Anti-Pattern | Rủi ro |
+|---|---|---|
+| DS1 | Chỉ có 1 luồng (chỉ auto hoặc chỉ manual) | Hệ thống bị block khi 1 bên không phản hồi |
+| DS2 | Không cancel reminder khi luồng kia thắng | Cửa hàng nhận tin nhắn thừa, mất lòng tin |
+| DS3 | Chain RETRY từ CANCELLED node | Logic vô nghĩa — ESCALATE khi chưa gửi lần 1 |
+| DS4 | Coordinator-Stream không gọi cancel → không Mutex | Xung đột 2 luồng hoàn thành cùng 1 node |
+| DS5 | Store nhắn text tự do được chấp nhận (vi phạm Link-Only) | Mất audit trail, dữ liệu không cấu trúc |
+| DS6 | Nhúng logic Mutex vào DB trigger | Không thể test, vi phạm Clean Architecture |
+
+### E. Checklist khi viết một tính năng auto-stream mới
+
+- [ ] Có `stepsSent` (hoặc tương đương) trong `metadata` CSDL để track state?
+- [ ] Hàm sweep dùng `isStepHandled()` (hoặc tương đương) cho mọi node check?
+- [ ] RETRY/ESCALATE chỉ chain từ "real sent" (không phải CANCELLED)?
+- [ ] Có API Coordinator-Stream cho mọi node quan trọng?
+- [ ] Mỗi Coordinator-Stream API gọi `cancelSteps()` sau khi thành công?
+- [ ] Mỗi Store-Stream endpoint gọi `cancelSteps()` sau khi thành công?
+- [ ] Coordinator-Stream API có xác thực `requireTenantContext` + `requireCapability`?
+- [ ] Store-Stream endpoint validate signed token, reject text input thuần?
+- [ ] UI dashboard Coordinator hiển thị trạng thái từng node và disable nút khi node đã done?
+
+**Tham chiếu triển khai SSOT**: `src/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps.ts` · `src/modules/greeting-card/use-cases/evaluate-customer-approval.ts` · `src/app/api/v1/coordinator/orders/[id]/` · Gate 2 audit report tại `gate2_audit_report.md`.
+
 ## Thứ tự pha — điều kiện chặn
+
 
 Lộ trình P0–P12 ở `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 15.
 
@@ -359,7 +478,7 @@ Xếp hạng BUILD cho thứ đã tồn tại ở một trong ba repo là lỗi 
   - Tệp `.env.production` lưu `DATABASE_URL` của Render Production (có `sslmode=require`) đã nằm trong `.gitignore`, dùng cho lệnh `npm run handover:clean:prod`. Chi tiết tại `docs/kien-truc/QUY_TRINH_BAN_GIAO_SACH_TENANT.md`.
 - `next dev` (Next 16) TỰ CHÈN khối `<!-- BEGIN:nextjs-agent-rules -->
 
-# This is NOT the Next.js you know
+## This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 

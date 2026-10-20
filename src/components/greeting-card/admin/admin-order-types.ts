@@ -26,7 +26,10 @@ export interface AdminOrder {
   pending_refund_vnd?: number | null | undefined
 }
 
-export type OrderAction = { type: "quote" | "collect" | "cancel" | "refund"; order: AdminOrder }
+export type AdminOrderDialogAction = { type: "quote" | "collect" | "cancel" | "refund"; order: AdminOrder }
+export type OrderAction =
+  | AdminOrderDialogAction
+  | { type: "confirm-order" | "reject-order"; order: AdminOrder }
 
 /** Kết quả thao tác: lời báo cho Điều hành + (khi vừa thu tiền) tin soạn sẵn để gửi khách qua Zalo. */
 export type ActionResult = { message: string; customerMessage?: string | undefined }

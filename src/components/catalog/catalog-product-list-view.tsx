@@ -24,14 +24,14 @@ export function CatalogProductListView({
   return (
     <main>
       <div className="flex items-center justify-between text-xs text-text-muted mb-3 px-1">
-        <span>Hiển thị <strong>{products.length}</strong> mẫu hoa</span>
-        <span className="flex items-center gap-1 text-success font-medium"><Check size={13} />Hoa tươi 100% tuyển chọn mỗi ngày</span>
+        <span>Hiển thị <strong>{products.length}</strong> sản phẩm</span>
+        <span className="flex items-center gap-1 text-success font-medium"><Check size={13} />Sản phẩm chuẩn chất lượng tuyển chọn</span>
       </div>
 
       {products.length === 0 ? (
         <div className="bg-surface rounded-3xl p-12 text-center border border-border shadow-xs my-6">
           <ShoppingBag size={40} className="mx-auto text-text-muted mb-3" />
-          <h3 className="text-base font-bold text-text">Không tìm thấy mẫu hoa phù hợp</h3>
+          <h3 className="text-base font-bold text-text">Không tìm thấy sản phẩm phù hợp</h3>
           <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto">Hãy thử từ khóa khác hoặc bấm nút bên dưới để xem lại toàn bộ.</p>
           <button onClick={onResetFilter} className="mt-4 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark transition-colors">Xem lại tất cả</button>
         </div>
@@ -52,7 +52,7 @@ export function CatalogProductListView({
                 </div>
                 <div className="p-5 pb-2">
                   <h4 className="text-title-sm font-black text-text group-hover:text-primary transition-colors">{p.name}</h4>
-                  <p className="text-caption text-text-muted mt-1 line-clamp-2">{p.description || "Tác phẩm hoa tươi thủ công tinh tế."}</p>
+                  <p className="text-caption text-text-muted mt-1 line-clamp-2">{p.description || "Tác phẩm thủ công tinh tế chất lượng cao."}</p>
                 </div>
               </button>
               <div className="p-5 pt-3 border-t border-border flex items-center justify-between">

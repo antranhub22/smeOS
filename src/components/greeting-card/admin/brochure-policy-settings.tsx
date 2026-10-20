@@ -64,7 +64,7 @@ export function BrochurePolicySettings() {
           <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-muted/40">
             <div>
               <span className="font-bold text-foreground text-body-sm">Mức đặt cọc tối thiểu mặc định</span>
-              <p className="text-caption text-text-muted">Tỉ lệ giá trị đơn hàng khách cần chuyển khoản trước khi xưởng tiến hành cắm hoa.</p>
+              <p className="text-caption text-text-muted">Tỉ lệ giá trị đơn hàng khách cần chuyển khoản trước khi xưởng tiến hành thực hiện đơn hàng.</p>
             </div>
             <select
               value={policy.depositPercent}

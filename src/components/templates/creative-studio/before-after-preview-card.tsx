@@ -100,7 +100,7 @@ export function BeforeAfterPreviewCard({
   const VARIANT_DESCRIPTIONS: Record<PreviewMode, { title: string; desc: string; icon: React.ElementType }> = {
     studio: {
       title: "P.Án 1: Studio Cao Cấp",
-      desc: "Light Wrap 3px tràn sáng viền hoa, làm mềm viền quang học 1.2px và đổ bóng tiếp xúc 2 tầng.",
+      desc: "Light Wrap 3px tràn sáng viền chủ thể, làm mềm viền quang học 1.2px và đổ bóng tiếp xúc 2 tầng.",
       icon: Sparkles,
     },
     lifestyle: {
@@ -110,7 +110,7 @@ export function BeforeAfterPreviewCard({
     },
     bokeh: {
       title: "P.Án 3: Không Gian Bokeh",
-      desc: "Xóa phông tiệm hoa f/1.8 với đốm sáng bokeh ấm áp, ánh sáng xiên nghệ thuật.",
+      desc: "Xóa phông không gian f/1.8 với đốm sáng bokeh ấm áp, ánh sáng xiên nghệ thuật.",
       icon: Coffee,
     },
     original: {

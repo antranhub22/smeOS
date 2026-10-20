@@ -79,7 +79,7 @@ dùng lại: `FlowerImage`, `TrackingStepperView` · tạo mới: `sales/sales-k
 - Cài đặt → Khu vực, phí giao & giờ nhận đơn: "Số đơn tối đa mỗi khung giờ" (chung, mặc định 100; riêng từng khung), "Miễn phí giao hoa cho mọi đơn", "Cho khách nhập mã giảm giá".
 - Hộp "Thu tiền" và thẻ đơn Điều phối hiện "Ưu đãi khách chọn".
 - Đợt 2: mở `/the-chao` vào thẳng chỗ làm theo năng lực — `R11` (Điều hành) → Quản lý · tab Điều hành; `R3`/`R4`/`R5` (Điều phối) → Quản lý · tab Điều phối; `R2` (Sale) → Quản lý · tab Bán hàng (PO 16/10/2026: Sale và Điều hành cùng một giao diện để phối hợp — Sale chỉ thấy 3 tab Bộ sưu tập · Theo dõi đơn · Bán hàng, khác nhau ở nút theo quyền); không `R2` → Gửi nhanh.
-- Đầu trang: màn rộng (≥ 1280px) tiêu đề bên trái, các nút bên phải trên một hàng; màn hẹp hơn các nút xuống dưới tiêu đề — mọi vai cùng bố cục, nút thiếu quyền chỉ ẩn đi. Thẻ bộ sưu tập: nút "Quản lý mẫu hoa" một hàng riêng, các nút biểu tượng ở hàng dưới.
+- Đầu trang: màn rộng (≥ 1280px) tiêu đề bên trái, các nút bên phải trên một hàng; màn hẹp hơn các nút xuống dưới tiêu đề — mọi vai cùng bố cục, nút thiếu quyền chỉ ẩn đi. Nút "Xuất file Excel" ở đầu trang được tinh gọn thành nút icon vuông (`iconOnly: true`, có tooltip "Xuất Excel" và nhãn trợ năng `aria-label`) để tiết kiệm không gian trên thanh điều hướng. Thẻ bộ sưu tập: nút "Quản lý mẫu hoa" một hàng riêng, các nút biểu tượng ở hàng dưới.
 - Tab Điều phối đọc `/greeting-card/coordinator-board`: mọi đơn đang làm + đơn xong/huỷ 24 giờ qua, xếp theo ngày + giờ giao, chip "Mọi ngày · Hôm nay · Ngày mai" + chọn ngày, tự làm mới 30 giây; quá 1000 đơn hiện ghi chú, không có "Tải thêm".
 - Tab Điều phối · Lưới thẻ (PO 16/10/2026): thẻ đơn chỉ hiện nút làm được ở bước hiện tại (`domain/coordinator-card-actions.ts`) — chờ cắm/đang cắm: Giao Florist, Chụp thành phẩm; hoa xong: Chụp thành phẩm, Giao Ship (còn chờ thanh toán lần 2 / khách duyệt ảnh thì Giao Ship hiện mờ kèm lý do); đang giao: Ảnh người nhận, Giao không thành công. Không còn nút nào → một dòng nêu lý do. "Đề xuất mẫu khác" chỉ hiện khi còn đổi được; thao tác khác vẫn qua "Xem chi tiết".
 - Ảnh / tên mẫu hoa trên mọi màn đơn (Theo dõi, Sale, Hộp việc, Điều phối, Thanh toán) đọc một nguồn: `product` dựng ở server bằng `orderProductView` (`src/modules/greeting-card/domain/order-product-view.ts`) — ảnh chụp lúc khách chọn → metadata dòng đơn → ảnh chính hiện tại trong kho. Giao diện không tự chọn giữa `product_snapshot` và `items[].metadata` (15/10/2026).
@@ -87,5 +87,19 @@ dùng lại: `FlowerImage`, `TrackingStepperView` · tạo mới: `sales/sales-k
 - Sửa nội dung bộ sưu tập (thêm/xoá mẫu, đổi tên, giao diện) ở cả Gửi nhanh và Quản lý: người tạo bộ sưu tập, hoặc `L4` (Điều hành) (PO 16/10/2026). Sale và Điều phối tạo được bộ sưu tập riêng và sửa toàn quyền bộ sưu tập của mình; bộ sưu tập người khác tạo thì chỉ xem và gửi link (màn "Quản lý mẫu hoa" hiện ghi chú, ẩn nút Thêm/Xoá). Cài đặt hiển thị dùng chung cả tiệm chỉ `L4` (Điều hành). Xoá mẫu khỏi bộ sưu tập luôn hỏi lại.
 - Trang khách `/b/<mã>` mở ở trình duyệt khác khi link đã có đơn: ô "4 số cuối số điện thoại người đặt" để vào lại đơn (thay vì báo link không tồn tại).
 
+## 13d. Nâng cấp Gửi Nhanh & Trải nghiệm Tiêu điểm Khối (PO 18/10/2026)
+- **Bỏ Stepper ngang đầu trang**: Thay thế thanh tiến trình tuần tự ngang (`JourneyStepper`) bằng bộ **Số thứ tự trực quan (Numbered Badges: 1, 2, 3)** gắn trực tiếp tại Header của từng khối hành động, cho phép nhân viên bao quát toàn bộ quy trình mà không bị cảm giác gò bó theo từng trang tuần tự:
+  - **Khối 1**: Chọn Bộ sưu tập & Danh sách sản phẩm/phòng lưu trú (`StepCatalog`).
+  - **Khối 2**: Chọn Giao diện khách xem (`TemplateSection` / `TemplateSelectorSplitPane`).
+  - **Khối 3**: Chia sẻ link — gồm 2 nhánh: *Gửi riêng cho khách* (cá nhân hóa tên khách) và *Link dùng chung* (`ShareSummaryPanel`). Khối "Đang chuẩn bị" rườm rà được loại bỏ để tập trung tối đa vào việc sao chép link.
+- **Kiến trúc Tiêu Điểm Khối Tương Tác (Active Block Spotlight / Focus-First Block UX)**:
+  - Điều phối bởi `JourneyFocusContext` (`activeBlock: 1 | 2 | 3`).
+  - Khi nhân viên click hoặc tương tác vào bất kỳ khối nào, khối đó sẽ trở thành **Tiêu điểm chính** (`opacity-100`, viền `ring-2 ring-primary/40`, đổ bóng `shadow-sm`, nền sáng).
+  - Các khối còn lại được làm mờ nhẹ (`opacity-60`, chuyển tiếp mượt mà `transition-all duration-300`, vẫn sáng rõ lên `hover:opacity-95` khi rê chuột) giúp người dùng dồn toàn bộ sự chú ý vào tác vụ hiện tại mà không bị xao nhãng.
+- **Tương thích Đa ngành SSOT (Multi-Industry Display & Preview)**:
+  - Bản xem trước giao diện (`TemplateSelectorSplitPane` / `use-catalog-products.ts`) tự động hiển thị dữ liệu mẫu theo đúng ngành nghề của cửa hàng (Homestay: phòng & tiện ích; Thời trang: trang phục & chất liệu; F&B: món ăn; Hoa tươi: mẫu hoa), loại bỏ hiện tượng tràn hoa tươi sang các ngành khác.
+  - Cấu hình hiển thị thông tin sản phẩm (`display-fields.ts`, `product-display.ts`, `product-info.tsx`) tự động thích ứng nhãn thuộc tính theo ngành (`ti.rawMaterialItem`, `ti.makerTitle`, `ti.makerAction`...).
+
 ## 14. Kết quả
 lint:ux sau: không tăng vi phạm · nợ mở: thông báo đẩy/Zalo cho tin nhắn chưa làm
+

@@ -13,6 +13,8 @@ export interface IncomingPayment {
   reference: string
   note: string
   evidenceAssetId?: string | null | undefined
+  /** 1 Cửa hàng: Khi duyệt tiền, tự động chốt & nhận đơn vào sản xuất (ASSIGNED) */
+  autoAcceptProduction?: boolean | undefined
 }
 
 export interface PaymentResult {
@@ -23,6 +25,8 @@ export interface PaymentResult {
   balanceVnd: number
   kind: "DEPOSIT" | "BALANCE"
   paymentId: string
+  productionStatus?: string | undefined
+  autoAccepted?: boolean | undefined
 }
 
 /**
@@ -62,11 +66,19 @@ export class BrochurePaymentRepository {
         ? "COMPLETED"
         : order.status
 
+    const shouldAutoAccept = Boolean(input.autoAcceptProduction && order.production_status === "WAITING")
+    const nextProductionStatus = shouldAutoAccept ? "ASSIGNED" : order.production_status
+
     return this.db.$transaction(async (tx) => {
       const moved = await tx.orders.updateMany({
         // Khoá cả tổng đơn: giảm giá / phí giao lại đổi tổng cùng lúc thì số còn phải thu tính sai
         where: { id: order.id, organization_id: ctx.organizationId, paid_vnd: order.paid_vnd, total_vnd: order.total_vnd, status: { not: "CANCELLED" } },
-        data: { paid_vnd: paidAfter, balance_vnd: total - paidAfter, status: nextStatus },
+        data: {
+          paid_vnd: paidAfter,
+          balance_vnd: total - paidAfter,
+          status: nextStatus,
+          ...(shouldAutoAccept ? { production_status: "ASSIGNED" } : {}),
+        },
       })
       if (moved.count === 0) throw conflict("Đơn hàng vừa được cập nhật thanh toán, vui lòng tải lại")
 
@@ -93,6 +105,19 @@ export class BrochurePaymentRepository {
             from_value: "DRAFT",
             to_value: "CONFIRMED",
             reason: "BROCHURE_PAYMENT_CONFIRMED",
+            actor_id: ctx.userId,
+          },
+        })
+      }
+      if (shouldAutoAccept) {
+        await tx.order_events.create({
+          data: {
+            organization_id: ctx.organizationId,
+            order_id: order.id,
+            axis: "production",
+            from_value: "WAITING",
+            to_value: "ASSIGNED",
+            reason: "AUTO_ACCEPTED_SINGLE_STORE",
             actor_id: ctx.userId,
           },
         })
@@ -139,6 +164,8 @@ export class BrochurePaymentRepository {
         balanceVnd: total - paidAfter,
         kind,
         paymentId: payment.id,
+        productionStatus: nextProductionStatus,
+        autoAccepted: shouldAutoAccept,
       }
     })
   }

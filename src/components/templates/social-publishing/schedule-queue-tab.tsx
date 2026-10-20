@@ -55,7 +55,7 @@ export function ScheduleQueueTab({
           </div>
           <div className="text-title-sm font-bold text-text">Chưa có bài viết nào chờ lên lịch</div>
           <div className="text-xs text-text-muted max-w-sm mt-1">
-            Hãy vào tab <strong>Sinh Nội Dung AI (Đăng mạng xã hội)</strong> để tạo và duyệt bài viết hoa tươi cho Facebook, Instagram, TikTok, Zalo và LinkedIn.
+            Hãy vào tab <strong>Sinh Nội Dung AI (Đăng mạng xã hội)</strong> để tạo và duyệt bài viết sản phẩm cho Facebook, Instagram, TikTok, Zalo và LinkedIn.
           </div>
           <Button
             className="mt-4 text-xs font-bold"

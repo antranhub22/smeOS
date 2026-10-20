@@ -6,6 +6,7 @@ import { Check, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { LINK_LIFETIME_HINT, linkExpiryLabel, type CatalogOption } from "./sales-types"
+import { useI18n } from "@/lib/i18n"
 
 interface Props {
   catalogs: CatalogOption[]
@@ -18,6 +19,11 @@ const INPUT = "w-full h-10 px-3 rounded-lg border border-border bg-background te
 
 /** Hộp thoại tạo link Thẻ chào gửi khách (chọn bộ sưu tập, khách, hạn dùng). */
 export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateToCatalog }: Props) {
+  const { ti } = useI18n()
+  const rawCatalogTitle = ti("catalogTitle") || "Bộ sưu tập"
+  const isHomestay = rawCatalogTitle.toLowerCase().includes("phòng")
+  const catalogHeading = isHomestay ? "danh sách phòng" : rawCatalogTitle.toLowerCase()
+  const catalogTitleCap = isHomestay ? "Danh Sách Phòng" : "Bộ Sưu Tập"
   const [catalogId, setCatalogId] = useState(catalogs[0]?.id ?? "")
   const [customerName, setCustomerName] = useState("")
   const [customerPhone, setCustomerPhone] = useState("")
@@ -84,13 +90,13 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
           <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
             {error && <p role="alert" className="p-3 rounded-xl bg-danger-bg text-danger text-body-sm">{error}</p>}
             <label className="flex flex-col gap-1">
-              <span className="text-caption font-bold text-foreground">Chọn Bộ sưu tập *</span>
+              <span className="text-caption font-bold text-foreground">Chọn {catalogTitleCap} *</span>
               {catalogs.length === 0 ? (
                 <span className="p-3 bg-warning-bg/50 border border-warning/30 rounded-xl text-body-sm text-text flex flex-col gap-2">
-                  Chưa có bộ sưu tập nào. Cần tạo bộ sưu tập mẫu hoa trước!
+                  Chưa có {catalogHeading} nào. Cần tạo {catalogHeading} trước!
                   {onNavigateToCatalog && (
                     <button type="button" onClick={() => { onClose(); onNavigateToCatalog() }} className="text-primary font-bold underline text-left">
-                      → Đến trang tạo Bộ Sưu Tập ngay
+                      → Đến trang tạo {catalogTitleCap} ngay
                     </button>
                   )}
                 </span>

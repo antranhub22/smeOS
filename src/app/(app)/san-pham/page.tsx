@@ -24,20 +24,12 @@ import {
 } from "@/components/products/product-filter-types"
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
 
-const BASE_CATEGORIES = [
-  "Tất cả",
-  "Bó hoa",
-  "Giỏ hoa",
-  "Kệ khai trương",
-  "Hoa chia buồn",
-  "Hộp hoa",
-  "Bình hoa",
-]
+
 
 export default function SanPhamPage() {
   const router = useRouter()
   const session = useSession()
-  const { t } = useI18n()
+  const { t, ti, industry } = useI18n()
   const [filters, setFilters] = useState<ProductFilterState>(DEFAULT_FILTER_STATE)
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
   const [trashTarget, setTrashTarget] = useState<TrashConfirmTarget | null>(null)
@@ -75,9 +67,10 @@ export default function SanPhamPage() {
     removeLocal(target.id)
   }
 
-  // Tự động gộp các danh mục thực tế từ kho sản phẩm để hiển thị đầy đủ
+  // Tự động gộp các danh mục thực tế từ kho sản phẩm và danh mục chuẩn của ngành
   const availableCategories = useMemo(() => {
-    const set = new Set<string>(BASE_CATEGORIES)
+    const defaultCats = industry?.taxonomy?.defaultCategories?.map((c) => c.label) || []
+    const set = new Set<string>(["Tất cả", ...defaultCats])
     if (rawProducts) {
       for (const p of rawProducts) {
         if (p.category && p.category.trim()) {
@@ -86,7 +79,7 @@ export default function SanPhamPage() {
       }
     }
     return Array.from(set)
-  }, [rawProducts])
+  }, [rawProducts, industry])
 
   // Lọc và sắp xếp theo Dịp, Giá, Từ khoá, Danh mục
   const filteredProducts = useMemo(() => {
@@ -103,8 +96,8 @@ export default function SanPhamPage() {
       {/* Header tác vụ */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-3.5 gap-3">
         <div>
-          <div className="text-caption text-text-muted">{t("products.header.category")}</div>
-          <h1 className="text-title font-extrabold text-primary">{t("products.header.title")}</h1>
+          <div className="text-caption text-text-muted">{ti("catalogTitle")}</div>
+          <h1 className="text-title font-extrabold text-primary">{ti("sampleProduct")}</h1>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -128,10 +121,10 @@ export default function SanPhamPage() {
             type="button"
             onClick={() => router.push("/tai-anh" as never)}
             className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 h-9 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-            title="Upload ảnh hoa → AI phân tích tự động"
+            title={`Tải ảnh ${ti("sampleProduct").toLowerCase()} → AI phân tích tự động`}
           >
             <Sparkles size={14} className="text-primary" />
-            <span className="hidden sm:inline">{t("products.header.scanPhoto")}</span>
+            <span className="hidden sm:inline">{ti("scanButtonLabel")}</span>
           </button>
           <Button
             size="sm"
@@ -139,7 +132,7 @@ export default function SanPhamPage() {
             className="flex items-center gap-1.5 h-9"
           >
             <Plus size={15} strokeWidth={2.2} />
-            <span>{t("products.header.createFlower")}</span>
+            <span>{ti("createButtonLabel")}</span>
           </Button>
         </div>
       </header>
@@ -169,15 +162,15 @@ export default function SanPhamPage() {
           </div>
         ) : filteredProducts.length === 0 ? (
           <EmptyState
-            title={rawProducts.length === 0 ? "Chưa có mẫu hoa nào trong kho" : "Không tìm thấy mẫu hoa phù hợp"}
+            title={rawProducts.length === 0 ? `Chưa có ${ti("sampleProduct").toLowerCase()} nào trong kho` : `Không tìm thấy ${ti("sampleProduct").toLowerCase()} phù hợp`}
             reason={
               rawProducts.length === 0
-                ? "Tải ảnh hoa hoặc nhập file Excel để thêm mẫu hoa vào kho."
+                ? `Tải ảnh ${ti("sampleProduct").toLowerCase()} hoặc nhập file Excel để thêm vào kho.`
                 : "Thử tìm kiếm với từ khoá khác, điều chỉnh khoảng giá hoặc chọn dịp khác."
             }
             action={
               rawProducts.length === 0
-                ? { label: "Quét ảnh hoa", onClick: () => router.push("/tai-anh" as never) }
+                ? { label: ti("scanButtonLabel"), onClick: () => router.push("/tai-anh" as never) }
                 : { label: "Xóa tất cả bộ lọc", onClick: handleResetFilters }
             }
           />
@@ -236,13 +229,13 @@ export default function SanPhamPage() {
                     <span>Đang tải thêm...</span>
                   </>
                 ) : (
-                  "Xem thêm mẫu hoa"
+                  `Xem thêm ${ti("sampleProduct").toLowerCase()}`
                 )}
               </button>
             )}
             {filteredProducts.length > 0 && (
               <div className="text-caption text-text-muted">
-                Hiển thị {filteredProducts.length} mẫu hoa
+                Hiển thị {filteredProducts.length} {ti("sampleProduct").toLowerCase()}
                 {nextCursor ? " — còn nhiều hơn" : " (tất cả)"}
               </div>
             )}

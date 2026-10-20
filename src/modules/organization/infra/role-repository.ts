@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto"
+
 import type { roles } from "./entities"
 
 import { prisma } from "@/core/tenancy/infra/prisma"
@@ -57,7 +59,7 @@ export class RoleRepository {
   /** Vai riêng của tổ chức. Gán năng lực cho vai thuộc P2. */
   create(ctx: TenantContext, input: { key: string; name: string }): Promise<roles> {
     return this.db.roles.create({
-      data: scopedData(ctx, { key: input.key, name: input.name, is_system: false }),
+      data: scopedData(ctx, { id: randomUUID(), key: input.key, name: input.name, is_system: false }),
     })
   }
 
@@ -86,7 +88,7 @@ export class RoleRepository {
       const record =
         existing ??
         (await this.db.roles.create({
-          data: { organization_id: null, key: role.key, name: role.name, is_system: true },
+          data: { id: randomUUID(), organization_id: null, key: role.key, name: role.name, is_system: true },
         }))
 
       // Idempotent qua `skipDuplicates` — an toàn gọi lại dù vai đã có sẵn,

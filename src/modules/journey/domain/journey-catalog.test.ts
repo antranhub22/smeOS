@@ -3,6 +3,7 @@ import {
   NETWORK_JOURNEYS,
   PLATFORM_JOURNEYS,
   STORE_JOURNEYS,
+  getStoreJourneys,
 } from "./journey-catalog"
 import { validateJourneyDefinition } from "./journey-model"
 
@@ -62,4 +63,22 @@ describe("journey-catalog domain", () => {
       }
     }
   })
+
+  it("getStoreJourneys thích ứng linh hoạt theo ngành (Fashion, FNB, Floral)", () => {
+    // Ngành Thời trang
+    const fashionJourneys = getStoreJourneys("FASHION")
+    expect(fashionJourneys.length).toBe(14)
+    const hubFashion = fashionJourneys.find((j) => j.id === "greeting-card-hub")
+    const scanFashion = fashionJourneys.find((j) => j.id === "analyze-product-photo")
+    const orderFashion = fashionJourneys.find((j) => j.id === "create-order")
+
+    expect(hubFashion?.goal).toBe("Thẻ chào & Bộ sưu tập Lookbook")
+    expect(scanFashion?.goal).toBe("Tạo mẫu thiết kế lookbook từ ảnh chụp")
+    expect(orderFashion?.description).toContain("thợ may / kỹ thuật cắt")
+
+    // Ngành Mặc định (FLORAL)
+    const floralJourneys = getStoreJourneys("FLORAL")
+    expect(floralJourneys.find((j) => j.id === "greeting-card-hub")?.goal).toBe("Thẻ chào mẫu hoa")
+  })
 })
+

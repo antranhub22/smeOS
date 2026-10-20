@@ -31,6 +31,7 @@ import {
   type PublishRatio,
   type PublishVideoFormat,
 } from "./publishing-rules"
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
 // ============================================================
 // HỢP ĐỒNG
@@ -123,6 +124,8 @@ export interface ScenePlanInput {
   readonly platforms?: readonly unknown[] | "all" | undefined
   /** Loại kết quả cần sản xuất (content/audio/image/video). `"all"` hoặc bỏ trống = cả 4. */
   readonly outputs?: readonly unknown[] | "all" | undefined
+  /** Mã ngành SSOT (FLORAL, FASHION, FNB, v.v.). Mặc định "FLORAL". */
+  readonly industryKey?: string | undefined
 }
 
 export interface ScenePlanScene {
@@ -455,12 +458,20 @@ export function buildScenePlanPrompt(input: ScenePlanInput): string {
   const beats = SCENE_BEATS_BY_MODE[input.mode]
   const pub = resolvePublishing(input.platforms, input.outputs)
   const phong = LOCAL_BACKDROP_IDS.map((id) => `  - ${id}: ${LOCAL_BACKDROPS[id]}`).join("\n")
+  const industryKey = input.industryKey || "FLORAL"
+  const plugin = getIndustryPlugin(industryKey)
+  const industryName = plugin.identity.name
+  const productTerm = plugin.terminology.sampleProduct
+  const backgroundSuggestions = plugin.aiConfig.studioBackgroundStyles.length > 0
+    ? `\nGỢI Ý BỐI CẢNH ĐẶC TRƯNG NGÀNH (${industryName}):\n${plugin.aiConfig.studioBackgroundStyles.map((s) => `  - ${s}`).join("\n")}\n`
+    : ""
+
   const modeRule =
     input.mode === "AUTHENTIC"
-      ? "AUTHENTIC: giữ tinh thần ảnh thật, bối cảnh giản dị, gần với tiệm hoa thật; không dựng không gian xa hoa."
+      ? `AUTHENTIC: giữ tinh thần ảnh thật, bối cảnh giản dị, gần với tiệm ${industryName} thật; không dựng không gian xa hoa.`
       : "CREATIVE: mỗi cảnh một không gian khác nhau nhưng cùng một câu chuyện, bám sát dịp và tông màu của chủ đề."
 
-  return `Bạn là đạo diễn hình ảnh cho cửa hàng hoa. Viết KỊCH BẢN BỐI CẢNH cho bộ ảnh/video quảng bá MỘT sản phẩm theo đúng chủ đề đã chọn.
+  return `Bạn là đạo diễn hình ảnh cho cửa hàng ${industryName}. Viết KỊCH BẢN BỐI CẢNH cho bộ ảnh/video quảng bá MỘT ${productTerm} theo đúng chủ đề đã chọn.
 
 CHỦ ĐỀ (Chặng 04–05)
 ${dong("Tiêu đề", input.topic.title)}
@@ -473,17 +484,17 @@ SẢN PHẨM
 ${dong("Tên", input.productName)}
 ${dong("Hình dáng", input.category)}
 ${dong("Phong cách", input.style)}
-${dong("Màu hoa", input.colors)}
+${dong("Màu sắc", input.colors)}
 ${dong("Thành phần", input.components)}
 ${dong("Dịp phù hợp", input.occasions)}
 ${dong("Người mua", input.targetAudience)}
 ${dong("Khoảng giá", input.priceRange)}
-
+${backgroundSuggestions}
 YÊU CẦU
 - Đúng ${beats.length} cảnh, theo thứ tự nhịp: ${beats.join(" → ")}.
 - ${modeRule}
 - Bối cảnh phải khớp DỊP và TÔNG MÀU nêu trong tiêu đề chủ đề (ví dụ chủ đề sinh nhật tone vàng thì không gian sinh nhật, bảng màu hài hoà với vàng). Không dùng bối cảnh không liên quan đến dịp.
-- Bó hoa thật sẽ được dán nguyên khối vào ảnh: KHÔNG mô tả hoa, người, bàn tay, chữ hay logo trong bối cảnh; chỉ mô tả không gian, bề mặt đặt bó hoa, ánh sáng, màu.
+- ${productTerm} thật sẽ được dán nguyên khối vào ảnh: KHÔNG mô tả sản phẩm, người, bàn tay, chữ hay logo trong bối cảnh; chỉ mô tả không gian, bề mặt đặt sản phẩm, ánh sáng, màu.
 - setting, title, lighting, purpose, voice_script: tiếng Việt có dấu. voice_script 1–2 câu ngắn, tự nhiên — CHÍNH câu này hiện làm phụ đề trên video (không có phụ đề riêng); text_overlay để trống.
 - background_prompt: tiếng Anh, 1–3 câu, chỉ tả không gian trống (surface, room, light, colour palette, depth of field), dạng ảnh chụp sản phẩm chân thực.
 - local_backdrop: chọn MỘT phông cục bộ gần nhất với cảnh:

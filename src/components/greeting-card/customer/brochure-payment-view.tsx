@@ -237,7 +237,7 @@ export function BrochurePaymentView({
         </>
       ) : (
         <>
-          <h2 className="text-title font-extrabold text-foreground mb-1">Đặt hoa thành công!</h2>
+          <h2 className="text-title font-extrabold text-foreground mb-1">Đặt hàng thành công!</h2>
           <p className="text-body-sm text-text-muted mb-4">
             Đơn <span className="font-mono font-bold text-foreground">#{orderCode}</span> trị giá{" "}
             <span className="font-bold text-primary">{totalVnd.toLocaleString("vi-VN")} đ</span>. Cửa hàng sẽ liên hệ

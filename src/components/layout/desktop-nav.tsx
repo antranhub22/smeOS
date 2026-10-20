@@ -1,36 +1,13 @@
 "use client"
 
-import { useState, useRef, useEffect, useMemo, type ComponentType } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import {
-  Home,
-  Users,
-  ShoppingBag,
-  Bot,
-  Globe,
-  Tag,
-  Camera,
-  Folder,
-  WalletCards,
-  TrendingUp,
   Sparkles,
-  Wand2,
-  Video,
-  FileText,
-  Share2,
-  LayoutTemplate,
-  Radio,
-  Clock,
-  CheckCircle2,
   BarChart3,
-  ShieldCheck,
-  Settings2,
-  BookOpen,
-  Cpu,
   ChevronDown,
   Search,
   X,
-  FileSpreadsheet,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { isRouteLocked } from "@/lib/feature-lock"
@@ -43,34 +20,7 @@ import {
 import { DesktopNavItem } from "./desktop-nav-item"
 import { DesktopNavFooter } from "./desktop-nav-footer"
 import { loadNavGroups, loadReportsOpen, navStorageKeys, persistNavGroups } from "./nav-storage"
-
-const ICONS: Record<string, ComponentType<{ size?: number; className?: string; strokeWidth?: number }>> = {
-  Home,
-  Users,
-  ShoppingBag,
-  Bot,
-  Globe,
-  Tag,
-  Camera,
-  Folder,
-  WalletCards,
-  TrendingUp,
-  Sparkles,
-  Wand2,
-  Video,
-  FileText,
-  Share2,
-  LayoutTemplate,
-  Radio,
-  Clock,
-  CheckCircle2,
-  BarChart3,
-  ShieldCheck,
-  Settings2,
-  BookOpen,
-  Cpu,
-  FileSpreadsheet,
-}
+import { NAV_ICONS as ICONS } from "./nav-icons"
 
 export function DesktopNav() {
   const pathname = usePathname()
@@ -79,7 +29,7 @@ export function DesktopNav() {
   const orgId = organization?.id
   const { groupsKey, reportsKey } = useMemo(() => navStorageKeys(orgId), [orgId])
 
-  const navView = useMemo(() => buildNav(can, roleUx), [can, roleUx])
+  const navView = useMemo(() => buildNav(can, roleUx, organization?.industry), [can, roleUx, organization?.industry])
 
   const [searchQuery, setSearchQuery] = useState("")
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})

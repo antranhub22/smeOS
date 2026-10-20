@@ -4,6 +4,8 @@ import React, { useState } from "react"
 import { Ban, AlertCircle } from "lucide-react"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export interface CancelFloristOrderModalProps {
   open: boolean
@@ -13,13 +15,6 @@ export interface CancelFloristOrderModalProps {
   onConfirmCancel: (reason: string) => Promise<void>
 }
 
-const QUICK_REASONS = [
-  "Thợ quá tải / Bận giờ cao điểm",
-  "Hết loại hoa chính trong công thức",
-  "Thời gian chuẩn bị quá gấp",
-  "Mức giá gia công chưa đạt thỏa thuận",
-  "Khu vực giao quá xa phạm vi xưởng",
-]
 
 export function CancelFloristOrderModal({
   open,
@@ -31,6 +26,16 @@ export function CancelFloristOrderModal({
   const [reason, setReason] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
+
+  const QUICK_REASONS = [
+    "Thợ quá tải / Bận giờ cao điểm",
+    `Hết ${ti.rawMaterialItem} chính trong công thức`,
+    "Thời gian chuẩn bị quá gấp",
+    "Mức giá gia công chưa đạt thỏa thuận",
+    "Khu vực giao quá xa phạm vi xưởng",
+  ]
 
   const handleSelectQuickReason = (tag: string) => {
     if (!reason.trim()) {

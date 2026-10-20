@@ -56,7 +56,7 @@ export function EmptyCatalog() {
   const embedded = useEmbeddedPreview()
   return (
     <div className={`flex ${rootHeight(embedded)} items-center justify-center bg-bg p-6 text-center`}>
-      <p className="text-body text-text-muted">Bộ sưu tập này chưa có mẫu hoa nào.</p>
+      <p className="text-body text-text-muted">Bộ sưu tập này chưa có sản phẩm nào.</p>
     </div>
   )
 }
@@ -159,7 +159,7 @@ export function ProductTile({ product, liked, onLike, onOpen, selected, aspect =
 /** Thanh đặt hoa cố định: tên mẫu đang chọn + giá + nút đặt. */
 export function OrderBar({ product, onOrder, hint }: { product: GreetingCatalogProduct | null; onOrder: (p: GreetingCatalogProduct) => void; hint?: string }) {
   if (!product) {
-    return <p className="py-3 text-center text-body-sm text-text-muted">{hint ?? "Chọn một mẫu hoa để đặt"}</p>
+    return <p className="py-3 text-center text-body-sm text-text-muted">{hint ?? "Chọn một sản phẩm để đặt"}</p>
   }
   return (
     <div className="flex items-center gap-3">

@@ -117,7 +117,7 @@ async function priceProduct(
   let zone = null
   if (shipping.zones.length > 0) {
     zone = shipping.zones.find((z) => z.id === req.shippingZoneId) ?? null
-    if (!zone) errors.shippingZoneId = "Vui lòng chọn khu vực giao hoa"
+    if (!zone) errors.shippingZoneId = "Vui lòng chọn khu vực giao hàng"
   }
 
   const unitPriceVnd = variant?.priceVnd ?? product.price
@@ -133,9 +133,9 @@ async function priceProduct(
   if (code) {
     const found = await checkout.findVoucher(organizationId, code)
     if (!found) {
-      // Mã thanh toán (DC30…) không phải mã giảm giá — chỉ khách sang đúng ô
+      // Mã đặt cọc (DC30…) không phải mã giảm giá — chỉ khách sang đúng ô
       errors.voucherCode = findPaymentCode(parsePaymentPlans(shopSettings), code)
-        ? "Đây là mã thanh toán (đặt cọc) — vui lòng nhập ở ô Mã thanh toán"
+        ? "Đây là mã áp dụng đặt cọc — vui lòng nhập ở ô Mã áp dụng đặt cọc"
         : "Mã giảm giá không tồn tại"
     } else {
       const customerId = await checkout.findCustomerIdByPhone(organizationId, normalizePhone(req.customerPhone))

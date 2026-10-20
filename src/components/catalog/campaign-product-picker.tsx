@@ -3,6 +3,8 @@
 import React from "react"
 import { Layers, Camera } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { CatalogProduct } from "./catalog-management-tab"
 
 interface CampaignProductPickerProps {
@@ -22,6 +24,8 @@ export function CampaignProductPicker({
   onDeselectAll,
   onOpenQuickUpload,
 }: CampaignProductPickerProps) {
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
   const isAllSelected = selectedProductIds.length === activeProducts.length && activeProducts.length > 0
 
   return (
@@ -29,7 +33,7 @@ export function CampaignProductPicker({
       <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
         <label className="text-xs font-bold text-text flex items-center gap-1.5">
           <Layers size={14} className="text-primary" />
-          <span>Tuyển chọn mẫu hoa bán ({selectedProductIds.length}/{activeProducts.length})</span>
+          <span>Tuyển chọn {ti.sampleProduct} bán ({selectedProductIds.length}/{activeProducts.length})</span>
         </label>
         <div className="flex items-center gap-2">
           <Button
@@ -40,7 +44,7 @@ export function CampaignProductPicker({
             className="h-7 text-caption gap-1 text-primary border-primary/30 hover:bg-primary-bg/20 font-bold"
           >
             <Camera size={13} />
-            <span>📸 Tải ảnh hoa mới vào chiến dịch</span>
+            <span>📸 Tải ảnh {ti.sampleProduct} mới vào chiến dịch</span>
           </Button>
           <Button
             variant="ghost"

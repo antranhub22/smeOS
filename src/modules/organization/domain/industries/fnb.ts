@@ -94,4 +94,7 @@ export const FNB_INDUSTRY: IndustryPluginContract = {
       "Set cơm bò sốt tiêu đen kèm canh rong biển",
     ],
   },
+  navigation: {
+    hiddenNavKeys: [],
+  },
 }
