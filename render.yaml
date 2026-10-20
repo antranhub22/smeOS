@@ -82,6 +82,10 @@ services:
         value: cpu
       - key: GREETING_CARD_ENABLED
         value: "true"
+      - key: TELEGRAM_DISPATCH_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_STAFF_BOT_TOKEN
+        sync: false
 
   # ══════════════════════════════════════════════
   # 2. BACKGROUND WORKER — Media AI
