@@ -130,6 +130,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       delivery_address: true,
       delivery_window: true,
       total_vnd: true,
+      pricing_rule_ref: true,
       items: {
         select: {
           product_id: true,
@@ -193,8 +194,21 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
     declinedBranchIds: [],
     invitedBranchIds: approvedBranches.map((b) => b.branchId),
     roundExpiresAt: roundExpiry,
+    subcontractPriceVnd: craftFee,
   }
   await stateRepo.saveSubcontractState(ctx, subcontractState)
+
+  // Đồng bộ giá gia công vào pricing_rule_ref của đơn hàng để làm SSOT xuyên suốt
+  const existingPricingRef = (order.pricing_rule_ref as Record<string, unknown> | null) ?? {}
+  await prisma.orders.update({
+    where: { id: order.id },
+    data: {
+      pricing_rule_ref: {
+        ...existingPricingRef,
+        subcontract_price_vnd: craftFee,
+      } as unknown as import("@/generated/prisma/client").Prisma.InputJsonValue,
+    },
+  })
 
   // Phát lệnh gửi tin nhắn riêng 1:1 cho từng chi nhánh được duyệt
   const results: Array<{ branchId: string; branchName: string; sent: boolean; channel: string; error?: string }> = []

@@ -41,6 +41,8 @@ export interface SubcontractOrderState {
   telegramChatId?: string | null | undefined
   /** Thẻ được gửi kèm ảnh (sendPhoto -> caption) hay text thuần */
   isCaption?: boolean | undefined
+  /** Thù lao gia công đã chốt cho đơn hàng (VNĐ) */
+  subcontractPriceVnd?: number | null | undefined
 }
 
 export type ClaimResult =

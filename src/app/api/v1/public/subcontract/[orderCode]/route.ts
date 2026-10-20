@@ -48,10 +48,13 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
 
   const pricingRef = (order.pricing_rule_ref as Record<string, unknown> | null) ?? {}
   const total = Number(order.total_vnd)
-  const defaultSubcontractPrice = Math.round(total * 0.7) // 70% mặc định cho gia công nếu chưa cấu hình thù lao riêng
-  const subcontractPriceVnd = typeof pricingRef.subcontract_price_vnd === "number"
-    ? pricingRef.subcontract_price_vnd
-    : defaultSubcontractPrice
+  const defaultSubcontractPrice = Math.round(total * 0.5) // SSOT: Chuẩn hoá 50% thù lao gia công mặc định
+  const subcontractPriceVnd =
+    typeof subState?.subcontractPriceVnd === "number"
+      ? (subState.subcontractPriceVnd as number)
+      : typeof pricingRef.subcontract_price_vnd === "number"
+      ? (pricingRef.subcontract_price_vnd as number)
+      : defaultSubcontractPrice
 
   const firstItem = order.items[0]
   const session = order.greeting_sessions[0]
