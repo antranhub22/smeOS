@@ -92,7 +92,8 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
         await this.db.orders.updateMany({
           where: scopedWhere(ctx, {
             id: state.orderId,
-            status: { in: ["DRAFT" as const, "PROCESSING" as const] },
+            NOT: { status: "CANCELLED" as const },
+            production_status: "WAITING" as const,
           }),
           data: {
             status: "CONFIRMED" as const,
