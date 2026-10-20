@@ -86,6 +86,7 @@ export function SubcontractClaimCard({
 }: SubcontractClaimCardProps) {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [imageError, setImageError] = useState(false)
   const [graceSeconds, setGraceSeconds] = useState(() =>
     getGraceSecondsRemaining(graceExpiresAt ?? null)
   )
@@ -472,10 +473,11 @@ export function SubcontractClaimCard({
         {/* Chi tiết sản phẩm & Định mức nguyên vật liệu */}
         <div className="bg-surface-muted rounded-xl p-3.5 border border-border flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            {product.imageUrl ? (
+            {product.imageUrl && !imageError ? (
               <img
                 src={product.imageUrl}
                 alt={product.name}
+                onError={() => setImageError(true)}
                 className="w-16 h-16 rounded-lg object-cover border border-border shadow-sm shrink-0"
               />
             ) : (
