@@ -1,0 +1,337 @@
+"use client"
+
+import React, { useRef, useState } from "react"
+import {
+  Camera,
+  CheckCircle2,
+  UploadCloud,
+  ImageIcon,
+  Loader2,
+  Trash2,
+  FileCheck2,
+  Lock,
+  ChevronDown,
+  Clock,
+  Sparkles,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import type { DeliveryProofInfo } from "./delivery-proof-card"
+
+export interface SubcontractStepProofProps {
+  orderCode: string
+  branchId: string
+  existingDeliveryProof?: DeliveryProofInfo | null | undefined
+  deliveryStatus?: string | null | undefined
+  orderStatus?: string | null | undefined
+  subcontractPriceVnd: number
+  isActive: boolean
+  isCompleted: boolean
+  isUnlocked: boolean
+  onActivate: () => void
+  onDelivered?: (() => void) | undefined
+}
+
+export function SubcontractStepProof({
+  orderCode,
+  branchId,
+  existingDeliveryProof,
+  deliveryStatus,
+  orderStatus,
+  subcontractPriceVnd,
+  isActive,
+  isCompleted,
+  isUnlocked,
+  onActivate,
+  onDelivered,
+}: SubcontractStepProofProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [note, setNote] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [successJustSubmitted, setSuccessJustSubmitted] = useState(false)
+
+  const isActuallyDelivered =
+    isCompleted ||
+    deliveryStatus === "DELIVERED" ||
+    orderStatus === "COMPLETED" ||
+    Boolean(existingDeliveryProof?.deliveredAt) ||
+    successJustSubmitted
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith("image/")) {
+      setErrorMsg("Vui lòng chỉ chọn tệp hình ảnh (JPG, PNG, WebP)")
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrorMsg("Ảnh vượt quá dung lượng tối đa cho phép (10MB)")
+      return
+    }
+
+    setErrorMsg(null)
+    setSelectedFile(file)
+    const objectUrl = URL.createObjectURL(file)
+    setPreviewUrl(objectUrl)
+  }
+
+  function handleCancelPreview() {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
+    }
+    setSelectedFile(null)
+    setPreviewUrl(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  async function handleSubmitProof() {
+    if (!selectedFile) {
+      setErrorMsg("Vui lòng chụp hoặc chọn ảnh bằng chứng giao hàng")
+      return
+    }
+
+    setSubmitting(true)
+    setErrorMsg(null)
+
+    try {
+      const formData = new FormData()
+      formData.append("file", selectedFile)
+      formData.append("branchId", branchId)
+      if (note.trim()) {
+        formData.append("note", note.trim())
+      }
+
+      const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/submit-delivery`, {
+        method: "POST",
+        body: formData,
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(data?.error?.message || data?.message || "Không thể tải bằng chứng giao hàng")
+      }
+
+      setSuccessJustSubmitted(true)
+      handleCancelPreview()
+      onDelivered?.()
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Đã có lỗi xảy ra khi gửi bằng chứng")
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <section
+      aria-label="Công đoạn 4: Bằng chứng giao hàng & Nghiệm thu (POD)"
+      className={cn(
+        "rounded-2xl border transition-all duration-300 overflow-hidden",
+        isActive
+          ? "border-primary/50 bg-surface shadow-md ring-2 ring-primary/20 opacity-100"
+          : isActuallyDelivered
+          ? "border-success/30 bg-surface/90 opacity-90 hover:opacity-100"
+          : isUnlocked
+          ? "border-border/60 bg-surface/80 opacity-70 hover:opacity-95"
+          : "border-border/40 bg-surface/50 opacity-50 cursor-not-allowed"
+      )}
+    >
+      {/* Header bar của Bước 4 */}
+      <button
+        type="button"
+        onClick={onActivate}
+        disabled={!isUnlocked}
+        className="w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
+      >
+        <div className="flex items-center gap-2.5">
+          <div
+            className={cn(
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-caption font-black",
+              isActuallyDelivered
+                ? "bg-success text-white"
+                : isActive
+                ? "bg-primary text-white ring-2 ring-primary/30"
+                : isUnlocked
+                ? "bg-surface-muted text-foreground border border-border"
+                : "bg-surface-muted text-text-muted/60 border border-border/40"
+            )}
+          >
+            {isActuallyDelivered ? <CheckCircle2 size={16} /> : !isUnlocked ? <Lock size={12} /> : "4"}
+          </div>
+          <div>
+            <span className="text-body-sm font-extrabold text-foreground block">
+              4. Bằng chứng giao hàng & Nghiệm thu (POD)
+            </span>
+            <span className="text-caption text-text-muted">
+              {isActuallyDelivered
+                ? "Đã giao thành công 100% & Ghi nhận thù lao"
+                : isUnlocked
+                ? "Tải ảnh xác nhận đã giao hàng thành công"
+                : "Chờ hoàn thành bàn giao Shipper ở Bước 3"}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {isActuallyDelivered ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-success/20 text-success text-caption font-bold">
+              <CheckCircle2 size={12} /> Hoàn tất 100%
+            </span>
+          ) : isUnlocked ? (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
+              <Clock size={12} /> Chờ ảnh POD
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-muted text-text-muted text-caption font-bold">
+              <Lock size={12} /> Khóa
+            </span>
+          )}
+          <ChevronDown
+            size={16}
+            className={cn(
+              "text-text-muted transition-transform duration-200",
+              isActive ? "rotate-180 text-primary" : ""
+            )}
+          />
+        </div>
+      </button>
+
+      {/* Thân chi tiết Bước 4 */}
+      <div className={cn("p-4 sm:p-5 flex flex-col gap-4", !isActive && "hidden")}>
+        {!isUnlocked ? (
+          <div className="p-4 rounded-xl bg-surface-muted text-center flex flex-col items-center gap-2 text-text-muted">
+            <Lock size={24} className="opacity-50" />
+            <p className="text-caption">
+              Vui lòng bàn giao đơn hàng cho Shipper ở <strong>Bước 3</strong> để mở khóa xác nhận giao hàng.
+            </p>
+          </div>
+        ) : isActuallyDelivered ? (
+          <div className="p-4 rounded-xl bg-success/10 border border-success/30 flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-full bg-success/20">
+                <CheckCircle2 size={20} className="text-success" />
+              </div>
+              <div>
+                <span className="text-body-sm font-extrabold text-success block">
+                  Đơn hàng đã giao thành công & Nghiệm thu hoàn tất
+                </span>
+                <span className="text-caption text-text-muted">
+                  Thù lao gia công {subcontractPriceVnd.toLocaleString("vi-VN")} đ đã được ghi nhận vào tài khoản của chi nhánh.
+                </span>
+              </div>
+            </div>
+
+            {existingDeliveryProof?.photoUrls && existingDeliveryProof.photoUrls.length > 0 && (
+              <div className="flex flex-col gap-1.5 pt-2 border-t border-success/20">
+                <span className="text-caption font-bold text-text-muted flex items-center gap-1">
+                  <ImageIcon size={13} /> Ảnh bằng chứng giao hàng (POD):
+                </span>
+                <div className="grid grid-cols-3 gap-2">
+                  {existingDeliveryProof.photoUrls.map((url, idx) => (
+                    <div key={idx} className="relative h-24 rounded-lg overflow-hidden border border-border shadow-xs">
+                      <img
+                        src={url.startsWith("http") || url.startsWith("/api/v1/storage/") ? url : `/api/v1/storage/${url}`}
+                        alt={`Ảnh POD #${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {errorMsg && (
+              <div className="p-3 rounded-xl bg-danger-bg border border-danger/30 text-danger text-body-sm">
+                {errorMsg}
+              </div>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+
+            {previewUrl ? (
+              <div className="flex flex-col gap-3 p-3 rounded-xl bg-surface-muted border border-border">
+                <div className="relative w-full h-56 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center">
+                  <img
+                    src={previewUrl}
+                    alt="Xem trước ảnh POD"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    disabled={submitting}
+                    onClick={handleCancelPreview}
+                    className="flex-1 h-10 text-caption font-bold"
+                  >
+                    <Trash2 size={15} className="mr-1 text-danger" /> Chọn ảnh khác
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full h-20 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all"
+              >
+                <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
+                  <Camera size={20} />
+                  <span>CHỤP ẢNH BẰNG CHỨNG GIAO HÀNG (POD)</span>
+                </div>
+                <span className="text-caption text-text-muted">
+                  Ảnh chụp người nhận nhận hoa hoặc ảnh hoa tại cửa/cổng địa chỉ nhận
+                </span>
+              </Button>
+            )}
+
+            <div>
+              <label htmlFor="pod-note" className="block text-caption font-bold text-foreground mb-1">
+                Ghi chú người nhận / giao hàng (tùy chọn)
+              </label>
+              <input
+                id="pod-note"
+                type="text"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Ví dụ: Giao tận tay anh Tuấn tại sảnh chung cư..."
+                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+
+            <Button
+              variant="primary"
+              disabled={submitting || !selectedFile}
+              onClick={handleSubmitProof}
+              className="w-full h-11 text-caption font-extrabold flex items-center justify-center gap-1.5 rounded-xl shadow-sm mt-1 cursor-pointer"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" /> Đang tải lên...
+                </>
+              ) : (
+                <>
+                  <FileCheck2 size={16} /> XÁC NHẬN ĐÃ GIAO HÀNG THÀNH CÔNG
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
