@@ -4,23 +4,22 @@
  * Coordinator-Stream M3: Điều phối viên trực tiếp nhập thông tin shipper thay cửa hàng.
  * Hành động này triệt tiêu (First-Wins Mutex) toàn bộ reminder M3 đang pending.
  *
- * Yêu cầu: Session đăng nhập với capability "coordinator_subcontract_act".
+ * Yêu cầu: Session đăng nhập có mã năng lực R5.
  */
 
-import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
-import type { Prisma } from "@/generated/prisma/client"
 
 const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
 
@@ -35,6 +34,7 @@ const setShipperSchema = z.object({
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R5")
   const { id: orderId } = await context.params
 
   const repo = new SubcontractOrderRepository()
@@ -72,8 +72,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     })
   }
 
-  const coord = await prisma.order_coordinations.findUnique({ where: { order_id: order.id } })
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const store = new SubcontractStepStore()
+  const existingMeta = await store.readMetadata(order.organization_id, order.id)
 
   const shipperInfo = {
     shipperName,
@@ -83,34 +83,19 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     submittedAt: new Date().toISOString(),
   }
 
-  await prisma.$transaction([
-    prisma.orders.update({
-      where: { id: order.id },
-      data: { delivery_status: "DELIVERING" },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          shipper_info: shipperInfo,
-          shipper_submitted_at: new Date().toISOString(),
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "delivery",
-        from_value: order.delivery_status,
-        to_value: "DELIVERING",
-        actor_id: `coordinator:${ctx.userId}`,
-        reason: `[Coordinator Set Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
-      },
-    }),
-  ])
+  await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { delivery_status: "DELIVERING" },
+    metadata: { ...existingMeta, shipper_info: shipperInfo, shipper_submitted_at: new Date().toISOString() },
+    events: [{
+      axis: "delivery",
+      fromValue: order.delivery_status,
+      toValue: "DELIVERING",
+      actorId: `coordinator:${ctx.userId}`,
+      reason: `[Coordinator Set Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
+    }],
+  })
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M3 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({

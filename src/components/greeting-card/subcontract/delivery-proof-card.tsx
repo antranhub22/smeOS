@@ -14,6 +14,7 @@ import {
   Clock,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface DeliveryProofInfo {
   photoUrls: string[]
@@ -116,6 +117,7 @@ export function DeliveryProofCard({
 
       const res = await fetch(`/api/v1/public/subcontract/${orderCode}/submit-delivery`, {
         method: "POST",
+        headers: subcontractAccessHeaders(),
         body: formData,
       })
 

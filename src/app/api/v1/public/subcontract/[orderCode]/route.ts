@@ -1,8 +1,10 @@
 import { z } from "zod"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import {
   cancelClaimSubcontractUseCase,
@@ -10,10 +12,9 @@ import {
 } from "@/modules/greeting-card/use-cases/handle-subcontract-claim"
 import { commitSubcontractOrder } from "@/modules/greeting-card/domain/subcontract-order"
 import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greeting-card/domain/chain-dispatch-policy"
-import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { signSubcontractPhoto } from "@/modules/greeting-card/use-cases/sign-subcontract-photo"
 import { formatDeliveryAddress, extractRecipientInfo } from "@/modules/greeting-card/domain/delivery-address"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import type { TenantContext } from "@/core/tenancy"
 
 const actionSchema = z.object({
@@ -33,8 +34,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   const branchId = url.searchParams.get("branch")
 
   const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
 
   // Kiểm tra chi nhánh có thuộc cùng tổ chức với đơn hàng hay không
   let branchName = ""
@@ -81,23 +81,10 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
     ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
     : "Giao trong ngày"
 
-  const storage = getStorageProvider()
-  const resolveKey = async (photo: string) => {
-    if (!photo) return photo
-    if (photo.startsWith("org/")) {
-      try { return await storage.signedUrl(photo, 604800, "GET") } catch { return photo }
-    }
-    const keyMatch = photo.match(/floraos-core\/(org\/[^?]+)/)
-    if (keyMatch?.[1]) {
-      try { return await storage.signedUrl(keyMatch[1], 604800, "GET") } catch { return photo }
-    }
-    return photo
-  }
-
   const rawQcPhotos = Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
   const rawPodPhotos = Array.isArray(coordMeta.pod_photos) ? (coordMeta.pod_photos as string[]) : []
-  const resolvedQcPhotos = await Promise.all(rawQcPhotos.map(resolveKey))
-  const resolvedPodPhotos = await Promise.all(rawPodPhotos.map(resolveKey))
+  const resolvedQcPhotos = await Promise.all(rawQcPhotos.map(signSubcontractPhoto))
+  const resolvedPodPhotos = await Promise.all(rawPodPhotos.map(signSubcontractPhoto))
 
   const rawPodProof = coordMeta.delivery_proof as
     | { note?: string; deliveredAt?: string; deliveredByBranch?: string }
@@ -179,8 +166,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   const { action, branchId } = parsed.data
   const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
 
   // Xác thực chi nhánh hợp lệ thuộc tổ chức
   const branch = await repo.findBranchInOrganization(branchId, order.organization_id)
@@ -272,7 +258,12 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       orderCode: order.code,
       branchName: branch.name,
       deliveryTime,
-      claimUrl: `${request.headers.get("origin") || ""}/subcontract/${order.code}?branch=${encodeURIComponent(branch.id)}`,
+      claimUrl: subcontractBranchUrl({
+        baseUrl: request.headers.get("origin") || "",
+        organizationId: order.organization_id,
+        orderCode: order.code,
+        branchId: branch.id,
+      }),
     })
 
     const branchCandidate = {
@@ -346,11 +337,13 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     if (!photoToDelete) {
       throw validationFailed({ photoUrl: "Thiếu thông tin ảnh cần xóa" })
     }
+    const qcState = await repo.loadSubcontractState(ctx, order.id)
+    if (!qcState || qcState.claimedBranchId !== branch.id) {
+      throw unprocessable("Chỉ chi nhánh đã nhận đơn mới được xoá ảnh thành phẩm.")
+    }
 
-    const coord = await prisma.order_coordinations.findUnique({
-      where: { order_id: order.id },
-    })
-    const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+    const store = new SubcontractStepStore()
+    const existingMeta = await store.readMetadata(order.organization_id, order.id)
     const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
 
     // Loại bỏ ảnh khớp theo URL hoặc theo storage key
@@ -364,15 +357,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       return true
     })
 
-    await prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          qc_photos: filteredQcPhotos,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    })
+    await store.writeMetadata(order.organization_id, order.id, { ...existingMeta, qc_photos: filteredQcPhotos })
 
     return jsonResponse({
       data: {

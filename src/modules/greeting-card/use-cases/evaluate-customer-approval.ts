@@ -14,9 +14,8 @@
  * First-Wins Mutex: Ai approve trước (khách thật, coordinator, hay auto) → khóa ngay lập tức.
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
-import type { Prisma } from "@/generated/prisma/client"
 
 export interface CustomerApprovalState {
   /** Timestamp gửi ảnh cho khách (ISO) */
@@ -60,14 +59,12 @@ export async function evaluateCustomerApproval(
     return { action: "no_op" }
   }
 
-  const coord = await prisma.order_coordinations.findFirst({
-    where: { order_id: orderId, organization_id: organizationId },
-    select: { id: true, metadata: true },
-  })
+  const store = new SubcontractStepStore()
+  const coordMeta = await store.findMetadata(organizationId, orderId)
 
-  if (!coord) return { action: "no_op" }
+  if (!coordMeta) return { action: "no_op" }
 
-  const existingMeta = (coord.metadata as Record<string, unknown> | null) ?? {}
+  const existingMeta = coordMeta
   const approvalState = (existingMeta.customer_photo_approval as CustomerApprovalState | undefined) ?? {
     sentToCustomerAt: null,
     approvalDeadlineMs: null,
@@ -92,15 +89,7 @@ export async function evaluateCustomerApproval(
       sentToCustomerAt: now.toISOString(),
       approvalDeadlineMs: deadlineMs,
     }
-    await prisma.order_coordinations.update({
-      where: { id: coord.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          customer_photo_approval: newApprovalState,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    })
+    await store.writeMetadata(organizationId, orderId, { ...existingMeta, customer_photo_approval: newApprovalState })
     log.info("customer_approval.deadline_set", {
       orderId,
       approveAfterMinutes: autoApproveAfterMinutes,
@@ -116,15 +105,7 @@ export async function evaluateCustomerApproval(
       approvedAt: now.toISOString(),
       approvedBy: "auto_timeout",
     }
-    await prisma.order_coordinations.update({
-      where: { id: coord.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          customer_photo_approval: autoApprovedState,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    })
+    await store.writeMetadata(organizationId, orderId, { ...existingMeta, customer_photo_approval: autoApprovedState })
     log.info("customer_approval.auto_approved", {
       orderId,
       orderCode: input.orderCode,
@@ -147,13 +128,11 @@ export async function approveCustomerPhoto(
   actorId: string,
   now = new Date()
 ): Promise<{ success: boolean; alreadyApproved: boolean }> {
-  const coord = await prisma.order_coordinations.findFirst({
-    where: { order_id: orderId, organization_id: organizationId },
-    select: { id: true, metadata: true },
-  })
-  if (!coord) return { success: false, alreadyApproved: false }
+  const store = new SubcontractStepStore()
+  const coordMeta = await store.findMetadata(organizationId, orderId)
+  if (!coordMeta) return { success: false, alreadyApproved: false }
 
-  const existingMeta = (coord.metadata as Record<string, unknown> | null) ?? {}
+  const existingMeta = coordMeta
   const approvalState = existingMeta.customer_photo_approval as CustomerApprovalState | undefined
 
   // Đã approve → trả alreadyApproved
@@ -170,15 +149,7 @@ export async function approveCustomerPhoto(
     rejectedReason: null,
   }
 
-  await prisma.order_coordinations.update({
-    where: { id: coord.id },
-    data: {
-      metadata: {
-        ...existingMeta,
-        customer_photo_approval: newApprovalState,
-      } as unknown as Prisma.InputJsonValue,
-    },
-  })
+  await store.writeMetadata(organizationId, orderId, { ...existingMeta, customer_photo_approval: newApprovalState })
 
   log.info("customer_approval.approved", { orderId, approvedBy, actorId })
   return { success: true, alreadyApproved: false }

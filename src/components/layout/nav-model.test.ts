@@ -1,4 +1,8 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
+
+// Test kiểm luật của ma trận MẶC ĐỊNH theo ngành. Ghi đè do Console Vận hành lưu vào
+// industry-nav-matrix-overrides.json là dữ liệu vận hành (039565c), không phải luật — tách khỏi test.
+vi.mock("@/lib/data/industry-nav-matrix-overrides.json", () => ({ default: {} }))
 import {
   buildNav,
   mobileSecondSlot,

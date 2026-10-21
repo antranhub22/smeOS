@@ -3,7 +3,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { requireCapability } from "@/core/rbac/capabilities"
 import { getAvailabilityBoard } from "@/modules/availability/use-cases/get-availability-board"
 
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 /**
  * GET /api/v1/availability/board?month=2026-10
@@ -16,10 +16,7 @@ export const GET = handle(async (request) => {
   const { searchParams } = new URL(request.url)
   const month = searchParams.get("month") ?? undefined
 
-  const org = await prisma.organizations.findUnique({
-    where: { id: ctx.organizationId },
-    select: { settings: true },
-  })
+  const org = await new OrganizationRepository().current(ctx)
   const settings = org?.settings as Record<string, unknown> | null
   const industryKey = typeof settings?.industry === "string" ? settings.industry : "FLORAL"
 

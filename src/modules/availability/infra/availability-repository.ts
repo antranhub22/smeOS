@@ -144,10 +144,28 @@ export class AvailabilityRepository {
     })
   }
 
-  /** Thêm block thủ công hoặc từ đơn hàng */
-  async createBooking(input: CreateBlockInput): Promise<string> {
-    if (this.db.product_bookings) {
-      const row = await this.db.product_bookings.create({
+  /**
+   * Thêm block thủ công hoặc từ đơn hàng — `null` nếu khoảng ngày chồng lên một đặt chỗ ACTIVE
+   * khác của cùng sản phẩm. Khoá tư vấn theo sản phẩm (pg_advisory_xact_lock) tuần tự hoá mọi lần
+   * ghi của một phòng giữa các instance, nên hai khách thanh toán cùng lúc không cùng giữ được
+   * một phòng (rà soát 21/10/2026, H8). Chưa đặt ràng buộc EXCLUDE ở CSDL: Prisma không khai được
+   * và `db push` lúc deploy sẽ gỡ ràng buộc ngoài lược đồ.
+   */
+  async createBooking(input: CreateBlockInput): Promise<string | null> {
+    return this.db.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${input.productId}::text, 0))`
+      const clash = await tx.product_bookings.findFirst({
+        where: {
+          organization_id: input.organizationId,
+          product_id: input.productId,
+          status: "ACTIVE",
+          check_in_date: { lt: input.checkOutDate },
+          check_out_date: { gt: input.checkInDate },
+        },
+        select: { id: true },
+      })
+      if (clash) return null
+      const row = await tx.product_bookings.create({
         data: {
           organization_id: input.organizationId,
           product_id: input.productId,
@@ -160,14 +178,31 @@ export class AvailabilityRepository {
         select: { id: true },
       })
       return row.id
-    }
+    })
+  }
 
-    const id = crypto.randomUUID()
-    await this.db.$executeRaw`
-      INSERT INTO product_bookings (id, organization_id, product_id, order_id, check_in_date, check_out_date, note, status, created_at, updated_at)
-      VALUES (${id}, ${input.organizationId}, ${input.productId}, ${input.orderId ?? null}, ${input.checkInDate}, ${input.checkOutDate}, ${input.note ?? null}, 'ACTIVE', NOW(), NOW())
-    `
-    return id
+  /** Khoảng ngày có chồng lên đặt chỗ ACTIVE nào của sản phẩm không (kiểm trước khi tạo đơn). */
+  async hasActiveOverlap(organizationId: string, productId: string, checkInDate: string, checkOutDate: string): Promise<boolean> {
+    const clash = await this.db.product_bookings.findFirst({
+      where: {
+        organization_id: organizationId,
+        product_id: productId,
+        status: "ACTIVE",
+        check_in_date: { lt: checkOutDate },
+        check_out_date: { gt: checkInDate },
+      },
+      select: { id: true },
+    })
+    return clash !== null
+  }
+
+  /** Sản phẩm có thuộc tổ chức không — `productId` đến từ body, không được tin. */
+  async productBelongsToOrganization(organizationId: string, productId: string): Promise<boolean> {
+    const row = await this.db.products.findFirst({
+      where: { id: productId, organization_id: organizationId },
+      select: { id: true },
+    })
+    return row !== null
   }
 
   /** Xóa manual block của admin (chỉ block có order_id = null) */

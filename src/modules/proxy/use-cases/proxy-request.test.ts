@@ -41,10 +41,15 @@ describe("readProxyIdentity", () => {
     expect(id).toEqual({ kind: "sso", value: "jwt-sso" })
   })
 
-  it("đọc cookie floraos_sso khi không có header", () => {
-    const req = mockRequest({ cookie: "floraos_session=abc; floraos_sso=jwt-cookie" })
+  it("đọc cookie smeos_sso khi không có header", () => {
+    const req = mockRequest({ cookie: "smeos_session=abc; smeos_sso=jwt-cookie" })
     const id = readProxyIdentity(req)
     expect(id).toEqual({ kind: "sso", value: "jwt-cookie" })
+  })
+
+  it("vẫn đọc cookie cũ floraos_sso trong giai đoạn chuyển tên", () => {
+    expect(readProxyIdentity(mockRequest({ cookie: "floraos_sso=jwt-cu" }))).toEqual({ kind: "sso", value: "jwt-cu" })
+    expect(readProxyIdentity(mockRequest({ cookie: "floraos_sso=jwt-cu; smeos_sso=jwt-moi" }))).toEqual({ kind: "sso", value: "jwt-moi" })
   })
 
   it("fallback sang Authorization Bearer khi không có SSO", () => {

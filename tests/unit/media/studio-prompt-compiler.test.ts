@@ -29,12 +29,13 @@ describe("StudioPromptCompiler", () => {
 
     // 1. Kiểm tra System Prompt (Mandate bảo tồn hoa thật)
     expect(result.systemPrompt).toContain("CRITICAL CONSTRAINT - SUBJECT INTEGRITY MANDATE")
-    expect(result.systemPrompt).toContain("DO NOT change, recolor, repaint, add, remove, or distort ANY flower petals")
+    // Đa ngành (da9855a): mệnh lệnh phủ mọi chi tiết vật lý của sản phẩm, không chỉ cánh hoa
+    expect(result.systemPrompt).toContain("DO NOT change, recolor, repaint, add, remove, or distort ANY physical details")
     expect(result.systemPrompt).toContain("The floral arrangement in the foreground mask is an EXACT PHYSICAL PRODUCT")
 
     // 2. Kiểm tra Positive Prompt (Thông tin hoa + bối cảnh + máy ảnh 85mm f/4)
     expect(result.positivePrompt).toContain("20 stems of Deep Red Red Naomi Roses")
-    expect(result.positivePrompt).toContain("charcoal black matte silk wrapping paper")
+    expect(result.positivePrompt).toContain("charcoal black matte silk packaging")
     expect(result.positivePrompt).toContain("round hand-tied bouquet")
     expect(result.positivePrompt).toContain("Calacatta marble tabletop")
     expect(result.positivePrompt).toContain("85mm prime lens at f/4.0")

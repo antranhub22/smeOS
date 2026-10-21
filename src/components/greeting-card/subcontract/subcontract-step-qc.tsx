@@ -19,6 +19,7 @@ import { SubcontractRecipientContact } from "./subcontract-recipient-contact"
 import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
 import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface SubcontractStepQcProps {
   orderCode: string
@@ -63,10 +64,8 @@ export function SubcontractStepQc({
   const [qcSuccessMsg, setQcSuccessMsg] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [currentQcPhotos, setCurrentQcPhotos] = useState<string[]>(qcPhotos)
-
-  React.useEffect(() => {
-    setCurrentQcPhotos(qcPhotos)
-  }, [qcPhotos])
+  const [syncedQcPhotos, setSyncedQcPhotos] = useState<string[]>(qcPhotos) // máy chủ trả ảnh mới → đồng bộ lúc render
+  if (syncedQcPhotos !== qcPhotos) { setSyncedQcPhotos(qcPhotos); setCurrentQcPhotos(qcPhotos) }
 
   function handleTriggerFileInput() {
     setErrorMsg(null)
@@ -118,6 +117,7 @@ export function SubcontractStepQc({
 
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/upload-qc`, {
         method: "POST",
+        headers: subcontractAccessHeaders(),
         body: formData,
       })
 
@@ -144,7 +144,7 @@ export function SubcontractStepQc({
     try {
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: subcontractAccessHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ action: "DELETE_QC", branchId, photoUrl }),
       })
       const json = await res.json().catch(() => ({}))

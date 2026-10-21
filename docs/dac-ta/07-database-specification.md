@@ -2436,3 +2436,55 @@ model decision_registry {
   updated_at DateTime @updatedAt
 }
 ```
+
+## 30. Bổ sung đợt smeOS đa ngành (17–21/10/2026)
+
+> **Bổ sung 21/10/2026** theo mã thật — các bảng và cột thêm từ mốc chuyển sang smeOS (`8c53b38`).
+>
+> - `product_bookings` — **TENANT**. Lịch đặt chỗ theo khoảng ngày (Homestay, chế độ `BOOKING_CALENDAR`). `order_id = null` là khoá thủ công do admin đặt. Ngày lưu dạng chuỗi `YYYY-MM-DD`, ngày ra không tính. Chống chồng lịch: mọi lần ghi đi qua `AvailabilityRepository.createBooking`, khoá tư vấn theo sản phẩm (`pg_advisory_xact_lock`) rồi kiểm chồng với đặt chỗ ACTIVE trong cùng giao dịch. Chưa đặt ràng buộc `EXCLUDE` ở CSDL, vì Prisma không khai được và `db push` lúc deploy sẽ gỡ ràng buộc ngoài lược đồ. Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
+> - `staff_notifications` — **TENANT**. Nhật ký thông báo nhân viên đa kênh (APP_INBOX, ZALO, SMS, TELEGRAM, WHATSAPP, MESSENGER). `recipient_info` là thông tin liên hệ nội bộ, chưa có hạn lưu (M5). Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
+> - Cột mới: `products.availability_config` (Json, cấu hình kiểm khả dụng theo ngành), `users.phone`, `greeting_integrations.staff_notify_enabled` / `staff_notify_channels` / `staff_notify_config_encrypted` (mã hoá như `notify_config_encrypted`) / `staff_notify_events`.
+
+```prisma
+model product_bookings {
+  id              String   @id @default(uuid())
+  organization_id String
+  product_id      String
+  order_id        String?  // null = admin block thủ công
+  check_in_date   String   // "YYYY-MM-DD"
+  check_out_date  String   // "YYYY-MM-DD" (exclusive — ngày check-out không được tính)
+  note            String?  // "Bảo trì", "Sựa chữa", null = đặt từ đơn khách
+  status          String   @default("ACTIVE") // ACTIVE | CANCELLED
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id])
+
+  @@index([organization_id, product_id, check_in_date])
+  @@index([organization_id, product_id, status])
+  @@index([organization_id, order_id])
+}
+
+/// Nhật ký thông báo nhân viên Thẻ Chào (Đa kênh: APP_INBOX, ZALO, TELEGRAM, WHATSAPP, MESSENGER, SMS)
+model staff_notifications {
+  id              String   @id @default(uuid())
+  organization_id String
+  order_id        String?
+  event_key       String
+  channel         String // APP_INBOX | ZALO | SMS | TELEGRAM | WHATSAPP | MESSENGER
+  recipient_role  String? // ADMIN | SALE | COORDINATOR
+  recipient_id    String? // user_id hoặc null nếu broadcast toàn bộ vai trò
+  recipient_info  String? // SĐT, Telegram Chat ID, Zalo User ID...
+  title           String?
+  message         String?
+  status          String   @default("SENT") // SENT | FAILED | SKIPPED
+  provider_msg_id String?
+  error           String?
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id, event_key])
+  @@index([organization_id, recipient_id])
+}
+```

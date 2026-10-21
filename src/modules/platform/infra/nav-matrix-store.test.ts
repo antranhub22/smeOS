@@ -1,4 +1,8 @@
-import { describe, expect, it, beforeEach } from "vitest"
+import { mkdtempSync, rmSync } from "node:fs"
+import { tmpdir } from "node:os"
+import path from "node:path"
+
+import { afterEach, describe, expect, it, beforeEach } from "vitest"
 import {
   getPlatformNavMatrixOverrides,
   savePlatformNavMatrixOverrides,
@@ -6,11 +10,19 @@ import {
 } from "./nav-matrix-store"
 
 describe("PlatformNavMatrixStore", () => {
+  // Ghi vào tệp tạm — trước đây test ghi thẳng tệp ghi đè đã commit và "dọn" nó về rỗng.
+  let dir: string
   beforeEach(() => {
+    dir = mkdtempSync(path.join(tmpdir(), "nav-matrix-"))
+    process.env.NAV_MATRIX_OVERRIDES_PATH = path.join(dir, "overrides.json")
     clearPlatformNavMatrixCache()
   })
+  afterEach(() => {
+    delete process.env.NAV_MATRIX_OVERRIDES_PATH
+    rmSync(dir, { recursive: true, force: true })
+  })
 
-  it("returns default overrides for all 7 industries when loaded", async () => {
+  it("returns default overrides for all 7 industries when no overrides file exists", async () => {
     const overrides = await getPlatformNavMatrixOverrides()
     expect(overrides).toBeDefined()
     expect(overrides.FLORAL).toEqual([])
@@ -39,15 +51,5 @@ describe("PlatformNavMatrixStore", () => {
     expect(reloaded.FNB).toEqual(["scan-photo", "greeting-card"])
     expect(reloaded.HOMESTAY).toEqual(["create-product"])
 
-    // Clean up back to empty
-    await savePlatformNavMatrixOverrides({
-      FLORAL: [],
-      FASHION: [],
-      FNB: [],
-      CRAFT_GIFT: [],
-      RETAIL_GENERAL: [],
-      SERVICES: [],
-      HOMESTAY: [],
-    })
   })
 })

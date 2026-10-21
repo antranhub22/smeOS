@@ -40,9 +40,11 @@ export function serializeClearedSessionCookie(): string {
  * Cookie JWT phiên liên-app (Unified Shell, B1) cho smeOS
  */
 export const SSO_COOKIE = "smeos_sso"
+/** Tên trước khi đổi thương hiệu (e9833b1) — LocalBudd/SocialFlow còn đọc/gửi tên này. */
+export const LEGACY_SSO_COOKIE = "floraos_sso"
 
 export function readSsoCookie(request: Request): string | null {
-  return readCookie(request, SSO_COOKIE)
+  return readCookie(request, SSO_COOKIE) ?? readCookie(request, LEGACY_SSO_COOKIE)
 }
 
 export function serializeSsoCookie(token: string, maxAgeSeconds: number): string {

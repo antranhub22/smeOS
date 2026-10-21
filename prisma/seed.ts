@@ -4,6 +4,7 @@ import {
   seedVisionModels,
 } from "../src/core/ai/infra/seed-ai-registry"
 import { ensureSystemRoles } from "../src/modules/organization/use-cases/ensure-system-roles"
+import { devSeedEnabled } from "./seed/dev-seed-policy"
 
 /**
  * Nạp bốn vai hệ thống và sổ đăng ký nền AI. Chạy bằng `npm run db:seed`, sau
@@ -27,12 +28,13 @@ async function main(): Promise<void> {
   const { seedDecisionRegistry } = await import("./seed/decision-registry")
   await seedDecisionRegistry()
 
-  // Đồng bộ & kích hoạt tài khoản Siin Store (chạy trên cả production / Render)
-  const { syncSiinStoreAccount } = await import("./seed/sync-siin-store")
-  await syncSiinStoreAccount()
-
-  // Dev fixture: chạy trong dev hoặc khi cờ SEED_DEV_DATA=true được bật (demo / staging deploy)
-  if (process.env.NODE_ENV !== "production" || process.env.SEED_DEV_DATA === "true") {
+  // Dev fixture: chạy trong dev hoặc khi cờ SEED_DEV_DATA=true được bật (demo / staging deploy).
+  // Tài khoản Siin Store cũng nằm sau cờ này: nó đặt mật khẩu viết cứng (công khai trong git)
+  // cho tài khoản vai Điều hành — chạy trên production là trao chìa khoá cho bất kỳ ai đọc repo
+  // (rà soát 21/10/2026, C3). Tài khoản thật trên production tạo bằng lời mời, không bằng seed.
+  if (devSeedEnabled(process.env)) {
+    const { syncSiinStoreAccount } = await import("./seed/sync-siin-store")
+    await syncSiinStoreAccount()
     const { seedDevShopMoclan } = await import("./seed/dev-shop-moclan")
     await seedDevShopMoclan()
   }

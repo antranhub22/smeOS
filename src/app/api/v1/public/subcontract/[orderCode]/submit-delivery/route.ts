@@ -1,11 +1,11 @@
 import { randomUUID } from "crypto"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
@@ -59,10 +59,6 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   await enforceRateLimit(request, { scope: "subcontract-submit-delivery", limit: 30, windowMs: 60_000 })
   const { orderCode } = await context.params
 
-  const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
-
   const formData = await request.formData().catch(() => null)
   if (!formData) {
     throw validationFailed({ body: "Dữ liệu gửi lên không đúng định dạng multipart/form-data" })
@@ -76,6 +72,9 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     throw validationFailed({ branchId: "Thiếu mã chi nhánh phụ trách" })
   }
 
+  const repo = new SubcontractOrderRepository()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
+
   if (!file || !(file instanceof Blob)) {
     throw validationFailed({ file: "Vui lòng chọn ảnh chụp giao hàng (ảnh người nhận / trước cửa / phiếu nhận)" })
   }
@@ -83,7 +82,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   // Kiểm tra chi nhánh có đúng là bên đang gia công đơn này không
   const coordMeta = (order.coordination?.metadata as Record<string, unknown> | null) ?? {}
   const subState = coordMeta.subcontract_dispatch as Record<string, unknown> | undefined
-  if (subState?.claimedBranchId && subState.claimedBranchId !== branchId) {
+  if (subState?.claimedBranchId !== branchId) {
     throw unprocessable("Đơn hàng này không thuộc chi nhánh của bạn.")
   }
 
@@ -126,10 +125,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   // 2. Lấy ảnh thành phẩm QC đã upload trước đó để AI đối chiếu chéo
-  const coord = await prisma.order_coordinations.findUnique({
-    where: { order_id: order.id },
-  })
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const store = new SubcontractStepStore()
+  const existingMeta = await store.readMetadata(order.organization_id, order.id)
   const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
   const latestQcKey = existingQcPhotos[existingQcPhotos.length - 1]
   let qcImageUrl: string | undefined
@@ -179,52 +176,28 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     deliveredByBranch: branchId,
   }
 
-  const updateOps: unknown[] = [
-    prisma.orders.update({
-      where: { id: order.id },
-      data: {
-        delivery_status: "DELIVERED",
-        status: "COMPLETED",
-      },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          pod_photos: updatedPodPhotos,
-          delivery_proof: deliveryProof,
-          last_pod_uploaded_at: deliveredAt,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
+  await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { delivery_status: "DELIVERED", status: "COMPLETED" },
+    metadata: { ...existingMeta, pod_photos: updatedPodPhotos, delivery_proof: deliveryProof, last_pod_uploaded_at: deliveredAt },
+    events: [
+      {
         axis: "delivery",
-        from_value: order.delivery_status || "DELIVERING",
-        to_value: "DELIVERED",
-        actor_id: `branch_${branchId}`,
+        fromValue: order.delivery_status || "DELIVERING",
+        toValue: "DELIVERED",
+        actorId: `branch_${branchId}`,
         reason: `[Xác Nhận Giao Hàng POD] Chi nhánh tải ảnh giao hàng thành công. Ghi chú: ${note || "Không có"}`,
       },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
+      {
         axis: "status",
-        from_value: order.status,
-        to_value: "COMPLETED",
-        actor_id: `branch_${branchId}`,
+        fromValue: order.status,
+        toValue: "COMPLETED",
+        actorId: `branch_${branchId}`,
         reason: "[Hoàn Tất] Đơn hàng hoàn thành sau khi xác nhận giao hoa thành công.",
       },
-    }),
-  ]
-
-  await prisma.$transaction(updateOps as any)
+    ],
+  })
 
   // 1. Tự động gửi thông báo chúc mừng & cảm ơn khách hàng kèm ảnh giao hàng
   try {

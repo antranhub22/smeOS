@@ -19,7 +19,8 @@
 
 import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth"
+import { ChainDispatchSweepQuery } from "@/modules/greeting-card/infra/chain-dispatch-sweep-query"
 import { parseChainDispatchPolicy } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
@@ -30,18 +31,16 @@ import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispa
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
 
-const CRON_SECRET = process.env.CRON_SECRET ?? "dev"
 const MAX_ORDERS_PER_SWEEP = 50
 
 export const POST = handle(async (request) => {
-  // Bảo mật: xác thực cron secret header
-  const secret = request.headers.get("x-cron-secret")
-  if (secret !== CRON_SECRET) {
+  // Bảo mật: xác thực cron secret header (production thiếu CRON_SECRET → luôn từ chối)
+  if (!isAuthorizedCronRequest(request)) {
     return jsonResponse({ error: "Unauthorized" }, { status: 401 })
   }
 
   const url = new URL(request.url)
-  const forceStep = url.searchParams.get("forceStep") as
+  const forceStep = (forceStepAllowed() ? url.searchParams.get("forceStep") : null) as
     | "M1_PREP"
     | "M2_QC"
     | "M2_QC_RETRY"
@@ -60,19 +59,8 @@ export const POST = handle(async (request) => {
   const errors: string[] = []
 
   // 1. Lấy danh sách order_coordinations có subcontract đang COMMITTED/CLAIMED_GRACE
-  const coordinations = await prisma.order_coordinations.findMany({
-    where: {
-      // JSON filter: tìm các record có subcontract_dispatch không null
-      metadata: { not: {} },
-    },
-    select: {
-      id: true,
-      organization_id: true,
-      order_id: true,
-      metadata: true,
-    },
-    take: MAX_ORDERS_PER_SWEEP,
-  })
+  const sweepQuery = new ChainDispatchSweepQuery()
+  const coordinations = await sweepQuery.listCoordinationsWithMetadata(MAX_ORDERS_PER_SWEEP)
 
   // Lọc chỉ những đơn đang ở trạng thái cần nhắc việc
   const activeCoords = coordinations.filter((c) => {
@@ -95,30 +83,12 @@ export const POST = handle(async (request) => {
 
   // 2. Nhóm theo organization để lấy settings một lần
   const orgIds = [...new Set(activeCoords.map((c) => c.organization_id))]
-  const orgs = await prisma.organizations.findMany({
-    where: { id: { in: orgIds } },
-    select: { id: true, settings: true },
-  })
+  const orgs = await sweepQuery.listOrganizationSettings(orgIds)
   const orgMap = new Map(orgs.map((o) => [o.id, o]))
 
   // 3. Lấy thông tin đơn hàng (delivery_window, items) theo batch
   const orderIds = activeCoords.map((c) => c.order_id)
-  const orders = await prisma.orders.findMany({
-    where: { id: { in: orderIds } },
-    select: {
-      id: true,
-      code: true,
-      delivery_window: true,
-      delivery_status: true,
-      production_status: true,
-      items: {
-        select: {
-          description: true,
-          metadata: true,
-        },
-      },
-    },
-  })
+  const orders = await sweepQuery.listOrdersForReminders(orderIds)
   const orderMap = new Map(orders.map((o) => [o.id, o]))
 
   // 4. Xử lý từng coordination
@@ -240,7 +210,8 @@ export const POST = handle(async (request) => {
           hasDeliveryProof,
           deliveryStatus: order.delivery_status ?? undefined,
           coordinatorChannel,
-          baseUrl: url.origin,
+          // Cron gọi qua host nội bộ Render — link gửi chi nhánh phải dùng URL công khai đã cấu hình
+          baseUrl: process.env.NEXT_PUBLIC_APP_URL || url.origin,
           forceStep: forceStep ?? undefined,
           productImageUrl,
         },

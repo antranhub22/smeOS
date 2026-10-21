@@ -64,6 +64,8 @@ describe("filterProductLookup", () => {
         "pricing",
         "redacted_fields",
         "attributes",
+        // Cấu hình kiểm tra khả dụng theo ngành (tồn kho/lịch/khung giờ) — không chứa giá vốn
+        "availability_config",
       ].sort()
     )
     expect(serialized).toBeDefined()

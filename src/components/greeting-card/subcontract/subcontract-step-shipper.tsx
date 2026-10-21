@@ -19,6 +19,7 @@ import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
 
 import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface ExistingShipperInfo {
   shipperName: string
@@ -84,7 +85,7 @@ export function SubcontractStepShipper({
         `/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/submit-shipper`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: subcontractAccessHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({
             branchId,
             shipperName: shipperName.trim(),

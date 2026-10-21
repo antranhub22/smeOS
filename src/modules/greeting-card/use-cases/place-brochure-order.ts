@@ -18,7 +18,7 @@ import { promotionNote, resolveOrderPolicies } from "../domain/order-policies"
 import { snapshotOf } from "./brochure-product-mapper"
 import { deliveryNoteFields } from "../domain/delivery-note"
 import { slotGuardFor } from "./slot-availability"
-import { bindOrderBooking } from "@/modules/availability/use-cases/bind-order-booking"
+import { assertBookingDatesAvailable, bindOrderBooking } from "@/modules/availability/use-cases/bind-order-booking"
 
 export const DEFAULT_TIME_SLOT = "Trong ngày"
 
@@ -63,6 +63,10 @@ export async function placeBrochureOrder(
   const { organizationId, session, product, input } = params
   const customerPhone = normalizePhone(input.customerPhone)
   await assertPhoneQuota(organizationId, customerPhone, checkout)
+  // Homestay / lưu trú: khoảng ngày đã có người giữ thì không tạo đơn (rà soát 21/10/2026, H8)
+  if (input.checkOutDate && input.deliveryDate) {
+    await assertBookingDatesAvailable({ organizationId, productId: product.id, checkInDate: input.deliveryDate, checkOutDate: input.checkOutDate })
+  }
   const policies = resolveOrderPolicies(resolveAppliedPolicies(params.catalogFilters, params.shopSettings), input)
   if (!policies.ok) throw validationFailed({ [policies.field]: policies.message })
   const promotion = policies.snapshot.promotion

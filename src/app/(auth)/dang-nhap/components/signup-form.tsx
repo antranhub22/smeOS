@@ -175,7 +175,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
                 {organizationType === "CHAIN" && <Check size={14} className="text-primary font-bold" />}
               </div>
               <p className="text-caption text-text-muted leading-relaxed">
-                Hệ thống nhiều chi nhánh. Điều phối cần liên hệ xác nhận chi nhánh nhận đơn.
+                Hệ thống nhiều chi nhánh. Bắt đầu như 1 cửa hàng; mô hình Chuỗi được mở sau khi Admin SaaS duyệt yêu cầu.
               </p>
             </button>
           </div>

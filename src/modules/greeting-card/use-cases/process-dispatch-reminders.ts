@@ -1,6 +1,4 @@
 /**
- * process-dispatch-reminders.ts
- *
  * Use-case: Đánh giá và Gửi tin nhắn nhắc việc theo mốc tiến độ (M1 Chế tác, M2 QC, M3 Bàn giao Shipper, M4 Quá hạn).
  * Clean Architecture — Pure Logic kết hợp với IDispatchNotifier & ISubcontractStateStore.
  */
@@ -16,6 +14,7 @@ import type { BranchCandidate } from "../domain/chain-dispatch-engine"
 import type { IDispatchNotifier, ISubcontractStateStore } from "./dispatch-subcontract-order"
 import { evaluateShipperMilestones } from "./dispatch-shipper-reminders"
 import { evaluateDeliveryMilestones } from "./dispatch-delivery-reminders"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 export type ReminderStep =
   | "M1_PREP"
@@ -92,12 +91,13 @@ export async function processOrderDispatchReminders(
   const deliveryMs = input.deliveryTimestampMs
   const minutesUntilDelivery = Math.round((deliveryMs - nowMs) / (60 * 1000))
 
-  // Dùng baseUrl cấu hình (local dev: http://localhost:3200, prod: https://...)
-  const base = input.baseUrl || "http://localhost:3200"
-  const claimUrl = `${base}/subcontract/${input.orderCode}?branch=${encodeURIComponent(branch.branchId)}`
-  const uploadQcUrl = `${claimUrl}&action=upload_qc`
-  const submitShipperUrl = `${claimUrl}&action=submit_shipper`
-  const submitDeliveryUrl = `${claimUrl}&action=submit_delivery`
+  // Link đã ký theo chi nhánh; baseUrl cấu hình (local dev: http://localhost:3200, prod: https://...)
+  const link = { baseUrl: input.baseUrl || "http://localhost:3200", organizationId: ctx.organizationId, orderCode: input.orderCode, branchId: branch.branchId }
+  const linkFor = (action?: string) => subcontractBranchUrl({ ...link, action })
+  const claimUrl = linkFor()
+  const uploadQcUrl = linkFor("upload_qc")
+  const submitShipperUrl = linkFor("submit_shipper")
+  const submitDeliveryUrl = linkFor("submit_delivery")
 
   // Thẻ Tiến Độ (Live Dashboard Card): dùng để EDIT tin nhắn cũ thay vì gửi mới
   const existingCard =

@@ -17,6 +17,7 @@ import {
   type MatchBranchesResult,
 } from "../domain/chain-dispatch-engine"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 export interface DispatchOrderInput {
   orderId: string
@@ -134,7 +135,12 @@ export async function executeAutomatedChainDispatch(
   // 4. Bắn thẻ gia công qua các kênh liên lạc của từng chi nhánh
   for (const candidate of matchResult.topCandidates) {
     const branch = candidate.branch
-    const claimUrl = `${baseUrl}/subcontract/${order.orderCode}?branch=${encodeURIComponent(branch.branchId)}`
+    const claimUrl = subcontractBranchUrl({
+      baseUrl,
+      organizationId: ctx.organizationId,
+      orderCode: order.orderCode,
+      branchId: branch.branchId,
+    })
 
     const messageText = renderDispatchMessage(policy.messageTemplates.inviteSubcontract, {
       orderCode: order.orderCode,

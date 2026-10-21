@@ -8,13 +8,13 @@
  */
 
 import { z } from "zod"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
+import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import type { TenantContext } from "@/core/tenancy"
 
 const requestBypassSchema = z.object({
@@ -33,16 +33,13 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   const { branchId, step, reason } = parsed.data
   const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
 
   const branch = await repo.findBranchInOrganization(branchId, order.organization_id)
   if (!branch) throw unprocessable("Chi nhánh không hợp lệ hoặc không thuộc hệ thống.")
 
-  const coord = await prisma.order_coordinations.findUnique({
-    where: { order_id: order.id },
-  })
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const store = new SubcontractStepStore()
+  const existingMeta = await store.readMetadata(order.organization_id, order.id)
   const bypassRequests = (existingMeta.bypass_requests as Record<string, unknown> | undefined) ?? {}
 
   const nowIso = new Date().toISOString()
@@ -59,15 +56,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     },
   }
 
-  await prisma.order_coordinations.update({
-    where: { order_id: order.id },
-    data: {
-      metadata: {
-        ...existingMeta,
-        bypass_requests: updatedBypassRequests,
-      } as unknown as Prisma.InputJsonValue,
-    },
-  })
+  await store.writeMetadata(order.organization_id, order.id, { ...existingMeta, bypass_requests: updatedBypassRequests })
 
   // Bắn thông báo khẩn cấp cho Điều phối qua Telegram
   const org = await repo.findOrganizationSettings(order.organization_id)

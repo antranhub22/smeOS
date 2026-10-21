@@ -34,6 +34,7 @@ interface TelegramDispatchResponse {
   data: {
     configured: boolean
     bot: TelegramBotInfo | null
+    linkCode: string | null
     recentChats: RecentChat[]
     error?: string
   }
@@ -62,6 +63,7 @@ export function TelegramDispatchConnector() {
   const isConfigured = respData?.configured ?? false
   const bot = respData?.bot
   const recentChats = respData?.recentChats ?? []
+  const linkCode = respData?.linkCode ?? null
 
   const handleCopy = (id: string) => {
     navigator.clipboard.writeText(id)
@@ -196,7 +198,9 @@ export function TelegramDispatchConnector() {
             <strong className="text-primary font-mono">@{bot?.username || "smeos_dieuphoi_bot"}</strong> vào nhóm.
           </li>
           <li>
-            Gửi một tin nhắn bất kỳ trong nhóm (ví dụ: <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">Xin chào</code>).
+            Gửi mã liên kết của cửa hàng vào nhóm:{" "}
+            <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">{linkCode ?? "…"}</code>{" "}
+            — chỉ nhóm đã gửi đúng mã này mới hiện ra và nhận được tin của cửa hàng bạn.
           </li>
           <li>
             Bấm nút <strong>&quot;Quét Chat ID mới&quot;</strong> ở góc trên. ID của nhóm sẽ xuất hiện ngay bên dưới để bạn chọn và kiểm tra.
@@ -208,14 +212,14 @@ export function TelegramDispatchConnector() {
       <div>
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
-            <Users size={16} className="text-primary" /> Nhóm chat / Người dùng đã tương tác gần đây ({recentChats.length})
+            <Users size={16} className="text-primary" /> Nhóm chat đã liên kết với cửa hàng ({recentChats.length})
           </h4>
           <span className="text-caption text-text-muted">Nhấp vào ID để chọn thử nghiệm</span>
         </div>
 
         {recentChats.length === 0 ? (
           <div className="p-4 text-center text-caption text-text-muted bg-surface-muted/50 rounded-xl border border-border border-dashed">
-            Chưa có tin nhắn nào gửi tới Bot. Hãy thêm bot vào nhóm và gửi 1 tin nhắn để nhận diện ID nhóm tự động.
+            Chưa có nhóm nào gửi mã liên kết. Hãy thêm bot vào nhóm, gửi mã liên kết ở bước 2 rồi bấm quét lại.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">

@@ -105,11 +105,12 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
   }
 
   /**
-   * Tìm đơn hàng gia công theo orderCode công khai cho màn hình Thẻ Gia Công.
+   * Tìm đơn hàng gia công theo orderCode công khai cho màn hình Thẻ Gia Công. Mã đơn chỉ duy
+   * nhất trong một tổ chức — tổ chức lấy từ token link đã xác minh, không bao giờ từ client.
    */
-  async findSubcontractByCode(orderCode: string) {
+  async findSubcontractByCode(orderCode: string, organizationId: string) {
     return this.db.orders.findFirst({
-      where: { code: orderCode },
+      where: { organization_id: organizationId, code: orderCode },
       include: {
         coordination: true,
         items: true,
@@ -287,5 +288,31 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
     })
 
     return { newQualityScore, bypassCount }
+  }
+
+  /** Đơn kèm dữ liệu cần để sàng lọc và phát lệnh điều phối chuỗi (route chain-dispatch). */
+  async findOrderForChainDispatch(organizationId: string, orderId: string) {
+    return this.db.orders.findFirst({
+      where: { id: orderId, organization_id: organizationId },
+      select: {
+        id: true,
+        organization_id: true,
+        code: true,
+        delivery_address: true,
+        delivery_window: true,
+        total_vnd: true,
+        pricing_rule_ref: true,
+        items: { select: { product_id: true, description: true, metadata: true } },
+        greeting_sessions: { select: { product_snapshot: true }, take: 1 },
+      },
+    })
+  }
+
+  /** Ghi đè `orders.pricing_rule_ref` (người gọi tự trộn với bản cũ). */
+  async updatePricingRef(organizationId: string, orderId: string, pricingRef: Record<string, unknown>): Promise<void> {
+    await this.db.orders.updateMany({
+      where: { id: orderId, organization_id: organizationId },
+      data: { pricing_rule_ref: pricingRef as Prisma.InputJsonValue },
+    })
   }
 }

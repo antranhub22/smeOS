@@ -7,7 +7,7 @@
  *   BOOKING_CALENDAR  → query product_bookings
  *   SCHEDULE_SLOTS    → đếm đơn theo slot
  */
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { AvailabilityCheckRepository } from "@/modules/greeting-card/infra/availability-check-repository"
 import {
   parseAvailabilityConfig,
   hasCalendarConflict,
@@ -59,16 +59,11 @@ const LOOKUP_DAYS = 90 // số ngày tìm kiếm lịch tới
 
 export async function checkProductAvailability(
   req: AvailabilityCheckRequest,
-  db: typeof prisma = prisma,
+  db = new AvailabilityCheckRepository(),
   bookingRepo = new ProductBookingRepository(),
 ): Promise<AvailabilityCheckResult> {
   // 1. Đọc cấu hình sản phẩm
-  const product = await db.products.findFirst({
-    where: { id: req.productId, organization_id: req.organizationId },
-    select: { availability_config: true, branch_id: true, inventory: {
-      select: { branch_id: true, status: true, quantity_available: true },
-    }},
-  })
+  const product = await db.findProduct(req.organizationId, req.productId)
 
   if (!product) return { available: false, mode: "STOCK_QUANTITY", message: "Sản phẩm không tồn tại" }
 
@@ -192,14 +187,11 @@ async function checkBookingCalendar(
 
 async function checkDailyCapacity(
   req: AvailabilityCheckRequest,
-  db: typeof prisma,
+  db: AvailabilityCheckRepository,
 ): Promise<AvailabilityCheckResult> {
   // Dùng lại fullSlotsOn() đã có — wrap vào interface mới
-  const shopSettings = await db.organizations.findFirst({
-    where: { id: req.organizationId },
-    select: { settings: true },
-  })
-  const fullSlots = await fullSlotsOn(req.organizationId, req.deliveryDate, shopSettings?.settings)
+  const shopSettings = await db.findOrganizationSettings(req.organizationId)
+  const fullSlots = await fullSlotsOn(req.organizationId, req.deliveryDate, shopSettings)
   const isFull = req.deliveryTimeSlot ? fullSlots.includes(req.deliveryTimeSlot) : false
   return {
     available: !isFull,
@@ -214,7 +206,7 @@ async function checkDailyCapacity(
 async function checkScheduleSlots(
   req: AvailabilityCheckRequest,
   config: ScheduleSlotsConfig,
-  db: typeof prisma,
+  db: AvailabilityCheckRepository,
 ): Promise<AvailabilityCheckResult> {
   if (!req.deliveryDate || !req.deliveryTimeSlot) {
     return { available: true, mode: "SCHEDULE_SLOTS" }
@@ -223,16 +215,7 @@ async function checkScheduleSlots(
   if (!slot) return { available: true, mode: "SCHEDULE_SLOTS" }
 
   // Đếm số đơn đã có trong ngày này
-  const count = await db.orders.count({
-    where: {
-      organization_id: req.organizationId,
-      status: { not: "CANCELLED" },
-      delivery_window: {
-        path: ["date"],
-        equals: req.deliveryDate,
-      },
-    },
-  })
+  const count = await db.countActiveOrdersOnDate(req.organizationId, req.deliveryDate)
 
   const available = count < slot.maxPerSlot
   return {

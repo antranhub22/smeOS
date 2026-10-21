@@ -74,14 +74,16 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
     const memberships = new MembershipRepository(tx)
     const sessions = new SessionRepository(tx)
 
-    let user = await users.findByEmail(email)
-    if (!user) {
-      user = await users.create({
-        email,
-        password_hash: passwordHash,
-        name,
-      })
+    // Dùng thử không có mật khẩu — nên KHÔNG BAO GIỜ được gắn phiên vào một tài khoản có sẵn:
+    // làm vậy là ai biết email cũng vào được tiệm thật của người đó.
+    if (await users.findByEmail(email)) {
+      throw conflict("Địa chỉ thư này đã có tài khoản. Vui lòng đăng nhập để tiếp tục.")
     }
+    const user = await users.create({
+      email,
+      password_hash: passwordHash,
+      name,
+    })
 
     const orgBaseName = `${name} - Demo ${industryPlugin.identity.name}`
     let slug: string | null = null

@@ -1,127 +1,70 @@
 import { z } from "zod"
-import { validationFailed } from "@/core/http/errors"
+import { unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
+import { getTelegramBotInfo, sendTelegramText } from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
+import { resolveTelegramDispatchAccess } from "@/modules/greeting-card/use-cases/telegram-dispatch-link"
 
 const testSchema = z.object({
   chatId: z.string().min(1),
-  message: z.string().optional(),
+  message: z.string().max(1000).optional(),
 })
+
+function dispatchBotToken(): string | undefined {
+  return process.env.TELEGRAM_DISPATCH_BOT_TOKEN || process.env.TELEGRAM_STAFF_BOT_TOKEN
+}
 
 /**
  * GET /api/v1/greeting-card/integrations/telegram-dispatch
- * Kiểm tra trạng thái Bot và tự động quét các chat/nhóm đã nhắn tin cho Bot gần đây.
+ * Trạng thái bot + mã liên kết của tổ chức + các nhóm ĐÃ nhắn mã đó. Bot là bot chung của nền
+ * tảng nên không bao giờ trả danh sách mọi nhóm mà bot thấy (rà soát 21/10/2026, H1).
  */
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.integrationManage)
 
-  const botToken = process.env.TELEGRAM_DISPATCH_BOT_TOKEN || process.env.TELEGRAM_STAFF_BOT_TOKEN
+  const botToken = dispatchBotToken()
   if (!botToken) {
-    return jsonResponse({
-      data: {
-        configured: false,
-        bot: null,
-        recentChats: [],
-      },
-    })
+    return jsonResponse({ data: { configured: false, bot: null, linkCode: null, recentChats: [] } })
   }
 
   try {
-    // 1. Kiểm tra thông tin Bot (getMe)
-    const meRes = await fetch(`https://api.telegram.org/bot${botToken}/getMe`)
-    const meData = (await meRes.json()) as { ok: boolean; result?: Record<string, unknown> }
-
-    // 2. Lấy danh sách tin nhắn/nhóm gần đây (getUpdates)
-    const updatesRes = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?limit=20`)
-    const updatesData = (await updatesRes.json()) as { ok: boolean; result?: Array<Record<string, unknown>> }
-
-    const recentChatsMap = new Map<string, { id: string; title: string; type: string }>()
-    if (updatesData.ok && Array.isArray(updatesData.result)) {
-      for (const update of updatesData.result) {
-        const message = (update.message || update.channel_post || update.my_chat_member) as Record<string, unknown> | undefined
-        const chat = (message?.chat as Record<string, unknown> | undefined)
-        if (chat && chat.id) {
-          const idStr = String(chat.id)
-          const title = (chat.title as string) ||
-            [(chat.first_name as string), (chat.last_name as string)].filter(Boolean).join(" ") ||
-            (chat.username ? `@${chat.username as string}` : idStr)
-          recentChatsMap.set(idStr, {
-            id: idStr,
-            title,
-            type: (chat.type as string) || "unknown",
-          })
-        }
-      }
-    }
-
+    const [bot, access] = await Promise.all([getTelegramBotInfo(botToken), resolveTelegramDispatchAccess(ctx, botToken)])
+    return jsonResponse({ data: { configured: true, bot, linkCode: access.linkCode, recentChats: access.linkedChats } })
+  } catch {
     return jsonResponse({
-      data: {
-        configured: true,
-        bot: meData.ok ? meData.result : null,
-        recentChats: Array.from(recentChatsMap.values()),
-      },
-    })
-  } catch (err) {
-    return jsonResponse({
-      data: {
-        configured: true,
-        bot: null,
-        recentChats: [],
-        error: err instanceof Error ? err.message : String(err),
-      },
+      data: { configured: true, bot: null, linkCode: null, recentChats: [], error: "Không kết nối được Telegram lúc này" },
     })
   }
 })
 
 /**
  * POST /api/v1/greeting-card/integrations/telegram-dispatch
- * Gửi một tin nhắn thử nghiệm đến Chat ID chi nhánh.
+ * Gửi tin thử — chỉ tới nhóm đã liên kết hoặc đã cấu hình cho chi nhánh của chính tổ chức.
  */
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.integrationManage)
 
-  const body = await request.json().catch(() => ({}))
-  const parsed = testSchema.safeParse(body)
-  if (!parsed.success) {
-    throw validationFailed({ issues: parsed.error.issues })
-  }
+  const parsed = testSchema.safeParse(await request.json().catch(() => ({})))
+  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const botToken = process.env.TELEGRAM_DISPATCH_BOT_TOKEN || process.env.TELEGRAM_STAFF_BOT_TOKEN
-  if (!botToken) {
-    throw validationFailed({ token: "Chưa cấu hình TELEGRAM_DISPATCH_BOT_TOKEN trên máy chủ" })
+  const botToken = dispatchBotToken()
+  if (!botToken) throw validationFailed({ token: "Chưa cấu hình TELEGRAM_DISPATCH_BOT_TOKEN trên máy chủ" })
+
+  const { allowedChatIds } = await resolveTelegramDispatchAccess(ctx, botToken)
+  if (!allowedChatIds.has(parsed.data.chatId)) {
+    throw unprocessable("Nhóm này chưa liên kết với cửa hàng của bạn. Hãy gửi mã liên kết vào nhóm rồi quét lại.")
   }
 
   const text = parsed.data.message ||
     "🌸 <b>[TEST ĐIỀU PHỐI CHUỖI smeOS]</b>\n\nKết nối thành công giữa hệ thống smeOS và Nhóm chat Chi nhánh!\n\n<i>Mọi đơn hàng gia công mới sẽ tự động được gửi tới nhóm này.</i>"
 
-  const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: parsed.data.chatId,
-      text,
-      parse_mode: "HTML",
-    }),
-  })
-
-  const data = (await res.json()) as { ok: boolean; description?: string; result?: { message_id: number } }
-  if (!data.ok) {
-    return jsonResponse({
-      data: {
-        success: false,
-        error: data.description || "Lỗi khi gửi tin nhắn Telegram",
-      },
-    }, { status: 400 })
+  const sent = await sendTelegramText(botToken, parsed.data.chatId, text)
+  if (!sent.ok) {
+    return jsonResponse({ data: { success: false, error: sent.error } }, { status: 400 })
   }
-
-  return jsonResponse({
-    data: {
-      success: true,
-      messageId: data.result?.message_id,
-    },
-  })
+  return jsonResponse({ data: { success: true, messageId: sent.messageId } })
 })

@@ -23,6 +23,7 @@ import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
 
 import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface SubcontractStepProofProps {
   orderCode: string
@@ -124,6 +125,7 @@ export function SubcontractStepProof({
 
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/submit-delivery`, {
         method: "POST",
+        headers: subcontractAccessHeaders(),
         body: formData,
       })
 

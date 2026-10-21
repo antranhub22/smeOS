@@ -4,8 +4,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 
 const branchSchema = z.object({
@@ -48,10 +47,8 @@ export const POST = handle(async (request) => {
 
   const { branches } = parsed.data
 
-  const org = await prisma.organizations.findFirst({
-    where: { id: ctx.organizationId },
-    select: { settings: true },
-  })
+  const organizations = new OrganizationRepository()
+  const org = await organizations.current(ctx)
 
   const currentSettings = (org?.settings as Record<string, unknown> | null) ?? {}
   const existingBranches: BranchCandidate[] = Array.isArray(currentSettings.chain_branches)
@@ -97,15 +94,7 @@ export const POST = handle(async (request) => {
 
   const newBranchesList = Array.from(branchMap.values())
 
-  await prisma.organizations.update({
-    where: { id: ctx.organizationId },
-    data: {
-      settings: {
-        ...currentSettings,
-        chain_branches: newBranchesList,
-      } as unknown as Prisma.InputJsonValue,
-    },
-  })
+  await organizations.updateSettings(ctx, { ...currentSettings, chain_branches: newBranchesList })
 
   return jsonResponse({
     data: {

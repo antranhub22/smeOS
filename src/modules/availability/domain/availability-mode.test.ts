@@ -105,6 +105,7 @@ describe("Availability Module Use-Cases", () => {
 
   it("createManualBlock and removeManualBlock invoke repository correctly", async () => {
     const mockRepo = {
+      productBelongsToOrganization: vi.fn().mockResolvedValue(true),
       createBooking: vi.fn().mockResolvedValue("manual-1"),
       deleteManualBlock: vi.fn().mockResolvedValue(true),
     } as unknown as AvailabilityRepository

@@ -22,6 +22,10 @@ jobs:
           --health-timeout 5s --health-retries 10
     env:
       DATABASE_URL: postgresql://floraos:floraos@localhost:5432/floraos
+      # `test:tenant`/`test:platform` mặc định trỏ `smeos@5433/smeos_test` (máy dev, e8a75d2) —
+      # CI dựng Postgres `floraos@5432`, nên phải chỉ rõ DB test ở đây, không thì cổng bắt buộc
+      # không kết nối được (rà soát 21/10/2026, C4).
+      DATABASE_URL_TEST: postgresql://floraos:floraos@localhost:5432/floraos_test
       SESSION_SECRET: ci-only-not-a-real-secret
       # P7 (YC-T8) — `src/lib/env.ts` BẮT BUỘC biến này. Thiếu nó thì bước
       # `npm run db:seed` ném ngay ở dòng import, trước cả `typecheck`, và

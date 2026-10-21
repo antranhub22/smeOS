@@ -4,7 +4,7 @@
  * Coordinator-Stream M2: Điều phối viên tự upload ảnh thành phẩm thay cho cửa hàng.
  * Hành động này triệt tiêu (First-Wins Mutex) toàn bộ reminder M2 đang pending.
  *
- * Yêu cầu: Session đăng nhập với capability "coordinator_subcontract_act"
+ * Yêu cầu: Session đăng nhập có mã năng lực R3
  * hoặc "can_upload_qc_photo" (fallback: bất kỳ member có vai coordinator).
  */
 
@@ -13,9 +13,10 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
@@ -23,7 +24,6 @@ import {
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { verifyQcPhotoWithAi } from "@/modules/greeting-card/use-cases/verify-qc-photo-ai"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
-import type { Prisma } from "@/generated/prisma/client"
 
 const MAX_QC_PHOTO_BYTES = 10 * 1024 * 1024
 
@@ -41,6 +41,7 @@ function sniffImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; mimeType:
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R3")
   const { id: orderId } = await context.params
 
   const repo = new SubcontractOrderRepository()
@@ -98,41 +99,30 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const publicPhotoUrl = await storage.signedUrl(storageKey, 604800, "GET")
 
   // Cập nhật DB — giống store upload nhưng actor là coordinator
-  const coord = await prisma.order_coordinations.findUnique({ where: { order_id: order.id } })
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const store = new SubcontractStepStore()
+  const existingMeta = await store.readMetadata(order.organization_id, order.id)
   const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
 
-  await prisma.$transaction([
-    prisma.orders.update({
-      where: { id: order.id },
-      data: { production_status: "READY" },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          qc_photos: [...existingQcPhotos, storageKey],
-          last_qc_uploaded_at: new Date().toISOString(),
-          last_qc_uploaded_by: `coordinator:${ctx.userId}`,
-          last_qc_note: note || null,
-          auto_bypassed_coordinator: false, // coordinator thực hiện trực tiếp
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "production",
-        from_value: order.production_status,
-        to_value: "READY",
-        actor_id: `coordinator:${ctx.userId}`,
-        reason: `[Coordinator Upload QC] ${aiVerify.reason} (${aiVerify.confidenceScore}%). Ghi chú: ${note || "Không có"}`,
-      },
-    }),
-  ])
+  await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { production_status: "READY" },
+    metadata: {
+      ...existingMeta,
+      qc_photos: [...existingQcPhotos, storageKey],
+      last_qc_uploaded_at: new Date().toISOString(),
+      last_qc_uploaded_by: `coordinator:${ctx.userId}`,
+      last_qc_note: note || null,
+      auto_bypassed_coordinator: false, // coordinator thực hiện trực tiếp
+    },
+    events: [{
+      axis: "production",
+      fromValue: order.production_status,
+      toValue: "READY",
+      actorId: `coordinator:${ctx.userId}`,
+      reason: `[Coordinator Upload QC] ${aiVerify.reason} (${aiVerify.confidenceScore}%). Ghi chú: ${note || "Không có"}`,
+    }],
+  })
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M2 reminders đang pending
   await cancelSubcontractReminderSteps({
