@@ -80,13 +80,16 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   }
 
   const aiVerify = await verifyQcPhotoWithAi({
+    organizationId: order.organization_id,
+    orderId: order.id,
     productName,
     sampleImageUrl,
     qcPhotoBytes: bytes,
     qcPhotoMimeType: sniffed.mimeType,
   })
 
-  if (!aiVerify.isMatch) {
+  // Điều phối là người duyệt: chỉ chặn khi AI kết luận SAI ảnh; AI không chạy được thì người tự quyết
+  if (aiVerify.verdict === "MISMATCH") {
     throw unprocessable(
       `❌ AI xác nhận ảnh không khớp sản phẩm: ${aiVerify.reason} (${aiVerify.confidenceScore}%). Vui lòng kiểm tra lại.`
     )

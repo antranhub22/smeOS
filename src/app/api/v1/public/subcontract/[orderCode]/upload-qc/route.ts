@@ -137,6 +137,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   // AI Vision đối chiếu ảnh thành phẩm với ảnh mẫu ban đầu trước khi lưu trữ
   const aiVerify = await verifyQcPhotoWithAi({
+    organizationId: order.organization_id,
+    orderId: order.id,
     productName,
     sampleImageUrl,
     qcPhotoBytes: bytes,
@@ -151,6 +153,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       branchId,
       aiVerify,
     })
+    if (aiVerify.verdict === "UNCERTAIN") throw unprocessable(aiVerify.reason)
     throw unprocessable(
       `❌ Ảnh thành phẩm không khớp với đơn hàng: ${aiVerify.reason} (Độ tin cậy: ${aiVerify.confidenceScore}%). Vui lòng kiểm tra và chụp đúng sản phẩm!`
     )

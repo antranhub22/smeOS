@@ -141,6 +141,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   // 3. AI Vision kiểm định ảnh bàn giao hàng POD
   const { verifyPodPhotoWithAi } = await import("@/modules/greeting-card/use-cases/verify-pod-photo-ai")
   const aiVerify = await verifyPodPhotoWithAi({
+    organizationId: order.organization_id,
+    orderId: order.id,
     productName,
     sampleImageUrl,
     qcImageUrl,
@@ -155,6 +157,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       branchId,
       aiVerify,
     })
+    if (aiVerify.verdict === "UNCERTAIN") throw unprocessable(aiVerify.reason)
     throw unprocessable(
       `❌ Ảnh giao hàng không hợp lệ: ${aiVerify.reason} (Độ tin cậy: ${aiVerify.confidenceScore}%). Vui lòng chụp rõ người nhận hoặc kiện hàng tại điểm giao!`
     )

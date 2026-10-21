@@ -1,163 +1,44 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+
+const callCapability = vi.fn()
+vi.mock("@/core/ai/gateway", () => ({ callCapability: (...args: unknown[]) => callCapability(...args) }))
+vi.mock("@/core/ai/wiring", () => ({ aiGatewayDeps: () => ({}) }))
+vi.mock("@/core/ai/adapters/multi-llm-provider", () => ({ createContentLLM: () => ({}) }))
+
 import { verifyQcPhotoWithAi } from "./verify-qc-photo-ai"
 
-describe("verifyQcPhotoWithAi", () => {
-  const originalEnv = process.env.OPENAI_API_KEY
-  const originalFetch = global.fetch
+const input = {
+  organizationId: "org-1",
+  orderId: "order-1",
+  productName: "Bó hoa hồng đỏ 50 bông",
+  sampleImageUrl: "data:image/jpeg;base64,AAAA",
+  qcPhotoBytes: new Uint8Array([1, 2, 3, 4]),
+  qcPhotoMimeType: "image/jpeg",
+}
 
+describe("verifyQcPhotoWithAi (qua gateway)", () => {
   beforeEach(() => {
-    vi.restoreAllMocks()
+    callCapability.mockReset()
   })
 
-  afterEach(() => {
-    process.env.OPENAI_API_KEY = originalEnv
-    global.fetch = originalFetch
+  it("gọi năng lực qua gateway, mức SHOP, gửi ảnh mẫu rồi ảnh thành phẩm", async () => {
+    callCapability.mockResolvedValue({ kind: "xong", output: { isMatch: true, confidenceScore: 95, verdict: "MATCH", reason: "Đúng mẫu." } })
+    const result = await verifyQcPhotoWithAi(input)
+    expect(result).toEqual({ isMatch: true, confidenceScore: 95, verdict: "MATCH", reason: "Đúng mẫu." })
+    const [request] = callCapability.mock.calls[0]!
+    expect(request).toMatchObject({ capability: "content_generation", privacy: "SHOP", entity: { type: "order_qc_photo", id: "order-1" } })
   })
 
-  it("trả về UNCERTAIN (isMatch=false) để Điều phối viên duyệt thủ công khi không có OPENAI_API_KEY", async () => {
-    delete process.env.OPENAI_API_KEY
-
-    const dummyBytes = new Uint8Array([1, 2, 3, 4])
-    const result = await verifyQcPhotoWithAi({
-      productName: "Bó hoa hồng đỏ 50 bông",
-      sampleImageUrl: "https://example.com/sample.jpg",
-      qcPhotoBytes: dummyBytes,
-      qcPhotoMimeType: "image/jpeg",
-    })
-
+  it("gateway hết đường chạy: UNCERTAIN, không tự cho qua", async () => {
+    callCapability.mockResolvedValue({ kind: "khong_chay_duoc", reason: "no_model", attempts: [] })
+    const result = await verifyQcPhotoWithAi(input)
     expect(result.isMatch).toBe(false)
     expect(result.verdict).toBe("UNCERTAIN")
-    expect(result.reason).toContain("Chưa cấu hình API Key kiểm định AI")
   })
 
-  it("trả về MATCH khi OpenAI xác nhận ảnh khớp với sản phẩm", async () => {
-    process.env.OPENAI_API_KEY = "sk-test-mock-key"
-
-    const mockAiResponse = {
-      choices: [
-        {
-          message: {
-            content: JSON.stringify({
-              isMatch: true,
-              confidenceScore: 95,
-              verdict: "MATCH",
-              reason: "Ảnh thành phẩm đúng mẫu bó hoa hồng đỏ, tông màu và kiểu dáng tương đồng 95%.",
-            }),
-          },
-        },
-      ],
-    }
-
-    global.fetch = vi.fn().mockImplementation(async (url: string) => {
-      if (typeof url === "string" && url.includes("api.openai.com")) {
-        return new Response(JSON.stringify(mockAiResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        })
-      }
-      return new Response(new Uint8Array([10, 20]), {
-        status: 200,
-        headers: { "Content-Type": "image/jpeg" },
-      })
-    })
-
-    const dummyBytes = new Uint8Array([1, 2, 3, 4])
-    const result = await verifyQcPhotoWithAi({
-      productName: "Bó hoa hồng đỏ",
-      sampleImageUrl: "https://example.com/sample.jpg",
-      qcPhotoBytes: dummyBytes,
-      qcPhotoMimeType: "image/jpeg",
-    })
-
-    expect(result.isMatch).toBe(true)
-    expect(result.verdict).toBe("MATCH")
-    expect(result.confidenceScore).toBe(95)
-    expect(result.reason).toContain("Ảnh thành phẩm đúng mẫu")
-  })
-
-  it("trả về MISMATCH khi OpenAI phát hiện ảnh thành phẩm không khớp hoặc ảnh rác", async () => {
-    process.env.OPENAI_API_KEY = "sk-test-mock-key"
-
-    const mockAiResponse = {
-      choices: [
-        {
-          message: {
-            content: JSON.stringify({
-              isMatch: false,
-              confidenceScore: 98,
-              verdict: "MISMATCH",
-              reason: "Ảnh thành phẩm là đồ gia dụng, hoàn toàn không phải bó hoa theo đơn hàng.",
-            }),
-          },
-        },
-      ],
-    }
-
-    global.fetch = vi.fn().mockImplementation(async (url: string) => {
-      if (typeof url === "string" && url.includes("api.openai.com")) {
-        return new Response(JSON.stringify(mockAiResponse), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        })
-      }
-      return new Response(new Uint8Array([10, 20]), {
-        status: 200,
-        headers: { "Content-Type": "image/jpeg" },
-      })
-    })
-
-    const dummyBytes = new Uint8Array([1, 2, 3, 4])
-    const result = await verifyQcPhotoWithAi({
-      productName: "Bó hoa hồng đỏ",
-      sampleImageUrl: "https://example.com/sample.jpg",
-      qcPhotoBytes: dummyBytes,
-      qcPhotoMimeType: "image/jpeg",
-    })
-
-    expect(result.isMatch).toBe(false)
-    expect(result.verdict).toBe("MISMATCH")
-    expect(result.confidenceScore).toBe(98)
-    expect(result.reason).toContain("không phải bó hoa")
-  })
-
-  it("xử lý an toàn khi OpenAI API lỗi (HTTP 500) mà không crash ứng dụng", async () => {
-    process.env.OPENAI_API_KEY = "sk-test-mock-key"
-
-    global.fetch = vi.fn().mockImplementation(async (url: string) => {
-      if (typeof url === "string" && url.includes("api.openai.com")) {
-        return new Response("Internal Server Error", { status: 500 })
-      }
-      return new Response(new Uint8Array([10, 20]), { status: 200 })
-    })
-
-    const dummyBytes = new Uint8Array([1, 2, 3, 4])
-    const result = await verifyQcPhotoWithAi({
-      productName: "Bó hoa hồng đỏ",
-      sampleImageUrl: "https://example.com/sample.jpg",
-      qcPhotoBytes: dummyBytes,
-      qcPhotoMimeType: "image/jpeg",
-    })
-
-    expect(result.isMatch).toBe(false)
-    expect(result.verdict).toBe("UNCERTAIN")
-    expect(result.reason).toContain("Dịch vụ kiểm định AI tạm thời gián đoạn")
-  })
-
-  it("xử lý an toàn khi fetch ném ngoại lệ (Network Error)", async () => {
-    process.env.OPENAI_API_KEY = "sk-test-mock-key"
-
-    global.fetch = vi.fn().mockRejectedValue(new Error("Network connection dropped"))
-
-    const dummyBytes = new Uint8Array([1, 2, 3, 4])
-    const result = await verifyQcPhotoWithAi({
-      productName: "Bó hoa hồng đỏ",
-      sampleImageUrl: "https://example.com/sample.jpg",
-      qcPhotoBytes: dummyBytes,
-      qcPhotoMimeType: "image/jpeg",
-    })
-
-    expect(result.isMatch).toBe(false)
-    expect(result.verdict).toBe("UNCERTAIN")
-    expect(result.reason).toContain("Hệ thống kiểm định AI gặp sự cố kết nối")
+  it("gateway ném lỗi: UNCERTAIN", async () => {
+    callCapability.mockImplementation(async () => { throw new Error("network down") })
+    const result = await verifyQcPhotoWithAi(input)
+    expect(result).toMatchObject({ isMatch: false, verdict: "UNCERTAIN" })
   })
 })

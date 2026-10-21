@@ -7,7 +7,9 @@ import { GET } from "@/app/api/health/route"
 
 /** `/api/health` công khai — chỉ được nói "sống hay không" (rà soát 21/10/2026, H2). */
 describe("GET /api/health", () => {
-  beforeEach(() => ping.mockReset())
+  beforeEach(() => {
+    ping.mockReset()
+  })
 
   it("CSDL trả lời: 200, chỉ có status và timestamp", async () => {
     ping.mockResolvedValue(true)
