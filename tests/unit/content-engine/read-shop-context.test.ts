@@ -25,7 +25,8 @@ describe("readShopContext", () => {
     brandCurrent.mockResolvedValue(null)
     businessCurrent.mockResolvedValue(null)
     const shop = await readShopContext(ctx)
-    expect(shop.displayName).toBe("Tiệm hoa")
+    // Đa ngành: tên mặc định trung tính, không còn giả định là tiệm hoa
+    expect(shop.displayName).toBe("Cửa hàng")
     expect(shop.hashtags).toEqual([])
     expect(shop.defaultOffers).toEqual({ freeGifts: [], guarantees: [] })
     expect(shop.forbiddenStyles).toEqual([])

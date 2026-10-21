@@ -2,10 +2,11 @@ import fs from "fs/promises"
 import path from "path"
 import { listAllIndustryPlugins } from "@/modules/organization/domain/industry-profile"
 
-const OVERRIDES_FILE_PATH = path.join(
-  process.cwd(),
-  "src/lib/data/industry-nav-matrix-overrides.json"
-)
+/** Tệp ghi đè; `NAV_MATRIX_OVERRIDES_PATH` cho test trỏ sang tệp tạm, không ghi đè tệp đã commit. */
+function overridesFilePath(): string {
+  return process.env.NAV_MATRIX_OVERRIDES_PATH ||
+    path.join(process.cwd(), "src/lib/data/industry-nav-matrix-overrides.json")
+}
 
 export type PlatformNavMatrixOverrides = Record<string, string[]>
 
@@ -32,7 +33,7 @@ export async function getPlatformNavMatrixOverrides(): Promise<PlatformNavMatrix
   }
 
   try {
-    const raw = await fs.readFile(OVERRIDES_FILE_PATH, "utf-8")
+    const raw = await fs.readFile(overridesFilePath(), "utf-8")
     const parsed = JSON.parse(raw) as PlatformNavMatrixOverrides
     const defaults = getDefaultOverrides()
     memoryCache = { ...defaults, ...parsed }
@@ -59,8 +60,8 @@ export async function savePlatformNavMatrixOverrides(
   const merged = { ...getDefaultOverrides(), ...overrides }
   const jsonContent = JSON.stringify(merged, null, 2) + "\n"
 
-  await fs.mkdir(path.dirname(OVERRIDES_FILE_PATH), { recursive: true })
-  await fs.writeFile(OVERRIDES_FILE_PATH, jsonContent, "utf-8")
+  await fs.mkdir(path.dirname(overridesFilePath()), { recursive: true })
+  await fs.writeFile(overridesFilePath(), jsonContent, "utf-8")
 
   memoryCache = merged
   return memoryCache
