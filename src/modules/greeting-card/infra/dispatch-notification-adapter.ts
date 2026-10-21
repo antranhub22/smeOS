@@ -135,13 +135,15 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
       }
     }
 
-    log.info("dispatch_notify.simulated_or_dispatched", {
+    // Không kênh nào gửi được (chưa cấu hình hoặc đều lỗi) — báo đúng là CHƯA gửi, để mốc nhắc
+    // không bị đánh dấu đã gửi và được thử lại ở lượt quét sau (rà soát M4)
+    log.warn("dispatch_notify.not_delivered", {
       branchId: branch.branchId,
-      branchName: branch.branchName,
       orderCode: target.orderCode,
-      channels: branch.channels,
+      hasTelegram: Boolean(channels?.telegramChatId),
+      hasZalo: Boolean(channels?.zaloPhone),
     })
 
-    return { sent: true }
+    return { sent: false, error: "Không gửi được qua kênh nào của chi nhánh" }
   }
 }
