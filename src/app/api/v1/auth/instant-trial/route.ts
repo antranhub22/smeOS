@@ -3,6 +3,7 @@ import { z } from "zod"
 import { serializeSessionCookie } from "@/core/http/cookies"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { enforceRateLimit } from "@/core/http/rate-limit"
 import { SESSION_TTL_SECONDS } from "@/modules/organization/domain/session-policy"
 import { startInstantTrial } from "@/modules/organization/use-cases/instant-trial"
 
@@ -14,6 +15,8 @@ const schema = z.object({
 })
 
 export const POST = handle(async (request) => {
+  // Mỗi lần gọi tạo một tổ chức + nạp dữ liệu mẫu — chặn tạo hàng loạt từ một IP.
+  await enforceRateLimit(request, { scope: "instant-trial-ip", limit: 5, windowMs: 60 * 60_000 })
   const parsed = schema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
