@@ -107,7 +107,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                 <ShieldCheck size={16} strokeWidth={2} className="text-primary shrink-0" aria-hidden="true" />
                 <span className="min-w-0">
                   <span className="block font-bold">Console Vận hành</span>
-                  <span className="block truncate text-[11px] font-medium text-text-muted">
+                  <span className="block truncate text-caption font-medium text-text-muted">
                     Quản trị SaaS nền tảng
                   </span>
                 </span>

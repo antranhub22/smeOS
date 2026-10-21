@@ -324,20 +324,20 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
                   </div>
 
                   {isUnlocked && (
-                    <div
-                      className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between w-full gap-1.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <span className="text-[11px] text-text-muted font-medium">Mock Data</span>
+                    <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between w-full gap-1.5">
+                      <span className="text-caption text-text-muted font-medium">Dữ liệu mẫu</span>
                       <button
                         type="button"
                         disabled={loadingMockKey !== null}
-                        onClick={() => handleApplyMockData(ind.key)}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 transition-all cursor-pointer disabled:opacity-60"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleApplyMockData(ind.key)
+                        }}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-bold bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 transition-all cursor-pointer disabled:opacity-60"
                         title={`Nạp dữ liệu mẫu cho ngành ${ind.name}`}
                       >
                         <Sparkles size={11} className={isLoadingThis ? "animate-spin" : "text-primary"} />
-                        <span>{isLoadingThis ? "Đang nạp..." : "Dùng Mock Data"}</span>
+                        <span>{isLoadingThis ? "Đang nạp..." : "Nạp dữ liệu mẫu"}</span>
                       </button>
                     </div>
                   )}

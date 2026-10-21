@@ -50,7 +50,7 @@ type ActionState = "idle" | "loading" | "success" | "error"
 function NodeBadge({ done, label }: { done: boolean; label: string }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
+      className={`inline-flex items-center gap-1 text-caption font-bold px-2 py-0.5 rounded-full ${
         done
           ? "bg-success/15 text-success border border-success/30"
           : "bg-warning/15 text-warning border border-warning/30"
@@ -133,7 +133,7 @@ function M2UploadQcAction({
         )}
       </Button>
       {msg && (
-        <p className={`text-[11px] ${state === "error" ? "text-danger" : "text-success"}`}>
+        <p className={`text-caption ${state === "error" ? "text-danger" : "text-success"}`}>
           {msg}
         </p>
       )}
@@ -182,13 +182,13 @@ function M2bApproveAction({
         size="sm"
         disabled={state === "loading" || state === "success"}
         onClick={approve}
-        className="h-8 text-caption gap-1.5 border-blue-400/40 text-blue-600 hover:bg-blue-50"
+        className="h-8 text-caption gap-1.5 border-info-border text-info hover:bg-info-bg"
       >
         <UserCheck size={13} />
         {state === "loading" ? "Đang duyệt…" : "Duyệt ảnh thay khách"}
       </Button>
       {msg && (
-        <p className={`text-[11px] ${state === "error" ? "text-danger" : "text-success"}`}>
+        <p className={`text-caption ${state === "error" ? "text-danger" : "text-success"}`}>
           {msg}
         </p>
       )}
@@ -249,7 +249,7 @@ function M3SetShipperAction({
         variant="outline"
         size="sm"
         onClick={() => setOpen(!open)}
-        className="h-8 text-caption gap-1.5 border-orange-400/40 text-orange-600 hover:bg-orange-50"
+        className="h-8 text-caption gap-1.5 border-warning-border text-warning hover:bg-warning-bg"
       >
         <Truck size={13} />
         Nhập thông tin Shipper (Điều phối)
@@ -285,7 +285,7 @@ function M3SetShipperAction({
       )}
 
       {msg && (
-        <p className={`text-[11px] ${state === "error" ? "text-danger" : "text-success"}`}>
+        <p className={`text-caption ${state === "error" ? "text-danger" : "text-success"}`}>
           {msg}
         </p>
       )}
@@ -400,7 +400,7 @@ function M4ConfirmDeliveryAction({
 
       {mode === "no_photo" && (
         <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-warning/30 bg-warning/5">
-          <p className="text-[11px] text-warning font-bold">
+          <p className="text-caption text-warning font-bold">
             ⚠️ Xác nhận giao hàng không có ảnh POD. Vui lòng ghi rõ lý do:
           </p>
           <textarea
@@ -424,7 +424,7 @@ function M4ConfirmDeliveryAction({
       )}
 
       {msg && (
-        <p className={`text-[11px] ${state === "error" ? "text-danger" : "text-success"}`}>
+        <p className={`text-caption ${state === "error" ? "text-danger" : "text-success"}`}>
           {msg}
         </p>
       )}
@@ -455,7 +455,7 @@ export function CoordinatorSubcontractActionsPanel({
     <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/15 text-primary text-[11px] font-bold tracking-wider uppercase">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/15 text-primary text-caption font-bold tracking-wider uppercase">
           <Camera size={11} />
           Điều phối can thiệp Gate 2
         </span>
@@ -483,13 +483,13 @@ export function CoordinatorSubcontractActionsPanel({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
-            <Truck size={13} className="text-orange-500" />
+            <Truck size={13} className="text-warning" />
             M3 — Thông tin Shipper
           </span>
           <NodeBadge done={m3Done} label="Chờ shipper" />
         </div>
         {m3Done && shipperInfo && (
-          <p className="text-[11px] text-text-muted">
+          <p className="text-caption text-text-muted">
             🛵 {shipperInfo.shipperName} — {shipperInfo.shipperPhone}
           </p>
         )}

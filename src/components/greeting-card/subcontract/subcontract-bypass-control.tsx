@@ -65,7 +65,7 @@ export function SubcontractBypassControl({
             <span className="text-text-muted">
               Lý do gửi: &ldquo;{existingRequest?.reason}&rdquo;
             </span>
-            <span className="text-[11px] text-danger font-medium mt-1">
+            <span className="text-caption text-danger font-medium mt-1">
               * Lưu ý: Khi được duyệt, chi nhánh sẽ bị trừ 2 điểm chất lượng KPI theo quy chế chuỗi.
             </span>
           </div>
