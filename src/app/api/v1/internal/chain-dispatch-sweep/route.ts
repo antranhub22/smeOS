@@ -19,6 +19,7 @@
 
 import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
+import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { parseChainDispatchPolicy } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
@@ -30,18 +31,16 @@ import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispa
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
 
-const CRON_SECRET = process.env.CRON_SECRET ?? "dev"
 const MAX_ORDERS_PER_SWEEP = 50
 
 export const POST = handle(async (request) => {
-  // Bảo mật: xác thực cron secret header
-  const secret = request.headers.get("x-cron-secret")
-  if (secret !== CRON_SECRET) {
+  // Bảo mật: xác thực cron secret header (production thiếu CRON_SECRET → luôn từ chối)
+  if (!isAuthorizedCronRequest(request)) {
     return jsonResponse({ error: "Unauthorized" }, { status: 401 })
   }
 
   const url = new URL(request.url)
-  const forceStep = url.searchParams.get("forceStep") as
+  const forceStep = (forceStepAllowed() ? url.searchParams.get("forceStep") : null) as
     | "M1_PREP"
     | "M2_QC"
     | "M2_QC_RETRY"
