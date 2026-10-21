@@ -95,20 +95,32 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
     if (!slug) throw conflict("Không sinh được định danh cho tên tổ chức này")
 
     const chosenIndustry = input.industryKey || "FLORAL"
-    const chosenType = input.organizationType === "CHAIN" ? "CHAIN" : "SINGLE"
-    const isChain = chosenType === "CHAIN"
+    // Mô hình Chuỗi mở gói FLOWER_NETWORK (entitlement-service) — client tự chọn thì không được
+    // trao ngay (rà soát 21/10/2026, H5). Tổ chức luôn bắt đầu là 1 cửa hàng; chọn Chuỗi chỉ ghi
+    // yêu cầu chờ Quản trị SaaS duyệt (N2), cùng cơ chế với request-organization-upgrade.
+    const wantsChain = input.organizationType === "CHAIN"
 
     const organization = await organizations.create({
       name: organizationName,
       slug,
-      type: chosenType,
+      type: "SINGLE",
       credit_balance: TRIAL_CREDIT_BALANCE,
       settings: {
         industry: chosenIndustry,
         industry_locked: true, // Khóa đổi ngành ngay sau khi chọn ban đầu
         brochure_workflow_policy: {
-          require_coordinator_acceptance: isChain,
+          require_coordinator_acceptance: false,
         },
+        ...(wantsChain
+          ? {
+              pending_model_change: {
+                requested_type: "CHAIN",
+                requested_at: new Date().toISOString(),
+                requested_by: user.id,
+                note: "Chọn mô hình Chuỗi khi đăng ký",
+              },
+            }
+          : {}),
       },
     })
 
