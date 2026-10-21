@@ -1,7 +1,8 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { unprocessable, validationFailed } from "@/core/http/errors"
+import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { log } from "@/core/observability/log"
@@ -36,10 +37,6 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   await enforceRateLimit(request, { scope: "subcontract-submit-shipper", limit: 20, windowMs: 60_000 })
 
   const { orderCode } = await context.params
-  const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
-
   const body = await request.json().catch(() => ({}))
   const parsed = shipperSchema.safeParse(body)
   if (!parsed.success) {
@@ -49,11 +46,13 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   const { branchId, shipperName, shipperPhone, shipperNote } = parsed.data
+  const repo = new SubcontractOrderRepository()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
 
   // Xác minh chi nhánh đang claim đơn này
   const coordMeta = (order.coordination?.metadata as Record<string, unknown> | null) ?? {}
   const subState = coordMeta.subcontract_dispatch as Record<string, unknown> | undefined
-  if (subState?.claimedBranchId && subState.claimedBranchId !== branchId) {
+  if (subState?.claimedBranchId !== branchId) {
     throw unprocessable("Đơn hàng này không thuộc chi nhánh của bạn.")
   }
 

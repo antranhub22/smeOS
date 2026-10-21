@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { Truck, CheckCircle2, AlertTriangle, Loader2, Phone, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 interface ShipperSubmitCardProps {
   orderCode: string
@@ -91,7 +92,7 @@ export function ShipperSubmitCard({
         `/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/submit-shipper`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: subcontractAccessHeaders({ "Content-Type": "application/json" }),
           body: JSON.stringify({
             branchId,
             shipperName: shipperName.trim(),

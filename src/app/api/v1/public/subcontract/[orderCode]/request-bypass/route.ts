@@ -8,9 +8,10 @@
  */
 
 import { z } from "zod"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
+import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import { prisma } from "@/core/tenancy/infra/prisma"
@@ -33,8 +34,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   const { branchId, step, reason } = parsed.data
   const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
 
   const branch = await repo.findBranchInOrganization(branchId, order.organization_id)
   if (!branch) throw unprocessable("Chi nhánh không hợp lệ hoặc không thuộc hệ thống.")

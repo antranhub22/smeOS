@@ -11,6 +11,7 @@ import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/disp
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 type RouteCtx = { params: Promise<{ id: string }> }
 
@@ -214,7 +215,12 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   const results: Array<{ branchId: string; branchName: string; sent: boolean; channel: string; error?: string }> = []
 
   for (const branch of approvedBranches) {
-    const claimUrl = `${claimBaseUrl}/subcontract/${order.code}?branch=${encodeURIComponent(branch.branchId)}`
+    const claimUrl = subcontractBranchUrl({
+      baseUrl: claimBaseUrl,
+      organizationId: ctx.organizationId,
+      orderCode: order.code,
+      branchId: branch.branchId,
+    })
     const messageText = renderDispatchMessage(policy.messageTemplates.inviteSubcontract, {
       orderCode: order.code,
       deliveryAddress: recipientAddress,

@@ -21,6 +21,7 @@ import {
 } from "../domain/chain-dispatch-policy"
 import type { IDispatchNotifier, ISubcontractStateStore } from "./dispatch-subcontract-order"
 import type { BranchCandidate } from "../domain/chain-dispatch-engine"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 export interface ClaimSubcontractInput {
   orderId: string
@@ -87,7 +88,12 @@ export async function claimSubcontractUseCase(
       graceMinutes: policy.cancellationGraceMinutes,
     })
 
-    const claimUrl = `${input.baseUrl || "http://localhost:3200"}/subcontract/${state.orderCode}?branch=${encodeURIComponent(claimingBranch.branchId)}`
+    const claimUrl = subcontractBranchUrl({
+      baseUrl: input.baseUrl || "http://localhost:3200",
+      organizationId: ctx.organizationId,
+      orderCode: state.orderCode,
+      branchId: claimingBranch.branchId,
+    })
 
     // Truyền existingTelegramCard nếu đã có thẻ từ lần gửi trước (grace period re-use)
     const existingCard =

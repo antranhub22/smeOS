@@ -13,6 +13,7 @@ import { log } from "@/core/observability/log"
 import { runInBackground } from "@/core/runtime/background"
 import { MultiChannelDispatchNotifier } from "../infra/dispatch-notification-adapter"
 import type { TenantContext } from "@/core/tenancy"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 const DEFAULT_SHIPPER_REMINDER_MINUTES = 30
 
@@ -28,9 +29,9 @@ export interface ShipperRequestInput {
   reminderMinutes?: number | undefined
 }
 
-function buildSubmitShipperUrl(orderCode: string, branchId: string): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3200"
-  return `${base}/subcontract/${encodeURIComponent(orderCode)}?branch=${encodeURIComponent(branchId)}&action=submit_shipper`
+function buildSubmitShipperUrl(organizationId: string, orderCode: string, branchId: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3200"
+  return subcontractBranchUrl({ baseUrl, organizationId, orderCode, branchId, action: "submit_shipper" })
 }
 
 /**
@@ -50,7 +51,7 @@ export async function notifyShipperRequest(input: ShipperRequestInput): Promise<
     reminderMinutes = DEFAULT_SHIPPER_REMINDER_MINUTES,
   } = input
 
-  const submitUrl = buildSubmitShipperUrl(orderCode, branchId)
+  const submitUrl = buildSubmitShipperUrl(organizationId, orderCode, branchId)
   const messageText =
     `🚀 [smeOS] Đơn hàng #${orderCode} đã được xác nhận hình ảnh thành phẩm!\n\n` +
     `📦 Vui lòng cung cấp thông tin SHIPPER để hệ thống bàn giao đơn hàng:\n` +

@@ -19,6 +19,7 @@ import { SubcontractRecipientContact } from "./subcontract-recipient-contact"
 import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
 import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface SubcontractStepQcProps {
   orderCode: string
@@ -118,6 +119,7 @@ export function SubcontractStepQc({
 
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/upload-qc`, {
         method: "POST",
+        headers: subcontractAccessHeaders(),
         body: formData,
       })
 
@@ -144,7 +146,7 @@ export function SubcontractStepQc({
     try {
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: subcontractAccessHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ action: "DELETE_QC", branchId, photoUrl }),
       })
       const json = await res.json().catch(() => ({}))

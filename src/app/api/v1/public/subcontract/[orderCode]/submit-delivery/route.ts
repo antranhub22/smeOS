@@ -1,8 +1,9 @@
 import { randomUUID } from "crypto"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
@@ -59,10 +60,6 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   await enforceRateLimit(request, { scope: "subcontract-submit-delivery", limit: 30, windowMs: 60_000 })
   const { orderCode } = await context.params
 
-  const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
-
   const formData = await request.formData().catch(() => null)
   if (!formData) {
     throw validationFailed({ body: "Dữ liệu gửi lên không đúng định dạng multipart/form-data" })
@@ -76,6 +73,9 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     throw validationFailed({ branchId: "Thiếu mã chi nhánh phụ trách" })
   }
 
+  const repo = new SubcontractOrderRepository()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
+
   if (!file || !(file instanceof Blob)) {
     throw validationFailed({ file: "Vui lòng chọn ảnh chụp giao hàng (ảnh người nhận / trước cửa / phiếu nhận)" })
   }
@@ -83,7 +83,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   // Kiểm tra chi nhánh có đúng là bên đang gia công đơn này không
   const coordMeta = (order.coordination?.metadata as Record<string, unknown> | null) ?? {}
   const subState = coordMeta.subcontract_dispatch as Record<string, unknown> | undefined
-  if (subState?.claimedBranchId && subState.claimedBranchId !== branchId) {
+  if (subState?.claimedBranchId !== branchId) {
     throw unprocessable("Đơn hàng này không thuộc chi nhánh của bạn.")
   }
 

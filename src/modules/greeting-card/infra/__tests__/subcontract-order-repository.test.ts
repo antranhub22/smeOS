@@ -118,9 +118,9 @@ describe("SubcontractOrderRepository", () => {
 
   it("findSubcontractByCode tìm đơn với include relations", async () => {
     mockDb.orders.findFirst.mockResolvedValue({ id: "ord-123", code: "DH123" })
-    const order = await repo.findSubcontractByCode("DH123")
+    const order = await repo.findSubcontractByCode("DH123", "org-1")
     expect(mockDb.orders.findFirst).toHaveBeenCalledWith({
-      where: { code: "DH123" },
+      where: { organization_id: "org-1", code: "DH123" },
       include: {
         coordination: true,
         items: true,

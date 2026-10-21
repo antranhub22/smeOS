@@ -105,11 +105,12 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
   }
 
   /**
-   * Tìm đơn hàng gia công theo orderCode công khai cho màn hình Thẻ Gia Công.
+   * Tìm đơn hàng gia công theo orderCode công khai cho màn hình Thẻ Gia Công. Mã đơn chỉ duy
+   * nhất trong một tổ chức — tổ chức lấy từ token link đã xác minh, không bao giờ từ client.
    */
-  async findSubcontractByCode(orderCode: string) {
+  async findSubcontractByCode(orderCode: string, organizationId: string) {
     return this.db.orders.findFirst({
-      where: { code: orderCode },
+      where: { organization_id: organizationId, code: orderCode },
       include: {
         coordination: true,
         items: true,

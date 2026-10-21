@@ -15,6 +15,7 @@ interface PageProps {
 
 import type { StepMilestoneDeadlines } from "@/modules/greeting-card/domain/subcontract-countdown"
 import type { StepBypassRequestInfo } from "@/components/greeting-card/subcontract/subcontract-bypass-control"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 interface SubcontractPageData extends SubcontractClaimCardProps {
   orderStatus?: string | null
@@ -45,7 +46,8 @@ export default function SubcontractClaimPage({ params }: PageProps) {
   const initialStep: SubcontractStepId | undefined =
     action === "upload_qc" ? 2 : action === "submit_shipper" ? 3 : undefined
 
-  const apiUrl = `/api/v1/public/subcontract/${encodeURIComponent(orderCode)}?branch=${encodeURIComponent(branchId)}`
+  const linkToken = searchParams.get("t") ?? ""
+  const apiUrl = `/api/v1/public/subcontract/${encodeURIComponent(orderCode)}?branch=${encodeURIComponent(branchId)}&t=${encodeURIComponent(linkToken)}`
   const { data, error, mutate, isLoading } = useSWR<{ data: SubcontractPageData }>(apiUrl, fetcher, {
     refreshInterval: 10_000,
   })
@@ -56,7 +58,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
     setActionError(null)
     const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: subcontractAccessHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ action: actionType, branchId }),
     })
     const body = await res.json().catch(() => ({}))
@@ -82,7 +84,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
           <AlertCircle size={40} className="text-danger" />
           <h2 className="text-title font-bold text-foreground">Không tìm thấy đơn gia công</h2>
           <p className="text-caption text-text-muted">
-            Đơn hàng #{orderCode} không tồn tại hoặc đã hết hạn điều phối trên hệ thống.
+            Đường dẫn của đơn #{orderCode} không hợp lệ hoặc đã hết hạn. Vui lòng mở đường dẫn mới nhất mà Điều phối gửi cho chi nhánh.
           </p>
         </div>
       </div>
