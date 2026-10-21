@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { listAllIndustryPlugins } from "@/modules/organization/domain/industry-profile"
 import { NAV_ENTRIES, HOME_ENTRY, NAV_GROUP_CONFIG } from "@/components/layout/nav-model"
 import {
@@ -61,6 +62,8 @@ export const GET = handle(async (request) => {
 
 export const PUT = handle(async (request) => {
   const pctx = await requirePlatformContext(request)
+  // Đổi điều hướng của MỌI tổ chức trong ngành — cần mã quản trị cấu hình, không chỉ phiên nền tảng
+  requirePlatformCapability(pctx, "N12")
   const rawBody = (await request.json()) as unknown
   const parsed = updateMatrixSchema.parse(rawBody)
 
