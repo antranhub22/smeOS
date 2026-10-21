@@ -210,7 +210,8 @@ export const POST = handle(async (request) => {
           hasDeliveryProof,
           deliveryStatus: order.delivery_status ?? undefined,
           coordinatorChannel,
-          baseUrl: url.origin,
+          // Cron gọi qua host nội bộ Render — link gửi chi nhánh phải dùng URL công khai đã cấu hình
+          baseUrl: process.env.NEXT_PUBLIC_APP_URL || url.origin,
           forceStep: forceStep ?? undefined,
           productImageUrl,
         },
