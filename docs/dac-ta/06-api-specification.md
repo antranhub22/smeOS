@@ -57,7 +57,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | POST | `/session/organization` | — | Đổi tổ chức đang hoạt động |
 | POST | `/session/password` | `A2` | Tự đổi mật khẩu `{ current_password, new_password }` (≥ 10 ký tự, khác mật khẩu cũ); sai mật khẩu hiện tại → 400; giữ phiên đang dùng, đăng xuất các máy khác; ghi audit (08/10/2026) |
 | GET | `/organizations/current` | `F1` | |
-| PATCH | `/organizations/current` | `F2` | |
+| PATCH | `/organizations/current` | `F2` | `{ name?, settings? }` — `settings` hợp nhất nông. Tenant không sửa được khoá do nền tảng quản lý (`industry_locked`, `pending_model_change`, `is_instant_trial`, `lead_*`); đổi `industry` khi đã khoá ngành chỉ dành cho người vận hành nền tảng `N1`/`N12`. Vi phạm → 403 (21/10/2026) |
 
 **Mỗi tài khoản chỉ một phiên.** `POST /auth/login` thu hồi mọi phiên còn hiệu lực của người dùng rồi mới cấp phiên mới (người đăng nhập sau thắng). Phiên cũ gọi bất kỳ endpoint nào nhận `401 UNAUTHENTICATED` kèm `details.reason = "SESSION_SUPERSEDED"`; giao diện hiện cảnh báo "đăng nhập trên thiết bị khác" và đưa về trang đăng nhập. Phiên tự đăng xuất hoặc hết hạn trả 401 không có `reason`.
 

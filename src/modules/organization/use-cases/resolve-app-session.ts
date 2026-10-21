@@ -1,6 +1,8 @@
 import { cache } from "react"
 
 import type { MockSession } from "@/lib/mock-data"
+import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
+import { canOverrideIndustryLock } from "@/modules/organization/domain/organization-settings-policy"
 import { describeSession } from "./describe-session"
 import { resolveSession } from "./resolve-session"
 
@@ -41,8 +43,10 @@ export const resolveAppSession = cache(async function resolveAppSession(
   const cleanOrgName = rawOrgName.replace(/\s*\(\s*dev\s*\)/gi, "").trim()
   const orgSettings = (described.organization?.settings as Record<string, unknown> | null) ?? null
   const industry = typeof orgSettings?.industry === "string" ? orgSettings.industry : "FLORAL"
-  const isSuperUser = described.user.email === "tuans2@dev.com" || Boolean(described.user.email?.endsWith("@dev.com"))
-  const industryLocked = isSuperUser ? false : Boolean(orgSettings?.industry_locked)
+  // Quyền vượt khoá ngành lấy từ mã năng lực nền tảng (N1/N12), không từ đuôi email (rà soát H11)
+  const operator = await new PlatformOperatorRepository().findActiveByUserId(described.user.id)
+  const platformCapabilities = operator?.capabilityCodes ?? []
+  const industryLocked = canOverrideIndustryLock(platformCapabilities) ? false : Boolean(orgSettings?.industry_locked)
 
   return {
     userName: described.user.name ?? described.user.email,
@@ -51,6 +55,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
     orgName: cleanOrgName,
     workspaceKind: (described.workspace?.kind as MockSession["workspaceKind"]) ?? "PRODUCTION",
     capabilities: described.capabilities,
+    platformCapabilities,
     organization: described.organization
       ? {
           id: described.organization.id,

@@ -22,7 +22,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
   const [dangXuat, setDangXuat] = useState(false)
   const [doiMatKhau, setDoiMatKhau] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const { roleUx, userName, userEmail, orgName, can } = useSession()
+  const { roleUx, userName, userEmail, orgName, can, platformCapabilities } = useSession()
 
   useEffect(() => {
     if (!mo) return
@@ -48,7 +48,8 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
     }
   }
 
-  const isSuperUser = userEmail === "tuans2@dev.com" || Boolean(userEmail?.endsWith("@dev.com"))
+  // Lối tắt Console Vận hành: chỉ người vận hành nền tảng thật, không xét đuôi email (rà soát H11)
+  const isSuperUser = (platformCapabilities ?? []).length > 0
 
   return (
     <div className="relative">
