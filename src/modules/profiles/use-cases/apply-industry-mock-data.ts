@@ -20,7 +20,7 @@ export interface ApplyMockDataResult {
 
 /**
  * Ghi đè hoặc nạp mock data của ngành vào hồ sơ và danh mục sản phẩm của tổ chức hiện tại.
- * Chỉ cho phép gọi bởi Điều hành (F2/H4) hoặc khi dev/staging.
+ * Chỉ cho tổ chức dùng thử (`EXPERIENCE`); quyền F2/H4 kiểm ở route.
  */
 export async function applyIndustryMockData(
   ctx: TenantContext,
@@ -31,6 +31,10 @@ export async function applyIndustryMockData(
 
   if (!org) {
     throw new AppError("NOT_FOUND", "Không tìm thấy tổ chức")
+  }
+  // PO 21/10/2026: chỉ tài khoản dùng thử — nạp mẫu ghi đè hồ sơ và đổi ngành của tiệm thật (H9)
+  if (org.type !== "EXPERIENCE") {
+    throw new AppError("CAPABILITY_DENIED", "Dữ liệu mẫu chỉ dùng cho tài khoản dùng thử.")
   }
 
   const orgSettings = (org.settings as Record<string, unknown>) || {}

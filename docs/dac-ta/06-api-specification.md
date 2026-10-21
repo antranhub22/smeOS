@@ -887,7 +887,7 @@ Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP |
-| POST | `/business-profile/mock-data` | `F2` (hoặc `H4`/`N1`/`N12`) | Nạp hồ sơ và sản phẩm mẫu theo ngành `{ industry_key? }`. Ghi đè hồ sơ hiện có — xem phát hiện H9 của đợt rà soát |
+| POST | `/business-profile/mock-data` | `F2` (hoặc `H4`/`N1`/`N12`) | Nạp hồ sơ và sản phẩm mẫu theo ngành `{ industry_key? }`, ghi đè hồ sơ hiện có. **Chỉ tổ chức dùng thử (`EXPERIENCE`)** — tiệm thật → 403 (PO 21/10/2026) |
 | GET | `/availability/board` | `L1` | `?month=YYYY-MM` — bảng khả dụng theo tháng (đặt phòng, khung giờ, tồn kho) |
 | POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ productId, checkInDate, checkOutDate, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |
 | DELETE | `/availability/blocks/:id` | `L3` | Bỏ chặn thủ công. Chỉ xoá được dòng không gắn đơn |

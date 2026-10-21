@@ -24,7 +24,7 @@ export class SampleCatalogRepository {
   async findOrganization(organizationId: string) {
     return this.db.organizations.findUnique({
       where: { id: organizationId },
-      select: { id: true, name: true, settings: true },
+      select: { id: true, name: true, type: true, settings: true },
     })
   }
 

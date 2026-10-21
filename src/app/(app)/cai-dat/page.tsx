@@ -24,7 +24,7 @@ import { ModelChangeCard } from "@/components/organization/model-change-card"
 import { useI18n } from "@/lib/i18n"
 
 export default function CaiDatTiemPage() {
-  const { orgName, can } = useSession()
+  const { orgName, can, organizationType } = useSession()
   const { dict } = useI18n()
   const canEdit = can("F2") || can("H4") // Quyền chỉnh sửa hồ sơ / điều hành
 
@@ -121,7 +121,7 @@ export default function CaiDatTiemPage() {
               Các trường thông tin dưới đây áp dụng tức thì cho hóa đơn, phiếu cắm hoa và kịch bản tư vấn.
             </p>
           </div>
-          {canEdit && (
+          {canEdit && organizationType === "EXPERIENCE" && (
             <div className="shrink-0">
               <LoadMockDataButton />
             </div>

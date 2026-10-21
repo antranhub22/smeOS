@@ -14,7 +14,7 @@ export function LoadMockDataButton({ currentIndustry, onApplied }: LoadMockDataB
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   const handleApply = async () => {
-    if (!confirm("Bạn có chắc chắn muốn nạp dữ liệu mẫu (Mock Data) theo ngành cho cửa hàng này? Dữ liệu mẫu sẽ bao gồm: tên cửa hàng, hotline, địa chỉ, logo AI, mô tả và các sản phẩm mẫu.")) {
+    if (!confirm("Bạn có chắc chắn muốn nạp dữ liệu mẫu theo ngành cho cửa hàng này? Dữ liệu mẫu sẽ bao gồm: tên cửa hàng, hotline, địa chỉ, logo AI, mô tả và các sản phẩm mẫu.")) {
       return
     }
 
@@ -65,7 +65,7 @@ export function LoadMockDataButton({ currentIndustry, onApplied }: LoadMockDataB
         title="Nạp dữ liệu mẫu theo ngành (Logo, Hồ sơ, Sản phẩm)"
       >
         <Database size={13} className={loading ? "animate-spin" : ""} />
-        <span>{loading ? "Đang nạp Mock Data..." : "Nạp Mock Data ngành"}</span>
+        <span>{loading ? "Đang nạp dữ liệu mẫu..." : "Nạp dữ liệu mẫu ngành"}</span>
       </Button>
 
       {msg && (
