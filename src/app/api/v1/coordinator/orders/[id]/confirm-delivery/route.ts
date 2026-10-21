@@ -17,14 +17,13 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
-import type { Prisma } from "@/generated/prisma/client"
 
 const MAX_POD_BYTES = 10 * 1024 * 1024
 
@@ -106,10 +105,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
       sampleImageUrl = await storage.signedUrl(sampleImageUrl, 3600, "GET").catch(() => sampleImageUrl)
     }
 
-    const coordExisting = await prisma.order_coordinations.findUnique({ where: { order_id: order.id } })
-    const existingQcPhotos = Array.isArray((coordExisting?.metadata as Record<string, unknown> | null)?.qc_photos)
-      ? ((coordExisting?.metadata as Record<string, unknown>).qc_photos as string[])
-      : []
+    const coordExistingMeta = await new SubcontractStepStore().readMetadata(order.organization_id, order.id)
+    const existingQcPhotos = Array.isArray(coordExistingMeta.qc_photos) ? (coordExistingMeta.qc_photos as string[]) : []
     const latestQcKey = existingQcPhotos[existingQcPhotos.length - 1]
     let qcImageUrl: string | undefined
     if (latestQcKey) {
@@ -154,8 +151,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   }
 
   // Cập nhật DB
-  const coord = await prisma.order_coordinations.findUnique({ where: { order_id: order.id } })
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const store = new SubcontractStepStore()
+  const existingMeta = await store.readMetadata(order.organization_id, order.id)
   const existingPodPhotos = Array.isArray(existingMeta.pod_photos)
     ? (existingMeta.pod_photos as string[])
     : []
@@ -168,47 +165,22 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     confirmMode,
   }
 
-  await prisma.$transaction([
-    prisma.orders.update({
-      where: { id: order.id },
-      data: { delivery_status: "DELIVERED", status: "COMPLETED" },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          ...(podPhotoStorageKey && { pod_photos: deliveryProof.photoUrls }),
-          delivery_proof: deliveryProof,
-          last_pod_uploaded_at: deliveredAt,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "delivery",
-        from_value: order.delivery_status || "DELIVERING",
-        to_value: "DELIVERED",
-        actor_id: `coordinator:${ctx.userId}`,
-        reason: `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}`,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "status",
-        from_value: order.status,
-        to_value: "COMPLETED",
-        actor_id: `coordinator:${ctx.userId}`,
-        reason: "[Hoàn Tất] Điều phối xác nhận giao hàng thành công.",
-      },
-    }),
-  ])
+  const actorId = `coordinator:${ctx.userId}`
+  await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { delivery_status: "DELIVERED", status: "COMPLETED" },
+    metadata: {
+      ...existingMeta,
+      ...(podPhotoStorageKey && { pod_photos: deliveryProof.photoUrls }),
+      delivery_proof: deliveryProof,
+      last_pod_uploaded_at: deliveredAt,
+    },
+    events: [
+      { axis: "delivery", fromValue: order.delivery_status || "DELIVERING", toValue: "DELIVERED", actorId, reason: `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}` },
+      { axis: "status", fromValue: order.status, toValue: "COMPLETED", actorId, reason: "[Hoàn Tất] Điều phối xác nhận giao hàng thành công." },
+    ],
+  })
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M4 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({

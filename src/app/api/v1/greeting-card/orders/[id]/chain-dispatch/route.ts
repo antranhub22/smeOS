@@ -10,7 +10,7 @@ import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcon
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 type RouteCtx = { params: Promise<{ id: string }> }
@@ -35,25 +35,13 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
   const { id } = await context.params
 
   // Lấy thông tin đơn hàng từ bảng orders
-  const order = await prisma.orders.findFirst({
-    where: { id, organization_id: ctx.organizationId },
-    select: {
-      id: true,
-      code: true,
-      delivery_address: true,
-      delivery_window: true,
-      total_vnd: true,
-    },
-  })
+  const order = await new SubcontractOrderRepository().findOrderForChainDispatch(ctx.organizationId, id)
   if (!order) throw notFound()
 
   const recipientAddress = formatDeliveryAddress(order.delivery_address)
 
   // Lấy cấu hình Policy điều phối chuỗi
-  const shop = await prisma.organizations.findFirst({
-    where: { id: ctx.organizationId },
-    select: { settings: true },
-  })
+  const shop = await new OrganizationRepository().current(ctx)
   const policy = parseChainDispatchPolicy(shop?.settings as Record<string, unknown> | null | undefined)
 
   // Lấy danh sách chi nhánh từ settings (org_settings key = chain_branches)
@@ -122,31 +110,8 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   const { approvedBranchIds, subcontractPriceVnd } = parsed.data
 
   // Lấy thông tin đơn hàng
-  const order = await prisma.orders.findFirst({
-    where: { id, organization_id: ctx.organizationId },
-    select: {
-      id: true,
-      organization_id: true,
-      code: true,
-      delivery_address: true,
-      delivery_window: true,
-      total_vnd: true,
-      pricing_rule_ref: true,
-      items: {
-        select: {
-          product_id: true,
-          description: true,
-          metadata: true,
-        },
-      },
-      greeting_sessions: {
-        select: {
-          product_snapshot: true,
-        },
-        take: 1,
-      },
-    },
-  })
+  const stateRepo = new SubcontractOrderRepository()
+  const order = await stateRepo.findOrderForChainDispatch(ctx.organizationId, id)
   if (!order) throw notFound()
 
   const recipientAddress = formatDeliveryAddress(order.delivery_address)
@@ -157,10 +122,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
     : "Giao trong ngày"
 
   // Lấy danh sách chi nhánh đã được duyệt
-  const shop = await prisma.organizations.findFirst({
-    where: { id: ctx.organizationId },
-    select: { settings: true },
-  })
+  const shop = await new OrganizationRepository().current(ctx)
   const policy = parseChainDispatchPolicy(shop?.settings as Record<string, unknown> | null | undefined)
   const rawBranches = (shop?.settings as Record<string, unknown> | null)?.["chain_branches"]
   const allBranches: BranchCandidate[] = Array.isArray(rawBranches) ? (rawBranches as BranchCandidate[]) : []
@@ -179,7 +141,6 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
     : process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3200"
 
   // Khởi tạo Subcontract state
-  const stateRepo = new SubcontractOrderRepository()
   const notifier = new MultiChannelDispatchNotifier()
 
   const roundExpiry = new Date(Date.now() + policy.claimTimeoutMinutes * 60 * 1000).toISOString()
@@ -201,15 +162,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
 
   // Đồng bộ giá gia công vào pricing_rule_ref của đơn hàng để làm SSOT xuyên suốt
   const existingPricingRef = (order.pricing_rule_ref as Record<string, unknown> | null) ?? {}
-  await prisma.orders.update({
-    where: { id: order.id },
-    data: {
-      pricing_rule_ref: {
-        ...existingPricingRef,
-        subcontract_price_vnd: craftFee,
-      } as unknown as import("@/generated/prisma/client").Prisma.InputJsonValue,
-    },
-  })
+  await stateRepo.updatePricingRef(ctx.organizationId, order.id, { ...existingPricingRef, subcontract_price_vnd: craftFee })
 
   // Phát lệnh gửi tin nhắn riêng 1:1 cho từng chi nhánh được duyệt
   const results: Array<{ branchId: string; branchName: string; sent: boolean; channel: string; error?: string }> = []

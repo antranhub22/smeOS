@@ -5,8 +5,7 @@ import { enforceRateLimit } from "@/core/http/rate-limit"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import { verifyQcPhotoWithAi } from "@/modules/greeting-card/use-cases/verify-qc-photo-ai"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
@@ -166,61 +165,40 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const nextProductionStatus = "READY"
 
   // Cập nhật CSDL
-  const coord = await prisma.order_coordinations.findUnique({
-    where: { order_id: order.id },
-  })
-
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const store = new SubcontractStepStore()
+  const existingMeta = await store.readMetadata(order.organization_id, order.id)
   const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
   // Lưu storageKey thuần dạng org/... vào DB để khi load ra sẽ được tự động ký URL mới còn hạn
   const updatedQcPhotos = [...existingQcPhotos, storageKey]
 
-  const updateOps: unknown[] = [
-    prisma.orders.update({
-      where: { id: order.id },
-      data: {
-        production_status: nextProductionStatus,
+  await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { production_status: nextProductionStatus },
+    metadata: {
+      ...existingMeta,
+      qc_photos: updatedQcPhotos,
+      last_qc_uploaded_at: new Date().toISOString(),
+      last_qc_uploaded_by_branch: branchId,
+      last_ai_verification: {
+        isMatch: aiVerify.isMatch,
+        confidenceScore: aiVerify.confidenceScore,
+        verdict: aiVerify.verdict,
+        reason: aiVerify.reason,
       },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          qc_photos: updatedQcPhotos,
-          last_qc_uploaded_at: new Date().toISOString(),
-          last_qc_uploaded_by_branch: branchId,
-          last_ai_verification: {
-            isMatch: aiVerify.isMatch,
-            confidenceScore: aiVerify.confidenceScore,
-            verdict: aiVerify.verdict,
-            reason: aiVerify.reason,
-          },
-          auto_bypassed_coordinator: aiVerify.isMatch,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-  ]
-
-  // Tạo sự kiện nhật ký đơn hàng
-  if (aiVerify.isMatch) {
-    updateOps.push(
-      prisma.order_events.create({
-        data: {
-          id: randomUUID(),
-          organization_id: order.organization_id,
-          order_id: order.id,
+      auto_bypassed_coordinator: aiVerify.isMatch,
+    },
+    // Nhật ký đơn hàng chỉ khi AI thẩm định khớp
+    events: aiVerify.isMatch
+      ? [{
           axis: "production",
-          from_value: order.production_status,
-          to_value: "READY",
-          actor_id: `branch_${branchId}`,
+          fromValue: order.production_status,
+          toValue: "READY",
+          actorId: `branch_${branchId}`,
           reason: `[AI Thẩm Định Khớp] ${aiVerify.reason} (${aiVerify.confidenceScore}%). Tự động duyệt ảnh thành phẩm và chuyển sang Đã cắm xong.`,
-        },
-      })
-    )
-  }
-
-  await prisma.$transaction(updateOps as any)
+        }]
+      : [],
+  })
 
   // Tự động gửi thông báo cập nhật tiến độ cho khách hàng kèm ảnh thành phẩm
   if (aiVerify.isMatch) {

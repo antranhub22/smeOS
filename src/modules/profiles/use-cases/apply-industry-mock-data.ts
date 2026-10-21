@@ -1,5 +1,9 @@
 import { AppError } from "@/core/http/errors"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import {
+  SAMPLE_PRODUCT_CODE_PREFIX,
+  SampleCatalogRepository,
+  type SampleProductInput,
+} from "@/modules/profiles/infra/sample-catalog-repository"
 import type { TenantContext } from "@/core/tenancy"
 import { BusinessProfileRepository } from "@/modules/profiles/infra/business-profile-repository"
 import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
@@ -22,10 +26,8 @@ export async function applyIndustryMockData(
   ctx: TenantContext,
   targetIndustryKey?: string
 ): Promise<ApplyMockDataResult> {
-  const org = await prisma.organizations.findUnique({
-    where: { id: ctx.organizationId },
-    select: { id: true, name: true, settings: true },
-  })
+  const catalog = new SampleCatalogRepository()
+  const org = await catalog.findOrganization(ctx.organizationId)
 
   if (!org) {
     throw new AppError("NOT_FOUND", "Không tìm thấy tổ chức")
@@ -38,15 +40,7 @@ export async function applyIndustryMockData(
 
   // 0. Cập nhật ngành trong organization settings nếu đổi sang ngành mới
   if (targetIndustryKey && orgSettings.industry !== targetIndustryKey) {
-    await prisma.organizations.update({
-      where: { id: ctx.organizationId },
-      data: {
-        settings: {
-          ...orgSettings,
-          industry: targetIndustryKey,
-        },
-      },
-    })
+    await catalog.updateOrganizationSettings(ctx.organizationId, { ...orgSettings, industry: targetIndustryKey })
   }
 
   const plugin = getIndustryPlugin(industryKey)
@@ -54,93 +48,36 @@ export async function applyIndustryMockData(
   const mockAssets = getMockAssetsForIndustry(industryKey)
 
   // 1. Cập nhật Business Profile
-  const bizRepo = new BusinessProfileRepository(prisma)
+  const bizRepo = new BusinessProfileRepository()
   await bizRepo.upsert(ctx, {
     ...seedProfiles.business,
     display_name: seedProfiles.business.display_name,
   })
 
   // 2. Cập nhật Brand Profile (kèm logo mock)
-  const brandRepo = new BrandProfileRepository(prisma)
+  const brandRepo = new BrandProfileRepository()
   await brandRepo.upsert(ctx, {
     ...seedProfiles.brand,
     logo_asset_id: mockAssets?.logo || seedProfiles.brand.logo_asset_id,
   })
 
-  // 3. Nạp danh mục sản phẩm mẫu
-  // Xóa các sản phẩm mẫu cũ (nếu có)
-  const existingSamples = await prisma.products.findMany({
-    where: {
-      organization_id: ctx.organizationId,
-      code: { startsWith: "DEMO-" },
-    },
-    select: { id: true },
-  })
-
-  if (existingSamples.length > 0) {
-    const ids = existingSamples.map((s) => s.id)
-    await prisma.product_bookings.deleteMany({
-      where: { product_id: { in: ids } },
-    })
-    await prisma.product_inventory.deleteMany({
-      where: { product_id: { in: ids } },
-    })
-    await prisma.product_images.deleteMany({
-      where: { product_id: { in: ids } },
-    })
-    await prisma.product_analyses.deleteMany({
-      where: { product_id: { in: ids } },
-    })
-    await prisma.product_variants.deleteMany({
-      where: { product_id: { in: ids } },
-    })
-    await prisma.products.deleteMany({
-      where: { id: { in: ids } },
-    })
-  }
-
-  let productsCount = 0
+  // 3. Nạp danh mục sản phẩm mẫu — thay các sản phẩm mẫu cũ trong một giao dịch
   const categories = plugin.taxonomy.defaultCategories
-
-  if (mockAssets && mockAssets.products.length > 0) {
-    for (let i = 0; i < mockAssets.products.length; i++) {
-      const p = mockAssets.products[i]!
-      const code = `DEMO-${industryKey.slice(0, 3)}-${String(i + 1).padStart(3, "0")}`
-
-      const product = await prisma.products.create({
-        data: {
-          organization_id: ctx.organizationId,
-          code,
-          name: p.name,
-          category: p.category,
-          status: "ACTIVE",
-          attributes: {
-            sample: true,
-            imageUrl: p.image,
-            price: p.price,
-            original_price: p.originalPrice,
-            description: p.description,
-            unit: categories[0]?.defaultUnit || "món",
-          },
-        },
-      })
-
-      await prisma.product_variants.create({
-        data: {
-          organization_id: ctx.organizationId,
-          product_id: product.id,
-          name: "Tiêu chuẩn",
-          multiplier: 1.0,
-          attributes: {
-            price: p.price,
-            original_price: p.originalPrice,
-          },
-        },
-      })
-
-      productsCount++
-    }
-  }
+  const samples: SampleProductInput[] = (mockAssets?.products ?? []).map((p, i) => ({
+    code: `${SAMPLE_PRODUCT_CODE_PREFIX}${industryKey.slice(0, 3)}-${String(i + 1).padStart(3, "0")}`,
+    name: p.name,
+    category: p.category,
+    attributes: {
+      sample: true,
+      imageUrl: p.image,
+      price: p.price,
+      original_price: p.originalPrice,
+      description: p.description,
+      unit: categories[0]?.defaultUnit || "món",
+    },
+    variantAttributes: { price: p.price, original_price: p.originalPrice },
+  }))
+  const productsCount = await catalog.replaceSampleProducts(ctx.organizationId, samples)
 
   return {
     industryKey,

@@ -20,7 +20,7 @@ import { hasCapability } from "@/core/rbac/capabilities"
 import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
 import { verifyQcPhotoWithAi } from "./verify-qc-photo-ai"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { OrderPhotoRepository } from "@/modules/greeting-card/infra/order-photo-repository"
 import { log } from "@/core/observability/log"
 
 /** Đơn của tổ chức + kiểm đúng thứ tự tác vụ xưởng (409 nếu sai bước). */
@@ -134,20 +134,11 @@ export async function uploadBrochureProductPhoto(
       // Lấy storage_key của ảnh đầu tiên để sign URL gửi AI
       const firstImageId = assetIds[0]
       const assetRow = firstImageId
-        ? await prisma.assets.findFirst({
-            where: { id: firstImageId, organization_id: ctx.organizationId },
-            select: { storage_key: true, mime_type: true },
-          })
+        ? await new OrderPhotoRepository().findAsset(ctx.organizationId, firstImageId)
         : null
 
       // Lấy ảnh mẫu gốc: query riêng vì findBrochureOrder không include items/product_snapshot
-      const orderDetail = await prisma.orders.findFirst({
-        where: { id: orderId, organization_id: ctx.organizationId },
-        select: {
-          items: { select: { description: true, metadata: true }, take: 1 },
-          greeting_sessions: { select: { product_snapshot: true }, take: 1 },
-        },
-      })
+      const orderDetail = await new OrderPhotoRepository().findOrderSampleSource(ctx.organizationId, orderId)
       const snapshot = (orderDetail?.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
       const itemMeta = (orderDetail?.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
       const productName = orderDetail?.items?.[0]?.description || (snapshot.name as string | undefined) || "Sản phẩm"

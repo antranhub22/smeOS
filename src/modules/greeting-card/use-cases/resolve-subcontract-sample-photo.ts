@@ -1,4 +1,4 @@
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { OrderPhotoRepository } from "@/modules/greeting-card/infra/order-photo-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { driveThumbProxySrc } from "../domain/drive-thumb"
 
@@ -47,30 +47,13 @@ export async function resolveSubcontractSamplePhoto(
   // Fallback 1: Nếu đơn chưa có ảnh trong snapshot/metadata nhưng có productId hoặc productName -> tra bảng products
   if (!rawImageUrl && (productId || productName)) {
     try {
-      const productRow = await prisma.products.findFirst({
-        where: productId
-          ? { id: productId, organization_id: order.organization_id }
-          : {
-              organization_id: order.organization_id,
-              name: { equals: productName!, mode: "insensitive" },
-            },
-        select: {
-          attributes: true,
-          images: {
-            orderBy: { position: "asc" },
-            take: 10,
-            select: { asset_id: true, role: true },
-          },
-        },
-      })
+      const photos = new OrderPhotoRepository()
+      const productRow = await photos.findProductImages(order.organization_id, productId, productName)
 
       if (productRow) {
         const firstImg = productRow.images.find((i) => i.role === "MAIN") ?? productRow.images[0]
         if (firstImg?.asset_id) {
-          const asset = await prisma.assets.findFirst({
-            where: { id: firstImg.asset_id, organization_id: order.organization_id },
-            select: { storage_key: true },
-          })
+          const asset = await photos.findAsset(order.organization_id, firstImg.asset_id)
           if (asset?.storage_key) {
             rawImageUrl = asset.storage_key
           }

@@ -289,4 +289,30 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
 
     return { newQualityScore, bypassCount }
   }
+
+  /** Đơn kèm dữ liệu cần để sàng lọc và phát lệnh điều phối chuỗi (route chain-dispatch). */
+  async findOrderForChainDispatch(organizationId: string, orderId: string) {
+    return this.db.orders.findFirst({
+      where: { id: orderId, organization_id: organizationId },
+      select: {
+        id: true,
+        organization_id: true,
+        code: true,
+        delivery_address: true,
+        delivery_window: true,
+        total_vnd: true,
+        pricing_rule_ref: true,
+        items: { select: { product_id: true, description: true, metadata: true } },
+        greeting_sessions: { select: { product_snapshot: true }, take: 1 },
+      },
+    })
+  }
+
+  /** Ghi đè `orders.pricing_rule_ref` (người gọi tự trộn với bản cũ). */
+  async updatePricingRef(organizationId: string, orderId: string, pricingRef: Record<string, unknown>): Promise<void> {
+    await this.db.orders.updateMany({
+      where: { id: orderId, organization_id: organizationId },
+      data: { pricing_rule_ref: pricingRef as Prisma.InputJsonValue },
+    })
+  }
 }

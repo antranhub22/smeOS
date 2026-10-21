@@ -20,7 +20,7 @@
 import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
 import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { ChainDispatchSweepQuery } from "@/modules/greeting-card/infra/chain-dispatch-sweep-query"
 import { parseChainDispatchPolicy } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
@@ -59,19 +59,8 @@ export const POST = handle(async (request) => {
   const errors: string[] = []
 
   // 1. Lấy danh sách order_coordinations có subcontract đang COMMITTED/CLAIMED_GRACE
-  const coordinations = await prisma.order_coordinations.findMany({
-    where: {
-      // JSON filter: tìm các record có subcontract_dispatch không null
-      metadata: { not: {} },
-    },
-    select: {
-      id: true,
-      organization_id: true,
-      order_id: true,
-      metadata: true,
-    },
-    take: MAX_ORDERS_PER_SWEEP,
-  })
+  const sweepQuery = new ChainDispatchSweepQuery()
+  const coordinations = await sweepQuery.listCoordinationsWithMetadata(MAX_ORDERS_PER_SWEEP)
 
   // Lọc chỉ những đơn đang ở trạng thái cần nhắc việc
   const activeCoords = coordinations.filter((c) => {
@@ -94,30 +83,12 @@ export const POST = handle(async (request) => {
 
   // 2. Nhóm theo organization để lấy settings một lần
   const orgIds = [...new Set(activeCoords.map((c) => c.organization_id))]
-  const orgs = await prisma.organizations.findMany({
-    where: { id: { in: orgIds } },
-    select: { id: true, settings: true },
-  })
+  const orgs = await sweepQuery.listOrganizationSettings(orgIds)
   const orgMap = new Map(orgs.map((o) => [o.id, o]))
 
   // 3. Lấy thông tin đơn hàng (delivery_window, items) theo batch
   const orderIds = activeCoords.map((c) => c.order_id)
-  const orders = await prisma.orders.findMany({
-    where: { id: { in: orderIds } },
-    select: {
-      id: true,
-      code: true,
-      delivery_window: true,
-      delivery_status: true,
-      production_status: true,
-      items: {
-        select: {
-          description: true,
-          metadata: true,
-        },
-      },
-    },
-  })
+  const orders = await sweepQuery.listOrdersForReminders(orderIds)
   const orderMap = new Map(orders.map((o) => [o.id, o]))
 
   // 4. Xử lý từng coordination

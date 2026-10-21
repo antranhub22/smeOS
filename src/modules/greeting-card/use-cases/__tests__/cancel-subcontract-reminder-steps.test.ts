@@ -9,7 +9,7 @@ vi.mock("@/core/tenancy/infra/prisma", () => ({
   prisma: {
     order_coordinations: {
       findFirst: vi.fn(),
-      update: vi.fn(),
+      updateMany: vi.fn(),
     },
   },
 }))
@@ -55,7 +55,7 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
 
     expect(result.cancelledSteps).toHaveLength(0)
     expect(result.alreadyDoneSteps).toHaveLength(0)
-    expect(prisma.order_coordinations.update).not.toHaveBeenCalled()
+    expect(prisma.order_coordinations.updateMany).not.toHaveBeenCalled()
   })
 
   it("đánh dấu CANCELLED_BY_COORDINATOR_ACTION cho các step chưa gửi", async () => {
@@ -70,7 +70,7 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
       },
     } as any)
 
-    vi.mocked(prisma.order_coordinations.update).mockResolvedValue({} as any)
+    vi.mocked(prisma.order_coordinations.updateMany).mockResolvedValue({} as any)
 
     const result = await cancelSubcontractReminderSteps({
       organizationId: "org-1",
@@ -82,8 +82,8 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
 
     expect(result.cancelledSteps).toEqual(["M2_QC", "M2_QC_RETRY", "M2_QC_ESCALATED"])
     expect(result.alreadyDoneSteps).toHaveLength(0)
-    expect(prisma.order_coordinations.update).toHaveBeenCalledWith({
-      where: { id: "coord-id-1" },
+    expect(prisma.order_coordinations.updateMany).toHaveBeenCalledWith({
+      where: { organization_id: "org-1", order_id: "order-1" },
       data: {
         metadata: {
           subcontract_dispatch: {
@@ -113,7 +113,7 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
       },
     } as any)
 
-    vi.mocked(prisma.order_coordinations.update).mockResolvedValue({} as any)
+    vi.mocked(prisma.order_coordinations.updateMany).mockResolvedValue({} as any)
 
     const result = await cancelSubcontractReminderSteps({
       organizationId: "org-1",
@@ -127,8 +127,8 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
     expect(result.alreadyDoneSteps).toEqual(["M2_QC"])
     expect(result.cancelledSteps).toEqual(["M2_QC_RETRY", "M2_QC_ESCALATED"])
 
-    expect(prisma.order_coordinations.update).toHaveBeenCalledWith({
-      where: { id: "coord-id-1" },
+    expect(prisma.order_coordinations.updateMany).toHaveBeenCalledWith({
+      where: { organization_id: "org-1", order_id: "order-1" },
       data: {
         metadata: {
           subcontract_dispatch: {
