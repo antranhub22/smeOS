@@ -149,7 +149,7 @@ export function ScheduledPulsePanel({
                     onChange={(e) => setNotifyCopilot(e.target.checked)}
                     className="h-4 w-4 rounded accent-rose-600"
                   />
-                  <span>FloraOS Copilot chào buổi sáng</span>
+                  <span>smeOS Copilot chào buổi sáng</span>
                 </label>
                 <label className="flex items-center gap-2 text-xs text-cool-700 cursor-pointer">
                   <input

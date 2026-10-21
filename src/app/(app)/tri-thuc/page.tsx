@@ -68,7 +68,7 @@ export default function KnowledgeBasePage() {
             </h1>
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Bảng tra cứu các trường nguyên tử bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ FloraOS
+            Bảng tra cứu các trường nguyên tử bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function KnowledgeBasePage() {
             className="font-bold text-xs gap-1.5 shadow-xs"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Mở FloraOS Copilot (⌘K)</span>
+            <span>Mở smeOS Copilot (⌘K)</span>
           </Button>
         </div>
       </header>
@@ -108,7 +108,7 @@ export default function KnowledgeBasePage() {
           tips={[
             { icon: "⚡", text: "Atomic Fields: Sửa trực tiếp từng ô dữ liệu nguyên tử mà không làm hỏng cấu trúc" },
             { icon: "🛡️", text: "Aegis Resource: Giữ nguyên tắc cách ly dữ liệu tenant và tránh ghi đè DB vô nghĩa" },
-            { icon: "💬", text: "AI Copilot: Bấm 'Hỏi FloraOS Copilot' để được trợ lý ảo hướng dẫn từng bước 24/7" },
+            { icon: "💬", text: "AI Copilot: Bấm 'Hỏi smeOS Copilot' để được trợ lý ảo hướng dẫn từng bước 24/7" },
             { icon: "🖨️", text: `In ấn bảo mật: Luôn dùng phiếu ${ti.makerAction} giấu giá cho thợ và phiếu A6 cho shipper` },
           ]}
         />

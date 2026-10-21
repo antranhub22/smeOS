@@ -44,7 +44,7 @@ export function FloraOSGlobalCopilot() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: "FloraOS In-App Copilot",
+        title: "smeOS In-App Copilot",
         channel: "INTERNAL_DASHBOARD",
       }),
     })
@@ -112,7 +112,7 @@ export function FloraOSGlobalCopilot() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            title: "FloraOS In-App Copilot",
+            title: "smeOS In-App Copilot",
             channel: "INTERNAL_DASHBOARD",
           }),
         })
@@ -178,7 +178,7 @@ export function FloraOSGlobalCopilot() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            aria-label="Mở FloraOS Copilot"
+            aria-label="Mở smeOS Copilot"
             className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
           >
             {/* Chấm báo trạng thái AI trực tuyến */}
@@ -192,7 +192,7 @@ export function FloraOSGlobalCopilot() {
 
             {/* Tooltip bay sang trái khi hover — không chiếm chỗ cố định */}
             <div className="pointer-events-none absolute right-full mr-2.5 hidden sm:flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-text/90 px-2.5 py-1 text-caption font-bold text-white shadow-md backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity">
-              <span>FloraOS Copilot</span>
+              <span>smeOS Copilot</span>
               <kbd className="rounded bg-white/20 px-1 py-0.2 text-caption font-mono">⌘K</kbd>
             </div>
           </button>
@@ -210,7 +210,7 @@ export function FloraOSGlobalCopilot() {
               </span>
               <div>
                 <div className="text-xs font-extrabold text-foreground flex items-center gap-1.5">
-                  FloraOS Ops Copilot
+                  smeOS Ops Copilot
                   <span className="inline-block h-2 w-2 rounded-full bg-success animate-pulse" />
                 </div>
                 <div className="text-caption font-medium text-text-muted">Trợ lý Vận hành & Hướng dẫn SaaS cho tiệm hoa</div>
@@ -279,7 +279,7 @@ export function FloraOSGlobalCopilot() {
                 {sending && (
                   <div className="flex items-center gap-2 text-caption text-muted-foreground p-2 rounded-xl bg-muted/40 animate-pulse">
                     <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                    <span>FloraOS Copilot đang tra cứu và soạn câu trả lời...</span>
+                    <span>smeOS Copilot đang tra cứu và soạn câu trả lời...</span>
                   </div>
                 )}
               </>
