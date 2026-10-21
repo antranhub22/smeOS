@@ -877,3 +877,57 @@ Bảng hiện trạng 05/10/2026 của Thẻ chào (phía tiệm và phía khác
 | POST | `/storage/trash/:id/restore` | như trên | Khôi phục `{ type }` |
 | DELETE | `/storage/trash/:id` | như trên | Xoá vĩnh viễn, `?type=` bắt buộc |
 
+
+## 26. Bổ sung đợt smeOS đa ngành (17–21/10/2026)
+
+Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38`) nhưng chưa được ghi vào đặc tả. Mục này ghi theo mã thật sau đợt vá bảo mật ngày 21/10/2026. Năng lực là mã thật mà route kiểm. Với route công khai, cột năng lực ghi cơ chế gác thay cho mã.
+
+### 26.1 Dùng thử và khả dụng theo ngành
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP |
+| POST | `/business-profile/mock-data` | `F2` (hoặc `H4`/`N1`/`N12`) | Nạp hồ sơ và sản phẩm mẫu theo ngành `{ industry_key? }`. Ghi đè hồ sơ hiện có — xem phát hiện H9 của đợt rà soát |
+| GET | `/availability/board` | `L1` | `?month=YYYY-MM` — bảng khả dụng theo tháng (đặt phòng, khung giờ, tồn kho) |
+| POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ productId, checkInDate, checkOutDate, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |
+| DELETE | `/availability/blocks/:id` | `L3` | Bỏ chặn thủ công. Chỉ xoá được dòng không gắn đơn |
+| POST | `/public/brochure/:sendCode/check-availability` | — *(chủ phiên Thẻ chào)* | Kiểm khả dụng sản phẩm trên link chào. 120 lần/phút/IP |
+| POST | `/public/greeting-catalog/:id/check-availability` | — *(công khai)* | Kiểm khả dụng sản phẩm trên form đặt hàng của danh mục. 120 lần/phút/IP |
+
+### 26.2 Thẻ chào — xác nhận đơn và điều phối chuỗi
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| POST · DELETE | `/greeting-card/orders/:id/confirm-order` | `R11` | Điều hành xác nhận (POST) hoặc từ chối đơn `{ reason }` (DELETE, kích hoạt hoàn tiền) — Gate 1b, mô hình 1 cửa hàng |
+| GET · POST | `/greeting-card/orders/:id/chain-dispatch` | `R4` | GET: danh sách chi nhánh đã sàng lọc và xếp hạng theo địa chỉ giao. POST: duyệt danh sách và gửi lời mời 1:1 cho từng chi nhánh, link kèm token chi nhánh (26.3) |
+| POST | `/greeting-card/chain-branches/bulk-import` | `R4` | Nhập danh sách chi nhánh vào `settings.chain_branches` |
+| GET · PUT | `/greeting-card/integrations/staff-notifications` | `F2` | Đọc / sửa cấu hình kênh thông báo nhân viên trong phạm vi các kênh mà SaaS cho phép |
+| PUT | `/greeting-card/integrations/staff-notifications/saas-policy` | *(phiên nền tảng)* `N2` | Người vận hành nền tảng cấp danh sách kênh cho `{ targetOrganizationId, allowedChannels }`. Không nhận phiên tenant |
+| GET · POST | `/greeting-card/integrations/telegram-dispatch` | `F2` | GET: trạng thái bot, `linkCode` của tổ chức, và các nhóm **đã gửi mã đó**. POST `{ chatId, message? }`: gửi thử, chỉ tới nhóm đã liên kết hoặc đã cấu hình cho chi nhánh của tổ chức; nhóm khác → 422 |
+
+### 26.3 Thẻ Gia Công — Điều phối và link công khai cho chi nhánh
+
+Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<token>`. Token có dạng `<organizationId>.<hạn>.<HMAC(SESSION_SECRET)>`, ký cho đúng (tổ chức, mã đơn, chi nhánh), hạn 14 ngày (`subcontract-link-token.ts`). Mọi route công khai dưới đây kiểm token qua `loadSubcontractOrderForBranch`: tra đơn theo `(organization_id, code)` và chỉ chấp nhận đơn đang có phiên điều phối gia công. Token thiếu, sai, hết hạn, hoặc đơn không có phiên điều phối đều trả cùng một 404. Trang gửi token bằng header `x-subcontract-token` (POST) hoặc `?t=` (GET).
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | Thẻ Gia Công của chi nhánh. SĐT người nhận bị che cho tới khi đơn sẵn sàng giao. 120 lần/phút/IP |
+| POST | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | `{ action: CLAIM \| CANCEL \| COMMIT \| DELETE_QC, branchId, photoUrl? }`. `DELETE_QC` chỉ dành cho chi nhánh đã nhận đơn. 30 lần/phút/IP |
+| POST | `/public/subcontract/:orderCode/upload-qc` | — *(token, chi nhánh đã nhận)* | multipart `{ file, branchId }`. Ảnh thành phẩm ≤ 10MB (JPG/PNG/WebP), AI đối chiếu với ảnh mẫu |
+| POST | `/public/subcontract/:orderCode/submit-shipper` | — *(token, chi nhánh đã nhận)* | `{ branchId, shipperName, shipperPhone, shipperNote? }`. Chỉ khi đơn đã `READY` |
+| POST | `/public/subcontract/:orderCode/submit-delivery` | — *(token, chi nhánh đã nhận)* | multipart `{ file, branchId, note? }`. Ảnh giao hàng, AI kiểm; đạt thì đơn `DELIVERED/COMPLETED` |
+| POST | `/public/subcontract/:orderCode/request-bypass` | — *(token chi nhánh)* | `{ branchId, step, reason }`. Xin bỏ qua bằng chứng vì bất khả kháng, chờ Điều phối duyệt |
+| POST | `/coordinator/orders/:id/approve-bypass` | `R3` | Điều phối duyệt hoặc từ chối yêu cầu bỏ qua bằng chứng |
+| POST | `/coordinator/orders/:id/approve-customer-photo` | `R3` | Điều phối duyệt ảnh thành phẩm thay khách (M2b, người đầu tiên thắng) |
+| POST | `/coordinator/orders/:id/upload-qc-subcontract` | `R3` | Điều phối tải ảnh QC thay chi nhánh |
+| POST | `/coordinator/orders/:id/set-shipper` | `R5` | Điều phối nhập thông tin shipper thay chi nhánh |
+| POST | `/coordinator/orders/:id/confirm-delivery` | `R5` | Điều phối xác nhận đã giao, kèm ảnh giao hàng nếu có |
+| POST | `/internal/chain-dispatch-sweep` | — *(cron, header `x-cron-secret`)* | Quét nhắc mốc M1–M4 (≤ 50 đơn/lượt). Production thiếu `CRON_SECRET` → luôn 401. `?forceStep=` chỉ có hiệu lực ngoài production |
+
+### 26.4 Console Vận hành Nền tảng
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/platform/nav-matrix` | *(phiên nền tảng)* | Ma trận điều hướng mặc định theo ngành và các ghi đè đang áp dụng |
+| PUT | `/platform/nav-matrix` | `N12` | `{ overrides: { [industryKey]: navKey[] } }` — ẩn mục điều hướng theo ngành, áp cho mọi tổ chức của ngành đó. Ghi nhật ký kiểm toán nền tảng |
+| PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |
