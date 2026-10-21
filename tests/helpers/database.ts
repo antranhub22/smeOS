@@ -50,6 +50,7 @@ const TENANT_TABLES = [
   "template_overrides",
   "catalog_links",
   "product_inventory",
+  "product_bookings",
   "customer_consents",
   "customer_occasions",
   // Chức năng 12 — Điều phối đơn hàng (25/09/2026)

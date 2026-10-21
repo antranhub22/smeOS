@@ -1,5 +1,5 @@
 import { AvailabilityRepository } from "../infra/availability-repository"
-import { validationFailed } from "@/core/http/errors"
+import { notFound, validationFailed } from "@/core/http/errors"
 
 export interface ManualBlockInput {
   organizationId: string
@@ -22,6 +22,9 @@ export async function createManualBlock(
   if (input.checkInDate >= input.checkOutDate) {
     throw validationFailed({ checkOutDate: "Ngày kết thúc phải sau ngày bắt đầu" })
   }
+
+  // Sản phẩm của tổ chức khác → 404 như mọi tài nguyên ngoài tenant (luật 2)
+  if (!(await repo.productBelongsToOrganization(input.organizationId, input.productId))) throw notFound()
 
   return repo.createBooking({
     organizationId: input.organizationId,

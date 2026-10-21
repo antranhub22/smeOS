@@ -170,6 +170,15 @@ export class AvailabilityRepository {
     return id
   }
 
+  /** Sản phẩm có thuộc tổ chức không — `productId` đến từ body, không được tin. */
+  async productBelongsToOrganization(organizationId: string, productId: string): Promise<boolean> {
+    const row = await this.db.products.findFirst({
+      where: { id: productId, organization_id: organizationId },
+      select: { id: true },
+    })
+    return row !== null
+  }
+
   /** Xóa manual block của admin (chỉ block có order_id = null) */
   async deleteManualBlock(organizationId: string, blockId: string): Promise<boolean> {
     if (this.db.product_bookings) {
