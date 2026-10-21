@@ -14,6 +14,7 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { prisma } from "@/core/tenancy/infra/prisma"
@@ -46,6 +47,7 @@ function sniffImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; mimeType:
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R5")
   const { id: orderId } = await context.params
 
   const repo = new SubcontractOrderRepository()

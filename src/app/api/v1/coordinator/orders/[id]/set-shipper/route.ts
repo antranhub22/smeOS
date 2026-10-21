@@ -4,7 +4,7 @@
  * Coordinator-Stream M3: Điều phối viên trực tiếp nhập thông tin shipper thay cửa hàng.
  * Hành động này triệt tiêu (First-Wins Mutex) toàn bộ reminder M3 đang pending.
  *
- * Yêu cầu: Session đăng nhập với capability "coordinator_subcontract_act".
+ * Yêu cầu: Session đăng nhập có mã năng lực R5.
  */
 
 import { randomUUID } from "crypto"
@@ -12,6 +12,7 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { log } from "@/core/observability/log"
@@ -35,6 +36,7 @@ const setShipperSchema = z.object({
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R5")
   const { id: orderId } = await context.params
 
   const repo = new SubcontractOrderRepository()

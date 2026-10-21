@@ -4,7 +4,7 @@
  * Coordinator-Stream M2: Điều phối viên tự upload ảnh thành phẩm thay cho cửa hàng.
  * Hành động này triệt tiêu (First-Wins Mutex) toàn bộ reminder M2 đang pending.
  *
- * Yêu cầu: Session đăng nhập với capability "coordinator_subcontract_act"
+ * Yêu cầu: Session đăng nhập có mã năng lực R3
  * hoặc "can_upload_qc_photo" (fallback: bất kỳ member có vai coordinator).
  */
 
@@ -13,6 +13,7 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { prisma } from "@/core/tenancy/infra/prisma"
@@ -41,6 +42,7 @@ function sniffImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; mimeType:
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R3")
   const { id: orderId } = await context.params
 
   const repo = new SubcontractOrderRepository()

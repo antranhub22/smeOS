@@ -14,6 +14,7 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { log } from "@/core/observability/log"
@@ -32,6 +33,7 @@ const decisionSchema = z.object({
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R3")
   const { id: orderId } = await context.params
 
   const body = await request.json().catch(() => ({}))
