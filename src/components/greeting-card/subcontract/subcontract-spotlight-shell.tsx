@@ -165,10 +165,13 @@ export function SubcontractSpotlightShell({
 
   const [activeStep, setActiveStep] = useState<SubcontractStepId>(defaultStep)
 
-  // Cập nhật activeStep khi trạng thái bên ngoài thay đổi (ví dụ sau khi chốt đơn hoặc tải ảnh)
-  useEffect(() => {
+  // Cập nhật activeStep khi trạng thái bên ngoài thay đổi (ví dụ sau khi chốt đơn hoặc tải ảnh) —
+  // điều chỉnh ngay lúc render thay vì setState trong effect
+  const [syncedDefaultStep, setSyncedDefaultStep] = useState<SubcontractStepId>(defaultStep)
+  if (syncedDefaultStep !== defaultStep) {
+    setSyncedDefaultStep(defaultStep)
     setActiveStep(defaultStep)
-  }, [defaultStep])
+  }
 
   return (
     <div className="w-full max-w-lg mx-auto bg-surface rounded-2xl border border-border shadow-md overflow-hidden flex flex-col">

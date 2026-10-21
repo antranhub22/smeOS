@@ -64,10 +64,8 @@ export function SubcontractStepQc({
   const [qcSuccessMsg, setQcSuccessMsg] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [currentQcPhotos, setCurrentQcPhotos] = useState<string[]>(qcPhotos)
-
-  React.useEffect(() => {
-    setCurrentQcPhotos(qcPhotos)
-  }, [qcPhotos])
+  const [syncedQcPhotos, setSyncedQcPhotos] = useState<string[]>(qcPhotos) // máy chủ trả ảnh mới → đồng bộ lúc render
+  if (syncedQcPhotos !== qcPhotos) { setSyncedQcPhotos(qcPhotos); setCurrentQcPhotos(qcPhotos) }
 
   function handleTriggerFileInput() {
     setErrorMsg(null)
