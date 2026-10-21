@@ -1,5 +1,5 @@
 import { AvailabilityRepository } from "../infra/availability-repository"
-import { notFound, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, validationFailed } from "@/core/http/errors"
 
 export interface ManualBlockInput {
   organizationId: string
@@ -26,7 +26,7 @@ export async function createManualBlock(
   // Sản phẩm của tổ chức khác → 404 như mọi tài nguyên ngoài tenant (luật 2)
   if (!(await repo.productBelongsToOrganization(input.organizationId, input.productId))) throw notFound()
 
-  return repo.createBooking({
+  const id = await repo.createBooking({
     organizationId: input.organizationId,
     productId: input.productId,
     orderId: null, // null biểu thị admin block thủ công
@@ -34,6 +34,8 @@ export async function createManualBlock(
     checkOutDate: input.checkOutDate,
     note: input.note?.trim() || "Chặn thủ công (Bảo trì / Giữ chỗ)",
   })
+  if (!id) throw conflict("Khoảng ngày này đã có đặt chỗ hoặc đang bị chặn. Vui lòng chọn khoảng ngày khác.")
+  return id
 }
 
 export async function removeManualBlock(
