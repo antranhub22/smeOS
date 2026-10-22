@@ -145,7 +145,8 @@ export function parsePricing(attributes: unknown): ProductPricing {
     })
   return {
     mode,
-    priceVnd: mode === "FIXED" ? money(p.price_vnd) ?? legacyPrice : null,
+    // `attributes.price` đi trước: nhập Excel mẫu cũ chỉ đổi cột giá vẫn ăn đúng
+    priceVnd: mode === "FIXED" ? legacyPrice ?? money(p.price_vnd) : null,
     peakPriceVnd: mode === "FIXED" ? money(p.peak_price_vnd) : null,
     dimensions,
     rows,

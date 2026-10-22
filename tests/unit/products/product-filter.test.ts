@@ -133,3 +133,24 @@ describe("Bộ lọc sản phẩm Mẫu Hoa: Giá, Dịp & Tìm kiếm", () => {
     expect(sortedDesc[0]!.price_vnd).toBe(2_412_000)
   })
 })
+
+describe("lọc / sắp xếp theo khoảng giá", () => {
+  const ranged = {
+    id: "r", name: "Bó theo size", code: "R1", category: null, price_vnd: 400000,
+    attributes: { price: 400000, pricing: { mode: "RANGE", dimensions: [{ key: "S", label: "Kích cỡ", values: ["Nhỏ", "Lớn"] }], rows: [{ values: ["Nhỏ"], price_vnd: 400000 }, { values: ["Lớn"], price_vnd: 1200000 }] } },
+  }
+  const contact = { id: "c", name: "Kệ", code: "C1", category: null, price_vnd: null, attributes: { pricing: { mode: "CONTACT" } } }
+
+  it("khoảng giá giao với khoảng lọc thì khớp; Liên hệ không khớp bộ lọc giá", () => {
+    expect(matchProductPrice({ min: 400000, max: 1200000 }, "1m_2m", null, null)).toBe(true)
+    expect(matchProductPrice({ min: 400000, max: 1200000 }, "over_2m", null, null)).toBe(false)
+    const out = filterAndSortProducts([ranged, contact], { ...DEFAULT_FILTER_STATE, priceRange: "1m_2m" })
+    expect(out.map((p) => p.id)).toEqual(["r"])
+  })
+
+  it("giá cao → thấp theo giá cao nhất, Liên hệ xếp cuối", () => {
+    const plain = { id: "p", name: "Bó", code: "P1", category: null, price_vnd: 900000, attributes: null }
+    const out = filterAndSortProducts([plain, contact, ranged], { ...DEFAULT_FILTER_STATE, sortBy: "price_desc" })
+    expect(out.map((p) => p.id)).toEqual(["r", "p", "c"])
+  })
+})
