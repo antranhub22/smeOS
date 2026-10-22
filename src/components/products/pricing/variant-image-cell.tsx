@@ -13,7 +13,6 @@ interface Props {
 /** Ảnh riêng của một phiên bản: tải lên kho ảnh, lưu mã ảnh (máy chủ ký đường dẫn khi khách xem). */
 export function VariantImageCell({ label, assetId, onChange }: Props) {
   const ref = useRef<HTMLInputElement>(null)
-  const [preview, setPreview] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -23,7 +22,6 @@ export function VariantImageCell({ label, assetId, onChange }: Props) {
     setError(null)
     try {
       const uploaded = await uploadImageFile(file)
-      setPreview(URL.createObjectURL(file))
       onChange(uploaded.assetId)
     } catch {
       setError("Tải ảnh lỗi")
@@ -37,13 +35,9 @@ export function VariantImageCell({ label, assetId, onChange }: Props) {
     <div className="flex items-center gap-1">
       {assetId ? (
         <>
-          {preview ? (
-            // eslint-disable-next-line @next/next/no-img-element -- xem trước ảnh vừa chọn trên máy
-            <img src={preview} alt={`Ảnh ${label}`} className="h-9 w-9 rounded-lg object-cover" />
-          ) : (
-            <span className="text-caption font-semibold text-success">Đã có ảnh</span>
-          )}
-          <button type="button" aria-label={`Bỏ ảnh ${label}`} onClick={() => { setPreview(null); onChange(null) }} className="rounded-full p-1 text-text-muted hover:text-danger">
+          {/* Không dựng ảnh từ file vừa chọn trên máy (CodeQL: DOM text → HTML); khách thấy ảnh đã ký từ kho */}
+          <span className="text-caption font-semibold text-success">Đã có ảnh</span>
+          <button type="button" aria-label={`Bỏ ảnh ${label}`} onClick={() => onChange(null)} className="rounded-full p-1 text-text-muted hover:text-danger">
             <X className="h-4 w-4" aria-hidden />
           </button>
         </>
