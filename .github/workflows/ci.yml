@@ -41,7 +41,7 @@ jobs:
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22.x"
           cache: "npm"
@@ -102,7 +102,7 @@ jobs:
           echo "${GITLEAKS_SHA256}  gitleaks.tgz" | sha256sum -c -
           tar xzf gitleaks.tgz gitleaks
           ./gitleaks git . --no-banner --redact --exit-code 1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22.x"
       # Chỉ chặn lỗ hổng CRITICAL ở dependency chạy trên production. 12 lỗi `high` có sẵn
@@ -148,7 +148,7 @@ jobs:
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22.x"
           cache: "npm"
