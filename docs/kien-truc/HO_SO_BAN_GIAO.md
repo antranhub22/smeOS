@@ -80,10 +80,14 @@ Chờ PO quyết:
 | — | Kiểm thử xâm nhập độc lập | Thuê bên thứ ba trước khi ký với khách |
 
 Việc làm tay một lần trước khi đưa khách vào:
-- Đổi mật khẩu 3 tài khoản seed, thu hồi phiên của chúng.
+- Dọn tài khoản (PO 22/10/2026): chỉ giữ `tuans2@dev.com` làm superadmin nền tảng (đủ mã N), xoá hẳn mọi tài khoản khác. Production chưa có khách thật. Tạo export CSDL trước, rồi trong Render Shell của `smeos-web` chạy:
+  1. `npm run don-tai-khoan -- --giu=tuans2@dev.com` — chỉ xem danh sách sẽ xoá.
+  2. `MAT_KHAU_MOI='<mật khẩu mới ≥ 12 ký tự>' npm run don-tai-khoan -- --giu=tuans2@dev.com --xac-nhan` — xoá thật, đổi mật khẩu, cấp mã.
+
+  Không hoàn tác được. Tổ chức hết thành viên được liệt kê nhưng không bị xoá.
 - Đặt `CRON_SECRET` (giống nhau ở web và cron) và `NEXT_PUBLIC_APP_URL`.
 - Bật thông báo lỗi của Render (`VAN_HANH_SU_CO_VA_SAO_LUU.md` mục 2).
 - Bật branch protection cho `main` (bắt buộc PR, CI xanh, ≥ 1 người duyệt).
 - Bật secret scanning và push protection trong *Settings → Code security*.
-- Cấp mã `N1`/`N2`/`N12` cho người vận hành.
+- Người vận hành nền tảng: chỉ `tuans2@dev.com` (đủ mã N, cấp bằng lệnh dọn tài khoản ở trên). Thêm người sau này: `npm run gan-van-hanh-nen-tang -- --email=… --capabilities=…`.
 - Deploy đầu tiên theo `VAN_HANH_CAP_NHAT_CSDL.md` mục 4: export CSDL trước, rồi đọc log `db-deploy`.
