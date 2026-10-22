@@ -1,8 +1,6 @@
-"use client"
-
-import React from "react"
-import { SubcontractSpotlightShell } from "./subcontract-spotlight-shell"
 import type { SubcontractDispatchStatus } from "@/modules/greeting-card/domain/subcontract-order"
+
+/** Kiểu dữ liệu Thẻ gia công của chi nhánh (trang /subcontract/[orderCode]). */
 
 export interface SubcontractCardProduct {
   name: string
@@ -10,6 +8,14 @@ export interface SubcontractCardProduct {
   bomItems?: Array<{ name: string; quantity: number; unit: string; role?: string }>
 }
 
+export interface DeliveryProofInfo {
+  photoUrls: string[]
+  note?: string | null | undefined
+  deliveredAt?: string | null | undefined
+  deliveredByBranch?: string | null | undefined
+}
+
+/** Dữ liệu chung của thẻ mà API `GET /public/subcontract/[orderCode]` trả về. */
 export interface SubcontractClaimCardProps {
   orderCode: string
   branchId: string
@@ -33,11 +39,4 @@ export interface SubcontractClaimCardProps {
   onCancelClaim: () => Promise<void>
   onCommitEarly?: (() => Promise<void>) | undefined
   onQcUploaded?: (() => void) | undefined
-}
-
-/**
- * Thẻ Tiếp nhận Gia công Chuỗi theo chuẩn Spotlight (Forwarder component cho SubcontractSpotlightShell).
- */
-export function SubcontractClaimCard(props: SubcontractClaimCardProps) {
-  return <SubcontractSpotlightShell {...props} />
 }

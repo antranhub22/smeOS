@@ -14,8 +14,8 @@ import {
   getGraceSecondsRemaining,
   type SubcontractDispatchStatus,
 } from "@/modules/greeting-card/domain/subcontract-order"
-import type { SubcontractCardProduct } from "./subcontract-claim-card"
-import type { DeliveryProofInfo } from "./delivery-proof-card"
+import type { SubcontractCardProduct } from "./subcontract-card-types"
+import type { DeliveryProofInfo } from "./subcontract-card-types"
 
 import type { StepMilestoneDeadlines } from "@/modules/greeting-card/domain/subcontract-countdown"
 import type { StepBypassRequestInfo } from "./subcontract-bypass-control"

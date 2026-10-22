@@ -16,7 +16,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import type { DeliveryProofInfo } from "./delivery-proof-card"
+import type { DeliveryProofInfo } from "./subcontract-card-types"
 import { SubcontractPodPreview } from "./subcontract-pod-preview"
 import { SubcontractPodSuccess } from "./subcontract-pod-success"
 import { useStepCountdown } from "./use-step-countdown"
@@ -146,7 +146,7 @@ export function SubcontractStepProof({
 
   return (
     <section
-      aria-label="Công đoạn 4: Bằng chứng giao hàng & Nghiệm thu (POD)"
+      aria-label="Công đoạn 4: Bằng chứng giao hàng & Nghiệm thu"
       className={cn(
         "rounded-2xl border transition-all duration-300 overflow-hidden",
         isActive
@@ -182,7 +182,7 @@ export function SubcontractStepProof({
           </div>
           <div>
             <span className="text-body-sm font-extrabold text-foreground block">
-              4. Bằng chứng giao hàng & Nghiệm thu (POD)
+              4. Bằng chứng giao hàng & Nghiệm thu
             </span>
             <span className="text-caption text-text-muted">
               {isActuallyDelivered
@@ -204,7 +204,7 @@ export function SubcontractStepProof({
               <StepCountdownBadge countdown={countdown} labelPrefix="Giao trước" />
             ) : (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
-                <Clock size={12} /> Chờ ảnh POD
+                <Clock size={12} /> Chờ ảnh giao hàng
               </span>
             )
           ) : (
@@ -237,7 +237,7 @@ export function SubcontractStepProof({
             <div className="flex items-center gap-2">
               <Clock size={16} className={countdown.isOverdue ? "text-danger" : "text-primary"} />
               <span>
-                Hạn chót giao hàng (POD): <strong>{countdown.targetTimeStr || "Đang tính"}</strong>
+                Hạn chót giao hàng: <strong>{countdown.targetTimeStr || "Đang tính"}</strong>
               </span>
             </div>
             <strong className={cn("text-body-sm font-black", countdown.isOverdue ? "text-danger" : "text-primary")}>
@@ -289,7 +289,7 @@ export function SubcontractStepProof({
               >
                 <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
                   <Camera size={20} />
-                  <span>CHỤP ẢNH BẰNG CHỨNG GIAO HÀNG (POD)</span>
+                  <span>CHỤP ẢNH BẰNG CHỨNG GIAO HÀNG</span>
                 </div>
                 <span className="text-caption text-text-muted">
                   Ảnh chụp người nhận nhận hoa hoặc ảnh hoa tại cửa/cổng địa chỉ nhận
@@ -335,7 +335,7 @@ export function SubcontractStepProof({
           orderCode={orderCode}
           branchId={branchId}
           stepKey="POD"
-          stepTitle="Bằng chứng giao hàng (POD)"
+          stepTitle="Bằng chứng giao hàng"
           existingRequest={bypassRequest}
           isCompleted={isActuallyDelivered}
           onBypassRequested={onBypassRequested}

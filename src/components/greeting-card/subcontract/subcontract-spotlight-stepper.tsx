@@ -18,7 +18,7 @@ export const SUBCONTRACT_STEPS: SubcontractStepMeta[] = [
   { id: 1, number: 1, shortTitle: "Nhận đơn", fullTitle: "Tiếp nhận & Chốt", hint: "Xác nhận nhận đơn" },
   { id: 2, number: 2, shortTitle: "Kiểm định QC", fullTitle: "Chế tác & QC", hint: "Tải ảnh thành phẩm" },
   { id: 3, number: 3, shortTitle: "Giao Shipper", fullTitle: "Bàn giao Shipper", hint: "Thông tin vận chuyển" },
-  { id: 4, number: 4, shortTitle: "Đã giao (POD)", fullTitle: "Bằng chứng POD", hint: "Nghiệm thu hoàn tất" },
+  { id: 4, number: 4, shortTitle: "Đã giao", fullTitle: "Bằng chứng giao hàng", hint: "Nghiệm thu hoàn tất" },
 ]
 
 export interface SubcontractStepDeadlinesMap {

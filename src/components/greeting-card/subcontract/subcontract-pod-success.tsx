@@ -2,7 +2,7 @@
 
 import React from "react"
 import { CheckCircle2, ImageIcon } from "lucide-react"
-import type { DeliveryProofInfo } from "./delivery-proof-card"
+import type { DeliveryProofInfo } from "./subcontract-card-types"
 
 export interface SubcontractPodSuccessProps {
   existingDeliveryProof?: DeliveryProofInfo | null | undefined
@@ -32,14 +32,14 @@ export function SubcontractPodSuccess({
       {existingDeliveryProof?.photoUrls && existingDeliveryProof.photoUrls.length > 0 && (
         <div className="flex flex-col gap-1.5 pt-2 border-t border-success/20">
           <span className="text-caption font-bold text-text-muted flex items-center gap-1">
-            <ImageIcon size={13} /> Ảnh bằng chứng giao hàng (POD):
+            <ImageIcon size={13} /> Ảnh bằng chứng giao hàng:
           </span>
           <div className="grid grid-cols-3 gap-2">
             {existingDeliveryProof.photoUrls.map((url, idx) => (
               <div key={idx} className="relative h-24 rounded-lg overflow-hidden border border-border shadow-xs">
                 <img
                   src={url.startsWith("http") || url.startsWith("/api/v1/storage/") ? url : `/api/v1/storage/${url}`}
-                  alt={`Ảnh POD #${idx + 1}`}
+                  alt={`Ảnh giao hàng #${idx + 1}`}
                   className="w-full h-full object-cover"
                 />
               </div>
