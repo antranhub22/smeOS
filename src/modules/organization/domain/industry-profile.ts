@@ -448,3 +448,8 @@ export function listAllIndustryPlugins(): readonly IndustryPluginContract[] {
 
 export * from "./industry-plugin-contract"
 export * from "./industries"
+
+/** Mã ngành có trong registry (đăng ký / dùng thử chỉ nhận mã này — ngành bị khoá ngay sau khi chọn). */
+export function isKnownIndustryKey(key: string | null | undefined): key is string {
+  return typeof key === "string" && key in INDUSTRY_REGISTRY
+}

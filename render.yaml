@@ -93,6 +93,20 @@ services:
         value: "true"
       - key: TELEGRAM_DISPATCH_BOT_TOKEN
         sync: false
+      # Toạ độ địa chỉ giao cho điều phối chuỗi (thiếu: xếp hạng theo phường/quận)
+      - key: GOONG_API_KEY
+        sync: false
+      # Zalo OA — gửi lời mời/nhắc việc cho chi nhánh qua Zalo
+      - key: ZALO_OA_APP_ID
+        sync: false
+      - key: ZALO_OA_APP_SECRET
+        sync: false
+      - key: ZALO_OA_REFRESH_TOKEN
+        sync: false
+      - key: ZALO_OA_WEBHOOK_SECRET
+        sync: false
+      - key: ZALO_OA_FOLLOW_URL
+        sync: false
       - key: TELEGRAM_STAFF_BOT_TOKEN
         sync: false
 

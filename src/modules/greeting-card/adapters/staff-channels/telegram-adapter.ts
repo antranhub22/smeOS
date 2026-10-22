@@ -1,4 +1,5 @@
 import { log } from "@/core/observability/log"
+import { safeRemoteUrl } from "@/lib/safe-remote-url"
 import type {
   ChannelSendResult,
   EditMessagePayload,
@@ -26,24 +27,7 @@ function normalizeTelegramButtonUrl(rawUrl: string): string {
 }
 
 /** URL ảnh Telegram được phép tự tải: chỉ https, không phải địa chỉ máy nội bộ. */
-export function safeRemotePhotoUrl(raw: string | null | undefined): string | null {
-  if (!raw) return null
-  try {
-    const url = new URL(raw.trim())
-    if (url.protocol !== "https:") return null
-    const host = url.hostname.toLowerCase()
-    const privateHost =
-      host === "localhost" ||
-      host.endsWith(".local") ||
-      host.endsWith(".internal") ||
-      /^(127\.|10\.|192\.168\.|169\.254\.|0\.)/.test(host) ||
-      /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
-      host.startsWith("[")
-    return privateHost ? null : url.toString()
-  } catch {
-    return null
-  }
-}
+export const safeRemotePhotoUrl = safeRemoteUrl
 
 export class TelegramStaffAdapter implements IStaffNotificationProvider {
   readonly channel = "TELEGRAM" as const
