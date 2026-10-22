@@ -39,7 +39,7 @@ export function OnboardingProgressBar() {
               </span>
             </div>
             <div className="text-xs text-muted-foreground">
-              Đã hoàn thành {completedCount}/{steps.length} tiêu chuẩn nhập liệu cốt lõi của FloraOS
+              Đã hoàn thành {completedCount}/{steps.length} tiêu chuẩn nhập liệu cốt lõi của smeOS
             </div>
           </div>
         </div>

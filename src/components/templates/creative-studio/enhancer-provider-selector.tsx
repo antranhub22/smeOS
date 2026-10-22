@@ -57,7 +57,7 @@ export const ENHANCER_PROVIDERS: EnhancerProviderOption[] = [
   {
     id: "studio",
     name: "Studio cục bộ (dự phòng)",
-    desc: "Chạy trên máy chủ FloraOS: tách nền, xoá watermark, ghép phông Studio. Chất lượng thấp hơn nhà cung cấp — dùng khi cần xoá watermark hoặc tiết kiệm.",
+    desc: "Chạy trên máy chủ smeOS: tách nền, xoá watermark, ghép phông Studio. Chất lượng thấp hơn nhà cung cấp — dùng khi cần xoá watermark hoặc tiết kiệm.",
     badge: "Dự phòng",
     tone: "accent",
     icon: Sparkles,

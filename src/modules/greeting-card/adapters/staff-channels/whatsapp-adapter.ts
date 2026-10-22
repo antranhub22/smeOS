@@ -26,6 +26,7 @@ export class WhatsAppStaffAdapter implements IStaffNotificationProvider {
     try {
       const res = await fetch(`https://graph.facebook.com/v20.0/${phoneNumberId}/messages`, {
         method: "POST",
+        signal: AbortSignal.timeout(10_000), // không treo tiến trình nền khi nhà cung cấp chậm
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,

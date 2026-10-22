@@ -119,6 +119,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
     const { verifyPodPhotoWithAi } = await import("@/modules/greeting-card/use-cases/verify-pod-photo-ai")
     const aiVerify = await verifyPodPhotoWithAi({
+      organizationId: order.organization_id,
+      orderId: order.id,
       productName,
       sampleImageUrl,
       qcImageUrl,
@@ -126,7 +128,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
       podPhotoMimeType: sniffed.mimeType,
     })
 
-    if (!aiVerify.isMatch) {
+    // Điều phối là người duyệt: chỉ chặn khi AI kết luận SAI ảnh; AI không chạy được thì người tự quyết
+    if (aiVerify.verdict === "MISMATCH") {
       throw unprocessable(
         `❌ AI phát hiện ảnh giao hàng không hợp lệ: ${aiVerify.reason} (${aiVerify.confidenceScore}%). Vui lòng kiểm tra lại ảnh chụp!`
       )

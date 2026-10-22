@@ -1632,7 +1632,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
           )}
           <p className="mt-1.5 text-caption text-text-muted leading-relaxed">
             {sceneEngine === "cloud_provider"
-              ? `Nhà cung cấp (theo thứ tự ưu tiên của tiệm: fal / Stability / Gemini) dựng cảnh + hoà sáng quanh bó hoa thật; FloraOS đo lại hình dáng, cấu trúc, màu. ${scenePlan?.mode === "AUTHENTIC" ? "AUTHENTIC: chỉ dựng nền và ánh sáng, không thêm đạo cụ vào bó hoa. " : ""}Mọi bên lỗi thì lùi phông cục bộ, ghi rõ trên ảnh và hoàn phần chênh credit.`
+              ? `Nhà cung cấp (theo thứ tự ưu tiên của tiệm: fal / Stability / Gemini) dựng cảnh + hoà sáng quanh bó hoa thật; smeOS đo lại hình dáng, cấu trúc, màu. ${scenePlan?.mode === "AUTHENTIC" ? "AUTHENTIC: chỉ dựng nền và ánh sáng, không thêm đạo cụ vào bó hoa. " : ""}Mọi bên lỗi thì lùi phông cục bộ, ghi rõ trên ảnh và hoàn phần chênh credit.`
               : "Dự phòng: mỗi cảnh dùng phông Studio dựng sẵn gần nhất (6 phông) — rẻ hơn nhưng chất lượng thấp hơn nhà cung cấp."}
           </p>
         </div>

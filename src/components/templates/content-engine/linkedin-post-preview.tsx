@@ -108,7 +108,7 @@ export function LinkedInPreview({
               {productName}
             </div>
             <span className="text-caption font-semibold text-[var(--color-linkedin)] bg-ocean-50 dark:bg-ocean-950/60 px-3 py-1 rounded-full border border-ocean-200/50">
-              B2B Premium Floral Styling · FloraOS
+              B2B Premium Floral Styling · smeOS
             </span>
           </div>
         )}

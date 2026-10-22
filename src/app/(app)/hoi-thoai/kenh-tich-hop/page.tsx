@@ -135,7 +135,7 @@ export default function ChatChannelsIntegrationPage() {
         <div className="flex items-center gap-2">
           <Badge tone="neutral" className="gap-1 text-xs">
             <Coins className="h-3.5 w-3.5" />
-            Cơ chế định giá & Thu phí FloraOS
+            Cơ chế định giá & Thu phí smeOS
           </Badge>
         </div>
       </header>
@@ -145,7 +145,7 @@ export default function ChatChannelsIntegrationPage() {
         <FeatureGuidanceCard
           tag="HƯỚNG DẪN TÍCH HỢP ĐA KÊNH"
           title="Kết Nối Trợ Lý Ảo Đa Điểm Chạm & Kiểm Soát Biểu Phí Nền Tảng"
-          description="Chủ cửa hàng có toàn quyền lựa chọn kích hoạt AI Assistant trên E-Catalog, Landing Page, Facebook Messenger, Zalo OA hoặc Website riêng. FloraOS-core áp dụng cơ chế trừ credit minh bạch theo gói thuê bao và lượt tin nhắn tư vấn."
+          description="Chủ cửa hàng có toàn quyền lựa chọn kích hoạt AI Assistant trên E-Catalog, Landing Page, Facebook Messenger, Zalo OA hoặc Website riêng. smeOS áp dụng cơ chế trừ credit minh bạch theo gói thuê bao và lượt tin nhắn tư vấn."
           tips={[
             "⚡ E-Catalog & Landing Page: Miễn phí kích hoạt, trừ credit theo lượt tin nhắn AI.",
             "💰 Facebook & Zalo OA: Phí thuê bao tháng (50 - 70 credit/tháng) tự động gia hạn.",

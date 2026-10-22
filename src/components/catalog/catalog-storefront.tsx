@@ -347,7 +347,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
       {showShareModal && <ShareCatalogModal slug={catalog.slug} name={catalog.name} description={catalog.description} onClose={() => setShowShareModal(false)} />}
       <footer className="mt-12 text-center text-xs text-text-muted max-w-4xl mx-auto px-4">
         <div className="border-t border-border pt-6">
-          <p className="font-medium text-text-muted">{shop.name} — Nền tảng Hoa tươi Thông minh FloraOS</p>
+          <p className="font-medium text-text-muted">{shop.name} — Nền tảng Hoa tươi Thông minh smeOS</p>
         </div>
       </footer>
     </div>

@@ -788,7 +788,7 @@ export function SalesPitchCard({
                     value={shopName}
                     onChange={(e) => setShopName(e.target.value)}
                     className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="FloraOS Boutique"
+                    placeholder="smeOS Boutique"
                   />
                 </div>
               </div>

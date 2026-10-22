@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   // Ảnh xem trước khi dán link vào Zalo/Facebook cần URL tuyệt đối; thiếu dòng này
   // Next.js rơi về http://localhost:<PORT> ở mọi môi trường ngoài Vercel.
   ...(appUrl ? { metadataBase: new URL(appUrl) } : {}),
-  title: "FloraOS",
+  title: "smeOS",
   description: "Nền tảng cho cửa hàng hoa",
 }
 

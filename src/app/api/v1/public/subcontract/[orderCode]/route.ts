@@ -62,9 +62,8 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   const firstItemMeta = (firstItem?.metadata as Record<string, unknown> | null) ?? {}
 
   const productName = firstItem?.description || (snapshot.name as string | undefined) || "Sản phẩm đặt gia công"
-  const forwardedHost = request.headers.get("x-forwarded-host") || request.headers.get("host") || url.host
-  const forwardedProto = request.headers.get("x-forwarded-proto") || (forwardedHost.includes("localhost") ? "http" : "https")
-  const baseOrigin = `${forwardedProto}://${forwardedHost}`
+  // URL công khai đã cấu hình, không tin header Host do client gửi (rà soát M7)
+  const baseOrigin = process.env.NEXT_PUBLIC_APP_URL || url.origin
 
   const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
   const productImageUrl = await resolveSubcontractSamplePhoto(order, { baseUrl: baseOrigin })

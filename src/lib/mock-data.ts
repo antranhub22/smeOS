@@ -174,6 +174,8 @@ export type MockSession = {
   orgName: string
   workspaceKind: WorkspaceKind
   capabilities: string[]
+  /** Mã năng lực nền tảng (N…) nếu người dùng là người vận hành nền tảng — rỗng nếu không. */
+  platformCapabilities?: string[] | undefined
   organization?: {
     id: string
     name?: string

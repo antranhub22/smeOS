@@ -166,6 +166,8 @@ export async function uploadBrochureProductPhoto(
       const qcMimeType = assetRow?.mime_type || "image/jpeg"
 
       return await verifyQcPhotoWithAi({
+        organizationId: ctx.organizationId,
+        orderId: orderId,
         productName,
         sampleImageUrl,
         qcPhotoBytes: qcBytes,

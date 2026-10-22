@@ -1,6 +1,9 @@
-import { log } from "@/core/observability/log"
+import type { PhotoMatchVerdict } from "../adapters/photo-match-vision-adapter"
+import { loadImageForAi, runPhotoMatch } from "./run-photo-match"
 
 export interface VerifyPodPhotoInput {
+  organizationId: string
+  orderId: string
   productName: string
   sampleImageUrl?: string | null | undefined
   qcImageUrl?: string | null | undefined
@@ -8,78 +11,25 @@ export interface VerifyPodPhotoInput {
   podPhotoMimeType: string
 }
 
-export interface VerifyPodPhotoResult {
-  isMatch: boolean
-  confidenceScore: number // 0 - 100
-  verdict: "MATCH" | "MISMATCH" | "UNCERTAIN"
-  reason: string
-}
+export type VerifyPodPhotoResult = PhotoMatchVerdict
 
 /**
  * verifyPodPhotoWithAi
  *
- * Sử dụng AI Vision để đối chiếu ảnh giao hàng (Proof of Delivery - POD) do cửa hàng/shipper tải lên
- * với ảnh thành phẩm (QC) và ảnh mẫu sản phẩm ban đầu.
- *
- * Kiểm tra:
- * 1. Ảnh có đúng là bằng chứng giao hàng (người nhận, trước cửa, bàn giao, xe giao hàng, phiếu nhận) không?
- * 2. Sản phẩm trong ảnh giao có tương đồng với ảnh thành phẩm QC / mẫu đơn hàng không?
- * 3. Chặn các ảnh rác, ảnh chụp màn hình vô nghĩa, ảnh không liên quan.
+ * Dùng AI Vision (qua gateway) kiểm ảnh giao hàng (POD) do cửa hàng/shipper tải lên, đối chiếu với
+ * ảnh thành phẩm (QC) và ảnh mẫu. Chặn ảnh rác/không liên quan. Lỗi AI → UNCERTAIN (isMatch=false):
+ * bản trước trả MATCH khi thiếu khoá hoặc AI lỗi, tức là cổng kiểm định tự mở (rà soát H6).
  */
 export async function verifyPodPhotoWithAi(input: VerifyPodPhotoInput): Promise<VerifyPodPhotoResult> {
-  const apiKey = process.env.OPENAI_API_KEY
-
-  if (!apiKey) {
-    log.warn("ai_pod_verify.no_api_key", { productName: input.productName })
-    return {
-      isMatch: true,
-      confidenceScore: 85,
-      verdict: "MATCH",
-      reason: "Hệ thống kiểm định an toàn nội bộ (Chế độ tự động)",
-    }
-  }
-
-  try {
-    const podBase64 = Buffer.from(input.podPhotoBytes).toString("base64")
-    const podDataUri = `data:${input.podPhotoMimeType};base64,${podBase64}`
-
-    // Chuẩn bị URL hoặc Data URI cho ảnh QC và ảnh mẫu gốc
-    const resolveImageUrl = async (imgUrl?: string | null): Promise<string | null> => {
-      if (!imgUrl) return null
-      if (imgUrl.startsWith("data:")) return imgUrl
-      if (imgUrl.startsWith("http://") || imgUrl.startsWith("https://")) {
-        try {
-          const res = await fetch(imgUrl, { signal: AbortSignal.timeout(5000) })
-          if (res.ok) {
-            const buf = await res.arrayBuffer()
-            const mime = res.headers.get("content-type") || "image/jpeg"
-            return `data:${mime};base64,${Buffer.from(buf).toString("base64")}`
-          }
-        } catch {
-          return imgUrl
-        }
-      }
-      return null
-    }
-
-    const [sampleDataUri, qcDataUri] = await Promise.all([
-      resolveImageUrl(input.sampleImageUrl),
-      resolveImageUrl(input.qcImageUrl),
-    ])
-
-    const messagesContent: Array<
-      | { type: "text"; text: string }
-      | { type: "image_url"; image_url: { url: string; detail?: "low" | "high" | "auto" } }
-    > = [
-      {
-        type: "text",
-        text: `Bạn là Chuyên gia Kiểm định Giao nhận (Proof of Delivery Auditor) của nền tảng quản lý đơn hàng smeOS.
+  const [sample, qc] = await Promise.all([loadImageForAi(input.sampleImageUrl), loadImageForAi(input.qcImageUrl)])
+  const photo = { mimeType: input.podPhotoMimeType, base64: Buffer.from(input.podPhotoBytes).toString("base64") }
+  const order = [sample ? "Mẫu Đặt Hàng Ban Đầu" : null, qc ? "Ảnh Thành Phẩm QC Trước Khi Giao" : null, "Ảnh Bàn Giao Hàng (POD)"].filter(Boolean)
+  const prompt = `Bạn là Chuyên gia Kiểm định Giao nhận (Proof of Delivery Auditor) của nền tảng quản lý đơn hàng smeOS.
 Nhiệm vụ của bạn là kiểm tra Ảnh Bàn Giao Hàng (POD - Proof of Delivery) do nhân viên giao hàng hoặc cửa hàng vừa chụp tải lên.
 
 Thông tin đơn hàng:
 - Tên sản phẩm: "${input.productName}"
-${qcDataUri ? "- Có kèm Ảnh [QC Thành Phẩm] để đối chiếu món hàng thực tế trước khi giao." : ""}
-${sampleDataUri ? "- Có kèm Ảnh [Mẫu Đặt Hàng Ban Đầu] để đối chiếu." : ""}
+- Thứ tự ảnh đính kèm: ${order.join(" → ")}. Ảnh CUỐI CÙNG là Ảnh Bàn Giao Hàng (POD) cần kiểm định.
 
 YÊU CẦU KIỂM ĐỊNH GIAO HÀNG (POD):
 1. Ảnh bàn giao hàng (POD) phải thể hiện bằng chứng giao nhận hợp lệ:
@@ -100,112 +50,17 @@ Trả về kết quả ĐÚNG ĐỊNH DẠNG JSON duy nhất (không dùng markd
   "confidenceScore": number, // 0 - 100
   "verdict": "MATCH" | "MISMATCH",
   "reason": "Giải thích ngắn gọn 1-2 câu tiếng Việt lý do đánh giá"
-}`,
-      },
-    ]
-
-    let photoIndex = 1
-    if (sampleDataUri) {
-      messagesContent.push({
-        type: "text",
-        text: `Ảnh [${photoIndex++}] — Mẫu Đặt Hàng Ban Đầu:`,
-      })
-      messagesContent.push({
-        type: "image_url",
-        image_url: { url: sampleDataUri, detail: "low" },
-      })
-    }
-
-    if (qcDataUri) {
-      messagesContent.push({
-        type: "text",
-        text: `Ảnh [${photoIndex++}] — Ảnh Thành Phẩm QC Trước Khi Giao:`,
-      })
-      messagesContent.push({
-        type: "image_url",
-        image_url: { url: qcDataUri, detail: "low" },
-      })
-    }
-
-    messagesContent.push({
-      type: "text",
-      text: `Ảnh [${photoIndex}] — Ảnh Bàn Giao Hàng (POD) Vừa Tải Lên Cần Kiểm Định:`,
-    })
-    messagesContent.push({
-      type: "image_url",
-      image_url: { url: podDataUri, detail: "low" },
-    })
-
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 12000)
-
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: messagesContent }],
-        response_format: { type: "json_object" },
-        max_tokens: 300,
-        temperature: 0.2,
-      }),
-      signal: controller.signal,
-    })
-
-    clearTimeout(timeoutId)
-
-    if (!res.ok) {
-      const errText = await res.text().catch(() => "")
-      log.warn("ai_pod_verify.api_error", { status: res.status, error: errText })
-      return {
-        isMatch: true,
-        confidenceScore: 80,
-        verdict: "MATCH",
-        reason: "Kiểm tra bàn giao thành công (Chế độ dự phòng khi AI bận)",
-      }
-    }
-
-    const json = (await res.json()) as {
-      choices?: Array<{ message?: { content?: string } }>
-    }
-    const rawContent = json.choices?.[0]?.message?.content?.trim() || "{}"
-    const parsed = JSON.parse(rawContent) as {
-      isMatch?: boolean
-      confidenceScore?: number
-      verdict?: "MATCH" | "MISMATCH"
-      reason?: string
-    }
-
-    const isMatch = Boolean(parsed.isMatch)
-    const confidenceScore = typeof parsed.confidenceScore === "number" ? parsed.confidenceScore : 85
-    const verdict = parsed.verdict === "MISMATCH" ? "MISMATCH" : isMatch ? "MATCH" : "MISMATCH"
-    const reason = parsed.reason || (isMatch ? "Ảnh bàn giao hàng hợp lệ." : "Ảnh bàn giao hàng không hợp lệ.")
-
-    log.info("ai_pod_verify.completed", {
-      productName: input.productName,
-      isMatch,
-      confidenceScore,
-      verdict,
-      reason,
-    })
-
-    return {
-      isMatch,
-      confidenceScore,
-      verdict,
-      reason,
-    }
-  } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : String(err)
-    log.warn("ai_pod_verify.exception", { error: errorMsg })
-    return {
-      isMatch: true,
-      confidenceScore: 75,
-      verdict: "MATCH",
-      reason: "Hệ thống kiểm định nội bộ xác nhận ảnh bàn giao hợp lệ.",
-    }
-  }
+}`
+  return runPhotoMatch({
+    organizationId: input.organizationId,
+    entity: { type: "order_pod_photo", id: input.orderId },
+    logKey: "ai_pod_verify",
+    uncertainReason: "Hệ thống kiểm định AI chưa sẵn sàng hoặc gặp sự cố. Vui lòng gửi yêu cầu bỏ qua bằng chứng để Điều phối duyệt.",
+    request: {
+      system: "Bạn là Chuyên gia Kiểm định Giao nhận. Luôn trả về đúng một đối tượng JSON.",
+      prompt,
+      images: [sample, qc, photo].filter((img): img is { mimeType: string; base64: string } => img !== null),
+      defaultReason: { match: "Ảnh bàn giao hàng hợp lệ.", mismatch: "Ảnh bàn giao hàng không hợp lệ." },
+    },
+  })
 }

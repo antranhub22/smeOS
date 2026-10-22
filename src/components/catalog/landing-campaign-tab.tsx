@@ -31,7 +31,7 @@ interface LandingCampaignTabProps {
 
 export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabProps) {
   const { business } = useTenantProfile()
-  const currentShopName = business?.display_name || "Tiệm hoa FloraOS"
+  const currentShopName = business?.display_name || "Tiệm hoa smeOS"
 
   // Phase: mode-selection → input → (executing via wizard) → published
   const [journeyPhase, setJourneyPhase] = useState<"mode-selection" | "input" | "wizard">("mode-selection")
@@ -56,7 +56,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
 
   const [generatedPackage, setGeneratedPackage] = useState<GeneratedLandingPackage | null>(() =>
     generateLandingPageContent({
-      shopName: "Tiệm hoa FloraOS",
+      shopName: "Tiệm hoa smeOS",
       occasionId: CAMPAIGN_OCCASIONS[0]?.id || "20-10",
       occasionLabel: CAMPAIGN_OCCASIONS[0]?.label || "Ngày Phụ Nữ Việt Nam 20/10",
       selectedProducts: [],

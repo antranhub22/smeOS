@@ -1,6 +1,7 @@
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 
-const SIGNED_URL_TTL_SECONDS = 604800
+// Trang ký lại mỗi lần tải (10 giây/lần) — link ảnh không cần sống 7 ngày như trước (rà soát M7)
+const SIGNED_URL_TTL_SECONDS = 3600
 
 /**
  * Ảnh QC / giao hàng lưu dạng khoá kho (`org/...`) hoặc URL cũ chứa khoá — đổi thành URL ký

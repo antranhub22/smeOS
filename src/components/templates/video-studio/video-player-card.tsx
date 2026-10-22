@@ -135,7 +135,7 @@ export function VideoPlayerCard({
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="text-xs font-bold text-white/90">@FloraOS Studio</div>
+            <div className="text-xs font-bold text-white/90">@smeOS Studio</div>
             {normalizedVideoUrl && (
               <button
                 type="button"

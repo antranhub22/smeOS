@@ -74,7 +74,7 @@ export function GlobalImageZoom() {
         isOpen: true,
         src,
         alt: img.alt || "Chi tiết ảnh",
-        title: img.title || img.alt || "Chi tiết ảnh FloraOS",
+        title: img.title || img.alt || "Chi tiết ảnh smeOS",
       })
     }
 

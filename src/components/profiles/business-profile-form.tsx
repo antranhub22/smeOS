@@ -7,6 +7,7 @@ import type { UpsertBusinessProfileInput } from "@/modules/profiles/infra/busine
 import { useSession } from "@/lib/session"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 import { AiRewriteInput } from "./ai-rewrite-input"
+import { canOverrideIndustryLock } from "@/modules/organization/domain/organization-settings-policy"
 
 export interface BusinessProfileFormProps {
   initialData: BusinessProfileDetail | null
@@ -15,12 +16,9 @@ export interface BusinessProfileFormProps {
 }
 
 export function BusinessProfileForm({ initialData, onSave, saving }: BusinessProfileFormProps) {
-  const { organization, capabilities, userEmail, organizationType } = useSession()
-  const isSuperAdmin =
-    capabilities.includes("N1") ||
-    capabilities.includes("N12") ||
-    userEmail === "tuans2@dev.com" ||
-    Boolean(userEmail?.endsWith("@dev.com"))
+  const { organization, platformCapabilities, organizationType } = useSession()
+  // Người vận hành nền tảng N1/N12 — cùng luật máy chủ dùng để cho đổi ngành đã khoá
+  const isSuperAdmin = canOverrideIndustryLock(platformCapabilities ?? [])
   const isUnlocked = isSuperAdmin || !Boolean(organization?.industryLocked)
   const [selectedIndustry, setSelectedIndustry] = useState<string>(organization?.industry || DEFAULT_INDUSTRY)
   const [industrySaved, setIndustrySaved] = useState<boolean>(false)
