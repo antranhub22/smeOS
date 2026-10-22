@@ -117,7 +117,7 @@ jobs:
         working-directory: workers
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       # Worker âm thanh/video gọi ffmpeg thật (phối trộn, đo độ to) — runner
