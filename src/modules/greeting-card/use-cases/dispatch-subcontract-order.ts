@@ -65,6 +65,16 @@ export interface IDispatchNotifier {
     ctx: TenantContext,
     target: DispatchNotificationTarget
   ): Promise<LiveCardSendResult>
+  /**
+   * Chỉ sửa một thẻ Telegram đã gửi (không bao giờ gửi tin mới). `actions` rỗng = gỡ nút.
+   * Trả false nếu không sửa được (thiếu bot, tin đã bị xoá...).
+   */
+  editInviteCard?(
+    ctx: TenantContext,
+    card: { msgId: string; chatId: string; isCaption: boolean },
+    text: string,
+    actions: Array<{ text: string; url: string }>
+  ): Promise<boolean>
 }
 
 export interface ISubcontractStateStore {

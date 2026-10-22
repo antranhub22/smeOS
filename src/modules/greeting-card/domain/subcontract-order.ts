@@ -12,6 +12,16 @@ export type SubcontractDispatchStatus =
   | "ESCALATED" // Hết các vòng hoặc không ai nhận -> Chuyển Điều phối can thiệp
   | "CANCELLED" // Đơn đã bị hủy
 
+/** Thẻ mời nhận đơn đã gửi riêng cho một chi nhánh trên Telegram — để sửa lại khi đơn đổi trạng thái */
+export interface InviteCardRef {
+  msgId: string
+  chatId: string
+  isCaption: boolean
+  /** Nội dung thẻ lúc mời (HTML) và link nhận đơn — dùng để mở lại thẻ khi đơn quay về OPEN */
+  text: string
+  claimUrl: string
+}
+
 export interface SubcontractOrderState {
   orderId: string
   orderCode: string
@@ -43,6 +53,8 @@ export interface SubcontractOrderState {
   telegramChatId?: string | null | undefined
   /** Thẻ được gửi kèm ảnh (sendPhoto -> caption) hay text thuần */
   isCaption?: boolean | undefined
+  /** Thẻ mời của từng chi nhánh trong vòng hiện tại, theo branchId */
+  inviteCards?: Record<string, InviteCardRef> | undefined
   /** Thù lao gia công đã chốt cho đơn hàng (VNĐ) */
   subcontractPriceVnd?: number | null | undefined
 }

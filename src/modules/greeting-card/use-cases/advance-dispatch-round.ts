@@ -9,9 +9,10 @@
 import type { TenantContext } from "@/core/tenancy"
 import { parseChainDispatchPolicy, renderDispatchMessage } from "../domain/chain-dispatch-policy"
 import { matchCandidateBranches, type BranchCandidate } from "../domain/chain-dispatch-engine"
-import type { SubcontractOrderState } from "../domain/subcontract-order"
 import type { IDispatchNotifier, ISubcontractClaimStore } from "./dispatch-subcontract-order"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
+import type { InviteCardRef, SubcontractOrderState } from "../domain/subcontract-order"
+import { CLAIM_BUTTON_TEXT, closeCardsAfterClaim, expireRoundCards, inviteCardText, rememberInviteCard } from "./invite-cards"
 
 export interface AdvanceDispatchRoundInput {
   state: SubcontractOrderState
@@ -56,9 +57,11 @@ export async function advanceExpiredDispatchRound(
       dispatchStatus: "ESCALATED",
       previouslyInvitedBranchIds: previouslyInvited,
       invitedBranchIds: [],
+      inviteCards: {},
       roundExpiresAt: null,
     }
     if (!(await store.saveSubcontractStateIfStatus(ctx, escalated, "OPEN"))) return { action: "SKIPPED_RACE" }
+    await expireRoundCards(ctx, state, notifier)
     if (policy.autoEscalateToCoordinator && input.coordinatorTelegramChatId) {
       await notifier.sendSubcontractInvite(ctx, {
         branch: {
@@ -87,11 +90,14 @@ export async function advanceExpiredDispatchRound(
     currentRound: round,
     previouslyInvitedBranchIds: previouslyInvited,
     invitedBranchIds,
+    inviteCards: {},
     roundExpiresAt: new Date(now.getTime() + policy.claimTimeoutMinutes * 60 * 1000).toISOString(),
   }
   // Ghi trước khi gửi: nếu chi nhánh vòng cũ vừa nhận thì dừng, không mời thêm ai
   if (!(await store.saveSubcontractStateIfStatus(ctx, nextState, "OPEN"))) return { action: "SKIPPED_RACE" }
+  await expireRoundCards(ctx, state, notifier)
 
+  const inviteCards: Record<string, InviteCardRef> = {}
   let sentCount = 0
   for (const { branch } of match.topCandidates) {
     const claimUrl = subcontractBranchUrl({
@@ -109,16 +115,28 @@ export async function advanceExpiredDispatchRound(
       timeoutMinutes: policy.claimTimeoutMinutes,
       branchName: branch.branchName,
     })
+    const title = `🌸 [ĐƠN GIA CÔNG #${state.orderCode}]`
     const res = await notifier.sendSubcontractInvite(ctx, {
       branch,
       orderCode: state.orderCode,
       messageText,
       claimUrl,
-      title: `🌸 [ĐƠN GIA CÔNG #${state.orderCode}]`,
-      actions: [{ text: "👉 Nhận đơn ngay", url: claimUrl }],
+      title,
+      actions: [{ text: CLAIM_BUTTON_TEXT, url: claimUrl }],
       imageUrl: input.imageUrl,
     })
     if (res.sent) sentCount++
+    rememberInviteCard(inviteCards, branch.branchId, res, inviteCardText(title, messageText), claimUrl)
+  }
+
+  if (Object.keys(inviteCards).length > 0) {
+    // Chỉ ghi khi đơn vẫn OPEN — nếu chi nhánh vòng mới đã nhận thì giữ nguyên trạng thái đó
+    const saved = await store.saveSubcontractStateIfStatus(ctx, { ...nextState, inviteCards }, "OPEN")
+    const latest = saved ? null : await store.loadSubcontractState(ctx, state.orderId)
+    if (latest?.claimedBranchId) {
+      await store.saveSubcontractStateIfStatus(ctx, { ...latest, inviteCards }, latest.dispatchStatus)
+      await closeCardsAfterClaim(ctx, { ...latest, inviteCards }, latest.claimedBranchId, notifier)
+    }
   }
 
   return { action: "NEXT_ROUND", round, invitedBranchIds, sentCount }

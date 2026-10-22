@@ -9,7 +9,8 @@ import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greet
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
-import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
+import type { InviteCardRef, SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
+import { CLAIM_BUTTON_TEXT, closeCardsAfterClaim, inviteCardText, rememberInviteCard } from "@/modules/greeting-card/use-cases/invite-cards"
 import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
@@ -163,6 +164,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   await stateRepo.updatePricingRef(ctx.organizationId, order.id, { ...existingPricingRef, subcontract_price_vnd: craftFee })
 
   // Phát lệnh gửi tin nhắn riêng 1:1 cho từng chi nhánh được duyệt
+  const inviteCards: Record<string, InviteCardRef> = {}
   const results: Array<{ branchId: string; branchName: string; sent: boolean; channel: string; error?: string }> = []
 
   for (const branch of approvedBranches) {
@@ -185,22 +187,18 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
     const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
     const sampleImageUrl = await resolveSubcontractSamplePhoto(order, { baseUrl: claimBaseUrl })
 
+    const title = `🌸 [ĐƠN GIA CÔNG #${order.code}]`
     const sendResult = await notifier.sendSubcontractInvite(ctx, {
       branch,
       orderCode: order.code,
       messageText,
       claimUrl,
-      title: `🌸 [ĐƠN GIA CÔNG #${order.code}]`,
-      actions: [{ text: "👉 Nhận đơn ngay", url: claimUrl }],
+      title,
+      actions: [{ text: CLAIM_BUTTON_TEXT, url: claimUrl }],
       imageUrl: sampleImageUrl,
     })
 
-    if (sendResult.sent && sendResult.telegramMsgId) {
-      subcontractState.telegramMsgId = sendResult.telegramMsgId
-      subcontractState.telegramChatId = sendResult.telegramChatId ?? null
-      subcontractState.isCaption = sendResult.isCaption ?? false
-      await stateRepo.saveSubcontractState(ctx, subcontractState)
-    }
+    rememberInviteCard(inviteCards, branch.branchId, sendResult, inviteCardText(title, messageText), claimUrl)
 
     const channel = branch.channels?.telegramChatId ? "TELEGRAM"
       : branch.channels?.zaloPhone ? "ZALO"
@@ -213,6 +211,15 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       channel,
       ...(sendResult.error ? { error: sendResult.error } : {}),
     })
+  }
+
+  // Lưu thẻ mời riêng từng chi nhánh — để sửa thẻ khi có chi nhánh nhận / huỷ (không còn ghi đè bằng thẻ cuối)
+  // Chi nhánh có thể đã bấm nhận trong lúc đang gửi: gộp vào state mới nhất, không đè trạng thái đã nhận
+  if (Object.keys(inviteCards).length > 0) {
+    const latest = (await stateRepo.loadSubcontractState(ctx, order.id)) ?? subcontractState
+    const merged = { ...latest, inviteCards }
+    await stateRepo.saveSubcontractStateIfStatus(ctx, merged, latest.dispatchStatus)
+    if (latest.claimedBranchId) await closeCardsAfterClaim(ctx, merged, latest.claimedBranchId, notifier)
   }
 
   const sentCount = results.filter((r) => r.sent).length
