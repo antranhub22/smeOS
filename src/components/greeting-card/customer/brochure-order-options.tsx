@@ -7,9 +7,13 @@ import { MAX_ORDER_QUANTITY } from "@/modules/greeting-card/domain/brochure-pric
 import type { QuoteSelection } from "./use-brochure-quote"
 import { PaymentCodeField, PaymentDueRows } from "./payment-code-field"
 import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+import { isOptionId } from "@/modules/products/domain/product-pricing"
+import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
+import { VariantStepPicker } from "./variant-step-picker"
 
 interface Props {
-  variants: Array<{ id: string; name: string; priceVnd: number }>
+  variants: NonNullable<GreetingCatalogProduct["variants"]>
+  priceDimensions?: GreetingCatalogProduct["priceDimensions"]
   basePrice: number
   shipping: ShippingConfig
   selection: QuoteSelection
@@ -24,7 +28,7 @@ const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-background te
 const vnd = (n: number) => `${n.toLocaleString("vi-VN")} đ`
 
 /** Size, số lượng, khu vực giao, mã giảm giá (khi tiệm bật), mã thanh toán (khi tiệm có mã) + bảng tổng tiền do server tính (đã trừ ưu đãi). */
-export function BrochureOrderOptions({ variants, basePrice, shipping, selection, onChange, quote, errors, loading, industryKey }: Props) {
+export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shipping, selection, onChange, quote, errors, loading, industryKey }: Props) {
   const [voucherInput, setVoucherInput] = useState(selection.voucherCode)
   const isHomestay = industryKey === "HOMESTAY"
   const orderTerms = getIndustryOrderTerms(industryKey)
@@ -36,13 +40,29 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
     <>
     <div className="flex flex-col gap-3 p-3 rounded-xl border border-border bg-surface-muted/50">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {variants.length > 0 && (
+        {priceDimensions && priceDimensions.length > 0 && variants.some((v) => v.values) ? (
+          <VariantStepPicker
+            dimensions={priceDimensions}
+            variants={variants}
+            value={selection.variantId}
+            onChange={(variantId) => onChange({ variantId })}
+            error={errors.variantId}
+          />
+        ) : variants.length > 0 && (
           <label className="flex flex-col gap-1">
             <span className="text-caption font-bold text-foreground">Kích thước / Phiên bản</span>
             <select value={selection.variantId} onChange={(e) => onChange({ variantId: e.target.value })} className={FIELD}>
-              <option value="">Bản tiêu chuẩn — {basePrice > 0 ? vnd(basePrice) : "Liên hệ"}</option>
+              {/* Khoảng giá theo phiên bản: không có "bản tiêu chuẩn", khách phải chọn */}
+              {variants.some((v) => isOptionId(v.id)) ? (
+                <option value="">Chọn phiên bản</option>
+              ) : (
+                <option value="">Bản tiêu chuẩn — {basePrice > 0 ? vnd(basePrice) : "Liên hệ"}</option>
+              )}
               {variants.map((v) => (
-                <option key={v.id} value={v.id}>{v.name} — {vnd(v.priceVnd)}</option>
+                <option key={v.id} value={v.id}>
+                  {v.name} — {vnd(v.priceVnd)}
+                  {v.peakPriceVnd && v.peakPriceVnd !== v.priceVnd ? ` (ngày cao điểm ${vnd(v.peakPriceVnd)})` : ""}
+                </option>
               ))}
             </select>
             {errors.variantId && <span className="text-caption text-danger">{errors.variantId}</span>}

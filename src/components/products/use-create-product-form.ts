@@ -1,5 +1,6 @@
 "use client"
 
+import { EMPTY_PRICING, pricingAttributes } from "./pricing/pricing-form"
 import { useState, useRef, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
@@ -55,6 +56,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
   const [facing, setFacing] = useState(designConfig.facingMultiple ? "" : (designConfig.facingOptions[0] || ""))
   const [container, setContainer] = useState("")
   const [priceVnd, setPriceVnd] = useState("")
+  const [pricing, setPricing] = useState(EMPTY_PRICING)
   const [primaryColor, setPrimaryColor] = useState("")
   const [description, setDescription] = useState("")
   const [status, setStatus] = useState<"ACTIVE" | "DRAFT">("ACTIVE")
@@ -309,11 +311,8 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
           role: b.role || "Chủ đạo",
         }))
 
-      const parsedPrice = priceVnd.trim() ? Number(priceVnd.replace(/\D/g, "")) : null
-
       const attributesPayload = {
-        price: parsedPrice,
-        price_vnd: parsedPrice,
+        ...pricingAttributes(priceVnd, pricing),
         description: description.trim() || null,
         color: primaryColor.trim() || null,
         bom: {
@@ -362,6 +361,8 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
     setCode,
     priceVnd,
     setPriceVnd,
+    pricing,
+    setPricing,
     category,
     setCategory,
     categories,

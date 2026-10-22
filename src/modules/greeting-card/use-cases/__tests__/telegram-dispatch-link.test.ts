@@ -28,7 +28,8 @@ describe("liên kết nhóm Telegram theo tổ chức", () => {
 
   it("kênh chi nhánh chỉ giữ giá trị chuỗi, bỏ giá trị sai kiểu", () => {
     const row = {
-      branch_code: "CN1", name: "Chi nhánh 1", address: null, latitude: 10.7, longitude: null,
+      branch_code: "CN1", name: "Chi nhánh 1", address: null, ward: null, district: null, province: null, service_wards: null,
+      latitude: 10.7, longitude: null,
       quality_score: 88, active_jobs_count: 1, max_concurrent_jobs: 5, is_active: true,
       channels: { telegramChatId: "-111", zaloPhone: 42, phone: null },
     }

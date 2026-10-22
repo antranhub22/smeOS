@@ -17,6 +17,8 @@ import { useProductList } from "@/components/products/use-product-list"
 import { ProductCard, type ProductItem } from "@/components/products/product-card"
 import { ProductTableView } from "@/components/products/product-table-view"
 import { ProductSearchFilterBar } from "@/components/products/product-search-filter-bar"
+import { PriceModeFilterBar } from "@/components/products/price-mode-filter"
+import { matchPriceMode, type PriceModeFilter } from "@/components/products/product-price-span"
 import {
   DEFAULT_FILTER_STATE,
   filterAndSortProducts,
@@ -31,6 +33,7 @@ export default function SanPhamPage() {
   const session = useSession()
   const { t, ti, industry } = useI18n()
   const [filters, setFilters] = useState<ProductFilterState>(DEFAULT_FILTER_STATE)
+  const [priceMode, setPriceMode] = useState<PriceModeFilter>("all")
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
   const [trashTarget, setTrashTarget] = useState<TrashConfirmTarget | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null)
@@ -82,13 +85,12 @@ export default function SanPhamPage() {
   }, [rawProducts, industry])
 
   // Lọc và sắp xếp theo Dịp, Giá, Từ khoá, Danh mục
-  const filteredProducts = useMemo(() => {
-    if (!rawProducts) return []
-    return filterAndSortProducts(rawProducts, filters)
-  }, [rawProducts, filters])
+  const baseFiltered = useMemo(() => (rawProducts ? filterAndSortProducts(rawProducts, filters) : []), [rawProducts, filters])
+  const filteredProducts = useMemo(() => baseFiltered.filter((p) => matchPriceMode(p, priceMode)), [baseFiltered, priceMode])
 
   const handleResetFilters = () => {
     setFilters(DEFAULT_FILTER_STATE)
+    setPriceMode("all")
   }
 
   return (
@@ -147,6 +149,7 @@ export default function SanPhamPage() {
         totalCount={filteredProducts.length}
         availableCategories={availableCategories}
       />
+      <PriceModeFilterBar value={priceMode} onChange={setPriceMode} products={baseFiltered} />
 
       {/* Nội dung chính */}
       <main className="flex flex-1 flex-col overflow-y-auto p-4">

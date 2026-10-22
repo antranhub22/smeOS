@@ -13,6 +13,7 @@ import type { IDispatchNotifier, ISubcontractClaimStore } from "./dispatch-subco
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 import type { InviteCardRef, SubcontractOrderState } from "../domain/subcontract-order"
 import { CLAIM_BUTTON_TEXT, closeCardsAfterClaim, expireRoundCards, inviteCardText, rememberInviteCard } from "./invite-cards"
+import type { AdministrativeArea } from "../domain/area-match"
 
 export interface AdvanceDispatchRoundInput {
   state: SubcontractOrderState
@@ -21,6 +22,8 @@ export interface AdvanceDispatchRoundInput {
   deliveryAddress: string
   /** Toạ độ người nhận (null = xếp hạng không theo khoảng cách) */
   deliveryLocation?: GeoCoordinate | null | undefined
+  /** Phường / quận / tỉnh người nhận — sàng lọc khi không có toạ độ */
+  deliveryArea?: AdministrativeArea | null | undefined
   deliveryTime: string
   baseUrl: string
   imageUrl?: string | null | undefined
@@ -50,7 +53,7 @@ export async function advanceExpiredDispatchRound(
   const excludedBranchIds = [...new Set([...state.declinedBranchIds, ...previouslyInvited])]
 
   const match = state.currentRound < policy.maxRounds
-    ? matchCandidateBranches(input.deliveryLocation ?? null, input.branches, policy, { excludedBranchIds, round: state.currentRound + 1 })
+    ? matchCandidateBranches(input.deliveryLocation ?? null, input.branches, policy, { excludedBranchIds, round: state.currentRound + 1, orderArea: input.deliveryArea })
     : null
 
   if (!match || match.topCandidates.length === 0) {

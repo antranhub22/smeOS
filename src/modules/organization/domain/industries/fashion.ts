@@ -48,6 +48,15 @@ export const FASHION_INDUSTRY: IndustryPluginContract = {
       { label: "1.500.000 – 3.000.000 ₫", min: 1500000, max: 3000000 },
       { label: "Trên 3.000.000 ₫", min: 3000000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: false,
+      variantDimensions: [
+        { key: "SIZE", label: "Size", values: ["XS", "S", "M", "L", "XL", "XXL", "Freesize"] },
+        { key: "COLOR", label: "Màu", values: ["Đen", "Trắng", "Be", "Xám", "Xanh navy", "Đỏ", "Hồng", "Nâu"] },
+        { key: "MATERIAL", label: "Chất liệu", values: ["Cotton", "Lụa", "Linen", "Kaki", "Jean", "Len", "Da"] },
+        { key: "FIT", label: "Kiểu dáng", values: ["Ôm", "Suông", "Rộng (oversize)"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["cái", "bộ", "mét", "cuộn", "chiếc", "set"],

@@ -53,7 +53,7 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick 
               </td>
               <td className="px-4 py-3 text-caption text-text">{p.category ?? "—"}</td>
               <td className="px-4 py-3">
-                <PriceLabel price={p.price_vnd} />
+                <PriceLabel price={p.price_vnd} attributes={p.attributes} />
               </td>
               <td className="px-4 py-3">
                 <StatusBadge status={p.status} />

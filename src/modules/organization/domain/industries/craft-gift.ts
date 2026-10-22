@@ -47,6 +47,16 @@ export const CRAFT_GIFT_INDUSTRY: IndustryPluginContract = {
       { label: "600.000 – 1.500.000 ₫", min: 600000, max: 1500000 },
       { label: "Trên 1.500.000 ₫", min: 1500000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: false,
+      variantDimensions: [
+        { key: "SIZE", label: "Kích thước", values: ["Nhỏ", "Vừa", "Lớn"] },
+        { key: "COLOR", label: "Màu", values: ["Tự nhiên", "Trắng", "Đen", "Đỏ", "Xanh", "Pastel"] },
+        { key: "MATERIAL", label: "Chất liệu", values: ["Gỗ", "Gốm", "Vải", "Giấy", "Da", "Kim loại", "Len"] },
+        { key: "PERSONALIZE", label: "Cá nhân hoá", values: ["Không khắc", "Khắc tên", "Khắc logo", "In ảnh"] },
+        { key: "GIFT_BOX", label: "Hộp quà", values: ["Không hộp", "Hộp giấy", "Hộp gỗ", "Hộp cao cấp"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["cái", "set", "hộp", "bộ", "gam", "chiếc"],

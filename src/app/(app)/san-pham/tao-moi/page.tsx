@@ -84,6 +84,8 @@ export default function CreateProductPage() {
               setCode={form.setCode}
               priceVnd={form.priceVnd}
               setPriceVnd={form.setPriceVnd}
+              pricing={form.pricing}
+              setPricing={form.setPricing}
               category={form.category}
               setCategory={form.setCategory}
               categories={form.categories}

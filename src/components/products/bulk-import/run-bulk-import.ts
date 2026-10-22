@@ -1,3 +1,4 @@
+import { serializePricing } from "@/modules/products/domain/product-pricing"
 import { parseFlowersText } from "./parse-product-sheet"
 import type { ImportProgress, ImportResult, ParsedProductRow } from "./types"
 
@@ -35,8 +36,7 @@ export function toBatchItem(row: ParsedProductRow, imageAssetId: string | null) 
     container: row.container || null,
     status: "ACTIVE" as const,
     attributes: {
-      price: row.price,
-      price_vnd: row.price,
+      ...(row.pricing ? serializePricing(row.pricing) : { price: row.price, price_vnd: row.price }),
       color: row.color || null,
       description: row.description || null,
       drive_link: row.driveLink || null,

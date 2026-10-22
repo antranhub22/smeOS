@@ -2523,6 +2523,10 @@ model chain_branches {
   branch_code          String
   name                 String
   address              String?
+  ward                 String?
+  district             String?
+  province             String?
+  service_wards        Json?
   latitude             Float?
   longitude            Float?
   quality_score        Float    @default(90)
@@ -2546,6 +2550,8 @@ model chain_branches {
 ```
 
 > - `platform_secrets` — **NỀN TẢNG** (PO duyệt 22/10/2026). Bí mật không thuộc tổ chức nào, `sealed_value` luôn là bản niêm phong secret-box (không bao giờ trả ra API/log). Hiện chỉ có khoá `zalo_oa_tokens`: access + refresh token của Zalo OA chung. Refresh token Zalo dùng một lần nên làm mới chạy dưới khoá dòng `FOR UPDATE` (`PlatformSecretRepository.withLock`). Không nằm trong TRUNCATE của bộ test tenant (ca thử tự dọn). Cùng migration `20261022140000_zalo_oa_platform`: cột `chain_branches.zalo_link_code` (mã `ZL` + 8 ký tự, duy nhất toàn nền tảng — webhook OA suy ra tổ chức từ mã). Ca thử: `tests/tenant/zalo-oa-branch-link.test.ts`.
+
+> - `chain_branches.ward` · `district` · `province` · `service_wards` (PO duyệt 22/10/2026, migration `20261022160000_chain_branch_area`, chỉ thêm cột). Khu vực hành chính của chi nhánh, nhập từ Excel; `service_wards` là mảng phường/xã lân cận nhận giao thêm. Khi không tính được khoảng cách theo toạ độ, điều phối xếp hạng theo mức khớp với địa chỉ người nhận (`orders.delivery_address.parts`): cùng phường (kể cả phường phục vụ) > cùng quận (chỉ khi cả hai còn ghi quận cũ) > cùng tỉnh; khác tỉnh bị loại (`domain/area-match.ts`, so không dấu, bỏ tiền tố). Ca thử: `tests/tenant/chain-branch-area.test.ts`.
 
 ```prisma
 model platform_secrets {
