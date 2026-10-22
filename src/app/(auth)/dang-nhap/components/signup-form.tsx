@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Check, Store, Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PendingApprovalNotice } from "./pending-approval-notice"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 
 interface SignupFormProps {
@@ -20,6 +21,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
   const [industryKey, setIndustryKey] = useState<string>(DEFAULT_INDUSTRY)
   const [organizationType, setOrganizationType] = useState<"SINGLE" | "CHAIN">("SINGLE")
   const [loi, setLoi] = useState<string | null>(null)
+  const [choDuyet, setChoDuyet] = useState<string | null>(null)
   const [dangGui, setDangGui] = useState(false)
 
   const allIndustries = listAllIndustries()
@@ -65,6 +67,11 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
         setLoi(data?.error?.message ?? "Đăng ký thất bại — vui lòng thử lại sau")
         return
       }
+      // 202: tài khoản chờ quản trị viên duyệt, chưa có phiên đăng nhập
+      if (res.status === 202) {
+        setChoDuyet(data?.message ?? "Đăng ký đang chờ quản trị viên duyệt.")
+        return
+      }
       router.push("/")
       router.refresh()
     } catch {
@@ -72,6 +79,16 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
     } finally {
       setDangGui(false)
     }
+  }
+
+  if (choDuyet) {
+    return (
+      <PendingApprovalNotice
+        message={choDuyet}
+        hint="Khi được duyệt, bạn đăng nhập bằng địa chỉ thư và mật khẩu vừa đăng ký."
+        onSwitchToLogin={onSwitchToLogin}
+      />
+    )
   }
 
   return (

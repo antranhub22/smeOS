@@ -8,10 +8,14 @@ import {
 } from "./platform-capability-catalog"
 
 describe("platform-capability-catalog", () => {
-  it("có đúng chín mã (N1..N8, N12), không nhiều hơn không ít hơn", () => {
+  it("có đúng mười mã (N1..N8, N12, N13), không nhiều hơn không ít hơn", () => {
     expect(ALL_PLATFORM_CAPABILITY_CODES).toEqual([
-      "N1", "N12", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
+      "N1", "N12", "N13", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
     ])
+  })
+
+  it("N13 là mã duyệt tài khoản tự đăng ký (PO 22/10/2026)", () => {
+    expect(platformCapability("N13").name).toBe("platform.registrations.manage")
   })
 
   it("N9-N11 không tồn tại trong dải này — giữ chỗ cho tuyến AI-1", () => {

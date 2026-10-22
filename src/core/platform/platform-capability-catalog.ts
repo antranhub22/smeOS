@@ -31,6 +31,8 @@ const DEFINITIONS: Record<string, Omit<PlatformCapabilityDefinition, "code">> = 
   // N9–N11 giữ chỗ cho tuyến AI-1 (sổ đăng ký mô hình AI, sổ ngưỡng, chi
   // phí theo mô hình) — chưa khai ở đây, xem lời dẫn ở đầu tệp.
   N12: { name: "platform.field_catalog.manage", label: "Quản trị trường dữ liệu, danh mục & trường tự tạo (ĐP-3)" },
+  // PO 22/10/2026: mọi tài khoản tự đăng ký/dùng thử chờ duyệt trước khi đăng nhập được
+  N13: { name: "platform.registrations.manage", label: "Duyệt/từ chối tài khoản tự đăng ký" },
 }
 
 export const PLATFORM_CAPABILITIES: Record<string, PlatformCapabilityDefinition> = Object.fromEntries(

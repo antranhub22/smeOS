@@ -3,6 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { POST as instantTrial } from "@/app/api/v1/auth/instant-trial/route"
 import { prisma } from "@/core/tenancy/infra/prisma"
 
+import { approveAndLogIn } from "../helpers/approval"
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, readJson, type Tenant } from "../helpers/fixtures"
 
@@ -43,10 +44,13 @@ describe("dùng thử tức thì không chiếm được tài khoản có sẵn"
     expect(await prisma.memberships.count({ where: { user_id: owner.userId } })).toBe(1)
   })
 
-  it("email mới: tạo người dùng mới, phiên chỉ thấy tổ chức dùng thử", async () => {
+  it("email mới: tạo người dùng mới chờ duyệt (không phiên); duyệt xong phiên chỉ thấy tổ chức dùng thử", async () => {
     const res = await instantTrial(trialRequest("khach-moi@vi-du.test"))
-    expect(res.status).toBe(201)
+    expect(res.status).toBe(202)
+    expect(res.headers.get("set-cookie")).toBeNull()
     const body = await readJson(res)
+    expect(await prisma.sessions.count({ where: { user_id: body.user_id as string } })).toBe(0)
+    await approveAndLogIn(body.user_id as string, "khach-moi@vi-du.test")
 
     expect(body.user_id).not.toBe(owner.userId)
     expect(body.organization_id).not.toBe(owner.organizationId)

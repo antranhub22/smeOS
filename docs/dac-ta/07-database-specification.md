@@ -83,15 +83,24 @@ enum provider_health_status { HEALTHY  DEGRADED  UNAVAILABLE }
 ## 3. Nền tảng đa tenant — P1
 
 ```prisma
+enum user_approval_status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model users {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  password_hash String?
-  name          String?
-  avatar_url    String?
-  locale        String   @default("vi")
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  password_hash       String?
+  name                String?
+  avatar_url          String?
+  locale              String               @default("vi")
+  approval_status     user_approval_status @default(APPROVED) // 22/10/2026 — mục 31
+  approval_decided_at DateTime?
+  approval_decided_by String?
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
 
   memberships   memberships[]
   sessions      sessions[]
@@ -2499,6 +2508,7 @@ model staff_notifications {
 ## 31. Cấu hình nền tảng và đặt chỗ (22/10/2026)
 
 > - `product_bookings` — kiểu dữ liệu chặt (rà soát M5). `check_in_date`/`check_out_date` là `DATE`; code vẫn dùng chuỗi `YYYY-MM-DD` và chỉ đổi ở biên repository (`src/modules/availability/domain/booking-day.ts`; ngày không có thật trên lịch → 422). `status` là enum `booking_status`. `order_id` có khoá ngoại sang `orders`, `ON DELETE CASCADE`: đơn chỉ bị xoá cứng khi dọn tenant bàn giao, và đặt chỗ sinh từ đơn đi theo; khoá thủ công (`order_id = null`) ở lại. Migration `20261022110000_product_bookings_typed` VIẾT TAY: đổi kiểu tại chỗ (`ALTER … TYPE … USING`), không để Prisma xoá và tạo lại cột. Ngày sai thì migration dừng, không đoán. Trạng thái lạ chuyển thành `CANCELLED`. Đặt chỗ trỏ tới đơn đã xoá được giải phóng (`CANCELLED`, ghi chú "Đơn gốc đã bị xoá"). Ca thử: `tests/tenant/availability-typed-dates.test.ts`.
+> - `users.approval_status` (enum `user_approval_status`, PO 22/10/2026) — duyệt tài khoản tự đăng ký. `/auth/signup` và `/auth/instant-trial` tạo tài khoản `PENDING`. Chỉ `APPROVED` đăng nhập được (`log-in.ts`) và dùng được phiên (`resolve-session.ts`; tài khoản bị chuyển về `PENDING`/`REJECTED` mất luôn phiên đang mở). Mặc định cột là `APPROVED`: tài khoản có sẵn, nhân viên được mời và tài khoản tạo bằng script vận hành không phải duyệt. Superadmin mã `N13` duyệt ở `/van-hanh/dang-ky`; `approval_decided_by` lưu `user_id` của superadmin. Migration `20261022120000_user_approval` chỉ thêm cột. Ca thử: `tests/tenant/registration-approval.test.ts`, `tests/platform/registration-approval.test.ts`.
 > - `platform_settings` — **NỀN TẢNG** (không có `organization_id`, mục 1). Khoá `nav_matrix_overrides`: ma trận điều hướng theo ngành do Admin SaaS ghi đè ở Console `/van-hanh` (`PUT /platform/nav-matrix`, mã `N12`). Trước 22/10 lưu vào một tệp trên máy chủ: mất khi deploy, mỗi instance một bản, và menu không đọc nó. Giờ máy chủ đọc (bộ nhớ đệm 30 giây) và gửi danh sách mục ẩn xuống qua phiên (`organization.navHiddenKeys`). Chưa có dòng thì dùng `src/lib/data/industry-nav-matrix-overrides.json` làm giá trị khởi đầu. Migration `20261022100000_platform_settings`. Ca thử: `tests/platform/nav-matrix-overrides.test.ts`.
 
 ```prisma

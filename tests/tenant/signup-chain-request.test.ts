@@ -36,7 +36,7 @@ describe("đăng ký chọn mô hình Chuỗi", () => {
 
   it("tạo tổ chức SINGLE kèm yêu cầu chuyển Chuỗi chờ duyệt, không có gói Chuỗi", async () => {
     const res = await signup(signupRequest("chuoi@vi-du.test", "CHAIN"))
-    expect(res.status).toBe(201)
+    expect(res.status).toBe(202) // chờ superadmin duyệt (PO 22/10/2026)
     const body = await readJson(res)
 
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: body.organization_id as string } })

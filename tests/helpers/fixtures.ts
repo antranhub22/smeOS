@@ -25,6 +25,7 @@ export async function createTenant(label: string): Promise<Tenant> {
     organizationName: `Tiệm hoa ${label}`,
   })
 
+  if (!result.token) throw new Error("Fixture tạo tài khoản đã duyệt nên phải có phiên")
   const workspace = await new WorkspaceRepository().findDefaultForSessionOrganization(
     result.organizationId
   )

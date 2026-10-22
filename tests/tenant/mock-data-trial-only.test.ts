@@ -4,6 +4,7 @@ import { POST as instantTrial } from "@/app/api/v1/auth/instant-trial/route"
 import { POST as applyMockData } from "@/app/api/v1/business-profile/mock-data/route"
 import { SESSION_COOKIE } from "@/core/http/cookies"
 
+import { approveAndLogIn } from "../helpers/approval"
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, withSession } from "../helpers/fixtures"
 
@@ -38,8 +39,9 @@ describe("nạp dữ liệu mẫu chỉ ở tài khoản dùng thử", () => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ name: "Khách thử", phone: "0901234567", email: "thu@vi-du.test", industry_key: "FLORAL" }),
     }))
-    const token = /smeos_session=([^;]+)/.exec(trial.headers.get("set-cookie") ?? "")?.[1]
-    expect(token).toBeDefined()
+    // Dùng thử chờ duyệt (PO 22/10/2026): duyệt rồi đăng nhập bằng mật khẩu tạm
+    const created = (await trial.json()) as { user_id: string }
+    const token = await approveAndLogIn(created.user_id, "thu@vi-du.test")
 
     const res = await applyMockData(new Request(URL, {
       method: "POST",

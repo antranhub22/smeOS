@@ -17,6 +17,7 @@ import { SessionProvider } from "@/lib/session"
 
 const MUC: Array<{ href: string; nhan: string }> = [
   { href: "/van-hanh", nhan: "Tổng quan" },
+  { href: "/van-hanh/dang-ky", nhan: "Duyệt đăng ký" },
   { href: "/van-hanh/to-chuc", nhan: "Tổ chức" },
   { href: "/van-hanh/nganh", nhan: "Ma trận ngành" },
   { href: "/van-hanh/truong-du-lieu", nhan: "Trường dữ liệu" },

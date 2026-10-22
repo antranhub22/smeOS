@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Check, Sparkles, Zap, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PendingApprovalNotice } from "./pending-approval-notice"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 
 interface InstantTrialFormProps {
@@ -17,6 +18,7 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
   const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
   const [loi, setLoi] = useState<string | null>(null)
+  const [choDuyet, setChoDuyet] = useState<string | null>(null)
   const [dangGui, setDangGui] = useState(false)
 
   const allIndustries = listAllIndustries()
@@ -39,7 +41,12 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
       })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
-        setLoi(data?.error?.message ?? "Không thể kích hoạt cửa hàng mẫu lúc này — vui lòng thử lại sau")
+        setLoi(data?.error?.message ?? "Không thể gửi đăng ký dùng thử lúc này — vui lòng thử lại sau")
+        return
+      }
+      // 202: đăng ký dùng thử chờ quản trị viên duyệt, chưa có phiên đăng nhập
+      if (res.status === 202) {
+        setChoDuyet(data?.message ?? "Đăng ký đang chờ quản trị viên duyệt.")
         return
       }
       router.push("/")
@@ -49,6 +56,16 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
     } finally {
       setDangGui(false)
     }
+  }
+
+  if (choDuyet) {
+    return (
+      <PendingApprovalNotice
+        message={choDuyet}
+        hint="Khi được duyệt, quản trị viên gửi mật khẩu đăng nhập qua số điện thoại hoặc Zalo bạn để lại."
+        onSwitchToLogin={onSwitchToLogin}
+      />
+    )
   }
 
   return (
@@ -65,9 +82,9 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
           <Zap size={18} />
         </div>
         <div className="text-body-sm">
-          <div className="font-bold text-primary">Cửa hàng mẫu sẵn sàng vận hành</div>
+          <div className="font-bold text-primary">Cửa hàng mẫu theo ngành nghề</div>
           <div className="text-text-muted text-caption mt-0.5 leading-relaxed">
-            Hệ thống cấp ngay cửa hàng mẫu với đầy đủ sản phẩm, danh mục và 50 lượt trải nghiệm AI — <strong>không cần tạo mật khẩu</strong>.
+            Cửa hàng mẫu có đầy đủ sản phẩm, danh mục và 50 lượt trải nghiệm AI. Quản trị viên duyệt đăng ký rồi gửi mật khẩu đăng nhập cho bạn qua số điện thoại hoặc Zalo.
           </div>
         </div>
       </div>
@@ -164,18 +181,18 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
 
       <Button type="submit" className="mt-1 h-12 w-full text-base font-bold shadow-md" disabled={dangGui}>
         {dangGui ? (
-          "Đang thiết lập cửa hàng mẫu…"
+          "Đang gửi đăng ký…"
         ) : (
           <span className="flex items-center justify-center gap-2">
             <Sparkles size={18} />
-            <span>Vào trải nghiệm Cửa hàng mẫu {selectedIndDef.name} ngay</span>
+            <span>Đăng ký dùng thử Cửa hàng mẫu {selectedIndDef.name}</span>
           </span>
         )}
       </Button>
 
       <div className="flex items-center justify-center gap-2 text-caption text-text-muted">
         <ShieldCheck size={14} className="text-success" />
-        <span>Không yêu cầu thẻ tín dụng · Tự động kích hoạt toàn bộ công cụ</span>
+        <span>Không yêu cầu thẻ tín dụng · Quản trị viên duyệt trước khi dùng</span>
       </div>
 
       <div className="my-1 flex items-center gap-2.5">

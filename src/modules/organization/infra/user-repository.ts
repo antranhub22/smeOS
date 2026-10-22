@@ -26,6 +26,7 @@ export class UserRepository {
     email: string
     password_hash: string
     name: string | null
+    approval_status?: "PENDING" | "APPROVED"
   }): Promise<users> {
     return this.db.users.create({ data: input })
   }

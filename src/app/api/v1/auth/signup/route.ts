@@ -1,9 +1,8 @@
 import { z } from "zod"
 
-import { serializeSessionCookie } from "@/core/http/cookies"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
-import { SESSION_TTL_SECONDS } from "@/modules/organization/domain/session-policy"
+import { PENDING_APPROVAL_MESSAGE } from "@/modules/organization/domain/account-approval"
 import { signUp } from "@/modules/organization/use-cases/sign-up"
 // Đăng ký thật: hồ sơ luôn để trống — chỉ instant-trial mới seed data mẫu theo ngành
 
@@ -30,13 +29,12 @@ export const POST = handle(async (request) => {
     // PO 08/10/2026: Đăng ký thật luôn để hồ sơ trống — không seed mock data bất kể môi trường.
     // Chỉ luồng instant-trial (dùng thử) mới seed hồ sơ mẫu theo ngành.
     seedProfile: false,
+    // PO 22/10/2026: mọi đăng ký công khai chờ superadmin nền tảng duyệt (N13) — không mở phiên
+    pendingApproval: true,
   })
 
   return jsonResponse(
-    { user_id: result.userId, organization_id: result.organizationId },
-    {
-      status: 201,
-      headers: { "set-cookie": serializeSessionCookie(result.token, SESSION_TTL_SECONDS) },
-    }
+    { user_id: result.userId, organization_id: result.organizationId, status: "PENDING_APPROVAL", message: PENDING_APPROVAL_MESSAGE },
+    { status: 202 }
   )
 })

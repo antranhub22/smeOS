@@ -82,22 +82,36 @@ enum ai_measure_state {
 
 // ── Nền tảng đa tenant — P1 ─────────────────────────────────────────────────
 
+/// Duyệt tài khoản tự đăng ký (PO 22/10/2026): tài khoản tự đăng ký hoặc dùng thử bắt đầu ở
+/// PENDING và chưa đăng nhập được cho tới khi superadmin nền tảng (mã N13) duyệt.
+enum user_approval_status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model users {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  password_hash String?
-  name          String?
-  avatar_url    String?
-  phone         String?
-  locale        String   @default("vi")
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  password_hash       String?
+  name                String?
+  avatar_url          String?
+  phone               String?
+  locale              String               @default("vi")
+  // Mặc định APPROVED: tài khoản có sẵn, nhân viên được mời, tài khoản tạo bằng script vận hành
+  approval_status     user_approval_status @default(APPROVED)
+  approval_decided_at DateTime?
+  approval_decided_by String? // user_id của superadmin
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
 
   memberships memberships[]
   sessions    sessions[]
 
   // Console Vận hành Nền tảng (P25) — độc lập với memberships, xem mục cuối tệp
   platform_operator platform_operators?
+
+  @@index([approval_status, created_at])
 }
 
 model sessions {

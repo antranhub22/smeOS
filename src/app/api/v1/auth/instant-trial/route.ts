@@ -1,10 +1,9 @@
 import { z } from "zod"
 
-import { serializeSessionCookie } from "@/core/http/cookies"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
-import { SESSION_TTL_SECONDS } from "@/modules/organization/domain/session-policy"
+import { PENDING_APPROVAL_MESSAGE } from "@/modules/organization/domain/account-approval"
 import { startInstantTrial } from "@/modules/organization/use-cases/instant-trial"
 
 const schema = z.object({
@@ -33,10 +32,10 @@ export const POST = handle(async (request) => {
       organization_id: result.organizationId,
       organization_name: result.organizationName,
       industry_key: result.industryKey,
+      // PO 22/10/2026: dùng thử chờ superadmin duyệt — không mở phiên
+      status: "PENDING_APPROVAL",
+      message: PENDING_APPROVAL_MESSAGE,
     },
-    {
-      status: 201,
-      headers: { "set-cookie": serializeSessionCookie(result.token, SESSION_TTL_SECONDS) },
-    }
+    { status: 202 }
   )
 })
