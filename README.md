@@ -27,7 +27,7 @@ cp .env.example .env      # điền SESSION_SECRET
 docker compose up -d
 npm i
 npx prisma generate
-npx prisma db push
+npm run db:deploy         # prisma migrate deploy
 npx prisma db seed        # bốn vai hệ thống
 npm run dev
 ```

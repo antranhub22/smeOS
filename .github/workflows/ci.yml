@@ -47,7 +47,11 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npx prisma generate
-      - run: npx prisma db push
+      # Dựng CSDL bằng đúng lệnh production dùng (`migrate deploy`), rồi đòi
+      # migration khớp schema.prisma: sửa schema mà quên `prisma migrate dev` là đỏ.
+      - run: npm run db:deploy
+      - name: Migration khớp schema.prisma
+        run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
       # Database RIÊNG cho `test:tenant`/`test:platform` — hai bộ test này
       # TRUNCATE mọi bảng và `tests/helpers/database.ts` từ chối database không
       # kết thúc bằng `_test`. Thiếu bước này thì cổng bắt buộc đỏ với
@@ -125,7 +129,7 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npx prisma generate
-      - run: npx prisma db push
+      - run: npm run db:deploy
       - run: npm run db:seed
       - run: npx playwright install chromium --with-deps
       - run: npm run build
