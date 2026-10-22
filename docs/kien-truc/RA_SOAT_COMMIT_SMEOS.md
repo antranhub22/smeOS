@@ -25,15 +25,15 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Cụm | Nội dung | Số commit | Trạng thái |
 |---|---|---|---|
-| G | Điều phối chuỗi và gia công | 30 | Đã rà — còn mở G-SIZE |
+| G | Điều phối chuỗi và gia công | 30 | Đã rà — G-SIZE hoãn |
 | B | Đăng ký, dùng thử, đăng nhập, duyệt tài khoản | 11 | Đã rà |
-| H | AI kiểm ảnh QC/POD | 8 | Đã rà — còn mở H-SKIP |
+| H | AI kiểm ảnh QC/POD | 8 | Đã rà |
 | E | Lịch đặt chỗ Homestay | 5 | Đã rà |
 | F | Ma trận menu ngành, Console vận hành | 7 | Đã rà |
 | K | Sức khoẻ hệ thống, giám sát, worker | 6 | Đã rà |
 | J | Seed, dữ liệu mẫu, script tài khoản | 6 | Đã rà |
 | D | Sửa schema | 6 | Đã rà (migrate diff sạch) |
-| C | Hạ tầng, CI, deploy, thư viện | 20 | Đã rà — còn mở C-ENV |
+| C | Hạ tầng, CI, deploy, thư viện | 20 | Đã rà |
 | I | Thông báo nhân viên | 2 | Đã rà |
 | A | Nền đa ngành | 23 | Đã rà — nợ A-TERM (ratchet) |
 | L | Tài liệu, token giao diện, kiến trúc, test | 10 | Đã rà |
@@ -97,7 +97,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 |---|---|---|---|---|
 | `ef991368` | 10-17 | feat(ai): establish multi-industry SSOT architecture for vision worker, market intelligence, and studio prompts | ĐẠT |  |
 | `85d5f912` | 10-17 | feat(backend): add Pillar 5 to validate AI Prompts and JSON Schemas for multi-industry SSOT | ĐẠT |  |
-| `a48852cb` | 10-19 | feat(qc): AI Vision verify ảnh thành phẩm cho cả 2 luồng điều phối + gia công | MỞ | H-IND, H-SKIP |
+| `a48852cb` | 10-19 | feat(qc): AI Vision verify ảnh thành phẩm cho cả 2 luồng điều phối + gia công | ĐẠT SAU SỬA | H-IND, H-SKIP |
 | `9f2cd27e` | 10-20 | feat(qc-ai): enforce strict AI Vision cross-checking of QC photo against original sample photo | ĐẠT SAU SỬA | H-IND, H-INJ |
 | `93847564` | 10-20 | feat(subcontract): tich hop AI kiem dinh anh giao hang POD va bo unit test cho QC/POD | ĐẠT SAU SỬA | H-INJ |
 | `2418d62d` | 10-20 | fix(qc): enforce strict ai vision comparison for subcontract qc photos and eliminate blind auto-pass | ĐẠT |  |
@@ -165,7 +165,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 |---|---|---|---|---|
 | `c155dc77` | 10-17 | chore(infra): isolate PostgreSQL port to 5433 and volume to smeos-db-data | ĐẠT |  |
 | `e8a75d28` | 10-17 | chore(test): isolate test database connection to port 5433 and smeos_test | ĐẠT |  |
-| `dce775e0` | 10-17 | chore(infra): isolate Render production blueprint (smeos-postgres, smeos-redis, smeos services) | MỞ | C-ENV |
+| `dce775e0` | 10-17 | chore(infra): isolate Render production blueprint (smeos-postgres, smeos-redis, smeos services) | ĐẠT SAU SỬA | C-ENV |
 | `e9833b11` | 10-17 | chore(isolation): change web port to 3200 and cookies to smeos_session/smeos_sso | ĐẠT |  |
 | `a2ed281e` | 10-17 | chore(isolation): purge legacy floraos database fallbacks in workers | ĐẠT |  |
 | `7e8ee445` | 10-20 | fix(ci): update eslint baseline and fix playwright port to 3200 | ĐẠT |  |
@@ -239,7 +239,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
 | A-TERM | Thấp | Giao diện | Còn 913 chỗ thuật ngữ ngành hoa viết cứng (`npm run audit:industry`) | Nợ có ratchet — không được tăng, giảm dần; `check:industry` 5/5 trụ cột đạt |
-| C-ENV | Trung bình | `render.yaml` | Biến code đang dùng chưa khai (`sync: false`) nên dễ quên khi bàn giao: `GOONG_API_KEY` (toạ độ điều phối chuỗi — thiếu thì xếp hạng theo khu vực), `ZALO_OA_APP_ID/APP_SECRET/REFRESH_TOKEN/WEBHOOK_SECRET/FOLLOW_URL` (Zalo OA). Không có giá trị bí mật nào trong file | **Mở** — sửa `render.yaml` cần PO duyệt |
+| C-ENV | Trung bình | `render.yaml` | Biến code đang dùng chưa khai (`sync: false`) nên dễ quên khi bàn giao: `GOONG_API_KEY` (toạ độ điều phối chuỗi — thiếu thì xếp hạng theo khu vực), `ZALO_OA_APP_ID/APP_SECRET/REFRESH_TOKEN/WEBHOOK_SECRET/FOLLOW_URL` (Zalo OA). Không có giá trị bí mật nào trong file | PO duyệt 22/10/2026 — đã khai (`sync: false`, không có giá trị) |
 | J-MOCK | Cao | Nạp dữ liệu mẫu theo ngành | Tiệm thật nạp được dữ liệu mẫu đè hồ sơ | Đã thay bằng `72fe6167`: chỉ tổ chức dùng thử |
 | K-LEAK | Cao | `GET /api/health` | Health công khai trả host CSDL đã che, chi tiết lỗi, phiên bản | Đã thay bằng `da210518`: chỉ trạng thái; chi tiết vào log và `/internal/health` có khoá |
 | F-SU | Chặn | Đổi ngành | Mở khoá đổi ngành theo email cố định của tài khoản dev | Đã thay bằng mã năng lực nền tảng N1/N12 (`df1b9630`); không còn email đặc quyền trong code |
@@ -250,7 +250,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | H-SSRF | Chặn | `run-photo-match.ts` `loadImageForAi` | Máy chủ tải mọi URL http(s) — kể cả địa chỉ nội bộ/metadata đám mây — khi URL ảnh mẫu do tiệm nhập (`attributes.imageUrl`); theo chuyển hướng, không giới hạn dung lượng | Chỉ https công khai (`lib/safe-remote-url.ts`, dùng chung với Telegram), `redirect: "error"`, tối đa 8 MB |
 | H-IND | Cao | `verify-qc-photo-ai.ts` | Prompt kiểm ảnh thành phẩm chỉ nói về loài hoa — ngành khác bị chấm sai | Prompt theo ngành của tiệm (tên ngành, ảnh thành phẩm, `aiConfig.visionFocus`) |
 | H-INJ | Trung bình | Prompt QC / ảnh giao hàng | Tên sản phẩm chèn thẳng vào prompt | Đưa vào dạng chuỗi JSON, cắt 200 ký tự, ghi rõ là dữ liệu |
-| H-SKIP | Trung bình | `update-brochure-order-status.ts` (ảnh thành phẩm luồng 1 cửa hàng) | Không ký/tải được ảnh vừa tải lên → bỏ qua AI và cho qua; còn AI lỗi thì chặn — hai lỗi hạ tầng xử lý ngược nhau | **Mở** — cần PO chọn: chặn (an toàn) hay cho qua kèm ghi chú |
+| H-SKIP | Trung bình | `update-brochure-order-status.ts` (ảnh thành phẩm luồng 1 cửa hàng) | Không ký/tải được ảnh vừa tải lên → bỏ qua AI và cho qua; còn AI lỗi thì chặn — hai lỗi hạ tầng xử lý ngược nhau | PO 22/10/2026: cho qua kèm ghi chú — AI lỗi (UNCERTAIN) cũng cho qua với ghi chú "AI bỏ qua"; AI xác nhận sai mẫu vẫn chặn |
 | B-RATE | Cao | `POST /auth/signup` | Không giới hạn tần suất — mỗi lần gọi tạo một tổ chức (dùng thử đã có 5/giờ) | 20 lần/giờ/IP |
 | B-IND | Trung bình | Đăng ký / dùng thử | Mã ngành tuỳ ý được ghi rồi khoá ngành vĩnh viễn | Chỉ nhận mã có trong danh mục ngành (`isKnownIndustryKey`) |
 | B-LEN | Trung bình | Đăng ký / dùng thử | Tên, tên tổ chức, email, SĐT không giới hạn độ dài/dạng | zod giới hạn độ dài, SĐT đúng dạng |
@@ -270,7 +270,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | G-COMMIT | Cao | Hết hạn huỷ nhận | Không tự chốt (logic nằm trong bộ lập lịch không được gọi) | Sweep tự chốt dưới khoá dòng, dùng chung use-case với nút Chốt |
 | G-UI | Trung bình | Màn chuỗi/gia công | Hiện mã kỹ thuật "Gate", "M2–M4", "POD", "Grace Period" | Thay bằng tiếng Việt |
 | G-DEAD | Thấp | Component | 3 component không dùng, 1 bộ lập lịch không được gọi | Đã xoá |
-| G-SIZE | Thấp | `coordinator-subcontract-actions-panel.tsx` (519), `chain-dispatch-panel.tsx` (408), `update-brochure-order-status.ts` (399), `process-dispatch-reminders.ts` (364) | Quá 350 dòng | **Mở** — tách file là thay đổi lớn, chờ PO duyệt |
+| G-SIZE | Thấp | `coordinator-subcontract-actions-panel.tsx` (519), `chain-dispatch-panel.tsx` (408), `update-brochure-order-status.ts` (399), `process-dispatch-reminders.ts` (364) | Quá 350 dòng | **Hoãn** — PO 22/10/2026: chưa làm |
 | G-FEE | Cao | `chain-dispatch` route, route công khai gia công, 4 màn hình Điều phối | "50%" viết cứng ở 6 chỗ với 3 nền giá khác nhau (tổng gồm VAT, tổng trước VAT, đơn giá); không có sàn/trần, phụ cấp, khấu trừ; không theo ngành | Thay bằng `craft-fee-policy.ts` (6 phương án, dùng chung mọi ngành, ngành khai số khởi điểm), cài đặt "Phí gia công", phí gợi ý do máy chủ tính, khấu trừ giao trễ/khiếu nại mặc định 0% (PO 22/10/2026) |
 
 ## 5. Chưa xác minh được

@@ -1,4 +1,5 @@
 import type { TenantContext } from "@/core/tenancy"
+import { qcAiOutcome } from "../domain/qc-ai-outcome"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { mediaSelectionError } from "../domain/media-limits"
 import { BrochureOrderRepository } from "../infra/brochure-order-repository"
@@ -180,22 +181,12 @@ export async function uploadBrochureProductPhoto(
     }
   })()
 
-  // Nếu AI xác nhận ảnh SAI sản phẩm → chặn ngay lập tức
-  if (aiVerify && !aiVerify.isMatch) {
-    log.warn("coordinator.product_photo.ai_rejected", {
-      orderId,
-      orderCode: order.code,
-      confidenceScore: aiVerify.confidenceScore,
-      reason: aiVerify.reason,
-    })
-    throw conflict(
-      `❌ AI kiểm định phát hiện ảnh thành phẩm không khớp với mẫu sản phẩm: ${aiVerify.reason} (Độ tin cậy: ${aiVerify.confidenceScore}%). Vui lòng kiểm tra và chụp đúng sản phẩm của đơn hàng này!`
-    )
+  const outcome = qcAiOutcome(aiVerify)
+  if (outcome.blockReason) {
+    log.warn("coordinator.product_photo.ai_rejected", { orderId, orderCode: order.code, confidenceScore: aiVerify?.confidenceScore, reason: aiVerify?.reason })
+    throw conflict(outcome.blockReason)
   }
-
-  const aiNote = aiVerify
-    ? `[AI ✅ ${aiVerify.confidenceScore}%] ${aiVerify.reason}`
-    : `[AI Bỏ qua — lỗi kết nối]`
+  const aiNote = outcome.note
 
   const result = await repo.applyProgress(ctx, order, {
     eventType: "PRODUCT_PHOTO_UPLOADED",
