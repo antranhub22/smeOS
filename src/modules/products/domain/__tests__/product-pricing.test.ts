@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
+  availableValues,
+  matchOption,
   combinations,
   isWeekend,
   optionId,
@@ -65,6 +67,9 @@ describe("product-pricing", () => {
     expect(saved.price).toBe(300000)
     expect(parsePricing(saved).rows.find((r) => r.values.join() === "Lớn,Đỏ")?.priceVnd).toBe(500000)
     expect(optionId(["Lớn", "Đỏ"])).toBe(optionId(["lớn", "đỏ"]))
+    expect(optionId(["Lớn", "Đỏ"])).not.toBe(optionId(["Lớn", "Trắng"]))
+    // Vừa giới hạn variantId ≤ 64 của API công khai
+    expect(optionId(["Đại / VIP lộng lẫy nhất tiệm", "Phối nhiều màu pastel"]).length).toBeLessThanOrEqual(64)
   })
 
   it("giá cao điểm chỉ áp ngày cao điểm", () => {
@@ -72,5 +77,32 @@ describe("product-pricing", () => {
     expect(unitPriceFor(300000, 350000, false)).toBe(300000)
     expect(unitPriceFor(300000, null, true)).toBe(300000)
     expect([isWeekend("2026-10-24"), isWeekend("2026-10-22")]).toEqual([true, false])
+  })
+
+  it("chọn từng nhóm: làm mờ tổ hợp không bán, đủ nhóm ra đúng phiên bản", () => {
+    const p = range([
+      [["Nhỏ", "Đỏ"], 300000, null],
+      [["Nhỏ", "Trắng"], 320000, null],
+      [["Lớn", "Đỏ"], 500000, null],
+      [["Lớn", "Trắng"], 900000, null, false],
+    ])
+    const opts = sellableOptions(p)
+    expect([...availableValues(opts, ["Lớn", null], 1)]).toEqual(["Đỏ"])
+    expect(matchOption(opts, ["Nhỏ", "Trắng"])?.priceVnd).toBe(320000)
+    expect(matchOption(opts, ["Nhỏ", null])).toBeNull()
+  })
+
+  it("ảnh riêng lưu mã ảnh, bỏ giá trị lạ", () => {
+    const p = parsePricing({
+      pricing: {
+        mode: "RANGE",
+        dimensions: [{ key: "SIZE", label: "Kích cỡ", values: ["Nhỏ", "Lớn"] }],
+        rows: [
+          { values: ["Nhỏ"], price_vnd: 1000, image_asset_id: "asset-1" },
+          { values: ["Lớn"], price_vnd: 2000, image_asset_id: "javascript:alert(1)" },
+        ],
+      },
+    })
+    expect(p.rows.map((r) => r.imageAssetId)).toEqual(["asset-1", null])
   })
 })

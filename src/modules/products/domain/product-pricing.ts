@@ -33,6 +33,8 @@ export interface PriceOptionRow {
   /** Giá ngày cao điểm; `null` = như giá thường */
   peakPriceVnd: number | null
   active: boolean
+  /** Mã ảnh riêng của phiên bản trong kho ảnh (`assets.id`); `null` = dùng ảnh mẫu */
+  imageAssetId: string | null
 }
 
 export interface ProductPricing {
@@ -62,13 +64,26 @@ function money(v: unknown): number | null {
   return typeof v === "number" && Number.isFinite(v) && v > 0 && v <= MAX_PRICE_VND ? Math.round(v) : null
 }
 
+function assetId(v: unknown): string | null {
+  return typeof v === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(v) ? v : null
+}
+
 function label(v: unknown): string {
   return typeof v === "string" ? v.trim().slice(0, LABEL_MAX) : ""
 }
 
 /** Mã ổn định của một phiên bản — dùng làm `variantId` khi khách đặt. */
 export function optionId(values: readonly string[]): string {
-  return `opt:${values.map((v) => encodeURIComponent(v.toLowerCase())).join("|")}`
+  // Băm ngắn (FNV-1a 32-bit ×2) để vừa giới hạn 64 ký tự của API công khai, kể cả giá trị tiếng Việt dài
+  const key = values.map((v) => v.trim().toLowerCase().normalize("NFC")).join("\u0001")
+  let a = 0x811c9dc5
+  let b = 0x01000193
+  for (let i = 0; i < key.length; i++) {
+    const c = key.charCodeAt(i)
+    a = Math.imul(a ^ c, 0x01000193) >>> 0
+    b = Math.imul(b ^ c, 0x811c9dc5) >>> 0
+  }
+  return `opt:${a.toString(16).padStart(8, "0")}${b.toString(16).padStart(8, "0")}`
 }
 
 /** Phiên bản khai theo kiểu "Khoảng giá" (không phải size cũ) — khách bắt buộc chọn. */
@@ -126,7 +141,7 @@ export function parsePricing(attributes: unknown): ProductPricing {
     .filter((c) => c.length > 0)
     .map((values) => {
       const r = saved.get(optionId(values)) ?? {}
-      return { values, priceVnd: money(r.price_vnd), peakPriceVnd: money(r.peak_price_vnd), active: r.active !== false }
+      return { values, priceVnd: money(r.price_vnd), peakPriceVnd: money(r.peak_price_vnd), active: r.active !== false, imageAssetId: assetId(r.image_asset_id) }
     })
   return {
     mode,
@@ -151,7 +166,7 @@ export function serializePricing(pricing: ProductPricing): { price: number | nul
       dimensions: pricing.mode === "RANGE" ? pricing.dimensions : [],
       rows:
         pricing.mode === "RANGE"
-          ? pricing.rows.map((r) => ({ values: r.values, price_vnd: r.priceVnd, peak_price_vnd: r.peakPriceVnd, active: r.active }))
+          ? pricing.rows.map((r) => ({ values: r.values, price_vnd: r.priceVnd, peak_price_vnd: r.peakPriceVnd, active: r.active, image_asset_id: r.imageAssetId }))
           : [],
       weekend_is_peak: pricing.weekendIsPeak,
     },
@@ -195,14 +210,50 @@ export function summarizePricing(pricing: ProductPricing): PriceSummary {
 }
 
 /** Phiên bản khách chọn được (đang bán, có giá) — cho trang đặt hàng. */
-export function sellableOptions(pricing: ProductPricing): Array<{ id: string; name: string; priceVnd: number; peakPriceVnd: number | null }> {
+export interface SellableOption {
+  id: string
+  name: string
+  /** Giá trị theo thứ tự nhóm đặc điểm — để khách chọn từng nhóm */
+  values: string[]
+  priceVnd: number
+  peakPriceVnd: number | null
+  imageAssetId: string | null
+  /** Đường dẫn ảnh đã ký (máy chủ điền khi hiển thị cho khách) */
+  imageUrl?: string | null | undefined
+}
+
+export function sellableOptions(pricing: ProductPricing): SellableOption[] {
   if (pricing.mode !== "RANGE") return []
   return pricing.rows
     .filter((r): r is PriceOptionRow & { priceVnd: number } => r.active && r.priceVnd !== null)
-    .map((r) => ({ id: optionId(r.values), name: optionName(r.values), priceVnd: r.priceVnd, peakPriceVnd: r.peakPriceVnd }))
+    .map((r) => ({ id: optionId(r.values), name: optionName(r.values), values: r.values, priceVnd: r.priceVnd, peakPriceVnd: r.peakPriceVnd, imageAssetId: r.imageAssetId }))
 }
 
 /** Thứ 7 / Chủ nhật của ngày `YYYY-MM-DD` (theo lịch, không phụ thuộc múi giờ máy chủ). */
+/** Mã ảnh riêng của các phiên bản — để máy chủ ký đường dẫn cùng ảnh mẫu. */
+export function variantImageAssetIds(attributes: unknown): string[] {
+  return parsePricing(attributes).rows.flatMap((r) => (r.imageAssetId ? [r.imageAssetId] : []))
+}
+
+/**
+ * Khách chọn từng nhóm: giá trị nào còn chọn được khi đã chọn các nhóm khác
+ * (`picked[i]` = giá trị đã chọn của nhóm i, hoặc `null`).
+ */
+export function availableValues(options: readonly SellableOption[], picked: readonly (string | null)[], dimIndex: number): Set<string> {
+  const out = new Set<string>()
+  for (const o of options) {
+    const fits = picked.every((p, i) => i === dimIndex || p === null || o.values[i] === p)
+    if (fits && o.values[dimIndex] !== undefined) out.add(o.values[dimIndex]!)
+  }
+  return out
+}
+
+/** Phiên bản khớp đủ mọi nhóm đã chọn, hoặc `null`. */
+export function matchOption(options: readonly SellableOption[], picked: readonly (string | null)[]): SellableOption | null {
+  if (picked.some((p) => p === null)) return null
+  return options.find((o) => o.values.length === picked.length && o.values.every((v, i) => v === picked[i])) ?? null
+}
+
 export function isWeekend(date: string): boolean {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date)
   if (!m) return false
@@ -232,6 +283,6 @@ export function withDimensions(pricing: ProductPricing, dimensions: PriceDimensi
   const old = new Map(pricing.rows.map((r) => [optionId(r.values), r]))
   const rows = combinations(dimensions.slice(0, MAX_DIMENSIONS))
     .filter((c) => c.length > 0)
-    .map((values) => ({ priceVnd: null, peakPriceVnd: null, active: true, ...old.get(optionId(values)), values }))
+    .map((values) => ({ priceVnd: null, peakPriceVnd: null, active: true, imageAssetId: null, ...old.get(optionId(values)), values }))
   return { ...pricing, dimensions: dimensions.slice(0, MAX_DIMENSIONS), rows }
 }

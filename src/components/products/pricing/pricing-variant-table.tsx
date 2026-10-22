@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { optionName, priceLabel, summarizePricing, type PriceOptionRow, type ProductPricing } from "@/modules/products/domain/product-pricing"
 import { formatVndInput, parseVndInput } from "./pricing-form"
 import { MoneyInput } from "./money-input"
+import { VariantImageCell } from "./variant-image-cell"
 
 interface Props {
   pricing: ProductPricing
@@ -66,6 +67,7 @@ export function PricingVariantTable({ pricing, setPricing }: Props) {
               <th className="px-3 py-2 text-left font-semibold">Phiên bản ({pricing.dimensions.map((d) => d.label).join(" / ")})</th>
               <th className="px-3 py-2 text-left font-semibold">Giá thường (₫)</th>
               <th className="px-3 py-2 text-left font-semibold">Giá cao điểm (₫)</th>
+              <th className="px-3 py-2 text-left font-semibold">Ảnh riêng</th>
               <th className="px-3 py-2 text-center font-semibold">Đang bán</th>
             </tr>
           </thead>
@@ -88,6 +90,9 @@ export function PricingVariantTable({ pricing, setPricing }: Props) {
                     onChange={(v) => setRow(i, { peakPriceVnd: parseVndInput(v) })}
                     placeholder="Như giá thường"
                   />
+                </td>
+                <td className="px-3 py-1">
+                  <VariantImageCell label={optionName(r.values)} assetId={r.imageAssetId} onChange={(imageAssetId) => setRow(i, { imageAssetId })} />
                 </td>
                 <td className="px-3 py-2 text-center">
                   <input

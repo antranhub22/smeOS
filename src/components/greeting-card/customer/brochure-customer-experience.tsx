@@ -260,6 +260,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
           <BrochureOrderForm
             productSnapshot={snapshot}
             variants={products.find((p) => p.id === snapshot.id)?.variants ?? []}
+            priceDimensions={products.find((p) => p.id === snapshot.id)?.priceDimensions}
             shipping={initialData.shipping}
             appliedPolicies={
               (catalog.filters as Record<string, unknown> | null | undefined)?.appliedPolicies as
