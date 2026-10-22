@@ -7,7 +7,7 @@ import { GET as craftFee } from "@/app/api/v1/greeting-card/orders/[id]/craft-fe
 import { prisma } from "@/core/tenancy/infra/prisma"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
-import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
 
 const BRANCH = "CN1"
 const params = <T>(v: T) => ({ params: Promise.resolve(v) })
@@ -52,6 +52,7 @@ describe("phí gia công của đơn điều phối chuỗi", () => {
     await resetDatabase()
     a = await createTenant("alpha")
     b = await createTenant("beta")
+    await makeChainOrganization(a)
   })
 
   afterAll(async () => {

@@ -5,6 +5,7 @@
  * (`POST .../chain-dispatch`) và chế độ tự động hoàn toàn (ngay sau khi xác nhận đã nhận tiền).
  */
 
+import { CHAIN_ONLY_MESSAGE, isChainOrganizationType } from "../domain/brochure-workflow-policy"
 import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { publicAppUrl } from "@/lib/public-url"
@@ -49,6 +50,7 @@ export async function rankBranchesForOrder(ctx: TenantContext, orderId: string) 
   if (!order) throw notFound()
   const recipientAddress = formatDeliveryAddress(order.delivery_address)
   const shop = await new OrganizationRepository().current(ctx)
+  if (!isChainOrganizationType(shop?.type)) throw conflict(CHAIN_ONLY_MESSAGE)
   const policy = parseChainDispatchPolicy(shop?.settings as Record<string, unknown> | null | undefined)
   const branches = await new ChainBranchRepository().listCandidates(ctx.organizationId)
   const orderLocation = hasDeliveryAddress(recipientAddress)

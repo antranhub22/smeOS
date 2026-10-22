@@ -9,7 +9,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { SUBCONTRACT_TOKEN_HEADER, signSubcontractBranchToken } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
-import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
 
 const CODE = "DH261022-0101"
 const BRANCH = "CN1"
@@ -68,6 +68,7 @@ describe("toàn vẹn trạng thái đơn gia công", () => {
   beforeEach(async () => {
     await resetDatabase()
     t = await createTenant("alpha")
+    await makeChainOrganization(t)
   })
 
   afterAll(async () => {

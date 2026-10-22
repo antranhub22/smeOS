@@ -1,4 +1,5 @@
 import type { TenantContext } from "@/core/tenancy"
+import { prisma } from "@/core/tenancy/infra/prisma"
 import { SESSION_COOKIE } from "@/core/http/cookies"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { signUp } from "@/modules/organization/use-cases/sign-up"
@@ -103,7 +104,6 @@ export async function addStaffWithSession(
   label: string
 ): Promise<{ userId: string; token: string; email: string }> {
   const { randomUUID } = await import("node:crypto")
-  const { prisma } = await import("@/core/tenancy/infra/prisma")
   const { RoleRepository } = await import("@/modules/organization/infra/role-repository")
   const { newSessionToken, hashSessionToken } = await import("@/modules/organization/infra/session-token")
   const { expiresAt } = await import("@/modules/organization/domain/session-policy")
@@ -119,4 +119,12 @@ export async function addStaffWithSession(
     data: { user_id: user.id, token_hash: hashSessionToken(token), organization_id: tenant.organizationId, expires_at: expiresAt(new Date()) },
   })
   return { userId: user.id, token, email }
+}
+
+/**
+ * Chuyển tổ chức sang mô hình Chuỗi — như Admin SaaS duyệt yêu cầu đổi mô hình. Tính năng điều phối
+ * chuỗi (mời chi nhánh, nhập chi nhánh) chỉ mở cho loại CHAIN / FLOWER_NETWORK (PO 22/10/2026).
+ */
+export async function makeChainOrganization(tenant: Tenant): Promise<void> {
+  await prisma.organizations.update({ where: { id: tenant.organizationId }, data: { type: "CHAIN" } })
 }

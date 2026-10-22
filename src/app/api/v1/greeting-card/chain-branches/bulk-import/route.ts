@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { validationFailed } from "@/core/http/errors"
+import { conflict, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -8,6 +8,8 @@ import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branc
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { fillMissingBranchLocations } from "@/modules/greeting-card/use-cases/resolve-geo-location"
+import { CHAIN_ONLY_MESSAGE, isChainOrganizationType } from "@/modules/greeting-card/domain/brochure-workflow-policy"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 const phone = z.string().trim().regex(/^\+?\d[\d .-]{7,18}$/, "Số điện thoại không hợp lệ")
 const telegramChatId = z.string().trim().regex(/^-?\d{5,20}$/, "Telegram Chat ID chỉ gồm số (nhóm bắt đầu bằng dấu trừ)")
@@ -54,6 +56,7 @@ const bulkImportSchema = z.object({
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.assignFlorist)
+  if (!isChainOrganizationType((await new OrganizationRepository().current(ctx))?.type)) throw conflict(CHAIN_ONLY_MESSAGE)
 
   const body = await request.json().catch(() => ({}))
   const parsed = bulkImportSchema.safeParse(body)

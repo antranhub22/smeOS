@@ -18,11 +18,14 @@ import { BrochureNotifySettings } from "./brochure-notify-settings"
 import { StaffNotifySettings } from "./staff-notify-settings"
 import { ChainDispatchSettings } from "./chain-dispatch-settings"
 import { CraftFeeSettings } from "./craft-fee-settings"
+import { useSession } from "@/lib/session"
+import { isChainOrganizationType } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 import { TelegramDispatchConnector } from "./telegram-dispatch-connector"
 import { ZaloDispatchConnector } from "./zalo-dispatch-connector"
 
 /** Ngăn Cài đặt của Điều hành — tách khỏi hộp việc để tab chỉ còn việc cần quyết. */
 export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
+  const isChain = isChainOrganizationType(useSession().organizationType)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
     window.addEventListener("keydown", onKey)
@@ -54,7 +57,7 @@ export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
           <BrochureHolidaySettings />
           <BrochureNotifySettings />
           <StaffNotifySettings />
-          <ChainDispatchSettings />
+          {isChain && <ChainDispatchSettings />}
           <CraftFeeSettings />
           <TelegramDispatchConnector />
           <ZaloDispatchConnector />

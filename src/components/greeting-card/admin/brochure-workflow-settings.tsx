@@ -20,6 +20,7 @@ import {
   LEAN_WORKFLOW_POLICY,
   STANDARD_WORKFLOW_POLICY,
   STRICT_WORKFLOW_POLICY,
+  isChainOrganizationType,
   parseBrochureWorkflowPolicy,
   serializeWorkflowPolicy,
   detectWorkflowPreset,
@@ -42,7 +43,8 @@ export function BrochureWorkflowSettings() {
     else if (preset === "STRICT") newPolicy = { ...STRICT_WORKFLOW_POLICY }
     else newPolicy = { ...STANDARD_WORKFLOW_POLICY }
 
-    setDraft(newPolicy)
+    // Chế độ Chuỗi theo loại tổ chức Admin SaaS đã duyệt — gói không đổi được
+    setDraft({ ...newPolicy, requireCoordinatorAcceptance: isChainOrganizationType(org.data?.type) })
     setMessage(null)
   }
 
@@ -187,22 +189,17 @@ export function BrochureWorkflowSettings() {
               />
             </div>
 
-            {/* Gate 2: Bắt buộc Điều phối thẩm định & Nhận đơn (Chuỗi vs 1 Cửa hàng) */}
-            <div className="flex items-start justify-between gap-3 pt-3">
-              <div>
-                <label className="text-body-sm font-bold text-foreground block">
-                  Bắt buộc Điều phối thẩm định & Nhận đơn (Gate 2 — Chuỗi cửa hàng)
-                </label>
-                <p className="text-caption text-text-muted">
-                  Bật (Chuỗi): Điều phối phải liên hệ các cửa hàng trong chuỗi và bấm Nhận đơn mới vào sản xuất. Tắt (1 Cửa hàng): Duyệt tiền là tự động nhận đơn vào sản xuất ngay.
-                </p>
-              </div>
-              <input
-                type="checkbox"
-                checked={policy.requireCoordinatorAcceptance}
-                onChange={(e) => handleToggle("requireCoordinatorAcceptance", e.target.checked)}
-                className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
-              />
+            {/* Chuỗi / 1 cửa hàng: theo loại tổ chức Admin SaaS duyệt, tiệm không tự đổi (PO 22/10/2026) */}
+            <div className="pt-3">
+              <span className="text-body-sm font-bold text-foreground block">
+                Mô hình vận hành: {policy.requireCoordinatorAcceptance ? "Chuỗi cửa hàng" : "1 cửa hàng"}
+              </span>
+              <p className="text-caption text-text-muted">
+                {policy.requireCoordinatorAcceptance
+                  ? "Điều phối chọn chi nhánh làm đơn và bấm Nhận đơn rồi đơn mới vào sản xuất."
+                  : "Duyệt tiền xong là đơn vào sản xuất ngay."}{" "}
+                Muốn đổi mô hình, gửi yêu cầu cho Admin SaaS duyệt.
+              </p>
             </div>
 
             {/* Gate 3: Bắt buộc chụp Ảnh thành phẩm */}
