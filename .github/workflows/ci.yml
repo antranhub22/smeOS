@@ -165,7 +165,7 @@ jobs:
       # không chụp ảnh mẫu trên máy khác vì font tải từ Google lúc chạy.
       - name: Lưu kết quả E2E khi đỏ
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-ux-test-results
           path: test-results/
