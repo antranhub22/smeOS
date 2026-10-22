@@ -8,6 +8,7 @@ import { matchCandidateBranches } from "@/modules/greeting-card/domain/chain-dis
 import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
+import { publicAppUrl } from "@/lib/public-url"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
@@ -132,11 +133,9 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   const total = Number(order.total_vnd)
   const craftFee = subcontractPriceVnd ?? Math.round(total * 0.5)
 
-  const host = request.headers.get("x-forwarded-host") || request.headers.get("host")
-  const proto = request.headers.get("x-forwarded-proto") || (host?.includes("localhost") ? "http" : "https")
-  const claimBaseUrl = host
-    ? `${proto}://${host}`
-    : process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3200"
+  // Link có chữ ký gửi cho chi nhánh luôn dùng địa chỉ cấu hình — header Host do client gửi từng đưa
+  // token sang tên miền tuỳ ý (rà soát cụm G, 22/10/2026)
+  const claimBaseUrl = publicAppUrl()
 
   // Khởi tạo Subcontract state
   const notifier = new MultiChannelDispatchNotifier()

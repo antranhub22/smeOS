@@ -5,6 +5,7 @@
  * Clean Architecture — Đảm bảo khóa đồng thời 1-chạm và tự động bắn lại khi hủy trong hạn.
  */
 
+import { publicAppUrl } from "@/lib/public-url"
 import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound, unprocessable } from "@/core/http/errors"
 import {
@@ -89,7 +90,7 @@ export async function claimSubcontractUseCase(
     })
 
     const claimUrl = subcontractBranchUrl({
-      baseUrl: input.baseUrl || "http://localhost:3200",
+      baseUrl: input.baseUrl || publicAppUrl(),
       organizationId: ctx.organizationId,
       orderCode: state.orderCode,
       branchId: claimingBranch.branchId,

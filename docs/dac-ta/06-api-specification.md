@@ -902,10 +902,10 @@ Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38
 |---|---|---|---|
 | POST · DELETE | `/greeting-card/orders/:id/confirm-order` | `R11` | Điều hành xác nhận (POST) hoặc từ chối đơn `{ reason }` (DELETE, kích hoạt hoàn tiền) — Gate 1b, mô hình 1 cửa hàng |
 | GET · POST | `/greeting-card/orders/:id/chain-dispatch` | `R4` | GET: danh sách chi nhánh đã sàng lọc và xếp hạng theo địa chỉ giao. POST: duyệt danh sách và gửi lời mời 1:1 cho từng chi nhánh, link kèm token chi nhánh (26.3) |
-| POST | `/greeting-card/chain-branches/bulk-import` | `R4` | Nhập danh sách chi nhánh vào bảng `chain_branches` (trùng mã → cập nhật, giữ lịch sử phạt) |
+| POST | `/greeting-card/chain-branches/bulk-import` | `R4` | Nhập danh sách chi nhánh vào bảng `chain_branches` (trùng mã → cập nhật, giữ lịch sử phạt). Tối đa 500 dòng, mã không trùng trong tệp, toạ độ/điểm KPI trong khoảng hợp lệ, SĐT và Telegram Chat ID đúng dạng; sai → 422. Chat ID nhập ở đây chỉ được dùng khi chat đó đã liên kết với tổ chức |
 | GET · PUT | `/greeting-card/integrations/staff-notifications` | `F2` | Đọc / sửa cấu hình kênh thông báo nhân viên trong phạm vi các kênh mà SaaS cho phép |
 | PUT | `/greeting-card/integrations/staff-notifications/saas-policy` | *(phiên nền tảng)* `N2` | Người vận hành nền tảng cấp danh sách kênh cho `{ targetOrganizationId, allowedChannels }`. Không nhận phiên tenant |
-| GET · POST | `/greeting-card/integrations/telegram-dispatch` | `F2` | GET: trạng thái bot, `linkCode` của tổ chức, và các nhóm **đã gửi mã đó**. POST `{ chatId, message? }`: gửi thử, chỉ tới nhóm đã liên kết hoặc đã cấu hình cho chi nhánh của tổ chức; nhóm khác → 422 |
+| GET · POST | `/greeting-card/integrations/telegram-dispatch` | `F2` | GET: trạng thái bot, `linkCode` của tổ chức, và các nhóm **đã gửi mã đó**. POST `{ chatId, message? }`: gửi thử, chỉ tới chat đã liên kết; chat khác (kể cả chat ID nhập cho chi nhánh) → 422. Chat đã nhắn mã được nhớ vào `settings.telegram_linked_chat_ids` (máy chủ ghi, tenant không sửa qua PATCH). Mọi tin của bot điều phối chung chỉ đi tới chat trong danh sách này |
 
 ### 26.3 Thẻ Gia Công — Điều phối và link công khai cho chi nhánh
 
@@ -913,12 +913,12 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | Thẻ Gia Công của chi nhánh. SĐT người nhận bị che cho tới khi đơn sẵn sàng giao. 120 lần/phút/IP |
+| GET | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | Thẻ Gia Công của chi nhánh. Chỉ chi nhánh đã nhận đơn thấy SĐT người nhận (từ khi đơn sẵn sàng giao), ảnh QC/giao hàng, shipper và yêu cầu bỏ qua; chi nhánh được mời khác chỉ thấy thông tin mời. 120 lần/phút/IP |
 | POST | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | `{ action: CLAIM \| CANCEL \| COMMIT \| DELETE_QC, branchId, photoUrl? }`. `DELETE_QC` chỉ dành cho chi nhánh đã nhận đơn. 30 lần/phút/IP |
 | POST | `/public/subcontract/:orderCode/upload-qc` | — *(token, chi nhánh đã nhận)* | multipart `{ file, branchId }`. Ảnh thành phẩm ≤ 10MB (JPG/PNG/WebP), AI đối chiếu với ảnh mẫu |
 | POST | `/public/subcontract/:orderCode/submit-shipper` | — *(token, chi nhánh đã nhận)* | `{ branchId, shipperName, shipperPhone, shipperNote? }`. Chỉ khi đơn đã `READY` |
 | POST | `/public/subcontract/:orderCode/submit-delivery` | — *(token, chi nhánh đã nhận)* | multipart `{ file, branchId, note? }`. Ảnh giao hàng, AI kiểm; đạt thì đơn `DELIVERED/COMPLETED` |
-| POST | `/public/subcontract/:orderCode/request-bypass` | — *(token chi nhánh)* | `{ branchId, step, reason }`. Xin bỏ qua bằng chứng vì bất khả kháng, chờ Điều phối duyệt |
+| POST | `/public/subcontract/:orderCode/request-bypass` | — *(token, chi nhánh đã nhận)* | `{ branchId, step, reason }`. Xin bỏ qua bằng chứng vì bất khả kháng, chờ Điều phối duyệt. Chỉ chi nhánh đã nhận đơn; công đoạn đang chờ duyệt hoặc đã duyệt → 409. Báo qua kênh điều phối của tổ chức (không rơi về nhóm chung); trả `coordinatorNotified` |
 | POST | `/coordinator/orders/:id/approve-bypass` | `R3` | Điều phối duyệt hoặc từ chối yêu cầu bỏ qua bằng chứng |
 | POST | `/coordinator/orders/:id/approve-customer-photo` | `R3` | Điều phối duyệt ảnh thành phẩm thay khách (M2b, người đầu tiên thắng) |
 | POST | `/coordinator/orders/:id/upload-qc-subcontract` | `R3` | Điều phối tải ảnh QC thay chi nhánh |

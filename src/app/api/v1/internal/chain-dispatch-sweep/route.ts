@@ -17,6 +17,7 @@
  *     -H "x-cron-secret: dev"
  */
 
+import { publicAppUrl } from "@/lib/public-url"
 import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
 import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth"
@@ -204,7 +205,7 @@ export const POST = handle(async (request) => {
           deliveryStatus: order.delivery_status ?? undefined,
           coordinatorChannel,
           // Cron gọi qua host nội bộ Render — link gửi chi nhánh phải dùng URL công khai đã cấu hình
-          baseUrl: process.env.NEXT_PUBLIC_APP_URL || url.origin,
+          baseUrl: publicAppUrl() || url.origin,
           forceStep: forceStep ?? undefined,
           productImageUrl,
         },

@@ -3,6 +3,7 @@
  * Clean Architecture — Pure Logic kết hợp với IDispatchNotifier & ISubcontractStateStore.
  */
 
+import { publicAppUrl } from "@/lib/public-url"
 import type { TenantContext } from "@/core/tenancy"
 import {
   parseChainDispatchPolicy,
@@ -91,8 +92,8 @@ export async function processOrderDispatchReminders(
   const deliveryMs = input.deliveryTimestampMs
   const minutesUntilDelivery = Math.round((deliveryMs - nowMs) / (60 * 1000))
 
-  // Link đã ký theo chi nhánh; baseUrl cấu hình (local dev: http://localhost:3200, prod: https://...)
-  const link = { baseUrl: input.baseUrl || "http://localhost:3200", organizationId: ctx.organizationId, orderCode: input.orderCode, branchId: branch.branchId }
+  // Link đã ký theo chi nhánh; baseUrl là địa chỉ cấu hình (publicAppUrl)
+  const link = { baseUrl: input.baseUrl || publicAppUrl(), organizationId: ctx.organizationId, orderCode: input.orderCode, branchId: branch.branchId }
   const linkFor = (action?: string) => subcontractBranchUrl({ ...link, action })
   const claimUrl = linkFor()
   const uploadQcUrl = linkFor("upload_qc")

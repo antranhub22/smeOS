@@ -18,16 +18,30 @@ import type {
   LiveCardSendResult,
 } from "../use-cases/dispatch-subcontract-order"
 import { getStaffChannelProvider } from "../adapters/staff-channels"
+import { listLinkedTelegramChatIds } from "./telegram-linked-chats"
 
 export class MultiChannelDispatchNotifier implements IDispatchNotifier {
+  constructor(private readonly linkedChatIds: (organizationId: string) => Promise<string[]> = listLinkedTelegramChatIds) {}
+
   async sendSubcontractInvite(
     ctx: TenantContext,
     target: DispatchNotificationTarget
   ): Promise<LiveCardSendResult> {
     const branch = target.branch
-    const channels = branch.channels
     const botToken = process.env.TELEGRAM_DISPATCH_BOT_TOKEN || process.env.TELEGRAM_STAFF_BOT_TOKEN
-    const existingCard = target.existingTelegramCard
+    // Bot điều phối là bot chung của nền tảng: chỉ gửi tới chat đã nhắn mã liên kết của CHÍNH tổ
+    // chức này, không tin chat ID nhập từ Excel/cấu hình (rà soát 22/10/2026, cụm G)
+    const requestedChatId = branch.channels?.telegramChatId
+    const linked = requestedChatId ? new Set(await this.linkedChatIds(ctx.organizationId)) : new Set<string>()
+    if (requestedChatId && !linked.has(requestedChatId)) {
+      log.warn("dispatch_notify.telegram_chat_not_linked", { organizationId: ctx.organizationId, orderCode: target.orderCode })
+    }
+    const channels = branch.channels && {
+      ...branch.channels,
+      telegramChatId: requestedChatId && linked.has(requestedChatId) ? requestedChatId : null,
+    }
+    const existingCard =
+      target.existingTelegramCard && linked.has(target.existingTelegramCard.chatId) ? target.existingTelegramCard : null
 
     const actions =
       target.actions && target.actions.length > 0

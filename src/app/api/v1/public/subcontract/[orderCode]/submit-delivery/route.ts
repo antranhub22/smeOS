@@ -10,6 +10,9 @@ import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-
 import { log } from "@/core/observability/log"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
+import { escapeTelegramHtml } from "@/modules/greeting-card/domain/chain-dispatch-policy"
+import { publicAppUrl } from "@/lib/public-url"
 import type { TenantContext } from "@/core/tenancy"
 import {
   cancelSubcontractReminderSteps,
@@ -237,14 +240,15 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       capabilities: new Set<string>(),
     }
     const notifier = new MultiChannelDispatchNotifier()
+    const cardUrl = subcontractBranchUrl({ baseUrl: publicAppUrl(), organizationId: order.organization_id, orderCode: order.code, branchId })
     if (branchObj) {
       await notifier.sendSubcontractInvite(tenantCtx, {
         branch: branchObj,
         orderCode: order.code,
-        messageText: `🎉 [HOÀN TẤT GIAO HÀNG] Đơn hàng #${order.code} đã được giao thành công!\n📸 Bằng chứng giao hàng (POD) đã lưu trữ.\n💰 Chi phí gia công đã được ghi nhận quyết toán. Cảm ơn chi nhánh ${branchName}!`,
-        claimUrl: `https://app.smeos.vn/subcontract/${order.code}?branch=${encodeURIComponent(branchId)}`,
+        messageText: `🎉 [HOÀN TẤT GIAO HÀNG] Đơn hàng #${order.code} đã được giao thành công!\n📸 Bằng chứng giao hàng (POD) đã lưu trữ.\n💰 Chi phí gia công đã được ghi nhận quyết toán. Cảm ơn chi nhánh ${escapeTelegramHtml(branchName)}!`,
+        claimUrl: cardUrl,
         title: `🎉 [GIAO THÀNH CÔNG #${order.code}]`,
-        actions: [{ text: "👁️ Xem Thẻ Đơn", url: `https://app.smeos.vn/subcontract/${order.code}?branch=${encodeURIComponent(branchId)}` }],
+        actions: [{ text: "👁️ Xem Thẻ Đơn", url: cardUrl }],
       })
     }
   } catch (err) {

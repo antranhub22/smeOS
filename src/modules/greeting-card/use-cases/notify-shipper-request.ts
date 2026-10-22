@@ -8,6 +8,7 @@
  * - Cơ chế nhắc 1 lần sau `reminderMinutes` (default 30 phút) nếu chưa cung cấp.
  */
 
+import { publicAppUrl } from "@/lib/public-url"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import { runInBackground } from "@/core/runtime/background"
@@ -30,7 +31,7 @@ export interface ShipperRequestInput {
 }
 
 function buildSubmitShipperUrl(organizationId: string, orderCode: string, branchId: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3200"
+  const baseUrl = publicAppUrl()
   return subcontractBranchUrl({ baseUrl, organizationId, orderCode, branchId, action: "submit_shipper" })
 }
 

@@ -22,7 +22,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
     isActive: true,
     channels: {
       phone: "0977234567",
-      telegramChatId: "-1003889928264",
+      telegramChatId: "-1000000000001",
     },
   }
 
@@ -282,7 +282,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     isActive: true,
     channels: {
       phone: "0977234567",
-      telegramChatId: "-1003889928264",
+      telegramChatId: "-1000000000001",
     },
   }
 

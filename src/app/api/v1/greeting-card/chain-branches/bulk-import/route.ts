@@ -7,28 +7,36 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 
+const phone = z.string().trim().regex(/^\+?\d[\d .-]{7,18}$/, "Số điện thoại không hợp lệ")
+const telegramChatId = z.string().trim().regex(/^-?\d{5,20}$/, "Telegram Chat ID chỉ gồm số (nhóm bắt đầu bằng dấu trừ)")
+
+// Giới hạn đầu vào: trước 22/10/2026 route nhận mảng và chuỗi không giới hạn, điểm KPI tuỳ ý
 const branchSchema = z.object({
-  branchId: z.string().min(1),
-  branchName: z.string().min(1),
-  address: z.string().optional(),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-  maxDeliveryRadiusKm: z.number().optional(),
-  qualityScore: z.number().default(90),
-  activeJobsCount: z.number().default(0),
-  maxConcurrentJobs: z.number().default(5),
+  branchId: z.string().trim().min(1).max(50),
+  branchName: z.string().trim().min(1).max(200),
+  address: z.string().trim().max(500).optional(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  maxDeliveryRadiusKm: z.number().min(0).max(500).optional(),
+  qualityScore: z.number().min(0).max(100).default(90),
+  activeJobsCount: z.number().int().min(0).max(1000).default(0),
+  maxConcurrentJobs: z.number().int().min(1).max(1000).default(5),
   isActive: z.boolean().default(true),
   channels: z
     .object({
-      phone: z.string().optional(),
-      telegramChatId: z.string().optional(),
-      zaloPhone: z.string().optional(),
+      phone: phone.optional(),
+      telegramChatId: telegramChatId.optional(),
+      zaloPhone: phone.optional(),
     })
     .optional(),
 })
 
 const bulkImportSchema = z.object({
-  branches: z.array(branchSchema).min(1),
+  branches: z
+    .array(branchSchema)
+    .min(1)
+    .max(500)
+    .refine((list) => new Set(list.map((b) => b.branchId)).size === list.length, "Mã chi nhánh bị trùng trong tệp"),
 })
 
 /**

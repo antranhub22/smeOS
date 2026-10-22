@@ -7,8 +7,9 @@ export interface ParsedBranchRow {
   address?: string | undefined
   district?: string | undefined
   city?: string | undefined
-  latitude: number
-  longitude: number
+  /** Không có toạ độ → bỏ trống; xếp hạng điều phối bỏ qua khoảng cách thay vì lấy tâm Hà Nội. */
+  latitude?: number | undefined
+  longitude?: number | undefined
   maxDeliveryRadiusKm: number
   qualityScore: number
   onTimeRate: number
@@ -67,6 +68,7 @@ export function parseBranchWorkbook(data: ArrayBuffer): ParsedBranchRow[] {
   if (rawRows.length === 0) throw new Error("Sheet dữ liệu trống")
 
   const results: ParsedBranchRow[] = []
+  const seenCodes = new Set<string>()
 
   rawRows.forEach((rawRow, idx) => {
     const rowNum = idx + 2 // Dòng 1 là tiêu đề
@@ -91,8 +93,13 @@ export function parseBranchWorkbook(data: ArrayBuffer): ParsedBranchRow[] {
     if (!name) errors.push("Thiếu tên chi nhánh")
     if (!address) errors.push("Thiếu địa chỉ")
 
-    const lat = latStr ? parseFloat(latStr) : 21.0333
-    const lng = lngStr ? parseFloat(lngStr) : 105.8167
+    const lat = latStr ? Number(latStr.replace(",", ".")) : undefined
+    const lng = lngStr ? Number(lngStr.replace(",", ".")) : undefined
+    if (lat !== undefined && (!Number.isFinite(lat) || lat < -90 || lat > 90)) errors.push("Vĩ độ không hợp lệ")
+    if (lng !== undefined && (!Number.isFinite(lng) || lng < -180 || lng > 180)) errors.push("Kinh độ không hợp lệ")
+    if ((lat === undefined) !== (lng === undefined)) errors.push("Cần đủ cả vĩ độ và kinh độ")
+    if (code && seenCodes.has(code)) errors.push("Mã chi nhánh bị trùng trong tệp")
+    if (code) seenCodes.add(code)
     const maxDeliveryRadiusKm = parseFloat(radiusStr) || 15
     const qualityScore = Math.min(100, Math.max(0, parseInt(qualityStr, 10) || 95))
     const maxConcurrentJobs = parseInt(maxJobsStr, 10) || 5
@@ -102,8 +109,8 @@ export function parseBranchWorkbook(data: ArrayBuffer): ParsedBranchRow[] {
       rawRowNumber: rowNum,
       branchId: code || `BRANCH-${rowNum}`,
       branchName: name || `Chi nhánh ${rowNum}`,
-      latitude: isNaN(lat) ? 21.0333 : lat,
-      longitude: isNaN(lng) ? 105.8167 : lng,
+      latitude: lat,
+      longitude: lng,
       maxDeliveryRadiusKm,
       qualityScore,
       onTimeRate: 98,
@@ -159,7 +166,7 @@ export function generateBranchTemplateBuffer(): Uint8Array {
       105.8142,
       15,
       "0988123456",
-      "6558865914", // ID cá nhân của bạn Tuan Nguyen để nhận tin nhắn riêng 1:1
+      "", // Telegram: để trống, điền sau khi chi nhánh đã gửi mã liên kết cho bot
       "0988123456",
       98,
       5,
@@ -175,7 +182,7 @@ export function generateBranchTemplateBuffer(): Uint8Array {
       105.8542,
       12,
       "0977234567",
-      "-1003889928264", // Nhóm điều phối chuỗi
+      "",
       "0977234567",
       95,
       4,

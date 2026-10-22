@@ -17,6 +17,8 @@ import { signSubcontractPhoto } from "@/modules/greeting-card/use-cases/sign-sub
 import { formatDeliveryAddress, extractRecipientInfo } from "@/modules/greeting-card/domain/delivery-address"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import type { TenantContext } from "@/core/tenancy"
+import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
+import { publicAppUrl } from "@/lib/public-url"
 
 const actionSchema = z.object({
   action: z.enum(["CLAIM", "CANCEL", "COMMIT", "DELETE_QC"]),
@@ -64,7 +66,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
 
   const productName = firstItem?.description || (snapshot.name as string | undefined) || "Sản phẩm đặt gia công"
   // URL công khai đã cấu hình, không tin header Host do client gửi (rà soát M7)
-  const baseOrigin = process.env.NEXT_PUBLIC_APP_URL || url.origin
+  const baseOrigin = publicAppUrl() || url.origin
 
   const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
   const productImageUrl = await resolveSubcontractSamplePhoto(order, { baseUrl: baseOrigin })
@@ -76,17 +78,21 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
     order.production_status === "READY" ||
     order.delivery_status === "DELIVERING" ||
     order.delivery_status === "DELIVERED"
-  const recipientPhone = isReadyForDelivery ? recipientInfo.phone : recipientInfo.maskedPhone
+  // Chi nhánh được mời nhưng không nhận đơn vẫn giữ link 14 ngày: chỉ chi nhánh đang làm đơn mới thấy
+  // SĐT người nhận, ảnh QC/giao hàng, shipper và yêu cầu bỏ qua (rà soát cụm G, 22/10/2026)
+  const isClaimant = Boolean(subState?.claimedBranchId) && subState?.claimedBranchId === branchId
+  const showPhone = isClaimant && isReadyForDelivery
+  const recipientPhone = showPhone ? recipientInfo.phone : recipientInfo.maskedPhone
   const deliveryTime = typeof deliveryWindow.timeSlot === "string" && typeof deliveryWindow.date === "string"
     ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
     : "Giao trong ngày"
 
-  const rawQcPhotos = Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
-  const rawPodPhotos = Array.isArray(coordMeta.pod_photos) ? (coordMeta.pod_photos as string[]) : []
-  const resolvedQcPhotos = await Promise.all(rawQcPhotos.map(signSubcontractPhoto))
-  const resolvedPodPhotos = await Promise.all(rawPodPhotos.map(signSubcontractPhoto))
+  const rawQcPhotos = isClaimant && Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
+  const rawPodPhotos = isClaimant && Array.isArray(coordMeta.pod_photos) ? (coordMeta.pod_photos as string[]) : []
+  const resolvedQcPhotos = await Promise.all(rawQcPhotos.map((p) => signSubcontractPhoto(p, order.organization_id)))
+  const resolvedPodPhotos = await Promise.all(rawPodPhotos.map((p) => signSubcontractPhoto(p, order.organization_id)))
 
-  const rawPodProof = coordMeta.delivery_proof as
+  const rawPodProof = (isClaimant ? coordMeta.delivery_proof : undefined) as
     | { note?: string; deliveredAt?: string; deliveredByBranch?: string }
     | undefined
 
@@ -124,7 +130,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       stepDeadlines,
       recipientName: recipientInfo.recipientName,
       recipientPhone,
-      isPhoneMasked: !isReadyForDelivery,
+      isPhoneMasked: !showPhone,
       cardMessage: order.card_message ?? null,
       specialNotes,
       subcontractPriceVnd,
@@ -135,14 +141,14 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       productionStatus: order.production_status,
       deliveryStatus: order.delivery_status,
       orderStatus: order.status,
-      qcPhotos: resolvedQcPhotos,
+      qcPhotos: resolvedQcPhotos.filter(Boolean),
       lastAiVerification: coordMeta.last_ai_verification ?? null,
       autoBypassedCoordinator: Boolean(coordMeta.auto_bypassed_coordinator),
-      bypassRequests: (coordMeta.bypass_requests as Record<string, unknown> | undefined) ?? null,
-      shipperInfo: (coordMeta.shipper_info as { shipperName: string; shipperPhone: string; submittedAt: string } | undefined) ?? null,
+      bypassRequests: isClaimant ? ((coordMeta.bypass_requests as Record<string, unknown> | undefined) ?? null) : null,
+      shipperInfo: isClaimant ? ((coordMeta.shipper_info as { shipperName: string; shipperPhone: string; submittedAt: string } | undefined) ?? null) : null,
       deliveryProof: rawPodProof
         ? {
-            photoUrls: resolvedPodPhotos,
+            photoUrls: resolvedPodPhotos.filter(Boolean),
             note: rawPodProof.note || null,
             deliveredAt: rawPodProof.deliveredAt || null,
             deliveredByBranch: rawPodProof.deliveredByBranch || null,
@@ -188,7 +194,6 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
     const sampleImageUrl = await resolveSubcontractSamplePhoto(order)
 
-    const reqUrl = new URL(request.url)
     const result = await claimSubcontractUseCase(
       ctx,
       {
@@ -196,7 +201,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         branchId: branch.id,
         branchName: branch.name,
         shopSettings: org?.settings,
-        baseUrl: reqUrl.origin,
+        baseUrl: publicAppUrl(),
         productImageUrl: sampleImageUrl,
       },
       repo,
@@ -256,7 +261,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       branchName: branch.name,
       deliveryTime,
       claimUrl: subcontractBranchUrl({
-        baseUrl: request.headers.get("origin") || "",
+        baseUrl: publicAppUrl(),
         organizationId: order.organization_id,
         orderCode: order.code,
         branchId: branch.id,
@@ -282,39 +287,15 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       claimUrl: "",
     })
 
-    // Tự động gửi tin nhắn thông báo xác nhận đơn cho Khách hàng
-    const customerPhone = order.customer?.phone || (order.greeting_sessions?.[0] as Record<string, unknown> | undefined)?.customer_phone as string | undefined
-    const customerName = order.customer?.name || (order.greeting_sessions?.[0] as Record<string, unknown> | undefined)?.customer_name as string | undefined || "Quý khách"
-
-    const customerNoticeText = `🌸 [SMEOS] Xin chào ${customerName}!\nĐơn hàng #${order.code} của bạn đã được ${branch.name} chính thức tiếp nhận và đang tiến hành chế tác.\n⏰ Hẹn giao: ${deliveryTime}.\nCảm ơn bạn đã tin tưởng dịch vụ!`
-
-    if (customerPhone) {
-      // Gửi thông báo cho khách hàng qua kênh notifier đa kênh
-      await notifier.sendSubcontractInvite(ctx, {
-        branch: {
-          branchId: `cust_${customerPhone}`,
-          branchName: customerName,
-          qualityScore: 100,
-          activeJobsCount: 0,
-          maxConcurrentJobs: 1,
-          isActive: true,
-          channels: {
-            phone: customerPhone,
-            zaloPhone: customerPhone,
-          },
-        },
-        orderCode: order.code,
-        messageText: customerNoticeText,
-        claimUrl: "",
-      }).catch(() => { /* Không chặn luồng nếu khách không có Zalo */ })
-    }
+    // Báo khách qua luồng thông báo khách chuẩn (ZNS/SMS, chống gửi trùng, không ghi SĐT vào log).
+    // Trước 22/10/2026 route tự nhắn khách bằng kênh của chi nhánh, tiêu đề "Đơn gia công" (rà soát cụm G).
+    queueOrderNotification(order.organization_id, order.id, "ORDER_ACCEPTED")
 
     const finalState = {
       ...nextState,
       remindersSent: {
         ...(nextState.remindersSent ?? {}),
         M1_PREP: new Date().toISOString(),
-        CUSTOMER_CONFIRMATION: new Date().toISOString(),
       },
     }
 

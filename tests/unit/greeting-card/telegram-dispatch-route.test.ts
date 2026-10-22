@@ -10,8 +10,13 @@ vi.mock("@/modules/greeting-card/adapters/staff-channels/telegram-bot-api", () =
   sendTelegramText: (...args: unknown[]) => sendTelegramText(...(args as [])),
   getRecentTelegramMessages: async () => messages,
 }))
-vi.mock("@/modules/organization/infra/organization-repository", () => ({
-  OrganizationRepository: class { current = async () => ({ settings: {} }) },
+// Danh sách chat đã liên kết lưu theo tổ chức (bản trong bộ nhớ thay cho organizations.settings)
+const linked = new Map<string, Set<string>>()
+vi.mock("@/modules/greeting-card/infra/telegram-linked-chats", () => ({
+  listLinkedTelegramChatIds: async (orgId: string) => [...(linked.get(orgId) ?? [])],
+  rememberLinkedTelegramChats: async (orgId: string, ids: string[]) => {
+    linked.set(orgId, new Set([...(linked.get(orgId) ?? []), ...ids]))
+  },
 }))
 
 import { GET, POST } from "@/app/api/v1/greeting-card/integrations/telegram-dispatch/route"
@@ -32,6 +37,7 @@ describe("telegram-dispatch route", () => {
   beforeEach(() => {
     process.env.TELEGRAM_DISPATCH_BOT_TOKEN = "test-token"
     sendTelegramText.mockClear()
+    linked.clear()
     messages = [
       { chatId: "-100", title: "Nhóm của A", type: "group", text: telegramLinkCode("org-a") },
       { chatId: "-200", title: "Nhóm của B", type: "group", text: telegramLinkCode("org-b") },
@@ -54,5 +60,18 @@ describe("telegram-dispatch route", () => {
     const res = await POST(post("-100"))
     expect(res.status).toBe(200)
     expect(sendTelegramText).toHaveBeenCalledTimes(1)
+  })
+
+  it("nhóm đã liên kết được nhớ lại khi tin nhắn mã đã trôi khỏi bot", async () => {
+    await GET(new Request("http://localhost/x"))
+    messages = []
+    expect((await POST(post("-100"))).status).toBe(200)
+  })
+
+  it("chat ID chỉ nằm trong cấu hình chi nhánh (Excel) không được tin", async () => {
+    messages = []
+    const res = await POST(post("-300"))
+    expect(res.status).toBe(422)
+    expect(sendTelegramText).not.toHaveBeenCalled()
   })
 })
