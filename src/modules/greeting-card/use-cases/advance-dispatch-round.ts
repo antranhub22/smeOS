@@ -8,7 +8,7 @@
 
 import type { TenantContext } from "@/core/tenancy"
 import { parseChainDispatchPolicy, renderDispatchMessage } from "../domain/chain-dispatch-policy"
-import { matchCandidateBranches, type BranchCandidate } from "../domain/chain-dispatch-engine"
+import { matchCandidateBranches, type BranchCandidate, type GeoCoordinate } from "../domain/chain-dispatch-engine"
 import type { IDispatchNotifier, ISubcontractClaimStore } from "./dispatch-subcontract-order"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 import type { InviteCardRef, SubcontractOrderState } from "../domain/subcontract-order"
@@ -19,6 +19,8 @@ export interface AdvanceDispatchRoundInput {
   shopSettings: unknown
   branches: BranchCandidate[]
   deliveryAddress: string
+  /** Toạ độ người nhận (null = xếp hạng không theo khoảng cách) */
+  deliveryLocation?: GeoCoordinate | null | undefined
   deliveryTime: string
   baseUrl: string
   imageUrl?: string | null | undefined
@@ -48,7 +50,7 @@ export async function advanceExpiredDispatchRound(
   const excludedBranchIds = [...new Set([...state.declinedBranchIds, ...previouslyInvited])]
 
   const match = state.currentRound < policy.maxRounds
-    ? matchCandidateBranches(null, input.branches, policy, { excludedBranchIds, round: state.currentRound + 1 })
+    ? matchCandidateBranches(input.deliveryLocation ?? null, input.branches, policy, { excludedBranchIds, round: state.currentRound + 1 })
     : null
 
   if (!match || match.topCandidates.length === 0) {

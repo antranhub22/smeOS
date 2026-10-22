@@ -22,6 +22,9 @@ interface ImportBranchResult {
   created: number
   updated: number
   errors: string[]
+  geocoded?: number
+  geocodeNotFound?: number
+  geocodeSkipped?: number
 }
 
 export function BranchImportPanel() {
@@ -206,6 +209,13 @@ export function BranchImportPanel() {
               <div className="text-caption-sm text-text-muted">Lỗi bỏ qua</div>
             </div>
           </div>
+          {(result.geocoded ?? 0) + (result.geocodeNotFound ?? 0) + (result.geocodeSkipped ?? 0) > 0 && (
+            <p className="text-caption text-text-muted">
+              Tự xác định vị trí từ địa chỉ: {result.geocoded ?? 0} cửa hàng.
+              {(result.geocodeNotFound ?? 0) + (result.geocodeSkipped ?? 0) > 0 &&
+                ` ${(result.geocodeNotFound ?? 0) + (result.geocodeSkipped ?? 0)} cửa hàng chưa có vị trí — hãy điền vĩ độ, kinh độ trong file để được phân đơn theo khoảng cách.`}
+            </p>
+          )}
           <Button type="button" variant="outline" size="sm" onClick={handleReset} className="self-start gap-1.5 mt-1">
             <RotateCcw size={13} /> Nhập thêm file khác
           </Button>

@@ -6,6 +6,8 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
+import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
+import { fillMissingBranchLocations } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 
 const phone = z.string().trim().regex(/^\+?\d[\d .-]{7,18}$/, "Số điện thoại không hợp lệ")
 const telegramChatId = z.string().trim().regex(/^-?\d{5,20}$/, "Telegram Chat ID chỉ gồm số (nhóm bắt đầu bằng dấu trừ)")
@@ -74,13 +76,19 @@ export const POST = handle(async (request) => {
     },
   }))
 
-  const { created, updated, total } = await new ChainBranchRepository().upsertMany(ctx.organizationId, candidates)
+  // Chi nhánh có địa chỉ mà thiếu toạ độ → tự tra toạ độ để phân đơn theo khoảng cách
+  const geo = await fillMissingBranchLocations(candidates, new GoongGeocoder())
+
+  const { created, updated, total } = await new ChainBranchRepository().upsertMany(ctx.organizationId, geo.branches)
 
   return jsonResponse({
     data: {
       created,
       updated,
       total,
+      geocoded: geo.geocoded,
+      geocodeNotFound: geo.notFound,
+      geocodeSkipped: geo.skipped,
       errors: [],
     },
   })
