@@ -10,8 +10,9 @@ import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { Prisma } from "@/generated/prisma/client"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
 import type { ISubcontractClaimStore } from "../use-cases/dispatch-subcontract-order"
+import type { DeliveryGeoEntry, IDeliveryGeoStore } from "../use-cases/resolve-geo-location"
 
-export class SubcontractOrderRepository implements ISubcontractClaimStore {
+export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeliveryGeoStore {
   constructor(private readonly db = prisma) {}
 
   async loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null> {
@@ -57,6 +58,26 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore {
     }
 
     await this.syncOrderWithState(ctx, state)
+  }
+
+  async loadDeliveryGeo(ctx: TenantContext, orderId: string): Promise<DeliveryGeoEntry | null> {
+    const coordination = await this.db.order_coordinations.findFirst({
+      where: scopedWhere(ctx, { order_id: orderId }),
+      select: { metadata: true },
+    })
+    const geo = (coordination?.metadata as Record<string, unknown> | null)?.delivery_geo
+    return geo && typeof geo === "object" ? (geo as DeliveryGeoEntry) : null
+  }
+
+  /**
+   * Ghi đệm toạ độ vào phiên điều phối có sẵn (không tạo phiên mới — phiên do luồng tạo đơn tạo).
+   * `jsonb_set` trong một câu lệnh: không đè `subcontract_dispatch` đang được ghi song song.
+   */
+  async saveDeliveryGeo(ctx: TenantContext, orderId: string, entry: DeliveryGeoEntry): Promise<void> {
+    await this.db.$executeRaw`
+      UPDATE "order_coordinations"
+      SET "metadata" = jsonb_set(COALESCE("metadata", '{}'::jsonb), '{delivery_geo}', ${JSON.stringify(entry)}::jsonb, true)
+      WHERE "organization_id" = ${ctx.organizationId} AND "order_id" = ${orderId}`
   }
 
   async saveSubcontractStateIfStatus(
