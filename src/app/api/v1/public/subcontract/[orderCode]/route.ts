@@ -5,19 +5,16 @@ import { enforceRateLimit } from "@/core/http/rate-limit"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
-import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import {
   cancelClaimSubcontractUseCase,
   claimSubcontractUseCase,
 } from "@/modules/greeting-card/use-cases/handle-subcontract-claim"
-import { commitSubcontractOrder } from "@/modules/greeting-card/domain/subcontract-order"
-import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greeting-card/domain/chain-dispatch-policy"
+import { commitSubcontractClaim } from "@/modules/greeting-card/use-cases/commit-subcontract-claim"
 import { signSubcontractPhoto } from "@/modules/greeting-card/use-cases/sign-subcontract-photo"
 import { formatDeliveryAddress, extractRecipientInfo } from "@/modules/greeting-card/domain/delivery-address"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import type { TenantContext } from "@/core/tenancy"
-import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { publicAppUrl } from "@/lib/public-url"
 import { craftFeePayable } from "@/modules/greeting-card/domain/craft-fee-policy"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
@@ -256,58 +253,14 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   if (action === "COMMIT") {
     // Chốt dưới khoá dòng; bấm lại khi đã chốt không gửi lại tin M1 và tin báo khách (rà soát cụm G)
-    const newlyCommitted = await repo.updateSubcontractState(ctx, order.id, (current) => {
-      if (!current || current.claimedBranchId !== branch.id) throw unprocessable("Không thể chốt đơn khi bạn chưa tiếp nhận.")
-      if (current.dispatchStatus === "COMMITTED") return { next: null, result: false }
-      if (current.dispatchStatus !== "CLAIMED_GRACE") throw conflict("Đơn hàng không ở trạng thái có thể chốt.")
-      const committed = commitSubcontractOrder(current)
-      return { next: { ...committed, remindersSent: { ...(committed.remindersSent ?? {}), M1_PREP: new Date().toISOString() } }, result: true }
-    })
-    if (!newlyCommitted) return jsonResponse({ data: { success: true, dispatchStatus: "COMMITTED", alreadyCommitted: true } })
-
-    // Bắn tin nhắn M1: Bắt đầu chế tác cho chi nhánh vừa chốt
-    const policy = parseChainDispatchPolicy(org?.settings as Record<string, unknown> | null | undefined)
-    const deliveryWindow = (order.delivery_window as Record<string, unknown> | null) ?? {}
-    const deliveryTime = typeof deliveryWindow.timeSlot === "string" && typeof deliveryWindow.date === "string"
-      ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
-      : "Giao trong ngày"
-
-    const prepMsg = renderDispatchMessage(policy.messageTemplates.prepReminder, {
+    const outcome = await commitSubcontractClaim(ctx, {
+      orderId: order.id,
       orderCode: order.code,
-      branchName: branch.name,
-      deliveryTime,
-      claimUrl: subcontractBranchUrl({
-        baseUrl: publicAppUrl(),
-        organizationId: order.organization_id,
-        orderCode: order.code,
-        branchId: branch.id,
-      }),
-    })
-
-    const branchCandidate = {
+      deliveryWindow: order.delivery_window as Record<string, unknown> | null,
+      shopSettings: org?.settings,
       branchId: branch.id,
-      branchName: branch.name,
-      qualityScore: 100,
-      activeJobsCount: 0,
-      maxConcurrentJobs: 10,
-      isActive: true,
-      channels: {
-        telegramChatId: (await new ChainBranchRepository().findByCode(order.organization_id, branch.id))?.channels?.telegramChatId,
-      },
-    }
-
-    await notifier.sendSubcontractInvite(ctx, {
-      branch: branchCandidate,
-      orderCode: order.code,
-      messageText: prepMsg,
-      claimUrl: "",
     })
-
-    // Báo khách qua luồng thông báo khách chuẩn (ZNS/SMS, chống gửi trùng, không ghi SĐT vào log).
-    // Trước 22/10/2026 route tự nhắn khách bằng kênh của chi nhánh, tiêu đề "Đơn gia công" (rà soát cụm G).
-    queueOrderNotification(order.organization_id, order.id, "ORDER_ACCEPTED")
-
-    return jsonResponse({ data: { success: true, dispatchStatus: "COMMITTED" } })
+    return jsonResponse({ data: { success: true, dispatchStatus: "COMMITTED", ...(outcome === "ALREADY_COMMITTED" ? { alreadyCommitted: true } : {}) } })
   }
 
   if (action === "DELETE_QC") {

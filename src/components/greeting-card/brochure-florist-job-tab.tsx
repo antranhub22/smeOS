@@ -10,6 +10,8 @@ import { CoordinatorAcceptRejectModal } from "./coordinator/coordinator-accept-r
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 import { ChainDispatchPanel } from "./subcontract/chain-dispatch-panel"
+import { isChainOrganizationType } from "@/modules/greeting-card/domain/brochure-workflow-policy"
+import { useCraftFeeSuggestion } from "./subcontract/use-craft-fee-suggestion"
 
 export interface BrochureFloristJobTabProps {
   target: OrderDetailModalTarget
@@ -29,15 +31,17 @@ export function BrochureFloristJobTab({
   onAcceptedOrRejected,
 }: BrochureFloristJobTabProps) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const { organization } = useSession()
+  const { organization, organizationType } = useSession()
   const terms = getIndustryTerminology(organization?.industry)
   const orderTerms = getIndustryOrderTerms(organization?.industry)
-  // Phí gia công do máy chủ tính theo phương án tiệm cài (mặc định 50% giá hàng trước VAT, có sàn/trần)
+  // Phí gia công do máy chủ tính theo phương án tiệm cài; điều phối chuỗi chỉ có ở mô hình Chuỗi
+  const isChain = isChainOrganizationType(organizationType)
   const { data: dispatchData } = useApi<{
-    data: { dispatchState?: { claimedBranchName?: string | null; claimedBranchId?: string | null }; craftFee?: { suggestedVnd: number; finalVnd: number | null } }
-  }>(target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/chain-dispatch` : null)
+    data: { dispatchState?: { claimedBranchName?: string | null; claimedBranchId?: string | null }; craftFee?: { finalVnd: number | null } }
+  }>(target.orderId && isChain ? `/api/v1/greeting-card/orders/${target.orderId}/chain-dispatch` : null)
   const claimedBranchName = dispatchData?.data.dispatchState?.claimedBranchName || dispatchData?.data.dispatchState?.claimedBranchId || null
-  const defaultFee = dispatchData?.data.craftFee?.finalVnd ?? dispatchData?.data.craftFee?.suggestedVnd ?? 0
+  const feeSuggestion = useCraftFeeSuggestion(target.orderId)
+  const defaultFee = dispatchData?.data.craftFee?.finalVnd ?? feeSuggestion?.suggestedVnd ?? 0
   const [feeOverride, setSuggestedCraftFee] = useState<number | null>(null)
   const suggestedCraftFee = feeOverride ?? defaultFee
   const [floristNote, setFloristNote] = useState<string>("")
@@ -163,7 +167,7 @@ export function BrochureFloristJobTab({
         </div>
 
         {/* Khối Điều Phối Chuỗi Tự Động (Matching Engine & Phát Lệnh Gửi Riêng) */}
-        {target.orderId && (
+        {target.orderId && isChain && (
           <ChainDispatchPanel
             orderId={target.orderId}
             orderCode={target.orderCode || target.sendCode || ""}
@@ -177,7 +181,6 @@ export function BrochureFloristJobTab({
           className="rounded-3xl border border-border/80 bg-surface p-6 shadow-md flex flex-col gap-5 text-foreground relative overflow-hidden"
           style={{ backgroundColor: "#ffffff" }}
         >
-          {/* Card Top Title Row in the captured voucher */}
           <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary font-extrabold text-caption uppercase tracking-wider">
@@ -211,7 +214,6 @@ export function BrochureFloristJobTab({
                 </div>
               </div>
 
-              {/* Target Ready Time Badge */}
               <div className="p-3 rounded-2xl bg-danger-bg/60 border border-danger/25 flex items-center justify-between text-caption">
                 <span className="font-bold text-danger flex items-center gap-1.5 shrink-0 whitespace-nowrap">
                   <Clock size={15} />
@@ -223,7 +225,6 @@ export function BrochureFloristJobTab({
                 </span>
               </div>
 
-              {/* Editable Suggested Craft Fee */}
               <div className="p-3.5 rounded-2xl bg-primary/5 border border-primary/20 space-y-1.5">
                 <span className="text-caption font-bold text-foreground block">
                   💰 Giá gia công trên thẻ:
@@ -247,7 +248,6 @@ export function BrochureFloristJobTab({
 
             {/* Column 2 & 3: Details, Materials & Recipient */}
             <div className="md:col-span-2 min-w-0 flex flex-col gap-3.5 justify-between">
-              {/* Product Title */}
               <div className="p-3.5 rounded-2xl bg-surface-alt/50 border border-border/80">
                 <span className="text-caption font-bold text-text-muted uppercase tracking-wider block mb-1">
                   {terms.sampleProduct}

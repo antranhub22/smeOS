@@ -219,6 +219,18 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
     })
   }
 
+  /** Dữ kiện khách duyệt ảnh thành phẩm của đơn (cùng nguồn với đơn 1 cửa hàng), hoặc `null`. */
+  async loadPhotoApprovalFacts(organizationId: string, orderId: string) {
+    return this.db.orders.findFirst({
+      where: { id: orderId, organization_id: organizationId },
+      select: {
+        qc_records: { select: { notes: true, created_at: true } },
+        greeting_sessions: { select: { catalog: { select: { filters: true } } } },
+        organization: { select: { settings: true } },
+      },
+    })
+  }
+
   /** Ghi đè `orders.pricing_rule_ref` (người gọi tự trộn với bản cũ). */
   async updatePricingRef(organizationId: string, orderId: string, pricingRef: Record<string, unknown>): Promise<void> {
     await this.db.orders.updateMany({

@@ -9,6 +9,9 @@ import type { BrochurePaymentRepository } from "@/modules/greeting-card/infra/br
 import type { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
 
+// Nhận đơn kiểm đề xuất huỷ đang chờ — unit test không chạm DB
+vi.mock("@/modules/greeting-card/infra/cancellation-repository", () => ({ CancellationRepository: class { listPending = async () => [] } }))
+
 vi.mock("@/modules/greeting-card/use-cases/notify-staff", () => ({ queueStaffNotification: vi.fn() }))
 
 const ctx: TenantContext = {

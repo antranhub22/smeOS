@@ -207,7 +207,7 @@ export function ChainDispatchSettings() {
 
           <div>
             <label className="text-caption font-semibold text-foreground block mb-1">
-              Thời hạn hủy sau khi nhận (Grace Period): <strong>{policy.cancellationGraceMinutes} phút</strong>
+              Thời hạn hủy sau khi nhận: <strong>{policy.cancellationGraceMinutes} phút</strong>
             </label>
             <input
               type="range"

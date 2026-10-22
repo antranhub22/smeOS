@@ -5,7 +5,7 @@ import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branc
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
  * Chi nhánh điều phối chuỗi chuyển từ `organizations.settings.chain_branches` sang bảng
@@ -30,6 +30,8 @@ describe("bảng chain_branches", () => {
     await resetDatabase()
     a = await createTenant("alpha")
     b = await createTenant("beta")
+    await makeChainOrganization(a)
+    await makeChainOrganization(b)
   })
 
   afterAll(async () => {

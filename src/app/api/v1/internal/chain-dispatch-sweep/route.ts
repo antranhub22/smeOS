@@ -22,17 +22,16 @@ import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
 import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth"
 import { ChainDispatchSweepQuery } from "@/modules/greeting-card/infra/chain-dispatch-sweep-query"
-import { parseChainDispatchPolicy } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import { processOrderDispatchReminders } from "@/modules/greeting-card/use-cases/process-dispatch-reminders"
-import { evaluateCustomerApproval } from "@/modules/greeting-card/use-cases/evaluate-customer-approval"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
 import { advanceExpiredDispatchRound } from "@/modules/greeting-card/use-cases/advance-dispatch-round"
+import { commitSubcontractClaim } from "@/modules/greeting-card/use-cases/commit-subcontract-claim"
 import { deliveryAreaOf, formatDeliveryAddress, hasDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
@@ -78,6 +77,7 @@ export const POST = handle(async (request) => {
   // 1. Phiên điều phối đang hoạt động (OPEN / CLAIMED_GRACE / COMMITTED), lọc trong DB, duyệt theo trang
   const sweepQuery = new ChainDispatchSweepQuery()
   let roundsAdvanced = 0
+  let graceCommitted = 0
   type Coordination = Awaited<ReturnType<ChainDispatchSweepQuery["listActiveDispatchPage"]>>[number]
 
   const processPage = async (coordinations: Coordination[]): Promise<void> => {
@@ -164,8 +164,22 @@ export const POST = handle(async (request) => {
         if (!org) continue
 
         const meta = coord.metadata as Record<string, unknown>
-        const state = meta.subcontract_dispatch as SubcontractOrderState
+        let state = meta.subcontract_dispatch as SubcontractOrderState
         if (!state?.claimedBranchId) continue
+        const claimedBranchId = state.claimedBranchId
+
+        const ctx: TenantContext = { organizationId: coord.organization_id, workspaceId: coord.organization_id, userId: "cron:chain-dispatch-sweep", branchId: null, capabilities: new Set<string>() }
+
+        // Hết thời gian huỷ nhận mà chi nhánh không huỷ → hệ thống chốt (PO 22/10/2026, "bật cả hai")
+        if (state.dispatchStatus === "CLAIMED_GRACE") {
+          const committed = await commitSubcontractClaim(ctx, {
+            orderId: coord.order_id, orderCode: order.code, deliveryWindow: order.delivery_window as Record<string, unknown> | null, shopSettings: org.settings, now,
+          })
+          if (committed === "COMMITTED") {
+            graceCommitted++
+            state = { ...state, dispatchStatus: "COMMITTED", remindersSent: { ...(state.remindersSent ?? {}), M1_PREP: now.toISOString() } }
+          }
+        }
 
         // Trích xuất giờ giao hàng
         const deliveryWindow = order.delivery_window as Record<string, unknown> | null
@@ -194,7 +208,7 @@ export const POST = handle(async (request) => {
         }
 
         // Chi nhánh đã nhận đơn — cần kênh liên lạc để nhắc mốc
-        const branchData = await chainBranches.findByCode(coord.organization_id, state.claimedBranchId)
+        const branchData = await chainBranches.findByCode(coord.organization_id, claimedBranchId)
         if (!branchData) continue
         const branch: BranchCandidate = {
           ...branchData,
@@ -202,14 +216,6 @@ export const POST = handle(async (request) => {
           activeJobsCount: 0,
           maxConcurrentJobs: 10,
           isActive: true,
-        }
-
-        const ctx: TenantContext = {
-          organizationId: coord.organization_id,
-          workspaceId: coord.organization_id,
-          userId: "cron:chain-dispatch-sweep",
-          branchId: null,
-          capabilities: new Set<string>(),
         }
 
         // Đơn hàng có ảnh thành phẩm khi production_status là QUALITY_CHECK / READY hoặc metadata có qc_photos
@@ -223,23 +229,7 @@ export const POST = handle(async (request) => {
           | { phone?: string; telegramChatId?: string }
           | undefined
 
-        // M2b: Đánh giá Customer Approval Timer (auto-approve nếu khách không phản hồi)
-        if (order.production_status === "READY") {
-          const policy = parseChainDispatchPolicy(org.settings)
-          const autoApproveMinutes = policy.milestoneReminders.qcRetryIntervalMinutes ?? 30
-          await evaluateCustomerApproval(
-            {
-              organizationId: coord.organization_id,
-              orderId: coord.order_id,
-              orderCode: order.code,
-              productionStatus: order.production_status,
-              autoApproveAfterMinutes: autoApproveMinutes,
-            },
-            now
-          ).catch((err) => {
-            log.warn("chain_dispatch_sweep.m2b_eval_failed", { orderId: coord.order_id, error: err instanceof Error ? err.message : String(err) })
-          })
-        }
+        // Khách duyệt ảnh thành phẩm: tính theo thời gian lúc đọc (domain/photo-approval.ts), không cần quét
 
         // Xác định ảnh sản phẩm (Ưu tiên ảnh QC nếu có, fallback ảnh mẫu trong items)
         const coordMeta = (coord.metadata as Record<string, unknown> | null) ?? {}
@@ -327,6 +317,7 @@ export const POST = handle(async (request) => {
     processed: totalProcessed,
     remindersSent: totalRemindersSent,
     roundsAdvanced,
+    graceCommitted,
     pages: sweep.pages,
     complete: sweep.complete,
     sentDetails: sentDetails.length > 0 ? sentDetails.slice(0, MAX_REPORTED) : undefined,

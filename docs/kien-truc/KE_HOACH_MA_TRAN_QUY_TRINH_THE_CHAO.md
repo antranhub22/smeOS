@@ -114,6 +114,7 @@ Phân hệ **Thẻ Chào Mẫu Hoa** hiện đang vận hành theo chuỗi 9 bư
   3. Cập nhật `CoordinatorCardDecisionBlocks` và `CoordinatorOrderCard`:
      * Đọc `workflowPolicy` từ context tiệm.
      * Ẩn/hiện khối "Xác nhận nhận đơn" theo chính sách `requireCoordinatorAcceptance`.
+       **Cập nhật PO 22/10/2026:** `requireCoordinatorAcceptance` không còn là công tắc của tiệm — luôn theo `organizations.type` do Admin SaaS duyệt (`CHAIN`/`FLOWER_NETWORK` = Chuỗi), gói Tinh gọn/Tiêu chuẩn/Nghiêm ngặt không ghi đè (`isChainOrganizationType`, `parseBrochureWorkflowPolicy(settings, orgType)`). Màn cài đặt chỉ hiện mô hình đang dùng.
      * Cho phép Điều phối xác nhận cọc nếu `requireAdminDepositApproval === false` hoặc khi quá hạn SLA.
      * Mở khóa nút "Giao Ship" linh hoạt theo `requireFullPaymentBeforeDispatch`.
 

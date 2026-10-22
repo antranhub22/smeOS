@@ -16,8 +16,8 @@
  *   - Thông báo khách: "Đơn đã được tiếp nhận — đang chuẩn bị sản phẩm 🌸"
  *
  * Khi từ chối đơn:
- *   - Tạo đề xuất huỷ + hoàn tiền toàn phần
- *   - Thông báo khách: "Rất tiếc, đơn chưa thể thực hiện..."
+ *   - Tạo đề xuất huỷ + hoàn tiền toàn phần (chờ duyệt)
+ *   - Khách nhận tin huỷ khi đề xuất được duyệt
  */
 
 import type { TenantContext } from "@/core/tenancy"
@@ -45,7 +45,8 @@ export async function adminConfirmBrochureOrder(
   orderId: string,
   input: { note?: string | undefined } = {},
   orders = new BrochureOrderRepository(),
-  shops = new GreetingCardRepository()
+  shops = new GreetingCardRepository(),
+  cancellations = new CancellationRepository()
 ) {
   const [order, shop] = await Promise.all([
     orders.findBrochureOrder(ctx, orderId),
@@ -76,6 +77,10 @@ export async function adminConfirmBrochureOrder(
   }
   if (order.production_status !== "WAITING") {
     throw conflict("Đơn chưa ở trạng thái chờ xác nhận")
+  }
+  // Đơn đang có đề xuất huỷ chờ duyệt: xử lý đề xuất trước — không vừa nhận vừa huỷ (rà soát cụm G)
+  if (await hasPendingCancellation(ctx, orderId, cancellations)) {
+    throw conflict("Đơn đang có đề xuất huỷ chờ duyệt. Duyệt hoặc từ chối đề xuất trước khi xác nhận đơn.")
   }
 
   const noteText = input.note?.trim() || "Điều hành xác nhận đơn — cửa hàng tiếp nhận và bắt đầu sản xuất"
@@ -110,8 +115,8 @@ export async function adminConfirmBrochureOrder(
  * Điều hành từ chối đơn (Gate 1b — không thể thực thi).
  *
  * Hệ quả:
- *  - Tạo đề xuất huỷ + hoàn tiền toàn phần (nếu có cọc)
- *  - Thông báo khách và toàn bộ nhân viên liên quan
+ *  - Tạo đề xuất huỷ + hoàn tiền toàn phần (nếu có cọc), chờ duyệt
+ *  - Báo nhân viên liên quan; khách nhận tin khi đề xuất được duyệt
  *
  * Điều kiện giống adminConfirmBrochureOrder nhưng cho phép CONFIRMED hoặc DRAFT
  * khi đã có tiền (trường hợp hiếm: xác nhận tiền và từ chối đơn ngay).
@@ -147,7 +152,7 @@ export async function adminRejectBrochureOrder(
   ) {
     throw conflict("Đơn đã vào sản xuất — không thể từ chối ở giai đoạn này")
   }
-  if ((await cancellations.listPending(ctx)).some((r) => r.order_id === orderId)) {
+  if (await hasPendingCancellation(ctx, orderId, cancellations)) {
     throw conflict("Đơn này đã có đề xuất huỷ đang chờ xử lý")
   }
 
@@ -165,7 +170,8 @@ export async function adminRejectBrochureOrder(
     },
   })
 
-  queueOrderNotification(ctx.organizationId, orderId, "CANCELLED")
+  // Khách chỉ nhận tin "đã huỷ" khi đề xuất được duyệt (cancellation-requests/[id]/decision) — trước
+  // 22/10/2026 gửi ngay lúc tạo đề xuất, đơn chưa huỷ và khách nhận tin hai lần (rà soát cụm G)
   queueStaffNotification(ctx.organizationId, "CANCELLATION_REQUESTED", {
     orderId,
     orderCode: order.code,
@@ -177,8 +183,12 @@ export async function adminRejectBrochureOrder(
   return {
     success: true,
     message: paid > 0
-      ? "Đã từ chối đơn và khởi tạo quy trình hoàn tiền cho khách."
-      : "Đã từ chối đơn và huỷ đơn hàng.",
+      ? "Đã tạo đề xuất huỷ đơn và hoàn tiền. Duyệt đề xuất trong mục Yêu cầu huỷ để huỷ đơn và báo khách."
+      : "Đã tạo đề xuất huỷ đơn. Duyệt đề xuất trong mục Yêu cầu huỷ để huỷ đơn và báo khách.",
     proposalId: result.id,
   }
+}
+
+async function hasPendingCancellation(ctx: TenantContext, orderId: string, cancellations: Pick<CancellationRepository, "listPending">) {
+  return (await cancellations.listPending(ctx)).some((r) => r.order_id === orderId)
 }

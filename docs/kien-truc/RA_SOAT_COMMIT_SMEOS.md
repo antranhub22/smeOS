@@ -25,7 +25,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Cụm | Nội dung | Số commit | Trạng thái |
 |---|---|---|---|
-| G | Điều phối chuỗi và gia công | 30 | Chưa rà |
+| G | Điều phối chuỗi và gia công | 30 | Đã rà — còn mở G-SIZE |
 | B | Đăng ký, dùng thử, đăng nhập, duyệt tài khoản | 11 | Chưa rà |
 | H | AI kiểm ảnh QC/POD | 8 | Chưa rà |
 | E | Lịch đặt chỗ Homestay | 5 | Chưa rà |
@@ -44,36 +44,36 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `30650f12` | 10-19 | feat(org,order): tach quy trinh 1 cua hang vs chuoi & hoan thien luong xac nhan don 2 buoc | CHƯA RÀ | |
-| `3f775904` | 10-19 | feat(chain-dispatch): he thong dieu phoi gia cong tu dong cho chuoi cua hang | CHƯA RÀ | |
-| `670f03c2` | 10-19 | feat(dispatch): tich hop Telegram Bot va tu dong quet chat id chi nhanh | CHƯA RÀ | |
-| `8da0cc1c` | 10-19 | feat(chain): them tab nhap danh sach cua hang chuoi tu Excel + template mau 14 truong | CHƯA RÀ | |
-| `4dcbf30f` | 10-19 | feat(chain-dispatch): hoàn thiện quy trình cung cấp thông tin shipper và cơ chế leo thang 3 cấp độ | CHƯA RÀ | |
-| `c01579a5` | 10-19 | feat(gate2): implement Dual-Stream + First-Wins Mutex + Link-Only for Gate 2 | CHƯA RÀ | |
-| `55f7bc3d` | 10-19 | test(gate2): add unit tests for cancelSubcontractReminderSteps First-Wins Mutex | CHƯA RÀ | |
-| `1bc6e4cb` | 10-19 | fix(dispatch): support local baseUrl in reminder links for local testing | CHƯA RÀ | |
-| `0cdebac2` | 10-20 | feat(dispatch): add native inline buttons and product photo to telegram dispatch notifications | CHƯA RÀ | |
-| `1848c450` | 10-20 | fix(dispatch): resolve full delivery address from parts and street in subcontract messages | CHƯA RÀ | |
-| `7d49f927` | 10-20 | feat(subcontract): mask recipient phone until QC photo is approved and ready for delivery | CHƯA RÀ | |
-| `2da98046` | 10-20 | feat(dispatch): add resend notification button for dispatched state in chain panel | CHƯA RÀ | |
-| `def7a3bd` | 10-20 | fix(dispatch): resolve sample photo, clean redundant link in telegram message, filter customer promotion from workshop note | CHƯA RÀ | |
-| `62b29cfc` | 10-20 | feat(greeting-card): implement Single Living Dashboard Card for subcontract Telegram notifications | CHƯA RÀ | |
-| `58f6af91` | 10-20 | fix(subcontract): resolve product sample photo from warehouse fallback and attach to live dashboard & detail card | CHƯA RÀ | |
-| `2a367bc0` | 10-20 | fix(subcontract): fix missing sample product image in telegram and claim card | CHƯA RÀ | |
-| `beef121f` | 10-20 | fix(subcontract-claim-card): add onError fallback for product image to prevent broken image icon | CHƯA RÀ | |
-| `228084a7` | 10-20 | fix(subcontract): auto-confirm order to ASSIGNED on branch commit regardless of existing order status | CHƯA RÀ | |
-| `b6173e91` | 10-20 | fix(subcontract): fix broken sample photo origin and fallback for qc photos | CHƯA RÀ | |
-| `fa1c6465` | 10-20 | feat(subcontract): redesign subcontract claim page with active block spotlight standard | CHƯA RÀ | |
-| `b65b58bc` | 10-20 | feat(subcontract): add real-time countdown timers and milestone deadlines for spotlight steps | CHƯA RÀ | |
-| `97a2629e` | 10-20 | feat(subcontract): add force-majeure bypass evidence mechanism with coordinator approval and customer transparency | CHƯA RÀ | |
-| `c3abac12` | 10-20 | fix(coordinator): show bypass banner in kanban view and fallback telegram chatId | CHƯA RÀ | |
+| `30650f12` | 10-19 | feat(org,order): tach quy trinh 1 cua hang vs chuoi & hoan thien luong xac nhan don 2 buoc | ĐẠT SAU SỬA | G-MODE, G-CANCEL |
+| `3f775904` | 10-19 | feat(chain-dispatch): he thong dieu phoi gia cong tu dong cho chuoi cua hang | MỞ | G-SEC3, G-LOCK, G-COMMIT, G-SIZE |
+| `670f03c2` | 10-19 | feat(dispatch): tich hop Telegram Bot va tu dong quet chat id chi nhanh | ĐẠT SAU SỬA | G-SEC1 |
+| `8da0cc1c` | 10-19 | feat(chain): them tab nhap danh sach cua hang chuoi tu Excel + template mau 14 truong | ĐẠT SAU SỬA | G-IMPORT |
+| `4dcbf30f` | 10-19 | feat(chain-dispatch): hoàn thiện quy trình cung cấp thông tin shipper và cơ chế leo thang 3 cấp độ | ĐẠT SAU SỬA | G-LOCK |
+| `c01579a5` | 10-19 | feat(gate2): implement Dual-Stream + First-Wins Mutex + Link-Only for Gate 2 | ĐẠT SAU SỬA | G-LOCK, G-PHOTO |
+| `55f7bc3d` | 10-19 | test(gate2): add unit tests for cancelSubcontractReminderSteps First-Wins Mutex | ĐẠT |  |
+| `1bc6e4cb` | 10-19 | fix(dispatch): support local baseUrl in reminder links for local testing | ĐẠT SAU SỬA | G-URL |
+| `0cdebac2` | 10-20 | feat(dispatch): add native inline buttons and product photo to telegram dispatch notifications | ĐẠT SAU SỬA | G-SEC2 |
+| `1848c450` | 10-20 | fix(dispatch): resolve full delivery address from parts and street in subcontract messages | ĐẠT |  |
+| `7d49f927` | 10-20 | feat(subcontract): mask recipient phone until QC photo is approved and ready for delivery | ĐẠT SAU SỬA | G-PII |
+| `2da98046` | 10-20 | feat(dispatch): add resend notification button for dispatched state in chain panel | ĐẠT SAU SỬA | G-LOCK |
+| `def7a3bd` | 10-20 | fix(dispatch): resolve sample photo, clean redundant link in telegram message, filter customer promotion from workshop note | ĐẠT |  |
+| `62b29cfc` | 10-20 | feat(greeting-card): implement Single Living Dashboard Card for subcontract Telegram notifications | ĐẠT SAU SỬA | G-CARD |
+| `58f6af91` | 10-20 | fix(subcontract): resolve product sample photo from warehouse fallback and attach to live dashboard & detail card | ĐẠT SAU SỬA | G-QC |
+| `2a367bc0` | 10-20 | fix(subcontract): fix missing sample product image in telegram and claim card | ĐẠT |  |
+| `beef121f` | 10-20 | fix(subcontract-claim-card): add onError fallback for product image to prevent broken image icon | THAY THẾ | G-DEAD |
+| `228084a7` | 10-20 | fix(subcontract): auto-confirm order to ASSIGNED on branch commit regardless of existing order status | ĐẠT SAU SỬA | G-LOCK |
+| `b6173e91` | 10-20 | fix(subcontract): fix broken sample photo origin and fallback for qc photos | ĐẠT SAU SỬA | G-QC |
+| `fa1c6465` | 10-20 | feat(subcontract): redesign subcontract claim page with active block spotlight standard | MỞ | G-UI, G-DEAD, G-SIZE |
+| `b65b58bc` | 10-20 | feat(subcontract): add real-time countdown timers and milestone deadlines for spotlight steps | ĐẠT SAU SỬA | G-UI |
+| `97a2629e` | 10-20 | feat(subcontract): add force-majeure bypass evidence mechanism with coordinator approval and customer transparency | ĐẠT SAU SỬA | G-LOCK |
+| `c3abac12` | 10-20 | fix(coordinator): show bypass banner in kanban view and fallback telegram chatId | ĐẠT |  |
 | `cbbc2671` | 10-20 | fix(dispatch): harmonize craft fee to 50% SSOT and persist subcontractPriceVnd | THAY THẾ | G-FEE |
-| `a795101f` | 10-21 | fix(subcontract): require signed per-branch links on public subcontract APIs | CHƯA RÀ | |
-| `24566461` | 10-21 | fix(subcontract-ui): remove synchronous setState inside effects | CHƯA RÀ | |
-| `169ad913` | 10-21 | fix(coordinator): guard subcontract coordinator actions by capability | CHƯA RÀ | |
-| `e0d73308` | 10-21 | fix(telegram): scope the shared dispatch bot to each tenant's own chats | CHƯA RÀ | |
-| `f598dec1` | 10-21 | fix(subcontract): shorten photo URL lifetime and stop trusting Host | CHƯA RÀ | |
-| `3ae29cf3` | 10-22 | feat(greeting-card): move chain_branches from org settings to its own table | CHƯA RÀ | |
+| `a795101f` | 10-21 | fix(subcontract): require signed per-branch links on public subcontract APIs | ĐẠT SAU SỬA | G-PII |
+| `24566461` | 10-21 | fix(subcontract-ui): remove synchronous setState inside effects | ĐẠT |  |
+| `169ad913` | 10-21 | fix(coordinator): guard subcontract coordinator actions by capability | ĐẠT |  |
+| `e0d73308` | 10-21 | fix(telegram): scope the shared dispatch bot to each tenant's own chats | ĐẠT SAU SỬA | G-SEC1 |
+| `f598dec1` | 10-21 | fix(subcontract): shorten photo URL lifetime and stop trusting Host | ĐẠT SAU SỬA | G-URL |
+| `3ae29cf3` | 10-22 | feat(greeting-card): move chain_branches from org settings to its own table | ĐẠT SAU SỬA | G-IMPORT |
 
 ### Cụm B — Đăng ký, dùng thử, đăng nhập, duyệt tài khoản
 
@@ -238,6 +238,22 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| G-SEC1 | Chặn | Liên kết Telegram | Bot dùng chung nhận mọi chat id, tổ chức này gửi được vào chat của tổ chức khác | Chỉ gửi tới chat đã chứng minh thuộc tổ chức (`telegram_linked_chat_ids`, khoá do máy chủ ghi) |
+| G-SEC2 | Chặn | `telegram-adapter.ts` | Ảnh gửi Telegram đọc file cục bộ / URL nội bộ | Chỉ URL https công khai (`safeRemotePhotoUrl`), bỏ đọc file |
+| G-SEC3 | Cao | `renderDispatchMessage` | Giá trị khách nhập chèn thẳng vào HTML tin Telegram | Escape HTML |
+| G-PII | Chặn | Route công khai gia công | Chi nhánh chưa nhận đơn vẫn thấy SĐT/ảnh/thông tin người nhận | Chỉ chi nhánh đang làm đơn thấy (`isClaimant`), link ký theo chi nhánh |
+| G-URL | Cao | Link ký, ảnh | Link lấy theo header Host, URL ảnh sống lâu | `publicAppUrl()`, ảnh ký 1 giờ, kiểm tiền tố kho theo tổ chức |
+| G-QC | Cao | Tải/xoá ảnh QC | Đường dẫn `..`, khoá kho của tổ chức khác, xoá theo chuỗi con | Chặn traversal và khoá lạ, xoá đúng khoá, chỉ trước khi xong |
+| G-LOCK | Chặn | Trạng thái gia công | Ghi đè JSON không khoá: duyệt đúp trừ điểm 2 lần, đơn huỷ vẫn sang hoàn tất, "Gửi lại" xoá chi nhánh đang làm | Mọi bước ghi dưới khoá dòng + điều kiện trạng thái đơn (`applyStep`, `updateSubcontractState`) |
+| G-IMPORT | Trung bình | Nhập chi nhánh | Không giới hạn số dòng/độ dài, chat id thật trong mẫu | zod giới hạn, 500 dòng, kiểm trùng; bảng `chain_branches` |
+| G-CARD | Trung bình | Thẻ Telegram | Một thẻ chung: chi nhánh A nhận thì thẻ của chi nhánh C bị sửa, mang link của A | Thẻ riêng từng chi nhánh (`inviteCards`) |
+| G-MODE | Cao | Quy trình Chuỗi / 1 cửa hàng | Tiệm tự bật tắt, gói Nghiêm ngặt biến tiệm 1 cửa hàng thành Chuỗi | Theo `organizations.type` Admin SaaS duyệt; tính năng chuỗi trả 409 cho 1 cửa hàng |
+| G-CANCEL | Cao | Từ chối đơn | Gửi SMS "đã huỷ" khi đề xuất mới chờ duyệt; vẫn xác nhận được đơn đang chờ huỷ | SMS khi duyệt; xác nhận/nhận đơn trả 409 khi còn đề xuất |
+| G-PHOTO | Cao | Khách duyệt ảnh đơn gia công | Khách không thấy ảnh, mốc chờ lấy nhầm số phút nhắc QC, nhập shipper không chờ | Nối vào luồng duyệt ảnh chung; chặn bước shipper khi còn chờ |
+| G-COMMIT | Cao | Hết hạn huỷ nhận | Không tự chốt (logic nằm trong bộ lập lịch không được gọi) | Sweep tự chốt dưới khoá dòng, dùng chung use-case với nút Chốt |
+| G-UI | Trung bình | Màn chuỗi/gia công | Hiện mã kỹ thuật "Gate", "M2–M4", "POD", "Grace Period" | Thay bằng tiếng Việt |
+| G-DEAD | Thấp | Component | 3 component không dùng, 1 bộ lập lịch không được gọi | Đã xoá |
+| G-SIZE | Thấp | `coordinator-subcontract-actions-panel.tsx` (519), `chain-dispatch-panel.tsx` (408), `update-brochure-order-status.ts` (399), `process-dispatch-reminders.ts` (364) | Quá 350 dòng | **Mở** — tách file là thay đổi lớn, chờ PO duyệt |
 | G-FEE | Cao | `chain-dispatch` route, route công khai gia công, 4 màn hình Điều phối | "50%" viết cứng ở 6 chỗ với 3 nền giá khác nhau (tổng gồm VAT, tổng trước VAT, đơn giá); không có sàn/trần, phụ cấp, khấu trừ; không theo ngành | Thay bằng `craft-fee-policy.ts` (6 phương án, dùng chung mọi ngành, ngành khai số khởi điểm), cài đặt "Phí gia công", phí gợi ý do máy chủ tính, khấu trừ giao trễ/khiếu nại mặc định 0% (PO 22/10/2026) |
 
 ## 5. Chưa xác minh được
