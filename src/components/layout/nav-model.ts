@@ -348,16 +348,14 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
 
 const RESERVED_MOBILE_HREFS = new Set(["/", "/duyet", "/job", "/tai-anh", "/them"])
 
-function getAdaptedNavEntries(industryKey?: string | null): readonly NavEntry[] {
-  // Lớp 1: Lọc theo Industry Navigation Matrix (Admin SaaS quyết định)
-  const hiddenKeys = getHiddenNavKeys(industryKey)
+function getAdaptedNavEntries(industryKey?: string | null, navHiddenOverride?: readonly string[] | null): readonly NavEntry[] {
+  // Lớp 1: Lọc theo Industry Navigation Matrix (Admin SaaS quyết định, gửi xuống qua phiên)
+  const hiddenKeys = getHiddenNavKeys(industryKey, navHiddenOverride)
   const visibleEntries = hiddenKeys.size > 0
     ? NAV_ENTRIES.filter((entry) => !hiddenKeys.has(entry.navKey))
     : NAV_ENTRIES
 
-  if (!industryKey || industryKey === "FLORAL") {
-    return visibleEntries
-  }
+  if (!industryKey || industryKey === "FLORAL") return visibleEntries
   const terms = getIndustryTerminology(industryKey)
   return visibleEntries.map((entry) => {
     if (entry.href === "/the-chao") {
@@ -422,9 +420,10 @@ function getAdaptedNavEntries(industryKey?: string | null): readonly NavEntry[] 
 export function buildNav(
   can: (code: string) => boolean,
   role: RoleUxDefinition | null,
-  industryKey?: string | null
+  industryKey?: string | null,
+  navHiddenOverride?: readonly string[] | null
 ): NavView {
-  const entries = getAdaptedNavEntries(industryKey)
+  const entries = getAdaptedNavEntries(industryKey, navHiddenOverride)
   const isAccessible = (item: NavEntry) => !item.capability || can(item.capability)
 
   // Gom các mục Việc chính nếu vai có cấu hình navPriority
@@ -489,11 +488,11 @@ export function buildNav(
 export function mobileSecondSlot(
   can: (code: string) => boolean,
   role: RoleUxDefinition | null,
-  industryKey?: string | null
+  industryKey?: string | null,
+  navHiddenOverride?: readonly string[] | null
 ): NavEntry {
-  const entries = getAdaptedNavEntries(industryKey)
-  const defaultEntry =
-    entries.find((e) => e.href === "/san-pham") ?? entries[0]!
+  const entries = getAdaptedNavEntries(industryKey, navHiddenOverride)
+  const defaultEntry = entries.find((e) => e.href === "/san-pham") ?? entries[0]!
 
   if (!role || !role.navPriority) return defaultEntry
 

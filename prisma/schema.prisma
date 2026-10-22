@@ -1666,6 +1666,16 @@ model platform_audit_logs {
   @@index([entity_type, entity_id])
 }
 
+/// Cấu hình cấp nền tảng — một dòng mỗi khoá, chỉ Console vận hành ghi. Không thuộc tổ chức nào
+/// nên không có `organization_id` (đặc tả 07 mục 1, cùng hạng `platform_operators`).
+/// Khoá đang dùng: `nav_matrix_overrides` — ma trận điều hướng theo ngành (rà soát M13, 22/10/2026).
+model platform_settings {
+  key        String   @id
+  value      Json
+  updated_by String?
+  updated_at DateTime @updatedAt
+}
+
 // ─────────────────────────────────────────────────────────────────────────
 // Nền quản trị trường (ĐP-3, 26/09/2026) — quản trị nền tảng sửa được mọi
 // trường đã xây, mọi danh mục, và tạo được trường HOÀN TOÀN MỚI, không cần

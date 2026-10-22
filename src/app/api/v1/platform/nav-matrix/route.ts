@@ -68,7 +68,7 @@ export const PUT = handle(async (request) => {
   const parsed = updateMatrixSchema.parse(rawBody)
 
   const previousOverrides = await getPlatformNavMatrixOverrides()
-  const savedOverrides = await savePlatformNavMatrixOverrides(parsed.overrides)
+  const savedOverrides = await savePlatformNavMatrixOverrides(parsed.overrides, pctx.userId)
 
   try {
     await recordPlatformAuditLog(pctx, {

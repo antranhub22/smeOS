@@ -181,6 +181,8 @@ export type MockSession = {
     name?: string
     industry?: string
     industryLocked?: boolean
+    /** Mục điều hướng Admin SaaS ẩn cho ngành của tổ chức; `null` = dùng mặc định của ngành. */
+    navHiddenKeys?: string[] | null
   } | undefined
   /**
    * Khoá vai phân quyền (`roles.key`) của membership hiện tại — CHỈ dùng để

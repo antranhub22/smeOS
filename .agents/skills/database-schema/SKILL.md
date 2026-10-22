@@ -56,8 +56,8 @@ model my_table {
 
 ### 3. Quy trình sửa schema
 1. Sửa `prisma/schema.prisma`
-2. `npx prisma generate`
-3. `npx prisma db push` (dev — hook `.claude/hooks/guard-bash.mjs` hỏi lại nếu `DATABASE_URL` không phải máy cục bộ)
+2. `npx prisma migrate dev --name <ten_thay_doi>` (dev — sinh migration và generate; hook `.claude/hooks/guard-bash.mjs` hỏi lại nếu `DATABASE_URL` không phải máy cục bộ). Đọc SQL sinh ra trước khi commit
+3. CSDL `*_test` vẫn dùng `npx prisma db push` (`npm run db:test:setup`)
 4. `npx prisma db seed` nếu cần
 5. **⚠️ DỪNG LẠI HỎI USER trước khi sửa schema.**
 

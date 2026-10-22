@@ -1,6 +1,7 @@
 import { cache } from "react"
 
 import type { MockSession } from "@/lib/mock-data"
+import { getNavHiddenOverride } from "@/modules/platform/infra/nav-matrix-store"
 import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
 import { canOverrideIndustryLock } from "@/modules/organization/domain/organization-settings-policy"
 import { describeSession } from "./describe-session"
@@ -47,6 +48,8 @@ export const resolveAppSession = cache(async function resolveAppSession(
   const operator = await new PlatformOperatorRepository().findActiveByUserId(described.user.id)
   const platformCapabilities = operator?.capabilityCodes ?? []
   const industryLocked = canOverrideIndustryLock(platformCapabilities) ? false : Boolean(orgSettings?.industry_locked)
+  // Ma trận điều hướng Admin SaaS ghi đè cho ngành này — đọc ở máy chủ, không đóng gói lúc build (M13)
+  const navHiddenKeys = await getNavHiddenOverride(industry)
 
   return {
     userName: described.user.name ?? described.user.email,
@@ -62,6 +65,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
           name: cleanOrgName,
           industry,
           industryLocked,
+          navHiddenKeys,
         }
       : undefined,
     // Đặc tả 03b (Role UX): khoá vai + loại tổ chức để chọn trang chủ/thứ tự

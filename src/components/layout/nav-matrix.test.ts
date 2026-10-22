@@ -1,8 +1,5 @@
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 
-// Test kiểm luật của ma trận MẶC ĐỊNH theo ngành. Ghi đè do Console Vận hành lưu vào
-// industry-nav-matrix-overrides.json là dữ liệu vận hành (039565c), không phải luật — tách khỏi test.
-vi.mock("@/lib/data/industry-nav-matrix-overrides.json", () => ({ default: {} }))
 import {
   ALL_NAV_KEYS,
   HREF_TO_NAV_KEY,
@@ -66,6 +63,14 @@ describe("nav-matrix (Industry Navigation Matrix SSOT)", () => {
       const hidden = getHiddenNavKeys(industry)
       expect(hidden.size, `Ngành ${industry} phải có hiddenNavKeys rỗng`).toBe(0)
     }
+  })
+
+  it("6b. ghi đè của Admin SaaS (gửi qua phiên) thay mặc định của ngành; rỗng/null thì về mặc định", () => {
+    expect([...getHiddenNavKeys("FNB", ["chat", "catalog"])]).toEqual(["chat", "catalog"])
+    expect(isNavKeyVisible("chat", "FNB", ["chat"])).toBe(false)
+    expect(filterHrefsByIndustry(["/hoi-thoai", "/khach-hang"], "FNB", ["chat"])).not.toContain("/hoi-thoai")
+    expect(getHiddenNavKeys("FNB", []).size).toBe(0)
+    expect(getHiddenNavKeys("FNB", null).size).toBe(0)
   })
 
   it("7. isNavKeyVisible trả true cho mọi navKey khi hiddenNavKeys rỗng", () => {
