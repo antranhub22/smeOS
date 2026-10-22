@@ -26,7 +26,7 @@ const COMMON_REJECT_REASONS = [
  *
  * - Xác nhận đơn: chuyển productionStatus WAITING → ASSIGNED, ⏱️ SLA bắt đầu chạy,
  *   thông báo khách "Đang chuẩn bị sản phẩm".
- * - Từ chối đơn: kích hoạt quy trình hoàn tiền tự động.
+ * - Từ chối đơn: tạo đề xuất huỷ (kèm hoàn tiền nếu có cọc); đơn huỷ và khách nhận tin khi đề xuất được duyệt.
  *
  * @see POST /api/v1/greeting-card/orders/[id]/confirm-order
  * @see DELETE /api/v1/greeting-card/orders/[id]/confirm-order
@@ -130,8 +130,8 @@ export function AdminConfirmOrderModal({
             <p className="flex items-start gap-2">
               <AlertTriangle size={15} className="mt-0.5 shrink-0" />
               <span>
-                Từ chối sẽ tạo đề xuất hủy đơn và <span className="font-bold">hoàn tiền tự động</span> cho
-                khách nếu đã có cọc. Thao tác này không thể hoàn tác.
+                Từ chối sẽ tạo <span className="font-bold">đề xuất hủy đơn</span> (kèm hoàn tiền nếu khách đã
+                cọc). Đơn chỉ hủy và khách chỉ nhận tin khi đề xuất được duyệt trong mục Yêu cầu hủy.
               </span>
             </p>
           )}

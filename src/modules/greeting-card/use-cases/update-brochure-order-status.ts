@@ -57,7 +57,6 @@ async function loadForAction(
   return order
 }
 
-
 /** Gói Nghiêm ngặt bắt buộc ảnh — gọi thẳng API bỏ qua ảnh cũng bị chặn (PO 15/10/2026). */
 async function assertSkipAllowed(ctx: TenantContext, kind: "product" | "recipient") {
   const workflow = parseBrochureWorkflowPolicy((await new GreetingCardRepository().getShopProfile(ctx.organizationId)).settings)
@@ -301,7 +300,8 @@ export async function coordinatorAcceptBrochureOrder(
   orderId: string,
   input: { note?: string | undefined; manualDispatch?: boolean | undefined } = {},
   repo = new BrochureOrderRepository(),
-  shops = new GreetingCardRepository()
+  shops = new GreetingCardRepository(),
+  cancellations: Pick<CancellationRepository, "listPending"> = new CancellationRepository()
 ) {
   const [order, shop] = await Promise.all([
     repo.findBrochureOrder(ctx, orderId),
@@ -317,6 +317,7 @@ export async function coordinatorAcceptBrochureOrder(
     workflow
   )
   if (acceptBlocker) throw conflict(acceptBlocker)
+  if ((await cancellations.listPending(ctx)).some((r) => r.order_id === orderId)) throw conflict("Đơn đang có đề xuất huỷ chờ duyệt. Duyệt hoặc từ chối đề xuất trước khi nhận đơn.")
 
   // Đơn chưa ghi cọc mà khách đã có bill/báo chuyển khoản → tự duyệt cọc như Điều hành
   const paid = Number(order.paid_vnd)
