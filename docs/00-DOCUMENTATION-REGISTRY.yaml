@@ -651,6 +651,20 @@ documents:
     dependencies: ["docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md", "docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md"]
     supersedes: []
 
+  - id: "DOC-05-RA-SOAT-COMMIT-SMEOS"
+    path: "docs/kien-truc/RA_SOAT_COMMIT_SMEOS.md"
+    title: "Rà soát từng commit smeOS"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Checklist 134 commit sau 8c53b38 theo 12 cụm, kết luận từng commit và bảng phát hiện của đợt rà soát trước bàn giao"
+    status: "SUPPORTING"
+    authority: "Level 5"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/HO_SO_BAN_GIAO.md"]
+    supersedes: []
+
   - id: "DOC-05-VAN-HANH-CAP-NHAT-CSDL"
     path: "docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md"
     title: "Vận hành — Cập nhật CSDL bằng migration"
