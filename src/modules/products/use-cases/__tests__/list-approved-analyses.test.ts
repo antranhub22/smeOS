@@ -12,7 +12,7 @@ vi.mock("@/modules/products/infra/product-analysis-repository")
 // "cannot be imported from a Client Component" ngay lúc collect test, trước khi chạy bất kỳ ca
 // thử nào — ba ca thử phía dưới không dùng `asset_id` nên không cần hành vi thật của hai mock này.
 vi.mock("@/modules/assets/infra/asset-repository", () => ({
-  AssetRepository: vi.fn().mockImplementation(() => ({ findById: vi.fn() })),
+  AssetRepository: vi.fn().mockImplementation(function () { return { findById: vi.fn() } }),
 }))
 vi.mock("@/modules/assets/adapters/storage-provider-factory", () => ({
   getStorageProvider: vi.fn().mockReturnValue({ signedUrl: vi.fn() }),
@@ -44,9 +44,9 @@ describe("listApprovedAnalyses", () => {
       { id: "ana-2", approval_state: "APPROVED" },
       { id: "ana-3", approval_state: "APPROVED" },
     ])
-    vi.mocked(ProductAnalysisRepository).mockImplementation(() => ({
+    vi.mocked(ProductAnalysisRepository).mockImplementation(function () { return {
       listApproved: mockListApproved,
-    } as unknown as ProductAnalysisRepository))
+    } as unknown as ProductAnalysisRepository })
 
     const res = await listApprovedAnalyses(ctx, { limit: 2 })
     expect(mockListApproved).toHaveBeenCalledWith(ctx, { limit: 3, cursor: null })
@@ -58,9 +58,9 @@ describe("listApprovedAnalyses", () => {
     const mockListApproved = vi.fn().mockResolvedValue([
       { id: "ana-1", approval_state: "APPROVED" },
     ])
-    vi.mocked(ProductAnalysisRepository).mockImplementation(() => ({
+    vi.mocked(ProductAnalysisRepository).mockImplementation(function () { return {
       listApproved: mockListApproved,
-    } as unknown as ProductAnalysisRepository))
+    } as unknown as ProductAnalysisRepository })
 
     const res = await listApprovedAnalyses(ctx, { limit: 2 })
     expect(res.data).toHaveLength(1)

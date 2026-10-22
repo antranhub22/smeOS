@@ -45,30 +45,30 @@ const PHAN_TICH_THAT = {
 }
 
 vi.mock("@/modules/products/infra/product-analysis-repository", () => ({
-  ProductAnalysisRepository: vi.fn().mockImplementation(() => ({ findById: vi.fn() })),
+  ProductAnalysisRepository: vi.fn().mockImplementation(function () { return { findById: vi.fn() } }),
 }))
 
 vi.mock("@/modules/profiles/infra/brand-profile-repository", () => ({
-  BrandProfileRepository: vi.fn().mockImplementation(() => ({ current: vi.fn() })),
+  BrandProfileRepository: vi.fn().mockImplementation(function () { return { current: vi.fn() } }),
 }))
 
 vi.mock("@/modules/organization/infra/occasion-repository", () => ({
-  OccasionRepository: vi.fn().mockImplementation(() => ({ list: vi.fn() })),
+  OccasionRepository: vi.fn().mockImplementation(function () { return { list: vi.fn() } }),
 }))
 
 vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
-  ProductCopyRepository: vi.fn().mockImplementation(() => ({
+  ProductCopyRepository: vi.fn().mockImplementation(function () { return {
     db: {},
     findByAnalysisId: vi.fn(),
     createFromAnalysis: vi.fn(),
-  })),
+  } }),
 }))
 
 vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({
+  GenerationJobRepository: vi.fn().mockImplementation(function () { return {
     startInline: vi.fn(),
     finishInline: vi.fn(),
-  })),
+  } }),
 }))
 
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({ enqueueJob: vi.fn() }))
@@ -122,11 +122,11 @@ describe("generateProductCopy", () => {
     copyRepo = { db: {}, findByAnalysisId: vi.fn().mockResolvedValue(null), createFromAnalysis: vi.fn() }
     jobRepo = { startInline: vi.fn(), finishInline: vi.fn() }
 
-    vi.mocked(ProductAnalysisRepository).mockImplementation(() => analysisRepo)
-    vi.mocked(BrandProfileRepository).mockImplementation(() => brandRepo)
-    vi.mocked(OccasionRepository).mockImplementation(() => occasionRepo)
-    vi.mocked(ProductCopyRepository).mockImplementation(() => copyRepo)
-    vi.mocked(GenerationJobRepository).mockImplementation(() => jobRepo)
+    vi.mocked(ProductAnalysisRepository).mockImplementation(function () { return analysisRepo })
+    vi.mocked(BrandProfileRepository).mockImplementation(function () { return brandRepo })
+    vi.mocked(OccasionRepository).mockImplementation(function () { return occasionRepo })
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return copyRepo })
+    vi.mocked(GenerationJobRepository).mockImplementation(function () { return jobRepo })
     vi.mocked(enqueueJob).mockResolvedValue({
       job: { id: "job-1" },
       deduped: false,

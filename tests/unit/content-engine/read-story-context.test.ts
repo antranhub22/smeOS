@@ -3,7 +3,7 @@ import type { TenantContext } from "@/core/tenancy"
 
 const findById = vi.fn()
 vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({ findById })),
+  GenerationJobRepository: vi.fn().mockImplementation(function () { return { findById } }),
 }))
 
 import { readStoryContext } from "@/modules/content-engine/infra/read-story-context"

@@ -13,7 +13,7 @@ const startInline = vi.fn()
 const finishInline = vi.fn()
 const findById = vi.fn()
 vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({ startInline, finishInline, findById })),
+  GenerationJobRepository: vi.fn().mockImplementation(function () { return { startInline, finishInline, findById } }),
 }))
 vi.mock("@/modules/content-engine/use-cases/generate-content", () => ({ generateContent: vi.fn() }))
 vi.mock("@/modules/usage/use-cases/refund-partial", () => ({ refundPartial: vi.fn() }))

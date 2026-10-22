@@ -7,7 +7,7 @@ const { getProductAnalysisRun, findFirst } = vi.hoisted(() => ({
   findFirst: vi.fn(),
 }))
 vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", () => ({
-  MarketIntelligenceRepository: vi.fn().mockImplementation(() => ({ getProductAnalysisRun })),
+  MarketIntelligenceRepository: vi.fn().mockImplementation(function () { return { getProductAnalysisRun } }),
 }))
 vi.mock("@/core/tenancy/infra/prisma", () => ({ prisma: { products: { findFirst } } }))
 

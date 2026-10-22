@@ -49,17 +49,17 @@ const mockFindById = vi.fn()
 const mockApprove = vi.fn()
 
 vi.mock("@/modules/assets/infra/asset-repository", () => ({
-  AssetRepository: vi.fn().mockImplementation(() => ({
+  AssetRepository: vi.fn().mockImplementation(function () { return {
     findById: mockFindById,
     approve: mockApprove,
-  })),
+  } }),
 }))
 
 vi.mock("@/modules/assets/adapters/storage-provider-factory", () => ({
-  getStorageProvider: vi.fn().mockImplementation(() => ({
+  getStorageProvider: vi.fn().mockImplementation(function () { return {
     name: "gia-lap",
     signedUrl: vi.fn().mockResolvedValue("https://storage.floraos.vn/asset-1.png"),
-  })),
+  } }),
 }))
 
 vi.mock("@/modules/audit/use-cases/record-audit-log", () => ({

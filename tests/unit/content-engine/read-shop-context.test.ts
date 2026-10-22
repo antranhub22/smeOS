@@ -4,10 +4,10 @@ import type { TenantContext } from "@/core/tenancy"
 const brandCurrent = vi.fn()
 const businessCurrent = vi.fn()
 vi.mock("@/modules/profiles/infra/brand-profile-repository", () => ({
-  BrandProfileRepository: vi.fn().mockImplementation(() => ({ current: brandCurrent })),
+  BrandProfileRepository: vi.fn().mockImplementation(function () { return { current: brandCurrent } }),
 }))
 vi.mock("@/modules/profiles/infra/business-profile-repository", () => ({
-  BusinessProfileRepository: vi.fn().mockImplementation(() => ({ current: businessCurrent })),
+  BusinessProfileRepository: vi.fn().mockImplementation(function () { return { current: businessCurrent } }),
 }))
 
 import { readShopContext } from "@/modules/content-engine/infra/read-shop-context"

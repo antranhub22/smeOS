@@ -36,10 +36,10 @@ vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({
   enqueueJob: (...args: unknown[]) => enqueueJob(...args),
 }))
 vi.mock("@/modules/assets/infra/asset-repository", () => ({
-  AssetRepository: vi.fn().mockImplementation(() => ({ findById })),
+  AssetRepository: vi.fn().mockImplementation(function () { return { findById } }),
 }))
 vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({ findById: vi.fn() })),
+  GenerationJobRepository: vi.fn().mockImplementation(function () { return { findById: vi.fn() } }),
 }))
 
 const { requestCloudVariant, requestVariants, candidateGroupId } = await import(
