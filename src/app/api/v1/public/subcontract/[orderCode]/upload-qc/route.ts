@@ -183,6 +183,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     orderId: order.id,
     order: { production_status: nextProductionStatus },
     require: SUBCONTRACT_STEP_PRECONDITION.QC,
+    recordProductPhoto: { createdBy: `branch_${branchId}` },
     metadata: (current) => ({
       ...current,
       qc_photos: (allQcPhotos = [...(Array.isArray(current.qc_photos) ? (current.qc_photos as string[]) : []), storageKey]),

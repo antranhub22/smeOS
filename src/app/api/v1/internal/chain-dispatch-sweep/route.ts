@@ -22,12 +22,10 @@ import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
 import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth"
 import { ChainDispatchSweepQuery } from "@/modules/greeting-card/infra/chain-dispatch-sweep-query"
-import { parseChainDispatchPolicy } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import { processOrderDispatchReminders } from "@/modules/greeting-card/use-cases/process-dispatch-reminders"
-import { evaluateCustomerApproval } from "@/modules/greeting-card/use-cases/evaluate-customer-approval"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 import type { TenantContext } from "@/core/tenancy"
@@ -223,23 +221,7 @@ export const POST = handle(async (request) => {
           | { phone?: string; telegramChatId?: string }
           | undefined
 
-        // M2b: Đánh giá Customer Approval Timer (auto-approve nếu khách không phản hồi)
-        if (order.production_status === "READY") {
-          const policy = parseChainDispatchPolicy(org.settings)
-          const autoApproveMinutes = policy.milestoneReminders.qcRetryIntervalMinutes ?? 30
-          await evaluateCustomerApproval(
-            {
-              organizationId: coord.organization_id,
-              orderId: coord.order_id,
-              orderCode: order.code,
-              productionStatus: order.production_status,
-              autoApproveAfterMinutes: autoApproveMinutes,
-            },
-            now
-          ).catch((err) => {
-            log.warn("chain_dispatch_sweep.m2b_eval_failed", { orderId: coord.order_id, error: err instanceof Error ? err.message : String(err) })
-          })
-        }
+        // Khách duyệt ảnh thành phẩm: tính theo thời gian lúc đọc (domain/photo-approval.ts), không cần quét
 
         // Xác định ảnh sản phẩm (Ưu tiên ảnh QC nếu có, fallback ảnh mẫu trong items)
         const coordMeta = (coord.metadata as Record<string, unknown> | null) ?? {}
