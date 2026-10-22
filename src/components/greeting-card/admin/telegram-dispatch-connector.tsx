@@ -209,9 +209,10 @@ export function TelegramDispatchConnector() {
           <li>
             Gửi mã liên kết của cửa hàng vào nhóm:{" "}
             <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">{linkCode ?? "…"}</code>{" "}
-            kèm tên bot, ví dụ{" "}
-            <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">@{bot?.username || "bot"} {linkCode ?? "…"}</code>{" "}
-            (trong nhóm, bot chỉ đọc tin có nhắc tên nó) — chỉ nhóm đã gửi đúng mã này mới nhận được tin của cửa hàng bạn.
+            dưới dạng lệnh{" "}
+            <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">/lienket@{bot?.username || "bot"} {linkCode ?? "…"}</code>{" "}
+            hoặc trả lời (Reply) một tin của bot bằng mã này. Trong nhóm, bot chỉ đọc lệnh gửi cho nó và tin trả lời nó;
+            nhắn tin riêng với bot thì chỉ cần gửi mã. Chỉ nhóm đã gửi đúng mã mới nhận được tin của cửa hàng bạn.
           </li>
           <li>
             Bấm nút <strong>&quot;Quét Chat ID mới&quot;</strong> ở góc trên. ID của nhóm sẽ xuất hiện ngay bên dưới để bạn chọn và kiểm tra.
