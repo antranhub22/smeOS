@@ -7,9 +7,7 @@ import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payme
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
 import { queueStaffNotification } from "./notify-staff"
-import {
-  DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason,
-} from "../domain/delivery-failure"
+import { DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason } from "../domain/delivery-failure"
 import { DeliveryFailureRepository } from "../infra/delivery-failure-repository"
 import { orderPhotoApproval, photoApprovalDispatchBlocker } from "../domain/photo-approval"
 import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
@@ -22,6 +20,7 @@ import { verifyQcPhotoWithAi } from "./verify-qc-photo-ai"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { OrderPhotoRepository } from "@/modules/greeting-card/infra/order-photo-repository"
 import { log } from "@/core/observability/log"
+import { confirmChainPaymentAndDispatch } from "./coordinator-confirm-chain-payment"
 
 /** Đơn của tổ chức + kiểm đúng thứ tự tác vụ xưởng (409 nếu sai bước). */
 async function loadForAction(
@@ -300,7 +299,7 @@ export async function markBrochureDeliveryFailed(
 export async function coordinatorAcceptBrochureOrder(
   ctx: TenantContext,
   orderId: string,
-  input: { note?: string | undefined } = {},
+  input: { note?: string | undefined; manualDispatch?: boolean | undefined } = {},
   repo = new BrochureOrderRepository(),
   shops = new GreetingCardRepository()
 ) {
@@ -340,10 +339,10 @@ export async function coordinatorAcceptBrochureOrder(
   const moneyBlocker = paymentGateBlocker("assign-florist", parsePaymentPolicy(shop.settings), { totalVnd: total, paidVnd: paidNow })
   if (moneyBlocker) throw conflict(`${moneyBlocker}. Chờ Điều hành xác nhận tiền cọc rồi tiếp nhận đơn.`)
 
+  // Chuỗi (PO 22/10/2026): chỉ xác nhận đã nhận tiền rồi chọn cửa hàng; "đã nhận đơn" báo khi chi nhánh chốt làm
+  if (workflow.requireCoordinatorAcceptance) return confirmChainPaymentAndDispatch(ctx, order, input, repo)
   const result = await repo.applyProgress(ctx, order, {
-    eventType: "COORDINATOR_ACCEPTED",
-    productionStatus: "ASSIGNED",
-    orderStatus: order.status === "DRAFT" ? "CONFIRMED" : order.status,
+    eventType: "COORDINATOR_ACCEPTED", productionStatus: "ASSIGNED", orderStatus: order.status === "DRAFT" ? "CONFIRMED" : order.status,
     noteAppend: `[Điều phối tiếp nhận] ${input.note?.trim() || "Xác nhận xưởng nhận đơn"}`,
   })
   queueOrderNotification(ctx.organizationId, order.id, "ORDER_ACCEPTED")

@@ -11,9 +11,15 @@ import type { Prisma } from "@/generated/prisma/client"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
 import type { ISubcontractClaimStore } from "../use-cases/dispatch-subcontract-order"
 import type { DeliveryGeoEntry, IDeliveryGeoStore } from "../use-cases/resolve-geo-location"
+import { queueOrderNotification } from "../use-cases/notify-customer"
 
 export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeliveryGeoStore {
-  constructor(private readonly db = prisma) {}
+  constructor(
+    private readonly db = prisma,
+    /** Chi nhánh chốt làm → báo khách "Đã nhận đơn" (PO 22/10/2026: không báo lúc Điều phối xác nhận tiền) */
+    private readonly onOrderAccepted: (organizationId: string, orderId: string) => void = (orgId, orderId) =>
+      queueOrderNotification(orgId, orderId, "ORDER_ACCEPTED")
+  ) {}
 
   async loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null> {
     const coordination = await this.db.order_coordinations.findFirst({
@@ -46,7 +52,8 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
     orderId: string,
     change: (current: SubcontractOrderState | null) => { next: SubcontractOrderState | null; result: T }
   ): Promise<T> {
-    return this.db.$transaction(async (tx) => {
+    let accepted = false
+    const out = await this.db.$transaction(async (tx) => {
       const rows = await tx.$queryRaw<Array<{ id: string; metadata: unknown }>>`
         SELECT "id", "metadata" FROM "order_coordinations"
         WHERE "organization_id" = ${ctx.organizationId} AND "order_id" = ${orderId}
@@ -67,9 +74,12 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
           data: { id: `coord_${orderId}`, organization_id: ctx.organizationId, order_id: orderId, metadata: newMeta },
         })
       }
-      await this.syncOrderWithDispatch(tx, ctx, next)
+      accepted = await this.syncOrderWithDispatch(tx, ctx, next)
       return result
     })
+    // Gửi sau khi giao dịch đã ghi — giao dịch huỷ thì không báo khách
+    if (accepted) this.onOrderAccepted(ctx.organizationId, orderId)
+    return out
   }
 
   /** Ghi trạng thái chỉ khi trạng thái hiện tại (dưới khoá dòng) còn là `expectedStatus`. */
@@ -105,7 +115,7 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
   }
 
   /** `orders.branch_id` theo chi nhánh đang giữ đơn, và tự xác nhận đơn khi chi nhánh chốt làm. */
-  private async syncOrderWithDispatch(tx: Prisma.TransactionClient, ctx: TenantContext, state: SubcontractOrderState): Promise<void> {
+  private async syncOrderWithDispatch(tx: Prisma.TransactionClient, ctx: TenantContext, state: SubcontractOrderState): Promise<boolean> {
     const realBranch = state.claimedBranchId
       ? await tx.branches.findFirst({ where: { id: state.claimedBranchId, organization_id: ctx.organizationId }, select: { id: true } })
       : null
@@ -116,14 +126,16 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
     }
 
     // Tự xác nhận đơn khi chi nhánh chốt làm (mặc định bật, tắt bằng auto_confirm_on_branch_commit=false)
-    if (state.dispatchStatus !== "COMMITTED") return
+    if (state.dispatchStatus !== "COMMITTED") return false
     const org = await tx.organizations.findUnique({ where: { id: ctx.organizationId }, select: { settings: true } })
     const rawPolicy = ((org?.settings as Record<string, unknown> | null) ?? {})["chain_dispatch_policy"] as Record<string, unknown> | undefined
-    if (rawPolicy?.auto_confirm_on_branch_commit === false || rawPolicy?.autoConfirmOnBranchCommit === false) return
-    await tx.orders.updateMany({
+    if (rawPolicy?.auto_confirm_on_branch_commit === false || rawPolicy?.autoConfirmOnBranchCommit === false) return false
+    const moved = await tx.orders.updateMany({
       where: scopedWhere(ctx, { id: state.orderId, NOT: { status: "CANCELLED" as const }, production_status: "WAITING" as const }),
       data: { status: "CONFIRMED" as const, production_status: "ASSIGNED" as const },
     })
+    // Chỉ lần chuyển WAITING → ASSIGNED đầu tiên mới là "đơn được nhận"
+    return moved.count > 0
   }
 
   /**

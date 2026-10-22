@@ -66,7 +66,7 @@ export function CoordinatorCardDecisionBlocks({
         <div className="flex flex-col gap-2 p-3 rounded-xl border-2 border-dashed border-success/40 bg-success-bg/30">
           <p className="text-body-sm font-bold text-success text-center flex items-center justify-center gap-1.5">
             <ShieldCheck size={16} />
-            Đơn hàng chờ Điều phối liên hệ chuỗi & Xác nhận nhận đơn
+            Đơn hàng chờ Điều phối xác nhận đã nhận tiền
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Button
@@ -77,7 +77,7 @@ export function CoordinatorCardDecisionBlocks({
               className="h-9 text-body-sm font-extrabold gap-1.5 bg-success hover:bg-success/90 text-white"
             >
               <CheckCircle2 size={15} />
-              Xác nhận Nhận đơn
+              Xác nhận đã nhận tiền
             </Button>
             <Button
               type="button"
