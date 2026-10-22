@@ -105,10 +105,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22.x"
-      # Chỉ chặn lỗ hổng CRITICAL ở dependency chạy trên production. 12 lỗi `high` có sẵn
-      # (gồm `xlsx`, chưa có bản vá) là nợ đã ghi nhận, không chặn ở đây.
-      - name: npm audit (production, mức critical)
-        run: npm audit --omit=dev --audit-level=critical
+      # Chặn lỗ hổng HIGH trở lên ở dependency chạy trên production — 0 lỗi từ 22/10/2026 (M11).
+      # `xlsx` cài từ cdn.sheetjs.com (bản vá 0.20.3 không có trên npm): Dependabot không tự nâng được.
+      - name: npm audit (production, mức high)
+        run: npm audit --omit=dev --audit-level=high
 
   worker:
     runs-on: ubuntu-latest

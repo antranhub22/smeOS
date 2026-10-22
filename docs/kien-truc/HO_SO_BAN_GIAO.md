@@ -53,7 +53,7 @@ Bắt buộc ở production, thiếu là app từ chối chạy hoặc tính nă
 | Link công khai (gia công) | Token HMAC theo tổ chức, mã đơn, chi nhánh; hạn 14 ngày | `tests/tenant/subcontract-public-link.test.ts` |
 | Cron nội bộ | `x-cron-secret`, so sánh thời gian hằng; production thiếu khoá → từ chối | `src/core/http/cron-auth.test.ts` |
 | AI | Mọi lời gọi qua `callCapability` (sổ chi phí, sàn riêng tư, lọc giấy phép mô hình) | skill `ai-integration` |
-| Chuỗi cung ứng | gitleaks (toàn lịch sử), `npm audit` mức critical, CodeQL, Dependabot | `.github/workflows/ci.yml`, `codeql.yml`, `.github/dependabot.yml` |
+| Chuỗi cung ứng | gitleaks (toàn lịch sử), `npm audit` mức high (production: 0 lỗi), CodeQL, Dependabot. `xlsx` cài từ cdn.sheetjs.com — tự kiểm bản mới ở https://cdn.sheetjs.com | `.github/workflows/ci.yml`, `codeql.yml`, `.github/dependabot.yml` |
 
 ## 5. Cổng chất lượng
 
@@ -76,7 +76,6 @@ Chờ PO quyết:
 | — | Nghị định 13/2023: đồng ý, hạn lưu, xuất/xoá dữ liệu cá nhân | PO hoãn 22/10 |
 | M5 | Ngày lưu dạng chuỗi; `chain_branches` nằm trong JSON settings | Đổi schema |
 | M13 | Ma trận điều hướng lưu trong tệp, mất khi deploy lại | Chuyển vào CSDL |
-| M11 | 12 lỗ hổng `high` ở dependency production (`xlsx` chưa có bản vá) | Đổi thư viện cần PO duyệt |
 | M12 | 20 ngành ghi "hoạt động" nhưng chỉ 7 ngành có plugin | Quyết định sản phẩm |
 | M2 | Tệp vượt 350 dòng | Tách dần khi sửa |
 | — | Ràng buộc CHECK `orders_balance_vnd_check` chưa có ở CSDL | `VAN_HANH_CAP_NHAT_CSDL.md` mục 2 |
