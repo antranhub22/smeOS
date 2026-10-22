@@ -48,7 +48,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/auth/signup` | — | Tạo người dùng và tổ chức trải nghiệm. Từ 22/10/2026 tài khoản **chờ superadmin duyệt** (`approval_status = PENDING`): trả `202 { status: "PENDING_APPROVAL", message }`, không đặt cookie, không tạo phiên |
+| POST | `/auth/signup` | — | Tạo người dùng và tổ chức trải nghiệm. Từ 22/10/2026 tài khoản **chờ superadmin duyệt** (`approval_status = PENDING`): trả `202 { status: "PENDING_APPROVAL", message }`, không đặt cookie, không tạo phiên. Giới hạn 20 lần/giờ/IP (429); `industry_key` phải có trong danh mục ngành, chuỗi giới hạn độ dài (email 254, tên/tên tổ chức 120) → sai: 400 (rà soát cụm B, 22/10/2026) |
 | POST | `/auth/login` | — | Chặn dò mật khẩu: 10 lần/15 phút mỗi email, 40 lần/15 phút mỗi IP → 429 (08/10/2026). Đúng mật khẩu nhưng tài khoản chưa duyệt / bị từ chối → 403 kèm câu báo; sai mật khẩu vẫn 401 như cũ, nên không dò được trạng thái |
 | POST | `/auth/logout` | — | |
 | GET | `/auth/me` | — | Người dùng, tổ chức hiện tại, danh sách năng lực đã tính |
@@ -895,7 +895,7 @@ Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP. Từ 22/10/2026 **chờ superadmin duyệt**: trả `202`, không cấp phiên; lúc duyệt hệ thống sinh mật khẩu tạm để superadmin gửi cho khách |
+| POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP. Từ 22/10/2026 **chờ superadmin duyệt**: trả `202`, không cấp phiên; lúc duyệt hệ thống sinh mật khẩu tạm để superadmin gửi cho khách. `industry_key` phải có trong danh mục ngành, `phone` đúng dạng số điện thoại, tên ≤ 120 ký tự → sai: 400 (rà soát cụm B) |
 | POST | `/business-profile/mock-data` | `F2` (hoặc `H4`/`N1`/`N12`) | Nạp hồ sơ và sản phẩm mẫu theo ngành `{ industry_key? }`, ghi đè hồ sơ hiện có. **Chỉ tổ chức dùng thử (`EXPERIENCE`)** — tiệm thật → 403 (PO 21/10/2026) |
 | GET | `/availability/board` | `L1` | `?month=YYYY-MM` — bảng khả dụng theo tháng (đặt phòng, khung giờ, tồn kho) |
 | POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ productId, checkInDate, checkOutDate, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |

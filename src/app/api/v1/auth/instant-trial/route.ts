@@ -5,12 +5,13 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { PENDING_APPROVAL_MESSAGE } from "@/modules/organization/domain/account-approval"
 import { startInstantTrial } from "@/modules/organization/use-cases/instant-trial"
+import { isKnownIndustryKey } from "@/modules/organization/domain/industry-profile"
 
 const schema = z.object({
-  name: z.string().min(1, "Vui lòng nhập họ và tên"),
-  phone: z.string().min(8, "Vui lòng nhập số điện thoại hoặc Zalo hợp lệ"),
-  email: z.string().email("Địa chỉ email không hợp lệ"),
-  industry_key: z.string().nullish(),
+  name: z.string().min(1, "Vui lòng nhập họ và tên").max(120),
+  phone: z.string().trim().regex(/^\+?\d[\d .-]{7,18}$/, "Vui lòng nhập số điện thoại hoặc Zalo hợp lệ"),
+  email: z.string().max(254).email("Địa chỉ email không hợp lệ"),
+  industry_key: z.string().nullish().refine((k) => k == null || isKnownIndustryKey(k), "Ngành nghề không hợp lệ"),
 })
 
 export const POST = handle(async (request) => {

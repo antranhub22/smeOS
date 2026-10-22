@@ -26,7 +26,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | Cụm | Nội dung | Số commit | Trạng thái |
 |---|---|---|---|
 | G | Điều phối chuỗi và gia công | 30 | Đã rà — còn mở G-SIZE |
-| B | Đăng ký, dùng thử, đăng nhập, duyệt tài khoản | 11 | Chưa rà |
+| B | Đăng ký, dùng thử, đăng nhập, duyệt tài khoản | 11 | Đã rà |
 | H | AI kiểm ảnh QC/POD | 8 | Chưa rà |
 | E | Lịch đặt chỗ Homestay | 5 | Chưa rà |
 | F | Ma trận menu ngành, Console vận hành | 7 | Chưa rà |
@@ -79,17 +79,17 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `484a180f` | 10-17 | feat(org): add industry selection support to tenant sign-up onboarding | CHƯA RÀ | |
-| `2fc3cc70` | 10-17 | feat(auth, settings): add industry selection in onboarding and enforce paid unlock in store settings | CHƯA RÀ | |
-| `4c14bddd` | 10-17 | feat(auth): nâng cấp form đăng ký chọn ngành nghề trực quan và khởi tạo hồ sơ chuẩn theo ngành | CHƯA RÀ | |
-| `ab5768a4` | 10-17 | feat(ui): thêm thanh chuyển đổi Đăng nhập / Đăng ký trực tiếp tại màn hình auth | CHƯA RÀ | |
-| `7a8aa652` | 10-17 | feat(auth): thêm cơ chế Trải nghiệm ngay (Instant Sandbox Trial) không cần mật khẩu kèm thu thập Lead | CHƯA RÀ | |
-| `033b35dc` | 10-17 | test(arch): đăng ký auth/instant-trial vào NO_CAPABILITY_GUARD | CHƯA RÀ | |
-| `9edc0ce6` | 10-21 | fix(auth): stop instant trial from issuing sessions for existing accounts | CHƯA RÀ | |
-| `7a43a59b` | 10-21 | fix(sso): keep reading the legacy floraos_sso cookie during the rename | CHƯA RÀ | |
-| `af790c20` | 10-21 | fix(signup): record a pending chain request instead of granting CHAIN | CHƯA RÀ | |
-| `6f6e3f1e` | 10-22 | feat(auth): require superadmin approval for every self-registered account | CHƯA RÀ | |
-| `af809424` | 10-22 | fix(platform): load the registration queue without setState in an effect body | CHƯA RÀ | |
+| `484a180f` | 10-17 | feat(org): add industry selection support to tenant sign-up onboarding | ĐẠT SAU SỬA | B-IND |
+| `2fc3cc70` | 10-17 | feat(auth, settings): add industry selection in onboarding and enforce paid unlock in store settings | ĐẠT SAU SỬA | B-IND |
+| `4c14bddd` | 10-17 | feat(auth): nâng cấp form đăng ký chọn ngành nghề trực quan và khởi tạo hồ sơ chuẩn theo ngành | ĐẠT SAU SỬA | B-IND |
+| `ab5768a4` | 10-17 | feat(ui): thêm thanh chuyển đổi Đăng nhập / Đăng ký trực tiếp tại màn hình auth | ĐẠT |  |
+| `7a8aa652` | 10-17 | feat(auth): thêm cơ chế Trải nghiệm ngay (Instant Sandbox Trial) không cần mật khẩu kèm thu thập Lead | ĐẠT SAU SỬA | B-LEN, B-ARCH |
+| `033b35dc` | 10-17 | test(arch): đăng ký auth/instant-trial vào NO_CAPABILITY_GUARD | ĐẠT |  |
+| `9edc0ce6` | 10-21 | fix(auth): stop instant trial from issuing sessions for existing accounts | ĐẠT |  |
+| `7a43a59b` | 10-21 | fix(sso): keep reading the legacy floraos_sso cookie during the rename | ĐẠT |  |
+| `af790c20` | 10-21 | fix(signup): record a pending chain request instead of granting CHAIN | ĐẠT |  |
+| `6f6e3f1e` | 10-22 | feat(auth): require superadmin approval for every self-registered account | ĐẠT SAU SỬA | B-RATE |
+| `af809424` | 10-22 | fix(platform): load the registration queue without setState in an effect body | ĐẠT |  |
 
 ### Cụm H — AI kiểm ảnh QC/POD
 
@@ -238,6 +238,10 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| B-RATE | Cao | `POST /auth/signup` | Không giới hạn tần suất — mỗi lần gọi tạo một tổ chức (dùng thử đã có 5/giờ) | 20 lần/giờ/IP |
+| B-IND | Trung bình | Đăng ký / dùng thử | Mã ngành tuỳ ý được ghi rồi khoá ngành vĩnh viễn | Chỉ nhận mã có trong danh mục ngành (`isKnownIndustryKey`) |
+| B-LEN | Trung bình | Đăng ký / dùng thử | Tên, tên tổ chức, email, SĐT không giới hạn độ dài/dạng | zod giới hạn độ dài, SĐT đúng dạng |
+| B-ARCH | Thấp | `instant-trial.ts` | Use-case ghi `products` trực tiếp qua `tx: any` (trái luật Prisma chỉ ở infra) | Chuyển sang `organization/infra/sample-product-seeder.ts`, có kiểu |
 | G-SEC1 | Chặn | Liên kết Telegram | Bot dùng chung nhận mọi chat id, tổ chức này gửi được vào chat của tổ chức khác | Chỉ gửi tới chat đã chứng minh thuộc tổ chức (`telegram_linked_chat_ids`, khoá do máy chủ ghi) |
 | G-SEC2 | Chặn | `telegram-adapter.ts` | Ảnh gửi Telegram đọc file cục bộ / URL nội bộ | Chỉ URL https công khai (`safeRemotePhotoUrl`), bỏ đọc file |
 | G-SEC3 | Cao | `renderDispatchMessage` | Giá trị khách nhập chèn thẳng vào HTML tin Telegram | Escape HTML |
