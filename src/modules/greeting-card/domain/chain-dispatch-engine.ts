@@ -15,6 +15,8 @@ export interface GeoCoordinate {
 export interface BranchChannelConfig {
   telegramChatId?: string | null | undefined
   zaloPhone?: string | null | undefined
+  /** Zalo user id của nhân viên chi nhánh trên OA chung (liên kết bằng mã qua OA) */
+  zaloUserId?: string | null | undefined
   messengerId?: string | null | undefined
   phone?: string | null | undefined
 }

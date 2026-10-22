@@ -90,7 +90,7 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
         rank: sc.rank,
         channels: {
           hasTelegram: Boolean(sc.branch.channels?.telegramChatId),
-          hasZalo: Boolean(sc.branch.channels?.zaloPhone),
+          hasZalo: Boolean(sc.branch.channels?.zaloUserId),
           phone: sc.branch.channels?.phone,
         },
       })),
@@ -209,7 +209,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
     rememberInviteCard(inviteCards, branch.branchId, sendResult, inviteCardText(title, messageText), claimUrl)
 
     const channel = branch.channels?.telegramChatId ? "TELEGRAM"
-      : branch.channels?.zaloPhone ? "ZALO"
+      : branch.channels?.zaloUserId ? "ZALO"
       : "SMS"
 
     results.push({
