@@ -46,6 +46,15 @@ export const SERVICES_INDUSTRY: IndustryPluginContract = {
       { label: "400.000 – 1.000.000 ₫", min: 400000, max: 1000000 },
       { label: "Trên 1.000.000 ₫", min: 1000000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: true,
+      variantDimensions: [
+        { key: "PACKAGE", label: "Gói dịch vụ", values: ["Cơ bản", "Tiêu chuẩn", "Cao cấp", "VIP"] },
+        { key: "DURATION", label: "Thời lượng", values: ["30 phút", "60 phút", "90 phút", "120 phút"] },
+        { key: "SESSIONS", label: "Số buổi", values: ["1 buổi", "5 buổi", "10 buổi", "20 buổi"] },
+        { key: "PROVIDER", label: "Người thực hiện", values: ["Kỹ thuật viên", "Chuyên viên", "Chuyên gia"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["lượt", "giờ", "buổi", "gói", "lần"],

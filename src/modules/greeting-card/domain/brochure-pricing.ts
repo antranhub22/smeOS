@@ -26,6 +26,8 @@ export interface PricedVariant {
   id: string
   name: string
   priceVnd: number
+  /** Giá ngày cao điểm (kiểu giá theo phiên bản); `null` = như giá thường */
+  peakPriceVnd?: number | null | undefined
 }
 
 /**

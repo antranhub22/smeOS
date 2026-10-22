@@ -4,7 +4,7 @@ import React, { useId, useState } from "react"
 import { ArrowLeft, Send, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ORDER_FIELD_MAX, MAX_DELIVERY_LEAD_DAYS } from "@/modules/greeting-card/domain/greeting-card-rules"
-import type { ProductSnapshot, CustomerOrderSubmitInput } from "@/modules/greeting-card/domain/greeting-card-types"
+import type { ProductSnapshot, CustomerOrderSubmitInput, GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import { BrochureOrderOptions } from "./brochure-order-options"
 import { useBrochureQuote } from "./use-brochure-quote"
@@ -25,7 +25,9 @@ import { useProductAvailability } from "./use-product-availability"
 
 interface BrochureOrderFormProps {
   productSnapshot: ProductSnapshot
-  variants: Array<{ id: string; name: string; priceVnd: number }>
+  variants: NonNullable<GreetingCatalogProduct["variants"]>
+  /** Kiểu "Khoảng giá": khách chọn lần lượt từng nhóm đặc điểm */
+  priceDimensions?: GreetingCatalogProduct["priceDimensions"]
   shipping: ShippingConfig
   appliedPolicies?: PublicAppliedPolicies | null | undefined
   quoteUrl: string
@@ -41,6 +43,7 @@ const INPUT =
 export function BrochureOrderForm({
   productSnapshot,
   variants,
+  priceDimensions,
   shipping,
   appliedPolicies,
   quoteUrl,
@@ -182,6 +185,7 @@ export function BrochureOrderForm({
 
         <BrochureOrderOptions
           variants={variants}
+          priceDimensions={priceDimensions}
           basePrice={productSnapshot.price}
           shipping={shipping}
           selection={pricing.selection}

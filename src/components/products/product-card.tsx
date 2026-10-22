@@ -1,5 +1,6 @@
 "use client"
 
+import { parsePricing, priceLabel, summarizePricing } from "@/modules/products/domain/product-pricing"
 import React from "react"
 import Link from "next/link"
 import { Trash2 } from "lucide-react"
@@ -43,7 +44,14 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
   )
 }
 
-export function PriceLabel({ price }: { price: number | null }) {
+export function PriceLabel({ price, attributes }: { price: number | null; attributes?: Record<string, unknown> | null | undefined }) {
+  // Sản phẩm đã khai kiểu giá (khoảng giá / liên hệ) → nhãn theo kiểu giá
+  if (attributes?.pricing) {
+    const summary = summarizePricing(parsePricing(attributes))
+    if (summary.mode !== "FIXED" || summary.minVnd !== summary.maxVnd) {
+      return <span className="text-caption font-semibold text-primary">{priceLabel(summary)}</span>
+    }
+  }
   if (price === null) {
     return <span className="text-caption text-text-muted italic">Liên hệ báo giá</span>
   }
@@ -94,7 +102,7 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
           <span className="truncate text-caption text-text-muted">
             {product.category ?? "Chưa phân loại"}
           </span>
-          <PriceLabel price={product.price_vnd} />
+          <PriceLabel price={product.price_vnd} attributes={product.attributes} />
         </div>
         <div className="mt-1 text-caption text-text-muted font-mono">#{product.code}</div>
       </Link>

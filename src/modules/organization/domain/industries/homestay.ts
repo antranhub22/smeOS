@@ -47,6 +47,15 @@ export const HOMESTAY_INDUSTRY: IndustryPluginContract = {
       { label: "1.200.000 – 3.000.000 ₫ / đêm", min: 1200000, max: 3000000 },
       { label: "Trên 3.000.000 ₫ / đêm", min: 3000000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: true,
+      variantDimensions: [
+        { key: "ROOM_TYPE", label: "Loại phòng", values: ["Phòng đơn", "Phòng đôi", "Phòng gia đình", "Phòng tập thể", "Nguyên căn"] },
+        { key: "GUESTS", label: "Số khách", values: ["1 khách", "2 khách", "4 khách", "6 khách", "10 khách"] },
+        { key: "VIEW", label: "Hướng phòng", values: ["Hướng núi", "Hướng biển", "Hướng vườn", "Hướng phố"] },
+        { key: "BOARD", label: "Gói kèm", values: ["Chỉ phòng", "Kèm ăn sáng", "Trọn gói ăn uống"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["đêm", "phòng", "căn", "giờ", "khách", "combo"],

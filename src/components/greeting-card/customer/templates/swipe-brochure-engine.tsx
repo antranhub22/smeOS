@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { ChevronLeft, ChevronRight, Heart, Info } from "lucide-react"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { EnterpriseSpecSheet } from "./enterprise-spec-sheet"
-import { SwipeCard, formatVnd } from "./swipe/swipe-card"
+import { SwipeCard } from "./swipe/swipe-card"
+import { productPriceText } from "./product-info/product-display"
 import { SwipeDeckEnd } from "./swipe/swipe-deck-end"
 import { SWIPE_SIGNAL, getSwipeTheme, isLightTheme } from "./swipe/swipe-themes"
 import { useStoryNav } from "./swipe/use-story-nav"
@@ -215,7 +216,7 @@ export function SwipeBrochureEngine({
                   style={{ background: theme.ctaBg, color: theme.ctaText }}
                 >
                   <span>{selectedProductId === current.id ? "Đã chọn mẫu này" : "Đặt mẫu này"}</span>
-                  <span className="tabular-nums opacity-90">{formatVnd(current.price)}</span>
+                  <span className="tabular-nums opacity-90">{productPriceText(current)}</span>
                 </button>
               </div>
             )}

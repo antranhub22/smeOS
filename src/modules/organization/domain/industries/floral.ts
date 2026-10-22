@@ -49,6 +49,16 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
       { label: "1.000.000 – 2.000.000 ₫", min: 1000000, max: 2000000 },
       { label: "Trên 2.000.000 ₫", min: 2000000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: false,
+      variantDimensions: [
+        { key: "SIZE", label: "Kích cỡ", values: ["Mini", "Nhỏ", "Vừa", "Lớn", "Đại / VIP"] },
+        { key: "COLOR", label: "Màu chủ đạo", values: ["Hồng", "Đỏ", "Trắng", "Vàng", "Cam", "Tím", "Xanh", "Pastel", "Phối nhiều màu"] },
+        { key: "MAIN_FLOWER", label: "Loại hoa chính", values: ["Hoa hồng", "Tulip", "Cẩm tú cầu", "Mẫu đơn", "Hướng dương", "Lan hồ điệp", "Hoa ly", "Cúc", "Baby"] },
+        { key: "STEM_COUNT", label: "Số bông", values: ["10 bông", "20 bông", "30 bông", "50 bông", "99 bông"] },
+        { key: "WRAP", label: "Kiểu gói", values: ["Giấy gói", "Giấy kraft", "Hộp", "Giỏ", "Bình", "Kệ / Lẵng"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["cành", "bó", "chậu", "giỏ", "kệ", "nhánh", "hộp"],
