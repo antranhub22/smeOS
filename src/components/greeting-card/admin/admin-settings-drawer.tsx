@@ -17,6 +17,7 @@ import { BrochureHolidaySettings } from "./brochure-holiday-settings"
 import { BrochureNotifySettings } from "./brochure-notify-settings"
 import { StaffNotifySettings } from "./staff-notify-settings"
 import { ChainDispatchSettings } from "./chain-dispatch-settings"
+import { CraftFeeSettings } from "./craft-fee-settings"
 import { TelegramDispatchConnector } from "./telegram-dispatch-connector"
 import { ZaloDispatchConnector } from "./zalo-dispatch-connector"
 
@@ -54,6 +55,7 @@ export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
           <BrochureNotifySettings />
           <StaffNotifySettings />
           <ChainDispatchSettings />
+          <CraftFeeSettings />
           <TelegramDispatchConnector />
           <ZaloDispatchConnector />
         </div>

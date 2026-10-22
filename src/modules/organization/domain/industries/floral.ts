@@ -110,4 +110,19 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
   navigation: {
     hiddenNavKeys: [],
   },
+  craftFee: {
+    feeLabel: "Phí cắm hoa",
+    defaultPercent: 50,
+    minVnd: 150_000,
+    maxVnd: 2_000_000,
+    partnerPercent: 75,
+    complexityLabels: { EASY: "Bó nhỏ, hoa cầm tay", MEDIUM: "Giỏ, hộp, bình", HARD: "Kệ, lẵng sự kiện" },
+    laborByComplexityVnd: { EASY: 80_000, MEDIUM: 150_000, HARD: 300_000 },
+    peakDays: [
+      { monthDay: "02-14", label: "Lễ Tình nhân" },
+      { monthDay: "03-08", label: "Quốc tế Phụ nữ" },
+      { monthDay: "10-20", label: "Phụ nữ Việt Nam" },
+      { monthDay: "11-20", label: "Nhà giáo Việt Nam" },
+    ],
+  },
 }

@@ -5,6 +5,8 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
+import { suggestCraftFee } from "@/modules/greeting-card/use-cases/suggest-craft-fee"
 import { listLinkedTelegramChatIds } from "@/modules/greeting-card/infra/telegram-linked-chats"
 import { rankBranchesForOrder, startChainDispatch } from "@/modules/greeting-card/use-cases/start-chain-dispatch"
 
@@ -36,6 +38,7 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
 
   // Tải trạng thái điều phối của đơn hàng (nếu đã tiếp nhận hoặc đã chốt)
   const subcontractState = await stateRepo.loadSubcontractState(ctx, order.id)
+  const suggestion = await suggestCraftFee(ctx.organizationId, order.id, new CraftFeeFactsRepository())
 
   return jsonResponse({
     data: {
@@ -69,6 +72,13 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
           phone: sc.branch.channels?.phone,
         },
       })),
+      craftFee: {
+        feeLabel: suggestion.feeLabel,
+        suggestedVnd: suggestion.suggestedVnd,
+        lines: suggestion.lines,
+        adjustPercent: suggestion.adjustPercent,
+        finalVnd: subcontractState?.craftFee?.finalVnd ?? subcontractState?.subcontractPriceVnd ?? null,
+      },
       policy: {
         topN: policy.topN,
         claimWindowMinutes: policy.claimTimeoutMinutes,

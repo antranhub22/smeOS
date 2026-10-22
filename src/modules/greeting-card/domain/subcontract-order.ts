@@ -5,6 +5,8 @@
  * Clean Architecture — Pure TypeScript, 100% không phụ thuộc cơ sở dữ liệu.
  */
 
+import type { CraftFeeDeduction, CraftFeeLine, CraftFeeMethod } from "./craft-fee-policy"
+
 export type SubcontractDispatchStatus =
   | "OPEN" // Đang mở để các chi nhánh trong vòng nhận đơn
   | "CLAIMED_GRACE" // 1 chi nhánh đã nhận, đang trong thời gian đếm ngược kiểm tra kho (Grace Period)
@@ -58,6 +60,19 @@ export interface SubcontractOrderState {
   inviteCards?: Record<string, InviteCardRef> | undefined
   /** Thù lao gia công đã chốt cho đơn hàng (VNĐ) */
   subcontractPriceVnd?: number | null | undefined
+  /** Cách ra phí gia công lúc mời (gợi ý, số chốt, diễn giải) và các khoản trừ sau đó — PO 22/10/2026. */
+  craftFee?: CraftFeeRecord | undefined
+}
+
+/** Phí gia công đã chốt của đơn: `finalVnd` = `subcontractPriceVnd`; thực nhận = chốt − khấu trừ. */
+export interface CraftFeeRecord {
+  suggestedVnd: number
+  finalVnd: number
+  method: CraftFeeMethod
+  lines: CraftFeeLine[]
+  /** Phí nhập tay vượt biên độ cho phép — do Điều hành duyệt. */
+  overrideApprovedBy?: string | undefined
+  deductions: CraftFeeDeduction[]
 }
 
 /** Thẻ Telegram của một chi nhánh (thẻ mời / thẻ tiến độ), hoặc `null` nếu chưa gửi. */

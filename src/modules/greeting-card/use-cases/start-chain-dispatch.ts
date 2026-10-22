@@ -17,6 +17,10 @@ import { ChainBranchRepository } from "../infra/chain-branch-repository"
 import { MultiChannelDispatchNotifier } from "../infra/dispatch-notification-adapter"
 import { subcontractBranchUrl } from "../infra/subcontract-link-token"
 import { SubcontractOrderRepository } from "../infra/subcontract-order-repository"
+import { hasCapability } from "@/core/rbac/capabilities"
+import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
+import { CraftFeeFactsRepository } from "../infra/craft-fee-facts-repository"
+import { resolveDispatchCraftFee, suggestCraftFee } from "./suggest-craft-fee"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { CLAIM_BUTTON_TEXT, closeCardsAfterClaim, inviteCardText, rememberInviteCard } from "./invite-cards"
 import { resolveDeliveryLocation } from "./resolve-geo-location"
@@ -82,8 +86,13 @@ export async function startChainDispatch(
   const approvedBranches = allBranches.filter((b) => approvedBranchIds.includes(b.branchId))
   if (approvedBranches.length === 0) throw validationFailed({ approvedBranchIds: "Không tìm thấy chi nhánh hợp lệ trong danh sách" })
 
-  const total = Number(order.total_vnd)
-  const craftFee = subcontractPriceVnd ?? Math.round(total * 0.5)
+  // Phí theo phương án tiệm đã cài (mặc định 50% giá hàng trước VAT, có sàn/trần) — PO 22/10/2026
+  const suggestion = await suggestCraftFee(ctx.organizationId, order.id, new CraftFeeFactsRepository())
+  const craftFeeRecord = resolveDispatchCraftFee(suggestion, subcontractPriceVnd, {
+    canApproveOutsideBand: hasCapability(ctx, GREETING_CARD_CAPABILITY.paymentRecord),
+    actorId: ctx.userId,
+  })
+  const craftFee = craftFeeRecord.finalVnd
 
   // Link có chữ ký gửi cho chi nhánh luôn dùng địa chỉ cấu hình — header Host do client gửi từng đưa
   // token sang tên miền tuỳ ý (rà soát cụm G, 22/10/2026)
@@ -117,6 +126,7 @@ export async function startChainDispatch(
       invitedBranchIds: invited,
       roundExpiresAt: roundExpiry,
       subcontractPriceVnd: craftFee,
+      craftFee: craftFeeRecord,
     }
     return { next, result: next }
   })

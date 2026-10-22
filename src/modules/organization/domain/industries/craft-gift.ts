@@ -107,4 +107,18 @@ export const CRAFT_GIFT_INDUSTRY: IndustryPluginContract = {
   navigation: {
     hiddenNavKeys: [],
   },
+  craftFee: {
+    feeLabel: "Phí gia công",
+    defaultPercent: 45,
+    minVnd: 80_000,
+    maxVnd: 2_000_000,
+    partnerPercent: 70,
+    complexityLabels: { EASY: "Gói, ghép quà", MEDIUM: "Làm thủ công", HARD: "Thiết kế riêng" },
+    laborByComplexityVnd: { EASY: 50_000, MEDIUM: 150_000, HARD: 400_000 },
+    peakDays: [
+      { monthDay: "02-14", label: "Lễ Tình nhân" },
+      { monthDay: "11-20", label: "Nhà giáo Việt Nam" },
+      { monthDay: "12-24", label: "Giáng sinh" },
+    ],
+  },
 }

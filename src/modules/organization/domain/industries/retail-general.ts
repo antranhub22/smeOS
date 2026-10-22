@@ -104,4 +104,14 @@ export const RETAIL_GENERAL_INDUSTRY: IndustryPluginContract = {
   navigation: {
     hiddenNavKeys: [],
   },
+  craftFee: {
+    feeLabel: "Phí gia công",
+    defaultPercent: 30,
+    minVnd: 50_000,
+    maxVnd: 1_000_000,
+    partnerPercent: 70,
+    complexityLabels: { EASY: "Đóng gói", MEDIUM: "Lắp ráp", HARD: "Gia công riêng" },
+    laborByComplexityVnd: { EASY: 20_000, MEDIUM: 80_000, HARD: 200_000 },
+    peakDays: [],
+  },
 }

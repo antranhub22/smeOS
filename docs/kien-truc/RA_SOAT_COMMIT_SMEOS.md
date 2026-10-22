@@ -67,7 +67,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | `b65b58bc` | 10-20 | feat(subcontract): add real-time countdown timers and milestone deadlines for spotlight steps | CHƯA RÀ | |
 | `97a2629e` | 10-20 | feat(subcontract): add force-majeure bypass evidence mechanism with coordinator approval and customer transparency | CHƯA RÀ | |
 | `c3abac12` | 10-20 | fix(coordinator): show bypass banner in kanban view and fallback telegram chatId | CHƯA RÀ | |
-| `cbbc2671` | 10-20 | fix(dispatch): harmonize craft fee to 50% SSOT and persist subcontractPriceVnd | CHƯA RÀ | |
+| `cbbc2671` | 10-20 | fix(dispatch): harmonize craft fee to 50% SSOT and persist subcontractPriceVnd | THAY THẾ | G-FEE |
 | `a795101f` | 10-21 | fix(subcontract): require signed per-branch links on public subcontract APIs | CHƯA RÀ | |
 | `24566461` | 10-21 | fix(subcontract-ui): remove synchronous setState inside effects | CHƯA RÀ | |
 | `169ad913` | 10-21 | fix(coordinator): guard subcontract coordinator actions by capability | CHƯA RÀ | |
@@ -238,6 +238,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| G-FEE | Cao | `chain-dispatch` route, route công khai gia công, 4 màn hình Điều phối | "50%" viết cứng ở 6 chỗ với 3 nền giá khác nhau (tổng gồm VAT, tổng trước VAT, đơn giá); không có sàn/trần, phụ cấp, khấu trừ; không theo ngành | Thay bằng `craft-fee-policy.ts` (6 phương án, dùng chung mọi ngành, ngành khai số khởi điểm), cài đặt "Phí gia công", phí gợi ý do máy chủ tính, khấu trừ giao trễ/khiếu nại mặc định 0% (PO 22/10/2026) |
 
 ## 5. Chưa xác minh được
 
