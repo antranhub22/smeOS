@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import {
-  Camera,
   CheckCircle2,
   UploadCloud,
   ImageIcon,
@@ -14,6 +13,7 @@ import {
   Clock,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PhotoSourcePicker } from "./photo-source-picker"
 import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface DeliveryProofInfo {
@@ -42,7 +42,6 @@ export function DeliveryProofCard({
   existingDeliveryProof,
   onDelivered,
 }: DeliveryProofCardProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [note, setNote] = useState("")
@@ -93,9 +92,6 @@ export function DeliveryProofCard({
     }
     setSelectedFile(null)
     setPreviewUrl(null)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
   }
 
   async function handleSubmitProof() {
@@ -241,16 +237,6 @@ export function DeliveryProofCard({
         </div>
       )}
 
-      {/* Input tệp ẩn hỗ trợ Camera trên di động */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleFileChange}
-        className="hidden"
-      />
-
       {previewUrl ? (
         /* Khung xem trước ảnh POD trước khi gửi */
         <div className="flex flex-col gap-3">
@@ -308,21 +294,10 @@ export function DeliveryProofCard({
         </div>
       ) : (
         /* Nút lớn chụp ảnh từ Camera hoặc chọn từ máy */
-        <div className="flex flex-col gap-2">
-          <Button
-            variant="outline"
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full h-24 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5 rounded-2xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all"
-          >
-            <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
-              <Camera size={22} />
-              <span>CHỤP ẢNH GIAO HÀNG HOẶC CHỌN TỪ MÁY</span>
-            </div>
-            <span className="text-caption text-text-muted">
-              Nhấp vào đây để mở Camera hoặc tải ảnh chụp người nhận / tại địa chỉ giao
-            </span>
-          </Button>
-        </div>
+        <PhotoSourcePicker
+          hint="Ảnh chụp người nhận / tại địa chỉ giao"
+          onChange={handleFileChange}
+        />
       )}
     </div>
   )

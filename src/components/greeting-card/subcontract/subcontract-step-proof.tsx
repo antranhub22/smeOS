@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import {
-  Camera,
   CheckCircle2,
   UploadCloud,
   ImageIcon,
@@ -15,6 +14,7 @@ import {
   Sparkles,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PhotoSourcePicker } from "./photo-source-picker"
 import { cn } from "@/lib/utils"
 import type { DeliveryProofInfo } from "./delivery-proof-card"
 import { SubcontractPodPreview } from "./subcontract-pod-preview"
@@ -58,7 +58,6 @@ export function SubcontractStepProof({
   onDelivered,
   onBypassRequested,
 }: SubcontractStepProofProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [note, setNote] = useState("")
@@ -101,9 +100,6 @@ export function SubcontractStepProof({
     }
     setSelectedFile(null)
     setPreviewUrl(null)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
   }
 
   async function handleSubmitProof() {
@@ -266,15 +262,6 @@ export function SubcontractStepProof({
               </div>
             )}
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-
             {previewUrl ? (
               <SubcontractPodPreview
                 previewUrl={previewUrl}
@@ -282,19 +269,10 @@ export function SubcontractStepProof({
                 onCancel={handleCancelPreview}
               />
             ) : (
-              <Button
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full h-20 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
-                  <Camera size={20} />
-                  <span>CHỤP ẢNH BẰNG CHỨNG GIAO HÀNG (POD)</span>
-                </div>
-                <span className="text-caption text-text-muted">
-                  Ảnh chụp người nhận nhận hoa hoặc ảnh hoa tại cửa/cổng địa chỉ nhận
-                </span>
-              </Button>
+              <PhotoSourcePicker
+                hint="Ảnh người nhận nhận hoa hoặc ảnh hoa tại cửa/cổng địa chỉ nhận"
+                onChange={handleFileChange}
+              />
             )}
 
             <div>
