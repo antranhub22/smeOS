@@ -90,6 +90,11 @@ export function formatDeliveryAddress(raw: unknown): string {
   return "Theo thỏa thuận"
 }
 
+/** Có địa chỉ thật để tra toạ độ (không phải giá trị mặc định "Theo thỏa thuận") */
+export function hasDeliveryAddress(formatted: string): boolean {
+  return Boolean(formatted.trim()) && formatted !== "Theo thỏa thuận"
+}
+
 /**
  * Che 4 chữ số cuối của số điện thoại (ví dụ: "0912121212" -> "091212****").
  */

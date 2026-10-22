@@ -5,7 +5,8 @@ import { MapPin, Star, Layers } from "lucide-react"
 export interface DispatchedCandidateBranch {
   branchId: string
   branchName: string
-  distanceKm: number
+  /** null = chưa xác định được vị trí người nhận hoặc chi nhánh */
+  distanceKm: number | null
   qualityScore: number
   activeJobsCount: number
   totalScore?: number
@@ -49,7 +50,7 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
           <div className="flex items-center gap-1.5 text-caption text-text-muted mt-0.5">
             <span className="flex items-center gap-0.5">
               <MapPin size={10} className="text-primary" />
-              <strong>{branch.distanceKm > 0 ? `${branch.distanceKm} km` : "Tại chỗ"}</strong>
+              <strong>{branch.distanceKm === null ? "Chưa rõ khoảng cách" : branch.distanceKm > 0 ? `${branch.distanceKm} km` : "Tại chỗ"}</strong>
             </span>
             <span>·</span>
             <span className="flex items-center gap-0.5">

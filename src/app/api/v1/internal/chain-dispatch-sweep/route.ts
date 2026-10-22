@@ -32,7 +32,9 @@ import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispa
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
 import { advanceExpiredDispatchRound } from "@/modules/greeting-card/use-cases/advance-dispatch-round"
-import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
+import { formatDeliveryAddress, hasDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
+import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
+import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 
 /** Kích thước một trang truy vấn — nhỏ để giới hạn bộ nhớ, lặp tới khi hết tập cần xử lý */
 const PAGE_SIZE = 50
@@ -65,6 +67,7 @@ export const POST = handle(async (request) => {
   const now = new Date()
   const stateRepo = new SubcontractOrderRepository()
   const notifier = new MultiChannelDispatchNotifier()
+  const geocoder = new GoongGeocoder()
 
   let totalProcessed = 0
   let totalRemindersSent = 0
@@ -100,11 +103,15 @@ export const POST = handle(async (request) => {
           const settings = (org.settings as Record<string, unknown> | null) ?? {}
           const coordinatorChannel = settings.coordinator_channel as { telegramChatId?: string } | undefined
           const firstItemMeta = (order.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
+          const deliveryAddress = formatDeliveryAddress(order.delivery_address)
           const result = await advanceExpiredDispatchRound(ctx, {
             state,
             shopSettings: org.settings,
             branches: await branchRepo.listCandidates(coord.organization_id),
-            deliveryAddress: formatDeliveryAddress(order.delivery_address),
+            deliveryAddress,
+            deliveryLocation: hasDeliveryAddress(deliveryAddress)
+              ? await resolveDeliveryLocation(ctx, { orderId: coord.order_id, address: deliveryAddress }, geocoder, stateRepo, now)
+              : null,
             deliveryTime: typeof win.timeSlot === "string" && typeof win.date === "string" ? `${win.timeSlot} ngày ${win.date}` : "Giao trong ngày",
             baseUrl: process.env.NEXT_PUBLIC_APP_URL || url.origin,
             imageUrl: (firstItemMeta.imageUrl as string | undefined) || (firstItemMeta.image as string | undefined) || null,

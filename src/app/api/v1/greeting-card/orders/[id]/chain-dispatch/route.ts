@@ -11,7 +11,9 @@ import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branc
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import type { InviteCardRef, SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import { CLAIM_BUTTON_TEXT, closeCardsAfterClaim, inviteCardText, rememberInviteCard } from "@/modules/greeting-card/use-cases/invite-cards"
-import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
+import { formatDeliveryAddress, hasDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
+import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
+import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
@@ -48,20 +50,26 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
 
   const branches = await new ChainBranchRepository().listCandidates(ctx.organizationId)
 
-  // Chạy Matching Engine — tính điểm, xếp hạng (orderLocation = null nếu chưa geocode)
-  const matchResult = matchCandidateBranches(null, branches, policy, {
+  // Toạ độ địa chỉ giao (Goong, có đệm theo địa chỉ) — không xác định được thì xếp hạng không theo khoảng cách
+  const stateRepo = new SubcontractOrderRepository()
+  const orderLocation = hasDeliveryAddress(recipientAddress)
+    ? await resolveDeliveryLocation(ctx, { orderId: order.id, address: recipientAddress }, new GoongGeocoder(), stateRepo)
+    : null
+
+  // Chạy Matching Engine — tính điểm khoảng cách / chất lượng / tải đơn, lọc bán kính khi có toạ độ
+  const matchResult = matchCandidateBranches(orderLocation, branches, policy, {
     excludedBranchIds: [],
     round: 1,
   })
 
   // Tải trạng thái điều phối của đơn hàng (nếu đã tiếp nhận hoặc đã chốt)
-  const stateRepo = new SubcontractOrderRepository()
   const subcontractState = await stateRepo.loadSubcontractState(ctx, order.id)
 
   return jsonResponse({
     data: {
       orderCode: order.code,
       deliveryAddress: recipientAddress,
+      deliveryLocationResolved: Boolean(orderLocation),
       dispatchState: subcontractState
         ? {
             status: subcontractState.dispatchStatus,
@@ -75,7 +83,7 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
       topBranches: matchResult.topCandidates.map((sc) => ({
         branchId: sc.branch.branchId,
         branchName: sc.branch.branchName,
-        distanceKm: sc.distanceKm ?? 0,
+        distanceKm: sc.distanceKm,
         qualityScore: sc.branch.qualityScore,
         activeJobsCount: sc.branch.activeJobsCount,
         totalScore: sc.totalScore,

@@ -3,6 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { POST as actOnSubcontract } from "@/app/api/v1/public/subcontract/[orderCode]/route"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { signSubcontractBranchToken } from "@/modules/greeting-card/infra/subcontract-link-token"
+import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
@@ -83,5 +84,15 @@ describe("chi nhánh bấm nhận Thẻ Gia Công", () => {
     const res = await claim(t, ids[1]!)
     expect(res.status).toBe(422)
     expect((await dispatchState(orderId))?.dispatchStatus).toBe("OPEN")
+  })
+
+  it("ghi đệm toạ độ giao hàng chỉ thêm khoá delivery_geo, giữ nguyên trạng thái điều phối", async () => {
+    const { orderId } = await seed(t, ["0"], ["CN-1"])
+    const ctx = { organizationId: t.organizationId, workspaceId: "", userId: "u", branchId: null, capabilities: new Set<string>() }
+    const repo = new SubcontractOrderRepository()
+    await repo.saveDeliveryGeo(ctx, orderId, { addressKey: "1 lê lợi", location: { latitude: 10.7, longitude: 106.7 }, resolvedAt: "2026-10-22T00:00:00Z" })
+
+    expect((await dispatchState(orderId))?.dispatchStatus).toBe("OPEN")
+    expect((await repo.loadDeliveryGeo(ctx, orderId))?.location).toEqual({ latitude: 10.7, longitude: 106.7 })
   })
 })
