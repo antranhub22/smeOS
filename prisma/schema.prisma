@@ -261,7 +261,9 @@ model chain_branches {
   active_jobs_count    Int      @default(0)
   max_concurrent_jobs  Int      @default(5)
   is_active            Boolean  @default(true)
-  channels             Json? // { phone, telegramChatId, zaloPhone, messengerId }
+  channels             Json? // { phone, telegramChatId, zaloPhone, zaloUserId, messengerId }
+  /// Mã chi nhánh nhắn vào Zalo OA chung để liên kết (sinh khi cần, duy nhất toàn nền tảng)
+  zalo_link_code       String?  @unique
   cancellation_count   Int      @default(0)
   bypass_count         Int      @default(0)
   cancellation_history Json? // tối đa 50 mục gần nhất
@@ -1698,6 +1700,15 @@ model platform_role_capabilities {
   operator platform_operators @relation(fields: [operator_id], references: [id], onDelete: Cascade)
 
   @@unique([operator_id, capability_code])
+}
+
+/// Bí mật cấp NỀN TẢNG (không thuộc tổ chức nào), niêm phong bằng secret-box.
+/// Dùng cho mã truy cập + refresh token của Zalo OA chung: refresh token chỉ dùng một lần,
+/// nên mỗi lần làm mới phải khoá dòng và lưu cặp mới. Không bao giờ trả ra API hay log.
+model platform_secrets {
+  key          String   @id // vd. zalo_oa_tokens
+  sealed_value String
+  updated_at   DateTime @updatedAt
 }
 
 /// Nhật ký cho hành động KHÔNG thuộc một tổ chức cụ thể (xem sức khoẻ hệ

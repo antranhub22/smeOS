@@ -5,6 +5,7 @@
  * `organizations.settings.chain_branches`). `branchId` phía domain chính là `branch_code` ở đây.
  */
 
+import { randomBytes } from "node:crypto"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { BranchCandidate, BranchChannelConfig } from "../domain/chain-dispatch-engine"
@@ -40,7 +41,7 @@ function channelsOf(value: Prisma.JsonValue): BranchChannelConfig {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {}
   const v = value as Record<string, unknown>
   const pick = (key: string) => (typeof v[key] === "string" ? (v[key] as string) : undefined)
-  return { phone: pick("phone"), telegramChatId: pick("telegramChatId"), zaloPhone: pick("zaloPhone"), messengerId: pick("messengerId") }
+  return { phone: pick("phone"), telegramChatId: pick("telegramChatId"), zaloPhone: pick("zaloPhone"), zaloUserId: pick("zaloUserId"), messengerId: pick("messengerId") }
 }
 
 export function toBranchCandidate(row: ChainBranchRow): BranchCandidate {
@@ -63,6 +64,13 @@ function channelsJson(channels: BranchChannelConfig | undefined): Prisma.InputJs
     if (typeof value === "string" && value.trim()) out[key] = value
   }
   return out
+}
+
+const LINK_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" // bỏ 0/O/1/I dễ nhầm khi gõ
+
+function newZaloLinkCode(): string {
+  const bytes = randomBytes(8)
+  return "ZL" + Array.from(bytes, (b) => LINK_ALPHABET[b % LINK_ALPHABET.length]).join("")
 }
 
 export class ChainBranchRepository {
@@ -100,9 +108,11 @@ export class ChainBranchRepository {
     return this.db.$transaction(async (tx) => {
       const existing = await tx.chain_branches.findMany({
         where: { organization_id: organizationId, branch_code: { in: [...byCode.keys()] } },
-        select: { branch_code: true },
+        select: { branch_code: true, channels: true },
       })
       const existingCodes = new Set(existing.map((e) => e.branch_code))
+      // Liên kết Zalo do nhân viên tự làm qua OA, không có trong tệp Excel → giữ nguyên khi nhập lại
+      const linkedZalo = new Map(existing.map((e) => [e.branch_code, channelsOf(e.channels).zaloUserId]))
       for (const b of byCode.values()) {
         const data = {
           name: b.branchName,
@@ -113,7 +123,7 @@ export class ChainBranchRepository {
           active_jobs_count: b.activeJobsCount,
           max_concurrent_jobs: b.maxConcurrentJobs,
           is_active: b.isActive,
-          channels: channelsJson(b.channels),
+          channels: channelsJson({ ...b.channels, zaloUserId: b.channels?.zaloUserId || linkedZalo.get(b.branchId) }),
         }
         await tx.chain_branches.upsert({
           where: { organization_id_branch_code: { organization_id: organizationId, branch_code: b.branchId } },
@@ -125,6 +135,47 @@ export class ChainBranchRepository {
       const updated = [...byCode.keys()].filter((code) => existingCodes.has(code)).length
       return { created: byCode.size - updated, updated, total }
     })
+  }
+
+  /** Chi nhánh của tổ chức kèm mã liên kết Zalo (sinh mã cho chi nhánh chưa có) */
+  async listZaloLinks(organizationId: string): Promise<Array<{ branchCode: string; name: string; linkCode: string; linked: boolean }>> {
+    const rows = await this.db.chain_branches.findMany({
+      where: { organization_id: organizationId },
+      select: { id: true, branch_code: true, name: true, zalo_link_code: true, channels: true },
+      orderBy: { created_at: "asc" },
+    })
+    const out = []
+    for (const row of rows) {
+      let linkCode = row.zalo_link_code
+      for (let attempt = 0; !linkCode && attempt < 5; attempt++) {
+        const candidate = newZaloLinkCode()
+        const updated = await this.db.chain_branches.updateMany({
+          where: { id: row.id, organization_id: organizationId, zalo_link_code: null },
+          data: { zalo_link_code: candidate },
+        }).catch(() => ({ count: 0 })) // trùng mã (cực hiếm) → thử mã khác
+        if (updated.count > 0) linkCode = candidate
+      }
+      out.push({ branchCode: row.branch_code, name: row.name, linkCode: linkCode ?? "", linked: Boolean(channelsOf(row.channels).zaloUserId) })
+    }
+    return out
+  }
+
+  /**
+   * Gắn Zalo user (người theo dõi OA chung) vào chi nhánh có mã liên kết. Mã là duy nhất toàn nền
+   * tảng nên tổ chức suy ra TỪ MÃ — webhook không có phiên tenant. `jsonb_set` không đè kênh khác.
+   */
+  async linkZaloUser(linkCode: string, zaloUserId: string): Promise<{ organizationId: string; branchName: string } | null> {
+    const row = await this.db.chain_branches.findUnique({
+      where: { zalo_link_code: linkCode },
+      select: { id: true, organization_id: true, name: true },
+    })
+    if (!row) return null
+    await this.db.$executeRaw`
+      UPDATE "chain_branches"
+      SET "channels" = jsonb_set(COALESCE("channels", '{}'::jsonb), '{zaloUserId}', to_jsonb(${zaloUserId}::text), true),
+          "updated_at" = NOW()
+      WHERE "id" = ${row.id} AND "organization_id" = ${row.organization_id}`
+    return { organizationId: row.organization_id, branchName: row.name }
   }
 
   /**

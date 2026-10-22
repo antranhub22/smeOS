@@ -18,8 +18,12 @@ import type {
   LiveCardSendResult,
 } from "../use-cases/dispatch-subcontract-order"
 import { getStaffChannelProvider } from "../adapters/staff-channels"
+import { ZaloOaPlatformClient } from "../adapters/staff-channels/zalo-oa-platform"
+import { ZaloOaTokenVault } from "./platform-secret-repository"
 
 export class MultiChannelDispatchNotifier implements IDispatchNotifier {
+  constructor(private readonly zalo = new ZaloOaPlatformClient(new ZaloOaTokenVault())) {}
+
   async editInviteCard(
     _ctx: TenantContext,
     card: { msgId: string; chatId: string; isCaption: boolean },
@@ -137,28 +141,13 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
       }
     }
 
-    // Zalo fallback (không hỗ trợ edit, vẫn gửi mới)
-    if (channels?.zaloPhone) {
-      const zaloProvider = getStaffChannelProvider("ZALO")
-      if (zaloProvider) {
-        try {
-          const res = await zaloProvider.sendMessage({
-            recipientId: branch.branchId,
-            recipientName: branch.branchName,
-            recipientPhone: channels.zaloPhone,
-            title: `Đơn gia công #${target.orderCode}`,
-            message: target.messageText,
-          })
-          if (res.sent) {
-            return { sent: true }
-          }
-        } catch (err) {
-          log.warn("dispatch_notify.zalo_err", {
-            branchId: branch.branchId,
-            error: err instanceof Error ? err.message : String(err),
-          })
-        }
-      }
+    // Zalo OA chung (không hỗ trợ sửa tin → luôn gửi mới). Nút bấm Telegram → link trong thân tin.
+    if (channels?.zaloUserId) {
+      const links = actions.filter((a) => a.url).map((a) => `${a.text}: ${a.url}`).join("\n")
+      const title = target.title ?? `Đơn gia công #${target.orderCode}`
+      const res = await this.zalo.sendText(channels.zaloUserId, [title, target.messageText, links].filter(Boolean).join("\n\n"))
+      if (res.sent) return { sent: true }
+      log.warn("dispatch_notify.zalo_err", { branchId: branch.branchId, error: res.error })
     }
 
     // Không kênh nào gửi được (chưa cấu hình hoặc đều lỗi) — báo đúng là CHƯA gửi, để mốc nhắc
@@ -167,7 +156,7 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
       branchId: branch.branchId,
       orderCode: target.orderCode,
       hasTelegram: Boolean(channels?.telegramChatId),
-      hasZalo: Boolean(channels?.zaloPhone),
+      hasZalo: Boolean(channels?.zaloUserId),
     })
 
     return { sent: false, error: "Không gửi được qua kênh nào của chi nhánh" }
