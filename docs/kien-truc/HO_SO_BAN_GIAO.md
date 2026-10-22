@@ -85,6 +85,10 @@ Việc làm tay một lần trước khi đưa khách vào:
   2. `MAT_KHAU_MOI='<mật khẩu mới ≥ 12 ký tự>' npm run don-tai-khoan -- --giu=tuans2@dev.com --xac-nhan` — xoá thật, đổi mật khẩu, cấp mã.
 
   Không hoàn tác được. Tổ chức hết thành viên được liệt kê nhưng không bị xoá.
+- Tài khoản test chức năng (PO 22/10/2026), tạo SAU bước dọn tài khoản. Tổ chức riêng "smeOS QA": `test01@smeos.com` vai Điều hành, `test02@smeos.com` vai Sale, không có mã N.
+  - Lệnh: `MAT_KHAU_TEST01='…' MAT_KHAU_TEST02='…' npm run tao-tai-khoan-test -- --xac-nhan`. Bỏ `--xac-nhan` thì chỉ kiểm tra.
+  - Đổi vai `test02`: thêm `--vai=dieu_phoi`.
+  - Đừng chạy lại `don-tai-khoan` sau bước này: lệnh đó xoá cả tài khoản test.
 - Đặt `CRON_SECRET` (giống nhau ở web và cron) và `NEXT_PUBLIC_APP_URL`.
 - Bật thông báo lỗi của Render (`VAN_HANH_SU_CO_VA_SAO_LUU.md` mục 2).
 - Bật branch protection cho `main` (bắt buộc PR, CI xanh, ≥ 1 người duyệt).
