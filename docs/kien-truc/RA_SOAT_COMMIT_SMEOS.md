@@ -33,8 +33,8 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | K | Sức khoẻ hệ thống, giám sát, worker | 6 | Đã rà |
 | J | Seed, dữ liệu mẫu, script tài khoản | 6 | Đã rà |
 | D | Sửa schema | 6 | Đã rà (migrate diff sạch) |
-| C | Hạ tầng, CI, deploy, thư viện | 20 | Chưa rà |
-| I | Thông báo nhân viên | 2 | Chưa rà |
+| C | Hạ tầng, CI, deploy, thư viện | 20 | Đã rà — còn mở C-ENV |
+| I | Thông báo nhân viên | 2 | Đã rà |
 | A | Nền đa ngành | 23 | Chưa rà |
 | L | Tài liệu, token giao diện, kiến trúc, test | 10 | Chưa rà |
 
@@ -163,33 +163,33 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `c155dc77` | 10-17 | chore(infra): isolate PostgreSQL port to 5433 and volume to smeos-db-data | CHƯA RÀ | |
-| `e8a75d28` | 10-17 | chore(test): isolate test database connection to port 5433 and smeos_test | CHƯA RÀ | |
-| `dce775e0` | 10-17 | chore(infra): isolate Render production blueprint (smeos-postgres, smeos-redis, smeos services) | CHƯA RÀ | |
-| `e9833b11` | 10-17 | chore(isolation): change web port to 3200 and cookies to smeos_session/smeos_sso | CHƯA RÀ | |
-| `a2ed281e` | 10-17 | chore(isolation): purge legacy floraos database fallbacks in workers | CHƯA RÀ | |
-| `7e8ee445` | 10-20 | fix(ci): update eslint baseline and fix playwright port to 3200 | CHƯA RÀ | |
-| `e12e5e1f` | 10-20 | fix(render): comment out Redis keyvalue — free tier limit reached on account | CHƯA RÀ | |
-| `1d9f3c24` | 10-20 | feat(render): add TELEGRAM_DISPATCH_BOT_TOKEN and TELEGRAM_STAFF_BOT_TOKEN to render.yaml | CHƯA RÀ | |
-| `6e03b338` | 10-21 | ci: point tenant and platform isolation gates at the CI test database | CHƯA RÀ | |
-| `1e1613b0` | 10-21 | chore(render): schedule the dispatch sweep, add CRON_SECRET and Redis | CHƯA RÀ | |
-| `57617ad2` | 10-22 | feat(db): deploy with prisma migrate deploy instead of db push --accept-data-loss | CHƯA RÀ | |
-| `4b6a96ff` | 10-22 | ci(security): scan secrets, audit dependencies, add CodeQL and Dependabot | CHƯA RÀ | |
-| `a8f03e45` | 10-22 | fix(deps): clear all high vulnerabilities in production dependencies | CHƯA RÀ | |
-| `98d09ef6` | 10-22 | ci(dependabot): skip semver-major version updates | CHƯA RÀ | |
-| `ea242c04` | 10-22 | chore(deps): bump the npm-minor-patch group across 1 directory with 18 updates | CHƯA RÀ | |
-| `6ae6271f` | 10-22 | chore(deps): update pytest requirement from >=8.0 to >=9.1.1 in /workers (#9) | CHƯA RÀ | |
-| `a75b19cc` | 10-22 | chore(deps): update onnxruntime requirement in /workers (#10) | CHƯA RÀ | |
-| `f912ce25` | 10-22 | chore(deps): update pillow requirement in /workers (#11) | CHƯA RÀ | |
-| `bee89a96` | 10-22 | chore(deps): upgrade vitest to 5 and @types/node to 22 | CHƯA RÀ | |
-| `13da4998` | 10-22 | chore(deps): update pydantic requirement in /workers (#12) | CHƯA RÀ | |
+| `c155dc77` | 10-17 | chore(infra): isolate PostgreSQL port to 5433 and volume to smeos-db-data | ĐẠT |  |
+| `e8a75d28` | 10-17 | chore(test): isolate test database connection to port 5433 and smeos_test | ĐẠT |  |
+| `dce775e0` | 10-17 | chore(infra): isolate Render production blueprint (smeos-postgres, smeos-redis, smeos services) | MỞ | C-ENV |
+| `e9833b11` | 10-17 | chore(isolation): change web port to 3200 and cookies to smeos_session/smeos_sso | ĐẠT |  |
+| `a2ed281e` | 10-17 | chore(isolation): purge legacy floraos database fallbacks in workers | ĐẠT |  |
+| `7e8ee445` | 10-20 | fix(ci): update eslint baseline and fix playwright port to 3200 | ĐẠT |  |
+| `e12e5e1f` | 10-20 | fix(render): comment out Redis keyvalue — free tier limit reached on account | THAY THẾ |  |
+| `1d9f3c24` | 10-20 | feat(render): add TELEGRAM_DISPATCH_BOT_TOKEN and TELEGRAM_STAFF_BOT_TOKEN to render.yaml | ĐẠT |  |
+| `6e03b338` | 10-21 | ci: point tenant and platform isolation gates at the CI test database | ĐẠT |  |
+| `1e1613b0` | 10-21 | chore(render): schedule the dispatch sweep, add CRON_SECRET and Redis | ĐẠT |  |
+| `57617ad2` | 10-22 | feat(db): deploy with prisma migrate deploy instead of db push --accept-data-loss | ĐẠT |  |
+| `4b6a96ff` | 10-22 | ci(security): scan secrets, audit dependencies, add CodeQL and Dependabot | ĐẠT |  |
+| `a8f03e45` | 10-22 | fix(deps): clear all high vulnerabilities in production dependencies | ĐẠT |  |
+| `98d09ef6` | 10-22 | ci(dependabot): skip semver-major version updates | ĐẠT |  |
+| `ea242c04` | 10-22 | chore(deps): bump the npm-minor-patch group across 1 directory with 18 updates | ĐẠT |  |
+| `6ae6271f` | 10-22 | chore(deps): update pytest requirement from >=8.0 to >=9.1.1 in /workers (#9) | ĐẠT |  |
+| `a75b19cc` | 10-22 | chore(deps): update onnxruntime requirement in /workers (#10) | ĐẠT |  |
+| `f912ce25` | 10-22 | chore(deps): update pillow requirement in /workers (#11) | ĐẠT |  |
+| `bee89a96` | 10-22 | chore(deps): upgrade vitest to 5 and @types/node to 22 | ĐẠT |  |
+| `13da4998` | 10-22 | chore(deps): update pydantic requirement in /workers (#12) | ĐẠT |  |
 
 ### Cụm I — Thông báo nhân viên
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `c281d3ff` | 10-18 | feat(greeting-card): he thong staff notification matrix da vai, da kenh va da nganh | CHƯA RÀ | |
-| `82fa0081` | 10-21 | fix(notify): time out staff channel calls and report undelivered invites | CHƯA RÀ | |
+| `c281d3ff` | 10-18 | feat(greeting-card): he thong staff notification matrix da vai, da kenh va da nganh | ĐẠT |  |
+| `82fa0081` | 10-21 | fix(notify): time out staff channel calls and report undelivered invites | ĐẠT |  |
 
 ### Cụm A — Nền đa ngành
 
@@ -238,6 +238,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| C-ENV | Trung bình | `render.yaml` | Biến code đang dùng chưa khai (`sync: false`) nên dễ quên khi bàn giao: `GOONG_API_KEY` (toạ độ điều phối chuỗi — thiếu thì xếp hạng theo khu vực), `ZALO_OA_APP_ID/APP_SECRET/REFRESH_TOKEN/WEBHOOK_SECRET/FOLLOW_URL` (Zalo OA). Không có giá trị bí mật nào trong file | **Mở** — sửa `render.yaml` cần PO duyệt |
 | J-MOCK | Cao | Nạp dữ liệu mẫu theo ngành | Tiệm thật nạp được dữ liệu mẫu đè hồ sơ | Đã thay bằng `72fe6167`: chỉ tổ chức dùng thử |
 | K-LEAK | Cao | `GET /api/health` | Health công khai trả host CSDL đã che, chi tiết lỗi, phiên bản | Đã thay bằng `da210518`: chỉ trạng thái; chi tiết vào log và `/internal/health` có khoá |
 | F-SU | Chặn | Đổi ngành | Mở khoá đổi ngành theo email cố định của tài khoản dev | Đã thay bằng mã năng lực nền tảng N1/N12 (`df1b9630`); không còn email đặc quyền trong code |
