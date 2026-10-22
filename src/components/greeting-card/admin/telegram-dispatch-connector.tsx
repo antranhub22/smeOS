@@ -187,6 +187,15 @@ export function TelegramDispatchConnector() {
         </div>
       )}
 
+      {respData?.error && (
+        <div className="p-3 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-2 text-caption text-foreground">
+          <AlertCircle size={16} className="text-warning shrink-0 mt-0.5" />
+          <span>
+            <strong>Không quét được nhóm mới:</strong> {respData.error}. Vui lòng liên hệ bộ phận hỗ trợ.
+          </span>
+        </div>
+      )}
+
       {/* Hướng dẫn 3 bước kết nối */}
       <div className="p-4 rounded-xl bg-surface-muted border border-border flex flex-col gap-2.5">
         <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
@@ -200,7 +209,9 @@ export function TelegramDispatchConnector() {
           <li>
             Gửi mã liên kết của cửa hàng vào nhóm:{" "}
             <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">{linkCode ?? "…"}</code>{" "}
-            — chỉ nhóm đã gửi đúng mã này mới hiện ra và nhận được tin của cửa hàng bạn.
+            kèm tên bot, ví dụ{" "}
+            <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">@{bot?.username || "bot"} {linkCode ?? "…"}</code>{" "}
+            (trong nhóm, bot chỉ đọc tin có nhắc tên nó) — chỉ nhóm đã gửi đúng mã này mới nhận được tin của cửa hàng bạn.
           </li>
           <li>
             Bấm nút <strong>&quot;Quét Chat ID mới&quot;</strong> ở góc trên. ID của nhóm sẽ xuất hiện ngay bên dưới để bạn chọn và kiểm tra.

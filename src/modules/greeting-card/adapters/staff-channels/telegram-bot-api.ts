@@ -36,20 +36,49 @@ export async function getTelegramBotInfo(botToken: string): Promise<TelegramBotI
   return data.ok && data.result ? data.result : null
 }
 
-/** Tin nhắn gần đây bot nhận được (tối đa 100), kèm nhóm chat và nội dung văn bản. */
+/** Telegram từ chối đọc tin của bot (đang dùng webhook / bị nơi khác đọc cùng lúc / token sai) */
+export class TelegramUpdatesError extends Error {
+  constructor(readonly reason: "WEBHOOK_ACTIVE" | "CONFLICT" | "UNAUTHORIZED" | "OTHER", message: string) {
+    super(message)
+  }
+}
+
+function updatesError(code: number | undefined, description: string | undefined): TelegramUpdatesError {
+  const d = (description ?? "").toLowerCase()
+  if (code === 409 && d.includes("webhook")) {
+    return new TelegramUpdatesError("WEBHOOK_ACTIVE", "Bot đang gắn webhook ở hệ thống khác nên không đọc được tin nhắn mới")
+  }
+  if (code === 409) {
+    return new TelegramUpdatesError("CONFLICT", "Bot đang được một hệ thống khác đọc tin cùng lúc (cùng token bot)")
+  }
+  if (code === 401) return new TelegramUpdatesError("UNAUTHORIZED", "Token bot Telegram không hợp lệ")
+  return new TelegramUpdatesError("OTHER", description || "Telegram không trả tin nhắn")
+}
+
+/**
+ * 100 tin MỚI NHẤT bot nhận được, kèm nhóm chat và nội dung. `offset=-100` lấy từ cuối hàng đợi —
+ * trước 23/10/2026 gọi không offset nên chỉ nhận 100 tin CŨ NHẤT: khi hàng đợi quá 100, mã liên kết
+ * vừa gửi không bao giờ được đọc. Telegram từ chối (webhook / xung đột) → ném lỗi thay vì trả rỗng.
+ */
 export async function getRecentTelegramMessages(botToken: string): Promise<TelegramChatMessage[]> {
-  const data = await call<Array<Record<string, unknown>>>(botToken, "getUpdates?limit=100")
-  if (!data.ok || !Array.isArray(data.result)) return []
+  const data = (await call<Array<Record<string, unknown>>>(botToken, "getUpdates?offset=-100&limit=100")) as {
+    ok: boolean
+    result?: Array<Record<string, unknown>>
+    description?: string
+    error_code?: number
+  }
+  if (!data.ok) throw updatesError(data.error_code, data.description)
+  if (!Array.isArray(data.result)) return []
   const out: TelegramChatMessage[] = []
   for (const update of data.result) {
-    const message = (update.message || update.channel_post) as Record<string, unknown> | undefined
+    const message = (update.message || update.edited_message || update.channel_post) as Record<string, unknown> | undefined
     const chat = message?.chat as Record<string, unknown> | undefined
     if (!chat?.id) continue
     const id = String(chat.id)
     const title = (chat.title as string) ||
       [chat.first_name as string, chat.last_name as string].filter(Boolean).join(" ") ||
       (chat.username ? `@${chat.username as string}` : id)
-    out.push({ chatId: id, title, type: (chat.type as string) || "unknown", text: String(message?.text ?? "") })
+    out.push({ chatId: id, title, type: (chat.type as string) || "unknown", text: String(message?.text ?? message?.caption ?? "") })
   }
   return out
 }

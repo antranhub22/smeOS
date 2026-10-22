@@ -174,6 +174,22 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
       hasZalo: Boolean(channels?.zaloUserId),
     })
 
-    return { sent: false, error: "Không gửi được qua kênh nào của chi nhánh" }
+    return { sent: false, error: notDeliveredReason({ requestedChatId, telegramLinked: Boolean(channels?.telegramChatId), botConfigured: Boolean(botToken), hasZalo: Boolean(channels?.zaloUserId) }) }
   }
+}
+
+/** Lý do không gửi được, viết cho người điều phối — chỉ ra việc cần làm thay vì báo chung chung */
+export function notDeliveredReason(input: {
+  requestedChatId: string | null | undefined
+  telegramLinked: boolean
+  botConfigured: boolean
+  hasZalo: boolean
+}): string {
+  if (input.requestedChatId && !input.telegramLinked) {
+    return "Nhóm Telegram chưa liên kết — gửi mã liên kết vào nhóm rồi bấm \"Quét Chat ID mới\" trong Cài đặt"
+  }
+  if (input.requestedChatId && !input.botConfigured) return "Hệ thống chưa bật bot Telegram"
+  if (input.requestedChatId) return "Telegram từ chối gửi — kiểm tra bot còn trong nhóm và chưa bị chặn"
+  if (input.hasZalo) return "Zalo không gửi được — nhân viên cần nhắn tin cho trang Zalo trong 7 ngày gần nhất"
+  return "Chi nhánh chưa có Telegram hoặc Zalo"
 }

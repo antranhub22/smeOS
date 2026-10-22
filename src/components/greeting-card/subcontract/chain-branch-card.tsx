@@ -26,6 +26,7 @@ export interface DispatchedCandidateBranch {
   rank: number
   channels?: {
     hasTelegram?: boolean
+    telegramLinked?: boolean
     hasZalo?: boolean
     phone?: string | null
   }
@@ -88,9 +89,14 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
 
       <div className="flex items-center justify-between pt-1.5 border-t border-border/40 text-caption w-full">
         <div className="flex items-center gap-1">
-          {branch.channels?.hasTelegram && (
+          {branch.channels?.hasTelegram && branch.channels.telegramLinked !== false && (
             <span className="px-1 py-0.5 rounded bg-info/10 text-info font-bold">
               Telegram riêng
+            </span>
+          )}
+          {branch.channels?.hasTelegram && branch.channels.telegramLinked === false && (
+            <span className="px-1 py-0.5 rounded bg-warning/10 text-warning font-bold" title="Gửi mã liên kết vào nhóm rồi bấm Quét Chat ID mới trong Cài đặt">
+              Telegram chưa liên kết
             </span>
           )}
           {branch.channels?.hasZalo && (
