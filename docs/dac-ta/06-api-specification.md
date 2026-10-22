@@ -85,6 +85,9 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | POST | `/members/:id/reset-password` | `A7` |
 | PATCH | `/members/:id/status` | `A5` |
 | PATCH | `/members/:id/role` | `F5` |
+| PUT | `/members/:id/chain-branch` | `F5` |
+| GET | `/members/chain-branches` | `F5` |
+| GET | `/branch-portal/orders` | `R14` |
 | GET | `/roles` | `F1` |
 | POST | `/roles` | `F5` |
 | PATCH | `/roles/:id/capabilities` | `F5` |
@@ -93,6 +96,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | PATCH | `/branches/:id` | `F7` |
 | GET | `/workspaces` | `F1` |
 | POST | `/workspaces` | `F8` |
+
+**Tài khoản cửa hàng nhận gia công (PO 22/10/2026).** Vai hệ thống `cua_hang`; `PUT /members/:id/chain-branch` `{ chain_branch_code | null }` gắn tài khoản với một chi nhánh chuỗi (`memberships.chain_branch_code`) — chi nhánh hoặc thành viên không thuộc tổ chức → 404; `GET /members/chain-branches` liệt kê chi nhánh để chọn. `GET /branch-portal/orders` (`R14`) trả `{ branch, orders[] }` cho trang `/cua-hang`: đơn đang mời chi nhánh (`OPEN`, có trong `invitedBranchIds` vòng hiện tại, chưa từ chối, chưa hết hạn), đơn chi nhánh đã nhận (`CLAIMED_GRACE`) hoặc đang làm (`COMMITTED`); lọc trong DB theo JSON, tối đa 100 đơn; chi nhánh lấy từ phiên, không nhận tham số. Mỗi đơn có `cardUrl` — link Thẻ Gia Công đã ký cho đúng chi nhánh (dựng từ `NEXT_PUBLIC_APP_URL`). Trang tự làm mới 30 giây/lần; chi nhánh không có Telegram/Zalo vẫn thấy lời mời ở đây (kết quả phát lệnh ghi kênh `APP`).
 
 **Tài khoản nhân viên (PO 08/10/2026).** `POST /members` `{ name, email, role_id, branch_id? }` tạo người dùng + thành viên **đang hoạt động** trong một giao dịch, trả `temporaryPassword` (12 ký tự, hiện một lần, `Cache-Control: no-store`); email đã có tài khoản FloraOS → 409 (không chiếm tài khoản người khác — dùng `/members/invite`). `POST /members/:id/reset-password` cấp mật khẩu tạm mới và đăng xuất người đó ở mọi máy; người đó còn là thành viên tiệm khác → 409; chính mình → 422. `PATCH /members/:id/status` `{ active }` tạm khoá (`SUSPENDED`, thu hồi ngay phiên ở tiệm này, giữ dữ liệu) hoặc mở lại. `A3`/`A5`/`A7` trần cứng Điều hành; thành viên tiệm khác → 404; mọi thao tác ghi `audit_logs` (không ghi mật khẩu).
 

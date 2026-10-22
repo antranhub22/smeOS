@@ -341,6 +341,9 @@ model memberships {
   user_id         String
   role_id         String
   branch_id       String? // null = phạm vi toàn tổ chức
+  /// Chi nhánh chuỗi (`chain_branches.branch_code`) của tài khoản vai `cua_hang` — trang cửa hàng chỉ
+  /// hiện đơn gia công của chi nhánh này. Khác `branch_id` (bảng `branches`, dùng cho giá/tồn kho).
+  chain_branch_code String?
   status          membership_status @default(INVITED)
   invited_at      DateTime          @default(now())
   joined_at       DateTime?
@@ -351,6 +354,7 @@ model memberships {
   @@unique([organization_id, user_id])
   @@index([organization_id])
   @@index([user_id])
+  @@index([organization_id, chain_branch_code])
 }
 
 // ── Asset · Job · Usage · Audit — P3 ────────────────────────────────────────

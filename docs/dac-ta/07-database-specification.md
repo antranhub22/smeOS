@@ -208,6 +208,7 @@ model memberships {
   user_id         String
   role_id         String
   branch_id       String?           // null = phạm vi toàn tổ chức
+  chain_branch_code String?         // chi nhánh chuỗi của tài khoản vai `cua_hang` (PO 22/10/2026)
   status          membership_status @default(INVITED)
   invited_at      DateTime          @default(now())
   joined_at       DateTime?
@@ -215,6 +216,7 @@ model memberships {
   user            users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
   @@unique([organization_id, user_id])
   @@index([organization_id])
+  @@index([organization_id, chain_branch_code])
   @@index([user_id])
 }
 ```

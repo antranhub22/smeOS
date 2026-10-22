@@ -46,6 +46,7 @@ export default function QuanLyThanhVienPage() {
     email: string
     roleId: string | null
     roleName: string | null
+    chainBranchCode: string | null
   } | null>(null)
 
   const fetchData = async () => {

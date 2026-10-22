@@ -11,6 +11,7 @@ export interface MemberListItem {
   user: { id: string; name: string | null; email: string }
   role: { id: string; key: string; name: string } | null
   branch_id: string | null
+  chain_branch_code?: string | null
   status: string
   invited_at: string
   joined_at: string | null
@@ -35,6 +36,7 @@ interface MemberTableProps {
     email: string
     roleId: string | null
     roleName: string | null
+    chainBranchCode: string | null
   }) => void
 }
 
@@ -155,6 +157,7 @@ export function MemberTable({
                           email: m.user.email,
                           roleId: m.role?.id || null,
                           roleName: m.role?.name || null,
+                          chainBranchCode: m.chain_branch_code ?? null,
                         })
                       }
                     >

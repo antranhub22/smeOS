@@ -6,6 +6,7 @@ import { ensureSystemRoles } from "@/modules/organization/use-cases/ensure-syste
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
+import { SYSTEM_ROLES } from "@/modules/organization/domain/system-roles"
 
 /**
  * `YC-T9` — không khoá ghi toàn cục. Đồng thời hoá bằng giao dịch cơ sở dữ
@@ -77,12 +78,13 @@ describe("không khoá ghi toàn cục", () => {
     ])
 
     const roles = new RoleRepository()
-    for (const key of ["dieu_hanh", "dieu_phoi", "sale", "product_manager", "marketing", "crm", "customer_service", "experience_user"]) {
+    for (const { key } of SYSTEM_ROLES) {
       expect(await roles.findSystemRoleByKey(key)).not.toBeNull()
     }
 
+    // Mỗi vai hệ thống đúng một dòng — nạp song song không sinh bản trùng
     const all = await prisma.roles.findMany({ where: { organization_id: null } })
-    expect(all).toHaveLength(8)
+    expect(all).toHaveLength(SYSTEM_ROLES.length)
   })
 
   it("hai người đăng ký cùng lúc không giành nhau slug", async () => {

@@ -8,6 +8,8 @@ export type MemberSummary = {
   user: { id: string; name: string | null; email: string }
   role: { id: string; key: string; name: string } | null
   branch_id: string | null
+  /** Chi nhánh chuỗi của tài khoản cửa hàng nhận gia công (null = chưa gắn) */
+  chain_branch_code: string | null
   status: string
   invited_at: string
   joined_at: string | null
@@ -30,6 +32,7 @@ export async function listMembers(ctx: TenantContext): Promise<MemberSummary[]> 
         user: user ? { id: user.id, name: user.name, email: user.email } : { id: membership.user_id, name: null, email: "" },
         role: role ? { id: role.id, key: role.key, name: role.name } : null,
         branch_id: membership.branch_id,
+        chain_branch_code: membership.chain_branch_code,
         status: membership.status,
         invited_at: membership.invited_at.toISOString(),
         joined_at: membership.joined_at ? membership.joined_at.toISOString() : null,
