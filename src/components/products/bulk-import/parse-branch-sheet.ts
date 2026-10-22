@@ -5,8 +5,11 @@ export interface ParsedBranchRow {
   branchId: string
   branchName: string
   address?: string | undefined
+  ward?: string | undefined
   district?: string | undefined
   city?: string | undefined
+  /** Phường/xã lân cận nhận giao thêm */
+  serviceWards?: string[] | undefined
   /** Không có toạ độ → bỏ trống; xếp hạng điều phối bỏ qua khoảng cách thay vì lấy tâm Hà Nội. */
   latitude?: number | undefined
   longitude?: number | undefined
@@ -30,7 +33,9 @@ const COLUMNS = {
   code: ["Mã chi nhánh *", "Mã chi nhánh", "Mã shop", "Mã cửa hàng", "code"],
   name: ["Tên chi nhánh *", "Tên chi nhánh", "Tên shop", "Tên cửa hàng", "name"],
   address: ["Địa chỉ chi tiết *", "Địa chỉ chi tiết", "Địa chỉ", "address"],
+  ward: ["Phường / Xã", "Phường", "Xã", "ward"],
   district: ["Quận / Huyện", "Quận", "Huyện", "district"],
+  serviceWards: ["Phường/xã phục vụ thêm", "Phường phục vụ", "serviceWards"],
   city: ["Tỉnh / Thành phố", "Tỉnh", "Thành phố", "city"],
   lat: ["Vĩ độ (Latitude)", "Vĩ độ", "Latitude", "lat"],
   lng: ["Kinh độ (Longitude)", "Kinh độ", "Longitude", "lng"],
@@ -75,7 +80,9 @@ export function parseBranchWorkbook(data: ArrayBuffer): ParsedBranchRow[] {
     const code = pick(rawRow, COLUMNS.code)
     const name = pick(rawRow, COLUMNS.name)
     const address = pick(rawRow, COLUMNS.address)
+    const ward = pick(rawRow, COLUMNS.ward)
     const district = pick(rawRow, COLUMNS.district)
+    const serviceWardsStr = pick(rawRow, COLUMNS.serviceWards)
     const city = pick(rawRow, COLUMNS.city)
     const latStr = pick(rawRow, COLUMNS.lat)
     const lngStr = pick(rawRow, COLUMNS.lng)
@@ -125,7 +132,11 @@ export function parseBranchWorkbook(data: ArrayBuffer): ParsedBranchRow[] {
       status: errors.length > 0 ? "ERROR" : "VALID",
     }
     if (address) parsed.address = address
+    if (ward) parsed.ward = ward
     if (district) parsed.district = district
+    if (serviceWardsStr) {
+      parsed.serviceWards = serviceWardsStr.split(/[;,\n]/).map((w) => w.trim()).filter(Boolean).slice(0, 50)
+    }
     if (city) parsed.city = city
     if (errors.length > 0) parsed.errorMessage = errors.join("; ")
     results.push(parsed)
@@ -142,8 +153,10 @@ export function generateBranchTemplateBuffer(): Uint8Array {
     "Mã chi nhánh *",
     "Tên chi nhánh *",
     "Địa chỉ chi tiết *",
+    "Phường / Xã",
     "Quận / Huyện",
     "Tỉnh / Thành phố",
+    "Phường/xã phục vụ thêm",
     "Vĩ độ (Latitude)",
     "Kinh độ (Longitude)",
     "Bán kính phục vụ (km)",
@@ -160,8 +173,10 @@ export function generateBranchTemplateBuffer(): Uint8Array {
       "CN-BADINH",
       "Chi nhánh Ba Đình (Xưởng Trung Tâm)",
       "22 Lê Lợi, Phường Cống Vị, Quận Ba Đình, Hà Nội",
+      "Phường Cống Vị",
       "Ba Đình",
       "Hà Nội",
+      "Phường Ngọc Hà, Phường Giảng Võ",
       21.0354,
       105.8142,
       15,
@@ -176,8 +191,10 @@ export function generateBranchTemplateBuffer(): Uint8Array {
       "CN-HOANKIEM",
       "Chi nhánh Hoàn Kiếm (Cửa Hàng Phố Cổ)",
       "45 Hàng Trống, Phường Hàng Trống, Quận Hoàn Kiếm, Hà Nội",
+      "Phường Hàng Trống",
       "Hoàn Kiếm",
       "Hà Nội",
+      "",
       21.0285,
       105.8542,
       12,
@@ -192,8 +209,10 @@ export function generateBranchTemplateBuffer(): Uint8Array {
       "CN-CAUGIAY",
       "Chi nhánh Cầu Giấy (Xưởng Vệ Tinh)",
       "102 Cầu Giấy, Phường Quan Hoa, Quận Cầu Giấy, Hà Nội",
+      "Phường Quan Hoa",
       "Cầu Giấy",
       "Hà Nội",
+      "",
       21.0315,
       105.7975,
       18,

@@ -6,6 +6,7 @@
  */
 
 import type { ChainDispatchPolicy } from "./chain-dispatch-policy"
+import { AREA_MATCH_SCORE, matchArea, type AdministrativeArea, type AreaMatchLevel, type BranchArea } from "./area-match"
 
 export interface GeoCoordinate {
   latitude: number
@@ -26,6 +27,8 @@ export interface BranchCandidate {
   branchName: string
   location?: GeoCoordinate | null | undefined
   address?: string | null | undefined
+  /** Phường / quận / tỉnh của chi nhánh — dùng khi không tính được khoảng cách theo toạ độ */
+  area?: BranchArea | null | undefined
   /** Điểm đánh giá chất lượng từ 0 đến 100 */
   qualityScore: number
   /** Số đơn hàng hiện đang thực hiện tại chi nhánh */
@@ -41,6 +44,8 @@ export interface BranchCandidate {
 export interface ScoredBranch {
   branch: BranchCandidate
   distanceKm: number | null
+  /** Mức khớp khu vực — chỉ có khi không tính được khoảng cách theo toạ độ */
+  areaMatch: AreaMatchLevel | null
   distanceScore: number
   qualityScore: number
   workloadScore: number
@@ -53,6 +58,8 @@ export interface MatchBranchesOptions {
   excludedBranchIds?: string[] | undefined
   /** Vòng phân bổ hiện tại (Bắt đầu từ 1) */
   round?: number | undefined
+  /** Phường / quận / tỉnh của người nhận — sàng lọc khi thiếu toạ độ */
+  orderArea?: AdministrativeArea | null | undefined
 }
 
 export interface MatchBranchesResult {
@@ -152,9 +159,11 @@ export function matchCandidateBranches(
     if (orderLocation && branch.location) {
       const dist = calculateHaversineDistanceKm(orderLocation, branch.location)
       if (dist > policy.maxRadiusKm) return false
+      return true
     }
 
-    return true
+    // Không tính được khoảng cách: chi nhánh khác tỉnh với người nhận bị loại
+    return matchArea(options.orderArea, branch.area) !== "OTHER_PROVINCE"
   })
 
   // 2. Chấm điểm từng chi nhánh hợp lệ
@@ -164,7 +173,9 @@ export function matchCandidateBranches(
       distanceKm = calculateHaversineDistanceKm(orderLocation, branch.location)
     }
 
-    const distScore = scoreDistance(distanceKm, policy.maxRadiusKm)
+    // Có toạ độ hai đầu → điểm theo km; không có → điểm theo mức khớp phường / quận / tỉnh
+    const areaMatch = distanceKm === null ? matchArea(options.orderArea, branch.area) : null
+    const distScore = areaMatch ? AREA_MATCH_SCORE[areaMatch] : scoreDistance(distanceKm, policy.maxRadiusKm)
     const qualScore = Math.max(0, Math.min(100, Math.round(branch.qualityScore)))
     const workScore = scoreWorkload(branch.activeJobsCount, branch.maxConcurrentJobs)
 
@@ -176,6 +187,7 @@ export function matchCandidateBranches(
     return {
       branch,
       distanceKm,
+      areaMatch,
       distanceScore: distScore,
       qualityScore: qualScore,
       workloadScore: workScore,

@@ -255,6 +255,12 @@ model chain_branches {
   branch_code          String
   name                 String
   address              String?
+  /// Khu vực hành chính (PO 22/10/2026) — sàng lọc theo phường/quận/tỉnh khi không có toạ độ
+  ward                 String?
+  district             String? // quận/huyện cũ (bỏ từ 01/07/2025), tuỳ chọn
+  province             String?
+  /// Phường/xã lân cận chi nhánh nhận giao thêm (mảng chuỗi), ngoài phường của chính chi nhánh
+  service_wards        Json?
   latitude             Float?
   longitude            Float?
   quality_score        Float    @default(90)

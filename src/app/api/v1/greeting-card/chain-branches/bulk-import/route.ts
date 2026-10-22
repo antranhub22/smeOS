@@ -17,6 +17,12 @@ const branchSchema = z.object({
   branchId: z.string().trim().min(1).max(50),
   branchName: z.string().trim().min(1).max(200),
   address: z.string().trim().max(500).optional(),
+  ward: z.string().trim().max(120).optional(),
+  district: z.string().trim().max(120).optional(),
+  /** Tỉnh / thành phố — nhận cả tên cũ `city` của file mẫu */
+  province: z.string().trim().max(120).optional(),
+  city: z.string().trim().max(120).optional(),
+  serviceWards: z.array(z.string().trim().max(120)).max(50).optional(),
   latitude: z.number().min(-90).max(90).optional(),
   longitude: z.number().min(-180).max(180).optional(),
   maxDeliveryRadiusKm: z.number().min(0).max(500).optional(),
@@ -61,6 +67,7 @@ export const POST = handle(async (request) => {
     branchId: b.branchId,
     branchName: b.branchName,
     address: b.address ?? "",
+    area: { ward: b.ward, district: b.district, province: b.province ?? b.city, serviceWards: b.serviceWards ?? [] },
     location:
       typeof b.latitude === "number" && typeof b.longitude === "number"
         ? { latitude: b.latitude, longitude: b.longitude }
