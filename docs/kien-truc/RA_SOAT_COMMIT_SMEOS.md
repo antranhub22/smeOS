@@ -28,7 +28,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | G | Điều phối chuỗi và gia công | 30 | Đã rà — còn mở G-SIZE |
 | B | Đăng ký, dùng thử, đăng nhập, duyệt tài khoản | 11 | Đã rà |
 | H | AI kiểm ảnh QC/POD | 8 | Đã rà — còn mở H-SKIP |
-| E | Lịch đặt chỗ Homestay | 5 | Chưa rà |
+| E | Lịch đặt chỗ Homestay | 5 | Đã rà |
 | F | Ma trận menu ngành, Console vận hành | 7 | Chưa rà |
 | K | Sức khoẻ hệ thống, giám sát, worker | 6 | Chưa rà |
 | J | Seed, dữ liệu mẫu, script tài khoản | 6 | Chưa rà |
@@ -108,11 +108,11 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `e684cdfb` | 10-18 | feat(availability): implement multi-industry product availability module and real-time greeting card integration | CHƯA RÀ | |
-| `e2357891` | 10-18 | feat(availability): hoan thien luong dat phong Homestay, tu dong khoa lich va popup chi tiet booking | CHƯA RÀ | |
-| `6f9bd39a` | 10-21 | fix(availability): reject manual blocks on another organization's product | CHƯA RÀ | |
-| `28e915b1` | 10-21 | fix(availability): prevent double booking of the same room | CHƯA RÀ | |
-| `85a4db6e` | 10-22 | fix(availability): type product_bookings dates, status and order link | CHƯA RÀ | |
+| `e684cdfb` | 10-18 | feat(availability): implement multi-industry product availability module and real-time greeting card integration | ĐẠT SAU SỬA | E-IND |
+| `e2357891` | 10-18 | feat(availability): hoan thien luong dat phong Homestay, tu dong khoa lich va popup chi tiet booking | ĐẠT SAU SỬA | E-IND |
+| `6f9bd39a` | 10-21 | fix(availability): reject manual blocks on another organization's product | ĐẠT |  |
+| `28e915b1` | 10-21 | fix(availability): prevent double booking of the same room | ĐẠT |  |
+| `85a4db6e` | 10-22 | fix(availability): type product_bookings dates, status and order link | ĐẠT |  |
 
 ### Cụm F — Ma trận menu ngành, Console vận hành
 
@@ -238,6 +238,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| E-IND | Trung bình | `check-product-availability.ts` (route kiểm khả dụng công khai) | `industryKey` client gửi ghi đè ngành của tiệm → đổi được chế độ khả dụng mặc định, phòng đã đặt hiện "còn trống" (đặt đơn vẫn bị chặn ở máy chủ) | Luôn dùng ngành của tiệm |
 | H-SSRF | Chặn | `run-photo-match.ts` `loadImageForAi` | Máy chủ tải mọi URL http(s) — kể cả địa chỉ nội bộ/metadata đám mây — khi URL ảnh mẫu do tiệm nhập (`attributes.imageUrl`); theo chuyển hướng, không giới hạn dung lượng | Chỉ https công khai (`lib/safe-remote-url.ts`, dùng chung với Telegram), `redirect: "error"`, tối đa 8 MB |
 | H-IND | Cao | `verify-qc-photo-ai.ts` | Prompt kiểm ảnh thành phẩm chỉ nói về loài hoa — ngành khác bị chấm sai | Prompt theo ngành của tiệm (tên ngành, ảnh thành phẩm, `aiConfig.visionFocus`) |
 | H-INJ | Trung bình | Prompt QC / ảnh giao hàng | Tên sản phẩm chèn thẳng vào prompt | Đưa vào dạng chuỗi JSON, cắt 200 ký tự, ghi rõ là dữ liệu |
