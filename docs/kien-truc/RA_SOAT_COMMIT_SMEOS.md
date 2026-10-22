@@ -1,0 +1,244 @@
+# Rà soát từng commit smeOS (8c53b38 → nay)
+
+> Trạng thái `SUPPORTING` · chủ sở hữu: Product Owner · bắt đầu 22/10/2026.
+> Phạm vi: 134 commit không phải merge trên `main` sau `8c53b38` (17/10/2026) đến `e6d3c566` (22/10/2026).
+> Phương pháp: rà theo cụm tính năng, kết luận trên code ở bản cuối; mỗi commit một dòng. Thứ tự theo rủi ro: G → B → H → E → F → K → J → D → C → I → A → L.
+
+## 1. Tiêu chí (mỗi commit)
+
+1. Mục đích rõ, khớp code thật.
+2. Nghiệp vụ đúng, có trường hợp biên (tiền, trạng thái, thời gian, trùng lặp, đồng thời).
+3. Luồng gọn: không trùng lặp, không code chết, đúng tầng `domain/` → `use-cases/` → `infra/` → route.
+4. Cách ly tenant: `organization_id` chỉ từ phiên hoặc token ký; truy cập chéo → 404.
+5. Phân quyền theo mã năng lực; route công khai có lý do.
+6. Bảo mật: không lộ khoá/dữ liệu cá nhân, giới hạn tần suất, AI qua gateway.
+7. Có test cho quy tắc/lỗi đã sửa.
+8. CSDL: migration, index, ràng buộc.
+9. Giao diện: tiếng Việt, token màu, không mã kỹ thuật, dùng được trên điện thoại.
+10. Tài liệu SSOT cập nhật cùng commit.
+11. Quy tắc repo: ≤ 350 dòng/tệp, không nợ ESLint mới.
+
+Kết luận: `ĐẠT` · `ĐẠT SAU SỬA` (đã sửa trong đợt rà soát, ghi mã phát hiện) · `THAY THẾ` (commit sau đã làm lại) · `MỞ` (còn phát hiện chưa xử lý) · `CHƯA RÀ`.
+Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật, mất dữ liệu) · **Cao** (sai luồng nghiệp vụ, thiếu test quy tắc quan trọng) · **Trung bình** (luồng rối, thiếu tài liệu, vi phạm quy tắc repo) · **Thấp**.
+
+## 2. Tiến độ theo cụm
+
+| Cụm | Nội dung | Số commit | Trạng thái |
+|---|---|---|---|
+| G | Điều phối chuỗi và gia công | 30 | Chưa rà |
+| B | Đăng ký, dùng thử, đăng nhập, duyệt tài khoản | 11 | Chưa rà |
+| H | AI kiểm ảnh QC/POD | 8 | Chưa rà |
+| E | Lịch đặt chỗ Homestay | 5 | Chưa rà |
+| F | Ma trận menu ngành, Console vận hành | 7 | Chưa rà |
+| K | Sức khoẻ hệ thống, giám sát, worker | 6 | Chưa rà |
+| J | Seed, dữ liệu mẫu, script tài khoản | 6 | Chưa rà |
+| D | Sửa schema | 6 | Chưa rà |
+| C | Hạ tầng, CI, deploy, thư viện | 20 | Chưa rà |
+| I | Thông báo nhân viên | 2 | Chưa rà |
+| A | Nền đa ngành | 23 | Chưa rà |
+| L | Tài liệu, token giao diện, kiến trúc, test | 10 | Chưa rà |
+
+## 3. Checklist từng commit
+
+### Cụm G — Điều phối chuỗi và gia công
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `30650f12` | 10-19 | feat(org,order): tach quy trinh 1 cua hang vs chuoi & hoan thien luong xac nhan don 2 buoc | CHƯA RÀ | |
+| `3f775904` | 10-19 | feat(chain-dispatch): he thong dieu phoi gia cong tu dong cho chuoi cua hang | CHƯA RÀ | |
+| `670f03c2` | 10-19 | feat(dispatch): tich hop Telegram Bot va tu dong quet chat id chi nhanh | CHƯA RÀ | |
+| `8da0cc1c` | 10-19 | feat(chain): them tab nhap danh sach cua hang chuoi tu Excel + template mau 14 truong | CHƯA RÀ | |
+| `4dcbf30f` | 10-19 | feat(chain-dispatch): hoàn thiện quy trình cung cấp thông tin shipper và cơ chế leo thang 3 cấp độ | CHƯA RÀ | |
+| `c01579a5` | 10-19 | feat(gate2): implement Dual-Stream + First-Wins Mutex + Link-Only for Gate 2 | CHƯA RÀ | |
+| `55f7bc3d` | 10-19 | test(gate2): add unit tests for cancelSubcontractReminderSteps First-Wins Mutex | CHƯA RÀ | |
+| `1bc6e4cb` | 10-19 | fix(dispatch): support local baseUrl in reminder links for local testing | CHƯA RÀ | |
+| `0cdebac2` | 10-20 | feat(dispatch): add native inline buttons and product photo to telegram dispatch notifications | CHƯA RÀ | |
+| `1848c450` | 10-20 | fix(dispatch): resolve full delivery address from parts and street in subcontract messages | CHƯA RÀ | |
+| `7d49f927` | 10-20 | feat(subcontract): mask recipient phone until QC photo is approved and ready for delivery | CHƯA RÀ | |
+| `2da98046` | 10-20 | feat(dispatch): add resend notification button for dispatched state in chain panel | CHƯA RÀ | |
+| `def7a3bd` | 10-20 | fix(dispatch): resolve sample photo, clean redundant link in telegram message, filter customer promotion from workshop note | CHƯA RÀ | |
+| `62b29cfc` | 10-20 | feat(greeting-card): implement Single Living Dashboard Card for subcontract Telegram notifications | CHƯA RÀ | |
+| `58f6af91` | 10-20 | fix(subcontract): resolve product sample photo from warehouse fallback and attach to live dashboard & detail card | CHƯA RÀ | |
+| `2a367bc0` | 10-20 | fix(subcontract): fix missing sample product image in telegram and claim card | CHƯA RÀ | |
+| `beef121f` | 10-20 | fix(subcontract-claim-card): add onError fallback for product image to prevent broken image icon | CHƯA RÀ | |
+| `228084a7` | 10-20 | fix(subcontract): auto-confirm order to ASSIGNED on branch commit regardless of existing order status | CHƯA RÀ | |
+| `b6173e91` | 10-20 | fix(subcontract): fix broken sample photo origin and fallback for qc photos | CHƯA RÀ | |
+| `fa1c6465` | 10-20 | feat(subcontract): redesign subcontract claim page with active block spotlight standard | CHƯA RÀ | |
+| `b65b58bc` | 10-20 | feat(subcontract): add real-time countdown timers and milestone deadlines for spotlight steps | CHƯA RÀ | |
+| `97a2629e` | 10-20 | feat(subcontract): add force-majeure bypass evidence mechanism with coordinator approval and customer transparency | CHƯA RÀ | |
+| `c3abac12` | 10-20 | fix(coordinator): show bypass banner in kanban view and fallback telegram chatId | CHƯA RÀ | |
+| `cbbc2671` | 10-20 | fix(dispatch): harmonize craft fee to 50% SSOT and persist subcontractPriceVnd | CHƯA RÀ | |
+| `a795101f` | 10-21 | fix(subcontract): require signed per-branch links on public subcontract APIs | CHƯA RÀ | |
+| `24566461` | 10-21 | fix(subcontract-ui): remove synchronous setState inside effects | CHƯA RÀ | |
+| `169ad913` | 10-21 | fix(coordinator): guard subcontract coordinator actions by capability | CHƯA RÀ | |
+| `e0d73308` | 10-21 | fix(telegram): scope the shared dispatch bot to each tenant's own chats | CHƯA RÀ | |
+| `f598dec1` | 10-21 | fix(subcontract): shorten photo URL lifetime and stop trusting Host | CHƯA RÀ | |
+| `3ae29cf3` | 10-22 | feat(greeting-card): move chain_branches from org settings to its own table | CHƯA RÀ | |
+
+### Cụm B — Đăng ký, dùng thử, đăng nhập, duyệt tài khoản
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `484a180f` | 10-17 | feat(org): add industry selection support to tenant sign-up onboarding | CHƯA RÀ | |
+| `2fc3cc70` | 10-17 | feat(auth, settings): add industry selection in onboarding and enforce paid unlock in store settings | CHƯA RÀ | |
+| `4c14bddd` | 10-17 | feat(auth): nâng cấp form đăng ký chọn ngành nghề trực quan và khởi tạo hồ sơ chuẩn theo ngành | CHƯA RÀ | |
+| `ab5768a4` | 10-17 | feat(ui): thêm thanh chuyển đổi Đăng nhập / Đăng ký trực tiếp tại màn hình auth | CHƯA RÀ | |
+| `7a8aa652` | 10-17 | feat(auth): thêm cơ chế Trải nghiệm ngay (Instant Sandbox Trial) không cần mật khẩu kèm thu thập Lead | CHƯA RÀ | |
+| `033b35dc` | 10-17 | test(arch): đăng ký auth/instant-trial vào NO_CAPABILITY_GUARD | CHƯA RÀ | |
+| `9edc0ce6` | 10-21 | fix(auth): stop instant trial from issuing sessions for existing accounts | CHƯA RÀ | |
+| `7a43a59b` | 10-21 | fix(sso): keep reading the legacy floraos_sso cookie during the rename | CHƯA RÀ | |
+| `af790c20` | 10-21 | fix(signup): record a pending chain request instead of granting CHAIN | CHƯA RÀ | |
+| `6f6e3f1e` | 10-22 | feat(auth): require superadmin approval for every self-registered account | CHƯA RÀ | |
+| `af809424` | 10-22 | fix(platform): load the registration queue without setState in an effect body | CHƯA RÀ | |
+
+### Cụm H — AI kiểm ảnh QC/POD
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `ef991368` | 10-17 | feat(ai): establish multi-industry SSOT architecture for vision worker, market intelligence, and studio prompts | CHƯA RÀ | |
+| `85d5f912` | 10-17 | feat(backend): add Pillar 5 to validate AI Prompts and JSON Schemas for multi-industry SSOT | CHƯA RÀ | |
+| `a48852cb` | 10-19 | feat(qc): AI Vision verify ảnh thành phẩm cho cả 2 luồng điều phối + gia công | CHƯA RÀ | |
+| `9f2cd27e` | 10-20 | feat(qc-ai): enforce strict AI Vision cross-checking of QC photo against original sample photo | CHƯA RÀ | |
+| `93847564` | 10-20 | feat(subcontract): tich hop AI kiem dinh anh giao hang POD va bo unit test cho QC/POD | CHƯA RÀ | |
+| `2418d62d` | 10-20 | fix(qc): enforce strict ai vision comparison for subcontract qc photos and eliminate blind auto-pass | CHƯA RÀ | |
+| `7b86fddf` | 10-20 | fix(qc-ai): remove random sample photo fallback and enforce high-detail visual matching | CHƯA RÀ | |
+| `0a509973` | 10-21 | fix(ai): route QC and delivery photo checks through the AI gateway | CHƯA RÀ | |
+
+### Cụm E — Lịch đặt chỗ Homestay
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `e684cdfb` | 10-18 | feat(availability): implement multi-industry product availability module and real-time greeting card integration | CHƯA RÀ | |
+| `e2357891` | 10-18 | feat(availability): hoan thien luong dat phong Homestay, tu dong khoa lich va popup chi tiet booking | CHƯA RÀ | |
+| `6f9bd39a` | 10-21 | fix(availability): reject manual blocks on another organization's product | CHƯA RÀ | |
+| `28e915b1` | 10-21 | fix(availability): prevent double booking of the same room | CHƯA RÀ | |
+| `85a4db6e` | 10-22 | fix(availability): type product_bookings dates, status and order link | CHƯA RÀ | |
+
+### Cụm F — Ma trận menu ngành, Console vận hành
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `d62aab60` | 10-17 | feat(org): unlock multi-industry switching for tuans2@dev.com and dev accounts | CHƯA RÀ | |
+| `ba6dcffb` | 10-18 | feat(navigation): kien truc ma tran dieu huong da nganh master matrix va console van hanh saas admin | CHƯA RÀ | |
+| `039565c6` | 10-21 | feat(platform): thêm lối tắt Console Vận hành cho Super Admin và cập nhật ghi đè ma trận ngành | CHƯA RÀ | |
+| `160d8251` | 10-21 | fix(platform): require platform capabilities for SaaS channel policy and nav matrix | CHƯA RÀ | |
+| `8cdecbf1` | 10-21 | test(nav): decouple navigation rule tests from operator override data | CHƯA RÀ | |
+| `df1b9630` | 10-21 | fix(org): enforce the industry lock on the server, drop email superusers | CHƯA RÀ | |
+| `4ca5eafa` | 10-22 | fix(platform): store the industry nav matrix in the database so it takes effect | CHƯA RÀ | |
+
+### Cụm K — Sức khoẻ hệ thống, giám sát, worker
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `5506c701` | 10-20 | chore(health): return db connectivity status and commit version in health endpoint | CHƯA RÀ | |
+| `08994a17` | 10-20 | chore(health): expose error details and masked db target host in health endpoint | CHƯA RÀ | |
+| `4f9a4fac` | 10-20 | fix(workers): lazy load openai client and add resilient reconnect loop to media worker | CHƯA RÀ | |
+| `da210518` | 10-21 | fix(health): stop leaking database details from the public health check | CHƯA RÀ | |
+| `173d8a10` | 10-21 | fix(cron): fail closed when CRON_SECRET is missing in production | CHƯA RÀ | |
+| `963b4308` | 10-22 | feat(observability): log unhandled server errors and alert on degraded health | CHƯA RÀ | |
+
+### Cụm J — Seed, dữ liệu mẫu, script tài khoản
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `5d18ecc2` | 10-19 | feat(profile): allow seeding industry-specific mock data on industry selection for SuperAdmin | CHƯA RÀ | |
+| `0943f8f8` | 10-20 | feat(auth): sync tuans2@dev.com superuser in sync-siin-store seed for prod | CHƯA RÀ | |
+| `6a8ad623` | 10-21 | fix(seed): stop resetting hardcoded passwords on production deploys | CHƯA RÀ | |
+| `72fe6167` | 10-21 | fix(profiles): allow sample data only for trial organizations | CHƯA RÀ | |
+| `24447cf0` | 10-22 | feat(platform): script to delete all accounts but one superadmin | CHƯA RÀ | |
+| `8a415d77` | 10-22 | feat(platform): script to create two QA accounts in a dedicated organization | CHƯA RÀ | |
+
+### Cụm D — Sửa schema
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `7c78c075` | 10-20 | fix(org): provide id when creating roles in RoleRepository | CHƯA RÀ | |
+| `87dd0bde` | 10-20 | fix(org): provide id when creating role_capabilities in CapabilityRepository | CHƯA RÀ | |
+| `9f5a35cd` | 10-20 | fix(schema): add @updatedAt to all required updated_at DateTime fields to auto-generate in seed/upsert | CHƯA RÀ | |
+| `7eee8117` | 10-20 | fix(schema): add @default(uuid()) to ai_models.id | CHƯA RÀ | |
+| `430357b7` | 10-20 | fix(schema): restore @default(uuid()) to all 88 model id fields | CHƯA RÀ | |
+| `592cb60d` | 10-20 | fix(schema): restore complete schema with relations and default uuids | CHƯA RÀ | |
+
+### Cụm C — Hạ tầng, CI, deploy, thư viện
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `c155dc77` | 10-17 | chore(infra): isolate PostgreSQL port to 5433 and volume to smeos-db-data | CHƯA RÀ | |
+| `e8a75d28` | 10-17 | chore(test): isolate test database connection to port 5433 and smeos_test | CHƯA RÀ | |
+| `dce775e0` | 10-17 | chore(infra): isolate Render production blueprint (smeos-postgres, smeos-redis, smeos services) | CHƯA RÀ | |
+| `e9833b11` | 10-17 | chore(isolation): change web port to 3200 and cookies to smeos_session/smeos_sso | CHƯA RÀ | |
+| `a2ed281e` | 10-17 | chore(isolation): purge legacy floraos database fallbacks in workers | CHƯA RÀ | |
+| `7e8ee445` | 10-20 | fix(ci): update eslint baseline and fix playwright port to 3200 | CHƯA RÀ | |
+| `e12e5e1f` | 10-20 | fix(render): comment out Redis keyvalue — free tier limit reached on account | CHƯA RÀ | |
+| `1d9f3c24` | 10-20 | feat(render): add TELEGRAM_DISPATCH_BOT_TOKEN and TELEGRAM_STAFF_BOT_TOKEN to render.yaml | CHƯA RÀ | |
+| `6e03b338` | 10-21 | ci: point tenant and platform isolation gates at the CI test database | CHƯA RÀ | |
+| `1e1613b0` | 10-21 | chore(render): schedule the dispatch sweep, add CRON_SECRET and Redis | CHƯA RÀ | |
+| `57617ad2` | 10-22 | feat(db): deploy with prisma migrate deploy instead of db push --accept-data-loss | CHƯA RÀ | |
+| `4b6a96ff` | 10-22 | ci(security): scan secrets, audit dependencies, add CodeQL and Dependabot | CHƯA RÀ | |
+| `a8f03e45` | 10-22 | fix(deps): clear all high vulnerabilities in production dependencies | CHƯA RÀ | |
+| `98d09ef6` | 10-22 | ci(dependabot): skip semver-major version updates | CHƯA RÀ | |
+| `ea242c04` | 10-22 | chore(deps): bump the npm-minor-patch group across 1 directory with 18 updates | CHƯA RÀ | |
+| `6ae6271f` | 10-22 | chore(deps): update pytest requirement from >=8.0 to >=9.1.1 in /workers (#9) | CHƯA RÀ | |
+| `a75b19cc` | 10-22 | chore(deps): update onnxruntime requirement in /workers (#10) | CHƯA RÀ | |
+| `f912ce25` | 10-22 | chore(deps): update pillow requirement in /workers (#11) | CHƯA RÀ | |
+| `bee89a96` | 10-22 | chore(deps): upgrade vitest to 5 and @types/node to 22 | CHƯA RÀ | |
+| `13da4998` | 10-22 | chore(deps): update pydantic requirement in /workers (#12) | CHƯA RÀ | |
+
+### Cụm I — Thông báo nhân viên
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `c281d3ff` | 10-18 | feat(greeting-card): he thong staff notification matrix da vai, da kenh va da nganh | CHƯA RÀ | |
+| `82fa0081` | 10-21 | fix(notify): time out staff channel calls and report undelivered invites | CHƯA RÀ | |
+
+### Cụm A — Nền đa ngành
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `f85dd856` | 10-17 | feat(org): implement IndustryProfile domain and i18n industry terminology support | CHƯA RÀ | |
+| `17384c4c` | 10-17 | feat(products): generalize Product BOM for multi-industry components support | CHƯA RÀ | |
+| `da9855a0` | 10-17 | feat(media): generalize Studio Prompt Compiler and ProductPassport for multi-industry catalog | CHƯA RÀ | |
+| `bba3fa2c` | 10-17 | feat(org): generalize Role UX titles and groups for multi-industry adaptation | CHƯA RÀ | |
+| `0db182db` | 10-17 | feat: bổ sung giao diện chọn/xem ngành nghề kinh doanh và chuẩn hóa nhãn đa ngành tại hồ sơ cửa hàng | CHƯA RÀ | |
+| `dd84a7c5` | 10-17 | feat(domain): thiết lập kiến trúc SSOT IndustryPluginContract và chuẩn hóa 6 ngành kinh doanh | CHƯA RÀ | |
+| `fc9810cc` | 10-17 | feat(roadmap): lộ trình triển khai 95 ngành nghề — 20 ACTIVE, 75 COMING_SOON + nợ TD-INDUSTRY | CHƯA RÀ | |
+| `d40ccf0a` | 10-17 | feat(ui): adapt order detail modal and production ticket dynamically for fashion and multi-industry | CHƯA RÀ | |
+| `330cdffd` | 10-17 | feat(ui): adapt journey home cards, spotlight card, and navigation dynamically to industry SSOT | CHƯA RÀ | |
+| `bdd7da65` | 10-17 | feat(ui): adapt product creation, quotation, dashboard and coordinator cards to industry SSOT terminology | CHƯA RÀ | |
+| `986b378f` | 10-17 | feat(industry): add automated SSOT checker, new-industry wizard, ratchet audit, and git pre-commit hook | CHƯA RÀ | |
+| `3a777ad6` | 10-17 | feat(ui): adapt product catalog list, categories, and search filter to industry SSOT | CHƯA RÀ | |
+| `ac26e8e1` | 10-17 | feat(ui): adapt product creation page and cards to dynamic industry SSOT | CHƯA RÀ | |
+| `50a26567` | 10-17 | feat(ui): adapt greeting card catalog and journey cards to dynamic industry SSOT | CHƯA RÀ | |
+| `68bb32d1` | 10-17 | refactor(industry): adapt app pages and catalog components to industry plugin contract | CHƯA RÀ | |
+| `43a1f1a7` | 10-18 | feat(industry): thêm ngành HOMESTAY & chuẩn hoá UI đa ngành | CHƯA RÀ | |
+| `12aaf9d0` | 10-18 | feat(the-chao): implement active block spotlight, numbered step badges and multi-industry preview | CHƯA RÀ | |
+| `7b6d19ca` | 10-18 | feat(products): phân tầng dữ liệu BOM cam kết giao kèo vs AI marketing | CHƯA RÀ | |
+| `4dba1277` | 10-18 | feat(greeting-card): chuẩn hóa form đặt hàng đa ngành & thẻ chào chuyên biệt theo ngành | CHƯA RÀ | |
+| `07e88f56` | 10-18 | feat(industry-order): standardize florist-job-tab & customer-slip with SSOT order terms | CHƯA RÀ | |
+| `38c498d4` | 10-18 | feat(multi-industry): chuẩn hóa tab Bán hàng, Điều phối, Điều hành theo SSOT đa ngành | CHƯA RÀ | |
+| `ef903f96` | 10-19 | feat(tracking): chuẩn hóa tab Theo dõi đơn theo SSOT đa ngành | CHƯA RÀ | |
+| `dad881d7` | 10-22 | chore(industry): delete unused industry roadmap data file | CHƯA RÀ | |
+
+### Cụm L — Tài liệu, token giao diện, kiến trúc, test
+
+| Commit | Ngày | Nội dung | Kết luận | Phát hiện |
+|---|---|---|---|---|
+| `24078f51` | 10-17 | docs: cập nhật quy chuẩn tạo ngành mới theo Industry Plugin SSOT vào AGENTS.md | CHƯA RÀ | |
+| `2d856ab2` | 10-19 | docs: formalize Dual-Stream + First-Wins Mutex architecture in AGENTS.md | CHƯA RÀ | |
+| `a4a6d654` | 10-20 | docs(agents): add Single Living Dashboard Card as mandatory external integration standard (PO 20/10/2026) | CHƯA RÀ | |
+| `4dff7257` | 10-21 | test: align stale expectations with multi-industry behaviour | CHƯA RÀ | |
+| `bd5e97d3` | 10-21 | docs(spec): document routes and tables added since the smeOS switch | CHƯA RÀ | |
+| `475831a0` | 10-21 | fix(ui): replace raw colors and ad-hoc font sizes with semantic tokens | CHƯA RÀ | |
+| `30a6eacf` | 10-21 | refactor(arch): move direct Prisma access out of routes and use-cases | CHƯA RÀ | |
+| `26e61a49` | 10-21 | fix(ui): show the smeOS product name instead of FloraOS | CHƯA RÀ | |
+| `62fdaac2` | 10-22 | docs(handover): add handover index and backup, monitoring and incident runbook | CHƯA RÀ | |
+| `e6d3c566` | 10-22 | docs(handover): reflect PO decision to keep Siin Store accounts | CHƯA RÀ | |
+
+## 4. Phát hiện
+
+| Mã | Mức | Vị trí | Vấn đề | Xử lý |
+|---|---|---|---|---|
+
+## 5. Chưa xác minh được
+
+- Kênh thật (Telegram, Zalo, nhà cung cấp AI) và dữ liệu production: chỉ kiểm qua code, test, E2E giả lập.

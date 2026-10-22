@@ -1,171 +1,59 @@
 /**
  * notify-shipper-request.ts
  *
- * Gửi thông báo yêu cầu cửa hàng/chi nhánh cung cấp thông tin shipper
- * ngay sau khi ảnh thành phẩm pass (production_status = "READY").
- *
- * - Tin nhắn kèm link public submit-shipper để điền tên + SĐT ngay từ Telegram/Zalo.
- * - Cơ chế nhắc 1 lần sau `reminderMinutes` (default 30 phút) nếu chưa cung cấp.
+ * Gửi yêu cầu chi nhánh cung cấp thông tin shipper ngay sau khi ảnh thành phẩm đạt (READY), kèm
+ * link đã ký để điền tên + SĐT shipper. Nhắc lại do cron mốc M3 đảm nhận — trước 22/10/2026 có
+ * thêm một hẹn giờ 30 phút trong tiến trình web (mất khi khởi động lại, gửi trùng với M3), và kênh
+ * liên lạc đọc nhầm chỗ nên yêu cầu không bao giờ tới chi nhánh (rà soát cụm G).
  */
 
-import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
+import { publicAppUrl } from "@/lib/public-url"
 import { log } from "@/core/observability/log"
-import { runInBackground } from "@/core/runtime/background"
-import { MultiChannelDispatchNotifier } from "../infra/dispatch-notification-adapter"
 import type { TenantContext } from "@/core/tenancy"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
-
-const DEFAULT_SHIPPER_REMINDER_MINUTES = 30
+import { MultiChannelDispatchNotifier } from "../infra/dispatch-notification-adapter"
 
 export interface ShipperRequestInput {
   organizationId: string
   orderId: string
   orderCode: string
   branchId: string
-  branchPhone?: string | null | undefined
-  branchTelegramChatId?: string | null | undefined
-  branchName?: string | null | undefined
-  /** Phút chờ trước khi gửi nhắc lần 2. Default: 30 phút. */
-  reminderMinutes?: number | undefined
 }
 
-function buildSubmitShipperUrl(organizationId: string, orderCode: string, branchId: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3200"
-  return subcontractBranchUrl({ baseUrl, organizationId, orderCode, branchId, action: "submit_shipper" })
-}
-
-/**
- * Gửi yêu cầu thông tin shipper cho chi nhánh ngay sau khi AI pass ảnh TP.
- * Kèm link public để chi nhánh điền tên + SĐT shipper mà không cần đăng nhập.
- * Lập lịch nhắc 1 lần sau reminderMinutes nếu chưa có thông tin.
- */
-export async function notifyShipperRequest(input: ShipperRequestInput): Promise<void> {
-  const {
-    organizationId,
-    orderId,
-    orderCode,
-    branchId,
-    branchPhone,
-    branchTelegramChatId,
-    branchName = "Chi nhánh",
-    reminderMinutes = DEFAULT_SHIPPER_REMINDER_MINUTES,
-  } = input
-
-  const submitUrl = buildSubmitShipperUrl(organizationId, orderCode, branchId)
-  const messageText =
-    `🚀 [smeOS] Đơn hàng #${orderCode} đã được xác nhận hình ảnh thành phẩm!\n\n` +
-    `📦 Vui lòng cung cấp thông tin SHIPPER để hệ thống bàn giao đơn hàng:\n` +
-    `👉 ${submitUrl}\n\n` +
-    `Điền đầy đủ Tên shipper + Số điện thoại để điều phối viên chuẩn bị bàn giao hàng cho tài xế.\n` +
-    `⏱️ Hệ thống sẽ nhắc lại sau ${reminderMinutes} phút nếu chưa nhận được thông tin.`
-
-  const ctx: TenantContext = {
-    organizationId,
-    workspaceId: "default",
-    userId: "system",
-    branchId,
-    capabilities: new Set(),
+export async function notifyShipperRequest(input: ShipperRequestInput): Promise<{ sent: boolean }> {
+  const { organizationId, orderId, orderCode, branchId } = input
+  const branch = await new ChainBranchRepository().findByCode(organizationId, branchId)
+  if (!branch) {
+    log.warn("shipper_request.branch_not_found", { orderId, orderCode, branchId })
+    return { sent: false }
   }
 
-  const notifier = new MultiChannelDispatchNotifier()
-  try {
-    await notifier.sendSubcontractInvite(ctx, {
-      branch: {
-        branchId,
-        branchName: branchName ?? "Chi nhánh",
-        qualityScore: 100,
-        activeJobsCount: 0,
-        maxConcurrentJobs: 1,
-        isActive: true,
-        channels: {
-          phone: branchPhone ?? undefined,
-          zaloPhone: branchPhone ?? undefined,
-          telegramChatId: branchTelegramChatId ?? undefined,
-        },
-      },
+  const submitUrl = subcontractBranchUrl({ baseUrl: publicAppUrl(), organizationId, orderCode, branchId, action: "submit_shipper" })
+  const messageText =
+    `🚀 Đơn hàng #${orderCode} đã được xác nhận ảnh thành phẩm!\n\n` +
+    `📦 Vui lòng cung cấp thông tin SHIPPER để bàn giao đơn hàng: tên và số điện thoại tài xế.\n` +
+    `Hệ thống sẽ nhắc lại nếu chưa nhận được thông tin.`
+  const ctx: TenantContext = { organizationId, workspaceId: organizationId, userId: "system", branchId: null, capabilities: new Set() }
+
+  const result = await new MultiChannelDispatchNotifier()
+    .sendSubcontractInvite(ctx, {
+      branch,
       orderCode,
       messageText,
       claimUrl: submitUrl,
       title: `📦 [SHIPPER] Đơn hàng #${orderCode} cần thông tin giao hàng`,
       actions: [{ text: "🚗 Nhập thông tin Shipper ngay", url: submitUrl }],
     })
-    log.info("shipper_request.sent", { orderId, orderCode, branchId })
-  } catch (err) {
-    log.warn("shipper_request.send_failed", {
-      orderId,
-      orderCode,
-      error: err instanceof Error ? err.message : String(err),
-    })
+    .catch(() => ({ sent: false }))
+
+  if (result.sent) {
+    await new SubcontractStepStore().mutateMetadata(organizationId, orderId, (current) => ({
+      next: { ...current, shipper_request_sent_at: new Date().toISOString() },
+      result: undefined,
+    }))
   }
-
-  // Ghi flag đã gửi yêu cầu shipper vào metadata
-  const store = new SubcontractStepStore()
-  const meta = await store.findMetadata(organizationId, orderId)
-  if (meta) {
-    await store.writeMetadata(organizationId, orderId, {
-      ...meta,
-      shipper_request_sent_at: new Date().toISOString(),
-      shipper_reminder_scheduled_at: new Date(Date.now() + reminderMinutes * 60_000).toISOString(),
-      shipper_reminder_sent: false,
-    })
-  }
-
-  // Lập lịch nhắc 1 lần sau reminderMinutes (chạy background, không block response)
-  runInBackground(`shipper_reminder:${orderCode}`, async () => {
-    await new Promise<void>((resolve) => setTimeout(resolve, reminderMinutes * 60_000))
-
-    // Kiểm tra xem chi nhánh đã cung cấp shipper chưa
-    const metaNow = await store.readMetadata(organizationId, orderId)
-    const shipperInfo = metaNow.shipper_info as Record<string, unknown> | undefined
-
-    if (shipperInfo?.shipperPhone || metaNow.shipper_reminder_sent === true) {
-      log.info("shipper_reminder.skip_already_done", { orderCode })
-      return
-    }
-
-    // Gửi nhắc lần cuối
-    const reminderMsg =
-      `⏰ [smeOS] Nhắc lại: Đơn hàng #${orderCode} đang chờ thông tin shipper!\n\n` +
-      `Cửa hàng chưa cung cấp thông tin tài xế giao hàng.\n` +
-      `👉 Vui lòng điền ngay tại: ${submitUrl}\n\n` +
-      `Đây là lần nhắc cuối cùng. Vui lòng liên hệ điều phối viên nếu cần hỗ trợ.`
-
-    await notifier.sendSubcontractInvite(ctx, {
-      branch: {
-        branchId,
-        branchName: branchName ?? "Chi nhánh",
-        qualityScore: 100,
-        activeJobsCount: 0,
-        maxConcurrentJobs: 1,
-        isActive: true,
-        channels: {
-          phone: branchPhone ?? undefined,
-          zaloPhone: branchPhone ?? undefined,
-          telegramChatId: branchTelegramChatId ?? undefined,
-        },
-      },
-      orderCode,
-      messageText: reminderMsg,
-      claimUrl: submitUrl,
-      title: `⏰ [NHẮC] Đơn #${orderCode} cần thông tin shipper`,
-      actions: [{ text: "🚗 Nhập thông tin Shipper", url: submitUrl }],
-    }).catch((err) => {
-      log.warn("shipper_reminder.send_failed", {
-        orderCode,
-        error: err instanceof Error ? err.message : String(err),
-      })
-    })
-
-    // Đánh dấu đã gửi nhắc — không nhắc lại
-    const metaFinal = await store.findMetadata(organizationId, orderId)
-    if (metaFinal) {
-      await store.writeMetadata(organizationId, orderId, {
-        ...metaFinal,
-        shipper_reminder_sent: true,
-        shipper_reminder_sent_at: new Date().toISOString(),
-      })
-    }
-
-    log.info("shipper_reminder.sent", { orderCode, branchId })
-  })
+  log.info(result.sent ? "shipper_request.sent" : "shipper_request.not_delivered", { orderId, orderCode, branchId })
+  return { sent: result.sent }
 }

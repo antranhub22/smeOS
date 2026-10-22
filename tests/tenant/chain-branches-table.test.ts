@@ -38,7 +38,7 @@ describe("bảng chain_branches", () => {
 
   it("nhập Excel ghi vào bảng theo tổ chức, không đụng settings; tổ chức khác không thấy", async () => {
     const res = await importBranches(a, [
-      { branchId: "CN1", branchName: "Quận 1", latitude: 10.77, longitude: 106.7, channels: { telegramChatId: "-111" } },
+      { branchId: "CN1", branchName: "Quận 1", latitude: 10.77, longitude: 106.7, channels: { telegramChatId: "-1001234567" } },
       { branchId: "CN2", branchName: "Quận 3" },
     ])
     expect(res.status).toBe(200)
@@ -48,8 +48,7 @@ describe("bảng chain_branches", () => {
     const listA = await repo.listCandidates(a.organizationId)
     expect(listA.map((x) => [x.branchId, x.branchName])).toEqual([["CN1", "Quận 1"], ["CN2", "Quận 3"]])
     expect(listA[0]?.location).toEqual({ latitude: 10.77, longitude: 106.7 })
-    expect(await repo.listTelegramChatIds(a.organizationId)).toEqual(["-111"])
-    expect(await repo.listTelegramChatIds(b.organizationId)).toEqual([])
+    expect(listA[0]?.channels?.telegramChatId).toBe("-1001234567")
     expect((await repo.findByCode(b.organizationId, "CN1"))?.branchName).toBe("Chi nhánh của B")
 
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: a.organizationId } })

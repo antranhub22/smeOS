@@ -10,7 +10,7 @@ export interface ParsedBranchRow {
   city?: string | undefined
   /** Phường/xã lân cận nhận giao thêm */
   serviceWards?: string[] | undefined
-  /** Trống trong file → không có toạ độ (KHÔNG gán toạ độ mặc định — sẽ tự tra hoặc lọc theo khu vực) */
+  /** Không có toạ độ → bỏ trống; xếp hạng điều phối bỏ qua khoảng cách thay vì lấy tâm Hà Nội. */
   latitude?: number | undefined
   longitude?: number | undefined
   maxDeliveryRadiusKm: number
@@ -73,6 +73,7 @@ export function parseBranchWorkbook(data: ArrayBuffer): ParsedBranchRow[] {
   if (rawRows.length === 0) throw new Error("Sheet dữ liệu trống")
 
   const results: ParsedBranchRow[] = []
+  const seenCodes = new Set<string>()
 
   rawRows.forEach((rawRow, idx) => {
     const rowNum = idx + 2 // Dòng 1 là tiêu đề
@@ -99,11 +100,13 @@ export function parseBranchWorkbook(data: ArrayBuffer): ParsedBranchRow[] {
     if (!name) errors.push("Thiếu tên chi nhánh")
     if (!address) errors.push("Thiếu địa chỉ")
 
-    // Toạ độ chỉ nhận khi có đủ cả hai và hợp lệ — trước đây ô trống bị gán toạ độ Hà Nội
-    const lat = latStr ? parseFloat(latStr) : NaN
-    const lng = lngStr ? parseFloat(lngStr) : NaN
-    const hasLocation = Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180
-    if ((latStr || lngStr) && !hasLocation) errors.push("Vĩ độ / kinh độ không hợp lệ")
+    const lat = latStr ? Number(latStr.replace(",", ".")) : undefined
+    const lng = lngStr ? Number(lngStr.replace(",", ".")) : undefined
+    if (lat !== undefined && (!Number.isFinite(lat) || lat < -90 || lat > 90)) errors.push("Vĩ độ không hợp lệ")
+    if (lng !== undefined && (!Number.isFinite(lng) || lng < -180 || lng > 180)) errors.push("Kinh độ không hợp lệ")
+    if ((lat === undefined) !== (lng === undefined)) errors.push("Cần đủ cả vĩ độ và kinh độ")
+    if (code && seenCodes.has(code)) errors.push("Mã chi nhánh bị trùng trong tệp")
+    if (code) seenCodes.add(code)
     const maxDeliveryRadiusKm = parseFloat(radiusStr) || 15
     const qualityScore = Math.min(100, Math.max(0, parseInt(qualityStr, 10) || 95))
     const maxConcurrentJobs = parseInt(maxJobsStr, 10) || 5
@@ -113,7 +116,8 @@ export function parseBranchWorkbook(data: ArrayBuffer): ParsedBranchRow[] {
       rawRowNumber: rowNum,
       branchId: code || `BRANCH-${rowNum}`,
       branchName: name || `Chi nhánh ${rowNum}`,
-      ...(hasLocation ? { latitude: lat, longitude: lng } : {}),
+      latitude: lat,
+      longitude: lng,
       maxDeliveryRadiusKm,
       qualityScore,
       onTimeRate: 98,
@@ -177,7 +181,7 @@ export function generateBranchTemplateBuffer(): Uint8Array {
       105.8142,
       15,
       "0988123456",
-      "6558865914", // ID cá nhân của bạn Tuan Nguyen để nhận tin nhắn riêng 1:1
+      "", // Telegram: để trống, điền sau khi chi nhánh đã gửi mã liên kết cho bot
       "0988123456",
       98,
       5,
@@ -195,7 +199,7 @@ export function generateBranchTemplateBuffer(): Uint8Array {
       105.8542,
       12,
       "0977234567",
-      "-1003889928264", // Nhóm điều phối chuỗi
+      "",
       "0977234567",
       95,
       4,

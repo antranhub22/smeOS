@@ -101,14 +101,6 @@ export class ChainBranchRepository {
     return row ? toBranchCandidate(row) : null
   }
 
-  /** Chat Telegram đã cấu hình cho chi nhánh của chính tổ chức, theo thứ tự tạo. */
-  async listTelegramChatIds(organizationId: string): Promise<string[]> {
-    const branches = await this.listCandidates(organizationId)
-    return branches
-      .map((b) => b.channels?.telegramChatId)
-      .filter((id): id is string => typeof id === "string" && id.trim().length > 0)
-  }
-
   /**
    * Nhập Excel: chi nhánh trùng mã thì ghi đè cấu hình và điểm theo tệp, giữ số lần phạt cùng lịch sử phạt;
    * mã mới thì tạo. Trong cùng một lô, mã xuất hiện sau thắng.

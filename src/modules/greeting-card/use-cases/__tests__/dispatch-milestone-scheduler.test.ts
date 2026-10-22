@@ -1,3 +1,4 @@
+import { lockedUpdate } from "./locked-state-store"
 import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import {
@@ -30,6 +31,7 @@ describe("dispatch-milestone-scheduler", () => {
 
   it("tự động commit đơn khi hết thời gian Grace Period và bắn tin bắt đầu chế tác", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -89,6 +91,7 @@ describe("dispatch-milestone-scheduler", () => {
 
   it("bắn tin nhắc QC khi gần giờ giao (trong ngưỡng 45 phút) mà chưa có ảnh", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -149,6 +152,7 @@ describe("dispatch-milestone-scheduler", () => {
 
   it("chuyển sang ESCALATED cho Điều phối khi đơn OPEN hết hạn các vòng bắn", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }

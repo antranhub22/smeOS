@@ -40,10 +40,18 @@ const KHOA_CAM = new Set([
   "dia_chi",
 ])
 
+// Khoá chứa các mảnh này cũng bị lọc: `shipperPhone`, `recipientAddress`… từng lọt vào log vì
+// danh sách trên chỉ so khớp nguyên khoá (rà soát cụm G, 22/10/2026)
+const MANH_CAM = /phone|so_dien_thoai|address|dia_chi|password|secret|cookie|authorization/i
+
+export function laKhoaCam(key: string): boolean {
+  return KHOA_CAM.has(key) || MANH_CAM.test(key)
+}
+
 function loc(ctx: NgữCảnhLog): Record<string, unknown> {
   const ra: Record<string, unknown> = {}
   for (const [k, v] of Object.entries(ctx)) {
-    if (KHOA_CAM.has(k)) continue
+    if (laKhoaCam(k)) continue
     if (v !== undefined) ra[k] = v
   }
   return ra
