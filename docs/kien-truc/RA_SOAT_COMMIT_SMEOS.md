@@ -240,6 +240,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 |---|---|---|---|---|
 | F-SU | Chặn | Đổi ngành | Mở khoá đổi ngành theo email cố định của tài khoản dev | Đã thay bằng mã năng lực nền tảng N1/N12 (`df1b9630`); không còn email đặc quyền trong code |
 | F-CAP | Cao | Route `/platform/*` | Ma trận menu, chính sách kênh từng chỉ cần phiên nền tảng | Mọi route kiểm N1/N12/N13 (route hoặc use-case) — đã đối chiếu toàn bộ 15 route |
+| F-SEED | Cao | `prisma/seed/sync-siin-store.ts` | Seed (sau cờ `SEED_DEV_DATA`) đặt lại mật khẩu tài khoản Điều hành/superadmin về giá trị công khai trong repo mỗi lần chạy; mật khẩu ghi cả trong comment | Chỉ đặt mật khẩu khi tạo mới, bỏ khỏi comment. Vẫn cần đổi mật khẩu các tài khoản này (HO_SO_BAN_GIAO) |
 | F-PII | Thấp | `connect-account-modal.tsx` | Placeholder là email cá nhân thật | Đổi thành email mẫu |
 | E-IND | Trung bình | `check-product-availability.ts` (route kiểm khả dụng công khai) | `industryKey` client gửi ghi đè ngành của tiệm → đổi được chế độ khả dụng mặc định, phòng đã đặt hiện "còn trống" (đặt đơn vẫn bị chặn ở máy chủ) | Luôn dùng ngành của tiệm |
 | H-SSRF | Chặn | `run-photo-match.ts` `loadImageForAi` | Máy chủ tải mọi URL http(s) — kể cả địa chỉ nội bộ/metadata đám mây — khi URL ảnh mẫu do tiệm nhập (`attributes.imageUrl`); theo chuyển hướng, không giới hạn dung lượng | Chỉ https công khai (`lib/safe-remote-url.ts`, dùng chung với Telegram), `redirect: "error"`, tối đa 8 MB |

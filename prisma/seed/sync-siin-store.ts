@@ -12,6 +12,9 @@
 
 import { prisma } from "../../src/core/tenancy/infra/prisma"
 import { hashPassword } from "../../src/modules/organization/infra/password-hasher"
+
+// Mật khẩu chỉ đặt khi TẠO tài khoản — chạy lại seed không đặt lại mật khẩu PO đã đổi (rà soát cụm F,
+// 22/10/2026: trước đó mỗi lần deploy có SEED_DEV_DATA=true đều trả mật khẩu về giá trị công khai trong repo).
 import { ensureSystemRoles } from "../../src/modules/organization/use-cases/ensure-system-roles"
 import { FOUNDER_ROLE_KEY } from "../../src/modules/organization/domain/system-roles"
 import { MOCLAN_CONSTANTS } from "./dev-moclan-data"
@@ -90,7 +93,6 @@ export async function syncSiinStoreAccount(): Promise<void> {
       data: {
         email: "siinstore@dev.vn",
         name: "Chủ tiệm Siin Store",
-        password_hash: targetPassword1,
       },
     })
     console.log(`  ✓ User chính: Cập nhật siinstore@dev.vn (ID: ${userId1})`)
@@ -157,7 +159,6 @@ export async function syncSiinStoreAccount(): Promise<void> {
       data: {
         email: "owner@siinstore.local",
         name: "Chủ tiệm Siin Store",
-        password_hash: targetPassword2,
       },
     })
     console.log(`  ✓ User phụ: Cập nhật owner@siinstore.local (ID: ${userId2})`)
@@ -203,7 +204,7 @@ export async function syncSiinStoreAccount(): Promise<void> {
     console.log(`  ✓ Membership phụ: Tạo mới ACTIVE (Role: ${FOUNDER_ROLE_KEY})`)
   }
 
-  // 6. Đồng bộ SuperUser: tuans2@dev.com / dev123456@
+  // 6. Đồng bộ SuperUser: tuans2@dev.com
   const targetPassword3 = await hashPassword("dev123456@")
   const existingUser3 = await prisma.users.findFirst({
     where: { email: "tuans2@dev.com" },
@@ -215,7 +216,6 @@ export async function syncSiinStoreAccount(): Promise<void> {
     await prisma.users.update({
       where: { id: existingUser3.id },
       data: {
-        password_hash: targetPassword3,
         name: "Admin Tuấn",
       },
     })
