@@ -2,7 +2,7 @@
 # Cài đúng 3.1.x thì worker ném TypeError ngay lần thăm dò rỗng đầu tiên.
 psycopg[binary]>=3.2
 pydantic>=2.6
-pillow>=10.2
+pillow>=13.0.0
 numpy>=1.26
 scipy>=1.12
 openai>=1.40
