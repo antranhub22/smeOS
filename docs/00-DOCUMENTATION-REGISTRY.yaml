@@ -1,8 +1,8 @@
 version: "1.0"
 governance:
   constitution: "docs/00-DOCUMENTATION-CONSTITUTION.md"
-  updated_at: "2026-10-14T17:10:00+07:00"
-  total_documents: 68
+  updated_at: "2026-10-22T08:00:00+07:00"
+  total_documents: 75
 
 documents:
   # =========================================================================
@@ -635,6 +635,48 @@ documents:
     ssot: true
     owner: "Platform Lead"
     dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    supersedes: []
+
+  - id: "DOC-05-HO-SO-BAN-GIAO"
+    path: "docs/kien-truc/HO_SO_BAN_GIAO.md"
+    title: "Hồ sơ bàn giao smeOS"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Điểm vào cho đội nhận bàn giao: thành phần hệ thống, biến môi trường, kiểm soát bảo mật, cổng CI, việc còn mở"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: true
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md", "docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md"]
+    supersedes: []
+
+  - id: "DOC-05-VAN-HANH-CAP-NHAT-CSDL"
+    path: "docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md"
+    title: "Vận hành — Cập nhật CSDL bằng migration"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Quy trình prisma migrate deploy, migration nền 22/10/2026, lần deploy đầu, đổi schema, xử lý lệch và migration lỗi"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: true
+    owner: "Platform Lead"
+    dependencies: []
+    supersedes: []
+
+  - id: "DOC-05-VAN-HANH-SU-CO-SAO-LUU"
+    path: "docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md"
+    title: "Vận hành — Sao lưu, quan trắc và xử lý sự cố"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "PITR và export Render, RPO/RTO đề xuất, tín hiệu log và /internal/health, sự cố thường gặp, xoay khoá bí mật"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: true
+    owner: "Platform Lead"
+    dependencies: ["docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md"]
     supersedes: []
 
   - id: "DOC-05-KE-HOACH-NANG-CAP-UIUX"

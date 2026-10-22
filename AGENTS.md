@@ -8,7 +8,7 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 
 | Việc | Lệnh |
 |---|---|
-| Cài | `docker compose up -d && npm i && npx prisma generate && npx prisma db push && npx prisma db seed` |
+| Cài | `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npx prisma db seed` |
 | Chạy toàn bộ (Web + DB + Workers + SocialFlow M07) | `npm run dev:all` (tự bật Docker DB + Ollama Qwen + Web 3100 + Worker Vision + Worker Media + Worker Video + SocialFlow 8000) |
 | Chạy web | `npm run dev` |
 | Chạy worker media | `npm run worker:media` |

@@ -43,6 +43,7 @@
     "quet-job-treo": "tsx --env-file-if-exists=.env scripts/scan-stuck-jobs.ts",
     "gan-van-hanh-nen-tang": "tsx --env-file-if-exists=.env scripts/gan-van-hanh-nen-tang.ts",
     "db:push": "prisma db push",
+    "db:deploy": "node scripts/db-deploy.mjs",
     "db:seed": "tsx --env-file-if-exists=.env prisma/seed.ts",
     "db:seed:dev": "tsx --env-file-if-exists=.env prisma/seed/dev-shop-moclan.ts",
     "clean:siin-orders": "tsx --env-file-if-exists=.env prisma/seed/clean-siin-store-orders.ts",

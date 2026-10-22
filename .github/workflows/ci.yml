@@ -47,7 +47,11 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npx prisma generate
-      - run: npx prisma db push
+      # Dựng CSDL bằng đúng lệnh production dùng (`migrate deploy`), rồi đòi
+      # migration khớp schema.prisma: sửa schema mà quên `prisma migrate dev` là đỏ.
+      - run: npm run db:deploy
+      - name: Migration khớp schema.prisma
+        run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
       # Database RIÊNG cho `test:tenant`/`test:platform` — hai bộ test này
       # TRUNCATE mọi bảng và `tests/helpers/database.ts` từ chối database không
       # kết thúc bằng `_test`. Thiếu bước này thì cổng bắt buộc đỏ với
@@ -80,6 +84,31 @@ jobs:
       - name: Test cách ly Console Vận hành Nền tảng
         run: npm run test:platform
       - run: npm run build
+
+  # Chuỗi cung ứng (rà soát 21/10/2026, giai đoạn 3; PO duyệt 22/10). Repo công khai, nên một
+  # khoá lọt vào bất kỳ commit nào là lộ ngay — quét toàn lịch sử, không chỉ commit mới.
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Quét bí mật bằng gitleaks (báo nhầm đã duyệt nằm ở .gitleaksignore)
+        env:
+          GITLEAKS_VERSION: "8.21.2"
+          GITLEAKS_SHA256: "5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba"
+        run: |
+          curl -sSL -o gitleaks.tgz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tgz" | sha256sum -c -
+          tar xzf gitleaks.tgz gitleaks
+          ./gitleaks git . --no-banner --redact --exit-code 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+      # Chỉ chặn lỗ hổng CRITICAL ở dependency chạy trên production. 12 lỗi `high` có sẵn
+      # (gồm `xlsx`, chưa có bản vá) là nợ đã ghi nhận, không chặn ở đây.
+      - name: npm audit (production, mức critical)
+        run: npm audit --omit=dev --audit-level=critical
 
   worker:
     runs-on: ubuntu-latest
@@ -125,7 +154,7 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npx prisma generate
-      - run: npx prisma db push
+      - run: npm run db:deploy
       - run: npm run db:seed
       - run: npx playwright install chromium --with-deps
       - run: npm run build

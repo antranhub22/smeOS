@@ -149,7 +149,7 @@ export class AvailabilityRepository {
    * khác của cùng sản phẩm. Khoá tư vấn theo sản phẩm (pg_advisory_xact_lock) tuần tự hoá mọi lần
    * ghi của một phòng giữa các instance, nên hai khách thanh toán cùng lúc không cùng giữ được
    * một phòng (rà soát 21/10/2026, H8). Chưa đặt ràng buộc EXCLUDE ở CSDL: Prisma không khai được
-   * và `db push` lúc deploy sẽ gỡ ràng buộc ngoài lược đồ.
+   * nên ràng buộc chỉ sống trong SQL migration viết tay và dễ trôi giữa các môi trường.
    */
   async createBooking(input: CreateBlockInput): Promise<string | null> {
     return this.db.$transaction(async (tx) => {

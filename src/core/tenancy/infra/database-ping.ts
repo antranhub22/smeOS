@@ -14,3 +14,9 @@ export async function pingDatabase(): Promise<boolean> {
     return false
   }
 }
+
+/** Độ trễ `SELECT 1` tính bằng ms; `null` khi CSDL không trả lời (lỗi đã vào log). */
+export async function measureDatabaseLatency(): Promise<number | null> {
+  const start = Date.now()
+  return (await pingDatabase()) ? Date.now() - start : null
+}

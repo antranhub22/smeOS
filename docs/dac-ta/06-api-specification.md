@@ -923,6 +923,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | POST | `/coordinator/orders/:id/set-shipper` | `R5` | Điều phối nhập thông tin shipper thay chi nhánh |
 | POST | `/coordinator/orders/:id/confirm-delivery` | `R5` | Điều phối xác nhận đã giao, kèm ảnh giao hàng nếu có |
 | POST | `/internal/chain-dispatch-sweep` | — *(cron, header `x-cron-secret`)* | Quét nhắc mốc M1–M4 (≤ 50 đơn/lượt), do Render cron `smeos-cron-dispatch-sweep` gọi 5 phút/lần qua mạng nội bộ. Link trong tin nhắc dựng từ `NEXT_PUBLIC_APP_URL`. Production thiếu `CRON_SECRET` → luôn 401. `?forceStep=` chỉ có hiệu lực ngoài production |
+| GET | `/internal/health` | — *(cron, header `x-cron-secret`)* | Sức khoẻ chi tiết: độ trễ CSDL, Redis, job `PENDING`/`PROCESSING` quá 15 phút. `200` khi ổn, `503` khi `degraded`/`down` kèm `issues`. Cron `smeos-cron-dispatch-sweep` gọi sau mỗi lượt quét để Render báo lỗi. Không trả dữ liệu tenant |
 
 ### 26.4 Console Vận hành Nền tảng
 
