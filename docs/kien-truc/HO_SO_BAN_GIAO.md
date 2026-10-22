@@ -74,7 +74,7 @@ Chờ PO quyết:
 | Mã | Việc | Ghi chú |
 |---|---|---|
 | — | Nghị định 13/2023: đồng ý, hạn lưu, xuất/xoá dữ liệu cá nhân | PO hoãn 22/10 |
-| M5 | Ngày lưu dạng chuỗi; `chain_branches` nằm trong JSON settings | Đổi schema |
+| M5 (phần còn lại) | `chain_branches` nằm trong JSON settings; `staff_notifications.recipient_info` chưa có hạn lưu | Đổi schema; hạn lưu đi cùng Nghị định 13 |
 | M2 | Tệp vượt 350 dòng | Tách dần khi sửa |
 | — | Ràng buộc CHECK `orders_balance_vnd_check` chưa có ở CSDL | `VAN_HANH_CAP_NHAT_CSDL.md` mục 2 |
 | — | Kiểm thử xâm nhập độc lập | Thuê bên thứ ba trước khi ký với khách |
