@@ -4,9 +4,10 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-import { matchCandidateBranches, type BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
+import { matchCandidateBranches } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
@@ -44,9 +45,7 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
   const shop = await new OrganizationRepository().current(ctx)
   const policy = parseChainDispatchPolicy(shop?.settings as Record<string, unknown> | null | undefined)
 
-  // Lấy danh sách chi nhánh từ settings (org_settings key = chain_branches)
-  const rawBranches = (shop?.settings as Record<string, unknown> | null)?.["chain_branches"]
-  const branches: BranchCandidate[] = Array.isArray(rawBranches) ? (rawBranches as BranchCandidate[]) : []
+  const branches = await new ChainBranchRepository().listCandidates(ctx.organizationId)
 
   // Chạy Matching Engine — tính điểm, xếp hạng (orderLocation = null nếu chưa geocode)
   const matchResult = matchCandidateBranches(null, branches, policy, {
@@ -124,8 +123,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   // Lấy danh sách chi nhánh đã được duyệt
   const shop = await new OrganizationRepository().current(ctx)
   const policy = parseChainDispatchPolicy(shop?.settings as Record<string, unknown> | null | undefined)
-  const rawBranches = (shop?.settings as Record<string, unknown> | null)?.["chain_branches"]
-  const allBranches: BranchCandidate[] = Array.isArray(rawBranches) ? (rawBranches as BranchCandidate[]) : []
+  const allBranches = await new ChainBranchRepository().listCandidates(ctx.organizationId)
 
   // Lọc ra các chi nhánh được duyệt
   const approvedBranches = allBranches.filter((b) => approvedBranchIds.includes(b.branchId))

@@ -23,6 +23,7 @@ import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth
 import { ChainDispatchSweepQuery } from "@/modules/greeting-card/infra/chain-dispatch-sweep-query"
 import { parseChainDispatchPolicy } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import { processOrderDispatchReminders } from "@/modules/greeting-card/use-cases/process-dispatch-reminders"
 import { evaluateCustomerApproval } from "@/modules/greeting-card/use-cases/evaluate-customer-approval"
@@ -85,6 +86,7 @@ export const POST = handle(async (request) => {
   const orgIds = [...new Set(activeCoords.map((c) => c.organization_id))]
   const orgs = await sweepQuery.listOrganizationSettings(orgIds)
   const orgMap = new Map(orgs.map((o) => [o.id, o]))
+  const chainBranches = new ChainBranchRepository()
 
   // 3. Lấy thông tin đơn hàng (delivery_window, items) theo batch
   const orderIds = activeCoords.map((c) => c.order_id)
@@ -130,25 +132,15 @@ export const POST = handle(async (request) => {
         deliveryTimestampMs = Date.now() + 30 * 60 * 1000 // Giả lập 30 phút nữa giao nếu không có giờ
       }
 
-      // Tìm chi nhánh trong settings để có thông tin kênh liên lạc
-      const settings = (org.settings as Record<string, unknown> | null) ?? {}
-      const chainBranches = (settings.chain_branches as Array<Record<string, unknown>>) || []
-      const branchData = chainBranches.find((b) => b.branchId === state.claimedBranchId)
+      // Chi nhánh đã nhận đơn — cần kênh liên lạc để nhắc mốc
+      const branchData = await chainBranches.findByCode(coord.organization_id, state.claimedBranchId)
       if (!branchData) continue
-
-      const branchChannels = (branchData.channels as Record<string, unknown> | undefined) ?? {}
       const branch: BranchCandidate = {
-        branchId: state.claimedBranchId,
-        branchName: (state.claimedBranchName ?? branchData.branchName ?? "Chi nhánh") as string,
-        qualityScore: typeof branchData.qualityScore === "number" ? branchData.qualityScore : 90,
+        ...branchData,
+        branchName: state.claimedBranchName ?? branchData.branchName,
         activeJobsCount: 0,
         maxConcurrentJobs: 10,
         isActive: true,
-        channels: {
-          phone: (branchChannels.phone ?? branchData.phone) as string | undefined,
-          telegramChatId: (branchChannels.telegramChatId ?? branchData.telegramChatId) as string | undefined,
-          zaloPhone: (branchChannels.zaloPhone ?? branchData.zaloPhone) as string | undefined,
-        },
       }
 
       const ctx: TenantContext = {
@@ -165,6 +157,7 @@ export const POST = handle(async (request) => {
       const hasShipperInfo = Boolean(subDispatchMeta?.shipper_info) || order.delivery_status === "DELIVERING" || order.delivery_status === "DELIVERED"
       const hasDeliveryProof = Boolean((coord.metadata as Record<string, unknown> | null)?.delivery_proof) || order.delivery_status === "DELIVERED"
 
+      const settings = (org.settings as Record<string, unknown> | null) ?? {}
       const coordinatorChannel = settings.coordinator_channel as
         | { phone?: string; telegramChatId?: string }
         | undefined

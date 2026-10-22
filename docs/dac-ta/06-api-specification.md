@@ -902,7 +902,7 @@ Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38
 |---|---|---|---|
 | POST · DELETE | `/greeting-card/orders/:id/confirm-order` | `R11` | Điều hành xác nhận (POST) hoặc từ chối đơn `{ reason }` (DELETE, kích hoạt hoàn tiền) — Gate 1b, mô hình 1 cửa hàng |
 | GET · POST | `/greeting-card/orders/:id/chain-dispatch` | `R4` | GET: danh sách chi nhánh đã sàng lọc và xếp hạng theo địa chỉ giao. POST: duyệt danh sách và gửi lời mời 1:1 cho từng chi nhánh, link kèm token chi nhánh (26.3) |
-| POST | `/greeting-card/chain-branches/bulk-import` | `R4` | Nhập danh sách chi nhánh vào `settings.chain_branches` |
+| POST | `/greeting-card/chain-branches/bulk-import` | `R4` | Nhập danh sách chi nhánh vào bảng `chain_branches` (trùng mã → cập nhật, giữ lịch sử phạt) |
 | GET · PUT | `/greeting-card/integrations/staff-notifications` | `F2` | Đọc / sửa cấu hình kênh thông báo nhân viên trong phạm vi các kênh mà SaaS cho phép |
 | PUT | `/greeting-card/integrations/staff-notifications/saas-policy` | *(phiên nền tảng)* `N2` | Người vận hành nền tảng cấp danh sách kênh cho `{ targetOrganizationId, allowedChannels }`. Không nhận phiên tenant |
 | GET · POST | `/greeting-card/integrations/telegram-dispatch` | `F2` | GET: trạng thái bot, `linkCode` của tổ chức, và các nhóm **đã gửi mã đó**. POST `{ chatId, message? }`: gửi thử, chỉ tới nhóm đã liên kết hoặc đã cấu hình cho chi nhánh của tổ chức; nhóm khác → 422 |

@@ -2511,6 +2511,36 @@ model staff_notifications {
 > - `users.approval_status` (enum `user_approval_status`, PO 22/10/2026) — duyệt tài khoản tự đăng ký. `/auth/signup` và `/auth/instant-trial` tạo tài khoản `PENDING`. Chỉ `APPROVED` đăng nhập được (`log-in.ts`) và dùng được phiên (`resolve-session.ts`; tài khoản bị chuyển về `PENDING`/`REJECTED` mất luôn phiên đang mở). Mặc định cột là `APPROVED`: tài khoản có sẵn, nhân viên được mời và tài khoản tạo bằng script vận hành không phải duyệt. Superadmin mã `N13` duyệt ở `/van-hanh/dang-ky`; `approval_decided_by` lưu `user_id` của superadmin. Migration `20261022120000_user_approval` chỉ thêm cột. Ca thử: `tests/tenant/registration-approval.test.ts`, `tests/platform/registration-approval.test.ts`.
 > - `platform_settings` — **NỀN TẢNG** (không có `organization_id`, mục 1). Khoá `nav_matrix_overrides`: ma trận điều hướng theo ngành do Admin SaaS ghi đè ở Console `/van-hanh` (`PUT /platform/nav-matrix`, mã `N12`). Trước 22/10 lưu vào một tệp trên máy chủ: mất khi deploy, mỗi instance một bản, và menu không đọc nó. Giờ máy chủ đọc (bộ nhớ đệm 30 giây) và gửi danh sách mục ẩn xuống qua phiên (`organization.navHiddenKeys`). Chưa có dòng thì dùng `src/lib/data/industry-nav-matrix-overrides.json` làm giá trị khởi đầu. Migration `20261022100000_platform_settings`. Ca thử: `tests/platform/nav-matrix-overrides.test.ts`.
 
+> - `chain_branches` — **TENANT** (rà soát M5, PO duyệt 22/10/2026). Chi nhánh nhận gia công của điều phối chuỗi, trước nằm trong `organizations.settings.chain_branches`: mỗi lần trừ điểm ghi đè cả mảng JSON, hai lần phạt cùng lúc mất một. Giờ mỗi chi nhánh một dòng, khoá `(organization_id, branch_code)`; `branch_code` là `branchId` phía domain (mã trên link gia công `?branch=`), khác `branches.id`. Nhập Excel (`POST /greeting-card/chain-branches/bulk-import`) cập nhật theo mã, giữ số lần phạt và lịch sử phạt. Trừ điểm (`ChainBranchRepository.applyPenalty`) khoá dòng `FOR UPDATE`: −2 điểm, sàn 10, lịch sử tối đa 50 mục. Migration `20261022130000_chain_branches_table` VIẾT TAY: chép từng phần tử JSON có mã và tên sang bảng (trùng mã giữ phần tử cuối), rồi xoá khoá `chain_branches` khỏi `settings`. Ca thử: `tests/tenant/chain-branches-table.test.ts`.
+
+```prisma
+model chain_branches {
+  id                   String   @id @default(uuid())
+  organization_id      String
+  branch_code          String
+  name                 String
+  address              String?
+  latitude             Float?
+  longitude            Float?
+  quality_score        Float    @default(90)
+  active_jobs_count    Int      @default(0)
+  max_concurrent_jobs  Int      @default(5)
+  is_active            Boolean  @default(true)
+  channels             Json? // { phone, telegramChatId, zaloPhone, messengerId }
+  cancellation_count   Int      @default(0)
+  bypass_count         Int      @default(0)
+  cancellation_history Json?
+  bypass_history       Json?
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@unique([organization_id, branch_code])
+  @@index([organization_id])
+}
+```
+
 ```prisma
 model platform_settings {
   key        String   @id

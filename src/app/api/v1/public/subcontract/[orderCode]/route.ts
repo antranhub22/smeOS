@@ -3,6 +3,7 @@ import { unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
@@ -220,11 +221,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     )
 
     // Đánh giá chất lượng dịch vụ: Trừ điểm KPI chi nhánh vì đã hủy nhận đơn
-    const penalty = await repo.recordBranchCancellationPenalty(
-      order.organization_id,
-      branch.id,
-      `Hủy nhận đơn #${order.code} trong hạn kiểm tra kho (Kho thiếu hoa/nguyên liệu)`
-    )
+    const penalty = await new ChainBranchRepository().applyPenalty(order.organization_id, branch.id, "CANCELLATION",
+      `Hủy nhận đơn #${order.code} trong hạn kiểm tra kho (Kho thiếu hoa/nguyên liệu)`)
 
     return jsonResponse({
       data: {
@@ -233,7 +231,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
           penalized: true,
           scoreDeducted: 2,
           currentQualityScore: penalty.newQualityScore,
-          totalCancellations: penalty.cancellationCount,
+          totalCancellations: penalty.count,
         },
       },
     })
@@ -273,14 +271,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       maxConcurrentJobs: 10,
       isActive: true,
       channels: {
-        telegramChatId: (org?.settings as Record<string, unknown> | null)?.["chain_branches"]
-          ? (
-              ((org?.settings as Record<string, unknown> | null)?.["chain_branches"] as Array<{
-                branchId: string
-                channels?: { telegramChatId?: string; phone?: string; zaloPhone?: string }
-              }>).find((b) => b.branchId === branch.id)?.channels?.telegramChatId
-            )
-          : undefined,
+        telegramChatId: (await new ChainBranchRepository().findByCode(order.organization_id, branch.id))?.channels?.telegramChatId,
       },
     }
 

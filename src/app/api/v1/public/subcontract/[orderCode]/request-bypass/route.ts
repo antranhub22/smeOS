@@ -13,6 +13,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import type { TenantContext } from "@/core/tenancy"
@@ -62,7 +63,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const org = await repo.findOrganizationSettings(order.organization_id)
   const settings = (org?.settings as Record<string, unknown> | null) ?? {}
   const coordChannel = settings.coordinator_channel as { telegramChatId?: string; phone?: string } | undefined
-  const chainBranches = (settings.chain_branches as Array<{ channels?: { telegramChatId?: string; phone?: string } }>) || []
+  const chainBranches = await new ChainBranchRepository().listCandidates(order.organization_id)
   const branchWithTelegram = chainBranches.find((b) => b.channels?.telegramChatId)
 
   const targetChatId =

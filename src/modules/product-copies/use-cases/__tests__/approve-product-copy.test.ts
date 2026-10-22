@@ -10,10 +10,10 @@ const mockTenantContext: TenantContext = {
 }
 
 vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
-  ProductCopyRepository: vi.fn().mockImplementation(() => ({
+  ProductCopyRepository: vi.fn().mockImplementation(function () { return {
     approve: vi.fn(),
     reject: vi.fn(),
-  })),
+  } }),
 }))
 
 vi.mock("@/modules/audit/use-cases/record-audit-log", () => ({

@@ -51,6 +51,7 @@ const TENANT_TABLES = [
   "catalog_links",
   "product_inventory",
   "product_bookings",
+  "chain_branches",
   "customer_consents",
   "customer_occasions",
   // Chức năng 12 — Điều phối đơn hàng (25/09/2026)

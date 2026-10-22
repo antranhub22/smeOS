@@ -11,9 +11,9 @@ const mockTenantContext: TenantContext = {
 }
 
 vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
-  ProductCopyRepository: vi.fn().mockImplementation(() => ({
+  ProductCopyRepository: vi.fn().mockImplementation(function () { return {
     updateEdited: vi.fn(),
-  })),
+  } }),
 }))
 
 import { updateProductCopy } from "@/modules/product-copies/use-cases/update-product-copy"
@@ -32,9 +32,9 @@ describe("updateProductCopy", () => {
 
   it("calls repo.updateEdited with valid data", async () => {
     const updateEdited = vi.fn().mockResolvedValue({})
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       updateEdited,
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const validEdited = {
       suggested_name: "Updated Name",
@@ -51,9 +51,9 @@ describe("updateProductCopy", () => {
 
   it("throws when repo throws NOT_FOUND", async () => {
     const updateEdited = vi.fn().mockRejectedValue(new Error("NOT_FOUND"))
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       updateEdited,
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const validEdited = {
       suggested_name: "Updated Name",
@@ -68,9 +68,9 @@ describe("updateProductCopy", () => {
 
   it("throws when repo throws CANNOT_EDIT", async () => {
     const updateEdited = vi.fn().mockRejectedValue(new Error("CANNOT_EDIT"))
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       updateEdited,
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const validEdited = {
       suggested_name: "Updated Name",

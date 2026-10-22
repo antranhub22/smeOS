@@ -15,7 +15,7 @@ const startInline = vi.fn()
 const finishInline = vi.fn()
 const setStage = vi.fn()
 vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({ startInline, finishInline, setStage })),
+  GenerationJobRepository: vi.fn().mockImplementation(function () { return { startInline, finishInline, setStage } }),
 }))
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({ enqueueJob: vi.fn() }))
 vi.mock("@/modules/usage/use-cases/refund-job", () => ({ refundJob: vi.fn().mockResolvedValue(undefined) }))
@@ -27,7 +27,7 @@ vi.mock("@/modules/content-engine/use-cases/get-content-brief", () => ({ getCont
 const createGeneration = vi.fn()
 const findByIdGeneration = vi.fn()
 vi.mock("@/modules/content-engine/infra/content-generation-repository", () => ({
-  ContentGenerationRepository: vi.fn().mockImplementation(() => ({ create: createGeneration, findById: findByIdGeneration })),
+  ContentGenerationRepository: vi.fn().mockImplementation(function () { return { create: createGeneration, findById: findByIdGeneration } }),
 }))
 
 import { callCapability } from "@/core/ai/gateway"

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
 
 import { telegramLinkCode } from "../../infra/telegram-link-code"
-import { chatsWithLinkCode, configuredBranchChatIds } from "../telegram-dispatch-link"
+import { toBranchCandidate } from "../../infra/chain-branch-repository"
+import { chatsWithLinkCode } from "../telegram-dispatch-link"
 
 describe("liên kết nhóm Telegram theo tổ chức", () => {
   it("mỗi tổ chức một mã, ổn định giữa các lần gọi", () => {
@@ -25,17 +26,16 @@ describe("liên kết nhóm Telegram theo tổ chức", () => {
     expect(chats).toEqual([{ id: "-100", title: "Nhóm A", type: "group" }])
   })
 
-  it("đọc chat ID chi nhánh đã cấu hình, bỏ giá trị rỗng/sai kiểu", () => {
-    expect(
-      configuredBranchChatIds({
-        chain_branches: [
-          { channels: { telegramChatId: "-111" } },
-          { channels: { telegramChatId: "  " } },
-          { channels: {} },
-          { channels: { telegramChatId: 42 } },
-        ],
-      })
-    ).toEqual(["-111"])
-    expect(configuredBranchChatIds(null)).toEqual([])
+  it("kênh chi nhánh chỉ giữ giá trị chuỗi, bỏ giá trị sai kiểu", () => {
+    const row = {
+      branch_code: "CN1", name: "Chi nhánh 1", address: null, latitude: 10.7, longitude: null,
+      quality_score: 88, active_jobs_count: 1, max_concurrent_jobs: 5, is_active: true,
+      channels: { telegramChatId: "-111", zaloPhone: 42, phone: null },
+    }
+    const candidate = toBranchCandidate(row)
+    expect(candidate.branchId).toBe("CN1")
+    expect(candidate.location).toBeNull()
+    expect(candidate.channels).toEqual({ telegramChatId: "-111", phone: undefined, zaloPhone: undefined, messengerId: undefined })
+    expect(toBranchCandidate({ ...row, channels: ["sai"] }).channels).toEqual({})
   })
 })
