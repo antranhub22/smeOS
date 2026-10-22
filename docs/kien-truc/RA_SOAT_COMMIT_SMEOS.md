@@ -32,7 +32,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | F | Ma trận menu ngành, Console vận hành | 7 | Đã rà |
 | K | Sức khoẻ hệ thống, giám sát, worker | 6 | Đã rà |
 | J | Seed, dữ liệu mẫu, script tài khoản | 6 | Đã rà |
-| D | Sửa schema | 6 | Chưa rà |
+| D | Sửa schema | 6 | Đã rà (migrate diff sạch) |
 | C | Hạ tầng, CI, deploy, thư viện | 20 | Chưa rà |
 | I | Thông báo nhân viên | 2 | Chưa rà |
 | A | Nền đa ngành | 23 | Chưa rà |
@@ -152,12 +152,12 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `7c78c075` | 10-20 | fix(org): provide id when creating roles in RoleRepository | CHƯA RÀ | |
-| `87dd0bde` | 10-20 | fix(org): provide id when creating role_capabilities in CapabilityRepository | CHƯA RÀ | |
-| `9f5a35cd` | 10-20 | fix(schema): add @updatedAt to all required updated_at DateTime fields to auto-generate in seed/upsert | CHƯA RÀ | |
-| `7eee8117` | 10-20 | fix(schema): add @default(uuid()) to ai_models.id | CHƯA RÀ | |
-| `430357b7` | 10-20 | fix(schema): restore @default(uuid()) to all 88 model id fields | CHƯA RÀ | |
-| `592cb60d` | 10-20 | fix(schema): restore complete schema with relations and default uuids | CHƯA RÀ | |
+| `7c78c075` | 10-20 | fix(org): provide id when creating roles in RoleRepository | ĐẠT |  |
+| `87dd0bde` | 10-20 | fix(org): provide id when creating role_capabilities in CapabilityRepository | ĐẠT |  |
+| `9f5a35cd` | 10-20 | fix(schema): add @updatedAt to all required updated_at DateTime fields to auto-generate in seed/upsert | ĐẠT |  |
+| `7eee8117` | 10-20 | fix(schema): add @default(uuid()) to ai_models.id | ĐẠT |  |
+| `430357b7` | 10-20 | fix(schema): restore @default(uuid()) to all 88 model id fields | ĐẠT |  |
+| `592cb60d` | 10-20 | fix(schema): restore complete schema with relations and default uuids | ĐẠT |  |
 
 ### Cụm C — Hạ tầng, CI, deploy, thư viện
 
