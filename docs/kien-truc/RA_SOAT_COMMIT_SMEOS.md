@@ -35,8 +35,8 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | D | Sửa schema | 6 | Đã rà (migrate diff sạch) |
 | C | Hạ tầng, CI, deploy, thư viện | 20 | Đã rà — còn mở C-ENV |
 | I | Thông báo nhân viên | 2 | Đã rà |
-| A | Nền đa ngành | 23 | Chưa rà |
-| L | Tài liệu, token giao diện, kiến trúc, test | 10 | Chưa rà |
+| A | Nền đa ngành | 23 | Đã rà — nợ A-TERM (ratchet) |
+| L | Tài liệu, token giao diện, kiến trúc, test | 10 | Đã rà |
 
 ## 3. Checklist từng commit
 
@@ -195,49 +195,50 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `f85dd856` | 10-17 | feat(org): implement IndustryProfile domain and i18n industry terminology support | CHƯA RÀ | |
-| `17384c4c` | 10-17 | feat(products): generalize Product BOM for multi-industry components support | CHƯA RÀ | |
-| `da9855a0` | 10-17 | feat(media): generalize Studio Prompt Compiler and ProductPassport for multi-industry catalog | CHƯA RÀ | |
-| `bba3fa2c` | 10-17 | feat(org): generalize Role UX titles and groups for multi-industry adaptation | CHƯA RÀ | |
-| `0db182db` | 10-17 | feat: bổ sung giao diện chọn/xem ngành nghề kinh doanh và chuẩn hóa nhãn đa ngành tại hồ sơ cửa hàng | CHƯA RÀ | |
-| `dd84a7c5` | 10-17 | feat(domain): thiết lập kiến trúc SSOT IndustryPluginContract và chuẩn hóa 6 ngành kinh doanh | CHƯA RÀ | |
-| `fc9810cc` | 10-17 | feat(roadmap): lộ trình triển khai 95 ngành nghề — 20 ACTIVE, 75 COMING_SOON + nợ TD-INDUSTRY | CHƯA RÀ | |
-| `d40ccf0a` | 10-17 | feat(ui): adapt order detail modal and production ticket dynamically for fashion and multi-industry | CHƯA RÀ | |
-| `330cdffd` | 10-17 | feat(ui): adapt journey home cards, spotlight card, and navigation dynamically to industry SSOT | CHƯA RÀ | |
-| `bdd7da65` | 10-17 | feat(ui): adapt product creation, quotation, dashboard and coordinator cards to industry SSOT terminology | CHƯA RÀ | |
-| `986b378f` | 10-17 | feat(industry): add automated SSOT checker, new-industry wizard, ratchet audit, and git pre-commit hook | CHƯA RÀ | |
-| `3a777ad6` | 10-17 | feat(ui): adapt product catalog list, categories, and search filter to industry SSOT | CHƯA RÀ | |
-| `ac26e8e1` | 10-17 | feat(ui): adapt product creation page and cards to dynamic industry SSOT | CHƯA RÀ | |
-| `50a26567` | 10-17 | feat(ui): adapt greeting card catalog and journey cards to dynamic industry SSOT | CHƯA RÀ | |
-| `68bb32d1` | 10-17 | refactor(industry): adapt app pages and catalog components to industry plugin contract | CHƯA RÀ | |
-| `43a1f1a7` | 10-18 | feat(industry): thêm ngành HOMESTAY & chuẩn hoá UI đa ngành | CHƯA RÀ | |
-| `12aaf9d0` | 10-18 | feat(the-chao): implement active block spotlight, numbered step badges and multi-industry preview | CHƯA RÀ | |
-| `7b6d19ca` | 10-18 | feat(products): phân tầng dữ liệu BOM cam kết giao kèo vs AI marketing | CHƯA RÀ | |
-| `4dba1277` | 10-18 | feat(greeting-card): chuẩn hóa form đặt hàng đa ngành & thẻ chào chuyên biệt theo ngành | CHƯA RÀ | |
-| `07e88f56` | 10-18 | feat(industry-order): standardize florist-job-tab & customer-slip with SSOT order terms | CHƯA RÀ | |
-| `38c498d4` | 10-18 | feat(multi-industry): chuẩn hóa tab Bán hàng, Điều phối, Điều hành theo SSOT đa ngành | CHƯA RÀ | |
-| `ef903f96` | 10-19 | feat(tracking): chuẩn hóa tab Theo dõi đơn theo SSOT đa ngành | CHƯA RÀ | |
-| `dad881d7` | 10-22 | chore(industry): delete unused industry roadmap data file | CHƯA RÀ | |
+| `f85dd856` | 10-17 | feat(org): implement IndustryProfile domain and i18n industry terminology support | ĐẠT | A-TERM |
+| `17384c4c` | 10-17 | feat(products): generalize Product BOM for multi-industry components support | ĐẠT | A-TERM |
+| `da9855a0` | 10-17 | feat(media): generalize Studio Prompt Compiler and ProductPassport for multi-industry catalog | ĐẠT | A-TERM |
+| `bba3fa2c` | 10-17 | feat(org): generalize Role UX titles and groups for multi-industry adaptation | ĐẠT | A-TERM |
+| `0db182db` | 10-17 | feat: bổ sung giao diện chọn/xem ngành nghề kinh doanh và chuẩn hóa nhãn đa ngành tại hồ sơ cửa hàng | ĐẠT | A-TERM |
+| `dd84a7c5` | 10-17 | feat(domain): thiết lập kiến trúc SSOT IndustryPluginContract và chuẩn hóa 6 ngành kinh doanh | ĐẠT | A-TERM |
+| `fc9810cc` | 10-17 | feat(roadmap): lộ trình triển khai 95 ngành nghề — 20 ACTIVE, 75 COMING_SOON + nợ TD-INDUSTRY | THAY THẾ |  |
+| `d40ccf0a` | 10-17 | feat(ui): adapt order detail modal and production ticket dynamically for fashion and multi-industry | ĐẠT | A-TERM |
+| `330cdffd` | 10-17 | feat(ui): adapt journey home cards, spotlight card, and navigation dynamically to industry SSOT | ĐẠT | A-TERM |
+| `bdd7da65` | 10-17 | feat(ui): adapt product creation, quotation, dashboard and coordinator cards to industry SSOT terminology | ĐẠT | A-TERM |
+| `986b378f` | 10-17 | feat(industry): add automated SSOT checker, new-industry wizard, ratchet audit, and git pre-commit hook | ĐẠT | A-TERM |
+| `3a777ad6` | 10-17 | feat(ui): adapt product catalog list, categories, and search filter to industry SSOT | ĐẠT | A-TERM |
+| `ac26e8e1` | 10-17 | feat(ui): adapt product creation page and cards to dynamic industry SSOT | ĐẠT | A-TERM |
+| `50a26567` | 10-17 | feat(ui): adapt greeting card catalog and journey cards to dynamic industry SSOT | ĐẠT | A-TERM |
+| `68bb32d1` | 10-17 | refactor(industry): adapt app pages and catalog components to industry plugin contract | ĐẠT | A-TERM |
+| `43a1f1a7` | 10-18 | feat(industry): thêm ngành HOMESTAY & chuẩn hoá UI đa ngành | ĐẠT | A-TERM |
+| `12aaf9d0` | 10-18 | feat(the-chao): implement active block spotlight, numbered step badges and multi-industry preview | ĐẠT | A-TERM |
+| `7b6d19ca` | 10-18 | feat(products): phân tầng dữ liệu BOM cam kết giao kèo vs AI marketing | ĐẠT | A-TERM |
+| `4dba1277` | 10-18 | feat(greeting-card): chuẩn hóa form đặt hàng đa ngành & thẻ chào chuyên biệt theo ngành | ĐẠT | A-TERM |
+| `07e88f56` | 10-18 | feat(industry-order): standardize florist-job-tab & customer-slip with SSOT order terms | ĐẠT | A-TERM |
+| `38c498d4` | 10-18 | feat(multi-industry): chuẩn hóa tab Bán hàng, Điều phối, Điều hành theo SSOT đa ngành | ĐẠT | A-TERM |
+| `ef903f96` | 10-19 | feat(tracking): chuẩn hóa tab Theo dõi đơn theo SSOT đa ngành | ĐẠT | A-TERM |
+| `dad881d7` | 10-22 | chore(industry): delete unused industry roadmap data file | ĐẠT | A-TERM |
 
 ### Cụm L — Tài liệu, token giao diện, kiến trúc, test
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `24078f51` | 10-17 | docs: cập nhật quy chuẩn tạo ngành mới theo Industry Plugin SSOT vào AGENTS.md | CHƯA RÀ | |
-| `2d856ab2` | 10-19 | docs: formalize Dual-Stream + First-Wins Mutex architecture in AGENTS.md | CHƯA RÀ | |
-| `a4a6d654` | 10-20 | docs(agents): add Single Living Dashboard Card as mandatory external integration standard (PO 20/10/2026) | CHƯA RÀ | |
-| `4dff7257` | 10-21 | test: align stale expectations with multi-industry behaviour | CHƯA RÀ | |
-| `bd5e97d3` | 10-21 | docs(spec): document routes and tables added since the smeOS switch | CHƯA RÀ | |
-| `475831a0` | 10-21 | fix(ui): replace raw colors and ad-hoc font sizes with semantic tokens | CHƯA RÀ | |
-| `30a6eacf` | 10-21 | refactor(arch): move direct Prisma access out of routes and use-cases | CHƯA RÀ | |
-| `26e61a49` | 10-21 | fix(ui): show the smeOS product name instead of FloraOS | CHƯA RÀ | |
-| `62fdaac2` | 10-22 | docs(handover): add handover index and backup, monitoring and incident runbook | CHƯA RÀ | |
-| `e6d3c566` | 10-22 | docs(handover): reflect PO decision to keep Siin Store accounts | CHƯA RÀ | |
+| `24078f51` | 10-17 | docs: cập nhật quy chuẩn tạo ngành mới theo Industry Plugin SSOT vào AGENTS.md | ĐẠT |  |
+| `2d856ab2` | 10-19 | docs: formalize Dual-Stream + First-Wins Mutex architecture in AGENTS.md | ĐẠT |  |
+| `a4a6d654` | 10-20 | docs(agents): add Single Living Dashboard Card as mandatory external integration standard (PO 20/10/2026) | ĐẠT SAU SỬA | G-CARD |
+| `4dff7257` | 10-21 | test: align stale expectations with multi-industry behaviour | ĐẠT |  |
+| `bd5e97d3` | 10-21 | docs(spec): document routes and tables added since the smeOS switch | ĐẠT |  |
+| `475831a0` | 10-21 | fix(ui): replace raw colors and ad-hoc font sizes with semantic tokens | ĐẠT |  |
+| `30a6eacf` | 10-21 | refactor(arch): move direct Prisma access out of routes and use-cases | ĐẠT |  |
+| `26e61a49` | 10-21 | fix(ui): show the smeOS product name instead of FloraOS | ĐẠT |  |
+| `62fdaac2` | 10-22 | docs(handover): add handover index and backup, monitoring and incident runbook | ĐẠT |  |
+| `e6d3c566` | 10-22 | docs(handover): reflect PO decision to keep Siin Store accounts | ĐẠT |  |
 
 ## 4. Phát hiện
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| A-TERM | Thấp | Giao diện | Còn 913 chỗ thuật ngữ ngành hoa viết cứng (`npm run audit:industry`) | Nợ có ratchet — không được tăng, giảm dần; `check:industry` 5/5 trụ cột đạt |
 | C-ENV | Trung bình | `render.yaml` | Biến code đang dùng chưa khai (`sync: false`) nên dễ quên khi bàn giao: `GOONG_API_KEY` (toạ độ điều phối chuỗi — thiếu thì xếp hạng theo khu vực), `ZALO_OA_APP_ID/APP_SECRET/REFRESH_TOKEN/WEBHOOK_SECRET/FOLLOW_URL` (Zalo OA). Không có giá trị bí mật nào trong file | **Mở** — sửa `render.yaml` cần PO duyệt |
 | J-MOCK | Cao | Nạp dữ liệu mẫu theo ngành | Tiệm thật nạp được dữ liệu mẫu đè hồ sơ | Đã thay bằng `72fe6167`: chỉ tổ chức dùng thử |
 | K-LEAK | Cao | `GET /api/health` | Health công khai trả host CSDL đã che, chi tiết lỗi, phiên bản | Đã thay bằng `da210518`: chỉ trạng thái; chi tiết vào log và `/internal/health` có khoá |

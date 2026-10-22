@@ -49,6 +49,8 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 
   **Nguyên tắc cốt lõi**: Mỗi thực thể nghiệp vụ chỉ có **DUY NHẤT MỘT TIN NHẮN / THẺ THÔNG BÁO** trên kênh ngoài. Tất cả cập nhật trạng thái tiếp theo đều **chỉnh sửa (EDIT) tin nhắn đó tại chỗ**, không bao giờ tạo tin mới. Khi có mốc hành động cần phản hồi ngay, hệ thống gửi **notification ping riêng** (thông báo đẩy) kèm nút dẫn vào thẻ đang tồn tại — không gửi thêm thẻ.
 
+  **Một thẻ cho mỗi người nhận (rà soát cụm G, 22/10/2026)**: khi cùng một thực thể gửi tới nhiều chat (vd. mời nhiều chi nhánh), mỗi chat giữ thẻ RIÊNG của mình (`subcontract_dispatch.inviteCards[branchId]`) và chỉ thẻ đó được sửa — không sửa thẻ của chat khác, không mang link đã ký của người khác.
+
   **Lý do bắt buộc**: Spam tin nhắn mới làm mất ngữ cảnh, cửa hàng/đối tác phải cuộn ngược để biết đơn đang ở bước nào; thẻ duy nhất giữ toàn bộ lịch sử tiến độ có thể nhìn một lần và hành động ngay.
 
   **Kiến trúc triển khai (SSOT: `src/modules/greeting-card/`):**
