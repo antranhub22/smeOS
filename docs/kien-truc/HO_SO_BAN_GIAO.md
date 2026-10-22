@@ -93,5 +93,6 @@ Việc làm tay một lần trước khi đưa khách vào:
 - Bật thông báo lỗi của Render (`VAN_HANH_SU_CO_VA_SAO_LUU.md` mục 2).
 - Bật branch protection cho `main` (bắt buộc PR, CI xanh, ≥ 1 người duyệt).
 - Bật secret scanning và push protection trong *Settings → Code security*.
+- Duyệt đăng ký (PO 22/10/2026): mọi tài khoản tự đăng ký hoặc dùng thử chờ `tuans2@dev.com` duyệt ở `/van-hanh/dang-ky` (mã `N13`). Nếu đã chạy `don-tai-khoan` TRƯỚC bản có `N13`, cấp thêm: `npm run gan-van-hanh-nen-tang -- --email=tuans2@dev.com --capabilities=N13`. Duyệt dùng thử hiện mật khẩu tạm một lần để gửi cho khách.
 - Người vận hành nền tảng: chỉ `tuans2@dev.com` (đủ mã N, cấp bằng lệnh dọn tài khoản ở trên). Thêm người sau này: `npm run gan-van-hanh-nen-tang -- --email=… --capabilities=…`.
 - Deploy đầu tiên theo `VAN_HANH_CAP_NHAT_CSDL.md` mục 4: export CSDL trước, rồi đọc log `db-deploy`.

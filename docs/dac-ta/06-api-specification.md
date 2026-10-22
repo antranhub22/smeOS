@@ -48,8 +48,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/auth/signup` | — | Tạo người dùng và tổ chức trải nghiệm |
-| POST | `/auth/login` | — | Chặn dò mật khẩu: 10 lần/15 phút mỗi email, 40 lần/15 phút mỗi IP → 429 (08/10/2026) |
+| POST | `/auth/signup` | — | Tạo người dùng và tổ chức trải nghiệm. Từ 22/10/2026 tài khoản **chờ superadmin duyệt** (`approval_status = PENDING`): trả `202 { status: "PENDING_APPROVAL", message }`, không đặt cookie, không tạo phiên |
+| POST | `/auth/login` | — | Chặn dò mật khẩu: 10 lần/15 phút mỗi email, 40 lần/15 phút mỗi IP → 429 (08/10/2026). Đúng mật khẩu nhưng tài khoản chưa duyệt / bị từ chối → 403 kèm câu báo; sai mật khẩu vẫn 401 như cũ, nên không dò được trạng thái |
 | POST | `/auth/logout` | — | |
 | GET | `/auth/me` | — | Người dùng, tổ chức hiện tại, danh sách năng lực đã tính |
 | GET | `/auth/session-status` | — | Kiểm nhanh phiên còn sống; giao diện hỏi mỗi 15 giây và khi quay lại tab |
@@ -674,6 +674,8 @@ P25a chỉ đọc (D-N5 áp dụng cho toàn bộ P25a, không riêng `/health`)
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/platform/organizations` | `N1` | Danh sách mọi tổ chức — tên, slug, loại, số dư credit, số thành viên |
+| GET | `/platform/registrations` | `N13` | Tài khoản tự đăng ký đang chờ duyệt (cũ trước) — email, tên, tổ chức, đăng ký thường hay dùng thử, SĐT lead |
+| POST | `/platform/registrations/:userId/decision` | `N13` | `{ decision: "APPROVE" \| "REJECT" }`. Chỉ quyết được tài khoản `PENDING` (đã quyết → 409, không có → 404). Duyệt dùng thử trả `temporaryPassword` đúng một lần, không lưu, không ghi nhật ký. Ghi `platform_audit_logs` (`platform.registration.approve`/`reject`) |
 | GET | `/platform/organizations/:id` | `N1` | Chi tiết một tổ chức bất kỳ — không lọc theo tổ chức của người gọi |
 | GET | `/platform/usage` | `N4` | Usage & chi phí gộp theo (tổ chức, tính năng), toàn hệ thống |
 | GET | `/platform/health` | `N5` | Đếm job theo trạng thái + danh sách job treo (chỉ đọc — không đánh dấu FAILED, xem `scripts/scan-stuck-jobs.ts`) |
@@ -886,7 +888,7 @@ Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP |
+| POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP. Từ 22/10/2026 **chờ superadmin duyệt**: trả `202`, không cấp phiên; lúc duyệt hệ thống sinh mật khẩu tạm để superadmin gửi cho khách |
 | POST | `/business-profile/mock-data` | `F2` (hoặc `H4`/`N1`/`N12`) | Nạp hồ sơ và sản phẩm mẫu theo ngành `{ industry_key? }`, ghi đè hồ sơ hiện có. **Chỉ tổ chức dùng thử (`EXPERIENCE`)** — tiệm thật → 403 (PO 21/10/2026) |
 | GET | `/availability/board` | `L1` | `?month=YYYY-MM` — bảng khả dụng theo tháng (đặt phòng, khung giờ, tồn kho) |
 | POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ productId, checkInDate, checkOutDate, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |

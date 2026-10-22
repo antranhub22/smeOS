@@ -11,9 +11,7 @@ import { MembershipRepository } from "@/modules/organization/infra/membership-re
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { RoleRepository } from "@/modules/organization/infra/role-repository"
-import { SessionRepository } from "@/modules/organization/infra/session-repository"
 import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
-import { hashSessionToken, newSessionToken } from "@/modules/organization/infra/session-token"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
 import { UserRepository } from "@/modules/organization/infra/user-repository"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
@@ -30,7 +28,6 @@ export type InstantTrialInput = {
 }
 
 export type InstantTrialResult = {
-  token: string
   userId: string
   organizationId: string
   organizationName: string
@@ -64,7 +61,6 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
   const randomPassword = `trial_${crypto.randomBytes(12).toString("hex")}!`
   const passwordHash = await hashPassword(randomPassword)
   const now = new Date()
-  const token = newSessionToken()
 
   return runInTransaction(async (tx) => {
     const users = new UserRepository(tx)
@@ -72,7 +68,6 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
     const workspaces = new WorkspaceRepository(tx)
     const roles = new RoleRepository(tx)
     const memberships = new MembershipRepository(tx)
-    const sessions = new SessionRepository(tx)
 
     // Dùng thử không có mật khẩu — nên KHÔNG BAO GIỜ được gắn phiên vào một tài khoản có sẵn:
     // làm vậy là ai biết email cũng vào được tiệm thật của người đó.
@@ -83,6 +78,9 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
       email,
       password_hash: passwordHash,
       name,
+      // PO 22/10/2026: dùng thử cũng chờ superadmin duyệt. Lúc duyệt, hệ thống cấp mật khẩu tạm
+      // (dùng thử không có mật khẩu) để superadmin gửi cho khách — xem account-approval-repository.
+      approval_status: "PENDING",
     })
 
     const orgBaseName = `${name} - Demo ${industryPlugin.identity.name}`
@@ -147,15 +145,7 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
       joinedAt: now,
     })
 
-    await sessions.create({
-      user_id: user.id,
-      token_hash: hashSessionToken(token),
-      organization_id: organization.id,
-      expires_at: new Date(now.getTime() + 7 * 24 * 3600 * 1000), // 7 ngày trải nghiệm
-    })
-
     return {
-      token,
       userId: user.id,
       organizationId: organization.id,
       organizationName: orgBaseName,

@@ -33,10 +33,13 @@ export type SignUpInput = {
   industryKey?: string | undefined
   organizationType?: "SINGLE" | "CHAIN" | undefined
   seedProfile?: boolean | undefined
+  /** Đăng ký công khai (`/auth/signup`): tài khoản chờ superadmin duyệt, không mở phiên. */
+  pendingApproval?: boolean | undefined
 }
 
 export type SignUpResult = {
-  token: string
+  /** `null` khi tài khoản chờ duyệt — chưa có phiên nào. */
+  token: string | null
   userId: string
   organizationId: string
 }
@@ -84,6 +87,7 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       email,
       password_hash: passwordHash,
       name: input.name?.trim() || null,
+      approval_status: input.pendingApproval ? "PENDING" : "APPROVED",
     })
 
     let slug: string | null = null
@@ -152,6 +156,8 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       status: "ACTIVE",
       joinedAt: now,
     })
+
+    if (input.pendingApproval) return { token: null, userId: user.id, organizationId: organization.id }
 
     await sessions.create({
       user_id: user.id,

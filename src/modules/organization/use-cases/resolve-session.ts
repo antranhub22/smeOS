@@ -1,6 +1,7 @@
 import { AppError, sessionSuperseded, unauthenticated } from "@/core/http/errors"
 import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
 import type { TenantContext } from "@/core/tenancy"
+import { canSignIn } from "@/modules/organization/domain/account-approval"
 import { isUsable } from "@/modules/organization/domain/session-policy"
 import type { memberships, sessions, users } from "@/modules/organization/infra/entities"
 import { CapabilityRepository } from "@/modules/organization/infra/capability-repository"
@@ -43,7 +44,8 @@ export async function resolveSession(request: Request): Promise<ResolvedSession>
   }
 
   const user = await new UserRepository().findById(session.user_id)
-  if (!user) throw unauthenticated()
+  // Tài khoản chưa duyệt / bị từ chối không dùng được phiên nào (kể cả phiên cũ khi bị thu quyền)
+  if (!user || !canSignIn(user.approval_status)) throw unauthenticated()
 
   if (!session.organization_id) {
     return { user, session, membership: null, ctx: null }
