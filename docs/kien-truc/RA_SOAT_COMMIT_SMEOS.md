@@ -30,7 +30,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | H | AI kiểm ảnh QC/POD | 8 | Đã rà — còn mở H-SKIP |
 | E | Lịch đặt chỗ Homestay | 5 | Đã rà |
 | F | Ma trận menu ngành, Console vận hành | 7 | Đã rà |
-| K | Sức khoẻ hệ thống, giám sát, worker | 6 | Chưa rà |
+| K | Sức khoẻ hệ thống, giám sát, worker | 6 | Đã rà |
 | J | Seed, dữ liệu mẫu, script tài khoản | 6 | Chưa rà |
 | D | Sửa schema | 6 | Chưa rà |
 | C | Hạ tầng, CI, deploy, thư viện | 20 | Chưa rà |
@@ -130,12 +130,12 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `5506c701` | 10-20 | chore(health): return db connectivity status and commit version in health endpoint | CHƯA RÀ | |
-| `08994a17` | 10-20 | chore(health): expose error details and masked db target host in health endpoint | CHƯA RÀ | |
-| `4f9a4fac` | 10-20 | fix(workers): lazy load openai client and add resilient reconnect loop to media worker | CHƯA RÀ | |
-| `da210518` | 10-21 | fix(health): stop leaking database details from the public health check | CHƯA RÀ | |
-| `173d8a10` | 10-21 | fix(cron): fail closed when CRON_SECRET is missing in production | CHƯA RÀ | |
-| `963b4308` | 10-22 | feat(observability): log unhandled server errors and alert on degraded health | CHƯA RÀ | |
+| `5506c701` | 10-20 | chore(health): return db connectivity status and commit version in health endpoint | THAY THẾ | K-LEAK |
+| `08994a17` | 10-20 | chore(health): expose error details and masked db target host in health endpoint | THAY THẾ | K-LEAK |
+| `4f9a4fac` | 10-20 | fix(workers): lazy load openai client and add resilient reconnect loop to media worker | ĐẠT |  |
+| `da210518` | 10-21 | fix(health): stop leaking database details from the public health check | ĐẠT |  |
+| `173d8a10` | 10-21 | fix(cron): fail closed when CRON_SECRET is missing in production | ĐẠT |  |
+| `963b4308` | 10-22 | feat(observability): log unhandled server errors and alert on degraded health | ĐẠT |  |
 
 ### Cụm J — Seed, dữ liệu mẫu, script tài khoản
 
@@ -238,6 +238,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| K-LEAK | Cao | `GET /api/health` | Health công khai trả host CSDL đã che, chi tiết lỗi, phiên bản | Đã thay bằng `da210518`: chỉ trạng thái; chi tiết vào log và `/internal/health` có khoá |
 | F-SU | Chặn | Đổi ngành | Mở khoá đổi ngành theo email cố định của tài khoản dev | Đã thay bằng mã năng lực nền tảng N1/N12 (`df1b9630`); không còn email đặc quyền trong code |
 | F-CAP | Cao | Route `/platform/*` | Ma trận menu, chính sách kênh từng chỉ cần phiên nền tảng | Mọi route kiểm N1/N12/N13 (route hoặc use-case) — đã đối chiếu toàn bộ 15 route |
 | F-SEED | Cao | `prisma/seed/sync-siin-store.ts` | Seed (sau cờ `SEED_DEV_DATA`) đặt lại mật khẩu tài khoản Điều hành/superadmin về giá trị công khai trong repo mỗi lần chạy; mật khẩu ghi cả trong comment | Chỉ đặt mật khẩu khi tạo mới, bỏ khỏi comment. Vẫn cần đổi mật khẩu các tài khoản này (HO_SO_BAN_GIAO) |
