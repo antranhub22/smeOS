@@ -7,6 +7,9 @@ import type { BrochureOrderRepository } from "@/modules/greeting-card/infra/broc
 import type { CancellationRepository } from "@/modules/greeting-card/infra/cancellation-repository"
 import type { BrochurePaymentRepository } from "@/modules/greeting-card/infra/brochure-payment-repository"
 import type { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
+import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
+
+vi.mock("@/modules/greeting-card/use-cases/notify-staff", () => ({ queueStaffNotification: vi.fn() }))
 
 const ctx: TenantContext = {
   organizationId: "org-test",
@@ -48,7 +51,7 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
       delivery_status: "PENDING",
       total_vnd: 500_000,
       paid_vnd: 0,
-      greeting_sessions: [{ status: "PAYMENT_REPORTED", payment_proof_asset_id: "proof-1" }],
+      greeting_sessions: [{ status: "PAYMENT_REPORTED", payment_proof_asset_id: "proof-1", sale_id: "sale-1" }],
     }
 
     const mockRepo = {
@@ -75,6 +78,8 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
         noteAppend: "[Điều phối tiếp nhận] Đủ hoa lan, tiếp nhận đơn",
       })
     )
+    // Sale phụ trách được báo như khi Điều hành xác nhận đơn ở 1 Cửa hàng
+    expect(queueStaffNotification).toHaveBeenCalledWith("org-test", "ORDER_ACCEPTED", expect.objectContaining({ orderId: "order-1", orderCode: "DH-1", assignedSaleId: "sale-1" }))
   })
 
   it("Điều phối từ chối nhận đơn → huỷ đơn và kích hoạt hoàn tiền cho khách", async () => {

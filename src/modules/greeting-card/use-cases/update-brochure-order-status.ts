@@ -319,8 +319,7 @@ export async function coordinatorAcceptBrochureOrder(
   )
   if (acceptBlocker) throw conflict(acceptBlocker)
 
-  // Nếu đơn chưa ghi nhận tiền cọc mà khách đã có bill hoặc báo chuyển khoản:
-  // Tự động phê duyệt tiền cọc tương đương với sự phê duyệt của Điều hành!
+  // Đơn chưa ghi cọc mà khách đã có bill/báo chuyển khoản → tự duyệt cọc như Điều hành
   const paid = Number(order.paid_vnd)
   const total = Number(order.total_vnd)
   const session = order.greeting_sessions?.[0]
@@ -348,6 +347,7 @@ export async function coordinatorAcceptBrochureOrder(
     noteAppend: `[Điều phối tiếp nhận] ${input.note?.trim() || "Xác nhận xưởng nhận đơn"}`,
   })
   queueOrderNotification(ctx.organizationId, order.id, "ORDER_ACCEPTED")
+  queueStaffNotification(ctx.organizationId, "ORDER_ACCEPTED", { orderId: order.id, orderCode: order.code, amountVnd: total, assignedSaleId: session?.sale_id ?? null })
   return result
 }
 
