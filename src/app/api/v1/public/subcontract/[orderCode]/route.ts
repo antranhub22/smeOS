@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
@@ -17,6 +17,8 @@ import { signSubcontractPhoto } from "@/modules/greeting-card/use-cases/sign-sub
 import { formatDeliveryAddress, extractRecipientInfo } from "@/modules/greeting-card/domain/delivery-address"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import type { TenantContext } from "@/core/tenancy"
+import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
+import { publicAppUrl } from "@/lib/public-url"
 
 const actionSchema = z.object({
   action: z.enum(["CLAIM", "CANCEL", "COMMIT", "DELETE_QC"]),
@@ -64,7 +66,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
 
   const productName = firstItem?.description || (snapshot.name as string | undefined) || "Sản phẩm đặt gia công"
   // URL công khai đã cấu hình, không tin header Host do client gửi (rà soát M7)
-  const baseOrigin = process.env.NEXT_PUBLIC_APP_URL || url.origin
+  const baseOrigin = publicAppUrl() || url.origin
 
   const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
   const productImageUrl = await resolveSubcontractSamplePhoto(order, { baseUrl: baseOrigin })
@@ -76,17 +78,21 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
     order.production_status === "READY" ||
     order.delivery_status === "DELIVERING" ||
     order.delivery_status === "DELIVERED"
-  const recipientPhone = isReadyForDelivery ? recipientInfo.phone : recipientInfo.maskedPhone
+  // Chi nhánh được mời nhưng không nhận đơn vẫn giữ link 14 ngày: chỉ chi nhánh đang làm đơn mới thấy
+  // SĐT người nhận, ảnh QC/giao hàng, shipper và yêu cầu bỏ qua (rà soát cụm G, 22/10/2026)
+  const isClaimant = Boolean(subState?.claimedBranchId) && subState?.claimedBranchId === branchId
+  const showPhone = isClaimant && isReadyForDelivery
+  const recipientPhone = showPhone ? recipientInfo.phone : recipientInfo.maskedPhone
   const deliveryTime = typeof deliveryWindow.timeSlot === "string" && typeof deliveryWindow.date === "string"
     ? `${deliveryWindow.timeSlot} ngày ${deliveryWindow.date}`
     : "Giao trong ngày"
 
-  const rawQcPhotos = Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
-  const rawPodPhotos = Array.isArray(coordMeta.pod_photos) ? (coordMeta.pod_photos as string[]) : []
-  const resolvedQcPhotos = await Promise.all(rawQcPhotos.map(signSubcontractPhoto))
-  const resolvedPodPhotos = await Promise.all(rawPodPhotos.map(signSubcontractPhoto))
+  const rawQcPhotos = isClaimant && Array.isArray(coordMeta.qc_photos) ? (coordMeta.qc_photos as string[]) : []
+  const rawPodPhotos = isClaimant && Array.isArray(coordMeta.pod_photos) ? (coordMeta.pod_photos as string[]) : []
+  const resolvedQcPhotos = await Promise.all(rawQcPhotos.map((p) => signSubcontractPhoto(p, order.organization_id)))
+  const resolvedPodPhotos = await Promise.all(rawPodPhotos.map((p) => signSubcontractPhoto(p, order.organization_id)))
 
-  const rawPodProof = coordMeta.delivery_proof as
+  const rawPodProof = (isClaimant ? coordMeta.delivery_proof : undefined) as
     | { note?: string; deliveredAt?: string; deliveredByBranch?: string }
     | undefined
 
@@ -124,7 +130,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       stepDeadlines,
       recipientName: recipientInfo.recipientName,
       recipientPhone,
-      isPhoneMasked: !isReadyForDelivery,
+      isPhoneMasked: !showPhone,
       cardMessage: order.card_message ?? null,
       specialNotes,
       subcontractPriceVnd,
@@ -135,14 +141,14 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       productionStatus: order.production_status,
       deliveryStatus: order.delivery_status,
       orderStatus: order.status,
-      qcPhotos: resolvedQcPhotos,
+      qcPhotos: resolvedQcPhotos.filter(Boolean),
       lastAiVerification: coordMeta.last_ai_verification ?? null,
       autoBypassedCoordinator: Boolean(coordMeta.auto_bypassed_coordinator),
-      bypassRequests: (coordMeta.bypass_requests as Record<string, unknown> | undefined) ?? null,
-      shipperInfo: (coordMeta.shipper_info as { shipperName: string; shipperPhone: string; submittedAt: string } | undefined) ?? null,
+      bypassRequests: isClaimant ? ((coordMeta.bypass_requests as Record<string, unknown> | undefined) ?? null) : null,
+      shipperInfo: isClaimant ? ((coordMeta.shipper_info as { shipperName: string; shipperPhone: string; submittedAt: string } | undefined) ?? null) : null,
       deliveryProof: rawPodProof
         ? {
-            photoUrls: resolvedPodPhotos,
+            photoUrls: resolvedPodPhotos.filter(Boolean),
             note: rawPodProof.note || null,
             deliveredAt: rawPodProof.deliveredAt || null,
             deliveredByBranch: rawPodProof.deliveredByBranch || null,
@@ -188,7 +194,6 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     const { resolveSubcontractSamplePhoto } = await import("@/modules/greeting-card/use-cases/resolve-subcontract-sample-photo")
     const sampleImageUrl = await resolveSubcontractSamplePhoto(order)
 
-    const reqUrl = new URL(request.url)
     const result = await claimSubcontractUseCase(
       ctx,
       {
@@ -196,7 +201,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         branchId: branch.id,
         branchName: branch.name,
         shopSettings: org?.settings,
-        baseUrl: reqUrl.origin,
+        baseUrl: publicAppUrl(),
         productImageUrl: sampleImageUrl,
       },
       repo,
@@ -242,11 +247,15 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   if (action === "COMMIT") {
-    const currentState = await repo.loadSubcontractState(ctx, order.id)
-    if (!currentState || currentState.claimedBranchId !== branch.id) {
-      throw unprocessable("Không thể chốt đơn khi bạn chưa tiếp nhận.")
-    }
-    const nextState = commitSubcontractOrder(currentState)
+    // Chốt dưới khoá dòng; bấm lại khi đã chốt không gửi lại tin M1 và tin báo khách (rà soát cụm G)
+    const newlyCommitted = await repo.updateSubcontractState(ctx, order.id, (current) => {
+      if (!current || current.claimedBranchId !== branch.id) throw unprocessable("Không thể chốt đơn khi bạn chưa tiếp nhận.")
+      if (current.dispatchStatus === "COMMITTED") return { next: null, result: false }
+      if (current.dispatchStatus !== "CLAIMED_GRACE") throw conflict("Đơn hàng không ở trạng thái có thể chốt.")
+      const committed = commitSubcontractOrder(current)
+      return { next: { ...committed, remindersSent: { ...(committed.remindersSent ?? {}), M1_PREP: new Date().toISOString() } }, result: true }
+    })
+    if (!newlyCommitted) return jsonResponse({ data: { success: true, dispatchStatus: "COMMITTED", alreadyCommitted: true } })
 
     // Bắn tin nhắn M1: Bắt đầu chế tác cho chi nhánh vừa chốt
     const policy = parseChainDispatchPolicy(org?.settings as Record<string, unknown> | null | undefined)
@@ -260,7 +269,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       branchName: branch.name,
       deliveryTime,
       claimUrl: subcontractBranchUrl({
-        baseUrl: request.headers.get("origin") || "",
+        baseUrl: publicAppUrl(),
         organizationId: order.organization_id,
         orderCode: order.code,
         branchId: branch.id,
@@ -286,44 +295,11 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       claimUrl: "",
     })
 
-    // Tự động gửi tin nhắn thông báo xác nhận đơn cho Khách hàng
-    const customerPhone = order.customer?.phone || (order.greeting_sessions?.[0] as Record<string, unknown> | undefined)?.customer_phone as string | undefined
-    const customerName = order.customer?.name || (order.greeting_sessions?.[0] as Record<string, unknown> | undefined)?.customer_name as string | undefined || "Quý khách"
+    // Báo khách qua luồng thông báo khách chuẩn (ZNS/SMS, chống gửi trùng, không ghi SĐT vào log).
+    // Trước 22/10/2026 route tự nhắn khách bằng kênh của chi nhánh, tiêu đề "Đơn gia công" (rà soát cụm G).
+    queueOrderNotification(order.organization_id, order.id, "ORDER_ACCEPTED")
 
-    const customerNoticeText = `🌸 [SMEOS] Xin chào ${customerName}!\nĐơn hàng #${order.code} của bạn đã được ${branch.name} chính thức tiếp nhận và đang tiến hành chế tác.\n⏰ Hẹn giao: ${deliveryTime}.\nCảm ơn bạn đã tin tưởng dịch vụ!`
-
-    if (customerPhone) {
-      // Gửi thông báo cho khách hàng qua kênh notifier đa kênh
-      await notifier.sendSubcontractInvite(ctx, {
-        branch: {
-          branchId: `cust_${customerPhone}`,
-          branchName: customerName,
-          qualityScore: 100,
-          activeJobsCount: 0,
-          maxConcurrentJobs: 1,
-          isActive: true,
-          channels: {
-            phone: customerPhone,
-            zaloPhone: customerPhone,
-          },
-        },
-        orderCode: order.code,
-        messageText: customerNoticeText,
-        claimUrl: "",
-      }).catch(() => { /* Không chặn luồng nếu khách không có Zalo */ })
-    }
-
-    const finalState = {
-      ...nextState,
-      remindersSent: {
-        ...(nextState.remindersSent ?? {}),
-        M1_PREP: new Date().toISOString(),
-        CUSTOMER_CONFIRMATION: new Date().toISOString(),
-      },
-    }
-
-    await repo.saveSubcontractState(ctx, finalState)
-    return jsonResponse({ data: { success: true, dispatchStatus: finalState.dispatchStatus } })
+    return jsonResponse({ data: { success: true, dispatchStatus: "COMMITTED" } })
   }
 
   if (action === "DELETE_QC") {
@@ -336,29 +312,23 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       throw unprocessable("Chỉ chi nhánh đã nhận đơn mới được xoá ảnh thành phẩm.")
     }
 
-    const store = new SubcontractStepStore()
-    const existingMeta = await store.readMetadata(order.organization_id, order.id)
-    const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
-
-    // Loại bỏ ảnh khớp theo URL hoặc theo storage key
-    const filteredQcPhotos = existingQcPhotos.filter((p) => {
-      if (p === photoToDelete) return false
-      // Nếu p là key và photoToDelete chứa key đó
-      if (photoToDelete.includes(p)) return false
-      // Nếu p chứa key trong photoToDelete
-      const keyMatch = photoToDelete.match(/floraos-core\/(org\/[^?]+)/)
-      if (keyMatch?.[1] && p.includes(keyMatch[1])) return false
-      return true
-    })
-
-    await store.writeMetadata(order.organization_id, order.id, { ...existingMeta, qc_photos: filteredQcPhotos })
-
-    return jsonResponse({
-      data: {
-        success: true,
-        remainingCount: filteredQcPhotos.length,
+    // Xoá đúng MỘT ảnh, khớp nguyên khoá kho (trước đây khớp chuỗi con: một chuỗi ghép mọi khoá xoá
+    // hết ảnh), và chỉ khi ảnh chưa được duyệt — sau đó ảnh QC là bằng chứng (rà soát cụm G)
+    const key = photoToDelete.startsWith("org/") ? photoToDelete : photoToDelete.match(/(?:^|\/)(org\/[^?#]+)/)?.[1]
+    let remainingCount = 0
+    const ok = await new SubcontractStepStore().applyStep({
+      organizationId: order.organization_id,
+      orderId: order.id,
+      require: { productionStatus: ["WAITING", "ASSIGNED", "ARRANGING", "QUALITY_CHECK"], deliveryStatus: ["PENDING"] },
+      metadata: (current) => {
+        const photos = Array.isArray(current.qc_photos) ? (current.qc_photos as string[]) : []
+        const remaining = photos.filter((p) => p !== photoToDelete && p !== key)
+        remainingCount = remaining.length
+        return { ...current, qc_photos: remaining }
       },
     })
+    if (!ok) throw conflict("Ảnh thành phẩm đã được duyệt, không thể xoá.")
+    return jsonResponse({ data: { success: true, remainingCount } })
   }
 
   throw unprocessable("Hành động không hợp lệ.")

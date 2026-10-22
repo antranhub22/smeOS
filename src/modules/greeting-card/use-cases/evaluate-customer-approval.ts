@@ -59,62 +59,41 @@ export async function evaluateCustomerApproval(
     return { action: "no_op" }
   }
 
-  const store = new SubcontractStepStore()
-  const coordMeta = await store.findMetadata(organizationId, orderId)
-
-  if (!coordMeta) return { action: "no_op" }
-
-  const existingMeta = coordMeta
-  const approvalState = (existingMeta.customer_photo_approval as CustomerApprovalState | undefined) ?? {
-    sentToCustomerAt: null,
-    approvalDeadlineMs: null,
-    approvedAt: null,
-    approvedBy: null,
-    rejectedAt: null,
-    rejectedReason: null,
-  }
-
-  // Đã approve rồi → no_op
-  if (approvalState.approvedAt) {
-    return { action: "already_approved", approvalState }
-  }
-
   const nowMs = now.getTime()
-
-  // Chưa gửi cho khách → đặt deadline và ghi nhận
-  if (!approvalState.sentToCustomerAt) {
-    const deadlineMs = nowMs + autoApproveAfterMinutes * 60 * 1000
-    const newApprovalState: CustomerApprovalState = {
-      ...approvalState,
-      sentToCustomerAt: now.toISOString(),
-      approvalDeadlineMs: deadlineMs,
+  // Đọc–sửa–ghi dưới khoá dòng: cron và người duyệt không ghi đè nhau
+  const outcome = await new SubcontractStepStore().mutateMetadata<EvaluateCustomerApprovalResult & { approvalState: CustomerApprovalState }>(organizationId, orderId, (current) => {
+    const approvalState = (current.customer_photo_approval as CustomerApprovalState | undefined) ?? {
+      sentToCustomerAt: null,
+      approvalDeadlineMs: null,
+      approvedAt: null,
+      approvedBy: null,
+      rejectedAt: null,
+      rejectedReason: null,
     }
-    await store.writeMetadata(organizationId, orderId, { ...existingMeta, customer_photo_approval: newApprovalState })
-    log.info("customer_approval.deadline_set", {
-      orderId,
-      approveAfterMinutes: autoApproveAfterMinutes,
-      deadlineMs,
-    })
-    return { action: "sent_to_customer", approvalState: newApprovalState }
-  }
-
-  // Đã gửi → kiểm tra timeout
-  if (approvalState.approvalDeadlineMs && nowMs >= approvalState.approvalDeadlineMs) {
-    const autoApprovedState: CustomerApprovalState = {
-      ...approvalState,
-      approvedAt: now.toISOString(),
-      approvedBy: "auto_timeout",
+    if (approvalState.approvedAt) {
+      return { next: null, result: { action: "already_approved" as const, approvalState } }
     }
-    await store.writeMetadata(organizationId, orderId, { ...existingMeta, customer_photo_approval: autoApprovedState })
-    log.info("customer_approval.auto_approved", {
-      orderId,
-      orderCode: input.orderCode,
-      autoAfterMinutes: autoApproveAfterMinutes,
-    })
-    return { action: "auto_approved", approvalState: autoApprovedState }
-  }
+    if (!approvalState.sentToCustomerAt) {
+      const sent: CustomerApprovalState = {
+        ...approvalState,
+        sentToCustomerAt: now.toISOString(),
+        approvalDeadlineMs: nowMs + autoApproveAfterMinutes * 60 * 1000,
+      }
+      return { next: { ...current, customer_photo_approval: sent }, result: { action: "sent_to_customer" as const, approvalState: sent } }
+    }
+    if (approvalState.approvalDeadlineMs && nowMs >= approvalState.approvalDeadlineMs) {
+      const approved: CustomerApprovalState = { ...approvalState, approvedAt: now.toISOString(), approvedBy: "auto_timeout" }
+      return { next: { ...current, customer_photo_approval: approved }, result: { action: "auto_approved" as const, approvalState: approved } }
+    }
+    return { next: null, result: { action: "no_op" as const, approvalState } }
+  })
 
-  return { action: "no_op", approvalState }
+  if (outcome.action === "sent_to_customer") {
+    log.info("customer_approval.deadline_set", { orderId, approveAfterMinutes: autoApproveAfterMinutes, deadlineMs: outcome.approvalState.approvalDeadlineMs })
+  } else if (outcome.action === "auto_approved") {
+    log.info("customer_approval.auto_approved", { orderId, orderCode: input.orderCode, autoAfterMinutes: autoApproveAfterMinutes })
+  }
+  return outcome
 }
 
 /**
@@ -128,28 +107,20 @@ export async function approveCustomerPhoto(
   actorId: string,
   now = new Date()
 ): Promise<{ success: boolean; alreadyApproved: boolean }> {
-  const store = new SubcontractStepStore()
-  const coordMeta = await store.findMetadata(organizationId, orderId)
-  if (!coordMeta) return { success: false, alreadyApproved: false }
-
-  const existingMeta = coordMeta
-  const approvalState = existingMeta.customer_photo_approval as CustomerApprovalState | undefined
-
-  // Đã approve → trả alreadyApproved
-  if (approvalState?.approvedAt) {
-    return { success: true, alreadyApproved: true }
-  }
-
-  const newApprovalState: CustomerApprovalState = {
-    sentToCustomerAt: approvalState?.sentToCustomerAt ?? now.toISOString(),
-    approvalDeadlineMs: approvalState?.approvalDeadlineMs ?? null,
-    approvedAt: now.toISOString(),
-    approvedBy,
-    rejectedAt: null,
-    rejectedReason: null,
-  }
-
-  await store.writeMetadata(organizationId, orderId, { ...existingMeta, customer_photo_approval: newApprovalState })
+  const outcome = await new SubcontractStepStore().mutateMetadata(organizationId, orderId, (current) => {
+    const approvalState = current.customer_photo_approval as CustomerApprovalState | undefined
+    if (approvalState?.approvedAt) return { next: null, result: "already" as const }
+    const approved: CustomerApprovalState = {
+      sentToCustomerAt: approvalState?.sentToCustomerAt ?? now.toISOString(),
+      approvalDeadlineMs: approvalState?.approvalDeadlineMs ?? null,
+      approvedAt: now.toISOString(),
+      approvedBy,
+      rejectedAt: null,
+      rejectedReason: null,
+    }
+    return { next: { ...current, customer_photo_approval: approved }, result: "approved" as const }
+  })
+  if (outcome === "already") return { success: true, alreadyApproved: true }
 
   log.info("customer_approval.approved", { orderId, approvedBy, actorId })
   return { success: true, alreadyApproved: false }

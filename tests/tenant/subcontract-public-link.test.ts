@@ -1,8 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { GET as viewSubcontract, POST as actOnSubcontract } from "@/app/api/v1/public/subcontract/[orderCode]/route"
+import { POST as requestBypass } from "@/app/api/v1/public/subcontract/[orderCode]/request-bypass/route"
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { signSubcontractBranchToken } from "@/modules/greeting-card/infra/subcontract-link-token"
+import { SUBCONTRACT_TOKEN_HEADER, signSubcontractBranchToken } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, readJson, type Tenant } from "../helpers/fixtures"
@@ -97,5 +98,44 @@ describe("link Thẻ Gia Công công khai", () => {
     expect(res.status).toBe(404)
     const coord = await prisma.order_coordinations.findFirst({ where: { organization_id: a.organizationId } })
     expect((coord?.metadata as Record<string, Record<string, unknown>>).subcontract_dispatch?.dispatchStatus).toBe("OPEN")
+  })
+
+  it("đơn đã có chi nhánh khác nhận: chi nhánh được mời KHÔNG thấy SĐT, ảnh QC, shipper; không xin bỏ qua được", async () => {
+    const other = await prisma.branches.create({ data: { organization_id: a.organizationId, name: "Chi nhánh khác", code: "CN-X" } })
+    const order = await prisma.orders.findFirstOrThrow({ where: { organization_id: a.organizationId } })
+    await prisma.orders.update({
+      where: { id: order.id },
+      data: { production_status: "READY", delivery_address: { recipientName: "Lan", recipientPhone: "0912345678", street: "1 Lê Lợi" } },
+    })
+    await prisma.order_coordinations.updateMany({
+      where: { organization_id: a.organizationId },
+      data: {
+        metadata: {
+          subcontract_dispatch: { orderId: order.id, orderCode: CODE, dispatchStatus: "COMMITTED", claimedBranchId: branchA, invitedBranchIds: [branchA, other.id] },
+          qc_photos: [`org/${a.organizationId}/subcontract/${order.id}/qc.jpg`],
+          shipper_info: { shipperName: "Tài xế", shipperPhone: "0900000000", submittedAt: "2026-10-22T00:00:00Z" },
+        },
+      },
+    })
+
+    const outsider = (await readJson(await view(other.id, signSubcontractBranchToken(a.organizationId, CODE, other.id)))).data as Record<string, unknown>
+    expect(outsider.isPhoneMasked).toBe(true)
+    expect(outsider.recipientPhone).not.toBe("0912345678")
+    expect(outsider.qcPhotos).toEqual([])
+    expect(outsider.shipperInfo).toBeNull()
+
+    const owner = (await readJson(await view(branchA, signSubcontractBranchToken(a.organizationId, CODE, branchA)))).data as Record<string, unknown>
+    expect(owner.isPhoneMasked).toBe(false)
+    expect(owner.shipperInfo).not.toBeNull()
+
+    const bypass = await requestBypass(
+      new Request(`http://localhost/api/v1/public/subcontract/${CODE}/request-bypass`, {
+        method: "POST",
+        headers: { "content-type": "application/json", [SUBCONTRACT_TOKEN_HEADER]: signSubcontractBranchToken(a.organizationId, CODE, other.id) },
+        body: JSON.stringify({ branchId: other.id, step: "QC", reason: "Máy ảnh hỏng không chụp được" }),
+      }),
+      { params: Promise.resolve({ orderCode: CODE }) }
+    )
+    expect(bypass.status).toBe(409)
   })
 })

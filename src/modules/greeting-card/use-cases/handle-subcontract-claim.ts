@@ -5,11 +5,14 @@
  * Clean Architecture — Đảm bảo khóa đồng thời 1-chạm và tự động bắn lại khi hủy trong hạn.
  */
 
+import { publicAppUrl } from "@/lib/public-url"
 import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound, unprocessable } from "@/core/http/errors"
 import {
+  branchTelegramCard,
   cancelClaimSubcontractOrder,
   claimSubcontractOrder,
+  withBranchTelegramCard,
   type CancelClaimResult,
   type ClaimResult,
   type SubcontractOrderState,
@@ -53,49 +56,32 @@ export async function claimSubcontractUseCase(
   now = new Date()
 ): Promise<ClaimSubcontractResponse> {
   const policy: ChainDispatchPolicy = parseChainDispatchPolicy(input.shopSettings)
-  const state = await store.loadSubcontractState(ctx, input.orderId)
 
-  if (!state) {
-    throw notFound()
-  }
-
-  const claimResult: ClaimResult = claimSubcontractOrder(
-    state,
-    input.branchId,
-    input.branchName,
-    policy.cancellationGraceMinutes,
-    now
-  )
-
-  if (!claimResult.success) {
-    if (claimResult.reason === "ALREADY_CLAIMED") {
-      throw conflict(`Đơn hàng này đã được một chi nhánh khác tiếp nhận trước đó. Cảm ơn bạn!`)
+  // 1. Kiểm và chuyển sang CLAIMED_GRACE trong CÙNG một khoá dòng: hai chi nhánh bấm nhận cùng lúc
+  // thì chỉ một bên thành công (trước 22/10/2026 cả hai đều được 200, rà soát cụm G)
+  const claimResult = await store.updateSubcontractState(ctx, input.orderId, (current) => {
+    if (!current) throw notFound()
+    const result: ClaimResult = claimSubcontractOrder(current, input.branchId, input.branchName, policy.cancellationGraceMinutes, now)
+    if (!result.success) {
+      if (result.reason === "ALREADY_CLAIMED") throw conflict("Đơn hàng này đã được một chi nhánh khác tiếp nhận trước đó. Cảm ơn bạn!")
+      if (result.reason === "DECLINED_PREVIOUSLY") throw unprocessable("Chi nhánh của bạn đã từ chối hoặc hủy đơn này trước đó.")
+      if (result.reason === "NOT_INVITED") throw unprocessable("Lời mời nhận đơn này đã chuyển sang vòng khác.")
+      throw conflict("Đơn hàng hiện không ở trạng thái sẵn sàng để nhận.")
     }
-    if (claimResult.reason === "DECLINED_PREVIOUSLY") {
-      throw unprocessable("Chi nhánh của bạn đã từ chối hoặc hủy đơn này trước đó.")
+    // Thẻ tiến độ của đơn = thẻ mời đã gửi cho chính chi nhánh nhận (không phải thẻ của chi nhánh khác)
+    const next = result.nextState
+    if (current.inviteCards) {
+      const ownCard = current.inviteCards[input.branchId]
+      next.telegramMsgId = ownCard?.msgId ?? null
+      next.telegramChatId = ownCard?.chatId ?? null
+      next.isCaption = ownCard?.isCaption ?? false
     }
-    if (claimResult.reason === "NOT_INVITED") {
-      throw unprocessable("Lời mời nhận đơn này không còn dành cho chi nhánh của bạn.")
-    }
-    throw conflict("Đơn hàng hiện không ở trạng thái sẵn sàng để nhận.")
-  }
-
-  // Thẻ tiến độ của đơn = thẻ mời đã gửi cho chính chi nhánh nhận (không phải thẻ của chi nhánh khác)
-  const ownCard = state.inviteCards?.[input.branchId]
-  if (state.inviteCards) {
-    claimResult.nextState.telegramMsgId = ownCard?.msgId ?? null
-    claimResult.nextState.telegramChatId = ownCard?.chatId ?? null
-    claimResult.nextState.isCaption = ownCard?.isCaption ?? false
-  }
-
-  // 1. Lưu trạng thái mới (CLAIMED_GRACE) — chỉ thắng nếu đơn vẫn OPEN lúc ghi
-  const won = await store.saveSubcontractStateIfStatus(ctx, claimResult.nextState, "OPEN")
-  if (!won) {
-    throw conflict(`Đơn hàng này đã được một chi nhánh khác tiếp nhận trước đó. Cảm ơn bạn!`)
-  }
+    return { next, result }
+  })
+  const state = claimResult.nextState
 
   // Thẻ mời của các chi nhánh khác: báo đã có chi nhánh nhận, gỡ nút
-  await closeCardsAfterClaim(ctx, claimResult.nextState, input.branchId, notifier)
+  await closeCardsAfterClaim(ctx, state, input.branchId, notifier)
 
   // 2. Bắn tin nhắn xác nhận tiếp nhận thành công cho chi nhánh vừa nhận
   const claimingBranch = branches.find((b) => b.branchId === input.branchId)
@@ -107,21 +93,14 @@ export async function claimSubcontractUseCase(
     })
 
     const claimUrl = subcontractBranchUrl({
-      baseUrl: input.baseUrl || "http://localhost:3200",
+      baseUrl: input.baseUrl || publicAppUrl(),
       organizationId: ctx.organizationId,
       orderCode: state.orderCode,
       branchId: claimingBranch.branchId,
     })
 
-    // Truyền existingTelegramCard nếu đã có thẻ từ lần gửi trước (grace period re-use)
-    const existingCard =
-      claimResult.nextState.telegramMsgId && claimResult.nextState.telegramChatId
-        ? {
-            msgId: claimResult.nextState.telegramMsgId,
-            chatId: claimResult.nextState.telegramChatId,
-            isCaption: claimResult.nextState.isCaption ?? false,
-          }
-        : null
+    // Sửa thẻ mời trong chat của CHÍNH chi nhánh vừa nhận (mỗi chi nhánh một thẻ)
+    const existingCard = branchTelegramCard(claimResult.nextState, input.branchId)
 
     const notifyRes = await notifier.sendSubcontractInvite(ctx, {
       branch: claimingBranch,
@@ -134,15 +113,21 @@ export async function claimSubcontractUseCase(
       existingTelegramCard: existingCard,
     })
 
-    // Lưu telegramMsgId vào state nếu đây là lần gửi đầu tiên (card mới tạo)
+    // Thẻ mới tạo (chi nhánh chưa có thẻ mời): thành thẻ tiến độ của đơn, gộp vào trạng thái mới nhất
     if (notifyRes.sent && notifyRes.telegramMsgId) {
-      const stateWithCard: SubcontractOrderState = {
-        ...claimResult.nextState,
-        telegramMsgId: notifyRes.telegramMsgId,
-        telegramChatId: notifyRes.telegramChatId ?? null,
-        isCaption: notifyRes.isCaption ?? false,
-      }
-      await store.saveSubcontractState(ctx, stateWithCard)
+      await store.updateSubcontractState(ctx, input.orderId, (current) =>
+        current?.claimedBranchId === input.branchId
+          ? {
+              next: {
+                ...withBranchTelegramCard(current, input.branchId, notifyRes, { text: successMsg, claimUrl }),
+                telegramMsgId: notifyRes.telegramMsgId ?? null,
+                telegramChatId: notifyRes.telegramChatId ?? null,
+                isCaption: notifyRes.isCaption ?? false,
+              },
+              result: undefined,
+            }
+          : { next: null, result: undefined }
+      )
     }
   }
 
@@ -165,31 +150,26 @@ export async function cancelClaimSubcontractUseCase(
   now = new Date(),
   notifier?: IDispatchNotifier
 ): Promise<{ success: boolean; reopened: boolean }> {
-  const state = await store.loadSubcontractState(ctx, input.orderId)
-  if (!state) throw notFound()
-
-  const cancelResult: CancelClaimResult = cancelClaimSubcontractOrder(state, input.branchId, now)
-
-  if (!cancelResult.success) {
-    if (cancelResult.reason === "GRACE_EXPIRED") {
-      throw unprocessable("Đã hết thời hạn hủy cho phép. Đơn hàng đã chính thức vào sản xuất!")
+  // Kiểm hạn huỷ và mở lại đơn trong cùng một khoá dòng
+  const { before, reopened } = await store.updateSubcontractState(ctx, input.orderId, (current) => {
+    if (!current) throw notFound()
+    const cancelResult: CancelClaimResult = cancelClaimSubcontractOrder(current, input.branchId, now)
+    if (!cancelResult.success) {
+      if (cancelResult.reason === "GRACE_EXPIRED") throw unprocessable("Đã hết thời hạn hủy cho phép. Đơn hàng đã chính thức vào sản xuất!")
+      if (cancelResult.reason === "UNAUTHORIZED_BRANCH") throw unprocessable("Bạn không phải chi nhánh đang tiếp nhận đơn này.")
+      throw conflict("Đơn hàng không ở trạng thái có thể hủy nhận.")
     }
-    if (cancelResult.reason === "UNAUTHORIZED_BRANCH") {
-      throw unprocessable("Bạn không phải chi nhánh đang tiếp nhận đơn này.")
-    }
-    throw conflict("Đơn hàng không ở trạng thái có thể hủy nhận.")
-  }
-
-  // Lưu trạng thái quay lại OPEN, loại trừ chi nhánh vừa hủy. Thẻ tiến độ cũ thuộc chi nhánh vừa huỷ → bỏ.
-  const reopened: SubcontractOrderState = state.inviteCards
-    ? { ...cancelResult.nextState, telegramMsgId: null, telegramChatId: null, isCaption: false }
-    : cancelResult.nextState
-  await store.saveSubcontractState(ctx, reopened)
+    // Quay lại OPEN, loại chi nhánh vừa huỷ. Thẻ tiến độ cũ thuộc chi nhánh vừa huỷ → bỏ.
+    const reopened: SubcontractOrderState = current.inviteCards
+      ? { ...cancelResult.nextState, telegramMsgId: null, telegramChatId: null, isCaption: false }
+      : cancelResult.nextState
+    return { next: reopened, result: { before: current, reopened } }
+  })
 
   if (notifier) {
-    const ownCard = state.inviteCards?.[input.branchId]
+    const ownCard = before.inviteCards?.[input.branchId]
     if (ownCard && notifier.editInviteCard) {
-      await notifier.editInviteCard(ctx, ownCard, `<b>↩️ [ĐÃ HUỶ NHẬN ĐƠN #${state.orderCode}]</b>\n\nChi nhánh đã huỷ nhận đơn #${state.orderCode}. Đơn được mở lại cho chi nhánh khác.`, [])
+      await notifier.editInviteCard(ctx, ownCard, `<b>↩️ [ĐÃ HUỶ NHẬN ĐƠN #${before.orderCode}]</b>\n\nChi nhánh đã huỷ nhận đơn #${before.orderCode}. Đơn được mở lại cho chi nhánh khác.`, [])
     }
     // Thẻ của các chi nhánh còn lại trong vòng: trở về lời mời có nút "Nhận đơn ngay"
     await reopenCardsAfterCancel(ctx, reopened, input.branchId, notifier)

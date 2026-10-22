@@ -12,7 +12,7 @@
 import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
@@ -155,35 +155,33 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   // Cập nhật DB
   const store = new SubcontractStepStore()
-  const existingMeta = await store.readMetadata(order.organization_id, order.id)
-  const existingPodPhotos = Array.isArray(existingMeta.pod_photos)
-    ? (existingMeta.pod_photos as string[])
-    : []
-
-  const deliveryProof = {
-    photoUrls: podPhotoStorageKey ? [...existingPodPhotos, podPhotoStorageKey] : existingPodPhotos,
-    note: confirmNote || "Điều phối xác nhận giao hàng thành công",
-    deliveredAt,
-    confirmedByCoordinator: ctx.userId,
-    confirmMode,
-  }
-
   const actorId = `coordinator:${ctx.userId}`
-  await store.applyStep({
+  // Điều phối được xác nhận giao cả khi chưa nhập shipper (tiệm tự giao), nhưng hoa phải đã xong
+  // và đơn chưa huỷ/hoàn tất — trước 22/10/2026 đơn đã huỷ vẫn bị đưa sang COMPLETED (rà soát cụm G)
+  const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
     order: { delivery_status: "DELIVERED", status: "COMPLETED" },
-    metadata: {
-      ...existingMeta,
-      ...(podPhotoStorageKey && { pod_photos: deliveryProof.photoUrls }),
-      delivery_proof: deliveryProof,
-      last_pod_uploaded_at: deliveredAt,
+    require: { productionStatus: ["READY"], deliveryStatus: ["PENDING", "DISPATCHED", "DELIVERING"] },
+    metadata: (current) => {
+      const podPhotos = Array.isArray(current.pod_photos) ? (current.pod_photos as string[]) : []
+      const photoUrls = podPhotoStorageKey ? [...podPhotos, podPhotoStorageKey] : podPhotos
+      const deliveryProof = {
+        photoUrls,
+        note: confirmNote || "Điều phối xác nhận giao hàng thành công",
+        deliveredAt,
+        confirmedByCoordinator: ctx.userId,
+        confirmMode,
+      }
+      return { ...current, ...(podPhotoStorageKey && { pod_photos: photoUrls }), delivery_proof: deliveryProof, last_pod_uploaded_at: deliveredAt }
     },
     events: [
       { axis: "delivery", fromValue: order.delivery_status || "DELIVERING", toValue: "DELIVERED", actorId, reason: `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}` },
       { axis: "status", fromValue: order.status, toValue: "COMPLETED", actorId, reason: "[Hoàn Tất] Điều phối xác nhận giao hàng thành công." },
     ],
   })
+
+  if (!saved) throw conflict("Đơn hàng chưa có ảnh thành phẩm được duyệt, hoặc đã huỷ/hoàn tất.")
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M4 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({

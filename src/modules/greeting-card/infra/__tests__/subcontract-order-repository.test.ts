@@ -43,7 +43,14 @@ describe("SubcontractOrderRepository", () => {
       branches: {
         findFirst: vi.fn().mockResolvedValue({ id: "branch-abc" }),
       },
+      organizations: { findUnique: vi.fn().mockResolvedValue({ settings: {} }) },
     }
+    // Giao dịch giả: chạy thẳng trên mock; SELECT … FOR UPDATE trả dòng mà findFirst đang giả lập
+    mockDb.$transaction = (fn: (tx: unknown) => unknown) => fn(mockDb)
+    mockDb.$queryRaw = vi.fn(async () => {
+      const row = await mockDb.order_coordinations.findFirst()
+      return row ? [row] : []
+    })
     repo = new SubcontractOrderRepository(mockDb)
   })
 

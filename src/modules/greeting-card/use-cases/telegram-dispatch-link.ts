@@ -4,7 +4,7 @@ import {
   type TelegramChatMessage,
 } from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
 import { telegramLinkCode } from "@/modules/greeting-card/infra/telegram-link-code"
-import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
+import { listLinkedTelegramChatIds, rememberLinkedTelegramChats } from "@/modules/greeting-card/infra/telegram-linked-chats"
 
 export interface LinkedTelegramChat {
   id: string
@@ -23,17 +23,15 @@ export function chatsWithLinkCode(messages: TelegramChatMessage[], linkCode: str
 }
 
 /**
- * Nhóm Telegram mà tổ chức được phép xem và gửi thử qua bot chung của nền tảng: nhóm đã nhắn
- * mã liên kết của tổ chức, cộng nhóm đã cấu hình cho chi nhánh của chính tổ chức đó.
- * Trước đây trả về mọi nhóm mà bot thấy — tức là nhóm của tất cả tenant (rà soát 21/10/2026, H1).
+ * Chat Telegram mà tổ chức được phép xem và gửi qua bot chung của nền tảng: chat vừa nhắn mã liên
+ * kết của tổ chức (được nhớ lại vào danh sách đã liên kết) cộng các chat đã liên kết trước đó.
+ * Chat ID nhập tay hoặc từ Excel chi nhánh KHÔNG tự được tin (rà soát 22/10/2026, cụm G).
  */
 export async function resolveTelegramDispatchAccess(ctx: TenantContext, botToken: string) {
   const linkCode = telegramLinkCode(ctx.organizationId)
-  const [messages, branchChatIds] = await Promise.all([
-    getRecentTelegramMessages(botToken),
-    new ChainBranchRepository().listTelegramChatIds(ctx.organizationId),
-  ])
+  const messages = await getRecentTelegramMessages(botToken)
   const linkedChats = chatsWithLinkCode(messages, linkCode)
-  const allowedChatIds = new Set([...linkedChats.map((c) => c.id), ...branchChatIds])
+  await rememberLinkedTelegramChats(ctx.organizationId, linkedChats.map((c) => c.id))
+  const allowedChatIds = new Set(await listLinkedTelegramChatIds(ctx.organizationId))
   return { linkCode, linkedChats, allowedChatIds }
 }

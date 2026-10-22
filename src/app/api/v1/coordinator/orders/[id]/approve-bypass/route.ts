@@ -11,11 +11,12 @@
 
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
+import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION } from "@/modules/greeting-card/domain/subcontract-order"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
@@ -29,6 +30,8 @@ const decisionSchema = z.object({
   decision: z.enum(["APPROVE", "REJECT"]),
   reviewNote: z.string().trim().max(300).optional(),
 })
+
+const STEP_LABEL = { QC: "ảnh thành phẩm", SHIPPER: "thông tin shipper", POD: "ảnh giao hàng" } as const
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
@@ -45,120 +48,75 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   if (!order) throw notFound()
 
   const store = new SubcontractStepStore()
-  const existingMeta = await store.readMetadata(order.organization_id, order.id)
-  const bypassRequests = (existingMeta.bypass_requests as Record<string, unknown> | undefined) ?? {}
-  const currentReq = (bypassRequests[step] as Record<string, unknown> | undefined)
-
-  if (!currentReq || currentReq.status !== "PENDING") {
-    throw unprocessable(`Không có yêu cầu bỏ qua ${step} đang chờ duyệt cho đơn hàng này.`)
+  const nowIso = new Date().toISOString()
+  const decisionNote = reviewNote || (decision === "REJECT" ? "Điều phối yêu cầu cung cấp đầy đủ hình ảnh/thông tin" : "Điều phối chấp thuận vì lý do bất khả kháng")
+  let bypassRequest: Record<string, unknown> = {}
+  /** Đổi PENDING → quyết định ngay dưới khoá dòng: bấm đúp hoặc hai người duyệt cùng lúc chỉ một lần thắng. */
+  const decide = (current: Record<string, unknown>, status: "APPROVED" | "REJECTED") => {
+    const requests = (current.bypass_requests as Record<string, unknown> | undefined) ?? {}
+    const pending = requests[step] as Record<string, unknown> | undefined
+    if (pending?.status !== "PENDING") throw conflict(`Không có yêu cầu bỏ qua ${STEP_LABEL[step]} đang chờ duyệt cho đơn hàng này.`)
+    bypassRequest = pending
+    return { ...requests, [step]: { ...pending, status, decisionAt: nowIso, decidedBy: ctx.userId, reviewNote: decisionNote } }
   }
 
-  const branchId = (currentReq.requestedByBranchId as string) || ""
-  const branchName = (currentReq.requestedByBranchName as string) || "Chi nhánh"
-  const requestReason = (currentReq.reason as string) || ""
-  const nowIso = new Date().toISOString()
-
   if (decision === "REJECT") {
-    const updatedBypassRequests = {
-      ...bypassRequests,
-      [step]: {
-        ...currentReq,
-        status: "REJECTED",
-        decisionAt: nowIso,
-        decidedBy: ctx.userId,
-        reviewNote: reviewNote || "Điều phối yêu cầu cung cấp đầy đủ hình ảnh/thông tin",
-      },
-    }
-
-    await store.writeMetadata(order.organization_id, order.id, { ...existingMeta, bypass_requests: updatedBypassRequests })
-
+    await store.mutateMetadata(order.organization_id, order.id, (current) => ({
+      next: { ...current, bypass_requests: decide(current, "REJECTED") },
+      result: undefined,
+    }))
     return jsonResponse({
-      data: {
-        success: true,
-        decision: "REJECT",
-        message: "Đã từ chối yêu cầu bỏ qua. Chi nhánh phải thực hiện cung cấp bằng chứng.",
-      },
+      data: { success: true, decision: "REJECT", message: "Đã từ chối yêu cầu bỏ qua. Chi nhánh phải thực hiện cung cấp bằng chứng." },
     })
   }
 
-  // Khi APPROVE: Cập nhật DB kích hoạt bước tiếp theo
-  const updatedBypassRequests = {
-    ...bypassRequests,
-    [step]: {
-      ...currentReq,
-      status: "APPROVED",
-      decisionAt: nowIso,
-      decidedBy: ctx.userId,
-      reviewNote: reviewNote || "Điều phối chấp thuận vì lý do bất khả kháng",
+  // APPROVE: duyệt + mở bước tiếp theo trong MỘT giao dịch, chỉ khi đơn đang ở đúng bước
+  const actorId = `coordinator:${ctx.userId}`
+  const stepWrite = {
+    QC: {
+      order: { production_status: "READY" as const },
+      fields: { last_qc_uploaded_at: nowIso, last_qc_uploaded_by: `coordinator_bypass:${ctx.userId}`, bypass_qc_approved: true },
+      event: { axis: "production", fromValue: order.production_status, toValue: "READY" },
     },
-  }
+    SHIPPER: {
+      order: { delivery_status: "DELIVERING" as const },
+      fields: {
+        shipper_info: { shipperName: "Giao gấp (Miễn thông tin)", shipperPhone: "", submittedAt: nowIso, bypassedByCoordinator: true },
+        bypass_shipper_approved: true,
+      },
+      event: { axis: "delivery", fromValue: order.delivery_status, toValue: "DELIVERING" },
+    },
+    POD: {
+      order: { delivery_status: "DELIVERED" as const, status: "COMPLETED" as const },
+      fields: {
+        bypass_pod_approved: true,
+        delivery_proof: { photoUrls: [], note: "Bỏ qua ảnh giao hàng (Điều phối duyệt)", deliveredAt: nowIso, confirmedByCoordinator: ctx.userId, confirmMode: "bypassed_without_photo" },
+      },
+      event: { axis: "status", fromValue: order.status, toValue: "COMPLETED" },
+    },
+  }[step]
 
+  const saved = await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: stepWrite.order,
+    require: SUBCONTRACT_STEP_PRECONDITION[step],
+    metadata: (current) => ({ ...current, ...stepWrite.fields, bypass_requests: decide(current, "APPROVED") }),
+    events: [{ ...stepWrite.event, actorId, reason: `[Duyệt bỏ qua ${STEP_LABEL[step]}] ${String(bypassRequest.reason ?? "")}` }],
+  })
+  if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED[step])
+
+  // Trừ điểm SAU khi duyệt đã ghi: lần duyệt thứ hai đã bị chặn ở trên nên chỉ trừ một lần
+  const branchId = (bypassRequest.requestedByBranchId as string) || ""
   let penaltyResult = null
   if (branchId) {
     const penalty = await new ChainBranchRepository().applyPenalty(
       order.organization_id,
       branchId,
       "BYPASS",
-      `Bỏ qua bằng chứng ${step} đơn #${order.code} (Lý do: ${requestReason})`
+      `Bỏ qua bằng chứng ${STEP_LABEL[step]} đơn #${order.code} (Lý do: ${String(bypassRequest.reason ?? "")})`
     )
     penaltyResult = { newQualityScore: penalty.newQualityScore, bypassCount: penalty.count }
-  }
-
-  const actorId = `coordinator:${ctx.userId}`
-  const penaltyNote = `${requestReason}. Chi nhánh ${branchName} bị trừ 2 điểm KPI.`
-  const base = { organizationId: order.organization_id, orderId: order.id }
-
-  if (step === "QC") {
-    // Kích hoạt bước 2 hoàn thành (READY) để bước 3 mở khóa
-    await store.applyStep({
-      ...base,
-      order: { production_status: "READY" },
-      metadata: {
-        ...existingMeta,
-        bypass_requests: updatedBypassRequests,
-        last_qc_uploaded_at: nowIso,
-        last_qc_uploaded_by: `coordinator_bypass:${ctx.userId}`,
-        bypass_qc_approved: true,
-      },
-      events: [{ axis: "production", fromValue: order.production_status, toValue: "READY", actorId, reason: `[Duyệt Bỏ Qua QC] ${penaltyNote}` }],
-    })
-  } else if (step === "SHIPPER") {
-    // Kích hoạt bước 3 hoàn thành (DELIVERING) để bước 4 mở khóa
-    await store.applyStep({
-      ...base,
-      order: { delivery_status: "DELIVERING" },
-      metadata: {
-        ...existingMeta,
-        bypass_requests: updatedBypassRequests,
-        shipper_info: {
-          shipperName: "Giao gấp (Miễn thông tin)",
-          shipperPhone: "",
-          submittedAt: nowIso,
-          bypassedByCoordinator: true,
-        },
-        bypass_shipper_approved: true,
-      },
-      events: [{ axis: "delivery", fromValue: order.delivery_status || "ASSIGNED", toValue: "DELIVERING", actorId, reason: `[Duyệt Bỏ Qua Shipper] ${penaltyNote}` }],
-    })
-  } else if (step === "POD") {
-    // Kích hoạt bước 4 hoàn thành (COMPLETED / DELIVERED)
-    await store.applyStep({
-      ...base,
-      order: { delivery_status: "DELIVERED", status: "COMPLETED" },
-      metadata: {
-        ...existingMeta,
-        bypass_requests: updatedBypassRequests,
-        delivery_proof: {
-          photoUrls: [],
-          note: `Bỏ qua POD (Điều phối duyệt: ${requestReason})`,
-          deliveredAt: nowIso,
-          confirmedByCoordinator: ctx.userId,
-          confirmMode: "bypassed_without_photo",
-        },
-        bypass_pod_approved: true,
-      },
-      events: [{ axis: "status", fromValue: order.status, toValue: "COMPLETED", actorId, reason: `[Duyệt Bỏ Qua POD] ${penaltyNote}` }],
-    })
   }
 
   // Triệt tiêu các reminder tương ứng
@@ -172,8 +130,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   })
 
   // Notify khách hàng chuyển bước
-  const notifyEvent = step === "QC" ? "READY" : step === "SHIPPER" ? "DELIVERING" : "DELIVERED"
-  queueOrderNotification(order.organization_id, order.id, notifyEvent as "READY" | "DELIVERED")
+  const notifyEvent = step === "QC" ? "READY" : step === "SHIPPER" ? "DISPATCHED" : "DELIVERED"
+  queueOrderNotification(order.organization_id, order.id, notifyEvent)
 
   log.info("coordinator.approve_bypass", {
     orderId: order.id,
@@ -187,7 +145,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     data: {
       success: true,
       decision: "APPROVE",
-      message: `✅ Đã chấp thuận bỏ qua ${step}. Bước tiếp theo đã được mở khóa cho chi nhánh.`,
+      message: `✅ Đã chấp thuận bỏ qua ${STEP_LABEL[step]}. Bước tiếp theo đã được mở khóa cho chi nhánh.`,
       penalty: penaltyResult,
     },
   })

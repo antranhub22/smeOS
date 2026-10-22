@@ -44,19 +44,37 @@ export interface SubcontractOrderState {
    * Key: mã mốc (vd: M1_PREP, M2_QC, M3_DISPATCH, M4_OVERDUE) -> Value: ISO timestamp
    */
   remindersSent?: Record<string, string> | undefined
-  /**
-   * Live Dashboard Card — Telegram message ID của thẻ tiến độ duy nhất trên Telegram.
-   * Tất cả cập nhật tiếp theo sẽ EDIT tin nhắn này thay vì gửi mới.
-   */
+  /** @deprecated Thẻ đơn lẻ kiểu cũ (của chi nhánh được mời CUỐI CÙNG) — chỉ còn trong dữ liệu cũ, không dùng để sửa. */
   telegramMsgId?: string | null | undefined
-  /** Chat ID (group/DM) nơi thẻ tiến độ đang hiển thị */
+  /** @deprecated xem `telegramMsgId`. */
   telegramChatId?: string | null | undefined
-  /** Thẻ được gửi kèm ảnh (sendPhoto -> caption) hay text thuần */
+  /** @deprecated xem `telegramMsgId`. */
   isCaption?: boolean | undefined
-  /** Thẻ mời của từng chi nhánh trong vòng hiện tại, theo branchId */
+  /**
+   * Thẻ Telegram của từng chi nhánh, theo branchId: thẻ mời, và với chi nhánh đã nhận thì là thẻ
+   * tiến độ mà các mốc nhắc sửa lại. Trước 22/10/2026 chỉ có một thẻ chung — khi chi nhánh A nhận
+   * đơn, thẻ trong chat của chi nhánh C bị sửa và mang link đã ký của A (rà soát cụm G).
+   */
   inviteCards?: Record<string, InviteCardRef> | undefined
   /** Thù lao gia công đã chốt cho đơn hàng (VNĐ) */
   subcontractPriceVnd?: number | null | undefined
+}
+
+/** Thẻ Telegram của một chi nhánh (thẻ mời / thẻ tiến độ), hoặc `null` nếu chưa gửi. */
+export function branchTelegramCard(state: SubcontractOrderState, branchId: string): InviteCardRef | null {
+  return state.inviteCards?.[branchId] ?? null
+}
+
+/** Ghi nhận thẻ vừa gửi MỚI cho chi nhánh (Telegram trả msgId) — giữ nguyên thẻ của chi nhánh khác. */
+export function withBranchTelegramCard(
+  state: SubcontractOrderState,
+  branchId: string,
+  sent: { telegramMsgId?: string | null | undefined; telegramChatId?: string | null | undefined; isCaption?: boolean | undefined },
+  content: { text: string; claimUrl: string }
+): SubcontractOrderState {
+  if (!sent.telegramMsgId || !sent.telegramChatId) return state
+  const card: InviteCardRef = { msgId: sent.telegramMsgId, chatId: sent.telegramChatId, isCaption: sent.isCaption ?? false, ...content }
+  return { ...state, inviteCards: { ...state.inviteCards, [branchId]: card } }
 }
 
 export type ClaimResult =
@@ -188,4 +206,40 @@ export function formatGraceCountdown(secondsRemaining: number): string {
   const m = Math.floor(secondsRemaining / 60)
   const s = secondsRemaining % 60
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
+}
+
+export type SubcontractStep = "QC" | "SHIPPER" | "POD"
+
+/**
+ * Trạng thái đơn mà mỗi bước gia công được phép ghi — áp như nhau cho link chi nhánh, thao tác
+ * Điều phối và duyệt bỏ qua bằng chứng. Thứ tự: ảnh thành phẩm → shipper → ảnh giao hàng. Trước
+ * 22/10/2026 không route nào kiểm: chi nhánh báo đã giao ngay từ lúc nhận đơn, kể cả đơn đã huỷ.
+ */
+export const SUBCONTRACT_STEP_PRECONDITION: Record<
+  SubcontractStep,
+  { productionStatus: Array<"WAITING" | "ASSIGNED" | "ARRANGING" | "QUALITY_CHECK" | "READY">; deliveryStatus: Array<"PENDING" | "DISPATCHED" | "DELIVERING"> }
+> = {
+  QC: { productionStatus: ["ASSIGNED", "ARRANGING", "QUALITY_CHECK", "READY"], deliveryStatus: ["PENDING"] },
+  SHIPPER: { productionStatus: ["READY"], deliveryStatus: ["PENDING", "DISPATCHED"] },
+  POD: { productionStatus: ["READY"], deliveryStatus: ["DELIVERING"] },
+}
+
+export const SUBCONTRACT_STEP_NOT_ALLOWED: Record<SubcontractStep, string> = {
+  QC: "Đơn hàng không còn ở bước nhận ảnh thành phẩm.",
+  SHIPPER: "Đơn hàng chưa đến bước giao (cần ảnh thành phẩm được duyệt) hoặc đã có shipper.",
+  POD: "Đơn hàng chưa đến bước xác nhận giao (cần thông tin shipper) hoặc đã hoàn tất.",
+}
+
+/** Kiểm nhanh trước khi làm việc tốn thời gian (AI, tải ảnh); kho vẫn kiểm lại dưới khoá dòng. */
+export function subcontractStepAllowed(
+  step: SubcontractStep,
+  order: { status: string; production_status: string; delivery_status: string }
+): boolean {
+  const rule = SUBCONTRACT_STEP_PRECONDITION[step]
+  return (
+    order.status !== "CANCELLED" &&
+    order.status !== "COMPLETED" &&
+    (rule.productionStatus as string[]).includes(order.production_status) &&
+    (rule.deliveryStatus as string[]).includes(order.delivery_status)
+  )
 }

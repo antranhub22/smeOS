@@ -1,6 +1,7 @@
 import { OrderPhotoRepository } from "@/modules/greeting-card/infra/order-photo-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { driveThumbProxySrc } from "../domain/drive-thumb"
+import { ownStorageKey, SIGNED_URL_TTL_SECONDS } from "./sign-subcontract-photo"
 
 export interface OrderSampleSource {
   organization_id: string
@@ -86,19 +87,10 @@ export async function resolveSubcontractSamplePhoto(
     }
   }
 
-  // Nếu là storage key -> ký signed URL
+  // Khoá kho -> URL ký 1 giờ, chỉ khi khoá nằm trong thư mục của chính tổ chức (rà soát cụm G)
   if (rawImageUrl && (rawImageUrl.startsWith("org/") || rawImageUrl.includes("floraos-core/org/"))) {
-    try {
-      const storage = getStorageProvider()
-      const key = rawImageUrl.startsWith("org/")
-        ? rawImageUrl
-        : rawImageUrl.match(/floraos-core\/(org\/[^?]+)/)?.[1]
-      if (key) {
-        rawImageUrl = await storage.signedUrl(key, 604800, "GET").catch(() => rawImageUrl)
-      }
-    } catch {
-      // Return original URL on error
-    }
+    const key = ownStorageKey(rawImageUrl, order.organization_id)
+    rawImageUrl = key ? await getStorageProvider().signedUrl(key, SIGNED_URL_TTL_SECONDS, "GET").catch(() => null) : null
   }
 
   if (!rawImageUrl) return null

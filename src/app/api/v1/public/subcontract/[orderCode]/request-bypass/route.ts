@@ -8,12 +8,13 @@
  */
 
 import { z } from "zod"
-import { unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
+import { escapeTelegramHtml } from "@/modules/greeting-card/domain/chain-dispatch-policy"
+import { publicAppUrl } from "@/lib/public-url"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import type { TenantContext } from "@/core/tenancy"
@@ -39,38 +40,31 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const branch = await repo.findBranchInOrganization(branchId, order.organization_id)
   if (!branch) throw unprocessable("Chi nhánh không hợp lệ hoặc không thuộc hệ thống.")
 
-  const store = new SubcontractStepStore()
-  const existingMeta = await store.readMetadata(order.organization_id, order.id)
-  const bypassRequests = (existingMeta.bypass_requests as Record<string, unknown> | undefined) ?? {}
-
   const nowIso = new Date().toISOString()
-  const updatedBypassRequests = {
-    ...bypassRequests,
-    [step]: {
-      requestedAt: nowIso,
-      requestedByBranchId: branch.id,
-      requestedByBranchName: branch.name,
-      reason,
-      status: "PENDING",
-      decisionAt: null,
-      decidedBy: null,
-    },
-  }
+  // Kiểm và ghi dưới khoá dòng: chi nhánh đang làm đơn, công đoạn chưa chờ duyệt/đã duyệt
+  await new SubcontractStepStore().mutateMetadata(order.organization_id, order.id, (current) => {
+    const dispatch = current.subcontract_dispatch as { claimedBranchId?: string | null } | undefined
+    // Chi nhánh được mời nhưng không nhận vẫn giữ link 14 ngày: trước 22/10/2026 ghi đè được yêu
+    // cầu của chi nhánh đang làm đơn (rà soát cụm G)
+    if (dispatch?.claimedBranchId !== branch.id) throw conflict("Chỉ chi nhánh đang thực hiện đơn này mới gửi được yêu cầu.")
+    const requests = (current.bypass_requests as Record<string, unknown> | undefined) ?? {}
+    const previous = (requests[step] as { status?: string } | undefined)?.status
+    if (previous === "PENDING") throw conflict("Yêu cầu cho công đoạn này đang chờ điều phối duyệt.")
+    if (previous === "APPROVED") throw conflict("Công đoạn này đã được duyệt bỏ qua.")
+    const request = {
+      requestedAt: nowIso, requestedByBranchId: branch.id, requestedByBranchName: branch.name,
+      reason, status: "PENDING", decisionAt: null, decidedBy: null,
+    }
+    return { next: { ...current, bypass_requests: { ...requests, [step]: request } }, result: undefined }
+  })
 
-  await store.writeMetadata(order.organization_id, order.id, { ...existingMeta, bypass_requests: updatedBypassRequests })
-
-  // Bắn thông báo khẩn cấp cho Điều phối qua Telegram
+  // Báo Điều phối qua kênh điều phối của CHÍNH tổ chức. Không rơi về nhóm chung của nền tảng hay
+  // nhóm của chi nhánh khác; thiếu kênh thì Điều phối vẫn thấy yêu cầu trên Thẻ Điều phối.
   const org = await repo.findOrganizationSettings(order.organization_id)
   const settings = (org?.settings as Record<string, unknown> | null) ?? {}
   const coordChannel = settings.coordinator_channel as { telegramChatId?: string; phone?: string } | undefined
-  const chainBranches = await new ChainBranchRepository().listCandidates(order.organization_id)
-  const branchWithTelegram = chainBranches.find((b) => b.channels?.telegramChatId)
-
-  const targetChatId =
-    coordChannel?.telegramChatId ||
-    process.env.TELEGRAM_COORDINATOR_CHAT_ID ||
-    branchWithTelegram?.channels?.telegramChatId ||
-    process.env.TELEGRAM_DEFAULT_CHAT_ID
+  const targetChatId = coordChannel?.telegramChatId
+  let notified = false
 
   if (targetChatId) {
     const notifier = new MultiChannelDispatchNotifier()
@@ -83,9 +77,9 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     }
 
     const stepLabel = step === "QC" ? "Ảnh thành phẩm (QC)" : step === "SHIPPER" ? "Thông tin Shipper" : "Bằng chứng giao hàng (POD)"
-    const alertMsg = `⚠️ [XIN BỎ QUA BẰNG CHỨNG - CẦN DUYỆT]\nĐơn hàng: #${order.code}\nChi nhánh: ${branch.name}\nCông đoạn: ${stepLabel}\nLý do: "${reason}"\n\n👉 Điều phối vui lòng kiểm tra và duyệt trong Tab Quản lý / Điều phối để đơn hàng tiếp tục được thực hiện.`
+    const alertMsg = `⚠️ [XIN BỎ QUA BẰNG CHỨNG - CẦN DUYỆT]\nĐơn hàng: #${order.code}\nChi nhánh: ${escapeTelegramHtml(branch.name)}\nCông đoạn: ${stepLabel}\nLý do: "${escapeTelegramHtml(reason)}"\n\n👉 Điều phối vui lòng kiểm tra và duyệt trong Tab Quản lý / Điều phối để đơn hàng tiếp tục được thực hiện.`
 
-    await notifier.sendSubcontractInvite(ctx, {
+    const sent = await notifier.sendSubcontractInvite(ctx, {
       branch: {
         branchId: "coordinator",
         branchName: "Điều Phối Chuỗi",
@@ -95,14 +89,15 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         isActive: true,
         channels: {
           telegramChatId: targetChatId,
-          phone: coordChannel?.phone || branchWithTelegram?.channels?.phone,
+          phone: coordChannel?.phone,
         },
       },
       orderCode: order.code,
       title: `⚠️ [XIN BỎ QUA BẰNG CHỨNG #${order.code}]`,
       messageText: alertMsg,
-      claimUrl: `${request.headers.get("origin") || ""}/the-chao`,
-    }).catch(() => {})
+      claimUrl: `${publicAppUrl()}/the-chao`,
+    }).catch(() => ({ sent: false }))
+    notified = sent.sent
   }
 
   return jsonResponse({
@@ -112,6 +107,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       step,
       status: "PENDING",
       requestedAt: nowIso,
+      coordinatorNotified: notified,
     },
   })
 })

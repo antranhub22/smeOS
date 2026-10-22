@@ -41,7 +41,7 @@ export interface DispatchNotificationTarget {
    * Nếu có: đây là bản cập nhật — adapter sẽ EDIT tin nhắn cũ thay vì gửi mới.
    * Nếu không có: gửi mới và trả về telegramMsgId để caller lưu lại.
    */
-  existingTelegramCard?: { msgId: string; chatId: string; isCaption?: boolean } | null | undefined
+  existingTelegramCard?: { msgId: string; chatId: string; isCaption?: boolean | undefined } | null | undefined
 }
 
 export interface LiveCardSendResult {
@@ -80,6 +80,12 @@ export interface IDispatchNotifier {
 export interface ISubcontractStateStore {
   saveSubcontractState(ctx: TenantContext, state: SubcontractOrderState): Promise<void>
   loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null>
+  /** Đọc–sửa–ghi dưới khoá dòng; `change` nhận trạng thái mới nhất (xem SubcontractOrderRepository). */
+  updateSubcontractState<T>(
+    ctx: TenantContext,
+    orderId: string,
+    change: (current: SubcontractOrderState | null) => { next: SubcontractOrderState | null; result: T }
+  ): Promise<T>
 }
 
 export interface ISubcontractClaimStore extends ISubcontractStateStore {

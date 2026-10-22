@@ -15,6 +15,8 @@ export const PLATFORM_OWNED_SETTING_KEYS = [
   "lead_phone",
   "lead_email",
   "lead_captured_at",
+  // Chat Telegram đã chứng minh thuộc tổ chức — chỉ máy chủ ghi (greeting-card/infra/telegram-linked-chats.ts)
+  "telegram_linked_chat_ids",
 ] as const
 
 /** Mã năng lực nền tảng được đổi ngành của tiệm đã khoá ngành. */

@@ -324,11 +324,19 @@ export function serializeChainDispatchPolicy(policy: ChainDispatchPolicy): Recor
   }
 }
 
+/** Thoát ký tự đặc biệt cho tin Telegram `parse_mode: HTML` — dùng cho MỌI giá trị do người nhập. */
+export function escapeTelegramHtml(value: string | number): string {
+  return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+}
+
 /**
- * Trộn các biến số vào mẫu tin nhắn thông báo (Template Interpolation Engine).
+ * Trộn biến vào mẫu tin nhắn. Mẫu được giữ thẻ HTML (`<b>`…); giá trị được thoát ký tự, vì địa chỉ
+ * "Hẻm 5 <cạnh chợ>" từng làm Telegram từ chối cả tin, và `<a href>` trong dữ liệu khách chèn
+ * được link lạ vào nhóm chi nhánh (rà soát cụm G, 22/10/2026).
  */
 export function renderDispatchMessage(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{\{([a-zA-Z0-9_]+)\}\}/g, (match, key) => {
-    return key in vars ? String(vars[key]) : match
+    const value = vars[key]
+    return value === undefined ? match : escapeTelegramHtml(value)
   })
 }
