@@ -19,6 +19,8 @@ import type { CollectionSession } from "@/modules/greeting-card/domain/collectio
 import { GreetingTemplateRenderer } from "./templates/greeting-template-renderer"
 import type { OptionalDisplayField } from "@/modules/greeting-card/domain/display-fields"
 import { BrochureOrderForm } from "./brochure-order-form"
+import { ProductContactActions } from "./product-contact-actions"
+import { ContactProductSheet } from "./contact-product-sheet"
 import { BrochurePaymentView } from "./brochure-payment-view"
 import { BrochureTrackingView } from "./brochure-tracking-view"
 import { readApiError } from "@/components/greeting-card/api-error"
@@ -91,6 +93,8 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
   const [snapshot, setSnapshot] = useState<ProductSnapshot | null>(session.productSnapshot)
   const [selectError, setSelectError] = useState<string | null>(null)
   const [selecting, setSelecting] = useState(false)
+  const [contactProduct, setContactProduct] = useState<GreetingCatalogProduct | null>(null)
+  const inquiryUrl = `/api/v1/public/brochure/${session.sendCode}/inquiry`
 
   // Hướng dẫn chuyển khoản luôn lấy từ server theo cấu hình của tiệm.
   const [orderResult, setOrderResult] = useState<OrderState | null>(() =>
@@ -133,6 +137,11 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
     if (selecting) return
     if (product.available === false) {
       setSelectError(SOLD_OUT_MESSAGE)
+      return
+    }
+    // Mẫu "Liên hệ": không chọn để đặt, mở khung Gọi / Zalo / Nhắn tin
+    if (product.priceMode === "CONTACT") {
+      setContactProduct(product)
       return
     }
     track("order_started", product.id)
@@ -256,6 +265,15 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
           </>
         )}
 
+        {step === "ORDER_FORM" && snapshot && products.find((p) => p.id === snapshot.id)?.priceMode === "RANGE" && (
+          <details className="mx-auto mt-3 w-full max-w-md rounded-xl border border-border bg-surface px-3 py-2">
+            <summary className="cursor-pointer text-body-sm font-semibold text-foreground">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
+            <div className="mt-2">
+              <ProductContactActions shop={shop} inquiryUrl={inquiryUrl} product={{ id: snapshot.id, name: snapshot.name }} />
+            </div>
+          </details>
+        )}
+
         {step === "ORDER_FORM" && snapshot && (
           <BrochureOrderForm
             productSnapshot={snapshot}
@@ -272,6 +290,10 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
             onBack={() => setStep("SWIPING")}
             onSubmit={handleSubmitOrder}
           />
+        )}
+
+        {contactProduct && (
+          <ContactProductSheet product={contactProduct} shop={shop} inquiryUrl={inquiryUrl} onClose={() => setContactProduct(null)} />
         )}
 
         {step === "PAYMENT" && orderResult && (

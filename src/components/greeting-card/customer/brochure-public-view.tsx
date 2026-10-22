@@ -201,7 +201,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
               )}
               {selected.priceMode === "CONTACT" && (
                 <div className="mt-3">
-                  <ProductContactActions shop={shop} catalogId={catalog.id} product={selected} />
+                  <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
                 </div>
               )}
               {selected.price === null && selected.priceMode !== "CONTACT" && (
@@ -229,7 +229,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
               <details className="rounded-xl border border-border px-3 py-2">
                 <summary className="cursor-pointer text-body-sm font-semibold text-foreground">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
                 <div className="mt-2">
-                  <ProductContactActions shop={shop} catalogId={catalog.id} product={selected} />
+                  <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
                 </div>
               </details>
             )}

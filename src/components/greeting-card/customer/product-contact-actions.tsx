@@ -7,7 +7,7 @@ import { ProductInquiryForm } from "./product-inquiry-form"
 
 interface Props {
   shop: ShopContact | null | undefined
-  catalogId: string
+  inquiryUrl: string
   product: { id: string; name: string }
   variantName?: string | null | undefined
 }
@@ -15,7 +15,7 @@ interface Props {
 const BTN = "flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface text-body-sm font-bold text-foreground hover:bg-surface-muted"
 
 /** Ba cách liên hệ cho mẫu "Liên hệ" / phiên bản theo ý khách: Gọi điện, Zalo, Nhắn tin (form). */
-export function ProductContactActions({ shop, catalogId, product, variantName }: Props) {
+export function ProductContactActions({ shop, inquiryUrl, product, variantName }: Props) {
   const [showForm, setShowForm] = useState(false)
   return (
     <div className="flex flex-col gap-2">
@@ -34,7 +34,7 @@ export function ProductContactActions({ shop, catalogId, product, variantName }:
           <MessageSquareText size={16} aria-hidden="true" /> Nhắn tin
         </button>
       </div>
-      {showForm && <ProductInquiryForm catalogId={catalogId} product={product} variantName={variantName} />}
+      {showForm && <ProductInquiryForm inquiryUrl={inquiryUrl} product={product} variantName={variantName} />}
     </div>
   )
 }

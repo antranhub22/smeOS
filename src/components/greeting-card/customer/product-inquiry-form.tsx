@@ -5,7 +5,8 @@ import { defaultInquiryMessage, INQUIRY_MESSAGE_MAX } from "@/modules/crm/domain
 import { readApiError } from "@/components/greeting-card/api-error"
 
 interface Props {
-  catalogId: string
+  /** API nhận tin: link bộ sưu tập hoặc link chào riêng */
+  inquiryUrl: string
   product: { id: string; name: string }
   variantName?: string | null | undefined
 }
@@ -13,7 +14,7 @@ interface Props {
 const FIELD = "w-full rounded-lg border border-border bg-background px-3 text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 /** Form nhắn tin cho cửa hàng → yêu cầu tư vấn trong mục Hội thoại / Khách hàng của tiệm. */
-export function ProductInquiryForm({ catalogId, product, variantName }: Props) {
+export function ProductInquiryForm({ inquiryUrl, product, variantName }: Props) {
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
   const [message, setMessage] = useState(() => defaultInquiryMessage(product.name, variantName))
@@ -35,7 +36,7 @@ export function ProductInquiryForm({ catalogId, product, variantName }: Props) {
     setSending(true)
     setErrors({})
     try {
-      const res = await fetch(`/api/v1/public/greeting-catalog/${catalogId}/inquiry`, {
+      const res = await fetch(inquiryUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId: product.id, customerName: name, customerPhone: phone, message, website, ...(variantName ? { variantName } : {}) }),

@@ -20,3 +20,21 @@ export function spanOverlaps(span: { min: number; max: number } | null, min: num
   if (max !== null && span.min > max) return false
   return true
 }
+
+export type PriceModeFilter = "all" | "FIXED" | "RANGE" | "CONTACT"
+
+export const PRICE_MODE_FILTERS: ReadonlyArray<{ id: PriceModeFilter; label: string }> = [
+  { id: "all", label: "Tất cả" },
+  { id: "FIXED", label: "Giá xác định" },
+  { id: "RANGE", label: "Khoảng giá" },
+  { id: "CONTACT", label: "Liên hệ" },
+]
+
+/** Kiểu giá của sản phẩm trong danh sách (sản phẩm cũ chưa khai = Giá xác định). */
+export function productPriceMode(p: { attributes?: Record<string, unknown> | null | undefined }): Exclude<PriceModeFilter, "all"> {
+  return parsePricing(p.attributes ?? {}).mode
+}
+
+export function matchPriceMode(p: { attributes?: Record<string, unknown> | null | undefined }, filter: PriceModeFilter): boolean {
+  return filter === "all" || productPriceMode(p) === filter
+}

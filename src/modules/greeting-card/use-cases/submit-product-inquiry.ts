@@ -17,25 +17,23 @@ export interface PublicProductInquiryInput extends ProductInquiryInput {
   productId: string
 }
 
-/**
- * Khách gửi yêu cầu tư vấn từ link bộ sưu tập công khai. Tổ chức suy từ bộ sưu tập (không nhận
- * từ client); mẫu phải thuộc bộ sưu tập đó, sai → 404. Mỗi SĐT tối đa 5 yêu cầu/giờ mỗi tiệm.
- */
-export async function submitProductInquiry(
-  catalogId: string,
-  input: PublicProductInquiryInput,
-  repo = new GreetingCardRepository(),
-  checkout = new BrochureCheckoutRepository(),
-  inquiries = new ProductInquiryRepository(),
-): Promise<{ conversationId: string }> {
-  const errors = validateProductInquiry(input)
-  if (Object.keys(errors).length > 0) throw validationFailed(errors)
+type CatalogItems = Array<{ product: { id: string; code: string; name: string } }>
 
-  const catalog = await repo.getPublicCatalogById(catalogId)
-  if (!catalog) throw notFound()
-  const item = catalog.items.find((i) => i.product.id === input.productId)
+interface Deps {
+  checkout: BrochureCheckoutRepository
+  inquiries: ProductInquiryRepository
+}
+
+/** Phần chung: mẫu phải thuộc danh sách của bộ sưu tập/link (sai → 404), chặn gửi dồn, ghi khách + hội thoại. */
+async function recordInquiry(
+  organizationId: string,
+  items: CatalogItems,
+  input: PublicProductInquiryInput,
+  source: { catalogId: string; sendCode?: string | undefined },
+  { checkout, inquiries }: Deps,
+): Promise<{ conversationId: string }> {
+  const item = items.find((i) => i.product.id === input.productId)
   if (!item) throw notFound()
-  const organizationId = catalog.organization_id
   const phone = normalizeInquiryPhone(input.customerPhone)
 
   const recent = await inquiries.countRecentByPhone(organizationId, phone, new Date(Date.now() - INQUIRY_WINDOW_MS))
@@ -57,10 +55,44 @@ export async function submitProductInquiry(
     content: inquiryContent(product, input),
     metadata: {
       kind: "PRODUCT_INQUIRY",
-      catalogId,
+      catalogId: source.catalogId,
+      sendCode: source.sendCode ?? null,
       productId: product.id,
       productCode: product.code,
       variantName: input.variantName?.trim().slice(0, 120) || null,
     },
   })
+}
+
+/**
+ * Khách gửi yêu cầu tư vấn từ link bộ sưu tập công khai. Tổ chức suy từ bộ sưu tập (không nhận
+ * từ client); mẫu phải thuộc bộ sưu tập đó, sai → 404. Mỗi SĐT tối đa 5 yêu cầu/giờ mỗi tiệm.
+ */
+export async function submitProductInquiry(
+  catalogId: string,
+  input: PublicProductInquiryInput,
+  repo = new GreetingCardRepository(),
+  checkout = new BrochureCheckoutRepository(),
+  inquiries = new ProductInquiryRepository(),
+): Promise<{ conversationId: string }> {
+  const errors = validateProductInquiry(input)
+  if (Object.keys(errors).length > 0) throw validationFailed(errors)
+  const catalog = await repo.getPublicCatalogById(catalogId)
+  if (!catalog) throw notFound()
+  return recordInquiry(catalog.organization_id, catalog.items, input, { catalogId }, { checkout, inquiries })
+}
+
+/** Như trên, từ link chào riêng `/b/<mã>`: tổ chức và danh sách mẫu suy từ phiên của mã đó. */
+export async function submitBrochureInquiry(
+  sendCode: string,
+  input: PublicProductInquiryInput,
+  repo = new GreetingCardRepository(),
+  checkout = new BrochureCheckoutRepository(),
+  inquiries = new ProductInquiryRepository(),
+): Promise<{ conversationId: string }> {
+  const errors = validateProductInquiry(input)
+  if (Object.keys(errors).length > 0) throw validationFailed(errors)
+  const session = await repo.getPublicSessionBySendCode(sendCode)
+  if (!session?.catalog) throw notFound()
+  return recordInquiry(session.organization_id, session.catalog.items, input, { catalogId: session.catalog_id, sendCode: session.send_code }, { checkout, inquiries })
 }

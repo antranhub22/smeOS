@@ -7,6 +7,7 @@ import {
   removeVietnameseTones,
   type MinimalProductItem,
 } from "@/components/products/product-filter-types"
+import { matchPriceMode, productPriceMode } from "@/components/products/product-price-span"
 
 describe("Bộ lọc sản phẩm Mẫu Hoa: Giá, Dịp & Tìm kiếm", () => {
   const sampleProducts: MinimalProductItem[] = [
@@ -154,3 +155,14 @@ describe("lọc / sắp xếp theo khoảng giá", () => {
     expect(out.map((p) => p.id)).toEqual(["r", "p", "c"])
   })
 })
+
+describe("lọc theo kiểu giá", () => {
+  it("sản phẩm chưa khai kiểu giá là Giá xác định", () => {
+    expect(productPriceMode({ attributes: { price: 1000 } })).toBe("FIXED")
+    expect(productPriceMode({ attributes: null })).toBe("FIXED")
+    expect(matchPriceMode({ attributes: { pricing: { mode: "CONTACT" } } }, "CONTACT")).toBe(true)
+    expect(matchPriceMode({ attributes: { pricing: { mode: "CONTACT" } } }, "RANGE")).toBe(false)
+    expect(matchPriceMode({ attributes: null }, "all")).toBe(true)
+  })
+})
+
