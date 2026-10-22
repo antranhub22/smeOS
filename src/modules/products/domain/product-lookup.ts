@@ -81,10 +81,10 @@ export interface ProductLookupResult {
 
 /**
  * Khoá trong `attributes` chỉ người có `L5` (`pricing.read`) được thấy: thành phần hoa (BOM — lộ
- * công thức/giá vốn) và giá sàn/trần nội bộ. Giá bán niêm yết (`price`, `price_vnd`) vẫn đi ra để
+ * công thức/giá vốn), giá sàn/trần nội bộ và phí làm thay của mẫu (`craft_fee_vnd`). Giá bán niêm yết (`price`, `price_vnd`) vẫn đi ra để
  * Sale tư vấn khách (PO 14/10/2026).
  */
-export const PRICING_ONLY_ATTRIBUTE_KEYS = ["bom", "priceGuard"] as const
+export const PRICING_ONLY_ATTRIBUTE_KEYS = ["bom", "priceGuard", "craft_fee_vnd"] as const
 
 /**
  * Lọc một bản ghi sản phẩm theo năng lực của người xem. Kê tên trường sản

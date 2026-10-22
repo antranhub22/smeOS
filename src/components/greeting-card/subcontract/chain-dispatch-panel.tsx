@@ -20,7 +20,7 @@ import { dispatchChannelLabel, dispatchFailureText } from "./dispatch-channel-la
 export interface ChainDispatchPanelProps {
   orderId: string
   orderCode: string
-  suggestedCraftFee?: number
+  suggestedCraftFee?: number | undefined // chỉ khi Điều phối sửa tay; bỏ trống → máy chủ tính theo phương án tiệm cài
   onDispatched?: () => void
 }
 

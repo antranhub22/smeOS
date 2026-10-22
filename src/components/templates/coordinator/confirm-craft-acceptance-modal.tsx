@@ -149,10 +149,10 @@ export function ConfirmCraftAcceptanceModal({
             <div className="flex items-center gap-1">
               <button
                 type="button"
-                onClick={() => setAgreedFee(Math.round(unitPriceVnd * 0.5))}
+                onClick={() => setAgreedFee(suggestedCraftFeeVnd)}
                 className="px-2 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption font-semibold"
               >
-                50% ({Math.round(unitPriceVnd * 0.5).toLocaleString("vi-VN")}đ)
+                Mức gợi ý ({suggestedCraftFeeVnd.toLocaleString("vi-VN")}đ)
               </button>
               <button
                 type="button"

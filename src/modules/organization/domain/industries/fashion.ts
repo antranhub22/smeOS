@@ -100,4 +100,17 @@ export const FASHION_INDUSTRY: IndustryPluginContract = {
   navigation: {
     hiddenNavKeys: [],
   },
+  craftFee: {
+    feeLabel: "Phí may đo",
+    defaultPercent: 40,
+    minVnd: 100_000,
+    maxVnd: 3_000_000,
+    partnerPercent: 70,
+    complexityLabels: { EASY: "Sửa, chỉnh đồ", MEDIUM: "May cơ bản", HARD: "Đo may cao cấp" },
+    laborByComplexityVnd: { EASY: 50_000, MEDIUM: 200_000, HARD: 600_000 },
+    peakDays: [
+      { monthDay: "03-08", label: "Quốc tế Phụ nữ" },
+      { monthDay: "10-20", label: "Phụ nữ Việt Nam" },
+    ],
+  },
 }

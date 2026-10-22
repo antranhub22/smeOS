@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { conflict, validationFailed, notFound } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { matchCandidateBranches } from "@/modules/greeting-card/domain/chain-dispatch-engine"
@@ -17,6 +17,8 @@ import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
+import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
+import { resolveDispatchCraftFee, suggestCraftFee } from "@/modules/greeting-card/use-cases/suggest-craft-fee"
 
 type RouteCtx = { params: Promise<{ id: string }> }
 
@@ -65,6 +67,7 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
 
   // Tải trạng thái điều phối của đơn hàng (nếu đã tiếp nhận hoặc đã chốt)
   const subcontractState = await stateRepo.loadSubcontractState(ctx, order.id)
+  const suggestion = await suggestCraftFee(ctx.organizationId, order.id, new CraftFeeFactsRepository())
 
   return jsonResponse({
     data: {
@@ -95,6 +98,13 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
           phone: sc.branch.channels?.phone,
         },
       })),
+      craftFee: {
+        feeLabel: suggestion.feeLabel,
+        suggestedVnd: suggestion.suggestedVnd,
+        lines: suggestion.lines,
+        adjustPercent: suggestion.adjustPercent,
+        finalVnd: subcontractState?.craftFee?.finalVnd ?? subcontractState?.subcontractPriceVnd ?? null,
+      },
       policy: {
         topN: policy.topN,
         claimWindowMinutes: policy.claimTimeoutMinutes,
@@ -139,8 +149,13 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   const approvedBranches = allBranches.filter((b) => approvedBranchIds.includes(b.branchId))
   if (approvedBranches.length === 0) throw validationFailed({ approvedBranchIds: "Không tìm thấy chi nhánh hợp lệ trong danh sách" })
 
-  const total = Number(order.total_vnd)
-  const craftFee = subcontractPriceVnd ?? Math.round(total * 0.5)
+  // Phí theo phương án tiệm đã cài (mặc định 50% giá hàng trước VAT, có sàn/trần) — PO 22/10/2026
+  const suggestion = await suggestCraftFee(ctx.organizationId, order.id, new CraftFeeFactsRepository())
+  const craftFeeRecord = resolveDispatchCraftFee(suggestion, subcontractPriceVnd, {
+    canApproveOutsideBand: hasCapability(ctx, GREETING_CARD_CAPABILITY.paymentRecord),
+    actorId: ctx.userId,
+  })
+  const craftFee = craftFeeRecord.finalVnd
 
   // Link có chữ ký gửi cho chi nhánh luôn dùng địa chỉ cấu hình — header Host do client gửi từng đưa
   // token sang tên miền tuỳ ý (rà soát cụm G, 22/10/2026)
@@ -174,6 +189,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       invitedBranchIds: invited,
       roundExpiresAt: roundExpiry,
       subcontractPriceVnd: craftFee,
+      craftFee: craftFeeRecord,
     }
     return { next, result: next }
   })

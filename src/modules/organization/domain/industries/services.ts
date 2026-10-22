@@ -95,4 +95,14 @@ export const SERVICES_INDUSTRY: IndustryPluginContract = {
   navigation: {
     hiddenNavKeys: [],
   },
+  craftFee: {
+    feeLabel: "Phí thực hiện dịch vụ",
+    defaultPercent: 60,
+    minVnd: 100_000,
+    maxVnd: 5_000_000,
+    partnerPercent: 80,
+    complexityLabels: { EASY: "Cơ bản", MEDIUM: "Nâng cao", HARD: "Chuyên sâu" },
+    laborByComplexityVnd: { EASY: 100_000, MEDIUM: 300_000, HARD: 800_000 },
+    peakDays: [],
+  },
 }

@@ -97,4 +97,17 @@ export const FNB_INDUSTRY: IndustryPluginContract = {
   navigation: {
     hiddenNavKeys: [],
   },
+  craftFee: {
+    feeLabel: "Phí chế biến",
+    defaultPercent: 40,
+    minVnd: 50_000,
+    maxVnd: 2_000_000,
+    partnerPercent: 70,
+    complexityLabels: { EASY: "Món đơn giản", MEDIUM: "Set, combo", HARD: "Tiệc, bánh đặt riêng" },
+    laborByComplexityVnd: { EASY: 30_000, MEDIUM: 100_000, HARD: 300_000 },
+    peakDays: [
+      { monthDay: "02-14", label: "Lễ Tình nhân" },
+      { monthDay: "12-24", label: "Giáng sinh" },
+    ],
+  },
 }
