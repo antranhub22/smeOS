@@ -91,7 +91,7 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
         rank: sc.rank,
         channels: {
           hasTelegram: Boolean(sc.branch.channels?.telegramChatId),
-          hasZalo: Boolean(sc.branch.channels?.zaloPhone),
+          hasZalo: Boolean(sc.branch.channels?.zaloUserId),
           phone: sc.branch.channels?.phone,
         },
       })),
@@ -220,9 +220,10 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
 
     rememberInviteCard(inviteCards, branch.branchId, sendResult, inviteCardText(title, messageText), claimUrl)
 
+    // Không có Telegram / Zalo: lời mời vẫn hiện trên trang cửa hàng (/cua-hang) của chi nhánh
     const channel = branch.channels?.telegramChatId ? "TELEGRAM"
-      : branch.channels?.zaloPhone ? "ZALO"
-      : "SMS"
+      : branch.channels?.zaloUserId ? "ZALO"
+      : "APP"
 
     results.push({
       branchId: branch.branchId,

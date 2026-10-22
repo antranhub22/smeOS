@@ -230,6 +230,10 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   R11: { name: "order.transfer.confirm", group: "order_operations", label: "Xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   R12: { name: "order.coordinator_reminder.configure", group: "order_operations", label: "Sửa thời điểm nhắc việc Điều phối (chung và theo mẫu hoa)", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R13: { name: "data.export", group: "order_operations", label: "Xuất đơn hàng / khách hàng ra tệp Excel (Điều hành cấp cho người khác khi duyệt)", defaultRoles: ["dieu_hanh"] },
+  // PO 22/10/2026 — trang cửa hàng nhận gia công: chỉ tài khoản cửa hàng thấy đơn của CHÍNH chi nhánh mình
+  // (chi nhánh lấy từ `memberships.chain_branch_code`, không từ yêu cầu). Điều hành có theo bất biến "mọi mã
+  // trừ K1" và chỉ thấy đơn khi tự gắn chi nhánh. Trần cứng: hai vai này.
+  R14: { name: "order.branch_inbox", group: "order_operations", label: "Xem và nhận đơn gia công của chi nhánh mình", defaultRoles: ["dieu_hanh", "cua_hang"], hardCap: ["dieu_hanh", "cua_hang"] },
   // Q — CRM & Khách hàng ngành hoa (M09, P21)
   Q1: { name: "crm.customer.read", group: "crm", label: "Xem thông tin khách hàng và hồ sơ RFM", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
   Q2: { name: "crm.customer.create", group: "crm", label: "Thêm khách hàng mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },

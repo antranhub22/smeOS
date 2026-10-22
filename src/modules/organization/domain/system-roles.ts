@@ -15,6 +15,8 @@ export const SYSTEM_ROLES = [
   { key: "crm", name: "Chăm sóc khách hàng" },
   { key: "customer_service", name: "Chăm sóc khách hàng (CSKH)" },
   { key: "experience_user", name: "Experience User" },
+  // PO 22/10/2026 — tài khoản của chi nhánh/cửa hàng nhận đơn gia công trong chuỗi (trang /cua-hang)
+  { key: "cua_hang", name: "Cửa hàng nhận gia công" },
 ] as const
 
 export type SystemRoleKey = (typeof SYSTEM_ROLES)[number]["key"]
