@@ -7,6 +7,7 @@
 //    - `sales` (vai `sale`)             → Pipeline Workspace
 //    - `coordinator` (vai `dieu_phoi`)  → Control Tower — chuyển sang tuyến có
 //      sẵn `/dieu-phoi`, không dựng màn thứ hai cho cùng một việc (03b §4.4)
+//    - `cua_hang` (cửa hàng nhận gia công) → `/cua-hang`
 //    - vai chưa gắn khuôn (vai riêng của tổ chức…) → Command Center, giữ đúng
 //      hành vi trước 26/09.
 // Khuôn chỉ chọn MÀN; năng lực (`capabilities`) vẫn quyết định nút nào hiện
@@ -43,6 +44,9 @@ export default async function DashboardPage() {
   // Không có phiên hợp lệ: layout bọc ngoài (`(app)/layout.tsx`) đã chuyển
   // sang /dang-nhap trước khi tới đây — nhánh này chỉ để tsc yên tâm về kiểu.
   if (!session) return null
+
+  // Tài khoản cửa hàng nhận gia công (PO 22/10/2026): vào thẳng trang đơn gia công của chi nhánh
+  if (session.roleKey === "cua_hang") return redirect("/cua-hang" as never)
 
   const roleUx = resolveRoleUx(session.roleKey, session.organizationType)
 

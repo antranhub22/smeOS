@@ -208,9 +208,10 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
 
     rememberInviteCard(inviteCards, branch.branchId, sendResult, inviteCardText(title, messageText), claimUrl)
 
+    // Không có Telegram / Zalo: lời mời vẫn hiện trên trang cửa hàng (/cua-hang) của chi nhánh
     const channel = branch.channels?.telegramChatId ? "TELEGRAM"
       : branch.channels?.zaloUserId ? "ZALO"
-      : "SMS"
+      : "APP"
 
     results.push({
       branchId: branch.branchId,

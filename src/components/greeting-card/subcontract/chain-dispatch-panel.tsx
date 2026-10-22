@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import { ChainBranchCard, type DispatchedCandidateBranch } from "./chain-branch-card"
+import { dispatchChannelLabel, dispatchFailureText } from "./dispatch-channel-label"
 
 export interface ChainDispatchPanelProps {
   orderId: string
@@ -316,7 +317,7 @@ export function ChainDispatchPanel({
                 <div className="flex items-center gap-1.5">
                   <span className="font-semibold text-foreground">{res.branchName}</span>
                   <span className="text-caption px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold">
-                    {res.channel}
+                    {dispatchChannelLabel(res.channel)}
                   </span>
                 </div>
                 {res.sent ? (
@@ -324,7 +325,7 @@ export function ChainDispatchPanel({
                     <Check size={12} /> Đã gửi riêng
                   </span>
                 ) : (
-                  <span className="text-danger font-medium">{res.error || "Không gửi được"}</span>
+                  <span className="text-danger font-medium">{dispatchFailureText(res.channel, res.error)}</span>
                 )}
               </div>
             ))}

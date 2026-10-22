@@ -12,7 +12,11 @@ interface MemberTarget {
   email: string
   roleId: string | null
   roleName: string | null
+  chainBranchCode: string | null
 }
+
+/** Vai tài khoản cửa hàng nhận gia công — cần gắn một chi nhánh chuỗi */
+const STORE_ROLE_KEY = "cua_hang"
 
 interface ChangeRoleDialogProps {
   open: boolean
@@ -36,16 +40,32 @@ export function ChangeRoleDialog({
   const [removing, setRemoving] = useState(false)
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [chainBranches, setChainBranches] = useState<Array<{ code: string; name: string }>>([])
+  const [selectedBranchCode, setSelectedBranchCode] = useState("")
 
   useEffect(() => {
     if (member) {
       setSelectedRoleId(member.roleId || "")
+      setSelectedBranchCode(member.chainBranchCode || "")
       setError(null)
       setShowRemoveConfirm(false)
     }
   }, [member])
 
+  const isStoreRole = roles.find((r) => r.id === selectedRoleId)?.key === STORE_ROLE_KEY
+
+  useEffect(() => {
+    if (!open || !isStoreRole || chainBranches.length > 0) return
+    fetch("/api/v1/members/chain-branches")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body: { data?: Array<{ code: string; name: string }> } | null) => setChainBranches(body?.data ?? []))
+      .catch(() => setChainBranches([]))
+  }, [open, isStoreRole, chainBranches.length])
+
   if (!member) return null
+
+  const roleChanged = selectedRoleId !== member.roleId
+  const branchChanged = isStoreRole && selectedBranchCode !== (member.chainBranchCode || "")
 
   const handleUpdateRole = async (e: FormEvent) => {
     e.preventDefault()
@@ -54,19 +74,34 @@ export function ChangeRoleDialog({
       return
     }
 
+    if (isStoreRole && !selectedBranchCode) {
+      setError("Vui lòng chọn chi nhánh cho tài khoản cửa hàng.")
+      return
+    }
+
     setSubmitting(true)
     setError(null)
 
     try {
-      const res = await fetch(`/api/v1/members/${member.id}/role`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role_id: selectedRoleId }),
-      })
+      if (roleChanged) {
+        const res = await fetch(`/api/v1/members/${member.id}/role`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ role_id: selectedRoleId }),
+        })
+        if (!res.ok) {
+          const body = await res.json().catch(() => null)
+          throw new Error(body?.error?.message || "Không thể cập nhật vai trò.")
+        }
+      }
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => null)
-        throw new Error(body?.error?.message || "Không thể cập nhật vai trò.")
+      if (branchChanged) {
+        const res = await fetch(`/api/v1/members/${member.id}/chain-branch`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chain_branch_code: selectedBranchCode }),
+        })
+        if (!res.ok) throw new Error("Không gắn được chi nhánh cho tài khoản này.")
       }
 
       onOpenChange(false)
@@ -148,6 +183,26 @@ export function ChangeRoleDialog({
             </select>
           </div>
 
+          {isStoreRole && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-body-sm font-semibold text-text">Chi nhánh của tài khoản</label>
+              <select
+                value={selectedBranchCode}
+                onChange={(e) => setSelectedBranchCode(e.target.value)}
+                disabled={submitting || removing}
+                className="flex h-11 w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              >
+                <option value="">— Chọn chi nhánh —</option>
+                {chainBranches.map((b) => (
+                  <option key={b.code} value={b.code}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-caption text-text-muted">Tài khoản chỉ thấy và nhận đơn gia công của chi nhánh này.</p>
+            </div>
+          )}
+
           <div className="flex items-center justify-end gap-2 pt-2">
             <Button
               type="button"
@@ -162,7 +217,7 @@ export function ChangeRoleDialog({
               type="submit"
               variant="primary"
               size="sm"
-              disabled={submitting || removing || selectedRoleId === member.roleId}
+              disabled={submitting || removing || (!roleChanged && !branchChanged)}
             >
               <ShieldCheck size={16} />
               <span>{submitting ? "Đang lưu..." : "Cập Nhật Vai Trò"}</span>
