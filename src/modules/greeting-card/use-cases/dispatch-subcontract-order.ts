@@ -72,6 +72,18 @@ export interface ISubcontractStateStore {
   loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null>
 }
 
+export interface ISubcontractClaimStore extends ISubcontractStateStore {
+  /**
+   * Ghi state chỉ khi state đang lưu vẫn ở `expectedStatus` (khoá dòng, kiểm tra và ghi trong một giao dịch).
+   * Trả false nếu đã có thao tác khác đổi trạng thái trước — hai chi nhánh bấm nhận cùng lúc chỉ một người thắng.
+   */
+  saveSubcontractStateIfStatus(
+    ctx: TenantContext,
+    state: SubcontractOrderState,
+    expectedStatus: SubcontractOrderState["dispatchStatus"]
+  ): Promise<boolean>
+}
+
 export interface AutomatedDispatchResult {
   dispatched: boolean
   round: number

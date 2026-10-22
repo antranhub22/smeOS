@@ -9,9 +9,9 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { Prisma } from "@/generated/prisma/client"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
-import type { ISubcontractStateStore } from "../use-cases/dispatch-subcontract-order"
+import type { ISubcontractClaimStore } from "../use-cases/dispatch-subcontract-order"
 
-export class SubcontractOrderRepository implements ISubcontractStateStore {
+export class SubcontractOrderRepository implements ISubcontractClaimStore {
   constructor(private readonly db = prisma) {}
 
   async loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null> {
@@ -56,6 +56,37 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
       })
     }
 
+    await this.syncOrderWithState(ctx, state)
+  }
+
+  async saveSubcontractStateIfStatus(
+    ctx: TenantContext,
+    state: SubcontractOrderState,
+    expectedStatus: SubcontractOrderState["dispatchStatus"]
+  ): Promise<boolean> {
+    const won = await this.db.$transaction(async (tx) => {
+      // Khoá dòng điều phối của đơn: lời bấm nhận thứ hai chờ ở đây và đọc thấy trạng thái đã đổi
+      const locked = await tx.$queryRaw<Array<{ id: string; metadata: unknown }>>`
+        SELECT "id", "metadata" FROM "order_coordinations"
+        WHERE "organization_id" = ${ctx.organizationId} AND "order_id" = ${state.orderId}
+        FOR UPDATE`
+      const row = locked[0]
+      if (!row) return false
+      const meta = (row.metadata as Record<string, unknown> | null) ?? {}
+      const current = meta.subcontract_dispatch as SubcontractOrderState | undefined
+      if (current?.dispatchStatus !== expectedStatus) return false
+      await tx.order_coordinations.update({
+        where: { id: row.id },
+        data: { metadata: { ...meta, subcontract_dispatch: state } as unknown as Prisma.InputJsonValue },
+      })
+      return true
+    })
+    if (won) await this.syncOrderWithState(ctx, state)
+    return won
+  }
+
+  /** Đồng bộ `orders` theo trạng thái điều phối vừa lưu (chi nhánh nhận, tự xác nhận khi chốt). */
+  private async syncOrderWithState(ctx: TenantContext, state: SubcontractOrderState): Promise<void> {
     // Nếu chi nhánh là branch thật trong CSDL bảng branches, cập nhật orders.branch_id
     const isRealDbBranch = state.claimedBranchId
       ? await this.db.branches.findFirst({

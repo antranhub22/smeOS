@@ -19,7 +19,7 @@ import {
   renderDispatchMessage,
   type ChainDispatchPolicy,
 } from "../domain/chain-dispatch-policy"
-import type { IDispatchNotifier, ISubcontractStateStore } from "./dispatch-subcontract-order"
+import type { IDispatchNotifier, ISubcontractClaimStore, ISubcontractStateStore } from "./dispatch-subcontract-order"
 import type { BranchCandidate } from "../domain/chain-dispatch-engine"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
@@ -46,7 +46,7 @@ export interface ClaimSubcontractResponse {
 export async function claimSubcontractUseCase(
   ctx: TenantContext,
   input: ClaimSubcontractInput,
-  store: ISubcontractStateStore,
+  store: ISubcontractClaimStore,
   notifier: IDispatchNotifier,
   branches: BranchCandidate[],
   now = new Date()
@@ -73,11 +73,17 @@ export async function claimSubcontractUseCase(
     if (claimResult.reason === "DECLINED_PREVIOUSLY") {
       throw unprocessable("Chi nhánh của bạn đã từ chối hoặc hủy đơn này trước đó.")
     }
+    if (claimResult.reason === "NOT_INVITED") {
+      throw unprocessable("Lời mời nhận đơn này không còn dành cho chi nhánh của bạn.")
+    }
     throw conflict("Đơn hàng hiện không ở trạng thái sẵn sàng để nhận.")
   }
 
-  // 1. Lưu trạng thái mới (CLAIMED_GRACE)
-  await store.saveSubcontractState(ctx, claimResult.nextState)
+  // 1. Lưu trạng thái mới (CLAIMED_GRACE) — chỉ thắng nếu đơn vẫn OPEN lúc ghi
+  const won = await store.saveSubcontractStateIfStatus(ctx, claimResult.nextState, "OPEN")
+  if (!won) {
+    throw conflict(`Đơn hàng này đã được một chi nhánh khác tiếp nhận trước đó. Cảm ơn bạn!`)
+  }
 
   // 2. Bắn tin nhắn xác nhận tiếp nhận thành công cho chi nhánh vừa nhận
   const claimingBranch = branches.find((b) => b.branchId === input.branchId)
