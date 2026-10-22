@@ -707,19 +707,27 @@ model product_inventory {
  * khoảng ngày. Mỗi dòng tương ứng một kỳ nghỉ / đặt chỗ / block thủ công.
  * `order_id = null` = admin block thủ công (bảo trì, dọ phòng...).
  */
+/// Trạng thái đặt chỗ — enum từ 22/10/2026 (rà soát M5), trước đó là chuỗi tự do.
+enum booking_status {
+  ACTIVE
+  CANCELLED
+}
+
 model product_bookings {
-  id              String   @id @default(uuid())
+  id              String         @id @default(uuid())
   organization_id String
   product_id      String
-  order_id        String?  // null = admin block thủ công
-  check_in_date   String   // "YYYY-MM-DD"
-  check_out_date  String   // "YYYY-MM-DD" (exclusive — ngày check-out không được tính)
-  note            String?  // "Bảo trì", "Sựa chữa", null = đặt từ đơn khách
-  status          String   @default("ACTIVE") // ACTIVE | CANCELLED
-  created_at      DateTime @default(now())
+  order_id        String? // null = admin block thủ công
+  check_in_date   DateTime       @db.Date // code dùng "YYYY-MM-DD" — đổi ở biên repository (booking-day.ts)
+  check_out_date  DateTime       @db.Date // exclusive — ngày check-out không được tính
+  note            String? // "Bảo trì", "Sửa chữa", null = đặt từ đơn khách
+  status          booking_status @default(ACTIVE)
+  created_at      DateTime       @default(now())
 
   organization organizations @relation(fields: [organization_id], references: [id])
   product      products      @relation(fields: [product_id], references: [id])
+  // Xoá đơn (chỉ khi dọn tenant bàn giao) thì xoá luôn đặt chỗ sinh từ đơn đó
+  order        orders?       @relation(fields: [order_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, product_id, check_in_date])
   @@index([organization_id, product_id, status])
@@ -1298,6 +1306,7 @@ model orders {
   payments          order_payments[]
   info_requests     order_info_requests[]
   change_requests   order_change_requests[]
+  bookings          product_bookings[]
   source            String?                 @default("MANUAL") // MANUAL | CHAT | BROCHURE
   source_session_id String? // greeting_sessions.id
   greeting_sessions greeting_sessions[]
@@ -1664,6 +1673,16 @@ model platform_audit_logs {
 
   @@index([created_at])
   @@index([entity_type, entity_id])
+}
+
+/// Cấu hình cấp nền tảng — một dòng mỗi khoá, chỉ Console vận hành ghi. Không thuộc tổ chức nào
+/// nên không có `organization_id` (đặc tả 07 mục 1, cùng hạng `platform_operators`).
+/// Khoá đang dùng: `nav_matrix_overrides` — ma trận điều hướng theo ngành (rà soát M13, 22/10/2026).
+model platform_settings {
+  key        String   @id
+  value      Json
+  updated_by String?
+  updated_at DateTime @updatedAt
 }
 
 // ─────────────────────────────────────────────────────────────────────────

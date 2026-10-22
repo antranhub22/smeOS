@@ -11,7 +11,6 @@
  */
 
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
-import matrixOverrides from "@/lib/data/industry-nav-matrix-overrides.json"
 
 /**
  * Toàn bộ navKey hợp lệ trong hệ thống.
@@ -93,23 +92,16 @@ export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
 /**
  * Tính toán tập navKey bị ẩn cho một ngành cụ thể.
  *
- * Lớp 1: Đọc từ Platform Admin Overrides (nếu có cấu hình tại Console `/van-hanh`).
+ * Lớp 1: Ghi đè của Admin SaaS (Console `/van-hanh`) cho ngành của tổ chức — máy chủ đọc từ CSDL
+ * và gửi xuống qua phiên (`organization.navHiddenKeys`), KHÔNG đóng gói lúc build (rà soát M13).
  * Mặc định: Đọc từ Industry Plugin (code-level SSOT).
  */
 export function getHiddenNavKeys(
   industryKey?: string | null,
-  customOverrides?: Record<string, string[]>
+  navHiddenOverride?: readonly string[] | null
 ): ReadonlySet<string> {
-  const plugin = getIndustryPlugin(industryKey)
-  const defaultHidden = plugin.navigation.hiddenNavKeys
-  const overridesSource = customOverrides ?? (matrixOverrides as Record<string, string[]>)
-  const key = plugin.identity.key
-  const overrideHidden = overridesSource[key]
-
-  if (Array.isArray(overrideHidden) && overrideHidden.length > 0) {
-    return new Set(overrideHidden)
-  }
-  return new Set(defaultHidden)
+  if (navHiddenOverride && navHiddenOverride.length > 0) return new Set(navHiddenOverride)
+  return new Set(getIndustryPlugin(industryKey).navigation.hiddenNavKeys)
 }
 
 /**
@@ -117,9 +109,10 @@ export function getHiddenNavKeys(
  */
 export function isNavKeyVisible(
   navKey: string,
-  industryKey?: string | null
+  industryKey?: string | null,
+  navHiddenOverride?: readonly string[] | null
 ): boolean {
-  const hidden = getHiddenNavKeys(industryKey)
+  const hidden = getHiddenNavKeys(industryKey, navHiddenOverride)
   return !hidden.has(navKey)
 }
 
@@ -128,9 +121,10 @@ export function isNavKeyVisible(
  */
 export function filterHrefsByIndustry(
   hrefs: readonly string[],
-  industryKey?: string | null
+  industryKey?: string | null,
+  navHiddenOverride?: readonly string[] | null
 ): string[] {
-  const hidden = getHiddenNavKeys(industryKey)
+  const hidden = getHiddenNavKeys(industryKey, navHiddenOverride)
   return hrefs.filter((href) => {
     const navKey = HREF_TO_NAV_KEY[href]
     if (!navKey) return true // href không có trong matrix → luôn hiện

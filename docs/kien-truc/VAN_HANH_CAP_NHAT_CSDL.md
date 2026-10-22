@@ -89,6 +89,17 @@ sửa CSDL bằng tay hoặc có bản deploy chưa xong.
 2. `npx prisma migrate resolve --rolled-back <ten>` (đã gỡ) hoặc `--applied <ten>` (đã làm xong tay).
 3. Deploy lại.
 
+**Migration dừng có chủ đích vì dữ liệu.** Một số migration kiểm dữ liệu trước khi đổi kiểu cột và
+dừng nếu không đổi được an toàn (ví dụ `20261022110000_product_bookings_typed` báo
+`product_bookings: N dòng có ngày không hợp lệ`). Cả tệp chạy trong một giao dịch nên CSDL chưa đổi gì.
+1. Tìm và sửa tay các dòng được báo (ví dụ ngày `2026-02-30`).
+2. `npx prisma migrate resolve --rolled-back 20261022110000_product_bookings_typed`.
+3. Deploy lại. Đã thử đủ ba bước trên Postgres 16 ngày 22/10/2026.
+
+**Đổi kiểu cột.** SQL do `prisma migrate dev` sinh cho đổi kiểu (vd `String` → `DateTime`) là
+`DROP COLUMN` rồi `ADD COLUMN` — mất dữ liệu. Luôn sửa tay thành `ALTER COLUMN … TYPE … USING …`,
+bọc `BEGIN; … COMMIT;`, rồi thử trên một CSDL có dữ liệu mẫu trước khi commit.
+
 **Cần quay lui.** Prisma không có migration ngược. Có hai cách:
 - Viết migration mới đảo thay đổi (ưu tiên).
 - Khôi phục bản sao lưu ở mục 4 bước 1 hoặc PITR (`VAN_HANH_SU_CO_VA_SAO_LUU.md`), chấp nhận mất

@@ -89,7 +89,7 @@ Chưa xây: 89 ngành dưới đây. Mỗi ngành cần triển khai theo quy tr
 **Quy trình triển khai 3 bước cho mỗi ngành:**
 1. Tạo `src/modules/organization/domain/industries/<ten-nganh>.ts` với `IndustryPluginContract`
 2. Đăng ký vào `INDUSTRY_REGISTRY` trong `industries/index.ts` + thêm key vào `IndustryKey`
-3. Cập nhật `industry-roadmap.ts`: đổi `status: "COMING_SOON"` → `status: "ACTIVE"`, thêm `industryKey`
+3. Gạch dòng `TD-INDUSTRY-*` tương ứng trong bảng trên. (`industry-roadmap.ts` đã xoá 22/10/2026 vì không mã nào đọc nó; bản cũ: commit `fc9810cc`.)
 
 ---
 

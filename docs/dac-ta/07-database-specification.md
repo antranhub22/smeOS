@@ -28,6 +28,7 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Xem mục 22b |
 
+| `platform_settings` | Cấu hình cấp nền tảng, một dòng mỗi khoá, chỉ Console vận hành ghi (mã `N12`) — vd ma trận điều hướng theo ngành áp cho MỌI tổ chức cùng ngành. Xem mục 31 |
 Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên là lỗi chặn ở review.
 
 *Ba câu cũ ở mục 1, mục 16 và mục 19 từng nói ba con số khác nhau ("duy nhất `users`" · "ngoại lệ duy nhất `flower_taxonomy`" · "hai bảng, gồm `platform_audit_logs`"), không câu nào đúng — bảng trên thay cả ba. Cập nhật 19/09: ba bảng Console Vận hành đã XÂY (P25a), không còn là đề xuất — dòng cũ ghi "`platform_audit_logs` chưa tồn tại... dải N1–N8 chưa xây" đã hết hiệu lực.*
@@ -2441,24 +2442,30 @@ model decision_registry {
 
 > **Bổ sung 21/10/2026** theo mã thật — các bảng và cột thêm từ mốc chuyển sang smeOS (`8c53b38`).
 >
-> - `product_bookings` — **TENANT**. Lịch đặt chỗ theo khoảng ngày (Homestay, chế độ `BOOKING_CALENDAR`). `order_id = null` là khoá thủ công do admin đặt. Ngày lưu dạng chuỗi `YYYY-MM-DD`, ngày ra không tính. Chống chồng lịch: mọi lần ghi đi qua `AvailabilityRepository.createBooking`, khoá tư vấn theo sản phẩm (`pg_advisory_xact_lock`) rồi kiểm chồng với đặt chỗ ACTIVE trong cùng giao dịch. Chưa đặt ràng buộc `EXCLUDE` ở CSDL, vì Prisma không khai được và `db push` lúc deploy sẽ gỡ ràng buộc ngoài lược đồ. Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
+> - `product_bookings` — **TENANT**. Lịch đặt chỗ theo khoảng ngày (Homestay, chế độ `BOOKING_CALENDAR`). `order_id = null` là khoá thủ công do admin đặt. Ngày ra không tính. Từ 22/10/2026 ngày là cột `DATE`, trạng thái là enum `booking_status`, `order_id` có khoá ngoại sang `orders` — xem mục 31. Chống chồng lịch: mọi lần ghi đi qua `AvailabilityRepository.createBooking`, khoá tư vấn theo sản phẩm (`pg_advisory_xact_lock`) rồi kiểm chồng với đặt chỗ ACTIVE trong cùng giao dịch. Chưa đặt ràng buộc `EXCLUDE` ở CSDL, vì Prisma không khai được và `db push` lúc deploy sẽ gỡ ràng buộc ngoài lược đồ. Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
 > - `staff_notifications` — **TENANT**. Nhật ký thông báo nhân viên đa kênh (APP_INBOX, ZALO, SMS, TELEGRAM, WHATSAPP, MESSENGER). `recipient_info` là thông tin liên hệ nội bộ, chưa có hạn lưu (M5). Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
 > - Cột mới: `products.availability_config` (Json, cấu hình kiểm khả dụng theo ngành), `users.phone`, `greeting_integrations.staff_notify_enabled` / `staff_notify_channels` / `staff_notify_config_encrypted` (mã hoá như `notify_config_encrypted`) / `staff_notify_events`.
 
 ```prisma
+enum booking_status {
+  ACTIVE
+  CANCELLED
+}
+
 model product_bookings {
-  id              String   @id @default(uuid())
+  id              String         @id @default(uuid())
   organization_id String
   product_id      String
-  order_id        String?  // null = admin block thủ công
-  check_in_date   String   // "YYYY-MM-DD"
-  check_out_date  String   // "YYYY-MM-DD" (exclusive — ngày check-out không được tính)
-  note            String?  // "Bảo trì", "Sựa chữa", null = đặt từ đơn khách
-  status          String   @default("ACTIVE") // ACTIVE | CANCELLED
-  created_at      DateTime @default(now())
+  order_id        String? // null = admin block thủ công
+  check_in_date   DateTime       @db.Date
+  check_out_date  DateTime       @db.Date // exclusive — ngày check-out không được tính
+  note            String? // "Bảo trì", "Sửa chữa", null = đặt từ đơn khách
+  status          booking_status @default(ACTIVE)
+  created_at      DateTime       @default(now())
 
   organization organizations @relation(fields: [organization_id], references: [id])
   product      products      @relation(fields: [product_id], references: [id])
+  order        orders?       @relation(fields: [order_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, product_id, check_in_date])
   @@index([organization_id, product_id, status])
@@ -2486,5 +2493,19 @@ model staff_notifications {
 
   @@index([organization_id, event_key])
   @@index([organization_id, recipient_id])
+}
+```
+
+## 31. Cấu hình nền tảng và đặt chỗ (22/10/2026)
+
+> - `product_bookings` — kiểu dữ liệu chặt (rà soát M5). `check_in_date`/`check_out_date` là `DATE`; code vẫn dùng chuỗi `YYYY-MM-DD` và chỉ đổi ở biên repository (`src/modules/availability/domain/booking-day.ts`; ngày không có thật trên lịch → 422). `status` là enum `booking_status`. `order_id` có khoá ngoại sang `orders`, `ON DELETE CASCADE`: đơn chỉ bị xoá cứng khi dọn tenant bàn giao, và đặt chỗ sinh từ đơn đi theo; khoá thủ công (`order_id = null`) ở lại. Migration `20261022110000_product_bookings_typed` VIẾT TAY: đổi kiểu tại chỗ (`ALTER … TYPE … USING`), không để Prisma xoá và tạo lại cột. Ngày sai thì migration dừng, không đoán. Trạng thái lạ chuyển thành `CANCELLED`. Đặt chỗ trỏ tới đơn đã xoá được giải phóng (`CANCELLED`, ghi chú "Đơn gốc đã bị xoá"). Ca thử: `tests/tenant/availability-typed-dates.test.ts`.
+> - `platform_settings` — **NỀN TẢNG** (không có `organization_id`, mục 1). Khoá `nav_matrix_overrides`: ma trận điều hướng theo ngành do Admin SaaS ghi đè ở Console `/van-hanh` (`PUT /platform/nav-matrix`, mã `N12`). Trước 22/10 lưu vào một tệp trên máy chủ: mất khi deploy, mỗi instance một bản, và menu không đọc nó. Giờ máy chủ đọc (bộ nhớ đệm 30 giây) và gửi danh sách mục ẩn xuống qua phiên (`organization.navHiddenKeys`). Chưa có dòng thì dùng `src/lib/data/industry-nav-matrix-overrides.json` làm giá trị khởi đầu. Migration `20261022100000_platform_settings`. Ca thử: `tests/platform/nav-matrix-overrides.test.ts`.
+
+```prisma
+model platform_settings {
+  key        String   @id
+  value      Json
+  updated_by String?
+  updated_at DateTime @updatedAt
 }
 ```
