@@ -31,7 +31,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | E | Lịch đặt chỗ Homestay | 5 | Đã rà |
 | F | Ma trận menu ngành, Console vận hành | 7 | Đã rà |
 | K | Sức khoẻ hệ thống, giám sát, worker | 6 | Đã rà |
-| J | Seed, dữ liệu mẫu, script tài khoản | 6 | Chưa rà |
+| J | Seed, dữ liệu mẫu, script tài khoản | 6 | Đã rà |
 | D | Sửa schema | 6 | Chưa rà |
 | C | Hạ tầng, CI, deploy, thư viện | 20 | Chưa rà |
 | I | Thông báo nhân viên | 2 | Chưa rà |
@@ -141,12 +141,12 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `5d18ecc2` | 10-19 | feat(profile): allow seeding industry-specific mock data on industry selection for SuperAdmin | CHƯA RÀ | |
-| `0943f8f8` | 10-20 | feat(auth): sync tuans2@dev.com superuser in sync-siin-store seed for prod | CHƯA RÀ | |
-| `6a8ad623` | 10-21 | fix(seed): stop resetting hardcoded passwords on production deploys | CHƯA RÀ | |
-| `72fe6167` | 10-21 | fix(profiles): allow sample data only for trial organizations | CHƯA RÀ | |
-| `24447cf0` | 10-22 | feat(platform): script to delete all accounts but one superadmin | CHƯA RÀ | |
-| `8a415d77` | 10-22 | feat(platform): script to create two QA accounts in a dedicated organization | CHƯA RÀ | |
+| `5d18ecc2` | 10-19 | feat(profile): allow seeding industry-specific mock data on industry selection for SuperAdmin | THAY THẾ | J-MOCK |
+| `0943f8f8` | 10-20 | feat(auth): sync tuans2@dev.com superuser in sync-siin-store seed for prod | ĐẠT SAU SỬA | F-SEED |
+| `6a8ad623` | 10-21 | fix(seed): stop resetting hardcoded passwords on production deploys | ĐẠT SAU SỬA | F-SEED |
+| `72fe6167` | 10-21 | fix(profiles): allow sample data only for trial organizations | ĐẠT |  |
+| `24447cf0` | 10-22 | feat(platform): script to delete all accounts but one superadmin | ĐẠT |  |
+| `8a415d77` | 10-22 | feat(platform): script to create two QA accounts in a dedicated organization | ĐẠT |  |
 
 ### Cụm D — Sửa schema
 
@@ -238,6 +238,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| J-MOCK | Cao | Nạp dữ liệu mẫu theo ngành | Tiệm thật nạp được dữ liệu mẫu đè hồ sơ | Đã thay bằng `72fe6167`: chỉ tổ chức dùng thử |
 | K-LEAK | Cao | `GET /api/health` | Health công khai trả host CSDL đã che, chi tiết lỗi, phiên bản | Đã thay bằng `da210518`: chỉ trạng thái; chi tiết vào log và `/internal/health` có khoá |
 | F-SU | Chặn | Đổi ngành | Mở khoá đổi ngành theo email cố định của tài khoản dev | Đã thay bằng mã năng lực nền tảng N1/N12 (`df1b9630`); không còn email đặc quyền trong code |
 | F-CAP | Cao | Route `/platform/*` | Ma trận menu, chính sách kênh từng chỉ cần phiên nền tảng | Mọi route kiểm N1/N12/N13 (route hoặc use-case) — đã đối chiếu toàn bộ 15 route |
