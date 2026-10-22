@@ -20,6 +20,7 @@ import {
   ProductStoryCard,
 } from "@/components/products/product-detail-cards"
 import { ProductAvailabilityCard } from "@/components/products/product-availability-card"
+import { ProductCraftFeeCard } from "@/components/products/product-craft-fee-card"
 
 type ProductDetail = {
   id: string
@@ -226,6 +227,11 @@ export default function ProductDetailPage() {
               productId={productId}
               canEdit={can("R12")}
             />
+
+            {/* Phí làm thay của mẫu — phí là giá vốn nội bộ nên cần quyền xem giá (L5) */}
+            {activeIndustry?.craftFee && can("L3") && can("L5") && (
+              <ProductCraftFeeCard productId={productId} attributes={attrs} spec={activeIndustry.craftFee} onUpdated={napLai} />
+            )}
 
             {/* Nhóm 7: Cấu hình Khả dụng & Cơ chế Đặt hàng theo ngành */}
             <ProductAvailabilityCard

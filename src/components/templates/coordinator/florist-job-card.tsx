@@ -29,6 +29,7 @@ export interface FloristJobCardProps {
   orderCode: string
   recipeTitle: string
   unitPriceVnd: number
+  suggestedFeeVnd?: number | undefined // phí gợi ý theo phương án tiệm cài; chưa tải xong → 50% giá bán
   targetReadyTime: string
   deliveryTargetTime?: string | undefined
   sampleImageUrl?: string | null | undefined
@@ -51,7 +52,7 @@ export interface FloristJobCardProps {
 export function FloristJobCard({
   orderCode,
   recipeTitle,
-  unitPriceVnd,
+  unitPriceVnd, suggestedFeeVnd,
   targetReadyTime,
   deliveryTargetTime,
   sampleImageUrl,
@@ -71,8 +72,9 @@ export function FloristJobCard({
   onPrint,
 }: FloristJobCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const defaultFee = Math.round(unitPriceVnd * 0.5)
-  const [suggestedCraftFee, setSuggestedCraftFee] = useState<number>(defaultFee)
+  const defaultFee = suggestedFeeVnd ?? Math.round(unitPriceVnd * 0.5)
+  const [feeOverride, setSuggestedCraftFee] = useState<number | null>(null)
+  const suggestedCraftFee = feeOverride ?? defaultFee
   const [maskPhone, setMaskPhone] = useState(true)
   const [copiedImage, setCopiedImage] = useState(false)
   const [copiedText, setCopiedText] = useState(false)
@@ -100,7 +102,6 @@ export function FloristJobCard({
       setCopiedText(true)
       setTimeout(() => setCopiedText(false), 2500)
     } catch {
-      // Fallback
     }
   }
 
@@ -142,7 +143,6 @@ export function FloristJobCard({
           return
         }
       } catch {
-        // Fallback
       }
       await handleCopyText()
     }

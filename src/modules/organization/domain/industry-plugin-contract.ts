@@ -97,6 +97,25 @@ export interface IndustryNavConfig {
   readonly hiddenNavKeys: readonly string[]
 }
 
+export type CraftComplexity = "EASY" | "MEDIUM" | "HARD"
+
+/**
+ * Phí trả cho bên làm thay (chi nhánh trong chuỗi / đối tác) — SỐ MẶC ĐỊNH của ngành; tiệm tự sửa
+ * trong Cài đặt → Điều phối chuỗi. Cách tính dùng chung mọi ngành nằm ở
+ * `greeting-card/domain/craft-fee-policy.ts`; ngành chỉ khai nhãn và số khởi điểm.
+ */
+export interface IndustryCraftFeeSpec {
+  readonly feeLabel: string // Tên khoản phí trên màn hình: "Phí cắm hoa", "Phí may đo", "Phí chế biến"…
+  readonly defaultPercent: number // % giá hàng trả cho chi nhánh cùng chủ
+  readonly minVnd: number
+  readonly maxVnd: number
+  readonly partnerPercent: number // % trả cho đối tác ngoài chuỗi
+  readonly complexityLabels: Readonly<Record<CraftComplexity, string>>
+  readonly laborByComplexityVnd: Readonly<Record<CraftComplexity, number>>
+  /** Ngày cao điểm cố định hằng năm (MM-DD) — tiệm thêm ngày âm lịch (Tết, Trung thu) trong cài đặt. */
+  readonly peakDays: readonly { readonly monthDay: string; readonly label: string }[]
+}
+
 export interface IndustryPluginContract {
   readonly identity: IndustryIdentity
   readonly terminology: IndustryTerminology
@@ -105,4 +124,6 @@ export interface IndustryPluginContract {
   readonly templates: IndustryTemplatesSpec
   readonly aiConfig: IndustryAiConfig
   readonly navigation: IndustryNavConfig
+  /** `null` = ngành không thuê ngoài sản xuất (vd. homestay) — mục Phí gia công ẩn khỏi cài đặt. */
+  readonly craftFee: IndustryCraftFeeSpec | null
 }

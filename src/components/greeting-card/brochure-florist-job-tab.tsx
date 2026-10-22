@@ -32,13 +32,12 @@ export function BrochureFloristJobTab({
   const { organization } = useSession()
   const terms = getIndustryTerminology(organization?.industry)
   const orderTerms = getIndustryOrderTerms(organization?.industry)
-  // Giá gia công tính trên giá trước VAT — VAT không làm tăng tiền công thợ
-  const { data: vatData } = useApi<{ data: { subtotalVnd: number } }>(target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/vat` : null)
-  const { data: dispatchData } = useApi<{ data: { dispatchState?: { claimedBranchName?: string | null; claimedBranchId?: string | null } } }>(
-    target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/chain-dispatch` : null
-  )
+  // Phí gia công do máy chủ tính theo phương án tiệm cài (mặc định 50% giá hàng trước VAT, có sàn/trần)
+  const { data: dispatchData } = useApi<{
+    data: { dispatchState?: { claimedBranchName?: string | null; claimedBranchId?: string | null }; craftFee?: { suggestedVnd: number; finalVnd: number | null } }
+  }>(target.orderId ? `/api/v1/greeting-card/orders/${target.orderId}/chain-dispatch` : null)
   const claimedBranchName = dispatchData?.data.dispatchState?.claimedBranchName || dispatchData?.data.dispatchState?.claimedBranchId || null
-  const defaultFee = Math.round((vatData?.data.subtotalVnd ?? target.totalVnd ?? 0) * 0.5)
+  const defaultFee = dispatchData?.data.craftFee?.finalVnd ?? dispatchData?.data.craftFee?.suggestedVnd ?? 0
   const [feeOverride, setSuggestedCraftFee] = useState<number | null>(null)
   const suggestedCraftFee = feeOverride ?? defaultFee
   const [floristNote, setFloristNote] = useState<string>("")
@@ -168,7 +167,7 @@ export function BrochureFloristJobTab({
           <ChainDispatchPanel
             orderId={target.orderId}
             orderCode={target.orderCode || target.sendCode || ""}
-            suggestedCraftFee={suggestedCraftFee}
+            suggestedCraftFee={feeOverride ?? undefined}
           />
         )}
 

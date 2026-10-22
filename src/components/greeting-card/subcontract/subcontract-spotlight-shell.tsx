@@ -35,6 +35,9 @@ export interface SubcontractSpotlightShellProps {
   cardMessage?: string | null | undefined
   specialNotes?: string | null | undefined
   subcontractPriceVnd: number
+  /** Khoản trừ phí (giao trễ, khiếu nại) và số thực nhận — chỉ có với chi nhánh đang làm đơn. */
+  craftFeeDeductions?: Array<{ amountVnd: number; reason: string }> | undefined
+  craftFeePayableVnd?: number | undefined
   dispatchStatus: SubcontractDispatchStatus
   claimedByBranchId?: string | null | undefined
   claimedBranchName?: string | null | undefined
@@ -75,6 +78,8 @@ export function SubcontractSpotlightShell({
   cardMessage,
   specialNotes,
   subcontractPriceVnd,
+  craftFeeDeductions = [],
+  craftFeePayableVnd,
   dispatchStatus,
   claimedByBranchId,
   claimedBranchName,
@@ -190,6 +195,14 @@ export function SubcontractSpotlightShell({
           <span className="text-title font-black text-primary">
             {subcontractPriceVnd.toLocaleString("vi-VN")} đ
           </span>
+          {craftFeeDeductions.map((d) => (
+            <span key={d.reason} className="text-caption text-danger block">
+              − {d.amountVnd.toLocaleString("vi-VN")} đ ({d.reason})
+            </span>
+          ))}
+          {craftFeeDeductions.length > 0 && craftFeePayableVnd !== undefined && (
+            <span className="text-caption font-bold text-foreground block">Thực nhận: {craftFeePayableVnd.toLocaleString("vi-VN")} đ</span>
+          )}
         </div>
       </div>
 

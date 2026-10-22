@@ -19,6 +19,10 @@ import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-
 import type { TenantContext } from "@/core/tenancy"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { publicAppUrl } from "@/lib/public-url"
+import { craftFeePayable } from "@/modules/greeting-card/domain/craft-fee-policy"
+import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
+import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
+import { suggestCraftFee } from "@/modules/greeting-card/use-cases/suggest-craft-fee"
 
 const actionSchema = z.object({
   action: z.enum(["CLAIM", "CANCEL", "COMMIT", "DELETE_QC"]),
@@ -50,14 +54,14 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   const subState = coordMeta.subcontract_dispatch as Record<string, unknown> | undefined
 
   const pricingRef = (order.pricing_rule_ref as Record<string, unknown> | null) ?? {}
-  const total = Number(order.total_vnd)
-  const defaultSubcontractPrice = Math.round(total * 0.5) // SSOT: Chuẩn hoá 50% thù lao gia công mặc định
+  // Phí đã chốt lúc mời; đơn cũ chưa chốt thì tính theo phương án tiệm đang cài (PO 22/10/2026)
+  const craftFee = (subState as Pick<SubcontractOrderState, "craftFee"> | undefined)?.craftFee
   const subcontractPriceVnd =
     typeof subState?.subcontractPriceVnd === "number"
       ? (subState.subcontractPriceVnd as number)
       : typeof pricingRef.subcontract_price_vnd === "number"
       ? (pricingRef.subcontract_price_vnd as number)
-      : defaultSubcontractPrice
+      : (await suggestCraftFee(order.organization_id, order.id, new CraftFeeFactsRepository())).suggestedVnd
 
   const firstItem = order.items[0]
   const session = order.greeting_sessions[0]
@@ -81,6 +85,8 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   // Chi nhánh được mời nhưng không nhận đơn vẫn giữ link 14 ngày: chỉ chi nhánh đang làm đơn mới thấy
   // SĐT người nhận, ảnh QC/giao hàng, shipper và yêu cầu bỏ qua (rà soát cụm G, 22/10/2026)
   const isClaimant = Boolean(subState?.claimedBranchId) && subState?.claimedBranchId === branchId
+  // Khoản trừ (lý do khiếu nại, giao trễ) chỉ chi nhánh đang làm đơn thấy
+  const deductions = isClaimant ? (craftFee?.deductions ?? []) : []
   const showPhone = isClaimant && isReadyForDelivery
   const recipientPhone = showPhone ? recipientInfo.phone : recipientInfo.maskedPhone
   const deliveryTime = typeof deliveryWindow.timeSlot === "string" && typeof deliveryWindow.date === "string"
@@ -134,6 +140,8 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
       cardMessage: order.card_message ?? null,
       specialNotes,
       subcontractPriceVnd,
+      craftFeeDeductions: deductions.map((d) => ({ amountVnd: d.amountVnd, reason: d.reason })),
+      craftFeePayableVnd: craftFeePayable(subcontractPriceVnd, deductions),
       dispatchStatus: subState?.dispatchStatus ?? "OPEN",
       claimedByBranchId: subState?.claimedBranchId ?? null,
       claimedBranchName: subState?.claimedBranchName ?? null,
