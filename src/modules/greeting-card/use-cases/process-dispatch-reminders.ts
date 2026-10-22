@@ -100,14 +100,10 @@ export async function processOrderDispatchReminders(
   const submitShipperUrl = linkFor("submit_shipper")
   const submitDeliveryUrl = linkFor("submit_delivery")
 
-  // Thẻ Tiến Độ (Live Dashboard Card): dùng để EDIT tin nhắn cũ thay vì gửi mới
+  // Thẻ tiến độ của đơn = thẻ trong chat của CHÍNH chi nhánh đã nhận (gán lúc nhận đơn) — sửa thay vì gửi mới
   const existingCard =
     state.telegramMsgId && state.telegramChatId
-      ? {
-          msgId: state.telegramMsgId,
-          chatId: state.telegramChatId,
-          isCaption: state.isCaption ?? false,
-        }
+      ? { msgId: state.telegramMsgId, chatId: state.telegramChatId, isCaption: state.isCaption ?? false }
       : null
   // Nếu lần này gửi lần đầu (chưa có thẻ), lưu msgId trả về vào state
   let capturedTelegramMsgId: string | null = null
@@ -348,21 +344,20 @@ export async function processOrderDispatchReminders(
     }
   }
 
-  // Nếu có mốc nào vừa gửi thành công, cập nhật state vào DB
+  // Gộp các mốc vừa gửi vào trạng thái MỚI NHẤT dưới khoá dòng — không ghi đè bản chụp đầu lượt
+  // quét lên thao tác chốt/huỷ xảy ra trong lúc gửi tin (rà soát cụm G)
   if (results.some((r) => r.sent)) {
-    const nextState: SubcontractOrderState = {
-      ...state,
-      remindersSent,
-      // Lưu Live Card ID nếu mới capture được lần đầu
-      ...(capturedTelegramMsgId
-        ? {
-            telegramMsgId: capturedTelegramMsgId,
-            telegramChatId: capturedTelegramChatId,
-            isCaption: capturedIsCaption,
-          }
-        : {}),
-    }
-    await store.saveSubcontractState(ctx, nextState)
+    await store.updateSubcontractState(ctx, state.orderId, (current) => {
+      const base = current ?? state
+      const merged: SubcontractOrderState = {
+        ...base,
+        remindersSent: { ...(base.remindersSent ?? {}), ...remindersSent },
+        ...(capturedTelegramMsgId && base.claimedBranchId === branch.branchId
+          ? { telegramMsgId: capturedTelegramMsgId, telegramChatId: capturedTelegramChatId, isCaption: capturedIsCaption }
+          : {}),
+      }
+      return { next: merged, result: undefined }
+    })
   }
 
   return results

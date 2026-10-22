@@ -1,3 +1,4 @@
+import { lockedUpdate } from "./locked-state-store"
 import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import {
@@ -68,6 +69,8 @@ describe("dispatch-subcontract-order & handle-subcontract-claim use-cases", () =
     let savedState: SubcontractOrderState | null = null
 
     const mockStore: ISubcontractStateStore = {
+
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockImplementation(async (_, s) => {
         savedState = s
       }),
@@ -112,6 +115,7 @@ describe("dispatch-subcontract-order & handle-subcontract-claim use-cases", () =
     }
 
     const mockStore: ISubcontractClaimStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockImplementation(async (_, s) => {
         currentState = s
       }),
@@ -177,15 +181,16 @@ describe("dispatch-subcontract-order & handle-subcontract-claim use-cases", () =
       roundExpiresAt: null,
     }
     let stored = openState
+    // Kho giả có khoá: đọc–kiểm–ghi không bị lượt khác chen giữa (như SELECT … FOR UPDATE)
     const mockStore: ISubcontractClaimStore = {
+      updateSubcontractState: async (_ctx, _orderId, change) => {
+        const { next, result } = change(stored)
+        if (next) stored = next
+        return result
+      },
       saveSubcontractState: vi.fn(),
-      // Cả hai lượt đều đọc thấy OPEN (đọc trước khi lượt kia kịp ghi)
       loadSubcontractState: vi.fn().mockResolvedValue(openState),
-      saveSubcontractStateIfStatus: vi.fn().mockImplementation(async (_, s, expected) => {
-        if (stored.dispatchStatus !== expected) return false
-        stored = s
-        return true
-      }),
+      saveSubcontractStateIfStatus: vi.fn(),
     }
     const mockNotifier: IDispatchNotifier = { sendSubcontractInvite: vi.fn().mockResolvedValue({ sent: true }) }
 
@@ -216,6 +221,8 @@ describe("dispatch-subcontract-order & handle-subcontract-claim use-cases", () =
     }
 
     const mockStore: ISubcontractStateStore = {
+
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockImplementation(async (_, s) => {
         currentState = s
       }),

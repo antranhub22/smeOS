@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto"
 
 import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
+import type { delivery_status, order_status, Prisma, production_status } from "@/generated/prisma/client"
 
 type Db = typeof prisma
 
@@ -21,14 +21,28 @@ export interface SubcontractOrderStatusPatch {
   delivery_status?: string | undefined
 }
 
+/** Điều kiện trạng thái HIỆN TẠI của đơn để bước gia công được ghi. */
+export interface SubcontractOrderPrecondition {
+  /** Đơn không được ở các trạng thái này (mặc định: đã huỷ, đã hoàn tất). */
+  notStatus?: order_status[] | undefined
+  productionStatus?: production_status[] | undefined
+  deliveryStatus?: delivery_status[] | undefined
+}
+
+export type MetadataChange = (current: Record<string, unknown>) => Record<string, unknown>
+
 export interface SubcontractStepWrite {
   organizationId: string
   orderId: string
   order?: SubcontractOrderStatusPatch | undefined
-  /** Thay TOÀN BỘ `order_coordinations.metadata` — người gọi tự trộn với bản cũ. */
-  metadata?: Record<string, unknown> | undefined
+  /** Tính metadata MỚI từ bản đang khoá — chỉ đổi khoá của bước mình, giữ nguyên phần còn lại. */
+  metadata?: MetadataChange | undefined
   events?: SubcontractOrderEvent[] | undefined
+  /** Không khớp → không ghi gì, `applyStep` trả `false` (route trả 409). */
+  require?: SubcontractOrderPrecondition | undefined
 }
+
+export const DEFAULT_CLOSED_ORDER_STATUSES: order_status[] = ["CANCELLED", "COMPLETED"]
 
 /**
  * Đọc/ghi phiên gia công của một đơn: `order_coordinations.metadata`, trạng thái `orders` và
@@ -52,35 +66,54 @@ export class SubcontractStepStore {
     return (await this.findMetadata(organizationId, orderId)) ?? {}
   }
 
-  async writeMetadata(organizationId: string, orderId: string, metadata: Record<string, unknown>): Promise<void> {
-    await this.db.order_coordinations.updateMany({
-      where: { organization_id: organizationId, order_id: orderId },
-      data: { metadata: metadata as Prisma.InputJsonValue },
+  /**
+   * Đọc–sửa–ghi metadata dưới khoá dòng (SELECT … FOR UPDATE). `change` nhận bản MỚI NHẤT và trả
+   * bản mới, hoặc `null` để không ghi. Trước 22/10/2026 nơi gọi đọc từ trước (có khi trước cả một
+   * lời gọi AI vài giây) rồi ghi đè cả khối JSON, làm mất thay đổi của luồng khác (rà soát cụm G).
+   */
+  async mutateMetadata<T = void>(
+    organizationId: string,
+    orderId: string,
+    change: (current: Record<string, unknown>) => { next: Record<string, unknown> | null; result: T }
+  ): Promise<T> {
+    return this.db.$transaction(async (tx) => {
+      const locked = await lockCoordination(tx, organizationId, orderId)
+      const { next, result } = change(locked?.metadata ?? {})
+      if (next && locked) {
+        await tx.order_coordinations.update({ where: { id: locked.id }, data: { metadata: next as Prisma.InputJsonValue } })
+      }
+      return result
     })
   }
 
-  /** Ghi một bước gia công trong MỘT giao dịch: trạng thái đơn, metadata, nhật ký sự kiện. */
-  async applyStep(input: SubcontractStepWrite): Promise<void> {
-    const ops: Prisma.PrismaPromise<unknown>[] = []
-    if (input.order && Object.keys(input.order).length > 0) {
-      ops.push(
-        this.db.orders.updateMany({
-          where: { organization_id: input.organizationId, id: input.orderId },
-          data: input.order as Prisma.ordersUpdateManyMutationInput,
-        })
-      )
-    }
-    if (input.metadata) {
-      ops.push(
-        this.db.order_coordinations.updateMany({
-          where: { organization_id: input.organizationId, order_id: input.orderId },
-          data: { metadata: input.metadata as Prisma.InputJsonValue },
-        })
-      )
-    }
-    for (const e of input.events ?? []) {
-      ops.push(
-        this.db.order_events.create({
+  /**
+   * Ghi một bước gia công trong MỘT giao dịch, dưới khoá dòng: kiểm điều kiện trạng thái đơn, đổi
+   * trạng thái đơn, metadata, nhật ký sự kiện. Trả `false` (không ghi gì) nếu đơn không còn ở
+   * trạng thái cho phép — vd. chi nhánh gửi ảnh giao hàng cho đơn vừa bị huỷ.
+   */
+  async applyStep(input: SubcontractStepWrite): Promise<boolean> {
+    return this.db.$transaction(async (tx) => {
+      const locked = await lockCoordination(tx, input.organizationId, input.orderId)
+      const req = input.require ?? {}
+      const where: Prisma.ordersWhereInput = {
+        organization_id: input.organizationId,
+        id: input.orderId,
+        status: { notIn: req.notStatus ?? DEFAULT_CLOSED_ORDER_STATUSES },
+        ...(req.productionStatus ? { production_status: { in: req.productionStatus } } : {}),
+        ...(req.deliveryStatus ? { delivery_status: { in: req.deliveryStatus } } : {}),
+      }
+      const hasOrderPatch = input.order && Object.keys(input.order).length > 0
+      const matched = hasOrderPatch
+        ? (await tx.orders.updateMany({ where, data: input.order as Prisma.ordersUpdateManyMutationInput })).count
+        : await tx.orders.count({ where })
+      if (matched === 0) return false
+
+      if (input.metadata && locked) {
+        const next = input.metadata(locked.metadata)
+        await tx.order_coordinations.update({ where: { id: locked.id }, data: { metadata: next as Prisma.InputJsonValue } })
+      }
+      for (const e of input.events ?? []) {
+        await tx.order_events.create({
           data: {
             id: randomUUID(),
             organization_id: input.organizationId,
@@ -92,8 +125,23 @@ export class SubcontractStepStore {
             reason: e.reason ?? null,
           },
         })
-      )
-    }
-    if (ops.length > 0) await this.db.$transaction(ops)
+      }
+      return true
+    })
   }
+}
+
+async function lockCoordination(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  orderId: string
+): Promise<{ id: string; metadata: Record<string, unknown> } | null> {
+  const rows = await tx.$queryRaw<Array<{ id: string; metadata: unknown }>>`
+    SELECT "id", "metadata" FROM "order_coordinations"
+    WHERE "organization_id" = ${organizationId} AND "order_id" = ${orderId}
+    FOR UPDATE`
+  const row = rows[0]
+  if (!row) return null
+  const metadata = row.metadata && typeof row.metadata === "object" ? (row.metadata as Record<string, unknown>) : {}
+  return { id: row.id, metadata }
 }

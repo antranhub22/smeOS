@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
@@ -247,11 +247,15 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   if (action === "COMMIT") {
-    const currentState = await repo.loadSubcontractState(ctx, order.id)
-    if (!currentState || currentState.claimedBranchId !== branch.id) {
-      throw unprocessable("Không thể chốt đơn khi bạn chưa tiếp nhận.")
-    }
-    const nextState = commitSubcontractOrder(currentState)
+    // Chốt dưới khoá dòng; bấm lại khi đã chốt không gửi lại tin M1 và tin báo khách (rà soát cụm G)
+    const newlyCommitted = await repo.updateSubcontractState(ctx, order.id, (current) => {
+      if (!current || current.claimedBranchId !== branch.id) throw unprocessable("Không thể chốt đơn khi bạn chưa tiếp nhận.")
+      if (current.dispatchStatus === "COMMITTED") return { next: null, result: false }
+      if (current.dispatchStatus !== "CLAIMED_GRACE") throw conflict("Đơn hàng không ở trạng thái có thể chốt.")
+      const committed = commitSubcontractOrder(current)
+      return { next: { ...committed, remindersSent: { ...(committed.remindersSent ?? {}), M1_PREP: new Date().toISOString() } }, result: true }
+    })
+    if (!newlyCommitted) return jsonResponse({ data: { success: true, dispatchStatus: "COMMITTED", alreadyCommitted: true } })
 
     // Bắn tin nhắn M1: Bắt đầu chế tác cho chi nhánh vừa chốt
     const policy = parseChainDispatchPolicy(org?.settings as Record<string, unknown> | null | undefined)
@@ -295,16 +299,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     // Trước 22/10/2026 route tự nhắn khách bằng kênh của chi nhánh, tiêu đề "Đơn gia công" (rà soát cụm G).
     queueOrderNotification(order.organization_id, order.id, "ORDER_ACCEPTED")
 
-    const finalState = {
-      ...nextState,
-      remindersSent: {
-        ...(nextState.remindersSent ?? {}),
-        M1_PREP: new Date().toISOString(),
-      },
-    }
-
-    await repo.saveSubcontractState(ctx, finalState)
-    return jsonResponse({ data: { success: true, dispatchStatus: finalState.dispatchStatus } })
+    return jsonResponse({ data: { success: true, dispatchStatus: "COMMITTED" } })
   }
 
   if (action === "DELETE_QC") {
@@ -317,29 +312,23 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       throw unprocessable("Chỉ chi nhánh đã nhận đơn mới được xoá ảnh thành phẩm.")
     }
 
-    const store = new SubcontractStepStore()
-    const existingMeta = await store.readMetadata(order.organization_id, order.id)
-    const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
-
-    // Loại bỏ ảnh khớp theo URL hoặc theo storage key
-    const filteredQcPhotos = existingQcPhotos.filter((p) => {
-      if (p === photoToDelete) return false
-      // Nếu p là key và photoToDelete chứa key đó
-      if (photoToDelete.includes(p)) return false
-      // Nếu p chứa key trong photoToDelete
-      const keyMatch = photoToDelete.match(/floraos-core\/(org\/[^?]+)/)
-      if (keyMatch?.[1] && p.includes(keyMatch[1])) return false
-      return true
-    })
-
-    await store.writeMetadata(order.organization_id, order.id, { ...existingMeta, qc_photos: filteredQcPhotos })
-
-    return jsonResponse({
-      data: {
-        success: true,
-        remainingCount: filteredQcPhotos.length,
+    // Xoá đúng MỘT ảnh, khớp nguyên khoá kho (trước đây khớp chuỗi con: một chuỗi ghép mọi khoá xoá
+    // hết ảnh), và chỉ khi ảnh chưa được duyệt — sau đó ảnh QC là bằng chứng (rà soát cụm G)
+    const key = photoToDelete.startsWith("org/") ? photoToDelete : photoToDelete.match(/(?:^|\/)(org\/[^?#]+)/)?.[1]
+    let remainingCount = 0
+    const ok = await new SubcontractStepStore().applyStep({
+      organizationId: order.organization_id,
+      orderId: order.id,
+      require: { productionStatus: ["WAITING", "ASSIGNED", "ARRANGING", "QUALITY_CHECK"], deliveryStatus: ["PENDING"] },
+      metadata: (current) => {
+        const photos = Array.isArray(current.qc_photos) ? (current.qc_photos as string[]) : []
+        const remaining = photos.filter((p) => p !== photoToDelete && p !== key)
+        remainingCount = remaining.length
+        return { ...current, qc_photos: remaining }
       },
     })
+    if (!ok) throw conflict("Ảnh thành phẩm đã được duyệt, không thể xoá.")
+    return jsonResponse({ data: { success: true, remainingCount } })
   }
 
   throw unprocessable("Hành động không hợp lệ.")

@@ -1,3 +1,4 @@
+import { lockedUpdate } from "./locked-state-store"
 import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import { processOrderDispatchReminders } from "../process-dispatch-reminders"
@@ -28,6 +29,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
 
   it("Lần 1 (M2_QC): Gửi nhắc chụp ảnh QC kèm nút tải ảnh khi chưa có ảnh", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -88,6 +90,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
 
   it("Không gửi nhắc QC nếu cửa hàng ĐÃ CÓ ẢNH THÀNH PHẨM (hasQcPhoto: true)", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -134,6 +137,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
 
   it("Lần 2 (M2_QC_RETRY): Nhắc giục khẩn cấp sau 5 phút nếu chưa có ảnh", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -200,6 +204,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
 
   it("Báo động Điều phối (M2_QC_ESCALATED): Sau Lần 2 5 phút vẫn chưa có ảnh -> Cảnh báo Điều phối kèm nút gọi Hotline", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -288,6 +293,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Lần 1 (M3_SHIPPER): Gửi nhắc cung cấp thông tin shipper trước giờ giao N phút khi chưa có shipper", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -355,6 +361,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Không gửi nhắc shipper nếu cửa hàng ĐÃ CÓ THÔNG TIN SHIPPER (hasShipperInfo: true)", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -407,6 +414,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Lần 2 (M3_SHIPPER_RETRY): Nhắc giục khẩn cấp sau 5 phút nếu chưa có shipper", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -473,6 +481,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Báo động đỏ Điều phối (M3_SHIPPER_ESCALATED): Sau Lần 2 5 phút vẫn chưa có shipper -> Cảnh báo đỏ Điều phối kèm hotline gọi trực tiếp", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -546,6 +555,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Mốc M4 Giao hàng (M4_DELIVERY): Đến/quá giờ hẹn giao mà chưa có ảnh POD -> Nhắc lần 1 tải ảnh giao hàng", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -615,6 +625,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Mốc M4 Giao hàng (M4_DELIVERY_ESCALATION): Quá hạn 2 lần nhắc chưa có ảnh POD -> Cảnh báo đỏ Điều phối", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }

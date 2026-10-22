@@ -1,3 +1,4 @@
+import { lockedUpdate } from "./locked-state-store"
 import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import type { BranchCandidate } from "../../domain/chain-dispatch-engine"
@@ -37,6 +38,7 @@ const openState = (over: Partial<SubcontractOrderState> = {}): SubcontractOrderS
 function setup(state: SubcontractOrderState, statusAtWrite = state.dispatchStatus) {
   let saved: SubcontractOrderState | null = null
   const store: ISubcontractClaimStore = {
+    updateSubcontractState: lockedUpdate(() => store),
     saveSubcontractState: vi.fn(),
     loadSubcontractState: vi.fn(),
     saveSubcontractStateIfStatus: vi.fn().mockImplementation(async (_, s, expected) => {

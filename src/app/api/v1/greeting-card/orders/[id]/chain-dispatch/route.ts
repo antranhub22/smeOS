@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { validationFailed, notFound } from "@/core/http/errors"
+import { conflict, validationFailed, notFound } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -141,22 +141,35 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   // Khởi tạo Subcontract state
   const notifier = new MultiChannelDispatchNotifier()
 
+  if (order.status === "CANCELLED" || order.status === "COMPLETED") throw conflict("Đơn hàng đã huỷ hoặc đã hoàn tất.")
   const roundExpiry = new Date(Date.now() + policy.claimTimeoutMinutes * 60 * 1000).toISOString()
-  const subcontractState: SubcontractOrderState = {
-    orderId: order.id,
-    orderCode: order.code,
-    dispatchStatus: "OPEN",
-    currentRound: 1,
-    claimedBranchId: null,
-    claimedBranchName: null,
-    claimedAt: null,
-    graceExpiresAt: null,
-    declinedBranchIds: [],
-    invitedBranchIds: approvedBranches.map((b) => b.branchId),
-    roundExpiresAt: roundExpiry,
-    subcontractPriceVnd: craftFee,
-  }
-  await stateRepo.saveSubcontractState(ctx, subcontractState)
+  // Mở vòng mời mới dưới khoá dòng. Đơn đã có chi nhánh nhận/chốt thì không mở lại — "Gửi lại" trước
+  // 22/10/2026 xoá mất chi nhánh đang làm đơn (rà soát cụm G). Chi nhánh đã từ chối không được mời lại.
+  const subcontractState = await stateRepo.updateSubcontractState(ctx, order.id, (current) => {
+    if (current && (current.dispatchStatus === "CLAIMED_GRACE" || current.dispatchStatus === "COMMITTED")) {
+      throw conflict("Đơn đã có chi nhánh nhận. Huỷ nhận của chi nhánh đó trước khi mời lại.")
+    }
+    const declined = current?.declinedBranchIds ?? []
+    const invited = approvedBranches.map((b) => b.branchId).filter((id) => !declined.includes(id))
+    if (invited.length === 0) throw validationFailed({ approvedBranchIds: "Các chi nhánh đã chọn đều đã từ chối đơn này" })
+    const next: SubcontractOrderState = {
+      ...(current ?? {}),
+      orderId: order.id,
+      orderCode: order.code,
+      dispatchStatus: "OPEN",
+      currentRound: (current?.currentRound ?? 0) + 1,
+      claimedBranchId: null,
+      claimedBranchName: null,
+      claimedAt: null,
+      graceExpiresAt: null,
+      declinedBranchIds: declined,
+      invitedBranchIds: invited,
+      roundExpiresAt: roundExpiry,
+      subcontractPriceVnd: craftFee,
+    }
+    return { next, result: next }
+  })
+  const invitedBranches = approvedBranches.filter((b) => subcontractState.invitedBranchIds.includes(b.branchId))
 
   // Đồng bộ giá gia công vào pricing_rule_ref của đơn hàng để làm SSOT xuyên suốt
   const existingPricingRef = (order.pricing_rule_ref as Record<string, unknown> | null) ?? {}
@@ -166,7 +179,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   const inviteCards: Record<string, InviteCardRef> = {}
   const results: Array<{ branchId: string; branchName: string; sent: boolean; channel: string; error?: string }> = []
 
-  for (const branch of approvedBranches) {
+  for (const branch of invitedBranches) {
     const claimUrl = subcontractBranchUrl({
       baseUrl: claimBaseUrl,
       organizationId: ctx.organizationId,
@@ -215,10 +228,11 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   // Lưu thẻ mời riêng từng chi nhánh — để sửa thẻ khi có chi nhánh nhận / huỷ (không còn ghi đè bằng thẻ cuối)
   // Chi nhánh có thể đã bấm nhận trong lúc đang gửi: gộp vào state mới nhất, không đè trạng thái đã nhận
   if (Object.keys(inviteCards).length > 0) {
-    const latest = (await stateRepo.loadSubcontractState(ctx, order.id)) ?? subcontractState
-    const merged = { ...latest, inviteCards }
-    await stateRepo.saveSubcontractStateIfStatus(ctx, merged, latest.dispatchStatus)
-    if (latest.claimedBranchId) await closeCardsAfterClaim(ctx, merged, latest.claimedBranchId, notifier)
+    const merged = await stateRepo.updateSubcontractState(ctx, order.id, (latest) => {
+      const next = { ...(latest ?? subcontractState), inviteCards: { ...latest?.inviteCards, ...inviteCards } }
+      return { next, result: next }
+    })
+    if (merged.claimedBranchId) await closeCardsAfterClaim(ctx, merged, merged.claimedBranchId, notifier)
   }
 
   const sentCount = results.filter((r) => r.sent).length
@@ -228,7 +242,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
       dispatched: sentCount > 0,
       orderCode: order.code,
       sentCount,
-      totalTargeted: approvedBranches.length,
+      totalTargeted: invitedBranches.length,
       results,
       claimUrl: `${claimBaseUrl}/subcontract/${order.code}`,
     },

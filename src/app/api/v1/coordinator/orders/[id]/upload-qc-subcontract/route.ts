@@ -11,11 +11,13 @@
 import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
+import { ownStorageKey } from "@/modules/greeting-card/use-cases/sign-subcontract-photo"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
@@ -68,6 +70,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   const sniffed = sniffImage(bytes)
   if (!sniffed) throw validationFailed({ file: "Định dạng không hợp lệ (JPG/PNG/WebP)" })
+  if (!subcontractStepAllowed("QC", order)) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.QC)
 
   // AI Verify — coordinator upload cũng phải pass AI để đảm bảo chất lượng
   const snapshot = (order.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
@@ -76,7 +79,9 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   const storage = getStorageProvider()
   if (sampleImageUrl?.startsWith("org/")) {
-    sampleImageUrl = await storage.signedUrl(sampleImageUrl, 3600, "GET").catch(() => sampleImageUrl)
+    // Chỉ ký ảnh trong thư mục của chính tổ chức (rà soát cụm G)
+    const ownKey = ownStorageKey(sampleImageUrl, order.organization_id)
+    sampleImageUrl = ownKey ? await storage.signedUrl(ownKey, 3600, "GET").catch(() => undefined) : undefined
   }
 
   const aiVerify = await verifyQcPhotoWithAi({
@@ -99,25 +104,23 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const assetId = randomUUID()
   const storageKey = `org/${order.organization_id}/subcontract/${order.id}/coord-qc-${assetId}.${sniffed.ext}`
   await storage.put(storageKey, Buffer.from(bytes), sniffed.mimeType)
-  const publicPhotoUrl = await storage.signedUrl(storageKey, 604800, "GET")
+  const publicPhotoUrl = await storage.signedUrl(storageKey, 3600, "GET")
 
   // Cập nhật DB — giống store upload nhưng actor là coordinator
   const store = new SubcontractStepStore()
-  const existingMeta = await store.readMetadata(order.organization_id, order.id)
-  const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
-
-  await store.applyStep({
+  const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
     order: { production_status: "READY" },
-    metadata: {
-      ...existingMeta,
-      qc_photos: [...existingQcPhotos, storageKey],
+    require: SUBCONTRACT_STEP_PRECONDITION.QC,
+    metadata: (current) => ({
+      ...current,
+      qc_photos: [...(Array.isArray(current.qc_photos) ? (current.qc_photos as string[]) : []), storageKey],
       last_qc_uploaded_at: new Date().toISOString(),
       last_qc_uploaded_by: `coordinator:${ctx.userId}`,
       last_qc_note: note || null,
       auto_bypassed_coordinator: false, // coordinator thực hiện trực tiếp
-    },
+    }),
     events: [{
       axis: "production",
       fromValue: order.production_status,
@@ -126,6 +129,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
       reason: `[Coordinator Upload QC] ${aiVerify.reason} (${aiVerify.confidenceScore}%). Ghi chú: ${note || "Không có"}`,
     }],
   })
+
+  if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.QC)
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M2 reminders đang pending
   await cancelSubcontractReminderSteps({

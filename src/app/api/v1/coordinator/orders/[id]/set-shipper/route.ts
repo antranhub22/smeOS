@@ -9,10 +9,11 @@
 
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
@@ -41,12 +42,6 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const order = await repo.findSubcontractById(orderId, ctx.organizationId)
   if (!order) throw notFound()
 
-  // Chỉ cho phép khi đơn đã ở trạng thái READY (ảnh thành phẩm đã được duyệt)
-  if (order.production_status !== "READY") {
-    throw unprocessable(
-      `Đơn hàng chưa đủ điều kiện nhập shipper. Trạng thái hiện tại: ${order.production_status}. Cần upload ảnh thành phẩm trước.`
-    )
-  }
 
   const body = await request.json().catch(() => ({}))
   const parsed = setShipperSchema.safeParse(body)
@@ -72,8 +67,9 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     })
   }
 
+  // Chỉ khi ảnh thành phẩm đã duyệt và chưa giao (đơn đã huỷ/hoàn tất → 409)
+  if (!subcontractStepAllowed("SHIPPER", order)) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.SHIPPER)
   const store = new SubcontractStepStore()
-  const existingMeta = await store.readMetadata(order.organization_id, order.id)
 
   const shipperInfo = {
     shipperName,
@@ -83,11 +79,12 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     submittedAt: new Date().toISOString(),
   }
 
-  await store.applyStep({
+  const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
     order: { delivery_status: "DELIVERING" },
-    metadata: { ...existingMeta, shipper_info: shipperInfo, shipper_submitted_at: new Date().toISOString() },
+    require: SUBCONTRACT_STEP_PRECONDITION.SHIPPER,
+    metadata: (current) => ({ ...current, shipper_info: shipperInfo, shipper_submitted_at: shipperInfo.submittedAt }),
     events: [{
       axis: "delivery",
       fromValue: order.delivery_status,
@@ -96,6 +93,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
       reason: `[Coordinator Set Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
     }],
   })
+
+  if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.SHIPPER)
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M3 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({

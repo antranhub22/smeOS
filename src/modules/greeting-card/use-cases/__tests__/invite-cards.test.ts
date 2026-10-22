@@ -1,3 +1,4 @@
+import { lockedUpdate } from "./locked-state-store"
 import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import type { BranchCandidate } from "../../domain/chain-dispatch-engine"
@@ -29,6 +30,7 @@ const openState = (over: Partial<SubcontractOrderState> = {}): SubcontractOrderS
 function harness(initial: SubcontractOrderState) {
   let current = initial
   const store: ISubcontractClaimStore = {
+    updateSubcontractState: lockedUpdate(() => store),
     saveSubcontractState: vi.fn().mockImplementation(async (_, s) => { current = s }),
     loadSubcontractState: vi.fn().mockImplementation(async () => current),
     saveSubcontractStateIfStatus: vi.fn().mockImplementation(async (_, s, expected) => {

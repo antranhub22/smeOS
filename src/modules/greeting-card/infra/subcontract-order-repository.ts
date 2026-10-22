@@ -27,112 +27,81 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore {
     return sub as SubcontractOrderState
   }
 
+  /** Ghi đè cả phiên gia công. Chỉ dùng khi KHÔNG phụ thuộc trạng thái cũ; còn lại dùng `updateSubcontractState`. */
   async saveSubcontractState(ctx: TenantContext, state: SubcontractOrderState): Promise<void> {
-    const coordination = await this.db.order_coordinations.findFirst({
-      where: scopedWhere(ctx, { order_id: state.orderId }),
-    })
-
-    const existingMeta = (coordination?.metadata as Record<string, unknown> | null) ?? {}
-    const newMeta = {
-      ...existingMeta,
-      subcontract_dispatch: state,
-    }
-
-    if (coordination) {
-      await this.db.order_coordinations.update({
-        where: { id: coordination.id },
-        data: {
-          metadata: newMeta as unknown as Prisma.InputJsonValue,
-        },
-      })
-    } else {
-      await this.db.order_coordinations.create({
-        data: {
-          id: `coord_${state.orderId}`,
-          organization_id: ctx.organizationId,
-          order_id: state.orderId,
-          metadata: newMeta as unknown as Prisma.InputJsonValue,
-        },
-      })
-    }
-
-    await this.syncOrderWithState(ctx, state)
+    await this.updateSubcontractState(ctx, state.orderId, () => ({ next: state, result: undefined }))
   }
 
+  /**
+   * Đọc–sửa–ghi phiên gia công dưới khoá dòng `order_coordinations` (SELECT … FOR UPDATE), cùng
+   * giao dịch với các thay đổi kèm theo trên `orders`. `change` nhận trạng thái MỚI NHẤT; trả
+   * `next: null` để không ghi gì; ném lỗi để huỷ cả giao dịch.
+   *
+   * Trước 22/10/2026 mọi nơi đọc trạng thái, kiểm tra trong bộ nhớ rồi ghi đè cả khối JSON: hai
+   * chi nhánh bấm nhận cùng lúc đều thắng, cron ghi đè thao tác chốt/huỷ vừa xảy ra (rà soát cụm G).
+   */
+  async updateSubcontractState<T>(
+    ctx: TenantContext,
+    orderId: string,
+    change: (current: SubcontractOrderState | null) => { next: SubcontractOrderState | null; result: T }
+  ): Promise<T> {
+    return this.db.$transaction(async (tx) => {
+      const rows = await tx.$queryRaw<Array<{ id: string; metadata: unknown }>>`
+        SELECT "id", "metadata" FROM "order_coordinations"
+        WHERE "organization_id" = ${ctx.organizationId} AND "order_id" = ${orderId}
+        FOR UPDATE`
+      const row = rows[0]
+      const meta = row?.metadata && typeof row.metadata === "object" ? (row.metadata as Record<string, unknown>) : {}
+      const sub = meta.subcontract_dispatch
+      const current = sub && typeof sub === "object" ? (sub as SubcontractOrderState) : null
+
+      const { next, result } = change(current)
+      if (!next) return result
+
+      const newMeta = { ...meta, subcontract_dispatch: next } as unknown as Prisma.InputJsonValue
+      if (row) {
+        await tx.order_coordinations.update({ where: { id: row.id }, data: { metadata: newMeta } })
+      } else {
+        await tx.order_coordinations.create({
+          data: { id: `coord_${orderId}`, organization_id: ctx.organizationId, order_id: orderId, metadata: newMeta },
+        })
+      }
+      await this.syncOrderWithDispatch(tx, ctx, next)
+      return result
+    })
+  }
+
+  /** Ghi trạng thái chỉ khi trạng thái hiện tại (dưới khoá dòng) còn là `expectedStatus`. */
   async saveSubcontractStateIfStatus(
     ctx: TenantContext,
     state: SubcontractOrderState,
     expectedStatus: SubcontractOrderState["dispatchStatus"]
   ): Promise<boolean> {
-    const won = await this.db.$transaction(async (tx) => {
-      // Khoá dòng điều phối của đơn: lời bấm nhận thứ hai chờ ở đây và đọc thấy trạng thái đã đổi
-      const locked = await tx.$queryRaw<Array<{ id: string; metadata: unknown }>>`
-        SELECT "id", "metadata" FROM "order_coordinations"
-        WHERE "organization_id" = ${ctx.organizationId} AND "order_id" = ${state.orderId}
-        FOR UPDATE`
-      const row = locked[0]
-      if (!row) return false
-      const meta = (row.metadata as Record<string, unknown> | null) ?? {}
-      const current = meta.subcontract_dispatch as SubcontractOrderState | undefined
-      if (current?.dispatchStatus !== expectedStatus) return false
-      await tx.order_coordinations.update({
-        where: { id: row.id },
-        data: { metadata: { ...meta, subcontract_dispatch: state } as unknown as Prisma.InputJsonValue },
-      })
-      return true
-    })
-    if (won) await this.syncOrderWithState(ctx, state)
-    return won
+    return this.updateSubcontractState(ctx, state.orderId, (current) =>
+      current?.dispatchStatus === expectedStatus ? { next: state, result: true } : { next: null, result: false }
+    )
   }
 
-  /** Đồng bộ `orders` theo trạng thái điều phối vừa lưu (chi nhánh nhận, tự xác nhận khi chốt). */
-  private async syncOrderWithState(ctx: TenantContext, state: SubcontractOrderState): Promise<void> {
-    // Nếu chi nhánh là branch thật trong CSDL bảng branches, cập nhật orders.branch_id
-    const isRealDbBranch = state.claimedBranchId
-      ? await this.db.branches.findFirst({
-          where: { id: state.claimedBranchId, organization_id: ctx.organizationId },
-          select: { id: true },
-        })
+  /** `orders.branch_id` theo chi nhánh đang giữ đơn, và tự xác nhận đơn khi chi nhánh chốt làm. */
+  private async syncOrderWithDispatch(tx: Prisma.TransactionClient, ctx: TenantContext, state: SubcontractOrderState): Promise<void> {
+    const realBranch = state.claimedBranchId
+      ? await tx.branches.findFirst({ where: { id: state.claimedBranchId, organization_id: ctx.organizationId }, select: { id: true } })
       : null
-
-    if (isRealDbBranch && (state.dispatchStatus === "CLAIMED_GRACE" || state.dispatchStatus === "COMMITTED")) {
-      await this.db.orders.updateMany({
-        where: scopedWhere(ctx, { id: state.orderId }),
-        data: { branch_id: isRealDbBranch.id },
-      })
+    if (realBranch && (state.dispatchStatus === "CLAIMED_GRACE" || state.dispatchStatus === "COMMITTED")) {
+      await tx.orders.updateMany({ where: scopedWhere(ctx, { id: state.orderId }), data: { branch_id: realBranch.id } })
     } else if (state.dispatchStatus === "OPEN") {
-      await this.db.orders.updateMany({
-        where: scopedWhere(ctx, { id: state.orderId }),
-        data: { branch_id: null },
-      })
+      await tx.orders.updateMany({ where: scopedWhere(ctx, { id: state.orderId }), data: { branch_id: null } })
     }
 
-    // Cơ chế Tự Động Xác Nhận Đơn (Gate 2 Auto-Confirm):
-    // Khi chi nhánh đã nhận & chốt làm (COMMITTED), nếu cấu hình autoConfirmOnBranchCommit = true (mặc định)
-    // -> Tự động chuyển đơn sang CONFIRMED & ASSIGNED, Điều phối không cần bấm nút duyệt thủ công.
-    if (state.dispatchStatus === "COMMITTED") {
-      const org = await this.db.organizations.findUnique({
-        where: { id: ctx.organizationId },
-        select: { settings: true },
-      })
-      const settings = (org?.settings as Record<string, unknown> | null) ?? {}
-      const rawPolicy = settings["chain_dispatch_policy"] as Record<string, unknown> | undefined
-      const autoConfirm = rawPolicy?.auto_confirm_on_branch_commit !== false && rawPolicy?.autoConfirmOnBranchCommit !== false
-
-      if (autoConfirm) {
-        await this.db.orders.updateMany({
-          where: scopedWhere(ctx, {
-            id: state.orderId,
-            NOT: { status: "CANCELLED" as const },
-            production_status: "WAITING" as const,
-          }),
-          data: {
-            status: "CONFIRMED" as const,
-            production_status: "ASSIGNED" as const,
-          },
-        })
-      }
-    }
+    // Tự xác nhận đơn khi chi nhánh chốt làm (mặc định bật, tắt bằng auto_confirm_on_branch_commit=false)
+    if (state.dispatchStatus !== "COMMITTED") return
+    const org = await tx.organizations.findUnique({ where: { id: ctx.organizationId }, select: { settings: true } })
+    const rawPolicy = ((org?.settings as Record<string, unknown> | null) ?? {})["chain_dispatch_policy"] as Record<string, unknown> | undefined
+    if (rawPolicy?.auto_confirm_on_branch_commit === false || rawPolicy?.autoConfirmOnBranchCommit === false) return
+    await tx.orders.updateMany({
+      where: scopedWhere(ctx, { id: state.orderId, NOT: { status: "CANCELLED" as const }, production_status: "WAITING" as const }),
+      data: { status: "CONFIRMED" as const, production_status: "ASSIGNED" as const },
+    })
   }
 
   /**
@@ -207,6 +176,7 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore {
         code: true,
         delivery_address: true,
         delivery_window: true,
+        status: true,
         total_vnd: true,
         pricing_rule_ref: true,
         items: { select: { product_id: true, description: true, metadata: true } },

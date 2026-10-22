@@ -40,33 +40,23 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const branch = await repo.findBranchInOrganization(branchId, order.organization_id)
   if (!branch) throw unprocessable("Chi nhánh không hợp lệ hoặc không thuộc hệ thống.")
 
-  const store = new SubcontractStepStore()
-  const existingMeta = await store.readMetadata(order.organization_id, order.id)
-  const dispatch = existingMeta.subcontract_dispatch as { claimedBranchId?: string | null } | undefined
-  // Chỉ chi nhánh ĐÃ nhận đơn mới xin bỏ qua bằng chứng: chi nhánh được mời nhưng không nhận vẫn
-  // giữ link 14 ngày, trước 22/10/2026 ghi đè được yêu cầu của chi nhánh đang làm (rà soát cụm G)
-  if (dispatch?.claimedBranchId !== branch.id) throw conflict("Chỉ chi nhánh đang thực hiện đơn này mới gửi được yêu cầu.")
-  const bypassRequests = (existingMeta.bypass_requests as Record<string, unknown> | undefined) ?? {}
-  const previous = (bypassRequests[step] as { status?: string } | undefined)?.status
-  if (previous === "PENDING" || previous === "APPROVED") {
-    throw conflict(previous === "PENDING" ? "Yêu cầu cho công đoạn này đang chờ điều phối duyệt." : "Công đoạn này đã được duyệt bỏ qua.")
-  }
-
   const nowIso = new Date().toISOString()
-  const updatedBypassRequests = {
-    ...bypassRequests,
-    [step]: {
-      requestedAt: nowIso,
-      requestedByBranchId: branch.id,
-      requestedByBranchName: branch.name,
-      reason,
-      status: "PENDING",
-      decisionAt: null,
-      decidedBy: null,
-    },
-  }
-
-  await store.writeMetadata(order.organization_id, order.id, { ...existingMeta, bypass_requests: updatedBypassRequests })
+  // Kiểm và ghi dưới khoá dòng: chi nhánh đang làm đơn, công đoạn chưa chờ duyệt/đã duyệt
+  await new SubcontractStepStore().mutateMetadata(order.organization_id, order.id, (current) => {
+    const dispatch = current.subcontract_dispatch as { claimedBranchId?: string | null } | undefined
+    // Chi nhánh được mời nhưng không nhận vẫn giữ link 14 ngày: trước 22/10/2026 ghi đè được yêu
+    // cầu của chi nhánh đang làm đơn (rà soát cụm G)
+    if (dispatch?.claimedBranchId !== branch.id) throw conflict("Chỉ chi nhánh đang thực hiện đơn này mới gửi được yêu cầu.")
+    const requests = (current.bypass_requests as Record<string, unknown> | undefined) ?? {}
+    const previous = (requests[step] as { status?: string } | undefined)?.status
+    if (previous === "PENDING") throw conflict("Yêu cầu cho công đoạn này đang chờ điều phối duyệt.")
+    if (previous === "APPROVED") throw conflict("Công đoạn này đã được duyệt bỏ qua.")
+    const request = {
+      requestedAt: nowIso, requestedByBranchId: branch.id, requestedByBranchName: branch.name,
+      reason, status: "PENDING", decisionAt: null, decidedBy: null,
+    }
+    return { next: { ...current, bypass_requests: { ...requests, [step]: request } }, result: undefined }
+  })
 
   // Báo Điều phối qua kênh điều phối của CHÍNH tổ chức. Không rơi về nhóm chung của nền tảng hay
   // nhóm của chi nhánh khác; thiếu kênh thì Điều phối vẫn thấy yêu cầu trên Thẻ Điều phối.

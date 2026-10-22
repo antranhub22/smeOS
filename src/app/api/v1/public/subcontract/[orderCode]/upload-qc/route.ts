@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto"
-import { unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
@@ -17,7 +17,8 @@ import {
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import type { TenantContext } from "@/core/tenancy"
 import { publicAppUrl } from "@/lib/public-url"
-import { ownStorageKey } from "@/modules/greeting-card/use-cases/sign-subcontract-photo"
+import { ownStorageKey, SIGNED_URL_TTL_SECONDS } from "@/modules/greeting-card/use-cases/sign-subcontract-photo"
+import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
 
 const MAX_QC_PHOTO_BYTES = 10 * 1024 * 1024 // 10 MB
 
@@ -69,6 +70,11 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const subState = coordMeta.subcontract_dispatch as Record<string, unknown> | undefined
   if (subState?.claimedBranchId !== branchId) {
     throw unprocessable("Đơn hàng này không thuộc chi nhánh của bạn.")
+  }
+  // Ảnh thành phẩm chỉ nhận khi đơn đã chốt và còn đang làm — không nhận cho đơn đã huỷ/đã giao
+  // (trước 22/10/2026 đơn đã giao vẫn bị đưa về READY và báo khách lần nữa, rà soát cụm G)
+  if (subState?.dispatchStatus !== "COMMITTED" || !subcontractStepAllowed("QC", order)) {
+    throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.QC)
   }
 
   const arrayBuffer = await file.arrayBuffer()
@@ -165,24 +171,21 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const assetId = randomUUID()
   const storageKey = `org/${order.organization_id}/subcontract/${order.id}/qc-${assetId}.${sniffed.ext}`
   await storage.put(storageKey, Buffer.from(bytes), sniffed.mimeType)
-  const publicPhotoUrl = await storage.signedUrl(storageKey, 604800, "GET")
+  const publicPhotoUrl = await storage.signedUrl(storageKey, SIGNED_URL_TTL_SECONDS, "GET")
 
   const nextProductionStatus = "READY"
 
-  // Cập nhật CSDL
+  // Cập nhật CSDL dưới khoá dòng; lưu khoá kho thuần (org/...) để mỗi lần tải được ký URL mới còn hạn
   const store = new SubcontractStepStore()
-  const existingMeta = await store.readMetadata(order.organization_id, order.id)
-  const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
-  // Lưu storageKey thuần dạng org/... vào DB để khi load ra sẽ được tự động ký URL mới còn hạn
-  const updatedQcPhotos = [...existingQcPhotos, storageKey]
-
-  await store.applyStep({
+  let allQcPhotos: string[] = []
+  const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
     order: { production_status: nextProductionStatus },
-    metadata: {
-      ...existingMeta,
-      qc_photos: updatedQcPhotos,
+    require: SUBCONTRACT_STEP_PRECONDITION.QC,
+    metadata: (current) => ({
+      ...current,
+      qc_photos: (allQcPhotos = [...(Array.isArray(current.qc_photos) ? (current.qc_photos as string[]) : []), storageKey]),
       last_qc_uploaded_at: new Date().toISOString(),
       last_qc_uploaded_by_branch: branchId,
       last_ai_verification: {
@@ -192,7 +195,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         reason: aiVerify.reason,
       },
       auto_bypassed_coordinator: aiVerify.isMatch,
-    },
+    }),
     // Nhật ký đơn hàng chỉ khi AI thẩm định khớp
     events: aiVerify.isMatch
       ? [{
@@ -204,25 +207,17 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         }]
       : [],
   })
+  if (!saved) {
+    throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.QC)
+  }
 
   // Tự động gửi thông báo cập nhật tiến độ cho khách hàng kèm ảnh thành phẩm
   if (aiVerify.isMatch) {
     // 1. Báo khách mốc READY qua luồng thông báo khách chuẩn (có link theo dõi đúng địa chỉ)
     queueOrderNotification(order.organization_id, order.id, "READY")
 
-    // 2. Gửi yêu cầu thông tin shipper cho chi nhánh + lập lịch nhắc 1 lần
-    const subMeta = (order.coordination?.metadata as Record<string, unknown> | null)?.subcontract_dispatch as Record<string, unknown> | undefined
-    const branchChannels = subMeta?.channels as Record<string, unknown> | undefined
-    notifyShipperRequest({
-      organizationId: order.organization_id,
-      orderId: order.id,
-      orderCode: order.code,
-      branchId,
-      branchPhone: (branchChannels?.phone ?? branchChannels?.zaloPhone) as string | undefined,
-      branchTelegramChatId: branchChannels?.telegramChatId as string | undefined,
-      branchName: subMeta?.claimedBranchName as string | undefined,
-      reminderMinutes: 30,
-    }).catch((err) => {
+    // 2. Gửi yêu cầu thông tin shipper cho chi nhánh (nhắc lại do cron mốc M3)
+    notifyShipperRequest({ organizationId: order.organization_id, orderId: order.id, orderCode: order.code, branchId }).catch((err) => {
       log.warn("subcontract.shipper_request_failed", {
         orderCode: order.code,
         error: err instanceof Error ? err.message : String(err),
@@ -261,7 +256,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         ? `✅ AI đã xác nhận ảnh thành phẩm khớp với mẫu (${aiVerify.confidenceScore}%). Đơn hàng đã tự động hoàn tất và chuyển sang trạng thái Sẵn Sàng Giao (READY)!`
         : `⚠️ Ảnh thành phẩm đã tải lên nhưng AI phát hiện có thể chưa khớp với mẫu (${aiVerify.reason}). Điều phối viên sẽ kiểm tra trực tiếp.`,
       photoUrl: publicPhotoUrl,
-      allQcPhotos: updatedQcPhotos,
+      allQcPhotos,
       productionStatus: nextProductionStatus,
       aiVerification: aiVerify,
       autoBypassedCoordinator: aiVerify.isMatch,
