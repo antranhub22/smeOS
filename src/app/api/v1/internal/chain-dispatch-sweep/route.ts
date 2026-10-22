@@ -32,7 +32,7 @@ import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispa
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
 import { advanceExpiredDispatchRound } from "@/modules/greeting-card/use-cases/advance-dispatch-round"
-import { formatDeliveryAddress, hasDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
+import { deliveryAreaOf, formatDeliveryAddress, hasDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 
@@ -112,6 +112,7 @@ export const POST = handle(async (request) => {
             deliveryLocation: hasDeliveryAddress(deliveryAddress)
               ? await resolveDeliveryLocation(ctx, { orderId: coord.order_id, address: deliveryAddress }, geocoder, stateRepo, now)
               : null,
+            deliveryArea: deliveryAreaOf(order.delivery_address),
             deliveryTime: typeof win.timeSlot === "string" && typeof win.date === "string" ? `${win.timeSlot} ngày ${win.date}` : "Giao trong ngày",
             baseUrl: process.env.NEXT_PUBLIC_APP_URL || url.origin,
             imageUrl: (firstItemMeta.imageUrl as string | undefined) || (firstItemMeta.image as string | undefined) || null,

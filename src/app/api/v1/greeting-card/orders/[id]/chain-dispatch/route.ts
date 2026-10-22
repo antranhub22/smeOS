@@ -11,7 +11,7 @@ import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branc
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import type { InviteCardRef, SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import { CLAIM_BUTTON_TEXT, closeCardsAfterClaim, inviteCardText, rememberInviteCard } from "@/modules/greeting-card/use-cases/invite-cards"
-import { formatDeliveryAddress, hasDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
+import { deliveryAreaOf, formatDeliveryAddress, hasDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
@@ -60,6 +60,8 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
   const matchResult = matchCandidateBranches(orderLocation, branches, policy, {
     excludedBranchIds: [],
     round: 1,
+    // Không có toạ độ (chưa cấu hình Goong, chi nhánh chưa có GPS…) → sàng lọc theo phường / quận / tỉnh
+    orderArea: deliveryAreaOf(order.delivery_address),
   })
 
   // Tải trạng thái điều phối của đơn hàng (nếu đã tiếp nhận hoặc đã chốt)
@@ -84,6 +86,7 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
         branchId: sc.branch.branchId,
         branchName: sc.branch.branchName,
         distanceKm: sc.distanceKm,
+        areaMatch: sc.areaMatch,
         qualityScore: sc.branch.qualityScore,
         activeJobsCount: sc.branch.activeJobsCount,
         totalScore: sc.totalScore,

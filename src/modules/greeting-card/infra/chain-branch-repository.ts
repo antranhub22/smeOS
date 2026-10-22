@@ -28,6 +28,10 @@ type ChainBranchRow = {
   branch_code: string
   name: string
   address: string | null
+  ward: string | null
+  district: string | null
+  province: string | null
+  service_wards: Prisma.JsonValue
   latitude: number | null
   longitude: number | null
   quality_score: number
@@ -49,6 +53,12 @@ export function toBranchCandidate(row: ChainBranchRow): BranchCandidate {
     branchId: row.branch_code,
     branchName: row.name,
     address: row.address ?? "",
+    area: {
+      ward: row.ward,
+      district: row.district,
+      province: row.province,
+      serviceWards: Array.isArray(row.service_wards) ? row.service_wards.filter((w): w is string => typeof w === "string") : [],
+    },
     location: row.latitude !== null && row.longitude !== null ? { latitude: row.latitude, longitude: row.longitude } : null,
     qualityScore: row.quality_score,
     activeJobsCount: row.active_jobs_count,
@@ -117,6 +127,10 @@ export class ChainBranchRepository {
         const data = {
           name: b.branchName,
           address: b.address || null,
+          ward: b.area?.ward?.trim() || null,
+          district: b.area?.district?.trim() || null,
+          province: b.area?.province?.trim() || null,
+          service_wards: (b.area?.serviceWards ?? []).map((w) => w.trim()).filter(Boolean),
           latitude: b.location?.latitude ?? null,
           longitude: b.location?.longitude ?? null,
           quality_score: b.qualityScore,
