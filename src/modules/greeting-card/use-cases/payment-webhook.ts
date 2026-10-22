@@ -9,6 +9,8 @@ import { paymentNotifyEvent } from "../domain/customer-notifications"
 import { queueOrderNotification } from "./notify-customer"
 import { resolveSaleScope } from "./order-scope"
 import type { PaymentEventStatus } from "../infra/greeting-integration-repository"
+import { runInBackground } from "@/core/runtime/background"
+import { dispatchAfterPaymentConfirmed } from "./dispatch-after-payment"
 
 export const SEPAY_PROVIDER = "SEPAY"
 
@@ -104,6 +106,9 @@ export async function handleSepayWebhook(
     })
     await repo.resolvePaymentEvent(row.id, { status: "MATCHED", orderId: order.id, paymentId: result.paymentId, note: decision.note })
     queueOrderNotification(orgId, order.id, paymentNotifyEvent(result.balanceVnd))
+    // Chuỗi ở chế độ tự động: tiền về qua SePay → tự chọn cửa hàng và phát lệnh (chạy nền, webhook trả ngay)
+    const ctx = systemContext(orgId, "system:sepay")
+    runInBackground("chain-dispatch:after-sepay", () => dispatchAfterPaymentConfirmed(ctx, order.id))
     return { status: "MATCHED", duplicate, orderCode: order.code }
   } catch (error) {
     const note = error instanceof AppError ? error.message : "Lỗi ghi thu tự động"

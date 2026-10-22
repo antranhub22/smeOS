@@ -3,8 +3,7 @@
 import React, { useState } from "react"
 import { CheckCircle2, ShieldCheck, X, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { apiSend } from "@/components/greeting-card/greeting-api"
-import { useI18n } from "@/lib/i18n"
+import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 
 interface CoordinatorAcceptRejectModalProps {
   mode: "accept" | "reject"
@@ -22,8 +21,9 @@ const COMMON_REJECT_REASONS = [
 ]
 
 /**
- * Hộp thoại Điều phối xác nhận nhận đơn hoặc từ chối đơn hàng.
- * - Nhận đơn: chuyển đơn sang CONFIRMED để tiếp tục xử lý sản phẩm.
+ * Hộp thoại Điều phối xác nhận đã nhận tiền hoặc từ chối đơn hàng (tổ chức Chuỗi).
+ * - Xác nhận đã nhận tiền: ghi nhận thanh toán rồi chọn cửa hàng theo cài đặt (tự động / thủ công).
+ *   Khách chỉ nhận tin "đã nhận đơn" khi cửa hàng chốt làm.
  * - Từ chối: huỷ đơn và kích hoạt quy trình hoàn tiền cho khách hàng.
  */
 export function CoordinatorAcceptRejectModal({
@@ -34,8 +34,11 @@ export function CoordinatorAcceptRejectModal({
   onClose,
   onDone,
 }: CoordinatorAcceptRejectModalProps) {
-  const { ti } = useI18n()
   const isAccept = mode === "accept"
+  const org = useApi<{ settings?: Record<string, unknown> | null }>(isAccept ? "/api/v1/organizations/current" : null)
+  const policy = org.data?.settings?.chain_dispatch_policy as { enabled?: unknown } | undefined
+  const autoMode = org.data ? policy?.enabled !== false : false
+  const [manualDispatch, setManualDispatch] = useState(false)
   const defaultNote = defaultBranchName ? `Cửa hàng đã nhận: ${defaultBranchName}` : ""
   const [note, setNote] = useState(defaultNote)
   const [reason, setReason] = useState("")
@@ -50,8 +53,8 @@ export function CoordinatorAcceptRejectModal({
         await apiSend(
           `/api/v1/greeting-card/orders/${orderId}/accept`,
           "POST",
-          { note: note.trim() || undefined },
-          "Không thể xác nhận nhận đơn"
+          { note: note.trim() || undefined, ...(autoMode && manualDispatch ? { manualDispatch: true } : {}) },
+          "Không thể xác nhận đã nhận tiền"
         )
       } else {
         if (!reason.trim()) {
@@ -91,7 +94,7 @@ export function CoordinatorAcceptRejectModal({
             {isAccept ? (
               <>
                 <ShieldCheck size={20} className="text-success" aria-hidden="true" />
-                Xác nhận Nhận đơn — #{orderCode}
+                Xác nhận đã nhận tiền — #{orderCode}
               </>
             ) : (
               <>
@@ -107,7 +110,9 @@ export function CoordinatorAcceptRejectModal({
 
         <p className="text-body-sm text-text-muted leading-relaxed">
           {isAccept
-            ? `Xác nhận xưởng có đầy đủ vật tư và nhân lực để hoàn thành đơn hàng. Đơn sẽ chuyển sang trạng thái Đã xác nhận để tiếp tục phân công ${ti("makerTitle").toLowerCase()} thực hiện.`
+            ? autoMode && !manualDispatch
+              ? "Xác nhận đã nhận đủ tiền theo ảnh chuyển khoản. Hệ thống sẽ tự chọn cửa hàng phù hợp và gửi lời mời gia công. Khách chỉ nhận tin \"đã nhận đơn\" khi cửa hàng chốt làm."
+              : "Xác nhận đã nhận đủ tiền theo ảnh chuyển khoản. Sau đó bạn chọn cửa hàng trong mục Thẻ gia công. Khách chỉ nhận tin \"đã nhận đơn\" khi cửa hàng chốt làm."
             : "Đề xuất không nhận đơn sẽ được gửi lên Điều hành phê duyệt hủy & hoàn tiền cho khách. Nếu Điều hành không duyệt trong vòng 15 phút, đơn sẽ tự động hủy theo đề xuất."}
         </p>
 
@@ -132,6 +137,12 @@ export function CoordinatorAcceptRejectModal({
               onChange={(e) => setNote(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
+            {autoMode && (
+              <label className="flex items-center gap-2 text-body-sm text-foreground">
+                <input type="checkbox" checked={manualDispatch} onChange={(e) => setManualDispatch(e.target.checked)} />
+                Tự chọn cửa hàng cho đơn này
+              </label>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -186,7 +197,7 @@ export function CoordinatorAcceptRejectModal({
               className="h-9 text-caption font-extrabold gap-1.5 bg-success hover:bg-success/90 text-white"
             >
               <CheckCircle2 size={15} />
-              {busy ? "Đang xử lý..." : "Xác nhận Nhận đơn"}
+              {busy ? "Đang xử lý..." : "Xác nhận đã nhận tiền"}
             </Button>
           ) : (
             <Button

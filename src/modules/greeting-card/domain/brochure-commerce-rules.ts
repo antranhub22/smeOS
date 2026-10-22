@@ -95,6 +95,11 @@ export function coordinatorAcceptanceBlocker(
   }
   const hasProof = Boolean(payment.paymentProofUrl)
   if (payment.paidVnd <= 0 && !hasProof) return "Chưa có thông tin chuyển khoản từ khách"
+  // Chuỗi (PO 22/10/2026): bước của Điều phối là xác nhận đã nhận tiền — tiền đã ghi nhận thì việc tiếp theo
+  // là chọn cửa hàng gia công (tự động hoặc trong Thẻ gia công), không còn nút "nhận đơn"
+  if (workflowPolicy?.requireCoordinatorAcceptance === true && payment.paidVnd > 0) {
+    return "Đã xác nhận nhận tiền — chọn cửa hàng trong Thẻ gia công"
+  }
   return null
 }
 

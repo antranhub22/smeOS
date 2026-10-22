@@ -155,7 +155,7 @@ export function OrderDetailFooter({
                 className="h-9 text-body-sm font-extrabold gap-1.5 bg-success hover:bg-success/90 text-white"
               >
                 <CheckCircle2 size={15} />
-                Xác nhận Nhận đơn
+                Xác nhận đã nhận tiền
               </Button>
               <Button
                 type="button"
