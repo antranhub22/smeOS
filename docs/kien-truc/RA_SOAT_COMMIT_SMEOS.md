@@ -29,7 +29,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | B | Đăng ký, dùng thử, đăng nhập, duyệt tài khoản | 11 | Đã rà |
 | H | AI kiểm ảnh QC/POD | 8 | Đã rà — còn mở H-SKIP |
 | E | Lịch đặt chỗ Homestay | 5 | Đã rà |
-| F | Ma trận menu ngành, Console vận hành | 7 | Chưa rà |
+| F | Ma trận menu ngành, Console vận hành | 7 | Đã rà |
 | K | Sức khoẻ hệ thống, giám sát, worker | 6 | Chưa rà |
 | J | Seed, dữ liệu mẫu, script tài khoản | 6 | Chưa rà |
 | D | Sửa schema | 6 | Chưa rà |
@@ -118,13 +118,13 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `d62aab60` | 10-17 | feat(org): unlock multi-industry switching for tuans2@dev.com and dev accounts | CHƯA RÀ | |
-| `ba6dcffb` | 10-18 | feat(navigation): kien truc ma tran dieu huong da nganh master matrix va console van hanh saas admin | CHƯA RÀ | |
-| `039565c6` | 10-21 | feat(platform): thêm lối tắt Console Vận hành cho Super Admin và cập nhật ghi đè ma trận ngành | CHƯA RÀ | |
-| `160d8251` | 10-21 | fix(platform): require platform capabilities for SaaS channel policy and nav matrix | CHƯA RÀ | |
-| `8cdecbf1` | 10-21 | test(nav): decouple navigation rule tests from operator override data | CHƯA RÀ | |
-| `df1b9630` | 10-21 | fix(org): enforce the industry lock on the server, drop email superusers | CHƯA RÀ | |
-| `4ca5eafa` | 10-22 | fix(platform): store the industry nav matrix in the database so it takes effect | CHƯA RÀ | |
+| `d62aab60` | 10-17 | feat(org): unlock multi-industry switching for tuans2@dev.com and dev accounts | THAY THẾ | F-SU |
+| `ba6dcffb` | 10-18 | feat(navigation): kien truc ma tran dieu huong da nganh master matrix va console van hanh saas admin | ĐẠT SAU SỬA | F-CAP |
+| `039565c6` | 10-21 | feat(platform): thêm lối tắt Console Vận hành cho Super Admin và cập nhật ghi đè ma trận ngành | ĐẠT SAU SỬA | F-PII |
+| `160d8251` | 10-21 | fix(platform): require platform capabilities for SaaS channel policy and nav matrix | ĐẠT |  |
+| `8cdecbf1` | 10-21 | test(nav): decouple navigation rule tests from operator override data | ĐẠT |  |
+| `df1b9630` | 10-21 | fix(org): enforce the industry lock on the server, drop email superusers | ĐẠT |  |
+| `4ca5eafa` | 10-22 | fix(platform): store the industry nav matrix in the database so it takes effect | ĐẠT |  |
 
 ### Cụm K — Sức khoẻ hệ thống, giám sát, worker
 
@@ -238,6 +238,9 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| F-SU | Chặn | Đổi ngành | Mở khoá đổi ngành theo email cố định của tài khoản dev | Đã thay bằng mã năng lực nền tảng N1/N12 (`df1b9630`); không còn email đặc quyền trong code |
+| F-CAP | Cao | Route `/platform/*` | Ma trận menu, chính sách kênh từng chỉ cần phiên nền tảng | Mọi route kiểm N1/N12/N13 (route hoặc use-case) — đã đối chiếu toàn bộ 15 route |
+| F-PII | Thấp | `connect-account-modal.tsx` | Placeholder là email cá nhân thật | Đổi thành email mẫu |
 | E-IND | Trung bình | `check-product-availability.ts` (route kiểm khả dụng công khai) | `industryKey` client gửi ghi đè ngành của tiệm → đổi được chế độ khả dụng mặc định, phòng đã đặt hiện "còn trống" (đặt đơn vẫn bị chặn ở máy chủ) | Luôn dùng ngành của tiệm |
 | H-SSRF | Chặn | `run-photo-match.ts` `loadImageForAi` | Máy chủ tải mọi URL http(s) — kể cả địa chỉ nội bộ/metadata đám mây — khi URL ảnh mẫu do tiệm nhập (`attributes.imageUrl`); theo chuyển hướng, không giới hạn dung lượng | Chỉ https công khai (`lib/safe-remote-url.ts`, dùng chung với Telegram), `redirect: "error"`, tối đa 8 MB |
 | H-IND | Cao | `verify-qc-photo-ai.ts` | Prompt kiểm ảnh thành phẩm chỉ nói về loài hoa — ngành khác bị chấm sai | Prompt theo ngành của tiệm (tên ngành, ảnh thành phẩm, `aiConfig.visionFocus`) |
