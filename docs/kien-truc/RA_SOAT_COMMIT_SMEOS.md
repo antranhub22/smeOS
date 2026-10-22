@@ -238,6 +238,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| G-SLOT | Cao | `internal/chain-dispatch-sweep` | Sweep tự đọc giờ giao bằng regex riêng: lấy ĐẦU khung giờ (thẻ chi nhánh, đếm ngược, khấu trừ trễ dùng CUỐI khung), và bỏ qua hẳn đơn có khung dạng chữ ("Trước 12h") — đơn đó không được nhắc mốc nào | Dùng chung `parseDeliveryTimestampMs`; test tenant cho sweep (tự chốt hết hạn huỷ nhận, chạy lại không chốt lần hai) |
 | A-TERM | Thấp | Giao diện | Còn 913 chỗ thuật ngữ ngành hoa viết cứng (`npm run audit:industry`) | Nợ có ratchet — không được tăng, giảm dần; `check:industry` 5/5 trụ cột đạt |
 | C-ENV | Trung bình | `render.yaml` | Biến code đang dùng chưa khai (`sync: false`) nên dễ quên khi bàn giao: `GOONG_API_KEY` (toạ độ điều phối chuỗi — thiếu thì xếp hạng theo khu vực), `ZALO_OA_APP_ID/APP_SECRET/REFRESH_TOKEN/WEBHOOK_SECRET/FOLLOW_URL` (Zalo OA). Không có giá trị bí mật nào trong file | PO duyệt 22/10/2026 — đã khai (`sync: false`, không có giá trị) |
 | J-MOCK | Cao | Nạp dữ liệu mẫu theo ngành | Tiệm thật nạp được dữ liệu mẫu đè hồ sơ | Đã thay bằng `72fe6167`: chỉ tổ chức dùng thử |

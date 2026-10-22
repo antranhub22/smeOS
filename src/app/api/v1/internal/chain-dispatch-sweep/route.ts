@@ -17,6 +17,7 @@
  *     -H "x-cron-secret: dev"
  */
 
+import { parseDeliveryTimestampMs } from "@/modules/greeting-card/domain/subcontract-countdown"
 import { publicAppUrl } from "@/lib/public-url"
 import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
@@ -181,25 +182,12 @@ export const POST = handle(async (request) => {
           }
         }
 
-        // Trích xuất giờ giao hàng
+        // Giờ giao = cuối khung giờ, cùng một hàm với thẻ chi nhánh, đếm ngược và khấu trừ giao trễ.
+        // Trước 22/10/2026 sweep lấy đầu khung và bỏ qua khung dạng "12h" (rà soát cụm G, G-c).
         const deliveryWindow = order.delivery_window as Record<string, unknown> | null
         const deliveryTimeStr = (deliveryWindow?.timeSlot as string | undefined) || "Theo thỏa thuận"
         const deliveryDateStr = (deliveryWindow?.date as string | undefined) || null
-
-        // Tính deliveryTimestampMs
-        let deliveryTimestampMs = 0
-        if (deliveryDateStr && deliveryTimeStr && deliveryTimeStr !== "Theo thỏa thuận") {
-          // Cố gắng parse "HH:mm" + "YYYY-MM-DD"
-          const timeMatch = deliveryTimeStr.match(/(\d{1,2}):(\d{2})/)
-          if (timeMatch) {
-            const hh = timeMatch[1] ?? "00"
-            const mm = timeMatch[2] ?? "00"
-            const dt = new Date(`${deliveryDateStr}T${hh.padStart(2, "0")}:${mm}:00+07:00`)
-            if (!isNaN(dt.getTime())) {
-              deliveryTimestampMs = dt.getTime()
-            }
-          }
-        }
+        let deliveryTimestampMs = parseDeliveryTimestampMs(deliveryDateStr, deliveryWindow?.timeSlot as string | undefined) ?? 0
 
         // Nếu không có thông tin thời gian và không ép step → bỏ qua đơn này
         if (deliveryTimestampMs === 0 && !forceStep) continue
