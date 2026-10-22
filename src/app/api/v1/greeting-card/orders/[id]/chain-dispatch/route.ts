@@ -17,6 +17,7 @@ import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
+import { listLinkedTelegramChatIds } from "@/modules/greeting-card/infra/telegram-linked-chats"
 
 type RouteCtx = { params: Promise<{ id: string }> }
 
@@ -65,6 +66,8 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
     orderArea: deliveryAreaOf(order.delivery_address),
   })
 
+  const linkedChatIds = new Set(await listLinkedTelegramChatIds(ctx.organizationId))
+
   // Tải trạng thái điều phối của đơn hàng (nếu đã tiếp nhận hoặc đã chốt)
   const subcontractState = await stateRepo.loadSubcontractState(ctx, order.id)
 
@@ -94,6 +97,8 @@ export const GET = handle<[RouteCtx]>(async (request, context) => {
         rank: sc.rank,
         channels: {
           hasTelegram: Boolean(sc.branch.channels?.telegramChatId),
+          // Bot chung chỉ gửi tới chat đã nhắn mã liên kết của tổ chức — báo trước khi phát lệnh
+          telegramLinked: Boolean(sc.branch.channels?.telegramChatId && linkedChatIds.has(sc.branch.channels.telegramChatId)),
           hasZalo: Boolean(sc.branch.channels?.zaloUserId),
           phone: sc.branch.channels?.phone,
         },

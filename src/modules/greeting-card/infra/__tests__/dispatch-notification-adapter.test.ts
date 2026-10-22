@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { MultiChannelDispatchNotifier } from "../dispatch-notification-adapter"
+import { MultiChannelDispatchNotifier, notDeliveredReason } from "../dispatch-notification-adapter"
 
 const ctx = { organizationId: "org-1", workspaceId: "ws", userId: "u", branchId: null, capabilities: new Set<string>() }
 const branch = { branchId: "b-1", branchName: "Chi nhánh 1", qualityScore: 90, activeJobsCount: 0, maxConcurrentJobs: 5, isActive: true }
@@ -34,6 +34,8 @@ describe("MultiChannelDispatchNotifier — chat Telegram đã liên kết", () =
     const res = await notifier.sendSubcontractInvite(ctx, { ...target, branch: { ...branch, channels: { telegramChatId: "-100" } } })
     expect(res.sent).toBe(false)
     expect(sendMessage).not.toHaveBeenCalled()
+    // Báo đúng việc cần làm thay vì "không gửi được qua kênh nào"
+    expect(res.error).toContain("chưa liên kết")
   })
 
   it("chat đã liên kết với tổ chức: gửi", async () => {
@@ -43,5 +45,17 @@ describe("MultiChannelDispatchNotifier — chat Telegram đã liên kết", () =
     const res = await notifier.sendSubcontractInvite(ctx, { ...target, branch: { ...branch, channels: { telegramChatId: "-100" } } })
     expect(res.sent).toBe(true)
     expect(sendMessage).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("notDeliveredReason", () => {
+  const base = { requestedChatId: null, telegramLinked: false, botConfigured: true, hasZalo: false }
+
+  it("chỉ ra đúng việc cần làm theo từng trường hợp", () => {
+    expect(notDeliveredReason({ ...base, requestedChatId: "-100" })).toContain("chưa liên kết")
+    expect(notDeliveredReason({ ...base, requestedChatId: "-100", telegramLinked: true, botConfigured: false })).toContain("chưa bật bot")
+    expect(notDeliveredReason({ ...base, requestedChatId: "-100", telegramLinked: true })).toContain("bot còn trong nhóm")
+    expect(notDeliveredReason({ ...base, hasZalo: true })).toContain("7 ngày")
+    expect(notDeliveredReason(base)).toBe("Chi nhánh chưa có Telegram hoặc Zalo")
   })
 })

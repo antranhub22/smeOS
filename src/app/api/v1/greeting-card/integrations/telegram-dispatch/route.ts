@@ -32,7 +32,15 @@ export const GET = handle(async (request) => {
 
   try {
     const [bot, access] = await Promise.all([getTelegramBotInfo(botToken), resolveTelegramDispatchAccess(ctx, botToken)])
-    return jsonResponse({ data: { configured: true, bot, linkCode: access.linkCode, recentChats: access.linkedChats } })
+    return jsonResponse({
+      data: {
+        configured: true,
+        bot,
+        linkCode: access.linkCode,
+        recentChats: access.linkedChats,
+        ...(access.scanError ? { error: access.scanError } : {}),
+      },
+    })
   } catch {
     return jsonResponse({
       data: { configured: true, bot: null, linkCode: null, recentChats: [], error: "Không kết nối được Telegram lúc này" },
