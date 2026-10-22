@@ -38,3 +38,14 @@ export async function closeRedis(): Promise<void> {
   if (client) await client.quit().catch(() => undefined)
   client = undefined
 }
+
+/** Redis còn trả lời `PING` không — cho `GET /internal/health`. */
+export async function pingRedis(): Promise<"ok" | "down" | "not_configured"> {
+  const redis = getRedis()
+  if (!redis) return "not_configured"
+  try {
+    return (await redis.ping()) === "PONG" ? "ok" : "down"
+  } catch {
+    return "down"
+  }
+}
