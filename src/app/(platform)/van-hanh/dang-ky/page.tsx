@@ -19,24 +19,26 @@ type PendingRegistration = {
 
 type DecisionResult = { status: "APPROVED" | "REJECTED"; temporaryPassword?: string }
 
+async function taiDanhSach(): Promise<{ data: PendingRegistration[] } | { loi: string }> {
+  const res = await fetch("/api/v1/platform/registrations")
+  if (!res.ok) return { loi: res.status === 403 ? "Bạn chưa có quyền duyệt đăng ký." : "Không tải được danh sách đăng ký." }
+  return { data: ((await res.json()) as { data: PendingRegistration[] }).data }
+}
+
 export default function DuyetDangKyPage() {
   const [items, setItems] = useState<PendingRegistration[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [dangXuLy, setDangXuLy] = useState<string | null>(null)
   const [matKhauTam, setMatKhauTam] = useState<{ email: string; phone: string | null; password: string } | null>(null)
 
-  const tai = useCallback(async () => {
-    const res = await fetch("/api/v1/platform/registrations")
-    if (!res.ok) {
-      setLoi(res.status === 403 ? "Bạn chưa có quyền duyệt đăng ký." : "Không tải được danh sách đăng ký.")
-      return
-    }
-    setItems(((await res.json()) as { data: PendingRegistration[] }).data)
+  const apDung = useCallback((kq: Awaited<ReturnType<typeof taiDanhSach>>) => {
+    if ("loi" in kq) setLoi(kq.loi)
+    else setItems(kq.data)
   }, [])
 
   useEffect(() => {
-    void tai()
-  }, [tai])
+    void (async () => apDung(await taiDanhSach()))()
+  }, [apDung])
 
   async function quyet(item: PendingRegistration, decision: "APPROVE" | "REJECT") {
     if (decision === "REJECT" && !window.confirm(`Từ chối đăng ký của ${item.email}?`)) return
@@ -56,7 +58,7 @@ export default function DuyetDangKyPage() {
       if (body?.data?.temporaryPassword) {
         setMatKhauTam({ email: item.email, phone: item.leadPhone, password: body.data.temporaryPassword })
       }
-      await tai()
+      apDung(await taiDanhSach())
     } finally {
       setDangXuLy(null)
     }
