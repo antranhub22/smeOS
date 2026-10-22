@@ -27,7 +27,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 |---|---|---|---|
 | G | Điều phối chuỗi và gia công | 30 | Đã rà — còn mở G-SIZE |
 | B | Đăng ký, dùng thử, đăng nhập, duyệt tài khoản | 11 | Đã rà |
-| H | AI kiểm ảnh QC/POD | 8 | Chưa rà |
+| H | AI kiểm ảnh QC/POD | 8 | Đã rà — còn mở H-SKIP |
 | E | Lịch đặt chỗ Homestay | 5 | Chưa rà |
 | F | Ma trận menu ngành, Console vận hành | 7 | Chưa rà |
 | K | Sức khoẻ hệ thống, giám sát, worker | 6 | Chưa rà |
@@ -95,14 +95,14 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Commit | Ngày | Nội dung | Kết luận | Phát hiện |
 |---|---|---|---|---|
-| `ef991368` | 10-17 | feat(ai): establish multi-industry SSOT architecture for vision worker, market intelligence, and studio prompts | CHƯA RÀ | |
-| `85d5f912` | 10-17 | feat(backend): add Pillar 5 to validate AI Prompts and JSON Schemas for multi-industry SSOT | CHƯA RÀ | |
-| `a48852cb` | 10-19 | feat(qc): AI Vision verify ảnh thành phẩm cho cả 2 luồng điều phối + gia công | CHƯA RÀ | |
-| `9f2cd27e` | 10-20 | feat(qc-ai): enforce strict AI Vision cross-checking of QC photo against original sample photo | CHƯA RÀ | |
-| `93847564` | 10-20 | feat(subcontract): tich hop AI kiem dinh anh giao hang POD va bo unit test cho QC/POD | CHƯA RÀ | |
-| `2418d62d` | 10-20 | fix(qc): enforce strict ai vision comparison for subcontract qc photos and eliminate blind auto-pass | CHƯA RÀ | |
-| `7b86fddf` | 10-20 | fix(qc-ai): remove random sample photo fallback and enforce high-detail visual matching | CHƯA RÀ | |
-| `0a509973` | 10-21 | fix(ai): route QC and delivery photo checks through the AI gateway | CHƯA RÀ | |
+| `ef991368` | 10-17 | feat(ai): establish multi-industry SSOT architecture for vision worker, market intelligence, and studio prompts | ĐẠT |  |
+| `85d5f912` | 10-17 | feat(backend): add Pillar 5 to validate AI Prompts and JSON Schemas for multi-industry SSOT | ĐẠT |  |
+| `a48852cb` | 10-19 | feat(qc): AI Vision verify ảnh thành phẩm cho cả 2 luồng điều phối + gia công | MỞ | H-IND, H-SKIP |
+| `9f2cd27e` | 10-20 | feat(qc-ai): enforce strict AI Vision cross-checking of QC photo against original sample photo | ĐẠT SAU SỬA | H-IND, H-INJ |
+| `93847564` | 10-20 | feat(subcontract): tich hop AI kiem dinh anh giao hang POD va bo unit test cho QC/POD | ĐẠT SAU SỬA | H-INJ |
+| `2418d62d` | 10-20 | fix(qc): enforce strict ai vision comparison for subcontract qc photos and eliminate blind auto-pass | ĐẠT |  |
+| `7b86fddf` | 10-20 | fix(qc-ai): remove random sample photo fallback and enforce high-detail visual matching | ĐẠT SAU SỬA | H-SSRF |
+| `0a509973` | 10-21 | fix(ai): route QC and delivery photo checks through the AI gateway | ĐẠT SAU SỬA | H-SSRF |
 
 ### Cụm E — Lịch đặt chỗ Homestay
 
@@ -238,6 +238,10 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| H-SSRF | Chặn | `run-photo-match.ts` `loadImageForAi` | Máy chủ tải mọi URL http(s) — kể cả địa chỉ nội bộ/metadata đám mây — khi URL ảnh mẫu do tiệm nhập (`attributes.imageUrl`); theo chuyển hướng, không giới hạn dung lượng | Chỉ https công khai (`lib/safe-remote-url.ts`, dùng chung với Telegram), `redirect: "error"`, tối đa 8 MB |
+| H-IND | Cao | `verify-qc-photo-ai.ts` | Prompt kiểm ảnh thành phẩm chỉ nói về loài hoa — ngành khác bị chấm sai | Prompt theo ngành của tiệm (tên ngành, ảnh thành phẩm, `aiConfig.visionFocus`) |
+| H-INJ | Trung bình | Prompt QC / ảnh giao hàng | Tên sản phẩm chèn thẳng vào prompt | Đưa vào dạng chuỗi JSON, cắt 200 ký tự, ghi rõ là dữ liệu |
+| H-SKIP | Trung bình | `update-brochure-order-status.ts` (ảnh thành phẩm luồng 1 cửa hàng) | Không ký/tải được ảnh vừa tải lên → bỏ qua AI và cho qua; còn AI lỗi thì chặn — hai lỗi hạ tầng xử lý ngược nhau | **Mở** — cần PO chọn: chặn (an toàn) hay cho qua kèm ghi chú |
 | B-RATE | Cao | `POST /auth/signup` | Không giới hạn tần suất — mỗi lần gọi tạo một tổ chức (dùng thử đã có 5/giờ) | 20 lần/giờ/IP |
 | B-IND | Trung bình | Đăng ký / dùng thử | Mã ngành tuỳ ý được ghi rồi khoá ngành vĩnh viễn | Chỉ nhận mã có trong danh mục ngành (`isKnownIndustryKey`) |
 | B-LEN | Trung bình | Đăng ký / dùng thử | Tên, tên tổ chức, email, SĐT không giới hạn độ dài/dạng | zod giới hạn độ dài, SĐT đúng dạng |
