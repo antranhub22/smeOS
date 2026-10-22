@@ -73,7 +73,7 @@ export function CoordinatorCardDecisionBlocks({
               type="button"
               variant="primary"
               size="sm"
-              onClick={() => onOpen({ type: "accept-order", orderId: order.id, orderCode: order.code })}
+              onClick={() => onOpen({ type: "accept-order", flow: "coordinator", orderId: order.id, orderCode: order.code })}
               className="h-9 text-body-sm font-extrabold gap-1.5 bg-success hover:bg-success/90 text-white"
             >
               <CheckCircle2 size={15} />
@@ -83,7 +83,7 @@ export function CoordinatorCardDecisionBlocks({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => onOpen({ type: "reject-order", orderId: order.id, orderCode: order.code })}
+              onClick={() => onOpen({ type: "reject-order", flow: "coordinator", orderId: order.id, orderCode: order.code })}
               className="h-9 text-body-sm font-bold gap-1.5 border-danger/40 text-danger hover:bg-danger-bg"
             >
               <XCircle size={15} />
@@ -105,7 +105,7 @@ export function CoordinatorCardDecisionBlocks({
               type="button"
               variant="primary"
               size="sm"
-              onClick={() => onOpen({ type: "accept-order", orderId: order.id, orderCode: order.code })}
+              onClick={() => onOpen({ type: "accept-order", flow: "admin", orderId: order.id, orderCode: order.code })}
               className="h-9 text-body-sm font-extrabold gap-1.5 bg-success hover:bg-success/90 text-white"
             >
               <CheckCircle2 size={15} />
@@ -115,7 +115,7 @@ export function CoordinatorCardDecisionBlocks({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => onOpen({ type: "reject-order", orderId: order.id, orderCode: order.code })}
+              onClick={() => onOpen({ type: "reject-order", flow: "admin", orderId: order.id, orderCode: order.code })}
               className="h-9 text-body-sm font-bold gap-1.5 border-danger/40 text-danger hover:bg-danger-bg"
             >
               <XCircle size={15} />

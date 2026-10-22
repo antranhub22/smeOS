@@ -136,6 +136,18 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
     )
   })
 
+  it.each([
+    [{ status: "COMPLETED", production_status: "DONE", delivery_status: "DELIVERED" }, /đã giao xong/],
+    [{ status: "CONFIRMED", production_status: "ARRANGING", delivery_status: "PENDING" }, /đã vào sản xuất/],
+  ])("gọi thẳng API từ chối đơn đã giao/đang sản xuất → chặn, không tạo đề xuất hoàn tiền", async (state, message) => {
+    const repo = {
+      findBrochureOrder: vi.fn().mockResolvedValue({ id: "order-5", code: "DH-5", total_vnd: 500_000, paid_vnd: 500_000, ...state }),
+    } as unknown as BrochureOrderRepository
+    const cancellations = { listPending: vi.fn().mockResolvedValue([]), createProposal: vi.fn() } as unknown as CancellationRepository
+    await expect(coordinatorRejectBrochureOrder(ctx, "order-5", { reason: "Hết hoa" }, cancellations, repo)).rejects.toThrow(message)
+    expect(cancellations.createProposal).not.toHaveBeenCalled()
+  })
+
   it("Xác nhận thanh toán gắn đúng tag MANUAL_ADMIN và AUTO_SYSTEM_15M", async () => {
     const mockOrder = {
       id: "order-3",

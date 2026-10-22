@@ -2,7 +2,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { mediaSelectionError } from "../domain/media-limits"
 import { BrochureOrderRepository } from "../infra/brochure-order-repository"
-import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, type CoordinatorAction } from "../domain/brochure-commerce-rules"
+import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, coordinatorRejectionBlocker, type CoordinatorAction } from "../domain/brochure-commerce-rules"
 import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payment-policy"
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
@@ -364,7 +364,7 @@ export async function coordinatorRejectBrochureOrder(
 ) {
   const order = await repo.findBrochureOrder(ctx, orderId)
   if (!order) throw notFound()
-  if (order.status === "CANCELLED") throw conflict("Đơn hàng đã được huỷ trước đó")
+  const rejectBlocker = coordinatorRejectionBlocker({ status: order.status, productionStatus: order.production_status, deliveryStatus: order.delivery_status }); if (rejectBlocker) throw conflict(rejectBlocker)
   const reasonText = input.reason?.trim() || "Điều phối từ chối nhận đơn (quá tải hoặc không đáp ứng mẫu hoa)"
   // Bấm lặp / hai người cùng bấm → không tạo hai đề xuất huỷ cho một đơn
   if ((await cancellationRepo.listPending(ctx)).some((r) => r.order_id === orderId)) {
