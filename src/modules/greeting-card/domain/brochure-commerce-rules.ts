@@ -98,6 +98,14 @@ export function coordinatorAcceptanceBlocker(
   return null
 }
 
+/** Điều phối từ chối nhận đơn: cùng chốt với Điều hành từ chối — đơn đã giao/đã vào sản xuất thì không hoàn tiền 100% */
+export function coordinatorRejectionBlocker(s: OrderProgressState): string | null {
+  if (s.status === "CANCELLED") return "Đơn hàng đã được huỷ trước đó"
+  if (s.status === "COMPLETED" || s.deliveryStatus === "DELIVERED") return "Đơn hàng đã giao xong, không thể từ chối"
+  if (s.productionStatus === "ARRANGING" || s.productionStatus === "READY") return "Đơn đã vào sản xuất — không thể từ chối ở giai đoạn này"
+  return null
+}
+
 /**
  * Trả lý do chặn (tiếng Việt) hoặc `null` nếu được làm. Bản cũ cho bấm cả
  * bốn tác vụ theo thứ tự bất kỳ — giao ship trước khi cắm xong, hay chụp ảnh

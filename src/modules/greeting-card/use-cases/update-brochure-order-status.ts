@@ -2,7 +2,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { mediaSelectionError } from "../domain/media-limits"
 import { BrochureOrderRepository } from "../infra/brochure-order-repository"
-import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, type CoordinatorAction } from "../domain/brochure-commerce-rules"
+import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, coordinatorRejectionBlocker, type CoordinatorAction } from "../domain/brochure-commerce-rules"
 import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payment-policy"
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
@@ -319,8 +319,7 @@ export async function coordinatorAcceptBrochureOrder(
   )
   if (acceptBlocker) throw conflict(acceptBlocker)
 
-  // Nếu đơn chưa ghi nhận tiền cọc mà khách đã có bill hoặc báo chuyển khoản:
-  // Tự động phê duyệt tiền cọc tương đương với sự phê duyệt của Điều hành!
+  // Đơn chưa ghi cọc mà khách đã có bill/báo chuyển khoản → tự duyệt cọc như Điều hành
   const paid = Number(order.paid_vnd)
   const total = Number(order.total_vnd)
   const session = order.greeting_sessions?.[0]
@@ -348,6 +347,7 @@ export async function coordinatorAcceptBrochureOrder(
     noteAppend: `[Điều phối tiếp nhận] ${input.note?.trim() || "Xác nhận xưởng nhận đơn"}`,
   })
   queueOrderNotification(ctx.organizationId, order.id, "ORDER_ACCEPTED")
+  queueStaffNotification(ctx.organizationId, "ORDER_ACCEPTED", { orderId: order.id, orderCode: order.code, amountVnd: total, assignedSaleId: session?.sale_id ?? null })
   return result
 }
 
@@ -364,7 +364,7 @@ export async function coordinatorRejectBrochureOrder(
 ) {
   const order = await repo.findBrochureOrder(ctx, orderId)
   if (!order) throw notFound()
-  if (order.status === "CANCELLED") throw conflict("Đơn hàng đã được huỷ trước đó")
+  const rejectBlocker = coordinatorRejectionBlocker({ status: order.status, productionStatus: order.production_status, deliveryStatus: order.delivery_status }); if (rejectBlocker) throw conflict(rejectBlocker)
   const reasonText = input.reason?.trim() || "Điều phối từ chối nhận đơn (quá tải hoặc không đáp ứng mẫu hoa)"
   // Bấm lặp / hai người cùng bấm → không tạo hai đề xuất huỷ cho một đơn
   if ((await cancellationRepo.listPending(ctx)).some((r) => r.order_id === orderId)) {

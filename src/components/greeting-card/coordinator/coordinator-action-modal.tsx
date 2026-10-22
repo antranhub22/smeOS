@@ -27,8 +27,6 @@ export function CoordinatorActionModal({ modal, onClose, onDone, allowSkipPhoto 
   /** Gói Nghiêm ngặt bắt buộc ảnh → ẩn "Bỏ qua ảnh" (máy chủ cũng chặn) */
   allowSkipPhoto?: Record<"product-photo" | "recipient-photo", boolean> | undefined
 }) {
-  const { organizationType } = useSession()
-
   // Lấy tên chi nhánh đã nhận đơn (chain-dispatch) để hiển thị trong ghi chú nội bộ
   const isAcceptReject = modal.type === "accept-order" || modal.type === "reject-order"
   const { data: dispatchData } = useApi<{ data: { dispatchState?: { claimedBranchName?: string | null; claimedBranchId?: string | null } } }>(
@@ -59,7 +57,8 @@ export function CoordinatorActionModal({ modal, onClose, onDone, allowSkipPhoto 
     return <SubstituteProposalModal orderId={modal.orderId} orderCode={modal.orderCode} onClose={onClose} onDone={onDone} />
   }
   if (modal.type === "accept-order" || modal.type === "reject-order") {
-    if (organizationType === "CHAIN") {
+    // Theo nút đã bấm (cùng cài đặt quy trình của thẻ), không theo loại tổ chức — tiệm Chuỗi có thể chọn gói Tiêu chuẩn
+    if (modal.flow === "coordinator") {
       return (
         <CoordinatorAcceptRejectModal
           mode={modal.type === "accept-order" ? "accept" : "reject"}
