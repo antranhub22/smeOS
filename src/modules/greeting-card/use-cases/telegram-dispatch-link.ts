@@ -1,6 +1,7 @@
 import type { TenantContext } from "@/core/tenancy"
 import {
   getRecentTelegramMessages,
+  TelegramUpdatesError,
   type TelegramChatMessage,
 } from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
 import { telegramLinkCode } from "@/modules/greeting-card/infra/telegram-link-code"
@@ -29,9 +30,23 @@ export function chatsWithLinkCode(messages: TelegramChatMessage[], linkCode: str
  */
 export async function resolveTelegramDispatchAccess(ctx: TenantContext, botToken: string) {
   const linkCode = telegramLinkCode(ctx.organizationId)
-  const messages = await getRecentTelegramMessages(botToken)
-  const linkedChats = chatsWithLinkCode(messages, linkCode)
-  await rememberLinkedTelegramChats(ctx.organizationId, linkedChats.map((c) => c.id))
+  // Không đọc được tin mới (webhook / xung đột) vẫn trả các chat đã liên kết trước đó, kèm lý do
+  let messages: TelegramChatMessage[] = []
+  let scanError: string | null = null
+  try {
+    messages = await getRecentTelegramMessages(botToken)
+  } catch (err) {
+    if (!(err instanceof TelegramUpdatesError)) throw err
+    scanError = err.message
+  }
+  const scanned = chatsWithLinkCode(messages, linkCode)
+  await rememberLinkedTelegramChats(ctx.organizationId, scanned.map((c) => c.id))
   const allowedChatIds = new Set(await listLinkedTelegramChatIds(ctx.organizationId))
-  return { linkCode, linkedChats, allowedChatIds }
+  // Hiển thị mọi chat đã liên kết (bot chỉ thấy tin trong 24 giờ — chat cũ hiện bằng ID)
+  const scannedIds = new Set(scanned.map((c) => c.id))
+  const linkedChats: LinkedTelegramChat[] = [
+    ...scanned,
+    ...[...allowedChatIds].filter((id) => !scannedIds.has(id)).map((id) => ({ id, title: id, type: "unknown" })),
+  ]
+  return { linkCode, linkedChats, allowedChatIds, scanError }
 }
