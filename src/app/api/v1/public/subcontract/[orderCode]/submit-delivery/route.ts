@@ -5,6 +5,7 @@ import { enforceRateLimit } from "@/core/http/rate-limit"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
@@ -225,10 +226,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   // 2. Bắn thông báo xác nhận hoàn tất tới kênh Điều phối / Chi nhánh
   try {
-    const org = await repo.findOrganizationSettings(order.organization_id)
-    const branches = (org?.settings as Record<string, unknown> | null)?.["chain_branches"]
-    const branchList = Array.isArray(branches) ? branches : []
-    const branchObj = branchList.find((b: any) => b.branchId === branchId)
+    const branchObj = await new ChainBranchRepository().findByCode(order.organization_id, branchId)
     const branchName = branchObj?.branchName || "Chi nhánh phụ trách"
 
     const tenantCtx: TenantContext = {

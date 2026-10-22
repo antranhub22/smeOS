@@ -15,6 +15,7 @@ import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
@@ -94,11 +95,13 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   let penaltyResult = null
   if (branchId) {
-    penaltyResult = await repo.recordBranchBypassPenalty(
+    const penalty = await new ChainBranchRepository().applyPenalty(
       order.organization_id,
       branchId,
+      "BYPASS",
       `Bỏ qua bằng chứng ${step} đơn #${order.code} (Lý do: ${requestReason})`
     )
+    penaltyResult = { newQualityScore: penalty.newQualityScore, bypassCount: penalty.count }
   }
 
   const actorId = `coordinator:${ctx.userId}`

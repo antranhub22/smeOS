@@ -4,7 +4,7 @@ import {
   type TelegramChatMessage,
 } from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
 import { telegramLinkCode } from "@/modules/greeting-card/infra/telegram-link-code"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 
 export interface LinkedTelegramChat {
   id: string
@@ -22,15 +22,6 @@ export function chatsWithLinkCode(messages: TelegramChatMessage[], linkCode: str
   return [...byId.values()]
 }
 
-/** Chat ID đã cấu hình cho chi nhánh trong `settings.chain_branches` của chính tổ chức. */
-export function configuredBranchChatIds(settings: unknown): string[] {
-  const branches = (settings as { chain_branches?: unknown } | null)?.chain_branches
-  if (!Array.isArray(branches)) return []
-  return branches
-    .map((b) => (b as { channels?: { telegramChatId?: unknown } })?.channels?.telegramChatId)
-    .filter((id): id is string => typeof id === "string" && id.trim().length > 0)
-}
-
 /**
  * Nhóm Telegram mà tổ chức được phép xem và gửi thử qua bot chung của nền tảng: nhóm đã nhắn
  * mã liên kết của tổ chức, cộng nhóm đã cấu hình cho chi nhánh của chính tổ chức đó.
@@ -38,11 +29,11 @@ export function configuredBranchChatIds(settings: unknown): string[] {
  */
 export async function resolveTelegramDispatchAccess(ctx: TenantContext, botToken: string) {
   const linkCode = telegramLinkCode(ctx.organizationId)
-  const [messages, organization] = await Promise.all([
+  const [messages, branchChatIds] = await Promise.all([
     getRecentTelegramMessages(botToken),
-    new OrganizationRepository().current(ctx),
+    new ChainBranchRepository().listTelegramChatIds(ctx.organizationId),
   ])
   const linkedChats = chatsWithLinkCode(messages, linkCode)
-  const allowedChatIds = new Set([...linkedChats.map((c) => c.id), ...configuredBranchChatIds(organization?.settings)])
+  const allowedChatIds = new Set([...linkedChats.map((c) => c.id), ...branchChatIds])
   return { linkCode, linkedChats, allowedChatIds }
 }

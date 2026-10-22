@@ -4,7 +4,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 
 const branchSchema = z.object({
@@ -33,7 +33,7 @@ const bulkImportSchema = z.object({
 
 /**
  * POST /api/v1/greeting-card/chain-branches/bulk-import
- * Nhập danh sách chi nhánh chuỗi từ file Excel vào cấu hình org_settings.chain_branches
+ * Nhập danh sách chi nhánh chuỗi từ file Excel vào bảng `chain_branches` (trùng mã → cập nhật)
  */
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -47,60 +47,32 @@ export const POST = handle(async (request) => {
 
   const { branches } = parsed.data
 
-  const organizations = new OrganizationRepository()
-  const org = await organizations.current(ctx)
+  const candidates: BranchCandidate[] = branches.map((b) => ({
+    branchId: b.branchId,
+    branchName: b.branchName,
+    address: b.address ?? "",
+    location:
+      typeof b.latitude === "number" && typeof b.longitude === "number"
+        ? { latitude: b.latitude, longitude: b.longitude }
+        : null,
+    qualityScore: b.qualityScore,
+    activeJobsCount: b.activeJobsCount,
+    maxConcurrentJobs: b.maxConcurrentJobs,
+    isActive: b.isActive,
+    channels: {
+      phone: b.channels?.phone,
+      telegramChatId: b.channels?.telegramChatId,
+      zaloPhone: b.channels?.zaloPhone,
+    },
+  }))
 
-  const currentSettings = (org?.settings as Record<string, unknown> | null) ?? {}
-  const existingBranches: BranchCandidate[] = Array.isArray(currentSettings.chain_branches)
-    ? (currentSettings.chain_branches as BranchCandidate[])
-    : []
-
-  const branchMap = new Map<string, BranchCandidate>()
-  for (const b of existingBranches) {
-    branchMap.set(b.branchId, b)
-  }
-
-  let created = 0
-  let updated = 0
-
-  for (const b of branches) {
-    const isUpdate = branchMap.has(b.branchId)
-    const candidate: BranchCandidate = {
-      branchId: b.branchId,
-      branchName: b.branchName,
-      address: b.address ?? "",
-      location:
-        typeof b.latitude === "number" && typeof b.longitude === "number"
-          ? { latitude: b.latitude, longitude: b.longitude }
-          : null,
-      qualityScore: b.qualityScore,
-      activeJobsCount: b.activeJobsCount,
-      maxConcurrentJobs: b.maxConcurrentJobs,
-      isActive: b.isActive,
-      channels: {
-        phone: b.channels?.phone,
-        telegramChatId: b.channels?.telegramChatId,
-        zaloPhone: b.channels?.zaloPhone,
-      },
-    }
-
-    branchMap.set(b.branchId, candidate)
-    if (isUpdate) {
-      updated++
-    } else {
-      created++
-    }
-  }
-
-  const newBranchesList = Array.from(branchMap.values())
-
-  await organizations.updateSettings(ctx, { ...currentSettings, chain_branches: newBranchesList })
+  const { created, updated, total } = await new ChainBranchRepository().upsertMany(ctx.organizationId, candidates)
 
   return jsonResponse({
     data: {
       created,
       updated,
-      total: newBranchesList.length,
+      total,
       errors: [],
     },
   })

@@ -1,5 +1,5 @@
 {
-  "total": 67,
+  "total": 66,
   "files": {
     "scripts/check-industry.ts": {
       "@typescript-eslint/no-explicit-any": 5
@@ -36,9 +36,6 @@
     },
     "src/app/(platform)/van-hanh/to-chuc/[id]/page.tsx": {
       "react-hooks/set-state-in-effect": 1
-    },
-    "src/app/api/v1/public/subcontract/[orderCode]/submit-delivery/route.ts": {
-      "@typescript-eslint/no-explicit-any": 1
     },
     "src/components/availability/manual-block-modal.tsx": {
       "react-hooks/purity": 1
