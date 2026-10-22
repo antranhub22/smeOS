@@ -32,6 +32,8 @@ import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subco
 import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
+import { advanceExpiredDispatchRound } from "@/modules/greeting-card/use-cases/advance-dispatch-round"
+import { formatDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 
 const MAX_ORDERS_PER_SWEEP = 50
 
@@ -64,6 +66,51 @@ export const POST = handle(async (request) => {
   const sweepQuery = new ChainDispatchSweepQuery()
   const coordinations = await sweepQuery.listCoordinationsWithMetadata(MAX_ORDERS_PER_SWEEP)
 
+  const subStatus = (c: (typeof coordinations)[number]) =>
+    ((c.metadata as Record<string, unknown> | null)?.subcontract_dispatch as Record<string, unknown> | undefined)
+      ?.dispatchStatus as string | undefined
+
+  // Đơn còn OPEN: hết hạn vòng nhận → mời vòng tiếp theo hoặc chuyển Điều phối
+  const openCoords = coordinations.filter((c) => subStatus(c) === "OPEN")
+  let roundsAdvanced = 0
+  if (openCoords.length > 0) {
+    const openOrgs = new Map((await sweepQuery.listOrganizationSettings([...new Set(openCoords.map((c) => c.organization_id))])).map((o) => [o.id, o]))
+    const openOrders = new Map((await sweepQuery.listOrdersForReminders(openCoords.map((c) => c.order_id))).map((o) => [o.id, o]))
+    const branchRepo = new ChainBranchRepository()
+    for (const coord of openCoords) {
+      const order = openOrders.get(coord.order_id)
+      const org = openOrgs.get(coord.organization_id)
+      if (!order || !org) continue
+      const state = (coord.metadata as Record<string, unknown>).subcontract_dispatch as SubcontractOrderState
+      if (!state.roundExpiresAt || now.getTime() < new Date(state.roundExpiresAt).getTime()) continue
+      try {
+        const ctx: TenantContext = { organizationId: coord.organization_id, workspaceId: coord.organization_id, userId: "cron:chain-dispatch-sweep", branchId: null, capabilities: new Set<string>() }
+        const win = (order.delivery_window as Record<string, unknown> | null) ?? {}
+        const settings = (org.settings as Record<string, unknown> | null) ?? {}
+        const coordinatorChannel = settings.coordinator_channel as { telegramChatId?: string } | undefined
+        const firstItemMeta = (order.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
+        const result = await advanceExpiredDispatchRound(ctx, {
+          state,
+          shopSettings: org.settings,
+          branches: await branchRepo.listCandidates(coord.organization_id),
+          deliveryAddress: formatDeliveryAddress(order.delivery_address),
+          deliveryTime: typeof win.timeSlot === "string" && typeof win.date === "string" ? `${win.timeSlot} ngày ${win.date}` : "Giao trong ngày",
+          baseUrl: process.env.NEXT_PUBLIC_APP_URL || url.origin,
+          imageUrl: (firstItemMeta.imageUrl as string | undefined) || (firstItemMeta.image as string | undefined) || null,
+          coordinatorTelegramChatId: coordinatorChannel?.telegramChatId ?? null,
+        }, stateRepo, notifier, now)
+        if (result.action !== "NONE") {
+          roundsAdvanced++
+          log.info("chain_dispatch_sweep.round_expired", { orderId: coord.order_id, action: result.action })
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err)
+        errors.push(`order:${coord.order_id} — ${msg}`)
+        log.warn("chain_dispatch_sweep.round_error", { orderId: coord.order_id, error: msg })
+      }
+    }
+  }
+
   // Lọc chỉ những đơn đang ở trạng thái cần nhắc việc
   const activeCoords = coordinations.filter((c) => {
     const meta = c.metadata as Record<string, unknown> | null
@@ -79,6 +126,7 @@ export const POST = handle(async (request) => {
       ok: true,
       processed: 0,
       remindersSent: 0,
+      roundsAdvanced,
       message: "Không có đơn gia công nào cần nhắc việc.",
     })
   }
@@ -244,6 +292,7 @@ export const POST = handle(async (request) => {
     ok: true,
     processed: totalProcessed,
     remindersSent: totalRemindersSent,
+    roundsAdvanced,
     sentDetails: sentDetails.length > 0 ? sentDetails : undefined,
     errors: errors.length > 0 ? errors : undefined,
     sweepAt: now.toISOString(),

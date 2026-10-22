@@ -65,11 +65,33 @@ export interface IDispatchNotifier {
     ctx: TenantContext,
     target: DispatchNotificationTarget
   ): Promise<LiveCardSendResult>
+  /**
+   * Chỉ sửa một thẻ Telegram đã gửi (không bao giờ gửi tin mới). `actions` rỗng = gỡ nút.
+   * Trả false nếu không sửa được (thiếu bot, tin đã bị xoá...).
+   */
+  editInviteCard?(
+    ctx: TenantContext,
+    card: { msgId: string; chatId: string; isCaption: boolean },
+    text: string,
+    actions: Array<{ text: string; url: string }>
+  ): Promise<boolean>
 }
 
 export interface ISubcontractStateStore {
   saveSubcontractState(ctx: TenantContext, state: SubcontractOrderState): Promise<void>
   loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null>
+}
+
+export interface ISubcontractClaimStore extends ISubcontractStateStore {
+  /**
+   * Ghi state chỉ khi state đang lưu vẫn ở `expectedStatus` (khoá dòng, kiểm tra và ghi trong một giao dịch).
+   * Trả false nếu đã có thao tác khác đổi trạng thái trước — hai chi nhánh bấm nhận cùng lúc chỉ một người thắng.
+   */
+  saveSubcontractStateIfStatus(
+    ctx: TenantContext,
+    state: SubcontractOrderState,
+    expectedStatus: SubcontractOrderState["dispatchStatus"]
+  ): Promise<boolean>
 }
 
 export interface AutomatedDispatchResult {

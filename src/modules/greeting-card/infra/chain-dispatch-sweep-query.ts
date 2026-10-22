@@ -31,6 +31,7 @@ export class ChainDispatchSweepQuery {
       select: {
         id: true,
         code: true,
+        delivery_address: true,
         delivery_window: true,
         delivery_status: true,
         production_status: true,

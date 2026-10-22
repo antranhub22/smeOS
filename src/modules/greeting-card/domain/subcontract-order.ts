@@ -12,6 +12,16 @@ export type SubcontractDispatchStatus =
   | "ESCALATED" // Hết các vòng hoặc không ai nhận -> Chuyển Điều phối can thiệp
   | "CANCELLED" // Đơn đã bị hủy
 
+/** Thẻ mời nhận đơn đã gửi riêng cho một chi nhánh trên Telegram — để sửa lại khi đơn đổi trạng thái */
+export interface InviteCardRef {
+  msgId: string
+  chatId: string
+  isCaption: boolean
+  /** Nội dung thẻ lúc mời (HTML) và link nhận đơn — dùng để mở lại thẻ khi đơn quay về OPEN */
+  text: string
+  claimUrl: string
+}
+
 export interface SubcontractOrderState {
   orderId: string
   orderCode: string
@@ -26,6 +36,8 @@ export interface SubcontractOrderState {
   declinedBranchIds: string[]
   /** Danh sách các chi nhánh đã được gửi lời mời ở vòng hiện tại */
   invitedBranchIds: string[]
+  /** Chi nhánh đã được mời ở các vòng trước — không mời lại ở vòng sau */
+  previouslyInvitedBranchIds?: string[] | undefined
   roundExpiresAt: string | null
   /**
    * Lưu vết thời điểm đã gửi các tin nhắn nhắc việc theo mốc JSON (Tránh gửi trùng hoặc bỏ sót)
@@ -41,13 +53,15 @@ export interface SubcontractOrderState {
   telegramChatId?: string | null | undefined
   /** Thẻ được gửi kèm ảnh (sendPhoto -> caption) hay text thuần */
   isCaption?: boolean | undefined
+  /** Thẻ mời của từng chi nhánh trong vòng hiện tại, theo branchId */
+  inviteCards?: Record<string, InviteCardRef> | undefined
   /** Thù lao gia công đã chốt cho đơn hàng (VNĐ) */
   subcontractPriceVnd?: number | null | undefined
 }
 
 export type ClaimResult =
   | { success: true; nextState: SubcontractOrderState }
-  | { success: false; reason: "ALREADY_CLAIMED" | "NOT_OPEN" | "DECLINED_PREVIOUSLY" | "EXPIRED" }
+  | { success: false; reason: "ALREADY_CLAIMED" | "NOT_OPEN" | "DECLINED_PREVIOUSLY" | "NOT_INVITED" | "EXPIRED" }
 
 export type CancelClaimResult =
   | { success: true; nextState: SubcontractOrderState }
@@ -59,6 +73,8 @@ export type CancelClaimResult =
 export function isSubcontractClaimable(state: SubcontractOrderState, branchId: string): boolean {
   if (state.dispatchStatus !== "OPEN") return false
   if (state.declinedBranchIds.includes(branchId)) return false
+  const invited = state.invitedBranchIds ?? []
+  if (invited.length > 0 && !invited.includes(branchId)) return false
   return true
 }
 
@@ -79,6 +95,13 @@ export function claimSubcontractOrder(
 
   if (state.declinedBranchIds.includes(branchId)) {
     return { success: false, reason: "DECLINED_PREVIOUSLY" }
+  }
+
+  // Chỉ chi nhánh được mời ở vòng hiện tại mới được nhận (link của vòng cũ không còn hiệu lực).
+  // Danh sách rỗng = state cũ trước khi lưu lời mời → giữ hành vi cũ.
+  const invited = state.invitedBranchIds ?? []
+  if (invited.length > 0 && !invited.includes(branchId)) {
+    return { success: false, reason: "NOT_INVITED" }
   }
 
   const claimedAtIso = now.toISOString()

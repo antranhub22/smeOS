@@ -213,6 +213,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
         activeJobsCount: 0,
         maxConcurrentJobs: 10,
         isActive: true,
+        // Kênh liên lạc của chi nhánh chuỗi — thiếu thì tin xác nhận nhận đơn không gửi được
+        channels: (await new ChainBranchRepository().findByCode(order.organization_id, branch.id))?.channels,
       }]
     )
     return jsonResponse({ data: result })
@@ -222,7 +224,9 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     const result = await cancelClaimSubcontractUseCase(
       ctx,
       { orderId: order.id, branchId: branch.id },
-      repo
+      repo,
+      new Date(),
+      notifier
     )
 
     // Đánh giá chất lượng dịch vụ: Trừ điểm KPI chi nhánh vì đã hủy nhận đơn

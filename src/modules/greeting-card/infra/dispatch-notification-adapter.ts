@@ -23,6 +23,32 @@ import { listLinkedTelegramChatIds } from "./telegram-linked-chats"
 export class MultiChannelDispatchNotifier implements IDispatchNotifier {
   constructor(private readonly linkedChatIds: (organizationId: string) => Promise<string[]> = listLinkedTelegramChatIds) {}
 
+  async editInviteCard(
+    _ctx: TenantContext,
+    card: { msgId: string; chatId: string; isCaption: boolean },
+    text: string,
+    actions: Array<{ text: string; url: string }>
+  ): Promise<boolean> {
+    const botToken = process.env.TELEGRAM_DISPATCH_BOT_TOKEN || process.env.TELEGRAM_STAFF_BOT_TOKEN
+    const telegramProvider = getStaffChannelProvider("TELEGRAM")
+    if (!botToken || !telegramProvider?.editMessage) return false
+    try {
+      const res = await telegramProvider.editMessage({
+        messageId: card.msgId,
+        chatId: card.chatId,
+        text,
+        isCaption: card.isCaption,
+        actions,
+        channelConfig: { botToken },
+      })
+      if (!res.ok) log.warn("dispatch_notify.invite_card_edit_failed", { msgId: card.msgId, error: res.error })
+      return res.ok
+    } catch (err) {
+      log.warn("dispatch_notify.invite_card_edit_exception", { error: err instanceof Error ? err.message : String(err) })
+      return false
+    }
+  }
+
   async sendSubcontractInvite(
     ctx: TenantContext,
     target: DispatchNotificationTarget
