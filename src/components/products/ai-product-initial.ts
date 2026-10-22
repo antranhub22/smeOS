@@ -1,6 +1,7 @@
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"
 import type { BomItem } from "./create-product-types"
 import type { ProductFormValues } from "./ai-product-helpers"
+import { parsePricing } from "@/modules/products/domain/product-pricing"
 
 export interface InitialProductInput {
   id: string
@@ -79,6 +80,7 @@ export function extractInitialFormValues(
     facing: product.facing || defaultFacing || "",
     container: product.container || "",
     priceVnd: initialPrice,
+    pricing: parsePricing(attrs),
     primaryColor: (attrs.color as string) || "",
     description: (attrs.description as string) || "",
     status: product.status === "DRAFT" ? "DRAFT" : "ACTIVE",

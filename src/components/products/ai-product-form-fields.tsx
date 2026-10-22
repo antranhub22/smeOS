@@ -5,6 +5,7 @@ import type { IndustryPluginContract } from "@/modules/organization/domain/indus
 import type { BomItem, TerminologyGetter } from "./create-product-types"
 import type { ProductFormValues } from "./ai-product-helpers"
 import { CreateGeneralCard } from "./create-general-card"
+import { EMPTY_PRICING } from "./pricing/pricing-form"
 import { CreateDesignCard } from "./create-design-card"
 import { CreateBomCard } from "./create-bom-card"
 import { CreateStoryCard } from "./create-story-card"
@@ -90,6 +91,8 @@ export function AiProductFormFields({
         setCode={(val) => onChange("code", val)}
         priceVnd={values.priceVnd}
         setPriceVnd={(val) => onChange("priceVnd", val)}
+        pricing={values.pricing ?? EMPTY_PRICING}
+        setPricing={(val) => onChange("pricing", val)}
         category={values.category}
         setCategory={(val) => onChange("category", val)}
         categories={categories}

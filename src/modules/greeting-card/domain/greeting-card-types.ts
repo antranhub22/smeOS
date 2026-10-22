@@ -66,7 +66,15 @@ export interface GreetingCatalogProduct {
   /** `false` = tạm hết hàng theo tồn kho chi nhánh — link riêng `/b` vẫn hiện kèm nhãn "Tạm hết", không đặt được. */
   available?: boolean | undefined
   /** Các size/biến thể bán online (đã có giá); rỗng = chỉ bán bản gốc. */
-  variants?: Array<{ id: string; name: string; priceVnd: number }> | undefined
+  variants?: Array<{ id: string; name: string; priceVnd: number; peakPriceVnd?: number | null | undefined }> | undefined
+  /** Kiểu giá (`products.attributes.pricing`); thiếu = FIXED. CONTACT = chỉ liên hệ, không đặt online. */
+  priceMode?: "FIXED" | "RANGE" | "CONTACT" | undefined
+  /** Giá cao nhất (kể cả cao điểm) — hiển thị "Từ … đến …" */
+  priceMaxVnd?: number | null | undefined
+  /** FIXED: giá ngày cao điểm; `null` = như giá thường */
+  peakPriceVnd?: number | null | undefined
+  /** Thứ 7, Chủ nhật tính cao điểm */
+  weekendIsPeak?: boolean | undefined
 }
 
 export interface GreetingCatalogRecord {

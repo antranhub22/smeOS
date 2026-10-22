@@ -7,9 +7,10 @@ import { MAX_ORDER_QUANTITY } from "@/modules/greeting-card/domain/brochure-pric
 import type { QuoteSelection } from "./use-brochure-quote"
 import { PaymentCodeField, PaymentDueRows } from "./payment-code-field"
 import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+import { isOptionId } from "@/modules/products/domain/product-pricing"
 
 interface Props {
-  variants: Array<{ id: string; name: string; priceVnd: number }>
+  variants: Array<{ id: string; name: string; priceVnd: number; peakPriceVnd?: number | null | undefined }>
   basePrice: number
   shipping: ShippingConfig
   selection: QuoteSelection
@@ -40,9 +41,17 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
           <label className="flex flex-col gap-1">
             <span className="text-caption font-bold text-foreground">Kích thước / Phiên bản</span>
             <select value={selection.variantId} onChange={(e) => onChange({ variantId: e.target.value })} className={FIELD}>
-              <option value="">Bản tiêu chuẩn — {basePrice > 0 ? vnd(basePrice) : "Liên hệ"}</option>
+              {/* Khoảng giá theo phiên bản: không có "bản tiêu chuẩn", khách phải chọn */}
+              {variants.some((v) => isOptionId(v.id)) ? (
+                <option value="">Chọn phiên bản</option>
+              ) : (
+                <option value="">Bản tiêu chuẩn — {basePrice > 0 ? vnd(basePrice) : "Liên hệ"}</option>
+              )}
               {variants.map((v) => (
-                <option key={v.id} value={v.id}>{v.name} — {vnd(v.priceVnd)}</option>
+                <option key={v.id} value={v.id}>
+                  {v.name} — {vnd(v.priceVnd)}
+                  {v.peakPriceVnd && v.peakPriceVnd !== v.priceVnd ? ` (ngày cao điểm ${vnd(v.peakPriceVnd)})` : ""}
+                </option>
               ))}
             </select>
             {errors.variantId && <span className="text-caption text-danger">{errors.variantId}</span>}

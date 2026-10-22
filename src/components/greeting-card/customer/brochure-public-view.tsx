@@ -9,7 +9,8 @@ import type { OptionalDisplayField } from "@/modules/greeting-card/domain/displa
 import { BrochureOrderForm } from "./brochure-order-form"
 import { BrochurePaymentView } from "./brochure-payment-view"
 import { BrochureTrackingView } from "./brochure-tracking-view"
-import { formatPriceVnd, readApiError } from "@/components/greeting-card/api-error"
+import { readApiError } from "@/components/greeting-card/api-error"
+import { productPriceText } from "./templates/product-info/product-display"
 import type {
   BrochurePaymentInstructions,
   GreetingCatalogProduct,
@@ -183,15 +184,24 @@ export function BrochurePublicView({ catalog, products, shipping }: Props) {
                 <p className="text-body-sm text-text-muted mt-1">{selected.description}</p>
               )}
               <p className="text-display font-extrabold text-primary mt-3">
-                {formatPriceVnd(selected.price)}
+                {productPriceText(selected)}
               </p>
-              {selected.price === null && (
+              {selected.priceMode === "RANGE" && (
+                <p className="text-body-sm text-text-muted mt-1">Giá tùy phiên bản — bạn chọn phiên bản ở bước đặt hàng để biết giá chính xác.</p>
+              )}
+              {selected.priceMode === "CONTACT" && (
+                <p className="text-body-sm text-text-muted mt-1">
+                  Mẫu này cửa hàng tư vấn giá trực tiếp. Bạn gọi điện hoặc nhắn Zalo cho cửa hàng ở thanh liên hệ nhé.
+                </p>
+              )}
+              {selected.price === null && selected.priceMode !== "CONTACT" && (
                 <p className="text-body-sm text-text-muted mt-1">
                   Mẫu này chưa niêm yết giá — bạn cứ đặt, cửa hàng sẽ liên hệ báo giá trước khi thu tiền.
                 </p>
               )}
             </div>
 
+            {selected.priceMode !== "CONTACT" && (
             <button
               type="button"
               onClick={() => {
@@ -203,6 +213,7 @@ export function BrochurePublicView({ catalog, products, shipping }: Props) {
               <ShoppingBag size={18} />
               <span>Đặt ngay</span>
             </button>
+            )}
 
             <button
               type="button"

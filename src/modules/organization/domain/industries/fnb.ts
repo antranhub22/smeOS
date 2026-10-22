@@ -47,6 +47,16 @@ export const FNB_INDUSTRY: IndustryPluginContract = {
       { label: "150.000 – 350.000 ₫", min: 150000, max: 350000 },
       { label: "Trên 350.000 ₫", min: 350000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: true,
+      variantDimensions: [
+        { key: "PORTION", label: "Kích cỡ phần", values: ["Nhỏ", "Vừa", "Lớn"] },
+        { key: "CUP_SIZE", label: "Size ly", values: ["S", "M", "L"] },
+        { key: "FLAVOR", label: "Hương vị", values: ["Truyền thống", "Socola", "Matcha", "Dâu", "Vani", "Trái cây"] },
+        { key: "SERVINGS", label: "Số người ăn", values: ["1 người", "2 người", "4 người", "6 người", "10 người"] },
+        { key: "CAKE_SIZE", label: "Kích thước bánh", values: ["12 cm", "16 cm", "20 cm", "24 cm", "2 tầng"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["phần", "ly", "cái", "hộp", "gram", "ml", "set"],

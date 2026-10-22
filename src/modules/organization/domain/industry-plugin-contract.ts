@@ -46,6 +46,20 @@ export interface IndustryTaxonomy {
   readonly defaultCategories: readonly IndustryTaxonomyCategory[]
   readonly occasions: readonly IndustryTaxonomyOccasion[]
   readonly priceRanges: readonly { readonly label: string; readonly min: number; readonly max?: number }[]
+  /** Gợi ý khai giá theo phiên bản / cao điểm (PO 22/10/2026). Cửa hàng vẫn tự thêm nhóm, giá trị riêng. */
+  readonly pricingPresets: IndustryPricingPresets
+}
+
+export interface IndustryVariantDimensionPreset {
+  readonly key: string
+  readonly label: string
+  readonly values: readonly string[]
+}
+
+export interface IndustryPricingPresets {
+  /** Mặc định tính Thứ 7, Chủ nhật là ngày cao điểm (homestay, F&B, dịch vụ) */
+  readonly weekendIsPeak: boolean
+  readonly variantDimensions: readonly IndustryVariantDimensionPreset[]
 }
 
 export interface IndustryBomSpec {
