@@ -914,7 +914,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | Thẻ Gia Công của chi nhánh. SĐT người nhận bị che cho tới khi đơn sẵn sàng giao. 120 lần/phút/IP |
-| POST | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | `{ action: CLAIM \| CANCEL \| COMMIT \| DELETE_QC, branchId, photoUrl? }`. `DELETE_QC` chỉ dành cho chi nhánh đã nhận đơn. 30 lần/phút/IP |
+| POST | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | `{ action: CLAIM \| CANCEL \| COMMIT \| DELETE_QC, branchId, photoUrl? }`. `DELETE_QC` chỉ dành cho chi nhánh đã nhận đơn. `CLAIM`: chỉ chi nhánh có trong lời mời vòng hiện tại (khác → 422); hai lượt nhận cùng lúc khoá dòng điều phối, chỉ một lượt thắng (lượt sau → 409). Thẻ mời Telegram lưu riêng theo chi nhánh (`inviteCards`): có chi nhánh nhận → thẻ các chi nhánh khác sửa thành "đã có chi nhánh khác nhận", gỡ nút; `CANCEL` trong hạn → thẻ các chi nhánh chưa từ chối trở về lời mời có nút "Nhận đơn ngay"; sang vòng mới/chuyển Điều phối → thẻ vòng cũ báo hết hạn. 30 lần/phút/IP |
 | POST | `/public/subcontract/:orderCode/upload-qc` | — *(token, chi nhánh đã nhận)* | multipart `{ file, branchId }`. Ảnh thành phẩm ≤ 10MB (JPG/PNG/WebP), AI đối chiếu với ảnh mẫu |
 | POST | `/public/subcontract/:orderCode/submit-shipper` | — *(token, chi nhánh đã nhận)* | `{ branchId, shipperName, shipperPhone, shipperNote? }`. Chỉ khi đơn đã `READY` |
 | POST | `/public/subcontract/:orderCode/submit-delivery` | — *(token, chi nhánh đã nhận)* | multipart `{ file, branchId, note? }`. Ảnh giao hàng, AI kiểm; đạt thì đơn `DELIVERED/COMPLETED` |
@@ -924,7 +924,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | POST | `/coordinator/orders/:id/upload-qc-subcontract` | `R3` | Điều phối tải ảnh QC thay chi nhánh |
 | POST | `/coordinator/orders/:id/set-shipper` | `R5` | Điều phối nhập thông tin shipper thay chi nhánh |
 | POST | `/coordinator/orders/:id/confirm-delivery` | `R5` | Điều phối xác nhận đã giao, kèm ảnh giao hàng nếu có |
-| POST | `/internal/chain-dispatch-sweep` | — *(cron, header `x-cron-secret`)* | Quét nhắc mốc M1–M4 (≤ 50 đơn/lượt), do Render cron `smeos-cron-dispatch-sweep` gọi 5 phút/lần qua mạng nội bộ. Link trong tin nhắc dựng từ `NEXT_PUBLIC_APP_URL`. Production thiếu `CRON_SECRET` → luôn 401. `?forceStep=` chỉ có hiệu lực ngoài production |
+| POST | `/internal/chain-dispatch-sweep` | — *(cron, header `x-cron-secret`)* | Quét nhắc mốc M1–M4 (≤ 50 đơn/lượt); đơn còn `OPEN` đã hết hạn vòng nhận → mời vòng sau (không mời lại chi nhánh đã mời/đã từ chối) hoặc chuyển `ESCALATED` và báo `coordinator_channel.telegramChatId` khi hết vòng/hết ứng viên, do Render cron `smeos-cron-dispatch-sweep` gọi 5 phút/lần qua mạng nội bộ. Link trong tin nhắc dựng từ `NEXT_PUBLIC_APP_URL`. Production thiếu `CRON_SECRET` → luôn 401. `?forceStep=` chỉ có hiệu lực ngoài production |
 | GET | `/internal/health` | — *(cron, header `x-cron-secret`)* | Sức khoẻ chi tiết: độ trễ CSDL, Redis, job `PENDING`/`PROCESSING` quá 15 phút. `200` khi ổn, `503` khi `degraded`/`down` kèm `issues`. Cron `smeos-cron-dispatch-sweep` gọi sau mỗi lượt quét để Render báo lỗi. Không trả dữ liệu tenant |
 
 ### 26.4 Console Vận hành Nền tảng
