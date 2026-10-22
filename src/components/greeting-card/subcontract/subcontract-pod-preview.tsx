@@ -20,7 +20,7 @@ export function SubcontractPodPreview({
       <div className="relative w-full h-56 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center">
         <img
           src={previewUrl}
-          alt="Xem trước ảnh POD"
+          alt="Xem trước ảnh giao hàng"
           className="w-full h-full object-contain"
         />
       </div>

@@ -24,7 +24,7 @@ const COMMON_REJECT_REASONS = [
  * Hộp thoại Điều phối xác nhận đã nhận tiền hoặc từ chối đơn hàng (tổ chức Chuỗi).
  * - Xác nhận đã nhận tiền: ghi nhận thanh toán rồi chọn cửa hàng theo cài đặt (tự động / thủ công).
  *   Khách chỉ nhận tin "đã nhận đơn" khi cửa hàng chốt làm.
- * - Từ chối: huỷ đơn và kích hoạt quy trình hoàn tiền cho khách hàng.
+ * - Từ chối: gửi đề xuất huỷ & hoàn tiền lên Điều hành; quá thời gian chờ duyệt thì tự huỷ theo đề xuất.
  */
 export function CoordinatorAcceptRejectModal({
   mode,
@@ -113,7 +113,7 @@ export function CoordinatorAcceptRejectModal({
             ? autoMode && !manualDispatch
               ? "Xác nhận đã nhận đủ tiền theo ảnh chuyển khoản. Hệ thống sẽ tự chọn cửa hàng phù hợp và gửi lời mời gia công. Khách chỉ nhận tin \"đã nhận đơn\" khi cửa hàng chốt làm."
               : "Xác nhận đã nhận đủ tiền theo ảnh chuyển khoản. Sau đó bạn chọn cửa hàng trong mục Thẻ gia công. Khách chỉ nhận tin \"đã nhận đơn\" khi cửa hàng chốt làm."
-            : "Đề xuất không nhận đơn sẽ được gửi lên Điều hành phê duyệt hủy & hoàn tiền cho khách. Nếu Điều hành không duyệt trong vòng 15 phút, đơn sẽ tự động hủy theo đề xuất."}
+            : "Đề xuất không nhận đơn sẽ được gửi lên Điều hành phê duyệt hủy & hoàn tiền cho khách. Nếu Điều hành không duyệt trong thời gian chờ tiệm đã cài (mặc định 15 phút), đơn sẽ tự động hủy theo đề xuất."}
         </p>
 
         {isAccept ? (

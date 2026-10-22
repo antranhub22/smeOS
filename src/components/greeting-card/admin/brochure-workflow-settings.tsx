@@ -20,6 +20,7 @@ import {
   LEAN_WORKFLOW_POLICY,
   STANDARD_WORKFLOW_POLICY,
   STRICT_WORKFLOW_POLICY,
+  isChainOrganizationType,
   parseBrochureWorkflowPolicy,
   serializeWorkflowPolicy,
   detectWorkflowPreset,
@@ -42,7 +43,8 @@ export function BrochureWorkflowSettings() {
     else if (preset === "STRICT") newPolicy = { ...STRICT_WORKFLOW_POLICY }
     else newPolicy = { ...STANDARD_WORKFLOW_POLICY }
 
-    setDraft(newPolicy)
+    // Chế độ Chuỗi theo loại tổ chức Admin SaaS đã duyệt — gói không đổi được
+    setDraft({ ...newPolicy, requireCoordinatorAcceptance: isChainOrganizationType(org.data?.type) })
     setMessage(null)
   }
 
@@ -110,7 +112,7 @@ export function BrochureWorkflowSettings() {
           <h3 className="text-title-sm font-extrabold text-foreground">Ma trận Vận hành & Phân quyền Quy trình</h3>
         </div>
         <span className="text-caption font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary">
-          {policy.preset === "CUSTOM" ? "Đang tùy chỉnh" : `Chế độ: ${policy.preset}`}
+          {policy.preset === "CUSTOM" ? "Đang tùy chỉnh" : `Gói: ${PRESETS.find((p) => p.id === policy.preset)?.title ?? "Tùy chỉnh"}`}
         </span>
       </div>
 
@@ -173,7 +175,7 @@ export function BrochureWorkflowSettings() {
             <div className="flex items-start justify-between gap-3 pt-2">
               <div>
                 <label className="text-body-sm font-bold text-foreground block">
-                  Bắt buộc Điều hành duyệt tiền cọc (Gate 1)
+                  Bắt buộc Điều hành duyệt tiền cọc
                 </label>
                 <p className="text-caption text-text-muted">
                   Bật: Chỉ tài khoản Điều hành mới bấm được &quot;Xác nhận tiền về&quot;. Tắt: Cho phép Điều phối và Sale xác nhận cọc ngay khi thấy bill.
@@ -187,29 +189,24 @@ export function BrochureWorkflowSettings() {
               />
             </div>
 
-            {/* Gate 2: Bắt buộc Điều phối thẩm định & Nhận đơn (Chuỗi vs 1 Cửa hàng) */}
-            <div className="flex items-start justify-between gap-3 pt-3">
-              <div>
-                <label className="text-body-sm font-bold text-foreground block">
-                  Bắt buộc Điều phối thẩm định & Nhận đơn (Gate 2 — Chuỗi cửa hàng)
-                </label>
-                <p className="text-caption text-text-muted">
-                  Bật (Chuỗi): Điều phối phải liên hệ các cửa hàng trong chuỗi và bấm Nhận đơn mới vào sản xuất. Tắt (1 Cửa hàng): Duyệt tiền là tự động nhận đơn vào sản xuất ngay.
-                </p>
-              </div>
-              <input
-                type="checkbox"
-                checked={policy.requireCoordinatorAcceptance}
-                onChange={(e) => handleToggle("requireCoordinatorAcceptance", e.target.checked)}
-                className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
-              />
+            {/* Chuỗi / 1 cửa hàng: theo loại tổ chức Admin SaaS duyệt, tiệm không tự đổi (PO 22/10/2026) */}
+            <div className="pt-3">
+              <span className="text-body-sm font-bold text-foreground block">
+                Mô hình vận hành: {policy.requireCoordinatorAcceptance ? "Chuỗi cửa hàng" : "1 cửa hàng"}
+              </span>
+              <p className="text-caption text-text-muted">
+                {policy.requireCoordinatorAcceptance
+                  ? "Điều phối chọn chi nhánh làm đơn và bấm Nhận đơn rồi đơn mới vào sản xuất."
+                  : "Duyệt tiền xong là đơn vào sản xuất ngay."}{" "}
+                Muốn đổi mô hình, gửi yêu cầu cho Admin SaaS duyệt.
+              </p>
             </div>
 
             {/* Gate 3: Bắt buộc chụp Ảnh thành phẩm */}
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
                 <label className="text-body-sm font-bold text-foreground block">
-                  Bắt buộc chụp Ảnh thành phẩm QC (Gate 3)
+                  Bắt buộc chụp ảnh thành phẩm
                 </label>
                 <p className="text-caption text-text-muted">
                   Bật: Phải có ảnh thành phẩm hoàn chỉnh mới cho xuất giao. Tắt: Cho phép bấm &quot;Bỏ qua ảnh&quot; với đơn gấp hoặc khách quen.
@@ -227,7 +224,7 @@ export function BrochureWorkflowSettings() {
             <div className={`flex items-start justify-between gap-3 pt-3 ${!policy.requireFinishedPhoto ? "opacity-50 pointer-events-none" : ""}`}>
               <div>
                 <label className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
-                  <span>Cơ chế Khách duyệt ảnh (Gate 4)</span>
+                  <span>Cách khách duyệt ảnh</span>
                   {!policy.requireFinishedPhoto && <Lock size={12} className="text-text-muted" />}
                 </label>
                 <p className="text-caption text-text-muted">
@@ -250,7 +247,7 @@ export function BrochureWorkflowSettings() {
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
                 <label className="text-body-sm font-bold text-foreground block">
-                  Chặn Giao Ship nếu chưa thu đủ 100% (Gate 5)
+                  Chặn giao ship nếu chưa thu đủ 100%
                 </label>
                 <p className="text-caption text-text-muted">
                   Bật: Đơn cọc bắt buộc thu nốt lần 2 mới mở nút Giao Ship. Tắt: Mở nút giao ngay (cho phép thu tiền mặt COD).
@@ -268,7 +265,7 @@ export function BrochureWorkflowSettings() {
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
                 <label className="text-body-sm font-bold text-foreground block">
-                  Bắt buộc chụp Ảnh người nhận (Gate 6)
+                  Bắt buộc chụp ảnh người nhận
                 </label>
                 <p className="text-caption text-text-muted">
                   Bật: Shipper phải tải ảnh người nhận mới bấm Hoàn tất. Tắt: Cho phép bấm hoàn tất trực tiếp 1 click.
@@ -286,7 +283,7 @@ export function BrochureWorkflowSettings() {
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
                 <label className="text-body-sm font-bold text-foreground block">
-                  Cho phép Điều phối / Sale duyệt cọc khi quá hạn SLA (Gate 7)
+                  Cho phép Điều phối / Sale duyệt cọc khi quá hạn xử lý
                 </label>
                 <p className="text-caption text-text-muted">
                   Nếu Điều hành không bấm duyệt sau thời gian SLA, tự động mở khóa nút duyệt cho Điều phối và Sale phụ trách (chống nghẽn đơn).

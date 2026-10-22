@@ -38,9 +38,9 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
   const orders = board.data?.data ?? []
   const loading = board.isLoading
   const loadOrders = () => void board.mutate()
-  const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
+  const org = useApi<{ type?: string; settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const policy = parsePaymentPolicy(org.data?.settings)
-  const workflowPolicy = parseBrochureWorkflowPolicy(org.data?.settings)
+  const workflowPolicy = parseBrochureWorkflowPolicy(org.data?.settings, org.data?.type)
   const [modal, setModal] = useState<ModalState>({ type: "none" })
   const openModal = (m: ModalState) => setModal(m)
   const [bucket, setBucket] = useState<WorkBucket | null>(null)

@@ -155,7 +155,7 @@ export function ChainDispatchPanel({
           </span>
           <div>
             <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
-              <span>Điều Phối Chuỗi Tự Động (Matching Engine)</span>
+              <span>Điều phối chuỗi tự động</span>
               <span className="text-caption font-bold px-1.5 py-0.5 rounded-md bg-primary/20 text-primary uppercase">
                 Gate 2
               </span>

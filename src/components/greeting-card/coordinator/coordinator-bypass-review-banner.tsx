@@ -33,7 +33,7 @@ interface CoordinatorBypassReviewBannerProps {
 const STEP_LABELS: Record<string, string> = {
   QC: "Bước 2 — Ảnh thành phẩm (QC)",
   SHIPPER: "Bước 3 — Thông tin Shipper",
-  POD: "Bước 4 — Ảnh giao hàng (POD)",
+  POD: "Bước 4 — Ảnh giao hàng",
 }
 
 export function CoordinatorBypassReviewBanner({

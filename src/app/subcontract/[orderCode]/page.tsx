@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { Shield, AlertCircle } from "lucide-react"
 import { SubcontractSpotlightShell } from "@/components/greeting-card/subcontract/subcontract-spotlight-shell"
-import type { SubcontractClaimCardProps } from "@/components/greeting-card/subcontract/subcontract-claim-card"
-import type { DeliveryProofInfo } from "@/components/greeting-card/subcontract/delivery-proof-card"
+import type { SubcontractClaimCardProps } from "@/components/greeting-card/subcontract/subcontract-card-types"
+import type { DeliveryProofInfo } from "@/components/greeting-card/subcontract/subcontract-card-types"
 import type { SubcontractStepId } from "@/components/greeting-card/subcontract/subcontract-spotlight-stepper"
 
 interface PageProps {

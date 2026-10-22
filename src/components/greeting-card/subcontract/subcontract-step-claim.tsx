@@ -20,7 +20,7 @@ import {
   formatGraceCountdown,
   type SubcontractDispatchStatus,
 } from "@/modules/greeting-card/domain/subcontract-order"
-import type { SubcontractCardProduct } from "./subcontract-claim-card"
+import type { SubcontractCardProduct } from "./subcontract-card-types"
 
 export interface SubcontractStepClaimProps {
   product: SubcontractCardProduct

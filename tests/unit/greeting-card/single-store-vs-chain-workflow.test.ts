@@ -13,6 +13,9 @@ import { adminConfirmBrochureOrder, adminRejectBrochureOrder } from "@/modules/g
 import type { CancellationRepository } from "@/modules/greeting-card/infra/cancellation-repository"
 import { dispatchAfterPaymentConfirmed } from "@/modules/greeting-card/use-cases/dispatch-after-payment"
 
+// Nhận đơn kiểm đề xuất huỷ đang chờ — unit test không chạm DB
+vi.mock("@/modules/greeting-card/infra/cancellation-repository", () => ({ CancellationRepository: class { listPending = async () => [] } }))
+
 vi.mock("@/modules/greeting-card/use-cases/dispatch-after-payment", () => ({
   dispatchAfterPaymentConfirmed: vi.fn().mockResolvedValue({ mode: "AUTO", dispatched: true, sentCount: 2 }),
 }))
@@ -319,7 +322,8 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
       }),
     } as unknown as GreetingCardRepository
 
-    const res = await adminConfirmBrochureOrder(ctx, "order-conf-1", { note: "Đủ nguyên liệu" }, mockOrders, mockShops)
+    const noPending = { listPending: vi.fn().mockResolvedValue([]) } as unknown as CancellationRepository
+    const res = await adminConfirmBrochureOrder(ctx, "order-conf-1", { note: "Đủ nguyên liệu" }, mockOrders, mockShops, noPending)
     expect(res.success).toBe(true)
     expect(res.productionStatus).toBe("ASSIGNED")
     expect(mockOrders.applyProgress).toHaveBeenCalledWith(
@@ -328,9 +332,15 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
       expect.objectContaining({ eventType: "ADMIN_CONFIRMED_ORDER", productionStatus: "ASSIGNED" })
     )
     expect(queueSpy).toHaveBeenCalledWith("org-test-1", "order-conf-1", "ORDER_ACCEPTED")
+
+    // Đơn còn đề xuất huỷ chờ duyệt → không xác nhận được, không ghi gì
+    vi.mocked(mockOrders.applyProgress).mockClear()
+    const pending = { listPending: vi.fn().mockResolvedValue([{ order_id: "order-conf-1" }]) } as unknown as CancellationRepository
+    await expect(adminConfirmBrochureOrder(ctx, "order-conf-1", {}, mockOrders, mockShops, pending)).rejects.toThrow(/đề xuất huỷ chờ duyệt/)
+    expect(mockOrders.applyProgress).not.toHaveBeenCalled()
   })
 
-  it("1 Cửa hàng: Gate 1b Điều hành từ chối đơn → tạo đề xuất huỷ & hoàn tiền, thông báo CANCELLED", async () => {
+  it("1 Cửa hàng: Điều hành từ chối đơn → tạo đề xuất huỷ & hoàn tiền; khách chưa nhận tin huỷ khi đề xuất còn chờ duyệt", async () => {
     const queueSpy = vi.spyOn(notifyCustomerModule, "queueOrderNotification")
     queueSpy.mockClear()
 
@@ -373,6 +383,7 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
         proposal: expect.objectContaining({ type: "FULL_REFUND", refundAmountVnd: 200_000 }),
       })
     )
-    expect(queueSpy).toHaveBeenCalledWith("org-test-1", "order-rej-1", "CANCELLED")
+    expect(queueSpy).not.toHaveBeenCalledWith("org-test-1", "order-rej-1", "CANCELLED")
+    expect(res.message).toMatch(/Duyệt đề xuất/)
   })
 })

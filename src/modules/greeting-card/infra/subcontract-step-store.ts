@@ -40,6 +40,12 @@ export interface SubcontractStepWrite {
   events?: SubcontractOrderEvent[] | undefined
   /** Không khớp → không ghi gì, `applyStep` trả `false` (route trả 409). */
   require?: SubcontractOrderPrecondition | undefined
+  /**
+   * Bước làm đơn chuyển "đã xong": ghi ảnh `qc_photos` (sau khi đổi metadata) thành ảnh thành phẩm
+   * của đơn — `assets` + `order_qc_records` PRODUCT_PHOTO_UPLOADED — để khách xem và duyệt trên trang
+   * theo dõi như đơn 1 cửa hàng, và bước giao chờ khách duyệt (PO 22/10/2026).
+   */
+  recordProductPhoto?: { createdBy: string } | undefined
 }
 
 export const DEFAULT_CLOSED_ORDER_STATUSES: order_status[] = ["CANCELLED", "COMPLETED"]
@@ -108,10 +114,12 @@ export class SubcontractStepStore {
         : await tx.orders.count({ where })
       if (matched === 0) return false
 
+      let metadata = locked?.metadata ?? {}
       if (input.metadata && locked) {
-        const next = input.metadata(locked.metadata)
-        await tx.order_coordinations.update({ where: { id: locked.id }, data: { metadata: next as Prisma.InputJsonValue } })
+        metadata = input.metadata(locked.metadata)
+        await tx.order_coordinations.update({ where: { id: locked.id }, data: { metadata: metadata as Prisma.InputJsonValue } })
       }
+      if (input.recordProductPhoto) await recordProductPhoto(tx, input.organizationId, input.orderId, metadata, input.recordProductPhoto.createdBy)
       for (const e of input.events ?? []) {
         await tx.order_events.create({
           data: {
@@ -129,6 +137,34 @@ export class SubcontractStepStore {
       return true
     })
   }
+}
+
+const MIME_BY_EXT: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", heic: "image/heic" }
+
+async function recordProductPhoto(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  orderId: string,
+  metadata: Record<string, unknown>,
+  createdBy: string
+): Promise<void> {
+  // Chỉ khoá trong kho của chính tổ chức (route tải ảnh đã chặn khoá lạ — chặn thêm ở đây)
+  const keys = (Array.isArray(metadata.qc_photos) ? metadata.qc_photos : []).filter(
+    (k): k is string => typeof k === "string" && k.startsWith(`org/${organizationId}/`)
+  )
+  if (keys.length === 0) return
+  const assetIds: string[] = []
+  for (const key of keys) {
+    const id = randomUUID()
+    const ext = key.split(".").pop()?.toLowerCase() ?? ""
+    await tx.assets.create({
+      data: { id, organization_id: organizationId, kind: "ORIGINAL", state: "READY", storage_key: key, mime_type: MIME_BY_EXT[ext] ?? "image/jpeg", created_by: createdBy, metadata: { source: "subcontract_qc", orderId } },
+    })
+    assetIds.push(id)
+  }
+  await tx.order_qc_records.create({
+    data: { organization_id: organizationId, order_id: orderId, status: "PASSED", notes: "PRODUCT_PHOTO_UPLOADED", image_asset_ids: assetIds },
+  })
 }
 
 async function lockCoordination(

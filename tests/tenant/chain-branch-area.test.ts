@@ -5,7 +5,7 @@ import { GET as rankBranches } from "@/app/api/v1/greeting-card/orders/[id]/chai
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
 /** Sàng lọc chi nhánh theo phường / quận / tỉnh khi không có toạ độ (PO 22/10/2026), không cần Goong. */
 describe("chi nhánh — khu vực hành chính", () => {
@@ -14,6 +14,7 @@ describe("chi nhánh — khu vực hành chính", () => {
   beforeEach(async () => {
     await resetDatabase()
     a = await createTenant("alpha")
+    await makeChainOrganization(a)
     delete process.env.GOONG_API_KEY
   })
 
