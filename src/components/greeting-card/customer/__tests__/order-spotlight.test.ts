@@ -43,3 +43,21 @@ describe("Chuẩn Spotlight", () => {
     expect(off.block).toContain("hover:opacity-95")
   })
 })
+
+describe("Báo lỗi theo khối", () => {
+  it("đưa lỗi về đúng khối chứa trường", async () => {
+    const { orderErrorBlock } = await import("../order-spotlight/order-error-block")
+    expect(orderErrorBlock("selectedPromotionId")).toBe(1)
+    expect(orderErrorBlock("customerPhone")).toBe(2)
+    expect(orderErrorBlock("recipientName")).toBe(3)
+    expect(orderErrorBlock("houseNumber")).toBe(3)
+    expect(orderErrorBlock("checkOutDate")).toBe(3)
+    expect(orderErrorBlock("mapUrl")).toBe(4)
+    expect(orderErrorBlock("")).toBeNull()
+  })
+
+  it("người mua cũng là người nhận → lỗi người nhận thuộc khối Người mua", async () => {
+    const { orderErrorBlock } = await import("../order-spotlight/order-error-block")
+    expect(orderErrorBlock("recipientPhone", true)).toBe(2)
+  })
+})

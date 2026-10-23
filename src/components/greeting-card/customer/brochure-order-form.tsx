@@ -26,6 +26,7 @@ import { OrderFocusProvider } from "./order-spotlight/order-focus-context"
 import { SpotlightBlock } from "./order-spotlight/spotlight-block"
 import { BuyerInfoFields } from "./order-spotlight/buyer-info-fields"
 import { CompactOrderNotes } from "./order-spotlight/compact-order-notes"
+import { orderErrorBlock } from "./order-spotlight/order-error-block"
 
 interface BrochureOrderFormProps {
   productSnapshot: ProductSnapshot
@@ -106,7 +107,7 @@ export function BrochureOrderForm({
   const [review, setReview, clearReview] = useSavedState<CustomerOrderSubmitInput | null>(`order-review:${productSnapshot.id}`, null)
   const [website, setWebsite] = useState("")
 
-  const { errorMessage, loading, handleSubmit, handleConfirm } = useBrochureOrderSubmit({
+  const { errorMessage, errorField, loading, handleSubmit, handleConfirm } = useBrochureOrderSubmit({
     isHomestay,
     industryKey,
     customerName,
@@ -138,6 +139,10 @@ export function BrochureOrderForm({
     onClearDraft: clearDraft,
     onClearReview: clearReview,
   })
+
+  const errorBlock = orderErrorBlock(errorField?.field, buyerIsRecipient || (isHomestay && isSelfBooking))
+  const blockError = (step: number) =>
+    errorBlock === step ? { error: errorMessage, errorAttempt: errorField?.attempt } : {}
 
   if (review) {
     return (
@@ -178,7 +183,7 @@ export function BrochureOrderForm({
 
       <SelectedProductHeader product={productSnapshot} />
 
-      {errorMessage && (
+      {errorMessage && errorBlock === null && (
         <div
           role="alert"
           ref={(el) => el?.scrollIntoView({ behavior: "smooth", block: "center" })}
@@ -193,7 +198,7 @@ export function BrochureOrderForm({
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <HoneypotField value={website} onChange={setWebsite} />
 
-        <SpotlightBlock step={1} title={`Chọn ${terms.sampleProduct.toLowerCase()}`}>
+        <SpotlightBlock step={1} {...blockError(1)} title={`Chọn ${terms.sampleProduct.toLowerCase()}`}>
           <BrochureOrderOptions
             variants={variants}
             priceDimensions={priceDimensions}
@@ -211,25 +216,29 @@ export function BrochureOrderForm({
           )}
         </SpotlightBlock>
 
-        <SpotlightBlock step={2} title="Thông tin người mua">
+        <SpotlightBlock step={2} {...blockError(2)} title="Thông tin người mua">
           <BuyerInfoFields
             idPrefix={uid}
             inputClassName={INPUT}
             customerName={customerName}
             customerPhone={customerPhone}
             customerEmail={customerEmail}
-            sameAsRecipient={isHomestay ? undefined : sameAsRecipient}
+            sameAsRecipient={isHomestay ? isSelfBooking : sameAsRecipient}
             onCustomerNameChange={setCustomerName}
             onCustomerPhoneChange={setCustomerPhone}
             onCustomerEmailChange={setCustomerEmail}
-            onSameAsRecipientChange={setSameAsRecipient}
+            onSameAsRecipientChange={isHomestay ? setIsSelfBooking : setSameAsRecipient}
+            {...(isHomestay
+              ? { sameAsRecipientLabel: "Tôi là người nhận phòng", sameAsRecipientHint: "Dùng họ tên và số điện thoại ở trên để nhận phòng." }
+              : {})}
           />
         </SpotlightBlock>
 
-        <SpotlightBlock step={3} title={isHomestay ? "Thông tin đặt phòng" : "Giao hàng"}>
+        <SpotlightBlock step={3} {...blockError(3)} title={isHomestay ? "Thông tin đặt phòng" : "Giao hàng"}>
         {isHomestay ? (
           <HomestayOrderFields
             showSpecialRequests={false}
+            showSelfToggle={false}
             idPrefix={uid}
             inputClassName={INPUT}
             checkInDate={deliveryDate}
@@ -293,7 +302,7 @@ export function BrochureOrderForm({
         )}
         </SpotlightBlock>
 
-        <SpotlightBlock step={4} title="Ghi chú">
+        <SpotlightBlock step={4} {...blockError(4)} title="Ghi chú">
           <CompactOrderNotes
             idPrefix={uid}
             inputClassName={INPUT}

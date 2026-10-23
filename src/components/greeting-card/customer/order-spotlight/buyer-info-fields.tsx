@@ -5,7 +5,7 @@ import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-ru
 
 const LABEL = "block text-body-sm font-bold text-foreground mb-1"
 
-/** Khối Người mua: họ tên, SĐT, email + công tắc "Tôi cũng là người nhận" (form giao hàng tiêu chuẩn). */
+/** Khối Người mua: họ tên, SĐT, email + công tắc người mua cũng là người nhận (homestay: người nhận phòng). */
 export function BuyerInfoFields({
   idPrefix,
   inputClassName,
@@ -17,18 +17,22 @@ export function BuyerInfoFields({
   onCustomerPhoneChange,
   onCustomerEmailChange,
   onSameAsRecipientChange,
+  sameAsRecipientLabel = "Tôi cũng là người nhận",
+  sameAsRecipientHint = "Dùng họ tên và số điện thoại ở trên để nhận hàng.",
 }: {
   idPrefix: string
   inputClassName: string
   customerName: string
   customerPhone: string
   customerEmail: string
-  /** undefined = không hiện công tắc (homestay đã có lựa chọn riêng) */
+  /** undefined = không hiện công tắc */
   sameAsRecipient?: boolean | undefined
   onCustomerNameChange: (v: string) => void
   onCustomerPhoneChange: (v: string) => void
   onCustomerEmailChange: (v: string) => void
   onSameAsRecipientChange?: ((v: boolean) => void) | undefined
+  sameAsRecipientLabel?: string | undefined
+  sameAsRecipientHint?: string | undefined
 }) {
   return (
     <>
@@ -98,8 +102,8 @@ export function BuyerInfoFields({
             className="h-5 w-5 shrink-0 accent-primary"
           />
           <span className="min-w-0">
-            <span className="block text-body-sm font-bold text-foreground">Tôi cũng là người nhận</span>
-            <span className="block text-caption text-text-muted">Dùng họ tên và số điện thoại ở trên để nhận hàng.</span>
+            <span className="block text-body-sm font-bold text-foreground">{sameAsRecipientLabel}</span>
+            <span className="block text-caption text-text-muted">{sameAsRecipientHint}</span>
           </span>
         </label>
       )}

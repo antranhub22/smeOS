@@ -49,6 +49,8 @@ interface HomestayOrderFieldsProps {
   onSpecialRequestsChange: (text: string) => void
   /** false khi ô yêu cầu đặc biệt hiển thị ở khối Ghi chú riêng */
   showSpecialRequests?: boolean | undefined
+  /** false khi công tắc tự đặt phòng hiển thị ở khối Người mua */
+  showSelfToggle?: boolean | undefined
 }
 
 export function calculateNights(checkIn: string, checkOut: string): number {
@@ -101,6 +103,7 @@ export function HomestayOrderFields({
   onTransitChange,
   onSpecialRequestsChange,
   showSpecialRequests = true,
+  showSelfToggle = true,
 }: HomestayOrderFieldsProps) {
   const uid = idPrefix || useId()
   const nights = calculateNights(checkInDate, checkOutDate)
@@ -217,6 +220,7 @@ export function HomestayOrderFields({
         onRecipientPhoneChange={onRecipientPhoneChange}
         onAdultsChange={onAdultsChange}
         onChildrenChange={onChildrenChange}
+        hideSelfToggle={!showSelfToggle}
       />
 
       {/* 3. KHỐI ĐỊA ĐIỂM HOMESTAY & PHƯƠNG TIỆN */}

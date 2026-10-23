@@ -1,6 +1,7 @@
 "use client"
 
-import React from "react"
+import React, { useEffect } from "react"
+import { AlertCircle } from "lucide-react"
 import { useOrderFocus, type OrderFocusBlock } from "./order-focus-context"
 
 /** Lớp giao diện theo chuẩn Spotlight: khối đang chọn nổi bật, khối khác chìm xuống. */
@@ -20,17 +21,29 @@ export function SpotlightBlock({
   step,
   title,
   description,
+  error,
+  errorAttempt,
   children,
 }: {
   step: OrderFocusBlock
   title: string
   description?: string | undefined
+  /** Lỗi thuộc khối này: hiện ngay trong khối */
+  error?: string | null | undefined
+  /** Đổi mỗi lần bấm gửi bị lỗi → khối tự nhận Spotlight và cuộn tới */
+  errorAttempt?: number | undefined
   children: React.ReactNode
 }) {
   const { activeBlock, setActiveBlock } = useOrderFocus()
   const active = activeBlock === step
   const cls = spotlightClasses(active)
   const headingId = `order-block-${step}-title`
+  useEffect(() => {
+    if (!error || errorAttempt === undefined) return
+    setActiveBlock(step)
+    document.getElementById(headingId)?.closest("section")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ chạy lại khi có lần gửi lỗi mới
+  }, [errorAttempt])
   const activate = () => {
     if (!active) setActiveBlock(step)
   }
@@ -58,6 +71,15 @@ export function SpotlightBlock({
           {description && <p className="mt-0.5 text-caption text-text-muted">{description}</p>}
         </div>
       </header>
+      {error && (
+        <div
+          role="alert"
+          className="mb-4 flex items-start gap-2 rounded-xl border border-danger/30 bg-danger-bg p-3 text-body-sm text-danger"
+        >
+          <AlertCircle size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </div>
+      )}
       <div className="flex flex-col gap-4">{children}</div>
     </section>
   )
