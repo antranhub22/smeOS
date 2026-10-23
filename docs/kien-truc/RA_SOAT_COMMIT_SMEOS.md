@@ -144,7 +144,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | `5d18ecc2` | 10-19 | feat(profile): allow seeding industry-specific mock data on industry selection for SuperAdmin | THAY THẾ | J-MOCK |
 | `0943f8f8` | 10-20 | feat(auth): sync tuans2@dev.com superuser in sync-siin-store seed for prod | ĐẠT SAU SỬA | F-SEED |
 | `6a8ad623` | 10-21 | fix(seed): stop resetting hardcoded passwords on production deploys | ĐẠT SAU SỬA | F-SEED |
-| `72fe6167` | 10-21 | fix(profiles): allow sample data only for trial organizations | ĐẠT |  |
+| `72fe6167` | 10-21 | fix(profiles): allow sample data only for trial organizations | ĐẠT SAU SỬA | J-KEY |
 | `24447cf0` | 10-22 | feat(platform): script to delete all accounts but one superadmin | ĐẠT |  |
 | `8a415d77` | 10-22 | feat(platform): script to create two QA accounts in a dedicated organization | ĐẠT |  |
 
@@ -199,7 +199,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | `17384c4c` | 10-17 | feat(products): generalize Product BOM for multi-industry components support | ĐẠT | A-TERM |
 | `da9855a0` | 10-17 | feat(media): generalize Studio Prompt Compiler and ProductPassport for multi-industry catalog | ĐẠT | A-TERM |
 | `bba3fa2c` | 10-17 | feat(org): generalize Role UX titles and groups for multi-industry adaptation | ĐẠT | A-TERM |
-| `0db182db` | 10-17 | feat: bổ sung giao diện chọn/xem ngành nghề kinh doanh và chuẩn hóa nhãn đa ngành tại hồ sơ cửa hàng | ĐẠT | A-TERM |
+| `0db182db` | 10-17 | feat: bổ sung giao diện chọn/xem ngành nghề kinh doanh và chuẩn hóa nhãn đa ngành tại hồ sơ cửa hàng | ĐẠT SAU SỬA | A-TERM, A-SET |
 | `dd84a7c5` | 10-17 | feat(domain): thiết lập kiến trúc SSOT IndustryPluginContract và chuẩn hóa 6 ngành kinh doanh | ĐẠT | A-TERM |
 | `fc9810cc` | 10-17 | feat(roadmap): lộ trình triển khai 95 ngành nghề — 20 ACTIVE, 75 COMING_SOON + nợ TD-INDUSTRY | THAY THẾ |  |
 | `d40ccf0a` | 10-17 | feat(ui): adapt order detail modal and production ticket dynamically for fashion and multi-industry | ĐẠT | A-TERM |
@@ -209,7 +209,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | `3a777ad6` | 10-17 | feat(ui): adapt product catalog list, categories, and search filter to industry SSOT | ĐẠT | A-TERM |
 | `ac26e8e1` | 10-17 | feat(ui): adapt product creation page and cards to dynamic industry SSOT | ĐẠT | A-TERM |
 | `50a26567` | 10-17 | feat(ui): adapt greeting card catalog and journey cards to dynamic industry SSOT | ĐẠT | A-TERM |
-| `68bb32d1` | 10-17 | refactor(industry): adapt app pages and catalog components to industry plugin contract | ĐẠT | A-TERM |
+| `68bb32d1` | 10-17 | refactor(industry): adapt app pages and catalog components to industry plugin contract | ĐẠT SAU SỬA | A-TERM, A-IMG |
 | `43a1f1a7` | 10-18 | feat(industry): thêm ngành HOMESTAY & chuẩn hoá UI đa ngành | ĐẠT | A-TERM |
 | `12aaf9d0` | 10-18 | feat(the-chao): implement active block spotlight, numbered step badges and multi-industry preview | ĐẠT | A-TERM |
 | `7b6d19ca` | 10-18 | feat(products): phân tầng dữ liệu BOM cam kết giao kèo vs AI marketing | ĐẠT | A-TERM |
@@ -230,7 +230,7 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | `bd5e97d3` | 10-21 | docs(spec): document routes and tables added since the smeOS switch | ĐẠT |  |
 | `475831a0` | 10-21 | fix(ui): replace raw colors and ad-hoc font sizes with semantic tokens | ĐẠT |  |
 | `30a6eacf` | 10-21 | refactor(arch): move direct Prisma access out of routes and use-cases | ĐẠT |  |
-| `26e61a49` | 10-21 | fix(ui): show the smeOS product name instead of FloraOS | ĐẠT |  |
+| `26e61a49` | 10-21 | fix(ui): show the smeOS product name instead of FloraOS | ĐẠT SAU SỬA | L-NAME |
 | `62fdaac2` | 10-22 | docs(handover): add handover index and backup, monitoring and incident runbook | ĐẠT |  |
 | `e6d3c566` | 10-22 | docs(handover): reflect PO decision to keep Siin Store accounts | ĐẠT |  |
 
@@ -238,6 +238,12 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 
 | Mã | Mức | Vị trí | Vấn đề | Xử lý |
 |---|---|---|---|---|
+| A-SET | Trung bình | `GET /auth/me` (`describe-session.ts`) | Trả nguyên `organizations.settings` cho mọi thành viên, kể cả vai Sale: SĐT và chat id Điều phối, chính sách phí gia công. Giao diện không dùng | Chỉ trả `industry`, `industry_locked`, `pending_model_change`; test `tests/tenant/auth-me-settings.test.ts` |
+| J-KEY | Trung bình | `POST /business-profile/mock-data` | `industry_key` bất kỳ được ghi vào `settings.industry` (cùng lỗi B-IND) | `isKnownIndustryKey`, sai → 400; thêm ca vào `mock-data-trial-only.test.ts` |
+| A-IMG | Thấp | `POST /market-intelligence/product-intelligence` | Ảnh mặc định `/images/sample-product.jpg` không tồn tại | Để trống như bản lưu DB |
+| L-NAME | Thấp | Tệp tải về | Tên tệp còn "FloraOS" (mẫu Excel nhập kho, ảnh thẻ sản phẩm kèm mã "T02") | Đổi sang `smeOS_…`, cập nhật tài liệu |
+| C-LRU | Thấp | `render.yaml` Redis `allkeys-lru` | Khi đầy bộ nhớ, khoá giới hạn tần suất có thể bị đẩy ra → giới hạn lỏng tạm thời | Ghi nhận; đổi chính sách cần PO duyệt (render.yaml) |
+| J-TX | Thấp | `account-cleanup.ts`, `qa-accounts.ts` | Cấp mã N / tạo nhân viên nằm ngoài giao dịch xoá / tạo chủ tiệm — lỗi giữa chừng thì chạy lại (đã có kiểm trước) | Ghi nhận; script chạy tay một lần, có chế độ xem trước |
 | G-SLOT | Cao | `internal/chain-dispatch-sweep` | Sweep tự đọc giờ giao bằng regex riêng: lấy ĐẦU khung giờ (thẻ chi nhánh, đếm ngược, khấu trừ trễ dùng CUỐI khung), và bỏ qua hẳn đơn có khung dạng chữ ("Trước 12h") — đơn đó không được nhắc mốc nào | Dùng chung `parseDeliveryTimestampMs`; test tenant cho sweep (tự chốt hết hạn huỷ nhận, chạy lại không chốt lần hai) |
 | A-TERM | Thấp | Giao diện | Còn 913 chỗ thuật ngữ ngành hoa viết cứng (`npm run audit:industry`) | Nợ có ratchet — không được tăng, giảm dần; `check:industry` 5/5 trụ cột đạt |
 | C-ENV | Trung bình | `render.yaml` | Biến code đang dùng chưa khai (`sync: false`) nên dễ quên khi bàn giao: `GOONG_API_KEY` (toạ độ điều phối chuỗi — thiếu thì xếp hạng theo khu vực), `ZALO_OA_APP_ID/APP_SECRET/REFRESH_TOKEN/WEBHOOK_SECRET/FOLLOW_URL` (Zalo OA). Không có giá trị bí mật nào trong file | PO duyệt 22/10/2026 — đã khai (`sync: false`, không có giá trị) |
@@ -273,6 +279,22 @@ Mức phát hiện: **Chặn** (tiền sai, lộ chéo tenant, lỗ bảo mật,
 | G-DEAD | Thấp | Component | 3 component không dùng, 1 bộ lập lịch không được gọi | Đã xoá |
 | G-SIZE | Thấp | `coordinator-subcontract-actions-panel.tsx` (519), `chain-dispatch-panel.tsx` (408), `update-brochure-order-status.ts` (399), `process-dispatch-reminders.ts` (364) | Quá 350 dòng | **Hoãn** — PO 22/10/2026: chưa làm |
 | G-FEE | Cao | `chain-dispatch` route, route công khai gia công, 4 màn hình Điều phối | "50%" viết cứng ở 6 chỗ với 3 nền giá khác nhau (tổng gồm VAT, tổng trước VAT, đơn giá); không có sàn/trần, phụ cấp, khấu trừ; không theo ngành | Thay bằng `craft-fee-policy.ts` (6 phương án, dùng chung mọi ngành, ngành khai số khởi điểm), cài đặt "Phí gia công", phí gợi ý do máy chủ tính, khấu trừ giao trễ/khiếu nại mặc định 0% (PO 22/10/2026) |
+
+## 4b. Rà soát lại lần 2 (23/10/2026) — bằng chứng theo cụm
+
+Lần 1 kết luận các cụm A, C, D, I, J, K, L chủ yếu qua cổng kiểm tra và tiêu đề commit. Lần 2 đọc mã thật ở bản cuối của các commit chạm backend, và kiểm tra lại bằng lệnh:
+
+| Cụm | Đã đọc | Bằng chứng |
+|---|---|---|
+| K | `api/health`, `internal/health`, `core/http/cron-auth.ts`, `observability/*`, `workers/media_ai/jobs/worker.py` | Health công khai chỉ trạng thái; cron so khoá thời gian hằng, thiếu khoá production → đóng; mọi route `internal/*` (2) kiểm khoá; worker backoff ≤ 60s, dừng êm khi SIGTERM. Test `health-route`, `internal-health-route`, `cron-auth`, `system-health`, `request-error` |
+| J | `scripts/don-tai-khoan.ts`, `scripts/tao-tai-khoan-test.ts`, `platform/infra/account-cleanup.ts`, `qa-accounts.ts`, `apply-industry-mock-data.ts`, route mock-data | Xem trước mặc định, `--xac-nhan` mới ghi, mật khẩu từ biến môi trường ≥ 12 ký tự; chỉ tổ chức dùng thử. Sửa J-KEY. `tests/platform/account-cleanup`, `qa-accounts`, `tests/tenant/mock-data-trial-only` 7/7 |
+| D | `prisma/schema.prisma`, `prisma/migrations` | `migrate deploy` lên CSDL trống rồi `migrate diff --from-config-datasource --to-schema` → migration rỗng (schema khớp migration); mọi cột `id` có giá trị mặc định |
+| C | `render.yaml`, `.github/workflows/ci.yml` (web, security, worker), `prisma/seed.ts` | Mọi khoá `sync: false`/`generateValue`, không có giá trị bí mật; seed production không chạm tài khoản (sau `SEED_DEV_DATA`); `npm audit --omit=dev --audit-level=high` → 0 lỗ hổng. Ghi nhận C-LRU |
+| I | 2 route staff-notifications, `staff-notification-settings.ts`, repository, 5 adapter kênh | F2 cho tiệm, N2 cho chính sách SaaS; khoá kênh mã hoá (`sealSecret`), GET chỉ trả `hasCredentials`; repository lọc `organization_id`; mọi kênh có giới hạn thời gian (eSMS 8s qua circuit breaker). `tests/platform/saas-policy-guard` |
+| A | 6 commit chạm backend (`0db182db`, `68bb32d1`, `12aaf9d0`, `7b6d19ca`, `4dba1277`, `38c498d4`); 17 commit còn lại chỉ giao diện | Ngành lấy từ tổ chức phía máy chủ; AI qua `callCapability`. Sửa A-SET, A-IMG. Giao diện: `lint:ux --check` đạt, `check:industry` 5/5, `audit:industry:check` 913 (ratchet) |
+| L | Tài liệu, `30a6eacf`, `26e61a49`, `475831a0` | Không còn import Prisma ngoài `infra/` (grep); `check:docs`, `check:template-ssot` đạt. Sửa L-NAME |
+
+Giới hạn còn lại: giao diện 17 commit cụm A được kiểm bằng công cụ, không mở từng màn trên trình duyệt; xem mục 5.
 
 ## 5. Chưa xác minh được
 

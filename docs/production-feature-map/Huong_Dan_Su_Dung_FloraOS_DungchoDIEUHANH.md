@@ -290,7 +290,7 @@ Trang **Nhập từ Excel & Ảnh** (`/san-pham/nhap-hang-loat`) giúp nạp d�
 ### 3. Hướng dẫn thao tác từng bước & 4. Kết quả sau mỗi thao tác
 
 Quy trình 4 giai đoạn:
-* **Bước 1: Tải file mẫu Excel chuẩn**: Nhấp nút tải file `/templates/FloraOS_Template_Master_Kho_San_Pham.xlsx` trên Header. -> *Kết quả*: Tải file mẫu về máy.
+* **Bước 1: Tải file mẫu Excel chuẩn**: Nhấp nút tải file `/templates/smeOS_Template_Master_Kho_San_Pham.xlsx` trên Header. -> *Kết quả*: Tải file mẫu về máy.
 * **Bước 2: Điền dữ liệu vào Excel**: Nhập mã hoa, tên hoa, giá, danh mục, và tên file ảnh (vd: `BO-01.jpg`).
 * **Bước 3: Tải file Excel và Ảnh lên (Kéo Thả Kép)**: Thả file Excel vào Dropzone 1, chọn tất cả ảnh thả vào Dropzone 2. -> *Kết quả*: Hệ thống tự động ghép ảnh.
 * **Bước 4: Xem trước và Nạp dữ liệu**: Kiểm tra bảng thống kê `importStats` (số dòng `MATCHED`, `NO_IMAGE`, `ERROR`), nhấp **"Bắt đầu nhập dữ liệu"**. -> *Kết quả*: Thanh tiến độ hiển thị phần trăm nạp; sau khi xong toàn bộ sản phẩm xuất hiện tại kho `/san-pham`.
