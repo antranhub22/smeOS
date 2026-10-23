@@ -1,5 +1,6 @@
 import { log } from "@/core/observability/log"
 import { safeRemoteUrl } from "@/lib/safe-remote-url"
+import { uploadTelegramPhoto } from "./telegram-photo-upload"
 import type {
   ChannelSendResult,
   EditMessagePayload,
@@ -90,6 +91,16 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
           log.warn("staff_notify.telegram_remote_photo_failed, fallback to sendMessage", { error: photoData.description })
         } catch (err) {
           log.warn("staff_notify.telegram_remote_photo_err, fallback to sendMessage", { error: String(err) })
+        }
+        // 1b. Telegram không tự tải được URL → máy chủ tải ảnh của chính hệ thống rồi gửi tệp
+        try {
+          const up = await uploadTelegramPhoto(botToken, { chatId, photoUrl: remotePhotoUrl, caption: text.slice(0, 1024), replyMarkup })
+          if (up.ok) {
+            return { sent: true, providerMsgId: up.messageId ? String(up.messageId) : null, providerChatId: chatId, isCaption: true }
+          }
+          log.warn("staff_notify.telegram_upload_photo_failed", { error: up.error })
+        } catch (err) {
+          log.warn("staff_notify.telegram_upload_photo_err", { error: err instanceof Error ? err.name : "Error" })
         }
       }
 
