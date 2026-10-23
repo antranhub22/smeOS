@@ -4,6 +4,9 @@ import { POST as approveRoute } from "@/app/api/v1/products/[id]/approve/route"
 import { PATCH as productPatch } from "@/app/api/v1/products/[id]/route"
 import { POST as productCreate } from "@/app/api/v1/products/route"
 import { POST as batchImport } from "@/app/api/v1/products/batch-import/route"
+import { POST as rejectRoute } from "@/app/api/v1/products/[id]/reject/route"
+import { GET as productList } from "@/app/api/v1/products/route"
+import { sweepProductProposals } from "@/modules/products/use-cases/sweep-product-proposals"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { addStaffWithSession, createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
@@ -78,5 +81,47 @@ describe("sản phẩm: mẫu đề xuất và mẫu chính thức", () => {
     const dp = await addStaffWithSession(a, "dieu_phoi", "dp")
     const res = await batchImport(withSession("http://localhost/api/v1/products/batch-import", dp.token, json({ products: [] })))
     expect(res.status).toBe(403)
+  })
+
+  it("Điều hành từ chối kèm lý do → mẫu tạm ẩn, người đề xuất không sửa được nữa; tổ chức khác → 404", async () => {
+    const sale = await addStaffWithSession(a, "sale", "sale")
+    const created = await readJson(await productCreate(withSession("http://localhost/api/v1/products", sale.token, json({ code: "DX-3", name: "Bó", status: "ACTIVE" }))))
+    const id = created.id as string
+    const url = `http://localhost/api/v1/products/${id}/reject`
+
+    expect((await rejectRoute(withSession(url, a.token, json({ reason: "" })), params(id))).status).toBe(400)
+    expect((await rejectRoute(withSession(url, b.token, json({ reason: "Trùng" })), params(id))).status).toBe(404)
+    expect((await rejectRoute(withSession(url, a.token, json({ reason: "Trùng mẫu có sẵn" })), params(id))).status).toBe(200)
+
+    const stored = await prisma.products.findUniqueOrThrow({ where: { id } })
+    expect(stored.status).toBe("DRAFT")
+    expect((stored.attributes as Record<string, unknown>).proposal).toMatchObject({ status: "rejected", note: "Trùng mẫu có sẵn" })
+    const edit = await productPatch(withSession(`http://localhost/api/v1/products/${id}`, sale.token, patch({ status: "ACTIVE" })), params(id))
+    expect(edit.status).toBe(403)
+  })
+
+  it("hàng chờ duyệt chỉ trả mẫu đề xuất đang chờ của đúng tổ chức", async () => {
+    const sale = await addStaffWithSession(a, "sale", "sale")
+    await productCreate(withSession("http://localhost/api/v1/products", sale.token, json({ code: "DX-4", name: "Chờ" })))
+    await productCreate(withSession("http://localhost/api/v1/products", a.token, json({ code: "CT-4", name: "Chính thức" })))
+    await productCreate(withSession("http://localhost/api/v1/products", b.token, json({ code: "B-4", name: "Khác tổ chức" })))
+
+    const list = await readJson(await productList(withSession("http://localhost/api/v1/products?proposal=pending", a.token)))
+    expect((list.data as Array<{ code: string }>).map((p) => p.code)).toEqual(["DX-4"])
+  })
+
+  it("tác vụ quét: hết hạn sau 30 ngày → tạm ẩn; 30 ngày sau nữa → vào thùng rác", async () => {
+    const sale = await addStaffWithSession(a, "sale", "sale")
+    const created = await readJson(await productCreate(withSession("http://localhost/api/v1/products", sale.token, json({ code: "DX-5", name: "Bó", status: "ACTIVE" }))))
+    const id = created.id as string
+    const start = new Date((created.attributes as { proposal: { at: string } }).proposal.at)
+    const day = (n: number) => new Date(start.getTime() + n * 86_400_000)
+
+    expect(await sweepProductProposals(day(7))).toMatchObject({ reminded: 1 })
+    expect(await sweepProductProposals(day(8))).toMatchObject({ reminded: 0 })
+    expect(await sweepProductProposals(day(31))).toMatchObject({ expired: 1 })
+    expect((await prisma.products.findUniqueOrThrow({ where: { id } })).status).toBe("DRAFT")
+    expect(await sweepProductProposals(day(62))).toMatchObject({ purged: 1 })
+    expect((await prisma.products.findUniqueOrThrow({ where: { id } })).status).toBe("ARCHIVED")
   })
 })

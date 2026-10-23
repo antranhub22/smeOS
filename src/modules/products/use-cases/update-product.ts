@@ -4,6 +4,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { ProductRepository, type UpdateProductInput } from "@/modules/products/infra/product-repository"
 import { PRICING_ONLY_ATTRIBUTE_KEYS } from "@/modules/products/domain/product-lookup"
 import { decideEdit, PROPOSAL_KEY, stripProposal } from "@/modules/products/domain/product-proposal"
+import { saveRevision } from "./product-revisions"
 
 /**
  * `PATCH /products/:id` (`L3`, đặc tả 06 mục 6). Sửa tay thông tin sản phẩm
@@ -52,6 +53,10 @@ export async function updateProduct(ctx: TenantContext, id: string, input: Updat
     )
     input = { ...input, attributes: { ...incoming, ...kept } }
   }
+
+  // Điều hành đổi nội dung (không chỉ tạm ẩn / khả dụng) → lưu phiên bản trước để khôi phục được.
+  const changesContent = Object.entries(input).some(([k, v]) => v !== undefined && k !== "status" && k !== "availabilityConfig")
+  if (changesContent && hasCapability(ctx, "H3")) await saveRevision(ctx, current, "EDIT")
 
   const updated = await repo.update(ctx, id, input)
   if (!updated) throw notFound()

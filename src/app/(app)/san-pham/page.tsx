@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Plus, Sparkles, RefreshCw, FileSpreadsheet } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,7 @@ import {
 } from "@/components/storage/trash-confirm-modal"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { useProductList } from "@/components/products/use-product-list"
+import { ProposalQueueBar } from "@/components/products/proposal-queue-bar"
 import { ProductCard, type ProductItem } from "@/components/products/product-card"
 import { ProductTableView } from "@/components/products/product-table-view"
 import { ProductSearchFilterBar } from "@/components/products/product-search-filter-bar"
@@ -37,6 +38,11 @@ export default function SanPhamPage() {
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
   const [trashTarget, setTrashTarget] = useState<TrashConfirmTarget | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null)
+  const [onlyProposals, setOnlyProposals] = useState(false)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- `?duyet=1` từ Hộp việc → mở thẳng hàng chờ duyệt; đọc URL một lần sau khi mount
+    if (new URLSearchParams(window.location.search).get("duyet") === "1") setOnlyProposals(true)
+  }, [])
 
   const isExecutive =
     session.roleKey === "dieu_hanh" ||
@@ -55,7 +61,8 @@ export default function SanPhamPage() {
     removeLocal,
   } = useProductList<ProductItem>(
     filters.search,
-    filters.category === "Tất cả" ? null : filters.category
+    filters.category === "Tất cả" ? null : filters.category,
+    onlyProposals ? "pending" : null
   )
 
   const handleConfirmTrash = async (target: TrashConfirmTarget) => {
@@ -151,6 +158,7 @@ export default function SanPhamPage() {
         availableCategories={availableCategories}
       />
       <PriceModeFilterBar value={priceMode} onChange={setPriceMode} products={baseFiltered} />
+      {session.can("H3") && <ProposalQueueBar active={onlyProposals} onToggle={() => setOnlyProposals((v) => !v)} />}
 
       {/* Nội dung chính */}
       <main className="flex flex-1 flex-col overflow-y-auto p-4">

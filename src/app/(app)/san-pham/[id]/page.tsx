@@ -11,6 +11,8 @@ import { AiProductEnrichmentModal } from "@/components/products/ai-product-enric
 import { ProductReminderOverrideCard } from "@/components/coordinator/product-reminder-override-card"
 import { NormalizeImageButton } from "@/components/products/normalize-image-button"
 import { ProductProposalBanner } from "@/components/products/product-proposal-banner"
+import { ProductChangeRequestsCard } from "@/components/products/product-change-requests-card"
+import { ProductRevisionsCard } from "@/components/products/product-revisions-card"
 import { useSession } from "@/lib/session"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 import { useI18n } from "@/lib/i18n"
@@ -173,7 +175,8 @@ export default function ProductDetailPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            <ProductProposalBanner productId={product.id} attributes={attrs} onApproved={napLai} />
+            <ProductProposalBanner productId={product.id} attributes={attrs} onChanged={napLai} />
+            {can("H3") && <ProductChangeRequestsCard productId={product.id} current={{ ...product, attributes: attrs }} onChanged={napLai} />}
             {/* Nhóm 1: Thẻ tổng quan */}
             <ProductOverviewCard
               name={product.name}
@@ -257,6 +260,7 @@ export default function ProductDetailPage() {
               canEdit={canEdit}
               onUpdated={napLai}
             />
+            {can("H3") && <ProductRevisionsCard productId={productId} onChanged={napLai} />}
 
             {/* Nhóm 6: Lối tắt tác vụ AI */}
             <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-primary/5 border-primary/20">

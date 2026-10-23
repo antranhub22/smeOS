@@ -30,15 +30,16 @@ và điều phối hằng ngày không bị chặn bởi quy trình duyệt.
 
 ## 4. Phân loại sản phẩm
 
-**Mức chính thức** (cột `products.proposal_status`, giai đoạn 2):
+**Mức chính thức** (`products.attributes.proposal.status`, chỉ máy chủ ghi — không thêm cột vì API
+danh sách/chi tiết map từng trường; quyết định khi làm giai đoạn 2):
 
 | Giá trị | Ý nghĩa | Ai sửa nội dung |
 |---|---|---|
-| `null` | Chính thức — Điều hành tạo hoặc đã duyệt | Chỉ Điều hành |
-| `PENDING` | Đề xuất mới, đang dùng được, chờ duyệt | Người đề xuất (và Điều hành) |
-| `APPROVED` | Đề xuất đã duyệt = chính thức | Chỉ Điều hành |
-| `REJECTED` | Bị từ chối — tự tạm ẩn | Chỉ Điều hành |
-| `EXPIRED` | Quá 30 ngày chưa duyệt — tự tạm ẩn | Chỉ Điều hành |
+| (không có nhãn) | Chính thức — Điều hành tạo hoặc đã có từ trước | Chỉ Điều hành |
+| `pending` | Đề xuất mới, đang dùng được, chờ duyệt | Người đề xuất (và Điều hành) |
+| `approved` | Đề xuất đã duyệt = chính thức | Chỉ Điều hành |
+| `rejected` | Bị từ chối — tự tạm ẩn | Chỉ Điều hành |
+| `expired` | Quá 30 ngày chưa duyệt — tự tạm ẩn | Chỉ Điều hành |
 
 **Trạng thái bán** (`products.status`): `ACTIVE` Đang bán · `DRAFT` Tạm ẩn/Bản nháp · `ARCHIVED` Ngừng kinh doanh.
 
@@ -74,7 +75,11 @@ Tạo (không H3) ──► PENDING (đang bán được, hạn 30 ngày)
 REJECTED / EXPIRED quá 30 ngày nữa ─► chuyển vào thùng rác (khôi phục được, chỉ Điều hành)
 ```
 
-- Nhắc Điều hành vào ngày 7, 21 và 27 của mỗi đề xuất (tác vụ quét hằng ngày).
+- Nhắc Điều hành vào ngày 7, 21 và 27 của mỗi đề xuất. Tác vụ quét chạy chung cron 5 phút sẵn có
+  (`internal/chain-dispatch-sweep`), mỗi tiến trình tối đa một lần/giờ, idempotent
+  (`src/modules/products/use-cases/sweep-product-proposals.ts`). Mẫu bị từ chối/hết hạn mà Điều hành đã
+  mở bán lại thì không bị dọn.
+- Điều hành thấy việc duyệt ở Hộp việc (`PRODUCT_PROPOSALS`) và thanh "Mẫu chờ duyệt" trên trang Sản phẩm.
 - Thông báo đi qua ma trận thông báo nhân viên sẵn có: `PRODUCT_PROPOSED`, `PRODUCT_PROPOSAL_REMINDER`
   (Điều hành), `PRODUCT_PROPOSAL_REJECTED`, `PRODUCT_PROPOSAL_EXPIRED` (người đề xuất).
 
@@ -108,5 +113,5 @@ Mọi thao tác tạo, sửa, duyệt, từ chối, hết hạn, tạm ẩn, nh�
 | Giai đoạn | Phạm vi | Schema |
 |---|---|---|
 | 1 (đã xong 23/10/2026) | Nhãn đề xuất trong `attributes.proposal`, chặn ghi đè, Excel chỉ Điều hành, thùng rác cần `L4`, Sale có `L2`/`L3`, thông báo `PRODUCT_PROPOSED`, nút Duyệt | Không |
-| 2 | Cột đề xuất trên `products` (thay `attributes.proposal`), từ chối, hàng chờ duyệt, hạn 30 ngày, nhắc, hết hạn, dọn | Có |
-| 3 | `product_change_requests`, `product_revisions`, `product_import_batches`, hoàn tác lô | Có |
+| 2 (23/10/2026) | Từ chối kèm lý do, hàng chờ duyệt, hạn 30 ngày, nhắc 7/21/27, hết hạn, dọn vào thùng rác, việc trong Hộp việc | Không (dùng `attributes.proposal`) |
+| 3 (23/10/2026) | `product_change_requests` (duyệt toàn bộ/một phần, xung đột 409), `product_revisions` + khôi phục, `product_import_batches` + hoàn tác 24 giờ | Có — migration `20261023024723_product_catalog_governance` |

@@ -221,5 +221,30 @@ export function formatIndustryStaffNotificationText(
         title: `Có mẫu mới chờ duyệt${item}`,
         message: `Nhân viên vừa tạo mẫu mới${item}. Mẫu đã dùng được để bán; Điều hành vào Sản phẩm để xem và duyệt.${note}`,
       }
+    case "PRODUCT_PROPOSAL_REMINDER":
+      return {
+        title: `Nhắc duyệt mẫu đề xuất${item}`,
+        message: `Mẫu đề xuất${item} chưa được duyệt. Quá hạn mẫu sẽ tự tạm ẩn.${note}`,
+      }
+    case "PRODUCT_PROPOSAL_REJECTED":
+      return {
+        title: `Mẫu đề xuất bị từ chối${item}`,
+        message: `Điều hành đã từ chối mẫu${item} và tạm ẩn mẫu.${note}`,
+      }
+    case "PRODUCT_CHANGE_REQUESTED":
+      return {
+        title: `Có đề xuất sửa mẫu${item}`,
+        message: `Nhân viên đề xuất sửa mẫu chính thức${item}. Bản đang bán giữ nguyên tới khi Điều hành duyệt.${note}`,
+      }
+    case "PRODUCT_CHANGE_REVIEWED":
+      return {
+        title: `Đề xuất sửa mẫu đã có kết quả${item}`,
+        message: `Điều hành đã xem đề xuất sửa mẫu${item}.${note}`,
+      }
+    case "PRODUCT_PROPOSAL_EXPIRED":
+      return {
+        title: `Mẫu đề xuất hết hạn${item}`,
+        message: `Mẫu${item} quá 30 ngày chưa được duyệt nên đã tự tạm ẩn. Liên hệ Điều hành nếu vẫn cần mẫu này.${note}`,
+      }
   }
 }
