@@ -42,12 +42,11 @@ export const resolveAppSession = cache(async function resolveAppSession(
 
   const rawOrgName = described.organization?.name ?? "smeOS"
   const cleanOrgName = rawOrgName.replace(/\s*\(\s*dev\s*\)/gi, "").trim()
-  const orgSettings = (described.organization?.settings as Record<string, unknown> | null) ?? null
-  const industry = typeof orgSettings?.industry === "string" ? orgSettings.industry : "FLORAL"
+  const industry = described.organization?.industry ?? "FLORAL"
   // Quyền vượt khoá ngành lấy từ mã năng lực nền tảng (N1/N12), không từ đuôi email (rà soát H11)
   const operator = await new PlatformOperatorRepository().findActiveByUserId(described.user.id)
   const platformCapabilities = operator?.capabilityCodes ?? []
-  const industryLocked = canOverrideIndustryLock(platformCapabilities) ? false : Boolean(orgSettings?.industry_locked)
+  const industryLocked = canOverrideIndustryLock(platformCapabilities) ? false : (described.organization?.industry_locked ?? false)
   // Ma trận điều hướng Admin SaaS ghi đè cho ngành này — đọc ở máy chủ, không đóng gói lúc build (M13)
   const navHiddenKeys = await getNavHiddenOverride(industry)
 
@@ -73,6 +72,6 @@ export const resolveAppSession = cache(async function resolveAppSession(
     roleKey: described.membership?.role_key ?? null,
     organizationType: described.organization?.type ?? null,
     pendingModelChange:
-      (orgSettings?.pending_model_change as MockSession["pendingModelChange"]) ?? null,
+      (described.organization?.pending_model_change as MockSession["pendingModelChange"]) ?? null,
   }
 })

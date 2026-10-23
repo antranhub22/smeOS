@@ -17,7 +17,7 @@ import { BranchImportPanel } from "@/components/products/bulk-import/branch-impo
 
 type ActiveTab = "products" | "branches"
 
-const TEMPLATE_PATH = "/templates/FloraOS_Template_Master_Kho_San_Pham.xlsx"
+const TEMPLATE_PATH = "/templates/smeOS_Template_Master_Kho_San_Pham.xlsx"
 
 /** Đối chiếu ảnh: ưu tiên tên file ghi trong Excel, sau đó mã SKU trùng tên ảnh. */
 function matchImages(rows: ParsedProductRow[], images: Map<string, File>): ParsedProductRow[] {

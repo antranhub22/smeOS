@@ -11,12 +11,24 @@ export type SessionDescription = {
     name: string
     slug: string
     type: string
-    settings?: Record<string, unknown> | null
+    industry: string
+    industry_locked: boolean
+    /** Yêu cầu đổi mô hình tổ chức đang chờ Admin SaaS duyệt (banner trong app). */
+    pending_model_change: unknown
   } | null
   workspace: { id: string; kind: string } | null
   membership: { role_key: string | null; branch_id: string | null } | null
   capabilities: string[]
   credit_balance: number | null
+}
+
+function publicSettingsOf(settings: unknown) {
+  const s = settings && typeof settings === "object" ? (settings as Record<string, unknown>) : {}
+  return {
+    industry: typeof s.industry === "string" ? s.industry : "FLORAL",
+    industry_locked: Boolean(s.industry_locked),
+    pending_model_change: s.pending_model_change ?? null,
+  }
 }
 
 /**
@@ -60,7 +72,9 @@ export async function describeSession(
           name: organization.name,
           slug: organization.slug,
           type: organization.type,
-          settings: (organization.settings as Record<string, unknown> | null) ?? null,
+          // Chỉ ngành và yêu cầu đổi mô hình — trước đây trả nguyên `settings` (SĐT điều phối, chat id, chính sách phí)
+          // cho mọi thành viên, kể cả vai thấp nhất (rà soát lại cụm A, 23/10/2026)
+          ...publicSettingsOf(organization.settings),
         }
       : null,
     workspace: workspace ? { id: workspace.id, kind: workspace.kind } : null,

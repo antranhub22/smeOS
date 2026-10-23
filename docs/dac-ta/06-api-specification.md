@@ -61,7 +61,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 **Mỗi tài khoản chỉ một phiên.** `POST /auth/login` thu hồi mọi phiên còn hiệu lực của người dùng rồi mới cấp phiên mới (người đăng nhập sau thắng). Phiên cũ gọi bất kỳ endpoint nào nhận `401 UNAUTHENTICATED` kèm `details.reason = "SESSION_SUPERSEDED"`; giao diện hiện cảnh báo "đăng nhập trên thiết bị khác" và đưa về trang đăng nhập. Phiên tự đăng xuất hoặc hết hạn trả 401 không có `reason`.
 
-`GET /auth/me` trả **danh sách mã năng lực đã tính sẵn** cho phiên hiện tại. Giao diện đọc danh sách này để ẩn hiện nút; máy chủ vẫn kiểm lại ở mọi endpoint. Giao diện ẩn nút không phải là phép kiểm quyền.
+`GET /auth/me` trả **danh sách mã năng lực đã tính sẵn** cho phiên hiện tại. Giao diện đọc danh sách này để ẩn hiện nút; máy chủ vẫn kiểm lại ở mọi endpoint. Giao diện ẩn nút không phải là phép kiểm quyền. Phần tổ chức chỉ gồm `id`, `name`, `slug`, `type`, `industry`, `industry_locked`, `pending_model_change` — không trả nguyên `settings` (SĐT, chat id, chính sách nội bộ).
 
 ```json
 {

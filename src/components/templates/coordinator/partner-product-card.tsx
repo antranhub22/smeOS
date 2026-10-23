@@ -208,7 +208,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
       const { toPng } = await import("html-to-image")
       const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, backgroundColor: "#ffffff", cacheBust: true })
       const link = document.createElement("a")
-      link.download = `FloraOS_T02_${orderCode}.png`
+      link.download = `smeOS_the-san-pham_${orderCode}.png`
       link.href = dataUrl
       link.click()
     } catch (err) {

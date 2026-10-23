@@ -40,7 +40,7 @@ describe("nạp dữ liệu mẫu chỉ ở tài khoản dùng thử", () => {
       body: JSON.stringify({ name: "Khách thử", phone: "0901234567", email: "thu@vi-du.test", industry_key: "FLORAL" }),
     }))
     // Dùng thử chờ duyệt (PO 22/10/2026): duyệt rồi đăng nhập bằng mật khẩu tạm
-    const created = (await trial.json()) as { user_id: string }
+    const created = (await trial.json()) as { user_id: string; organization_id: string }
     const token = await approveAndLogIn(created.user_id, "thu@vi-du.test")
 
     const res = await applyMockData(new Request(URL, {
@@ -49,5 +49,14 @@ describe("nạp dữ liệu mẫu chỉ ở tài khoản dùng thử", () => {
       body: JSON.stringify({}),
     }))
     expect(res.status).toBe(200)
+
+    const bad = await applyMockData(new Request(URL, {
+      method: "POST",
+      headers: { "content-type": "application/json", cookie: `${SESSION_COOKIE}=${token}` },
+      body: JSON.stringify({ industry_key: "KHONG_CO" }),
+    }))
+    expect(bad.status).toBe(400)
+    const org = await prisma.organizations.findUniqueOrThrow({ where: { id: created.organization_id } })
+    expect((org.settings as Record<string, unknown> | null)?.industry).toBe("FLORAL")
   })
 })
