@@ -1,7 +1,7 @@
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { approveProductProposal } from "@/modules/products/use-cases/approve-product-proposal"
+import { approveProductProposal } from "@/modules/products/use-cases/review-product-proposal"
 
 /** `POST /products/:id/approve` (`H3`, trần cứng `dieu_hanh`) — duyệt mẫu do nhân viên đề xuất. */
 export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {

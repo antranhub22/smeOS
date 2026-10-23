@@ -198,6 +198,9 @@ model organizations {
   field_config_overrides    field_config_overrides[]
   order_info_requests       order_info_requests[]
   order_change_requests     order_change_requests[]
+  product_change_requests   product_change_requests[]
+  product_revisions         product_revisions[]
+  product_import_batches    product_import_batches[]
   greeting_catalogs         greeting_catalogs[]
   greeting_catalog_products greeting_catalog_products[]
   greeting_sessions         greeting_sessions[]
@@ -700,9 +703,76 @@ model products {
   inventory                 product_inventory[]
   bookings                  product_bookings[]
   greeting_catalog_products greeting_catalog_products[]
+  change_requests           product_change_requests[]
+  revisions                 product_revisions[]
 
   @@unique([organization_id, code])
   @@index([organization_id])
+}
+
+/// Đề xuất sửa một mẫu CHÍNH THỨC của người không có `H3` (quản trị danh mục, giai đoạn 3 —
+/// `docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md` mục 6). Bản gốc không đổi tới khi
+/// Điều hành duyệt; `base_updated_at` phát hiện bản gốc đã đổi sau lúc gửi (xung đột, không tự gộp).
+model product_change_requests {
+  id              String    @id @default(uuid())
+  organization_id String
+  product_id      String
+  proposed_by     String
+  changes         Json // tập con trường của PATCH /products/:id (đã bỏ khoá chỉ máy chủ ghi)
+  base_updated_at DateTime
+  status          String    @default("PENDING") // PENDING | APPROVED | PARTIAL | REJECTED | EXPIRED
+  applied_fields  Json? // các trường Điều hành chọn áp dụng khi duyệt một phần
+  reviewed_by     String?
+  reviewed_at     DateTime?
+  note            String?
+  expires_at      DateTime
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, product_id])
+}
+
+/// Ảnh chụp nội dung mẫu TRƯỚC mỗi lần đổi nội dung mẫu chính thức (Điều hành sửa, duyệt đề xuất
+/// sửa, nhập Excel cập nhật, khôi phục) — để khôi phục và hoàn tác lô nhập.
+model product_revisions {
+  id              String   @id @default(uuid())
+  organization_id String
+  product_id      String
+  snapshot        Json // name, code, category, shape, facing, container, status, attributes, availability_config
+  reason          String // EDIT | CHANGE_REQUEST | IMPORT | RESTORE
+  actor_id        String
+  import_batch_id String?
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, product_id, created_at])
+  @@index([organization_id, import_batch_id])
+}
+
+/// Một lần Điều hành nhập Excel — hoàn tác được trong 24 giờ (mẫu tạo ra vào thùng rác,
+/// mẫu bị cập nhật trả về `product_revisions` cùng `import_batch_id`).
+model product_import_batches {
+  id              String    @id @default(uuid())
+  organization_id String
+  created_by      String
+  created_ids     Json // string[]
+  updated_ids     Json // string[]
+  undone_at       DateTime?
+  undone_by       String?
+  created_at      DateTime  @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
 }
 
 model product_variants {

@@ -34,6 +34,7 @@ export interface InboxAction {
     | "QC_INSPECTION"
     | "ASSIGN_SHIPPER"
     | "CANCELLATION_FOLLOW_UP"
+    | "PRODUCT_PROPOSALS"
   title: string
   detail: string
   orderId: string | null
@@ -43,6 +44,8 @@ export interface InboxAction {
   tab: InboxTab
   /** Càng lớn càng gấp — kẹt quá lâu lên đầu. */
   urgency: number
+  /** Việc nằm ngoài màn Thẻ Chào (vd. duyệt mẫu sản phẩm) — mở thẳng đường dẫn này. */
+  href?: string | undefined
   /** Chỉ với DISCOUNT: để Điều hành duyệt/từ chối ngay trong Hộp việc. */
   discount?: {
     requestId: string

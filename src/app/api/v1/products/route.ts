@@ -7,9 +7,10 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { isPendingProposal } from "@/modules/products/domain/product-proposal"
 import { createProduct } from "@/modules/products/use-cases/create-product"
 import { listProducts } from "@/modules/products/use-cases/list-products"
-import { notifyProductProposed } from "@/modules/products/use-cases/notify-product-proposed"
+import { notifyProductProposed } from "@/modules/products/use-cases/product-proposal-notifications"
 
 const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "ARCHIVED"] as const
+const PROPOSAL_FILTERS = ["pending", "rejected", "expired"] as const
 
 /** `GET /products` (`L1`, đặc tả 06 mục 6) — M03. Lọc `branch_id`/`status`/`category`. */
 export const GET = handle(async (request) => {
@@ -26,6 +27,11 @@ export const GET = handle(async (request) => {
   const limit = limitParam === null ? undefined : Number(limitParam)
   if (limit !== undefined && !Number.isInteger(limit)) {
     throw validationFailed({ limit: "Phải là số nguyên" })
+  }
+
+  const proposalParam = url.searchParams.get("proposal")
+  if (proposalParam !== null && !PROPOSAL_FILTERS.includes(proposalParam as (typeof PROPOSAL_FILTERS)[number])) {
+    throw validationFailed({ proposal: `Phải là một trong: ${PROPOSAL_FILTERS.join(", ")}` })
   }
 
   const priceMinParam = url.searchParams.get("price_min")
@@ -49,6 +55,7 @@ export const GET = handle(async (request) => {
       ...(priceMinParam !== null ? { priceMin: Number(priceMinParam) } : {}),
       ...(priceMaxParam !== null ? { priceMax: Number(priceMaxParam) } : {}),
       ...(url.searchParams.has("search") ? { search: url.searchParams.get("search") ?? "" } : {}),
+      ...(proposalParam ? { proposalStatus: proposalParam as (typeof PROPOSAL_FILTERS)[number] } : {}),
     },
     { limit, cursor: url.searchParams.get("cursor") }
   )

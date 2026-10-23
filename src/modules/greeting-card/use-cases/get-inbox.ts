@@ -14,6 +14,7 @@ import { getCurrentOrganization } from "@/modules/organization/use-cases/get-cur
 import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
 import { changeRequestActions } from "./order-change"
 import { BrochureOrderRepository } from "../infra/brochure-order-repository"
+import { countPendingProposals } from "@/modules/products/use-cases/count-pending-proposals"
 
 export interface InboxThread {
   key: string
@@ -97,6 +98,14 @@ export async function getInbox(ctx: TenantContext, targetRole?: MessageRole | un
           requestId: r.id, requester: names.get(r.sender_id) ?? "Sale", reason: r.body, baseTotalVnd: p.baseTotalVnd,
           requestedVnd: p.requestedVnd, percent: typeof p.percent === "number" ? p.percent : null, maxPercent,
         },
+      })
+    }
+    const proposals = ctx.capabilities.has("H3") ? await countPendingProposals(ctx) : 0 // mẫu mới + đề xuất sửa
+    if (proposals > 0) {
+      actions.push({
+        id: "product-proposals", kind: "PRODUCT_PROPOSALS", title: `${proposals >= 100 ? "100+" : proposals} đề xuất mẫu sản phẩm chờ duyệt`,
+        detail: "Mẫu mới và đề xuất sửa của nhân viên; duyệt hoặc từ chối trước hạn 30 ngày", orderId: null, sessionId: null, customerName: null, imageUrl: null,
+        tab: "payment", urgency: 300, href: "/san-pham?duyet=1",
       })
     }
     const unmatched = await new GreetingIntegrationRepository().listPaymentEvents(ctx, { status: "UNMATCHED", limit: 50 })

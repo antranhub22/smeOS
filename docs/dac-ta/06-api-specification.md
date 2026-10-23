@@ -114,11 +114,20 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/products` | `L1` | Lọc theo `branch_id`, `status`, `category` |
+| GET | `/products` | `L1` | Lọc theo `branch_id`, `status`, `category`; `proposal=pending/rejected/expired` lọc mẫu đề xuất theo `attributes.proposal.status` (hàng chờ duyệt, PO 23/10/2026) |
 | POST | `/products` | `L2` | Người thiếu `H3` tạo → mẫu mang nhãn đề xuất (`attributes.proposal`, chỉ máy chủ ghi), dùng được ngay, báo Điều hành sự kiện `PRODUCT_PROPOSED` (PO 23/10/2026) |
 | GET · PATCH | `/products/:id` | `L1` · `L3` | PATCH `image_asset_id` thay ảnh chính; asset của tổ chức khác → 404. Thiếu `L5`: `attributes` bỏ `bom`, `priceGuard` và `craft_fee_vnd` (phí làm thay của mẫu, PO 22/10/2026) (kê trong `redacted_fields`), giá bán niêm yết vẫn trả; PATCH của người thiếu `L5` không ghi đè các khoá này (PO 14/10/2026). `craft_complexity` (`EASY`/`MEDIUM`/`HARD`) không bị ẩn. Thiếu `H3`: chỉ sửa nội dung mẫu đề xuất của chính mình; trên mẫu chính thức chỉ đổi `status` ACTIVE↔DRAFT và `availability_config`, còn lại `CAPABILITY_DENIED` (PO 23/10/2026) |
 | POST | `/products/:id/approve` | `H3` | Duyệt mẫu đề xuất vào danh mục chính thức, ghi `audit_logs` `product.approve`; không có đề xuất chờ duyệt → 422; tổ chức khác → 404 (PO 23/10/2026) |
-| POST | `/products/batch-import` | `L2` + `H3` | Chỉ Điều hành nhập Excel (PO 23/10/2026). Nhập đồng loạt tối đa 500 sản phẩm (Excel/thư mục ảnh đã parse); `skip_duplicates` mặc định `true`. Mã đã có + kèm `image_asset_id` → chỉ bù ảnh chính nếu sản phẩm chưa có ảnh (không ghi đè dữ liệu/ảnh sẵn có), trả `images_attached_count`; link ảnh đang lưu không phải Google Drive (trống/trang web) được thay bằng link Drive trong file → `drive_links_updated_count` (09/10/2026). Bổ sung vào đặc tả 05/10/2026 |
+| POST | `/products/:id/reject` | `H3` | Body `{ reason }` (bắt buộc). Từ chối mẫu đề xuất: tạm ẩn (`DRAFT`), báo người đề xuất, 30 ngày sau tác vụ quét chuyển vào thùng rác; tổ chức khác → 404 (PO 23/10/2026) |
+| GET · POST | `/products/:id/change-requests` | `H3` · `L3` | POST: người không có `H3` đề xuất sửa mẫu chính thức (body như PATCH, không có `status`); bản gốc giữ nguyên, báo Điều hành `PRODUCT_CHANGE_REQUESTED`. Không có thay đổi → 422. GET: đề xuất đang chờ của mẫu |
+| GET | `/product-change-requests` | `H3` | Hàng chờ đề xuất sửa của tổ chức; `?status=` mặc định `PENDING` |
+| POST | `/product-change-requests/:id/approve` | `H3` | Body `{ fields? }` — áp toàn bộ hoặc một phần; lưu `product_revisions` trước khi ghi; bản gốc đã đổi sau lúc gửi → 409 |
+| POST | `/product-change-requests/:id/reject` | `H3` | Body `{ reason }` (bắt buộc) |
+| GET | `/products/:id/revisions` | `H3` | 50 phiên bản gần nhất của mẫu |
+| POST | `/products/:id/revisions/:revisionId/restore` | `H3` | Khôi phục nội dung (giữ trạng thái bán và nhãn đề xuất hiện tại); bản hiện tại được lưu thành phiên bản trước khi ghi |
+| GET | `/products/import-batches` | `H3` | 10 lô nhập Excel gần nhất, `canUndo` trong 24 giờ |
+| POST | `/products/import-batches/:id/undo` | `H3` | Hoàn tác lô: mẫu tạo ra vào thùng rác, mẫu bị cập nhật trả về bản trước lô; quá 24 giờ hoặc đã hoàn tác → 422 |
+| POST | `/products/batch-import` | `L2` + `H3` | Chỉ Điều hành nhập Excel (PO 23/10/2026). Mỗi lần gọi là một lô (`batch_id` trong phản hồi), hoàn tác được 24 giờ; mẫu bị cập nhật được lưu phiên bản trước; tệp không gắn/gỡ được nhãn đề xuất. Nhập đồng loạt tối đa 500 sản phẩm (Excel/thư mục ảnh đã parse); `skip_duplicates` mặc định `true`. Mã đã có + kèm `image_asset_id` → chỉ bù ảnh chính nếu sản phẩm chưa có ảnh (không ghi đè dữ liệu/ảnh sẵn có), trả `images_attached_count`; link ảnh đang lưu không phải Google Drive (trống/trang web) được thay bằng link Drive trong file → `drive_links_updated_count` (09/10/2026). Bổ sung vào đặc tả 05/10/2026 |
 | POST | `/products/drive-thumbnails` | `L2` | Body `{ folder_ids: string[] }` (1–50 Drive id) → `{ thumbnails: { [folder_id]: url \| null } }`; màn nhập hàng loạt gom lô thay cho gọi `/public/drive-thumbnail` từng folder (trần 120/phút/IP làm file >120 dòng mất ảnh). 60 lần/phút/người dùng; server phân giải tối đa 6 luồng song song; client thử lại 429/5xx tối đa 4 lần (09/10/2026) |
 | GET | `/products/:id/images` | **CHƯA XÂY** `G1` | |
 | PUT | `/products/:id/images` | **CHƯA XÂY** `G2` | Đặt lại thứ tự và vai trò ảnh |

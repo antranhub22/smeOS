@@ -2569,3 +2569,76 @@ model platform_settings {
   updated_at DateTime @updatedAt
 }
 ```
+
+
+## 32. Quản trị danh mục sản phẩm (23/10/2026)
+
+> - **TENANT**, PO duyệt 23/10/2026 — giai đoạn 3 của `docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md`. Migration `20261023024723_product_catalog_governance` chỉ thêm ba bảng. Ca thử: `tests/tenant/product-governance.test.ts`.
+> - `product_change_requests` — nhân viên không có `H3` đề xuất sửa mẫu chính thức; bản gốc không đổi tới khi Điều hành duyệt (toàn bộ hoặc một phần). `base_updated_at` khác `products.updated_at` lúc duyệt → 409, không tự gộp. Quá `expires_at` (30 ngày) tác vụ quét đóng `EXPIRED`.
+> - `product_revisions` — ảnh chụp nội dung mẫu TRƯỚC mỗi lần đổi (Điều hành sửa, duyệt đề xuất sửa, nhập Excel cập nhật, khôi phục). Khôi phục giữ nguyên trạng thái bán và nhãn đề xuất hiện tại.
+> - `product_import_batches` — mỗi lần gọi `POST /products/batch-import`; hoàn tác trong 24 giờ: mẫu tạo ra vào thùng rác, mẫu bị cập nhật trả về phiên bản đầu tiên cùng `import_batch_id`.
+> - Trạng thái mẫu đề xuất mới (giai đoạn 1–2) KHÔNG có cột riêng: nằm ở `products.attributes.proposal` (`pending`/`approved`/`rejected`/`expired`), chỉ máy chủ ghi.
+
+```prisma
+model product_change_requests {
+  id              String    @id @default(uuid())
+  organization_id String
+  product_id      String
+  proposed_by     String
+  changes         Json // tập con trường của PATCH /products/:id (đã bỏ khoá chỉ máy chủ ghi)
+  base_updated_at DateTime
+  status          String    @default("PENDING") // PENDING | APPROVED | PARTIAL | REJECTED | EXPIRED
+  applied_fields  Json? // các trường Điều hành chọn áp dụng khi duyệt một phần
+  reviewed_by     String?
+  reviewed_at     DateTime?
+  note            String?
+  expires_at      DateTime
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, product_id])
+}
+```
+
+```prisma
+model product_revisions {
+  id              String   @id @default(uuid())
+  organization_id String
+  product_id      String
+  snapshot        Json // name, code, category, shape, facing, container, status, attributes, availability_config
+  reason          String // EDIT | CHANGE_REQUEST | IMPORT | RESTORE
+  actor_id        String
+  import_batch_id String?
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, product_id, created_at])
+  @@index([organization_id, import_batch_id])
+}
+```
+
+```prisma
+model product_import_batches {
+  id              String    @id @default(uuid())
+  organization_id String
+  created_by      String
+  created_ids     Json // string[]
+  updated_ids     Json // string[]
+  undone_at       DateTime?
+  undone_by       String?
+  created_at      DateTime  @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+```
