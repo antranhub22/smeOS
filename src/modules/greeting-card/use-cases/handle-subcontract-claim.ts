@@ -8,6 +8,7 @@
 import { publicAppUrl } from "@/lib/public-url"
 import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound, unprocessable } from "@/core/http/errors"
+import { buildDispatchTitle } from "../domain/dispatch-message-titles"
 import {
   branchTelegramCard,
   cancelClaimSubcontractOrder,
@@ -107,8 +108,8 @@ export async function claimSubcontractUseCase(
       orderCode: state.orderCode,
       messageText: successMsg,
       claimUrl,
-      title: `🔔 [BẮT ĐẦU CHẾ TÁC #${state.orderCode}]`,
-      actions: [{ text: "🔍 Xem Thẻ Chế Tác", url: claimUrl }],
+      title: buildDispatchTitle({ emoji: "🔔", action: "Bắt đầu chế tác", level: "normal", orderCode: state.orderCode }),
+      actions: [{ text: "Xem thẻ gia công", url: claimUrl }],
       imageUrl: input.productImageUrl,
       existingTelegramCard: existingCard,
     })
