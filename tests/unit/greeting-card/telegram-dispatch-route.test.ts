@@ -4,11 +4,14 @@ const ctx = { organizationId: "org-a", workspaceId: "ws", userId: "u", branchId:
 vi.mock("@/modules/organization/use-cases/resolve-session", () => ({ requireTenantContext: async () => ({ ctx }) }))
 vi.mock("@/core/rbac/capabilities", () => ({ requireCapability: () => undefined }))
 
+const getTelegramBotInfo = vi.fn(async () => ({ id: 1, is_bot: true, first_name: "Bot", username: "smeos_bot" }))
+const getRecentTelegramMessages = vi.fn(async () => messages)
 const sendTelegramText = vi.fn(async () => ({ ok: true, messageId: 1 }))
 vi.mock("@/modules/greeting-card/adapters/staff-channels/telegram-bot-api", () => ({
-  getTelegramBotInfo: async () => ({ id: 1, is_bot: true, first_name: "Bot", username: "smeos_bot" }),
+  getTelegramBotInfo: () => getTelegramBotInfo(),
   sendTelegramText: (...args: unknown[]) => sendTelegramText(...(args as [])),
-  getRecentTelegramMessages: async () => messages,
+  getRecentTelegramMessages: () => getRecentTelegramMessages(),
+  TelegramUpdatesError: class extends Error {},
 }))
 // Danh sách chat đã liên kết lưu theo tổ chức (bản trong bộ nhớ thay cho organizations.settings)
 const linked = new Map<string, Set<string>>()
@@ -37,6 +40,8 @@ describe("telegram-dispatch route", () => {
   beforeEach(() => {
     process.env.TELEGRAM_DISPATCH_BOT_TOKEN = "test-token"
     sendTelegramText.mockClear()
+    getTelegramBotInfo.mockReset().mockImplementation(async () => ({ id: 1, is_bot: true, first_name: "Bot", username: "smeos_bot" }))
+    getRecentTelegramMessages.mockReset().mockImplementation(async () => messages)
     linked.clear()
     messages = [
       { chatId: "-100", title: "Nhóm của A", type: "group", text: telegramLinkCode("org-a") },
@@ -73,5 +78,15 @@ describe("telegram-dispatch route", () => {
     const res = await POST(post("-300"))
     expect(res.status).toBe(422)
     expect(sendTelegramText).not.toHaveBeenCalled()
+  })
+
+  it("Telegram lỗi thoáng qua: vẫn giữ nhóm đã liên kết, không báo chưa cấu hình", async () => {
+    await GET(new Request("http://localhost/x"))
+    getTelegramBotInfo.mockRejectedValueOnce(new Error("timeout"))
+    getRecentTelegramMessages.mockRejectedValueOnce(new Error("timeout"))
+    const body = await (await GET(new Request("http://localhost/x"))).json()
+    expect(body.data.configured).toBe(true)
+    expect(body.data.recentChats.map((c: { id: string }) => c.id)).toEqual(["-100"])
+    expect(body.data.error).toBeTruthy()
   })
 })

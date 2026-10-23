@@ -50,7 +50,9 @@ interface SendTestResponse {
 
 export function TelegramDispatchConnector() {
   const { data, error, isLoading, isValidating, mutate } = useApi<TelegramDispatchResponse>(
-    "/api/v1/greeting-card/integrations/telegram-dispatch"
+    "/api/v1/greeting-card/integrations/telegram-dispatch",
+    // Mỗi lần quét gọi Telegram — không tự quét lại khi chuyển tab (qua Telegram rồi quay lại)
+    { revalidateOnFocus: false, keepPreviousData: true }
   )
 
   const [testChatId, setTestChatId] = useState("")
@@ -177,7 +179,7 @@ export function TelegramDispatchConnector() {
             <Users size={14} /> Thêm Bot vào nhóm Chi nhánh
           </a>
         </div>
-      ) : (
+      ) : isConfigured || isLoading ? null : (
         <div className="p-4 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-3">
           <AlertCircle size={20} className="text-warning shrink-0 mt-0.5" />
           <div className="text-caption text-foreground leading-relaxed">
