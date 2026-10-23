@@ -22,7 +22,14 @@ import { DesktopNavFooter } from "./desktop-nav-footer"
 import { loadNavGroups, loadReportsOpen, navStorageKeys, persistNavGroups } from "./nav-storage"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 
-export function DesktopNav() {
+type DesktopNavProps = {
+  /** Hiển thị trong ngăn kéo trên điện thoại (thay vì cột cố định trên màn hình lớn) */
+  drawer?: boolean
+  onNavigate?: () => void
+  onClose?: () => void
+}
+
+export function DesktopNav({ drawer = false, onNavigate, onClose }: DesktopNavProps = {}) {
   const pathname = usePathname()
   const router = useRouter()
   const { can, roleUx, orgName, organization } = useSession()
@@ -112,12 +119,16 @@ export function DesktopNav() {
   function navigateTo(href: string) {
     if (searchQuery) setSearchQuery("")
     router.push(href as never)
+    onNavigate?.()
   }
 
   return (
     <aside
       aria-label="Điều hướng chính"
-      className="hidden h-dvh w-60 flex-shrink-0 flex-col border-r border-border bg-surface md:flex"
+      className={cn(
+        "h-dvh flex-shrink-0 flex-col border-r border-border bg-surface",
+        drawer ? "flex w-72 max-w-[85vw]" : "hidden w-60 md:flex"
+      )}
     >
       {/* Brand Header */}
       <div className="flex h-14 items-center justify-between border-b border-border px-4">
@@ -134,6 +145,16 @@ export function DesktopNav() {
             </div>
           </div>
         </div>
+        {drawer && onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Đóng menu"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-text-muted hover:bg-surface-alt hover:text-text"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* Quick Search */}

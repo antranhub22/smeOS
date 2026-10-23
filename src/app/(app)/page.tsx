@@ -5,9 +5,9 @@
 // 2. Workspace THẬT → khuôn trải nghiệm của vai (`resolveRoleUx`):
 //    - `store_manager` (vai `dieu_hanh`) → Business & Operations Command Center
 //    - `sales` (vai `sale`)             → Pipeline Workspace
-//    - `coordinator` (vai `dieu_phoi`)  → Control Tower — chuyển sang tuyến có
-//      sẵn `/dieu-phoi`, không dựng màn thứ hai cho cùng một việc (03b §4.4)
-//    - `cua_hang` (cửa hàng nhận gia công) → `/cua-hang`
+//    - `coordinator` (vai `dieu_phoi`)  → trang chủ chuỗi (`/dieu-phoi` mở từ menu)
+//    - `cua_hang` (cửa hàng nhận gia công) → trang chủ cửa hàng (`/cua-hang` mở từ menu)
+//    PO 23/10/2026: mọi tài khoản luôn thấy trang chủ sau đăng nhập — không chuyển tiếp.
 //    - vai chưa gắn khuôn (vai riêng của tổ chức…) → Command Center, giữ đúng
 //      hành vi trước 26/09.
 // Khuôn chỉ chọn MÀN; năng lực (`capabilities`) vẫn quyết định nút nào hiện
@@ -17,7 +17,6 @@
 // tài khoản tự đăng ký (`POST /auth/signup`) luôn có workspace `EXPERIENCE`.
 
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
 
 import { ExperienceGrid } from "@/components/dashboard/experience-grid"
 import { SalesWorkspace } from "@/components/dashboard/sales-workspace"
@@ -45,8 +44,7 @@ export default async function DashboardPage() {
   // sang /dang-nhap trước khi tới đây — nhánh này chỉ để tsc yên tâm về kiểu.
   if (!session) return null
 
-  // Tài khoản cửa hàng nhận gia công (PO 22/10/2026): vào thẳng trang đơn gia công của chi nhánh
-  if (session.roleKey === "cua_hang") return redirect("/cua-hang" as never)
+  if (session.roleKey === "cua_hang") return <StoreJourneyHome />
 
   const roleUx = resolveRoleUx(session.roleKey, session.organizationType)
 
@@ -58,9 +56,7 @@ export default async function DashboardPage() {
     case "PLATFORM_JOURNEY_HOME":
       return <PlatformJourneyHome />
     case "CONTROL_TOWER":
-      return redirect("/dieu-phoi" as never)
-    case "CONTROL_CENTER":
-      return redirect("/van-hanh" as never)
+      return <NetworkJourneyHome />
     case "FLOWER_NETWORK_COMMAND_CENTER":
       return <FlowerNetworkCommandCenter />
     case "SALES_WORKSPACE":
@@ -73,6 +69,7 @@ export default async function DashboardPage() {
       return <CrmWorkspace />
     case "CUSTOMER_SERVICE_WORKSPACE":
       return <CustomerServiceWorkspace />
+    case "CONTROL_CENTER":
     case "STORE_GROWTH_CENTER":
     case "STORE_COMMAND_CENTER":
     default:
