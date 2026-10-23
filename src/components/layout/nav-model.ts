@@ -141,7 +141,8 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     group: "san-pham",
     iconKey: "FileSpreadsheet",
     navKey: "bulk-import",
-    capability: "L2",
+    // Nhập Excel chỉ Điều hành (PO 23/10/2026) — route kiểm `L2` + `H3`.
+    capability: "H3",
     mobileLabel: "Nhập Excel",
   },
   {

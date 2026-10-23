@@ -10,6 +10,7 @@ import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
 import { ProductReminderOverrideCard } from "@/components/coordinator/product-reminder-override-card"
 import { NormalizeImageButton } from "@/components/products/normalize-image-button"
+import { ProductProposalBanner } from "@/components/products/product-proposal-banner"
 import { useSession } from "@/lib/session"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 import { useI18n } from "@/lib/i18n"
@@ -161,7 +162,7 @@ export default function ProductDetailPage() {
         )}
         {vuaTaoMoi && (
           <div className="rounded-xl border border-success-border bg-success-bg px-3.5 py-2.5 text-body-sm font-medium text-success">
-            Đã tạo mẫu mới ở dạng bản nháp. Kiểm tra lại thông tin rồi chuyển sang Đang bán khi sẵn sàng.
+            Đã tạo mẫu mới. Kiểm tra lại thông tin và trạng thái bán của mẫu.
           </div>
         )}
 
@@ -171,6 +172,7 @@ export default function ProductDetailPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
+            <ProductProposalBanner productId={product.id} attributes={attrs} onApproved={napLai} />
             {/* Nhóm 1: Thẻ tổng quan */}
             <ProductOverviewCard
               name={product.name}

@@ -4,8 +4,10 @@ import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { isPendingProposal } from "@/modules/products/domain/product-proposal"
 import { createProduct } from "@/modules/products/use-cases/create-product"
 import { listProducts } from "@/modules/products/use-cases/list-products"
+import { notifyProductProposed } from "@/modules/products/use-cases/notify-product-proposed"
 
 const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "ARCHIVED"] as const
 
@@ -86,6 +88,8 @@ export const POST = handle(async (request) => {
     attributes: parsed.data.attributes ?? null,
     imageAssetId: parsed.data.image_asset_id ?? null,
   })
+
+  if (isPendingProposal(product.attributes as Record<string, unknown> | null)) notifyProductProposed(ctx, product)
 
   return jsonResponse(product, { status: 201 })
 })

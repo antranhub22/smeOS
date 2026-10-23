@@ -16,6 +16,7 @@ export const STAFF_NOTIFY_EVENTS = [
   "STUCK_DETECTED",
   "SECOND_PAYMENT_REPORTED",
   "DISCOUNT_REQUESTED",
+  "PRODUCT_PROPOSED",
 ] as const
 
 export type StaffNotifyEvent = (typeof STAFF_NOTIFY_EVENTS)[number]
@@ -32,6 +33,7 @@ export const STAFF_NOTIFY_EVENT_LABELS: Record<StaffNotifyEvent, string> = {
   STUCK_DETECTED: "Đơn hàng kẹt quá thời gian SLA",
   SECOND_PAYMENT_REPORTED: "Khách báo đã chuyển khoản lần 2 (đặt cọc)",
   DISCOUNT_REQUESTED: "Đề xuất giảm giá chờ duyệt",
+  PRODUCT_PROPOSED: "Nhân viên đề xuất mẫu sản phẩm mới chờ duyệt",
 }
 
 export const STAFF_NOTIFY_CHANNELS = [

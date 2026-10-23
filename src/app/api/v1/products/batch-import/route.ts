@@ -27,12 +27,13 @@ const batchSchema = z.object({
 export type BatchImportItem = z.infer<typeof itemSchema>
 
 /**
- * POST /api/v1/products/batch-import (Quyền: L2)
+ * POST /api/v1/products/batch-import (Quyền: L2 + H3 — chỉ Điều hành nhập Excel, PO 23/10/2026)
  * Nhập sản phẩm đồng loạt từ danh sách Excel/Folder ảnh đã parse và upload asset.
  */
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "L2")
+  requireCapability(ctx, "H3")
 
   const parsed = batchSchema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })

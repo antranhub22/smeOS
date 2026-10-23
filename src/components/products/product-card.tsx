@@ -5,6 +5,7 @@ import React from "react"
 import Link from "next/link"
 import { Trash2 } from "lucide-react"
 import { ProductThumb } from "@/components/products/product-thumb"
+import { isPendingProposal } from "@/modules/products/domain/product-proposal"
 
 export type ProductItem = {
   id: string
@@ -40,6 +41,15 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
     <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold text-text-muted">
       <span className="h-1.5 w-1.5 rounded-full bg-text-muted" aria-hidden="true" />
       Bản nháp
+    </span>
+  )
+}
+
+/** Mẫu nhân viên đề xuất, đã dùng được nhưng Điều hành chưa duyệt. */
+export function ProposalBadge() {
+  return (
+    <span className="inline-flex items-center rounded-full bg-warning-bg px-2 py-0.5 text-caption font-bold text-warning">
+      Đề xuất · chờ duyệt
     </span>
   )
 }
@@ -85,8 +95,9 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
           driveLink={product.driveLink}
           size="card"
         />
-        <div className="absolute top-2 left-2 pointer-events-none">
+        <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
           <StatusBadge status={product.status} />
+          {isPendingProposal(product.attributes) && <ProposalBadge />}
         </div>
       </button>
 

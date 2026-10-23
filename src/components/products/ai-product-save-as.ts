@@ -3,7 +3,8 @@ import type { ProductPatchPayload } from "./ai-product-helpers"
 /**
  * "Lưu thành mẫu mới" trong hộp sửa mẫu: giữ nguyên mẫu gốc, tạo mẫu mới từ
  * dữ liệu đang có trong form. Ảnh dùng chung `image_asset_id`/`imageUrl` với
- * mẫu gốc — không chép tệp. Mẫu mới luôn là bản nháp để không tự lên bán.
+ * mẫu gốc — không chép tệp. Trạng thái bán giữ theo form (PO 23/10/2026: mẫu
+ * mới dùng được ngay); người không phải Điều hành tạo thì máy chủ gắn nhãn đề xuất.
  */
 
 export const COPY_NAME_SUFFIX = " (bản sao)"
@@ -24,7 +25,6 @@ export function buildSaveAsPayload(
     ...payload,
     name: sameName ? `${payload.name}${COPY_NAME_SUFFIX}` : payload.name,
     code: sameCode ? `${payload.code}-${suffix}` : payload.code,
-    status: "DRAFT",
   }
 }
 

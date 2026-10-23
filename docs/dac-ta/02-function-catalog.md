@@ -223,13 +223,19 @@ Các nhóm dưới đây không tồn tại ở FloraOS v1. Chúng nhận nhóm 
 | Mã | Tên đọc được | Năng lực | Mặc định | Trần cứng |
 |---|---|---|---|---|
 | `L1` | `product.read` | Xem sản phẩm trong Product Master | Điều hành · Điều phối · Sale | — |
-| `L2` | `product.create` | Thêm sản phẩm mới | Điều hành · Điều phối | — |
-| `L3` | `product.update` | Sửa thông tin sản phẩm | Điều hành · Điều phối | — |
+| `L2` | `product.create` | Thêm sản phẩm mới | Điều hành · Điều phối · Sale | — |
+| `L3` | `product.update` | Sửa thông tin sản phẩm | Điều hành · Điều phối · Sale | — |
 | `L4` | `product.archive` | Ngừng kinh doanh một sản phẩm | Điều hành | Điều hành |
 | `L5` | `pricing.read` | Xem quy tắc giá của tổ chức | Điều hành · Điều phối | — |
 | `L6` | `pricing.manage` | Sửa quy tắc giá của tổ chức | Điều hành | Điều hành |
 
 `product.approve` không nằm ở nhóm này — nó là `H3`, vì duyệt sản phẩm chính là duyệt kết quả phân tích ghi vào Product Master.
+
+**Mẫu đề xuất và mẫu chính thức (PO 23/10/2026, giai đoạn 1).** `L2`/`L3` không đủ để đụng vào danh mục chính thức — `H3` mới đủ:
+
+- Người không có `H3` tạo mẫu → mẫu dùng được ngay, mang nhãn đề xuất (`attributes.proposal`, chỉ máy chủ ghi) và Điều hành nhận thông báo `PRODUCT_PROPOSED`. Điều hành duyệt qua `POST /products/:id/approve` (`H3`, ghi `audit_logs`).
+- Người không có `H3` chỉ sửa nội dung mẫu đề xuất **của chính mình** đang chờ duyệt. Trên mẫu chính thức họ chỉ đổi được trạng thái bán (Đang bán ↔ Bản nháp, tức tạm ẩn khi hết hoa) và cấu hình khả dụng; ngừng kinh doanh vẫn cần `L4`.
+- Nhập Excel (`POST /products/batch-import`) cần thêm `H3`. Xoá/khôi phục sản phẩm trong thùng rác cần `L4`.
 
 **Duyệt và từ chối dùng chung `H3`.** Năng lực ở đây là *ra phán quyết trên kết quả AI*, và phán quyết gồm cả hai chiều. Tách thành hai mã sẽ dựng được một vai duyệt được mà không bỏ được — thứ không có nghĩa trong vận hành, và nó đẩy người soát về phía duyệt cho xong khi gặp một kết quả sai.
 

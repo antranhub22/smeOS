@@ -15,11 +15,11 @@ const base: ProductPatchPayload = {
 }
 
 describe("buildSaveAsPayload", () => {
-  it("giữ tên/mã gốc thì thêm hậu tố bản sao và mã mới, luôn là bản nháp", () => {
+  it("giữ tên/mã gốc thì thêm hậu tố bản sao và mã mới, giữ trạng thái bán theo form", () => {
     const out = buildSaveAsPayload(base, { name: "Ke Hoa Vieng", code: "BST-030" }, "AB12C")
     expect(out.name).toBe("Ke Hoa Vieng (bản sao)")
     expect(out.code).toBe("BST-030-AB12C")
-    expect(out.status).toBe("DRAFT")
+    expect(out.status).toBe("ACTIVE")
   })
 
   it("người dùng đã đổi tên và mã thì giữ nguyên", () => {

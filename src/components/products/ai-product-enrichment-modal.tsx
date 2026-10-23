@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react"
 import { Sparkles, CheckCircle2, AlertCircle, X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
+import { useSession } from "@/lib/session"
+import { isPendingProposal } from "@/modules/products/domain/product-proposal"
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"
 import {
   type ProductFormValues,
@@ -37,6 +39,9 @@ export function AiProductEnrichmentModal({
   onSavedAsNew,
 }: AiProductEnrichmentModalProps) {
   const { ti, industry } = useI18n()
+  const { can } = useSession()
+  // Máy chủ kiểm lại; ở đây chỉ ẩn nút người dùng chắc chắn bị từ chối.
+  const canOverwrite = can("H3") || isPendingProposal(initialProduct.attributes as Record<string, unknown> | null)
   const designConfig = getDesignFieldsConfig(industry.identity.key)
   const defaultCategory = industry.taxonomy.defaultCategories[0]?.label || ""
   const defaultShape = designConfig.shapeOptions[0] || ""
@@ -321,7 +326,10 @@ export function AiProductEnrichmentModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-border px-5 py-3.5 bg-surface-alt/50">
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border px-5 py-3.5 bg-surface-alt/50">
+          {!canOverwrite && (
+            <span className="mr-auto text-caption text-text-muted">Mẫu chính thức chỉ Điều hành sửa được. Bạn có thể lưu thành mẫu mới để đề xuất.</span>
+          )}
           <Button variant="outline" size="sm" onClick={onClose} disabled={!!isSubmitting}>
             Hủy
           </Button>
@@ -329,10 +337,12 @@ export function AiProductEnrichmentModal({
             {isSubmitting === "saveAs" && <Loader2 size={15} className="animate-spin" />}
             <span>Lưu thành mẫu mới</span>
           </Button>
-          <Button size="sm" onClick={() => handleSubmit("save")} disabled={!!isSubmitting} className="font-bold">
-            {isSubmitting === "save" && <Loader2 size={15} className="animate-spin" />}
-            <span>{isSubmitting === "save" ? "Đang lưu..." : "Lưu"}</span>
-          </Button>
+          {canOverwrite && (
+            <Button size="sm" onClick={() => handleSubmit("save")} disabled={!!isSubmitting} className="font-bold">
+              {isSubmitting === "save" && <Loader2 size={15} className="animate-spin" />}
+              <span>{isSubmitting === "save" ? "Đang lưu..." : "Lưu"}</span>
+            </Button>
+          )}
         </div>
       </div>
     </div>
