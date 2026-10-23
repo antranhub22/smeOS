@@ -40,13 +40,13 @@ describe("Industry Notification Formatter", () => {
       expect(message).toContain("liên hệ lại")
     })
 
-    it("STUCK_DETECTED — icon ⏱️ và cảnh báo quá hạn SLA", () => {
+    it("STUCK_DETECTED — icon ⏱️ và cảnh báo quá hạn xử lý", () => {
       const { title, message } = formatIndustryStaffNotificationText("STUCK_DETECTED", {
         orderCode: "DH-004",
         productName: "Lẵng hoa lan",
       })
       expect(title).toContain("⏱️")
-      expect(title).toContain("hạn SLA")
+      expect(title).toContain("quá hạn xử lý")
       expect(message).toContain("kẹt")
     })
 

@@ -118,9 +118,10 @@ Riêng 2 chỗ còn dùng `&` nên đổi "và": *"Xác nhận và in thẻ gia 
 
 ---
 
-## Bước tiếp theo (sau khi PO duyệt câu chữ)
+## Trạng thái triển khai (cập nhật 23/10/2026)
 
-1. Tạo 1 nguồn mẫu chung (ví dụ `domain/message-catalog/` hoặc gộp vào `chain-dispatch-policy.ts` hiện có) chứa **toàn bộ** tiêu đề + nội dung ở trên dưới dạng hằng số có biến nội suy.
-2. Sửa từng use-case (`dispatch-*.ts`, `process-dispatch-reminders.ts`, `advance-dispatch-round.ts`, `handle-subcontract-claim.ts`, `notify-shipper-request.ts`) để gọi về nguồn mẫu, xóa chuỗi viết tay.
-3. Thêm test chống trùng lặp/jargon: so khớp các hằng số template qua `TECHNICAL_JARGON_PATTERNS` và kiểm tra không còn `[` `]` kiểu mã hoặc ALL CAPS trong nội dung gửi đi.
-4. Chạy `npm run lint:ux -- --check`, `npm test`, `npm run typecheck` theo Cổng 1–3 trước khi bàn giao.
+- **Đã xong** (PR #43 + đợt rà soát tiếp theo):
+  - Bước 1–2 ở cụm A–F phía trên: `domain/dispatch-message-titles.ts` (SSOT tiêu đề dùng chung), `chain-dispatch-policy.ts` (xóa jargon BOM/QC/POD), 6 use-case điều phối chuỗi, `industry-notification-formatter.ts`, `inbox.ts`, `staff-notification-matrix.ts`, `dispatch-reminder-evaluator.ts`.
+  - Thêm: `store-policy.ts` (xóa `&` trong 13 tiêu đề cam kết/thỏa thuận, xóa jargon QC/BOM trong `internalText`), `staff-notification-types.ts` (`STAFF_NOTIFY_EVENT_LABELS` hiển thị trong màn cài đặt — xóa "QC"/"SLA"), gộp tiêu đề trùng nguyên văn "Thu phần tiền còn lại sau giao" (Điều hành & Sale) thành 1 hằng số `COLLECT_POST_DELIVERY_TITLE` trong `inbox.ts`.
+  - **Quyết định về việc hợp nhất catalog (mục 5 cũ)**: không gộp vật lý `chain-dispatch-policy` (mẫu tùy biến theo tổ chức), `industry-notification-formatter` (nhánh theo ngành) và `STAFF_NOTIFY_EVENT_LABELS` (nhãn cài đặt) thành 1 cấu trúc dữ liệu — mỗi nguồn có nhu cầu kỹ thuật khác nhau, gộp vật lý rủi ro cao hơn lợi ích. Thay vào đó đã thêm `domain/__tests__/message-copy-governance.test.ts` — 1 bộ luật kiểm chuẩn (R8/R12: không jargon, không mã kỹ thuật, không `&`) quét **toàn bộ 4 nguồn cùng lúc**, chạy trong `npm test` nên không thể lệch chuẩn mà không bị chặn.
+- **Vẫn ngoài phạm vi đã xác nhận** (nội bộ + chi nhánh, không gồm tin gửi khách): `customer-notifications.ts`, `greeting-card-rules.ts` (trạng thái đơn hiển thị cho khách), `greeting-template-catalog/registry` (mẫu lời chúc trên thẻ). Nếu cần chuẩn hóa luôn, cần kiểm kê riêng và PO duyệt câu chữ trước — xin hỏi lại trước khi làm.

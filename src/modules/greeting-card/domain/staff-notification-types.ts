@@ -23,13 +23,13 @@ export type StaffNotifyEvent = (typeof STAFF_NOTIFY_EVENTS)[number]
 export const STAFF_NOTIFY_EVENT_LABELS: Record<StaffNotifyEvent, string> = {
   ORDER_RECEIVED: "Có đơn hàng mới",
   ORDER_ACCEPTED: "Đơn hàng đã được tiếp nhận — bắt đầu sản xuất",
-  PAYMENT_REPORTED: "Khách báo đã chuyển khoản (Lần 1)",
+  PAYMENT_REPORTED: "Khách báo đã chuyển khoản (lần 1)",
   PAYMENT_CONFIRMED: "Xác nhận chuyển khoản thành công",
   CANCELLATION_REQUESTED: "Khách yêu cầu huỷ đơn hàng",
   CHANGE_REQUESTED: "Khách yêu cầu thay đổi thông tin đơn",
-  READY: "Sản phẩm đã hoàn thiện (QC xong)",
+  READY: "Sản phẩm đã hoàn thiện, đã kiểm tra chất lượng",
   DELIVERY_FAILED: "Giao hàng chưa thành công",
-  STUCK_DETECTED: "Đơn hàng kẹt quá thời gian SLA",
+  STUCK_DETECTED: "Đơn hàng kẹt quá thời gian xử lý",
   SECOND_PAYMENT_REPORTED: "Khách báo đã chuyển khoản lần 2 (đặt cọc)",
   DISCOUNT_REQUESTED: "Đề xuất giảm giá chờ duyệt",
 }

@@ -95,6 +95,8 @@ export interface PipelineLike {
 const TAB_OF_ROLE: Record<MessageRole, InboxTab> = { ADMIN: "payment", SALE: "sales", COORDINATOR: "coordinator" }
 const COORDINATOR_STEPS = new Set<TrackingPipelineStepId>(["STEP_5_PAYMENT_CONFIRMED", "STEP_6_ARRANGING", "STEP_7_READY_QC", "STEP_8_DELIVERING", "STEP_9_COMPLETED"])
 const code = (i: PipelineLike) => (i.orderCode ? `Đơn ${i.orderCode}` : `Link ${i.sendCode}`)
+/** Dùng chung cho Điều hành và Sale — cùng một việc, tránh lệch câu chữ giữa 2 vai. */
+const COLLECT_POST_DELIVERY_TITLE = "Thu phần tiền còn lại sau giao"
 
 /** Việc cần làm của một vai từ quy trình theo dõi. */
 export function inboxActions(items: PipelineLike[], role: MessageRole, userId: string): InboxAction[] {
@@ -145,7 +147,7 @@ export function inboxActions(items: PipelineLike[], role: MessageRole, userId: s
           ...base,
           id: `collect-post-delivery:${i.id}`,
           kind: "COLLECT_POST_DELIVERY_BALANCE",
-          title: "Thu phần tiền còn lại sau giao",
+          title: COLLECT_POST_DELIVERY_TITLE,
           detail: `${code(i)} · Còn nợ ${balance.toLocaleString("vi-VN")} đ`,
           tab: "payment",
           urgency: 420,
@@ -201,7 +203,7 @@ export function inboxActions(items: PipelineLike[], role: MessageRole, userId: s
             ...base,
             id: `collect-post-delivery:${i.id}`,
             kind: "COLLECT_POST_DELIVERY_BALANCE",
-            title: "Thu phần tiền còn lại sau giao",
+            title: COLLECT_POST_DELIVERY_TITLE,
             detail: `${code(i)} · Còn nợ ${balance.toLocaleString("vi-VN")} đ`,
             tab: "sales",
             urgency: 420,
@@ -274,7 +276,7 @@ export function inboxActions(items: PipelineLike[], role: MessageRole, userId: s
             id: `qc-inspect:${i.id}`,
             kind: "QC_INSPECTION",
             title: "Kiểm tra chất lượng và chụp ảnh thành phẩm",
-            detail: `${code(i)} · Thợ đã cắm xong, cần kiểm tra và tải ảnh QC`,
+            detail: `${code(i)} · Thợ đã cắm xong, cần kiểm tra và tải ảnh thành phẩm`,
             tab: "coordinator",
             urgency: 720,
           })
@@ -284,8 +286,8 @@ export function inboxActions(items: PipelineLike[], role: MessageRole, userId: s
               ...base,
               id: `confirm-second-pay:${i.id}`,
               kind: "CONFIRM_PAYMENT",
-              title: "Khách đã chuyển tiền Lần 2 — Xác nhận để giao hoa",
-              detail: `${code(i)} · Đã có bill CK lần 2 · Cần xác nhận ${balance.toLocaleString("vi-VN")} đ để mở Giao Ship`,
+              title: "Khách đã chuyển tiền lần 2 — Xác nhận để giao hoa",
+              detail: `${code(i)} · Đã có bill chuyển khoản lần 2 · Cần xác nhận ${balance.toLocaleString("vi-VN")} đ để mở giao hàng`,
               tab: "coordinator",
               urgency: 920,
             })
@@ -305,7 +307,7 @@ export function inboxActions(items: PipelineLike[], role: MessageRole, userId: s
             ...base,
             id: `assign-shipper:${i.id}`,
             kind: "ASSIGN_SHIPPER",
-            title: "Sẵn sàng giao — Điều phối tài xế / Shipper",
+            title: "Sẵn sàng giao — Điều phối tài xế hoặc shipper",
             detail: `${code(i)} · Đã hoàn thiện, cần gán tài xế xuất giao`,
             tab: "coordinator",
             urgency: 680,
