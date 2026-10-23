@@ -189,7 +189,7 @@ describe("inboxActions — cơ chế thanh toán lần 2 và thu nợ sau giao",
       const actions = inboxActions([qcOrder], "COORDINATOR", "coord-1")
       const qc = actions.find((a) => a.kind === "QC_INSPECTION")
       expect(qc).toBeDefined()
-      expect(qc?.title).toContain("Kiểm tra chất lượng (QC)")
+      expect(qc?.title).toContain("Kiểm tra chất lượng")
     })
 
     it("Bước 7 đã QC xong và đơn đã thanh toán 100% → Điều phối nhận action ASSIGN_SHIPPER", () => {

@@ -227,6 +227,20 @@ documents:
     dependencies: ["src/core/rbac/capability-catalog.ts"]
     supersedes: []
 
+  - id: "DOC-03-PRODUCT-CATALOG-GOVERNANCE"
+    path: "docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md"
+    title: "Quản trị danh mục sản phẩm theo vai trò"
+    domain: "Products / RBAC"
+    layer: "Level 3"
+    purpose: "Phân loại mẫu chính thức/đề xuất, quy trình duyệt 30 ngày, bảng quyền theo vai, phiên bản và nhập Excel theo lô"
+    status: "CANONICAL"
+    authority: "Level 3"
+    canonical: true
+    ssot: true
+    owner: "Product Owner"
+    dependencies: ["docs/dac-ta/02-function-catalog.md", "docs/dac-ta/06-api-specification.md", "src/modules/products/domain/product-proposal.ts"]
+    supersedes: []
+
   - id: "DOC-03-AI-ORCHESTRATION"
     path: "docs/dac-ta/10-ai-orchestration.md"
     title: "AI Orchestration Specification"

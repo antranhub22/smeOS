@@ -193,8 +193,10 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   J6: { name: "chat.manage", group: "channel", label: "Quản lý hội thoại khách hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing", "customer_service"] },
   // L — Sản phẩm và giá
   L1: { name: "product.read", group: "product_pricing", label: "Xem sản phẩm trong Product Master", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "product_manager", "marketing", "crm"] },
-  L2: { name: "product.create", group: "product_pricing", label: "Thêm sản phẩm mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "product_manager"] },
-  L3: { name: "product.update", group: "product_pricing", label: "Sửa thông tin sản phẩm", defaultRoles: ["dieu_hanh", "dieu_phoi", "product_manager"] },
+  // PO 23/10/2026: Sale tạo được mẫu đề xuất. Không có H3 thì mẫu mang nhãn đề xuất và
+  // chỉ sửa được mẫu đề xuất của chính mình (`modules/products/domain/product-proposal.ts`).
+  L2: { name: "product.create", group: "product_pricing", label: "Thêm sản phẩm mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "product_manager"] },
+  L3: { name: "product.update", group: "product_pricing", label: "Sửa thông tin sản phẩm", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "product_manager"] },
   L4: { name: "product.archive", group: "product_pricing", label: "Ngừng kinh doanh một sản phẩm", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   L5: { name: "pricing.read", group: "product_pricing", label: "Xem quy tắc giá của tổ chức", defaultRoles: ["dieu_hanh", "dieu_phoi", "product_manager"] },
   L6: { name: "pricing.manage", group: "product_pricing", label: "Sửa quy tắc giá của tổ chức", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },

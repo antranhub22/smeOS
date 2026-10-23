@@ -9,6 +9,7 @@
 
 import type { TenantContext } from "@/core/tenancy"
 import { renderDispatchMessage, type ChainDispatchPolicy } from "../domain/chain-dispatch-policy"
+import { buildDispatchTitle } from "../domain/dispatch-message-titles"
 import type { IDispatchNotifier } from "./dispatch-subcontract-order"
 import type { BranchCandidate } from "../domain/chain-dispatch-engine"
 import type { ProcessOrderReminderInput, ReminderStepExecutionResult } from "./process-dispatch-reminders"
@@ -69,8 +70,8 @@ export async function evaluateDeliveryMilestones({
       orderCode: input.orderCode,
       messageText: text,
       claimUrl: submitDeliveryUrl,
-      title: `📸 [NHẮC BÀN GIAO & POD #${input.orderCode}]`,
-      actions: [{ text: "📸 Tải Ảnh Giao Hàng (POD)", url: submitDeliveryUrl }],
+      title: buildDispatchTitle({ emoji: "📸", action: "Nhắc bàn giao", level: "normal", orderCode: input.orderCode }),
+      actions: [{ text: "Tải ảnh đã giao", url: submitDeliveryUrl }],
       imageUrl: input.productImageUrl,
     })
 
@@ -105,8 +106,8 @@ export async function evaluateDeliveryMilestones({
         orderCode: input.orderCode,
         messageText: text,
         claimUrl: submitDeliveryUrl,
-        title: `⚠️ [NHẮC LẦN 2 - GIAO HÀNG KHẨN #${input.orderCode}]`,
-        actions: [{ text: "📸 Tải Ảnh Giao Hàng Ngay", url: submitDeliveryUrl }],
+        title: buildDispatchTitle({ emoji: "⚠️", action: "Nhắc bàn giao", level: "retry", orderCode: input.orderCode }),
+        actions: [{ text: "Tải ảnh ngay", url: submitDeliveryUrl }],
         imageUrl: input.productImageUrl,
       })
 
@@ -143,10 +144,10 @@ export async function evaluateDeliveryMilestones({
         orderCode: input.orderCode,
         messageText: text,
         claimUrl: submitDeliveryUrl,
-        title: `🚨 [CẢNH BÁO ĐỎ - CHƯA GIAO HÀNG #${input.orderCode}]`,
+        title: buildDispatchTitle({ emoji: "🚨", action: "Nhắc bàn giao", level: "escalate", orderCode: input.orderCode }),
         actions: [
-          { text: "📞 Gọi Cửa Hàng Ngay", url: `tel:${branchPhone.replace(/\s+/g, "")}` },
-          { text: "👁️ Xem Thẻ Đơn", url: submitDeliveryUrl },
+          { text: "Gọi chi nhánh", url: `tel:${branchPhone.replace(/\s+/g, "")}` },
+          { text: "Xem đơn hàng", url: submitDeliveryUrl },
         ],
         imageUrl: input.productImageUrl,
       })

@@ -5,6 +5,7 @@ import React from "react"
 import Link from "next/link"
 import { Trash2 } from "lucide-react"
 import { ProductThumb } from "@/components/products/product-thumb"
+import { readProposal, type ProposalStatus } from "@/modules/products/domain/product-proposal"
 
 export type ProductItem = {
   id: string
@@ -40,6 +41,24 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
     <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold text-text-muted">
       <span className="h-1.5 w-1.5 rounded-full bg-text-muted" aria-hidden="true" />
       Bản nháp
+    </span>
+  )
+}
+
+const PROPOSAL_LABEL: Partial<Record<ProposalStatus, string>> = {
+  pending: "Đề xuất · chờ duyệt",
+  rejected: "Đề xuất bị từ chối",
+  expired: "Đề xuất hết hạn",
+}
+
+/** Nhãn mẫu nhân viên đề xuất: chờ duyệt (đang dùng được), bị từ chối hoặc hết hạn (đã tạm ẩn). */
+export function ProposalBadge({ attributes }: { attributes?: Record<string, unknown> | null | undefined }) {
+  const status = readProposal(attributes)?.status
+  const label = status ? PROPOSAL_LABEL[status] : undefined
+  if (!label) return null
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-caption font-bold ${status === "pending" ? "bg-warning-bg text-warning" : "bg-danger-bg text-danger"}`}>
+      {label}
     </span>
   )
 }
@@ -85,8 +104,9 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
           driveLink={product.driveLink}
           size="card"
         />
-        <div className="absolute top-2 left-2 pointer-events-none">
+        <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
           <StatusBadge status={product.status} />
+          <ProposalBadge attributes={product.attributes} />
         </div>
       </button>
 

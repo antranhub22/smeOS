@@ -10,6 +10,9 @@ import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
 import { ProductReminderOverrideCard } from "@/components/coordinator/product-reminder-override-card"
 import { NormalizeImageButton } from "@/components/products/normalize-image-button"
+import { ProductProposalBanner } from "@/components/products/product-proposal-banner"
+import { ProductChangeRequestsCard } from "@/components/products/product-change-requests-card"
+import { ProductRevisionsCard } from "@/components/products/product-revisions-card"
 import { useSession } from "@/lib/session"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 import { useI18n } from "@/lib/i18n"
@@ -50,6 +53,8 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<ProductDetail | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  /** Vừa "Lưu thành mẫu mới" (`?moi=1`): mở sẵn hộp sửa trên mẫu mới. */
+  const [vuaTaoMoi, setVuaTaoMoi] = useState(false)
   /** URL ảnh sau khi chuẩn hóa (user chấp nhận) — ghi đè displayImageUrl tạm thời */
   const [normalizedDisplayUrl, setNormalizedDisplayUrl] = useState<string | null>(null)
   const { industry: industryFromSession } = useI18n()
@@ -70,6 +75,13 @@ export default function ProductDetailPage() {
       setLoi(e instanceof Error ? e.message : "Không tải được sản phẩm")
     }
   }, [productId, router])
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("moi") !== "1") return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc cờ trên URL một lần sau khi mount
+    setVuaTaoMoi(true)
+    setIsModalOpen(true)
+  }, [])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- tải dữ liệu sản phẩm khi mount/đổi id; setState nằm trong hàm tải
@@ -151,6 +163,11 @@ export default function ProductDetailPage() {
             {loi}
           </div>
         )}
+        {vuaTaoMoi && (
+          <div className="rounded-xl border border-success-border bg-success-bg px-3.5 py-2.5 text-body-sm font-medium text-success">
+            Đã tạo mẫu mới. Kiểm tra lại thông tin và trạng thái bán của mẫu.
+          </div>
+        )}
 
         {product === null ? (
           <div className="py-4">
@@ -158,6 +175,8 @@ export default function ProductDetailPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
+            <ProductProposalBanner productId={product.id} attributes={attrs} onChanged={napLai} />
+            {can("H3") && <ProductChangeRequestsCard productId={product.id} current={{ ...product, attributes: attrs }} onChanged={napLai} />}
             {/* Nhóm 1: Thẻ tổng quan */}
             <ProductOverviewCard
               name={product.name}
@@ -241,6 +260,7 @@ export default function ProductDetailPage() {
               canEdit={canEdit}
               onUpdated={napLai}
             />
+            {can("H3") && <ProductRevisionsCard productId={productId} onChanged={napLai} />}
 
             {/* Nhóm 6: Lối tắt tác vụ AI */}
             <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-primary/5 border-primary/20">
@@ -283,6 +303,7 @@ export default function ProductDetailPage() {
           productId={productId}
           initialProduct={product}
           onSuccess={napLai}
+          onSavedAsNew={(created) => router.push(`/san-pham/${created.id}?moi=1` as never)}
         />
       )}
     </div>

@@ -4,6 +4,8 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { ProductRepository, type CreateProductInput } from "@/modules/products/infra/product-repository"
+import { stripProposal } from "@/modules/products/domain/product-proposal"
+import { finishImportBatch, saveRevisionBeforeImport, startImportBatch } from "@/modules/products/use-cases/product-import-batches"
 
 const itemSchema = z.object({
   code: z.string().min(1),
@@ -27,19 +29,25 @@ const batchSchema = z.object({
 export type BatchImportItem = z.infer<typeof itemSchema>
 
 /**
- * POST /api/v1/products/batch-import (Quyền: L2)
+ * POST /api/v1/products/batch-import (Quyền: L2 + H3 — chỉ Điều hành nhập Excel, PO 23/10/2026)
  * Nhập sản phẩm đồng loạt từ danh sách Excel/Folder ảnh đã parse và upload asset.
  */
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "L2")
+  requireCapability(ctx, "H3")
 
   const parsed = batchSchema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const { items, skip_duplicates, overwrite_existing_images, overwrite_existing } = parsed.data
+  const { skip_duplicates, overwrite_existing_images, overwrite_existing } = parsed.data
+  // Nhãn đề xuất chỉ máy chủ ghi — tệp Excel không gắn/gỡ được.
+  const items = parsed.data.items.map((i) => ({ ...i, attributes: stripProposal(i.attributes) }))
   const shouldOverwrite = overwrite_existing || overwrite_existing_images
   const repo = new ProductRepository()
+  // Mỗi lần nhập là một lô — hoàn tác được trong 24 giờ (giai đoạn 3 quản trị danh mục).
+  const batch = await startImportBatch(ctx)
+  const updatedIds: string[] = []
 
   // 1. Kiểm tra mã trùng hàng loạt
   const inputCodes = items.map((i) => i.code)
@@ -61,8 +69,10 @@ export const POST = handle(async (request) => {
         if (!writtenInRun.has(item.code)) {
           try {
             if (shouldOverwrite) {
+              const productId = await saveRevisionBeforeImport(ctx, item.code, batch.id)
               const updated = await repo.updateExistingFromBatch(ctx, item)
               if (updated) updatedCodes.push(item.code)
+              if (updated && productId) updatedIds.push(productId)
               if (item.image_asset_id) imagesAttached.push(item.code)
               if (item.attributes?.drive_link) driveLinksUpdated.push(item.code)
             } else {
@@ -111,8 +121,11 @@ export const POST = handle(async (request) => {
     }
   }
 
+  await finishImportBatch(ctx, batch.id, createdProducts.map((p) => p.id), updatedIds)
+
   return jsonResponse({
     success: true,
+    batch_id: batch.id,
     total_requested: items.length,
     created_count: createdProducts.length,
     updated_count: updatedCodes.length,

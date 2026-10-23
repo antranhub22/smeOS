@@ -14,6 +14,7 @@ import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 import { MultiChannelDispatchNotifier } from "../infra/dispatch-notification-adapter"
+import { buildDispatchTitle } from "../domain/dispatch-message-titles"
 
 export interface ShipperRequestInput {
   organizationId: string
@@ -32,8 +33,8 @@ export async function notifyShipperRequest(input: ShipperRequestInput): Promise<
 
   const submitUrl = subcontractBranchUrl({ baseUrl: publicAppUrl(), organizationId, orderCode, branchId, action: "submit_shipper" })
   const messageText =
-    `🚀 Đơn hàng #${orderCode} đã được xác nhận ảnh thành phẩm!\n\n` +
-    `📦 Vui lòng cung cấp thông tin SHIPPER để bàn giao đơn hàng: tên và số điện thoại tài xế.\n` +
+    `🚀 Đơn hàng #${orderCode} đã xác nhận ảnh thành phẩm.\n\n` +
+    `Vui lòng cung cấp thông tin shipper để bàn giao đơn: tên và số điện thoại tài xế.\n` +
     `Hệ thống sẽ nhắc lại nếu chưa nhận được thông tin.`
   const ctx: TenantContext = { organizationId, workspaceId: organizationId, userId: "system", branchId: null, capabilities: new Set() }
 
@@ -43,8 +44,8 @@ export async function notifyShipperRequest(input: ShipperRequestInput): Promise<
       orderCode,
       messageText,
       claimUrl: submitUrl,
-      title: `📦 [SHIPPER] Đơn hàng #${orderCode} cần thông tin giao hàng`,
-      actions: [{ text: "🚗 Nhập thông tin Shipper ngay", url: submitUrl }],
+      title: buildDispatchTitle({ emoji: "📦", action: "Cần thông tin shipper", level: "normal", orderCode }),
+      actions: [{ text: "Nhập thông tin shipper ngay", url: submitUrl }],
     })
     .catch(() => ({ sent: false }))
 

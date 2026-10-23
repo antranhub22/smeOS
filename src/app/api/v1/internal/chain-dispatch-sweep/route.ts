@@ -36,6 +36,7 @@ import { commitSubcontractClaim } from "@/modules/greeting-card/use-cases/commit
 import { deliveryAreaOf, formatDeliveryAddress, hasDeliveryAddress } from "@/modules/greeting-card/domain/delivery-address"
 import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
+import { sweepProductProposalsIfDue } from "@/modules/products/use-cases/sweep-product-proposals"
 
 /** Kích thước một trang truy vấn — nhỏ để giới hạn bộ nhớ, lặp tới khi hết tập cần xử lý */
 const PAGE_SIZE = 50
@@ -299,6 +300,8 @@ export const POST = handle(async (request) => {
     return jsonResponse({ ok: true, skipped: "Lượt quét trước vẫn đang chạy", sweepAt: now.toISOString() })
   }
   if (!sweep.complete) log.warn("chain_dispatch_sweep.incomplete", { pages: sweep.pages, processed: totalProcessed })
+  // Mẫu sản phẩm đề xuất (nhắc / hết hạn / dọn) — đi chung cron để không thêm dịch vụ Render.
+  const productProposals = await sweepProductProposalsIfDue(now)
 
   return jsonResponse({
     ok: true,
@@ -308,6 +311,7 @@ export const POST = handle(async (request) => {
     graceCommitted,
     pages: sweep.pages,
     complete: sweep.complete,
+    productProposals: productProposals ?? undefined,
     sentDetails: sentDetails.length > 0 ? sentDetails.slice(0, MAX_REPORTED) : undefined,
     errorCount: errors.length,
     errors: errors.length > 0 ? errors.slice(0, MAX_REPORTED) : undefined,
