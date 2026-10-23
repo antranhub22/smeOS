@@ -16,6 +16,8 @@ interface HomestayGuestFieldsProps {
   onRecipientPhoneChange: (phone: string) => void
   onAdultsChange: (count: number) => void
   onChildrenChange: (count: number) => void
+  /** true khi công tắc "Tôi là người nhận phòng" đã hiển thị ở khối Người mua */
+  hideSelfToggle?: boolean | undefined
 }
 
 export function HomestayGuestFields({
@@ -31,6 +33,7 @@ export function HomestayGuestFields({
   onRecipientPhoneChange,
   onAdultsChange,
   onChildrenChange,
+  hideSelfToggle,
 }: HomestayGuestFieldsProps) {
   return (
     <div className="p-4 rounded-xl border border-border bg-surface-muted/40 flex flex-col gap-3">
@@ -40,6 +43,7 @@ export function HomestayGuestFields({
           <span>Khách lưu trú & Người nhận phòng</span>
         </div>
 
+        {!hideSelfToggle && (
         <label className="flex items-center gap-1.5 cursor-pointer text-caption font-bold text-primary">
           <input
             type="checkbox"
@@ -49,6 +53,7 @@ export function HomestayGuestFields({
           />
           <span>Tôi là người nhận phòng</span>
         </label>
+        )}
       </div>
 
       {!isSelfBooking && (

@@ -8,12 +8,9 @@ import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-pr
 import { ViDateInput } from "./vi-date-input"
 import { DeliveryTimePicker } from "./delivery-time-picker"
 import { AddressFields } from "./address-fields"
-import { OrderNotesFields } from "./order-notes-fields"
 
 import { AvailabilityIndicator } from "./availability-indicator"
 import type { HomestayAvailabilityState } from "./homestay-order-fields"
-
-import type { OrderNotesValue } from "./order-notes-fields"
 
 interface StandardOrderFieldsProps {
   idPrefix: string
@@ -28,17 +25,14 @@ interface StandardOrderFieldsProps {
   shipping: ShippingConfig
   fullSlots?: readonly string[] | undefined
   addressParts: AddressParts
-  cardMessage?: string | undefined
-  senderNote?: string | undefined
-  deliveryNote?: string | undefined
-  mapUrl?: string | undefined
+  /** Người mua cũng là người nhận → ẩn ô người nhận */
+  hideRecipient?: boolean | undefined
   availability?: HomestayAvailabilityState | undefined
   onRecipientNameChange: (val: string) => void
   onRecipientPhoneChange: (val: string) => void
   onDeliveryDateChange: (val: string) => void
   onDeliveryTimeSlotChange: (val: string) => void
   onAddressPartsChange: (val: AddressParts) => void
-  onNotesChange: (patch: Partial<OrderNotesValue>) => void
 }
 
 export function StandardOrderFields({
@@ -54,17 +48,13 @@ export function StandardOrderFields({
   shipping,
   fullSlots,
   addressParts,
-  cardMessage,
-  senderNote,
-  deliveryNote,
-  mapUrl,
+  hideRecipient,
   availability,
   onRecipientNameChange,
   onRecipientPhoneChange,
   onDeliveryDateChange,
   onDeliveryTimeSlotChange,
   onAddressPartsChange,
-  onNotesChange,
 }: StandardOrderFieldsProps) {
   const orderTerms = getIndustryOrderTerms(industryKey)
   const recipientLabel = orderTerms.recipientShortLabel
@@ -73,6 +63,7 @@ export function StandardOrderFields({
   return (
     <div className="flex flex-col gap-4">
       {/* Người nhận */}
+      {!hideRecipient && (
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor={`${idPrefix}-recipientName`} className="block text-body-sm font-bold text-foreground mb-1">
@@ -108,6 +99,7 @@ export function StandardOrderFields({
           />
         </div>
       </div>
+      )}
 
       {/* Ngày & Giờ giao */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -154,19 +146,6 @@ export function StandardOrderFields({
       )}
 
       <AddressFields idPrefix={idPrefix} value={addressParts} inputClassName={inputClassName} onChange={onAddressPartsChange} />
-
-      <OrderNotesFields
-        idPrefix={idPrefix}
-        value={{
-          cardMessage: cardMessage ?? "",
-          senderNote: senderNote ?? "",
-          deliveryNote: deliveryNote ?? "",
-          mapUrl: mapUrl ?? "",
-        }}
-        inputClassName={inputClassName}
-        industryKey={industryKey}
-        onChange={onNotesChange}
-      />
     </div>
   )
 }

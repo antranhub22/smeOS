@@ -71,6 +71,7 @@ dùng lại: `FlowerImage`, `TrackingStepperView` · tạo mới: `sales/sales-k
 - Đơn mới cọc: mở lại link vẫn ở bước thanh toán với QR phần còn lại; màn thanh toán báo "Cửa hàng đã nhận tiền cọc" + nút xem QR phần còn lại.
 - Theo dõi theo mã đơn: mặc định rút gọn (tên viết tắt, phường + tỉnh); ô "Nhập 4 số cuối số điện thoại" để xem đầy đủ; mở từ chính link của khách thì đầy đủ sẵn.
 - Form đặt hoa có ô bẫy ẩn chống máy tự điền (không hiện, không nhận Tab, trình đọc màn hình bỏ qua).
+- Form đặt mua (PO 23/10/2026) theo chuẩn Spotlight, 4 khối có số thứ tự: ① Chọn sản phẩm (tùy chọn, giá, ưu đãi) · ② Thông tin người mua (công tắc "Tôi cũng là người nhận", mặc định tắt — bật thì ẩn ô người nhận, đơn gửi tên/SĐT người mua làm người nhận; homestay: công tắc "Tôi là người nhận phòng" cũng nằm ở khối này) · ③ Giao hàng (homestay: Thông tin đặt phòng) · ④ Ghi chú dạng gọn: chỉ mở sẵn ô mặc định theo ngành (hoa, quà, thời trang, F&B, bán lẻ: lời nhắn trên thiệp; dịch vụ: ghi chú gia công; homestay: yêu cầu đặc biệt) + ô đã có nội dung, loại khác thêm qua menu "Thêm ghi chú…", bỏ ô thì xoá nội dung. Khối đang thao tác sáng lên, khối khác mờ; bấm "Xem lại đơn" bị lỗi → khối chứa trường lỗi tự sáng, cuộn tới và hiện lỗi ngay trong khối (`order-spotlight/`).
 
 ## 13c. Chuẩn bị 20/10 (PO 08/10/2026)
 - Tab "Điều hành" (thu tiền, báo giá, giao dịch ngân hàng) chỉ hiện với `R11` — trần cứng Điều hành; Sale và Điều phối không thấy nút "Thu tiền" (cả ở Sổ đơn hàng).
