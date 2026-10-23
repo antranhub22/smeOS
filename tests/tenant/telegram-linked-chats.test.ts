@@ -1,7 +1,12 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { PATCH as patchOrganization } from "@/app/api/v1/organizations/current/route"
-import { listLinkedTelegramChatIds, rememberLinkedTelegramChats } from "@/modules/greeting-card/infra/telegram-linked-chats"
+import {
+  listLinkedTelegramChatIds,
+  listUnlinkedTelegramChats,
+  rememberLinkedTelegramChats,
+  unlinkTelegramChat,
+} from "@/modules/greeting-card/infra/telegram-linked-chats"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
@@ -40,5 +45,17 @@ describe("chat Telegram đã liên kết", () => {
     )
     expect(res.status).toBeGreaterThanOrEqual(400)
     expect(await listLinkedTelegramChatIds(a.organizationId)).toEqual([])
+  })
+
+  it("gỡ chat: chỉ bỏ chat đó của tổ chức đó, ghi thời điểm gỡ, giữ khoá settings khác", async () => {
+    await prisma.organizations.update({ where: { id: a.organizationId }, data: { settings: { industry: "FLORIST" } } })
+    await rememberLinkedTelegramChats(a.organizationId, ["-100", "-200"])
+    await rememberLinkedTelegramChats(b.organizationId, ["-100"])
+    await unlinkTelegramChat(a.organizationId, "-100")
+    expect(await listLinkedTelegramChatIds(a.organizationId)).toEqual(["-200"])
+    expect(await listLinkedTelegramChatIds(b.organizationId)).toEqual(["-100"])
+    expect(Object.keys(await listUnlinkedTelegramChats(a.organizationId))).toEqual(["-100"])
+    const org = await prisma.organizations.findUniqueOrThrow({ where: { id: a.organizationId } })
+    expect((org.settings as Record<string, unknown>).industry).toBe("FLORIST")
   })
 })

@@ -15,14 +15,20 @@ vi.mock("@/modules/greeting-card/adapters/staff-channels/telegram-bot-api", () =
 }))
 // Danh sách chat đã liên kết lưu theo tổ chức (bản trong bộ nhớ thay cho organizations.settings)
 const linked = new Map<string, Set<string>>()
+const unlinked = new Map<string, Set<string>>()
 vi.mock("@/modules/greeting-card/infra/telegram-linked-chats", () => ({
   listLinkedTelegramChatIds: async (orgId: string) => [...(linked.get(orgId) ?? [])],
   rememberLinkedTelegramChats: async (orgId: string, ids: string[]) => {
     linked.set(orgId, new Set([...(linked.get(orgId) ?? []), ...ids]))
   },
+  listUnlinkedTelegramChats: async (orgId: string) => Object.fromEntries([...(unlinked.get(orgId) ?? [])].map((id) => [id, new Date().toISOString()])),
+  unlinkTelegramChat: async (orgId: string, chatId: string) => {
+    linked.get(orgId)?.delete(chatId)
+    unlinked.set(orgId, new Set([...(unlinked.get(orgId) ?? []), chatId]))
+  },
 }))
 
-import { GET, POST } from "@/app/api/v1/greeting-card/integrations/telegram-dispatch/route"
+import { DELETE, GET, POST } from "@/app/api/v1/greeting-card/integrations/telegram-dispatch/route"
 import { telegramLinkCode } from "@/modules/greeting-card/infra/telegram-link-code"
 
 let messages: Array<{ chatId: string; title: string; type: string; text: string }> = []
@@ -43,6 +49,7 @@ describe("telegram-dispatch route", () => {
     getTelegramBotInfo.mockReset().mockImplementation(async () => ({ id: 1, is_bot: true, first_name: "Bot", username: "smeos_bot" }))
     getRecentTelegramMessages.mockReset().mockImplementation(async () => messages)
     linked.clear()
+    unlinked.clear()
     messages = [
       { chatId: "-100", title: "Nhóm của A", type: "group", text: telegramLinkCode("org-a") },
       { chatId: "-200", title: "Nhóm của B", type: "group", text: telegramLinkCode("org-b") },
@@ -96,5 +103,19 @@ describe("telegram-dispatch route", () => {
     const res = await POST(post("-100"))
     expect(res.status).toBe(422)
     expect(JSON.stringify(await res.json())).toContain("Quét Chat ID mới")
+  })
+
+  it("Gỡ nhóm: bot thôi gửi, quét lại không làm nhóm hiện lại (mã cũ)", async () => {
+    await GET(new Request("http://localhost/x"))
+    const del = await DELETE(new Request("http://localhost/x?chatId=-100", { method: "DELETE" }))
+    expect(del.status).toBe(200)
+    const body = await (await GET(new Request("http://localhost/x"))).json()
+    expect(body.data.recentChats).toEqual([])
+    expect((await POST(post("-100"))).status).toBe(422)
+  })
+
+  it("Gỡ nhóm không thuộc cửa hàng: 404", async () => {
+    const del = await DELETE(new Request("http://localhost/x?chatId=-200", { method: "DELETE" }))
+    expect(del.status).toBe(404)
   })
 })

@@ -17,6 +17,8 @@ export interface TelegramChatMessage {
   title: string
   type: string
   text: string
+  /** Thời điểm gửi (giây Unix) — để bỏ qua mã liên kết gửi TRƯỚC khi nhóm bị gỡ */
+  date?: number
 }
 
 const TIMEOUT_MS = 8000
@@ -95,7 +97,7 @@ export async function getRecentTelegramMessages(botToken: string): Promise<Teleg
     const title = (chat.title as string) ||
       [chat.first_name as string, chat.last_name as string].filter(Boolean).join(" ") ||
       (chat.username ? `@${chat.username as string}` : id)
-    out.push({ chatId: id, title, type: (chat.type as string) || "unknown", text: String(message?.text ?? message?.caption ?? "") })
+    out.push({ chatId: id, title, type: (chat.type as string) || "unknown", text: String(message?.text ?? message?.caption ?? ""), date: Number(message?.date) || 0 })
   }
   return out
 }

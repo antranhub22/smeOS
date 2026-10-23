@@ -26,6 +26,15 @@ describe("liên kết nhóm Telegram theo tổ chức", () => {
     expect(chats).toEqual([{ id: "-100", title: "Nhóm A", type: "group" }])
   })
 
+  it("nhóm đã gỡ chỉ liên kết lại khi có mã gửi SAU lúc gỡ", () => {
+    const code = telegramLinkCode("org-a")
+    const removedAt = "2026-10-23T10:00:00.000Z"
+    const t = Date.parse(removedAt) / 1000
+    const msg = (date: number) => ({ chatId: "-100", title: "Nhóm A", type: "group", text: code, date })
+    expect(chatsWithLinkCode([msg(t - 60)], code, { "-100": removedAt })).toEqual([])
+    expect(chatsWithLinkCode([msg(t + 60)], code, { "-100": removedAt })).toHaveLength(1)
+  })
+
   it("kênh chi nhánh chỉ giữ giá trị chuỗi, bỏ giá trị sai kiểu", () => {
     const row = {
       branch_code: "CN1", name: "Chi nhánh 1", address: null, ward: null, district: null, province: null, service_wards: null,

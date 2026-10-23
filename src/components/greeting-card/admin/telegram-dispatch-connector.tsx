@@ -9,13 +9,13 @@ import {
   AlertCircle,
   ExternalLink,
   MessageSquare,
-  Copy,
   Users,
   ShieldCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { TelegramDirectChatGuide } from "./telegram-direct-chat-guide"
+import { TelegramLinkedChatCard } from "./telegram-linked-chat-card"
 
 interface TelegramBotInfo {
   id: number
@@ -241,35 +241,17 @@ export function TelegramDispatchConnector() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {recentChats.map((chat) => (
-              <button
-                type="button"
+              <TelegramLinkedChatCard
                 key={chat.id}
-                onClick={() => handleCopy(chat.id)}
-                className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2 text-left w-full ${
-                  testChatId === chat.id
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "border-border bg-surface hover:border-primary/50"
-                }`}
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="text-body-sm font-bold text-foreground truncate">{chat.title}</div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-caption-sm text-text-muted capitalize">[{chat.type}]</span>
-                    <code className="text-caption-sm font-mono font-semibold text-primary">{chat.id}</code>
-                  </div>
-                </div>
-                <div className="shrink-0 flex items-center gap-1 text-caption text-primary font-medium">
-                  {copiedId === chat.id ? (
-                    <span className="text-success inline-flex items-center gap-1 font-bold">
-                      <CheckCircle2 size={14} /> Đã chọn
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1">
-                      <Copy size={13} /> Chọn
-                    </span>
-                  )}
-                </div>
-              </button>
+                chat={chat}
+                selected={testChatId === chat.id}
+                copied={copiedId === chat.id}
+                onSelect={handleCopy}
+                onRemoved={() => {
+                  if (testChatId === chat.id) setTestChatId("")
+                  void mutate()
+                }}
+              />
             ))}
           </div>
         )}
