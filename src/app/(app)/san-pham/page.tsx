@@ -264,6 +264,7 @@ export default function SanPhamPage() {
             napLai()
             setSelectedProduct(null)
           }}
+          onSavedAsNew={(created) => router.push(`/san-pham/${created.id}?moi=1` as never)}
         />
       )}
     </div>

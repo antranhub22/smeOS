@@ -16,6 +16,7 @@ import {
 import { getDesignFieldsConfig } from "./create-product-types"
 import { AiProductFormFields } from "./ai-product-form-fields"
 import { extractInitialFormValues, type InitialProductInput } from "./ai-product-initial"
+import { buildSaveAsPayload, createProductCopy, type CreatedProduct } from "./ai-product-save-as"
 
 interface AiProductEnrichmentModalProps {
   isOpen: boolean
@@ -23,6 +24,8 @@ interface AiProductEnrichmentModalProps {
   productId: string
   initialProduct: InitialProductInput
   onSuccess: () => void
+  /** Sau "Lưu thành mẫu mới": nơi gọi mở mẫu vừa tạo. */
+  onSavedAsNew?: (created: CreatedProduct) => void
 }
 
 export function AiProductEnrichmentModal({
@@ -31,6 +34,7 @@ export function AiProductEnrichmentModal({
   productId,
   initialProduct,
   onSuccess,
+  onSavedAsNew,
 }: AiProductEnrichmentModalProps) {
   const { ti, industry } = useI18n()
   const designConfig = getDesignFieldsConfig(industry.identity.key)
@@ -57,7 +61,7 @@ export function AiProductEnrichmentModal({
   const [uploadingImage, setUploadingImage] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [isGeneratingContent, setIsGeneratingContent] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState<false | "save" | "saveAs">(false)
   const [notice, setNotice] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [contentSuggestions, setContentSuggestions] = useState<string[]>([])
@@ -178,7 +182,7 @@ export function AiProductEnrichmentModal({
     }
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (mode: "save" | "saveAs") => {
     if (!values.name.trim()) {
       setErrorMsg(`Vui lòng nhập tên ${ti("sampleProduct").toLowerCase()}.`)
       return
@@ -188,7 +192,7 @@ export function AiProductEnrichmentModal({
       return
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(mode)
     setErrorMsg(null)
 
     try {
@@ -202,6 +206,17 @@ export function AiProductEnrichmentModal({
 
       const currentAttrs = (initialProduct.attributes as Record<string, unknown> | null) ?? {}
       const patchData = buildProductPatchPayload(values, currentAttrs, finalAssetId, finalImageUrl)
+
+      if (mode === "saveAs") {
+        const created = await createProductCopy(
+          buildSaveAsPayload(patchData, initialProduct),
+          ti("sampleProduct").toLowerCase()
+        )
+        onSuccess()
+        onSavedAsNew?.(created)
+        if (!onSavedAsNew) onClose()
+        return
+      }
 
       const res = await fetch(`/api/v1/products/${productId}`, {
         method: "PATCH",
@@ -307,18 +322,16 @@ export function AiProductEnrichmentModal({
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 border-t border-border px-5 py-3.5 bg-surface-alt/50">
-          <Button variant="outline" size="sm" onClick={onClose} disabled={isSubmitting}>
+          <Button variant="outline" size="sm" onClick={onClose} disabled={!!isSubmitting}>
             Hủy
           </Button>
-          <Button size="sm" onClick={handleSubmit} disabled={isSubmitting} className="font-bold">
-            {isSubmitting ? (
-              <>
-                <Loader2 size={15} className="animate-spin" />
-                <span>Đang lưu...</span>
-              </>
-            ) : (
-              "Lưu thay đổi"
-            )}
+          <Button variant="outline" size="sm" onClick={() => handleSubmit("saveAs")} disabled={!!isSubmitting} className="font-bold">
+            {isSubmitting === "saveAs" && <Loader2 size={15} className="animate-spin" />}
+            <span>Lưu thành mẫu mới</span>
+          </Button>
+          <Button size="sm" onClick={() => handleSubmit("save")} disabled={!!isSubmitting} className="font-bold">
+            {isSubmitting === "save" && <Loader2 size={15} className="animate-spin" />}
+            <span>{isSubmitting === "save" ? "Đang lưu..." : "Lưu"}</span>
           </Button>
         </div>
       </div>
