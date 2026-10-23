@@ -15,9 +15,11 @@ type Props = {
   onDownloadTemplate: () => void
   onImport: () => void
   onTabChange: (tab: ActiveTab) => void
+  /** Chỉ tổ chức mô hình Chuỗi mới có tab nhập danh sách cửa hàng chuỗi */
+  showBranchesTab: boolean
 }
 
-export function BulkImportHeader({ restoredCount, validCount, isImporting, activeTab, onBack, onClearRestored, onDownloadTemplate, onImport, onTabChange }: Props) {
+export function BulkImportHeader({ restoredCount, validCount, isImporting, activeTab, onBack, onClearRestored, onDownloadTemplate, onImport, onTabChange, showBranchesTab }: Props) {
   return (
     <header className="flex flex-shrink-0 flex-col border-b border-border bg-surface">
       {/* Top bar */}
@@ -80,6 +82,7 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
       </div>
 
       {/* Tab switcher */}
+      {showBranchesTab && (
       <div className="flex items-center gap-0 px-4 pb-0 -mb-px">
         <button
           type="button"
@@ -106,6 +109,7 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
           🏪 Cửa Hàng Chuỗi
         </button>
       </div>
+      )}
     </header>
   )
 }

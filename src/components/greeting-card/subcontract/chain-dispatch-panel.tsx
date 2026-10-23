@@ -20,7 +20,7 @@ import { dispatchChannelLabel, dispatchFailureText } from "./dispatch-channel-la
 export interface ChainDispatchPanelProps {
   orderId: string
   orderCode: string
-  suggestedCraftFee?: number
+  suggestedCraftFee?: number | undefined // chỉ khi Điều phối sửa tay; bỏ trống → máy chủ tính theo phương án tiệm cài
   onDispatched?: () => void
 }
 
@@ -155,7 +155,7 @@ export function ChainDispatchPanel({
           </span>
           <div>
             <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
-              <span>Điều Phối Chuỗi Tự Động (Matching Engine)</span>
+              <span>Điều phối chuỗi tự động</span>
               <span className="text-caption font-bold px-1.5 py-0.5 rounded-md bg-primary/20 text-primary uppercase">
                 Gate 2
               </span>

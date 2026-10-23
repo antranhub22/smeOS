@@ -6,6 +6,7 @@ import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
+import { subcontractPhotoApprovalBlocker } from "@/modules/greeting-card/use-cases/subcontract-photo-gate"
 import { log } from "@/core/observability/log"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
@@ -59,6 +60,9 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   // Kiểm tra đơn đã qua ảnh thành phẩm và chưa giao — mới cho phép nhập shipper
   const alreadyDelivering = order.delivery_status === "DELIVERING" || order.delivery_status === "DELIVERED"
   if (!alreadyDelivering && !subcontractStepAllowed("SHIPPER", order)) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.SHIPPER)
+  // Còn chờ khách duyệt ảnh thành phẩm → chưa giao (theo chế độ duyệt ảnh tiệm chọn)
+  const waitingCustomer = alreadyDelivering ? null : await subcontractPhotoApprovalBlocker(order.organization_id, order.id)
+  if (waitingCustomer) throw conflict(waitingCustomer)
 
   // Kiểm tra shipper chưa được nhập (idempotent — nếu đã có thì bỏ qua)
   const existingShipper = coordMeta.shipper_info as Record<string, unknown> | undefined

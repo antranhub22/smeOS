@@ -289,7 +289,8 @@ export async function checkPublicCatalogProductAvailability(
 
   const orgSettings = (catalog.organization.settings as Record<string, unknown>) ?? {}
   const orgIndustry = typeof orgSettings.industry === "string" ? orgSettings.industry : null
-  const industryKey = req.industryKey || orgIndustry
+  // Ngành luôn theo tiệm — client gửi ngành khác từng đổi được chế độ khả dụng mặc định (rà soát cụm E)
+  const industryKey = orgIndustry
 
   return checkProductAvailability({
     ...req,
@@ -307,7 +308,8 @@ export async function checkPublicBrochureProductAvailability(
   const session = await loadPublicSession(sendCode, repo)
   const orgSettings = (session.organization?.settings as Record<string, unknown>) ?? {}
   const orgIndustry = typeof orgSettings.industry === "string" ? orgSettings.industry : null
-  const industryKey = req.industryKey || orgIndustry
+  // Ngành luôn theo tiệm — client gửi ngành khác từng đổi được chế độ khả dụng mặc định (rà soát cụm E)
+  const industryKey = orgIndustry
 
   return checkProductAvailability({
     ...req,

@@ -108,3 +108,14 @@ export function extractComponentNames(rawBom: unknown): string[] {
   const names = normalized.components.map((c) => c.name)
   return Array.from(new Set(names))
 }
+
+/**
+ * Chi phí nguyên liệu của MỘT sản phẩm theo định mức: Σ (đơn giá × định mức) của các thành phần có
+ * đơn giá. `null` khi chưa thành phần nào có đơn giá — nơi gọi tự chọn cách tính khác.
+ */
+export function bomMaterialCostVnd(rawBom: unknown): number | null {
+  const bom = normalizeProductBom(rawBom)
+  const priced = [...bom.components, ...(bom.packaging ?? [])].filter((i) => typeof i.costVnd === "number" && i.costVnd > 0)
+  if (priced.length === 0) return null
+  return Math.round(priced.reduce((sum, i) => sum + (i.costVnd ?? 0) * i.quantity, 0))
+}

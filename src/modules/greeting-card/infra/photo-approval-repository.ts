@@ -10,7 +10,8 @@ export const CUSTOMER_PHOTO_APPROVED = "CUSTOMER_PHOTO_APPROVED"
 export class PhotoApprovalRepository {
   constructor(private readonly db = prisma) {}
 
-  async recordApproval(order: { id: string; organization_id: string; production_status: string }) {
+  /** `actorId`: Điều phối duyệt thay khách; khách tự duyệt thì để trống. */
+  async recordApproval(order: { id: string; organization_id: string; production_status: string }, actorId: string | null = null) {
     return this.db.$transaction(async (tx) => {
       const existing = await tx.order_qc_records.findFirst({
         where: { organization_id: order.organization_id, order_id: order.id, notes: CUSTOMER_PHOTO_APPROVED },
@@ -24,7 +25,7 @@ export class PhotoApprovalRepository {
           order_id: order.id,
           status: "PASSED",
           notes: CUSTOMER_PHOTO_APPROVED,
-          inspector_id: null,
+          inspector_id: actorId,
         },
       })
       await tx.order_events.create({
@@ -35,7 +36,7 @@ export class PhotoApprovalRepository {
           from_value: order.production_status,
           to_value: "CUSTOMER_APPROVED",
           reason: CUSTOMER_PHOTO_APPROVED,
-          actor_id: null,
+          actor_id: actorId,
         },
       })
       return { created: true }

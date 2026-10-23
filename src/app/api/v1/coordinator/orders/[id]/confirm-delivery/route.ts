@@ -9,6 +9,8 @@
  * Hành động này triệt tiêu (First-Wins Mutex) toàn bộ reminder M4 đang pending.
  */
 
+import { prepareLateDeliveryDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
+import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
 import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -158,6 +160,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const actorId = `coordinator:${ctx.userId}`
   // Điều phối được xác nhận giao cả khi chưa nhập shipper (tiệm tự giao), nhưng hoa phải đã xong
   // và đơn chưa huỷ/hoàn tất — trước 22/10/2026 đơn đã huỷ vẫn bị đưa sang COMPLETED (rà soát cụm G)
+  const applyLateFee = await prepareLateDeliveryDeduction(order.organization_id, order.id, new CraftFeeFactsRepository(), new Date(deliveredAt))
   const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
@@ -173,7 +176,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
         confirmedByCoordinator: ctx.userId,
         confirmMode,
       }
-      return { ...current, ...(podPhotoStorageKey && { pod_photos: photoUrls }), delivery_proof: deliveryProof, last_pod_uploaded_at: deliveredAt }
+      return applyLateFee({ ...current, ...(podPhotoStorageKey && { pod_photos: photoUrls }), delivery_proof: deliveryProof, last_pod_uploaded_at: deliveredAt })
     },
     events: [
       { axis: "delivery", fromValue: order.delivery_status || "DELIVERING", toValue: "DELIVERED", actorId, reason: `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}` },

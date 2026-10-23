@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import {
-  Camera,
   CheckCircle2,
   Clock,
   UploadCloud,
@@ -12,6 +11,7 @@ import {
   Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PhotoSourcePicker } from "./photo-source-picker"
 import { cn } from "@/lib/utils"
 import { SubcontractQcGallery } from "./subcontract-qc-gallery"
 import { SubcontractQcPreview } from "./subcontract-qc-preview"
@@ -56,7 +56,6 @@ export function SubcontractStepQc({
   onQcUploaded,
   onBypassRequested,
 }: SubcontractStepQcProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const countdown = useStepCountdown(isUnlocked && !isCompleted ? deadlineMs : null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -70,7 +69,6 @@ export function SubcontractStepQc({
   function handleTriggerFileInput() {
     setErrorMsg(null)
     setQcSuccessMsg(null)
-    fileInputRef.current?.click()
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -98,9 +96,6 @@ export function SubcontractStepQc({
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
-    }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
     }
   }
 
@@ -279,16 +274,6 @@ export function SubcontractStepQc({
               </div>
             )}
 
-            {/* Input file ẩn */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-
             {/* Xem trước ảnh vừa chọn từ máy */}
             {previewUrl ? (
               <SubcontractQcPreview
@@ -299,20 +284,11 @@ export function SubcontractStepQc({
                 onUpload={handleUploadQcPhoto}
               />
             ) : (
-              /* Nút mở Camera / Thư viện ảnh */
-              <Button
-                variant="outline"
-                onClick={handleTriggerFileInput}
-                className="w-full h-20 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
-                  <Camera size={20} />
-                  <span>CHỤP ẢNH TỪ CAMERA HOẶC CHỌN TỪ MÁY</span>
-                </div>
-                <span className="text-caption text-text-muted">
-                  Nhấp vào đây để mở Camera hoặc thư viện ảnh trên thiết bị của bạn
-                </span>
-              </Button>
+              <PhotoSourcePicker
+                hint="Chụp ảnh mới hoặc chọn ảnh có sẵn trong thư viện ảnh của máy"
+                onOpen={handleTriggerFileInput}
+                onChange={handleFileChange}
+              />
             )}
 
 

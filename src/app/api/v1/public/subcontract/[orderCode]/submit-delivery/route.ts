@@ -1,4 +1,6 @@
 import { randomUUID } from "crypto"
+import { prepareLateDeliveryDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
+import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
 import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
@@ -175,6 +177,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const publicPhotoUrl = await storage.signedUrl(storageKey, 3600, "GET")
 
   const deliveredAt = new Date().toISOString()
+  // Giao trễ giờ hẹn → trừ phí gia công theo % tiệm cài (mặc định 0%)
+  const applyLateFee = await prepareLateDeliveryDeduction(order.organization_id, order.id, new CraftFeeFactsRepository(), new Date(deliveredAt))
   const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
@@ -183,7 +187,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     metadata: (current) => {
       const podPhotos = [...(Array.isArray(current.pod_photos) ? (current.pod_photos as string[]) : []), storageKey]
       const deliveryProof = { photoUrls: podPhotos, note: note || "Đã giao thành công cho khách hàng", deliveredAt, deliveredByBranch: branchId }
-      return { ...current, pod_photos: podPhotos, delivery_proof: deliveryProof, last_pod_uploaded_at: deliveredAt }
+      return applyLateFee({ ...current, pod_photos: podPhotos, delivery_proof: deliveryProof, last_pod_uploaded_at: deliveredAt })
     },
     events: [
       {

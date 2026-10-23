@@ -67,10 +67,11 @@ export const recipientPhotoPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.de
 /** POST /api/v1/greeting-card/orders/[id]/delivery-failed — shipper không giao được, hẹn giao lại */
 export const deliveryFailedPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.deliveryManage, failedSchema, markBrochureDeliveryFailed)
 
-const acceptSchema = z.object({ note: z.string().trim().max(500).optional() })
+// manualDispatch: chế độ tự động nhưng Điều phối muốn tự chọn cửa hàng cho riêng đơn này
+const acceptSchema = z.object({ note: z.string().trim().max(500).optional(), manualDispatch: z.boolean().optional() })
 const rejectSchema = z.object({ reason: z.string().trim().min(1, "Nhập lý do từ chối nhận đơn").max(500) })
 
-/** POST /api/v1/greeting-card/orders/[id]/accept — Điều phối tiếp nhận đơn hàng */
+/** POST /api/v1/greeting-card/orders/[id]/accept — Điều phối xác nhận đã nhận tiền (Chuỗi) rồi chọn cửa hàng gia công */
 export const acceptOrderPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.assignFlorist, acceptSchema, coordinatorAcceptBrochureOrder)
 
 /** POST /api/v1/greeting-card/orders/[id]/reject — Điều phối từ chối nhận đơn (gửi đề xuất hủy/hoàn tiền lên Điều hành) */

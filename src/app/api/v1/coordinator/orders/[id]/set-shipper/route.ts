@@ -15,6 +15,7 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
+import { subcontractPhotoApprovalBlocker } from "@/modules/greeting-card/use-cases/subcontract-photo-gate"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
@@ -69,6 +70,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   // Chỉ khi ảnh thành phẩm đã duyệt và chưa giao (đơn đã huỷ/hoàn tất → 409)
   if (!subcontractStepAllowed("SHIPPER", order)) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.SHIPPER)
+  const waitingCustomer = await subcontractPhotoApprovalBlocker(order.organization_id, order.id)
+  if (waitingCustomer) throw conflict(waitingCustomer)
   const store = new SubcontractStepStore()
 
   const shipperInfo = {

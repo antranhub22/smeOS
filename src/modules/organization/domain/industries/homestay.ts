@@ -106,4 +106,6 @@ export const HOMESTAY_INDUSTRY: IndustryPluginContract = {
   navigation: {
     hiddenNavKeys: [],
   },
+  // Lưu trú không thuê ngoài sản xuất — không có Phí gia công
+  craftFee: null,
 }

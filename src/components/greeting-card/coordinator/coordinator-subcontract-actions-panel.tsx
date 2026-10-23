@@ -324,7 +324,7 @@ function M4ConfirmDeliveryAction({
         { method: "POST", body: fd }
       )
       if (!res.ok) throw new Error(await readApiError(res, "Lỗi xác nhận giao hàng"))
-      setMsg("✅ Đã xác nhận giao hàng thành công (có ảnh POD)")
+      setMsg("✅ Đã xác nhận giao hàng thành công (có ảnh giao hàng)")
       setState("success")
       onDone()
     } catch (err) {
@@ -383,7 +383,7 @@ function M4ConfirmDeliveryAction({
           className="h-8 text-caption gap-1.5 border-success/40 text-success hover:bg-success/5"
         >
           <PackageCheck size={13} />
-          {state === "loading" ? "Đang xử lý…" : "Upload ảnh POD"}
+          {state === "loading" ? "Đang xử lý…" : "Tải ảnh giao hàng"}
         </Button>
         <Button
           type="button"
@@ -401,7 +401,7 @@ function M4ConfirmDeliveryAction({
       {mode === "no_photo" && (
         <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-warning/30 bg-warning/5">
           <p className="text-caption text-warning font-bold">
-            ⚠️ Xác nhận giao hàng không có ảnh POD. Vui lòng ghi rõ lý do:
+            ⚠️ Xác nhận giao hàng không có ảnh giao hàng. Vui lòng ghi rõ lý do:
           </p>
           <textarea
             rows={2}
@@ -457,7 +457,7 @@ export function CoordinatorSubcontractActionsPanel({
       <div className="flex items-center gap-2">
         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/15 text-primary text-caption font-bold tracking-wider uppercase">
           <Camera size={11} />
-          Điều phối can thiệp Gate 2
+          Điều phối can thiệp
         </span>
         <span className="text-caption text-text-muted">
           (hành động đầu tiên sẽ triệt tiêu nhắc tự động)
@@ -469,7 +469,7 @@ export function CoordinatorSubcontractActionsPanel({
         <div className="flex items-center justify-between">
           <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
             <Camera size={13} className="text-primary" />
-            M2 — Ảnh thành phẩm
+            Bước 2 — Ảnh thành phẩm
           </span>
           <NodeBadge done={m2Done} label="Chờ upload" />
         </div>
@@ -484,7 +484,7 @@ export function CoordinatorSubcontractActionsPanel({
         <div className="flex items-center justify-between">
           <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
             <Truck size={13} className="text-warning" />
-            M3 — Thông tin Shipper
+            Bước 3 — Thông tin shipper
           </span>
           <NodeBadge done={m3Done} label="Chờ shipper" />
         </div>
@@ -508,9 +508,9 @@ export function CoordinatorSubcontractActionsPanel({
         <div className="flex items-center justify-between">
           <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
             <PackageCheck size={13} className="text-success" />
-            M4 — Xác nhận giao hàng (POD)
+            Bước 4 — Xác nhận giao hàng
           </span>
-          <NodeBadge done={m4Done} label="Chờ POD" />
+          <NodeBadge done={m4Done} label="Chờ ảnh giao hàng" />
         </div>
         <M4ConfirmDeliveryAction orderId={orderId} done={m4Done} onDone={onActionDone} />
       </div>

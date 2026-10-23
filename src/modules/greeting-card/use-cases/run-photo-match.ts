@@ -3,6 +3,7 @@ import { callCapability } from "@/core/ai/gateway"
 import { aiGatewayDeps } from "@/core/ai/wiring"
 import { log } from "@/core/observability/log"
 import type { TenantContext } from "@/core/tenancy"
+import { safeRemoteUrl } from "@/lib/safe-remote-url"
 
 import {
   createPhotoMatchVisionAdapter,
@@ -11,19 +12,26 @@ import {
 } from "../adapters/photo-match-vision-adapter"
 
 const IMAGE_FETCH_TIMEOUT_MS = 6000
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024
 
 /** Ảnh mẫu / ảnh QC (URL ký của kho hoặc data URI) → base64 để gửi mô hình; lỗi thì bỏ qua ảnh đó. */
 export async function loadImageForAi(url: string | null | undefined): Promise<{ mimeType: string; base64: string } | null> {
   if (!url) return null
   const dataUri = /^data:([^;]+);base64,(.+)$/.exec(url)
   if (dataUri) return { mimeType: dataUri[1]!, base64: dataUri[2]! }
-  if (!url.startsWith("https://") && !url.startsWith("http://")) return null
+  // URL ảnh mẫu có thể do tiệm nhập (`attributes.imageUrl`): chỉ https công khai, không theo chuyển
+  // hướng, tối đa 8 MB — trước 22/10/2026 máy chủ tải mọi URL http(s), kể cả địa chỉ nội bộ (rà soát cụm H)
+  const safe = safeRemoteUrl(url)
+  if (!safe) return null
   try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(IMAGE_FETCH_TIMEOUT_MS) })
+    const res = await fetch(safe, { signal: AbortSignal.timeout(IMAGE_FETCH_TIMEOUT_MS), redirect: "error" })
     if (!res.ok) return null
     const mimeType = res.headers.get("content-type") || "image/jpeg"
     if (!mimeType.startsWith("image/")) return null
-    return { mimeType, base64: Buffer.from(await res.arrayBuffer()).toString("base64") }
+    if (Number(res.headers.get("content-length") ?? 0) > MAX_IMAGE_BYTES) return null
+    const bytes = Buffer.from(await res.arrayBuffer())
+    if (bytes.length > MAX_IMAGE_BYTES) return null
+    return { mimeType, base64: bytes.toString("base64") }
   } catch {
     return null
   }

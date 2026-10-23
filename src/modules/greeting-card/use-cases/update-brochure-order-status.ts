@@ -1,4 +1,5 @@
 import type { TenantContext } from "@/core/tenancy"
+import { qcAiOutcome } from "../domain/qc-ai-outcome"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { mediaSelectionError } from "../domain/media-limits"
 import { BrochureOrderRepository } from "../infra/brochure-order-repository"
@@ -7,9 +8,7 @@ import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payme
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
 import { queueStaffNotification } from "./notify-staff"
-import {
-  DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason,
-} from "../domain/delivery-failure"
+import { DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason } from "../domain/delivery-failure"
 import { DeliveryFailureRepository } from "../infra/delivery-failure-repository"
 import { orderPhotoApproval, photoApprovalDispatchBlocker } from "../domain/photo-approval"
 import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
@@ -22,6 +21,7 @@ import { verifyQcPhotoWithAi } from "./verify-qc-photo-ai"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { OrderPhotoRepository } from "@/modules/greeting-card/infra/order-photo-repository"
 import { log } from "@/core/observability/log"
+import { confirmChainPaymentAndDispatch } from "./coordinator-confirm-chain-payment"
 
 /** Đơn của tổ chức + kiểm đúng thứ tự tác vụ xưởng (409 nếu sai bước). */
 async function loadForAction(
@@ -57,7 +57,6 @@ async function loadForAction(
   }
   return order
 }
-
 
 /** Gói Nghiêm ngặt bắt buộc ảnh — gọi thẳng API bỏ qua ảnh cũng bị chặn (PO 15/10/2026). */
 async function assertSkipAllowed(ctx: TenantContext, kind: "product" | "recipient") {
@@ -182,22 +181,12 @@ export async function uploadBrochureProductPhoto(
     }
   })()
 
-  // Nếu AI xác nhận ảnh SAI sản phẩm → chặn ngay lập tức
-  if (aiVerify && !aiVerify.isMatch) {
-    log.warn("coordinator.product_photo.ai_rejected", {
-      orderId,
-      orderCode: order.code,
-      confidenceScore: aiVerify.confidenceScore,
-      reason: aiVerify.reason,
-    })
-    throw conflict(
-      `❌ AI kiểm định phát hiện ảnh thành phẩm không khớp với mẫu sản phẩm: ${aiVerify.reason} (Độ tin cậy: ${aiVerify.confidenceScore}%). Vui lòng kiểm tra và chụp đúng sản phẩm của đơn hàng này!`
-    )
+  const outcome = qcAiOutcome(aiVerify)
+  if (outcome.blockReason) {
+    log.warn("coordinator.product_photo.ai_rejected", { orderId, orderCode: order.code, confidenceScore: aiVerify?.confidenceScore, reason: aiVerify?.reason })
+    throw conflict(outcome.blockReason)
   }
-
-  const aiNote = aiVerify
-    ? `[AI ✅ ${aiVerify.confidenceScore}%] ${aiVerify.reason}`
-    : `[AI Bỏ qua — lỗi kết nối]`
+  const aiNote = outcome.note
 
   const result = await repo.applyProgress(ctx, order, {
     eventType: "PRODUCT_PHOTO_UPLOADED",
@@ -300,9 +289,10 @@ export async function markBrochureDeliveryFailed(
 export async function coordinatorAcceptBrochureOrder(
   ctx: TenantContext,
   orderId: string,
-  input: { note?: string | undefined } = {},
+  input: { note?: string | undefined; manualDispatch?: boolean | undefined } = {},
   repo = new BrochureOrderRepository(),
-  shops = new GreetingCardRepository()
+  shops = new GreetingCardRepository(),
+  cancellations: Pick<CancellationRepository, "listPending"> = new CancellationRepository()
 ) {
   const [order, shop] = await Promise.all([
     repo.findBrochureOrder(ctx, orderId),
@@ -318,6 +308,7 @@ export async function coordinatorAcceptBrochureOrder(
     workflow
   )
   if (acceptBlocker) throw conflict(acceptBlocker)
+  if ((await cancellations.listPending(ctx)).some((r) => r.order_id === orderId)) throw conflict("Đơn đang có đề xuất huỷ chờ duyệt. Duyệt hoặc từ chối đề xuất trước khi nhận đơn.")
 
   // Đơn chưa ghi cọc mà khách đã có bill/báo chuyển khoản → tự duyệt cọc như Điều hành
   const paid = Number(order.paid_vnd)
@@ -340,10 +331,10 @@ export async function coordinatorAcceptBrochureOrder(
   const moneyBlocker = paymentGateBlocker("assign-florist", parsePaymentPolicy(shop.settings), { totalVnd: total, paidVnd: paidNow })
   if (moneyBlocker) throw conflict(`${moneyBlocker}. Chờ Điều hành xác nhận tiền cọc rồi tiếp nhận đơn.`)
 
+  // Chuỗi (PO 22/10/2026): chỉ xác nhận đã nhận tiền rồi chọn cửa hàng; "đã nhận đơn" báo khi chi nhánh chốt làm
+  if (workflow.requireCoordinatorAcceptance) return confirmChainPaymentAndDispatch(ctx, order, input, repo)
   const result = await repo.applyProgress(ctx, order, {
-    eventType: "COORDINATOR_ACCEPTED",
-    productionStatus: "ASSIGNED",
-    orderStatus: order.status === "DRAFT" ? "CONFIRMED" : order.status,
+    eventType: "COORDINATOR_ACCEPTED", productionStatus: "ASSIGNED", orderStatus: order.status === "DRAFT" ? "CONFIRMED" : order.status,
     noteAppend: `[Điều phối tiếp nhận] ${input.note?.trim() || "Xác nhận xưởng nhận đơn"}`,
   })
   queueOrderNotification(ctx.organizationId, order.id, "ORDER_ACCEPTED")

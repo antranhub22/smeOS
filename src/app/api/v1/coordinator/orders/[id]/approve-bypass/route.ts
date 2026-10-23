@@ -9,6 +9,8 @@
  * - Khách hàng sẽ thấy tiến độ chuyển bước kèm ghi chú bất khả kháng.
  */
 
+import { prepareLateDeliveryDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
+import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
@@ -18,6 +20,7 @@ import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcon
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION } from "@/modules/greeting-card/domain/subcontract-order"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
+import { subcontractPhotoApprovalBlocker } from "@/modules/greeting-card/use-cases/subcontract-photo-gate"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
@@ -96,12 +99,17 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     },
   }[step]
 
+  // Bỏ qua thông tin shipper không bỏ qua bước khách duyệt ảnh thành phẩm
+  const waitingCustomer = step === "SHIPPER" ? await subcontractPhotoApprovalBlocker(order.organization_id, order.id) : null
+  if (waitingCustomer) throw conflict(waitingCustomer)
+  const applyLateFee =
+    step === "POD" ? await prepareLateDeliveryDeduction(order.organization_id, order.id, new CraftFeeFactsRepository(), new Date(nowIso)) : (m: Record<string, unknown>) => m
   const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
     order: stepWrite.order,
     require: SUBCONTRACT_STEP_PRECONDITION[step],
-    metadata: (current) => ({ ...current, ...stepWrite.fields, bypass_requests: decide(current, "APPROVED") }),
+    metadata: (current) => applyLateFee({ ...current, ...stepWrite.fields, bypass_requests: decide(current, "APPROVED") }),
     events: [{ ...stepWrite.event, actorId, reason: `[Duyệt bỏ qua ${STEP_LABEL[step]}] ${String(bypassRequest.reason ?? "")}` }],
   })
   if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED[step])

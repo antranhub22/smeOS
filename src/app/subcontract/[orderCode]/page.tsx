@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { Shield, AlertCircle } from "lucide-react"
 import { SubcontractSpotlightShell } from "@/components/greeting-card/subcontract/subcontract-spotlight-shell"
-import type { SubcontractClaimCardProps } from "@/components/greeting-card/subcontract/subcontract-claim-card"
-import type { DeliveryProofInfo } from "@/components/greeting-card/subcontract/delivery-proof-card"
+import type { SubcontractClaimCardProps } from "@/components/greeting-card/subcontract/subcontract-card-types"
+import type { DeliveryProofInfo } from "@/components/greeting-card/subcontract/subcontract-card-types"
 import type { SubcontractStepId } from "@/components/greeting-card/subcontract/subcontract-spotlight-stepper"
 
 interface PageProps {
@@ -18,6 +18,8 @@ import type { StepBypassRequestInfo } from "@/components/greeting-card/subcontra
 import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 interface SubcontractPageData extends SubcontractClaimCardProps {
+  craftFeeDeductions?: Array<{ amountVnd: number; reason: string }>
+  craftFeePayableVnd?: number
   orderStatus?: string | null
   deliveryStatus?: string | null
   deliveryTimestampMs?: number | null
@@ -129,6 +131,8 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         cardMessage={orderData.cardMessage}
         specialNotes={orderData.specialNotes}
         subcontractPriceVnd={orderData.subcontractPriceVnd}
+        craftFeeDeductions={orderData.craftFeeDeductions}
+        craftFeePayableVnd={orderData.craftFeePayableVnd}
         dispatchStatus={orderData.dispatchStatus}
         claimedByBranchId={orderData.claimedByBranchId}
         claimedBranchName={orderData.claimedBranchName}

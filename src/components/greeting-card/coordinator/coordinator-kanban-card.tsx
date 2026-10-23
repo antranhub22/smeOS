@@ -245,7 +245,7 @@ export function CoordinatorKanbanCard({
                   className="h-7 text-caption gap-1 px-2 flex-1 bg-success hover:bg-success/90 text-white font-extrabold"
                 >
                   <ShieldCheck size={12} />
-                  Nhận đơn
+                  Đã nhận tiền
                 </Button>
                 <Button
                   type="button"
