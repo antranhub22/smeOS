@@ -89,4 +89,12 @@ describe("telegram-dispatch route", () => {
     expect(body.data.recentChats.map((c: { id: string }) => c.id)).toEqual(["-100"])
     expect(body.data.error).toBeTruthy()
   })
+
+  it("Telegram từ chối gửi: trả đúng lý do cho màn hình (nhóm đã nâng cấp đổi ID)", async () => {
+    await GET(new Request("http://localhost/x"))
+    sendTelegramText.mockResolvedValueOnce({ ok: false, error: "Bad Request: group chat was upgraded to a supergroup chat" } as never)
+    const res = await POST(post("-100"))
+    expect(res.status).toBe(422)
+    expect(JSON.stringify(await res.json())).toContain("Quét Chat ID mới")
+  })
 })
