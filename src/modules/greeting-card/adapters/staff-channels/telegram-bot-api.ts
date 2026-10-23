@@ -2,6 +2,7 @@
  * Lời gọi Telegram Bot API thô cho màn kết nối bot điều phối (getMe / getUpdates / sendMessage).
  * Nằm ở `adapters/` theo luật kiến trúc 4 — route không gọi thẳng nhà cung cấp.
  */
+import { log } from "@/core/observability/log"
 
 export interface TelegramBotInfo {
   id: number
@@ -19,16 +20,32 @@ export interface TelegramChatMessage {
 }
 
 const TIMEOUT_MS = 8000
+const MAX_ATTEMPTS = 2
+
+/** Lý do lỗi mạng để ghi log — chỉ tên lỗi + mã, không bao giờ kèm URL (URL chứa token bot) */
+function networkReason(err: unknown): string {
+  const e = err as { name?: string; cause?: { code?: string } }
+  return [e?.name ?? "Error", e?.cause?.code].filter(Boolean).join(":")
+}
 
 async function call<T>(botToken: string, method: string, body?: unknown): Promise<{ ok: boolean; result?: T; description?: string }> {
   const init: RequestInit = body
     ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
     : { method: "GET" }
-  const res = await fetch(`https://api.telegram.org/bot${botToken}/${method}`, {
-    ...init,
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-  })
-  return (await res.json()) as { ok: boolean; result?: T; description?: string }
+  const methodName = method.split("?")[0]
+  // Thử lại đúng 1 lần khi lỗi mạng / timeout (trước 23/10/2026 lỗi bị nuốt, không có log để tra)
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/${method}`, {
+        ...init,
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      })
+      return (await res.json()) as { ok: boolean; result?: T; description?: string }
+    } catch (err) {
+      log.warn("telegram_bot_api.network_error", { method: methodName, attempt, reason: networkReason(err) })
+      if (attempt >= MAX_ATTEMPTS || body) throw err
+    }
+  }
 }
 
 export async function getTelegramBotInfo(botToken: string): Promise<TelegramBotInfo | null> {
