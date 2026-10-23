@@ -5,7 +5,7 @@ import {
   type TelegramChatMessage,
 } from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
 import { telegramLinkCode } from "@/modules/greeting-card/infra/telegram-link-code"
-import { listLinkedTelegramChatIds, rememberLinkedTelegramChats } from "@/modules/greeting-card/infra/telegram-linked-chats"
+import { listLinkedTelegramChatIds, listUnlinkedTelegramChats, rememberLinkedTelegramChats } from "@/modules/greeting-card/infra/telegram-linked-chats"
 
 export interface LinkedTelegramChat {
   id: string
@@ -14,10 +14,17 @@ export interface LinkedTelegramChat {
 }
 
 /** Nhóm đã nhắn đúng mã liên kết của tổ chức — chỉ những nhóm này mới hiện cho tổ chức đó. */
-export function chatsWithLinkCode(messages: TelegramChatMessage[], linkCode: string): LinkedTelegramChat[] {
+export function chatsWithLinkCode(
+  messages: TelegramChatMessage[],
+  linkCode: string,
+  unlinkedAt: Record<string, string> = {}
+): LinkedTelegramChat[] {
   const byId = new Map<string, LinkedTelegramChat>()
   for (const m of messages) {
     if (!m.text.toUpperCase().includes(linkCode)) continue
+    // Nhóm đã bị gỡ: chỉ liên kết lại khi có mã gửi SAU lúc gỡ, quét lại không làm nhóm hiện lại
+    const removedAt = unlinkedAt[m.chatId]
+    if (removedAt && (m.date ?? 0) * 1000 <= Date.parse(removedAt)) continue
     byId.set(m.chatId, { id: m.chatId, title: m.title, type: m.type })
   }
   return [...byId.values()]
@@ -39,7 +46,7 @@ export async function resolveTelegramDispatchAccess(ctx: TenantContext, botToken
     // Lỗi mạng / timeout cũng chỉ là "chưa quét được", không làm mất các chat đã liên kết
     scanError = err instanceof TelegramUpdatesError ? err.message : "Không kết nối được Telegram lúc này"
   }
-  const scanned = chatsWithLinkCode(messages, linkCode)
+  const scanned = chatsWithLinkCode(messages, linkCode, await listUnlinkedTelegramChats(ctx.organizationId))
   await rememberLinkedTelegramChats(ctx.organizationId, scanned.map((c) => c.id))
   const allowedChatIds = new Set(await listLinkedTelegramChatIds(ctx.organizationId))
   // Hiển thị mọi chat đã liên kết (bot chỉ thấy tin trong 24 giờ — chat cũ hiện bằng ID)

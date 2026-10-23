@@ -1,11 +1,12 @@
 import { z } from "zod"
-import { unprocessable, validationFailed } from "@/core/http/errors"
+import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { getTelegramBotInfo, sendTelegramText } from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
 import { resolveTelegramDispatchAccess } from "@/modules/greeting-card/use-cases/telegram-dispatch-link"
+import { listLinkedTelegramChatIds, unlinkTelegramChat } from "@/modules/greeting-card/infra/telegram-linked-chats"
 
 const testSchema = z.object({
   chatId: z.string().min(1),
@@ -85,4 +86,21 @@ export const POST = handle(async (request) => {
   // Lỗi phải nằm trong `error.message` để màn hình hiện đúng lý do (trước 23/10/2026 chỉ hiện câu chung)
   if (!sent.ok) throw unprocessable(telegramSendErrorText(sent.error))
   return jsonResponse({ data: { success: true, messageId: sent.messageId } })
+})
+
+/**
+ * DELETE /api/v1/greeting-card/integrations/telegram-dispatch?chatId=...
+ * Gỡ một chat khỏi danh sách đã liên kết của tổ chức — bot không gửi tới đó nữa. Chat không thuộc
+ * tổ chức → 404. Quét lại không làm chat hiện lại, trừ khi nhóm gửi mã liên kết MỚI.
+ */
+export const DELETE = handle(async (request) => {
+  const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, GREETING_CARD_CAPABILITY.integrationManage)
+
+  const chatId = new URL(request.url).searchParams.get("chatId")?.trim()
+  if (!chatId) throw validationFailed({ chatId: "Thiếu chat cần gỡ" })
+  if (!(await listLinkedTelegramChatIds(ctx.organizationId)).includes(chatId)) throw notFound()
+
+  await unlinkTelegramChat(ctx.organizationId, chatId)
+  return jsonResponse({ data: { removed: chatId } })
 })

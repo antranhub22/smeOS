@@ -10,6 +10,8 @@ import { prisma } from "@/core/tenancy/infra/prisma"
  * Excel chi nhánh cũng được tin, nên tiệm A gửi được tin vào nhóm của tiệm B (rà soát cụm G).
  */
 export const TELEGRAM_LINKED_CHATS_SETTING_KEY = "telegram_linked_chat_ids"
+/** Chat đã bị gỡ → thời điểm gỡ (ISO). Mã liên kết gửi trước thời điểm này không còn tác dụng. */
+export const TELEGRAM_UNLINKED_CHATS_SETTING_KEY = "telegram_unlinked_chats"
 
 type Db = typeof prisma
 
@@ -36,6 +38,39 @@ export async function rememberLinkedTelegramChats(organizationId: string, chatId
           || to_jsonb(${ids}::text[])
         ) AS x
       )
+    )
+    WHERE "id" = ${organizationId}`
+}
+
+export async function listUnlinkedTelegramChats(organizationId: string, db: Db = prisma): Promise<Record<string, string>> {
+  const org = await db.organizations.findUnique({ where: { id: organizationId }, select: { settings: true } })
+  const raw = (org?.settings as Record<string, unknown> | null)?.[TELEGRAM_UNLINKED_CHATS_SETTING_KEY]
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {}
+  return Object.fromEntries(Object.entries(raw).filter((e): e is [string, string] => typeof e[1] === "string"))
+}
+
+/** Gỡ chat khỏi danh sách đã liên kết và ghi thời điểm gỡ — một câu lệnh, không đụng khoá settings khác. */
+export async function unlinkTelegramChat(organizationId: string, chatId: string, db: Db = prisma): Promise<void> {
+  const removedAt = new Date().toISOString()
+  await db.$executeRaw`
+    UPDATE "organizations"
+    SET "settings" = jsonb_set(
+      jsonb_set(
+        COALESCE("settings", '{}'::jsonb),
+        ARRAY[${TELEGRAM_LINKED_CHATS_SETTING_KEY}]::text[],
+        (
+          SELECT COALESCE(jsonb_agg(x), '[]'::jsonb)
+          FROM jsonb_array_elements_text(
+            CASE WHEN jsonb_typeof("settings" -> ${TELEGRAM_LINKED_CHATS_SETTING_KEY}) = 'array'
+              THEN "settings" -> ${TELEGRAM_LINKED_CHATS_SETTING_KEY} ELSE '[]'::jsonb END
+          ) AS x
+          WHERE x <> ${chatId}
+        )
+      ),
+      ARRAY[${TELEGRAM_UNLINKED_CHATS_SETTING_KEY}]::text[],
+      (CASE WHEN jsonb_typeof("settings" -> ${TELEGRAM_UNLINKED_CHATS_SETTING_KEY}) = 'object'
+        THEN "settings" -> ${TELEGRAM_UNLINKED_CHATS_SETTING_KEY} ELSE '{}'::jsonb END)
+        || jsonb_build_object(${chatId}::text, ${removedAt}::text)
     )
     WHERE "id" = ${organizationId}`
 }
