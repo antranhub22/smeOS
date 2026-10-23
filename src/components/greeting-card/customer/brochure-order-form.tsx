@@ -22,6 +22,10 @@ import { HomestayOrderFields, calculateNights } from "./homestay-order-fields"
 import { StandardOrderFields } from "./standard-order-fields"
 import { useBrochureOrderSubmit } from "./use-brochure-order-submit"
 import { useProductAvailability } from "./use-product-availability"
+import { OrderFocusProvider } from "./order-spotlight/order-focus-context"
+import { SpotlightBlock } from "./order-spotlight/spotlight-block"
+import { BuyerInfoFields } from "./order-spotlight/buyer-info-fields"
+import { CompactOrderNotes } from "./order-spotlight/compact-order-notes"
 
 interface BrochureOrderFormProps {
   productSnapshot: ProductSnapshot
@@ -71,6 +75,11 @@ export function BrochureOrderForm({
   const [childrenCount, setChildrenCount] = useState(0)
   const [transitMethod, setTransitMethod] = useState("")
   const [specialRequests, setSpecialRequests] = useState("")
+  // Khách quay lại sửa đơn mà người nhận trùng người mua → giữ công tắc bật
+  const [sameAsRecipient, setSameAsRecipient] = useState(
+    () => recipientName.trim() !== "" && recipientName === customerName && recipientPhone === customerPhone
+  )
+  const buyerIsRecipient = !isHomestay && sameAsRecipient
 
   const [selectedPromotionId, setSelectedPromotionId] = useState<string>(
     appliedPolicies && !customerChoosesPromotion(appliedPolicies) ? appliedPolicies.promotions[0]?.id ?? "" : ""
@@ -103,8 +112,8 @@ export function BrochureOrderForm({
     customerName,
     customerPhone,
     customerEmail,
-    recipientName,
-    recipientPhone,
+    recipientName: buyerIsRecipient ? customerName : recipientName,
+    recipientPhone: buyerIsRecipient ? customerPhone : recipientPhone,
     deliveryDate,
     deliveryTimeSlot,
     addressParts,
@@ -180,81 +189,47 @@ export function BrochureOrderForm({
         </div>
       )}
 
+      <OrderFocusProvider>
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <HoneypotField value={website} onChange={setWebsite} />
 
-        <BrochureOrderOptions
-          variants={variants}
-          priceDimensions={priceDimensions}
-          basePrice={productSnapshot.price}
-          shipping={shipping}
-          selection={pricing.selection}
-          onChange={pricing.update}
-          quote={pricing.quote}
-          errors={pricing.errors}
-          loading={pricing.loading}
-          industryKey={industryKey}
-        />
+        <SpotlightBlock step={1} title={`Chọn ${terms.sampleProduct.toLowerCase()}`}>
+          <BrochureOrderOptions
+            variants={variants}
+            priceDimensions={priceDimensions}
+            basePrice={productSnapshot.price}
+            shipping={shipping}
+            selection={pricing.selection}
+            onChange={pricing.update}
+            quote={pricing.quote}
+            errors={pricing.errors}
+            loading={pricing.loading}
+            industryKey={industryKey}
+          />
+          {appliedPolicies && (
+            <PromotionPicker policies={appliedPolicies} value={selectedPromotionId} onChange={setSelectedPromotionId} />
+          )}
+        </SpotlightBlock>
 
-        {appliedPolicies && (
-          <PromotionPicker policies={appliedPolicies} value={selectedPromotionId} onChange={setSelectedPromotionId} />
-        )}
+        <SpotlightBlock step={2} title="Thông tin người mua">
+          <BuyerInfoFields
+            idPrefix={uid}
+            inputClassName={INPUT}
+            customerName={customerName}
+            customerPhone={customerPhone}
+            customerEmail={customerEmail}
+            sameAsRecipient={isHomestay ? undefined : sameAsRecipient}
+            onCustomerNameChange={setCustomerName}
+            onCustomerPhoneChange={setCustomerPhone}
+            onCustomerEmailChange={setCustomerEmail}
+            onSameAsRecipientChange={setSameAsRecipient}
+          />
+        </SpotlightBlock>
 
-        {/* Khối Người đặt (chung cho mọi ngành) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label htmlFor={`${uid}-customerName`} className="block text-body-sm font-bold text-foreground mb-1">
-              Họ tên của bạn <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="VD: Nguyễn Văn A"
-              value={customerName}
-              maxLength={ORDER_FIELD_MAX.name}
-              id={`${uid}-customerName`}
-              autoComplete="name"
-              onChange={(e) => setCustomerName(e.target.value)}
-              className={INPUT}
-            />
-          </div>
-          <div>
-            <label htmlFor={`${uid}-customerPhone`} className="block text-body-sm font-bold text-foreground mb-1">
-              Số điện thoại của bạn <span className="text-danger">*</span>
-            </label>
-            <input
-              type="tel"
-              required
-              placeholder="VD: 0901234567"
-              value={customerPhone}
-              maxLength={15}
-              id={`${uid}-customerPhone`}
-              autoComplete="tel"
-              inputMode="tel"
-              onChange={(e) => setCustomerPhone(e.target.value)}
-              className={INPUT}
-            />
-          </div>
-          <div>
-            <label htmlFor={`${uid}-customerEmail`} className="block text-body-sm font-bold text-foreground mb-1">
-              Email <span className="text-caption font-normal text-text-muted">(tùy chọn)</span>
-            </label>
-            <input
-              type="email"
-              placeholder="VD: email@example.com"
-              value={customerEmail}
-              maxLength={100}
-              id={`${uid}-customerEmail`}
-              autoComplete="email"
-              onChange={(e) => setCustomerEmail(e.target.value)}
-              className={INPUT}
-            />
-          </div>
-        </div>
-
-        {/* Chuyển đổi linh hoạt giữa giao diện Homestay và giao diện Giao hàng Tiêu chuẩn */}
+        <SpotlightBlock step={3} title={isHomestay ? "Thông tin đặt phòng" : "Giao hàng"}>
         {isHomestay ? (
           <HomestayOrderFields
+            showSpecialRequests={false}
             idPrefix={uid}
             inputClassName={INPUT}
             checkInDate={deliveryDate}
@@ -307,19 +282,28 @@ export function BrochureOrderForm({
             shipping={shipping}
             fullSlots={pricing.fullSlots}
             addressParts={addressParts}
-            cardMessage={cardMessage}
-            senderNote={senderNote}
-            deliveryNote={deliveryNote}
-            mapUrl={mapUrl}
+            hideRecipient={buyerIsRecipient}
             availability={availability}
             onRecipientNameChange={setRecipientName}
             onRecipientPhoneChange={setRecipientPhone}
             onDeliveryDateChange={setDeliveryDate}
             onDeliveryTimeSlotChange={setDeliveryTimeSlot}
             onAddressPartsChange={setAddressParts}
-            onNotesChange={setNotes}
           />
         )}
+        </SpotlightBlock>
+
+        <SpotlightBlock step={4} title="Ghi chú">
+          <CompactOrderNotes
+            idPrefix={uid}
+            inputClassName={INPUT}
+            industryKey={industryKey}
+            values={isHomestay ? { specialRequests } : { cardMessage, senderNote, deliveryNote, mapUrl }}
+            onChange={(kind, value) =>
+              kind === "specialRequests" ? setSpecialRequests(value) : setNotes({ [kind]: value })
+            }
+          />
+        </SpotlightBlock>
 
         {/* Submit Button */}
         <Button
@@ -339,6 +323,7 @@ export function BrochureOrderForm({
           </span>
         </Button>
       </form>
+      </OrderFocusProvider>
     </div>
   )
 }

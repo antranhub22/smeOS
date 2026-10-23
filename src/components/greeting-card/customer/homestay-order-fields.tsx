@@ -47,6 +47,8 @@ interface HomestayOrderFieldsProps {
   onChildrenChange: (count: number) => void
   onTransitChange: (transit: string) => void
   onSpecialRequestsChange: (text: string) => void
+  /** false khi ô yêu cầu đặc biệt hiển thị ở khối Ghi chú riêng */
+  showSpecialRequests?: boolean | undefined
 }
 
 export function calculateNights(checkIn: string, checkOut: string): number {
@@ -98,6 +100,7 @@ export function HomestayOrderFields({
   onChildrenChange,
   onTransitChange,
   onSpecialRequestsChange,
+  showSpecialRequests = true,
 }: HomestayOrderFieldsProps) {
   const uid = idPrefix || useId()
   const nights = calculateNights(checkInDate, checkOutDate)
@@ -259,6 +262,7 @@ export function HomestayOrderFields({
       </div>
 
       {/* 4. GHI CHÚ CHO QUẢN GIA / CHỦ NHÀ */}
+      {showSpecialRequests && (
       <div>
         <label htmlFor={`${uid}-specialRequests`} className="block text-caption font-bold text-foreground mb-1">
           Yêu cầu đặc biệt cho Quản gia / Chủ nhà
@@ -277,6 +281,7 @@ export function HomestayOrderFields({
           <span>Chủ nhà luôn hỗ trợ và chuẩn bị chu đáo trước giờ đón tiếp.</span>
         </div>
       </div>
+      )}
     </div>
   )
 }
