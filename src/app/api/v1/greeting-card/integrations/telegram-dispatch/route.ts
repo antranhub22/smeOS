@@ -12,6 +12,17 @@ const testSchema = z.object({
   message: z.string().max(1000).optional(),
 })
 
+/** Lý do Telegram từ chối gửi, nói bằng lời của người dùng */
+function telegramSendErrorText(error: string | undefined): string {
+  const d = (error ?? "").toLowerCase()
+  if (d.includes("upgraded to a supergroup")) {
+    return "Nhóm đã được Telegram nâng cấp nên đổi ID mới. Gửi lại mã liên kết vào nhóm, bấm \"Quét Chat ID mới\" và dùng ID mới (bắt đầu bằng -100)."
+  }
+  if (d.includes("chat not found")) return "Không tìm thấy nhóm. Kiểm tra bot còn trong nhóm và ID đúng."
+  if (d.includes("kicked") || d.includes("not a member")) return "Bot đã bị xoá khỏi nhóm. Thêm lại bot vào nhóm rồi thử lại."
+  return `Telegram từ chối gửi: ${error || "không rõ lý do"}`
+}
+
 function dispatchBotToken(): string | undefined {
   return process.env.TELEGRAM_DISPATCH_BOT_TOKEN || process.env.TELEGRAM_STAFF_BOT_TOKEN
 }
@@ -71,8 +82,7 @@ export const POST = handle(async (request) => {
     "🌸 <b>[TEST ĐIỀU PHỐI CHUỖI smeOS]</b>\n\nKết nối thành công giữa hệ thống smeOS và Nhóm chat Chi nhánh!\n\n<i>Mọi đơn hàng gia công mới sẽ tự động được gửi tới nhóm này.</i>"
 
   const sent = await sendTelegramText(botToken, parsed.data.chatId, text)
-  if (!sent.ok) {
-    return jsonResponse({ data: { success: false, error: sent.error } }, { status: 400 })
-  }
+  // Lỗi phải nằm trong `error.message` để màn hình hiện đúng lý do (trước 23/10/2026 chỉ hiện câu chung)
+  if (!sent.ok) throw unprocessable(telegramSendErrorText(sent.error))
   return jsonResponse({ data: { success: true, messageId: sent.messageId } })
 })
