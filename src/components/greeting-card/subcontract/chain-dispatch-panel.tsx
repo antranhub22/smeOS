@@ -286,7 +286,7 @@ export function ChainDispatchPanel({
       )}
 
       {/* Kết quả phát lệnh nếu đã gửi thành công */}
-      {dispatchResult && !data?.data?.dispatchState?.status && (
+      {dispatchResult && (
         <div className="p-3 rounded-xl bg-success/10 border border-success/30 flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-caption font-bold text-success">
