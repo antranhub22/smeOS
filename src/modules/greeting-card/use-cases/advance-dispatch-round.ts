@@ -8,6 +8,7 @@
 
 import type { TenantContext } from "@/core/tenancy"
 import { parseChainDispatchPolicy, renderDispatchMessage } from "../domain/chain-dispatch-policy"
+import { buildDispatchTitle } from "../domain/dispatch-message-titles"
 import { matchCandidateBranches, type BranchCandidate, type GeoCoordinate } from "../domain/chain-dispatch-engine"
 import type { IDispatchNotifier, ISubcontractClaimStore } from "./dispatch-subcontract-order"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
@@ -81,7 +82,7 @@ export async function advanceExpiredDispatchRound(
         orderCode: state.orderCode,
         messageText: `Đơn #${state.orderCode} đã qua ${state.currentRound} vòng mời nhưng chưa chi nhánh nào nhận. Điều phối vui lòng liên hệ chi nhánh trực tiếp.`,
         claimUrl: "",
-        title: `🚨 [CHƯA CÓ CHI NHÁNH NHẬN #${state.orderCode}]`,
+        title: buildDispatchTitle({ emoji: "🚨", action: "Chưa có chi nhánh nhận", level: "normal", orderCode: state.orderCode }),
         actions: [],
       })
     }

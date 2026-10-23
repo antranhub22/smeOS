@@ -76,7 +76,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
       ctx,
       expect.objectContaining({
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "📸 Chụp & Tải ảnh thành phẩm" }),
+          expect.objectContaining({ text: "Chụp và tải ảnh thành phẩm" }),
         ]),
       })
     )
@@ -188,9 +188,9 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        messageText: expect.stringContaining("NHẮC LẦN 2"),
+        messageText: expect.stringContaining("Nhắc lần 2"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: expect.stringContaining("TẢI ẢNH THÀNH PHẨM NGAY (LẦN 2)") }),
+          expect.objectContaining({ text: expect.stringContaining("Tải ảnh thành phẩm ngay") }),
         ]),
       })
     )
@@ -260,11 +260,11 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("BÁO ĐỘNG ĐIỀU PHỐI"),
-        messageText: expect.stringContaining("CHƯA CÓ ẢNH THÀNH PHẨM"),
+        title: expect.stringContaining("Khẩn cấp"),
+        messageText: expect.stringContaining("chưa có ảnh thành phẩm"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: expect.stringContaining("Gọi cửa hàng: 0977234567") }),
-          expect.objectContaining({ text: "🔍 Xem chi tiết đơn" }),
+          expect.objectContaining({ text: expect.stringContaining("Gọi chi nhánh: 0977234567") }),
+          expect.objectContaining({ text: "Xem chi tiết đơn" }),
         ]),
       })
     )
@@ -344,10 +344,10 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("YÊU CẦU SHIPPER"),
-        messageText: expect.stringContaining("Vui lòng cung cấp Họ tên & SĐT Shipper"),
+        title: expect.stringContaining("Cần thông tin shipper"),
+        messageText: expect.stringContaining("Vui lòng nhập họ tên và số điện thoại shipper"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "🛵 Nhập Thông Tin Shipper" }),
+          expect.objectContaining({ text: "Nhập thông tin shipper" }),
         ]),
       })
     )
@@ -465,9 +465,9 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("NHẮC LẦN 2 - KHẨN CẤP"),
+        title: expect.stringContaining("Nhắc lần 2"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "🚨 NHẬP THÔNG TIN SHIPPER NGAY (LẦN 2)" }),
+          expect.objectContaining({ text: "Nhập thông tin shipper ngay" }),
         ]),
       })
     )
@@ -537,10 +537,10 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("CẢNH BÁO ĐỎ - THIẾU SHIPPER"),
-        messageText: expect.stringContaining("CHƯA CUNG CẤP SHIPPER"),
+        title: expect.stringContaining("Khẩn cấp"),
+        messageText: expect.stringContaining("vẫn chưa có shipper"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: expect.stringContaining("Gọi cửa hàng: 0977234567") }),
+          expect.objectContaining({ text: expect.stringContaining("Gọi chi nhánh: 0977234567") }),
           expect.objectContaining({ text: expect.stringContaining("Xem chi tiết đơn") }),
         ]),
       })
@@ -608,10 +608,10 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("NHẮC BÀN GIAO & POD"),
-        messageText: expect.stringContaining("tải ảnh xác nhận giao hàng (POD)"),
+        title: expect.stringContaining("Nhắc bàn giao"),
+        messageText: expect.stringContaining("tải ảnh xác nhận đã giao"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "📸 Tải Ảnh Giao Hàng (POD)" }),
+          expect.objectContaining({ text: "Tải ảnh đã giao" }),
         ]),
       })
     )
@@ -680,10 +680,10 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("CẢNH BÁO ĐỎ - CHƯA GIAO HÀNG"),
-        messageText: expect.stringContaining("đã quá hạn giao nhưng chưa có ảnh xác nhận"),
+        title: expect.stringContaining("Khẩn cấp"),
+        messageText: expect.stringContaining("đã quá hạn giao mà chưa có ảnh xác nhận"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "📞 Gọi Cửa Hàng Ngay" }),
+          expect.objectContaining({ text: "Gọi chi nhánh" }),
         ]),
       })
     )

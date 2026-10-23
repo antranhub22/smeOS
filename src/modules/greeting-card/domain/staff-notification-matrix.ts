@@ -246,7 +246,7 @@ export function resolveStaffNotificationTargets(
           recipientUserId: null,
           channels: effectiveChannels,
           priority: spec.priority,
-          title: `[Chưa nhận] ${title}`,
+          title,
           message: `${message} (Đơn chưa có người phụ trách — nhân viên Sale nhận đơn ngay).`,
         })
       }
