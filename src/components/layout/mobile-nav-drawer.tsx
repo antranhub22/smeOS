@@ -28,7 +28,7 @@ export function MobileNavDrawer() {
     drawerRef.current?.querySelector<HTMLElement>("button[aria-label=\"Đóng menu\"]")?.focus()
     const burger = burgerRef.current
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false)
+      if (e.key === "Escape") setOpenedAt(null)
     }
     window.addEventListener("keydown", onKey)
     return () => {
