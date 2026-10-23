@@ -110,7 +110,8 @@ export default function SanPhamPage() {
           >
             <RefreshCw size={15} />
           </button>
-          <button
+          {/* Chỉ Điều hành nhập Excel (H3, PO 23/10/2026) — máy chủ kiểm lại */}
+          {session.can("H3") && <button
             type="button"
             onClick={() => router.push("/san-pham/nhap-hang-loat" as never)}
             className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 h-9 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
@@ -118,7 +119,7 @@ export default function SanPhamPage() {
           >
             <FileSpreadsheet size={14} className="text-success" />
             <span className="hidden sm:inline">{t("products.header.importExcel")}</span>
-          </button>
+          </button>}
           <button
             type="button"
             onClick={() => router.push("/tai-anh" as never)}
@@ -264,6 +265,7 @@ export default function SanPhamPage() {
             napLai()
             setSelectedProduct(null)
           }}
+          onSavedAsNew={(created) => router.push(`/san-pham/${created.id}?moi=1` as never)}
         />
       )}
     </div>

@@ -216,5 +216,10 @@ export function formatIndustryStaffNotificationText(
         title: `${code} · Yêu cầu phê duyệt giảm giá`,
         message: `Đề xuất chiết khấu cho đơn hàng${item}. Điều hành xem xét duyệt.${note}`,
       }
+    case "PRODUCT_PROPOSED":
+      return {
+        title: `Có mẫu mới chờ duyệt${item}`,
+        message: `Nhân viên vừa tạo mẫu mới${item}. Mẫu đã dùng được để bán; Điều hành vào Sản phẩm để xem và duyệt.${note}`,
+      }
   }
 }

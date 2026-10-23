@@ -172,8 +172,8 @@
 | Mã | Tên | ĐH | ĐP | Sale | PM | Mkt | CRM | CSKH | Exp | Trần cứng | Được kiểm ở mã |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | L1 | `product.read` | ● | ● | ● | ● | ● | ● | · | · | — | server + UI |
-| L2 | `product.create` | ● | ● | · | ● | · | · | · | · | — | server + UI |
-| L3 | `product.update` | ● | ● | · | ● | · | · | · | · | — | server |
+| L2 | `product.create` | ● | ● | ● | ● | · | · | · | · | — | server + UI |
+| L3 | `product.update` | ● | ● | ● | ● | · | · | · | · | — | server |
 | L4 | `product.archive` | ● | · | · | · | · | · | · | · | ĐH | server + UI |
 | L5 | `pricing.read` | ● | ● | · | ● | · | · | · | · | — | server + UI |
 | L6 | `pricing.manage` | ● | · | · | · | · | · | · | · | ĐH | server + UI |

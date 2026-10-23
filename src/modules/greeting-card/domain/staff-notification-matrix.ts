@@ -193,6 +193,16 @@ export const STAFF_NOTIFY_MATRIX: Record<StaffNotifyEvent, StaffRecipientTarget[
       priority: "NORMAL",
     },
   ],
+
+  // Mẫu mới do nhân viên tạo đã dùng được ngay — Điều hành chỉ cần duyệt sau.
+  PRODUCT_PROPOSED: [
+    {
+      role: "ADMIN",
+      dispatchMode: "BROADCAST",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "NORMAL",
+    },
+  ],
 }
 
 import { formatIndustryStaffNotificationText } from "./industry-notification-formatter"
