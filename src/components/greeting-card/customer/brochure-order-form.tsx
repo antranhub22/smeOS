@@ -181,7 +181,7 @@ export function BrochureOrderForm({
         </span>
       </div>
 
-      <SelectedProductHeader product={productSnapshot} />
+      <SelectedProductHeader product={productSnapshot} variant={variants.find((v) => v.id === pricing.selection.variantId) ?? null} />
 
       {errorMessage && errorBlock === null && (
         <div
