@@ -13,6 +13,7 @@ import { ExportCustomersButton } from "@/components/crm/export-customers-button"
 import { useSession } from "@/lib/session"
 import { getIndustryPlugin, getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { CustomerMasterIndex, OccasionReminder } from "@/modules/crm/domain/customer-master-index"
+import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
 
 export default function CRMPage() {
   const { orgName, can, organization } = useSession()
@@ -79,7 +80,7 @@ export default function CRMPage() {
     <div className="flex flex-col min-h-screen bg-background">
       {/* 1. Header chuẩn có Top-Right Action Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-4 sm:px-6 py-4 backdrop-blur-sm">
-        <div>
+        <div className="flex items-start"><MobileMenuButton /><div>
           <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
             Quản lý quan hệ khách hàng & Chăm sóc
           </div>
@@ -87,7 +88,7 @@ export default function CRMPage() {
           <p className="text-caption text-text-muted mt-0.5">
             Hồ sơ khách hàng hợp nhất · Phân tầng RFM tự động · Nhắc hẹn ngày kỷ niệm
           </p>
-        </div>
+        </div></div>
 
         {/* Top-Right Action Header */}
         <div className="flex items-center gap-2">

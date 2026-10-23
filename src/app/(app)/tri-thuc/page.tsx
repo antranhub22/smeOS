@@ -21,6 +21,7 @@ import { OnboardingProgressBar } from "@/components/knowledge-base/onboarding-pr
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { Route } from "next"
+import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
 
 export default function KnowledgeBasePage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -58,7 +59,7 @@ export default function KnowledgeBasePage() {
     <div className="flex flex-col min-h-screen bg-background">
       {/* 1. Standardized Top-Right Action Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-6 py-4 backdrop-blur-sm">
-        <div>
+        <div className="flex items-start"><MobileMenuButton /><div>
           <div className="flex items-center gap-2">
             <span className="rounded bg-danger/15 px-2 py-0.5 text-xs font-mono font-bold text-danger uppercase tracking-wider">
               KHO TRI THỨC HỆ THỐNG
@@ -70,7 +71,7 @@ export default function KnowledgeBasePage() {
           <p className="text-xs text-muted-foreground mt-0.5">
             Bảng tra cứu các trường nguyên tử bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS
           </p>
-        </div>
+        </div></div>
 
         {/* Top-Right Action Toolbar (K2: 1 primary + 1 secondary) */}
         <div className="flex items-center gap-3">
