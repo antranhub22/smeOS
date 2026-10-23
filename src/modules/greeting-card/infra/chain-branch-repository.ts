@@ -143,6 +143,15 @@ export class ChainBranchRepository {
     })
   }
 
+  /** Bật / tạm dừng một chi nhánh của tổ chức; `false` khi mã không thuộc tổ chức. */
+  async setActive(organizationId: string, branchCode: string, isActive: boolean): Promise<boolean> {
+    const res = await this.db.chain_branches.updateMany({
+      where: { organization_id: organizationId, branch_code: branchCode },
+      data: { is_active: isActive },
+    })
+    return res.count > 0
+  }
+
   /** Chi nhánh của tổ chức kèm mã liên kết Zalo (sinh mã cho chi nhánh chưa có) */
   async listZaloLinks(organizationId: string): Promise<Array<{ branchCode: string; name: string; linkCode: string; linked: boolean }>> {
     const rows = await this.db.chain_branches.findMany({

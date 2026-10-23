@@ -17,6 +17,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { generateBranchTemplateBuffer, parseBranchWorkbook, type ParsedBranchRow } from "./parse-branch-sheet"
 import { apiSend } from "@/components/greeting-card/greeting-api"
+import { mutate } from "swr"
+import { BRANCH_LIST_URL, BranchPartnerList } from "./branch-partner-list"
 
 interface ImportBranchResult {
   created: number
@@ -80,6 +82,7 @@ export function BranchImportPanel() {
         "Không nhập được danh sách cửa hàng chuỗi"
       )
       setResult(res.data)
+      void mutate(BRANCH_LIST_URL)
       setParsedRows([])
       setFileName("")
     } catch (err) {
@@ -302,6 +305,8 @@ export function BranchImportPanel() {
           </div>
         </div>
       )}
+
+      <BranchPartnerList />
     </div>
   )
 }
