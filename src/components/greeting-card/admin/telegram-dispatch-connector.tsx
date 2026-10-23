@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
+import { TelegramDirectChatGuide } from "./telegram-direct-chat-guide"
 
 interface TelegramBotInfo {
   id: number
@@ -198,10 +199,12 @@ export function TelegramDispatchConnector() {
         </div>
       )}
 
+      <TelegramDirectChatGuide botUsername={bot?.username || "smeos_dieuphoi_bot"} linkCode={linkCode} />
+
       {/* Hướng dẫn 3 bước kết nối */}
       <div className="p-4 rounded-xl bg-surface-muted border border-border flex flex-col gap-2.5">
         <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
-          <MessageSquare size={16} className="text-primary" /> Hướng dẫn kết nối nhóm Chi nhánh trong 3 bước:
+          <MessageSquare size={16} className="text-primary" /> Hoặc dùng nhóm Telegram cho Chi nhánh trong 3 bước:
         </h4>
         <ol className="text-caption text-foreground/90 space-y-1.5 list-decimal pl-4 leading-relaxed">
           <li>
