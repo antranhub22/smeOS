@@ -30,22 +30,22 @@ export const GET = handle(async (request) => {
     return jsonResponse({ data: { configured: false, bot: null, linkCode: null, recentChats: [] } })
   }
 
-  try {
-    const [bot, access] = await Promise.all([getTelegramBotInfo(botToken), resolveTelegramDispatchAccess(ctx, botToken)])
-    return jsonResponse({
-      data: {
-        configured: true,
-        bot,
-        linkCode: access.linkCode,
-        recentChats: access.linkedChats,
-        ...(access.scanError ? { error: access.scanError } : {}),
-      },
-    })
-  } catch {
-    return jsonResponse({
-      data: { configured: true, bot: null, linkCode: null, recentChats: [], error: "Không kết nối được Telegram lúc này" },
-    })
-  }
+  // getMe lỗi thoáng qua (timeout, Telegram chậm) KHÔNG được xoá nhóm đã liên kết hay báo "chưa cấu hình"
+  // — trước đây một lần lỗi trả bot=null + danh sách rỗng nên màn hình nhấp nháy giữa hai trạng thái.
+  const [bot, access] = await Promise.all([
+    getTelegramBotInfo(botToken).catch(() => null),
+    resolveTelegramDispatchAccess(ctx, botToken),
+  ])
+  const error = access.scanError ?? (bot ? null : "Không kết nối được Telegram lúc này")
+  return jsonResponse({
+    data: {
+      configured: true,
+      bot,
+      linkCode: access.linkCode,
+      recentChats: access.linkedChats,
+      ...(error ? { error } : {}),
+    },
+  })
 })
 
 /**

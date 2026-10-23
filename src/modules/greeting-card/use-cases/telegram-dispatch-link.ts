@@ -36,8 +36,8 @@ export async function resolveTelegramDispatchAccess(ctx: TenantContext, botToken
   try {
     messages = await getRecentTelegramMessages(botToken)
   } catch (err) {
-    if (!(err instanceof TelegramUpdatesError)) throw err
-    scanError = err.message
+    // Lỗi mạng / timeout cũng chỉ là "chưa quét được", không làm mất các chat đã liên kết
+    scanError = err instanceof TelegramUpdatesError ? err.message : "Không kết nối được Telegram lúc này"
   }
   const scanned = chatsWithLinkCode(messages, linkCode)
   await rememberLinkedTelegramChats(ctx.organizationId, scanned.map((c) => c.id))
