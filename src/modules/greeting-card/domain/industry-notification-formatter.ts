@@ -203,7 +203,7 @@ export function formatIndustryStaffNotificationText(
       }
     case "STUCK_DETECTED":
       return {
-        title: `⏱️ ${code} · Cảnh báo quá hạn SLA`,
+        title: `⏱️ ${code} · Đơn quá hạn xử lý`,
         message: `${customer}${item}. Đơn bị kẹt quá thời gian quy định, cần xử lý ngay.${note}`,
       }
     case "SECOND_PAYMENT_REPORTED":

@@ -80,7 +80,7 @@ export function getIndustryDefaultPromotions(industryKey?: string | null): Promo
   if (industryKey === "FASHION" || industryKey === "RETAIL_GENERAL" || industryKey === "CRAFT_GIFT") {
     return [
       { id: "promo-discount-10", title: "Giảm 10%", description: "Giảm 10% trên tổng giá trị đơn hàng.", kind: "PERCENT_OFF", config: { percent: 10 } },
-      { id: "promo-gift-wrap", title: "Hộp quà & Thiệp", description: "Tặng hộp quà cao cấp kèm thiệp chúc mừng gửi kèm.", kind: "GIFT" },
+      { id: "promo-gift-wrap", title: "Hộp quà và thiệp", description: "Tặng hộp quà cao cấp kèm thiệp chúc mừng gửi kèm.", kind: "GIFT" },
       { id: "promo-free-shipping", title: "Freeship", description: "Miễn phí giao hàng tiêu chuẩn trên toàn quốc.", kind: "GIFT" },
     ]
   }
@@ -92,9 +92,9 @@ export function getIndustryDefaultPromotions(industryKey?: string | null): Promo
  * Hồ sơ tiệm; đã lưu `store_policies` thì không còn dùng bộ này.
  */
 export const DEFAULT_COMMITMENTS: CommitmentItem[] = [
-  { id: "commit-match-sample", title: "Đúng mẫu – đúng tone màu", customerText: "Sản phẩm được thực hiện theo mẫu quý khách đã chọn, giữ đúng phong cách, tone màu và bố cục chính của thiết kế.", internalText: "Thợ cắm đối chiếu chặt chẽ với ảnh mẫu (phong cách, tone màu, bố cục) trước khi chuyển QC." },
-  { id: "commit-match-value", title: "Đúng hoa chính – đúng cấu phần", customerText: "Đúng loại hoa chính, số lượng và các hạng mục đã được xác nhận trong đơn hàng.", internalText: "Đảm bảo đúng chủng loại, số lượng hoa chính và các hạng mục đã xác nhận theo BOM." },
-  { id: "commit-qc", title: "Hoa tươi – kiểm tra trước khi giao", customerText: "Hoa và sản phẩm hoàn thiện đều được kiểm tra chất lượng, độ tươi và hình thức trước khi rời cửa hàng.", internalText: "Chụp ảnh QC và đối chiếu checklist kiểm định." },
+  { id: "commit-match-sample", title: "Đúng mẫu – đúng tone màu", customerText: "Sản phẩm được thực hiện theo mẫu quý khách đã chọn, giữ đúng phong cách, tone màu và bố cục chính của thiết kế.", internalText: "Thợ cắm đối chiếu chặt chẽ với ảnh mẫu (phong cách, tone màu, bố cục) trước khi chuyển kiểm tra chất lượng." },
+  { id: "commit-match-value", title: "Đúng hoa chính – đúng cấu phần", customerText: "Đúng loại hoa chính, số lượng và các hạng mục đã được xác nhận trong đơn hàng.", internalText: "Đảm bảo đúng chủng loại, số lượng hoa chính và các hạng mục đã xác nhận trong đơn." },
+  { id: "commit-qc", title: "Hoa tươi – kiểm tra trước khi giao", customerText: "Hoa và sản phẩm hoàn thiện đều được kiểm tra chất lượng, độ tươi và hình thức trước khi rời cửa hàng.", internalText: "Chụp ảnh kiểm tra chất lượng và đối chiếu checklist kiểm định." },
   { id: "commit-send-photo", title: "Xem ảnh hoa thật trước khi giao", customerText: "Quý khách được xem ảnh sản phẩm thực tế sau khi hoàn thiện, trước khi đơn hàng được giao đi.", internalText: "Tải ảnh sản phẩm hoàn thiện lên hệ thống cho khách xem." },
   { id: "commit-delivery-time", title: "Giao đúng khung giờ đã xác nhận", customerText: "Cửa hàng chủ động chuẩn bị và điều phối để giao hoa trong khung giờ quý khách đã chọn và được xác nhận.", internalText: "Điều phối điều xe trước 45 phút so với mốc hẹn khách." },
   { id: "commit-support", title: "Cửa hàng chịu trách nhiệm đến cùng", customerText: "Mọi phản hồi về sản phẩm hoặc giao hàng đều được cửa hàng tiếp nhận và phối hợp xử lý nhanh chóng.", internalText: "Chăm sóc sau giao trong vòng 24h." },
@@ -105,18 +105,18 @@ export function getIndustryDefaultCommitments(industryKey?: string | null): Comm
     return [
       { id: "commit-room-clean", title: "Phòng sạch sẽ – khử khuẩn 100%", customerText: "Phòng ốc luôn được vệ sinh kỹ lưỡng, thay mới toàn bộ chăn ga gối đệm và khử khuẩn trước giờ quý khách nhận phòng.", internalText: "Bộ phận buồng phòng kiểm tra checklist vệ sinh 12 bước trước khi bàn giao chìa khóa." },
       { id: "commit-exact-amenities", title: "Đúng tiện nghi – đúng mô tả", customerText: "Cơ sở lưu trú cam kết cung cấp đầy đủ các tiện ích, trang thiết bị đúng như hình ảnh và thông tin đã công bố.", internalText: "Kiểm tra hoạt động của điều hòa, nước nóng, wifi và đồ dùng trước khi khách check-in." },
-      { id: "commit-safe-quiet", title: "Không gian an ninh & riêng tư", customerText: "Đảm bảo sự yên tĩnh, an ninh và tôn trọng quyền riêng tư tuyệt đối cho kỳ nghỉ của quý khách.", internalText: "Giám sát an ninh khu vực công cộng, hỗ trợ khóa thông minh hoặc bảo vệ 24/7." },
+      { id: "commit-safe-quiet", title: "Không gian an ninh và riêng tư", customerText: "Đảm bảo sự yên tĩnh, an ninh và tôn trọng quyền riêng tư tuyệt đối cho kỳ nghỉ của quý khách.", internalText: "Giám sát an ninh khu vực công cộng, hỗ trợ khóa thông minh hoặc bảo vệ 24/7." },
       { id: "commit-ready-on-time", title: "Sẵn sàng đón tiếp đúng giờ", customerText: "Phòng luôn trong trạng thái sẵn sàng đón tiếp theo khung giờ nhận phòng tiêu chuẩn hoặc theo thỏa thuận.", internalText: "Bật sẵn điều hòa và chuẩn bị phòng đón tiếp trước 30 phút." },
-      { id: "commit-host-support", title: "Quản gia & Chủ nhà hỗ trợ 24/7", customerText: "Đội ngũ quản gia luôn sẵn sàng giải đáp thắc mắc, hướng dẫn chỉ đường và hỗ trợ trong suốt thời gian lưu trú.", internalText: "Trực hotline hỗ trợ khách lưu trú, xử lý sự cố phát sinh trong vòng 15 phút." },
+      { id: "commit-host-support", title: "Quản gia và chủ nhà hỗ trợ 24/7", customerText: "Đội ngũ quản gia luôn sẵn sàng giải đáp thắc mắc, hướng dẫn chỉ đường và hỗ trợ trong suốt thời gian lưu trú.", internalText: "Trực hotline hỗ trợ khách lưu trú, xử lý sự cố phát sinh trong vòng 15 phút." },
       { id: "commit-transparent-pricing", title: "Minh bạch giá – không phụ phí ẩn", customerText: "Mọi chi phí dịch vụ, tiền cọc và quy định phụ thu đều được thông báo rõ ràng trước khi quý khách xác nhận đặt phòng.", internalText: "Hóa đơn và phiếu thu đặt phòng rõ ràng, không tự ý thu thêm phí." },
     ]
   }
   if (industryKey === "FNB") {
     return [
       { id: "commit-food-safety", title: "Vệ sinh an toàn thực phẩm 100%", customerText: "Toàn bộ nguyên liệu chế biến tươi ngon mỗi ngày, có nguồn gốc rõ ràng và đạt tiêu chuẩn an toàn thực phẩm.", internalText: "Kiểm tra hạn sử dụng và lưu mẫu thực phẩm theo quy chuẩn của bếp." },
-      { id: "commit-exact-recipe", title: "Đúng định lượng & Chuẩn vị món ăn", customerText: "Món ăn và thức uống được chế biến đúng công thức chuẩn, đảm bảo hương vị và định lượng đã niêm yết.", internalText: "Bếp trưởng kiểm tra thành phẩm đĩa ăn trước khi chuyển phục vụ." },
+      { id: "commit-exact-recipe", title: "Đúng định lượng và chuẩn vị món ăn", customerText: "Món ăn và thức uống được chế biến đúng công thức chuẩn, đảm bảo hương vị và định lượng đã niêm yết.", internalText: "Bếp trưởng kiểm tra thành phẩm đĩa ăn trước khi chuyển phục vụ." },
       { id: "commit-serve-on-time", title: "Phục vụ nhanh chóng – Đúng giờ hẹn", customerText: "Cửa hàng chuẩn bị bàn tiệc và lên món đúng thời gian đã xác nhận với quý khách.", internalText: "Bếp và bàn phối hợp điều phối món theo đúng tiến độ thời gian đặt bàn." },
-      { id: "commit-support", title: "Lắng nghe & Chăm sóc tận tâm", customerText: "Mọi phản hồi về chất lượng món ăn và dịch vụ đều được quản lý tiếp nhận và xử lý ngay tại bàn.", internalText: "Quản lý ca trực giải quyết phản hồi của khách trong vòng 5 phút." },
+      { id: "commit-support", title: "Lắng nghe và chăm sóc tận tâm", customerText: "Mọi phản hồi về chất lượng món ăn và dịch vụ đều được quản lý tiếp nhận và xử lý ngay tại bàn.", internalText: "Quản lý ca trực giải quyết phản hồi của khách trong vòng 5 phút." },
     ]
   }
   if (industryKey === "SERVICES") {
@@ -150,27 +150,27 @@ export const DEFAULT_AGREEMENTS: AgreementItem[] = [
 export function getIndustryDefaultAgreements(industryKey?: string | null): AgreementItem[] {
   if (industryKey === "HOMESTAY") {
     return [
-      { id: "agree-checkin-checkout", title: "Giờ nhận & trả phòng tiêu chuẩn", customerText: "Thời gian nhận phòng (Check-in) từ 14:00 và trả phòng (Check-out) trước 12:00. Nếu quý khách có nhu cầu nhận sớm hoặc trả muộn, xin vui lòng liên hệ trước để được hỗ trợ tùy thuộc vào tình trạng phòng.", internalText: "Áp dụng biểu phí nhận sớm/trả muộn theo quy định cơ sở lưu trú." },
+      { id: "agree-checkin-checkout", title: "Giờ nhận và trả phòng tiêu chuẩn", customerText: "Thời gian nhận phòng (Check-in) từ 14:00 và trả phòng (Check-out) trước 12:00. Nếu quý khách có nhu cầu nhận sớm hoặc trả muộn, xin vui lòng liên hệ trước để được hỗ trợ tùy thuộc vào tình trạng phòng.", internalText: "Áp dụng biểu phí nhận sớm/trả muộn theo quy định cơ sở lưu trú." },
       { id: "agree-id-registration", title: "Xuất trình giấy tờ tùy thân", customerText: "Quý khách vui lòng xuất trình CMND/CCCD hoặc Hộ chiếu còn hạn của tất cả các thành viên lưu trú để làm thủ tục đăng ký tạm trú theo quy định pháp luật.", internalText: "Chụp ảnh giấy tờ và khai báo tạm trú qua cổng dịch vụ công." },
-      { id: "agree-quiet-hours", title: "Giữ gìn trật tự & Giờ yên tĩnh", customerText: "Xin vui lòng giữ trật tự chung sau 22:00 để không làm ảnh hưởng đến các phòng xung quanh và cư dân lân cận. Không tổ chức tiệc tùng gây ồn ào quá mức quy định.", internalText: "Nhắc nhở nhẹ nhàng khách giữ trật tự sau 22:00." },
+      { id: "agree-quiet-hours", title: "Giữ gìn trật tự và giờ yên tĩnh", customerText: "Xin vui lòng giữ trật tự chung sau 22:00 để không làm ảnh hưởng đến các phòng xung quanh và cư dân lân cận. Không tổ chức tiệc tùng gây ồn ào quá mức quy định.", internalText: "Nhắc nhở nhẹ nhàng khách giữ trật tự sau 22:00." },
       { id: "agree-guest-capacity", title: "Số lượng khách lưu trú tối đa", customerText: "Số lượng khách lưu trú thực tế không vượt quá số lượng đã xác nhận khi đặt phòng. Cơ sở có thể phụ thu nếu phát sinh thêm người lưu trú ngoài thỏa thuận.", internalText: "Thu phụ phí khách phát sinh theo bảng giá niêm yết." },
-      { id: "agree-amenities-care", title: "Giữ gìn tài sản & Tiện nghi phòng", customerText: "Quý khách vui lòng sử dụng cẩn thận các trang thiết bị trong phòng. Trường hợp làm mất mát, hỏng hóc hoặc làm bẩn không thể tẩy rửa, chi phí bồi thường sẽ được tính theo giá trị thực tế.", internalText: "Kiểm tra phòng khi khách check-out trước khi hoàn cọc." },
+      { id: "agree-amenities-care", title: "Giữ gìn tài sản và tiện nghi phòng", customerText: "Quý khách vui lòng sử dụng cẩn thận các trang thiết bị trong phòng. Trường hợp làm mất mát, hỏng hóc hoặc làm bẩn không thể tẩy rửa, chi phí bồi thường sẽ được tính theo giá trị thực tế.", internalText: "Kiểm tra phòng khi khách check-out trước khi hoàn cọc." },
       { id: "agree-no-smoking", title: "Quy định cấm hút thuốc trong phòng", customerText: "Nghiêm cấm hút thuốc lá/thuốc lá điện tử bên trong không gian phòng kín. Quý khách có thể hút thuốc tại khu vực ban công hoặc sân vườn ngoài trời được phép.", internalText: "Phụ thu phí khử mùi nếu khách vi phạm quy định hút thuốc trong phòng." },
-      { id: "agree-cancellation-policy", title: "Chính sách hủy phòng & Hoàn cọc", customerText: "Quý khách có thể yêu cầu đổi lịch hoặc hủy phòng theo chính sách thông báo trước thời gian nhận phòng. Sau mốc quy định, tiền đặt cọc có thể không được hoàn lại tùy theo quy định của cơ sở.", internalText: "Giải quyết hoàn tiền hoặc bảo lưu kỳ nghỉ theo thỏa thuận đặt phòng." },
+      { id: "agree-cancellation-policy", title: "Chính sách hủy phòng và hoàn cọc", customerText: "Quý khách có thể yêu cầu đổi lịch hoặc hủy phòng theo chính sách thông báo trước thời gian nhận phòng. Sau mốc quy định, tiền đặt cọc có thể không được hoàn lại tùy theo quy định của cơ sở.", internalText: "Giải quyết hoàn tiền hoặc bảo lưu kỳ nghỉ theo thỏa thuận đặt phòng." },
     ]
   }
   if (industryKey === "FNB") {
     return [
       { id: "agree-fresh-ingredients", title: "Nguyên liệu theo mùa vụ", customerText: "Một số nguyên liệu tươi sống đặc thù theo mùa có thể hết hoặc được thay thế bằng loại tương đương với sự đồng ý của quý khách.", internalText: "Báo trước cho khách nếu món ăn có thay đổi nguyên liệu phụ." },
-      { id: "agree-serving-time", title: "Thời gian giữ bàn & Lên món", customerText: "Bàn đặt trước sẽ được giữ trong vòng 15–20 phút so với giờ hẹn. Quý khách vui lòng thông báo nếu đến muộn để nhà hàng sắp xếp chu đáo nhất.", internalText: "Gọi nhắc khách trước 15 phút so với giờ đặt bàn." },
-      { id: "agree-cancellation-policy", title: "Chính sách thay đổi & Hủy đặt bàn", customerText: "Quý khách có thể thay đổi số lượng khách hoặc hủy đặt bàn trước 2 tiếng so với giờ hẹn để nhà hàng hỗ trợ hoàn cọc nếu có.", internalText: "Cập nhật lại sơ đồ bàn khi khách báo đổi lịch." },
+      { id: "agree-serving-time", title: "Thời gian giữ bàn và lên món", customerText: "Bàn đặt trước sẽ được giữ trong vòng 15–20 phút so với giờ hẹn. Quý khách vui lòng thông báo nếu đến muộn để nhà hàng sắp xếp chu đáo nhất.", internalText: "Gọi nhắc khách trước 15 phút so với giờ đặt bàn." },
+      { id: "agree-cancellation-policy", title: "Chính sách thay đổi và hủy đặt bàn", customerText: "Quý khách có thể thay đổi số lượng khách hoặc hủy đặt bàn trước 2 tiếng so với giờ hẹn để nhà hàng hỗ trợ hoàn cọc nếu có.", internalText: "Cập nhật lại sơ đồ bàn khi khách báo đổi lịch." },
     ]
   }
   if (industryKey === "SERVICES") {
     return [
-      { id: "agree-site-condition", title: "Điều kiện mặt bằng & Hiện trạng", customerText: "Quý khách tạo điều kiện về mặt bằng và nguồn điện/nước cần thiết để kỹ thuật viên tiến hành dịch vụ thuận lợi.", internalText: "Khảo sát hiện trạng trước khi tiến hành thi công/sửa chữa." },
+      { id: "agree-site-condition", title: "Điều kiện mặt bằng và hiện trạng", customerText: "Quý khách tạo điều kiện về mặt bằng và nguồn điện/nước cần thiết để kỹ thuật viên tiến hành dịch vụ thuận lợi.", internalText: "Khảo sát hiện trạng trước khi tiến hành thi công/sửa chữa." },
       { id: "agree-reschedule", title: "Thay đổi lịch hẹn dịch vụ", customerText: "Quý khách có thể yêu cầu dời lịch hẹn trước tối thiểu 02 tiếng. Trường hợp phát sinh sự cố bất khả kháng, hai bên sẽ cùng thống nhất lịch hẹn mới.", internalText: "Cập nhật điều phối lịch làm việc của kỹ thuật viên." },
-      { id: "agree-payment-terms", title: "Nghiệm thu & Thanh toán", customerText: "Quý khách kiểm tra nghiệm thu kết quả dịch vụ cùng kỹ thuật viên trước khi hoàn tất thanh toán phần còn lại.", internalText: "Ký biên bản nghiệm thu trước khi nhận thanh toán." },
+      { id: "agree-payment-terms", title: "Nghiệm thu và thanh toán", customerText: "Quý khách kiểm tra nghiệm thu kết quả dịch vụ cùng kỹ thuật viên trước khi hoàn tất thanh toán phần còn lại.", internalText: "Ký biên bản nghiệm thu trước khi nhận thanh toán." },
     ]
   }
   if (industryKey === "FASHION" || industryKey === "RETAIL_GENERAL" || industryKey === "CRAFT_GIFT") {
