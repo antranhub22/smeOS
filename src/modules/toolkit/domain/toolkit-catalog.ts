@@ -139,7 +139,7 @@ const GROUP_3_TOOLS: readonly ToolDefinition[] = [
     id: 14, name: "Tạo catalog bán hàng theo nhu cầu",
     description: "Bộ sưu tập sản phẩm chọn lọc theo nhu cầu khách",
     icon: "ShoppingBag", label: "STORE", status: "DONE", progress: 100,
-    href: "/the-chao?mode=wizard", statusNote: "Tư vấn chốt đơn 1-1 — tạo nhanh BST theo ngân sách & dịp (<10s)",
+    href: "/the-chao?quick=true", statusNote: "Tư vấn chốt đơn 1-1 — tạo nhanh BST theo ngân sách & dịp (<10s)",
   },
   {
     id: 15, name: "Tạo báo giá theo yêu cầu",

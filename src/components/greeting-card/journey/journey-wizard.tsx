@@ -23,6 +23,7 @@ import { JourneyFocusProvider } from "./journey-focus-context"
 
 interface JourneyWizardProps {
   onFinish?: () => void
+  autoOpenQuickModal?: boolean
 }
 
 function absoluteUrl(path: string): string {
@@ -31,7 +32,7 @@ function absoluteUrl(path: string): string {
   return `${origin}${path.startsWith("/") ? "" : "/"}${path}`
 }
 
-export function JourneyWizard({ onFinish }: JourneyWizardProps) {
+export function JourneyWizard({ onFinish, autoOpenQuickModal = false }: JourneyWizardProps) {
   const { can } = useSession()
   const me = useApi<{ user: { id: string } }>("/api/v1/auth/me")
   const data = useJourneyCatalogs()
@@ -46,7 +47,7 @@ export function JourneyWizard({ onFinish }: JourneyWizardProps) {
   const [customerName, setCustomerName] = useState("")
   const [customerPhone, setCustomerPhone] = useState("")
   const [sent, setSent] = useState<{ sendCode: string; shareUrl: string } | null>(null)
-  const [isQuickModalOpen, setIsQuickModalOpen] = useState(false)
+  const [isQuickModalOpen, setIsQuickModalOpen] = useState(autoOpenQuickModal)
 
   // Tải danh sách sản phẩm để cấp vào QuickCollectionModal
   const productsRes = useApi<{ data: QuickCollectionProductRow[] }>("/api/v1/products?limit=100&status=ACTIVE")

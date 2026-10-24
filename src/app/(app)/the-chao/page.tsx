@@ -41,9 +41,11 @@ export default function TheChaoPage() {
 
   const requestedTab = searchParams.get("tab") as ActiveTab | null
   const requestedMode = searchParams.get("mode") as ViewMode | null
+  const isQuickParam = searchParams.get("quick") === "true"
 
   // "wizard": luồng 3 bước gửi thẻ · "manager": bảng quản lý chi tiết — mở theo URL param hoặc vai
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (isQuickParam) return "wizard"
     if (requestedMode === "manager" || requestedMode === "wizard") return requestedMode
     if (requestedTab) return "manager"
     return defaultTheChaoView(can).viewMode
@@ -217,6 +219,7 @@ export default function TheChaoPage() {
       {viewMode === "wizard" ? (
         <JourneyWizard
           key={refreshKey}
+          autoOpenQuickModal={isQuickParam}
           onFinish={() => {
             refreshAll()
             setActiveTab("sales")
