@@ -42,7 +42,7 @@ export function SettingsTabsNav({
   const tabs = [
     { key: "INFO" as const, label: "1. Thông Tin Tiệm", icon: Store },
     { key: "BRANDING" as const, label: "2. Thương Hiệu", icon: Palette },
-    { key: "PAYMENT" as const, label: "3. Tài Khoản & VietQR", icon: QrCode },
+    { key: "PAYMENT" as const, label: "3. Nhận Thanh Toán", icon: QrCode },
     { key: "DEPOSIT" as const, label: "4. Đặt Cọc & Giá", icon: DollarSign },
     { key: "PROMOTIONS" as const, label: `5. Ưu Đãi (${policyCounts.promotions})`, icon: Gift },
     { key: "COMMITMENTS" as const, label: `6. Cam Kết (${policyCounts.commitments})`, icon: ShieldCheck },

@@ -14,7 +14,7 @@ import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { ModelChangeCard } from "@/components/organization/model-change-card"
 import { calculateReadinessScore } from "@/modules/field-platform/domain/readiness-score-engine"
-import { BrochurePaymentSettings } from "@/components/greeting-card/admin/brochure-payment-settings"
+import { StorePaymentMethodsEditor } from "@/components/profiles/store-payment-methods-editor"
 import { PaymentPolicySection } from "@/components/profiles/payment-policy-section"
 import { DepositLevelsSection } from "@/components/profiles/deposit-levels-section"
 import { PriceBudgetsSection } from "@/components/profiles/price-budgets-section"
@@ -199,10 +199,10 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* MỤC 3: TÀI KHOẢN NGÂN HÀNG & VIETQR */}
+      {/* MỤC 3: CƠ CHẾ NHẬN THANH TOÁN & ĐỐI SOÁT */}
       {activeTab === "PAYMENT" && (
         <div className="flex flex-col gap-6">
-          <BrochurePaymentSettings />
+          <StorePaymentMethodsEditor />
         </div>
       )}
 
