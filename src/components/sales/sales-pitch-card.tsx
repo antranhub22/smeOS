@@ -121,6 +121,10 @@ export function SalesPitchCard({
   const [exportSuccess, setExportSuccess] = useState<string | null>(null)
   const [exportError, setExportError] = useState<string | null>(null)
 
+  // Cấu hình hiển thị Thẻ Chào Đa Kích Thước (Công cụ 03)
+  const [cardFormat, setCardFormat] = useState<"a6" | "square" | "story">("a6")
+  const [cardTheme, setCardTheme] = useState<"classic" | "minimal" | "festive">("classic")
+
   // State & Data cho tác vụ BH-15: Chuyển Báo giá / Thẻ chào thành Đơn hàng 1-chạm
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
   const [orderCreatedSuccess, setOrderCreatedSuccess] = useState(false)
@@ -1200,10 +1204,102 @@ export function SalesPitchCard({
             </div>
           )}
 
+          {/* Thanh lựa chọn Kích thước & Phong cách thiết kế thẻ (Công cụ 03) */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-2xl bg-surface border border-border p-2.5 shadow-xs">
+            {/* Bộ chọn Tỷ lệ / Kích thước */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-caption font-bold text-text-muted uppercase tracking-wider pl-1">
+                Kích thước:
+              </span>
+              <div className="flex items-center gap-1 bg-surface-alt p-1 rounded-xl border border-border">
+                <button
+                  type="button"
+                  onClick={() => setCardFormat("a6")}
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                    cardFormat === "a6"
+                      ? "bg-surface text-primary shadow-xs font-bold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                  title="Khổ bưu thiếp chuẩn A6 (105x148mm)"
+                >
+                  Bưu thiếp A6
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCardFormat("square")}
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                    cardFormat === "square"
+                      ? "bg-surface text-primary shadow-xs font-bold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                  title="Khổ vuông 1:1 - tối ưu gửi chat Zalo / Messenger"
+                >
+                  Vuông 1:1
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCardFormat("story")}
+                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                    cardFormat === "story"
+                      ? "bg-surface text-primary shadow-xs font-bold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                  title="Khổ dọc dạng Story / Nhật ký Zalo"
+                >
+                  Story
+                </button>
+              </div>
+            </div>
+
+            {/* Bộ chọn Phong cách màu sắc */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-caption font-bold text-text-muted uppercase tracking-wider pl-1">
+                Giao diện:
+              </span>
+              <div className="flex items-center gap-1 bg-surface-alt p-1 rounded-xl border border-border">
+                <button
+                  type="button"
+                  onClick={() => setCardTheme("classic")}
+                  className={`px-2 py-1 text-xs font-semibold rounded-lg transition-all ${
+                    cardTheme === "classic"
+                      ? "bg-surface text-primary shadow-xs font-bold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  Tiêu chuẩn
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCardTheme("minimal")}
+                  className={`px-2 py-1 text-xs font-semibold rounded-lg transition-all ${
+                    cardTheme === "minimal"
+                      ? "bg-surface text-primary shadow-xs font-bold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  Tối giản
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCardTheme("festive")}
+                  className={`px-2 py-1 text-xs font-semibold rounded-lg transition-all ${
+                    cardTheme === "festive"
+                      ? "bg-surface text-primary shadow-xs font-bold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  Lễ hội
+                </button>
+              </div>
+            </div>
+          </div>
+
           <SalesPitchCardA6
             ref={cardRef}
             activePitch={activePitch}
             status={status}
+            cardFormat={cardFormat}
+            theme={cardTheme}
           />
 
           {/* Quick navigation at bottom of card */}

@@ -66,8 +66,8 @@ const GROUP_1_TOOLS: readonly ToolDefinition[] = [
   {
     id: 3, name: "Tạo thẻ chào sản phẩm",
     description: "Tạo thẻ giới thiệu mẫu sản phẩm dạng ảnh, sẵn sàng gửi hoặc đăng",
-    icon: "CreditCard", label: "BOTH", status: "IN_PROGRESS", progress: 40,
-    href: "/tai-anh", statusNote: "SalesPitchCard A6 có trong M01, thiếu đa kích thước + gửi kênh",
+    icon: "CreditCard", label: "BOTH", status: "DONE", progress: 100,
+    href: "/tai-anh?tab=m01c", statusNote: "Công cụ 03 — Thẻ chào đa kích thước A6/1:1/Story, xuất ảnh & Zalo Script",
   },
   {
     id: 4, name: "Tạo nội dung bán hàng",
