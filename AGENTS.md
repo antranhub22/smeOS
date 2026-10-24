@@ -113,6 +113,20 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
   - **Cả hai mã được cài đặt trong Hồ sơ tiệm** (payment_plans / store_policies). Server đọc qua `brochure-quote.ts` → trả `BrochureQuote.paymentPlan`. **Tuyệt đối cấm** tạo ô input mã mới trong `BrochureOrderForm` hoặc bất kỳ `*OrderFields` nào — đó là duplicate giả không kết nối server.
   - **Placeholder của 2 ô mã phải để trống** — không ghi ví dụ mã cụ thể. Sub-label phụ nếu có phải là thuật ngữ trung lập (không hardcode tên ngành).
   - **Khi nào tạo `*OrderFields` mới cho ngành**: Chỉ tạo khi ngành có **trường dữ liệu cấu trúc hoàn toàn khác** không thể diễn đạt bằng `StandardOrderFields` (ví dụ: Homestay cần `checkInDate` / `checkOutDate` / `numberOfNights` / `adultsCount` nên tạo `HomestayOrderFields`). Tạo file `<industry-key>-order-fields.tsx`, thêm điều kiện `isXxx` trong `BrochureOrderForm`, KHÔNG đặt lại ô mã ưu đãi / mã thanh toán (đã có trong `BrochureOrderOptions` ở trên form).
+- **Quy chuẩn Bắt Buộc Đa Ngành Toàn Hệ Thống (Multi-Industry First Standard, PO 24/10/2026)**:
+  - **Mọi chức năng, công cụ (bao gồm Công cụ 01 → 10, Catalog, Đơn hàng, Kênh bán, v.v.)** khi xây dựng mới hoặc nâng cấp **BẮT BUỘC** phải thiết kế theo chuẩn Đa Ngành (Multi-Industry First), tuyệt đối không thiết kế chỉ cho riêng một ngành cụ thể (như hoa tươi, thời trang hay F&B).
+  - **4 Nguyên tắc Bất biến về Đa ngành trong Mã nguồn**:
+    1. **Cấm Hardcode Thuật ngữ Ngành trong Tầng Core & Domain**:
+       - Cấm nhúng trực tiếp các từ ngữ đặc thù một ngành (`hoa tươi`, `bó hoa`, `cành`, `bình hoa`, `florist`, `flower shop`, `cắm hoa`...) vào logic tính toán, domain entities, prompt AI mặc định, use-case contracts hoặc API route.
+       - Mọi thuật ngữ hiển thị phải đi qua bộ từ điển ngành `getIndustryPlugin(industryKey).terminology` (như `makerTitle`, `productRecipe`, `rawMaterialItem`, v.v.) hoặc từ điển i18n trung lập (`ti.<term>`).
+    2. **AI Prompts & Output Standards phải Trung lập hoặc Dynamic theo Plugin**:
+       - Prompts gửi tới các mô hình AI (chỉnh ảnh studio, ghép bộ ảnh sản phẩm, viết bài tiếp thị, trích xuất thông tin...) phải dùng ngôn ngữ trung lập thương phẩm chung: `product`, `item`, `components`, `packaging`, `materials`, `product story`, `usage/care instructions`.
+       - Trường hợp cần tùy biến chuyên sâu theo ngành: nạp ngữ cảnh động từ `IndustryPluginContract.aiConfig` (`visionFocus`, `studioBackgroundStyles`, `marketingToneExamples`) dựa trên `industryKey` của tenant/sản phẩm; tuyệt đối không gắn cứng prompt cho một ngành.
+    3. **UI / Components & Phân loại Danh mục Tự Thích Ứng**:
+       - Các bộ lọc danh mục (`categories`), dịp/sự kiện (`occasions`), đơn vị tính (`measurementUnits`), vai trò thành phần nguyên liệu (`componentRoles`) phải đọc từ `IndustryPluginContract` tương ứng với ngành của cửa hàng.
+       - Placeholder, nhãn hướng dẫn và gợi ý nhập liệu không được mang tính đơn ngành; nếu cần ví dụ phải đưa ví dụ đa dạng đại diện cho các ngành khác nhau (ví dụ: "Áo sơ mi, Bánh sinh nhật, Bó hoa hồng...").
+    4. **Kiểm tra & Ratchet Guard**:
+       - Trước khi bàn giao tính năng mới, bắt buộc chạy `npm run check:industry` và `npm run audit:industry`. Không để lọt các vi phạm hardcode ngành trong mã nguồn mới.
   - **Luồng dữ liệu chuẩn**: `QuoteSelection` (client state) → `useBrochureQuote` (SWR) → `POST /api/v1/public/[catalog]/quote` → `brochure-quote.ts` (use-case) → trả `BrochureQuote.paymentPlan` → `PaymentCodeField` hiện kết quả.
 - **Tách biệt trường dữ liệu nguyên tử (Atomic Disaggregated Fields) để tối ưu khả năng chỉnh sửa (Editable)**:
   - Tuyệt đối không gộp chung văn bản và số lượng/đơn vị vào cùng một chuỗi tự do (ví dụ: cấm gộp `"Hồng đỏ 10 cành"` thành 1 ô text).

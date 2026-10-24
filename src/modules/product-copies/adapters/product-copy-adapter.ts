@@ -76,7 +76,7 @@ export function buildPrompt(input: ProductCopyInput): string {
 
   const tenDip = occasions.map((o) => o.name);
 
-  return `Bạn là chuyên viên viết nội dung bán hàng cho cửa hàng hoa.
+  return `Bạn là chuyên viên viết nội dung bán hàng chuyên nghiệp.
 
 SẢN PHẨM
 ${dong("Phân loại", analysis.identity.category)}
@@ -113,15 +113,15 @@ RÀNG BUỘC
 - suggested_name: tối đa ${TEN_TOI_DA} ký tự, tiếng Việt có dấu.
 - short_headline: tagline/slogan ngắn 1 dòng (dưới 60 ký tự) giàu cảm xúc.
 - suggested_description: ${DAI_MO_TA.min}–${DAI_MO_TA.max} ký tự.
-- suggested_style: phong cách thiết kế cắm hoa.
+- suggested_style: phong cách thiết kế / trình bày sản phẩm.
 - suggested_tags: ${DAI_THE.min}–${DAI_THE.max} thẻ, tiếng Việt KHÔNG dấu, viết thường, nối bằng dấu gạch ngang.
 - seo_keywords: 3-5 từ khóa tìm kiếm Google Intent.
 - suggested_occasions: chỉ chọn từ DANH MỤC DỊP CỦA CỬA HÀNG, chép đúng tên.
 - target_audience: đối tượng người nhận (recipient) và chân dung người mua (buyer_persona).
-- flower_meaning_story: câu chuyện ngắn 2-3 câu về ý nghĩa loài hoa và thông điệp.
+- flower_meaning_story: câu chuyện ngắn 2-3 câu về ý nghĩa, nguồn gốc hoặc cảm hứng của sản phẩm (tùy ngành: ý nghĩa loài hoa, nghề thủ công, công thức gia truyền, v.v.).
 - key_selling_points: 3 điểm bán hàng độc nhất (USP) để nhân viên chốt sale nhanh.
 - card_message_suggestions: 3 mẫu lời chúc viết thiệp (romantic, subtle, congratulatory).
-- care_instructions: 2-3 mẹo chăm sóc hoa tươi bền lâu.
+- care_instructions: 2-3 mẹo sử dụng, bảo quản hoặc kết hợp sản phẩm phù hợp với ngành hàng (ví dụ: bảo quản hoa tươi, cách dùng sản phẩm thủ công, cách bảo quản bánh, v.v.).
 - suggested_price_segment: đúng một trong ${PHAN_KHUC.join(" | ")}.
 - suggested_price_range: dải giá đề xuất VNĐ (min_price, target_price, max_price).
 - recommended_upsells: 2-3 sản phẩm gợi ý bán kèm.

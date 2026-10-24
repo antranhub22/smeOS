@@ -14,8 +14,8 @@ export function buildSetVariantPrompt(params: SetPromptBuildParams): string {
     params.variant.promptDirective,
     "CRITICAL SET CONSISTENCY & IDENTITY RULE: This photo is part of an official commercial product set. " +
     "You MUST preserve 100% exact product identity compared to the original reference photo: " +
-    "identical flower species, exact count of stems, exact bouquet wrap materials and colors, exact geometry, and structural proportions. " +
-    "DO NOT introduce new elements, flowers, or logos. Maintain flawless visual continuity across the entire set."
+    "identical product type and components, exact count of items/parts, exact packaging materials and colors, exact geometry, and structural proportions. " +
+    "DO NOT introduce new elements, substitute product components, or add logos not present in the original. Maintain flawless visual continuity across the entire set."
   ]
 
   if (params.customNote?.trim()) {
