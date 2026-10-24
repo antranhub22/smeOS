@@ -106,7 +106,7 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
     id: 9, name: "Tạo catalog và bộ sưu tập",
     description: "Tổ chức sản phẩm theo danh mục với link chia sẻ và bộ lọc",
     icon: "BookOpen", label: "STORE", status: "DONE", progress: 100,
-    href: "/the-chao", statusNote: "Catalog + brochure system hoàn chỉnh",
+    href: "/the-chao", statusNote: "Showroom số hóa cố định — quản lý bộ sưu tập & link chia sẻ",
   },
   {
     id: 10, name: "Tạo trang giới thiệu dịch vụ",
@@ -139,7 +139,7 @@ const GROUP_3_TOOLS: readonly ToolDefinition[] = [
     id: 14, name: "Tạo catalog bán hàng theo nhu cầu",
     description: "Bộ sưu tập sản phẩm chọn lọc theo nhu cầu khách",
     icon: "ShoppingBag", label: "STORE", status: "DONE", progress: 100,
-    href: "/the-chao", statusNote: "Journey Wizard catalog tùy chọn",
+    href: "/the-chao", statusNote: "Tư vấn chốt đơn 1-1 — tạo nhanh BST theo ngân sách & dịp (<10s)",
   },
   {
     id: 15, name: "Tạo báo giá theo yêu cầu",
