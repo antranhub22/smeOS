@@ -144,8 +144,8 @@ const GROUP_3_TOOLS: readonly ToolDefinition[] = [
   {
     id: 15, name: "Tạo báo giá theo yêu cầu",
     description: "Báo giá cá nhân hóa nhiều phương án từ công thức giá vốn",
-    icon: "Receipt", label: "STORE", status: "IN_PROGRESS", progress: 50,
-    href: "/bao-gia", statusNote: "Có UI bảng giá, thiếu nhiều phương án + liên kết giá vốn",
+    icon: "Receipt", label: "STORE", status: "PLANNED", progress: 0,
+    href: null, statusNote: "Chức năng mới — báo giá cá nhân hóa nhiều phương án từ công thức giá vốn",
   },
   {
     id: 16, name: "Tạo báo giá sự kiện và doanh nghiệp",
@@ -156,8 +156,8 @@ const GROUP_3_TOOLS: readonly ToolDefinition[] = [
   {
     id: 17, name: "Tạo form đặt hoa theo yêu cầu",
     description: "Form nhận yêu cầu đặt hoa từ khách, tự động thông báo cửa hàng",
-    icon: "ClipboardList", label: "BOTH", status: "DONE", progress: 100,
-    href: "/the-chao", statusNote: "Brochure order form hoàn chỉnh",
+    icon: "ClipboardList", label: "BOTH", status: "PLANNED", progress: 0,
+    href: null, statusNote: "Chức năng mới — form nhận yêu cầu đặt hàng tùy chỉnh độc lập",
   },
   {
     id: 18, name: "Tạo gói hoa và combo quà tặng",
