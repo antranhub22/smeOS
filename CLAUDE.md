@@ -1,6 +1,6 @@
-# CLAUDE.md — FloraOS Core
+# CLAUDE.md — smeOS (trước đây FloraOS Core)
 
-Multi-tenant SaaS for flower shops: Next.js 16 + Prisma 7/Postgres (`src/`), Python job workers (`workers/`).
+Multi-tenant, multi-industry SaaS for SMEs (originally flower shops): Next.js 16 + Prisma 7/Postgres (`src/`), Python job workers (`workers/`).
 Status `CANONICAL` · owner: Product Owner (PO) · changes need PO approval. Loaded every session — keep it short; detail lives in the files it points to.
 
 ## Non-negotiables
@@ -68,4 +68,4 @@ Also: a new business rule or bug fix ships with a test; a new unguarded route mu
 
 ## Commands
 
-Setup `docker compose up -d && npm i && npx prisma generate && npx prisma db push && npm run db:seed` · dev `npm run dev` (port 3100) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.
+Setup `docker compose up -d && npm i && npx prisma generate && npx prisma db push && npm run db:seed` · dev `npm run dev` (port 3200) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.
