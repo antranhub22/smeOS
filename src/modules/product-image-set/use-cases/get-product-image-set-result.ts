@@ -67,15 +67,22 @@ export async function getProductImageSetResult(
     let resolvedUrl = originalUrl || ""
     let candidatePath: string | undefined
 
-    if (def.aspectRatio === "4:5") {
+    if (def.angle === "close_up") {
+      // Ưu tiên ảnh cận cảnh macro được sinh riêng
+      candidatePath = ratios["closeup"] || (outputOrResult.master_asset_id as string | undefined)
+    } else if (def.angle === "angle_15") {
+      // Ưu tiên ảnh góc nghiêng dynamic hoặc tỷ lệ 4:5 của lifestyle/studio
+      candidatePath = ratios["angle_15"] || ratios["4:5"] || variantAssets["lifestyle"]
+    } else if (def.angle === "angle_30") {
+      candidatePath = variantAssets["bokeh"] || ratios["1:1"]
+    } else if (def.angle === "top_down") {
+      candidatePath = ratios["closeup"] || ratios["1:1"]
+    } else if (def.aspectRatio === "4:5") {
       candidatePath = ratios["4:5"]
     } else if (def.aspectRatio === "9:16") {
       candidatePath = ratios["9:16"]
-    } else if (def.angle === "close_up") {
-      // Ảnh cận cảnh hoặc master 1:1
-      candidatePath = ratios["1:1"] || (outputOrResult.master_asset_id as string | undefined)
     } else {
-      // 1:1 Catalog
+      // 1:1 Catalog Front
       candidatePath = ratios["1:1"] || (outputOrResult.master_asset_id as string | undefined)
     }
 
