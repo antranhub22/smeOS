@@ -84,8 +84,8 @@ const GROUP_1_TOOLS: readonly ToolDefinition[] = [
   {
     id: 6, name: "Tạo video giới thiệu sản phẩm",
     description: "Dựng video ngắn từ ảnh sản phẩm với hiệu ứng và nhạc nền",
-    icon: "Video", label: "BOTH", status: "DONE", progress: 100,
-    href: "/video", statusNote: "M04c — Video marketing pipeline hoàn chỉnh",
+    icon: "Video", label: "BOTH", status: "IN_PROGRESS", progress: 50,
+    href: "/video", statusNote: "Đang phát triển — hoàn thiện pipeline video marketing",
   },
   {
     id: 7, name: "Tạo thiệp và lời chúc",
@@ -99,8 +99,8 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
   {
     id: 8, name: "Tạo landing page cửa hàng",
     description: "Tạo trang giới thiệu trực tuyến có link chia sẻ",
-    icon: "Globe", label: "BOTH", status: "DONE", progress: 100,
-    href: "/catalog", statusNote: "Landing page builder hoàn chỉnh",
+    icon: "Globe", label: "BOTH", status: "IN_PROGRESS", progress: 60,
+    href: "/landing-page", statusNote: "Đang phát triển — tách trang /landing-page độc lập và hoàn thiện theo SSOT v3",
   },
   {
     id: 9, name: "Tạo catalog và bộ sưu tập",
