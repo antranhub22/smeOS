@@ -216,8 +216,8 @@ const GROUP_5_TOOLS: readonly ToolDefinition[] = [
   {
     id: 26, name: "Tạo nội dung chăm sóc khách hàng",
     description: "Tin nhắn cá nhân hóa theo tình huống: cảm ơn, hỏi thăm, chúc mừng",
-    icon: "MessageSquareHeart", label: "STORE", status: "DONE", progress: 90,
-    href: "/khach-hang", statusNote: "CRM care scripts + AI copilot đã hoàn chỉnh",
+    icon: "MessageSquareHeart", label: "STORE", status: "PLANNED", progress: 0,
+    href: null, statusNote: "Chức năng mới — tạo kịch bản chăm sóc khách hàng tự động",
   },
   {
     id: 27, name: "Tạo chiến dịch chăm sóc và bán lại",
@@ -249,8 +249,8 @@ const GROUP_6_TOOLS: readonly ToolDefinition[] = [
   {
     id: 31, name: "Tạo công thức và định mức nguyên liệu",
     description: "Ghi công thức chuẩn cho từng mẫu: thành phần, số lượng, thời gian",
-    icon: "FlaskConical", label: "BOTH", status: "DONE", progress: 90,
-    href: "/san-pham", statusNote: "BOM (Bill of Materials) trong sản phẩm hoàn chỉnh",
+    icon: "FlaskConical", label: "BOTH", status: "PLANNED", progress: 0,
+    href: null, statusNote: "Chức năng mới — công thức và định mức nguyên liệu độc lập",
   },
   {
     id: 32, name: "Quản lý bảng giá nguyên liệu",
@@ -294,8 +294,8 @@ const GROUP_7_TOOLS: readonly ToolDefinition[] = [
   {
     id: 38, name: "Tạo link duyệt ảnh trước khi giao",
     description: "Gửi ảnh sản phẩm thật cho khách duyệt trước khi giao",
-    icon: "ImageCheck", label: "STORE", status: "DONE", progress: 90,
-    href: "/don-hang", statusNote: "POD flow + link duyệt ảnh trong đơn hàng",
+    icon: "ImageCheck", label: "STORE", status: "PLANNED", progress: 0,
+    href: null, statusNote: "Chức năng mới — link duyệt ảnh độc lập trước khi giao hàng",
   },
   {
     id: 39, name: "Tạo phiếu giao hàng",
