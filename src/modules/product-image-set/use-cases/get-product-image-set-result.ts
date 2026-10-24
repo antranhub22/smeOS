@@ -65,8 +65,19 @@ export async function getProductImageSetResult(
 
   for (const def of bundle.variants) {
     let resolvedUrl = originalUrl || ""
-    const key = def.aspectRatio === "4:5" ? "4:5" : def.aspectRatio === "9:16" ? "9:16" : "1:1"
-    const candidatePath = ratios[key] || variantAssets[def.id] || outputOrResult.master_asset_id
+    let candidatePath: string | undefined
+
+    if (def.aspectRatio === "4:5") {
+      candidatePath = ratios["4:5"]
+    } else if (def.aspectRatio === "9:16") {
+      candidatePath = ratios["9:16"]
+    } else if (def.angle === "close_up") {
+      // Ảnh cận cảnh hoặc master 1:1
+      candidatePath = ratios["1:1"] || (outputOrResult.master_asset_id as string | undefined)
+    } else {
+      // 1:1 Catalog
+      candidatePath = ratios["1:1"] || (outputOrResult.master_asset_id as string | undefined)
+    }
 
     if (typeof candidatePath === "string") {
       if (candidatePath.includes("/")) {

@@ -5,7 +5,7 @@ import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { IMAGE_SET_BUNDLES } from "../domain/bundle-catalog"
 import { buildSetVariantPrompt } from "../domain/prompt-builder"
 
-export const PRODUCT_IMAGE_SET_FEATURE = "media.variant.cloud"
+export const PRODUCT_IMAGE_SET_FEATURE = "media.optimize"
 
 export interface CreateProductImageSetJobInput {
   assetId: string
