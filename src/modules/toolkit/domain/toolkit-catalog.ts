@@ -132,8 +132,8 @@ const GROUP_3_TOOLS: readonly ToolDefinition[] = [
   {
     id: 13, name: "Tạo link bán hàng",
     description: "Link bán hàng riêng cho từng sản phẩm với tùy chọn và nút đặt mua",
-    icon: "Link", label: "STORE", status: "DONE", progress: 100,
-    href: "/the-chao", statusNote: "Brochure sales link hoàn chỉnh",
+    icon: "Link", label: "STORE", status: "PLANNED", progress: 0,
+    href: null, statusNote: "Chức năng mới — tạo link bán hàng độc lập cho từng sản phẩm đơn lẻ",
   },
   {
     id: 14, name: "Tạo catalog bán hàng theo nhu cầu",
