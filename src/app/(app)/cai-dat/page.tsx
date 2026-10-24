@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react"
 import {
   Store,
   Building2,
+  Palette,
   CheckCircle2,
   AlertCircle,
   Clock,
@@ -20,6 +21,8 @@ import {
   Gift,
   FileText,
   DollarSign,
+  Users,
+  Image as ImageIcon,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
@@ -34,6 +37,9 @@ import { PaymentPolicySection } from "@/components/profiles/payment-policy-secti
 import { DepositLevelsSection } from "@/components/profiles/deposit-levels-section"
 import { PriceBudgetsSection } from "@/components/profiles/price-budgets-section"
 import { StorePoliciesEditor } from "@/components/profiles/store-policies-editor"
+import { BrandProfileForm } from "@/components/profiles/brand-profile-form"
+import { BrandAssetsManagerTab } from "@/components/profiles/brand-assets-manager-tab"
+import { OccasionsSettingsForm } from "@/components/organization/occasions-settings-form"
 import {
   parseStorePolicies,
   STORE_POLICIES_SETTINGS_KEY,
@@ -43,16 +49,16 @@ import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import Link from "next/link"
 import type { Route } from "next"
 
-// Flat, clear categories for settings
+// 8 Distinct, Flat Settings & Profile Categories
 type SettingsTab =
-  | "INFO"          // Thông tin tiệm
-  | "PAYMENT"       // Tài khoản & VietQR
-  | "PROMOTIONS"    // Ưu đãi & Giảm giá
-  | "COMMITMENTS"   // Cam kết chất lượng
-  | "AGREEMENTS"    // Thỏa thuận đặt hàng
-  | "DEPOSIT"       // Mức đặt cọc & Giá
-  | "AI_CHANNELS"   // AI & Mạng xã hội
-  | "OPERATIONS"    // Vận hành điều phối
+  | "INFO"          // 1. Thông tin cơ sở
+  | "BRANDING"      // 2. Nhận diện thương hiệu (Logo, màu, dịp)
+  | "PAYMENT"       // 3. Tài khoản ngân hàng & VietQR
+  | "PROMOTIONS"    // 4. Ưu đãi (Voucher)
+  | "COMMITMENTS"   // 5. Cam kết chất lượng
+  | "AGREEMENTS"    // 6. Thỏa thuận đặt hàng
+  | "DEPOSIT"       // 7. Đặt cọc & Dải giá
+  | "AI_CHANNELS"   // 8. Trợ lý AI & Mạng xã hội
 
 export default function CaiDatTiemPage() {
   const { orgName, can } = useSession()
@@ -60,11 +66,13 @@ export default function CaiDatTiemPage() {
 
   const {
     business,
+    brand,
     loading,
     saving,
     error,
     successMessage,
     saveBusiness,
+    saveBrand,
   } = useTenantProfile()
 
   const [activeTab, setActiveTab] = useState<SettingsTab>("INFO")
@@ -159,13 +167,13 @@ export default function CaiDatTiemPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl border border-border bg-surface shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-extrabold text-text">Cài Đặt Cửa Hàng</h1>
+            <h1 className="text-lg font-extrabold text-text">Hồ Sơ & Cài Đặt Cửa Hàng</h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-bold bg-primary/10 text-primary border border-primary/20">
-              <Sparkles size={11} /> Inputs SSOT v2.1
+              <Sparkles size={11} /> Trung Tâm Quản Lý SSOT
             </span>
           </div>
           <p className="text-xs text-text-muted mt-1">
-            Trung tâm quản lý phẳng: chọn trực tiếp mục bạn muốn thiết lập bên dưới.
+            Trung tâm hợp nhất: quản lý toàn bộ thương hiệu, thanh toán, ưu đãi, cam kết và vận hành tại một nơi duy nhất.
           </p>
         </div>
 
@@ -210,7 +218,20 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <Store size={15} />
-          <span>1. Thông Tin Tiệm</span>
+          <span>1. Thông Tin Cơ Sở</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("BRANDING")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "BRANDING"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-text-muted hover:text-text hover:bg-background"
+          }`}
+        >
+          <Palette size={15} />
+          <span>2. Thương Hiệu & Logo</span>
         </button>
 
         <button
@@ -223,7 +244,7 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <QrCode size={15} />
-          <span>2. Tài Khoản & VietQR</span>
+          <span>3. Tài Khoản & VietQR</span>
         </button>
 
         <button
@@ -236,7 +257,7 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <Gift size={15} />
-          <span>3. Ưu Đãi ({policies?.promotions.length ?? 0})</span>
+          <span>4. Ưu Đãi ({policies?.promotions.length ?? 0})</span>
         </button>
 
         <button
@@ -249,7 +270,7 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <ShieldCheck size={15} />
-          <span>4. Cam Kết ({policies?.commitments.length ?? 0})</span>
+          <span>5. Cam Kết ({policies?.commitments.length ?? 0})</span>
         </button>
 
         <button
@@ -262,7 +283,7 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <FileText size={15} />
-          <span>5. Thỏa Thuận ({policies?.agreements.length ?? 0})</span>
+          <span>6. Thỏa Thuận ({policies?.agreements.length ?? 0})</span>
         </button>
 
         <button
@@ -275,7 +296,7 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <DollarSign size={15} />
-          <span>6. Đặt Cọc & Giá</span>
+          <span>7. Đặt Cọc & Giá</span>
         </button>
 
         <button
@@ -288,26 +309,13 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <Cpu size={15} />
-          <span>7. Trợ Lý AI & Mạng Xã Hội</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("OPERATIONS")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-            activeTab === "OPERATIONS"
-              ? "bg-primary text-primary-foreground shadow-xs"
-              : "text-text-muted hover:text-text hover:bg-background"
-          }`}
-        >
-          <Bell size={15} />
-          <span>8. Vận Hành</span>
+          <span>8. AI & Kênh</span>
         </button>
       </div>
 
-      {/* 3. Nội dung chi tiết hiển thị phẳng theo mục đang chọn */}
+      {/* 3. Nội dung chi tiết từng mục */}
 
-      {/* MỤC 1: THÔNG TIN TIỆM */}
+      {/* MỤC 1: THÔNG TIN CƠ SỞ */}
       {activeTab === "INFO" && (
         <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
@@ -334,7 +342,6 @@ export default function CaiDatTiemPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Tên cơ sở */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-text flex items-center gap-1.5">
                       <Store size={13} className="text-text-muted" /> Tên cơ sở kinh doanh
@@ -353,7 +360,6 @@ export default function CaiDatTiemPage() {
                     />
                   </div>
 
-                  {/* Ngành nghề */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-text flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
@@ -371,7 +377,6 @@ export default function CaiDatTiemPage() {
                     />
                   </div>
 
-                  {/* Hotline */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-text flex items-center gap-1.5">
                       <Phone size={13} className="text-text-muted" /> Hotline / Zalo đặt hàng
@@ -389,7 +394,6 @@ export default function CaiDatTiemPage() {
                     />
                   </div>
 
-                  {/* Giờ mở cửa */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-text flex items-center gap-1.5">
                       <Clock size={13} className="text-text-muted" /> Giờ hoạt động
@@ -407,7 +411,6 @@ export default function CaiDatTiemPage() {
                     />
                   </div>
 
-                  {/* Địa chỉ */}
                   <div className="space-y-1.5 sm:col-span-2">
                     <label className="text-xs font-bold text-text flex items-center gap-1.5">
                       <MapPin size={13} className="text-text-muted" /> Địa chỉ cửa hàng
@@ -448,22 +451,45 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* MỤC 2: TÀI KHOẢN NGÂN HÀNG & VIETQR */}
+      {/* MỤC 2: NHẬN DIỆN THƯƠNG HIỆU (Gộp từ Hồ sơ) */}
+      {activeTab === "BRANDING" && (
+        <div className="flex flex-col gap-6">
+          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
+            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
+              <Palette size={18} className="text-primary" /> Nhận Diện Thương Hiệu & Logo
+            </h2>
+            <p className="text-xs text-text-muted mb-4">
+              Cài đặt màu sắc chủ đạo, logo thương hiệu, slogan và phong cách hiển thị.
+            </p>
+            <BrandProfileForm initialData={brand} onSave={saveBrand} saving={saving} />
+          </div>
+
+          {/* Dịp lễ & Ngữ cảnh */}
+          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
+            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
+              <Sparkles size={18} className="text-primary" /> Sự Kiện & Dịp Kích Cầu
+            </h2>
+            <OccasionsSettingsForm />
+          </div>
+        </div>
+      )}
+
+      {/* MỤC 3: TÀI KHOẢN NGÂN HÀNG & VIETQR */}
       {activeTab === "PAYMENT" && (
         <div className="flex flex-col gap-6">
           <BrochurePaymentSettings />
         </div>
       )}
 
-      {/* MỤC 3: ƯU ĐÃI & GIẢM GIÁ */}
+      {/* MỤC 4: ƯU ĐÃI & KHUYẾN MÃI */}
       {activeTab === "PROMOTIONS" && (
         <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
             <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
-              <Gift size={18} className="text-primary" /> Danh Mục Ưu Đãi & Khuyến Mãi (Khách chọn khi đặt hàng)
+              <Gift size={18} className="text-primary" /> Danh Mục Ưu Đãi (Voucher & Quà Tặng)
             </h2>
             <p className="text-xs text-text-muted mb-4">
-              Cửa hàng có thể thiết lập giảm % đơn hàng, miễn phí vận chuyển hoặc quà tặng kèm.
+              Khách hàng được chọn 01 ưu đãi khi mở liên kết Thẻ Chào hoặc Đặt hàng trực tiếp.
             </p>
 
             {policies ? (
@@ -481,7 +507,7 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* MỤC 4: CAM KẾT CHẤT LƯỢNG */}
+      {/* MỤC 5: CAM KẾT CHẤT LƯỢNG */}
       {activeTab === "COMMITMENTS" && (
         <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
@@ -507,7 +533,7 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* MỤC 5: THỎA THUẬN ĐẶT HÀNG */}
+      {/* MỤC 6: THỎA THUẬN ĐẶT HÀNG */}
       {activeTab === "AGREEMENTS" && (
         <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
@@ -533,7 +559,7 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* MỤC 6: ĐẶT CỌC & GIÁ */}
+      {/* MỤC 7: ĐẶT CỌC & GIÁ */}
       {activeTab === "DEPOSIT" && (
         <div className="flex flex-col gap-6">
           <PaymentPolicySection />
@@ -542,7 +568,7 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* MỤC 7: TRỢ LÝ AI & KÊNH MẠNG XÃ HỘI */}
+      {/* MỤC 8: TRỢ LÝ AI & KÊNH MẠNG XÃ HỘI */}
       {activeTab === "AI_CHANNELS" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between">
@@ -580,13 +606,10 @@ export default function CaiDatTiemPage() {
               Kết Nối Kênh
             </Link>
           </div>
-        </div>
-      )}
 
-      {/* MỤC 8: VẬN HÀNH & ĐIỀU PHỐI */}
-      {activeTab === "OPERATIONS" && (
-        <div className="flex flex-col gap-6">
-          <DispatchReminderPolicyCard canEdit={can("R12")} />
+          <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between sm:col-span-2">
+            <DispatchReminderPolicyCard canEdit={can("R12")} />
+          </div>
         </div>
       )}
     </div>

@@ -293,15 +293,6 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
 
   // 5. Nhóm Thiết lập
   {
-    href: "/ho-so",
-    label: "Hồ sơ cửa hàng",
-    group: "thiet-lap",
-    iconKey: "Settings2",
-    navKey: "profile",
-    capability: "F1",
-    mobileLabel: "Hồ sơ",
-  },
-  {
     href: "/tri-thuc",
     label: "Tri thức",
     group: "thiet-lap",
@@ -337,7 +328,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat",
-    label: "Cài đặt",
+    label: "Hồ sơ & Cài đặt",
     group: "thiet-lap",
     iconKey: "Settings2",
     navKey: "settings",
