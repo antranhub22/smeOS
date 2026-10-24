@@ -26,6 +26,8 @@ export interface CatalogProduct {
   collection?: string | null
   price?: number | null
   imageUrl?: string | null
+  /** Link Google Drive (fallback thumbnail khi chưa upload ảnh lưu trữ). */
+  driveLink?: string | null
   attributes?: Record<string, unknown> | null
 }
 

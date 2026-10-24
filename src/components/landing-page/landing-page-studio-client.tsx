@@ -27,7 +27,37 @@ export function LandingPageStudioClient() {
       }
       if (!res.ok) throw new Error("Không thể tải danh sách sản phẩm")
       const json = await res.json()
-      setProducts(json.data || [])
+      const rawProducts = (json.data || []) as Array<{
+        id: string
+        code: string
+        name: string
+        category?: string | null
+        status: string
+        occasion_code?: string | null
+        color?: string | null
+        collection?: string | null
+        price_vnd?: number | null
+        masterImageUrl?: string | null
+        driveLink?: string | null
+        attributes?: Record<string, unknown> | null
+      }>
+      // Map API fields → CatalogProduct shape (masterImageUrl → imageUrl, price_vnd → price)
+      setProducts(
+        rawProducts.map((p) => ({
+          id: p.id,
+          code: p.code,
+          name: p.name,
+          category: p.category ?? null,
+          status: p.status as "DRAFT" | "ACTIVE" | "ARCHIVED",
+          occasion_code: p.occasion_code ?? null,
+          color: p.color ?? null,
+          collection: p.collection ?? null,
+          price: p.price_vnd ?? null,
+          imageUrl: p.masterImageUrl ?? null,
+          driveLink: p.driveLink ?? null,
+          attributes: p.attributes ?? null,
+        }))
+      )
     } catch (e) {
       setError(e instanceof Error ? e.message : "Lỗi khi tải dữ liệu")
     } finally {

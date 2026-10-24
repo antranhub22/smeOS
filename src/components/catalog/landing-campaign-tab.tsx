@@ -105,7 +105,10 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
       if (data.videoUrl) setVideoUrl(data.videoUrl)
       if (data.imagePreviewUrls[0]) setCustomHeroImageUrl(data.imagePreviewUrls[0])
 
-      const preSelectedIds = activeProducts.slice(0, 4).map((p) => p.id)
+      const preSelectedIds =
+        data.selectedProducts && data.selectedProducts.length > 0
+          ? data.selectedProducts.map((p) => p.id)
+          : activeProducts.slice(0, 4).map((p) => p.id)
       setSelectedProductIds(preSelectedIds)
 
       // Step 1 — Vision done
@@ -294,6 +297,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
           <SmartInputDropzone
             onAnalyze={handleSmartAnalyze}
             isAnalyzing={isAiGenerating}
+            availableProducts={activeProducts}
             onSwitchToManual={() => {
               setEntryMode("wizard")
               setExecutionMode("guided")

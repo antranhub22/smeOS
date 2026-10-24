@@ -132,6 +132,30 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
   - Tuyệt đối không gộp chung văn bản và số lượng/đơn vị vào cùng một chuỗi tự do (ví dụ: cấm gộp `"Hồng đỏ 10 cành"` thành 1 ô text).
   - Bắt buộc phân rã thành các trường cấu trúc độc lập: tên hoa (text), số lượng (number), đơn vị (text), màu sắc (text), vai trò (select)... để người dùng có thể nhấp chuột sửa trực tiếp từng thông số mà không làm hỏng cấu trúc dữ liệu.
   - Áp dụng nguyên tắc tương tự cho kích thước (`height`/`width` số, `unit` text), báo giá (`price`/`originalPrice` số), và danh sách quà tặng/cam kết (mảng các item độc lập có nút thêm/sửa/xóa từng dòng).
+- **Quy chuẩn Hiển thị Thumbnail Ảnh Sản Phẩm (Product Thumbnail Display Standard, PO 24/10/2026)**:
+  - **Nguyên tắc cốt lõi**: Mọi danh sách, lưới, modal hay component hiển thị sản phẩm/mẫu **BẮT BUỘC** phải hiển thị thumbnail ảnh đại diện. Tuyệt đối không để ô ảnh trống hoặc chỉ hiển thị mã SKU/code thô khi đã có thông tin ảnh.
+  - **Quy tắc mapping field bắt buộc (API → UI)**:
+    - API `/api/v1/products` trả về `masterImageUrl` (chuỗi URL đã ký từ storage) và `price_vnd` (số).
+    - Giao diện (`CatalogProduct`) dùng `imageUrl` và `price`.
+    - **BẮT BUỘC** thực hiện bước mapping khi nhận dữ liệu từ API:
+      ```ts
+      // ✅ ĐÚNG — Map trước khi set state
+      setProducts(json.data.map((p) => ({
+        ...p,
+        imageUrl: p.masterImageUrl ?? null,
+        price:    p.price_vnd    ?? null,
+      })))
+
+      // ❌ SAI — Set thẳng json.data mà không map
+      setProducts(json.data)
+      ```
+    - Mọi trang/component mới fetch `/api/v1/products` đều phải tự thực hiện mapping này — **không được** giả định API trả đúng field name của `CatalogProduct`.
+  - **Chuỗi fallback bắt buộc (Fallback Chain)**:
+    1. `imageUrl` / `masterImageUrl` từ storage (URL đã ký).
+    2. `driveLink` → proxy `/api/v1/public/drive-thumb-proxy` (ảnh Google Drive).
+    3. Ảnh tĩnh ngẫu nhiên từ `DEFAULT_FLOWER_IMAGES` tại `src/components/catalog/flower-image-fallback.ts` — **KHÔNG bao giờ để component trắng/blank**.
+    - Dùng component `<FlowerImage>` (`src/components/greeting-card/flower-image.tsx`) cho thẻ chào & kho catalog vì nó xử lý đủ 3 tầng fallback; dùng `resolveFlowerImage()` từ `src/components/catalog/flower-image-fallback.ts` cho Landing Page và Campaign.
+  - **Áp dụng bắt buộc**: Mọi `<ProductLibraryModal>`, `<CampaignProductPicker>`, `<SmartInputDropzone>`, `<CatalogWizard>`, danh sách sản phẩm trong các Modal tạo đơn hàng, danh sách Catalog tĩnh đều phải tuân thủ chuỗi fallback này.
 - **Tiêu chuẩn hóa vị trí nút tác vụ chung của các Tab (Standardized Tab Action Header)**:
   - Mọi tác vụ chung của các Tab (Copy, Lưu nháp, Duyệt/Chốt, Chỉnh sửa, Xuất file...) **bắt buộc phải nằm ở vị trí thống nhất: Góc trên cùng bên phải (Top-Right Action Header) của mỗi Tab**. Không đặt mỗi tab một vị trí khác nhau gây mất phương hướng cho người dùng.
   - Cấu trúc thanh công cụ góc trên bên phải gồm 2 khối (tuân thủ K2 & 03a UX-010/UX-011):
@@ -233,6 +257,14 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
     - *Video*: Giữ nguyên độ mượt gốc, không nén chỉnh sửa phức tạp, nhúng trực tiếp vào khu vực video của trang/mục tiêu.
     - *Văn bản (Text/Directives)*: Đưa trực tiếp vào Content Engine làm chỉ đạo ngữ cảnh (Context Prompt) để sinh tiêu đề, câu chuyện thương hiệu, đặc quyền, giá bán.
   - **Cơ chế Pre-fill Wizard (Human-in-the-loop)**: AI KHÔNG hoạt động như một "hộp đen" đóng kín. Sau khi phân tích, AI tự động điền sẵn (pre-fill) toàn bộ các thông số tối ưu vào chính Wizard từng bước kèm huy hiệu `✨ AI đã tối ưu lựa chọn cho bạn`. Người dùng có toàn quyền kiểm tra, điều chỉnh bất kỳ bước nào trước khi xuất bản.
+- **Quy chuẩn Tiếp nhận Đầu vào Kép (Dual-Source Media & Product Input Standard, PO 24/10/2026)**:
+  - **Nguyên tắc cốt lõi**: Bất kỳ màn hình hoặc công cụ nào tiếp nhận nguyên liệu, ảnh sản phẩm, video hoặc dữ liệu mẫu đầu vào (SmartInputDropzone, Creation Studio, Landing Page, Catalog, Thẻ chào & Đơn hàng...) **BẮT BUỘC** phải hỗ trợ đồng thời cả **2 NGUỒN TIẾP NHẬN**:
+    1. 🛍️ **Chọn từ Kho sản phẩm của cửa hàng** (`store-catalog`): Cho phép chọn trực tiếp các mẫu sản phẩm đã có trong kho tiệm (với thanh tìm kiếm, bộ lọc danh mục/ngành, xem trước ảnh mẫu và thông số đã có).
+    2. 💻 **Tải lên từ thiết bị / máy tính** (`device-upload`): Kéo thả ảnh/video từ máy, dán link hoặc chọn file từ thiết bị cục bộ như thông thường.
+  - **Đồng bộ hai chiều & Tái sử dụng**:
+    - Khi người dùng tải ảnh mới từ máy lên, giao diện phải có tùy chọn/checkbox *"Lưu vào kho sản phẩm tiệm để tái sử dụng sau này"* để làm giàu kho dữ liệu của tenant.
+    - Khi chọn từ kho sản phẩm, hệ thống tự động nạp sẵn thông tin cấu trúc (tên sản phẩm, giá bán, link ảnh sắc nét) giúp giảm tối đa thao tác nhập tay lại cho người dùng.
+  - **Thành phần hạ tầng chuẩn hóa**: Mọi module phải tái sử dụng component chuẩn `DualSourceMediaInput` hoặc `SmartInputDropzone` mở rộng; tuyệt đối không tạo các ô upload đơn nguồn cô lập chỉ cho phép tải từ máy.
 - **Quyền Quyết Định (Decision Ownership) & Vùng Cấm Của AI**:
   - **Ba tầng sở hữu quyết định**:
     | Owner | Hành vi hệ thống |
