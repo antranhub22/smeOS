@@ -4,7 +4,7 @@ import React, { useState, useCallback } from "react"
 import Link from "next/link"
 import { useSWRConfig } from "swr"
 import { useApi } from "@/components/greeting-card/greeting-api"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Sparkles, Send, ShieldCheck, BookOpen, RefreshCw, GitMerge, Wand2, LayoutList } from "lucide-react"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { cn } from "@/lib/utils"
@@ -35,11 +35,25 @@ const MODES: { id: ViewMode; label: string; icon: typeof Wand2 }[] = [
 
 export default function TheChaoPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { can } = useSession()
   const { dict, ti } = useI18n()
-  // "wizard": luồng 3 bước gửi thẻ · "manager": bảng quản lý chi tiết — mở theo vai (Điều hành/Điều phối/Sale)
-  const [viewMode, setViewMode] = useState<ViewMode>(() => defaultTheChaoView(can).viewMode)
-  const [activeTab, setActiveTab] = useState<ActiveTab>(() => defaultTheChaoView(can).activeTab)
+
+  const requestedTab = searchParams.get("tab") as ActiveTab | null
+  const requestedMode = searchParams.get("mode") as ViewMode | null
+
+  // "wizard": luồng 3 bước gửi thẻ · "manager": bảng quản lý chi tiết — mở theo URL param hoặc vai
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (requestedMode === "manager" || requestedMode === "wizard") return requestedMode
+    if (requestedTab) return "manager"
+    return defaultTheChaoView(can).viewMode
+  })
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
+    if (requestedTab && ["sales", "payment", "catalog", "coordinator", "tracking"].includes(requestedTab)) {
+      return requestedTab
+    }
+    return defaultTheChaoView(can).activeTab
+  })
   const [selectedCatalog, setSelectedCatalog] = useState<CatalogBasic | null>(null)
   // Số đếm cho huy hiệu tab (SWR). Danh sách phân trang: quá 100 thì hiện "100+".
   const catalogList = useApi<{ data: unknown[]; next_cursor: string | null }>("/api/v1/greeting-card/catalogs?limit=100")
