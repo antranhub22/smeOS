@@ -21,8 +21,8 @@ import {
   Gift,
   FileText,
   DollarSign,
-  Users,
-  Image as ImageIcon,
+  Send,
+  Zap,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
@@ -38,8 +38,13 @@ import { DepositLevelsSection } from "@/components/profiles/deposit-levels-secti
 import { PriceBudgetsSection } from "@/components/profiles/price-budgets-section"
 import { StorePoliciesEditor } from "@/components/profiles/store-policies-editor"
 import { BrandProfileForm } from "@/components/profiles/brand-profile-form"
-import { BrandAssetsManagerTab } from "@/components/profiles/brand-assets-manager-tab"
 import { OccasionsSettingsForm } from "@/components/organization/occasions-settings-form"
+import { BrochureWorkflowSettings } from "@/components/greeting-card/admin/brochure-workflow-settings"
+import { BrochureStepTimeoutSettings } from "@/components/greeting-card/admin/brochure-step-timeout-settings"
+import { BrochureStepSlaSettings } from "@/components/greeting-card/admin/brochure-step-sla-settings"
+import { BrochureLinkLifetimeSettings } from "@/components/greeting-card/admin/brochure-link-lifetime-settings"
+import { StaffNotifySettings } from "@/components/greeting-card/admin/staff-notify-settings"
+import { TelegramDispatchConnector } from "@/components/greeting-card/admin/telegram-dispatch-connector"
 import {
   parseStorePolicies,
   STORE_POLICIES_SETTINGS_KEY,
@@ -49,7 +54,7 @@ import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import Link from "next/link"
 import type { Route } from "next"
 
-// 8 Distinct, Flat Settings & Profile Categories
+// 9 All-In-One Categories
 type SettingsTab =
   | "INFO"          // 1. Thông tin cơ sở
   | "BRANDING"      // 2. Nhận diện thương hiệu (Logo, màu, dịp)
@@ -58,7 +63,8 @@ type SettingsTab =
   | "COMMITMENTS"   // 5. Cam kết chất lượng
   | "AGREEMENTS"    // 6. Thỏa thuận đặt hàng
   | "DEPOSIT"       // 7. Đặt cọc & Dải giá
-  | "AI_CHANNELS"   // 8. Trợ lý AI & Mạng xã hội
+  | "BROCHURE_FLOW" // 8. Cơ chế Thẻ Chào & Đặt Hàng (Workflow, Timeout, Link)
+  | "AI_CHANNELS"   // 9. Trợ lý AI & Mạng xã hội
 
 export default function CaiDatTiemPage() {
   const { orgName, can } = useSession()
@@ -169,11 +175,11 @@ export default function CaiDatTiemPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-extrabold text-text">Hồ Sơ & Cài Đặt Cửa Hàng</h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-bold bg-primary/10 text-primary border border-primary/20">
-              <Sparkles size={11} /> Trung Tâm Quản Lý SSOT
+              <Sparkles size={11} /> Trung Tâm All-In-One SSOT
             </span>
           </div>
           <p className="text-xs text-text-muted mt-1">
-            Trung tâm hợp nhất: quản lý toàn bộ thương hiệu, thanh toán, ưu đãi, cam kết và vận hành tại một nơi duy nhất.
+            Một nơi duy nhất để thiết lập toàn bộ thông số: thương hiệu, thanh toán, ưu đãi, cơ chế thẻ chào và tự động hóa.
           </p>
         </div>
 
@@ -206,38 +212,38 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* 2. Thanh Tabs phẳng tách rời hoàn toàn từng mục riêng biệt */}
+      {/* 2. Thanh Tabs All-In-One phẳng tách rời hoàn toàn từng mục riêng biệt */}
       <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface border border-border overflow-x-auto">
         <button
           type="button"
           onClick={() => setActiveTab("INFO")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             activeTab === "INFO"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
           <Store size={15} />
-          <span>1. Thông Tin Cơ Sở</span>
+          <span>1. Thông Tin Tiệm</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab("BRANDING")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             activeTab === "BRANDING"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
           <Palette size={15} />
-          <span>2. Thương Hiệu & Logo</span>
+          <span>2. Thương Hiệu</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab("PAYMENT")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             activeTab === "PAYMENT"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
@@ -250,7 +256,7 @@ export default function CaiDatTiemPage() {
         <button
           type="button"
           onClick={() => setActiveTab("PROMOTIONS")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             activeTab === "PROMOTIONS"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
@@ -263,7 +269,7 @@ export default function CaiDatTiemPage() {
         <button
           type="button"
           onClick={() => setActiveTab("COMMITMENTS")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             activeTab === "COMMITMENTS"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
@@ -276,7 +282,7 @@ export default function CaiDatTiemPage() {
         <button
           type="button"
           onClick={() => setActiveTab("AGREEMENTS")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             activeTab === "AGREEMENTS"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
@@ -289,7 +295,7 @@ export default function CaiDatTiemPage() {
         <button
           type="button"
           onClick={() => setActiveTab("DEPOSIT")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             activeTab === "DEPOSIT"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
@@ -301,21 +307,34 @@ export default function CaiDatTiemPage() {
 
         <button
           type="button"
+          onClick={() => setActiveTab("BROCHURE_FLOW")}
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "BROCHURE_FLOW"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-text-muted hover:text-text hover:bg-background"
+          }`}
+        >
+          <Send size={15} />
+          <span>8. Cơ Chế Thẻ Chào</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveTab("AI_CHANNELS")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
             activeTab === "AI_CHANNELS"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
           <Cpu size={15} />
-          <span>8. AI & Kênh</span>
+          <span>9. AI & Kênh</span>
         </button>
       </div>
 
       {/* 3. Nội dung chi tiết từng mục */}
 
-      {/* MỤC 1: THÔNG TIN CƠ SỞ */}
+      {/* MỤC 1: THÔNG TIN TIỆM */}
       {activeTab === "INFO" && (
         <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
@@ -451,7 +470,7 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* MỤC 2: NHẬN DIỆN THƯƠNG HIỆU (Gộp từ Hồ sơ) */}
+      {/* MỤC 2: NHẬN DIỆN THƯƠNG HIỆU */}
       {activeTab === "BRANDING" && (
         <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
@@ -568,7 +587,42 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* MỤC 8: TRỢ LÝ AI & KÊNH MẠNG XÃ HỘI */}
+      {/* MỤC 8: CƠ CHẾ THẺ CHÀO & ĐẶT HÀNG (ALL-IN-ONE EMBEDDED) */}
+      {activeTab === "BROCHURE_FLOW" && (
+        <div className="flex flex-col gap-6">
+          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
+            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
+              <Send size={18} className="text-primary" /> Cơ Chế Vận Hành & Tự Động Hủy Đơn Thẻ Chào
+            </h2>
+            <p className="text-xs text-text-muted mb-4">
+              Thiết lập quy trình duyệt (Tinh gọn / Tiêu chuẩn / Nghiêm ngặt), thời hạn hết hạn liên kết và thời gian giữ chỗ.
+            </p>
+          </div>
+
+          {/* Ma trận vận hành quy trình */}
+          <BrochureWorkflowSettings />
+
+          {/* Thời hạn & Tự động hủy đơn theo bước */}
+          <BrochureStepTimeoutSettings />
+
+          {/* Thời hạn hiệu lực của liên kết Thẻ Chào */}
+          <BrochureLinkLifetimeSettings />
+
+          {/* SLA xử lý đơn theo bước */}
+          <BrochureStepSlaSettings />
+
+          {/* Thông báo Telegram điều phối */}
+          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
+            <h3 className="text-sm font-bold text-text mb-3">Thông Báo Kênh Điều Phối & Telegram</h3>
+            <div className="space-y-4">
+              <StaffNotifySettings />
+              <TelegramDispatchConnector />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MỤC 9: TRỢ LÝ AI & KÊNH MẠNG XÃ HỘI */}
       {activeTab === "AI_CHANNELS" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between">
