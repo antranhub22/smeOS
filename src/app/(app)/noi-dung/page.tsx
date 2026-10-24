@@ -1,337 +1,88 @@
 "use client"
 
-import React, { useState, useEffect, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import {
-  Sparkles,
-  ArrowLeft,
-  Calendar,
-  RefreshCw,
-  CheckCircle2,
-  AlertCircle,
-  Flower2,
-  Send,
-  MessageCircle,
-  Check,
-} from "lucide-react"
+/**
+ * Chức năng 04 — AI Content Engine: Tạo nội dung bán hàng đa kênh.
+ * Input mở rộng: Chọn từ Product Master HOẶC Upload ảnh trực tiếp.
+ *
+ * Phân tách SRP (mỗi file ≤350 dòng):
+ *  - ProductSelector     → product-selector.tsx
+ *  - ChannelSelector     → channel-selector.tsx
+ *  - ImageUploadTab      → image-upload-tab.tsx
+ *  - GenerationResults   → generation-results.tsx
+ *  - useImageUploadFlow  → use-image-upload-flow.ts
+ */
+
+import React, { useState, Suspense } from "react"
+import { useRouter } from "next/navigation"
+import { Sparkles, ArrowLeft, Calendar, Database, Upload, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { SkeletonBlock } from "@/components/ui/skeleton"
-import { FlowSteps, type FlowStep } from "@/components/flow/flow-steps"
-import {
-  ContentGuidanceCard,
-  MultichannelPostCard,
-  type MultichannelPostItem,
-} from "@/components/templates/content-engine"
+import { FlowSteps } from "@/components/flow/flow-steps"
+import { ContentGuidanceCard, type MultichannelPostItem } from "@/components/templates/content-engine"
 import { FlowerContentStudioModal } from "@/components/content/flower-content-studio-modal"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
-/** Hình dạng thô một dòng `GET /api/v1/products` — chỉ các trường trang này đọc. */
-interface RawProductRow {
-  id: string
-  name: string
-  code?: string
-  category?: string
-  shape?: string
-  pricing?: { selling_price?: number }
-  master_image_url?: string
-  image_url?: string
-  images?: Array<{ url?: string }>
-}
+import { ProductSelector } from "./product-selector"
+import { ChannelSelector, CHANNELS_CONFIG } from "./channel-selector"
+import { ImageUploadTab } from "./image-upload-tab"
+import { GenerationResults } from "./generation-results"
+import { useImageUploadFlow } from "./use-image-upload-flow"
+import { useProductData } from "./use-product-data"
+import { useContentGeneration } from "./use-content-generation"
 
-interface ProductOption {
-  id: string
-  name: string
-  code?: string | undefined
-  price?: number | undefined
-  flowers?: string | undefined
-  color?: string | undefined
-  imageUrl?: string | undefined
-}
-
-const CHANNELS_CONFIG = [
-  {
-    id: "facebook",
-    label: "Facebook Fanpage",
-    icon: "📘",
-    tag: "Album & Bài viết",
-    description: "Kể chuyện cảm xúc, thông điệp ý nghĩa & album ảnh sản phẩm",
-  },
-  {
-    id: "instagram",
-    label: "Instagram",
-    icon: "📸",
-    tag: "Visual & Hashtag",
-    description: "Caption thẩm mỹ ngắn gọn, tinh tế theo phong cách hình ảnh",
-  },
-  {
-    id: "tiktok",
-    label: "TikTok Video",
-    icon: "🎵",
-    tag: "Kịch bản quay 30s",
-    description: "Hook mở đầu 3s giữ chân, visual cues & âm thanh xu hướng",
-  },
-  {
-    id: "zalo",
-    label: "Zalo OA",
-    icon: "💬",
-    tag: "Tư vấn & Báo giá",
-    description: "Tin nhắn chào mẫu mới, báo giá ưu đãi & tư vấn 1-chạm",
-  },
+const FLOW_STEPS_PRODUCT = [
+  { key: "analyze", label: "Đọc thông số sản phẩm & Brand Kit" },
+  { key: "generate", label: "Content Engine (P27) sinh bài đa kênh" },
+  { key: "review", label: "Kiểm duyệt an toàn thương hiệu" },
 ]
 
-const FLOW_STEPS: FlowStep[] = [
-  { key: "analyze", label: "Đọc thông số hoa & Brand Kit" },
-  { key: "generate", label: "Content Engine (P27) sinh bài đa kênh" },
+const FLOW_STEPS_UPLOAD = [
+  { key: "upload", label: "Tải & Đăng ký ảnh sản phẩm" },
+  { key: "vision", label: "AI Vision phân tích thị giác" },
+  { key: "generate", label: "Content Engine sinh bài đa kênh" },
   { key: "review", label: "Kiểm duyệt an toàn thương hiệu" },
 ]
 
 function ContentEngineContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const { organization } = useSession()
   const ti = getIndustryTerminology(organization?.industry)
-  const catalogSlug = searchParams.get("catalog_slug")
-  const catalogName = searchParams.get("catalog_name")
 
-  // Trạng thái dữ liệu
-  const [products, setProducts] = useState<ProductOption[]>([])
-  const [selectedProductId, setSelectedProductId] = useState<string>("")
-  const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
-  const [selectedChannels, setSelectedChannels] = useState<string[]>([
-    "facebook",
-    "instagram",
-    "tiktok",
-    "zalo",
-  ])
-  const [generationId, setGenerationId] = useState<string | null>(null)
+  const [selectedChannels, setSelectedChannels] = useState<string[]>(
+    CHANNELS_CONFIG.map((c) => c.id)
+  )
+  const [inputMode, setInputMode] = useState<"product" | "upload">("product")
   const [isStudioModalOpen, setIsStudioModalOpen] = useState(false)
 
-  // Trạng thái luồng
-  const [phase, setPhase] = useState<"select" | "generating" | "results">("select")
-  const [currentStep, setCurrentStep] = useState<string>("analyze")
-  const [generatedPosts, setGeneratedPosts] = useState<MultichannelPostItem[]>([])
-  const [criticScore, setCriticScore] = useState<number | null>(null)
-  const [modelInfo, setModelInfo] = useState<{
-    provider?: string | undefined
-    modelName?: string | undefined
-    isFallback?: boolean | undefined
-  }>({
-    provider: "content_engine",
-    modelName: "Content Engine (P27)",
-    isFallback: false,
+  // Custom hooks
+  const { products, selectedProductId, setSelectedProductId, isLoading, loadError } =
+    useProductData(ti.sampleProduct)
+  const uploadFlow = useImageUploadFlow()
+  const generation = useContentGeneration({
+    uploadFlow,
+    products,
+    selectedProductId,
+    selectedChannels,
+    ti,
+    inputMode,
   })
-  const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null)
-
-  // Tải danh mục sản phẩm từ Product Master
-  useEffect(() => {
-    async function loadProducts() {
-      setIsLoadingProducts(true)
-      setLoadError(null)
-      try {
-        const [resProds, resAnalyses] = await Promise.all([
-          fetch("/api/v1/products?limit=25"),
-          fetch("/api/v1/vision/analyses?approval_state=APPROVED&limit=100").catch(() => null),
-        ])
-
-        const imageMap: Record<string, string> = {}
-        if (resAnalyses && resAnalyses.ok) {
-          try {
-            const analysesJson = await resAnalyses.json()
-            const analysesList = analysesJson.data || []
-            for (const a of analysesList) {
-              if (a.image_url) {
-                if (a.product_id) imageMap[a.product_id] = a.image_url
-                if (a.product?.id) imageMap[a.product.id] = a.image_url
-                if (a.product?.code) imageMap[a.product.code] = a.image_url
-              }
-            }
-          } catch {
-            // Bỏ qua nếu lỗi đọc analyses
-          }
-        }
-
-        if (resProds.ok) {
-          const json = await resProds.json()
-          const rawList = json.data || json.items || []
-          if (rawList.length > 0) {
-            const mapped: ProductOption[] = (rawList as RawProductRow[]).map((p) => ({
-              id: p.id,
-              name: p.name,
-              code: p.code,
-              price: p.pricing?.selling_price || 0,
-              flowers: p.category ? `Danh mục: ${p.category}` : (p.shape || ti.sampleProduct),
-              color: p.shape || "Tiêu chuẩn",
-              imageUrl:
-                imageMap[p.id] ||
-                (p.code ? imageMap[p.code] : undefined) ||
-                p.master_image_url ||
-                p.image_url ||
-                p.images?.[0]?.url,
-            }))
-            setProducts(mapped)
-            setSelectedProductId(mapped[0]?.id || "")
-          } else {
-            setProducts([])
-          }
-        } else {
-          setLoadError("Không thể tải sản phẩm từ Product Master.")
-        }
-      } catch {
-        setLoadError("Lỗi kết nối cơ sở dữ liệu sản phẩm.")
-      } finally {
-        setIsLoadingProducts(false)
-      }
-    }
-    loadProducts()
-  }, [])
 
   const selectedProduct = products.find((p) => p.id === selectedProductId) || products[0]
 
-  // Xử lý bật/tắt chọn kênh
-  const toggleChannel = (chId: string) => {
-    setSelectedChannels((prev) =>
-      prev.includes(chId)
-        ? prev.filter((c) => c !== chId)
-        : [...prev, chId]
-    )
-  }
-
-  // Kích hoạt sinh nội dung qua Content Engine (P27) — gọi thẳng
-  // `POST /api/v1/content-engine/generations`, không qua proxy SocialFlow
-  // M07 nữa (quyết định PO 25/09/2026).
-  async function handleGenerate() {
-    if (selectedChannels.length === 0 || !selectedProduct) return
-
-    setPhase("generating")
-    setCurrentStep("analyze")
-
-    setTimeout(() => setCurrentStep("generate"), 600)
-
-    try {
-      const idempotencyKey =
-        typeof window !== "undefined" && "randomUUID" in window.crypto
-          ? window.crypto.randomUUID()
-          : `noi-dung-${selectedProduct.id}-${Date.now()}`
-
-      const res = await fetch("/api/v1/content-engine/generations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey },
-        body: JSON.stringify({
-          product_id: selectedProduct.id,
-          channels: selectedChannels,
-        }),
-      })
-
-      setTimeout(() => setCurrentStep("review"), 1400)
-
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({}))
-        const errorMsg = errJson.error?.message || errJson.detail || errJson.message || `Lỗi máy chủ (${res.status}) khi gọi Content Engine`
-        throw new Error(errorMsg)
-      }
-
-      const data = await res.json()
-      setGenerationId(data.generation_id || null)
-      setCriticScore(typeof data.overall_score === "number" ? data.overall_score : null)
-
-      const posts: MultichannelPostItem[] = []
-      for (const p of data.posts ?? []) {
-        let bodyText = p.text || ""
-        if (catalogSlug && typeof window !== "undefined") {
-          const linkUrl = `${window.location.origin}/c/${catalogSlug}`
-          if (!bodyText.includes(`/c/${catalogSlug}`)) {
-            bodyText = `${bodyText}\n\n👉 Xem trọn bộ ${ti.sampleProduct} & đặt trực tuyến tại:\n${linkUrl}`
-          }
-        }
-
-        posts.push({
-          channel: p.channel,
-          channelLabel:
-            CHANNELS_CONFIG.find((c) => c.id === p.channel)?.label || String(p.channel).toUpperCase(),
-          headline: `${ti.sampleProduct} ${selectedProduct.name}`,
-          bodyText,
-          hashtags: p.hashtags || [],
-        })
-      }
-
-      if (posts.length === 0) {
-        throw new Error("Không nhận được nội dung hợp lệ từ Content Engine cho các kênh đã chọn.")
-      }
-
-      setModelInfo({
-        provider: "content_engine",
-        modelName: "Content Engine (P27)",
-        isFallback: Boolean(data.needs_review),
-      })
-      setGeneratedPosts(posts)
-      setTimeout(() => setPhase("results"), 1800)
-    } catch (err) {
-      setNotification({
-        type: "error",
-        message: `Lỗi sinh nội dung: ${(err instanceof Error && err.message) || "Không gọi được Content Engine"}. Vui lòng thử lại.`,
-      })
-      setPhase("select")
-    }
-  }
-
-  // Cập nhật từng trường của bài viết
-  const handleUpdatePost = (channel: string, updated: Partial<MultichannelPostItem>) => {
-    setGeneratedPosts((prev) =>
-      prev.map((p) => (p.channel === channel ? { ...p, ...updated } : p))
-    )
-  }
-
-  // Duyệt bài viết — ghi vào core (`POST /content-engine/generations/:id/approve`,
-  // `J5`, có audit). Trước đây gọi proxy SocialFlow `m07/posts/<id>/approve`
-  // với mã lượt sinh của core (SocialFlow không biết mã này), không kiểm
-  // `res.ok`, rồi LUÔN báo "đã đưa vào hàng đợi xuất bản" — báo thành công
-  // giả. Gửi sang Lịch đăng chưa nối (nợ kỹ thuật, xem TECHNICAL_DEBT.md).
-  async function handleApprovePost(post: MultichannelPostItem) {
-    if (!generationId) {
-      setNotification({ type: "error", message: "Chưa có lượt sinh bài nào để duyệt — hãy tạo bài trước." })
-      return
-    }
-    try {
-      const res = await fetch(`/api/v1/content-engine/generations/${encodeURIComponent(generationId)}/approve`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          posts: [{ channel: post.channel, text: post.bodyText, hashtags: post.hashtags }],
-        }),
-      })
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({}))
-        throw new Error(errJson.error?.message || `Lỗi máy chủ (${res.status}) khi duyệt bài`)
-      }
-      setNotification({
-        type: "success",
-        message: `Đã duyệt bài ${post.channelLabel}. Bài đã lưu ở trạng thái "Đã duyệt"; gửi sang Lịch đăng sẽ có ở bản sau.`,
-      })
-    } catch (err) {
-      setNotification({
-        type: "error",
-        message: `Chưa duyệt được bài ${post.channelLabel}: ${err instanceof Error ? err.message : "lỗi không xác định"}`,
-      })
-    }
-  }
-
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">
-      {/* Top Header */}
+      {/* ─── Header ─── */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-3.5">
         <div>
-          <div className="text-caption font-bold tracking-wider text-text-muted uppercase">Máy nội dung tiếp thị</div>
+          <div className="text-caption font-bold tracking-wider text-text-muted uppercase">
+            Máy nội dung tiếp thị
+          </div>
           <div className="text-title font-black text-primary flex items-center gap-2">
             <Sparkles size={18} />
             AI Content Engine — Cỗ Máy Nội Dung Đa Kênh
           </div>
         </div>
-
-        {/* Standardized Tab Action Header */}
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -363,318 +114,171 @@ function ContentEngineContent() {
         </div>
       </div>
 
-      {/* Main Content Area */}
+      {/* ─── Main ─── */}
       <div className="flex flex-1 flex-col overflow-y-auto p-6 max-w-5xl mx-auto w-full gap-5">
-        {/* Thông báo toast nếu có */}
-        {notification && (
+        {/* Toast */}
+        {generation.notification && (
           <div
-            className={`p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all ${
-              notification.type === "success"
+            className={`p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+              generation.notification.type === "success"
                 ? "bg-success/10 text-success border border-success/30"
                 : "bg-danger/10 text-danger border border-danger/30"
             }`}
           >
             <CheckCircle2 size={16} />
-            {notification.message}
+            {generation.notification.message}
           </div>
         )}
 
-        {/* Khối Chiến dịch Quảng bá Catalog nếu được mở từ Module M06 */}
-        {catalogSlug && (
-          <div className="p-4 rounded-2xl bg-surface-alt border border-primary/20 flex items-center justify-between shadow-xs">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
-                <Sparkles size={20} />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-extrabold text-text">
-                    Chiến dịch quảng bá Catalog: {catalogName || catalogSlug}
-                  </span>
-                  <Badge tone="accent">Nội dung → Lịch đăng</Badge>
-                </div>
-                <p className="text-xs text-text-muted mt-0.5">
-                  Bài viết đa kênh sinh ra sẽ tự động kèm liên kết đặt hoa trực tuyến: <code>/c/{catalogSlug}</code>
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Khối Hướng dẫn Thao tác SSOT (Chuẩn khung đỏ nét đứt) */}
         <ContentGuidanceCard />
 
-        {/* ================= PHASE 1: CHỌN SẢN PHẨM & CẤU HÌNH GÓC TIẾP CẬN ================= */}
-        {phase === "select" && (
+        {/* ═══ PHASE 1: ĐẦU VÀO ═══ */}
+        {generation.phase === "select" && (
           <div className="flex flex-col gap-5">
-            {/* 1. Chọn Sản phẩm từ Product Master */}
-            <Card className="border border-border bg-card p-5 shadow-sm flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-semibold text-text-muted">Bước 1: Chọn sản phẩm hoa</div>
-                  <div className="text-title-sm font-extrabold text-text">Dữ liệu từ Product Master</div>
-                </div>
-                <Badge tone="accent" className="text-xs">
-                  {products.length} sản phẩm sẵn sàng
-                </Badge>
+            {/* Toggle: Nguồn đầu vào */}
+            <Card className="border border-border bg-card p-1 shadow-sm">
+              <div className="grid grid-cols-2 gap-1">
+                {(["product", "upload"] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    aria-pressed={inputMode === mode}
+                    onClick={() => setInputMode(mode)}
+                    className={`flex items-center justify-center gap-2 rounded-xl py-3 px-4 text-xs font-bold transition-all ${
+                      inputMode === mode
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-text-muted hover:bg-surface hover:text-text"
+                    }`}
+                  >
+                    {mode === "product" ? <Database size={14} /> : <Upload size={14} />}
+                    {mode === "product" ? "Chọn từ kho sản phẩm" : "Tải ảnh sản phẩm mới"}
+                  </button>
+                ))}
               </div>
-
-              {isLoadingProducts ? (
-                <div className="py-4">
-                  <SkeletonBlock lines={3} label="Đang tải danh sách sản phẩm từ cơ sở dữ liệu..." />
-                </div>
-              ) : loadError ? (
-                <div className="py-6 text-center text-xs text-danger bg-danger/10 rounded-lg border border-danger/30 p-3">
-                  {loadError}
-                </div>
-              ) : products.length === 0 ? (
-                <div className="py-8 text-center text-xs text-text-muted bg-surface/50 rounded-lg p-4">
-                  Chưa có sản phẩm nào trong Product Master.
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 max-h-[280px] overflow-y-auto pr-1">
-                  {products.map((prod) => {
-                    const isSelected = prod.id === selectedProductId
-                    return (
-                      <button
-                        key={prod.id}
-                        type="button"
-                        aria-pressed={isSelected}
-                        onClick={() => setSelectedProductId(prod.id)}
-                        className={`text-left rounded-xl border p-3 transition flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                          isSelected
-                            ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
-                            : "border-border hover:border-text-muted bg-background"
-                        }`}
-                      >
-                        {prod.imageUrl ? (
-                          <img
-                            src={prod.imageUrl}
-                            alt={prod.name}
-                            className="w-12 h-12 rounded-lg object-cover border border-border flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-surface border border-border flex items-center justify-center text-xl flex-shrink-0">
-                            🌸
-                          </div>
-                        )}
-                        <div className="min-w-0 flex-1 flex flex-col gap-0.5">
-                          <div className="flex items-center justify-between">
-                            <span className="text-caption font-bold text-text-muted truncate">{prod.code || "SKU"}</span>
-                            <span className="text-caption font-bold text-primary">
-                              {prod.price ? `${prod.price.toLocaleString("vi-VN")}đ` : "Giá liên hệ"}
-                            </span>
-                          </div>
-                          <div className="text-xs font-bold text-text line-clamp-1">{prod.name}</div>
-                          <div className="text-caption text-text-muted line-clamp-1">
-                            {prod.flowers || ti.sampleProduct}
-                          </div>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
             </Card>
 
-            {/* 2. Chọn Kênh Phân Phối Đăng Bài */}
-            <Card className="border border-border bg-card p-5 shadow-sm flex flex-col gap-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            {/* 1A: Product Master */}
+            {inputMode === "product" && (
+              <ProductSelector
+                products={products}
+                selectedProductId={selectedProductId}
+                isLoading={isLoading}
+                loadError={loadError}
+                sampleProductLabel={ti.sampleProduct}
+                onSelect={setSelectedProductId}
+              />
+            )}
+
+            {/* 1B: Upload ảnh mới */}
+            {inputMode === "upload" && (
+              <Card className="border border-border bg-card p-5 shadow-sm flex flex-col gap-3">
                 <div>
-                  <div className="text-xs font-semibold text-text-muted">
-                    Bước 2: Chọn kênh phân phối bài đăng
-                  </div>
-                  <div className="text-title font-extrabold text-text">
-                    Lựa chọn nền tảng viết bài & xuất bản
+                  <div className="text-xs font-semibold text-text-muted">Bước 1: Tải ảnh sản phẩm</div>
+                  <div className="text-title-sm font-extrabold text-text">
+                    AI Vision sẽ tự phân tích & sinh nội dung
                   </div>
                 </div>
+                <ImageUploadTab
+                  state={uploadFlow.state}
+                  selectedChannels={selectedChannels}
+                  onFileSelected={uploadFlow.onFileSelected}
+                  onRunFlow={uploadFlow.runFlow}
+                  onReset={uploadFlow.reset}
+                />
+              </Card>
+            )}
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-text-muted">
-                    Đã chọn:{" "}
-                    <strong className="text-primary font-bold">
-                      {selectedChannels.length}/{CHANNELS_CONFIG.length} kênh
-                    </strong>
-                  </span>
-                  <div className="h-4 w-px bg-border hidden sm:block" />
-                  <button
-                    type="button"
-                    onClick={() => setSelectedChannels(CHANNELS_CONFIG.map((c) => c.id))}
-                    className="text-xs text-primary hover:underline font-semibold"
-                  >
-                    Chọn tất cả
-                  </button>
-                  <span className="text-xs text-text-muted">•</span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedChannels([])}
-                    className="text-xs text-text-muted hover:text-text font-semibold"
-                  >
-                    Bỏ chọn hết
-                  </button>
+            {/* 2: Chọn kênh */}
+            <ChannelSelector
+              selectedChannels={selectedChannels}
+              onToggle={(id) =>
+                setSelectedChannels((prev) =>
+                  prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+                )
+              }
+              onSelectAll={() => setSelectedChannels(CHANNELS_CONFIG.map((c) => c.id))}
+              onClearAll={() => setSelectedChannels([])}
+            />
+
+            {/* 3: CTA (chỉ Product mode) */}
+            {inputMode === "product" && (
+              <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="text-xs text-text-muted">
+                  {selectedChannels.length === 0 ? (
+                    <span className="text-warning font-semibold">
+                      ⚠️ Vui lòng chọn ít nhất 1 kênh.
+                    </span>
+                  ) : (
+                    <span>
+                      💡 Content Engine sẽ viết bài cho{" "}
+                      <strong>{selectedChannels.length} kênh</strong> đã chọn.
+                    </span>
+                  )}
                 </div>
-              </div>
-
-              {/* Grid 4 Kênh phân phối */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {CHANNELS_CONFIG.map((ch) => {
-                  const isChecked = selectedChannels.includes(ch.id)
-                  return (
-                    <button
-                      key={ch.id}
-                      type="button"
-                      aria-pressed={isChecked}
-                      onClick={() => toggleChannel(ch.id)}
-                      className={`text-left rounded-xl border p-4 transition-all flex flex-col justify-between gap-2 relative select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                        isChecked
-                          ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
-                          : "border-border hover:border-text-muted bg-background opacity-70 hover:opacity-100"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xl">{ch.icon}</span>
-                        <div
-                          className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                            isChecked
-                              ? "bg-primary border-primary text-white"
-                              : "border-border bg-surface"
-                          }`}
-                        >
-                          {isChecked && <Check size={13} strokeWidth={3} />}
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="text-xs font-bold text-text flex items-center gap-1.5">
-                          {ch.label}
-                        </div>
-                        <div className="text-caption text-text-muted line-clamp-2 mt-0.5 leading-snug">
-                          {ch.description}
-                        </div>
-                      </div>
-
-                      <div className="pt-2 border-t border-border/60 flex items-center justify-between w-full">
-                        <span className="text-caption font-semibold text-text-muted uppercase tracking-wider">
-                          {ch.tag}
-                        </span>
-                        <span
-                          className={`text-caption font-bold ${
-                            isChecked ? "text-primary" : "text-text-muted"
-                          }`}
-                        >
-                          {isChecked ? "Sẽ tạo & đăng" : "Bỏ qua"}
-                        </span>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            </Card>
-
-            {/* 3. Sinh bài viết bằng Content Engine (P27) */}
-            <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="text-xs text-text-muted">
-                {selectedChannels.length === 0 ? (
-                  <span className="text-warning font-semibold flex items-center gap-1">
-                    ⚠️ Vui lòng chọn ít nhất 1 kênh mạng xã hội ở trên để sinh bài viết.
-                  </span>
-                ) : (
-                  <span>
-                    💡 Content Engine sẽ viết bài cho <strong>{selectedChannels.length} kênh</strong> đã chọn (Strategist → Writer → Critic → Rewriter).
-                  </span>
-                )}
-              </div>
-              <Button
-                size="default"
-                onClick={handleGenerate}
-                disabled={selectedChannels.length === 0 || !selectedProduct}
-                className="w-full sm:w-auto gap-2 font-bold px-7 shadow-md whitespace-nowrap"
-              >
-                <Sparkles size={16} />
-                {selectedChannels.length === 0 ? "Chưa chọn kênh nào" : "Sinh bài bằng Content Engine"}
-              </Button>
-            </Card>
+                <Button
+                  size="default"
+                  onClick={generation.handleGenerate}
+                  disabled={selectedChannels.length === 0 || !selectedProduct}
+                  className="w-full sm:w-auto gap-2 font-bold px-7 shadow-md whitespace-nowrap"
+                >
+                  <Sparkles size={16} />
+                  {selectedChannels.length === 0 ? "Chưa chọn kênh nào" : "Sinh bài bằng Content Engine"}
+                </Button>
+              </Card>
+            )}
           </div>
         )}
 
-        {/* ================= PHASE 2: TIẾN TRÌNH XỬ LÝ (GENERATING) ================= */}
-        {phase === "generating" && (
+        {/* ═══ PHASE 2: ĐANG XỬ LÝ ═══ */}
+        {generation.phase === "generating" && (
           <div className="flex flex-col items-center justify-center py-12 gap-6">
-            <div className="text-center">
-              <div className="text-sm font-semibold text-primary animate-pulse">SocialFlow Engine đang xử lý...</div>
-              <div className="text-title font-black text-text mt-1">Đang soạn thảo nội dung tiếp thị ngành hoa</div>
-              <div className="text-xs text-text-muted mt-1">
-                Tự động tối ưu theo từng nền tảng & kiểm duyệt từ ngữ cấm
+            {inputMode === "product" && (
+              <div className="text-center">
+                <div className="text-sm font-semibold text-primary animate-pulse">
+                  Content Engine đang xử lý...
+                </div>
+                <div className="text-title font-black text-text mt-1">
+                  Đang soạn thảo nội dung tiếp thị đa kênh
+                </div>
               </div>
-            </div>
-
+            )}
             <div className="w-full max-w-md">
               <FlowSteps
-                steps={FLOW_STEPS}
-                currentStep={currentStep}
+                steps={inputMode === "product" ? FLOW_STEPS_PRODUCT : FLOW_STEPS_UPLOAD}
+                currentStep={generation.currentStep}
                 cancellable={false}
               />
             </div>
           </div>
         )}
 
-        {/* ================= PHASE 3: HIỂN THỊ & BIÊN TẬP TRỰC TIẾP ================= */}
-        {phase === "results" && generatedPosts.length > 0 && (
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-xs font-semibold text-text-muted">Kết quả từ Content Engine</span>
-                <h2 className="text-lg font-black text-text">Xem trước & Biên tập nội dung</h2>
-              </div>
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => setPhase("select")}
-                className="text-xs gap-1.5 shadow-xs"
-              >
-                <RefreshCw size={13} />
-                Viết bài mới
-              </Button>
-            </div>
-
-            {/* Thẻ hiển thị đa kênh kèm Live Preview & Atomic Fields */}
-            <MultichannelPostCard
-              posts={generatedPosts}
-              productName={selectedProduct?.name || ti.sampleProduct}
-              productImageUrl={selectedProduct?.imageUrl}
-              modelInfo={modelInfo}
-              criticScore={criticScore ?? undefined}
-              onUpdatePost={handleUpdatePost}
-              onSchedulePost={handleApprovePost}
-            />
-
-            {/* Gợi ý chuyển tiếp */}
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div>
-                <div className="text-xs font-bold text-primary flex items-center gap-1.5">
-                  <span>🚀</span> Bước tiếp theo: Xuất bản đa nền tảng
-                </div>
-                <div className="text-xs text-text-muted mt-0.5">
-                  Sau khi duyệt, bài viết sẽ tự động chuyển vào hàng đợi Social Publishing để lên lịch phát sóng tự động.
-                </div>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => router.push("/lich-dang" as never)}
-                className="text-xs gap-1.5 font-bold whitespace-nowrap"
-              >
-                Đến Lịch đăng bài
-                <Send size={13} />
-              </Button>
-            </div>
-          </div>
+        {/* ═══ PHASE 3: KẾT QUẢ ═══ */}
+        {generation.phase === "results" && generation.posts.length > 0 && (
+          <GenerationResults
+            posts={generation.posts}
+            productName={
+              inputMode === "upload"
+                ? (uploadFlow.state.fileName?.replace(/\.[^.]+$/, "") || "Sản phẩm tải lên")
+                : (selectedProduct?.name || ti.sampleProduct)
+            }
+            productImageUrl={
+              inputMode === "upload"
+                ? (uploadFlow.state.previewUrl ?? undefined)
+                : selectedProduct?.imageUrl
+            }
+            modelInfo={generation.modelInfo}
+            criticScore={generation.criticScore ?? undefined}
+            onUpdatePost={generation.handleUpdatePost}
+            onApprovePost={generation.handleApprovePost}
+            onReset={() => generation.setPhase("select")}
+          />
         )}
       </div>
 
       <FlowerContentStudioModal
         open={isStudioModalOpen}
         onOpenChange={setIsStudioModalOpen}
-        initialProductName={products.find((p) => p.id === selectedProductId)?.name}
+        initialProductName={selectedProduct?.name}
       />
     </div>
   )
@@ -682,7 +286,13 @@ function ContentEngineContent() {
 
 export default function ContentEnginePage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-xs text-text-muted">Đang tải xưởng nội dung AI...</div>}>
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs text-text-muted">
+          Đang tải xưởng nội dung AI...
+        </div>
+      }
+    >
       <ContentEngineContent />
     </Suspense>
   )
