@@ -78,8 +78,8 @@ const GROUP_1_TOOLS: readonly ToolDefinition[] = [
   {
     id: 5, name: "Tạo poster và banner quảng cáo",
     description: "Tạo bộ thiết kế quảng cáo nhiều kích thước theo dịp và chương trình",
-    icon: "Presentation", label: "BOTH", status: "PLANNED", progress: 0,
-    href: null, statusNote: "Chức năng mới hoàn toàn — chưa có code",
+    icon: "Presentation", label: "BOTH", status: "DONE", progress: 100,
+    href: "/cong-cu/poster-banner", statusNote: "Công cụ 05 — Provider Single-Call & Template Hybrid Engine",
   },
   {
     id: 6, name: "Tạo video giới thiệu sản phẩm",
