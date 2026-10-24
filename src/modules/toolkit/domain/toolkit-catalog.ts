@@ -61,7 +61,7 @@ const GROUP_1_TOOLS: readonly ToolDefinition[] = [
     id: 2, name: "Tạo bộ ảnh sản phẩm từ một ảnh gốc",
     description: "Sinh nhiều biến thể tỉ lệ, phong cách, góc chụp từ một ảnh",
     icon: "Images", label: "BOTH", status: "DONE", progress: 100,
-    href: "/creative-studio", statusNote: "M01b — Bộ ảnh đa tỉ lệ hoàn chỉnh",
+    href: "/cong-cu/bo-anh-san-pham", statusNote: "Công cụ 02 — Provider Single-Call Image Set Studio",
   },
   {
     id: 3, name: "Tạo thẻ chào sản phẩm",
