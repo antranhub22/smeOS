@@ -105,8 +105,8 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
   {
     id: 9, name: "Tạo catalog và bộ sưu tập",
     description: "Tổ chức sản phẩm theo danh mục với link chia sẻ và bộ lọc",
-    icon: "BookOpen", label: "STORE", status: "DONE", progress: 100,
-    href: "/catalog", statusNote: "Showroom số hóa cố định — quản lý danh mục bộ sưu tập & link chia sẻ",
+    icon: "BookOpen", label: "STORE", status: "IN_PROGRESS", progress: 60,
+    href: "/catalog", statusNote: "Đang phát triển — tách trang /catalog độc lập và hoàn thiện showroom số hóa",
   },
   {
     id: 10, name: "Tạo trang giới thiệu dịch vụ",
