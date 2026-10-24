@@ -11,11 +11,15 @@ import {
   MapPin,
   Save,
   CreditCard,
-  ShieldCheck,
   Cpu,
   Share2,
   Bell,
   Sparkles,
+  QrCode,
+  ShieldCheck,
+  Tag,
+  DollarSign,
+  Gift,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
@@ -25,10 +29,21 @@ import { LoadMockDataButton } from "@/components/profiles/load-mock-data-button"
 import { DispatchReminderPolicyCard } from "@/components/coordinator/dispatch-reminder-policy-card"
 import { ModelChangeCard } from "@/components/organization/model-change-card"
 import { calculateReadinessScore } from "@/modules/field-platform/domain/readiness-score-engine"
+import { BrochurePaymentSettings } from "@/components/greeting-card/admin/brochure-payment-settings"
+import { PaymentPolicySection } from "@/components/profiles/payment-policy-section"
+import { DepositLevelsSection } from "@/components/profiles/deposit-levels-section"
+import { PriceBudgetsSection } from "@/components/profiles/price-budgets-section"
+import { StorePoliciesEditor } from "@/components/profiles/store-policies-editor"
+import {
+  parseStorePolicies,
+  STORE_POLICIES_SETTINGS_KEY,
+  type StorePoliciesConfig,
+} from "@/modules/greeting-card/domain/store-policy"
+import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import Link from "next/link"
 import type { Route } from "next"
 
-type SettingsTab = "GENERAL" | "PAYMENT_POLICY" | "AI_INTEGRATION" | "COORDINATION"
+type SettingsTab = "GENERAL" | "PAYMENT_BANK" | "POLICIES_VOUCHER" | "AI_INTEGRATION" | "COORDINATION"
 
 export default function CaiDatTiemPage() {
   const { orgName, can } = useSession()
@@ -49,6 +64,34 @@ export default function CaiDatTiemPage() {
   const [address, setAddress] = useState("")
   const [openingHours, setOpeningHours] = useState("07:30 - 21:30")
   const [formDirty, setFormDirty] = useState(false)
+
+  // API load policies
+  const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
+  const [savingPolicies, setSavingPolicies] = useState(false)
+  const industryKey = typeof org.data?.settings?.industry === "string" ? org.data.settings.industry : null
+  const policies = org.data ? parseStorePolicies(org.data.settings, industryKey) : null
+
+  async function handleSavePolicies(updatedPolicies: StorePoliciesConfig): Promise<boolean> {
+    setSavingPolicies(true)
+    try {
+      await apiSend(
+        "/api/v1/organizations/current",
+        "PATCH",
+        {
+          settings: {
+            [STORE_POLICIES_SETTINGS_KEY]: updatedPolicies,
+          },
+        },
+        "Không lưu được chính sách & cam kết"
+      )
+      await org.mutate()
+      return true
+    } catch {
+      return false
+    } finally {
+      setSavingPolicies(false)
+    }
+  }
 
   useEffect(() => {
     if (business) {
@@ -113,7 +156,7 @@ export default function CaiDatTiemPage() {
             </span>
           </div>
           <p className="text-xs text-text-muted mt-1">
-            Quản lý thông số nền tảng, thanh toán, chính sách dịch vụ và kết nối hệ thống.
+            Trung tâm quản lý toàn bộ thông số, tài khoản nhận tiền, chính sách cọc, ưu đãi và cam kết của cửa hàng.
           </p>
         </div>
 
@@ -163,15 +206,28 @@ export default function CaiDatTiemPage() {
 
         <button
           type="button"
-          onClick={() => setActiveTab("PAYMENT_POLICY")}
+          onClick={() => setActiveTab("PAYMENT_BANK")}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-            activeTab === "PAYMENT_POLICY"
+            activeTab === "PAYMENT_BANK"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
-          <CreditCard size={15} />
-          <span>Thanh Toán & Chính Sách</span>
+          <QrCode size={15} />
+          <span>Tài Khoản & Thanh Toán</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("POLICIES_VOUCHER")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "POLICIES_VOUCHER"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-text-muted hover:text-text hover:bg-background"
+          }`}
+        >
+          <ShieldCheck size={15} />
+          <span>Ưu Đãi & Chính Sách Bán</span>
         </button>
 
         <button
@@ -184,7 +240,7 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <Cpu size={15} />
-          <span>Trợ Lý AI & Kênh Kết Nối</span>
+          <span>Trợ Lý AI & Kênh</span>
         </button>
 
         <button
@@ -197,11 +253,11 @@ export default function CaiDatTiemPage() {
           }`}
         >
           <Bell size={15} />
-          <span>Vận Hành & Điều Phối</span>
+          <span>Vận Hành</span>
         </button>
       </div>
 
-      {/* 3. Nội dung chi tiết theo từng Tab */}
+      {/* 3. Nội dung chi tiết trực tiếp trong trang Cài Đặt */}
 
       {/* TAB 1: THÔNG TIN CƠ BẢN */}
       {activeTab === "GENERAL" && (
@@ -249,7 +305,7 @@ export default function CaiDatTiemPage() {
                     />
                   </div>
 
-                  {/* Lĩnh vực hoạt động */}
+                  {/* Ngành nghề */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-text flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
@@ -345,33 +401,44 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* TAB 2: THANH TOÁN & CHÍNH SÁCH */}
-      {activeTab === "PAYMENT_POLICY" && (
-        <div className="flex flex-col gap-5">
+      {/* TAB 2: TÀI KHOẢN & THANH TOÁN (Trực tiếp, không redirect) */}
+      {activeTab === "PAYMENT_BANK" && (
+        <div className="flex flex-col gap-6">
+          {/* Cài đặt tài khoản ngân hàng & VietQR */}
+          <BrochurePaymentSettings />
+          
+          {/* Chính sách thanh toán & tỷ lệ cọc */}
+          <PaymentPolicySection />
+          <DepositLevelsSection />
+          <PriceBudgetsSection />
+        </div>
+      )}
+
+      {/* TAB 3: ƯU ĐÃI & CHÍNH SÁCH BÁN (Trực tiếp, không redirect) */}
+      {activeTab === "POLICIES_VOUCHER" && (
+        <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
             <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
-              <CreditCard size={18} className="text-primary" /> Hồ Sơ & Chính Sách Bán Hàng
+              <ShieldCheck size={18} className="text-primary" /> Quản Lý Ưu Đãi, Cam Kết & Chính Sách Shop
             </h2>
             <p className="text-xs text-text-muted mb-4">
-              Cài đặt tài khoản nhận tiền, tỷ lệ cọc, mã ưu đãi và quy định hoàn hủy theo chuẩn kế thừa.
+              Chỉnh sửa trực tiếp danh sách mã giảm giá, cam kết chất lượng, bảo hành và chính sách đổi trả của cửa hàng.
             </p>
-            <div className="p-4 rounded-xl bg-background border border-border flex items-center justify-between">
-              <div>
-                <div className="text-xs font-bold text-text">Hồ sơ thanh toán, mã voucher & cam kết</div>
-                <div className="text-caption text-text-muted">Quản lý sâu tại phân hệ Hồ sơ cửa hàng</div>
-              </div>
-              <Link
-                href={"/ho-so" as Route}
-                className="px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity"
-              >
-                Mở Hồ Sơ & Chính Sách
-              </Link>
-            </div>
+
+            {policies ? (
+              <StorePoliciesEditor
+                initialPolicies={policies}
+                onSave={handleSavePolicies}
+                saving={savingPolicies || org.isLoading}
+              />
+            ) : (
+              <p className="text-xs text-text-muted py-4">Đang tải cấu hình chính sách & ưu đãi...</p>
+            )}
           </div>
         </div>
       )}
 
-      {/* TAB 3: TRỢ LÝ AI & KÊNH KẾT NỐI */}
+      {/* TAB 4: TRỢ LÝ AI & KÊNH KẾT NỐI */}
       {activeTab === "AI_INTEGRATION" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between">
@@ -412,7 +479,7 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* TAB 4: VẬN HÀNH & ĐIỀU PHỐI */}
+      {/* TAB 5: VẬN HÀNH & ĐIỀU PHỐI */}
       {activeTab === "COORDINATION" && (
         <div className="flex flex-col gap-6">
           <DispatchReminderPolicyCard canEdit={can("R12")} />
