@@ -17,9 +17,9 @@ import {
   Sparkles,
   QrCode,
   ShieldCheck,
-  Tag,
-  DollarSign,
   Gift,
+  FileText,
+  DollarSign,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
@@ -43,7 +43,16 @@ import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import Link from "next/link"
 import type { Route } from "next"
 
-type SettingsTab = "GENERAL" | "PAYMENT_BANK" | "POLICIES_VOUCHER" | "AI_INTEGRATION" | "COORDINATION"
+// Flat, clear categories for settings
+type SettingsTab =
+  | "INFO"          // Thông tin tiệm
+  | "PAYMENT"       // Tài khoản & VietQR
+  | "PROMOTIONS"    // Ưu đãi & Giảm giá
+  | "COMMITMENTS"   // Cam kết chất lượng
+  | "AGREEMENTS"    // Thỏa thuận đặt hàng
+  | "DEPOSIT"       // Mức đặt cọc & Giá
+  | "AI_CHANNELS"   // AI & Mạng xã hội
+  | "OPERATIONS"    // Vận hành điều phối
 
 export default function CaiDatTiemPage() {
   const { orgName, can } = useSession()
@@ -58,7 +67,7 @@ export default function CaiDatTiemPage() {
     saveBusiness,
   } = useTenantProfile()
 
-  const [activeTab, setActiveTab] = useState<SettingsTab>("GENERAL")
+  const [activeTab, setActiveTab] = useState<SettingsTab>("INFO")
   const [displayName, setDisplayName] = useState("")
   const [phone, setPhone] = useState("")
   const [address, setAddress] = useState("")
@@ -156,7 +165,7 @@ export default function CaiDatTiemPage() {
             </span>
           </div>
           <p className="text-xs text-text-muted mt-1">
-            Trung tâm quản lý toàn bộ thông số, tài khoản nhận tiền, chính sách cọc, ưu đãi và cam kết của cửa hàng.
+            Trung tâm quản lý phẳng: chọn trực tiếp mục bạn muốn thiết lập bên dưới.
           </p>
         </div>
 
@@ -189,78 +198,117 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* 2. Thanh điều hướng ngang (Segmented Tabs) */}
+      {/* 2. Thanh Tabs phẳng tách rời hoàn toàn từng mục riêng biệt */}
       <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface border border-border overflow-x-auto">
         <button
           type="button"
-          onClick={() => setActiveTab("GENERAL")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-            activeTab === "GENERAL"
+          onClick={() => setActiveTab("INFO")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "INFO"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
           <Store size={15} />
-          <span>Thông Tin Cửa Hàng</span>
+          <span>1. Thông Tin Tiệm</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab("PAYMENT_BANK")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-            activeTab === "PAYMENT_BANK"
+          onClick={() => setActiveTab("PAYMENT")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "PAYMENT"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
           <QrCode size={15} />
-          <span>Tài Khoản & Thanh Toán</span>
+          <span>2. Tài Khoản & VietQR</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab("POLICIES_VOUCHER")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-            activeTab === "POLICIES_VOUCHER"
+          onClick={() => setActiveTab("PROMOTIONS")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "PROMOTIONS"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-text-muted hover:text-text hover:bg-background"
+          }`}
+        >
+          <Gift size={15} />
+          <span>3. Ưu Đãi ({policies?.promotions.length ?? 0})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("COMMITMENTS")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "COMMITMENTS"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
           <ShieldCheck size={15} />
-          <span>Ưu Đãi & Chính Sách Bán</span>
+          <span>4. Cam Kết ({policies?.commitments.length ?? 0})</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab("AI_INTEGRATION")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-            activeTab === "AI_INTEGRATION"
+          onClick={() => setActiveTab("AGREEMENTS")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "AGREEMENTS"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-text-muted hover:text-text hover:bg-background"
+          }`}
+        >
+          <FileText size={15} />
+          <span>5. Thỏa Thuận ({policies?.agreements.length ?? 0})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("DEPOSIT")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "DEPOSIT"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-text-muted hover:text-text hover:bg-background"
+          }`}
+        >
+          <DollarSign size={15} />
+          <span>6. Đặt Cọc & Giá</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("AI_CHANNELS")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "AI_CHANNELS"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
           <Cpu size={15} />
-          <span>Trợ Lý AI & Kênh</span>
+          <span>7. Trợ Lý AI & Mạng Xã Hội</span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab("COORDINATION")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-            activeTab === "COORDINATION"
+          onClick={() => setActiveTab("OPERATIONS")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            activeTab === "OPERATIONS"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-text-muted hover:text-text hover:bg-background"
           }`}
         >
           <Bell size={15} />
-          <span>Vận Hành</span>
+          <span>8. Vận Hành</span>
         </button>
       </div>
 
-      {/* 3. Nội dung chi tiết trực tiếp trong trang Cài Đặt */}
+      {/* 3. Nội dung chi tiết hiển thị phẳng theo mục đang chọn */}
 
-      {/* TAB 1: THÔNG TIN CƠ BẢN */}
-      {activeTab === "GENERAL" && (
+      {/* MỤC 1: THÔNG TIN TIỆM */}
+      {activeTab === "INFO" && (
         <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
             <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -388,7 +436,7 @@ export default function CaiDatTiemPage() {
                       className="text-xs font-bold gap-1.5 shadow-xs"
                     >
                       <Save size={13} />
-                      {saving ? "Đang lưu..." : "Lưu thay đổi"}
+                      {saving ? "Đang lưu..." : "Lưu thông tin"}
                     </Button>
                   </div>
                 )}
@@ -396,33 +444,26 @@ export default function CaiDatTiemPage() {
             )}
           </div>
 
-          {/* Mô hình chuỗi / cửa hàng */}
           <ModelChangeCard />
         </div>
       )}
 
-      {/* TAB 2: TÀI KHOẢN & THANH TOÁN (Trực tiếp, không redirect) */}
-      {activeTab === "PAYMENT_BANK" && (
+      {/* MỤC 2: TÀI KHOẢN NGÂN HÀNG & VIETQR */}
+      {activeTab === "PAYMENT" && (
         <div className="flex flex-col gap-6">
-          {/* Cài đặt tài khoản ngân hàng & VietQR */}
           <BrochurePaymentSettings />
-          
-          {/* Chính sách thanh toán & tỷ lệ cọc */}
-          <PaymentPolicySection />
-          <DepositLevelsSection />
-          <PriceBudgetsSection />
         </div>
       )}
 
-      {/* TAB 3: ƯU ĐÃI & CHÍNH SÁCH BÁN (Trực tiếp, không redirect) */}
-      {activeTab === "POLICIES_VOUCHER" && (
+      {/* MỤC 3: ƯU ĐÃI & GIẢM GIÁ */}
+      {activeTab === "PROMOTIONS" && (
         <div className="flex flex-col gap-6">
           <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
             <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
-              <ShieldCheck size={18} className="text-primary" /> Quản Lý Ưu Đãi, Cam Kết & Chính Sách Shop
+              <Gift size={18} className="text-primary" /> Danh Mục Ưu Đãi & Khuyến Mãi (Khách chọn khi đặt hàng)
             </h2>
             <p className="text-xs text-text-muted mb-4">
-              Chỉnh sửa trực tiếp danh sách mã giảm giá, cam kết chất lượng, bảo hành và chính sách đổi trả của cửa hàng.
+              Cửa hàng có thể thiết lập giảm % đơn hàng, miễn phí vận chuyển hoặc quà tặng kèm.
             </p>
 
             {policies ? (
@@ -432,14 +473,71 @@ export default function CaiDatTiemPage() {
                 saving={savingPolicies || org.isLoading}
               />
             ) : (
-              <p className="text-xs text-text-muted py-4">Đang tải cấu hình chính sách & ưu đãi...</p>
+              <p className="text-xs text-text-muted py-4">Đang tải danh mục ưu đãi...</p>
             )}
           </div>
         </div>
       )}
 
-      {/* TAB 4: TRỢ LÝ AI & KÊNH KẾT NỐI */}
-      {activeTab === "AI_INTEGRATION" && (
+      {/* MỤC 4: CAM KẾT CHẤT LƯỢNG */}
+      {activeTab === "COMMITMENTS" && (
+        <div className="flex flex-col gap-6">
+          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
+            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
+              <ShieldCheck size={18} className="text-primary" /> Cam Kết Chất Lượng Của Cửa Hàng
+            </h2>
+            <p className="text-xs text-text-muted mb-4">
+              Hiển thị minh bạch với khách hàng: gửi ảnh trước khi giao, cam kết độ tươi mới, đổi trả miễn phí.
+            </p>
+
+            {policies ? (
+              <StorePoliciesEditor
+                initialPolicies={policies}
+                onSave={handleSavePolicies}
+                saving={savingPolicies || org.isLoading}
+              />
+            ) : (
+              <p className="text-xs text-text-muted py-4">Đang tải danh mục cam kết...</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* MỤC 5: THỎA THUẬN ĐẶT HÀNG */}
+      {activeTab === "AGREEMENTS" && (
+        <div className="flex flex-col gap-6">
+          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
+            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
+              <FileText size={18} className="text-primary" /> Thỏa Thuận & Quy Định Khi Đặt Hàng
+            </h2>
+            <p className="text-xs text-text-muted mb-4">
+              Các điều khoản cần khách hàng đọc và đồng ý trước khi chốt đơn (thay thế hoa theo mùa, phụ thu giờ cao điểm...).
+            </p>
+
+            {policies ? (
+              <StorePoliciesEditor
+                initialPolicies={policies}
+                onSave={handleSavePolicies}
+                saving={savingPolicies || org.isLoading}
+              />
+            ) : (
+              <p className="text-xs text-text-muted py-4">Đang tải danh mục thỏa thuận...</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* MỤC 6: ĐẶT CỌC & GIÁ */}
+      {activeTab === "DEPOSIT" && (
+        <div className="flex flex-col gap-6">
+          <PaymentPolicySection />
+          <DepositLevelsSection />
+          <PriceBudgetsSection />
+        </div>
+      )}
+
+      {/* MỤC 7: TRỢ LÝ AI & KÊNH MẠNG XÃ HỘI */}
+      {activeTab === "AI_CHANNELS" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between">
             <div>
@@ -479,8 +577,8 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* TAB 5: VẬN HÀNH & ĐIỀU PHỐI */}
-      {activeTab === "COORDINATION" && (
+      {/* MỤC 8: VẬN HÀNH & ĐIỀU PHỐI */}
+      {activeTab === "OPERATIONS" && (
         <div className="flex flex-col gap-6">
           <DispatchReminderPolicyCard canEdit={can("R12")} />
         </div>
