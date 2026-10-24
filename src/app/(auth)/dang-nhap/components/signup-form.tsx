@@ -65,8 +65,8 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
         setLoi(data?.error?.message ?? "Đăng ký thất bại — vui lòng thử lại sau")
         return
       }
-      router.push("/")
-      router.refresh()
+      // Approval Gate: chuyển sang trang chờ duyệt thay vì vào app ngay.
+      router.push("/dang-ky-thanh-cong")
     } catch {
       setLoi("Không kết nối được máy chủ — vui lòng kiểm tra kết nối mạng")
     } finally {

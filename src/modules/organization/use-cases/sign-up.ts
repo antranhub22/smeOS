@@ -10,16 +10,14 @@ import {
   TRIAL_CREDIT_BALANCE,
   TRIAL_LIMIT,
 } from "@/modules/organization/domain/experience"
-import { expiresAt } from "@/modules/organization/domain/session-policy"
 import { slugCandidates } from "@/modules/organization/domain/slug"
 import { FOUNDER_ROLE_KEY } from "@/modules/organization/domain/system-roles"
 import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
+import { RegistrationRequestRepository } from "@/modules/organization/infra/registration-request-repository"
 import { RoleRepository } from "@/modules/organization/infra/role-repository"
-import { SessionRepository } from "@/modules/organization/infra/session-repository"
 import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
-import { hashSessionToken, newSessionToken } from "@/modules/organization/infra/session-token"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
 import { UserRepository } from "@/modules/organization/infra/user-repository"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
@@ -36,20 +34,23 @@ export type SignUpInput = {
 }
 
 export type SignUpResult = {
-  token: string
+  /** Đơn đăng ký đang chờ Super Admin duyệt — không tạo session. */
+  status: "PENDING_APPROVAL"
   userId: string
   organizationId: string
 }
 
 /**
- * Đăng ký tạo người dùng **và** tổ chức trải nghiệm của họ (đặc tả 06 mục 3).
+ * Đăng ký tạo người dùng **và** tổ chức — tài khoản ở trạng thái CHỜ DUYỆT.
  *
- * Người mở tổ chức nhận vai `dieu_hanh`: họ điều hành chính tổ chức mình vừa
- * tạo. Vai `experience_user` dành cho người được mời vào một workspace trải
- * nghiệm sẵn có, và luồng mời thuộc P2.
+ * Luồng Approval Gate (giai đoạn thử nghiệm beta):
+ * - Membership của Founder được tạo với status = INVITED (chưa active).
+ * - Bản ghi `registration_requests` được tạo với status = PENDING.
+ * - KHÔNG tạo session — user phải đăng nhập lại sau khi được duyệt.
+ * - Super Admin vào /van-hanh → tab Đăng ký mới → duyệt → membership → ACTIVE.
  *
- * Cả năm bản ghi — user, organization, workspace, membership, session — nằm
- * trong một giao dịch. Giao dịch hỏng thì không sinh ra tổ chức mồ côi.
+ * Cả bốn bản ghi (user, org, workspace, membership, registration_request) trong
+ * một giao dịch — giao dịch hỏng thì không sinh ra org mồ côi.
  */
 export async function signUp(input: SignUpInput): Promise<SignUpResult> {
   const email = normalizeEmail(input.email)
@@ -65,8 +66,6 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
   // Băm trước khi mở giao dịch: bcrypt cố ý chậm, giữ giao dịch mở trong lúc
   // băm là giữ khoá cơ sở dữ liệu không vì lý do gì.
   const passwordHash = await hashPassword(input.password)
-  const now = new Date()
-  const token = newSessionToken()
 
   return runInTransaction(async (tx) => {
     const users = new UserRepository(tx)
@@ -74,7 +73,7 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
     const workspaces = new WorkspaceRepository(tx)
     const roles = new RoleRepository(tx)
     const memberships = new MembershipRepository(tx)
-    const sessions = new SessionRepository(tx)
+    const registrations = new RegistrationRequestRepository(tx)
 
     if (await users.findByEmail(email)) {
       throw conflict("Địa chỉ thư này đã có tài khoản")
@@ -105,7 +104,7 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       credit_balance: TRIAL_CREDIT_BALANCE,
       settings: {
         industry: chosenIndustry,
-        industry_locked: true, // Khóa đổi ngành ngay sau khi chọn ban đầu
+        industry_locked: true,
         brochure_workflow_policy: {
           require_coordinator_acceptance: isChain,
         },
@@ -120,7 +119,13 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       trial_status: "ACTIVE",
     })
 
-    await new OccasionRepository(tx).seedDefault({ organizationId: organization.id, workspaceId: workspace.id, userId: user.id, branchId: null, capabilities: new Set<string>() })
+    await new OccasionRepository(tx).seedDefault({
+      organizationId: organization.id,
+      workspaceId: workspace.id,
+      userId: user.id,
+      branchId: null,
+      capabilities: new Set<string>(),
+    })
     if (input.seedProfile) {
       await seedExperienceMasterProfile(tx, organization.id, chosenIndustry)
     }
@@ -133,21 +138,25 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       )
     }
 
+    // Approval Gate: membership ở trạng thái INVITED cho đến khi Super Admin duyệt.
     await memberships.createForNewOrganization({
       organizationId: organization.id,
       userId: user.id,
       roleId: founderRole.id,
-      status: "ACTIVE",
-      joinedAt: now,
+      status: "INVITED",
+      joinedAt: null,
     })
 
-    await sessions.create({
-      user_id: user.id,
-      token_hash: hashSessionToken(token),
-      organization_id: organization.id,
-      expires_at: expiresAt(now),
+    // Tạo đơn đăng ký chờ duyệt.
+    await registrations.create({
+      organizationId: organization.id,
+      userId: user.id,
+      applicantEmail: email,
+      applicantName: input.name?.trim() ?? null,
+      orgName: organizationName,
+      industryKey: chosenIndustry,
     })
 
-    return { token, userId: user.id, organizationId: organization.id }
+    return { status: "PENDING_APPROVAL" as const, userId: user.id, organizationId: organization.id }
   })
 }

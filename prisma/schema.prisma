@@ -97,7 +97,8 @@ model users {
   sessions    sessions[]
 
   // Console Vận hành Nền tảng (P25) — độc lập với memberships, xem mục cuối tệp
-  platform_operator platform_operators?
+  platform_operator     platform_operators?
+  registration_requests registration_requests[]
 }
 
 model sessions {
@@ -195,6 +196,7 @@ model organizations {
   greeting_share_links    greeting_share_links[]
   greeting_message_reads  greeting_message_reads[]
   staff_notifications     staff_notifications[]
+  registration_request    registration_requests?
 }
 
 model workspaces {
@@ -2916,4 +2918,33 @@ model greeting_journey_events {
   session      greeting_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, session_id])
+}
+
+/// Đơn đăng ký tài khoản cửa hàng — chờ Super Admin duyệt trước khi
+/// tổ chức có thể sử dụng hệ thống. Mỗi tổ chức có đúng một đơn.
+/// Khi duyệt: membership.status của Founder chuyển INVITED → ACTIVE.
+model registration_requests {
+  id              String              @id @default(uuid())
+  organization_id String              @unique
+  user_id         String              // Founder (người đăng ký)
+  applicant_email String              // email lưu tại thời điểm đăng ký
+  applicant_name  String?             // tên tuỳ chọn
+  org_name        String              // tên tổ chức tại thời điểm đăng ký
+  industry_key    String?
+  status          registration_status @default(PENDING)
+  reviewer_id     String?             // user_id của platform_operator duyệt
+  review_note     String?
+  submitted_at    DateTime            @default(now())
+  reviewed_at     DateTime?
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user         users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([status, submitted_at])
+}
+
+enum registration_status {
+  PENDING
+  APPROVED
+  REJECTED
 }
