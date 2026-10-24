@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import {
   Palette,
   AlertCircle,
@@ -33,7 +34,33 @@ import {
 } from "@/modules/greeting-card/domain/store-policy"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 
-export default function CaiDatTiemPage() {
+const VALID_TABS: SettingsTab[] = [
+  "INFO",
+  "BRANDING",
+  "PAYMENT",
+  "DEPOSIT",
+  "PROMOTIONS",
+  "COMMITMENTS",
+  "AGREEMENTS",
+  "BROCHURE_FLOW",
+  "AI_CHANNELS",
+]
+
+function CaiDatTiemContent() {
+  const searchParams = useSearchParams()
+  const tabParam = searchParams.get("tab") as SettingsTab | null
+
+  const [activeTab, setActiveTab] = useState<SettingsTab>(() => {
+    if (tabParam && VALID_TABS.includes(tabParam)) return tabParam
+    return "INFO"
+  })
+
+  useEffect(() => {
+    if (tabParam && VALID_TABS.includes(tabParam)) {
+      setActiveTab(tabParam)
+    }
+  }, [tabParam])
+
   const {
     business,
     brand,
@@ -44,8 +71,6 @@ export default function CaiDatTiemPage() {
     saveBusiness,
     saveBrand,
   } = useTenantProfile()
-
-  const [activeTab, setActiveTab] = useState<SettingsTab>("INFO")
 
   // API load policies
   const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
@@ -145,7 +170,7 @@ export default function CaiDatTiemPage() {
         </div>
       )}
 
-      {/* 2. Thanh Tabs All-In-One phẳng tách rời hoàn toàn từng mục riêng biệt */}
+      {/* 2. Thanh Tabs All-In-One */}
       <SettingsTabsNav
         activeTab={activeTab}
         onSelectTab={setActiveTab}
@@ -299,5 +324,19 @@ export default function CaiDatTiemPage() {
       {/* MỤC 9: TRỢ LÝ AI & KÊNH MẠNG XÃ HỘI */}
       {activeTab === "AI_CHANNELS" && <AiChannelsSettingsTab />}
     </div>
+  )
+}
+
+export default function CaiDatTiemPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-6 max-w-5xl mx-auto w-full">
+          <SkeletonBlock lines={4} label="Đang tải Hồ sơ & Cài đặt..." />
+        </div>
+      }
+    >
+      <CaiDatTiemContent />
+    </Suspense>
   )
 }
