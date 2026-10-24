@@ -55,7 +55,7 @@ const GROUP_1_TOOLS: readonly ToolDefinition[] = [
     id: 1, name: "Tạo ảnh sản phẩm chuyên nghiệp",
     description: "Biến ảnh chụp thô thành ảnh sản phẩm chuẩn studio bằng AI",
     icon: "Camera", label: "BOTH", status: "DONE", progress: 100,
-    href: "/tai-anh", statusNote: "M01a — Creative Studio pipeline hoàn chỉnh",
+    href: "/cong-cu/anh-san-pham", statusNote: "Công cụ 01 — Provider Single-Call Studio",
   },
   {
     id: 2, name: "Tạo bộ ảnh sản phẩm từ một ảnh gốc",

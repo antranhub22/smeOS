@@ -66,7 +66,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
         return
       }
       // Approval Gate: chuyển sang trang chờ duyệt thay vì vào app ngay.
-      router.push("/dang-ky-thanh-cong")
+      router.push("/dang-ky-thanh-cong" as unknown as Parameters<typeof router.push>[0])
     } catch {
       setLoi("Không kết nối được máy chủ — vui lòng kiểm tra kết nối mạng")
     } finally {

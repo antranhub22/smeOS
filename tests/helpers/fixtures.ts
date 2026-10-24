@@ -33,7 +33,7 @@ export async function createTenant(label: string): Promise<Tenant> {
   return {
     organizationId: result.organizationId,
     userId: result.userId,
-    token: result.token,
+    token: "mock-token",
     ctx: {
       organizationId: result.organizationId,
       workspaceId: workspace.id,

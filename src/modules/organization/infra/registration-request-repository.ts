@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import type { registration_requests, registration_status } from "@/generated/prisma"
+import type { registration_requests, registration_status } from "@/generated/prisma/client"
 import type { DbClient } from "./db-client"
 
 export type { registration_requests }

@@ -6,7 +6,7 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { RegistrationRequestRepository } from "@/modules/organization/infra/registration-request-repository"
-import type { registration_status } from "@/generated/prisma"
+import type { registration_status } from "@/generated/prisma/client"
 
 const querySchema = z.object({
   status: z.enum(["PENDING", "APPROVED", "REJECTED", "all"]).default("all"),
