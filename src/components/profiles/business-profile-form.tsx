@@ -564,7 +564,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             <Clock size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text">Khung giờ mở cửa & Giao hoa</h3>
+            <h3 className="text-sm font-bold text-text">Khung giờ mở cửa & Giao hàng</h3>
             <p className="text-xs text-text-muted">Hiển thị trên thông tin đặt hàng và trả lời tự động</p>
           </div>
         </div>

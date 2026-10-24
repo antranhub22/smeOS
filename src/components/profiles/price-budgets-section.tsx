@@ -24,7 +24,7 @@ const toNum = (v: string): number | null => {
 const fmt = (n: number | null) => (n === null ? "" : n.toLocaleString("vi-VN"))
 
 /**
- * Khoảng giá lọc nhanh mẫu hoa (Điều hành tự đặt). Dùng ở "Lọc nhanh mẫu hoa",
+ * Khoảng giá lọc nhanh sản phẩm / mẫu (Điều hành tự đặt). Dùng ở "Lọc nhanh sản phẩm",
  * "Tạo bộ sưu tập nhanh" và "Tư vấn theo ngân sách". Khoảng tính từ giá "Từ"
  * đến dưới giá "Đến"; để trống "Đến" = không giới hạn.
  */
