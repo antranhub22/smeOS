@@ -471,6 +471,8 @@ export default function CaiDatTiemPage() {
                 initialPolicies={policies}
                 onSave={handleSavePolicies}
                 saving={savingPolicies || org.isLoading}
+                initialSection="promo"
+                hideSubTabs={true}
               />
             ) : (
               <p className="text-xs text-text-muted py-4">Đang tải danh mục ưu đãi...</p>
@@ -495,6 +497,8 @@ export default function CaiDatTiemPage() {
                 initialPolicies={policies}
                 onSave={handleSavePolicies}
                 saving={savingPolicies || org.isLoading}
+                initialSection="commit"
+                hideSubTabs={true}
               />
             ) : (
               <p className="text-xs text-text-muted py-4">Đang tải danh mục cam kết...</p>
@@ -519,6 +523,8 @@ export default function CaiDatTiemPage() {
                 initialPolicies={policies}
                 onSave={handleSavePolicies}
                 saving={savingPolicies || org.isLoading}
+                initialSection="agree"
+                hideSubTabs={true}
               />
             ) : (
               <p className="text-xs text-text-muted py-4">Đang tải danh mục thỏa thuận...</p>

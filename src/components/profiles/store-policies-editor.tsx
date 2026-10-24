@@ -19,9 +19,18 @@ interface Props {
   onSave: (policies: StorePoliciesConfig) => Promise<boolean>
   saving: boolean
   industryKey?: string | null | undefined
+  initialSection?: "promo" | "commit" | "agree" | undefined
+  hideSubTabs?: boolean | undefined
 }
 
-export function StorePoliciesEditor({ initialPolicies, onSave, saving, industryKey }: Props) {
+export function StorePoliciesEditor({
+  initialPolicies,
+  onSave,
+  saving,
+  industryKey,
+  initialSection = "promo",
+  hideSubTabs = false,
+}: Props) {
   const defaultPromos = getIndustryDefaultPromotions(industryKey)
   const defaultCommits = getIndustryDefaultCommitments(industryKey)
   const defaultAgrees = getIndustryDefaultAgreements(industryKey)
@@ -30,8 +39,13 @@ export function StorePoliciesEditor({ initialPolicies, onSave, saving, industryK
   const [commitments, setCommitments] = useState<CommitmentItem[]>(initialPolicies?.commitments ?? defaultCommits)
   const [agreements, setAgreements] = useState<AgreementItem[]>(initialPolicies?.agreements ?? defaultAgrees)
   const [intakeCta, setIntakeCta] = useState(() => initialPolicies?.intakePromotionCta ?? { enabled: true, percent: 10 })
-  const [activeSection, setActiveSection] = useState<"promo" | "commit" | "agree">("promo")
+  const [activeSection, setActiveSection] = useState<"promo" | "commit" | "agree">(initialSection)
   const [saveSuccess, setSaveSuccess] = useState(false)
+
+  // Sync activeSection when initialSection changes from outside
+  React.useEffect(() => {
+    setActiveSection(initialSection)
+  }, [initialSection])
 
   const handleResetDefaults = () => {
     if (!window.confirm("Khôi phục danh sách Ưu đãi, Cam kết và Thỏa thuận về mặc định theo ngành?")) return
@@ -78,40 +92,51 @@ export function StorePoliciesEditor({ initialPolicies, onSave, saving, industryK
 
   return (
     <div className="space-y-6">
-      {/* Thanh chuyển đổi Section */}
+      {/* Thanh chuyển đổi Section (ẩn nếu parent đã có Tab riêng) */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-surface p-4 rounded-2xl border border-border shadow-xs">
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setActiveSection("promo")}
-            className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
-              activeSection === "promo" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
-            }`}
-          >
-            <Gift size={16} />
-            <span>A. Ưu đãi ({promotions.length})</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveSection("commit")}
-            className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
-              activeSection === "commit" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
-            }`}
-          >
-            <ShieldCheck size={16} />
-            <span>B. Cam kết ({commitments.length})</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveSection("agree")}
-            className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
-              activeSection === "agree" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
-            }`}
-          >
-            <FileText size={16} />
-            <span>C. Thỏa thuận ({agreements.length})</span>
-          </button>
-        </div>
+        {!hideSubTabs ? (
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveSection("promo")}
+              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
+                activeSection === "promo" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
+              }`}
+            >
+              <Gift size={16} />
+              <span>A. Ưu đãi ({promotions.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection("commit")}
+              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
+                activeSection === "commit" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
+              }`}
+            >
+              <ShieldCheck size={16} />
+              <span>B. Cam kết ({commitments.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection("agree")}
+              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
+                activeSection === "agree" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
+              }`}
+            >
+              <FileText size={16} />
+              <span>C. Thỏa thuận ({agreements.length})</span>
+            </button>
+          </div>
+        ) : (
+          <div className="text-xs font-bold text-text-muted flex items-center gap-1.5">
+            <span>Đang thiết lập:</span>
+            <span className="text-primary font-extrabold uppercase">
+              {activeSection === "promo" && "Danh mục Ưu đãi"}
+              {activeSection === "commit" && "Cam kết chất lượng"}
+              {activeSection === "agree" && "Thỏa thuận đặt hàng"}
+            </span>
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <Button type="button" variant="outline" size="sm" onClick={handleResetDefaults} className="h-9 gap-1 text-caption text-text-muted">
