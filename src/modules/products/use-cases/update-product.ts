@@ -1,7 +1,8 @@
 import { conflict, notFound } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
-import { ProductRepository, type UpdateProductInput } from "@/modules/products/infra/product-repository"
+import type { IProductRepository, UpdateProductInput } from "@/modules/products/domain/repositories/product-repository.interface"
+import { getProductRepository } from "@/modules/products/infra/product-repository"
 import { PRICING_ONLY_ATTRIBUTE_KEYS } from "@/modules/products/domain/product-lookup"
 
 /**
@@ -9,8 +10,12 @@ import { PRICING_ONLY_ATTRIBUTE_KEYS } from "@/modules/products/domain/product-l
  * — tách khỏi luồng duyệt phân tích ảnh (`H3`, ghi cả bốn trường nhận dạng
  * cùng lúc qua `updateIdentity`).
  */
-export async function updateProduct(ctx: TenantContext, id: string, input: UpdateProductInput) {
-  const repo = new ProductRepository()
+export async function updateProduct(
+  ctx: TenantContext,
+  id: string,
+  input: UpdateProductInput,
+  repo: IProductRepository = getProductRepository()
+) {
 
   if (input.code !== undefined) {
     const existing = await repo.findByCode(ctx, input.code)
