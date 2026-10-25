@@ -9,7 +9,7 @@ Trạng thái: TODO | DOING | DONE | WAIVED (SHOULD bị bỏ, kèm lý do). Age
 | REQ-ARCH-003 | MUST |  |  | TODO |
 | REQ-ARCH-004 | MUST |  |  | TODO |
 | REQ-ARCH-005 | MUST |  |  | TODO |
-| REQ-ARCH-006 | MUST |  |  | TODO |
+| REQ-ARCH-006 | MUST | Chuẩn hóa Clean Repositories Wave 1 | src/modules/orders/domain/repositories/order-repository.interface.ts, src/modules/coordinator/domain/repositories/coordinator-repository.interface.ts, src/modules/organization/domain/repositories/organization-repository.interface.ts | DOING |
 | REQ-ARCH-007 | MUST |  |  | TODO |
 | REQ-ARCH-008 | MUST |  |  | TODO |
 | REQ-ARCH-009 | MUST |  |  | TODO |
@@ -24,8 +24,8 @@ Trạng thái: TODO | DOING | DONE | WAIVED (SHOULD bị bỏ, kèm lý do). Age
 | REQ-BND-002 | MUST |  |  | TODO |
 | REQ-BND-003 | MUST |  |  | TODO |
 | REQ-BND-004 | MUST |  |  | TODO |
-| REQ-BND-005 | MUST |  |  | TODO |
-| REQ-BND-006 | MUST |  |  | TODO |
+| REQ-BND-005 | MUST | Store OS sở hữu đơn hàng | src/modules/orders/domain/repositories/order-repository.interface.ts, src/modules/orders/use-cases/__tests__/order-use-cases.test.ts | DOING |
+| REQ-BND-006 | MUST | Chain OS sở hữu điều phối & đối tác | src/modules/coordinator/domain/repositories/coordinator-repository.interface.ts, src/modules/chain-partnership/domain/partnership-repository.interface.ts | DOING |
 | REQ-BND-007 | MUST |  |  | TODO |
 | REQ-BND-008 | MUST |  |  | TODO |
 | REQ-BND-009 | MUST |  |  | TODO |
