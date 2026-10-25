@@ -25,7 +25,8 @@ import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider"
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences"
 import type { LLMProvider } from "@/core/ports/llm-provider"
 import type { TenantContext } from "@/core/tenancy"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface"
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
 
@@ -150,7 +151,8 @@ async function writeChannel(
 export async function generateContent(
   ctx: TenantContext,
   input: GenerateContentInput,
-  contentRepo: IContentGenerationRepository = getContentGenerationRepository()
+  contentRepo: IContentGenerationRepository = getContentGenerationRepository(),
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository()
 ): Promise<ContentGenerationView> {
   requireCapability(ctx, "I1")
 
@@ -188,7 +190,6 @@ export async function generateContent(
     }
   }
 
-  const jobRepo = new GenerationJobRepository()
   await jobRepo.startInline(ctx, enq.job.id, new Date())
 
   try {
