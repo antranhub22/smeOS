@@ -50,7 +50,8 @@ export class BrandProfileRepository implements IBrandProfileRepository {
 
 let defaultRepo: IBrandProfileRepository | null = null
 
-export function getBrandProfileRepository(): IBrandProfileRepository {
+export function getBrandProfileRepository(db?: DbClient): IBrandProfileRepository {
+  if (db) return new BrandProfileRepository(db)
   if (!defaultRepo) {
     defaultRepo = new BrandProfileRepository()
   }

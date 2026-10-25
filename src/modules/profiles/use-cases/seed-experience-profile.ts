@@ -1,6 +1,6 @@
 import type { DbClient } from "../infra/db-client"
-import { BusinessProfileRepository } from "../infra/business-profile-repository"
-import { BrandProfileRepository } from "../infra/brand-profile-repository"
+import { getBusinessProfileRepository } from "../infra/business-profile-repository"
+import { getBrandProfileRepository } from "../infra/brand-profile-repository"
 import type { TenantContext } from "@/core/tenancy"
 
 export const MOC_LAN_BUSINESS_PROFILE = {
@@ -277,8 +277,8 @@ export async function seedExperienceMasterProfile(
     capabilities: new Set<string>(),
   }
 
-  const bizRepo = new BusinessProfileRepository(db)
-  const brandRepo = new BrandProfileRepository(db)
+  const bizRepo = getBusinessProfileRepository(db)
+  const brandRepo = getBrandProfileRepository(db)
 
   const [existingBiz, existingBrand] = await Promise.all([
     bizRepo.current(dummyCtx),

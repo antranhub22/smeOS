@@ -1,8 +1,10 @@
 import { AppError } from "@/core/http/errors"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy"
-import { BusinessProfileRepository } from "@/modules/profiles/infra/business-profile-repository"
-import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
+import type { IBusinessProfileRepository } from "@/modules/profiles/domain/repositories/business-profile-repository.interface"
+import type { IBrandProfileRepository } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
+import { getBusinessProfileRepository } from "@/modules/profiles/infra/business-profile-repository"
+import { getBrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
 import { getIndustrySeedProfiles } from "@/modules/profiles/use-cases/seed-experience-profile"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 import { getMockAssetsForIndustry } from "@/modules/profiles/domain/mock-data-catalog"
@@ -20,7 +22,9 @@ export interface ApplyMockDataResult {
  */
 export async function applyIndustryMockData(
   ctx: TenantContext,
-  targetIndustryKey?: string
+  targetIndustryKey?: string,
+  bizRepo: IBusinessProfileRepository = getBusinessProfileRepository(),
+  brandRepo: IBrandProfileRepository = getBrandProfileRepository()
 ): Promise<ApplyMockDataResult> {
   const org = await prisma.organizations.findUnique({
     where: { id: ctx.organizationId },
@@ -54,14 +58,12 @@ export async function applyIndustryMockData(
   const mockAssets = getMockAssetsForIndustry(industryKey)
 
   // 1. Cập nhật Business Profile
-  const bizRepo = new BusinessProfileRepository(prisma)
   await bizRepo.upsert(ctx, {
     ...seedProfiles.business,
     display_name: seedProfiles.business.display_name,
   })
 
   // 2. Cập nhật Brand Profile (kèm logo mock)
-  const brandRepo = new BrandProfileRepository(prisma)
   await brandRepo.upsert(ctx, {
     ...seedProfiles.brand,
     logo_asset_id: mockAssets?.logo || seedProfiles.brand.logo_asset_id,

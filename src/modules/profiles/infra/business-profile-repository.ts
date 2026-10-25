@@ -50,7 +50,8 @@ export class BusinessProfileRepository implements IBusinessProfileRepository {
 
 let defaultRepo: IBusinessProfileRepository | null = null
 
-export function getBusinessProfileRepository(): IBusinessProfileRepository {
+export function getBusinessProfileRepository(db?: DbClient): IBusinessProfileRepository {
+  if (db) return new BusinessProfileRepository(db)
   if (!defaultRepo) {
     defaultRepo = new BusinessProfileRepository()
   }
