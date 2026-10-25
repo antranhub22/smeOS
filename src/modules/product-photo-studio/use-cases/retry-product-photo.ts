@@ -1,6 +1,7 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface"
 import { canRetry } from "../domain/photo-enhance-rules"
 import { createProductPhotoJob } from "./create-product-photo-job"
 import { getProductPhotoResult } from "./get-product-photo-result"
@@ -13,14 +14,14 @@ export interface RetryProductPhotoInput {
 
 export async function retryProductPhoto(
   ctx: TenantContext,
-  input: RetryProductPhotoInput
+  input: RetryProductPhotoInput,
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository()
 ) {
-  const currentResult = await getProductPhotoResult(ctx, input.jobId)
+  const currentResult = await getProductPhotoResult(ctx, input.jobId, jobRepo)
   if (!currentResult) {
     throw notFound()
   }
 
-  const jobRepo = new GenerationJobRepository()
   const previousJob = await jobRepo.findById(ctx, input.jobId)
   if (!previousJob) throw notFound()
 

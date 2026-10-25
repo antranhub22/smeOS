@@ -1,6 +1,7 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { IMAGE_SET_BUNDLES } from "../domain/bundle-catalog"
 import { buildSetVariantPrompt } from "../domain/prompt-builder"
@@ -16,13 +17,13 @@ export interface CreateProductImageSetJobInput {
 
 export async function createProductImageSetJob(
   ctx: TenantContext,
-  input: CreateProductImageSetJobInput
+  input: CreateProductImageSetJobInput,
+  assetRepo: IAssetRepository = getAssetRepository()
 ) {
   if (!input.assetId) {
     throw validationFailed({ assetId: "Bắt buộc phải chọn ảnh gốc của sản phẩm" })
   }
 
-  const assetRepo = new AssetRepository()
   const asset = await assetRepo.findById(ctx, input.assetId)
   if (!asset) {
     throw notFound()

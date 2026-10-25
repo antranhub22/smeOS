@@ -18,39 +18,21 @@ import type {
   OrderFact,
   PostRef,
 } from "../domain/campaign-package-rules"
+import type {
+  CreateCampaignPackageRow,
+  UpdateCampaignPackageRow,
+  ICampaignPackageRepository,
+} from "../domain/repositories/campaign-package-repository.interface"
 
 type DbClient = PrismaClient | Prisma.TransactionClient
 
-export type { campaign_packages }
-
-export interface CreateCampaignPackageRow {
-  readonly productId: string | null
-  readonly masterAssetId: string
-  readonly name: string
-  readonly mode: string
-  readonly topic: unknown
-  readonly content: unknown
-  readonly variantAssetIds: readonly string[]
-  readonly videoJobId: string | null
-  /** Mọi video của gói (mỗi khung một video); phần tử đầu = `videoJobId`. */
-  readonly videoJobIds: readonly string[]
-  readonly audioJobId: string | null
-}
-
-export interface UpdateCampaignPackageRow {
-  readonly name?: string | undefined
-  readonly content?: unknown
-  readonly variantAssetIds?: readonly string[] | undefined
-  readonly videoJobId?: string | null | undefined
-  readonly videoJobIds?: readonly string[] | undefined
-  readonly audioJobId?: string | null | undefined
-}
+export type { campaign_packages, CreateCampaignPackageRow, UpdateCampaignPackageRow, ICampaignPackageRepository }
 
 function json(value: unknown): Prisma.InputJsonValue {
   return (value ?? null) as Prisma.InputJsonValue
 }
 
-export class CampaignPackageRepository {
+export class CampaignPackageRepository implements ICampaignPackageRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   create(ctx: TenantContext, row: CreateCampaignPackageRow): Promise<campaign_packages> {
@@ -197,4 +179,13 @@ export class CampaignPackageRepository {
       conversions: m.conversions,
     }))
   }
+}
+
+let defaultRepo: ICampaignPackageRepository | null = null
+
+export function getCampaignPackageRepository(): ICampaignPackageRepository {
+  if (!defaultRepo) {
+    defaultRepo = new CampaignPackageRepository()
+  }
+  return defaultRepo
 }

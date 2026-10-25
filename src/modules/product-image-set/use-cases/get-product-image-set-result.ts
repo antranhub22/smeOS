@@ -1,8 +1,10 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface"
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface"
 import { evaluateSetQc, type ImageSetQcEvaluation } from "../domain/image-set-rules"
 import { IMAGE_SET_BUNDLES } from "../domain/bundle-catalog"
 
@@ -31,9 +33,10 @@ const PREVIEW_EXPIRES_IN = 3600
 
 export async function getProductImageSetResult(
   ctx: TenantContext,
-  jobId: string
+  jobId: string,
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository(),
+  assetRepo: IAssetRepository = getAssetRepository()
 ): Promise<ProductImageSetResult> {
-  const jobRepo = new GenerationJobRepository()
   const job = await jobRepo.findById(ctx, jobId)
   if (!job) throw notFound()
 
@@ -43,7 +46,6 @@ export async function getProductImageSetResult(
     IMAGE_SET_BUNDLES.find((b) => b.id === config.bundle_id) ?? IMAGE_SET_BUNDLES[0]!
 
   const storage = getStorageProvider()
-  const assetRepo = new AssetRepository()
 
   let originalUrl: string | null = null
   if (typeof payload.asset_id === "string") {

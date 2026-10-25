@@ -15,50 +15,9 @@ import type {
   ProducedAsset,
   MediaPlanItem,
 } from "../domain/production-types"
+import type { ICreativeProductionRepository } from "../domain/repositories/creative-production-repository.interface"
 
-// ============================================================
-// PORT INTERFACE
-// ============================================================
-
-/**
- * Repository port cho Creative Production.
- * Infrastructure sẽ inject implementation thật.
- */
-export interface ICreativeProductionRepository {
-  /** Lưu campaign package mới */
-  saveCampaign(campaign: CampaignPackage): Promise<void>
-
-  /** Lấy campaign theo ID */
-  getCampaign(campaignId: string, organizationId: string): Promise<CampaignPackage | null>
-
-  /** Cập nhật trạng thái campaign */
-  updateCampaignStatus(
-    campaignId: string,
-    organizationId: string,
-    status: CampaignPackage["status"],
-  ): Promise<void>
-
-  /** Thêm asset đã sản xuất vào campaign */
-  addProducedAsset(
-    campaignId: string,
-    organizationId: string,
-    asset: ProducedAsset,
-  ): Promise<void>
-
-  /** Cập nhật trạng thái 1 media plan item */
-  updateMediaPlanItemStatus(
-    campaignId: string,
-    itemIndex: number,
-    status: MediaPlanItem["status"],
-    jobId?: string,
-  ): Promise<void>
-
-  /** Liệt kê campaigns theo organization */
-  listCampaigns(
-    organizationId: string,
-    options?: { status?: CampaignPackage["status"]; limit?: number },
-  ): Promise<readonly CampaignPackage[]>
-}
+export type { ICreativeProductionRepository }
 
 // ============================================================
 // IN-MEMORY IMPLEMENTATION (Phase 1)
@@ -156,4 +115,13 @@ export class InMemoryCreativeProductionRepository
   get size(): number {
     return this.store.size
   }
+}
+
+let defaultRepo: ICreativeProductionRepository | null = null
+
+export function getCreativeProductionRepository(): ICreativeProductionRepository {
+  if (!defaultRepo) {
+    defaultRepo = new InMemoryCreativeProductionRepository()
+  }
+  return defaultRepo
 }

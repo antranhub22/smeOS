@@ -7,17 +7,16 @@ import type { Prisma, PrismaClient, content_drafts } from "@/generated/prisma/cl
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
+import type {
+  ContentDraftKey,
+  IContentDraftRepository,
+} from "../domain/repositories/content-draft-repository.interface"
+
 type DbClient = PrismaClient | Prisma.TransactionClient
 
-export type { content_drafts }
+export type { content_drafts, ContentDraftKey, IContentDraftRepository }
 
-export interface ContentDraftKey {
-  readonly assetId: string
-  readonly topicId: string
-  readonly mode: string
-}
-
-export class ContentDraftRepository {
+export class ContentDraftRepository implements IContentDraftRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   find(ctx: TenantContext, key: ContentDraftKey): Promise<content_drafts | null> {
@@ -55,4 +54,13 @@ export class ContentDraftRepository {
       }),
     })
   }
+}
+
+let defaultRepo: IContentDraftRepository | null = null
+
+export function getContentDraftRepository(): IContentDraftRepository {
+  if (!defaultRepo) {
+    defaultRepo = new ContentDraftRepository()
+  }
+  return defaultRepo
 }
