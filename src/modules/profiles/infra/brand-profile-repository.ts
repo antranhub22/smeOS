@@ -1,32 +1,19 @@
 import type { brand_profiles, InputJsonValue } from "./entities"
-
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy"
-
 import type { DbClient } from "./db-client"
+import type {
+  IBrandProfileRepository,
+  UpsertBrandProfileInput,
+} from "../domain/repositories/brand-profile-repository.interface"
 
-export type UpsertBrandProfileInput = {
-  primary_color?: string | null | undefined
-  secondary_color?: string | null | undefined
-  accent_color?: string | null | undefined
-  background_color?: string | null | undefined
-  text_color?: string | null | undefined
-  font_heading?: string | null | undefined
-  font_body?: string | null | undefined
-  logo_asset_id?: string | null | undefined
-  tone_of_voice?: string | null | undefined
-  hashtags?: unknown
-  cta_templates?: unknown
-  default_offers?: unknown
-  forbidden_styles?: unknown
-  brand_assets?: unknown
-}
+export type { UpsertBrandProfileInput, IBrandProfileRepository }
 
 /**
  * `brand_profiles` — cùng hình dạng một-bản-ghi-mỗi-tổ-chức và cùng ngữ nghĩa
  * PUT-thay-toàn-bộ với `BusinessProfileRepository`; xem chú thích ở đó.
  */
-export class BrandProfileRepository {
+export class BrandProfileRepository implements IBrandProfileRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   current(ctx: TenantContext): Promise<brand_profiles | null> {
@@ -36,7 +23,6 @@ export class BrandProfileRepository {
   }
 
   upsert(ctx: TenantContext, input: UpsertBrandProfileInput): Promise<brand_profiles> {
-    // `InputJsonValue` — xem chú thích ở `BusinessProfileRepository.upsert`.
     const fields = {
       primary_color: input.primary_color ?? null,
       secondary_color: input.secondary_color ?? null,
@@ -60,4 +46,13 @@ export class BrandProfileRepository {
       update: fields,
     })
   }
+}
+
+let defaultRepo: IBrandProfileRepository | null = null
+
+export function getBrandProfileRepository(): IBrandProfileRepository {
+  if (!defaultRepo) {
+    defaultRepo = new BrandProfileRepository()
+  }
+  return defaultRepo
 }

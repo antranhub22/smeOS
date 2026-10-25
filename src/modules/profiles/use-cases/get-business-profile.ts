@@ -1,5 +1,6 @@
 import type { TenantContext } from "@/core/tenancy"
-import { BusinessProfileRepository } from "@/modules/profiles/infra/business-profile-repository"
+import { getBusinessProfileRepository } from "@/modules/profiles/infra/business-profile-repository"
+import type { IBusinessProfileRepository } from "@/modules/profiles/domain/repositories/business-profile-repository.interface"
 
 export type BusinessProfileDetail = {
   legal_name: string | null
@@ -19,8 +20,11 @@ export type BusinessProfileDetail = {
  * chưa nhập hồ sơ lần nào — chưa có bản ghi là trạng thái bình thường, không
  * phải lỗi (khác hành vi 404 của một tài nguyên có id không tồn tại).
  */
-export async function getBusinessProfile(ctx: TenantContext): Promise<BusinessProfileDetail | null> {
-  const profile = await new BusinessProfileRepository().current(ctx)
+export async function getBusinessProfile(
+  ctx: TenantContext,
+  repo: IBusinessProfileRepository = getBusinessProfileRepository()
+): Promise<BusinessProfileDetail | null> {
+  const profile = await repo.current(ctx)
   if (!profile) return null
   return {
     legal_name: profile.legal_name,
