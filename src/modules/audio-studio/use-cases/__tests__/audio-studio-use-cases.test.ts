@@ -50,6 +50,9 @@ vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
   GenerationJobRepository: vi.fn().mockImplementation(() => ({
     findById: vi.fn().mockResolvedValue(null),
   })),
+  getGenerationJobRepository: vi.fn().mockReturnValue({
+    findById: vi.fn().mockResolvedValue(null),
+  }),
 }))
 
 vi.mock("@/core/rbac/capabilities", () => ({
