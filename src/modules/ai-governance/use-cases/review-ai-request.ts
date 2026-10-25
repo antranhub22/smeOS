@@ -1,6 +1,7 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AiRequestRepository } from "@/core/ai/infra/ai-request-repository"
+import type { IAiRequestRepository } from "@/core/ai/domain/ai-repository.interface"
+import { getAiRequestRepository } from "@/core/ai/infra/ai-request-repository"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 
 export type ReviewAction = "approve" | "reject" | "modify"
@@ -25,9 +26,9 @@ export async function reviewAiRequest(
   ctx: TenantContext,
   id: string,
   action: ReviewAction,
-  note?: string | null
+  note?: string | null,
+  repo: IAiRequestRepository = getAiRequestRepository()
 ): Promise<ReviewDecision> {
-  const repo = new AiRequestRepository()
   const existing = await repo.getById(ctx, id)
   if (!existing) throw notFound()
 

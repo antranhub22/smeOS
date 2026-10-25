@@ -3,6 +3,7 @@ import type { TenantContext } from "@/core/tenancy"
 
 import type { ai_policies, InputJsonValue } from "./entities"
 import type { DbClient } from "./db-client"
+import type { IAiPolicyRepository, AiPolicyRecord } from "../domain/ai-repository.interface"
 
 export type UpsertAiPolicyInput = {
   capability_code: string
@@ -13,32 +14,34 @@ export type UpsertAiPolicyInput = {
 }
 
 /** `ai_policies` — thuộc tenant, nên bộ gác tổ chức áp ở đây như mọi bảng khác. */
-export class AiPolicyRepository {
+export class AiPolicyRepository implements IAiPolicyRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
-  list(ctx: TenantContext): Promise<ai_policies[]> {
-    return this.db.ai_policies.findMany({
+  async list(ctx: TenantContext): Promise<AiPolicyRecord[]> {
+    const rows = await this.db.ai_policies.findMany({
       where: { organization_id: ctx.organizationId },
       orderBy: { capability_code: "asc" },
     })
+    return rows as unknown as AiPolicyRecord[]
   }
 
-  find(ctx: TenantContext, capabilityCode: string): Promise<ai_policies | null> {
-    return this.db.ai_policies.findFirst({
+  async find(ctx: TenantContext, capabilityCode: string): Promise<AiPolicyRecord | null> {
+    const row = await this.db.ai_policies.findFirst({
       where: { organization_id: ctx.organizationId, capability_code: capabilityCode },
     })
+    return (row as unknown as AiPolicyRecord) ?? null
   }
 
-  upsert(ctx: TenantContext, input: UpsertAiPolicyInput): Promise<ai_policies> {
+  async upsert(ctx: TenantContext, input: UpsertAiPolicyInput): Promise<AiPolicyRecord> {
     const fields = {
       allowed_models: input.allowed_models as InputJsonValue,
       quality_target: input.quality_target ?? null,
       cost_ceiling: input.cost_ceiling ?? null,
       privacy_floor: input.privacy_floor,
-      updated_by: ctx.userId,
+      updated_by: ctx.userId ?? "system",
     }
 
-    return this.db.ai_policies.upsert({
+    const row = await this.db.ai_policies.upsert({
       where: {
         organization_id_capability_code: {
           organization_id: ctx.organizationId,
@@ -52,5 +55,16 @@ export class AiPolicyRepository {
       },
       update: fields,
     })
+    return row as unknown as AiPolicyRecord
   }
+}
+
+let aiPolicyRepoInstance: IAiPolicyRepository | null = null
+
+export function getAiPolicyRepository(db?: DbClient): IAiPolicyRepository {
+  if (db) return new AiPolicyRepository(db)
+  if (!aiPolicyRepoInstance) {
+    aiPolicyRepoInstance = new AiPolicyRepository()
+  }
+  return aiPolicyRepoInstance!
 }

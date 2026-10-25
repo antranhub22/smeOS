@@ -1,6 +1,8 @@
 import { AI_CAPABILITIES, type AiCapabilityDefinition } from "@/core/ai/domain/ai-capabilities"
-import { AiPolicyRepository } from "@/core/ai/infra/ai-policy-repository"
-import { AiRegistryRepository } from "@/core/ai/infra/ai-registry-repository"
+import type { IAiPolicyRepository } from "@/core/ai/domain/ai-repository.interface"
+import type { IAiRegistryRepository } from "@/core/ai/domain/ai-repository.interface"
+import { getAiPolicyRepository } from "@/core/ai/infra/ai-policy-repository"
+import { getAiRegistryRepository } from "@/core/ai/infra/ai-registry-repository"
 import type { TenantContext } from "@/core/tenancy"
 
 export type AiPolicyView = {
@@ -35,12 +37,15 @@ export type AiPolicyView = {
  * biết TRƯỚC khi chọn — bày ba lựa chọn trông ngang nhau là nói dối bằng bố cục
  * (đặc tả 03 mục 6.1 và 6.2).
  */
-export async function getAiPolicy(ctx: TenantContext): Promise<{ capabilities: AiPolicyView[] }> {
-  const registry = new AiRegistryRepository()
+export async function getAiPolicy(
+  ctx: TenantContext,
+  registryRepo: IAiRegistryRepository = getAiRegistryRepository(),
+  policyRepo: IAiPolicyRepository = getAiPolicyRepository()
+): Promise<{ capabilities: AiPolicyView[] }> {
   const [rows, models, policies] = await Promise.all([
-    registry.capabilities(),
-    registry.eligibleModels(),
-    new AiPolicyRepository().list(ctx),
+    registryRepo.capabilities(),
+    registryRepo.eligibleModels(),
+    policyRepo.list(ctx),
   ])
 
   const byCode = new Map(policies.map((policy) => [policy.capability_code, policy]))
@@ -84,8 +89,8 @@ export async function getAiPolicy(ctx: TenantContext): Promise<{ capabilities: A
           ]
         }),
         privacy_floor: policy?.privacy_floor ?? row.privacy_floor,
-        quality_target: policy?.quality_target ?? null,
-        cost_ceiling: policy?.cost_ceiling ?? null,
+        quality_target: (policy?.quality_target as string | null | undefined) ?? null,
+        cost_ceiling: (policy?.cost_ceiling as number | null | undefined) ?? null,
         accept_threshold: row.accept_threshold,
         measure_channels: Array.isArray(row.measure_channels)
           ? (row.measure_channels as string[])

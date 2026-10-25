@@ -1,4 +1,5 @@
-import { AiRequestRepository } from "@/core/ai/infra/ai-request-repository"
+import type { IAiRequestRepository } from "@/core/ai/domain/ai-repository.interface"
+import { getAiRequestRepository } from "@/core/ai/infra/ai-request-repository"
 import type { TenantContext } from "@/core/tenancy"
 
 export type AiRequestFilter = {
@@ -17,8 +18,12 @@ export type AiRequestFilter = {
  *
  * Đáp ứng không bao giờ mang prompt hay đầu ra: bảng không giữ chúng.
  */
-export async function listAiRequests(ctx: TenantContext, filter: AiRequestFilter = {}) {
-  const rows = await new AiRequestRepository().list(ctx, filter)
+export async function listAiRequests(
+  ctx: TenantContext,
+  filter: AiRequestFilter = {},
+  repo: IAiRequestRepository = getAiRequestRepository()
+) {
+  const rows = await repo.list(ctx, filter)
   return {
     data: rows.map((row) => ({
       id: row.id,
@@ -38,8 +43,12 @@ export async function listAiRequests(ctx: TenantContext, filter: AiRequestFilter
   }
 }
 
-export async function summarizeAiRequests(ctx: TenantContext, filter: AiRequestFilter = {}) {
-  const rows = await new AiRequestRepository().list(ctx, { ...filter, limit: 5000 })
+export async function summarizeAiRequests(
+  ctx: TenantContext,
+  filter: AiRequestFilter = {},
+  repo: IAiRequestRepository = getAiRequestRepository()
+) {
+  const rows = await repo.list(ctx, { ...filter, limit: 5000 })
 
   const buckets = new Map<
     string,
