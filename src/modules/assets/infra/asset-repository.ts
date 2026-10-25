@@ -212,7 +212,8 @@ export class AssetRepository implements IAssetRepository {
 
 let defaultAssetRepository: IAssetRepository | null = null
 
-export function getAssetRepository(): IAssetRepository {
+export function getAssetRepository(db?: DbClient): IAssetRepository {
+  if (db) return new AssetRepository(db)
   if (!defaultAssetRepository) {
     defaultAssetRepository = new AssetRepository()
   }

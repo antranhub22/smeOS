@@ -45,15 +45,21 @@ const mockAsset: assets = {
   created_at: new Date(),
 }
 
-const mockFindById = vi.fn()
-const mockApprove = vi.fn()
+const { mockFindById, mockApprove } = vi.hoisted(() => ({
+  mockFindById: vi.fn(),
+  mockApprove: vi.fn(),
+}))
 
-vi.mock("@/modules/assets/infra/asset-repository", () => ({
-  AssetRepository: vi.fn().mockImplementation(() => ({
+vi.mock("@/modules/assets/infra/asset-repository", () => {
+  const repoInstance = {
     findById: mockFindById,
     approve: mockApprove,
-  })),
-}))
+  }
+  return {
+    AssetRepository: vi.fn().mockImplementation(() => repoInstance),
+    getAssetRepository: vi.fn().mockImplementation(() => repoInstance),
+  }
+})
 
 vi.mock("@/modules/assets/adapters/storage-provider-factory", () => ({
   getStorageProvider: vi.fn().mockImplementation(() => ({

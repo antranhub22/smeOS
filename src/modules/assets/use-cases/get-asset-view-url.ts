@@ -1,6 +1,7 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface"
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 
 /**
@@ -22,8 +23,12 @@ export interface AssetViewUrl {
 
 /** `GET /assets/:id/view-url` (`G1`) — dùng ở nơi cần hiển thị ảnh gốc bằng
  *  `assetId` thay vì tự mang URL/Data URL qua nhiều màn hình. */
-export async function getAssetViewUrl(ctx: TenantContext, id: string): Promise<AssetViewUrl> {
-  const asset = await new AssetRepository().findById(ctx, id)
+export async function getAssetViewUrl(
+  ctx: TenantContext,
+  id: string,
+  repo: IAssetRepository = getAssetRepository()
+): Promise<AssetViewUrl> {
+  const asset = await repo.findById(ctx, id)
   if (!asset) throw notFound()
 
   const url = await getStorageProvider().signedUrl(asset.storage_key, ASSET_VIEW_URL_TTL_SECONDS, "GET")
