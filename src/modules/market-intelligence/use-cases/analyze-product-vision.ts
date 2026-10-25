@@ -8,7 +8,8 @@ import type { TenantContext } from "@/core/tenancy";
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory";
 import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
 import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface";
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
 import { refundJob } from "@/modules/usage/use-cases/refund-job";
 
@@ -19,7 +20,8 @@ import { aiGatewayDeps } from "@/core/ai/wiring";
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider";
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences";
 import { createProductVisionAdapter } from "../adapters/product-vision-ai-adapter";
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository";
+import type { IOrganizationRepository } from "@/modules/organization/domain/repositories/organization-repository.interface";
+import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository";
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile";
 import type {
   ProductFlowerComponent,
@@ -74,7 +76,9 @@ export async function analyzeProductVision(
   ctx: TenantContext,
   input: AnalyzeProductVisionInput,
   repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository(),
-  assetRepo: IAssetRepository = getAssetRepository()
+  assetRepo: IAssetRepository = getAssetRepository(),
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository(),
+  orgRepo: IOrganizationRepository = getOrganizationRepository()
 ): Promise<AnalyzeProductVisionResult> {
   const { assetId, productTitle, reanalyzeKey } = input;
   const asset = await assetRepo.findById(ctx, assetId);
@@ -103,11 +107,10 @@ export async function analyzeProductVision(
     throw new AppError("CONFLICT", "Ảnh này đang được Vision AI bóc tách — chờ vài giây rồi thử lại.");
   }
 
-  const jobRepo = new GenerationJobRepository();
   await jobRepo.startInline(ctx, enq.job.id, new Date());
   try {
     const bytes = await storage.get(asset.storage_key);
-    const org = await new OrganizationRepository().current(ctx);
+    const org = await orgRepo.current(ctx);
     const orgSettings = (org?.settings as Record<string, unknown>) || {};
     const industryKey = typeof orgSettings.industry === "string" ? orgSettings.industry : "FLORAL";
     const industryPlugin = getIndustryPlugin(industryKey);

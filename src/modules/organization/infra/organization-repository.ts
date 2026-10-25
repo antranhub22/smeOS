@@ -196,3 +196,13 @@ export class OrganizationRepository implements IOrganizationRepository {
   }
 }
 
+let orgRepoInstance: IOrganizationRepository | null = null
+
+export function getOrganizationRepository(db?: DbClient): IOrganizationRepository {
+  if (db) return new OrganizationRepository(db)
+  if (!orgRepoInstance) {
+    orgRepoInstance = new OrganizationRepository()
+  }
+  return orgRepoInstance!
+}
+
