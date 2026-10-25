@@ -19,7 +19,7 @@ const globalForPrisma = globalThis as unknown as {
   schemaVersion?: string
 }
 
-const CURRENT_SCHEMA_VERSION = "2026-10-18-availability-v1"
+const CURRENT_SCHEMA_VERSION = "2026-10-25-chain-partnership-v1"
 if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
   globalForPrisma.floraosPrisma?.$disconnect?.().catch(() => {})
   delete globalForPrisma.floraosPrisma

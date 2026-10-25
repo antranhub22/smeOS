@@ -35,6 +35,9 @@ export const LOCKED_ROUTE_PREFIXES: readonly string[] = [
   // Khách hàng (Bán hàng & Khách) + Bộ máy phân tích ảnh (Thiết lập) — PO 09/10/2026
   "/khach-hang",
   "/bo-may",
+  // Chat nội bộ & Profile kết nối — PO 25/10/2026
+  "/tin-nhan",
+  "/noi-bo/ket-noi",
 ]
 
 /**

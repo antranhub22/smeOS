@@ -28,6 +28,8 @@ import {
   CalendarCheck,
   Package,
   Database,
+  MessageSquare,
+  BadgeCheck,
 } from "lucide-react"
 
 export type NavIconComponent = LucideIcon
@@ -61,4 +63,6 @@ export const NAV_ICONS: Record<string, LucideIcon> = {
   CalendarCheck,
   Package,
   Database,
+  MessageSquare,
+  BadgeCheck,
 }

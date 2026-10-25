@@ -17,6 +17,7 @@ export interface ChainPartnershipEntity {
   province?: string | undefined
   district?: string | undefined
   partnerOrgName?: string | undefined
+  partnerOrgSlug?: string | undefined
   createdAt: Date
   updatedAt: Date
 }

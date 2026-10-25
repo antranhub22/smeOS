@@ -237,6 +237,17 @@ export default function ChainPartnersPage() {
                     <span className="truncate">{p.address} ({p.province})</span>
                   </div>
                 )}
+                {p.partnerOrgSlug && (
+                  <div className="flex items-center justify-between pt-1 border-t border-neutral-100/80 mt-1">
+                    <div className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                      <span className="text-[11px] text-neutral-500">Mã kết nối:</span>
+                      <span className="font-mono font-bold text-neutral-700 text-[11px]">
+                        {p.partnerOrgSlug.toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">

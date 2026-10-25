@@ -149,7 +149,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
         skip: filter.offset ?? 0,
         include: {
           partner_organization: {
-            select: { name: true },
+            select: { name: true, slug: true },
           },
         },
       }),
@@ -157,7 +157,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     ])
 
     return {
-      items: rows.map((r) => this.mapEntity(r, r.partner_organization?.name)),
+      items: rows.map((r) => this.mapEntity(r, r.partner_organization?.name, r.partner_organization?.slug)),
       total,
     }
   }
@@ -167,11 +167,11 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       where: { id },
       include: {
         partner_organization: {
-          select: { name: true },
+          select: { name: true, slug: true },
         },
       },
     })
-    return row ? this.mapEntity(row, row.partner_organization?.name) : null
+    return row ? this.mapEntity(row, row.partner_organization?.name, row.partner_organization?.slug) : null
   }
 
   async updateStatus(id: string, status: PartnershipStatus): Promise<ChainPartnershipEntity> {
@@ -180,11 +180,11 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       data: { status },
       include: {
         partner_organization: {
-          select: { name: true },
+          select: { name: true, slug: true },
         },
       },
     })
-    return this.mapEntity(row, row.partner_organization?.name)
+    return this.mapEntity(row, row.partner_organization?.name, row.partner_organization?.slug)
   }
 
   async findStoreByIdentifier(identifier: string): Promise<{
@@ -307,7 +307,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
 
 
 
-  private mapEntity(row: any, partnerOrgName?: string): ChainPartnershipEntity {
+  private mapEntity(row: any, partnerOrgName?: string, partnerOrgSlug?: string): ChainPartnershipEntity {
     return {
       id: row.id,
       chainOrgId: row.chain_org_id,
@@ -324,6 +324,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       province: row.province ?? undefined,
       district: row.district ?? undefined,
       partnerOrgName: partnerOrgName ?? undefined,
+      partnerOrgSlug: partnerOrgSlug ?? undefined,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     }
