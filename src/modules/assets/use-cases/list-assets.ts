@@ -1,8 +1,10 @@
 import { validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import type { IAssetRepository } from "../domain/repositories/asset-repository.interface"
+import { getAssetRepository } from "../infra/asset-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { ProductRepository } from "@/modules/products/infra/product-repository"
+import type { IProductRepository } from "@/modules/products/domain/repositories/product-repository.interface"
+import { getProductRepository } from "@/modules/products/infra/product-repository"
 
 const DEFAULT_LIMIT = 25
 const MAX_LIMIT = 100
@@ -20,14 +22,16 @@ export async function listAssets(
     parentAssetId?: string | undefined
     limit?: number | undefined
     cursor?: string | null | undefined
-  }
+  },
+  assetRepo: IAssetRepository = getAssetRepository(),
+  productRepo: IProductRepository = getProductRepository()
 ) {
   const limit = options.limit ?? DEFAULT_LIMIT
   if (limit < 1 || limit > MAX_LIMIT) {
     throw validationFailed({ limit: `Phải trong khoảng 1..${MAX_LIMIT}` })
   }
 
-  const rows = await new AssetRepository().list(ctx, {
+  const rows = await assetRepo.list(ctx, {
     productId: options.productId,
     kind: options.kind as import("@/modules/assets/infra/entities").asset_kind | undefined,
     approvalState: options.approvalState as import("@/modules/assets/infra/entities").approval_state | undefined,
@@ -40,7 +44,6 @@ export async function listAssets(
   const nextCursor = hasMore ? (page[page.length - 1]?.id ?? null) : null
 
   const storage = getStorageProvider()
-  const productRepo = new ProductRepository()
 
   // Lấy danh sách tên sản phẩm cho các asset đã liên kết
   const productIds = Array.from(new Set(page.map((r) => r.product_id).filter((id): id is string => Boolean(id))))
