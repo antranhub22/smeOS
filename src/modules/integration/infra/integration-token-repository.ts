@@ -5,13 +5,14 @@ import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
 import type { DbClient } from "./db-client"
 
-export type CreateIntegrationTokenInput = {
-  client: integration_client
-  tokenHash: string
-  createdBy: string
-  expiresAt: Date
-  rotatedFromId?: string | null
-}
+import type {
+  IIntegrationTokenRepository,
+  IntegrationTokenRecord,
+  CreateIntegrationTokenInput,
+} from "../domain/repositories/integration-repository.interface"
+
+export type { CreateIntegrationTokenInput }
+
 
 /**
  * Token máy gọi máy — P7, đặc tả 08 mục 3 (`YC-T8`). `create`/`list`/`revoke`
@@ -19,7 +20,7 @@ export type CreateIntegrationTokenInput = {
  * `findActiveByHash` là ngoại lệ SINH ngữ cảnh, giống
  * `SessionRepository.findByTokenHash`.
  */
-export class IntegrationTokenRepository {
+export class IntegrationTokenRepository implements IIntegrationTokenRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   /**
@@ -47,7 +48,7 @@ export class IntegrationTokenRepository {
   create(ctx: TenantContext, input: CreateIntegrationTokenInput): Promise<integration_tokens> {
     return this.db.integration_tokens.create({
       data: scopedData(ctx, {
-        client: input.client,
+        client: input.client as integration_client,
         token_hash: input.tokenHash,
         created_by: input.createdBy,
         expires_at: input.expiresAt,
@@ -69,3 +70,14 @@ export class IntegrationTokenRepository {
     return result.count > 0
   }
 }
+
+let integrationTokenRepoInstance: IIntegrationTokenRepository | null = null
+
+export function getIntegrationTokenRepository(db?: DbClient): IIntegrationTokenRepository {
+  if (db) return new IntegrationTokenRepository(db)
+  if (!integrationTokenRepoInstance) {
+    integrationTokenRepoInstance = new IntegrationTokenRepository()
+  }
+  return integrationTokenRepoInstance
+}
+

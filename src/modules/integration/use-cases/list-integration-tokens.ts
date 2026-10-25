@@ -1,5 +1,6 @@
 import type { TenantContext } from "@/core/tenancy"
-import { IntegrationTokenRepository } from "@/modules/integration/infra/integration-token-repository"
+import type { IIntegrationTokenRepository } from "../domain/repositories/integration-repository.interface"
+import { getIntegrationTokenRepository } from "../infra/integration-token-repository"
 
 export type IntegrationTokenSummary = {
   id: string
@@ -11,8 +12,11 @@ export type IntegrationTokenSummary = {
 }
 
 /** `GET /integration-tokens` (`F9`). Không bao giờ trả `token_hash` — chỉ metadata. */
-export async function listIntegrationTokens(ctx: TenantContext): Promise<IntegrationTokenSummary[]> {
-  const rows = await new IntegrationTokenRepository().list(ctx)
+export async function listIntegrationTokens(
+  ctx: TenantContext,
+  repo: IIntegrationTokenRepository = getIntegrationTokenRepository()
+): Promise<IntegrationTokenSummary[]> {
+  const rows = await repo.list(ctx)
   return rows.map((row) => ({
     id: row.id,
     client: row.client,

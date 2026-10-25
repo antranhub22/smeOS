@@ -1,6 +1,7 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { IntegrationTokenRepository } from "@/modules/integration/infra/integration-token-repository"
+import type { IIntegrationTokenRepository } from "../domain/repositories/integration-repository.interface"
+import { getIntegrationTokenRepository } from "../infra/integration-token-repository"
 import { hashIntegrationToken, newIntegrationToken } from "@/modules/integration/infra/token-crypto"
 import { resolveExpiry } from "@/modules/integration/domain/token-rules"
 
@@ -20,9 +21,9 @@ export type RotateIntegrationTokenResult = {
  */
 export async function rotateIntegrationToken(
   ctx: TenantContext,
-  id: string
+  id: string,
+  repo: IIntegrationTokenRepository = getIntegrationTokenRepository()
 ): Promise<RotateIntegrationTokenResult> {
-  const repo = new IntegrationTokenRepository()
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
 
