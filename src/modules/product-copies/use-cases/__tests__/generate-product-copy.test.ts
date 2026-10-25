@@ -56,13 +56,17 @@ vi.mock("@/modules/organization/infra/occasion-repository", () => ({
   OccasionRepository: vi.fn().mockImplementation(() => ({ list: vi.fn() })),
 }))
 
-vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
-  ProductCopyRepository: vi.fn().mockImplementation(() => ({
+vi.mock("@/modules/product-copies/infra/product-copy-repository", () => {
+  const MockRepo = vi.fn().mockImplementation(() => ({
     db: {},
     findByAnalysisId: vi.fn(),
     createFromAnalysis: vi.fn(),
-  })),
-}))
+  }))
+  return {
+    ProductCopyRepository: MockRepo,
+    getProductCopyRepository: () => new MockRepo(),
+  }
+})
 
 vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
   GenerationJobRepository: vi.fn().mockImplementation(() => ({

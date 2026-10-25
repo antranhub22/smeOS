@@ -1,6 +1,7 @@
 import { AppError } from "@/core/http/errors";
 import { requireCapability } from "@/core/rbac/capabilities";
-import { ProductCopyRepository } from "../infra/product-copy-repository";
+import type { IProductCopyRepository } from "../domain/repositories/product-copy-repository.interface";
+import { getProductCopyRepository } from "../infra/product-copy-repository";
 import { OccasionRepository } from "@/modules/organization/infra/occasion-repository";
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log";
 import { runInTransaction } from "@/modules/jobs/infra/transaction";
@@ -15,11 +16,10 @@ import type { approval_state } from "../infra/entities";
  */
 export async function approveProductCopy(
   ctx: TenantContext,
-  id: string
+  id: string,
+  repo: IProductCopyRepository = getProductCopyRepository()
 ): Promise<{ productId: string; copyId: string }> {
   requireCapability(ctx, "H6");
-
-  const repo = new ProductCopyRepository();
 
   return runInTransaction(async (tx: DbClient) => {
     const copy = await tx.product_copies.findFirst({
@@ -69,11 +69,10 @@ export async function approveProductCopy(
 export async function rejectProductCopy(
   ctx: TenantContext,
   id: string,
-  reason?: string
+  reason?: string,
+  repo: IProductCopyRepository = getProductCopyRepository()
 ): Promise<void> {
   requireCapability(ctx, "H6");
-
-  const repo = new ProductCopyRepository();
 
   await runInTransaction(async (tx: DbClient) => {
     await repo.reject(ctx, id, tx, reason);

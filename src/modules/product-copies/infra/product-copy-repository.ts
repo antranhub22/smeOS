@@ -18,8 +18,9 @@ import {
   type ProductCopyRaw,
   type ProductCopyEffective,
 } from "../domain/product-copy-rules";
+import type { IProductCopyRepository } from "../domain/repositories/product-copy-repository.interface";
 
-export class ProductCopyRepository {
+export class ProductCopyRepository implements IProductCopyRepository {
   readonly db: DbClient;
   constructor(db: DbClient = prisma) {
     this.db = db;
@@ -249,4 +250,13 @@ export class ProductCopyRepository {
     }
     return code;
   }
+}
+
+let defaultProductCopyRepository: IProductCopyRepository | null = null;
+
+export function getProductCopyRepository(): IProductCopyRepository {
+  if (!defaultProductCopyRepository) {
+    defaultProductCopyRepository = new ProductCopyRepository();
+  }
+  return defaultProductCopyRepository;
 }

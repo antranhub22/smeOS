@@ -6,7 +6,8 @@ import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider";
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences";
 import type { TenantContext } from "@/core/tenancy";
 
-import { ProductCopyRepository } from "../infra/product-copy-repository";
+import type { IProductCopyRepository } from "../domain/repositories/product-copy-repository.interface";
+import { getProductCopyRepository } from "../infra/product-copy-repository";
 import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository";
 import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository";
 import { OccasionRepository } from "@/modules/organization/infra/occasion-repository";
@@ -44,14 +45,14 @@ export type GenerateProductCopyInput = {
  */
 export async function generateProductCopy(
   ctx: TenantContext,
-  input: GenerateProductCopyInput
+  input: GenerateProductCopyInput,
+  copyRepo: IProductCopyRepository = getProductCopyRepository()
 ): Promise<{ copyId: string; raw: unknown; needsReview: boolean; modelKey: string | null }> {
   requireCapability(ctx, "H5");
 
-  const copyRepo = new ProductCopyRepository();
   const analysisRepo = new ProductAnalysisRepository();
   const brandRepo = new BrandProfileRepository();
-  const occasionRepo = new OccasionRepository(copyRepo.db);
+  const occasionRepo = new OccasionRepository();
 
   const analysis = await analysisRepo.findById(ctx, input.analysisId);
   if (!analysis) throw new AppError("NOT_FOUND", "Phân tích không tồn tại");

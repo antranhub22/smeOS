@@ -1,6 +1,7 @@
 import { AppError } from "@/core/http/errors";
 import { requireCapability } from "@/core/rbac/capabilities";
-import { ProductCopyRepository } from "../infra/product-copy-repository";
+import type { IProductCopyRepository } from "../domain/repositories/product-copy-repository.interface";
+import { getProductCopyRepository } from "../infra/product-copy-repository";
 import { validateProductCopyEdited, type ProductCopyEdited } from "../domain/product-copy-rules";
 import { assertFlowerContentAllowed } from "@/core/ai/domain/flower-content-guard";
 import type { TenantContext } from "@/core/tenancy";
@@ -12,7 +13,8 @@ import type { TenantContext } from "@/core/tenancy";
 export async function updateProductCopy(
   ctx: TenantContext,
   id: string,
-  edited: unknown
+  edited: unknown,
+  repo: IProductCopyRepository = getProductCopyRepository()
 ): Promise<void> {
   requireCapability(ctx, "H5");
 
@@ -28,6 +30,5 @@ export async function updateProductCopy(
     assertFlowerContentAllowed(d.suggested_description, "Mô tả sản phẩm");
   }
 
-  const repo = new ProductCopyRepository();
-  await repo.updateEdited(ctx, id, edited);
+  await repo.updateEdited(ctx, id, edited as object);
 }
