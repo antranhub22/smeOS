@@ -1,6 +1,7 @@
 import { AppError, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { TrashRepository } from "../infra/trash-repository"
+import type { ITrashRepository } from "../domain/repositories/trash-repository.interface"
+import { getTrashRepository } from "../infra/trash-repository"
 import type { TrashItem, TrashItemType } from "../domain/trash-types"
 
 export function requireExecutiveRole(ctx: TenantContext) {
@@ -18,7 +19,7 @@ export function requireExecutiveRole(ctx: TenantContext) {
 
 export async function getTrashList(
   ctx: TenantContext,
-  repo = new TrashRepository()
+  repo: ITrashRepository = getTrashRepository()
 ): Promise<TrashItem[]> {
   requireExecutiveRole(ctx)
   return repo.listTrash(ctx)
@@ -27,7 +28,7 @@ export async function getTrashList(
 export async function moveToTrash(
   ctx: TenantContext,
   input: { id: string; type: TrashItemType },
-  repo = new TrashRepository()
+  repo: ITrashRepository = getTrashRepository()
 ): Promise<void> {
   requireExecutiveRole(ctx)
   const ok = await repo.moveToTrash(ctx, { ...input, userId: ctx.userId })
@@ -37,7 +38,7 @@ export async function moveToTrash(
 export async function restoreFromTrash(
   ctx: TenantContext,
   input: { id: string; type: TrashItemType },
-  repo = new TrashRepository()
+  repo: ITrashRepository = getTrashRepository()
 ): Promise<void> {
   requireExecutiveRole(ctx)
   const ok = await repo.restoreFromTrash(ctx, input)
@@ -47,9 +48,10 @@ export async function restoreFromTrash(
 export async function permanentDelete(
   ctx: TenantContext,
   input: { id: string; type: TrashItemType },
-  repo = new TrashRepository()
+  repo: ITrashRepository = getTrashRepository()
 ): Promise<void> {
   requireExecutiveRole(ctx)
   const ok = await repo.permanentDelete(ctx, input)
   if (!ok) throw notFound()
 }
+
