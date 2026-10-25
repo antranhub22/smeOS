@@ -2,7 +2,7 @@ import { type TenantContext } from "@/core/tenancy";
 import { requireCapability } from "@/core/rbac/capabilities";
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory";
 import { ASSET_VIEW_URL_TTL_SECONDS } from "@/modules/assets/use-cases/get-asset-view-url";
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
 import { lyDoHoanCredit } from "@/modules/usage/domain/refund-policy";
 import { refundJob } from "@/modules/usage/use-cases/refund-job";
 import { refundPartial } from "@/modules/usage/use-cases/refund-partial";
@@ -37,8 +37,12 @@ export class GetVideoJobUseCase {
  * lượt render hỏng → hoàn toàn phần; nhà cung cấp lỗi, video dựng Ken Burns cục
  * bộ, hoặc bên thật rẻ hơn bên đã tính → hoàn chênh (`videoRenderRefund`).
  */
-async function settleVideoRenderCredit(ctx: TenantContext, videoJobId: string): Promise<void> {
-  const gen = await new GenerationJobRepository().findLatestByPayload(ctx, "video.render", "videoJobId", videoJobId);
+async function settleVideoRenderCredit(
+  ctx: TenantContext,
+  videoJobId: string,
+  genRepo = getGenerationJobRepository()
+): Promise<void> {
+  const gen = await genRepo.findLatestByPayload(ctx, "video.render", "videoJobId", videoJobId);
   if (!gen) return;
   if (lyDoHoanCredit(gen) !== null) {
     await refundJob(ctx, gen.id);
