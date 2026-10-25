@@ -9,13 +9,14 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { OrderRecord } from "../domain/order-types"
-import { OrderRepository } from "../infra/order-repository"
+import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import { getOrderRepository } from "../infra/order-repository"
 
 export async function cancelOrder(
   ctx: TenantContext,
   orderId: string,
   reason: string,
-  repo = new OrderRepository()
+  repo: IOrderRepository = getOrderRepository()
 ): Promise<OrderRecord> {
   // Gác quyền R6 (Trần cứng)
   requireCapability(ctx, "R6")

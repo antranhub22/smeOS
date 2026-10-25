@@ -11,13 +11,14 @@ import {
   brochureLockReason,
 } from "../domain/order-rules"
 import type { OrderRecord, UpdateOrderInput } from "../domain/order-types"
-import { OrderRepository } from "../infra/order-repository"
+import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import { getOrderRepository } from "../infra/order-repository"
 
 export async function updateOrderProgress(
   ctx: TenantContext,
   orderId: string,
   input: UpdateOrderInput,
-  repo = new OrderRepository()
+  repo: IOrderRepository = getOrderRepository()
 ): Promise<OrderRecord> {
   const existing = await repo.findById(ctx.organizationId, orderId)
   if (!existing) {

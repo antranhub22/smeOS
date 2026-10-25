@@ -6,7 +6,8 @@ import { brochureLockReason } from "../domain/order-rules"
 import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { OrderRecord } from "../domain/order-types"
-import { OrderRepository } from "../infra/order-repository"
+import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import { getOrderRepository } from "../infra/order-repository"
 
 export interface AssignFloristInput {
   assigneeId: string
@@ -17,7 +18,7 @@ export async function assignFlorist(
   ctx: TenantContext,
   orderId: string,
   input: AssignFloristInput,
-  repo = new OrderRepository()
+  repo: IOrderRepository = getOrderRepository()
 ): Promise<OrderRecord> {
   const existing = await repo.findById(ctx.organizationId, orderId)
   if (!existing) {

@@ -1,5 +1,6 @@
 /**
- * Infrastructure Repository for M10 — Orders.
+ * Infrastructure Repository for M10 — Orders (Store OS).
+ * Implements IOrderRepository port interface.
  * Enforces Tenant Isolation on all queries via scoped organization_id.
  */
 
@@ -17,8 +18,11 @@ import type {
   OrderFilter,
   OrderRecord,
   OrderItemRecord,
+  OrderAssignmentRecord,
   OrderEventRecord,
+  OrderEventAxis,
 } from "../domain/order-types"
+import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 
 /** Hàng `orders` kèm các quan hệ mà truy vấn nào `include` thì có. */
 type OrderRow = orders & {
@@ -83,7 +87,7 @@ function mapPrismaOrder(row: OrderRow): OrderRecord {
   }
 }
 
-export class OrderRepository {
+export class OrderRepository implements IOrderRepository {
   async countTodayOrders(organizationId: string, date = new Date()): Promise<number> {
     const startOfDay = new Date(date)
     startOfDay.setHours(0, 0, 0, 0)
@@ -113,7 +117,6 @@ export class OrderRepository {
           code,
           customer_id: input.customerId ?? null,
           total_vnd: totalVnd,
-          // ĐP-4a.3 (26/09/2026, sổ thu): đơn mới luôn chưa thu gì -> balance = total.
           balance_vnd: totalVnd,
           pricing_rule_ref: (input.pricingRuleRef as unknown as Prisma.InputJsonValue) ?? null,
           voucher_id: input.voucherId ?? null,
@@ -235,6 +238,15 @@ export class OrderRepository {
     id: string,
     input: UpdateOrderInput
   ): Promise<OrderRecord> {
+    // Đảm bảo cô lập tenant: đơn phải thuộc tổ chức
+    const existing = await prisma.orders.findFirst({
+      where: { id, organization_id: organizationId },
+      select: { id: true },
+    })
+    if (!existing) {
+      throw new Error(`Đơn hàng ${id} không thuộc tổ chức ${organizationId}`)
+    }
+
     const data: Prisma.ordersUpdateInput = {}
     if (input.status) data.status = input.status
     if (input.productionStatus) data.production_status = input.productionStatus
@@ -263,8 +275,8 @@ export class OrderRepository {
     assigneeId: string,
     assignedBy: string,
     difficulty = "trung_binh"
-  ) {
-    return prisma.order_assignments.create({
+  ): Promise<OrderAssignmentRecord> {
+    const row = await prisma.order_assignments.create({
       data: {
         organization_id: organizationId,
         order_id: orderId,
@@ -273,18 +285,28 @@ export class OrderRepository {
         difficulty,
       },
     })
+    return {
+      id: row.id,
+      organizationId: row.organization_id,
+      orderId: row.order_id,
+      assigneeId: row.assignee_id,
+      assignedBy: row.assigned_by,
+      difficulty: row.difficulty ?? undefined,
+      assignedAt: row.assigned_at,
+      releasedAt: row.released_at,
+    }
   }
 
   async recordEvent(
     organizationId: string,
     orderId: string,
-    axis: "order" | "production" | "delivery",
+    axis: OrderEventAxis,
     toValue: string,
     actorId?: string,
     fromValue?: string,
     reason?: string
-  ) {
-    return prisma.order_events.create({
+  ): Promise<OrderEventRecord> {
+    const row = await prisma.order_events.create({
       data: {
         organization_id: organizationId,
         order_id: orderId,
@@ -295,5 +317,26 @@ export class OrderRepository {
         reason: reason ?? null,
       },
     })
+    return {
+      id: row.id,
+      organizationId: row.organization_id,
+      orderId: row.order_id,
+      axis: row.axis as OrderEventAxis,
+      fromValue: row.from_value,
+      toValue: row.to_value,
+      actorId: row.actor_id,
+      reason: row.reason,
+      createdAt: row.created_at,
+    }
   }
+}
+
+// Singleton factory
+let orderRepoInstance: IOrderRepository | null = null
+
+export function getOrderRepository(): IOrderRepository {
+  if (!orderRepoInstance) {
+    orderRepoInstance = new OrderRepository()
+  }
+  return orderRepoInstance
 }

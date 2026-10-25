@@ -11,8 +11,10 @@ import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { CoordinatorStage, CoordinationRiskLevel } from "../domain/coordinator-types"
+import type { ICoordinatorRepository } from "../domain/repositories/coordinator-repository.interface"
 import { changedAxes, type StageTransitionFacts } from "../domain/stage-transitions"
 import type { MappedOrderAxes } from "../domain/state-mapper"
+import { PartnerRepository } from "./partner-repository"
 import type { DbClient } from "./transaction"
 
 const ORDER_INCLUDE = {
@@ -64,8 +66,12 @@ export interface CreateCoordinatorOrderData {
   salesOwnerId: string
 }
 
-export class CoordinatorRepository {
-  constructor(private readonly db: DbClient = prisma) {}
+export class CoordinatorRepository implements ICoordinatorRepository<CoordinatorOrderRow> {
+  private readonly partnerRepo: PartnerRepository
+
+  constructor(private readonly db: DbClient = prisma) {
+    this.partnerRepo = new PartnerRepository(db)
+  }
 
   // ── Đọc ────────────────────────────────────────────────────────────────
 
@@ -386,18 +392,14 @@ export class CoordinatorRepository {
     })
   }
 
-  // ── Đối tác ────────────────────────────────────────────────────────────
+  // ── Đối tác (Ủy thác qua PartnerRepository) ─────────────────────────────
 
   listPartners(ctx: TenantContext, options: { activeOnly: boolean }): Promise<PartnerRow[]> {
-    return this.db.partners.findMany({
-      where: scopedWhere(ctx, options.activeOnly ? { is_active: true } : {}),
-      orderBy: [{ is_active: "desc" }, { rating: "desc" }, { name: "asc" }],
-      take: 200,
-    })
+    return this.partnerRepo.listPartners(ctx, options) as unknown as Promise<PartnerRow[]>
   }
 
   findPartner(ctx: TenantContext, id: string): Promise<PartnerRow | null> {
-    return this.db.partners.findFirst({ where: scopedWhere(ctx, { id }) })
+    return this.partnerRepo.findPartner(ctx, id) as unknown as Promise<PartnerRow | null>
   }
 
   createPartner(
@@ -413,35 +415,18 @@ export class CoordinatorRepository {
       capacityDaily: number
     }
   ): Promise<PartnerRow> {
-    return this.db.partners.create({
-      data: scopedData(ctx, {
-        code: data.code,
-        name: data.name,
-        phone: data.phone,
-        address: data.address,
-        district: data.district,
-        province: data.province,
-        tier: data.tier,
-        capacity_daily: data.capacityDaily,
-      }),
-    })
+    return this.partnerRepo.createPartner(ctx, data) as unknown as Promise<PartnerRow>
   }
 
-  async updatePartner(
+  updatePartner(
     ctx: TenantContext,
     id: string,
     data: Prisma.partnersUncheckedUpdateManyInput
   ): Promise<void> {
-    await this.db.partners.updateMany({ where: scopedWhere(ctx, { id }), data })
+    return this.partnerRepo.updatePartner(ctx, id, data)
   }
 
-  /** Đơn đang chạy của một đối tác hôm nay — để so với `capacity_daily`. */
   countActiveOrdersForPartner(ctx: TenantContext, partnerId: string): Promise<number> {
-    return this.db.order_coordinations.count({
-      where: scopedWhere(ctx, {
-        partner_id: partnerId,
-        stage: { in: ["ASSIGNING", "IN_PRODUCTION", "QUALITY_CHECK"] as CoordinatorStage[] },
-      }),
-    })
+    return this.partnerRepo.countActiveOrdersForPartner(ctx, partnerId)
   }
 }
