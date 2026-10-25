@@ -80,7 +80,7 @@ export function AddBranchModal({ isOpen, onClose, onSuccess }: AddBranchModalPro
           <input
             type="text"
             required
-            placeholder="Ví dụ: Chi nhánh Cầu Giấy, Tiệm hoa Q1…"
+            placeholder="Ví dụ: Chi nhánh Cầu Giấy, Chi nhánh Q1…"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full text-body-sm h-10 px-3 rounded-xl border border-border bg-surface focus:outline-primary"

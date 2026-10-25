@@ -7,6 +7,7 @@ import { MAX_ORDER_QUANTITY } from "@/modules/greeting-card/domain/brochure-pric
 import type { QuoteSelection } from "./use-brochure-quote"
 import { PaymentCodeField, PaymentDueRows } from "./payment-code-field"
 import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+import { useI18n } from "@/lib/i18n"
 
 interface Props {
   variants: Array<{ id: string; name: string; priceVnd: number }>
@@ -21,16 +22,19 @@ interface Props {
 }
 
 const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
-const vnd = (n: number) => `${n.toLocaleString("vi-VN")} đ`
 
 /** Size, số lượng, khu vực giao, mã giảm giá (khi tiệm bật), mã thanh toán (khi tiệm có mã) + bảng tổng tiền do server tính (đã trừ ưu đãi). */
 export function BrochureOrderOptions({ variants, basePrice, shipping, selection, onChange, quote, errors, loading, industryKey }: Props) {
+  const { t, locale } = useI18n()
+  const isEn = locale === "en"
+  const vnd = (n: number) => isEn ? `${n.toLocaleString("en-US")} VND` : `${n.toLocaleString("vi-VN")} đ`
+
   const [voucherInput, setVoucherInput] = useState(selection.voucherCode)
   const isHomestay = industryKey === "HOMESTAY"
   const orderTerms = getIndustryOrderTerms(industryKey)
-  const shippingFeeLabel = orderTerms.shippingFeeLabel
-  const shippingZoneLabel = orderTerms.shippingZoneLabel
-  const freeShippingText = orderTerms.freeShippingText
+  const shippingFeeLabel = isEn ? "Shipping Fee" : orderTerms.shippingFeeLabel
+  const shippingZoneLabel = isEn ? "Delivery Area" : orderTerms.shippingZoneLabel
+  const freeShippingText = isEn ? "Free Shipping for All Orders" : orderTerms.freeShippingText
 
   return (
     <>
@@ -38,9 +42,9 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {variants.length > 0 && (
           <label className="flex flex-col gap-1">
-            <span className="text-caption font-bold text-foreground">Kích thước / Phiên bản</span>
+            <span className="text-caption font-bold text-foreground">{t("greetingCard.customer.options.variantsLabel")}</span>
             <select value={selection.variantId} onChange={(e) => onChange({ variantId: e.target.value })} className={FIELD}>
-              <option value="">Bản tiêu chuẩn — {basePrice > 0 ? vnd(basePrice) : "Liên hệ"}</option>
+              <option value="">{t("greetingCard.customer.options.standardVariant")} — {basePrice > 0 ? vnd(basePrice) : t("greetingCard.customer.headerLabels.contactPrice")}</option>
               {variants.map((v) => (
                 <option key={v.id} value={v.id}>{v.name} — {vnd(v.priceVnd)}</option>
               ))}
@@ -49,11 +53,11 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
           </label>
         )}
         <div className="flex flex-col gap-1">
-          <span className="text-caption font-bold text-foreground" id="qty-label">Số lượng</span>
+          <span className="text-caption font-bold text-foreground" id="qty-label">{t("greetingCard.customer.options.quantity")}</span>
           <div className="flex items-center gap-2" role="group" aria-labelledby="qty-label">
             <button
               type="button"
-              aria-label="Giảm số lượng"
+              aria-label={t("greetingCard.customer.options.decreaseQty")}
               disabled={selection.quantity <= 1}
               onClick={() => onChange({ quantity: selection.quantity - 1 })}
               className="h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
@@ -63,7 +67,7 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
             <span className="w-10 text-center font-extrabold text-body" aria-live="polite">{selection.quantity}</span>
             <button
               type="button"
-              aria-label="Tăng số lượng"
+              aria-label={t("greetingCard.customer.options.increaseQty")}
               disabled={selection.quantity >= MAX_ORDER_QUANTITY}
               onClick={() => onChange({ quantity: selection.quantity + 1 })}
               className="h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
@@ -78,15 +82,15 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
         <label className="flex flex-col gap-1">
           <span className="text-caption font-bold text-foreground">{shippingZoneLabel} <span className="text-danger">*</span></span>
           <select value={selection.shippingZoneId} onChange={(e) => onChange({ shippingZoneId: e.target.value })} className={FIELD}>
-            <option value="">— Chọn khu vực —</option>
+            <option value="">{t("greetingCard.customer.options.selectZone")}</option>
             {shipping.zones.map((z) => (
-              <option key={z.id} value={z.id}>{z.name} — {z.feeVnd > 0 && !shipping.freeShippingAll ? vnd(z.feeVnd) : "Miễn phí"}</option>
+              <option key={z.id} value={z.id}>{z.name} — {z.feeVnd > 0 && !shipping.freeShippingAll ? vnd(z.feeVnd) : t("greetingCard.customer.options.free")}</option>
             ))}
           </select>
           {shipping.freeShippingAll ? (
             <span className="text-caption text-success">{freeShippingText}</span>
           ) : shipping.freeShippingOverVnd !== null && (
-            <span className="text-caption text-text-muted">Miễn phí giao cho đơn từ {vnd(shipping.freeShippingOverVnd)}</span>
+            <span className="text-caption text-text-muted">{t("greetingCard.customer.options.freeShippingNote", { amount: vnd(shipping.freeShippingOverVnd) })}</span>
           )}
         </label>
       )}
@@ -96,7 +100,7 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
         <div className="flex items-center justify-between">
           <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
             <Ticket size={14} className="text-primary" />
-            Mã ưu đãi
+            {t("greetingCard.customer.options.voucherTitle")}
           </span>
         </div>
         <div className="flex gap-2">
@@ -113,7 +117,7 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
             onClick={() => onChange({ voucherCode: voucherInput.trim() })}
             className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
           >
-            <Ticket size={14} /> Áp dụng
+            <Ticket size={14} /> {t("greetingCard.customer.options.apply")}
           </button>
         </div>
         {errors.voucherCode && <span className="text-caption text-danger">{errors.voucherCode}</span>}
@@ -121,26 +125,26 @@ export function BrochureOrderOptions({ variants, basePrice, shipping, selection,
 
       {quote?.awaitingQuote ? (
         <p role="status" className="text-body-sm text-text-muted border-t border-border pt-2">
-          Mẫu này chưa niêm yết giá. Cửa hàng sẽ báo giá trọn gói sau khi nhận đơn — bạn chưa cần thanh toán lúc này.
+          {t("greetingCard.customer.options.awaitingQuoteNote")}
         </p>
       ) : (
         <dl className="flex flex-col gap-1 text-body-sm border-t border-border pt-2" aria-busy={loading}>
-          <div className="flex justify-between"><dt className="text-text-muted">Tạm tính</dt><dd>{quote ? vnd(quote.subtotalVnd) : "—"}</dd></div>
+          <div className="flex justify-between"><dt className="text-text-muted">{t("greetingCard.customer.options.subtotal")}</dt><dd>{quote ? vnd(quote.subtotalVnd) : "—"}</dd></div>
           {quote && quote.discountVnd > 0 && (
-            <div className="flex justify-between text-success"><dt>Giảm giá ({quote.voucherCode})</dt><dd>−{vnd(quote.discountVnd)}</dd></div>
+            <div className="flex justify-between text-success"><dt>{t("greetingCard.customer.options.discount", { code: quote.voucherCode ?? "" })}</dt><dd>−{vnd(quote.discountVnd)}</dd></div>
           )}
           <div className="flex justify-between">
             <dt className="text-text-muted">{shippingFeeLabel}</dt>
-            <dd>{shipping.freeShippingAll ? "Miễn phí" : shipping.zones.length === 0 ? (isHomestay ? "Bao gồm" : "Cửa hàng báo sau") : quote?.shippingZone ? (quote.shippingFeeVnd > 0 ? vnd(quote.shippingFeeVnd) : "Miễn phí") : "—"}</dd>
+            <dd>{shipping.freeShippingAll ? t("greetingCard.customer.options.free") : shipping.zones.length === 0 ? (isHomestay ? t("greetingCard.customer.options.included") : t("greetingCard.customer.options.shopInformsLater")) : quote?.shippingZone ? (quote.shippingFeeVnd > 0 ? vnd(quote.shippingFeeVnd) : t("greetingCard.customer.options.free")) : "—"}</dd>
           </div>
           {quote?.promotionDiscountVnd ? (
-            <div className="flex justify-between text-success"><dt>Ưu đãi</dt><dd>−{vnd(quote.promotionDiscountVnd)}</dd></div>
+            <div className="flex justify-between text-success"><dt>{t("greetingCard.customer.options.promoDiscount")}</dt><dd>−{vnd(quote.promotionDiscountVnd)}</dd></div>
           ) : null}
           {quote?.holidaySurchargeVnd ? (
-            <div className="flex justify-between"><dt className="text-text-muted">Phụ phí ngày lễ ({quote.holidayName})</dt><dd>+{vnd(quote.holidaySurchargeVnd)}</dd></div>
+            <div className="flex justify-between"><dt className="text-text-muted">{t("greetingCard.customer.options.holidaySurcharge", { holiday: quote.holidayName ?? "" })}</dt><dd>+{vnd(quote.holidaySurchargeVnd)}</dd></div>
           ) : null}
           <div className="flex justify-between font-extrabold text-body">
-            <dt>Tổng đơn hàng</dt>
+            <dt>{t("greetingCard.customer.options.total")}</dt>
             <dd className="text-primary">{quote ? vnd(quote.totalVnd) : "—"}</dd>
           </div>
           <PaymentDueRows quote={quote} />

@@ -108,7 +108,7 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
             <input
               type="text"
               required
-              placeholder="VD: Tiệm hoa Đà Lạt Franchise…"
+              placeholder="VD: Chi nhánh Đà Lạt Franchise…"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full text-body-sm h-9 px-3 rounded-xl border border-border bg-surface focus:outline-primary"

@@ -3,6 +3,7 @@
 import React, { useId, useState } from "react"
 import { ArrowLeft, Send, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/lib/i18n"
 import { ORDER_FIELD_MAX, MAX_DELIVERY_LEAD_DAYS } from "@/modules/greeting-card/domain/greeting-card-rules"
 import type { ProductSnapshot, CustomerOrderSubmitInput } from "@/modules/greeting-card/domain/greeting-card-types"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -49,6 +50,8 @@ export function BrochureOrderForm({
   onBack,
   onSubmit,
 }: BrochureOrderFormProps) {
+  const { locale } = useI18n()
+  const isEn = locale === "en"
   const terms = getIndustryTerminology(industryKey)
   const isHomestay = industryKey === "HOMESTAY"
   const uid = useId()
@@ -94,7 +97,7 @@ export function BrochureOrderForm({
   const [review, setReview, clearReview] = useSavedState<CustomerOrderSubmitInput | null>(`order-review:${productSnapshot.id}`, null)
   const [website, setWebsite] = useState("")
 
-  const { errorMessage, loading, handleSubmit, handleConfirm } = useBrochureOrderSubmit({
+  const { errorMessage, loading, setErrorMessage, handleSubmit, handleConfirm } = useBrochureOrderSubmit({
     isHomestay,
     industryKey,
     customerName,
@@ -127,6 +130,12 @@ export function BrochureOrderForm({
     onClearReview: clearReview,
   })
 
+  // Khi có lỗi, nếu người dùng bắt đầu sửa bất kỳ trường nào thì tự động xóa thông báo lỗi để không bị vướng mắt
+  const onInputChange = <T,>(setter: (val: T) => void) => (val: T) => {
+    if (errorMessage) setErrorMessage(null)
+    setter(val)
+  }
+
   if (review) {
     return (
       <div className="w-full max-w-lg mx-auto bg-surface rounded-2xl border border-border p-5 sm:p-6 shadow-sm">
@@ -157,10 +166,10 @@ export function BrochureOrderForm({
           className="gap-1.5 text-text-muted hover:text-foreground text-caption"
         >
           <ArrowLeft size={16} />
-          <span>Đổi {terms.sampleProduct.toLowerCase()}</span>
+          <span>{isEn ? "Change design" : `Đổi ${terms.sampleProduct.toLowerCase()}`}</span>
         </Button>
         <span className="text-caption font-bold uppercase tracking-wider text-primary">
-          Điền đơn đặt {terms.sampleProduct.toLowerCase()}
+          {isEn ? "Order Details" : `Điền đơn đặt ${terms.sampleProduct.toLowerCase()}`}
         </span>
       </div>
 
@@ -168,12 +177,20 @@ export function BrochureOrderForm({
 
       {errorMessage && (
         <div
+          id="order-form-error-banner"
           role="alert"
-          ref={(el) => el?.scrollIntoView({ behavior: "smooth", block: "center" })}
-          className="mb-5 p-3 rounded-xl bg-danger-bg border border-danger/30 text-danger text-body-sm flex items-start gap-2"
+          className="mb-5 p-3 rounded-xl bg-danger-bg border border-danger/30 text-danger text-body-sm flex items-start gap-2 animate-in fade-in duration-200"
         >
           <AlertCircle size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
-          <span>{errorMessage}</span>
+          <span className="flex-1">{errorMessage}</span>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="text-danger/70 hover:text-danger text-caption underline cursor-pointer shrink-0"
+            aria-label="Đóng thông báo lỗi"
+          >
+            Đóng
+          </button>
         </div>
       )}
 
@@ -200,49 +217,49 @@ export function BrochureOrderForm({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label htmlFor={`${uid}-customerName`} className="block text-body-sm font-bold text-foreground mb-1">
-              Họ tên của bạn <span className="text-danger">*</span>
+              {isEn ? "Your Full Name" : "Họ tên của bạn"} <span className="text-danger">*</span>
             </label>
             <input
               type="text"
               required
-              placeholder="VD: Nguyễn Văn A"
+              placeholder={isEn ? "e.g., Alex Johnson" : "VD: Nguyễn Văn A"}
               value={customerName}
               maxLength={ORDER_FIELD_MAX.name}
               id={`${uid}-customerName`}
               autoComplete="name"
-              onChange={(e) => setCustomerName(e.target.value)}
+              onChange={(e) => onInputChange(setCustomerName)(e.target.value)}
               className={INPUT}
             />
           </div>
           <div>
             <label htmlFor={`${uid}-customerPhone`} className="block text-body-sm font-bold text-foreground mb-1">
-              Số điện thoại của bạn <span className="text-danger">*</span>
+              {isEn ? "Your Phone Number" : "Số điện thoại của bạn"} <span className="text-danger">*</span>
             </label>
             <input
               type="tel"
               required
-              placeholder="VD: 0901234567"
+              placeholder={isEn ? "e.g., 0901234567" : "VD: 0901234567"}
               value={customerPhone}
-              maxLength={15}
+              maxLength={18}
               id={`${uid}-customerPhone`}
               autoComplete="tel"
               inputMode="tel"
-              onChange={(e) => setCustomerPhone(e.target.value)}
+              onChange={(e) => onInputChange(setCustomerPhone)(e.target.value)}
               className={INPUT}
             />
           </div>
           <div>
             <label htmlFor={`${uid}-customerEmail`} className="block text-body-sm font-bold text-foreground mb-1">
-              Email <span className="text-caption font-normal text-text-muted">(tùy chọn)</span>
+              Email <span className="text-caption font-normal text-text-muted">{isEn ? "(optional)" : "(tùy chọn)"}</span>
             </label>
             <input
               type="email"
-              placeholder="VD: email@example.com"
+              placeholder={isEn ? "e.g., email@example.com" : "VD: email@example.com"}
               value={customerEmail}
               maxLength={100}
               id={`${uid}-customerEmail`}
               autoComplete="email"
-              onChange={(e) => setCustomerEmail(e.target.value)}
+              onChange={(e) => onInputChange(setCustomerEmail)(e.target.value)}
               className={INPUT}
             />
           </div>
@@ -308,12 +325,12 @@ export function BrochureOrderForm({
             deliveryNote={deliveryNote}
             mapUrl={mapUrl}
             availability={availability}
-            onRecipientNameChange={setRecipientName}
-            onRecipientPhoneChange={setRecipientPhone}
-            onDeliveryDateChange={setDeliveryDate}
-            onDeliveryTimeSlotChange={setDeliveryTimeSlot}
-            onAddressPartsChange={setAddressParts}
-            onNotesChange={setNotes}
+            onRecipientNameChange={onInputChange(setRecipientName)}
+            onRecipientPhoneChange={onInputChange(setRecipientPhone)}
+            onDeliveryDateChange={onInputChange(setDeliveryDate)}
+            onDeliveryTimeSlotChange={onInputChange(setDeliveryTimeSlot)}
+            onAddressPartsChange={onInputChange(setAddressParts)}
+            onNotesChange={onInputChange(setNotes)}
           />
         )}
 
@@ -326,12 +343,12 @@ export function BrochureOrderForm({
           <Send size={18} aria-hidden="true" />
           <span>
             {loading
-              ? "Đang gửi đơn..."
+              ? (isEn ? "Submitting order..." : "Đang gửi đơn...")
               : availability.available === false
-              ? (availability.message || "Tạm không khả dụng")
+              ? (availability.message || (isEn ? "Currently unavailable" : "Tạm không khả dụng"))
               : isHomestay
-              ? "Xem lại thông tin đặt phòng"
-              : "Xem lại đơn"}
+              ? (isEn ? "Review Booking Details" : "Xem lại thông tin đặt phòng")
+              : (isEn ? "Review Order" : "Xem lại đơn")}
           </span>
         </Button>
       </form>

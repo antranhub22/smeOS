@@ -27,12 +27,13 @@ interface Props {
   catalog: { id: string; code: string; name: string; description: string | null; filters?: Record<string, unknown> | null }
   products: GreetingCatalogProduct[]
   shipping: ShippingConfig
+  internationalGuide?: string | null | undefined
 }
 
 
 const SELECTED_KEY = "public-selected"
 
-export function BrochurePublicView({ catalog, products, shipping }: Props) {
+export function BrochurePublicView({ catalog, products, shipping, internationalGuide }: Props) {
   const [step, setStep] = useState<PublicStep>("SWIPING")
   // Mẫu đang chọn + bước đang đứng nhớ trên máy: rời trang lúc xem mẫu đã chọn / điền form thì quay lại đúng chỗ
   const [selectedId, setSelectedId] = useSavedState<string | null>(SELECTED_KEY, null)
@@ -137,6 +138,7 @@ export function BrochurePublicView({ catalog, products, shipping }: Props) {
           sendCode={orderResult.sendCode}
           totalVnd={orderResult.totalVnd}
           vietQr={orderResult.vietQr}
+          internationalGuide={internationalGuide}
           onReportPaid={async (proofAssetId?: string) => {
             const res = await fetch(`/api/v1/public/brochure/${orderResult.sendCode}/payment-notify`, {
               method: "POST",

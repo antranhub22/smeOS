@@ -9,6 +9,7 @@ import {
 } from "../domain/shop-contact"
 import { ShopContactRepository } from "../infra/shop-contact-repository"
 import { parseStorePolicies } from "../domain/store-policy"
+import { getUnlockedLocales, parseBrochureLanguagePolicy } from "../domain/brochure-language-policy"
 
 export async function getShopContact(
   organizationId: string,
@@ -17,8 +18,15 @@ export async function getShopContact(
   const raw = await repo.findByOrganizationId(organizationId)
   if (!raw) return null
   const { settings, ...contact } = raw
+  const unlocked = getUnlockedLocales(settings)
+  const languagePolicy = parseBrochureLanguagePolicy(settings, unlocked)
   // Cam kết lấy từ Chính sách trong Hồ sơ tiệm (PO 08/10/2026), áp chung mọi link của tiệm
-  return toShopContact({ ...contact, commitments: parseStorePolicies(settings).commitments })
+  const shopContact = toShopContact({ ...contact, commitments: parseStorePolicies(settings).commitments })
+  if (!shopContact) return null
+  return {
+    ...shopContact,
+    languagePolicy,
+  }
 }
 
 export async function getShopContactBySlug(

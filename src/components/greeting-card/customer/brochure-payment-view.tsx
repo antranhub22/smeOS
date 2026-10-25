@@ -23,6 +23,8 @@ import { PaymentFailedNotice } from "./payment-failed-notice"
 import { PaymentProofUploader } from "./payment-proof-uploader"
 import { BrochurePaymentConfirmedBanner } from "./brochure-payment-confirmed-banner"
 
+import { useI18n } from "@/lib/i18n"
+
 type PolledTracking = { status: string; order?: { status: string; productionStatus?: string; paidVnd: number; totalVnd: number; payment?: { status: string } } }
 
 interface BrochurePaymentViewProps {
@@ -32,6 +34,8 @@ interface BrochurePaymentViewProps {
   /** `null` khi tiệm chưa cấu hình tài khoản nhận tiền — cửa hàng tự liên hệ khách. */
   vietQr: BrochurePaymentInstructions | null
   shopPhone?: string | null | undefined
+  /** Hướng dẫn chuyển tiền quốc tế do cửa hàng cài đặt (Wise, PayPal, Swift...) */
+  internationalGuide?: string | null | undefined
   onReportPaid: (proofAssetId?: string) => Promise<void>
   onGoToTracking: () => void
   /** Khách đã báo chuyển khoản trước đó (rời trang rồi quay lại) → hiện ngay "chờ xác nhận" */
@@ -52,6 +56,7 @@ export function BrochurePaymentView({
   totalVnd,
   vietQr,
   shopPhone,
+  internationalGuide,
   onReportPaid,
   onGoToTracking,
   alreadyReported = false,
@@ -234,6 +239,19 @@ export function BrochurePaymentView({
             </div>
           </div>
         </div>
+
+        {/* Khối hướng dẫn thanh toán quốc tế dành riêng cho khách nước ngoài */}
+        {internationalGuide && (
+          <div className="w-full p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-2 text-left">
+            <div className="flex items-center gap-2 text-body-sm font-bold text-foreground">
+              <span className="text-base">🌍</span>
+              <span>International Payment (Wise / PayPal / Swift / Zelle)</span>
+            </div>
+            <p className="text-body-sm text-foreground/90 whitespace-pre-line leading-relaxed font-mono">
+              {internationalGuide}
+            </p>
+          </div>
+        )}
         </>
       ) : (
         <>

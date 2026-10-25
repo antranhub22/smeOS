@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Send } from "lucide-react"
+import { BrochureLanguageSettings } from "@/components/greeting-card/admin/brochure-language-settings"
 import { BrochureWorkflowSettings } from "@/components/greeting-card/admin/brochure-workflow-settings"
 import { BrochureStepTimeoutSettings } from "@/components/greeting-card/admin/brochure-step-timeout-settings"
 import { BrochureStepSlaSettings } from "@/components/greeting-card/admin/brochure-step-sla-settings"
@@ -20,9 +21,12 @@ export function BrochureFlowSettingsTab() {
           <Send size={18} className="text-primary" /> Cơ Chế Vận Hành & Tự Động Hủy Đơn Thẻ Chào
         </h2>
         <p className="text-xs text-text-muted">
-          Thiết lập quy trình duyệt (Tinh gọn / Tiêu chuẩn / Nghiêm ngặt), thời hạn hết hạn liên kết và thời gian giữ chỗ.
+          Thiết lập quy trình duyệt (Tinh gọn / Tiêu chuẩn / Nghiêm ngặt), ngôn ngữ quốc tế, thời hạn hết hạn liên kết và thời gian giữ chỗ.
         </p>
       </div>
+
+      {/* Thiết lập Ngôn ngữ & Khách Quốc tế */}
+      <BrochureLanguageSettings />
 
       {/* Ma trận vận hành quy trình */}
       <BrochureWorkflowSettings />

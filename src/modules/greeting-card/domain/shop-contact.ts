@@ -21,6 +21,8 @@ export interface ShopContact {
   commitments?: ShopCommitment[] | undefined
   /** Mã định danh ngành nghề (FLORAL, FASHION, HOMESTAY...) để chuyên biệt hóa trải nghiệm */
   industry?: string | null | undefined
+  /** Chính sách ngôn ngữ & quốc tế cho Thẻ Chào */
+  languagePolicy?: import("./brochure-language-policy").BrochureLanguagePolicy | undefined
 }
 
 export interface ShopLink {

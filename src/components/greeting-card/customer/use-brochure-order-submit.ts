@@ -167,7 +167,15 @@ export function useBrochureOrderSubmit(params: UseBrochureOrderSubmitParams) {
       check.valid = false
     }
     if (!check.valid) {
-      setErrorMessage(Object.values(check.errors)[0] ?? "Thông tin đặt hàng chưa hợp lệ")
+      const firstError = Object.values(check.errors)[0] ?? "Thông tin đặt hàng chưa hợp lệ"
+      setErrorMessage(firstError)
+      // Cuộn lên xem lỗi 1 lần duy nhất khi người dùng bấm Gửi đơn
+      if (typeof window !== "undefined") {
+        setTimeout(() => {
+          const el = document.getElementById("order-form-error-banner")
+          el?.scrollIntoView({ behavior: "smooth", block: "center" })
+        }, 50)
+      }
       return
     }
 

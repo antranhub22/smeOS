@@ -44,9 +44,87 @@ export async function listAllOrganizations(
   }))
 }
 
+export type PendingApprovalItem = {
+  id: string
+  organizationId: string
+  organizationName: string
+  organizationSlug: string
+  type: "LANGUAGE_UNLOCK" | "MODEL_CHANGE"
+  requestedAt: string
+  requestedBy?: string
+  note?: string | null
+  /** LANGUAGE_UNLOCK: danh sách locale yêu cầu mở */
+  requestedLocales?: string[]
+  /** MODEL_CHANGE: loại mô hình yêu cầu chuyển */
+  requestedModelType?: string
+}
+
+/** Lấy tất cả yêu cầu cần duyệt trong toàn hệ thống (cross-tenant, chỉ platform). */
+export async function listPendingApprovals(
+  _pctx: PlatformContext
+): Promise<PendingApprovalItem[]> {
+  const orgs = await prisma.organizations.findMany({
+    select: { id: true, name: true, slug: true, settings: true },
+  })
+
+  const items: PendingApprovalItem[] = []
+
+  for (const org of orgs) {
+    const settings = (org.settings as Record<string, unknown> | null) ?? {}
+
+    const langUnlock = settings.pending_language_unlock as
+      | { requested_locales: string[]; requested_at: string; requested_by?: string; note?: string | null }
+      | null
+      | undefined
+
+    if (langUnlock) {
+      items.push({
+        id: `lang-${org.id}`,
+        organizationId: org.id,
+        organizationName: org.name,
+        organizationSlug: org.slug,
+        type: "LANGUAGE_UNLOCK",
+        requestedAt: langUnlock.requested_at,
+        ...(langUnlock.requested_by ? { requestedBy: langUnlock.requested_by } : {}),
+        ...(langUnlock.note !== undefined ? { note: langUnlock.note } : {}),
+        requestedLocales: langUnlock.requested_locales,
+      })
+    }
+
+    const modelChange = settings.pending_model_change as
+      | { requested_type: string; requested_at: string; requested_by?: string; note?: string | null }
+      | null
+      | undefined
+
+    if (modelChange) {
+      items.push({
+        id: `model-${org.id}`,
+        organizationId: org.id,
+        organizationName: org.name,
+        organizationSlug: org.slug,
+        type: "MODEL_CHANGE",
+        requestedAt: modelChange.requested_at,
+        ...(modelChange.requested_by ? { requestedBy: modelChange.requested_by } : {}),
+        ...(modelChange.note !== undefined ? { note: modelChange.note } : {}),
+        requestedModelType: modelChange.requested_type,
+      })
+    }
+  }
+
+  // Sắp xếp theo thời gian gửi mới nhất lên đầu
+  return items.sort((a, b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime())
+}
+
 export type PlatformOrganizationDetail = PlatformOrganizationSummary & {
   branchCount: number
   workspaceKinds: string[]
+  unlockedLocales?: string[] | undefined
+  pendingLanguageUnlock?: {
+    requested_locales: string[]
+    requested_at: string
+    requested_by?: string
+    note?: string | null
+  } | null | undefined
   pendingModelChange?: {
     requested_type: string
     requested_at: string
@@ -67,6 +145,7 @@ export async function getAnyOrganization(
     },
   })
   if (!org) return null
+  const settings = (org.settings as Record<string, unknown> | null) ?? {}
   return {
     id: org.id,
     name: org.name,
@@ -77,8 +156,15 @@ export async function getAnyOrganization(
     memberCount: org._count.memberships,
     branchCount: org._count.branches,
     workspaceKinds: org.workspaces.map((w) => w.kind),
+    unlockedLocales: Array.isArray(settings.unlocked_locales)
+      ? (settings.unlocked_locales as string[])
+      : ["vi"],
+    pendingLanguageUnlock:
+      (settings.pending_language_unlock as
+        | PlatformOrganizationDetail["pendingLanguageUnlock"]
+        | undefined) ?? null,
     pendingModelChange:
-      ((org.settings as Record<string, unknown> | null)?.pending_model_change as
+      (settings.pending_model_change as
         | PlatformOrganizationDetail["pendingModelChange"]
         | undefined) ?? null,
   }

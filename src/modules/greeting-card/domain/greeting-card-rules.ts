@@ -107,11 +107,19 @@ export const ORDER_FIELD_MAX = {
 export const MAX_DELIVERY_LEAD_DAYS = 365
 
 const VN_PHONE_REGEX = /^(0|\+84)[35789][0-9]{8}$/
+/** Định dạng số điện thoại quốc tế theo chuẩn E.164 (+123456789... từ 7 đến 15 chữ số) */
+const INTERNATIONAL_PHONE_REGEX = /^\+?[1-9]\d{6,14}$/
 const VN_OFFSET_MS = 7 * 3_600_000
 
 /** SĐT di động Việt Nam 10 số (0… hoặc +84…). */
 export function isValidVnPhone(phone: string | undefined | null): boolean {
   return VN_PHONE_REGEX.test(normalizePhone(phone))
+}
+
+/** SĐT hợp lệ: hỗ trợ cả số di động VN và số quốc tế E.164 (dành cho kiều bào/khách nước ngoài) */
+export function isValidOrderPhone(phone: string | undefined | null): boolean {
+  const normalized = normalizePhone(phone)
+  return VN_PHONE_REGEX.test(normalized) || INTERNATIONAL_PHONE_REGEX.test(normalized)
 }
 
 export function normalizePhone(phone: string | undefined | null): string {
@@ -164,8 +172,8 @@ export function validateCustomerOrderInput(
     errors.customerName = `Họ tên tối đa ${ORDER_FIELD_MAX.name} ký tự`
   }
 
-  if (!VN_PHONE_REGEX.test(normalizePhone(input.customerPhone))) {
-    errors.customerPhone = "Số điện thoại người đặt không hợp lệ (10 số)"
+  if (!isValidOrderPhone(input.customerPhone)) {
+    errors.customerPhone = "Số điện thoại người đặt không hợp lệ (hỗ trợ 10 số VN hoặc số quốc tế E.164)"
   }
 
   const customerEmail = input.customerEmail?.trim() ?? ""
@@ -182,10 +190,10 @@ export function validateCustomerOrderInput(
     errors.recipientName = `Họ tên tối đa ${ORDER_FIELD_MAX.name} ký tự`
   }
 
-  if (!VN_PHONE_REGEX.test(normalizePhone(input.recipientPhone))) {
+  if (!isValidOrderPhone(input.recipientPhone)) {
     errors.recipientPhone = isHomestay
-      ? "Số điện thoại người nhận phòng không hợp lệ (10 số)"
-      : "Số điện thoại người nhận không hợp lệ (10 số)"
+      ? "Số điện thoại người nhận phòng không hợp lệ"
+      : "Số điện thoại người nhận không hợp lệ"
   }
 
   const dateError = validateDeliveryDate(

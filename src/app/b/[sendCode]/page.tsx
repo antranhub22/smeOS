@@ -11,6 +11,7 @@ import { getGreetingCatalogForCustomer } from "@/modules/greeting-card/use-cases
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { LinkUnavailable } from "@/components/greeting-card/customer/link-unavailable"
 import { BrochureCustomerExperience } from "@/components/greeting-card/customer/brochure-customer-experience"
+import { I18nProvider } from "@/lib/i18n"
 
 interface PageProps {
   params: Promise<{ sendCode: string }>
@@ -108,7 +109,14 @@ export default async function PublicBrochurePage({ params, searchParams }: PageP
     )
   }
 
-  return <BrochureCustomerExperience initialData={data} preview={viewer?.viewer === "STAFF"} />
+  const initialLocale = data.shop?.languagePolicy?.defaultLocale ?? "vi"
+  const industryKey = data.shop?.industry ?? undefined
+
+  return (
+    <I18nProvider initialLocale={initialLocale} industryKey={industryKey}>
+      <BrochureCustomerExperience initialData={data} preview={viewer?.viewer === "STAFF"} />
+    </I18nProvider>
+  )
 }
 
 function UnavailableLink({ reason, shop }: { reason: "EXPIRED" | "CLOSED"; shop: ShopContact }) {

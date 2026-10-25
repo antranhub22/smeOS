@@ -9,6 +9,7 @@ import { ViDateInput } from "./vi-date-input"
 import { DeliveryTimePicker } from "./delivery-time-picker"
 import { AddressFields } from "./address-fields"
 import { OrderNotesFields } from "./order-notes-fields"
+import { useI18n } from "@/lib/i18n"
 
 import { AvailabilityIndicator } from "./availability-indicator"
 import type { HomestayAvailabilityState } from "./homestay-order-fields"
@@ -66,9 +67,11 @@ export function StandardOrderFields({
   onAddressPartsChange,
   onNotesChange,
 }: StandardOrderFieldsProps) {
+  const { locale } = useI18n()
+  const isEn = locale === "en"
   const orderTerms = getIndustryOrderTerms(industryKey)
-  const recipientLabel = orderTerms.recipientShortLabel
-  const dateLabel = orderTerms.deliveryDateLabel
+  const recipientLabel = isEn ? "Recipient" : orderTerms.recipientShortLabel
+  const dateLabel = isEn ? "Delivery Date" : orderTerms.deliveryDateLabel
 
   return (
     <div className="flex flex-col gap-4">
@@ -76,12 +79,12 @@ export function StandardOrderFields({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor={`${idPrefix}-recipientName`} className="block text-body-sm font-bold text-foreground mb-1">
-            Họ tên {recipientLabel} <span className="text-danger">*</span>
+            {isEn ? "Recipient Full Name" : `Họ tên ${recipientLabel}`} <span className="text-danger">*</span>
           </label>
           <input
             type="text"
             required
-            placeholder="VD: Trần Thị B"
+            placeholder={isEn ? "e.g., Jane Doe" : "VD: Trần Thị B"}
             value={recipientName}
             maxLength={ORDER_FIELD_MAX.name}
             id={`${idPrefix}-recipientName`}
@@ -92,14 +95,14 @@ export function StandardOrderFields({
         </div>
         <div>
           <label htmlFor={`${idPrefix}-recipientPhone`} className="block text-body-sm font-bold text-foreground mb-1">
-            Số điện thoại người nhận <span className="text-danger">*</span>
+            {isEn ? "Recipient Phone Number" : "Số điện thoại người nhận"} <span className="text-danger">*</span>
           </label>
           <input
             type="tel"
             required
-            placeholder="VD: 0912345678"
+            placeholder={isEn ? "e.g., +1 234 567 8900" : "VD: 0912345678"}
             value={recipientPhone}
-            maxLength={15}
+            maxLength={18}
             id={`${idPrefix}-recipientPhone`}
             autoComplete="off"
             inputMode="tel"
@@ -127,7 +130,7 @@ export function StandardOrderFields({
         </div>
         <div>
           <label htmlFor={`${idPrefix}-deliveryTimeSlot`} className="block text-body-sm font-bold text-foreground mb-1">
-            Khung giờ mong muốn
+            {isEn ? "Preferred Time Window" : "Khung giờ mong muốn"}
           </label>
           <DeliveryTimePicker
             id={`${idPrefix}-deliveryTimeSlot`}

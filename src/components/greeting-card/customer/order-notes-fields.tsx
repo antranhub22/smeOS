@@ -4,6 +4,7 @@ import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
 import { DELIVERY_NOTE_MAX, MAP_URL_MAX } from "@/modules/greeting-card/domain/delivery-note"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { useI18n } from "@/lib/i18n"
 
 export interface OrderNotesValue {
   cardMessage: string
@@ -14,7 +15,10 @@ export interface OrderNotesValue {
 
 const LABEL = "block text-body-sm font-bold text-foreground mb-1"
 
-function getCardPlaceholder(industryKey?: string | null): string {
+function getCardPlaceholder(industryKey: string | null | undefined, isEn: boolean): string {
+  if (isEn) {
+    return "e.g., Happy Birthday to the most wonderful person! Wishing you all the best..."
+  }
   switch (industryKey) {
     case "FASHION":
       return "VD: Lời nhắn gửi kèm trang phục, yêu cầu ghi chú thẻ cảm ơn..."
@@ -51,12 +55,20 @@ export function OrderNotesFields({
   industryKey?: string | null | undefined
   onChange: (patch: Partial<OrderNotesValue>) => void
 }) {
+  const { t, locale } = useI18n()
+  const isEn = locale === "en"
   const terms = getIndustryTerminology(industryKey)
   const id = (k: keyof OrderNotesValue) => `${idPrefix}-${k}`
   const cardLength = value.cardMessage.length
-  const cardLabel = terms.printablesTitle ? `${terms.printablesTitle} / Lời nhắn` : "Nội dung thiệp mừng / băng rôn"
-  const cardPlaceholder = getCardPlaceholder(industryKey)
-  const makerNoteLabel = terms.makerTitle
+  const cardLabel = isEn
+    ? "Greeting Card Message / Card Note"
+    : terms.printablesTitle
+    ? `${terms.printablesTitle} / Lời nhắn`
+    : "Nội dung thiệp mừng / băng rôn"
+  const cardPlaceholder = getCardPlaceholder(industryKey, isEn)
+  const makerNoteLabel = isEn
+    ? "Notes for Artisan Workshop"
+    : terms.makerTitle
     ? `Ghi chú cho bộ phận gia công / ${terms.makerTitle.toLowerCase()}`
     : "Ghi chú cho xưởng / bộ phận gia công"
 
@@ -81,7 +93,7 @@ export function OrderNotesFields({
           aria-live="polite"
           className={`mt-1 text-right text-caption ${cardLength >= ORDER_FIELD_MAX.cardMessage ? "text-warning font-bold" : "text-text-muted"}`}
         >
-          {cardLength}/{ORDER_FIELD_MAX.cardMessage} ký tự
+          {cardLength}/{ORDER_FIELD_MAX.cardMessage} {isEn ? "chars" : "ký tự"}
         </p>
       </div>
 
@@ -91,7 +103,7 @@ export function OrderNotesFields({
         </label>
         <input
           type="text"
-          placeholder="VD: Lưu ý quy cách, đóng gói hoặc chi tiết phụ kiện"
+          placeholder={isEn ? "e.g., Special packaging, design notes or accessories" : "VD: Lưu ý quy cách, đóng gói hoặc chi tiết phụ kiện"}
           value={value.senderNote}
           maxLength={ORDER_FIELD_MAX.senderNote}
           id={id("senderNote")}
@@ -102,11 +114,11 @@ export function OrderNotesFields({
 
       <div>
         <label htmlFor={id("deliveryNote")} className={LABEL}>
-          Ghi chú cho người giao hàng
+          {isEn ? "Instructions for Courier / Delivery" : "Ghi chú cho người giao hàng"}
         </label>
         <input
           type="text"
-          placeholder="VD: Gọi trước 15 phút, người nhận vắng thì gửi bảo vệ"
+          placeholder={isEn ? "e.g., Call 15 mins prior, leave with reception if absent" : "VD: Gọi trước 15 phút, người nhận vắng thì gửi bảo vệ"}
           value={value.deliveryNote}
           maxLength={DELIVERY_NOTE_MAX}
           id={id("deliveryNote")}
@@ -117,19 +129,23 @@ export function OrderNotesFields({
 
       <div>
         <label htmlFor={id("mapUrl")} className={LABEL}>
-          Link vị trí trên Google Maps (nếu có)
+          {isEn ? "Google Maps Location Link (optional)" : "Link vị trí trên Google Maps (nếu có)"}
         </label>
         <input
           type="url"
           inputMode="url"
-          placeholder="Mở Google Maps → Chia sẻ → Sao chép đường liên kết"
+          placeholder={isEn ? "Open Google Maps → Share → Copy Link" : "Mở Google Maps → Chia sẻ → Sao chép đường liên kết"}
           value={value.mapUrl}
           maxLength={MAP_URL_MAX}
           id={id("mapUrl")}
           onChange={(e) => onChange({ mapUrl: e.target.value })}
           className={inputClassName}
         />
-        <p className="mt-1 text-caption text-text-muted">Giúp người giao tìm đúng chỗ nhanh hơn, nhất là địa chỉ trong hẻm hoặc khu mới.</p>
+        <p className="mt-1 text-caption text-text-muted">
+          {isEn
+            ? "Helps courier locate address faster, especially for alleys or newly developed zones."
+            : "Giúp người giao tìm đúng chỗ nhanh hơn, nhất là địa chỉ trong hẻm hoặc khu mới."}
+        </p>
       </div>
     </>
   )
