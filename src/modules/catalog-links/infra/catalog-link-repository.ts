@@ -2,8 +2,14 @@ import type { DbClient } from "./db-client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { InputJsonValue } from "./entities"
+import type {
+  ICatalogLinkRepository,
+  CreateCatalogLinkInput,
+  UpdateCatalogLinkInput,
+  CatalogLeadInput,
+} from "../domain/repositories/catalog-link-repository.interface"
 
-export class CatalogLinkRepository {
+export class CatalogLinkRepository implements ICatalogLinkRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   async findBySlug(slug: string) {
@@ -170,4 +176,13 @@ export class CatalogLinkRepository {
     })
     return true
   }
+}
+
+let defaultCatalogLinkRepository: ICatalogLinkRepository | null = null
+
+export function getCatalogLinkRepository(): ICatalogLinkRepository {
+  if (!defaultCatalogLinkRepository) {
+    defaultCatalogLinkRepository = new CatalogLinkRepository()
+  }
+  return defaultCatalogLinkRepository!
 }

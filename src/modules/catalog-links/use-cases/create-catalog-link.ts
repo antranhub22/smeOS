@@ -1,12 +1,14 @@
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
-import { CatalogLinkRepository } from "@/modules/catalog-links/infra/catalog-link-repository"
+import type { ICatalogLinkRepository } from "@/modules/catalog-links/domain/repositories/catalog-link-repository.interface"
+import { getCatalogLinkRepository } from "@/modules/catalog-links/infra/catalog-link-repository"
 import { validateSlug, normalizeSlug, validateFilters, type CatalogLinkFilters } from "@/modules/catalog-links/domain/catalog-link-rules"
 
 export async function createCatalogLink(
   ctx: TenantContext,
-  input: { slug: string; name: string; description?: string | null; filters?: CatalogLinkFilters | null }
+  input: { slug: string; name: string; description?: string | null; filters?: CatalogLinkFilters | null },
+  repo: ICatalogLinkRepository = getCatalogLinkRepository()
 ) {
   requireCapability(ctx, "J1")
 
@@ -17,7 +19,6 @@ export async function createCatalogLink(
   const filtersError = validateFilters(input.filters ?? {})
   if (filtersError) throw validationFailed({ filters: filtersError })
 
-  const repo = new CatalogLinkRepository()
   const existing = await repo.findBySlug(normalizedSlug)
   if (existing) throw validationFailed({ slug: "Slug đã được sử dụng" })
 

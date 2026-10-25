@@ -1,4 +1,5 @@
-import { AvailabilityRepository } from "../infra/availability-repository"
+import type { IAvailabilityRepository } from "../domain/repositories/availability-repository.interface"
+import { getAvailabilityRepository } from "../infra/availability-repository"
 import { validationFailed } from "@/core/http/errors"
 
 export interface ManualBlockInput {
@@ -11,7 +12,7 @@ export interface ManualBlockInput {
 
 export async function createManualBlock(
   input: ManualBlockInput,
-  repo = new AvailabilityRepository(),
+  repo: IAvailabilityRepository = getAvailabilityRepository(),
 ): Promise<string> {
   if (!input.checkInDate || !/^\d{4}-\d{2}-\d{2}$/.test(input.checkInDate)) {
     throw validationFailed({ checkInDate: "Ngày bắt đầu không hợp lệ" })
@@ -36,7 +37,7 @@ export async function createManualBlock(
 export async function removeManualBlock(
   organizationId: string,
   blockId: string,
-  repo = new AvailabilityRepository(),
+  repo: IAvailabilityRepository = getAvailabilityRepository(),
 ): Promise<boolean> {
   return repo.deleteManualBlock(organizationId, blockId)
 }

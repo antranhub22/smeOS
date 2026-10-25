@@ -1,12 +1,16 @@
 import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
-import { CatalogLinkRepository } from "@/modules/catalog-links/infra/catalog-link-repository"
+import type { ICatalogLinkRepository } from "@/modules/catalog-links/domain/repositories/catalog-link-repository.interface"
+import { getCatalogLinkRepository } from "@/modules/catalog-links/infra/catalog-link-repository"
 import type { CatalogLinkResult } from "@/modules/catalog-links/domain/catalog-link-rules"
 
-export async function listCatalogLinks(ctx: TenantContext, options: { includeRevoked?: boolean } = {}): Promise<CatalogLinkResult[]> {
+export async function listCatalogLinks(
+  ctx: TenantContext,
+  options: { includeRevoked?: boolean } = {},
+  repo: ICatalogLinkRepository = getCatalogLinkRepository()
+): Promise<CatalogLinkResult[]> {
   requireCapability(ctx, "J1")
 
-  const repo = new CatalogLinkRepository()
   const links = await repo.list(ctx, options)
 
   return links.map((link) => ({

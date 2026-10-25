@@ -2,18 +2,17 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { ProductBookingRecord } from "../domain/availability-mode"
 
+import type {
+  IAvailabilityRepository,
+  CreateBlockInput,
+  ProductWithAvailability,
+} from "../domain/repositories/availability-repository.interface"
+
+export type { CreateBlockInput, ProductWithAvailability }
+
 type Db = typeof prisma
 
-export interface CreateBlockInput {
-  organizationId: string
-  productId: string
-  orderId?: string | null | undefined
-  checkInDate: string
-  checkOutDate: string
-  note?: string | null | undefined
-}
-
-export class AvailabilityRepository {
+export class AvailabilityRepository implements IAvailabilityRepository {
   constructor(private readonly db: Db = prisma) {}
 
   /** Lấy danh sách booking trong khoảng ngày của một hoặc tất cả sản phẩm */
@@ -311,5 +310,14 @@ export class AvailabilityRepository {
       data: { delivery_window: deliveryWindow as Prisma.InputJsonValue },
     })
   }
+}
+
+let defaultAvailabilityRepository: IAvailabilityRepository | null = null
+
+export function getAvailabilityRepository(): IAvailabilityRepository {
+  if (!defaultAvailabilityRepository) {
+    defaultAvailabilityRepository = new AvailabilityRepository()
+  }
+  return defaultAvailabilityRepository!
 }
 

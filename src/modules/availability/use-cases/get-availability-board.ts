@@ -1,4 +1,5 @@
-import { AvailabilityRepository } from "../infra/availability-repository"
+import type { IAvailabilityRepository } from "../domain/repositories/availability-repository.interface"
+import { getAvailabilityRepository } from "../infra/availability-repository"
 import { parseAvailabilityConfig } from "@/modules/greeting-card/domain/product-availability-config"
 import type { ProductBookingRecord } from "../domain/availability-mode"
 
@@ -28,7 +29,7 @@ export async function getAvailabilityBoard(
   organizationId: string,
   monthString?: string | undefined,
   industryKey?: string | null | undefined,
-  repo = new AvailabilityRepository(),
+  repo: IAvailabilityRepository = getAvailabilityRepository(),
 ): Promise<AvailabilityBoardResult> {
   const now = new Date()
   const targetMonth = monthString && /^\d{4}-\d{2}$/.test(monthString)

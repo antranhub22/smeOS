@@ -9,7 +9,7 @@ Trạng thái: TODO | DOING | DONE | WAIVED (SHOULD bị bỏ, kèm lý do). Age
 | REQ-ARCH-003 | MUST |  |  | TODO |
 | REQ-ARCH-004 | MUST |  |  | TODO |
 | REQ-ARCH-005 | MUST |  |  | TODO |
-| REQ-ARCH-006 | MUST | Chuẩn hóa Clean Repositories Wave 1 | src/modules/orders/domain/repositories/order-repository.interface.ts, src/modules/coordinator/domain/repositories/coordinator-repository.interface.ts, src/modules/organization/domain/repositories/organization-repository.interface.ts | DONE |
+| REQ-ARCH-006 | MUST | Chuẩn hóa Clean Repositories Wave 1 & Wave 2 (orders, coordinator, organization, products, crm, availability, catalog-links, greeting-card) | src/modules/orders/domain/repositories/order-repository.interface.ts, src/modules/coordinator/domain/repositories/coordinator-repository.interface.ts, src/modules/organization/domain/repositories/organization-repository.interface.ts, src/modules/products/domain/repositories/product-repository.interface.ts, src/modules/crm/domain/repositories/customer-repository.interface.ts, src/modules/availability/domain/repositories/availability-repository.interface.ts, src/modules/catalog-links/domain/repositories/catalog-link-repository.interface.ts, src/modules/greeting-card/domain/repositories/subcontract-order-repository.interface.ts | DONE |
 | REQ-ARCH-007 | MUST |  |  | TODO |
 | REQ-ARCH-008 | MUST |  |  | TODO |
 | REQ-ARCH-009 | MUST |  |  | TODO |

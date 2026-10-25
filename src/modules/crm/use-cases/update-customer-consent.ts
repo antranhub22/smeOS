@@ -4,14 +4,15 @@
 
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { CustomerRepository } from "../infra/customer-repository"
+import type { ICustomerRepository } from "../domain/repositories/customer-repository.interface"
+import { getCustomerRepository } from "../infra/customer-repository"
 
 export async function updateCustomerConsent(
   ctx: TenantContext,
   customerId: string,
   channel: "ZALO_ZNS" | "SMS" | "PHONE_CALL" | "PROMOTION",
   granted: boolean,
-  repo: CustomerRepository = new CustomerRepository()
+  repo: ICustomerRepository = getCustomerRepository()
 ) {
   const customer = await repo.getById(ctx, customerId)
   if (!customer) {

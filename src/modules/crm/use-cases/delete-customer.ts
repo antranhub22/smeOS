@@ -4,12 +4,13 @@
 
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { CustomerRepository } from "../infra/customer-repository"
+import type { ICustomerRepository } from "../domain/repositories/customer-repository.interface"
+import { getCustomerRepository } from "../infra/customer-repository"
 
 export async function deleteCustomer(
   ctx: TenantContext,
   id: string,
-  repo: CustomerRepository = new CustomerRepository()
+  repo: ICustomerRepository = getCustomerRepository()
 ): Promise<void> {
   const success = await repo.delete(ctx, id)
   if (!success) {

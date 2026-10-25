@@ -10,8 +10,9 @@ import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { Prisma } from "@/generated/prisma/client"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
 import type { ISubcontractStateStore } from "../use-cases/dispatch-subcontract-order"
+import type { ISubcontractOrderRepository } from "../domain/repositories/subcontract-order-repository.interface"
 
-export class SubcontractOrderRepository implements ISubcontractStateStore {
+export class SubcontractOrderRepository implements ISubcontractStateStore, ISubcontractOrderRepository {
   constructor(private readonly db = prisma) {}
 
   async loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null> {
@@ -288,4 +289,13 @@ export class SubcontractOrderRepository implements ISubcontractStateStore {
 
     return { newQualityScore, bypassCount }
   }
+}
+
+let defaultSubcontractOrderRepository: ISubcontractOrderRepository | null = null
+
+export function getSubcontractOrderRepository(): ISubcontractOrderRepository {
+  if (!defaultSubcontractOrderRepository) {
+    defaultSubcontractOrderRepository = new SubcontractOrderRepository()
+  }
+  return defaultSubcontractOrderRepository!
 }
