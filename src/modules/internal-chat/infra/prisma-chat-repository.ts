@@ -1,10 +1,11 @@
 import type { PrismaClient } from "@/generated/prisma/client"
+import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import type {
   IInternalChatRepository,
   CreateConversationParams,
   ListConversationsFilter,
   SendMessageParams,
-} from "../domain/chat-repository.interface"
+} from "../domain/repositories/chat-repository.interface"
 import type {
   InternalChatConversation,
   InternalChatMessage,
@@ -15,7 +16,7 @@ import type {
 } from "../domain/chat-entities"
 
 export class PrismaInternalChatRepository implements IInternalChatRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient = defaultPrisma) {}
 
   async createConversation(params: CreateConversationParams): Promise<InternalChatConversation> {
     const row = await this.prisma.internal_chat_conversations.create({
@@ -282,4 +283,13 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
       createdAt: row.created_at,
     }
   }
+}
+
+let defaultRepo: IInternalChatRepository | null = null
+
+export function getInternalChatRepository(): IInternalChatRepository {
+  if (!defaultRepo) {
+    defaultRepo = new PrismaInternalChatRepository()
+  }
+  return defaultRepo
 }

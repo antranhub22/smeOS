@@ -1,8 +1,14 @@
-import type { IChainPartnershipRepository, ListPartnershipsFilter } from "../domain/partnership-repository.interface"
+import type {
+  IChainPartnershipRepository,
+  ListPartnershipsFilter,
+} from "../domain/repositories/chain-partnership-repository.interface"
+import { getChainPartnershipRepository } from "../infra/prisma-partnership-repository"
 import type { ChainPartnershipEntity } from "../domain/partnership-entities"
 
 export class ListChainPartnersUseCase {
-  constructor(private readonly partnershipRepo: IChainPartnershipRepository) {}
+  constructor(
+    private readonly partnershipRepo: IChainPartnershipRepository = getChainPartnershipRepository()
+  ) {}
 
   async execute(filter: ListPartnershipsFilter): Promise<{
     items: ChainPartnershipEntity[]

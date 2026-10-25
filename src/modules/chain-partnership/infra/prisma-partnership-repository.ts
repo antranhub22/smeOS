@@ -1,10 +1,11 @@
 import type { PrismaClient } from "@/generated/prisma/client"
+import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { slugCandidates } from "@/modules/organization/domain/slug"
 import type {
   IChainPartnershipRepository,
   ListPartnershipsFilter,
-} from "../domain/partnership-repository.interface"
+} from "../domain/repositories/chain-partnership-repository.interface"
 import type {
   ChainPartnershipEntity,
   ProvisionPartnerInput,
@@ -13,7 +14,7 @@ import type {
 } from "../domain/partnership-entities"
 
 export class PrismaChainPartnershipRepository implements IChainPartnershipRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient = defaultPrisma) {}
 
   async provisionPartner(input: ProvisionPartnerInput): Promise<{
     partnership: ChainPartnershipEntity
@@ -329,4 +330,13 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       updatedAt: row.updated_at,
     }
   }
+}
+
+let defaultRepo: IChainPartnershipRepository | null = null
+
+export function getChainPartnershipRepository(): IChainPartnershipRepository {
+  if (!defaultRepo) {
+    defaultRepo = new PrismaChainPartnershipRepository()
+  }
+  return defaultRepo
 }

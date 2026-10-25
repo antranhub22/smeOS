@@ -1,11 +1,13 @@
-import type { IChainPartnershipRepository } from "../domain/partnership-repository.interface"
-import type { IInternalChatRepository } from "@/modules/internal-chat/domain/chat-repository.interface"
+import type { IChainPartnershipRepository } from "../domain/repositories/chain-partnership-repository.interface"
+import { getChainPartnershipRepository } from "../infra/prisma-partnership-repository"
+import type { IInternalChatRepository } from "@/modules/internal-chat/domain/repositories/chat-repository.interface"
+import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import type { ChainPartnershipEntity, ProvisionPartnerInput } from "../domain/partnership-entities"
 
 export class ProvisionPartnerAccountUseCase {
   constructor(
-    private readonly partnershipRepo: IChainPartnershipRepository,
-    private readonly chatRepo: IInternalChatRepository
+    private readonly partnershipRepo: IChainPartnershipRepository = getChainPartnershipRepository(),
+    private readonly chatRepo: IInternalChatRepository = getInternalChatRepository()
   ) {}
 
   async execute(input: ProvisionPartnerInput, coordinatorUserId: string): Promise<ChainPartnershipEntity> {
