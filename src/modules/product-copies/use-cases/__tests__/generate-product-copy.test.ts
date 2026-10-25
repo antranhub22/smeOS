@@ -44,35 +44,37 @@ const PHAN_TICH_THAT = {
   confidence: 90,
 }
 
+const { mockAnalysisRepoInst, mockBrandRepoInst, mockOccasionRepoInst, mockCopyRepoInst, mockJobRepoInst } = vi.hoisted(() => ({
+  mockAnalysisRepoInst: { findById: vi.fn() },
+  mockBrandRepoInst: { current: vi.fn() },
+  mockOccasionRepoInst: { list: vi.fn() },
+  mockCopyRepoInst: { db: {}, findByAnalysisId: vi.fn(), createFromAnalysis: vi.fn() },
+  mockJobRepoInst: { startInline: vi.fn(), finishInline: vi.fn() },
+}))
+
 vi.mock("@/modules/products/infra/product-analysis-repository", () => ({
-  ProductAnalysisRepository: vi.fn().mockImplementation(() => ({ findById: vi.fn() })),
+  ProductAnalysisRepository: vi.fn().mockImplementation(() => mockAnalysisRepoInst),
+  getProductAnalysisRepository: vi.fn().mockImplementation(() => mockAnalysisRepoInst),
 }))
 
 vi.mock("@/modules/profiles/infra/brand-profile-repository", () => ({
-  BrandProfileRepository: vi.fn().mockImplementation(() => ({ current: vi.fn() })),
+  BrandProfileRepository: vi.fn().mockImplementation(() => mockBrandRepoInst),
+  getBrandProfileRepository: vi.fn().mockImplementation(() => mockBrandRepoInst),
 }))
 
 vi.mock("@/modules/organization/infra/occasion-repository", () => ({
-  OccasionRepository: vi.fn().mockImplementation(() => ({ list: vi.fn() })),
+  OccasionRepository: vi.fn().mockImplementation(() => mockOccasionRepoInst),
+  getOccasionRepository: vi.fn().mockImplementation(() => mockOccasionRepoInst),
 }))
 
-vi.mock("@/modules/product-copies/infra/product-copy-repository", () => {
-  const MockRepo = vi.fn().mockImplementation(() => ({
-    db: {},
-    findByAnalysisId: vi.fn(),
-    createFromAnalysis: vi.fn(),
-  }))
-  return {
-    ProductCopyRepository: MockRepo,
-    getProductCopyRepository: () => new MockRepo(),
-  }
-})
+vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
+  ProductCopyRepository: vi.fn().mockImplementation(() => mockCopyRepoInst),
+  getProductCopyRepository: vi.fn().mockImplementation(() => mockCopyRepoInst),
+}))
 
 vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({
-    startInline: vi.fn(),
-    finishInline: vi.fn(),
-  })),
+  GenerationJobRepository: vi.fn().mockImplementation(() => mockJobRepoInst),
+  getGenerationJobRepository: vi.fn().mockImplementation(() => mockJobRepoInst),
 }))
 
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({ enqueueJob: vi.fn() }))
@@ -85,11 +87,6 @@ vi.mock("@/modules/product-copies/adapters/product-copy-adapter", () => ({
 vi.mock("@/core/ai/adapters/openai-llm-provider", () => ({ OpenAILLMProvider: vi.fn() }))
 
 import { generateProductCopy } from "@/modules/product-copies/use-cases/generate-product-copy"
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
-import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
-import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
-import { ProductCopyRepository } from "@/modules/product-copies/infra/product-copy-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
 import { callCapability } from "@/core/ai/gateway"
@@ -120,17 +117,15 @@ describe("generateProductCopy", () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    analysisRepo = { findById: vi.fn() }
-    brandRepo = { current: vi.fn().mockResolvedValue(null) }
-    occasionRepo = { list: vi.fn().mockResolvedValue([{ code: "ky-niem", name: "Kỷ niệm" }]) }
-    copyRepo = { db: {}, findByAnalysisId: vi.fn().mockResolvedValue(null), createFromAnalysis: vi.fn() }
-    jobRepo = { startInline: vi.fn(), finishInline: vi.fn() }
+    analysisRepo = mockAnalysisRepoInst
+    brandRepo = mockBrandRepoInst
+    occasionRepo = mockOccasionRepoInst
+    copyRepo = mockCopyRepoInst
+    jobRepo = mockJobRepoInst
 
-    vi.mocked(ProductAnalysisRepository).mockImplementation(() => analysisRepo)
-    vi.mocked(BrandProfileRepository).mockImplementation(() => brandRepo)
-    vi.mocked(OccasionRepository).mockImplementation(() => occasionRepo)
-    vi.mocked(ProductCopyRepository).mockImplementation(() => copyRepo)
-    vi.mocked(GenerationJobRepository).mockImplementation(() => jobRepo)
+    brandRepo.current.mockResolvedValue(null)
+    occasionRepo.list.mockResolvedValue([{ code: "ky-niem", name: "Kỷ niệm" }])
+    copyRepo.findByAnalysisId.mockResolvedValue(null)
     vi.mocked(enqueueJob).mockResolvedValue({
       job: { id: "job-1" },
       deduped: false,

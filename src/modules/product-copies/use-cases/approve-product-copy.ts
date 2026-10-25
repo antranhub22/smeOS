@@ -2,7 +2,7 @@ import { AppError } from "@/core/http/errors";
 import { requireCapability } from "@/core/rbac/capabilities";
 import type { IProductCopyRepository } from "../domain/repositories/product-copy-repository.interface";
 import { getProductCopyRepository } from "../infra/product-copy-repository";
-import { OccasionRepository } from "@/modules/organization/infra/occasion-repository";
+import { getOccasionRepository } from "@/modules/organization/infra/occasion-repository";
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log";
 import { runInTransaction } from "@/modules/jobs/infra/transaction";
 import { scopedWhere } from "@/core/tenancy";
@@ -40,7 +40,7 @@ export async function approveProductCopy(
 
     // Danh mục dịch của chính tổ chức — dùng để đổi TÊN dịp mà mô hình viết
     // ra thành MÃ dịp mà bộ lọc tra cứu đọc.
-    const danhMucDip = await new OccasionRepository(tx).list(ctx);
+    const danhMucDip = await getOccasionRepository(tx).list(ctx);
     const result = await repo.approve(ctx, id, ctx.userId, tx, danhMucDip);
 
     await recordAuditLog(ctx, {

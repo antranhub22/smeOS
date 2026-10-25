@@ -2,25 +2,16 @@ import type { approval_state, InputJsonValue, product_analyses } from "./entitie
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
+import type {
+  IProductAnalysisRepository,
+  CreateProductAnalysisInput,
+  ApproveAnalysisInput,
+  ProductAnalysisRecord,
+} from "../domain/repositories/product-analysis-repository.interface"
 
 import type { DbClient } from "./db-client"
 
-export type CreateProductAnalysisInput = {
-  productId: string | null
-  assetId: string
-  jobId: string
-  provider: string
-  model: string
-  modelVersion: string
-  contractName: string
-  contractVersion: string
-  raw: Record<string, unknown>
-}
-
-export type ApproveAnalysisInput = {
-  approvedBy: string
-  approvedAt: Date
-}
+export type { CreateProductAnalysisInput, ApproveAnalysisInput }
 
 /**
  * `product_analyses` — đặc tả 07 mục 9. Worker Python (`workers/vision/`)
@@ -29,7 +20,7 @@ export type ApproveAnalysisInput = {
  * bộ test và mọi đường ghi phía TS trong tương lai, không phải đường ghi
  * chính của luồng thật.
  */
-export class ProductAnalysisRepository {
+export class ProductAnalysisRepository implements IProductAnalysisRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   findById(ctx: TenantContext, id: string): Promise<product_analyses | null> {
@@ -229,4 +220,14 @@ export class ProductAnalysisRepository {
     if (result.count === 0) return null
     return this.findById(ctx, id)
   }
+}
+
+let productAnalysisRepoInstance: IProductAnalysisRepository | null = null
+
+export function getProductAnalysisRepository(db?: DbClient): IProductAnalysisRepository {
+  if (db) return new ProductAnalysisRepository(db)
+  if (!productAnalysisRepoInstance) {
+    productAnalysisRepoInstance = new ProductAnalysisRepository()
+  }
+  return productAnalysisRepoInstance!
 }
