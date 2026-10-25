@@ -1,16 +1,18 @@
 import { type TenantContext } from "@/core/tenancy";
 import { requireCapability } from "@/core/rbac/capabilities";
-import { AssetRepository } from "@/modules/assets/infra/asset-repository";
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
+import type { IVideoJobRepository } from "../domain/repositories/video-job-repository.interface";
 import {
-  VideoJobRepository,
+  getVideoJobRepository,
   type VideoJobWithScenes,
 } from "../infra/video-job-repository";
 import { canApproveVideo } from "../domain/video-approval-rules";
 
 export class ApproveVideoOutputUseCase {
   constructor(
-    private readonly repo: VideoJobRepository = new VideoJobRepository(),
-    private readonly assetRepo: AssetRepository = new AssetRepository()
+    private readonly repo: IVideoJobRepository = getVideoJobRepository(),
+    private readonly assetRepo: IAssetRepository = getAssetRepository()
   ) {}
 
   async execute(

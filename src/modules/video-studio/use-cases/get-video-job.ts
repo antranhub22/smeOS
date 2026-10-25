@@ -7,13 +7,14 @@ import { lyDoHoanCredit } from "@/modules/usage/domain/refund-policy";
 import { refundJob } from "@/modules/usage/use-cases/refund-job";
 import { refundPartial } from "@/modules/usage/use-cases/refund-partial";
 import { videoRenderRefund } from "../domain/video-provider-billing";
+import type { IVideoJobRepository } from "../domain/repositories/video-job-repository.interface";
 import {
-  VideoJobRepository,
+  getVideoJobRepository,
   type VideoJobWithScenes,
 } from "../infra/video-job-repository";
 
 export class GetVideoJobUseCase {
-  constructor(private readonly repo: VideoJobRepository = new VideoJobRepository()) {}
+  constructor(private readonly repo: IVideoJobRepository = getVideoJobRepository()) {}
 
   async execute(
     ctx: TenantContext,

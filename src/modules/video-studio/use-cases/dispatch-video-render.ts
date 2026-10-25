@@ -2,13 +2,15 @@ import { type TenantContext } from "@/core/tenancy";
 import { AppError } from "@/core/http/errors";
 import { requireCapability } from "@/core/rbac/capabilities";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
+import type { IVideoJobRepository } from "../domain/repositories/video-job-repository.interface";
 import {
-  VideoJobRepository,
+  getVideoJobRepository,
   type VideoJobWithScenes,
 } from "../infra/video-job-repository";
 import { video_scenes } from "../infra/entities";
 import { canStartRender } from "../domain/video-approval-rules";
-import { AssetRepository } from "@/modules/assets/infra/asset-repository";
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences";
 import { videoRenderCredit } from "@/modules/usage/domain/pricing";
 
@@ -20,7 +22,10 @@ export interface DispatchRenderResult {
 }
 
 export class DispatchVideoRenderUseCase {
-  constructor(private readonly repo: VideoJobRepository = new VideoJobRepository()) {}
+  constructor(
+    private readonly repo: IVideoJobRepository = getVideoJobRepository(),
+    private readonly assetRepo: IAssetRepository = getAssetRepository()
+  ) {}
 
   async execute(
     ctx: TenantContext,
@@ -52,7 +57,7 @@ export class DispatchVideoRenderUseCase {
     // được đường dẫn kho — đổi mã asset thành `storage_key` của ĐÚNG tổ chức
     // (24/09/2026). Trước đây worker không tìm được ảnh theo mã asset và lặng lẽ
     // dựng video bằng ảnh mẫu có sẵn trong kho.
-    const assetRepo = new AssetRepository();
+    const assetRepo = this.assetRepo;
 
     // Cảnh còn trống ảnh (job tạo trước khi Khu vực D sinh ảnh, hoặc storyboard
     // dựng lúc chưa tìm được Master): lấp bằng ảnh storyboard gửi kèm, không có
@@ -146,7 +151,7 @@ export class DispatchVideoRenderUseCase {
     productId: string | null,
     sceneIndexes: number[],
     provided: ReadonlyArray<{ sceneIndex: number; assetId: string }>,
-    assetRepo: AssetRepository
+    assetRepo: IAssetRepository
   ): Promise<Map<number, string>> {
     const out = new Map<number, string>();
     const USABLE = new Set(["MASTER", "MARKETING", "ORIGINAL", "ENHANCED"]);
