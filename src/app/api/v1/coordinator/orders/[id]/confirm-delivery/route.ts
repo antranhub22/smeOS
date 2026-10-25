@@ -23,6 +23,7 @@ import {
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
+import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import type { Prisma } from "@/generated/prisma/client"
 
 const MAX_POD_BYTES = 10 * 1024 * 1024
@@ -166,47 +167,44 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     confirmMode,
   }
 
-  await prisma.$transaction([
-    prisma.orders.update({
-      where: { id: order.id },
-      data: { delivery_status: "DELIVERED", status: "COMPLETED" },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          ...(podPhotoStorageKey && { pod_photos: deliveryProof.photoUrls }),
-          delivery_proof: deliveryProof,
-          last_pod_uploaded_at: deliveredAt,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "delivery",
-        from_value: order.delivery_status || "DELIVERING",
-        to_value: "DELIVERED",
-        actor_id: `coordinator:${ctx.userId}`,
-        reason: `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}`,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "status",
-        from_value: order.status,
-        to_value: "COMPLETED",
-        actor_id: `coordinator:${ctx.userId}`,
-        reason: "[Hoàn Tất] Điều phối xác nhận giao hàng thành công.",
-      },
-    }),
-  ])
+  const orderRepo = getOrderRepository()
+
+  await prisma.order_coordinations.update({
+    where: { order_id: order.id },
+    data: {
+      metadata: {
+        ...existingMeta,
+        ...(podPhotoStorageKey && { pod_photos: deliveryProof.photoUrls }),
+        delivery_proof: deliveryProof,
+        last_pod_uploaded_at: deliveredAt,
+      } as unknown as Prisma.InputJsonValue,
+    },
+  })
+
+  await orderRepo.update(order.organization_id, order.id, {
+    deliveryStatus: "DELIVERED",
+    status: "COMPLETED",
+  })
+
+  await orderRepo.recordEvent(
+    order.organization_id,
+    order.id,
+    "delivery",
+    "DELIVERED",
+    `coordinator:${ctx.userId}`,
+    order.delivery_status || "DELIVERING",
+    `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}`
+  )
+
+  await orderRepo.recordEvent(
+    order.organization_id,
+    order.id,
+    "order",
+    "COMPLETED",
+    `coordinator:${ctx.userId}`,
+    order.status,
+    "[Hoàn Tất] Điều phối xác nhận giao hàng thành công."
+  )
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M4 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({

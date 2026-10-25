@@ -3,6 +3,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed, notFound } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { PrismaInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { DispatchOrderToChatUseCase } from "@/modules/internal-chat/use-cases/dispatch-order-to-chat"
 
@@ -22,37 +23,25 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     throw validationFailed({ reason: errorDetails })
   }
 
-  // 1. Fetch order details
-  const order = await prisma.orders.findFirst({
-    where: {
-      id: orderId,
-      organization_id: ctx.organizationId,
-    },
-    include: {
-      items: {
-        take: 1,
-      },
-      customer: {
-        select: { name: true },
-      },
-    },
-  })
+  // 1. Fetch order details via Clean OrderRepository (REQ-ARCH-006)
+  const orderRepo = getOrderRepository()
+  const order = await orderRepo.findById(ctx.organizationId, orderId)
 
   if (!order) {
     throw notFound()
   }
 
-  const firstItem = order.items[0]
+  const firstItem = order.items?.[0]
   const meta = (firstItem?.metadata ?? {}) as Record<string, unknown>
   const thumbnailUrl = (meta.masterImageUrl || meta.imageUrl) as string | undefined
 
   const chatRepo = new PrismaInternalChatRepository(prisma)
   const useCase = new DispatchOrderToChatUseCase(chatRepo)
 
-  const deliveryAddrStr = typeof order.delivery_address === "string" 
-    ? order.delivery_address 
-    : order.delivery_address 
-    ? JSON.stringify(order.delivery_address) 
+  const deliveryAddrStr = order.deliveryAddress
+    ? typeof order.deliveryAddress === "string"
+      ? order.deliveryAddress
+      : JSON.stringify(order.deliveryAddress)
     : undefined
 
   const result = await useCase.execute({
@@ -63,11 +52,11 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     coordinatorOrgId: ctx.organizationId,
     targetPartnerOrgId: parsed.data.targetPartnerOrgId,
     targetPartnerUserId: parsed.data.targetPartnerUserId,
-    customerName: order.customer?.name ?? undefined,
-    recipientName: undefined,
-    deliveryTime: undefined,
+    customerName: order.deliveryAddress?.recipientName ?? undefined,
+    recipientName: order.deliveryAddress?.recipientName ?? undefined,
+    deliveryTime: order.deliveryWindow?.timeSlot ?? undefined,
     deliveryAddress: deliveryAddrStr,
-    priceVnd: order.total_vnd ? Number(order.total_vnd) : undefined,
+    priceVnd: order.totalVnd,
     thumbnailUrl,
   })
 

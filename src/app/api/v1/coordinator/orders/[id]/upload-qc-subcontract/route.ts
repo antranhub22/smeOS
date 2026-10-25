@@ -23,6 +23,7 @@ import {
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { verifyQcPhotoWithAi } from "@/modules/greeting-card/use-cases/verify-qc-photo-ai"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
+import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import type { Prisma } from "@/generated/prisma/client"
 
 const MAX_QC_PHOTO_BYTES = 10 * 1024 * 1024
@@ -102,37 +103,35 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
   const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
 
-  await prisma.$transaction([
-    prisma.orders.update({
-      where: { id: order.id },
-      data: { production_status: "READY" },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          qc_photos: [...existingQcPhotos, storageKey],
-          last_qc_uploaded_at: new Date().toISOString(),
-          last_qc_uploaded_by: `coordinator:${ctx.userId}`,
-          last_qc_note: note || null,
-          auto_bypassed_coordinator: false, // coordinator thực hiện trực tiếp
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "production",
-        from_value: order.production_status,
-        to_value: "READY",
-        actor_id: `coordinator:${ctx.userId}`,
-        reason: `[Coordinator Upload QC] ${aiVerify.reason} (${aiVerify.confidenceScore}%). Ghi chú: ${note || "Không có"}`,
-      },
-    }),
-  ])
+  const orderRepo = getOrderRepository()
+
+  await prisma.order_coordinations.update({
+    where: { order_id: order.id },
+    data: {
+      metadata: {
+        ...existingMeta,
+        qc_photos: [...existingQcPhotos, storageKey],
+        last_qc_uploaded_at: new Date().toISOString(),
+        last_qc_uploaded_by: `coordinator:${ctx.userId}`,
+        last_qc_note: note || null,
+        auto_bypassed_coordinator: false, // coordinator thực hiện trực tiếp
+      } as unknown as Prisma.InputJsonValue,
+    },
+  })
+
+  await orderRepo.update(order.organization_id, order.id, {
+    productionStatus: "READY",
+  })
+
+  await orderRepo.recordEvent(
+    order.organization_id,
+    order.id,
+    "production",
+    "READY",
+    `coordinator:${ctx.userId}`,
+    order.production_status,
+    `[Coordinator Upload QC] ${aiVerify.reason} (${aiVerify.confidenceScore}%). Ghi chú: ${note || "Không có"}`
+  )
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M2 reminders đang pending
   await cancelSubcontractReminderSteps({

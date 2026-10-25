@@ -9,7 +9,6 @@
  * - Khách hàng sẽ thấy tiến độ chuyển bước kèm ghi chú bất khả kháng.
  */
 
-import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
@@ -22,6 +21,7 @@ import {
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
+import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import type { Prisma } from "@/generated/prisma/client"
 
 const decisionSchema = z.object({
@@ -111,116 +111,97 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     )
   }
 
-  const updates: Prisma.PrismaPromise<unknown>[] = []
+  const orderRepo = getOrderRepository()
 
   if (step === "QC") {
     // Kích hoạt bước 2 hoàn thành (READY) để bước 3 mở khóa
-    updates.push(
-      prisma.orders.update({
-        where: { id: order.id },
-        data: { production_status: "READY" },
-      }),
-      prisma.order_coordinations.update({
-        where: { order_id: order.id },
-        data: {
-          metadata: {
-            ...existingMeta,
-            bypass_requests: updatedBypassRequests,
-            last_qc_uploaded_at: nowIso,
-            last_qc_uploaded_by: `coordinator_bypass:${ctx.userId}`,
-            bypass_qc_approved: true,
-          } as unknown as Prisma.InputJsonValue,
-        },
-      }),
-      prisma.order_events.create({
-        data: {
-          id: randomUUID(),
-          organization_id: order.organization_id,
-          order_id: order.id,
-          axis: "production",
-          from_value: order.production_status,
-          to_value: "READY",
-          actor_id: `coordinator:${ctx.userId}`,
-          reason: `[Duyệt Bỏ Qua QC] ${requestReason}. Chi nhánh ${branchName} bị trừ 2 điểm KPI.`,
-        },
-      })
+    await prisma.order_coordinations.update({
+      where: { order_id: order.id },
+      data: {
+        metadata: {
+          ...existingMeta,
+          bypass_requests: updatedBypassRequests,
+          last_qc_uploaded_at: nowIso,
+          last_qc_uploaded_by: `coordinator_bypass:${ctx.userId}`,
+          bypass_qc_approved: true,
+        } as unknown as Prisma.InputJsonValue,
+      },
+    })
+    await orderRepo.update(order.organization_id, order.id, {
+      productionStatus: "READY",
+    })
+    await orderRepo.recordEvent(
+      order.organization_id,
+      order.id,
+      "production",
+      "READY",
+      `coordinator:${ctx.userId}`,
+      order.production_status,
+      `[Duyệt Bỏ Qua QC] ${requestReason}. Chi nhánh ${branchName} bị trừ 2 điểm KPI.`
     )
   } else if (step === "SHIPPER") {
     // Kích hoạt bước 3 hoàn thành (DELIVERING) để bước 4 mở khóa
-    updates.push(
-      prisma.orders.update({
-        where: { id: order.id },
-        data: { delivery_status: "DELIVERING" },
-      }),
-      prisma.order_coordinations.update({
-        where: { order_id: order.id },
-        data: {
-          metadata: {
-            ...existingMeta,
-            bypass_requests: updatedBypassRequests,
-            shipper_info: {
-              shipperName: "Giao gấp (Miễn thông tin)",
-              shipperPhone: "",
-              submittedAt: nowIso,
-              bypassedByCoordinator: true,
-            },
-            bypass_shipper_approved: true,
-          } as unknown as Prisma.InputJsonValue,
-        },
-      }),
-      prisma.order_events.create({
-        data: {
-          id: randomUUID(),
-          organization_id: order.organization_id,
-          order_id: order.id,
-          axis: "delivery",
-          from_value: order.delivery_status || "ASSIGNED",
-          to_value: "DELIVERING",
-          actor_id: `coordinator:${ctx.userId}`,
-          reason: `[Duyệt Bỏ Qua Shipper] ${requestReason}. Chi nhánh ${branchName} bị trừ 2 điểm KPI.`,
-        },
-      })
+    await prisma.order_coordinations.update({
+      where: { order_id: order.id },
+      data: {
+        metadata: {
+          ...existingMeta,
+          bypass_requests: updatedBypassRequests,
+          shipper_info: {
+            shipperName: "Giao gấp (Miễn thông tin)",
+            shipperPhone: "",
+            submittedAt: nowIso,
+            bypassedByCoordinator: true,
+          },
+          bypass_shipper_approved: true,
+        } as unknown as Prisma.InputJsonValue,
+      },
+    })
+    await orderRepo.update(order.organization_id, order.id, {
+      deliveryStatus: "DELIVERING",
+    })
+    await orderRepo.recordEvent(
+      order.organization_id,
+      order.id,
+      "delivery",
+      "DELIVERING",
+      `coordinator:${ctx.userId}`,
+      order.delivery_status || "ASSIGNED",
+      `[Duyệt Bỏ Qua Shipper] ${requestReason}. Chi nhánh ${branchName} bị trừ 2 điểm KPI.`
     )
   } else if (step === "POD") {
     // Kích hoạt bước 4 hoàn thành (COMPLETED / DELIVERED)
-    updates.push(
-      prisma.orders.update({
-        where: { id: order.id },
-        data: { delivery_status: "DELIVERED", status: "COMPLETED" },
-      }),
-      prisma.order_coordinations.update({
-        where: { order_id: order.id },
-        data: {
-          metadata: {
-            ...existingMeta,
-            bypass_requests: updatedBypassRequests,
-            delivery_proof: {
-              photoUrls: [],
-              note: `Bỏ qua POD (Điều phối duyệt: ${requestReason})`,
-              deliveredAt: nowIso,
-              confirmedByCoordinator: ctx.userId,
-              confirmMode: "bypassed_without_photo",
-            },
-            bypass_pod_approved: true,
-          } as unknown as Prisma.InputJsonValue,
-        },
-      }),
-      prisma.order_events.create({
-        data: {
-          id: randomUUID(),
-          organization_id: order.organization_id,
-          order_id: order.id,
-          axis: "status",
-          from_value: order.status,
-          to_value: "COMPLETED",
-          actor_id: `coordinator:${ctx.userId}`,
-          reason: `[Duyệt Bỏ Qua POD] ${requestReason}. Chi nhánh ${branchName} bị trừ 2 điểm KPI.`,
-        },
-      })
+    await prisma.order_coordinations.update({
+      where: { order_id: order.id },
+      data: {
+        metadata: {
+          ...existingMeta,
+          bypass_requests: updatedBypassRequests,
+          delivery_proof: {
+            photoUrls: [],
+            note: `Bỏ qua POD (Điều phối duyệt: ${requestReason})`,
+            deliveredAt: nowIso,
+            confirmedByCoordinator: ctx.userId,
+            confirmMode: "bypassed_without_photo",
+          },
+          bypass_pod_approved: true,
+        } as unknown as Prisma.InputJsonValue,
+      },
+    })
+    await orderRepo.update(order.organization_id, order.id, {
+      deliveryStatus: "DELIVERED",
+      status: "COMPLETED",
+    })
+    await orderRepo.recordEvent(
+      order.organization_id,
+      order.id,
+      "order",
+      "COMPLETED",
+      `coordinator:${ctx.userId}`,
+      order.status,
+      `[Duyệt Bỏ Qua POD] ${requestReason}. Chi nhánh ${branchName} bị trừ 2 điểm KPI.`
     )
   }
-
-  await prisma.$transaction(updates)
 
   // Triệt tiêu các reminder tương ứng
   const milestoneKey = step === "QC" ? "M2" : step === "SHIPPER" ? "M3" : "M4"

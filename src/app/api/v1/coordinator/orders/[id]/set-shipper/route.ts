@@ -7,7 +7,6 @@
  * Yêu cầu: Session đăng nhập với capability "coordinator_subcontract_act".
  */
 
-import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
@@ -20,6 +19,7 @@ import {
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
+import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import type { Prisma } from "@/generated/prisma/client"
 
 const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
@@ -83,34 +83,32 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     submittedAt: new Date().toISOString(),
   }
 
-  await prisma.$transaction([
-    prisma.orders.update({
-      where: { id: order.id },
-      data: { delivery_status: "DELIVERING" },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          shipper_info: shipperInfo,
-          shipper_submitted_at: new Date().toISOString(),
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "delivery",
-        from_value: order.delivery_status,
-        to_value: "DELIVERING",
-        actor_id: `coordinator:${ctx.userId}`,
-        reason: `[Coordinator Set Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
-      },
-    }),
-  ])
+  const orderRepo = getOrderRepository()
+
+  await prisma.order_coordinations.update({
+    where: { order_id: order.id },
+    data: {
+      metadata: {
+        ...existingMeta,
+        shipper_info: shipperInfo,
+        shipper_submitted_at: new Date().toISOString(),
+      } as unknown as Prisma.InputJsonValue,
+    },
+  })
+
+  await orderRepo.update(order.organization_id, order.id, {
+    deliveryStatus: "DELIVERING",
+  })
+
+  await orderRepo.recordEvent(
+    order.organization_id,
+    order.id,
+    "delivery",
+    "DELIVERING",
+    `coordinator:${ctx.userId}`,
+    order.delivery_status,
+    `[Coordinator Set Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`
+  )
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M3 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({
