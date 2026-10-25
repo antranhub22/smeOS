@@ -7,6 +7,7 @@ import type {
   CreateCatalogLinkInput,
   UpdateCatalogLinkInput,
   CatalogLeadInput,
+  PublicCatalogRawData,
 } from "../domain/repositories/catalog-link-repository.interface"
 
 export class CatalogLinkRepository implements ICatalogLinkRepository {
@@ -77,7 +78,7 @@ export class CatalogLinkRepository implements ICatalogLinkRepository {
     return result.count > 0
   }
 
-  async getPublicCatalogRaw(slug: string) {
+  async getPublicCatalogRaw(slug: string): Promise<PublicCatalogRawData | null> {
     const link = await this.db.catalog_links.findUnique({
       where: { slug },
     })
@@ -153,7 +154,7 @@ export class CatalogLinkRepository implements ICatalogLinkRepository {
       brandProfile,
       productRows,
       assetRecords,
-    }
+    } as unknown as PublicCatalogRawData
   }
 
   async recordLead(slug: string, lead: { phone: string; message: string | null; submittedAt: string }) {

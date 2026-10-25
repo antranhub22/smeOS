@@ -41,6 +41,46 @@ export interface CatalogLeadInput {
   submittedAt: string
 }
 
+export type PublicCatalogRawData =
+  | {
+      link: { name: string; [key: string]: unknown }
+      revoked: true
+    }
+  | {
+      link: CatalogLinkRecord
+      revoked: false
+      org: { name: string } | null
+      bizProfile: {
+        legal_name: string | null
+        display_name: string | null
+        phone: string | null
+        email: string | null
+        address: string | null
+        website: string | null
+      } | null
+      brandProfile: {
+        primary_color: string | null
+        logo_asset_id: string | null
+      } | null
+      productRows: Array<{
+        id: string
+        code: string
+        name: string
+        category: string | null
+        shape: string | null
+        container: string | null
+        base_price: unknown
+        attributes: unknown
+        images: Array<{ asset_id: string }>
+        analyses: Array<{
+          asset_id: string | null
+          raw: unknown
+          edited: unknown
+        }>
+      }>
+      assetRecords: Array<{ id: string; storage_key: string }>
+    }
+
 export interface ICatalogLinkRepository {
   findBySlug(slug: string): Promise<CatalogLinkRecord | null>
   findBySlugInOrg(ctx: TenantContext, slug: string): Promise<CatalogLinkRecord | null>
@@ -48,6 +88,6 @@ export interface ICatalogLinkRepository {
   list(ctx: TenantContext, options?: { includeRevoked?: boolean }): Promise<CatalogLinkRecord[]>
   update(ctx: TenantContext, slug: string, input: UpdateCatalogLinkInput): Promise<CatalogLinkRecord | null>
   revoke(ctx: TenantContext, slug: string, revokedBy: string): Promise<boolean>
-  getPublicCatalogRaw(slug: string): Promise<unknown>
+  getPublicCatalogRaw(slug: string): Promise<PublicCatalogRawData | null>
   recordLead(slug: string, lead: CatalogLeadInput): Promise<boolean | null>
 }
