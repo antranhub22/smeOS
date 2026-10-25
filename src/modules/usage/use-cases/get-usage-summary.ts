@@ -1,8 +1,8 @@
 import type { TenantContext } from "@/core/tenancy"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import type { IOrganizationRepository } from "@/modules/organization/domain/repositories/organization-repository.interface"
+import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
 import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
-
 
 /**
  * `GET /usage/summary` (`G8`, đặc tả 06 mục 10).
@@ -12,11 +12,12 @@ import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage
  */
 export async function getUsageSummary(
   ctx: TenantContext,
-  repo: IUsageRepository = getUsageRepository()
+  repo: IUsageRepository = getUsageRepository(),
+  orgRepo: IOrganizationRepository = getOrganizationRepository()
 ) {
   const [byFeature, organization] = await Promise.all([
     repo.summaryByFeature(ctx),
-    new OrganizationRepository().current(ctx),
+    orgRepo.current(ctx),
   ])
 
   const creditUsed = byFeature.reduce((sum, row) => sum + row.costCredit, 0)

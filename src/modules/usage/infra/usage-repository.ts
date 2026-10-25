@@ -128,7 +128,8 @@ export class UsageRepository implements IUsageRepository {
 let _instance: UsageRepository | undefined
 
 /** Trả về singleton UsageRepository (inject mặc định cho use-cases). */
-export function getUsageRepository(): IUsageRepository {
+export function getUsageRepository(db?: DbClient): IUsageRepository {
+  if (db) return new UsageRepository(db)
   _instance ??= new UsageRepository()
   return _instance
 }

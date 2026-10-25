@@ -1,11 +1,11 @@
 import type { TenantContext } from "@/core/tenancy"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface"
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { soCreditHoanMotPhan, type LyDoHoanMotPhan } from "@/modules/usage/domain/refund-policy"
-import { UsageRepository, getUsageRepository } from "@/modules/usage/infra/usage-repository"
+import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
 import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
-
 
 /**
  * Hoàn MỘT PHẦN credit của một job — khách nhận kết quả nhưng rẻ hơn thứ đã
@@ -25,14 +25,15 @@ export async function refundPartial(
   jobId: string,
   lyDo: LyDoHoanMotPhan,
   soCredit: number,
-  repo: IUsageRepository = getUsageRepository()
+  repo: IUsageRepository = getUsageRepository(),
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository()
 ): Promise<{ refunded: number }> {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await jobRepo.findById(ctx, jobId)
   if (!job) return { refunded: 0 }
 
   return runInTransaction(async (tx) => {
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`refund:${jobId}`}))`
-    const usageRepo = new UsageRepository(tx)
+    const usageRepo = getUsageRepository(tx)
     const dong = await usageRepo.listByJob(ctx, jobId)
     const hoan = soCreditHoanMotPhan(dong, lyDo, soCredit)
     if (hoan <= 0) return { refunded: 0 }
@@ -45,7 +46,7 @@ export async function refundPartial(
       status: "PARTIAL_REFUND",
       metadata: { reason: lyDo },
     })
-    await new OrganizationRepository(tx).refundCredit(ctx, hoan)
+    await getOrganizationRepository(tx).refundCredit(ctx, hoan)
     return { refunded: hoan }
   })
 }

@@ -1,9 +1,10 @@
 import type { TenantContext } from "@/core/tenancy"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface"
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { lyDoHoanCredit, type LyDoHoan } from "@/modules/usage/domain/refund-policy"
-import { UsageRepository, getUsageRepository } from "@/modules/usage/infra/usage-repository"
+import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
 import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
 
 export type RefundOutcome =
@@ -37,9 +38,10 @@ export type RefundOutcome =
 export async function refundJob(
   ctx: TenantContext,
   jobId: string,
-  repo: IUsageRepository = getUsageRepository()
+  repo: IUsageRepository = getUsageRepository(),
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository()
 ): Promise<RefundOutcome> {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await jobRepo.findById(ctx, jobId)
   if (!job) return { refunded: false, reason: "khong-thuoc-dien-hoan" }
 
   const lyDo = lyDoHoanCredit({ status: job.status, result: job.result })
@@ -63,14 +65,14 @@ export async function refundJob(
   )
 
   await runInTransaction(async (tx) => {
-    await new UsageRepository(tx).recordRefund(ctx, {
+    await getUsageRepository(tx).recordRefund(ctx, {
       workspaceId: job.workspace_id,
       userId: job.user_id,
       jobId,
       feature: job.feature,
       costUsd,
     })
-    await new OrganizationRepository(tx).refundCredit(ctx, daTru)
+    await getOrganizationRepository(tx).refundCredit(ctx, daTru)
   })
 
   return { refunded: true, creditHoanLai: daTru, lyDo }
