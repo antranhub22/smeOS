@@ -34,6 +34,8 @@ import {
 } from "@/modules/greeting-card/domain/store-policy"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 
+import { ChainCollectionProfileManager } from "@/components/organization/chain-collection-profile-manager"
+
 const VALID_TABS: SettingsTab[] = [
   "INFO",
   "BRANDING",
@@ -44,6 +46,7 @@ const VALID_TABS: SettingsTab[] = [
   "AGREEMENTS",
   "BROCHURE_FLOW",
   "AI_CHANNELS",
+  "COLLECTION_PROFILE",
 ]
 
 function CaiDatTiemContent() {
@@ -323,6 +326,9 @@ function CaiDatTiemContent() {
 
       {/* MỤC 9: TRỢ LÝ AI & KÊNH MẠNG XÃ HỘI */}
       {activeTab === "AI_CHANNELS" && <AiChannelsSettingsTab />}
+
+      {/* MỤC 10: DANH MỤC THU THẬP CHUỖI (§9.5.8) */}
+      {activeTab === "COLLECTION_PROFILE" && <ChainCollectionProfileManager />}
     </div>
   )
 }

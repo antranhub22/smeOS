@@ -27,6 +27,7 @@ import {
   FileSpreadsheet,
   CalendarCheck,
   Package,
+  Database,
 } from "lucide-react"
 
 export type NavIconComponent = LucideIcon
@@ -59,4 +60,5 @@ export const NAV_ICONS: Record<string, LucideIcon> = {
   FileSpreadsheet,
   CalendarCheck,
   Package,
+  Database,
 }

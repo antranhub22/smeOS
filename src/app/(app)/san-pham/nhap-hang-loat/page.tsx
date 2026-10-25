@@ -13,6 +13,7 @@ import { runBulkImport } from "@/components/products/bulk-import/run-bulk-import
 import { useDriveThumbs } from "@/components/products/bulk-import/use-drive-thumbs"
 import type { ImportProgress, ImportResult, ParsedProductRow } from "@/components/products/bulk-import/types"
 import { BranchImportPanel } from "@/components/products/bulk-import/branch-import-panel"
+import { validateSpreadsheetSecurity } from "@/modules/platform/domain/spreadsheet-security"
 
 type ActiveTab = "products" | "branches"
 
@@ -92,14 +93,71 @@ export default function BulkImportProductsPage() {
     setExcelFileName(file.name)
     setRestoredFromSession(false)
     setParsingError(null)
+
     const reader = new FileReader()
-    reader.onload = (evt) => {
+    reader.onload = async (evt) => {
+      const buffer = evt.target?.result as ArrayBuffer
+      if (!buffer) return
+
+      // 1. Kiểm tra an ninh & chống virus/macro/phishing
+      const sec = validateSpreadsheetSecurity(buffer, file.name)
+      if (!sec.isValid) {
+        setParsingError(sec.error ?? "Tệp tải lên không an toàn")
+        setParsedRows([])
+        setExcelFile(null)
+        return
+      }
+
+      // 2. Parse workbook an toàn
       try {
-        const rows = parseProductWorkbook(evt.target?.result as ArrayBuffer, file.name)
+        const rows = parseProductWorkbook(buffer, file.name)
         setParsedRows(matchImages(rows, imageFiles))
       } catch (err) {
         setParsingError(err instanceof Error ? err.message : "Lỗi đọc file Excel")
         setParsedRows([])
+        return
+      }
+
+      // 3. Tự động lưu trữ bản gốc vào kho asset của tổ chức để có thể xem lại/tải về từ SaaS Admin
+      try {
+        const urlRes = await fetch("/api/v1/assets/upload-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ product_id: null, mimeType: sec.sanitizedMimeType }),
+        })
+        if (urlRes.ok) {
+          const { asset_id, storage_key, upload_url } = (await urlRes.json()) as {
+            asset_id: string
+            storage_key: string
+            upload_url: string
+          }
+          const putRes = await fetch(upload_url, {
+            method: "PUT",
+            headers: { "Content-Type": sec.sanitizedMimeType },
+            body: file,
+          })
+          if (putRes.ok) {
+            await fetch("/api/v1/assets", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                asset_id,
+                product_id: null,
+                kind: "ORIGINAL",
+                storage_key,
+                mime_type: sec.sanitizedMimeType,
+                file_size: file.size,
+                parameters: {
+                  original_filename: file.name,
+                  uploaded_at: new Date().toISOString(),
+                  source: "bulk_import",
+                },
+              }),
+            })
+          }
+        }
+      } catch {
+        // Lưu trữ ngầm — không chặn luồng import nếu lưu tệp gặp sự cố mạng
       }
     }
     reader.readAsArrayBuffer(file)

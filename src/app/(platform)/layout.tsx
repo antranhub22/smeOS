@@ -21,6 +21,7 @@ const MUC: Array<{ href: string; nhan: string }> = [
   { href: "/van-hanh/to-chuc", nhan: "Tổ chức" },
   { href: "/van-hanh/nganh", nhan: "Ma trận ngành" },
   { href: "/van-hanh/truong-du-lieu", nhan: "Trường dữ liệu" },
+  { href: "/van-hanh/du-lieu", nhan: "Dữ liệu tổ chức" },
   { href: "/van-hanh/muc-dung", nhan: "Mức dùng" },
   { href: "/van-hanh/suc-khoe", nhan: "Sức khoẻ hệ thống" },
   { href: "/van-hanh/nhat-ky", nhan: "Nhật ký" },

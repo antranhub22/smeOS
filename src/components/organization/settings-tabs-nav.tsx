@@ -23,6 +23,7 @@ export type SettingsTab =
   | "AGREEMENTS"    // 7. Thỏa thuận đặt hàng
   | "BROCHURE_FLOW" // 8. Cơ chế Thẻ Chào & Quy trình
   | "AI_CHANNELS"   // 9. Trợ lý AI & Mạng xã hội
+  | "COLLECTION_PROFILE" // 10. Danh mục thu thập chuỗi (§9.5.8)
 
 interface SettingsTabsNavProps {
   activeTab: SettingsTab
@@ -49,6 +50,7 @@ export function SettingsTabsNav({
     { key: "AGREEMENTS" as const, label: `7. Thỏa Thuận (${policyCounts.agreements})`, icon: FileText },
     { key: "BROCHURE_FLOW" as const, label: "8. Thẻ Chào & Quy Trình", icon: Send },
     { key: "AI_CHANNELS" as const, label: "9. AI & Kênh", icon: Cpu },
+    { key: "COLLECTION_PROFILE" as const, label: "10. Thu Thập Chuỗi", icon: ShieldCheck },
   ]
 
   return (

@@ -246,6 +246,14 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Điều phối",
   },
   {
+    href: "/du-lieu",
+    label: "Dữ liệu chuỗi",
+    group: "van-hanh",
+    iconKey: "Database",
+    navKey: "chain-data",
+    mobileLabel: "Dữ liệu",
+  },
+  {
     href: "/job",
     label: "Job",
     group: "van-hanh",

@@ -31,6 +31,10 @@ const EXTENSION_BY_MIME: Readonly<Record<string, string>> = {
   "video/mp4": "mp4",
   "video/quicktime": "mov",
   "video/webm": "webm",
+  // Tệp dữ liệu / bảng tính đã qua kiểm định an toàn
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
+  "application/vnd.ms-excel": "xls",
+  "text/csv": "csv",
 }
 
 export function extensionForMimeType(mimeType: string): string {
