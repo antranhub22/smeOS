@@ -53,7 +53,40 @@ class InMemoryPartnershipRepository implements IChainPartnershipRepository {
     p.status = status
     return p
   }
+
+  async findStoreByIdentifier(identifier: string): Promise<any> {
+    if (identifier === "existing@shop.vn" || identifier === "existing-shop") {
+      return {
+        orgId: "existing-org-1",
+        orgName: "Tiệm Hoa Có Sẵn",
+        founderUserId: "existing-user-1",
+        contactEmail: "existing@shop.vn",
+      }
+    }
+    return null
+  }
+
+  async linkExistingStore(params: any): Promise<ChainPartnershipEntity> {
+    const entity: ChainPartnershipEntity = {
+      id: "part-linked-1",
+      chainOrgId: params.chainOrgId,
+      partnerOrgId: params.partnerOrgId,
+      partnerCode: params.partnerCode,
+      partnershipType: params.partnershipType ?? "SUBCONTRACTOR",
+      status: "ACTIVE",
+      capacityDaily: params.capacityDaily ?? 10,
+      contactName: params.contactName,
+      contactPhone: params.contactPhone,
+      contactEmail: params.contactEmail,
+      partnerOrgName: "Tiệm Hoa Có Sẵn",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+    this.partnerships.push(entity)
+    return entity
+  }
 }
+
 
 class InMemoryChatRepoMock implements Partial<IInternalChatRepository> {
   public createdConversations: CreateConversationParams[] = []
@@ -120,5 +153,32 @@ describe("Chain Partnership Use Cases", () => {
     expect(result.total).toBe(1)
     expect(result.items[0]!.partnerCode).toBe("DT-01")
   })
+
+  it("liên kết thành công cửa hàng đã có tài khoản và mở kênh chat nội bộ", async () => {
+    const { LinkExistingStoreUseCase } = await import("./link-existing-store")
+    const useCase = new LinkExistingStoreUseCase(
+      partnershipRepo,
+      chatRepo as unknown as IInternalChatRepository
+    )
+
+    const partnership = await useCase.execute(
+      {
+        chainOrgId: "chain-hq-1",
+        identifier: "existing@shop.vn",
+        partnerCode: "DT-EXISTING-01",
+      },
+      "coordinator-user-1"
+    )
+
+    expect(partnership.partnerCode).toBe("DT-EXISTING-01")
+    expect(partnershipRepo.partnerships).toHaveLength(1)
+
+    // Kênh chat 1-1 với tiệm có sẵn đã được mở
+    expect(chatRepo.createdConversations).toHaveLength(1)
+    const conv = chatRepo.createdConversations[0]!
+    expect(conv.conversationType).toBe("CHAIN_PARTNER")
+    expect(conv.participantUserIds).toHaveLength(2)
+  })
 })
+
 

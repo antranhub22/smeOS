@@ -36,3 +36,13 @@ export interface ProvisionPartnerInput {
   capacityDaily?: number | undefined
   commissionRate?: number | undefined
 }
+
+export interface InviteExistingStoreInput {
+  chainOrgId: string
+  identifier: string // Email đại diện hoặc Mã/Slug của cửa hàng đã tồn tại
+  partnerCode: string
+  partnershipType?: PartnershipType | undefined
+  commissionRate?: number | undefined
+  capacityDaily?: number | undefined
+}
+

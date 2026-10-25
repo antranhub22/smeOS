@@ -187,6 +187,126 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     return this.mapEntity(row, row.partner_organization?.name)
   }
 
+  async findStoreByIdentifier(identifier: string): Promise<{
+    orgId: string
+    orgName: string
+    founderUserId: string
+    contactEmail: string
+    contactPhone?: string | undefined
+    address?: string | undefined
+  } | null> {
+    const trimmed = identifier.trim().toLowerCase()
+
+    // 1. Thử tìm qua slug hoặc tên tổ chức
+    let org = await this.prisma.organizations.findFirst({
+      where: {
+        OR: [{ slug: trimmed }, { name: { equals: identifier.trim(), mode: "insensitive" } }],
+      },
+      include: {
+        memberships: {
+          include: {
+            user: { select: { id: true, email: true, phone: true } },
+          },
+          take: 1,
+        },
+      },
+    })
+
+    // 2. Nếu không thấy, thử tìm qua email người dùng
+    if (!org) {
+      const user = await this.prisma.users.findUnique({
+        where: { email: trimmed },
+        include: {
+          memberships: {
+            include: { organization: true },
+            take: 1,
+          },
+        },
+      })
+      if (user && user.memberships[0]?.organization) {
+        const foundOrg = user.memberships[0].organization
+        const settings = (foundOrg.settings as Record<string, unknown> | null) ?? {}
+        return {
+          orgId: foundOrg.id,
+          orgName: foundOrg.name,
+          founderUserId: user.id,
+          contactEmail: user.email,
+          contactPhone: user.phone ?? undefined,
+          address: typeof settings.address === "string" ? settings.address : undefined,
+        }
+      }
+    }
+
+    if (!org) return null
+
+    const founderUser = org.memberships[0]?.user
+    const settings = (org.settings as Record<string, unknown> | null) ?? {}
+
+    return {
+      orgId: org.id,
+      orgName: org.name,
+      founderUserId: founderUser?.id || "",
+      contactEmail: founderUser?.email || "",
+      contactPhone: founderUser?.phone ?? undefined,
+      address: typeof settings.address === "string" ? settings.address : undefined,
+    }
+  }
+
+  async linkExistingStore(params: {
+    chainOrgId: string
+    partnerOrgId: string
+    partnerCode: string
+    partnershipType?: string | undefined
+    commissionRate?: number | undefined
+    capacityDaily?: number | undefined
+    contactName?: string | undefined
+    contactPhone?: string | undefined
+    contactEmail?: string | undefined
+  }): Promise<ChainPartnershipEntity> {
+    const updateData: any = {
+      status: "ACTIVE",
+      partner_code: params.partnerCode,
+      partnership_type: params.partnershipType ?? "SUBCONTRACTOR",
+      commission_rate: params.commissionRate ? Number(params.commissionRate) : null,
+      capacity_daily: params.capacityDaily ?? 10,
+    }
+    if (params.contactName !== undefined) updateData.contact_name = params.contactName
+    if (params.contactPhone !== undefined) updateData.contact_phone = params.contactPhone
+    if (params.contactEmail !== undefined) updateData.contact_email = params.contactEmail
+
+    const row = await this.prisma.chain_partnerships.upsert({
+      where: {
+        chain_org_id_partner_org_id: {
+          chain_org_id: params.chainOrgId,
+          partner_org_id: params.partnerOrgId,
+        },
+      },
+      update: updateData,
+      create: {
+        chain_org_id: params.chainOrgId,
+        partner_org_id: params.partnerOrgId,
+        partner_code: params.partnerCode,
+        partnership_type: params.partnershipType ?? "SUBCONTRACTOR",
+        status: "ACTIVE",
+        commission_rate: params.commissionRate ? Number(params.commissionRate) : null,
+        capacity_daily: params.capacityDaily ?? 10,
+        contact_name: params.contactName ?? null,
+        contact_phone: params.contactPhone ?? null,
+        contact_email: params.contactEmail ?? null,
+      },
+      include: {
+        partner_organization: {
+          select: { name: true },
+        },
+      },
+    })
+
+    const partnerName = (row as any).partner_organization?.name
+    return this.mapEntity(row, partnerName)
+  }
+
+
+
   private mapEntity(row: any, partnerOrgName?: string): ChainPartnershipEntity {
     return {
       id: row.id,

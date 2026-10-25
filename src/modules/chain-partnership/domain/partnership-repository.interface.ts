@@ -21,4 +21,24 @@ export interface IChainPartnershipRepository {
   }>
   findPartnershipById(id: string): Promise<ChainPartnershipEntity | null>
   updateStatus(id: string, status: PartnershipStatus): Promise<ChainPartnershipEntity>
+  findStoreByIdentifier(identifier: string): Promise<{
+    orgId: string
+    orgName: string
+    founderUserId: string
+    contactEmail: string
+    contactPhone?: string | undefined
+    address?: string | undefined
+  } | null>
+  linkExistingStore(params: {
+    chainOrgId: string
+    partnerOrgId: string
+    partnerCode: string
+    partnershipType?: string | undefined
+    commissionRate?: number | undefined
+    capacityDaily?: number | undefined
+    contactName?: string | undefined
+    contactPhone?: string | undefined
+    contactEmail?: string | undefined
+  }): Promise<ChainPartnershipEntity>
 }
+
