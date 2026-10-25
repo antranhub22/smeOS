@@ -23,7 +23,8 @@
  *   `product_analysis_runs.report` (JSONB), dù resolve thành công hay không.
  */
 
-import { marketIntelligenceRepo } from "../infra/market-intelligence-repository";
+import type { IMarketIntelligenceRepository } from "../domain/repositories/market-intelligence-repository.interface";
+import { getMarketIntelligenceRepository } from "../infra/market-intelligence-repository";
 import {
   evaluateProductTrendFit,
   deriveProductKeyAttributes,
@@ -32,7 +33,8 @@ import {
   type RealAttributeSignals,
 } from "../domain/trend-fit";
 import { synthesizeProductResearchQueries } from "../domain/synthesize-product-queries";
-import { AssetRepository } from "@/modules/assets/infra/asset-repository";
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory";
 import { ASSET_VIEW_URL_TTL_SECONDS } from "@/modules/assets/use-cases/get-asset-view-url";
 import type {
@@ -69,12 +71,15 @@ const TREND_SIGNAL_PLATFORM_LABELS: Record<string, string> = {
  * trend_signals thật đầu tiên — không tìm thấy candidate nào trả về null (trung thực,
  * không bịa). Bọc try/catch riêng từng candidate để một lỗi DB không chặn cả pipeline.
  */
-async function lookupRealAttributeSignal(candidates: (string | undefined)[]): Promise<RealAttributeSignal | null> {
+async function lookupRealAttributeSignal(
+  candidates: (string | undefined)[],
+  repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository()
+): Promise<RealAttributeSignal | null> {
   for (const raw of candidates) {
     const keyword = raw?.trim();
     if (!keyword) continue;
     try {
-      const rows = await marketIntelligenceRepo.findCachedSignalsAnyPlatform(keyword);
+      const rows = await repo.findCachedSignalsAnyPlatform(keyword);
       const top = rows[0];
       if (top) {
         return {
@@ -93,7 +98,9 @@ async function lookupRealAttributeSignal(candidates: (string | undefined)[]): Pr
 }
 
 export async function analyzeProductIntelligence(
-  params: AnalyzeProductIntelligenceParams
+  params: AnalyzeProductIntelligenceParams,
+  repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository(),
+  assetRepo: IAssetRepository = getAssetRepository()
 ): Promise<ProductIntelligenceReport> {
   // BẮT BUỘC: Vision AI (Chặng 02 UNDERSTAND) phải trả dữ liệu thật, không fallback cứng
   if (!params.components || params.components.length === 0) {
@@ -154,11 +161,11 @@ export async function analyzeProductIntelligence(
   // — thử từ khóa thuộc tính thô trước, rồi tới cụm từ khóa đã tổng hợp (synthesized) để tăng
   // khả năng khớp được dữ liệu thật đã thu thập qua "Quét theo từ khóa".
   const [colorSignal, flowerSignal, styleSignal, packagingSignal, occasionSignal] = await Promise.all([
-    lookupRealAttributeSignal([keyAttrs.mainColor, synthesized.flowerColorQuery]),
-    lookupRealAttributeSignal([keyAttrs.dominantFlower, synthesized.flowerColorQuery]),
-    lookupRealAttributeSignal([keyAttrs.primaryStyle, synthesized.styleQuery]),
-    lookupRealAttributeSignal([keyAttrs.packagingMaterial, synthesized.packagingQuery]),
-    lookupRealAttributeSignal([keyAttrs.primaryOccasion, synthesized.occasionQuery]),
+    lookupRealAttributeSignal([keyAttrs.mainColor, synthesized.flowerColorQuery], repo),
+    lookupRealAttributeSignal([keyAttrs.dominantFlower, synthesized.flowerColorQuery], repo),
+    lookupRealAttributeSignal([keyAttrs.primaryStyle, synthesized.styleQuery], repo),
+    lookupRealAttributeSignal([keyAttrs.packagingMaterial, synthesized.packagingQuery], repo),
+    lookupRealAttributeSignal([keyAttrs.primaryOccasion, synthesized.occasionQuery], repo),
   ]);
 
   const realAttributeSignals: RealAttributeSignals = {
@@ -173,10 +180,10 @@ export async function analyzeProductIntelligence(
   // — dùng làm dẫn chứng cấp chủ đề (cụ thể/cá nhân hóa hơn), ưu tiên trước tín hiệu thô ở trên.
   let realSignals: RealTrendSignalInput[] = [];
   try {
-    const opps = await marketIntelligenceRepo.findTenantOpportunities(params.organizationId, 10);
+    const opps = await repo.findTenantOpportunities(params.organizationId, 10);
 
     realSignals = opps.map((o) => ({
-      topicName: o.topic.canonical_name,
+      topicName: o.topic?.canonical_name ?? "Chủ đề",
       trendScore: o.trend_score,
       viralScore: o.viral_score,
       commercialScore: o.commercial_score,
@@ -190,14 +197,14 @@ export async function analyzeProductIntelligence(
   // Nếu chưa có opportunities riêng của tenant, tra cứu bảng topics chung
   if (realSignals.length === 0) {
     try {
-      const topTopics = await marketIntelligenceRepo.findTopTopics(10);
+      const topTopics = await repo.findTopTopics(10);
 
       realSignals = topTopics.map((t) => ({
         topicName: t.canonical_name,
-        trendScore: t.scores[0]?.trend_score ?? 70,
-        viralScore: t.scores[0]?.viral_score ?? 65,
-        summary: t.description ?? undefined,
-        marketSignal: `Chủ đề thịnh hành trên thị trường (${t.status})`,
+        trendScore: t.scores?.[0]?.trend_score ?? 70,
+        viralScore: t.scores?.[0]?.viral_score ?? 65,
+        summary: typeof t.description === "string" ? t.description : undefined,
+        marketSignal: `Chủ đề thịnh hành trên thị trường (${t.status ?? ""})`,
       }));
     } catch {
       // Dự phòng an toàn
@@ -222,7 +229,7 @@ export async function analyzeProductIntelligence(
   // chỉ riêng bản GHI XUỐNG DB (bên dưới) là không bao giờ chứa base64.
   let resolvedImageUrl: string | null = null;
   try {
-    const asset = await new AssetRepository().findByOrganizationId(params.organizationId, params.assetId);
+    const asset = await assetRepo.findByOrganizationId(params.organizationId, params.assetId);
     if (asset) {
       resolvedImageUrl = await getStorageProvider().signedUrl(asset.storage_key, ASSET_VIEW_URL_TTL_SECONDS, "GET");
       report.imageUrl = resolvedImageUrl;
@@ -238,7 +245,7 @@ export async function analyzeProductIntelligence(
   // (không còn cần sessionStorage — xem `build-handoff-url.ts`).
   try {
     const persistedReport = { ...report, imageUrl: resolvedImageUrl ?? "" };
-    const run = await marketIntelligenceRepo.createProductAnalysisRun({
+    const run = await repo.createProductAnalysisRun({
       organizationId: params.organizationId,
       assetId: params.assetId,
       productName: report.productName,

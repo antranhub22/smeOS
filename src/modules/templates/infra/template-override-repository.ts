@@ -2,8 +2,12 @@ import type { DbClient } from "@/modules/organization/infra/db-client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { TemplateFamily } from "@/modules/templates/domain/template-override-rules"
+import type {
+  ITemplateOverrideRepository,
+  TemplateOverrideRecord,
+} from "@/modules/templates/domain/repositories/template-override-repository.interface"
 
-export class TemplateOverrideRepository {
+export class TemplateOverrideRepository implements ITemplateOverrideRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   async findByKey(ctx: TenantContext, templateKey: string, fieldKey: string) {
@@ -63,3 +67,14 @@ export class TemplateOverrideRepository {
     return result.count > 0
   }
 }
+
+let templateOverrideRepoInstance: ITemplateOverrideRepository | null = null
+
+export function getTemplateOverrideRepository(db?: DbClient): ITemplateOverrideRepository {
+  if (db) return new TemplateOverrideRepository(db)
+  if (!templateOverrideRepoInstance) {
+    templateOverrideRepoInstance = new TemplateOverrideRepository()
+  }
+  return templateOverrideRepoInstance
+}
+

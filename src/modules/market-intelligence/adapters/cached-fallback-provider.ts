@@ -49,7 +49,7 @@ export class CachedFallbackProvider implements TrendProvider {
         regionCode: s.region_code,
         city: s.city,
         industry: s.industry,
-        metricName: s.metric_name,
+        metricName: s.metric_name ?? "cached_metric",
         metricValue: s.metric_value,
         growthRate: s.growth_rate,
         confidence: Math.max(0.3, s.confidence * 0.8), // Giảm nhẹ độ tin cậy do là cache cũ
@@ -83,9 +83,9 @@ export class CachedFallbackProvider implements TrendProvider {
       return points.map((p) => ({
         date: p.date,
         value: p.value,
-        growthRate: p.growth_rate,
-        velocity: p.velocity,
-        acceleration: p.acceleration,
+        growthRate: p.growth_rate ?? null,
+        velocity: p.velocity ?? null,
+        acceleration: p.acceleration ?? null,
         confidence: Math.max(0.3, p.confidence * 0.8),
       }));
     } catch {

@@ -1,4 +1,5 @@
-import { marketIntelligenceRepo } from "../infra/market-intelligence-repository";
+import type { IMarketIntelligenceRepository } from "../domain/repositories/market-intelligence-repository.interface";
+import { getMarketIntelligenceRepository } from "../infra/market-intelligence-repository";
 
 export type ResearchRunType = "DAILY_DEEP" | "INTRADAY_PULSE" | "WEEKLY_DEEP" | "MANUAL";
 
@@ -15,9 +16,10 @@ export interface TriggerRunResult {
  */
 export async function triggerResearchRun(
   runType: ResearchRunType = "MANUAL",
-  params?: { keyword?: string | undefined; geo?: string | undefined; timeframe?: string | undefined; channel?: string | undefined }
+  params?: { keyword?: string | undefined; geo?: string | undefined; timeframe?: string | undefined; channel?: string | undefined },
+  repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository()
 ): Promise<TriggerRunResult> {
-  const run = await marketIntelligenceRepo.triggerResearchRunAndNotify(runType, params);
+  const run = await repo.triggerResearchRunAndNotify(runType, params);
 
   return {
     runId: run.id,

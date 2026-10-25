@@ -6,12 +6,14 @@
 import { AppError, notFound } from "@/core/http/errors";
 import type { TenantContext } from "@/core/tenancy";
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory";
-import { AssetRepository } from "@/modules/assets/infra/asset-repository";
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
 import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
 import { refundJob } from "@/modules/usage/use-cases/refund-job";
 
-import { marketIntelligenceRepo } from "../infra/market-intelligence-repository";
+import type { IMarketIntelligenceRepository } from "../domain/repositories/market-intelligence-repository.interface";
+import { getMarketIntelligenceRepository } from "../infra/market-intelligence-repository";
 import { callCapability } from "@/core/ai/gateway";
 import { aiGatewayDeps } from "@/core/ai/wiring";
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider";
@@ -70,16 +72,18 @@ const MAX_DEDUPE_CHAIN = 5;
  */
 export async function analyzeProductVision(
   ctx: TenantContext,
-  input: AnalyzeProductVisionInput
+  input: AnalyzeProductVisionInput,
+  repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository(),
+  assetRepo: IAssetRepository = getAssetRepository()
 ): Promise<AnalyzeProductVisionResult> {
   const { assetId, productTitle, reanalyzeKey } = input;
-  const asset = await new AssetRepository().findById(ctx, assetId);
+  const asset = await assetRepo.findById(ctx, assetId);
   if (!asset) throw notFound();
   const storage = getStorageProvider();
   const imageUrl = await storage.signedUrl(asset.storage_key, PREVIEW_TTL_SECONDS);
 
   // 1. Kết quả M01 đã có của đúng ảnh này → dùng lại, không gọi mô hình, không thu.
-  const existingAnalysis = await marketIntelligenceRepo.findProductAnalysis(ctx.organizationId, assetId);
+  const existingAnalysis = await repo.findProductAnalysis(ctx.organizationId, assetId);
   if (existingAnalysis && !reanalyzeKey) {
     const data = (existingAnalysis.edited || existingAnalysis.raw) as RawVisionAnalysis;
     return { ...mapAnalysisToProductIntelligence(data, imageUrl, assetId, productTitle), source: "m01", reused: true };

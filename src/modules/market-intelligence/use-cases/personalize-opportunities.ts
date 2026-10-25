@@ -1,6 +1,7 @@
 import type { VideoEvidenceSnippet } from "@/core/ports/trend-provider";
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile";
-import { marketIntelligenceRepo } from "../infra/market-intelligence-repository";
+import type { IMarketIntelligenceRepository } from "../domain/repositories/market-intelligence-repository.interface";
+import { getMarketIntelligenceRepository } from "../infra/market-intelligence-repository";
 import { getTopicDualRealVideoEvidence } from "../domain/video-evidence-catalog";
 import {
   calculateCommercialScore,
@@ -25,12 +26,13 @@ export interface PersonalizeResult {
  */
 export async function personalizeOpportunitiesForTenants(
   topicIds?: string[],
-  topicEvidenceMap?: Record<string, VideoEvidenceSnippet[]>
+  topicEvidenceMap?: Record<string, VideoEvidenceSnippet[]>,
+  repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository()
 ): Promise<PersonalizeResult> {
-  const orgs = await marketIntelligenceRepo.getTenantsForPersonalization();
+  const orgs = await repo.getTenantsForPersonalization();
 
   // Lấy các chủ đề có điểm số mới nhất
-  const topics = await marketIntelligenceRepo.getScoredTopics(topicIds);
+  const topics = await repo.getScoredTopics(topicIds);
 
   let totalCreated = 0;
 
@@ -55,7 +57,8 @@ export async function personalizeOpportunitiesForTenants(
     const industryKey = typeof orgSettings.industry === "string" ? orgSettings.industry : "FLORAL";
     const plugin = getIndustryPlugin(industryKey);
     const defaultTone = plugin.aiConfig.marketingToneExamples[0] ?? "Trang nhã, tinh tế, chân thành";
-    const tone = org.brand_profile?.tone_of_voice ?? defaultTone;
+    const tone =
+      (typeof org.brand_profile?.tone_of_voice === "string" ? org.brand_profile.tone_of_voice : null) ?? defaultTone;
     const defaultTag = `#${industryKey.toLowerCase()}`;
     const hashtags = Array.isArray(org.brand_profile?.hashtags)
       ? (org.brand_profile.hashtags as string[])
@@ -66,7 +69,7 @@ export async function personalizeOpportunitiesForTenants(
         priceSegment,
       });
 
-      const latestScore = topic.scores[0];
+      const latestScore = topic.scores?.[0];
       const trendScore = latestScore?.trend_score
         ? Math.round((latestScore.trend_score * 0.4 + context.trendScore * 0.6) * 10) / 10
         : context.trendScore;
@@ -146,7 +149,7 @@ export async function personalizeOpportunitiesForTenants(
 
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // Hết hạn sau 7 ngày
 
-      await marketIntelligenceRepo.createContentOpportunity({
+      await repo.createContentOpportunity({
         organizationId: org.id,
         topicId: topic.id,
         audience: audienceProxy,
