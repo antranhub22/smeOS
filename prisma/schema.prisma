@@ -132,75 +132,77 @@ model organizations {
   // Khoá ngoại tới organizations mở lại ở P3 (TECHNICAL_DEBT #8) — bốn bảng
   // dưới đây là bốn bảng nợ đó; assets/generation_jobs/usage/audit_logs khai
   // khoá ngoại ngay từ khi tạo, không nợ.
-  workspaces                workspaces[]
-  branches                  branches[]
-  capability_overrides      capability_overrides[]
-  memberships               memberships[]
-  assets                    assets[]
-  generation_jobs           generation_jobs[]
-  usage                     usage[]
-  audit_logs                audit_logs[]
-  business_profile          business_profiles?
-  brand_profile             brand_profiles?
-  products                  products[]
-  product_variants          product_variants[]
-  product_images            product_images[]
-  product_analyses          product_analyses[]
-  product_inventory         product_inventory[]
-  product_bookings          product_bookings[]
-  pricing_rules             pricing_rules[]
-  integration_tokens        integration_tokens[]
-  ai_policies               ai_policies[]
-  ai_requests               ai_requests[]
-  ai_evaluations            ai_evaluations[]
-  occasions                 occasions[]
-  template_overrides        template_overrides[]
-  catalog_links             catalog_links[]
-  product_copies            product_copies[]
-  content_metrics           content_metrics[]
-  video_jobs                video_jobs[]
-  orders                    orders[]
-  order_items               order_items[]
-  order_assignments         order_assignments[]
-  order_events              order_events[]
-  customers                 customers[]
-  customer_occasions        customer_occasions[]
-  journey_runs              journey_runs[]
-  customer_consents         customer_consents[]
-  vouchers                  vouchers[]
-  chat_conversations        chat_conversations[]
-  chat_messages             chat_messages[]
-  chat_channel_integrations chat_channel_integrations[]
-  content_opportunities     content_opportunities[]
-  product_analysis_runs     product_analysis_runs[]
-  campaign_packages         campaign_packages[]
-  content_drafts            content_drafts[]
-  content_generations       content_generations[]
-  voice_clones              voice_clones[]
-  music_tracks              music_tracks[]
-  partners                  partners[]
-  order_coordinations       order_coordinations[]
-  order_qc_records          order_qc_records[]
-  order_payments            order_payments[]
-  order_exceptions          order_exceptions[]
-  field_config_overrides    field_config_overrides[]
-  order_info_requests       order_info_requests[]
-  order_change_requests     order_change_requests[]
-  greeting_catalogs         greeting_catalogs[]
-  greeting_catalog_products greeting_catalog_products[]
-  greeting_sessions         greeting_sessions[]
-  greeting_journey_events   greeting_journey_events[]
-  greeting_integration      greeting_integrations?
-  greeting_payment_events   greeting_payment_events[]
-  greeting_notifications    greeting_notifications[]
-  greeting_catalog_events   greeting_catalog_events[]
-  greeting_messages         greeting_messages[]
-  greeting_share_links      greeting_share_links[]
-  greeting_message_reads    greeting_message_reads[]
-  staff_notifications       staff_notifications[]
-  registration_request      registration_requests?
-  internalChatConversations internal_chat_conversations[]
-  internalChatParticipants  internal_chat_participants[]
+  workspaces                 workspaces[]
+  branches                   branches[]
+  capability_overrides       capability_overrides[]
+  memberships                memberships[]
+  assets                     assets[]
+  generation_jobs            generation_jobs[]
+  usage                      usage[]
+  audit_logs                 audit_logs[]
+  business_profile           business_profiles?
+  brand_profile              brand_profiles?
+  products                   products[]
+  product_variants           product_variants[]
+  product_images             product_images[]
+  product_analyses           product_analyses[]
+  product_inventory          product_inventory[]
+  product_bookings           product_bookings[]
+  pricing_rules              pricing_rules[]
+  integration_tokens         integration_tokens[]
+  ai_policies                ai_policies[]
+  ai_requests                ai_requests[]
+  ai_evaluations             ai_evaluations[]
+  occasions                  occasions[]
+  template_overrides         template_overrides[]
+  catalog_links              catalog_links[]
+  product_copies             product_copies[]
+  content_metrics            content_metrics[]
+  video_jobs                 video_jobs[]
+  orders                     orders[]
+  order_items                order_items[]
+  order_assignments          order_assignments[]
+  order_events               order_events[]
+  customers                  customers[]
+  customer_occasions         customer_occasions[]
+  journey_runs               journey_runs[]
+  customer_consents          customer_consents[]
+  vouchers                   vouchers[]
+  chat_conversations         chat_conversations[]
+  chat_messages              chat_messages[]
+  chat_channel_integrations  chat_channel_integrations[]
+  content_opportunities      content_opportunities[]
+  product_analysis_runs      product_analysis_runs[]
+  campaign_packages          campaign_packages[]
+  content_drafts             content_drafts[]
+  content_generations        content_generations[]
+  voice_clones               voice_clones[]
+  music_tracks               music_tracks[]
+  partners                   partners[]
+  order_coordinations        order_coordinations[]
+  order_qc_records           order_qc_records[]
+  order_payments             order_payments[]
+  order_exceptions           order_exceptions[]
+  field_config_overrides     field_config_overrides[]
+  order_info_requests        order_info_requests[]
+  order_change_requests      order_change_requests[]
+  greeting_catalogs          greeting_catalogs[]
+  greeting_catalog_products  greeting_catalog_products[]
+  greeting_sessions          greeting_sessions[]
+  greeting_journey_events    greeting_journey_events[]
+  greeting_integration       greeting_integrations?
+  greeting_payment_events    greeting_payment_events[]
+  greeting_notifications     greeting_notifications[]
+  greeting_catalog_events    greeting_catalog_events[]
+  greeting_messages          greeting_messages[]
+  greeting_share_links       greeting_share_links[]
+  greeting_message_reads     greeting_message_reads[]
+  staff_notifications        staff_notifications[]
+  internalChatConversations  internal_chat_conversations[]
+  internalChatParticipants   internal_chat_participants[]
+  chainPartnershipsAsChain   chain_partnerships[]          @relation("ChainPartnershipsAsChain")
+  chainPartnershipsAsPartner chain_partnerships[]          @relation("ChainPartnershipsAsPartner")
+  registrationRequests       registration_requests?
 }
 
 model workspaces {
@@ -3014,4 +3016,32 @@ model internal_chat_messages {
   sender       users                       @relation(fields: [sender_user_id], references: [id], onDelete: Cascade)
 
   @@index([conversation_id, created_at])
+}
+
+// ── CHAIN & PARTNER STORES (Quản lý phân tầng Chuỗi & Cửa hàng đối tác) ────
+
+model chain_partnerships {
+  id               String   @id @default(uuid())
+  chain_org_id     String
+  partner_org_id   String
+  partner_code     String
+  partnership_type String   @default("SUBCONTRACTOR") // SUBCONTRACTOR, FRANCHISE, BRANCH
+  status           String   @default("ACTIVE") // PENDING, ACTIVE, SUSPENDED, TERMINATED
+  commission_rate  Decimal? @db.Decimal(5, 2)
+  capacity_daily   Int      @default(10)
+  contact_name     String?
+  contact_phone    String?
+  contact_email    String?
+  address          String?
+  province         String?
+  district         String?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  chain_organization   organizations @relation("ChainPartnershipsAsChain", fields: [chain_org_id], references: [id], onDelete: Cascade)
+  partner_organization organizations @relation("ChainPartnershipsAsPartner", fields: [partner_org_id], references: [id], onDelete: Cascade)
+
+  @@unique([chain_org_id, partner_org_id])
+  @@index([chain_org_id, status])
+  @@index([partner_org_id])
 }

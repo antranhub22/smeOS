@@ -1,0 +1,211 @@
+import type { PrismaClient } from "@/generated/prisma/client"
+import { hashPassword } from "@/modules/organization/infra/password-hasher"
+import { slugCandidates } from "@/modules/organization/domain/slug"
+import type {
+  IChainPartnershipRepository,
+  ListPartnershipsFilter,
+} from "../domain/partnership-repository.interface"
+import type {
+  ChainPartnershipEntity,
+  ProvisionPartnerInput,
+  PartnershipStatus,
+  PartnershipType,
+} from "../domain/partnership-entities"
+
+export class PrismaChainPartnershipRepository implements IChainPartnershipRepository {
+  constructor(private readonly prisma: PrismaClient) {}
+
+  async provisionPartner(input: ProvisionPartnerInput): Promise<{
+    partnership: ChainPartnershipEntity
+    partnerOrgId: string
+    founderUserId: string
+  }> {
+    const rawPassword = input.password || "SmeOS@Partner2026"
+    const passwordHash = await hashPassword(rawPassword)
+
+    // Generate unique slug for partner store
+    const candidateSlugs = slugCandidates(input.partnerStoreName)
+    let partnerSlug = candidateSlugs[0] || `store-${Date.now()}`
+    const existingOrg = await this.prisma.organizations.findUnique({
+      where: { slug: partnerSlug },
+    })
+    if (existingOrg) {
+      partnerSlug = `${partnerSlug}-${Date.now().toString().slice(-4)}`
+    }
+
+    return await this.prisma.$transaction(async (tx) => {
+      // 1. Tạo tổ chức Cửa hàng đối tác (STORE)
+      const partnerOrg = await tx.organizations.create({
+        data: {
+          name: input.partnerStoreName,
+          slug: partnerSlug,
+          type: "STORE",
+          settings: {
+            address: input.address,
+            province: input.province,
+            district: input.district,
+            chain_id: input.chainOrgId,
+          },
+        },
+      })
+
+      // 2. Tạo Workspace mặc định cho Cửa hàng
+      await tx.workspaces.create({
+        data: {
+          organization_id: partnerOrg.id,
+          name: "Không gian làm việc",
+          kind: "PRODUCTION",
+        },
+      })
+
+      // 3. Tạo User đối tác (hoặc lấy nếu email đã tồn tại)
+      let user = await tx.users.findUnique({
+        where: { email: input.contactEmail.toLowerCase().trim() },
+      })
+      if (!user) {
+        user = await tx.users.create({
+          data: {
+            email: input.contactEmail.toLowerCase().trim(),
+            password_hash: passwordHash,
+            name: input.contactName,
+            phone: input.contactPhone,
+          },
+        })
+      }
+
+      // 4. Tìm vai store_admin hoặc vai quản trị mặc định
+      const role = await tx.roles.findFirst({
+        where: {
+          OR: [{ key: "store_admin" }, { key: "dieu_hanh" }, { is_system: true }],
+        },
+      })
+
+      // 5. Tạo Membership cho đối tác tại tổ chức mới
+      if (role) {
+        await tx.memberships.create({
+          data: {
+            organization_id: partnerOrg.id,
+            user_id: user.id,
+            role_id: role.id,
+            status: "ACTIVE",
+          },
+        })
+      }
+
+      // 6. Tạo Liên kết quan hệ Chuỗi - Đối tác (chain_partnerships)
+      const row = await tx.chain_partnerships.create({
+        data: {
+          chain_org_id: input.chainOrgId,
+          partner_org_id: partnerOrg.id,
+          partner_code: input.partnerCode,
+          partnership_type: input.partnershipType ?? "SUBCONTRACTOR",
+          status: "ACTIVE",
+          capacity_daily: input.capacityDaily ?? 10,
+          commission_rate: input.commissionRate ? Number(input.commissionRate) : null,
+          contact_name: input.contactName,
+          contact_phone: input.contactPhone,
+          contact_email: input.contactEmail,
+          address: input.address ?? null,
+          province: input.province ?? null,
+          district: input.district ?? null,
+        },
+      })
+
+      return {
+        partnership: this.mapEntity(row, partnerOrg.name),
+        partnerOrgId: partnerOrg.id,
+        founderUserId: user.id,
+      }
+    })
+  }
+
+  async listPartnerships(filter: ListPartnershipsFilter): Promise<{
+    items: ChainPartnershipEntity[]
+    total: number
+  }> {
+    const where: any = {
+      chain_org_id: filter.chainOrgId,
+    }
+
+    if (filter.status) {
+      where.status = filter.status
+    }
+    if (filter.province) {
+      where.province = filter.province
+    }
+    if (filter.query) {
+      where.OR = [
+        { partner_code: { contains: filter.query, mode: "insensitive" } },
+        { contact_name: { contains: filter.query, mode: "insensitive" } },
+        { contact_phone: { contains: filter.query, mode: "insensitive" } },
+      ]
+    }
+
+    const [rows, total] = await Promise.all([
+      this.prisma.chain_partnerships.findMany({
+        where,
+        orderBy: { created_at: "desc" },
+        take: Math.min(filter.limit ?? 50, 100),
+        skip: filter.offset ?? 0,
+        include: {
+          partner_organization: {
+            select: { name: true },
+          },
+        },
+      }),
+      this.prisma.chain_partnerships.count({ where }),
+    ])
+
+    return {
+      items: rows.map((r) => this.mapEntity(r, r.partner_organization?.name)),
+      total,
+    }
+  }
+
+  async findPartnershipById(id: string): Promise<ChainPartnershipEntity | null> {
+    const row = await this.prisma.chain_partnerships.findUnique({
+      where: { id },
+      include: {
+        partner_organization: {
+          select: { name: true },
+        },
+      },
+    })
+    return row ? this.mapEntity(row, row.partner_organization?.name) : null
+  }
+
+  async updateStatus(id: string, status: PartnershipStatus): Promise<ChainPartnershipEntity> {
+    const row = await this.prisma.chain_partnerships.update({
+      where: { id },
+      data: { status },
+      include: {
+        partner_organization: {
+          select: { name: true },
+        },
+      },
+    })
+    return this.mapEntity(row, row.partner_organization?.name)
+  }
+
+  private mapEntity(row: any, partnerOrgName?: string): ChainPartnershipEntity {
+    return {
+      id: row.id,
+      chainOrgId: row.chain_org_id,
+      partnerOrgId: row.partner_org_id,
+      partnerCode: row.partner_code,
+      partnershipType: row.partnership_type as PartnershipType,
+      status: row.status as PartnershipStatus,
+      commissionRate: row.commission_rate ? Number(row.commission_rate) : undefined,
+      capacityDaily: row.capacity_daily,
+      contactName: row.contact_name ?? undefined,
+      contactPhone: row.contact_phone ?? undefined,
+      contactEmail: row.contact_email ?? undefined,
+      address: row.address ?? undefined,
+      province: row.province ?? undefined,
+      district: row.district ?? undefined,
+      partnerOrgName: partnerOrgName ?? undefined,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }
+  }
+}
