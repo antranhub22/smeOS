@@ -2,7 +2,8 @@ import { notFound } from "@/core/http/errors"
 import { log } from "@/core/observability/log"
 import type { TenantContext } from "@/core/tenancy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AudioJobRepository } from "@/modules/audio-studio/infra/audio-job-repository"
+import { getAudioJobRepository } from "@/modules/audio-studio/infra/audio-job-repository"
+import type { IAudioJobRepository } from "@/modules/audio-studio/domain/repositories/audio-job-repository.interface"
 import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
 import { refundPartial } from "@/modules/usage/use-cases/refund-partial"
@@ -19,8 +20,12 @@ const AUDIO_URL_EXPIRES_IN = 3600
  * lượng thật từng cảnh, nhạc đã dùng; job `FAILED` tự hoàn credit ngay ở lần
  * đọc này (idempotent) thay vì chờ `npm run hoan-credit`.
  */
-export async function getAudioJob(ctx: TenantContext, jobId: string) {
-  const job = await new AudioJobRepository().findById(ctx, jobId)
+export async function getAudioJob(
+  ctx: TenantContext,
+  jobId: string,
+  repo: IAudioJobRepository = getAudioJobRepository()
+) {
+  const job = await repo.findById(ctx, jobId)
   if (!job) throw notFound()
 
   const raw = await new GenerationJobRepository().findById(ctx, jobId)

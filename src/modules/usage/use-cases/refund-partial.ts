@@ -3,7 +3,9 @@ import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-rep
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { soCreditHoanMotPhan, type LyDoHoanMotPhan } from "@/modules/usage/domain/refund-policy"
-import { UsageRepository } from "@/modules/usage/infra/usage-repository"
+import { UsageRepository, getUsageRepository } from "@/modules/usage/infra/usage-repository"
+import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
+
 
 /**
  * Hoàn MỘT PHẦN credit của một job — khách nhận kết quả nhưng rẻ hơn thứ đã
@@ -22,7 +24,8 @@ export async function refundPartial(
   ctx: TenantContext,
   jobId: string,
   lyDo: LyDoHoanMotPhan,
-  soCredit: number
+  soCredit: number,
+  repo: IUsageRepository = getUsageRepository()
 ): Promise<{ refunded: number }> {
   const job = await new GenerationJobRepository().findById(ctx, jobId)
   if (!job) return { refunded: 0 }

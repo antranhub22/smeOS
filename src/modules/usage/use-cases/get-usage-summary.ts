@@ -1,6 +1,8 @@
 import type { TenantContext } from "@/core/tenancy"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { UsageRepository } from "@/modules/usage/infra/usage-repository"
+import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
+import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
+
 
 /**
  * `GET /usage/summary` (`G8`, đặc tả 06 mục 10).
@@ -8,9 +10,12 @@ import { UsageRepository } from "@/modules/usage/infra/usage-repository"
  * Chưa chia theo chi nhánh cho tổ chức Chuỗi — `usage` không có cột
  * `branch_id` ở đặc tả 07 mục 7. Ghi ở `docs/dac-ta/TECHNICAL_DEBT.md`.
  */
-export async function getUsageSummary(ctx: TenantContext) {
+export async function getUsageSummary(
+  ctx: TenantContext,
+  repo: IUsageRepository = getUsageRepository()
+) {
   const [byFeature, organization] = await Promise.all([
-    new UsageRepository().summaryByFeature(ctx),
+    repo.summaryByFeature(ctx),
     new OrganizationRepository().current(ctx),
   ])
 

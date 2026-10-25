@@ -3,7 +3,8 @@ import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-rep
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { lyDoHoanCredit, type LyDoHoan } from "@/modules/usage/domain/refund-policy"
-import { UsageRepository } from "@/modules/usage/infra/usage-repository"
+import { UsageRepository, getUsageRepository } from "@/modules/usage/infra/usage-repository"
+import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
 
 export type RefundOutcome =
   | { refunded: false; reason: "khong-thuoc-dien-hoan" | "da-hoan-truoc-do" | "khong-co-gi-de-hoan" }
@@ -35,7 +36,8 @@ export type RefundOutcome =
  */
 export async function refundJob(
   ctx: TenantContext,
-  jobId: string
+  jobId: string,
+  repo: IUsageRepository = getUsageRepository()
 ): Promise<RefundOutcome> {
   const job = await new GenerationJobRepository().findById(ctx, jobId)
   if (!job) return { refunded: false, reason: "khong-thuoc-dien-hoan" }
@@ -43,13 +45,12 @@ export async function refundJob(
   const lyDo = lyDoHoanCredit({ status: job.status, result: job.result })
   if (lyDo === null) return { refunded: false, reason: "khong-thuoc-dien-hoan" }
 
-  const usageRepo = new UsageRepository()
-  const dong = await usageRepo.listByJob(ctx, jobId)
+  const dong = await repo.listByJob(ctx, jobId)
   if (dong.some((d) => d.status === "REFUNDED")) {
     return { refunded: false, reason: "da-hoan-truoc-do" }
   }
 
-  const daTru = dong.reduce((tong, d) => tong + d.cost_credit, 0)
+  const daTru = dong.reduce((tong, d) => tong + (d.cost_credit as number), 0)
   if (daTru <= 0) {
     // Workspace trải nghiệm đi đường hạn mức TRIAL, không trừ credit — không
     // có gì để hoàn, và ghi một dòng REFUNDED rỗng chỉ làm bẩn sổ.
@@ -57,7 +58,7 @@ export async function refundJob(
   }
 
   const costUsd = dong.reduce<number | null>(
-    (tong, d) => (d.cost_usd === null ? tong : (tong ?? 0) + d.cost_usd),
+    (tong, d) => (d.cost_usd === null ? tong : (tong ?? 0) + (d.cost_usd as number)),
     null
   )
 

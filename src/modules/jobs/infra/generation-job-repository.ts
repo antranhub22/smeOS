@@ -5,6 +5,11 @@ import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
 import type { DbClient } from "./db-client"
 import { JobEventRepository } from "./job-event-repository"
+import type { IGenerationJobRepository } from "../domain/repositories/generation-job-repository.interface"
+
+// Re-export interface cho các module cần import từ một nơi
+export type { IGenerationJobRepository }
+
 
 export type CreateJobInput = {
   workspaceId: string
@@ -23,7 +28,7 @@ export type CreateJobInput = {
  * `generation_jobs` — đặc tả 07 mục 6. Bộ gác tổ chức ở tầng này
  * (`scopedWhere`/`scopedData`), giống mọi repository khác của core.
  */
-export class GenerationJobRepository {
+export class GenerationJobRepository implements IGenerationJobRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   findById(ctx: TenantContext, id: string): Promise<generation_jobs | null> {
@@ -393,4 +398,16 @@ export class GenerationJobRepository {
     })
     return result.count
   }
+}
+
+// ============================================================
+// SINGLETON FACTORY
+// ============================================================
+
+let _instance: GenerationJobRepository | undefined
+
+/** Trả về singleton GenerationJobRepository (inject mặc định cho use-cases). */
+export function getGenerationJobRepository(): IGenerationJobRepository {
+  _instance ??= new GenerationJobRepository()
+  return _instance
 }

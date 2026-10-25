@@ -1,10 +1,12 @@
 /**
- * Audio Job Repository — Infra layer cho Audio Studio.
+ * AudioJobRepository — Infra layer cho Audio Studio.
  *
  * Delegate sang GenerationJobRepository (đã có sẵn) với filter
- * feature = "audio.generate". Không gọi Prisma trực tiếp.
+ * feature = "audio.generate". Không gọi Prisma trực tiếp ngoại trừ
+ * findByOrganization (cần filter feature chính xác).
  *
  * domain/ KHÔNG import file này (Dependency Inversion).
+ * Interface IAudioJobRepository nằm tại domain/repositories/audio-job-repository.interface.ts
  */
 
 import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
@@ -20,21 +22,13 @@ import type {
   MusicMood,
   AudioTaskType,
 } from "../domain/audio-types"
+import type { IAudioJobRepository } from "../domain/repositories/audio-job-repository.interface"
+
+// Re-export interface cho các module cần import từ một nơi
+export type { IAudioJobRepository }
 
 // ============================================================
-// REPOSITORY PORT (domain-facing interface)
-// ============================================================
-
-export interface IAudioJobRepository {
-  findById(ctx: TenantContext, jobId: string): Promise<AudioJobEntity | null>
-  findByOrganization(
-    ctx: TenantContext,
-    options?: { limit?: number; offset?: number; stage?: AudioJobStage }
-  ): Promise<AudioJobEntity[]>
-}
-
-// ============================================================
-// IMPLEMENTATION — Delegate sang GenerationJobRepository
+// IMPLEMENTATION
 // ============================================================
 
 export class AudioJobRepository implements IAudioJobRepository {
@@ -54,8 +48,6 @@ export class AudioJobRepository implements IAudioJobRepository {
     ctx: TenantContext,
     options?: { limit?: number; offset?: number; stage?: AudioJobStage }
   ): Promise<AudioJobEntity[]> {
-    // Lấy jobs rồi lọc feature — GenerationJobRepository chưa hỗ trợ
-    // filter theo feature trong findMany, nên dùng raw query qua prisma
     const where = {
       organization_id: ctx.organizationId,
       feature: "audio.generate" as const,
@@ -79,8 +71,6 @@ export class AudioJobRepository implements IAudioJobRepository {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapToEntity(row: any): AudioJobEntity {
     const payload = (row.payload ?? {}) as Record<string, unknown>
-    // Kết quả worker nằm ở `output` (JSON), không ở `result` (enum phán quyết)
-    // — sửa 23/09/2026 cùng lúc nối worker `audio.generate`.
     const output = (row.output ?? {}) as Record<string, unknown>
 
     return {
@@ -128,4 +118,16 @@ export class AudioJobRepository implements IAudioJobRepository {
       default: return "DRAFT"
     }
   }
+}
+
+// ============================================================
+// SINGLETON FACTORY
+// ============================================================
+
+let _instance: AudioJobRepository | undefined
+
+/** Trả về singleton AudioJobRepository (inject mặc định cho use-cases). */
+export function getAudioJobRepository(): IAudioJobRepository {
+  _instance ??= new AudioJobRepository()
+  return _instance
 }

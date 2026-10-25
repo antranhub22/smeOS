@@ -5,6 +5,11 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
 import type { DbClient } from "./db-client"
+import type { IUsageRepository } from "../domain/repositories/usage-repository.interface"
+
+// Re-export interface cho các module cần import từ một nơi
+export type { IUsageRepository }
+
 
 export type RecordUsageInput = {
   workspaceId: string
@@ -24,7 +29,7 @@ export type RecordUsageInput = {
  * trong cùng giao dịch với kiểm hạn mức và tạo `generation_jobs`
  * (`enqueue-job.ts`, đặc tả 05 mục 6) — không tạo `PrismaClient` mới ở đây.
  */
-export class UsageRepository {
+export class UsageRepository implements IUsageRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   record(ctx: TenantContext, input: RecordUsageInput): Promise<usage> {
@@ -114,4 +119,16 @@ export class UsageRepository {
       costCredit: row._sum.cost_credit ?? 0,
     }))
   }
+}
+
+// ============================================================
+// SINGLETON FACTORY
+// ============================================================
+
+let _instance: UsageRepository | undefined
+
+/** Trả về singleton UsageRepository (inject mặc định cho use-cases). */
+export function getUsageRepository(): IUsageRepository {
+  _instance ??= new UsageRepository()
+  return _instance
 }
