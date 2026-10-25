@@ -4,7 +4,8 @@
 
 import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { OrderRepository } from "../infra/order-repository"
+import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import { getOrderRepository } from "../infra/order-repository"
 
 export interface OrderPrintData {
   orderCode: string
@@ -29,7 +30,7 @@ export interface OrderPrintData {
 export async function getOrderPrintout(
   ctx: TenantContext,
   orderId: string,
-  repo = new OrderRepository()
+  repo: IOrderRepository = getOrderRepository()
 ): Promise<OrderPrintData> {
   const order = await repo.findById(ctx.organizationId, orderId)
   if (!order) {
