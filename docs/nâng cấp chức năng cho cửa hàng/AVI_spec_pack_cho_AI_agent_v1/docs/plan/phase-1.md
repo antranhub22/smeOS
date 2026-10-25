@@ -43,5 +43,8 @@
 ## Cổng chuyển giai đoạn
 Giai đoạn 2 chỉ bắt đầu khi con người đã đọc `SUMMARY.md`, chốt D1 và D3 trong ADR, rồi ghi `APPROVED` vào cuối file này.
 
+**APPROVED: 2026-10-25 bởi Người Dùng (Đã chốt ADR-D1: Phương án A - Relay qua Chain OS; ADR-D3: Phương án A - Mặc định Shared Database + organization_id). Chuyển sang Giai đoạn 2.**
+
+
 ## Lệnh kiểm tra chung
 Rà soát thủ công bằng đối chiếu: số thư mục/bảng thực tế (lệnh đếm) so với số dòng trong bảng đầu ra. Ghi con số hai phía vào cuối mỗi file.

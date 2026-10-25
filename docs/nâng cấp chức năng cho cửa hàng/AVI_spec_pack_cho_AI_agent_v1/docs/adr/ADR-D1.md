@@ -1,7 +1,9 @@
-# ADR-D1: Chain OS chuyển tiếp (relay) dữ liệu cửa hàng lên Mother, hay Store gửi song song cho cả Chain và Mother?
+# ADR-D1: Topology đồng bộ — Relay qua Chain OS hay Store gửi song song?
 
-- Trạng thái: **CHƯA CHỐT — AGENT KHÔNG ĐƯỢC TỰ QUYẾT**
-- Khuyến nghị (để con người cân nhắc): Relay qua Chain; Store độc lập gửi thẳng Mother
-- Cần chốt vào: Giai đoạn 1
-- Quyết định của con người: _(trống)_
-- Hành vi của agent khi gặp: DỪNG phần phụ thuộc quyết định này, ghi câu hỏi vào docs/plan/questions.md, làm tiếp phần không bị ảnh hưởng. Không chọn tạm.
+- Trạng thái: **ĐÃ CHỐT** (2026-10-25)
+- Quyết định của con người: **Phương án A — Relay qua Chain OS**
+- Chi tiết quyết định:
+  - Cửa hàng thuộc chuỗi: Chỉ phát sự kiện vận hành cho Chain OS. Chain OS tổng hợp chỉ số, xác thực quyền và chịu trách nhiệm gửi lên Mother Platform qua Mother Connector.
+  - Cửa hàng độc lập (không thuộc chuỗi): Gửi trực tiếp lên Mother Platform qua Mother Connector.
+  - Tắt đồng bộ Mother tại cấp Chuỗi không làm gián đoạn vận hành giữa Chuỗi và Cửa hàng thành viên.
+- Yêu cầu liên quan: REQ-CON-003, REQ-BND-005, REQ-BND-006.

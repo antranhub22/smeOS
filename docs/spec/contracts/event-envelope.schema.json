@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event-envelope/1.0.0",
+  "title": "Event Envelope (Mother Connector)",
+  "type": "object",
+  "required": ["event_id","idempotency_key","event_type","schema_version","occurred_at","source","subject","classification","payload"],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {"type":"string","description":"UUIDv7, duy nhất toàn cục"},
+    "idempotency_key": {"type":"string","description":"<instance_id>:<aggregate_id>:<aggregate_version>"},
+    "event_type": {"type":"string","pattern":"^[a-z_]+\\.[a-z_]+$"},
+    "schema_version": {"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},
+    "occurred_at": {"type":"string","format":"date-time"},
+    "source": {
+      "type":"object",
+      "required":["org_id","instance_id","product","product_version","connector_version"],
+      "properties":{
+        "org_id":{"type":"string"},"chain_id":{"type":["string","null"]},"store_id":{"type":["string","null"]},
+        "instance_id":{"type":"string"},
+        "product":{"enum":["mother-platform","industry-saas","chain-os","store-os"]},
+        "product_version":{"type":"string"},"connector_version":{"type":"string"}
+      }
+    },
+    "subject": {
+      "type":"object",
+      "required":["aggregate_type","aggregate_id","aggregate_version"],
+      "properties":{"aggregate_type":{"type":"string"},"aggregate_id":{"type":"string"},"aggregate_version":{"type":"integer","minimum":1}}
+    },
+    "classification": {"enum":["L0","L1","L2","L3"]},
+    "payload": {"type":"object","description":"Đã lọc theo Connector Profile; schema theo event_type"}
+  }
+}
