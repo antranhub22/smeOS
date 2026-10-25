@@ -3,8 +3,9 @@ import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
 import { filterProductLookup, type ProductLookupResult } from "@/modules/products/domain/product-lookup"
 import type { IProductRepository } from "@/modules/products/domain/repositories/product-repository.interface"
-import { getProductRepository } from "@/modules/products/infra/product-repository"
-import { PricingRuleRepository } from "@/modules/products/infra/pricing-rule-repository"
+import { getProductRepository } from "../infra/product-repository"
+import type { IPricingRuleRepository } from "../domain/repositories/pricing-rule-repository.interface"
+import { getPricingRuleRepository } from "../infra/pricing-rule-repository"
 
 /**
  * `GET /products/:id` (`L1`, đặc tả 06 mục 6). M03 — áp `filterProductLookup`
@@ -15,13 +16,14 @@ import { PricingRuleRepository } from "@/modules/products/infra/pricing-rule-rep
 export async function getProduct(
   ctx: TenantContext,
   id: string,
-  productRepo: IProductRepository = getProductRepository()
+  productRepo: IProductRepository = getProductRepository(),
+  pricingRepo: IPricingRuleRepository = getPricingRuleRepository()
 ): Promise<ProductLookupResult> {
   const product = await productRepo.findById(ctx, id)
   if (!product) throw notFound()
 
   const canReadPricing = hasCapability(ctx, "L5")
-  const pricingRuleRows = canReadPricing ? await new PricingRuleRepository().currentRows(ctx) : []
+  const pricingRuleRows = canReadPricing ? await pricingRepo.currentRows(ctx) : []
 
   return filterProductLookup(
     {

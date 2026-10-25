@@ -5,10 +5,15 @@ import {
   validatePricingRuleValue,
   type PricingRuleKey,
 } from "@/modules/products/domain/pricing-rules"
-import { PricingRuleRepository } from "@/modules/products/infra/pricing-rule-repository"
+import type { IPricingRuleRepository } from "../domain/repositories/pricing-rule-repository.interface"
+import { getPricingRuleRepository } from "../infra/pricing-rule-repository"
 import { BranchRepository } from "@/modules/organization/infra/branch-repository"
 
 import { getPricingRules } from "./get-pricing-rules"
+
+export interface IBranchLookup {
+  findById(ctx: TenantContext, id: string): Promise<{ id: string } | null>
+}
 
 /**
  * `PUT /pricing-rules` (`L6`, đặc tả 06 mục 6). CHÈN một dòng mới cho một
@@ -19,7 +24,9 @@ import { getPricingRules } from "./get-pricing-rules"
  */
 export async function putPricingRules(
   ctx: TenantContext,
-  input: { key: string; value: unknown; branchId?: string | null | undefined }
+  input: { key: string; value: unknown; branchId?: string | null | undefined },
+  pricingRepo: IPricingRuleRepository = getPricingRuleRepository(),
+  branchRepo: IBranchLookup = new BranchRepository()
 ) {
   if (!isPricingRuleKey(input.key)) {
     throw validationFailed({
@@ -33,16 +40,16 @@ export async function putPricingRules(
 
   const branchId = input.branchId ?? null
   if (branchId !== null) {
-    const branch = await new BranchRepository().findById(ctx, branchId)
+    const branch = await branchRepo.findById(ctx, branchId)
     if (!branch) throw notFound()
   }
 
-  await new PricingRuleRepository().create(ctx, {
+  await pricingRepo.create(ctx, {
     key,
     value: input.value,
     branchId,
     createdBy: ctx.userId,
   })
 
-  return getPricingRules(ctx, branchId)
+  return getPricingRules(ctx, branchId, pricingRepo)
 }

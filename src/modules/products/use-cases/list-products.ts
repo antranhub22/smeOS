@@ -4,7 +4,8 @@ import type { TenantContext } from "@/core/tenancy"
 import { filterProductLookup, type ProductLookupResult } from "@/modules/products/domain/product-lookup"
 import type { IProductRepository, ListProductsFilters } from "@/modules/products/domain/repositories/product-repository.interface"
 import { getProductRepository } from "@/modules/products/infra/product-repository"
-import { PricingRuleRepository } from "@/modules/products/infra/pricing-rule-repository"
+import type { IPricingRuleRepository } from "../domain/repositories/pricing-rule-repository.interface"
+import { getPricingRuleRepository } from "../infra/pricing-rule-repository"
 
 const DEFAULT_LIMIT = 25
 const MAX_LIMIT = 100
@@ -21,7 +22,8 @@ export async function listProducts(
   ctx: TenantContext,
   filters: ListProductsFilters,
   options: { limit?: number | undefined; cursor?: string | null | undefined },
-  productRepo: IProductRepository = getProductRepository()
+  productRepo: IProductRepository = getProductRepository(),
+  pricingRepo: IPricingRuleRepository = getPricingRuleRepository()
 ): Promise<{ data: ProductLookupResult[]; next_cursor: string | null }> {
   const limit = options.limit ?? DEFAULT_LIMIT
   if (limit < 1 || limit > MAX_LIMIT) {
@@ -37,7 +39,7 @@ export async function listProducts(
   const nextCursor = hasMore ? (page[page.length - 1]?.id ?? null) : null
 
   const canReadPricing = hasCapability(ctx, "L5")
-  const pricingRuleRows = canReadPricing ? await new PricingRuleRepository().currentRows(ctx) : []
+  const pricingRuleRows = canReadPricing ? await pricingRepo.currentRows(ctx) : []
 
   const data = page.map((product) =>
     filterProductLookup(

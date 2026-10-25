@@ -137,4 +137,51 @@ describe("Product Use Cases with Clean Repository", () => {
     expect(updated.name).toBe("Bó hoa hồng đỏ cao cấp")
     expect(mockRepo.update).toHaveBeenCalled()
   })
+
+  it("getPricingRules trả về cấu hình giá hiệu lực qua IPricingRuleRepository", async () => {
+    const { getPricingRules } = await import("../get-pricing-rules")
+    const mockPricingRepo = {
+      create: vi.fn(),
+      currentRows: vi.fn(async () => []),
+    }
+    const rules = await getPricingRules(mockTenant, null, mockPricingRepo)
+    expect(rules).toBeDefined()
+    expect(mockPricingRepo.currentRows).toHaveBeenCalledWith(mockTenant)
+  })
+
+  it("putPricingRules ghi cấu hình giá mới qua IPricingRuleRepository", async () => {
+    const { putPricingRules } = await import("../put-pricing-rules")
+    const mockPricingRepo = {
+      create: vi.fn(async () => ({
+        id: "pr-1",
+        organization_id: "org-1",
+        branch_id: null,
+        key: "optimal_price_ratio",
+        value: 0.6,
+        effective_from: new Date(),
+        created_by: "user-1",
+        created_at: new Date(),
+      })),
+      currentRows: vi.fn(async () => []),
+    }
+    const mockBranchRepo = {
+      findById: vi.fn(async () => null),
+      findByCode: vi.fn(async () => null),
+      list: vi.fn(async () => []),
+      create: vi.fn(),
+      update: vi.fn(),
+    }
+    const res = await putPricingRules(
+      mockTenant,
+      { key: "optimal_price_ratio", value: 0.6 },
+      mockPricingRepo,
+      mockBranchRepo
+    )
+    expect(res).toBeDefined()
+    expect(mockPricingRepo.create).toHaveBeenCalledWith(
+      mockTenant,
+      expect.objectContaining({ key: "optimal_price_ratio", value: 0.6 })
+    )
+  })
 })
+

@@ -1,16 +1,16 @@
 import type { InputJsonValue, pricing_rules } from "./entities"
+import type { DbClient } from "./db-client"
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
-import type { DbClient } from "./db-client"
+import type {
+  IPricingRuleRepository,
+  CreatePricingRuleInput,
+  PricingRuleRecord,
+} from "../domain/repositories/pricing-rule-repository.interface"
 
-export type CreatePricingRuleInput = {
-  key: string
-  value: unknown
-  branchId: string | null
-  createdBy: string
-}
+export type { CreatePricingRuleInput, PricingRuleRecord }
 
 /**
  * `pricing_rules` — đặc tả 07 mục 9, bảng dựng sẵn từ P3, nối luật ở P6.
@@ -23,7 +23,7 @@ export type CreatePricingRuleInput = {
  * Không có ràng buộc duy nhất `(organization_id, key, branch_id)` ở tầng cơ
  * sở dữ liệu — lược đồ đặc tả 07 cố ý để vậy cho lịch sử tích luỹ tự do.
  */
-export class PricingRuleRepository {
+export class PricingRuleRepository implements IPricingRuleRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   create(ctx: TenantContext, input: CreatePricingRuleInput): Promise<pricing_rules> {
@@ -58,3 +58,13 @@ export class PricingRuleRepository {
     return [...latestByKeyAndBranch.values()]
   }
 }
+
+let defaultPricingRuleRepository: IPricingRuleRepository | null = null
+
+export function getPricingRuleRepository(): IPricingRuleRepository {
+  if (!defaultPricingRuleRepository) {
+    defaultPricingRuleRepository = new PricingRuleRepository()
+  }
+  return defaultPricingRuleRepository!
+}
+
