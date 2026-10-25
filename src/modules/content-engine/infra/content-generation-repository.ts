@@ -10,49 +10,30 @@
 import { Prisma, type PrismaClient, type content_generations } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
+import type {
+  IContentGenerationRepository,
+  CreateContentGenerationInput,
+  LatestContentGenerationFilter,
+  ApproveContentGenerationInput,
+  ContentGenerationOrigin,
+  ContentGenerationMode,
+  ContentGenerationStatus,
+} from "../domain/repositories/content-generation-repository.interface"
 
 type DbClient = PrismaClient | Prisma.TransactionClient
 
-export type { content_generations }
-
-export type ContentGenerationOrigin = "creative_studio" | "content_engine_ui" | "package_rewrite"
-export type ContentGenerationMode = "AUTHENTIC" | "CREATIVE"
-export type ContentGenerationStatus = "DRAFT" | "APPROVED" | "SCHEDULED"
-
-export interface CreateContentGenerationInput {
-  readonly jobId?: string | null | undefined
-  readonly origin: ContentGenerationOrigin
-  readonly assetId?: string | null | undefined
-  readonly productId?: string | null | undefined
-  readonly topicId?: string | null | undefined
-  readonly scenePlanId?: string | null | undefined
-  readonly mode?: ContentGenerationMode | null | undefined
-  readonly channels: unknown
-  readonly brief: unknown
-  readonly briefVersion: number
-  readonly promptVersions: unknown
-  readonly rubricVersion: string
-  readonly strategy?: unknown
-  readonly posts: unknown
-  readonly overallScore?: number | null | undefined
-  readonly createdBy: string
+export type {
+  content_generations,
+  IContentGenerationRepository,
+  CreateContentGenerationInput,
+  LatestContentGenerationFilter,
+  ApproveContentGenerationInput,
+  ContentGenerationOrigin,
+  ContentGenerationMode,
+  ContentGenerationStatus,
 }
 
-export interface LatestContentGenerationFilter {
-  readonly assetId?: string | null | undefined
-  readonly topicId?: string | null | undefined
-  readonly scenePlanId?: string | null | undefined
-  readonly mode?: ContentGenerationMode | null | undefined
-}
-
-export interface ApproveContentGenerationInput {
-  readonly approvedBy: string
-  readonly approvedPosts: unknown
-  /** Khoá lạc quan: chỉ ghi khi trạng thái vẫn đúng như lúc đọc. Vắng = không kiểm. */
-  readonly expectedStatus?: ContentGenerationStatus | undefined
-}
-
-export class ContentGenerationRepository {
+export class ContentGenerationRepository implements IContentGenerationRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   create(ctx: TenantContext, input: CreateContentGenerationInput): Promise<content_generations> {
@@ -125,4 +106,16 @@ export class ContentGenerationRepository {
     })
     return this.findById(ctx, id)
   }
+}
+
+let defaultRepo: IContentGenerationRepository | null = null
+
+export function getContentGenerationRepository(db?: DbClient): IContentGenerationRepository {
+  if (db) {
+    return new ContentGenerationRepository(db)
+  }
+  if (!defaultRepo) {
+    defaultRepo = new ContentGenerationRepository()
+  }
+  return defaultRepo
 }

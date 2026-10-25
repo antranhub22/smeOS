@@ -48,9 +48,9 @@ import {
   aggregateOverallScore,
 } from "../domain/pipeline-rules"
 import type { CriticOutput } from "../domain/prompts/critic/v1"
-import type { RubricChannelKey } from "../domain/rubric"
-import { RUBRIC_VERSION, weightedScore } from "../domain/rubric"
-import { ContentGenerationRepository, type content_generations } from "../infra/content-generation-repository"
+import { RUBRIC_VERSION, weightedScore, type RubricChannelKey } from "../domain/rubric"
+import { getContentGenerationRepository, type content_generations } from "../infra/content-generation-repository"
+import type { IContentGenerationRepository } from "../domain/repositories/content-generation-repository.interface"
 import { getContentBrief } from "./get-content-brief"
 
 const PROMPT_VERSIONS = { strategist: "v1", writer: "v1", critic: "v1", rewriter: "v1" } as const
@@ -147,7 +147,11 @@ async function writeChannel(
 /**
  * AI viết bài đa kênh cho MỘT chủ đề/sản phẩm (P27, quyết định PO 25/09/2026).
  */
-export async function generateContent(ctx: TenantContext, input: GenerateContentInput): Promise<ContentGenerationView> {
+export async function generateContent(
+  ctx: TenantContext,
+  input: GenerateContentInput,
+  contentRepo: IContentGenerationRepository = getContentGenerationRepository()
+): Promise<ContentGenerationView> {
   requireCapability(ctx, "I1")
 
   if (input.channels.length === 0) throw new AppError("VALIDATION_FAILED", "Cần ít nhất một kênh")
@@ -168,9 +172,8 @@ export async function generateContent(ctx: TenantContext, input: GenerateContent
   })
 
   if (enq.deduped) {
-    const generationRepo = new ContentGenerationRepository()
     const record = enq.job.output
-      ? await generationRepo.findById(ctx, (enq.job.output as { generation_id?: string }).generation_id ?? "")
+      ? await contentRepo.findById(ctx, (enq.job.output as { generation_id?: string }).generation_id ?? "")
       : null
     if (record) return viewFromRecord(enq.job.id, true, enq.usage, record)
     return {
@@ -336,7 +339,7 @@ export async function generateContent(ctx: TenantContext, input: GenerateContent
     const scoredForAverage = finalPosts.filter((p) => p.source !== "template" && p.scores !== null)
     const overallScore = aggregateOverallScore(scoredForAverage.map((p) => weightedScore(p.scores ?? {}, hasStory)))
 
-    const generation = await new ContentGenerationRepository().create(ctx, {
+    const generation = await contentRepo.create(ctx, {
       jobId: enq.job.id,
       origin: "content_engine_ui",
       assetId: input.assetId ?? null,
