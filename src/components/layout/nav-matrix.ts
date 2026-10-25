@@ -39,6 +39,7 @@ export const ALL_NAV_KEYS = [
   "schedule",
   "templates",
   "coordinator",
+  "internal-chat",
   "chain-data",
   "jobs",
   "approval",
@@ -78,6 +79,7 @@ export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/lich-dang": "schedule",
   "/kho-templates": "templates",
   "/dieu-phoi": "coordinator",
+  "/tin-nhan": "internal-chat",
   "/du-lieu": "chain-data",
   "/job": "jobs",
   "/duyet": "approval",
@@ -91,6 +93,7 @@ export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/bo-may": "engine",
   "/cai-dat": "settings",
 }
+
 
 /**
  * Tính toán tập navKey bị ẩn cho một ngành cụ thể.

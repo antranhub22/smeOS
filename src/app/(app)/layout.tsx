@@ -21,6 +21,7 @@ import { LiveRegionProvider } from "@/components/ui/live-region"
 import { I18nProvider } from "@/lib/i18n"
 
 import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
+import { InternalChatWidget } from "@/components/internal-chat/internal-chat-widget"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -59,8 +60,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <GlobalImageZoom />
           <SessionTakeoverWatcher />
           <FloraOSGlobalCopilot />
+          <InternalChatWidget />
         </LiveRegionProvider>
       </I18nProvider>
     </SessionProvider>
   )
 }
+
