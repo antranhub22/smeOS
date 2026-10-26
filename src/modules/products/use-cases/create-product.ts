@@ -2,7 +2,8 @@ import { conflict } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
 import { newProposal, PROPOSAL_KEY, stripProposal } from "@/modules/products/domain/product-proposal"
-import { ProductRepository, type CreateProductInput } from "@/modules/products/infra/product-repository"
+import type { IProductRepository, CreateProductInput } from "@/modules/products/domain/repositories/product-repository.interface"
+import { getProductRepository } from "@/modules/products/infra/product-repository"
 
 /**
  * `POST /products` (`L2`, đặc tả 06 mục 6). `products` có
@@ -12,8 +13,11 @@ import { ProductRepository, type CreateProductInput } from "@/modules/products/i
  * `sign-up.ts` cho email/slug) — mức rủi ro chấp nhận được cho một thao tác
  * do người thao tác tay, không phải job chạy hàng loạt.
  */
-export async function createProduct(ctx: TenantContext, input: CreateProductInput) {
-  const repo = new ProductRepository()
+export async function createProduct(
+  ctx: TenantContext,
+  input: CreateProductInput,
+  repo: IProductRepository = getProductRepository()
+) {
   const existing = await repo.findByCode(ctx, input.code)
   if (existing) throw conflict(`Mã sản phẩm "${input.code}" đã tồn tại trong tổ chức`)
 

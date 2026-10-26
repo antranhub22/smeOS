@@ -1,7 +1,8 @@
 import { AppError, conflict, notFound } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
-import { ProductRepository, type UpdateProductInput } from "@/modules/products/infra/product-repository"
+import type { IProductRepository, UpdateProductInput } from "@/modules/products/domain/repositories/product-repository.interface"
+import { getProductRepository } from "@/modules/products/infra/product-repository"
 import { PRICING_ONLY_ATTRIBUTE_KEYS } from "@/modules/products/domain/product-lookup"
 import { decideEdit, PROPOSAL_KEY, stripProposal } from "@/modules/products/domain/product-proposal"
 import { saveRevision } from "./product-revisions"
@@ -11,8 +12,12 @@ import { saveRevision } from "./product-revisions"
  * — tách khỏi luồng duyệt phân tích ảnh (`H3`, ghi cả bốn trường nhận dạng
  * cùng lúc qua `updateIdentity`).
  */
-export async function updateProduct(ctx: TenantContext, id: string, input: UpdateProductInput) {
-  const repo = new ProductRepository()
+export async function updateProduct(
+  ctx: TenantContext,
+  id: string,
+  input: UpdateProductInput,
+  repo: IProductRepository = getProductRepository()
+) {
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
   const stored = (current.attributes as Record<string, unknown> | null) ?? {}
@@ -56,7 +61,7 @@ export async function updateProduct(ctx: TenantContext, id: string, input: Updat
 
   // Điều hành đổi nội dung (không chỉ tạm ẩn / khả dụng) → lưu phiên bản trước để khôi phục được.
   const changesContent = Object.entries(input).some(([k, v]) => v !== undefined && k !== "status" && k !== "availabilityConfig")
-  if (changesContent && hasCapability(ctx, "H3")) await saveRevision(ctx, current, "EDIT")
+  if (changesContent && hasCapability(ctx, "H3")) await saveRevision(ctx, current as unknown as import("@/modules/products/infra/entities").products, "EDIT")
 
   const updated = await repo.update(ctx, id, input)
   if (!updated) throw notFound()

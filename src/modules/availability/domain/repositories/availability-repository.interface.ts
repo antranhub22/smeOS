@@ -40,8 +40,8 @@ export interface IAvailabilityRepository {
     productId?: string | undefined
   ): Promise<ProductBookingRecord[]>
 
-  /** Thêm block thủ công hoặc từ đơn hàng */
-  createBooking(input: CreateBlockInput): Promise<string>
+  /** Thêm block thủ công hoặc từ đơn hàng — null nếu trùng lịch */
+  createBooking(input: CreateBlockInput): Promise<string | null>
 
   /** Xóa manual block của admin (chỉ block có order_id = null) */
   deleteManualBlock(organizationId: string, blockId: string): Promise<boolean>

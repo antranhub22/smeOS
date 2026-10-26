@@ -61,7 +61,6 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "coordinator/partners/[id]/status": DEBT_170,
   "coordinator/partners/link-existing": DEBT_170,
   "coordinator/partners": DEBT_170,
-  "internal/chain-dispatch-sweep": "sweep nội bộ gọi từ cron/background worker",
   "internal-chat/conversations/[id]/messages": DEBT_170,
   "internal-chat/conversations": DEBT_170,
   "internal-chat/messages/[id]/action": DEBT_170,
