@@ -2,8 +2,10 @@ import { notFound } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
 import { filterProductLookup, type ProductLookupResult } from "@/modules/products/domain/product-lookup"
-import { ProductRepository } from "@/modules/products/infra/product-repository"
-import { PricingRuleRepository } from "@/modules/products/infra/pricing-rule-repository"
+import type { IProductRepository } from "@/modules/products/domain/repositories/product-repository.interface"
+import { getProductRepository } from "../infra/product-repository"
+import type { IPricingRuleRepository } from "../domain/repositories/pricing-rule-repository.interface"
+import { getPricingRuleRepository } from "../infra/pricing-rule-repository"
 
 /**
  * `GET /products/:id` (`L1`, đặc tả 06 mục 6). M03 — áp `filterProductLookup`
@@ -11,27 +13,29 @@ import { PricingRuleRepository } from "@/modules/products/infra/pricing-rule-rep
  * (`pricing.read`), đúng ranh giới bảng ở đặc tả 06 ("GET /pricing-rules gác
  * bằng L5").
  */
-export async function getProduct(ctx: TenantContext, id: string): Promise<ProductLookupResult> {
-  const product = await new ProductRepository().findById(ctx, id)
+export async function getProduct(
+  ctx: TenantContext,
+  id: string,
+  productRepo: IProductRepository = getProductRepository(),
+  pricingRepo: IPricingRuleRepository = getPricingRuleRepository()
+): Promise<ProductLookupResult> {
+  const product = await productRepo.findById(ctx, id)
   if (!product) throw notFound()
 
   const canReadPricing = hasCapability(ctx, "L5")
-  const pricingRuleRows = canReadPricing ? await new PricingRuleRepository().currentRows(ctx) : []
+  const pricingRuleRows = canReadPricing ? await pricingRepo.currentRows(ctx) : []
 
   return filterProductLookup(
     {
       id: product.id,
       code: product.code,
       name: product.name,
-      category: product.category,
-      shape: product.shape,
-      facing: product.facing,
-      container: product.container,
+      category: product.category ?? null,
+      shape: product.shape ?? null,
+      facing: product.facing ?? null,
+      container: product.container ?? null,
       status: product.status,
-      branch_id: product.branch_id,
-      // `getProduct` không eager-load ảnh/biến thể (chỉ dùng ở trang chi tiết,
-      // không cần preview). Nếu cần masterImageUrl ở trang chi tiết, dùng
-      // `ProductMasterIndexRepository.getById` thay thế.
+      branch_id: product.branch_id ?? null,
       masterImageUrl: (product.attributes as Record<string, unknown> | null)?.imageUrl as string | undefined,
       price_vnd: null,
       attributes: (product.attributes as Record<string, unknown>) ?? null,

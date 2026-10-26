@@ -55,3 +55,9 @@ export class BranchRepository {
     return this.findById(ctx, id)
   }
 }
+
+let _branchRepositorySingleton: BranchRepository | null = null
+export function getBranchRepository(): BranchRepository {
+  if (!_branchRepositorySingleton) _branchRepositorySingleton = new BranchRepository()
+  return _branchRepositorySingleton
+}

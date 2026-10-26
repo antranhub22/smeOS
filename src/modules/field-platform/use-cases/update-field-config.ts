@@ -1,7 +1,7 @@
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
-import { FieldDefinitionRepository } from "../infra/field-definition-repository"
+import { FieldDefinitionRepository, getFieldDefinitionRepository } from "../infra/field-definition-repository"
 import { ALL_CORE_FIELD_DEFINITIONS } from "../domain/all-core-fields"
 import { findByKey, type FieldAudience } from "../domain/core-field-registry"
 import { AppError } from "@/core/http/errors"
@@ -36,7 +36,7 @@ export async function updateFieldConfig(
 ): Promise<FieldDefinitionApiView> {
   requirePlatformCapability(pctx, "N12")
 
-  const repo = new FieldDefinitionRepository()
+  const repo = getFieldDefinitionRepository()
   const current = await repo.findByKey(input.key)
   if (!current) throw new AppError("NOT_FOUND", `Không tìm thấy trường ${input.key}`, { key: input.key })
 

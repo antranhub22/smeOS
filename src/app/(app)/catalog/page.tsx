@@ -2,31 +2,23 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, BookOpen, Sparkles } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
-import { TabActionHeader } from "@/components/ui/tab-header"
 import { CatalogGuidanceCard } from "@/components/templates/catalog/catalog-guidance-card"
 import { CatalogManagementTab, type CatalogProduct, type CatalogLinkItem } from "@/components/catalog/catalog-management-tab"
-import { LandingCampaignTab } from "@/components/catalog/landing-campaign-tab"
 import { BudgetMatchingModal } from "@/components/sales/budget-matching-modal"
-import { QuickCollectionModal } from "@/components/catalog/quick-collection-modal"
 import type { ProductMatchCandidate } from "@/modules/products/domain/budget-flower-matcher"
-import type { QuickCollectionCandidate } from "@/modules/catalog-links/domain/quick-collection-engine"
-import { toQuickCollectionCandidate } from "@/modules/catalog-links/domain/quick-collection-candidate"
 import { useI18n } from "@/lib/i18n"
 
 /**
- * Trang Catalog & Website.
+ * Trang Chức năng 09: Tạo catalog và bộ sưu tập.
  *
- * Orchestrator gọn — chỉ quản lý fetch dữ liệu chung và chuyển tab,
- * mọi nghiệp vụ UI nằm ở CatalogManagementTab / LandingCampaignTab.
+ * Chuyên sâu quản lý catalog trực tuyến và showroom sản phẩm số hóa.
  */
 export default function CatalogWebsitePage() {
   const router = useRouter()
-  const [tab, setTab] = useState<"catalog" | "landing">("catalog")
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false)
-  const [isQuickCollectionOpen, setIsQuickCollectionOpen] = useState(false)
   const [products, setProducts] = useState<CatalogProduct[]>([])
   const [catalogLinks, setCatalogLinks] = useState<CatalogLinkItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -120,7 +112,7 @@ export default function CatalogWebsitePage() {
     code: p.code || p.id,
     name: p.name,
     sellingPriceVnd: p.price ?? 500_000,
-    category: p.category || "Hoa tươi",
+    category: p.category || "Sản phẩm",
     colorTheme: "Đa sắc",
     occasions: ["Sinh nhật", "Kỷ niệm", "Khai trương"],
     style: "Thiết kế hiện đại",
@@ -128,13 +120,10 @@ export default function CatalogWebsitePage() {
     highlightFlowers: [],
   }))
 
-  const quickCandidates: QuickCollectionCandidate[] = products.map(toQuickCollectionCandidate)
-
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <PageHeader
-        onBack={() => router.push("/")}
-        onOpenQuickCollection={() => setIsQuickCollectionOpen(true)}
+        onBack={() => router.push("/cong-cu" as never)}
         onOpenBudgetMatcher={() => setIsBudgetModalOpen(true)}
       />
 
@@ -148,36 +137,13 @@ export default function CatalogWebsitePage() {
         {/* Khối hướng dẫn chuẩn SSOT */}
         <CatalogGuidanceCard />
 
-        {/* Tab Switcher */}
-        <TabActionHeader
-          tabs={[
-            { id: "catalog", label: "Catalog số trực tuyến", icon: BookOpen, badge: `${activeCount} SP`, badgeTone: "neutral" },
-            { id: "landing", label: "Landing page chiến dịch", icon: Sparkles },
-          ]}
-          activeTab={tab}
-          onTabChange={(id) => setTab(id as "catalog" | "landing")}
+        {/* Nội dung quản lý Catalog & Bộ sưu tập */}
+        <CatalogManagementTab
+          products={products}
+          catalogLinks={catalogLinks}
+          onRefresh={refreshAll}
         />
-
-        {/* Tab Content */}
-        {tab === "catalog" && (
-          <CatalogManagementTab
-            products={products}
-            catalogLinks={catalogLinks}
-            onRefresh={refreshAll}
-          />
-        )}
-
-        {tab === "landing" && (
-          <LandingCampaignTab products={products} onRefresh={refreshAll} />
-        )}
       </div>
-
-      <QuickCollectionModal
-        open={isQuickCollectionOpen}
-        onOpenChange={setIsQuickCollectionOpen}
-        products={quickCandidates}
-        onCreatedLink={refreshAll}
-      />
 
       <BudgetMatchingModal
         open={isBudgetModalOpen}
@@ -205,18 +171,8 @@ function PageHeader({
 
   return (
     <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-[18px] py-4">
-      <div className="text-title font-extrabold text-primary">Catalog & Website</div>
+      <div className="text-title font-extrabold text-primary">Tạo catalog & bộ sưu tập</div>
       <div className="flex items-center gap-2">
-        {onOpenQuickCollection && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={onOpenQuickCollection}
-            className="flex items-center gap-1.5 text-xs font-bold"
-          >
-            <Sparkles size={14} /> Tạo nhanh BST (&lt;10s)
-          </Button>
-        )}
         {onOpenBudgetMatcher && (
           <Button
             variant="outline"
@@ -228,7 +184,7 @@ function PageHeader({
           </Button>
         )}
         <Button variant="ghost" onClick={onBack} className="flex items-center gap-1.5">
-          <ArrowLeft size={16} strokeWidth={2} /> Quay về Trang chủ
+          <ArrowLeft size={16} strokeWidth={2} /> Quay về Công cụ
         </Button>
       </div>
     </div>

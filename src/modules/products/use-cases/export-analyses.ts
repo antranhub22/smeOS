@@ -5,7 +5,7 @@ import {
   dungCsv,
   type DongXuat,
 } from "@/modules/products/domain/analysis-export"
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
+import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
 import type { approval_state } from "@/modules/products/infra/entities"
 
 const TRAN_LUOT = 5000
@@ -49,7 +49,7 @@ export async function exportAnalyses(
     throw validationFailed({ from: "Mốc đầu muộn hơn mốc cuối" })
   }
 
-  const rows = await new ProductAnalysisRepository().listForExport(ctx, {
+  const rows = await getProductAnalysisRepository().listForExport!(ctx, {
     states,
     ...(from ? { from } : {}),
     ...(to ? { to } : {}),

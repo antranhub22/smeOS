@@ -2,8 +2,8 @@ import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 import { AppError } from "@/core/http/errors"
-import { FieldDefinitionRepository } from "../infra/field-definition-repository"
-import { FieldConfigOverrideRepository } from "../infra/field-config-override-repository"
+import { FieldDefinitionRepository, getFieldDefinitionRepository } from "../infra/field-definition-repository"
+import { FieldConfigOverrideRepository, getFieldConfigOverrideRepository } from "../infra/field-config-override-repository"
 import { mapOverrideToApiView, type FieldConfigOverrideApiView } from "../infra/row-mappers"
 import type { FieldAudience } from "../domain/core-field-registry"
 
@@ -32,7 +32,7 @@ export async function setFieldOverrideForOrganization(
 ): Promise<FieldConfigOverrideApiView> {
   requirePlatformCapability(pctx, "N12")
 
-  const definition = await new FieldDefinitionRepository().findByKey(input.fieldKey)
+  const definition = await getFieldDefinitionRepository().findByKey(input.fieldKey)
   if (!definition) throw new AppError("NOT_FOUND", `Không tìm thấy trường ${input.fieldKey}`, { key: input.fieldKey })
 
   if (
@@ -58,7 +58,7 @@ export async function setFieldOverrideForOrganization(
     }
   }
 
-  const repo = new FieldConfigOverrideRepository()
+  const repo = getFieldConfigOverrideRepository()
   const updated = await repo.setFieldOverride({
     organizationId: input.organizationId,
     fieldKey: input.fieldKey,
@@ -94,7 +94,7 @@ export async function setCatalogValueOverrideForOrganization(
 ): Promise<FieldConfigOverrideApiView> {
   requirePlatformCapability(pctx, "N12")
 
-  const repo = new FieldConfigOverrideRepository()
+  const repo = getFieldConfigOverrideRepository()
   const updated = await repo.setCatalogValueOverride({
     organizationId: input.organizationId,
     catalogKey: input.catalogKey,

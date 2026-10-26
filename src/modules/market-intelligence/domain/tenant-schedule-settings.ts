@@ -24,7 +24,7 @@ export const DEFAULT_TENANT_SCHEDULE: TenantDailyScheduleConfig = {
   dailyExecutionTime: "06:30",
   trackedTopics: [
     "Hoa tulip pastel",
-    "Bó hoa tốt nghiệp",
+    "Sản phẩm tốt nghiệp",
     "Lan hồ điệp khai trương",
   ],
   geo: "VN",
@@ -39,7 +39,7 @@ export const DEFAULT_SAAS_ADMIN_SCHEDULE: SaaSAdminSystemScheduleConfig = {
     "Hoa cưới vintage tone cam",
     "Hoa mẫu đơn nhập khẩu",
     "Hoa cẩm tú cầu tone xanh",
-    "Bó hoa sinh nhật tinh tế",
+    "Sản phẩm sinh nhật tinh tế",
   ],
   autoPublishReportToTenants: true,
 };

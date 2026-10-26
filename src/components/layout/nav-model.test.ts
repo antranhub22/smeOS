@@ -121,7 +121,45 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     // Ngành mặc định (FLORAL)
     const floralNav = buildNav(() => true, null, "FLORAL")
     const floralEntries = floralNav.groups.flatMap((g) => g.entries)
-    expect(floralEntries.find((e) => e.href === "/the-chao")?.label).toBe("Thẻ chào mẫu hoa")
+    expect(floralEntries.find((e) => e.href === "/the-chao")?.label).toBe("Thẻ chào sản phẩm")
+  })
+
+  it("9. Vai platform_admin → đủ 3 nhóm vận hành nền tảng (to-chuc, cau-hinh, giam-sat) với các đường dẫn /van-hanh/*", () => {
+    const rolePlatform = ROLE_UX_CATALOG.find((r) => r.key === "platform_admin")!
+    const nav = buildNav(() => true, rolePlatform)
+
+    expect(nav.groups.map((g) => g.key)).toEqual(["to-chuc", "cau-hinh", "giam-sat"])
+
+    const allHrefs = nav.groups.flatMap((g) => g.entries.map((e) => e.href))
+    expect(allHrefs).toContain("/van-hanh")
+    expect(allHrefs).toContain("/van-hanh/to-chuc")
+    expect(allHrefs).toContain("/van-hanh/dang-ky")
+    expect(allHrefs).toContain("/van-hanh/phe-duyet")
+    expect(allHrefs).toContain("/van-hanh/nganh")
+    expect(allHrefs).toContain("/van-hanh/muc-dung")
+
+    // Ô thứ hai mobile cho platform_admin
+    const slot2 = mobileSecondSlot(() => true, rolePlatform)
+    expect(slot2.href).toBe("/van-hanh/to-chuc")
+  })
+
+  it("10. Vai industry_admin → đủ 3 nhóm quản trị SaaS Đa Ngành (he-sinh-thai, chuan-hoa, thi-truong)", () => {
+    const roleIndustry = ROLE_UX_CATALOG.find((r) => r.key === "industry_admin")!
+    const nav = buildNav(() => true, roleIndustry)
+
+    expect(nav.groups.map((g) => g.key)).toEqual(["he-sinh-thai", "chuan-hoa", "thi-truong"])
+
+    const allHrefs = nav.groups.flatMap((g) => g.entries.map((e) => e.href))
+    expect(allHrefs).toContain("/")
+    expect(allHrefs).toContain("/van-hanh/nganh")
+    expect(allHrefs).toContain("/kho-templates")
+    expect(allHrefs).toContain("/san-pham")
+    expect(allHrefs).toContain("/market-intelligence")
+
+    // Ô thứ hai mobile cho industry_admin
+    const slot2 = mobileSecondSlot(() => true, roleIndustry)
+    expect(slot2.href).toBe("/van-hanh/nganh")
   })
 })
+
 

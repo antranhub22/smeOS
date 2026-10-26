@@ -212,7 +212,7 @@ export class PrismaDispatchReminderRepository implements IDispatchReminderReposi
       where: { id: productId, organization_id: organizationId },
       select: { attributes: true },
     })
-    // Mẫu hoa không thuộc cửa hàng này → 404, không để lộ là "chưa cấu hình"
+    // Sản phẩm không thuộc cửa hàng này → 404, không để lộ là "chưa cấu hình"
     if (!product) throw notFound()
 
     if (!product.attributes) return null
@@ -229,7 +229,7 @@ export class PrismaDispatchReminderRepository implements IDispatchReminderReposi
       where: { id: productId, organization_id: organizationId },
       select: { attributes: true },
     })
-    // Mẫu hoa không thuộc cửa hàng này → 404, không bao giờ ghi sang cửa hàng khác
+    // Sản phẩm không thuộc cửa hàng này → 404, không bao giờ ghi sang cửa hàng khác
     if (!product) throw notFound()
 
     const existingAttrs = (product.attributes as Record<string, unknown> | null) ?? {}

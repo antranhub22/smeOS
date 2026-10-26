@@ -74,7 +74,7 @@ export function extractRecipientName(text: string): string | null {
       // Loại bỏ tiền tố xưng hô nếu bị bắt dính
       cleaned = cleaned.replace(/^(?:là|la|chị|anh|bạn|em|cô|bác)\s+/i, "")
       // Bỏ qua các từ phi tên riêng
-      const forbidden = ["hoa", "hoa tươi", "bó hoa", "giỏ hoa", "tiệm", "shop", "địa chỉ", "số", "mẫu đó", "mẫu này"]
+      const forbidden = ["hoa", "sản phẩm", "sản phẩm", "giỏ hoa", "tiệm", "shop", "địa chỉ", "số", "mẫu đó", "mẫu này"]
       if (!forbidden.includes(cleaned.toLowerCase()) && cleaned.length >= 2) {
         return cleaned
       }
@@ -170,9 +170,9 @@ export function extractOrderDraftFromChat(
   else if (lowerAll.includes("trắng") || lowerAll.includes("tinh khôi")) flowerStyleOrTone = "Tone Trắng tinh khôi thanh lịch"
   else if (lowerAll.includes("vàng") || lowerAll.includes("cam")) flowerStyleOrTone = "Tone Vàng cam may mắn"
   else if (lowerAll.includes("xanh")) flowerStyleOrTone = "Tone Xanh hy vọng"
-  else if (lowerAll.includes("tulip")) flowerStyleOrTone = "Bó hoa Tulip Hà Lan"
-  else if (lowerAll.includes("hướng dương")) flowerStyleOrTone = "Bó hoa Hướng Dương rạng rỡ"
-  else if (lowerAll.includes("hồng đỏ")) flowerStyleOrTone = "Bó hoa Hồng đỏ Ecuador"
+  else if (lowerAll.includes("tulip")) flowerStyleOrTone = "Sản phẩm Tulip Hà Lan"
+  else if (lowerAll.includes("hướng dương")) flowerStyleOrTone = "Sản phẩm Hướng Dương rạng rỡ"
+  else if (lowerAll.includes("hồng đỏ")) flowerStyleOrTone = "Sản phẩm Hồng đỏ Ecuador"
 
   return {
     recipientName,
@@ -216,10 +216,10 @@ export function validateChatOrderDraft(draft: ChatOrderDraft): ChatOrderValidati
   }
 
   if (draft.budgetVnd || draft.productName) {
-    completedFields.push("Mẫu hoa hoặc Ngân sách")
+    completedFields.push("Sản phẩm hoặc Ngân sách")
     score += 15
   } else {
-    missingFields.push("Mẫu hoa hoặc Ngân sách")
+    missingFields.push("Sản phẩm hoặc Ngân sách")
   }
 
   if (draft.deliveryTime) {
@@ -275,7 +275,7 @@ export function generateChatOrderCheckout(
     deliveryAddress: draft.deliveryAddress || "Nhận trực tiếp tại cửa hàng",
     deliveryTime: draft.deliveryTime || "Trong ngày hôm nay",
     cardMessage: draft.cardMessage || (draft.occasion ? `Chúc mừng ${draft.occasion}` : "Chúc mừng tốt đẹp nhất"),
-    productName: draft.productName || draft.flowerStyleOrTone || "Bó hoa tươi thiết kế cao cấp",
+    productName: draft.productName || draft.flowerStyleOrTone || "Sản phẩm tươi thiết kế cao cấp",
     totalVnd,
     vietqrPayload: {
       bankCode,

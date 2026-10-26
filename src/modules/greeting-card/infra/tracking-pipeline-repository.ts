@@ -175,3 +175,9 @@ export class TrackingPipelineRepository {
     return out
   }
 }
+
+let _trackingPipelineRepositorySingleton: TrackingPipelineRepository | null = null
+export function getTrackingPipelineRepository(): TrackingPipelineRepository {
+  if (!_trackingPipelineRepositorySingleton) _trackingPipelineRepositorySingleton = new TrackingPipelineRepository()
+  return _trackingPipelineRepositorySingleton
+}

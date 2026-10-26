@@ -32,6 +32,16 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 - **`organization_id` giải từ phiên đăng nhập phía máy chủ.** Không bao giờ nhận từ body/query của client.
 - `domain/` không được import Prisma. Đó là điều kiện để test luật nghiệp vụ không cần cơ sở dữ liệu.
 - Mọi module đủ bốn thư mục `domain/ use-cases/ infra/ adapters/`. Viết `use-cases`, không viết `usecases`.
+- **Chuẩn hóa Kiến trúc Clean Repositories & Ranh giới Module (Clean Repository & Boundary Isolation Standard, PO 25/10/2026, ADR-001/002/006, REQ-ARCH-006, REQ-BND-005):**
+  Đây là **tiêu chuẩn kiến trúc bất biến** áp dụng cho toàn bộ 38 modules của `smeOS` nhằm phân lập dữ liệu, triệt tiêu rò rỉ hạ tầng CSDL vào tầng nghiệp vụ và ngăn ngừa xung đột dữ liệu liên module:
+  1. **Domain Purity (Zero ORM)**: Thư mục `domain/` tuyệt đối cấm import `@prisma/client`, `@/generated/prisma/client` hoặc bất kỳ ORM/driver CSDL nào. Logic nghiệp vụ trong `domain/` phải là TypeScript thuần túy, test được 100% không cần CSDL.
+  2. **Repository Port Interface**: Mọi thao tác truy xuất dữ liệu (đọc/ghi) phải thông qua Port Interface đặt tại:
+     `src/modules/<module-name>/domain/repositories/<entity>-repository.interface.ts`.
+     Interface định nghĩa các kiểu dữ liệu Domain Entities và phương thức thuần túy, không phụ thuộc Prisma types.
+  3. **Infra Adapter & Singleton Factory**: Hiện thực hóa interface đặt tại `src/modules/<module-name>/infra/<entity>-repository.ts` (hoặc `infra/repositories/`). Luôn sử dụng `scopedWhere(ctx)` để đảm bảo Tenant Isolation. Bắt buộc xuất hàm singleton factory `get<Entity>Repository(): I<Entity>Repository` để phục vụ default injection và tái sử dụng.
+  4. **Dependency Inversion trong Use-Cases**: Mọi use-case phải nhận repository qua tham số hàm với giá trị mặc định là factory (ví dụ: `repo: IProductRepository = getProductRepository()`). Tuyệt đối cấm khởi tạo cứng `new ConcreteRepository()` trong thân hàm, đảm bảo use-case có thể được test độc lập 100% bằng in-memory mock mà không cần DB thật.
+  5. **Boundary Isolation (REQ-ARCH-006, REQ-BND-005)**: Tuyệt đối cấm Module A gọi Prisma client trực tiếp để đọc/ghi bảng thuộc quyền sở hữu của Module B (ví dụ: `coordinator` không được ghi đè trực tiếp bảng `orders`; `crm` hay các module khác không được ghi trực tiếp vào `organizations`). Mọi giao tiếp liên module bắt buộc phải thông qua Repository Port/Use-case công khai hoặc Domain Event.
+  6. **Giới hạn kích thước tệp (SRP Limit)**: Mỗi tệp repository và use-case không vượt quá 350 dòng. Khi phình to, bắt buộc tách thành các query helpers, command handlers hoặc sub-repositories độc lập.
 - Route dưới `/api/v1/`. Endpoint duyệt tách khỏi endpoint sinh kết quả (`/x/[id]/approve`).
 - Quyền theo mã năng lực, không theo vai UI. Ba lớp cắt: mặc định → bảng công tắc → **trần cứng cắt sau cùng**.
 - **Trải nghiệm theo vai (Role UX, PO 26/09/2026)** — SSOT `docs/dac-ta/03b-role-ux.md` + `src/modules/organization/domain/role-ux-catalog.ts`. 14 vai trải nghiệm; vai quyết định trang chủ, thứ tự điều hướng, ưu tiên thông tin — mã năng lực vẫn quyết định nút nào hiện. Không bao giờ suy quyền từ `roleKey`. Vai `IN_DEVELOPMENT` hiện nhưng vô hiệu, không làm trang chủ. "Admin" trong tài liệu Role UX là `platform_admin` (Console `/van-hanh`), KHÔNG phải vai Điều hành của tiệm. Bất kỳ màn nào sửa theo vai phải qua tiêu chí nghiệm thu 03b §9.
@@ -40,7 +50,17 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 - `usage` ghi ở phía core **tại điểm tạo job**, không ghi ở worker.
 - Worker Python lấy việc bằng `SELECT … FOR UPDATE SKIP LOCKED` + `LISTEN/NOTIFY`. **Cấm `subprocess` + parse stdout. Cấm chạy job qua HTTP.**
 - Provider AI chỉ gọi qua cổng — mười cổng ở `src/core/ports/`. Không module nào gọi thẳng API nhà cung cấp.
-- **Phân luồng NHÀ CUNG CẤP / CỤC BỘ (PO 25/09/2026).** Khi một lượt đã dùng nhà cung cấp thì dùng TOÀN BỘ tính năng của nhà cung cấp cho các bước chất lượng (tách nền, dựng cảnh, chỉnh sáng, tăng nét…) — không trộn xử lý cục bộ thay cho bước nhà cung cấp làm được. Các nhà cung cấp có vai trò tương đương: mỗi bên một adapter theo cùng cổng + bảng năng lực, thứ tự thử cấu hình được, bên lỗi → bên kế tiếp, mọi bên lỗi → lùi luồng cục bộ và GHI RÕ lý do. Luồng cục bộ là cho máy phát triển / dự phòng; phần còn thiếu ghi nợ kỹ thuật (#138). Không nhà cung cấp nào trả phép đo "giữ nguyên sản phẩm" — cổng kiểm vẫn là của FloraOS (ảnh do nhà cung cấp chỉnh sáng dùng phép đo `perceptual`). Mẫu chuẩn: Khu vực D — `workers/media_ai/providers/scene/`, `jobs/variant_nha_cung_cap.py`. Module chưa theo luật này: nợ #139.
+- **Provider Single-Call — Phương án mặc định cho mọi tác vụ AI (PO 24/10/2026, thay thế quy tắc "Phân luồng NHÀ CUNG CẤP / CỤC BỘ" cũ PO 25/09/2026).**
+  Khi hệ thống cần AI xử lý một tác vụ (chỉnh ảnh, sinh nội dung, phân tích, v.v.), phương án mặc định là **GỌI MỘT LẦN DUY NHẤT** (Single-Call) tới provider AI (Gemini, OpenAI, Anthropic, Photoroom, fal…): gửi input (ảnh, văn bản, dữ liệu) kèm prompt mô tả yêu cầu → provider tự xử lý toàn bộ trong một lần gọi → trả kết quả hoàn chỉnh. Giống cách dùng ChatGPT / Claude để chỉnh ảnh hoặc viết nội dung: một yêu cầu, một kết quả — không phải chuỗi pipeline nhiều bước (segment → backdrop → enhance → composite).
+  **Quy tắc cụ thể:**
+  1. **Mặc định Single-Call**: Bất kỳ tính năng nào đề cập đến "dùng provider AI" nghĩa là gửi input + prompt cho provider trong MỘT lần gọi. Provider đủ mạnh (Gemini, GPT-4o…) tự xử lý end-to-end: thay nền, chỉnh sáng, bố cục, giữ nguyên sản phẩm — không cần pipeline nhiều bước ở phía hệ thống.
+  2. **Prompt là trung tâm**: Chất lượng đầu ra phụ thuộc prompt. Prompt được dựng từ Tiêu chuẩn đầu ra (Output Standard) + cấu hình tenant + lựa chọn người dùng (nếu có). Prompt Builder nằm trong `domain/` của module.
+  3. **QC sau provider**: Sau khi provider trả kết quả, hệ thống chạy QC tự động (giữ nguyên sản phẩm, chất lượng kỹ thuật, nội dung cấm). Không provider nào trả phép đo "giữ nguyên sản phẩm" — cổng kiểm vẫn là của smeOS (phép đo `perceptual`).
+  4. **Retry với hint**: QC không đạt → bổ sung `failed_criteria` + `retry_hint` vào prompt → gọi lại provider (tối đa 2 lần). Vẫn không đạt → chuyển provider tiếp theo trong chain, hoặc trả kết quả tốt nhất.
+  5. **Provider chain**: Các provider có vai trò tương đương, thứ tự thử cấu hình được (vd Gemini → OpenAI → Photoroom → fal). Bên lỗi → bên kế tiếp. Mọi bên lỗi → lùi luồng cục bộ (PIL fallback) và GHI RÕ lý do.
+  6. **Pipeline cục bộ nhiều bước** (segment → backdrop → enhance): CHỈ là phương án dự phòng khi tất cả provider cloud đều lỗi, hoặc cho máy phát triển không có API key. Không phải phương án mặc định cho production.
+  7. **Triển khai provider-first**: Ưu tiên dùng provider có sẵn (đã có adapter) để ra kết quả chuyên nghiệp ngay. Mô hình AI tự xây / fine-tune sẽ là bước cải tiến sau, dưới dạng adapter mới cắm vào cùng cổng — không đổi giao diện, không đổi luồng người dùng.
+  Adapter mẫu chuẩn Single-Call: `workers/media_ai/providers/enhancement/openai_enhancer.py` (đã có implementation thật). Module chưa theo luật này: nợ #139.
 - **Mã nghiệp vụ gọi một NĂNG LỰC, không gọi một nhà cung cấp** (D15). Mọi lời gọi AI đi qua cổng AI ở `src/core/ai/`; SDK của nhà cung cấp chỉ được xuất hiện trong `adapters/`. Mô hình là một hàng trong `ai_models`, không phải một hằng trong mã.
 - **Mô hình không vào production khi thiếu một trong bốn ô giấy phép** (D18): `license`, `commercial_use`, `territory`, `allowed_use`. Bộ lọc nằm ở `eligibleModels()`, nên mô hình thiếu ô không lộ ra cả trong danh sách để chọn.
 - **Sàn quyền riêng tư cắt sau cùng**, cùng tính chất với trần cứng của RBAC: lời gọi `SENSITIVE` không có đường nào ra nhà cung cấp ngoài, kể cả qua bước dự phòng.
@@ -106,11 +126,49 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
   - **Cả hai mã được cài đặt trong Hồ sơ tiệm** (payment_plans / store_policies). Server đọc qua `brochure-quote.ts` → trả `BrochureQuote.paymentPlan`. **Tuyệt đối cấm** tạo ô input mã mới trong `BrochureOrderForm` hoặc bất kỳ `*OrderFields` nào — đó là duplicate giả không kết nối server.
   - **Placeholder của 2 ô mã phải để trống** — không ghi ví dụ mã cụ thể. Sub-label phụ nếu có phải là thuật ngữ trung lập (không hardcode tên ngành).
   - **Khi nào tạo `*OrderFields` mới cho ngành**: Chỉ tạo khi ngành có **trường dữ liệu cấu trúc hoàn toàn khác** không thể diễn đạt bằng `StandardOrderFields` (ví dụ: Homestay cần `checkInDate` / `checkOutDate` / `numberOfNights` / `adultsCount` nên tạo `HomestayOrderFields`). Tạo file `<industry-key>-order-fields.tsx`, thêm điều kiện `isXxx` trong `BrochureOrderForm`, KHÔNG đặt lại ô mã ưu đãi / mã thanh toán (đã có trong `BrochureOrderOptions` ở trên form).
+- **Quy chuẩn Bắt Buộc Đa Ngành Toàn Hệ Thống (Multi-Industry First Standard, PO 24/10/2026)**:
+  - **Mọi chức năng, công cụ (bao gồm Công cụ 01 → 10, Catalog, Đơn hàng, Kênh bán, v.v.)** khi xây dựng mới hoặc nâng cấp **BẮT BUỘC** phải thiết kế theo chuẩn Đa Ngành (Multi-Industry First), tuyệt đối không thiết kế chỉ cho riêng một ngành cụ thể (như hoa tươi, thời trang hay F&B).
+  - **4 Nguyên tắc Bất biến về Đa ngành trong Mã nguồn**:
+    1. **Cấm Hardcode Thuật ngữ Ngành trong Tầng Core & Domain**:
+       - Cấm nhúng trực tiếp các từ ngữ đặc thù một ngành (`hoa tươi`, `bó hoa`, `cành`, `bình hoa`, `florist`, `flower shop`, `cắm hoa`...) vào logic tính toán, domain entities, prompt AI mặc định, use-case contracts hoặc API route.
+       - Mọi thuật ngữ hiển thị phải đi qua bộ từ điển ngành `getIndustryPlugin(industryKey).terminology` (như `makerTitle`, `productRecipe`, `rawMaterialItem`, v.v.) hoặc từ điển i18n trung lập (`ti.<term>`).
+    2. **AI Prompts & Output Standards phải Trung lập hoặc Dynamic theo Plugin**:
+       - Prompts gửi tới các mô hình AI (chỉnh ảnh studio, ghép bộ ảnh sản phẩm, viết bài tiếp thị, trích xuất thông tin...) phải dùng ngôn ngữ trung lập thương phẩm chung: `product`, `item`, `components`, `packaging`, `materials`, `product story`, `usage/care instructions`.
+       - Trường hợp cần tùy biến chuyên sâu theo ngành: nạp ngữ cảnh động từ `IndustryPluginContract.aiConfig` (`visionFocus`, `studioBackgroundStyles`, `marketingToneExamples`) dựa trên `industryKey` của tenant/sản phẩm; tuyệt đối không gắn cứng prompt cho một ngành.
+    3. **UI / Components & Phân loại Danh mục Tự Thích Ứng**:
+       - Các bộ lọc danh mục (`categories`), dịp/sự kiện (`occasions`), đơn vị tính (`measurementUnits`), vai trò thành phần nguyên liệu (`componentRoles`) phải đọc từ `IndustryPluginContract` tương ứng với ngành của cửa hàng.
+       - Placeholder, nhãn hướng dẫn và gợi ý nhập liệu không được mang tính đơn ngành; nếu cần ví dụ phải đưa ví dụ đa dạng đại diện cho các ngành khác nhau (ví dụ: "Áo sơ mi, Bánh sinh nhật, Bó hoa hồng...").
+    4. **Kiểm tra & Ratchet Guard**:
+       - Trước khi bàn giao tính năng mới, bắt buộc chạy `npm run check:industry` và `npm run audit:industry`. Không để lọt các vi phạm hardcode ngành trong mã nguồn mới.
   - **Luồng dữ liệu chuẩn**: `QuoteSelection` (client state) → `useBrochureQuote` (SWR) → `POST /api/v1/public/[catalog]/quote` → `brochure-quote.ts` (use-case) → trả `BrochureQuote.paymentPlan` → `PaymentCodeField` hiện kết quả.
 - **Tách biệt trường dữ liệu nguyên tử (Atomic Disaggregated Fields) để tối ưu khả năng chỉnh sửa (Editable)**:
   - Tuyệt đối không gộp chung văn bản và số lượng/đơn vị vào cùng một chuỗi tự do (ví dụ: cấm gộp `"Hồng đỏ 10 cành"` thành 1 ô text).
   - Bắt buộc phân rã thành các trường cấu trúc độc lập: tên hoa (text), số lượng (number), đơn vị (text), màu sắc (text), vai trò (select)... để người dùng có thể nhấp chuột sửa trực tiếp từng thông số mà không làm hỏng cấu trúc dữ liệu.
   - Áp dụng nguyên tắc tương tự cho kích thước (`height`/`width` số, `unit` text), báo giá (`price`/`originalPrice` số), và danh sách quà tặng/cam kết (mảng các item độc lập có nút thêm/sửa/xóa từng dòng).
+- **Quy chuẩn Hiển thị Thumbnail Ảnh Sản Phẩm (Product Thumbnail Display Standard, PO 24/10/2026)**:
+  - **Nguyên tắc cốt lõi**: Mọi danh sách, lưới, modal hay component hiển thị sản phẩm/mẫu **BẮT BUỘC** phải hiển thị thumbnail ảnh đại diện. Tuyệt đối không để ô ảnh trống hoặc chỉ hiển thị mã SKU/code thô khi đã có thông tin ảnh.
+  - **Quy tắc mapping field bắt buộc (API → UI)**:
+    - API `/api/v1/products` trả về `masterImageUrl` (chuỗi URL đã ký từ storage) và `price_vnd` (số).
+    - Giao diện (`CatalogProduct`) dùng `imageUrl` và `price`.
+    - **BẮT BUỘC** thực hiện bước mapping khi nhận dữ liệu từ API:
+      ```ts
+      // ✅ ĐÚNG — Map trước khi set state
+      setProducts(json.data.map((p) => ({
+        ...p,
+        imageUrl: p.masterImageUrl ?? null,
+        price:    p.price_vnd    ?? null,
+      })))
+
+      // ❌ SAI — Set thẳng json.data mà không map
+      setProducts(json.data)
+      ```
+    - Mọi trang/component mới fetch `/api/v1/products` đều phải tự thực hiện mapping này — **không được** giả định API trả đúng field name của `CatalogProduct`.
+  - **Chuỗi fallback bắt buộc (Fallback Chain)**:
+    1. `imageUrl` / `masterImageUrl` từ storage (URL đã ký).
+    2. `driveLink` → proxy `/api/v1/public/drive-thumb-proxy` (ảnh Google Drive).
+    3. Ảnh tĩnh ngẫu nhiên từ `DEFAULT_FLOWER_IMAGES` tại `src/components/catalog/flower-image-fallback.ts` — **KHÔNG bao giờ để component trắng/blank**.
+    - Dùng component `<FlowerImage>` (`src/components/greeting-card/flower-image.tsx`) cho thẻ chào & kho catalog vì nó xử lý đủ 3 tầng fallback; dùng `resolveFlowerImage()` từ `src/components/catalog/flower-image-fallback.ts` cho Landing Page và Campaign.
+  - **Áp dụng bắt buộc**: Mọi `<ProductLibraryModal>`, `<CampaignProductPicker>`, `<SmartInputDropzone>`, `<CatalogWizard>`, danh sách sản phẩm trong các Modal tạo đơn hàng, danh sách Catalog tĩnh đều phải tuân thủ chuỗi fallback này.
 - **Tiêu chuẩn hóa vị trí nút tác vụ chung của các Tab (Standardized Tab Action Header)**:
   - Mọi tác vụ chung của các Tab (Copy, Lưu nháp, Duyệt/Chốt, Chỉnh sửa, Xuất file...) **bắt buộc phải nằm ở vị trí thống nhất: Góc trên cùng bên phải (Top-Right Action Header) của mỗi Tab**. Không đặt mỗi tab một vị trí khác nhau gây mất phương hướng cho người dùng.
   - Cấu trúc thanh công cụ góc trên bên phải gồm 2 khối (tuân thủ K2 & 03a UX-010/UX-011):
@@ -212,6 +270,14 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
     - *Video*: Giữ nguyên độ mượt gốc, không nén chỉnh sửa phức tạp, nhúng trực tiếp vào khu vực video của trang/mục tiêu.
     - *Văn bản (Text/Directives)*: Đưa trực tiếp vào Content Engine làm chỉ đạo ngữ cảnh (Context Prompt) để sinh tiêu đề, câu chuyện thương hiệu, đặc quyền, giá bán.
   - **Cơ chế Pre-fill Wizard (Human-in-the-loop)**: AI KHÔNG hoạt động như một "hộp đen" đóng kín. Sau khi phân tích, AI tự động điền sẵn (pre-fill) toàn bộ các thông số tối ưu vào chính Wizard từng bước kèm huy hiệu `✨ AI đã tối ưu lựa chọn cho bạn`. Người dùng có toàn quyền kiểm tra, điều chỉnh bất kỳ bước nào trước khi xuất bản.
+- **Quy chuẩn Tiếp nhận Đầu vào Kép (Dual-Source Media & Product Input Standard, PO 24/10/2026)**:
+  - **Nguyên tắc cốt lõi**: Bất kỳ màn hình hoặc công cụ nào tiếp nhận nguyên liệu, ảnh sản phẩm, video hoặc dữ liệu mẫu đầu vào (SmartInputDropzone, Creation Studio, Landing Page, Catalog, Thẻ chào & Đơn hàng...) **BẮT BUỘC** phải hỗ trợ đồng thời cả **2 NGUỒN TIẾP NHẬN**:
+    1. 🛍️ **Chọn từ Kho sản phẩm của cửa hàng** (`store-catalog`): Cho phép chọn trực tiếp các mẫu sản phẩm đã có trong kho tiệm (với thanh tìm kiếm, bộ lọc danh mục/ngành, xem trước ảnh mẫu và thông số đã có).
+    2. 💻 **Tải lên từ thiết bị / máy tính** (`device-upload`): Kéo thả ảnh/video từ máy, dán link hoặc chọn file từ thiết bị cục bộ như thông thường.
+  - **Đồng bộ hai chiều & Tái sử dụng**:
+    - Khi người dùng tải ảnh mới từ máy lên, giao diện phải có tùy chọn/checkbox *"Lưu vào kho sản phẩm tiệm để tái sử dụng sau này"* để làm giàu kho dữ liệu của tenant.
+    - Khi chọn từ kho sản phẩm, hệ thống tự động nạp sẵn thông tin cấu trúc (tên sản phẩm, giá bán, link ảnh sắc nét) giúp giảm tối đa thao tác nhập tay lại cho người dùng.
+  - **Thành phần hạ tầng chuẩn hóa**: Mọi module phải tái sử dụng component chuẩn `DualSourceMediaInput` hoặc `SmartInputDropzone` mở rộng; tuyệt đối không tạo các ô upload đơn nguồn cô lập chỉ cho phép tải từ máy.
 - **Quyền Quyết Định (Decision Ownership) & Vùng Cấm Của AI**:
   - **Ba tầng sở hữu quyết định**:
     | Owner | Hành vi hệ thống |

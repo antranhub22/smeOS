@@ -5,7 +5,7 @@ import {
   type CatalogSourceRow,
   type ProductImportRow,
 } from "@/modules/avi-gift-import/domain/catalog-mapping"
-import { ProductRepository } from "@/modules/products/infra/product-repository"
+import { ProductRepository, getProductRepository } from "@/modules/products/infra/product-repository"
 
 export type ImportCatalogResult = {
   created: number
@@ -32,7 +32,7 @@ export async function importCatalog(
   rows: CatalogSourceRow[],
   importedAt: Date
 ): Promise<ImportCatalogResult> {
-  const repo = new ProductRepository()
+  const repo = getProductRepository()
   let created = 0
   let skippedExisting = 0
   const failed: Array<{ code: string; error: string }> = []

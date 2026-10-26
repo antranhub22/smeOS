@@ -210,7 +210,7 @@ export function compileStudioPrompts(params: {
 }
 
 /**
- * Đóng gói chuỗi 4 kịch bản Story Carousel cho một chiến dịch marketing hoa tươi
+ * Đóng gói chuỗi 4 kịch bản Story Carousel cho một chiến dịch marketing sản phẩm
  */
 export function compileStoryCarouselPrompts(params: {
   productPassport: ProductPassportInput
@@ -218,7 +218,7 @@ export function compileStoryCarouselPrompts(params: {
 }): readonly StoryCarouselChapterPrompt[] {
   const base = params
 
-  // Chương 1: The Craft (Xưởng hoa & Bàn tay thợ cắm hoa)
+  // Chương 1: The Craft (Xưởng hoa & Bàn tay thợ chế tác)
   const p1 = compileStudioPrompts({
     ...base,
     sceneConfig: { presetId: "minimal_nordic", surfaceTexture: "oak_wood" },
@@ -239,7 +239,7 @@ export function compileStoryCarouselPrompts(params: {
     visualStoryConfig: { cameraAngle: "three_quarter_45", humanInteraction: "female_holding" },
   })
 
-  // Chương 4: The Living Memory (Bó hoa trang trọng trong phòng khách)
+  // Chương 4: The Living Memory (Sản phẩm trang trọng trong phòng khách)
   const p4 = compileStudioPrompts({
     ...base,
     sceneConfig: { presetId: "luxury_warm", surfaceTexture: "marble_white" },
@@ -251,7 +251,7 @@ export function compileStoryCarouselPrompts(params: {
       chapterNumber: 1,
       chapterTitle: "1. The Craft — Tỉ mỉ từ xưởng hoa",
       prompt: p1,
-      suggestedCaption: "Từng cành hoa được tuyển chọn và cắm tỉ mỉ bằng tất cả tình yêu thương của nghệ nhân...",
+      suggestedCaption: "Từng thành phần được tuyển chọn và cắm tỉ mỉ bằng tất cả tình yêu thương của nghệ nhân...",
     },
     {
       chapterNumber: 2,

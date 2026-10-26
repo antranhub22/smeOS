@@ -21,6 +21,8 @@ export interface ShopContact {
   commitments?: ShopCommitment[] | undefined
   /** Mã định danh ngành nghề (FLORAL, FASHION, HOMESTAY...) để chuyên biệt hóa trải nghiệm */
   industry?: string | null | undefined
+  /** Chính sách ngôn ngữ & quốc tế cho Thẻ Chào */
+  languagePolicy?: import("./brochure-language-policy").BrochureLanguagePolicy | undefined
 }
 
 export interface ShopLink {
@@ -136,10 +138,11 @@ export function zaloQrUrlFromBrandAssets(brandAssets: unknown): string | null {
  * Hồ sơ mẫu "Tiệm Hoa Mộc Lan" (dữ liệu trải nghiệm) — PO 08/10/2026: không để khách thấy tên/SĐT mẫu.
  * Tiệm còn hồ sơ mẫu và chưa xác nhận thì máy chủ chặn tạo link gửi khách cho tới khi sửa hoặc xác nhận.
  */
-export const DEMO_SHOP_NAME = "Tiệm Hoa Mộc Lan"
+export const DEMO_SHOP_NAME = "Cửa Hàng Mẫu Mộc Lan"
+export const LEGACY_DEMO_SHOP_NAME = "Ti\u1EC7m Hoa M\u1ED9c Lan"
 export const DEMO_SHOP_PHONE_DIGITS = "0900123456"
 export const DEMO_SHOP_PROFILE_MESSAGE =
-  "Hồ sơ cửa hàng vẫn là thông tin mẫu (Tiệm Hoa Mộc Lan). Vào Hồ sơ cửa hàng sửa tên, số điện thoại, địa chỉ thật trước khi gửi link cho khách."
+  "Hồ sơ cửa hàng vẫn là thông tin mẫu. Vào Hồ sơ cửa hàng sửa tên, số điện thoại, địa chỉ thật trước khi gửi link cho khách."
 
 export const CONFIRMED_DEMO_CONTACT_SETTINGS_KEY = "confirmed_demo_contact"
 
@@ -151,7 +154,8 @@ export function isConfirmedDemoContact(settings: unknown): boolean {
 
 /** Trả về thông điệp chi tiết chính xác trường nào đang trùng dữ liệu mẫu. */
 export function demoShopContactGap(contact: { name: string | null | undefined; phone: string | null | undefined }): string | null {
-  const nameIsDemo = contact.name?.trim() === DEMO_SHOP_NAME
+  const name = contact.name?.trim()
+  const nameIsDemo = name === DEMO_SHOP_NAME || name === LEGACY_DEMO_SHOP_NAME
   const digits = (contact.phone ?? "").replace(/\D/g, "")
   const phoneIsDemo = digits === DEMO_SHOP_PHONE_DIGITS
 
@@ -159,7 +163,7 @@ export function demoShopContactGap(contact: { name: string | null | undefined; p
     return DEMO_SHOP_PROFILE_MESSAGE
   }
   if (nameIsDemo) {
-    return "Tên cửa hàng vẫn là tên mẫu (Tiệm Hoa Mộc Lan). Vào Hồ sơ cửa hàng sửa tên thật trước khi gửi link cho khách."
+    return `Tên cửa hàng vẫn là tên mẫu (${name}). Vào Hồ sơ cửa hàng sửa tên thật trước khi gửi link cho khách.`
   }
   if (phoneIsDemo) {
     return "Số điện thoại cửa hàng (0900 123 456) đang trùng với số điện thoại mẫu của hệ thống."
@@ -173,7 +177,8 @@ export function isDemoShopContact(
 ): boolean {
   if (isConfirmed) return false
   const digits = (contact.phone ?? "").replace(/\D/g, "")
-  return contact.name?.trim() === DEMO_SHOP_NAME || digits === DEMO_SHOP_PHONE_DIGITS
+  const name = contact.name?.trim()
+  return name === DEMO_SHOP_NAME || name === LEGACY_DEMO_SHOP_NAME || digits === DEMO_SHOP_PHONE_DIGITS
 }
 
 /** Việc cần làm trên hồ sơ trước khi bán (hiện ở màn Thẻ chào); `null` = sẵn sàng. */
@@ -181,7 +186,7 @@ export function shopProfileGap(
   contact: { name: string | null | undefined; phone: string | null | undefined } | null,
   isConfirmed = false
 ): string | null {
-  if (!contact?.phone?.trim()) return "Hồ sơ cửa hàng chưa có số điện thoại — khách sẽ không gọi hoặc nhắn Zalo cho cửa hàng được từ trang đặt hoa."
+  if (!contact?.phone?.trim()) return "Hồ sơ cửa hàng chưa có số điện thoại — khách sẽ không gọi hoặc nhắn Zalo cho cửa hàng được từ trang đặt hàng."
   if (isConfirmed) return null
   const gap = demoShopContactGap(contact)
   if (gap) return gap

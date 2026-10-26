@@ -235,7 +235,7 @@ export default function BoMayPage() {
         open={hienXacNhan}
         onOpenChange={setHienXacNhan}
         title="Xác nhận đổi bộ máy phân tích ảnh"
-        description="Hành động tác động lớn đến toàn bộ quy trình nhận diện hoa của tổ chức."
+        description="Hành động tác động lớn đến toàn bộ quy trình nhận diện sản phẩm của tổ chức."
         size="md"
         footer={
           <>

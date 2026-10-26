@@ -98,7 +98,7 @@ export function CatalogWizardStep4Success({
           <button
             type="button"
             onClick={() => {
-              const text = encodeURIComponent(`Gửi bạn xem catalog mẫu hoa mới của tiệm: ${publishedUrl}`)
+              const text = encodeURIComponent(`Gửi bạn xem catalog sản phẩm mới của tiệm: ${publishedUrl}`)
               window.open(`https://zalo.me/share?url=${encodeURIComponent(publishedUrl)}&title=${text}`, "_blank")
             }}
             className="p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 text-left transition-colors cursor-pointer"

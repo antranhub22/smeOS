@@ -2,7 +2,7 @@ import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 import { AppError } from "@/core/http/errors"
-import { FieldDefinitionRepository } from "../infra/field-definition-repository"
+import { FieldDefinitionRepository, getFieldDefinitionRepository } from "../infra/field-definition-repository"
 import { mapFieldDefinitionToApiView, type FieldDefinitionApiView } from "../infra/row-mappers"
 
 /**
@@ -14,7 +14,7 @@ import { mapFieldDefinitionToApiView, type FieldDefinitionApiView } from "../inf
 export async function deactivateField(pctx: PlatformContext, key: string): Promise<FieldDefinitionApiView> {
   requirePlatformCapability(pctx, "N12")
 
-  const repo = new FieldDefinitionRepository()
+  const repo = getFieldDefinitionRepository()
   const current = await repo.findByKey(key)
   if (!current) throw new AppError("NOT_FOUND", `Không tìm thấy trường ${key}`, { key })
   if (current.origin === "CORE" && current.requirement === "REQUIRED") {

@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { ADDRESS_PART_MAX, type AddressParts } from "@/modules/greeting-card/domain/delivery-address"
 import {
-  ADDRESS_SYSTEM_LABEL,
   districtNames,
   guessAddressSystem,
   provinceNames,
@@ -10,9 +9,10 @@ import {
 } from "@/modules/greeting-card/domain/vn-address-units"
 import { PickOrTypeField } from "./pick-or-type-field"
 import { useVnAddressUnits } from "./use-vn-address-units"
+import { useI18n } from "@/lib/i18n"
 
 /**
- * Địa chỉ giao hoa: khách chọn hệ địa chỉ cũ (Tỉnh → Quận/Huyện → Phường/Xã, mặc định)
+ * Địa chỉ giao hàng: khách chọn hệ địa chỉ cũ (Tỉnh → Quận/Huyện → Phường/Xã, mặc định)
  * hoặc mới từ 01/07/2025 (Tỉnh → Phường/Xã), rồi bấm chọn từng cấp; không có trong danh sách thì tự nhập.
  */
 export function AddressFields(props: {
@@ -22,13 +22,16 @@ export function AddressFields(props: {
   onChange: (next: AddressParts) => void
 }) {
   const { idPrefix, value, inputClassName, onChange } = props
+  const { locale } = useI18n()
+  const isEn = locale === "en"
+
   const [system, setSystem] = useState<AddressSystem>(() => guessAddressSystem(value))
   const units = useVnAddressUnits(system)
   const data = units.data
   const provinces = data ? provinceNames(data) : []
   const districts = data ? districtNames(data, value.province) : []
   const wards = data ? wardNames(data, value.province, value.district) : []
-  const loadingHint = units.loading ? "Đang tải danh sách..." : null
+  const loadingHint = units.loading ? (isEn ? "Loading list..." : "Đang tải danh sách...") : null
 
   function switchSystem(next: AddressSystem) {
     if (next === system) return
@@ -37,13 +40,18 @@ export function AddressFields(props: {
     onChange({ houseNumber: value.houseNumber, street: value.street, ward: "", province: "" })
   }
 
+  const systemLabels: Record<AddressSystem, string> = {
+    old: isEn ? "District system (Pre-2025)" : "Địa chỉ cũ (có Quận/Huyện)",
+    new: isEn ? "New system (From 07/2025)" : "Địa chỉ mới (từ 01/07/2025)",
+  }
+
   return (
     <fieldset className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <legend className="mb-1 block text-body-sm font-bold text-foreground">
-        Địa chỉ nhận hoa <span className="text-danger">*</span>
+        {isEn ? "Delivery Address" : "Địa chỉ nhận hàng"} <span className="text-danger">*</span>
       </legend>
 
-      <div role="radiogroup" aria-label="Kiểu địa chỉ" className="flex flex-wrap gap-2 sm:col-span-2">
+      <div role="radiogroup" aria-label={isEn ? "Address System" : "Kiểu địa chỉ"} className="flex flex-wrap gap-2 sm:col-span-2">
         {(["old", "new"] as const).map((s) => (
           <button
             key={s}
@@ -55,7 +63,7 @@ export function AddressFields(props: {
               system === s ? "border-primary bg-primary/10 text-primary" : "border-border bg-surface text-text-muted hover:border-primary/40"
             }`}
           >
-            {ADDRESS_SYSTEM_LABEL[s]}
+            {systemLabels[s]}
           </button>
         ))}
       </div>
@@ -63,12 +71,12 @@ export function AddressFields(props: {
 
       <PickOrTypeField
         id={`${idPrefix}-province`}
-        label="Tỉnh / Thành phố"
+        label={isEn ? "Province / City" : "Tỉnh / Thành phố"}
         required
         value={value.province}
         options={provinces}
-        placeholder="VD: Thành phố Hồ Chí Minh"
-        pickPlaceholder={loadingHint ?? "— Chọn Tỉnh / Thành phố —"}
+        placeholder={isEn ? "e.g., Ho Chi Minh City, Ha Noi..." : "VD: Thành phố Hồ Chí Minh"}
+        pickPlaceholder={loadingHint ?? (isEn ? "— Select Province / City —" : "— Chọn Tỉnh / Thành phố —")}
         inputClassName={inputClassName}
         onChange={(province) => onChange({ ...value, province, district: undefined, ward: "" })}
       />
@@ -76,12 +84,12 @@ export function AddressFields(props: {
       {system === "old" && (
         <PickOrTypeField
           id={`${idPrefix}-district`}
-          label="Quận / Huyện"
+          label={isEn ? "District" : "Quận / Huyện"}
           required
           value={value.district ?? ""}
           options={districts}
-          placeholder="VD: Quận 1"
-          pickPlaceholder={value.province ? "— Chọn Quận / Huyện —" : "Chọn Tỉnh / Thành phố trước"}
+          placeholder={isEn ? "e.g., District 1" : "VD: Quận 1"}
+          pickPlaceholder={value.province ? (isEn ? "— Select District —" : "— Chọn Quận / Huyện —") : (isEn ? "Select Province/City first" : "Chọn Tỉnh / Thành phố trước")}
           inputClassName={inputClassName}
           onChange={(district) => onChange({ ...value, district, ward: "" })}
         />
@@ -89,26 +97,26 @@ export function AddressFields(props: {
 
       <PickOrTypeField
         id={`${idPrefix}-ward`}
-        label="Phường / Xã"
+        label={isEn ? "Ward / Commune" : "Phường / Xã"}
         required
         value={value.ward}
         options={wards}
-        placeholder="VD: Phường Bến Thành"
-        pickPlaceholder="— Chọn Phường / Xã —"
+        placeholder={isEn ? "e.g., Ben Nghe Ward" : "VD: Phường Bến Thành"}
+        pickPlaceholder={isEn ? "— Select Ward / Commune —" : "— Chọn Phường / Xã —"}
         inputClassName={inputClassName}
         onChange={(ward) => onChange({ ...value, ward })}
       />
 
       <div>
         <label htmlFor={`${idPrefix}-street`} className="mb-1 block text-caption font-semibold text-text-muted">
-          Đường / Thôn / Ấp <span className="text-danger">*</span>
+          {isEn ? "Street / Village" : "Đường / Thôn / Ấp"} <span className="text-danger">*</span>
         </label>
         <input
           id={`${idPrefix}-street`}
           type="text"
           required
           maxLength={ADDRESS_PART_MAX}
-          placeholder="VD: Lê Lợi, Nguyễn Huệ..."
+          placeholder={isEn ? "e.g., Le Loi, Nguyen Hue..." : "VD: Lê Lợi, Nguyễn Huệ..."}
           value={value.street ?? ""}
           onChange={(e) => onChange({ ...value, street: e.target.value })}
           className={inputClassName}
@@ -117,14 +125,14 @@ export function AddressFields(props: {
 
       <div className={system === "old" ? "sm:col-span-2" : ""}>
         <label htmlFor={`${idPrefix}-houseNumber`} className="mb-1 block text-caption font-semibold text-text-muted">
-          Số nhà / Tòa nhà / Phòng <span className="text-danger">*</span>
+          {isEn ? "House / Building / Unit No." : "Số nhà / Tòa nhà / Phòng"} <span className="text-danger">*</span>
         </label>
         <input
           id={`${idPrefix}-houseNumber`}
           type="text"
           required
           maxLength={ADDRESS_PART_MAX}
-          placeholder="VD: 45, Tòa Bitexco Tầng 12..."
+          placeholder={isEn ? "e.g., No. 45, Bitexco Tower 12th Floor..." : "VD: 45, Tòa Bitexco Tầng 12..."}
           value={value.houseNumber ?? ""}
           onChange={(e) => onChange({ ...value, houseNumber: e.target.value })}
           className={inputClassName}

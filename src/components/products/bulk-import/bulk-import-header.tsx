@@ -34,14 +34,14 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
             <ArrowLeft size={16} />
           </button>
           <div>
-            <div className="text-caption text-text-muted">Kho mẫu hoa</div>
+            <div className="text-caption text-text-muted">Kho sản phẩm</div>
             <h1 className="text-title font-extrabold text-primary">
-              {activeTab === "branches" ? "Nhập Danh Sách Cửa Hàng Chuỗi" : "Nhập mẫu hoa từ Excel và ảnh"}
+              {activeTab === "branches" ? "Nhập Danh Sách Cửa Hàng Chuỗi" : "Nhập sản phẩm từ Excel và ảnh"}
             </h1>
             {restoredCount > 0 && activeTab === "products" && (
               <div className="mt-0.5 flex items-center gap-1.5 text-caption font-semibold text-success">
                 <CheckCircle2 size={12} />
-                <span>Đã khôi phục {restoredCount} mẫu hoa từ phiên trước</span>
+                <span>Đã khôi phục {restoredCount} sản phẩm từ phiên trước</span>
                 <button
                   type="button"
                   onClick={onClearRestored}
@@ -75,7 +75,7 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
               className="flex items-center gap-1.5"
             >
               <CheckCircle2 size={15} strokeWidth={2.2} />
-              <span>{isImporting ? "Đang thêm mẫu hoa vào kho…" : `Thêm vào kho mẫu hoa (${validCount})`}</span>
+              <span>{isImporting ? "Đang thêm sản phẩm vào kho…" : `Thêm vào kho sản phẩm (${validCount})`}</span>
             </Button>
           </div>
         )}

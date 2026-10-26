@@ -12,7 +12,7 @@ interface OnboardingStep {
 
 export function OnboardingProgressBar() {
   const steps: OnboardingStep[] = [
-    { id: "s1", title: "M01: Duyệt BOM cành hoa", completed: true, route: "/tai-anh" },
+    { id: "s1", title: "M01: Duyệt BOM thành phần", completed: true, route: "/tai-anh" },
     { id: "s2", title: "M02: Cài giá sàn & markup", completed: true, route: "/san-pham" },
     { id: "s3", title: "M04c: Dựng video 9:16", completed: true, route: "/video" },
     { id: "s4", title: "M06: Tải mã QR E-Catalog", completed: true, route: "/catalog" },

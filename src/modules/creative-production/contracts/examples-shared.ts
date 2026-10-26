@@ -42,7 +42,7 @@ export const exampleTopic = {
   angleCategory: "EMOTIONAL" as const,
   hook: "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
   format: "REELS_TIKTOK_9_16" as const,
-  cta: "Nhắn tiệm để giữ bó hoa cho ngày kỷ niệm",
+  cta: "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
   evidenceNote: "Chủ đề kỷ niệm tăng mạnh trên TikTok tuần này",
 }
 

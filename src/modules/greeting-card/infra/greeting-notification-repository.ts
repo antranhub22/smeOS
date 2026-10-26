@@ -93,3 +93,9 @@ export class GreetingNotificationRepository {
     })
   }
 }
+
+let _greetingNotificationRepositorySingleton: GreetingNotificationRepository | null = null
+export function getGreetingNotificationRepository(): GreetingNotificationRepository {
+  if (!_greetingNotificationRepositorySingleton) _greetingNotificationRepositorySingleton = new GreetingNotificationRepository()
+  return _greetingNotificationRepositorySingleton
+}

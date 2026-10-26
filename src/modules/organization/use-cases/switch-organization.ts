@@ -1,7 +1,7 @@
 import { notFound } from "@/core/http/errors"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { SessionRepository } from "@/modules/organization/infra/session-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
 
 import type { OrganizationSummary } from "./list-organizations"
 
@@ -19,15 +19,15 @@ export async function switchOrganization(input: {
   sessionId: string
   organizationId: string
 }): Promise<OrganizationSummary> {
-  const membership = await new MembershipRepository().findForUserInOrganization(
+  const membership = await getMembershipRepository().findForUserInOrganization(
     input.userId,
     input.organizationId
   )
   if (!membership || membership.status !== "ACTIVE") throw notFound()
 
-  await new SessionRepository().setActiveOrganization(input.sessionId, input.organizationId)
+  await getSessionRepository().setActiveOrganization(input.sessionId, input.organizationId)
 
-  const organizations = await new OrganizationRepository().listForUser(input.userId)
+  const organizations = await getOrganizationRepository().listForUser(input.userId)
   const organization = organizations.find((row) => row.id === input.organizationId)
   if (!organization) throw notFound()
 

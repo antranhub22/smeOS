@@ -105,3 +105,10 @@ export class WorkspaceRepository {
     })
   }
 }
+
+let _workspaceRepositorySingleton: WorkspaceRepository | null = null
+export function getWorkspaceRepository(db?: DbClient): WorkspaceRepository {
+  if (db) return new WorkspaceRepository(db)
+  if (!_workspaceRepositorySingleton) _workspaceRepositorySingleton = new WorkspaceRepository()
+  return _workspaceRepositorySingleton
+}

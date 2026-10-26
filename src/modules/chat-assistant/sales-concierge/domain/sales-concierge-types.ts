@@ -7,7 +7,7 @@
 
 import type { ProductMasterIndex } from "@/modules/products/domain/product-master-index"
 import type { CustomerMasterIndex } from "@/modules/crm/domain/customer-master-index"
-import type { SuggestedFlowerCard } from "../../domain/chat-types"
+import type { SuggestedProductCard } from "../../domain/chat-types"
 
 export interface SalesConsultantInput {
   query: string
@@ -18,7 +18,9 @@ export interface SalesConsultantInput {
 
 export interface SalesConsultantOutput {
   replyText: string
-  suggestedFlowers: SuggestedFlowerCard[]
+  suggestedProducts: SuggestedProductCard[]
+  /** @deprecated Dùng `suggestedProducts` để tương thích đa ngành */
+  suggestedFlowers: SuggestedProductCard[]
   detectedBudget?: number | undefined
   detectedOccasion?: string | undefined
 }

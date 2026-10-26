@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Hand, Heart, ShoppingBag } from "lucide-react"
+import { useI18n } from "@/lib/i18n"
 import { SWIPE_SIGNAL, type SwipeTheme } from "./swipe-themes"
 import { JourneyContactForm } from "./journey-contact-form"
 import { useOrderDraft } from "../../use-order-draft"
@@ -19,12 +20,6 @@ interface JourneyIntroProps {
   onStartOver: () => void
 }
 
-const GUIDE_STEPS = [
-  { icon: Hand, color: SWIPE_SIGNAL.info, text: "Chạm hoặc vuốt để xem" },
-  { icon: Heart, color: SWIPE_SIGNAL.like, text: "Thả tim mẫu bạn thích" },
-  { icon: ShoppingBag, color: SWIPE_SIGNAL.info, text: "Đặt mua mẫu này" },
-]
-
 /**
  * Hướng dẫn lần đầu mở link (2 chặng: Nhập thông tin -> Hướng dẫn siêu ngắn),
  * hoặc hỏi "Tiếp tục xem / Xem lại từ đầu" khi mở lại link.
@@ -40,6 +35,7 @@ export function JourneyIntro({
   onStart,
   onStartOver,
 }: JourneyIntroProps) {
+  const { t } = useI18n()
   const { customerName, customerPhone, customerEmail, setContactInfo } = useOrderDraft()
   const [stage, setStage] = useState<"contact" | "guide">("contact")
 
@@ -67,6 +63,16 @@ export function JourneyIntro({
     )
   }
 
+  const guideSteps = [
+    { icon: Hand, color: SWIPE_SIGNAL.info, text: t("greetingCard.customer.journey.guideTouch") },
+    { icon: Heart, color: SWIPE_SIGNAL.like, text: t("greetingCard.customer.journey.guideHeart") },
+    { icon: ShoppingBag, color: SWIPE_SIGNAL.info, text: t("greetingCard.customer.journey.guideOrder") },
+  ]
+
+  const likedSuffix = progress.liked > 0
+    ? t("greetingCard.customer.journey.likedText", { liked: progress.liked })
+    : ""
+
   // Chặng 2 (Hướng dẫn siêu ngắn) hoặc Mở lại (Resume)
   return (
     <section
@@ -83,18 +89,18 @@ export function JourneyIntro({
           <Hand size={26} aria-hidden="true" />
         </span>
         <h2 id="journey-intro-title" className="mt-3 text-title font-semibold" style={{ fontFamily: theme.font }}>
-          {mode === "onboarding" ? catalogName : "Chào mừng bạn quay lại"}
+          {mode === "onboarding" ? catalogName : t("greetingCard.customer.journey.welcomeBack")}
         </h2>
         <p className="mt-1 text-body-sm" style={{ color: theme.stageMuted }}>
           {mode === "onboarding"
-            ? `${total} mẫu hoa đang chờ bạn:`
-            : `Bạn đã xem ${progress.viewed}/${total} mẫu${progress.liked > 0 ? ` và thích ${progress.liked} mẫu` : ""}.`}
+            ? t("greetingCard.customer.journey.itemsWaiting", { count: total })
+            : t("greetingCard.customer.journey.progressText", { viewed: progress.viewed, total, likedText: likedSuffix })}
         </p>
       </div>
 
       {mode === "onboarding" && (
         <ul className="flex flex-col gap-2.5">
-          {GUIDE_STEPS.map(({ icon: Icon, color, text }) => (
+          {guideSteps.map(({ icon: Icon, color, text }) => (
             <li key={text} className="flex items-center gap-3 rounded-2xl border p-3.5 text-body font-medium shadow-2xs" style={panel}>
               <Icon size={20} color={color} aria-hidden="true" className="shrink-0" />
               <span>{text}</span>
@@ -111,7 +117,7 @@ export function JourneyIntro({
           className="h-12 rounded-2xl text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
           style={{ background: theme.ctaBg, color: theme.ctaText }}
         >
-          {mode === "onboarding" ? "Bắt đầu" : "Tiếp tục xem"}
+          {mode === "onboarding" ? t("greetingCard.customer.journey.start") : t("greetingCard.customer.journey.resume")}
         </button>
         {mode === "resume" && (
           <button
@@ -120,7 +126,7 @@ export function JourneyIntro({
             className="h-12 rounded-2xl border text-body-sm font-semibold transition-transform active:scale-[0.98]"
             style={{ borderColor: theme.controlBorder }}
           >
-            Xem lại từ đầu
+            {t("greetingCard.customer.journey.startOver")}
           </button>
         )}
         {mode === "onboarding" && (
@@ -130,7 +136,7 @@ export function JourneyIntro({
             className="mt-1 text-center text-caption underline opacity-75"
             style={{ color: theme.stageMuted }}
           >
-            Sửa lại thông tin của bạn
+            {t("greetingCard.customer.journey.editInfo")}
           </button>
         )}
       </div>

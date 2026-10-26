@@ -36,3 +36,9 @@ export class CatalogHeartsRepository {
     return actions
   }
 }
+
+let _catalogHeartsRepositorySingleton: CatalogHeartsRepository | null = null
+export function getCatalogHeartsRepository(): CatalogHeartsRepository {
+  if (!_catalogHeartsRepositorySingleton) _catalogHeartsRepositorySingleton = new CatalogHeartsRepository()
+  return _catalogHeartsRepositorySingleton
+}

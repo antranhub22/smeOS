@@ -26,6 +26,8 @@ export interface CatalogProduct {
   collection?: string | null
   price?: number | null
   imageUrl?: string | null
+  /** Link Google Drive (fallback thumbnail khi chưa upload ảnh lưu trữ). */
+  driveLink?: string | null
   attributes?: Record<string, unknown> | null
 }
 
@@ -269,7 +271,7 @@ export function CatalogManagementTab({
           </div>
           <h2 className="text-title font-bold text-text">Danh mục hoa & Liên kết catalog đã tạo</h2>
           <p className="text-body-sm text-text-muted mt-0.5">
-            Quản lý các link catalog đang hoạt động, tra cứu mã QR và kiểm tra trạng thái các mẫu hoa.
+            Quản lý các link catalog đang hoạt động, tra cứu mã QR và kiểm tra trạng thái các sản phẩm.
           </p>
         </div>
         <Button

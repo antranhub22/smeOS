@@ -26,7 +26,7 @@ const SAMPLE_SETTLEMENT_ITEMS: PartnerSettlementItem[] = [
     orderId: "ord-101",
     orderCode: "FL-8921",
     partnerId: "partner-1",
-    partnerName: "Xưởng Hoa Tươi An Nhiên",
+    partnerName: "Xưởng Sản Phẩm An Nhiên",
     arrangementType: "BO_HOA",
     craftFeeVnd: 60_000,
     materialAllowanceVnd: 0,
@@ -44,7 +44,7 @@ const SAMPLE_SETTLEMENT_ITEMS: PartnerSettlementItem[] = [
     orderId: "ord-102",
     orderCode: "FL-8924",
     partnerId: "partner-1",
-    partnerName: "Xưởng Hoa Tươi An Nhiên",
+    partnerName: "Xưởng Sản Phẩm An Nhiên",
     arrangementType: "KE_KHAI_TRUONG",
     craftFeeVnd: 180_000,
     materialAllowanceVnd: 50_000,
@@ -62,7 +62,7 @@ const SAMPLE_SETTLEMENT_ITEMS: PartnerSettlementItem[] = [
     orderId: "ord-103",
     orderCode: "FL-8930",
     partnerId: "partner-1",
-    partnerName: "Xưởng Hoa Tươi An Nhiên",
+    partnerName: "Xưởng Sản Phẩm An Nhiên",
     arrangementType: "GIO_HOA",
     craftFeeVnd: 75_000,
     materialAllowanceVnd: 0,
@@ -81,7 +81,7 @@ export function PartnerSettlementModal({
   open,
   onOpenChange,
   partnerId = "partner-1",
-  partnerName = "Xưởng Hoa Tươi An Nhiên",
+  partnerName = "Xưởng Sản Phẩm An Nhiên",
   initialPeriod,
 }: PartnerSettlementModalProps) {
   const [items, setItems] = useState<PartnerSettlementItem[]>(
@@ -196,7 +196,7 @@ export function PartnerSettlementModal({
             <div className="text-caption text-muted mt-1">Tổng giá trị: {totalOrderPrice.toLocaleString("vi-VN")} đ</div>
           </div>
           <div className="p-3 rounded-lg border border-border bg-surface">
-            <div className="text-caption text-muted">Tiền công cắm hoa</div>
+            <div className="text-caption text-muted">Tiền công chế tác</div>
             <div className="text-title font-bold text-primary mt-0.5">{totalCraftFee.toLocaleString("vi-VN")} đ</div>
             <div className="text-caption text-muted mt-1">Phụ cấp: +{totalAllowance.toLocaleString("vi-VN")} đ</div>
           </div>

@@ -38,7 +38,7 @@ export function OrderActionButtons({
       return (
         <Button size="sm" variant="primary" disabled={actionLoading}
           onClick={() => onUpdateStatus({ productionStatus: "IN_PRODUCTION", status: "CONFIRMED" })}>
-          <Flower2 className="mr-1.5 h-4 w-4" /> Nhận cắm hoa
+          <Flower2 className="mr-1.5 h-4 w-4" /> Nhận chế tác
         </Button>
       )
     }

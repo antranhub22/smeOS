@@ -11,9 +11,9 @@ import {
   type SubstituteOption,
   type SubstitutePayload,
 } from "../domain/substitute-proposal"
-import { SubstituteRepository } from "../infra/substitute-repository"
-import { OrderChangeRepository } from "../infra/order-change-repository"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { SubstituteRepository, getSubstituteRepository } from "../infra/substitute-repository"
+import { OrderChangeRepository, getOrderChangeRepository } from "../infra/order-change-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { collectImageAssetIds, toCatalogProduct } from "./brochure-product-mapper"
 import { isVerifiedCustomer, type ChangeProof } from "./order-change"
 import { queueOrderNotification } from "./notify-customer"
@@ -35,7 +35,7 @@ async function loadStaffOrder(ctx: TenantContext, orderId: string, repo: Substit
 async function catalogOptions(ctx: TenantContext, catalogId: string | null, currentProductId: string, repo: SubstituteRepository): Promise<SubstituteOption[]> {
   if (!catalogId) return []
   const items = await repo.catalogItems(ctx, catalogId)
-  const urls = await new GreetingCardRepository().getAssetsStorageMap(ctx.organizationId, collectImageAssetIds(items))
+  const urls = await getGreetingCardRepository().getAssetsStorageMap(ctx.organizationId, collectImageAssetIds(items))
   return items
     .map((item) => toCatalogProduct(item, urls))
     .filter((p) => p.available !== false && p.id !== currentProductId)
@@ -43,7 +43,7 @@ async function catalogOptions(ctx: TenantContext, catalogId: string | null, curr
 }
 
 /** Màn đề xuất của nhân viên (R3): mẫu đang đặt, mẫu có thể thay, đề xuất gần nhất. */
-export async function substituteOptions(ctx: TenantContext, orderId: string, repo = new SubstituteRepository()) {
+export async function substituteOptions(ctx: TenantContext, orderId: string, repo = getSubstituteRepository()) {
   const { order, current, catalogId } = await loadStaffOrder(ctx, orderId, repo)
   const [options, history] = await Promise.all([
     catalogOptions(ctx, catalogId, current.productId, repo),
@@ -63,7 +63,7 @@ export async function proposeSubstitute(
   ctx: TenantContext,
   orderId: string,
   input: { reason: string; productIds: string[] },
-  repo = new SubstituteRepository(),
+  repo = getSubstituteRepository(),
   now = new Date(),
 ) {
   const { order, current, catalogId, saleId } = await loadStaffOrder(ctx, orderId, repo)
@@ -81,7 +81,7 @@ export async function proposeSubstitute(
 }
 
 /** Phần "Đề xuất đổi mẫu" trên trang theo dõi (chỉ người đặt đã xác minh). */
-export async function customerSubstituteSection(order: { id: string; organization_id: string }, repo = new SubstituteRepository()) {
+export async function customerSubstituteSection(order: { id: string; organization_id: string }, repo = getSubstituteRepository()) {
   const rows = await repo.listForOrder(order.organization_id, order.id)
   if (rows.length === 0) return null
   const history = rows.map((r) => substituteForCustomer(r.id, r.payload))
@@ -97,8 +97,8 @@ export async function respondSubstitute(
   orderCode: string,
   proof: ChangeProof,
   input: ResponseInput & { proposalId: string },
-  repo = new SubstituteRepository(),
-  orders = new OrderChangeRepository(),
+  repo = getSubstituteRepository(),
+  orders = getOrderChangeRepository(),
   now = new Date(),
 ) {
   const order = await orders.findPublicOrder(orderCode)

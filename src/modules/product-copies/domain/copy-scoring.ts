@@ -65,7 +65,7 @@ function tu_co_dau(s: string): string[] {
 }
 
 /**
- * `factual` — phần dữ kiện trong câu chữ có nguồn trong bó hoa thật.
+ * `factual` — phần dữ kiện trong câu chữ có nguồn trong sản phẩm thật.
  *
  * Đếm hai thứ đo được mà không cần mô hình: dịp nêu ra phải nằm trong danh
  * mục dịp của tổ chức, và mọi CON SỐ nêu trong mô tả phải là một con số có
@@ -141,7 +141,7 @@ export function chamBrand(out: CopyOutput, ctx: NgữCảnhChấm): number {
 
 /**
  * `readability` — độ dài mô tả trong dải đã yêu cầu, câu không quá dài, và
- * câu chữ có thật sự nhắc tới bó hoa này chứ không phải một đoạn chung chung
+ * câu chữ có thật sự nhắc tới sản phẩm này chứ không phải một đoạn chung chung
  * lắp vào sản phẩm nào cũng được.
  */
 export function chamReadability(out: CopyOutput, ctx: NgữCảnhChấm): number {

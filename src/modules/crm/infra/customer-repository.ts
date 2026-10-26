@@ -1,50 +1,49 @@
-/**
- * Customer Repository (Infra).
- * Phân lập hoàn toàn theo organization_id (Tenant Isolation).
- */
-
-import type {
-  Prisma,
-  customer_consents,
-  customer_occasions,
-  customers,
-  vouchers,
-} from "@/generated/prisma/client"
+import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { CustomerMasterIndex, CustomerTier } from "../domain/customer-master-index"
 import { deriveCustomerTier } from "../domain/crm-rules"
+import type {
+  ICustomerRepository,
+  CreateCustomerInput,
+  UpdateCustomerInput,
+} from "../domain/repositories/customer-repository.interface"
+
+export type { CreateCustomerInput, UpdateCustomerInput }
 
 /** Hàng `customers` kèm các quan hệ mà truy vấn nào `include` thì có. */
-type CustomerRow = customers & {
-  occasions?: customer_occasions[]
-  consents?: customer_consents[]
-  vouchers?: vouchers[]
-}
-
-export interface CreateCustomerInput {
+type CustomerRow = {
+  id: string
+  organization_id: string
+  code: string
   name: string
   phone: string
-  email?: string | undefined
-  address?: string | undefined
-  notes?: string | undefined
-  tags?: string[] | undefined
-  preferredFlowers?: string[] | undefined
-  preferredColors?: string[] | undefined
+  email: string | null
+  address: string | null
+  notes: string | null
+  tags: string[]
+  preferred_flowers: string[]
+  preferred_colors: string[]
+  tier: string
+  total_spent: unknown
+  order_count: unknown
+  last_order_at: Date | null
+  updated_at: Date
+  occasions?: Array<{
+    id: string; name: string; date: string; is_recurring: boolean
+    reminder_days_before: number; recipient_name: string | null; notes: string | null
+  }>
+  consents?: Array<{
+    channel: "ZALO_ZNS" | "SMS" | "PHONE_CALL" | "PROMOTION"
+    granted: boolean; granted_at: Date; revoked_at: Date | null
+  }>
+  vouchers?: Array<{
+    code: string; discount_type: "PERCENTAGE" | "FIXED_AMOUNT"
+    discount_value: unknown; expires_at: Date | null; min_order_vnd: unknown; max_discount_vnd: unknown
+  }>
 }
 
-export interface UpdateCustomerInput {
-  name?: string | undefined
-  phone?: string | undefined
-  email?: string | undefined
-  address?: string | undefined
-  notes?: string | undefined
-  tags?: string[] | undefined
-  preferredFlowers?: string[] | undefined
-  preferredColors?: string[] | undefined
-}
-
-export class CustomerRepository {
+export class CustomerRepository implements ICustomerRepository {
   async create(ctx: TenantContext, input: CreateCustomerInput): Promise<CustomerMasterIndex> {
     const count = await prisma.customers.count({ where: { organization_id: ctx.organizationId } })
     const code = `KH-${String(count + 1).padStart(4, "0")}`
@@ -318,4 +317,13 @@ export class CustomerRepository {
       })),
     }
   }
+}
+
+let defaultCustomerRepository: ICustomerRepository | null = null
+
+export function getCustomerRepository(): ICustomerRepository {
+  if (!defaultCustomerRepository) {
+    defaultCustomerRepository = new CustomerRepository()
+  }
+  return defaultCustomerRepository!
 }

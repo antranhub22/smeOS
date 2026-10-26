@@ -305,3 +305,9 @@ export class CancellationRepository {
     return rows.map((r) => ({ ...r, delivery_status: r.order_id ? delivery.get(r.order_id) ?? null : null }))
   }
 }
+
+let _cancellationRepositorySingleton: CancellationRepository | null = null
+export function getCancellationRepository(): CancellationRepository {
+  if (!_cancellationRepositorySingleton) _cancellationRepositorySingleton = new CancellationRepository()
+  return _cancellationRepositorySingleton
+}

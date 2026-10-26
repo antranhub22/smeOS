@@ -13,7 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import type { SuggestedFlowerCard } from "@/modules/chat-assistant/domain/chat-types"
+import type { SuggestedProductCard } from "@/modules/chat-assistant/domain/chat-types"
 import {
   extractOrderDraftFromChat,
   type ChatOrderDraft,
@@ -24,7 +24,7 @@ interface WidgetMessage {
   id: string
   senderType: "USER" | "ASSISTANT"
   content: string
-  suggestedFlowers?: SuggestedFlowerCard[]
+  suggestedProducts?: SuggestedProductCard[]
 }
 
 interface PublicStorefrontChatWidgetProps {
@@ -49,7 +49,7 @@ function newMessageId(prefix: "usr" | "bot"): string {
 
 export function PublicStorefrontChatWidget({
   shopSlug,
-  shopName = "Tiệm Hoa",
+  shopName = "Cửa Hàng",
 }: PublicStorefrontChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<WidgetMessage[]>([])
@@ -105,7 +105,7 @@ export function PublicStorefrontChatWidget({
           id: newMessageId("bot"),
           senderType: "ASSISTANT",
           content: data.replyText,
-          suggestedFlowers: data.suggestedFlowers || [],
+          suggestedProducts: data.suggestedProducts || [],
         }
         setMessages((prev) => [...prev, botMsg])
       }
@@ -148,7 +148,7 @@ export function PublicStorefrontChatWidget({
                   Trợ Lý {shopName}
                   <span className="inline-block h-2 w-2 rounded-full bg-success" />
                 </div>
-                <div className="text-caption text-text-muted">Tư vấn mẫu hoa & Báo giá trực tuyến</div>
+                <div className="text-caption text-text-muted">Tư vấn sản phẩm & Báo giá trực tuyến</div>
               </div>
             </div>
             <button
@@ -176,7 +176,7 @@ export function PublicStorefrontChatWidget({
 
                 <div className="space-y-1.5 w-full pt-3">
                   {[
-                    "Tư vấn bó hoa sinh nhật tầm 500k",
+                    "Tư vấn sản phẩm sinh nhật tầm 500k",
                     "Kệ hoa khai trương trang trọng tone đỏ",
                     "Hoa tặng mẹ ngày lễ 20/10",
                   ].map((q, idx) => (
@@ -194,7 +194,7 @@ export function PublicStorefrontChatWidget({
             ) : (
               messages.map((m) => {
                 const isUser = m.senderType === "USER"
-                const flowers = m.suggestedFlowers || []
+                const flowers = m.suggestedProducts || []
 
                 return (
                   <div key={m.id} className={`flex gap-2 ${isUser ? "justify-end" : "justify-start"}`}>
@@ -293,7 +293,7 @@ export function PublicStorefrontChatWidget({
             >
               <input
                 type="text"
-                placeholder="Nhắn tin cho tiệm hoa..."
+                placeholder="Nhắn tin cho cửa hàng..."
                 className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs focus:ring-1 focus:ring-primary"
                 value={inputQuery}
                 onChange={(e) => setInputQuery(e.target.value)}

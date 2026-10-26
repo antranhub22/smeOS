@@ -6,6 +6,7 @@ import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-op
 import { canOverrideIndustryLock } from "@/modules/organization/domain/organization-settings-policy"
 import { describeSession } from "./describe-session"
 import { resolveSession } from "./resolve-session"
+import { parseDevRoleOverride, applyDevRoleOverride, DEV_ROLE_COOKIE } from "@/lib/dev-role-override"
 
 function viettatTen(name: string | null, email: string): string {
   const nguon = (name ?? email).trim()
@@ -33,6 +34,7 @@ function viettatTen(name: string | null, email: string): string {
 export const resolveAppSession = cache(async function resolveAppSession(
   cookieHeader: string
 ): Promise<MockSession | null> {
+  const IS_DEV = process.env.NODE_ENV !== "production"
   const request = new Request("http://localhost/", { headers: { cookie: cookieHeader } })
 
   const resolved = await resolveSession(request).catch(() => null)
@@ -50,7 +52,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
   // Ma trận điều hướng Admin SaaS ghi đè cho ngành này — đọc ở máy chủ, không đóng gói lúc build (M13)
   const navHiddenKeys = await getNavHiddenOverride(industry)
 
-  return {
+  const session: MockSession = {
     userName: described.user.name ?? described.user.email,
     userEmail: described.user.email,
     userInitials: viettatTen(described.user.name, described.user.email),
@@ -74,4 +76,19 @@ export const resolveAppSession = cache(async function resolveAppSession(
     pendingModelChange:
       (described.organization?.pending_model_change as MockSession["pendingModelChange"]) ?? null,
   }
+
+  // Dev-only: merge role override cookie nếu có.
+  if (IS_DEV) {
+    const rawCookieSegment = cookieHeader
+      .split(";")
+      .map((c) => c.trim())
+      .find((c) => c.startsWith(`${DEV_ROLE_COOKIE}=`))
+    const overrideCookieValue = rawCookieSegment
+      ? decodeURIComponent(rawCookieSegment.slice(DEV_ROLE_COOKIE.length + 1))
+      : ""
+    const override = parseDevRoleOverride(overrideCookieValue || undefined)
+    if (override !== null) return applyDevRoleOverride(session, override)
+  }
+
+  return session
 })

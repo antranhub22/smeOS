@@ -1,6 +1,6 @@
 import { conflict, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { BranchRepository } from "@/modules/organization/infra/branch-repository"
+import { BranchRepository, getBranchRepository } from "@/modules/organization/infra/branch-repository"
 
 /** `POST /branches` (`F7`, đặc tả 06 mục 4). */
 export async function createBranch(
@@ -12,7 +12,7 @@ export async function createBranch(
   if (name.length === 0) throw validationFailed({ name: "Tên chi nhánh không được để trống" })
   if (code.length === 0) throw validationFailed({ code: "Mã chi nhánh không được để trống" })
 
-  const repository = new BranchRepository()
+  const repository = getBranchRepository()
   if (await repository.findByCode(ctx, code)) {
     throw conflict(`Mã chi nhánh ${code} đã tồn tại`)
   }

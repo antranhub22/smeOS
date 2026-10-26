@@ -23,7 +23,9 @@ import {
   VOICE_SAMPLE_MIN_BYTES,
   sniffAudioExtension,
 } from "../domain/audio-task-rules"
-import { VoiceCloneRepository, type voice_clones } from "../infra/voice-clone-repository"
+import { getVoiceCloneRepository } from "../infra/voice-clone-repository"
+import type { IVoiceCloneRepository, VoiceCloneData } from "../domain/repositories/voice-clone-repository.interface"
+
 
 export const VOICE_CLONE_FEATURE = "audio.voice_clone"
 
@@ -41,7 +43,7 @@ export interface VoiceCloneView {
   readonly created_at: Date
 }
 
-async function toView(row: voice_clones, withSample: boolean): Promise<VoiceCloneView> {
+async function toView(row: VoiceCloneData, withSample: boolean): Promise<VoiceCloneView> {
   return {
     id: row.id,
     name: row.name,
@@ -73,7 +75,7 @@ export async function createVoiceClone(
   const storageKey = `org/${ctx.organizationId}/audio/voice-samples/${id}.${ext}`
   await getStorageProvider().put(storageKey, input.sample, MIME_BY_EXT[ext])
 
-  const repo = new VoiceCloneRepository()
+  const repo = getVoiceCloneRepository()
   await repo.create(ctx, {
     id,
     name,
@@ -105,7 +107,7 @@ export async function createVoiceClone(
 }
 
 /** Giọng hỏng thì hoàn credit (idempotent — `refundJob` tự chặn hoàn hai lần). */
-async function refundIfFailed(ctx: TenantContext, row: voice_clones): Promise<void> {
+async function refundIfFailed(ctx: TenantContext, row: VoiceCloneData): Promise<void> {
   if (row.status !== "FAILED" || !row.job_id) return
   await refundJob(ctx, row.job_id).catch((err: unknown) =>
     log.warn("voice_clone.refund_failed", { job_id: row.job_id, error: String(err) })
@@ -114,22 +116,22 @@ async function refundIfFailed(ctx: TenantContext, row: voice_clones): Promise<vo
 
 export async function listVoiceClones(ctx: TenantContext): Promise<VoiceCloneView[]> {
   requireCapability(ctx, "I1")
-  const rows = await new VoiceCloneRepository().list(ctx)
+  const rows = await getVoiceCloneRepository().list(ctx)
   await Promise.all(rows.map((r) => refundIfFailed(ctx, r)))
   return Promise.all(rows.map((r) => toView(r, false)))
 }
 
 export async function getVoiceClone(ctx: TenantContext, id: string): Promise<VoiceCloneView> {
   requireCapability(ctx, "I1")
-  const row = await new VoiceCloneRepository().findById(ctx, id)
+  const row = await getVoiceCloneRepository().findById(ctx, id)
   if (!row) throw notFound()
   await refundIfFailed(ctx, row)
   return toView(row, true)
 }
 
 /** Giọng READY của tổ chức — dùng khi tạo job VOICE_CLONE. */
-export async function requireReadyVoiceClone(ctx: TenantContext, id: string): Promise<voice_clones> {
-  const row = await new VoiceCloneRepository().findById(ctx, id)
+export async function requireReadyVoiceClone(ctx: TenantContext, id: string): Promise<VoiceCloneData> {
+  const row = await getVoiceCloneRepository().findById(ctx, id)
   if (!row) throw notFound()
   if (row.status !== "READY" || !row.provider_voice_id) {
     throw new AppError("CONFLICT", "Giọng nhân bản chưa sẵn sàng (đang tạo hoặc đã lỗi)")
@@ -144,7 +146,7 @@ export async function requireReadyVoiceClone(ctx: TenantContext, id: string): Pr
  */
 export async function deleteVoiceClone(ctx: TenantContext, id: string): Promise<{ provider_deleted: boolean }> {
   requireCapability(ctx, "I1")
-  const repo = new VoiceCloneRepository()
+  const repo = getVoiceCloneRepository()
   const row = await repo.findById(ctx, id)
   if (!row) throw notFound()
 

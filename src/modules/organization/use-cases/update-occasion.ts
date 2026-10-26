@@ -1,6 +1,6 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
+import { OccasionRepository, getOccasionRepository } from "@/modules/organization/infra/occasion-repository"
 import {
   validateUpdateOccasionInput,
   type UpdateOccasionInput,
@@ -21,7 +21,7 @@ export async function updateOccasion(ctx: TenantContext, id: string, input: Upda
     throw validationFailed({ body: "Không có trường nào để sửa" })
   }
 
-  const updated = await new OccasionRepository().update(ctx, id, validated)
+  const updated = await getOccasionRepository().update(ctx, id, validated)
   if (!updated) throw notFound()
   return updated
 }

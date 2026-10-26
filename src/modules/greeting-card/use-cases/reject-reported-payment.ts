@@ -1,7 +1,7 @@
 import type { TenantContext } from "@/core/tenancy"
 import { notFound, conflict } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
 import { queueOrderNotification } from "./notify-customer"
 import { assertOrderInScope } from "./order-scope"
 
@@ -15,8 +15,8 @@ export async function rejectReportedPayment(
   ctx: TenantContext,
   orderId: string,
   input: { reason?: string | null | undefined } = {},
-  orders = new BrochureOrderRepository(),
-  repo = new GreetingCardRepository()
+  orders = getBrochureOrderRepository(),
+  repo = getGreetingCardRepository()
 ) {
   await assertOrderInScope(ctx, orderId, orders)
   const order = await orders.findBrochureOrder(ctx, orderId)

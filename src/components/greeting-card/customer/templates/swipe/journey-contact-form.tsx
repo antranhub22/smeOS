@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Gift, UserCheck } from "lucide-react"
+import { useI18n } from "@/lib/i18n"
 import type { SwipeTheme } from "./swipe-themes"
 
 interface JourneyContactFormProps {
@@ -27,6 +28,7 @@ export function JourneyContactForm({
   promotionCta,
   onNext,
 }: JourneyContactFormProps) {
+  const { t } = useI18n()
   const [name, setName] = useState(initialName)
   const [phone, setPhone] = useState(initialPhone)
   const [email, setEmail] = useState(initialEmail)
@@ -62,10 +64,10 @@ export function JourneyContactForm({
           <UserCheck size={24} aria-hidden="true" />
         </span>
         <h2 id="journey-contact-title" className="mt-2.5 text-title font-bold" style={{ fontFamily: theme.font }}>
-          Chào mừng bạn
+          {t("greetingCard.customer.journey.welcome")}
         </h2>
         <p className="mt-0.5 text-body-sm" style={{ color: theme.stageMuted }}>
-          Khám phá bộ sưu tập <strong className="font-semibold">{catalogName}</strong>
+          {t("greetingCard.customer.journey.exploreCatalog", { name: catalogName })}
         </p>
       </div>
 
@@ -85,14 +87,14 @@ export function JourneyContactForm({
           <div className="min-w-0 flex-1 text-left">
             <div className="flex items-center gap-1.5">
               <span className="inline-flex items-center rounded-full bg-danger-bg px-2 py-0.5 text-caption font-extrabold uppercase text-danger">
-                Ưu đãi {promotionCta?.percent ?? 10}%
+                {t("greetingCard.customer.journey.promoBanner", { percent: promotionCta?.percent ?? 10 })}
               </span>
               <span className="text-caption font-semibold" style={{ color: theme.stageMuted }}>
-                Độc quyền tại link
+                {t("greetingCard.customer.journey.exclusiveLink")}
               </span>
             </div>
             <p className="mt-0.5 text-body-sm font-bold" style={{ color: theme.stageText }}>
-              Nhận quà {promotionCta?.percent ?? 10}% giảm giá khi Đặt mua hoa trực tiếp tại link này!
+              {t("greetingCard.customer.journey.promoText", { percent: promotionCta?.percent ?? 10 })}
             </p>
           </div>
         </div>
@@ -101,7 +103,7 @@ export function JourneyContactForm({
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded-2xl border p-4 shadow-sm" style={panel}>
         <div>
           <label htmlFor="intake-name" className="block text-body-sm font-semibold mb-1" style={{ color: theme.stageText }}>
-            Họ tên của bạn <span className="text-danger">*</span>
+            {t("greetingCard.customer.journey.yourName")} <span className="text-danger">*</span>
           </label>
           <input
             id="intake-name"
@@ -109,7 +111,7 @@ export function JourneyContactForm({
             required
             autoFocus
             autoComplete="name"
-            placeholder="VD: Lan Anh, Minh Tuấn..."
+            placeholder={t("greetingCard.customer.journey.namePlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             className={inputClass}
@@ -118,14 +120,15 @@ export function JourneyContactForm({
 
         <div>
           <label htmlFor="intake-phone" className="block text-body-sm font-semibold mb-1" style={{ color: theme.stageText }}>
-            Số điện thoại <span className="text-caption font-normal opacity-70">(không bắt buộc)</span>
+            {t("greetingCard.customer.journey.phone")}{" "}
+            <span className="text-caption font-normal opacity-70">{t("greetingCard.customer.journey.optional")}</span>
           </label>
           <input
             id="intake-phone"
             type="tel"
             autoComplete="tel"
             inputMode="tel"
-            placeholder="VD: 0901234567"
+            placeholder={t("greetingCard.customer.journey.phonePlaceholder")}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             className={inputClass}
@@ -134,13 +137,14 @@ export function JourneyContactForm({
 
         <div>
           <label htmlFor="intake-email" className="block text-body-sm font-semibold mb-1" style={{ color: theme.stageText }}>
-            Email <span className="text-caption font-normal opacity-70">(không bắt buộc)</span>
+            {t("greetingCard.customer.journey.email")}{" "}
+            <span className="text-caption font-normal opacity-70">{t("greetingCard.customer.journey.optional")}</span>
           </label>
           <input
             id="intake-email"
             type="email"
             autoComplete="email"
-            placeholder="VD: email@example.com"
+            placeholder={t("greetingCard.customer.journey.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={inputClass}
@@ -153,11 +157,11 @@ export function JourneyContactForm({
           className="mt-1 h-12 w-full rounded-xl text-body font-bold shadow-md transition-all active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
           style={{ background: theme.ctaBg, color: theme.ctaText }}
         >
-          Tiếp tục
+          {t("greetingCard.customer.journey.continue")}
         </button>
 
         <p className="text-center text-caption opacity-70">
-          Thông tin được lưu để tự động điền khi bạn đặt hoa
+          {t("greetingCard.customer.journey.savedNote")}
         </p>
       </form>
     </section>

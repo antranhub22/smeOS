@@ -8,11 +8,12 @@ import { parsePaymentPolicy } from "@/modules/greeting-card/domain/brochure-paym
 import { UnmatchedPaymentsPanel } from "./unmatched-payments-panel"
 import { AdminOrderTable } from "./admin-order-table"
 import { AdminOrderActionDialog } from "./admin-order-action-dialog"
-import { AdminSettingsDrawer } from "./admin-settings-drawer"
 import { ORDER_FILTERS, type ActionResult, type AdminOrder, type AdminOrderDialogAction, type OrderAction, type OrderFilterId } from "./admin-order-types"
 import { CopyCustomerMessage } from "./copy-customer-message"
 import { PendingCancellationPanel } from "./pending-cancellation-panel"
 import { AdminConfirmOrderModal } from "@/components/greeting-card/coordinator/admin-confirm-order-modal"
+import Link from "next/link"
+import type { Route } from "next"
 
 /** Tab Điều hành: việc cần chủ tiệm quyết (thu tiền, báo giá, tiền chưa khớp); cài đặt nằm trong ngăn riêng. */
 export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: { focusOrderId?: string | null; onClearFocus?: () => void } = {}) {
@@ -20,7 +21,6 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
   const [action, setAction] = useState<OrderAction | null>(null)
   const [notice, setNotice] = useState<ActionResult | null>(null)
   const [search, setSearch] = useState("")
-  const [settingsOpen, setSettingsOpen] = useState(false)
   // Tìm theo tên khách / mã đơn / mã link / SĐT khách bỏ qua bộ lọc — để đối chiếu nhanh
   const term = search.trim()
   // Mở từ Hộp việc: chỉ hiện đúng đơn đó, bất kể bộ lọc đang chọn (trước đây lọc "Còn phải thu" che mất đơn)
@@ -43,10 +43,13 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={() => setSettingsOpen(true)} className="gap-1.5 text-caption h-9">
+          <Link
+            href={"/cai-dat?tab=BROCHURE_FLOW" as Route}
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border border-border bg-background text-caption font-bold text-foreground hover:bg-surface-muted transition-colors"
+          >
             <Settings size={14} aria-hidden="true" />
             <span>Cài đặt</span>
-          </Button>
+          </Link>
           <Button type="button" variant="outline" size="sm" onClick={() => void orders.refresh()} className="gap-1.5 text-caption h-9">
             <RefreshCw size={14} className={orders.isLoading ? "animate-spin" : ""} />
             <span>Làm mới</span>
@@ -131,8 +134,6 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
           </>
         )}
       </section>
-
-      {settingsOpen && <AdminSettingsDrawer onClose={() => setSettingsOpen(false)} />}
 
       {action && (action.type === "confirm-order" || action.type === "reject-order") && (
         <AdminConfirmOrderModal

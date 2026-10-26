@@ -46,10 +46,10 @@ describe("FloraOS Template Interpolation Engine", () => {
 
   it("falls back to custom default when context has empty variable", () => {
     const emptyCtx = { product: {} }
-    const tmpl = 'Sản phẩm: {{ product.name | default: "Mẫu hoa tươi" }}'
+    const tmpl = 'Sản phẩm: {{ product.name | default: "Sản phẩm tươi" }}'
     const result = interpolateTemplate(tmpl, emptyCtx)
 
-    expect(result).toBe("Sản phẩm: Mẫu hoa tươi")
+    expect(result).toBe("Sản phẩm: Sản phẩm tươi")
   })
 
   it("extracts all variable keys from a template string", () => {

@@ -18,8 +18,9 @@ import {
   type ProductCopyRaw,
   type ProductCopyEffective,
 } from "../domain/product-copy-rules";
+import type { IProductCopyRepository } from "../domain/repositories/product-copy-repository.interface";
 
-export class ProductCopyRepository {
+export class ProductCopyRepository implements IProductCopyRepository {
   readonly db: DbClient;
   constructor(db: DbClient = prisma) {
     this.db = db;
@@ -160,7 +161,7 @@ export class ProductCopyRepository {
       // Đọc `attributes` hiện có TRƯỚC khi ghi. Duyệt phân tích ảnh (`H3`) đã
       // đặt `bom`, `confidence`, `checklist`, `san_xuat` vào đúng cột này và
       // M02/M03 đọc chúng — ghi đè nguyên cột ở đây sẽ xoá trắng định mức vật
-      // tư của bó hoa mà không ai biết. Hợp nhất nông, giữ mọi khoá cũ.
+      // tư của sản phẩm mà không ai biết. Hợp nhất nông, giữ mọi khoá cũ.
       const current = await tx.products.findFirst({
         where: { id: copy.product_id, organization_id: ctx.organizationId },
         select: { attributes: true },
@@ -249,4 +250,13 @@ export class ProductCopyRepository {
     }
     return code;
   }
+}
+
+let defaultProductCopyRepository: IProductCopyRepository | null = null;
+
+export function getProductCopyRepository(): IProductCopyRepository {
+  if (!defaultProductCopyRepository) {
+    defaultProductCopyRepository = new ProductCopyRepository();
+  }
+  return defaultProductCopyRepository;
 }

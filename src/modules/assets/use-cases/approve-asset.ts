@@ -1,6 +1,7 @@
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface"
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
@@ -13,9 +14,12 @@ const PREVIEW_EXPIRES_IN = 24 * 60 * 60
  * - Chỉ duyệt asset ở trạng thái `PENDING`.
  * - Ghi nhận `approved_by`, `approved_at` và `audit_logs` trong một giao dịch.
  */
-export async function approveAsset(ctx: TenantContext, assetId: string) {
-  const assetRepo = new AssetRepository()
-  const asset = await assetRepo.findById(ctx, assetId)
+export async function approveAsset(
+  ctx: TenantContext,
+  assetId: string,
+  repo: IAssetRepository = getAssetRepository()
+) {
+  const asset = await repo.findById(ctx, assetId)
   if (!asset) throw notFound()
 
   if (asset.approval_state === "APPROVED") {
@@ -30,7 +34,7 @@ export async function approveAsset(ctx: TenantContext, assetId: string) {
   }
 
   const approvedAsset = await runInTransaction(async (tx) => {
-    const updated = await new AssetRepository(tx).approve(ctx, assetId, {
+    const updated = await getAssetRepository(tx).approve(ctx, assetId, {
       approvedBy: ctx.userId,
       approvedAt: new Date(),
     })

@@ -102,9 +102,10 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 
 ## 13. JOURNEY-FIRST UX ARCHITECTURE (J1–J7 Standards)
 - **Journey-First Entry Point**: Entry pages/dashboards start with the user's action goal (`ChoiceGrid` asking "What do you want to do?") rather than raw metrics or module menus.
-- **Mandatory Dual-Mode Entry**: Every feature workflow (create, draft, configure) MUST provide 2 initial entry options:
-  1. *Automatic AI Fast-Track (`SmartInputDropzone`)*: User inputs raw media/text (Images, Video URL, Notes) ➔ AI analyzes (Vision OCR, Content Engine) and **pre-fills all wizard steps (Human-in-the-loop)**.
+- **Mandatory Dual-Mode Entry & Dual-Source Input (PO 24/10/2026)**:
+  1. *Automatic AI Fast-Track (`SmartInputDropzone`)*: User inputs raw media/text ➔ AI analyzes (Vision OCR, Content Engine) and **pre-fills all wizard steps (Human-in-the-loop)**.
   2. *Manually Guided Wizard*: Step-by-step sequential guided progress (Progressive Disclosure J2).
+  3. *Dual-Source Media/Product Input*: BẮT BUỘC cho phép chọn từ **Kho sản phẩm của tiệm** (`store-catalog`) HOẶC **Tải từ máy/thiết bị** (`device-upload`). Hỗ trợ lưu ngược vào kho tiệm khi upload từ máy.
 - **7 Core Principles**:
   1. `J1` Journey-First: Action-oriented choice grid over module hierarchy.
   2. `J2` Progressive Disclosure: Show only the relevant steps/inputs for the current stage.

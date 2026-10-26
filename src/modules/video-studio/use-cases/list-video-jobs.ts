@@ -1,13 +1,14 @@
 import { type TenantContext } from "@/core/tenancy";
 import { requireCapability } from "@/core/rbac/capabilities";
+import type { IVideoJobRepository } from "../domain/repositories/video-job-repository.interface";
 import {
-  VideoJobRepository,
+  getVideoJobRepository,
   type VideoJobWithScenes,
 } from "../infra/video-job-repository";
 import { video_format, video_stage } from "../infra/entities";
 
 export class ListVideoJobsUseCase {
-  constructor(private readonly repo: VideoJobRepository = new VideoJobRepository()) {}
+  constructor(private readonly repo: IVideoJobRepository = getVideoJobRepository()) {}
 
   async execute(
     ctx: TenantContext,

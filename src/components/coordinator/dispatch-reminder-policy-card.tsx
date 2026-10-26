@@ -40,7 +40,7 @@ const MILESTONE_META: {
   {
     key: "m1MinutesBeforeDelivery",
     code: "M1",
-    label: "Xác nhận bắt đầu cắm hoa",
+    label: "Xác nhận bắt đầu chế tác",
     description: "Nhắc Điều phối kiểm tra xưởng đã bắt đầu thực hiện đơn, tạo cửa sổ đệm can thiệp kịp thời",
     unit: "phút trước giờ giao",
     min: 10,
@@ -159,7 +159,7 @@ export function DispatchReminderPolicySection({ canEdit }: DispatchReminderPolic
         <p className="text-caption text-text-muted leading-relaxed">
           Hệ thống sẽ tự động nhắc Điều phối viên thực hiện đúng nghiệp vụ tại mỗi mốc thời gian.
           Mốc <strong>Dặn shipper chụp ảnh lúc giao</strong> kích hoạt ngay khi nhập SĐT shipper, không cần cấu hình thời gian.
-          Cấu hình theo từng mẫu hoa được thiết lập riêng tại trang Chi tiết sản phẩm.
+          Cấu hình theo từng sản phẩm được thiết lập riêng tại trang Chi tiết sản phẩm.
         </p>
       </div>
 

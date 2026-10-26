@@ -1,7 +1,7 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import {
   MO_TA_BO_MAY,
   VISION_ENGINES,
@@ -22,7 +22,7 @@ export type VisionEngineState = {
  * kể cả khi họ không đổi được nó.
  */
 export async function getVisionEngine(ctx: TenantContext): Promise<VisionEngineState> {
-  const organization = await new OrganizationRepository().current(ctx)
+  const organization = await getOrganizationRepository().current(ctx)
   if (!organization) throw notFound()
   return {
     dang_dung: resolveVisionEngine(organization.settings as Record<string, unknown> | null),
@@ -43,7 +43,7 @@ export async function setVisionEngine(
   ctx: TenantContext,
   engine: VisionEngine
 ): Promise<VisionEngineState> {
-  const repository = new OrganizationRepository()
+  const repository = getOrganizationRepository()
   const current = await repository.current(ctx)
   if (!current) throw notFound()
 

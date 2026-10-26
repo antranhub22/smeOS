@@ -1,19 +1,13 @@
 import type { InputJsonValue, audit_logs } from "./entities"
-
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
-
 import type { DbClient } from "./db-client"
+import type {
+  IAuditLogRepository,
+  RecordAuditLogInput,
+} from "../domain/repositories/audit-log-repository.interface"
 
-export type RecordAuditLogInput = {
-  action: string
-  entityType: string
-  entityId: string
-  before?: unknown
-  after?: unknown
-  ip?: string | null
-  userAgent?: string | null
-}
+export type { RecordAuditLogInput, IAuditLogRepository }
 
 /**
  * Nhật ký kiểm toán — đặc tả 07 mục 8, `YC-R4`. Dựng ở P3 làm hạ tầng dùng
@@ -22,7 +16,7 @@ export type RecordAuditLogInput = {
  * trong CÙNG giao dịch với chính hành động duyệt — audit_logs không đứng
  * tách rời, mất nó nếu giao dịch duyệt rollback là sai.
  */
-export class AuditLogRepository {
+export class AuditLogRepository implements IAuditLogRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   record(ctx: TenantContext, input: RecordAuditLogInput): Promise<audit_logs> {
@@ -51,4 +45,16 @@ export class AuditLogRepository {
       ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),
     })
   }
+}
+
+let defaultRepo: IAuditLogRepository | null = null
+
+export function getAuditLogRepository(db?: DbClient): IAuditLogRepository {
+  if (db) {
+    return new AuditLogRepository(db)
+  }
+  if (!defaultRepo) {
+    defaultRepo = new AuditLogRepository()
+  }
+  return defaultRepo
 }

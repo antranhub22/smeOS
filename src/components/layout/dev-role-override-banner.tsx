@@ -1,0 +1,160 @@
+"use client"
+
+/**
+ * DevRoleOverrideBanner — Floating switcher chỉ hiện khi NODE_ENV=development.
+ *
+ * Cho phép developer click để switch giữa các vai/tầng kiến trúc mà
+ * không cần re-login. Gọi POST/DELETE /api/dev/role-override rồi
+ * router.refresh() để server đọc lại cookie và re-render session.
+ *
+ * Render ở góc dưới-phải, z-index cao, không ảnh hưởng layout.
+ */
+
+import { useState, useCallback } from "react"
+import { useRouter } from "next/navigation"
+import { ChevronDown, FlaskConical, X } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
+
+interface Props {
+  /** Vai đang active trong session hiện tại (từ server). */
+  activeRoleKey: string | null | undefined
+  /** Truyền từ Server Component: process.env.NODE_ENV !== "production" */
+  isDev: boolean
+}
+
+export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
+  const router = useRouter()
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState<string | null>(null)
+
+  // Guard: không render gì ở production
+  if (!isDev) return null
+
+  const applyOverride = useCallback(
+    async (override: DevRoleOverride | null) => {
+      const key = override?.roleKey ?? "clear"
+      setLoading(key)
+      try {
+        if (override === null) {
+          await fetch("/api/dev/role-override", { method: "DELETE" })
+        } else {
+          await fetch("/api/dev/role-override", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(override),
+          })
+        }
+        if (override?.roleKey === "platform_admin") {
+          window.location.href = "/van-hanh"
+        } else {
+          window.location.href = "/"
+        }
+        setOpen(false)
+      } finally {
+        setLoading(null)
+      }
+    },
+    [router]
+  )
+
+  return (
+    <div
+      className="fixed bottom-20 right-3 z-[9999] flex flex-col items-end gap-1.5 md:bottom-4"
+      aria-label="Dev Role Override"
+    >
+      {/* Dropdown panel */}
+      {open && (
+        <div
+          role="dialog"
+          aria-label="Chọn vai dev"
+          className="flex w-64 flex-col overflow-hidden rounded-xl border border-amber-300 bg-amber-50 shadow-xl dark:border-amber-700 dark:bg-amber-950"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-amber-200 px-3 py-2 dark:border-amber-800">
+            <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-300">
+              <FlaskConical size={12} aria-hidden />
+              Dev Role Override
+            </span>
+            <button
+              onClick={() => setOpen(false)}
+              className="rounded p-0.5 text-amber-600 hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-900"
+              aria-label="Đóng"
+            >
+              <X size={13} />
+            </button>
+          </div>
+
+          {/* Presets */}
+          <ul className="divide-y divide-amber-100 dark:divide-amber-900">
+            {DEV_ROLE_PRESETS.map((preset) => {
+              const isActive = activeRoleKey === preset.roleKey
+              const isLoading = loading === preset.roleKey
+              return (
+                <li key={preset.roleKey}>
+                  <button
+                    onClick={() => applyOverride(preset)}
+                    disabled={isLoading}
+                    className={cn(
+                      "flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] transition-colors",
+                      isActive
+                        ? "bg-amber-200 font-bold text-amber-900 dark:bg-amber-800 dark:text-amber-100"
+                        : "text-amber-800 hover:bg-amber-100 dark:text-amber-200 dark:hover:bg-amber-900",
+                      isLoading && "opacity-50"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "inline-block h-2 w-2 flex-shrink-0 rounded-full",
+                        isActive ? "bg-amber-600" : "bg-amber-300"
+                      )}
+                      aria-hidden
+                    />
+                    <span className="flex-1">{preset.label}</span>
+                    {isActive && (
+                      <span className="rounded bg-amber-600 px-1 py-0.5 text-[9px] font-bold text-white">
+                        ACTIVE
+                      </span>
+                    )}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+
+          {/* Clear override */}
+          {activeRoleKey && (
+            <div className="border-t border-amber-200 p-2 dark:border-amber-800">
+              <button
+                onClick={() => applyOverride(null)}
+                disabled={loading === "clear"}
+                className="w-full rounded-lg px-3 py-1.5 text-center text-[11px] font-semibold text-amber-700 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900"
+              >
+                {loading === "clear" ? "Đang xoá…" : "✕ Xoá override — dùng session thật"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Toggle button */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          "flex items-center gap-1.5 rounded-full border border-amber-400 bg-amber-100 px-3 py-1.5 text-[11px] font-bold text-amber-800 shadow-md transition-all hover:bg-amber-200 dark:border-amber-600 dark:bg-amber-900 dark:text-amber-200 dark:hover:bg-amber-800",
+          open && "bg-amber-200 dark:bg-amber-800"
+        )}
+        aria-expanded={open}
+        aria-haspopup="dialog"
+      >
+        <FlaskConical size={13} aria-hidden />
+        DEV
+        <ChevronDown
+          size={11}
+          aria-hidden
+          className={cn("transition-transform", open && "rotate-180")}
+        />
+      </button>
+    </div>
+  )
+}

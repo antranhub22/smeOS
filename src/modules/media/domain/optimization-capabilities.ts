@@ -66,7 +66,7 @@ export const OPTIMIZATION_CAPABILITIES: readonly OptimizationCapability[] = [
   {
     id: "remove_background",
     name: "Tách nền & Phông Studio Ambiance",
-    description: "Loại bỏ hậu cảnh rườm rà tại xưởng cắm hoa, thay bằng phông nền studio sang trọng với ánh sáng dịu.",
+    description: "Loại bỏ hậu cảnh rườm rà tại xưởng chế tác, thay bằng phông nền studio sang trọng với ánh sáng dịu.",
     category: "composition",
     iconName: "Layers",
     supportedProviders: ["openai", "gemini"], // Cần Generative Studio Backdrop
@@ -81,7 +81,7 @@ export const OPTIMIZATION_CAPABILITIES: readonly OptimizationCapability[] = [
     iconName: "Maximize2",
     supportedProviders: "all",
     defaultInAuto: true,
-    executionNote: "Đã tạo 4 tỷ lệ chuẩn (1:1, 4:5, 9:16, 16:9) bảo toàn 100% bó hoa",
+    executionNote: "Đã tạo 4 tỷ lệ chuẩn (1:1, 4:5, 9:16, 16:9) bảo toàn 100% sản phẩm",
   },
   {
     id: "add_marketing_text",

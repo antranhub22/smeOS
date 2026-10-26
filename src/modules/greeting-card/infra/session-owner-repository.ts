@@ -71,3 +71,9 @@ export class SessionOwnerRepository {
     return link?.code ?? null
   }
 }
+
+let _sessionOwnerRepositorySingleton: SessionOwnerRepository | null = null
+export function getSessionOwnerRepository(): SessionOwnerRepository {
+  if (!_sessionOwnerRepositorySingleton) _sessionOwnerRepositorySingleton = new SessionOwnerRepository()
+  return _sessionOwnerRepositorySingleton
+}

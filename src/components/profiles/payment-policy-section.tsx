@@ -13,7 +13,7 @@ import {
 import { PolicyMatrixTable } from "./policy-matrix-table"
 
 /**
- * Chính sách thanh toán của tiệm (Điều hành quyết): có bắt thu đủ tiền trước khi giao hoa không,
+ * Chính sách thanh toán của tiệm (Điều hành quyết): có bắt thu đủ tiền trước khi giao hàng không,
  * và hạn thanh toán — quá hạn mà khách chưa chuyển khoản, chưa bấm "Tôi đã chuyển khoản" thì đơn
  * tự huỷ (thanh toán thất bại).
  */
@@ -54,7 +54,7 @@ export function PaymentPolicySection() {
     <form onSubmit={save} className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Truck size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Chính sách thanh toán & giao hoa</h3>
+        <h3 className="text-title-sm font-extrabold text-foreground">Chính sách thanh toán & giao hàng</h3>
       </div>
       {!policy ? (
         <div className="h-40 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />

@@ -7,7 +7,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { getProductMasterIndex } from "@/modules/products/use-cases/get-product-master-index"
 import { createOrder } from "@/modules/orders/use-cases/create-order"
 import { hasRealPrice, formatQuotePriceForChat } from "../domain/flower-consultant-rules"
-import { ChatRepository } from "../infra/chat-repository"
+import { ChatRepository, getChatRepository } from "../infra/chat-repository"
 
 export async function convertChatToDraftOrder(
   ctx: TenantContext,
@@ -19,7 +19,7 @@ export async function convertChatToDraftOrder(
     street?: string | undefined
     cardMessage?: string | undefined
   },
-  repo: ChatRepository = new ChatRepository()
+  repo: ChatRepository = getChatRepository()
 ) {
   const conversation = await repo.getConversation(ctx, conversationId)
   if (!conversation) {
@@ -41,7 +41,7 @@ export async function convertChatToDraftOrder(
   const priceVnd = product.pricing.quotePriceVnd
   if (!hasRealPrice(priceVnd)) {
     throw validationFailed({
-      priceVnd: `Mẫu hoa "${product.name}" chưa có giá bán cấu hình. Vui lòng tạo đơn thủ công và nhập giá trước khi chốt.`,
+      priceVnd: `Sản phẩm "${product.name}" chưa có giá bán cấu hình. Vui lòng tạo đơn thủ công và nhập giá trước khi chốt.`,
     })
   }
 

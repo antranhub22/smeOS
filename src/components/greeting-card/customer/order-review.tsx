@@ -9,9 +9,8 @@ import { PrivacyNotice } from "./privacy-notice"
 import { openShopInfo } from "./shop-info-sheet"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { getIndustryTerminology, getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react"
-
-const vnd = (n: number) => `${n.toLocaleString("vi-VN")} đ`
 
 function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
   return (
@@ -44,6 +43,10 @@ export function OrderReview(props: {
   onEdit: () => void
   onConfirm: (confirmedTerms: boolean) => void
 }) {
+  const { t, locale } = useI18n()
+  const isEn = locale === "en"
+  const vnd = (n: number) => isEn ? `${n.toLocaleString("en-US")} VND` : `${n.toLocaleString("vi-VN")} đ`
+
   const { product, input, quote, appliedPolicies, industryKey } = props
   const terms = getIndustryTerminology(industryKey)
   const orderTerms = getIndustryOrderTerms(industryKey)
@@ -58,7 +61,9 @@ export function OrderReview(props: {
   return (
     <section aria-labelledby="order-review-title" className="flex flex-col gap-4">
       <h2 id="order-review-title" className="text-title font-extrabold text-foreground">
-        {isHomestay ? "Xem lại thông tin đặt phòng" : "Xem lại đơn trước khi đặt"}
+        {isHomestay
+          ? (isEn ? "Review Booking Details" : "Xem lại thông tin đặt phòng")
+          : (isEn ? "Review Order Before Submitting" : "Xem lại đơn trước khi đặt")}
       </h2>
 
       {/* Ảnh mẫu đã chọn — khách nhìn lại đúng sản phẩm trước khi xác nhận */}
@@ -72,40 +77,44 @@ export function OrderReview(props: {
           className="h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-border sm:h-32 sm:w-32"
         />
         <figcaption className="min-w-0 flex-1">
-          <p className="text-caption text-text-muted">{isHomestay ? "Hạng phòng bạn đã chọn" : "Mẫu bạn đã chọn"}</p>
+          <p className="text-caption text-text-muted">
+            {isHomestay
+              ? (isEn ? "Selected room type" : "Hạng phòng bạn đã chọn")
+              : (isEn ? "Selected item" : "Mẫu bạn đã chọn")}
+          </p>
           <p className="text-body font-extrabold text-foreground">{product.name}</p>
           {props.variantName && <p className="text-body-sm text-text-muted">{props.variantName}</p>}
         </figcaption>
       </figure>
 
       <dl className="rounded-xl border border-border bg-surface-muted px-4 py-2 divide-y divide-border">
-        <Row label={isHomestay ? "Hạng phòng" : terms.sampleProduct} value={props.variantName ? `${product.name} · ${props.variantName}` : product.name} />
-        {quote && quote.quantity > 1 && <Row label={isHomestay ? "Số đêm / Số phòng" : "Số lượng"} value={String(quote.quantity)} />}
-        {quote && !awaitingQuote && <Row label="Tạm tính" value={vnd(quote.subtotalVnd)} />}
-        {quote && quote.discountVnd > 0 && <Row label={`Giảm giá${quote.voucherCode ? ` (${quote.voucherCode})` : ""}`} value={`− ${vnd(quote.discountVnd)}`} />}
+        <Row label={isHomestay ? (isEn ? "Room Type" : "Hạng phòng") : (isEn ? "Product" : terms.sampleProduct)} value={props.variantName ? `${product.name} · ${props.variantName}` : product.name} />
+        {quote && quote.quantity > 1 && <Row label={isHomestay ? (isEn ? "Nights / Rooms" : "Số đêm / Số phòng") : (isEn ? "Quantity" : "Số lượng")} value={String(quote.quantity)} />}
+        {quote && !awaitingQuote && <Row label={isEn ? "Subtotal" : "Tạm tính"} value={vnd(quote.subtotalVnd)} />}
+        {quote && quote.discountVnd > 0 && <Row label={`${isEn ? "Discount" : "Giảm giá"}${quote.voucherCode ? ` (${quote.voucherCode})` : ""}`} value={`− ${vnd(quote.discountVnd)}`} />}
         {quote?.shippingZone && (
-          <Row label={`${orderTerms.shippingFeeLabel} (${quote.shippingZone.name})`} value={quote.shippingFeeVnd > 0 ? vnd(quote.shippingFeeVnd) : "Miễn phí"} />
+          <Row label={`${isEn ? "Shipping Fee" : orderTerms.shippingFeeLabel} (${quote.shippingZone.name})`} value={quote.shippingFeeVnd > 0 ? vnd(quote.shippingFeeVnd) : (isEn ? "Free" : "Miễn phí")} />
         )}
-        {quote?.promotionDiscountVnd ? <Row label={`Ưu đãi${selectedPromo ? ` (${selectedPromo.title})` : ""}`} value={`− ${vnd(quote.promotionDiscountVnd)}`} /> : null}
-        {quote?.holidaySurchargeVnd ? <Row label={`Phụ phí ngày lễ (${quote.holidayName ?? ""})`} value={`+ ${vnd(quote.holidaySurchargeVnd)}`} /> : null}
-        <Row label={isHomestay ? "Tổng tiền đặt phòng" : "Tổng đơn hàng"} value={awaitingQuote ? "Cửa hàng báo giá sau" : vnd(quote?.totalVnd ?? product.price)} strong />
+        {quote?.promotionDiscountVnd ? <Row label={`${isEn ? "Promotion" : "Ưu đãi"}${selectedPromo ? ` (${selectedPromo.title})` : ""}`} value={`− ${vnd(quote.promotionDiscountVnd)}`} /> : null}
+        {quote?.holidaySurchargeVnd ? <Row label={`${isEn ? "Holiday surcharge" : "Phụ phí ngày lễ"} (${quote.holidayName ?? ""})`} value={`+ ${vnd(quote.holidaySurchargeVnd)}`} /> : null}
+        <Row label={isHomestay ? (isEn ? "Total Booking Fee" : "Tổng tiền đặt phòng") : (isEn ? "Total" : "Tổng đơn hàng")} value={awaitingQuote ? (isEn ? "Calculated later" : "Cửa hàng báo giá sau") : vnd(quote?.totalVnd ?? product.price)} strong />
         {!awaitingQuote && quote?.paymentPlan && quote.paymentPlan.dueLaterVnd > 0 && (
           <>
-            <Row label={`Đặt cọc hôm nay (${quote.paymentPlan.depositPercent}%)`} value={vnd(quote.paymentPlan.dueNowVnd)} strong />
-            <Row label={isHomestay ? "Thanh toán khi nhận phòng" : "Thanh toán phần còn lại khi nhận hàng"} value={vnd(quote.paymentPlan.dueLaterVnd)} />
+            <Row label={`${isEn ? "Deposit today" : "Đặt cọc hôm nay"} (${quote.paymentPlan.depositPercent}%)`} value={vnd(quote.paymentPlan.dueNowVnd)} strong />
+            <Row label={isHomestay ? (isEn ? "Balance upon check-in" : "Thanh toán khi nhận phòng") : (isEn ? "Balance upon delivery" : "Thanh toán phần còn lại khi nhận hàng")} value={vnd(quote.paymentPlan.dueLaterVnd)} />
           </>
         )}
       </dl>
 
       <dl className="rounded-xl border border-border px-4 py-2 divide-y divide-border">
-        <Row label={orderTerms.customerRoleLabel} value={`${input.customerName} · ${input.customerPhone}${input.customerEmail ? ` · ${input.customerEmail}` : ""}`} />
-        <Row label={orderTerms.recipientRoleLabel} value={`${input.recipientName} · ${input.recipientPhone}`} />
-        <Row label={orderTerms.deliveryTimeLabel} value={`${viDate(input.deliveryDate)} · ${input.deliveryTimeSlot ?? ""}`} />
-        <Row label={orderTerms.addressLabel} value={input.deliveryAddress} />
-        {input.cardMessage?.trim() && <Row label={isHomestay ? "Nội quy & Thẻ chào mừng" : terms.printablesTitle} value={`“${input.cardMessage.trim()}”`} />}
-        {input.senderNote?.trim() && <Row label={isHomestay ? "Yêu cầu cho Quản gia" : "Ghi chú đơn hàng"} value={input.senderNote.trim()} />}
-        {input.deliveryNote?.trim() && <Row label="Ghi chú thêm" value={input.deliveryNote.trim()} />}
-        {input.mapUrl?.trim() && <Row label="Vị trí bản đồ" value="Đã gửi link Google Maps" />}
+        <Row label={isEn ? "Customer" : orderTerms.customerRoleLabel} value={`${input.customerName} · ${input.customerPhone}${input.customerEmail ? ` · ${input.customerEmail}` : ""}`} />
+        <Row label={isEn ? "Recipient" : orderTerms.recipientRoleLabel} value={`${input.recipientName} · ${input.recipientPhone}`} />
+        <Row label={isEn ? "Delivery schedule" : orderTerms.deliveryTimeLabel} value={`${viDate(input.deliveryDate)} · ${input.deliveryTimeSlot ?? ""}`} />
+        <Row label={isEn ? "Address" : orderTerms.addressLabel} value={input.deliveryAddress} />
+        {input.cardMessage?.trim() && <Row label={isHomestay ? (isEn ? "House rules & greeting" : "Nội quy & Thẻ chào mừng") : (isEn ? "Greeting card" : terms.printablesTitle)} value={`“${input.cardMessage.trim()}”`} />}
+        {input.senderNote?.trim() && <Row label={isHomestay ? (isEn ? "Requests for Host" : "Yêu cầu cho Quản gia") : (isEn ? "Order notes" : "Ghi chú đơn hàng")} value={input.senderNote.trim()} />}
+        {input.deliveryNote?.trim() && <Row label={isEn ? "Courier instructions" : "Ghi chú thêm"} value={input.deliveryNote.trim()} />}
+        {input.mapUrl?.trim() && <Row label={isEn ? "Map location" : "Vị trí bản đồ"} value={isEn ? "Google Maps link attached" : "Đã gửi link Google Maps"} />}
       </dl>
 
       {/* CHÍNH SÁCH: ƯU ĐÃI, (lối mở) CAM KẾT, THỎA THUẬN (SPEC #2 & #5) */}
@@ -114,7 +123,7 @@ export function OrderReview(props: {
           <div className="p-3.5 rounded-xl border border-primary/20 bg-primary/5 space-y-1">
             <h4 className="text-caption font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
               <Gift size={14} />
-              <span>Ưu đãi áp dụng cho đơn hàng</span>
+              <span>{isEn ? "Applied order promotion" : "Ưu đãi áp dụng cho đơn hàng"}</span>
             </h4>
             <p className="text-body-sm font-bold text-foreground">{selectedPromo.title}</p>
             <p className="text-caption text-text-muted">{selectedPromo.customerText}</p>
@@ -128,14 +137,14 @@ export function OrderReview(props: {
           className="flex min-h-11 w-full items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3.5 text-left text-body-sm font-bold text-success"
         >
           <ShieldCheck size={16} aria-hidden="true" />
-          <span>Xem cam kết của cửa hàng</span>
+          <span>{isEn ? "View store commitments & guarantees" : "Xem cam kết của cửa hàng"}</span>
         </button>
 
         {appliedPolicies?.agreements && appliedPolicies.agreements.length > 0 && (
           <div className="p-3.5 rounded-xl border border-border bg-surface-muted space-y-2">
             <h4 className="text-caption font-extrabold uppercase tracking-wider text-foreground flex items-center gap-1.5">
               <FileText size={14} />
-              <span>{orderTerms.agreementHeading} ({appliedPolicies.agreements.length})</span>
+              <span>{isEn ? "Terms & Agreements" : orderTerms.agreementHeading} ({appliedPolicies.agreements.length})</span>
             </h4>
             <ul className="space-y-1.5 text-caption text-text-muted">
               {appliedPolicies.agreements.map((a) => (
@@ -158,7 +167,9 @@ export function OrderReview(props: {
           className="mt-0.5 rounded border-border text-primary focus:ring-primary w-4 h-4"
         />
         <span className="text-caption leading-relaxed text-foreground">
-          Tôi đã đọc và đồng ý với {appliedPolicies?.agreements.length} <strong>{isHomestay ? "quy định & thỏa thuận" : "thỏa thuận"}</strong> ở trên {isHomestay ? "cho kỳ lưu trú này" : "cho đơn hàng này"}.
+          {isEn
+            ? `I have read and agree to the ${appliedPolicies?.agreements.length} terms & agreements above for this order.`
+            : `Tôi đã đọc và đồng ý với ${appliedPolicies?.agreements.length} ${isHomestay ? "quy định & thỏa thuận" : "thỏa thuận"} ở trên ${isHomestay ? "cho kỳ lưu trú này" : "cho đơn hàng này"}.`}
         </span>
       </label>}
 
@@ -175,12 +186,16 @@ export function OrderReview(props: {
         className="h-12 w-full gap-2 rounded-xl text-body font-extrabold"
       >
         <Check size={18} aria-hidden="true" />
-        {props.submitting ? (isHomestay ? "Đang gửi yêu cầu đặt phòng..." : "Đang gửi đơn hàng...") : awaitingQuote ? (isHomestay ? "Xác nhận gửi yêu cầu" : "Xác nhận gửi đơn") : orderTerms.confirmButtonText}
+        {props.submitting
+          ? (isHomestay ? (isEn ? "Submitting booking request..." : "Đang gửi yêu cầu đặt phòng...") : (isEn ? "Submitting order..." : "Đang gửi đơn hàng..."))
+          : awaitingQuote
+          ? (isHomestay ? (isEn ? "Confirm Booking Request" : "Xác nhận gửi yêu cầu") : (isEn ? "Confirm Order" : "Xác nhận gửi đơn"))
+          : (isEn ? "Confirm & Proceed to Payment" : orderTerms.confirmButtonText)}
       </Button>
       <PrivacyNotice industryKey={props.industryKey} />
       <Button type="button" variant="ghost" onClick={props.onEdit} disabled={props.submitting} className="gap-1.5 text-text-muted">
         <ArrowLeft size={16} aria-hidden="true" />
-        Sửa thông tin
+        {isEn ? "Edit Information" : "Sửa thông tin"}
       </Button>
     </section>
   )

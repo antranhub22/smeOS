@@ -123,9 +123,9 @@ export type CameraAngleType =
 
 export type HumanInteractionType =
   | "none"                 // Không có người (chỉ chụp hoa)
-  | "female_holding"       // Mẫu nữ thanh lịch ôm bó hoa ngang ngực
+  | "female_holding"       // Mẫu nữ thanh lịch ôm sản phẩm ngang ngực
   | "male_holding"         // Mẫu nam lịch lãm veston/sơ mi cầm hoa
-  | "florist_artisan_hands" // Bàn tay thợ cắm hoa thắt nơ nghệ thuật
+  | "florist_artisan_hands" // Bàn tay thợ chế tác thắt nơ nghệ thuật
   | "gifting_moment"       // Khoảnh khắc trao tặng hoa rạng ngời
 
 export type StorylineMode = "single_shot" | "four_part_story_carousel"
@@ -242,7 +242,7 @@ export function validateCreativeStudioInput(input: unknown): { isValid: boolean;
   } else {
     const flowers = passport.primaryFlowers
     if (!Array.isArray(flowers) || flowers.length === 0) {
-      errors.push("productPassport.primaryFlowers phải là một mảng có ít nhất 1 loại hoa")
+      errors.push("productPassport.primaryFlowers phải là một mảng có ít nhất 1 nguyên liệu")
     }
   }
 

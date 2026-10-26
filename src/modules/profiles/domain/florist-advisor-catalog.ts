@@ -33,18 +33,18 @@ export const FLORIST_FREE_GIFTS_CATALOG: AdvisorOptionItem[] = [
   {
     id: "gift-silk-banner",
     label: "Banner lụa satin dập kim nhũ vàng",
-    description: "Dải ruy băng lụa satin thiết kế riêng in thông điệp người gửi, gắn lên kệ hoa/giỏ hoa",
+    description: "Dải ruy băng lụa satin thiết kế riêng in thông điệp người gửi, gắn lên sản phẩm quà tặng",
     category: "aesthetic",
   },
   {
     id: "gift-chrysal-nutrition",
-    label: "Gói dưỡng hoa tươi lâu Chrysal (Hà Lan)",
-    description: "Tặng kèm 2 gói dưỡng hoa nhập khẩu + cẩm nang 3 bước thay nước để hoa tươi 5–7 ngày tại nhà",
+    label: "Gói dưỡng sản phẩm lâu Chrysal (Hà Lan)",
+    description: "Tặng kèm 2 gói dưỡng hoa nhập khẩu + cẩm nang 3 bước thay nước để sản phẩm 5–7 ngày tại nhà",
     category: "care",
   },
   {
     id: "gift-premium-bag",
-    label: "Túi giấy quai lụa chống dập cánh hoa",
+    label: "Túi giấy quai lụa bảo vệ sản phẩm chống va đập",
     description: "Túi cứng chuyên dụng chống nghiêng đổ khi khách di chuyển xe máy hoặc ô tô",
     category: "delivery",
   },
@@ -63,7 +63,7 @@ export const FLORIST_FREE_GIFTS_CATALOG: AdvisorOptionItem[] = [
   {
     id: "gift-artisan-chocolate",
     label: "Hộp chocolate thủ công cao cấp",
-    description: "Món quà ngọt ngào đi cùng bó hoa sinh nhật hoặc lời chúc mừng hạnh phúc",
+    description: "Món quà ngọt ngào đi cùng sản phẩm sinh nhật hoặc lời chúc mừng hạnh phúc",
     category: "upsell",
   },
 ]
@@ -81,12 +81,12 @@ export const FLORIST_GUARANTEES_CATALOG: AdvisorOptionItem[] = [
   {
     id: "guar-4h-replacement",
     label: "Đổi mới 100% trong 4 giờ nếu hoa dập nát, héo úa",
-    description: "Bảo hiểm vận chuyển hoa tươi tận tay người nhận không phát sinh thêm bất kỳ chi phí nào",
+    description: "Bảo hiểm vận chuyển sản phẩm tận tay người nhận không phát sinh thêm bất kỳ chi phí nào",
     category: "trust",
   },
   {
     id: "guar-grade-a-flowers",
-    label: "100% hoa tươi loại 1 nhập mới mỗi sáng",
+    label: "100% sản phẩm loại 1 nhập mới mỗi sáng",
     description: "Nhập mới từ trang trại Đà Lạt và quốc tế; nói không với hoa đông lạnh, hoa tẩy cánh",
     category: "quality",
   },
@@ -122,18 +122,18 @@ export const FLORIST_GUARANTEES_CATALOG: AdvisorOptionItem[] = [
 export const FLORIST_STRATEGY_PRESETS: AdvisorPresetPackage[] = [
   {
     id: "preset-artisan-boutique",
-    name: "Tiệm Hoa Nghệ Thuật / Thiết Kế",
+    name: "Cửa Hàng Nghệ Thuật / Thiết Kế",
     tagline: "Tập trung vào cảm xúc, sự tinh xảo và tính thẩm mỹ cao cấp",
     icon: "Palette",
     freeGifts: [
       "Thiệp chúc mừng mỹ thuật độc bản",
-      "Gói dưỡng hoa tươi lâu Chrysal (Hà Lan)",
-      "Túi giấy quai lụa chống dập cánh hoa",
+      "Gói dưỡng sản phẩm lâu Chrysal (Hà Lan)",
+      "Túi giấy quai lụa bảo vệ sản phẩm chống va đập",
       "Banner lụa satin dập kim nhũ vàng",
     ],
     guarantees: [
       "Gửi ảnh & video thành phẩm thực tế trước khi giao",
-      "100% hoa tươi loại 1 nhập mới mỗi sáng",
+      "100% sản phẩm loại 1 nhập mới mỗi sáng",
       "Độ tương đồng thực tế đạt 90%–95% so với mẫu",
       "Đổi mới 100% trong 4 giờ nếu hoa dập nát, héo úa",
     ],
@@ -156,12 +156,12 @@ export const FLORIST_STRATEGY_PRESETS: AdvisorPresetPackage[] = [
   },
   {
     id: "preset-gift-occasions",
-    name: "Tiệm Hoa Quà Tặng & Dịp Lễ",
+    name: "Cửa Hàng Quà Tặng & Dịp Lễ",
     tagline: "Kích thích trải nghiệm trọn vẹn, bất ngờ và quà tặng kèm ngọt ngào",
     icon: "Gift",
     freeGifts: [
       "Thiệp chúc mừng mỹ thuật độc bản",
-      "Gói dưỡng hoa tươi lâu Chrysal (Hà Lan)",
+      "Gói dưỡng sản phẩm lâu Chrysal (Hà Lan)",
       "Nến thơm tinh dầu hoa hồng thiên nhiên",
     ],
     guarantees: [
@@ -198,7 +198,7 @@ export const FLORIST_TONE_OPTIONS = [
     value: "modern",
     label: "Trẻ trung & Năng động (Giới trẻ, tốt nghiệp, chúc mừng bạn bè)",
     tagline: "Tươi mới, hóm hỉnh, bắt nhịp xu hướng mạng xã hội",
-    exampleDialog: "Một ngày rạng rỡ với mẫu hoa phối màu pastel siêu xinh nè! Nhắn tin ngay cho tiệm để nhận ưu đãi thiết kế độc bản cho bạn nhé!",
+    exampleDialog: "Một ngày rạng rỡ với sản phẩm phối màu pastel siêu xinh nè! Nhắn tin ngay cho tiệm để nhận ưu đãi thiết kế độc bản cho bạn nhé!",
   },
 ]
 

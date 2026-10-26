@@ -60,17 +60,17 @@ export const PROVIDER_CATALOG: Readonly<Record<ProviderKind, ProviderKindSpec>> 
     providers: [
       { key: "photoroom", label: "Photoroom", vendor: "Photoroom", envKey: "PHOTOROOM_API_KEY", quality: "cao", note: "Tách nền, phông studio, bóng + ánh sáng AI" },
       { key: "fal_flux", label: "fal.ai Product Shot", vendor: "fal.ai", envKey: "FAL_KEY", quality: "cao", note: "BiRefNet + BRIA Product Shot + ESRGAN" },
-      { key: "imagen", label: "Google Gemini Image", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Dựng phông + chỉnh sáng, bó hoa ghép lại từ ảnh gốc" },
-      { key: "openai", label: "OpenAI Image", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "cao", note: "gpt-image-1, mặt nạ bảo vệ bó hoa" },
+      { key: "imagen", label: "Google Gemini Image", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Dựng phông + chỉnh sáng, sản phẩm ghép lại từ ảnh gốc" },
+      { key: "openai", label: "OpenAI Image", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "cao", note: "gpt-image-1, mặt nạ bảo vệ sản phẩm" },
     ],
     localFallback: { key: "studio", label: "Studio cục bộ (rembg + phông)" },
   },
   image_variant: {
     label: "Biến thể ảnh marketing (Khu vực D)",
     providers: [
-      { key: "fal", label: "fal.ai Product Shot", vendor: "fal.ai", envKey: "FAL_KEY", quality: "cao", note: "Dựng cảnh + hoà sáng, giữ vị trí bó hoa" },
+      { key: "fal", label: "fal.ai Product Shot", vendor: "fal.ai", envKey: "FAL_KEY", quality: "cao", note: "Dựng cảnh + hoà sáng, giữ vị trí sản phẩm" },
       { key: "stability", label: "Stability AI Relight", vendor: "Stability AI", envKey: "STABILITY_API_KEY", quality: "cao", note: "Thay nền + chỉnh hướng sáng, seed tái tạo được" },
-      { key: "imagen", label: "Google Gemini Image", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Dựng cảnh theo mô tả, bó hoa ghép lại từ Master" },
+      { key: "imagen", label: "Google Gemini Image", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Dựng cảnh theo mô tả, sản phẩm ghép lại từ Master" },
     ],
     localFallback: { key: "local_studio", label: "Phông cục bộ" },
   },

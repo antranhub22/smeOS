@@ -35,7 +35,7 @@ export function BriefImportantView({
         </div>
         <h3 className="font-bold text-cool-800 text-base">Chưa có cơ hội thị trường nào</h3>
         <p className="text-xs text-cool-500 mt-1 max-w-sm mx-auto">
-          Kích hoạt quét tín hiệu xu hướng để hệ thống phân tích và đề xuất cơ hội kinh doanh cho tiệm hoa của bạn.
+          Kích hoạt quét tín hiệu xu hướng để hệ thống phân tích và đề xuất cơ hội kinh doanh cho cửa hàng của bạn.
         </p>
       </div>
     );

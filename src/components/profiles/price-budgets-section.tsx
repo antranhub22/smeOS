@@ -24,7 +24,7 @@ const toNum = (v: string): number | null => {
 const fmt = (n: number | null) => (n === null ? "" : n.toLocaleString("vi-VN"))
 
 /**
- * Khoảng giá lọc nhanh mẫu hoa (Điều hành tự đặt). Dùng ở "Lọc nhanh mẫu hoa",
+ * Khoảng giá lọc nhanh sản phẩm / mẫu (Điều hành tự đặt). Dùng ở "Lọc nhanh sản phẩm",
  * "Tạo bộ sưu tập nhanh" và "Tư vấn theo ngân sách". Khoảng tính từ giá "Từ"
  * đến dưới giá "Đến"; để trống "Đến" = không giới hạn.
  */
@@ -80,10 +80,10 @@ export function PriceBudgetsSection() {
     <form onSubmit={save} className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <DollarSign size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Khoảng giá lọc nhanh mẫu hoa</h3>
+        <h3 className="text-title-sm font-extrabold text-foreground">Khoảng giá lọc nhanh sản phẩm</h3>
       </div>
       <p className="text-body-sm text-text-muted">
-        Các nút khoảng giá khi tìm mẫu hoa, tạo bộ sưu tập nhanh và tư vấn theo ngân sách. Mỗi khoảng tính từ giá “Từ” đến
+        Các nút khoảng giá khi tìm sản phẩm, tạo bộ sưu tập nhanh và tư vấn theo ngân sách. Mỗi khoảng tính từ giá “Từ” đến
         dưới giá “Đến”; để trống “Đến” nghĩa là không giới hạn.
       </p>
       {!budgets ? (

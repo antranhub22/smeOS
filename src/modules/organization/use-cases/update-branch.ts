@@ -1,6 +1,6 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { BranchRepository } from "@/modules/organization/infra/branch-repository"
+import { BranchRepository, getBranchRepository } from "@/modules/organization/infra/branch-repository"
 
 export type UpdateBranchInput = {
   name?: string | undefined
@@ -22,7 +22,7 @@ export async function updateBranch(
   if (input.address !== undefined) data.address = input.address
   if (input.is_active !== undefined) data.is_active = input.is_active
 
-  const updated = await new BranchRepository().update(ctx, id, data)
+  const updated = await getBranchRepository().update(ctx, id, data)
   if (!updated) throw notFound()
   return updated
 }

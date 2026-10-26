@@ -9,9 +9,11 @@ import {
   type TrashItemType,
 } from "../domain/trash-types"
 
+import type { ITrashRepository } from "../domain/repositories/trash-repository.interface"
+
 const PREVIEW_EXPIRES_IN = 86400
 
-export class TrashRepository {
+export class TrashRepository implements ITrashRepository {
   async listTrash(ctx: TenantContext): Promise<TrashItem[]> {
     const storage = getStorageProvider()
     const now = new Date()
@@ -282,4 +284,13 @@ export class TrashRepository {
 
     return false
   }
+}
+
+let defaultTrashRepository: ITrashRepository | null = null
+
+export function getTrashRepository(): ITrashRepository {
+  if (!defaultTrashRepository) {
+    defaultTrashRepository = new TrashRepository()
+  }
+  return defaultTrashRepository
 }

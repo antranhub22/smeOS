@@ -25,12 +25,12 @@ const SAMPLE_PRODUCTS: ProductMatchCandidate[] = [
   {
     id: "prod-1",
     code: "FL-801",
-    name: "Bó Hoa Hồng Ohara Tinh Khôi",
+    name: "Sản Phẩm Hồng Ohara Tinh Khôi",
     sellingPriceVnd: 550_000,
-    category: "Bó hoa",
+    category: "Sản phẩm",
     colorTheme: "Hồng pastel",
     occasions: ["Sinh nhật", "Tình yêu", "Kỷ niệm"],
-    style: "Bó hoa tròn",
+    style: "Sản phẩm tròn",
     highlightFlowers: ["Hồng Ohara", "Baby trắng", "Lá bạc"],
     isFeatured: true,
   },
@@ -49,12 +49,12 @@ const SAMPLE_PRODUCTS: ProductMatchCandidate[] = [
   {
     id: "prod-3",
     code: "FL-803",
-    name: "Bó Hoa Hồng Juliet Hoàng Gia VIP",
+    name: "Sản Phẩm Hồng Juliet Hoàng Gia VIP",
     sellingPriceVnd: 850_000,
-    category: "Bó hoa",
+    category: "Sản phẩm",
     colorTheme: "Cam pastel",
     occasions: ["Sinh nhật", "Kỷ niệm", "Tình yêu"],
-    style: "Bó hoa dài",
+    style: "Sản phẩm dài",
     highlightFlowers: ["Hồng Juliet", "Lan hồ điệp", "Phi yến"],
     isFeatured: true,
   },
@@ -208,10 +208,10 @@ export function BudgetMatchingModal({
           </div>
         </div>
 
-        {/* Danh sách mẫu hoa phù hợp chuẩn ngân sách */}
+        {/* Danh sách sản phẩm phù hợp chuẩn ngân sách */}
         <div>
           <div className="text-caption font-bold text-text mb-2 flex items-center justify-between">
-            <span>Mẫu hoa chuẩn ngân sách ({matchResult.bestMatches.length} mẫu)</span>
+            <span>Sản phẩm chuẩn ngân sách ({matchResult.bestMatches.length} mẫu)</span>
             <span className="text-caption text-muted">Sắp xếp theo độ khớp cao nhất</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">

@@ -8,7 +8,7 @@ import {
 } from "../product-master-merge"
 
 const SALES: SalesData = {
-  description: "Bó hoa hồng đỏ cho ngày kỷ niệm",
+  description: "Sản phẩm hồng đỏ cho ngày kỷ niệm",
   tags: ["hoa-hong", "ky-niem"],
   occasions: ["Kỷ niệm"],
   occasionCodes: ["anniversary"],

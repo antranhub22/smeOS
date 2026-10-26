@@ -5,6 +5,7 @@ import { ChevronDown, MessageCircle, QrCode, X } from "lucide-react"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { generateQRCodeDataUrl } from "@/core/media/qr-engine"
 import { SHOP_INFO_EVENT, ShopInfoSheet, ShopLogo, type ShopInfoSection } from "./shop-info-sheet"
+import { LanguageToggle } from "./language-toggle"
 
 interface ShopContactBarProps {
   shop: ShopContact
@@ -37,6 +38,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
   }, [shop.zaloQrUrl, shop.zaloUrl])
 
   const qrImageUrl = shop.zaloQrUrl || generatedQr
+  const showLanguageToggle = shop.languagePolicy?.enableLanguageSwitcher && (shop.languagePolicy.activeLocales?.length ?? 0) > 1
 
   return (
     <>
@@ -53,6 +55,11 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
             <span className="min-w-0 truncate text-body font-bold text-foreground">{shop.name}</span>
             <ChevronDown size={16} className="shrink-0 text-text-muted" aria-hidden="true" />
           </button>
+
+          {/* Nút chuyển đổi ngôn ngữ khi cửa hàng bật tính năng này */}
+          {showLanguageToggle && (
+            <LanguageToggle activeLocales={shop.languagePolicy?.activeLocales} />
+          )}
 
           {/* Nút xem QR Code Zalo (từ hồ sơ cửa hàng) */}
           {qrImageUrl && (

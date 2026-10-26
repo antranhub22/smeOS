@@ -5,9 +5,9 @@ import { refundJob } from "@/modules/usage/use-cases/refund-job"
 import { refundPartial } from "@/modules/usage/use-cases/refund-partial"
 import type { TenantContext } from "@/core/tenancy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
-import { JobEventRepository } from "@/modules/jobs/infra/job-event-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { JobEventRepository, getJobEventRepository } from "@/modules/jobs/infra/job-event-repository"
 import {
   canApproveVariant,
   MEDIA_VARIANT_CLOUD_FEATURE,
@@ -74,7 +74,7 @@ export type VariantJobDetail = {
     /** `provider_scene` = nhà cung cấp làm trọn gói; `provider_background` = chỉ xin hậu cảnh;
      *  `local` / `local_fallback` = luồng cục bộ (lùi khi mọi nhà cung cấp lỗi). */
     flow: string
-    /** Bó hoa đã được nhà cung cấp chỉnh sáng — nhãn "đã chỉnh sáng bằng AI". */
+    /** Sản phẩm đã được nhà cung cấp chỉnh sáng — nhãn "đã chỉnh sáng bằng AI". */
     ai_relit: boolean
     integrity_method: string
     provider_steps: Record<string, unknown> | null
@@ -126,16 +126,16 @@ function doc<T>(nguon: unknown, khoa: string, mac_dinh: T): T {
  * không có gì để duyệt hay để đem đi đăng.
  */
 export async function getVariantJob(ctx: TenantContext, jobId: string): Promise<VariantJobDetail> {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await getGenerationJobRepository().findById(ctx, jobId)
   // Chỉ job biến thể — `:id` của một job khác (vd. video) không được đọc qua đây.
   if (!job || !(MEDIA_VARIANT_FEATURES as readonly string[]).includes(job.feature)) throw notFound()
 
   // Quyền sở hữu job đã kiểm ở trên — `job_events` không mang
   // `organization_id`, nên thứ tự này bắt buộc, không phải tuỳ chọn.
-  const suKien = await new JobEventRepository().findLatestByType(jobId, "variant_integrity")
+  const suKien = await getJobEventRepository().findLatestByType(jobId, "variant_integrity")
   const integrity = parseVariantIntegrityBlock(suKien?.payload)
 
-  const assetRepo = new AssetRepository()
+  const assetRepo = getAssetRepository()
   const storage = getStorageProvider()
 
   const payload = job.payload

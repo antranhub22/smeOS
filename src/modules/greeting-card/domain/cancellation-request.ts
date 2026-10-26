@@ -75,7 +75,7 @@ export function canProposeCancellation(order: {
   if (order.productionStatus && order.productionStatus !== "WAITING") {
     return {
       allowed: false,
-      reason: "Thợ đang cắm hoa, chưa đề xuất hủy được. Vui lòng liên hệ trực tiếp Điều hành.",
+      reason: "Thợ đang chế tác, chưa đề xuất hủy được. Vui lòng liên hệ trực tiếp Điều hành.",
     }
   }
   return { allowed: true }

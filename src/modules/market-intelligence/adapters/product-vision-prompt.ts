@@ -38,12 +38,12 @@ export interface VisionExtractionResult {
 }
 
 export const PRODUCT_VISION_SYSTEM_PROMPT = `Bạn là chuyên gia thẩm định thị giác hoa nghệ thuật cao cấp của FloraOS.
-Nhiệm vụ của bạn là quan sát thật kỹ bức ảnh sản phẩm hoa tươi được cung cấp, nhận diện chính xác từng chi tiết và xuất ra định dạng JSON thuần túy (không markdown, không giải thích ngoài JSON) theo đúng cấu trúc sau:
+Nhiệm vụ của bạn là quan sát thật kỹ bức ảnh sản phẩm sản phẩm được cung cấp, nhận diện chính xác từng chi tiết và xuất ra định dạng JSON thuần túy (không markdown, không giải thích ngoài JSON) theo đúng cấu trúc sau:
 {
-  "product_name": "Tên thương mại cuốn hút cho sản phẩm (ví dụ: Bó hoa hồng đỏ Passionate Love, Bó hoa tulip cam cháy vintage...)",
+  "product_name": "Tên thương mại cuốn hút cho sản phẩm (ví dụ: Sản phẩm hồng đỏ Passionate Love, Sản phẩm tulip cam cháy vintage...)",
   "flowers": [
     {
-      "name": "Tên loại hoa chính xác bằng tiếng Việt (ví dụ: Hoa hồng đỏ Ohara, Hoa baby trắng, Hoa cúc tana...)",
+      "name": "Tên nguyên liệu chính xác bằng tiếng Việt (ví dụ: Hoa hồng đỏ Ohara, Hoa baby trắng, Hoa cúc tana...)",
       "count": 15, // ước tính số bông / cành nhìn thấy trong ảnh
       "unit": "cành", // hoặc "bông", "nhánh"
       "role": "dominant" // "dominant" cho hoa chủ đạo, "supporting" cho hoa phụ
@@ -136,7 +136,7 @@ export function productVisionUserText(productTitle?: string | undefined, industr
     return `Hãy quan sát thật kỹ và bóc tách toàn diện sản phẩm hoa trong bức ảnh này.${
       productTitle ? ` Gợi ý tiêu đề ban đầu: ${productTitle}.` : ""
     } Đặc biệt chú ý:
-1. Nhận diện các loại hoa chính, hoa phụ và cả LÁ PHỤ ĐỆM (foliage).
+1. Nhận diện các nguyên liệu chính, hoa phụ và cả LÁ PHỤ ĐỆM (foliage).
 2. Soi kỹ mặt trước, chân bó và vùng nơ xem CÓ THIỆP / BIỂN CHỮ KHÔNG, đọc chính xác nội dung chữ in/viết trên thiệp (OCR).
 3. Bóc tách chi tiết chất liệu giấy gói, màu ruy băng và phụ kiện trang trí đi kèm.`;
   }
@@ -181,7 +181,7 @@ export function parseProductVisionJson(
       parsed.flowers.forEach((f: VisionBomItem, idx: number) => {
         components.push({
           id: `flower-${idx}`,
-          flowerType: f.name || `Hoa tươi #${idx + 1}`,
+          flowerType: f.name || `Nguyên liệu #${idx + 1}`,
           quantityEstimate: parseInt(String(f.count ?? f.quantity)) || 0,
           unit: f.unit || "cành",
           role: f.role === "supporting" ? "supporting" : "dominant",
@@ -319,7 +319,7 @@ export function parseProductVisionJson(
     };
 
     return {
-      productName: parsed.product_name || productTitle || "Bó hoa tươi nghệ thuật",
+      productName: parsed.product_name || productTitle || "Sản phẩm mới",
       components,
       attributes,
       packaging,

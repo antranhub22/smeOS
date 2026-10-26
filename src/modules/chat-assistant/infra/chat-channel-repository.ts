@@ -227,3 +227,9 @@ export class ChatChannelRepository {
     }
   }
 }
+
+let _chatChannelRepo: ChatChannelRepository | null = null
+export function getChatChannelRepository(): ChatChannelRepository {
+  if (!_chatChannelRepo) _chatChannelRepo = new ChatChannelRepository()
+  return _chatChannelRepo
+}

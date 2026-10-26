@@ -134,3 +134,9 @@ export class FieldDefinitionRepository {
     })
   }
 }
+
+let _fieldDefinitionRepo: FieldDefinitionRepository | null = null
+export function getFieldDefinitionRepository(): FieldDefinitionRepository {
+  if (!_fieldDefinitionRepo) _fieldDefinitionRepo = new FieldDefinitionRepository()
+  return _fieldDefinitionRepo
+}

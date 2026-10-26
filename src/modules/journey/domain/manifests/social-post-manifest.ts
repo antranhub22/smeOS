@@ -57,7 +57,7 @@ export const SOCIAL_POST_MANIFEST: JourneyManifestV2 = {
       {
         kind: 'choose_product',
         key: 'featured_flower',
-        label: 'Mẫu hoa làm chủ đề',
+        label: 'Sản phẩm làm chủ đề',
         target: 'content_context',
         decision: 'D-CHOOSE-PRODUCT',
         required: false,

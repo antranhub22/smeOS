@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { BusinessProfileFactReader } from './business-profile-fact-reader'
+import { BusinessProfileFactReader } from '../business-profile-fact-reader'
 import { prisma } from '@/core/tenancy/infra/prisma'
 
 vi.mock('@/core/tenancy/infra/prisma', () => ({

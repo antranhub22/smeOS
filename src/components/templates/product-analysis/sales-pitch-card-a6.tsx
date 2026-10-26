@@ -14,26 +14,74 @@ import type { SalesPitchData } from "@/modules/products/domain/sales-pitch-templ
 import { formatCurrencyVnd } from "@/core/templates/domain/variable-catalog"
 import { useI18n } from "@/lib/i18n"
 
+export type SalesPitchCardFormat = "a6" | "square" | "story"
+export type SalesPitchCardTheme = "classic" | "minimal" | "festive"
+
 export interface SalesPitchCardA6Props {
   activePitch: SalesPitchData
   status?: "DRAFT" | "FINALIZED"
+  cardFormat?: SalesPitchCardFormat
+  theme?: SalesPitchCardTheme
   className?: string
 }
 
 /**
- * Template Thẻ Chào Khách A6 Trực Quan (Chức năng Phân tích ảnh sản phẩm & Bán hàng)
- * Tỷ lệ chuẩn A6 105x148mm, hỗ trợ chụp canvas xuất ảnh Retina 2x & PDF in ấn.
+ * Template Thẻ Chào Khách Đa Kích Thước & Đa Phong Cách (Công cụ 03 - Tạo thẻ chào sản phẩm)
+ * Hỗ trợ các tỷ lệ:
+ * - A6 (105x148mm ~ 3:4 / bưu thiếp in ấn & gửi chat)
+ * - Square (1:1 ~ vuông tối ưu tin nhắn Zalo/Messenger/Instagram)
+ * - Story (9:16 ~ dọc tối ưu Story Facebook / Zalo Diary)
  */
 export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props>(
-  function SalesPitchCardA6({ activePitch, status = "DRAFT", className }, ref) {
+  function SalesPitchCardA6(
+    {
+      activePitch,
+      status = "DRAFT",
+      cardFormat = "a6",
+      theme = "classic",
+      className,
+    },
+    ref
+  ) {
     const { ti } = useI18n()
+
+    const themeStyles = {
+      classic: {
+        cardBorder: "border-border/80",
+        badgeBg: "bg-primary/10 text-primary",
+        priceGradient: "from-black/85 via-black/45 to-transparent",
+        accentDot: "bg-primary",
+      },
+      minimal: {
+        cardBorder: "border-border/60 shadow-md",
+        badgeBg: "bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300",
+        priceGradient: "from-stone-950/90 via-stone-900/50 to-transparent",
+        accentDot: "bg-stone-600 dark:bg-stone-400",
+      },
+      festive: {
+        cardBorder: "border-rose-300/80 shadow-rose-100 dark:shadow-none",
+        badgeBg: "bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
+        priceGradient: "from-rose-950/90 via-rose-900/40 to-transparent",
+        accentDot: "bg-rose-500",
+      },
+    }[theme]
+
+    const imageAspectClass =
+      cardFormat === "square"
+        ? "aspect-square max-h-[300px]"
+        : cardFormat === "story"
+        ? "aspect-[4/3] sm:aspect-[16/11]"
+        : "aspect-[4/3]"
+
     return (
       <Card
         ref={ref}
-        className={`overflow-hidden rounded-3xl border border-border/80 bg-surface shadow-lg transition-all duration-300 hover:shadow-xl ${className ?? ""}`}
+        data-card-format={cardFormat}
+        data-card-theme={theme}
+        className={`overflow-hidden rounded-3xl border bg-surface shadow-lg transition-all duration-300 hover:shadow-xl ${themeStyles.cardBorder} ${className ?? ""}`}
       >
         {/* Card Image Cover with Badges */}
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-alt">
+        <div className={`relative ${imageAspectClass} w-full overflow-hidden bg-surface-alt`}>
           {activePitch.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -104,7 +152,7 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
               {activePitch.occasions.map((occ, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-semibold text-primary"
+                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-caption font-semibold ${themeStyles.badgeBg}`}
                 >
                   <Tag size={10} />
                   {occ}
@@ -129,7 +177,7 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
               {activePitch.mainFlowers.map((flower, idx) => (
                 <div key={idx} className="pt-1.5 first:pt-0 flex items-center justify-between">
                   <span className="font-semibold text-text flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <span className={`h-1.5 w-1.5 rounded-full ${themeStyles.accentDot}`} />
                     {flower.name}
                     {flower.color && (
                       <span className="text-caption font-normal text-text-muted">({flower.color})</span>

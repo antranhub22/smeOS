@@ -217,7 +217,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                 </div>
 
                 <div>
-                  <div className="mb-2 font-bold text-text">Mẫu hoa đặt cắm</div>
+                  <div className="mb-2 font-bold text-text">Sản phẩm đặt cắm</div>
                   <div className="divide-y divide-border rounded-lg border border-border">
                     {order.items?.map((it) => (
                       <div key={it.id} className="flex items-center justify-between p-3 text-caption">
@@ -261,14 +261,14 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
             {activeTab === "florist" && (
               <div className="space-y-4">
                 <div className="rounded-lg bg-info-bg/70 border border-info/30 p-3 text-caption text-info">
-                  ℹ️ <strong>Nguyên tắc bảo mật:</strong> Lát cắt dữ liệu cho xưởng cắm hoa chỉ hiển thị định lượng hoa, ảnh mẫu và thời hạn. Toàn bộ giá vốn, giá bán đã được lọc bỏ.
+                  ℹ️ <strong>Nguyên tắc bảo mật:</strong> Lát cắt dữ liệu cho xưởng chế tác chỉ hiển thị định lượng hoa, ảnh mẫu và thời hạn. Toàn bộ giá vốn, giá bán đã được lọc bỏ.
                 </div>
                 <FloristTicketCard
                   orderCode={order.code}
                   productName={productNameText}
                   sampleImageUrl={sampleImg}
                   deadlineTime={`${order.deliveryWindow?.date} (${order.deliveryWindow?.timeSlot})`}
-                  floristName="Thợ cắm hoa xưởng"
+                  floristName="Thợ chế tác hoa xưởng"
                   items={floristItems}
                   wrapStyle={wrapStyleText}
                   notes={order.internalNote ?? undefined}

@@ -1,9 +1,9 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
-import { UserRepository } from "@/modules/organization/infra/user-repository"
-import { CapabilityRepository } from "@/modules/organization/infra/capability-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
+import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
+import { CapabilityRepository, getCapabilityRepository } from "@/modules/organization/infra/capability-repository"
 import { getCurrentOrganization } from "@/modules/organization/use-cases/get-current-organization"
 import { updateCurrentOrganization } from "@/modules/organization/use-cases/update-current-organization"
 import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
@@ -27,10 +27,10 @@ export interface SaleVisibilityView {
 
 /** Nhân viên bán hàng thuần (gửi được link, không có quyền luôn-thấy-tất-cả) đang hoạt động. */
 async function listSales(ctx: TenantContext): Promise<Array<Omit<SaleVisibilityMember, "mode">>> {
-  const roles = new RoleRepository()
-  const caps = new CapabilityRepository()
-  const users = new UserRepository()
-  const rows = (await new MembershipRepository().list(ctx)).filter((m) => m.status === "ACTIVE")
+  const roles = getRoleRepository()
+  const caps = getCapabilityRepository()
+  const users = getUserRepository()
+  const rows = (await getMembershipRepository().list(ctx)).filter((m) => m.status === "ACTIVE")
   const out = await Promise.all(rows.map(async (m) => {
     const role = await roles.findAssignableById(ctx, m.role_id)
     if (!role) return null

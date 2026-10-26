@@ -1,6 +1,12 @@
 import type { TenantContext } from "@/core/tenancy"
-import { AuditLogRepository, type RecordAuditLogInput } from "@/modules/audit/infra/audit-log-repository"
+import { getAuditLogRepository } from "@/modules/audit/infra/audit-log-repository"
+import type {
+  IAuditLogRepository,
+  RecordAuditLogInput,
+} from "@/modules/audit/domain/repositories/audit-log-repository.interface"
 import type { DbClient } from "@/modules/audit/infra/db-client"
+
+export type { RecordAuditLogInput, IAuditLogRepository }
 
 /**
  * Điểm gọi chung cho mọi hành động duyệt (`YC-R4`). Nhận `db` tuỳ chọn để
@@ -10,7 +16,9 @@ import type { DbClient } from "@/modules/audit/infra/db-client"
 export function recordAuditLog(
   ctx: TenantContext,
   input: RecordAuditLogInput,
-  db?: DbClient
+  db?: DbClient,
+  repo?: IAuditLogRepository
 ) {
-  return new AuditLogRepository(db).record(ctx, input)
+  const repository = repo ?? getAuditLogRepository(db)
+  return repository.record(ctx, input)
 }

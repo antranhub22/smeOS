@@ -1,6 +1,6 @@
 import type { TenantContext } from "@/core/tenancy"
 import { loadTrackingDataset } from "./get-tracking-pipeline"
-import { TrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
+import { TrackingPipelineRepository, getTrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
 import { getIndustryPipelineSteps } from "../domain/tracking-pipeline-types"
 import {
   calendarDays, dashboardOf, filterAndSort, kanbanColumns, paginate, slaStatusOf,
@@ -29,7 +29,7 @@ export interface TrackingQueryParams {
  * sắp xếp chung; mỗi view chỉ khác cách trả kết quả. Trình duyệt chỉ nhận một trang, một nhóm
  * cột rút gọn, một khoảng lịch hoặc số tổng hợp — không nhận cả tập.
  */
-export async function queryTracking(ctx: TenantContext, p: TrackingQueryParams, now = new Date(), repo = new TrackingPipelineRepository()) {
+export async function queryTracking(ctx: TenantContext, p: TrackingQueryParams, now = new Date(), repo = getTrackingPipelineRepository()) {
   const { items, sla, industryKey } = await loadTrackingDataset(ctx, repo, now)
   const steps = getIndustryPipelineSteps(industryKey)
   const enriched: TrackingViewItem[] = items.map((i) => ({ ...i, sla: slaStatusOf(i, sla, now) }))

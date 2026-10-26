@@ -39,7 +39,7 @@ const OCCASION_SECTIONS = [
     audience: "Tân cử nhân, sinh viên, bạn bè tặng nhau",
     stockAdvice: "Nên nhập: Hoa hướng dương, Cúc tana, Cúc họa mi, Hồng vàng",
     colorAdvice: "Tông vàng rực rỡ, cam nhiệt huyết, trắng hy vọng",
-    keywords: ["tốt nghiệp", "cử nhân", "bó hoa"],
+    keywords: ["tốt nghiệp", "cử nhân", "sản phẩm"],
     badgeClass: "bg-sand-50 text-sand-700 border-sand-200",
   },
   {
@@ -63,7 +63,7 @@ export function BriefOccasionsView({
   const currentSection =
     OCCASION_SECTIONS.find((s) => s.id === activeOccasionId) ?? OCCASION_SECTIONS[0]!;
 
-  // Lọc các mẫu hoa khớp với dịp lễ đang chọn
+  // Lọc các sản phẩm khớp với dịp lễ đang chọn
   const matchingItems = opportunities.filter((item) => {
     const text = `${item.topicName} ${item.opportunitySummary} ${item.audience || ""}`.toLowerCase();
     return currentSection.keywords.some((kw) => text.includes(kw));
@@ -99,7 +99,7 @@ export function BriefOccasionsView({
               <div className="flex items-baseline justify-between pt-1">
                 <span className="text-caption text-cool-500">{sec.timeframe}</span>
                 <span className="text-xs font-black text-orchid-700 bg-white px-2 py-0.5 rounded-md border border-orchid-100">
-                  {count} mẫu hoa
+                  {count} sản phẩm
                 </span>
               </div>
             </button>
@@ -119,7 +119,7 @@ export function BriefOccasionsView({
             </p>
           </div>
           <span className="text-xs font-bold text-orchid-700 bg-orchid-100/80 px-3 py-1 rounded-full self-start sm:self-auto">
-            {matchingItems.length} mẫu hoa gợi ý trong kho
+            {matchingItems.length} sản phẩm gợi ý trong kho
           </span>
         </div>
 
@@ -139,7 +139,7 @@ export function BriefOccasionsView({
       <div className="space-y-2">
         <h4 className="text-xs font-bold uppercase tracking-wider text-cool-600 flex items-center gap-1.5">
           <Sparkles size={13} className="text-orchid-600" />
-          Mẫu hoa gợi ý ({matchingItems.length})
+          Sản phẩm gợi ý ({matchingItems.length})
         </h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

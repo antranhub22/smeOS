@@ -4,7 +4,7 @@
  */
 
 import type { TenantContext } from "@/core/tenancy"
-import { ChatChannelRepository } from "../infra/chat-channel-repository"
+import { ChatChannelRepository, getChatChannelRepository } from "../infra/chat-channel-repository"
 import {
   CHANNEL_PRICING_CATALOG,
   isChannelSubscriptionActive,
@@ -26,7 +26,7 @@ export interface ChannelStatusItem {
 
 export async function listChatChannels(
   ctx: TenantContext,
-  repository = new ChatChannelRepository()
+  repository = getChatChannelRepository()
 ): Promise<ChannelStatusItem[]> {
   const existingList = await repository.listAll(ctx)
   const existingMap = new Map(existingList.map((c) => [c.channel, c]))

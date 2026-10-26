@@ -1,7 +1,13 @@
 import type { TenantContext } from "@/core/tenancy"
-import { TemplateOverrideRepository } from "@/modules/templates/infra/template-override-repository"
+import type { ITemplateOverrideRepository } from "../domain/repositories/template-override-repository.interface"
+import { getTemplateOverrideRepository } from "../infra/template-override-repository"
 
 /** `GET /template-overrides?templateKey=...` (nợ #99). */
-export function getTemplateOverrides(ctx: TenantContext, templateKey: string) {
-  return new TemplateOverrideRepository().listForTemplate(ctx, templateKey)
+export function getTemplateOverrides(
+  ctx: TenantContext,
+  templateKey: string,
+  repo: ITemplateOverrideRepository = getTemplateOverrideRepository()
+) {
+  return repo.listForTemplate(ctx, templateKey)
 }
+

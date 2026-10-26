@@ -23,7 +23,7 @@ interface RouteContext {
 
 /**
  * `GET /api/v1/coordinator/templates/[id]/reminders` (R1)
- * Lấy cấu hình override nhắc việc của một Thẻ chào mẫu hoa.
+ * Lấy cấu hình override nhắc việc của một Thẻ chào sản phẩm.
  */
 export const GET = handle(async (request, context: unknown) => {
   const { ctx } = await requireTenantContext(request)
@@ -42,7 +42,7 @@ export const GET = handle(async (request, context: unknown) => {
 
 /**
  * `PUT /api/v1/coordinator/templates/[id]/reminders` (R12)
- * Cập nhật cấu hình override nhắc việc cho một Thẻ chào mẫu hoa.
+ * Cập nhật cấu hình override nhắc việc cho một Thẻ chào sản phẩm.
  */
 export const PUT = handle(async (request, context: unknown) => {
   const { ctx } = await requireTenantContext(request)

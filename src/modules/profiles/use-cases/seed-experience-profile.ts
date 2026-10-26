@@ -1,6 +1,6 @@
 import type { DbClient } from "../infra/db-client"
-import { BusinessProfileRepository } from "../infra/business-profile-repository"
-import { BrandProfileRepository } from "../infra/brand-profile-repository"
+import { getBusinessProfileRepository } from "../infra/business-profile-repository"
+import { getBrandProfileRepository } from "../infra/brand-profile-repository"
 import type { TenantContext } from "@/core/tenancy"
 
 export const MOC_LAN_BUSINESS_PROFILE = {
@@ -11,7 +11,7 @@ export const MOC_LAN_BUSINESS_PROFILE = {
   address: "42 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh",
   website: "https://siinstore.vn",
   tax_code: "0318999888",
-  description: "Siin Store — Cửa hàng hoa tươi cao cấp, chuyên hoa thiết kế, hoa sinh nhật, hoa sự kiện và hoa cưới",
+  description: "Siin Store — Cửa hàng sản phẩm cao cấp, chuyên hoa thiết kế, hoa sinh nhật, hoa sự kiện và hoa cưới",
   operating_hours: {
     open: "07:30",
     close: "21:30",
@@ -37,14 +37,14 @@ export const MOC_LAN_BRAND_PROFILE = {
     default: ["#siinstore", "#hoatuoisaigon", "#hoathietke", "#hoasinhnhat", "#hoatinhyeu"],
   },
   cta_templates: {
-    default: "Nhắn tin Zalo hoặc gọi ngay Hotline để đội ngũ Siin Store tư vấn mẫu hoa độc bản dành riêng cho bạn!",
+    default: "Nhắn tin Zalo hoặc gọi ngay Hotline để đội ngũ Siin Store tư vấn sản phẩm độc bản dành riêng cho bạn!",
     free_gifts: [
       "Tặng thiệp chúc mừng thiết kế riêng theo thông điệp",
-      "Tặng gói nước dưỡng hoa Chrysal giúp hoa tươi lâu 5 - 7 ngày",
+      "Tặng gói nước dưỡng hoa Chrysal giúp sản phẩm lâu 5 - 7 ngày",
       "Ruy băng lụa cao cấp in nhũ sang trọng",
     ],
     guarantees: [
-      "100% hoa tươi mới tuyển chọn nhập trong ngày",
+      "100% sản phẩm mới tuyển chọn nhập trong ngày",
       "Chụp hình hoa thực tế gửi quý khách duyệt trước khi giao",
       "Giao hoa hỏa tốc đúng giờ (60 - 90 phút nội thành)",
       "Bảo hành đổi mới nếu hoa bị dập héo khi vận chuyển",
@@ -277,8 +277,8 @@ export async function seedExperienceMasterProfile(
     capabilities: new Set<string>(),
   }
 
-  const bizRepo = new BusinessProfileRepository(db)
-  const brandRepo = new BrandProfileRepository(db)
+  const bizRepo = getBusinessProfileRepository(db)
+  const brandRepo = getBrandProfileRepository(db)
 
   const [existingBiz, existingBrand] = await Promise.all([
     bizRepo.current(dummyCtx),

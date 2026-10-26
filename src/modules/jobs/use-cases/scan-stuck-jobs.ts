@@ -1,4 +1,4 @@
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { STUCK_JOB_TIMEOUT_MS } from "@/modules/jobs/domain/job-rules"
 
 /**
@@ -7,5 +7,5 @@ import { STUCK_JOB_TIMEOUT_MS } from "@/modules/jobs/domain/job-rules"
  * (`scripts/scan-stuck-jobs.ts`), không phải một route.
  */
 export function scanStuckJobs(now: Date = new Date()): Promise<number> {
-  return new GenerationJobRepository().markStuckAsFailed(now, STUCK_JOB_TIMEOUT_MS)
+  return getGenerationJobRepository().markStuckAsFailed(now, STUCK_JOB_TIMEOUT_MS)
 }

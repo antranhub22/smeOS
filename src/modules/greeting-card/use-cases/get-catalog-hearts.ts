@@ -1,8 +1,8 @@
 import type { TenantContext } from "@/core/tenancy"
 import { notFound } from "@/core/http/errors"
 import { tallyHearts } from "../domain/catalog-hearts"
-import { CatalogHeartsRepository } from "../infra/catalog-hearts-repository"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { CatalogHeartsRepository, getCatalogHeartsRepository } from "../infra/catalog-hearts-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 
 /**
  * Bảng "Mẫu được thả tim nhiều nhất" của một bộ sưu tập: cộng tim từ link gửi riêng và link công
@@ -11,8 +11,8 @@ import { GreetingCardRepository } from "../infra/greeting-card-repository"
 export async function getCatalogHearts(
   ctx: TenantContext,
   catalogId: string,
-  catalogs = new GreetingCardRepository(),
-  hearts = new CatalogHeartsRepository(),
+  catalogs = getGreetingCardRepository(),
+  hearts = getCatalogHeartsRepository(),
 ) {
   const catalog = await catalogs.getCatalogById(ctx, catalogId)
   if (!catalog) throw notFound()

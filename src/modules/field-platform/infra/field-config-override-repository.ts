@@ -99,3 +99,9 @@ export class FieldConfigOverrideRepository {
     })
   }
 }
+
+let _fieldConfigOverrideRepo: FieldConfigOverrideRepository | null = null
+export function getFieldConfigOverrideRepository(): FieldConfigOverrideRepository {
+  if (!_fieldConfigOverrideRepo) _fieldConfigOverrideRepo = new FieldConfigOverrideRepository()
+  return _fieldConfigOverrideRepo
+}

@@ -93,7 +93,7 @@ function buildAuthenticArc(input: PlanNarrativeArcInput): NarrativeArcOutput {
       durationSeconds: sceneDurations[1]!,
       transitionEffect: "fade",
       motionEffect: "pan_right",
-      connectionToNext: "Để sở hữu bó hoa này...",
+      connectionToNext: "Để sở hữu sản phẩm này...",
       authenticEffect: {
         cropRatio: "4:5",
         motionEffect: "pan_right",
@@ -108,7 +108,7 @@ function buildAuthenticArc(input: PlanNarrativeArcInput): NarrativeArcOutput {
       beat: "CTA",
       beatTitle: "Kêu gọi đặt hoa",
       sceneDescription: "Ảnh gốc + CTA rõ ràng",
-      voiceScript: topic.topicCta || "Inbox mình để đặt hoa tươi ngay hôm nay nhé!",
+      voiceScript: topic.topicCta || "Inbox mình để đặt hàng ngay hôm nay nhé!",
       textOverlay: topic.topicCta || "Đặt hoa ngay! 🌹",
       durationSeconds: sceneDurations[2]!,
       transitionEffect: "fade",
@@ -299,7 +299,7 @@ function selectCreativePresets(style: string, category: string): readonly Preset
   // Bộ presets theo style/category (mở rộng sau)
   const romanticPresets: PresetOption[] = [
     { name: "Xưởng hoa ấm áp", preset: "workshop_cozy", lighting: "warm_golden", surface: "wooden_table" },
-    { name: "Bàn tay thợ hoa", preset: "artisan_hands", lighting: "soft_window", surface: "linen_cloth" },
+    { name: "Bàn tay nghệ nhân", preset: "artisan_hands", lighting: "soft_window", surface: "linen_cloth" },
     { name: "Studio trắng", preset: "studio_white", lighting: "soft_diffused", surface: "marble" },
     { name: "Phòng khách ấm cúng", preset: "living_room", lighting: "natural_window", surface: "wooden_shelf" },
     { name: "Cửa hàng hoa", preset: "flower_shop", lighting: "store_ambient", surface: "display_counter" },

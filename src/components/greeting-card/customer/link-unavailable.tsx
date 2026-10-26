@@ -18,7 +18,7 @@ export function LinkUnavailable({ shop, title, message, action }: {
         <p className="text-body text-text-muted">
           {message ?? (shop
             ? `Link có thể đã hết hạn hoặc cửa hàng đã cập nhật mẫu mới. Liên hệ ${shop.name} để nhận bộ sưu tập mới nhất.`
-            : "Đường dẫn xem mẫu hoa này không tồn tại hoặc đã hết thời gian sử dụng. Vui lòng liên hệ người gửi hoặc cửa hàng hoa để nhận link mới.")}
+            : "Đường dẫn xem sản phẩm này không tồn tại hoặc đã hết thời gian sử dụng. Vui lòng liên hệ người gửi hoặc cửa hàng hoa để nhận link mới.")}
         </p>
         {action && (
           <a href={action.href} className="mt-2 inline-flex h-12 w-full items-center justify-center rounded-xl bg-primary text-body font-bold text-surface hover:bg-primary-dark">

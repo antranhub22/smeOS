@@ -68,3 +68,10 @@ export class SessionRepository {
     })
   }
 }
+
+let _sessionRepositorySingleton: SessionRepository | null = null
+export function getSessionRepository(db?: DbClient): SessionRepository {
+  if (db) return new SessionRepository(db)
+  if (!_sessionRepositorySingleton) _sessionRepositorySingleton = new SessionRepository()
+  return _sessionRepositorySingleton
+}

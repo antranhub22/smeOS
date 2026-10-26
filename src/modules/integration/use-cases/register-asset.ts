@@ -1,6 +1,6 @@
 import { validationFailed, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { registerAsset } from "@/modules/assets/use-cases/register-asset"
 import { storageKeyMatchesContext } from "@/modules/assets/domain/storage-key"
 import type { asset_kind } from "@/modules/assets/infra/entities"
@@ -42,7 +42,7 @@ export async function registerIntegrationAsset(
   ctx: TenantContext,
   input: RegisterIntegrationAssetInput
 ) {
-  const repo = new AssetRepository()
+  const repo = getAssetRepository()
 
   // Validate parent asset exists, is APPROVED, and belongs to same product (if productId provided)
   const parentAsset = await repo.findById(ctx, input.parentAssetId)

@@ -9,7 +9,7 @@
  * Phương án phải KHÁC NHAU THẬT, không phải n bản giống hệt:
  *   - nhà cung cấp có seed (đám mây): giữ nguyên chỉ đạo, mỗi phương án một
  *     seed — cùng ý đồ, hậu cảnh khác;
- *   - phông cục bộ (không có seed, không đọc prompt): đổi vị trí bó hoa và
+ *   - phông cục bộ (không có seed, không đọc prompt): đổi vị trí sản phẩm và
  *     hướng sáng theo vòng — khác bố cục và hướng bóng.
  *
  * Hai nút trên thẻ cảnh:
@@ -233,7 +233,7 @@ export const SIMILAR_CANDIDATE_COUNT = 2
  * Chỉ đạo gốc gửi cho "Sinh lại giống thế này" (`variant_count =
  * SIMILAR_CANDIDATE_COUNT`) sao cho KHÔNG phương án nào trùng ảnh đang xem:
  *   - đám mây: cùng chỉ đạo, bỏ seed → worker bốc seed mới cho từng phương án;
- *   - cục bộ (không seed): dời vị trí bó hoa một nấc — `candidateDirections`
+ *   - cục bộ (không seed): dời vị trí sản phẩm một nấc — `candidateDirections`
  *     dời tiếp nấc nữa cho phương án 2, nên cả hai khác ảnh đang xem.
  */
 export function similarDirection(current: VariantDirection, engine: VariantEngine): VariantDirection {

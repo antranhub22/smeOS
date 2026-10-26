@@ -44,7 +44,7 @@ export function LandingTemplateProcess({
           3 Bước Hoàn Hảo Để Trao Yêu Thương
         </h3>
         <p className={`text-caption ${isLuxury ? "font-serif text-text/75" : "text-text-muted"}`}>
-          Quy trình chuẩn hóa từ lúc chọn mẫu đến khi hoa tươi thắm đến tay người nhận.
+          Quy trình chuẩn hóa từ lúc chọn mẫu đến khi sản phẩm thắm đến tay người nhận.
         </p>
       </div>
 

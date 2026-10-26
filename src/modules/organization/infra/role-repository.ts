@@ -98,3 +98,10 @@ export class RoleRepository {
     }
   }
 }
+
+let _roleRepositorySingleton: RoleRepository | null = null
+export function getRoleRepository(db?: DbClient): RoleRepository {
+  if (db) return new RoleRepository(db)
+  if (!_roleRepositorySingleton) _roleRepositorySingleton = new RoleRepository()
+  return _roleRepositorySingleton
+}

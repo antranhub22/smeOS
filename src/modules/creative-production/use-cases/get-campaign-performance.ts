@@ -17,7 +17,8 @@ import {
   type CampaignPackageStatus,
   type PackageOutcome,
 } from "../domain/campaign-package-rules"
-import { CampaignPackageRepository } from "../infra/campaign-package-repository"
+import { getCampaignPackageRepository } from "../infra/campaign-package-repository"
+import type { ICampaignPackageRepository } from "../domain/repositories/campaign-package-repository.interface"
 import { launchPlanOf } from "./manage-campaign-package"
 
 const MAX_PACKAGES_FOR_LEARN = 50
@@ -32,8 +33,12 @@ function angleOf(topic: unknown): string | null {
   return typeof t?.angleCategory === "string" ? t.angleCategory : null
 }
 
-export async function getCampaignPerformance(ctx: TenantContext, id: string, now: Date = new Date()) {
-  const repo = new CampaignPackageRepository()
+export async function getCampaignPerformance(
+  ctx: TenantContext,
+  id: string,
+  now: Date = new Date(),
+  repo: ICampaignPackageRepository = getCampaignPackageRepository()
+) {
   const row = await repo.findById(ctx, id)
   if (!row) throw notFound()
 

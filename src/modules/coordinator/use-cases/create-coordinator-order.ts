@@ -8,7 +8,8 @@
 
 import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { CustomerRepository } from "@/modules/crm/infra/customer-repository"
+import type { ICustomerRepository } from "@/modules/crm/domain/repositories/customer-repository.interface"
+import { getCustomerRepository } from "@/modules/crm/infra/customer-repository"
 import { applyCustomFields } from "@/modules/field-platform/use-cases/apply-custom-fields"
 import { assertActiveCatalogCode, getActiveCatalogValue } from "@/modules/field-platform/use-cases/validate-catalog-code"
 import { projectCoordinatorSnapshot } from "@/modules/products/domain/product-master-index"
@@ -19,7 +20,7 @@ import { suggestPriority } from "../domain/priority-suggestion"
 import { computeDeliveryTargetAt } from "../domain/sla-calculation"
 import { mapStageToOrderAxes } from "../domain/state-mapper"
 import { DirectMasterIndexConnector } from "../connectors/master-index-connector"
-import { CoordinatorRepository } from "../infra/coordinator-repository"
+import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import { isUniqueViolation, runInTransaction } from "../infra/transaction"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import { audit, ensureAssetsOwned, getOrderView } from "./shared"
@@ -86,7 +87,7 @@ export async function createCoordinatorOrder(
   let customerTier = input.customerTier ?? "NEW"
   let customerPhone = input.customerPhone
   if (input.customerId) {
-    const customer = await new CustomerRepository().getById(ctx, input.customerId)
+    const customer = await getCustomerRepository().getById(ctx, input.customerId)
     if (!customer) throw new AppError("UNPROCESSABLE_ENTITY", "Khách hàng không tồn tại", { customerId: input.customerId })
     customerName = customer.name
     customerTier = customer.metrics.tier
@@ -165,7 +166,7 @@ export async function createCoordinatorOrder(
     try {
       const created = await runInTransaction(async (tx) => {
         if (input.sampleAssetId) await ensureAssetsOwned(ctx, tx, [input.sampleAssetId])
-        const repo = new CoordinatorRepository(tx)
+        const repo = getCoordinatorRepository(tx)
         const seq = (await repo.countOrdersWithCodePrefix(ctx, prefix)) + 1 + attempt
         const result = await repo.createOrder(ctx, {
           code: coordinatorOrderCode(seq, now),

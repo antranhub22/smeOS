@@ -1,6 +1,6 @@
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
-import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
+import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 
 import type { ResolvedSession } from "./resolve-session"
 
@@ -60,9 +60,9 @@ export async function describeSession(
     }
   }
 
-  const organization = await new OrganizationRepository().current(ctx)
-  const workspace = await new WorkspaceRepository().findById(ctx, ctx.workspaceId)
-  const role = await new RoleRepository().findAssignableById(ctx, resolved.membership.role_id)
+  const organization = await getOrganizationRepository().current(ctx)
+  const workspace = await getWorkspaceRepository().findById(ctx, ctx.workspaceId)
+  const role = await getRoleRepository().findAssignableById(ctx, resolved.membership.role_id)
 
   return {
     ...base,

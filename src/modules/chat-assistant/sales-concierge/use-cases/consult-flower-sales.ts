@@ -1,6 +1,6 @@
 /**
  * Use-case: Consult Flower Sales.
- * Tiếp nhận yêu cầu tư vấn mua hoa từ khách hàng và gợi ý mẫu hoa phù hợp.
+ * Tiếp nhận yêu cầu tư vấn mua hoa từ khách hàng và gợi ý sản phẩm phù hợp.
  * Hoàn toàn cách ly với quy trình vận hành SaaS nội bộ.
  */
 

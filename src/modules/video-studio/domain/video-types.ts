@@ -195,7 +195,7 @@ export const VIDEO_MOTION_SPECS: Record<VideoMotionEffect, VideoMotionSpec> = {
   ZOOM_OUT: {
     motion: "ZOOM_OUT",
     label: "Zoom Out (Toàn cảnh)",
-    description: "Mở rộng góc nhìn ra trọn bó hoa",
+    description: "Mở rộng góc nhìn ra trọn sản phẩm",
     iconName: "ZoomOut",
   },
   PAN_UP: {

@@ -1,4 +1,4 @@
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 export type OrganizationSummary = {
   id: string
@@ -15,7 +15,7 @@ export type OrganizationSummary = {
  * bao giờ chứa tổ chức người dùng không thuộc về.
  */
 export async function listOrganizations(userId: string): Promise<OrganizationSummary[]> {
-  const rows = await new OrganizationRepository().listForUser(userId)
+  const rows = await getOrganizationRepository().listForUser(userId)
   return rows.map((row) => ({
     id: row.id,
     name: row.name,

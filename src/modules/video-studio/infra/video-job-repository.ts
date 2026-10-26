@@ -15,26 +15,26 @@ export type DbClient = Pick<
   "video_jobs" | "video_scenes" | "$transaction"
 >;
 
-export interface CreateVideoJobDbInput {
-  productId?: string | null | undefined;
-  title: string;
-  format: video_format;
-  durationSeconds?: number | undefined;
-  aspectRatio?: string | undefined;
-  musicTrack?: string | null | undefined;
-  voiceCode?: string | null | undefined;
-  hasSubtitle?: boolean | undefined;
-  captionStyle?: string | undefined;
-  hasWatermark?: boolean | undefined;
-  costCredits?: number | undefined;
-  scenes: VideoSceneItem[];
-}
+import type {
+  IVideoJobRepository,
+  CreateVideoJobDbInput as ICreateVideoJobDbInput,
+  VideoJobWithScenes as IVideoJobWithScenes,
+  ListVideoJobsOptions,
+  AttachPlanAudioInput,
+  UpdateStageExtra,
+} from "../domain/repositories/video-job-repository.interface";
 
-export type VideoJobWithScenes = video_jobs & {
-  scenes: video_scenes[];
+export type {
+  IVideoJobRepository,
+  ListVideoJobsOptions,
+  AttachPlanAudioInput,
+  UpdateStageExtra,
 };
 
-export class VideoJobRepository {
+export type CreateVideoJobDbInput = ICreateVideoJobDbInput;
+export type VideoJobWithScenes = IVideoJobWithScenes;
+
+export class VideoJobRepository implements IVideoJobRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   /**
@@ -282,3 +282,13 @@ export class VideoJobRepository {
     });
   }
 }
+
+let defaultVideoJobRepository: IVideoJobRepository | null = null;
+
+export function getVideoJobRepository(): IVideoJobRepository {
+  if (!defaultVideoJobRepository) {
+    defaultVideoJobRepository = new VideoJobRepository();
+  }
+  return defaultVideoJobRepository;
+}
+

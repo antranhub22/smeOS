@@ -1,0 +1,46 @@
+/**
+ * GET & PUT /api/v1/chain/collection-profile
+ *
+ * Implements Chain Collection Profile management (§9.5.8):
+ * - GET: Retrieves existing profile and list of collectable fields
+ * - PUT: Validates and publishes a new immutable profile version
+ */
+
+import { handle, jsonResponse } from "@/core/http/response"
+import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"
+import { getChainCollectionProfile } from "@/modules/field-platform/use-cases/get-chain-collection-profile"
+import { publishChainCollectionProfile } from "@/modules/field-platform/use-cases/publish-chain-collection-profile"
+import { type CollectionRule } from "@/modules/field-platform/domain/chain-collection-profile"
+
+export const GET = handle(async (request) => {
+  const { ctx } = await requireTenantContext(request)
+  const repo = new ChainCollectionProfileRepository()
+
+  const result = await getChainCollectionProfile(ctx.organizationId, repo)
+  return jsonResponse({ data: result })
+})
+
+export const PUT = handle(async (request) => {
+  const { ctx } = await requireTenantContext(request)
+  const repo = new ChainCollectionProfileRepository()
+
+  const body = (await request.json()) as { rules?: CollectionRule[] }
+  if (!body.rules || !Array.isArray(body.rules)) {
+    throw new Error("Danh sách quy tắc (rules) là bắt buộc.")
+  }
+
+  const profile = await publishChainCollectionProfile(
+    {
+      organizationId: ctx.organizationId,
+      rules: body.rules,
+      publishedBy: ctx.userId,
+    },
+    repo
+  )
+
+  return jsonResponse({ data: profile })
+})
+
+export const dynamic = "force-dynamic" as const
+export const revalidate = 0 as const

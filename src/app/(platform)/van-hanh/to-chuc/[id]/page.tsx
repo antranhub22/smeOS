@@ -17,6 +17,13 @@ type PlatformOrganizationDetail = {
   memberCount: number
   branchCount: number
   workspaceKinds: string[]
+  unlockedLocales?: string[]
+  pendingLanguageUnlock?: {
+    requested_locales: string[]
+    requested_at: string
+    requested_by?: string
+    note?: string | null
+  } | null
   pendingModelChange?: {
     requested_type: string
     requested_at: string
@@ -144,6 +151,59 @@ export default function ChiTietToChucPage() {
         </Card>
       )}
 
+      {/* Khối cảnh báo yêu cầu MỞ KHÓA NGÔN NGỮ QUỐC TẾ cần Admin duyệt */}
+      {org.pendingLanguageUnlock && (
+        <Card className="p-4 border-2 border-primary/40 bg-primary/5 rounded-2xl space-y-3">
+          <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
+            <Clock size={16} />
+            <span>Yêu cầu mở khóa Gói Ngôn Ngữ Quốc Tế (Tiếng Anh)</span>
+          </div>
+
+          <div className="text-caption text-text-muted space-y-1">
+            <div>
+              Cửa hàng gửi yêu cầu mở khóa:{" "}
+              <strong className="text-foreground">
+                Tiếng Anh ({org.pendingLanguageUnlock.requested_locales.join(", ")})
+              </strong>
+            </div>
+            <div>Thời gian gửi: {new Date(org.pendingLanguageUnlock.requested_at).toLocaleString("vi-VN")}</div>
+            {org.pendingLanguageUnlock.note && (
+              <div className="italic">Ghi chú từ cửa hàng: &ldquo;{org.pendingLanguageUnlock.note}&rdquo;</div>
+            )}
+          </div>
+
+          <div className="pt-1 flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              size="sm"
+              disabled={dangDuyet}
+              onClick={async () => {
+                setDangDuyet(true)
+                setLoi(null)
+                try {
+                  const res = await fetch(`/api/v1/platform/organizations/${params.id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ unlocked_locales: ["vi", "en"] }),
+                  })
+                  if (!res.ok) throw new Error("Không thể phê duyệt mở khóa ngôn ngữ")
+                  setThongBao("Đã phê duyệt MỞ KHÓA Tiếng Anh thành công cho cửa hàng!")
+                  await taiDuLieu()
+                } catch (err) {
+                  setLoi(err instanceof Error ? err.message : "Lỗi phê duyệt")
+                } finally {
+                  setDangDuyet(false)
+                }
+              }}
+              className="gap-1.5 font-bold shadow-xs"
+            >
+              <CheckCircle2 size={14} />
+              <span>{dangDuyet ? "Đang xử lý…" : "Phê duyệt Mở khóa Tiếng Anh"}</span>
+            </Button>
+          </div>
+        </Card>
+      )}
+
       <Card className="p-4 space-y-3">
         <div className="flex items-center justify-between mb-1 border-b border-border pb-2">
           <p className="text-lg font-semibold">{org.name}</p>
@@ -182,6 +242,69 @@ export default function ChiTietToChucPage() {
         <Dong nhan="Chi nhánh" giaTri={org.branchCount} />
         <Dong nhan="Workspace" giaTri={org.workspaceKinds.join(", ") || "—"} />
         <Dong nhan="Tạo lúc" giaTri={new Date(org.createdAt).toLocaleString("vi-VN")} />
+      </Card>
+
+      {/* Khối quản trị mở khóa ngôn ngữ đa quốc gia (SaaS Admin Language Unlock) */}
+      <Card className="p-4 space-y-3">
+        <div className="flex items-center justify-between border-b border-border pb-2">
+          <div>
+            <p className="text-body-sm font-bold text-foreground">Gói Ngôn Ngữ & Quốc Tế (SaaS Unlock)</p>
+            <p className="text-caption text-text-muted">
+              Admin SaaS cấp quyền cho cửa hàng này được phép sử dụng ngôn ngữ nào trên Thẻ Chào.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 pt-1">
+          <label className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-surface-muted/40 cursor-not-allowed">
+            <div className="flex items-center gap-2.5">
+              <span className="text-base">🇻🇳</span>
+              <div>
+                <p className="text-caption font-bold text-foreground">Tiếng Việt (vi)</p>
+                <p className="text-[11px] text-text-muted">Mặc định cho toàn bộ cửa hàng nội địa</p>
+              </div>
+            </div>
+            <span className="text-caption font-semibold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+              Luôn mở
+            </span>
+          </label>
+
+          <label className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-surface hover:bg-surface-muted/50 transition-colors cursor-pointer">
+            <div className="flex items-center gap-2.5">
+              <span className="text-base">🇬🇧</span>
+              <div>
+                <p className="text-caption font-bold text-foreground">Tiếng Anh (en — Quốc tế / Kiều bào)</p>
+                <p className="text-[11px] text-text-muted">Cho phép cửa hàng tạo Thẻ chào & nhận đơn từ nước ngoài</p>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={Boolean(org.unlockedLocales?.includes("en"))}
+              disabled={dangDuyet}
+              onChange={async (e) => {
+                const enableEn = e.target.checked
+                const newLocales = enableEn ? ["vi", "en"] : ["vi"]
+                setDangDuyet(true)
+                setLoi(null)
+                try {
+                  const res = await fetch(`/api/v1/platform/organizations/${params.id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ unlocked_locales: newLocales }),
+                  })
+                  if (!res.ok) throw new Error("Không thể cập nhật quyền ngôn ngữ")
+                  setThongBao(enableEn ? "Đã MỞ KHÓA Tiếng Anh cho cửa hàng này!" : "Đã KHÓA Tiếng Anh đối với cửa hàng này.")
+                  await taiDuLieu()
+                } catch (err) {
+                  setLoi(err instanceof Error ? err.message : "Lỗi cập nhật ngôn ngữ")
+                } finally {
+                  setDangDuyet(false)
+                }
+              }}
+              className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer"
+            />
+          </label>
+        </div>
       </Card>
     </div>
   )

@@ -71,7 +71,7 @@ export class IntentAnalyzerAgent {
       "ẩn giá", "phiếu giao", "tạo hoa", "công thức cành", "bom", "atomic bom", "nhập excel",
       "drive", "quét ảnh", "đếm cành", "kịch bản zalo", "kho dữ liệu", "thùng rác",
       "hồ sơ", "stk", "ngân hàng", "vietqr", "thêm nhân viên", "phân quyền",
-      // Thuật ngữ tiệm hoa thực tế:
+      // Thuật ngữ cửa hàng thực tế:
       "bắt cọc", "bắn zalo", "lên kệ", "cắt phế", "giấu giá thợ", "chốt đơn", "báo giá",
       "gửi ảnh", "ảnh hoàn thành", "ảnh thành phẩm", "số lượng ảnh", "duyệt ảnh", "ảnh tp", "ảnh nhận",
       "tạo từ chat", "dán tin nhắn", "đếm ngược 10 phút", "bỏ qua ảnh", "kéo thả kép",

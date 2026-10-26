@@ -94,7 +94,7 @@ export function describeIntegrity(t: Pick<M04bIntegrity, "subject_pixel_identity
     const iou = typeof p?.shape_iou === "number" ? `hình dáng ${(p.shape_iou * 100).toFixed(1)}%` : "hình dáng —"
     const ssim = typeof p?.structure_ssim === "number" ? `cấu trúc ${(p.structure_ssim * 100).toFixed(1)}%` : "cấu trúc —"
     const de = typeof p?.color_delta_e === "number" ? `lệch màu ΔE ${p.color_delta_e.toFixed(1)}` : "lệch màu —"
-    return `Giữ nguyên bó hoa: ${iou} · ${ssim} · ${de} (${t.result})${t.ai_relit ? " · đã chỉnh sáng bằng AI" : ""}`
+    return `Giữ nguyên sản phẩm: ${iou} · ${ssim} · ${de} (${t.result})${t.ai_relit ? " · đã chỉnh sáng bằng AI" : ""}`
   }
   return `Lõi trùng khít ${(t.subject_pixel_identity * 100).toFixed(2)}% (${t.result})`
 }

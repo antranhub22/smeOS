@@ -2,7 +2,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { validationFailed } from "@/core/http/errors"
 import { openSecret, sealSecret } from "@/core/security/secret-box"
 import type { StaffNotifyChannel } from "../domain/staff-notification-types"
-import { StaffNotificationRepository } from "../infra/staff-notification-repository"
+import { StaffNotificationRepository, getStaffNotificationRepository } from "../infra/staff-notification-repository"
 import { STAFF_NOTIFY_SECRET_PURPOSE } from "./notify-staff"
 
 export interface StaffNotificationSettingsDTO {
@@ -22,7 +22,7 @@ export interface UpdateStaffNotificationInput {
 
 export async function getStaffNotificationSettings(
   ctx: TenantContext,
-  repo = new StaffNotificationRepository()
+  repo = getStaffNotificationRepository()
 ): Promise<StaffNotificationSettingsDTO> {
   const saasAllowed = await repo.getSaasAllowedChannels(ctx.organizationId)
   const shopConfig = await repo.getShopStaffNotificationConfig(ctx.organizationId)
@@ -39,7 +39,7 @@ export async function getStaffNotificationSettings(
 export async function updateStaffNotificationSettings(
   ctx: TenantContext,
   input: UpdateStaffNotificationInput,
-  repo = new StaffNotificationRepository()
+  repo = getStaffNotificationRepository()
 ): Promise<{ success: boolean }> {
   const saasAllowed = await repo.getSaasAllowedChannels(ctx.organizationId)
   const saasSet = new Set(saasAllowed)
@@ -74,7 +74,7 @@ export async function updateStaffNotificationSettings(
 export async function updateSaasAllowedNotificationChannels(
   targetOrganizationId: string,
   allowedChannels: StaffNotifyChannel[],
-  repo = new StaffNotificationRepository()
+  repo = getStaffNotificationRepository()
 ): Promise<{ success: boolean }> {
   try {
     await repo.updateSaasAllowedChannels(targetOrganizationId, allowedChannels)

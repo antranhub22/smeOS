@@ -12,19 +12,21 @@ import { runInTransaction } from "@/modules/jobs/infra/transaction"
 
 import { decideApproval, type ApprovalPostInput, type ApprovedPost } from "../domain/approval-rules"
 import {
-  ContentGenerationRepository,
+  getContentGenerationRepository,
   type ContentGenerationStatus,
   type content_generations,
 } from "../infra/content-generation-repository"
+import type { IContentGenerationRepository } from "../domain/repositories/content-generation-repository.interface"
 
 export async function approveContentGeneration(
   ctx: TenantContext,
   id: string,
-  input: { readonly posts?: readonly ApprovalPostInput[] | undefined }
+  input: { readonly posts?: readonly ApprovalPostInput[] | undefined },
+  repo: IContentGenerationRepository = getContentGenerationRepository()
 ): Promise<content_generations> {
   requireCapability(ctx, "J5")
 
-  const row = await new ContentGenerationRepository().findById(ctx, id)
+  const row = await repo.findById(ctx, id)
   if (!row) throw notFound()
 
   const status = row.status as ContentGenerationStatus
@@ -40,7 +42,7 @@ export async function approveContentGeneration(
   }
 
   return runInTransaction(async (tx) => {
-    const updated = await new ContentGenerationRepository(tx).approve(ctx, id, {
+    const updated = await getContentGenerationRepository(tx).approve(ctx, id, {
       approvedBy: ctx.userId,
       approvedPosts: decision.approvedPosts,
       expectedStatus: status,

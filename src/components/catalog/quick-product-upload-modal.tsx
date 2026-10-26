@@ -175,7 +175,7 @@ export function QuickProductUploadModal({
               <Flower2 size={16} aria-hidden="true" />
             </div>
             <div>
-              <h3 id="qp-title" className="text-sm font-extrabold text-text">Thêm nhanh mẫu hoa</h3>
+              <h3 id="qp-title" className="text-sm font-extrabold text-text">Thêm nhanh sản phẩm</h3>
               <p className="text-caption text-text-muted">Chụp ảnh, điền thông tin — AI có thể giúp điền phần mô tả</p>
             </div>
           </div>
@@ -212,7 +212,7 @@ export function QuickProductUploadModal({
                 <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                   <UploadCloud size={20} aria-hidden="true" />
                 </div>
-                <div className="text-xs font-bold text-text">Bấm vào đây để chọn ảnh chụp hoa tươi</div>
+                <div className="text-xs font-bold text-text">Bấm vào đây để chọn ảnh chụp sản phẩm</div>
                 <div className="text-caption text-text-muted">Hỗ trợ JPG, PNG, WEBP từ điện thoại hoặc máy tính</div>
               </button>
             )}
@@ -231,7 +231,7 @@ export function QuickProductUploadModal({
           <div className="space-y-3">
             <div>
               <label htmlFor="qp-name" className="block text-xs font-bold text-text mb-1">
-                Tên mẫu hoa *{aiFilled.has("name") && <span className="ml-1 text-caption font-medium text-primary">· AI gợi ý</span>}
+                Tên sản phẩm *{aiFilled.has("name") && <span className="ml-1 text-caption font-medium text-primary">· AI gợi ý</span>}
               </label>
               <Input id="qp-name" value={fields.name} onChange={(e) => setField("name", e.target.value)} placeholder="VD: Bó Hồng Đỏ Ecuador 15 Cành" className="h-9 text-xs" required />
             </div>
@@ -269,7 +269,7 @@ export function QuickProductUploadModal({
             <Button type="button" variant="ghost" onClick={onClose} className="h-9 text-xs">Hủy</Button>
             <Button type="submit" disabled={isSubmitting || isAnalyzing || !fields.name.trim()} className="h-9 text-xs bg-primary text-white hover:bg-primary-dark font-bold gap-1.5">
               <Check size={14} aria-hidden="true" />
-              <span>{isSubmitting ? "Đang lưu..." : "Thêm mẫu hoa"}</span>
+              <span>{isSubmitting ? "Đang lưu..." : "Thêm sản phẩm"}</span>
             </Button>
           </div>
         </form>

@@ -1,4 +1,5 @@
-import { CatalogLinkRepository } from "../infra/catalog-link-repository"
+import type { ICatalogLinkRepository } from "../domain/repositories/catalog-link-repository.interface"
+import { getCatalogLinkRepository } from "../infra/catalog-link-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 
 export interface PublicCatalogShop {
@@ -118,8 +119,10 @@ async function signStoragePath(
  * Tự động tổng hợp thông tin tiệm, danh mục hoa đã duyệt, ký URL ảnh hợp lệ,
  * và trích xuất đầy đủ thông tin bán hàng (mô tả, dịp, định lượng cành, giá).
  */
-export async function getPublicCatalog(slug: string): Promise<PublicCatalogResult> {
-  const repo = new CatalogLinkRepository()
+export async function getPublicCatalog(
+  slug: string,
+  repo: ICatalogLinkRepository = getCatalogLinkRepository()
+): Promise<PublicCatalogResult> {
   const rawData = await repo.getPublicCatalogRaw(slug)
 
   if (!rawData) {
@@ -157,7 +160,7 @@ export async function getPublicCatalog(slug: string): Promise<PublicCatalogResul
   }
 
   const shop: PublicCatalogShop = {
-    name: bizProfile?.display_name || org?.name || "Tiệm hoa FloraOS",
+    name: bizProfile?.display_name || org?.name || "Cửa hàng smeOS",
     legalName: bizProfile?.legal_name ?? null,
     phone: bizProfile?.phone ?? null,
     email: bizProfile?.email ?? null,
@@ -189,7 +192,7 @@ export async function getPublicCatalog(slug: string): Promise<PublicCatalogResul
       const firstAnalysis = p.analyses[0]
       if (firstImg && assetMap.has(firstImg.asset_id)) {
         imageUrl = assetMap.get(firstImg.asset_id) ?? null
-      } else if (firstAnalysis && assetMap.has(firstAnalysis.asset_id)) {
+      } else if (firstAnalysis?.asset_id && assetMap.has(firstAnalysis.asset_id)) {
         imageUrl = assetMap.get(firstAnalysis.asset_id) ?? null
       } else if (typeof attr.imageUrl === "string") {
         imageUrl = attr.imageUrl

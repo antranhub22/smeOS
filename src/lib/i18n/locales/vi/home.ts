@@ -22,7 +22,7 @@ export const homeVi = {
   spotlight: {
     badge: "Nổi bật",
     readyStatus: "Sẵn sàng sử dụng",
-    title: "Thẻ chào mẫu hoa",
+    title: "Thẻ chào sản phẩm",
     description: "Gửi bộ sưu tập hoa cho khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.",
     features: {
       zalo: "Gửi link qua Zalo",
@@ -38,12 +38,12 @@ export const homeVi = {
       desc: "Xem doanh thu, số đơn hàng và hoạt động trên FloraOS của cửa hàng.",
     },
     trends: {
-      title: "Xem mẫu hoa được ưa chuộng",
+      title: "Xem sản phẩm được ưa chuộng",
       desc: "Biết khách thích kiểu hoa, màu sắc và mức giá nào để chuẩn bị hàng.",
     },
     scanPhoto: {
-      title: "Tạo mẫu hoa từ ảnh chụp",
-      desc: "Chụp ảnh hoa, AI nhận diện các loại hoa và tạo sẵn mẫu hoa để bán.",
+      title: "Tạo sản phẩm từ ảnh chụp",
+      desc: "Chụp ảnh hoa, AI nhận diện các nguyên liệu và tạo sẵn sản phẩm để bán.",
     },
     quote: {
       title: "Tạo báo giá",
@@ -55,7 +55,7 @@ export const homeVi = {
     },
     voiceover: {
       title: "Tạo giọng đọc cho bài đăng",
-      desc: "Chuyển bài viết thành giọng đọc để ghép vào video giới thiệu mẫu hoa.",
+      desc: "Chuyển bài viết thành giọng đọc để ghép vào video giới thiệu sản phẩm.",
     },
     mockup: {
       title: "Tạo ảnh quảng cáo từ ảnh gốc",

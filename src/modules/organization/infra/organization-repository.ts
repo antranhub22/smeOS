@@ -2,31 +2,56 @@ import type { InputJsonValue, organization_type, organizations } from "./entitie
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy"
+import type {
+  CreateOrganizationInput,
+  IOrganizationRepository,
+  OrganizationEntity,
+  OrganizationType,
+  UpdateOrganizationInput,
+} from "../domain/repositories/organization-repository.interface"
 
 import type { DbClient } from "./db-client"
+
+function mapOrganization(org: organizations): OrganizationEntity {
+  return {
+    id: org.id,
+    name: org.name,
+    slug: org.slug,
+    type: org.type as OrganizationType,
+    credit_balance: org.credit_balance,
+    credit_plan: org.credit_plan ?? null,
+    data_region: org.data_region ?? null,
+    settings: (org.settings as Record<string, unknown> | null) ?? null,
+    created_at: org.created_at,
+    updated_at: org.updated_at,
+  }
+}
 
 /**
  * `organizations` là chính tenant, nên khoá lọc của nó là cột `id` chứ không
  * phải `organization_id`. Bộ gác vẫn ở đây, không ở route: phương thức đọc
  * nhận `TenantContext` bắt buộc và không nhận id từ đâu khác.
  */
-export class OrganizationRepository {
+export class OrganizationRepository implements IOrganizationRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   /** Tổ chức đang hoạt động của phiên. Không có đường nào đọc tổ chức khác. */
-  current(ctx: TenantContext): Promise<organizations | null> {
-    return this.db.organizations.findUnique({ where: { id: ctx.organizationId } })
+  async current(ctx: TenantContext): Promise<OrganizationEntity | null> {
+    const row = await this.db.organizations.findUnique({ where: { id: ctx.organizationId } })
+    return row ? mapOrganization(row) : null
   }
 
-  findBySlug(slug: string): Promise<organizations | null> {
-    return this.db.organizations.findUnique({ where: { slug } })
+  async findBySlug(slug: string): Promise<OrganizationEntity | null> {
+    const row = await this.db.organizations.findUnique({ where: { slug } })
+    return row ? mapOrganization(row) : null
   }
 
   /**
    * Đọc tổ chức theo ID — dành cho người vận hành nền tảng (Platform Operator).
    */
-  findById(organizationId: string): Promise<organizations | null> {
-    return this.db.organizations.findUnique({ where: { id: organizationId } })
+  async findById(organizationId: string): Promise<OrganizationEntity | null> {
+    const row = await this.db.organizations.findUnique({ where: { id: organizationId } })
+    return row ? mapOrganization(row) : null
   }
 
   /**
@@ -36,8 +61,8 @@ export class OrganizationRepository {
    */
   async update(
     ctx: TenantContext,
-    input: { name?: string; settings?: Record<string, unknown> }
-  ): Promise<organizations | null> {
+    input: UpdateOrganizationInput
+  ): Promise<OrganizationEntity | null> {
     const data: { name?: string; settings?: InputJsonValue } = {}
     if (input.name !== undefined) data.name = input.name
     if (input.settings !== undefined) data.settings = input.settings as InputJsonValue
@@ -51,13 +76,7 @@ export class OrganizationRepository {
   }
 
   /** Chỉ dùng lúc đăng ký, khi chưa có ngữ cảnh nào để gác. */
-  create(input: {
-    name: string
-    slug: string
-    type: organization_type
-    credit_balance: number
-    settings?: Record<string, unknown>
-  }): Promise<organizations> {
+  async create(input: CreateOrganizationInput): Promise<OrganizationEntity> {
     const data: {
       name: string
       slug: string
@@ -67,13 +86,14 @@ export class OrganizationRepository {
     } = {
       name: input.name,
       slug: input.slug,
-      type: input.type,
+      type: input.type as organization_type,
       credit_balance: input.credit_balance,
     }
     if (input.settings !== undefined) {
       data.settings = input.settings as InputJsonValue
     }
-    return this.db.organizations.create({ data })
+    const row = await this.db.organizations.create({ data })
+    return mapOrganization(row)
   }
 
   /**
@@ -134,7 +154,7 @@ export class OrganizationRepository {
    * và của bộ chọn tổ chức. Đây là truy vấn duy nhất trong core đi ngang qua
    * nhiều tổ chức, và nó lọc theo `user_id` chứ không theo tham số của client.
    */
-  async listForUser(userId: string): Promise<organizations[]> {
+  async listForUser(userId: string): Promise<OrganizationEntity[]> {
     const memberships = await this.db.memberships.findMany({
       where: { user_id: userId, status: "ACTIVE" },
       select: { organization_id: true },
@@ -142,10 +162,11 @@ export class OrganizationRepository {
     const ids = memberships.map((m) => m.organization_id)
     if (ids.length === 0) return []
 
-    return this.db.organizations.findMany({
+    const rows = await this.db.organizations.findMany({
       where: { id: { in: ids } },
       orderBy: { created_at: "asc" },
     })
+    return rows.map(mapOrganization)
   }
 
   /** Cập nhật trường settings cho tổ chức hiện tại */
@@ -161,16 +182,27 @@ export class OrganizationRepository {
    */
   async updateTypeAndSettings(
     organizationId: string,
-    type: organization_type,
+    type: OrganizationType,
     settings: Record<string, unknown>
-  ): Promise<organizations> {
-    return this.db.organizations.update({
+  ): Promise<OrganizationEntity> {
+    const row = await this.db.organizations.update({
       where: { id: organizationId },
       data: {
-        type,
+        type: type as organization_type,
         settings: settings as InputJsonValue,
       },
     })
+    return mapOrganization(row)
   }
+}
+
+let orgRepoInstance: IOrganizationRepository | null = null
+
+export function getOrganizationRepository(db?: DbClient): IOrganizationRepository {
+  if (db) return new OrganizationRepository(db)
+  if (!orgRepoInstance) {
+    orgRepoInstance = new OrganizationRepository()
+  }
+  return orgRepoInstance!
 }
 

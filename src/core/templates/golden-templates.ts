@@ -37,7 +37,7 @@ export const SYSTEM_GOLDEN_TEMPLATES: TemplateDefinition[] = [
     schemaVersion: 1,
     templateString: `🌸 DẠ EM CHÀO ANH/CHỊ Ạ!
 
-Em gửi anh/chị thông tin mẫu hoa đang được yêu thích bên em:
+Em gửi anh/chị thông tin sản phẩm đang được yêu thích bên em:
 ✨ Tên mẫu: {{product.name}}
 🏷️ Mã sản phẩm: {{product.sku | default: "SP-Flora"}}
 🌿 Phong cách: {{product.style | default: "Thiết kế hiện đại"}}
@@ -56,14 +56,14 @@ Em gửi anh/chị thông tin mẫu hoa đang được yêu thích bên em:
 🛡️ CAM KẾT TỪ {{shop.name | default: "FLORA BOUTIQUE"}}:
 {{service.commitments_bullets}}
 
-Dạ anh/chị chốt mẫu này để bên em lên đơn và chuẩn bị hoa tươi mới nhất cho mình nhé!
+Dạ anh/chị chốt mẫu này để bên em lên đơn và chuẩn bị sản phẩm mới nhất cho mình nhé!
 Hotline/Zalo hỗ trợ: {{shop.hotline}} 💖`,
   },
   {
     id: "florist_bom_ticket_standard",
     category: "production",
-    name: "Phiếu Kỹ Thuật Cắm Hoa (BOM Ticket)",
-    description: "Phiếu sản xuất cho thợ cắm hoa: chi tiết từng loại hoa, số cành, kiểu gói",
+    name: "Phiếu Kỹ Thuật Chế Tác (BOM Ticket)",
+    description: "Phiếu sản xuất cho thợ chế tác: chi tiết từng nguyên liệu, số cành, kiểu gói",
     format: "plain_text",
     requiredVariables: ["product.name", "flower.summary_list"],
     isSystemGolden: true,
@@ -80,10 +80,10 @@ Tone màu: {{flower.main_tones}}
 Giấy gói & Nơ: {{flower.wrapping}}
 
 YÊU CẦU ĐẶC BIỆT:
-- Hoa tươi đồng đều, cắt gốc xéo 45 độ.
+- Sản phẩm đồng đều, cắt gốc xéo 45 độ.
 - Chụp ảnh 3 góc (chính diện, trên xuống, cận cảnh) gửi bộ phận điều phối duyệt trước khi bọc màng bảo vệ.
 ------------------------------------------
-Tiệm hoa: {{shop.name}}`,
+Cửa hàng: {{shop.name}}`,
   },
 ]
 

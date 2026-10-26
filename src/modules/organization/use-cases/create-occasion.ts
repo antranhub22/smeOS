@@ -1,6 +1,6 @@
 import { conflict, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
+import { OccasionRepository, getOccasionRepository } from "@/modules/organization/infra/occasion-repository"
 import {
   validateCreateOccasionInput,
   type CreateOccasionInput,
@@ -13,7 +13,7 @@ export async function createOccasion(ctx: TenantContext, input: CreateOccasionIn
     throw validationFailed({ [validated.field]: validated.message })
   }
 
-  const repository = new OccasionRepository()
+  const repository = getOccasionRepository()
   if (await repository.findByCode(ctx, validated.code)) {
     throw conflict(`Mã dịp ${validated.code} đã tồn tại`)
   }

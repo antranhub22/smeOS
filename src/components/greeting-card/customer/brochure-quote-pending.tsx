@@ -12,7 +12,7 @@ export function BrochureQuotePending({ orderCode, onGoToTracking }: { orderCode:
       </div>
       <h2 className="text-title font-extrabold">Đã nhận đơn #{orderCode}</h2>
       <p className="text-body-sm text-text-muted">
-        Mẫu hoa này chưa niêm yết giá. Cửa hàng sẽ liên hệ báo giá và hướng dẫn thanh toán cho bạn sớm nhất.
+        Sản phẩm này chưa niêm yết giá. Cửa hàng sẽ liên hệ báo giá và hướng dẫn thanh toán cho bạn sớm nhất.
       </p>
       <Button type="button" onClick={onGoToTracking} className="w-full gap-1.5">
         Theo dõi đơn hàng <ArrowRight size={16} aria-hidden="true" />

@@ -297,3 +297,9 @@ export class GreetingCatalogRepository {
     return map.get(assetId) ?? null
   }
 }
+
+let _greetingCatalogRepositorySingleton: GreetingCatalogRepository | null = null
+export function getGreetingCatalogRepository(): GreetingCatalogRepository {
+  if (!_greetingCatalogRepositorySingleton) _greetingCatalogRepositorySingleton = new GreetingCatalogRepository()
+  return _greetingCatalogRepositorySingleton
+}

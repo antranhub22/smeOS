@@ -1,8 +1,8 @@
 import type { TenantContext } from "@/core/tenancy"
-import { GreetingIntegrationRepository } from "../infra/greeting-integration-repository"
+import { GreetingIntegrationRepository, getGreetingIntegrationRepository } from "../infra/greeting-integration-repository"
 
 /** Trạng thái tích hợp cho UI — chỉ gợi ý 4 ký tự cuối khoá, không lộ bí mật. */
-export async function getIntegrationStatus(ctx: TenantContext, repo = new GreetingIntegrationRepository()) {
+export async function getIntegrationStatus(ctx: TenantContext, repo = getGreetingIntegrationRepository()) {
   const row = await repo.getForTenant(ctx)
   return {
     payment: {

@@ -1,8 +1,8 @@
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
 import { COORDINATOR_BOARD_MAX, DONE_VISIBLE_MS, sortByDelivery } from "../domain/coordinator-board"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { withOrderProduct } from "./order-product-views"
 import { resolveSaleScope } from "./order-scope"
 import { orderPhotoApproval } from "../domain/photo-approval"
@@ -13,7 +13,7 @@ import { extractGate2State } from "../domain/subcontract-gate2-extractor"
  * `GET /greeting-card/coordinator-board` — toàn bộ đơn còn việc cho bảng Điều phối, xếp theo ngày +
  * giờ giao gần nhất (đếm "Cần làm / Đang làm / Xong" trên đủ đơn, không cắt 20 đơn như trước).
  */
-export async function getCoordinatorBoard(ctx: TenantContext, input: { date?: string | undefined }, repo = new BrochureOrderRepository(), now = new Date()) {
+export async function getCoordinatorBoard(ctx: TenantContext, input: { date?: string | undefined }, repo = getBrochureOrderRepository(), now = new Date()) {
   const saleId = (await resolveSaleScope(ctx)) ?? undefined
   const rows = await repo.listCoordinatorBoard(ctx, {
     date: input.date,
@@ -32,11 +32,11 @@ export async function getCoordinatorBoard(ctx: TenantContext, input: { date?: st
     ])
     .filter((id): id is string => typeof id === "string" && id.length > 0)
   const proofUrls = proofAssetIds.length > 0
-    ? await new GreetingCardRepository().getAssetsStorageMap(ctx.organizationId, proofAssetIds)
+    ? await getGreetingCardRepository().getAssetsStorageMap(ctx.organizationId, proofAssetIds)
     : new Map<string, string>()
 
   // Chờ khách duyệt ảnh thành phẩm (mục 4, PO 15/10/2026): Điều phối thấy đếm ngược trước khi giao ship
-  const shopSettings = (await new GreetingCardRepository().getShopProfile(ctx.organizationId)).settings
+  const shopSettings = (await getGreetingCardRepository().getShopProfile(ctx.organizationId)).settings
   const reviewMinutes = parsePaymentPolicy(shopSettings).productPhotoReviewMinutes
   const rowsWithProof = rows.map((o) => ({
     ...o,

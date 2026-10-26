@@ -1,11 +1,11 @@
 import type { TenantContext } from "@/core/tenancy"
-import { TrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
+import { TrackingPipelineRepository, getTrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
 import { orderProductId, orderProductView, type OrderProductSource, type OrderProductView } from "../domain/order-product-view"
 
 export { orderProductView }
 
 /** Ảnh hiện tại trong kho cho các đơn/link (một truy vấn gộp, đúng tổ chức). */
-export function productImagesFor(ctx: TenantContext, sources: OrderProductSource[], repo = new TrackingPipelineRepository()) {
+export function productImagesFor(ctx: TenantContext, sources: OrderProductSource[], repo = getTrackingPipelineRepository()) {
   return repo.productMainImages(ctx, sources.map((s) => orderProductId(s) ?? ""))
 }
 

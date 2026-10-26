@@ -319,7 +319,7 @@ export function ProductIntelligenceWorkspace() {
           <StageGateApprovalBar
             stageCode="Chặng 03 — DISCOVER"
             title="Xác nhận Kết quả Đối soát Thị trường & Trend Fit"
-            description={`AI đã đối soát dữ liệu thị trường hoa tươi: Điểm Trend Fit ${report.trendFitScore}/100, Audience Fit ${report.audienceFitScore}/100, xác định ${report.improvements.keep.length} điểm GIỮ và ${report.improvements.improve.length} điểm CẢI TIẾN. Chủ shop xác nhận kết quả để mở khóa Chặng 04.`}
+            description={`AI đã đối soát dữ liệu thị trường sản phẩm: Điểm Trend Fit ${report.trendFitScore}/100, Audience Fit ${report.audienceFitScore}/100, xác định ${report.improvements.keep.length} điểm GIỮ và ${report.improvements.improve.length} điểm CẢI TIẾN. Chủ shop xác nhận kết quả để mở khóa Chặng 04.`}
             isApproved={approvedStage3}
             approveLabel="Phê duyệt Trend Fit & Mở khóa Chặng 04 (10 Chủ đề tiếp thị)"
             onApprove={() => {

@@ -1,7 +1,7 @@
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { canRetry } from "@/modules/jobs/domain/job-rules"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 
 /**
  * `POST /jobs/:id/retry` (`G7`) — chỉ job `FAILED` (`YC-J3`). Job
@@ -9,7 +9,7 @@ import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-rep
  * ra đúng phán quyết cũ, chỉ tốn GPU (đặc tả 06 mục 7).
  */
 export async function retryJob(ctx: TenantContext, id: string) {
-  const repo = new GenerationJobRepository()
+  const repo = getGenerationJobRepository()
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
   if (!canRetry(current.status)) {

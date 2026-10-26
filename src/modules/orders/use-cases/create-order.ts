@@ -6,15 +6,16 @@ import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { calculateOrderTotal, generateOrderCode } from "../domain/order-rules"
 import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
-import { OrderRepository } from "../infra/order-repository"
+import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import { getOrderRepository } from "../infra/order-repository"
 
 export async function createOrder(
   ctx: TenantContext,
   input: CreateOrderInput,
-  repo = new OrderRepository()
+  repo: IOrderRepository = getOrderRepository()
 ): Promise<OrderRecord> {
   if (!input.items || input.items.length === 0) {
-    throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc mẫu hoa.")
+    throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc sản phẩm.")
   }
 
   const totalVnd = calculateOrderTotal(input.items)

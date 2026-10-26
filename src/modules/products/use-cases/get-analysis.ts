@@ -1,8 +1,8 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
+import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
 
 export type AnalysisDetail = {
   id: string
@@ -25,12 +25,12 @@ export type AnalysisDetail = {
 
 /** `GET /vision/analyses/:id` (`H1`, đặc tả 06 mục 8). */
 export async function getAnalysis(ctx: TenantContext, id: string): Promise<AnalysisDetail> {
-  const analysis = await new ProductAnalysisRepository().findById(ctx, id)
+  const analysis = await getProductAnalysisRepository().findById(ctx, id)
   if (!analysis) throw notFound()
 
   let imageUrl: string | null = null
   if (analysis.asset_id) {
-    const asset = await new AssetRepository().findById(ctx, analysis.asset_id)
+    const asset = await getAssetRepository().findById(ctx, analysis.asset_id)
     if (asset?.storage_key) {
       imageUrl = await getStorageProvider().signedUrl(asset.storage_key, 24 * 60 * 60)
     }

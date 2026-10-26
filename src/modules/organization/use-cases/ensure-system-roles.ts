@@ -1,4 +1,4 @@
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
 
 /**
@@ -12,6 +12,6 @@ import { runInTransaction } from "@/modules/organization/infra/transaction"
  */
 export function ensureSystemRoles(): Promise<void> {
   return runInTransaction(async (tx) => {
-    await new RoleRepository(tx).ensureSystemRoles()
+    await getRoleRepository(tx).ensureSystemRoles()
   })
 }

@@ -6,7 +6,7 @@
 
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import type {
   AccessoryBomItem,
   CoordinatorProductSnapshot,
@@ -252,7 +252,7 @@ const iso = (d: Date | null | undefined) => (d ? d.toISOString() : null)
 async function signedAssetUrls(ctx: TenantContext, ids: string[]): Promise<Map<string, string>> {
   const out = new Map<string, string>()
   if (ids.length === 0) return out
-  const repo = new AssetRepository()
+  const repo = getAssetRepository()
   const storage = getStorageProvider()
   for (const id of new Set(ids)) {
     const asset = await repo.findById(ctx, id)

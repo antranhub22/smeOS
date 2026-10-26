@@ -64,7 +64,7 @@ export function LandingTemplateProducts({
           <Sparkles size={14} className={isRomantic ? "text-primary" : "text-warning"} />
           <span>Danh Sách Thiết Kế Tuyển Chọn ({products.length})</span>
         </div>
-        <span className="text-caption text-text-muted font-medium">Bảo đảm hoa tươi giống mẫu 95%+</span>
+        <span className="text-caption text-text-muted font-medium">Bảo đảm sản phẩm giống mẫu 95%+</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -116,7 +116,7 @@ export function LandingTemplateProducts({
                 </div>
 
                 <a
-                  href={`https://zalo.me?text=${encodeURIComponent(`Xin chào, tôi muốn đặt mẫu hoa ${p.name} (${p.code}) trong chiến dịch!`)}`}
+                  href={`https://zalo.me?text=${encodeURIComponent(`Xin chào, tôi muốn đặt sản phẩm ${p.name} (${p.code}) trong chiến dịch!`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 ${ctaBtnStyle}`}

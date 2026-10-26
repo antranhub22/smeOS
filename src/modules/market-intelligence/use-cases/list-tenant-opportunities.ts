@@ -1,4 +1,5 @@
-import { marketIntelligenceRepo } from "../infra/market-intelligence-repository";
+import type { IMarketIntelligenceRepository } from "../domain/repositories/market-intelligence-repository.interface";
+import { getMarketIntelligenceRepository } from "../infra/market-intelligence-repository";
 import { getTopicDualRealVideoEvidence } from "../domain/video-evidence-catalog";
 import {
   type MarketTimeframeKey,
@@ -67,7 +68,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
       const isUnsplash = typeof ref.thumbnailUrl === "string" && ref.thumbnailUrl.includes("unsplash.com");
       const isGenericMockAuthor =
         ref.author === "@florist.trend" ||
-        ref.author === "Kênh Hoa Tươi Nghệ Thuật" ||
+        ref.author === "Kênh Nghệ Thuật Chế Tác" ||
         !ref.author;
       const isGenericMockMetrics =
         !ref.metrics ||
@@ -101,7 +102,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
   }
 
   const encodedTopic = encodeURIComponent(topicName);
-  const encodedQuery = encodeURIComponent(`${topicName} hoa tươi`);
+  const encodedQuery = encodeURIComponent(topicName);
 
   return [
     {
@@ -122,7 +123,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
       thumbnailUrl: catalogEvidence.youtube.thumbnailUrl,
       author: catalogEvidence.youtube.author,
       metrics: catalogEvidence.youtube.metrics,
-      engagementNote: "Video hướng dẫn & mẫu cắm hoa thực tế",
+      engagementNote: "Video hướng dẫn & trình diễn sản phẩm thực tế",
     },
     {
       title: `Biểu đồ Google Trends: ${topicName}`,
@@ -136,7 +137,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
       type: "IMAGE_PINTEREST",
       platform: "Pinterest",
       url: `https://www.pinterest.com/search/pins/?q=${encodedQuery}`,
-      engagementNote: "Kho cảm hứng hình ảnh cắm hoa chuẩn phong cách",
+      engagementNote: "Kho cảm hứng hình ảnh sản phẩm chuẩn phong cách",
     },
   ];
 }
@@ -146,7 +147,8 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
  * Tuyệt đối cách ly theo `organizationId`.
  */
 export async function listTenantOpportunities(
-  params: ListOpportunitiesParams
+  params: ListOpportunitiesParams,
+  repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository()
 ): Promise<ListOpportunitiesResult> {
   const limit = Math.min(Math.max(params.limit ?? 20, 1), 100);
   const minScore = params.minScore ?? 0;
@@ -160,8 +162,8 @@ export async function listTenantOpportunities(
   }
 
   const [total, records] = await Promise.all([
-    marketIntelligenceRepo.countOpportunities(params.organizationId, minScore, createdAfter),
-    marketIntelligenceRepo.listOpportunitiesWithTopic(params.organizationId, {
+    repo.countOpportunities(params.organizationId, minScore, createdAfter),
+    repo.listOpportunitiesWithTopic(params.organizationId, {
       minScore,
       limit,
       cursor: params.cursor,
@@ -184,13 +186,13 @@ export async function listTenantOpportunities(
     items: itemsToReturn.map((r) => ({
       id: r.id,
       organizationId: r.organization_id,
-      topicName: r.topic.canonical_name,
-      audience: r.audience,
+      topicName: r.topic?.canonical_name ?? "Chủ đề",
+      audience: r.audience ?? null,
       opportunitySummary: r.opportunity_summary,
       contentAngles: r.content_angles,
       recommendedFormats: r.recommended_formats,
       recommendedHooks: r.recommended_hooks,
-      evidenceReferences: resolveEvidenceReferences(r.content_angles, r.topic.canonical_name, r.opportunity_summary),
+      evidenceReferences: resolveEvidenceReferences(r.content_angles, r.topic?.canonical_name ?? "", r.opportunity_summary),
       trendScore: r.trend_score,
       viralScore: r.viral_score,
       commercialScore: r.commercial_score,

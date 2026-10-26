@@ -9,14 +9,19 @@
  */
 
 import type { TenantContext } from "@/core/tenancy"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface"
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { SCENE_PLAN_FEATURE, parseStoredScenePlan } from "@/modules/creative-production/domain/scene-plan-rules"
 
 import type { RawStoryInput } from "../domain/brief-builder"
 
-export async function readStoryContext(ctx: TenantContext, scenePlanId?: string | null): Promise<RawStoryInput | null> {
+export async function readStoryContext(
+  ctx: TenantContext,
+  scenePlanId?: string | null,
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository()
+): Promise<RawStoryInput | null> {
   if (!scenePlanId) return null
-  const job = await new GenerationJobRepository().findById(ctx, scenePlanId)
+  const job = await jobRepo.findById(ctx, scenePlanId)
   if (!job || job.feature !== SCENE_PLAN_FEATURE || job.status !== "COMPLETED") return null
   const plan = parseStoredScenePlan(job.output)
   if (!plan) return null

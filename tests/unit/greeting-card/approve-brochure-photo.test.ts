@@ -6,9 +6,11 @@ const isBrochureOwner = vi.fn()
 
 vi.mock("@/modules/greeting-card/infra/brochure-order-repository", () => ({
   BrochureOrderRepository: class { getTrackingOrderByCode = getTrackingOrderByCode },
+  getBrochureOrderRepository: () => ({ getTrackingOrderByCode }),
 }))
 vi.mock("@/modules/greeting-card/infra/photo-approval-repository", () => ({
   PhotoApprovalRepository: class { recordApproval = recordApproval },
+  getPhotoApprovalRepository: () => ({ recordApproval }),
 }))
 vi.mock("@/modules/greeting-card/use-cases/brochure-owner", () => ({ isBrochureOwner }))
 

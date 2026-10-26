@@ -1,4 +1,4 @@
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import type { GreetingCatalogProduct } from "../domain/greeting-card-types"
 import { withPaymentCodeFlag, type ShippingConfig } from "../domain/brochure-pricing"
 import { collectImageAssetIds, toCatalogProduct } from "./brochure-product-mapper"
@@ -62,7 +62,7 @@ export async function mapCatalogToPublicResult(
  */
 export async function getPublicGreetingCatalog(
   catalogId: string,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ): Promise<PublicGreetingCatalogResult> {
   const catalog = await repo.getPublicCatalogById(catalogId)
   if (!catalog) return { status: "NOT_FOUND" }

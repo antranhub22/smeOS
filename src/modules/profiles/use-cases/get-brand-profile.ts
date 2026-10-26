@@ -1,6 +1,8 @@
 import type { TenantContext } from "@/core/tenancy"
-import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { getBrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
+import type { IBrandProfileRepository } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { ASSET_VIEW_URL_TTL_SECONDS } from "@/modules/assets/use-cases/get-asset-view-url"
 
@@ -26,8 +28,12 @@ export type BrandProfileDetail = {
  * `GET /brand-profile` (`F1`, đặc tả 06 mục 5). `null` khi tổ chức chưa nhập
  * hồ sơ thương hiệu — xem chú thích ở `getBusinessProfile`.
  */
-export async function getBrandProfile(ctx: TenantContext): Promise<BrandProfileDetail | null> {
-  const profile = await new BrandProfileRepository().current(ctx)
+export async function getBrandProfile(
+  ctx: TenantContext,
+  repo: IBrandProfileRepository = getBrandProfileRepository(),
+  assetRepo: IAssetRepository = getAssetRepository()
+): Promise<BrandProfileDetail | null> {
+  const profile = await repo.current(ctx)
   if (!profile) return null
 
   let logoUrl: string | null = null
@@ -40,7 +46,7 @@ export async function getBrandProfile(ctx: TenantContext): Promise<BrandProfileD
       logoUrl = profile.logo_asset_id
     } else {
       try {
-        const asset = await new AssetRepository().findById(ctx, profile.logo_asset_id)
+        const asset = await assetRepo.findById(ctx, profile.logo_asset_id)
         if (asset) {
           logoUrl = await getStorageProvider().signedUrl(
             asset.storage_key,

@@ -72,3 +72,9 @@ export class GreetingStatsRepository {
     return map
   }
 }
+
+let _greetingStatsRepositorySingleton: GreetingStatsRepository | null = null
+export function getGreetingStatsRepository(): GreetingStatsRepository {
+  if (!_greetingStatsRepositorySingleton) _greetingStatsRepositorySingleton = new GreetingStatsRepository()
+  return _greetingStatsRepositorySingleton
+}

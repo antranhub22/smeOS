@@ -14,7 +14,7 @@ export const NODE_01_TRANG_CHU: OpsKnowledgeNode = {
     "job lỗi", "kết quả chờ duyệt", "đơn nháp chưa chốt"
   ],
   intents: ["dieu_huong_trang_chu", "chuyen_che_do_chuyen_gia", "kiem_tra_ton_dong", "xu_ly_viec_can_can_thiep"],
-  summary: "Trang chủ là trung tâm điều hướng của tiệm hoa với 2 chế độ: Chế độ tác vụ nhanh giúp nhân viên chọn việc cần làm đầu ngày, và Chế độ Chuyên gia giúp Quản lý theo dõi việc tồn đọng và hạn mức AI.",
+  summary: "Trang chủ là trung tâm điều hướng của cửa hàng với 2 chế độ: Chế độ tác vụ nhanh giúp nhân viên chọn việc cần làm đầu ngày, và Chế độ Chuyên gia giúp Quản lý theo dõi việc tồn đọng và hạn mức AI.",
   stepByStepSOP: [
     {
       stepNumber: 1,
@@ -23,7 +23,7 @@ export const NODE_01_TRANG_CHU: OpsKnowledgeNode = {
     },
     {
       stepNumber: 2,
-      actionText: "Bắt đầu làm việc: Bấm nút 'Bắt đầu ngay' trên thẻ 'Thẻ Chào mẫu hoa' để tạo link gửi khách Zalo",
+      actionText: "Bắt đầu làm việc: Bấm nút 'Bắt đầu ngay' trên thẻ 'Thẻ Chào sản phẩm' để tạo link gửi khách Zalo",
       expectedResult: "Hệ thống mở ngay màn hình tạo thẻ chào gửi khách",
     },
     {
@@ -43,7 +43,7 @@ export const NODE_01_TRANG_CHU: OpsKnowledgeNode = {
     },
   ],
   caveatsAndGotchas: [
-    "Thẻ 'Thẻ Chào mẫu hoa' đã sẵn sàng sử dụng; các thẻ tính năng nâng cao khác đang được mở dần theo lộ trình.",
+    "Thẻ 'Thẻ Chào sản phẩm' đã sẵn sàng sử dụng; các thẻ tính năng nâng cao khác đang được mở dần theo lộ trình.",
     "Bảng theo dõi của Quản lý sẽ tự động báo động khi có đơn hàng sắp trễ giờ hẹn của khách.",
   ],
   actionLabel: "Về Trang Chủ Điều Hành",

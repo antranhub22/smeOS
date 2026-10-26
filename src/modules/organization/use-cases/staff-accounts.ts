@@ -4,12 +4,12 @@ import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { isAcceptablePassword, isValidEmail, MIN_PASSWORD_LENGTH, normalizeEmail } from "@/modules/organization/domain/credentials"
 import { generateTemporaryPassword } from "@/modules/organization/domain/temporary-password"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
 import { hashPassword, verifyPassword } from "@/modules/organization/infra/password-hasher"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
-import { StaffAccountRepository } from "@/modules/organization/infra/staff-account-repository"
-import { UserRepository } from "@/modules/organization/infra/user-repository"
-import { BranchRepository } from "@/modules/organization/infra/branch-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
+import { StaffAccountRepository, getStaffAccountRepository } from "@/modules/organization/infra/staff-account-repository"
+import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
+import { BranchRepository, getBranchRepository } from "@/modules/organization/infra/branch-repository"
 
 const newTemporaryPassword = () => generateTemporaryPassword((n) => randomBytes(n))
 
@@ -37,16 +37,16 @@ export async function createStaffAccount(
   if (!name || name.length > 100) errors.name = "Nhập họ tên nhân viên (tối đa 100 ký tự)"
   if (Object.keys(errors).length > 0) throw validationFailed(errors)
 
-  const role = await new RoleRepository().findAssignableById(ctx, input.roleId)
+  const role = await getRoleRepository().findAssignableById(ctx, input.roleId)
   if (!role) throw notFound()
-  if (input.branchId && !(await new BranchRepository().findById(ctx, input.branchId))) throw notFound()
-  if (await new UserRepository().findByEmail(email)) {
+  if (input.branchId && !(await getBranchRepository().findById(ctx, input.branchId))) throw notFound()
+  if (await getUserRepository().findByEmail(email)) {
     throw conflict("Email này đã có tài khoản FloraOS — dùng email khác cho nhân viên, hoặc dùng “Mời” nếu đúng là người đó")
   }
 
   const temporaryPassword = newTemporaryPassword()
   const passwordHash = await hashPassword(temporaryPassword)
-  const created = await new StaffAccountRepository().createActive(ctx, {
+  const created = await getStaffAccountRepository().createActive(ctx, {
     email, name, passwordHash, roleId: role.id, branchId: input.branchId ?? null,
   })
   await recordAuditLog(ctx, {
@@ -60,7 +60,7 @@ export async function createStaffAccount(
 
 /** Thành viên của chính tổ chức (404 nếu không) và không phải chính người thao tác. */
 async function targetMember(ctx: TenantContext, membershipId: string) {
-  const membership = await new MembershipRepository().findById(ctx, membershipId)
+  const membership = await getMembershipRepository().findById(ctx, membershipId)
   if (!membership) throw notFound()
   if (membership.user_id === ctx.userId) throw unprocessable("Không thao tác trên chính tài khoản của bạn ở đây")
   return membership
@@ -73,7 +73,7 @@ async function targetMember(ctx: TenantContext, membershipId: string) {
  */
 export async function resetMemberPassword(ctx: TenantContext, membershipId: string): Promise<{ email: string; temporaryPassword: string }> {
   const membership = await targetMember(ctx, membershipId)
-  const repo = new StaffAccountRepository()
+  const repo = getStaffAccountRepository()
   if (await repo.belongsToOtherOrganization(membership.user_id, ctx.organizationId)) {
     throw conflict("Tài khoản này còn dùng ở tiệm khác — nhờ chính người đó tự đổi mật khẩu")
   }
@@ -90,7 +90,7 @@ export async function resetMemberPassword(ctx: TenantContext, membershipId: stri
 export async function setMemberActive(ctx: TenantContext, membershipId: string, active: boolean): Promise<{ status: "ACTIVE" | "SUSPENDED" }> {
   const membership = await targetMember(ctx, membershipId)
   const status = active ? "ACTIVE" : "SUSPENDED"
-  await new StaffAccountRepository().setStatus(ctx, membership.id, membership.user_id, status)
+  await getStaffAccountRepository().setStatus(ctx, membership.id, membership.user_id, status)
   await recordAuditLog(ctx, {
     action: active ? "member.account.reactivate" : "member.account.suspend",
     entityType: "memberships",
@@ -109,13 +109,13 @@ export async function changeOwnPassword(
   ctx: TenantContext,
   input: { currentPassword: string; newPassword: string; keepSessionId: string }
 ): Promise<void> {
-  const user = await new UserRepository().findById(ctx.userId)
+  const user = await getUserRepository().findById(ctx.userId)
   if (!user?.password_hash || !(await verifyPassword(input.currentPassword, user.password_hash))) {
     throw validationFailed({ currentPassword: "Mật khẩu hiện tại không đúng" })
   }
   if (!isAcceptablePassword(input.newPassword)) throw validationFailed({ newPassword: `Mật khẩu mới tối thiểu ${MIN_PASSWORD_LENGTH} ký tự` })
   if (input.newPassword === input.currentPassword) throw validationFailed({ newPassword: "Mật khẩu mới phải khác mật khẩu hiện tại" })
-  await new StaffAccountRepository().setPassword(ctx.userId, await hashPassword(input.newPassword), { keepSessionId: input.keepSessionId })
+  await getStaffAccountRepository().setPassword(ctx.userId, await hashPassword(input.newPassword), { keepSessionId: input.keepSessionId })
   await recordAuditLog(ctx, { action: "user.password.change", entityType: "users", entityId: ctx.userId, after: {} })
 }
 

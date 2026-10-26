@@ -6,18 +6,22 @@
 import { AppError, notFound } from "@/core/http/errors";
 import type { TenantContext } from "@/core/tenancy";
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory";
-import { AssetRepository } from "@/modules/assets/infra/asset-repository";
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface";
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
 import { refundJob } from "@/modules/usage/use-cases/refund-job";
 
-import { marketIntelligenceRepo } from "../infra/market-intelligence-repository";
+import type { IMarketIntelligenceRepository } from "../domain/repositories/market-intelligence-repository.interface";
+import { getMarketIntelligenceRepository } from "../infra/market-intelligence-repository";
 import { callCapability } from "@/core/ai/gateway";
 import { aiGatewayDeps } from "@/core/ai/wiring";
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider";
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences";
 import { createProductVisionAdapter } from "../adapters/product-vision-ai-adapter";
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository";
+import type { IOrganizationRepository } from "@/modules/organization/domain/repositories/organization-repository.interface";
+import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository";
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile";
 import type {
   ProductFlowerComponent,
@@ -70,16 +74,20 @@ const MAX_DEDUPE_CHAIN = 5;
  */
 export async function analyzeProductVision(
   ctx: TenantContext,
-  input: AnalyzeProductVisionInput
+  input: AnalyzeProductVisionInput,
+  repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository(),
+  assetRepo: IAssetRepository = getAssetRepository(),
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository(),
+  orgRepo: IOrganizationRepository = getOrganizationRepository()
 ): Promise<AnalyzeProductVisionResult> {
   const { assetId, productTitle, reanalyzeKey } = input;
-  const asset = await new AssetRepository().findById(ctx, assetId);
+  const asset = await assetRepo.findById(ctx, assetId);
   if (!asset) throw notFound();
   const storage = getStorageProvider();
   const imageUrl = await storage.signedUrl(asset.storage_key, PREVIEW_TTL_SECONDS);
 
   // 1. Kết quả M01 đã có của đúng ảnh này → dùng lại, không gọi mô hình, không thu.
-  const existingAnalysis = await marketIntelligenceRepo.findProductAnalysis(ctx.organizationId, assetId);
+  const existingAnalysis = await repo.findProductAnalysis(ctx.organizationId, assetId);
   if (existingAnalysis && !reanalyzeKey) {
     const data = (existingAnalysis.edited || existingAnalysis.raw) as RawVisionAnalysis;
     return { ...mapAnalysisToProductIntelligence(data, imageUrl, assetId, productTitle), source: "m01", reused: true };
@@ -99,11 +107,10 @@ export async function analyzeProductVision(
     throw new AppError("CONFLICT", "Ảnh này đang được Vision AI bóc tách — chờ vài giây rồi thử lại.");
   }
 
-  const jobRepo = new GenerationJobRepository();
   await jobRepo.startInline(ctx, enq.job.id, new Date());
   try {
     const bytes = await storage.get(asset.storage_key);
-    const org = await new OrganizationRepository().current(ctx);
+    const org = await orgRepo.current(ctx);
     const orgSettings = (org?.settings as Record<string, unknown>) || {};
     const industryKey = typeof orgSettings.industry === "string" ? orgSettings.industry : "FLORAL";
     const industryPlugin = getIndustryPlugin(industryKey);
@@ -187,7 +194,7 @@ function mapAnalysisToProductIntelligence(
 
   rawFlowers.forEach((f: RawVisionRow, idx: number) => {
     components.push({
-      flowerType: f.name || f.loai_hoa || `Hoa tươi #${idx + 1}`,
+      flowerType: f.name || f.loai_hoa || `Thành phần #${idx + 1}`,
       quantityEstimate: parseInt(String(f.count || f.so_luong)) || 0,
       unit: "cành",
       role: idx === 0 ? "dominant" : "supporting",
@@ -238,7 +245,7 @@ function mapAnalysisToProductIntelligence(
   };
 
   return {
-    productName: productTitle || raw.product_name || "Bó hoa nghệ thuật FloraOS",
+    productName: productTitle || raw.product_name || "Sản phẩm mới",
     imageUrl,
     assetId,
     components,

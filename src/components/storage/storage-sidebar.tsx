@@ -93,7 +93,7 @@ export function StorageSidebar({
           : flowers.reduce((s: number, f: { quantity?: number | string; count?: number | string }) => s + (Number(f.quantity ?? f.count) || 0), 0)
 
       const title =
-        a.product?.name || (effective.product_name as string) || (identity.category as string) || "Bó hoa thiết kế"
+        a.product?.name || (effective.product_name as string) || (identity.category as string) || "Sản phẩm thiết kế"
       const subtitle = `${flowerCount} cành • ${identity.phong_cach || "Đã duyệt BOM"}`
 
       items.push({
@@ -216,7 +216,7 @@ export function StorageSidebar({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tìm theo tên, loại hoa..."
+            placeholder="Tìm theo tên, nguyên liệu..."
             className="w-full pl-7 pr-2.5 py-1.5 rounded-xl border border-border bg-surface-alt text-xs outline-none focus:border-primary transition-colors"
           />
         </div>

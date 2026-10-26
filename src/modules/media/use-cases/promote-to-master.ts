@@ -1,6 +1,6 @@
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import { randomUUID } from "crypto"
@@ -24,7 +24,7 @@ export async function promoteOriginalToMaster(
   ctx: TenantContext,
   assetId: string
 ): Promise<{ master_asset_id: string; approval_state: "APPROVED" }> {
-  const assetRepo = new AssetRepository()
+  const assetRepo = getAssetRepository()
   const original = await assetRepo.findById(ctx, assetId)
 
   if (!original) throw notFound()
@@ -55,7 +55,7 @@ export async function promoteOriginalToMaster(
   const masterId = randomUUID()
 
   await runInTransaction(async (tx) => {
-    const txRepo = new AssetRepository(tx)
+    const txRepo = getAssetRepository(tx)
 
     await txRepo.create(ctx, {
       id: masterId,

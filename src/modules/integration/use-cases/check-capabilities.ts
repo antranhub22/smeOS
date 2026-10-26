@@ -1,8 +1,8 @@
 import type { IntegrationContext } from "@/modules/integration/use-cases/resolve-integration-context"
 import { isCapabilityCode } from "@/core/rbac/capability-catalog"
-import { CapabilityRepository } from "@/modules/organization/infra/capability-repository"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { CapabilityRepository, getCapabilityRepository } from "@/modules/organization/infra/capability-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
 
 export type CheckCapabilitiesResult = Record<string, boolean>
 
@@ -27,19 +27,19 @@ export async function checkCapabilities(
   const allFalse = (): CheckCapabilitiesResult =>
     Object.fromEntries(codes.map((code) => [code, false]))
 
-  const membership = await new MembershipRepository().findForUserInOrganization(
+  const membership = await getMembershipRepository().findForUserInOrganization(
     input.userId,
     ic.organizationId
   )
   if (!membership || membership.status !== "ACTIVE") return allFalse()
 
-  const role = await new RoleRepository().findAssignableByIdForOrganization(
+  const role = await getRoleRepository().findAssignableByIdForOrganization(
     ic.organizationId,
     membership.role_id
   )
   if (!role) return allFalse()
 
-  const grants = await new CapabilityRepository().resolveGrants(
+  const grants = await getCapabilityRepository().resolveGrants(
     ic.organizationId,
     role.id,
     role.key

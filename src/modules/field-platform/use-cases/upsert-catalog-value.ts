@@ -2,7 +2,7 @@ import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 import { AppError } from "@/core/http/errors"
-import { FieldCatalogRepository } from "../infra/field-catalog-repository"
+import { FieldCatalogRepository, getFieldCatalogRepository } from "../infra/field-catalog-repository"
 import { isKnownBehaviorCode } from "../domain/behaviors"
 import { mapCatalogValueToApiView, type CatalogValueApiView } from "../infra/row-mappers"
 
@@ -30,7 +30,7 @@ export async function upsertCatalogValue(
 ): Promise<CatalogValueApiView> {
   requirePlatformCapability(pctx, "N12")
 
-  const repo = new FieldCatalogRepository()
+  const repo = getFieldCatalogRepository()
   const catalogs = await repo.listCatalogs()
   const catalog = catalogs.find((c) => c.key === input.catalogKey)
   if (!catalog) throw new AppError("NOT_FOUND", `Không tìm thấy danh mục ${input.catalogKey}`, { key: input.catalogKey })

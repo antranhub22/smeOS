@@ -28,7 +28,7 @@ const newLevel = (pct: number): PaymentCodeRule => ({
 
 /**
  * Mức đặt cọc cho khách (Điều hành quyết): mỗi mức là một MÃ THANH TOÁN (VD: DC30 = cọc 30%).
- * Sale gửi mã cho khách; khách nhập ở ô "Mã thanh toán" khi đặt hoa. Mã không giảm giá — tổng đơn
+ * Sale gửi mã cho khách; khách nhập ở ô "Mã thanh toán" khi đặt hàng. Mã không giảm giá — tổng đơn
  * không đổi. Khách không tự chọn phần trăm.
  */
 export function DepositLevelsSection() {

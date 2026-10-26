@@ -1,7 +1,7 @@
 import { conflict, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 const REQUESTABLE_TYPES = ["SINGLE", "STORE", "CHAIN", "FLOWER_NETWORK"] as const
 
@@ -37,7 +37,7 @@ export async function requestOrganizationUpgrade(
   ctx: TenantContext,
   input: RequestOrganizationUpgradeInput
 ): Promise<{ recorded: true; pendingChange: PendingModelChange }> {
-  const orgRepo = new OrganizationRepository()
+  const orgRepo = getOrganizationRepository()
   const organization = await orgRepo.current(ctx)
   if (!organization) throw validationFailed({ organization: "Không tìm thấy tổ chức" })
 

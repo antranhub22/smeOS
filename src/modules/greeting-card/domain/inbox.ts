@@ -267,7 +267,7 @@ export function inboxActions(items: PipelineLike[], role: MessageRole, userId: s
           ...base,
           id: `check-arranging:${i.id}`,
           kind: "CHECK_ARRANGING_PROGRESS",
-          title: "Theo dõi tiến độ thợ cắm hoa",
+          title: "Theo dõi tiến độ nghệ nhân",
           detail: `${code(i)} · Xưởng đang cắm · Đôn đốc hoàn thành đúng giờ`,
           tab: "coordinator",
           urgency: 400,

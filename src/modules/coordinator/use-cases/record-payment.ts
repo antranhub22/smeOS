@@ -13,7 +13,7 @@
 
 import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { CoordinatorRepository } from "../infra/coordinator-repository"
+import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import { audit, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
 
@@ -44,7 +44,7 @@ export async function recordCoordinatorPayment(
   input: RecordPaymentInput
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const paidBefore = Number(row.paid_vnd)
     const totalVnd = Number(row.total_vnd)
@@ -84,7 +84,7 @@ export async function recordCoordinatorPayment(
 }
 
 export async function listCoordinatorPayments(ctx: TenantContext, orderIdOrCode: string): Promise<OrderPaymentView[]> {
-  const repo = new CoordinatorRepository()
+  const repo = getCoordinatorRepository()
   const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
   const rows = await repo.listPayments(ctx, row.id)
   return rows.map((p) => ({

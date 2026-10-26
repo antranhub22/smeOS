@@ -35,7 +35,7 @@ export function suggestJourneyFromPhoto(photoInfo: {
       {
         id: "step-analyze-flowers",
         label: "Phân tích loài hoa & công thức cắm",
-        description: "Bóc tách cành hoa, lá đệm, phong cách cắm và chi phí vốn",
+        description: "Bóc tách thành phần, lá đệm, phong cách cắm và chi phí vốn",
         inputType: "CONFIRMATION",
         isOptional: false,
         nextStepId: "step-render-backdrop",

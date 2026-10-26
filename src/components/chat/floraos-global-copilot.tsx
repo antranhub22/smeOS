@@ -213,7 +213,7 @@ export function FloraOSGlobalCopilot() {
                   smeOS Ops Copilot
                   <span className="inline-block h-2 w-2 rounded-full bg-success animate-pulse" />
                 </div>
-                <div className="text-caption font-medium text-text-muted">Trợ lý Vận hành & Hướng dẫn SaaS cho tiệm hoa</div>
+                <div className="text-caption font-medium text-text-muted">Trợ lý Vận hành & Hướng dẫn SaaS cho cửa hàng</div>
               </div>
             </div>
             <button
@@ -242,7 +242,7 @@ export function FloraOSGlobalCopilot() {
                 <div className="space-y-1.5 w-full pt-2">
                   <div className="text-caption font-bold text-muted-foreground text-left px-1">💡 Hướng dẫn thao tác nhanh:</div>
                   {[
-                    "Làm sao in phiếu cắm hoa giấu giá cho thợ xưởng?",
+                    "Làm sao in phiếu chế tác giấu giá cho thợ xưởng?",
                     "Cách tạo link thẻ chào gửi Zalo và cọc VietQR?",
                     "Tải file Excel mẫu để nhập sản phẩm hàng loạt?",
                     "Cách cấp tài khoản nhân viên mới trong 10 giây?",
@@ -298,7 +298,7 @@ export function FloraOSGlobalCopilot() {
             >
               <input
                 type="text"
-                placeholder="Hỏi về cách dùng hệ thống hoặc tìm mẫu hoa..."
+                placeholder="Hỏi về cách dùng hệ thống hoặc tìm sản phẩm..."
                 className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs focus:ring-1 focus:ring-primary"
                 value={inputQuery}
                 onChange={(e) => setInputQuery(e.target.value)}

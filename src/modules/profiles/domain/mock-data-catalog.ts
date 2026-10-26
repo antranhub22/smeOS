@@ -32,12 +32,12 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
     storeBanner: "/mock-data/floral/store.jpg",
     products: [
       {
-        name: "Bó hoa hồng đỏ tình yêu 30 bông",
+        name: "Sản phẩm hồng đỏ tình yêu 30 bông",
         image: "/mock-data/floral/p1.jpg",
         price: 450000,
         originalPrice: 550000,
         category: "BIRTHDAY",
-        description: "Bó hoa hồng đỏ premium 30 bông Ecuador nhập khẩu, thiết kế bó tròn cổ điển sang trọng, kèm baby breath và lá xanh tươi",
+        description: "Sản phẩm hồng đỏ premium 30 bông Ecuador nhập khẩu, thiết kế bó tròn cổ điển sang trọng, kèm baby breath và lá xanh tươi",
       },
       {
         name: "Hộp hoa sinh nhật pastel mix",

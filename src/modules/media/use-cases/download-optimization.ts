@@ -1,8 +1,8 @@
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { canApproveOptimization, isGuardResult } from "@/modules/media/domain/optimization-rules"
 
 const HAN_URL_GIAY = 5 * 60
@@ -24,14 +24,14 @@ export async function downloadOptimization(
   jobId: string,
   ratio?: string | undefined
 ): Promise<{ url: string; asset_id: string; expires_in: number }> {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await getGenerationJobRepository().findById(ctx, jobId)
   if (!job) throw notFound()
 
   if (isGuardResult(job.result) && !canApproveOptimization(job.result)) {
     throw conflict("Identity Guard đã từ chối ảnh này — chỉ ảnh gốc còn dùng được")
   }
 
-  const assetRepo = new AssetRepository()
+  const assetRepo = getAssetRepository()
   const master = await assetRepo.findMasterByJobId(ctx, jobId)
   if (!master) throw notFound()
 

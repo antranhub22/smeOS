@@ -7,7 +7,7 @@ import type { ProductPricing } from "@/modules/products/domain/product-pricing"
 import { pricingAttributes } from "./pricing/pricing-form"
 
 export const CATEGORIES = [
-  "Bó hoa",
+  "Sản phẩm",
   "Giỏ hoa",
   "Hộp hoa",
   "Kệ hoa khai trương",
@@ -146,7 +146,7 @@ export async function callVisionExtract(assetId: string, reanalyzeKey?: string):
 }
 
 /**
- * Gọi Content Engine để tạo câu chuyện và thông điệp mẫu hoa sang trọng, giàu cảm xúc.
+ * Gọi Content Engine để tạo câu chuyện và thông điệp sản phẩm sang trọng, giàu cảm xúc.
  */
 export async function callContentEngineMarketing(
   summaryContext: string,
@@ -181,7 +181,7 @@ function inferCategory(shapeOrName: string): string {
   if (lower.includes("kệ") || lower.includes("khai trương")) return "Kệ hoa khai trương"
   if (lower.includes("viếng") || lower.includes("chia buồn") || lower.includes("tang")) return "Hoa chia buồn"
   if (lower.includes("cây") || lower.includes("chậu")) return "Cây cảnh / Quà tặng"
-  return "Bó hoa"
+  return "Sản phẩm"
 }
 
 /**
@@ -194,7 +194,7 @@ export function applyVisionToForm(
   let filledCount = 0
   const next = { ...current }
 
-  // 1. Tên mẫu hoa
+  // 1. Tên sản phẩm
   if (!next.name.trim() && vision.productName?.trim()) {
     next.name = vision.productName.trim()
     filledCount++

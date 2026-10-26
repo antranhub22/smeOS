@@ -38,7 +38,7 @@ export const step01IntakeContract = defineStep({
       deliveryAddress: { street: "123 Phố Huế", ward: "Phường Ngô Thì Nhậm", district: "Quận Hai Bà Trưng", city: "Hà Nội" },
       deliveryTargetTime: "17:00 hôm nay",
       deliveryTargetAt: "2026-09-25T17:00:00+07:00",
-      productTitle: "Bó hoa hồng Pastel",
+      productTitle: "Sản phẩm hồng Pastel",
       unitPriceVnd: 850000,
       flowers: [{ flowerName: "Hồng Ohara", quantity: 12, unit: "cành", color: "hồng phấn", role: "Chủ đạo" }],
       cardMessage: "Chúc mừng sinh nhật!",

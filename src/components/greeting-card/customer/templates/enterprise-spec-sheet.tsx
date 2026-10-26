@@ -15,7 +15,7 @@ interface EnterpriseSpecSheetProps {
 }
 
 /**
- * Bảng chi tiết mẫu hoa (trượt từ dưới lên). Chỉ hiển thị dữ liệu có thật
+ * Bảng chi tiết sản phẩm (trượt từ dưới lên). Chỉ hiển thị dữ liệu có thật
  * của sản phẩm — không tự thêm kích thước, thành phần hay cam kết.
  */
 export function EnterpriseSpecSheet({ product, isOpen, onClose, onSelectProduct }: EnterpriseSpecSheetProps) {

@@ -8,6 +8,7 @@ import { categoryAndSearchWhere } from "./product-list-where"
 import type { DbClient } from "./db-client"
 import { assertOwnedAsset, attachMainImageIfMissing, linkMainImage, refreshDriveLinkIfNotDrive, refreshDriveLink, replaceMainImage, upsertMainImage } from "./product-main-image"
 import { updateExistingProductFromBatch, type BatchUpdateItemInput } from "./product-batch-update"
+import type { IProductRepository } from "../domain/repositories/product-repository.interface"
 
 /** Kết quả trả về từ `listWithPreview` — bản ghi sản phẩm kèm ảnh chính và giá. */
 export type ProductPreviewRow = products & {
@@ -73,12 +74,8 @@ export type ListProductsPage = {
   cursor?: string | null | undefined
 }
 
-/**
- * Product Master — đặc tả 07 mục 9, P5. `create`/`updateIdentity` nhận `db`
- * tuỳ chọn để `approveAnalysis` ghi cùng giao dịch với chính lượt duyệt
- * (giống quy ước `AuditLogRepository`/`GenerationJobRepository` của P3).
- */
-export class ProductRepository {
+/** Product Master Repository — quản lý dữ liệu sản phẩm của tenant. */
+export class ProductRepository implements IProductRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   findById(ctx: TenantContext, id: string): Promise<products | null> {
@@ -147,7 +144,7 @@ export class ProductRepository {
   }
 
   /**
-   * Phần mở rộng của `list` cho màn hình Kho Sản Phẩm và modal chọn mẫu hoa.
+   * Phần mở rộng của `list` cho màn hình Kho Sản Phẩm và modal chọn sản phẩm.
    * Được include `product_images` (MAIN) và `product_variants` rồi giải asset URL
    * bằng 1 query `IN(asset_ids)` tập trung — không N+1 (cùng kỹ thuật đã dùng
    * trong `ProductMasterIndexRepository`).
@@ -340,4 +337,14 @@ export class ProductRepository {
     if (result.count === 0) return null
     return this.findById(ctx, id)
   }
+}
+
+let defaultProductRepository: IProductRepository | null = null
+
+export function getProductRepository(db?: DbClient): IProductRepository {
+  if (db) return new ProductRepository(db)
+  if (!defaultProductRepository) {
+    defaultProductRepository = new ProductRepository()
+  }
+  return defaultProductRepository!
 }

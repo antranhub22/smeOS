@@ -10,7 +10,7 @@
 
 import type { TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { MarketIntelligenceRepository } from "@/modules/market-intelligence/infra/market-intelligence-repository"
+import { getMarketIntelligenceRepository } from "@/modules/market-intelligence/infra/market-intelligence-repository"
 import type {
   ConcreteTopic,
   ProductIntelligenceReport,
@@ -94,11 +94,11 @@ export async function readProductContext(
   input: { readonly productId?: string | null; readonly analysisRunId?: string | null }
 ): Promise<ProductBriefContext> {
   const run = input.analysisRunId
-    ? await new MarketIntelligenceRepository().getProductAnalysisRun(ctx.organizationId, input.analysisRunId)
+    ? await getMarketIntelligenceRepository().getProductAnalysisRun(ctx.organizationId, input.analysisRunId)
     : null
   const report = (run?.report as unknown as ProductIntelligenceReport | undefined) ?? null
 
-  let fallbackName = "Bó hoa"
+  let fallbackName = "Sản phẩm"
   if (!report && input.productId) {
     const product = await prisma.products.findFirst({
       where: { organization_id: ctx.organizationId, id: input.productId },

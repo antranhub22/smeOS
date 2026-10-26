@@ -3,7 +3,8 @@ import {
   mergeEffectiveFloorCeilingRatio,
   mergeEffectivePricingConfig,
 } from "@/modules/products/domain/pricing-rules"
-import { PricingRuleRepository } from "@/modules/products/infra/pricing-rule-repository"
+import type { IPricingRuleRepository } from "../domain/repositories/pricing-rule-repository.interface"
+import { getPricingRuleRepository } from "../infra/pricing-rule-repository"
 
 /**
  * `GET /pricing-rules` (`L5`, đặc tả 06 mục 6). Trả cấu hình giá HIỆU LỰC —
@@ -15,9 +16,13 @@ import { PricingRuleRepository } from "@/modules/products/infra/pricing-rule-rep
  * dùng khi Điều hành ở phạm vi tổ chức muốn xem chi nhánh cụ thể đang áp
  * dụng gì, không cần chuyển phiên sang chi nhánh đó.
  */
-export async function getPricingRules(ctx: TenantContext, overrideBranchId?: string | null) {
+export async function getPricingRules(
+  ctx: TenantContext,
+  overrideBranchId?: string | null,
+  pricingRepo: IPricingRuleRepository = getPricingRuleRepository()
+) {
   const branchId = overrideBranchId !== undefined ? overrideBranchId : ctx.branchId
-  const rows = await new PricingRuleRepository().currentRows(ctx)
+  const rows = await pricingRepo.currentRows(ctx)
 
   const config = mergeEffectivePricingConfig(rows, branchId)
   const floorCeilingRatio = mergeEffectiveFloorCeilingRatio(rows, branchId)

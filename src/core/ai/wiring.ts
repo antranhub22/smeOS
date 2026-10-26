@@ -9,7 +9,7 @@ import { AiPolicyRepository } from "./infra/ai-policy-repository"
 import { AiRegistryRepository, licenseComplete } from "./infra/ai-registry-repository"
 import { AiRequestRepository } from "./infra/ai-request-repository"
 import type { AiGatewayDeps } from "./gateway"
-import type { AiClass, AiMeasureState, AiModelCandidate } from "./domain/routing"
+import type { AiClass, AiMeasureState, AiModelCandidate, AiPolicy } from "./domain/routing"
 
 function toCandidate(row: {
   key: string
@@ -47,7 +47,7 @@ export function aiGatewayDeps(ctx: TenantContext): AiGatewayDeps {
   const evaluations = new AiEvaluationRepository()
 
   return {
-    async policyFor(capabilityCode) {
+    async policyFor(capabilityCode): Promise<AiPolicy> {
       const row = await policies.find(ctx, capabilityCode)
       if (!row) return { allowedModels: [] }
       return {

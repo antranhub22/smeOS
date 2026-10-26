@@ -2,6 +2,12 @@ import type { DbClient } from "@/modules/organization/infra/db-client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { OccasionRegisterValue } from "@/modules/organization/domain/occasion-rules"
+import type {
+  IOccasionRepository,
+  CreateOccasionInput,
+  UpdateOccasionInput,
+  OccasionEntity,
+} from "../domain/repositories/occasion-repository.interface"
 
 /**
  * Thêm "Chia buồn" (SOLEMN) — nợ #104, 18/09. Trước đợt này, 6 dòng mặc định
@@ -29,7 +35,7 @@ const DEFAULT_OCCASIONS: ReadonlyArray<{
   { code: "condolence", name: "Chia buồn", sortOrder: 7, register: "SOLEMN" },
 ] as const
 
-export class OccasionRepository {
+export class OccasionRepository implements IOccasionRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   async seedDefault(ctx: TenantContext): Promise<void> {
@@ -119,4 +125,14 @@ export class OccasionRepository {
     if (result.count === 0) return null
     return this.findById(ctx, id)
   }
+}
+
+let occasionRepoInstance: IOccasionRepository | null = null
+
+export function getOccasionRepository(db?: DbClient): IOccasionRepository {
+  if (db) return new OccasionRepository(db)
+  if (!occasionRepoInstance) {
+    occasionRepoInstance = new OccasionRepository()
+  }
+  return occasionRepoInstance!
 }

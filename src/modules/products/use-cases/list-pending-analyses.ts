@@ -1,8 +1,8 @@
 import { validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
+import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
 
 const DEFAULT_LIMIT = 25
 const MAX_LIMIT = 100
@@ -23,7 +23,7 @@ export async function listPendingAnalyses(
     throw validationFailed({ limit: `Phải trong khoảng 1..${MAX_LIMIT}` })
   }
 
-  const rows = await new ProductAnalysisRepository().listPending(ctx, {
+  const rows = await getProductAnalysisRepository().listPending(ctx, {
     limit: limit + 1,
     cursor: options.cursor ?? null,
   })
@@ -31,7 +31,7 @@ export async function listPendingAnalyses(
   const page = hasMore ? rows.slice(0, limit) : rows
   const nextCursor = hasMore ? (page[page.length - 1]?.id ?? null) : null
 
-  const assetRepo = new AssetRepository()
+  const assetRepo = getAssetRepository()
   const storage = getStorageProvider()
   const data = await Promise.all(
     page.map(async (row) => {

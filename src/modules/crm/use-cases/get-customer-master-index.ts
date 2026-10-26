@@ -5,12 +5,13 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { CustomerMasterIndex } from "../domain/customer-master-index"
-import { CustomerRepository } from "../infra/customer-repository"
+import type { ICustomerRepository } from "../domain/repositories/customer-repository.interface"
+import { getCustomerRepository } from "../infra/customer-repository"
 
 export async function getCustomerMasterIndex(
   ctx: TenantContext,
   id: string,
-  repo: CustomerRepository = new CustomerRepository()
+  repo: ICustomerRepository = getCustomerRepository()
 ): Promise<CustomerMasterIndex> {
   const customer = await repo.getById(ctx, id)
   if (!customer) {

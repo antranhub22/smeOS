@@ -337,12 +337,12 @@ export default function ChatAssistantPage() {
                           {m.content}
                         </div>
 
-                        {/* Danh sách Card mẫu hoa gợi ý từ Master Index */}
+                        {/* Danh sách Card sản phẩm gợi ý từ Master Index */}
                         {suggestedFlowers.length > 0 && (
                           <div className="space-y-2 pt-1">
                             <div className="text-caption font-bold text-foreground flex items-center gap-1.5">
                               <Flower2 className="h-3.5 w-3.5 text-primary" />
-                              Mẫu hoa đề xuất từ Master Catalog ({suggestedFlowers.length} mẫu):
+                              Sản phẩm đề xuất từ Master Catalog ({suggestedFlowers.length} mẫu):
                             </div>
                             <div className="grid grid-cols-1 gap-2.5">
                               {suggestedFlowers.map((f) => (

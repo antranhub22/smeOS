@@ -45,11 +45,11 @@ export type VariantStyle = (typeof VARIANT_STYLES)[number]
  * Tuỳ chọn dựng ảnh (Đợt 3, 25/09/2026) — ý định FloraOS, khớp `CHAT_LUONG` /
  * `TANG_NET` / `CACH_GHEP` ở `workers/media_ai/providers/background/base.py`.
  *   quality      standard | high (đám mây: Stability Ultra; cục bộ: provider_ignored)
- *   upscale      none | 2x (khung xuất ×2; tăng nét HẬU CẢNH — bó hoa không qua mô hình siêu phân giải)
+ *   upscale      none | 2x (khung xuất ×2; tăng nét HẬU CẢNH — sản phẩm không qua mô hình siêu phân giải)
  *   compose_mode paste | harmonize | relight
  *     relight   = NHÀ CUNG CẤP LÀM TRỌN GÓI (tách nền, dựng cảnh, ghép, chỉnh sáng, tăng nét) —
  *                 MẶC ĐỊNH của nhánh đám mây (PO 25/09/2026); cổng đo `perceptual`;
- *     paste     = FloraOS tự dán nguyên khối bó hoa lên hậu cảnh (giữ từng điểm ảnh) —
+ *     paste     = FloraOS tự dán nguyên khối sản phẩm lên hậu cảnh (giữ từng điểm ảnh) —
  *                 mặc định của nhánh cục bộ; trên đám mây = chỉ xin hậu cảnh;
  *     harmonize = như paste + hoà bóng / độ nét (xử lý cục bộ).
  */

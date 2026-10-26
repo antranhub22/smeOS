@@ -43,3 +43,9 @@ export class PlatformOperatorRepository {
     return operator.id
   }
 }
+
+let _platformOperatorRepo: PlatformOperatorRepository | null = null
+export function getPlatformOperatorRepository(): PlatformOperatorRepository {
+  if (!_platformOperatorRepo) _platformOperatorRepo = new PlatformOperatorRepository()
+  return _platformOperatorRepo
+}

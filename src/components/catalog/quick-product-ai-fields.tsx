@@ -38,7 +38,7 @@ export function QuickProductAiFields({ values, aiFilled, onChange }: Props) {
           value={values.description}
           onChange={(e) => onChange("description", e.target.value)}
           rows={3}
-          placeholder="Vài câu giới thiệu mẫu hoa cho khách"
+          placeholder="Vài câu giới thiệu sản phẩm cho khách"
           className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-xs text-text focus:outline-none focus:border-primary"
         />
       </div>

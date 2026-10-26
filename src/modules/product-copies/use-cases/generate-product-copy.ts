@@ -6,11 +6,16 @@ import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider";
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences";
 import type { TenantContext } from "@/core/tenancy";
 
-import { ProductCopyRepository } from "../infra/product-copy-repository";
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository";
-import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository";
-import { OccasionRepository } from "@/modules/organization/infra/occasion-repository";
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
+import type { IProductCopyRepository } from "../domain/repositories/product-copy-repository.interface";
+import { getProductCopyRepository } from "../infra/product-copy-repository";
+import type { IProductAnalysisRepository } from "@/modules/products/domain/repositories/product-analysis-repository.interface";
+import { getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository";
+import type { IBrandProfileRepository } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface";
+import { getBrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository";
+import type { IOccasionRepository } from "@/modules/organization/domain/repositories/occasion-repository.interface";
+import { getOccasionRepository } from "@/modules/organization/infra/occasion-repository";
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface";
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
 import { refundJob } from "@/modules/usage/use-cases/refund-job";
 import { parseBrandForbiddenStyles } from "@/core/ai/domain/flower-content-guard";
@@ -44,14 +49,14 @@ export type GenerateProductCopyInput = {
  */
 export async function generateProductCopy(
   ctx: TenantContext,
-  input: GenerateProductCopyInput
+  input: GenerateProductCopyInput,
+  copyRepo: IProductCopyRepository = getProductCopyRepository(),
+  analysisRepo: IProductAnalysisRepository = getProductAnalysisRepository(),
+  brandRepo: IBrandProfileRepository = getBrandProfileRepository(),
+  occasionRepo: IOccasionRepository = getOccasionRepository(),
+  jobRepo: IGenerationJobRepository = getGenerationJobRepository()
 ): Promise<{ copyId: string; raw: unknown; needsReview: boolean; modelKey: string | null }> {
   requireCapability(ctx, "H5");
-
-  const copyRepo = new ProductCopyRepository();
-  const analysisRepo = new ProductAnalysisRepository();
-  const brandRepo = new BrandProfileRepository();
-  const occasionRepo = new OccasionRepository(copyRepo.db);
 
   const analysis = await analysisRepo.findById(ctx, input.analysisId);
   if (!analysis) throw new AppError("NOT_FOUND", "Phân tích không tồn tại");
@@ -106,7 +111,6 @@ export async function generateProductCopy(
     idempotencyKey: input.idempotencyKey,
   });
 
-  const jobRepo = new GenerationJobRepository();
   await jobRepo.startInline(ctx, job.id, new Date());
 
   try {

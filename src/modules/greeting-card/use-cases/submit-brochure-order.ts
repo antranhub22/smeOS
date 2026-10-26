@@ -2,8 +2,8 @@ import { normalizeOrderAddress } from "../domain/delivery-address"
 import { orderScheduleError } from "../domain/holiday-policy"
 import { assertHolidayCapacity } from "./holiday-capacity"
 import { unprocessable, validationFailed } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
 import { validateCustomerOrderInput } from "../domain/greeting-card-rules"
 import { paymentInstructionsFor } from "./payment-instructions"
 import type { CustomerOrderSubmitInput, ProductSnapshot } from "../domain/greeting-card-types"
@@ -18,8 +18,8 @@ export { DEFAULT_TIME_SLOT, type BrochureOrderResult } from "./place-brochure-or
 export async function submitBrochureOrder(
   sendCode: string,
   rawInput: CustomerOrderSubmitInput,
-  repo = new GreetingCardRepository(),
-  orders = new BrochureOrderRepository()
+  repo = getGreetingCardRepository(),
+  orders = getBrochureOrderRepository()
 ): Promise<BrochureOrderResult> {
   const address = normalizeOrderAddress(rawInput)
   const input = address.input
@@ -47,7 +47,7 @@ export async function submitBrochureOrder(
 
   // Không còn "tự lấy mẫu đầu tiên" như bản cũ: khách phải chọn mẫu.
   if (!session.selected_product_id) {
-    throw unprocessable("Vui lòng chọn mẫu hoa trước khi hoàn tất đặt hàng")
+    throw unprocessable("Vui lòng chọn sản phẩm trước khi hoàn tất đặt hàng")
   }
   // Tính lại giá từ Product Master lúc đặt — không tin ảnh chụp đã lưu.
   const product = await resolveOrderableProduct(session, session.selected_product_id, repo)
@@ -98,10 +98,10 @@ async function existingOrderResult(
 export async function quoteBrochureSession(
   sendCode: string,
   req: QuoteRequest,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ): Promise<QuoteResult> {
   const session = await loadPublicSession(sendCode, repo)
-  if (!session.selected_product_id) throw unprocessable("Vui lòng chọn mẫu hoa trước")
+  if (!session.selected_product_id) throw unprocessable("Vui lòng chọn sản phẩm trước")
   const product = await resolveOrderableProduct(session, session.selected_product_id, repo)
   const shop = await repo.getShopProfile(session.organization_id)
   const promo = promotionForQuote(session.catalog.filters, shop.settings, req.selectedPromotionId)

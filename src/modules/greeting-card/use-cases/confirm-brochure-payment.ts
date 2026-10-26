@@ -1,9 +1,9 @@
 import type { TenantContext } from "@/core/tenancy"
 import { notFound, unprocessable, conflict } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
-import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
-import { CancellationFollowUpRepository } from "../infra/cancellation-follow-up-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
+import { BrochurePaymentRepository, getBrochurePaymentRepository } from "../infra/brochure-payment-repository"
+import { CancellationFollowUpRepository, getCancellationFollowUpRepository } from "../infra/cancellation-follow-up-repository"
 import { expectedPayment, parsePaymentPolicy, resolveRequirePaymentProof } from "../domain/brochure-payment-policy"
 import { parseBrochureWorkflowPolicy } from "../domain/brochure-workflow-policy"
 import { policyForOrder, readPaymentPlan } from "../domain/payment-plan"
@@ -24,7 +24,7 @@ import { ensureHomestayOrderBooking } from "@/modules/availability/use-cases/bin
 export async function reportCustomerPayment(
   sendCode: string,
   input: { proofAssetId?: string | undefined } = {},
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ) {
   const session = await loadPublicSession(sendCode, repo)
   if (!session.order_id) {
@@ -94,9 +94,9 @@ export async function adminConfirmBrochurePayment(
     /** Tự duyệt bill: số tiền AI đã đối chiếu lúc khách gửi bill — lệch số phải thu hiện tại thì KHÔNG ghi thu. */
     expectedAmountVnd?: number | undefined
   } = {},
-  payments = new BrochurePaymentRepository(),
-  orders = new BrochureOrderRepository(),
-  repo = new GreetingCardRepository()
+  payments = getBrochurePaymentRepository(),
+  orders = getBrochureOrderRepository(),
+  repo = getGreetingCardRepository()
 ) {
   await assertOrderInScope(ctx, orderId, orders)
   const order = await orders.findBrochureOrder(ctx, orderId)
@@ -168,7 +168,7 @@ export async function cancelBrochureOrder(
   orderId: string,
   reason: string,
   confirmInTransit = false,
-  payments = new BrochurePaymentRepository()
+  payments = getBrochurePaymentRepository()
 ) {
   await assertOrderInScope(ctx, orderId)
   const result = await payments.cancel(ctx, orderId, reason.trim(), { confirmInTransit })
@@ -180,8 +180,8 @@ export async function refundBrochureOrder(
   ctx: TenantContext,
   orderId: string,
   input: { amountVnd: number; reason: string },
-  payments = new BrochurePaymentRepository(),
-  followUps = new CancellationFollowUpRepository()
+  payments = getBrochurePaymentRepository(),
+  followUps = getCancellationFollowUpRepository()
 ) {
   await assertOrderInScope(ctx, orderId)
   // Khoản hoàn của đề xuất huỷ đã duyệt được ghi ở "Cần hoàn tiền" (Hộp việc) — ghi thêm ở đây là ghi trùng
@@ -200,9 +200,9 @@ export async function coordinatorConfirmBalancePayment(
   ctx: TenantContext,
   orderId: string,
   input: { note?: string | null | undefined } = {},
-  payments = new BrochurePaymentRepository(),
-  orders = new BrochureOrderRepository(),
-  repo = new GreetingCardRepository()
+  payments = getBrochurePaymentRepository(),
+  orders = getBrochureOrderRepository(),
+  repo = getGreetingCardRepository()
 ) {
   await assertOrderInScope(ctx, orderId, orders)
   const order = await orders.findBrochureOrder(ctx, orderId)
@@ -246,9 +246,9 @@ export async function coordinatorConfirmDepositPayment(
   ctx: TenantContext,
   orderId: string,
   input: { note?: string | null | undefined } = {},
-  payments = new BrochurePaymentRepository(),
-  orders = new BrochureOrderRepository(),
-  repo = new GreetingCardRepository()
+  payments = getBrochurePaymentRepository(),
+  orders = getBrochureOrderRepository(),
+  repo = getGreetingCardRepository()
 ) {
   await assertOrderInScope(ctx, orderId, orders)
   const order = await orders.findBrochureOrder(ctx, orderId)
@@ -341,7 +341,7 @@ export async function quoteBrochureOrder(
   orderId: string,
   totalVnd: number,
   reason?: string | undefined,
-  payments = new BrochurePaymentRepository()
+  payments = getBrochurePaymentRepository()
 ) {
   await assertOrderInScope(ctx, orderId)
   const result = await payments.setQuote(ctx, orderId, totalVnd, reason?.trim() || null)

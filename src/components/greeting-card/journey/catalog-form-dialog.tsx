@@ -12,7 +12,7 @@ interface CatalogFormDialogProps {
   onOpenChange: (open: boolean) => void
   mode: "create" | "clone"
   orgSlug: string
-  /** Số mẫu hoa sẽ được chép sang (chỉ dùng khi nhân bản). */
+  /** Số sản phẩm sẽ được chép sang (chỉ dùng khi nhân bản). */
   cloneItemCount?: number
   initialName?: string
   initialCode?: string
@@ -53,7 +53,7 @@ export function CatalogFormDialog(props: CatalogFormDialogProps) {
   const description =
     mode === "create"
       ? "Đặt tên dễ nhớ theo dịp, ví dụ “Hoa 20/10” hoặc “Sinh nhật tháng 11”."
-      : `${cloneItemCount} mẫu hoa sẽ được chép sang link mới để bạn theo dõi riêng từng kênh (Fanpage, Zalo, quảng cáo…).`
+      : `${cloneItemCount} sản phẩm sẽ được chép sang link mới để bạn theo dõi riêng từng kênh (Fanpage, Zalo, quảng cáo…).`
 
   return (
     <Dialog

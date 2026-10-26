@@ -1,9 +1,9 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import type { assets } from "@/modules/assets/infra/entities"
-import { ProductRepository } from "@/modules/products/infra/product-repository"
+import { ProductRepository, getProductRepository } from "@/modules/products/infra/product-repository"
 
 /**
  * Hạn của URL ký sẵn trả kèm mỗi ảnh. Ngắn có chủ đích: engine ngoài tải ảnh
@@ -73,12 +73,12 @@ async function toIntegrationAsset(asset: assets, origin: string): Promise<Integr
 export async function getMasterImage(
   ctx: TenantContext,
   productId: string,
-  options: { origin: string }
+  options: { origin: string },
+  assets: AssetRepository = getAssetRepository() as AssetRepository
 ): Promise<MasterImageResult> {
-  const product = await new ProductRepository().findById(ctx, productId)
+  const product = await getProductRepository().findById(ctx, productId)
   if (!product || product.status !== "ACTIVE") throw notFound()
 
-  const assets = new AssetRepository()
   const master = await assets.findApprovedMaster(ctx, productId)
   if (!master) throw notFound()
 

@@ -29,7 +29,7 @@ const CATEGORIES: IllustrationCategory[] = [
     images: [
       {
         url: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80",
-        alt: "Bó hoa cưới hồng phấn",
+        alt: "Sản phẩm cưới hồng phấn",
       },
       {
         url: "https://images.unsplash.com/photo-1676868198934-ef67ee2c808c?auto=format&fit=crop&w=600&q=80",
@@ -38,11 +38,11 @@ const CATEGORIES: IllustrationCategory[] = [
     ],
   },
   {
-    keywords: ["tốt nghiệp", "cử nhân", "bó hoa"],
+    keywords: ["tốt nghiệp", "cử nhân", "sản phẩm"],
     images: [
       {
         url: "https://images.unsplash.com/photo-1543409777-30250849aa3e?auto=format&fit=crop&w=600&q=80",
-        alt: "Bó hoa hướng dương",
+        alt: "Sản phẩm hướng dương",
       },
     ],
   },
@@ -73,7 +73,7 @@ const CATEGORIES: IllustrationCategory[] = [
 const DEFAULT_IMAGES: IllustrationEntry[] = [
   {
     url: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80",
-    alt: "Bó hoa hồng pastel",
+    alt: "Sản phẩm hồng pastel",
   },
   {
     url: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80",
@@ -163,7 +163,7 @@ export function getOpportunityHeadline(item: HeadlineLike): string {
     return `Xu hướng thiết kế ${cleanTopic} chuẩn gu & tươi lâu`;
   }
 
-  // Nếu tiêu đề là chuỗi nối nhiều từ khóa bằng dấu phẩy (vd: "BST Hoa 20/10, Bó hoa tốt nghiệp...")
+  // Nếu tiêu đề là chuỗi nối nhiều từ khóa bằng dấu phẩy (vd: "BST Hoa 20/10, Sản phẩm tốt nghiệp...")
   if (text.includes(",") && text.split(",").length >= 2) {
     const firstSegment = text.split(",")[0]?.trim() || text;
     if (firstSegment.toLowerCase().startsWith("bst ")) {

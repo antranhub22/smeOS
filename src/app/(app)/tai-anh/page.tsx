@@ -550,7 +550,7 @@ export default function TaiAnhPage() {
         method: "POST",
         // Bắt buộc như mọi điểm tạo job: bấm hai lần, lỡ tay tải lại trang,
         // hay mạng chập đều không được tính tiền lần thứ hai. Khoá theo
-        // lượt phân tích nên hai lần bấm cho cùng một bó hoa là cùng khoá.
+        // lượt phân tích nên hai lần bấm cho cùng một sản phẩm là cùng khoá.
         headers: { "idempotency-key": `product-copy:${analysisId}` },
         body: JSON.stringify({ analysisId, productId }),
       })

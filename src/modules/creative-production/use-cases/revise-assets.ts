@@ -7,10 +7,10 @@ import type { AiModelCandidate } from "@/core/ai/domain/routing"
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider"
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences"
 import type { TenantContext } from "@/core/tenancy"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
-import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
+import { BrandProfileRepository, getBrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
 
 import {
   createContentRewriteAdapter,
@@ -59,7 +59,7 @@ async function runInlineAiJob<O>(
     }
     return { jobId: enq.job.id, output: enq.job.output as O, usage: enq.usage, deduped: true }
   }
-  const jobs = new GenerationJobRepository()
+  const jobs = getGenerationJobRepository()
   await jobs.startInline(ctx, enq.job.id, new Date())
   try {
     const preferredModelKeys = await providerOrderFor(ctx, "content")
@@ -102,7 +102,7 @@ export async function reviseScene(
 
   let plan: ScenePlan | null = null
   let current: ScenePlanScene | null = input.scene ?? null
-  const jobs = new GenerationJobRepository()
+  const jobs = getGenerationJobRepository()
   if (input.scenePlanId) {
     const planJob = await jobs.findById(ctx, input.scenePlanId)
     if (!planJob || planJob.feature !== SCENE_PLAN_FEATURE) throw new AppError("NOT_FOUND", "Không có kịch bản này")
@@ -156,7 +156,7 @@ export async function rewriteContent(
   }
 ): Promise<{ jobId: string; result: RewriteOutput; usage: Usage }> {
   requireCapability(ctx, "I1")
-  const brand = await new BrandProfileRepository().current(ctx)
+  const brand = await getBrandProfileRepository().current(ctx)
   const f = brand?.forbidden_styles
   const brandForbidden =
     typeof f === "string" ? f : Array.isArray(f) ? f.join(", ") : f ? JSON.stringify(f) : null

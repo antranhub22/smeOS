@@ -44,7 +44,7 @@ export function LandingTemplateGallery({
         <div className="flex items-center gap-1.5 text-xs font-bold text-text uppercase tracking-wider">
           <Camera size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-danger" : "text-warning"} />
           <span className={isLuxury ? "font-serif" : ""}>
-            {isLuxury ? "Triển Lãm Ảnh Tác Phẩm Thực Tế" : "Khoảnh Khắc Hoa Tươi Tại Xưởng"}
+            {isLuxury ? "Triển Lãm Ảnh Tác Phẩm Thực Tế" : "Khoảnh Khắc Sản Phẩm Tại Xưởng"}
           </span>
         </div>
         <span className={`text-caption font-medium ${isLuxury ? "font-serif text-primary" : "text-text-muted"}`}>

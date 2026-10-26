@@ -5,7 +5,7 @@
 export type ChatChannel = "WEB_WIDGET" | "INTERNAL_DASHBOARD" | "ZALO"
 export type ChatSenderType = "USER" | "ASSISTANT" | "SYSTEM"
 
-export interface SuggestedFlowerCard {
+export interface SuggestedProductCard {
   productId: string
   productCode: string
   productName: string
@@ -18,7 +18,9 @@ export interface SuggestedFlowerCard {
 }
 
 export interface ChatMessageMetadata {
-  suggestedFlowers?: SuggestedFlowerCard[] | undefined
+  suggestedProducts?: SuggestedProductCard[] | undefined
+  /** @deprecated Dùng `suggestedProducts` để tương thích đa ngành */
+  suggestedFlowers?: SuggestedProductCard[] | undefined
   createdOrderId?: string | undefined
   orderCode?: string | undefined
   userIntent?: string | undefined

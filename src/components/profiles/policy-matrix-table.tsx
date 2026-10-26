@@ -90,7 +90,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
               <PolicyRow
                 icon={<Truck size={17} className="text-foreground" />}
                 title="Bắt buộc thu đủ 100% trước khi Giao Ship"
-                description="Đơn đặt cọc bắt buộc phải thanh toán nốt phần còn lại (Lần 2) trước khi tài xế xuất giao hoa."
+                description="Đơn đặt cọc bắt buộc phải thanh toán nốt phần còn lại (Lần 2) trước khi tài xế xuất giao hàng."
                 isOn={isPaidBeforeShip}
                 onToggle={(val) => onChange({ requireFullBeforeDispatch: val })}
                 statusText={isPaidBeforeShip ? "Khóa nút Giao nếu còn nợ tiền" : "Cho phép giao cọc, thu sau"}
@@ -139,7 +139,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
               <PolicyRow
                 icon={<Clock size={17} className="text-foreground" />}
                 title="Tự động duyệt thanh toán khi có ảnh chụp bill"
-                description="Bill khách tải lên khớp đúng tài khoản và số tiền mà quá thời gian chọn chưa ai bấm duyệt, hệ thống tự xác nhận để đơn vào cắm hoa kịp giờ. Bill lệch hoặc không đọc được luôn chờ người duyệt. Cần bật “AI đọc ảnh bill”."
+                description="Bill khách tải lên khớp đúng tài khoản và số tiền mà quá thời gian chọn chưa ai bấm duyệt, hệ thống tự xác nhận để đơn vào chế tác kịp giờ. Bill lệch hoặc không đọc được luôn chờ người duyệt. Cần bật “AI đọc ảnh bill”."
                 isOn={isAutoApproveProof}
                 onToggle={(val) => onChange({ autoApprovePaymentWithProof: val })}
                 extraControl={
@@ -161,7 +161,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
               <PolicyRow
                 icon={<AlertTriangle size={17} className="text-warning" />}
                 title="Tự động hủy & hoàn tiền khi Điều phối từ chối (SLA)"
-                description="Khi xưởng hết hoa/quá tải, Điều phối báo từ chối. Quá thời gian quy định sẽ tự hủy & tạo lệnh hoàn tiền."
+                description="Khi xưởng hết nguyên liệu/quá tải, Điều phối báo từ chối. Quá thời gian quy định sẽ tự hủy & tạo lệnh hoàn tiền."
                 isOn={Boolean(policy.cancellationApprovalTimeoutMinutes && policy.cancellationApprovalTimeoutMinutes <= 120)}
                 onToggle={(val) => onChange({ cancellationApprovalTimeoutMinutes: val ? 30 : 1440 })}
                 extraControl={
@@ -185,7 +185,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
               <PolicyRow
                 icon={<Clock size={17} className="text-foreground" />}
                 title="Hạn thanh toán giữ đơn (Tự hủy đơn nháp)"
-                description="Hết giờ mà khách chưa chuyển khoản ➔ Đơn tự hủy để giải phóng nguyên liệu hoa cho khách khác."
+                description="Hết giờ mà khách chưa chuyển khoản ➔ Đơn tự hủy để giải phóng tồn kho cho khách khác."
                 isOn={isAutoCancelUnpaid}
                 onToggle={(val) => onChange({ paymentTimeoutMinutes: val ? 30 : 0, autoCancelUnpaid: val })}
                 extraControl={
@@ -218,18 +218,18 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
               {/* 8. ẢNH THÀNH PHẨM QC */}
               <PolicyRow
                 icon={<Camera size={17} className="text-foreground" />}
-                title="Bắt buộc ảnh hoa thành phẩm (QC) trước khi Giao"
-                description="Thợ cắm hoa phải tải ảnh QC lên hệ thống mới mở nút Giao Ship. Tắt = không chặn xuất giao."
+                title="Bắt buộc ảnh sản phẩm hoàn thiện (QC) trước khi Giao"
+                description="Thợ chế tác phải tải ảnh QC lên hệ thống mới mở nút Giao Ship. Tắt = không chặn xuất giao."
                 isOn={isQCRequired}
                 onToggle={(val) => onChange({ requireProductPhotoQC: val })}
-                statusText={isQCRequired ? "Kiểm định hoa chặt chẽ" : "Tự do giao (Thợ vẫn có thể tải ảnh)"}
+                statusText={isQCRequired ? "Kiểm định sản phẩm chặt chẽ" : "Tự do giao (Thợ vẫn có thể tải ảnh)"}
                 disabled={disabled}
               />
 
               {/* 9. ĐẾM NGƯỢC DUYỆT ẢNH HOA THÀNH PHẨM */}
               <PolicyRow
                 icon={<Clock size={17} className="text-foreground" />}
-                title="Đếm ngược duyệt ảnh hoa thành phẩm (SLA)"
+                title="Đếm ngược duyệt ảnh thành phẩm (SLA)"
                 description="Khách xem ảnh trên link theo dõi. Hết thời gian đếm ngược sẽ tự động duyệt để kịp giờ bàn giao tài xế."
                 isOn={(policy.productPhotoReviewMinutes ?? 10) > 0}
                 onToggle={(val) => onChange({ productPhotoReviewMinutes: val ? 10 : 0 })}
@@ -252,7 +252,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
               {/* 10. ẢNH NGƯỜI NHẬN HOA */}
               <PolicyRow
                 icon={<Camera size={17} className="text-foreground" />}
-                title="Bắt buộc ảnh người nhận hoa lúc giao thành công"
+                title="Bắt buộc ảnh người nhận hàng lúc giao thành công"
                 description="Shipper phải chụp ảnh người nhận mới bấm Hoàn tất. Tắt = cho phép bấm Hoàn tất trực tiếp."
                 isOn={isRecipientPhotoRequired}
                 onToggle={(val) => onChange({ requireRecipientPhoto: val })}

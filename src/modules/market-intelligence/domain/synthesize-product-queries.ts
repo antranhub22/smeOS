@@ -47,7 +47,7 @@ export function synthesizeProductResearchQueries(
   const dominantFlower =
     input.components.find((c) => c.role === "dominant")?.flowerType ||
     input.components[0]?.flowerType ||
-    "Hoa tươi";
+    "Sản phẩm";
 
   const cleanFlower = cleanPhrase(dominantFlower);
   const mainColor = input.attributes.mainColors[0] ? cleanPhrase(input.attributes.mainColors[0]) : "";

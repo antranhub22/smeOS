@@ -1,5 +1,5 @@
 import type { TenantContext } from "@/core/tenancy"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 export type OrganizationDetail = {
   id: string
@@ -12,7 +12,7 @@ export type OrganizationDetail = {
 
 /** `GET /organizations/current` (`F1`, đặc tả 06 mục 3). */
 export async function getCurrentOrganization(ctx: TenantContext): Promise<OrganizationDetail | null> {
-  const organization = await new OrganizationRepository().current(ctx)
+  const organization = await getOrganizationRepository().current(ctx)
   if (!organization) return null
   return {
     id: organization.id,

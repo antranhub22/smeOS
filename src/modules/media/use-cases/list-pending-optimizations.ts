@@ -1,7 +1,7 @@
 import { validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 
 const DEFAULT_LIMIT = 25
 const MAX_LIMIT = 100
@@ -38,8 +38,8 @@ export async function listPendingOptimizations(
     throw validationFailed({ limit: `Phải trong khoảng 1..${MAX_LIMIT}` })
   }
 
-  const jobRepo = new GenerationJobRepository()
-  const assetRepo = new AssetRepository()
+  const jobRepo = getGenerationJobRepository()
+  const assetRepo = getAssetRepository()
 
   const candidates = await jobRepo.listCompletedNotRejected(ctx, {
     feature: "media.optimize",

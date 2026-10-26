@@ -26,7 +26,7 @@ interface FlowerImageProps {
 
 
 /**
- * Ảnh mẫu hoa dùng chung — hỗ trợ 3 nguồn theo thứ tự ưu tiên:
+ * Ảnh sản phẩm dùng chung — hỗ trợ 3 nguồn theo thứ tự ưu tiên:
  * 1. `src` (storage URL đã ký)
  * 2. `driveLink` → proxy `/api/v1/public/drive-thumb-proxy?folder_id=...`
  * 3. Placeholder icon

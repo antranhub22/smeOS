@@ -77,7 +77,7 @@ export function buildNarrativeArcPrompt(input: NarrativeAiInput): string {
 
   if (mode === "AUTHENTIC") {
     return [
-      `Sinh cung truyện AUTHENTIC cho video marketing hoa tươi.`,
+      `Sinh cung truyện AUTHENTIC cho video marketing sản phẩm.`,
       `Sản phẩm: ${passport.productName} (${passport.category}).`,
       `Phong cách: ${passport.style}.`,
       `Thành phần: ${passport.components.join(", ")}.`,
@@ -95,7 +95,7 @@ export function buildNarrativeArcPrompt(input: NarrativeAiInput): string {
   }
 
   return [
-    `Sinh cung truyện CREATIVE cho video marketing hoa tươi.`,
+    `Sinh cung truyện CREATIVE cho video marketing sản phẩm.`,
     `Sản phẩm: ${passport.productName} (${passport.category}).`,
     `Phong cách: ${passport.style}.`,
     `Thành phần: ${passport.components.join(", ")}.`,

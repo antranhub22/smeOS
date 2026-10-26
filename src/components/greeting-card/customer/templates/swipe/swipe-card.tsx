@@ -113,7 +113,7 @@ export function SwipeCard({ product, theme, brand, index, total, onInfo }: Swipe
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-body-sm opacity-60" style={{ color: theme.muted }}>
-            Chưa có ảnh mẫu hoa
+            Chưa có ảnh sản phẩm
           </div>
         )}
         {theme.tape && (

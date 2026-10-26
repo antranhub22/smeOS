@@ -25,7 +25,7 @@ describe("trạng thái duyệt", () => {
 })
 
 describe("resolveEffectiveAnalysis", () => {
-  const raw = { identity: { category: "Bó hoa" } }
+  const raw = { identity: { category: "Sản phẩm" } }
 
   it("dùng raw khi chưa có edited", () => {
     expect(resolveEffectiveAnalysis(raw, null)).toBe(raw)
@@ -40,11 +40,11 @@ describe("resolveEffectiveAnalysis", () => {
 describe("extractProductFieldsFromAnalysis", () => {
   it("đọc đủ bốn trường identity", () => {
     const fields = extractProductFieldsFromAnalysis({
-      identity: { category: "Bó hoa", shape: "Tròn", facing: "Một mặt", container: "Giấy gói" },
+      identity: { category: "Sản phẩm", shape: "Tròn", facing: "Một mặt", container: "Giấy gói" },
       bom: { flowers: [] },
       confidence: 87,
     })
-    expect(fields.category).toBe("Bó hoa")
+    expect(fields.category).toBe("Sản phẩm")
     expect(fields.shape).toBe("Tròn")
     expect(fields.facing).toBe("Một mặt")
     expect(fields.container).toBe("Giấy gói")
@@ -84,8 +84,8 @@ describe("extractProductFieldsFromAnalysis", () => {
 describe("draftProductName", () => {
   it("dùng category khi có", () => {
     expect(
-      draftProductName({ category: "Bó hoa", shape: null, facing: null, container: null, attributes: {} })
-    ).toBe("Bó hoa")
+      draftProductName({ category: "Sản phẩm", shape: null, facing: null, container: null, attributes: {} })
+    ).toBe("Sản phẩm")
   })
 
   it("dùng tên mặc định khi category null", () => {
@@ -100,7 +100,7 @@ describe("missingKeysInEdit", () => {
 
   it("chấp nhận bản sửa giữ đủ khoá, dù đổi hết giá trị", () => {
     expect(
-      missingKeysInEdit(raw, { identity: { category: "Bó hoa" }, bom: { flowers: [] }, confidence: 95, checklist: {} })
+      missingKeysInEdit(raw, { identity: { category: "Sản phẩm" }, bom: { flowers: [] }, confidence: 95, checklist: {} })
     ).toEqual([])
   })
 

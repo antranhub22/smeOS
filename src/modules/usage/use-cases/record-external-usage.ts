@@ -1,6 +1,7 @@
 import { validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { UsageRepository } from "@/modules/usage/infra/usage-repository"
+import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
+import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
 import type { usage } from "@/modules/usage/infra/entities"
 
 const RECORDABLE_STATUS = ["COMPLETED", "REFUNDED"] as const
@@ -29,13 +30,17 @@ export type RecordExternalUsageInput = {
  * chính lúc tạo job (`enqueue-job.ts`), engine ngoài không tạo job qua
  * đường này thì không được tự ghi nó.
  */
-export async function recordExternalUsage(ctx: TenantContext, input: RecordExternalUsageInput): Promise<usage> {
+export async function recordExternalUsage(
+  ctx: TenantContext,
+  input: RecordExternalUsageInput,
+  repo: IUsageRepository = getUsageRepository()
+): Promise<usage> {
   if (!input.feature) throw validationFailed({ feature: "Bắt buộc" })
   if (!RECORDABLE_STATUS.includes(input.status as RecordableStatus)) {
     throw validationFailed({ status: `Phải là một trong: ${RECORDABLE_STATUS.join(", ")}` })
   }
 
-  return new UsageRepository().record(ctx, {
+  return repo.record(ctx, {
     workspaceId: ctx.workspaceId,
     userId: ctx.userId,
     jobId: input.jobId ?? null,

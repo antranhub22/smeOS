@@ -1,7 +1,7 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import type { organization_type } from "@/modules/organization/infra/entities"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 
@@ -29,7 +29,7 @@ export async function approveOrganizationModelChange(
 ): Promise<{ success: true; targetType: organization_type; organizationId: string }> {
   requirePlatformCapability(pctx, "N2")
 
-  const orgRepo = new OrganizationRepository()
+  const orgRepo = getOrganizationRepository()
   const org = await orgRepo.findById(input.organizationId)
   if (!org) throw notFound()
 

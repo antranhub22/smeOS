@@ -2,8 +2,15 @@ import type { DbClient } from "./db-client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { InputJsonValue } from "./entities"
+import type {
+  ICatalogLinkRepository,
+  CreateCatalogLinkInput,
+  UpdateCatalogLinkInput,
+  CatalogLeadInput,
+  PublicCatalogRawData,
+} from "../domain/repositories/catalog-link-repository.interface"
 
-export class CatalogLinkRepository {
+export class CatalogLinkRepository implements ICatalogLinkRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   async findBySlug(slug: string) {
@@ -71,7 +78,7 @@ export class CatalogLinkRepository {
     return result.count > 0
   }
 
-  async getPublicCatalogRaw(slug: string) {
+  async getPublicCatalogRaw(slug: string): Promise<PublicCatalogRawData | null> {
     const link = await this.db.catalog_links.findUnique({
       where: { slug },
     })
@@ -147,7 +154,7 @@ export class CatalogLinkRepository {
       brandProfile,
       productRows,
       assetRecords,
-    }
+    } as unknown as PublicCatalogRawData
   }
 
   async recordLead(slug: string, lead: { phone: string; message: string | null; submittedAt: string }) {
@@ -170,4 +177,13 @@ export class CatalogLinkRepository {
     })
     return true
   }
+}
+
+let defaultCatalogLinkRepository: ICatalogLinkRepository | null = null
+
+export function getCatalogLinkRepository(): ICatalogLinkRepository {
+  if (!defaultCatalogLinkRepository) {
+    defaultCatalogLinkRepository = new CatalogLinkRepository()
+  }
+  return defaultCatalogLinkRepository!
 }

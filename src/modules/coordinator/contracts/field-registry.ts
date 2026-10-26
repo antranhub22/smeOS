@@ -366,7 +366,7 @@ export const COORDINATOR_CORE_FIELDS: readonly CoreFieldDefinition[] = [
     key: "technicalInstruction",
     entity: "ORDER",
     dataType: "LONG_TEXT",
-    label: "Hướng dẫn kỹ thuật cho thợ cắm",
+    label: "Hướng dẫn kỹ thuật cho thợ chế tác",
     requirement: "OPTIONAL",
     visibility: INTERNAL_AND_PARTNER,
     sensitivity: "NORMAL",

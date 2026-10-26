@@ -279,7 +279,7 @@ export function MarketingWorkspace() {
                           {opp.title}
                         </div>
                         <div className="text-xs text-text-muted">
-                          {opp.dominantTopic || "Hoa tươi & Quà tặng"} {opp.suggestedAngle ? `· ${opp.suggestedAngle}` : ""}
+                          {opp.dominantTopic || "Sản phẩm & Quà tặng"} {opp.suggestedAngle ? `· ${opp.suggestedAngle}` : ""}
                         </div>
                       </div>
                       {typeof opp.trendScore === "number" && (

@@ -65,8 +65,8 @@ export function ImportPreview({ rows, stats, isImporting, progressPhase, driveTh
                 <tr>
                   <th className="px-3 py-2.5 w-12 text-center">#</th>
                   <th className="px-3 py-2.5 w-20">Ảnh</th>
-                  <th className="px-3 py-2.5 w-28">Mã mẫu hoa</th>
-                  <th className="px-3 py-2.5">Tên mẫu hoa</th>
+                  <th className="px-3 py-2.5 w-28">Mã sản phẩm</th>
+                  <th className="px-3 py-2.5">Tên sản phẩm</th>
                   <th className="px-3 py-2.5 w-28">Danh mục</th>
                   <th className="px-3 py-2.5 w-28 text-right">Giá niêm yết (₫)</th>
                   <th className="px-3 py-2.5">Thành phần hoa</th>

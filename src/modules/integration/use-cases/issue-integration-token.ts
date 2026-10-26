@@ -1,7 +1,8 @@
 import { validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import type { integration_client } from "@/modules/integration/infra/entities"
-import { IntegrationTokenRepository } from "@/modules/integration/infra/integration-token-repository"
+import type { IIntegrationTokenRepository, IntegrationClient } from "../domain/repositories/integration-repository.interface"
+import { getIntegrationTokenRepository } from "../infra/integration-token-repository"
 import { hashIntegrationToken, newIntegrationToken } from "@/modules/integration/infra/token-crypto"
 import { MAX_TOKEN_TTL_DAYS, MIN_TOKEN_TTL_DAYS, resolveExpiry } from "@/modules/integration/domain/token-rules"
 
@@ -9,7 +10,7 @@ const CLIENTS: readonly integration_client[] = ["LOCALBUDD", "SOCIALFLOW"]
 
 export type IssueIntegrationTokenResult = {
   id: string
-  client: integration_client
+  client: string
   /** Giá trị thật — chỉ trả về đúng MỘT lần lúc cấp. Cơ sở dữ liệu chỉ giữ HMAC. */
   token: string
   expires_at: Date
@@ -23,7 +24,8 @@ export type IssueIntegrationTokenResult = {
  */
 export async function issueIntegrationToken(
   ctx: TenantContext,
-  input: { client: string; createdBy: string; ttlDays?: number | undefined }
+  input: { client: string; createdBy: string; ttlDays?: number | undefined },
+  repo: IIntegrationTokenRepository = getIntegrationTokenRepository()
 ): Promise<IssueIntegrationTokenResult> {
   if (!CLIENTS.includes(input.client as integration_client)) {
     throw validationFailed({ client: `Phải là một trong: ${CLIENTS.join(", ")}` })
@@ -38,7 +40,7 @@ export async function issueIntegrationToken(
   const raw = newIntegrationToken()
   const expiresAt = resolveExpiry(new Date(), input.ttlDays)
 
-  const row = await new IntegrationTokenRepository().create(ctx, {
+  const row = await repo.create(ctx, {
     client: input.client as integration_client,
     tokenHash: hashIntegrationToken(raw),
     createdBy: input.createdBy,

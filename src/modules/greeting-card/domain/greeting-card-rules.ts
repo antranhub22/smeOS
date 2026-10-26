@@ -107,11 +107,19 @@ export const ORDER_FIELD_MAX = {
 export const MAX_DELIVERY_LEAD_DAYS = 365
 
 const VN_PHONE_REGEX = /^(0|\+84)[35789][0-9]{8}$/
+/** Định dạng số điện thoại quốc tế theo chuẩn E.164 (+123456789... từ 7 đến 15 chữ số) */
+const INTERNATIONAL_PHONE_REGEX = /^\+?[1-9]\d{6,14}$/
 const VN_OFFSET_MS = 7 * 3_600_000
 
 /** SĐT di động Việt Nam 10 số (0… hoặc +84…). */
 export function isValidVnPhone(phone: string | undefined | null): boolean {
   return VN_PHONE_REGEX.test(normalizePhone(phone))
+}
+
+/** SĐT hợp lệ: hỗ trợ cả số di động VN và số quốc tế E.164 (dành cho kiều bào/khách nước ngoài) */
+export function isValidOrderPhone(phone: string | undefined | null): boolean {
+  const normalized = normalizePhone(phone)
+  return VN_PHONE_REGEX.test(normalized) || INTERNATIONAL_PHONE_REGEX.test(normalized)
 }
 
 export function normalizePhone(phone: string | undefined | null): string {
@@ -164,8 +172,8 @@ export function validateCustomerOrderInput(
     errors.customerName = `Họ tên tối đa ${ORDER_FIELD_MAX.name} ký tự`
   }
 
-  if (!VN_PHONE_REGEX.test(normalizePhone(input.customerPhone))) {
-    errors.customerPhone = "Số điện thoại người đặt không hợp lệ (10 số)"
+  if (!isValidOrderPhone(input.customerPhone)) {
+    errors.customerPhone = "Số điện thoại người đặt không hợp lệ (hỗ trợ 10 số VN hoặc số quốc tế E.164)"
   }
 
   const customerEmail = input.customerEmail?.trim() ?? ""
@@ -182,10 +190,10 @@ export function validateCustomerOrderInput(
     errors.recipientName = `Họ tên tối đa ${ORDER_FIELD_MAX.name} ký tự`
   }
 
-  if (!VN_PHONE_REGEX.test(normalizePhone(input.recipientPhone))) {
+  if (!isValidOrderPhone(input.recipientPhone)) {
     errors.recipientPhone = isHomestay
-      ? "Số điện thoại người nhận phòng không hợp lệ (10 số)"
-      : "Số điện thoại người nhận không hợp lệ (10 số)"
+      ? "Số điện thoại người nhận phòng không hợp lệ"
+      : "Số điện thoại người nhận không hợp lệ"
   }
 
   const dateError = validateDeliveryDate(
@@ -260,8 +268,8 @@ export function mapOrderStatusToTrackingStep(
   if (deliveryStatus === "DELIVERED" || orderStatus === "COMPLETED") {
     return {
       stepIndex: 5,
-      title: "Giao hoa thành công",
-      description: "Đơn hoa đã được trao tận tay người nhận với tình cảm trọn vẹn.",
+      title: "Giao hàng thành công",
+      description: "Đơn hàng đã được trao tận tay người nhận với tình cảm trọn vẹn.",
       percentage: 100,
     }
   }
@@ -269,8 +277,8 @@ export function mapOrderStatusToTrackingStep(
   if (deliveryStatus === "FAILED") {
     return {
       stepIndex: 4,
-      title: "Giao hoa chưa thành công",
-      description: "Shipper chưa giao được hoa. Cửa hàng sẽ liên hệ để hẹn giao lại — bạn cũng có thể đổi giờ hoặc địa chỉ giao ngay trên trang này.",
+      title: "Giao hàng chưa thành công",
+      description: "Shipper chưa giao được hàng. Cửa hàng sẽ liên hệ để hẹn giao lại — bạn cũng có thể đổi giờ hoặc địa chỉ giao ngay trên trang này.",
       percentage: 80,
     }
   }
@@ -278,8 +286,8 @@ export function mapOrderStatusToTrackingStep(
   if (deliveryStatus === "DELIVERING" || deliveryStatus === "DISPATCHED") {
     return {
       stepIndex: 4,
-      title: "Đang trên đường giao hoa",
-      description: "Shipper đang cẩn thận vận chuyển bình/bó hoa đến địa chỉ nhận.",
+      title: "Đang trên đường giao hàng",
+      description: "Shipper đang cẩn thận vận chuyển đơn hàng đến địa chỉ nhận.",
       percentage: 80,
     }
   }
@@ -287,11 +295,11 @@ export function mapOrderStatusToTrackingStep(
   if (productionStatus === "READY" || productionStatus === "ARRANGING" || productionStatus === "QUALITY_CHECK") {
     return {
       stepIndex: 3,
-      title: productionStatus === "READY" ? "Hoa đã cắm xong" : "Nghệ nhân đang cắm hoa",
+      title: productionStatus === "READY" ? "Sản phẩm đã hoàn thiện" : "Nghệ nhân đang chế tác",
       description:
         productionStatus === "READY"
-          ? "Bình hoa hoàn thiện đã qua kiểm duyệt chất lượng và sẵn sàng giao."
-          : "Florist đang tỉ mỉ lựa chọn từng cành hoa tươi và phối mẫu theo yêu cầu.",
+          ? "Sản phẩm hoàn thiện đã qua kiểm duyệt chất lượng và sẵn sàng giao."
+          : "Nghệ nhân đang tỉ mỉ chế tác và hoàn thiện sản phẩm theo yêu cầu.",
       percentage: 60,
     }
   }
@@ -300,7 +308,7 @@ export function mapOrderStatusToTrackingStep(
     return {
       stepIndex: 2,
       title: "Cửa hàng đã xác nhận đơn",
-      description: "Cửa hàng đã xác nhận đơn hàng và sẽ cắm hoa theo đúng lịch giao bạn đã chọn.",
+      description: "Cửa hàng đã xác nhận đơn hàng và sẽ chuẩn bị theo đúng lịch giao bạn đã chọn.",
       percentage: 40,
     }
   }
@@ -308,7 +316,7 @@ export function mapOrderStatusToTrackingStep(
   return {
     stepIndex: 1,
     title: "Đã tiếp nhận đơn hàng",
-    description: "Cửa hàng đã nhận thông tin đặt hoa. Xác nhận chuyển khoản trong 15’, sau đó Điều phối sẽ xác nhận nhận đơn trong 30’ (hoàn tiền nếu không thể nhận đơn).",
+    description: "Cửa hàng đã nhận thông tin đặt hàng. Xác nhận chuyển khoản trong 15’, sau đó Điều phối sẽ xác nhận nhận đơn trong 30’ (hoàn tiền nếu không thể nhận đơn).",
     percentage: 20,
   }
 }

@@ -4,20 +4,17 @@
 
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { CustomerRepository } from "../infra/customer-repository"
+import type {
+  ICustomerRepository,
+  AddOccasionInput,
+} from "../domain/repositories/customer-repository.interface"
+import { getCustomerRepository } from "../infra/customer-repository"
 
 export async function addCustomerOccasion(
   ctx: TenantContext,
   customerId: string,
-  data: {
-    name: string
-    date: string
-    isRecurring?: boolean | undefined
-    reminderDaysBefore?: number | undefined
-    recipientName?: string | undefined
-    notes?: string | undefined
-  },
-  repo: CustomerRepository = new CustomerRepository()
+  data: AddOccasionInput,
+  repo: ICustomerRepository = getCustomerRepository()
 ) {
   if (!data.name.trim()) {
     throw validationFailed({ name: "Tên dịp kỷ niệm không được để trống" })

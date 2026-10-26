@@ -1,9 +1,9 @@
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
-import { BackgroundSweepRepository } from "../infra/background-sweep-repository"
-import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
-import { CancellationFollowUpRepository } from "../infra/cancellation-follow-up-repository"
-import { DismissalRepository } from "../infra/dismissal-repository"
+import { BackgroundSweepRepository, getBackgroundSweepRepository } from "../infra/background-sweep-repository"
+import { BrochurePaymentRepository, getBrochurePaymentRepository } from "../infra/brochure-payment-repository"
+import { CancellationFollowUpRepository, getCancellationFollowUpRepository } from "../infra/cancellation-follow-up-repository"
+import { DismissalRepository, getDismissalRepository } from "../infra/dismissal-repository"
 import { DISMISSAL_TIMEOUT_MS } from "../domain/dismissal-policy"
 import { parsePaymentPolicy, DEFAULT_CANCELLATION_APPROVAL_TIMEOUT_MINUTES } from "../domain/brochure-payment-policy"
 import { NOTIFY_EVENTS, type NotifyEvent } from "../domain/customer-notifications"
@@ -47,8 +47,8 @@ function systemContext(organizationId: string): TenantContext {
  */
 export async function runBackgroundSweep(
   now = new Date(),
-  repo = new BackgroundSweepRepository(),
-  payments = new BrochurePaymentRepository(),
+  repo = getBackgroundSweepRepository(),
+  payments = getBrochurePaymentRepository(),
 ): Promise<SweepResult> {
   const result: SweepResult = { staleFailed: 0, retried: 0, reminded: 0, cancelled: 0, sessionsExpired: 0, autoConfirmed: 0, dismissed: 0 }
 
@@ -134,7 +134,7 @@ export async function runBackgroundSweep(
           now
         )
       ) {
-        const reason = `Tự hủy: Quá hạn chọn mẫu hoa (${formatTimeoutDuration(policy.browsingExpiryHours, "hours")})`
+        const reason = `Tự hủy: Quá hạn chọn sản phẩm (${formatTimeoutDuration(policy.browsingExpiryHours, "hours")})`
         await repo.expireSession(s.organization_id, s.id, reason, now)
         result.sessionsExpired += 1
       }
@@ -148,7 +148,7 @@ export async function runBackgroundSweep(
 
   // 6. Quét các yêu cầu từ chối nhận đơn của Điều phối quá hạn chờ Điều hành duyệt (mặc định 15 phút) -> Tự động hủy
   try {
-    const cancellationRepo = new CancellationFollowUpRepository()
+    const cancellationRepo = getCancellationFollowUpRepository()
     // Lấy rộng: tất cả PENDING từ ≥ 5 phút trước (mức cấu hình thấp nhất cho phép).
     // Kiểm chính xác từng bản ghi theo policy cụ thể của từng tiệm ở bước dưới.
     const MIN_TIMEOUT_MINUTES = 5
@@ -196,7 +196,7 @@ export async function runBackgroundSweep(
   // 7. Đề xuất bỏ hiển thị của Sale quá 5 phút chưa ai duyệt → tự duyệt THẬT (ghi DB, lịch sử, audit),
   // không chỉ "trông như đã duyệt" lúc đọc. Đơn khách vừa trả tiền thì tự duyệt bị từ chối, giữ nguyên.
   try {
-    const dismissals = new DismissalRepository()
+    const dismissals = getDismissalRepository()
     for (const d of await dismissals.listExpired(new Date(now.getTime() - DISMISSAL_TIMEOUT_MS))) {
       try {
         await dismissals.autoApprove(d.organizationId, d)

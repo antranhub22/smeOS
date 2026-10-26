@@ -5,37 +5,17 @@ import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
 import type { DbClient } from "./db-client"
 
-export type CreateAssetInput = {
-  /** Đã cấp sẵn ở `create-upload-url.ts` để khớp với `storage_key`. */
-  id: string
-  productId: string | null
-  parentAssetId: string | null
-  kind: asset_kind
-  version: number
-  storageKey: string
-  thumbKey?: string | null
-  mimeType: string
-  width?: number | null
-  height?: number | null
-  aspectRatio?: string | null
-  fileSize?: number | null
-  provider?: string | null
-  model?: string | null
-  modelVersion?: string | null
-  pipelineVersion?: string | null
-  parameters?: Record<string, unknown> | null
-  prompt?: string | null
-  inputSha256?: string | null
-  outputSha256?: string | null
-  qualityScore?: number | null
-  identityScore?: number | null
-  generatedFlags?: Record<string, unknown> | null
-  costUsd?: number | null
-  metadata?: Record<string, unknown> | null
-  createdBy: string
-}
+import type {
+  IAssetRepository,
+  CreateAssetInput as CreateAssetDomainInput,
+  ListAssetsOptions,
+  AssetEntity,
+} from "../domain/repositories/asset-repository.interface"
 
-export class AssetRepository {
+export type CreateAssetInput = CreateAssetDomainInput
+export type { ListAssetsOptions, AssetEntity }
+
+export class AssetRepository implements IAssetRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   findById(ctx: TenantContext, id: string): Promise<assets | null> {
@@ -85,7 +65,7 @@ export class AssetRepository {
         id: input.id,
         product_id: input.productId,
         parent_asset_id: input.parentAssetId,
-        kind: input.kind,
+        kind: input.kind as asset_kind,
         state: "READY" as asset_state,
         version: input.version,
         storage_key: input.storageKey,
@@ -229,3 +209,14 @@ export class AssetRepository {
     })
   }
 }
+
+let defaultAssetRepository: IAssetRepository | null = null
+
+export function getAssetRepository(db?: DbClient): IAssetRepository {
+  if (db) return new AssetRepository(db)
+  if (!defaultAssetRepository) {
+    defaultAssetRepository = new AssetRepository()
+  }
+  return defaultAssetRepository!
+}
+

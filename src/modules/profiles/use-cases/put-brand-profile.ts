@@ -1,7 +1,8 @@
 import { validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { validateBrandProfileInput } from "@/modules/profiles/domain/profile-rules"
-import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
+import { getBrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
+import type { IBrandProfileRepository } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
 
 import { getBrandProfile, type BrandProfileDetail } from "./get-brand-profile"
 
@@ -28,14 +29,15 @@ export type PutBrandProfileInput = {
  */
 export async function putBrandProfile(
   ctx: TenantContext,
-  input: PutBrandProfileInput
+  input: PutBrandProfileInput,
+  repo: IBrandProfileRepository = getBrandProfileRepository()
 ): Promise<BrandProfileDetail> {
   const errors = validateBrandProfileInput(input)
   if (Object.keys(errors).length > 0) throw validationFailed(errors)
 
-  await new BrandProfileRepository().upsert(ctx, input)
+  await repo.upsert(ctx, input)
 
-  const detail = await getBrandProfile(ctx)
+  const detail = await getBrandProfile(ctx, repo)
   if (!detail) throw new Error("upsert brand_profiles không trả lại bản ghi vừa ghi")
   return detail
 }

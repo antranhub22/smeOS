@@ -224,7 +224,7 @@ export function FlowerNetworkCommandCenter() {
               {[
                 { step: "1. Tiếp nhận", count: stats.pendingOrders, icon: Radio },
                 { step: "2. Phân xưởng", count: stats.inProductionOrders, icon: Users },
-                { step: "3. Cắm hoa", count: Math.floor(stats.inProductionOrders * 0.7), icon: Sparkles },
+                { step: "3. Chế tác", count: Math.floor(stats.inProductionOrders * 0.7), icon: Sparkles },
                 { step: "4. Duyệt QC", count: Math.floor(stats.inProductionOrders * 0.2), icon: CheckCircle },
                 { step: "5. Giao hoa", count: Math.floor(stats.inProductionOrders * 0.1), icon: Truck },
               ].map((s, idx) => (

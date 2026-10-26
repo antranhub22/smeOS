@@ -1,10 +1,10 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { resolveVisionEngine, type VisionEngine } from "@/modules/products/domain/vision-engine"
-import { ProductRepository } from "@/modules/products/infra/product-repository"
+import { ProductRepository, getProductRepository } from "@/modules/products/infra/product-repository"
 
 export type RequestAnalysisInput = {
   assetIds: string[]
@@ -44,18 +44,18 @@ export async function requestAnalysis(
     throw validationFailed({ asset_ids: "Cần ít nhất một ảnh" })
   }
 
-  const assetRepo = new AssetRepository()
+  const assetRepo = getAssetRepository()
   for (const assetId of input.assetIds) {
     const asset = await assetRepo.findById(ctx, assetId)
     if (!asset) throw notFound()
   }
 
   if (input.productId) {
-    const product = await new ProductRepository().findById(ctx, input.productId)
+    const product = await getProductRepository().findById(ctx, input.productId)
     if (!product) throw notFound()
   }
 
-  const organization = await new OrganizationRepository().current(ctx)
+  const organization = await getOrganizationRepository().current(ctx)
   const engine = resolveVisionEngine(
     (organization?.settings as Record<string, unknown> | null) ?? null
   )

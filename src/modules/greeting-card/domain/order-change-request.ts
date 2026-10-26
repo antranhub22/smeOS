@@ -89,7 +89,7 @@ export function changeLockReason(o: { status: string; productionStatus: string; 
   // Giao không thành công: khách được hẹn lại giờ/địa chỉ dù hoa đã cắm xong (trừ lời nhắn thiệp — xem `cardMessageLocked`)
   if (o.deliveryStatus === "FAILED") return null
   if (o.deliveryStatus === "DISPATCHED" || o.deliveryStatus === "DELIVERING" || (o.productionStatus !== "WAITING" && o.productionStatus !== "ASSIGNED")) {
-    return "Cửa hàng đã bắt đầu cắm hoa nên không đổi thông tin trên trang được nữa. Vui lòng gọi cửa hàng để được hỗ trợ."
+    return "Cửa hàng đã bắt đầu chế tác nên không đổi thông tin trên trang được nữa. Vui lòng gọi cửa hàng để được hỗ trợ."
   }
   return null
 }

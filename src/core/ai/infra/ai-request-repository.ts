@@ -3,6 +3,7 @@ import type { TenantContext } from "@/core/tenancy"
 
 import type { ai_requests } from "./entities"
 import type { DbClient } from "./db-client"
+import type { IAiRequestRepository } from "../domain/ai-repository.interface"
 
 export type RecordAiRequestInput = {
   capability_code: string
@@ -34,7 +35,7 @@ export type RecordAiRequestInput = {
  * vụ vẫn trừ đúng số credit đã công bố dù bên dưới gọi mô hình ba lần
  * (`YC-G13`).
  */
-export class AiRequestRepository {
+export class AiRequestRepository implements IAiRequestRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   record(ctx: TenantContext, input: RecordAiRequestInput): Promise<ai_requests> {
@@ -121,4 +122,14 @@ export class AiRequestRepository {
       data: { outcome },
     })
   }
+}
+
+let aiRequestRepoInstance: IAiRequestRepository | null = null
+
+export function getAiRequestRepository(db?: DbClient): IAiRequestRepository {
+  if (db) return new AiRequestRepository(db)
+  if (!aiRequestRepoInstance) {
+    aiRequestRepoInstance = new AiRequestRepository()
+  }
+  return aiRequestRepoInstance!
 }

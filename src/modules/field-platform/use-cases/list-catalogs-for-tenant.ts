@@ -1,4 +1,4 @@
-import { FieldCatalogRepository } from "../infra/field-catalog-repository"
+import { FieldCatalogRepository, getFieldCatalogRepository } from "../infra/field-catalog-repository"
 
 export interface TenantCatalogValueView {
   code: string
@@ -29,7 +29,7 @@ export interface TenantCatalogView {
  * nhận `TenantContext` để lọc theo tổ chức.
  */
 export async function listCatalogsForTenant(keys?: readonly string[]): Promise<TenantCatalogView[]> {
-  const repo = new FieldCatalogRepository()
+  const repo = getFieldCatalogRepository()
   const all = await repo.listCatalogs()
   const filtered = keys && keys.length > 0 ? all.filter((c) => keys.includes(c.key)) : all
   return Promise.all(

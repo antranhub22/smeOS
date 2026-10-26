@@ -10,7 +10,7 @@ export const NODE_10_CAI_DAT_THANH_VIEN: OpsKnowledgeNode = {
   keywords: [
     "cài đặt", "thành viên", "nhân viên", "thêm nhân viên", "phân quyền", "tạo tài khoản",
     "cấp mật khẩu", "khóa tài khoản", "xóa nhân viên", "thu hồi quyền",
-    "quản lý", "thợ cắm", "bán hàng", "bảo mật nhân sự"
+    "quản lý", "thợ chế tác", "bán hàng", "bảo mật nhân sự"
   ],
   intents: ["them_nhan_vien_moi", "phan_quyen_nhan_su", "khoa_tai_khoan_nghi_viec", "doi_vai_tro_nhan_vien"],
   summary: "Quản lý nhân sự và phân quyền: Cấp tài khoản cho nhân viên mới dùng ngay trong 10 giây (không cần chờ email xác nhận) và khóa tài khoản tức thì khi nhân viên nghỉ việc.",
@@ -27,7 +27,7 @@ export const NODE_10_CAI_DAT_THANH_VIEN: OpsKnowledgeNode = {
     },
     {
       stepNumber: 3,
-      actionText: "Điền thông tin tài khoản: Nhập Họ tên, Email đăng nhập, Mật khẩu ban đầu và chọn Vai trò (Quản lý, Bán hàng, hoặc Thợ cắm hoa)",
+      actionText: "Điền thông tin tài khoản: Nhập Họ tên, Email đăng nhập, Mật khẩu ban đầu và chọn Vai trò (Quản lý, Bán hàng, hoặc Thợ chế tác hoa)",
       expectedResult: "Thiết lập đúng quyền truy cập cho nhân viên",
     },
     {

@@ -27,7 +27,9 @@ import {
   sniffAudioExtension,
 } from "../domain/audio-task-rules"
 import { MUSIC_CATALOG, getMusicTrack } from "../domain/music-catalog"
-import { MusicTrackRepository, type music_tracks } from "../infra/music-track-repository"
+import { getMusicTrackRepository } from "../infra/music-track-repository"
+import type { IMusicTrackRepository, MusicTrackData } from "../domain/repositories/music-track-repository.interface"
+
 
 const MIME_BY_EXT = { mp3: "audio/mpeg", wav: "audio/wav", m4a: "audio/mp4" } as const
 const SYSTEM_MUSIC_DIR = path.join(process.cwd(), "workers", "media_ai", "video", "assets", "music")
@@ -44,7 +46,7 @@ export interface MusicTrackView {
   readonly preview_url: string
 }
 
-async function orgView(row: music_tracks): Promise<MusicTrackView> {
+async function orgView(row: MusicTrackData): Promise<MusicTrackView> {
   return {
     track_id: `${ORG_TRACK_PREFIX}${row.id}`,
     title: row.title,
@@ -72,7 +74,7 @@ export async function listMusicTracks(ctx: TenantContext): Promise<MusicTrackVie
     license_verified: t.licenseVerified,
     preview_url: `/api/v1/audio/music-tracks/system/${encodeURIComponent(t.trackId)}`,
   }))
-  const org = await Promise.all((await new MusicTrackRepository().list(ctx)).map(orgView))
+  const org = await Promise.all((await getMusicTrackRepository().list(ctx)).map(orgView))
   return [...org, ...system]
 }
 
@@ -107,7 +109,7 @@ export async function uploadMusicTrack(
   const id = randomUUID()
   const storageKey = `org/${ctx.organizationId}/audio/music/${id}.${ext}`
   await getStorageProvider().put(storageKey, input.file, MIME_BY_EXT[ext])
-  const row = await new MusicTrackRepository().create(ctx, {
+  const row = await getMusicTrackRepository().create(ctx, {
     id,
     title,
     mood: input.mood,
@@ -124,7 +126,7 @@ export async function uploadMusicTrack(
 export async function deleteMusicTrack(ctx: TenantContext, trackId: string): Promise<void> {
   requireCapability(ctx, "I1")
   const id = isOrgTrackId(trackId) ? orgTrackUuid(trackId) : trackId
-  const ok = await new MusicTrackRepository().markDeleted(ctx, id)
+  const ok = await getMusicTrackRepository().markDeleted(ctx, id)
   if (!ok) throw notFound()
 }
 
@@ -147,7 +149,7 @@ export async function resolveMusicForJob(
   trackId: string
 ): Promise<{ musicTrackId: string | null; musicStorageKey: string | null; title: string; mood: string; licenseVerified: boolean }> {
   if (isOrgTrackId(trackId)) {
-    const row = await new MusicTrackRepository().findById(ctx, orgTrackUuid(trackId))
+    const row = await getMusicTrackRepository().findById(ctx, orgTrackUuid(trackId))
     if (!row) throw unprocessable("Bài nhạc không thuộc thư viện của tiệm", { musicTrackId: "Không tìm thấy bài nhạc này trong thư viện của tiệm" })
     return { musicTrackId: null, musicStorageKey: row.storage_key, title: row.title, mood: row.mood, licenseVerified: true }
   }

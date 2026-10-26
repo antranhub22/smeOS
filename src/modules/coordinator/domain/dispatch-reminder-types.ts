@@ -36,7 +36,7 @@ export interface DispatchReminderPolicyConfig {
 }
 
 /**
- * Cấu hình ghi đè theo từng mẫu hoa / Thẻ chào (Template Override Level).
+ * Cấu hình ghi đè theo từng sản phẩm / Thẻ chào (Template Override Level).
  */
 export interface TemplateReminderOverrides {
   m0MinutesAfterPaid?: number | undefined

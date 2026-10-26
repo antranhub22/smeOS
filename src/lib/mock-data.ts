@@ -211,7 +211,7 @@ export const MOCK_SESSION: MockSession = {
 }
 
 export const SAMPLE_PRODUCTS = [
-  { id: "p1", name: "Bó hồng đỏ 20 cành", category: "Bó hoa", tint: "#FBEAEC", color: "#E48692" },
+  { id: "p1", name: "Bó hồng đỏ 20 cành", category: "Sản phẩm", tint: "#FBEAEC", color: "#E48692" },
   { id: "p2", name: "Giỏ hoa chúc mừng", category: "Giỏ hoa", tint: "#EEF4EE", color: "#174C3C" },
   { id: "p3", name: "Hộp hoa hồng phấn", category: "Hộp hoa", tint: "#FBEAEC", color: "#E48692" },
   { id: "p4", name: "Bình hoa để bàn", category: "Bình hoa", tint: "#F5EEE3", color: "#B08D57" },

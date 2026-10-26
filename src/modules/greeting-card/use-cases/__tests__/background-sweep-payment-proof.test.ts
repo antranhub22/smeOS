@@ -1,15 +1,19 @@
 import { describe, it, expect, vi } from "vitest"
 
-vi.mock("../../infra/cancellation-follow-up-repository", () => ({
-  CancellationFollowUpRepository: class {
-    listExpiredCoordinatorRejections = vi.fn().mockResolvedValue([])
-  },
-}))
-vi.mock("../../infra/dismissal-repository", () => ({
-  DismissalRepository: class {
-    listExpired = vi.fn().mockResolvedValue([])
-  },
-}))
+vi.mock("../../infra/cancellation-follow-up-repository", () => {
+  const instance = { listExpiredCoordinatorRejections: vi.fn().mockResolvedValue([]) }
+  return {
+    CancellationFollowUpRepository: class { listExpiredCoordinatorRejections = instance.listExpiredCoordinatorRejections },
+    getCancellationFollowUpRepository: () => instance,
+  }
+})
+vi.mock("../../infra/dismissal-repository", () => {
+  const instance = { listExpired: vi.fn().mockResolvedValue([]) }
+  return {
+    DismissalRepository: class { listExpired = instance.listExpired },
+    getDismissalRepository: () => instance,
+  }
+})
 vi.mock("../confirm-brochure-payment", () => ({
   adminConfirmBrochurePayment: vi.fn().mockResolvedValue({ paymentId: "pay-1" }),
 }))

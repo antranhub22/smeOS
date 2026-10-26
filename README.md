@@ -36,9 +36,7 @@ Chuỗi kết nối nằm ở `prisma.config.ts` cho lệnh dòng lệnh và ở
 
 ## Trạng thái
 
-**P1 xong.** Bảy bảng nền, ngữ cảnh tổ chức giải từ phiên phía máy chủ, bộ gác lọc theo tổ chức ở tầng repository, sáu endpoint phiên và tổ chức dưới `/api/v1/`, bộ test cách ly xanh trong CI.
-
-Hạng mục kế tiếp là **P2** — quyền: 76 mã năng lực, ba lớp cắt, trần cứng cắt sau cùng. Không tạo bảng, route, job hay đường dẫn lưu trữ thật của bất kỳ module nào trước khi P2 đạt nghiệm thu; làm ngược sẽ sinh ra lược đồ thiếu `organization_id` và phải migration lại khi đã có dữ liệu thật.
+Cập nhật 21/10/2026. Nền tảng (P0–P12) đã xong; các module nghiệp vụ (sản phẩm, ảnh, video, catalog, CRM, đơn hàng, điều phối, thẻ chào, chat, nội dung, Console Vận hành) đã có mã và chạy đa ngành qua Industry Plugin. Trạng thái chi tiết và việc kế tiếp: `docs/kien-truc/TRANG_THAI.md` (mục 4–6, tra phần còn lại bằng `grep`). Cổng dev mặc định là 3200 (`npm run dev`).
 
 ## Ba repo còn lại
 

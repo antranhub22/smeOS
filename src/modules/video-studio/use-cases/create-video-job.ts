@@ -1,7 +1,8 @@
 import { type TenantContext } from "@/core/tenancy";
 import { requireCapability } from "@/core/rbac/capabilities";
+import type { IVideoJobRepository } from "../domain/repositories/video-job-repository.interface";
 import {
-  VideoJobRepository,
+  getVideoJobRepository,
   type VideoJobWithScenes,
 } from "../infra/video-job-repository";
 import {
@@ -27,7 +28,7 @@ export interface CreateVideoJobUseCaseInput {
 }
 
 export class CreateVideoJobUseCase {
-  constructor(private readonly repo: VideoJobRepository = new VideoJobRepository()) {}
+  constructor(private readonly repo: IVideoJobRepository = getVideoJobRepository()) {}
 
   async execute(
     ctx: TenantContext,
@@ -69,8 +70,8 @@ export class CreateVideoJobUseCase {
             sceneIndex: 2,
             durationSeconds: 6,
             imageAssetId: null,
-            textOverlay: "Từng cành hoa tươi qua bàn tay nghệ nhân",
-            voiceScript: "Từng cành hoa tươi qua bàn tay nghệ nhân",
+            textOverlay: "Từng cành sản phẩm qua bàn tay nghệ nhân",
+            voiceScript: "Từng cành sản phẩm qua bàn tay nghệ nhân",
             transitionEffect: "slide_left",
             motionEffect: "PAN_RIGHT",
           },

@@ -122,7 +122,7 @@ export function ProductReminderOverrideCard({
         throw new Error(errData.message || "Lưu cấu hình thất bại")
       }
       setOverrides(payload)
-      setSuccessMessage("Đã lưu cấu hình riêng cho mẫu hoa này!")
+      setSuccessMessage("Đã lưu cấu hình riêng cho sản phẩm này!")
       setIsDirty(false)
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Đã có lỗi xảy ra")
@@ -156,7 +156,7 @@ export function ProductReminderOverrideCard({
           </div>
           <div>
             <div className="text-body-sm font-bold text-text">
-              Cấu hình mốc nhắc riêng cho mẫu hoa này
+              Cấu hình mốc nhắc riêng cho sản phẩm này
             </div>
             <div className="text-caption text-text-muted">
               {activeOverrideCount > 0
@@ -184,7 +184,7 @@ export function ProductReminderOverrideCard({
       <div className="flex gap-2 p-2.5 rounded-lg bg-surface-alt/50 border border-border">
         <Info size={13} className="text-text-muted shrink-0 mt-0.5" />
         <p className="text-caption text-text-muted leading-relaxed">
-          Bật cài đặt ghi đè (toggle) để đặt timeout riêng cho mẫu hoa cầu kỳ cần nhiều thời gian hơn. Mốc không bật sẽ tự kế thừa từ chính sách toàn tiệm.
+          Bật cài đặt ghi đè (toggle) để đặt timeout riêng cho sản phẩm cầu kỳ cần nhiều thời gian hơn. Mốc không bật sẽ tự kế thừa từ chính sách toàn tiệm.
         </p>
       </div>
 
@@ -291,7 +291,7 @@ export function ProductReminderOverrideCard({
             className="h-8 px-4 bg-primary hover:bg-primary-dark text-white font-bold text-caption gap-1.5"
           >
             <Save size={13} />
-            {isSaving ? "Đang lưu..." : "Lưu cài đặt mẫu hoa"}
+            {isSaving ? "Đang lưu..." : "Lưu cài đặt sản phẩm"}
           </Button>
         </div>
       )}

@@ -4,13 +4,13 @@ import { conflict } from "@/core/http/errors"
 import { isAcceptablePassword, isValidEmail, normalizeEmail } from "@/modules/organization/domain/credentials"
 import { FOUNDER_ROLE_KEY } from "@/modules/organization/domain/system-roles"
 import { slugCandidates } from "@/modules/organization/domain/slug"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
-import { UserRepository } from "@/modules/organization/infra/user-repository"
-import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
+import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 
 export type BootstrapAviGiftOrganizationInput = {
   organizationName: string
@@ -66,11 +66,11 @@ export async function bootstrapAviGiftOrganization(
   const now = new Date()
 
   return runInTransaction(async (tx) => {
-    const users = new UserRepository(tx)
-    const organizations = new OrganizationRepository(tx)
-    const workspaces = new WorkspaceRepository(tx)
-    const roles = new RoleRepository(tx)
-    const memberships = new MembershipRepository(tx)
+    const users = getUserRepository(tx)
+    const organizations = getOrganizationRepository(tx)
+    const workspaces = getWorkspaceRepository(tx)
+    const roles = getRoleRepository(tx)
+    const memberships = getMembershipRepository(tx)
 
     if (await users.findByEmail(email)) {
       throw conflict(`Địa chỉ thư này đã có tài khoản: ${email}`)

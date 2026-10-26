@@ -3,11 +3,23 @@
 import React from "react"
 import { CalendarDays } from "lucide-react"
 import { viDeliveryDate, viShortDate } from "@/modules/greeting-card/domain/delivery-schedule"
+import { useI18n } from "@/lib/i18n"
+
+/** "Friday, Oct 16, 2026" cho tiếng Anh */
+function enDateDisplay(iso: string, compact?: boolean): string {
+  try {
+    const d = new Date(`${iso}T00:00:00Z`)
+    if (compact) {
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+    }
+    return d.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+  } catch {
+    return iso
+  }
+}
 
 /**
- * Ô chọn ngày hiện kiểu Việt Nam ("Thứ Sáu, 16/10/2026"). Ô `type="date"` của trình duyệt hiện theo
- * ngôn ngữ máy khách ("16 Oct 2026") và không đổi được — giữ nó (trong suốt, phủ lên trên) để vẫn mở
- * bảng lịch của máy, chữ hiển thị nằm bên dưới. `compact`: ô nhỏ phía nhân viên ("16/10/2026", không kèm thứ).
+ * Ô chọn ngày hiện kiểu Việt Nam ("Thứ Sáu, 16/10/2026") hoặc tiếng Anh khi locale là EN.
  */
 export function ViDateInput({
   id,
@@ -33,6 +45,18 @@ export function ViDateInput({
   ariaLabel?: string | undefined
   compact?: boolean | undefined
 }) {
+  const { locale } = useI18n()
+  const isEn = locale === "en"
+  const formattedDate = value
+    ? isEn
+      ? enDateDisplay(value, compact)
+      : compact
+      ? viShortDate(value)
+      : viDeliveryDate(value)
+    : isEn
+    ? "Select date"
+    : "Chọn ngày"
+
   return (
     <div className={`relative ${wrapperClassName ?? ""}`}>
       <input
@@ -59,7 +83,7 @@ export function ViDateInput({
         className={`${className} flex items-center justify-between gap-2 peer-focus-visible:ring-2 peer-focus-visible:ring-primary/20`}
       >
         <span className={value ? "truncate" : `truncate text-text-muted/70 ${compact ? "" : "text-body"}`}>
-          {value ? (compact ? viShortDate(value) : viDeliveryDate(value)) : "Chọn ngày"}
+          {formattedDate}
         </span>
         <CalendarDays size={compact ? 14 : 18} className="shrink-0 text-text-muted" />
       </div>

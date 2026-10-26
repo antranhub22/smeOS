@@ -22,3 +22,9 @@ export class LinkCustomerRepository {
     return res.count > 0
   }
 }
+
+let _linkCustomerRepositorySingleton: LinkCustomerRepository | null = null
+export function getLinkCustomerRepository(): LinkCustomerRepository {
+  if (!_linkCustomerRepositorySingleton) _linkCustomerRepositorySingleton = new LinkCustomerRepository()
+  return _linkCustomerRepositorySingleton
+}

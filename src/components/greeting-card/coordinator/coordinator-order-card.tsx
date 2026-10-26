@@ -44,7 +44,7 @@ export interface BrochureOrder {
   pricing_rule_ref?: { policies?: { promotion?: { title?: string } | null } | null } | null
   saleId?: string | null; saleName?: string | null; coordinatorId?: string | null; coordinatorName?: string | null
   payment_proof_url?: string | null; payment_proof_balance_url?: string | null; created_at: string
-  /** Thông tin mẫu hoa dựng sẵn ở server (SSOT) — chỉ đọc trường này để hiện mẫu. */
+  /** Thông tin sản phẩm dựng sẵn ở server (SSOT) — chỉ đọc trường này để hiện mẫu. */
   product: OrderProductView
   /** Chờ khách duyệt ảnh thành phẩm trước khi giao ship */
   photo_approval?: PhotoApprovalState | null
@@ -95,7 +95,7 @@ function productionLabel(s: string, terms?: IndustryTerminology) {
     if (s === "DONE") return "Đã xong"
   }
   const fallback: Record<string, string> = {
-    WAITING: "Chờ cắm hoa", ASSIGNED: "Đã phân công", ARRANGING: "Đang cắm hoa",
+    WAITING: "Chờ chế tác", ASSIGNED: "Đã phân công", ARRANGING: "Đang chế tác",
     QUALITY_CHECK: "Đang kiểm tra", READY: "Hoa đã hoàn thiện", DONE: "Đã xong",
   }
   return fallback[s] ?? s

@@ -1,13 +1,15 @@
 import { validationFailed, notFound } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
-import { CatalogLinkRepository } from "@/modules/catalog-links/infra/catalog-link-repository"
+import type { ICatalogLinkRepository } from "@/modules/catalog-links/domain/repositories/catalog-link-repository.interface"
+import { getCatalogLinkRepository } from "@/modules/catalog-links/infra/catalog-link-repository"
 import { validateFilters, type CatalogLinkFilters, type CatalogLinkResult } from "@/modules/catalog-links/domain/catalog-link-rules"
 
 export async function updateCatalogLink(
   ctx: TenantContext,
   slug: string,
-  input: { name?: string; description?: string | null; filters?: CatalogLinkFilters | null }
+  input: { name?: string; description?: string | null; filters?: CatalogLinkFilters | null },
+  repo: ICatalogLinkRepository = getCatalogLinkRepository()
 ) {
   requireCapability(ctx, "J1")
 
@@ -16,7 +18,6 @@ export async function updateCatalogLink(
     if (filtersError) throw validationFailed({ filters: filtersError })
   }
 
-  const repo = new CatalogLinkRepository()
   const existing = await repo.findBySlugInOrg(ctx, slug)
   if (!existing) throw notFound()
 

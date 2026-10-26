@@ -11,7 +11,7 @@ import type {
   ProductSnapshot,
 } from "../domain/greeting-card-types"
 import type { BrochureQuote } from "../domain/brochure-pricing"
-import { BrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
+import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 import { quoteForProduct } from "./brochure-quote"
 import { resolveAppliedPolicies } from "../domain/store-policy"
 import { promotionNote, resolveOrderPolicies } from "../domain/order-policies"
@@ -35,7 +35,7 @@ export interface BrochureOrderResult {
 }
 
 /** Trần đơn theo SĐT mỗi giờ — giới hạn theo IP không chặn được một người đổi mạng liên tục. */
-export async function assertPhoneQuota(organizationId: string, phone: string, checkout = new BrochureCheckoutRepository()) {
+export async function assertPhoneQuota(organizationId: string, phone: string, checkout = getBrochureCheckoutRepository()) {
   const recent = await checkout.countRecentOrdersByPhone(organizationId, phone, new Date(Date.now() - 3_600_000))
   if (recent >= MAX_ORDERS_PER_PHONE_PER_HOUR) throw new AppError("RATE_LIMITED", TOO_MANY_ORDERS_MESSAGE)
 }
@@ -58,7 +58,7 @@ export async function placeBrochureOrder(
     /** Bộ sưu tập — phạm vi áp dụng của mã thanh toán. */
     catalogId?: string | null | undefined
   },
-  checkout = new BrochureCheckoutRepository()
+  checkout = getBrochureCheckoutRepository()
 ): Promise<BrochureOrderResult> {
   const { organizationId, session, product, input } = params
   const customerPhone = normalizePhone(input.customerPhone)

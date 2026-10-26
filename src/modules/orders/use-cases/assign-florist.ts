@@ -1,12 +1,13 @@
 /**
- * Use-case: Assign Florist (Phân công thợ cắm hoa — M10, R4).
+ * Use-case: Assign Florist (Phân công thợ chế tác — M10, R4).
  */
 
 import { brochureLockReason } from "../domain/order-rules"
 import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { OrderRecord } from "../domain/order-types"
-import { OrderRepository } from "../infra/order-repository"
+import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import { getOrderRepository } from "../infra/order-repository"
 
 export interface AssignFloristInput {
   assigneeId: string
@@ -17,7 +18,7 @@ export async function assignFlorist(
   ctx: TenantContext,
   orderId: string,
   input: AssignFloristInput,
-  repo = new OrderRepository()
+  repo: IOrderRepository = getOrderRepository()
 ): Promise<OrderRecord> {
   const existing = await repo.findById(ctx.organizationId, orderId)
   if (!existing) {
@@ -28,7 +29,7 @@ export async function assignFlorist(
   if (brochureLock) throw new AppError("CONFLICT", brochureLock)
 
   if (existing.status === "CANCELLED" || existing.status === "COMPLETED") {
-    throw new AppError("UNPROCESSABLE_ENTITY", "Không thể phân công thợ cắm cho đơn đã kết thúc.")
+    throw new AppError("UNPROCESSABLE_ENTITY", "Không thể phân công thợ chế tác cho đơn đã kết thúc.")
   }
 
   // Tạo phân công mới qua repository
@@ -48,7 +49,7 @@ export async function assignFlorist(
     "ASSIGNED",
     ctx.userId,
     existing.productionStatus,
-    `Phân công thợ cắm (ID: ${input.assigneeId})`
+    `Phân công thợ chế tác (ID: ${input.assigneeId})`
   )
 
   return repo.update(ctx.organizationId, orderId, {

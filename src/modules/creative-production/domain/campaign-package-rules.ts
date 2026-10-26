@@ -162,12 +162,12 @@ export function evaluateCampaignQa(input: QaInput): QaReport {
     } else if (v.identityScore < PACKAGE_IDENTITY_WARNING) {
       integrity.push({
         v: "REJECTED",
-        msg: `Ảnh ${short}: lõi bó hoa chỉ còn ${(v.identityScore * 100).toFixed(2)}% trùng khít Master.`,
+        msg: `Ảnh ${short}: lõi sản phẩm chỉ còn ${(v.identityScore * 100).toFixed(2)}% trùng khít Master.`,
       })
     } else if (v.identityScore < PACKAGE_IDENTITY_SAFE) {
       integrity.push({
         v: "NEEDS_REVIEW",
-        msg: `Ảnh ${short}: lõi bó hoa lệch nhẹ (${(v.identityScore * 100).toFixed(2)}%) — xem kỹ trước khi đăng.`,
+        msg: `Ảnh ${short}: lõi sản phẩm lệch nhẹ (${(v.identityScore * 100).toFixed(2)}%) — xem kỹ trước khi đăng.`,
       })
     }
   }

@@ -26,7 +26,7 @@ export function AiProductMarketingSection({
     <Card className="p-5 space-y-3.5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <div className="text-title-sm font-bold text-text">Câu chuyện và thông điệp mẫu hoa</div>
+          <div className="text-title-sm font-bold text-text">Câu chuyện và thông điệp sản phẩm</div>
           <div className="text-caption text-text-muted">
             Trau chuốt bởi hệ thống Content Engine tạo chiều sâu cảm xúc và sức hút thương mại.
           </div>
@@ -54,7 +54,7 @@ export function AiProductMarketingSection({
         rows={3}
         value={description}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Mô tả ý nghĩa mẫu hoa, cảm xúc gửi gắm hoặc hướng dẫn chăm sóc giúp hoa tươi lâu..."
+        placeholder="Mô tả ý nghĩa sản phẩm, cảm xúc gửi gắm hoặc hướng dẫn chăm sóc giúp sản phẩm lâu..."
         className="w-full rounded-xl border border-border bg-surface p-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary resize-y"
       />
 

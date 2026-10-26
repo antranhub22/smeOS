@@ -36,7 +36,7 @@ export function CatalogCard({
   catalog, canManageState, copied, deleting, restoring, onSelect, onPreview, onCopy, onDelete, onRestore,
 }: Props) {
   const { ti } = useI18n()
-  const itemLabel = (ti("sampleProduct") || "mẫu hoa").replace(/ chuẩn$/i, "").toLowerCase()
+  const itemLabel = (ti("sampleProduct") || "sản phẩm").replace(/ chuẩn$/i, "").toLowerCase()
 
   return (
     <div

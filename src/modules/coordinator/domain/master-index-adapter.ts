@@ -14,7 +14,7 @@ import type {
 import type { FloristProductionCardData } from "./coordinator-types"
 
 /**
- * Trích xuất thông số cắm hoa chuẩn từ metadata của OrderItem hoặc ProductMasterIndex.
+ * Trích xuất thông số chế tác chuẩn từ metadata của OrderItem hoặc ProductMasterIndex.
  */
 export function extractFloristRecipeFromOrderItem(item: {
   productTitle?: string
@@ -39,7 +39,7 @@ export function extractFloristRecipeFromOrderItem(item: {
     ? rawFlowers
     : [
         {
-          flowerName: item.description || item.productTitle || "Mẫu hoa theo yêu cầu",
+          flowerName: item.description || item.productTitle || "Sản phẩm theo yêu cầu",
           quantity: 1,
           unit: "cành",
           color: "Tự nhiên",
@@ -59,7 +59,7 @@ export function extractFloristRecipeFromOrderItem(item: {
   return {
     orderId: item.orderId,
     orderCode: item.orderCode,
-    recipeTitle: item.productTitle || item.description || "Bó hoa tươi thiết kế",
+    recipeTitle: item.productTitle || item.description || "Sản phẩm tươi thiết kế",
     targetReadyTime: item.targetReadyTime,
     deliveryAddress: item.deliveryAddress,
     cardMessage: item.cardMessage,

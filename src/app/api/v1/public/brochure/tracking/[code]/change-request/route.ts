@@ -29,7 +29,7 @@ const bodySchema = z.object({
  * POST /api/v1/public/brochure/tracking/[code]/change-request?link=<mã link>
  * Người đặt xin đổi thông tin đơn (ngày giờ giao, người nhận, địa chỉ, lời nhắn, ghi chú giao).
  * Chỉ chủ phiên của link đơn, hoặc người nhập đúng 4 số cuối SĐT người đặt; khác → 404.
- * Cửa hàng duyệt rồi đơn mới đổi; khoá từ lúc bắt đầu cắm hoa.
+ * Cửa hàng duyệt rồi đơn mới đổi; khoá từ lúc bắt đầu chế tác.
  */
 export const POST = handle<[{ params: Promise<{ code: string }> }]>(async (request, context) => {
   const { code } = await context.params

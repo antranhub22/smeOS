@@ -35,11 +35,14 @@ export const LOCKED_ROUTE_PREFIXES: readonly string[] = [
   // Khách hàng (Bán hàng & Khách) + Bộ máy phân tích ảnh (Thiết lập) — PO 09/10/2026
   "/khach-hang",
   "/bo-may",
+  // Chat nội bộ & Profile kết nối — PO 25/10/2026
+  "/tin-nhan",
+  "/noi-bo/ket-noi",
 ]
 
 /**
  * Trang chủ cửa hàng trên production: CHỈ các thẻ này hoạt động (PO 08/10/2026 —
- * chỉ mở Thẻ chào mẫu hoa). Mọi thẻ khác của cửa hàng bị khóa "Sắp ra mắt".
+ * chỉ mở Thẻ chào sản phẩm). Mọi thẻ khác của cửa hàng bị khóa "Sắp ra mắt".
  * Thẻ quản trị nền tảng / chuỗi không thuộc trang chủ cửa hàng nên không bị ảnh hưởng.
  */
 export const UNLOCKED_STORE_JOURNEY_IDS: readonly string[] = [

@@ -19,13 +19,13 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
   {
     id: "m10_florist_ticket",
     moduleCode: "M10",
-    title: "In phiếu cắm hoa xưởng (ẩn giá tiền)",
-    keywords: ["phiếu cắm hoa", "thợ cắm", "giấu giá", "ẩn giá", "phiếu xưởng", "florist ticket", "công thức hoa"],
-    summary: "Hệ thống tự động trích xuất công thức hoa nguyên tử (BOM) và ảnh mẫu từ M01 sang phiếu xưởng, đồng thời ẩn 100% giá vốn và giá bán để bảo mật thông tin tài chính của tiệm.",
+    title: "In phiếu chế tác xưởng (ẩn giá tiền)",
+    keywords: ["phiếu chế tác", "thợ chế tác", "giấu giá", "ẩn giá", "phiếu xưởng", "florist ticket", "công thức định lượng BOM"],
+    summary: "Hệ thống tự động trích xuất công thức định lượng BOM nguyên tử (BOM) và ảnh mẫu từ M01 sang phiếu xưởng, đồng thời ẩn 100% giá vốn và giá bán để bảo mật thông tin tài chính của cửa hàng.",
     steps: [
       "Vào mục 'Đơn hàng' trên thanh điều hướng bên trái",
       "Nhấp chọn đơn hàng cần in phiếu",
-      "Chọn tab 'Lát cắt Thợ Cắm Hoa (Ẩn Giá)'",
+      "Chọn tab 'Lát cắt Thợ Chế Tác (Ẩn Giá)'",
       "Bấm nút 'In phiếu A6' ở góc dưới",
     ],
     routePath: "/don-hang",
@@ -51,10 +51,10 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M10",
     title: "Quản lý tiến độ đơn hàng và đo lường SLA",
     keywords: ["kanban", "tiến độ đơn", "đo sla", "thời gian xử lý", "trạng thái đơn", "quá hạn"],
-    summary: "Bảng Kanban 4 cột (Chờ xử lý, Đang cắm hoa, Đang giao hàng, Hoàn tất) tự động bấm giờ đo SLA và cảnh báo màu đỏ nếu đơn bị chậm tiến độ mục tiêu (180 phút).",
+    summary: "Bảng Kanban 4 cột (Chờ xử lý, Đang chế tác, Đang giao hàng, Hoàn tất) tự động bấm giờ đo SLA và cảnh báo màu đỏ nếu đơn bị chậm tiến độ mục tiêu (180 phút).",
     steps: [
       "Vào mục 'Đơn hàng'",
-      "Nhấn các nút thao tác nhanh: 'Nhận cắm hoa' -> 'Đã cắm xong' -> 'Bắt đầu giao' -> 'Giao thành công'",
+      "Nhấn các nút thao tác nhanh: 'Nhận chế tác' -> 'Đã chế tác xong' -> 'Bắt đầu giao' -> 'Giao thành công'",
       "Hệ thống ghi nhận chuỗi sự kiện Event Sourcing để đối soát",
     ],
     routePath: "/don-hang",
@@ -112,11 +112,11 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M01",
     title: "Nhận diện ảnh hoa và đếm cành nguyên tử (Vision AI)",
     keywords: ["nhận diện ảnh", "phân tích hoa", "đếm cành", "bom hoa", "vision", "tải ảnh hoa", "bóc tách hoa"],
-    summary: "Vision AI tự động nhận diện dáng hoa (bó/giỏ/kệ/bình), tone màu sắc, phong cách và đếm chính xác số lượng từng cành hoa (Hoa hồng, Baby, Cúc mâm xôi...) để tạo công thức cắm hoa.",
+    summary: "Vision AI tự động nhận diện dáng hoa (bó/giỏ/kệ/bình), tone màu sắc, phong cách và đếm chính xác số lượng từng thành phần (Hoa hồng, Baby, Cúc mâm xôi...) để tạo công thức chế tác.",
     steps: [
       "Vào mục 'Tải ảnh' trên thanh điều hướng",
-      "Tải ảnh sản phẩm hoa tươi lên hệ thống",
-      "AI tự động phân tích và đưa ra bảng thành phần BOM cành hoa",
+      "Tải ảnh sản phẩm sản phẩm lên hệ thống",
+      "AI tự động phân tích và đưa ra bảng thành phần BOM thành phần",
       "Bấm 'Chốt duyệt' để lưu vào Product Master Index",
     ],
     routePath: "/tai-anh",
@@ -127,12 +127,12 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
   {
     id: "m04c_video_studio",
     moduleCode: "M04c",
-    title: "Dựng video marketing hoa tươi dọc 9:16 (Video Studio)",
+    title: "Dựng video marketing sản phẩm dọc 9:16 (Video Studio)",
     keywords: ["dựng video", "video marketing", "tiktok", "reels", "storyboard", "video 9:16", "ken burns"],
-    summary: "Dựng video hoa tươi chuyên nghiệp cho TikTok/Reels với hiệu ứng chuyển cảnh điện ảnh Ken Burns, giọng đọc thuyết minh Edge TTS tự động ducking nhạc nền, hỗ trợ 6 khuôn định dạng.",
+    summary: "Dựng video sản phẩm chuyên nghiệp cho TikTok/Reels với hiệu ứng chuyển cảnh điện ảnh Ken Burns, giọng đọc thuyết minh Edge TTS tự động ducking nhạc nền, hỗ trợ 6 khuôn định dạng.",
     steps: [
       "Vào mục 'Video Studio' trên thanh điều hướng",
-      "Chọn mẫu hoa và kịch bản Storyboard 2–15 cảnh",
+      "Chọn sản phẩm và kịch bản Storyboard 2–15 cảnh",
       "Tùy chỉnh góc máy chuyển động (Zoom In/Out, Pan Left/Right)",
       "Chọn phong cách phụ đề và giọng đọc -> Bấm 'Xuất video HD'",
     ],
@@ -146,7 +146,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M06",
     title: "Chia sẻ E-Catalog trực tuyến và tạo mã QR 500px",
     keywords: ["e-catalog", "mã qr", "chia sẻ catalog", "menu hoa", "link xem hoa", "landing page"],
-    summary: "Tạo trang catalog hoa tươi trực tuyến theo tên thương hiệu của tiệm và xuất mã QR sắc nét chuẩn 500px để in để bàn hoặc gửi qua Zalo cho khách hàng tự chọn mẫu.",
+    summary: "Tạo trang catalog sản phẩm trực tuyến theo tên thương hiệu của cửa hàng và xuất mã QR sắc nét chuẩn 500px để in để bàn hoặc gửi qua Zalo cho khách hàng tự chọn mẫu.",
     steps: [
       "Vào mục 'Catalog'",
       "Bấm nút 'Chia sẻ & Mã QR' ở góc trên",
@@ -162,7 +162,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M02",
     title: "Thiết lập quy tắc định giá và giá sàn/trần",
     keywords: ["cài đặt giá", "định giá", "giá sàn", "giá trần", "giá chào khách", "chiết khấu", "chi phí cành", "markup"],
-    summary: "Thiết lập công thức tính giá bán dựa trên giá vốn cành hoa, phụ kiện đóng gói và biên lợi nhuận mục tiêu của từng chi nhánh.",
+    summary: "Thiết lập công thức tính giá bán dựa trên giá vốn thành phần, phụ kiện đóng gói và biên lợi nhuận mục tiêu của từng chi nhánh.",
     steps: [
       "Vào mục 'Sản phẩm' hoặc 'Bảng giá' trên thanh điều hướng",
       "Xem và chỉnh sửa các quy tắc giá bán niêm yết",
@@ -178,7 +178,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M08",
     title: "Cấu hình AI Chat Đa Kênh (Facebook, Zalo, Web Widget)",
     keywords: ["tích hợp đa kênh", "kết nối facebook", "kết nối zalo", "nhúng website", "biểu phí chat", "credit", "page id", "oa id", "script nhúng"],
-    summary: "Kết nối AI Chatbot vào Fanpage Messenger, Zalo OA và Website tiệm hoa với biểu phí 0–70 credit/tháng và 1 credit/10 tin nhắn.",
+    summary: "Kết nối AI Chatbot vào Fanpage Messenger, Zalo OA và Website cửa hàng với biểu phí 0–70 credit/tháng và 1 credit/10 tin nhắn.",
     steps: [
       "Vào mục 'Chat Assistant' -> Chọn 'Tích Hợp Đa Kênh & Biểu Phí'",
       "Nhập Page ID / Zalo OA ID và Token tương ứng",
@@ -195,12 +195,12 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M03",
     title: "Nhập sản phẩm từ Excel & Bảo mật link Google Drive",
     keywords: ["google drive", "link drive", "quyền riêng tư", "bảo mật link", "drive thumbnail", "nhập excel", "công khai", "người xem", "kho ảnh", "lộ link"],
-    summary: "Hướng dẫn phân quyền thư mục Google Drive ở chế độ 'Người xem' (Viewer) cho kho ảnh mẫu hoa, và giải pháp bảo mật tối đa bằng cách kéo thả folder ảnh trực tiếp từ máy tính lên FloraOS Native Storage có mã hóa HMAC.",
+    summary: "Hướng dẫn phân quyền thư mục Google Drive ở chế độ 'Người xem' (Viewer) cho kho ảnh sản phẩm, và giải pháp bảo mật tối đa bằng cách kéo thả folder ảnh trực tiếp từ máy tính lên FloraOS Native Storage có mã hóa HMAC.",
     steps: [
       "Trên Google Drive: Tạo riêng thư mục '[FloraOS] Kho Ảnh Mẫu', tuyệt đối không để chung với tài liệu tài chính hay hợp đồng",
       "Cài đặt chia sẻ: Chọn 'Bất kỳ ai có đường liên kết' -> Đặt vai trò 'Người xem' (Viewer) để chỉ cho xem ảnh mẫu bán hàng, không thể sửa hay xóa",
       "Để bảo mật tuyệt đối và hiển thị ảnh tức thì: Tại màn hình '/san-pham/nhap-hang-loat', kéo thả cả folder ảnh từ máy tính vào ô '2. Thư mục ảnh sản phẩm'",
-      "Hệ thống FloraOS sẽ lưu ảnh vào Cloud Storage riêng của tiệm, bảo vệ bằng Signed URL có chữ ký HMAC tự hết hạn sau 24h",
+      "Hệ thống FloraOS sẽ lưu ảnh vào Cloud Storage riêng của cửa hàng, bảo vệ bằng Signed URL có chữ ký HMAC tự hết hạn sau 24h",
     ],
     routePath: "/san-pham/nhap-hang-loat",
     actionLabel: "Mở Nhập Hàng Loạt & Ảnh",
@@ -227,28 +227,28 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
   {
     id: "the_chao_tong_quan",
     moduleCode: "THẺ CHÀO",
-    title: "Quy trình sử dụng Thẻ Chào mẫu hoa & Link đặt hoa trực tuyến",
-    keywords: ["thẻ chào", "thẻ chào mẫu", "thẻ chào mẫu hoa", "link đặt hoa", "link chào", "bộ sưu tập mẫu", "đặt hoa trực tuyến", "greeting card", "brochure"],
-    summary: "Hệ thống Thẻ Chào mẫu hoa cho phép gửi bộ sưu tập cho khách lướt chọn mẫu trên điện thoại, tự động tạo đơn, chuyển khoản VietQR và theo dõi tiến độ qua chu trình chuẩn 9 bước khép kín.",
+    title: "Quy trình sử dụng Thẻ Chào sản phẩm & Link đặt hoa trực tuyến",
+    keywords: ["thẻ chào", "thẻ chào mẫu", "thẻ chào sản phẩm", "link đặt hoa", "link chào", "bộ sưu tập mẫu", "đặt hoa trực tuyến", "greeting card", "brochure"],
+    summary: "Hệ thống Thẻ Chào sản phẩm cho phép gửi bộ sưu tập cho khách lướt chọn mẫu trên điện thoại, tự động tạo đơn, chuyển khoản VietQR và theo dõi tiến độ qua chu trình chuẩn 9 bước khép kín.",
     steps: [
-      "Vào mục 'Thẻ chào mẫu hoa' (/the-chao) trên thanh điều hướng",
+      "Vào mục 'Thẻ chào sản phẩm' (/the-chao) trên thanh điều hướng",
       "Chọn 'Gửi nhanh' hoặc vào tab 'Bộ sưu tập' chọn mẫu để tạo link gửi khách",
       "Khách mở link lướt chọn hoa, điền form và chuyển khoản VietQR",
       "Điều hành xác nhận tiền về để kích hoạt nút theo dõi cho khách và chuyển đơn sang xưởng",
-      "Xưởng cắm hoa, chụp ảnh nghiệm thu (khách duyệt 10 phút) và bàn giao shipper",
+      "Xưởng chế tác, chụp ảnh nghiệm thu (khách duyệt 10 phút) và bàn giao shipper",
       "Đơn hoàn tất hiển thị Màn hình Cảm ơn khách hàng với các nút xem lại đơn và đặt đơn mới",
     ],
     routePath: "/the-chao",
-    actionLabel: "Mở Phân Hệ Thẻ Chào Mẫu Hoa",
+    actionLabel: "Mở Phân Hệ Thẻ Chào Sản Phẩm",
   },
   {
     id: "the_chao_dieu_hanh",
     moduleCode: "THẺ CHÀO",
-    title: "Thẻ Chào Mẫu Hoa: Hướng dẫn nghiệp vụ cho Điều hành & Chủ tiệm",
+    title: "Thẻ Chào Sản Phẩm: Hướng dẫn nghiệp vụ cho Điều hành & Chủ cửa hàng",
     keywords: ["điều hành", "điều hành thẻ chào", "xác nhận tiền về", "duyệt thanh toán", "đối soát tranh chấp", "hoàn tiền thẻ chào", "hủy đơn thẻ chào", "bằng chứng đối soát"],
     summary: "Điều hành quản trị tài chính, đối soát app ngân hàng và bấm 'Xác nhận tiền về' để kích hoạt nút theo dõi tiến độ cho khách; phê duyệt đề xuất hủy/hoàn tiền; và tra cứu Lịch sử đơn hàng để trích xuất bằng chứng đối soát khi có tranh chấp.",
     steps: [
-      "Vào mục 'Thẻ chào mẫu hoa' -> Chọn tab 'Điều hành'",
+      "Vào mục 'Thẻ chào sản phẩm' -> Chọn tab 'Điều hành'",
       "Kiểm tra số dư ngân hàng và bấm 'Xác nhận tiền về' cho các đơn đã thanh toán",
       "Xử lý các đề xuất Hủy đơn / Hoàn tiền từ Sale hoặc Điều phối",
       "Khi có khiếu nại: Click vào đơn hàng -> Chọn tab 'Lịch sử đơn hàng' -> Bấm 'Sao chép tóm tắt đối soát' để gửi chứng cứ qua Zalo cho khách",
@@ -259,11 +259,11 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
   {
     id: "the_chao_sale",
     moduleCode: "THẺ CHÀO",
-    title: "Thẻ Chào Mẫu Hoa: Hướng dẫn cho Nhân viên Bán hàng (Sale)",
+    title: "Thẻ Chào Sản Phẩm: Hướng dẫn cho Nhân viên Bán hàng (Sale)",
     keywords: ["sale", "bán hàng", "kanban sale", "sale thẻ chào", "khách của tôi", "mã nhân viên", "giờ giao hàng", "xem chi tiết đơn sale", "gỡ kẹt", "kanban khách hàng"],
     summary: "Sale tạo link chào gắn mã nhân viên phụ trách để ghi nhận hoa hồng; theo dõi khách trên bảng Kanban 9 bước đồng bộ; xem mốc giờ giao to rõ và nhấp thẻ đơn để xem toàn bộ thông tin khách điền.",
     steps: [
-      "Vào mục 'Thẻ chào mẫu hoa' -> Chọn tab 'Bán hàng'",
+      "Vào mục 'Thẻ chào sản phẩm' -> Chọn tab 'Bán hàng'",
       "Bấm 'Tạo Thẻ Chào Mới' để lấy link gửi khách qua Zalo/Facebook",
       "Theo dõi khách trên Kanban 9 bước; thẻ có mốc giờ giao to rõ sắp xếp theo thứ tự ưu tiên",
       "Click vào thẻ đơn hàng để mở cửa sổ xem thông tin người đặt, người nhận, lời chúc thiệp mừng",
@@ -275,12 +275,12 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
   {
     id: "the_chao_dieu_phoi",
     moduleCode: "THẺ CHÀO",
-    title: "Thẻ Chào Mẫu Hoa: Hướng dẫn cho Điều phối & Xưởng cắm hoa",
-    keywords: ["điều phối", "điều phối thẻ chào", "xưởng hoa", "cắm hoa", "nghiệm thu ảnh", "đếm ngược 10 phút", "giao gấp", "bỏ qua ảnh", "ảnh thành phẩm", "kanban điều phối"],
+    title: "Thẻ Chào Sản Phẩm: Hướng dẫn cho Điều phối & Xưởng chế tác",
+    keywords: ["điều phối", "điều phối thẻ chào", "xưởng hoa", "chế tác", "nghiệm thu ảnh", "đếm ngược 10 phút", "giao gấp", "bỏ qua ảnh", "ảnh thành phẩm", "kanban điều phối"],
     summary: "Điều phối theo dõi Kanban xưởng 6 cột công đoạn sắp xếp theo giờ hẹn giao sớm nhất; chụp ảnh hoa thành phẩm kích hoạt countdown 10 phút cho khách duyệt; xử lý giao gấp bỏ qua ảnh; và nghiệm thu ảnh người nhận.",
     steps: [
-      "Vào mục 'Thẻ chào mẫu hoa' -> Chọn tab 'Điều phối'",
-      "Theo dõi các đơn xếp theo giờ giao sớm nhất để phân công thợ hoa cắm kịp tiến độ",
+      "Vào mục 'Thẻ chào sản phẩm' -> Chọn tab 'Điều phối'",
+      "Theo dõi các đơn xếp theo giờ giao sớm nhất để phân công thợ chế tác cắm kịp tiến độ",
       "Click vào thẻ đơn để xem chi tiết ảnh mẫu, kích thước và lời chúc thiệp",
       "Bấm 'Ảnh TP' tải ảnh hoa thành phẩm lên hệ thống để khách duyệt trong 10 phút (tự động duyệt sau 10p)",
       "Nếu khách cần gấp: Bấm 'Bỏ qua ảnh' để chuyển thẳng sang giao shipper",
@@ -294,18 +294,18 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
 /**
  * Nhận diện ý định câu hỏi:
  * - "SAAS_HELP": Câu hỏi về thao tác, cách dùng, in ấn, tính năng, quy trình FloraOS.
- * - "FLOWER_SALES": Câu hỏi về mua hoa, giá mẫu hoa, tìm hoa theo dịp, ngân sách.
+ * - "FLOWER_SALES": Câu hỏi về mua hoa, giá sản phẩm, tìm hoa theo dịp, ngân sách.
  */
 export function detectUserIntent(query: string): "SAAS_HELP" | "FLOWER_SALES" {
   const lower = query.toLowerCase()
 
   const saasHelpKeywords = [
     "làm sao", "làm thế nào", "cách", "hướng dẫn", "chức năng", "tính năng",
-    "thẻ chào", "thẻ chào mẫu", "thẻ chào mẫu hoa", "link đặt hoa", "link chào", "bộ sưu tập mẫu",
+    "thẻ chào", "thẻ chào mẫu", "thẻ chào sản phẩm", "link đặt hoa", "link chào", "bộ sưu tập mẫu",
     "xác nhận tiền về", "tiền về", "đối soát", "bằng chứng", "duyệt ảnh", "đếm ngược", "giao gấp", "bỏ qua ảnh",
     "cần nhập gì", "hướng dẫn nhập liệu", "nhập thông tin gì", "nhập liệu", "chuẩn bị gì",
     "in phiếu", "phiếu xưởng", "phiếu a6", "phiếu giao", "ẩn giá", "giấu giá",
-    "thợ cắm", "shipper", "đo sla", "quá hạn", "kanban",
+    "thợ chế tác", "shipper", "đo sla", "quá hạn", "kanban",
     "ngày kỷ niệm", "nhắc hẹn", "quét dịp", "consent", "quyền riêng tư",
     "phân tầng", "rfm", "hạng vip", "hạng vàng", "khách hàng",
     "dựng video", "video studio", "storyboard", "mã qr", "catalog",

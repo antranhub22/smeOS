@@ -1,0 +1,99 @@
+# Ma trận truy vết
+
+Trạng thái: TODO | DOING | DONE | WAIVED (SHOULD bị bỏ, kèm lý do). Agent cập nhật cột Trạng thái, Nhiệm vụ, Bằng chứng (đường dẫn file/test). Một yêu cầu chỉ được DONE khi Bằng chứng chạy được.
+
+| ID | Mức | Nhiệm vụ | Bằng chứng (file/test) | Trạng thái |
+|---|---|---|---|---|
+| REQ-ARCH-001 | MUST |  |  | TODO |
+| REQ-ARCH-002 | MUST |  |  | TODO |
+| REQ-ARCH-003 | MUST |  |  | TODO |
+| REQ-ARCH-004 | MUST |  |  | TODO |
+| REQ-ARCH-005 | MUST |  |  | TODO |
+| REQ-ARCH-006 | MUST | Chuẩn hóa Clean Repositories Wave 1 | src/modules/orders/domain/repositories/order-repository.interface.ts, src/modules/coordinator/domain/repositories/coordinator-repository.interface.ts, src/modules/organization/domain/repositories/organization-repository.interface.ts | DOING |
+| REQ-ARCH-007 | MUST |  |  | TODO |
+| REQ-ARCH-008 | MUST |  |  | TODO |
+| REQ-ARCH-009 | MUST |  |  | TODO |
+| REQ-ARCH-010 | MUST |  |  | TODO |
+| REQ-ARCH-011 | MUST |  |  | TODO |
+| REQ-ARCH-012 | MUST |  |  | TODO |
+| REQ-ARCH-013 | MUST |  |  | TODO |
+| REQ-ARCH-014 | MUST |  |  | TODO |
+| REQ-ARCH-015 | MUST |  |  | TODO |
+| REQ-ARCH-016 | SHOULD |  |  | TODO |
+| REQ-BND-001 | MUST |  |  | TODO |
+| REQ-BND-002 | MUST |  |  | TODO |
+| REQ-BND-003 | MUST |  |  | TODO |
+| REQ-BND-004 | MUST |  |  | TODO |
+| REQ-BND-005 | MUST | Store OS sở hữu đơn hàng | src/modules/orders/domain/repositories/order-repository.interface.ts, src/modules/orders/use-cases/__tests__/order-use-cases.test.ts | DOING |
+| REQ-BND-006 | MUST | Chain OS sở hữu điều phối & đối tác | src/modules/coordinator/domain/repositories/coordinator-repository.interface.ts, src/modules/chain-partnership/domain/partnership-repository.interface.ts | DOING |
+| REQ-BND-007 | MUST |  |  | TODO |
+| REQ-BND-008 | MUST |  |  | TODO |
+| REQ-BND-009 | MUST |  |  | TODO |
+| REQ-BND-010 | MUST |  |  | TODO |
+| REQ-BND-011 | MUST |  |  | TODO |
+| REQ-BND-012 | MUST |  |  | TODO |
+| REQ-BND-013 | MUST |  |  | TODO |
+| REQ-PRD-001 | MUST |  |  | TODO |
+| REQ-PRD-002 | MUST |  |  | TODO |
+| REQ-PRD-003 | MUST |  |  | TODO |
+| REQ-PRD-004 | MUST |  |  | TODO |
+| REQ-PRD-005 | SHOULD |  |  | TODO |
+| REQ-CON-001 | MUST |  |  | TODO |
+| REQ-CON-002 | MUST |  |  | TODO |
+| REQ-CON-003 | MUST |  |  | TODO |
+| REQ-CON-004 | MUST |  |  | TODO |
+| REQ-CON-005 | MUST |  |  | TODO |
+| REQ-CON-006 | MUST |  |  | TODO |
+| REQ-CON-007 | MUST |  |  | TODO |
+| REQ-CON-008 | MUST |  |  | TODO |
+| REQ-CON-009 | MUST |  |  | TODO |
+| REQ-CON-010 | MUST |  |  | TODO |
+| REQ-CON-011 | MUST |  |  | TODO |
+| REQ-CON-012 | MUST |  |  | TODO |
+| REQ-CON-013 | MUST |  |  | TODO |
+| REQ-CON-014 | MUST |  |  | TODO |
+| REQ-CON-015 | MUST |  |  | TODO |
+| REQ-CON-016 | MUST |  |  | TODO |
+| REQ-CON-017 | MUST |  |  | TODO |
+| REQ-CON-018 | MUST |  |  | TODO |
+| REQ-CON-019 | MUST |  |  | TODO |
+| REQ-CON-020 | MUST |  |  | TODO |
+| REQ-CON-021 | MUST |  |  | TODO |
+| REQ-CON-022 | SHOULD |  |  | TODO |
+| REQ-DAT-001 | MUST |  |  | TODO |
+| REQ-DAT-002 | MUST |  |  | TODO |
+| REQ-DAT-003 | MUST |  |  | TODO |
+| REQ-DAT-004 | MUST |  |  | TODO |
+| REQ-DAT-005 | MUST |  |  | TODO |
+| REQ-DAT-006 | MUST |  |  | TODO |
+| REQ-DAT-007 | MUST |  |  | TODO |
+| REQ-DAT-008 | MUST |  |  | TODO |
+| REQ-DAT-009 | MUST |  |  | TODO |
+| REQ-SEC-001 | MUST |  |  | TODO |
+| REQ-SEC-002 | MUST |  |  | TODO |
+| REQ-SEC-003 | MUST |  |  | TODO |
+| REQ-SEC-004 | MUST |  |  | TODO |
+| REQ-SEC-005 | MUST |  |  | TODO |
+| REQ-SEC-006 | MUST |  |  | TODO |
+| REQ-SEC-007 | MUST |  |  | TODO |
+| REQ-COM-001 | MUST |  |  | TODO |
+| REQ-COM-002 | MUST |  |  | TODO |
+| REQ-COM-003 | MUST |  |  | TODO |
+| REQ-COM-004 | MUST |  |  | TODO |
+| REQ-COM-005 | MUST |  |  | TODO |
+| REQ-COM-006 | MUST |  |  | TODO |
+| REQ-VER-001 | MUST |  |  | TODO |
+| REQ-VER-002 | MUST |  |  | TODO |
+| REQ-VER-003 | MUST |  |  | TODO |
+| REQ-VER-004 | MUST |  |  | TODO |
+| REQ-VER-005 | MUST |  |  | TODO |
+| REQ-VER-006 | MUST |  |  | TODO |
+| REQ-VER-007 | MUST |  |  | TODO |
+| REQ-VER-008 | MUST |  |  | TODO |
+| REQ-VER-009 | MUST |  |  | TODO |
+| REQ-NFR-001 | MUST |  |  | TODO |
+| REQ-NFR-002 | SHOULD |  |  | TODO |
+| REQ-NFR-003 | MUST |  |  | TODO |
+| REQ-NFR-004 | SHOULD |  |  | TODO |
+| REQ-NFR-005 | MUST |  |  | TODO |
+| REQ-NFR-006 | MUST |  |  | TODO |

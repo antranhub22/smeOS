@@ -6,12 +6,13 @@ import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { calculateOrderSla } from "../domain/order-rules"
 import type { OrderRecord, OrderSlaCalculation } from "../domain/order-types"
-import { OrderRepository } from "../infra/order-repository"
+import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import { getOrderRepository } from "../infra/order-repository"
 
 export async function getOrder(
   ctx: TenantContext,
   orderId: string,
-  repo = new OrderRepository()
+  repo: IOrderRepository = getOrderRepository()
 ): Promise<{ order: OrderRecord; sla: OrderSlaCalculation }> {
   const order = await repo.findById(ctx.organizationId, orderId)
   if (!order) {

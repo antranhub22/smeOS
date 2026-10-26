@@ -2,6 +2,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 
 import type { ai_capabilities, ai_models } from "./entities"
 import type { DbClient } from "./db-client"
+import type { IAiRegistryRepository } from "../domain/ai-repository.interface"
 
 /**
  * Sổ đăng ký năng lực và mô hình — dữ liệu cấp NỀN TẢNG, không thuộc tenant.
@@ -12,7 +13,7 @@ import type { DbClient } from "./db-client"
  * mục 16. Mọi đường GHI vào hai bảng này thuộc console vận hành nền tảng
  * (`N9`–`N11`), không thuộc bất kỳ route nào của tổ chức.
  */
-export class AiRegistryRepository {
+export class AiRegistryRepository implements IAiRegistryRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
   capabilities(): Promise<ai_capabilities[]> {
@@ -37,6 +38,16 @@ export class AiRegistryRepository {
   allModels(): Promise<ai_models[]> {
     return this.db.ai_models.findMany({ orderBy: { key: "asc" } })
   }
+}
+
+let aiRegistryRepoInstance: IAiRegistryRepository | null = null
+
+export function getAiRegistryRepository(db?: DbClient): IAiRegistryRepository {
+  if (db) return new AiRegistryRepository(db)
+  if (!aiRegistryRepoInstance) {
+    aiRegistryRepoInstance = new AiRegistryRepository()
+  }
+  return aiRegistryRepoInstance
 }
 
 /** Bốn ô của D18. Rỗng hoặc chỉ có khoảng trắng đều là thiếu. */

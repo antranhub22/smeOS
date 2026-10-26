@@ -5,7 +5,7 @@ import { apiGet } from "@/components/greeting-card/greeting-api"
 
 type CatalogDetail = { data: { items: Array<{ product: { id: string } }> } }
 
-/** Mẫu hoa nằm trong bất kỳ bộ sưu tập nào đã chọn — bộ lọc "không trùng mẫu". Thuần, để test. */
+/** Sản phẩm nằm trong bất kỳ bộ sưu tập nào đã chọn — bộ lọc "không trùng mẫu". Thuần, để test. */
 export function productIdsOfCatalogs(details: CatalogDetail[]): Set<string> {
   return new Set(details.flatMap((d) => d.data.items.map((i) => i.product.id)))
 }
@@ -15,7 +15,7 @@ export function withoutProducts<T extends { id: string }>(products: T[], exclude
   return excluded.size === 0 ? products : products.filter((p) => !excluded.has(p.id))
 }
 
-/** Tải mẫu hoa của các bộ sưu tập đã chọn (một request mỗi bộ, SWR khử trùng lặp). */
+/** Tải sản phẩm của các bộ sưu tập đã chọn (một request mỗi bộ, SWR khử trùng lặp). */
 export function useExcludedCatalogProducts(catalogIds: string[]) {
   const key = catalogIds.length > 0 ? ["excluded-catalog-products", ...[...catalogIds].sort()] : null
   const res = useSWR(key, ([, ...ids]: string[]) =>
@@ -24,6 +24,6 @@ export function useExcludedCatalogProducts(catalogIds: string[]) {
   return {
     excludedProductIds: res.data ? productIdsOfCatalogs(res.data) : new Set<string>(),
     loading: res.isLoading,
-    error: res.error ? "Không tải được mẫu hoa của bộ sưu tập đã chọn" : null,
+    error: res.error ? "Không tải được sản phẩm của bộ sưu tập đã chọn" : null,
   }
 }

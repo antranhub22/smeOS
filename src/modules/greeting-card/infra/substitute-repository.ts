@@ -143,3 +143,9 @@ export class SubstituteRepository {
     })
   }
 }
+
+let _substituteRepositorySingleton: SubstituteRepository | null = null
+export function getSubstituteRepository(): SubstituteRepository {
+  if (!_substituteRepositorySingleton) _substituteRepositorySingleton = new SubstituteRepository()
+  return _substituteRepositorySingleton
+}

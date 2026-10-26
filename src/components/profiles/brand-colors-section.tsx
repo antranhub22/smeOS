@@ -83,7 +83,7 @@ export function BrandColorsSection({
           className="flex items-center gap-1.5 text-xs text-text-muted hover:text-primary transition-colors"
         >
           <RefreshCw size={13} />
-          <span>Mặc định tiệm hoa</span>
+          <span>Mặc định cửa hàng</span>
         </button>
       </div>
 

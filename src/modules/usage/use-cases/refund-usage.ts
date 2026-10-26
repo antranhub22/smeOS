@@ -1,6 +1,6 @@
 import type { TenantContext } from "@/core/tenancy"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { UsageRepository } from "@/modules/usage/infra/usage-repository"
+import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
 import type { DbClient } from "@/modules/usage/infra/db-client"
 
 /**
@@ -22,12 +22,12 @@ export async function refundUsage(
   },
   db?: DbClient
 ): Promise<void> {
-  await new UsageRepository(db).recordRefund(ctx, {
+  await getUsageRepository(db).recordRefund(ctx, {
     workspaceId: input.workspaceId,
     userId: input.userId,
     jobId: input.jobId,
     feature: input.feature,
     costUsd: input.costUsd,
   })
-  await new OrganizationRepository(db).refundCredit(ctx, input.creditToRefund)
+  await getOrganizationRepository(db).refundCredit(ctx, input.creditToRefund)
 }

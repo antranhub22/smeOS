@@ -1,6 +1,7 @@
 import { aiCapability } from "@/core/ai/domain/ai-capabilities"
-import { AiPolicyRepository } from "@/core/ai/infra/ai-policy-repository"
-import { AiRegistryRepository } from "@/core/ai/infra/ai-registry-repository"
+import type { IAiPolicyRepository, IAiRegistryRepository } from "@/core/ai/domain/ai-repository.interface"
+import { getAiPolicyRepository } from "@/core/ai/infra/ai-policy-repository"
+import { getAiRegistryRepository } from "@/core/ai/infra/ai-registry-repository"
 import { AppError, validationFailed } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
@@ -28,7 +29,9 @@ import { getAiPolicy, type AiPolicyView } from "./get-ai-policy"
  */
 export async function putAiPolicy(
   ctx: TenantContext,
-  input: AiPolicyInput
+  input: AiPolicyInput,
+  registryRepo: IAiRegistryRepository = getAiRegistryRepository(),
+  policyRepo: IAiPolicyRepository = getAiPolicyRepository()
 ): Promise<{ capabilities: AiPolicyView[] }> {
   if (requiresVisionEngineCapability(input.capability_code) && !hasCapability(ctx, "H4")) {
     throw new AppError(
@@ -37,8 +40,7 @@ export async function putAiPolicy(
     )
   }
 
-  const registry = new AiRegistryRepository()
-  const models = await registry.eligibleModels()
+  const models = await registryRepo.eligibleModels()
   const errors = validateAiPolicyInput(
     input,
     models.map((model) => model.key)
@@ -46,10 +48,9 @@ export async function putAiPolicy(
   if (Object.keys(errors).length > 0) throw validationFailed(errors)
 
   const capability = aiCapability(input.capability_code)
-  const repository = new AiPolicyRepository()
-  const before = await repository.find(ctx, capability.code)
+  const before = await policyRepo.find(ctx, capability.code)
 
-  const saved = await repository.upsert(ctx, {
+  const saved = await policyRepo.upsert(ctx, {
     capability_code: capability.code,
     allowed_models: input.allowed_models,
     quality_target: input.quality_target ?? null,
@@ -78,5 +79,5 @@ export async function putAiPolicy(
     },
   })
 
-  return getAiPolicy(ctx)
+  return getAiPolicy(ctx, registryRepo, policyRepo)
 }

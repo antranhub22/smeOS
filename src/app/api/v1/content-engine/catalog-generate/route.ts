@@ -24,7 +24,7 @@ export const POST = handle(async (request) => {
   }
 
   const bizProfile = await getBusinessProfile(ctx).catch(() => null)
-  const shopName = bizProfile?.display_name || "Tiệm Hoa Tươi"
+  const shopName = bizProfile?.display_name || "Tiệm Sản Phẩm"
 
   const result = await executeGenerateCatalogContent(
     {

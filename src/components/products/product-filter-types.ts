@@ -1,6 +1,6 @@
 /**
  * Định nghĩa các bộ lọc sản phẩm: Giá, Dịp, Danh mục, Sắp xếp
- * và các tiện ích chuẩn hóa tìm kiếm tiếng Việt cho Kho Sản Phẩm Mẫu Hoa FloraOS.
+ * và các tiện ích chuẩn hóa tìm kiếm tiếng Việt cho Kho Sản Phẩm Sản Phẩm FloraOS.
  */
 
 import { productPriceSpan, spanOverlaps } from "./product-price-span"

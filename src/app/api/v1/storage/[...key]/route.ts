@@ -58,11 +58,19 @@ export const GET = handle(async (request, context: { params: Promise<{ key: stri
   else if (key.endsWith(".mp3")) contentType = "audio/mpeg"
   else if (key.endsWith(".wav")) contentType = "audio/wav"
   else if (key.endsWith(".ogg")) contentType = "audio/ogg"
+  else if (key.endsWith(".xlsx")) contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  else if (key.endsWith(".xls")) contentType = "application/vnd.ms-excel"
+  else if (key.endsWith(".csv")) contentType = "text/csv; charset=utf-8"
 
-  const baseHeaders = {
+  const isSpreadsheet = key.endsWith(".xlsx") || key.endsWith(".xls") || key.endsWith(".csv")
+  const filename = key.split("/").pop() ?? "download"
+
+  const baseHeaders: Record<string, string> = {
     "content-type": contentType,
-    "cache-control": "public, max-age=86400, immutable",
+    "cache-control": isSpreadsheet ? "private, max-age=3600" : "public, max-age=86400, immutable",
     "accept-ranges": "bytes",
+    "x-content-type-options": "nosniff",
+    ...(isSpreadsheet ? { "content-disposition": `attachment; filename="${filename}"` } : {}),
   }
 
   // Hỗ trợ `Range` — trình phát <audio>/<video> (nhất là Safari) đòi 206 để

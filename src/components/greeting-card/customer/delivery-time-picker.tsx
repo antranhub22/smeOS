@@ -2,6 +2,7 @@
 
 import React from "react"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
+import { useI18n } from "@/lib/i18n"
 import {
   CUSTOM_TIME_MAX_HOUR,
   CUSTOM_TIME_MIN_HOUR,
@@ -39,6 +40,8 @@ export function DeliveryTimePicker({
   inputClassName: string
   onChange: (value: string) => void
 }) {
+  const { locale } = useI18n()
+  const isEn = locale === "en"
   const slots = date ? availableSlots(date, shipping) : enabledSlots(shipping).map((s) => s.label)
   const allowCustom = date ? customTimeAvailable(date, shipping) : shipping.allowCustomTime !== false
   const custom = isCustomTimeSlot(value)
@@ -57,21 +60,27 @@ export function DeliveryTimePicker({
         className={inputClassName}
       >
         <option value="" disabled>
-          {slots.length === 0 && !allowCustom ? "Ngày này không còn khung giờ — chọn ngày khác" : "Chọn khung giờ giao"}
+          {slots.length === 0 && !allowCustom
+            ? (isEn ? "No available slots on this date — please choose another date" : "Ngày này không còn khung giờ — chọn ngày khác")
+            : (isEn ? "Select delivery time window" : "Chọn khung giờ giao")}
         </option>
         {slots.map((slot) => (
           <option key={slot} value={slot} disabled={fullSlots.includes(slot)}>
-            {fullSlots.includes(slot) ? `${slot} (đã kín)` : slot}
+            {fullSlots.includes(slot) ? `${slot} (${isEn ? "full" : "đã kín"})` : slot}
           </option>
         ))}
-        {allowCustom && <option value={CUSTOM}>Giờ cụ thể (tự nhập)</option>}
+        {allowCustom && (
+          <option value={CUSTOM}>
+            {isEn ? "Specific time (custom)" : "Giờ cụ thể (tự nhập)"}
+          </option>
+        )}
       </select>
       {custom && (
         <label className="flex items-center gap-2 text-body-sm text-text-muted">
-          <span className="shrink-0">Giao lúc</span>
+          <span className="shrink-0">{isEn ? "Deliver at" : "Giao lúc"}</span>
           <input
             type="time"
-            aria-label="Giờ giao cụ thể"
+            aria-label={isEn ? "Specific delivery time" : "Giờ giao cụ thể"}
             min={minTimeStr}
             max={`${pad(CUSTOM_TIME_MAX_HOUR)}:00`}
             step={900}

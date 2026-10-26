@@ -4,13 +4,13 @@ import { orderScheduleError } from "../domain/holiday-policy"
 import { assertHolidayCapacity } from "./holiday-capacity"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { SOLD_OUT_MESSAGE } from "../domain/product-availability"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { validateCustomerOrderInput, normalizePhone } from "../domain/greeting-card-rules"
 import type { CustomerOrderSubmitInput, GreetingCatalogProduct } from "../domain/greeting-card-types"
 import { collectImageAssetIds, snapshotOf, toCatalogProduct } from "./brochure-product-mapper"
 import { assertPhoneQuota, placeBrochureOrder, type BrochureOrderResult } from "./place-brochure-order"
 import { paymentInstructionsFor } from "./payment-instructions"
-import { BrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
+import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 import { DUPLICATE_ORDER_WINDOW_MS, isSameOrder } from "../domain/order-guard"
 import type { ProductSnapshot } from "../domain/greeting-card-types"
 import { promotionForQuote, quoteForProduct, type QuoteRequest, type QuoteResult } from "./brochure-quote"
@@ -71,8 +71,8 @@ async function recentDuplicate(
 export async function submitPublicCatalogOrder(
   catalogId: string,
   rawInput: PublicCatalogOrderInput,
-  repo = new GreetingCardRepository(),
-  checkout = new BrochureCheckoutRepository()
+  repo = getGreetingCardRepository(),
+  checkout = getBrochureCheckoutRepository()
 ): Promise<BrochureOrderResult> {
   const address = normalizeOrderAddress(rawInput)
   const input = address.input
@@ -140,7 +140,7 @@ export async function quotePublicCatalog(
   catalogId: string,
   productId: string,
   req: QuoteRequest,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ): Promise<QuoteResult> {
   const { catalog, product } = await orderableFromCatalog(catalogId, productId, repo)
   const shop = await repo.getShopProfile(catalog.organization_id)

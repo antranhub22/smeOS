@@ -35,8 +35,7 @@ export class TikTokTrendAdapter implements TrendProvider {
   async searchTrends(query: TrendSearchQuery): Promise<TrendSignalData[]> {
     const geo = query.geo ?? "VN";
     const industry = query.industry ?? "florist";
-    const searchQuery = `site:tiktok.com "${query.query}" hoa tươi`;
-
+    const searchQuery = `site:tiktok.com "${query.query}"`;
     if (!this.apiKey) {
       const context = estimateTopicContextMetrics(query.query);
       return [

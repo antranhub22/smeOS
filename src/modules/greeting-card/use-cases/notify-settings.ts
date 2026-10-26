@@ -1,7 +1,7 @@
 import type { TenantContext } from "@/core/tenancy"
 import { unprocessable, validationFailed } from "@/core/http/errors"
 import { openSecret, sealSecret } from "@/core/security/secret-box"
-import { GreetingNotificationRepository } from "../infra/greeting-notification-repository"
+import { GreetingNotificationRepository, getGreetingNotificationRepository } from "../infra/greeting-notification-repository"
 import { NOTIFY_EVENTS, toInternationalPhone, smsText, type NotifyChannel, type NotifyParams } from "../domain/customer-notifications"
 import { sendZnsMessage, type FetchLike, type ZnsCredentials } from "../adapters/zalo-zns-adapter"
 import { sendEsmsMessage, type EsmsCredentials } from "../adapters/esms-adapter"
@@ -29,7 +29,7 @@ function isZns(c: ZnsInput | EsmsCredentials): c is ZnsInput {
 export async function updateNotifySettings(
   ctx: TenantContext,
   input: NotifySettingsInput,
-  repo = new GreetingNotificationRepository()
+  repo = getGreetingNotificationRepository()
 ) {
   const current = await repo.getChannelConfig(ctx.organizationId)
   let sealed: string | undefined
@@ -62,7 +62,7 @@ export async function updateNotifySettings(
 export async function sendTestNotification(
   ctx: TenantContext,
   rawPhone: string,
-  repo = new GreetingNotificationRepository(),
+  repo = getGreetingNotificationRepository(),
   fetchImpl: FetchLike = fetch
 ) {
   const phone = toInternationalPhone(rawPhone)

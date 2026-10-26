@@ -6,7 +6,8 @@ import {
   requiresExplicitGeneratedFlags,
 } from "@/modules/assets/domain/asset-rules"
 import { storageKeyMatchesContext } from "@/modules/assets/domain/storage-key"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import type { IAssetRepository } from "../domain/repositories/asset-repository.interface"
+import { getAssetRepository } from "../infra/asset-repository"
 import type { asset_kind } from "@/modules/assets/infra/entities"
 
 export type RegisterAssetInput = {
@@ -40,8 +41,11 @@ export type RegisterAssetInput = {
  * `generated_flags` bắt buộc tường minh cho asset dẫn xuất, từ chối ngay ở
  * đây nếu thiếu — không suy ra giá trị mặc định.
  */
-export async function registerAsset(ctx: TenantContext, input: RegisterAssetInput) {
-  const repo = new AssetRepository()
+export async function registerAsset(
+  ctx: TenantContext,
+  input: RegisterAssetInput,
+  repo: IAssetRepository = getAssetRepository()
+) {
 
   if (
     !storageKeyMatchesContext(input.storageKey, {

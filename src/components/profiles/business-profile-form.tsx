@@ -86,8 +86,8 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
       case "FLORAL":
       default:
         return {
-          displayName: "Ví dụ: Tiệm Hoa Tươi Thảo Mộc",
-          legalName: "Ví dụ: Công ty TNHH Hoa Tươi Việt Nam",
+          displayName: "Ví dụ: Tiệm Sản Phẩm Thảo Mộc",
+          legalName: "Ví dụ: Công ty TNHH Sản Phẩm Việt Nam",
           description: "Chuyên hoa sự kiện, hoa cưới, hoa sinh nhật thiết kế cao cấp",
         }
     }
@@ -562,7 +562,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             <Clock size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text">Khung giờ mở cửa & Giao hoa</h3>
+            <h3 className="text-sm font-bold text-text">Khung giờ mở cửa & Giao hàng</h3>
             <p className="text-xs text-text-muted">Hiển thị trên thông tin đặt hàng và trả lời tự động</p>
           </div>
         </div>

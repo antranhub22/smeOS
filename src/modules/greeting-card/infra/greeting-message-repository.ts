@@ -159,3 +159,9 @@ export class GreetingMessageRepository {
     return rows.map((r) => ({ userId: r.user_id, name: r.user.name?.trim() || r.user.email.split("@")[0] || "Nhân viên" }))
   }
 }
+
+let _greetingMessageRepositorySingleton: GreetingMessageRepository | null = null
+export function getGreetingMessageRepository(): GreetingMessageRepository {
+  if (!_greetingMessageRepositorySingleton) _greetingMessageRepositorySingleton = new GreetingMessageRepository()
+  return _greetingMessageRepositorySingleton
+}

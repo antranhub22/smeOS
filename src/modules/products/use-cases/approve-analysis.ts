@@ -10,9 +10,9 @@ import {
   extractProductFieldsFromAnalysis,
   resolveEffectiveAnalysis,
 } from "@/modules/products/domain/product-analysis-rules"
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
+import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
 import { draftProductCode } from "@/modules/products/domain/product-code"
-import { ProductRepository } from "@/modules/products/infra/product-repository"
+import { ProductRepository, getProductRepository } from "@/modules/products/infra/product-repository"
 
 import { getAnalysis, type AnalysisDetail } from "./get-analysis"
 
@@ -43,7 +43,7 @@ export async function approveAnalysis(
   options: ApproveAnalysisOptions = {}
 ): Promise<AnalysisDetail> {
   const { createProduct = true } = options
-  const analysisRepo = new ProductAnalysisRepository()
+  const analysisRepo = getProductAnalysisRepository()
   const current = await analysisRepo.findById(ctx, id)
   if (!current) throw notFound()
   if (!canApproveAnalysis(current.approval_state)) {
@@ -57,15 +57,15 @@ export async function approveAnalysis(
   const fields = extractProductFieldsFromAnalysis(effective)
 
   await runInTransaction(async (tx) => {
-    const productRepo = new ProductRepository(tx)
-    const analysisRepoTx = new ProductAnalysisRepository(tx)
+    const productRepo = getProductRepository(tx)
+    const analysisRepoTx = getProductAnalysisRepository(tx)
 
     let productId = current.product_id
     if (createProduct) {
       if (productId) {
         const updated = await productRepo.updateIdentity(ctx, productId, fields)
         if (!updated) throw new AppError("INTERNAL", "Sản phẩm liên kết không còn tồn tại")
-        if (current.asset_id) {
+        if (current.asset_id && productRepo.linkMainImage) {
           await productRepo.linkMainImage(ctx, productId, current.asset_id)
         }
       } else {

@@ -8,7 +8,7 @@
  */
 
 import type { JourneyDefinition } from "./journey-model"
-import { STORE_JOURNEYS } from "./journey-catalog"
+import { STORE_JOURNEYS, NETWORK_JOURNEYS } from "./journey-catalog"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 export function getStoreJourneys(industryKey?: string | null): JourneyDefinition[] {
@@ -94,6 +94,63 @@ export function getStoreJourneys(industryKey?: string | null): JourneyDefinition
           ...j,
           goal: "Hỏi trợ lý smeOS",
           description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng smeOS.",
+        }
+      default:
+        return j
+    }
+  })
+}
+
+/**
+ * Trả về danh mục Hành trình cho ChainOS (flower_network_admin / chain_admin).
+ * Thay thế thuật ngữ hardcode "điện hoa / hoa" bằng từ điển ngành SSOT.
+ */
+export function getNetworkJourneys(industryKey?: string | null): JourneyDefinition[] {
+  if (!industryKey || industryKey === "FLORAL") {
+    return NETWORK_JOURNEYS
+  }
+  const terms = getIndustryTerminology(industryKey)
+  return NETWORK_JOURNEYS.map((j) => {
+    switch (j.id) {
+      case "network-overview":
+        return {
+          ...j,
+          goal: `Báo cáo toàn hệ thống mạng lưới`,
+          description: `Theo dõi dòng đơn điều phối, tỷ lệ nhận đơn và doanh số toàn mạng lưới`,
+        }
+      case "network-products":
+        return {
+          ...j,
+          goal: `Quản lý ${terms.sampleProduct.toLowerCase()} mạng lưới`,
+          description: `Chuẩn hóa danh mục ${terms.sampleProduct.toLowerCase()} chung cho các thành viên nhận làm`,
+        }
+      case "network-sales":
+        return {
+          ...j,
+          goal: `Bán hàng & Đơn đặt ${terms.sampleProduct.toLowerCase()}`,
+          description: `Tiếp nhận đơn hàng liên tỉnh và phân bổ nhanh chóng`,
+        }
+      case "network-dispatch":
+        return {
+          ...j,
+          goal: `Điều phối đơn ${terms.sampleProduct.toLowerCase()}`,
+          description: `Chuyển đơn thông minh tới đối tác gần điểm giao nhất`,
+        }
+      case "network-partners":
+        return {
+          ...j,
+          goal: `Quản lý đối tác ${terms.makerTitle.toLowerCase()}`,
+          description: `Đánh giá chất lượng, tỷ lệ hoàn thành đúng hẹn của ${terms.makerTitle.toLowerCase()} đối tác`,
+        }
+      case "network-marketing":
+        return {
+          ...j,
+          description: `Quảng bá thương hiệu mạng lưới và thúc đẩy lưu lượng đặt ${terms.sampleProduct.toLowerCase()} toàn quốc`,
+        }
+      case "network-finance":
+        return {
+          ...j,
+          description: `Tính toán chi phí ${terms.makerTitle.toLowerCase()}, hoa hồng giới thiệu và thanh toán cho đối tác`,
         }
       default:
         return j

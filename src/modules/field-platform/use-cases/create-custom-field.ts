@@ -2,7 +2,7 @@ import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 import { AppError } from "@/core/http/errors"
-import { FieldDefinitionRepository } from "../infra/field-definition-repository"
+import { FieldDefinitionRepository, getFieldDefinitionRepository } from "../infra/field-definition-repository"
 import { ALL_CORE_FIELD_DEFINITIONS } from "../domain/all-core-fields"
 import {
   assertCustomFieldCountWithinLimit,
@@ -44,7 +44,7 @@ export async function createCustomField(
     })
   }
 
-  const repo = new FieldDefinitionRepository()
+  const repo = getFieldDefinitionRepository()
   const existingForEntity = await repo.list(input.entity)
   assertCustomFieldCountWithinLimit(existingForEntity.filter((f) => f.origin === "CUSTOM").length)
 

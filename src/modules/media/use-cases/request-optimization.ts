@@ -1,6 +1,6 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { isExplicitLocalEngine, optimizationPriceKey } from "@/modules/media/domain/optimization-rules"
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences"
@@ -27,7 +27,7 @@ export async function requestOptimization(
   ctx: TenantContext,
   input: RequestOptimizationInput
 ) {
-  const asset = await new AssetRepository().findById(ctx, input.assetId)
+  const asset = await getAssetRepository().findById(ctx, input.assetId)
   if (!asset) throw notFound()
 
   // PO 25/09/2026: nhà cung cấp trước. Trừ khi người dùng chọn đích danh bộ máy

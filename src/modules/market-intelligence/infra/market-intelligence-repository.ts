@@ -5,7 +5,9 @@ import type {
   research_run_type,
 } from "@/generated/prisma/client"
 
-export class MarketIntelligenceRepository {
+import type { IMarketIntelligenceRepository } from "../domain/repositories/market-intelligence-repository.interface"
+
+export class MarketIntelligenceRepository implements IMarketIntelligenceRepository {
   constructor(private readonly db = prisma) {}
 
   // --- Provider Health ---
@@ -344,4 +346,15 @@ export class MarketIntelligenceRepository {
   }
 }
 
-export const marketIntelligenceRepo = new MarketIntelligenceRepository()
+let marketIntelligenceRepoInstance: IMarketIntelligenceRepository | null = null
+
+export function getMarketIntelligenceRepository(db = prisma): IMarketIntelligenceRepository {
+  if (db !== prisma) return new MarketIntelligenceRepository(db)
+  if (!marketIntelligenceRepoInstance) {
+    marketIntelligenceRepoInstance = new MarketIntelligenceRepository()
+  }
+  return marketIntelligenceRepoInstance
+}
+
+export const marketIntelligenceRepo: IMarketIntelligenceRepository = getMarketIntelligenceRepository()
+

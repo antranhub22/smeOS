@@ -6,12 +6,13 @@
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { calculateDaysUntilOccasion } from "../domain/crm-rules"
 import { projectOccasionReminder } from "../domain/customer-master-index"
-import { CustomerRepository } from "../infra/customer-repository"
+import type { ICustomerRepository } from "../domain/repositories/customer-repository.interface"
+import { getCustomerRepository } from "../infra/customer-repository"
 
 export async function scanUpcomingReminders(
   ctx: TenantContext,
   daysAhead = 14,
-  repo: CustomerRepository = new CustomerRepository()
+  repo: ICustomerRepository = getCustomerRepository()
 ) {
   const { items } = await repo.list(ctx, {}, { limit: 200 })
 

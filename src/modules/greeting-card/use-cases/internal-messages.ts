@@ -1,6 +1,6 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { GreetingMessageRepository, type ThreadTarget } from "../infra/greeting-message-repository"
+import { GreetingMessageRepository, type ThreadTarget, getGreetingMessageRepository } from "../infra/greeting-message-repository"
 import {
   MAX_MESSAGE_LENGTH, MESSAGE_ROLE_LABEL, recipientLabel, resolveRecipient, roleOf, isAddressedTo, CUSTOMER_SENDER_ID, CUSTOMER_SENDER_LABEL,
   type MessageRole, type RecipientChoice,
@@ -82,7 +82,7 @@ export async function visibleTarget(ctx: TenantContext, ref: ThreadRef, repo: Gr
   return target
 }
 
-export async function getThread(ctx: TenantContext, ref: ThreadRef, repo = new GreetingMessageRepository()) {
+export async function getThread(ctx: TenantContext, ref: ThreadRef, repo = getGreetingMessageRepository()) {
   const target = await visibleTarget(ctx, ref, repo)
   const [messages, members, org] = await Promise.all([
     repo.listThread(ctx, target), repo.activeMembers(ctx), getCurrentOrganization(ctx),
@@ -120,7 +120,7 @@ export async function getThread(ctx: TenantContext, ref: ThreadRef, repo = new G
 export async function sendMessage(
   ctx: TenantContext,
   input: ThreadRef & { stepKey: string; to: RecipientChoice; body: string; replyToId?: string | undefined },
-  repo = new GreetingMessageRepository(),
+  repo = getGreetingMessageRepository(),
 ) {
   const body = input.body.trim()
   if (!body || body.length > MAX_MESSAGE_LENGTH) throw validationFailed({ body: `Nội dung từ 1 đến ${MAX_MESSAGE_LENGTH} ký tự` })
@@ -148,12 +148,12 @@ export async function sendMessage(
   return { id: msg.id, createdAt: msg.createdAt.toISOString() }
 }
 
-export async function markMessagesRead(ctx: TenantContext, messageIds: string[], repo = new GreetingMessageRepository()) {
+export async function markMessagesRead(ctx: TenantContext, messageIds: string[], repo = getGreetingMessageRepository()) {
   return { marked: await repo.markRead(ctx, messageIds) }
 }
 
 /** Lựa chọn "Gửi cho": 3 vai + từng thành viên (trừ chính mình). */
-export async function listRecipients(ctx: TenantContext, repo = new GreetingMessageRepository()) {
+export async function listRecipients(ctx: TenantContext, repo = getGreetingMessageRepository()) {
   const members = (await repo.activeMembers(ctx)).filter((m) => m.userId !== ctx.userId).sort((a, b) => a.name.localeCompare(b.name, "vi"))
   return {
     roles: (Object.keys(MESSAGE_ROLE_LABEL) as MessageRole[]).map((role) => ({ role, label: MESSAGE_ROLE_LABEL[role] })),

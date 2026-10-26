@@ -8,7 +8,7 @@ import type {
   StaffNotifyChannel,
   StaffNotifyEvent,
 } from "../domain/staff-notification-types"
-import { StaffNotificationRepository } from "../infra/staff-notification-repository"
+import { StaffNotificationRepository, getStaffNotificationRepository } from "../infra/staff-notification-repository"
 
 export const STAFF_NOTIFY_SECRET_PURPOSE = "greeting-card-staff-notify"
 
@@ -27,7 +27,7 @@ export async function notifyStaffEvent(
   organizationId: string,
   event: StaffNotifyEvent,
   ctx: StaffNotificationContext,
-  repo = new StaffNotificationRepository()
+  repo = getStaffNotificationRepository()
 ): Promise<StaffNotifySummary> {
   const summary: StaffNotifySummary = {
     event,

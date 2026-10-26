@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto"
 import { conflict, validationFailed, unprocessable } from "@/core/http/errors"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { loadPublicSession } from "./brochure-session-access"
 import { queueStaffNotification } from "./notify-staff"
 
@@ -50,7 +50,7 @@ export interface UploadPaymentProofInput {
 
 export async function uploadPaymentProof(
   input: UploadPaymentProofInput,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ) {
   const session = await loadPublicSession(input.sendCode, repo)
   if (!session.order_id) {

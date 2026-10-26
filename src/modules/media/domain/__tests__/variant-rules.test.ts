@@ -46,7 +46,7 @@ describe("M04b — luật thuần của biến thể marketing", () => {
       expect(variantIntegrityResult(SUBJECT_IDENTITY_WARNING)).toBe("WARNING")
     })
 
-    it("sụt sâu là REJECTED — có bước nào đó đã vẽ đè lên bó hoa", () => {
+    it("sụt sâu là REJECTED — có bước nào đó đã vẽ đè lên sản phẩm", () => {
       expect(variantIntegrityResult(0.9)).toBe("REJECTED")
       expect(variantIntegrityResult(0)).toBe("REJECTED")
     })

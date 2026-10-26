@@ -14,7 +14,7 @@ import {
   type ExceptionType,
 } from "../domain/operation-rules"
 import { axesAfterTransition } from "../domain/stage-transitions"
-import { CoordinatorRepository } from "../infra/coordinator-repository"
+import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import { audit, concurrentUpdate, ensureRule, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
 
@@ -24,7 +24,7 @@ export async function openCoordinatorException(
   input: { type: ExceptionType; severity: ExceptionSeverity; description: string }
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const from = row.coordination!.stage
     ensureRule(checkOpenException(from))
@@ -64,7 +64,7 @@ export async function resolveCoordinatorException(
   input: { resolution: string }
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const exception = await repo.findException(ctx, exceptionId)
     if (!exception) throw notFound()
     if (exception.status === "RESOLVED" || exception.status === "CANCELLED") {

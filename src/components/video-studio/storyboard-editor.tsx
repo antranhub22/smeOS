@@ -35,7 +35,7 @@ export function StoryboardEditor({
           {
             sceneIndex: 1,
             durationSeconds: 3.5,
-            textOverlay: "Hoa tươi ngát hương đón ngày mới",
+            textOverlay: "Sản phẩm ngát hương đón ngày mới",
             voiceScript: "Mỗi đóa hoa được chọn lựa thủ công từ sáng sớm",
             transitionEffect: "fade",
             motionEffect: "ZOOM_IN",
@@ -43,7 +43,7 @@ export function StoryboardEditor({
           {
             sceneIndex: 2,
             durationSeconds: 3.5,
-            textOverlay: "Nghệ thuật cắm hoa tỉ mỉ",
+            textOverlay: "Nghệ thuật chế tác tỉ mỉ",
             voiceScript: "Thiết kế sang trọng phù hợp mọi dịp kỷ niệm",
             transitionEffect: "slide_left",
             motionEffect: "PAN_RIGHT",
@@ -207,7 +207,7 @@ export function StoryboardEditor({
 
             {/* Ảnh phân cảnh — ảnh THẬT của sản phẩm (biến thể Khu vực D hoặc Master
                 Image), gắn theo mã asset. 24/09/2026: bỏ ảnh mẫu Unsplash và ô
-                "Chọn mẫu hoa" — ảnh đó không phải sản phẩm của tiệm mà vẫn được
+                "Chọn sản phẩm" — ảnh đó không phải sản phẩm của tiệm mà vẫn được
                 đưa vào video. */}
             <div className="flex items-center gap-3 bg-surface-alt/60 p-2.5 rounded-lg border border-border">
               <div className="relative aspect-[9/16] w-12 shrink-0 rounded-md overflow-hidden bg-black/5 border border-border shadow-xs flex items-center justify-center">

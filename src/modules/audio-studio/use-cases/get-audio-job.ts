@@ -2,8 +2,10 @@ import { notFound } from "@/core/http/errors"
 import { log } from "@/core/observability/log"
 import type { TenantContext } from "@/core/tenancy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AudioJobRepository } from "@/modules/audio-studio/infra/audio-job-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { getAudioJobRepository } from "@/modules/audio-studio/infra/audio-job-repository"
+import type { IAudioJobRepository } from "@/modules/audio-studio/domain/repositories/audio-job-repository.interface"
+import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface"
+import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
 import { refundPartial } from "@/modules/usage/use-cases/refund-partial"
 import { audioJobRefund, type AudioCostPlan } from "@/modules/audio-studio/domain/audio-task-rules"
@@ -19,11 +21,16 @@ const AUDIO_URL_EXPIRES_IN = 3600
  * lượng thật từng cảnh, nhạc đã dùng; job `FAILED` tự hoàn credit ngay ở lần
  * đọc này (idempotent) thay vì chờ `npm run hoan-credit`.
  */
-export async function getAudioJob(ctx: TenantContext, jobId: string) {
-  const job = await new AudioJobRepository().findById(ctx, jobId)
+export async function getAudioJob(
+  ctx: TenantContext,
+  jobId: string,
+  repo: IAudioJobRepository = getAudioJobRepository(),
+  genRepo: IGenerationJobRepository = getGenerationJobRepository()
+) {
+  const job = await repo.findById(ctx, jobId)
   if (!job) throw notFound()
 
-  const raw = await new GenerationJobRepository().findById(ctx, jobId)
+  const raw = await genRepo.findById(ctx, jobId)
   const payload = ((raw?.payload ?? {}) as Record<string, unknown>) || {}
   const output = ((raw?.output ?? {}) as Record<string, unknown>) || {}
 

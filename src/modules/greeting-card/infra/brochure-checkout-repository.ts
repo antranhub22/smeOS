@@ -295,3 +295,9 @@ export class BrochureCheckoutRepository {
     })
   }
 }
+
+let _brochureCheckoutRepositorySingleton: BrochureCheckoutRepository | null = null
+export function getBrochureCheckoutRepository(): BrochureCheckoutRepository {
+  if (!_brochureCheckoutRepositorySingleton) _brochureCheckoutRepositorySingleton = new BrochureCheckoutRepository()
+  return _brochureCheckoutRepositorySingleton
+}

@@ -8,7 +8,7 @@
 
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { applyCustomFields, mergeCustomFields } from "@/modules/field-platform/use-cases/apply-custom-fields"
-import { CoordinatorRepository } from "../infra/coordinator-repository"
+import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import { audit, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
 
@@ -18,7 +18,7 @@ export async function updateCoordinatorCustomFields(
   values: Record<string, unknown>
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const before = (row.coordination!.custom_fields as Record<string, unknown> | null) ?? {}
 

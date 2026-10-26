@@ -303,6 +303,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
             totalVnd={orderResult.totalVnd}
             vietQr={orderResult.vietQr}
             shopPhone={shop.phone}
+            internationalGuide={shop.languagePolicy?.internationalPaymentGuide}
             onReportPaid={handleReportPaid}
             alreadyReported={reportedPaid}
             requirePaymentProof={

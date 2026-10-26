@@ -25,7 +25,7 @@ export function occasionsOf(products: GreetingCatalogProduct[]): string[] {
   return [...seen]
 }
 
-/** Mức ngân sách có ít nhất một mẫu hoa. */
+/** Mức ngân sách có ít nhất một sản phẩm. */
 export function budgetsOf(products: GreetingCatalogProduct[]): BudgetTier[] {
   return BUDGET_TIERS.filter((t) => products.some((p) => p.price !== null && p.price >= t.min && p.price <= t.max))
 }
@@ -71,7 +71,7 @@ export function matchesMood(p: GreetingCatalogProduct, mood: ColorMood): boolean
   return mood.keywords.some((k) => text.includes(k))
 }
 
-/** Chỉ các tông màu thực sự có mẫu hoa (dựa trên tên, phong cách, mô tả, thành phần). */
+/** Chỉ các tông màu thực sự có sản phẩm (dựa trên tên, phong cách, mô tả, thành phần). */
 export function moodsOf(products: GreetingCatalogProduct[]): ColorMood[] {
   return COLOR_MOODS.filter((m) => products.some((p) => matchesMood(p, m)))
 }

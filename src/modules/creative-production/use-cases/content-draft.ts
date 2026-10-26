@@ -1,10 +1,17 @@
 import { AppError } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface"
 
-import { ContentDraftRepository, type ContentDraftKey } from "../infra/content-draft-repository"
+import { getContentDraftRepository } from "../infra/content-draft-repository"
+import type {
+  ContentDraftKey,
+  IContentDraftRepository,
+} from "../domain/repositories/content-draft-repository.interface"
 import type { PackagePost } from "../domain/campaign-package-rules"
+
+export type { ContentDraftKey }
 
 export interface ContentDraftDto {
   asset_id: string
@@ -40,16 +47,22 @@ function toDto(row: {
 export async function saveContentDraft(
   ctx: TenantContext,
   key: ContentDraftKey,
-  data: { posts: PackagePost[]; topicTitle: string | null }
+  data: { posts: PackagePost[]; topicTitle: string | null },
+  repo: IContentDraftRepository = getContentDraftRepository(),
+  assetRepo: IAssetRepository = getAssetRepository()
 ): Promise<ContentDraftDto> {
   requireCapability(ctx, "I1")
-  const asset = await new AssetRepository().findById(ctx, key.assetId)
+  const asset = await assetRepo.findById(ctx, key.assetId)
   if (!asset) throw new AppError("NOT_FOUND", "Không có ảnh sản phẩm này trong kho của tổ chức")
-  return toDto(await new ContentDraftRepository().upsert(ctx, key, data))
+  return toDto(await repo.upsert(ctx, key, data))
 }
 
-export async function getContentDraft(ctx: TenantContext, key: ContentDraftKey): Promise<ContentDraftDto | null> {
+export async function getContentDraft(
+  ctx: TenantContext,
+  key: ContentDraftKey,
+  repo: IContentDraftRepository = getContentDraftRepository()
+): Promise<ContentDraftDto | null> {
   requireCapability(ctx, "I1")
-  const row = await new ContentDraftRepository().find(ctx, key)
+  const row = await repo.find(ctx, key)
   return row ? toDto(row) : null
 }

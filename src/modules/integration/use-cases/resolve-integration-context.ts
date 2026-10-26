@@ -6,10 +6,11 @@ import {
   SSO_HEADER,
 } from "@/modules/integration/domain/integration-credential"
 import type { integration_client } from "@/modules/integration/infra/entities"
-import { IntegrationTokenRepository } from "@/modules/integration/infra/integration-token-repository"
+import type { IIntegrationTokenRepository } from "@/modules/integration/domain/repositories/integration-repository.interface"
+import { getIntegrationTokenRepository } from "@/modules/integration/infra/integration-token-repository"
 import { hashIntegrationToken } from "@/modules/integration/infra/token-crypto"
 import { tenantContextFor } from "@/modules/organization/use-cases/resolve-session"
-import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { verifySsoToken } from "@/modules/sso/infra/sso-jwt"
 
 /**
@@ -47,7 +48,10 @@ export type IntegrationContext =
  * chứng thư đã ký chứ không từ cookie phiên — `organization_id` không bao giờ
  * do client tự khai (đặc tả 08 mục 3).
  */
-export async function requireIntegrationContext(request: Request): Promise<IntegrationContext> {
+export async function requireIntegrationContext(
+  request: Request,
+  tokenRepo: IIntegrationTokenRepository = getIntegrationTokenRepository()
+): Promise<IntegrationContext> {
   const credential = readIntegrationCredential(request.headers)
   if (!credential) throw unauthenticated()
 
@@ -60,7 +64,7 @@ export async function requireIntegrationContext(request: Request): Promise<Integ
     return { source: "sso", organizationId: claims.org, userId: claims.sub }
   }
 
-  const row = await new IntegrationTokenRepository().findActiveByHash(
+  const row = await tokenRepo.findActiveByHash(
     hashIntegrationToken(credential.value),
     new Date()
   )
@@ -69,7 +73,7 @@ export async function requireIntegrationContext(request: Request): Promise<Integ
   return {
     source: "token",
     organizationId: row.organization_id,
-    client: row.client,
+    client: row.client as integration_client,
     tokenId: row.id,
   }
 }
@@ -128,7 +132,7 @@ export async function toTenantContext(ic: IntegrationContext): Promise<TenantCon
     }
   }
 
-  const workspace = await new WorkspaceRepository().findDefaultForSessionOrganization(
+  const workspace = await getWorkspaceRepository().findDefaultForSessionOrganization(
     ic.organizationId
   )
   if (!workspace) throw new AppError("INTERNAL", "Tổ chức không có workspace nào")

@@ -104,9 +104,18 @@ export function customerPaymentMessage(p: { orderCode: string; amountVnd: number
 /**
  * Tin soạn sẵn báo khách "cửa hàng đã xác nhận nhận đơn" — Điều phối/Sale chép gửi qua Zalo.
  */
-export function customerOrderAcceptedMessage(p: { orderCode: string; trackingUrl: string | null }): string {
-  const head = `Cửa hàng thông báo: Đã xác nhận nhận đơn hoa ${p.orderCode}! Xưởng đã tiếp nhận đơn và đang chuẩn bị nguyên liệu cắm hoa.`
-  return p.trackingUrl ? `${head} Theo dõi tiến độ đơn hàng và ảnh hoa tại: ${p.trackingUrl}` : head
+export function customerOrderAcceptedMessage(p: {
+  orderCode: string
+  trackingUrl: string | null
+  sampleProductTerm?: string
+  makerActionTerm?: string
+  completedPhotoTerm?: string
+}): string {
+  const item = (p.sampleProductTerm || "sản phẩm").replace(/ chuẩn$/i, "").toLowerCase()
+  const makerAction = p.makerActionTerm ? p.makerActionTerm.toLowerCase() : "chế tác"
+  const photoText = p.completedPhotoTerm ? p.completedPhotoTerm.toLowerCase() : "ảnh thực tế"
+  const head = `Cửa hàng thông báo: Đã xác nhận nhận đơn ${p.orderCode}! Xưởng đã tiếp nhận đơn và đang chuẩn bị ${item}.`
+  return p.trackingUrl ? `${head} Theo dõi tiến độ đơn hàng và ${photoText} tại: ${p.trackingUrl}` : head
 }
 
 /**
@@ -132,10 +141,10 @@ export function customerSecondPaymentReminderMessage(p: {
   deliveryActionTerm?: string
 }): string {
   const money = `${p.balanceVnd.toLocaleString("vi-VN")} đ`
-  const item = (p.sampleProductTerm || "hoa").replace(/ chuẩn$/i, "").toLowerCase()
-  const makerAction = p.makerActionTerm ? `${p.makerActionTerm.toLowerCase()} hoàn tất` : "cắm xong hoàn thiện"
-  const photoText = p.completedPhotoTerm ? p.completedPhotoTerm.toLowerCase() : "ảnh hoa thực tế"
-  const deliveryAction = p.deliveryActionTerm || "tiến hành giao hoa"
+  const item = (p.sampleProductTerm || "sản phẩm").replace(/ chuẩn$/i, "").toLowerCase()
+  const makerAction = p.makerActionTerm ? `${p.makerActionTerm.toLowerCase()} hoàn tất` : "hoàn tất"
+  const photoText = p.completedPhotoTerm ? p.completedPhotoTerm.toLowerCase() : "ảnh thực tế"
+  const deliveryAction = p.deliveryActionTerm || "tiến hành giao hàng"
 
   const head = p.skippedPhoto
     ? `Dạ chào anh/chị, ${item} cho đơn ${p.orderCode} đã hoàn thành và đang chuẩn bị giao gấp ạ!`

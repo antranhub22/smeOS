@@ -2,7 +2,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { isValidVnPhone, normalizePhone } from "../domain/greeting-card-rules"
-import { LinkCustomerRepository } from "../infra/link-customer-repository"
+import { LinkCustomerRepository, getLinkCustomerRepository } from "../infra/link-customer-repository"
 import { resolveSaleScope } from "./order-scope"
 
 /**
@@ -13,7 +13,7 @@ export async function updateLinkCustomer(
   ctx: TenantContext,
   sessionId: string,
   input: { customerName: string; customerPhone?: string | null | undefined },
-  repo = new LinkCustomerRepository(),
+  repo = getLinkCustomerRepository(),
 ) {
   const customerName = input.customerName.trim()
   const customerPhone = input.customerPhone ? normalizePhone(input.customerPhone) : null

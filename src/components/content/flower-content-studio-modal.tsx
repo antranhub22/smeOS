@@ -32,7 +32,7 @@ const FORMAT_OPTIONS: Array<{ value: ContentFormatType; label: string; icon: Rea
 export function FlowerContentStudioModal({
   open,
   onOpenChange,
-  initialProductName = "Bó Hoa Hồng Juliet",
+  initialProductName = "Sản Phẩm Hồng Juliet",
   initialOccasion = "Sinh nhật",
   initialColorTheme = "Cam pastel",
 }: FlowerContentStudioModalProps) {
@@ -51,7 +51,7 @@ export function FlowerContentStudioModal({
       .filter(Boolean)
 
     const input: FlowerContentInput = {
-      productName: productName.trim() || "Mẫu hoa thiết kế",
+      productName: productName.trim() || "Sản phẩm thiết kế",
       occasion: occasion.trim() || undefined,
       colorTheme: colorTheme.trim() || undefined,
       flowerTypes: flowers.length > 0 ? flowers : undefined,
@@ -172,7 +172,7 @@ export function FlowerContentStudioModal({
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
                 className="w-full h-8 px-2.5 rounded-md border border-border bg-surface text-body-sm text-text"
-                placeholder="vd: Bó Hoa Juliet"
+                placeholder="vd: Sản Phẩm Juliet"
               />
             </div>
             <div>
@@ -199,7 +199,7 @@ export function FlowerContentStudioModal({
               />
             </div>
             <div>
-              <label className="block text-caption font-medium text-muted mb-1">Các loại hoa chính</label>
+              <label className="block text-caption font-medium text-muted mb-1">Các nguyên liệu chính</label>
               <input
                 type="text"
                 value={flowerTypesText}
