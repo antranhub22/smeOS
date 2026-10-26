@@ -1,6 +1,6 @@
 /**
- * Sidebar Tầng 4: StoreOS (Cửa hàng Cơ sở Toàn diện)
- * Vận hành trọn gói: Tự bán lẻ tại tiệm + Cổng nhận đơn gia công (/cua-hang) từ Mạng lưới & Chuỗi.
+ * Sidebar Tầng 4: StoreOS (Không gian làm việc cửa hàng)
+ * Tư duy: Việc hôm nay — Công cụ (Thư viện) — Bán hàng — Sản phẩm — Vận hành — Quản trị.
  */
 
 import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"
@@ -11,16 +11,88 @@ import type { NavEntry, NavGroup, NavView } from "./nav-types"
 import { HOME_ENTRY } from "./nav-types"
 
 export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
-  // 1. Nhóm Bán hàng & Khách
+  // 01 · CÔNG CỤ
   {
-    href: "/khach-hang",
-    label: "Khách hàng",
-    group: "ban-hang",
-    iconKey: "Users",
-    navKey: "customers",
-    capability: "Q1",
-    mobileLabel: "Khách hàng",
+    href: "/cong-cu",
+    label: "Thư viện công cụ",
+    group: "cong-cu",
+    iconKey: "LayoutGrid",
+    navKey: "toolkit",
+    mobileLabel: "Công cụ",
   },
+  {
+    href: "/the-chao",
+    label: "Thẻ chào sản phẩm",
+    group: "cong-cu",
+    iconKey: "Sparkles",
+    navKey: "greeting-card",
+    capability: "R1",
+    mobileLabel: "Thẻ chào",
+  },
+  {
+    href: "/catalog",
+    label: "Tạo Catalog & Link bán hàng",
+    group: "cong-cu",
+    iconKey: "Globe",
+    navKey: "catalog",
+    capability: "J1",
+    mobileLabel: "Catalog",
+  },
+  {
+    href: "/tai-anh",
+    label: "Phân tích ảnh bằng AI",
+    group: "cong-cu",
+    iconKey: "Camera",
+    navKey: "scan-photo",
+    capability: "H1",
+    mobileLabel: "Quét ảnh",
+  },
+  {
+    href: "/creative-studio",
+    label: "Tạo ảnh sản phẩm",
+    group: "cong-cu",
+    iconKey: "Wand2",
+    navKey: "creative-studio",
+    capability: "I1",
+    mobileLabel: "Tạo ảnh",
+  },
+  {
+    href: "/video",
+    label: "Tạo video",
+    group: "cong-cu",
+    iconKey: "Video",
+    navKey: "video",
+    capability: "I1",
+    mobileLabel: "Video",
+  },
+  {
+    href: "/noi-dung",
+    label: "Viết nội dung marketing",
+    group: "cong-cu",
+    iconKey: "FileText",
+    navKey: "content",
+    capability: "I1",
+    mobileLabel: "Nội dung",
+  },
+  {
+    href: "/kho-templates",
+    label: "Kho mẫu & Ấn phẩm",
+    group: "cong-cu",
+    iconKey: "LayoutTemplate",
+    navKey: "templates",
+    mobileLabel: "Kho mẫu",
+  },
+  {
+    href: "/gia",
+    label: "Tính giá thành",
+    group: "cong-cu",
+    iconKey: "WalletCards",
+    navKey: "pricing",
+    capability: "L6",
+    mobileLabel: "Tính giá",
+  },
+
+  // 02 · BÁN HÀNG & KHÁCH HÀNG
   {
     href: "/don-hang",
     label: "Đơn hàng",
@@ -31,6 +103,15 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Đơn hàng",
   },
   {
+    href: "/khach-hang",
+    label: "Khách hàng",
+    group: "ban-hang",
+    iconKey: "Users",
+    navKey: "customers",
+    capability: "Q1",
+    mobileLabel: "Khách hàng",
+  },
+  {
     href: "/hoi-thoai",
     label: "Hội thoại",
     group: "ban-hang",
@@ -39,43 +120,16 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     capability: "T1",
     mobileLabel: "Hội thoại",
   },
-  {
-    href: "/catalog",
-    label: "Catalog & QR",
-    group: "ban-hang",
-    iconKey: "Globe",
-    navKey: "catalog",
-    capability: "J1",
-    mobileLabel: "Catalog",
-  },
-  {
-    href: "/the-chao",
-    label: "Thẻ chào sản phẩm",
-    group: "ban-hang",
-    iconKey: "Sparkles",
-    navKey: "greeting-card",
-    capability: "R1",
-    mobileLabel: "Thẻ chào",
-  },
 
-  // 2. Nhóm Sản phẩm
+  // 03 · SẢN PHẨM & NGUỒN LỰC
   {
     href: "/san-pham",
-    label: "Sản phẩm & Giá",
+    label: "Danh mục sản phẩm",
     group: "san-pham",
     iconKey: "Tag",
     navKey: "products",
     capability: "L1",
     mobileLabel: "Sản phẩm",
-  },
-  {
-    href: "/san-pham/kha-dung",
-    label: "Khả dụng & Lịch",
-    group: "san-pham",
-    iconKey: "CalendarCheck",
-    navKey: "availability",
-    capability: "L1",
-    mobileLabel: "Khả dụng",
   },
   {
     href: "/san-pham/tao-moi",
@@ -96,116 +150,36 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Nhập Excel",
   },
   {
-    href: "/tai-anh",
-    label: "Quét ảnh hoa",
+    href: "/san-pham/kha-dung",
+    label: "Khả dụng & Lịch",
     group: "san-pham",
-    iconKey: "Camera",
-    navKey: "scan-photo",
-    capability: "H1",
-    mobileLabel: "Tải ảnh",
+    iconKey: "CalendarCheck",
+    navKey: "availability",
+    capability: "L1",
+    mobileLabel: "Khả dụng",
   },
   {
     href: "/kho-du-lieu",
-    label: "Kho dữ liệu",
+    label: "Kho & Nguyên liệu",
     group: "san-pham",
     iconKey: "Folder",
     navKey: "storage",
     capability: "G1",
-    mobileLabel: "Kho dữ liệu",
-  },
-  {
-    href: "/gia",
-    label: "Tính giá",
-    group: "san-pham",
-    iconKey: "WalletCards",
-    navKey: "pricing",
-    capability: "L6",
-    mobileLabel: "Tính giá",
+    mobileLabel: "Kho",
   },
 
-  // 3. Nhóm Nội dung & Tiếp thị
-  {
-    href: "/market-intelligence",
-    label: "Nghiên cứu thị trường",
-    group: "noi-dung",
-    iconKey: "TrendingUp",
-    navKey: "market-intel",
-    capability: "V2",
-    mobileLabel: "Thị trường",
-  },
-  {
-    href: "/creative-studio",
-    label: "Creative Studio",
-    group: "noi-dung",
-    iconKey: "Sparkles",
-    navKey: "creative-studio",
-    capability: "I1",
-    mobileLabel: "Studio",
-  },
-  {
-    href: "/creative-studio?tab=area-d",
-    label: "Ảnh marketing",
-    group: "noi-dung",
-    iconKey: "Wand2",
-    navKey: "marketing-photo",
-    capability: "I4",
-    mobileLabel: "Ảnh mẫu",
-  },
-  {
-    href: "/video",
-    label: "Video",
-    group: "noi-dung",
-    iconKey: "Video",
-    navKey: "video",
-    capability: "I1",
-    mobileLabel: "Video",
-  },
-  {
-    href: "/noi-dung",
-    label: "Viết nội dung",
-    group: "noi-dung",
-    iconKey: "FileText",
-    navKey: "content",
-    capability: "I1",
-    mobileLabel: "Nội dung",
-  },
-  {
-    href: "/lich-dang",
-    label: "Lịch đăng",
-    group: "noi-dung",
-    iconKey: "Share2",
-    navKey: "schedule",
-    mobileLabel: "Lịch đăng",
-  },
-  {
-    href: "/kho-templates",
-    label: "Kho mẫu",
-    group: "noi-dung",
-    iconKey: "LayoutTemplate",
-    navKey: "templates",
-    mobileLabel: "Kho mẫu",
-  },
-
-  // 4. Nhóm Vận hành
+  // 04 · VẬN HÀNH
   {
     href: "/cua-hang",
-    label: "📥 Đơn Mạng Lưới & Chuỗi",
+    label: "Đơn nhận từ mạng lưới",
     group: "van-hanh",
     iconKey: "Inbox",
     navKey: "branch-portal",
     mobileLabel: "Đơn chuỗi",
   },
   {
-    href: "/cong-cu",
-    label: "Hộp công cụ",
-    group: "van-hanh",
-    iconKey: "LayoutGrid",
-    navKey: "toolkit",
-    mobileLabel: "Công cụ",
-  },
-  {
     href: "/dieu-phoi",
-    label: "Điều phối",
+    label: "Sản xuất & Điều phối",
     group: "van-hanh",
     iconKey: "Radio",
     navKey: "coordinator",
@@ -213,32 +187,8 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Điều phối",
   },
   {
-    href: "/tin-nhan",
-    label: "Tin nhắn nội bộ",
-    group: "van-hanh",
-    iconKey: "MessageSquare",
-    navKey: "internal-chat",
-    mobileLabel: "Tin nhắn",
-  },
-  {
-    href: "/noi-bo/ket-noi",
-    label: "Profile Kết Nối",
-    group: "van-hanh",
-    iconKey: "BadgeCheck",
-    navKey: "connect-identity",
-    mobileLabel: "Kết nối",
-  },
-  {
-    href: "/du-lieu",
-    label: "Dữ liệu chuỗi",
-    group: "van-hanh",
-    iconKey: "Database",
-    navKey: "chain-data",
-    mobileLabel: "Dữ liệu",
-  },
-  {
     href: "/job",
-    label: "Job",
+    label: "Giao hàng & Bàn giao",
     group: "van-hanh",
     iconKey: "Clock",
     navKey: "jobs",
@@ -247,17 +197,27 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/duyet",
-    label: "Hàng chờ duyệt",
+    label: "Việc chờ duyệt (QC)",
     group: "van-hanh",
     iconKey: "CheckCircle2",
     navKey: "approval",
     capability: "H3",
-    mobileLabel: "Duyệt",
+    mobileLabel: "Duyệt QC",
   },
   {
-    href: "/so-lieu",
-    label: "Số liệu",
+    href: "/tin-nhan",
+    label: "Trao đổi nội bộ",
     group: "van-hanh",
+    iconKey: "MessageSquare",
+    navKey: "internal-chat",
+    mobileLabel: "Tin nhắn",
+  },
+
+  // 05 · QUẢN TRỊ CỬA HÀNG
+  {
+    href: "/so-lieu",
+    label: "Báo cáo kinh doanh",
+    group: "quan-tri",
     iconKey: "BarChart3",
     navKey: "stats",
     capability: "U3",
@@ -265,62 +225,25 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/muc-dung",
-    label: "Mức dùng",
-    group: "van-hanh",
+    label: "Sổ quỹ & Thu chi",
+    group: "quan-tri",
     iconKey: "WalletCards",
     navKey: "usage",
     capability: "G8",
-    mobileLabel: "Mức dùng",
+    mobileLabel: "Sổ quỹ",
   },
-  {
-    href: "/audit",
-    label: "Nhật ký kiểm toán",
-    group: "van-hanh",
-    iconKey: "ShieldCheck",
-    navKey: "audit",
-    capability: "G9",
-    mobileLabel: "Kiểm toán",
-  },
-
-  // 5. Nhóm Thiết lập
   {
     href: "/tri-thuc",
-    label: "Tri thức",
-    group: "thiet-lap",
+    label: "Tri thức & Quy trình",
+    group: "quan-tri",
     iconKey: "BookOpen",
     navKey: "knowledge",
     mobileLabel: "Tri thức",
   },
   {
-    href: "/cai-dat-ai",
-    label: "Chính sách AI",
-    group: "thiet-lap",
-    iconKey: "Cpu",
-    navKey: "ai-policy",
-    capability: "U1",
-    mobileLabel: "Chính sách AI",
-  },
-  {
-    href: "/ket-noi",
-    label: "Kết nối kênh",
-    group: "thiet-lap",
-    iconKey: "Share2",
-    navKey: "channels",
-    mobileLabel: "Kết nối",
-  },
-  {
-    href: "/bo-may",
-    label: "Bộ máy phân tích ảnh",
-    group: "thiet-lap",
-    iconKey: "Cpu",
-    navKey: "engine",
-    capability: "H4",
-    mobileLabel: "Bộ máy",
-  },
-  {
     href: "/cai-dat",
-    label: "Hồ sơ & Cài đặt",
-    group: "thiet-lap",
+    label: "Thiết lập & Kết nối",
+    group: "quan-tri",
     iconKey: "Settings2",
     navKey: "settings",
     capability: "F1",
@@ -329,11 +252,11 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
 ] as const
 
 export const NAV_GROUP_CONFIG = [
-  { key: "ban-hang", label: "Bán hàng & Khách" },
-  { key: "san-pham", label: "Sản phẩm" },
-  { key: "noi-dung", label: "Nội dung & Tiếp thị" },
-  { key: "van-hanh", label: "Vận hành" },
-  { key: "thiet-lap", label: "Thiết lập" },
+  { key: "cong-cu", label: "01 · CÔNG CỤ" },
+  { key: "ban-hang", label: "02 · BÁN HÀNG & KHÁCH" },
+  { key: "san-pham", label: "03 · SẢN PHẨM & KHO" },
+  { key: "van-hanh", label: "04 · VẬN HÀNH" },
+  { key: "quan-tri", label: "05 · QUẢN TRỊ TIỆM" },
 ] as const
 
 function adaptStoreEntries(industryKey?: string | null): readonly NavEntry[] {
@@ -407,13 +330,13 @@ export function buildStoreNav(
   if (viecChinhEntries.length > 0 && role) {
     groups.push({
       key: "viec-chinh",
-      label: `Việc chính · ${role.label}`,
+      label: `Việc hôm nay · ${role.label}`,
       entries: viecChinhEntries,
     })
   } else if (role?.key === "store_admin") {
     groups.push({
       key: "viec-chinh",
-      label: "Tổng quan",
+      label: "Việc hôm nay",
       entries: [HOME_ENTRY],
     })
   }

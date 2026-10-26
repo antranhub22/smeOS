@@ -1,48 +1,34 @@
 /**
- * Sidebar Tầng 2: SaaS Ngành (Affiliate Engine & Standardization Hub)
- * Chuẩn hóa ngành hàng + Cỗ máy bán hàng Affiliate tự động xuyên cửa hàng.
+ * Sidebar Tầng 2: SaaS Ngành (Industry Growth & Network Platform)
+ * Nền tảng phát triển ngành hàng và mạng lưới phân phối affiliate xuyên cửa hàng.
  */
 
 import type { NavEntry, NavGroup, NavView } from "./nav-types"
 
 export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
-  // 1. Hệ sinh thái Đa Ngành & Công cụ Affiliate
+  // 1. TRUNG TÂM ĐIỀU HÀNH
   {
     href: "/",
-    label: "Tổng quan SaaS Ngành",
-    group: "he-sinh-thai",
+    label: "Tổng quan ngành",
+    group: "trung-tam-dieu-hanh",
     iconKey: "LayoutDashboard",
     navKey: "industry-overview",
     mobileLabel: "Tổng quan",
   },
-  {
-    href: "/van-hanh/nganh",
-    label: "Ma trận & Plugin Ngành",
-    group: "he-sinh-thai",
-    iconKey: "Layers",
-    navKey: "industry-matrix",
-    mobileLabel: "Ngành",
-  },
-  {
-    href: "/kho-templates",
-    label: "Kho mẫu ấn phẩm A6",
-    group: "he-sinh-thai",
-    iconKey: "LayoutTemplate",
-    navKey: "industry-templates",
-    mobileLabel: "Mẫu A6",
-  },
+
+  // 2. CÔNG CỤ BÁN HÀNG
   {
     href: "/landing-page",
-    label: "Landing Page Sản phẩm",
-    group: "he-sinh-thai",
+    label: "Landing Page & Kênh bán",
+    group: "cong-cu-ban-hang",
     iconKey: "Globe",
     navKey: "industry-landing",
     mobileLabel: "Landing",
   },
   {
     href: "/catalog",
-    label: "Catalog Liên kết & QR",
-    group: "he-sinh-thai",
+    label: "Catalog & QR",
+    group: "cong-cu-ban-hang",
     iconKey: "QrCode",
     navKey: "industry-catalog",
     capability: "J1",
@@ -50,92 +36,142 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/the-chao",
-    label: "Thẻ chào Bán hàng",
-    group: "he-sinh-thai",
+    label: "Thẻ chào sản phẩm",
+    group: "cong-cu-ban-hang",
     iconKey: "Sparkles",
     navKey: "industry-greeting-card",
     capability: "R1",
     mobileLabel: "Thẻ chào",
   },
+  {
+    href: "/kho-templates",
+    label: "Thư viện Template",
+    group: "cong-cu-ban-hang",
+    iconKey: "LayoutTemplate",
+    navKey: "industry-templates",
+    mobileLabel: "Template",
+  },
+  {
+    href: "/creative-studio",
+    label: "Studio sáng tạo AI",
+    group: "cong-cu-ban-hang",
+    iconKey: "Wand2",
+    navKey: "industry-studio",
+    capability: "I1",
+    mobileLabel: "Studio AI",
+  },
 
-  // 2. Chuẩn hóa, Định lượng & Điều phối
+  // 3. CHUẨN HÓA NGÀNH
   {
     href: "/san-pham",
     label: "Danh mục & Sản phẩm mẫu",
-    group: "chuan-hoa",
+    group: "chuan-hoa-nganh",
     iconKey: "Package",
     navKey: "industry-products",
     capability: "L1",
     mobileLabel: "Sản phẩm",
   },
   {
+    href: "/van-hanh/nganh",
+    label: "Taxonomy & Quy chuẩn",
+    group: "chuan-hoa-nganh",
+    iconKey: "Layers",
+    navKey: "industry-taxonomy",
+    mobileLabel: "Quy chuẩn",
+  },
+  {
     href: "/van-hanh/truong-du-lieu",
-    label: "Trường dữ liệu mở rộng",
-    group: "chuan-hoa",
+    label: "Trường dữ liệu ngành",
+    group: "chuan-hoa-nganh",
     iconKey: "SlidersHorizontal",
     navKey: "industry-fields",
     mobileLabel: "Trường",
   },
-  {
-    href: "/dieu-phoi",
-    label: "Điều phối Đơn Tự động",
-    group: "chuan-hoa",
-    iconKey: "Radio",
-    navKey: "industry-dispatch",
-    capability: "C23",
-    mobileLabel: "Điều phối",
-  },
+
+  // 4. MẠNG LƯỚI & ĐIỀU PHỐI
   {
     href: "/dieu-phoi/doi-tac",
-    label: "Mạng lưới Shop Đối tác",
-    group: "chuan-hoa",
+    label: "Đối tác & Nhà cung cấp",
+    group: "mang-luoi-dieu-phoi",
     iconKey: "Building2",
     navKey: "industry-partners",
     mobileLabel: "Đối tác",
   },
   {
-    href: "/duyet",
-    label: "Duyệt Chất lượng (QC)",
-    group: "chuan-hoa",
-    iconKey: "CheckCircle2",
-    navKey: "industry-approvals",
-    capability: "H3",
-    mobileLabel: "Duyệt QC",
-  },
-
-  // 3. Thị trường, Báo cáo & Đối soát
-  {
     href: "/don-hang",
-    label: "Trung tâm Đơn Mạng lưới",
-    group: "thi-truong",
+    label: "Đơn hàng Affiliate",
+    group: "mang-luoi-dieu-phoi",
     iconKey: "ShoppingBag",
     navKey: "industry-orders",
     capability: "R1",
     mobileLabel: "Đơn hàng",
   },
   {
+    href: "/dieu-phoi",
+    label: "Điều phối tự động",
+    group: "mang-luoi-dieu-phoi",
+    iconKey: "Radio",
+    navKey: "industry-dispatch",
+    capability: "C23",
+    mobileLabel: "Điều phối",
+  },
+  {
+    href: "/duyet",
+    label: "Kiểm soát chất lượng",
+    group: "mang-luoi-dieu-phoi",
+    iconKey: "CheckCircle2",
+    navKey: "industry-approvals",
+    capability: "H3",
+    mobileLabel: "Duyệt QC",
+  },
+
+  // 5. HIỆU QUẢ THƯƠNG MẠI
+  {
     href: "/market-intelligence",
     label: "Thị trường & Xu hướng",
-    group: "thi-truong",
+    group: "hieu-qua-thuong-mai",
     iconKey: "TrendingUp",
     navKey: "industry-market",
     capability: "V2",
     mobileLabel: "Thị trường",
   },
   {
+    href: "/so-lieu",
+    label: "Hiệu suất kênh bán",
+    group: "hieu-qua-thuong-mai",
+    iconKey: "BarChart3",
+    navKey: "industry-channel-performance",
+    capability: "U3",
+    mobileLabel: "Hiệu suất",
+  },
+  {
     href: "/van-hanh/du-lieu",
-    label: "Dữ liệu ngành & Đối soát",
-    group: "thi-truong",
-    iconKey: "Database",
-    navKey: "industry-data",
-    mobileLabel: "Dữ liệu",
+    label: "Hoa hồng & Đối soát",
+    group: "hieu-qua-thuong-mai",
+    iconKey: "DollarSign",
+    navKey: "industry-clearing",
+    mobileLabel: "Đối soát",
+  },
+
+  // 6. THIẾT LẬP
+  {
+    href: "/cai-dat",
+    label: "Chính sách & Cấu hình ngành",
+    group: "thiet-lap-nganh",
+    iconKey: "Settings2",
+    navKey: "industry-settings",
+    capability: "F1",
+    mobileLabel: "Cài đặt",
   },
 ] as const
 
-const INDUSTRY_GROUPS_CONFIG = [
-  { key: "he-sinh-thai", label: "Hệ sinh thái Đa Ngành & Công cụ Affiliate" },
-  { key: "chuan-hoa", label: "Chuẩn hóa, Định lượng & Điều phối" },
-  { key: "thi-truong", label: "Thị trường, Báo cáo & Đối soát" },
+export const INDUSTRY_GROUPS_CONFIG = [
+  { key: "trung-tam-dieu-hanh", label: "Trung tâm Điều hành" },
+  { key: "cong-cu-ban-hang", label: "Công cụ Bán hàng" },
+  { key: "chuan-hoa-nganh", label: "Chuẩn hóa Ngành" },
+  { key: "mang-luoi-dieu-phoi", label: "Mạng lưới & Điều phối" },
+  { key: "hieu-qua-thuong-mai", label: "Hiệu quả Thương mại" },
+  { key: "thiet-lap-nganh", label: "Thiết lập" },
 ] as const
 
 export function buildIndustryNav(can: (code: string) => boolean): NavView {

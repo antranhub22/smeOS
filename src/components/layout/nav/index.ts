@@ -90,10 +90,10 @@ export function mobileSecondSlot(
   if (organizationType === "INDUSTRY" || role?.key === "industry_admin") {
     return {
       href: "/van-hanh/nganh",
-      label: "Ma trận ngành",
-      group: "tong-quan-nganh",
+      label: "Taxonomy & Quy chuẩn",
+      group: "chuan-hoa-nganh",
       iconKey: "Layers",
-      navKey: "industry-matrix",
+      navKey: "industry-taxonomy",
       mobileLabel: "Ngành",
     }
   }
@@ -102,8 +102,8 @@ export function mobileSecondSlot(
   if (organizationType === "PLATFORM" || role?.key === "platform_admin") {
     return {
       href: "/van-hanh/to-chuc",
-      label: "Tổ chức",
-      group: "quan-tri-to-chuc",
+      label: "Tổ chức & Tenant",
+      group: "to-chuc-dich-vu",
       iconKey: "Building2",
       navKey: "platform-organizations",
       mobileLabel: "Tổ chức",
@@ -114,7 +114,7 @@ export function mobileSecondSlot(
     return {
       href: "/dieu-phoi",
       label: "Điều phối",
-      group: "dieu-phoi-gia-cong",
+      group: "dieu-hanh-chuoi",
       iconKey: "Radio",
       navKey: "chain-coordinator",
       mobileLabel: "Điều phối",
@@ -124,7 +124,7 @@ export function mobileSecondSlot(
   return {
     href: "/don-hang",
     label: "Đơn hàng",
-    group: "ban-hang-tiem",
+    group: "ban-hang",
     iconKey: "ShoppingBag",
     navKey: "orders",
     mobileLabel: "Đơn hàng",

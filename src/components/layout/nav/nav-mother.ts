@@ -1,102 +1,116 @@
 /**
- * Sidebar Tầng 1: SaaS Mother (Platform Console /van-hanh)
- * Quản trị toàn bộ 3 tầng dưới, hạ tầng đám mây, đa tenant và tài nguyên AI.
+ * Sidebar Tầng 1: SaaS Mother (Platform Control Center · Quản trị nền tảng SaaS)
+ * Quản trị toàn bộ 3 tầng dưới, hạ tầng đám mây, đa tenant, AI resources và bảo mật.
  */
 
 import type { NavEntry, NavGroup, NavView } from "./nav-types"
 
 export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
-  // 1. Tổ chức & Khách hàng
+  // 1. TỔNG QUAN
   {
     href: "/van-hanh",
     label: "Tổng quan nền tảng",
-    group: "to-chuc",
+    group: "tong-quan",
     iconKey: "LayoutDashboard",
     navKey: "platform-overview",
     mobileLabel: "Tổng quan",
   },
-  {
-    href: "/van-hanh/dang-ky",
-    label: "Đăng ký mới",
-    group: "to-chuc",
-    iconKey: "UserPlus",
-    navKey: "platform-registrations",
-    mobileLabel: "Đăng ký",
-  },
+
+  // 2. TỔ CHỨC & DỊCH VỤ
   {
     href: "/van-hanh/to-chuc",
-    label: "Danh sách tổ chức",
-    group: "to-chuc",
+    label: "Tổ chức & Tenant",
+    group: "to-chuc-dich-vu",
     iconKey: "Building2",
     navKey: "platform-organizations",
     mobileLabel: "Tổ chức",
   },
   {
-    href: "/van-hanh/phe-duyet",
-    label: "Phê duyệt yêu cầu",
-    group: "to-chuc",
-    iconKey: "CheckCircle2",
-    navKey: "platform-approvals",
-    mobileLabel: "Phê duyệt",
+    href: "/van-hanh/dang-ky",
+    label: "Đăng ký & Phê duyệt",
+    group: "to-chuc-dich-vu",
+    iconKey: "UserPlus",
+    navKey: "platform-registrations",
+    mobileLabel: "Đăng ký",
   },
-
-  // 2. Cấu hình nền tảng
+  {
+    href: "/van-hanh/phe-duyet",
+    label: "Gói dịch vụ & Đăng ký",
+    group: "to-chuc-dich-vu",
+    iconKey: "CreditCard",
+    navKey: "platform-subscriptions",
+    mobileLabel: "Gói cước",
+  },
   {
     href: "/van-hanh/nganh",
-    label: "Ma trận ngành",
-    group: "cau-hinh",
+    label: "Ngành hàng & Năng lực",
+    group: "to-chuc-dich-vu",
     iconKey: "Layers",
     navKey: "platform-industry-matrix",
-    mobileLabel: "Ngành",
-  },
-  {
-    href: "/van-hanh/truong-du-lieu",
-    label: "Trường dữ liệu",
-    group: "cau-hinh",
-    iconKey: "SlidersHorizontal",
-    navKey: "platform-custom-fields",
-    mobileLabel: "Trường",
-  },
-  {
-    href: "/van-hanh/du-lieu",
-    label: "Dữ liệu tổ chức",
-    group: "cau-hinh",
-    iconKey: "Database",
-    navKey: "platform-org-data",
-    mobileLabel: "Dữ liệu",
+    mobileLabel: "Ngành hàng",
   },
 
-  // 3. Vận hành & Giám sát
+  // 3. HẠ TẦNG & TÀI NGUYÊN
+  {
+    href: "/cai-dat-ai",
+    label: "AI Providers & Models",
+    group: "ha-tang-tai-nguyen",
+    iconKey: "Cpu",
+    navKey: "platform-ai-providers",
+    mobileLabel: "AI Models",
+  },
   {
     href: "/van-hanh/muc-dung",
     label: "Mức dùng & Chi phí",
-    group: "giam-sat",
+    group: "ha-tang-tai-nguyen",
     iconKey: "WalletCards",
     navKey: "platform-usage",
     mobileLabel: "Mức dùng",
   },
   {
+    href: "/van-hanh/du-lieu",
+    label: "Dữ liệu & Lưu trữ",
+    group: "ha-tang-tai-nguyen",
+    iconKey: "Database",
+    navKey: "platform-org-data",
+    mobileLabel: "Dữ liệu",
+  },
+
+  // 4. ĐỘ TIN CẬY & BẢO MẬT
+  {
     href: "/van-hanh/suc-khoe",
-    label: "Sức khoẻ hệ thống",
-    group: "giam-sat",
+    label: "Sức khỏe hệ thống",
+    group: "do-tin-cay-bao-mat",
     iconKey: "Activity",
     navKey: "platform-health",
-    mobileLabel: "Sức khoẻ",
+    mobileLabel: "Sức khỏe",
   },
   {
     href: "/van-hanh/nhat-ky",
-    label: "Nhật ký hệ thống",
-    group: "giam-sat",
+    label: "Bảo mật & Nhật ký kiểm toán",
+    group: "do-tin-cay-bao-mat",
     iconKey: "ShieldCheck",
     navKey: "platform-audit",
-    mobileLabel: "Nhật ký",
+    mobileLabel: "Kiểm toán",
+  },
+
+  // 5. THIẾT LẬP
+  {
+    href: "/van-hanh/truong-du-lieu",
+    label: "Cấu hình nền tảng",
+    group: "thiet-lap-platform",
+    iconKey: "SlidersHorizontal",
+    navKey: "platform-custom-fields",
+    mobileLabel: "Cấu hình",
   },
 ] as const
 
-const MOTHER_GROUPS_CONFIG = [
-  { key: "to-chuc", label: "Tổ chức & Khách hàng" },
-  { key: "cau-hinh", label: "Cấu hình nền tảng" },
-  { key: "giam-sat", label: "Vận hành & Giám sát" },
+export const MOTHER_GROUPS_CONFIG = [
+  { key: "tong-quan", label: "Tổng quan" },
+  { key: "to-chuc-dich-vu", label: "Tổ chức & Dịch vụ" },
+  { key: "ha-tang-tai-nguyen", label: "Hạ tầng & Tài nguyên" },
+  { key: "do-tin-cay-bao-mat", label: "Độ tin cậy & Bảo mật" },
+  { key: "thiet-lap-platform", label: "Thiết lập" },
 ] as const
 
 export function buildMotherNav(can: (code: string) => boolean): NavView {
