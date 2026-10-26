@@ -8,6 +8,7 @@ import type {
   CatalogStyleId,
   CatalogProductItem,
   BrandProfile,
+  StyleDefinition,
 } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { resolveCatalogBrief } from "@/modules/catalog-studio/use-cases/resolve-catalog-brief"
 import type { PublicCatalogProduct } from "@/modules/catalog-links/use-cases/get-public-catalog"
@@ -28,6 +29,9 @@ interface CatalogStorefrontHeaderProps {
   }
   products: PublicCatalogProduct[]
   onOpenShareModal: () => void
+  style?: StyleDefinition
+  templateId?: CatalogTemplateId
+  styleId?: CatalogStyleId
 }
 
 export function CatalogStorefrontHeader({
@@ -35,6 +39,9 @@ export function CatalogStorefrontHeader({
   catalog,
   products,
   onOpenShareModal,
+  style,
+  templateId,
+  styleId,
 }: CatalogStorefrontHeaderProps) {
   const studioProducts: CatalogProductItem[] = useMemo(() => {
     return products.map((p, idx) => ({
@@ -54,19 +61,19 @@ export function CatalogStorefrontHeader({
     brandId: shop.id || "shop",
     name: shop.name,
     slogan: catalog.description || "Bộ Sưu Tập Tinh Tuyển 2026",
-    brandColors: { primary: "#9A3412" },
+    brandColors: { primary: style?.tokens.accent || "#9A3412" },
     contacts: {
       phone: shop.phone || null,
       hotline: shop.phone || null,
       zalo: shop.phone || null,
       address: shop.address || null,
     },
-  }), [shop, catalog])
+  }), [shop, catalog, style])
 
   const resolvedCatalog = useMemo(() => {
     const filters = (catalog.filters as Record<string, unknown>) || {}
-    const templateId = (filters.template_id as CatalogTemplateId) || "T01_SIGNATURE_COLLECTION"
-    const styleId = (filters.style_id as CatalogStyleId) || "S01_EDITORIAL_MAGAZINE"
+    const resolvedTemplateId = templateId || (filters.template_id as CatalogTemplateId) || (filters.templateId as CatalogTemplateId) || "T01_SIGNATURE_COLLECTION"
+    const resolvedStyleId = styleId || (filters.style_id as CatalogStyleId) || (filters.styleId as CatalogStyleId) || "S01_EDITORIAL_MAGAZINE"
 
     return resolveCatalogBrief(
       {
@@ -75,8 +82,8 @@ export function CatalogStorefrontHeader({
         purpose: "COLLECTION",
         audience: "CONSUMER",
         language: "vi-VN",
-        styleId,
-        templateId,
+        styleId: resolvedStyleId,
+        templateId: resolvedTemplateId,
         pageSize: "A4_PORTRAIT",
         outputProfile: "DIGITAL_PDF",
         brandId: brandProfile.brandId,
@@ -85,24 +92,45 @@ export function CatalogStorefrontHeader({
       brandProfile,
       studioProducts
     )
-  }, [catalog, brandProfile, studioProducts])
+  }, [catalog, brandProfile, studioProducts, templateId, styleId])
 
   return (
-    <header className="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-border shadow-xs">
+    <header
+      className="sticky top-0 z-40 backdrop-blur-md border-b shadow-xs transition-colors"
+      style={{
+        backgroundColor: style ? `${style.tokens.surface}EE` : undefined,
+        borderColor: style?.tokens.border,
+      }}
+    >
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {shop.logoUrl ? (
             <img src={shop.logoUrl} alt={shop.name} className="w-10 h-10 rounded-full object-cover border border-border" />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center font-bold"
+              style={{
+                backgroundColor: style?.tokens.badgeBg || "rgba(154, 52, 18, 0.1)",
+                color: style?.tokens.accent || "#9A3412",
+                borderColor: style?.tokens.border || "rgba(154, 52, 18, 0.2)",
+              }}
+            >
               <Flower2 size={20} />
             </div>
           )}
           <div>
-            <div className="text-sm font-extrabold text-text leading-tight">{shop.name}</div>
+            <div
+              className="text-sm font-extrabold leading-tight"
+              style={{ color: style?.tokens.textPrimary }}
+            >
+              {shop.name}
+            </div>
             {shop.address && (
-              <div className="text-caption text-text-muted flex items-center gap-1 mt-0.5 line-clamp-1">
-                <MapPin size={11} className="shrink-0 text-primary" />
+              <div
+                className="text-caption flex items-center gap-1 mt-0.5 line-clamp-1"
+                style={{ color: style?.tokens.textSecondary }}
+              >
+                <MapPin size={11} className="shrink-0" style={{ color: style?.tokens.accent || "#9A3412" }} />
                 {shop.address}
               </div>
             )}
@@ -123,7 +151,11 @@ export function CatalogStorefrontHeader({
 
           <button
             onClick={onOpenShareModal}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/15 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors"
+            style={{
+              backgroundColor: style?.tokens.badgeBg || "rgba(154, 52, 18, 0.1)",
+              color: style?.tokens.badgeText || "#9A3412",
+            }}
           >
             <Share2 size={14} />
             <span>Chia sẻ</span>
@@ -132,7 +164,10 @@ export function CatalogStorefrontHeader({
           {shop.phone && (
             <a
               href={`tel:${shop.phone}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-primary text-white hover:bg-primary-dark shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm transition-colors"
+              style={{
+                backgroundColor: style?.tokens.accent || "#9A3412",
+              }}
             >
               <Phone size={13} />
               <span className="hidden sm:inline">{shop.phone}</span>

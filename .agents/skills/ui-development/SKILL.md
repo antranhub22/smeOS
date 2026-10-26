@@ -288,4 +288,28 @@ return <div>{items.map(item => <Card key={item.id} />)}</div>
 **Thiếu token?** → Đăng ký vào `src/app/globals.css` @theme TRƯỚC → dùng SAU.
 Kiểm: `npm run lint:ux -- --check` — cấm tăng vi phạm.
 
+## 7. Quy chuẩn Thiết Kế Trực Quan Cao Cấp (High-Fidelity Storefront Standard)
+
+> Tuân thủ bắt buộc theo SSOT `AGENTS.md` (PO 26/10/2026). Áp dụng cho mọi Storefront, Catalog, Lookbook, Card sản phẩm và Poster xuất bản.
+
+### 7.1 Hòa nền ảnh Studio (`photoBackdrop` + `mix-blend-mode: multiply`)
+Ảnh sản phẩm phông trắng bắt buộc dùng `mixBlendMode: "multiply"` cùng lớp nền tỏa tâm để tan biến nền trắng studio vào thẻ:
+```tsx
+<div style={{ background: `radial-gradient(90% 70% at 50% 40%, #ffffff 0%, ${cardBg} 70%)` }}>
+  <img src={product.imageUrl} alt={product.name} style={{ mixBlendMode: "multiply" }} />
+</div>
+```
+
+### 7.2 Phân luồng 4 Card Info Modes
+Không dùng chung 1 layout card cho mọi phong cách. Tách biệt rõ 4 component:
+- `CatalogCardOverlay` (`infoMode: "overlay"`): Tràn viền điện ảnh + gradient scrim `rgba(0,0,0,0) ➔ rgba(0,0,0,0.9)`.
+- `CatalogCardPaper` (`infoMode: "paper"`): Ảnh trên nền giấy ấm, khối thông tin trang nhã bên dưới.
+- `CatalogCardGlass` (`infoMode: "glass"`): Hiệu ứng kính mờ `backdrop-blur-xl`, bo góc `rounded-3xl` (`radiusPx: 24`).
+- `CatalogCardSplit` (`infoMode: "split"`): Chia đôi ngang phục vụ tra cứu thông số nhanh.
+
+### 7.3 Bố cục thích ứng (Adaptive Bento Grid)
+Tuyệt đối CẤM ép sản phẩm vào lưới cố định gây ra ô trống thủng (như 3 món trong lưới 2x2).
+- Với 3 sản phẩm: Cột trái 58% (1 Hero lớn) + Cột phải 42% (2 sản phẩm nhỏ xếp dọc).
+- Với 1, 2, 4, 5, 6 sản phẩm: Tự động cân đối diện tích, tuyệt đối không để ô trống thừa.
+
 > Xem thêm: skill `api-development` §5 cho cách lấy data từ server. Skill `testing` để test component.

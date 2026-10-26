@@ -6,7 +6,7 @@ import type {
   StyleDefinition,
   BrandProfile,
 } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
-import { Sparkles } from "lucide-react"
+import { PosterProductGrid } from "./catalog-cover-poster-grid"
 
 interface CatalogCoverPosterProps {
   products: CatalogProductItem[]
@@ -17,13 +17,15 @@ interface CatalogCoverPosterProps {
   productCount?: number
 }
 
+function cleanDisplayUrl(url?: string): string {
+  if (!url) return ""
+  return url.replace(/^https?:\/\/(localhost:\d+|127\.0\.0\.1:\d+)/, "smeos.vn").replace(/^https?:\/\//, "")
+}
+
 /**
  * Catalog Cover Poster — Square 1080×1080 (Instagram / Zalo / Facebook-ready)
- * Renders a visually-rich poster image with:
- *  - Brand header bar
- *  - Up to 6 product thumbnail grid
- *  - Collection title + subtitle
- *  - Shop contact / URL footer
+ * Redesigned with Editorial Bento Grid that dynamically adapts to 1, 2, 3, 4, 5, 6 items.
+ * Strictly 0 empty/broken grid cells.
  */
 export function CatalogCoverPoster({
   products,
@@ -33,18 +35,17 @@ export function CatalogCoverPoster({
   catalogUrl,
   productCount,
 }: CatalogCoverPosterProps) {
-  const { tokens, typography } = style
+  const { tokens } = style
   const showcaseProducts = products.slice(0, 6)
   const totalCount = productCount ?? products.length
 
-  const formatPrice = (price: number | null | undefined) => {
-    if (!price) return null
-    if (price >= 1_000_000) return `${(price / 1_000_000).toFixed(1).replace(".0", "")}M₫`
-    if (price >= 1_000) return `${Math.round(price / 1_000)}K₫`
-    return `${price}₫`
-  }
+  const isSerif = style.typography.fontDisplay.includes("serif")
+  const displayFont = isSerif
+    ? '"Playfair Display", "Cormorant Garamond", Georgia, serif'
+    : '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
 
-  const gridCols = showcaseProducts.length <= 2 ? "2" : showcaseProducts.length <= 4 ? "2" : "3"
+  const accentColor = tokens.ctaBg || tokens.accent || "#9A3412"
+  const stageBg = tokens.stage || tokens.accent
 
   return (
     <div
@@ -52,9 +53,9 @@ export function CatalogCoverPoster({
       style={{
         width: "1080px",
         height: "1080px",
-        backgroundColor: tokens.background,
-        color: tokens.textPrimary,
-        fontFamily: "system-ui, -apple-system, sans-serif",
+        backgroundColor: tokens.background || "#FAF8F5",
+        color: tokens.textPrimary || "#1C1917",
+        fontFamily: displayFont,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -64,172 +65,84 @@ export function CatalogCoverPoster({
       {/* Top Brand Bar */}
       <div
         style={{
-          backgroundColor: tokens.accent,
-          padding: "28px 48px",
+          background: stageBg,
+          padding: "26px 44px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexShrink: 0,
+          borderBottom: "1px solid rgba(255,255,255,0.12)",
         }}
       >
         <div>
           <div
             style={{
-              color: "rgba(255,255,255,0.8)",
-              fontSize: "18px",
-              fontWeight: 700,
-              letterSpacing: "0.25em",
+              color: "#FFFFFF",
+              fontSize: "20px",
+              fontWeight: 800,
+              letterSpacing: "0.22em",
               textTransform: "uppercase",
+              fontFamily: displayFont,
             }}
           >
             {brand.name}
           </div>
           <div
             style={{
-              color: "rgba(255,255,255,0.6)",
-              fontSize: "14px",
-              marginTop: "2px",
-              letterSpacing: "0.05em",
+              color: "rgba(255,255,255,0.8)",
+              fontSize: "12px",
+              marginTop: "4px",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              fontFamily: "system-ui, sans-serif",
             }}
           >
             Bộ sưu tập độc quyền • {new Date().getFullYear()}
           </div>
         </div>
+
         <div
           style={{
-            backgroundColor: "rgba(255,255,255,0.15)",
-            borderRadius: "40px",
+            backgroundColor: "rgba(255,255,255,0.18)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.25)",
+            borderRadius: "30px",
             padding: "8px 20px",
-            color: "white",
-            fontSize: "14px",
+            color: "#FFFFFF",
+            fontSize: "13px",
             fontWeight: 700,
-            letterSpacing: "0.05em",
+            letterSpacing: "0.06em",
+            fontFamily: "system-ui, sans-serif",
           }}
         >
-          {totalCount} Mẫu
+          {totalCount} Tác phẩm
         </div>
       </div>
 
-      {/* Product Grid */}
-      <div
-        style={{
-          flex: 1,
-          display: "grid",
-          gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
-          gap: "4px",
-          backgroundColor: tokens.border,
-          overflow: "hidden",
-        }}
-      >
-        {showcaseProducts.map((product, idx) => (
-          <div
-            key={product.productId}
-            style={{
-              backgroundColor: tokens.surface,
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            {product.primaryImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={product.primaryImage}
-                alt={product.name}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: tokens.badgeBg,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <svg
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke={tokens.textSecondary}
-                  strokeWidth="1.5"
-                >
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-                  <circle cx="12" cy="9" r="2.5" />
-                </svg>
-              </div>
-            )}
-            {/* Price badge overlay */}
-            {product.price && (
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "8px",
-                  right: "8px",
-                  backgroundColor: tokens.accent,
-                  color: "white",
-                  fontSize: "15px",
-                  fontWeight: 800,
-                  padding: "4px 10px",
-                  borderRadius: "8px",
-                  letterSpacing: "0.02em",
-                }}
-              >
-                {formatPrice(product.price)}
-              </div>
-            )}
-            {/* First product badge */}
-            {idx === 0 && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  left: "10px",
-                  backgroundColor: "rgba(0,0,0,0.6)",
-                  color: "white",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  padding: "3px 9px",
-                  borderRadius: "6px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                }}
-              >
-                ✦ Nổi bật
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      {/* Adaptive Product Grid — Adapts intelligently to 1, 2, 3, 4, 5, 6 items */}
+      <PosterProductGrid products={showcaseProducts} accentColor={accentColor} />
 
       {/* Bottom Info Bar */}
       <div
         style={{
-          backgroundColor: tokens.surface,
-          borderTop: `3px solid ${tokens.accent}`,
-          padding: "22px 48px",
+          backgroundColor: tokens.cardBg || tokens.surface || "#FFFFFF",
+          borderTop: `2px solid ${tokens.border || "#E7E5E4"}`,
+          padding: "22px 44px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexShrink: 0,
         }}
       >
-        <div>
+        <div style={{ maxWidth: "680px" }}>
           <div
             style={{
               fontSize: "26px",
               fontWeight: 800,
-              color: tokens.textPrimary,
-              letterSpacing: "-0.02em",
-              lineHeight: 1.2,
-              maxWidth: "600px",
+              color: tokens.textPrimary || "#1C1917",
+              letterSpacing: "-0.01em",
+              lineHeight: 1.25,
+              fontFamily: displayFont,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -237,66 +150,63 @@ export function CatalogCoverPoster({
           >
             {catalogTitle}
           </div>
+
           <div
             style={{
-              fontSize: "15px",
-              color: tokens.textSecondary,
-              marginTop: "4px",
+              fontSize: "13px",
+              color: tokens.textSecondary || "#78716C",
+              marginTop: "5px",
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              gap: "10px",
+              fontFamily: "system-ui, sans-serif",
             }}
           >
             {brand.contacts.phone && (
               <>
-                <span>{brand.contacts.phone}</span>
-                <span style={{ color: tokens.border }}>•</span>
+                <span style={{ fontWeight: 600 }}>Hotline: {brand.contacts.phone}</span>
+                <span style={{ opacity: 0.4 }}>•</span>
               </>
             )}
             {catalogUrl ? (
               <span
                 style={{
-                  fontSize: "13px",
-                  color: tokens.accent,
+                  color: accentColor,
                   fontWeight: 600,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
-                  maxWidth: "380px",
+                  maxWidth: "420px",
                   whiteSpace: "nowrap",
                 }}
               >
-                🔗 {catalogUrl.replace("https://", "")}
+                🔗 {cleanDisplayUrl(catalogUrl)}
               </span>
             ) : (
-              <span
-                style={{
-                  fontSize: "13px",
-                  color: tokens.textSecondary,
-                  fontStyle: "italic",
-                }}
-              >
-                Nhấn QR để xem đầy đủ sản phẩm
-              </span>
+              <span style={{ fontStyle: "italic" }}>Quét mã QR để xem trọn bộ sưu tập</span>
             )}
           </div>
         </div>
 
-        {/* Powered by badge */}
+        {/* Editorial Collection Badge */}
         <div
           style={{
-            backgroundColor: tokens.badgeBg,
-            borderRadius: "12px",
-            padding: "8px 16px",
+            backgroundColor: tokens.badgeBg || "rgba(0,0,0,0.05)",
+            border: `1px solid ${tokens.border || "rgba(0,0,0,0.08)"}`,
+            borderRadius: "14px",
+            padding: "8px 18px",
             display: "flex",
             alignItems: "center",
             gap: "6px",
-            color: tokens.textSecondary,
+            color: tokens.textSecondary || "#44403C",
             fontSize: "12px",
-            fontWeight: 600,
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            fontFamily: "system-ui, sans-serif",
             flexShrink: 0,
           }}
         >
-          <span style={{ fontSize: "14px" }}>✦</span>
+          <span style={{ color: accentColor }}>✦</span>
           <span>smeOS Catalog</span>
         </div>
       </div>

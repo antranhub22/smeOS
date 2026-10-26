@@ -1,5 +1,5 @@
 /**
- * Universal Catalog Studio 2026 — 3 Core Prototypes (T01–T03).
+ * Universal Catalog Studio 2026 — 5 Core Prototypes (T01–T05).
  * Pure Domain — Zero ORM.
  */
 
@@ -53,6 +53,39 @@ export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototy
       { layoutId: "L04_HERO_PRODUCT", title: "Tác phẩm đỉnh cao" },
       { layoutId: "L07_BUNDLE", title: "Bộ phối quà tặng độc quyền" },
       { layoutId: "L08_CLOSING", title: "Trân trọng cảm ơn & Kết nối" },
+    ],
+  },
+
+  T04_BENTO_SHOWCASE: {
+    id: "T04_BENTO_SHOWCASE",
+    name: "Bento Showcase",
+    subtitle: "Khối Bento năng động 2026 — Thương mại hiện đại đa năng",
+    badge: "2026 Trending",
+    defaultStyleId: "S08_BENTO_GALLERY",
+    description: "Bố cục chia ô Bento bất quy tắc cân bằng, kết hợp hình ảnh nổi bật với thẻ thông tin phụ trực quan, tối ưu cho lướt nhanh và chốt đơn tức thì.",
+    recommendedFor: "Thương mại tổng hợp, F&B, bán lẻ Gen Z, sản phẩm đa dạng cần trình bày sinh động không nhàm chán.",
+    structure: [
+      { layoutId: "L01_COVER", title: "Bìa Bento năng động" },
+      { layoutId: "L03_COLLECTION_DIVIDER", title: "Phân vùng danh mục" },
+      { layoutId: "L05_PRODUCT_GRID", title: "Lưới sản phẩm Bento đa tầng" },
+      { layoutId: "L07_BUNDLE", title: "Combo & Bộ sản phẩm gợi ý" },
+      { layoutId: "L08_CLOSING", title: "Gọi hành động & Đặt hàng ngay" },
+    ],
+  },
+
+  T05_DARK_CINEMATIC: {
+    id: "T05_DARK_CINEMATIC",
+    name: "Dark Cinematic",
+    subtitle: "Điện ảnh studio huyền bí — Cao cấp không giới hạn",
+    badge: "Premium Dark",
+    defaultStyleId: "S11_DARK_SHOWCASE",
+    description: "Nền đen huyền bí sang trọng, ánh sáng spotlight tôn vinh từng chi tiết sản phẩm, contrast kịch tính mạnh mẽ như một thước phim điện ảnh.",
+    recommendedFor: "Trang sức, đồng hồ, mỹ phẩm cao cấp, rượu vang, công nghệ premium và thương hiệu cần định vị độc bản.",
+    structure: [
+      { layoutId: "L01_COVER", title: "Bìa điện ảnh huyền bí" },
+      { layoutId: "L04_HERO_PRODUCT", title: "Tác phẩm spotlight chủ đạo" },
+      { layoutId: "L06_PRODUCT_DETAIL", title: "Chi tiết & Thông số kỹ thuật" },
+      { layoutId: "L08_CLOSING", title: "Kết nối VIP & Đặt hàng riêng" },
     ],
   },
 }

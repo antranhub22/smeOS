@@ -13,6 +13,31 @@ import { CATALOG_STYLES } from "@/modules/catalog-studio/domain/styles/style-reg
 import { resolveCatalogBrief } from "@/modules/catalog-studio/use-cases/resolve-catalog-brief"
 import { CatalogPageRenderer } from "./catalog-page-renderer"
 
+type StyleCategory = "ALL" | "LUXURY" | "DYNAMIC" | "NATURAL" | "MODERN"
+
+const STYLE_CATEGORY_MAP: Record<CatalogStyleId, StyleCategory> = {
+  S01_EDITORIAL_MAGAZINE: "LUXURY",
+  S02_PURE_MINIMAL: "LUXURY",
+  S03_QUIET_LUXURY: "LUXURY",
+  S04_BOLD_POP: "DYNAMIC",
+  S08_BENTO_GALLERY: "DYNAMIC",
+  S10_PLAYFUL_ILLUSTRATION: "DYNAMIC",
+  S05_ORGANIC_NATURAL: "NATURAL",
+  S06_BOTANICAL_ATELIER: "NATURAL",
+  S07_SWISS_GRID: "MODERN",
+  S09_MODERN_RETRO: "MODERN",
+  S11_DARK_SHOWCASE: "MODERN",
+  S12_MODERN_COMMERCE: "MODERN",
+}
+
+const CATEGORY_TABS: { id: StyleCategory; label: string }[] = [
+  { id: "ALL", label: "Tất cả (12)" },
+  { id: "LUXURY", label: "Sang trọng" },
+  { id: "DYNAMIC", label: "Năng động" },
+  { id: "NATURAL", label: "Tự nhiên" },
+  { id: "MODERN", label: "Hiện đại" },
+]
+
 interface CatalogTemplateSelectorProps {
   selectedTemplateId: CatalogTemplateId
   selectedStyleId: CatalogStyleId
@@ -33,6 +58,7 @@ export function CatalogTemplateSelector({
   collectionTitle,
 }: CatalogTemplateSelectorProps) {
   const [activeTab, setActiveTab] = useState<"templates" | "styles">("templates")
+  const [styleCategory, setStyleCategory] = useState<StyleCategory>("ALL")
   const [previewPageIdx, setPreviewPageIdx] = useState(0)
 
   // Resolve active catalog structure in memory for real-time preview
@@ -82,7 +108,7 @@ export function CatalogTemplateSelector({
               activeTab === "templates" ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-text"
             }`}
           >
-            3 Prototype Mục Tiêu
+            5 Template Bố Cục
           </button>
           <button
             type="button"
@@ -141,41 +167,63 @@ export function CatalogTemplateSelector({
               })}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-1">
-              {Object.values(CATALOG_STYLES).map((s) => {
-                const isSelected = selectedStyleId === s.id
-                return (
+            <div className="space-y-3">
+              {/* Category Filter Chips */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {CATEGORY_TABS.map((cat) => (
                   <button
-                    key={s.id}
+                    key={cat.id}
                     type="button"
-                    onClick={() => onSelectStyle(s.id)}
-                    className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
-                      isSelected
-                        ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
-                        : "border-border bg-surface hover:bg-surface-alt/60"
+                    onClick={() => setStyleCategory(cat.id)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                      styleCategory === cat.id
+                        ? "bg-primary text-surface shadow-xs"
+                        : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface-alt"
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface-alt text-text-muted">
-                          {s.number}
-                        </span>
-                        <span className="text-caption font-bold text-text truncate max-w-[130px]">{s.name}</span>
-                      </div>
-                      {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
-                    </div>
-
-                    <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed mb-2">{s.description}</p>
-
-                    <div className="flex items-center gap-1.5 mt-auto">
-                      <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.background }} />
-                      <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.accent }} />
-                      <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.textPrimary }} />
-                      <span className="text-[10px] text-text-muted font-mono ml-auto">{s.typography.fontDisplay.replace("font-", "")}</span>
-                    </div>
+                    {cat.label}
                   </button>
-                )
-              })}
+                ))}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[460px] overflow-y-auto pr-1">
+                {Object.values(CATALOG_STYLES)
+                  .filter((s) => styleCategory === "ALL" || STYLE_CATEGORY_MAP[s.id] === styleCategory)
+                  .map((s) => {
+                    const isSelected = selectedStyleId === s.id
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => onSelectStyle(s.id)}
+                        className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
+                          isSelected
+                            ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
+                            : "border-border bg-surface hover:bg-surface-alt/60"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface-alt text-text-muted">
+                              {s.number}
+                            </span>
+                            <span className="text-caption font-bold text-text truncate max-w-[130px]">{s.name}</span>
+                          </div>
+                          {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
+                        </div>
+
+                        <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed mb-2">{s.description}</p>
+
+                        <div className="flex items-center gap-1.5 mt-auto">
+                          <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.background }} />
+                          <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.accent }} />
+                          <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.textPrimary }} />
+                          <span className="text-[10px] text-text-muted font-mono ml-auto">{s.typography.fontDisplay.replace("font-", "")}</span>
+                        </div>
+                      </button>
+                    )
+                  })}
+              </div>
             </div>
           )}
         </div>

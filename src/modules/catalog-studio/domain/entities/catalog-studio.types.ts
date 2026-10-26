@@ -113,6 +113,8 @@ export type CatalogTemplateId =
   | "T01_SIGNATURE_COLLECTION"
   | "T02_MINIMAL_PRODUCT_LIST"
   | "T03_PREMIUM_LOOKBOOK"
+  | "T04_BENTO_SHOWCASE"
+  | "T05_DARK_CINEMATIC"
 
 export interface StyleDesignTokens {
   background: string
@@ -124,6 +126,18 @@ export interface StyleDesignTokens {
   price: string
   badgeBg: string
   badgeText: string
+  /** Full-bleed gradient for hero/stage background (like SwipeTheme.stage) */
+  stage: string
+  /** Product card background — may differ from surface for dark themes */
+  cardBg: string
+  /** CTA button fill color */
+  ctaBg: string
+  /** CTA button text color */
+  ctaText: string
+  /** CSS box-shadow for product cards */
+  shadowCard: string
+  /** CSS filter applied to product images for atmosphere (contrast, saturation, sepia…) */
+  photoFilter?: string
 }
 
 export interface StyleTypography {
@@ -140,6 +154,15 @@ export interface StyleTypography {
     caption: string
   }
 }
+
+/**
+ * How the product image and info panel are laid out on a card.
+ * - overlay : text overlaid on image with a gradient scrim (Tinder / cinema style)
+ * - paper   : image on top, info on white/cream paper panel below
+ * - glass   : info inside a frosted glass panel over the image
+ * - split   : image left / info right (horizontal split, compact layout)
+ */
+export type CardInfoMode = "overlay" | "paper" | "glass" | "split"
 
 export interface StyleDefinition {
   id: CatalogStyleId
@@ -159,11 +182,21 @@ export interface StyleDefinition {
     hasBorder: boolean
     borderRadius: string
     shadow: string
+    /** Card info layout mode — drives how image and text are composed */
+    infoMode: CardInfoMode
+    /** mix-blend-mode applied to the product image (e.g. "multiply" for seamless backdrop) */
+    blendMode?: string
+    /** Whether to render a radial white→card backdrop behind the image */
+    useBackdrop: boolean
+    /** Pixel border-radius number for JS-driven rounding on inner elements */
+    radiusPx: number
   }
   decorationRules: {
     showHairline: boolean
     hasGlassmorphism: boolean
     patternType?: "none" | "botanical" | "geometric" | "dots" | "hand_drawn"
+    /** Decorative inner border frame (e.g. thin botanical leaf line) */
+    innerFrame?: string
   }
 }
 

@@ -17,7 +17,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { CatalogProduct } from "./catalog-management-tab"
 import { ProductLibraryModal } from "./product-library-modal"
-import { ProductThumb } from "@/components/products/product-thumb"
+import { SmartInputStyleSelector, type PreferredStyleChoice } from "./smart-input-style-selector"
+import { SmartInputStorePicker } from "./smart-input-store-picker"
+import { SmartInputFileUploader } from "./smart-input-file-uploader"
 
 export interface SmartInputData {
   imageFiles: File[]
@@ -25,6 +27,7 @@ export interface SmartInputData {
   videoUrl: string
   userDirectives: string
   selectedProducts?: CatalogProduct[]
+  preferredStyle?: PreferredStyleChoice
 }
 
 interface SmartInputDropzoneProps {
@@ -55,14 +58,7 @@ export function SmartInputDropzone({
   // Video & Directives
   const [videoUrl, setVideoUrl] = useState("")
   const [userDirectives, setUserDirectives] = useState("")
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return
-    const files = Array.from(e.target.files)
-    addFiles(files)
-  }
-
+  const [preferredStyle, setPreferredStyle] = useState<PreferredStyleChoice>("auto")
   const addFiles = (files: File[]) => {
     const validImages = files.filter((f) => f.type.startsWith("image/"))
     if (validImages.length === 0) return
@@ -82,13 +78,6 @@ export function SmartInputDropzone({
 
   const handleRemoveProduct = (productId: string) => {
     setSelectedProducts((prev) => prev.filter((p) => p.id !== productId))
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    if (e.dataTransfer.files) {
-      addFiles(Array.from(e.dataTransfer.files))
-    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -116,6 +105,7 @@ export function SmartInputDropzone({
       videoUrl: videoUrl.trim(),
       userDirectives: combinedDirectives,
       selectedProducts,
+      preferredStyle,
     })
   }
 
@@ -195,176 +185,31 @@ export function SmartInputDropzone({
 
           {/* Nguồn 1: Chọn từ Kho sản phẩm */}
           {inputSource === "store" && (
-            <div className="rounded-xl border border-border p-4 bg-surface-alt/30 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <span className="text-caption font-semibold text-text">
-                  Kho sản phẩm của bạn đang có <strong>{availableProducts.length}</strong> mẫu sẵn sàng.
-                </span>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setIsLibraryOpen(true)}
-                  className="gap-1.5 text-primary border-primary/30 hover:bg-primary-muted/20 font-bold"
-                >
-                  <Layers className="h-3.5 w-3.5" />
-                  <span>Mở danh mục chọn sản phẩm →</span>
-                </Button>
-              </div>
-
-              {/* Danh sách và hình ảnh các sản phẩm từ kho cửa hàng */}
-              {availableProducts.length > 0 ? (
-                <div className="space-y-2.5 pt-1">
-                  <div className="flex items-center justify-between text-caption text-text-muted">
-                    <span>Nhấp trực tiếp vào ảnh sản phẩm bên dưới để chọn đưa vào chiến dịch:</span>
-                    <span>
-                      Đã chọn: <strong className="text-primary font-bold">{selectedProducts.length}</strong>/{availableProducts.length}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2.5 max-h-64 overflow-y-auto p-2 rounded-xl bg-surface border border-border">
-                    {availableProducts.map((p) => {
-                      const isSelected = selectedProducts.some((sp) => sp.id === p.id)
-                      return (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => {
-                            if (isSelected) {
-                              handleRemoveProduct(p.id)
-                            } else {
-                              setSelectedProducts((prev) => [...prev, p])
-                            }
-                          }}
-                          className={`relative rounded-xl border text-left p-1.5 transition-all flex flex-col gap-1.5 group cursor-pointer ${
-                            isSelected
-                              ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30"
-                              : "border-border bg-surface hover:border-primary-border hover:bg-surface-alt/50"
-                          }`}
-                        >
-                          <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-surface-alt">
-                            <ProductThumb
-                              name={p.name}
-                              masterImageUrl={p.imageUrl ?? undefined}
-                              driveLink={p.driveLink ?? undefined}
-                              size="card"
-                            />
-                            <div
-                              className={`absolute top-1 right-1 h-5 w-5 rounded-md flex items-center justify-center transition-colors ${
-                                isSelected ? "bg-primary text-surface shadow-xs" : "bg-black/30 text-white/70"
-                              }`}
-                            >
-                              {isSelected ? (
-                                <CheckCircle2 className="h-4 w-4" />
-                              ) : (
-                                <div className="h-3 w-3 border border-white/80 rounded-xs" />
-                              )}
-                            </div>
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-caption font-bold text-text truncate group-hover:text-primary transition-colors">
-                              {p.name}
-                            </p>
-                            <p className="text-meta text-primary font-semibold">
-                              {p.price ? `${p.price.toLocaleString("vi-VN")} đ` : p.code}
-                            </p>
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setIsLibraryOpen(true)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault()
-                      setIsLibraryOpen(true)
-                    }
-                  }}
-                  className="p-6 border border-dashed border-border rounded-lg text-center hover:bg-surface cursor-pointer transition-colors"
-                >
-                  <p className="text-body-sm text-text-muted font-medium">
-                    Chưa có sản phẩm nào trong kho. Bấm để tìm kiếm hoặc chuyển sang tab &quot;Tải từ máy&quot;.
-                  </p>
-                </div>
-              )}
-            </div>
+            <SmartInputStorePicker
+              availableProducts={availableProducts}
+              selectedProducts={selectedProducts}
+              onOpenLibrary={() => setIsLibraryOpen(true)}
+              onToggleProduct={(p) => {
+                const isSelected = selectedProducts.some((sp) => sp.id === p.id)
+                if (isSelected) {
+                  handleRemoveProduct(p.id)
+                } else {
+                  setSelectedProducts((prev) => [...prev, p])
+                }
+              }}
+            />
           )}
 
           {/* Nguồn 2: Tải lên từ máy */}
           {inputSource === "upload" && (
-            <div className="space-y-3">
-              <div
-                role="button"
-                tabIndex={0}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault()
-                    fileInputRef.current?.click()
-                  }
-                }}
-                className="border-2 border-dashed border-border hover:border-primary-border rounded-xl p-6 text-center bg-surface-alt/50 hover:bg-primary-muted/20 cursor-pointer transition-colors"
-              >
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                />
-                <div className="flex flex-col items-center justify-center gap-2">
-                  <div className="h-10 w-10 rounded-full bg-primary-muted flex items-center justify-center text-primary">
-                    <UploadCloud className="h-5 w-5" />
-                  </div>
-                  <div className="text-body-sm font-semibold text-text">
-                    Kéo thả ảnh bó/lẵng hoa từ máy vào đây, hoặc <span className="text-primary underline">nhấp để chọn</span>
-                  </div>
-                  <p className="text-caption text-text-muted">
-                    Hỗ trợ PNG, JPG, WEBP. AI tự động tách nền, nâng nét và căn chỉnh khổ đẹp.
-                  </p>
-                </div>
-              </div>
-
-              {/* Tùy chọn lưu ngược vào kho tiệm */}
-              <label className="flex items-center gap-2 text-caption text-text-muted cursor-pointer hover:text-text">
-                <input
-                  type="checkbox"
-                  checked={saveToStore}
-                  onChange={(e) => setSaveToStore(e.target.checked)}
-                  className="rounded border-border text-primary focus:ring-primary"
-                />
-                <span>Tự động lưu các ảnh mới này vào Kho sản phẩm tiệm để tái sử dụng sau này</span>
-              </label>
-
-              {/* Danh sách ảnh máy đã tải */}
-              {imagePreviewUrls.length > 0 && (
-                <div className="flex flex-wrap gap-3 pt-1">
-                  {imagePreviewUrls.map((url, idx) => (
-                    <div key={idx} className="relative h-20 w-20 rounded-lg overflow-hidden border border-border group bg-surface">
-                      <img src={url} alt={`Ảnh hoa ${idx + 1}`} className="h-full w-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleRemoveImage(idx)
-                        }}
-                        className="absolute top-1 right-1 h-5 w-5 rounded-full bg-danger text-surface flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
-                        aria-label="Xóa ảnh này"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <SmartInputFileUploader
+              imageFiles={imageFiles}
+              imagePreviewUrls={imagePreviewUrls}
+              saveToStore={saveToStore}
+              onAddFiles={addFiles}
+              onRemoveImage={handleRemoveImage}
+              onToggleSaveToStore={setSaveToStore}
+            />
           )}
         </div>
 
@@ -403,6 +248,12 @@ export function SmartInputDropzone({
           </p>
         </div>
 
+        {/* Khối 4: Phong cách thiết kế Catalog */}
+        <SmartInputStyleSelector
+          selectedChoice={preferredStyle}
+          onSelectChoice={setPreferredStyle}
+        />
+
         {/* Nút hành động chính */}
         <div className="flex items-center justify-between pt-3 border-t border-border">
           <span className="text-caption text-text-muted">
@@ -435,7 +286,7 @@ export function SmartInputDropzone({
           onClose={() => setIsLibraryOpen(false)}
           products={availableProducts}
           selectedIds={selectedProducts.map((p) => p.id)}
-          onSelectProducts={(chosen) => setSelectedProducts(chosen)}
+          onSelectProducts={(chosen: CatalogProduct[]) => setSelectedProducts(chosen)}
         />
       )}
     </div>
