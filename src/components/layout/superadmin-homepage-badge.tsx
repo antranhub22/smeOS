@@ -24,6 +24,10 @@ const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
     label: "Industry Home",
     color: "bg-indigo-50 text-indigo-700 border-indigo-200/90 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/50",
   },
+  TOOLKIT_HOME: {
+    label: "🧰 Toolkit Hub",
+    color: "bg-amber-50 text-amber-700 border-amber-200/90 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/50",
+  },
   NETWORK_JOURNEY_HOME: {
     label: "Network Home",
     color: "bg-sky-50 text-sky-700 border-sky-200/90 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/50",

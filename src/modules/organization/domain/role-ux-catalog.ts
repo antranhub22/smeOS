@@ -56,6 +56,7 @@ export type RoleUxHomepage =
   | "CRM_WORKSPACE"
   | "CUSTOMER_SERVICE_WORKSPACE"
   | "CONTROL_TOWER"
+  | "TOOLKIT_HOME"
   | "NOT_BUILT"
 
 export interface RoleUxDefinition {
@@ -111,13 +112,13 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     supportingPhilosophies: ["Industry Benchmarks", "Plugin Contract SSOT"],
     mission: "Quản trị, chuẩn hóa và tối ưu hóa hệ sinh thái đa ngành (BOM, Taxonomy, AI Studio, Mẫu in ấn A6 và Tiêu chuẩn ngành).",
     primaryQuestion: "Hệ sinh thái ngành nào cần chuẩn hóa hoặc cập nhật tiêu chuẩn hôm nay?",
-    homepageModel: "Industry Journey Home",
+    homepageModel: "Toolkit Home (48 công cụ)",
     dominantActions: ["Chuẩn hóa", "Cấu hình AI", "Quản lý Ngành", "Định lượng BOM"],
     status: "AVAILABLE",
-    homepage: "INDUSTRY_JOURNEY_HOME",
+    homepage: "TOOLKIT_HOME",
     systemRoleKeys: [],
-    entryHref: "/",
-    navPriority: ["/van-hanh/nganh", "/kho-templates", "/san-pham", "/market-intelligence"],
+    entryHref: "/cong-cu",
+    navPriority: ["/cong-cu", "/van-hanh/nganh", "/kho-templates", "/san-pham", "/market-intelligence"],
     debtRefs: [],
   },
   {
@@ -128,13 +129,13 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     supportingPhilosophies: ["Executive Dashboard"],
     mission: "Vận hành và phát triển cửa hàng hoa hiệu quả, thúc đẩy kinh doanh toàn diện.",
     primaryQuestion: "Hôm nay tôi cần làm gì để cửa hàng phát triển?",
-    homepageModel: "Store Journey Home",
+    homepageModel: "Toolkit Home (48 công cụ)",
     dominantActions: ["Xem xét", "Ưu tiên", "Hành động"],
     status: "AVAILABLE",
-    homepage: "STORE_JOURNEY_HOME",
+    homepage: "TOOLKIT_HOME",
     systemRoleKeys: ["dieu_hanh"],
-    entryHref: "/",
-    navPriority: [],
+    entryHref: "/cong-cu",
+    navPriority: ["/cong-cu", "/don-hang", "/khach-hang", "/san-pham", "/cai-dat"],
     debtRefs: [163],
   },
   {
@@ -145,13 +146,13 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     supportingPhilosophies: ["Control Tower", "Exception Management"],
     mission: "Vận hành, giám sát, quản lý và điều hành toàn bộ hệ thống mạng lưới điện hoa.",
     primaryQuestion: "Toàn bộ hệ thống điện hoa đang hoạt động thế nào và tôi cần can thiệp ở đâu?",
-    homepageModel: "Network Journey Home",
+    homepageModel: "Toolkit Home (48 công cụ)",
     dominantActions: ["Điều phối", "Giám sát", "Quản lý", "Điều hành"],
     status: "AVAILABLE",
-    homepage: "NETWORK_JOURNEY_HOME",
+    homepage: "TOOLKIT_HOME",
     systemRoleKeys: [],
-    entryHref: "/",
-    navPriority: ["/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
+    entryHref: "/cong-cu",
+    navPriority: ["/cong-cu", "/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
     debtRefs: [],
   },
   {

@@ -30,6 +30,7 @@ import { StoreJourneyHome } from "@/components/dashboard/store-journey-home"
 import { NetworkJourneyHome } from "@/components/dashboard/network-journey-home"
 import { PlatformJourneyHome } from "@/components/dashboard/platform-journey-home"
 import { IndustryJourneyHome } from "@/components/dashboard/industry-journey-home"
+import { ToolkitHome } from "@/components/dashboard/toolkit-home"
 import { resolveRoleUx } from "@/modules/organization/domain/role-ux-catalog"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
 
@@ -50,6 +51,8 @@ export default async function DashboardPage() {
   const roleUx = resolveRoleUx(session.roleKey, session.organizationType)
 
   switch (roleUx?.homepage) {
+    case "TOOLKIT_HOME":
+      return <ToolkitHome />
     case "STORE_JOURNEY_HOME":
       return <StoreJourneyHome />
     case "NETWORK_JOURNEY_HOME":

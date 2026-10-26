@@ -66,6 +66,15 @@ export const NAV_GROUP_CONFIG: readonly {
 ] as const
 
 export const NAV_ENTRIES: readonly NavEntry[] = [
+  // 0. Hộp công cụ (Toolkit Hub — 48 công cụ kinh doanh)
+  {
+    href: "/cong-cu",
+    label: "Hộp công cụ",
+    group: "van-hanh",
+    iconKey: "LayoutGrid",
+    navKey: "toolkit",
+    mobileLabel: "Công cụ",
+  },
   // 1. Nhóm Bán hàng & Khách
   {
     href: "/khach-hang",
