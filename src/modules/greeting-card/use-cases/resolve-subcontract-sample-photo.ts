@@ -1,7 +1,7 @@
-import { getSubcontractSamplePhotoRepository } from "../infra/subcontract-sample-photo-repository"
-import type { ISubcontractSamplePhotoRepository } from "../domain/repositories/subcontract-sample-photo-repository.interface"
+import { OrderPhotoRepository } from "@/modules/greeting-card/infra/order-photo-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { driveThumbProxySrc } from "../domain/drive-thumb"
+import { ownStorageKey, SIGNED_URL_TTL_SECONDS } from "./sign-subcontract-photo"
 
 export interface OrderSampleSource {
   organization_id: string
@@ -26,8 +26,7 @@ export interface OrderSampleSource {
  */
 export async function resolveSubcontractSamplePhoto(
   order: OrderSampleSource,
-  options?: { baseUrl?: string },
-  repo: ISubcontractSamplePhotoRepository = getSubcontractSamplePhotoRepository()
+  options?: { baseUrl?: string }
 ): Promise<string | null> {
   const firstItem = order.items?.[0]
   const session = order.greeting_sessions?.[0]
@@ -49,16 +48,13 @@ export async function resolveSubcontractSamplePhoto(
   // Fallback 1: Nếu đơn chưa có ảnh trong snapshot/metadata nhưng có productId hoặc productName -> tra bảng products
   if (!rawImageUrl && (productId || productName)) {
     try {
-      const productRow = await repo.findProductWithImages(
-        order.organization_id,
-        productId ?? null,
-        productName ?? null
-      )
+      const photos = new OrderPhotoRepository()
+      const productRow = await photos.findProductImages(order.organization_id, productId, productName)
 
       if (productRow) {
-        const firstImg = productRow.images.find((i: { role: string }) => i.role === "MAIN") ?? productRow.images[0]
+        const firstImg = productRow.images.find((i) => i.role === "MAIN") ?? productRow.images[0]
         if (firstImg?.asset_id) {
-          const asset = await repo.findAssetById(firstImg.asset_id, order.organization_id)
+          const asset = await photos.findAsset(order.organization_id, firstImg.asset_id)
           if (asset?.storage_key) {
             rawImageUrl = asset.storage_key
           }
@@ -91,19 +87,10 @@ export async function resolveSubcontractSamplePhoto(
     }
   }
 
-  // Nếu là storage key -> ký signed URL
+  // Khoá kho -> URL ký 1 giờ, chỉ khi khoá nằm trong thư mục của chính tổ chức (rà soát cụm G)
   if (rawImageUrl && (rawImageUrl.startsWith("org/") || rawImageUrl.includes("floraos-core/org/"))) {
-    try {
-      const storage = getStorageProvider()
-      const key = rawImageUrl.startsWith("org/")
-        ? rawImageUrl
-        : rawImageUrl.match(/floraos-core\/(org\/[^?]+)/)?.[1]
-      if (key) {
-        rawImageUrl = await storage.signedUrl(key, 604800, "GET").catch(() => rawImageUrl)
-      }
-    } catch {
-      // Return original URL on error
-    }
+    const key = ownStorageKey(rawImageUrl, order.organization_id)
+    rawImageUrl = key ? await getStorageProvider().signedUrl(key, SIGNED_URL_TTL_SECONDS, "GET").catch(() => null) : null
   }
 
   if (!rawImageUrl) return null

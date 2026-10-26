@@ -5,6 +5,9 @@ export type {
   approval_state,
   pricing_rules,
   product_analyses,
+  product_change_requests,
+  product_import_batches,
+  product_revisions,
   product_status,
   products,
 } from "@/generated/prisma/client"

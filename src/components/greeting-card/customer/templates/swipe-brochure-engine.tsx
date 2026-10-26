@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { ChevronLeft, ChevronRight, Heart, Info } from "lucide-react"
-import { useI18n } from "@/lib/i18n"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { EnterpriseSpecSheet } from "./enterprise-spec-sheet"
-import { SwipeCard, formatVnd } from "./swipe/swipe-card"
+import { SwipeCard } from "./swipe/swipe-card"
+import { productPriceText } from "./product-info/product-display"
 import { SwipeDeckEnd } from "./swipe/swipe-deck-end"
 import { SWIPE_SIGNAL, getSwipeTheme, isLightTheme } from "./swipe/swipe-themes"
 import { useStoryNav } from "./swipe/use-story-nav"
@@ -72,7 +72,6 @@ export function SwipeBrochureEngine({
   onSelectProduct,
   styleKey = "01",
 }: SwipeBrochureEngineProps) {
-  const { t } = useI18n()
   const embedded = useEmbeddedPreview()
   const theme = useMemo(() => getSwipeTheme(styleKey), [styleKey])
   const light = isLightTheme(theme)
@@ -89,8 +88,8 @@ export function SwipeBrochureEngine({
 
   useEffect(() => {
     if (!savedToast) return
-    const tTimer = window.setTimeout(() => setSavedToast(0), 1400)
-    return () => window.clearTimeout(tTimer)
+    const t = window.setTimeout(() => setSavedToast(0), 1400)
+    return () => window.clearTimeout(t)
   }, [savedToast])
 
   const nav = useStoryNav({ onNext: j.next, onPrevious: j.previous, disabled: !current || j.prompt !== null })
@@ -129,7 +128,7 @@ export function SwipeBrochureEngine({
   if (products.length === 0) {
     return (
       <div className={`flex ${rootHeight(embedded)} w-full items-center justify-center p-6 text-center`} style={stageStyle}>
-        <p className="text-body">{t("greetingCard.customer.journey.emptyCatalog")}</p>
+        <p className="text-body">Bộ sưu tập này chưa có sản phẩm nào.</p>
       </div>
     )
   }
@@ -147,9 +146,9 @@ export function SwipeBrochureEngine({
         </header>
         {range && (
           <p className="flex items-center justify-between px-1 pb-2 text-caption" style={{ color: theme.stageMuted }}>
-            <span>{t("greetingCard.customer.journey.viewingRange", { range: range.label.toLowerCase() })}</span>
+            <span>Đang xem mẫu {range.label.toLowerCase()}</span>
             <button type="button" className="font-semibold underline" onClick={() => setPriceKey(null)}>
-              {t("greetingCard.customer.journey.viewAll")}
+              Xem tất cả
             </button>
           </p>
         )}
@@ -174,22 +173,22 @@ export function SwipeBrochureEngine({
               </div>
               {savedToast > 0 && (
                 <p role="status" className="pointer-events-none absolute inset-x-0 top-1/2 z-20 mx-auto w-fit rounded-full px-4 py-2 text-body-sm font-bold shadow-lg" style={{ background: theme.ctaBg, color: theme.ctaText }}>
-                  {t("greetingCard.customer.journey.likedToast")}
+                  ♥ Đã thả tim
                 </p>
               )}
             </div>
 
             <div className="flex items-center justify-center gap-3 pt-4" role="group" aria-label="Điều khiển thẻ">
-              <RoundButton label={t("greetingCard.customer.journey.prevItem")} color={theme.stageText} size="sm" bg={theme.controlBg} border={theme.controlBorder} disabled={!j.canGoBack} onClick={j.previous}>
+              <RoundButton label="Mẫu trước" color={theme.stageText} size="sm" bg={theme.controlBg} border={theme.controlBorder} disabled={!j.canGoBack} onClick={j.previous}>
                 <ChevronLeft size={22} strokeWidth={2.5} />
               </RoundButton>
-              <RoundButton label={t("greetingCard.customer.journey.viewDetails")} color={SWIPE_SIGNAL.info} size="sm" bg={theme.controlBg} border={theme.controlBorder} onClick={() => setInspect(current)}>
+              <RoundButton label="Xem chi tiết" color={SWIPE_SIGNAL.info} size="sm" bg={theme.controlBg} border={theme.controlBorder} onClick={() => setInspect(current)}>
                 <Info size={20} strokeWidth={2.5} />
               </RoundButton>
-              <RoundButton label={j.isLiked(current.id) ? t("greetingCard.customer.journey.unlike") : t("greetingCard.customer.journey.like")} pressed={j.isLiked(current.id)} color={SWIPE_SIGNAL.like} size="lg" bg={theme.controlBg} border={theme.controlBorder} onClick={toggleHeart}>
+              <RoundButton label={j.isLiked(current.id) ? "Bỏ tim" : "Thả tim"} pressed={j.isLiked(current.id)} color={SWIPE_SIGNAL.like} size="lg" bg={theme.controlBg} border={theme.controlBorder} onClick={toggleHeart}>
                 <Heart size={28} strokeWidth={2.5} fill={j.isLiked(current.id) ? "currentColor" : "none"} />
               </RoundButton>
-              <RoundButton label={t("greetingCard.customer.journey.nextItem")} color={theme.stageText} size="sm" bg={theme.controlBg} border={theme.controlBorder} onClick={j.next}>
+              <RoundButton label="Mẫu sau" color={theme.stageText} size="sm" bg={theme.controlBg} border={theme.controlBorder} onClick={j.next}>
                 <ChevronRight size={22} strokeWidth={2.5} />
               </RoundButton>
             </div>
@@ -204,7 +203,7 @@ export function SwipeBrochureEngine({
                   <span
                     className="flex h-12 shrink-0 items-center gap-1.5 rounded-2xl border px-3 text-body-sm font-semibold"
                     style={{ borderColor: light ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.2)" }}
-                    aria-label={t("greetingCard.customer.journey.likedCount", { count: liked.length })}
+                    aria-label={`Đã thích ${liked.length} mẫu`}
                   >
                     <Heart size={16} fill={SWIPE_SIGNAL.like} color={SWIPE_SIGNAL.like} aria-hidden="true" />
                     {liked.length}
@@ -216,8 +215,8 @@ export function SwipeBrochureEngine({
                   className="flex h-12 min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl px-5 text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
                   style={{ background: theme.ctaBg, color: theme.ctaText }}
                 >
-                  <span>{selectedProductId === current.id ? t("greetingCard.customer.journey.selectedItem") : t("greetingCard.customer.journey.orderItem")}</span>
-                  <span className="tabular-nums opacity-90">{formatVnd(current.price)}</span>
+                  <span>{selectedProductId === current.id ? "Đã chọn mẫu này" : "Đặt mẫu này"}</span>
+                  <span className="tabular-nums opacity-90">{productPriceText(current)}</span>
                 </button>
               </div>
             )}

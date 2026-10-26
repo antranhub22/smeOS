@@ -20,6 +20,7 @@ import {
 import { notifyOrderEvent, queueOrderNotification } from "./notify-customer"
 import { queueStaffNotification } from "./notify-staff"
 import { adminConfirmBrochurePayment } from "./confirm-brochure-payment"
+import { dispatchAfterPaymentConfirmed } from "./dispatch-after-payment"
 
 const HOLD_LOOKBACK_MS = 7 * 86_400_000
 
@@ -103,6 +104,7 @@ export async function runBackgroundSweep(
         note: "Hệ thống tự động xác nhận chuyển khoản (tiệm bật tự duyệt, bill khớp tài khoản và số tiền)",
       }, payments)
       result.autoConfirmed += 1
+      await dispatchAfterPaymentConfirmed(systemContext(o.organizationId), o.id)
     } catch (error) {
       log.warn("greeting_card.auto_confirm_payment_skipped", {
         organizationId: o.organizationId, feature: "greeting-card", orderId: o.id,

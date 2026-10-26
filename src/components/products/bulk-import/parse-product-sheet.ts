@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx"
 import type { ParsedProductRow } from "./types"
+import { mergeVariantRows, readPriceCells } from "./parse-price-columns"
 
 /**
  * Đọc file Excel/CSV kho sản phẩm → các dòng xem trước. Phần ánh xạ là hàm thuần (có unit test):
@@ -129,7 +130,8 @@ export function parseProductMatrix(matrix: unknown[][]): ParsedProductRow[] {
   if (matrix.length === 0) throw new Error("File không chứa dữ liệu sản phẩm.")
   const records = matrixToRecords(matrix)
   if (records.length === 0) throw new Error("File không chứa bản ghi dữ liệu sản phẩm hợp lệ.")
-  return markDuplicateCodes(records.map(mapRecordToRow))
+  const rows = records.map((r, i) => ({ ...mapRecordToRow(r, i), priceCells: readPriceCells(r, parsePrice) }))
+  return markDuplicateCodes(mergeVariantRows(rows))
 }
 
 /** Đọc nội dung file (.xlsx/.xls/.csv) → các dòng xem trước. */

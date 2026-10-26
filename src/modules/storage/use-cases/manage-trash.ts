@@ -17,6 +17,16 @@ export function requireExecutiveRole(ctx: TenantContext) {
   }
 }
 
+/**
+ * Sản phẩm trong thùng rác đòi đúng `L4` (ngừng kinh doanh, trần cứng
+ * `dieu_hanh`). `B6` không có trần cứng nên không đủ để xoá sản phẩm.
+ */
+function requireProductArchive(ctx: TenantContext, type: TrashItemType) {
+  if (type === "PRODUCT" && !ctx.capabilities.has("L4")) {
+    throw new AppError("CAPABILITY_DENIED", "Chỉ Điều hành mới được xoá hoặc khôi phục sản phẩm")
+  }
+}
+
 export async function getTrashList(
   ctx: TenantContext,
   repo: ITrashRepository = getTrashRepository()
@@ -31,6 +41,7 @@ export async function moveToTrash(
   repo: ITrashRepository = getTrashRepository()
 ): Promise<void> {
   requireExecutiveRole(ctx)
+  requireProductArchive(ctx, input.type)
   const ok = await repo.moveToTrash(ctx, { ...input, userId: ctx.userId })
   if (!ok) throw notFound()
 }
@@ -41,6 +52,7 @@ export async function restoreFromTrash(
   repo: ITrashRepository = getTrashRepository()
 ): Promise<void> {
   requireExecutiveRole(ctx)
+  requireProductArchive(ctx, input.type)
   const ok = await repo.restoreFromTrash(ctx, input)
   if (!ok) throw notFound()
 }
@@ -51,6 +63,7 @@ export async function permanentDelete(
   repo: ITrashRepository = getTrashRepository()
 ): Promise<void> {
   requireExecutiveRole(ctx)
+  requireProductArchive(ctx, input.type)
   const ok = await repo.permanentDelete(ctx, input)
   if (!ok) throw notFound()
 }

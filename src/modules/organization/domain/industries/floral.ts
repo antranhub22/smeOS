@@ -49,6 +49,16 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
       { label: "1.000.000 – 2.000.000 ₫", min: 1000000, max: 2000000 },
       { label: "Trên 2.000.000 ₫", min: 2000000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: false,
+      variantDimensions: [
+        { key: "SIZE", label: "Kích cỡ", values: ["Mini", "Nhỏ", "Vừa", "Lớn", "Đại / VIP"] },
+        { key: "COLOR", label: "Màu chủ đạo", values: ["Hồng", "Đỏ", "Trắng", "Vàng", "Cam", "Tím", "Xanh", "Pastel", "Phối nhiều màu"] },
+        { key: "MAIN_FLOWER", label: "Loại hoa chính", values: ["Hoa hồng", "Tulip", "Cẩm tú cầu", "Mẫu đơn", "Hướng dương", "Lan hồ điệp", "Hoa ly", "Cúc", "Baby"] },
+        { key: "STEM_COUNT", label: "Số bông", values: ["10 bông", "20 bông", "30 bông", "50 bông", "99 bông"] },
+        { key: "WRAP", label: "Kiểu gói", values: ["Giấy gói", "Giấy kraft", "Hộp", "Giỏ", "Bình", "Kệ / Lẵng"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["cành", "bó", "chậu", "giỏ", "kệ", "nhánh", "hộp"],
@@ -99,5 +109,20 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
   },
   navigation: {
     hiddenNavKeys: [],
+  },
+  craftFee: {
+    feeLabel: "Phí cắm hoa",
+    defaultPercent: 50,
+    minVnd: 150_000,
+    maxVnd: 2_000_000,
+    partnerPercent: 75,
+    complexityLabels: { EASY: "Bó nhỏ, hoa cầm tay", MEDIUM: "Giỏ, hộp, bình", HARD: "Kệ, lẵng sự kiện" },
+    laborByComplexityVnd: { EASY: 80_000, MEDIUM: 150_000, HARD: 300_000 },
+    peakDays: [
+      { monthDay: "02-14", label: "Lễ Tình nhân" },
+      { monthDay: "03-08", label: "Quốc tế Phụ nữ" },
+      { monthDay: "10-20", label: "Phụ nữ Việt Nam" },
+      { monthDay: "11-20", label: "Nhà giáo Việt Nam" },
+    ],
   },
 }

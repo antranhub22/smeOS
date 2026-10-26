@@ -1,6 +1,6 @@
-import fs from "fs"
-import path from "path"
 import { log } from "@/core/observability/log"
+import { safeRemoteUrl } from "@/lib/safe-remote-url"
+import { uploadTelegramPhoto } from "./telegram-photo-upload"
 import type {
   ChannelSendResult,
   EditMessagePayload,
@@ -26,6 +26,9 @@ function normalizeTelegramButtonUrl(rawUrl: string): string {
     return rawUrl
   }
 }
+
+/** URL ảnh Telegram được phép tự tải: chỉ https, không phải địa chỉ máy nội bộ. */
+export const safeRemotePhotoUrl = safeRemoteUrl
 
 export class TelegramStaffAdapter implements IStaffNotificationProvider {
   readonly channel = "TELEGRAM" as const
@@ -57,99 +60,12 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
         ? { inline_keyboard: [inlineButtons] }
         : undefined
 
-      // Xử lý đính kèm ảnh sản phẩm nếu có
-      let localPhotoBlob: Blob | null = null
-      let remotePhotoUrl: string | null = null
+      // Ảnh sản phẩm: chỉ chuyển URL https công khai cho Telegram tự tải. Máy chủ KHÔNG tự tải URL
+      // hay đọc tệp theo đường dẫn lấy từ dữ liệu tiệm nhập — trước 22/10/2026 kiểm tra kiểu chuỗi
+      // con (".onrender.com") cho phép gọi địa chỉ nội bộ và đọc tệp tuỳ ý (rà soát cụm G).
+      const remotePhotoUrl = safeRemotePhotoUrl(msg.imageUrl)
 
-      if (msg.imageUrl) {
-        const img = msg.imageUrl.trim()
-        if (img.startsWith("http://") || img.startsWith("https://")) {
-          if (img.includes("localhost") || img.includes("127.0.0.1") || img.includes(".onrender.com") || img.includes("/api/v1/storage/")) {
-            // Thử fetch trực tiếp buffer nếu là endpoint của chính app nội bộ
-            try {
-              const fetchRes = await fetch(img, { signal: AbortSignal.timeout(6000) })
-              if (fetchRes.ok) {
-                const arrayBuf = await fetchRes.arrayBuffer()
-                const contentType = fetchRes.headers.get("content-type") || "image/jpeg"
-                localPhotoBlob = new Blob([arrayBuf], { type: contentType })
-              }
-            } catch {
-              // fallback thử đọc từ đĩa cục bộ
-              try {
-                const u = new URL(img)
-                const rel = u.pathname.startsWith("/") ? u.pathname.slice(1) : u.pathname
-                const localPath = path.join(process.cwd(), "public", rel)
-                if (fs.existsSync(localPath)) {
-                  const buf = fs.readFileSync(localPath)
-                  const ext = path.extname(localPath).toLowerCase()
-                  const mime = ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg"
-                  localPhotoBlob = new Blob([buf], { type: mime })
-                }
-              } catch {
-                // fallback
-              }
-            }
-          } else {
-            remotePhotoUrl = img
-          }
-        } else {
-          const rel = img.startsWith("/") ? img.slice(1) : img
-          const cleanKey = (rel.replace(/^api\/v1\/storage\//, "").replace(/^storage\//, "").split("?")[0]) || rel
-          const possiblePaths = [
-            path.join(process.cwd(), "var", "storage", cleanKey),
-            path.join(process.cwd(), "public", rel),
-            path.join(process.cwd(), rel),
-            path.join(process.cwd(), "storage", rel),
-            path.join(process.cwd(), "var", "storage", rel),
-          ]
-          for (const p of possiblePaths) {
-            if (fs.existsSync(p)) {
-              try {
-                const buf = fs.readFileSync(p)
-                const ext = path.extname(p).toLowerCase()
-                const mime = ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg"
-                localPhotoBlob = new Blob([buf], { type: mime })
-                break
-              } catch {
-                // fallback
-              }
-            }
-          }
-        }
-      }
-
-      // 1. Nếu có ảnh cục bộ -> gửi qua sendPhoto (FormData)
-      if (localPhotoBlob) {
-        try {
-          const form = new FormData()
-          form.append("chat_id", chatId)
-          form.append("photo", localPhotoBlob, "product.jpg")
-          form.append("caption", text.slice(0, 1024))
-          form.append("parse_mode", "HTML")
-          if (replyMarkup) {
-            form.append("reply_markup", JSON.stringify(replyMarkup))
-          }
-
-          const photoRes = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-            method: "POST",
-            body: form,
-          })
-          const photoData = (await photoRes.json()) as { ok: boolean; result?: { message_id: number }; description?: string }
-          if (photoData.ok) {
-            return {
-              sent: true,
-              providerMsgId: photoData.result?.message_id ? String(photoData.result.message_id) : null,
-              providerChatId: chatId,
-              isCaption: true,
-            }
-          }
-          log.warn("staff_notify.telegram_photo_failed, fallback to sendMessage", { error: photoData.description })
-        } catch (err) {
-          log.warn("staff_notify.telegram_photo_err, fallback to sendMessage", { error: String(err) })
-        }
-      }
-
-      // 2. Nếu có ảnh từ URL internet -> gửi qua sendPhoto (JSON)
+      // 1. Có ảnh -> sendPhoto, Telegram tự tải từ URL
       if (remotePhotoUrl) {
         try {
           const photoRes = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
@@ -176,9 +92,19 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
         } catch (err) {
           log.warn("staff_notify.telegram_remote_photo_err, fallback to sendMessage", { error: String(err) })
         }
+        // 1b. Telegram không tự tải được URL → máy chủ tải ảnh của chính hệ thống rồi gửi tệp
+        try {
+          const up = await uploadTelegramPhoto(botToken, { chatId, photoUrl: remotePhotoUrl, caption: text.slice(0, 1024), replyMarkup })
+          if (up.ok) {
+            return { sent: true, providerMsgId: up.messageId ? String(up.messageId) : null, providerChatId: chatId, isCaption: true }
+          }
+          log.warn("staff_notify.telegram_upload_photo_failed", { error: up.error })
+        } catch (err) {
+          log.warn("staff_notify.telegram_upload_photo_err", { error: err instanceof Error ? err.name : "Error" })
+        }
       }
 
-      // 3. Gửi tin nhắn text kèm các nút bấm native (sendMessage)
+      // 2. Gửi tin nhắn text kèm các nút bấm native (sendMessage)
       const bodyPayload: Record<string, unknown> = {
         chat_id: chatId,
         text,

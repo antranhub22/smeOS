@@ -7,6 +7,7 @@ import type { UpsertBusinessProfileInput } from "@/modules/profiles/infra/busine
 import { useSession } from "@/lib/session"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 import { AiRewriteInput } from "./ai-rewrite-input"
+import { canOverrideIndustryLock } from "@/modules/organization/domain/organization-settings-policy"
 
 export interface BusinessProfileFormProps {
   initialData: BusinessProfileDetail | null
@@ -15,12 +16,9 @@ export interface BusinessProfileFormProps {
 }
 
 export function BusinessProfileForm({ initialData, onSave, saving }: BusinessProfileFormProps) {
-  const { organization, capabilities, userEmail } = useSession()
-  const isSuperAdmin =
-    capabilities.includes("N1") ||
-    capabilities.includes("N12") ||
-    userEmail === "tuans2@dev.com" ||
-    Boolean(userEmail?.endsWith("@dev.com"))
+  const { organization, platformCapabilities, organizationType } = useSession()
+  // Người vận hành nền tảng N1/N12 — cùng luật máy chủ dùng để cho đổi ngành đã khoá
+  const isSuperAdmin = canOverrideIndustryLock(platformCapabilities ?? [])
   const isUnlocked = isSuperAdmin || !Boolean(organization?.industryLocked)
   const [selectedIndustry, setSelectedIndustry] = useState<string>(organization?.industry || DEFAULT_INDUSTRY)
   const [industrySaved, setIndustrySaved] = useState<boolean>(false)
@@ -112,7 +110,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
       }
       const json = await res.json()
       setSelectedIndustry(industryKey)
-      setMockSuccessMsg(`Đã nạp thành công Mock Data ngành ${json.data?.industryName || industryKey} (${json.data?.businessName})!`)
+      setMockSuccessMsg(`Đã nạp dữ liệu mẫu ngành ${json.data?.industryName || industryKey} (${json.data?.businessName})!`)
       setTimeout(() => {
         window.location.reload()
       }, 1000)
@@ -148,7 +146,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
   }
 
   const handleSelectIndustry = async (newKey: string) => {
-    if (isSuperAdmin && autoSeedMockData) {
+    if (organizationType === "EXPERIENCE" && isSuperAdmin && autoSeedMockData) {
       await handleApplyMockData(newKey)
     } else {
       await handleUpdateIndustry(newKey)
@@ -257,8 +255,8 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
         </div>
 
         <div className="space-y-3">
-          {/* Thanh công cụ Mock Data dành cho SuperAdmin */}
-          {isSuperAdmin && (
+          {/* Dữ liệu mẫu — chỉ tài khoản dùng thử (PO 21/10/2026), máy chủ cũng chặn */}
+          {organizationType === "EXPERIENCE" && isSuperAdmin && (
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl bg-primary/5 border border-primary/20">
               <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-text select-none">
                 <input
@@ -267,7 +265,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
                   onChange={(e) => setAutoSeedMockData(e.target.checked)}
                   className="rounded border-border text-primary focus:ring-primary/20 w-4 h-4 cursor-pointer"
                 />
-                <span>Tự động nạp Mock Data chuẩn (Tên shop, logo, sản phẩm mẫu) khi click đổi ngành</span>
+                <span>Tự động nạp dữ liệu mẫu (tên cửa hàng, logo, sản phẩm mẫu) khi đổi ngành</span>
               </label>
 
               <button
@@ -281,7 +279,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
                 <span>
                   {loadingMockKey === selectedIndustry
                     ? "Đang đồng bộ..."
-                    : `Đồng bộ Mock Data ${currentIndDef.name}`}
+                    : `Nạp dữ liệu mẫu ${currentIndDef.name}`}
                 </span>
               </button>
             </div>
@@ -323,21 +321,21 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
                     </p>
                   </div>
 
-                  {isUnlocked && (
-                    <div
-                      className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between w-full gap-1.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <span className="text-[11px] text-text-muted font-medium">Mock Data</span>
+                  {organizationType === "EXPERIENCE" && isUnlocked && (
+                    <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between w-full gap-1.5">
+                      <span className="text-caption text-text-muted font-medium">Dữ liệu mẫu</span>
                       <button
                         type="button"
                         disabled={loadingMockKey !== null}
-                        onClick={() => handleApplyMockData(ind.key)}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 transition-all cursor-pointer disabled:opacity-60"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleApplyMockData(ind.key)
+                        }}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-bold bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 transition-all cursor-pointer disabled:opacity-60"
                         title={`Nạp dữ liệu mẫu cho ngành ${ind.name}`}
                       >
                         <Sparkles size={11} className={isLoadingThis ? "animate-spin" : "text-primary"} />
-                        <span>{isLoadingThis ? "Đang nạp..." : "Dùng Mock Data"}</span>
+                        <span>{isLoadingThis ? "Đang nạp..." : "Nạp dữ liệu mẫu"}</span>
                       </button>
                     </div>
                   )}

@@ -134,7 +134,7 @@ export function ConnectAccountModal({
             onChange={(e) => setUsername(e.target.value)}
             placeholder={
               platformId === "linkedin"
-                ? "tuans2@gmail.com"
+                ? "taikhoan@congty.vn"
                 : platformId === "instagram"
                 ? "cuahang_official"
                 : "taikhoan@gmail.com"

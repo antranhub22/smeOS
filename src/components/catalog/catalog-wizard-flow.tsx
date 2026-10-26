@@ -41,7 +41,7 @@ export function CatalogWizardFlow({
   initialStep,
 }: CatalogWizardFlowProps) {
   const { business } = useTenantProfile()
-  const currentShopName = business?.display_name || "Cửa hàng smeOS"
+  const currentShopName = business?.display_name || "Tiệm hoa smeOS"
 
   const [currentStep, setCurrentStep] = useState<number>(initialStep ?? 1)
 
@@ -74,7 +74,7 @@ export function CatalogWizardFlow({
   const handleQuickPreset = (type: "all" | "occasion" | "budget") => {
     if (type === "all") {
       setSelectedIds(activeProducts.map((p) => p.id))
-      setName("Tất cả sản phẩm đang bán")
+      setName("Tất cả mẫu hoa đang bán")
       setStyleVariant("MODERN_SHOWROOM")
     } else if (type === "occasion") {
       const occ = availableOccasions[0] || "Sự kiện"
@@ -110,7 +110,7 @@ export function CatalogWizardFlow({
         setDesc(json.data.description)
       }
     } catch {
-      setDesc(`Chào mừng quý khách đến với ${name}. Tuyển chọn những sản phẩm tươi nghệ thuật được thiết kế tinh tế nhất từ ${currentShopName}.`)
+      setDesc(`Chào mừng quý khách đến với ${name}. Tuyển chọn những mẫu hoa tươi nghệ thuật được thiết kế tinh tế nhất từ ${currentShopName}.`)
     } finally {
       setIsAiGenerating(false)
     }
@@ -289,7 +289,7 @@ export function CatalogWizardFlow({
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="VD: Bộ sưu tập Sản Phẩm Mới Về Hôm Nay..."
+                  placeholder="VD: Bộ sưu tập Hoa Tươi Mới Về Hôm Nay..."
                   className="text-body-sm"
                 />
               </div>
@@ -322,7 +322,7 @@ export function CatalogWizardFlow({
                 <div>
                   <div className="text-body-sm font-bold text-text">{name || "Chưa đặt tên Catalog"}</div>
                   <div className="text-caption text-text-muted mt-0.5">
-                    Phong cách: <strong className="text-text">{styleVariant}</strong> • Gồm <strong className="text-primary">{selectedIds.length}</strong> sản phẩm tuyển chọn
+                    Phong cách: <strong className="text-text">{styleVariant}</strong> • Gồm <strong className="text-primary">{selectedIds.length}</strong> mẫu hoa tuyển chọn
                   </div>
                 </div>
                 <div className="text-caption text-success font-semibold flex items-center gap-1">
@@ -364,7 +364,7 @@ export function CatalogWizardFlow({
                   disabled={currentStep === 1 && selectedIds.length === 0}
                   onClick={() => {
                     if (currentStep === 1 && !name) {
-                      setName(`Bộ sưu tập ${selectedIds.length} Sản Phẩm Tuyển Chọn`)
+                      setName(`Bộ sưu tập ${selectedIds.length} Mẫu Hoa Tuyển Chọn`)
                     }
                     setCurrentStep((prev) => Math.min(3, prev + 1))
                   }}

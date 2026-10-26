@@ -47,6 +47,16 @@ export const FNB_INDUSTRY: IndustryPluginContract = {
       { label: "150.000 – 350.000 ₫", min: 150000, max: 350000 },
       { label: "Trên 350.000 ₫", min: 350000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: true,
+      variantDimensions: [
+        { key: "PORTION", label: "Kích cỡ phần", values: ["Nhỏ", "Vừa", "Lớn"] },
+        { key: "CUP_SIZE", label: "Size ly", values: ["S", "M", "L"] },
+        { key: "FLAVOR", label: "Hương vị", values: ["Truyền thống", "Socola", "Matcha", "Dâu", "Vani", "Trái cây"] },
+        { key: "SERVINGS", label: "Số người ăn", values: ["1 người", "2 người", "4 người", "6 người", "10 người"] },
+        { key: "CAKE_SIZE", label: "Kích thước bánh", values: ["12 cm", "16 cm", "20 cm", "24 cm", "2 tầng"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["phần", "ly", "cái", "hộp", "gram", "ml", "set"],
@@ -96,5 +106,18 @@ export const FNB_INDUSTRY: IndustryPluginContract = {
   },
   navigation: {
     hiddenNavKeys: [],
+  },
+  craftFee: {
+    feeLabel: "Phí chế biến",
+    defaultPercent: 40,
+    minVnd: 50_000,
+    maxVnd: 2_000_000,
+    partnerPercent: 70,
+    complexityLabels: { EASY: "Món đơn giản", MEDIUM: "Set, combo", HARD: "Tiệc, bánh đặt riêng" },
+    laborByComplexityVnd: { EASY: 30_000, MEDIUM: 100_000, HARD: 300_000 },
+    peakDays: [
+      { monthDay: "02-14", label: "Lễ Tình nhân" },
+      { monthDay: "12-24", label: "Giáng sinh" },
+    ],
   },
 }

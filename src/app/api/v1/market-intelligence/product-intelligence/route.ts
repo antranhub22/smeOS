@@ -20,7 +20,8 @@ export const POST = handle(async (request) => {
   }
 
   const productName = parsed.data.product_name ?? "Sản phẩm mẫu phong cách thanh lịch";
-  const imageUrl = parsed.data.image_url ?? "/images/sample-product.jpg";
+  // Không có ảnh thì để trống như bản lưu DB — "/images/sample-product.jpg" không tồn tại (rà soát lại cụm A)
+  const imageUrl = parsed.data.image_url ?? "";
 
   const result = await analyzeProductIntelligence({
     organizationId: ctx.organizationId,

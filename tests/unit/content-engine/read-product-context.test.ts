@@ -6,13 +6,9 @@ const { getProductAnalysisRun, findFirst } = vi.hoisted(() => ({
   getProductAnalysisRun: vi.fn(),
   findFirst: vi.fn(),
 }))
-vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", () => {
-  const instance = { getProductAnalysisRun }
-  return {
-    MarketIntelligenceRepository: vi.fn().mockImplementation(() => instance),
-    getMarketIntelligenceRepository: vi.fn().mockImplementation(() => instance),
-  }
-})
+vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", () => ({
+  MarketIntelligenceRepository: vi.fn().mockImplementation(function () { return { getProductAnalysisRun } }),
+}))
 vi.mock("@/core/tenancy/infra/prisma", () => ({ prisma: { products: { findFirst } } }))
 
 import { readProductContext, projectTopicFromReport } from "@/modules/content-engine/infra/read-product-context"

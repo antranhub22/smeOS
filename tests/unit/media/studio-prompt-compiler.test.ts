@@ -29,6 +29,7 @@ describe("StudioPromptCompiler", () => {
 
     // 1. Kiểm tra System Prompt (Mandate bảo tồn hoa thật)
     expect(result.systemPrompt).toContain("CRITICAL CONSTRAINT - SUBJECT INTEGRITY MANDATE")
+    // Đa ngành (da9855a): mệnh lệnh phủ mọi chi tiết vật lý của sản phẩm, không chỉ cánh hoa
     expect(result.systemPrompt).toContain("DO NOT change, recolor, repaint, add, remove, or distort ANY physical details")
     expect(result.systemPrompt).toContain("The floral arrangement in the foreground mask is an EXACT PHYSICAL PRODUCT")
 

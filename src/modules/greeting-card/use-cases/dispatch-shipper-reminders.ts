@@ -9,6 +9,7 @@
 
 import type { TenantContext } from "@/core/tenancy"
 import { renderDispatchMessage, type ChainDispatchPolicy } from "../domain/chain-dispatch-policy"
+import { buildDispatchTitle } from "../domain/dispatch-message-titles"
 import type { IDispatchNotifier } from "./dispatch-subcontract-order"
 import type { BranchCandidate } from "../domain/chain-dispatch-engine"
 import type { ProcessOrderReminderInput, ReminderStepExecutionResult } from "./process-dispatch-reminders"
@@ -69,8 +70,8 @@ export async function evaluateShipperMilestones({
       orderCode: input.orderCode,
       messageText: text,
       claimUrl: submitShipperUrl,
-      title: `🛵 [YÊU CẦU SHIPPER #${input.orderCode}]`,
-      actions: [{ text: "🛵 Nhập Thông Tin Shipper", url: submitShipperUrl }],
+      title: buildDispatchTitle({ emoji: "🛵", action: "Cần thông tin shipper", level: "normal", orderCode: input.orderCode }),
+      actions: [{ text: "Nhập thông tin shipper", url: submitShipperUrl }],
       imageUrl: input.productImageUrl,
     })
 
@@ -105,8 +106,8 @@ export async function evaluateShipperMilestones({
         orderCode: input.orderCode,
         messageText: text,
         claimUrl: submitShipperUrl,
-        title: `⚠️ [NHẮC LẦN 2 - KHẨN CẤP #${input.orderCode}]`,
-        actions: [{ text: "🚨 NHẬP THÔNG TIN SHIPPER NGAY (LẦN 2)", url: submitShipperUrl }],
+        title: buildDispatchTitle({ emoji: "⚠️", action: "Cần thông tin shipper", level: "retry", orderCode: input.orderCode }),
+        actions: [{ text: "Nhập thông tin shipper ngay", url: submitShipperUrl }],
         imageUrl: input.productImageUrl,
       })
 
@@ -150,8 +151,8 @@ export async function evaluateShipperMilestones({
         : branch
 
       const escalationActions = [
-        ...(branch.channels?.phone ? [{ text: `📞 Gọi cửa hàng: ${branch.channels.phone}`, url: `tel:${branch.channels.phone}` }] : []),
-        { text: "🔍 Xem chi tiết đơn / Điền hộ", url: submitShipperUrl },
+        ...(branch.channels?.phone ? [{ text: `Gọi chi nhánh: ${branch.channels.phone}`, url: `tel:${branch.channels.phone}` }] : []),
+        { text: "Xem chi tiết đơn / Điền hộ", url: submitShipperUrl },
       ]
 
       const sendRes = await notifier.sendSubcontractInvite(ctx, {
@@ -159,7 +160,7 @@ export async function evaluateShipperMilestones({
         orderCode: input.orderCode,
         messageText: text,
         claimUrl: submitShipperUrl,
-        title: `🚨 [CẢNH BÁO ĐỎ - THIẾU SHIPPER #${input.orderCode}]`,
+        title: buildDispatchTitle({ emoji: "🚨", action: "Cần thông tin shipper", level: "escalate", orderCode: input.orderCode }),
         actions: escalationActions,
         imageUrl: input.productImageUrl,
       })

@@ -10,17 +10,19 @@ import {
   TRIAL_CREDIT_BALANCE,
   TRIAL_LIMIT,
 } from "@/modules/organization/domain/experience"
+import { expiresAt } from "@/modules/organization/domain/session-policy"
 import { slugCandidates } from "@/modules/organization/domain/slug"
 import { FOUNDER_ROLE_KEY } from "@/modules/organization/domain/system-roles"
-import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
-import { RegistrationRequestRepository, getRegistrationRequestRepository } from "@/modules/organization/infra/registration-request-repository"
-import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
-import { OccasionRepository, getOccasionRepository } from "@/modules/organization/infra/occasion-repository"
+import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { SessionRepository } from "@/modules/organization/infra/session-repository"
+import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
+import { hashSessionToken, newSessionToken } from "@/modules/organization/infra/session-token"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
-import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
-import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { UserRepository } from "@/modules/organization/infra/user-repository"
+import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { seedExperienceMasterProfile } from "@/modules/profiles/use-cases/seed-experience-profile"
 
 export type SignUpInput = {
@@ -31,26 +33,26 @@ export type SignUpInput = {
   industryKey?: string | undefined
   organizationType?: "SINGLE" | "CHAIN" | undefined
   seedProfile?: boolean | undefined
+  /** Đăng ký công khai (`/auth/signup`): tài khoản chờ superadmin duyệt, không mở phiên. */
+  pendingApproval?: boolean | undefined
 }
 
 export type SignUpResult = {
-  /** Đơn đăng ký đang chờ Super Admin duyệt — không tạo session. */
-  status: "PENDING_APPROVAL"
+  /** `null` khi tài khoản chờ duyệt — chưa có phiên nào. */
+  token: string | null
   userId: string
   organizationId: string
 }
 
 /**
- * Đăng ký tạo người dùng **và** tổ chức — tài khoản ở trạng thái CHỜ DUYỆT.
+ * Đăng ký tạo người dùng **và** tổ chức trải nghiệm của họ (đặc tả 06 mục 3).
  *
- * Luồng Approval Gate (giai đoạn thử nghiệm beta):
- * - Membership của Founder được tạo với status = INVITED (chưa active).
- * - Bản ghi `registration_requests` được tạo với status = PENDING.
- * - KHÔNG tạo session — user phải đăng nhập lại sau khi được duyệt.
- * - Super Admin vào /van-hanh → tab Đăng ký mới → duyệt → membership → ACTIVE.
+ * Người mở tổ chức nhận vai `dieu_hanh`: họ điều hành chính tổ chức mình vừa
+ * tạo. Vai `experience_user` dành cho người được mời vào một workspace trải
+ * nghiệm sẵn có, và luồng mời thuộc P2.
  *
- * Cả bốn bản ghi (user, org, workspace, membership, registration_request) trong
- * một giao dịch — giao dịch hỏng thì không sinh ra org mồ côi.
+ * Cả năm bản ghi — user, organization, workspace, membership, session — nằm
+ * trong một giao dịch. Giao dịch hỏng thì không sinh ra tổ chức mồ côi.
  */
 export async function signUp(input: SignUpInput): Promise<SignUpResult> {
   const email = normalizeEmail(input.email)
@@ -66,14 +68,16 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
   // Băm trước khi mở giao dịch: bcrypt cố ý chậm, giữ giao dịch mở trong lúc
   // băm là giữ khoá cơ sở dữ liệu không vì lý do gì.
   const passwordHash = await hashPassword(input.password)
+  const now = new Date()
+  const token = newSessionToken()
 
   return runInTransaction(async (tx) => {
-    const users = getUserRepository(tx)
-    const organizations = getOrganizationRepository(tx)
-    const workspaces = getWorkspaceRepository(tx)
-    const roles = getRoleRepository(tx)
-    const memberships = getMembershipRepository(tx)
-    const registrations = getRegistrationRequestRepository(tx)
+    const users = new UserRepository(tx)
+    const organizations = new OrganizationRepository(tx)
+    const workspaces = new WorkspaceRepository(tx)
+    const roles = new RoleRepository(tx)
+    const memberships = new MembershipRepository(tx)
+    const sessions = new SessionRepository(tx)
 
     if (await users.findByEmail(email)) {
       throw conflict("Địa chỉ thư này đã có tài khoản")
@@ -83,6 +87,7 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       email,
       password_hash: passwordHash,
       name: input.name?.trim() || null,
+      approval_status: input.pendingApproval ? "PENDING" : "APPROVED",
     })
 
     let slug: string | null = null
@@ -94,20 +99,32 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
     if (!slug) throw conflict("Không sinh được định danh cho tên tổ chức này")
 
     const chosenIndustry = input.industryKey || "FLORAL"
-    const chosenType = input.organizationType === "CHAIN" ? "CHAIN" : "SINGLE"
-    const isChain = chosenType === "CHAIN"
+    // Mô hình Chuỗi mở gói FLOWER_NETWORK (entitlement-service) — client tự chọn thì không được
+    // trao ngay (rà soát 21/10/2026, H5). Tổ chức luôn bắt đầu là 1 cửa hàng; chọn Chuỗi chỉ ghi
+    // yêu cầu chờ Quản trị SaaS duyệt (N2), cùng cơ chế với request-organization-upgrade.
+    const wantsChain = input.organizationType === "CHAIN"
 
     const organization = await organizations.create({
       name: organizationName,
       slug,
-      type: chosenType,
+      type: "SINGLE",
       credit_balance: TRIAL_CREDIT_BALANCE,
       settings: {
         industry: chosenIndustry,
-        industry_locked: true,
+        industry_locked: true, // Khóa đổi ngành ngay sau khi chọn ban đầu
         brochure_workflow_policy: {
-          require_coordinator_acceptance: isChain,
+          require_coordinator_acceptance: false,
         },
+        ...(wantsChain
+          ? {
+              pending_model_change: {
+                requested_type: "CHAIN",
+                requested_at: new Date().toISOString(),
+                requested_by: user.id,
+                note: "Chọn mô hình Chuỗi khi đăng ký",
+              },
+            }
+          : {}),
       },
     })
 
@@ -119,13 +136,7 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       trial_status: "ACTIVE",
     })
 
-    await getOccasionRepository(tx).seedDefault({
-      organizationId: organization.id,
-      workspaceId: workspace.id,
-      userId: user.id,
-      branchId: null,
-      capabilities: new Set<string>(),
-    })
+    await new OccasionRepository(tx).seedDefault({ organizationId: organization.id, workspaceId: workspace.id, userId: user.id, branchId: null, capabilities: new Set<string>() })
     if (input.seedProfile) {
       await seedExperienceMasterProfile(tx, organization.id, chosenIndustry)
     }
@@ -138,25 +149,23 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       )
     }
 
-    // Approval Gate: membership ở trạng thái INVITED cho đến khi Super Admin duyệt.
     await memberships.createForNewOrganization({
       organizationId: organization.id,
       userId: user.id,
       roleId: founderRole.id,
-      status: "INVITED",
-      joinedAt: null,
+      status: "ACTIVE",
+      joinedAt: now,
     })
 
-    // Tạo đơn đăng ký chờ duyệt.
-    await registrations.create({
-      organizationId: organization.id,
-      userId: user.id,
-      applicantEmail: email,
-      applicantName: input.name?.trim() ?? null,
-      orgName: organizationName,
-      industryKey: chosenIndustry,
+    if (input.pendingApproval) return { token: null, userId: user.id, organizationId: organization.id }
+
+    await sessions.create({
+      user_id: user.id,
+      token_hash: hashSessionToken(token),
+      organization_id: organization.id,
+      expires_at: expiresAt(now),
     })
 
-    return { status: "PENDING_APPROVAL" as const, userId: user.id, organizationId: organization.id }
+    return { token, userId: user.id, organizationId: organization.id }
   })
 }

@@ -1,21 +1,22 @@
 /**
- * process-dispatch-reminders.ts
- *
  * Use-case: Đánh giá và Gửi tin nhắn nhắc việc theo mốc tiến độ (M1 Chế tác, M2 QC, M3 Bàn giao Shipper, M4 Quá hạn).
  * Clean Architecture — Pure Logic kết hợp với IDispatchNotifier & ISubcontractStateStore.
  */
 
+import { publicAppUrl } from "@/lib/public-url"
 import type { TenantContext } from "@/core/tenancy"
 import {
   parseChainDispatchPolicy,
   renderDispatchMessage,
   type ChainDispatchPolicy,
 } from "../domain/chain-dispatch-policy"
+import { buildDispatchTitle } from "../domain/dispatch-message-titles"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
 import type { BranchCandidate } from "../domain/chain-dispatch-engine"
 import type { IDispatchNotifier, ISubcontractStateStore } from "./dispatch-subcontract-order"
 import { evaluateShipperMilestones } from "./dispatch-shipper-reminders"
 import { evaluateDeliveryMilestones } from "./dispatch-delivery-reminders"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 export type ReminderStep =
   | "M1_PREP"
@@ -92,21 +93,18 @@ export async function processOrderDispatchReminders(
   const deliveryMs = input.deliveryTimestampMs
   const minutesUntilDelivery = Math.round((deliveryMs - nowMs) / (60 * 1000))
 
-  // Dùng baseUrl cấu hình (local dev: http://localhost:3200, prod: https://...)
-  const base = input.baseUrl || "http://localhost:3200"
-  const claimUrl = `${base}/subcontract/${input.orderCode}?branch=${encodeURIComponent(branch.branchId)}`
-  const uploadQcUrl = `${claimUrl}&action=upload_qc`
-  const submitShipperUrl = `${claimUrl}&action=submit_shipper`
-  const submitDeliveryUrl = `${claimUrl}&action=submit_delivery`
+  // Link đã ký theo chi nhánh; baseUrl là địa chỉ cấu hình (publicAppUrl)
+  const link = { baseUrl: input.baseUrl || publicAppUrl(), organizationId: ctx.organizationId, orderCode: input.orderCode, branchId: branch.branchId }
+  const linkFor = (action?: string) => subcontractBranchUrl({ ...link, action })
+  const claimUrl = linkFor()
+  const uploadQcUrl = linkFor("upload_qc")
+  const submitShipperUrl = linkFor("submit_shipper")
+  const submitDeliveryUrl = linkFor("submit_delivery")
 
-  // Thẻ Tiến Độ (Live Dashboard Card): dùng để EDIT tin nhắn cũ thay vì gửi mới
+  // Thẻ tiến độ của đơn = thẻ trong chat của CHÍNH chi nhánh đã nhận (gán lúc nhận đơn) — sửa thay vì gửi mới
   const existingCard =
     state.telegramMsgId && state.telegramChatId
-      ? {
-          msgId: state.telegramMsgId,
-          chatId: state.telegramChatId,
-          isCaption: state.isCaption ?? false,
-        }
+      ? { msgId: state.telegramMsgId, chatId: state.telegramChatId, isCaption: state.isCaption ?? false }
       : null
   // Nếu lần này gửi lần đầu (chưa có thẻ), lưu msgId trả về vào state
   let capturedTelegramMsgId: string | null = null
@@ -130,8 +128,8 @@ export async function processOrderDispatchReminders(
       orderCode: input.orderCode,
       messageText: text,
       claimUrl,
-      title: `🔔 [BẮT ĐẦU CHẾ TÁC #${input.orderCode}]`,
-      actions: [{ text: "📋 Xem Thẻ Gia Công", url: claimUrl }],
+      title: buildDispatchTitle({ emoji: "🔔", action: "Bắt đầu chế tác", level: "normal", orderCode: input.orderCode }),
+      actions: [{ text: "Xem thẻ gia công", url: claimUrl }],
       imageUrl: input.productImageUrl,
       existingTelegramCard: existingCard,
     })
@@ -169,8 +167,8 @@ export async function processOrderDispatchReminders(
       orderCode: input.orderCode,
       messageText: text,
       claimUrl,
-      title: `📸 [NHẮC CHỤP ẢNH THÀNH PHẨM #${input.orderCode}]`,
-      actions: [{ text: "📸 Chụp & Tải ảnh thành phẩm", url: uploadQcUrl }],
+      title: buildDispatchTitle({ emoji: "📸", action: "Nhắc chụp ảnh thành phẩm", level: "normal", orderCode: input.orderCode }),
+      actions: [{ text: "Chụp và tải ảnh thành phẩm", url: uploadQcUrl }],
       imageUrl: input.productImageUrl,
       existingTelegramCard: existingCard,
     })
@@ -210,8 +208,8 @@ export async function processOrderDispatchReminders(
         orderCode: input.orderCode,
         messageText: text,
         claimUrl,
-        title: `⚠️ [NHẮC LẦN 2 - KHẨN CẤP #${input.orderCode}]`,
-        actions: [{ text: "🚨 TẢI ẢNH THÀNH PHẨM NGAY (LẦN 2)", url: uploadQcUrl }],
+        title: buildDispatchTitle({ emoji: "⚠️", action: "Nhắc chụp ảnh thành phẩm", level: "retry", orderCode: input.orderCode }),
+        actions: [{ text: "Tải ảnh thành phẩm ngay", url: uploadQcUrl }],
         imageUrl: input.productImageUrl,
         existingTelegramCard: existingCard,
       })
@@ -259,8 +257,8 @@ export async function processOrderDispatchReminders(
         : branch
 
       const escalationActions = [
-        ...(branch.channels?.phone ? [{ text: `📞 Gọi cửa hàng: ${branch.channels.phone}`, url: `tel:${branch.channels.phone}` }] : []),
-        { text: "🔍 Xem chi tiết đơn", url: claimUrl },
+        ...(branch.channels?.phone ? [{ text: `Gọi chi nhánh: ${branch.channels.phone}`, url: `tel:${branch.channels.phone}` }] : []),
+        { text: "Xem chi tiết đơn", url: claimUrl },
       ]
 
       const sendRes = await notifier.sendSubcontractInvite(ctx, {
@@ -268,7 +266,7 @@ export async function processOrderDispatchReminders(
         orderCode: input.orderCode,
         messageText: text,
         claimUrl,
-        title: `🚨 [BÁO ĐỘNG ĐIỀU PHỐI #${input.orderCode}]`,
+        title: buildDispatchTitle({ emoji: "🚨", action: "Nhắc chụp ảnh thành phẩm", level: "escalate", orderCode: input.orderCode }),
         actions: escalationActions,
         imageUrl: input.productImageUrl,
         existingTelegramCard: existingCard,
@@ -331,8 +329,8 @@ export async function processOrderDispatchReminders(
       orderCode: input.orderCode,
       messageText: text,
       claimUrl,
-      title: `⚠️ [CẢNH BÁO TRỄ HẠN #${input.orderCode}]`,
-      actions: [{ text: "🚨 Xem đơn trễ hạn", url: claimUrl }],
+      title: buildDispatchTitle({ emoji: "⚠️", action: "Quá hạn xử lý", level: "normal", orderCode: input.orderCode }),
+      actions: [{ text: "Xem đơn trễ hạn", url: claimUrl }],
       existingTelegramCard: existingCard,
     })
 
@@ -347,21 +345,20 @@ export async function processOrderDispatchReminders(
     }
   }
 
-  // Nếu có mốc nào vừa gửi thành công, cập nhật state vào DB
+  // Gộp các mốc vừa gửi vào trạng thái MỚI NHẤT dưới khoá dòng — không ghi đè bản chụp đầu lượt
+  // quét lên thao tác chốt/huỷ xảy ra trong lúc gửi tin (rà soát cụm G)
   if (results.some((r) => r.sent)) {
-    const nextState: SubcontractOrderState = {
-      ...state,
-      remindersSent,
-      // Lưu Live Card ID nếu mới capture được lần đầu
-      ...(capturedTelegramMsgId
-        ? {
-            telegramMsgId: capturedTelegramMsgId,
-            telegramChatId: capturedTelegramChatId,
-            isCaption: capturedIsCaption,
-          }
-        : {}),
-    }
-    await store.saveSubcontractState(ctx, nextState)
+    await store.updateSubcontractState(ctx, state.orderId, (current) => {
+      const base = current ?? state
+      const merged: SubcontractOrderState = {
+        ...base,
+        remindersSent: { ...(base.remindersSent ?? {}), ...remindersSent },
+        ...(capturedTelegramMsgId && base.claimedBranchId === branch.branchId
+          ? { telegramMsgId: capturedTelegramMsgId, telegramChatId: capturedTelegramChatId, isCaption: capturedIsCaption }
+          : {}),
+      }
+      return { next: merged, result: undefined }
+    })
   }
 
   return results

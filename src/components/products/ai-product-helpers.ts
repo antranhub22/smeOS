@@ -3,6 +3,9 @@
  * Kết nối Vision AI (M01/Market Intelligence) và Content Engine (M04/P27).
  */
 
+import type { ProductPricing } from "@/modules/products/domain/product-pricing"
+import { pricingAttributes } from "./pricing/pricing-form"
+
 export const CATEGORIES = [
   "Sản phẩm",
   "Giỏ hoa",
@@ -43,6 +46,7 @@ export interface ProductFormValues {
   facing: string
   container: string
   priceVnd: string
+  pricing?: ProductPricing | undefined
   primaryColor: string
   description: string
   status: "ACTIVE" | "DRAFT"
@@ -308,8 +312,6 @@ export function buildProductPatchPayload(
       role: f.role || "Chủ đạo",
     }))
 
-  const parsedPrice = values.priceVnd.trim() ? Number(values.priceVnd.replace(/\D/g, "")) : null
-
   // Bảo toàn imageUrl, drive_link và imageAssetId từ values hoặc currentAttrs
   const preservedImageUrl = finalImageUrl || values.imageUrl || (currentAttrs.imageUrl as string | undefined) || undefined
   const preservedDriveLink = values.driveLink || (currentAttrs.drive_link as string | undefined) || undefined
@@ -317,8 +319,7 @@ export function buildProductPatchPayload(
 
   const mergedAttributes: ProductPatchAttributes = {
     ...currentAttrs,
-    price: parsedPrice,
-    price_vnd: parsedPrice,
+    ...pricingAttributes(values.priceVnd, values.pricing),
     description: values.description.trim() || null,
     color: values.primaryColor.trim() || null,
     bom: {

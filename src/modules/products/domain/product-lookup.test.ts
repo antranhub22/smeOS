@@ -6,8 +6,8 @@ import type { PricingRuleRow } from "./pricing-rules"
 const PRODUCT: ProductLookupRaw = {
   id: "p1",
   code: "BHBB0001",
-  name: "Sản phẩm baby Giấc Mơ Nhỏ",
-  category: "Sản phẩm",
+  name: "Bó hoa baby Giấc Mơ Nhỏ",
+  category: "Bó hoa",
   shape: "Tròn",
   facing: "Một mặt",
   container: "Giấy gói",
@@ -39,7 +39,7 @@ describe("filterProductLookup", () => {
     const result = filterProductLookup(PRODUCT, RULE_ROWS, { canReadPricing: false, branchId: null })
     expect(result.code).toBe("BHBB0001")
     expect(result.name).toBe(PRODUCT.name)
-    expect(result.category).toBe("Sản phẩm")
+    expect(result.category).toBe("Bó hoa")
   })
 
   it("không nguyên liệu tính toán nội bộ nào lọt ra ngoài kê tên", () => {
@@ -64,23 +64,25 @@ describe("filterProductLookup", () => {
         "pricing",
         "redacted_fields",
         "attributes",
+        // Cấu hình kiểm tra khả dụng theo ngành (tồn kho/lịch/khung giờ) — không chứa giá vốn
         "availability_config",
       ].sort()
     )
     expect(serialized).toBeDefined()
   })
-  it("không có L5: ẩn BOM và giá sàn/trần trong attributes, vẫn giữ giá bán niêm yết", () => {
+  it("không có L5: ẩn BOM, giá sàn/trần và phí làm thay trong attributes, vẫn giữ giá bán niêm yết", () => {
     const withAttrs: ProductLookupRaw = {
       ...PRODUCT,
-      attributes: { price: 450_000, color: "Hồng", bom: { flowers: [{ name: "Hồng", quantity: 10 }] }, priceGuard: { floorVnd: 1, ceilingVnd: 2 } },
+      attributes: { price: 450_000, color: "Hồng", bom: { flowers: [{ name: "Hồng", quantity: 10 }] }, priceGuard: { floorVnd: 1, ceilingVnd: 2 }, craft_fee_vnd: 200_000, craft_complexity: "HARD" },
     }
     const hidden = filterProductLookup(withAttrs, RULE_ROWS, { canReadPricing: false, branchId: null })
-    expect(hidden.attributes).toEqual({ price: 450_000, color: "Hồng" })
+    expect(hidden.attributes).toEqual({ price: 450_000, color: "Hồng", craft_complexity: "HARD" })
     expect(hidden.price_vnd).toBe(450_000)
-    expect(hidden.redacted_fields).toEqual(expect.arrayContaining(["pricing", "bom", "priceGuard"]))
+    expect(hidden.redacted_fields).toEqual(expect.arrayContaining(["pricing", "bom", "priceGuard", "craft_fee_vnd"]))
 
     const full = filterProductLookup(withAttrs, RULE_ROWS, { canReadPricing: true, branchId: null })
     expect(full.attributes).toHaveProperty("bom")
     expect(full.attributes).toHaveProperty("priceGuard")
+    expect(full.attributes).toHaveProperty("craft_fee_vnd")
   })
 })

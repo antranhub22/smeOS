@@ -26,6 +26,8 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "auth/login": "đăng nhập — chưa có phiên",
   "auth/signup": "đăng ký — chưa có phiên",
   "auth/instant-trial": "dùng thử tức thì không cần mật khẩu — chưa có phiên",
+  "internal/chain-dispatch-sweep": "cron nội bộ, không có phiên — gác bằng CRON_SECRET (isAuthorizedCronRequest)",
+  "internal/health": "sức khoẻ chi tiết cho cron/vận hành, không có phiên — gác bằng CRON_SECRET (isAuthorizedCronRequest)",
   "auth/logout": "đăng xuất phiên của chính mình",
   "auth/me": "đọc phiên của chính mình",
   "auth/session-status": "kiểm phiên của chính mình còn sống (cảnh báo đăng nhập nơi khác)",

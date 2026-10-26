@@ -131,10 +131,12 @@ export function ChainDispatchSettings() {
       <div className="flex items-center justify-between p-4 rounded-xl bg-surface-muted border border-border">
         <div>
           <span className="text-body font-bold text-foreground block">
-            Bật cơ chế Bắn Đơn & Điều phối Tự động
+            Tự động chọn cửa hàng & phát lệnh (mặc định)
           </span>
           <span className="text-caption text-text-muted">
-            Khi bật, hệ thống sẽ tự động quét chi nhánh và gửi Thẻ Gia Công ngay khi đơn xác nhận thanh toán.
+            Bật: ngay khi xác nhận đã nhận tiền, hệ thống tự chọn các cửa hàng phù hợp nhất và gửi Thẻ Gia Công.
+            Tắt: Điều phối tự chọn cửa hàng rồi bấm &quot;Duyệt &amp; phát lệnh&quot; trong Thẻ gia công. Khi đang bật,
+            Điều phối vẫn có thể chọn thủ công cho từng đơn lúc xác nhận tiền.
           </span>
         </div>
         <input
@@ -205,7 +207,7 @@ export function ChainDispatchSettings() {
 
           <div>
             <label className="text-caption font-semibold text-foreground block mb-1">
-              Thời hạn hủy sau khi nhận (Grace Period): <strong>{policy.cancellationGraceMinutes} phút</strong>
+              Thời hạn hủy sau khi nhận: <strong>{policy.cancellationGraceMinutes} phút</strong>
             </label>
             <input
               type="range"

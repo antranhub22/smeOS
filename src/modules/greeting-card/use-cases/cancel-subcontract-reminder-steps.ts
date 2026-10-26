@@ -12,7 +12,7 @@
  * → Sweep engine sẽ nhận ra và skip, không phân biệt với trường hợp đã gửi thật.
  */
 
-import { getSubcontractOrderRepository } from "../infra/subcontract-order-repository"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import type { ReminderStep } from "./process-dispatch-reminders"
 
@@ -39,7 +39,7 @@ export interface CancelReminderStepsResult {
  * Đánh dấu các reminder steps là đã bị hủy bởi coordinator hoặc store.
  * Sweep engine đọc `remindersSent[step]` — nếu có giá trị (kể cả "CANCELLED_...") thì skip.
  *
- * Thread-safe: dùng JSON merge patch — không overwrite toàn bộ metadata.
+ * Ghi dưới khoá dòng (`mutateMetadata`): không đè thay đổi của luồng khác chạy cùng lúc.
  */
 export async function cancelSubcontractReminderSteps(
   input: CancelReminderStepsInput
@@ -48,48 +48,32 @@ export async function cancelSubcontractReminderSteps(
   const now = new Date()
   const cancelMarker = `CANCELLED_BY_${reason.toUpperCase()}:${now.toISOString()}`
 
-  const repo = getSubcontractOrderRepository() as import("../infra/subcontract-order-repository").SubcontractOrderRepository
-  const coord = await repo.findCoordinationScoped(orderId, organizationId)
-
-  if (!coord) {
-    log.warn("cancel_reminder_steps.coord_not_found", { orderId, organizationId })
-    return { orderId, cancelledSteps: [], alreadyDoneSteps: [] }
-  }
-
-  const existingMeta = (coord.metadata as Record<string, unknown> | null) ?? {}
-  const subState = existingMeta.subcontract_dispatch as Record<string, unknown> | undefined
-  const existingRemindersSent = (subState?.remindersSent as Record<string, string> | undefined) ?? {}
-
   const cancelledSteps: ReminderStep[] = []
   const alreadyDoneSteps: ReminderStep[] = []
 
-  const newRemindersSent = { ...existingRemindersSent }
-
-  for (const step of steps) {
-    const existing = existingRemindersSent[step]
-    if (existing && !existing.startsWith("CANCELLED_")) {
-      // Step đã được gửi thật (ISO timestamp) → đây là "đã xong" không phải "đang pending"
-      alreadyDoneSteps.push(step)
-    } else {
-      // Step chưa gửi hoặc đã cancelled trước → đánh dấu cancelled
-      newRemindersSent[step] = cancelMarker
-      cancelledSteps.push(step)
+  // Đọc và ghi dưới khoá dòng — chỉ đổi `remindersSent`, giữ nguyên phần còn lại của phiên
+  const found = await new SubcontractStepStore().mutateMetadata(organizationId, orderId, (current) => {
+    const subState = current.subcontract_dispatch as Record<string, unknown> | undefined
+    if (!subState) return { next: null, result: false }
+    const sent = { ...((subState.remindersSent as Record<string, string> | undefined) ?? {}) }
+    for (const step of steps) {
+      const existing = sent[step]
+      if (existing && !existing.startsWith("CANCELLED_")) {
+        alreadyDoneSteps.push(step) // đã gửi thật — "đã xong", không phải "đang chờ"
+      } else {
+        sent[step] = cancelMarker
+        cancelledSteps.push(step)
+      }
     }
-  }
-
-  if (cancelledSteps.length === 0) {
-    return { orderId, cancelledSteps: [], alreadyDoneSteps }
-  }
-
-  // Cập nhật patch nhỏ — chỉ thay đổi remindersSent trong subcontract_dispatch
-  const updatedSubState = {
-    ...(subState ?? {}),
-    remindersSent: newRemindersSent,
-  }
-
-  await repo.upsertCoordinationMeta(orderId, organizationId, {
-    subcontract_dispatch: updatedSubState,
+    if (cancelledSteps.length === 0) return { next: null, result: true }
+    return { next: { ...current, subcontract_dispatch: { ...subState, remindersSent: sent } }, result: true }
   })
+
+  if (!found) {
+    log.warn("cancel_reminder_steps.coord_not_found", { orderId, organizationId })
+    return { orderId, cancelledSteps: [], alreadyDoneSteps: [] }
+  }
+  if (cancelledSteps.length === 0) return { orderId, cancelledSteps: [], alreadyDoneSteps }
 
   log.info("cancel_reminder_steps.done", {
     orderId,

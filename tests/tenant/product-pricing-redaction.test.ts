@@ -2,6 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { GET as productGet } from "@/app/api/v1/products/[id]/route"
 import { GET as productList } from "@/app/api/v1/products/route"
+import { newProposal } from "@/modules/products/domain/product-proposal"
 import { ProductRepository } from "@/modules/products/infra/product-repository"
 import { updateProduct } from "@/modules/products/use-cases/update-product"
 
@@ -47,7 +48,12 @@ describe("sản phẩm: ẩn BOM và giá sàn/trần theo quyền xem giá", ()
   })
 
   it("người có quyền sửa nhưng không có L5 lưu sản phẩm → BOM/giá sàn-trần đang lưu được giữ, không bị ghi đè", async () => {
-    const product = await new ProductRepository().create(a.ctx, { code: "SP-2", name: "Bó", attributes: ATTRS })
+    // Không có H3 thì chỉ sửa được mẫu đề xuất của chính mình (product-proposal.ts).
+    const product = await new ProductRepository().create(a.ctx, {
+      code: "SP-2",
+      name: "Bó",
+      attributes: { ...ATTRS, proposal: newProposal(a.ctx.userId) },
+    })
     const editor = { ...a.ctx, capabilities: new Set(["L1", "L3"]) }
 
     await updateProduct(editor, product.id, { attributes: { price: 500_000, color: "Đỏ", bom: { flowers: [] } } })

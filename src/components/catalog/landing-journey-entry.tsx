@@ -19,10 +19,10 @@ export function LandingJourneyEntry({ onSelectMode }: LandingJourneyEntryProps) 
           <span>Tạo Landing Page chiến dịch</span>
         </div>
         <h2 className="text-display font-extrabold text-text">
-          Bạn muốn FloraOS thực hiện như thế nào?
+          Bạn muốn smeOS thực hiện như thế nào?
         </h2>
         <p className="text-body-sm text-text-muted leading-relaxed">
-          Đưa những gì bạn đang có — ảnh hoa, video, ghi chú — FloraOS sẽ lo phần còn lại.
+          Đưa những gì bạn đang có — ảnh hoa, video, ghi chú — smeOS sẽ lo phần còn lại.
           Hoặc bạn tự chọn từng bước theo ý muốn.
         </p>
       </div>
@@ -46,7 +46,7 @@ export function LandingJourneyEntry({ onSelectMode }: LandingJourneyEntryProps) 
             <div className="text-title font-extrabold text-text">⚡ AI làm cho tôi</div>
             <p className="text-body-sm text-text-muted leading-relaxed">
               Bạn chỉ cần đưa ảnh hoa, link video hoặc ghi chú ngắn.
-              FloraOS phân tích, tạo tiêu đề, chọn sản phẩm và xuất bản toàn bộ.
+              smeOS phân tích, tạo tiêu đề, chọn sản phẩm và xuất bản toàn bộ.
             </p>
           </div>
 

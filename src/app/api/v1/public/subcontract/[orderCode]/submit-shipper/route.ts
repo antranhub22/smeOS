@@ -1,8 +1,12 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
+import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
+import { subcontractPhotoApprovalBlocker } from "@/modules/greeting-card/use-cases/subcontract-photo-gate"
 import { log } from "@/core/observability/log"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
@@ -34,10 +38,6 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   await enforceRateLimit(request, { scope: "subcontract-submit-shipper", limit: 20, windowMs: 60_000 })
 
   const { orderCode } = await context.params
-  const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
-
   const body = await request.json().catch(() => ({}))
   const parsed = shipperSchema.safeParse(body)
   if (!parsed.success) {
@@ -47,20 +47,22 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   const { branchId, shipperName, shipperPhone, shipperNote } = parsed.data
+  const repo = new SubcontractOrderRepository()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
 
   // Xác minh chi nhánh đang claim đơn này
   const coordMeta = (order.coordination?.metadata as Record<string, unknown> | null) ?? {}
   const subState = coordMeta.subcontract_dispatch as Record<string, unknown> | undefined
-  if (subState?.claimedBranchId && subState.claimedBranchId !== branchId) {
+  if (subState?.claimedBranchId !== branchId) {
     throw unprocessable("Đơn hàng này không thuộc chi nhánh của bạn.")
   }
 
-  // Kiểm tra đơn đã ở trạng thái READY (ảnh đã pass) — mới cho phép nhập shipper
-  if (order.production_status !== "READY") {
-    throw unprocessable(
-      `Đơn hàng chưa đến bước giao hàng (trạng thái hiện tại: ${order.production_status}). Vui lòng upload ảnh thành phẩm trước.`
-    )
-  }
+  // Kiểm tra đơn đã qua ảnh thành phẩm và chưa giao — mới cho phép nhập shipper
+  const alreadyDelivering = order.delivery_status === "DELIVERING" || order.delivery_status === "DELIVERED"
+  if (!alreadyDelivering && !subcontractStepAllowed("SHIPPER", order)) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.SHIPPER)
+  // Còn chờ khách duyệt ảnh thành phẩm → chưa giao (theo chế độ duyệt ảnh tiệm chọn)
+  const waitingCustomer = alreadyDelivering ? null : await subcontractPhotoApprovalBlocker(order.organization_id, order.id)
+  if (waitingCustomer) throw conflict(waitingCustomer)
 
   // Kiểm tra shipper chưa được nhập (idempotent — nếu đã có thì bỏ qua)
   const existingShipper = coordMeta.shipper_info as Record<string, unknown> | undefined
@@ -75,8 +77,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     })
   }
 
-  const coord = await repo.findCoordination(order.id)
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const store = new SubcontractStepStore()
 
   const shipperInfo = {
     shipperName,
@@ -87,20 +88,22 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   // Cập nhật metadata + đổi delivery_status → DELIVERING
-  await repo.updateOrderStatus(order.id, { delivery_status: "DELIVERING" })
-  await repo.upsertCoordinationMeta(order.id, order.organization_id, {
-    shipper_info: shipperInfo,
-    shipper_submitted_at: new Date().toISOString(),
+  const saved = await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { delivery_status: "DELIVERING" },
+    require: SUBCONTRACT_STEP_PRECONDITION.SHIPPER,
+    metadata: (current) => ({ ...current, shipper_info: shipperInfo, shipper_submitted_at: shipperInfo.submittedAt }),
+    events: [{
+      axis: "delivery",
+      fromValue: order.delivery_status,
+      toValue: "DELIVERING",
+      actorId: `branch_${branchId}`,
+      reason: `[Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
+    }],
   })
-  await repo.createOrderEvent({
-    organization_id: order.organization_id,
-    order_id: order.id,
-    axis: "delivery",
-    from_value: order.delivery_status,
-    to_value: "DELIVERING",
-    actor_id: `branch_${branchId}`,
-    reason: `[Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
-  })
+
+  if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.SHIPPER)
 
   // Thông báo cho hệ thống (ZNS/Telegram nội bộ) — điều phối viên biết để chuẩn bị bàn giao
   queueOrderNotification(order.organization_id, order.id, "DISPATCHED")

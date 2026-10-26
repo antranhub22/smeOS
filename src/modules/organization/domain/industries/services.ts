@@ -46,6 +46,15 @@ export const SERVICES_INDUSTRY: IndustryPluginContract = {
       { label: "400.000 – 1.000.000 ₫", min: 400000, max: 1000000 },
       { label: "Trên 1.000.000 ₫", min: 1000000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: true,
+      variantDimensions: [
+        { key: "PACKAGE", label: "Gói dịch vụ", values: ["Cơ bản", "Tiêu chuẩn", "Cao cấp", "VIP"] },
+        { key: "DURATION", label: "Thời lượng", values: ["30 phút", "60 phút", "90 phút", "120 phút"] },
+        { key: "SESSIONS", label: "Số buổi", values: ["1 buổi", "5 buổi", "10 buổi", "20 buổi"] },
+        { key: "PROVIDER", label: "Người thực hiện", values: ["Kỹ thuật viên", "Chuyên viên", "Chuyên gia"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["lượt", "giờ", "buổi", "gói", "lần"],
@@ -94,5 +103,15 @@ export const SERVICES_INDUSTRY: IndustryPluginContract = {
   },
   navigation: {
     hiddenNavKeys: [],
+  },
+  craftFee: {
+    feeLabel: "Phí thực hiện dịch vụ",
+    defaultPercent: 60,
+    minVnd: 100_000,
+    maxVnd: 5_000_000,
+    partnerPercent: 80,
+    complexityLabels: { EASY: "Cơ bản", MEDIUM: "Nâng cao", HARD: "Chuyên sâu" },
+    laborByComplexityVnd: { EASY: 100_000, MEDIUM: 300_000, HARD: 800_000 },
+    peakDays: [],
   },
 }

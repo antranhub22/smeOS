@@ -22,7 +22,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
   const [dangXuat, setDangXuat] = useState(false)
   const [doiMatKhau, setDoiMatKhau] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const { roleUx, userName, userEmail, orgName, can } = useSession()
+  const { roleUx, userName, userEmail, orgName, can, platformCapabilities } = useSession()
 
   useEffect(() => {
     if (!mo) return
@@ -48,7 +48,8 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
     }
   }
 
-  const isSuperUser = userEmail === "tuans2@dev.com" || Boolean(userEmail?.endsWith("@dev.com"))
+  // Lối tắt Console Vận hành: chỉ người vận hành nền tảng thật, không xét đuôi email (rà soát H11)
+  const isSuperUser = (platformCapabilities ?? []).length > 0
 
   return (
     <div className="relative">
@@ -107,7 +108,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                 <ShieldCheck size={16} strokeWidth={2} className="text-primary shrink-0" aria-hidden="true" />
                 <span className="min-w-0">
                   <span className="block font-bold">Console Vận hành</span>
-                  <span className="block truncate text-[11px] font-medium text-text-muted">
+                  <span className="block truncate text-caption font-medium text-text-muted">
                     Quản trị SaaS nền tảng
                   </span>
                 </span>

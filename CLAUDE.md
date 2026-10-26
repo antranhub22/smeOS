@@ -1,6 +1,6 @@
-# CLAUDE.md — smeOS (trước đây FloraOS Core)
+# CLAUDE.md — FloraOS Core
 
-Multi-tenant, multi-industry SaaS for SMEs (originally flower shops): Next.js 16 + Prisma 7/Postgres (`src/`), Python job workers (`workers/`).
+Multi-tenant SaaS for flower shops: Next.js 16 + Prisma 7/Postgres (`src/`), Python job workers (`workers/`).
 Status `CANONICAL` · owner: Product Owner (PO) · changes need PO approval. Loaded every session — keep it short; detail lives in the files it points to.
 
 ## Non-negotiables
@@ -27,7 +27,7 @@ Full rulebook (anti-patterns A1–A12, security, performance, Journey-First UX, 
 ## Stop and ask the PO first when the task would
 
 - touch a feature where the user uploads photos (confirm which of the 14 journey stages run);
-- change `prisma/schema.prisma` at all (database-schema skill) — production deploys run `db push --accept-data-loss`;
+- change `prisma/schema.prisma` at all (database-schema skill) — every change ships a `prisma migrate dev` migration; production runs `npm run db:deploy`;
 - weaken tenancy, RBAC ceilings, the AI privacy floor, the model license filter, or auth/SSO;
 - change PO-locked UX (`<FeatureGuidanceCard />`, Tab Action Header);
 - add a dependency, provider, paid API, or change CI/`render.yaml`;
@@ -68,4 +68,4 @@ Also: a new business rule or bug fix ships with a test; a new unguarded route mu
 
 ## Commands
 
-Setup `docker compose up -d && npm i && npx prisma generate && npx prisma db push && npm run db:seed` · dev `npm run dev` (port 3200) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.
+Setup `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npm run db:seed` · dev `npm run dev` (port 3100) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.

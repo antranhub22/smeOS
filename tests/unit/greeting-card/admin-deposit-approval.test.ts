@@ -3,6 +3,9 @@ import type { TenantContext } from "@/core/tenancy"
 import type { BrochureOrderRepository } from "@/modules/greeting-card/infra/brochure-order-repository"
 import type { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 
+// Nhận đơn kiểm đề xuất huỷ đang chờ — unit test không chạm DB
+vi.mock("@/modules/greeting-card/infra/cancellation-repository", () => ({ CancellationRepository: class { listPending = async () => [] } }))
+
 const confirmDeposit = vi.fn(async () => ({ paidVnd: 250_000 }))
 vi.mock("@/modules/greeting-card/use-cases/confirm-brochure-payment", () => ({ coordinatorConfirmDepositPayment: confirmDeposit }))
 vi.mock("@/modules/greeting-card/use-cases/notify-customer", () => ({ queueOrderNotification: vi.fn() }))

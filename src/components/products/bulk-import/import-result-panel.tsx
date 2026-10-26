@@ -3,6 +3,7 @@
 import { AlertTriangle, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { ImportResult } from "./types"
+import { RecentImportBatches } from "./recent-import-batches"
 
 type Props = { result: ImportResult; onBack: () => void; onReset: () => void }
 
@@ -60,6 +61,7 @@ export function ImportResultPanel({ result, onBack, onReset }: Props) {
           Nhập đợt khác
         </Button>
       </div>
+      <RecentImportBatches />
     </div>
   )
 }

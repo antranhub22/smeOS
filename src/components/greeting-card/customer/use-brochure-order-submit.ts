@@ -52,38 +52,45 @@ interface UseBrochureOrderSubmitParams {
 export function useBrochureOrderSubmit(params: UseBrochureOrderSubmitParams) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  // Trường gây lỗi + số lần bấm gửi → form đưa Spotlight tới đúng khối, kể cả khi lỗi lặp lại
+  const [errorField, setErrorField] = useState<{ field: string; attempt: number } | null>(null)
+  const fail = (field: string, message: string) => {
+    setErrorMessage(message)
+    setErrorField((prev) => ({ field, attempt: (prev?.attempt ?? 0) + 1 }))
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setErrorMessage(null)
+    setErrorField(null)
 
     if (params.isHomestay) {
       if (!params.customerName.trim()) {
-        setErrorMessage("Vui lòng nhập họ tên người đặt phòng")
+        fail("customerName", "Vui lòng nhập họ tên người đặt phòng")
         return
       }
       if (!params.customerPhone.trim()) {
-        setErrorMessage("Vui lòng nhập số điện thoại người đặt phòng")
+        fail("customerPhone", "Vui lòng nhập số điện thoại người đặt phòng")
         return
       }
       if (!params.deliveryDate) {
-        setErrorMessage("Vui lòng chọn ngày nhận phòng (Check-in)")
+        fail("deliveryDate", "Vui lòng chọn ngày nhận phòng (Check-in)")
         return
       }
       if (!params.checkOutDate) {
-        setErrorMessage("Vui lòng chọn ngày trả phòng (Check-out)")
+        fail("checkOutDate", "Vui lòng chọn ngày trả phòng (Check-out)")
         return
       }
       if (params.checkOutDate <= params.deliveryDate) {
-        setErrorMessage("Ngày trả phòng phải sau ngày nhận phòng ít nhất 1 đêm")
+        fail("checkOutDate", "Ngày trả phòng phải sau ngày nhận phòng ít nhất 1 đêm")
         return
       }
       if (!params.isSelfBooking && (!params.recipientName.trim() || !params.recipientPhone.trim())) {
-        setErrorMessage("Vui lòng nhập họ tên và số điện thoại người nhận phòng")
+        fail("recipientName", "Vui lòng nhập họ tên và số điện thoại người nhận phòng")
         return
       }
       if (params.appliedPolicies && customerChoosesPromotion(params.appliedPolicies) && !params.selectedPromotionId) {
-        setErrorMessage(PROMOTION_CHOICE_MISSING)
+        fail("selectedPromotionId", PROMOTION_CHOICE_MISSING)
         return
       }
 
@@ -167,15 +174,8 @@ export function useBrochureOrderSubmit(params: UseBrochureOrderSubmitParams) {
       check.valid = false
     }
     if (!check.valid) {
-      const firstError = Object.values(check.errors)[0] ?? "Thông tin đặt hàng chưa hợp lệ"
-      setErrorMessage(firstError)
-      // Cuộn lên xem lỗi 1 lần duy nhất khi người dùng bấm Gửi đơn
-      if (typeof window !== "undefined") {
-        setTimeout(() => {
-          const el = document.getElementById("order-form-error-banner")
-          el?.scrollIntoView({ behavior: "smooth", block: "center" })
-        }, 50)
-      }
+      const [field, message] = Object.entries(check.errors)[0] ?? ["", "Thông tin đặt hàng chưa hợp lệ"]
+      fail(field, message ?? "Thông tin đặt hàng chưa hợp lệ")
       return
     }
 
@@ -223,6 +223,7 @@ export function useBrochureOrderSubmit(params: UseBrochureOrderSubmitParams) {
 
   return {
     errorMessage,
+    errorField,
     loading,
     setErrorMessage,
     handleSubmit,

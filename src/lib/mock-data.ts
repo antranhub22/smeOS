@@ -174,11 +174,15 @@ export type MockSession = {
   orgName: string
   workspaceKind: WorkspaceKind
   capabilities: string[]
+  /** Mã năng lực nền tảng (N…) nếu người dùng là người vận hành nền tảng — rỗng nếu không. */
+  platformCapabilities?: string[] | undefined
   organization?: {
     id: string
     name?: string
     industry?: string
     industryLocked?: boolean
+    /** Mục điều hướng Admin SaaS ẩn cho ngành của tổ chức; `null` = dùng mặc định của ngành. */
+    navHiddenKeys?: string[] | null
   } | undefined
   /**
    * Khoá vai phân quyền (`roles.key`) của membership hiện tại — CHỈ dùng để

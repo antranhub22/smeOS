@@ -95,6 +95,19 @@ export function coordinatorAcceptanceBlocker(
   }
   const hasProof = Boolean(payment.paymentProofUrl)
   if (payment.paidVnd <= 0 && !hasProof) return "Chưa có thông tin chuyển khoản từ khách"
+  // Chuỗi (PO 22/10/2026): bước của Điều phối là xác nhận đã nhận tiền — tiền đã ghi nhận thì việc tiếp theo
+  // là chọn cửa hàng gia công (tự động hoặc trong Thẻ gia công), không còn nút "nhận đơn"
+  if (workflowPolicy?.requireCoordinatorAcceptance === true && payment.paidVnd > 0) {
+    return "Đã xác nhận nhận tiền — chọn cửa hàng trong Thẻ gia công"
+  }
+  return null
+}
+
+/** Điều phối từ chối nhận đơn: cùng chốt với Điều hành từ chối — đơn đã giao/đã vào sản xuất thì không hoàn tiền 100% */
+export function coordinatorRejectionBlocker(s: OrderProgressState): string | null {
+  if (s.status === "CANCELLED") return "Đơn hàng đã được huỷ trước đó"
+  if (s.status === "COMPLETED" || s.deliveryStatus === "DELIVERED") return "Đơn hàng đã giao xong, không thể từ chối"
+  if (s.productionStatus === "ARRANGING" || s.productionStatus === "READY") return "Đơn đã vào sản xuất — không thể từ chối ở giai đoạn này"
   return null
 }
 

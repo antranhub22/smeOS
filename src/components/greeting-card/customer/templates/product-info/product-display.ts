@@ -18,6 +18,15 @@ export function formatVnd(value: number | null): string {
   return value !== null && value > 0 ? `${value.toLocaleString("vi-VN")} ₫` : "Liên hệ"
 }
 
+/** Giá hiển thị cho khách theo kiểu giá: "Liên hệ", "Từ … – …" (theo phiên bản/cao điểm) hoặc một giá. */
+export function productPriceText(p: Pick<GreetingCatalogProduct, "price" | "priceMode" | "priceMaxVnd">): string {
+  if (p.priceMode === "CONTACT") return "Liên hệ"
+  if (p.price !== null && p.price > 0 && p.priceMaxVnd != null && p.priceMaxVnd > p.price) {
+    return `${formatVnd(p.price)} – ${formatVnd(p.priceMaxVnd)}`
+  }
+  return formatVnd(p.price)
+}
+
 const clean = (v: string | null | undefined): string | null => {
   const t = v?.trim()
   return t ? t : null
@@ -58,7 +67,7 @@ export function toProductDisplay(
 ): ProductDisplay {
   const on = new Set(enabled)
   const value = (k: OptionalDisplayField) => (on.has(k) ? FIELD_VALUE[k](p) : null)
-  const priceLabel = formatVnd(p.price)
+  const priceLabel = productPriceText(p)
   const displayFields = getOptionalDisplayFields(industryKey)
 
   return {
@@ -84,7 +93,7 @@ export function comparisonRows(
   const on = new Set(enabled)
   const displayFields = getOptionalDisplayFields(industryKey)
   return [
-    { label: industryKey === "HOMESTAY" ? "Giá phòng / đêm" : "Giá", get: (p: GreetingCatalogProduct) => formatVnd(p.price) },
+    { label: industryKey === "HOMESTAY" ? "Giá phòng / đêm" : "Giá", get: (p: GreetingCatalogProduct) => productPriceText(p) },
     { label: industryKey === "HOMESTAY" ? "Mã phòng" : "Mã mẫu", get: (p: GreetingCatalogProduct) => p.code },
     ...displayFields.filter((f) => on.has(f.key) && f.key !== "description").map((f) => ({
       label: f.label,

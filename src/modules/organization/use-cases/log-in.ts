@@ -1,4 +1,5 @@
 import { AppError } from "@/core/http/errors"
+import { signInBlockedMessage } from "@/modules/organization/domain/account-approval"
 import { normalizeEmail } from "@/modules/organization/domain/credentials"
 import { expiresAt } from "@/modules/organization/domain/session-policy"
 import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
@@ -34,6 +35,9 @@ export async function logIn(input: LogInInput): Promise<LogInResult> {
   const user = await users.findByEmail(email)
   if (!user || !user.password_hash) throw rejected()
   if (!(await verifyPassword(input.password, user.password_hash))) throw rejected()
+  // Chỉ nói "chờ duyệt" SAU khi đúng mật khẩu — người không có mật khẩu không dò được trạng thái
+  const blocked = signInBlockedMessage(user.approval_status)
+  if (blocked) throw new AppError("CAPABILITY_DENIED", blocked, { reason: `ACCOUNT_${user.approval_status}` })
 
   // Tổ chức đang hoạt động của phiên chọn phía máy chủ, không nhận từ client.
   // Người dùng đổi nó về sau qua `POST /session/organization`.

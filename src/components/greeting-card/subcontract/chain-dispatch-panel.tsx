@@ -15,11 +15,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import { ChainBranchCard, type DispatchedCandidateBranch } from "./chain-branch-card"
+import { dispatchChannelLabel, dispatchFailureText } from "./dispatch-channel-label"
 
 export interface ChainDispatchPanelProps {
   orderId: string
   orderCode: string
-  suggestedCraftFee?: number
+  suggestedCraftFee?: number | undefined // chỉ khi Điều phối sửa tay; bỏ trống → máy chủ tính theo phương án tiệm cài
   onDispatched?: () => void
 }
 
@@ -154,7 +155,7 @@ export function ChainDispatchPanel({
           </span>
           <div>
             <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
-              <span>Điều Phối Chuỗi Tự Động (Matching Engine)</span>
+              <span>Điều phối chuỗi tự động</span>
               <span className="text-caption font-bold px-1.5 py-0.5 rounded-md bg-primary/20 text-primary uppercase">
                 Gate 2
               </span>
@@ -285,7 +286,7 @@ export function ChainDispatchPanel({
       )}
 
       {/* Kết quả phát lệnh nếu đã gửi thành công */}
-      {dispatchResult && !data?.data?.dispatchState?.status && (
+      {dispatchResult && (
         <div className="p-3 rounded-xl bg-success/10 border border-success/30 flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-caption font-bold text-success">
@@ -316,7 +317,7 @@ export function ChainDispatchPanel({
                 <div className="flex items-center gap-1.5">
                   <span className="font-semibold text-foreground">{res.branchName}</span>
                   <span className="text-caption px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold">
-                    {res.channel}
+                    {dispatchChannelLabel(res.channel)}
                   </span>
                 </div>
                 {res.sent ? (
@@ -324,7 +325,7 @@ export function ChainDispatchPanel({
                     <Check size={12} /> Đã gửi riêng
                   </span>
                 ) : (
-                  <span className="text-danger font-medium">{res.error || "Không gửi được"}</span>
+                  <span className="text-danger font-medium">{dispatchFailureText(res.channel, res.error)}</span>
                 )}
               </div>
             ))}

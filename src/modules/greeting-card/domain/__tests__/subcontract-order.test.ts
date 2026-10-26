@@ -67,6 +67,19 @@ describe("subcontract-order state machine", () => {
     expect(result.reason).toBe("ALREADY_CLAIMED")
   })
 
+  it("chi nhánh không có trong lời mời vòng hiện tại nhận lỗi NOT_INVITED", () => {
+    const result = claimSubcontractOrder(initialOpenState, "b9", "Chi nhánh lạ", 5)
+    expect(result.success).toBe(false)
+    if (result.success) return
+    expect(result.reason).toBe("NOT_INVITED")
+    expect(isSubcontractClaimable(initialOpenState, "b9")).toBe(false)
+  })
+
+  it("state cũ chưa lưu danh sách mời vẫn cho nhận như trước", () => {
+    const result = claimSubcontractOrder({ ...initialOpenState, invitedBranchIds: [] }, "b9", "Chi nhánh lạ", 5)
+    expect(result.success).toBe(true)
+  })
+
   it("chi nhánh đã nhận được quyền hủy trong thời hạn Grace Period và đơn quay về OPEN", () => {
     const claimTime = new Date("2026-10-19T08:00:00Z")
     const graceExpiry = new Date("2026-10-19T08:05:00Z")

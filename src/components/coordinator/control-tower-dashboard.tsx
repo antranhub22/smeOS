@@ -31,6 +31,7 @@ import {
 } from "./coordinator-api"
 import { useCustomFieldDefinitions, visibleCustomFieldsForAudience } from "./custom-fields-section"
 import type { FlowerBomItem, StructuredAddress } from "@/modules/products/domain/product-master-index"
+import { useCraftFeeSuggestion } from "@/components/greeting-card/subcontract/use-craft-fee-suggestion"
 
 /**
  * Control Tower — Chức năng 12 (Điều phối đơn hàng).
@@ -123,6 +124,7 @@ export function ControlTowerDashboard({
   const [isCraftAcceptModalOpen, setIsCraftAcceptModalOpen] = useState(false)
   const [isCraftCancelModalOpen, setIsCraftCancelModalOpen] = useState(false)
   const [suggestedFeeForAccept, setSuggestedFeeForAccept] = useState(0)
+  const craftFeeSuggestion = useCraftFeeSuggestion(selectedId)
   const [partners, setPartners] = useState<import("./coordinator-api").CoordinationPartner[]>([])
   const [resolutionDrafts, setResolutionDrafts] = useState<Record<string, string>>({})
   const [newException, setNewException] = useState({ type: "CUSTOMER_CHANGE", severity: "MEDIUM", description: "" })
@@ -747,7 +749,7 @@ export function ControlTowerDashboard({
                   <FloristJobCard
                     orderCode={selectedOrder.orderCode}
                     recipeTitle={selectedOrder.productTitle}
-                    unitPriceVnd={selectedOrder.unitPriceVnd}
+                    unitPriceVnd={selectedOrder.unitPriceVnd} suggestedFeeVnd={craftFeeSuggestion?.suggestedVnd}
                     targetReadyTime={selectedOrder.deliveryTargetTime}
                     deliveryTargetTime={selectedOrder.deliveryTargetTime}
                     sampleImageUrl={selectedOrder.sampleImageUrl}
@@ -962,7 +964,7 @@ export function ControlTowerDashboard({
             orderCode={selectedOrder.orderCode}
             recipeTitle={selectedOrder.productTitle}
             unitPriceVnd={selectedOrder.unitPriceVnd}
-            suggestedCraftFeeVnd={suggestedFeeForAccept || Math.round(selectedOrder.unitPriceVnd * 0.5)}
+            suggestedCraftFeeVnd={suggestedFeeForAccept || craftFeeSuggestion?.suggestedVnd || Math.round(selectedOrder.unitPriceVnd * 0.5)}
             partners={partners}
             currentPartnerId={selectedOrder.partner?.id ?? null}
             onConfirm={handleCraftAccept}

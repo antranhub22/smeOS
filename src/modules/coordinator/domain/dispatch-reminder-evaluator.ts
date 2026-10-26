@@ -35,7 +35,7 @@ function formatTimeString(date: Date | null): string {
 const MILESTONE_DEFINITIONS: Record<CoordinatorMilestoneCode, MilestoneDefinition> = {
   M0: {
     code: "M0",
-    title: "Xác nhận & In Thẻ gia công",
+    title: "Xác nhận và in thẻ gia công",
     description: "Đơn đã nhận thanh toán, cần in thẻ gia công và gửi sản xuất xác nhận",
     recipientType: "WORKSHOP",
     suggestedAction:
@@ -57,7 +57,7 @@ const MILESTONE_DEFINITIONS: Record<CoordinatorMilestoneCode, MilestoneDefinitio
   },
   M2: {
     code: "M2",
-    title: "Hoàn thành sản phẩm & Book ship",
+    title: "Hoàn thành sản phẩm và đặt lịch giao hàng",
     description: "Yêu cầu chụp ảnh sản phẩm hoàn thành, book ship và lấy SĐT shipper",
     recipientType: "WORKSHOP",
     suggestedAction:
@@ -84,7 +84,7 @@ const MILESTONE_DEFINITIONS: Record<CoordinatorMilestoneCode, MilestoneDefinitio
     description: "Nhắn shipper chụp ảnh lúc giao đơn và ảnh người nhận gửi về điều phối",
     recipientType: "SHIPPER",
     suggestedAction:
-      "Gửi tin nhắn dặn shipper chụp ảnh trao hoa & ảnh người nhận rồi gửi về SĐT điều phối",
+      "Gửi tin nhắn dặn shipper chụp ảnh trao hoa và ảnh người nhận rồi gửi về SĐT điều phối",
     buildMessageTemplate: (input) => {
       const shipper = input.shipperName || "anh/chị shipper"
       const phone = input.shipperPhone ? ` (${input.shipperPhone})` : ""

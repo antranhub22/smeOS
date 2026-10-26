@@ -24,10 +24,12 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `video_scenes` | Bảng con, thuộc tổ chức qua `video_jobs.organization_id` |
 | `ai_capabilities` · `ai_models` | Sổ đăng ký nền AI cấp nền tảng; `tests/helpers/database.ts` cũng không truncate hai bảng này |
 | `flower_taxonomy` · `flower_confusable_pairs` | Tri thức ngành hoa, không phải dữ liệu của một cửa hàng — xem mục 16 |
+| `platform_secrets` | Bí mật cấp nền tảng đã niêm phong (token Zalo OA chung) — xem mục `chain_branches` |
 | `platform_operators` · `platform_role_capabilities` · `platform_audit_logs` | Console Vận hành Nền tảng (P25, 19/09) — dữ liệu của người vận hành xuyên tổ chức, không thuộc một tổ chức nào. Từ vựng năng lực `N1`–`N8` TÁCH HẲN khỏi `roles`/`role_capabilities` của tenant (D-N6) — không dùng `capability_scope`, không thêm giá trị `PLATFORM` vào enum đó. Xem `../kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md` mục 4.1 |
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Xem mục 22b |
 
+| `platform_settings` | Cấu hình cấp nền tảng, một dòng mỗi khoá, chỉ Console vận hành ghi (mã `N12`) — vd ma trận điều hướng theo ngành áp cho MỌI tổ chức cùng ngành. Xem mục 31 |
 Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên là lỗi chặn ở review.
 
 *Ba câu cũ ở mục 1, mục 16 và mục 19 từng nói ba con số khác nhau ("duy nhất `users`" · "ngoại lệ duy nhất `flower_taxonomy`" · "hai bảng, gồm `platform_audit_logs`"), không câu nào đúng — bảng trên thay cả ba. Cập nhật 19/09: ba bảng Console Vận hành đã XÂY (P25a), không còn là đề xuất — dòng cũ ghi "`platform_audit_logs` chưa tồn tại... dải N1–N8 chưa xây" đã hết hiệu lực.*
@@ -82,15 +84,24 @@ enum provider_health_status { HEALTHY  DEGRADED  UNAVAILABLE }
 ## 3. Nền tảng đa tenant — P1
 
 ```prisma
+enum user_approval_status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model users {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  password_hash String?
-  name          String?
-  avatar_url    String?
-  locale        String   @default("vi")
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  password_hash       String?
+  name                String?
+  avatar_url          String?
+  locale              String               @default("vi")
+  approval_status     user_approval_status @default(APPROVED) // 22/10/2026 — mục 31
+  approval_decided_at DateTime?
+  approval_decided_by String?
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
 
   memberships   memberships[]
   sessions      sessions[]
@@ -197,6 +208,7 @@ model memberships {
   user_id         String
   role_id         String
   branch_id       String?           // null = phạm vi toàn tổ chức
+  chain_branch_code String?         // chi nhánh chuỗi của tài khoản vai `cua_hang` (PO 22/10/2026)
   status          membership_status @default(INVITED)
   invited_at      DateTime          @default(now())
   joined_at       DateTime?
@@ -204,6 +216,7 @@ model memberships {
   user            users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
   @@unique([organization_id, user_id])
   @@index([organization_id])
+  @@index([organization_id, chain_branch_code])
   @@index([user_id])
 }
 ```
@@ -2434,5 +2447,198 @@ model decision_registry {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+```
+
+## 30. Bổ sung đợt smeOS đa ngành (17–21/10/2026)
+
+> **Bổ sung 21/10/2026** theo mã thật — các bảng và cột thêm từ mốc chuyển sang smeOS (`8c53b38`).
+>
+> - `product_bookings` — **TENANT**. Lịch đặt chỗ theo khoảng ngày (Homestay, chế độ `BOOKING_CALENDAR`). `order_id = null` là khoá thủ công do admin đặt. Ngày ra không tính. Từ 22/10/2026 ngày là cột `DATE`, trạng thái là enum `booking_status`, `order_id` có khoá ngoại sang `orders` — xem mục 31. Chống chồng lịch: mọi lần ghi đi qua `AvailabilityRepository.createBooking`, khoá tư vấn theo sản phẩm (`pg_advisory_xact_lock`) rồi kiểm chồng với đặt chỗ ACTIVE trong cùng giao dịch. Chưa đặt ràng buộc `EXCLUDE` ở CSDL, vì Prisma không khai được và `db push` lúc deploy sẽ gỡ ràng buộc ngoài lược đồ. Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
+> - `staff_notifications` — **TENANT**. Nhật ký thông báo nhân viên đa kênh (APP_INBOX, ZALO, SMS, TELEGRAM, WHATSAPP, MESSENGER). `recipient_info` là thông tin liên hệ nội bộ, chưa có hạn lưu (M5). Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
+> - Cột mới: `products.availability_config` (Json, cấu hình kiểm khả dụng theo ngành), `users.phone`, `greeting_integrations.staff_notify_enabled` / `staff_notify_channels` / `staff_notify_config_encrypted` (mã hoá như `notify_config_encrypted`) / `staff_notify_events`.
+
+```prisma
+enum booking_status {
+  ACTIVE
+  CANCELLED
+}
+
+model product_bookings {
+  id              String         @id @default(uuid())
+  organization_id String
+  product_id      String
+  order_id        String? // null = admin block thủ công
+  check_in_date   DateTime       @db.Date
+  check_out_date  DateTime       @db.Date // exclusive — ngày check-out không được tính
+  note            String? // "Bảo trì", "Sửa chữa", null = đặt từ đơn khách
+  status          booking_status @default(ACTIVE)
+  created_at      DateTime       @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id])
+  order        orders?       @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id, product_id, check_in_date])
+  @@index([organization_id, product_id, status])
+  @@index([organization_id, order_id])
+}
+
+/// Nhật ký thông báo nhân viên Thẻ Chào (Đa kênh: APP_INBOX, ZALO, TELEGRAM, WHATSAPP, MESSENGER, SMS)
+model staff_notifications {
+  id              String   @id @default(uuid())
+  organization_id String
+  order_id        String?
+  event_key       String
+  channel         String // APP_INBOX | ZALO | SMS | TELEGRAM | WHATSAPP | MESSENGER
+  recipient_role  String? // ADMIN | SALE | COORDINATOR
+  recipient_id    String? // user_id hoặc null nếu broadcast toàn bộ vai trò
+  recipient_info  String? // SĐT, Telegram Chat ID, Zalo User ID...
+  title           String?
+  message         String?
+  status          String   @default("SENT") // SENT | FAILED | SKIPPED
+  provider_msg_id String?
+  error           String?
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id, event_key])
+  @@index([organization_id, recipient_id])
+}
+```
+
+## 31. Cấu hình nền tảng và đặt chỗ (22/10/2026)
+
+> - `product_bookings` — kiểu dữ liệu chặt (rà soát M5). `check_in_date`/`check_out_date` là `DATE`; code vẫn dùng chuỗi `YYYY-MM-DD` và chỉ đổi ở biên repository (`src/modules/availability/domain/booking-day.ts`; ngày không có thật trên lịch → 422). `status` là enum `booking_status`. `order_id` có khoá ngoại sang `orders`, `ON DELETE CASCADE`: đơn chỉ bị xoá cứng khi dọn tenant bàn giao, và đặt chỗ sinh từ đơn đi theo; khoá thủ công (`order_id = null`) ở lại. Migration `20261022110000_product_bookings_typed` VIẾT TAY: đổi kiểu tại chỗ (`ALTER … TYPE … USING`), không để Prisma xoá và tạo lại cột. Ngày sai thì migration dừng, không đoán. Trạng thái lạ chuyển thành `CANCELLED`. Đặt chỗ trỏ tới đơn đã xoá được giải phóng (`CANCELLED`, ghi chú "Đơn gốc đã bị xoá"). Ca thử: `tests/tenant/availability-typed-dates.test.ts`.
+> - `users.approval_status` (enum `user_approval_status`, PO 22/10/2026) — duyệt tài khoản tự đăng ký. `/auth/signup` và `/auth/instant-trial` tạo tài khoản `PENDING`. Chỉ `APPROVED` đăng nhập được (`log-in.ts`) và dùng được phiên (`resolve-session.ts`; tài khoản bị chuyển về `PENDING`/`REJECTED` mất luôn phiên đang mở). Mặc định cột là `APPROVED`: tài khoản có sẵn, nhân viên được mời và tài khoản tạo bằng script vận hành không phải duyệt. Superadmin mã `N13` duyệt ở `/van-hanh/dang-ky`; `approval_decided_by` lưu `user_id` của superadmin. Migration `20261022120000_user_approval` chỉ thêm cột. Ca thử: `tests/tenant/registration-approval.test.ts`, `tests/platform/registration-approval.test.ts`.
+> - `platform_settings` — **NỀN TẢNG** (không có `organization_id`, mục 1). Khoá `nav_matrix_overrides`: ma trận điều hướng theo ngành do Admin SaaS ghi đè ở Console `/van-hanh` (`PUT /platform/nav-matrix`, mã `N12`). Trước 22/10 lưu vào một tệp trên máy chủ: mất khi deploy, mỗi instance một bản, và menu không đọc nó. Giờ máy chủ đọc (bộ nhớ đệm 30 giây) và gửi danh sách mục ẩn xuống qua phiên (`organization.navHiddenKeys`). Chưa có dòng thì dùng `src/lib/data/industry-nav-matrix-overrides.json` làm giá trị khởi đầu. Migration `20261022100000_platform_settings`. Ca thử: `tests/platform/nav-matrix-overrides.test.ts`.
+
+> - `chain_branches` — **TENANT** (rà soát M5, PO duyệt 22/10/2026). Chi nhánh nhận gia công của điều phối chuỗi, trước nằm trong `organizations.settings.chain_branches`: mỗi lần trừ điểm ghi đè cả mảng JSON, hai lần phạt cùng lúc mất một. Giờ mỗi chi nhánh một dòng, khoá `(organization_id, branch_code)`; `branch_code` là `branchId` phía domain (mã trên link gia công `?branch=`), khác `branches.id`. Nhập Excel (`POST /greeting-card/chain-branches/bulk-import`) cập nhật theo mã, giữ số lần phạt và lịch sử phạt. Trừ điểm (`ChainBranchRepository.applyPenalty`) khoá dòng `FOR UPDATE`: −2 điểm, sàn 10, lịch sử tối đa 50 mục. Migration `20261022130000_chain_branches_table` VIẾT TAY: chép từng phần tử JSON có mã và tên sang bảng (trùng mã giữ phần tử cuối), rồi xoá khoá `chain_branches` khỏi `settings`. Ca thử: `tests/tenant/chain-branches-table.test.ts`.
+
+```prisma
+model chain_branches {
+  id                   String   @id @default(uuid())
+  organization_id      String
+  branch_code          String
+  name                 String
+  address              String?
+  ward                 String?
+  district             String?
+  province             String?
+  service_wards        Json?
+  latitude             Float?
+  longitude            Float?
+  quality_score        Float    @default(90)
+  active_jobs_count    Int      @default(0)
+  max_concurrent_jobs  Int      @default(5)
+  is_active            Boolean  @default(true)
+  channels             Json? // { phone, telegramChatId, zaloPhone, zaloUserId, messengerId }
+  zalo_link_code       String?  @unique
+  cancellation_count   Int      @default(0)
+  bypass_count         Int      @default(0)
+  cancellation_history Json?
+  bypass_history       Json?
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@unique([organization_id, branch_code])
+  @@index([organization_id])
+}
+```
+
+> - `platform_secrets` — **NỀN TẢNG** (PO duyệt 22/10/2026). Bí mật không thuộc tổ chức nào, `sealed_value` luôn là bản niêm phong secret-box (không bao giờ trả ra API/log). Hiện chỉ có khoá `zalo_oa_tokens`: access + refresh token của Zalo OA chung. Refresh token Zalo dùng một lần nên làm mới chạy dưới khoá dòng `FOR UPDATE` (`PlatformSecretRepository.withLock`). Không nằm trong TRUNCATE của bộ test tenant (ca thử tự dọn). Cùng migration `20261022140000_zalo_oa_platform`: cột `chain_branches.zalo_link_code` (mã `ZL` + 8 ký tự, duy nhất toàn nền tảng — webhook OA suy ra tổ chức từ mã). Ca thử: `tests/tenant/zalo-oa-branch-link.test.ts`.
+
+> - `chain_branches.ward` · `district` · `province` · `service_wards` (PO duyệt 22/10/2026, migration `20261022160000_chain_branch_area`, chỉ thêm cột). Khu vực hành chính của chi nhánh, nhập từ Excel; `service_wards` là mảng phường/xã lân cận nhận giao thêm. Khi không tính được khoảng cách theo toạ độ, điều phối xếp hạng theo mức khớp với địa chỉ người nhận (`orders.delivery_address.parts`): cùng phường (kể cả phường phục vụ) > cùng quận (chỉ khi cả hai còn ghi quận cũ) > cùng tỉnh; khác tỉnh bị loại (`domain/area-match.ts`, so không dấu, bỏ tiền tố). Ca thử: `tests/tenant/chain-branch-area.test.ts`.
+
+```prisma
+model platform_secrets {
+  key          String   @id
+  sealed_value String
+  updated_at   DateTime @updatedAt
+}
+```
+
+```prisma
+model platform_settings {
+  key        String   @id
+  value      Json
+  updated_by String?
+  updated_at DateTime @updatedAt
+}
+```
+
+
+## 32. Quản trị danh mục sản phẩm (23/10/2026)
+
+> - **TENANT**, PO duyệt 23/10/2026 — giai đoạn 3 của `docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md`. Migration `20261023024723_product_catalog_governance` chỉ thêm ba bảng. Ca thử: `tests/tenant/product-governance.test.ts`.
+> - `product_change_requests` — nhân viên không có `H3` đề xuất sửa mẫu chính thức; bản gốc không đổi tới khi Điều hành duyệt (toàn bộ hoặc một phần). `base_updated_at` khác `products.updated_at` lúc duyệt → 409, không tự gộp. Quá `expires_at` (30 ngày) tác vụ quét đóng `EXPIRED`.
+> - `product_revisions` — ảnh chụp nội dung mẫu TRƯỚC mỗi lần đổi (Điều hành sửa, duyệt đề xuất sửa, nhập Excel cập nhật, khôi phục). Khôi phục giữ nguyên trạng thái bán và nhãn đề xuất hiện tại.
+> - `product_import_batches` — mỗi lần gọi `POST /products/batch-import`; hoàn tác trong 24 giờ: mẫu tạo ra vào thùng rác, mẫu bị cập nhật trả về phiên bản đầu tiên cùng `import_batch_id`.
+> - Trạng thái mẫu đề xuất mới (giai đoạn 1–2) KHÔNG có cột riêng: nằm ở `products.attributes.proposal` (`pending`/`approved`/`rejected`/`expired`), chỉ máy chủ ghi.
+
+```prisma
+model product_change_requests {
+  id              String    @id @default(uuid())
+  organization_id String
+  product_id      String
+  proposed_by     String
+  changes         Json // tập con trường của PATCH /products/:id (đã bỏ khoá chỉ máy chủ ghi)
+  base_updated_at DateTime
+  status          String    @default("PENDING") // PENDING | APPROVED | PARTIAL | REJECTED | EXPIRED
+  applied_fields  Json? // các trường Điều hành chọn áp dụng khi duyệt một phần
+  reviewed_by     String?
+  reviewed_at     DateTime?
+  note            String?
+  expires_at      DateTime
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, product_id])
+}
+```
+
+```prisma
+model product_revisions {
+  id              String   @id @default(uuid())
+  organization_id String
+  product_id      String
+  snapshot        Json // name, code, category, shape, facing, container, status, attributes, availability_config
+  reason          String // EDIT | CHANGE_REQUEST | IMPORT | RESTORE
+  actor_id        String
+  import_batch_id String?
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  product      products      @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, product_id, created_at])
+  @@index([organization_id, import_batch_id])
+}
+```
+
+```prisma
+model product_import_batches {
+  id              String    @id @default(uuid())
+  organization_id String
+  created_by      String
+  created_ids     Json // string[]
+  updated_ids     Json // string[]
+  undone_at       DateTime?
+  undone_by       String?
+  created_at      DateTime  @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
 }
 ```

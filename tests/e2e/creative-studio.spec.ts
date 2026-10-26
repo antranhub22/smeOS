@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto"
 import path from "node:path"
 
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test"
+import { approveAndLogin } from "./ux/helpers"
 
 /**
  * Hành trình Creative Studio đầu cuối (25/09/2026) — trình duyệt thật, app
@@ -56,7 +57,8 @@ test("hành trình Creative Studio: ảnh gốc → Master → biến thể → 
   const dangKy = await page.request.post("/api/v1/auth/signup", {
     data: { email, password: "MatKhau-E2E-2026!", name: "E2E", organization_name: "Tiệm hoa E2E" },
   })
-  expect(dangKy.status()).toBe(201)
+  expect(dangKy.status()).toBe(202) // chờ superadmin duyệt (PO 22/10/2026)
+  await approveAndLogin(page.request, email, "MatKhau-E2E-2026!")
 
   // 2. Mở Creative Studio (Khu vực A = Chặng 01–05) và tải ảnh qua ô chọn tệp của thẻ Chặng 01.
   await page.goto("/creative-studio")

@@ -9,18 +9,12 @@ const ctx: TenantContext = {
   capabilities: new Set(["I1"]),
 }
 
-const { startInline, finishInline, findById } = vi.hoisted(() => ({
-  startInline: vi.fn(),
-  finishInline: vi.fn(),
-  findById: vi.fn(),
+const startInline = vi.fn()
+const finishInline = vi.fn()
+const findById = vi.fn()
+vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
+  GenerationJobRepository: vi.fn().mockImplementation(function () { return { startInline, finishInline, findById } }),
 }))
-vi.mock("@/modules/jobs/infra/generation-job-repository", () => {
-  const instance = { startInline, finishInline, findById }
-  return {
-    GenerationJobRepository: vi.fn().mockImplementation(() => instance),
-    getGenerationJobRepository: vi.fn().mockImplementation(() => instance),
-  }
-})
 vi.mock("@/modules/content-engine/use-cases/generate-content", () => ({ generateContent: vi.fn() }))
 vi.mock("@/modules/usage/use-cases/refund-partial", () => ({ refundPartial: vi.fn() }))
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({ enqueueJob: vi.fn() }))

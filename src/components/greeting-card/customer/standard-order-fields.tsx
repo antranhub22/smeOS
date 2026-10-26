@@ -8,13 +8,9 @@ import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-pr
 import { ViDateInput } from "./vi-date-input"
 import { DeliveryTimePicker } from "./delivery-time-picker"
 import { AddressFields } from "./address-fields"
-import { OrderNotesFields } from "./order-notes-fields"
-import { useI18n } from "@/lib/i18n"
 
 import { AvailabilityIndicator } from "./availability-indicator"
 import type { HomestayAvailabilityState } from "./homestay-order-fields"
-
-import type { OrderNotesValue } from "./order-notes-fields"
 
 interface StandardOrderFieldsProps {
   idPrefix: string
@@ -29,17 +25,14 @@ interface StandardOrderFieldsProps {
   shipping: ShippingConfig
   fullSlots?: readonly string[] | undefined
   addressParts: AddressParts
-  cardMessage?: string | undefined
-  senderNote?: string | undefined
-  deliveryNote?: string | undefined
-  mapUrl?: string | undefined
+  /** Người mua cũng là người nhận → ẩn ô người nhận */
+  hideRecipient?: boolean | undefined
   availability?: HomestayAvailabilityState | undefined
   onRecipientNameChange: (val: string) => void
   onRecipientPhoneChange: (val: string) => void
   onDeliveryDateChange: (val: string) => void
   onDeliveryTimeSlotChange: (val: string) => void
   onAddressPartsChange: (val: AddressParts) => void
-  onNotesChange: (patch: Partial<OrderNotesValue>) => void
 }
 
 export function StandardOrderFields({
@@ -55,36 +48,31 @@ export function StandardOrderFields({
   shipping,
   fullSlots,
   addressParts,
-  cardMessage,
-  senderNote,
-  deliveryNote,
-  mapUrl,
+  hideRecipient,
   availability,
   onRecipientNameChange,
   onRecipientPhoneChange,
   onDeliveryDateChange,
   onDeliveryTimeSlotChange,
   onAddressPartsChange,
-  onNotesChange,
 }: StandardOrderFieldsProps) {
-  const { locale } = useI18n()
-  const isEn = locale === "en"
   const orderTerms = getIndustryOrderTerms(industryKey)
-  const recipientLabel = isEn ? "Recipient" : orderTerms.recipientShortLabel
-  const dateLabel = isEn ? "Delivery Date" : orderTerms.deliveryDateLabel
+  const recipientLabel = orderTerms.recipientShortLabel
+  const dateLabel = orderTerms.deliveryDateLabel
 
   return (
     <div className="flex flex-col gap-4">
       {/* Người nhận */}
+      {!hideRecipient && (
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor={`${idPrefix}-recipientName`} className="block text-body-sm font-bold text-foreground mb-1">
-            {isEn ? "Recipient Full Name" : `Họ tên ${recipientLabel}`} <span className="text-danger">*</span>
+            Họ tên {recipientLabel} <span className="text-danger">*</span>
           </label>
           <input
             type="text"
             required
-            placeholder={isEn ? "e.g., Jane Doe" : "VD: Trần Thị B"}
+            placeholder="VD: Trần Thị B"
             value={recipientName}
             maxLength={ORDER_FIELD_MAX.name}
             id={`${idPrefix}-recipientName`}
@@ -95,14 +83,14 @@ export function StandardOrderFields({
         </div>
         <div>
           <label htmlFor={`${idPrefix}-recipientPhone`} className="block text-body-sm font-bold text-foreground mb-1">
-            {isEn ? "Recipient Phone Number" : "Số điện thoại người nhận"} <span className="text-danger">*</span>
+            Số điện thoại người nhận <span className="text-danger">*</span>
           </label>
           <input
             type="tel"
             required
-            placeholder={isEn ? "e.g., +1 234 567 8900" : "VD: 0912345678"}
+            placeholder="VD: 0912345678"
             value={recipientPhone}
-            maxLength={18}
+            maxLength={15}
             id={`${idPrefix}-recipientPhone`}
             autoComplete="off"
             inputMode="tel"
@@ -111,6 +99,7 @@ export function StandardOrderFields({
           />
         </div>
       </div>
+      )}
 
       {/* Ngày & Giờ giao */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -130,7 +119,7 @@ export function StandardOrderFields({
         </div>
         <div>
           <label htmlFor={`${idPrefix}-deliveryTimeSlot`} className="block text-body-sm font-bold text-foreground mb-1">
-            {isEn ? "Preferred Time Window" : "Khung giờ mong muốn"}
+            Khung giờ mong muốn
           </label>
           <DeliveryTimePicker
             id={`${idPrefix}-deliveryTimeSlot`}
@@ -157,19 +146,6 @@ export function StandardOrderFields({
       )}
 
       <AddressFields idPrefix={idPrefix} value={addressParts} inputClassName={inputClassName} onChange={onAddressPartsChange} />
-
-      <OrderNotesFields
-        idPrefix={idPrefix}
-        value={{
-          cardMessage: cardMessage ?? "",
-          senderNote: senderNote ?? "",
-          deliveryNote: deliveryNote ?? "",
-          mapUrl: mapUrl ?? "",
-        }}
-        inputClassName={inputClassName}
-        industryKey={industryKey}
-        onChange={onNotesChange}
-      />
     </div>
   )
 }

@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { ShieldAlert, Clock, AlertTriangle, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { BypassRequestModal } from "./bypass-request-modal"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface StepBypassRequestInfo {
   status: "PENDING" | "APPROVED" | "REJECTED"
@@ -42,7 +43,7 @@ export function SubcontractBypassControl({
   async function handleSendRequest(reason: string) {
     const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/request-bypass`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: subcontractAccessHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ branchId, step: stepKey, reason }),
     })
     const json = await res.json().catch(() => ({}))
@@ -64,7 +65,7 @@ export function SubcontractBypassControl({
             <span className="text-text-muted">
               Lý do gửi: &ldquo;{existingRequest?.reason}&rdquo;
             </span>
-            <span className="text-[11px] text-danger font-medium mt-1">
+            <span className="text-caption text-danger font-medium mt-1">
               * Lưu ý: Khi được duyệt, chi nhánh sẽ bị trừ 2 điểm chất lượng KPI theo quy chế chuỗi.
             </span>
           </div>

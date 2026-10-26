@@ -9,20 +9,23 @@
  * Hành động này triệt tiêu (First-Wins Mutex) toàn bộ reminder M4 đang pending.
  */
 
+import { prepareLateDeliveryDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
+import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
 import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
-import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 
 const MAX_POD_BYTES = 10 * 1024 * 1024
 
@@ -45,6 +48,7 @@ function sniffImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; mimeType:
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R5")
   const { id: orderId } = await context.params
 
   const repo = new SubcontractOrderRepository()
@@ -103,11 +107,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
       sampleImageUrl = await storage.signedUrl(sampleImageUrl, 3600, "GET").catch(() => sampleImageUrl)
     }
 
-    const coord = await repo.findCoordination(order.id)
-    const coordMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
-    const existingQcPhotos = Array.isArray(coordMeta.qc_photos)
-      ? (coordMeta.qc_photos as string[])
-      : []
+    const coordExistingMeta = await new SubcontractStepStore().readMetadata(order.organization_id, order.id)
+    const existingQcPhotos = Array.isArray(coordExistingMeta.qc_photos) ? (coordExistingMeta.qc_photos as string[]) : []
     const latestQcKey = existingQcPhotos[existingQcPhotos.length - 1]
     let qcImageUrl: string | undefined
     if (latestQcKey) {
@@ -120,6 +121,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
     const { verifyPodPhotoWithAi } = await import("@/modules/greeting-card/use-cases/verify-pod-photo-ai")
     const aiVerify = await verifyPodPhotoWithAi({
+      organizationId: order.organization_id,
+      orderId: order.id,
       productName,
       sampleImageUrl,
       qcImageUrl,
@@ -127,7 +130,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
       podPhotoMimeType: sniffed.mimeType,
     })
 
-    if (!aiVerify.isMatch) {
+    // Điều phối là người duyệt: chỉ chặn khi AI kết luận SAI ảnh; AI không chạy được thì người tự quyết
+    if (aiVerify.verdict === "MISMATCH") {
       throw unprocessable(
         `❌ AI phát hiện ảnh giao hàng không hợp lệ: ${aiVerify.reason} (${aiVerify.confidenceScore}%). Vui lòng kiểm tra lại ảnh chụp!`
       )
@@ -152,52 +156,35 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   }
 
   // Cập nhật DB
-  const coord = await repo.findCoordination(order.id)
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
-  const existingPodPhotos = Array.isArray(existingMeta.pod_photos)
-    ? (existingMeta.pod_photos as string[])
-    : []
-
-  const deliveryProof = {
-    photoUrls: podPhotoStorageKey ? [...existingPodPhotos, podPhotoStorageKey] : existingPodPhotos,
-    note: confirmNote || "Điều phối xác nhận giao hàng thành công",
-    deliveredAt,
-    confirmedByCoordinator: ctx.userId,
-    confirmMode,
-  }
-
-  const orderRepo = getOrderRepository()
-
-  await repo.upsertCoordinationMeta(order.id, order.organization_id, {
-    ...(podPhotoStorageKey && { pod_photos: deliveryProof.photoUrls }),
-    delivery_proof: deliveryProof,
-    last_pod_uploaded_at: deliveredAt,
+  const store = new SubcontractStepStore()
+  const actorId = `coordinator:${ctx.userId}`
+  // Điều phối được xác nhận giao cả khi chưa nhập shipper (tiệm tự giao), nhưng hoa phải đã xong
+  // và đơn chưa huỷ/hoàn tất — trước 22/10/2026 đơn đã huỷ vẫn bị đưa sang COMPLETED (rà soát cụm G)
+  const applyLateFee = await prepareLateDeliveryDeduction(order.organization_id, order.id, new CraftFeeFactsRepository(), new Date(deliveredAt))
+  const saved = await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { delivery_status: "DELIVERED", status: "COMPLETED" },
+    require: { productionStatus: ["READY"], deliveryStatus: ["PENDING", "DISPATCHED", "DELIVERING"] },
+    metadata: (current) => {
+      const podPhotos = Array.isArray(current.pod_photos) ? (current.pod_photos as string[]) : []
+      const photoUrls = podPhotoStorageKey ? [...podPhotos, podPhotoStorageKey] : podPhotos
+      const deliveryProof = {
+        photoUrls,
+        note: confirmNote || "Điều phối xác nhận giao hàng thành công",
+        deliveredAt,
+        confirmedByCoordinator: ctx.userId,
+        confirmMode,
+      }
+      return applyLateFee({ ...current, ...(podPhotoStorageKey && { pod_photos: photoUrls }), delivery_proof: deliveryProof, last_pod_uploaded_at: deliveredAt })
+    },
+    events: [
+      { axis: "delivery", fromValue: order.delivery_status || "DELIVERING", toValue: "DELIVERED", actorId, reason: `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}` },
+      { axis: "status", fromValue: order.status, toValue: "COMPLETED", actorId, reason: "[Hoàn Tất] Điều phối xác nhận giao hàng thành công." },
+    ],
   })
 
-  await orderRepo.update(order.organization_id, order.id, {
-    deliveryStatus: "DELIVERED",
-    status: "COMPLETED",
-  })
-
-  await orderRepo.recordEvent(
-    order.organization_id,
-    order.id,
-    "delivery",
-    "DELIVERED",
-    `coordinator:${ctx.userId}`,
-    order.delivery_status || "DELIVERING",
-    `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}`
-  )
-
-  await orderRepo.recordEvent(
-    order.organization_id,
-    order.id,
-    "order",
-    "COMPLETED",
-    `coordinator:${ctx.userId}`,
-    order.status,
-    "[Hoàn Tất] Điều phối xác nhận giao hàng thành công."
-  )
+  if (!saved) throw conflict("Đơn hàng chưa có ảnh thành phẩm được duyệt, hoặc đã huỷ/hoàn tất.")
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M4 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({

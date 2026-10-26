@@ -1,5 +1,5 @@
 {
-  "total": 70,
+  "total": 66,
   "files": {
     "scripts/check-industry.ts": {
       "@typescript-eslint/no-explicit-any": 5
@@ -36,12 +36,6 @@
     },
     "src/app/(platform)/van-hanh/to-chuc/[id]/page.tsx": {
       "react-hooks/set-state-in-effect": 1
-    },
-    "src/app/api/v1/public/subcontract/[orderCode]/submit-delivery/route.ts": {
-      "@typescript-eslint/no-explicit-any": 2
-    },
-    "src/app/api/v1/public/subcontract/[orderCode]/upload-qc/route.ts": {
-      "@typescript-eslint/no-explicit-any": 1
     },
     "src/components/availability/manual-block-modal.tsx": {
       "react-hooks/purity": 1
@@ -89,9 +83,6 @@
       "react-hooks/rules-of-hooks": 1
     },
     "src/components/greeting-card/subcontract/chain-dispatch-panel.tsx": {
-      "react-hooks/set-state-in-effect": 1
-    },
-    "src/components/greeting-card/subcontract/subcontract-claim-card.tsx": {
       "react-hooks/set-state-in-effect": 1
     },
     "src/components/layout/desktop-nav.tsx": {

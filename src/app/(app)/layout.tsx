@@ -12,6 +12,7 @@ import { redirect } from "next/navigation"
 import { SessionProvider } from "@/lib/session"
 import { BottomNav } from "@/components/layout/bottom-nav"
 import { DesktopNav } from "@/components/layout/desktop-nav"
+import { MobileNavDrawer } from "@/components/layout/mobile-nav-drawer"
 import { GlobalImageZoom } from "@/components/ui/global-image-zoom"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
 import { SessionTakeoverWatcher } from "@/components/layout/session-takeover-watcher"
@@ -21,7 +22,6 @@ import { LiveRegionProvider } from "@/components/ui/live-region"
 import { I18nProvider } from "@/lib/i18n"
 
 import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
-import { InternalChatWidget } from "@/components/internal-chat/internal-chat-widget"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -51,19 +51,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             Bỏ qua tới nội dung
           </a>
           <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-none md:flex-row">
-            <DesktopNav isDev={process.env.NODE_ENV !== "production"} />
-            <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-hidden focus:outline-none">
-              {children}
-            </div>
+            <MobileNavDrawer>
+              <DesktopNav />
+              <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-hidden focus:outline-none">
+                {children}
+              </div>
+            </MobileNavDrawer>
             <BottomNav />
           </div>
           <GlobalImageZoom />
           <SessionTakeoverWatcher />
           <FloraOSGlobalCopilot />
-          <InternalChatWidget />
         </LiveRegionProvider>
       </I18nProvider>
     </SessionProvider>
   )
 }
-

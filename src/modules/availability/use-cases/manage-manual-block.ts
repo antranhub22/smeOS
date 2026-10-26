@@ -1,6 +1,5 @@
-import type { IAvailabilityRepository } from "../domain/repositories/availability-repository.interface"
-import { getAvailabilityRepository } from "../infra/availability-repository"
-import { validationFailed } from "@/core/http/errors"
+import { AvailabilityRepository } from "../infra/availability-repository"
+import { conflict, notFound, validationFailed } from "@/core/http/errors"
 
 export interface ManualBlockInput {
   organizationId: string
@@ -12,7 +11,7 @@ export interface ManualBlockInput {
 
 export async function createManualBlock(
   input: ManualBlockInput,
-  repo: IAvailabilityRepository = getAvailabilityRepository(),
+  repo = new AvailabilityRepository(),
 ): Promise<string> {
   if (!input.checkInDate || !/^\d{4}-\d{2}-\d{2}$/.test(input.checkInDate)) {
     throw validationFailed({ checkInDate: "Ngày bắt đầu không hợp lệ" })
@@ -24,7 +23,10 @@ export async function createManualBlock(
     throw validationFailed({ checkOutDate: "Ngày kết thúc phải sau ngày bắt đầu" })
   }
 
-  return repo.createBooking({
+  // Sản phẩm của tổ chức khác → 404 như mọi tài nguyên ngoài tenant (luật 2)
+  if (!(await repo.productBelongsToOrganization(input.organizationId, input.productId))) throw notFound()
+
+  const id = await repo.createBooking({
     organizationId: input.organizationId,
     productId: input.productId,
     orderId: null, // null biểu thị admin block thủ công
@@ -32,12 +34,14 @@ export async function createManualBlock(
     checkOutDate: input.checkOutDate,
     note: input.note?.trim() || "Chặn thủ công (Bảo trì / Giữ chỗ)",
   })
+  if (!id) throw conflict("Khoảng ngày này đã có đặt chỗ hoặc đang bị chặn. Vui lòng chọn khoảng ngày khác.")
+  return id
 }
 
 export async function removeManualBlock(
   organizationId: string,
   blockId: string,
-  repo: IAvailabilityRepository = getAvailabilityRepository(),
+  repo = new AvailabilityRepository(),
 ): Promise<boolean> {
   return repo.deleteManualBlock(organizationId, blockId)
 }

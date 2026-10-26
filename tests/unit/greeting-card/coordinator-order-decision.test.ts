@@ -7,6 +7,12 @@ import type { BrochureOrderRepository } from "@/modules/greeting-card/infra/broc
 import type { CancellationRepository } from "@/modules/greeting-card/infra/cancellation-repository"
 import type { BrochurePaymentRepository } from "@/modules/greeting-card/infra/brochure-payment-repository"
 import type { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
+import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
+
+// Nhận đơn kiểm đề xuất huỷ đang chờ — unit test không chạm DB
+vi.mock("@/modules/greeting-card/infra/cancellation-repository", () => ({ CancellationRepository: class { listPending = async () => [] } }))
+
+vi.mock("@/modules/greeting-card/use-cases/notify-staff", () => ({ queueStaffNotification: vi.fn() }))
 
 const ctx: TenantContext = {
   organizationId: "org-test",
@@ -48,7 +54,7 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
       delivery_status: "PENDING",
       total_vnd: 500_000,
       paid_vnd: 0,
-      greeting_sessions: [{ status: "PAYMENT_REPORTED", payment_proof_asset_id: "proof-1" }],
+      greeting_sessions: [{ status: "PAYMENT_REPORTED", payment_proof_asset_id: "proof-1", sale_id: "sale-1" }],
     }
 
     const mockRepo = {
@@ -75,6 +81,8 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
         noteAppend: "[Điều phối tiếp nhận] Đủ hoa lan, tiếp nhận đơn",
       })
     )
+    // Sale phụ trách được báo như khi Điều hành xác nhận đơn ở 1 Cửa hàng
+    expect(queueStaffNotification).toHaveBeenCalledWith("org-test", "ORDER_ACCEPTED", expect.objectContaining({ orderId: "order-1", orderCode: "DH-1", assignedSaleId: "sale-1" }))
   })
 
   it("Điều phối từ chối nhận đơn → huỷ đơn và kích hoạt hoàn tiền cho khách", async () => {
@@ -134,6 +142,18 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
         }),
       })
     )
+  })
+
+  it.each([
+    [{ status: "COMPLETED", production_status: "DONE", delivery_status: "DELIVERED" }, /đã giao xong/],
+    [{ status: "CONFIRMED", production_status: "ARRANGING", delivery_status: "PENDING" }, /đã vào sản xuất/],
+  ])("gọi thẳng API từ chối đơn đã giao/đang sản xuất → chặn, không tạo đề xuất hoàn tiền", async (state, message) => {
+    const repo = {
+      findBrochureOrder: vi.fn().mockResolvedValue({ id: "order-5", code: "DH-5", total_vnd: 500_000, paid_vnd: 500_000, ...state }),
+    } as unknown as BrochureOrderRepository
+    const cancellations = { listPending: vi.fn().mockResolvedValue([]), createProposal: vi.fn() } as unknown as CancellationRepository
+    await expect(coordinatorRejectBrochureOrder(ctx, "order-5", { reason: "Hết hoa" }, cancellations, repo)).rejects.toThrow(message)
+    expect(cancellations.createProposal).not.toHaveBeenCalled()
   })
 
   it("Xác nhận thanh toán gắn đúng tag MANUAL_ADMIN và AUTO_SYSTEM_15M", async () => {

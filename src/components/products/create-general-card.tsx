@@ -7,6 +7,8 @@ import type { IndustryPluginContract } from "@/modules/organization/domain/indus
 import type { TerminologyGetter } from "./create-product-types"
 import { SingleSelectCustom } from "./single-select-custom"
 import { NormalizeImageButton } from "./normalize-image-button"
+import type { ProductPricing } from "@/modules/products/domain/product-pricing"
+import { ProductPricingEditor } from "./pricing/product-pricing-editor"
 
 interface CreateGeneralCardProps {
   ti: TerminologyGetter
@@ -17,6 +19,8 @@ interface CreateGeneralCardProps {
   setCode: (v: string) => void
   priceVnd: string
   setPriceVnd: (v: string) => void
+  pricing: ProductPricing
+  setPricing: (v: ProductPricing) => void
   category: string
   setCategory: (v: string) => void
   categories: string[]
@@ -41,6 +45,8 @@ export function CreateGeneralCard({
   setCode,
   priceVnd,
   setPriceVnd,
+  pricing,
+  setPricing,
   category,
   setCategory,
   categories,
@@ -172,22 +178,9 @@ export function CreateGeneralCard({
               />
             </div>
 
-            <div>
-              <label className="block text-caption font-semibold text-text mb-1">
-                Giá niêm yết (₫) <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                value={priceVnd}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "")
-                  setPriceVnd(val ? Number(val).toLocaleString("vi-VN") : "")
-                }}
-                placeholder="Ví dụ: 650.000"
-                className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
-              />
-            </div>
           </div>
+
+          <ProductPricingEditor industry={industry} priceVnd={priceVnd} setPriceVnd={setPriceVnd} pricing={pricing} setPricing={setPricing} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>

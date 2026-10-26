@@ -11,6 +11,7 @@ import {
 import { createProductSnapshot } from "../domain/greeting-card-rules"
 import { resolvePricedVariants } from "../domain/brochure-pricing"
 import type { GreetingCatalogProduct, ProductSnapshot } from "../domain/greeting-card-types"
+import { parsePricing, sellableOptions, summarizePricing, variantImageAssetIds } from "@/modules/products/domain/product-pricing"
 import { isProductAvailable, type InventoryRow } from "../domain/product-availability"
 
 /** Hình dạng tối thiểu của một dòng `greeting_catalog_products` kèm sản phẩm. */
@@ -50,11 +51,18 @@ export function toCatalogProduct(item: CatalogItemRow, imageUrls: Map<string, st
   const driveLink = typeof attrs.drive_link === "string" && attrs.drive_link
     ? attrs.drive_link
     : (driveFileId ? `https://drive.google.com/file/d/${driveFileId}/view` : null)
+  const pricing = parsePricing(p.attributes)
+  const summary = summarizePricing(pricing)
   return {
     id: p.id,
     code: p.code,
     name: p.name,
-    price: resolveProductPriceVnd(p.attributes, p.variants[0]?.attributes),
+    price: pricing.mode === "FIXED" ? resolveProductPriceVnd(p.attributes, p.variants[0]?.attributes) : summary.minVnd,
+    priceMode: pricing.mode,
+    priceMaxVnd: summary.maxVnd,
+    peakPriceVnd: pricing.peakPriceVnd,
+    weekendIsPeak: pricing.weekendIsPeak,
+    priceDimensions: pricing.dimensions.map((d) => ({ label: d.label, values: d.values })),
     imageUrl: (mainImg ? imageUrls.get(mainImg.asset_id) ?? null : null) ?? fallbackImageUrl,
     driveLink,
     description: readDescription(src),
@@ -66,13 +74,16 @@ export function toCatalogProduct(item: CatalogItemRow, imageUrls: Map<string, st
     dimensions: dims ? `Cao ${dims.heightCm} cm · Rộng ${dims.widthCm} cm` : null,
     wrapStyle: readWrapStyle(src),
     sortOrder: item.sort_order,
-    variants: resolvePricedVariants(p.attributes, p.variants),
+    // Giá theo phiên bản khai trong thẻ sản phẩm thay cho bảng size cũ
+    variants: pricing.mode === "RANGE"
+      ? sellableOptions(pricing).map(({ imageAssetId, ...o }) => ({ ...o, imageUrl: imageAssetId ? imageUrls.get(imageAssetId) ?? null : null }))
+      : pricing.mode === "CONTACT" ? [] : resolvePricedVariants(p.attributes, p.variants),
     available: isProductAvailable(p),
   }
 }
 
 export function collectImageAssetIds(items: CatalogItemRow[]): string[] {
-  return items.flatMap((item) => item.product.images.map((img) => img.asset_id))
+  return items.flatMap((item) => [...item.product.images.map((img) => img.asset_id), ...variantImageAssetIds(item.product.attributes)])
 }
 
 /** Đóng băng mẫu đã chọn. Mẫu chưa niêm yết giá ghi giá 0 = "Liên hệ" (cửa hàng báo giá sau). */

@@ -3,9 +3,8 @@
 import React, { useId, useState } from "react"
 import { ArrowLeft, Send, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useI18n } from "@/lib/i18n"
 import { ORDER_FIELD_MAX, MAX_DELIVERY_LEAD_DAYS } from "@/modules/greeting-card/domain/greeting-card-rules"
-import type { ProductSnapshot, CustomerOrderSubmitInput } from "@/modules/greeting-card/domain/greeting-card-types"
+import type { ProductSnapshot, CustomerOrderSubmitInput, GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import { BrochureOrderOptions } from "./brochure-order-options"
 import { useBrochureQuote } from "./use-brochure-quote"
@@ -23,10 +22,17 @@ import { HomestayOrderFields, calculateNights } from "./homestay-order-fields"
 import { StandardOrderFields } from "./standard-order-fields"
 import { useBrochureOrderSubmit } from "./use-brochure-order-submit"
 import { useProductAvailability } from "./use-product-availability"
+import { OrderFocusProvider } from "./order-spotlight/order-focus-context"
+import { SpotlightBlock } from "./order-spotlight/spotlight-block"
+import { BuyerInfoFields } from "./order-spotlight/buyer-info-fields"
+import { CompactOrderNotes } from "./order-spotlight/compact-order-notes"
+import { orderErrorBlock } from "./order-spotlight/order-error-block"
 
 interface BrochureOrderFormProps {
   productSnapshot: ProductSnapshot
-  variants: Array<{ id: string; name: string; priceVnd: number }>
+  variants: NonNullable<GreetingCatalogProduct["variants"]>
+  /** Kiểu "Khoảng giá": khách chọn lần lượt từng nhóm đặc điểm */
+  priceDimensions?: GreetingCatalogProduct["priceDimensions"]
   shipping: ShippingConfig
   appliedPolicies?: PublicAppliedPolicies | null | undefined
   quoteUrl: string
@@ -42,6 +48,7 @@ const INPUT =
 export function BrochureOrderForm({
   productSnapshot,
   variants,
+  priceDimensions,
   shipping,
   appliedPolicies,
   quoteUrl,
@@ -50,8 +57,6 @@ export function BrochureOrderForm({
   onBack,
   onSubmit,
 }: BrochureOrderFormProps) {
-  const { locale } = useI18n()
-  const isEn = locale === "en"
   const terms = getIndustryTerminology(industryKey)
   const isHomestay = industryKey === "HOMESTAY"
   const uid = useId()
@@ -71,6 +76,11 @@ export function BrochureOrderForm({
   const [childrenCount, setChildrenCount] = useState(0)
   const [transitMethod, setTransitMethod] = useState("")
   const [specialRequests, setSpecialRequests] = useState("")
+  // Khách quay lại sửa đơn mà người nhận trùng người mua → giữ công tắc bật
+  const [sameAsRecipient, setSameAsRecipient] = useState(
+    () => recipientName.trim() !== "" && recipientName === customerName && recipientPhone === customerPhone
+  )
+  const buyerIsRecipient = !isHomestay && sameAsRecipient
 
   const [selectedPromotionId, setSelectedPromotionId] = useState<string>(
     appliedPolicies && !customerChoosesPromotion(appliedPolicies) ? appliedPolicies.promotions[0]?.id ?? "" : ""
@@ -97,14 +107,14 @@ export function BrochureOrderForm({
   const [review, setReview, clearReview] = useSavedState<CustomerOrderSubmitInput | null>(`order-review:${productSnapshot.id}`, null)
   const [website, setWebsite] = useState("")
 
-  const { errorMessage, loading, setErrorMessage, handleSubmit, handleConfirm } = useBrochureOrderSubmit({
+  const { errorMessage, errorField, loading, handleSubmit, handleConfirm } = useBrochureOrderSubmit({
     isHomestay,
     industryKey,
     customerName,
     customerPhone,
     customerEmail,
-    recipientName,
-    recipientPhone,
+    recipientName: buyerIsRecipient ? customerName : recipientName,
+    recipientPhone: buyerIsRecipient ? customerPhone : recipientPhone,
     deliveryDate,
     deliveryTimeSlot,
     addressParts,
@@ -130,11 +140,9 @@ export function BrochureOrderForm({
     onClearReview: clearReview,
   })
 
-  // Khi có lỗi, nếu người dùng bắt đầu sửa bất kỳ trường nào thì tự động xóa thông báo lỗi để không bị vướng mắt
-  const onInputChange = <T,>(setter: (val: T) => void) => (val: T) => {
-    if (errorMessage) setErrorMessage(null)
-    setter(val)
-  }
+  const errorBlock = orderErrorBlock(errorField?.field, buyerIsRecipient || (isHomestay && isSelfBooking))
+  const blockError = (step: number) =>
+    errorBlock === step ? { error: errorMessage, errorAttempt: errorField?.attempt } : {}
 
   if (review) {
     return (
@@ -166,108 +174,71 @@ export function BrochureOrderForm({
           className="gap-1.5 text-text-muted hover:text-foreground text-caption"
         >
           <ArrowLeft size={16} />
-          <span>{isEn ? "Change design" : `Đổi ${terms.sampleProduct.toLowerCase()}`}</span>
+          <span>Đổi {terms.sampleProduct.toLowerCase()}</span>
         </Button>
         <span className="text-caption font-bold uppercase tracking-wider text-primary">
-          {isEn ? "Order Details" : `Điền đơn đặt ${terms.sampleProduct.toLowerCase()}`}
+          Điền đơn đặt {terms.sampleProduct.toLowerCase()}
         </span>
       </div>
 
-      <SelectedProductHeader product={productSnapshot} />
+      <SelectedProductHeader product={productSnapshot} variant={variants.find((v) => v.id === pricing.selection.variantId) ?? null} />
 
-      {errorMessage && (
+      {errorMessage && errorBlock === null && (
         <div
-          id="order-form-error-banner"
           role="alert"
-          className="mb-5 p-3 rounded-xl bg-danger-bg border border-danger/30 text-danger text-body-sm flex items-start gap-2 animate-in fade-in duration-200"
+          ref={(el) => el?.scrollIntoView({ behavior: "smooth", block: "center" })}
+          className="mb-5 p-3 rounded-xl bg-danger-bg border border-danger/30 text-danger text-body-sm flex items-start gap-2"
         >
           <AlertCircle size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
-          <span className="flex-1">{errorMessage}</span>
-          <button
-            type="button"
-            onClick={() => setErrorMessage(null)}
-            className="text-danger/70 hover:text-danger text-caption underline cursor-pointer shrink-0"
-            aria-label="Đóng thông báo lỗi"
-          >
-            Đóng
-          </button>
+          <span>{errorMessage}</span>
         </div>
       )}
 
+      <OrderFocusProvider>
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <HoneypotField value={website} onChange={setWebsite} />
 
-        <BrochureOrderOptions
-          variants={variants}
-          basePrice={productSnapshot.price}
-          shipping={shipping}
-          selection={pricing.selection}
-          onChange={pricing.update}
-          quote={pricing.quote}
-          errors={pricing.errors}
-          loading={pricing.loading}
-          industryKey={industryKey}
-        />
+        <SpotlightBlock step={1} {...blockError(1)} title={`Chọn ${terms.sampleProduct.toLowerCase()}`}>
+          <BrochureOrderOptions
+            variants={variants}
+            priceDimensions={priceDimensions}
+            basePrice={productSnapshot.price}
+            shipping={shipping}
+            selection={pricing.selection}
+            onChange={pricing.update}
+            quote={pricing.quote}
+            errors={pricing.errors}
+            loading={pricing.loading}
+            industryKey={industryKey}
+          />
+          {appliedPolicies && (
+            <PromotionPicker policies={appliedPolicies} value={selectedPromotionId} onChange={setSelectedPromotionId} />
+          )}
+        </SpotlightBlock>
 
-        {appliedPolicies && (
-          <PromotionPicker policies={appliedPolicies} value={selectedPromotionId} onChange={setSelectedPromotionId} />
-        )}
+        <SpotlightBlock step={2} {...blockError(2)} title="Thông tin người mua">
+          <BuyerInfoFields
+            idPrefix={uid}
+            inputClassName={INPUT}
+            customerName={customerName}
+            customerPhone={customerPhone}
+            customerEmail={customerEmail}
+            sameAsRecipient={isHomestay ? isSelfBooking : sameAsRecipient}
+            onCustomerNameChange={setCustomerName}
+            onCustomerPhoneChange={setCustomerPhone}
+            onCustomerEmailChange={setCustomerEmail}
+            onSameAsRecipientChange={isHomestay ? setIsSelfBooking : setSameAsRecipient}
+            {...(isHomestay
+              ? { sameAsRecipientLabel: "Tôi là người nhận phòng", sameAsRecipientHint: "Dùng họ tên và số điện thoại ở trên để nhận phòng." }
+              : {})}
+          />
+        </SpotlightBlock>
 
-        {/* Khối Người đặt (chung cho mọi ngành) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div>
-            <label htmlFor={`${uid}-customerName`} className="block text-body-sm font-bold text-foreground mb-1">
-              {isEn ? "Your Full Name" : "Họ tên của bạn"} <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              placeholder={isEn ? "e.g., Alex Johnson" : "VD: Nguyễn Văn A"}
-              value={customerName}
-              maxLength={ORDER_FIELD_MAX.name}
-              id={`${uid}-customerName`}
-              autoComplete="name"
-              onChange={(e) => onInputChange(setCustomerName)(e.target.value)}
-              className={INPUT}
-            />
-          </div>
-          <div>
-            <label htmlFor={`${uid}-customerPhone`} className="block text-body-sm font-bold text-foreground mb-1">
-              {isEn ? "Your Phone Number" : "Số điện thoại của bạn"} <span className="text-danger">*</span>
-            </label>
-            <input
-              type="tel"
-              required
-              placeholder={isEn ? "e.g., 0901234567" : "VD: 0901234567"}
-              value={customerPhone}
-              maxLength={18}
-              id={`${uid}-customerPhone`}
-              autoComplete="tel"
-              inputMode="tel"
-              onChange={(e) => onInputChange(setCustomerPhone)(e.target.value)}
-              className={INPUT}
-            />
-          </div>
-          <div>
-            <label htmlFor={`${uid}-customerEmail`} className="block text-body-sm font-bold text-foreground mb-1">
-              Email <span className="text-caption font-normal text-text-muted">{isEn ? "(optional)" : "(tùy chọn)"}</span>
-            </label>
-            <input
-              type="email"
-              placeholder={isEn ? "e.g., email@example.com" : "VD: email@example.com"}
-              value={customerEmail}
-              maxLength={100}
-              id={`${uid}-customerEmail`}
-              autoComplete="email"
-              onChange={(e) => onInputChange(setCustomerEmail)(e.target.value)}
-              className={INPUT}
-            />
-          </div>
-        </div>
-
-        {/* Chuyển đổi linh hoạt giữa giao diện Homestay và giao diện Giao hàng Tiêu chuẩn */}
+        <SpotlightBlock step={3} {...blockError(3)} title={isHomestay ? "Thông tin đặt phòng" : "Giao hàng"}>
         {isHomestay ? (
           <HomestayOrderFields
+            showSpecialRequests={false}
+            showSelfToggle={false}
             idPrefix={uid}
             inputClassName={INPUT}
             checkInDate={deliveryDate}
@@ -320,19 +291,28 @@ export function BrochureOrderForm({
             shipping={shipping}
             fullSlots={pricing.fullSlots}
             addressParts={addressParts}
-            cardMessage={cardMessage}
-            senderNote={senderNote}
-            deliveryNote={deliveryNote}
-            mapUrl={mapUrl}
+            hideRecipient={buyerIsRecipient}
             availability={availability}
-            onRecipientNameChange={onInputChange(setRecipientName)}
-            onRecipientPhoneChange={onInputChange(setRecipientPhone)}
-            onDeliveryDateChange={onInputChange(setDeliveryDate)}
-            onDeliveryTimeSlotChange={onInputChange(setDeliveryTimeSlot)}
-            onAddressPartsChange={onInputChange(setAddressParts)}
-            onNotesChange={onInputChange(setNotes)}
+            onRecipientNameChange={setRecipientName}
+            onRecipientPhoneChange={setRecipientPhone}
+            onDeliveryDateChange={setDeliveryDate}
+            onDeliveryTimeSlotChange={setDeliveryTimeSlot}
+            onAddressPartsChange={setAddressParts}
           />
         )}
+        </SpotlightBlock>
+
+        <SpotlightBlock step={4} {...blockError(4)} title="Ghi chú">
+          <CompactOrderNotes
+            idPrefix={uid}
+            inputClassName={INPUT}
+            industryKey={industryKey}
+            values={isHomestay ? { specialRequests } : { cardMessage, senderNote, deliveryNote, mapUrl }}
+            onChange={(kind, value) =>
+              kind === "specialRequests" ? setSpecialRequests(value) : setNotes({ [kind]: value })
+            }
+          />
+        </SpotlightBlock>
 
         {/* Submit Button */}
         <Button
@@ -343,15 +323,16 @@ export function BrochureOrderForm({
           <Send size={18} aria-hidden="true" />
           <span>
             {loading
-              ? (isEn ? "Submitting order..." : "Đang gửi đơn...")
+              ? "Đang gửi đơn..."
               : availability.available === false
-              ? (availability.message || (isEn ? "Currently unavailable" : "Tạm không khả dụng"))
+              ? (availability.message || "Tạm không khả dụng")
               : isHomestay
-              ? (isEn ? "Review Booking Details" : "Xem lại thông tin đặt phòng")
-              : (isEn ? "Review Order" : "Xem lại đơn")}
+              ? "Xem lại thông tin đặt phòng"
+              : "Xem lại đơn"}
           </span>
         </Button>
       </form>
+      </OrderFocusProvider>
     </div>
   )
 }

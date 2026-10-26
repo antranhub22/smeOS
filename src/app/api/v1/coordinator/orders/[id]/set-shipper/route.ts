@@ -4,21 +4,24 @@
  * Coordinator-Stream M3: Điều phối viên trực tiếp nhập thông tin shipper thay cửa hàng.
  * Hành động này triệt tiêu (First-Wins Mutex) toàn bộ reminder M3 đang pending.
  *
- * Yêu cầu: Session đăng nhập với capability "coordinator_subcontract_act".
+ * Yêu cầu: Session đăng nhập có mã năng lực R5.
  */
 
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
+import { subcontractPhotoApprovalBlocker } from "@/modules/greeting-card/use-cases/subcontract-photo-gate"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
-import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 
 const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
 
@@ -33,18 +36,13 @@ const setShipperSchema = z.object({
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R5")
   const { id: orderId } = await context.params
 
   const repo = new SubcontractOrderRepository()
   const order = await repo.findSubcontractById(orderId, ctx.organizationId)
   if (!order) throw notFound()
 
-  // Chỉ cho phép khi đơn đã ở trạng thái READY (ảnh thành phẩm đã được duyệt)
-  if (order.production_status !== "READY") {
-    throw unprocessable(
-      `Đơn hàng chưa đủ điều kiện nhập shipper. Trạng thái hiện tại: ${order.production_status}. Cần upload ảnh thành phẩm trước.`
-    )
-  }
 
   const body = await request.json().catch(() => ({}))
   const parsed = setShipperSchema.safeParse(body)
@@ -70,8 +68,11 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     })
   }
 
-  const coord = await repo.findCoordination(order.id)
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  // Chỉ khi ảnh thành phẩm đã duyệt và chưa giao (đơn đã huỷ/hoàn tất → 409)
+  if (!subcontractStepAllowed("SHIPPER", order)) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.SHIPPER)
+  const waitingCustomer = await subcontractPhotoApprovalBlocker(order.organization_id, order.id)
+  if (waitingCustomer) throw conflict(waitingCustomer)
+  const store = new SubcontractStepStore()
 
   const shipperInfo = {
     shipperName,
@@ -81,26 +82,22 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     submittedAt: new Date().toISOString(),
   }
 
-  const orderRepo = getOrderRepository()
-
-  await repo.upsertCoordinationMeta(order.id, order.organization_id, {
-    shipper_info: shipperInfo,
-    shipper_submitted_at: new Date().toISOString(),
+  const saved = await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { delivery_status: "DELIVERING" },
+    require: SUBCONTRACT_STEP_PRECONDITION.SHIPPER,
+    metadata: (current) => ({ ...current, shipper_info: shipperInfo, shipper_submitted_at: shipperInfo.submittedAt }),
+    events: [{
+      axis: "delivery",
+      fromValue: order.delivery_status,
+      toValue: "DELIVERING",
+      actorId: `coordinator:${ctx.userId}`,
+      reason: `[Coordinator Set Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
+    }],
   })
 
-  await orderRepo.update(order.organization_id, order.id, {
-    deliveryStatus: "DELIVERING",
-  })
-
-  await orderRepo.recordEvent(
-    order.organization_id,
-    order.id,
-    "delivery",
-    "DELIVERING",
-    `coordinator:${ctx.userId}`,
-    order.delivery_status,
-    `[Coordinator Set Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`
-  )
+  if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.SHIPPER)
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M3 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({

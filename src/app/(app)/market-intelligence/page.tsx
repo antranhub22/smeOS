@@ -106,7 +106,7 @@ export default function MarketIntelligencePage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold tracking-tight text-text flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              FloraOS Intelligence Engine
+              smeOS Intelligence Engine
             </h1>
             <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
               v2.0 Omnichannel

@@ -65,6 +65,8 @@ export type ListProductsFilters = {
   priceMax?: number | undefined
   /** Tìm theo tên hoặc mã SKU (ILIKE, không phân biệt hoa-thường). */
   search?: string | undefined
+  /** Lọc mẫu đề xuất theo `attributes.proposal.status` — hàng chờ duyệt của Điều hành. */
+  proposalStatus?: "pending" | "rejected" | "expired" | undefined
 }
 
 export type ListProductsPage = {
@@ -130,6 +132,7 @@ export class ProductRepository implements IProductRepository {
       ...(filters.collection !== undefined
         ? { attributes: { path: ["collection"], equals: filters.collection } }
         : {}),
+      ...(filters.proposalStatus ? { AND: [{ attributes: { path: ["proposal", "status"], equals: filters.proposalStatus } }] } : {}),
     })
 
     return this.db.products.findMany({
@@ -168,6 +171,7 @@ export class ProductRepository implements IProductRepository {
       ...(filters.collection !== undefined
         ? { attributes: { path: ["collection"], equals: filters.collection } }
         : {}),
+      ...(filters.proposalStatus ? { AND: [{ attributes: { path: ["proposal", "status"], equals: filters.proposalStatus } }] } : {}),
     })
 
     // `prisma` singleton (không phải `this.db`) vì `include` cần full PrismaClient type;

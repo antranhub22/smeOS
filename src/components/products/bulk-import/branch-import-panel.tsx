@@ -23,6 +23,9 @@ interface ImportBranchResult {
   created: number
   updated: number
   errors: string[]
+  geocoded?: number
+  geocodeNotFound?: number
+  geocodeSkipped?: number
 }
 
 export function BranchImportPanel() {
@@ -185,14 +188,13 @@ export function BranchImportPanel() {
           </strong>
           <ul className="space-y-1 text-foreground/80">
             <li>
-              <strong>ID cá nhân (ưu tiên):</strong> Chủ cửa hàng mở Telegram, chat với{" "}
-              <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border text-caption-sm">@smeos_dieuphoi_bot</code>{" "}
-              và gõ <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border text-caption-sm">/start</code>{" "}
-              → hệ thống sẽ hiển thị ID cá nhân. Tin nhắn đơn hàng sẽ gửi <strong>riêng tư 1:1</strong>.
+              <strong>Liên kết trước:</strong> chi nhánh nhắn <strong>mã liên kết của cửa hàng</strong> (xem ở Cài đặt → Kết nối Telegram) cho bot điều phối, hoặc thêm bot vào nhóm của chi nhánh rồi nhắn mã đó trong nhóm.
             </li>
             <li>
-              <strong>ID nhóm:</strong> Bắt đầu bằng dấu trừ (vd: <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border text-caption-sm">-1003889928264</code>).
-              Tin nhắn sẽ gửi vào nhóm Telegram của cửa hàng.
+              <strong>Rồi mới điền ID:</strong> chép Chat ID hiện trong danh sách nhóm đã liên kết vào cột này. ID nhóm bắt đầu bằng dấu trừ.
+            </li>
+            <li>
+              Chat chưa liên kết sẽ không nhận được tin giao việc — hệ thống báo “chưa gửi được” để bạn kiểm tra lại.
             </li>
           </ul>
         </div>
@@ -265,6 +267,13 @@ export function BranchImportPanel() {
               <div className="text-caption-sm text-text-muted">Lỗi bỏ qua</div>
             </div>
           </div>
+          {(result.geocoded ?? 0) + (result.geocodeNotFound ?? 0) + (result.geocodeSkipped ?? 0) > 0 && (
+            <p className="text-caption text-text-muted">
+              Tự xác định vị trí từ địa chỉ: {result.geocoded ?? 0} cửa hàng.
+              {(result.geocodeNotFound ?? 0) + (result.geocodeSkipped ?? 0) > 0 &&
+                ` ${(result.geocodeNotFound ?? 0) + (result.geocodeSkipped ?? 0)} cửa hàng chưa có vị trí — hãy điền vĩ độ, kinh độ trong file để được phân đơn theo khoảng cách.`}
+            </p>
+          )}
           <Button type="button" variant="outline" size="sm" onClick={handleReset} className="self-start gap-1.5 mt-1">
             <RotateCcw size={13} /> Nhập thêm file khác
           </Button>

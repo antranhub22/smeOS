@@ -10,17 +10,13 @@ const mockTenantContext: TenantContext = {
   capabilities: new Set(["H5"]),
 }
 
-vi.mock("@/modules/product-copies/infra/product-copy-repository", () => {
-  const MockRepo = vi.fn().mockImplementation(() => ({
+vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
+  ProductCopyRepository: vi.fn().mockImplementation(function () { return {
     findById: vi.fn(),
     listByProduct: vi.fn(),
     listPendingApproval: vi.fn(),
-  }))
-  return {
-    ProductCopyRepository: MockRepo,
-    getProductCopyRepository: () => new MockRepo(),
-  }
-})
+  } }),
+}))
 
 import { getProductCopy, listProductCopies } from "@/modules/product-copies/use-cases/get-product-copy"
 import { ProductCopyRepository } from "@/modules/product-copies/infra/product-copy-repository"
@@ -33,9 +29,9 @@ describe("getProductCopy", () => {
   it("returns copy when found", async () => {
     const mockCopy = { id: "copy-1", analysis_id: "analysis-1", raw: {} }
 
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       findById: vi.fn().mockResolvedValue(mockCopy),
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const result = await getProductCopy(mockTenantContext, "copy-1")
 
@@ -43,9 +39,9 @@ describe("getProductCopy", () => {
   })
 
   it("throws NOT_FOUND when copy not found", async () => {
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       findById: vi.fn().mockResolvedValue(null),
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     await expect(getProductCopy(mockTenantContext, "non-existent")).rejects.toThrow(AppError)
   })
@@ -59,9 +55,9 @@ describe("listProductCopies", () => {
   it("lists by productId when provided", async () => {
     const mockCopies = [{ id: "copy-1" }, { id: "copy-2" }]
 
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       listByProduct: vi.fn().mockResolvedValue(mockCopies),
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const result = await listProductCopies(mockTenantContext, "product-1")
 
@@ -71,9 +67,9 @@ describe("listProductCopies", () => {
   it("lists pending approval when no productId", async () => {
     const mockCopies = [{ id: "copy-1" }]
 
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       listPendingApproval: vi.fn().mockResolvedValue(mockCopies),
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const result = await listProductCopies(mockTenantContext)
 

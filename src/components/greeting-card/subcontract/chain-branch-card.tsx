@@ -2,16 +2,31 @@
 
 import React from "react"
 import { MapPin, Star, Layers } from "lucide-react"
+const AREA_LABEL: Record<string, string> = {
+  WARD: "Cùng phường",
+  DISTRICT: "Cùng quận",
+  PROVINCE: "Cùng tỉnh",
+}
+
+function proximityLabel(branch: DispatchedCandidateBranch): string {
+  if (branch.distanceKm !== null) return branch.distanceKm > 0 ? `${branch.distanceKm} km` : "Tại chỗ"
+  return (branch.areaMatch && AREA_LABEL[branch.areaMatch]) || "Chưa rõ khoảng cách"
+}
+
 export interface DispatchedCandidateBranch {
   branchId: string
   branchName: string
-  distanceKm: number
+  /** null = chưa xác định được vị trí người nhận hoặc chi nhánh */
+  distanceKm: number | null
+  /** Mức khớp khu vực khi không có km: cùng phường / cùng quận / cùng tỉnh */
+  areaMatch?: "WARD" | "DISTRICT" | "PROVINCE" | "OTHER_PROVINCE" | "UNKNOWN" | null
   qualityScore: number
   activeJobsCount: number
   totalScore?: number
   rank: number
   channels?: {
     hasTelegram?: boolean
+    telegramLinked?: boolean
     hasZalo?: boolean
     phone?: string | null
   }
@@ -49,7 +64,7 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
           <div className="flex items-center gap-1.5 text-caption text-text-muted mt-0.5">
             <span className="flex items-center gap-0.5">
               <MapPin size={10} className="text-primary" />
-              <strong>{branch.distanceKm > 0 ? `${branch.distanceKm} km` : "Tại chỗ"}</strong>
+              <strong>{proximityLabel(branch)}</strong>
             </span>
             <span>·</span>
             <span className="flex items-center gap-0.5">
@@ -74,9 +89,14 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
 
       <div className="flex items-center justify-between pt-1.5 border-t border-border/40 text-caption w-full">
         <div className="flex items-center gap-1">
-          {branch.channels?.hasTelegram && (
+          {branch.channels?.hasTelegram && branch.channels.telegramLinked !== false && (
             <span className="px-1 py-0.5 rounded bg-info/10 text-info font-bold">
               Telegram riêng
+            </span>
+          )}
+          {branch.channels?.hasTelegram && branch.channels.telegramLinked === false && (
+            <span className="px-1 py-0.5 rounded bg-warning/10 text-warning font-bold" title="Gửi mã liên kết vào nhóm rồi bấm Quét Chat ID mới trong Cài đặt">
+              Telegram chưa liên kết
             </span>
           )}
           {branch.channels?.hasZalo && (

@@ -10,7 +10,7 @@ services:
     runtime: node
     region: singapore
     plan: starter
-    buildCommand: npm ci --include=dev && npx prisma generate && npx prisma db push --accept-data-loss && npm run db:seed && npm run build
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run db:deploy && npm run db:seed && npm run build
     startCommand: npm run start
     healthCheckPath: /api/health
     autoDeploy: true
@@ -32,12 +32,21 @@ services:
         generateValue: true
       - key: INTEGRATION_TOKEN_SECRET
         generateValue: true
-      # Redis (tuỳ chọn) — nếu không có thì rate limiting bị tắt
-      # - key: REDIS_URL
-      #   fromService:
-      #     type: keyvalue
-      #     name: smeos-redis
-      #     property: connectionString
+      # Redis dùng chung cho giới hạn tần suất (đăng nhập, link công khai) giữa các instance.
+      # Thiếu thì rate-limit chỉ đếm trong bộ nhớ từng tiến trình (rà soát 21/10/2026, H7).
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: smeos-redis
+          property: connectionString
+      # Secret của endpoint cron nội bộ — đặt CÙNG MỘT giá trị ở đây và ở smeos-cron-dispatch-sweep.
+      # Thiếu thì /api/v1/internal/* luôn từ chối trên production (rà soát 21/10/2026, H3).
+      - key: CRON_SECRET
+        sync: false
+      # URL công khai của app (vd. https://app.smeos.vn) — dùng dựng link gửi chi nhánh/khách,
+      # kể cả khi request đến từ cron qua mạng nội bộ.
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
       - key: OPENAI_API_KEY
         sync: false
       - key: ANTHROPIC_API_KEY
@@ -83,6 +92,20 @@ services:
       - key: GREETING_CARD_ENABLED
         value: "true"
       - key: TELEGRAM_DISPATCH_BOT_TOKEN
+        sync: false
+      # Toạ độ địa chỉ giao cho điều phối chuỗi (thiếu: xếp hạng theo phường/quận)
+      - key: GOONG_API_KEY
+        sync: false
+      # Zalo OA — gửi lời mời/nhắc việc cho chi nhánh qua Zalo
+      - key: ZALO_OA_APP_ID
+        sync: false
+      - key: ZALO_OA_APP_SECRET
+        sync: false
+      - key: ZALO_OA_REFRESH_TOKEN
+        sync: false
+      - key: ZALO_OA_WEBHOOK_SECRET
+        sync: false
+      - key: ZALO_OA_FOLLOW_URL
         sync: false
       - key: TELEGRAM_STAFF_BOT_TOKEN
         sync: false
@@ -203,15 +226,40 @@ services:
         value: auto
 
   # ══════════════════════════════════════════════
-  # KEY VALUE (Redis) — bị comment vì Render chỉ cho 1 free instance
-  # Bật lại khi nâng cấp plan hoặc xoá Redis từ project khác
+  # 5. CRON — nhắc mốc tiến độ đơn gia công chuỗi (M1–M4), 5 phút/lần
   # ══════════════════════════════════════════════
-  # - type: keyvalue
-  #   name: smeos-redis
-  #   region: singapore
-  #   plan: free
-  #   maxmemoryPolicy: allkeys-lru
-  #   ipAllowList: []
+  # Gọi web qua mạng nội bộ Render. Không có job này thì nhắc việc M1–M4 không bao giờ chạy.
+  # Sau lượt quét, kiểm /internal/health: không khoẻ → 503 → lượt cron thất bại → Render báo lỗi.
+  - type: cron
+    name: smeos-cron-dispatch-sweep
+    runtime: node
+    region: singapore
+    schedule: "*/5 * * * *"
+    buildCommand: echo "no build"
+    startCommand: >-
+      curl -fsS -X POST "http://$WEB_HOSTPORT/api/v1/internal/chain-dispatch-sweep"
+      -H "x-cron-secret: $CRON_SECRET" --max-time 120
+      && curl -fsS "http://$WEB_HOSTPORT/api/v1/internal/health"
+      -H "x-cron-secret: $CRON_SECRET" --max-time 20
+    envVars:
+      - key: WEB_HOSTPORT
+        fromService:
+          type: web
+          name: smeos-web
+          property: hostport
+      - key: CRON_SECRET
+        sync: false
+
+  # ══════════════════════════════════════════════
+  # KEY VALUE (Redis) — bộ đếm giới hạn tần suất dùng chung các instance
+  # Gói trả phí 256mb: workspace chỉ có 1 instance free và đang dùng cho project khác.
+  # ══════════════════════════════════════════════
+  - type: keyvalue
+    name: smeos-redis
+    region: singapore
+    plan: 256mb
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: [] # chỉ dịch vụ nội bộ Render truy cập
 
 # ══════════════════════════════════════════════
 # DATABASE — PostgreSQL 16

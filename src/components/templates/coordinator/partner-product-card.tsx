@@ -134,7 +134,7 @@ export function buildZaloText(props: PartnerProductCardProps): string {
 
   lines.push(``)
   lines.push(`━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`FloraOS • Hệ thống Điều phối Tự động`)
+  lines.push(`smeOS • Hệ thống Điều phối Tự động`)
 
   return lines.join("\n")
 }
@@ -208,7 +208,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
       const { toPng } = await import("html-to-image")
       const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, backgroundColor: "#ffffff", cacheBust: true })
       const link = document.createElement("a")
-      link.download = `FloraOS_T02_${orderCode}.png`
+      link.download = `smeOS_the-san-pham_${orderCode}.png`
       link.href = dataUrl
       link.click()
     } catch (err) {
@@ -544,7 +544,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
 
         {/* Footer */}
         <div className="px-5 py-3 bg-surface-alt border-t border-border flex items-center justify-between text-caption text-text-muted">
-          <span>FloraOS Coordinator • Phiếu T02 tự động</span>
+          <span>smeOS Coordinator • Phiếu T02 tự động</span>
           <span className="font-bold">
             {new Date().toLocaleDateString("vi-VN")} {new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
           </span>

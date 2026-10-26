@@ -28,6 +28,7 @@ export class ZaloOaStaffAdapter implements IStaffNotificationProvider {
     try {
       const res = await fetch("https://openapi.zalo.me/v3.0/oa/message/cs", {
         method: "POST",
+        signal: AbortSignal.timeout(10_000), // không treo tiến trình nền khi nhà cung cấp chậm
         headers: {
           "Content-Type": "application/json",
           access_token: accessToken,

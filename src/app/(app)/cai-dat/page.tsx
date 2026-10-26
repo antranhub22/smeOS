@@ -1,163 +1,97 @@
 "use client"
 
-import { useState, useEffect, Suspense } from "react"
-import { useSearchParams } from "next/navigation"
+import { useEffect, useState, type FormEvent } from "react"
 import {
-  Palette,
-  AlertCircle,
+  Settings,
+  Building2,
   CheckCircle2,
-  Sparkles,
-  ShieldCheck,
-  Gift,
-  FileText,
+  AlertCircle,
+  Clock,
+  Phone,
+  MapPin,
+  Store,
+  Save,
 } from "lucide-react"
+import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
+import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
+import { DispatchReminderPolicyCard } from "@/components/coordinator/dispatch-reminder-policy-card"
+import { LoadMockDataButton } from "@/components/profiles/load-mock-data-button"
+import { SettingsSubsystemGrid } from "@/components/organization/settings-subsystem-grid"
 import { ModelChangeCard } from "@/components/organization/model-change-card"
-import { calculateReadinessScore } from "@/modules/field-platform/domain/readiness-score-engine"
-import { StorePaymentMethodsEditor } from "@/components/profiles/store-payment-methods-editor"
-import { PaymentPolicySection } from "@/components/profiles/payment-policy-section"
-import { DepositLevelsSection } from "@/components/profiles/deposit-levels-section"
-import { PriceBudgetsSection } from "@/components/profiles/price-budgets-section"
-import { StorePoliciesEditor } from "@/components/profiles/store-policies-editor"
-import { BrandProfileForm } from "@/components/profiles/brand-profile-form"
-import { BusinessProfileForm } from "@/components/profiles/business-profile-form"
-import { OccasionsSettingsForm } from "@/components/organization/occasions-settings-form"
-import { BrochureFlowSettingsTab } from "@/components/organization/brochure-flow-settings-tab"
-import { AiChannelsSettingsTab } from "@/components/organization/ai-channels-settings-tab"
-import { SettingsTabsNav, type SettingsTab } from "@/components/organization/settings-tabs-nav"
-import { BROCHURE_PAYMENT_SETTINGS_KEY } from "@/modules/greeting-card/domain/brochure-commerce-rules"
-import {
-  parseStorePolicies,
-  STORE_POLICIES_SETTINGS_KEY,
-  type StorePoliciesConfig,
-} from "@/modules/greeting-card/domain/store-policy"
-import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
+import { useI18n } from "@/lib/i18n"
 
-import { ChainCollectionProfileManager } from "@/components/organization/chain-collection-profile-manager"
-
-const VALID_TABS: SettingsTab[] = [
-  "INFO",
-  "BRANDING",
-  "PAYMENT",
-  "DEPOSIT",
-  "PROMOTIONS",
-  "COMMITMENTS",
-  "AGREEMENTS",
-  "BROCHURE_FLOW",
-  "AI_CHANNELS",
-  "COLLECTION_PROFILE",
-]
-
-function CaiDatTiemContent() {
-  const searchParams = useSearchParams()
-  const tabParam = searchParams.get("tab") as SettingsTab | null
-
-  const [activeTab, setActiveTab] = useState<SettingsTab>(() => {
-    if (tabParam && VALID_TABS.includes(tabParam)) return tabParam
-    return "INFO"
-  })
-
-  useEffect(() => {
-    if (tabParam && VALID_TABS.includes(tabParam)) {
-      setActiveTab(tabParam)
-    }
-  }, [tabParam])
+export default function CaiDatTiemPage() {
+  const { orgName, can, organizationType } = useSession()
+  const { dict } = useI18n()
+  const canEdit = can("F2") || can("H4") // Quyền chỉnh sửa hồ sơ / điều hành
 
   const {
     business,
-    brand,
     loading,
     saving,
     error,
     successMessage,
     saveBusiness,
-    saveBrand,
   } = useTenantProfile()
 
-  // API load policies
-  const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
-  const [savingPolicies, setSavingPolicies] = useState(false)
-  const industryKey = typeof org.data?.settings?.industry === "string" ? org.data.settings.industry : null
-  const policies = org.data ? parseStorePolicies(org.data.settings, industryKey) : null
+  const [displayName, setDisplayName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [address, setAddress] = useState("")
+  const [openingHours, setOpeningHours] = useState("07:30 - 21:30")
+  const [formDirty, setFormDirty] = useState(false)
 
-  async function handleSavePolicies(updatedPolicies: StorePoliciesConfig): Promise<boolean> {
-    setSavingPolicies(true)
-    try {
-      await apiSend(
-        "/api/v1/organizations/current",
-        "PATCH",
-        {
-          settings: {
-            [STORE_POLICIES_SETTINGS_KEY]: updatedPolicies,
-          },
-        },
-        "Không lưu được chính sách & cam kết"
-      )
-      await org.mutate()
-      return true
-    } catch {
-      return false
-    } finally {
-      setSavingPolicies(false)
+  useEffect(() => {
+    if (business) {
+      setDisplayName(business.display_name || "")
+      setPhone(business.phone || "")
+      setAddress(business.address || "")
+      const hours = business.operating_hours as { regular?: string } | null
+      if (hours?.regular) {
+        setOpeningHours(hours.regular)
+      }
+    }
+  }, [business])
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!business) return
+
+    const ok = await saveBusiness({
+      legal_name: business.legal_name,
+      display_name: displayName.trim() || orgName || "Cửa Hàng Hoa",
+      phone: phone.trim() || null,
+      email: business.email,
+      address: address.trim() || null,
+      website: business.website,
+      social_links: business.social_links,
+      tax_code: business.tax_code,
+      description: business.description,
+      operating_hours: { regular: openingHours.trim() },
+    })
+
+    if (ok) {
+      setFormDirty(false)
     }
   }
 
-  // Calculate live Readiness Score based on current inputs
-  const configuredBank = Boolean(
-    (org.data?.settings?.[BROCHURE_PAYMENT_SETTINGS_KEY] as Record<string, unknown> | undefined)?.account_no
-  )
-  const hasStoreName = Boolean(business?.display_name?.trim())
-  const hasPhone = Boolean(business?.phone?.trim())
-  const hasAddress = Boolean(business?.address?.trim())
-  const hasTaxOrLegal = Boolean(business?.legal_name?.trim() || business?.tax_code?.trim())
-
-  const readiness = calculateReadinessScore({
-    targetStage: "G1",
-    fields: [
-      { fieldKey: "core.org.store_name", isPopulated: hasStoreName, isValid: true, isFresh: true },
-      { fieldKey: "core.org.hotline_phone", isPopulated: hasPhone, isValid: true, isFresh: true },
-      { fieldKey: "core.org.store_address", isPopulated: hasAddress, isValid: true, isFresh: true },
-      { fieldKey: "core.finance.bank_account_number", isPopulated: configuredBank, isValid: true, isFresh: true },
-    ],
-    consistencyChecks: [
-      { checkId: "CHK_TAX_LEGAL", description: "Đã có thông tin pháp lý hoặc mã số thuế", passed: hasTaxOrLegal },
-    ],
-    approvalItems: [
-      { itemId: "R1_POLICY", isApproved: true },
-    ],
-  })
-
   return (
     <div className="flex flex-col gap-6 p-6 max-w-5xl mx-auto w-full">
-      {/* 1. Header & Readiness Summary Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl border border-border bg-surface shadow-xs">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-extrabold text-text">Hồ Sơ & Cài Đặt Cửa Hàng</h1>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-bold bg-primary/10 text-primary border border-primary/20">
-              <Sparkles size={11} /> Trung Tâm All-In-One SSOT
-            </span>
-          </div>
-          <p className="text-xs text-text-muted mt-1">
-            Một nơi duy nhất để thiết lập toàn bộ thông số: pháp lý, thương hiệu, thanh toán, ưu đãi, quy trình và tự động hóa.
-          </p>
-        </div>
-
-        {/* Readiness Score Progress Pill */}
-        <div className="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-background border border-border shrink-0">
-          <div className="flex flex-col text-right">
-            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Độ sẵn sàng (G1)</span>
-            <span className="text-xs font-black text-text">{readiness.totalScore} / 100 điểm</span>
-          </div>
-          <div className="w-16 h-2 bg-surface-alt rounded-full overflow-hidden border border-border/40">
-            <div
-              className={`h-full transition-all duration-500 ${readiness.totalScore >= 90 ? "bg-emerald-500" : "bg-primary"}`}
-              style={{ width: `${readiness.totalScore}%` }}
-            />
-          </div>
-        </div>
-      </div>
+      {/* 1. Hướng dẫn chuẩn hóa K1 */}
+      <FeatureGuidanceCard
+        badgeLabel={dict.settings.header.guidanceBadge}
+        badgeIcon={Settings}
+        title={dict.settings.header.guidanceTitle}
+        titleIcon={Store}
+        description="Chỉnh sửa tên cửa hàng, hotline, địa chỉ và giờ mở cửa. Những thông tin này tự động đồng bộ sang thẻ chào khách và tin nhắn Zalo."
+        tips={[
+          "⚡ Tên cửa hàng, hotline và địa chỉ đồng bộ sang Thẻ chào A6 và tin nhắn Zalo",
+          "🔒 Thiết lập AI và kết nối mạng xã hội chỉ dành cho tài khoản Điều hành",
+          "🌐 Liên kết tài khoản mạng xã hội để đăng bài tự động đa kênh",
+        ]}
+      />
 
       {/* Thông báo trạng thái */}
       {error && (
@@ -173,176 +107,162 @@ function CaiDatTiemContent() {
         </div>
       )}
 
-      {/* 2. Thanh Tabs All-In-One */}
-      <SettingsTabsNav
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        policyCounts={{
-          promotions: policies?.promotions.length ?? 0,
-          commitments: policies?.commitments.length ?? 0,
-          agreements: policies?.agreements.length ?? 0,
-        }}
-      />
+      {/* 2. Lưới liên kết sâu đến các phân hệ thiết lập */}
+      <SettingsSubsystemGrid />
 
-      {/* 3. Nội dung chi tiết từng mục */}
-
-      {/* MỤC 1: THÔNG TIN TIỆM & PHÁP LÝ */}
-      {activeTab === "INFO" && (
-        <div className="flex flex-col gap-6">
-          {loading ? (
-            <div className="p-6 rounded-2xl border border-border bg-surface">
-              <SkeletonBlock lines={5} label="Đang tải thông tin cửa hàng..." />
+      {/* 3. Form chỉnh sửa nhanh thông số cơ bản tại chỗ */}
+      <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 className="text-base font-extrabold text-text flex items-center gap-2">
+              <Store size={18} className="text-primary" /> Thông tin cơ bản của cửa hàng
+            </h2>
+            <p className="text-xs text-text-muted mt-0.5">
+              Các trường thông tin dưới đây áp dụng tức thì cho hóa đơn, phiếu cắm hoa và kịch bản tư vấn.
+            </p>
+          </div>
+          {canEdit && organizationType === "EXPERIENCE" && (
+            <div className="shrink-0">
+              <LoadMockDataButton />
             </div>
-          ) : (
-            <BusinessProfileForm
-              initialData={business}
-              onSave={saveBusiness}
-              saving={saving}
-            />
           )}
-
-          <ModelChangeCard />
         </div>
-      )}
 
-      {/* MỤC 2: NHẬN DIỆN THƯƠNG HIỆU */}
-      {activeTab === "BRANDING" && (
-        <div className="flex flex-col gap-6">
-          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
-              <Palette size={18} className="text-primary" /> Nhận Diện Thương Hiệu & Logo
-            </h2>
-            <p className="text-xs text-text-muted mb-4">
-              Cài đặt màu sắc chủ đạo, logo thương hiệu, slogan và phong cách hiển thị.
-            </p>
-            <BrandProfileForm initialData={brand} onSave={saveBrand} saving={saving} />
+        {loading ? (
+          <div className="py-4">
+            <SkeletonBlock lines={4} label="Đang tải thông tin cửa hàng..." />
           </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Tên cửa hàng */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text flex items-center gap-1.5">
+                  <Store size={13} className="text-text-muted" /> Tên cơ sở kinh doanh
+                </label>
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => {
+                    setDisplayName(e.target.value)
+                    setFormDirty(true)
+                  }}
+                  disabled={!canEdit || saving}
+                  placeholder="Ví dụ: Tiệm Nắng Sài Gòn"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-border bg-background text-text focus:outline-hidden focus:ring-1 focus:ring-primary disabled:opacity-60"
+                  required
+                />
+              </div>
 
-          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
-              <Sparkles size={18} className="text-primary" /> Sự Kiện & Dịp Kích Cầu
-            </h2>
-            <OccasionsSettingsForm />
-          </div>
-        </div>
-      )}
+              {/* Lĩnh vực hoạt động (Khóa & Phí mở khóa) */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Building2 size={13} className="text-text-muted" /> Lĩnh vực hoạt động
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-caption font-semibold text-warning bg-warning/10 px-2 py-0.5 rounded-full border border-warning/20">
+                    🔒 Đang khóa
+                  </span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    disabled
+                    value="Hoa & Cây cảnh (Đã thiết lập ban đầu)"
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-border bg-surface-alt text-text-muted opacity-80 cursor-not-allowed"
+                  />
+                </div>
+                <div className="flex items-center justify-between pt-1 text-caption">
+                  <span className="text-text-muted">Chuyển đổi sang Thời trang, F&B hoặc Bán lẻ cần điều chỉnh dữ liệu.</span>
+                  <button
+                    type="button"
+                    onClick={() => alert("Yêu cầu chuyển đổi ngành nghề: Vui lòng thanh toán phí chuyển đổi hệ thống (500.000 VNĐ) để mở khóa chuyển ngành.")}
+                    className="font-bold text-primary hover:underline"
+                  >
+                    Mở khóa chuyển ngành (Có phí)
+                  </button>
+                </div>
+              </div>
 
-      {/* MỤC 3: CƠ CHẾ NHẬN THANH TOÁN & ĐỐI SOÁT */}
-      {activeTab === "PAYMENT" && (
-        <div className="flex flex-col gap-6">
-          <StorePaymentMethodsEditor />
-        </div>
-      )}
+              {/* Hotline */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text flex items-center gap-1.5">
+                  <Phone size={13} className="text-text-muted" /> Hotline / Zalo đặt hoa
+                </label>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value)
+                    setFormDirty(true)
+                  }}
+                  disabled={!canEdit || saving}
+                  placeholder="Ví dụ: 0908 123 456"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-border bg-background text-text focus:outline-hidden focus:ring-1 focus:ring-primary disabled:opacity-60"
+                />
+              </div>
 
-      {/* MỤC 4: ĐẶT CỌC, THANH TOÁN & DẢI GIÁ */}
-      {activeTab === "DEPOSIT" && (
-        <div className="flex flex-col gap-6">
-          <PaymentPolicySection />
-          <DepositLevelsSection />
-          <PriceBudgetsSection />
-        </div>
-      )}
+              {/* Địa chỉ */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text flex items-center gap-1.5">
+                  <MapPin size={13} className="text-text-muted" /> Địa chỉ cửa hàng
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => {
+                    setAddress(e.target.value)
+                    setFormDirty(true)
+                  }}
+                  disabled={!canEdit || saving}
+                  placeholder="Ví dụ: 124 Nguyễn Đình Chiểu, P. Đa Kao, Q.1, TP.HCM"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-border bg-background text-text focus:outline-hidden focus:ring-1 focus:ring-primary disabled:opacity-60"
+                />
+              </div>
 
-      {/* MỤC 5: ƯU ĐÃI & KHUYẾN MÃI */}
-      {activeTab === "PROMOTIONS" && (
-        <div className="flex flex-col gap-6">
-          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
-              <Gift size={18} className="text-primary" /> Danh Mục Ưu Đãi (Voucher & Quà Tặng)
-            </h2>
-            <p className="text-xs text-text-muted mb-4">
-              Khách hàng được chọn 01 ưu đãi khi mở liên kết Thẻ Chào hoặc Đặt hàng trực tiếp.
-            </p>
+              {/* Giờ mở cửa */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-text flex items-center gap-1.5">
+                  <Clock size={13} className="text-text-muted" /> Giờ mở cửa
+                </label>
+                <input
+                  type="text"
+                  value={openingHours}
+                  onChange={(e) => {
+                    setOpeningHours(e.target.value)
+                    setFormDirty(true)
+                  }}
+                  disabled={!canEdit || saving}
+                  placeholder="Ví dụ: 07:30 - 21:30 (Mở cửa tất cả các ngày)"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-border bg-background text-text focus:outline-hidden focus:ring-1 focus:ring-primary disabled:opacity-60"
+                />
+              </div>
+            </div>
 
-            {policies ? (
-              <StorePoliciesEditor
-                initialPolicies={policies}
-                onSave={handleSavePolicies}
-                saving={savingPolicies || org.isLoading}
-                initialSection="promo"
-                hideSubTabs={true}
-              />
-            ) : (
-              <p className="text-xs text-text-muted py-4">Đang tải danh mục ưu đãi...</p>
+            {/* Nút lưu (K2: 1 primary action duy nhất) */}
+            {canEdit && (
+              <div className="pt-2 flex justify-end">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  disabled={saving || !formDirty}
+                  className="text-xs font-bold gap-1.5 shadow-xs"
+                >
+                  <Save size={13} />
+                  {saving ? "Đang lưu..." : "Lưu thay đổi"}
+                </Button>
+              </div>
             )}
-          </div>
-        </div>
-      )}
+          </form>
+        )}
+      </div>
 
-      {/* MỤC 6: CAM KẾT CHẤT LƯỢNG */}
-      {activeTab === "COMMITMENTS" && (
-        <div className="flex flex-col gap-6">
-          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
-              <ShieldCheck size={18} className="text-primary" /> Cam Kết Chất Lượng Của Cửa Hàng
-            </h2>
-            <p className="text-xs text-text-muted mb-4">
-              Hiển thị minh bạch với khách hàng: gửi ảnh trước khi giao, cam kết độ tươi mới, đổi trả miễn phí.
-            </p>
+      {/* 4. Mô hình vận hành doanh nghiệp (1 Cửa hàng vs Chuỗi) */}
+      <ModelChangeCard />
 
-            {policies ? (
-              <StorePoliciesEditor
-                initialPolicies={policies}
-                onSave={handleSavePolicies}
-                saving={savingPolicies || org.isLoading}
-                initialSection="commit"
-                hideSubTabs={true}
-              />
-            ) : (
-              <p className="text-xs text-text-muted py-4">Đang tải danh mục cam kết...</p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* MỤC 7: THỎA THUẬN ĐẶT HÀNG */}
-      {activeTab === "AGREEMENTS" && (
-        <div className="flex flex-col gap-6">
-          <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-            <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
-              <FileText size={18} className="text-primary" /> Thỏa Thuận & Quy Định Khi Đặt Hàng
-            </h2>
-            <p className="text-xs text-text-muted mb-4">
-              Các điều khoản cần khách hàng đọc và đồng ý trước khi chốt đơn (thay thế nguyên liệu theo mùa, phụ thu...).
-            </p>
-
-            {policies ? (
-              <StorePoliciesEditor
-                initialPolicies={policies}
-                onSave={handleSavePolicies}
-                saving={savingPolicies || org.isLoading}
-                initialSection="agree"
-                hideSubTabs={true}
-              />
-            ) : (
-              <p className="text-xs text-text-muted py-4">Đang tải danh mục thỏa thuận...</p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* MỤC 8: CƠ CHẾ THẺ CHÀO & QUY TRÌNH DUYỆT ĐƠN */}
-      {activeTab === "BROCHURE_FLOW" && <BrochureFlowSettingsTab />}
-
-      {/* MỤC 9: TRỢ LÝ AI & KÊNH MẠNG XÃ HỘI */}
-      {activeTab === "AI_CHANNELS" && <AiChannelsSettingsTab />}
-
-      {/* MỤC 10: DANH MỤC THU THẬP CHUỖI (§9.5.8) */}
-      {activeTab === "COLLECTION_PROFILE" && <ChainCollectionProfileManager />}
+      {/* 5. Nhắc Nghiệp Vụ Điều Phối (M0..M5) */}
+      <DispatchReminderPolicyCard canEdit={can("R12")} />
     </div>
-  )
-}
-
-export default function CaiDatTiemPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="p-6 max-w-5xl mx-auto w-full">
-          <SkeletonBlock lines={4} label="Đang tải Hồ sơ & Cài đặt..." />
-        </div>
-      }
-    >
-      <CaiDatTiemContent />
-    </Suspense>
   )
 }

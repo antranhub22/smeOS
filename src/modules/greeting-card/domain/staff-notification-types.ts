@@ -16,6 +16,12 @@ export const STAFF_NOTIFY_EVENTS = [
   "STUCK_DETECTED",
   "SECOND_PAYMENT_REPORTED",
   "DISCOUNT_REQUESTED",
+  "PRODUCT_PROPOSED",
+  "PRODUCT_PROPOSAL_REMINDER",
+  "PRODUCT_PROPOSAL_REJECTED",
+  "PRODUCT_PROPOSAL_EXPIRED",
+  "PRODUCT_CHANGE_REQUESTED",
+  "PRODUCT_CHANGE_REVIEWED",
 ] as const
 
 export type StaffNotifyEvent = (typeof STAFF_NOTIFY_EVENTS)[number]
@@ -23,15 +29,21 @@ export type StaffNotifyEvent = (typeof STAFF_NOTIFY_EVENTS)[number]
 export const STAFF_NOTIFY_EVENT_LABELS: Record<StaffNotifyEvent, string> = {
   ORDER_RECEIVED: "Có đơn hàng mới",
   ORDER_ACCEPTED: "Đơn hàng đã được tiếp nhận — bắt đầu sản xuất",
-  PAYMENT_REPORTED: "Khách báo đã chuyển khoản (Lần 1)",
+  PAYMENT_REPORTED: "Khách báo đã chuyển khoản (lần 1)",
   PAYMENT_CONFIRMED: "Xác nhận chuyển khoản thành công",
   CANCELLATION_REQUESTED: "Khách yêu cầu huỷ đơn hàng",
   CHANGE_REQUESTED: "Khách yêu cầu thay đổi thông tin đơn",
-  READY: "Sản phẩm đã hoàn thiện (QC xong)",
+  READY: "Sản phẩm đã hoàn thiện, đã kiểm tra chất lượng",
   DELIVERY_FAILED: "Giao hàng chưa thành công",
-  STUCK_DETECTED: "Đơn hàng kẹt quá thời gian SLA",
+  STUCK_DETECTED: "Đơn hàng kẹt quá thời gian xử lý",
   SECOND_PAYMENT_REPORTED: "Khách báo đã chuyển khoản lần 2 (đặt cọc)",
   DISCOUNT_REQUESTED: "Đề xuất giảm giá chờ duyệt",
+  PRODUCT_PROPOSED: "Nhân viên đề xuất mẫu sản phẩm mới chờ duyệt",
+  PRODUCT_PROPOSAL_REMINDER: "Nhắc duyệt mẫu đề xuất sắp hết hạn",
+  PRODUCT_PROPOSAL_REJECTED: "Mẫu đề xuất của bạn bị từ chối",
+  PRODUCT_PROPOSAL_EXPIRED: "Mẫu đề xuất của bạn hết hạn chưa được duyệt",
+  PRODUCT_CHANGE_REQUESTED: "Nhân viên đề xuất sửa một mẫu chính thức",
+  PRODUCT_CHANGE_REVIEWED: "Đề xuất sửa mẫu của bạn đã có kết quả",
 }
 
 export const STAFF_NOTIFY_CHANNELS = [

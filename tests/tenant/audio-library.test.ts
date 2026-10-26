@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto"
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { POST as postAudioJob } from "@/app/api/v1/audio/jobs/route"
+import { SESSION_COOKIE } from "@/core/http/cookies"
 import { DELETE as deleteTrack } from "@/app/api/v1/audio/music-tracks/[id]/route"
 import { GET as listTracks, POST as uploadTrack } from "@/app/api/v1/audio/music-tracks/route"
 import { GET as getClone } from "@/app/api/v1/audio/voice-clones/[id]/route"
@@ -20,7 +21,7 @@ const BASE = "http://localhost/api/v1/audio"
 
 function req(url: string, t: Tenant, init?: RequestInit): Request {
   const headers = new Headers(init?.headers)
-  headers.set("cookie", `floraos_session=${encodeURIComponent(t.token)}`)
+  headers.set("cookie", `${SESSION_COOKIE}=${encodeURIComponent(t.token)}`)
   return new Request(url, { ...init, headers })
 }
 

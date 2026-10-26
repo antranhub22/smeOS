@@ -9,11 +9,17 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { Prisma } from "@/generated/prisma/client"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
-import type { ISubcontractStateStore } from "../use-cases/dispatch-subcontract-order"
-import type { ISubcontractOrderRepository } from "../domain/repositories/subcontract-order-repository.interface"
+import type { ISubcontractClaimStore } from "../use-cases/dispatch-subcontract-order"
+import type { DeliveryGeoEntry, IDeliveryGeoStore } from "../use-cases/resolve-geo-location"
+import { queueOrderNotification } from "../use-cases/notify-customer"
 
-export class SubcontractOrderRepository implements ISubcontractStateStore, ISubcontractOrderRepository {
-  constructor(private readonly db = prisma) {}
+export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeliveryGeoStore {
+  constructor(
+    private readonly db = prisma,
+    /** Chi nhánh chốt làm → báo khách "Đã nhận đơn" (PO 22/10/2026: không báo lúc Điều phối xác nhận tiền) */
+    private readonly onOrderAccepted: (organizationId: string, orderId: string) => void = (orgId, orderId) =>
+      queueOrderNotification(orgId, orderId, "ORDER_ACCEPTED")
+  ) {}
 
   async loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null> {
     const coordination = await this.db.order_coordinations.findFirst({
@@ -28,89 +34,117 @@ export class SubcontractOrderRepository implements ISubcontractStateStore, ISubc
     return sub as SubcontractOrderState
   }
 
+  /** Ghi đè cả phiên gia công. Chỉ dùng khi KHÔNG phụ thuộc trạng thái cũ; còn lại dùng `updateSubcontractState`. */
   async saveSubcontractState(ctx: TenantContext, state: SubcontractOrderState): Promise<void> {
-    const coordination = await this.db.order_coordinations.findFirst({
-      where: scopedWhere(ctx, { order_id: state.orderId }),
-    })
-
-    const existingMeta = (coordination?.metadata as Record<string, unknown> | null) ?? {}
-    const newMeta = {
-      ...existingMeta,
-      subcontract_dispatch: state,
-    }
-
-    if (coordination) {
-      await this.db.order_coordinations.update({
-        where: { id: coordination.id },
-        data: {
-          metadata: newMeta as unknown as Prisma.InputJsonValue,
-        },
-      })
-    } else {
-      await this.db.order_coordinations.create({
-        data: {
-          id: `coord_${state.orderId}`,
-          organization_id: ctx.organizationId,
-          order_id: state.orderId,
-          metadata: newMeta as unknown as Prisma.InputJsonValue,
-        },
-      })
-    }
-
-    // Nếu chi nhánh là branch thật trong CSDL bảng branches, cập nhật orders.branch_id
-    const isRealDbBranch = state.claimedBranchId
-      ? await this.db.branches.findFirst({
-          where: { id: state.claimedBranchId, organization_id: ctx.organizationId },
-          select: { id: true },
-        })
-      : null
-
-    if (isRealDbBranch && (state.dispatchStatus === "CLAIMED_GRACE" || state.dispatchStatus === "COMMITTED")) {
-      await this.db.orders.updateMany({
-        where: scopedWhere(ctx, { id: state.orderId }),
-        data: { branch_id: isRealDbBranch.id },
-      })
-    } else if (state.dispatchStatus === "OPEN") {
-      await this.db.orders.updateMany({
-        where: scopedWhere(ctx, { id: state.orderId }),
-        data: { branch_id: null },
-      })
-    }
-
-    // Cơ chế Tự Động Xác Nhận Đơn (Gate 2 Auto-Confirm):
-    // Khi chi nhánh đã nhận & chốt làm (COMMITTED), nếu cấu hình autoConfirmOnBranchCommit = true (mặc định)
-    // -> Tự động chuyển đơn sang CONFIRMED & ASSIGNED, Điều phối không cần bấm nút duyệt thủ công.
-    if (state.dispatchStatus === "COMMITTED") {
-      const org = await this.db.organizations.findUnique({
-        where: { id: ctx.organizationId },
-        select: { settings: true },
-      })
-      const settings = (org?.settings as Record<string, unknown> | null) ?? {}
-      const rawPolicy = settings["chain_dispatch_policy"] as Record<string, unknown> | undefined
-      const autoConfirm = rawPolicy?.auto_confirm_on_branch_commit !== false && rawPolicy?.autoConfirmOnBranchCommit !== false
-
-      if (autoConfirm) {
-        await this.db.orders.updateMany({
-          where: scopedWhere(ctx, {
-            id: state.orderId,
-            NOT: { status: "CANCELLED" as const },
-            production_status: "WAITING" as const,
-          }),
-          data: {
-            status: "CONFIRMED" as const,
-            production_status: "ASSIGNED" as const,
-          },
-        })
-      }
-    }
+    await this.updateSubcontractState(ctx, state.orderId, () => ({ next: state, result: undefined }))
   }
 
   /**
-   * Tìm đơn hàng gia công theo orderCode công khai cho màn hình Thẻ Gia Công.
+   * Đọc–sửa–ghi phiên gia công dưới khoá dòng `order_coordinations` (SELECT … FOR UPDATE), cùng
+   * giao dịch với các thay đổi kèm theo trên `orders`. `change` nhận trạng thái MỚI NHẤT; trả
+   * `next: null` để không ghi gì; ném lỗi để huỷ cả giao dịch.
+   *
+   * Trước 22/10/2026 mọi nơi đọc trạng thái, kiểm tra trong bộ nhớ rồi ghi đè cả khối JSON: hai
+   * chi nhánh bấm nhận cùng lúc đều thắng, cron ghi đè thao tác chốt/huỷ vừa xảy ra (rà soát cụm G).
    */
-  async findSubcontractByCode(orderCode: string) {
+  async updateSubcontractState<T>(
+    ctx: TenantContext,
+    orderId: string,
+    change: (current: SubcontractOrderState | null) => { next: SubcontractOrderState | null; result: T }
+  ): Promise<T> {
+    let accepted = false
+    const out = await this.db.$transaction(async (tx) => {
+      const rows = await tx.$queryRaw<Array<{ id: string; metadata: unknown }>>`
+        SELECT "id", "metadata" FROM "order_coordinations"
+        WHERE "organization_id" = ${ctx.organizationId} AND "order_id" = ${orderId}
+        FOR UPDATE`
+      const row = rows[0]
+      const meta = row?.metadata && typeof row.metadata === "object" ? (row.metadata as Record<string, unknown>) : {}
+      const sub = meta.subcontract_dispatch
+      const current = sub && typeof sub === "object" ? (sub as SubcontractOrderState) : null
+
+      const { next, result } = change(current)
+      if (!next) return result
+
+      const newMeta = { ...meta, subcontract_dispatch: next } as unknown as Prisma.InputJsonValue
+      if (row) {
+        await tx.order_coordinations.update({ where: { id: row.id }, data: { metadata: newMeta } })
+      } else {
+        await tx.order_coordinations.create({
+          data: { id: `coord_${orderId}`, organization_id: ctx.organizationId, order_id: orderId, metadata: newMeta },
+        })
+      }
+      accepted = await this.syncOrderWithDispatch(tx, ctx, next)
+      return result
+    })
+    // Gửi sau khi giao dịch đã ghi — giao dịch huỷ thì không báo khách
+    if (accepted) this.onOrderAccepted(ctx.organizationId, orderId)
+    return out
+  }
+
+  /** Ghi trạng thái chỉ khi trạng thái hiện tại (dưới khoá dòng) còn là `expectedStatus`. */
+
+  async loadDeliveryGeo(ctx: TenantContext, orderId: string): Promise<DeliveryGeoEntry | null> {
+    const coordination = await this.db.order_coordinations.findFirst({
+      where: scopedWhere(ctx, { order_id: orderId }),
+      select: { metadata: true },
+    })
+    const geo = (coordination?.metadata as Record<string, unknown> | null)?.delivery_geo
+    return geo && typeof geo === "object" ? (geo as DeliveryGeoEntry) : null
+  }
+
+  /**
+   * Ghi đệm toạ độ vào phiên điều phối có sẵn (không tạo phiên mới — phiên do luồng tạo đơn tạo).
+   * `jsonb_set` trong một câu lệnh: không đè `subcontract_dispatch` đang được ghi song song.
+   */
+  async saveDeliveryGeo(ctx: TenantContext, orderId: string, entry: DeliveryGeoEntry): Promise<void> {
+    await this.db.$executeRaw`
+      UPDATE "order_coordinations"
+      SET "metadata" = jsonb_set(COALESCE("metadata", '{}'::jsonb), '{delivery_geo}', ${JSON.stringify(entry)}::jsonb, true)
+      WHERE "organization_id" = ${ctx.organizationId} AND "order_id" = ${orderId}`
+  }
+
+  async saveSubcontractStateIfStatus(
+    ctx: TenantContext,
+    state: SubcontractOrderState,
+    expectedStatus: SubcontractOrderState["dispatchStatus"]
+  ): Promise<boolean> {
+    return this.updateSubcontractState(ctx, state.orderId, (current) =>
+      current?.dispatchStatus === expectedStatus ? { next: state, result: true } : { next: null, result: false }
+    )
+  }
+
+  /** `orders.branch_id` theo chi nhánh đang giữ đơn, và tự xác nhận đơn khi chi nhánh chốt làm. */
+  private async syncOrderWithDispatch(tx: Prisma.TransactionClient, ctx: TenantContext, state: SubcontractOrderState): Promise<boolean> {
+    const realBranch = state.claimedBranchId
+      ? await tx.branches.findFirst({ where: { id: state.claimedBranchId, organization_id: ctx.organizationId }, select: { id: true } })
+      : null
+    if (realBranch && (state.dispatchStatus === "CLAIMED_GRACE" || state.dispatchStatus === "COMMITTED")) {
+      await tx.orders.updateMany({ where: scopedWhere(ctx, { id: state.orderId }), data: { branch_id: realBranch.id } })
+    } else if (state.dispatchStatus === "OPEN") {
+      await tx.orders.updateMany({ where: scopedWhere(ctx, { id: state.orderId }), data: { branch_id: null } })
+    }
+
+    // Tự xác nhận đơn khi chi nhánh chốt làm (mặc định bật, tắt bằng auto_confirm_on_branch_commit=false)
+    if (state.dispatchStatus !== "COMMITTED") return false
+    const org = await tx.organizations.findUnique({ where: { id: ctx.organizationId }, select: { settings: true } })
+    const rawPolicy = ((org?.settings as Record<string, unknown> | null) ?? {})["chain_dispatch_policy"] as Record<string, unknown> | undefined
+    if (rawPolicy?.auto_confirm_on_branch_commit === false || rawPolicy?.autoConfirmOnBranchCommit === false) return false
+    const moved = await tx.orders.updateMany({
+      where: scopedWhere(ctx, { id: state.orderId, NOT: { status: "CANCELLED" as const }, production_status: "WAITING" as const }),
+      data: { status: "CONFIRMED" as const, production_status: "ASSIGNED" as const },
+    })
+    // Chỉ lần chuyển WAITING → ASSIGNED đầu tiên mới là "đơn được nhận"
+    return moved.count > 0
+  }
+
+  /**
+   * Tìm đơn hàng gia công theo orderCode công khai cho màn hình Thẻ Gia Công. Mã đơn chỉ duy
+   * nhất trong một tổ chức — tổ chức lấy từ token link đã xác minh, không bao giờ từ client.
+   */
+  async findSubcontractByCode(orderCode: string, organizationId: string) {
     return this.db.orders.findFirst({
-      where: { code: orderCode },
+      where: { organization_id: organizationId, code: orderCode },
       include: {
         coordination: true,
         items: true,
@@ -137,7 +171,7 @@ export class SubcontractOrderRepository implements ISubcontractStateStore, ISubc
 
   /**
    * Tra cứu chi nhánh trong phạm vi tổ chức cho màn hình Thẻ Gia Công công khai.
-   * Hỗ trợ tìm trong cả bảng branches lẫn danh sách chain_branches được import qua Excel vào settings.
+   * Tìm trong bảng `branches` trước, rồi đến `chain_branches` (chi nhánh chuỗi nhập qua Excel).
    */
   async findBranchInOrganization(branchId: string, orgId: string) {
     const dbBranch = await this.db.branches.findFirst({
@@ -146,21 +180,12 @@ export class SubcontractOrderRepository implements ISubcontractStateStore, ISubc
     })
     if (dbBranch) return dbBranch
 
-    // Nếu không có trong bảng branches, tra cứu trong settings.chain_branches
-    const org = await this.db.organizations.findUnique({
-      where: { id: orgId },
-      select: { settings: true },
+    // Không có trong bảng branches → chi nhánh điều phối chuỗi (bảng chain_branches, nhập Excel)
+    const chainBranch = await this.db.chain_branches.findUnique({
+      where: { organization_id_branch_code: { organization_id: orgId, branch_code: branchId } },
+      select: { branch_code: true, name: true, is_active: true },
     })
-    const settings = (org?.settings as Record<string, unknown> | null) ?? {}
-    const chainBranches = (settings.chain_branches as Array<{ branchId: string; branchName: string; isActive?: boolean }>) || []
-    const match = chainBranches.find((b) => b.branchId === branchId)
-    if (match) {
-      return {
-        id: match.branchId,
-        name: match.branchName,
-        is_active: match.isActive ?? true,
-      }
-    }
+    if (chainBranch) return { id: chainBranch.branch_code, name: chainBranch.name, is_active: chainBranch.is_active }
 
     return null
   }
@@ -175,236 +200,42 @@ export class SubcontractOrderRepository implements ISubcontractStateStore, ISubc
     })
   }
 
-  /**
-   * Ghi nhận sự kiện chi nhánh HỦY nhận đơn và trừ điểm chất lượng KPI (Quality Score Penalty).
-   * Mỗi lần hủy trong Grace Period trừ 2 điểm KPI và tăng biến đếm số lần hủy để thuật toán Matching Engine giảm ưu tiên đơn sau.
-   */
-  async recordBranchCancellationPenalty(
-    orgId: string,
-    branchId: string,
-    reason: string = "Hủy nhận đơn trong thời hạn Grace Period (Kho thiếu hoa/nguyên liệu)"
-  ): Promise<{ newQualityScore: number; cancellationCount: number }> {
-    const org = await this.db.organizations.findUnique({
-      where: { id: orgId },
-      select: { settings: true },
-    })
-    const settings = (org?.settings as Record<string, unknown> | null) ?? {}
-    const rawBranches = settings.chain_branches
-    const chainBranches = Array.isArray(rawBranches) ? [...(rawBranches as Array<Record<string, unknown>>)] : []
-
-    let newQualityScore = 90
-    let cancellationCount = 1
-
-    const updatedBranches = chainBranches.map((b) => {
-      if (b.branchId === branchId) {
-        const currentScore = typeof b.qualityScore === "number" ? b.qualityScore : 90
-        const currentCancels = typeof b.cancellationCount === "number" ? b.cancellationCount : 0
-        // Trừ 2 điểm chất lượng, tối thiểu 10 điểm
-        newQualityScore = Math.max(10, currentScore - 2)
-        cancellationCount = currentCancels + 1
-
-        const history = Array.isArray(b.cancellationHistory) ? [...b.cancellationHistory] : []
-        history.unshift({
-          timestamp: new Date().toISOString(),
-          reason,
-          penalty: -2,
-        })
-
-        return {
-          ...b,
-          qualityScore: newQualityScore,
-          cancellationCount,
-          cancellationHistory: history.slice(0, 50), // Giữ tối đa 50 lần gần nhất
-        }
-      }
-      return b
-    })
-
-    await this.db.organizations.update({
-      where: { id: orgId },
-      data: {
-        settings: {
-          ...settings,
-          chain_branches: updatedBranches,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    })
-
-    return { newQualityScore, cancellationCount }
-  }
-
-  /**
-   * Trừ 2 điểm chất lượng KPI của chi nhánh khi xin bỏ qua bằng chứng (QC, Shipper, POD).
-   * Điểm này trực tiếp làm giảm tỷ lệ trúng đơn gia công ở các vòng phân bổ sau.
-   */
-  async recordBranchBypassPenalty(
-    orgId: string,
-    branchId: string,
-    reason: string
-  ): Promise<{ newQualityScore: number; bypassCount: number }> {
-    const org = await this.db.organizations.findUnique({
-      where: { id: orgId },
-      select: { settings: true },
-    })
-    const settings = (org?.settings as Record<string, unknown> | null) ?? {}
-    const rawBranches = settings.chain_branches
-    const chainBranches = Array.isArray(rawBranches) ? [...(rawBranches as Array<Record<string, unknown>>)] : []
-
-    let newQualityScore = 90
-    let bypassCount = 1
-
-    const updatedBranches = chainBranches.map((b) => {
-      if (b.branchId === branchId) {
-        const currentScore = typeof b.qualityScore === "number" ? b.qualityScore : 90
-        const currentBypasses = typeof b.bypassCount === "number" ? b.bypassCount : 0
-        newQualityScore = Math.max(10, currentScore - 2)
-        bypassCount = currentBypasses + 1
-
-        const history = Array.isArray(b.bypassHistory) ? [...b.bypassHistory] : []
-        history.unshift({
-          timestamp: new Date().toISOString(),
-          reason,
-          penalty: -2,
-        })
-
-        return {
-          ...b,
-          qualityScore: newQualityScore,
-          bypassCount,
-          bypassHistory: history.slice(0, 50),
-        }
-      }
-      return b
-    })
-
-    await this.db.organizations.update({
-      where: { id: orgId },
-      data: {
-        settings: {
-          ...settings,
-          chain_branches: updatedBranches,
-        } as unknown as Prisma.InputJsonValue,
-      },
-    })
-
-    return { newQualityScore, bypassCount }
-  }
-
-  /**
-   * Tìm order_coordinations record theo orderId.
-   */
-  async findCoordination(orderId: string) {
-    return this.db.order_coordinations.findUnique({
-      where: { order_id: orderId },
-    })
-  }
-
-  /**
-   * Tìm order_coordinations scoped theo org.
-   */
-  async findCoordinationScoped(orderId: string, organizationId: string) {
-    return this.db.order_coordinations.findFirst({
-      where: { order_id: orderId, organization_id: organizationId },
-      select: { id: true, metadata: true },
-    })
-  }
-
-  /**
-   * Cập nhật metadata của order_coordinations (upsert safe: merge với existing meta).
-   * Trả về metadata sau khi merge.
-   */
-  async upsertCoordinationMeta(
-    orderId: string,
-    organizationId: string,
-    metaPatch: Record<string, unknown>
-  ): Promise<Record<string, unknown>> {
-    const existing = await this.db.order_coordinations.findUnique({
-      where: { order_id: orderId },
-    })
-    const existingMeta = (existing?.metadata as Record<string, unknown> | null) ?? {}
-    const newMeta = { ...existingMeta, ...metaPatch }
-
-    await this.db.order_coordinations.update({
-      where: { order_id: orderId },
-      data: { metadata: newMeta as unknown as import("@/generated/prisma/client").Prisma.InputJsonValue },
-    })
-    return newMeta
-  }
-
-  /**
-   * Update orders status fields (status, production_status, delivery_status).
-   */
-  async updateOrderStatus(
-    orderId: string,
-    data: {
-      status?: string
-      production_status?: string
-      delivery_status?: string
-    }
-  ): Promise<void> {
-    await this.db.orders.update({
-      where: { id: orderId },
-      data: data as Parameters<typeof this.db.orders.update>[0]["data"],
-    })
-  }
-
-  /**
-   * Tạo order_events record.
-   */
-  async createOrderEvent(data: {
-    id?: string
-    organization_id: string
-    order_id: string
-    axis: string
-    from_value: string | null
-    to_value: string
-    actor_id: string
-    reason?: string
-  }): Promise<void> {
-    const { randomUUID } = await import("crypto")
-    await this.db.order_events.create({
-      data: {
-        id: data.id ?? randomUUID(),
-        organization_id: data.organization_id,
-        order_id: data.order_id,
-        axis: data.axis,
-        from_value: data.from_value ?? "",
-        to_value: data.to_value,
-        actor_id: data.actor_id,
-        reason: data.reason ?? null,
+  /** Đơn kèm dữ liệu cần để sàng lọc và phát lệnh điều phối chuỗi (route chain-dispatch). */
+  async findOrderForChainDispatch(organizationId: string, orderId: string) {
+    return this.db.orders.findFirst({
+      where: { id: orderId, organization_id: organizationId },
+      select: {
+        id: true,
+        organization_id: true,
+        code: true,
+        delivery_address: true,
+        delivery_window: true,
+        status: true,
+        total_vnd: true,
+        pricing_rule_ref: true,
+        items: { select: { product_id: true, description: true, metadata: true } },
+        greeting_sessions: { select: { product_snapshot: true }, take: 1 },
       },
     })
   }
 
-  /**
-   * Update orders pricing_rule_ref (merge patch).
-   */
-  async patchOrderPricingRef(
-    orderId: string,
-    patch: Record<string, unknown>
-  ): Promise<void> {
-    const order = await this.db.orders.findUnique({
-      where: { id: orderId },
-      select: { pricing_rule_ref: true },
-    })
-    const existing = (order?.pricing_rule_ref as Record<string, unknown> | null) ?? {}
-    await this.db.orders.update({
-      where: { id: orderId },
-      data: {
-        pricing_rule_ref: {
-          ...existing,
-          ...patch,
-        } as unknown as import("@/generated/prisma/client").Prisma.InputJsonValue,
+  /** Dữ kiện khách duyệt ảnh thành phẩm của đơn (cùng nguồn với đơn 1 cửa hàng), hoặc `null`. */
+  async loadPhotoApprovalFacts(organizationId: string, orderId: string) {
+    return this.db.orders.findFirst({
+      where: { id: orderId, organization_id: organizationId },
+      select: {
+        qc_records: { select: { notes: true, created_at: true } },
+        greeting_sessions: { select: { catalog: { select: { filters: true } } } },
+        organization: { select: { settings: true } },
       },
     })
   }
-}
 
-let defaultSubcontractOrderRepository: ISubcontractOrderRepository | null = null
-
-export function getSubcontractOrderRepository(): ISubcontractOrderRepository {
-  if (!defaultSubcontractOrderRepository) {
-    defaultSubcontractOrderRepository = new SubcontractOrderRepository()
+  /** Ghi đè `orders.pricing_rule_ref` (người gọi tự trộn với bản cũ). */
+  async updatePricingRef(organizationId: string, orderId: string, pricingRef: Record<string, unknown>): Promise<void> {
+    await this.db.orders.updateMany({
+      where: { id: orderId, organization_id: organizationId },
+      data: { pricing_rule_ref: pricingRef as Prisma.InputJsonValue },
+    })
   }
-  return defaultSubcontractOrderRepository!
 }

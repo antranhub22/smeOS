@@ -1,12 +1,21 @@
 import { randomUUID } from "crypto"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { prepareLateDeliveryDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
+import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
+import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { loadSubcontractOrderForBranch } from "@/modules/greeting-card/use-cases/authorize-subcontract-branch"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
+import { escapeTelegramHtml } from "@/modules/greeting-card/domain/chain-dispatch-policy"
+import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
+import { publicAppUrl } from "@/lib/public-url"
 import type { TenantContext } from "@/core/tenancy"
 import {
   cancelSubcontractReminderSteps,
@@ -57,10 +66,6 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   await enforceRateLimit(request, { scope: "subcontract-submit-delivery", limit: 30, windowMs: 60_000 })
   const { orderCode } = await context.params
 
-  const repo = new SubcontractOrderRepository()
-  const order = await repo.findSubcontractByCode(orderCode)
-  if (!order) throw notFound()
-
   const formData = await request.formData().catch(() => null)
   if (!formData) {
     throw validationFailed({ body: "Dữ liệu gửi lên không đúng định dạng multipart/form-data" })
@@ -74,6 +79,9 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     throw validationFailed({ branchId: "Thiếu mã chi nhánh phụ trách" })
   }
 
+  const repo = new SubcontractOrderRepository()
+  const order = await loadSubcontractOrderForBranch(request, orderCode, branchId, repo)
+
   if (!file || !(file instanceof Blob)) {
     throw validationFailed({ file: "Vui lòng chọn ảnh chụp giao hàng (ảnh người nhận / trước cửa / phiếu nhận)" })
   }
@@ -81,9 +89,10 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   // Kiểm tra chi nhánh có đúng là bên đang gia công đơn này không
   const coordMeta = (order.coordination?.metadata as Record<string, unknown> | null) ?? {}
   const subState = coordMeta.subcontract_dispatch as Record<string, unknown> | undefined
-  if (subState?.claimedBranchId && subState.claimedBranchId !== branchId) {
+  if (subState?.claimedBranchId !== branchId) {
     throw unprocessable("Đơn hàng này không thuộc chi nhánh của bạn.")
   }
+  if (!subcontractStepAllowed("POD", order)) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.POD)
 
   const arrayBuffer = await file.arrayBuffer()
   const bytes = new Uint8Array(arrayBuffer)
@@ -124,8 +133,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   // 2. Lấy ảnh thành phẩm QC đã upload trước đó để AI đối chiếu chéo
-  const coord = await repo.findCoordination(order.id)
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
+  const store = new SubcontractStepStore()
+  const existingMeta = await store.readMetadata(order.organization_id, order.id)
   const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
   const latestQcKey = existingQcPhotos[existingQcPhotos.length - 1]
   let qcImageUrl: string | undefined
@@ -140,6 +149,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   // 3. AI Vision kiểm định ảnh bàn giao hàng POD
   const { verifyPodPhotoWithAi } = await import("@/modules/greeting-card/use-cases/verify-pod-photo-ai")
   const aiVerify = await verifyPodPhotoWithAi({
+    organizationId: order.organization_id,
+    orderId: order.id,
     productName,
     sampleImageUrl,
     qcImageUrl,
@@ -154,6 +165,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       branchId,
       aiVerify,
     })
+    if (aiVerify.verdict === "UNCERTAIN") throw unprocessable(aiVerify.reason)
     throw unprocessable(
       `❌ Ảnh giao hàng không hợp lệ: ${aiVerify.reason} (Độ tin cậy: ${aiVerify.confidenceScore}%). Vui lòng chụp rõ người nhận hoặc kiện hàng tại điểm giao!`
     )
@@ -162,52 +174,39 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const assetId = randomUUID()
   const storageKey = `org/${order.organization_id}/subcontract/${order.id}/pod-${assetId}.${sniffed.ext}`
   await storage.put(storageKey, Buffer.from(bytes), sniffed.mimeType)
-  const publicPhotoUrl = await storage.signedUrl(storageKey, 604800, "GET")
+  const publicPhotoUrl = await storage.signedUrl(storageKey, 3600, "GET")
 
   const deliveredAt = new Date().toISOString()
-  const existingPodPhotos = Array.isArray(existingMeta.pod_photos) ? (existingMeta.pod_photos as string[]) : []
-  const updatedPodPhotos = [...existingPodPhotos, storageKey]
-
-  const deliveryProof = {
-    photoUrls: updatedPodPhotos,
-    note: note || "Đã giao thành công cho khách hàng",
-    deliveredAt,
-    deliveredByBranch: branchId,
-  }
-
-  const updateOps: Array<Promise<unknown>> = [
-    repo.updateOrderStatus(order.id, {
-      delivery_status: "DELIVERED",
-      status: "COMPLETED",
-    }),
-    repo.upsertCoordinationMeta(order.id, order.organization_id, {
-      pod_photos: updatedPodPhotos,
-      delivery_proof: deliveryProof,
-      last_pod_uploaded_at: deliveredAt,
-    }),
-    repo.createOrderEvent({
-      id: randomUUID(),
-      organization_id: order.organization_id,
-      order_id: order.id,
-      axis: "delivery",
-      from_value: order.delivery_status || "DELIVERING",
-      to_value: "DELIVERED",
-      actor_id: `branch_${branchId}`,
-      reason: `[Xác Nhận Giao Hàng POD] Chi nhánh tải ảnh giao hàng thành công. Ghi chú: ${note || "Không có"}`,
-    }),
-    repo.createOrderEvent({
-      id: randomUUID(),
-      organization_id: order.organization_id,
-      order_id: order.id,
-      axis: "status",
-      from_value: order.status,
-      to_value: "COMPLETED",
-      actor_id: `branch_${branchId}`,
-      reason: "[Hoàn Tất] Đơn hàng hoàn thành sau khi xác nhận giao hoa thành công.",
-    }),
-  ]
-
-  await Promise.all(updateOps)
+  // Giao trễ giờ hẹn → trừ phí gia công theo % tiệm cài (mặc định 0%)
+  const applyLateFee = await prepareLateDeliveryDeduction(order.organization_id, order.id, new CraftFeeFactsRepository(), new Date(deliveredAt))
+  const saved = await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { delivery_status: "DELIVERED", status: "COMPLETED" },
+    require: SUBCONTRACT_STEP_PRECONDITION.POD,
+    metadata: (current) => {
+      const podPhotos = [...(Array.isArray(current.pod_photos) ? (current.pod_photos as string[]) : []), storageKey]
+      const deliveryProof = { photoUrls: podPhotos, note: note || "Đã giao thành công cho khách hàng", deliveredAt, deliveredByBranch: branchId }
+      return applyLateFee({ ...current, pod_photos: podPhotos, delivery_proof: deliveryProof, last_pod_uploaded_at: deliveredAt })
+    },
+    events: [
+      {
+        axis: "delivery",
+        fromValue: order.delivery_status || "DELIVERING",
+        toValue: "DELIVERED",
+        actorId: `branch_${branchId}`,
+        reason: `[Xác Nhận Giao Hàng POD] Chi nhánh tải ảnh giao hàng thành công. Ghi chú: ${note || "Không có"}`,
+      },
+      {
+        axis: "status",
+        fromValue: order.status,
+        toValue: "COMPLETED",
+        actorId: `branch_${branchId}`,
+        reason: "[Hoàn Tất] Đơn hàng hoàn thành sau khi xác nhận giao hoa thành công.",
+      },
+    ],
+  })
+  if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.POD)
 
   // 1. Tự động gửi thông báo chúc mừng & cảm ơn khách hàng kèm ảnh giao hàng
   try {
@@ -232,10 +231,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   // 2. Bắn thông báo xác nhận hoàn tất tới kênh Điều phối / Chi nhánh
   try {
-    const org = await repo.findOrganizationSettings(order.organization_id)
-    const branches = (org?.settings as Record<string, unknown> | null)?.["chain_branches"]
-    const branchList = Array.isArray(branches) ? branches : []
-    const branchObj = branchList.find((b: any) => b.branchId === branchId)
+    const branchObj = await new ChainBranchRepository().findByCode(order.organization_id, branchId)
     const branchName = branchObj?.branchName || "Chi nhánh phụ trách"
 
     const tenantCtx: TenantContext = {
@@ -246,14 +242,15 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       capabilities: new Set<string>(),
     }
     const notifier = new MultiChannelDispatchNotifier()
+    const cardUrl = subcontractBranchUrl({ baseUrl: publicAppUrl(), organizationId: order.organization_id, orderCode: order.code, branchId })
     if (branchObj) {
       await notifier.sendSubcontractInvite(tenantCtx, {
         branch: branchObj,
         orderCode: order.code,
-        messageText: `🎉 [HOÀN TẤT GIAO HÀNG] Đơn hàng #${order.code} đã được giao thành công!\n📸 Bằng chứng giao hàng (POD) đã lưu trữ.\n💰 Chi phí gia công đã được ghi nhận quyết toán. Cảm ơn chi nhánh ${branchName}!`,
-        claimUrl: `https://app.smeos.vn/subcontract/${order.code}?branch=${encodeURIComponent(branchId)}`,
+        messageText: `🎉 [HOÀN TẤT GIAO HÀNG] Đơn hàng #${order.code} đã được giao thành công!\n📸 Bằng chứng giao hàng (POD) đã lưu trữ.\n💰 Chi phí gia công đã được ghi nhận quyết toán. Cảm ơn chi nhánh ${escapeTelegramHtml(branchName)}!`,
+        claimUrl: cardUrl,
         title: `🎉 [GIAO THÀNH CÔNG #${order.code}]`,
-        actions: [{ text: "👁️ Xem Thẻ Đơn", url: `https://app.smeos.vn/subcontract/${order.code}?branch=${encodeURIComponent(branchId)}` }],
+        actions: [{ text: "👁️ Xem Thẻ Đơn", url: cardUrl }],
       })
     }
   } catch (err) {

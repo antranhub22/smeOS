@@ -64,7 +64,13 @@ def _khoa_ky(secret: str, ngay: str, region: str, service: str) -> bytes:
 
 
 def _ky(cfg: dict, method: str, canonical_uri: str, payload_hash: str) -> tuple[str, dict]:
-    host = urllib.parse.urlparse(cfg["endpoint"]).netloc
+    # Chỉ lấy scheme + host từ STORAGE_ENDPOINT, bỏ mọi path đi kèm (vd.
+    # endpoint đã có sẵn "/<bucket>"). Đối xứng với `S3StorageProvider` phía
+    # TypeScript, dùng `new URL(endpoint).host` — ghép nguyên endpoint (có
+    # path) với canonical_uri sẽ nhân đôi đoạn bucket trong URL thật, lệch
+    # với chữ ký đã ký cho canonical_uri, và kho trả 403 dù key tồn tại.
+    diem_cuoi = urllib.parse.urlparse(cfg["endpoint"])
+    host = diem_cuoi.netloc
     now = datetime.now(timezone.utc)
     amz_date = now.strftime("%Y%m%dT%H%M%SZ")
     ngay = amz_date[:8]
@@ -95,7 +101,7 @@ def _ky(cfg: dict, method: str, canonical_uri: str, payload_hash: str) -> tuple[
         f"{THUAT_TOAN} Credential={cfg['access']}/{pham_vi}, "
         f"SignedHeaders={signed_headers}, Signature={signature}"
     )
-    return f"{cfg['endpoint'].rstrip('/')}{canonical_uri}", headers
+    return f"{diem_cuoi.scheme}://{host}{canonical_uri}", headers
 
 
 def _duong_dan_s3(cfg: dict, storage_key: str) -> str:

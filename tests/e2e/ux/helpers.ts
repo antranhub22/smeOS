@@ -1,8 +1,24 @@
 import { randomUUID } from "node:crypto"
-import type { Page } from "@playwright/test"
+import type { APIRequestContext, Page } from "@playwright/test"
 import { Client } from "pg"
 
 const dbUrl = process.env.DATABASE_URL || "postgresql://floraos:floraos@localhost:5432/floraos"
+
+/**
+ * Đăng ký công khai chờ superadmin duyệt (PO 22/10/2026) và không mở phiên. E2E duyệt thẳng trong
+ * CSDL test rồi đăng nhập thật, để cookie phiên nằm trong ngữ cảnh của `request`.
+ */
+export async function approveAndLogin(request: APIRequestContext, email: string, password: string, base = ""): Promise<void> {
+  const client = new Client({ connectionString: dbUrl })
+  await client.connect()
+  try {
+    await client.query("UPDATE users SET approval_status = 'APPROVED', approval_decided_at = now() WHERE email = $1", [email])
+  } finally {
+    await client.end()
+  }
+  const res = await request.post(`${base}/api/v1/auth/login`, { data: { email, password } })
+  if (!res.ok()) throw new Error(`Login failed after approval: ${res.status()} ${await res.text()}`)
+}
 
 export async function createTestUserAndLogin(
   page: Page,
@@ -22,6 +38,7 @@ export async function createTestUserAndLogin(
     throw new Error(`Signup failed: ${res.status()} ${await res.text()}`)
   }
   const body = (await res.json()) as { organization_id: string; user_id: string }
+  await approveAndLogin(page.request, email, password)
   const orgId = body.organization_id
   const userId = body.user_id
 

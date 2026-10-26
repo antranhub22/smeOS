@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import {
-  Camera,
   CheckCircle2,
   Clock,
   UploadCloud,
@@ -12,6 +11,7 @@ import {
   Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PhotoSourcePicker } from "./photo-source-picker"
 import { cn } from "@/lib/utils"
 import { SubcontractQcGallery } from "./subcontract-qc-gallery"
 import { SubcontractQcPreview } from "./subcontract-qc-preview"
@@ -19,6 +19,7 @@ import { SubcontractRecipientContact } from "./subcontract-recipient-contact"
 import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
 import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface SubcontractStepQcProps {
   orderCode: string
@@ -55,7 +56,6 @@ export function SubcontractStepQc({
   onQcUploaded,
   onBypassRequested,
 }: SubcontractStepQcProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const countdown = useStepCountdown(isUnlocked && !isCompleted ? deadlineMs : null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -63,15 +63,12 @@ export function SubcontractStepQc({
   const [qcSuccessMsg, setQcSuccessMsg] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [currentQcPhotos, setCurrentQcPhotos] = useState<string[]>(qcPhotos)
-
-  React.useEffect(() => {
-    setCurrentQcPhotos(qcPhotos)
-  }, [qcPhotos])
+  const [syncedQcPhotos, setSyncedQcPhotos] = useState<string[]>(qcPhotos) // máy chủ trả ảnh mới → đồng bộ lúc render
+  if (syncedQcPhotos !== qcPhotos) { setSyncedQcPhotos(qcPhotos); setCurrentQcPhotos(qcPhotos) }
 
   function handleTriggerFileInput() {
     setErrorMsg(null)
     setQcSuccessMsg(null)
-    fileInputRef.current?.click()
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -100,9 +97,6 @@ export function SubcontractStepQc({
       URL.revokeObjectURL(previewUrl)
       setPreviewUrl(null)
     }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
   }
 
   async function handleUploadQcPhoto() {
@@ -118,6 +112,7 @@ export function SubcontractStepQc({
 
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/upload-qc`, {
         method: "POST",
+        headers: subcontractAccessHeaders(),
         body: formData,
       })
 
@@ -144,7 +139,7 @@ export function SubcontractStepQc({
     try {
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: subcontractAccessHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ action: "DELETE_QC", branchId, photoUrl }),
       })
       const json = await res.json().catch(() => ({}))
@@ -279,16 +274,6 @@ export function SubcontractStepQc({
               </div>
             )}
 
-            {/* Input file ẩn */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-
             {/* Xem trước ảnh vừa chọn từ máy */}
             {previewUrl ? (
               <SubcontractQcPreview
@@ -299,20 +284,11 @@ export function SubcontractStepQc({
                 onUpload={handleUploadQcPhoto}
               />
             ) : (
-              /* Nút mở Camera / Thư viện ảnh */
-              <Button
-                variant="outline"
-                onClick={handleTriggerFileInput}
-                className="w-full h-20 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
-                  <Camera size={20} />
-                  <span>CHỤP ẢNH TỪ CAMERA HOẶC CHỌN TỪ MÁY</span>
-                </div>
-                <span className="text-caption text-text-muted">
-                  Nhấp vào đây để mở Camera hoặc thư viện ảnh trên thiết bị của bạn
-                </span>
-              </Button>
+              <PhotoSourcePicker
+                hint="Chụp ảnh mới hoặc chọn ảnh có sẵn trong thư viện ảnh của máy"
+                onOpen={handleTriggerFileInput}
+                onChange={handleFileChange}
+              />
             )}
 
 

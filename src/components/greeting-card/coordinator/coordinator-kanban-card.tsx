@@ -196,7 +196,7 @@ export function CoordinatorKanbanCard({
                     type="button"
                     size="sm"
                     variant="secondary"
-                    onClick={() => onOpen({ type: "accept-order", orderId: o.id, orderCode: o.code })}
+                    onClick={() => onOpen({ type: "accept-order", flow: "admin", orderId: o.id, orderCode: o.code })}
                     className="h-7 text-caption gap-1 px-2 flex-1 bg-success hover:bg-success/90 text-white font-extrabold"
                   >
                     <ShieldCheck size={12} />
@@ -206,7 +206,7 @@ export function CoordinatorKanbanCard({
                     type="button"
                     size="sm"
                     variant="outline"
-                    onClick={() => onOpen({ type: "reject-order", orderId: o.id, orderCode: o.code })}
+                    onClick={() => onOpen({ type: "reject-order", flow: "admin", orderId: o.id, orderCode: o.code })}
                     className="h-7 text-caption gap-1 px-2 border-danger/40 text-danger hover:bg-danger-bg"
                   >
                     <XCircle size={12} />
@@ -241,17 +241,17 @@ export function CoordinatorKanbanCard({
                   type="button"
                   size="sm"
                   variant="primary"
-                  onClick={() => onOpen({ type: "accept-order", orderId: o.id, orderCode: o.code })}
+                  onClick={() => onOpen({ type: "accept-order", flow: "coordinator", orderId: o.id, orderCode: o.code })}
                   className="h-7 text-caption gap-1 px-2 flex-1 bg-success hover:bg-success/90 text-white font-extrabold"
                 >
                   <ShieldCheck size={12} />
-                  Nhận đơn
+                  Đã nhận tiền
                 </Button>
                 <Button
                   type="button"
                   size="sm"
                   variant="outline"
-                  onClick={() => onOpen({ type: "reject-order", orderId: o.id, orderCode: o.code })}
+                  onClick={() => onOpen({ type: "reject-order", flow: "coordinator", orderId: o.id, orderCode: o.code })}
                   className="h-7 text-caption gap-1 px-2 border-danger/40 text-danger hover:bg-danger-bg"
                 >
                   <XCircle size={12} />

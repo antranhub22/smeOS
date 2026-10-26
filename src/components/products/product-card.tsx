@@ -1,9 +1,11 @@
 "use client"
 
+import { parsePricing, priceLabel, summarizePricing } from "@/modules/products/domain/product-pricing"
 import React from "react"
 import Link from "next/link"
 import { Trash2 } from "lucide-react"
 import { ProductThumb } from "@/components/products/product-thumb"
+import { readProposal, type ProposalStatus } from "@/modules/products/domain/product-proposal"
 
 export type ProductItem = {
   id: string
@@ -43,7 +45,32 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
   )
 }
 
-export function PriceLabel({ price }: { price: number | null }) {
+const PROPOSAL_LABEL: Partial<Record<ProposalStatus, string>> = {
+  pending: "Đề xuất · chờ duyệt",
+  rejected: "Đề xuất bị từ chối",
+  expired: "Đề xuất hết hạn",
+}
+
+/** Nhãn mẫu nhân viên đề xuất: chờ duyệt (đang dùng được), bị từ chối hoặc hết hạn (đã tạm ẩn). */
+export function ProposalBadge({ attributes }: { attributes?: Record<string, unknown> | null | undefined }) {
+  const status = readProposal(attributes)?.status
+  const label = status ? PROPOSAL_LABEL[status] : undefined
+  if (!label) return null
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-caption font-bold ${status === "pending" ? "bg-warning-bg text-warning" : "bg-danger-bg text-danger"}`}>
+      {label}
+    </span>
+  )
+}
+
+export function PriceLabel({ price, attributes }: { price: number | null; attributes?: Record<string, unknown> | null | undefined }) {
+  // Sản phẩm đã khai kiểu giá (khoảng giá / liên hệ) → nhãn theo kiểu giá
+  if (attributes?.pricing) {
+    const summary = summarizePricing(parsePricing(attributes))
+    if (summary.mode !== "FIXED" || summary.minVnd !== summary.maxVnd) {
+      return <span className="text-caption font-semibold text-primary">{priceLabel(summary)}</span>
+    }
+  }
   if (price === null) {
     return <span className="text-caption text-text-muted italic">Liên hệ báo giá</span>
   }
@@ -77,8 +104,9 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
           driveLink={product.driveLink}
           size="card"
         />
-        <div className="absolute top-2 left-2 pointer-events-none">
+        <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
           <StatusBadge status={product.status} />
+          <ProposalBadge attributes={product.attributes} />
         </div>
       </button>
 
@@ -94,7 +122,7 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
           <span className="truncate text-caption text-text-muted">
             {product.category ?? "Chưa phân loại"}
           </span>
-          <PriceLabel price={product.price_vnd} />
+          <PriceLabel price={product.price_vnd} attributes={product.attributes} />
         </div>
         <div className="mt-1 text-caption text-text-muted font-mono">#{product.code}</div>
       </Link>

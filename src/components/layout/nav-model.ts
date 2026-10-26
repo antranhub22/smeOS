@@ -17,12 +17,6 @@ export type NavGroupKey =
   | "noi-dung"
   | "van-hanh"
   | "thiet-lap"
-  | "to-chuc"
-  | "cau-hinh"
-  | "giam-sat"
-  | "he-sinh-thai"
-  | "chuan-hoa"
-  | "thi-truong"
 
 export interface NavEntry {
   href: string
@@ -105,7 +99,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/the-chao",
-    label: "Thẻ chào sản phẩm",
+    label: "Thẻ chào mẫu hoa",
     group: "ban-hang",
     iconKey: "Sparkles",
     navKey: "greeting-card",
@@ -134,7 +128,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/san-pham/tao-moi",
-    label: "Tạo sản phẩm mới",
+    label: "Tạo mẫu hoa mới",
     group: "san-pham",
     iconKey: "Sparkles",
     navKey: "create-product",
@@ -147,7 +141,8 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     group: "san-pham",
     iconKey: "FileSpreadsheet",
     navKey: "bulk-import",
-    capability: "L2",
+    // Nhập Excel chỉ Điều hành (PO 23/10/2026) — route kiểm `L2` + `H3`.
+    capability: "H3",
     mobileLabel: "Nhập Excel",
   },
   {
@@ -252,28 +247,13 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Điều phối",
   },
   {
-    href: "/tin-nhan",
-    label: "Tin nhắn nội bộ",
+    href: "/cua-hang",
+    label: "Đơn gia công",
     group: "van-hanh",
-    iconKey: "MessageSquare",
-    navKey: "internal-chat",
-    mobileLabel: "Tin nhắn",
-  },
-  {
-    href: "/noi-bo/ket-noi",
-    label: "Profile Kết Nối",
-    group: "van-hanh",
-    iconKey: "BadgeCheck",
-    navKey: "connect-identity",
-    mobileLabel: "Kết nối",
-  },
-  {
-    href: "/du-lieu",
-    label: "Dữ liệu chuỗi",
-    group: "van-hanh",
-    iconKey: "Database",
-    navKey: "chain-data",
-    mobileLabel: "Dữ liệu",
+    iconKey: "Store",
+    navKey: "branch-portal",
+    capability: "R14",
+    mobileLabel: "Gia công",
   },
   {
     href: "/job",
@@ -323,6 +303,15 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
 
   // 5. Nhóm Thiết lập
   {
+    href: "/ho-so",
+    label: "Hồ sơ cửa hàng",
+    group: "thiet-lap",
+    iconKey: "Settings2",
+    navKey: "profile",
+    capability: "F1",
+    mobileLabel: "Hồ sơ",
+  },
+  {
     href: "/tri-thuc",
     label: "Tri thức",
     group: "thiet-lap",
@@ -358,7 +347,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat",
-    label: "Hồ sơ & Cài đặt",
+    label: "Cài đặt",
     group: "thiet-lap",
     iconKey: "Settings2",
     navKey: "settings",
@@ -369,16 +358,14 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
 
 const RESERVED_MOBILE_HREFS = new Set(["/", "/duyet", "/job", "/tai-anh", "/them"])
 
-function getAdaptedNavEntries(industryKey?: string | null): readonly NavEntry[] {
-  // Lớp 1: Lọc theo Industry Navigation Matrix (Admin SaaS quyết định)
-  const hiddenKeys = getHiddenNavKeys(industryKey)
+function getAdaptedNavEntries(industryKey?: string | null, navHiddenOverride?: readonly string[] | null): readonly NavEntry[] {
+  // Lớp 1: Lọc theo Industry Navigation Matrix (Admin SaaS quyết định, gửi xuống qua phiên)
+  const hiddenKeys = getHiddenNavKeys(industryKey, navHiddenOverride)
   const visibleEntries = hiddenKeys.size > 0
     ? NAV_ENTRIES.filter((entry) => !hiddenKeys.has(entry.navKey))
     : NAV_ENTRIES
 
-  if (!industryKey || industryKey === "FLORAL") {
-    return visibleEntries
-  }
+  if (!industryKey || industryKey === "FLORAL") return visibleEntries
   const terms = getIndustryTerminology(industryKey)
   return visibleEntries.map((entry) => {
     if (entry.href === "/the-chao") {
@@ -443,195 +430,10 @@ function getAdaptedNavEntries(industryKey?: string | null): readonly NavEntry[] 
 export function buildNav(
   can: (code: string) => boolean,
   role: RoleUxDefinition | null,
-  industryKey?: string | null
+  industryKey?: string | null,
+  navHiddenOverride?: readonly string[] | null
 ): NavView {
-  if (role?.key === "industry_admin") {
-    return {
-      groups: [
-        {
-          key: "he-sinh-thai",
-          label: "Hệ sinh thái Đa Ngành",
-          entries: [
-            {
-              href: "/",
-              label: "Tổng quan SaaS Ngành",
-              group: "he-sinh-thai",
-              iconKey: "LayoutDashboard",
-              navKey: "industry-overview",
-              mobileLabel: "Tổng quan",
-            },
-            {
-              href: "/van-hanh/nganh",
-              label: "Ma trận & Plugin Ngành",
-              group: "he-sinh-thai",
-              iconKey: "Layers",
-              navKey: "industry-matrix",
-              mobileLabel: "Ngành",
-            },
-            {
-              href: "/kho-templates",
-              label: "Kho mẫu ấn phẩm A6",
-              group: "he-sinh-thai",
-              iconKey: "LayoutTemplate",
-              navKey: "industry-templates",
-              mobileLabel: "Mẫu A6",
-            },
-          ],
-        },
-        {
-          key: "chuan-hoa",
-          label: "Chuẩn hóa & Định lượng",
-          entries: [
-            {
-              href: "/san-pham",
-              label: "Danh mục & Sản phẩm mẫu",
-              group: "chuan-hoa",
-              iconKey: "Package",
-              navKey: "industry-products",
-              mobileLabel: "Sản phẩm",
-            },
-            {
-              href: "/van-hanh/truong-du-lieu",
-              label: "Trường dữ liệu mở rộng",
-              group: "chuan-hoa",
-              iconKey: "SlidersHorizontal",
-              navKey: "industry-fields",
-              mobileLabel: "Trường",
-            },
-          ],
-        },
-        {
-          key: "thi-truong",
-          label: "Thị trường & Báo cáo",
-          entries: [
-            {
-              href: "/market-intelligence",
-              label: "Thị trường & Xu hướng",
-              group: "thi-truong",
-              iconKey: "TrendingUp",
-              navKey: "industry-market",
-              mobileLabel: "Thị trường",
-            },
-            {
-              href: "/van-hanh/du-lieu",
-              label: "Dữ liệu ngành",
-              group: "thi-truong",
-              iconKey: "Database",
-              navKey: "industry-data",
-              mobileLabel: "Dữ liệu",
-            },
-          ],
-        },
-      ],
-    }
-  }
-
-  if (role?.group === "PLATFORM" || role?.key === "platform_admin") {
-    return {
-      groups: [
-        {
-          key: "to-chuc",
-          label: "Tổ chức & Khách hàng",
-          entries: [
-            {
-              href: "/van-hanh",
-              label: "Tổng quan nền tảng",
-              group: "to-chuc",
-              iconKey: "LayoutDashboard",
-              navKey: "platform-overview",
-              mobileLabel: "Tổng quan",
-            },
-            {
-              href: "/van-hanh/dang-ky",
-              label: "Đăng ký mới",
-              group: "to-chuc",
-              iconKey: "UserPlus",
-              navKey: "platform-registrations",
-              mobileLabel: "Đăng ký",
-            },
-            {
-              href: "/van-hanh/to-chuc",
-              label: "Danh sách tổ chức",
-              group: "to-chuc",
-              iconKey: "Building2",
-              navKey: "platform-organizations",
-              mobileLabel: "Tổ chức",
-            },
-            {
-              href: "/van-hanh/phe-duyet",
-              label: "Phê duyệt yêu cầu",
-              group: "to-chuc",
-              iconKey: "CheckCircle2",
-              navKey: "platform-approvals",
-              mobileLabel: "Phê duyệt",
-            },
-          ],
-        },
-        {
-          key: "cau-hinh",
-          label: "Cấu hình nền tảng",
-          entries: [
-            {
-              href: "/van-hanh/nganh",
-              label: "Ma trận ngành",
-              group: "cau-hinh",
-              iconKey: "Layers",
-              navKey: "platform-industry-matrix",
-              mobileLabel: "Ngành",
-            },
-            {
-              href: "/van-hanh/truong-du-lieu",
-              label: "Trường dữ liệu",
-              group: "cau-hinh",
-              iconKey: "SlidersHorizontal",
-              navKey: "platform-custom-fields",
-              mobileLabel: "Trường",
-            },
-            {
-              href: "/van-hanh/du-lieu",
-              label: "Dữ liệu tổ chức",
-              group: "cau-hinh",
-              iconKey: "Database",
-              navKey: "platform-org-data",
-              mobileLabel: "Dữ liệu",
-            },
-          ],
-        },
-        {
-          key: "giam-sat",
-          label: "Vận hành & Giám sát",
-          entries: [
-            {
-              href: "/van-hanh/muc-dung",
-              label: "Mức dùng & Chi phí",
-              group: "giam-sat",
-              iconKey: "WalletCards",
-              navKey: "platform-usage",
-              mobileLabel: "Mức dùng",
-            },
-            {
-              href: "/van-hanh/suc-khoe",
-              label: "Sức khoẻ hệ thống",
-              group: "giam-sat",
-              iconKey: "Activity",
-              navKey: "platform-health",
-              mobileLabel: "Sức khoẻ",
-            },
-            {
-              href: "/van-hanh/nhat-ky",
-              label: "Nhật ký hệ thống",
-              group: "giam-sat",
-              iconKey: "ShieldCheck",
-              navKey: "platform-audit",
-              mobileLabel: "Nhật ký",
-            },
-          ],
-        },
-      ],
-    }
-  }
-
-  const entries = getAdaptedNavEntries(industryKey)
+  const entries = getAdaptedNavEntries(industryKey, navHiddenOverride)
   const isAccessible = (item: NavEntry) => !item.capability || can(item.capability)
 
   // Gom các mục Việc chính nếu vai có cấu hình navPriority
@@ -696,33 +498,11 @@ export function buildNav(
 export function mobileSecondSlot(
   can: (code: string) => boolean,
   role: RoleUxDefinition | null,
-  industryKey?: string | null
+  industryKey?: string | null,
+  navHiddenOverride?: readonly string[] | null
 ): NavEntry {
-  if (role?.key === "industry_admin") {
-    return {
-      href: "/van-hanh/nganh",
-      label: "Ma trận ngành",
-      group: "he-sinh-thai",
-      iconKey: "Layers",
-      navKey: "industry-matrix",
-      mobileLabel: "Ngành",
-    }
-  }
-
-  if (role?.group === "PLATFORM" || role?.key === "platform_admin") {
-    return {
-      href: "/van-hanh/to-chuc",
-      label: "Tổ chức",
-      group: "to-chuc",
-      iconKey: "Building2",
-      navKey: "platform-organizations",
-      mobileLabel: "Tổ chức",
-    }
-  }
-
-  const entries = getAdaptedNavEntries(industryKey)
-  const defaultEntry =
-    entries.find((e) => e.href === "/san-pham") ?? entries[0]!
+  const entries = getAdaptedNavEntries(industryKey, navHiddenOverride)
+  const defaultEntry = entries.find((e) => e.href === "/san-pham") ?? entries[0]!
 
   if (!role || !role.navPriority) return defaultEntry
 

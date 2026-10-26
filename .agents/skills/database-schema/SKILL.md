@@ -16,7 +16,7 @@ description: >-
 ```
 1. Thêm model vào prisma/schema.prisma — BẮT BUỘC có organization_id
 2. npx prisma generate
-3. npx prisma db push (dev). ⚠ Production (Render) cũng chạy `prisma db push --accept-data-loss` khi build (`render.yaml`) — đổi tên/xoá cột là MẤT DỮ LIỆU THẬT lúc deploy
+3. npx prisma migrate dev --name <ten_thay_doi> — sinh migration trong prisma/migrations/ và commit CÙNG schema. Production chạy `npm run db:deploy` (`prisma migrate deploy`, xem docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md); CI đỏ nếu schema đổi mà thiếu migration. Đổi tên/xoá cột: đọc kỹ SQL sinh ra — Prisma xoá rồi tạo lại cột, mất dữ liệu
 4. Tạo repository tại src/modules/<module>/infra/<table>-repository.ts
 5. Dùng scopedWhere(ctx) + scopedData(ctx, data)
 6. Viết tenant test tại tests/tenant/<resource>.test.ts
@@ -56,8 +56,8 @@ model my_table {
 
 ### 3. Quy trình sửa schema
 1. Sửa `prisma/schema.prisma`
-2. `npx prisma generate`
-3. `npx prisma db push` (dev — hook `.claude/hooks/guard-bash.mjs` hỏi lại nếu `DATABASE_URL` không phải máy cục bộ)
+2. `npx prisma migrate dev --name <ten_thay_doi>` (dev — sinh migration và generate; hook `.claude/hooks/guard-bash.mjs` hỏi lại nếu `DATABASE_URL` không phải máy cục bộ). Đọc SQL sinh ra trước khi commit
+3. CSDL `*_test` vẫn dùng `npx prisma db push` (`npm run db:test:setup`)
 4. `npx prisma db seed` nếu cần
 5. **⚠️ DỪNG LẠI HỎI USER trước khi sửa schema.**
 

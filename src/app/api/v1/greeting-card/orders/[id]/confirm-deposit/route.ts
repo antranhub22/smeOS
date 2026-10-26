@@ -13,9 +13,12 @@ import {
 } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { BrochureOrderRepository } from "@/modules/greeting-card/infra/brochure-order-repository"
+import { dispatchAfterPaymentConfirmed } from "@/modules/greeting-card/use-cases/dispatch-after-payment"
 
 const schema = z.object({
   note: z.string().trim().max(500).nullable().optional(),
+  /** Đang ở chế độ tự động nhưng muốn tự chọn cửa hàng cho riêng đơn này */
+  manualDispatch: z.boolean().optional(),
 })
 
 /**
@@ -59,7 +62,9 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await coordinatorConfirmDepositPayment(ctx, id, { note: parsed.data.note })
-  return jsonResponse({ data: result })
+  // Chuỗi: tiền đã ghi nhận → chọn cửa hàng gia công theo cài đặt (PO 22/10/2026)
+  const dispatch = await dispatchAfterPaymentConfirmed(ctx, id, { manualDispatch: parsed.data.manualDispatch })
+  return jsonResponse({ data: { ...result, dispatch } })
 })
 
 export const dynamic = "force-dynamic"

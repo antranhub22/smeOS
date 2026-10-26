@@ -82,7 +82,7 @@ export function ProductReadinessCard({
       {/* Action Handoffs */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
         <span className="text-xs text-cool-300 font-medium">
-          🚀 Chuyển giao ngay sang các công cụ sáng tạo nội dung của FloraOS:
+          🚀 Chuyển giao ngay sang các công cụ sáng tạo nội dung của smeOS:
         </span>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
