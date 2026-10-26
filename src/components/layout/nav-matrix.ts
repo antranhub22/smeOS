@@ -18,6 +18,7 @@ import { getIndustryPlugin } from "@/modules/organization/domain/industry-profil
  */
 export const ALL_NAV_KEYS = [
   "home",
+  "toolkit",
   "customers",
   "orders",
   "chat",
@@ -57,6 +58,7 @@ export type NavKey = (typeof ALL_NAV_KEYS)[number]
 /** Ánh xạ href → navKey để liên kết NAV_ENTRIES với matrix. */
 export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/": "home",
+  "/cong-cu": "toolkit",
   "/khach-hang": "customers",
   "/don-hang": "orders",
   "/hoi-thoai": "chat",

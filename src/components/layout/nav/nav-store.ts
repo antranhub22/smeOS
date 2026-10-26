@@ -1,0 +1,438 @@
+/**
+ * Sidebar Tầng 4: StoreOS (Cửa hàng Cơ sở Toàn diện)
+ * Vận hành trọn gói: Tự bán lẻ tại tiệm + Cổng nhận đơn gia công (/cua-hang) từ Mạng lưới & Chuỗi.
+ */
+
+import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"
+import { isRouteLocked } from "@/lib/feature-lock"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { getHiddenNavKeys } from "../nav-matrix"
+import type { NavEntry, NavGroup, NavView } from "./nav-types"
+import { HOME_ENTRY } from "./nav-types"
+
+export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
+  // 1. Nhóm Bán hàng & Khách
+  {
+    href: "/khach-hang",
+    label: "Khách hàng",
+    group: "ban-hang",
+    iconKey: "Users",
+    navKey: "customers",
+    capability: "Q1",
+    mobileLabel: "Khách hàng",
+  },
+  {
+    href: "/don-hang",
+    label: "Đơn hàng",
+    group: "ban-hang",
+    iconKey: "ShoppingBag",
+    navKey: "orders",
+    capability: "R1",
+    mobileLabel: "Đơn hàng",
+  },
+  {
+    href: "/hoi-thoai",
+    label: "Hội thoại",
+    group: "ban-hang",
+    iconKey: "Bot",
+    navKey: "chat",
+    capability: "T1",
+    mobileLabel: "Hội thoại",
+  },
+  {
+    href: "/catalog",
+    label: "Catalog & QR",
+    group: "ban-hang",
+    iconKey: "Globe",
+    navKey: "catalog",
+    capability: "J1",
+    mobileLabel: "Catalog",
+  },
+  {
+    href: "/the-chao",
+    label: "Thẻ chào sản phẩm",
+    group: "ban-hang",
+    iconKey: "Sparkles",
+    navKey: "greeting-card",
+    capability: "R1",
+    mobileLabel: "Thẻ chào",
+  },
+
+  // 2. Nhóm Sản phẩm
+  {
+    href: "/san-pham",
+    label: "Sản phẩm & Giá",
+    group: "san-pham",
+    iconKey: "Tag",
+    navKey: "products",
+    capability: "L1",
+    mobileLabel: "Sản phẩm",
+  },
+  {
+    href: "/san-pham/kha-dung",
+    label: "Khả dụng & Lịch",
+    group: "san-pham",
+    iconKey: "CalendarCheck",
+    navKey: "availability",
+    capability: "L1",
+    mobileLabel: "Khả dụng",
+  },
+  {
+    href: "/san-pham/tao-moi",
+    label: "Tạo sản phẩm mới",
+    group: "san-pham",
+    iconKey: "Sparkles",
+    navKey: "create-product",
+    capability: "L2",
+    mobileLabel: "Tạo mẫu",
+  },
+  {
+    href: "/san-pham/nhap-hang-loat",
+    label: "Nhập từ Excel & Ảnh",
+    group: "san-pham",
+    iconKey: "FileSpreadsheet",
+    navKey: "bulk-import",
+    capability: "L2",
+    mobileLabel: "Nhập Excel",
+  },
+  {
+    href: "/tai-anh",
+    label: "Quét ảnh hoa",
+    group: "san-pham",
+    iconKey: "Camera",
+    navKey: "scan-photo",
+    capability: "H1",
+    mobileLabel: "Tải ảnh",
+  },
+  {
+    href: "/kho-du-lieu",
+    label: "Kho dữ liệu",
+    group: "san-pham",
+    iconKey: "Folder",
+    navKey: "storage",
+    capability: "G1",
+    mobileLabel: "Kho dữ liệu",
+  },
+  {
+    href: "/gia",
+    label: "Tính giá",
+    group: "san-pham",
+    iconKey: "WalletCards",
+    navKey: "pricing",
+    capability: "L6",
+    mobileLabel: "Tính giá",
+  },
+
+  // 3. Nhóm Nội dung & Tiếp thị
+  {
+    href: "/market-intelligence",
+    label: "Nghiên cứu thị trường",
+    group: "noi-dung",
+    iconKey: "TrendingUp",
+    navKey: "market-intel",
+    capability: "V2",
+    mobileLabel: "Thị trường",
+  },
+  {
+    href: "/creative-studio",
+    label: "Creative Studio",
+    group: "noi-dung",
+    iconKey: "Sparkles",
+    navKey: "creative-studio",
+    capability: "I1",
+    mobileLabel: "Studio",
+  },
+  {
+    href: "/creative-studio?tab=area-d",
+    label: "Ảnh marketing",
+    group: "noi-dung",
+    iconKey: "Wand2",
+    navKey: "marketing-photo",
+    capability: "I4",
+    mobileLabel: "Ảnh mẫu",
+  },
+  {
+    href: "/video",
+    label: "Video",
+    group: "noi-dung",
+    iconKey: "Video",
+    navKey: "video",
+    capability: "I1",
+    mobileLabel: "Video",
+  },
+  {
+    href: "/noi-dung",
+    label: "Viết nội dung",
+    group: "noi-dung",
+    iconKey: "FileText",
+    navKey: "content",
+    capability: "I1",
+    mobileLabel: "Nội dung",
+  },
+  {
+    href: "/lich-dang",
+    label: "Lịch đăng",
+    group: "noi-dung",
+    iconKey: "Share2",
+    navKey: "schedule",
+    mobileLabel: "Lịch đăng",
+  },
+  {
+    href: "/kho-templates",
+    label: "Kho mẫu",
+    group: "noi-dung",
+    iconKey: "LayoutTemplate",
+    navKey: "templates",
+    mobileLabel: "Kho mẫu",
+  },
+
+  // 4. Nhóm Vận hành
+  {
+    href: "/cua-hang",
+    label: "📥 Đơn Mạng Lưới & Chuỗi",
+    group: "van-hanh",
+    iconKey: "Inbox",
+    navKey: "branch-portal",
+    mobileLabel: "Đơn chuỗi",
+  },
+  {
+    href: "/cong-cu",
+    label: "Hộp công cụ",
+    group: "van-hanh",
+    iconKey: "LayoutGrid",
+    navKey: "toolkit",
+    mobileLabel: "Công cụ",
+  },
+  {
+    href: "/dieu-phoi",
+    label: "Điều phối",
+    group: "van-hanh",
+    iconKey: "Radio",
+    navKey: "coordinator",
+    capability: "C23",
+    mobileLabel: "Điều phối",
+  },
+  {
+    href: "/tin-nhan",
+    label: "Tin nhắn nội bộ",
+    group: "van-hanh",
+    iconKey: "MessageSquare",
+    navKey: "internal-chat",
+    mobileLabel: "Tin nhắn",
+  },
+  {
+    href: "/noi-bo/ket-noi",
+    label: "Profile Kết Nối",
+    group: "van-hanh",
+    iconKey: "BadgeCheck",
+    navKey: "connect-identity",
+    mobileLabel: "Kết nối",
+  },
+  {
+    href: "/du-lieu",
+    label: "Dữ liệu chuỗi",
+    group: "van-hanh",
+    iconKey: "Database",
+    navKey: "chain-data",
+    mobileLabel: "Dữ liệu",
+  },
+  {
+    href: "/job",
+    label: "Job",
+    group: "van-hanh",
+    iconKey: "Clock",
+    navKey: "jobs",
+    capability: "G4",
+    mobileLabel: "Job",
+  },
+  {
+    href: "/duyet",
+    label: "Hàng chờ duyệt",
+    group: "van-hanh",
+    iconKey: "CheckCircle2",
+    navKey: "approval",
+    capability: "H3",
+    mobileLabel: "Duyệt",
+  },
+  {
+    href: "/so-lieu",
+    label: "Số liệu",
+    group: "van-hanh",
+    iconKey: "BarChart3",
+    navKey: "stats",
+    capability: "U3",
+    mobileLabel: "Số liệu",
+  },
+  {
+    href: "/muc-dung",
+    label: "Mức dùng",
+    group: "van-hanh",
+    iconKey: "WalletCards",
+    navKey: "usage",
+    capability: "G8",
+    mobileLabel: "Mức dùng",
+  },
+  {
+    href: "/audit",
+    label: "Nhật ký kiểm toán",
+    group: "van-hanh",
+    iconKey: "ShieldCheck",
+    navKey: "audit",
+    capability: "G9",
+    mobileLabel: "Kiểm toán",
+  },
+
+  // 5. Nhóm Thiết lập
+  {
+    href: "/tri-thuc",
+    label: "Tri thức",
+    group: "thiet-lap",
+    iconKey: "BookOpen",
+    navKey: "knowledge",
+    mobileLabel: "Tri thức",
+  },
+  {
+    href: "/cai-dat-ai",
+    label: "Chính sách AI",
+    group: "thiet-lap",
+    iconKey: "Cpu",
+    navKey: "ai-policy",
+    capability: "U1",
+    mobileLabel: "Chính sách AI",
+  },
+  {
+    href: "/ket-noi",
+    label: "Kết nối kênh",
+    group: "thiet-lap",
+    iconKey: "Share2",
+    navKey: "channels",
+    mobileLabel: "Kết nối",
+  },
+  {
+    href: "/bo-may",
+    label: "Bộ máy phân tích ảnh",
+    group: "thiet-lap",
+    iconKey: "Cpu",
+    navKey: "engine",
+    capability: "H4",
+    mobileLabel: "Bộ máy",
+  },
+  {
+    href: "/cai-dat",
+    label: "Hồ sơ & Cài đặt",
+    group: "thiet-lap",
+    iconKey: "Settings2",
+    navKey: "settings",
+    capability: "F1",
+    mobileLabel: "Cài đặt",
+  },
+] as const
+
+export const NAV_GROUP_CONFIG = [
+  { key: "ban-hang", label: "Bán hàng & Khách" },
+  { key: "san-pham", label: "Sản phẩm" },
+  { key: "noi-dung", label: "Nội dung & Tiếp thị" },
+  { key: "van-hanh", label: "Vận hành" },
+  { key: "thiet-lap", label: "Thiết lập" },
+] as const
+
+function adaptStoreEntries(industryKey?: string | null): readonly NavEntry[] {
+  const hiddenKeys = getHiddenNavKeys(industryKey)
+  const visible = hiddenKeys.size > 0
+    ? STORE_NAV_ENTRIES.filter((e) => !hiddenKeys.has(e.navKey))
+    : STORE_NAV_ENTRIES
+
+  if (!industryKey || industryKey === "FLORAL") return visible
+  const terms = getIndustryTerminology(industryKey)
+
+  return visible.map((entry) => {
+    if (entry.href === "/the-chao") {
+      const shortTitle = terms.catalogTitle.length > 20
+        ? terms.catalogTitle.replace(/ & .*/, "")
+        : terms.catalogTitle
+      return {
+        ...entry,
+        label: `Thẻ chào & ${shortTitle}`,
+        mobileLabel: shortTitle.slice(0, 8),
+      }
+    }
+    if (entry.href === "/san-pham/tao-moi") {
+      return { ...entry, label: terms.createButtonLabel, mobileLabel: "Tạo mới" }
+    }
+    if (entry.href === "/tai-anh") {
+      return { ...entry, label: terms.scanButtonLabel, mobileLabel: "Quét ảnh" }
+    }
+    if (entry.href === "/san-pham/kha-dung") {
+      if (industryKey === "HOMESTAY") return { ...entry, label: "Lịch phòng & Khả dụng", mobileLabel: "Lịch phòng" }
+      if (industryKey === "FNB") return { ...entry, label: "Lịch phục vụ & Khung giờ", mobileLabel: "Lịch bàn" }
+      if (industryKey === "SERVICES") return { ...entry, label: "Lịch ca & Đặt hẹn", mobileLabel: "Lịch hẹn" }
+      return { ...entry, label: "Khả dụng & Tồn kho", mobileLabel: "Khả dụng" }
+    }
+    return entry
+  })
+}
+
+export function buildStoreNav(
+  can: (code: string) => boolean,
+  role: RoleUxDefinition | null,
+  industryKey?: string | null,
+  navHiddenKeys?: string[] | null
+): NavView {
+  const baseEntries = adaptStoreEntries(industryKey)
+  const extraHidden = new Set<string>(navHiddenKeys ?? [])
+  const entries = extraHidden.size > 0
+    ? baseEntries.filter((e) => !extraHidden.has(e.navKey))
+    : baseEntries
+  const isAccessible = (item: NavEntry) => !item.capability || can(item.capability)
+
+  const pinnedHrefs = new Set<string>()
+  const viecChinhEntries: NavEntry[] = []
+
+  if (role && role.navPriority && role.navPriority.length > 0) {
+    viecChinhEntries.push(HOME_ENTRY)
+    pinnedHrefs.add(HOME_ENTRY.href)
+
+    for (const href of role.navPriority) {
+      if (pinnedHrefs.has(href)) continue
+      const found = entries.find((entry) => entry.href === href)
+      if (found && found.status !== "COMING_SOON" && !isRouteLocked(found.href) && isAccessible(found)) {
+        viecChinhEntries.push(found)
+        pinnedHrefs.add(found.href)
+      }
+    }
+  }
+
+  const groups: NavGroup[] = []
+
+  if (viecChinhEntries.length > 0 && role) {
+    groups.push({
+      key: "viec-chinh",
+      label: `Việc chính · ${role.label}`,
+      entries: viecChinhEntries,
+    })
+  } else if (role?.key === "store_admin") {
+    groups.push({
+      key: "viec-chinh",
+      label: "Tổng quan",
+      entries: [HOME_ENTRY],
+    })
+  }
+
+  for (const config of NAV_GROUP_CONFIG) {
+    const groupEntries = entries.filter(
+      (entry) =>
+        entry.group === config.key &&
+        !pinnedHrefs.has(entry.href) &&
+        isAccessible(entry)
+    )
+    if (groupEntries.length > 0) {
+      groups.push({
+        key: config.key,
+        label: config.label,
+        entries: groupEntries,
+      })
+    }
+  }
+
+  return { groups }
+}

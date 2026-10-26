@@ -35,11 +35,14 @@ type DesktopNavProps = {
 export function DesktopNav({ drawer = false, onNavigate, onClose, isDev = false }: DesktopNavProps = {}) {
   const pathname = usePathname()
   const router = useRouter()
-  const { can, roleUx, orgName, organization } = useSession()
+  const { can, roleUx, orgName, organization, organizationType } = useSession()
   const orgId = organization?.id
   const { groupsKey, reportsKey } = useMemo(() => navStorageKeys(orgId), [orgId])
 
-  const navView = useMemo(() => buildNav(can, roleUx, organization?.industry, organization?.navHiddenKeys), [can, roleUx, organization?.industry, organization?.navHiddenKeys])
+  const navView = useMemo(
+    () => buildNav(can, roleUx, organization?.industry, organization?.navHiddenKeys, organizationType),
+    [can, roleUx, organization?.industry, organization?.navHiddenKeys, organizationType]
+  )
 
   const [searchQuery, setSearchQuery] = useState("")
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})

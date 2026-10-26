@@ -19,10 +19,10 @@ import { NAV_ICONS as ICONS } from "./nav-icons"
 
 export function BottomNav() {
   const pathname = usePathname()
-  const { can, roleUx } = useSession()
+  const { can, roleUx, organizationType } = useSession()
   const canApprove = can("H3") || can("I2")
 
-  const slot2 = mobileSecondSlot(can, roleUx)
+  const slot2 = mobileSecondSlot(can, roleUx, undefined, undefined, organizationType)
   const Slot2Icon = ICONS[slot2.iconKey] || Tag
 
   // Nút giữa gác H1: có H1 thì là Tải ảnh (Camera), không có H1 thì lấy việc chính đầu tiên hoặc Sản phẩm
