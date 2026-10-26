@@ -16,10 +16,16 @@ export const DEFAULT_FLOWER_IMAGES: string[] = [
   "/images/flowers/g070.jpeg",
 ]
 
+import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
+
 export const FLORIST_STORY_IMAGE = "/images/flowers/g040.jpg"
 
 export function resolveFlowerImage(imageUrl: string | null | undefined, index: number = 0): string {
   if (imageUrl && imageUrl.trim().length > 0) {
+    if (imageUrl.includes("drive.google.com")) {
+      const proxied = driveThumbProxySrc(imageUrl)
+      if (proxied) return proxied
+    }
     return imageUrl
   }
   const safeIdx = Math.abs(index)

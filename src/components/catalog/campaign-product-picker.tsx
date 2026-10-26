@@ -1,10 +1,11 @@
 "use client"
 
 import React from "react"
-import { Layers, Camera } from "lucide-react"
+import { Layers, Camera, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { ProductThumb } from "@/components/products/product-thumb"
 import type { CatalogProduct } from "./catalog-management-tab"
 
 interface CampaignProductPickerProps {
@@ -57,30 +58,58 @@ export function CampaignProductPicker({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 rounded-xl bg-surface border">
-        {activeProducts.map((p) => {
-          const isSelected = selectedProductIds.includes(p.id)
-          return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => onToggleProduct(p.id)}
-              className={`p-2.5 rounded-lg border text-xs cursor-pointer flex items-center gap-2 transition-colors text-left ${
-                isSelected ? "border-primary bg-white font-bold" : "border-border bg-white/70"
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={isSelected}
-                readOnly
-                tabIndex={-1}
-                className="h-3.5 w-3.5 accent-primary pointer-events-none"
-              />
-              <span className="truncate">{p.name}</span>
-            </button>
-          )
-        })}
-      </div>
+      {activeProducts.length === 0 ? (
+        <div className="p-6 text-center rounded-xl bg-surface-alt/40 border border-border text-caption text-text-muted">
+          Kho sản phẩm hiện chưa có mẫu nào. Bạn có thể bấm nút &quot;📸 Tải ảnh mới&quot; ở trên để thêm sản phẩm vào chiến dịch.
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto p-2.5 rounded-xl bg-surface-alt/40 border border-border">
+          {activeProducts.map((p) => {
+            const isSelected = selectedProductIds.includes(p.id)
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => onToggleProduct(p.id)}
+                className={`relative rounded-xl border text-left p-2 transition-all flex flex-col gap-1.5 group cursor-pointer ${
+                  isSelected
+                    ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30"
+                    : "border-border bg-surface hover:border-primary-border hover:bg-surface-alt/50"
+                }`}
+              >
+                <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-surface-alt">
+                  <ProductThumb
+                    name={p.name}
+                    masterImageUrl={p.imageUrl ?? undefined}
+                    driveLink={p.driveLink ?? undefined}
+                    size="card"
+                  />
+                  <div
+                    className={`absolute top-1.5 right-1.5 h-5 w-5 rounded-md flex items-center justify-center transition-colors ${
+                      isSelected ? "bg-primary text-surface shadow-xs" : "bg-black/30 text-white/70"
+                    }`}
+                  >
+                    {isSelected ? <CheckCircle2 className="h-4 w-4" /> : <div className="h-3 w-3 border border-white/80 rounded-xs" />}
+                  </div>
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-caption font-bold text-text truncate group-hover:text-primary transition-colors">
+                    {p.name}
+                  </h4>
+                  <div className="flex items-center justify-between text-meta text-text-muted mt-0.5">
+                    <span className="font-mono text-2xs truncate">{p.code}</span>
+                    {p.price && (
+                      <span className="font-semibold text-primary text-2xs">
+                        {p.price.toLocaleString("vi-VN")} đ
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

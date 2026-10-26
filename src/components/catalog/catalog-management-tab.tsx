@@ -234,6 +234,7 @@ export function CatalogManagementTab({
             <SmartInputDropzone
               onAnalyze={handleSmartAnalyze}
               isAnalyzing={isAiAnalyzing}
+              availableProducts={activeProducts}
               onSwitchToManual={() => setCatalogMode("guided")}
             />
           )

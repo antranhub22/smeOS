@@ -80,7 +80,7 @@ export interface GeneratedLandingPackage {
  * Sinh gói nội dung hoàn chỉnh cho 7 Sections của Landing Page
  */
 export function generateLandingPageContent(input: LandingContentInput): GeneratedLandingPackage {
-  const shop = input.shopName || "Siin Store"
+  const shop = input.shopName || "Tiệm hoa smeOS"
   const occasion = input.occasionLabel || "Dịp Đặc Biệt"
   const directive = input.userDirectives ? sanitizeFlowerText(input.userDirectives) : ""
   const discount = input.discountPercent || 10

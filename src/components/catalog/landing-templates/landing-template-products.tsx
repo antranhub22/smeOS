@@ -83,12 +83,12 @@ export function LandingTemplateProducts({
               />
 
               {/* Badges */}
-              <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-lg bg-black/60 backdrop-blur-sm text-white text-caption font-mono font-bold tracking-wide">
+              <div className="absolute top-2 left-2 z-20 max-w-[55%] truncate px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-sm text-white text-caption font-mono font-bold tracking-wide shadow-xs pointer-events-none">
                 {p.code}
               </div>
 
               {idx === 0 && (
-                <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-primary text-white text-caption font-black uppercase tracking-wider shadow-xs animate-pulse">
+                <div className="absolute top-2 right-2 z-20 px-2 py-0.5 rounded-full bg-primary text-white text-caption font-black uppercase tracking-wider shadow-xs animate-pulse pointer-events-none">
                   Bán chạy #1
                 </div>
               )}
@@ -97,7 +97,7 @@ export function LandingTemplateProducts({
             {/* Content Details */}
             <div className="p-3.5 flex-1 flex flex-col justify-between space-y-3">
               <div>
-                <h4 className="text-sm font-extrabold text-text line-clamp-1 group-hover:text-primary transition-colors">
+                <h4 className="text-sm font-extrabold text-text line-clamp-2 min-h-[2.5rem] leading-snug group-hover:text-primary transition-colors">
                   {p.name}
                 </h4>
                 <div className="flex items-center gap-2 mt-1 text-caption text-text-muted">
@@ -107,10 +107,10 @@ export function LandingTemplateProducts({
               </div>
 
               {/* Price & CTA Action */}
-              <div className="pt-2 border-t border-border flex items-center justify-between gap-2">
-                <div>
-                  <div className="text-caption uppercase font-bold text-text-muted">Giá ưu đãi</div>
-                  <div className={`text-sm font-black ${priceColor}`}>
+              <div className="pt-2 border-t border-border flex flex-col xs:flex-row xs:items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-2xs uppercase font-bold text-text-muted">Giá ưu đãi</div>
+                  <div className={`text-sm font-black truncate ${priceColor}`}>
                     {formatVnd(p.price)}
                   </div>
                 </div>
@@ -119,7 +119,7 @@ export function LandingTemplateProducts({
                   href={`https://zalo.me?text=${encodeURIComponent(`Xin chào, tôi muốn đặt sản phẩm ${p.name} (${p.code}) trong chiến dịch!`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 ${ctaBtnStyle}`}
+                  className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 w-full xs:w-auto ${ctaBtnStyle}`}
                 >
                   <MessageCircle size={13} />
                   <span>Đặt Zalo</span>

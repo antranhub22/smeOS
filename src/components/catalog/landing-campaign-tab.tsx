@@ -49,14 +49,16 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
   const [videoUrl, setVideoUrl] = useState("")
   const [campaignSlug, setCampaignSlug] = useState("campaign-20-10")
 
-  const [activeProducts, setActiveProducts] = useState<CatalogProduct[]>(() =>
-    products.filter((p) => p.status === "ACTIVE")
-  )
+  const [createdProducts, setCreatedProducts] = useState<CatalogProduct[]>([])
+  const activeProducts = React.useMemo(() => {
+    const combined = [...createdProducts, ...products]
+    return combined.filter((p) => p.status !== "ARCHIVED")
+  }, [createdProducts, products])
   const [isQuickUploadOpen, setIsQuickUploadOpen] = useState(false)
 
   const [generatedPackage, setGeneratedPackage] = useState<GeneratedLandingPackage | null>(() =>
     generateLandingPageContent({
-      shopName: "Tiệm hoa smeOS",
+      shopName: currentShopName,
       occasionId: CAMPAIGN_OCCASIONS[0]?.id || "20-10",
       occasionLabel: CAMPAIGN_OCCASIONS[0]?.label || "Ngày Phụ Nữ Việt Nam 20/10",
       selectedProducts: [],
@@ -200,7 +202,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
   }
 
   const handleProductCreated = (newProd: CatalogProduct) => {
-    setActiveProducts((prev) => [newProd, ...prev.filter((p) => p.id !== newProd.id)])
+    setCreatedProducts((prev) => [newProd, ...prev.filter((p) => p.id !== newProd.id)])
     setSelectedProductIds((prev) => [newProd.id, ...prev])
     if (!customHeroImageUrl && newProd.imageUrl) setCustomHeroImageUrl(newProd.imageUrl)
     onRefresh?.()
@@ -294,6 +296,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
           <SmartInputDropzone
             onAnalyze={handleSmartAnalyze}
             isAnalyzing={isAiGenerating}
+            availableProducts={activeProducts}
             onSwitchToManual={() => {
               setEntryMode("wizard")
               setExecutionMode("guided")

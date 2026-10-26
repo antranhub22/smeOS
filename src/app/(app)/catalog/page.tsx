@@ -7,6 +7,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { CatalogGuidanceCard } from "@/components/templates/catalog/catalog-guidance-card"
 import { CatalogManagementTab, type CatalogProduct, type CatalogLinkItem } from "@/components/catalog/catalog-management-tab"
+import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
 import { BudgetMatchingModal } from "@/components/sales/budget-matching-modal"
 import type { ProductMatchCandidate } from "@/modules/products/domain/budget-flower-matcher"
 import { useI18n } from "@/lib/i18n"
@@ -27,7 +28,7 @@ export default function CatalogWebsitePage() {
   const fetchProducts = useCallback(async () => {
     try {
       const [prodRes, analysisRes] = await Promise.all([
-        fetch("/api/v1/products?limit=100&status=ACTIVE"),
+        fetch("/api/v1/products?limit=100"),
         fetch("/api/v1/vision/analyses?approval_state=APPROVED").catch(() => null),
       ])
       if (prodRes.status === 401) { router.push("/dang-nhap"); return }
@@ -56,10 +57,16 @@ export default function CatalogWebsitePage() {
 
       const enriched = rawProducts.map((p) => {
         const extra = analysisMap.get(p.id)
+        const rawAny = p as unknown as { masterImageUrl?: string | null; price_vnd?: number | null; attributes?: Record<string, unknown> }
+        const resolvedDriveLink = p.driveLink ?? (typeof rawAny.attributes?.drive_link === "string" ? rawAny.attributes.drive_link : null)
+        const resolvedMasterImg = extra?.imageUrl || rawAny.masterImageUrl || (typeof rawAny.attributes?.imageUrl === "string" ? rawAny.attributes.imageUrl : null)
+        const finalImageUrl = resolvedMasterImg || (resolvedDriveLink ? driveThumbProxySrc(resolvedDriveLink) : null)
+
         return {
           ...p,
-          imageUrl: extra?.imageUrl || p.imageUrl || null,
-          price: p.price ?? extra?.price ?? null,
+          imageUrl: finalImageUrl,
+          driveLink: resolvedDriveLink,
+          price: p.price ?? rawAny.price_vnd ?? extra?.price ?? null,
         }
       })
 
