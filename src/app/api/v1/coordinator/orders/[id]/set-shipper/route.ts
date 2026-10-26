@@ -12,7 +12,6 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
@@ -20,7 +19,6 @@ import {
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
 import { getOrderRepository } from "@/modules/orders/infra/order-repository"
-import type { Prisma } from "@/generated/prisma/client"
 
 const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
 
@@ -72,7 +70,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     })
   }
 
-  const coord = await prisma.order_coordinations.findUnique({ where: { order_id: order.id } })
+  const coord = await repo.findCoordination(order.id)
   const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
 
   const shipperInfo = {
@@ -85,15 +83,9 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   const orderRepo = getOrderRepository()
 
-  await prisma.order_coordinations.update({
-    where: { order_id: order.id },
-    data: {
-      metadata: {
-        ...existingMeta,
-        shipper_info: shipperInfo,
-        shipper_submitted_at: new Date().toISOString(),
-      } as unknown as Prisma.InputJsonValue,
-    },
+  await repo.upsertCoordinationMeta(order.id, order.organization_id, {
+    shipper_info: shipperInfo,
+    shipper_submitted_at: new Date().toISOString(),
   })
 
   await orderRepo.update(order.organization_id, order.id, {

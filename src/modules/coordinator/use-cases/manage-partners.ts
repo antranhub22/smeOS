@@ -4,7 +4,8 @@
 
 import { AppError, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { CoordinatorRepository, type PartnerRow } from "../infra/coordinator-repository"
+import type { IPartnerRepository, PartnerEntity } from "../domain/repositories/partner-repository.interface"
+import { getPartnerRepository } from "../infra/partner-repository"
 import { isUniqueViolation, runInTransaction } from "../infra/transaction"
 import { audit } from "./shared"
 
@@ -22,7 +23,7 @@ export interface PartnerView {
   isActive: boolean
 }
 
-function present(p: PartnerRow): PartnerView {
+function present(p: PartnerEntity): PartnerView {
   return {
     id: p.id,
     code: p.code,
@@ -38,8 +39,12 @@ function present(p: PartnerRow): PartnerView {
   }
 }
 
-export async function listPartners(ctx: TenantContext, options: { activeOnly: boolean }): Promise<PartnerView[]> {
-  return (await new CoordinatorRepository().listPartners(ctx, options)).map(present)
+export async function listPartners(
+  ctx: TenantContext,
+  options: { activeOnly: boolean },
+  repo: IPartnerRepository = getPartnerRepository()
+): Promise<PartnerView[]> {
+  return (await repo.listPartners(ctx, options)).map(present)
 }
 
 export interface PartnerInput {
@@ -56,7 +61,7 @@ export interface PartnerInput {
 export async function createPartner(ctx: TenantContext, input: PartnerInput): Promise<PartnerView> {
   try {
     const partner = await runInTransaction(async (tx) => {
-      const p = await new CoordinatorRepository(tx).createPartner(ctx, {
+      const p = await getPartnerRepository(tx).createPartner(ctx, {
         code: input.code.trim(),
         name: input.name.trim(),
         phone: input.phone.trim(),
@@ -82,7 +87,7 @@ export async function updatePartner(
   input: { [K in keyof Omit<PartnerInput, "code">]?: PartnerInput[K] | undefined } & { isActive?: boolean | undefined }
 ): Promise<PartnerView> {
   return runInTransaction(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getPartnerRepository(tx)
     const before = await repo.findPartner(ctx, id)
     if (!before) throw notFound()
     await repo.updatePartner(ctx, id, {

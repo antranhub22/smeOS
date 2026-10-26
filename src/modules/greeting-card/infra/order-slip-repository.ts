@@ -33,3 +33,9 @@ export class OrderSlipRepository {
     }
   }
 }
+
+let _orderSlipRepositorySingleton: OrderSlipRepository | null = null
+export function getOrderSlipRepository(): OrderSlipRepository {
+  if (!_orderSlipRepositorySingleton) _orderSlipRepositorySingleton = new OrderSlipRepository()
+  return _orderSlipRepositorySingleton
+}

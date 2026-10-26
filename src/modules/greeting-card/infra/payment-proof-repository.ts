@@ -19,3 +19,9 @@ export class PaymentProofRepository {
     return other !== null
   }
 }
+
+let _paymentProofRepositorySingleton: PaymentProofRepository | null = null
+export function getPaymentProofRepository(): PaymentProofRepository {
+  if (!_paymentProofRepositorySingleton) _paymentProofRepositorySingleton = new PaymentProofRepository()
+  return _paymentProofRepositorySingleton
+}

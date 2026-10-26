@@ -14,7 +14,6 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
@@ -22,7 +21,6 @@ import {
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { getOrderRepository } from "@/modules/orders/infra/order-repository"
-import type { Prisma } from "@/generated/prisma/client"
 
 const decisionSchema = z.object({
   step: z.enum(["QC", "SHIPPER", "POD"]),
@@ -43,9 +41,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const order = await repo.findSubcontractById(orderId, ctx.organizationId)
   if (!order) throw notFound()
 
-  const coord = await prisma.order_coordinations.findUnique({
-    where: { order_id: order.id },
-  })
+  const coord = await repo.findCoordination(order.id)
   const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
   const bypassRequests = (existingMeta.bypass_requests as Record<string, unknown> | undefined) ?? {}
   const currentReq = (bypassRequests[step] as Record<string, unknown> | undefined)
@@ -71,14 +67,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
       },
     }
 
-    await prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          bypass_requests: updatedBypassRequests,
-        } as unknown as Prisma.InputJsonValue,
-      },
+    await repo.upsertCoordinationMeta(order.id, order.organization_id, {
+      bypass_requests: updatedBypassRequests,
     })
 
     return jsonResponse({
@@ -115,17 +105,11 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   if (step === "QC") {
     // Kích hoạt bước 2 hoàn thành (READY) để bước 3 mở khóa
-    await prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          bypass_requests: updatedBypassRequests,
-          last_qc_uploaded_at: nowIso,
-          last_qc_uploaded_by: `coordinator_bypass:${ctx.userId}`,
-          bypass_qc_approved: true,
-        } as unknown as Prisma.InputJsonValue,
-      },
+    await repo.upsertCoordinationMeta(order.id, order.organization_id, {
+      bypass_requests: updatedBypassRequests,
+      last_qc_uploaded_at: nowIso,
+      last_qc_uploaded_by: `coordinator_bypass:${ctx.userId}`,
+      bypass_qc_approved: true,
     })
     await orderRepo.update(order.organization_id, order.id, {
       productionStatus: "READY",
@@ -141,21 +125,15 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     )
   } else if (step === "SHIPPER") {
     // Kích hoạt bước 3 hoàn thành (DELIVERING) để bước 4 mở khóa
-    await prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          bypass_requests: updatedBypassRequests,
-          shipper_info: {
-            shipperName: "Giao gấp (Miễn thông tin)",
-            shipperPhone: "",
-            submittedAt: nowIso,
-            bypassedByCoordinator: true,
-          },
-          bypass_shipper_approved: true,
-        } as unknown as Prisma.InputJsonValue,
+    await repo.upsertCoordinationMeta(order.id, order.organization_id, {
+      bypass_requests: updatedBypassRequests,
+      shipper_info: {
+        shipperName: "Giao gấp (Miễn thông tin)",
+        shipperPhone: "",
+        submittedAt: nowIso,
+        bypassedByCoordinator: true,
       },
+      bypass_shipper_approved: true,
     })
     await orderRepo.update(order.organization_id, order.id, {
       deliveryStatus: "DELIVERING",
@@ -171,22 +149,16 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     )
   } else if (step === "POD") {
     // Kích hoạt bước 4 hoàn thành (COMPLETED / DELIVERED)
-    await prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          bypass_requests: updatedBypassRequests,
-          delivery_proof: {
-            photoUrls: [],
-            note: `Bỏ qua POD (Điều phối duyệt: ${requestReason})`,
-            deliveredAt: nowIso,
-            confirmedByCoordinator: ctx.userId,
-            confirmMode: "bypassed_without_photo",
-          },
-          bypass_pod_approved: true,
-        } as unknown as Prisma.InputJsonValue,
+    await repo.upsertCoordinationMeta(order.id, order.organization_id, {
+      bypass_requests: updatedBypassRequests,
+      delivery_proof: {
+        photoUrls: [],
+        note: `Bỏ qua POD (Điều phối duyệt: ${requestReason})`,
+        deliveredAt: nowIso,
+        confirmedByCoordinator: ctx.userId,
+        confirmMode: "bypassed_without_photo",
       },
+      bypass_pod_approved: true,
     })
     await orderRepo.update(order.organization_id, order.id, {
       deliveryStatus: "DELIVERED",

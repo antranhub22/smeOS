@@ -12,8 +12,6 @@ import { commitSubcontractOrder } from "@/modules/greeting-card/domain/subcontra
 import { parseChainDispatchPolicy, renderDispatchMessage } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { formatDeliveryAddress, extractRecipientInfo } from "@/modules/greeting-card/domain/delivery-address"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
 import type { TenantContext } from "@/core/tenancy"
 
 const actionSchema = z.object({
@@ -347,9 +345,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       throw validationFailed({ photoUrl: "Thiếu thông tin ảnh cần xóa" })
     }
 
-    const coord = await prisma.order_coordinations.findUnique({
-      where: { order_id: order.id },
-    })
+    const coord = await repo.findCoordination(order.id)
     const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
     const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
 
@@ -364,14 +360,8 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       return true
     })
 
-    await prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          qc_photos: filteredQcPhotos,
-        } as unknown as Prisma.InputJsonValue,
-      },
+    await repo.upsertCoordinationMeta(order.id, order.organization_id, {
+      qc_photos: filteredQcPhotos,
     })
 
     return jsonResponse({

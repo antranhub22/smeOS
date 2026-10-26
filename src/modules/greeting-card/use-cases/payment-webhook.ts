@@ -2,8 +2,8 @@ import { createHash, randomBytes } from "node:crypto"
 import type { TenantContext } from "@/core/tenancy"
 import { AppError, notFound, unauthenticated } from "@/core/http/errors"
 import { log } from "@/core/observability/log"
-import { GreetingIntegrationRepository } from "../infra/greeting-integration-repository"
-import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
+import { GreetingIntegrationRepository, getGreetingIntegrationRepository } from "../infra/greeting-integration-repository"
+import { BrochurePaymentRepository, getBrochurePaymentRepository } from "../infra/brochure-payment-repository"
 import { decideTransfer, extractOrderCode } from "../domain/bank-transfer-matching"
 import { paymentNotifyEvent } from "../domain/customer-notifications"
 import { queueOrderNotification } from "./notify-customer"
@@ -33,13 +33,13 @@ function systemContext(organizationId: string, actor: string): TenantContext {
 }
 
 /** Bật đối soát tự động: sinh khoá mới (chỉ trả MỘT lần), khoá cũ mất hiệu lực. */
-export async function rotatePaymentWebhookKey(ctx: TenantContext, repo = new GreetingIntegrationRepository()) {
+export async function rotatePaymentWebhookKey(ctx: TenantContext, repo = getGreetingIntegrationRepository()) {
   const key = `brk_${randomBytes(24).toString("base64url")}`
   await repo.setPaymentWebhookKey(ctx, { provider: SEPAY_PROVIDER, hash: hashWebhookKey(key), hint: key.slice(-4) })
   return { apiKey: key, provider: SEPAY_PROVIDER, webhookPath: "/api/v1/public/payments/sepay" }
 }
 
-export async function disablePaymentWebhook(ctx: TenantContext, repo = new GreetingIntegrationRepository()) {
+export async function disablePaymentWebhook(ctx: TenantContext, repo = getGreetingIntegrationRepository()) {
   await repo.setPaymentWebhookKey(ctx, null)
   return { enabled: false }
 }
@@ -52,8 +52,8 @@ export async function disablePaymentWebhook(ctx: TenantContext, repo = new Greet
 export async function handleSepayWebhook(
   apiKey: string | null,
   transfer: SepayTransfer,
-  repo = new GreetingIntegrationRepository(),
-  payments = new BrochurePaymentRepository()
+  repo = getGreetingIntegrationRepository(),
+  payments = getBrochurePaymentRepository()
 ) {
   if (!apiKey) throw unauthenticated()
   const integration = await repo.findByPaymentKeyHash(hashWebhookKey(apiKey))
@@ -118,7 +118,7 @@ export async function markPaymentEventHandled(
   ctx: TenantContext,
   id: string,
   note: string,
-  repo = new GreetingIntegrationRepository()
+  repo = getGreetingIntegrationRepository()
 ) {
   // Tiền chưa khớp không thuộc riêng sale nào — sale "chỉ khách của mình" không xử lý được
   if (await resolveSaleScope(ctx)) throw notFound()
@@ -130,7 +130,7 @@ export async function markPaymentEventHandled(
 export async function listPaymentEvents(
   ctx: TenantContext,
   options: { status?: PaymentEventStatus | undefined; limit: number; cursor?: string | undefined },
-  repo = new GreetingIntegrationRepository()
+  repo = getGreetingIntegrationRepository()
 ) {
   if (await resolveSaleScope(ctx)) return []
   return repo.listPaymentEvents(ctx, options)

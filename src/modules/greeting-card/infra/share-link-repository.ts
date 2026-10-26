@@ -120,3 +120,9 @@ export class ShareLinkRepository {
     return this.db.greeting_catalogs.findFirst({ where: { id: catalogId, is_active: true }, select: { name: true, description: true } })
   }
 }
+
+let _shareLinkRepositorySingleton: ShareLinkRepository | null = null
+export function getShareLinkRepository(): ShareLinkRepository {
+  if (!_shareLinkRepositorySingleton) _shareLinkRepositorySingleton = new ShareLinkRepository()
+  return _shareLinkRepositorySingleton
+}

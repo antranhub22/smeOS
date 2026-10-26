@@ -10,7 +10,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { listProductMasterIndex } from "@/modules/products/use-cases/get-product-master-index"
 import { getCustomerMasterIndex } from "@/modules/crm/use-cases/get-customer-master-index"
 import type { ChatMessage } from "../domain/chat-types"
-import { ChatRepository } from "../infra/chat-repository"
+import { ChatRepository, getChatRepository } from "../infra/chat-repository"
 import { OpsCopilotEngine } from "../ops-copilot/domain/ops-copilot-engine"
 import { askOpsCopilot } from "../ops-copilot/use-cases/ask-ops-copilot"
 import { OpsCopilotOrchestrator, ToneSynthesizerAgent } from "../ops-copilot/pipeline"
@@ -22,7 +22,7 @@ export async function sendChatMessage(
   conversationId: string,
   query: string,
   assistantType?: "OPS_COPILOT" | "SALES_CONCIERGE",
-  repo: ChatRepository = new ChatRepository(),
+  repo: ChatRepository = getChatRepository(),
   salesProvider: SalesConciergeProvider = new SalesConciergeProvider(chatAnswerViaGateway(ctx, conversationId))
 ): Promise<{ userMessage: ChatMessage; assistantMessage: ChatMessage }> {
   if (!query.trim()) {

@@ -1,7 +1,7 @@
 import { validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { MEDIA_VARIANT_FEATURES } from "@/modules/media/domain/variant-rules"
 
 const DEFAULT_LIMIT = 25
@@ -35,8 +35,8 @@ export async function listPendingVariants(
     throw validationFailed({ limit: `Phải trong khoảng 1..${MAX_LIMIT}` })
   }
 
-  const jobRepo = new GenerationJobRepository()
-  const assetRepo = new AssetRepository()
+  const jobRepo = getGenerationJobRepository()
+  const assetRepo = getAssetRepository()
 
   // Hai nhánh (local + cloud, 23/09/2026) cùng sinh asset MARKETING cần duyệt.
   const theoNhanh = await Promise.all(

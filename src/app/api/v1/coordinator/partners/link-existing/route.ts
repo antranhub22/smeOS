@@ -2,9 +2,8 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import { PrismaChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
-import { PrismaInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
+import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
+import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { LinkExistingStoreUseCase } from "@/modules/chain-partnership/use-cases/link-existing-store"
 
 const linkSchema = z.object({
@@ -25,8 +24,8 @@ export const POST = handle(async (request) => {
     throw validationFailed({ reason: errorDetails })
   }
 
-  const partnershipRepo = new PrismaChainPartnershipRepository(prisma)
-  const chatRepo = new PrismaInternalChatRepository(prisma)
+  const partnershipRepo = getChainPartnershipRepository()
+  const chatRepo = getInternalChatRepository()
   const useCase = new LinkExistingStoreUseCase(partnershipRepo, chatRepo)
 
   try {

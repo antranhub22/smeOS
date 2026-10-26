@@ -1,4 +1,4 @@
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { journeyEventType, type CustomerJourneyEvent } from "../domain/customer-journey-events"
 import { loadPublicSession } from "./brochure-session-access"
 
@@ -9,7 +9,7 @@ import { loadPublicSession } from "./brochure-session-access"
 export async function recordCustomerJourneyEvent(
   sendCode: string,
   input: { event: CustomerJourneyEvent; productId?: string | undefined },
-  repo = new GreetingCardRepository(),
+  repo = getGreetingCardRepository(),
 ): Promise<{ recorded: true }> {
   const session = await loadPublicSession(sendCode, repo)
   const known = input.productId && session.catalog.items.some((i) => i.product.id === input.productId)

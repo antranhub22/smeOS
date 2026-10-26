@@ -1,5 +1,5 @@
 import { AppError } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { paymentInstructionsFor } from "./payment-instructions"
 import { withPaymentCodeFlag, type ShippingConfig } from "../domain/brochure-pricing"
 import type {
@@ -39,7 +39,7 @@ export type CustomerBrochureView = {
  */
 export async function getGreetingCatalogForCustomer(
   sendCode: string,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ): Promise<CustomerBrochureView | { status: "NOT_FOUND" } | { status: "UNAVAILABLE"; reason: "EXPIRED" | "CLOSED"; shop: ShopContact }> {
   let session
   try {
@@ -113,7 +113,7 @@ export async function getGreetingCatalogForCustomer(
  * Trình duyệt của khách báo đã mở link (gọi từ trang sau khi chạy JavaScript). Chỉ đổi
  * CREATED → OPENED một lần; link sai/hết hạn → 404 như trang khách.
  */
-export async function markBrochureOpened(sendCode: string, repo = new GreetingCardRepository()): Promise<{ opened: boolean }> {
+export async function markBrochureOpened(sendCode: string, repo = getGreetingCardRepository()): Promise<{ opened: boolean }> {
   const session = await loadPublicSession(sendCode, repo)
   if (session.status !== "CREATED") return { opened: false }
   const now = new Date()

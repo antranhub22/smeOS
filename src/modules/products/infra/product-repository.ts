@@ -337,7 +337,8 @@ export class ProductRepository implements IProductRepository {
 
 let defaultProductRepository: IProductRepository | null = null
 
-export function getProductRepository(): IProductRepository {
+export function getProductRepository(db?: DbClient): IProductRepository {
+  if (db) return new ProductRepository(db)
   if (!defaultProductRepository) {
     defaultProductRepository = new ProductRepository()
   }

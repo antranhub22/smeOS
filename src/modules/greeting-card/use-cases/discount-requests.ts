@@ -1,8 +1,8 @@
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { getCurrentOrganization } from "@/modules/organization/use-cases/get-current-organization"
-import { DiscountRepository } from "../infra/discount-repository"
-import { GreetingMessageRepository } from "../infra/greeting-message-repository"
+import { DiscountRepository, getDiscountRepository } from "../infra/discount-repository"
+import { GreetingMessageRepository, getGreetingMessageRepository } from "../infra/greeting-message-repository"
 import { discountError, discountVndOf, parseMaxDiscountPercent, type DiscountAsk } from "../domain/discount-request"
 import { roleOf } from "../domain/internal-message"
 import { visibleTarget } from "./internal-messages"
@@ -16,11 +16,11 @@ async function maxPercent(ctx: TenantContext) {
 export async function requestDiscount(
   ctx: TenantContext,
   input: { orderId: string; ask: DiscountAsk; reason: string },
-  repo = new DiscountRepository(),
+  repo = getDiscountRepository(),
 ) {
   const reason = input.reason.trim()
   if (reason.length < 3) throw validationFailed({ reason: "Ghi lý do xin giảm (ít nhất 3 ký tự)" })
-  await visibleTarget(ctx, { orderId: input.orderId }, new GreetingMessageRepository())
+  await visibleTarget(ctx, { orderId: input.orderId }, getGreetingMessageRepository())
   const order = await repo.orderBase(ctx, input.orderId)
   if (!order) throw notFound()
   if (order.status === "CANCELLED") throw conflict("Đơn đã huỷ")
@@ -51,12 +51,12 @@ export async function requestDiscount(
 export async function decideDiscount(
   ctx: TenantContext,
   input: { requestId: string; approve: boolean; ask?: DiscountAsk | undefined; note: string },
-  repo = new DiscountRepository(),
+  repo = getDiscountRepository(),
 ) {
   const note = input.note.trim()
   if (!input.approve && note.length < 3) throw validationFailed({ note: "Ghi lý do từ chối để sale báo lại khách" })
   const pending = (await repo.listPending(ctx)).find((r) => r.id === input.requestId)
-  if (!pending?.order_id) throw (await new GreetingMessageRepository().findById(ctx, input.requestId)) ? conflict("Yêu cầu này đã được xử lý") : notFound()
+  if (!pending?.order_id) throw (await getGreetingMessageRepository().findById(ctx, input.requestId)) ? conflict("Yêu cầu này đã được xử lý") : notFound()
   const order = await repo.orderBase(ctx, pending.order_id)
   if (!order) throw notFound()
 

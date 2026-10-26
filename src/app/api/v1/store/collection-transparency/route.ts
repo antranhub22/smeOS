@@ -9,7 +9,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"
 import { getStoreCollectionTransparency } from "@/modules/field-platform/use-cases/get-store-collection-transparency"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { getBranchRepository } from "@/modules/organization/infra/branch-repository"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -20,10 +20,8 @@ export const GET = handle(async (request) => {
 
   if (!storeId) {
     // If storeId is not provided, pick the first active branch for this organization
-    const firstBranch = await prisma.branches.findFirst({
-      where: { organization_id: ctx.organizationId, is_active: true },
-      select: { id: true },
-    })
+    const branches = await getBranchRepository().list(ctx)
+    const firstBranch = branches.find((b) => b.is_active)
     storeId = firstBranch?.id ?? ""
   }
 

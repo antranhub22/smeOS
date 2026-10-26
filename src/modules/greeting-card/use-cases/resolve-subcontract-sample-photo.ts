@@ -1,4 +1,5 @@
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { getSubcontractSamplePhotoRepository } from "../infra/subcontract-sample-photo-repository"
+import type { ISubcontractSamplePhotoRepository } from "../domain/repositories/subcontract-sample-photo-repository.interface"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { driveThumbProxySrc } from "../domain/drive-thumb"
 
@@ -25,7 +26,8 @@ export interface OrderSampleSource {
  */
 export async function resolveSubcontractSamplePhoto(
   order: OrderSampleSource,
-  options?: { baseUrl?: string }
+  options?: { baseUrl?: string },
+  repo: ISubcontractSamplePhotoRepository = getSubcontractSamplePhotoRepository()
 ): Promise<string | null> {
   const firstItem = order.items?.[0]
   const session = order.greeting_sessions?.[0]
@@ -47,30 +49,16 @@ export async function resolveSubcontractSamplePhoto(
   // Fallback 1: Nếu đơn chưa có ảnh trong snapshot/metadata nhưng có productId hoặc productName -> tra bảng products
   if (!rawImageUrl && (productId || productName)) {
     try {
-      const productRow = await prisma.products.findFirst({
-        where: productId
-          ? { id: productId, organization_id: order.organization_id }
-          : {
-              organization_id: order.organization_id,
-              name: { equals: productName!, mode: "insensitive" },
-            },
-        select: {
-          attributes: true,
-          images: {
-            orderBy: { position: "asc" },
-            take: 10,
-            select: { asset_id: true, role: true },
-          },
-        },
-      })
+      const productRow = await repo.findProductWithImages(
+        order.organization_id,
+        productId ?? null,
+        productName ?? null
+      )
 
       if (productRow) {
-        const firstImg = productRow.images.find((i) => i.role === "MAIN") ?? productRow.images[0]
+        const firstImg = productRow.images.find((i: { role: string }) => i.role === "MAIN") ?? productRow.images[0]
         if (firstImg?.asset_id) {
-          const asset = await prisma.assets.findFirst({
-            where: { id: firstImg.asset_id, organization_id: order.organization_id },
-            select: { storage_key: true },
-          })
+          const asset = await repo.findAssetById(firstImg.asset_id, order.organization_id)
           if (asset?.storage_key) {
             rawImageUrl = asset.storage_key
           }

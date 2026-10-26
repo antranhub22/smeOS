@@ -214,3 +214,9 @@ export class OrderChangeRepository {
     })
   }
 }
+
+let _orderChangeRepositorySingleton: OrderChangeRepository | null = null
+export function getOrderChangeRepository(): OrderChangeRepository {
+  if (!_orderChangeRepositorySingleton) _orderChangeRepositorySingleton = new OrderChangeRepository()
+  return _orderChangeRepositorySingleton
+}

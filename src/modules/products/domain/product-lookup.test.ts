@@ -64,6 +64,7 @@ describe("filterProductLookup", () => {
         "pricing",
         "redacted_fields",
         "attributes",
+        "availability_config",
       ].sort()
     )
     expect(serialized).toBeDefined()

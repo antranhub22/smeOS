@@ -407,7 +407,8 @@ export class GenerationJobRepository implements IGenerationJobRepository {
 let _instance: GenerationJobRepository | undefined
 
 /** Trả về singleton GenerationJobRepository (inject mặc định cho use-cases). */
-export function getGenerationJobRepository(): IGenerationJobRepository {
+export function getGenerationJobRepository(db?: DbClient): IGenerationJobRepository {
+  if (db) return new GenerationJobRepository(db)
   _instance ??= new GenerationJobRepository()
   return _instance
 }

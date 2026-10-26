@@ -149,3 +149,9 @@ export class CancellationFollowUpRepository {
     })
   }
 }
+
+let _cancellationFollowUpRepositorySingleton: CancellationFollowUpRepository | null = null
+export function getCancellationFollowUpRepository(): CancellationFollowUpRepository {
+  if (!_cancellationFollowUpRepositorySingleton) _cancellationFollowUpRepositorySingleton = new CancellationFollowUpRepository()
+  return _cancellationFollowUpRepositorySingleton
+}

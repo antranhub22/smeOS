@@ -1,6 +1,6 @@
 import { conflict, notFound } from "@/core/http/errors"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
-import { PhotoApprovalRepository } from "../infra/photo-approval-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
+import { PhotoApprovalRepository, getPhotoApprovalRepository } from "../infra/photo-approval-repository"
 import { isBrochureOwner } from "./brochure-owner"
 
 /**
@@ -10,12 +10,12 @@ import { isBrochureOwner } from "./brochure-owner"
 export async function approveBrochurePhoto(request: Request, code: string, sendCode: string | null) {
   if (!sendCode || !isBrochureOwner(request, sendCode)) throw notFound()
 
-  const order = await new BrochureOrderRepository().getTrackingOrderByCode(code)
+  const order = await getBrochureOrderRepository().getTrackingOrderByCode(code)
   if (!order || !order.greeting_sessions.some((s) => s.send_code === sendCode)) throw notFound()
   if (order.status === "CANCELLED") throw conflict("Đơn hàng đã bị hủy")
   if (!order.qc_records.some((qc) => qc.notes === "PRODUCT_PHOTO_UPLOADED")) {
     throw conflict("Cửa hàng chưa gửi ảnh sản phẩm để xác nhận")
   }
 
-  return new PhotoApprovalRepository().recordApproval(order)
+  return getPhotoApprovalRepository().recordApproval(order)
 }

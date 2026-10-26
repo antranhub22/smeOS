@@ -1,11 +1,11 @@
 import type { TenantContext } from "@/core/tenancy"
 import { assertShopReadyForCustomers } from "./get-shop-contact"
 import { conflict, notFound } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { normalizePhone, randomCode } from "../domain/greeting-card-rules"
 import { linkExpiryFrom, parseLinkLifetimeHours } from "../domain/link-lifetime"
 import { resolveEffectiveStepTimeoutPolicy } from "../domain/step-timeout-policy"
-import { GreetingMessageRepository } from "../infra/greeting-message-repository"
+import { GreetingMessageRepository, getGreetingMessageRepository } from "../infra/greeting-message-repository"
 import { visibleTarget } from "./internal-messages"
 
 export interface CreateSendLinkInput {
@@ -38,7 +38,7 @@ export function displayFiltersOnly(filters: Record<string, unknown> | null | und
 export async function createSendLink(
   ctx: TenantContext,
   input: CreateSendLinkInput,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ) {
   await assertShopReadyForCustomers(ctx.organizationId)
   let targetCatalogId = input.catalogId
@@ -109,8 +109,8 @@ export async function createSendLink(
  * Thu hồi link đã gửi (chưa có đơn): khách mở lại sẽ thấy link không còn hiệu lực.
  * Sale "chỉ khách của mình" không thu hồi được link của sale khác — 404 như mọi thao tác trên link.
  */
-export async function revokeSendLink(ctx: TenantContext, sessionId: string, repo = new GreetingCardRepository()) {
-  await visibleTarget(ctx, { sessionId }, new GreetingMessageRepository())
+export async function revokeSendLink(ctx: TenantContext, sessionId: string, repo = getGreetingCardRepository()) {
+  await visibleTarget(ctx, { sessionId }, getGreetingMessageRepository())
   const changed = await repo.revokeSession(ctx, sessionId)
   if (changed) {
     await repo.recordJourneyEvent(ctx.organizationId, sessionId, "LINK_REVOKED", { revokedBy: ctx.userId })

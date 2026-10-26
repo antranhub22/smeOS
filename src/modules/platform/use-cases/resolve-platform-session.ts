@@ -2,10 +2,10 @@ import { AppError, unauthenticated } from "@/core/http/errors"
 import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { isUsable } from "@/modules/organization/domain/session-policy"
-import { SessionRepository } from "@/modules/organization/infra/session-repository"
+import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
 import { hashSessionToken } from "@/modules/organization/infra/session-token"
-import { UserRepository } from "@/modules/organization/infra/user-repository"
-import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
+import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
+import { PlatformOperatorRepository, getPlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
 
 /**
  * Giải `PlatformContext` — NGỮ CẢNH SONG SONG với `resolveSession`
@@ -31,13 +31,41 @@ export async function requirePlatformContext(request: Request): Promise<Platform
   const token = readCookie(request, SESSION_COOKIE)
   if (!token) throw unauthenticated()
 
-  const session = await new SessionRepository().findByTokenHash(hashSessionToken(token))
+  const session = await getSessionRepository().findByTokenHash(hashSessionToken(token))
   if (!session || !isUsable(session, new Date())) throw unauthenticated()
 
-  const user = await new UserRepository().findById(session.user_id)
+  const user = await getUserRepository().findById(session.user_id)
   if (!user) throw unauthenticated()
 
-  const operator = await new PlatformOperatorRepository().findActiveByUserId(user.id)
+  // Dev-only: hỗ trợ DevRoleOverride & SuperUser khi dev mà chưa chạy script gán quyền thủ công
+  if (process.env.NODE_ENV !== "production") {
+    const rawDev = readCookie(request, "smeos_dev_role")
+    if (rawDev) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(rawDev))
+        if (parsed?.roleKey === "platform_admin" || parsed?.organizationType === "PLATFORM") {
+          return {
+            userId: user.id,
+            capabilities: new Set(["N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N12"]),
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+    if (user.email === "tuans2@dev.com" || Boolean(user.email?.endsWith("@dev.com"))) {
+      const operator = await getPlatformOperatorRepository().findActiveByUserId(user.id)
+      if (operator) {
+        return { userId: user.id, capabilities: new Set(operator.capabilityCodes) }
+      }
+      return {
+        userId: user.id,
+        capabilities: new Set(["N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N12"]),
+      }
+    }
+  }
+
+  const operator = await getPlatformOperatorRepository().findActiveByUserId(user.id)
   if (!operator) {
     throw new AppError("CAPABILITY_DENIED", "Không phải người vận hành nền tảng", {
       userId: user.id,

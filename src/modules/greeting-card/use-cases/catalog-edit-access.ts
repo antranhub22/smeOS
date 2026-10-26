@@ -1,13 +1,13 @@
 import type { TenantContext } from "@/core/tenancy"
 import { AppError, notFound } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { canEditAnyCatalog, canEditCatalog } from "../domain/catalog-edit-policy"
 
 /** Chặn sửa nội dung bộ sưu tập người khác tạo (thêm/xoá mẫu, đổi tên, giao diện) — xem `catalog-edit-policy`. */
 export async function assertCanEditCatalog(
   ctx: TenantContext,
   catalogId: string,
-  repo: Pick<GreetingCardRepository, "getCatalogById"> = new GreetingCardRepository(),
+  repo: Pick<GreetingCardRepository, "getCatalogById"> = getGreetingCardRepository(),
 ): Promise<void> {
   const catalog = await repo.getCatalogById(ctx, catalogId)
   if (!catalog) throw notFound()

@@ -5,8 +5,7 @@
  * bound by a Data Sharing Agreement (DSA).
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
-import { ChainCollectionProfileRepository } from "../infra/chain-collection-repository"
+import { ChainCollectionProfileRepository, getChainCollectionProfileRepository, type IChainCollectionProfileRepository } from "../infra/chain-collection-repository"
 import type { DataSharingAgreement } from "../domain/chain-collection-profile"
 import type { PropagationTarget } from "../domain/field-registry-v2"
 
@@ -28,59 +27,28 @@ export interface RegisterPartnerStoreResult {
   readonly dsa: DataSharingAgreement
 }
 
-const DSA_KEY = "data_sharing_agreements"
-
 export async function registerPartnerStore(
-  input: RegisterPartnerStoreInput
+  input: RegisterPartnerStoreInput,
+  repo: IChainCollectionProfileRepository = getChainCollectionProfileRepository()
 ): Promise<RegisterPartnerStoreResult> {
   const { organizationId, name, code, address, legalEntityId, fieldCeilings, validUntil } = input
 
-  // 1. Create branch entry marked as partner
-  const branch = await prisma.branches.create({
-    data: {
-      organization_id: organizationId,
-      name,
-      code,
-      address: address ?? null,
-      is_active: true,
-    },
-  })
-
-  // 2. Setup Data Sharing Agreement
+  // Setup Data Sharing Agreement draft
   const dsa: DataSharingAgreement = {
-    storeId: branch.id,
+    storeId: "",
     legalEntityId,
     fieldCeilings,
     validUntil: validUntil ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
     status: "ACTIVE",
   }
 
-  // 3. Persist DSA into organization settings
-  const org = await prisma.organizations.findUnique({
-    where: { id: organizationId },
-    select: { settings: true },
-  })
-
-  const currentSettings =
-    org?.settings && typeof org.settings === "object"
-      ? (org.settings as Record<string, unknown>)
-      : {}
-
-  const currentDsas = (currentSettings[DSA_KEY] as Record<string, DataSharingAgreement>) ?? {}
-
-  const updatedSettings = {
-    ...currentSettings,
-    [DSA_KEY]: {
-      ...currentDsas,
-      [branch.id]: dsa,
-    },
-  }
-
-  await prisma.organizations.update({
-    where: { id: organizationId },
-    data: {
-      settings: JSON.parse(JSON.stringify(updatedSettings)),
-    },
+  // Create branch entry and persist DSA in repo
+  const branch = await repo.createPartnerBranch({
+    organizationId,
+    name,
+    code,
+    address: address ?? null,
+    dsa,
   })
 
   return {
@@ -88,6 +56,9 @@ export async function registerPartnerStore(
     name: branch.name,
     code: branch.code,
     isPartner: true,
-    dsa,
+    dsa: {
+      ...dsa,
+      storeId: branch.id,
+    },
   }
 }

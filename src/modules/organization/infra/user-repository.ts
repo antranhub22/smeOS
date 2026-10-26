@@ -30,3 +30,10 @@ export class UserRepository {
     return this.db.users.create({ data: input })
   }
 }
+
+let _userRepositorySingleton: UserRepository | null = null
+export function getUserRepository(db?: DbClient): UserRepository {
+  if (db) return new UserRepository(db)
+  if (!_userRepositorySingleton) _userRepositorySingleton = new UserRepository()
+  return _userRepositorySingleton
+}

@@ -18,7 +18,7 @@ export interface ProductAnalysisRecord {
   contract_version: string
   raw: unknown
   edited: unknown | null
-  approval_state: "PENDING" | "APPROVED" | "REJECTED" | string
+  approval_state: "PENDING" | "APPROVED" | "REJECTED"
   approved_by: string | null
   approved_at: Date | null
   created_at: Date

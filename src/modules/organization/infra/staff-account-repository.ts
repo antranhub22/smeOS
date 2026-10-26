@@ -78,3 +78,9 @@ export class StaffAccountRepository {
     })
   }
 }
+
+let _staffAccountRepositorySingleton: StaffAccountRepository | null = null
+export function getStaffAccountRepository(): StaffAccountRepository {
+  if (!_staffAccountRepositorySingleton) _staffAccountRepositorySingleton = new StaffAccountRepository()
+  return _staffAccountRepositorySingleton
+}

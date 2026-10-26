@@ -88,3 +88,9 @@ export class ProductBookingRepository {
     })
   }
 }
+
+let _productBookingRepositorySingleton: ProductBookingRepository | null = null
+export function getProductBookingRepository(): ProductBookingRepository {
+  if (!_productBookingRepositorySingleton) _productBookingRepositorySingleton = new ProductBookingRepository()
+  return _productBookingRepositorySingleton
+}

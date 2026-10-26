@@ -3,7 +3,7 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 import {
   isProviderKind,
@@ -46,14 +46,14 @@ export async function providerOrderFor(
   requested?: string | null
 ): Promise<string[]> {
   // Đọc cài đặt hỏng không được làm hỏng lượt tạo: lùi về thứ tự mặc định.
-  const org = await new OrganizationRepository().current(ctx).catch(() => null)
+  const org = await getOrganizationRepository().current(ctx).catch(() => null)
   return resolveProviderOrder(kind, orgProviderOrders(org?.settings)[kind], requested)
 }
 
 /** `GET /creative-production/providers` (`I1`) — danh mục + thứ tự của tiệm + bên nào đã có khoá. */
 export async function getProviderPreferences(ctx: TenantContext): Promise<ProviderPreferencesView> {
   requireCapability(ctx, "I1")
-  const org = await new OrganizationRepository().current(ctx)
+  const org = await getOrganizationRepository().current(ctx)
   const orders = orgProviderOrders(org?.settings)
   const kinds = {} as ProviderPreferencesView["kinds"]
   for (const kind of PROVIDER_KINDS) {
@@ -87,7 +87,7 @@ export async function setProviderOrder(ctx: TenantContext, kind: unknown, order:
   if (!checked.ok) throw validationFailed({ order: checked.error })
 
   await runInTransaction(async (tx) => {
-    const repo = new OrganizationRepository(tx)
+    const repo = getOrganizationRepository(tx)
     const org = await repo.current(ctx)
     const settings = (org?.settings && typeof org.settings === "object" ? org.settings : {}) as Record<string, unknown>
     const before = orgProviderOrders(settings)[kind] ?? null

@@ -8,7 +8,7 @@
  * - Cơ chế nhắc 1 lần sau `reminderMinutes` (default 30 phút) nếu chưa cung cấp.
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { getSubcontractOrderRepository } from "../infra/subcontract-order-repository"
 import { log } from "@/core/observability/log"
 import { runInBackground } from "@/core/runtime/background"
 import { MultiChannelDispatchNotifier } from "../infra/dispatch-notification-adapter"
@@ -98,34 +98,19 @@ export async function notifyShipperRequest(input: ShipperRequestInput): Promise<
   }
 
   // Ghi flag đã gửi yêu cầu shipper vào metadata
-  const coord = await prisma.order_coordinations.findUnique({
-    where: { order_id: orderId },
-    select: { metadata: true },
+  const repo = getSubcontractOrderRepository() as import("../infra/subcontract-order-repository").SubcontractOrderRepository
+  await repo.upsertCoordinationMeta(orderId, organizationId, {
+    shipper_request_sent_at: new Date().toISOString(),
+    shipper_reminder_scheduled_at: new Date(Date.now() + reminderMinutes * 60_000).toISOString(),
+    shipper_reminder_sent: false,
   })
-  if (coord) {
-    const meta = (coord.metadata as Record<string, unknown>) ?? {}
-    await prisma.order_coordinations.update({
-      where: { order_id: orderId },
-      data: {
-        metadata: {
-          ...meta,
-          shipper_request_sent_at: new Date().toISOString(),
-          shipper_reminder_scheduled_at: new Date(Date.now() + reminderMinutes * 60_000).toISOString(),
-          shipper_reminder_sent: false,
-        },
-      },
-    })
-  }
 
   // Lập lịch nhắc 1 lần sau reminderMinutes (chạy background, không block response)
   runInBackground(`shipper_reminder:${orderCode}`, async () => {
     await new Promise<void>((resolve) => setTimeout(resolve, reminderMinutes * 60_000))
 
     // Kiểm tra xem chi nhánh đã cung cấp shipper chưa
-    const coordNow = await prisma.order_coordinations.findFirst({
-      where: { order_id: orderId },
-      select: { metadata: true },
-    })
+    const coordNow = await repo.findCoordination(orderId)
     const metaNow = (coordNow?.metadata as Record<string, unknown>) ?? {}
     const shipperInfo = metaNow.shipper_info as Record<string, unknown> | undefined
 
@@ -168,23 +153,10 @@ export async function notifyShipperRequest(input: ShipperRequestInput): Promise<
     })
 
     // Đánh dấu đã gửi nhắc — không nhắc lại
-    const coordFinal = await prisma.order_coordinations.findFirst({
-      where: { order_id: orderId },
-      select: { metadata: true },
+    await repo.upsertCoordinationMeta(orderId, organizationId, {
+      shipper_reminder_sent: true,
+      shipper_reminder_sent_at: new Date().toISOString(),
     })
-    if (coordFinal) {
-      const metaFinal = (coordFinal.metadata as Record<string, unknown>) ?? {}
-      await prisma.order_coordinations.update({
-        where: { order_id: orderId },
-        data: {
-          metadata: {
-            ...metaFinal,
-            shipper_reminder_sent: true,
-            shipper_reminder_sent_at: new Date().toISOString(),
-          },
-        },
-      })
-    }
 
     log.info("shipper_reminder.sent", { orderCode, branchId })
   })

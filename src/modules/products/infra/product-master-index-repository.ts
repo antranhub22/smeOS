@@ -437,3 +437,9 @@ export class ProductMasterIndexRepository {
     }
   }
 }
+
+let _productMasterIndexRepo: ProductMasterIndexRepository | null = null
+export function getProductMasterIndexRepository(): ProductMasterIndexRepository {
+  if (!_productMasterIndexRepo) _productMasterIndexRepo = new ProductMasterIndexRepository()
+  return _productMasterIndexRepo
+}

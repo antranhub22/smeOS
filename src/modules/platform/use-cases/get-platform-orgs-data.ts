@@ -7,9 +7,9 @@
  * - Dữ liệu thu thập: profile, products, branches, usage, members
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
+import { PlatformDataRepository, getPlatformDataRepository } from "../infra/platform-data-repository"
 
 export interface PlatformOrgDataSummary {
   readonly id: string
@@ -37,76 +37,19 @@ export interface GetPlatformOrgsDataResult {
 }
 
 export async function getPlatformOrgsData(
-  pctx: PlatformContext
+  pctx: PlatformContext,
+  repo: PlatformDataRepository = getPlatformDataRepository()
 ): Promise<GetPlatformOrgsDataResult> {
   requirePlatformCapability(pctx, "N1")
 
-  const orgs = await prisma.organizations.findMany({
-    orderBy: { created_at: "desc" },
-    include: {
-      _count: {
-        select: {
-          memberships: true,
-          branches: true,
-        },
-      },
-      business_profile: { select: { id: true } },
-      brand_profile: { select: { id: true } },
-      workspaces: { select: { kind: true } },
-    },
-  })
-
-  const orgIds = orgs.map((o) => o.id)
-
-  // Batch: product counts per org
-  const productGroups = await prisma.products.groupBy({
-    by: ["organization_id"],
-    where: { organization_id: { in: orgIds } },
-    _count: { _all: true },
-  })
-  const productCountMap = new Map(productGroups.map((r) => [r.organization_id, r._count._all]))
-
-  // Batch: order counts per org
-  const orderGroups = await prisma.orders.groupBy({
-    by: ["organization_id"],
-    where: { organization_id: { in: orgIds } },
-    _count: { _all: true },
-  })
-  const orderCountMap = new Map(orderGroups.map((r) => [r.organization_id, r._count._all]))
-
-  // Batch: generation job counts per org
-  const jobGroups = await prisma.generation_jobs.groupBy({
-    by: ["organization_id"],
-    where: { organization_id: { in: orgIds } },
-    _count: { _all: true },
-  })
-  const jobCountMap = new Map(jobGroups.map((r) => [r.organization_id, r._count._all]))
-
-  // Batch: uploaded spreadsheets per org
-  const sheetGroups = await prisma.assets.groupBy({
-    by: ["organization_id"],
-    where: {
-      organization_id: { in: orgIds },
-      mime_type: {
-        in: [
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          "application/vnd.ms-excel",
-          "text/csv",
-        ],
-      },
-    },
-    _count: { _all: true },
-  })
-  const sheetCountMap = new Map(sheetGroups.map((r) => [r.organization_id, r._count._all]))
-
-  // Batch: most recent order/product date per org (last activity)
-  const recentOrders = await prisma.orders.findMany({
-    where: { organization_id: { in: orgIds } },
-    orderBy: { created_at: "desc" },
-    select: { organization_id: true, created_at: true },
-    distinct: ["organization_id"],
-  })
-  const lastActivityMap = new Map(recentOrders.map((r) => [r.organization_id, r.created_at]))
+  const {
+    orgs,
+    productCountMap,
+    orderCountMap,
+    jobCountMap,
+    sheetCountMap,
+    lastActivityMap,
+  } = await repo.getOrganizationsDataWithCounts()
 
   const result: PlatformOrgDataSummary[] = orgs.map((org) => {
     const hasBusinessProfile = !!org.business_profile

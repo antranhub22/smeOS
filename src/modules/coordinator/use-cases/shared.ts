@@ -1,11 +1,11 @@
 import { AppError, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import type { CoordinatorStage } from "../domain/coordinator-types"
 import type { RuleResult } from "../domain/operation-rules"
 import { checkStageTransition, type StageTransitionFacts } from "../domain/stage-transitions"
-import { CoordinatorRepository, type CoordinatorOrderRow } from "../infra/coordinator-repository"
+import { CoordinatorRepository, getCoordinatorRepository, type CoordinatorOrderRow } from "../infra/coordinator-repository"
 import { isUniqueViolation, runInTransaction, type DbClient } from "../infra/transaction"
 import { presentCoordinatorOrders, type CoordinatorOrderView } from "./present-coordinator-order"
 
@@ -42,7 +42,7 @@ export function concurrentUpdate(): AppError {
  * trả cùng câu như id không tồn tại (không xác nhận nó tồn tại).
  */
 export async function ensureAssetsOwned(ctx: TenantContext, db: DbClient, ids: readonly string[]): Promise<void> {
-  const repo = new AssetRepository(db)
+  const repo = getAssetRepository(db)
   for (const id of ids) {
     if (!(await repo.findById(ctx, id))) {
       throw new AppError("UNPROCESSABLE_ENTITY", "Ảnh không tồn tại", { asset_id: id })
@@ -62,7 +62,7 @@ export function audit(
 }
 
 export async function getOrderView(ctx: TenantContext, idOrCode: string): Promise<CoordinatorOrderView> {
-  const repo = new CoordinatorRepository()
+  const repo = getCoordinatorRepository()
   const row = await loadOrderOrThrow(ctx, repo, idOrCode)
   const [view] = await presentCoordinatorOrders(ctx, [row])
   return view!

@@ -7,11 +7,11 @@
  * - Gom dữ liệu theo Input Domains giống mô hình Folder-in-Folder
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { INPUT_DOMAINS, type InputDomainKey } from "@/modules/field-platform/domain/input-domains"
 import { STANDARD_G1_CORE_FIELDS } from "@/modules/field-platform/domain/standard-core-fields"
+import { PlatformDataRepository, getPlatformDataRepository } from "../infra/platform-data-repository"
 
 export interface PlatformOrgFieldRecord {
   readonly fieldKey: string
@@ -48,36 +48,15 @@ export interface PlatformOrgFolderDataResult {
 
 export async function getPlatformOrgFolderData(
   pctx: PlatformContext,
-  orgId: string
+  orgId: string,
+  repo: PlatformDataRepository = getPlatformDataRepository()
 ): Promise<PlatformOrgFolderDataResult | null> {
   requirePlatformCapability(pctx, "N1")
 
-  const org = await prisma.organizations.findUnique({
-    where: { id: orgId },
-    include: {
-      business_profile: true,
-      brand_profile: true,
-      _count: {
-        select: {
-          memberships: true,
-          branches: true,
-        },
-      },
-      branches: {
-        select: { id: true, name: true, address: true, code: true },
-        take: 5,
-        orderBy: { created_at: "asc" },
-      },
-    },
-  })
+  const details = await repo.getOrgFolderDetails(orgId)
+  if (!details) return null
 
-  if (!org) return null
-
-  // Batch counts
-  const [productCount, orderCount] = await Promise.all([
-    prisma.products.count({ where: { organization_id: orgId } }),
-    prisma.orders.count({ where: { organization_id: orgId } }),
-  ])
+  const { org, productCount, orderCount } = details
 
   // Xây dựng map values thực tế từ org data
   const business = org.business_profile

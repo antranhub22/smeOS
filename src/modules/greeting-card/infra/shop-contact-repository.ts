@@ -51,3 +51,9 @@ export class ShopContactRepository {
   }
 }
 
+
+let _shopContactRepositorySingleton: ShopContactRepository | null = null
+export function getShopContactRepository(): ShopContactRepository {
+  if (!_shopContactRepositorySingleton) _shopContactRepositorySingleton = new ShopContactRepository()
+  return _shopContactRepositorySingleton
+}

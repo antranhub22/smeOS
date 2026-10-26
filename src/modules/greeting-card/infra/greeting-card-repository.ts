@@ -369,3 +369,9 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
     })
   }
 }
+
+let _greetingCardRepositorySingleton: GreetingCardRepository | null = null
+export function getGreetingCardRepository(): GreetingCardRepository {
+  if (!_greetingCardRepositorySingleton) _greetingCardRepositorySingleton = new GreetingCardRepository()
+  return _greetingCardRepositorySingleton
+}

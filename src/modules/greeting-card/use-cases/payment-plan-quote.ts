@@ -12,7 +12,7 @@ import {
   type PaymentCodeRule,
   type PaymentPlanSnapshot,
 } from "../domain/payment-plan"
-import { BrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
+import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 
 export interface PaymentPlanResolution {
   plan: PaymentPlanSnapshot
@@ -31,7 +31,7 @@ export async function resolvePaymentPlan(
   organizationId: string,
   shopSettings: unknown,
   input: { paymentCode?: string | undefined; totalVnd: number | null; catalogId: string | null; deliveryDate?: string | undefined },
-  checkout = new BrochureCheckoutRepository(),
+  checkout = getBrochureCheckoutRepository(),
   now: Date = new Date(),
 ): Promise<PaymentPlanResolution> {
   const config = parsePaymentPlans(shopSettings)

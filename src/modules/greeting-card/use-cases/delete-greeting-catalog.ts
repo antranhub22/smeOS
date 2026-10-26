@@ -1,6 +1,6 @@
 import type { TenantContext } from "@/core/tenancy"
 import { notFound, AppError } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 
 /** L4 `product.archive` — "Ngừng kinh doanh sản phẩm", mặc định & trần cứng là Điều hành. */
 export const CATALOG_ARCHIVE_ANY_CAPABILITY = "L4"
@@ -25,7 +25,7 @@ async function loadOwnedOrAdmin(ctx: TenantContext, catalogId: string, repo: Cat
  * Ẩn (soft-delete) bộ sưu tập Thẻ chào: người tạo, hoặc người có L4.
  * Thay đổi và `audit_logs` ghi trong cùng transaction.
  */
-export async function deleteGreetingCatalog(ctx: TenantContext, catalogId: string, repo: CatalogRepo = new GreetingCardRepository()) {
+export async function deleteGreetingCatalog(ctx: TenantContext, catalogId: string, repo: CatalogRepo = getGreetingCardRepository()) {
   const catalog = await loadOwnedOrAdmin(ctx, catalogId, repo, "Bạn chỉ có quyền xóa bộ sưu tập do chính mình tạo ra")
   await repo.setCatalogActiveWithAudit(ctx, catalogId, false, {
     action: "greeting_catalog.delete",
@@ -41,7 +41,7 @@ export async function deleteGreetingCatalog(ctx: TenantContext, catalogId: strin
 }
 
 /** Khôi phục bộ sưu tập đã ẩn: người tạo, hoặc người có L4. */
-export async function restoreGreetingCatalog(ctx: TenantContext, catalogId: string, repo: CatalogRepo = new GreetingCardRepository()) {
+export async function restoreGreetingCatalog(ctx: TenantContext, catalogId: string, repo: CatalogRepo = getGreetingCardRepository()) {
   const catalog = await loadOwnedOrAdmin(ctx, catalogId, repo, "Bạn không có quyền khôi phục bộ sưu tập này")
   await repo.setCatalogActiveWithAudit(ctx, catalogId, true, {
     action: "greeting_catalog.restore",

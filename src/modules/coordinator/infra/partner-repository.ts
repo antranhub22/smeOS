@@ -85,3 +85,13 @@ export class PartnerRepository implements IPartnerRepository {
     })
   }
 }
+
+let defaultPartnerRepository: IPartnerRepository | null = null
+
+export function getPartnerRepository(db?: DbClient): IPartnerRepository {
+  if (db) return new PartnerRepository(db)
+  if (!defaultPartnerRepository) {
+    defaultPartnerRepository = new PartnerRepository()
+  }
+  return defaultPartnerRepository
+}

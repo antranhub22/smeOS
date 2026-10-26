@@ -8,7 +8,7 @@ describe("Customer Intake & Contact Flow", () => {
     customerPhone: "0901234567",
     recipientName: "Trần Thị B",
     recipientPhone: "0987654321",
-    deliveryDate: "2026-10-25",
+    deliveryDate: "2026-12-25",
     deliveryAddress: "123 Lê Lợi, Phường Bến Nghé, Quận 1, TP.HCM",
   }
 

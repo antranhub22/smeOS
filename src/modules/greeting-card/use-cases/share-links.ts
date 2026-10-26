@@ -1,8 +1,8 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { ShareLinkRepository } from "../infra/share-link-repository"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { GreetingMessageRepository } from "../infra/greeting-message-repository"
+import { ShareLinkRepository, getShareLinkRepository } from "../infra/share-link-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingMessageRepository, getGreetingMessageRepository } from "../infra/greeting-message-repository"
 import { linkExpiryFrom, parseLinkLifetimeHours } from "../domain/link-lifetime"
 import { resolveEffectiveStepTimeoutPolicy } from "../domain/step-timeout-policy"
 import { normalizeChannel, DIRECT_CHANNEL, channelLabel } from "../domain/catalog-channel"
@@ -14,7 +14,7 @@ import { assertShopReadyForCustomers } from "./get-shop-contact"
  * Bấm "Sao chép" link bộ sưu tập: tạo link `/s/<mã>` mang tên người đang đăng nhập.
  * Mọi khách mở link này đều tính cho người đó, tính giờ từ lúc khách mở.
  */
-export async function createShareLink(ctx: TenantContext, input: { catalogId: string; channel?: string | null | undefined }, repo = new ShareLinkRepository()) {
+export async function createShareLink(ctx: TenantContext, input: { catalogId: string; channel?: string | null | undefined }, repo = getShareLinkRepository()) {
   await assertShopReadyForCustomers(ctx.organizationId)
   const channel = normalizeChannel(input.channel)
   const link = await repo.create(ctx, { catalogId: input.catalogId, channel: channel === DIRECT_CHANNEL ? null : channel })
@@ -22,9 +22,9 @@ export async function createShareLink(ctx: TenantContext, input: { catalogId: st
 }
 
 /** Link đã sao chép (sale "chỉ khách của mình" chỉ thấy link của mình) kèm số khách mở và số đơn. */
-export async function listShareLinks(ctx: TenantContext, repo = new ShareLinkRepository()) {
+export async function listShareLinks(ctx: TenantContext, repo = getShareLinkRepository()) {
   const scope = await resolveSaleScope(ctx)
-  const [rows, members] = await Promise.all([repo.listWithStats(ctx, scope), new GreetingMessageRepository().activeMembers(ctx)])
+  const [rows, members] = await Promise.all([repo.listWithStats(ctx, scope), getGreetingMessageRepository().activeMembers(ctx)])
   const names = new Map(members.map((m) => [m.userId, m.name]))
   return rows.map((r) => ({
     code: r.code, path: `/s/${r.code}`, catalogName: r.catalog.name, ownerName: names.get(r.owner_id) ?? "Nhân viên đã rời",
@@ -37,7 +37,7 @@ export async function listShareLinks(ctx: TenantContext, repo = new ShareLinkRep
  * Khách mở `/s/<mã>`: mỗi khách một phiên riêng (giữ lại qua cookie để tải lại không tạo phiên mới).
  * Trả mã phiên `/b/<sendCode>` để chuyển tiếp, hoặc `null` khi link không còn hiệu lực.
  */
-export async function openShareLink(code: string, knownSendCode: string | null, repo = new ShareLinkRepository()) {
+export async function openShareLink(code: string, knownSendCode: string | null, repo = getShareLinkRepository()) {
   if (!SHARE_CODE_REGEX.test(code)) return null
   const link = await repo.findActive(code)
   if (!link) return null
@@ -46,7 +46,7 @@ export async function openShareLink(code: string, knownSendCode: string | null, 
     if (existing) return { sendCode: existing.send_code, sessionId: existing.id, organizationId: link.organization_id, catalogId: link.catalog_id }
   }
   // Mỗi khách có hạn riêng tính từ lúc mở, theo cài đặt của tiệm / bộ sưu tập
-  const shop = await new GreetingCardRepository().getShopProfile(link.organization_id)
+  const shop = await getGreetingCardRepository().getShopProfile(link.organization_id)
   const effectivePolicy = resolveEffectiveStepTimeoutPolicy(shop.settings, link.catalog?.filters)
   const explicitLifetime = parseLinkLifetimeHours(shop.settings)
   const hasExplicitSetting = (shop.settings && typeof shop.settings === "object"
@@ -62,7 +62,7 @@ export async function openShareLink(code: string, knownSendCode: string | null, 
 }
 
 /** Thông tin xem trước của link (tiêu đề, ảnh) — trả về cho mọi bên mở link, không tạo phiên. */
-export async function shareLinkPreview(code: string, repo = new ShareLinkRepository()) {
+export async function shareLinkPreview(code: string, repo = getShareLinkRepository()) {
   if (!SHARE_CODE_REGEX.test(code)) return null
   const link = await repo.findActive(code)
   if (!link) return null
@@ -71,8 +71,8 @@ export async function shareLinkPreview(code: string, repo = new ShareLinkReposit
 }
 
 /** Sale sao chép link riêng gửi khách: ghi mốc gửi lần đầu (bắt đầu tính "khách chưa mở"). */
-export async function markSendLinkCopied(ctx: TenantContext, sendCode: string, repo = new GreetingCardRepository()) {
-  const session = await new ShareLinkRepository().sessionForCopy(ctx, sendCode)
+export async function markSendLinkCopied(ctx: TenantContext, sendCode: string, repo = getGreetingCardRepository()) {
+  const session = await getShareLinkRepository().sessionForCopy(ctx, sendCode)
   const scope = await resolveSaleScope(ctx)
   if (!session || (scope && session.sale_id !== scope)) throw notFound()
   if (session.events.length === 0) await repo.recordJourneyEvent(ctx.organizationId, session.id, LINK_COPIED_EVENT, { copiedBy: ctx.userId })
@@ -80,7 +80,7 @@ export async function markSendLinkCopied(ctx: TenantContext, sendCode: string, r
 }
 
 /** Người phụ trách đơn đến từ link cũ (không qua nút Sao chép): Điều hành chọn, mặc định chủ tiệm. */
-export async function defaultOwnerOf(organizationId: string, repo = new ShareLinkRepository()): Promise<string | null> {
+export async function defaultOwnerOf(organizationId: string, repo = getShareLinkRepository()): Promise<string | null> {
   const c = await repo.ownerCandidates(organizationId)
   return resolveDefaultOwner(parseDefaultOwnerId(c.settings), c.activeMemberIds, c.founderId)
 }

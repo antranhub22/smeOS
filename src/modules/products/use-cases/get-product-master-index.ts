@@ -5,12 +5,12 @@
 
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { ProductMasterIndex } from "../domain/product-master-index"
-import { ProductMasterIndexRepository } from "../infra/product-master-index-repository"
+import { ProductMasterIndexRepository, getProductMasterIndexRepository } from "../infra/product-master-index-repository"
 
 export async function getProductMasterIndex(
   ctx: TenantContext,
   productId: string,
-  repo: ProductMasterIndexRepository = new ProductMasterIndexRepository()
+  repo: ProductMasterIndexRepository = getProductMasterIndexRepository()
 ): Promise<ProductMasterIndex | null> {
   return repo.getById(ctx, productId)
 }
@@ -18,7 +18,7 @@ export async function getProductMasterIndex(
 export async function listProductMasterIndex(
   ctx: TenantContext,
   limit = 50,
-  repo: ProductMasterIndexRepository = new ProductMasterIndexRepository()
+  repo: ProductMasterIndexRepository = getProductMasterIndexRepository()
 ): Promise<ProductMasterIndex[]> {
   return repo.list(ctx, limit)
 }

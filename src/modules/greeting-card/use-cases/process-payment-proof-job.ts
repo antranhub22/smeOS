@@ -1,6 +1,6 @@
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { PaymentProofRepository } from "../infra/payment-proof-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { PaymentProofRepository, getPaymentProofRepository } from "../infra/payment-proof-repository"
 import { callCapability } from "@/core/ai/gateway"
 import { aiGatewayDeps } from "@/core/ai/wiring"
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider"
@@ -30,8 +30,8 @@ export interface ProcessPaymentProofInput {
  */
 export async function processPaymentProofVisionJob(
   input: ProcessPaymentProofInput,
-  repo = new GreetingCardRepository(),
-  proofs = new PaymentProofRepository()
+  repo = getGreetingCardRepository(),
+  proofs = getPaymentProofRepository()
 ): Promise<PaymentProofAnalysisResult | null> {
   const { assetId, organizationId, sendCode, purpose } = input
 

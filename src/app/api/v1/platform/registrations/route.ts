@@ -5,8 +5,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
-import { RegistrationRequestRepository } from "@/modules/organization/infra/registration-request-repository"
-import type { registration_status } from "@/generated/prisma/client"
+import { getRegistrationRequestRepository, type RegistrationStatus } from "@/modules/organization/infra/registration-request-repository"
 
 const querySchema = z.object({
   status: z.enum(["PENDING", "APPROVED", "REJECTED", "all"]).default("all"),
@@ -18,11 +17,11 @@ export const GET = handle(async (request) => {
   const { searchParams } = new URL(request.url)
   const { status } = querySchema.parse({ status: searchParams.get("status") ?? "all" })
 
-  const repo = new RegistrationRequestRepository()
+  const repo = getRegistrationRequestRepository()
   const rows =
     status === "all"
       ? await repo.listAll()
-      : await repo.listByStatus(status as registration_status)
+      : await repo.listByStatus(status as RegistrationStatus)
 
   return jsonResponse({ data: rows })
 })

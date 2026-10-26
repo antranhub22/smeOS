@@ -3,9 +3,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
 import { log } from "@/core/observability/log"
-import type { Prisma } from "@/generated/prisma/client"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
 import {
@@ -77,9 +75,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     })
   }
 
-  const coord = await prisma.order_coordinations.findUnique({
-    where: { order_id: order.id },
-  })
+  const coord = await repo.findCoordination(order.id)
   const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
 
   const shipperInfo = {
@@ -91,33 +87,20 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   // Cập nhật metadata + đổi delivery_status → DELIVERING
-  await prisma.$transaction([
-    prisma.orders.update({
-      where: { id: order.id },
-      data: { delivery_status: "DELIVERING" },
-    }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          shipper_info: shipperInfo,
-          shipper_submitted_at: new Date().toISOString(),
-        } as unknown as Prisma.InputJsonValue,
-      },
-    }),
-    prisma.order_events.create({
-      data: {
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "delivery",
-        from_value: order.delivery_status,
-        to_value: "DELIVERING",
-        actor_id: `branch_${branchId}`,
-        reason: `[Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
-      },
-    }),
-  ])
+  await repo.updateOrderStatus(order.id, { delivery_status: "DELIVERING" })
+  await repo.upsertCoordinationMeta(order.id, order.organization_id, {
+    shipper_info: shipperInfo,
+    shipper_submitted_at: new Date().toISOString(),
+  })
+  await repo.createOrderEvent({
+    organization_id: order.organization_id,
+    order_id: order.id,
+    axis: "delivery",
+    from_value: order.delivery_status,
+    to_value: "DELIVERING",
+    actor_id: `branch_${branchId}`,
+    reason: `[Shipper] ${shipperName} — ${shipperPhone}${shipperNote ? ` (${shipperNote})` : ""}`,
+  })
 
   // Thông báo cho hệ thống (ZNS/Telegram nội bộ) — điều phối viên biết để chuẩn bị bàn giao
   queueOrderNotification(order.organization_id, order.id, "DISPATCHED")

@@ -1,8 +1,8 @@
 import { notFound } from "@/core/http/errors"
 import { validateSendCode, linkAvailability } from "../domain/greeting-card-rules"
 import type { FamilyMember } from "../domain/order-family"
-import { OrderFamilyRepository } from "../infra/order-family-repository"
-import { SessionOwnerRepository } from "../infra/session-owner-repository"
+import { OrderFamilyRepository, getOrderFamilyRepository } from "../infra/order-family-repository"
+import { SessionOwnerRepository, getSessionOwnerRepository } from "../infra/session-owner-repository"
 
 /**
  * Nhóm đơn của khách trên link `sendCode` (phiên gốc + các lần "Đặt thêm đơn") — cho trang khách tự về
@@ -11,8 +11,8 @@ import { SessionOwnerRepository } from "../infra/session-owner-repository"
  */
 export async function getOrderFamily(
   sendCode: string,
-  sessions = new SessionOwnerRepository(),
-  families = new OrderFamilyRepository(),
+  sessions = getSessionOwnerRepository(),
+  families = getOrderFamilyRepository(),
 ): Promise<{ rootSendCode: string; members: FamilyMember[] }> {
   if (!validateSendCode(sendCode)) throw notFound()
   const session = await sessions.findSession(sendCode)

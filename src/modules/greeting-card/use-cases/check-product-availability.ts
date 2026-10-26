@@ -19,8 +19,8 @@ import {
   type AvailabilityMode,
 } from "../domain/product-availability-config"
 import { notFound } from "@/core/http/errors"
-import { ProductBookingRepository } from "../infra/product-booking-repository"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { ProductBookingRepository, getProductBookingRepository } from "../infra/product-booking-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { fullSlotsOn } from "./slot-availability"
 import { loadPublicSession } from "./brochure-session-access"
 
@@ -60,7 +60,7 @@ const LOOKUP_DAYS = 90 // số ngày tìm kiếm lịch tới
 export async function checkProductAvailability(
   req: AvailabilityCheckRequest,
   db: typeof prisma = prisma,
-  bookingRepo = new ProductBookingRepository(),
+  bookingRepo = getProductBookingRepository(),
 ): Promise<AvailabilityCheckResult> {
   // 1. Đọc cấu hình sản phẩm
   const product = await db.products.findFirst({
@@ -296,7 +296,7 @@ function findNextAvailableDate(
 export async function checkPublicCatalogProductAvailability(
   catalogId: string,
   req: Omit<AvailabilityCheckRequest, "organizationId">,
-  repo = new GreetingCardRepository(),
+  repo = getGreetingCardRepository(),
 ): Promise<AvailabilityCheckResult> {
   const catalog = await repo.getPublicCatalogById(catalogId)
   if (!catalog) throw notFound()
@@ -319,7 +319,7 @@ export async function checkPublicCatalogProductAvailability(
 export async function checkPublicBrochureProductAvailability(
   sendCode: string,
   req: Omit<AvailabilityCheckRequest, "organizationId">,
-  repo = new GreetingCardRepository(),
+  repo = getGreetingCardRepository(),
 ): Promise<AvailabilityCheckResult> {
   const session = await loadPublicSession(sendCode, repo)
   const orgSettings = (session.organization?.settings as Record<string, unknown>) ?? {}

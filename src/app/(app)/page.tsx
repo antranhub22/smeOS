@@ -29,6 +29,7 @@ import { FlowerNetworkCommandCenter } from "@/components/dashboard/flower-networ
 import { StoreJourneyHome } from "@/components/dashboard/store-journey-home"
 import { NetworkJourneyHome } from "@/components/dashboard/network-journey-home"
 import { PlatformJourneyHome } from "@/components/dashboard/platform-journey-home"
+import { IndustryJourneyHome } from "@/components/dashboard/industry-journey-home"
 import { resolveRoleUx } from "@/modules/organization/domain/role-ux-catalog"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
 
@@ -51,12 +52,13 @@ export default async function DashboardPage() {
       return <StoreJourneyHome />
     case "NETWORK_JOURNEY_HOME":
       return <NetworkJourneyHome />
+    case "INDUSTRY_JOURNEY_HOME":
+      return <IndustryJourneyHome />
     case "PLATFORM_JOURNEY_HOME":
-      return <PlatformJourneyHome />
-    case "CONTROL_TOWER":
-      return redirect("/dieu-phoi" as never)
     case "CONTROL_CENTER":
       return redirect("/van-hanh" as never)
+    case "CONTROL_TOWER":
+      return redirect("/dieu-phoi" as never)
     case "FLOWER_NETWORK_COMMAND_CENTER":
       return <FlowerNetworkCommandCenter />
     case "SALES_WORKSPACE":

@@ -110,3 +110,10 @@ export class MembershipRepository {
     return this.findById(ctx, id)
   }
 }
+
+let _membershipRepositorySingleton: MembershipRepository | null = null
+export function getMembershipRepository(db?: DbClient): MembershipRepository {
+  if (db) return new MembershipRepository(db)
+  if (!_membershipRepositorySingleton) _membershipRepositorySingleton = new MembershipRepository()
+  return _membershipRepositorySingleton
+}

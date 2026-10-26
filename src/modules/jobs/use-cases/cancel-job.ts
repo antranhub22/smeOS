@@ -1,11 +1,11 @@
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { canCancel } from "@/modules/jobs/domain/job-rules"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 
 /** `POST /jobs/:id/cancel` (`G6`) — chỉ job còn `PENDING` (`YC-J4`). */
 export async function cancelJob(ctx: TenantContext, id: string) {
-  const repo = new GenerationJobRepository()
+  const repo = getGenerationJobRepository()
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
   if (!canCancel(current.status)) {

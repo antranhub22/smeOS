@@ -167,9 +167,13 @@ export function StoreJourneyHome() {
   }
 
   // 4. Mặc định: Lưới lựa chọn Hành trình tác vụ (ChoiceGrid)
+  const homeTitle = organization?.name
+    ? `Hôm nay bạn muốn làm gì cho ${organization.name}?`
+    : "Hôm nay bạn muốn làm gì cho cửa hàng?"
+
   return (
     <ChoiceGrid
-      title="Hôm nay bạn muốn làm gì cho cửa hàng?"
+      title={homeTitle}
       subtitle="Chọn một công việc bên dưới để bắt đầu."
       journeys={journeys}
       onSelectJourney={handleSelectJourney}

@@ -17,10 +17,10 @@ import {
   type AnalysisSourceRow,
 } from "@/modules/avi-gift-import/domain/analysis-mapping"
 import { buildStorageKey } from "@/modules/assets/domain/storage-key"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
-import { ProductRepository } from "@/modules/products/infra/product-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
+import { ProductRepository, getProductRepository } from "@/modules/products/infra/product-repository"
 
 export type ImportAnalysesDeps = {
   storage: StorageProvider
@@ -31,6 +31,10 @@ export type ImportAnalysesDeps = {
   /** Ai chịu trách nhiệm cho lượt duyệt một-lần này — `users.id` thật của
    *  quản trị AVI GIFT, không phải một chuỗi bịa. */
   approvedBy: string
+  jobRepo?: GenerationJobRepository
+  productRepo?: ProductRepository
+  assetRepo?: AssetRepository
+  analysisRepo?: ProductAnalysisRepository
 }
 
 export type ImportAnalysesResult = {
@@ -66,10 +70,10 @@ export async function importAnalyses(
   rows: AnalysisSourceRow[],
   deps: ImportAnalysesDeps
 ): Promise<ImportAnalysesResult> {
-  const jobRepo = new GenerationJobRepository()
-  const productRepo = new ProductRepository()
-  const assetRepo = new AssetRepository()
-  const analysisRepo = new ProductAnalysisRepository()
+  const jobRepo = deps.jobRepo ?? (getGenerationJobRepository() as GenerationJobRepository)
+  const productRepo = deps.productRepo ?? (getProductRepository() as ProductRepository)
+  const assetRepo = deps.assetRepo ?? (getAssetRepository() as AssetRepository)
+  const analysisRepo = deps.analysisRepo ?? (getProductAnalysisRepository() as ProductAnalysisRepository)
 
   const result: ImportAnalysesResult = {
     jobId: "",

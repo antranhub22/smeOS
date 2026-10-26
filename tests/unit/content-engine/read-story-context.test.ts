@@ -1,10 +1,16 @@
 import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 
-const findById = vi.fn()
-vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({ findById })),
+const { findById } = vi.hoisted(() => ({
+  findById: vi.fn(),
 }))
+vi.mock("@/modules/jobs/infra/generation-job-repository", () => {
+  const instance = { findById }
+  return {
+    GenerationJobRepository: vi.fn().mockImplementation(() => instance),
+    getGenerationJobRepository: vi.fn().mockImplementation(() => instance),
+  }
+})
 
 import { readStoryContext } from "@/modules/content-engine/infra/read-story-context"
 import { buildRuleScenePlan, SCENE_PLAN_FEATURE, type ScenePlanInput } from "@/modules/creative-production/domain/scene-plan-rules"

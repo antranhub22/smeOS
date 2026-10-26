@@ -1,4 +1,4 @@
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { mapCatalogToPublicResult } from "./get-public-greeting-catalog"
 import type { PublicGreetingCatalogResult } from "./get-public-greeting-catalog"
 
@@ -10,7 +10,7 @@ import type { PublicGreetingCatalogResult } from "./get-public-greeting-catalog"
 export async function getPublicGreetingCatalogBySlug(
   orgSlug: string,
   catalogCode: string,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ): Promise<PublicGreetingCatalogResult> {
   const catalog = await repo.getPublicCatalogBySlugAndCode(orgSlug, catalogCode)
   if (!catalog) return { status: "NOT_FOUND" }

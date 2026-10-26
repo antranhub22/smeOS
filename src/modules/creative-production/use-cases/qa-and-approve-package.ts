@@ -15,7 +15,7 @@ import type { IAudioJobRepository } from "@/modules/audio-studio/domain/reposito
 import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositories/generation-job-repository.interface"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
-import { BrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
+import { BrandProfileRepository, getBrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
 import { getVideoJobRepository } from "@/modules/video-studio/infra/video-job-repository"
 import type { IVideoJobRepository } from "@/modules/video-studio/domain/repositories/video-job-repository.interface"
 import {
@@ -118,7 +118,7 @@ export async function runCampaignQa(
     if (v) videoRows.push(v)
   }
   const audioRow = row.audio_job_id ? await audioRepo.findById(ctx, row.audio_job_id) : null
-  const brand = await new BrandProfileRepository().current(ctx)
+  const brand = await getBrandProfileRepository().current(ctx)
   const forbidden = brand?.forbidden_styles
   const forbiddenStyles =
     typeof forbidden === "string"
@@ -169,7 +169,7 @@ export async function approveCampaignPackage(
   if (!decision.ok) throw conflict(decision.reason)
 
   await runInTransaction(async (tx) => {
-    const ok = await new CampaignPackageRepository(tx).approve(ctx, id, status, now)
+    const ok = await getCampaignPackageRepository(tx).approve(ctx, id, status, now)
     if (!ok) throw conflict("Trạng thái gói vừa thay đổi — tải lại rồi duyệt lại.")
     await recordAuditLog(
       ctx,

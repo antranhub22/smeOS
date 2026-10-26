@@ -30,6 +30,12 @@ import {
   Database,
   MessageSquare,
   BadgeCheck,
+  Building2,
+  UserPlus,
+  Layers,
+  SlidersHorizontal,
+  Activity,
+  LayoutDashboard,
 } from "lucide-react"
 
 export type NavIconComponent = LucideIcon
@@ -65,4 +71,10 @@ export const NAV_ICONS: Record<string, LucideIcon> = {
   Database,
   MessageSquare,
   BadgeCheck,
+  Building2,
+  UserPlus,
+  Layers,
+  SlidersHorizontal,
+  Activity,
+  LayoutDashboard,
 }

@@ -1,16 +1,16 @@
 import type { TenantContext } from "@/core/tenancy"
-import { OrderVatRepository } from "../infra/order-vat-repository"
-import { OrderSlipRepository } from "../infra/order-slip-repository"
+import { OrderVatRepository, getOrderVatRepository } from "../infra/order-vat-repository"
+import { OrderSlipRepository, getOrderSlipRepository } from "../infra/order-slip-repository"
 import { normalizeInvoiceInfo, type VatChange, type VatInvoiceInfo } from "../domain/order-vat"
 import { assertOrderInScope } from "./order-scope"
 
-export async function getOrderVat(ctx: TenantContext, orderId: string, repo = new OrderVatRepository()) {
+export async function getOrderVat(ctx: TenantContext, orderId: string, repo = getOrderVatRepository()) {
   await assertOrderInScope(ctx, orderId)
   return repo.get(ctx, orderId)
 }
 
 /** VAT + phần bổ sung Thẻ Đơn Khách hàng (mã mẫu, ảnh gốc, ghi chú khách) — cùng kiểm tra phạm vi xem. */
-export async function getOrderSlip(ctx: TenantContext, orderId: string, repo = new OrderVatRepository(), slips = new OrderSlipRepository()) {
+export async function getOrderSlip(ctx: TenantContext, orderId: string, repo = getOrderVatRepository(), slips = getOrderSlipRepository()) {
   await assertOrderInScope(ctx, orderId)
   const [vat, extras] = await Promise.all([repo.get(ctx, orderId), slips.get(ctx, orderId)])
   return { ...vat, ...extras }
@@ -21,7 +21,7 @@ export async function setOrderVat(
   ctx: TenantContext,
   orderId: string,
   input: VatChange & Partial<Record<keyof VatInvoiceInfo, string | null | undefined>>,
-  repo = new OrderVatRepository()
+  repo = getOrderVatRepository()
 ) {
   await assertOrderInScope(ctx, orderId)
   return repo.set(ctx, orderId, { enabled: input.enabled, rate: input.rate }, normalizeInvoiceInfo(input))

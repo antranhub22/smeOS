@@ -1,6 +1,6 @@
 import { validationFailed } from "@/core/http/errors"
 import { holidayCapacityError, holidayOn, parseHolidayPolicy } from "../domain/holiday-policy"
-import { BrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
+import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 
 /**
  * Chặn nhận thêm đơn khi ngày lễ đã đủ số đơn tối đa (mặc định 500, áp cả tiệm — PO 08/10/2026).
@@ -11,7 +11,7 @@ export async function assertHolidayCapacity(
   deliveryDate: string,
   shopSettings: unknown,
   options: { excludeOrderId?: string | undefined } = {},
-  checkout = new BrochureCheckoutRepository(),
+  checkout = getBrochureCheckoutRepository(),
 ): Promise<void> {
   const holiday = holidayOn(deliveryDate.trim(), parseHolidayPolicy(shopSettings))
   if (!holiday) return

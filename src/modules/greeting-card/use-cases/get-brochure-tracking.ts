@@ -1,5 +1,5 @@
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
 import { mapOrderStatusToTrackingStep } from "../domain/greeting-card-rules"
 import { areaOnly, maskPersonName, phoneLast4Matches } from "../domain/tracking-privacy"
 import { orderPhotoApproval } from "../domain/photo-approval"
@@ -34,8 +34,8 @@ export interface TrackingProof {
 export async function getBrochureTracking(
   orderCode: string,
   proof: TrackingProof = {},
-  orders = new BrochureOrderRepository(),
-  repo = new GreetingCardRepository()
+  orders = getBrochureOrderRepository(),
+  repo = getGreetingCardRepository()
 ) {
   const code = orderCode.trim().toUpperCase()
   if (!ORDER_CODE_REGEX.test(code)) return { status: "NOT_FOUND" as const }

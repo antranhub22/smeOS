@@ -123,3 +123,9 @@ export class DiscountRepository {
     })
   }
 }
+
+let _discountRepositorySingleton: DiscountRepository | null = null
+export function getDiscountRepository(): DiscountRepository {
+  if (!_discountRepositorySingleton) _discountRepositorySingleton = new DiscountRepository()
+  return _discountRepositorySingleton
+}

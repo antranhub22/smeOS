@@ -18,7 +18,7 @@ import {
   type OrderChangePayload,
 } from "../domain/order-change-request"
 import type { InboxAction, PipelineLike } from "../domain/inbox"
-import { OrderChangeRepository } from "../infra/order-change-repository"
+import { OrderChangeRepository, getOrderChangeRepository } from "../infra/order-change-repository"
 import { isBrochureOwner } from "./brochure-owner"
 import { holidayOn, holidaySurcharge, parseHolidayPolicy } from "../domain/holiday-policy"
 import { assertHolidayCapacity } from "./holiday-capacity"
@@ -56,7 +56,7 @@ export async function submitOrderChange(
   orderCode: string,
   proof: ChangeProof,
   input: OrderChangeInput,
-  repo = new OrderChangeRepository(),
+  repo = getOrderChangeRepository(),
   now: Date = new Date(),
 ) {
   const order = await repo.findPublicOrder(orderCode)
@@ -121,7 +121,7 @@ export interface CustomerChangeView {
 /** Phần "Thay đổi thông tin" trên trang theo dõi (chỉ khi người xem đã xác minh). */
 export async function customerChangeSection(
   order: { id: string; organization_id: string; status: string; production_status: string; delivery_status: string },
-  repo = new OrderChangeRepository(),
+  repo = getOrderChangeRepository(),
 ) {
   const rows = await repo.listForOrder(order.organization_id, order.id)
   const history: CustomerChangeView[] = rows.map((r) => ({
@@ -145,7 +145,7 @@ export async function customerChangeSection(
 export async function decideOrderChange(
   ctx: TenantContext,
   input: { requestId: string; approve: boolean; note: string },
-  repo = new OrderChangeRepository(),
+  repo = getOrderChangeRepository(),
 ) {
   const note = input.note.trim()
   if (!input.approve && note.length < 3) throw validationFailed({ note: "Ghi lý do không đổi để khách biết (ít nhất 3 ký tự)" })
@@ -165,7 +165,7 @@ export async function decideOrderChange(
 }
 
 /** Việc "Khách xin đổi thông tin" trong Hộp việc — cho người có quyền sửa đơn. */
-export async function changeRequestActions(ctx: TenantContext, pipeline: PipelineLike[], repo = new OrderChangeRepository()): Promise<InboxAction[]> {
+export async function changeRequestActions(ctx: TenantContext, pipeline: PipelineLike[], repo = getOrderChangeRepository()): Promise<InboxAction[]> {
   const pending = await repo.listPending(ctx)
   return pending.flatMap((r) => {
     const p = r.payload as unknown as OrderChangePayload

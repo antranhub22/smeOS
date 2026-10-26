@@ -348,3 +348,9 @@ export class BrochureOrderRepository {
     })
   }
 }
+
+let _brochureOrderRepositorySingleton: BrochureOrderRepository | null = null
+export function getBrochureOrderRepository(): BrochureOrderRepository {
+  if (!_brochureOrderRepositorySingleton) _brochureOrderRepositorySingleton = new BrochureOrderRepository()
+  return _brochureOrderRepositorySingleton
+}

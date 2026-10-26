@@ -30,10 +30,33 @@ export async function createTenant(label: string): Promise<Tenant> {
   )
   if (!workspace) throw new Error("Đăng ký không tạo workspace")
 
+  const { randomUUID } = await import("node:crypto")
+  const { prisma } = await import("@/core/tenancy/infra/prisma")
+  const { newSessionToken, hashSessionToken } = await import("@/modules/organization/infra/session-token")
+  const { expiresAt } = await import("@/modules/organization/domain/session-policy")
+
+  await prisma.memberships.updateMany({
+    where: { user_id: result.userId, organization_id: result.organizationId },
+    data: { status: "ACTIVE" },
+  })
+
+  const token = newSessionToken()
+  const now = new Date()
+  await prisma.sessions.create({
+    data: {
+      id: randomUUID(),
+      user_id: result.userId,
+      token_hash: hashSessionToken(token),
+      organization_id: result.organizationId,
+      expires_at: expiresAt(now),
+      created_at: now,
+    },
+  })
+
   return {
     organizationId: result.organizationId,
     userId: result.userId,
-    token: "mock-token",
+    token,
     ctx: {
       organizationId: result.organizationId,
       workspaceId: workspace.id,

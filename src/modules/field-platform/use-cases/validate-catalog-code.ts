@@ -1,5 +1,5 @@
 import { AppError } from "@/core/http/errors"
-import { FieldCatalogRepository } from "../infra/field-catalog-repository"
+import { FieldCatalogRepository, getFieldCatalogRepository } from "../infra/field-catalog-repository"
 
 /**
  * ĐP-4a.1 (26/09/2026) — kiểm một mã giá trị có phải mã ĐANG ACTIVE của một
@@ -33,7 +33,7 @@ export async function getActiveCatalogValue(
   code: string | null | undefined
 ): Promise<ActiveCatalogValue | null> {
   if (!code) return null
-  const repo = new FieldCatalogRepository()
+  const repo = getFieldCatalogRepository()
   const values = await repo.listValues(catalogKey)
   const found = values.find((v) => v.code === code && v.is_active)
   if (!found) return null

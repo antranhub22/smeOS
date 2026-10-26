@@ -65,3 +65,9 @@ export class JobEventRepository {
     })
   }
 }
+
+let _jobEventRepo: JobEventRepository | null = null
+export function getJobEventRepository(): JobEventRepository {
+  if (!_jobEventRepo) _jobEventRepo = new JobEventRepository()
+  return _jobEventRepo
+}

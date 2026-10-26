@@ -68,4 +68,44 @@ export class RegistrationRequestRepository {
       },
     })
   }
+
+  async approveAndActivateFounder(
+    id: string,
+    reviewerId: string,
+    reviewNote: string | null,
+    organizationId: string,
+    userId: string
+  ): Promise<void> {
+    await prisma.$transaction([
+      prisma.registration_requests.update({
+        where: { id },
+        data: {
+          status: "APPROVED",
+          reviewer_id: reviewerId,
+          review_note: reviewNote,
+          reviewed_at: new Date(),
+        },
+      }),
+      prisma.memberships.updateMany({
+        where: {
+          organization_id: organizationId,
+          user_id: userId,
+          status: "INVITED",
+        },
+        data: {
+          status: "ACTIVE",
+          joined_at: new Date(),
+        },
+      }),
+    ])
+  }
+}
+
+export type RegistrationStatus = registration_status
+
+let _registrationRequestRepo: RegistrationRequestRepository | null = null
+export function getRegistrationRequestRepository(db?: DbClient): RegistrationRequestRepository {
+  if (db) return new RegistrationRequestRepository(db)
+  if (!_registrationRequestRepo) _registrationRequestRepo = new RegistrationRequestRepository()
+  return _registrationRequestRepo
 }

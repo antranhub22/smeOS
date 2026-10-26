@@ -12,7 +12,7 @@ import type { GreetingCatalogProduct } from "../domain/greeting-card-types"
 import type { PromotionPricing } from "../domain/promotion-pricing"
 import { resolveAppliedPolicies } from "../domain/store-policy"
 import { selectPromotion } from "../domain/order-policies"
-import { BrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
+import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 import { holidayOn, holidaySurcharge, parseHolidayPolicy } from "../domain/holiday-policy"
 import { paymentSplit } from "../domain/payment-schedule"
 import { findPaymentCode, parsePaymentPlans, type PaymentCodeRule } from "../domain/payment-plan"
@@ -67,7 +67,7 @@ export async function quoteForProduct(
   product: GreetingCatalogProduct,
   req: QuoteRequest,
   shopSettings: unknown,
-  checkout = new BrochureCheckoutRepository(),
+  checkout = getBrochureCheckoutRepository(),
   promotion: PromotionPricing | null = null,
   /** `catalog.filters` của bộ sưu tập khách đang đặt — quyết định có phụ phí ngày lễ không */
   catalogFilters?: unknown,

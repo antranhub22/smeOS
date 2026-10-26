@@ -71,3 +71,9 @@ export class DeliveryFailureRepository {
     })
   }
 }
+
+let _deliveryFailureRepositorySingleton: DeliveryFailureRepository | null = null
+export function getDeliveryFailureRepository(): DeliveryFailureRepository {
+  if (!_deliveryFailureRepositorySingleton) _deliveryFailureRepositorySingleton = new DeliveryFailureRepository()
+  return _deliveryFailureRepositorySingleton
+}

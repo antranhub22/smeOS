@@ -223,3 +223,9 @@ export class StaffNotificationRepository {
     })
   }
 }
+
+let _staffNotificationRepositorySingleton: StaffNotificationRepository | null = null
+export function getStaffNotificationRepository(): StaffNotificationRepository {
+  if (!_staffNotificationRepositorySingleton) _staffNotificationRepositorySingleton = new StaffNotificationRepository()
+  return _staffNotificationRepositorySingleton
+}

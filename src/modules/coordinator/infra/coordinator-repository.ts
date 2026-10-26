@@ -14,63 +14,36 @@ import type { CoordinatorStage, CoordinationRiskLevel } from "../domain/coordina
 import type { ICoordinatorRepository } from "../domain/repositories/coordinator-repository.interface"
 import { changedAxes, type StageTransitionFacts } from "../domain/stage-transitions"
 import type { MappedOrderAxes } from "../domain/state-mapper"
-import { PartnerRepository } from "./partner-repository"
+import type { IPartnerRepository } from "../domain/repositories/partner-repository.interface"
+import { getPartnerRepository } from "./partner-repository"
+import type { IOrderExceptionRepository } from "../domain/repositories/order-exception-repository.interface"
+import { getOrderExceptionRepository } from "./order-exception-repository"
 import type { DbClient } from "./transaction"
 
-const ORDER_INCLUDE = {
-  coordination: { include: { partner: true } },
-  items: true,
-  qc_records: { orderBy: { created_at: "desc" as const }, take: 1 },
-  exceptions: { orderBy: { created_at: "asc" as const } },
-  // ĐP-4a (26/09/2026) — sổ thu, cần để suy `paymentStatus` (§2.15.7: REFUNDED
-  // đòi hỏi biết có dòng REFUND hay không, không suy được chỉ từ paid_vnd).
-  payments: { orderBy: { collected_at: "asc" as const } },
-} satisfies Prisma.ordersInclude
+import {
+  ORDER_INCLUDE,
+  executeCreateOrder,
+  type CoordinatorOrderRow,
+  type PartnerRow,
+  type ExceptionRow,
+  type CreateCoordinatorOrderData,
+} from "./coordinator-query-helper"
 
-export type CoordinatorOrderRow = Prisma.ordersGetPayload<{ include: typeof ORDER_INCLUDE }>
-export type PartnerRow = Prisma.partnersGetPayload<object>
-export type ExceptionRow = Prisma.order_exceptionsGetPayload<object>
-
-export interface CreateCoordinatorOrderData {
-  code: string
-  stage: CoordinatorStage
-  axes: MappedOrderAxes
-  riskLevel: CoordinationRiskLevel
-  nextAction: string
-  totalVnd: number
-  customerId: string | null
-  cardMessage: string | null
-  /** ĐP-4a.1 (26/09/2026) — `cardMessage` bắt buộc khi true. */
-  cardRequired: boolean
-  internalNote: string | null
-  deliveryWindow: { timeSlot: string; targetAt: string | null }
-  deliveryAddress: Record<string, unknown>
-  estimatedDeliveryAt: Date | null
-  sampleAssetId: string | null
-  items: Array<{ productId?: string | null; description: string; quantity: number; metadata: Record<string, unknown> }>
-  metadata: Record<string, unknown>
-  /** ĐP-3.16 (26/09/2026): giá trị trường tự tạo đã qua `applyCustomFields` (entity = ORDER). */
-  customFields: Record<string, unknown>
-  // ── ĐP-4a.1 (26/09/2026) — T01: đủ trường P0/P1 (Đặc tả trường §2.1/§3.1) ──
-  source: string
-  sourceReference: string | null
-  channel: string | null
-  orderType: string | null
-  priority: string
-  serviceLevel: string | null
-  deliveryType: string | null
-  deliveryLocationType: string | null
-  receivedAt: Date
-  deliveryWindowStart: Date | null
-  deliveryWindowEnd: Date | null
-  salesOwnerId: string
+export {
+  ORDER_INCLUDE,
+  type CoordinatorOrderRow,
+  type PartnerRow,
+  type ExceptionRow,
+  type CreateCoordinatorOrderData,
 }
 
 export class CoordinatorRepository implements ICoordinatorRepository<CoordinatorOrderRow> {
-  private readonly partnerRepo: PartnerRepository
+  private readonly partnerRepo: IPartnerRepository
+  private readonly exceptionRepo: IOrderExceptionRepository
 
   constructor(private readonly db: DbClient = prisma) {
-    this.partnerRepo = new PartnerRepository(db)
+    this.partnerRepo = getPartnerRepository(db)
+    this.exceptionRepo = getOrderExceptionRepository(db)
   }
 
   // ── Đọc ────────────────────────────────────────────────────────────────
@@ -127,69 +100,9 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
   // ── Ghi đơn ─────────────────────────────────────────────────────────────
 
   async createOrder(ctx: TenantContext, data: CreateCoordinatorOrderData): Promise<{ id: string; code: string }> {
-    const order = await this.db.orders.create({
-      data: scopedData(ctx, {
-        code: data.code,
-        customer_id: data.customerId,
-        status: data.axes.status,
-        production_status: data.axes.productionStatus,
-        delivery_status: data.axes.deliveryStatus,
-        total_vnd: data.totalVnd,
-        // ĐP-4a (26/09/2026): chưa thu gì lúc tạo đơn → còn phải thu = tổng số.
-        balance_vnd: data.totalVnd,
-        card_message: data.cardMessage,
-        internal_note: data.internalNote,
-        delivery_window: data.deliveryWindow as Prisma.InputJsonValue,
-        delivery_address: data.deliveryAddress as Prisma.InputJsonValue,
-        created_by: ctx.userId,
-      }),
-    })
-
-    if (data.items.length > 0) {
-      await this.db.order_items.createMany({
-        data: data.items.map((it) =>
-          scopedData(ctx, {
-            order_id: order.id,
-            product_id: it.productId ?? null,
-            description: it.description,
-            quantity: it.quantity,
-            unit_price_vnd: 0,
-            metadata: it.metadata as Prisma.InputJsonValue,
-          })
-        ),
-      })
-    }
-
-    await this.db.order_coordinations.create({
-      data: scopedData(ctx, {
-        order_id: order.id,
-        coordinator_id: ctx.userId,
-        stage: data.stage,
-        risk_level: data.riskLevel,
-        next_action: data.nextAction,
-        estimated_delivery_at: data.estimatedDeliveryAt,
-        sample_asset_id: data.sampleAssetId,
-        metadata: data.metadata as Prisma.InputJsonValue,
-        custom_fields: data.customFields as Prisma.InputJsonValue,
-        // ĐP-4a.1 (26/09/2026) — T01: đủ trường P0/P1.
-        card_required: data.cardRequired,
-        source: data.source,
-        source_reference: data.sourceReference,
-        channel: data.channel,
-        order_type: data.orderType,
-        priority: data.priority,
-        service_level: data.serviceLevel,
-        delivery_type: data.deliveryType,
-        delivery_location_type: data.deliveryLocationType,
-        received_at: data.receivedAt,
-        delivery_window_start: data.deliveryWindowStart,
-        delivery_window_end: data.deliveryWindowEnd,
-        sales_owner_id: data.salesOwnerId,
-      }),
-    })
-
-    await this.recordEvent(ctx, order.id, "order", null, data.axes.status, "Tiếp nhận đơn điều phối")
-    return { id: order.id, code: order.code }
+    const result = await executeCreateOrder(this.db, ctx, data)
+    await this.recordEvent(ctx, result.id, "order", null, data.axes.status, "Tiếp nhận đơn điều phối")
+    return result
   }
 
   /**
@@ -362,34 +275,21 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
     })
   }
 
-  // ── Sự cố ──────────────────────────────────────────────────────────────
+  // ── Sự cố (Ủy thác qua OrderExceptionRepository) ──────────────────────
 
   createException(
     ctx: TenantContext,
     data: { orderId: string; code: string; type: string; severity: string; description: string }
   ): Promise<ExceptionRow> {
-    return this.db.order_exceptions.create({
-      data: scopedData(ctx, {
-        order_id: data.orderId,
-        code: data.code,
-        type: data.type,
-        severity: data.severity,
-        description: data.description,
-        status: "OPEN",
-        reported_by: ctx.userId,
-      }),
-    })
+    return this.exceptionRepo.createException(ctx, data) as unknown as Promise<ExceptionRow>
   }
 
   findException(ctx: TenantContext, id: string): Promise<ExceptionRow | null> {
-    return this.db.order_exceptions.findFirst({ where: scopedWhere(ctx, { id }) })
+    return this.exceptionRepo.findException(ctx, id) as unknown as Promise<ExceptionRow | null>
   }
 
-  async resolveException(ctx: TenantContext, id: string, resolution: string): Promise<void> {
-    await this.db.order_exceptions.updateMany({
-      where: scopedWhere(ctx, { id }),
-      data: { status: "RESOLVED", resolution, resolved_by: ctx.userId, resolved_at: new Date() },
-    })
+  resolveException(ctx: TenantContext, id: string, resolution: string): Promise<void> {
+    return this.exceptionRepo.resolveException(ctx, id, resolution)
   }
 
   // ── Đối tác (Ủy thác qua PartnerRepository) ─────────────────────────────
@@ -423,10 +323,21 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
     id: string,
     data: Prisma.partnersUncheckedUpdateManyInput
   ): Promise<void> {
-    return this.partnerRepo.updatePartner(ctx, id, data)
+    return this.partnerRepo.updatePartner(ctx, id, data as Parameters<typeof this.partnerRepo.updatePartner>[2])
   }
 
   countActiveOrdersForPartner(ctx: TenantContext, partnerId: string): Promise<number> {
     return this.partnerRepo.countActiveOrdersForPartner(ctx, partnerId)
   }
 }
+
+let defaultCoordinatorRepository: CoordinatorRepository | null = null
+
+export function getCoordinatorRepository(db?: DbClient): CoordinatorRepository {
+  if (db) return new CoordinatorRepository(db)
+  if (!defaultCoordinatorRepository) {
+    defaultCoordinatorRepository = new CoordinatorRepository()
+  }
+  return defaultCoordinatorRepository
+}
+

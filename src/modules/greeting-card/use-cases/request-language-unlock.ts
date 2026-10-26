@@ -1,7 +1,7 @@
 import { conflict, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import {
   SAAS_PENDING_LANGUAGE_UNLOCK_KEY,
   SAAS_UNLOCKED_LOCALES_KEY,
@@ -20,7 +20,7 @@ export async function requestLanguageUnlock(
   ctx: TenantContext,
   input: RequestLanguageUnlockInput
 ): Promise<{ recorded: true; pendingRequest: PendingLanguageUnlockRequest }> {
-  const orgRepo = new OrganizationRepository()
+  const orgRepo = getOrganizationRepository()
   const organization = await orgRepo.current(ctx)
   if (!organization) throw validationFailed({ organization: "Không tìm thấy tổ chức" })
 

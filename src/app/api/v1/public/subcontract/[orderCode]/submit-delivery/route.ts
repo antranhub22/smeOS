@@ -4,8 +4,6 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
 import { log } from "@/core/observability/log"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
@@ -126,9 +124,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   }
 
   // 2. Lấy ảnh thành phẩm QC đã upload trước đó để AI đối chiếu chéo
-  const coord = await prisma.order_coordinations.findUnique({
-    where: { order_id: order.id },
-  })
+  const coord = await repo.findCoordination(order.id)
   const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
   const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
   const latestQcKey = existingQcPhotos[existingQcPhotos.length - 1]
@@ -179,52 +175,39 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     deliveredByBranch: branchId,
   }
 
-  const updateOps: unknown[] = [
-    prisma.orders.update({
-      where: { id: order.id },
-      data: {
-        delivery_status: "DELIVERED",
-        status: "COMPLETED",
-      },
+  const updateOps: Array<Promise<unknown>> = [
+    repo.updateOrderStatus(order.id, {
+      delivery_status: "DELIVERED",
+      status: "COMPLETED",
     }),
-    prisma.order_coordinations.update({
-      where: { order_id: order.id },
-      data: {
-        metadata: {
-          ...existingMeta,
-          pod_photos: updatedPodPhotos,
-          delivery_proof: deliveryProof,
-          last_pod_uploaded_at: deliveredAt,
-        } as unknown as Prisma.InputJsonValue,
-      },
+    repo.upsertCoordinationMeta(order.id, order.organization_id, {
+      pod_photos: updatedPodPhotos,
+      delivery_proof: deliveryProof,
+      last_pod_uploaded_at: deliveredAt,
     }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "delivery",
-        from_value: order.delivery_status || "DELIVERING",
-        to_value: "DELIVERED",
-        actor_id: `branch_${branchId}`,
-        reason: `[Xác Nhận Giao Hàng POD] Chi nhánh tải ảnh giao hàng thành công. Ghi chú: ${note || "Không có"}`,
-      },
+    repo.createOrderEvent({
+      id: randomUUID(),
+      organization_id: order.organization_id,
+      order_id: order.id,
+      axis: "delivery",
+      from_value: order.delivery_status || "DELIVERING",
+      to_value: "DELIVERED",
+      actor_id: `branch_${branchId}`,
+      reason: `[Xác Nhận Giao Hàng POD] Chi nhánh tải ảnh giao hàng thành công. Ghi chú: ${note || "Không có"}`,
     }),
-    prisma.order_events.create({
-      data: {
-        id: randomUUID(),
-        organization_id: order.organization_id,
-        order_id: order.id,
-        axis: "status",
-        from_value: order.status,
-        to_value: "COMPLETED",
-        actor_id: `branch_${branchId}`,
-        reason: "[Hoàn Tất] Đơn hàng hoàn thành sau khi xác nhận giao hoa thành công.",
-      },
+    repo.createOrderEvent({
+      id: randomUUID(),
+      organization_id: order.organization_id,
+      order_id: order.id,
+      axis: "status",
+      from_value: order.status,
+      to_value: "COMPLETED",
+      actor_id: `branch_${branchId}`,
+      reason: "[Hoàn Tất] Đơn hàng hoàn thành sau khi xác nhận giao hoa thành công.",
     }),
   ]
 
-  await prisma.$transaction(updateOps as any)
+  await Promise.all(updateOps)
 
   // 1. Tự động gửi thông báo chúc mừng & cảm ơn khách hàng kèm ảnh giao hàng
   try {

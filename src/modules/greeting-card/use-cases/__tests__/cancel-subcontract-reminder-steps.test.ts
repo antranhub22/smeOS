@@ -9,6 +9,7 @@ vi.mock("@/core/tenancy/infra/prisma", () => ({
   prisma: {
     order_coordinations: {
       findFirst: vi.fn(),
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
@@ -59,7 +60,7 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
   })
 
   it("đánh dấu CANCELLED_BY_COORDINATOR_ACTION cho các step chưa gửi", async () => {
-    vi.mocked(prisma.order_coordinations.findFirst).mockResolvedValue({
+    const coordObj = {
       id: "coord-id-1",
       order_id: "order-1",
       organization_id: "org-1",
@@ -68,7 +69,9 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
           remindersSent: {},
         },
       },
-    } as any)
+    } as any
+    vi.mocked(prisma.order_coordinations.findFirst).mockResolvedValue(coordObj)
+    vi.mocked(prisma.order_coordinations.findUnique).mockResolvedValue(coordObj)
 
     vi.mocked(prisma.order_coordinations.update).mockResolvedValue({} as any)
 
@@ -83,7 +86,7 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
     expect(result.cancelledSteps).toEqual(["M2_QC", "M2_QC_RETRY", "M2_QC_ESCALATED"])
     expect(result.alreadyDoneSteps).toHaveLength(0)
     expect(prisma.order_coordinations.update).toHaveBeenCalledWith({
-      where: { id: "coord-id-1" },
+      where: { order_id: "order-1" },
       data: {
         metadata: {
           subcontract_dispatch: {
@@ -100,7 +103,7 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
 
   it("không ghi đè các step ĐÃ GỬI THẬT (ISO timestamp) và đưa vào alreadyDoneSteps", async () => {
     const sentRealIso = "2026-10-19T08:00:00.000Z"
-    vi.mocked(prisma.order_coordinations.findFirst).mockResolvedValue({
+    const coordObj = {
       id: "coord-id-1",
       order_id: "order-1",
       organization_id: "org-1",
@@ -111,7 +114,9 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
           },
         },
       },
-    } as any)
+    } as any
+    vi.mocked(prisma.order_coordinations.findFirst).mockResolvedValue(coordObj)
+    vi.mocked(prisma.order_coordinations.findUnique).mockResolvedValue(coordObj)
 
     vi.mocked(prisma.order_coordinations.update).mockResolvedValue({} as any)
 
@@ -128,7 +133,7 @@ describe("cancelSubcontractReminderSteps (First-Wins Mutex)", () => {
     expect(result.cancelledSteps).toEqual(["M2_QC_RETRY", "M2_QC_ESCALATED"])
 
     expect(prisma.order_coordinations.update).toHaveBeenCalledWith({
-      where: { id: "coord-id-1" },
+      where: { order_id: "order-1" },
       data: {
         metadata: {
           subcontract_dispatch: {

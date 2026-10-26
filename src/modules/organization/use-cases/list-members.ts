@@ -1,7 +1,7 @@
 import type { TenantContext } from "@/core/tenancy"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
-import { UserRepository } from "@/modules/organization/infra/user-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
+import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
 
 export type MemberSummary = {
   id: string
@@ -15,9 +15,9 @@ export type MemberSummary = {
 
 /** `GET /members` (`F1`, đặc tả 06 mục 4). */
 export async function listMembers(ctx: TenantContext): Promise<MemberSummary[]> {
-  const memberships = await new MembershipRepository().list(ctx)
-  const users = new UserRepository()
-  const roles = new RoleRepository()
+  const memberships = await getMembershipRepository().list(ctx)
+  const users = getUserRepository()
+  const roles = getRoleRepository()
 
   return Promise.all(
     memberships.map(async (membership) => {

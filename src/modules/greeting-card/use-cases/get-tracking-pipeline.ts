@@ -1,7 +1,7 @@
 import { resolveSaleScope } from "./order-scope"
 import type { TenantContext } from "@/core/tenancy"
-import { TrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { TrackingPipelineRepository, getTrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { getCurrentOrganization } from "@/modules/organization/use-cases/get-current-organization"
 import { parseStepSla, stuckOf } from "../domain/step-sla"
 import { channelLabel } from "../domain/catalog-channel"
@@ -73,7 +73,7 @@ function resolveSessionStep(session: {
 }
 
 /** Danh sách theo dõi (Hộp việc, danh sách việc) — cùng tập dữ liệu với mọi view. */
-export async function getTrackingPipeline(ctx: TenantContext, repo = new TrackingPipelineRepository()): Promise<TrackingPipelineItem[]> {
+export async function getTrackingPipeline(ctx: TenantContext, repo = getTrackingPipelineRepository()): Promise<TrackingPipelineItem[]> {
   return (await loadTrackingDataset(ctx, repo)).items
 }
 
@@ -84,7 +84,7 @@ export async function getTrackingPipeline(ctx: TenantContext, repo = new Trackin
  */
 export async function loadTrackingDataset(
   ctx: TenantContext,
-  repo = new TrackingPipelineRepository(),
+  repo = getTrackingPipelineRepository(),
   now = new Date(), opts: { ordersOnly?: boolean } = {} // ordersOnly: bảng Điều phối không cần link chưa có đơn
 ): Promise<{ items: TrackingPipelineItem[]; sla: ReturnType<typeof parseStepSla>; industryKey: string }> {
   const saleId = await resolveSaleScope(ctx)
@@ -140,7 +140,7 @@ export async function loadTrackingDataset(
     ]),
   ].filter((id): id is string => typeof id === "string" && id.length > 0)
 
-  const proofUrls = await new GreetingCardRepository().getPaymentProofAssetsMap(ctx.organizationId, proofAssetIds)
+  const proofUrls = await getGreetingCardRepository().getPaymentProofAssetsMap(ctx.organizationId, proofAssetIds)
   const productImages = await productImagesFor(ctx, [...orders, ...activeSessions.map((s) => ({ items: [], greeting_sessions: [s] }))], repo)
 
   // 1. Process Orders

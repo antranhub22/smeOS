@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { checkDatabaseHealth } from "@/core/tenancy/infra/health"
 
 export async function GET() {
   let dbStatus = "ok"
@@ -9,7 +9,7 @@ export async function GET() {
   const maskedHost = `${url.protocol}//${url.username ? "***:***@" : ""}${url.host}${url.pathname}`
 
   try {
-    userCount = await prisma.users.count()
+    userCount = await checkDatabaseHealth()
   } catch (err: any) {
     dbStatus = "error"
     dbError = {

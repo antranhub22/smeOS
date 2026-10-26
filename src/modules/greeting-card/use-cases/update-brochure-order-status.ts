@@ -1,19 +1,19 @@
 import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { mediaSelectionError } from "../domain/media-limits"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
 import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, type CoordinatorAction } from "../domain/brochure-commerce-rules"
 import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payment-policy"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
 import { queueStaffNotification } from "./notify-staff"
 import {
   DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason,
 } from "../domain/delivery-failure"
-import { DeliveryFailureRepository } from "../infra/delivery-failure-repository"
+import { DeliveryFailureRepository, getDeliveryFailureRepository } from "../infra/delivery-failure-repository"
 import { orderPhotoApproval, photoApprovalDispatchBlocker } from "../domain/photo-approval"
-import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
-import { CancellationRepository } from "../infra/cancellation-repository"
+import { BrochurePaymentRepository, getBrochurePaymentRepository } from "../infra/brochure-payment-repository"
+import { CancellationRepository, getCancellationRepository } from "../infra/cancellation-repository"
 import { coordinatorConfirmDepositPayment } from "./confirm-brochure-payment"
 import { canBypassDeliveryPhoto, canBypassFinishedPhoto, canRoleApproveDeposit, depositApproverRole, isUrgentOrder, parseBrochureWorkflowPolicy } from "../domain/brochure-workflow-policy"
 import { hasCapability } from "@/core/rbac/capabilities"
@@ -33,7 +33,7 @@ async function loadForAction(
   const order = await repo.findBrochureOrder(ctx, orderId)
   if (!order) throw notFound()
   // Chính sách thu tiền và kiểm định ảnh của tiệm
-  const shop = await new GreetingCardRepository().getShopProfile(ctx.organizationId)
+  const shop = await getGreetingCardRepository().getShopProfile(ctx.organizationId)
   const policy = parsePaymentPolicy(shop.settings)
   const blocker = coordinatorActionBlocker(
     action,
@@ -61,7 +61,7 @@ async function loadForAction(
 
 /** Gói Nghiêm ngặt bắt buộc ảnh — gọi thẳng API bỏ qua ảnh cũng bị chặn (PO 15/10/2026). */
 async function assertSkipAllowed(ctx: TenantContext, kind: "product" | "recipient") {
-  const workflow = parseBrochureWorkflowPolicy((await new GreetingCardRepository().getShopProfile(ctx.organizationId)).settings)
+  const workflow = parseBrochureWorkflowPolicy((await getGreetingCardRepository().getShopProfile(ctx.organizationId)).settings)
   const allowed = kind === "product" ? canBypassFinishedPhoto(workflow) : canBypassDeliveryPhoto(workflow)
   if (!allowed) throw conflict(kind === "product" ? "Tiệm bắt buộc ảnh thành phẩm — không bỏ qua được" : "Tiệm bắt buộc ảnh bàn giao — không bỏ qua được")
 }
@@ -92,7 +92,7 @@ export async function assignBrochureFlorist(
   ctx: TenantContext,
   orderId: string,
   input: { floristNote: string },
-  repo = new BrochureOrderRepository()
+  repo = getBrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "assign-florist", repo)
   return repo.applyProgress(ctx, order, {
@@ -106,7 +106,7 @@ export async function uploadBrochureProductPhoto(
   ctx: TenantContext,
   orderId: string,
   input: PhotoInput,
-  repo = new BrochureOrderRepository()
+  repo = getBrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "product-photo", repo)
   if (input.skipPhoto) {
@@ -226,7 +226,7 @@ export async function dispatchBrochureShipping(
   ctx: TenantContext,
   orderId: string,
   input: { trackingNote: string },
-  repo = new BrochureOrderRepository()
+  repo = getBrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "dispatch-shipping", repo)
   const result = await repo.applyProgress(ctx, order, {
@@ -242,7 +242,7 @@ export async function uploadBrochureRecipientPhoto(
   ctx: TenantContext,
   orderId: string,
   input: PhotoInput,
-  repo = new BrochureOrderRepository()
+  repo = getBrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "recipient-photo", repo)
   if (input.skipPhoto) {
@@ -275,14 +275,14 @@ export async function markBrochureDeliveryFailed(
   ctx: TenantContext,
   orderId: string,
   input: { reason: DeliveryFailureReason; note?: string | undefined; chargeFee?: boolean | undefined },
-  repo = new BrochureOrderRepository(),
+  repo = getBrochureOrderRepository(),
 ) {
   const error = deliveryFailureError(input)
   if (error) throw validationFailed({ note: error })
   const order = await loadForAction(ctx, orderId, "delivery-failed", repo)
-  const shop = await new GreetingCardRepository().getShopProfile(ctx.organizationId)
+  const shop = await getGreetingCardRepository().getShopProfile(ctx.organizationId)
   const feeVnd = redeliveryFeeFor({ chargeFee: input.chargeFee === true, configuredFeeVnd: parseRedeliveryFee(shop.settings), totalVnd: Number(order.total_vnd) })
-  const result = await new DeliveryFailureRepository().recordFailure(ctx, order, {
+  const result = await getDeliveryFailureRepository().recordFailure(ctx, order, {
     failure: {
       at: new Date().toISOString(), reason: input.reason, reasonLabel: DELIVERY_FAILURE_LABEL[input.reason],
       note: input.note?.trim() || null, feeVnd, by: ctx.userId,
@@ -308,8 +308,8 @@ export async function coordinatorAcceptBrochureOrder(
   ctx: TenantContext,
   orderId: string,
   input: { note?: string | undefined } = {},
-  repo = new BrochureOrderRepository(),
-  shops = new GreetingCardRepository()
+  repo = getBrochureOrderRepository(),
+  shops = getGreetingCardRepository()
 ) {
   const [order, shop] = await Promise.all([
     repo.findBrochureOrder(ctx, orderId),
@@ -366,8 +366,8 @@ export async function coordinatorRejectBrochureOrder(
   ctx: TenantContext,
   orderId: string,
   input: { reason: string },
-  cancellationRepo = new CancellationRepository(),
-  repo = new BrochureOrderRepository()
+  cancellationRepo = getCancellationRepository(),
+  repo = getBrochureOrderRepository()
 ) {
   const order = await repo.findBrochureOrder(ctx, orderId)
   if (!order) throw notFound()

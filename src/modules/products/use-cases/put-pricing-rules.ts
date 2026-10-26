@@ -7,7 +7,7 @@ import {
 } from "@/modules/products/domain/pricing-rules"
 import type { IPricingRuleRepository } from "../domain/repositories/pricing-rule-repository.interface"
 import { getPricingRuleRepository } from "../infra/pricing-rule-repository"
-import { BranchRepository } from "@/modules/organization/infra/branch-repository"
+import { BranchRepository, getBranchRepository } from "@/modules/organization/infra/branch-repository"
 
 import { getPricingRules } from "./get-pricing-rules"
 
@@ -26,7 +26,7 @@ export async function putPricingRules(
   ctx: TenantContext,
   input: { key: string; value: unknown; branchId?: string | null | undefined },
   pricingRepo: IPricingRuleRepository = getPricingRuleRepository(),
-  branchRepo: IBranchLookup = new BranchRepository()
+  branchRepo: IBranchLookup = getBranchRepository()
 ) {
   if (!isPricingRuleKey(input.key)) {
     throw validationFailed({

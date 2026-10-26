@@ -94,3 +94,9 @@ export class OrderVatRepository {
     })
   }
 }
+
+let _orderVatRepositorySingleton: OrderVatRepository | null = null
+export function getOrderVatRepository(): OrderVatRepository {
+  if (!_orderVatRepositorySingleton) _orderVatRepositorySingleton = new OrderVatRepository()
+  return _orderVatRepositorySingleton
+}

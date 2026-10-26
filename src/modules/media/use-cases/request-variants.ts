@@ -3,9 +3,9 @@ import { createHash, randomUUID } from "node:crypto"
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { SCENE_PLAN_FEATURE, parseStoredScenePlan } from "@/modules/creative-production/domain/scene-plan-rules"
 import {
   resolveVariantDirection,
@@ -77,7 +77,7 @@ async function sceneHintFor(
 ): Promise<PlanSceneHint | null> {
   if (!scenePlanId || !sceneIndex || !/^[0-9a-f-]{36}$/i.test(scenePlanId)) return null
   try {
-    const job = await new GenerationJobRepository().findById(ctx, scenePlanId)
+    const job = await getGenerationJobRepository().findById(ctx, scenePlanId)
     if (!job || job.feature !== SCENE_PLAN_FEATURE || job.status !== "COMPLETED") return null
     const scene = parseStoredScenePlan(job.output)?.scenes.find((s) => s.sceneIndex === sceneIndex)
     return scene ? { shot: scene.shot, lighting: scene.lighting, palette: scene.palette } : null
@@ -187,7 +187,7 @@ async function enqueueCandidates(
  * xin thêm quyền cho một việc mà quyền không giải quyết được.
  */
 export async function requestVariants(ctx: TenantContext, input: RequestVariantsInput) {
-  const master = await new AssetRepository().findById(ctx, input.masterAssetId)
+  const master = await getAssetRepository().findById(ctx, input.masterAssetId)
   if (!master) throw notFound()
 
   if (!isEligibleMasterForVariants(master)) {
@@ -239,7 +239,7 @@ export type RequestCloudVariantInput = RequestVariantsInput & {
  * Cùng cổng Master đã duyệt như nhánh local — nhánh Cloud cũ không có cổng này.
  */
 export async function requestCloudVariant(ctx: TenantContext, input: RequestCloudVariantInput) {
-  const master = await new AssetRepository().findById(ctx, input.masterAssetId)
+  const master = await getAssetRepository().findById(ctx, input.masterAssetId)
   if (!master) throw notFound()
 
   if (!isEligibleMasterForVariants(master)) {
@@ -327,7 +327,7 @@ export async function requestVariantBatch(
   ctx: TenantContext,
   input: RequestVariantBatchInput
 ): Promise<RequestVariantBatchResult> {
-  const master = await new AssetRepository().findById(ctx, input.masterAssetId)
+  const master = await getAssetRepository().findById(ctx, input.masterAssetId)
   if (!master) throw notFound()
 
   if (!isEligibleMasterForVariants(master)) {

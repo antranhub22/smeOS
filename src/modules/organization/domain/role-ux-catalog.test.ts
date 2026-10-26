@@ -8,19 +8,20 @@ import {
   resolveRoleUx,
 } from "./role-ux-catalog"
 
-describe("danh mục 16 vai trải nghiệm (Role & Capability Architecture)", () => {
-  it("đủ 16 vai, khoá không trùng", () => {
-    expect(ROLE_UX_CATALOG).toHaveLength(16)
-    expect(new Set(ROLE_UX_CATALOG.map((r) => r.key)).size).toBe(16)
+describe("danh mục 17 vai trải nghiệm (Role & Capability Architecture)", () => {
+  it("đủ 17 vai, khoá không trùng", () => {
+    expect(ROLE_UX_CATALOG).toHaveLength(17)
+    expect(new Set(ROLE_UX_CATALOG.map((r) => r.key)).size).toBe(17)
   })
 
-  it("đúng 10 vai đang dùng được (gồm 3 Top-Level Roles)", () => {
+  it("đúng 11 vai đang dùng được (gồm 4 Top-Level Roles)", () => {
     const available = ROLE_UX_CATALOG.filter((r) => r.status === "AVAILABLE").map((r) => r.key)
     expect(available.sort()).toEqual([
       "coordinator",
       "crm",
       "customer_service",
       "flower_network_admin",
+      "industry_admin",
       "lead_marketing",
       "marketing",
       "platform_admin",
@@ -87,6 +88,22 @@ describe("resolveRoleUx", () => {
   it("tổ chức STORE hoặc SINGLE giải dieu_hanh sang store_admin", () => {
     expect(resolveRoleUx("dieu_hanh", "STORE")?.key).toBe("store_admin")
     expect(resolveRoleUx("dieu_hanh", "SINGLE")?.key).toBe("store_admin")
+  })
+
+  it("tổ chức PLATFORM hoặc vai platform_admin giải sang platform_admin", () => {
+    expect(resolveRoleUx("platform_admin")?.key).toBe("platform_admin")
+    expect(resolveRoleUx(null, "PLATFORM")?.key).toBe("platform_admin")
+    expect(resolveRoleUx("dieu_hanh", "PLATFORM")?.key).toBe("platform_admin")
+    expect(resolveRoleUx("platform_admin")?.homepage).toBe("CONTROL_CENTER")
+    expect(resolveRoleUx("platform_admin")?.entryHref).toBe("/van-hanh")
+  })
+
+  it("tổ chức INDUSTRY hoặc vai industry_admin giải sang industry_admin", () => {
+    expect(resolveRoleUx("industry_admin")?.key).toBe("industry_admin")
+    expect(resolveRoleUx(null, "INDUSTRY")?.key).toBe("industry_admin")
+    expect(resolveRoleUx("dieu_hanh", "INDUSTRY")?.key).toBe("industry_admin")
+    expect(resolveRoleUx("industry_admin")?.homepage).toBe("INDUSTRY_JOURNEY_HOME")
+    expect(resolveRoleUx("industry_admin")?.entryHref).toBe("/")
   })
 
   it("experience_user, vai riêng của tổ chức, rỗng → null (giữ hành vi cũ)", () => {

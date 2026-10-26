@@ -2,9 +2,8 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import { PrismaChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
-import { PrismaInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
+import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
+import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { ListChainPartnersUseCase } from "@/modules/chain-partnership/use-cases/list-chain-partners"
 import { ProvisionPartnerAccountUseCase } from "@/modules/chain-partnership/use-cases/provision-partner-account"
 
@@ -30,7 +29,7 @@ export const GET = handle(async (request) => {
   const province = url.searchParams.get("province") ?? undefined
   const query = url.searchParams.get("q") ?? undefined
 
-  const partnershipRepo = new PrismaChainPartnershipRepository(prisma)
+  const partnershipRepo = getChainPartnershipRepository()
   const useCase = new ListChainPartnersUseCase(partnershipRepo)
 
   const result = await useCase.execute({
@@ -57,8 +56,8 @@ export const POST = handle(async (request) => {
     throw validationFailed({ reason: errorDetails })
   }
 
-  const partnershipRepo = new PrismaChainPartnershipRepository(prisma)
-  const chatRepo = new PrismaInternalChatRepository(prisma)
+  const partnershipRepo = getChainPartnershipRepository()
+  const chatRepo = getInternalChatRepository()
   const useCase = new ProvisionPartnerAccountUseCase(partnershipRepo, chatRepo)
 
   const partnership = await useCase.execute(

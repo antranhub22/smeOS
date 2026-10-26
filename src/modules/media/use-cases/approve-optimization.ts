@@ -1,8 +1,8 @@
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import { canApproveOptimization, isGuardResult } from "@/modules/media/domain/optimization-rules"
 
@@ -29,7 +29,7 @@ export async function approveOptimization(
   ctx: TenantContext,
   jobId: string
 ): Promise<OptimizationDetail> {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await getGenerationJobRepository().findById(ctx, jobId)
   if (!job) throw notFound()
 
   if (job.status !== "COMPLETED") {
@@ -44,7 +44,7 @@ export async function approveOptimization(
     throw conflict("Identity Guard đã từ chối ảnh này — không đưa vào luồng duyệt được")
   }
 
-  const assetRepo = new AssetRepository()
+  const assetRepo = getAssetRepository()
   const master = await assetRepo.findMasterByJobId(ctx, jobId)
   if (!master) throw notFound()
 
@@ -53,7 +53,7 @@ export async function approveOptimization(
   }
 
   await runInTransaction(async (tx) => {
-    const approved = await new AssetRepository(tx).approve(ctx, master.id, {
+    const approved = await getAssetRepository(tx).approve(ctx, master.id, {
       approvedBy: ctx.userId,
       approvedAt: new Date(),
     })

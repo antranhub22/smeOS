@@ -1,7 +1,7 @@
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
-import { FieldDefinitionRepository } from "../infra/field-definition-repository"
-import { FieldConfigOverrideRepository } from "../infra/field-config-override-repository"
+import { FieldDefinitionRepository, getFieldDefinitionRepository } from "../infra/field-definition-repository"
+import { FieldConfigOverrideRepository, getFieldConfigOverrideRepository } from "../infra/field-config-override-repository"
 import { mapDefinitionRowToFloorShape, mapOverrideRowToFieldOverride } from "../infra/row-mappers"
 import { computeEffectiveFieldConfig, type EffectiveFieldConfig } from "../domain/field-rules"
 import type { FieldEntity } from "../domain/core-field-registry"
@@ -19,8 +19,8 @@ export async function previewEffectiveConfig(
 ): Promise<EffectiveFieldConfig[]> {
   requirePlatformCapability(pctx, "N12")
 
-  const definitions = await new FieldDefinitionRepository().list(entity)
-  const overrideRows = await new FieldConfigOverrideRepository().listForOrganizationId(organizationId)
+  const definitions = await getFieldDefinitionRepository().list(entity)
+  const overrideRows = await getFieldConfigOverrideRepository().listForOrganizationId(organizationId)
   const overridesByKey = new Map(
     overrideRows.filter((r) => r.target === "FIELD").map((r) => [r.override_key, mapOverrideRowToFieldOverride(r)])
   )

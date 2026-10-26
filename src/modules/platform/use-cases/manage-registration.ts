@@ -1,6 +1,5 @@
 import { AppError, notFound } from "@/core/http/errors"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import { RegistrationRequestRepository } from "@/modules/organization/infra/registration-request-repository"
+import { RegistrationRequestRepository, getRegistrationRequestRepository } from "@/modules/organization/infra/registration-request-repository"
 import type { PlatformContext } from "@/core/platform/platform-context"
 
 export type ApproveRegistrationInput = {
@@ -14,38 +13,23 @@ export type ApproveRegistrationInput = {
  */
 export async function approveRegistration(
   pctx: PlatformContext,
-  input: ApproveRegistrationInput
+  input: ApproveRegistrationInput,
+  repo: RegistrationRequestRepository = getRegistrationRequestRepository()
 ): Promise<void> {
-  const repo = new RegistrationRequestRepository()
   const req = await repo.findById(input.registrationId)
   if (!req) throw notFound()
   if (req.status !== "PENDING") {
     throw new AppError("UNPROCESSABLE_ENTITY", "Đơn này đã được xử lý rồi")
   }
 
-  // Cập nhật đơn → APPROVED + kích hoạt membership của Founder.
-  await prisma.$transaction([
-    prisma.registration_requests.update({
-      where: { id: req.id },
-      data: {
-        status: "APPROVED",
-        reviewer_id: pctx.userId,
-        review_note: input.reviewNote ?? null,
-        reviewed_at: new Date(),
-      },
-    }),
-    prisma.memberships.updateMany({
-      where: {
-        organization_id: req.organization_id,
-        user_id: req.user_id,
-        status: "INVITED",
-      },
-      data: {
-        status: "ACTIVE",
-        joined_at: new Date(),
-      },
-    }),
-  ])
+  // Cập nhật đơn → APPROVED + kích hoạt membership của Founder qua repo.
+  await repo.approveAndActivateFounder(
+    req.id,
+    pctx.userId,
+    input.reviewNote ?? null,
+    req.organization_id,
+    req.user_id
+  )
 }
 
 export type RejectRegistrationInput = {
@@ -60,7 +44,7 @@ export async function rejectRegistration(
   pctx: PlatformContext,
   input: RejectRegistrationInput
 ): Promise<void> {
-  const repo = new RegistrationRequestRepository()
+  const repo = getRegistrationRequestRepository()
   const req = await repo.findById(input.registrationId)
   if (!req) throw notFound()
   if (req.status !== "PENDING") {

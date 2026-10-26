@@ -7,12 +7,11 @@
  * 3. Returns rich structured records for UI display.
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
 import { STANDARD_G1_CORE_FIELDS } from "../domain/standard-core-fields"
 import { INPUT_DOMAINS, type InputDomainKey } from "../domain/input-domains"
 import { resolveStoreEffectiveTarget, type StoreContext } from "../domain/chain-collection-profile"
 import { transformForPropagation } from "../domain/data-propagation-hub"
-import { ChainCollectionProfileRepository } from "../infra/chain-collection-repository"
+import { ChainCollectionProfileRepository, getChainCollectionProfileRepository, type IChainCollectionProfileRepository } from "../infra/chain-collection-repository"
 import type { PropagationTarget } from "../domain/field-registry-v2"
 
 export interface StoreFieldRecord {
@@ -45,31 +44,15 @@ export interface StoreFolderDataResult {
 
 export async function getStoreFolderData(
   storeId: string,
-  organizationId: string
+  organizationId: string,
+  repo: IChainCollectionProfileRepository = getChainCollectionProfileRepository()
 ): Promise<StoreFolderDataResult | null> {
-  const branch = await prisma.branches.findUnique({
-    where: { id: storeId },
-    include: {
-      organization: {
-        include: {
-          business_profile: true,
-          brand_profile: true,
-        },
-      },
-      inventory: {
-        include: {
-          product: true,
-        },
-        take: 10,
-      },
-    },
-  })
+  const branch = await repo.findBranchWithFullProfiles(storeId)
 
   if (!branch || branch.organization_id !== organizationId) {
     return null
   }
 
-  const repo = new ChainCollectionProfileRepository()
   const profile = await repo.getProfile(organizationId)
   const dsa = await repo.getStoreDsa(storeId)
 

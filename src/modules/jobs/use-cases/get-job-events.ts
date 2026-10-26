@@ -1,7 +1,7 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
-import { JobEventRepository } from "@/modules/jobs/infra/job-event-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { JobEventRepository, getJobEventRepository } from "@/modules/jobs/infra/job-event-repository"
 
 /**
  * `GET /jobs/:id/events` (`G4`, đặc tả 06 mục 7). `afterSeq` đến từ
@@ -10,7 +10,7 @@ import { JobEventRepository } from "@/modules/jobs/infra/job-event-repository"
  * — nó thuộc về job, không thuộc trực tiếp về tổ chức.
  */
 export async function getJobEvents(ctx: TenantContext, jobId: string, afterSeq: number) {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await getGenerationJobRepository().findById(ctx, jobId)
   if (!job) throw notFound()
-  return new JobEventRepository().listSince(jobId, afterSeq)
+  return getJobEventRepository().listSince(jobId, afterSeq)
 }

@@ -5,7 +5,7 @@ import { aiGatewayDeps } from "@/core/ai/wiring"
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider"
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences"
 import type { TenantContext } from "@/core/tenancy"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
 import { refundPartial } from "@/modules/usage/use-cases/refund-partial"
@@ -99,7 +99,7 @@ export async function generateScenePlan(
     return { ...view(enq.job), deduped: true, usage: enq.usage }
   }
 
-  const jobRepo = new GenerationJobRepository()
+  const jobRepo = getGenerationJobRepository()
   await jobRepo.startInline(ctx, enq.job.id, new Date())
   const preferredModelKeys = await providerOrderFor(ctx, "content", input.contentProvider)
 
@@ -171,7 +171,7 @@ export async function generateScenePlan(
 /** `GET /scene-plans/:id` — chỉ job `creative.scene_plan` của đúng tổ chức. */
 export async function getScenePlan(ctx: TenantContext, jobId: string): Promise<ScenePlanJobView> {
   requireCapability(ctx, "I1")
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await getGenerationJobRepository().findById(ctx, jobId)
   if (!job || job.feature !== SCENE_PLAN_FEATURE) throw new AppError("NOT_FOUND", "Không có kịch bản này")
   return view(job)
 }
@@ -185,7 +185,7 @@ export async function findScenePlanByKey(
   idempotencyKey: string
 ): Promise<ScenePlanJobView | null> {
   requireCapability(ctx, "I1")
-  const job = await new GenerationJobRepository().findByIdempotencyKey(ctx, SCENE_PLAN_FEATURE, idempotencyKey)
+  const job = await getGenerationJobRepository().findByIdempotencyKey(ctx, SCENE_PLAN_FEATURE, idempotencyKey)
   return job ? view(job) : null
 }
 
@@ -196,7 +196,7 @@ export async function findScenePlanByKey(
  */
 export async function updateScenePlan(ctx: TenantContext, jobId: string, edit: ScenePlanEdit): Promise<ScenePlanJobView> {
   requireCapability(ctx, "I1")
-  const jobs = new GenerationJobRepository()
+  const jobs = getGenerationJobRepository()
   const job = await jobs.findById(ctx, jobId)
   if (!job || job.feature !== SCENE_PLAN_FEATURE) throw new AppError("NOT_FOUND", "Không có kịch bản này")
   const plan = job.status === "COMPLETED" ? parseStoredScenePlan(job.output) : null

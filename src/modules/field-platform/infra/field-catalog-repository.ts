@@ -96,3 +96,9 @@ export class FieldCatalogRepository {
     })
   }
 }
+
+let _fieldCatalogRepo: FieldCatalogRepository | null = null
+export function getFieldCatalogRepository(): FieldCatalogRepository {
+  if (!_fieldCatalogRepo) _fieldCatalogRepo = new FieldCatalogRepository()
+  return _fieldCatalogRepo
+}

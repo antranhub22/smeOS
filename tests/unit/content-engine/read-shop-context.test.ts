@@ -1,14 +1,24 @@
 import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 
-const brandCurrent = vi.fn()
-const businessCurrent = vi.fn()
-vi.mock("@/modules/profiles/infra/brand-profile-repository", () => ({
-  BrandProfileRepository: vi.fn().mockImplementation(() => ({ current: brandCurrent })),
+const { brandCurrent, businessCurrent } = vi.hoisted(() => ({
+  brandCurrent: vi.fn(),
+  businessCurrent: vi.fn(),
 }))
-vi.mock("@/modules/profiles/infra/business-profile-repository", () => ({
-  BusinessProfileRepository: vi.fn().mockImplementation(() => ({ current: businessCurrent })),
-}))
+vi.mock("@/modules/profiles/infra/brand-profile-repository", () => {
+  const instance = { current: brandCurrent }
+  return {
+    BrandProfileRepository: vi.fn().mockImplementation(() => instance),
+    getBrandProfileRepository: vi.fn().mockImplementation(() => instance),
+  }
+})
+vi.mock("@/modules/profiles/infra/business-profile-repository", () => {
+  const instance = { current: businessCurrent }
+  return {
+    BusinessProfileRepository: vi.fn().mockImplementation(() => instance),
+    getBusinessProfileRepository: vi.fn().mockImplementation(() => instance),
+  }
+})
 
 import { readShopContext } from "@/modules/content-engine/infra/read-shop-context"
 
@@ -25,7 +35,7 @@ describe("readShopContext", () => {
     brandCurrent.mockResolvedValue(null)
     businessCurrent.mockResolvedValue(null)
     const shop = await readShopContext(ctx)
-    expect(shop.displayName).toBe("Tiệm hoa")
+    expect(shop.displayName).toBe("Cửa hàng")
     expect(shop.hashtags).toEqual([])
     expect(shop.defaultOffers).toEqual({ freeGifts: [], guarantees: [] })
     expect(shop.forbiddenStyles).toEqual([])

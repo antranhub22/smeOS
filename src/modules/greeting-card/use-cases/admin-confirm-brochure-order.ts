@@ -22,9 +22,9 @@
 
 import type { TenantContext } from "@/core/tenancy"
 import { conflict, notFound } from "@/core/http/errors"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { CancellationRepository } from "../infra/cancellation-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { CancellationRepository, getCancellationRepository } from "../infra/cancellation-repository"
 import { parseBrochureWorkflowPolicy } from "../domain/brochure-workflow-policy"
 import { queueOrderNotification } from "./notify-customer"
 import { queueStaffNotification } from "./notify-staff"
@@ -44,8 +44,8 @@ export async function adminConfirmBrochureOrder(
   ctx: TenantContext,
   orderId: string,
   input: { note?: string | undefined } = {},
-  orders = new BrochureOrderRepository(),
-  shops = new GreetingCardRepository()
+  orders = getBrochureOrderRepository(),
+  shops = getGreetingCardRepository()
 ) {
   const [order, shop] = await Promise.all([
     orders.findBrochureOrder(ctx, orderId),
@@ -120,9 +120,9 @@ export async function adminRejectBrochureOrder(
   ctx: TenantContext,
   orderId: string,
   input: { reason: string },
-  orders = new BrochureOrderRepository(),
-  shops = new GreetingCardRepository(),
-  cancellations = new CancellationRepository()
+  orders = getBrochureOrderRepository(),
+  shops = getGreetingCardRepository(),
+  cancellations = getCancellationRepository()
 ) {
   const [order, shop] = await Promise.all([
     orders.findBrochureOrder(ctx, orderId),

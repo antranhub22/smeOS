@@ -118,3 +118,9 @@ export class GreetingIntegrationRepository {
     return res.count > 0
   }
 }
+
+let _greetingIntegrationRepositorySingleton: GreetingIntegrationRepository | null = null
+export function getGreetingIntegrationRepository(): GreetingIntegrationRepository {
+  if (!_greetingIntegrationRepositorySingleton) _greetingIntegrationRepositorySingleton = new GreetingIntegrationRepository()
+  return _greetingIntegrationRepositorySingleton
+}

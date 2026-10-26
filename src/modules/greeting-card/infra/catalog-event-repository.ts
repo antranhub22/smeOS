@@ -84,3 +84,9 @@ export class CatalogEventRepository {
     return [...counts.values()]
   }
 }
+
+let _catalogEventRepositorySingleton: CatalogEventRepository | null = null
+export function getCatalogEventRepository(): CatalogEventRepository {
+  if (!_catalogEventRepositorySingleton) _catalogEventRepositorySingleton = new CatalogEventRepository()
+  return _catalogEventRepositorySingleton
+}

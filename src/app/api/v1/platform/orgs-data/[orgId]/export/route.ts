@@ -21,7 +21,7 @@ import {
   type RecordDomain,
 } from "@/modules/platform/use-cases/get-platform-org-records"
 import { strToU8, zipSync } from "fflate"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 export const GET = handle(async (request, { params }) => {
   const pctx = await requirePlatformContext(request)
@@ -30,10 +30,8 @@ export const GET = handle(async (request, { params }) => {
   const url = new URL(request.url)
   const type = url.searchParams.get("type") ?? "full"
 
-  const org = await prisma.organizations.findUnique({
-    where: { id: orgId as string },
-    select: { name: true, slug: true },
-  })
+  const orgRepo = getOrganizationRepository()
+  const org = await orgRepo.findById(orgId as string)
   const orgSlug = org?.slug ?? (orgId as string)
   const safeSlug = orgSlug.replace(/[^a-zA-Z0-9_\-]/g, "_")
   const timestamp = new Date().toISOString().slice(0, 10)

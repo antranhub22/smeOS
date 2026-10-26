@@ -3,7 +3,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { toSlug } from "@/modules/organization/domain/slug"
 import { isSystemRoleKey } from "@/modules/organization/domain/system-roles"
 import type { roles } from "@/modules/organization/infra/entities"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
 
 /**
  * `POST /roles` (`F5`, đặc tả 06 mục 4).
@@ -23,7 +23,7 @@ export async function createRole(ctx: TenantContext, input: { name: string }): P
     throw conflict("Tên vai trùng với một vai hệ thống")
   }
 
-  const repository = new RoleRepository()
+  const repository = getRoleRepository()
   const existing = await repository.listForOrganization(ctx)
   const existingKeys = new Set(existing.map((role) => role.key))
 

@@ -183,7 +183,8 @@ export class CampaignPackageRepository implements ICampaignPackageRepository {
 
 let defaultRepo: ICampaignPackageRepository | null = null
 
-export function getCampaignPackageRepository(): ICampaignPackageRepository {
+export function getCampaignPackageRepository(db?: DbClient): ICampaignPackageRepository {
+  if (db) return new CampaignPackageRepository(db)
   if (!defaultRepo) {
     defaultRepo = new CampaignPackageRepository()
   }

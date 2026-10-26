@@ -545,5 +545,91 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   },
 ]
 
+/**
+ * Danh mục hành trình cho Quản trị SaaS Đa Ngành (Industry Admin)
+ */
+export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
+  {
+    id: "industry-ecosystem-overview",
+    goal: "Hệ sinh thái Đa Ngành",
+    description: "Theo dõi toàn diện 7 ngành hàng, tỷ lệ kích hoạt tenant và độ sẵn sàng của các plugin ngành",
+    icon: "Layers",
+    roleScope: "PLATFORM",
+    category: "SINGLE",
+    badgeText: "Nổi bật",
+    steps: [{ id: "step-1", label: "Tổng quan hệ sinh thái", inputType: "NONE", isOptional: false, nextStepId: null }],
+  },
+  {
+    id: "industry-plugin-matrix",
+    goal: "Ma trận & Hợp đồng Plugin Ngành",
+    description: "Cấu hình phân quyền menu, điều hướng và công tắc tính năng theo từng ngành hàng",
+    icon: "SlidersHorizontal",
+    roleScope: "PLATFORM",
+    category: "SINGLE",
+    primaryHref: "/van-hanh/nganh",
+    steps: [{ id: "step-1", label: "Ma trận ngành", inputType: "NONE", isOptional: false, nextStepId: null }],
+  },
+  {
+    id: "industry-bom-specs",
+    goal: "Chuẩn hóa Định lượng BOM & Đơn vị",
+    description: "Cấu hình vai trò nguyên vật liệu, công thức chế tác và đơn vị đo lường theo ngành",
+    icon: "Package",
+    roleScope: "PLATFORM",
+    category: "SINGLE",
+    primaryHref: "/san-pham",
+    steps: [{ id: "step-1", label: "Chuẩn hóa BOM", inputType: "NONE", isOptional: false, nextStepId: null }],
+  },
+  {
+    id: "industry-printables-templates",
+    goal: "Kho mẫu ấn phẩm A6 ngành",
+    description: "Chuẩn hóa mẫu in ấn (Tag mác, Thiệp, Menu, Phiếu bảo hành) cho từng ngành hàng",
+    icon: "LayoutTemplate",
+    roleScope: "PLATFORM",
+    category: "SINGLE",
+    primaryHref: "/kho-templates",
+    steps: [{ id: "step-1", label: "Kho mẫu ấn phẩm A6", inputType: "NONE", isOptional: false, nextStepId: null }],
+  },
+  {
+    id: "industry-ai-studio-config",
+    goal: "Cấu hình AI Vision & Studio Ngành",
+    description: "Thiết lập góc nhìn thị giác, bối cảnh studio và phong cách tiếp thị AI theo từng ngành",
+    icon: "Sparkles",
+    roleScope: "PLATFORM",
+    category: "SINGLE",
+    primaryHref: "/market-intelligence",
+    steps: [{ id: "step-1", label: "Cấu hình AI ngành", inputType: "NONE", isOptional: false, nextStepId: null }],
+  },
+  {
+    id: "industry-market-benchmarks",
+    goal: "Nghiên cứu Thị trường & Xu hướng Ngành",
+    description: "Phân tích xu hướng thị hiếu, khoảng giá phổ biến và sản phẩm bán chạy theo từng ngành",
+    icon: "TrendingUp",
+    roleScope: "PLATFORM",
+    category: "SINGLE",
+    primaryHref: "/market-intelligence",
+    steps: [{ id: "step-1", label: "Xu hướng thị trường", inputType: "NONE", isOptional: false, nextStepId: null }],
+  },
+  {
+    id: "industry-custom-fields",
+    goal: "Quản lý Trường dữ liệu mở rộng",
+    description: "Định nghĩa các trường thuộc tính tùy biến linh hoạt cho từng mô hình ngành hàng",
+    icon: "Database",
+    roleScope: "PLATFORM",
+    category: "SINGLE",
+    primaryHref: "/van-hanh/truong-du-lieu",
+    steps: [{ id: "step-1", label: "Trường dữ liệu", inputType: "NONE", isOptional: false, nextStepId: null }],
+  },
+  {
+    id: "industry-new-wizard",
+    goal: "Khởi tạo & Đăng ký Ngành mới",
+    description: "Tạo ngành mới theo chuẩn Hợp đồng Plugin SSOT (3 bước chuẩn hóa, zero DB mutation)",
+    icon: "CheckCircle2",
+    roleScope: "PLATFORM",
+    category: "SINGLE",
+    primaryHref: "/van-hanh/nganh",
+    steps: [{ id: "step-1", label: "Khởi tạo ngành mới", inputType: "NONE", isOptional: false, nextStepId: null }],
+  },
+]
+
 export { getStoreJourneys } from "./industry-journeys"
 

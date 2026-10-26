@@ -29,7 +29,7 @@ import {
   type QcDecision,
 } from "../domain/operation-rules"
 import { axesAfterTransition } from "../domain/stage-transitions"
-import { CoordinatorRepository, type CoordinatorOrderRow } from "../infra/coordinator-repository"
+import { getCoordinatorRepository, type CoordinatorRepository, type CoordinatorOrderRow } from "../infra/coordinator-repository"
 import type { DbClient } from "../infra/transaction"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import {
@@ -97,7 +97,7 @@ export async function assignPartner(
   input: { partnerId: string; notes?: string | undefined; overrideCapacity?: boolean | undefined; agreedCraftFeeVnd?: number | undefined }
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const partner = await repo.findPartner(ctx, input.partnerId)
     if (!partner) throw notFound()
@@ -164,7 +164,7 @@ export async function recordProductionUpdate(
   }
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const stage = row.coordination!.stage
 
@@ -212,7 +212,7 @@ export async function recordQcInspection(
   input: { decision: QcDecision; notes?: string | undefined; checklist?: Record<string, boolean> | undefined }
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const c = row.coordination!
     const images = Array.isArray(c.finished_asset_ids)
@@ -265,7 +265,7 @@ export async function recordDeliveryUpdate(
   now = new Date()
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const c = row.coordination!
     ensureRule(
@@ -333,7 +333,7 @@ export async function closeCoordinatorOrder(
   now = new Date()
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const facts = await repo.facts(ctx, row)
     ensureRule(
@@ -369,7 +369,7 @@ export async function cancelCoordinatorOrder(
   input: { reason: string }
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const from = row.coordination!.stage
     ensureRule(checkCancellation({ stage: from, reason: input.reason }))

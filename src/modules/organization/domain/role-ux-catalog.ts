@@ -14,6 +14,7 @@
 
 export type RoleUxKey =
   | "platform_admin"
+  | "industry_admin"
   | "store_admin"
   | "store_manager" // backward-compatibility alias for store_admin
   | "flower_network_admin"
@@ -44,6 +45,7 @@ export type RoleUxHomepage =
   | "STORE_JOURNEY_HOME"
   | "NETWORK_JOURNEY_HOME"
   | "PLATFORM_JOURNEY_HOME"
+  | "INDUSTRY_JOURNEY_HOME"
   | "CONTROL_CENTER"
   | "STORE_COMMAND_CENTER"
   | "STORE_GROWTH_CENTER"
@@ -94,11 +96,28 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     homepageModel: "Platform Journey Home",
     dominantActions: ["Cấu hình", "Kiểm tra", "Áp dụng"],
     status: "AVAILABLE",
-    homepage: "PLATFORM_JOURNEY_HOME",
-    // Không phải vai của tổ chức: cấp qua `platform_operators` (D-N6).
+    homepage: "CONTROL_CENTER",
+    // Không phải vai của tổ chức: cấp qua `platform_operators` (D-N6) hoặc roleKey platform_admin.
     systemRoleKeys: [],
     entryHref: "/van-hanh",
     navPriority: [],
+    debtRefs: [],
+  },
+  {
+    key: "industry_admin",
+    label: "Quản trị SaaS Đa Ngành",
+    group: "PLATFORM",
+    primaryPhilosophy: "Multi-Industry Ecosystem & Standardization",
+    supportingPhilosophies: ["Industry Benchmarks", "Plugin Contract SSOT"],
+    mission: "Quản trị, chuẩn hóa và tối ưu hóa hệ sinh thái đa ngành (BOM, Taxonomy, AI Studio, Mẫu in ấn A6 và Tiêu chuẩn ngành).",
+    primaryQuestion: "Hệ sinh thái ngành nào cần chuẩn hóa hoặc cập nhật tiêu chuẩn hôm nay?",
+    homepageModel: "Industry Journey Home",
+    dominantActions: ["Chuẩn hóa", "Cấu hình AI", "Quản lý Ngành", "Định lượng BOM"],
+    status: "AVAILABLE",
+    homepage: "INDUSTRY_JOURNEY_HOME",
+    systemRoleKeys: [],
+    entryHref: "/",
+    navPriority: ["/van-hanh/nganh", "/kho-templates", "/san-pham", "/market-intelligence"],
     debtRefs: [],
   },
   {
@@ -131,7 +150,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "NETWORK_JOURNEY_HOME",
     systemRoleKeys: [],
-    entryHref: "/dieu-phoi",
+    entryHref: "/",
     navPriority: ["/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
     debtRefs: [],
   },
@@ -413,7 +432,25 @@ export function resolveRoleUx(
   systemRoleKey: string | null | undefined,
   organizationType?: string | null
 ): RoleUxDefinition | null {
-  if (!systemRoleKey) return null
+  if (!systemRoleKey && !organizationType) return null
+
+  // Khi là Quản trị nền tảng (PLATFORM hoặc platform_admin):
+  if (
+    organizationType === "PLATFORM" ||
+    systemRoleKey === "platform_admin"
+  ) {
+    const pAdmin = ROLE_UX_CATALOG.find((r) => r.key === "platform_admin")
+    if (pAdmin && pAdmin.status === "AVAILABLE") return pAdmin
+  }
+
+  // Khi là Quản trị SaaS Đa Ngành (INDUSTRY hoặc industry_admin):
+  if (
+    organizationType === "INDUSTRY" ||
+    systemRoleKey === "industry_admin"
+  ) {
+    const indAdmin = ROLE_UX_CATALOG.find((r) => r.key === "industry_admin")
+    if (indAdmin && indAdmin.status === "AVAILABLE") return indAdmin
+  }
 
   // Khi là tổ chức Điện hoa / Mạng lưới (FLOWER_NETWORK hoặc CHAIN):
   const isNetwork =
@@ -426,7 +463,7 @@ export function resolveRoleUx(
     if (fnAdmin && fnAdmin.status === "AVAILABLE") return fnAdmin
   }
 
-  const found = ROLE_UX_CATALOG.find((r) => r.systemRoleKeys.includes(systemRoleKey))
+  const found = ROLE_UX_CATALOG.find((r) => r.systemRoleKeys.includes(systemRoleKey ?? ""))
   if (!found || found.status !== "AVAILABLE") return null
   return found
 }

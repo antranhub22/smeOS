@@ -6,9 +6,11 @@ const recordAuditLog = vi.fn()
 
 vi.mock("@/modules/organization/infra/membership-repository", () => ({
   MembershipRepository: class { findById = findById },
+  getMembershipRepository: () => ({ findById }),
 }))
 vi.mock("@/modules/organization/infra/staff-account-repository", () => ({
   StaffAccountRepository: class { removeMembership = removeMembership },
+  getStaffAccountRepository: () => ({ removeMembership }),
 }))
 vi.mock("@/modules/audit/use-cases/record-audit-log", () => ({ recordAuditLog }))
 

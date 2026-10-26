@@ -1,6 +1,6 @@
 import { conflict, notFound } from "@/core/http/errors"
 import { SOLD_OUT_MESSAGE } from "../domain/product-availability"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { linkAvailability, validateSendCode } from "../domain/greeting-card-rules"
 import { resolveEffectiveStepTimeoutPolicy, isSessionBrowsingExpired } from "../domain/step-timeout-policy"
 import type { GreetingCatalogProduct } from "../domain/greeting-card-types"

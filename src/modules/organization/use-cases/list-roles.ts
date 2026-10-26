@@ -1,7 +1,7 @@
 import type { TenantContext } from "@/core/tenancy"
-import { CapabilityRepository } from "@/modules/organization/infra/capability-repository"
+import { CapabilityRepository, getCapabilityRepository } from "@/modules/organization/infra/capability-repository"
 import type { roles } from "@/modules/organization/infra/entities"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
 import { SYSTEM_ROLES } from "@/modules/organization/domain/system-roles"
 
 export type RoleSummary = {
@@ -22,8 +22,8 @@ export type RoleSummary = {
  * `capability_overrides`.
  */
 export async function listRoles(ctx: TenantContext): Promise<RoleSummary[]> {
-  const roles = new RoleRepository()
-  const capabilities = new CapabilityRepository()
+  const roles = getRoleRepository()
+  const capabilities = getCapabilityRepository()
 
   const [own, systemRoles] = await Promise.all([
     roles.listForOrganization(ctx),

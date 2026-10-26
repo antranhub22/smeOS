@@ -135,4 +135,73 @@ export class BackgroundSweepRepository {
       }
     })
   }
+
+  /**
+   * Lấy dữ liệu quét điều phối chuỗi (order_coordinations kèm settings và orders).
+   */
+  async findSubcontractDispatchSweepData(maxOrders = 100) {
+    const coordinations = await this.db.order_coordinations.findMany({
+      where: {
+        metadata: { not: {} },
+      },
+      select: {
+        id: true,
+        organization_id: true,
+        order_id: true,
+        metadata: true,
+      },
+      take: maxOrders,
+    })
+
+    const activeCoords = coordinations.filter((c) => {
+      const meta = c.metadata as Record<string, unknown> | null
+      if (!meta || typeof meta !== "object") return false
+      const sub = meta.subcontract_dispatch as Record<string, unknown> | undefined
+      if (!sub) return false
+      const status = sub.dispatchStatus as string | undefined
+      return status === "COMMITTED" || status === "CLAIMED_GRACE"
+    })
+
+    if (activeCoords.length === 0) {
+      return {
+        activeCoords: [],
+        orgMap: new Map<string, { id: string; settings: unknown }>(),
+        orderMap: new Map<string, any>(),
+      }
+    }
+
+    const orgIds = [...new Set(activeCoords.map((c) => c.organization_id))]
+    const orgs = await this.db.organizations.findMany({
+      where: { id: { in: orgIds } },
+      select: { id: true, settings: true },
+    })
+    const orgMap = new Map(orgs.map((o) => [o.id, o]))
+
+    const orderIds = activeCoords.map((c) => c.order_id)
+    const orders = await this.db.orders.findMany({
+      where: { id: { in: orderIds } },
+      select: {
+        id: true,
+        code: true,
+        delivery_window: true,
+        delivery_status: true,
+        production_status: true,
+        items: {
+          select: {
+            description: true,
+            metadata: true,
+          },
+        },
+      },
+    })
+    const orderMap = new Map(orders.map((o) => [o.id, o]))
+
+    return { activeCoords, orgMap, orderMap }
+  }
+}
+
+let _backgroundSweepRepositorySingleton: BackgroundSweepRepository | null = null
+export function getBackgroundSweepRepository(): BackgroundSweepRepository {
+  if (!_backgroundSweepRepositorySingleton) _backgroundSweepRepositorySingleton = new BackgroundSweepRepository()
+  return _backgroundSweepRepositorySingleton
 }

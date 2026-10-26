@@ -10,7 +10,7 @@ import { loadEffectiveFieldConfigs } from "@/modules/field-platform/use-cases/ge
 import type { CoordinatorStage } from "../domain/coordinator-types"
 import { defaultNextAction } from "../domain/operation-rules"
 import { axesAfterTransition } from "../domain/stage-transitions"
-import { CoordinatorRepository } from "../infra/coordinator-repository"
+import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import {
   audit,
@@ -29,7 +29,7 @@ export async function updateCoordinatorStage(
   nextAction?: string | undefined
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = new CoordinatorRepository(tx)
+    const repo = getCoordinatorRepository(tx)
     const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
     const from = row.coordination!.stage
     ensureTransition(from, nextStage, await repo.facts(ctx, row))

@@ -13,6 +13,7 @@ vi.mock("@/modules/products/infra/product-analysis-repository")
 // thử nào — ba ca thử phía dưới không dùng `asset_id` nên không cần hành vi thật của hai mock này.
 vi.mock("@/modules/assets/infra/asset-repository", () => ({
   AssetRepository: vi.fn().mockImplementation(() => ({ findById: vi.fn() })),
+  getAssetRepository: vi.fn().mockImplementation(() => ({ findById: vi.fn() })),
 }))
 vi.mock("@/modules/assets/adapters/storage-provider-factory", () => ({
   getStorageProvider: vi.fn().mockReturnValue({ signedUrl: vi.fn() }),
@@ -44,11 +45,9 @@ describe("listApprovedAnalyses", () => {
       { id: "ana-2", approval_state: "APPROVED" },
       { id: "ana-3", approval_state: "APPROVED" },
     ])
-    vi.mocked(ProductAnalysisRepository).mockImplementation(() => ({
-      listApproved: mockListApproved,
-    } as unknown as ProductAnalysisRepository))
+    const mockRepo = { listApproved: mockListApproved } as unknown as ProductAnalysisRepository
 
-    const res = await listApprovedAnalyses(ctx, { limit: 2 })
+    const res = await listApprovedAnalyses(ctx, { limit: 2 }, mockRepo)
     expect(mockListApproved).toHaveBeenCalledWith(ctx, { limit: 3, cursor: null })
     expect(res.data).toHaveLength(2)
     expect(res.next_cursor).toBe("ana-2")
@@ -58,11 +57,9 @@ describe("listApprovedAnalyses", () => {
     const mockListApproved = vi.fn().mockResolvedValue([
       { id: "ana-1", approval_state: "APPROVED" },
     ])
-    vi.mocked(ProductAnalysisRepository).mockImplementation(() => ({
-      listApproved: mockListApproved,
-    } as unknown as ProductAnalysisRepository))
+    const mockRepo = { listApproved: mockListApproved } as unknown as ProductAnalysisRepository
 
-    const res = await listApprovedAnalyses(ctx, { limit: 2 })
+    const res = await listApprovedAnalyses(ctx, { limit: 2 }, mockRepo)
     expect(res.data).toHaveLength(1)
     expect(res.next_cursor).toBeNull()
   })

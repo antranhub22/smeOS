@@ -137,3 +137,9 @@ export class CapabilityRepository {
     })
   }
 }
+
+let _capabilityRepositorySingleton: CapabilityRepository | null = null
+export function getCapabilityRepository(): CapabilityRepository {
+  if (!_capabilityRepositorySingleton) _capabilityRepositorySingleton = new CapabilityRepository()
+  return _capabilityRepositorySingleton
+}

@@ -2,7 +2,7 @@ import { openSecret, sealSecret } from "@/core/security/secret-box"
 import { runInBackground } from "@/core/runtime/background"
 import { log } from "@/core/observability/log"
 import { publicAppUrl } from "@/lib/public-url"
-import { GreetingNotificationRepository } from "../infra/greeting-notification-repository"
+import { GreetingNotificationRepository, getGreetingNotificationRepository } from "../infra/greeting-notification-repository"
 import {
   NOTIFY_EVENT_LABELS,
   maskPhone,
@@ -40,7 +40,7 @@ export async function notifyOrderEvent(
   organizationId: string,
   orderId: string,
   event: NotifyEvent,
-  repo = new GreetingNotificationRepository(),
+  repo = getGreetingNotificationRepository(),
   fetchImpl: FetchLike = fetch
 ): Promise<NotifyOutcome> {
   const config = await repo.getChannelConfig(organizationId)

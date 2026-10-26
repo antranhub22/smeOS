@@ -2,8 +2,8 @@ import { normalizeOrderAddress } from "../domain/delivery-address"
 import { orderScheduleError } from "../domain/holiday-policy"
 import { assertHolidayCapacity } from "./holiday-capacity"
 import { unprocessable, validationFailed } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { BrochureOrderRepository } from "../infra/brochure-order-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
 import { validateCustomerOrderInput } from "../domain/greeting-card-rules"
 import { paymentInstructionsFor } from "./payment-instructions"
 import type { CustomerOrderSubmitInput, ProductSnapshot } from "../domain/greeting-card-types"
@@ -18,8 +18,8 @@ export { DEFAULT_TIME_SLOT, type BrochureOrderResult } from "./place-brochure-or
 export async function submitBrochureOrder(
   sendCode: string,
   rawInput: CustomerOrderSubmitInput,
-  repo = new GreetingCardRepository(),
-  orders = new BrochureOrderRepository()
+  repo = getGreetingCardRepository(),
+  orders = getBrochureOrderRepository()
 ): Promise<BrochureOrderResult> {
   const address = normalizeOrderAddress(rawInput)
   const input = address.input
@@ -98,7 +98,7 @@ async function existingOrderResult(
 export async function quoteBrochureSession(
   sendCode: string,
   req: QuoteRequest,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ): Promise<QuoteResult> {
   const session = await loadPublicSession(sendCode, repo)
   if (!session.selected_product_id) throw unprocessable("Vui lòng chọn mẫu hoa trước")

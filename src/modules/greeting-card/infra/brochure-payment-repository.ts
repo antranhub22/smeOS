@@ -313,3 +313,9 @@ export class BrochurePaymentRepository {
     })
   }
 }
+
+let _brochurePaymentRepositorySingleton: BrochurePaymentRepository | null = null
+export function getBrochurePaymentRepository(): BrochurePaymentRepository {
+  if (!_brochurePaymentRepositorySingleton) _brochurePaymentRepositorySingleton = new BrochurePaymentRepository()
+  return _brochurePaymentRepositorySingleton
+}

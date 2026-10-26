@@ -1,7 +1,7 @@
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { requireCapability } from "@/core/rbac/capabilities"
-import { FieldDefinitionRepository } from "../infra/field-definition-repository"
-import { FieldConfigOverrideRepository } from "../infra/field-config-override-repository"
+import { FieldDefinitionRepository, getFieldDefinitionRepository } from "../infra/field-definition-repository"
+import { FieldConfigOverrideRepository, getFieldConfigOverrideRepository } from "../infra/field-config-override-repository"
 import { mapDefinitionRowToFloorShape, mapOverrideRowToFieldOverride } from "../infra/row-mappers"
 import { computeEffectiveFieldConfig, type EffectiveFieldConfig } from "../domain/field-rules"
 import type { FieldEntity } from "../domain/core-field-registry"
@@ -25,8 +25,8 @@ export async function loadEffectiveFieldConfigs(
   ctx: TenantContext,
   entity?: FieldEntity
 ): Promise<EffectiveFieldConfig[]> {
-  const definitions = await new FieldDefinitionRepository().list(entity)
-  const overrideRows = await new FieldConfigOverrideRepository().listForOrganization(ctx)
+  const definitions = await getFieldDefinitionRepository().list(entity)
+  const overrideRows = await getFieldConfigOverrideRepository().listForOrganization(ctx)
   const overridesByKey = new Map(
     overrideRows.filter((r) => r.target === "FIELD").map((r) => [r.override_key, mapOverrideRowToFieldOverride(r)])
   )

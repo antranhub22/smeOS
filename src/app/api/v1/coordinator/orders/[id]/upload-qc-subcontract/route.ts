@@ -15,7 +15,6 @@ import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
@@ -24,7 +23,6 @@ import {
 import { verifyQcPhotoWithAi } from "@/modules/greeting-card/use-cases/verify-qc-photo-ai"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { getOrderRepository } from "@/modules/orders/infra/order-repository"
-import type { Prisma } from "@/generated/prisma/client"
 
 const MAX_QC_PHOTO_BYTES = 10 * 1024 * 1024
 
@@ -99,24 +97,18 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const publicPhotoUrl = await storage.signedUrl(storageKey, 604800, "GET")
 
   // Cập nhật DB — giống store upload nhưng actor là coordinator
-  const coord = await prisma.order_coordinations.findUnique({ where: { order_id: order.id } })
+  const coord = await repo.findCoordination(order.id)
   const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
   const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
 
   const orderRepo = getOrderRepository()
 
-  await prisma.order_coordinations.update({
-    where: { order_id: order.id },
-    data: {
-      metadata: {
-        ...existingMeta,
-        qc_photos: [...existingQcPhotos, storageKey],
-        last_qc_uploaded_at: new Date().toISOString(),
-        last_qc_uploaded_by: `coordinator:${ctx.userId}`,
-        last_qc_note: note || null,
-        auto_bypassed_coordinator: false, // coordinator thực hiện trực tiếp
-      } as unknown as Prisma.InputJsonValue,
-    },
+  await repo.upsertCoordinationMeta(order.id, order.organization_id, {
+    qc_photos: [...existingQcPhotos, storageKey],
+    last_qc_uploaded_at: new Date().toISOString(),
+    last_qc_uploaded_by: `coordinator:${ctx.userId}`,
+    last_qc_note: note || null,
+    auto_bypassed_coordinator: false,
   })
 
   await orderRepo.update(order.organization_id, order.id, {

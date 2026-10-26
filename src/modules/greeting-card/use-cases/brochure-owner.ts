@@ -3,7 +3,7 @@ import { readCookie } from "@/core/http/cookies"
 import { validateSendCode } from "../domain/greeting-card-rules"
 import { decideViewer, ownerCookieName, OWNER_COOKIE_MAX_AGE, type BrochureViewer } from "../domain/session-owner"
 import { phoneLast4Matches } from "../domain/tracking-privacy"
-import { SessionOwnerRepository } from "../infra/session-owner-repository"
+import { SessionOwnerRepository, getSessionOwnerRepository } from "../infra/session-owner-repository"
 import { signOwnerToken, verifyOwnerToken } from "../infra/session-owner-token"
 
 export type OwnerCookie = { name: string; value: string; maxAge: number }
@@ -24,7 +24,7 @@ export async function isBrochureOwnerOrStaff(request: Request, sendCode: string)
     const { SessionOwnerRepository } = await import("../infra/session-owner-repository")
     const orgId = await staffOrganizationId(request.headers)
     if (!orgId) return false
-    const session = await new SessionOwnerRepository().findSession(sendCode)
+    const session = await getSessionOwnerRepository().findSession(sendCode)
     return session?.organization_id === orgId
   } catch {
     return false
@@ -43,7 +43,7 @@ export async function assertBrochureOwner(request: Request, sendCode: string): P
 export async function brochureViewer(
   sendCode: string,
   input: { ownerToken: string | null; staffOrganizationId: string | null },
-  repo = new SessionOwnerRepository(),
+  repo = getSessionOwnerRepository(),
 ): Promise<{ viewer: BrochureViewer; shareCode: string | null } | null> {
   if (!validateSendCode(sendCode)) return null
   const session = await repo.findSession(sendCode)
@@ -63,7 +63,7 @@ export async function brochureViewer(
 export async function claimBrochureSession(
   request: Request,
   sendCode: string,
-  repo = new SessionOwnerRepository(),
+  repo = getSessionOwnerRepository(),
 ): Promise<OwnerCookie> {
   if (!validateSendCode(sendCode)) throw notFound()
   const session = await repo.findSession(sendCode)
@@ -78,7 +78,7 @@ export async function claimBrochureSession(
  * người nhà chuyển khoản hộ): đúng 4 số cuối SĐT người đặt thì trình duyệt này cũng thành chủ phiên.
  * Phiên chưa có đơn hoặc sai số → 404 (không lộ phiên có tồn tại). Bên gọi giới hạn số lần thử.
  */
-export async function unlockBrochureSession(sendCode: string, phoneLast4: string, repo = new SessionOwnerRepository()): Promise<OwnerCookie> {
+export async function unlockBrochureSession(sendCode: string, phoneLast4: string, repo = getSessionOwnerRepository()): Promise<OwnerCookie> {
   if (!validateSendCode(sendCode)) throw notFound()
   const session = await repo.findSession(sendCode)
   if (!session) throw notFound()
@@ -94,14 +94,14 @@ export async function unlockBrochureSession(sendCode: string, phoneLast4: string
 export async function grantBrochureOwner(
   session: { id: string; organization_id: string; send_code: string },
   source: string,
-  repo = new SessionOwnerRepository(),
+  repo = getSessionOwnerRepository(),
 ): Promise<OwnerCookie> {
   await repo.claim(session.organization_id, session.id, source, true)
   return cookieFor(session.send_code)
 }
 
 /** Như `grantBrochureOwner` nhưng tra phiên theo mã (bên gọi chỉ có mã phiên vừa tạo). */
-export async function grantBrochureOwnerByCode(sendCode: string, source: string, repo = new SessionOwnerRepository()): Promise<OwnerCookie | null> {
+export async function grantBrochureOwnerByCode(sendCode: string, source: string, repo = getSessionOwnerRepository()): Promise<OwnerCookie | null> {
   const session = await repo.findSession(sendCode)
   return session ? grantBrochureOwner(session, source, repo) : null
 }

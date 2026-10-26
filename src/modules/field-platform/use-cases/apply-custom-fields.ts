@@ -1,7 +1,7 @@
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { AppError } from "@/core/http/errors"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { FieldDefinitionRepository } from "../infra/field-definition-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { FieldDefinitionRepository, getFieldDefinitionRepository } from "../infra/field-definition-repository"
 import { validateCustomFieldsInput, type CustomFieldDefinitionInput } from "../domain/custom-field-schema"
 import type { FieldEntity } from "../domain/core-field-registry"
 import type { field_definitions } from "../infra/entities"
@@ -23,7 +23,7 @@ export async function applyCustomFields(
   entity: FieldEntity,
   input: Record<string, unknown> | null | undefined
 ): Promise<Record<string, unknown>> {
-  const definitions = await new FieldDefinitionRepository().list(entity)
+  const definitions = await getFieldDefinitionRepository().list(entity)
   const activeCustom = definitions.filter((d) => d.origin === "CUSTOM" && d.status === "ACTIVE")
 
   const activeDefs: CustomFieldDefinitionInput[] = activeCustom.map((d) => ({
@@ -43,7 +43,7 @@ export async function applyCustomFields(
   // assets cùng tổ chức với kiểu tệp/ảnh").
   const assetFields = activeCustom.filter((d) => d.data_type === "IMAGE" || d.data_type === "FILE")
   if (assetFields.length > 0) {
-    const assetRepo = new AssetRepository()
+    const assetRepo = getAssetRepository()
     for (const def of assetFields) {
       const value = validated[def.key]
       if (typeof value !== "string") continue

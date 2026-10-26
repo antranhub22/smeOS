@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest"
-import { getChainStoresData } from "./get-chain-stores-data"
-import { getStoreFolderData } from "./get-store-folder-data"
+import { getChainStoresData } from "../get-chain-stores-data"
+import { getStoreFolderData } from "../get-store-folder-data"
 import { prisma } from "@/core/tenancy/infra/prisma"
 
 describe("Consolidated Chain Stores Data Use-Cases (/du-lieu)", () => {

@@ -19,7 +19,7 @@
 
 import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { getBackgroundSweepRepository } from "@/modules/greeting-card/infra/background-sweep-repository"
 import { parseChainDispatchPolicy } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
@@ -59,30 +59,9 @@ export const POST = handle(async (request) => {
   const sentDetails: Array<{ orderCode: string; step: string; message?: string | undefined }> = []
   const errors: string[] = []
 
-  // 1. Lấy danh sách order_coordinations có subcontract đang COMMITTED/CLAIMED_GRACE
-  const coordinations = await prisma.order_coordinations.findMany({
-    where: {
-      // JSON filter: tìm các record có subcontract_dispatch không null
-      metadata: { not: {} },
-    },
-    select: {
-      id: true,
-      organization_id: true,
-      order_id: true,
-      metadata: true,
-    },
-    take: MAX_ORDERS_PER_SWEEP,
-  })
-
-  // Lọc chỉ những đơn đang ở trạng thái cần nhắc việc
-  const activeCoords = coordinations.filter((c) => {
-    const meta = c.metadata as Record<string, unknown> | null
-    if (!meta || typeof meta !== "object") return false
-    const sub = meta.subcontract_dispatch as Record<string, unknown> | undefined
-    if (!sub) return false
-    const status = sub.dispatchStatus as string | undefined
-    return status === "COMMITTED" || status === "CLAIMED_GRACE"
-  })
+  // 1. Lấy dữ liệu quét điều phối chuỗi qua BackgroundSweepRepository (Clean Architecture)
+  const sweepRepo = getBackgroundSweepRepository()
+  const { activeCoords, orgMap, orderMap } = await sweepRepo.findSubcontractDispatchSweepData(MAX_ORDERS_PER_SWEEP)
 
   if (activeCoords.length === 0) {
     return jsonResponse({
@@ -92,34 +71,6 @@ export const POST = handle(async (request) => {
       message: "Không có đơn gia công nào cần nhắc việc.",
     })
   }
-
-  // 2. Nhóm theo organization để lấy settings một lần
-  const orgIds = [...new Set(activeCoords.map((c) => c.organization_id))]
-  const orgs = await prisma.organizations.findMany({
-    where: { id: { in: orgIds } },
-    select: { id: true, settings: true },
-  })
-  const orgMap = new Map(orgs.map((o) => [o.id, o]))
-
-  // 3. Lấy thông tin đơn hàng (delivery_window, items) theo batch
-  const orderIds = activeCoords.map((c) => c.order_id)
-  const orders = await prisma.orders.findMany({
-    where: { id: { in: orderIds } },
-    select: {
-      id: true,
-      code: true,
-      delivery_window: true,
-      delivery_status: true,
-      production_status: true,
-      items: {
-        select: {
-          description: true,
-          metadata: true,
-        },
-      },
-    },
-  })
-  const orderMap = new Map(orders.map((o) => [o.id, o]))
 
   // 4. Xử lý từng coordination
   for (const coord of activeCoords) {

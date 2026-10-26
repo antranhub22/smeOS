@@ -66,20 +66,54 @@ export function FeaturedSpotlightCard({
             </p>
           </div>
 
-          {/* Ba điểm nổi bật của quy trình */}
+          {/* Các điểm nổi bật của quy trình */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2">
-            <div className="flex items-center gap-2 text-body-sm font-medium text-text">
-              <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
-              <span>Gửi link qua Zalo</span>
-            </div>
-            <div className="flex items-center gap-2 text-body-sm font-medium text-text">
-              <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
-              <span>Khách tự chọn mẫu và gửi lời chúc</span>
-            </div>
-            <div className="flex items-center gap-2 text-body-sm font-medium text-text">
-              <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
-              <span>Đơn vào hệ thống và giao việc cho {terms.makerTitle.toLowerCase()}</span>
-            </div>
+            {journey.id === "view-platform-overview" ? (
+              <>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>Số liệu vận hành thời gian thực</span>
+                </div>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>Sức khỏe microservices & CSDL</span>
+                </div>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>Giám sát tổ chức & hạn mức AI</span>
+                </div>
+              </>
+            ) : journey.id === "industry-ecosystem-overview" ? (
+              <>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>7 Ngành hàng chuẩn hóa SSOT</span>
+                </div>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>Đồng bộ BOM & ấn phẩm in A6</span>
+                </div>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>Bộ chuẩn thị giác AI theo ngành</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>Gửi link qua Zalo / Tin nhắn</span>
+                </div>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>Khách tự chọn mẫu và gửi thông tin</span>
+                </div>
+                <div className="flex items-center gap-2 text-body-sm font-medium text-text">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                  <span>Đơn vào hệ thống và giao việc cho {terms.makerTitle.toLowerCase()}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -89,14 +123,22 @@ export function FeaturedSpotlightCard({
             <span>
               {disabled
                 ? COMING_SOON_LABEL
+                : journey.id === "view-platform-overview"
+                ? "Xem tổng quan vận hành"
+                : journey.id === "industry-ecosystem-overview"
+                ? "Khám phá hệ sinh thái"
                 : organization?.industry && organization.industry !== "FLORAL"
                 ? `Tạo link ${terms.catalogTitle.toLowerCase()}`
-                : "Tạo link đặt hoa"}
+                : "Tạo link đặt hàng"}
             </span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </div>
           <span className="text-caption font-medium text-text-muted">
-            Nên dùng mỗi ngày cho cửa hàng
+            {journey.id === "view-platform-overview"
+              ? "Dành cho Quản trị viên Nền tảng"
+              : journey.id === "industry-ecosystem-overview"
+              ? "Dành cho Quản trị SaaS Đa Ngành"
+              : "Nên dùng mỗi ngày cho cửa hàng"}
           </span>
         </div>
       </div>

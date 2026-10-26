@@ -1,6 +1,6 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 import { getCurrentOrganization, type OrganizationDetail } from "./get-current-organization"
 
@@ -19,7 +19,7 @@ export async function updateCurrentOrganization(
   ctx: TenantContext,
   input: UpdateCurrentOrganizationInput
 ): Promise<OrganizationDetail> {
-  const repository = new OrganizationRepository()
+  const repository = getOrganizationRepository()
 
   if (input.name === undefined && input.settings === undefined) {
     throw validationFailed({ body: "Không có trường nào để sửa" })

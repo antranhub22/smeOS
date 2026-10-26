@@ -42,7 +42,7 @@ export function serializeClearedSessionCookie(): string {
 export const SSO_COOKIE = "smeos_sso"
 
 export function readSsoCookie(request: Request): string | null {
-  return readCookie(request, SSO_COOKIE)
+  return readCookie(request, SSO_COOKIE) ?? readCookie(request, "floraos_sso")
 }
 
 export function serializeSsoCookie(token: string, maxAgeSeconds: number): string {

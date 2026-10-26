@@ -86,3 +86,9 @@ export class DismissalRestoreRepository {
     })
   }
 }
+
+let _dismissalRestoreRepositorySingleton: DismissalRestoreRepository | null = null
+export function getDismissalRestoreRepository(): DismissalRestoreRepository {
+  if (!_dismissalRestoreRepositorySingleton) _dismissalRestoreRepositorySingleton = new DismissalRestoreRepository()
+  return _dismissalRestoreRepositorySingleton
+}

@@ -11,8 +11,7 @@ import {
 } from "../domain/chain-collection-profile"
 import { type PropagationTarget } from "../domain/field-registry-v2"
 import { STANDARD_G1_CORE_FIELDS } from "../domain/standard-core-fields"
-import { type IChainCollectionProfileRepository } from "../infra/chain-collection-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { type IChainCollectionProfileRepository, getChainCollectionProfileRepository } from "../infra/chain-collection-repository"
 
 export interface StoreCollectedItemView {
   readonly fieldKey: string
@@ -36,13 +35,10 @@ export interface StoreCollectionTransparencyResult {
 export async function getStoreCollectionTransparency(
   storeId: string,
   organizationId: string,
-  repo: IChainCollectionProfileRepository
+  repo: IChainCollectionProfileRepository = getChainCollectionProfileRepository()
 ): Promise<StoreCollectionTransparencyResult> {
   // 1. Fetch store/branch details
-  const branch = await prisma.branches.findUnique({
-    where: { id: storeId },
-    select: { id: true, name: true, organization_id: true },
-  })
+  const branch = await repo.findBranchBasic(storeId)
 
   const storeName = branch?.name ?? "Cửa hàng"
 

@@ -28,17 +28,28 @@ import { mediaVariantBodySchema } from "@/modules/creative-production/contracts/
 
 const ROOT = path.resolve(__dirname, "../../..")
 
-const enqueueJob = vi.fn()
-const findById = vi.fn()
+const { enqueueJob, findById, findJobById } = vi.hoisted(() => ({
+  enqueueJob: vi.fn(),
+  findById: vi.fn(),
+  findJobById: vi.fn(),
+}))
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({
   enqueueJob: (...args: unknown[]) => enqueueJob(...args),
 }))
-vi.mock("@/modules/assets/infra/asset-repository", () => ({
-  AssetRepository: vi.fn().mockImplementation(() => ({ findById })),
-}))
-vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({ findById: vi.fn() })),
-}))
+vi.mock("@/modules/assets/infra/asset-repository", () => {
+  const instance = { findById }
+  return {
+    AssetRepository: vi.fn().mockImplementation(() => instance),
+    getAssetRepository: vi.fn().mockImplementation(() => instance),
+  }
+})
+vi.mock("@/modules/jobs/infra/generation-job-repository", () => {
+  const instance = { findById: findJobById }
+  return {
+    GenerationJobRepository: vi.fn().mockImplementation(() => instance),
+    getGenerationJobRepository: vi.fn().mockImplementation(() => instance),
+  }
+})
 const { requestCloudVariant, requestVariants } = await import("@/modules/media/use-cases/request-variants")
 
 const ctx = { organizationId: "org-1", userId: "u-1" } as unknown as TenantContext

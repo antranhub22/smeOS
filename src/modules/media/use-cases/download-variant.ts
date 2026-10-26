@@ -1,9 +1,9 @@
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
-import { JobEventRepository } from "@/modules/jobs/infra/job-event-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { JobEventRepository, getJobEventRepository } from "@/modules/jobs/infra/job-event-repository"
 import { canApproveVariant, parseVariantIntegrityBlock } from "@/modules/media/domain/variant-rules"
 
 const HAN_URL_GIAY = 5 * 60
@@ -24,16 +24,16 @@ export async function downloadVariant(
   jobId: string,
   assetId: string
 ): Promise<{ url: string; asset_id: string; expires_in: number }> {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await getGenerationJobRepository().findById(ctx, jobId)
   if (!job) throw notFound()
 
-  const suKien = await new JobEventRepository().findLatestByType(jobId, "variant_integrity")
+  const suKien = await getJobEventRepository().findLatestByType(jobId, "variant_integrity")
   const integrity = parseVariantIntegrityBlock(suKien?.payload)
   if (integrity && !canApproveVariant(integrity.result)) {
     throw conflict("Cổng Subject Integrity đã từ chối lượt này — chỉ Master Image còn dùng được")
   }
 
-  const thuocJob = await new AssetRepository().listByJobId(ctx, jobId, "MARKETING")
+  const thuocJob = await getAssetRepository().listByJobId(ctx, jobId, "MARKETING")
   const target = thuocJob.find((a) => a.id === assetId)
   if (!target) throw notFound()
 

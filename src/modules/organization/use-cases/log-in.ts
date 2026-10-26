@@ -1,12 +1,12 @@
 import { AppError } from "@/core/http/errors"
 import { normalizeEmail } from "@/modules/organization/domain/credentials"
 import { expiresAt } from "@/modules/organization/domain/session-policy"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
 import { verifyPassword } from "@/modules/organization/infra/password-hasher"
-import { SessionRepository } from "@/modules/organization/infra/session-repository"
+import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
 import { hashSessionToken, newSessionToken } from "@/modules/organization/infra/session-token"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
-import { UserRepository } from "@/modules/organization/infra/user-repository"
+import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
 
 export type LogInInput = { email: string; password: string }
 
@@ -27,8 +27,8 @@ function rejected(): AppError {
 }
 
 export async function logIn(input: LogInInput): Promise<LogInResult> {
-  const users = new UserRepository()
-  const memberships = new MembershipRepository()
+  const users = getUserRepository()
+  const memberships = getMembershipRepository()
 
   const email = normalizeEmail(input.email)
   const user = await users.findByEmail(email)
@@ -46,7 +46,7 @@ export async function logIn(input: LogInInput): Promise<LogInResult> {
   // `resolveSession`). Gói trong transaction để không có khoảnh khắc nào hai
   // phiên cùng sống.
   await runInTransaction(async (tx) => {
-    const sessions = new SessionRepository(tx)
+    const sessions = getSessionRepository(tx)
     await sessions.revokeAllActiveForUser(user.id, now)
     await sessions.create({
       user_id: user.id,

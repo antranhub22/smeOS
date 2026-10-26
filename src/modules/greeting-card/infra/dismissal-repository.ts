@@ -128,3 +128,9 @@ export class DismissalRepository {
     return this.decide(systemContext(organizationId), { ...t, approve: true, auto: true })
   }
 }
+
+let _dismissalRepositorySingleton: DismissalRepository | null = null
+export function getDismissalRepository(): DismissalRepository {
+  if (!_dismissalRepositorySingleton) _dismissalRepositorySingleton = new DismissalRepository()
+  return _dismissalRepositorySingleton
+}

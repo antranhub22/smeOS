@@ -1,9 +1,9 @@
 import type { TenantContext } from "@/core/tenancy"
 import { notFound } from "@/core/http/errors"
 import { getCurrentOrganization } from "@/modules/organization/use-cases/get-current-organization"
-import { TrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
-import { GreetingMessageRepository } from "../infra/greeting-message-repository"
+import { TrackingPipelineRepository, getTrackingPipelineRepository } from "../infra/tracking-pipeline-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingMessageRepository, getGreetingMessageRepository } from "../infra/greeting-message-repository"
 import { parseStepSla } from "../domain/step-sla"
 import { EVENT_ENTERS_STEP, EVENT_LABEL, stepSegments, type TimelineEvent } from "../domain/tracking-timeline"
 import { paginate } from "../domain/tracking-views"
@@ -23,9 +23,9 @@ export async function getTrackingTimeline(
   ref: { orderId?: string | undefined; sessionId?: string | undefined },
   page: { limit: number; cursor?: string | undefined },
   now = new Date(),
-  repo = new TrackingPipelineRepository(),
+  repo = getTrackingPipelineRepository(),
 ) {
-  await visibleTarget(ctx, ref, new GreetingMessageRepository())
+  await visibleTarget(ctx, ref, getGreetingMessageRepository())
   const src = await repo.timelineSource(ctx, ref)
   if (!src) throw notFound()
 
@@ -92,7 +92,7 @@ export async function getTrackingTimeline(
   if (proofBalanceId) assetIds.push(proofBalanceId)
 
   const urlMap = assetIds.length > 0
-    ? await new GreetingCardRepository().getAssetsStorageMap(orgId, assetIds)
+    ? await getGreetingCardRepository().getAssetsStorageMap(orgId, assetIds)
     : new Map<string, string>()
 
   // Gắn imageUrls vào event tương ứng

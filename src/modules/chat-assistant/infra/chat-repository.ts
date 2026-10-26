@@ -112,3 +112,9 @@ export class ChatRepository {
     }
   }
 }
+
+let _chatRepo: ChatRepository | null = null
+export function getChatRepository(): ChatRepository {
+  if (!_chatRepo) _chatRepo = new ChatRepository()
+  return _chatRepo
+}

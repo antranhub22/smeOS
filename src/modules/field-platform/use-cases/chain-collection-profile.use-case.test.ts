@@ -16,6 +16,11 @@ describe("Chain Collection Profile Use-Cases (§9.5.8)", () => {
     }),
     getStoreDsa: vi.fn(async () => null),
     listActiveDsas: vi.fn(async () => []),
+    listBranchesWithInventory: vi.fn(async () => []),
+    findBranchBasic: vi.fn(async () => null),
+    findBranchWithFullProfiles: vi.fn(async () => null),
+    countActiveBranches: vi.fn(async () => 0),
+    createPartnerBranch: vi.fn(async () => ({ id: "branch-1", name: "Test Store", code: "TST" })),
   }
 
   it("getChainCollectionProfile returns default profile when non-existent", async () => {

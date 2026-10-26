@@ -1,4 +1,4 @@
-import { SessionRepository } from "@/modules/organization/infra/session-repository"
+import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
 import { hashSessionToken } from "@/modules/organization/infra/session-token"
 
 /**
@@ -8,7 +8,7 @@ import { hashSessionToken } from "@/modules/organization/infra/session-token"
 export async function logOut(token: string | null): Promise<void> {
   if (!token) return
 
-  const sessions = new SessionRepository()
+  const sessions = getSessionRepository()
   const session = await sessions.findByTokenHash(hashSessionToken(token))
   if (!session || session.revoked_at) return
 

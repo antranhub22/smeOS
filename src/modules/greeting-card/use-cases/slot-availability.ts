@@ -1,7 +1,7 @@
 import { validationFailed } from "@/core/http/errors"
 import { parseShippingConfig } from "../domain/brochure-pricing"
 import { capacityOf, fullSlotLabels, slotFullMessage, slotIdOfTimeSlot } from "../domain/slot-capacity"
-import { BrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
+import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 
 /** Trần của khung giờ khách chọn, để giao dịch tạo đơn kiểm lại có khoá; `null` = không thuộc khung nào. */
 export function slotGuardFor(shopSettings: unknown, timeSlot: string | undefined): { slotId: string; max: number } | null {
@@ -14,7 +14,7 @@ export async function assertSlotOpen(
   organizationId: string,
   input: { deliveryDate: string; deliveryTimeSlot?: string | undefined },
   shopSettings: unknown,
-  checkout = new BrochureCheckoutRepository()
+  checkout = getBrochureCheckoutRepository()
 ): Promise<void> {
   const guard = slotGuardFor(shopSettings, input.deliveryTimeSlot)
   if (!guard) return
@@ -27,7 +27,7 @@ export async function fullSlotsOn(
   organizationId: string,
   date: string | undefined,
   shopSettings: unknown,
-  checkout = new BrochureCheckoutRepository()
+  checkout = getBrochureCheckoutRepository()
 ): Promise<string[]> {
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return []
   return fullSlotLabels(await checkout.countOrdersBySlot(organizationId, date), parseShippingConfig(shopSettings).slotCapacity)

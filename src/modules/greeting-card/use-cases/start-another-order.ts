@@ -1,5 +1,5 @@
 import { conflict } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { loadPublicSession } from "./brochure-session-access"
 import { linkExpiryFrom, parseLinkLifetimeHours } from "../domain/link-lifetime"
 import { resolveEffectiveStepTimeoutPolicy } from "../domain/step-timeout-policy"
@@ -14,7 +14,7 @@ import { grantBrochureOwner, type OwnerCookie } from "./brochure-owner"
  */
 export async function startAnotherOrder(
   sendCode: string,
-  repo = new GreetingCardRepository(),
+  repo = getGreetingCardRepository(),
 ): Promise<{ sendCode: string; ownerCookie: OwnerCookie }> {
   const session = await loadPublicSession(sendCode, repo)
   if (!session.order_id) throw conflict("Link này chưa có đơn — hãy đặt đơn trên chính link này")

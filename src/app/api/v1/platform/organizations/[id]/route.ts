@@ -4,7 +4,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { getOrganization } from "@/modules/platform/use-cases/get-organization"
 import { approveOrganizationModelChange } from "@/modules/platform/use-cases/approve-organization-model-change"
-import type { Prisma } from "@/generated/prisma/client"
+import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const pctx = await requirePlatformContext(request)
@@ -50,31 +50,23 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
   }
 
   if (parsed.data.clear_pending_language_unlock) {
-    const { prisma } = await import("@/core/tenancy/infra/prisma")
-    const org = await prisma.organizations.findUnique({ where: { id }, select: { settings: true } })
+    const orgRepo = getOrganizationRepository()
+    const org = await orgRepo.findById(id)
     if (org) {
       const settings = (org.settings as Record<string, unknown> | null) ?? {}
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { pending_language_unlock: _, ...rest } = settings
-      await prisma.organizations.update({
-        where: { id },
-        data: { settings: rest as unknown as Prisma.InputJsonValue },
-      })
+      await orgRepo.updateTypeAndSettings(org.id, org.type, rest)
     }
     result = { success: true, action: "clear_pending_language_unlock" }
   }
 
   if (parsed.data.clear_pending_model_change) {
-    const { prisma } = await import("@/core/tenancy/infra/prisma")
-    const org = await prisma.organizations.findUnique({ where: { id }, select: { settings: true } })
+    const orgRepo = getOrganizationRepository()
+    const org = await orgRepo.findById(id)
     if (org) {
       const settings = (org.settings as Record<string, unknown> | null) ?? {}
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { pending_model_change: _, ...rest } = settings
-      await prisma.organizations.update({
-        where: { id },
-        data: { settings: rest as unknown as Prisma.InputJsonValue },
-      })
+      await orgRepo.updateTypeAndSettings(org.id, org.type, rest)
     }
     result = { success: true, action: "clear_pending_model_change" }
   }

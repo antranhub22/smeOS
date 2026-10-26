@@ -12,15 +12,15 @@ import {
 } from "@/modules/organization/domain/experience"
 import { slugCandidates } from "@/modules/organization/domain/slug"
 import { FOUNDER_ROLE_KEY } from "@/modules/organization/domain/system-roles"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
-import { RegistrationRequestRepository } from "@/modules/organization/infra/registration-request-repository"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
-import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
+import { RegistrationRequestRepository, getRegistrationRequestRepository } from "@/modules/organization/infra/registration-request-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
+import { OccasionRepository, getOccasionRepository } from "@/modules/organization/infra/occasion-repository"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
-import { UserRepository } from "@/modules/organization/infra/user-repository"
-import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
+import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { seedExperienceMasterProfile } from "@/modules/profiles/use-cases/seed-experience-profile"
 
 export type SignUpInput = {
@@ -68,12 +68,12 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
   const passwordHash = await hashPassword(input.password)
 
   return runInTransaction(async (tx) => {
-    const users = new UserRepository(tx)
-    const organizations = new OrganizationRepository(tx)
-    const workspaces = new WorkspaceRepository(tx)
-    const roles = new RoleRepository(tx)
-    const memberships = new MembershipRepository(tx)
-    const registrations = new RegistrationRequestRepository(tx)
+    const users = getUserRepository(tx)
+    const organizations = getOrganizationRepository(tx)
+    const workspaces = getWorkspaceRepository(tx)
+    const roles = getRoleRepository(tx)
+    const memberships = getMembershipRepository(tx)
+    const registrations = getRegistrationRequestRepository(tx)
 
     if (await users.findByEmail(email)) {
       throw conflict("Địa chỉ thư này đã có tài khoản")
@@ -119,7 +119,7 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
       trial_status: "ACTIVE",
     })
 
-    await new OccasionRepository(tx).seedDefault({
+    await getOccasionRepository(tx).seedDefault({
       organizationId: organization.id,
       workspaceId: workspace.id,
       userId: user.id,

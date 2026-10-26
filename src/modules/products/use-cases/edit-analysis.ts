@@ -6,7 +6,7 @@ import {
   canEditAnalysis,
   missingKeysInEdit,
 } from "@/modules/products/domain/product-analysis-rules"
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
+import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
 
 import { getAnalysis, type AnalysisDetail } from "./get-analysis"
 
@@ -25,7 +25,7 @@ export async function editAnalysis(
   id: string,
   edited: Record<string, unknown>
 ): Promise<AnalysisDetail> {
-  const repo = new ProductAnalysisRepository()
+  const repo = getProductAnalysisRepository()
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
   if (!canEditAnalysis(current.approval_state)) {
@@ -40,7 +40,7 @@ export async function editAnalysis(
   }
 
   await runInTransaction(async (tx) => {
-    const repoTx = new ProductAnalysisRepository(tx)
+    const repoTx = getProductAnalysisRepository(tx)
     const updated = await repoTx.updateEdited(ctx, id, edited)
     if (!updated) throw conflict("Bản ghi vừa đổi trạng thái, thử lại")
 

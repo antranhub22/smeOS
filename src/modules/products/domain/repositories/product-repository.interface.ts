@@ -91,4 +91,5 @@ export interface IProductRepository {
   create(ctx: TenantContext, input: CreateProductInput): Promise<ProductEntity>
   update(ctx: TenantContext, id: string, input: UpdateProductInput): Promise<ProductEntity | null>
   updateIdentity(ctx: TenantContext, id: string, input: UpdateProductIdentityInput): Promise<ProductEntity | null>
+  linkMainImage?(ctx: TenantContext, productId: string, assetId: string): Promise<void>
 }

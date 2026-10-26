@@ -13,11 +13,11 @@
  * Platform Admin có quyền xem RAW không qua DSA.
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { signStorageUrl } from "@/modules/assets/infra/storage-signing"
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
+import { PlatformRecordsRepository, getPlatformRecordsRepository } from "../infra/platform-records-repository"
 
 export type RecordDomain =
   | "catalog"
@@ -50,7 +50,8 @@ export async function getPlatformOrgRecords(
   pctx: PlatformContext,
   orgId: string,
   domain: RecordDomain,
-  page = 1
+  page = 1,
+  repo: PlatformRecordsRepository = getPlatformRecordsRepository()
 ): Promise<PlatformOrgRecordsResult> {
   requirePlatformCapability(pctx, "N1")
 
@@ -58,40 +59,7 @@ export async function getPlatformOrgRecords(
 
   switch (domain) {
     case "catalog": {
-      const [total, products] = await Promise.all([
-        prisma.products.count({ where: { organization_id: orgId } }),
-        prisma.products.findMany({
-          where: { organization_id: orgId },
-          orderBy: { created_at: "desc" },
-          skip,
-          take: PAGE_SIZE,
-          select: {
-            id: true,
-            code: true,
-            name: true,
-            category: true,
-            shape: true,
-            status: true,
-            attributes: true,
-            created_at: true,
-            images: {
-              where: { role: "MAIN" },
-              take: 1,
-              select: { asset_id: true },
-            },
-          },
-        }),
-      ])
-
-      // Batch-load storage_key cho tất cả main images
-      const assetIds = products
-        .map((p) => p.images[0]?.asset_id)
-        .filter((id): id is string => Boolean(id))
-
-      const assets = await prisma.assets.findMany({
-        where: { id: { in: assetIds } },
-        select: { id: true, storage_key: true, thumb_key: true },
-      })
+      const { total, products, assets } = await repo.fetchCatalogRecords(orgId, skip, PAGE_SIZE)
       const assetMap = new Map(assets.map((a) => [a.id, a]))
 
       const exp = Date.now() + 86_400_000 // 24h signed URL
@@ -160,29 +128,7 @@ export async function getPlatformOrgRecords(
     }
 
     case "orders": {
-      const [total, orders] = await Promise.all([
-        prisma.orders.count({ where: { organization_id: orgId } }),
-        prisma.orders.findMany({
-          where: { organization_id: orgId },
-          orderBy: { created_at: "desc" },
-          skip,
-          take: PAGE_SIZE,
-          select: {
-            id: true,
-            code: true,
-            status: true,
-            production_status: true,
-            delivery_status: true,
-            total_vnd: true,
-            paid_vnd: true,
-            balance_vnd: true,
-            card_message: true,
-            source: true,
-            created_at: true,
-            customer: { select: { name: true, phone: true } },
-          },
-        }),
-      ])
+      const { total, orders } = await repo.fetchOrderRecords(orgId, skip, PAGE_SIZE)
       return {
         domain,
         columns: [
@@ -217,23 +163,7 @@ export async function getPlatformOrgRecords(
     }
 
     case "members": {
-      const [total, members] = await Promise.all([
-        prisma.memberships.count({ where: { organization_id: orgId } }),
-        prisma.memberships.findMany({
-          where: { organization_id: orgId },
-          orderBy: { invited_at: "desc" },
-          skip,
-          take: PAGE_SIZE,
-          select: {
-            id: true,
-            status: true,
-            role_id: true,
-            invited_at: true,
-            joined_at: true,
-            user: { select: { name: true, email: true } },
-          },
-        }),
-      ])
+      const { total, members } = await repo.fetchMemberRecords(orgId, skip, PAGE_SIZE)
       return {
         domain,
         columns: [
@@ -261,24 +191,7 @@ export async function getPlatformOrgRecords(
     }
 
     case "branches": {
-      const [total, branches] = await Promise.all([
-        prisma.branches.count({ where: { organization_id: orgId } }),
-        prisma.branches.findMany({
-          where: { organization_id: orgId },
-          orderBy: { created_at: "asc" },
-          skip,
-          take: PAGE_SIZE,
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            address: true,
-            is_active: true,
-            created_at: true,
-            _count: { select: { inventory: true } },
-          },
-        }),
-      ])
+      const { total, branches } = await repo.fetchBranchRecords(orgId, skip, PAGE_SIZE)
       return {
         domain,
         columns: [
@@ -306,28 +219,7 @@ export async function getPlatformOrgRecords(
     }
 
     case "customers": {
-      const [total, customers] = await Promise.all([
-        prisma.customers.count({ where: { organization_id: orgId } }),
-        prisma.customers.findMany({
-          where: { organization_id: orgId },
-          orderBy: { created_at: "desc" },
-          skip,
-          take: PAGE_SIZE,
-          select: {
-            id: true,
-            code: true,
-            name: true,
-            phone: true,
-            email: true,
-            address: true,
-            tier: true,
-            notes: true,
-            total_spent: true,
-            order_count: true,
-            created_at: true,
-          },
-        }),
-      ])
+      const { total, customers } = await repo.fetchCustomerRecords(orgId, skip, PAGE_SIZE)
       return {
         domain,
         columns: [
@@ -361,27 +253,7 @@ export async function getPlatformOrgRecords(
     }
 
     case "jobs": {
-      const [total, jobs] = await Promise.all([
-        prisma.generation_jobs.count({ where: { organization_id: orgId } }),
-        prisma.generation_jobs.findMany({
-          where: { organization_id: orgId },
-          orderBy: { created_at: "desc" },
-          skip,
-          take: PAGE_SIZE,
-          select: {
-            id: true,
-            feature: true,
-            status: true,
-            stage: true,
-            result: true,
-            attempts: true,
-            user_id: true,
-            created_at: true,
-            started_at: true,
-            completed_at: true,
-          },
-        }),
-      ])
+      const { total, jobs } = await repo.fetchJobRecords(orgId, skip, PAGE_SIZE)
       return {
         domain,
         columns: [
@@ -417,44 +289,7 @@ export async function getPlatformOrgRecords(
 
     case "spreadsheets": {
       const exp = Date.now() + 86_400_000 // 24h
-      const [total, files] = await Promise.all([
-        prisma.assets.count({
-          where: {
-            organization_id: orgId,
-            mime_type: {
-              in: [
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "application/vnd.ms-excel",
-                "text/csv",
-              ],
-            },
-          },
-        }),
-        prisma.assets.findMany({
-          where: {
-            organization_id: orgId,
-            mime_type: {
-              in: [
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "application/vnd.ms-excel",
-                "text/csv",
-              ],
-            },
-          },
-          orderBy: { version: "desc" },
-          skip,
-          take: PAGE_SIZE,
-          select: {
-            id: true,
-            storage_key: true,
-            mime_type: true,
-            file_size: true,
-            parameters: true,
-            version: true,
-            state: true,
-          },
-        }),
-      ])
+      const { total, files } = await repo.fetchSpreadsheetRecords(orgId, skip, PAGE_SIZE)
 
       return {
         domain,
@@ -469,7 +304,8 @@ export async function getPlatformOrgRecords(
           const params = (f.parameters as Record<string, unknown> | null) ?? {}
           const originalName = typeof params.original_filename === "string" ? params.original_filename : f.storage_key.split("/").pop() ?? f.id
           const ext = f.storage_key.split(".").pop()?.toUpperCase() ?? "XLSX"
-          const sizeKb = f.file_size ? `${(f.file_size / 1024).toFixed(1)} KB` : "—"
+          const fileSize = (f as any).file_size_bytes ?? (f as any).file_size
+          const sizeKb = fileSize ? `${(fileSize / 1024).toFixed(1)} KB` : "—"
           const sig = signStorageUrl(f.storage_key, exp)
           const downloadUrl = `/api/v1/storage/${f.storage_key}?exp=${exp}&sig=${sig}`
 

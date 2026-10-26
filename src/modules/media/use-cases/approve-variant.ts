@@ -1,9 +1,9 @@
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
-import { JobEventRepository } from "@/modules/jobs/infra/job-event-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { JobEventRepository, getJobEventRepository } from "@/modules/jobs/infra/job-event-repository"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import { canApproveVariant, parseVariantIntegrityBlock } from "@/modules/media/domain/variant-rules"
 
@@ -30,14 +30,14 @@ export async function approveVariant(
   jobId: string,
   assetId: string
 ): Promise<VariantJobDetail> {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await getGenerationJobRepository().findById(ctx, jobId)
   if (!job) throw notFound()
 
   if (job.status !== "COMPLETED") {
     throw conflict("Job chưa chạy xong, chưa có gì để duyệt")
   }
 
-  const suKien = await new JobEventRepository().findLatestByType(jobId, "variant_integrity")
+  const suKien = await getJobEventRepository().findLatestByType(jobId, "variant_integrity")
   const integrity = parseVariantIntegrityBlock(suKien?.payload)
   if (!integrity) {
     throw conflict("Job không có số đo của cổng Subject Integrity")
@@ -48,7 +48,7 @@ export async function approveVariant(
     )
   }
 
-  const assetRepo = new AssetRepository()
+  const assetRepo = getAssetRepository()
 
   // Asset phải thuộc ĐÚNG job này, không chỉ thuộc đúng tổ chức: nếu chỉ kiểm
   // tổ chức thì một `asset_id` bất kỳ của cùng tiệm cũng duyệt được qua
@@ -62,7 +62,7 @@ export async function approveVariant(
   }
 
   await runInTransaction(async (tx) => {
-    const approved = await new AssetRepository(tx).approve(ctx, target.id, {
+    const approved = await getAssetRepository(tx).approve(ctx, target.id, {
       approvedBy: ctx.userId,
       approvedAt: new Date(),
     })

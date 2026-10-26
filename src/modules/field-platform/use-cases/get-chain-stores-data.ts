@@ -5,9 +5,8 @@
  * statistics for the store card tiles in /du-lieu.
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
 import { STANDARD_G1_CORE_FIELDS } from "../domain/standard-core-fields"
-import { ChainCollectionProfileRepository } from "../infra/chain-collection-repository"
+import { ChainCollectionProfileRepository, getChainCollectionProfileRepository, type IChainCollectionProfileRepository } from "../infra/chain-collection-repository"
 
 export interface ChainStoreSummary {
   readonly id: string
@@ -31,21 +30,10 @@ export interface GetChainStoresDataResult {
 }
 
 export async function getChainStoresData(
-  organizationId: string
+  organizationId: string,
+  repo: IChainCollectionProfileRepository = getChainCollectionProfileRepository()
 ): Promise<GetChainStoresDataResult> {
-  const branches = await prisma.branches.findMany({
-    where: { organization_id: organizationId },
-    include: {
-      _count: {
-        select: {
-          inventory: true,
-        },
-      },
-    },
-    orderBy: { created_at: "asc" },
-  })
-
-  const repo = new ChainCollectionProfileRepository()
+  const branches = await repo.listBranchesWithInventory(organizationId)
   const profile = await repo.getProfile(organizationId)
   const activeRules = profile?.rules.filter((r) => r.status === "ACTIVE") ?? []
   const dsas = await repo.listActiveDsas(organizationId)

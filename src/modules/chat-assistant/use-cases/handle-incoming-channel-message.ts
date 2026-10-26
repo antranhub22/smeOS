@@ -6,7 +6,7 @@
 
 import { SalesConciergeProvider } from "../sales-concierge/adapters/sales-concierge-provider"
 import { chatAnswerViaGateway } from "../adapters/chat-answer-gateway"
-import { ChatChannelRepository } from "../infra/chat-channel-repository"
+import { ChatChannelRepository, getChatChannelRepository } from "../infra/chat-channel-repository"
 import { isChannelSubscriptionActive } from "../domain/channel-integration-rules"
 import type { SupportedChatChannel } from "../domain/channel-integration-types"
 import type { SuggestedFlowerCard } from "../domain/chat-types"
@@ -30,7 +30,7 @@ export interface HandleChannelMessageResult {
 export async function handleIncomingChannelMessage(
   input: HandleChannelMessageInput,
   deps: { channelRepo: ChatChannelRepository; chatProvider?: SalesConciergeProvider | undefined } = {
-    channelRepo: new ChatChannelRepository(),
+    channelRepo: getChatChannelRepository(),
   }
 ): Promise<HandleChannelMessageResult> {
   const { organizationId, channel, externalSenderId, messageText } = input

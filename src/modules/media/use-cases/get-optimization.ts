@@ -1,9 +1,9 @@
 import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
-import { JobEventRepository } from "@/modules/jobs/infra/job-event-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { JobEventRepository, getJobEventRepository } from "@/modules/jobs/infra/job-event-repository"
 import {
   canApproveOptimization,
   isGuardResult,
@@ -64,7 +64,7 @@ export async function getOptimization(
   ctx: TenantContext,
   jobId: string
 ): Promise<OptimizationDetail> {
-  const job = await new GenerationJobRepository().findById(ctx, jobId)
+  const job = await getGenerationJobRepository().findById(ctx, jobId)
   if (!job) throw notFound()
 
   // Hoàn credit lúc đọc (25/09/2026, cùng khuôn biến thể/âm thanh) — idempotent:
@@ -85,10 +85,10 @@ export async function getOptimization(
 
   // Quyền sở hữu job đã kiểm ở trên — `job_events` không mang
   // `organization_id` nên thứ tự này là bắt buộc, không phải tuỳ chọn.
-  const suKien = await new JobEventRepository().findLatestByType(jobId, "guard")
+  const suKien = await getJobEventRepository().findLatestByType(jobId, "guard")
   const guard = parseIdentityGuardBlock(suKien?.payload)
 
-  const assetRepo = new AssetRepository()
+  const assetRepo = getAssetRepository()
   const storage = getStorageProvider()
 
   const master = await assetRepo.findMasterByJobId(ctx, jobId)

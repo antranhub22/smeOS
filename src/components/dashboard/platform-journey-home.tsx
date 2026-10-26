@@ -171,9 +171,10 @@ export function PlatformJourneyHome({
   // 3. Mặc định: Lưới lựa chọn Hành trình tác vụ Nền tảng (ChoiceGrid)
   return (
     <ChoiceGrid
-      title="BẠN MUỐN LÀM GÌ VỚI FLORAOS?"
+      title="BẠN MUỐN LÀM GÌ VỚI NỀN TẢNG SMEOS?"
       subtitle="Trung tâm định hướng tác vụ cho Quản trị viên Vận hành Nền tảng"
       journeys={PLATFORM_JOURNEYS}
+      featuredJourneyId="view-platform-overview"
       onSelectJourney={handleSelectJourney}
       onSwitchToExpertMode={() => handleToggleExpertMode(true)}
     />

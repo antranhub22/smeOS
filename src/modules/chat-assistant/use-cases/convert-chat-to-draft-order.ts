@@ -7,7 +7,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { getProductMasterIndex } from "@/modules/products/use-cases/get-product-master-index"
 import { createOrder } from "@/modules/orders/use-cases/create-order"
 import { hasRealPrice, formatQuotePriceForChat } from "../domain/flower-consultant-rules"
-import { ChatRepository } from "../infra/chat-repository"
+import { ChatRepository, getChatRepository } from "../infra/chat-repository"
 
 export async function convertChatToDraftOrder(
   ctx: TenantContext,
@@ -19,7 +19,7 @@ export async function convertChatToDraftOrder(
     street?: string | undefined
     cardMessage?: string | undefined
   },
-  repo: ChatRepository = new ChatRepository()
+  repo: ChatRepository = getChatRepository()
 ) {
   const conversation = await repo.getConversation(ctx, conversationId)
   if (!conversation) {

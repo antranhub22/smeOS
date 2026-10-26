@@ -2,16 +2,16 @@ import { AppError, quotaExceeded, validationFailed } from "@/core/http/errors"
 import { log } from "@/core/observability/log"
 import { docCauHinhTran, moc, vuotTran } from "@/modules/jobs/domain/rate-limit"
 import type { TenantContext } from "@/core/tenancy"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 import { fundingSourceForWorkspace } from "@/modules/usage/domain/quota"
-import { UsageRepository } from "@/modules/usage/infra/usage-repository"
+import { UsageRepository, getUsageRepository } from "@/modules/usage/infra/usage-repository"
 
 import { isDuplicateIdempotencyError } from "@/modules/jobs/domain/job-rules"
 import { PostgresQueueProvider } from "@/modules/jobs/adapters/postgres-queue-provider"
 import type { generation_jobs } from "@/modules/jobs/infra/entities"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 
 export type EnqueueJobInput = {
@@ -58,7 +58,7 @@ export async function enqueueJob(
   }
 
   const dedupe = async (): Promise<EnqueueJobResult | null> => {
-    const existing = await new GenerationJobRepository().findByIdempotencyKey(
+    const existing = await getGenerationJobRepository().findByIdempotencyKey(
       ctx,
       input.feature,
       input.idempotencyKey
@@ -76,7 +76,7 @@ export async function enqueueJob(
   // web đếm riêng thì trần thành vô nghĩa, và đó đúng là lỗi hệ v1 đã mắc
   // với trạng thái job.
   const cauHinhTran = docCauHinhTran(process.env)
-  const daTao = await new GenerationJobRepository().countSince(ctx, moc(new Date(), cauHinhTran))
+  const daTao = await getGenerationJobRepository().countSince(ctx, moc(new Date(), cauHinhTran))
   if (vuotTran(daTao, cauHinhTran)) {
     log.warn("job.rate_limited", {
       organizationId: ctx.organizationId,
@@ -99,20 +99,20 @@ export async function enqueueJob(
 
   async function runTransaction(): Promise<EnqueueJobResult> {
     return runInTransaction(async (tx) => {
-      const workspaceRepo = new WorkspaceRepository(tx)
+      const workspaceRepo = getWorkspaceRepository(tx)
       const workspace = await workspaceRepo.findById(ctx, ctx.workspaceId)
       if (!workspace) throw new AppError("INTERNAL", "Workspace của ngữ cảnh không tồn tại")
 
       const fundingSource = input.includedInJobId ? "bundle" : fundingSourceForWorkspace(workspace.kind)
 
       if (fundingSource === "bundle") {
-        const parent = await new GenerationJobRepository(tx).findById(ctx, input.includedInJobId!)
+        const parent = await getGenerationJobRepository(tx).findById(ctx, input.includedInJobId!)
         if (!parent) throw validationFailed({ included_in_job_id: "Job cha không thuộc tổ chức này" })
       } else if (fundingSource === "trial") {
         const ok = await workspaceRepo.tryConsumeTrial(workspace.id)
         if (!ok) throw quotaExceeded("Đã hết lượt dùng thử", { workspace_id: workspace.id })
       } else {
-        const ok = await new OrganizationRepository(tx).tryDeductCredit(ctx, cost)
+        const ok = await getOrganizationRepository(tx).tryDeductCredit(ctx, cost)
         if (!ok) throw quotaExceeded("Không đủ credit", { required: cost })
       }
 
@@ -129,7 +129,7 @@ export async function enqueueJob(
         tx
       )
 
-      await new UsageRepository(tx).record(ctx, {
+      await getUsageRepository(tx).record(ctx, {
         workspaceId: ctx.workspaceId,
         userId: ctx.userId,
         jobId,
@@ -142,12 +142,12 @@ export async function enqueueJob(
             : { funded_by: fundingSource },
       })
 
-      const job = await new GenerationJobRepository(tx).findById(ctx, jobId)
+      const job = await getGenerationJobRepository(tx).findById(ctx, jobId)
       if (!job) throw new AppError("INTERNAL", "Job vừa tạo không đọc lại được trong cùng giao dịch")
 
       let balanceAfter: number | null = null
       if (fundingSource === "credit") {
-        const organization = await new OrganizationRepository(tx).current(ctx)
+        const organization = await getOrganizationRepository(tx).current(ctx)
         balanceAfter = organization?.credit_balance ?? null
       }
 

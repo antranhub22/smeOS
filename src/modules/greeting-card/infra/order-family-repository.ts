@@ -67,3 +67,9 @@ export class OrderFamilyRepository {
     return { rootSendCode: root.send_code, rows }
   }
 }
+
+let _orderFamilyRepositorySingleton: OrderFamilyRepository | null = null
+export function getOrderFamilyRepository(): OrderFamilyRepository {
+  if (!_orderFamilyRepositorySingleton) _orderFamilyRepositorySingleton = new OrderFamilyRepository()
+  return _orderFamilyRepositorySingleton
+}

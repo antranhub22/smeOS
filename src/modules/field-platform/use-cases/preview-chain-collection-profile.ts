@@ -8,8 +8,7 @@ import {
   type ProfileValidationResult,
 } from "../domain/chain-collection-profile"
 import { STANDARD_G1_CORE_FIELDS } from "../domain/standard-core-fields"
-import { type IChainCollectionProfileRepository } from "../infra/chain-collection-repository"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { type IChainCollectionProfileRepository, getChainCollectionProfileRepository } from "../infra/chain-collection-repository"
 
 export interface PreviewChainCollectionProfileResult {
   readonly validation: ProfileValidationResult
@@ -25,15 +24,13 @@ export interface PreviewChainCollectionProfileResult {
 export async function previewChainCollectionProfile(
   organizationId: string,
   rules: readonly CollectionRule[],
-  repo: IChainCollectionProfileRepository
+  repo: IChainCollectionProfileRepository = getChainCollectionProfileRepository()
 ): Promise<PreviewChainCollectionProfileResult> {
   const dsas = await repo.listActiveDsas(organizationId)
   const validation = validateCollectionProfile(rules, STANDARD_G1_CORE_FIELDS, dsas)
 
   // Count active branches
-  const affectedStoreCount = await prisma.branches.count({
-    where: { organization_id: organizationId, is_active: true },
-  })
+  const affectedStoreCount = await repo.countActiveBranches(organizationId)
 
   // Detect R1 vs R2 risk according to §9.5.8 e
   const fieldMap = new Map(STANDARD_G1_CORE_FIELDS.map((f) => [f.fieldKey, f]))

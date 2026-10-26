@@ -11,9 +11,9 @@
 import { AppError, notFound } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
-import { AssetRepository } from "@/modules/assets/infra/asset-repository"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
-import { VideoJobRepository } from "@/modules/video-studio/infra/video-job-repository"
+import { AssetRepository, getAssetRepository } from "@/modules/assets/infra/asset-repository"
+import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
+import { VideoJobRepository, getVideoJobRepository } from "@/modules/video-studio/infra/video-job-repository"
 import type { CaptionStyle, VideoFormat } from "@/modules/video-studio/domain/video-types"
 
 import { SCENE_PLAN_FEATURE, parseStoredScenePlan, type ScenePlan } from "../domain/scene-plan-rules"
@@ -42,7 +42,7 @@ export interface AssembleVideoOutput {
 
 async function loadPlan(ctx: TenantContext, scenePlanId: string, provided: unknown): Promise<ScenePlan> {
   if (UUID_RE.test(scenePlanId)) {
-    const job = await new GenerationJobRepository().findById(ctx, scenePlanId)
+    const job = await getGenerationJobRepository().findById(ctx, scenePlanId)
     if (!job || job.feature !== SCENE_PLAN_FEATURE) throw notFound()
     const plan = job.status === "COMPLETED" ? parseStoredScenePlan(job.output) : null
     if (!plan) throw new AppError("CONFLICT", "Kịch bản chưa sẵn sàng")
@@ -80,7 +80,7 @@ export async function assembleVideoFromPlan(ctx: TenantContext, input: AssembleV
   requireCapability(ctx, "I1")
   const plan = await loadPlan(ctx, input.scenePlanId, input.plan)
 
-  const assets = new AssetRepository()
+  const assets = getAssetRepository()
   const master = await assets.findById(ctx, input.masterAssetId)
   if (!master || master.kind !== "MASTER") throw new AppError("VALIDATION_FAILED", "Cần Master Image đã duyệt của sản phẩm")
   const rows = await assets.list(ctx, { parentAssetId: master.id, kind: "MARKETING", limit: 300 })
@@ -101,10 +101,10 @@ export async function assembleVideoFromPlan(ctx: TenantContext, input: AssembleV
   // Âm thanh: job chỉ định, hoặc bản phối xong mới nhất của ĐÚNG kịch bản.
   let audioJob: { id: string; status: string; payload: unknown; output: unknown } | null = null
   if (input.audioJobId) {
-    const j = await new GenerationJobRepository().findById(ctx, input.audioJobId)
+    const j = await getGenerationJobRepository().findById(ctx, input.audioJobId)
     if (j && j.feature === "audio.generate") audioJob = j
   } else {
-    audioJob = await new GenerationJobRepository().findLatestCompletedByPayload(
+    audioJob = await getGenerationJobRepository().findLatestCompletedByPayload(
       ctx,
       "audio.generate",
       "scenePlanId",
@@ -126,7 +126,7 @@ export async function assembleVideoFromPlan(ctx: TenantContext, input: AssembleV
   }
   if (input.dryRun || !assembly.ready) return { ...out, videoJobId: null }
 
-  const repo = new VideoJobRepository()
+  const repo = getVideoJobRepository()
   const job = await repo.create(ctx, {
     productId: master.product_id,
     title: (input.title?.trim() || `${plan.topicTitle} — video ${assembly.aspectRatio}`).slice(0, 200),

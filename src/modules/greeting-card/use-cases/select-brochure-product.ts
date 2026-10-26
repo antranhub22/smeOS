@@ -1,5 +1,5 @@
 import { conflict } from "@/core/http/errors"
-import { GreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { canTransitionSessionStatus } from "../domain/greeting-card-rules"
 import type { GreetingSessionStatus, ProductSnapshot } from "../domain/greeting-card-types"
 import { loadPublicSession, resolveOrderableProduct } from "./brochure-session-access"
@@ -13,7 +13,7 @@ import { snapshotOf } from "./brochure-product-mapper"
 export async function selectBrochureProduct(
   sendCode: string,
   productId: string,
-  repo = new GreetingCardRepository()
+  repo = getGreetingCardRepository()
 ): Promise<ProductSnapshot> {
   const session = await loadPublicSession(sendCode, repo)
   if (session.order_id || !canTransitionSessionStatus(session.status as GreetingSessionStatus, "SELECTED")) {

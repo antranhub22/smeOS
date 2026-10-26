@@ -42,3 +42,9 @@ export class PhotoApprovalRepository {
     })
   }
 }
+
+let _photoApprovalRepositorySingleton: PhotoApprovalRepository | null = null
+export function getPhotoApprovalRepository(): PhotoApprovalRepository {
+  if (!_photoApprovalRepositorySingleton) _photoApprovalRepositorySingleton = new PhotoApprovalRepository()
+  return _photoApprovalRepositorySingleton
+}

@@ -2,8 +2,8 @@ import { AppError, notFound, validationFailed } from "@/core/http/errors"
 import { isCapabilityCode } from "@/core/rbac/capability-catalog"
 import { passesHardCap } from "@/core/rbac/permission-resolver"
 import type { TenantContext } from "@/core/tenancy"
-import { CapabilityRepository } from "@/modules/organization/infra/capability-repository"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { CapabilityRepository, getCapabilityRepository } from "@/modules/organization/infra/capability-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
 
 export type CapabilityChange = { code: string; allowed: boolean }
 
@@ -25,7 +25,7 @@ export async function updateRoleCapabilities(
 ): Promise<string[]> {
   if (changes.length === 0) throw validationFailed({ changes: "Danh sách rỗng" })
 
-  const roles = new RoleRepository()
+  const roles = getRoleRepository()
   const role = await roles.findAssignableById(ctx, roleId)
   if (!role) throw notFound()
 
@@ -40,7 +40,7 @@ export async function updateRoleCapabilities(
     }
   }
 
-  const capabilities = new CapabilityRepository()
+  const capabilities = getCapabilityRepository()
   for (const change of changes) {
     await capabilities.upsertOverride(ctx, {
       roleId: role.id,

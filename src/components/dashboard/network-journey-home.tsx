@@ -1,24 +1,44 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles, SlidersHorizontal } from "lucide-react"
-import { NETWORK_JOURNEYS } from "@/modules/journey/domain/journey-catalog"
+import { getNetworkJourneys } from "@/modules/journey/domain/industry-journeys"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { createJourneyState } from "@/modules/journey/domain/journey-state"
 import { ChoiceGrid } from "@/components/journey/choice-grid"
 import { JourneyShell } from "@/components/journey/journey-shell"
 import { FlowerNetworkCommandCenter } from "./flower-network-command-center"
+import { useSession } from "@/lib/session"
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
 const STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_network"
 
 export function NetworkJourneyHome() {
   const router = useRouter()
+  const { organization } = useSession()
+  const industryKey = organization?.industry
+
+  const journeys = useMemo(
+    () => getNetworkJourneys(industryKey),
+    [industryKey]
+  )
+
+  const { title, subtitle } = useMemo(() => {
+    const plugin = getIndustryPlugin(industryKey)
+    const product = plugin.terminology.sampleProduct.toLowerCase()
+    const maker = plugin.terminology.makerTitle
+    const orgName = organization?.name
+    return {
+      title: orgName
+        ? `BẠN MUỐN LÀM GÌ VỚI MẠNG LƯỚI ${orgName.toUpperCase()}?`
+        : `BẠN MUỐN LÀM GÌ VỚI MẠNG LƯỚI ${maker.toUpperCase()}?`,
+      subtitle: `Chọn một tác vụ để bắt đầu điều phối hoặc quản lý mạng lưới ${product}`,
+    }
+  }, [industryKey, organization?.name])
   const [isExpertMode, setIsExpertMode] = useState<boolean>(false)
   const [activeJourney, setActiveJourney] = useState<JourneyDefinition | null>(null)
-  const [journeyState, setJourneyState] = useState(() =>
-    activeJourney ? createJourneyState(activeJourney) : null
-  )
+  const [journeyState, setJourneyState] = useState<ReturnType<typeof createJourneyState> | null>(null)
 
   useEffect(() => {
     try {
@@ -132,9 +152,9 @@ export function NetworkJourneyHome() {
   // 3. Mặc định: Lưới lựa chọn Hành trình tác vụ Điện hoa (ChoiceGrid)
   return (
     <ChoiceGrid
-      title="BẠN MUỐN LÀM GÌ CHO HOẠT ĐỘNG ĐIỆN HOA?"
-      subtitle="Chọn một tác vụ để bắt đầu điều phối hoặc quản lý mạng lưới hoa"
-      journeys={NETWORK_JOURNEYS}
+      title={title}
+      subtitle={subtitle}
+      journeys={journeys}
       onSelectJourney={handleSelectJourney}
       onSwitchToExpertMode={() => handleToggleExpertMode(true)}
     />

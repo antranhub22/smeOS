@@ -6,9 +6,9 @@
 import { requireCapability } from "@/core/rbac/capabilities"
 import { validationFailed, AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { UsageRepository } from "@/modules/usage/infra/usage-repository"
-import { ChatChannelRepository } from "../infra/chat-channel-repository"
+import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { UsageRepository, getUsageRepository } from "@/modules/usage/infra/usage-repository"
+import { ChatChannelRepository, getChatChannelRepository } from "../infra/chat-channel-repository"
 import {
   canActivateChannel,
   calculateNewExpiry,
@@ -31,9 +31,9 @@ export async function configureChatChannel(
   ctx: TenantContext,
   input: ConfigureChatChannelInput,
   deps = {
-    channelRepo: new ChatChannelRepository(),
-    orgRepo: new OrganizationRepository(),
-    usageRepo: new UsageRepository(),
+    channelRepo: getChatChannelRepository() as ChatChannelRepository,
+    orgRepo: getOrganizationRepository() as OrganizationRepository,
+    usageRepo: getUsageRepository() as UsageRepository,
   }
 ): Promise<ChatChannelIntegration> {
   // Yêu cầu quyền điều hành cấu hình bot T4

@@ -2,8 +2,7 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import { PrismaChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
+import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
 
 const statusSchema = z.object({
   status: z.enum(["ACTIVE", "SUSPENDED", "TERMINATED"]),
@@ -20,7 +19,7 @@ export const PATCH = handle<[{ params: Promise<{ id: string }> }]>(async (reques
     throw validationFailed({ reason: errorDetails })
   }
 
-  const partnershipRepo = new PrismaChainPartnershipRepository(prisma)
+  const partnershipRepo = getChainPartnershipRepository()
   const updated = await partnershipRepo.updateStatus(partnershipId, parsed.data.status)
 
   return jsonResponse({

@@ -10,7 +10,7 @@ import type { IIntegrationTokenRepository } from "@/modules/integration/domain/r
 import { getIntegrationTokenRepository } from "@/modules/integration/infra/integration-token-repository"
 import { hashIntegrationToken } from "@/modules/integration/infra/token-crypto"
 import { tenantContextFor } from "@/modules/organization/use-cases/resolve-session"
-import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { verifySsoToken } from "@/modules/sso/infra/sso-jwt"
 
 /**
@@ -132,7 +132,7 @@ export async function toTenantContext(ic: IntegrationContext): Promise<TenantCon
     }
   }
 
-  const workspace = await new WorkspaceRepository().findDefaultForSessionOrganization(
+  const workspace = await getWorkspaceRepository().findDefaultForSessionOrganization(
     ic.organizationId
   )
   if (!workspace) throw new AppError("INTERNAL", "Tổ chức không có workspace nào")

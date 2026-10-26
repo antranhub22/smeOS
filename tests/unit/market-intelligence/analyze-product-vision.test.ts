@@ -11,15 +11,25 @@ const ctx: TenantContext = { organizationId: "org-1", workspaceId: "ws-1", userI
 const asset = { id: "asset-1", product_id: null, storage_key: "org/org-1/unfiled/asset-1.jpg", mime_type: "image/jpeg" }
 
 const { findById } = vi.hoisted(() => ({ findById: vi.fn() }))
-vi.mock("@/modules/assets/infra/asset-repository", () => ({ AssetRepository: vi.fn().mockImplementation(() => ({ findById })) }))
+vi.mock("@/modules/assets/infra/asset-repository", () => {
+  const instance = { findById }
+  return {
+    AssetRepository: vi.fn().mockImplementation(() => instance),
+    getAssetRepository: vi.fn().mockImplementation(() => instance),
+  }
+})
 vi.mock("@/modules/assets/adapters/storage-provider-factory", () => ({
   getStorageProvider: () => ({ get: vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3])), signedUrl: vi.fn().mockResolvedValue("https://kho/ky.jpg") }),
 }))
 const { startInline } = vi.hoisted(() => ({ startInline: vi.fn() }))
 const { finishInline } = vi.hoisted(() => ({ finishInline: vi.fn() }))
-vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(() => ({ startInline, finishInline })),
-}))
+vi.mock("@/modules/jobs/infra/generation-job-repository", () => {
+  const instance = { startInline, finishInline }
+  return {
+    GenerationJobRepository: vi.fn().mockImplementation(() => instance),
+    getGenerationJobRepository: vi.fn().mockImplementation(() => instance),
+  }
+})
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({ enqueueJob: vi.fn() }))
 vi.mock("@/modules/usage/use-cases/refund-job", () => ({ refundJob: vi.fn().mockResolvedValue({ refunded: true }) }))
 vi.mock("@/core/ai/gateway", () => ({ callCapability: vi.fn() }))
@@ -30,9 +40,14 @@ vi.mock("@/modules/market-intelligence/adapters/product-vision-ai-adapter", () =
 vi.mock("@/modules/creative-production/use-cases/provider-preferences", () => ({
   providerOrderFor: vi.fn().mockResolvedValue(["claude_opus", "openai_structured", "gemini_pro"]),
 }))
-vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", () => ({
-  marketIntelligenceRepo: { findProductAnalysis: vi.fn().mockResolvedValue(null) },
-}))
+vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", () => {
+  const mockRepo = { findProductAnalysis: vi.fn().mockResolvedValue(null) }
+  return {
+    marketIntelligenceRepo: mockRepo,
+    MarketIntelligenceRepository: vi.fn().mockImplementation(() => mockRepo),
+    getMarketIntelligenceRepository: vi.fn().mockImplementation(() => mockRepo),
+  }
+})
 
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { callCapability } from "@/core/ai/gateway"

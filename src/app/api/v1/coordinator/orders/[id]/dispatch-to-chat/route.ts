@@ -2,9 +2,8 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed, notFound } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { prisma } from "@/core/tenancy/infra/prisma"
 import { getOrderRepository } from "@/modules/orders/infra/order-repository"
-import { PrismaInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
+import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { DispatchOrderToChatUseCase } from "@/modules/internal-chat/use-cases/dispatch-order-to-chat"
 
 const dispatchSchema = z.object({
@@ -35,7 +34,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const meta = (firstItem?.metadata ?? {}) as Record<string, unknown>
   const thumbnailUrl = (meta.masterImageUrl || meta.imageUrl) as string | undefined
 
-  const chatRepo = new PrismaInternalChatRepository(prisma)
+  const chatRepo = getInternalChatRepository()
   const useCase = new DispatchOrderToChatUseCase(chatRepo)
 
   const deliveryAddrStr = order.deliveryAddress

@@ -289,6 +289,115 @@ export class SubcontractOrderRepository implements ISubcontractStateStore, ISubc
 
     return { newQualityScore, bypassCount }
   }
+
+  /**
+   * Tìm order_coordinations record theo orderId.
+   */
+  async findCoordination(orderId: string) {
+    return this.db.order_coordinations.findUnique({
+      where: { order_id: orderId },
+    })
+  }
+
+  /**
+   * Tìm order_coordinations scoped theo org.
+   */
+  async findCoordinationScoped(orderId: string, organizationId: string) {
+    return this.db.order_coordinations.findFirst({
+      where: { order_id: orderId, organization_id: organizationId },
+      select: { id: true, metadata: true },
+    })
+  }
+
+  /**
+   * Cập nhật metadata của order_coordinations (upsert safe: merge với existing meta).
+   * Trả về metadata sau khi merge.
+   */
+  async upsertCoordinationMeta(
+    orderId: string,
+    organizationId: string,
+    metaPatch: Record<string, unknown>
+  ): Promise<Record<string, unknown>> {
+    const existing = await this.db.order_coordinations.findUnique({
+      where: { order_id: orderId },
+    })
+    const existingMeta = (existing?.metadata as Record<string, unknown> | null) ?? {}
+    const newMeta = { ...existingMeta, ...metaPatch }
+
+    await this.db.order_coordinations.update({
+      where: { order_id: orderId },
+      data: { metadata: newMeta as unknown as import("@/generated/prisma/client").Prisma.InputJsonValue },
+    })
+    return newMeta
+  }
+
+  /**
+   * Update orders status fields (status, production_status, delivery_status).
+   */
+  async updateOrderStatus(
+    orderId: string,
+    data: {
+      status?: string
+      production_status?: string
+      delivery_status?: string
+    }
+  ): Promise<void> {
+    await this.db.orders.update({
+      where: { id: orderId },
+      data: data as Parameters<typeof this.db.orders.update>[0]["data"],
+    })
+  }
+
+  /**
+   * Tạo order_events record.
+   */
+  async createOrderEvent(data: {
+    id?: string
+    organization_id: string
+    order_id: string
+    axis: string
+    from_value: string | null
+    to_value: string
+    actor_id: string
+    reason?: string
+  }): Promise<void> {
+    const { randomUUID } = await import("crypto")
+    await this.db.order_events.create({
+      data: {
+        id: data.id ?? randomUUID(),
+        organization_id: data.organization_id,
+        order_id: data.order_id,
+        axis: data.axis,
+        from_value: data.from_value ?? "",
+        to_value: data.to_value,
+        actor_id: data.actor_id,
+        reason: data.reason ?? null,
+      },
+    })
+  }
+
+  /**
+   * Update orders pricing_rule_ref (merge patch).
+   */
+  async patchOrderPricingRef(
+    orderId: string,
+    patch: Record<string, unknown>
+  ): Promise<void> {
+    const order = await this.db.orders.findUnique({
+      where: { id: orderId },
+      select: { pricing_rule_ref: true },
+    })
+    const existing = (order?.pricing_rule_ref as Record<string, unknown> | null) ?? {}
+    await this.db.orders.update({
+      where: { id: orderId },
+      data: {
+        pricing_rule_ref: {
+          ...existing,
+          ...patch,
+        } as unknown as import("@/generated/prisma/client").Prisma.InputJsonValue,
+      },
+    })
+  }
 }
 
 let defaultSubcontractOrderRepository: ISubcontractOrderRepository | null = null

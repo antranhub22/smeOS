@@ -2,8 +2,7 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { prisma } from "@/core/tenancy/infra/prisma"
-import { PrismaInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
+import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { ListUserConversationsUseCase } from "@/modules/internal-chat/use-cases/list-user-conversations"
 import { CreateOrGetConversationUseCase } from "@/modules/internal-chat/use-cases/create-or-get-conversation"
 
@@ -21,7 +20,7 @@ export const GET = handle(async (request) => {
   const conversationType = url.searchParams.get("type") as any
   const orderId = url.searchParams.get("orderId") ?? undefined
 
-  const chatRepo = new PrismaInternalChatRepository(prisma)
+  const chatRepo = getInternalChatRepository()
   const useCase = new ListUserConversationsUseCase(chatRepo)
 
   const result = await useCase.execute({
@@ -48,7 +47,7 @@ export const POST = handle(async (request) => {
     throw validationFailed({ reason: errorDetails })
   }
 
-  const chatRepo = new PrismaInternalChatRepository(prisma)
+  const chatRepo = getInternalChatRepository()
   const useCase = new CreateOrGetConversationUseCase(chatRepo)
 
   const conversation = await useCase.execute({

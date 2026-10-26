@@ -1,10 +1,10 @@
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { isValidEmail, normalizeEmail } from "@/modules/organization/domain/credentials"
-import { BranchRepository } from "@/modules/organization/infra/branch-repository"
-import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { RoleRepository } from "@/modules/organization/infra/role-repository"
-import { UserRepository } from "@/modules/organization/infra/user-repository"
+import { BranchRepository, getBranchRepository } from "@/modules/organization/infra/branch-repository"
+import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
+import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
 
 export type InviteMemberInput = {
   email: string
@@ -23,17 +23,17 @@ export async function inviteMember(ctx: TenantContext, input: InviteMemberInput)
   const email = normalizeEmail(input.email)
   if (!isValidEmail(email)) throw validationFailed({ email: "Địa chỉ thư không hợp lệ" })
 
-  const roles = new RoleRepository()
+  const roles = getRoleRepository()
   const role = await roles.findAssignableById(ctx, input.roleId)
   if (!role) throw notFound()
 
   if (input.branchId) {
-    const branch = await new BranchRepository().findById(ctx, input.branchId)
+    const branch = await getBranchRepository().findById(ctx, input.branchId)
     if (!branch) throw notFound()
   }
 
-  const users = new UserRepository()
-  const memberships = new MembershipRepository()
+  const users = getUserRepository()
+  const memberships = getMembershipRepository()
 
   const existingForOrg = await memberships.list(ctx)
   const existingUser = await users.findByEmail(email)

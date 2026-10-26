@@ -12,8 +12,7 @@
  * → Sweep engine sẽ nhận ra và skip, không phân biệt với trường hợp đã gửi thật.
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
+import { getSubcontractOrderRepository } from "../infra/subcontract-order-repository"
 import { log } from "@/core/observability/log"
 import type { ReminderStep } from "./process-dispatch-reminders"
 
@@ -49,10 +48,8 @@ export async function cancelSubcontractReminderSteps(
   const now = new Date()
   const cancelMarker = `CANCELLED_BY_${reason.toUpperCase()}:${now.toISOString()}`
 
-  const coord = await prisma.order_coordinations.findFirst({
-    where: { order_id: orderId, organization_id: organizationId },
-    select: { id: true, metadata: true },
-  })
+  const repo = getSubcontractOrderRepository() as import("../infra/subcontract-order-repository").SubcontractOrderRepository
+  const coord = await repo.findCoordinationScoped(orderId, organizationId)
 
   if (!coord) {
     log.warn("cancel_reminder_steps.coord_not_found", { orderId, organizationId })
@@ -90,14 +87,8 @@ export async function cancelSubcontractReminderSteps(
     remindersSent: newRemindersSent,
   }
 
-  await prisma.order_coordinations.update({
-    where: { id: coord.id },
-    data: {
-      metadata: {
-        ...existingMeta,
-        subcontract_dispatch: updatedSubState,
-      } as unknown as Prisma.InputJsonValue,
-    },
+  await repo.upsertCoordinationMeta(orderId, organizationId, {
+    subcontract_dispatch: updatedSubState,
   })
 
   log.info("cancel_reminder_steps.done", {
