@@ -6,8 +6,8 @@
 export function navStorageKeys(orgId?: string | null) {
   const suffix = orgId ? `__${orgId}` : ""
   return {
-    groupsKey: `floraos_nav_groups_v1${suffix}`,
-    reportsKey: `floraos_nav_reports_open_v1${suffix}`,
+    groupsKey: `smeos_nav_groups_v2${suffix}`,
+    reportsKey: `smeos_nav_reports_open_v2${suffix}`,
     collapseKey: `smeos_nav_collapsed_v1`,
   }
 }

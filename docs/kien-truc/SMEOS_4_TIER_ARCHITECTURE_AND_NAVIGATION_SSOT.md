@@ -149,90 +149,75 @@ Hệ sinh thái **smeOS** được cấu trúc thành **4 tầng độc lập nh
 
 ### 4.1 SIDEBAR TẦNG 1: SAAS MOTHER
 - **Architecture Nametag:** `smeOS • SaaS Mother`
-- **Màu sắc nhận diện:** Tím hoàng gia (`purple-600` / `purple-950`)
-- **Tuyến URL gốc:** `/van-hanh/*`
+- **Màu sắc nhận diện:** Tím hoàng gia (`bg-[#6B21A8]` / `text-purple-700` / gradient strip `from-[#6B21A8]/15`)
+- **Tuyến URL gốc:** `/van-hanh/*` (chế độ tổ chức `PLATFORM` hoặc role `platform_admin`)
+- **Builder Code:** `src/components/layout/nav/nav-mother.ts` (`buildMotherNav`)
 
 ```yaml
 nhom_1:
-  key: "tong-quan-nen-tang"
-  label: "Tổng quan Nền tảng"
+  key: "to-chuc"
+  label: "Tổ chức & Khách hàng"
   entries:
-    - label: "Chỉ huy Nền tảng Mẹ"
+    - label: "Tổng quan nền tảng"
       href: "/van-hanh"
       icon: "LayoutDashboard"
-      mo_ta: "Platform Journey Home (ChoiceGrid 10 tác vụ toàn cục)"
-    - label: "Sức khỏe Hệ thống & Workers"
-      href: "/van-hanh/suc-khoe"
-      icon: "Activity"
-      mo_ta: "Trạng thái DB Postgres, Queue, Vision Worker, Media Worker, Video Worker"
-
-nhom_2:
-  key: "quan-tri-to-chuc"
-  label: "Quản trị 3 Tầng Hệ thống"
-  entries:
-    - label: "Mạng lưới SaaS Ngành"
-      href: "/van-hanh/to-chuc?tab=industry"
-      icon: "Layers"
-      mo_ta: "Quản trị các Hub Ngành liên kết"
-    - label: "Danh sách Chuỗi (ChainOS)"
-      href: "/van-hanh/to-chuc?tab=chain"
-      icon: "Network"
-      mo_ta: "Danh sách các tổ chức mô hình Chuỗi nhiều chi nhánh"
-    - label: "Danh sách Cửa hàng (StoreOS)"
-      href: "/van-hanh/to-chuc?tab=store"
-      icon: "Store"
-      mo_ta: "Danh sách các cửa hàng độc lập"
-    - label: "Duyệt Đăng ký Mới"
+      navKey: "platform-overview"
+      mo_ta: "Platform Journey Home (ChoiceGrid tác vụ toàn cục)"
+    - label: "Đăng ký mới"
       href: "/van-hanh/dang-ky"
       icon: "UserPlus"
-      mo_ta: "Phê duyệt hồ sơ doanh nghiệp mới đăng ký vào hệ thống"
-    - label: "Phê duyệt Yêu cầu Quota"
+      navKey: "platform-registrations"
+      mo_ta: "Phê duyệt hồ sơ đăng ký doanh nghiệp mới vào hệ thống"
+    - label: "Danh sách tổ chức"
+      href: "/van-hanh/to-chuc"
+      icon: "Building2"
+      navKey: "platform-organizations"
+      mo_ta: "Quản trị danh sách tổ chức 3 tầng (Ngành, Chuỗi, Tiệm đơn lẻ)"
+    - label: "Phê duyệt yêu cầu"
       href: "/van-hanh/phe-duyet"
       icon: "CheckCircle2"
-      mo_ta: "Duyệt mở rộng hạn mức, nâng cấp gói tenant"
+      navKey: "platform-approvals"
+      mo_ta: "Duyệt mở rộng hạn mức, quota, nâng cấp gói dịch vụ"
+
+nhom_2:
+  key: "cau-hinh"
+  label: "Cấu hình nền tảng"
+  entries:
+    - label: "Ma trận ngành"
+      href: "/van-hanh/nganh"
+      icon: "Layers"
+      navKey: "platform-industry-matrix"
+      mo_ta: "Bật/tắt và quản trị plugin 7 ngành hàng chuẩn hóa"
+    - label: "Trường dữ liệu"
+      href: "/van-hanh/truong-du-lieu"
+      icon: "SlidersHorizontal"
+      navKey: "platform-custom-fields"
+      mo_ta: "Cấu hình trường dữ liệu động mở rộng theo nhu cầu"
+    - label: "Dữ liệu tổ chức"
+      href: "/van-hanh/du-lieu"
+      icon: "Database"
+      navKey: "platform-org-data"
+      mo_ta: "Tra cứu, sao lưu và kiểm tra phân lập CSDL đa tenant"
 
 nhom_3:
-  key: "goi-cuoc-doanh-thu"
-  label: "Gói cước & Doanh thu SaaS"
+  key: "giam-sat"
+  label: "Vận hành & Giám sát"
   entries:
-    - label: "Quản trị Gói Dịch vụ"
-      href: "/van-hanh/goi-dich-vu"
-      icon: "CreditCard"
-      mo_ta: "Cấu hình tính năng & biểu phí các gói SaaS"
-    - label: "Mức dùng & Doanh thu Nền tảng"
+    - label: "Mức dùng & Chi phí"
       href: "/van-hanh/muc-dung"
       icon: "WalletCards"
-      mo_ta: "Giám sát Credit tiêu thụ, Token AI, Storage và doanh thu phí nền tảng"
-
-nhom_4:
-  key: "ha-tang-ai"
-  label: "Hạ tầng AI & Tài nguyên"
-  entries:
-    - label: "Danh mục Mô hình & Giấy phép"
-      href: "/van-hanh/ai-models"
-      icon: "Cpu"
-      mo_ta: "4 ô giấy phép bắt buộc (D18): license, commercial_use, territory, allowed_use"
-    - label: "Cổng kết nối AI Providers"
-      href: "/van-hanh/ai-gateways"
-      icon: "Plug"
-      mo_ta: "Quản trị API Keys: OpenAI, Gemini, Anthropic, Fal, Photoroom"
-    - label: "Hạn mức Quota & Circuit Breaker"
-      href: "/van-hanh/ai-quotas"
-      icon: "Gauge"
-      mo_ta: "Chống tràn chi phí và ngắt mạch tự động khi lỗi provider"
-
-nhom_5:
-  key: "bao-mat-kiem-toan"
-  label: "Bảo mật & Kiểm toán"
-  entries:
-    - label: "Nhật ký Hệ thống (Audit Logs)"
+      navKey: "platform-usage"
+      mo_ta: "Giám sát Credit tiêu thụ, Token AI, Storage và doanh thu nền tảng"
+    - label: "Sức khoẻ hệ thống"
+      href: "/van-hanh/suc-khoe"
+      icon: "Activity"
+      navKey: "platform-health"
+      mo_ta: "Trạng thái CSDL Postgres, Queue, Vision Worker, Media Worker, Video Worker"
+    - label: "Nhật ký hệ thống"
       href: "/van-hanh/nhat-ky"
       icon: "ShieldCheck"
-      mo_ta: "Giám sát cách ly Tenant Isolation, phát hiện bất thường an ninh"
-    - label: "Phân quyền Người Vận hành"
-      href: "/van-hanh/phan-quyen"
-      icon: "Lock"
-      mo_ta: "Danh sách Platform Operators và năng lực vận hành"
+      navKey: "platform-audit"
+      mo_ta: "Audit logs giám sát cách ly Tenant Isolation và an ninh hệ thống"
 ```
 
 ---
@@ -240,97 +225,101 @@ nhom_5:
 ### 4.2 SIDEBAR TẦNG 2: SAAS NGÀNH
 - **Architecture Nametag:** `smeOS • SaaS Đa Ngành`
 - **Màu sắc nhận diện:** Xanh lục ngọc / Ngọc bích (`teal-600` / `teal-950`)
-- **Tuyến URL:** Kết hợp `/(app)/*` và các console điều hành ngành
+- **Tuyến URL:** Kết hợp `/(app)/*` và các console điều hành ngành (`buildIndustryNav`)
+- **Quy chuẩn hiển thị:** 3 nhóm chức năng tinh gọn, tập trung chuẩn hóa taxonomy & cỗ máy affiliate phân bổ đơn
 
 ```yaml
 nhom_1:
-  key: "tong-quan-nganh"
-  label: "Tổng quan & Dòng chảy Bán hàng"
+  key: "he-sinh-thai"
+  label: "Hệ sinh thái Đa Ngành & Công cụ Affiliate"
   entries:
-    - label: "Tổng quan Mạng lưới Ngành"
+    - label: "Tổng quan SaaS Ngành"
       href: "/"
       icon: "LayoutDashboard"
-      mo_ta: "Báo cáo doanh số bán hàng affiliate và số lượng đơn phân bổ"
-    - label: "Trung tâm Đơn hàng Mạng lưới"
-      href: "/don-hang"
-      icon: "ShoppingBag"
-      mo_ta: "Quản lý toàn bộ đơn hàng phát sinh từ các link bán hàng"
-    - label: "Ma trận Plugin Ngành (7 Ngành)"
+      navKey: "industry-overview"
+      mo_ta: "Báo cáo tổng hợp số lượng tenant, lưu lượng affiliate và tổng đơn phân bổ"
+    - label: "Ma trận & Plugin Ngành"
       href: "/van-hanh/nganh"
       icon: "Layers"
-      mo_ta: "Quản trị danh mục ngành và thông số plugin contract"
-
-nhom_2:
-  key: "cong-cu-affiliate"
-  label: "Công cụ Bán hàng Affiliate"
-  entries:
+      navKey: "industry-matrix"
+      mo_ta: "Quản trị danh mục 7 ngành hàng và thông số IndustryPluginContract"
+    - label: "Kho mẫu ấn phẩm A6"
+      href: "/kho-templates"
+      icon: "LayoutTemplate"
+      navKey: "industry-templates"
+      mo_ta: "Kho mẫu chuẩn hóa A6 (Tag giá, Menu, Thẻ bảo hành, Care Guide) cho ngành"
     - label: "Landing Page Sản phẩm"
       href: "/landing-page"
       icon: "Globe"
-      mo_ta: "Trang đích bán hàng chuyển đổi cao cho từng sản phẩm/chiến dịch"
+      navKey: "industry-landing"
+      mo_ta: "Trang đích bán hàng chuyển đổi cao cho từng sản phẩm/chiến dịch ngành"
     - label: "Catalog Liên kết & QR"
       href: "/catalog"
       icon: "QrCode"
-      mo_ta: "Catalog điện tử phân phối cho các đối tác affiliate chia sẻ"
-    - label: "Thẻ chào Bán hàng (Greeting Card)"
+      navKey: "industry-catalog"
+      capability: "J1"
+      mo_ta: "Catalog điện tử phân phối cho đối tác affiliate chia sẻ và chốt đơn"
+    - label: "Thẻ chào Bán hàng"
       href: "/the-chao"
       icon: "Sparkles"
-      mo_ta: "Công cụ tư vấn và chốt đơn tự động qua thẻ quà tặng số"
-    - label: "Kho Mẫu Ấn phẩm & Chiến dịch"
-      href: "/kho-templates"
-      icon: "LayoutTemplate"
-      mo_ta: "Mẫu A6, banner, tài liệu bán hàng cho đối tác"
+      navKey: "industry-greeting-card"
+      capability: "R1"
+      mo_ta: "Công cụ chốt đơn tự động qua thẻ chào đa ngành số"
 
-nhom_3:
-  key: "tu-dong-phan-bo"
-  label: "Tự động Phân bổ & Gia công"
+nhom_2:
+  key: "chuan-hoa"
+  label: "Chuẩn hóa, Định lượng & Điều phối"
   entries:
+    - label: "Danh mục & Sản phẩm mẫu"
+      href: "/san-pham"
+      icon: "Package"
+      navKey: "industry-products"
+      capability: "L1"
+      mo_ta: "Taxonomy chuẩn hóa và thư viện sản phẩm mẫu theo ngành"
+    - label: "Trường dữ liệu mở rộng"
+      href: "/van-hanh/truong-du-lieu"
+      icon: "SlidersHorizontal"
+      navKey: "industry-fields"
+      mo_ta: "Cấu hình thuộc tính động (dynamic attributes) theo đặc thù ngành"
     - label: "Điều phối Đơn Tự động"
       href: "/dieu-phoi"
       icon: "Radio"
-      mo_ta: "Thuật toán định tuyến đơn về tiệm tối ưu theo vị trí và tồn kho"
-    - label: "Mạng lưới Cửa hàng Đối tác"
+      navKey: "industry-dispatch"
+      capability: "C23"
+      mo_ta: "Thuật toán định tuyến đơn về tiệm tối ưu theo vị trí và năng lực gia công"
+    - label: "Mạng lưới Shop Đối tác"
       href: "/dieu-phoi/doi-tac"
       icon: "Building2"
+      navKey: "industry-partners"
       mo_ta: "Danh bạ các shop/xưởng liên kết sẵn sàng nhận gia công"
-    - label: "Hàng chờ Duyệt Chất lượng (QC)"
+    - label: "Duyệt Chất lượng (QC)"
       href: "/duyet"
       icon: "CheckCircle2"
+      navKey: "industry-approvals"
+      capability: "H3"
       mo_ta: "Duyệt ảnh sản phẩm thực tế của thợ trước khi cho phép giao"
 
-nhom_4:
-  key: "chuan-hoa-nganh"
-  label: "Bộ Quy chuẩn Ngành Hàng"
+nhom_3:
+  key: "thi-truong"
+  label: "Thị trường, Báo cáo & Đối soát"
   entries:
-    - label: "Danh mục Chuẩn & Sản phẩm Mẫu"
-      href: "/san-pham"
-      icon: "Package"
-      mo_ta: "Taxonomy chuẩn hóa và thư viện sản phẩm mẫu"
-    - label: "Công thức & Định lượng (BOM)"
-      href: "/san-pham/dinh-luong-bom"
-      icon: "FileSpreadsheet"
-      mo_ta: "Quy chuẩn đơn vị đo lường và vai trò linh kiện vật tư"
-    - label: "Quy chuẩn AI Studio Ngành"
-      href: "/cai-dat-ai"
-      icon: "Wand2"
-      mo_ta: "Bối cảnh ảnh, góc máy thị giác và văn phong tiếp thị ngành"
-
-nhom_5:
-  key: "doi-soat-hoa-hong"
-  label: "Đối soát & Hoa hồng Liên kết"
-  entries:
-    - label: "Đối soát Doanh thu & Phí Gia công"
-      href: "/so-lieu/doi-soat"
-      icon: "DollarSign"
-      mo_ta: "Bảng cân đối hoa hồng affiliate và tiền công trả cho shop làm"
-    - label: "Chính sách Phí Gia công (Craft Fee)"
-      href: "/cai-dat/chinh-sach-tho"
-      icon: "SlidersHorizontal"
-      mo_ta: "Khung tính tiền công thợ chuẩn ngành theo độ khó và ngày lễ"
-    - label: "Radar Xu hướng Thị trường"
+    - label: "Trung tâm Đơn Mạng lưới"
+      href: "/don-hang"
+      icon: "ShoppingBag"
+      navKey: "industry-orders"
+      capability: "R1"
+      mo_ta: "Quản lý toàn bộ đơn hàng phát sinh từ các link bán hàng affiliate"
+    - label: "Thị trường & Xu hướng"
       href: "/market-intelligence"
       icon: "TrendingUp"
-      mo_ta: "Phân tích xu hướng tiêu dùng, dịp lễ kích cầu (Occasions)"
+      navKey: "industry-market"
+      capability: "V2"
+      mo_ta: "Phân tích xu hướng tiêu dùng, các dịp kích cầu và thị hiếu ngành"
+    - label: "Dữ liệu ngành & Đối soát"
+      href: "/van-hanh/du-lieu"
+      icon: "Database"
+      navKey: "industry-data"
+      mo_ta: "Bảng cân đối công nợ, hoa hồng liên kết và phí gia công mạng lưới"
 ```
 
 ---
@@ -338,110 +327,137 @@ nhom_5:
 ### 4.3 SIDEBAR TẦNG 3: CHAINOS
 - **Architecture Nametag:** `smeOS • ChainOS • [Ngành]`
 - **Màu sắc nhận diện:** Xanh da trời sâu (`sky-600` / `sky-950`)
-- **Tuyến URL:** `/(app)/*` (chế độ tổ chức `CHAIN` hoặc `FLOWER_NETWORK`)
+- **Tuyến URL:** `/(app)/*` (chế độ tổ chức `CHAIN` hoặc `FLOWER_NETWORK` qua `buildChainNav`)
+- **Quy chuẩn độ dài nhãn nhóm (Strict Label Length):** Tất cả 6 tiêu đề nhóm được chuẩn hóa nghiêm ngặt từ 17–21 ký tự để đảm bảo **100% hiển thị trên 1 dòng duy nhất**, triệt tiêu hoàn toàn hiện tượng rớt dòng (wrapping) trên sidebar chuẩn 240px.
+- **Loại bỏ phân mảnh `viec-chinh`:** Tầng Chuỗi vận hành theo mô hình trung tâm chỉ huy mạng lưới (HQ Central Command), không phân mảnh nhóm theo vai trò để đảm bảo tính trực quan và đồng bộ trong toàn bộ ban điều phối chuỗi.
 
 ```yaml
 nhom_1:
   key: "chi-huy-chuoi"
-  label: "Trung tâm Chỉ huy Chuỗi"
+  label: "Trung tâm Chỉ huy" # 17 ký tự
   entries:
-    - label: "Chỉ huy Chuỗi (Command Center)"
+    - label: "Chỉ huy Mạng lưới"
       href: "/"
       icon: "LayoutDashboard"
-      mo_ta: "Network Command Center: tình hình đơn và vận hành toàn hệ thống"
-    - label: "Báo cáo Hợp nhất Chuỗi"
+      navKey: "chain-command"
+      mo_ta: "Network Command Center: tình hình đơn và vận hành toàn hệ thống mạng lưới"
+    - label: "Báo cáo Hợp nhất"
       href: "/so-lieu"
       icon: "BarChart3"
-      mo_ta: "Doanh thu tổng hợp, so sánh hiệu suất giữa các chi nhánh"
+      navKey: "chain-stats"
+      capability: "U3"
+      mo_ta: "Doanh thu hợp nhất chuỗi, so sánh hiệu suất giữa các chi nhánh và xưởng vệ tinh"
 
 nhom_2:
   key: "ban-hang-chuoi"
-  label: "Bán hàng Thương hiệu Chuỗi"
+  label: "Bán hàng Thương hiệu" # 20 ký tự
   entries:
-    - label: "Đơn hàng Trực tiếp vào Chuỗi"
+    - label: "Đơn hàng Trực tiếp"
       href: "/don-hang"
       icon: "ShoppingBag"
-      mo_ta: "Toàn bộ đơn khách đặt qua Hotline, Fanpage và Website thương hiệu Chuỗi"
-    - label: "Catalog Bộ sưu tập Chuỗi"
+      navKey: "chain-orders"
+      capability: "R1"
+      mo_ta: "Toàn bộ đơn khách đặt trực tiếp qua Hotline, Fanpage và Website thương hiệu Chuỗi"
+    - label: "Catalog Thương hiệu"
       href: "/catalog"
       icon: "Globe"
-      mo_ta: "Catalog chính thức của thương hiệu Chuỗi chia sẻ cho khách hàng"
-    - label: "Khách hàng Thân thiết Chuỗi (CRM)"
+      navKey: "chain-catalog"
+      capability: "J1"
+      mo_ta: "Catalog điện tử phân phối cho các đối tác affiliate chia sẻ và chốt đơn"
+    - label: "Khách hàng Thân thiết"
       href: "/khach-hang"
       icon: "Users"
-      mo_ta: "Quản lý dữ liệu khách hàng tập trung của toàn hệ thống"
-    - label: "Hội thoại & CSKH Tập trung"
+      navKey: "chain-customers"
+      capability: "Q1"
+      mo_ta: "Cơ sở dữ liệu khách hàng CRM tập trung của toàn chuỗi"
+    - label: "Hộp thư CSKH"
       href: "/hoi-thoai"
       icon: "Bot"
-      mo_ta: "Hộp thư tiếp nhận tư vấn khách hàng tập trung của Chuỗi"
+      navKey: "chain-chat"
+      capability: "T1"
+      mo_ta: "Hộp thư tiếp nhận tư vấn và CSKH đa kênh tập trung"
 
 nhom_3:
   key: "dieu-phoi-gia-cong"
-  label: "Điều phối Đơn & Gia công Chi nhánh"
+  label: "Điều phối & Gia công" # 20 ký tự
   entries:
-    - label: "Tháp Điều phối Đơn (Control Tower)"
+    - label: "Tháp Điều phối Đơn"
       href: "/dieu-phoi"
       icon: "Radio"
-      mo_ta: "Bắn đơn về các chi nhánh, xử lý rủi ro trễ hẹn SLA"
-    - label: "Đơn Gia công từ Thẻ chào"
-      href: "/dieu-phoi?tab=brochure"
-      icon: "Sparkles"
-      mo_ta: "Theo dõi tiến độ đơn gia công qua Live Dashboard Card Telegram"
-    - label: "Duyệt Chất lượng Sản phẩm (QC)"
+      navKey: "chain-coordinator"
+      capability: "C23"
+      mo_ta: "Phân bổ đơn về chi nhánh và xưởng vệ tinh tối ưu thời gian và chi phí"
+    - label: "Duyệt Chất lượng (QC)"
       href: "/duyet"
       icon: "CheckCircle2"
-      mo_ta: "Duyệt ảnh thành phẩm chi nhánh gửi lên trước khi giao cho khách"
-    - label: "Chat Điều hành Nội bộ Chuỗi"
+      navKey: "chain-qc"
+      capability: "H3"
+      mo_ta: "Nghiệm thu ảnh thành phẩm chi nhánh gửi lên trước khi giao cho khách hàng"
+    - label: "Chat Điều hành Nội bộ"
       href: "/tin-nhan"
       icon: "MessageSquare"
-      mo_ta: "Kênh chat tức thì giữa Điều phối Chuỗi và Quản lý các chi nhánh"
+      navKey: "chain-internal-chat"
+      mo_ta: "Kênh chat tức thì giữa Điều phối Chuỗi và Quản lý các chi nhánh/xưởng"
 
 nhom_4:
   key: "mang-luoi-chi-nhanh"
-  label: "Mạng lưới Chi nhánh & Xưởng"
+  label: "Chi nhánh & Xưởng" # 17 ký tự (chuẩn hóa thay cho Mạng lưới Chi nhánh & Xưởng)
   entries:
-    - label: "Danh bạ Chi nhánh & Xưởng Ngoài"
+    - label: "Danh bạ Chi nhánh & Xưởng"
       href: "/dieu-phoi/doi-tac"
       icon: "Store"
-      mo_ta: "Quản lý danh sách điểm bán và xưởng gia công vệ tinh"
-    - label: "Khả dụng & Tồn kho Mạng lưới"
+      navKey: "chain-branches"
+      mo_ta: "Quản lý hồ sơ, địa chỉ, năng lực và liên hệ của các chi nhánh thành viên"
+    - label: "Khả dụng & Tồn kho"
       href: "/san-pham/kha-dung"
       icon: "CalendarCheck"
-      mo_ta: "Giám sát năng lực đáp ứng và ca làm việc của từng chi nhánh"
-    - label: "Mã Kết nối & Hồ sơ Định danh"
+      navKey: "chain-availability"
+      capability: "L1"
+      mo_ta: "Giám sát năng lực đáp ứng, ca thợ và tồn kho nguyên liệu các chi nhánh"
+    - label: "Mã Kết nối & Định danh"
       href: "/noi-bo/ket-noi"
       icon: "BadgeCheck"
+      navKey: "chain-identity"
       mo_ta: "Quản lý mã kết nối nội bộ giữa Chuỗi và Cửa hàng thành viên"
 
 nhom_5:
   key: "bo-suu-tap-chuoi"
-  label: "Bộ sưu tập & Bảng giá Chuỗi"
+  label: "Bộ sưu tập & Bảng giá" # 21 ký tự
   entries:
-    - label: "Bộ sưu tập Chuỗi Phát hành"
+    - label: "Bộ sưu tập Chuỗi"
       href: "/san-pham"
       icon: "Tag"
-      mo_ta: "Quản lý Chain Collections phân bổ danh mục cho toàn chuỗi"
-    - label: "Bảng giá Chuỗi & Chiết khấu"
+      navKey: "chain-collections"
+      capability: "L1"
+      mo_ta: "Quản lý Chain Collections phân bổ danh mục mẫu cho toàn hệ thống"
+    - label: "Bảng giá & Chiết khấu"
       href: "/gia"
       icon: "WalletCards"
-      mo_ta: "Khung giá niêm yết và tỷ lệ chiết khấu cho chi nhánh"
-    - label: "Studio AI Chiến dịch Chuỗi"
+      navKey: "chain-pricing"
+      capability: "L6"
+      mo_ta: "Khung giá niêm yết và chính sách chiết khấu/hoa hồng cho chi nhánh"
+    - label: "Studio Chiến dịch AI"
       href: "/creative-studio"
       icon: "Sparkles"
-      mo_ta: "Sản xuất bộ ảnh và video truyền thông đồng bộ cho toàn chuỗi"
+      navKey: "chain-studio"
+      capability: "I1"
+      mo_ta: "Sản xuất bộ ảnh và video tiếp thị đồng bộ cho chiến dịch toàn chuỗi"
 
 nhom_6:
   key: "doi-soat-chuoi"
-  label: "Đối soát & Tài chính Chuỗi"
+  label: "Đối soát & Tài chính" # 20 ký tự
   entries:
-    - label: "Dữ liệu & Đối soát Công nợ Chuỗi"
+    - label: "Dữ liệu & Đối soát"
       href: "/du-lieu"
       icon: "Database"
+      navKey: "chain-clearing"
       mo_ta: "Bảng công nợ gia công và phân chia doanh thu với các chi nhánh"
-    - label: "Chính sách Phí Gia công Chuỗi"
-      href: "/cai-dat/phi-gia-cong"
-      icon: "SlidersHorizontal"
-      mo_ta: "Bảng phí trả thợ cắm/thợ may của chuỗi (6 phương án, bậc thợ)"
+    - label: "Chính sách & Cài đặt"
+      href: "/cai-dat"
+      icon: "Settings2"
+      navKey: "chain-settings"
+      capability: "F1"
+      mo_ta: "Cài đặt phí gia công, hạn mức công nợ và chính sách thanh toán chuỗi"
 ```
 
 ---
@@ -449,149 +465,310 @@ nhom_6:
 ### 4.4 SIDEBAR TẦNG 4: STOREOS
 - **Architecture Nametag:** `smeOS • StoreOS • [Ngành]`
 - **Màu sắc nhận diện:** Xanh ngọc lục bảo (`emerald-600` / `emerald-950`)
-- **Tuyến URL:** `/(app)/*` (chế độ tổ chức `SINGLE`)
+- **Tuyến URL:** `/(app)/*` (chế độ tổ chức `SINGLE` qua `buildStoreNav`)
+- **Đặc tính đa ngành động (Industry Adaptation):** Nhãn mục tự động điều chỉnh theo `IndustryPluginContract` (ví dụ `terms.createButtonLabel`, `terms.scanButtonLabel`, `terms.catalogTitle`, khả dụng nguyên liệu vs lịch phòng Homestay vs lịch bàn F&B vs lịch hẹn Dịch vụ).
 
 ```yaml
-nhom_1:
-  key: "viec-chinh-tiem"
-  label: "Việc chính Hôm nay"
-  entries:
-    - label: "Bàn làm việc Cửa hàng"
-      href: "/"
-      icon: "Home"
-      mo_ta: "Store Growth Center: Tình hình bán hàng và việc ưu tiên hôm nay"
-    - label: "📥 Đơn nhận từ Mạng lưới & Chuỗi"
-      href: "/cua-hang"
-      icon: "Inbox"
-      mo_ta: "Cổng nhận đơn gia công được rót về từ SaaS Ngành và ChainOS"
-    - label: "Hộp Công cụ Kinh doanh (48 Tool)"
-      href: "/cong-cu"
-      icon: "LayoutGrid"
-      mo_ta: "Bộ công cụ tăng trưởng doanh thu tiệm"
+nhom_uu_tien: # Sinh động theo vai trò (Role UX)
+  key: "viec-chinh"
+  label: "⚡ Việc chính hôm nay"
+  entries: "Ưu tiên theo roleKey (vd: thợ cắm thấy /cua-hang, /tai-anh, /kho-templates; sales thấy /hoi-thoai, /don-hang, /the-chao)"
 
-nhom_2:
-  key: "ban-hang-tiem"
-  label: "Bán hàng & Khách tại Tiệm"
+nhom_1:
+  key: "ban-hang"
+  label: "Bán hàng & Khách"
   entries:
-    - label: "Hội thoại Tư vấn Đa kênh"
-      href: "/hoi-thoai"
-      icon: "Bot"
-      mo_ta: "Chat với khách từ Fanpage, Zalo, Website cửa hàng"
-    - label: "Khách hàng & Dịp kỷ niệm (CRM)"
+    - label: "Khách hàng"
       href: "/khach-hang"
       icon: "Users"
-      mo_ta: "Nhắc sinh nhật, ngày cưới, chăm sóc khách thân thiết của tiệm"
-    - label: "Đơn hàng Tiệm Tự Bán"
+      navKey: "customers"
+      capability: "Q1"
+      mo_ta: "Quản lý hồ sơ khách hàng, phân loại VIP/thường, lịch sử mua sắm"
+    - label: "Đơn hàng"
       href: "/don-hang"
       icon: "ShoppingBag"
-      mo_ta: "Quản lý đơn bán tại quầy và đơn khách quen đặt trực tiếp"
-    - label: "Thẻ chào Bán hàng của Tiệm"
-      href: "/the-chao"
-      icon: "Sparkles"
-      mo_ta: "Tạo link thẻ chào gửi khách chọn mẫu và chốt cọc nhanh"
-
-nhom_3:
-  key: "san-xuat-tiem"
-  label: "Sản xuất & Chế tác tại Chỗ"
-  entries:
-    - label: "Quét ảnh & Nghiệm thu Sản phẩm"
-      href: "/tai-anh"
-      icon: "Camera"
-      mo_ta: "Chụp ảnh thành phẩm gửi khách duyệt hoặc gửi Tổng bộ nghiệm thu"
-    - label: "In Ấn phẩm A6 tại Chỗ"
-      href: "/kho-templates"
-      icon: "Printer"
-      mo_ta: "In Tag giá, Thiệp chúc mừng, Menu, Thẻ bảo hành, Care Guide"
-
-nhom_4:
-  key: "san-pham-kho-tiem"
-  label: "Sản phẩm & Kho Tiệm"
-  entries:
-    - label: "Sản phẩm & Công thức (BOM)"
-      href: "/san-pham"
-      icon: "Tag"
-      mo_ta: "Danh mục sản phẩm bán tại quầy kèm công thức thành phần"
-    - label: "Khả dụng & Lịch Thợ/Lịch Bàn"
-      href: "/san-pham/kha-dung"
-      icon: "CalendarCheck"
-      mo_ta: "Cập nhật tồn kho nguyên liệu trong ngày và khả năng nhận đơn"
-    - label: "Tạo Mới & Nhập Excel Hàng loạt"
-      href: "/san-pham/nhap-hang-loat"
-      icon: "FileSpreadsheet"
-      mo_ta: "Thêm sản phẩm mới từ file Excel hoặc từ kho ảnh chụp"
-    - label: "Bảng Tính Giá Vốn & Giá Lẻ"
-      href: "/gia"
-      icon: "WalletCards"
-      mo_ta: "Tính giá thành theo nguyên vật liệu và biên lợi nhuận của tiệm"
-
-nhom_5:
-  key: "marketing-tiem"
-  label: "Marketing & Studio tại Tiệm"
-  entries:
-    - label: "Creative Studio (AI Làm đẹp Ảnh)"
-      href: "/creative-studio"
-      icon: "Wand2"
-      mo_ta: "Chụp ảnh thật tại tiệm -> AI tách nền, chỉnh sáng, tôn dáng sản phẩm"
-    - label: "Tạo Video Ngắn Bán hàng"
-      href: "/video"
-      icon: "Video"
-      mo_ta: "Sinh video ngắn tự động để đăng TikTok / Reels / Shorts"
-    - label: "Viết Bài Tiếp thị Tự động"
-      href: "/noi-dung"
-      icon: "FileText"
-      mo_ta: "Tạo nội dung bài viết bán hàng theo đúng văn phong tiệm"
-    - label: "Catalog Tiệm & Mã QR Quầy"
+      navKey: "orders"
+      capability: "R1"
+      mo_ta: "Quản lý đơn bán tại tiệm, đơn trực tiếp và tiến độ thanh toán"
+    - label: "Hội thoại"
+      href: "/hoi-thoai"
+      icon: "Bot"
+      navKey: "chat"
+      capability: "T1"
+      mo_ta: "Hộp thư tư vấn khách hàng đa kênh (Fanpage, Zalo, Web)"
+    - label: "Catalog & QR"
       href: "/catalog"
       icon: "Globe"
-      mo_ta: "Trang Catalog online của tiệm và mã QR in để bàn thu ngân"
+      navKey: "catalog"
+      capability: "J1"
+      mo_ta: "Catalog sản phẩm trực tuyến của tiệm kèm mã QR chia sẻ"
+    - label: "Thẻ chào sản phẩm" # Động theo ngành: "Thẻ chào & Bộ sưu tập..."
+      href: "/the-chao"
+      icon: "Sparkles"
+      navKey: "greeting-card"
+      capability: "R1"
+      mo_ta: "Tạo link thẻ chào kèm báo giá gửi khách duyệt mẫu và đặt cọc"
 
-nhom_6:
-  key: "so-quy-cai-dat"
-  label: "Sổ quỹ & Cài đặt Tiệm"
+nhom_2:
+  key: "san-pham"
+  label: "Sản phẩm"
   entries:
-    - label: "Báo cáo Doanh thu & Sổ quỹ"
+    - label: "Sản phẩm & Giá"
+      href: "/san-pham"
+      icon: "Tag"
+      navKey: "products"
+      capability: "L1"
+      mo_ta: "Bảng danh mục sản phẩm, định lượng linh kiện và cơ cấu giá"
+    - label: "Khả dụng & Lịch" # Động theo ngành: "Lịch phòng" (Homestay) / "Lịch bàn" (FNB)
+      href: "/san-pham/kha-dung"
+      icon: "CalendarCheck"
+      navKey: "availability"
+      capability: "L1"
+      mo_ta: "Quản lý khả năng đáp ứng đơn, lịch thợ và tồn kho linh kiện"
+    - label: "Tạo sản phẩm mới" # Động theo ngành (terms.createButtonLabel)
+      href: "/san-pham/tao-moi"
+      icon: "Sparkles"
+      navKey: "create-product"
+      capability: "L2"
+      mo_ta: "Khởi tạo sản phẩm mới vào danh mục bán tại tiệm"
+    - label: "Nhập từ Excel & Ảnh"
+      href: "/san-pham/nhap-hang-loat"
+      icon: "FileSpreadsheet"
+      navKey: "bulk-import"
+      capability: "L2"
+      mo_ta: "Nhập dữ liệu sản phẩm hàng loạt từ file bảng tính Excel"
+    - label: "Quét ảnh hoa" # Động theo ngành (terms.scanButtonLabel: Quét ảnh mẫu / Scan)
+      href: "/tai-anh"
+      icon: "Camera"
+      navKey: "scan-photo"
+      capability: "H1"
+      mo_ta: "Trợ lý AI phân tích thành phần nguyên liệu từ ảnh chụp mẫu"
+    - label: "Kho dữ liệu"
+      href: "/kho-du-lieu"
+      icon: "Folder"
+      navKey: "storage"
+      capability: "G1"
+      mo_ta: "Kho lưu trữ tài nguyên ảnh, video và tư liệu của tiệm"
+    - label: "Tính giá"
+      href: "/gia"
+      icon: "WalletCards"
+      navKey: "pricing"
+      capability: "L6"
+      mo_ta: "Công cụ tính giá thành sản phẩm dựa trên công thức và biên lợi nhuận"
+
+nhom_3:
+  key: "noi-dung"
+  label: "Nội dung & Tiếp thị"
+  entries:
+    - label: "Nghiên cứu thị trường"
+      href: "/market-intelligence"
+      icon: "TrendingUp"
+      navKey: "market-intel"
+      capability: "V2"
+      mo_ta: "Radar xu hướng tiêu dùng và các dịp lễ hội kích cầu theo ngành"
+    - label: "Creative Studio"
+      href: "/creative-studio"
+      icon: "Sparkles"
+      navKey: "creative-studio"
+      capability: "I1"
+      mo_ta: "AI Studio nâng cấp ảnh chụp sản phẩm thành ảnh studio chuyên nghiệp"
+    - label: "Ảnh marketing"
+      href: "/creative-studio?tab=area-d"
+      icon: "Wand2"
+      navKey: "marketing-photo"
+      capability: "I4"
+      mo_ta: "Thư viện ảnh marketing ghép bối cảnh nghệ thuật"
+    - label: "Video"
+      href: "/video"
+      icon: "Video"
+      navKey: "video"
+      capability: "I1"
+      mo_ta: "Tạo video ngắn giới thiệu sản phẩm tự động từ ảnh chụp"
+    - label: "Viết nội dung"
+      href: "/noi-dung"
+      icon: "FileText"
+      navKey: "content"
+      capability: "I1"
+      mo_ta: "Trợ lý AI viết bài đăng mạng xã hội chuẩn văn phong thương hiệu tiệm"
+    - label: "Lịch đăng"
+      href: "/lich-dang"
+      icon: "Share2"
+      navKey: "schedule"
+      capability: "I1"
+      mo_ta: "Lên lịch tự động xuất bản nội dung lên các kênh mạng xã hội"
+    - label: "Kho mẫu"
+      href: "/kho-templates"
+      icon: "LayoutTemplate"
+      navKey: "templates"
+      mo_ta: "Kho mẫu ấn phẩm A6 in ấn tại chỗ (Tag, Card, Menu, Warranty)"
+
+nhom_4:
+  key: "van-hanh"
+  label: "Vận hành"
+  entries:
+    - label: "📥 Đơn Mạng Lưới & Chuỗi" # Cổng nhận gia công cốt lõi
+      href: "/cua-hang"
+      icon: "Inbox"
+      navKey: "branch-portal"
+      mo_ta: "Cổng nhận đơn gia công phân bổ từ SaaS Ngành và ChainOS"
+    - label: "Hộp công cụ"
+      href: "/cong-cu"
+      icon: "LayoutGrid"
+      navKey: "toolkit"
+      mo_ta: "Tập hợp 48 công cụ tiện ích phục vụ vận hành hàng ngày"
+    - label: "Điều phối"
+      href: "/dieu-phoi"
+      icon: "Radio"
+      navKey: "coordinator"
+      capability: "C23"
+      mo_ta: "Xem bảng điều phối đơn hàng và trạng thái shipper"
+    - label: "Tin nhắn nội bộ"
+      href: "/tin-nhan"
+      icon: "MessageSquare"
+      navKey: "internal-chat"
+      mo_ta: "Kênh trao đổi công việc nội bộ giữa nhân sự tiệm và điều phối chuỗi"
+    - label: "Profile Kết Nối"
+      href: "/noi-bo/ket-noi"
+      icon: "BadgeCheck"
+      navKey: "connect-identity"
+      mo_ta: "Hồ sơ định danh nhận diện liên kết với mạng lưới chuỗi"
+    - label: "Dữ liệu chuỗi"
+      href: "/du-lieu"
+      icon: "Database"
+      navKey: "chain-data"
+      mo_ta: "Số liệu đối soát công nợ gia công với chuỗi"
+    - label: "Job"
+      href: "/job"
+      icon: "Clock"
+      navKey: "jobs"
+      capability: "G4"
+      mo_ta: "Giám sát tiến độ các tác vụ xử lý nền (AI background jobs)"
+    - label: "Hàng chờ duyệt"
+      href: "/duyet"
+      icon: "CheckCircle2"
+      navKey: "approval"
+      capability: "H3"
+      mo_ta: "Duyệt chất lượng thành phẩm trước khi xuất kho giao khách"
+    - label: "Số liệu"
       href: "/so-lieu"
       icon: "BarChart3"
-      mo_ta: "Dòng tiền thu chi thực tế trong ngày của cửa hàng"
-    - label: "Hồ sơ Tiệm & Kênh Kết nối"
+      navKey: "stats"
+      capability: "U3"
+      mo_ta: "Báo cáo doanh thu, lợi nhuận và hiệu quả kinh doanh của tiệm"
+    - label: "Mức dùng"
+      href: "/muc-dung"
+      icon: "WalletCards"
+      navKey: "usage"
+      capability: "G8"
+      mo_ta: "Theo dõi số lượng token AI và tài nguyên đã tiêu thụ"
+    - label: "Nhật ký kiểm toán"
+      href: "/audit"
+      icon: "ShieldCheck"
+      navKey: "audit"
+      capability: "G9"
+      mo_ta: "Lịch sử thao tác hệ thống và kiểm toán an toàn dữ liệu"
+
+nhom_5:
+  key: "thiet-lap"
+  label: "Thiết lập"
+  entries:
+    - label: "Tri thức"
+      href: "/tri-thuc"
+      icon: "BookOpen"
+      navKey: "knowledge"
+      mo_ta: "Cơ sở tri thức (Knowledge Base) phục vụ đào tạo trợ lý AI"
+    - label: "Chính sách AI"
+      href: "/cai-dat-ai"
+      icon: "Cpu"
+      navKey: "ai-policy"
+      capability: "U1"
+      mo_ta: "Cấu hình hành vi và ngưỡng duyệt an toàn của các mô hình AI"
+    - label: "Kết nối kênh"
+      href: "/ket-noi"
+      icon: "Share2"
+      navKey: "channels"
+      mo_ta: "Thiết lập kết nối với Facebook Page, Zalo OA, Webhook"
+    - label: "Bộ máy phân tích ảnh"
+      href: "/bo-may"
+      icon: "Cpu"
+      navKey: "engine"
+      capability: "H4"
+      mo_ta: "Cấu hình tham số mô hình Vision nhận diện nguyên vật liệu"
+    - label: "Hồ sơ & Cài đặt"
       href: "/cai-dat"
       icon: "Settings2"
-      mo_ta: "Cấu hình tài khoản ngân hàng, mã thanh toán cọc, mã ưu đãi"
+      navKey: "settings"
+      capability: "F1"
+      mo_ta: "Thông tin cửa hàng, tài khoản ngân hàng, mã thanh toán cọc"
 ```
+
+---
+
+### 4.5 QUY CHUẨN THIẾT KẾ SIDEBAR ENTERPRISE GRADE & UX STANDARDS
+
+Để đạt chuẩn Commercial & Enterprise Handover, toàn bộ 4 thanh sidebar tuân thủ nghiêm ngặt các quy chuẩn kỹ thuật và trải nghiệm người dùng sau:
+
+1. **Header Thu nhỏ Tương tác Tinh xảo (Morphing Header & Hover Effect):**
+   - Khi ở trạng thái thu nhỏ (`isCollapsed = true`), nút logo ở vị trí trung tâm (`36x36px`, `rounded-xl`) bình thường hiển thị biểu tượng ứng dụng (`Sparkles`).
+   - Khi người dùng rê chuột (hover) vào nút, biểu tượng tự động chuyển hóa (morph) mượt mà thành icon mở rộng `PanelLeftOpen`, kèm tooltip định vị rõ `Mở thanh điều hướng (⌘B)`.
+   - Toàn bộ vùng header ở trạng thái thu nhỏ cho phép click trực tiếp để bung sidebar ra, không gây ức chế người dùng.
+
+2. **Khắc phục Triệt để Lỗi Tràn & Che khuất Menu Dropdown:**
+   - Loại bỏ `overflow-hidden` tại container header `desktop-nav-header.tsx`, thay thế bằng `relative z-30` trên thanh điều hướng `desktop-nav.tsx`.
+   - Dropdown chuyển đổi tầng kiến trúc (`ArchitectureNametag`) được bổ sung lớp backdrop trong suốt (`fixed inset-0 z-[9990]`) để xử lý click-away đóng bảng chọn an toàn, không bị lồng hay che khuất bởi các thành phần trang.
+
+3. **Căn lề Trực quan & Chống vỡ Typography Nhóm:**
+   - Căn chỉnh văn bản tiêu đề nhóm: Khắc phục thuộc tính mặc định của thẻ `<button>` bằng cách áp dụng `text-left truncate flex-1`, đảm bảo chữ luôn căn lề trái tuyệt đối, thẳng hàng với biểu tượng.
+   - Loại bỏ viền xanh mặc định của trình duyệt: Thay thế bằng `focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40` trang nhã, sắc nét.
+   - Giữ icon mũi tên thu gọn `ChevronDown` có `shrink-0`, không bị co dúm khi tiêu đề nhóm dài.
+   - Chuẩn hóa độ dài tiêu đề nhóm: Mọi nhãn nhóm trong ChainOS và các tầng khống chế trong khoảng 17–21 ký tự, hiển thị 1 dòng duy nhất, triệt tiêu hoàn toàn hiện tượng xuống dòng gây lệch giao diện.
+
+4. **Trạng thái Mặc định Mở rộng (Expanded-by-Default Architecture):**
+   - Thay vì mặc định đóng khiến thanh điều hướng trống trải, thuộc tính `isGroupExpanded` được đặt mặc định là `true` cho toàn bộ các nhóm trên tất cả các tầng.
+   - LocalStorage key được nâng cấp lên `smeos_nav_groups_v2` và `smeos_nav_reports_open_v2` nhằm tự động xóa sạch các trạng thái đóng cũ bị lưu trong bộ nhớ trình duyệt người dùng, mang lại trải nghiệm đầy đủ tính năng ngay từ lần truy cập đầu tiên.
+
+5. **Phím tắt Toàn cục Đẳng cấp (Keyboard Shortcuts):**
+   - `⌘B` (macOS) hoặc `Ctrl+B` (Windows/Linux): Đóng/mở nhanh thanh điều hướng từ mọi màn hình.
+   - `/`: Tiêu điểm nhanh vào ô tìm kiếm toàn cục.
+   - `⌘K`: Mở Command Palette điều hướng nhanh theo chuẩn Linear / Stripe.
+
+6. **Tuân thủ Tuyệt đối Giới hạn Đơn nhiệm SRP (File Size Limit < 350 lines):**
+   - Tách toàn bộ logic hiển thị nhóm điều hướng ra component độc lập `src/components/layout/desktop-nav-group.tsx` (177 dòng).
+   - Tệp chính `src/components/layout/desktop-nav.tsx` được rút gọn từ ~450 dòng xuống còn ~304 dòng, tuân thủ 100% Luật Kiến trúc số 3 và Anti-pattern A8 trong Hiến pháp phát triển.
 
 ---
 
 ## 5. MA TRẬN ÁNH XẠ VAI TRÒ (ROLE UX MATRIX)
 
-Tùy theo vai trò của người dùng trong phiên làm việc (`useSession().roleUx`), hệ thống tự động ghim nhóm **"⚡ VIỆC CHÍNH HÔM NAY"** lên vị trí số 1 của sidebar để tối ưu năng suất làm việc:
+Tùy theo kiến trúc của từng tầng, cơ chế điều hướng được tối ưu hóa như sau:
+- **Tầng StoreOS (Cửa hàng cơ sở):** Tự động ghim nhóm **"⚡ VIỆC CHÍNH HÔM NAY"** lên đầu sidebar theo đúng vai trò thực tế (`useSession().roleUx`) để nhân viên vào ca thao tác ngay không cần tìm kiếm.
+- **Tầng ChainOS & SaaS Mother/Ngành:** Duy trì cây điều hướng Trung tâm Chỉ huy hợp nhất (Unified Command Center) để đảm bảo toàn thể ban chỉ huy và điều phối viên có góc nhìn toàn cảnh về hệ sinh thái và mạng lưới chuỗi.
 
-| Tầng | Vai trò (Role UX) | Danh mục ưu tiên ghim lên đầu ("Việc chính") |
+| Tầng | Vai trò (Role UX) | Danh mục ưu tiên thao tác |
 | :--- | :--- | :--- |
-| **SaaS Mother** | `platform_admin` | Chỉ huy Nền tảng (`/van-hanh`) · Duyệt Đăng ký Mới (`/van-hanh/dang-ky`) · Mức dùng (`/van-hanh/muc-dung`) · Sức khỏe (`/van-hanh/suc-khoe`) |
-| **SaaS Ngành** | `industry_admin` | Ma trận Ngành (`/van-hanh/nganh`) · Landing Page (`/landing-page`) · Điều phối Tự động (`/dieu-phoi`) · Đối soát Affiliate (`/so-lieu/doi-soat`) |
-| **ChainOS** | `flower_network_admin` / `chain_admin` | Chỉ huy Chuỗi (`/`) · Đơn vào Chuỗi (`/don-hang`) · Tháp Điều phối (`/dieu-phoi`) · QC Duyệt chất lượng (`/duyet`) |
-| | `coordinator` (Điều phối viên Chuỗi) | Tháp Điều phối (`/dieu-phoi`) · Đơn từ Thẻ chào (`/dieu-phoi?tab=brochure`) · Chat Nội bộ (`/tin-nhan`) · Bắn đơn gia công |
-| **StoreOS** | `store_admin` (Chủ tiệm / Quản lý) | Bàn làm việc (`/`) · **Đơn nhận từ Mạng lưới (`/cua-hang`)** · Đơn tiệm tự bán (`/don-hang`) · Khách kỷ niệm (`/khach-hang`) · Sổ quỹ (`/so-lieu`) |
+| **SaaS Mother** | `platform_admin` | Chỉ huy Nền tảng (`/van-hanh`) · Đăng ký Mới (`/van-hanh/dang-ky`) · Mức dùng Token (`/van-hanh/muc-dung`) · Sức khỏe Server (`/van-hanh/suc-khoe`) |
+| **SaaS Ngành** | `industry_admin` | Ma trận & Plugin Ngành (`/van-hanh/nganh`) · Landing Page (`/landing-page`) · Điều phối Đơn (`/dieu-phoi`) · Đối soát Affiliate (`/van-hanh/du-lieu`) |
+| **ChainOS** | `flower_network_admin` / `chain_admin` | Chỉ huy Mạng lưới (`/`) · Đơn hàng Trực tiếp (`/don-hang`) · Tháp Điều phối (`/dieu-phoi`) · QC Duyệt chất lượng (`/duyet`) |
+| | `coordinator` (Điều phối viên Chuỗi) | Tháp Điều phối (`/dieu-phoi`) · QC Duyệt chất lượng (`/duyet`) · Chat Nội bộ (`/tin-nhan`) · Danh bạ Chi nhánh (`/dieu-phoi/doi-tac`) |
+| **StoreOS** | `store_admin` (Chủ tiệm / Quản lý) | Bàn làm việc (`/`) · **Đơn nhận từ Mạng lưới (`/cua-hang`)** · Đơn tiệm tự bán (`/don-hang`) · Khách CRM (`/khach-hang`) · Báo cáo (`/so-lieu`) |
 | | `sales` (Nhân viên bán hàng) | Bàn làm việc (`/`) · Hội thoại đa kênh (`/hoi-thoai`) · Khách hàng (`/khach-hang`) · Đơn hàng (`/don-hang`) · Thẻ chào (`/the-chao`) |
-| | `florist` (Thợ chế tác / Cắm / May) | **Đơn nhận từ Mạng lưới (`/cua-hang`)** · Quét ảnh nghiệm thu (`/tai-anh`) · In ấn phẩm A6 (`/kho-templates`) · Xem công thức BOM |
+| | `florist` (Thợ chế tác / Cắm / May) | **Đơn nhận từ Mạng lưới (`/cua-hang`)** · Quét ảnh nghiệm thu (`/tai-anh`) · In ấn phẩm A6 (`/kho-templates`) · Xem định lượng BOM (`/san-pham`) |
 | | `marketing` (Nhân viên Marketing) | Creative Studio (`/creative-studio`) · Viết nội dung (`/noi-dung`) · Tạo video (`/video`) · Catalog QR (`/catalog`) |
 
 ---
 
-## 6. KẾ HOẠCH TRIỂN KHAI MÃ NGUỒN (TECHNICAL IMPLEMENTATION PLAN)
+## 6. TRẠNG THÁI TRIỂN KHAI & BÀN GIAO (IMPLEMENTATION & HANDOVER READINESS)
 
-1. **Cập nhật `src/components/layout/nav-model.ts`**:
-   - Tách hàm `buildNav()` thành 4 bộ builder chuyên biệt:
-     - `buildMotherNav()`: Dành riêng cho `organizationType === "PLATFORM"` hoặc `roleKey === "platform_admin"`.
-     - `buildIndustryNav()`: Dành riêng cho `organizationType === "INDUSTRY"` hoặc `roleKey === "industry_admin"`.
-     - `buildChainNav()`: Dành riêng cho `organizationType === "CHAIN"` hoặc `organizationType === "FLOWER_NETWORK"`.
-     - `buildStoreNav()`: Dành riêng cho `organizationType === "SINGLE"`.
-   - Bổ sung các `navKey`, icon mapping và cập nhật các route link tương ứng.
-2. **Cập nhật `src/components/layout/desktop-nav.tsx` & `mobile-nav-drawer.tsx`**:
-   - Tích hợp `ArchitectureNametag` chuẩn hóa lên góc trên của thanh sidebar để người dùng luôn nhận biết mình đang đứng ở tầng nào.
-   - Giữ nguyên cơ chế bảo mật năng lực `can(capability)` và tính năng lưu trạng thái đóng/mở nhóm qua `localStorage`.
-3. **Cập nhật `src/lib/dev-role-override.ts`**:
-   - Đảm bảo 4 preset tương ứng với 4 tầng cho phép chuyển đổi tức thì trong môi trường phát triển (Dev Mode).
-4. **Kiểm chuẩn & Regression Testing**:
-   - Chạy `npm run test:tenant` (Bắt buộc xanh 100% về cách ly tenant).
-   - Kiểm tra hiển thị đa ngành (`FLORAL`, `FASHION`, `FNB`, `CRAFT_GIFT`, `SERVICES`...) để đảm bảo từ ngữ hiển thị động theo đúng quy chuẩn `IndustryPluginContract`.
+1. **Kiến trúc Dispatcher 4 Tầng độc lập (`src/components/layout/nav/`):**
+   - `nav-mother.ts`: Cấu trúc 3 nhóm cho SaaS Mother (`to-chuc`, `cau-hinh`, `giam-sat`).
+   - `nav-industry.ts`: Cấu trúc 3 nhóm cho SaaS Ngành (`he-sinh-thai`, `chuan-hoa`, `thi-truong`).
+   - `nav-chain.ts`: Cấu trúc 6 nhóm cân đối 17–21 ký tự cho ChainOS (`chi-huy-chuoi`, `ban-hang-chuoi`, `dieu-phoi-gia-cong`, `mang-luoi-chi-nhanh`, `bo-suu-tap-chuoi`, `doi-soat-chuoi`).
+   - `nav-store.ts`: Cấu trúc 5 nhóm đa ngành + `viec-chinh` cho StoreOS.
+   - `index.ts`: Dispatcher định tuyến tự động theo `organizationType` và `roleKey`.
+2. **Kiểm chuẩn Toàn diện & Regression Testing:**
+   - **Unit Tests:** `22/22 tests passing` (`npx vitest run src/components/layout/`).
+   - **Typecheck:** `0 errors` (`npx tsc --noEmit`).
+   - **Tenant Isolation:** Bảo đảm cách ly dữ liệu và phân quyền theo mã năng lực `can(capability)`.
+3. **Mức độ Sẵn sàng Tách Repo Độc lập:**
+   - Cả 4 tầng đã được module hóa ranh giới hoàn toàn sạch sẽ, cho phép đóng gói thành các sản phẩm phần mềm SaaS độc lập hoặc triển khai chung dưới dạng Monorepo thống nhất.
+

@@ -56,7 +56,7 @@ function NavTooltip({
   if (!collapsed) return <>{children}</>
 
   return (
-    <div className="relative flex justify-center">
+    <div className="group relative flex w-full justify-center">
       {children}
       {/* Tooltip */}
       <div

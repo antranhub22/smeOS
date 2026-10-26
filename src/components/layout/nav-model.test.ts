@@ -160,6 +160,33 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     const slot2 = mobileSecondSlot(() => true, roleIndustry)
     expect(slot2.href).toBe("/van-hanh/nganh")
   })
+
+  it("11. Vai ChainOS (flower_network_admin hoặc organizationType=CHAIN) → đủ 6 nhóm chuẩn hóa không bị phân mảnh", () => {
+    const roleChain = ROLE_UX_CATALOG.find((r) => r.key === "flower_network_admin")!
+    const nav = buildNav(() => true, roleChain, null, null, "CHAIN")
+
+    expect(nav.groups.map((g) => g.key)).toEqual([
+      "chi-huy-chuoi",
+      "ban-hang-chuoi",
+      "dieu-phoi-gia-cong",
+      "mang-luoi-chi-nhanh",
+      "bo-suu-tap-chuoi",
+      "doi-soat-chuoi",
+    ])
+
+    const allHrefs = nav.groups.flatMap((g) => g.entries.map((e) => e.href))
+    expect(allHrefs).toContain("/")
+    expect(allHrefs).toContain("/so-lieu")
+    expect(allHrefs).toContain("/don-hang")
+    expect(allHrefs).toContain("/dieu-phoi")
+    expect(allHrefs).toContain("/dieu-phoi/doi-tac")
+    expect(allHrefs).toContain("/san-pham")
+    expect(allHrefs).toContain("/du-lieu")
+
+    // Ô thứ hai mobile cho ChainOS
+    const slot2 = mobileSecondSlot(() => true, roleChain, null, null, "CHAIN")
+    expect(slot2.href).toBe("/dieu-phoi")
+  })
 })
 
 

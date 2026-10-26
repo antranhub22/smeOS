@@ -43,7 +43,7 @@ export const DEV_ROLE_PRESETS: readonly (DevRoleOverride & { label: string; badg
     orgNameSuffix: "[DEV Store]",
   },
   {
-    label: "ChainOS — Điện hoa Admin",
+    label: "ChainOS — Quản trị mạng lưới chuỗi",
     badge: "ChainOS",
     roleKey: "flower_network_admin",
     organizationType: "FLOWER_NETWORK",

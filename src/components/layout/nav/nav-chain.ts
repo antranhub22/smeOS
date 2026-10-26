@@ -12,7 +12,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 1. Chỉ huy Chuỗi
   {
     href: "/",
-    label: "Chỉ huy Chuỗi (Command Center)",
+    label: "Chỉ huy Mạng lưới",
     group: "chi-huy-chuoi",
     iconKey: "LayoutDashboard",
     navKey: "chain-command",
@@ -20,7 +20,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/so-lieu",
-    label: "Báo cáo Hợp nhất Chuỗi",
+    label: "Báo cáo Hợp nhất",
     group: "chi-huy-chuoi",
     iconKey: "BarChart3",
     navKey: "chain-stats",
@@ -31,7 +31,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 2. Bán hàng Thương hiệu Chuỗi (HQ Central Sales)
   {
     href: "/don-hang",
-    label: "Đơn hàng Trực tiếp vào Chuỗi",
+    label: "Đơn hàng Trực tiếp",
     group: "ban-hang-chuoi",
     iconKey: "ShoppingBag",
     navKey: "chain-orders",
@@ -40,7 +40,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/catalog",
-    label: "Catalog Bộ sưu tập Chuỗi",
+    label: "Catalog Thương hiệu",
     group: "ban-hang-chuoi",
     iconKey: "Globe",
     navKey: "chain-catalog",
@@ -49,7 +49,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/khach-hang",
-    label: "Khách hàng Thân thiết Chuỗi (CRM)",
+    label: "Khách hàng Thân thiết",
     group: "ban-hang-chuoi",
     iconKey: "Users",
     navKey: "chain-customers",
@@ -58,7 +58,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/hoi-thoai",
-    label: "Hộp thư CSKH Tập trung",
+    label: "Hộp thư CSKH",
     group: "ban-hang-chuoi",
     iconKey: "Bot",
     navKey: "chain-chat",
@@ -69,7 +69,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 3. Điều phối Đơn & Gia công Chi nhánh
   {
     href: "/dieu-phoi",
-    label: "Tháp Điều phối Đơn (Control Tower)",
+    label: "Tháp Điều phối Đơn",
     group: "dieu-phoi-gia-cong",
     iconKey: "Radio",
     navKey: "chain-coordinator",
@@ -78,7 +78,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/duyet",
-    label: "Duyệt Chất lượng Sản phẩm (QC)",
+    label: "Duyệt Chất lượng (QC)",
     group: "dieu-phoi-gia-cong",
     iconKey: "CheckCircle2",
     navKey: "chain-qc",
@@ -87,7 +87,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/tin-nhan",
-    label: "Chat Điều hành Nội bộ Chuỗi",
+    label: "Chat Điều hành Nội bộ",
     group: "dieu-phoi-gia-cong",
     iconKey: "MessageSquare",
     navKey: "chain-internal-chat",
@@ -97,7 +97,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 4. Mạng lưới Chi nhánh & Xưởng Ngoài
   {
     href: "/dieu-phoi/doi-tac",
-    label: "Danh bạ Chi nhánh & Xưởng Ngoài",
+    label: "Danh bạ Chi nhánh & Xưởng",
     group: "mang-luoi-chi-nhanh",
     iconKey: "Store",
     navKey: "chain-branches",
@@ -105,7 +105,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/san-pham/kha-dung",
-    label: "Khả dụng & Tồn kho Mạng lưới",
+    label: "Khả dụng & Tồn kho",
     group: "mang-luoi-chi-nhanh",
     iconKey: "CalendarCheck",
     navKey: "chain-availability",
@@ -114,7 +114,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/noi-bo/ket-noi",
-    label: "Mã Kết nối & Hồ sơ Điểm bán",
+    label: "Mã Kết nối & Định danh",
     group: "mang-luoi-chi-nhanh",
     iconKey: "BadgeCheck",
     navKey: "chain-identity",
@@ -124,7 +124,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 5. Bộ sưu tập & Bảng giá Chuỗi
   {
     href: "/san-pham",
-    label: "Bộ sưu tập Chuỗi Phát hành",
+    label: "Bộ sưu tập Chuỗi",
     group: "bo-suu-tap-chuoi",
     iconKey: "Tag",
     navKey: "chain-collections",
@@ -133,7 +133,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/gia",
-    label: "Bảng giá Chuỗi & Chiết khấu",
+    label: "Bảng giá & Chiết khấu",
     group: "bo-suu-tap-chuoi",
     iconKey: "WalletCards",
     navKey: "chain-pricing",
@@ -142,7 +142,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/creative-studio",
-    label: "Studio AI Chiến dịch Chuỗi",
+    label: "Studio Chiến dịch AI",
     group: "bo-suu-tap-chuoi",
     iconKey: "Sparkles",
     navKey: "chain-studio",
@@ -153,7 +153,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 6. Đối soát & Tài chính Chuỗi
   {
     href: "/du-lieu",
-    label: "Dữ liệu & Đối soát Công nợ Chuỗi",
+    label: "Dữ liệu & Đối soát",
     group: "doi-soat-chuoi",
     iconKey: "Database",
     navKey: "chain-clearing",
@@ -161,7 +161,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat",
-    label: "Chính sách & Cài đặt Chuỗi",
+    label: "Chính sách & Cài đặt",
     group: "doi-soat-chuoi",
     iconKey: "Settings2",
     navKey: "chain-settings",
@@ -171,60 +171,33 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
 ] as const
 
 const CHAIN_GROUPS_CONFIG = [
-  { key: "chi-huy-chuoi", label: "Trung tâm Chỉ huy Chuỗi" },
-  { key: "ban-hang-chuoi", label: "Bán hàng Thương hiệu Chuỗi" },
-  { key: "dieu-phoi-gia-cong", label: "Điều phối Đơn & Gia công Chi nhánh" },
-  { key: "mang-luoi-chi-nhanh", label: "Mạng lưới Chi nhánh & Xưởng Ngoài" },
-  { key: "bo-suu-tap-chuoi", label: "Bộ sưu tập & Bảng giá Chuỗi" },
-  { key: "doi-soat-chuoi", label: "Đối soát & Tài chính Chuỗi" },
+  { key: "chi-huy-chuoi", label: "Trung tâm Chỉ huy" },
+  { key: "ban-hang-chuoi", label: "Bán hàng Thương hiệu" },
+  { key: "dieu-phoi-gia-cong", label: "Điều phối & Gia công" },
+  { key: "mang-luoi-chi-nhanh", label: "Chi nhánh & Xưởng" },
+  { key: "bo-suu-tap-chuoi", label: "Bộ sưu tập & Bảng giá" },
+  { key: "doi-soat-chuoi", label: "Đối soát & Tài chính" },
 ] as const
 
 export function buildChainNav(
   can: (code: string) => boolean,
-  role: RoleUxDefinition | null
+  role?: RoleUxDefinition | null
 ): NavView {
   const isAccessible = (item: NavEntry) => !item.capability || can(item.capability)
 
-  // Gom các mục Việc chính nếu vai có cấu hình navPriority
-  const pinnedHrefs = new Set<string>()
-  const viecChinhEntries: NavEntry[] = []
-
-  if (role && role.navPriority && role.navPriority.length > 0) {
-    viecChinhEntries.push(HOME_ENTRY)
-    pinnedHrefs.add(HOME_ENTRY.href)
-
-    for (const href of role.navPriority) {
-      if (pinnedHrefs.has(href)) continue
-      const found = CHAIN_NAV_ENTRIES.find((entry) => entry.href === href)
-      if (found && found.status !== "COMING_SOON" && !isRouteLocked(found.href) && isAccessible(found)) {
-        viecChinhEntries.push(found)
-        pinnedHrefs.add(found.href)
-      }
-    }
-  }
-
   const groups: NavGroup[] = []
-
-  if (viecChinhEntries.length > 0 && role) {
-    groups.push({
-      key: "viec-chinh",
-      label: `Việc chính · ${role.label}`,
-      entries: viecChinhEntries,
-    })
-  }
 
   for (const config of CHAIN_GROUPS_CONFIG) {
     const groupEntries = CHAIN_NAV_ENTRIES.filter(
       (entry) =>
         entry.group === config.key &&
-        !pinnedHrefs.has(entry.href) &&
         isAccessible(entry)
     )
     if (groupEntries.length > 0) {
       groups.push({
         key: config.key,
         label: config.label,
-        entries: groupEntries,
+        entries: [...groupEntries],
       })
     }
   }
