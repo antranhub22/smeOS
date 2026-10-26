@@ -33,7 +33,7 @@
 # huggingface.co — không cần tải tay.
 
 torch>=2.3
-torchvision>=0.18
+torchvision>=0.29.1
 # Ghim đúng 5.15.1 — ĐÃ CHẠY THỬ THẬT 2026-09-11 trên máy thật (MPS).
 # 5.17.0 vỡ generate() của Florence-2 (encoder-decoder): 'EncoderDecoderCache'
 # object has no attribute 'layers', bên trong chính transformers.generation.utils,
