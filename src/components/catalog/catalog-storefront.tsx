@@ -17,6 +17,7 @@ import type { PublicCatalogResult, PublicCatalogProduct } from "@/modules/catalo
 import type { GeneratedLandingPackage } from "@/modules/content-engine/domain/landing-content-generator"
 import { ProductDetailModal } from "./product-detail-modal"
 import { ShareCatalogModal } from "./share-catalog-modal"
+import { CatalogStorefrontHeader } from "./catalog-storefront-header"
 import {
   LandingTemplateHero,
   LandingTemplateStory,
@@ -130,46 +131,12 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
   return (
     <div className="min-h-screen bg-background text-text antialiased font-sans pb-16">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-border shadow-xs">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {shop.logoUrl ? (
-              <img src={shop.logoUrl} alt={shop.name} className="w-10 h-10 rounded-full object-cover border border-border" />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold">
-                <Flower2 size={20} />
-              </div>
-            )}
-            <div>
-              <div className="text-sm font-extrabold text-text leading-tight">{shop.name}</div>
-              {shop.address && (
-                <div className="text-caption text-text-muted flex items-center gap-1 mt-0.5 line-clamp-1">
-                  <MapPin size={11} className="shrink-0 text-primary" />
-                  {shop.address}
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/15 transition-colors"
-            >
-              <Share2 size={14} />
-              <span>Chia sẻ</span>
-            </button>
-            {shop.phone && (
-              <a
-                href={`tel:${shop.phone}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-primary text-white hover:bg-primary-dark shadow-sm transition-colors"
-              >
-                <Phone size={13} />
-                {shop.phone}
-              </a>
-            )}
-          </div>
-        </div>
-      </header>
+      <CatalogStorefrontHeader
+        shop={shop}
+        catalog={catalog}
+        products={products}
+        onOpenShareModal={() => setShowShareModal(true)}
+      />
 
       {/* Main Content Sections */}
       <div className="max-w-4xl mx-auto px-4 pt-6 space-y-6">

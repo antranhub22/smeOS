@@ -1,18 +1,25 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { BookOpen, ArrowLeft, ArrowRight, Check, Wand2, Sparkles } from "lucide-react"
+import { BookOpen, ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import type { CatalogProduct } from "./catalog-management-tab"
-import {
-  CATALOG_STYLE_OPTIONS,
-  type CatalogStyleVariant,
-} from "@/modules/content-engine/domain/catalog-content-generator"
+import { type CatalogStyleVariant } from "@/modules/content-engine/domain/catalog-content-generator"
 import { generateQRCodeDataUrl, triggerDownload } from "@/core/media/qr-engine"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
+import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { CatalogWizardStep1Products } from "./catalog-wizard-step1-products"
+import { CatalogWizardStep3Intro } from "./catalog-wizard-step3-intro"
 import { CatalogWizardStep4Success } from "./catalog-wizard-step4-success"
+import { CatalogTemplateSelector } from "./studio/catalog-template-selector"
+import type {
+  CatalogTemplateId,
+  CatalogStyleId,
+  CatalogProductItem,
+  BrandProfile,
+} from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
+import { resolveCatalogBrief } from "@/modules/catalog-studio/use-cases/resolve-catalog-brief"
 
 interface CatalogWizardFlowProps {
   products: CatalogProduct[]
@@ -24,7 +31,6 @@ interface CatalogWizardFlowProps {
   initialName?: string | undefined
   initialDesc?: string | undefined
   isAiPreFilled?: boolean | undefined
-  /** Cho phép nhảy thẳng đến step chỉ định (dùng khi Autonomous AI đã điền sẵn) */
   initialStep?: number | undefined
 }
 
@@ -41,12 +47,17 @@ export function CatalogWizardFlow({
   initialStep,
 }: CatalogWizardFlowProps) {
   const { business } = useTenantProfile()
-  const currentShopName = business?.display_name || "Tiệm hoa smeOS"
+  const { organization } = useSession()
+  const ti = getIndustryTerminology(organization?.industry)
+  const sampleTerm = ti.sampleProduct || "sản phẩm"
+  const currentShopName = business?.display_name || "Cửa hàng của bạn"
 
   const [currentStep, setCurrentStep] = useState<number>(initialStep ?? 1)
-
   const [selectedIds, setSelectedIds] = useState<string[]>(initialSelectedIds || [])
   const [styleVariant, setStyleVariant] = useState<CatalogStyleVariant>(initialStyleVariant || "MODERN_SHOWROOM")
+  const [templateId, setTemplateId] = useState<CatalogTemplateId>("T01_SIGNATURE_COLLECTION")
+  const [styleId, setStyleId] = useState<CatalogStyleId>("S01_EDITORIAL_MAGAZINE")
+
   const [name, setName] = useState(initialName || "")
   const [desc, setDesc] = useState(initialDesc || "")
 
@@ -56,10 +67,7 @@ export function CatalogWizardFlow({
   const [error, setError] = useState<string | null>(null)
   const [downloadingQR, setDownloadingQR] = useState(false)
 
-  const activeProducts = useMemo(
-    () => products.filter((p) => p.status === "ACTIVE"),
-    [products]
-  )
+  const activeProducts = useMemo(() => products.filter((p) => p.status === "ACTIVE"), [products])
 
   const availableOccasions = useMemo(() => {
     const set = new Set<string>()
@@ -74,18 +82,18 @@ export function CatalogWizardFlow({
   const handleQuickPreset = (type: "all" | "occasion" | "budget") => {
     if (type === "all") {
       setSelectedIds(activeProducts.map((p) => p.id))
-      setName("Tất cả mẫu hoa đang bán")
+      setName(`Tất cả ${sampleTerm} đang bán`)
       setStyleVariant("MODERN_SHOWROOM")
     } else if (type === "occasion") {
       const occ = availableOccasions[0] || "Sự kiện"
       const matched = activeProducts.filter((p) => p.occasion_code === occ)
       setSelectedIds(matched.length > 0 ? matched.map((p) => p.id) : activeProducts.slice(0, 6).map((p) => p.id))
-      setName(`Bộ sưu tập Hoa ${occ}`)
+      setName(`Bộ sưu tập ${sampleTerm} ${occ}`)
       setStyleVariant("EDITORIAL_LOOKBOOK")
     } else if (type === "budget") {
       const budgetProds = activeProducts.filter((p) => p.price && p.price <= 800000)
       setSelectedIds(budgetProds.length > 0 ? budgetProds.map((p) => p.id) : activeProducts.slice(0, 5).map((p) => p.id))
-      setName("Bộ sưu tập Hoa Tinh Tuyển Dưới 800K")
+      setName(`Bộ sưu tập ${sampleTerm} Dưới 800K`)
       setStyleVariant("COMPACT_LIST")
     }
     setCurrentStep(2)
@@ -110,7 +118,7 @@ export function CatalogWizardFlow({
         setDesc(json.data.description)
       }
     } catch {
-      setDesc(`Chào mừng quý khách đến với ${name}. Tuyển chọn những mẫu hoa tươi nghệ thuật được thiết kế tinh tế nhất từ ${currentShopName}.`)
+      setDesc(`Chào mừng quý khách đến với ${name}. Tuyển chọn những ${sampleTerm} nghệ thuật được thiết kế tinh tế nhất từ ${currentShopName}.`)
     } finally {
       setIsAiGenerating(false)
     }
@@ -127,15 +135,20 @@ export function CatalogWizardFlow({
         body: JSON.stringify({
           name: name.trim(),
           description: desc.trim() || null,
-          filters: { product_ids: selectedIds, style_variant: styleVariant },
+          filters: {
+            product_ids: selectedIds,
+            style_variant: styleVariant,
+            template_id: templateId,
+            style_id: styleId,
+          },
         }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error(data.message || "Không thể tạo liên kết catalog.")
+        throw new Error(data.message || data.error?.message || "Không thể tạo liên kết catalog.")
       }
       const json = await res.json()
-      setPublishedSlug(json.data?.slug || "catalog")
+      setPublishedSlug(json.data?.slug || json.slug || "catalog")
       setCurrentStep(4)
       onCreated()
     } catch (err) {
@@ -158,6 +171,55 @@ export function CatalogWizardFlow({
     }
   }
 
+  // Domain models for studio & PDF rendering
+  const studioProducts: CatalogProductItem[] = useMemo(() => {
+    const chosen = products.filter((p) => selectedIds.includes(p.id))
+    return (chosen.length > 0 ? chosen : activeProducts.slice(0, 6)).map((p, idx) => ({
+      productId: p.id,
+      name: p.name,
+      code: p.code || p.id,
+      category: p.category ?? null,
+      primaryImage: p.imageUrl || null,
+      price: p.price ?? null,
+      currency: "VND",
+      sortOrder: idx + 1,
+      status: p.status,
+    }))
+  }, [products, selectedIds, activeProducts])
+
+  const brandProfile: BrandProfile = useMemo(() => ({
+    brandId: organization?.id || "brand",
+    name: currentShopName,
+    slogan: "Bộ Sưu Tập Tuyển Chọn • smeOS 2026",
+    brandColors: { primary: "#9A3412" },
+    contacts: {
+      phone: business?.phone || null,
+      hotline: business?.phone || null,
+      zalo: business?.phone || null,
+      address: business?.address || null,
+    },
+  }), [organization?.id, business, currentShopName])
+
+  const resolvedCatalog = useMemo(() => {
+    return resolveCatalogBrief(
+      {
+        catalogId: publishedSlug || "preview",
+        title: name || `Bộ Sưu Tập ${sampleTerm}`,
+        purpose: "COLLECTION",
+        audience: "CONSUMER",
+        language: "vi-VN",
+        styleId,
+        templateId,
+        pageSize: "A4_PORTRAIT",
+        outputProfile: "DIGITAL_PDF",
+        brandId: brandProfile.brandId,
+        productIds: studioProducts.map((p) => p.productId),
+      },
+      brandProfile,
+      studioProducts
+    )
+  }, [publishedSlug, name, sampleTerm, styleId, templateId, brandProfile, studioProducts])
+
   return (
     <div className="space-y-5">
       {/* Header Wizard & Progress */}
@@ -168,10 +230,10 @@ export function CatalogWizardFlow({
             <span>Hành trình Tạo Catalog Số Trực Tuyến</span>
           </div>
           <h2 className="text-title font-bold text-text">
-            {currentStep === 1 && "Bước 1: Tuyển chọn sản phẩm hoa vào Catalog"}
-            {currentStep === 2 && "Bước 2: Chọn phong cách hiển thị Catalog"}
+            {currentStep === 1 && `Bước 1: Tuyển chọn ${sampleTerm} vào Catalog`}
+            {currentStep === 2 && "Bước 2: Chọn Template & Ngôn ngữ Thị giác 2026"}
             {currentStep === 3 && "Bước 3: Đặt tên, lời chào AI & Xem trước"}
-            {currentStep === 4 && "Bước 4: Xuất bản thành công & Hành động tiếp theo"}
+            {currentStep === 4 && "Bước 4: Xuất bản thành công & Tải PDF / QR"}
           </h2>
         </div>
 
@@ -199,12 +261,11 @@ export function CatalogWizardFlow({
         </div>
       </div>
 
-      {/* Thông báo AI pre-fill nếu có */}
       {isAiPreFilled && currentStep < 4 && (
         <div className="p-3.5 rounded-xl bg-primary-muted border border-primary-border flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-primary text-body-sm font-semibold">
             <Sparkles className="h-4 w-4 shrink-0" />
-            <span>AI đã phân tích nguyên liệu và chuẩn bị sẵn các lựa chọn tối ưu cho Catalog. Bạn có thể kiểm tra từng bước!</span>
+            <span>AI đã phân tích và chuẩn bị sẵn các lựa chọn tối ưu cho Catalog. Bạn có thể kiểm tra từng bước!</span>
           </div>
           {onBackToModeSelection && (
             <button
@@ -224,7 +285,7 @@ export function CatalogWizardFlow({
         </div>
       )}
 
-      {/* Nội dung từng bước */}
+      {/* Wizard Steps Content */}
       <div className="rounded-2xl border border-border bg-surface p-5 shadow-xs space-y-5">
         {currentStep === 1 && (
           <CatalogWizardStep1Products
@@ -238,99 +299,32 @@ export function CatalogWizardFlow({
         )}
 
         {currentStep === 2 && (
-          <div className="space-y-4">
-            <div className="border-b border-border pb-3">
-              <h3 className="text-title font-bold text-text">Chọn phong cách trình bày Catalog</h3>
-              <p className="text-body-sm text-text-muted mt-0.5">
-                Phong cách sẽ quyết định bố cục lướt xem của khách hàng trên điện thoại di động.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {CATALOG_STYLE_OPTIONS.map((style) => {
-                const isSelected = styleVariant === style.id
-                return (
-                  <button
-                    key={style.id}
-                    type="button"
-                    onClick={() => setStyleVariant(style.id)}
-                    className={`flex flex-col p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                      isSelected
-                        ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
-                        : "border-border bg-surface hover:bg-surface-alt/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-body font-bold text-text">{style.name}</span>
-                      {isSelected && <Check className="h-4 w-4 text-primary" />}
-                    </div>
-                    <p className="text-caption text-text-muted flex-1">{style.desc}</p>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
+          <CatalogTemplateSelector
+            selectedTemplateId={templateId}
+            selectedStyleId={styleId}
+            onSelectTemplate={(tplId, defStyleId) => {
+              setTemplateId(tplId)
+              setStyleId(defStyleId)
+            }}
+            onSelectStyle={(sId) => setStyleId(sId)}
+            sampleProducts={studioProducts}
+            brand={brandProfile}
+            collectionTitle={name || `Bộ sưu tập ${sampleTerm}`}
+          />
         )}
 
         {currentStep === 3 && (
-          <div className="space-y-4">
-            <div className="border-b border-border pb-3">
-              <h3 className="text-title font-bold text-text">Thông tin hiển thị & Lời chào khách</h3>
-              <p className="text-body-sm text-text-muted mt-0.5">
-                Đặt tên bộ sưu tập và để AI tạo lời tự sự giới thiệu hoa chuyên nghiệp.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <label className="block text-caption font-bold text-text mb-1">
-                  Tên Catalog / Bộ sưu tập <span className="text-destructive">*</span>
-                </label>
-                <Input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="VD: Bộ sưu tập Hoa Tươi Mới Về Hôm Nay..."
-                  className="text-body-sm"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-caption font-bold text-text">Lời chào & Mô tả Catalog</label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={!name.trim() || isAiGenerating}
-                    onClick={handleAiWriteIntro}
-                    className="text-caption text-primary hover:bg-primary-muted/20 h-7 gap-1"
-                  >
-                    <Wand2 className="h-3.5 w-3.5" />
-                    <span>{isAiGenerating ? "AI đang viết..." : "✨ AI Viết Lời Chào"}</span>
-                  </Button>
-                </div>
-                <textarea
-                  value={desc}
-                  onChange={(e) => setDesc(e.target.value)}
-                  rows={3}
-                  placeholder="Nhập lời chào khách khi mở link catalog..."
-                  className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </div>
-
-              <div className="p-4 rounded-xl bg-surface-alt/70 border border-border flex items-center justify-between">
-                <div>
-                  <div className="text-body-sm font-bold text-text">{name || "Chưa đặt tên Catalog"}</div>
-                  <div className="text-caption text-text-muted mt-0.5">
-                    Phong cách: <strong className="text-text">{styleVariant}</strong> • Gồm <strong className="text-primary">{selectedIds.length}</strong> mẫu hoa tuyển chọn
-                  </div>
-                </div>
-                <div className="text-caption text-success font-semibold flex items-center gap-1">
-                  <Check className="h-4 w-4" /> Đã sẵn sàng xuất bản
-                </div>
-              </div>
-            </div>
-          </div>
+          <CatalogWizardStep3Intro
+            name={name}
+            setName={setName}
+            desc={desc}
+            setDesc={setDesc}
+            selectedCount={selectedIds.length}
+            sampleProductTerm={sampleTerm}
+            styleName={`${templateId.replace("T0", "T")}`}
+            isAiGenerating={isAiGenerating}
+            onAiWriteIntro={handleAiWriteIntro}
+          />
         )}
 
         {currentStep === 4 && publishedUrl && publishedSlug && (
@@ -339,10 +333,22 @@ export function CatalogWizardFlow({
             publishedSlug={publishedSlug}
             onDownloadQR={handleDownloadQR}
             downloadingQR={downloadingQR}
+            imageExportProps={{
+              products: studioProducts,
+              style: resolvedCatalog.style,
+              brand: brandProfile,
+              catalogTitle: name || "Catalog",
+            }}
+            pdfExportProps={{
+              pages: resolvedCatalog.pages,
+              style: resolvedCatalog.style,
+              brand: resolvedCatalog.brand,
+              catalogTitle: name || "Catalog",
+            }}
           />
         )}
 
-        {/* Nút điều hướng tuần tự */}
+        {/* Step Navigation Controls */}
         {currentStep < 4 && (
           <div className="flex items-center justify-between pt-4 border-t border-border">
             <Button
@@ -364,13 +370,13 @@ export function CatalogWizardFlow({
                   disabled={currentStep === 1 && selectedIds.length === 0}
                   onClick={() => {
                     if (currentStep === 1 && !name) {
-                      setName(`Bộ sưu tập ${selectedIds.length} Mẫu Hoa Tuyển Chọn`)
+                      setName(`Bộ sưu tập ${selectedIds.length} ${sampleTerm} Tuyển Chọn`)
                     }
                     setCurrentStep((prev) => Math.min(3, prev + 1))
                   }}
                   className="border-primary text-primary hover:bg-primary-muted/20 flex items-center gap-1.5 text-body-sm font-semibold"
                 >
-                  <span>Tiếp tục ({selectedIds.length} hoa đã chọn)</span>
+                  <span>Tiếp tục ({selectedIds.length} {sampleTerm} đã chọn)</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               ) : (
