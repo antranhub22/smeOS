@@ -1,3 +1,4 @@
+import type { IAvailabilityRepository } from "../domain/repositories/availability-repository.interface"
 import { AvailabilityRepository } from "../infra/availability-repository"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 
@@ -11,7 +12,7 @@ export interface ManualBlockInput {
 
 export async function createManualBlock(
   input: ManualBlockInput,
-  repo = new AvailabilityRepository(),
+  repo: IAvailabilityRepository = new AvailabilityRepository(),
 ): Promise<string> {
   if (!input.checkInDate || !/^\d{4}-\d{2}-\d{2}$/.test(input.checkInDate)) {
     throw validationFailed({ checkInDate: "Ngày bắt đầu không hợp lệ" })
@@ -24,7 +25,9 @@ export async function createManualBlock(
   }
 
   // Sản phẩm của tổ chức khác → 404 như mọi tài nguyên ngoài tenant (luật 2)
-  if (!(await repo.productBelongsToOrganization(input.organizationId, input.productId))) throw notFound()
+  if (repo.productBelongsToOrganization && !(await repo.productBelongsToOrganization(input.organizationId, input.productId))) {
+    throw notFound()
+  }
 
   const id = await repo.createBooking({
     organizationId: input.organizationId,
@@ -41,7 +44,7 @@ export async function createManualBlock(
 export async function removeManualBlock(
   organizationId: string,
   blockId: string,
-  repo = new AvailabilityRepository(),
+  repo: IAvailabilityRepository = new AvailabilityRepository(),
 ): Promise<boolean> {
   return repo.deleteManualBlock(organizationId, blockId)
 }

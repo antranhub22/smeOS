@@ -1,6 +1,7 @@
+import type { IAvailabilityRepository } from "../domain/repositories/availability-repository.interface"
+import { AvailabilityRepository } from "../infra/availability-repository"
 import { conflict } from "@/core/http/errors"
 import { log } from "@/core/observability/log"
-import { AvailabilityRepository } from "../infra/availability-repository"
 
 export interface BindOrderBookingInput {
   organizationId: string
@@ -14,7 +15,7 @@ export interface BindOrderBookingInput {
 /** Tự động tạo booking khóa ngày khi khách đặt phòng trên Thẻ chào (Greeting Card). */
 export async function bindOrderBooking(
   input: BindOrderBookingInput,
-  repo = new AvailabilityRepository(),
+  repo: IAvailabilityRepository = new AvailabilityRepository(),
 ): Promise<string | null> {
   if (!input.checkInDate || !input.checkOutDate) return null
   if (input.checkInDate >= input.checkOutDate) return null
@@ -98,7 +99,7 @@ function resolveHomestayCheckOut(
 /** Đảm bảo đơn Homestay luôn được khóa phòng trên Calendar khi có thông báo chuyển khoản hoặc thanh toán */
 export async function ensureHomestayOrderBooking(
   order: EnsureHomestayBookingOrder,
-  repo = new AvailabilityRepository(),
+  repo: IAvailabilityRepository = new AvailabilityRepository(),
 ): Promise<string | null> {
   const window = (order.delivery_window as Record<string, string> | null) || {}
   const checkInDate = window.date
@@ -139,7 +140,7 @@ export async function ensureHomestayOrderBooking(
 export async function releaseOrderBooking(
   organizationId: string,
   orderId: string,
-  repo = new AvailabilityRepository(),
+  repo: IAvailabilityRepository = new AvailabilityRepository(),
 ): Promise<void> {
   await repo.cancelByOrderId(organizationId, orderId)
 }

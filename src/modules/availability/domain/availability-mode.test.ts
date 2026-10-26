@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest"
 import { getAvailabilityBoard } from "../use-cases/get-availability-board"
 import { bindOrderBooking, ensureHomestayOrderBooking, releaseOrderBooking } from "../use-cases/bind-order-booking"
 import { createManualBlock, removeManualBlock } from "../use-cases/manage-manual-block"
-import type { IAvailabilityRepository } from "./repositories/availability-repository.interface"
+import type { AvailabilityRepository } from "../infra/availability-repository"
 
 describe("Availability Module Use-Cases", () => {
   it("getAvailabilityBoard creates proper days array and aggregates product data", async () => {
@@ -35,7 +35,7 @@ describe("Availability Module Use-Cases", () => {
           createdAt: "2026-10-01T00:00:00Z",
         },
       ]),
-    } as unknown as IAvailabilityRepository
+    } as unknown as AvailabilityRepository
 
     const result = await getAvailabilityBoard("org-1", "2026-10", "HOMESTAY", mockRepo)
 

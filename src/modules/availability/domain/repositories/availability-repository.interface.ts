@@ -66,4 +66,10 @@ export interface IAvailabilityRepository {
     orderId: string,
     deliveryWindow: Record<string, unknown>
   ): Promise<void>
+
+  /** Kiểm tra sản phẩm thuộc tổ chức */
+  productBelongsToOrganization?(
+    organizationId: string,
+    productId: string
+  ): Promise<boolean>
 }
