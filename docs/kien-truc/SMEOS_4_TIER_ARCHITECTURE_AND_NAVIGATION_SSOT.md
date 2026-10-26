@@ -740,6 +740,47 @@ nhom_5:
 
 ---
 
+### 4.7 KIẾN TRÚC SSOT THƯ VIỆN CÔNG CỤ (PLATFORM TOOLKIT SSOT ARCHITECTURE)
+
+Để phục vụ chiến lược đa ngành và quản trị tập trung toàn bộ 48+ công cụ nghiệp vụ, hệ thống thiết lập kiến trúc **Single Source of Truth (SSOT) Toolkit**:
+
+```
+                       ┌───────────────────────────────────────────────┐
+                       │           TẦNG 1: SAAS MOTHER                 │
+                       │     (Trung tâm Điều khiển Ma trận Công cụ)    │
+                       │             /van-hanh/nganh?tab=tools         │
+                       └──────────────────────┬────────────────────────┘
+                                              │ Quản trị Bật/Tắt & Cấp phép
+                                              ▼
+                       ┌───────────────────────────────────────────────┐
+                       │           SSOT TOOL REGISTRY (Domain)         │
+                       │     src/modules/toolkit/domain/tool-registry  │
+                       │  - 48+ Công cụ định nghĩa 1 nơi duy nhất      │
+                       │  - Metadata: href, icon, tiers, capability    │
+                       │  - Hàm chiếu: getSidebarToolsForTier(tier)    │
+                       └──────┬────────────────┬────────────────┬──────┘
+                              │                │                │
+            Chiếu theo Tầng 2 │                │ Chiếu Tầng 3   │ Chiếu Tầng 4
+                              ▼                ▼                ▼
+         ┌────────────────────────┐  ┌──────────────────┐  ┌──────────────────────┐
+         │     TẦNG 2: SAAS NGÀNH │  │ TẦNG 3: CHAINOS  │  │   TẦNG 4: STOREOS    │
+         │   (Công cụ Bán hàng)   │  │  (Công cụ Chuỗi) │  │ (Thư viện Công cụ)   │
+         │    nav-industry.ts     │  │   nav-chain.ts   │  │    nav-store.ts      │
+         └────────────────────────┘  └──────────────────┘  └──────────────────────┘
+```
+
+#### 4.7.1 Các Nguyên tắc Kiến trúc Bất biến của Toolkit SSOT:
+1. **Định nghĩa Một nơi Duy nhất (Single Definition Rule):**
+   - Mọi công cụ (Catalog, Thẻ chào, Studio ảnh AI, Video Studio, Tính giá thành BOM, Kho mẫu ấn phẩm...) được khai báo đầy đủ metadata tại `src/modules/toolkit/domain/tool-registry.ts`.
+   - Tuyệt đối cấm định nghĩa lại các mảng công cụ tĩnh rời rạc rải rác trong các file giao diện.
+2. **Một Trung tâm Điều khiển Bật/Tắt Toàn cục (Single Control Plane):**
+   - Admin SaaS quản trị ma trận công cụ tập trung tại Console Tầng 1 (`/van-hanh/nganh?tab=tools`).
+   - Việc bật/tắt hay nâng cấp một công cụ áp dụng tức thì xuống các tầng dưới theo ngành hàng (`industryKey`) và cấp độ tổ chức (`organizationType`).
+3. **Tiêu thụ Động theo Tầng (Dynamic Tier Projection):**
+   - Các thanh sidebar của **SaaS Ngành (Tầng 2)**, **ChainOS (Tầng 3)**, và **StoreOS (Tầng 4)** sử dụng hàm chiếu `getSidebarToolsForTier(tier)` từ SSOT Registry để tự động lọc và hiển thị đúng các công cụ được chỉ định cho tầng đó mà không phụ thuộc vào mã nguồn cứng.
+
+---
+
 ### 4.6 QUY CHUẨN THIẾT KẾ SIDEBAR ENTERPRISE GRADE & UX STANDARDS
 
 Để đạt chuẩn Commercial & Enterprise Handover, toàn bộ 4 thanh sidebar tuân thủ nghiêm ngặt các quy chuẩn kỹ thuật và trải nghiệm người dùng sau:

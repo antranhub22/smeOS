@@ -49,6 +49,14 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "platform-industry-matrix",
     mobileLabel: "Ngành hàng",
   },
+  {
+    href: "/van-hanh/nganh?tab=tools",
+    label: "Thư viện & Ma trận Công cụ",
+    group: "to-chuc-dich-vu",
+    iconKey: "LayoutGrid",
+    navKey: "platform-toolkit-matrix",
+    mobileLabel: "Công cụ",
+  },
 
   // 3. HẠ TẦNG & TÀI NGUYÊN
   {
