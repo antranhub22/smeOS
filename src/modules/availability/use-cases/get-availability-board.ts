@@ -52,7 +52,7 @@ export async function getAvailabilityBoard(
   }
 
   const rawProducts = await repo.listProductsWithAvailability(organizationId)
-  const bookings = await repo.listBookings(organizationId, fromDate, `${toDate}T23:59:59Z`)
+  const bookings = await repo.listBookings(organizationId, fromDate, toDate)
 
   const products: AvailabilityBoardProduct[] = rawProducts.map((p) => {
     const parsed = parseAvailabilityConfig(p.availabilityConfig, industryKey)

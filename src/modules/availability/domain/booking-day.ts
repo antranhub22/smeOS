@@ -16,7 +16,7 @@ export function isValidIsoDay(value: string): boolean {
 
 /** `YYYY-MM-DD` → `Date` cho cột `DATE`. Ngày sai → 422, không để CSDL ném lỗi 500. */
 export function isoDayToDate(value: string): Date {
-  if (!isValidIsoDay(value)) throw unprocessable("Ngày nhận hoặc trả phòng không hợp lệ.")
+  if (!isValidIsoDay(value)) throw unprocessable("Định dạng ngày không hợp lệ (YYYY-MM-DD).")
   return new Date(`${value}T00:00:00.000Z`)
 }
 
