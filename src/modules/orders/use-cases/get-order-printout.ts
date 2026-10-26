@@ -60,7 +60,7 @@ export async function getOrderPrintout(
     },
     cardMessage: order.cardMessage || "Không có lời nhắn thiệp",
     items: (order.items ?? []).map((it) => ({
-      name: it.description ?? "Mẫu hoa tươi",
+      name: it.description ?? "Sản phẩm tươi",
       quantity: it.quantity,
       price: it.unitPriceVnd,
       subtotal: it.quantity * it.unitPriceVnd,

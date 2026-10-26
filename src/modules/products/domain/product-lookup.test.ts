@@ -6,8 +6,8 @@ import type { PricingRuleRow } from "./pricing-rules"
 const PRODUCT: ProductLookupRaw = {
   id: "p1",
   code: "BHBB0001",
-  name: "Bó hoa baby Giấc Mơ Nhỏ",
-  category: "Bó hoa",
+  name: "Sản phẩm baby Giấc Mơ Nhỏ",
+  category: "Sản phẩm",
   shape: "Tròn",
   facing: "Một mặt",
   container: "Giấy gói",
@@ -39,7 +39,7 @@ describe("filterProductLookup", () => {
     const result = filterProductLookup(PRODUCT, RULE_ROWS, { canReadPricing: false, branchId: null })
     expect(result.code).toBe("BHBB0001")
     expect(result.name).toBe(PRODUCT.name)
-    expect(result.category).toBe("Bó hoa")
+    expect(result.category).toBe("Sản phẩm")
   })
 
   it("không nguyên liệu tính toán nội bộ nào lọt ra ngoài kê tên", () => {

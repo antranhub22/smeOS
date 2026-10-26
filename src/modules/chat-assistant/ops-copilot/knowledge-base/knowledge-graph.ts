@@ -28,9 +28,9 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
       },
       {
         nodeId: "node-08-kho-du-lieu",
-        title: "Lấy Mẫu Hoa Từ Kho Dữ Liệu",
+        title: "Lấy Sản Phẩm Từ Kho Dữ Liệu",
         route: "/kho-du-lieu",
-        relationReason: "Chọn các mẫu hoa đã duyệt để ghim vào bộ sưu tập gửi khách.",
+        relationReason: "Chọn các sản phẩm đã duyệt để ghim vào bộ sưu tập gửi khách.",
       },
     ],
   },
@@ -39,9 +39,9 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
     relations: [
       {
         nodeId: "node-05-tao-mau-hoa-moi",
-        title: "Công Thức Cành Hoa BOM",
+        title: "Công Thức Định Lượng BOM",
         route: "/san-pham/tao-moi",
-        relationReason: "Phiếu xưởng ẩn giá trích xuất trực tiếp từ công thức cành hoa BOM của mẫu hoa.",
+        relationReason: "Phiếu xưởng ẩn giá trích xuất trực tiếp từ công thức định lượng BOM BOM của sản phẩm.",
       },
       {
         nodeId: "node-09-ho-so-cua-hang",
@@ -51,7 +51,7 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
       },
       {
         nodeId: "node-10-cai-dat-thanh-vien",
-        title: "Phân Quyền Thợ Cắm Hoa & Shipper",
+        title: "Phân Quyền Thợ Chế Tác Hoa & Shipper",
         route: "/cai-dat/thanh-vien",
         relationReason: "Cấp tài khoản chuyên biệt cho thợ xưởng để họ chỉ xem lát cắt ẩn giá.",
       },
@@ -81,7 +81,7 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
         nodeId: "node-04-san-pham-va-gia",
         title: "Kiểm Tra Danh Mục Sau Nhập Excel",
         route: "/san-pham",
-        relationReason: "Kiểm tra toàn bộ mẫu hoa vừa import trên giao diện Lưới hoặc Bảng.",
+        relationReason: "Kiểm tra toàn bộ sản phẩm vừa import trên giao diện Lưới hoặc Bảng.",
       },
       {
         nodeId: "node-08-kho-du-lieu",
@@ -98,7 +98,7 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
         nodeId: "node-08-kho-du-lieu",
         title: "Tái Sử Dụng Mẫu Không Tốn Credit",
         route: "/kho-du-lieu",
-        relationReason: "Chọn lại các mẫu hoa đã duyệt trong kho để tiết kiệm Credit AI.",
+        relationReason: "Chọn lại các sản phẩm đã duyệt trong kho để tiết kiệm Credit AI.",
       },
       {
         nodeId: "node-03-the-chao",

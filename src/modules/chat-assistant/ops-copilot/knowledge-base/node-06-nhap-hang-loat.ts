@@ -14,7 +14,7 @@ export const NODE_06_NHAP_HANG_LOAT: OpsKnowledgeNode = {
     "google drive", "drive"
   ],
   intents: ["nhap_excel_hang_loat", "dong_bo_anh_hang_loat", "tai_file_excel_mau", "keo_tha_kep_excel_anh"],
-  summary: "Công cụ đưa hàng chục đến hàng trăm mẫu hoa lên hệ thống nhanh chóng bằng file Excel mẫu và thư mục ảnh (hoặc link Google Drive).",
+  summary: "Công cụ đưa hàng chục đến hàng trăm sản phẩm lên hệ thống nhanh chóng bằng file Excel mẫu và thư mục ảnh (hoặc link Google Drive).",
   stepByStepSOP: [
     {
       stepNumber: 1,

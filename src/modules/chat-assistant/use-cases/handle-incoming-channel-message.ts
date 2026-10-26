@@ -9,7 +9,7 @@ import { chatAnswerViaGateway } from "../adapters/chat-answer-gateway"
 import { ChatChannelRepository, getChatChannelRepository } from "../infra/chat-channel-repository"
 import { isChannelSubscriptionActive } from "../domain/channel-integration-rules"
 import type { SupportedChatChannel } from "../domain/channel-integration-types"
-import type { SuggestedFlowerCard } from "../domain/chat-types"
+import type { SuggestedProductCard } from "../domain/chat-types"
 import { listProductMasterIndex } from "@/modules/products/use-cases/get-product-master-index"
 
 export interface HandleChannelMessageInput {
@@ -22,7 +22,7 @@ export interface HandleChannelMessageInput {
 
 export interface HandleChannelMessageResult {
   replyText: string
-  suggestedFlowers: SuggestedFlowerCard[]
+  suggestedProducts: SuggestedProductCard[]
   conversationId: string
   channel: SupportedChatChannel
 }
@@ -48,7 +48,7 @@ export async function handleIncomingChannelMessage(
   if (!isActive) {
     return {
       replyText: "Trợ lý AI trên kênh này hiện đang tạm đóng. Nhân viên cửa hàng sẽ liên hệ lại quý khách sớm nhất!",
-      suggestedFlowers: [],
+      suggestedProducts: [],
       conversationId: "",
       channel,
     }
@@ -65,7 +65,7 @@ export async function handleIncomingChannelMessage(
   if (!creditDeducted) {
     return {
       replyText: "Tư vấn viên AI đang bận xử lý nhiều đơn hàng. Nhân viên của tiệm sẽ phản hồi quý khách trong ít phút!",
-      suggestedFlowers: [],
+      suggestedProducts: [],
       conversationId: "",
       channel,
     }
@@ -111,13 +111,13 @@ export async function handleIncomingChannelMessage(
     "ASSISTANT",
     aiOutput.replyText,
     {
-      suggestedFlowers: aiOutput.suggestedFlowers || [],
+      suggestedProducts: aiOutput.suggestedProducts || [],
     }
   )
 
   return {
     replyText: aiOutput.replyText,
-    suggestedFlowers: aiOutput.suggestedFlowers || [],
+    suggestedProducts: aiOutput.suggestedProducts || [],
     conversationId,
     channel,
   }

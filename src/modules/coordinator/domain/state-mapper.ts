@@ -150,7 +150,7 @@ export function evaluateOrderRiskLevel(params: {
   if (minutesRemaining <= 120 && (stage === "INTAKE" || stage === "VALIDATING" || stage === "PLANNING")) {
     return {
       riskLevel: "ATTENTION",
-      reason: `Còn 2 tiếng nhưng chưa phân công thợ cắm hoa`,
+      reason: `Còn 2 tiếng nhưng chưa phân công thợ chế tác`,
     }
   }
 

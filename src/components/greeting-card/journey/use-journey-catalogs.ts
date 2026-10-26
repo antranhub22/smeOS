@@ -121,7 +121,7 @@ export function useJourneyCatalogs() {
   const cloneCatalog = useCallback(
     async (sourceId: string, input: { name: string; code: string }) => {
       const res = await fetch(`${CATALOG_API}/${sourceId}`)
-      if (!res.ok) throw new Error(await readError(res, "Không đọc được mẫu hoa của bộ sưu tập gốc."))
+      if (!res.ok) throw new Error(await readError(res, "Không đọc được sản phẩm của bộ sưu tập gốc."))
       const json = (await res.json()) as { data?: { items?: Array<{ product: { id: string } }> } }
       const productIds = json.data?.items?.map((item) => item.product.id) ?? []
       const id = await createCatalog({ ...input, productIds })

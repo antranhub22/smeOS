@@ -40,7 +40,7 @@ describe("projectCoordinatorSnapshot — MI-5 (ĐP-2.3, 26/09/2026)", () => {
       code: "HOA-001",
       name: "Bó Hồng Ohara Kem",
       status: "ACTIVE",
-      category: "Bó hoa",
+      category: "Sản phẩm",
       shape: "Tròn",
       facing: "Một mặt",
       style: "Hàn Quốc",
@@ -76,7 +76,7 @@ describe("projectCoordinatorSnapshot — MI-5 (ĐP-2.3, 26/09/2026)", () => {
     expect(snapshot.productId).toBe("prod-1")
     expect(snapshot.code).toBe("HOA-001")
     expect(snapshot.name).toBe("Bó Hồng Ohara Kem")
-    expect(snapshot.category).toBe("Bó hoa")
+    expect(snapshot.category).toBe("Sản phẩm")
     expect(snapshot.style).toBe("Hàn Quốc")
     expect(snapshot.colorPalette).toEqual({ primaryColor: "Kem", secondaryColor: "Trắng" })
     expect(snapshot.bom.flowers).toHaveLength(1)

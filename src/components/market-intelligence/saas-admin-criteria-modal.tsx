@@ -44,7 +44,7 @@ export function SaaSAdminCriteriaModal({
   onSaveAndTrigger,
   isSaving,
 }: SaaSAdminCriteriaModalProps) {
-  // Mặc định chọn bộ đề xuất theo mùa thu (20/10, tốt nghiệp, hoa cưới)
+  // Mặc định chọn bộ đề xuất theo mùa thu (20/10, tốt nghiệp, quà tặng cưới)
   const [selectedTopics, setSelectedTopics] = useState<string[]>(() =>
     getSeasonalRecommendedKeywords()
   );
@@ -181,7 +181,7 @@ export function SaaSAdminCriteriaModal({
                   type="button"
                   onClick={handleResetToSeasonal}
                   className="px-2 py-0.5 rounded-md bg-cool-100 text-cool-700 font-medium hover:bg-cool-200 transition"
-                  title="Gợi ý mùa thu: 20/10, tốt nghiệp, hoa cưới"
+                  title="Gợi ý mùa thu: 20/10, tốt nghiệp, quà tặng cưới"
                 >
                   Đề xuất mùa này
                 </button>

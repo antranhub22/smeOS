@@ -50,7 +50,7 @@ export const CREDIT_ESTIMATES: Record<string, CreditEstimate> = {
   },
   "vision.suggest_description": {
     featureKey: "vision.suggest_description",
-    featureLabel: "Đề xuất mô tả bó hoa",
+    featureLabel: "Đề xuất mô tả sản phẩm",
     estimatedCredits: 3,
     breakdown: "Marketing copy ~300 tokens",
     confidence: "medium",

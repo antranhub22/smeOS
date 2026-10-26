@@ -34,7 +34,7 @@ export function CreateStoryCard({
       case "HOMESTAY":
         return "Mô tả không gian nghỉ dưỡng, tiện nghi đặc biệt, view cảnh quan và trải nghiệm lưu trú đáng nhớ..."
       default:
-        return "Mô tả ý nghĩa mẫu hoa, cảm xúc gửi gắm hoặc hướng dẫn chăm sóc giúp hoa tươi lâu…"
+        return "Mô tả ý nghĩa sản phẩm, cảm xúc gửi gắm hoặc hướng dẫn chăm sóc giúp sản phẩm lâu…"
     }
   })()
 

@@ -65,7 +65,7 @@ export function FeatureSettingsModal({
   const [keywordSchedule, setKeywordSchedule] = useState({
     enabled: true,
     time: "06:30",
-    trackedKeywords: ["Hoa tulip pastel", "Bó hoa tốt nghiệp Hàn Quốc", "Lan hồ điệp khai trương"],
+    trackedKeywords: ["Hoa tulip pastel", "Sản phẩm tốt nghiệp Hàn Quốc", "Lan hồ điệp khai trương"],
   });
   const [newKeywordInput, setNewKeywordInput] = useState("");
   const [keywordInput, setKeywordInput] = useState({

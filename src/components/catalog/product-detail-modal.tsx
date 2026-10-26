@@ -34,7 +34,7 @@ function getZaloUrl(
   const priceText = product.price ? formatVnd(product.price) : "chưa có giá"
   const senderText = customer?.name ? `Tôi là ${customer.name}` : "Tôi"
   const text = encodeURIComponent(
-    `Chào ${shop.name}, ${senderText} muốn tư vấn & đặt mẫu hoa: ${product.name} (Mã: ${product.code}, Giá: ${priceText}).`
+    `Chào ${shop.name}, ${senderText} muốn tư vấn & đặt sản phẩm: ${product.name} (Mã: ${product.code}, Giá: ${priceText}).`
   )
   return phone ? `https://zalo.me/${phone}?text=${text}` : `https://zalo.me/?text=${text}`
 }
@@ -121,7 +121,7 @@ export function ProductDetailModal({ product, shop, customer, onClose }: Product
         <div className="space-y-2 text-xs text-text-muted">
           <div className="flex items-center gap-2">
             <Check size={14} className="text-success shrink-0" />
-            Cam kết hoa tươi từ 3 – 5 ngày khi cắm xốp chuyên dụng
+            Cam kết sản phẩm từ 3 – 5 ngày khi cắm xốp chuyên dụng
           </div>
           <div className="flex items-center gap-2">
             <Check size={14} className="text-success shrink-0" />

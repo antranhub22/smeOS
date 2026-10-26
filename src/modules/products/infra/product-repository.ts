@@ -141,7 +141,7 @@ export class ProductRepository implements IProductRepository {
   }
 
   /**
-   * Phần mở rộng của `list` cho màn hình Kho Sản Phẩm và modal chọn mẫu hoa.
+   * Phần mở rộng của `list` cho màn hình Kho Sản Phẩm và modal chọn sản phẩm.
    * Được include `product_images` (MAIN) và `product_variants` rồi giải asset URL
    * bằng 1 query `IN(asset_ids)` tập trung — không N+1 (cùng kỹ thuật đã dùng
    * trong `ProductMasterIndexRepository`).

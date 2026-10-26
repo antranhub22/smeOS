@@ -55,7 +55,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
       mockTenant,
       {
         items: [
-          { description: "Bó hoa hồng", quantity: 2, unitPriceVnd: 250000 },
+          { description: "Sản phẩm hồng", quantity: 2, unitPriceVnd: 250000 },
         ],
       },
       mockRepo
@@ -182,7 +182,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
       "ASSIGNED",
       "user-1",
       "WAITING",
-      "Phân công thợ cắm (ID: user-2)"
+      "Phân công thợ chế tác (ID: user-2)"
     )
   })
 

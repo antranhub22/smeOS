@@ -101,7 +101,7 @@ export function scenePlanInputOf(ctx: ScenePlanContext): ScenePlanInput {
   const p = ctx.commercialPassport
   return {
     mode: ctx.mode,
-    productName: ctx.productName || "Bó hoa",
+    productName: ctx.productName || "Sản phẩm",
     category: p?.category || undefined,
     style: p?.style || undefined,
     colors: p?.colors ?? [],

@@ -35,7 +35,7 @@ export function balanceCollectionBlocker(order: BalanceCollectionOrder, policy: 
       : "Đơn hàng đã được ghi nhận tiền cọc. Theo chính sách của tiệm, phần còn lại sẽ thu sau khi giao hoa thành công."
   }
   if (order.productionStatus !== "READY") {
-    return "Đơn hàng đã được ghi nhận tiền cọc. Phần còn lại chỉ được thu sau khi xưởng hoàn thành cắm hoa và khách xác nhận ảnh."
+    return "Đơn hàng đã được ghi nhận tiền cọc. Phần còn lại chỉ được thu sau khi xưởng hoàn thành chế tác và khách xác nhận ảnh."
   }
   const productPhoto = order.qcRecords.find((qc) => qc.notes === "PRODUCT_PHOTO_UPLOADED")
   // Tiệm bỏ qua ảnh thành phẩm → không có ảnh nào để khách duyệt; hoa xong là đủ để thu

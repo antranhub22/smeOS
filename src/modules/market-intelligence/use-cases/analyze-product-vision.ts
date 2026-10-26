@@ -194,7 +194,7 @@ function mapAnalysisToProductIntelligence(
 
   rawFlowers.forEach((f: RawVisionRow, idx: number) => {
     components.push({
-      flowerType: f.name || f.loai_hoa || `Hoa tươi #${idx + 1}`,
+      flowerType: f.name || f.loai_hoa || `Thành phần #${idx + 1}`,
       quantityEstimate: parseInt(String(f.count || f.so_luong)) || 0,
       unit: "cành",
       role: idx === 0 ? "dominant" : "supporting",
@@ -245,7 +245,7 @@ function mapAnalysisToProductIntelligence(
   };
 
   return {
-    productName: productTitle || raw.product_name || "Bó hoa nghệ thuật FloraOS",
+    productName: productTitle || raw.product_name || "Sản phẩm mới",
     imageUrl,
     assetId,
     components,

@@ -35,7 +35,7 @@ describe("exportCustomers", () => {
       email: "b.tran@example.com",
       address: "456 Nguyễn Thị Minh Khai, Q3, TP.HCM",
       tier: "VIP",
-      notes: "Thích hoa tươi tone pastel",
+      notes: "Thích sản phẩm tone pastel",
       tags: ["VIP", "Doanh nghiệp"],
       preferred_flowers: ["Hoa mẫu đơn", "Hoa hồng Ecuador"],
       preferred_colors: ["Hồng pastel", "Trắng"],

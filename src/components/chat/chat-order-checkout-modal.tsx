@@ -171,7 +171,7 @@ export function ChatOrderCheckoutModal({
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
                   <label className="text-meta font-medium text-text-muted flex items-center gap-1.5 mb-1">
-                    Mẫu hoa / Phong cách
+                    Sản phẩm / Phong cách
                   </label>
                   <input
                     type="text"

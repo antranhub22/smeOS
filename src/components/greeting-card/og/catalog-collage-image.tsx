@@ -160,7 +160,7 @@ export function renderCatalogCollage(data: CatalogCollageData, init?: ResponseIn
               background: C.champ,
             }}
           >
-            {data.priceLabel ? "Xem mẫu và đặt hoa" : "Xem mẫu hoa"}
+            {data.priceLabel ? "Xem mẫu và đặt hoa" : "Xem sản phẩm"}
           </div>
         </div>
 

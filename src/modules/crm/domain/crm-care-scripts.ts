@@ -29,11 +29,11 @@ const OCCASION_FLOWER_SUGGESTIONS: Record<string, string> = {
   "khai trương": "Cây mai vàng hoặc bình hoa phong thủy may mắn",
   "8/3": "Hoa hồng đỏ hoặc tulip pastel ngọt ngào",
   "20/10": "Hoa hồng hoặc cúc tana phong cách Hàn",
-  "valentine": "Hoa hồng đỏ cổ điển hoặc bó hoa ngọt ngào",
+  "valentine": "Hoa hồng đỏ cổ điển hoặc sản phẩm ngọt ngào",
 }
 
 /**
- * Gợi ý mẫu hoa phù hợp theo dịp và sở thích (CRM-12).
+ * Gợi ý sản phẩm phù hợp theo dịp và sở thích (CRM-12).
  */
 export function suggestFlowerForOccasion(
   occasionName: string,
@@ -78,7 +78,7 @@ export function generateOccasionCareScript(
     : `Còn ${reminder.daysLeft} ngày đến ngày ${reminder.occasionName}. `
 
   const vipExtra = (tier === "VIP" || tier === "GOLD")
-    ? `\n\n💎 Với tư cách khách hàng thân thiết, anh/chị sẽ được ưu tiên tư vấn chọn mẫu và đặt trước để đảm bảo hoa tươi nhất ngày đó ạ.`
+    ? `\n\n💎 Với tư cách khách hàng thân thiết, anh/chị sẽ được ưu tiên tư vấn chọn mẫu và đặt trước để đảm bảo sản phẩm nhất ngày đó ạ.`
     : ""
 
   const ctaLine = hotline
@@ -90,7 +90,7 @@ export function generateOccasionCareScript(
     "",
     `${urgencyNote}${shopName} muốn gợi ý anh/chị tặng **${flower}**${recipientLabel} nhân dịp ${reminder.occasionName} ạ 🌺`,
     "",
-    `✅ Hoa tươi cắt buổi sáng sớm`,
+    `✅ Sản phẩm cắt buổi sáng sớm`,
     `✅ Thiết kế theo yêu cầu & gói hộp đẹp`,
     `✅ Giao tận nơi đúng giờ`,
     vipExtra,

@@ -80,7 +80,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
         <div>
           <label className="text-caption text-text-muted font-semibold block mb-1">Tên tiệm / Xưởng *</label>
           <Input
-            placeholder="Tiệm Hoa Nắng Ban Mai"
+            placeholder="Cửa Hàng Nắng Ban Mai"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="h-8 text-xs"

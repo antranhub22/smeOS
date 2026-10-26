@@ -51,7 +51,7 @@ function ChangeList({ changes }: { changes: ChangeItem[] }) {
 
 /**
  * Trên trang theo dõi (người đặt đã xác minh): thông báo kết quả yêu cầu gần nhất, yêu cầu đang chờ,
- * nút "Thay đổi thông tin" (khoá khi cửa hàng đã bắt đầu cắm hoa) và lịch sử thay đổi.
+ * nút "Thay đổi thông tin" (khoá khi cửa hàng đã bắt đầu chế tác) và lịch sử thay đổi.
  */
 export function OrderChangePanel({
   orderCode,

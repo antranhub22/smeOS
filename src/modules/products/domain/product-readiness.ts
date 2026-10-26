@@ -44,7 +44,7 @@ export interface ProductReadinessResult {
  * 1. Trạng thái ACTIVE (25%)
  * 2. Đã có ảnh chính thức (25%)
  * 3. Đã có phân loại danh mục (25%)
- * 4. Đã có công thức cắm hoa (BOM) hoặc giá bán niêm yết (25%)
+ * 4. Đã có công thức chế tác (BOM) hoặc giá bán niêm yết (25%)
  */
 export function computeProductReadiness(product: ProductReadinessInput): ProductReadinessResult {
   const missingReasons: string[] = []
@@ -61,7 +61,7 @@ export function computeProductReadiness(product: ProductReadinessInput): Product
 
   const hasCategory = Boolean(product.category && product.category.trim().length > 0)
   if (!hasCategory) {
-    missingReasons.push("Chưa phân loại danh mục (Bó hoa, Giỏ hoa, Kệ khai trương...)")
+    missingReasons.push("Chưa phân loại danh mục (Sản phẩm, Giỏ hoa, Kệ khai trương...)")
   }
 
   const hasQuotePrice = typeof product.pricing?.quotePriceVnd === "number" && product.pricing.quotePriceVnd > 0
@@ -70,7 +70,7 @@ export function computeProductReadiness(product: ProductReadinessInput): Product
   const hasPricingOrBom = hasQuotePrice || hasCostPrice || hasBomFlowers
 
   if (!hasPricingOrBom) {
-    missingReasons.push("Chưa có giá niêm yết hoặc công thức cành hoa (BOM)")
+    missingReasons.push("Chưa có giá niêm yết hoặc công thức thành phần (BOM)")
   }
 
   let score = 0

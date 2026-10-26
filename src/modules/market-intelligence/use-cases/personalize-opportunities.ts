@@ -112,7 +112,7 @@ export async function personalizeOpportunitiesForTenants(
           thumbnailUrl: ytSnippet?.thumbnailUrl ?? catalogEvidence.youtube.thumbnailUrl,
           author: ytSnippet?.author ?? catalogEvidence.youtube.author,
           metrics: ytSnippet?.metrics ?? catalogEvidence.youtube.metrics,
-          engagementNote: ytSnippet?.snippet ?? "Video hướng dẫn & mẫu cắm hoa thực tế",
+          engagementNote: ytSnippet?.snippet ?? "Video hướng dẫn & trình diễn sản phẩm thực tế",
         },
         {
           title: `Biểu đồ Google Trends: ${topic.canonical_name}`,
@@ -126,7 +126,7 @@ export async function personalizeOpportunitiesForTenants(
           type: "IMAGE_PINTEREST",
           platform: "Pinterest",
           url: `https://www.pinterest.com/search/pins/?q=${encodedSocial}`,
-          engagementNote: "Kho cảm hứng hình ảnh cắm hoa chuẩn phong cách",
+          engagementNote: "Kho cảm hứng hình ảnh sản phẩm chuẩn phong cách",
         },
       ];
 
@@ -227,7 +227,7 @@ function generateDynamicHooks(topicName: string, tone: string): string[] {
   }
 
   return [
-    `Xu hướng ${topicName} sang trọng dẫn đầu thị hiếu hoa tươi tuần này`,
+    `Xu hướng ${topicName} sang trọng dẫn đầu thị hiếu tuần này`,
     `Gợi ý thiết kế ${topicName} phong cách ${tone}`,
     `Bí quyết chọn ${topicName} tươi lâu & chuẩn form nghệ thuật`,
   ];

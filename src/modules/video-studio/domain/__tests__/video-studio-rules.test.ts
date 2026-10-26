@@ -21,7 +21,7 @@ describe("Video Studio Domain Rules", () => {
       sceneIndex: 1,
       durationSeconds: 4,
       imageAssetId: "asset-master-1",
-      textOverlay: "Bó hoa tươi rực rỡ",
+      textOverlay: "Sản phẩm tươi rực rỡ",
       voiceScript: "Mở đầu với những đóa hồng tươi thắm nhất",
     },
     {
@@ -29,7 +29,7 @@ describe("Video Studio Domain Rules", () => {
       durationSeconds: 4,
       imageAssetId: "asset-detail-2",
       textOverlay: "Gói giấy Hàn Quốc sang trọng",
-      voiceScript: "Từng đường gấp tỉ mỉ của nghệ nhân cắm hoa",
+      voiceScript: "Từng đường gấp tỉ mỉ của nghệ nhân chế tác",
     },
     {
       sceneIndex: 3,

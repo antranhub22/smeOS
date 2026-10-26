@@ -65,7 +65,7 @@ describe("analysis-schema-mapper (Khóa hợp đồng Schema.json ra UI)", () =>
   it("khi raw có dữ liệu, ánh xạ đúng từng trường và tách biệt name, unit, quantity", () => {
     const raw = {
       identity: {
-        category: "Bó hoa",
+        category: "Sản phẩm",
         shape: "Tròn",
         facing: "Toàn diện 360",
         container: "Giấy gói",
@@ -137,7 +137,7 @@ describe("analysis-schema-mapper (Khóa hợp đồng Schema.json ra UI)", () =>
     const fields = mapAnalysisFromSchema(raw)
 
     const cat = fields.find((f) => f.key === "category")
-    expect(cat?.value).toBe("Bó hoa")
+    expect(cat?.value).toBe("Sản phẩm")
 
     const flow = fields.find((f) => f.key === "flowers")
     const flowerItems = flow?.value as ResultFieldItem[]

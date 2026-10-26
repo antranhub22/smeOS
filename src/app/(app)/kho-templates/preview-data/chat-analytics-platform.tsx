@@ -16,7 +16,7 @@ const CHAT_MESSAGES: ChatMessage[] = [
   {
     id: "2",
     sender: "bot",
-    content: "Dạ chào anh! Shop gợi ý 2 mẫu hoa phù hợp dịp kỷ niệm ạ:",
+    content: "Dạ chào anh! Shop gợi ý 2 sản phẩm phù hợp dịp kỷ niệm ạ:",
     time: "19:02",
     suggestedProducts: [
       { name: "Nồng Nàn Yêu Thương", price: "650.000đ" },

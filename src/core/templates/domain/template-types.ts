@@ -13,7 +13,7 @@ export type TemplateCategory =
   | "inspection"    // Mẫu kết quả phân tích cấu phần hoa / BOM
   | "commercial"    // Mẫu nội dung bán hàng / SEO / phân khúc giá
   | "sales_pitch"   // Mẫu thẻ chào khách A6 / kịch bản tư vấn Zalo
-  | "production"    // Mẫu vận hành / phiếu cắm hoa / thiệp mừng
+  | "production"    // Mẫu vận hành / phiếu chế tác / thiệp mừng
 
 export type TemplateOutputFormat =
   | "react_component" // Render giao diện React tương tác

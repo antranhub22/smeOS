@@ -165,8 +165,8 @@ export const STOREFRONT_GUIDANCE = {
     "Tăng độ tin cậy với khách hàng mới, giảm tỷ lệ thoát trang",
   ],
   tips: [
-    "Chụp vào buổi sáng có ánh sáng tự nhiên — hoa tươi và không gian sáng sủa",
-    "Chụp bàn cắm hoa, tủ trưng bày hoặc góc shop đẹp nhất",
+    "Chụp vào buổi sáng có ánh sáng tự nhiên — sản phẩm và không gian sáng sủa",
+    "Chụp bàn chế tác, tủ trưng bày hoặc góc shop đẹp nhất",
     "Tỉ lệ 4:3 (ngang) hoặc 1:1 (vuông) phù hợp nhất với layout Gallery",
   ],
 }
@@ -180,7 +180,7 @@ export const VIDEO_GUIDANCE = {
   ],
   tips: [
     "Clip 3–5 giây, không có tiếng (nhạc sẽ được thêm khi render)",
-    "Quay logo + tên tiệm hoặc bàn tay nghệ nhân đang cắm hoa",
+    "Quay logo + tên tiệm hoặc bàn tay nghệ nhân đang chế tác",
   ],
 }
 

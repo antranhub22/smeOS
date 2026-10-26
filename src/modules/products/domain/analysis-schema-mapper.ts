@@ -25,7 +25,7 @@ export const VISION_SCHEMA = schemaContract
  */
 export const FIELD_LABELS: Record<string, string> = {
   // BOM lists
-  flowers: "Danh sách loại hoa",
+  flowers: "Danh sách nguyên liệu",
   foliage: "Lá, cành phụ",
   accessories: "Phụ kiện & Nơ",
   wrapping: "Vật liệu gói & Bao bì",
@@ -369,12 +369,12 @@ export function mapAnalysisFromSchema(
   return [
     {
       key: "flowers",
-      label: activeLabels.flowers ?? "Danh sách loại hoa",
+      label: activeLabels.flowers ?? "Danh sách nguyên liệu",
       type: "list",
       editable: true,
       value: flowers,
       confidence: confidenceNum,
-      placeholder: "Thêm loại hoa...",
+      placeholder: "Thêm nguyên liệu...",
     },
     {
       key: "foliage",
@@ -477,7 +477,7 @@ export function mapAnalysisFromSchema(
     },
     {
       // Sửa được: máy đọc số tầng lớp từ ảnh, và một bó chụp nghiêng thì nó
-      // đếm hụt. Người soát nhìn bó hoa thật nên họ mới là nguồn đúng.
+      // đếm hụt. Người soát nhìn sản phẩm thật nên họ mới là nguồn đúng.
       key: "so_tang_lop",
       label: activeLabels.so_tang_lop ?? "Cấu trúc sản xuất",
       type: "number",

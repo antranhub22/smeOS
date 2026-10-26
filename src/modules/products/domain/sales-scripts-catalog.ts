@@ -1,7 +1,7 @@
 /**
  * sales-scripts-catalog.ts
  *
- * Danh mục 14 kịch bản tư vấn bán hoa thực chiến (KB-01 -> KB-14, BH-07, BH-08, BH-10).
+ * Danh mục 14 kịch bản tư vấn bán hàng thực chiến (KB-01 -> KB-14, BH-07, BH-08, BH-10).
  * Clean Architecture: Domain thuần TypeScript — Không import Prisma, không import React.
  */
 
@@ -36,7 +36,7 @@ export interface ScriptVariables {
   [key: string]: string | number | undefined
 }
 
-export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
+export const SALES_SCRIPTS_CATALOG: readonly SalesScriptItem[] = [
   // 1. Chào khách mới
   {
     id: "kb-01",
@@ -45,7 +45,7 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     title: "Chào khách mới ghé hỏi giá",
     summary: "Mở đầu thân thiện, xác định ngay nhu cầu và dịp tặng để tránh khách rời đi.",
     template:
-      "Dạ {{shopName}} xin chào {{customerName}} ạ! Bó hoa {{productName}} này đang là mẫu thiết kế rất được yêu thích tại tiệm bên em. Em xin phép hỏi anh/chị đang chọn hoa tặng dịp gì và gửi tới ai (bạn bè, người yêu hay đối tác) để em tư vấn tone màu và thiệp chúc phù hợp nhất cho mình nhé ạ?",
+      "Dạ {{shopName}} xin chào {{customerName}} ạ! Sản phẩm {{productName}} này đang là mẫu thiết kế rất được yêu thích tại tiệm bên em. Em xin phép hỏi anh/chị đang chọn sản phẩm cho dịp gì và gửi tới ai (bạn bè, người yêu hay đối tác) để em tư vấn tone màu và thiệp chúc phù hợp nhất cho mình nhé ạ?",
     psychologicalTip: "Không báo mỗi giá cộc lốc; đặt câu hỏi mở về 'dịp tặng' để mở ra cơ hội tư vấn sâu hơn.",
     suggestedActionLabel: "Sao chép chào khách mới",
   },
@@ -56,9 +56,9 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     code: "KB-02",
     category: "CHAO_HOI",
     title: "Chào khách quen quay lại",
-    summary: "Gợi nhắc lịch sử đặt hoa trước đó, mang lại cảm giác được tôn trọng và ưu tiên.",
+    summary: "Gợi nhắc lịch sử đặt hàng trước đó, mang lại cảm giác được tôn trọng và ưu tiên.",
     template:
-      "Dạ em chào {{customerName}}, rất vui được gặp lại anh/chị ạ! Lần trước bó hoa tặng bên em gửi đi mọi người có ưng ý không ạ? Hôm nay {{customerName}} đang có dịp đặc biệt nào cần {{shopName}} chuẩn bị không, để em ưu tiên chọn những bông hoa tươi mới về sáng nay cho mình nhé ạ!",
+      "Dạ em chào {{customerName}}, rất vui được gặp lại anh/chị ạ! Lần trước sản phẩm tặng bên em gửi đi mọi người có ưng ý không ạ? Hôm nay {{customerName}} đang có dịp đặc biệt nào cần {{shopName}} chuẩn bị không, để em ưu tiên chọn những bông sản phẩm mới về sáng nay cho mình nhé ạ!",
     psychologicalTip: "Gợi nhớ trải nghiệm tích cực lần trước giúp khách hàng cảm thấy họ là khách VIP.",
     suggestedActionLabel: "Sao chép chào khách quen",
   },
@@ -71,7 +71,7 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     title: "Tư vấn hoa khai trương hồng phát",
     summary: "Nhấn mạnh ý nghĩa phong thủy, sự hoành tráng và băng rôn chúc mừng nổi bật.",
     template:
-      "Dạ với dịp khai trương hồng phát, bên em thường ưu tiên các tone màu mang lại may mắn và thịnh vượng như Đỏ rực rỡ, Vàng hoàng kim hoặc Cam san hô. Mẫu {{productName}} có dáng kệ cao sang trọng, hoa tươi bền 3–5 ngày kèm bảng chúc mừng thiết kế riêng in tên anh/chị cực kỳ nổi bật giữa sự kiện ạ!",
+      "Dạ với dịp khai trương hồng phát, bên em thường ưu tiên các tone màu mang lại may mắn và thịnh vượng như Đỏ rực rỡ, Vàng hoàng kim hoặc Cam san hô. Mẫu {{productName}} có dáng kệ cao sang trọng, sản phẩm bền 3–5 ngày kèm bảng chúc mừng thiết kế riêng in tên anh/chị cực kỳ nổi bật giữa sự kiện ạ!",
     psychologicalTip: "Khai trương là dịp người mua cần 'thể diện'; nhấn mạnh tính sang trọng và băng rôn to rõ.",
     suggestedActionLabel: "Sao chép tư vấn khai trương",
   },
@@ -121,7 +121,7 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     code: "KB-07",
     category: "XU_LY_TU_CHOI",
     title: "Xử lý khi khách chê đắt / so sánh giá",
-    summary: "Khẳng định chất lượng hoa loại 1, bảo hành hoa tươi 3 ngày thay vì vội vàng giảm giá.",
+    summary: "Khẳng định chất lượng hoa loại 1, bảo hành sản phẩm 3 ngày thay vì vội vàng giảm giá.",
     template:
       "Dạ em rất hiểu tâm lý của anh/chị khi cân nhắc chi phí ạ. Tuy nhiên toàn bộ hoa tại {{shopName}} đều là hoa tuyển chọn loại 1 từ Đà Lạt và hoa nhập khẩu, bông nở đều to và tươi bền từ 3–5 ngày chứ không phải hoa dạt chợ. Đặc biệt bên em có chính sách bảo hành 1 đổi 1 nếu hoa héo úa trong 24h, kèm freeship và tặng thiệp thiết kế nên tính ra rất an tâm và xứng đáng cho một món quà chỉn chu ạ!",
     psychologicalTip: "Đừng giảm giá ngay khiến khách nghĩ giá ban đầu là giá ảo; hãy bảo vệ giá trị bằng bảo hành.",
@@ -136,7 +136,7 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     title: "Gợi ý hoa thay thế khi hết mẫu",
     summary: "Xoa dịu khách và đề xuất dòng hoa tương đương cùng tone màu hoặc nâng cấp miễn phí.",
     template:
-      "Dạ hiện tại loại hoa này vừa hết đợt tươi nhất sáng nay rồi ạ. Để đảm bảo tác phẩm gửi đi được rạng rỡ nhất, em xin phép đổi sang hoa {{substituteFlower}} cùng tone màu và giá trị tương đương (hoặc thậm chí cao hơn) nhưng bên em không tính thêm phụ phí nào. Thợ hoa bên em sẽ cắm phối thử và gửi ảnh trước để {{customerName}} duyệt trước khi giao nhé ạ!",
+      "Dạ hiện tại nguyên liệu này vừa hết đợt tươi nhất sáng nay rồi ạ. Để đảm bảo tác phẩm gửi đi được rạng rỡ nhất, em xin phép đổi sang hoa {{substituteFlower}} cùng tone màu và giá trị tương đương (hoặc thậm chí cao hơn) nhưng bên em không tính thêm phụ phí nào. Thợ chế tác bên em sẽ cắm phối thử và gửi ảnh trước để {{customerName}} duyệt trước khi giao nhé ạ!",
     psychologicalTip: "Cam kết gửi ảnh trước khi giao giúp loại bỏ 100% nỗi sợ hoa bị cắm xấu đi.",
     suggestedActionLabel: "Sao chép gợi ý hoa thay thế",
   },
@@ -146,11 +146,11 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     id: "kb-09",
     code: "KB-09",
     category: "CHOT_DON",
-    title: "Kêu gọi đặt cọc giữ hoa tươi",
-    summary: "Tạo cảm giác cấp bách tự nhiên về số lượng cành hoa tươi đẹp nhất trong ngày.",
+    title: "Kêu gọi đặt cọc giữ sản phẩm",
+    summary: "Tạo cảm giác cấp bách tự nhiên về số lượng cành sản phẩm đẹp nhất trong ngày.",
     template:
-      "Dạ mẫu hoa này hiện tại hoa trong kho chỉ còn vừa đủ cho 2 bó đẹp nhất hôm nay thôi ạ. Em xin phép tạo đơn giữ hoa cho mình nhé? {{customerName}} chỉ cần đặt cọc trước một phần là xưởng bên em sẽ chọn ngay những cành hoa tươi đẹp nhất để lên mẫu cho anh/chị ngay bây giờ ạ!",
-    psychologicalTip: "Sự khan hiếm về hoa tươi đẹp là động lực chốt cọc mạnh mẽ nhất trong ngành hoa.",
+      "Dạ sản phẩm này hiện tại hoa trong kho chỉ còn vừa đủ cho 2 bó đẹp nhất hôm nay thôi ạ. Em xin phép tạo đơn giữ hoa cho mình nhé? {{customerName}} chỉ cần đặt cọc trước một phần là xưởng bên em sẽ chọn ngay những cành sản phẩm đẹp nhất để lên mẫu cho anh/chị ngay bây giờ ạ!",
+    psychologicalTip: "Sự khan hiếm về sản phẩm đẹp là động lực chốt cọc mạnh mẽ nhất trong ngành hoa.",
     suggestedActionLabel: "Sao chép thúc đẩy chốt cọc",
   },
 
@@ -175,7 +175,7 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     title: "Xin lỗi giao trễ do thời tiết / kẹt xe",
     summary: "Chủ động thông báo trước khi khách giục, đưa ra lý do khách quan và gửi lời xin lỗi chân thành.",
     template:
-      "Dạ {{shopName}} xin chân thành cáo lỗi cùng {{customerName}} ạ! Hiện tại tài xế giao hoa đang trên đường tới nhưng do khu vực đang kẹt xe/mưa lớn nên đơn có thể chậm hơn dự kiến khoảng 15–20 phút. Shipper đang di chuyển cẩn thận để giữ bó hoa được nguyên vẹn nhất. Bên em đang bám sát định vị và sẽ cập nhật ngay khi tài xế tới nơi ạ, rất mong anh/chị thông cảm giúp bên em nhé ạ!",
+      "Dạ {{shopName}} xin chân thành cáo lỗi cùng {{customerName}} ạ! Hiện tại tài xế giao hoa đang trên đường tới nhưng do khu vực đang kẹt xe/mưa lớn nên đơn có thể chậm hơn dự kiến khoảng 15–20 phút. Shipper đang di chuyển cẩn thận để giữ sản phẩm được nguyên vẹn nhất. Bên em đang bám sát định vị và sẽ cập nhật ngay khi tài xế tới nơi ạ, rất mong anh/chị thông cảm giúp bên em nhé ạ!",
     psychologicalTip: "Báo trước khi khách kịp bực mình sẽ chuyển từ thế bị trách sang thế được thông cảm.",
     suggestedActionLabel: "Sao chép xin lỗi trễ đơn",
   },
@@ -188,7 +188,7 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     title: "Xử lý khiếu nại hoa dập cánh / không đúng mẫu",
     summary: "Không cãi lý với khách; nhận trách nhiệm ngay lập tức và đề xuất phương án đổi/bù hoa.",
     template:
-      "Dạ {{shopName}} thật sự rất tiếc và xin lỗi {{customerName}} vì trải nghiệm không như mong đợi này ạ! Anh/chị cho em xin hình ảnh thực tế hoa nhận được nhé. Bên em xin phép được cắm đền một bó hoa mới tinh chuyển gấp đến mình hoặc hoàn tiền lại phần hoa bị ảnh hưởng ngay lập tức ạ. Uy tín của tiệm là trên hết nên anh/chị cứ an tâm bên em sẽ xử lý thỏa đáng nhất cho mình ạ!",
+      "Dạ {{shopName}} thật sự rất tiếc và xin lỗi {{customerName}} vì trải nghiệm không như mong đợi này ạ! Anh/chị cho em xin hình ảnh thực tế hoa nhận được nhé. Bên em xin phép được cắm đền một sản phẩm mới tinh chuyển gấp đến mình hoặc hoàn tiền lại phần hoa bị ảnh hưởng ngay lập tức ạ. Uy tín của tiệm là trên hết nên anh/chị cứ an tâm bên em sẽ xử lý thỏa đáng nhất cho mình ạ!",
     psychologicalTip: "Khẳng định uy tín và giải pháp bồi thường ngay lập tức giúp dập tắt cơn giận của khách.",
     suggestedActionLabel: "Sao chép xử lý khiếu nại",
   },
@@ -201,7 +201,7 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     title: "Gửi ảnh hoa cắm xong tại xưởng trước khi giao",
     summary: "Xác thực sự uy tín, cho khách duyệt tác phẩm thật trước khi tài xế lăn bánh.",
     template:
-      "Dạ hoa của {{customerName}} đã được thợ cắm hoàn thiện xong xuôi rồi đây ạ! Em gửi ảnh và video thực tế tại tiệm để mình ngắm trước nhé. Bó hoa phối đúng tone màu và cắm hoa loại 1 rất tươi đẹp. Shipper bắt đầu di chuyển, em sẽ gửi ảnh giao tận tay người nhận sau khi giao xong anh/chị nhé!",
+      "Dạ hoa của {{customerName}} đã được thợ chế tác hoàn thiện xong xuôi rồi đây ạ! Em gửi ảnh và video thực tế tại tiệm để mình ngắm trước nhé. Sản phẩm phối đúng tone màu và chế tác loại 1 rất tươi đẹp. Shipper bắt đầu di chuyển, em sẽ gửi ảnh giao tận tay người nhận sau khi giao xong anh/chị nhé!",
     psychologicalTip: "Người mua hoa gián tiếp (tặng người khác) rất thèm nhìn thấy món quà họ đã bỏ tiền ra mua.",
     suggestedActionLabel: "Sao chép gửi ảnh hoàn thiện",
   },
@@ -214,7 +214,7 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
     title: "Xin feedback, đánh giá 5 sao & kích hoạt ưu đãi",
     summary: "Khép lại đơn hàng với trải nghiệm tích cực và biến khách hàng thành khách thân thiết.",
     template:
-      "Dạ đơn hoa của mình đã được giao tận tay người nhận chu đáo rồi ạ! Nếu hài lòng với sản phẩm và dịch vụ của {{shopName}}, anh/chị dành tặng bên em một đánh giá 5 sao nhé ạ, đó sẽ là nguồn động viên rất lớn cho đội ngũ thợ hoa bên em. Để cảm ơn {{customerName}}, bên em xin gửi tặng mình mã giảm 10% cho lần đặt hoa tiếp theo ạ!",
+      "Dạ đơn hoa của mình đã được giao tận tay người nhận chu đáo rồi ạ! Nếu hài lòng với sản phẩm và dịch vụ của {{shopName}}, anh/chị dành tặng bên em một đánh giá 5 sao nhé ạ, đó sẽ là nguồn động viên rất lớn cho đội ngũ thợ chế tác bên em. Để cảm ơn {{customerName}}, bên em xin gửi tặng mình mã giảm 10% cho lần đặt hàng tiếp theo ạ!",
     psychologicalTip: "Tặng voucher ngay sau khi xin đánh giá làm tăng 300% tỷ lệ quay lại mua lần 2.",
     suggestedActionLabel: "Sao chép xin đánh giá",
   },
@@ -226,9 +226,9 @@ export const FLORIST_SALES_SCRIPTS: readonly SalesScriptItem[] = [
 export function renderSalesScript(template: string, vars: ScriptVariables = {}): string {
   let rendered = template
   const defaults: Record<string, string> = {
-    shopName: vars.shopName?.trim() || "Flora Tiệm Hoa",
+    shopName: vars.shopName?.trim() || "Flora Cửa Hàng",
     customerName: vars.customerName?.trim() || "anh/chị",
-    productName: vars.productName?.trim() || "mẫu hoa này",
+    productName: vars.productName?.trim() || "sản phẩm này",
     priceVnd: vars.priceVnd !== undefined && vars.priceVnd !== ""
       ? Number(vars.priceVnd).toLocaleString("vi-VN")
       : "550,000",
@@ -249,10 +249,14 @@ export function renderSalesScript(template: string, vars: ScriptVariables = {}):
  * Tìm kịch bản theo ID hoặc Category
  */
 export function getScriptById(id: string): SalesScriptItem | undefined {
-  return FLORIST_SALES_SCRIPTS.find((s) => s.id === id || s.code === id)
+  return SALES_SCRIPTS_CATALOG.find((s) => s.id === id || s.code === id)
 }
 
 export function getScriptsByCategory(category: SalesScriptCategory | "ALL"): readonly SalesScriptItem[] {
-  if (category === "ALL") return FLORIST_SALES_SCRIPTS
-  return FLORIST_SALES_SCRIPTS.filter((s) => s.category === category)
+  if (category === "ALL") return SALES_SCRIPTS_CATALOG
+  return SALES_SCRIPTS_CATALOG.filter((s) => s.category === category)
 }
+
+/** @deprecated Dùng `SALES_SCRIPTS_CATALOG` để chuẩn hóa đa ngành */
+export const FLORIST_SALES_SCRIPTS = SALES_SCRIPTS_CATALOG
+

@@ -78,7 +78,7 @@ describe("journey-catalog domain", () => {
 
     // Ngành Mặc định (FLORAL)
     const floralJourneys = getStoreJourneys("FLORAL")
-    expect(floralJourneys.find((j) => j.id === "greeting-card-hub")?.goal).toBe("Thẻ chào mẫu hoa")
+    expect(floralJourneys.find((j) => j.id === "greeting-card-hub")?.goal).toBe("Thẻ chào sản phẩm")
   })
 })
 

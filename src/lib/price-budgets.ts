@@ -1,5 +1,5 @@
 /**
- * Khoảng giá lọc nhanh mẫu hoa — mỗi cửa hàng tự đặt (Điều hành, mục "Bán hàng"
+ * Khoảng giá lọc nhanh sản phẩm — mỗi cửa hàng tự đặt (Điều hành, mục "Bán hàng"
  * trong Hồ sơ tổ chức). Lưu ở `organizations.settings[PRICE_BUDGETS_SETTINGS_KEY]`.
  *
  * Quy ước: khoảng là nửa mở `min ≤ giá < max`; `max = null` = không giới hạn trên.

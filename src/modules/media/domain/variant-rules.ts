@@ -1,9 +1,9 @@
 /**
  * Luật thuần của M04b — biến thể marketing dựng trên Master Image đã duyệt.
  *
- * M04b KHÔNG sinh pixel mới trên chính bó hoa. Nó lấy chủ thể đã có trong
+ * M04b KHÔNG sinh pixel mới trên chính sản phẩm. Nó lấy chủ thể đã có trong
  * Master Image, tách khỏi nền, rồi đặt vào một bối cảnh khác. Mọi đường sinh
- * lại bó hoa đều thuộc M04a và phải đi qua Identity Guard — luật này ghi ở
+ * lại sản phẩm đều thuộc M04a và phải đi qua Identity Guard — luật này ghi ở
  * `BO_TINH_NANG_HIEN_TRANG.md` mục 2.2 và M04 mục A.
  *
  * Hệ quả trực tiếp tới thiết kế ở đây, và là lý do tệp này tồn tại:
@@ -34,7 +34,7 @@ export const MEDIA_VARIANT_FEATURE = "media.variant"
 /**
  * Nhánh Cloud của M04b (23/09/2026). Cùng worker `process_variant_job`, cùng
  * cổng Subject Integrity — chỉ khác nguồn HẬU CẢNH: nhà cung cấp vẽ không gian
- * trống, bó hoa vẫn dán nguyên khối từ Master Image. Tách `feature` để bảng giá
+ * trống, sản phẩm vẫn dán nguyên khối từ Master Image. Tách `feature` để bảng giá
  * tính riêng (gọi nhà cung cấp trả phí) và để hàng đợi phân biệt được.
  *
  * Trước ngày này nhánh Cloud chạy đồng bộ trong request HTTP (`executeCloudCreative`):
@@ -145,7 +145,7 @@ export const SUBJECT_IDENTITY_WARNING = 0.99
  * Dịch số đo thành phán quyết.
  *
  * Lõi chủ thể được sao chép nguyên khối nên giá trị ĐÚNG là `1`. Bất kỳ mức
- * sụt nào cũng nghĩa là có một bước trong dây chuyền đã vẽ đè lên bó hoa —
+ * sụt nào cũng nghĩa là có một bước trong dây chuyền đã vẽ đè lên sản phẩm —
  * đó là một lỗi lập trình, không phải một biến động tự nhiên. Vì vậy ngưỡng
  * `SAFE` đặt sát 1 chứ không đặt "đủ tốt".
  */
@@ -169,7 +169,7 @@ export function variantRequiresWarning(result: GuardResult): boolean {
 /**
  * Cách đo của cổng (PO 25/09/2026):
  *  - `pixel_exact`: luồng cục bộ / đám mây chỉ-hậu-cảnh — FloraOS tự dán nguyên
- *    khối bó hoa, lõi phải trùng khít từng điểm ảnh (ngưỡng 0,999 / 0,99);
+ *    khối sản phẩm, lõi phải trùng khít từng điểm ảnh (ngưỡng 0,999 / 0,99);
  *  - `perceptual`: luồng NHÀ CUNG CẤP TRỌN GÓI — nhà cung cấp chỉnh sáng cả bó
  *    hoa, nên đo HÌNH DÁNG (IoU mặt nạ) + CẤU TRÚC (SSIM) + MÀU (ΔE). Không nhà
  *    cung cấp nào trả phép đo này (soát 25/09) — cổng vẫn là của FloraOS.
@@ -219,7 +219,7 @@ export type VariantIntegrityBlock = {
   method: IntegrityMethod
   /** Chỉ có ở `perceptual`. */
   perceptual?: PerceptualMetrics
-  /** Nhà cung cấp đã chỉnh sáng cả bó hoa → giao diện gắn nhãn "đã chỉnh sáng bằng AI". */
+  /** Nhà cung cấp đã chỉnh sáng cả sản phẩm → giao diện gắn nhãn "đã chỉnh sáng bằng AI". */
   ai_relit: boolean
 }
 

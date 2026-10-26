@@ -212,7 +212,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="px-2 py-0.5 rounded-md bg-surface-alt text-caption text-text-muted font-bold">
                         {item.type === "PRODUCT"
-                          ? "Mẫu hoa"
+                          ? "Sản phẩm"
                           : item.type === "RAW_ASSET"
                           ? "Ảnh gốc"
                           : "Ảnh duyệt"}

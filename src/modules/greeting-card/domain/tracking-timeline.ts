@@ -61,7 +61,7 @@ export const EVENT_LABEL: Record<string, string> = {
   PAYMENT_FIRST: "Ghi nhận tiền lần đầu",
   PAYMENT: "Ghi nhận tiền",
   REFUND: "Hoàn tiền",
-  FLORIST_ASSIGNED: "Phân công thợ cắm hoa",
+  FLORIST_ASSIGNED: "Phân công nghệ nhân",
   PRODUCT_PHOTO_UPLOADED: "Tải ảnh thành phẩm",
   SHIPPING_DISPATCHED: "Giao cho shipper",
   DELIVERY_FAILED: "Giao không thành công",

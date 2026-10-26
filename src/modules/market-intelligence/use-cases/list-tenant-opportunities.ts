@@ -68,7 +68,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
       const isUnsplash = typeof ref.thumbnailUrl === "string" && ref.thumbnailUrl.includes("unsplash.com");
       const isGenericMockAuthor =
         ref.author === "@florist.trend" ||
-        ref.author === "Kênh Hoa Tươi Nghệ Thuật" ||
+        ref.author === "Kênh Nghệ Thuật Chế Tác" ||
         !ref.author;
       const isGenericMockMetrics =
         !ref.metrics ||
@@ -102,7 +102,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
   }
 
   const encodedTopic = encodeURIComponent(topicName);
-  const encodedQuery = encodeURIComponent(`${topicName} hoa tươi`);
+  const encodedQuery = encodeURIComponent(topicName);
 
   return [
     {
@@ -123,7 +123,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
       thumbnailUrl: catalogEvidence.youtube.thumbnailUrl,
       author: catalogEvidence.youtube.author,
       metrics: catalogEvidence.youtube.metrics,
-      engagementNote: "Video hướng dẫn & mẫu cắm hoa thực tế",
+      engagementNote: "Video hướng dẫn & trình diễn sản phẩm thực tế",
     },
     {
       title: `Biểu đồ Google Trends: ${topicName}`,
@@ -137,7 +137,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
       type: "IMAGE_PINTEREST",
       platform: "Pinterest",
       url: `https://www.pinterest.com/search/pins/?q=${encodedQuery}`,
-      engagementNote: "Kho cảm hứng hình ảnh cắm hoa chuẩn phong cách",
+      engagementNote: "Kho cảm hứng hình ảnh sản phẩm chuẩn phong cách",
     },
   ];
 }

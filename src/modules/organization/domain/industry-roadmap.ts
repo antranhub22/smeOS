@@ -50,7 +50,7 @@ export const INDUSTRY_ROADMAP: readonly IndustryRoadmapItem[] = [
     stt: 1,
     group: "A",
     groupName: "Hoa và quà tặng",
-    name: "Hoa tươi",
+    name: "Sản phẩm",
     industryKey: "FLORAL",
     status: "ACTIVE",
   },

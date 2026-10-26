@@ -148,7 +148,7 @@ export default function MarketIntelligencePage() {
               type="button"
               onClick={() => router.push("/creative-studio?tab=area-a")}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-muted hover:text-primary hover:bg-surface/60 transition"
-              title="Quét xu hướng dựa theo ảnh sản phẩm hoa từ Creative Studio"
+              title="Quét xu hướng dựa theo ảnh sản phẩm từ Creative Studio"
             >
               <Camera size={13} />
               Quét Theo Ảnh Mẫu (Creative Studio) →

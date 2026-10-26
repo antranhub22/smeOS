@@ -22,10 +22,10 @@ describe("shop-contact-readiness (PO 08/10/2026 & UX xác nhận sử dụng)", 
     const contact = { name: DEMO_SHOP_NAME, phone: "0912 345 678" }
     expect(isDemoShopContact(contact)).toBe(true)
     expect(demoShopContactGap(contact)).toBe(
-      "Tên cửa hàng vẫn là tên mẫu (Tiệm Hoa Mộc Lan). Vào Hồ sơ cửa hàng sửa tên thật trước khi gửi link cho khách."
+      `Tên cửa hàng vẫn là tên mẫu (${DEMO_SHOP_NAME}). Vào Hồ sơ cửa hàng sửa tên thật trước khi gửi link cho khách.`
     )
     expect(shopProfileGap(contact)).toBe(
-      "Tên cửa hàng vẫn là tên mẫu (Tiệm Hoa Mộc Lan). Vào Hồ sơ cửa hàng sửa tên thật trước khi gửi link cho khách."
+      `Tên cửa hàng vẫn là tên mẫu (${DEMO_SHOP_NAME}). Vào Hồ sơ cửa hàng sửa tên thật trước khi gửi link cho khách.`
     )
   })
 
@@ -59,7 +59,7 @@ describe("shop-contact-readiness (PO 08/10/2026 & UX xác nhận sử dụng)", 
   it("vẫn cảnh báo khi thiếu số điện thoại kể cả khi đã xác nhận", () => {
     const contact = { name: "Homestay Villa Mây Sơn", phone: "" }
     expect(shopProfileGap(contact, true)).toBe(
-      "Hồ sơ cửa hàng chưa có số điện thoại — khách sẽ không gọi hoặc nhắn Zalo cho cửa hàng được từ trang đặt hoa."
+      "Hồ sơ cửa hàng chưa có số điện thoại — khách sẽ không gọi hoặc nhắn Zalo cho cửa hàng được từ trang đặt hàng."
     )
   })
 })

@@ -120,7 +120,7 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     // Ngành mặc định (FLORAL)
     const floralNav = buildNav(() => true, null, "FLORAL")
     const floralEntries = floralNav.groups.flatMap((g) => g.entries)
-    expect(floralEntries.find((e) => e.href === "/the-chao")?.label).toBe("Thẻ chào mẫu hoa")
+    expect(floralEntries.find((e) => e.href === "/the-chao")?.label).toBe("Thẻ chào sản phẩm")
   })
 
   it("9. Vai platform_admin → đủ 3 nhóm vận hành nền tảng (to-chuc, cau-hinh, giam-sat) với các đường dẫn /van-hanh/*", () => {

@@ -146,7 +146,7 @@ export function QuickCollectionModal({
           customerPhone: customerPhone.trim() || undefined,
           customCatalog: {
             name: liveResult.generatedName,
-            description: liveResult.personalizedGreeting || "Bộ sưu tập hoa tươi tuyển chọn theo yêu cầu.",
+            description: liveResult.personalizedGreeting || "Bộ sưu tập sản phẩm tuyển chọn theo yêu cầu.",
             filters: {
               templateId,
               occasion: occasion || undefined,

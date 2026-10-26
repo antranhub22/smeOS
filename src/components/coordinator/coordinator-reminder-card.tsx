@@ -133,7 +133,7 @@ export function CoordinatorReminderCard({
         <div className="flex items-center justify-between mb-1">
           <span className="text-caption font-bold text-text-muted">
             {reminder.recipientType === "WORKSHOP"
-              ? "Tin nhắn gửi Xưởng / Thợ cắm"
+              ? "Tin nhắn gửi Xưởng / Thợ chế tác"
               : reminder.recipientType === "SHIPPER"
               ? `Tin nhắn gửi Shipper ${
                   reminder.recipientTarget ? `(${reminder.recipientTarget})` : ""

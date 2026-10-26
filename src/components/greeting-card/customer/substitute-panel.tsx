@@ -44,7 +44,7 @@ export function SubstitutePanel({
     if (!last?.choiceLabel) return null
     return (
       <div role="status" className="rounded-2xl border border-border bg-surface-muted p-4 flex flex-col gap-1 text-body-sm">
-        <p className="font-bold text-foreground flex items-center gap-2"><Shuffle size={16} aria-hidden="true" /> Đổi mẫu hoa</p>
+        <p className="font-bold text-foreground flex items-center gap-2"><Shuffle size={16} aria-hidden="true" /> Đổi sản phẩm</p>
         <p className="text-foreground">
           {last.choiceLabel}{last.chosenName ? `: ${last.chosenName}` : ""} <span className="text-text-muted">· {when(last.answeredAt)}</span>
         </p>
@@ -84,7 +84,7 @@ export function SubstitutePanel({
   return (
     <section aria-labelledby="substitute-title" className="rounded-2xl border border-warning/30 bg-warning-bg p-4 flex flex-col gap-3">
       <h3 id="substitute-title" className="text-body font-extrabold text-warning flex items-center gap-2">
-        <Shuffle size={18} aria-hidden="true" /> Tiệm cần bạn chọn lại mẫu hoa
+        <Shuffle size={18} aria-hidden="true" /> Tiệm cần bạn chọn lại sản phẩm
       </h3>
       <p className="text-body-sm text-foreground">
         Mẫu <strong>{p.originalName}</strong> tạm thời không làm được: {p.reason}

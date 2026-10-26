@@ -59,7 +59,7 @@ export function ProductTrendFitMatrix({
           <thead className="bg-cool-50/80 text-cool-500 font-semibold">
             <tr>
               <th className="px-3.5 py-2.5">Thuộc tính sản phẩm</th>
-              <th className="px-3.5 py-2.5">Giá trị của bó hoa</th>
+              <th className="px-3.5 py-2.5">Giá trị của sản phẩm</th>
               <th className="px-3.5 py-2.5">Tín hiệu nhu cầu thị trường</th>
               <th className="px-3.5 py-2.5">Vòng đời</th>
               <th className="px-3.5 py-2.5 text-center">Mức độ khớp</th>

@@ -105,7 +105,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/the-chao",
-    label: "Thẻ chào mẫu hoa",
+    label: "Thẻ chào sản phẩm",
     group: "ban-hang",
     iconKey: "Sparkles",
     navKey: "greeting-card",
@@ -134,7 +134,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/san-pham/tao-moi",
-    label: "Tạo mẫu hoa mới",
+    label: "Tạo sản phẩm mới",
     group: "san-pham",
     iconKey: "Sparkles",
     navKey: "create-product",

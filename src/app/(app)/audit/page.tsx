@@ -95,7 +95,7 @@ export default function AuditLogsPage() {
         badgeLabel="GIÁM SÁT AN TOÀN & TUÂN THỦ"
         badgeIcon={ShieldCheck}
         title="Nhật Ký Kiểm Toán Tổ Chức (Audit Trail)"
-        description="Mọi thay đổi cấu hình trọng yếu, duyệt phân tích hoa, thay đổi bộ máy và phân quyền đều được ghi vết bất biến kèm mã định danh người dùng và thời điểm."
+        description="Mọi thay đổi cấu hình trọng yếu, duyệt phân tích sản phẩm, thay đổi bộ máy và phân quyền đều được ghi vết bất biến kèm mã định danh người dùng và thời điểm."
         tips={[
           "🔒 Dữ liệu kiểm toán được lưu trữ bất biến (Append-only) trong cùng giao dịch cơ sở dữ liệu",
           "⚡ Tra cứu nhanh theo loại hành động, mã thực thể hoặc định danh người thao tác",

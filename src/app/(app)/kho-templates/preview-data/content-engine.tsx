@@ -52,7 +52,7 @@ export const contentEnginePreviews: Record<string, React.ReactNode> = {
   "linkedin-post-preview.tsx": (
     <LinkedInPreview
       post={{ ...SAMPLE_POST, channel: "linkedin", channelLabel: "LinkedIn" }}
-      productName="Hoa tươi quà tặng doanh nghiệp"
+      productName="Sản phẩm quà tặng doanh nghiệp"
       shopName="SiiN Store Corporate"
     />
   ),

@@ -1,6 +1,6 @@
 /**
  * Use-Case: Manage Template Reminder Overrides.
- * Xem và cập nhật cấu hình ghi đè nhắc việc theo từng mẫu hoa / Thẻ chào.
+ * Xem và cập nhật cấu hình ghi đè nhắc việc theo từng sản phẩm / Thẻ chào.
  */
 
 import type { IDispatchReminderRepository } from "../domain/dispatch-reminder-repository-port"

@@ -64,12 +64,12 @@ const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
   FLORAL: [
     {
       id: "sample-1",
-      name: "Bó Hoa Hồng Red Naomi Ecuador",
+      name: "Sản Phẩm Hồng Red Naomi Ecuador",
       code: "HH-01",
       price: 850000,
       imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80",
       description: "Hoa hồng đỏ nhung Ecuador tuyển chọn, phối cành lá bạc bạch đàn.",
-      flowersSummary: "12 cành hoa hồng Red Naomi Ecuador, lá bạc thơm, giấy gói lụa cao cấp",
+      flowersSummary: "12 thành phần hồng Red Naomi Ecuador, lá bạc thơm, giấy gói lụa cao cấp",
       style: "Sang Trọng",
       meaning: "Tình yêu mãnh liệt, đam mê và sự gắn kết trường tồn",
       sortOrder: 1,

@@ -41,7 +41,7 @@ export async function convertChatToDraftOrder(
   const priceVnd = product.pricing.quotePriceVnd
   if (!hasRealPrice(priceVnd)) {
     throw validationFailed({
-      priceVnd: `Mẫu hoa "${product.name}" chưa có giá bán cấu hình. Vui lòng tạo đơn thủ công và nhập giá trước khi chốt.`,
+      priceVnd: `Sản phẩm "${product.name}" chưa có giá bán cấu hình. Vui lòng tạo đơn thủ công và nhập giá trước khi chốt.`,
     })
   }
 

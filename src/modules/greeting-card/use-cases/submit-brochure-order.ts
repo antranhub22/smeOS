@@ -47,7 +47,7 @@ export async function submitBrochureOrder(
 
   // Không còn "tự lấy mẫu đầu tiên" như bản cũ: khách phải chọn mẫu.
   if (!session.selected_product_id) {
-    throw unprocessable("Vui lòng chọn mẫu hoa trước khi hoàn tất đặt hàng")
+    throw unprocessable("Vui lòng chọn sản phẩm trước khi hoàn tất đặt hàng")
   }
   // Tính lại giá từ Product Master lúc đặt — không tin ảnh chụp đã lưu.
   const product = await resolveOrderableProduct(session, session.selected_product_id, repo)
@@ -101,7 +101,7 @@ export async function quoteBrochureSession(
   repo = getGreetingCardRepository()
 ): Promise<QuoteResult> {
   const session = await loadPublicSession(sendCode, repo)
-  if (!session.selected_product_id) throw unprocessable("Vui lòng chọn mẫu hoa trước")
+  if (!session.selected_product_id) throw unprocessable("Vui lòng chọn sản phẩm trước")
   const product = await resolveOrderableProduct(session, session.selected_product_id, repo)
   const shop = await repo.getShopProfile(session.organization_id)
   const promo = promotionForQuote(session.catalog.filters, shop.settings, req.selectedPromotionId)

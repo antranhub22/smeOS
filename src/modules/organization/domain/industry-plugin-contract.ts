@@ -18,12 +18,12 @@ export interface IndustryTerminology {
   readonly makerTitle: string              // Tên vai trò người sản xuất (Thợ hoa, Thợ may, Đầu bếp...)
   readonly makerAction: string             // Hành động chế tác (Cắm hoa, May đo, Chế biến...)
   readonly productRecipe: string           // Tên công thức (Công thức cành, Bảng định mức vải, Định lượng món...)
-  readonly sampleProduct: string           // Tên mẫu sản phẩm (Mẫu hoa, Mẫu thiết kế, Món ăn chuẩn...)
+  readonly sampleProduct: string           // Tên mẫu sản phẩm (Sản phẩm, Mẫu thiết kế, Món ăn chuẩn...)
   readonly rawMaterialItem: string         // Tên đơn vị nguyên liệu (Cành hoa, Vải/Phụ liệu, Nguyên liệu...)
   readonly completedProductPhoto: string   // Tên ảnh thành phẩm (Ảnh hoa hoàn thành, Ảnh trang phục, Ảnh món ra đĩa...)
   readonly printablesTitle: string         // Tên thẻ đính kèm (Thiệp chúc mừng, Thẻ bài & HD giặt, Menu để bàn...)
-  readonly catalogTitle: string            // Tên danh mục tổng (Kho mẫu hoa, Bộ sưu tập Lookbook, Thực đơn món...)
-  readonly createButtonLabel: string       // Nút tạo mới (Thêm mẫu hoa, Thêm mẫu thiết kế, Thêm món mới...)
+  readonly catalogTitle: string            // Tên danh mục tổng (Kho sản phẩm, Bộ sưu tập Lookbook, Thực đơn món...)
+  readonly createButtonLabel: string       // Nút tạo mới (Thêm sản phẩm, Thêm mẫu thiết kế, Thêm món mới...)
   readonly scanButtonLabel: string         // Nút quét ảnh (Quét ảnh hoa, Quét mẫu trang phục, Quét ảnh món...)
   readonly defaultMeasurementUnits: readonly string[]
   readonly defaultComponentRoles: readonly { readonly key: string; readonly label: string; readonly isRequired?: boolean }[]

@@ -118,7 +118,7 @@ export function scaleBOMForSize(
   const rawSellingPrice = totalCost * markupRatio
   const roundedSellingPrice = Math.round(rawSellingPrice / 10_000) * 10_000
 
-  const summary = `${config.shortLabel}: ${mainStems} cành hoa chính (${totalStems} cành hoa tổng cộng)`
+  const summary = `${config.shortLabel}: ${mainStems} thành phần chính (${totalStems} thành phần tổng cộng)`
 
   return {
     sizeKey: targetSize,

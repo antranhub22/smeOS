@@ -31,7 +31,7 @@ export type ProductCopyRaw = {
   suggested_name: string;
   /** Slogan / Catchphrase ngắn 1 dòng (dưới 60 ký tự) cho Banner / Story / Thumbnail */
   short_headline?: string | undefined;
-  /** Mô tả marketing giàu cảm xúc: "Bó hoa hồng đỏ tinh tế, 20 cành, ý nghĩa tình yêu..." */
+  /** Mô tả marketing giàu cảm xúc: "Sản phẩm hồng đỏ tinh tế, 20 cành, ý nghĩa tình yêu..." */
   suggested_description: string;
   /** Phong cách thiết kế: "Sang trọng" | "Hàn Quốc Romantic" | "Tối giản" ... */
   suggested_style: string;
@@ -51,7 +51,7 @@ export type ProductCopyRaw = {
   key_selling_points?: string[] | undefined;
   /** 3 mẫu lời chúc viết thiệp tương ứng các sắc thái */
   card_message_suggestions?: CardMessageSuggestions | undefined;
-  /** 2-3 mẹo chăm sóc giữ hoa tươi bền lâu */
+  /** 2-3 mẹo chăm sóc giữ sản phẩm bền lâu */
   care_instructions?: string[] | undefined;
   /** Phân khúc giá: "budget" | "standard" | "premium" | "luxury" */
   suggested_price_segment: "budget" | "standard" | "premium" | "luxury";

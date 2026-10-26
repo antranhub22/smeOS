@@ -47,7 +47,7 @@ export interface DispatchMessageTemplates {
   inviteSubcontract: string
   /** Tin nhắn thông báo chi nhánh đã nhận đơn thành công */
   claimSuccess: string
-  /** Tin nhắn nhắc chuẩn bị nguyên vật liệu / cắm hoa */
+  /** Tin nhắn nhắc chuẩn bị nguyên vật liệu / chế tác */
   prepReminder: string
   /** Tin nhắn nhắc chụp ảnh thành phẩm QC lần 1 */
   qcReminder: string
@@ -110,7 +110,7 @@ export const DEFAULT_DISPATCH_MESSAGE_TEMPLATES: Readonly<DispatchMessageTemplat
   prepReminder:
     "🔔 [BẮT ĐẦU CHẾ TÁC] Đơn #{{orderCode}} đã chính thức chốt. Vui lòng chuẩn bị hoa và nguyên vật liệu theo định lượng BOM.",
   qcReminder:
-    "📸 [NHẮC CHỤP ẢNH QC] Đơn #{{orderCode}} cần giao lúc {{deliveryTime}}. Vui lòng hoàn tất cắm hoa và chụp ảnh gửi khách trước {{qcTime}}.",
+    "📸 [NHẮC CHỤP ẢNH QC] Đơn #{{orderCode}} cần giao lúc {{deliveryTime}}. Vui lòng hoàn tất chế tác và chụp ảnh gửi khách trước {{qcTime}}.",
   qcReminderSecond:
     "⚠️ [NHẮC LẦN 2 - KHẨN CẤP] Đơn #{{orderCode}} sắp đến giờ giao nhưng hệ thống chưa nhận được ảnh chụp thành phẩm! Yêu cầu cửa hàng chụp và tải ảnh ngay.",
   qcEscalationAlert:

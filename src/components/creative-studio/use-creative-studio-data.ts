@@ -683,7 +683,7 @@ export function useCreativeStudioData(): UseCreativeStudioReturn {
         method: "POST",
         headers: { [IDEMPOTENCY_KEY_HEADER]: idempotencyKey },
         // 23/09/2026: cả hai nhánh đi qua hàng đợi job; nhánh cloud gửi mô tả
-        // HẬU CẢNH (không mô tả bó hoa) — bó hoa dán nguyên khối ở worker.
+        // HẬU CẢNH (không mô tả sản phẩm) — sản phẩm dán nguyên khối ở worker.
         body: JSON.stringify({
           master_asset_id: masterId,
           engine: variantEngineMode,

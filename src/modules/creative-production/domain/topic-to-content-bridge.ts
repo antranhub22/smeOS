@@ -138,7 +138,7 @@ export function buildContentPrompt(input: ContentGenerationInput): string {
 function buildAuthenticPrompt(input: ContentGenerationInput): string {
   return [
     `Viết caption ${input.platform} cho sản phẩm hoa "${input.product.name}".`,
-    `Phong cách: Chân thật, gần gũi, như lời chia sẻ từ chủ tiệm hoa.`,
+    `Phong cách: Chân thật, gần gũi, như lời chia sẻ từ người sáng lập thương hiệu.`,
     `Tone: ${input.captionSpec.tone}.`,
     `Chủ đề: ${input.topic.title} — ${input.topic.angle}.`,
     `Thành phần hoa: ${input.product.components.join(", ")}.`,

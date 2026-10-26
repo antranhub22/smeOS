@@ -132,7 +132,7 @@ export async function runBackgroundSweep(
           now
         )
       ) {
-        const reason = `Tự hủy: Quá hạn chọn mẫu hoa (${formatTimeoutDuration(policy.browsingExpiryHours, "hours")})`
+        const reason = `Tự hủy: Quá hạn chọn sản phẩm (${formatTimeoutDuration(policy.browsingExpiryHours, "hours")})`
         await repo.expireSession(s.organization_id, s.id, reason, now)
         result.sessionsExpired += 1
       }

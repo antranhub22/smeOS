@@ -150,7 +150,7 @@ function CreativeResultViewerBody({
   )
 
   // Trích xuất thông tin sản phẩm và topic
-  const productName = ctx?.productName || currentResult.topicTitle || "Bó hoa tươi thiết kế"
+  const productName = ctx?.productName || currentResult.topicTitle || "Bó sản phẩm thiết kế"
   const components =
     ctx?.commercialPassport?.components ||
     ctx?.report?.components?.map((c) => c.flowerType) ||
@@ -359,7 +359,7 @@ function CreativeResultViewerBody({
                 {mode === "CREATIVE" ? "✨ AI CREATIVE SẢN XUẤT THÀNH CÔNG" : "🌿 AUTHENTIC XƯỞNG HOÀN THÀNH"}
               </div>
               <h3 className="text-title font-extrabold text-text">
-                {currentResult.topicTitle || "Nội dung truyền thông hoa tươi"}
+                {currentResult.topicTitle || "Nội dung truyền thông sản phẩm"}
               </h3>
             </div>
           </div>

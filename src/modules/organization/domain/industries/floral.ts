@@ -4,19 +4,19 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
   identity: {
     key: "FLORAL",
     name: "Hoa & Cây cảnh",
-    description: "Cửa hàng hoa tươi, cây cảnh, hoa sự kiện và điện hoa",
+    description: "Cửa hàng sản phẩm, cây cảnh, hoa sự kiện và điện hoa",
     iconName: "Flower2",
   },
   terminology: {
-    makerTitle: "Thợ cắm hoa",
+    makerTitle: "Thợ chế tác",
     makerAction: "Cắm hoa",
     productRecipe: "Công thức cành hoa",
-    sampleProduct: "Mẫu hoa chuẩn",
+    sampleProduct: "Sản phẩm chuẩn",
     rawMaterialItem: "Cành/Loại hoa",
     completedProductPhoto: "Ảnh hoa hoàn thành",
     printablesTitle: "Thiệp chúc mừng",
-    catalogTitle: "Kho mẫu hoa",
-    createButtonLabel: "Thêm mẫu hoa",
+    catalogTitle: "Kho sản phẩm",
+    createButtonLabel: "Thêm sản phẩm",
     scanButtonLabel: "Quét ảnh hoa",
     defaultMeasurementUnits: ["cành", "bó", "chậu", "giỏ", "kệ", "nhánh", "hộp"],
     defaultComponentRoles: [
@@ -28,7 +28,7 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
   },
   taxonomy: {
     defaultCategories: [
-      { key: "BOUQUET", label: "Bó hoa", defaultUnit: "bó" },
+      { key: "BOUQUET", label: "Sản phẩm", defaultUnit: "bó" },
       { key: "BASKET", label: "Giỏ hoa", defaultUnit: "giỏ" },
       { key: "STAND", label: "Kệ hoa khai trương", defaultUnit: "kệ" },
       { key: "VASE", label: "Bình hoa", defaultUnit: "bình" },
@@ -75,7 +75,7 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
       {
         type: "CARE_GUIDE",
         title: "Thẻ hướng dẫn dưỡng hoa",
-        description: "Thẻ hướng dẫn khách hàng giữ hoa tươi lâu tại nhà",
+        description: "Thẻ hướng dẫn khách hàng giữ sản phẩm lâu tại nhà",
         defaultFrontTitle: "Bí Quyết Giữ Hoa Tươi Lâu",
         defaultBackInstructions: [
           "Dùng gói dưỡng hoa kèm theo pha với 500ml nước sạch",
@@ -88,11 +88,11 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
     visionFocus: "Nhận diện độ nở cánh hoa, màu sắc chủ đạo, tỷ lệ phối hoa chính/hoa phụ và ước tính cành hoa",
     studioBackgroundStyles: ["Không gian phòng khách hiện đại", "Bàn tiệc trà chiều kiểu Pháp", "Ánh sáng tự nhiên buổi sớm"],
     marketingToneExamples: [
-      "Trao gửi yêu thương tinh tế qua từng đóa hoa tươi rạng rỡ",
+      "Trao gửi yêu thương tinh tế qua từng đóa sản phẩm rạng rỡ",
       "Thiết kế hoa độc bản mang dấu ấn riêng cho sự kiện đặc biệt của bạn",
     ],
     sampleProductNames: [
-      "Bó hoa hồng Ohara đỏ nhung cao cấp",
+      "Sản phẩm hồng Ohara đỏ nhung cao cấp",
       "Giỏ hoa cúc mẫu đơn kết hợp hoa tulip pastel",
       "Kệ hoa khai trương Đại Cát Đại Lợi 2 tầng",
     ],

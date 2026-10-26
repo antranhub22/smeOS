@@ -10,6 +10,6 @@ export function linkPreviewText(input: {
   const known = input.prices.filter((p): p is number => typeof p === "number" && p > 0)
   const fromPrice = known.length ? `, giá từ ${Math.min(...known).toLocaleString("vi-VN")}đ` : ""
   const description =
-    input.catalogDescription?.trim() || `${input.prices.length} mẫu hoa tươi${fromPrice}. Chạm để xem và đặt hoa.`
+    input.catalogDescription?.trim() || `${input.prices.length} sản phẩm${fromPrice}. Chạm để xem và đặt hàng.`
   return { title, description }
 }

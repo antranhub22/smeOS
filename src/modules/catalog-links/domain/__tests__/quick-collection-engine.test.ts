@@ -13,7 +13,7 @@ describe("quick-collection-engine", () => {
       code: "HOA-001",
       name: "Bó Hoa Hồng Đỏ Tình Yêu",
       price: 500_000,
-      category: "Bó hoa",
+      category: "Sản phẩm",
       shape: "Tròn",
       colorTheme: "Đỏ",
       occasions: ["Sinh nhật", "Kỷ niệm"],

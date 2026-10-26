@@ -55,7 +55,7 @@ export function LandingStepSetup({
     return (
       <div className="space-y-4">
         <div className="border-b border-border pb-3">
-          <h3 className="text-title font-bold text-text">Bước 2: Tuyển Chọn Mẫu Hoa Bán Trong Chiến Dịch</h3>
+          <h3 className="text-title font-bold text-text">Bước 2: Tuyển Chọn Sản Phẩm Bán Trong Chiến Dịch</h3>
           <p className="text-body-sm text-text-muted mt-0.5">
             Tích chọn các sản phẩm hoa tiêu biểu từ kho hoặc tải nhanh ảnh mẫu mới.
           </p>

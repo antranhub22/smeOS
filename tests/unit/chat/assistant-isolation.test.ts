@@ -47,9 +47,9 @@ describe("Kiến trúc phân tách: Ops Copilot (Vận hành SaaS) vs Sales Conc
         userRole: "Sale",
       })
 
-      expect(result.replyText).toContain("Brochure Mẫu Hoa")
+      expect(result.replyText).toContain("Brochure")
       expect(result.targetRoute).toBe("/the-chao")
-      expect(result.actionLabel).toBe("Mở Bảng Thẻ Chào Mẫu Hoa")
+      expect(result.actionLabel).toBe("Mở Bảng Thẻ Chào Sản Phẩm")
     })
 
     it("trả về hướng dẫn tổng quan các phân hệ khi câu hỏi không khớp 1 mục cụ thể (không đóng vai bán hoa)", async () => {

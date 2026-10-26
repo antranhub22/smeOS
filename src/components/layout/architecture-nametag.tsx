@@ -16,7 +16,7 @@ import { FlaskConical, Check, ChevronDown } from "lucide-react"
 import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
 
 const INDUSTRY_SHORT_NAME: Record<string, string> = {
-  FLORAL: "Hoa tươi",
+  FLORAL: "Sản phẩm",
   FASHION: "Thời trang",
   FNB: "F&B",
   CRAFT_GIFT: "Quà tặng",
@@ -67,7 +67,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
     }
 
     const industryKey = (organization?.industry || "FLORAL").toUpperCase()
-    const industryShort = INDUSTRY_SHORT_NAME[industryKey] || "Hoa tươi"
+    const industryShort = INDUSTRY_SHORT_NAME[industryKey] || "Sản phẩm"
 
     // 2. ChainOS
     const isChain =

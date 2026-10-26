@@ -30,7 +30,7 @@ export function VideoCreateModal({
   onSubmit,
 }: VideoCreateModalProps) {
   const [format, setFormat] = useState<VideoFormat>("REEL_15S");
-  const [title, setTitle] = useState("Video giới thiệu bó hoa tươi");
+  const [title, setTitle] = useState("Video giới thiệu sản phẩm tươi");
   const [musicTrack, setMusicTrack] = useState("Acoustic Warm Guitar");
   const [voiceCode, setVoiceCode] = useState("vi-VN-Standard-A");
   const [captionStyle, setCaptionStyle] = useState<CaptionStyle>("MODERN_BADGE");
@@ -150,7 +150,7 @@ export function VideoCreateModal({
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="VD: Video giới thiệu bó hoa hồng Valentine..."
+            placeholder="VD: Video giới thiệu sản phẩm hồng Valentine..."
             className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-xs focus:border-primary focus:outline-none"
           />
         </div>

@@ -40,7 +40,7 @@ export async function updateOrderProgress(
   if (input.productionStatus && input.productionStatus !== existing.productionStatus) {
     const check = validateProductionStatusTransition(existing.productionStatus, input.productionStatus)
     if (!check.valid) {
-      throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái cắm hoa không hợp lệ.")
+      throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái chế tác không hợp lệ.")
     }
   }
 
@@ -73,7 +73,7 @@ export async function updateOrderProgress(
       input.productionStatus,
       ctx.userId,
       existing.productionStatus,
-      "Cập nhật tiến độ cắm hoa"
+      "Cập nhật tiến độ chế tác"
     )
   }
 

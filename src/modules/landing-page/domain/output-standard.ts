@@ -45,7 +45,7 @@ export const OUTPUT_STANDARDS_08: readonly LandingOutputCriterion[] = [
   {
     code: "compelling_storytelling",
     name: "Văn phong tiếp thị & câu chuyện thương hiệu",
-    description: "Nội dung giới thiệu truyền cảm hứng, ngắn gọn, phù hợp với văn hóa từng ngành nghề (hoa tươi, thời trang, F&B...)",
+    description: "Nội dung giới thiệu truyền cảm hứng, ngắn gọn, phù hợp với văn hóa từng ngành nghề (sản phẩm, thời trang, F&B...)",
     type: "SCORED",
     threshold: 0.8,
   },

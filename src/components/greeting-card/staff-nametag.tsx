@@ -48,7 +48,7 @@ export function getStaffColor(id: string | null | undefined) {
 
 /**
  * Xác định đơn hàng/thẻ đang ở giai đoạn Điều phối hay giai đoạn Bán hàng.
- * - Giai đoạn Điều phối: từ bước 6 trở đi (Cắm hoa, QC, Giao hàng, Hoàn tất) hoặc
+ * - Giai đoạn Điều phối: từ bước 6 trở đi (Chế tác, QC, Giao hàng, Hoàn tất) hoặc
  *   khi sản xuất/giao hàng đã được kích hoạt.
  * - Giai đoạn Bán hàng: mở link, chọn mẫu, điền form, chờ thanh toán, xác nhận TT (bước 1–5).
  */

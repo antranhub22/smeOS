@@ -1,5 +1,5 @@
 /**
- * greeting-card.ts — Từ điển màn hình Thẻ chào mẫu hoa & Thiệp số (03-the-chao.md SSOT)
+ * greeting-card.ts — Từ điển màn hình Thẻ chào sản phẩm & Thiệp số (03-the-chao.md SSOT)
  */
 
 export const greetingCardVi = {

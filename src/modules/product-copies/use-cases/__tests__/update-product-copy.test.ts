@@ -89,7 +89,7 @@ describe("updateProductCopy", () => {
 
   it("throws VALIDATION_FAILED when edited content contains flower banned phrases", async () => {
     const bannedEdited = {
-      suggested_name: "Bó hoa vĩnh cửu không bao giờ tàn",
+      suggested_name: "Sản phẩm vĩnh cửu không bao giờ tàn",
       suggested_description: "Cam kết xả kho lỗ vốn",
       suggested_tags: ["hoa vĩnh cửu"],
     }

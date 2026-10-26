@@ -1,7 +1,7 @@
 /**
  * industry-profile.ts — Định nghĩa và danh mục cấu hình ngành (Industry Profile SSOT)
  *
- * Cho phép smeOS thích ứng linh hoạt đa ngành (Bán lẻ, Thời trang, F&B, Quà tặng/Thủ công, Dịch vụ, Hoa tươi)
+ * Cho phép smeOS thích ứng linh hoạt đa ngành (Bán lẻ, Thời trang, F&B, Quà tặng/Thủ công, Dịch vụ, Sản phẩm)
  * mà không phải sửa đổi cấu trúc CSDL hay viết lại logic nghiệp vụ cốt lõi.
  *
  * Tích hợp kiến trúc IndustryPluginContract SSOT:
@@ -227,7 +227,7 @@ const ORDER_TERMS_MAP: Record<IndustryKey, IndustryOrderTerminology> = {
     trackingBalanceAfterDeliveryHint: "Vui lòng thanh toán phần còn lại qua mã QR bên dưới hoặc cho shipper khi nhận hoa.",
     trackingBalanceAfterCompletionHint: "Hoa của bạn đã hoàn thành. Vui lòng thanh toán phần còn lại để cửa hàng tiến hành giao hoa.",
     trackingBalanceContactHint: "Cửa hàng sẽ liên hệ để nhận phần còn lại khi giao hoa.",
-    trackingAcceptedNote: "Điều phối đã duyệt đơn. Nghệ nhân hoa đang chuẩn bị nguyên liệu cắm hoa.",
+    trackingAcceptedNote: "Điều phối đã duyệt đơn. Nghệ nhân hoa đang chuẩn bị nguyên liệu chế tác.",
     trackingChangeButtonLabel: "Đổi giờ giao, địa chỉ hoặc người nhận",
     trackingDeliveryStepLabel: "Đang giao",
     trackingLoadingText: "Đang tải tiến trình đơn hoa của bạn...",

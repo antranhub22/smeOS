@@ -259,7 +259,7 @@ export function SmartInputDropzone({
                   className="p-6 border border-dashed border-border rounded-lg text-center hover:bg-surface cursor-pointer transition-colors"
                 >
                   <p className="text-body-sm text-text-muted font-medium">
-                    Chưa chọn mẫu nào từ kho. Nhấp vào đây để chọn các mẫu hoa tiêu biểu của tiệm.
+                    Chưa chọn mẫu nào từ kho. Nhấp vào đây để chọn các sản phẩm tiêu biểu của tiệm.
                   </p>
                 </div>
               )}

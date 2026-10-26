@@ -15,7 +15,7 @@ const goc: AnalysisDeXuat = {
   model: "gpt-4o",
   contract_version: "1",
   raw: {
-    identity: { category: "Bó hoa" },
+    identity: { category: "Sản phẩm" },
     confidence: 82,
     flower_count: 17,
     bud_count: 3,

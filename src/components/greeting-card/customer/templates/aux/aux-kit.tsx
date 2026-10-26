@@ -64,7 +64,7 @@ export function EmptyCatalog() {
 /**
  * Ảnh sản phẩm hòa nền: nhân (multiply) lên `backdrop` để nền trắng của ảnh studio
  * tan vào màu khung, không lộ thành khối chữ nhật. Ảnh có bối cảnh thật gần như không đổi.
- * Luôn `object-contain`: khách phải thấy trọn mẫu hoa, không bị cắt mép.
+ * Luôn `object-contain`: khách phải thấy trọn sản phẩm, không bị cắt mép.
  */
 
 export function ProductImage({

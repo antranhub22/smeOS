@@ -7,7 +7,7 @@
 export type SettlementStatus = "CHO_DOI_SOAT" | "DA_DOI_SOAT" | "DA_THANH_TOAN" | "TRANH_CHAP"
 
 export type FlowerArrangementType =
-  | "BO_HOA" // Bó hoa tiêu chuẩn
+  | "BO_HOA" // Sản phẩm tiêu chuẩn
   | "GIO_HOA" // Giỏ hoa / Hộp hoa
   | "LANG_HOA" // Lẵng hoa bàn tiệc
   | "KE_KHAI_TRUONG" // Kệ hoa khai trương 2-3 tầng
@@ -255,7 +255,7 @@ export function generateSettlementCsv(period: PartnerSettlementPeriod): string {
   const headers = [
     "Mã đơn hàng",
     "Ngày hoàn tất",
-    "Kiểu cắm hoa",
+    "Kiểu chế tác",
     "Giá trị đơn (VNĐ)",
     "Tiền công (VNĐ)",
     "Vật tư ứng (VNĐ)",
@@ -268,7 +268,7 @@ export function generateSettlementCsv(period: PartnerSettlementPeriod): string {
   ]
 
   const typeLabels: Record<FlowerArrangementType, string> = {
-    BO_HOA: "Bó hoa",
+    BO_HOA: "Sản phẩm",
     GIO_HOA: "Giỏ hoa",
     LANG_HOA: "Lẵng hoa",
     KE_KHAI_TRUONG: "Kệ khai trương",

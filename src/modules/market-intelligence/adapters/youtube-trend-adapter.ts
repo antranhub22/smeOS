@@ -11,7 +11,7 @@ import { readDotenvKey } from "./read-dotenv-key";
 
 /**
  * Adapter YouTube Trend qua SerpApi YouTube Engine.
- * Thu thập dữ liệu video xu hướng cắm hoa, số lượt xem và tốc độ tăng trưởng.
+ * Thu thập dữ liệu video xu hướng chế tác, số lượt xem và tốc độ tăng trưởng.
  */
 /** Một kết quả video (engine `youtube`) của SerpApi — chỉ các trường adapter đọc. */
 interface YouTubeVideoResult {
@@ -37,7 +37,7 @@ export class YouTubeTrendAdapter implements TrendProvider {
   async searchTrends(query: TrendSearchQuery): Promise<TrendSignalData[]> {
     const geo = query.geo ?? "VN";
     const industry = query.industry ?? "florist";
-    const searchQuery = `${query.query} hoa tươi cắm hoa`;
+    const searchQuery = `${query.query}`;
 
     if (!this.apiKey) {
       const context = estimateTopicContextMetrics(query.query);
@@ -109,20 +109,20 @@ export class YouTubeTrendAdapter implements TrendProvider {
         if (isSpam) return false;
 
         return (
-          t.includes("bó hoa") ||
-          t.includes("cắm hoa") ||
+          t.includes("sản phẩm") ||
+          t.includes("chế tác") ||
           t.includes("lẵng hoa") ||
           t.includes("giỏ hoa") ||
           t.includes("kệ hoa") ||
-          t.includes("hoa tươi") ||
+          
           t.includes("hoa cưới") ||
           t.includes("hoa tốt nghiệp") ||
           t.includes("hoa khai trương") ||
           t.includes("florist") ||
-          c.includes("hoa tươi") ||
-          c.includes("tiệm hoa") ||
+          
+          
           c.includes("florist") ||
-          d.includes("cắm hoa")
+          d.includes("chế tác")
         );
       });
 
@@ -134,13 +134,13 @@ export class YouTubeTrendAdapter implements TrendProvider {
 
       const evidenceSnippets = relevantVideos.slice(0, 3).map((v) => {
         const thumb = typeof v.thumbnail === "string" ? v.thumbnail : v.thumbnail?.static || v.thumbnail?.rich || undefined;
-        const channelName = typeof v.channel === "string" ? v.channel : v.channel?.name || "Kênh Hoa Tươi";
+        const channelName = typeof v.channel === "string" ? v.channel : v.channel?.name || "Kênh Xu Hướng";
         const viewStr = typeof v.views === "number" ? `${v.views.toLocaleString("vi-VN")} lượt xem` : "Xem nhiều";
         const dateStr = v.published_date ? `Đăng ${v.published_date} • ` : "Đăng tuần này • ";
         return {
           title: v.title || `Video hướng dẫn: ${query.query}`,
           platform: "YOUTUBE" as const,
-          url: v.link || `https://www.youtube.com/results?search_query=${encodeURIComponent(`${query.query} cắm hoa`)}&sp=CAISAhAC`,
+          url: v.link || `https://www.youtube.com/results?search_query=${encodeURIComponent(`${query.query} chế tác`)}&sp=CAISAhAC`,
           thumbnailUrl: thumb,
           author: channelName,
           metrics: `${dateStr}${viewStr}`,

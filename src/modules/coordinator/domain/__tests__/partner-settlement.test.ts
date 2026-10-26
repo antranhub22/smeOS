@@ -10,7 +10,7 @@ import {
 
 describe("Partner Settlement Domain (TC-01 -> TC-06)", () => {
   describe("calculatePartnerWorkmanship (TC-01, TC-02)", () => {
-    it("tính toán tiền công cơ sở cho bó hoa tiêu chuẩn", () => {
+    it("tính toán tiền công cơ sở cho sản phẩm tiêu chuẩn", () => {
       const res = calculatePartnerWorkmanship({
         arrangementType: "BO_HOA",
       })
@@ -172,7 +172,7 @@ describe("Partner Settlement Domain (TC-01 -> TC-06)", () => {
             orderPriceVnd: 500_000,
             status: "DA_THANH_TOAN",
             completedAt: "2026-09-28T10:00:00Z",
-            notes: "Giao đúng hẹn, hoa tươi đẹp",
+            notes: "Giao đúng hẹn, sản phẩm đẹp",
           },
         ],
         "partner-A",
@@ -182,9 +182,9 @@ describe("Partner Settlement Domain (TC-01 -> TC-06)", () => {
 
       const csv = generateSettlementCsv(period)
       expect(csv.startsWith("\uFEFF")).toBe(true)
-      expect(csv).toContain("Mã đơn hàng,Ngày hoàn tất,Kiểu cắm hoa")
+      expect(csv).toContain("Mã đơn hàng,Ngày hoàn tất,Kiểu chế tác")
       expect(csv).toContain('"FL-001"')
-      expect(csv).toContain('"Bó hoa"')
+      expect(csv).toContain('"Sản phẩm"')
       expect(csv).toContain("TỔNG CỘNG (1 đơn)")
     })
   })

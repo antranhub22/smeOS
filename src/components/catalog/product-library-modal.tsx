@@ -77,7 +77,7 @@ export function ProductLibraryModal({
                 Chọn sản phẩm từ Kho cửa hàng
               </h3>
               <p className="text-caption text-text-muted">
-                Tái sử dụng mẫu hoa và ảnh chất lượng cao đã có sẵn trong shop ({products.length} sản phẩm)
+                Tái sử dụng sản phẩm và ảnh chất lượng cao đã có sẵn trong shop ({products.length} sản phẩm)
               </p>
             </div>
           </div>

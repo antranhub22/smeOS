@@ -53,7 +53,7 @@ export function validateOrderStatusTransition(
   return { valid: true }
 }
 
-/** Kiểm tra luồng trạng thái sản xuất / cắm hoa */
+/** Kiểm tra luồng trạng thái sản xuất / chế tác */
 export function validateProductionStatusTransition(
   current: ProductionStatus,
   next: ProductionStatus
@@ -63,7 +63,7 @@ export function validateProductionStatusTransition(
   if (!allowed.includes(next)) {
     return {
       valid: false,
-      reason: `Không thể chuyển trạng thái cắm hoa từ "${current}" sang "${next}". Trạng thái cho phép: ${allowed.join(", ")}.`,
+      reason: `Không thể chuyển trạng thái chế tác từ "${current}" sang "${next}". Trạng thái cho phép: ${allowed.join(", ")}.`,
     }
   }
   return { valid: true }

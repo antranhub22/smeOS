@@ -362,14 +362,14 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
   },
   {
     key: "florist",
-    label: "Thợ cắm",
+    label: "Thợ chế tác",
     group: "STORE",
     primaryPhilosophy: "Production Queue",
     supportingPhilosophies: [],
-    mission: "Cắm hoa đúng công thức, đúng tiến độ và chuẩn chất lượng theo từng phiếu cắm.",
+    mission: "Chế tác đúng công thức, đúng tiến độ và chuẩn chất lượng theo từng phiếu cắm.",
     primaryQuestion: "Hôm nay tôi cắm những đơn nào, theo thứ tự nào?",
     homepageModel: "Production Queue",
-    dominantActions: ["Nhận việc", "Cắm hoa", "Báo xong"],
+    dominantActions: ["Nhận việc", "Chế tác", "Báo xong"],
     status: "IN_DEVELOPMENT",
     homepage: "NOT_BUILT",
     systemRoleKeys: [],
@@ -392,7 +392,7 @@ export const ROLE_UX_GROUP_LABEL: Record<RoleUxGroup, string> = {
  */
 export function getRoleUxLabelByIndustry(roleKey: RoleUxKey, industryKey?: string | null): string {
   if (roleKey === "florist") {
-    if (!industryKey || industryKey === "FLORAL") return "Thợ cắm hoa"
+    if (!industryKey || industryKey === "FLORAL") return "Thợ chế tác"
     if (industryKey === "FASHION") return "Thợ may / Kỹ thuật cắt"
     if (industryKey === "FNB") return "Đầu bếp / Pha chế"
     if (industryKey === "CRAFT_GIFT") return "Nghệ nhân chế tác"

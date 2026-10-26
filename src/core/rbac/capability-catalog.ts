@@ -215,7 +215,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   R1: { name: "order.read", group: "order_operations", label: "Xem đơn hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
   R2: { name: "order.create", group: "order_operations", label: "Tạo đơn hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale"] },
   R3: { name: "order.update", group: "order_operations", label: "Sửa đơn và cập nhật trạng thái sản xuất", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
-  R4: { name: "order.assign", group: "order_operations", label: "Phân công thợ cắm cho một đơn", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
+  R4: { name: "order.assign", group: "order_operations", label: "Phân công thợ chế tác cho một đơn", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R5: { name: "delivery.manage", group: "order_operations", label: "Theo dõi và cập nhật giao hàng, đặt khung giờ", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R6: { name: "order.cancel", group: "order_operations", label: "Huỷ một đơn hàng", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   R7: { name: "order.print", group: "order_operations", label: "In phiếu đơn và phiếu sản xuất", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
@@ -228,7 +228,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   // PO 08/10/2026 (thay quyết định 06/10 "giữ R9 cho Sale/Điều phối" ở Thẻ chào): chỉ Điều hành —
   // người giữ tài khoản ngân hàng — xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào. Trần cứng.
   R11: { name: "order.transfer.confirm", group: "order_operations", label: "Xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
-  R12: { name: "order.coordinator_reminder.configure", group: "order_operations", label: "Sửa thời điểm nhắc việc Điều phối (chung và theo mẫu hoa)", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
+  R12: { name: "order.coordinator_reminder.configure", group: "order_operations", label: "Sửa thời điểm nhắc việc Điều phối (chung và theo sản phẩm)", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R13: { name: "data.export", group: "order_operations", label: "Xuất đơn hàng / khách hàng ra tệp Excel (Điều hành cấp cho người khác khi duyệt)", defaultRoles: ["dieu_hanh"] },
   // Q — CRM & Khách hàng ngành hoa (M09, P21)
   Q1: { name: "crm.customer.read", group: "crm", label: "Xem thông tin khách hàng và hồ sơ RFM", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },

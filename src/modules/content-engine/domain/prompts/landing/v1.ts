@@ -45,7 +45,7 @@ function buildPrompt(input: LandingWriterInput): string {
 
   const toneGuide = input.shopTone
     ? `Giọng văn bắt buộc: ${input.shopTone}.`
-    : "Giọng văn: ấm áp, chuyên nghiệp, gần gũi — phong cách tiệm hoa Việt Nam cao cấp."
+    : "Giọng văn: ấm áp, chuyên nghiệp, gần gũi — phong cách thương hiệu Việt Nam cao cấp."
 
   const discount = input.discountPercent ?? 10
   const directive = input.userDirectives ? `\nCHỈ ĐẠO NGỮ CẢNH TỪ CHỦ TIỆM:\n${input.userDirectives}` : ""

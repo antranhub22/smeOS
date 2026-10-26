@@ -268,8 +268,8 @@ export function mapOrderStatusToTrackingStep(
   if (deliveryStatus === "DELIVERED" || orderStatus === "COMPLETED") {
     return {
       stepIndex: 5,
-      title: "Giao hoa thành công",
-      description: "Đơn hoa đã được trao tận tay người nhận với tình cảm trọn vẹn.",
+      title: "Giao hàng thành công",
+      description: "Đơn hàng đã được trao tận tay người nhận với tình cảm trọn vẹn.",
       percentage: 100,
     }
   }
@@ -277,8 +277,8 @@ export function mapOrderStatusToTrackingStep(
   if (deliveryStatus === "FAILED") {
     return {
       stepIndex: 4,
-      title: "Giao hoa chưa thành công",
-      description: "Shipper chưa giao được hoa. Cửa hàng sẽ liên hệ để hẹn giao lại — bạn cũng có thể đổi giờ hoặc địa chỉ giao ngay trên trang này.",
+      title: "Giao hàng chưa thành công",
+      description: "Shipper chưa giao được hàng. Cửa hàng sẽ liên hệ để hẹn giao lại — bạn cũng có thể đổi giờ hoặc địa chỉ giao ngay trên trang này.",
       percentage: 80,
     }
   }
@@ -286,8 +286,8 @@ export function mapOrderStatusToTrackingStep(
   if (deliveryStatus === "DELIVERING" || deliveryStatus === "DISPATCHED") {
     return {
       stepIndex: 4,
-      title: "Đang trên đường giao hoa",
-      description: "Shipper đang cẩn thận vận chuyển bình/bó hoa đến địa chỉ nhận.",
+      title: "Đang trên đường giao hàng",
+      description: "Shipper đang cẩn thận vận chuyển đơn hàng đến địa chỉ nhận.",
       percentage: 80,
     }
   }
@@ -295,11 +295,11 @@ export function mapOrderStatusToTrackingStep(
   if (productionStatus === "READY" || productionStatus === "ARRANGING" || productionStatus === "QUALITY_CHECK") {
     return {
       stepIndex: 3,
-      title: productionStatus === "READY" ? "Hoa đã cắm xong" : "Nghệ nhân đang cắm hoa",
+      title: productionStatus === "READY" ? "Sản phẩm đã hoàn thiện" : "Nghệ nhân đang chế tác",
       description:
         productionStatus === "READY"
-          ? "Bình hoa hoàn thiện đã qua kiểm duyệt chất lượng và sẵn sàng giao."
-          : "Florist đang tỉ mỉ lựa chọn từng cành hoa tươi và phối mẫu theo yêu cầu.",
+          ? "Sản phẩm hoàn thiện đã qua kiểm duyệt chất lượng và sẵn sàng giao."
+          : "Nghệ nhân đang tỉ mỉ chế tác và hoàn thiện sản phẩm theo yêu cầu.",
       percentage: 60,
     }
   }
@@ -308,7 +308,7 @@ export function mapOrderStatusToTrackingStep(
     return {
       stepIndex: 2,
       title: "Cửa hàng đã xác nhận đơn",
-      description: "Cửa hàng đã xác nhận đơn hàng và sẽ cắm hoa theo đúng lịch giao bạn đã chọn.",
+      description: "Cửa hàng đã xác nhận đơn hàng và sẽ chuẩn bị theo đúng lịch giao bạn đã chọn.",
       percentage: 40,
     }
   }
@@ -316,7 +316,7 @@ export function mapOrderStatusToTrackingStep(
   return {
     stepIndex: 1,
     title: "Đã tiếp nhận đơn hàng",
-    description: "Cửa hàng đã nhận thông tin đặt hoa. Xác nhận chuyển khoản trong 15’, sau đó Điều phối sẽ xác nhận nhận đơn trong 30’ (hoàn tiền nếu không thể nhận đơn).",
+    description: "Cửa hàng đã nhận thông tin đặt hàng. Xác nhận chuyển khoản trong 15’, sau đó Điều phối sẽ xác nhận nhận đơn trong 30’ (hoàn tiền nếu không thể nhận đơn).",
     percentage: 20,
   }
 }

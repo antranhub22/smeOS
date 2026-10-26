@@ -15,7 +15,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     badge: "Editorial",
     category: "swipe-style",
     isDefault: true,
-    description: "Nền kem trầm ấm, font Serif tương phản cao, typography to bản sau bó hoa, viền mảnh tinh tế và khoảng thở rộng rãi chuẩn tạp chí.",
+    description: "Nền kem trầm ấm, font Serif tương phản cao, typography to bản sau sản phẩm, viền mảnh tinh tế và khoảng thở rộng rãi chuẩn tạp chí.",
     tag: "Sang trọng & Thời trang",
     features: [
       "Typography Serif khổ lớn sang trọng partially overlap sau sản phẩm",
@@ -23,7 +23,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
       "Bộ nút điều hướng tròn tối giản hỗ trợ vuốt trái/phải mượt mà",
       "Nút chốt mẫu chuẩn xác giữ tỷ lệ chuyển đổi cao",
     ],
-    recommendedFor: "Bó hoa cao cấp, hoa tình yêu kỷ niệm, khách hàng yêu phong cách tinh tế",
+    recommendedFor: "Sản phẩm cao cấp, quà tặng kỷ niệm, khách hàng yêu phong cách tinh tế",
   },
   // 02
   "minimal-clean": {
@@ -36,12 +36,12 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     description: "Nền trắng ngà thanh thoát, font Sans-serif hiện đại, tối đa khoảng trống quang đãng tôn trọn vẹn vẻ đẹp tự nhiên của đóa hoa.",
     tag: "Tối giản & Tinh khôi",
     features: [
-      "Khoảng trắng tối đa (Negative Space) bao quanh bó hoa",
-      "Không viền thẻ, không hiệu ứng rườm rà, tập trung 100% vào hoa",
+      "Khoảng trắng tối đa (Negative Space) bao quanh sản phẩm",
+      "Không viền thẻ, không hiệu ứng rườm rà, tập trung 100% vào sản phẩm",
       "Bóng tiếp xúc mềm mại tự nhiên",
       "Nút chốt mẫu 1-chạm dứt khoát",
     ],
-    recommendedFor: "Hoa tulip, hoa cúc họa mi, phong cách tươi sáng",
+    recommendedFor: "Sản phẩm nhẹ nhàng tươi sáng, phong cách tối giản hiện đại",
   },
   // 03
   "cinematic-dark": {
@@ -56,10 +56,10 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     features: [
       "Nền đen studio kết hợp ánh sáng viền (Rim Light) nổi bật",
       "Tiêu đề uốn lượn phong cách chữ ký sang trọng",
-      "Độ tương phản cao tôn sắc hoa rực rỡ",
+      "Độ tương phản cao tôn trọn sản phẩm",
       "Nút thả tim màu hổ phách nổi bật",
     ],
-    recommendedFor: "Bó hoa hồng đỏ nhập khẩu, phong cách quý phái huyền bí",
+    recommendedFor: "Sản phẩm cao cấp, quà tặng sang trọng, phong cách quý phái huyền bí",
   },
   // 04
   "romantic-pastel": {
@@ -77,7 +77,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
       "Nhãn tiêu đề uốn lượn Blooming Moments ngọt ngào",
       "Nút hành động tông hồng phấn nữ tính",
     ],
-    recommendedFor: "Hoa mẫu đơn, hoa sinh nhật bạn gái, ngày lễ tình nhân 20/10 & 8/3",
+    recommendedFor: "Quà tặng sinh nhật, lễ tình nhân, kỷ niệm 20/10 & 8/3",
   },
   // 05
   "botanical-frame": {
@@ -95,7 +95,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
       "Tỷ lệ trang trí <10% không lấn át sản phẩm chính",
       "Nút bấm tông màu đất và ô-liu tự nhiên",
     ],
-    recommendedFor: "Bó hoa cẩm tú cầu, hoa lan, phong cách mộc mạc Vintage",
+    recommendedFor: "Sản phẩm thủ công, quà tặng phong cách mộc mạc Vintage",
   },
   // 06
   "glassmorphism": {
@@ -110,10 +110,10 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     features: [
       "Tấm kính mờ backdrop-blur nổi bật trên nền ảnh",
       "Viền phản chiếu ánh sáng trắng tinh tế",
-      "Độ che phủ <35% giữ trọn bố cục hoa phía sau",
+      "Độ che phủ <35% giữ trọn bố cục sản phẩm phía sau",
       "Nút điều khiển kính mờ đồng bộ",
     ],
-    recommendedFor: "Hoa hướng dương, hoa hiện đại, khách hàng trẻ yêu công nghệ",
+    recommendedFor: "Sản phẩm hiện đại, khách hàng trẻ yêu công nghệ",
   },
   // 07
   "real-life-shop": {
@@ -123,15 +123,15 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     subtitle: "Ảnh chụp thực tế, tự nhiên",
     badge: "Shop Photo",
     category: "swipe-style",
-    description: "Bối cảnh cửa hàng hoa thực tế, góc chụp trước thềm tiệm chân thực, ánh sáng ấm cúng tạo cảm giác gần gũi tin cậy.",
+    description: "Bối cảnh cửa hàng thực tế, góc chụp trước thềm tiệm chân thực, ánh sáng ấm cúng tạo cảm giác gần gũi tin cậy.",
     tag: "Chân thực & Đời sống",
     features: [
-      "Bối cảnh tiệm hoa thực tế với ánh đèn ấm áp",
+      "Bối cảnh cửa hàng thực tế với ánh đèn ấm áp",
       "Bóng tiếp xúc tự nhiên đổ dưới sản phẩm",
       "Nơ ruy-băng đỏ thực tế tạo điểm nhấn thân quen",
       "Thông số gọn gàng tôn trọng ảnh thật",
     ],
-    recommendedFor: "Bó hoa đỏ truyền thống, khách thích ảnh chụp thật tại tiệm",
+    recommendedFor: "Sản phẩm truyền thống, khách thích ảnh chụp thật tại cửa hàng",
   },
   // 08
   "real-life-daylight": {
@@ -145,11 +145,11 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     tag: "Nắng sớm & Tươi mới",
     features: [
       "Mô phỏng ánh sáng tự nhiên cạnh cửa sổ rực rỡ",
-      "Màu sắc cánh hoa tươi tắn trung thực",
+      "Màu sắc sản phẩm tươi tắn trung thực",
       "Phông chữ đơn giản không che khuất nắng sớm",
-      "Gợi cảm giác hoa vừa cắt từ vườn",
+      "Gợi cảm giác sản phẩm tươi mới vừa hoàn thiện",
     ],
-    recommendedFor: "Hoa tulip, hoa hồng pastel, tặng buổi sáng tươi vui",
+    recommendedFor: "Sản phẩm nhẹ nhàng, quà tặng buổi sáng tươi vui",
   },
   // 09
   "real-life-in-store": {
@@ -159,15 +159,15 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     subtitle: "Trong cửa hàng, gần gũi",
     badge: "In Store",
     category: "swipe-style",
-    description: "Không gian bên trong xưởng hoa với kệ gỗ, ánh đèn vàng ấm áp và khung cảnh làm việc đầy chất nghệ nhân.",
+    description: "Không gian bên trong xưởng thực tế với kệ gỗ, ánh đèn vàng ấm áp và khung cảnh làm việc đầy chất nghệ nhân.",
     tag: "Ấm cúng & Nghệ nhân",
     features: [
-      "Kệ hoa gỗ và đèn trang trí phía sau mờ nhẹ (Bokeh)",
+      "Kệ gỗ và đèn trang trí phía sau mờ nhẹ (Bokeh)",
       "Độ sâu trường ảnh tạo cảm giác không gian thực",
       "Chất màu ấm cúng mang lại sự an tâm",
       "Nút thao tác mượt mà dễ bấm bằng 1 tay",
     ],
-    recommendedFor: "Hoa cúc mẫu đơn, hoa tặng mẹ, hoa gia đình ấm cúng",
+    recommendedFor: "Quà tặng gia đình, sản phẩm ấm cúng gần gũi",
   },
   // 10
   "real-life-handheld": {
@@ -177,15 +177,15 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     subtitle: "Cầm tay, góc chụp casual",
     badge: "Handheld",
     category: "swipe-style",
-    description: "Góc chụp ngôi thứ nhất (POV) bàn tay cầm bó hoa bước đi dạo phố, góc máy tự nhiên chuẩn phong cách mạng xã hội.",
+    description: "Góc chụp ngôi thứ nhất (POV) bàn tay cầm sản phẩm bước đi dạo phố, góc máy tự nhiên chuẩn phong cách mạng xã hội.",
     tag: "Casual & POV",
     features: [
       "Góc nhìn cận cảnh cầm tay chân thật",
-      "Nhãn tag giấy gói hoa mộc mạc",
+      "Nhãn tag giấy gói mộc mạc",
       "Góc máy casual tự nhiên như bạn bè gửi cho nhau",
       "Trải nghiệm lướt nhanh tối ưu cho màn hình dọc",
     ],
-    recommendedFor: "Bó hoa nhỏ xinh xách tay, sinh viên, khách trẻ năng động",
+    recommendedFor: "Sản phẩm nhỏ xinh, sinh viên, khách trẻ năng động",
   },
   // 11
   "lifestyle-context": {
@@ -195,15 +195,15 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     subtitle: "Trong bối cảnh sử dụng",
     badge: "Lifestyle",
     category: "swipe-style",
-    description: "Đặt bình hoa trong không gian sống thực tế: bàn trà sáng sớm, tách cafe, cuốn sách mở và vạt nắng dịu êm.",
+    description: "Đặt sản phẩm trong không gian sống thực tế: bàn trà sáng sớm, tách cafe, cuốn sách mở và vạt nắng dịu êm.",
     tag: "Không gian sống & Thơ mộng",
     features: [
       "Bối cảnh bàn cafe và ánh sáng ban mai nhẹ nhàng",
-      "Giúp khách hàng dễ hình dung hoa đặt trong nhà",
+      "Giúp khách hàng dễ hình dung sản phẩm đặt trong không gian",
       "Bầu không khí thư thái tĩnh lặng",
       "Nút chốt mẫu trang nhã",
     ],
-    recommendedFor: "Bình hoa bàn khách, hoa kỷ niệm ngày cưới, trang trí nhà",
+    recommendedFor: "Quà tặng kỷ niệm ngày cưới, trang trí nhà, không gian sống",
   },
   // 12
   "mixed-media": {
@@ -221,7 +221,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
       "Bố cục layer phối ghép đa chất liệu sinh động",
       "Cảm giác độc bản và thủ công riêng biệt",
     ],
-    recommendedFor: "Quà tặng sinh nhật bạn gái, Gen Z, hoa chúc mừng dễ thương",
+    recommendedFor: "Quà tặng sinh nhật bạn gái, Gen Z, sản phẩm dễ thương",
   },
 
   // Legacy & Auxiliary Exploratory Decks
@@ -232,14 +232,14 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     badge: "Enterprise",
     category: "swipe-style",
     description: "Bộ thẻ 3 lớp không gian (3-Layer Spatial Deck), kính mờ Floating Frosted Glass, danh sách thả tim (Shortlist), bóc tách thành phần hoa (BOM).",
-    tag: "Khuyên dùng cho tiệm hoa cao cấp",
+    tag: "Khuyên dùng cho cửa hàng cao cấp",
     features: [
       "Xếp chồng 3 lớp không gian với hiệu ứng nảy lò xo",
       "Tấm thông tin kính mờ nổi (Floating Frosted Glass)",
       "Chạm đúp (Double-tap) thả tim & khay so sánh mẫu ưng ý",
       "Nút hành động chốt mẫu chuẩn xác, giữ nguyên kênh chuyển đổi",
     ],
-    recommendedFor: "Phù hợp nhất cho khách VIP, bó hoa thiết kế, giỏ hoa sự kiện",
+    recommendedFor: "Phù hợp nhất cho khách VIP, sản phẩm thiết kế, giỏ quà sự kiện",
   },
   "swipe-classic": {
     id: "swipe-classic",
@@ -258,7 +258,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     subtitle: "Lưới Trưng Bày Thương Mại",
     badge: "Catalog Lookbook",
     category: "interactive-deck",
-    description: "Bố cục lưới 2 cột sang trọng cho phép khách hàng nhìn tổng quan tất cả mẫu hoa cùng lúc.",
+    description: "Bố cục lưới 2 cột sang trọng cho phép khách hàng nhìn tổng quan tất cả sản phẩm cùng lúc.",
     tag: "Tổng quan danh mục",
     features: ["Bố cục lưới thương mại 2 cột", "Bộ lọc giá nhanh", "Nút chốt mẫu tức thời"],
     recommendedFor: "Phù hợp cho bộ sưu tập nhiều mẫu (>10 mẫu)",
@@ -272,7 +272,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     description: "Bố cục tạp chí nghệ thuật cao cấp với cuộn dọc Parallax và khung hình to bản nghệ thuật.",
     tag: "Cảm xúc & Chiều sâu",
     features: ["Khung ảnh to bản tỷ lệ 4:5 sang trọng", "Nút chốt mẫu cố định chân trang"],
-    recommendedFor: "Hoa cưới, hoa kỷ niệm, bộ sưu tập giới hạn",
+    recommendedFor: "Sản phẩm cưới, quà kỷ niệm, bộ sưu tập giới hạn",
   },
   "video-reels": {
     id: "video-reels",
@@ -283,7 +283,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
     description: "Trải nghiệm lướt video dọc toàn màn hình 9:16 phong cách TikTok/Reels.",
     tag: "Trực quan sinh động",
     features: ["Khung nhìn 9:16 toàn màn hình", "Nút chốt mẫu 1-chạm nổi bật trên nền video"],
-    recommendedFor: "Bó hoa khổng lồ, giỏ hoa đại tiệc, khách trẻ tuổi",
+    recommendedFor: "Sản phẩm kích thước lớn, bộ quà sự kiện, khách trẻ tuổi",
   },
   "occasion-budget-quiz": {
     id: "occasion-budget-quiz",

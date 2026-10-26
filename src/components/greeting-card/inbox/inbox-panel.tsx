@@ -164,7 +164,7 @@ function ActionRow({ action, onOpen, onMessage, onDecided }: { action: InboxActi
       <div className="flex items-center gap-3">
         {action.imageUrl !== null || action.orderId ? (
           <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border">
-            <FlowerImage src={action.imageUrl} alt={action.customerName ?? "Mẫu hoa"} sizes="48px" fallback="icon" className="h-full w-full" />
+            <FlowerImage src={action.imageUrl} alt={action.customerName ?? "Sản phẩm"} sizes="48px" fallback="icon" className="h-full w-full" />
           </div>
         ) : (
           <AlertTriangle size={22} className="shrink-0 text-danger" aria-hidden="true" />

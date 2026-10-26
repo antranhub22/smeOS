@@ -8,7 +8,7 @@ export const AI_FIELDS = ["name", "category", "occasion", "components", "colors"
 export type AiField = (typeof AI_FIELDS)[number]
 export type AiFieldValues = Record<AiField, string>
 
-export const CATEGORY_OPTIONS = ["Bó hoa tươi", "Giỏ hoa để bàn", "Bình hoa nghệ thuật", "Lẵng hoa chúc mừng"] as const
+export const CATEGORY_OPTIONS = ["Bó sản phẩm", "Giỏ hoa để bàn", "Bình hoa nghệ thuật", "Lẵng hoa chúc mừng"] as const
 
 export interface VisionResult {
   productName?: string
@@ -23,7 +23,7 @@ function categoryOf(text: string): string {
   if (t.includes("giỏ")) return "Giỏ hoa để bàn"
   if (t.includes("bình")) return "Bình hoa nghệ thuật"
   if (t.includes("lẵng") || t.includes("kệ")) return "Lẵng hoa chúc mừng"
-  if (t.includes("bó")) return "Bó hoa tươi"
+  if (t.includes("bó")) return "Bó sản phẩm"
   return ""
 }
 

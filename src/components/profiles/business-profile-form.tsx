@@ -88,8 +88,8 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
       case "FLORAL":
       default:
         return {
-          displayName: "Ví dụ: Tiệm Hoa Tươi Thảo Mộc",
-          legalName: "Ví dụ: Công ty TNHH Hoa Tươi Việt Nam",
+          displayName: "Ví dụ: Tiệm Sản Phẩm Thảo Mộc",
+          legalName: "Ví dụ: Công ty TNHH Sản Phẩm Việt Nam",
           description: "Chuyên hoa sự kiện, hoa cưới, hoa sinh nhật thiết kế cao cấp",
         }
     }

@@ -24,7 +24,7 @@ export function normalizeText(input: string | null | undefined): string {
  * Tra cứu trong một bảng ánh xạ theo key đã chuẩn hóa.
  * Cho phép user nhập "bo hoa", "Bó Hoa", "BÓ HOA"… đều tìm ra "BOUQUET".
  *
- * @param map   - Bảng ánh xạ { "Bó hoa": "BOUQUET", ... }
+ * @param map   - Bảng ánh xạ { "Sản phẩm": "BOUQUET", ... }
  * @param label - Nhãn do người dùng chọn (bất kỳ biến thể nào)
  * @returns     giá trị tương ứng, hoặc undefined nếu không tìm thấy
  */

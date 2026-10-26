@@ -6,7 +6,7 @@
  * Việt: `identity.phong_cach`, `identity.dip_su_dung`. Đọc thẳng hợp đồng
  * bằng những cái tên tự nghĩ ra — `identity.style`, `identity.color_tone` —
  * không ném lỗi, không làm đỏ ca thử nào, chỉ lặng lẽ đưa `undefined` vào
- * lời nhắc; mô hình khi đó viết quảng cáo cho một bó hoa không phong cách,
+ * lời nhắc; mô hình khi đó viết quảng cáo cho một sản phẩm không phong cách,
  * không tông màu. Tệp này là chỗ duy nhất được biết tên trường của hợp
  * đồng, và nó đọc phòng thủ vì đầu ra AI có thể thiếu trường bất kỳ.
  *

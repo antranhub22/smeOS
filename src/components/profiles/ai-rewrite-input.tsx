@@ -58,7 +58,7 @@ export function AiRewriteInput({
       setSuggestions([
         `${value} (Chuẩn thiết kế thủ công)`,
         `Đặc quyền ${value.toLowerCase()} cao cấp`,
-        `${value} — Cam kết chất lượng dịch vụ hoa tươi`,
+        `${value} — Cam kết chất lượng dịch vụ sản phẩm`,
       ])
     } finally {
       setLoading(false)
@@ -160,7 +160,7 @@ export function AiRewriteInput({
           {loading ? (
             <div className="py-4 text-center space-y-2">
               <Loader2 size={18} className="animate-spin text-primary mx-auto" />
-              <p className="text-caption text-text-muted">AI đang phân tích & trau chuốt theo tông giọng tiệm hoa...</p>
+              <p className="text-caption text-text-muted">AI đang phân tích & trau chuốt theo tông giọng cửa hàng...</p>
             </div>
           ) : (
             <div className="space-y-1.5">

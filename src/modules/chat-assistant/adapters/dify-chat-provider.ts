@@ -1,8 +1,8 @@
 /**
  * Dify Chat Provider Adapter (Headless AI Engine).
  * Hỗ trợ Dual-Intent:
- * 1. Tư vấn bán hoa & Chốt đơn M10 từ Product Master Index.
- * 2. Trợ lý SaaS In-App Copilot hướng dẫn toàn diện cách sử dụng nền tảng FloraOS.
+ * 1. Tư vấn bán hàng Tư vấn bán hoa & Chốt đơn M10 Chốt đơn M10 từ Product Master Index.
+ * 2. Trợ lý SaaS In-App Copilot hướng dẫn toàn diện cách sử dụng nền tảng smeOS.
  */
 
 import { env } from "@/lib/env"
@@ -18,7 +18,7 @@ import {
   detectUserIntent,
   querySaasKnowledge,
 } from "../domain/saas-knowledge-base"
-import type { SuggestedFlowerCard } from "../domain/chat-types"
+import type { SuggestedProductCard } from "../domain/chat-types"
 
 export interface ChatConsultantInput {
   query: string
@@ -30,8 +30,8 @@ export interface ChatConsultantInput {
 
 export interface ChatConsultantOutput {
   replyText: string
-  suggestedFlowers: SuggestedFlowerCard[]
-  userIntent: "SAAS_HELP" | "FLOWER_SALES"
+  suggestedProducts: SuggestedProductCard[]
+  userIntent: "SAAS_HELP" | "PRODUCT_SALES"
   targetRoute?: string | undefined
   actionLabel?: string | undefined
   actionSteps?: string[] | undefined
@@ -66,7 +66,7 @@ export class DifyChatProvider {
 
         return {
           replyText,
-          suggestedFlowers: [],
+          suggestedProducts: [],
           userIntent: "SAAS_HELP",
           targetRoute: kbMatch.routePath,
           actionLabel: kbMatch.actionLabel,
@@ -76,18 +76,18 @@ export class DifyChatProvider {
 
       // Trả lời hướng dẫn chung nếu chưa khớp chính xác 1 mục
       return {
-        replyText: `Dạ em là FloraOS AI Copilot! Em có thể hướng dẫn anh/chị thao tác toàn bộ tính năng trên hệ thống:\n\n- **M01**: Phân tích ảnh hoa & bóc tách BOM cành hoa\n- **M02**: Cấu hình bảng giá niêm yết\n- **M04c**: Dựng video marketing 9:16 cho TikTok/Reels\n- **M06**: Xuất mã QR & quản lý Catalog trực tuyến\n- **M09**: Quản lý khách hàng, phân tầng RFM & nhắc ngày kỷ niệm\n- **M10**: Tạo đơn hàng, in phiếu cắm hoa xưởng (ẩn giá) & phiếu giao A6\n\nAnh/chị đang cần hỗ trợ thao tác chức năng nào ạ?`,
-        suggestedFlowers: [],
+        replyText: `Dạ em là smeOS AI Copilot! Em có thể hướng dẫn anh/chị thao tác toàn bộ tính năng trên hệ thống:\n\n- **M01**: Phân tích ảnh sản phẩm Phân tích ảnh hoa & bóc tách BOM thành phần bóc tách BOM thành phần\n- **M02**: Cấu hình bảng giá niêm yết\n- **M04c**: Dựng video marketing 9:16 cho TikTok/Reels\n- **M06**: Xuất mã QR & quản lý Catalog trực tuyến\n- **M09**: Quản lý khách hàng, phân tầng RFM & nhắc ngày kỷ niệm\n- **M10**: Tạo đơn hàng, in phiếu chế tác xưởng (ẩn giá) & phiếu giao A6\n\nAnh/chị đang cần hỗ trợ thao tác chức năng nào ạ?`,
+        suggestedProducts: [],
         userIntent: "SAAS_HELP",
       }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // NHÁNH 2: TƯ VẤN HOA TƯƠI & BÁN HÀNG (Sales Consultant)
+    // NHÁNH 2: TƯ VẤN SẢN PHẨM TƯ VẤN HOA TƯƠI & BÁN HÀNG BÁN HÀNG (Sales Consultant)
     // ─────────────────────────────────────────────────────────────────────────
     const budget = extractBudgetFromQuery(input.query)
     const occasion = extractOccasionFromQuery(input.query)
-    const suggestedFlowers = matchProductsFromMasterIndex(input.masterProducts, budget, occasion)
+    const suggestedProducts = matchProductsFromMasterIndex(input.masterProducts, budget, occasion)
 
     // 1. Ưu tiên Dify nếu có DIFY_API_KEY
     if (this.apiKey) {
@@ -102,7 +102,7 @@ export class DifyChatProvider {
             inputs: {
               customer_name: input.customer?.name || "Quý khách",
               customer_tier: input.customer?.metrics.tier || "Khách mới",
-              fav_flowers: input.customer?.preferences.preferredFlowers.join(", ") || "",
+              fav_products: input.customer?.preferences.preferredFlowers.join(", ") || "",
               budget: budget ? `${budget.toLocaleString("vi-VN")} đ` : "Chưa rõ",
               occasion: occasion || "Tự do",
             },
@@ -116,9 +116,9 @@ export class DifyChatProvider {
         if (res.ok) {
           const data = await res.json()
           return {
-            replyText: data.answer || "Dạ, em xin phép tư vấn mẫu hoa phù hợp nhất cho anh/chị ạ.",
-            suggestedFlowers,
-            userIntent: "FLOWER_SALES",
+            replyText: data.answer || "Dạ, em xin phép tư vấn sản phẩm phù hợp nhất cho anh/chị ạ.",
+            suggestedProducts,
+            userIntent: "PRODUCT_SALES",
             detectedBudget: budget ?? undefined,
             detectedOccasion: occasion ?? undefined,
           }
@@ -130,27 +130,27 @@ export class DifyChatProvider {
 
     // 2. Gọi trực tiếp OpenAI API (gpt-4o-mini) nếu có OPENAI_API_KEY
     if (this.openaiApiKey) {
-      const openaiReply = await this.callOpenAI(input, budget, occasion, suggestedFlowers)
+      const openaiReply = await this.callOpenAI(input, budget, occasion, suggestedProducts)
       if (openaiReply) {
         return openaiReply
       }
     }
 
     // 3. Gọi Local Qwen 2.5:7b (Ollama) miễn phí 0đ
-    const qwenReply = await this.callOllamaQwen(input, budget, occasion, suggestedFlowers)
+    const qwenReply = await this.callOllamaQwen(input, budget, occasion, suggestedProducts)
     if (qwenReply) {
       return qwenReply
     }
 
     // 4. Fallback chốt chặn an toàn: Local Rule Engine
-    return this.generateLocalConsultantReply(input, budget, occasion, suggestedFlowers)
+    return this.generateLocalConsultantReply(input, budget, occasion, suggestedProducts)
   }
 
   private async callOpenAI(
     input: ChatConsultantInput,
     budget: number | null,
     occasion: string | null,
-    suggestedFlowers: SuggestedFlowerCard[]
+    suggestedProducts: SuggestedProductCard[]
   ): Promise<ChatConsultantOutput | null> {
     try {
       const catalogSummary =
@@ -162,22 +162,22 @@ export class DifyChatProvider {
                   `- ${p.name} (Giá: ${formatQuotePriceForChat(p.pricing.quotePriceVnd)}, Dịp: ${p.occasions.join(", ") || "Mọi dịp"})`
               )
               .join("\n")
-          : "Hiện tiệm đang cập nhật danh mục mẫu hoa mới."
+          : "Hiện tiệm đang cập nhật danh mục sản phẩm mới."
 
       const customerContext = input.customer
         ? `Khách hàng: ${input.customer.name} (Hạng: ${input.customer.metrics.tier || "Mới"})`
         : "Khách hàng"
 
-      const systemPrompt = `Bạn là Trợ lý Hoa Tươi AI chuyên nghiệp và tận tâm của tiệm hoa FloraOS.
+      const systemPrompt = `Bạn là Trợ lý Sản Phẩm AI chuyên nghiệp và tận tâm của cửa hàng smeOS.
 Nhiệm vụ của bạn:
 - Giao tiếp duyên dáng, tinh tế, lịch thiệp, ấm áp bằng tiếng Việt.
 - Tư vấn nhiệt tình theo ngân sách, màu sắc phong thủy, loài hoa hoặc dịp lễ (sinh nhật, khai trương, kỷ niệm, tình yêu...).
-- Nếu tiệm chưa có sản phẩm mẫu nào trong danh mục, hãy giải thích nhẹ nhàng và gợi ý vào mục "Phân tích hoa (M01)" để tải ảnh mẫu hoa lên.
-- Nếu có sản phẩm phù hợp, hãy nhắc khách có thể bấm nút "⚡ Chốt đơn mẫu này" ở bên dưới để xưởng thợ cắm chuẩn bị ngay.
+- Nếu tiệm chưa có sản phẩm mẫu nào trong danh mục, hãy giải thích nhẹ nhàng và gợi ý vào mục "Phân tích sản phẩm (M01)" để tải ảnh sản phẩm lên.
+- Nếu có sản phẩm phù hợp, hãy nhắc khách có thể bấm nút "⚡ Chốt đơn mẫu này" ở bên dưới để xưởng thợ chế tác chuẩn bị ngay.
 - Trả lời súc tích, tự nhiên, sinh động, không rập khuôn, tối đa 3-4 câu.
 
 Thông tin khách: ${customerContext}
-Danh mục mẫu hoa hiện có tại tiệm:
+Danh mục sản phẩm hiện có tại tiệm:
 ${catalogSummary}`
 
       const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -209,12 +209,12 @@ ${catalogSummary}`
 
       return {
         replyText: answer,
-        suggestedFlowers,
-        userIntent: "FLOWER_SALES",
+        suggestedProducts,
+        userIntent: "PRODUCT_SALES",
         detectedBudget: budget ?? undefined,
         detectedOccasion: occasion ?? undefined,
-        targetRoute: suggestedFlowers.length === 0 ? "/tai-anh" : undefined,
-        actionLabel: suggestedFlowers.length === 0 ? "Tải Ảnh & Phân Tích Mẫu Hoa M01" : undefined,
+        targetRoute: suggestedProducts.length === 0 ? "/tai-anh" : undefined,
+        actionLabel: suggestedProducts.length === 0 ? "Tải Ảnh & Phân Tích Sản Phẩm M01" : undefined,
       }
     } catch (err) {
       console.warn("[OpenAIChat] Lỗi kết nối OpenAI API, chuyển fallback:", err)
@@ -226,7 +226,7 @@ ${catalogSummary}`
     input: ChatConsultantInput,
     budget: number | null,
     occasion: string | null,
-    suggestedFlowers: SuggestedFlowerCard[]
+    suggestedProducts: SuggestedProductCard[]
   ): Promise<ChatConsultantOutput | null> {
     try {
       const catalogSummary =
@@ -238,22 +238,22 @@ ${catalogSummary}`
                   `- ${p.name} (Giá: ${formatQuotePriceForChat(p.pricing.quotePriceVnd)}, Dịp: ${p.occasions.join(", ") || "Mọi dịp"})`
               )
               .join("\n")
-          : "Hiện tiệm đang cập nhật danh mục mẫu hoa mới."
+          : "Hiện tiệm đang cập nhật danh mục sản phẩm mới."
 
       const customerContext = input.customer
         ? `Khách hàng: ${input.customer.name} (Hạng: ${input.customer.metrics.tier || "Mới"})`
         : "Khách hàng"
 
-      const systemPrompt = `Bạn là Trợ lý Hoa Tươi AI chuyên nghiệp của tiệm hoa FloraOS (sử dụng mô hình Qwen Local).
+      const systemPrompt = `Bạn là Trợ lý Sản Phẩm AI chuyên nghiệp của cửa hàng smeOS (sử dụng mô hình Qwen Local).
 Nhiệm vụ:
 - Giao tiếp duyên dáng, thân thiện, lịch thiệp bằng tiếng Việt.
-- Tư vấn mẫu hoa phù hợp theo ngân sách, loài hoa hoặc dịp lễ (sinh nhật, khai trương, kỷ niệm...).
-- Nếu tiệm chưa có mẫu hoa, giải thích nhẹ nhàng và gợi ý vào "Phân tích hoa (M01)" để tải ảnh mẫu hoa lên.
+- Tư vấn sản phẩm phù hợp theo ngân sách, loài hoa hoặc dịp lễ (sinh nhật, khai trương, kỷ niệm...).
+- Nếu tiệm chưa có sản phẩm, giải thích nhẹ nhàng và gợi ý vào "Phân tích sản phẩm (M01)" để tải ảnh sản phẩm lên.
 - Nếu có sản phẩm phù hợp, nhắc khách có thể bấm nút "⚡ Chốt đơn mẫu này" ở bên dưới.
 - Trả lời ngắn gọn, súc tích trong 2-3 câu.
 
 Thông tin khách: ${customerContext}
-Danh mục mẫu hoa hiện có tại tiệm:
+Danh mục sản phẩm hiện có tại tiệm:
 ${catalogSummary}`
 
       const controller = new AbortController()
@@ -284,12 +284,12 @@ ${catalogSummary}`
 
       return {
         replyText: answer,
-        suggestedFlowers,
-        userIntent: "FLOWER_SALES",
+        suggestedProducts,
+        userIntent: "PRODUCT_SALES",
         detectedBudget: budget ?? undefined,
         detectedOccasion: occasion ?? undefined,
-        targetRoute: suggestedFlowers.length === 0 ? "/tai-anh" : undefined,
-        actionLabel: suggestedFlowers.length === 0 ? "Tải Ảnh & Phân Tích Mẫu Hoa M01" : undefined,
+        targetRoute: suggestedProducts.length === 0 ? "/tai-anh" : undefined,
+        actionLabel: suggestedProducts.length === 0 ? "Tải Ảnh & Phân Tích Sản Phẩm M01" : undefined,
       }
     } catch {
       // Ollama service offline or timeout
@@ -301,24 +301,24 @@ ${catalogSummary}`
     input: ChatConsultantInput,
     budget: number | null,
     occasion: string | null,
-    suggestedFlowers: SuggestedFlowerCard[]
+    suggestedProducts: SuggestedProductCard[]
   ): ChatConsultantOutput {
     const customerName = input.customer?.name ? ` ${input.customer.name}` : ""
     const tier = input.customer?.metrics.tier
 
-    let greeting = `Dạ em chào anh/chị${customerName}! Em là trợ lý hoa tươi của tiệm.`
+    let greeting = `Dạ em chào anh/chị${customerName}! Em là trợ lý sản phẩm của tiệm.`
     if (tier === "VIP" || tier === "GOLD") {
       greeting = `Dạ em kính chào quý khách thân thiết${customerName}! Rất vui được gặp lại anh/chị ạ.`
     }
 
     // Trường hợp cửa hàng chưa có sản phẩm trong Product Master Index
-    if (suggestedFlowers.length === 0) {
+    if (suggestedProducts.length === 0) {
       return {
-        replyText: `${greeting} Hiện tại cửa hàng chưa có mẫu hoa nào được duyệt trong Danh mục Master Index (M01/M03), nên em chưa có dữ liệu sản phẩm để gửi thẻ mẫu hoa cho anh/chị xem.\n\n**Để thêm mẫu hoa vào hệ thống và chốt đơn tự động:**\n1. Anh/chị vào mục **'Phân tích hoa (M01)'** tải ảnh chụp mẫu hoa lên\n2. AI tự động đếm cành và lập công thức hoa\n3. Bấm **'Chốt duyệt'** để đưa vào danh mục bán hàng của tiệm\n\nAnh/chị bấm nút bên dưới để vào trang tải ảnh hoa ngay nhé ạ!`,
-        suggestedFlowers: [],
-        userIntent: "FLOWER_SALES",
+        replyText: `${greeting} Hiện tại cửa hàng chưa có sản phẩm nào được duyệt trong Danh mục Master Index (M01/M03), nên em chưa có dữ liệu sản phẩm để gửi thẻ sản phẩm cho anh/chị xem.\n\n**Để thêm sản phẩm vào hệ thống và chốt đơn tự động:**\n1. Anh/chị vào mục **'Phân tích sản phẩm (M01)'** tải ảnh chụp sản phẩm lên\n2. AI tự động đếm cành và lập công thức hoa\n3. Bấm **'Chốt duyệt'** để đưa vào danh mục bán hàng của tiệm\n\nAnh/chị bấm nút bên dưới để vào trang tải ảnh hoa ngay nhé ạ!`,
+        suggestedProducts: [],
+        userIntent: "PRODUCT_SALES",
         targetRoute: "/tai-anh",
-        actionLabel: "Tải Ảnh & Phân Tích Mẫu Hoa M01",
+        actionLabel: "Tải Ảnh & Phân Tích Sản Phẩm M01",
         detectedBudget: budget ?? undefined,
         detectedOccasion: occasion ?? undefined,
       }
@@ -326,21 +326,21 @@ ${catalogSummary}`
 
     let body = ""
     if (occasion && budget) {
-      body = `Em đã chọn lọc các mẫu hoa tươi thiết kế tinh tế dành riêng cho dịp **${occasion}** trong phân khúc ngân sách **${budget.toLocaleString("vi-VN")} đ** dưới đây để anh/chị tham khảo ạ.`
+      body = `Em đã chọn lọc các sản phẩm tươi thiết kế tinh tế dành riêng cho dịp **${occasion}** trong phân khúc ngân sách **${budget.toLocaleString("vi-VN")} đ** dưới đây để anh/chị tham khảo ạ.`
     } else if (occasion) {
       body = `Dịp **${occasion}** này bên em đang có những thiết kế hoa tone màu rất sang trọng và ý nghĩa dưới đây. Anh/chị xem qua mẫu nhé!`
     } else if (budget) {
-      body = `Với tầm ngân sách khoảng **${budget.toLocaleString("vi-VN")} đ**, em xin gợi ý các mẫu hoa bán chạy nhất tại tiệm dưới đây ạ.`
+      body = `Với tầm ngân sách khoảng **${budget.toLocaleString("vi-VN")} đ**, em xin gợi ý các sản phẩm bán chạy nhất tại tiệm dưới đây ạ.`
     } else {
-      body = `Dạ tiệm có đầy đủ các mẫu bó hoa, giỏ hoa và bình hoa tươi thiết kế cho sinh nhật, khai trương hay kỷ niệm. Em xin gửi anh/chị một số mẫu nổi bật nhất của tiệm hôm nay ạ!`
+      body = `Dạ tiệm có đầy đủ các mẫu sản phẩm, giỏ hoa và bình sản phẩm thiết kế cho sinh nhật, khai trương hay kỷ niệm. Em xin gửi anh/chị một số mẫu nổi bật nhất của tiệm hôm nay ạ!`
     }
 
-    const cta = "\n\nAnh/chị ưng mẫu nào có thể bấm nút **⚡ Chốt đơn mẫu này** để bên em lên đơn gửi thợ cắm ngay nhé ạ!"
+    const cta = "\n\nAnh/chị ưng mẫu nào có thể bấm nút **⚡ Chốt đơn mẫu này** để bên em lên đơn gửi thợ chế tác ngay nhé ạ!"
 
     return {
       replyText: `${greeting} ${body}${cta}`,
-      suggestedFlowers,
-      userIntent: "FLOWER_SALES",
+      suggestedProducts,
+      userIntent: "PRODUCT_SALES",
       detectedBudget: budget ?? undefined,
       detectedOccasion: occasion ?? undefined,
     }

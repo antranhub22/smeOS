@@ -27,7 +27,7 @@ export function ImportDropzones({ excelFile, excelFileName, imageCount, isImport
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-title-sm font-bold text-text">
               <FileSpreadsheet size={20} className="text-success" />
-              <span>File Excel danh sách mẫu hoa (.xlsx, .xls)</span>
+              <span>File Excel danh sách sản phẩm (.xlsx, .xls)</span>
             </div>
             {excelFile && (
               <span className="text-caption font-semibold text-success flex items-center gap-1 bg-success-bg px-2 py-0.5 rounded-full">
@@ -36,7 +36,7 @@ export function ImportDropzones({ excelFile, excelFileName, imageCount, isImport
             )}
           </div>
           <p className="mt-1 text-body-sm text-text-muted">
-            File cần có các cột: mã mẫu hoa, tên, danh mục, giá bán và tên file ảnh.
+            File cần có các cột: mã sản phẩm, tên, danh mục, giá bán và tên file ảnh.
           </p>
           <button
             type="button"
@@ -76,7 +76,7 @@ export function ImportDropzones({ excelFile, excelFileName, imageCount, isImport
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-title-sm font-bold text-text">
               <FolderUp size={20} className="text-primary" />
-              <span>Ảnh mẫu hoa (không bắt buộc)</span>
+              <span>Ảnh sản phẩm (không bắt buộc)</span>
             </div>
             {imageCount > 0 && (
               <span className="text-caption font-semibold text-primary flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full">
@@ -85,7 +85,7 @@ export function ImportDropzones({ excelFile, excelFileName, imageCount, isImport
             )}
           </div>
           <p className="mt-1 text-body-sm text-text-muted">
-            Kéo thả nhiều ảnh hoặc bấm để chọn file. Đặt tên file ảnh trùng với mã mẫu hoa hoặc tên ghi ở cột ảnh trong file Excel.
+            Kéo thả nhiều ảnh hoặc bấm để chọn file. Đặt tên file ảnh trùng với mã sản phẩm hoặc tên ghi ở cột ảnh trong file Excel.
           </p>
           {/* Security tip */}
           <div className="mt-3 flex items-start gap-2 rounded-lg bg-success-bg border border-success/30 px-3 py-2">

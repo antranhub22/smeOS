@@ -10,7 +10,7 @@ import {
 
 const PHAN_TICH = {
   identity: {
-    category: "Bó hoa",
+    category: "Sản phẩm",
     shape: "tròn",
     facing: "một mặt",
     container: "giấy gói",
@@ -42,7 +42,7 @@ describe("hình chiếu hợp đồng Vision cho bước sinh câu chữ", () =>
 
     expect(hc.identity.phong_cach).toBe("Cổ điển")
     expect(hc.identity.dip_su_dung).toBe("Kỷ niệm")
-    expect(hc.identity.category).toBe("Bó hoa")
+    expect(hc.identity.category).toBe("Sản phẩm")
     expect(hc.identity.container).toBe("giấy gói")
   })
 

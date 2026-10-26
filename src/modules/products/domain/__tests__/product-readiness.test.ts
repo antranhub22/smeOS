@@ -7,7 +7,7 @@ describe("computeProductReadiness (T6.1 / Role UX Product Manager)", () => {
     code: "SP-001",
     name: "Bó Hồng Đỏ Ecuador",
     status: "ACTIVE",
-    category: "Bó hoa",
+    category: "Sản phẩm",
     masterImageUrl: "https://example.com/hoa-hong.jpg",
     pricing: {
       quotePriceVnd: 550_000,
@@ -47,7 +47,7 @@ describe("computeProductReadiness (T6.1 / Role UX Product Manager)", () => {
     const res = computeProductReadiness({ ...completeProduct, category: null })
     expect(res.isReady).toBe(false)
     expect(res.score).toBe(75)
-    expect(res.missingReasons).toContain("Chưa phân loại danh mục (Bó hoa, Giỏ hoa, Kệ khai trương...)")
+    expect(res.missingReasons).toContain("Chưa phân loại danh mục (Sản phẩm, Giỏ hoa, Kệ khai trương...)")
   })
 
   it("chấp nhận sản phẩm có BOM dù chưa có giá niêm yết cố định (hệ thống dynamic pricing)", () => {

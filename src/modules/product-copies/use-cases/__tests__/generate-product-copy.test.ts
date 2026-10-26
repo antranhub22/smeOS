@@ -22,7 +22,7 @@ const KHOA = "idem-1"
  */
 const PHAN_TICH_THAT = {
   identity: {
-    category: "Bó hoa",
+    category: "Sản phẩm",
     shape: "tròn",
     facing: "một mặt",
     container: "giấy gói",

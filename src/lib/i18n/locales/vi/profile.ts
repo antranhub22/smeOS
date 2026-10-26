@@ -17,7 +17,7 @@ export const profileVi = {
   },
   form: {
     shopNameLabel: "Tên cửa hàng hiển thị",
-    shopNamePlaceholder: "Ví dụ: Tiệm Hoa Ban Mai, Flora Boutique",
+    shopNamePlaceholder: "Ví dụ: Cửa Hàng Ban Mai, Flora Boutique",
     hotlineLabel: "Hotline tư vấn",
     hotlinePlaceholder: "Ví dụ: 0909xxxxxx",
     addressLabel: "Địa chỉ cửa hàng",

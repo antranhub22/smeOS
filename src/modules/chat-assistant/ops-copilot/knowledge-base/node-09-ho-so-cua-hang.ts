@@ -13,7 +13,7 @@ export const NODE_09_HO_SO_CUA_HANG: OpsKnowledgeNode = {
     "chính sách cọc", "mức cọc", "giọng văn ai"
   ],
   intents: ["cau_hinh_ho_so_tiem", "cai_dat_stk_ngan_hang_vietqr", "cai_dat_chinh_sach_coc", "cai_dat_bo_nhan_dien"],
-  summary: "Cài đặt thông tin tiệm hoa, logo thương hiệu và số tài khoản ngân hàng nhận tiền cọc: Tự động đồng bộ số điện thoại, địa chỉ và mã QR sang phiếu in hoa và link gửi cho khách.",
+  summary: "Cài đặt thông tin cửa hàng, logo thương hiệu và số tài khoản ngân hàng nhận tiền cọc: Tự động đồng bộ số điện thoại, địa chỉ và mã QR sang phiếu in hoa và link gửi cho khách.",
   stepByStepSOP: [
     {
       stepNumber: 1,
@@ -37,7 +37,7 @@ export const NODE_09_HO_SO_CUA_HANG: OpsKnowledgeNode = {
     },
     {
       stepNumber: 5,
-      actionText: "Thiết lập chính sách cọc: Chọn mức cọc mặc định (50% hoặc 100%), cam kết hoa tươi rồi bấm 'Lưu hồ sơ'",
+      actionText: "Thiết lập chính sách cọc: Chọn mức cọc mặc định (50% hoặc 100%), cam kết sản phẩm rồi bấm 'Lưu hồ sơ'",
       expectedResult: "Hệ thống lưu thành công và áp dụng quy định cọc trên toàn bộ đơn hàng",
     },
   ],

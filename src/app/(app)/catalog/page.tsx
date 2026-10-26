@@ -112,7 +112,7 @@ export default function CatalogWebsitePage() {
     code: p.code || p.id,
     name: p.name,
     sellingPriceVnd: p.price ?? 500_000,
-    category: p.category || "Hoa tươi",
+    category: p.category || "Sản phẩm",
     colorTheme: "Đa sắc",
     occasions: ["Sinh nhật", "Kỷ niệm", "Khai trương"],
     style: "Thiết kế hiện đại",

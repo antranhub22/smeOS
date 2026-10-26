@@ -39,7 +39,7 @@ export const CHANNEL_SPECS: Readonly<Record<PackageChannel, ChannelSpec>> = {
     hashtagRange: [4, 6],
     tone: "Kể chuyện (storytelling), lôi cuốn, 3–4 đoạn ngắn dễ đọc",
     structureNote:
-      "Câu mở gợi cảm xúc (hook) → mô tả nét đẹp bó hoa/ý nghĩa loài hoa → cam kết THẬT của tiệm (chỉ nếu có trong facts) → CTA nhắn tin Inbox/Zalo",
+      "Câu mở gợi cảm xúc (hook) → mô tả nét đẹp và công năng sản phẩm → cam kết THẬT của tiệm (chỉ nếu có trong facts) → CTA nhắn tin Inbox/Zalo",
     ctaStyle: "Mời nhắn tin Inbox hoặc Zalo để được tư vấn thiết kế riêng",
   },
   instagram: {
@@ -67,7 +67,7 @@ export const CHANNEL_SPECS: Readonly<Record<PackageChannel, ChannelSpec>> = {
     targetCharsRange: [200, 500],
     hashtagRange: [0, 0],
     tone: "Trang trọng, ân cần, riêng tư, tập trung dịch vụ khách hàng",
-    structureNote: "Lời chào → giới thiệu mẫu hoa → chi tiết loài hoa/màu/giá → CTA phản hồi tin nhắn",
+    structureNote: "Lời chào → giới thiệu sản phẩm → chi tiết chất liệu/màu/giá → CTA phản hồi tin nhắn",
     ctaStyle: "Mời phản hồi tin nhắn để tiệm giữ hoa/chuẩn bị",
   },
 }

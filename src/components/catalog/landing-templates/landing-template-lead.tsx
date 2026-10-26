@@ -115,7 +115,7 @@ export function LandingTemplateLead({
             <span>Đã ghi nhận số điện thoại thành công!</span>
           </div>
           <p className="text-caption opacity-90">
-            Chuyên viên tư vấn hoa tươi sẽ liên hệ Zalo lại ngay trong vòng 5 phút để xác nhận mẫu và áp dụng mã giảm giá 10% cho bạn.
+            Chuyên viên tư vấn sản phẩm sẽ liên hệ Zalo lại ngay trong vòng 5 phút để xác nhận mẫu và áp dụng mã giảm giá 10% cho bạn.
           </p>
         </div>
       ) : (
@@ -164,7 +164,7 @@ export function LandingTemplateLead({
         </div>
         <div className="flex flex-col items-center gap-1">
           <CheckCircle2 size={14} className="text-success" />
-          <span className="font-medium">Hoa tươi 3–5 ngày</span>
+          <span className="font-medium">Sản phẩm 3–5 ngày</span>
         </div>
       </div>
     </div>

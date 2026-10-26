@@ -60,7 +60,7 @@ const SAMPLE_PITCH: SalesPitchData = {
   originalPriceVnd: 750000,
   priceSegment: "Trung - Cao cấp",
   freeGifts: ["Thiệp chúc mừng thiết kế riêng", "Miễn phí giao trong bán kính 5km"],
-  guarantees: ["Hoa tươi trên 5 ngày", "Đổi trả nếu hoa héo trong 24h", "Cam kết đúng mẫu ảnh"],
+  guarantees: ["Sản phẩm trên 5 ngày", "Đổi trả nếu hoa héo trong 24h", "Cam kết đúng mẫu ảnh"],
   shopName: "SiiN Store — Mộc Lan Demo",
   shopHotline: "0909 xxx xxx",
   customNote: "Ưu đãi tặng thêm hộp socola nhỏ trong tuần lễ Valentine",
@@ -80,7 +80,7 @@ const SAMPLE_ZALO_SCRIPT = `🌹 NỒNG NÀN YÊU THƯƠNG 🌹
 🎁 Tặng kèm: Thiệp chúc mừng thiết kế riêng, miễn phí giao trong 5km
 
 📞 Hotline: 0909 xxx xxx
-Anh/chị đặt ngay để shop chuẩn bị hoa tươi nhất nhé! ❤️`
+Anh/chị đặt ngay để shop chuẩn bị sản phẩm nhất nhé! ❤️`
 
 export const productAnalysisPreviews: Record<string, React.ReactNode> = {
   "m01a-guidance-card.tsx": <M01aGuidanceCard />,

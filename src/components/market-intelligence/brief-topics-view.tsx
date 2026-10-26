@@ -264,7 +264,7 @@ export function BriefTopicsView({
                   onClick={() => onSelectOpportunity(entry.item)}
                   className="text-caption text-cool-500 hover:text-blush-600 font-bold underline"
                 >
-                  Xem chi tiết mẫu hoa →
+                  Xem chi tiết sản phẩm →
                 </button>
 
                 <div className="flex items-center gap-1.5">

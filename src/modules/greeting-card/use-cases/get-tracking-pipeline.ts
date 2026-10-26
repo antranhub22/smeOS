@@ -146,7 +146,7 @@ export async function loadTrackingDataset(
   // 1. Process Orders
   const orderItems: TrackingPipelineItem[] = orders.map((order) => {
     const session = order.greeting_sessions[0]
-    const product = orderProductView(order, productImages, "Mẫu hoa Thẻ chào")
+    const product = orderProductView(order, productImages, "Sản phẩm Thẻ chào")
     const deliveryAddress = loose(order.delivery_address)
     const deliveryWindow = loose(order.delivery_window)
 

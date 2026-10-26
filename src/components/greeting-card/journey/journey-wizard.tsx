@@ -53,7 +53,7 @@ export function JourneyWizard({ onFinish, autoOpenQuickModal = false }: JourneyW
   const productsRes = useApi<{ data: QuickCollectionProductRow[] }>("/api/v1/products?limit=100&status=ACTIVE")
   const quickCandidates: QuickCollectionCandidate[] = (productsRes.data?.data || []).map(toQuickCollectionCandidate)
 
-  // Mặc định chọn bộ sưu tập đầu tiên; số mẫu hoa lấy từ danh sách (được cập nhật khi thêm/xóa mẫu)
+  // Mặc định chọn bộ sưu tập đầu tiên; số sản phẩm lấy từ danh sách (được cập nhật khi thêm/xóa mẫu)
   const selectedId = pickedId || catalogs[0]?.id || ""
   const selected = catalogs.find((c) => c.id === selectedId)
   // Sửa mẫu/giao diện: người tạo bộ sưu tập hoặc L4; Sale và Điều phối chỉ chọn bộ sưu tập người khác tạo (PO 16/10/2026)

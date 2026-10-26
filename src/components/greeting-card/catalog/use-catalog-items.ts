@@ -30,7 +30,7 @@ const PICKER_LIMIT = 100
 const SEARCH_DEBOUNCE_MS = 280
 
 /**
- * Mẫu hoa trong một bộ sưu tập + kho sản phẩm để thêm vào (SWR).
+ * Sản phẩm trong một bộ sưu tập + kho sản phẩm để thêm vào (SWR).
  *
  * Chiến lược lọc:
  * - Server-side: `search` (ILIKE name/code) khi người dùng gõ vào ô tìm kiếm
@@ -92,7 +92,7 @@ export function useCatalogItems<TDetail extends { items: Array<{ product: { id: 
         `/api/v1/greeting-card/catalogs/${catalogId}/products`,
         method,
         { productId },
-        method === "POST" ? "Không thêm được mẫu hoa" : "Không xoá được mẫu hoa"
+        method === "POST" ? "Không thêm được sản phẩm" : "Không xoá được sản phẩm"
       )
       await detail.mutate()
     } catch (err) {

@@ -49,7 +49,7 @@ const MILESTONE_DEFINITIONS: Record<CoordinatorMilestoneCode, MilestoneDefinitio
     description: "Kiểm tra bộ phận sản xuất đã bắt đầu thực hiện đơn hay chưa",
     recipientType: "WORKSHOP",
     suggestedAction:
-      "Liên hệ bộ phận sản xuất xác nhận đã bắt đầu cắm hoa; nếu chưa thì can thiệp ngay",
+      "Liên hệ bộ phận sản xuất xác nhận đã bắt đầu chế tác; nếu chưa thì can thiệp ngay",
     buildMessageTemplate: (input) =>
       `Nhờ Xưởng kiểm tra và xác nhận đã bắt đầu cắm đơn #${input.orderCode}. Đơn hẹn giao lúc ${formatTimeString(
         input.deliveryTime

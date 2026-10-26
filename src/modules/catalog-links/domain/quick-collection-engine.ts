@@ -116,9 +116,9 @@ function buildCustomerMessage(
   const count = products.length
   const name = criteria.customerName?.trim()
   if (name) {
-    return `Dạ em chào ${name} ạ! Tiệm gửi ${name} link xem ${count} mẫu hoa chọn riêng cho mình: {URL}\n${name} xem ưng mẫu nào báo em chuẩn bị ngay nhé ạ!`
+    return `Dạ em chào ${name} ạ! Tiệm gửi ${name} link xem ${count} sản phẩm chọn riêng cho mình: {URL}\n${name} xem ưng mẫu nào báo em chuẩn bị ngay nhé ạ!`
   }
-  return `Dạ tiệm gửi anh/chị link ${count} mẫu hoa theo yêu cầu: {URL}\nAnh/chị ưng mẫu nào nhắn tiệm hỗ trợ ngay nhé ạ!`
+  return `Dạ tiệm gửi anh/chị link ${count} sản phẩm theo yêu cầu: {URL}\nAnh/chị ưng mẫu nào nhắn tiệm hỗ trợ ngay nhé ạ!`
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -178,7 +178,7 @@ export function generateQuickCollection(
       suggestedSlug: `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`,
       customerMessage: buildCustomerMessage([], criteria),
       personalizedGreeting: criteria.customerName?.trim()
-        ? `Mẫu hoa chọn riêng cho ${criteria.customerName.trim()}`
+        ? `Sản phẩm chọn riêng cho ${criteria.customerName.trim()}`
         : undefined,
     }
   }
@@ -200,7 +200,7 @@ export function generateQuickCollection(
   const suggestedSlug = `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`
   const customerMessage = buildCustomerMessage(selectedProducts, criteria)
   const personalizedGreeting = criteria.customerName?.trim()
-    ? `Mẫu hoa chọn riêng cho ${criteria.customerName.trim()}`
+    ? `Sản phẩm chọn riêng cho ${criteria.customerName.trim()}`
     : undefined
 
   // totalMatched = số sản phẩm thực sự khớp filter cứng

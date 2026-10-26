@@ -75,7 +75,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
             Bộ sưu tập <span className="font-semibold text-text">&quot;{initialData.catalogName}&quot;</span> đã tạm ngừng chia sẻ.
           </p>
           <div className="p-4 rounded-2xl bg-surface-alt border border-border text-xs text-text-muted w-full">
-            Vui lòng liên hệ trực tiếp với cửa hàng để được tư vấn mẫu hoa tươi mới nhất.
+            Vui lòng liên hệ trực tiếp với cửa hàng để được tư vấn sản phẩm tươi mới nhất.
           </div>
         </div>
       </div>
@@ -192,7 +192,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
               ) : (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-white/90 text-caption font-bold tracking-wide uppercase mb-3">
                   <Sparkles size={13} />
-                  <span>Bộ Sưu Tập Mẫu Hoa Tuyển Chọn</span>
+                  <span>Bộ Sưu Tập Sản Phẩm Tuyển Chọn</span>
                 </div>
               )}
               <h1 className="text-title sm:text-display font-black tracking-tight leading-snug">{catalog.name}</h1>
@@ -209,7 +209,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           <LandingTemplateVideo
             videoUrl={videoUrl}
             archetypeId={campaign.archetype}
-            title="Video Cận Cảnh Mẫu Hoa Thực Tế"
+            title="Video Cận Cảnh Sản Phẩm Thực Tế"
           />
         )}
 
@@ -347,7 +347,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
       {showShareModal && <ShareCatalogModal slug={catalog.slug} name={catalog.name} description={catalog.description} onClose={() => setShowShareModal(false)} />}
       <footer className="mt-12 text-center text-xs text-text-muted max-w-4xl mx-auto px-4">
         <div className="border-t border-border pt-6">
-          <p className="font-medium text-text-muted">{shop.name} — Nền tảng Hoa tươi Thông minh FloraOS</p>
+          <p className="font-medium text-text-muted">{shop.name} — Nền tảng Sản phẩm Thông minh FloraOS</p>
         </div>
       </footer>
     </div>

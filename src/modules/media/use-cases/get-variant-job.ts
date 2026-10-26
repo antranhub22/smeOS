@@ -74,7 +74,7 @@ export type VariantJobDetail = {
     /** `provider_scene` = nhà cung cấp làm trọn gói; `provider_background` = chỉ xin hậu cảnh;
      *  `local` / `local_fallback` = luồng cục bộ (lùi khi mọi nhà cung cấp lỗi). */
     flow: string
-    /** Bó hoa đã được nhà cung cấp chỉnh sáng — nhãn "đã chỉnh sáng bằng AI". */
+    /** Sản phẩm đã được nhà cung cấp chỉnh sáng — nhãn "đã chỉnh sáng bằng AI". */
     ai_relit: boolean
     integrity_method: string
     provider_steps: Record<string, unknown> | null

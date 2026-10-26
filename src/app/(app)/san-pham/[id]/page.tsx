@@ -199,7 +199,7 @@ export default function ProductDetailPage() {
               onOpenModal={() => setIsModalOpen(true)}
             />
 
-            {/* Nhóm 4: Câu chuyện và thông điệp mẫu hoa (Content Engine) */}
+            {/* Nhóm 4: Câu chuyện và thông điệp sản phẩm (Content Engine) */}
             <ProductStoryCard
               description={description}
               onOpenModal={() => setIsModalOpen(true)}
@@ -221,7 +221,7 @@ export default function ProductDetailPage() {
               </div>
             </Card>
 
-            {/* Nhóm 6: Cấu hình mốc nhắc việc Điều phối riêng cho mẫu hoa này */}
+            {/* Nhóm 6: Cấu hình mốc nhắc việc Điều phối riêng cho sản phẩm này */}
             <ProductReminderOverrideCard
               productId={productId}
               canEdit={can("R12")}
