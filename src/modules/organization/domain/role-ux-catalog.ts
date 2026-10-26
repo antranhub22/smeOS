@@ -96,7 +96,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     homepageModel: "Platform Journey Home",
     dominantActions: ["Cấu hình", "Kiểm tra", "Áp dụng"],
     status: "AVAILABLE",
-    homepage: "CONTROL_CENTER",
+    homepage: "PLATFORM_JOURNEY_HOME",
     // Không phải vai của tổ chức: cấp qua `platform_operators` (D-N6) hoặc roleKey platform_admin.
     systemRoleKeys: [],
     entryHref: "/van-hanh",
@@ -184,7 +184,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "CRM_WORKSPACE",
     systemRoleKeys: ["crm"],
-    entryHref: "/khach-hang",
+    entryHref: "/",
     navPriority: ["/khach-hang", "/hoi-thoai", "/don-hang"],
     debtRefs: [],
   },
@@ -201,7 +201,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "CREATIVE_WORKSPACE",
     systemRoleKeys: ["marketing"],
-    entryHref: "/creative-studio",
+    entryHref: "/",
     navPriority: ["/creative-studio", "/noi-dung", "/lich-dang", "/market-intelligence"],
     debtRefs: [],
   },
@@ -252,7 +252,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "CONTROL_TOWER",
     systemRoleKeys: ["dieu_phoi"],
-    entryHref: "/dieu-phoi",
+    entryHref: "/",
     navPriority: ["/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
     debtRefs: [166],
   },
@@ -286,7 +286,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "CUSTOMER_SERVICE_WORKSPACE",
     systemRoleKeys: ["customer_service"],
-    entryHref: "/hoi-thoai",
+    entryHref: "/",
     navPriority: ["/hoi-thoai", "/khach-hang", "/don-hang"],
     debtRefs: [165],
   },
@@ -322,7 +322,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     // Chuỗi/CHAIN: Vai phân quyền "marketing" đã gắn cho lead_marketing
     // (ONE_STORE). Tổ chức CHAIN cần vai phân quyền riêng — nợ #165.
     systemRoleKeys: [],
-    entryHref: "/creative-studio",
+    entryHref: "/",
     navPriority: ["/creative-studio", "/noi-dung", "/lich-dang", "/market-intelligence"],
     debtRefs: [165],
   },
@@ -339,7 +339,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "PRODUCT_WORKSPACE",
     systemRoleKeys: ["product_manager"],
-    entryHref: "/san-pham",
+    entryHref: "/",
     navPriority: ["/san-pham", "/catalog", "/gia", "/kho-templates"],
     debtRefs: [],
   },
@@ -456,14 +456,26 @@ export function resolveRoleUx(
   const isNetwork =
     organizationType === "FLOWER_NETWORK" || organizationType === "CHAIN"
   if (
-    isNetwork &&
-    (systemRoleKey === "dieu_hanh" || systemRoleKey === "flower_network_admin")
+    (isNetwork && (systemRoleKey === "dieu_hanh" || systemRoleKey === "flower_network_admin" || systemRoleKey === "chain_admin")) ||
+    systemRoleKey === "flower_network_admin" ||
+    systemRoleKey === "chain_admin"
   ) {
     const fnAdmin = ROLE_UX_CATALOG.find((r) => r.key === "flower_network_admin")
     if (fnAdmin && fnAdmin.status === "AVAILABLE") return fnAdmin
   }
 
-  const found = ROLE_UX_CATALOG.find((r) => r.systemRoleKeys.includes(systemRoleKey ?? ""))
+  // Khi là Quản trị cửa hàng cơ sở (StoreOS / SINGLE):
+  if (
+    systemRoleKey === "store_admin" ||
+    (organizationType === "SINGLE" && systemRoleKey === "dieu_hanh")
+  ) {
+    const sAdmin = ROLE_UX_CATALOG.find((r) => r.key === "store_admin")
+    if (sAdmin && sAdmin.status === "AVAILABLE") return sAdmin
+  }
+
+  const found = ROLE_UX_CATALOG.find(
+    (r) => r.key === systemRoleKey || r.systemRoleKeys.includes(systemRoleKey ?? "")
+  )
   if (!found || found.status !== "AVAILABLE") return null
   return found
 }

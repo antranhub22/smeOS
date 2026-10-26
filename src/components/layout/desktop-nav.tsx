@@ -21,15 +21,18 @@ import { DesktopNavItem } from "./desktop-nav-item"
 import { DesktopNavFooter } from "./desktop-nav-footer"
 import { loadNavGroups, loadReportsOpen, navStorageKeys, persistNavGroups } from "./nav-storage"
 import { NAV_ICONS as ICONS } from "./nav-icons"
+import { SuperadminHomepageBadge } from "./superadmin-homepage-badge"
 
 type DesktopNavProps = {
   /** Hiển thị trong ngăn kéo trên điện thoại (thay vì cột cố định trên màn hình lớn) */
   drawer?: boolean
   onNavigate?: () => void
   onClose?: () => void
+  /** Truyền từ Server Component: process.env.NODE_ENV !== "production" */
+  isDev?: boolean
 }
 
-export function DesktopNav({ drawer = false, onNavigate, onClose }: DesktopNavProps = {}) {
+export function DesktopNav({ drawer = false, onNavigate, onClose, isDev = false }: DesktopNavProps = {}) {
   const pathname = usePathname()
   const router = useRouter()
   const { can, roleUx, orgName, organization } = useSession()
@@ -140,8 +143,11 @@ export function DesktopNav({ drawer = false, onNavigate, onClose }: DesktopNavPr
             <div className="text-body-sm font-extrabold text-primary leading-tight">
               smeOS
             </div>
-            <div className="truncate text-caption text-text-muted font-medium">
-              {(orgName || "Doanh nghiệp SME").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
+            <div className="flex items-center gap-1 min-w-0">
+              <span className="truncate text-caption text-text-muted font-medium">
+                {(orgName || "Doanh nghiệp SME").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
+              </span>
+              <SuperadminHomepageBadge isDev={isDev} />
             </div>
           </div>
         </div>
