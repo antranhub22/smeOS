@@ -153,15 +153,6 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 5. HIỆU QUẢ THƯƠNG MẠI
   {
-    href: "/market-intelligence",
-    label: "Thị trường & Xu hướng",
-    group: "hieu-qua-thuong-mai",
-    iconKey: "TrendingUp",
-    navKey: "industry-market",
-    capability: "V2",
-    mobileLabel: "Thị trường",
-  },
-  {
     href: "/so-lieu",
     label: "Hiệu suất kênh bán",
     group: "hieu-qua-thuong-mai",

@@ -62,6 +62,7 @@ export const ALL_NAV_KEYS = [
   "store-matrix-payments",
   "store-matrix-craft-fees",
   "system-optimizer",
+  "platform-config",
 ] as const
 
 export type NavKey = (typeof ALL_NAV_KEYS)[number]
@@ -113,6 +114,7 @@ export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/cai-dat/ma-tran-chinhsach": "store-matrix-policies",
   "/cai-dat/ma-tran-thanhtoan-datco": "store-matrix-payments",
   "/cai-dat/ma-tran-phigiacong": "store-matrix-craft-fees",
+  "/van-hanh/cau-hinh": "platform-config",
 }
 
 /**

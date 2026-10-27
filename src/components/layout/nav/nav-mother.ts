@@ -75,14 +75,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "platform-taxonomy",
     mobileLabel: "Schema",
   },
-  {
-    href: "/van-hanh/du-lieu",
-    label: "Tổng hợp Kho & Tồn kho",
-    group: "san-pham-kho-platform",
-    iconKey: "Folder",
-    navKey: "platform-inventory",
-    mobileLabel: "Tồn kho",
-  },
+
 
   // 3. HẠ TẦNG & TÀI NGUYÊN
   {
@@ -130,14 +123,15 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 5. THIẾT LẬP
   {
-    href: "/van-hanh/truong-du-lieu",
+    href: "/van-hanh/cau-hinh",
     label: "Cấu hình nền tảng",
     group: "thiet-lap-platform",
     iconKey: "SlidersHorizontal",
-    navKey: "platform-custom-fields",
+    navKey: "platform-config",
     mobileLabel: "Cấu hình",
   },
-  // 5. MA TRẬN QUẢN TRỊ 4 TẦNG
+
+  // 6. MA TRẬN QUẢN TRỊ 4 TẦNG
   {
     href: "/van-hanh/thong-bao",
     label: "Ma trận thông báo",
