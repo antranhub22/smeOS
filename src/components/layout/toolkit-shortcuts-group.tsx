@@ -11,8 +11,8 @@
  * SRP: File này chỉ phụ trách render nhóm Công cụ. Storage ở nav-toolkit-shortcuts.ts.
  */
 
-import { useState, useEffect, useCallback, useRef } from "react"
-import { LayoutGrid, Plus, X, Pin, PinOff, RotateCcw, ChevronDown } from "lucide-react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
+import { Plus, X, Pin, RotateCcw, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { DesktopNavItem } from "./desktop-nav-item"
@@ -24,15 +24,19 @@ import {
   resetShortcuts,
   hasCustomShortcuts,
   MAX_SHORTCUTS,
-  DEFAULT_SHORTCUT_KEYS,
 } from "./nav-toolkit-shortcuts"
+import { ToolkitPicker } from "./toolkit-picker"
 
 // ────────────────────────────────────────────────────────────────
 // Types
 // ────────────────────────────────────────────────────────────────
 
 export interface ToolkitShortcutsGroupProps {
-  /** Toàn bộ NavEntry thuộc nhóm cong-cu (không gồm mục Thư viện) */
+  /** Key của nhóm trong nav (vd: "cong-cu", "cong-cu-chuoi", "cong-cu-ban-hang") */
+  groupKey?: string
+  /** Nhãn hiển thị của nhóm (vd: "01 · CÔNG CỤ", "02 · CÔNG CỤ", "CÔNG CỤ BÁN HÀNG") */
+  groupLabel?: string
+  /** Toàn bộ NavEntry thuộc nhóm công cụ (không gồm mục Thư viện) */
   toolEntries: NavEntry[]
   /**
    * Toàn bộ NavEntry từ MỌI nhóm trong nav (đã lọc qua capability).
@@ -55,6 +59,8 @@ export interface ToolkitShortcutsGroupProps {
 // ────────────────────────────────────────────────────────────────
 
 export function ToolkitShortcutsGroup({
+  groupKey = "cong-cu",
+  groupLabel = "01 · CÔNG CỤ",
   toolEntries,
   allNavEntries,
   libraryEntry,
@@ -65,16 +71,22 @@ export function ToolkitShortcutsGroup({
   onNavigate,
   onToggleGroup,
 }: ToolkitShortcutsGroupProps) {
+  // Gợi ý default keys từ chính nhóm công cụ hiện tại nếu chưa custom
+  const tierDefaultKeys = useMemo(
+    () => toolEntries.map((e) => e.navKey).slice(0, MAX_SHORTCUTS),
+    [toolEntries]
+  )
+
   const [shortcutKeys, setShortcutKeys] = useState<string[]>(() =>
-    getEffectiveShortcutKeys(orgId)
+    getEffectiveShortcutKeys(orgId, tierDefaultKeys)
   )
   const [pickerOpen, setPickerOpen] = useState(false)
   const pickerRef = useRef<HTMLDivElement>(null)
 
-  // Đồng bộ lại khi orgId thay đổi (switch tổ chức)
+  // Đồng bộ lại khi orgId hoặc tierDefaultKeys thay đổi
   useEffect(() => {
-    setShortcutKeys(getEffectiveShortcutKeys(orgId))
-  }, [orgId])
+    setShortcutKeys(getEffectiveShortcutKeys(orgId, tierDefaultKeys))
+  }, [orgId, tierDefaultKeys])
 
   // Đóng picker khi click ngoài
   useEffect(() => {
@@ -106,9 +118,9 @@ export function ToolkitShortcutsGroup({
 
   const handleReset = useCallback(() => {
     resetShortcuts(orgId)
-    setShortcutKeys([...DEFAULT_SHORTCUT_KEYS])
+    setShortcutKeys([...tierDefaultKeys])
     setPickerOpen(false)
-  }, [orgId])
+  }, [orgId, tierDefaultKeys])
 
   // Shortcut entries hiển thị theo thứ tự đã pin
   // Lookup trong allNavEntries để resolve shortcuts từ mọi nhóm (không chỉ cong-cu)
@@ -118,7 +130,7 @@ export function ToolkitShortcutsGroup({
 
   // Entries khả dụng cho picker: toàn bộ allNavEntries, trừ Thư viện và đã pin
   const unpinnedEntries = allNavEntries.filter(
-    (e) => e.navKey !== "toolkit" && !shortcutKeys.includes(e.navKey)
+    (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey && !shortcutKeys.includes(e.navKey)
   )
 
   const isActive = (entry: NavEntry) =>
@@ -159,14 +171,14 @@ export function ToolkitShortcutsGroup({
       <button
         type="button"
         aria-expanded={expanded}
-        onClick={() => onToggleGroup("cong-cu", expanded)}
+        onClick={() => onToggleGroup(groupKey, expanded)}
         className={cn(
           "group flex w-full items-center justify-between gap-1.5 rounded-lg px-2 py-1 text-left select-none cursor-pointer",
           "text-caption font-bold uppercase tracking-wider text-text-muted hover:text-text hover:bg-surface-alt/50 transition-colors duration-150",
           "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
         )}
       >
-        <span className="truncate text-left flex-1">01 · CÔNG CỤ</span>
+        <span className="truncate text-left flex-1">{groupLabel}</span>
         <ChevronDown
           size={12}
           aria-hidden
@@ -212,7 +224,10 @@ export function ToolkitShortcutsGroup({
               <button
                 type="button"
                 aria-label={`Bỏ pin "${entry.label}"`}
-                onClick={(e) => { e.stopPropagation(); handleUnpin(entry.navKey) }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleUnpin(entry.navKey)
+                }}
                 className={cn(
                   "absolute right-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-md",
                   "text-text-muted hover:text-destructive hover:bg-destructive/10 transition-all duration-150",
@@ -274,94 +289,6 @@ export function ToolkitShortcutsGroup({
           )}
         </div>
       )}
-    </div>
-  )
-}
-
-// ────────────────────────────────────────────────────────────────
-// ToolkitPicker — Mini dropdown chọn công cụ để pin
-// ────────────────────────────────────────────────────────────────
-
-interface ToolkitPickerProps {
-  entries: NavEntry[]
-  pinnedKeys: string[]
-  isCustomized: boolean
-  onPin: (navKey: string) => void
-  onReset: () => void
-  onClose: () => void
-}
-
-function ToolkitPicker({
-  entries,
-  isCustomized,
-  onPin,
-  onReset,
-  onClose,
-}: ToolkitPickerProps) {
-  return (
-    <div
-      className={cn(
-        "absolute left-0 right-0 top-full z-50 mt-1 rounded-xl border border-border",
-        "bg-surface shadow-lg shadow-black/10 backdrop-blur-sm",
-        "animate-in fade-in slide-in-from-top-2 duration-150"
-      )}
-      role="dialog"
-      aria-label="Chọn công cụ để ghim"
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-3 py-2">
-        <span className="text-meta font-semibold text-text">Chọn lối tắt</span>
-        <div className="flex items-center gap-1">
-          {isCustomized && (
-            <button
-              type="button"
-              onClick={onReset}
-              className="flex items-center gap-1 rounded-md px-2 py-0.5 text-caption text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
-            >
-              <RotateCcw size={10} />
-              Mặc định
-            </button>
-          )}
-          <button
-            type="button"
-            aria-label="Đóng"
-            onClick={onClose}
-            className="rounded-md p-0.5 text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
-          >
-            <X size={13} />
-          </button>
-        </div>
-      </div>
-
-      {/* Danh sách công cụ chưa pin */}
-      <div className="max-h-56 overflow-y-auto py-1">
-        {entries.length === 0 ? (
-          <p className="px-3 py-4 text-center text-meta text-text-muted">
-            Đã ghim tất cả công cụ khả dụng
-          </p>
-        ) : (
-          entries.map((entry) => {
-            const Icon = ICONS[entry.iconKey]
-            return (
-              <button
-                key={entry.navKey}
-                type="button"
-                onClick={() => { onPin(entry.navKey); onClose() }}
-                className={cn(
-                  "flex w-full items-center gap-2.5 px-3 py-2 text-meta text-left",
-                  "hover:bg-surface-alt transition-colors duration-100"
-                )}
-              >
-                {Icon && (
-                  <Icon size={14} className="shrink-0 text-text-muted" aria-hidden />
-                )}
-                <span className="flex-1 truncate text-text">{entry.label}</span>
-                <PinOff size={11} className="shrink-0 text-text-muted/60" aria-hidden />
-              </button>
-            )
-          })
-        )}
-      </div>
     </div>
   )
 }

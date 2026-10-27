@@ -10,7 +10,7 @@
 
 export const MAX_SHORTCUTS = 5
 
-/** Mặc định hiển thị nếu user chưa tự chọn */
+/** Mặc định hiển thị nếu user chưa tự chọn (StoreOS) */
 export const DEFAULT_SHORTCUT_KEYS: readonly string[] = [
   "creative-studio",   // Chế tác tự động A-Z
   "catalog",           // Tạo Catalog & Link bán hàng
@@ -42,8 +42,13 @@ export function loadShortcutKeys(orgId?: string | null): string[] | null {
 }
 
 /** Trả danh sách hiển thị (defaults nếu chưa pin) */
-export function getEffectiveShortcutKeys(orgId?: string | null): string[] {
-  return loadShortcutKeys(orgId) ?? [...DEFAULT_SHORTCUT_KEYS]
+export function getEffectiveShortcutKeys(orgId?: string | null, availableDefaultKeys?: string[]): string[] {
+  const loaded = loadShortcutKeys(orgId)
+  if (loaded !== null) return loaded
+  if (availableDefaultKeys && availableDefaultKeys.length > 0) {
+    return availableDefaultKeys.slice(0, MAX_SHORTCUTS)
+  }
+  return [...DEFAULT_SHORTCUT_KEYS]
 }
 
 /** Kiểm tra user đã tự chỉnh shortcuts chưa */

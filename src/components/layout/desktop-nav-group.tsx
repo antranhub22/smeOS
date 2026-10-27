@@ -44,14 +44,33 @@ export function DesktopNavGroup({
   const isActive = (entry: NavEntry) =>
     pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
 
-  // ── Nhóm "cong-cu" — Thư viện + Shortcuts user tự pin ───────
-  if (group.key === "cong-cu") {
-    const libraryEntry = group.entries.find((e) => e.navKey === "toolkit") ?? group.entries[0]!
-    const toolEntries = group.entries.filter((e) => e.navKey !== "toolkit")
-    // allNavEntries trừ Thư viện — dùng cho picker để hiển toàn bộ công cụ
-    const pickerSource = (allNavEntries ?? toolEntries).filter((e) => e.navKey !== "toolkit")
+  // ── Nhóm Công cụ (StoreOS: "cong-cu", ChainOS: "cong-cu-chuoi", SaaS Ngành: "cong-cu-ban-hang") ───────
+  const isToolkitGroup =
+    group.key === "cong-cu" ||
+    group.key === "cong-cu-chuoi" ||
+    group.key === "cong-cu-ban-hang"
+
+  if (isToolkitGroup) {
+    const libraryEntry =
+      group.entries.find(
+        (e) =>
+          e.navKey === "toolkit" ||
+          e.navKey === "chain-toolkit" ||
+          e.navKey === "industry-toolkit" ||
+          e.href === "/cong-cu"
+      ) ?? group.entries[0]!
+
+    const toolEntries = group.entries.filter(
+      (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey
+    )
+    // allNavEntries trừ Thư viện — dùng cho picker để hiển thị toàn bộ công cụ
+    const pickerSource = (allNavEntries ?? toolEntries).filter(
+      (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey
+    )
     return (
       <ToolkitShortcutsGroup
+        groupKey={group.key}
+        groupLabel={group.label}
         libraryEntry={libraryEntry}
         toolEntries={toolEntries}
         allNavEntries={pickerSource}
