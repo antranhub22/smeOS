@@ -72,7 +72,9 @@ function getApiPaths(tier: MatrixViewerTier): {
   switch (tier) {
     case "MOTHER":
       return {
-        events: "/api/v1/platform/notification/visibility",
+        // /events trả NotificationEventDefinition[] đầy đủ (có roleDefaults)
+        // /visibility chỉ dùng để Mother configure visibility cho tầng dưới (khác mục đích)
+        events: "/api/v1/platform/notification/events",
         // MOTHER không có policy endpoint riêng — dùng hard-locks làm proxy
         // (hard-locks đủ để render trạng thái bật/tắt ở tầng Mother)
         policy: null,
@@ -275,13 +277,16 @@ export function useNotificationMatrix({
   }
 }
 
-/** Default enabled: APP_INBOX always on, others check roleDefaults */
+/** Default enabled: APP_INBOX always on, others check roleDefaults (if available) */
 function getDefaultEnabled(
-  evt: NotificationEventDefinition,
+  evt: NotificationEventDefinition & { roleDefaults?: { roleKey: string; channels: string[] }[] },
   channel: string
 ): boolean {
   if (channel === "APP_INBOX") return true
-  const wildcard = evt.roleDefaults.find((rd) => rd.roleKey === "*")
+  // roleDefaults có thể không có nếu API trả EventVisibilityRow (platform tier)
+  const roleDefaults = evt.roleDefaults ?? []
+  const wildcard = roleDefaults.find((rd) => rd.roleKey === "*")
   if (wildcard) return wildcard.channels.includes(channel as NotifyChannel)
-  return false
+  // Fallback: nếu bất kỳ role nào include channel này → coi là enabled mặc định
+  return roleDefaults.some((rd) => rd.channels.includes(channel as NotifyChannel))
 }
