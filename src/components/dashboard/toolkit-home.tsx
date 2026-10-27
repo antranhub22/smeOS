@@ -136,16 +136,16 @@ export function ToolkitHome() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>48 công cụ kinh doanh</span>
+            <span>Toàn bộ 51 công cụ kinh doanh (9 nhóm)</span>
           </div>
           <h1 className="text-display font-extrabold text-text tracking-tight">
             {isDev
-              ? "Hệ thống chức năng smeOS"
+              ? "Hệ thống công cụ kinh doanh smeOS"
               : "Hôm nay bạn muốn làm gì?"}
           </h1>
           <p className="text-body text-text-muted mt-1">
             {isDev
-              ? "Toàn bộ 48 chức năng phân nhóm theo lộ trình phát triển"
+              ? "Toàn bộ 51 công cụ phân theo 9 nhóm tác nghiệp chuẩn hóa đa tầng"
               : "Chọn công cụ bên dưới để bắt đầu."}
           </p>
         </div>
@@ -219,8 +219,8 @@ export function ToolkitHome() {
       {isDev && (
         <div className="mt-8 pt-4 border-t border-border text-center">
           <p className="text-caption text-text-muted">
-            🔧 Đang chạy môi trường phát triển — Hiển thị toàn bộ 48 chức năng kèm trạng thái.
-            Trên production chỉ hiển thị các chức năng đã hoàn thiện.
+            🔧 Đang chạy môi trường phát triển — Hiển thị toàn bộ 51 công cụ phân 9 nhóm kèm trạng thái.
+            Trên production chỉ hiển thị các công cụ đã hoàn thiện.
           </p>
         </div>
       )}

@@ -453,14 +453,14 @@ export const TOOLKIT_GROUPS: readonly ToolGroup[] = [
 
 // ── Helpers ────────────────────────────────────────────────────────
 
-/** Trả tất cả 48 công cụ flat */
+/** Trả tất cả công cụ flat */
 export function getAllTools(): ToolDefinition[] {
   return TOOLKIT_GROUPS.flatMap((g) => [...g.tools])
 }
 
 /**
  * Lọc nhóm + công cụ theo môi trường:
- * - Dev: toàn bộ 48 chức năng
+ * - Dev: toàn bộ 51 chức năng phân 9 nhóm
  * - Prod: chỉ hiện chức năng DONE
  */
 export function getVisibleGroups(isDev: boolean): ToolGroup[] {
