@@ -1,14 +1,15 @@
 {
-  "total": 29,
-  "errorCount": 17,
+  "total": 21,
+  "errorCount": 13,
   "byRule": {
-    "IT-F02": 6,
     "IT-F01": 8,
     "IT-F03": 2,
     "IT-F06": 1,
-    "IT-G01": 3,
-    "IT-F08": 6,
-    "IT-F07": 3
+    "IT-F02": 1,
+    "IT-F05": 1,
+    "IT-F07": 2,
+    "IT-G01": 2,
+    "IT-F08": 4
   },
-  "updatedAt": "2026-10-27T12:21:06.350Z"
+  "updatedAt": "2026-10-27T12:43:42.985Z"
 }
