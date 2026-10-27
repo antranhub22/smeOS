@@ -46,6 +46,15 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 02 · CÔNG CỤ
   {
+    href: "/creative-studio",
+    label: "Chế tác tự động A-Z",
+    group: "cong-cu-chuoi",
+    iconKey: "Sparkles",
+    navKey: "chain-auto-campaign",
+    capability: "I1",
+    mobileLabel: "Tự động A-Z",
+  },
+  {
     href: "/catalog",
     label: "Catalog & Kênh bán",
     group: "cong-cu-chuoi",
@@ -58,19 +67,19 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
     href: "/the-chao",
     label: "Thẻ chào sản phẩm",
     group: "cong-cu-chuoi",
-    iconKey: "Sparkles",
+    iconKey: "CreditCard",
     navKey: "chain-greeting-card",
     capability: "R1",
     mobileLabel: "Thẻ chào",
   },
   {
-    href: "/creative-studio",
-    label: "Studio sáng tạo AI",
+    href: "/market-intelligence",
+    label: "Xu hướng & Cơ hội thị trường",
     group: "cong-cu-chuoi",
-    iconKey: "Wand2",
-    navKey: "chain-studio",
+    iconKey: "TrendingUp",
+    navKey: "chain-market",
     capability: "I1",
-    mobileLabel: "Studio",
+    mobileLabel: "Xu hướng",
   },
   {
     href: "/video",

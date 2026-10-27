@@ -18,6 +18,15 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 2. CÔNG CỤ BÁN HÀNG
   {
+    href: "/creative-studio",
+    label: "Chế tác tự động A-Z",
+    group: "cong-cu-ban-hang",
+    iconKey: "Sparkles",
+    navKey: "industry-auto-campaign",
+    capability: "I1",
+    mobileLabel: "Tự động A-Z",
+  },
+  {
     href: "/landing-page",
     label: "Landing Page & Kênh bán",
     group: "cong-cu-ban-hang",
@@ -38,10 +47,19 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
     href: "/the-chao",
     label: "Thẻ chào sản phẩm",
     group: "cong-cu-ban-hang",
-    iconKey: "Sparkles",
+    iconKey: "CreditCard",
     navKey: "industry-greeting-card",
     capability: "R1",
     mobileLabel: "Thẻ chào",
+  },
+  {
+    href: "/market-intelligence",
+    label: "Xu hướng & Cơ hội ngành",
+    group: "cong-cu-ban-hang",
+    iconKey: "TrendingUp",
+    navKey: "industry-market",
+    capability: "V2",
+    mobileLabel: "Xu hướng",
   },
   {
     href: "/kho-templates",
@@ -50,15 +68,6 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
     iconKey: "LayoutTemplate",
     navKey: "industry-templates",
     mobileLabel: "Template",
-  },
-  {
-    href: "/creative-studio",
-    label: "Studio sáng tạo AI",
-    group: "cong-cu-ban-hang",
-    iconKey: "Wand2",
-    navKey: "industry-studio",
-    capability: "I1",
-    mobileLabel: "Studio AI",
   },
 
   // 3. SẢN PHẨM & DANH MỤC NGHÀNH

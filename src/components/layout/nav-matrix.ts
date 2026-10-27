@@ -54,6 +54,7 @@ export const ALL_NAV_KEYS = [
   "channels",
   "engine",
   "settings",
+  "system-optimizer",
 ] as const
 
 export type NavKey = (typeof ALL_NAV_KEYS)[number]
@@ -62,6 +63,7 @@ export type NavKey = (typeof ALL_NAV_KEYS)[number]
 export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/": "home",
   "/cong-cu": "toolkit",
+  "/cong-cu/toi-uu-he-thong": "system-optimizer",
   "/khach-hang": "customers",
   "/don-hang": "orders",
   "/hoi-thoai": "chat",
