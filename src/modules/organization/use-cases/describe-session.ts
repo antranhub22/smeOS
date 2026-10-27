@@ -13,6 +13,8 @@ export type SessionDescription = {
     type: string
     industry: string
     industry_locked: boolean
+    /** Danh sách công cụ được cấp trên (Chuỗi/Ngành) phê duyệt mở khóa (Whitelist) */
+    unlocked_tools?: string[] | null
     /** Yêu cầu đổi mô hình tổ chức đang chờ Admin SaaS duyệt (banner trong app). */
     pending_model_change: unknown
   } | null
@@ -24,9 +26,14 @@ export type SessionDescription = {
 
 function publicSettingsOf(settings: unknown) {
   const s = settings && typeof settings === "object" ? (settings as Record<string, unknown>) : {}
+  const unlocked = Array.isArray(s.unlocked_tools)
+    ? (s.unlocked_tools as unknown[]).filter((x): x is string => typeof x === "string")
+    : null
+
   return {
     industry: typeof s.industry === "string" ? s.industry : "FLORAL",
     industry_locked: Boolean(s.industry_locked),
+    unlocked_tools: unlocked,
     pending_model_change: s.pending_model_change ?? null,
   }
 }

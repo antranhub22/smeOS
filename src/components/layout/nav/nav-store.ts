@@ -321,13 +321,24 @@ export function buildStoreNav(
   can: (code: string) => boolean,
   role: RoleUxDefinition | null,
   industryKey?: string | null,
-  navHiddenKeys?: string[] | null
+  navHiddenKeys?: string[] | null,
+  unlockedToolKeys?: string[] | null
 ): NavView {
   const baseEntries = adaptStoreEntries(industryKey)
   const extraHidden = new Set<string>(navHiddenKeys ?? [])
-  const entries = extraHidden.size > 0
-    ? baseEntries.filter((e) => !extraHidden.has(e.navKey))
-    : baseEntries
+  const hasWhitelist = unlockedToolKeys && unlockedToolKeys.length > 0
+  const allowedWhitelist = new Set<string>(unlockedToolKeys ?? [])
+
+  const entries = baseEntries.filter((e) => {
+    // 1. Kiểm tra nếu bị ẩn theo ma trận ngành / cấp trên
+    if (extraHidden.has(e.navKey)) return false
+    // 2. Nếu có danh sách Whitelist từ cấp trên -> các công cụ thuộc nhóm cong-cu phải được duyệt
+    // (riêng mục thư viện cố định 'toolkit' luôn mở)
+    if (hasWhitelist && e.group === "cong-cu" && e.navKey !== "toolkit") {
+      return allowedWhitelist.has(e.navKey)
+    }
+    return true
+  })
   const isAccessible = (item: NavEntry) => !item.capability || can(item.capability)
 
   const pinnedHrefs = new Set<string>()

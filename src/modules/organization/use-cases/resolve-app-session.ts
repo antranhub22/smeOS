@@ -67,6 +67,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
           industry,
           industryLocked,
           navHiddenKeys,
+          unlockedTools: described.organization.unlocked_tools ?? null,
         }
       : undefined,
     // Đặc tả 03b (Role UX): khoá vai + loại tổ chức để chọn trang chủ/thứ tự
