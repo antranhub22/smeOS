@@ -137,6 +137,14 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "platform-custom-fields",
     mobileLabel: "Cấu hình",
   },
+  {
+    href: "/van-hanh/thong-bao",
+    label: "Ma trận thông báo",
+    group: "thiet-lap-platform",
+    iconKey: "Bell",
+    navKey: "platform-notifications",
+    mobileLabel: "Thông báo",
+  },
 ] as const
 
 export const MOTHER_GROUPS_CONFIG = [

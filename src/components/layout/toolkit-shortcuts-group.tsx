@@ -77,14 +77,15 @@ export function ToolkitShortcutsGroup({
     [toolEntries]
   )
 
-  const [shortcutKeys, setShortcutKeys] = useState<string[]>(() =>
-    getEffectiveShortcutKeys(orgId, tierDefaultKeys)
-  )
+  // Bắt đầu bằng tierDefaultKeys để HTML trên Server và Client khớp nhau 100% khi hydrate
+  const [shortcutKeys, setShortcutKeys] = useState<string[]>(tierDefaultKeys)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const pickerRef = useRef<HTMLDivElement>(null)
 
-  // Đồng bộ lại khi orgId hoặc tierDefaultKeys thay đổi
+  // Đồng bộ lại từ localStorage sau khi mounted trên client
   useEffect(() => {
+    setMounted(true)
     setShortcutKeys(getEffectiveShortcutKeys(orgId, tierDefaultKeys))
   }, [orgId, tierDefaultKeys])
 
@@ -277,7 +278,7 @@ export function ToolkitShortcutsGroup({
           )}
 
           {/* Khi đã đủ MAX: chỉ hiện nút reset nếu đã tùy chỉnh */}
-          {shortcutKeys.length >= MAX_SHORTCUTS && hasCustomShortcuts(orgId) && (
+          {mounted && shortcutKeys.length >= MAX_SHORTCUTS && hasCustomShortcuts(orgId) && (
             <button
               type="button"
               onClick={handleReset}
