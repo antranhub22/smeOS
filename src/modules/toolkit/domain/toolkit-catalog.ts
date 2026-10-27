@@ -52,6 +52,12 @@ export interface ToolGroup {
 
 const GROUP_1_TOOLS: readonly ToolDefinition[] = [
   {
+    id: 0, name: "Chế tác tự động trọn gói từ A-Z",
+    description: "Quy trình AI tự động trọn gói từ 1 ảnh thô ra bộ tư liệu bán hàng đa kênh",
+    icon: "Sparkles", label: "BOTH", status: "DONE", progress: 100,
+    href: "/creative-studio", statusNote: "Workflow Pipeline — Tự động bóc tách BOM, tạo ảnh studio, video, caption và thẻ chào",
+  },
+  {
     id: 1, name: "Tạo ảnh sản phẩm chuyên nghiệp",
     description: "Biến ảnh chụp thô thành ảnh sản phẩm chuẩn studio bằng AI",
     icon: "Camera", label: "BOTH", status: "DONE", progress: 100,
@@ -210,6 +216,12 @@ const GROUP_4_TOOLS: readonly ToolDefinition[] = [
     icon: "ScanLine", label: "BOTH", status: "FOUNDATION", progress: 20,
     href: null, statusNote: "QR cơ bản có, thiếu trang đích + thống kê vị trí",
   },
+  {
+    id: 49, name: "Khám phá xu hướng & cơ hội thị trường",
+    description: "Nghiên cứu thị trường, phong cách thiết kế hot và cơ hội bán hàng theo mùa vụ",
+    icon: "TrendingUp", label: "BOTH", status: "DONE", progress: 100,
+    href: "/market-intelligence", statusNote: "Chức năng 03 hợp nhất — AI Market Intelligence & Seasonal Trend",
+  },
 ] as const
 
 const GROUP_5_TOOLS: readonly ToolDefinition[] = [
@@ -362,6 +374,15 @@ const GROUP_8_TOOLS: readonly ToolDefinition[] = [
   },
 ] as const
 
+const GROUP_9_TOOLS: readonly ToolDefinition[] = [
+  {
+    id: 50, name: "Trợ lý Học máy & Tối ưu Tác nghiệp",
+    description: "Nhận diện thói quen tác nghiệp, hiệu quả chuyển đổi và đề xuất cải tiến toàn hệ thống",
+    icon: "Brain", label: "BOTH", status: "FOUNDATION", progress: 30,
+    href: "/cong-cu/toi-uu-he-thong", statusNote: "Chức năng 13 hợp nhất — System Learning & Operations Optimizer",
+  },
+] as const
+
 // ── Registry ───────────────────────────────────────────────────────
 
 export const TOOLKIT_GROUPS: readonly ToolGroup[] = [
@@ -421,18 +442,25 @@ export const TOOLKIT_GROUPS: readonly ToolGroup[] = [
     icon: "Building2",
     tools: GROUP_8_TOOLS,
   },
+  {
+    groupNumber: 9,
+    name: "Tối ưu hóa và học máy hệ thống",
+    objective: "Học từ lịch sử sử dụng của tiệm và đề xuất cách cải tiến hiệu quả kinh doanh",
+    icon: "Brain",
+    tools: GROUP_9_TOOLS,
+  },
 ] as const
 
 // ── Helpers ────────────────────────────────────────────────────────
 
-/** Trả tất cả 48 công cụ flat */
+/** Trả tất cả công cụ flat */
 export function getAllTools(): ToolDefinition[] {
   return TOOLKIT_GROUPS.flatMap((g) => [...g.tools])
 }
 
 /**
  * Lọc nhóm + công cụ theo môi trường:
- * - Dev: toàn bộ 48 chức năng
+ * - Dev: toàn bộ 51 chức năng phân 9 nhóm
  * - Prod: chỉ hiện chức năng DONE
  */
 export function getVisibleGroups(isDev: boolean): ToolGroup[] {

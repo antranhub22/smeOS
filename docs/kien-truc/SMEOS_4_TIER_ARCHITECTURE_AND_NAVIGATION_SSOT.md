@@ -560,10 +560,16 @@ nhom_1:
       href: "/cong-cu"
       icon: "LayoutGrid"
       navKey: "toolkit"
-      mo_ta: "Thư viện 48 công cụ đa năng (Bán hàng, AI & Sáng tạo, Sản phẩm, Ấn phẩm, Tiện ích)"
+      mo_ta: "Thư viện công cụ đa năng (Bán hàng, AI & Sáng tạo, Sản phẩm, Ấn phẩm, Tiện ích)"
+    - label: "Chế tác tự động A-Z"
+      href: "/creative-studio"
+      icon: "Sparkles"
+      navKey: "auto-campaign"
+      capability: "I1"
+      mo_ta: "Quy trình AI tự động trọn gói từ 1 ảnh thô ra bộ tư liệu bán hàng đa kênh"
     - label: "Thẻ chào sản phẩm"
       href: "/the-chao"
-      icon: "Sparkles"
+      icon: "CreditCard"
       navKey: "greeting-card"
       capability: "R1"
       mo_ta: "Tạo link thẻ chào kèm báo giá gửi khách duyệt mẫu và đặt cọc nhanh"
@@ -580,7 +586,7 @@ nhom_1:
       capability: "H1"
       mo_ta: "Trợ lý AI phân tích thành phần nguyên liệu từ ảnh chụp mẫu"
     - label: "Tạo ảnh sản phẩm"
-      href: "/creative-studio"
+      href: "/cong-cu/anh-san-pham"
       icon: "Wand2"
       navKey: "creative-studio"
       capability: "I1"
@@ -597,6 +603,12 @@ nhom_1:
       navKey: "content"
       capability: "I1"
       mo_ta: "Trợ lý AI viết bài đăng mạng xã hội chuẩn văn phong thương hiệu tiệm"
+    - label: "Xu hướng & Cơ hội thị trường"
+      href: "/cong-cu/thi-truong"
+      icon: "TrendingUp"
+      navKey: "market-trends"
+      capability: "I1"
+      mo_ta: "Khám phá xu hướng thiết kế, chủ đề hot và cơ hội mùa vụ cho tiệm"
     - label: "Kho mẫu & Ấn phẩm"
       href: "/kho-templates"
       icon: "LayoutTemplate"
@@ -608,6 +620,12 @@ nhom_1:
       navKey: "pricing"
       capability: "L6"
       mo_ta: "Công cụ tính giá vốn theo nguyên vật liệu và biên lợi nhuận của tiệm"
+    - label: "Trợ lý Tối ưu Tác nghiệp"
+      href: "/cong-cu/toi-uu-he-thong"
+      icon: "Brain"
+      navKey: "system-optimizer"
+      capability: "L6"
+      mo_ta: "Học thói quen tác nghiệp và đề xuất cải tiến sử dụng toàn bộ công cụ"
 
 nhom_2:
   key: "ban-hang"
@@ -778,6 +796,14 @@ nhom_5:
    - Việc bật/tắt hay nâng cấp một công cụ áp dụng tức thì xuống các tầng dưới theo ngành hàng (`industryKey`) và cấp độ tổ chức (`organizationType`).
 3. **Tiêu thụ Động theo Tầng (Dynamic Tier Projection):**
    - Các thanh sidebar của **SaaS Ngành (Tầng 2)**, **ChainOS (Tầng 3)**, và **StoreOS (Tầng 4)** sử dụng hàm chiếu `getSidebarToolsForTier(tier)` từ SSOT Registry để tự động lọc và hiển thị đúng các công cụ được chỉ định cho tầng đó mà không phụ thuộc vào mã nguồn cứng.
+
+#### 4.7.2 Hợp Nhất Hệ Thống 14 Chặng & Bộ Công Cụ (PO Decision 27/10/2026):
+Theo quyết định phê chuẩn của PO, hệ thống triệt tiêu hoàn toàn sự phân mảnh giữa chuỗi 14 chặng Product-to-Market và Danh mục công cụ:
+- **Chuỗi 14 chặng $\rightarrow$ Auto-Campaign Workflow Tool:** Đóng gói toàn bộ pipeline 14 chặng thành một **Công cụ Chế tác Tự động từ A-Z** (`/creative-studio`), tận dụng use-case `planProduction()` và modal handoff tự động hóa có sẵn.
+- **Chức năng 03 $\rightarrow$ Tool Nghiên cứu Thị trường & Xu hướng:** Độc lập hóa Chặng 03 thành công cụ tra cứu xu hướng và cơ hội kinh doanh theo mùa vụ (`/cong-cu/thi-truong`).
+- **Chức năng 13 $\rightarrow$ Tool Trợ lý Học & Tối ưu Tác nghiệp:** Độc lập hóa Chặng 13 thành công cụ học máy, nhận diện thói quen và đề xuất giải pháp tối ưu tác nghiệp (`/cong-cu/toi-uu-he-thong`).
+- **Chức năng 14 $\rightarrow$ Universal Next Action Component:** Chuẩn hóa Chặng 14 thành component dùng chung `NextActionCard` tích hợp ở cuối trang kết quả của MỌI công cụ trong hệ thống.
+Chi tiết xem văn bản SSOT cấp 2: [`docs/kien-truc/QUY_CHUAN_HOP_NHAT_14_CHANG_VA_BO_CONG_CU_SSOT.md`](file:///Users/tuan/Projects/smeOS/docs/kien-truc/QUY_CHUAN_HOP_NHAT_14_CHANG_VA_BO_CONG_CU_SSOT.md).
 
 ### 4.8 KIẾN TRÚC SSOT SẢN PHẨM & KHO (PRODUCT & INVENTORY SSOT ARCHITECTURE)
 

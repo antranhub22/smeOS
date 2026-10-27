@@ -79,12 +79,38 @@ export default function ThemPage() {
   const [dangGui, setDangGui] = useState(false)
 
   const navView = useMemo(
-    () => buildNav(can, roleUx, organization?.industry, organization?.navHiddenKeys),
-    [can, roleUx, organization?.industry, organization?.navHiddenKeys]
+    () =>
+      buildNav(
+        can,
+        roleUx,
+        organization?.industry,
+        organization?.navHiddenKeys,
+        undefined,
+        organization?.unlockedTools
+      ),
+    [
+      can,
+      roleUx,
+      organization?.industry,
+      organization?.navHiddenKeys,
+      organization?.unlockedTools,
+    ]
   )
   const slot2 = useMemo(
-    () => mobileSecondSlot(can, roleUx, organization?.industry, organization?.navHiddenKeys),
-    [can, roleUx, organization?.industry, organization?.navHiddenKeys]
+    () =>
+      mobileSecondSlot(
+        can,
+        roleUx,
+        organization?.industry,
+        organization?.navHiddenKeys,
+        undefined
+      ),
+    [
+      can,
+      roleUx,
+      organization?.industry,
+      organization?.navHiddenKeys,
+    ]
   )
   const canApprove = can("H3") || can("I2")
 

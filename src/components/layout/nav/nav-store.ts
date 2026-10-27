@@ -14,17 +14,26 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   // 01 · CÔNG CỤ
   {
     href: "/cong-cu",
-    label: "Thư viện công cụ",
+    label: "Thư viện 51 công cụ (9 nhóm)",
     group: "cong-cu",
     iconKey: "LayoutGrid",
     navKey: "toolkit",
     mobileLabel: "Công cụ",
   },
   {
+    href: "/creative-studio",
+    label: "Chế tác tự động A-Z",
+    group: "cong-cu",
+    iconKey: "Sparkles",
+    navKey: "creative-studio",
+    capability: "I1",
+    mobileLabel: "Tự động A-Z",
+  },
+  {
     href: "/the-chao",
     label: "Thẻ chào sản phẩm",
     group: "cong-cu",
-    iconKey: "Sparkles",
+    iconKey: "CreditCard",
     navKey: "greeting-card",
     capability: "R1",
     mobileLabel: "Thẻ chào",
@@ -48,15 +57,6 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Quét ảnh",
   },
   {
-    href: "/creative-studio",
-    label: "Tạo ảnh sản phẩm",
-    group: "cong-cu",
-    iconKey: "Wand2",
-    navKey: "creative-studio",
-    capability: "I1",
-    mobileLabel: "Tạo ảnh",
-  },
-  {
     href: "/video",
     label: "Tạo video",
     group: "cong-cu",
@@ -75,12 +75,30 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Nội dung",
   },
   {
+    href: "/market-intelligence",
+    label: "Xu hướng & Cơ hội thị trường",
+    group: "cong-cu",
+    iconKey: "TrendingUp",
+    navKey: "market-intel",
+    capability: "I1",
+    mobileLabel: "Xu hướng",
+  },
+  {
     href: "/kho-templates",
     label: "Kho mẫu & Ấn phẩm",
     group: "cong-cu",
     iconKey: "LayoutTemplate",
     navKey: "templates",
     mobileLabel: "Kho mẫu",
+  },
+  {
+    href: "/cong-cu/toi-uu-he-thong",
+    label: "Trợ lý Tối ưu Tác nghiệp",
+    group: "cong-cu",
+    iconKey: "Brain",
+    navKey: "system-optimizer",
+    capability: "L6",
+    mobileLabel: "Tối ưu",
   },
 
 
@@ -169,15 +187,6 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "pricing",
     capability: "L6",
     mobileLabel: "Tính giá",
-  },
-  {
-    href: "/market-intelligence",
-    label: "Thị trường & Giá cả",
-    group: "kho",
-    iconKey: "TrendingUp",
-    navKey: "market-intel",
-    capability: "V2",
-    mobileLabel: "Thị trường",
   },
 
   // 04 · VẬN HÀNH
@@ -312,13 +321,24 @@ export function buildStoreNav(
   can: (code: string) => boolean,
   role: RoleUxDefinition | null,
   industryKey?: string | null,
-  navHiddenKeys?: string[] | null
+  navHiddenKeys?: string[] | null,
+  unlockedToolKeys?: string[] | null
 ): NavView {
   const baseEntries = adaptStoreEntries(industryKey)
   const extraHidden = new Set<string>(navHiddenKeys ?? [])
-  const entries = extraHidden.size > 0
-    ? baseEntries.filter((e) => !extraHidden.has(e.navKey))
-    : baseEntries
+  const hasWhitelist = unlockedToolKeys && unlockedToolKeys.length > 0
+  const allowedWhitelist = new Set<string>(unlockedToolKeys ?? [])
+
+  const entries = baseEntries.filter((e) => {
+    // 1. Kiểm tra nếu bị ẩn theo ma trận ngành / cấp trên
+    if (extraHidden.has(e.navKey)) return false
+    // 2. Nếu có danh sách Whitelist từ cấp trên -> các công cụ thuộc nhóm cong-cu phải được duyệt
+    // (riêng mục thư viện cố định 'toolkit' luôn mở)
+    if (hasWhitelist && e.group === "cong-cu" && e.navKey !== "toolkit") {
+      return allowedWhitelist.has(e.navKey)
+    }
+    return true
+  })
   const isAccessible = (item: NavEntry) => !item.capability || can(item.capability)
 
   const pinnedHrefs = new Set<string>()

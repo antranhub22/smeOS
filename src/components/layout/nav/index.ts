@@ -48,7 +48,8 @@ export function buildNav(
   role: RoleUxDefinition | null,
   industryKey?: string | null,
   navHiddenKeys?: string[] | null,
-  organizationType?: string | null
+  organizationType?: string | null,
+  unlockedToolKeys?: string[] | null
 ): NavView {
   // Tầng 2: SaaS Ngành (Affiliate & Standardization Hub)
   if (
@@ -73,7 +74,7 @@ export function buildNav(
   }
 
   // Tầng 4: StoreOS (Cửa hàng cơ sở)
-  return buildStoreNav(can, role, industryKey, navHiddenKeys)
+  return buildStoreNav(can, role, industryKey, navHiddenKeys, unlockedToolKeys)
 }
 
 /**

@@ -7,8 +7,10 @@
 import { ChevronDown, BarChart3 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { NavEntry, NavGroup as NavGroupType } from "./nav-model"
+import { isToolkitGroupKey } from "./nav/nav-types"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { NAV_ICONS as ICONS } from "./nav-icons"
+import { ToolkitShortcutsGroup } from "./toolkit-shortcuts-group"
 
 export interface DesktopNavGroupProps {
   group: NavGroupType
@@ -16,6 +18,13 @@ export interface DesktopNavGroupProps {
   expanded: boolean
   pathname: string
   reportsOpen: boolean
+  /** ID tổ chức hiện tại — dùng để lưu shortcuts per-org */
+  orgId?: string | null | undefined
+  /**
+   * Toàn bộ NavEntry từ mọi nhóm (đã lọc qua capability) — dùng cho picker shortcuts.
+   * Chỉ cần khi nhóm là ToolkitGroupKey.
+   */
+  allNavEntries?: NavEntry[]
   onToggleGroup: (key: string, current: boolean) => void
   onToggleReports: (next: boolean) => void
   onNavigate: (href: string) => void
@@ -27,12 +36,49 @@ export function DesktopNavGroup({
   expanded,
   pathname,
   reportsOpen,
+  orgId,
+  allNavEntries,
   onToggleGroup,
   onToggleReports,
   onNavigate,
 }: DesktopNavGroupProps) {
   const isActive = (entry: NavEntry) =>
     pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
+
+  // ── Nhóm Công cụ (StoreOS: "cong-cu", ChainOS: "cong-cu-chuoi", SaaS Ngành: "cong-cu-ban-hang") ───────
+  if (isToolkitGroupKey(group.key)) {
+    const libraryEntry =
+      group.entries.find(
+        (e) =>
+          e.navKey === "toolkit" ||
+          e.navKey === "chain-toolkit" ||
+          e.navKey === "industry-toolkit" ||
+          e.href === "/cong-cu"
+      ) ?? group.entries[0]!
+
+    const toolEntries = group.entries.filter(
+      (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey
+    )
+    // allNavEntries trừ Thư viện — dùng cho picker để hiển thị toàn bộ công cụ
+    const pickerSource = (allNavEntries ?? toolEntries).filter(
+      (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey
+    )
+    return (
+      <ToolkitShortcutsGroup
+        groupKey={group.key}
+        groupLabel={group.label}
+        libraryEntry={libraryEntry}
+        toolEntries={toolEntries}
+        allNavEntries={pickerSource}
+        collapsed={collapsed}
+        expanded={expanded}
+        pathname={pathname}
+        orgId={orgId}
+        onNavigate={onNavigate}
+        onToggleGroup={onToggleGroup}
+      />
+    )
+  }
 
   // ── Collapsed: chỉ hiện icon stack ──────────────────────────
   if (collapsed) {

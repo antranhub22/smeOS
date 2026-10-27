@@ -19,9 +19,11 @@ import {
 } from "lucide-react"
 import type { ChainPartnershipEntity } from "@/modules/chain-partnership/domain/partnership-entities"
 import Link from "next/link"
+import { PartnerToolMatrixModal } from "@/components/organization/partner-tool-matrix-modal"
 
 export default function ChainPartnersPage() {
   const [partners, setPartners] = useState<ChainPartnershipEntity[]>([])
+  const [selectedToolPartner, setSelectedToolPartner] = useState<ChainPartnershipEntity | null>(null)
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [showModal, setShowModal] = useState(false)
@@ -251,11 +253,20 @@ export default function ChainPartnersPage() {
               </div>
 
               <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedToolPartner(p)}
+                  className="flex-1 py-2 bg-neutral-100 hover:bg-neutral-200/80 text-neutral-800 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-rose-600" />
+                  <span>Phân quyền công cụ</span>
+                </button>
                 <Link
                   href={"/tin-nhan" as any}
-                  className="flex-1 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                  className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-semibold flex items-center justify-center transition-colors"
+                  title="Nhắn tin nội bộ"
                 >
-                  <MessageSquare className="w-3.5 h-3.5" /> Nhắn tin nội bộ
+                  <MessageSquare className="w-3.5 h-3.5" />
                 </Link>
                 <Link
                   href="/dieu-phoi"
@@ -267,6 +278,26 @@ export default function ChainPartnersPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Modal Phân quyền Công cụ Chi nhánh */}
+      {selectedToolPartner && (
+        <PartnerToolMatrixModal
+          partnerId={selectedToolPartner.id}
+          partnerName={selectedToolPartner.partnerOrgName || "Cửa hàng đối tác"}
+          partnerCode={selectedToolPartner.partnerCode}
+          initialUnlockedTools={selectedToolPartner.unlockedTools}
+          onClose={() => setSelectedToolPartner(null)}
+          onSuccess={(updatedTools) => {
+            setPartners((prev) =>
+              prev.map((item) =>
+                item.id === selectedToolPartner.id
+                  ? { ...item, unlockedTools: updatedTools }
+                  : item
+              )
+            )
+          }}
+        />
       )}
 
       {/* Modal Thêm Đối tác */}

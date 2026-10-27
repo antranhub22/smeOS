@@ -69,8 +69,29 @@ export function DesktopNav({
 
   // ── Nav data ───────────────────────────────────────────────────
   const navView = useMemo(
-    () => buildNav(can, roleUx, organization?.industry, organization?.navHiddenKeys, organizationType),
-    [can, roleUx, organization?.industry, organization?.navHiddenKeys, organizationType]
+    () =>
+      buildNav(
+        can,
+        roleUx,
+        organization?.industry,
+        organization?.navHiddenKeys,
+        organizationType,
+        organization?.unlockedTools
+      ),
+    [
+      can,
+      roleUx,
+      organization?.industry,
+      organization?.navHiddenKeys,
+      organizationType,
+      organization?.unlockedTools,
+    ]
+  )
+
+  // Toàn bộ entries đã lọc (capability + hidden) — nguồn cho picker shortcuts
+  const allNavEntries = useMemo(
+    () => navView.groups.flatMap((g) => g.entries),
+    [navView]
   )
 
   // ── Hydrate from localStorage ──────────────────────────────────
@@ -287,6 +308,8 @@ export function DesktopNav({
               expanded={isGroupExpanded(group)}
               pathname={pathname}
               reportsOpen={reportsOpen}
+              orgId={orgId}
+              allNavEntries={allNavEntries}
               onToggleGroup={(key, current) => toggleGroup(key, current)}
               onToggleReports={toggleReports}
               onNavigate={navigateTo}

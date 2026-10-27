@@ -47,6 +47,8 @@ import {
   Lock,
   Network,
   DollarSign,
+  Brain,
+  Calculator,
 } from "lucide-react"
 
 export type NavIconComponent = LucideIcon
@@ -99,4 +101,6 @@ export const NAV_ICONS: Record<string, LucideIcon> = {
   Lock,
   Network,
   DollarSign,
+  Brain,
+  Calculator,
 }
