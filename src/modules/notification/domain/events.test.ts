@@ -3,7 +3,8 @@ import {
   getAllNotificationEvents,
   getNotificationEvent,
   getEventsByTier,
-} from "./events"
+  getDefaultVisibleEvents,
+} from "./events/index"
 
 describe("Notification Event Registry", () => {
   it("nạp thành công toàn bộ sự kiện từ 4 tầng mà không có duplicate key", () => {
@@ -46,5 +47,10 @@ describe("Notification Event Registry", () => {
     expect(evt).toBeDefined()
     expect(evt?.tier).toBe("STORE")
     expect(evt?.group).toBe("ORDER")
+  })
+
+  it("getDefaultVisibleEvents trả về đầy đủ sự kiện cho STORE", () => {
+    const storeVisible = getDefaultVisibleEvents("STORE")
+    expect(storeVisible.length).toBeGreaterThan(15)
   })
 })

@@ -72,6 +72,8 @@ export interface NotificationMatrixProps {
   onRemoveHardLock?: ((eventKey: string, channel: NotifyChannel) => Promise<void>) | undefined
   /** Loading state */
   loading?: boolean | undefined
+  /** Error message nếu events API fail */
+  error?: string | null | undefined
 }
 
 /** Label tiếng Việt cho các nhóm sự kiện */

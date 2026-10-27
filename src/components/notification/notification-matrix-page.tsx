@@ -16,6 +16,8 @@ import {
   Shield,
   Lock,
   Sparkles,
+  AlertTriangle,
+  RefreshCw,
 } from "lucide-react"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
@@ -42,6 +44,7 @@ export function NotificationMatrixPage({
   onToggleHardLock,
   onRemoveHardLock,
   loading = false,
+  error,
 }: NotificationMatrixProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedGroup, setSelectedGroup] = useState<NotificationEventGroup | "ALL">("ALL")
@@ -102,6 +105,27 @@ export function NotificationMatrixPage({
     () => [...new Set(sections.map((s) => s.groupKey))],
     [sections]
   )
+
+  if (error) {
+    return (
+      <div className="flex flex-col gap-6 p-6 max-w-7xl mx-auto w-full">
+        <div className="flex items-start gap-3 p-5 rounded-2xl border border-destructive/30 bg-destructive/5">
+          <AlertTriangle size={20} className="text-destructive mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <p className="text-body font-semibold text-text">Không tải được ma trận thông báo</p>
+            <p className="text-caption text-text-muted mt-1">{error}</p>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-border text-caption text-text hover:bg-surface-alt transition-colors"
+          >
+            <RefreshCw size={12} />
+            Thử lại
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   if (loading) {
     return (

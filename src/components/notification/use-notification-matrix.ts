@@ -22,22 +22,28 @@ import type {
   NotificationEventDefinition,
 } from "@/modules/notification/domain/events/_contract"
 
-/** Shape trả về từ API */
+/**
+ * Shape trả về từ API hard-locks — camelCase
+ * Match với HardLockEntry domain type trong cascading-policy.ts
+ */
 interface HardLockRecord {
-  event_key: string
+  eventKey: string
   channel: string
   tier: string
-  scope_id: string
+  scopeId: string
   enabled: boolean
   reason?: string
 }
 
+/**
+ * Shape trả về từ API policy/defaults — camelCase
+ * Match với PreferenceRecord domain type trong cascading-policy.ts
+ */
 interface PolicyRecord {
-  event_key: string
+  eventKey: string
   channel: string
-  role_key: string
   enabled: boolean
-  priority_override?: string
+  priority?: string
 }
 
 interface UseNotificationMatrixParams {
@@ -115,15 +121,12 @@ export function useNotificationMatrix({
   // Fetch active channels
   const channelsRes = useApi<{ data: Record<string, boolean> }>(paths.channels)
 
-  const loading =
-    eventsRes.isLoading || hardLocksRes.isLoading || policyRes.isLoading || channelsRes.isLoading
+  // Chỉ báo loading khi events chưa có (quan trọng nhất)
+  const loading = eventsRes.isLoading
 
-  const error =
-    eventsRes.error?.message ??
-    hardLocksRes.error?.message ??
-    policyRes.error?.message ??
-    channelsRes.error?.message ??
-    null
+  // Chỉ báo critical error khi events API fail
+  // Policy/hardlocks errors được tolerate — fallback về defaults
+  const error = eventsRes.error?.message ?? null
 
   const activeChannels = useMemo<NotifyChannel[]>(() => {
     const raw = channelsRes.data?.data
@@ -135,6 +138,7 @@ export function useNotificationMatrix({
   // Build matrix sections
   const sections = useMemo<MatrixEventGroupSection[]>(() => {
     const events = eventsRes.data?.data ?? []
+    // Tolerate errors: fallback về empty array nếu API phụ fail
     const hardLocks = hardLocksRes.data?.data ?? []
     const policies = policyRes.data?.data ?? []
 
@@ -147,14 +151,14 @@ export function useNotificationMatrix({
       const channels: Record<string, MatrixCellState> = {}
 
       for (const ch of activeChannels) {
-        // Find hard lock
+        // Find hard lock (camelCase fields)
         const lock = hardLocks.find(
-          (l) => l.event_key === evt.key && l.channel === ch
+          (l) => l.eventKey === evt.key && l.channel === ch
         )
 
-        // Find policy
+        // Find policy (camelCase fields)
         const pol = policies.find(
-          (p) => p.event_key === evt.key && p.channel === ch
+          (p) => p.eventKey === evt.key && p.channel === ch
         )
 
         // Determine hard lock status
@@ -172,7 +176,7 @@ export function useNotificationMatrix({
           eventKey: evt.key,
           channel: ch as NotifyChannel,
           enabled: lock ? lock.enabled : (pol?.enabled ?? getDefaultEnabled(evt, ch)),
-          priority: (pol?.priority_override as MatrixCellState["priority"]) ?? "NORMAL",
+          priority: (pol?.priority as MatrixCellState["priority"]) ?? "NORMAL",
           decidedBy: lock ? `HARD_LOCK_${lock.tier}` : (pol ? viewerTier : "SYSTEM_DEFAULT"),
           hardLockedBy,
           hardLockReason,

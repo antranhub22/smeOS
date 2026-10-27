@@ -31,6 +31,7 @@ export function TierNotificationMatrixClient({
     sections,
     activeChannels,
     loading,
+    error,
     toggleCell,
     toggleHardLock,
     removeHardLock,
@@ -52,6 +53,7 @@ export function TierNotificationMatrixClient({
       onToggleHardLock={toggleHardLock}
       onRemoveHardLock={removeHardLock}
       loading={loading}
+      error={error}
     />
   )
 }
