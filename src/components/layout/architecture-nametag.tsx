@@ -69,7 +69,21 @@ export function ArchitectureNametag({ isDev = false }: Props) {
     const industryKey = (organization?.industry || "FLORAL").toUpperCase()
     const industryShort = INDUSTRY_SHORT_NAME[industryKey] || "Sản phẩm"
 
-    // 2. ChainOS
+    // 2. SaaS Ngành (Tầng 2)
+    const isIndustry =
+      organizationType === "INDUSTRY" ||
+      roleKey === "industry_admin"
+
+    if (isIndustry) {
+      return {
+        label: `SaaS Ngành • ${industryShort}`,
+        title: `Hệ điều hành Chuẩn hóa & Mạng lưới Ngành`,
+        badgeClass:
+          "bg-teal-50 text-teal-700 border-teal-200/90 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-800/50",
+      }
+    }
+
+    // 3. ChainOS (Tầng 3)
     const isChain =
       organizationType === "FLOWER_NETWORK" ||
       organizationType === "CHAIN" ||
@@ -85,7 +99,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
       }
     }
 
-    // 3. StoreOS
+    // 4. StoreOS (Tầng 4)
     return {
       label: `StoreOS • ${industryShort}`,
       title: `Hệ điều hành Cửa hàng Cơ sở`,

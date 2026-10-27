@@ -61,11 +61,11 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Studio AI",
   },
 
-  // 3. CHUẨN HÓA NGÀNH
+  // 3. SẢN PHẨM & DANH MỤC NGHÀNH
   {
     href: "/san-pham",
     label: "Danh mục & Sản phẩm mẫu",
-    group: "chuan-hoa-nganh",
+    group: "san-pham-nganh",
     iconKey: "Package",
     navKey: "industry-products",
     capability: "L1",
@@ -74,7 +74,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   {
     href: "/van-hanh/nganh",
     label: "Taxonomy & Quy chuẩn",
-    group: "chuan-hoa-nganh",
+    group: "san-pham-nganh",
     iconKey: "Layers",
     navKey: "industry-taxonomy",
     mobileLabel: "Quy chuẩn",
@@ -82,10 +82,19 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   {
     href: "/van-hanh/truong-du-lieu",
     label: "Trường dữ liệu ngành",
-    group: "chuan-hoa-nganh",
+    group: "san-pham-nganh",
     iconKey: "SlidersHorizontal",
     navKey: "industry-fields",
     mobileLabel: "Trường",
+  },
+  {
+    href: "/gia",
+    label: "Chính sách giá & Chiết khấu ngành",
+    group: "san-pham-nganh",
+    iconKey: "WalletCards",
+    navKey: "industry-pricing",
+    capability: "L6",
+    mobileLabel: "Giá ngành",
   },
 
   // 4. MẠNG LƯỚI & ĐIỀU PHỐI
@@ -168,7 +177,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
 export const INDUSTRY_GROUPS_CONFIG = [
   { key: "trung-tam-dieu-hanh", label: "Trung tâm Điều hành" },
   { key: "cong-cu-ban-hang", label: "Công cụ Bán hàng" },
-  { key: "chuan-hoa-nganh", label: "Chuẩn hóa Ngành" },
+  { key: "san-pham-nganh", label: "Sản phẩm & Danh mục Ngành" },
   { key: "mang-luoi-dieu-phoi", label: "Mạng lưới & Điều phối" },
   { key: "hieu-qua-thuong-mai", label: "Hiệu quả Thương mại" },
   { key: "thiet-lap-nganh", label: "Thiết lập" },

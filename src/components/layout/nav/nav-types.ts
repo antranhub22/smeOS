@@ -52,6 +52,12 @@ export type NavGroupKey =
   | "mang-luoi-chi-nhanh"
   | "bo-suu-tap-chuoi"
   | "doi-soat-chuoi"
+  // Tầng 1: SaaS Mother — Sản phẩm & Kho
+  | "san-pham-kho-platform"
+  // Tầng 2: SaaS Ngành — Sản phẩm & Kho
+  | "san-pham-nganh"
+  // Tầng 3: ChainOS — Sản phẩm & Kho
+  | "san-pham-kho-chuoi"
   // Tầng 4: StoreOS (Không gian làm việc cửa hàng)
   | "cong-cu"
   | "quan-tri"
@@ -63,6 +69,7 @@ export type NavGroupKey =
   | "san-pham-kho-tiem"
   | "marketing-tiem"
   | "so-quy-cai-dat"
+  | "kho"
 
 export interface NavEntry {
   href: string

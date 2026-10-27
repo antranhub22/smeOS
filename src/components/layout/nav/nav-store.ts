@@ -82,15 +82,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "templates",
     mobileLabel: "Kho mẫu",
   },
-  {
-    href: "/gia",
-    label: "Tính giá thành",
-    group: "cong-cu",
-    iconKey: "WalletCards",
-    navKey: "pricing",
-    capability: "L6",
-    mobileLabel: "Tính giá",
-  },
+
 
   // 02 · BÁN HÀNG & KHÁCH HÀNG
   {
@@ -121,7 +113,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Hội thoại",
   },
 
-  // 03 · SẢN PHẨM & NGUỒN LỰC
+  // 03 · SẢN PHẨM
   {
     href: "/san-pham",
     label: "Danh mục sản phẩm",
@@ -138,7 +130,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     iconKey: "Sparkles",
     navKey: "create-product",
     capability: "L2",
-    mobileLabel: "Tạo mẫu",
+    mobileLabel: "Tạo mới",
   },
   {
     href: "/san-pham/nhap-hang-loat",
@@ -158,14 +150,34 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     capability: "L1",
     mobileLabel: "Khả dụng",
   },
+
+  // 04 · KHO & NGUYÊN LIỆU
   {
     href: "/kho-du-lieu",
     label: "Kho & Nguyên liệu",
-    group: "san-pham",
+    group: "kho",
     iconKey: "Folder",
     navKey: "storage",
     capability: "G1",
     mobileLabel: "Kho",
+  },
+  {
+    href: "/gia",
+    label: "Công thức BOM & Tính giá",
+    group: "kho",
+    iconKey: "Calculator",
+    navKey: "pricing",
+    capability: "L6",
+    mobileLabel: "Tính giá",
+  },
+  {
+    href: "/market-intelligence",
+    label: "Thị trường & Giá cả",
+    group: "kho",
+    iconKey: "TrendingUp",
+    navKey: "market-intel",
+    capability: "V2",
+    mobileLabel: "Thị trường",
   },
 
   // 04 · VẬN HÀNH
@@ -254,9 +266,10 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
 export const NAV_GROUP_CONFIG = [
   { key: "cong-cu", label: "01 · CÔNG CỤ" },
   { key: "ban-hang", label: "02 · BÁN HÀNG & KHÁCH" },
-  { key: "san-pham", label: "03 · SẢN PHẨM & KHO" },
-  { key: "van-hanh", label: "04 · VẬN HÀNH" },
-  { key: "quan-tri", label: "05 · QUẢN TRỊ TIỆM" },
+  { key: "san-pham", label: "03 · SẢN PHẨM" },
+  { key: "kho", label: "04 · KHO & NGUYÊN LIỆU" },
+  { key: "van-hanh", label: "05 · VẬN HÀNH" },
+  { key: "quan-tri", label: "06 · QUẢN TRỊ TIỆM" },
 ] as const
 
 function adaptStoreEntries(industryKey?: string | null): readonly NavEntry[] {
