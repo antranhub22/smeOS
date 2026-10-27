@@ -74,17 +74,17 @@ function getApiPaths(tier: MatrixViewerTier): {
     case "INDUSTRY":
     case "CHAIN":
       return {
-        events: "/api/v1/notification/org-policy",
+        events: `/api/v1/notification/events?tier=${tier}`,
         policy: "/api/v1/notification/org-policy",
         hardLocks: "/api/v1/notification/org-hard-locks",
-        channels: "/api/v1/platform/notification/channels",
+        channels: "/api/v1/notification/channels",
       }
     case "STORE":
       return {
-        events: "/api/v1/notification/store-defaults",
+        events: "/api/v1/notification/events?tier=STORE",
         policy: "/api/v1/notification/store-defaults",
         hardLocks: "/api/v1/notification/store-hard-locks",
-        channels: "/api/v1/platform/notification/channels",
+        channels: "/api/v1/notification/channels",
       }
   }
 }
@@ -113,7 +113,7 @@ export function useNotificationMatrix({
   const policyRes = useApi<{ data: PolicyRecord[] }>(paths.policy)
 
   // Fetch active channels
-  const channelsRes = useApi<{ data: { channels?: NotifyChannel[] } }>(paths.channels)
+  const channelsRes = useApi<{ data: Record<string, boolean> }>(paths.channels)
 
   const loading =
     eventsRes.isLoading || hardLocksRes.isLoading || policyRes.isLoading || channelsRes.isLoading
@@ -125,10 +125,12 @@ export function useNotificationMatrix({
     channelsRes.error?.message ??
     null
 
-  const activeChannels = useMemo<NotifyChannel[]>(
-    () => channelsRes.data?.data?.channels ?? DEFAULT_CHANNELS,
-    [channelsRes.data]
-  )
+  const activeChannels = useMemo<NotifyChannel[]>(() => {
+    const raw = channelsRes.data?.data
+    if (!raw || Object.keys(raw).length === 0) return DEFAULT_CHANNELS
+    const active = (Object.keys(raw) as NotifyChannel[]).filter((ch) => raw[ch] === true)
+    return active.length > 0 ? active : DEFAULT_CHANNELS
+  }, [channelsRes.data])
 
   // Build matrix sections
   const sections = useMemo<MatrixEventGroupSection[]>(() => {

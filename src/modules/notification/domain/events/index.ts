@@ -61,13 +61,17 @@ export function getEventsByTier(tier: NotificationTier): NotificationEventDefini
 /**
  * Lấy events mà một tầng có quyền thấy (Visibility).
  * Mother luôn thấy tất cả.
- * Các tầng khác chỉ thấy events có defaultVisibleToTiers chứa tier đó.
+ * Các tầng khác luôn thấy:
+ * 1. Sự kiện do chính tầng đó sở hữu (e.tier === tier)
+ * 2. Sự kiện tầng trên cho phép hiển thị xuống (defaultVisibleToTiers chứa tier đó)
  * (Visibility có thể bị override bởi notification_event_visibility DB table)
  */
 export function getDefaultVisibleEvents(tier: NotificationTier): NotificationEventDefinition[] {
   if (tier === "MOTHER") return listAllEvents()
   return _allEvents.filter(
-    (e) => !e.deprecated && e.defaultVisibleToTiers.includes(tier as NotificationSubTier)
+    (e) =>
+      !e.deprecated &&
+      (e.tier === tier || e.defaultVisibleToTiers.includes(tier as NotificationSubTier))
   )
 }
 
