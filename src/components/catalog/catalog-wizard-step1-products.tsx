@@ -70,7 +70,7 @@ export function CatalogWizardStep1Products({
             onClick={() => onQuickPreset("all")}
             className="text-caption hover:border-primary"
           >
-            🌸 Toàn bộ sản phẩm ({activeProducts.length} mẫu)
+            ✨ Toàn bộ sản phẩm ({activeProducts.length} mẫu)
           </Button>
           <Button
             type="button"
@@ -99,7 +99,7 @@ export function CatalogWizardStep1Products({
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tìm theo tên hoặc mã hoa..."
+            placeholder="Tìm theo tên hoặc mã sản phẩm..."
             className="text-body-sm h-9"
           />
           {availableOccasions.length > 0 && (

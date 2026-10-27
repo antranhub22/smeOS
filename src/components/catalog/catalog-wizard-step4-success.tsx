@@ -1,14 +1,32 @@
-"use client"
-
 import React, { useState } from "react"
-import { Check, Copy, ExternalLink, Download, Share2, Bot, Sparkles } from "lucide-react"
+import { Check, Copy, ExternalLink, Download, Share2, Bot, Sparkles, ImageDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CatalogPdfExportButton } from "./studio/catalog-pdf-export-button"
+import { CatalogImageExportButton } from "./studio/catalog-image-export-button"
+import type {
+  CatalogPageModel,
+  StyleDefinition,
+  BrandProfile,
+  CatalogProductItem,
+} from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 
 interface CatalogWizardStep4SuccessProps {
   publishedUrl: string
   publishedSlug: string
   onDownloadQR: () => Promise<void>
   downloadingQR?: boolean
+  pdfExportProps?: {
+    pages: CatalogPageModel[]
+    style: StyleDefinition
+    brand: BrandProfile
+    catalogTitle: string
+  }
+  imageExportProps?: {
+    products: CatalogProductItem[]
+    style: StyleDefinition
+    brand: BrandProfile
+    catalogTitle: string
+  }
 }
 
 export function CatalogWizardStep4Success({
@@ -16,6 +34,8 @@ export function CatalogWizardStep4Success({
   publishedSlug,
   onDownloadQR,
   downloadingQR = false,
+  pdfExportProps,
+  imageExportProps,
 }: CatalogWizardStep4SuccessProps) {
   const [copied, setCopied] = useState(false)
 
@@ -42,8 +62,8 @@ export function CatalogWizardStep4Success({
         </div>
       </div>
 
-      {/* Link & QR */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Link, QR, Ảnh Poster & PDF */}
+      <div className={`grid grid-cols-1 ${pdfExportProps || imageExportProps ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-2"} gap-4`}>
         <div className="rounded-xl border border-border bg-surface-alt/60 p-4 space-y-2">
           <div className="text-caption font-bold text-text-muted uppercase">Link xem trực tiếp</div>
           <div className="flex items-center gap-2">
@@ -71,7 +91,7 @@ export function CatalogWizardStep4Success({
         <div className="rounded-xl border border-border bg-surface-alt/60 p-4 flex items-center justify-between">
           <div>
             <div className="text-caption font-bold text-text-muted uppercase">Mã QR Catalog</div>
-            <p className="text-caption text-text-muted mt-1 max-w-[200px]">
+            <p className="text-caption text-text-muted mt-1 max-w-[180px]">
               Tải về để in thiệp hoặc để tại bàn thanh toán.
             </p>
           </div>
@@ -86,6 +106,50 @@ export function CatalogWizardStep4Success({
             <span>{downloadingQR ? "Đang tạo..." : "Tải ảnh QR"}</span>
           </Button>
         </div>
+
+        {/* Ảnh Poster gửi Zalo/Facebook */}
+        {imageExportProps && (
+          <div className="rounded-xl border border-primary-border bg-primary-muted/10 p-4 flex items-center justify-between">
+            <div>
+              <div className="text-caption font-bold text-primary uppercase flex items-center gap-1">
+                <ImageDown className="h-3.5 w-3.5" />
+                Ảnh Poster Zalo/FB
+              </div>
+              <p className="text-caption text-text-muted mt-1 max-w-[160px]">
+                Ảnh 1080×1080 gửi ngay qua Zalo, Facebook, Instagram.
+              </p>
+            </div>
+            <CatalogImageExportButton
+              products={imageExportProps.products}
+              style={imageExportProps.style}
+              brand={imageExportProps.brand}
+              catalogTitle={imageExportProps.catalogTitle}
+              catalogUrl={publishedUrl}
+              variant="outline"
+              size="sm"
+              className="border-primary text-primary"
+            />
+          </div>
+        )}
+
+        {pdfExportProps && (
+          <div className="rounded-xl border border-border bg-surface-alt/60 p-4 flex items-center justify-between">
+            <div>
+              <div className="text-caption font-bold text-text-muted uppercase">Bản In / File PDF</div>
+              <p className="text-caption text-text-muted mt-1 max-w-[160px]">
+                Xuất file PDF A4 chuẩn thiết kế 2026.
+              </p>
+            </div>
+            <CatalogPdfExportButton
+              pages={pdfExportProps.pages}
+              style={pdfExportProps.style}
+              brand={pdfExportProps.brand}
+              catalogTitle={pdfExportProps.catalogTitle}
+              variant="outline"
+              size="sm"
+            />
+          </div>
+        )}
       </div>
 
       {/* Next Best Actions (J3) */}
@@ -94,7 +158,7 @@ export function CatalogWizardStep4Success({
           <Sparkles className="h-4 w-4" />
           <span>Hành động đề xuất tiếp theo (Next Best Actions)</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <button
             type="button"
             onClick={() => {
@@ -105,8 +169,18 @@ export function CatalogWizardStep4Success({
           >
             <Share2 className="h-4 w-4 text-info mb-1.5" />
             <div className="text-body-sm font-bold text-text">Gửi link qua Zalo</div>
-            <div className="text-caption text-text-muted mt-0.5">Gửi nhanh cho khách quen xem hoa chọn mẫu.</div>
+            <div className="text-caption text-text-muted mt-0.5">Chia sẻ link cho khách xem trực tiếp trên điện thoại.</div>
           </button>
+
+          {imageExportProps && (
+            <div className="p-3.5 rounded-xl border border-primary-border bg-primary-muted/5 text-left">
+              <ImageDown className="h-4 w-4 text-primary mb-1.5" />
+              <div className="text-body-sm font-bold text-text">Ảnh đẹp gửi ngay Zalo</div>
+              <div className="text-caption text-text-muted mt-0.5">
+                Ảnh poster 1080px — gửi story, status Zalo OA như ảnh bình thường.
+              </div>
+            </div>
+          )}
 
           <button
             type="button"
@@ -115,7 +189,7 @@ export function CatalogWizardStep4Success({
           >
             <Download className="h-4 w-4 text-success mb-1.5" />
             <div className="text-body-sm font-bold text-text">In tem QR để bàn</div>
-            <div className="text-caption text-text-muted mt-0.5">Đặt tại quầy để khách quét menu hoa trên điện thoại.</div>
+            <div className="text-caption text-text-muted mt-0.5">Đặt tại quầy để khách quét xem menu sản phẩm.</div>
           </button>
 
           <div className="p-3.5 rounded-xl border border-border bg-surface text-left">

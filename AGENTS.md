@@ -207,7 +207,34 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 - **Cấm cỡ chữ tuỳ ý `text-[Npx]` (UX Lint R2, PO 29/09/2026)**: CẤM viết `text-[11px]`, `text-[10.5px]`, `text-[9px]`… trong className. BẮT BUỘC dùng thang token cỡ chữ chuẩn: 9–11.5px → `text-caption` (11px); 12–12.5px → `text-meta` (12px); 13px → `text-body-sm` (13px); 13.5–14px → `text-body` (13.5px); 14.5–15px → `text-title-sm` (14.5px); 16–18px → `text-title` (17px); 19–20px → `text-display` (20px). Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R2.
 - **Cấm mã kỹ thuật trên giao diện (UX Lint R8, PO 29/09/2026)**: Không hiển thị `M01a`, `Khu vực D`, `SSOT`, `Chặng 05`, `P2`… trên label/text mà người dùng cửa hàng hoa nhìn thấy. Chỉ dùng trong `data-testid`, `title` cho dev, hoặc comment code. Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R8.
 - **Cấm `onClick` trên phần tử phi tương tác (UX Lint R5 / WCAG 2.1.1, PO 29/09/2026)**: Không đặt `onClick` lên `<div>`, `<span>`, `<li>`, `<tr>`, `<td>`, `<img>`. Dùng `<button type="button">` thay thế. Nếu bất khả kháng (modal backdrop) thì PHẢI có `role="button"` + `tabIndex={0}` + `onKeyDown`. Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R5.
-- **Chuẩn UX toàn cục (03a)**: Bất kỳ màn hình mới nào hoặc màn hình bị sửa đổi bố cục/thứ bậc/luồng bắt buộc phải có Screen Contract lưu tại `docs/dac-ta/screen-contracts/` + vượt qua QA Matrix 03a §34 (không có chỉ số FAIL) + `npm run lint:ux -- --check` không tăng vi phạm (từ T2.3).
+- **Quy chuẩn Thiết Kế Trực Quan & Động Cơ Trưng Bày Cao Cấp (High-Fidelity Visual Storefront & Adaptive Presentation Standard, PO 26/10/2026)**:
+  Đây là **tiêu chuẩn bắt buộc** áp dụng cho toàn bộ các màn hình hiển thị sản phẩm, storefront, bộ sưu tập, lookbook và ấn phẩm xuất bản (social poster/card/PDF) trên toàn hệ thống `smeOS` nhằm triệt tiêu lối thiết kế lưới bẹt (flat themed grid), mang lại trải nghiệm thị giác cao cấp tương đương tạp chí/lookbook:
+  1. **Ảnh hòa nền Studio (Photo Blending Engine)**:
+     - Đối với ảnh sản phẩm chụp phông trắng/studio: BẮT BUỘC áp dụng `mix-blend-mode: multiply` kết hợp lớp lót nền tỏa tâm `radial-gradient` (`photoBackdrop: radial-gradient(90% 70% at 50% 40%, #ffffff 0%, ${cardBg} 70%)`).
+     - Tuyệt đối cấm đặt ảnh thô vào khung xám lộ viền chữ nhật bẹt. Nền phông trắng của ảnh phải tan biến mượt mà vào màu nền của thẻ.
+  2. **Phân luồng 4 chế độ thẻ (`infoMode`)**:
+     - Card sản phẩm phải được điều hướng hiển thị đúng theo phong cách thiết kế, cấm dùng một mẫu card đơn điệu cho mọi style:
+       - `overlay`: Tràn viền điện ảnh (Dark Cinematic, S11) + gradient scrim tối dần ở chân ảnh (`linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.92) 100%)`) + chữ trắng & thẻ giá nổi bật trên nền tối.
+       - `paper`: Nền giấy sang trọng (Editorial S01, Minimal S02, Quiet Luxury S03, Organic S05) + ảnh hòa nền phía trên + khối thông tin thanh nhã phía dưới với font serif và khoảng thở tinh tế.
+       - `glass`: Khối kính mờ (Bento S08) với `backdrop-blur-xl`, bo góc lớn `rounded-3xl` (`radiusPx: 24`), viền phản quang `border-white/18`.
+       - `split`: Bố cục chia đôi ngang cho danh mục tra cứu nhanh và bảng giá kỹ thuật B2B (Swiss Grid S07, Modern Commerce S12).
+  3. **Trường sân khấu đa chiều (`stage` + `ambient glow`)**:
+     - Cấm dùng màu nền đơn sắc bẹt (`#FFFFFF` phẳng hoặc `#F3F4F6` xám xịt).
+     - Mỗi phong cách sở hữu một token `stage` (gradient chuyển sắc 2–3 điểm màu, ví dụ `#FAF8F5 ➔ #F0EBE3` hoặc `#27272A ➔ #09090B`).
+     - Trang bị quầng sáng tản mờ vô hình (`blur-3xl opacity-20` lấy từ màu `accent`) tạo chiều sâu không gian như một sân khấu trưng bày.
+  4. **Bố cục lưới thích ứng thông minh (Adaptive Bento Grid — Chống thủng ô lưới)**:
+     - Khi hiển thị lưới sản phẩm hoặc xuất ảnh poster truyền thông (PNG/JPG), bố cục BẮT BUỘC phải thích ứng linh hoạt theo số lượng sản phẩm:
+       - **3 sản phẩm**: BẮT BUỘC dùng layout Bento (1 Hero lớn 58% bên trái + 2 sản phẩm nhỏ 42% xếp dọc bên phải). **Tuyệt đối cấm** ép vào lưới `2x2` để lại ô thứ 4 trống trơn gây cảm giác ảnh lỗi / thiếu dữ liệu.
+       - **1 sản phẩm**: Khung Hero lớn trung tâm.
+       - **2 sản phẩm**: Cột đôi 50/50 cân xứng.
+       - **4 sản phẩm**: Lưới `2x2` cân đối.
+       - **5 sản phẩm**: 1 Hero lớn bên trái + 4 sản phẩm chia lưới `2x2` bên phải.
+       - **≥ 6 sản phẩm**: Lưới `3x2`.
+     - Tuyệt đối không bao giờ để lại ô lưới trống rỗng trong bất kỳ trường hợp nào.
+  5. **Typography Biên tập & Làm sạch dữ liệu**:
+     - Tiêu đề thương hiệu và tên bộ sưu tập phải dùng font có bản sắc riêng (serif biên tập *Playfair Display / Cormorant Garamond* hoặc geometric sans giãn dòng `tracking-widest`).
+     - Thẻ giá dán trên ảnh phải có lớp đệm gradient bảo vệ tương phản, dùng định dạng viên thuốc (pill badge) thanh lịch thay vì khối vuông thô.
+     - Toàn bộ ấn phẩm xuất file ảnh PNG/PDF phải tự động làm sạch URL nội bộ (lược bỏ `localhost:3200`, `http://` ➔ hiển thị tên miền sạch `smeos.vn/...`).
 - **Quy chuẩn Tiêu Điểm Khối Tương Tác (Active Block Spotlight Standard / Focus-First Block UX, PO 18/10/2026)**:
   - **Mục tiêu UX**: Tránh quá tải nhận thức thị giác (Cognitive Overload) khi hiển thị nhiều khối tính năng hoặc các bước tác vụ trên cùng một màn hình (như Wizard cấu hình, Tạo bộ sưu tập, Thiết lập chiến dịch).
   - **Cơ chế hoạt động**:

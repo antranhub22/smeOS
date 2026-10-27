@@ -12,7 +12,7 @@ const querySchema = z.object({
 })
 
 const createSchema = z.object({
-  slug: z.string().min(1),
+  slug: z.string().min(1).optional(),
   name: z.string().min(1),
   description: z.string().nullable().optional(),
   filters: z.record(z.string(), z.unknown()).nullable().optional(),
@@ -38,11 +38,11 @@ export const POST = handle(async (request) => {
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const link = await createCatalogLink(ctx, {
-    slug: parsed.data.slug,
+    slug: parsed.data.slug ?? null,
     name: parsed.data.name,
     description: parsed.data.description ?? null,
     filters: parsed.data.filters ?? null,
   })
 
-  return jsonResponse(link, { status: 201 })
+  return jsonResponse({ data: link }, { status: 201 })
 })
