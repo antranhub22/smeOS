@@ -71,7 +71,7 @@ export function PublishedCatalogLinks({ catalogLinks, onRefresh }: PublishedCata
       </h3>
       {catalogLinks.length === 0 ? (
         <div className="p-8 text-center bg-surface rounded-2xl border border-dashed text-text-muted text-xs">
-          Chưa có catalog nào được xuất bản. Hãy chọn mẫu hoa và bấm &quot;Xuất bản Catalog mới&quot; ở trên.
+          Chưa có catalog nào được xuất bản. Hãy chọn sản phẩm và bấm &quot;Xuất bản Catalog mới&quot; ở trên.
         </div>
       ) : (
         <div className="space-y-2.5">

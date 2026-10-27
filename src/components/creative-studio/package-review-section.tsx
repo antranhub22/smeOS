@@ -317,7 +317,7 @@ export function PackageReviewSection(props: {
                   {sc.setting && <div className="text-text-muted line-clamp-2">{sc.setting}</div>}
                   {shown && (
                     <div className="flex items-center gap-2">
-                      <span className="text-text-muted">Lõi bó hoa: {pct(shown.identity_score)}</span>
+                      <span className="text-text-muted">Lõi sản phẩm: {pct(shown.identity_score)}</span>
                       <Badge tone={shown.approval_state === "APPROVED" ? "success" : "neutral"} className="text-caption">
                         {shown.approval_state === "APPROVED" ? "Đã duyệt (I5)" : "Chưa duyệt"}
                       </Badge>

@@ -336,7 +336,7 @@ export default function ChainPartnersPage() {
                     <input
                       type="text"
                       required
-                      placeholder="Ví dụ: Tiệm Hoa Nhỏ - Chi nhánh Cầu Giấy"
+                      placeholder="Ví dụ: Cửa Hàng Nhỏ - Chi nhánh Cầu Giấy"
                       value={partnerStoreName}
                       onChange={(e) => setPartnerStoreName(e.target.value)}
                       className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"

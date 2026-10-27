@@ -31,7 +31,7 @@ interface LandingCampaignTabProps {
 
 export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabProps) {
   const { business } = useTenantProfile()
-  const currentShopName = business?.display_name || "Tiệm hoa FloraOS"
+  const currentShopName = business?.display_name || "Tiệm hoa smeOS"
 
   // Phase: mode-selection → input → (executing via wizard) → published
   const [journeyPhase, setJourneyPhase] = useState<"mode-selection" | "input" | "wizard">("mode-selection")
@@ -49,14 +49,16 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
   const [videoUrl, setVideoUrl] = useState("")
   const [campaignSlug, setCampaignSlug] = useState("campaign-20-10")
 
-  const [activeProducts, setActiveProducts] = useState<CatalogProduct[]>(() =>
-    products.filter((p) => p.status === "ACTIVE")
-  )
+  const [createdProducts, setCreatedProducts] = useState<CatalogProduct[]>([])
+  const activeProducts = React.useMemo(() => {
+    const combined = [...createdProducts, ...products]
+    return combined.filter((p) => p.status !== "ARCHIVED")
+  }, [createdProducts, products])
   const [isQuickUploadOpen, setIsQuickUploadOpen] = useState(false)
 
   const [generatedPackage, setGeneratedPackage] = useState<GeneratedLandingPackage | null>(() =>
     generateLandingPageContent({
-      shopName: "Tiệm hoa FloraOS",
+      shopName: currentShopName,
       occasionId: CAMPAIGN_OCCASIONS[0]?.id || "20-10",
       occasionLabel: CAMPAIGN_OCCASIONS[0]?.label || "Ngày Phụ Nữ Việt Nam 20/10",
       selectedProducts: [],
@@ -105,10 +107,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
       if (data.videoUrl) setVideoUrl(data.videoUrl)
       if (data.imagePreviewUrls[0]) setCustomHeroImageUrl(data.imagePreviewUrls[0])
 
-      const preSelectedIds =
-        data.selectedProducts && data.selectedProducts.length > 0
-          ? data.selectedProducts.map((p) => p.id)
-          : activeProducts.slice(0, 4).map((p) => p.id)
+      const preSelectedIds = activeProducts.slice(0, 4).map((p) => p.id)
       setSelectedProductIds(preSelectedIds)
 
       // Step 1 — Vision done
@@ -203,7 +202,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
   }
 
   const handleProductCreated = (newProd: CatalogProduct) => {
-    setActiveProducts((prev) => [newProd, ...prev.filter((p) => p.id !== newProd.id)])
+    setCreatedProducts((prev) => [newProd, ...prev.filter((p) => p.id !== newProd.id)])
     setSelectedProductIds((prev) => [newProd.id, ...prev])
     if (!customHeroImageUrl && newProd.imageUrl) setCustomHeroImageUrl(newProd.imageUrl)
     onRefresh?.()

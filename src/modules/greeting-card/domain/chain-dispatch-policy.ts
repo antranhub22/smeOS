@@ -104,33 +104,33 @@ export interface ChainDispatchPolicy {
 
 export const DEFAULT_DISPATCH_MESSAGE_TEMPLATES: Readonly<DispatchMessageTemplates> = Object.freeze({
   inviteSubcontract:
-    "🌸 [ĐƠN GIA CÔNG MỚI] Đơn hàng #{{orderCode}}\n📍 Giao tại: {{deliveryAddress}}\n⏰ Thời gian giao: {{deliveryTime}}\n💰 Thù lao gia công: {{subcontractPriceVnd}}\n⏳ Hạn nhận đơn: {{timeoutMinutes}} phút (Bấm nút bên dưới)",
+    "🌸 Có đơn gia công mới #{{orderCode}}\nGiao tại: {{deliveryAddress}}\nThời gian giao: {{deliveryTime}}\nThù lao: {{subcontractPriceVnd}}\nVui lòng nhận đơn trong {{timeoutMinutes}} phút.",
   claimSuccess:
-    "✅ [TIẾP NHẬN THÀNH CÔNG] Chi nhánh {{branchName}} đã nhận đơn #{{orderCode}}.\n⏳ Bạn có {{graceMinutes}} phút để kiểm tra kho và xác nhận lần cuối nếu thiếu nguyên liệu.",
+    "✅ Chi nhánh {{branchName}} đã nhận đơn #{{orderCode}}. Vui lòng kiểm tra kho trong {{graceMinutes}} phút và báo ngay nếu thiếu nguyên liệu.",
   prepReminder:
-    "🔔 [BẮT ĐẦU CHẾ TÁC] Đơn #{{orderCode}} đã chính thức chốt. Vui lòng chuẩn bị hoa và nguyên vật liệu theo định lượng BOM.",
+    "🔔 Đơn #{{orderCode}} đã chốt, bắt đầu chế tác. Vui lòng chuẩn bị hoa và nguyên vật liệu theo công thức sản phẩm.",
   qcReminder:
-    "📸 [NHẮC CHỤP ẢNH QC] Đơn #{{orderCode}} cần giao lúc {{deliveryTime}}. Vui lòng hoàn tất cắm hoa và chụp ảnh gửi khách trước {{qcTime}}.",
+    "📸 Đơn #{{orderCode}} cần giao lúc {{deliveryTime}}. Vui lòng hoàn tất và chụp ảnh thành phẩm trước {{qcTime}}.",
   qcReminderSecond:
-    "⚠️ [NHẮC LẦN 2 - KHẨN CẤP] Đơn #{{orderCode}} sắp đến giờ giao nhưng hệ thống chưa nhận được ảnh chụp thành phẩm! Yêu cầu cửa hàng chụp và tải ảnh ngay.",
+    "⚠️ Nhắc lần 2: Đơn #{{orderCode}} sắp đến giờ giao mà chưa có ảnh thành phẩm. Chi nhánh chụp và tải ảnh ngay.",
   qcEscalationAlert:
-    "🚨 [CẢNH BÁO NGUY CƠ TRỄ HẠN] Đơn #{{orderCode}} tại {{branchName}} đã nhắc 2 lần nhưng CHƯA CÓ ẢNH THÀNH PHẨM! Điều phối vui lòng can thiệp gấp. Hotline: {{branchPhone}}",
+    "🚨 Khẩn cấp: Đơn #{{orderCode}} tại {{branchName}} đã nhắc 2 lần vẫn chưa có ảnh thành phẩm. Điều phối can thiệp ngay — gọi {{branchPhone}}.",
   dispatchReminder:
-    "🛵 [BÀN GIAO SHIPPER] Đơn #{{orderCode}} sắp đến giờ giao. Vui lòng đóng gói và bàn giao cho shipper.",
+    "🛵 Đơn #{{orderCode}} sắp đến giờ giao. Vui lòng đóng gói và bàn giao cho shipper.",
   shipperReminder:
-    "🛵 [YÊU CẦU SHIPPER] Đơn #{{orderCode}} cần giao lúc {{deliveryTime}}. Vui lòng cung cấp Họ tên & SĐT Shipper để điều phối chuẩn bị bàn giao hàng: {{claimUrl}}",
+    "🛵 Đơn #{{orderCode}} cần giao lúc {{deliveryTime}}. Vui lòng nhập họ tên và số điện thoại shipper: {{claimUrl}}",
   shipperReminderSecond:
-    "⚠️ [NHẮC LẦN 2 - KHẨN] Đơn #{{orderCode}} chỉ còn {{minutesUntilDelivery}} phút là đến giờ giao nhưng hệ thống CHƯA CÓ THÔNG TIN SHIPPER! Chi nhánh vui lòng nhập ngay: {{claimUrl}}",
+    "⚠️ Nhắc lần 2: Đơn #{{orderCode}} còn {{minutesUntilDelivery}} phút là đến giờ giao mà chưa có thông tin shipper. Nhập ngay: {{claimUrl}}",
   shipperEscalationAlert:
-    "🚨 [CẢNH BÁO ĐỎ - THIẾU SHIPPER] Đơn #{{orderCode}} tại {{branchName}} đã nhắc 2 lần nhưng CHƯA CUNG CẤP SHIPPER! Còn {{minutesUntilDelivery}} phút đến giờ giao. Điều phối gọi ngay: {{branchPhone}}",
+    "🚨 Khẩn cấp: Đơn #{{orderCode}} tại {{branchName}} đã nhắc 2 lần vẫn chưa có shipper, còn {{minutesUntilDelivery}} phút đến giờ giao. Điều phối gọi ngay {{branchPhone}}.",
   deliveryReminder:
-    "⏰ [NHẮC BÀN GIAO & POD] Đơn #{{orderCode}} đã đến giờ giao ({{deliveryTime}}). Chi nhánh {{branchName}} vui lòng tải ảnh xác nhận giao hàng (POD) để hoàn tất đơn: {{claimUrl}}",
+    "⏰ Đơn #{{orderCode}} đã đến giờ giao ({{deliveryTime}}). Chi nhánh {{branchName}} vui lòng tải ảnh xác nhận đã giao: {{claimUrl}}",
   deliveryReminderSecond:
-    "⚠️ [NHẮC LẦN 2 - GIAO HÀNG KHẨN] Đơn #{{orderCode}} đã quá giờ giao {{overdueMinutes}} phút nhưng chưa có ảnh xác nhận giao hàng! Vui lòng cập nhật ngay: {{claimUrl}}",
+    "⚠️ Nhắc lần 2: Đơn #{{orderCode}} đã quá giờ giao {{overdueMinutes}} phút mà chưa có ảnh xác nhận đã giao. Cập nhật ngay: {{claimUrl}}",
   deliveryEscalationAlert:
-    "🚨 [CẢNH BÁO ĐỎ - CHƯA GIAO HÀNG] Đơn #{{orderCode}} tại {{branchName}} đã quá hạn giao nhưng chưa có ảnh xác nhận! Điều phối gọi can thiệp gấp: {{branchPhone}}",
+    "🚨 Khẩn cấp: Đơn #{{orderCode}} tại {{branchName}} đã quá hạn giao mà chưa có ảnh xác nhận. Điều phối gọi ngay {{branchPhone}}.",
   overdueAlert:
-    "⚠️ [CẢNH BÁO TRỄ HẠN] Đơn #{{orderCode}} đã quá hạn {{overdueMinutes}} phút mà chưa hoàn tất! Điều phối chuỗi đang theo dõi.",
+    "⚠️ Đơn #{{orderCode}} đã quá hạn {{overdueMinutes}} phút mà chưa hoàn tất. Điều phối chuỗi đang theo dõi.",
 })
 
 export const DEFAULT_CHAIN_DISPATCH_POLICY: Readonly<ChainDispatchPolicy> = Object.freeze({
@@ -324,11 +324,19 @@ export function serializeChainDispatchPolicy(policy: ChainDispatchPolicy): Recor
   }
 }
 
+/** Thoát ký tự đặc biệt cho tin Telegram `parse_mode: HTML` — dùng cho MỌI giá trị do người nhập. */
+export function escapeTelegramHtml(value: string | number): string {
+  return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+}
+
 /**
- * Trộn các biến số vào mẫu tin nhắn thông báo (Template Interpolation Engine).
+ * Trộn biến vào mẫu tin nhắn. Mẫu được giữ thẻ HTML (`<b>`…); giá trị được thoát ký tự, vì địa chỉ
+ * "Hẻm 5 <cạnh chợ>" từng làm Telegram từ chối cả tin, và `<a href>` trong dữ liệu khách chèn
+ * được link lạ vào nhóm chi nhánh (rà soát cụm G, 22/10/2026).
  */
 export function renderDispatchMessage(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{\{([a-zA-Z0-9_]+)\}\}/g, (match, key) => {
-    return key in vars ? String(vars[key]) : match
+    const value = vars[key]
+    return value === undefined ? match : escapeTelegramHtml(value)
   })
 }

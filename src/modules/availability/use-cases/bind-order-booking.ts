@@ -1,5 +1,7 @@
 import type { IAvailabilityRepository } from "../domain/repositories/availability-repository.interface"
-import { getAvailabilityRepository } from "../infra/availability-repository"
+import { AvailabilityRepository } from "../infra/availability-repository"
+import { conflict } from "@/core/http/errors"
+import { log } from "@/core/observability/log"
 
 export interface BindOrderBookingInput {
   organizationId: string
@@ -13,7 +15,7 @@ export interface BindOrderBookingInput {
 /** Tự động tạo booking khóa ngày khi khách đặt phòng trên Thẻ chào (Greeting Card). */
 export async function bindOrderBooking(
   input: BindOrderBookingInput,
-  repo: IAvailabilityRepository = getAvailabilityRepository(),
+  repo: IAvailabilityRepository = new AvailabilityRepository(),
 ): Promise<string | null> {
   if (!input.checkInDate || !input.checkOutDate) return null
   if (input.checkInDate >= input.checkOutDate) return null
@@ -24,7 +26,7 @@ export async function bindOrderBooking(
     return existing.id
   }
 
-  return repo.createBooking({
+  const id = await repo.createBooking({
     organizationId: input.organizationId,
     productId: input.productId,
     orderId: input.orderId,
@@ -32,6 +34,31 @@ export async function bindOrderBooking(
     checkOutDate: input.checkOutDate,
     note: input.note ?? null,
   })
+  if (!id) {
+    // Đơn đã có nhưng khoảng ngày vừa bị người khác giữ trước — cần Điều hành xử lý (đổi phòng/hoàn tiền)
+    log.error("availability.booking_conflict", {
+      organizationId: input.organizationId,
+      productId: input.productId,
+      orderId: input.orderId,
+      checkInDate: input.checkInDate,
+      checkOutDate: input.checkOutDate,
+    })
+  }
+  return id
+}
+
+/**
+ * Chặn đặt đơn khi khoảng ngày đã có đặt chỗ ACTIVE — gọi TRƯỚC khi tạo đơn, để khách không
+ * thanh toán cho một phòng đã có người giữ. `bindOrderBooking` vẫn khoá lại trong giao dịch.
+ */
+export async function assertBookingDatesAvailable(
+  input: { organizationId: string; productId: string; checkInDate: string; checkOutDate: string },
+  repo = new AvailabilityRepository(),
+): Promise<void> {
+  if (!input.checkInDate || !input.checkOutDate || input.checkInDate >= input.checkOutDate) return
+  if (await repo.hasActiveOverlap(input.organizationId, input.productId, input.checkInDate, input.checkOutDate)) {
+    throw conflict("Khoảng ngày bạn chọn vừa có khách khác đặt. Vui lòng chọn ngày khác.")
+  }
 }
 
 export interface EnsureHomestayBookingOrder {
@@ -72,7 +99,7 @@ function resolveHomestayCheckOut(
 /** Đảm bảo đơn Homestay luôn được khóa phòng trên Calendar khi có thông báo chuyển khoản hoặc thanh toán */
 export async function ensureHomestayOrderBooking(
   order: EnsureHomestayBookingOrder,
-  repo: IAvailabilityRepository = getAvailabilityRepository(),
+  repo: IAvailabilityRepository = new AvailabilityRepository(),
 ): Promise<string | null> {
   const window = (order.delivery_window as Record<string, string> | null) || {}
   const checkInDate = window.date
@@ -113,7 +140,7 @@ export async function ensureHomestayOrderBooking(
 export async function releaseOrderBooking(
   organizationId: string,
   orderId: string,
-  repo: IAvailabilityRepository = getAvailabilityRepository(),
+  repo: IAvailabilityRepository = new AvailabilityRepository(),
 ): Promise<void> {
   await repo.cancelByOrderId(organizationId, orderId)
 }

@@ -103,7 +103,7 @@ export function projectCustomerSalesCard(customer: CustomerMasterIndex) {
 
 /**
  * 2. PROJECTION CHO NHẮC VIỆC DỊP KỶ NIỆM (Occasion Reminder)
- * Lấy danh sách dịp kỷ niệm sắp diễn ra kèm gợi ý mẫu hoa phù hợp gu của khách.
+ * Lấy danh sách dịp kỷ niệm sắp diễn ra kèm gợi ý sản phẩm phù hợp gu của khách.
  */
 export function projectOccasionReminder(
   customer: CustomerMasterIndex,

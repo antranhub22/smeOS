@@ -33,7 +33,7 @@ interface CoordinatorBypassReviewBannerProps {
 const STEP_LABELS: Record<string, string> = {
   QC: "Bước 2 — Ảnh thành phẩm (QC)",
   SHIPPER: "Bước 3 — Thông tin Shipper",
-  POD: "Bước 4 — Ảnh giao hàng (POD)",
+  POD: "Bước 4 — Ảnh giao hàng",
 }
 
 export function CoordinatorBypassReviewBanner({
@@ -87,9 +87,9 @@ export function CoordinatorBypassReviewBanner({
   }
 
   return (
-    <div className="w-full flex flex-col gap-2 p-3.5 rounded-xl bg-amber-500/10 border-2 border-amber-500/40 text-foreground">
-      <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold text-body-sm">
-        <ShieldAlert size={18} className="text-amber-600 animate-pulse shrink-0" />
+    <div className="w-full flex flex-col gap-2 p-3.5 rounded-xl bg-warning-bg border-2 border-warning-border text-foreground">
+      <div className="flex items-center gap-2 text-warning-text font-bold text-body-sm">
+        <ShieldAlert size={18} className="text-warning animate-pulse shrink-0" />
         <span>Yêu Cầu Bỏ Qua Bằng Chứng Cần Phê Duyệt</span>
       </div>
 
@@ -107,11 +107,11 @@ export function CoordinatorBypassReviewBanner({
           return (
             <div
               key={stepKey}
-              className="p-3 rounded-lg bg-surface border border-amber-300/40 shadow-xs flex flex-col gap-2"
+              className="p-3 rounded-lg bg-surface border border-warning-border shadow-xs flex flex-col gap-2"
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                  <span className="text-caption font-bold uppercase tracking-wider text-warning-text">
                     {stepTitle}
                   </span>
                   <div className="text-caption text-text-muted mt-0.5">
@@ -121,17 +121,17 @@ export function CoordinatorBypassReviewBanner({
                     </strong>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 shrink-0">
+                <span className="px-2 py-0.5 text-caption font-extrabold rounded-full bg-warning-bg text-warning-text shrink-0">
                   CHỜ DUYỆT
                 </span>
               </div>
 
-              <div className="p-2 rounded bg-surface-muted text-caption text-text-muted italic border-l-2 border-amber-500">
+              <div className="p-2 rounded bg-surface-muted text-caption text-text-muted italic border-l-2 border-warning">
                 &ldquo;{req.reason || "Lý do bất khả kháng"}&rdquo;
               </div>
 
               {/* Cảnh báo KPI hợp tác */}
-              <div className="flex items-center gap-1.5 text-[11px] text-danger font-semibold bg-danger/5 p-1.5 rounded">
+              <div className="flex items-center gap-1.5 text-caption text-danger font-semibold bg-danger/5 p-1.5 rounded">
                 <AlertTriangle size={13} className="shrink-0" />
                 <span>
                   Lưu ý: Nếu duyệt, chi nhánh sẽ bị trừ 2 điểm chất lượng KPI và giảm ưu tiên chia đơn!
@@ -154,7 +154,7 @@ export function CoordinatorBypassReviewBanner({
                   size="sm"
                   disabled={isLoading}
                   onClick={() => handleDecision(stepKey, "APPROVE")}
-                  className="h-8 px-3 text-caption bg-amber-600 hover:bg-amber-700 text-white font-bold"
+                  className="h-8 px-3 text-caption bg-warning hover:bg-warning/90 text-white font-bold"
                 >
                   {isLoading ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
                   Chấp thuận Bỏ qua

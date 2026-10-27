@@ -1,6 +1,6 @@
 /**
  * Chính sách thu tiền đơn Thẻ chào theo tiệm (`organizations.settings.brochure_policy`):
- * đặt cọc %, có bắt thu tiền trước khi cắm hoa / thu đủ trước khi giao không.
+ * đặt cọc %, có bắt thu tiền trước khi chế tác / thu đủ trước khi giao không.
  * Pure TypeScript — dùng chung server (chặn thao tác) và UI (khoá nút, báo lý do).
  */
 
@@ -10,7 +10,7 @@ import type { PaymentPurpose } from "./brochure-policy-resolvers"
 export const BROCHURE_POLICY_SETTINGS_KEY = "brochure_policy"
 
 /**
- * Cơ chế kích hoạt bước tiếp theo (Theo dõi tiến độ / Chuyển sang cắm hoa):
+ * Cơ chế kích hoạt bước tiếp theo (Theo dõi tiến độ / Chuyển sang chế tác):
  * - "PAYMENT_ONLY": Chỉ khi Điều hành xác nhận đã thanh toán (đủ hoặc cọc) thì mới trigger bước tiếp theo.
  * - "PAYMENT_OR_COORDINATOR": Cho phép thêm việc Điều phối xác nhận Nhận đơn là trigger bước tiếp theo (mặc định linh hoạt).
  */
@@ -37,7 +37,7 @@ export interface BrochurePaymentPolicy {
    */
   requirePaymentProof?: boolean
   /**
-   * Cơ chế kích hoạt bước tiếp theo (Theo dõi tiến độ / Chuyển sang cắm hoa).
+   * Cơ chế kích hoạt bước tiếp theo (Theo dõi tiến độ / Chuyển sang chế tác).
    */
   trackingTriggerPolicy?: TrackingTriggerPolicy
   /**
@@ -266,7 +266,7 @@ export function paymentGateBlocker(
 ): string | null {
   const producing = action === "assign-florist" || action === "product-photo"
   if (producing && policy.requirePaidBeforeProduction && money.paidVnd <= 0) {
-    return "Tiệm yêu cầu thu cọc/thanh toán trước khi cắm hoa"
+    return "Tiệm yêu cầu thu cọc/thanh toán trước khi chế tác"
   }
   if (action === "dispatch-shipping") {
     const hasQuote = money.totalVnd > 0

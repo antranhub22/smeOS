@@ -34,7 +34,7 @@ describe("dispatch-reminder domain", () => {
     it("ghi đè cấp Thẻ chào (Template Overrides) có độ ưu tiên cao nhất", () => {
       const config = resolveEffectiveReminderConfig(
         {
-          m1MinutesBeforeDelivery: 180, // Mẫu hoa VIP cần 3 tiếng
+          m1MinutesBeforeDelivery: 180, // Sản phẩm VIP cần 3 tiếng
         },
         {
           m1MinutesBeforeDelivery: 100, // Policy tiệm

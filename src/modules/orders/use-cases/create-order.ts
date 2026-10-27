@@ -15,7 +15,7 @@ export async function createOrder(
   repo: IOrderRepository = getOrderRepository()
 ): Promise<OrderRecord> {
   if (!input.items || input.items.length === 0) {
-    throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc mẫu hoa.")
+    throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc sản phẩm.")
   }
 
   const totalVnd = calculateOrderTotal(input.items)

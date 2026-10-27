@@ -220,7 +220,7 @@ export async function requestVariants(ctx: TenantContext, input: RequestVariants
 export type RequestCloudVariantInput = RequestVariantsInput & {
   /** Bỏ trống = worker thử các nhà cung cấp tương đương theo `VARIANT_PROVIDER_ORDER`. */
   provider?: VariantCloudProvider | undefined
-  /** Mô tả KHÔNG GIAN hậu cảnh (không mô tả bó hoa) — worker luôn nối thêm
+  /** Mô tả KHÔNG GIAN hậu cảnh (không mô tả sản phẩm) — worker luôn nối thêm
    *  ràng buộc "cảnh trống", cắt còn `MAX_SCENE_PROMPT_LENGTH` ký tự. */
   scenePrompt?: string | undefined
 }

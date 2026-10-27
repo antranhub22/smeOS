@@ -220,7 +220,7 @@ export function exampleOrderView(over: Partial<CoordinatorOrderView> = {}): Coor
     nextAction: "Kiểm tra thông tin đơn trước khi lập kế hoạch",
     partner: null,
     partnerName: null,
-    productTitle: "Bó hoa hồng Pastel",
+    productTitle: "Sản phẩm hồng Pastel",
     sampleImageUrl: null,
     finishedImageUrls: [],
     productionProgress: 0,

@@ -20,8 +20,8 @@ function createMockProductRepo(): IProductRepository {
       organization_id: "org-1",
       branch_id: "branch-1",
       code: "HOA-001",
-      name: "Bó hoa hồng đỏ",
-      category: "Bó hoa",
+      name: "Sản phẩm hồng đỏ",
+      category: "Sản phẩm",
       shape: "Tròn",
       facing: "Một mặt",
       container: "Giấy gói",
@@ -129,12 +129,12 @@ describe("Product Use Cases with Clean Repository", () => {
       mockTenant,
       "prod-1",
       {
-        name: "Bó hoa hồng đỏ cao cấp",
+        name: "Sản phẩm hồng đỏ cao cấp",
       },
       mockRepo
     )
 
-    expect(updated.name).toBe("Bó hoa hồng đỏ cao cấp")
+    expect(updated.name).toBe("Sản phẩm hồng đỏ cao cấp")
     expect(mockRepo.update).toHaveBeenCalled()
   })
 

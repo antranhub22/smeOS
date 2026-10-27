@@ -40,7 +40,7 @@ export function ScheduledPulsePanel({
   const [isEnabled, setIsEnabled] = useState(true);
   const [trackedKeywords, setTrackedKeywords] = useState<string[]>([
     "Hoa tulip pastel",
-    "Bó hoa tốt nghiệp Hàn Quốc",
+    "Sản phẩm tốt nghiệp Hàn Quốc",
     "Lan hồ điệp khai trương",
   ]);
   const [newKeyword, setNewKeyword] = useState("");
@@ -149,7 +149,7 @@ export function ScheduledPulsePanel({
                     onChange={(e) => setNotifyCopilot(e.target.checked)}
                     className="h-4 w-4 rounded accent-rose-600"
                   />
-                  <span>FloraOS Copilot chào buổi sáng</span>
+                  <span>smeOS Copilot chào buổi sáng</span>
                 </label>
                 <label className="flex items-center gap-2 text-xs text-cool-700 cursor-pointer">
                   <input
@@ -272,7 +272,7 @@ export function ScheduledPulsePanel({
               <span>Cảnh báo mẫu hạ nhiệt</span>
             </div>
             <p className="text-xs text-cool-600 leading-relaxed pt-1">
-              Các mẫu hoa giấy gói màu đậm truyền thống đang giảm tương tác 18%. Khách hàng trẻ chuyển dịch mạnh sang <strong>giấy mờ phong cách Pháp</strong>.
+              Các sản phẩm giấy gói màu đậm truyền thống đang giảm tương tác 18%. Khách hàng trẻ chuyển dịch mạnh sang <strong>giấy mờ phong cách Pháp</strong>.
             </p>
           </div>
 

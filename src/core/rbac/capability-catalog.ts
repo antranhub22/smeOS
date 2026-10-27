@@ -193,8 +193,10 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   J6: { name: "chat.manage", group: "channel", label: "Quản lý hội thoại khách hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing", "customer_service"] },
   // L — Sản phẩm và giá
   L1: { name: "product.read", group: "product_pricing", label: "Xem sản phẩm trong Product Master", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "product_manager", "marketing", "crm"] },
-  L2: { name: "product.create", group: "product_pricing", label: "Thêm sản phẩm mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "product_manager"] },
-  L3: { name: "product.update", group: "product_pricing", label: "Sửa thông tin sản phẩm", defaultRoles: ["dieu_hanh", "dieu_phoi", "product_manager"] },
+  // PO 23/10/2026: Sale tạo được mẫu đề xuất. Không có H3 thì mẫu mang nhãn đề xuất và
+  // chỉ sửa được mẫu đề xuất của chính mình (`modules/products/domain/product-proposal.ts`).
+  L2: { name: "product.create", group: "product_pricing", label: "Thêm sản phẩm mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "product_manager"] },
+  L3: { name: "product.update", group: "product_pricing", label: "Sửa thông tin sản phẩm", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "product_manager"] },
   L4: { name: "product.archive", group: "product_pricing", label: "Ngừng kinh doanh một sản phẩm", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   L5: { name: "pricing.read", group: "product_pricing", label: "Xem quy tắc giá của tổ chức", defaultRoles: ["dieu_hanh", "dieu_phoi", "product_manager"] },
   L6: { name: "pricing.manage", group: "product_pricing", label: "Sửa quy tắc giá của tổ chức", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
@@ -215,7 +217,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   R1: { name: "order.read", group: "order_operations", label: "Xem đơn hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
   R2: { name: "order.create", group: "order_operations", label: "Tạo đơn hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale"] },
   R3: { name: "order.update", group: "order_operations", label: "Sửa đơn và cập nhật trạng thái sản xuất", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
-  R4: { name: "order.assign", group: "order_operations", label: "Phân công thợ cắm cho một đơn", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
+  R4: { name: "order.assign", group: "order_operations", label: "Phân công thợ chế tác cho một đơn", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R5: { name: "delivery.manage", group: "order_operations", label: "Theo dõi và cập nhật giao hàng, đặt khung giờ", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R6: { name: "order.cancel", group: "order_operations", label: "Huỷ một đơn hàng", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   R7: { name: "order.print", group: "order_operations", label: "In phiếu đơn và phiếu sản xuất", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
@@ -228,8 +230,12 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   // PO 08/10/2026 (thay quyết định 06/10 "giữ R9 cho Sale/Điều phối" ở Thẻ chào): chỉ Điều hành —
   // người giữ tài khoản ngân hàng — xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào. Trần cứng.
   R11: { name: "order.transfer.confirm", group: "order_operations", label: "Xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
-  R12: { name: "order.coordinator_reminder.configure", group: "order_operations", label: "Sửa thời điểm nhắc việc Điều phối (chung và theo mẫu hoa)", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
+  R12: { name: "order.coordinator_reminder.configure", group: "order_operations", label: "Sửa thời điểm nhắc việc Điều phối (chung và theo sản phẩm)", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R13: { name: "data.export", group: "order_operations", label: "Xuất đơn hàng / khách hàng ra tệp Excel (Điều hành cấp cho người khác khi duyệt)", defaultRoles: ["dieu_hanh"] },
+  // PO 22/10/2026 — trang cửa hàng nhận gia công: chỉ tài khoản cửa hàng thấy đơn của CHÍNH chi nhánh mình
+  // (chi nhánh lấy từ `memberships.chain_branch_code`, không từ yêu cầu). Điều hành có theo bất biến "mọi mã
+  // trừ K1" và chỉ thấy đơn khi tự gắn chi nhánh. Trần cứng: hai vai này.
+  R14: { name: "order.branch_inbox", group: "order_operations", label: "Xem và nhận đơn gia công của chi nhánh mình", defaultRoles: ["dieu_hanh", "cua_hang"], hardCap: ["dieu_hanh", "cua_hang"] },
   // Q — CRM & Khách hàng ngành hoa (M09, P21)
   Q1: { name: "crm.customer.read", group: "crm", label: "Xem thông tin khách hàng và hồ sơ RFM", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
   Q2: { name: "crm.customer.create", group: "crm", label: "Thêm khách hàng mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },

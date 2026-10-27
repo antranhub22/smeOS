@@ -10,20 +10,15 @@ import {
  * Hook đếm ngược thời gian thực (realtime tick mỗi giây) cho một mốc đích (targetMs).
  */
 export function useStepCountdown(targetMs: number | null | undefined): CountdownState | null {
-  const [state, setState] = useState<CountdownState | null>(() =>
-    calculateCountdownState(targetMs)
-  )
+  // Chỉ giữ "bây giờ" trong state; trạng thái đếm ngược tính ngay khi render nên đổi mốc
+  // đích là thấy ngay, không cần setState đồng bộ trong effect.
+  const [nowMs, setNowMs] = useState(() => Date.now())
 
   useEffect(() => {
-    setState(calculateCountdownState(targetMs))
     if (!targetMs) return
-
-    const interval = setInterval(() => {
-      setState(calculateCountdownState(targetMs))
-    }, 1000)
-
+    const interval = setInterval(() => setNowMs(Date.now()), 1000)
     return () => clearInterval(interval)
   }, [targetMs])
 
-  return state
+  return calculateCountdownState(targetMs, nowMs)
 }

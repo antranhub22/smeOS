@@ -165,7 +165,7 @@ export function calculateExpectedStepTimeline(
   return {
     arranging: {
       stepKey: "ARRANGING",
-      label: "Cắm hoa",
+      label: "Chế tác",
       startIso: new Date(arrangeStartMs).toISOString(),
       endIso: new Date(qcStartMs).toISOString(),
       displayRange: `${fmtHm(arrangeStartMs)} - ${fmtHm(qcStartMs)}`,

@@ -9,12 +9,13 @@ import {
   AlertCircle,
   ExternalLink,
   MessageSquare,
-  Copy,
   Users,
   ShieldCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
+import { TelegramDirectChatGuide } from "./telegram-direct-chat-guide"
+import { TelegramLinkedChatCard } from "./telegram-linked-chat-card"
 
 interface TelegramBotInfo {
   id: number
@@ -34,6 +35,7 @@ interface TelegramDispatchResponse {
   data: {
     configured: boolean
     bot: TelegramBotInfo | null
+    linkCode: string | null
     recentChats: RecentChat[]
     error?: string
   }
@@ -49,7 +51,9 @@ interface SendTestResponse {
 
 export function TelegramDispatchConnector() {
   const { data, error, isLoading, isValidating, mutate } = useApi<TelegramDispatchResponse>(
-    "/api/v1/greeting-card/integrations/telegram-dispatch"
+    "/api/v1/greeting-card/integrations/telegram-dispatch",
+    // Mỗi lần quét gọi Telegram — không tự quét lại khi chuyển tab (qua Telegram rồi quay lại)
+    { revalidateOnFocus: false, keepPreviousData: true }
   )
 
   const [testChatId, setTestChatId] = useState("")
@@ -62,6 +66,7 @@ export function TelegramDispatchConnector() {
   const isConfigured = respData?.configured ?? false
   const bot = respData?.bot
   const recentChats = respData?.recentChats ?? []
+  const linkCode = respData?.linkCode ?? null
 
   const handleCopy = (id: string) => {
     navigator.clipboard.writeText(id)
@@ -175,7 +180,7 @@ export function TelegramDispatchConnector() {
             <Users size={14} /> Thêm Bot vào nhóm Chi nhánh
           </a>
         </div>
-      ) : (
+      ) : isConfigured || isLoading ? null : (
         <div className="p-4 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-3">
           <AlertCircle size={20} className="text-warning shrink-0 mt-0.5" />
           <div className="text-caption text-foreground leading-relaxed">
@@ -185,10 +190,21 @@ export function TelegramDispatchConnector() {
         </div>
       )}
 
+      {respData?.error && (
+        <div className="p-3 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-2 text-caption text-foreground">
+          <AlertCircle size={16} className="text-warning shrink-0 mt-0.5" />
+          <span>
+            <strong>Không quét được nhóm mới:</strong> {respData.error}. Vui lòng liên hệ bộ phận hỗ trợ.
+          </span>
+        </div>
+      )}
+
+      <TelegramDirectChatGuide botUsername={bot?.username || "smeos_dieuphoi_bot"} linkCode={linkCode} />
+
       {/* Hướng dẫn 3 bước kết nối */}
       <div className="p-4 rounded-xl bg-surface-muted border border-border flex flex-col gap-2.5">
         <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
-          <MessageSquare size={16} className="text-primary" /> Hướng dẫn kết nối nhóm Chi nhánh trong 3 bước:
+          <MessageSquare size={16} className="text-primary" /> Hoặc dùng nhóm Telegram cho Chi nhánh trong 3 bước:
         </h4>
         <ol className="text-caption text-foreground/90 space-y-1.5 list-decimal pl-4 leading-relaxed">
           <li>
@@ -196,7 +212,12 @@ export function TelegramDispatchConnector() {
             <strong className="text-primary font-mono">@{bot?.username || "smeos_dieuphoi_bot"}</strong> vào nhóm.
           </li>
           <li>
-            Gửi một tin nhắn bất kỳ trong nhóm (ví dụ: <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">Xin chào</code>).
+            Gửi mã liên kết của cửa hàng vào nhóm:{" "}
+            <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">{linkCode ?? "…"}</code>{" "}
+            dưới dạng lệnh{" "}
+            <code className="font-mono bg-surface px-1 py-0.5 rounded border border-border">/lienket@{bot?.username || "bot"} {linkCode ?? "…"}</code>{" "}
+            hoặc trả lời (Reply) một tin của bot bằng mã này. Trong nhóm, bot chỉ đọc lệnh gửi cho nó và tin trả lời nó;
+            nhắn tin riêng với bot thì chỉ cần gửi mã. Chỉ nhóm đã gửi đúng mã mới nhận được tin của cửa hàng bạn.
           </li>
           <li>
             Bấm nút <strong>&quot;Quét Chat ID mới&quot;</strong> ở góc trên. ID của nhóm sẽ xuất hiện ngay bên dưới để bạn chọn và kiểm tra.
@@ -208,47 +229,29 @@ export function TelegramDispatchConnector() {
       <div>
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
-            <Users size={16} className="text-primary" /> Nhóm chat / Người dùng đã tương tác gần đây ({recentChats.length})
+            <Users size={16} className="text-primary" /> Nhóm chat đã liên kết với cửa hàng ({recentChats.length})
           </h4>
           <span className="text-caption text-text-muted">Nhấp vào ID để chọn thử nghiệm</span>
         </div>
 
         {recentChats.length === 0 ? (
           <div className="p-4 text-center text-caption text-text-muted bg-surface-muted/50 rounded-xl border border-border border-dashed">
-            Chưa có tin nhắn nào gửi tới Bot. Hãy thêm bot vào nhóm và gửi 1 tin nhắn để nhận diện ID nhóm tự động.
+            Chưa có nhóm nào gửi mã liên kết. Hãy thêm bot vào nhóm, gửi mã liên kết ở bước 2 rồi bấm quét lại.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {recentChats.map((chat) => (
-              <button
-                type="button"
+              <TelegramLinkedChatCard
                 key={chat.id}
-                onClick={() => handleCopy(chat.id)}
-                className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2 text-left w-full ${
-                  testChatId === chat.id
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "border-border bg-surface hover:border-primary/50"
-                }`}
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="text-body-sm font-bold text-foreground truncate">{chat.title}</div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-caption-sm text-text-muted capitalize">[{chat.type}]</span>
-                    <code className="text-caption-sm font-mono font-semibold text-primary">{chat.id}</code>
-                  </div>
-                </div>
-                <div className="shrink-0 flex items-center gap-1 text-caption text-primary font-medium">
-                  {copiedId === chat.id ? (
-                    <span className="text-success inline-flex items-center gap-1 font-bold">
-                      <CheckCircle2 size={14} /> Đã chọn
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1">
-                      <Copy size={13} /> Chọn
-                    </span>
-                  )}
-                </div>
-              </button>
+                chat={chat}
+                selected={testChatId === chat.id}
+                copied={copiedId === chat.id}
+                onSelect={handleCopy}
+                onRemoved={() => {
+                  if (testChatId === chat.id) setTestChatId("")
+                  void mutate()
+                }}
+              />
             ))}
           </div>
         )}

@@ -24,9 +24,9 @@ export interface ProductFilterCriteria {
   priceRanges?: PriceRange[]
   /** Dịp tặng — nhãn UI tiếng Việt (vd: "Sinh nhật") hoặc slug DB (vd: "sinh-nhat"). */
   occasion?: string
-  /** Dáng hoa — nhãn UI tiếng Việt (vd: "Bó hoa") hoặc mã DB (vd: "BOUQUET"). */
+  /** Dáng hoa — nhãn UI tiếng Việt (vd: "Sản phẩm") hoặc mã DB (vd: "BOUQUET"). */
   category?: string
-  /** Loại hoa — nhãn UI (vd: "Hoa hồng") hoặc từ khoá (vd: "hong"). */
+  /** Nguyên liệu — nhãn UI (vd: "Hoa hồng") hoặc từ khoá (vd: "hong"). */
   flowerType?: string
   /** Tone màu — nhãn UI (vd: "Pastel") hoặc slug (vd: "pastel"). */
   colorTone?: string
@@ -54,7 +54,7 @@ export interface FilterableProduct {
   colorTheme?: string | null
   /** Dịp tặng — mảng slug (vd: ["sinh-nhat", "khai-truong"]). */
   occasions?: string[]
-  /** Loại hoa — mảng tên (vd: ["Hoa hồng", "Lan hồ điệp"]). */
+  /** Nguyên liệu — mảng tên (vd: ["Hoa hồng", "Lan hồ điệp"]). */
   flowerTypes?: string[]
   /** JSONB attributes từ DB — fallback khi các field trên chưa được map. */
   attributes?: Record<string, unknown> | null
@@ -73,6 +73,6 @@ export interface ScoredProduct<T extends FilterableProduct = FilterableProduct> 
   product: T
   /** Điểm tổng (0–100+). Sắp xếp giảm dần → sản phẩm khớp nhất lên đầu. */
   score: number
-  /** Các tag giải thích lý do khớp (vd: ["Đúng tầm giá", "Bó hoa", "Hoa hồng"]). */
+  /** Các tag giải thích lý do khớp (vd: ["Đúng tầm giá", "Sản phẩm", "Hoa hồng"]). */
   matchTags: string[]
 }

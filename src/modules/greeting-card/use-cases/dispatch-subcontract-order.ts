@@ -17,6 +17,7 @@ import {
   type MatchBranchesResult,
 } from "../domain/chain-dispatch-engine"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
+import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 export interface DispatchOrderInput {
   orderId: string
@@ -40,7 +41,7 @@ export interface DispatchNotificationTarget {
    * Nếu có: đây là bản cập nhật — adapter sẽ EDIT tin nhắn cũ thay vì gửi mới.
    * Nếu không có: gửi mới và trả về telegramMsgId để caller lưu lại.
    */
-  existingTelegramCard?: { msgId: string; chatId: string; isCaption?: boolean } | null | undefined
+  existingTelegramCard?: { msgId: string; chatId: string; isCaption?: boolean | undefined } | null | undefined
 }
 
 export interface LiveCardSendResult {
@@ -64,11 +65,39 @@ export interface IDispatchNotifier {
     ctx: TenantContext,
     target: DispatchNotificationTarget
   ): Promise<LiveCardSendResult>
+  /**
+   * Chỉ sửa một thẻ Telegram đã gửi (không bao giờ gửi tin mới). `actions` rỗng = gỡ nút.
+   * Trả false nếu không sửa được (thiếu bot, tin đã bị xoá...).
+   */
+  editInviteCard?(
+    ctx: TenantContext,
+    card: { msgId: string; chatId: string; isCaption: boolean },
+    text: string,
+    actions: Array<{ text: string; url: string }>
+  ): Promise<boolean>
 }
 
 export interface ISubcontractStateStore {
   saveSubcontractState(ctx: TenantContext, state: SubcontractOrderState): Promise<void>
   loadSubcontractState(ctx: TenantContext, orderId: string): Promise<SubcontractOrderState | null>
+  /** Đọc–sửa–ghi dưới khoá dòng; `change` nhận trạng thái mới nhất (xem SubcontractOrderRepository). */
+  updateSubcontractState<T>(
+    ctx: TenantContext,
+    orderId: string,
+    change: (current: SubcontractOrderState | null) => { next: SubcontractOrderState | null; result: T }
+  ): Promise<T>
+}
+
+export interface ISubcontractClaimStore extends ISubcontractStateStore {
+  /**
+   * Ghi state chỉ khi state đang lưu vẫn ở `expectedStatus` (khoá dòng, kiểm tra và ghi trong một giao dịch).
+   * Trả false nếu đã có thao tác khác đổi trạng thái trước — hai chi nhánh bấm nhận cùng lúc chỉ một người thắng.
+   */
+  saveSubcontractStateIfStatus(
+    ctx: TenantContext,
+    state: SubcontractOrderState,
+    expectedStatus: SubcontractOrderState["dispatchStatus"]
+  ): Promise<boolean>
 }
 
 export interface AutomatedDispatchResult {
@@ -134,7 +163,12 @@ export async function executeAutomatedChainDispatch(
   // 4. Bắn thẻ gia công qua các kênh liên lạc của từng chi nhánh
   for (const candidate of matchResult.topCandidates) {
     const branch = candidate.branch
-    const claimUrl = `${baseUrl}/subcontract/${order.orderCode}?branch=${encodeURIComponent(branch.branchId)}`
+    const claimUrl = subcontractBranchUrl({
+      baseUrl,
+      organizationId: ctx.organizationId,
+      orderCode: order.orderCode,
+      branchId: branch.branchId,
+    })
 
     const messageText = renderDispatchMessage(policy.messageTemplates.inviteSubcontract, {
       orderCode: order.orderCode,

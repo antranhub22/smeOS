@@ -98,7 +98,7 @@ export async function readProductContext(
     : null
   const report = (run?.report as unknown as ProductIntelligenceReport | undefined) ?? null
 
-  let fallbackName = "Bó hoa"
+  let fallbackName = "Sản phẩm"
   if (!report && input.productId) {
     const product = await prisma.products.findFirst({
       where: { organization_id: ctx.organizationId, id: input.productId },

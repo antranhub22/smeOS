@@ -62,7 +62,7 @@ export function buildStoryboardFromTopic(
   targetSeconds: number,
   master: SceneImage | null
 ): VideoSceneItem[] {
-  const name = productName || "Bó hoa"
+  const name = productName || "Sản phẩm"
   const texts: Array<[string, string, VideoMotionEffect]> = topic
     ? [
         [topic.hook || `Giới thiệu ${name}`, topic.hook || `Giới thiệu ${name}`, "ZOOM_IN"],

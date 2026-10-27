@@ -22,7 +22,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     author: "Thanh Hằng",
     occasion: "Tặng sinh nhật mẹ",
     rating: 5,
-    comment: "Hoa giao đến còn tươi rói, mẹ mình khen tấm tắc. Thợ cắm hoa chụp ảnh gửi duyệt trước rất nhiệt tình và chu đáo!",
+    comment: "Hoa giao đến còn tươi rói, mẹ mình khen tấm tắc. Đội ngũ chế tác chụp ảnh gửi duyệt trước rất nhiệt tình và chu đáo!",
     verified: true,
   },
   {

@@ -3,7 +3,7 @@ import type {
   TemplateReminderOverrides,
 } from "@/modules/coordinator/domain/dispatch-reminder-types"
 
-/** Các mốc nhắc việc Điều phối có thể ghi đè theo từng mẫu hoa (giới hạn phút + màu nhấn). */
+/** Các mốc nhắc việc Điều phối có thể ghi đè theo từng sản phẩm (giới hạn phút + màu nhấn). */
 export const OVERRIDE_META: {
   key: keyof TemplateReminderOverrides
   label: string
@@ -22,7 +22,7 @@ export const OVERRIDE_META: {
   },
   {
     key: "m1MinutesBeforeDelivery",
-    label: "Xác nhận bắt đầu cắm hoa",
+    label: "Xác nhận bắt đầu chế tác",
     unit: "phút trước giao",
     min: 10,
     max: 720,

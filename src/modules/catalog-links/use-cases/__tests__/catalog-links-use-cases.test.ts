@@ -20,7 +20,7 @@ const mockLink: CatalogLinkRecord = {
   organization_id: "org_cat_test",
   slug: "bo-suu-tap-tet",
   name: "Bộ Sưu Tập Tết",
-  description: "Các mẫu hoa Tết đặc sắc",
+  description: "Các sản phẩm Tết đặc sắc",
   filters: { category: "TET" },
   is_revoked: false,
   revoked_at: null,

@@ -9,7 +9,7 @@ import { Globe, Calendar, Layers } from "lucide-react";
  * một bản nhãn khác nhau cho cùng 3 tham số này (vd. "7 ngày qua (Sóng nóng)"
  * vs "7 ngày qua (Bắt trend nóng)"), dễ lệch nhau khi sửa một chỗ mà quên chỗ
  * kia. Rút gọn 19/09/2026: bỏ các chú thích ngoặc đơn không giúp quyết định
- * (vd. "(Video xu hướng cắm hoa)"), giữ đúng những gì cần để chọn đúng.
+ * (vd. "(Video xu hướng chế tác)"), giữ đúng những gì cần để chọn đúng.
  */
 export const GEO_OPTIONS = [
   { value: "VN", label: "Toàn quốc" },

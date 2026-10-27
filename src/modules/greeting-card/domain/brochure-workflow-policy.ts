@@ -72,11 +72,22 @@ export const STRICT_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object.f
   slaEscalationMinutes: 15,
 })
 
-/** Nhận diện preset tương ứng từ các giá trị cấu hình */
+/**
+ * Chuỗi / 1 cửa hàng do Admin SaaS duyệt qua `organizations.type` (PO 22/10/2026) — tiệm không tự
+ * bật tắt, gói vận hành cũng không ghi đè. Trước đó gói "Nghiêm ngặt" bật chế độ Chuỗi cho cả tiệm
+ * 1 cửa hàng, gói "Tiêu chuẩn" tắt nó với tổ chức Chuỗi.
+ */
+export function isChainOrganizationType(orgType: string | null | undefined): boolean {
+  return orgType === "CHAIN" || orgType === "FLOWER_NETWORK"
+}
+
+/** Lý do từ chối khi tổ chức 1 cửa hàng gọi tính năng của Chuỗi (mời chi nhánh, nhập chi nhánh). */
+export const CHAIN_ONLY_MESSAGE = "Tính năng này dành cho mô hình Chuỗi cửa hàng. Gửi yêu cầu đổi mô hình cho Admin SaaS duyệt."
+
+/** Nhận diện preset tương ứng từ các giá trị cấu hình (không xét chế độ Chuỗi — không phải lựa chọn của tiệm) */
 export function detectWorkflowPreset(policy: Omit<BrochureWorkflowPolicy, "preset">): WorkflowPreset {
   const isMatch = (target: BrochureWorkflowPolicy) =>
     target.requireAdminDepositApproval === policy.requireAdminDepositApproval &&
-    target.requireCoordinatorAcceptance === policy.requireCoordinatorAcceptance &&
     target.requireFinishedPhoto === policy.requireFinishedPhoto &&
     target.customerApprovalMode === policy.customerApprovalMode &&
     target.requireFullPaymentBeforeDispatch === policy.requireFullPaymentBeforeDispatch &&
@@ -89,13 +100,21 @@ export function detectWorkflowPreset(policy: Omit<BrochureWorkflowPolicy, "prese
   return "CUSTOM"
 }
 
-/** Đọc cấu hình từ settings của tổ chức, bảo đảm tương thích ngược 100% với cài đặt cũ */
+/**
+ * Đọc cấu hình từ settings của tổ chức, bảo đảm tương thích ngược với cài đặt cũ. Truyền `orgType`
+ * thì chế độ Chuỗi theo loại tổ chức, bỏ qua giá trị đã lưu và gói đã chọn.
+ */
 export function parseBrochureWorkflowPolicy(settings: unknown, orgType?: string | null): BrochureWorkflowPolicy {
+  const policy = parseStoredWorkflowPolicy(settings, orgType)
+  return orgType === undefined ? policy : { ...policy, requireCoordinatorAcceptance: isChainOrganizationType(orgType) }
+}
+
+function parseStoredWorkflowPolicy(settings: unknown, orgType?: string | null): BrochureWorkflowPolicy {
   const root = settings && typeof settings === "object" ? (settings as Record<string, unknown>) : {}
   const raw = root[BROCHURE_WORKFLOW_POLICY_KEY] as Record<string, unknown> | undefined
 
   // Nếu là tổ chức Chuỗi / Mạng lưới (CHAIN, FLOWER_NETWORK): mặc định cần điều phối nhận đơn
-  const defaultForOrg = orgType === "CHAIN" || orgType === "FLOWER_NETWORK"
+  const defaultForOrg = isChainOrganizationType(orgType)
 
   // Nếu chưa có cài đặt workflow mới, kế thừa thông minh từ brochure_policy cũ nếu có
   if (!raw || typeof raw !== "object") {

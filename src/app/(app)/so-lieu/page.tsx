@@ -300,7 +300,7 @@ export default function AnalyticsPage() {
             <BusinessPerformanceCard
               orders={orders}
               aiCreditUsed={usage?.credit_used ?? 0}
-              shopName={orgName || "Tiệm Hoa"}
+              shopName={orgName || "Cửa Hàng"}
             />
 
             {/* Khối thẻ số đo thực tế */}

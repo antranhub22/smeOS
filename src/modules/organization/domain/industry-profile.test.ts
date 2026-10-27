@@ -27,7 +27,7 @@ describe("IndustryProfile Domain", () => {
     expect(DEFAULT_INDUSTRY).toBe("FLORAL")
     const fallbackDef = getIndustryDefinition(null)
     expect(fallbackDef.key).toBe("FLORAL")
-    expect(fallbackDef.terms.makerTitle).toBe("Thợ cắm hoa")
+    expect(fallbackDef.terms.makerTitle).toBe("Thợ chế tác")
   })
 
   it("trả về định nghĩa chính xác cho ngành FASHION", () => {
@@ -47,7 +47,7 @@ describe("IndustryProfile Domain", () => {
 
   it("tự động lùi về FLORAL nếu truyền ngành không hợp lệ", () => {
     const invalidTerms = getIndustryTerminology("UNKNOWN_INDUSTRY_XYZ")
-    expect(invalidTerms.makerTitle).toBe("Thợ cắm hoa")
+    expect(invalidTerms.makerTitle).toBe("Thợ chế tác")
   })
 
   it("mỗi ngành đều có đủ các trường bắt buộc trong IndustryTerminology", () => {

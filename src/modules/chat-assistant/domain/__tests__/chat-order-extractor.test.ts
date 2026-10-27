@@ -19,7 +19,7 @@ describe("Chat Order Extractor & Checkout (DH-03, DH-04)", () => {
     })
 
     it("trả về null khi không có số điện thoại hợp lệ", () => {
-      expect(extractVietnamesePhone("hoa tươi đẹp lắm shop")).toBeNull()
+      expect(extractVietnamesePhone("sản phẩm đẹp lắm shop")).toBeNull()
     })
   })
 
@@ -55,8 +55,8 @@ describe("Chat Order Extractor & Checkout (DH-03, DH-04)", () => {
   describe("extractOrderDraftFromChat", () => {
     it("trích xuất tổng thể đơn hàng từ lịch sử chat hoàn chỉnh", () => {
       const messages = [
-        { senderType: "USER", content: "Shop ơi tư vấn mình bó hoa tặng sinh nhật tầm 600k" },
-        { senderType: "ASSISTANT", content: "Dạ shop có mẫu hoa hồng pastel rất đẹp ạ" },
+        { senderType: "USER", content: "Shop ơi tư vấn mình sản phẩm tặng sinh nhật tầm 600k" },
+        { senderType: "ASSISTANT", content: "Dạ shop có sản phẩm hồng pastel rất đẹp ạ" },
         { senderType: "USER", content: "Ok lấy mẫu đó giao cho chị Mai sđt 0987654321 nhé" },
         { senderType: "USER", content: "Địa chỉ: 456 Hai Bà Trưng, Quận 3. Giao lúc 10h sáng mai nha" },
         { senderType: "USER", content: 'Ghi thiệp: "Chúc Mai sinh nhật rực rỡ và luôn hạnh phúc"' },

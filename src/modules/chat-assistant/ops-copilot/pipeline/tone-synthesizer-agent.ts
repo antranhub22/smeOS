@@ -2,7 +2,7 @@
  * Agent 3: Tone & Copywriting Synthesizer Agent — LLM Edition.
  *
  * Chuyên trách tổng hợp câu trả lời tự nhiên bằng cách đưa FactSheet vào LLM,
- * yêu cầu trả lời theo văn phong nhân viên tiệm hoa Việt Nam thực thụ.
+ * yêu cầu trả lời theo văn phong nhân viên cửa hàng Việt Nam thực thụ.
  *
  * Gọi mô hình chỉ qua cổng AI (`ChatAnswerFn` → `callCapability("chat_answer")`); cổng chọn
  * mô hình theo chính sách tiệm. Không gọi được → mẫu tĩnh.
@@ -51,7 +51,7 @@ function purifyDevJargon(text: string): string {
 // ---------------------------------------------------------------------------
 
 function buildSystemPrompt(): string {
-  return `Bạn là Trợ lý Vận hành FloraOS — nhân viên hỗ trợ nội bộ của tiệm hoa.
+  return `Bạn là Trợ lý Vận hành FloraOS — nhân viên hỗ trợ nội bộ của cửa hàng.
 Nhiệm vụ: Trả lời câu hỏi của chủ tiệm / nhân viên về cách sử dụng phần mềm FloraOS.
 
 QUY TẮC BẮT BUỘC:
@@ -103,16 +103,16 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
   if (facts.isOverview && facts.overviewItems) {
     const greeting = intent.userRole !== "ALL"
       ? `Dạ em là FloraOS Ops Copilot — Trợ lý vận hành đồng hành cùng anh/chị (${intent.userRole})!`
-      : "Dạ em là FloraOS Ops Copilot — Trợ lý vận hành nền tảng FloraOS của tiệm hoa!"
+      : "Dạ em là FloraOS Ops Copilot — Trợ lý vận hành nền tảng FloraOS của cửa hàng!"
 
     const bodyText = `${greeting} Em có thể hướng dẫn anh/chị thao tác 10 chức năng chính của tiệm:\n\n` +
       `1. **Trang Chủ:** Xem việc cần làm đầu ngày, theo dõi đơn tồn và hạn mức AI.\n` +
-      `2. **Đơn Hàng & Xưởng:** Quản lý tiến độ đơn, in phiếu cắm hoa giấu giá và phiếu giao cho shipper.\n` +
-      `3. **Thẻ Chào Mẫu Hoa:** Tạo link xem hoa gửi Zalo cho khách và nhận cọc tự động qua mã QR.\n` +
+      `2. **Đơn Hàng & Xưởng:** Quản lý tiến độ đơn, in phiếu chế tác giấu giá và phiếu giao cho shipper.\n` +
+      `3. **Thẻ Chào Sản Phẩm:** Tạo link xem hoa gửi Zalo cho khách và nhận cọc tự động qua mã QR.\n` +
       `4. **Sản Phẩm & Giá:** Quản lý bảng giá niêm yết, tra cứu mẫu theo dịp và khoảng giá.\n` +
-      `5. **Tạo Mẫu Hoa Mới:** Đăng mẫu hoa mới, ghi rõ số cành hoa để thợ cắm chuẩn mẫu.\n` +
-      `6. **Nhập từ Excel:** Nạp hàng loạt mẫu hoa cũ và tải ảnh nhanh chóng.\n` +
-      `7. **Quét Ảnh Hoa AI & Phân tích hoa:** Nhận diện loại hoa, đếm cành và soạn sẵn tin nhắn Zalo chốt đơn.\n` +
+      `5. **Tạo Sản Phẩm Mới:** Đăng sản phẩm mới, ghi rõ số thành phần để thợ chế tác chuẩn mẫu.\n` +
+      `6. **Nhập từ Excel:** Nạp hàng loạt sản phẩm cũ và tải ảnh nhanh chóng.\n` +
+      `7. **Quét Ảnh Hoa AI & Phân tích hoa:** Nhận diện nguyên liệu, đếm cành và soạn sẵn tin nhắn Zalo chốt đơn.\n` +
       `8. **Kho Dữ Liệu:** Lưu trữ ảnh hoa của tiệm và quản lý thùng rác 30 ngày.\n` +
       `9. **Hồ Sơ Cửa Hàng:** Cài đặt thông tin tiệm, logo và số tài khoản ngân hàng nhận tiền cọc.\n` +
       `10. **Cài Đặt & Thành Viên:** Cấp tài khoản nhân viên dùng ngay trong 10 giây và phân quyền.\n\n` +
@@ -125,9 +125,9 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
     const roleNote = intent.userRole !== "ALL" ? ` (${intent.userRole})` : ""
     const bodyText = `Dạ, em chưa nhận diện được thao tác cụ thể trong câu hỏi của anh/chị${roleNote}.\n\n` +
       `Anh/chị có thể miêu tả việc muốn làm để em hướng dẫn từng bước nhé. Ví dụ:\n` +
-      `• *"Tạo link mẫu hoa gửi Zalo cho khách"*\n` +
-      `• *"In phiếu cắm hoa giấu giá cho thợ"*\n` +
-      `• *"Có cần gửi ảnh khi cắm hoa xong không"*\n` +
+      `• *"Tạo link sản phẩm gửi Zalo cho khách"*\n` +
+      `• *"In phiếu chế tác giấu giá cho thợ"*\n` +
+      `• *"Có cần gửi ảnh khi chế tác xong không"*\n` +
       `• *"Cài đặt số tài khoản nhận tiền cọc"*\n` +
       `• *"Thêm tài khoản cho nhân viên mới"*\n\n` +
       `Anh/chị cứ gõ câu hỏi, em sẽ hướng dẫn chi tiết ngay ạ!`
@@ -136,7 +136,7 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
       greeting: "Dạ em xin phép hỗ trợ anh/chị ạ!",
       bodyText,
       targetRoute: "/the-chao",
-      actionLabel: "Xem Hướng Dẫn Thẻ Chào Mẫu Hoa",
+      actionLabel: "Xem Hướng Dẫn Thẻ Chào Sản Phẩm",
     }
   }
 

@@ -20,9 +20,11 @@ export function SmartFlowerImage({
   fallbackIndex = 0,
   className = "",
 }: SmartFlowerImageProps) {
-  const initialSrc = resolveFlowerImage(src, fallbackIndex)
-  const [currentSrc, setCurrentSrc] = useState(initialSrc)
-  const [hasError, setHasError] = useState(false)
+  const [errorSrc, setErrorSrc] = useState<string | null>(null)
+  const isBroken = errorSrc === src
+  const currentSrc = isBroken
+    ? resolveFlowerImage(null, fallbackIndex)
+    : resolveFlowerImage(src, fallbackIndex)
 
   const aspectClass =
     aspectRatio === "square"
@@ -36,11 +38,7 @@ export function SmartFlowerImage({
       : "aspect-4/3"
 
   const handleImgError = () => {
-    if (!hasError) {
-      setHasError(true)
-      const fallback = resolveFlowerImage(null, fallbackIndex)
-      setCurrentSrc(fallback)
-    }
+    setErrorSrc(src || "")
   }
 
   return (
@@ -53,13 +51,13 @@ export function SmartFlowerImage({
         style={{ backgroundImage: `url(${currentSrc})` }}
       />
 
-      {/* Main Flower Image — Luôn căn giữa hoàn hảo, hiển thị trọn vẹn đỉnh và gốc hoa */}
+      {/* Main Flower Image — Tràn viền sắc nét, hiển thị trọn vẹn và liền mạch với khung thẻ */}
       <img
         src={currentSrc}
         alt={alt}
         loading="lazy"
         onError={handleImgError}
-        className="relative z-10 max-h-full max-w-full object-contain p-2.5 transition-transform duration-500 group-hover:scale-105 drop-shadow-sm select-none"
+        className="relative z-10 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 select-none"
       />
     </div>
   )

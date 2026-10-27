@@ -46,6 +46,15 @@ export const RETAIL_GENERAL_INDUSTRY: IndustryPluginContract = {
       { label: "300.000 – 800.000 ₫", min: 300000, max: 800000 },
       { label: "Trên 800.000 ₫", min: 800000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: false,
+      variantDimensions: [
+        { key: "VOLUME", label: "Dung tích / Khối lượng", values: ["100 ml", "250 ml", "500 ml", "1 lít", "100 g", "500 g", "1 kg"] },
+        { key: "COLOR", label: "Màu", values: ["Đen", "Trắng", "Xám", "Xanh", "Đỏ", "Hồng"] },
+        { key: "PACK", label: "Quy cách", values: ["Lẻ", "Lốc", "Hộp", "Thùng"] },
+        { key: "EDITION", label: "Phiên bản", values: ["Tiêu chuẩn", "Cao cấp", "Giới hạn"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["cái", "hộp", "thùng", "bịch", "chai", "gói"],
@@ -94,5 +103,15 @@ export const RETAIL_GENERAL_INDUSTRY: IndustryPluginContract = {
   },
   navigation: {
     hiddenNavKeys: [],
+  },
+  craftFee: {
+    feeLabel: "Phí gia công",
+    defaultPercent: 30,
+    minVnd: 50_000,
+    maxVnd: 1_000_000,
+    partnerPercent: 70,
+    complexityLabels: { EASY: "Đóng gói", MEDIUM: "Lắp ráp", HARD: "Gia công riêng" },
+    laborByComplexityVnd: { EASY: 20_000, MEDIUM: 80_000, HARD: 200_000 },
+    peakDays: [],
   },
 }

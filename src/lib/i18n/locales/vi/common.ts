@@ -5,12 +5,12 @@
 export const commonVi = {
   terms: {
     shop: "Cửa hàng",
-    florist: "Thợ cắm hoa",
+    florist: "Thợ chế tác",
     customer: "Khách hàng",
     order: "Đơn hàng",
     product: "Sản phẩm",
-    flowerRecipe: "Công thức cành hoa",
-    sampleProduct: "Mẫu hoa chuẩn",
+    flowerRecipe: "Công thức thành phần",
+    sampleProduct: "Sản phẩm chuẩn",
     greetingCard: "Thiệp chúc mừng",
     brochure: "Thẻ chào & Giới thiệu",
     storage: "Kho dữ liệu",

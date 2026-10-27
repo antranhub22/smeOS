@@ -10,15 +10,11 @@ const mockTenantContext: TenantContext = {
   capabilities: new Set(["H5"]),
 }
 
-vi.mock("@/modules/product-copies/infra/product-copy-repository", () => {
-  const MockRepo = vi.fn().mockImplementation(() => ({
+vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
+  ProductCopyRepository: vi.fn().mockImplementation(function () { return {
     updateEdited: vi.fn(),
-  }))
-  return {
-    ProductCopyRepository: MockRepo,
-    getProductCopyRepository: () => new MockRepo(),
-  }
-})
+  } }),
+}))
 
 import { updateProductCopy } from "@/modules/product-copies/use-cases/update-product-copy"
 import { ProductCopyRepository } from "@/modules/product-copies/infra/product-copy-repository"
@@ -36,9 +32,9 @@ describe("updateProductCopy", () => {
 
   it("calls repo.updateEdited with valid data", async () => {
     const updateEdited = vi.fn().mockResolvedValue({})
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       updateEdited,
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const validEdited = {
       suggested_name: "Updated Name",
@@ -55,9 +51,9 @@ describe("updateProductCopy", () => {
 
   it("throws when repo throws NOT_FOUND", async () => {
     const updateEdited = vi.fn().mockRejectedValue(new Error("NOT_FOUND"))
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       updateEdited,
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const validEdited = {
       suggested_name: "Updated Name",
@@ -72,9 +68,9 @@ describe("updateProductCopy", () => {
 
   it("throws when repo throws CANNOT_EDIT", async () => {
     const updateEdited = vi.fn().mockRejectedValue(new Error("CANNOT_EDIT"))
-    vi.mocked(ProductCopyRepository).mockImplementation(() => ({
+    vi.mocked(ProductCopyRepository).mockImplementation(function () { return {
       updateEdited,
-    } as unknown as ProductCopyRepository))
+    } as unknown as ProductCopyRepository })
 
     const validEdited = {
       suggested_name: "Updated Name",

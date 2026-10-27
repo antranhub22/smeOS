@@ -66,6 +66,15 @@ export const NAV_GROUP_CONFIG: readonly {
 ] as const
 
 export const NAV_ENTRIES: readonly NavEntry[] = [
+  // 0. Hộp công cụ (Toolkit Hub — 48 công cụ kinh doanh)
+  {
+    href: "/cong-cu",
+    label: "Hộp công cụ",
+    group: "van-hanh",
+    iconKey: "LayoutGrid",
+    navKey: "toolkit",
+    mobileLabel: "Công cụ",
+  },
   // 1. Nhóm Bán hàng & Khách
   {
     href: "/khach-hang",
@@ -105,7 +114,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/the-chao",
-    label: "Thẻ chào mẫu hoa",
+    label: "Thẻ chào sản phẩm",
     group: "ban-hang",
     iconKey: "Sparkles",
     navKey: "greeting-card",
@@ -134,7 +143,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/san-pham/tao-moi",
-    label: "Tạo mẫu hoa mới",
+    label: "Tạo sản phẩm mới",
     group: "san-pham",
     iconKey: "Sparkles",
     navKey: "create-product",
@@ -443,7 +452,8 @@ function getAdaptedNavEntries(industryKey?: string | null): readonly NavEntry[] 
 export function buildNav(
   can: (code: string) => boolean,
   role: RoleUxDefinition | null,
-  industryKey?: string | null
+  industryKey?: string | null,
+  navHiddenKeys?: string[] | null
 ): NavView {
   if (role?.key === "industry_admin") {
     return {
@@ -631,7 +641,11 @@ export function buildNav(
     }
   }
 
-  const entries = getAdaptedNavEntries(industryKey)
+  const baseEntries = getAdaptedNavEntries(industryKey)
+  const extraHidden = new Set<string>(navHiddenKeys ?? [])
+  const entries = extraHidden.size > 0
+    ? baseEntries.filter((e) => !extraHidden.has(e.navKey))
+    : baseEntries
   const isAccessible = (item: NavEntry) => !item.capability || can(item.capability)
 
   // Gom các mục Việc chính nếu vai có cấu hình navPriority
@@ -696,7 +710,9 @@ export function buildNav(
 export function mobileSecondSlot(
   can: (code: string) => boolean,
   role: RoleUxDefinition | null,
-  industryKey?: string | null
+  industryKey?: string | null,
+  // navHiddenKeys is accepted for API parity with buildNav but not applied to slot
+  _navHiddenKeys?: string[] | null
 ): NavEntry {
   if (role?.key === "industry_admin") {
     return {

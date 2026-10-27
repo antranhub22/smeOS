@@ -69,7 +69,7 @@ const BRIEF_EXAMPLE = {
   assetId: "asset_001",
   product: {
     productId: "prod_001",
-    name: "Bó hoa hồng đỏ 20 cành",
+    name: "Sản phẩm hồng đỏ 20 cành",
     style: "cổ điển, sang trọng",
     components: [{ flowerType: "Hồng đỏ Ecuador", quantityEstimate: 20, unit: "cành", role: "dominant", color: "đỏ" }],
     packaging: { wrappingMaterial: "giấy kraft", wrappingColor: "nâu", ribbon: "lụa đỏ", accessories: ["thiệp"], cardText: "Chúc mừng sinh nhật!" },
@@ -86,7 +86,7 @@ const BRIEF_EXAMPLE = {
   },
   topic: {
     topicId: "topic_001",
-    title: "Bó hoa sinh nhật tone đỏ",
+    title: "Sản phẩm sinh nhật tone đỏ",
     angleCategory: "EMOTIONAL",
     hook: "Món quà nào nói hộ lời yêu thương?",
     cta: "Nhắn tin đặt hoa ngay hôm nay",
@@ -96,7 +96,7 @@ const BRIEF_EXAMPLE = {
   story: {
     scenePlanId: "scene_001",
     mode: "AUTHENTIC",
-    logline: "Một buổi sáng chuẩn bị bó hoa cho ngày sinh nhật đặc biệt.",
+    logline: "Một buổi sáng chuẩn bị sản phẩm cho ngày sinh nhật đặc biệt.",
     emotionalTone: "ấm áp",
     hook: "Món quà nào nói hộ lời yêu thương?",
     cta: "Nhắn tin đặt hoa ngay hôm nay",
@@ -121,12 +121,12 @@ const BRIEF_EXAMPLE = {
       targetCharsRange: [400, 900],
       hashtagRange: [4, 6],
       tone: "Kể chuyện (storytelling), lôi cuốn, 3–4 đoạn ngắn dễ đọc",
-      structureNote: "Câu mở gợi cảm xúc (hook) → mô tả nét đẹp bó hoa → CTA",
+      structureNote: "Câu mở gợi cảm xúc (hook) → mô tả nét đẹp sản phẩm → CTA",
       ctaStyle: "Mời nhắn tin Inbox hoặc Zalo để được tư vấn thiết kế riêng",
     },
   ],
   facts: [
-    { factId: "F1", category: "product", text: "Sản phẩm: Bó hoa hồng đỏ 20 cành — phong cách cổ điển, sang trọng" },
+    { factId: "F1", category: "product", text: "Sản phẩm: Sản phẩm hồng đỏ 20 cành — phong cách cổ điển, sang trọng" },
     { factId: "F2", category: "offer", text: "Quà tặng kèm: Thiệp thiết kế riêng" },
   ],
   rules: {

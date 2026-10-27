@@ -12,7 +12,7 @@
 Màn hình Nhập từ Excel & Ảnh giải quyết bài toán lớn nhất của các cửa hàng hoa khi mới chuyển đổi số: **làm thế nào để đưa hàng trăm mẫu hoa đang có vào hệ thống mà không phải gõ tay từng sản phẩm**. Bố cục gồm 4 giai đoạn logic:
 
 ### 1.1. Header & Tải File Mẫu Chuẩn (`BulkImportHeader`)
-- **Tải file mẫu Excel**: Cung cấp nút tải trực tiếp file mẫu chuẩn: `/templates/FloraOS_Template_Master_Kho_San_Pham.xlsx`.
+- **Tải file mẫu Excel**: Cung cấp nút tải trực tiếp file mẫu chuẩn: `/templates/smeOS_Template_Master_Kho_San_Pham.xlsx`.
 - **Nút quay lại**: Về màn hình Sản phẩm & Giá.
 - **Nút Đặt lại (Reset)**: Xóa toàn bộ phiên nhập hiện tại để làm lại từ đầu.
 
@@ -41,6 +41,11 @@ Gồm 2 ô dropzone độc lập nhưng đồng bộ tự động:
 
 ## 2. Tính năng chi tiết từng thành phần
 
+### 2.0. Kiểu giá & phiên bản (PO 22/10/2026)
+- File mẫu có nhóm cột **8. KIỂU GIÁ & PHIÊN BẢN**: `Kiểu giá` (Giá xác định / Khoảng giá / Liên hệ), `Giá cao điểm (VNĐ)`, `Nhóm đặc điểm 1`, `Giá trị 1`, `Nhóm đặc điểm 2`, `Giá trị 2`, `Đang bán`, `Cuối tuần cao điểm`.
+- **Khoảng giá: mỗi dòng một phiên bản.** Các dòng cùng mã SKU gộp thành một sản phẩm; thông tin chung lấy từ dòng đầu, dòng sau chỉ cần mã + giá + đặc điểm. Tối đa 2 nhóm × 12 giá trị; các dòng phải cùng tên nhóm; tổ hợp không có dòng tự tắt bán. Bảng xem trước hiện "300.000 ₫ – 500.000 ₫ · 3 phiên bản".
+- File không có cột `Kiểu giá` → nhập như cũ, không ghi đè kiểu giá đã khai trên phần mềm. Mã: `components/products/bulk-import/parse-price-columns.ts`.
+
 ### 2.1. Thuật Toán Tự Khớp Ảnh Thông Minh
 - Nhân viên không cần ngồi chọn từng ảnh cho từng sản phẩm. Chỉ cần đặt tên file ảnh trùng với mã hoa (vd: `BO-01.jpg` ứng với mã sản phẩm `BO-01`), hệ thống tự động nhận diện và gán đúng 100%.
 
@@ -52,7 +57,7 @@ Gồm 2 ô dropzone độc lập nhưng đồng bộ tự động:
 ## 3. Luồng nghiệp vụ & Tình huống sử dụng thực tế
 
 ### Tình huống 1: Tiệm hoa mới gia nhập FloraOS nạp 200 mẫu hoa cũ
-1. Quản lý tải file `FloraOS_Template_Master_Kho_San_Pham.xlsx`.
+1. Quản lý tải file `smeOS_Template_Master_Kho_San_Pham.xlsx`.
 2. Điền thông tin 200 mẫu hoa vào Excel, cột ảnh điền `hoa-01.jpg`, `hoa-02.jpg`...
 3. Vào `/san-pham/nhap-hang-loat`:
    - Thả file Excel vào ô thứ nhất.

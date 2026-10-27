@@ -82,7 +82,10 @@ describe("Staff Notification Matrix SSOT", () => {
     const saleTarget = targets.find((t) => t.role === "SALE")
     expect(saleTarget).toBeDefined()
     expect(saleTarget?.recipientUserId).toBeNull() // Broadcast
-    expect(saleTarget?.title).toContain("[Chưa nhận]")
+    // Tiêu đề chuẩn hóa: không còn tiền tố mã kỹ thuật "[Chưa nhận]" (R8) — tình trạng
+    // "chưa có người phụ trách" chuyển vào câu nội dung tự nhiên.
+    expect(saleTarget?.title).not.toContain("[Chưa nhận]")
+    expect(saleTarget?.message).toContain("chưa có người phụ trách")
     expect(saleTarget?.message).toContain("nhận đơn ngay")
   })
 

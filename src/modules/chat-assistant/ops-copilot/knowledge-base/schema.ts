@@ -7,7 +7,7 @@ export type OpsTargetRole = "ALL" | "QUAN_LY" | "BAN_HANG" | "THO_CAM" | "GIAO_H
 
 export type OpsResponseStyle =
   | "CONSULTANT"      // Chuyên gia Cố vấn Vận hành (Quản lý / Điều hành)
-  | "COACH"           // Hướng dẫn viên Cầm tay chỉ việc (Bán hàng / Thợ cắm / Mới)
+  | "COACH"           // Hướng dẫn viên Cầm tay chỉ việc (Bán hàng / Thợ chế tác / Mới)
   | "TROUBLESHOOTER"  // Kỹ thuật viên Khắc phục Sự cố (Khi gặp lỗi)
   | "FAST_SOP"        // Tóm tắt Siêu tốc Giờ cao điểm (Ngắn gọn, hành động ngay)
 

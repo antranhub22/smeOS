@@ -24,6 +24,7 @@ import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { Route } from "next"
 import type { ChatConversation, ChatMessage } from "@/modules/chat-assistant/domain/chat-types"
+import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
 
 export default function ChatAssistantPage() {
   const router = useRouter()
@@ -148,7 +149,7 @@ export default function ChatAssistantPage() {
     <div className="flex flex-col min-h-screen bg-background">
       {/* 1. Header chuẩn Top-Right Action Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-4 sm:px-6 py-4 backdrop-blur-sm">
-        <div>
+        <div className="flex items-start"><MobileMenuButton /><div>
           <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
             Trợ lý tư vấn AI & Bán hàng đa kênh
           </div>
@@ -156,7 +157,7 @@ export default function ChatAssistantPage() {
           <p className="text-caption text-text-muted mt-0.5">
             Tự động truy vấn sản phẩm và lịch sử khách hàng · Trả lời thông minh · 1-chạm chốt đơn sang xưởng hoa
           </p>
-        </div>
+        </div></div>
 
         {/* Top-Right Action Header */}
         <div className="flex items-center gap-2">
@@ -336,12 +337,12 @@ export default function ChatAssistantPage() {
                           {m.content}
                         </div>
 
-                        {/* Danh sách Card mẫu hoa gợi ý từ Master Index */}
+                        {/* Danh sách Card sản phẩm gợi ý từ Master Index */}
                         {suggestedFlowers.length > 0 && (
                           <div className="space-y-2 pt-1">
                             <div className="text-caption font-bold text-foreground flex items-center gap-1.5">
                               <Flower2 className="h-3.5 w-3.5 text-primary" />
-                              Mẫu hoa đề xuất từ Master Catalog ({suggestedFlowers.length} mẫu):
+                              Sản phẩm đề xuất từ Master Catalog ({suggestedFlowers.length} mẫu):
                             </div>
                             <div className="grid grid-cols-1 gap-2.5">
                               {suggestedFlowers.map((f) => (

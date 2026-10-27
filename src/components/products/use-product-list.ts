@@ -12,7 +12,7 @@ type Page<T> = { data: T[]; next_cursor: string | null }
  * Danh sách sản phẩm phía server: tìm kiếm (debounce 300ms) + danh mục + "tải thêm" theo cursor.
  * Mỗi lần tải mới huỷ yêu cầu cũ (AbortController) — gõ nhanh không bị kết quả cũ ghi đè kết quả mới.
  */
-export function useProductList<T extends { id: string }>(search: string, category: string | null) {
+export function useProductList<T extends { id: string }>(search: string, category: string | null, proposal: string | null = null) {
   const router = useRouter()
   const [items, setItems] = useState<T[] | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -30,9 +30,10 @@ export function useProductList<T extends { id: string }>(search: string, categor
     const params = new URLSearchParams({ limit: PAGE_SIZE })
     if (debounced.trim()) params.set("search", debounced.trim())
     if (category) params.set("category", category)
+    if (proposal) params.set("proposal", proposal)
     if (cursor) params.set("cursor", cursor)
     return `/api/v1/products?${params.toString()}`
-  }, [debounced, category])
+  }, [debounced, category, proposal])
 
   const fetchPage = useCallback(async (cursor: string | null): Promise<Page<T> | null> => {
     controller.current?.abort()

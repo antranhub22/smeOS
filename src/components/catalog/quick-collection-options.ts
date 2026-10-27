@@ -1,4 +1,4 @@
-/** Lựa chọn nhanh của "Tạo nhanh bộ sưu tập": dịp tặng, dáng hoa, loại hoa, tone màu, khung giá. */
+/** Lựa chọn nhanh của "Tạo nhanh bộ sưu tập": dịp tặng, dáng hoa, nguyên liệu, tone màu, khung giá. */
 
 export const COMMON_OCCASIONS = [
   "Sinh nhật",
@@ -10,7 +10,7 @@ export const COMMON_OCCASIONS = [
 ]
 
 export const COMMON_CATEGORIES = [
-  "Bó hoa",
+  "Sản phẩm",
   "Giỏ hoa",
   "Kệ hoa",
   "Lẵng hoa",

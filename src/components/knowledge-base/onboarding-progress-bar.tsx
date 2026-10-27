@@ -12,7 +12,7 @@ interface OnboardingStep {
 
 export function OnboardingProgressBar() {
   const steps: OnboardingStep[] = [
-    { id: "s1", title: "M01: Duyệt BOM cành hoa", completed: true, route: "/tai-anh" },
+    { id: "s1", title: "M01: Duyệt BOM thành phần", completed: true, route: "/tai-anh" },
     { id: "s2", title: "M02: Cài giá sàn & markup", completed: true, route: "/san-pham" },
     { id: "s3", title: "M04c: Dựng video 9:16", completed: true, route: "/video" },
     { id: "s4", title: "M06: Tải mã QR E-Catalog", completed: true, route: "/catalog" },
@@ -39,7 +39,7 @@ export function OnboardingProgressBar() {
               </span>
             </div>
             <div className="text-xs text-muted-foreground">
-              Đã hoàn thành {completedCount}/{steps.length} tiêu chuẩn nhập liệu cốt lõi của FloraOS
+              Đã hoàn thành {completedCount}/{steps.length} tiêu chuẩn nhập liệu cốt lõi của smeOS
             </div>
           </div>
         </div>

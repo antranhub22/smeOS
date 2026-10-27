@@ -14,8 +14,8 @@ import type { JourneyDefinition } from "./journey-model"
 export const STORE_JOURNEYS: JourneyDefinition[] = [
   {
     id: "greeting-card-hub",
-    goal: "Thẻ chào mẫu hoa",
-    description: "Gửi bộ sưu tập hoa cho khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.",
+    goal: "Thẻ chào sản phẩm",
+    description: "Gửi bộ sưu tập sản phẩm cho khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.",
     icon: "Sparkles",
     badgeText: "Nổi bật",
     roleScope: "STORE",
@@ -34,7 +34,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   {
     id: "view-store-overview",
     goal: "Xem báo cáo",
-    description: "Xem doanh thu, số đơn hàng và hoạt động trên FloraOS của cửa hàng.",
+    description: "Xem doanh thu, số đơn hàng và hoạt động trên smeOS của cửa hàng.",
     icon: "BarChart3",
     roleScope: "STORE",
     category: "SINGLE",
@@ -51,8 +51,8 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "market-intelligence-explore",
-    goal: "Xem mẫu hoa được ưa chuộng",
-    description: "Biết khách thích kiểu hoa, màu sắc và mức giá nào để chuẩn bị hàng.",
+    goal: "Xem xu hướng sản phẩm thịnh hành",
+    description: "Biết khách thích kiểu dáng, màu sắc và mức giá nào để chuẩn bị hàng.",
     icon: "TrendingUp",
     roleScope: "STORE",
     category: "SINGLE",
@@ -69,8 +69,8 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "analyze-product-photo",
-    goal: "Tạo mẫu hoa từ ảnh chụp",
-    description: "Chụp ảnh hoa, AI nhận diện các loại hoa và tạo sẵn mẫu hoa để bán.",
+    goal: "Tạo sản phẩm từ ảnh chụp",
+    description: "Chụp ảnh hoa, AI nhận diện các nguyên liệu và tạo sẵn sản phẩm để bán.",
     icon: "Camera",
     roleScope: "STORE",
     category: "SINGLE",
@@ -79,7 +79,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
       {
         id: "upload-product-photo",
         label: "Tải ảnh sản phẩm",
-        description: "Chọn ảnh bó hoa, giỏ hoa hoặc kệ hoa cần phân tích",
+        description: "Chọn ảnh sản phẩm, giỏ hoa hoặc kệ hoa cần phân tích",
         inputType: "IMAGE_UPLOAD",
         isOptional: false,
         nextStepId: "review-analysis",
@@ -147,7 +147,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   {
     id: "create-audio-voiceover",
     goal: "Tạo giọng đọc cho bài đăng",
-    description: "Chuyển bài viết thành giọng đọc để ghép vào video giới thiệu mẫu hoa.",
+    description: "Chuyển bài viết thành giọng đọc để ghép vào video giới thiệu sản phẩm.",
     icon: "Volume2",
     roleScope: "STORE",
     category: "SINGLE",
@@ -197,7 +197,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   {
     id: "create-product-video",
     goal: "Tạo video từ ảnh hoa",
-    description: "Biến ảnh bó hoa thành video ngắn để đăng Story, Reels, TikTok.",
+    description: "Biến ảnh sản phẩm thành video ngắn để đăng Story, Reels, TikTok.",
     icon: "Video",
     roleScope: "STORE",
     category: "SINGLE",
@@ -247,7 +247,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   {
     id: "create-order",
     goal: "Xử lý đơn hàng",
-    description: "Theo dõi đơn từ lúc chốt, giao việc cho thợ cắm đến khi hoa tới tay người nhận.",
+    description: "Theo dõi đơn từ lúc chốt, giao việc cho thợ chế tác đến khi hoa tới tay người nhận.",
     icon: "ShoppingCart",
     roleScope: "STORE",
     category: "SINGLE",
@@ -282,8 +282,8 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "launch-product-combo",
-    goal: "Ra mắt mẫu hoa mới",
-    description: "Từ một ảnh chụp: nhận diện hoa, tạo mẫu hoa, viết bài và làm ảnh quảng cáo.",
+    goal: "Ra mắt sản phẩm mới",
+    description: "Từ một ảnh chụp: nhận diện hoa, tạo sản phẩm, viết bài và làm ảnh quảng cáo.",
     icon: "Rocket",
     badgeText: "Quy trình",
     roleScope: "STORE",
@@ -335,8 +335,8 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "customer-service-chatbot",
-    goal: "Hỏi trợ lý FloraOS",
-    description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng FloraOS.",
+    goal: "Hỏi trợ lý smeOS",
+    description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng smeOS.",
     icon: "Bot",
     badgeText: "Trợ lý AI",
     roleScope: "STORE",
@@ -476,7 +476,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   {
     id: "network-products",
     goal: "Quản lý sản phẩm mạng lưới",
-    description: "Chuẩn hóa danh mục mẫu hoa chung cho các tiệm thành viên nhận làm",
+    description: "Chuẩn hóa danh mục sản phẩm chung cho các tiệm thành viên nhận làm",
     icon: "Flower2",
     roleScope: "FLOWER_NETWORK",
     category: "SINGLE",
@@ -505,8 +505,8 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "network-partners",
-    goal: "Quản lý đối tác tiệm hoa",
-    description: "Đánh giá chất lượng cắm hoa, tỷ lệ hoàn thành đúng hẹn của đối tác",
+    goal: "Quản lý đối tác cửa hàng",
+    description: "Đánh giá chất lượng chế tác, tỷ lệ hoàn thành đúng hẹn của đối tác",
     icon: "Handshake",
     roleScope: "FLOWER_NETWORK",
     category: "SINGLE",
@@ -536,7 +536,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   {
     id: "network-finance",
     goal: "Đối soát tài chính & Hoa hồng",
-    description: "Tính toán tiền cắm hoa, hoa hồng giới thiệu và thanh toán cho đối tác",
+    description: "Tính toán tiền chế tác, hoa hồng giới thiệu và thanh toán cho đối tác",
     icon: "Coins",
     roleScope: "FLOWER_NETWORK",
     category: "SINGLE",

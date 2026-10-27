@@ -160,7 +160,7 @@ export async function getPublicCatalog(
   }
 
   const shop: PublicCatalogShop = {
-    name: bizProfile?.display_name || org?.name || "Tiệm hoa FloraOS",
+    name: bizProfile?.display_name || org?.name || "Cửa hàng smeOS",
     legalName: bizProfile?.legal_name ?? null,
     phone: bizProfile?.phone ?? null,
     email: bizProfile?.email ?? null,

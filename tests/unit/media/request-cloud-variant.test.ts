@@ -7,28 +7,18 @@ import type { TenantContext } from "@/core/tenancy"
 // local. Bản trước chạy đồng bộ trong request HTTP, không qua cổng nào.
 
 const enqueueJob = vi.fn()
-const { findById, findJobById } = vi.hoisted(() => ({
-  findById: vi.fn(),
-  findJobById: vi.fn(),
-}))
+const findById = vi.fn()
 
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({
   enqueueJob: (...args: unknown[]) => enqueueJob(...args),
 }))
-vi.mock("@/modules/assets/infra/asset-repository", () => {
-  const instance = { findById }
-  return {
-    AssetRepository: vi.fn().mockImplementation(() => instance),
-    getAssetRepository: vi.fn().mockImplementation(() => instance),
-  }
-})
-vi.mock("@/modules/jobs/infra/generation-job-repository", () => {
-  const instance = { findById: findJobById }
-  return {
-    GenerationJobRepository: vi.fn().mockImplementation(() => instance),
-    getGenerationJobRepository: vi.fn().mockImplementation(() => instance),
-  }
-})
+vi.mock("@/modules/assets/infra/asset-repository", () => ({
+  AssetRepository: vi.fn().mockImplementation(function () { return { findById } }),
+}))
+const findJobById = vi.fn()
+vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
+  GenerationJobRepository: vi.fn().mockImplementation(function () { return { findById: findJobById } }),
+}))
 
 const { requestCloudVariant, requestVariants } = await import(
   "@/modules/media/use-cases/request-variants"

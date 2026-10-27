@@ -129,7 +129,7 @@ export function buildCommercialPassport(
   return {
     suggestedName: productName || `Bó ${dominantFlower} ${mainColor} ${primaryStyle}`,
     shortHeadline: `${dominantFlower} ${mainColor} — Trọn Vẹn Cảm Xúc Trao Gửi`,
-    description: `Bó hoa ${dominantFlower.toLowerCase()} phối tone màu ${mainColor.toLowerCase()} tinh tế, gói theo phong cách ${primaryStyle}. Thiết kế trang nhã, hoàn hảo để gửi gắm tình cảm chân thành tới người nhận.`,
+    description: `Sản phẩm ${dominantFlower.toLowerCase()} phối tone màu ${mainColor.toLowerCase()} tinh tế, gói theo phong cách ${primaryStyle}. Thiết kế trang nhã, hoàn hảo để gửi gắm tình cảm chân thành tới người nhận.`,
     style: primaryStyle,
     tags: [
       dominantFlower.toLowerCase().replace(/\s+/g, "-"),
@@ -139,8 +139,8 @@ export function buildCommercialPassport(
     ],
     seoKeywords: [
       `đặt hoa ${dominantFlower.toLowerCase()}`,
-      `hoa tươi tone ${mainColor.toLowerCase()}`,
-      `bó hoa ${primaryStyle.toLowerCase()}`,
+      `sản phẩm tone ${mainColor.toLowerCase()}`,
+      `sản phẩm ${primaryStyle.toLowerCase()}`,
     ],
     occasions: context.likelyOccasions.length > 0 ? context.likelyOccasions : ["Sinh nhật", "Kỷ niệm"],
     targetAudience: {
@@ -157,12 +157,12 @@ export function buildCommercialPassport(
     ],
     cardMessageSuggestions: {
       romantic: packaging.card?.printedText || "Mong mỗi ngày của em đều rạng rỡ và ngập tràn hạnh phúc như những đóa hoa này.",
-      subtle: packaging.card?.printedText || "Gửi đến bạn những đóa hoa tươi thắm nhất cùng lời chúc an lành và niềm vui.",
+      subtle: packaging.card?.printedText || "Gửi đến bạn món quà ý nghĩa nhất cùng lời chúc an lành và niềm vui.",
       congratulatory: packaging.card?.printedText || "Chúc mừng ngày đặc biệt! Chúc bạn luôn thành công, rực rỡ và may mắn.",
     },
     careInstructions: [
       "Đặt hoa nơi thoáng mát, tránh ánh nắng trực tiếp và luồng gió máy lạnh",
-      "Thêm một chút nước mát vào gốc mỗi ngày để giữ hoa tươi lâu",
+      "Bảo quản đúng cách theo hướng dẫn đi kèm để giữ sản phẩm bền đẹp lâu",
     ],
     priceSegment: price > 1500000 ? "luxury" : price > 800000 ? "premium" : price > 400000 ? "standard" : "budget",
     priceRange: {
@@ -297,7 +297,7 @@ export function evaluateProductTrendFit(input: EvaluateTrendFitInput): ProductIn
       attributeLabel: `Phong cách thiết kế (${primaryStyle})`,
       productValue: primaryStyle,
       real: realAttributeSignals?.style,
-      note: "Phong cách cắm hoa là điều khách hàng thường tìm kiếm trực tiếp trên TikTok/YouTube trước khi đặt hoa.",
+      note: "Phong cách chế tác là điều khách hàng thường tìm kiếm trực tiếp trên TikTok/YouTube trước khi đặt hoa.",
       noDataHint: `phong cách "${primaryStyle}"`,
     }),
     buildAttributeRow({
@@ -311,7 +311,7 @@ export function evaluateProductTrendFit(input: EvaluateTrendFitInput): ProductIn
       attributeLabel: `Dịp sử dụng đề xuất (${primaryOccasion})`,
       productValue: context.likelyOccasions.join(", "),
       real: realAttributeSignals?.occasion,
-      note: "Dịp sử dụng quyết định thời điểm và ngân sách khách sẵn sàng chi cho một bó hoa.",
+      note: "Dịp sử dụng quyết định thời điểm và ngân sách khách sẵn sàng chi cho một sản phẩm.",
       noDataHint: `dịp "${primaryOccasion}"`,
     }),
   ];
@@ -336,7 +336,7 @@ export function evaluateProductTrendFit(input: EvaluateTrendFitInput): ProductIn
       `Phối hoa lá phụ (${components.find((c) => c.role === "foliage")?.flowerType || "Lá bạc Eucalyptus"}) tạo độ bay bổng tự nhiên.`,
     ],
     improve: [
-      "Góc chụp ảnh hiện tại hơi phẳng, nên chụp góc nghiêng 45 độ đón ánh sáng ban mai để thấy chiều sâu cành hoa.",
+      "Góc chụp ảnh hiện tại hơi phẳng, nên chụp góc nghiêng 45 độ đón ánh sáng ban mai để thấy chiều sâu thành phần.",
       "Phần thắt nơ ruy băng có thể kéo dài dải ruy băng thêm 10cm để tạo nét thướt tha khi quay video ngắn.",
     ],
     test: [
@@ -353,24 +353,24 @@ export function evaluateProductTrendFit(input: EvaluateTrendFitInput): ProductIn
   const rawTopics: ConcreteTopic[] = [
     {
       id: "top-01",
-      title: `Bó hoa ${primaryOccasion.toLowerCase()} ${formattedPrice} cho người thích tone màu ${mainColor.toLowerCase()}`,
+      title: `Sản phẩm ${primaryOccasion.toLowerCase()} ${formattedPrice} cho người thích tone màu ${mainColor.toLowerCase()}`,
       angleCategory: "PRODUCT_SHOWCASE",
       hook: `Đừng mua hoa đắt tiền, chỉ cần ${formattedPrice} mà tinh tế như thế này thì ai cũng đổ!`,
       format: "REELS_TIKTOK_9_16",
-      cta: "Nhắn tin cho tiệm để giữ mẫu hoa tươi trong ngày nhé!",
+      cta: "Nhắn tin cho cửa hàng để giữ sản phẩm trong ngày nhé!",
       evidenceNote: honestEvidenceNote({
         sourceLabel: "SerpApi & TikTok",
         tenantSignalText: findRealSignal(mainColor),
         attributeSignal: realAttributeSignals?.color,
       }),
       platform: "tiktok",
-      referenceUrl: `https://www.tiktok.com/search?q=${encodeURIComponent("bó hoa tone " + mainColor)}`,
+      referenceUrl: `https://www.tiktok.com/search?q=${encodeURIComponent("sản phẩm tone " + mainColor)}`,
     },
     {
       id: "top-02",
-      title: `3 tone màu giúp bó hoa ${dominantFlower.toLowerCase()} trông sang trọng gấp đôi`,
+      title: `3 tone màu giúp sản phẩm ${dominantFlower.toLowerCase()} trông sang trọng gấp đôi`,
       angleCategory: "EDUCATIONAL",
-      hook: "Bí quyết thợ hoa 10 năm kinh nghiệm: Phối 3 tone màu này bó hoa lập tức nâng tầm!",
+      hook: "Bí quyết thợ chế tác 10 năm kinh nghiệm: Phối 3 tone màu này sản phẩm lập tức nâng tầm!",
       format: "CAROUSEL_PHOTO_1_1",
       cta: "Lưu lại bài viết này để khi cần đặt hoa mở ra xem ngay nhé!",
       evidenceNote: honestEvidenceNote({
@@ -379,11 +379,11 @@ export function evaluateProductTrendFit(input: EvaluateTrendFitInput): ProductIn
         attributeSignal: realAttributeSignals?.dominantFlower,
       }),
       platform: "youtube",
-      referenceUrl: `https://www.youtube.com/results?search_query=${encodeURIComponent("phối màu bó hoa " + dominantFlower)}`,
+      referenceUrl: `https://www.youtube.com/results?search_query=${encodeURIComponent("phối màu sản phẩm " + dominantFlower)}`,
     },
     {
       id: "top-03",
-      title: `Nếu cô ấy yêu vẻ đẹp dịu dàng, hãy chọn ngay bó hoa này`,
+      title: `Nếu cô ấy yêu vẻ đẹp dịu dàng, hãy chọn ngay sản phẩm này`,
       angleCategory: "PROBLEM_SOLUTION",
       hook: "Con trai thường không biết chọn hoa gì, cứ mang ảnh này ra là 10 điểm tinh tế!",
       format: "REELS_TIKTOK_9_16",
@@ -398,11 +398,11 @@ export function evaluateProductTrendFit(input: EvaluateTrendFitInput): ProductIn
     },
     {
       id: "top-04",
-      title: "Bó hoa thay lời tỏ tình: Có những món quà không cần nói thành lời",
+      title: "Sản phẩm thay lời tỏ tình: Có những món quà không cần nói thành lời",
       angleCategory: "EMOTIONAL",
-      hook: "Có những cảm xúc khó cất thành lời, hãy để những cành hoa này nói thay bạn...",
+      hook: "Có những cảm xúc khó cất thành lời, hãy để những thành phần này nói thay bạn...",
       format: "REELS_TIKTOK_9_16",
-      cta: "Đặt trước hôm nay để tiệm chuẩn bị hoa tươi nhất từ Đà Lạt.",
+      cta: "Đặt trước hôm nay để cửa hàng chuẩn bị sản phẩm chất lượng nhất.",
       evidenceNote: "Góc cảm xúc phù hợp định dạng video ngắn, thường giữ chân người xem tốt hơn nội dung thuần sản phẩm.",
       platform: "tiktok",
       referenceUrl: `https://www.tiktok.com/search?q=${encodeURIComponent("quà tặng tinh tế")}`,
@@ -452,11 +452,11 @@ export function evaluateProductTrendFit(input: EvaluateTrendFitInput): ProductIn
     },
     {
       id: "top-08",
-      title: `Quá trình hoàn thiện một bó hoa ${dominantFlower.toLowerCase()} tại xưởng`,
+      title: `Quá trình hoàn thiện một sản phẩm ${dominantFlower.toLowerCase()} tại xưởng`,
       angleCategory: "PRODUCT_SHOWCASE",
-      hook: "Mất 45 phút tỉ mẩn từng cành hoa để tạo nên kiệt tác này, bạn xem có xứng đáng không?",
+      hook: "Mất 45 phút tỉ mẩn từng thành phần để tạo nên kiệt tác này, bạn xem có xứng đáng không?",
       format: "REELS_TIKTOK_9_16",
-      cta: "Ghé trực tiếp tiệm hoa để ngắm các thợ cắm hoa trổ tài nhé!",
+      cta: "Ghé trực tiếp cửa hàng để khám phá quy trình chế tác thủ công nhé!",
       evidenceNote: honestEvidenceNote({
         sourceLabel: "TikTok / Reels",
         tenantSignalText: findRealSignal(dominantFlower),
@@ -477,7 +477,7 @@ export function evaluateProductTrendFit(input: EvaluateTrendFitInput): ProductIn
       id: "top-10",
       title: `Món quà sinh nhật ngọt ngào nhất dành cho người bạn thương yêu`,
       angleCategory: "EMOTIONAL",
-      hook: "Khoảnh khắc người ấy nhận được bó hoa này và mỉm cười chính là điều vô giá nhất hôm nay.",
+      hook: "Khoảnh khắc người ấy nhận được sản phẩm này và mỉm cười chính là điều vô giá nhất hôm nay.",
       format: "REELS_TIKTOK_9_16",
       cta: "Tiệm giao hoa hỏa tốc trong 2 giờ nội thành kèm ảnh chụp trước khi giao.",
       evidenceNote: "Khách mua hoa dịp sinh nhật thường quay lại vào dịp kế tiếp nếu trải nghiệm tốt — nên đầu tư chăm sóc hậu mãi cho nhóm khách này.",

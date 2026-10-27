@@ -1,13 +1,21 @@
+// Console Vận hành Nền tảng — ngữ cảnh song song với `(app)/layout.tsx`
+// (chốt 18/09, kế hoạch mục 4.2/4.6). Giải `PlatformContext` từ CÙNG
+// cookie phiên (`floraos_session`) nhưng KHÔNG qua `resolveAppSession` —
+// hai bảng nguồn (`memberships`, `platform_operators`) độc lập, một tài
+// khoản có thể vừa là thành viên tổ chức vừa là người vận hành.
+//
+// Không phải người vận hành (chưa đăng nhập, hoặc đã đăng nhập nhưng
+// không có dòng `platform_operators` đang hoạt động) → về "/", không lộ
+// rằng route này tồn tại.
+
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
 import { resolvePlatformSession } from "@/modules/platform/use-cases/resolve-platform-session"
 import { SessionProvider } from "@/lib/session"
 import { DesktopNav } from "@/components/layout/desktop-nav"
+import { MobileNavDrawer } from "@/components/layout/mobile-nav-drawer"
 import { BottomNav } from "@/components/layout/bottom-nav"
-import { DevRoleOverrideBanner } from "@/components/layout/dev-role-override-banner"
-import { I18nProvider } from "@/lib/i18n"
-import { LiveRegionProvider } from "@/components/ui/live-region"
 
 export default async function PlatformLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -23,27 +31,27 @@ export default async function PlatformLayout({ children }: { children: React.Rea
   const platformSession = {
     userName: "Quản trị Nền tảng",
     userInitials: "AD",
-    orgName: "smeOS Mother",
+    orgName: "Vận hành Nền tảng",
     workspaceKind: "PRODUCTION" as const,
     capabilities: Array.from(pctx.capabilities),
     roleKey: "platform_admin",
-    organizationType: "PLATFORM",
+    organizationType: "PLATFORM" as const,
   }
+
+  const isDev = process.env.NODE_ENV !== "production"
 
   return (
     <SessionProvider session={platformSession}>
-      <I18nProvider>
-        <LiveRegionProvider>
-          <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-none md:flex-row">
-            <DesktopNav isDev={process.env.NODE_ENV !== "production"} />
-            <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-y-auto focus:outline-none">
-              {children}
-            </div>
-            <BottomNav />
+      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-none md:flex-row">
+        <MobileNavDrawer>
+          <DesktopNav isDev={isDev} />
+          <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-hidden focus:outline-none">
+            <main className="h-full overflow-auto">{children}</main>
           </div>
-          <DevRoleOverrideBanner activeRoleKey="platform_admin" isDev={process.env.NODE_ENV !== "production"} />
-        </LiveRegionProvider>
-      </I18nProvider>
+        </MobileNavDrawer>
+        <BottomNav />
+      </div>
     </SessionProvider>
   )
 }
+

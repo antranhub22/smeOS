@@ -11,6 +11,14 @@ import type { GreetingCardRepository } from "@/modules/greeting-card/infra/greet
 import * as notifyCustomerModule from "@/modules/greeting-card/use-cases/notify-customer"
 import { adminConfirmBrochureOrder, adminRejectBrochureOrder } from "@/modules/greeting-card/use-cases/admin-confirm-brochure-order"
 import type { CancellationRepository } from "@/modules/greeting-card/infra/cancellation-repository"
+import { dispatchAfterPaymentConfirmed } from "@/modules/greeting-card/use-cases/dispatch-after-payment"
+
+// Nhận đơn kiểm đề xuất huỷ đang chờ — unit test không chạm DB
+vi.mock("@/modules/greeting-card/infra/cancellation-repository", () => ({ CancellationRepository: class { listPending = async () => [] } }))
+
+vi.mock("@/modules/greeting-card/use-cases/dispatch-after-payment", () => ({
+  dispatchAfterPaymentConfirmed: vi.fn().mockResolvedValue({ mode: "AUTO", dispatched: true, sentCount: 2 }),
+}))
 
 const ctx: TenantContext = {
   organizationId: "org-test-1",
@@ -178,8 +186,10 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
       deliveryStatus: "PENDING",
     }
 
-    // Với Chuỗi: Nút Nhận đơn MỞ (blocker = null) vì Điều phối cần chốt chi nhánh
-    expect(coordinatorAcceptanceBlocker(orderState, { paidVnd: 800_000 }, chainPolicy)).toBeNull()
+    // Với Chuỗi: đã ghi nhận tiền → không xác nhận tiền lần nữa, chọn cửa hàng trong Thẻ gia công
+    expect(coordinatorAcceptanceBlocker(orderState, { paidVnd: 800_000 }, chainPolicy)).toBe("Đã xác nhận nhận tiền — chọn cửa hàng trong Thẻ gia công")
+    // Chưa ghi nhận tiền nhưng khách đã gửi bill → nút "Xác nhận đã nhận tiền" MỞ
+    expect(coordinatorAcceptanceBlocker(orderState, { paidVnd: 0, paymentProofUrl: "proof-1" }, chainPolicy)).toBeNull()
 
     // Với 1 Cửa hàng: Nút Nhận đơn ĐÓNG vì Điều hành đã nhận đơn ngay lúc duyệt tiền
     expect(coordinatorAcceptanceBlocker(orderState, { paidVnd: 800_000 }, singlePolicy)).toBe(
@@ -196,7 +206,7 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
     ).toBe("Đơn đã vào sản xuất")
   })
 
-  it("Chuỗi cửa hàng: Điều phối xác nhận Nhận đơn sau khi liên hệ chi nhánh thành công", async () => {
+  it("Chuỗi cửa hàng: Điều phối xác nhận đã nhận tiền → không vào sản xuất, chuyển sang chọn cửa hàng", async () => {
     const mockOrder = {
       id: "order-chain-2",
       code: "DH-CHAIN-2",
@@ -204,10 +214,10 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
       production_status: "WAITING",
       delivery_status: "PENDING",
       total_vnd: 800_000,
-      paid_vnd: 800_000,
+      paid_vnd: 0,
       delivery_window: null,
       created_at: new Date(),
-      greeting_sessions: [],
+      greeting_sessions: [{ status: "PAYMENT_REPORTED", payment_proof_asset_id: "proof-1" }],
     }
 
     const mockRepo = {
@@ -225,24 +235,25 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
       }),
     } as unknown as GreetingCardRepository
 
+    // Điều phối thật không có R11 — chỉ ghi nhận việc đã đối chiếu bill, không tự ghi tiền cọc
+    const coordinatorCtx: TenantContext = { ...ctx, capabilities: new Set(["R4", "R6"]) }
     const result = await coordinatorAcceptBrochureOrder(
-      ctx,
+      coordinatorCtx,
       "order-chain-2",
       { note: "Chi nhánh Quận 1 xác nhận có đủ hoa và nhận làm" },
       mockRepo,
       mockShops
     )
 
-    expect(result).toEqual({ success: true })
-    expect(mockRepo.applyProgress).toHaveBeenCalledWith(
-      ctx,
-      mockOrder,
-      expect.objectContaining({
-        eventType: "COORDINATOR_ACCEPTED",
-        productionStatus: "ASSIGNED",
-        noteAppend: "[Điều phối tiếp nhận] Chi nhánh Quận 1 xác nhận có đủ hoa và nhận làm",
-      })
-    )
+    // Khách chưa nhận tin "đã nhận đơn"; chuyển sang chọn cửa hàng (tự động theo cài đặt)
+    expect(result).toMatchObject({ success: true, dispatch: { mode: "AUTO", dispatched: true, sentCount: 2 } })
+    const progress = vi.mocked(mockRepo.applyProgress).mock.calls.at(-1)?.[2]
+    expect(progress).toMatchObject({
+      eventType: "COORDINATOR_PAYMENT_CONFIRMED",
+      noteAppend: "[Điều phối xác nhận đã nhận tiền] Chi nhánh Quận 1 xác nhận có đủ hoa và nhận làm",
+    })
+    expect(progress).not.toHaveProperty("productionStatus")
+    expect(dispatchAfterPaymentConfirmed).toHaveBeenCalledWith(coordinatorCtx, "order-chain-2", { manualDispatch: undefined })
   })
 
   it("Hộp việc (Inbox): phân biệt task điều phối giữa Chờ liên hệ chuỗi vs Đã tiếp nhận sẵn sàng giao thợ", () => {
@@ -311,7 +322,8 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
       }),
     } as unknown as GreetingCardRepository
 
-    const res = await adminConfirmBrochureOrder(ctx, "order-conf-1", { note: "Đủ nguyên liệu" }, mockOrders, mockShops)
+    const noPending = { listPending: vi.fn().mockResolvedValue([]) } as unknown as CancellationRepository
+    const res = await adminConfirmBrochureOrder(ctx, "order-conf-1", { note: "Đủ nguyên liệu" }, mockOrders, mockShops, noPending)
     expect(res.success).toBe(true)
     expect(res.productionStatus).toBe("ASSIGNED")
     expect(mockOrders.applyProgress).toHaveBeenCalledWith(
@@ -320,9 +332,15 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
       expect.objectContaining({ eventType: "ADMIN_CONFIRMED_ORDER", productionStatus: "ASSIGNED" })
     )
     expect(queueSpy).toHaveBeenCalledWith("org-test-1", "order-conf-1", "ORDER_ACCEPTED")
+
+    // Đơn còn đề xuất huỷ chờ duyệt → không xác nhận được, không ghi gì
+    vi.mocked(mockOrders.applyProgress).mockClear()
+    const pending = { listPending: vi.fn().mockResolvedValue([{ order_id: "order-conf-1" }]) } as unknown as CancellationRepository
+    await expect(adminConfirmBrochureOrder(ctx, "order-conf-1", {}, mockOrders, mockShops, pending)).rejects.toThrow(/đề xuất huỷ chờ duyệt/)
+    expect(mockOrders.applyProgress).not.toHaveBeenCalled()
   })
 
-  it("1 Cửa hàng: Gate 1b Điều hành từ chối đơn → tạo đề xuất huỷ & hoàn tiền, thông báo CANCELLED", async () => {
+  it("1 Cửa hàng: Điều hành từ chối đơn → tạo đề xuất huỷ & hoàn tiền; khách chưa nhận tin huỷ khi đề xuất còn chờ duyệt", async () => {
     const queueSpy = vi.spyOn(notifyCustomerModule, "queueOrderNotification")
     queueSpy.mockClear()
 
@@ -365,6 +383,7 @@ describe("Phân tách quy trình 1 Cửa hàng vs Chuỗi cửa hàng (Gate 2)",
         proposal: expect.objectContaining({ type: "FULL_REFUND", refundAmountVnd: 200_000 }),
       })
     )
-    expect(queueSpy).toHaveBeenCalledWith("org-test-1", "order-rej-1", "CANCELLED")
+    expect(queueSpy).not.toHaveBeenCalledWith("org-test-1", "order-rej-1", "CANCELLED")
+    expect(res.message).toMatch(/Duyệt đề xuất/)
   })
 })

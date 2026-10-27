@@ -38,8 +38,8 @@ interface ItemRow {
   unitPriceVnd: number
   sampleImageUrl?: string | undefined
   bomSummary?: string | undefined
-  /** BOM có cấu trúc thật lấy từ Master Index — để phiếu cắm hoa (florist ticket) đọc được
-   * đúng từng loại hoa/số lượng/màu thay vì phải bịa lại từ mô tả chữ tự do. */
+  /** BOM có cấu trúc thật lấy từ Master Index — để phiếu chế tác (florist ticket) đọc được
+   * đúng từng nguyên liệu/số lượng/màu thay vì phải bịa lại từ mô tả chữ tự do. */
   bomFlowers?: FlowerBomItemLite[] | undefined
   wrapStyle?: string | undefined
   ribbon?: string | undefined
@@ -57,7 +57,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
   const [cardMessage, setCardMessage] = useState("")
   const [internalNote, setInternalNote] = useState("")
   const [items, setItems] = useState<ItemRow[]>([
-    { description: "Bó hoa hồng đỏ 20 cành (Thiết kế tiêu chuẩn)", quantity: 1, unitPriceVnd: 650000 },
+    { description: "Sản phẩm hồng đỏ 20 cành (Thiết kế tiêu chuẩn)", quantity: 1, unitPriceVnd: 650000 },
   ])
   const [error, setError] = useState<string | null>(null)
 
@@ -207,7 +207,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
       open={isOpen}
       onOpenChange={(open) => { if (!open) onClose() }}
       title={dialogTitle}
-      description="Chọn mẫu có sẵn từ kho mẫu hoa hoặc nhập trực tiếp."
+      description="Chọn mẫu có sẵn từ kho sản phẩm hoặc nhập trực tiếp."
       size="lg"
       footer={dialogFooter}
     >
@@ -223,7 +223,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 text-caption font-bold text-guidance-text">
                 <Flower2 className="h-4 w-4 text-guidance" />
-                Chọn nhanh từ kho mẫu hoa
+                Chọn nhanh từ kho sản phẩm
               </span>
               <span className="text-caption font-medium text-guidance">{masterProducts.length} mẫu sẵn sàng</span>
             </div>
@@ -232,7 +232,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
               value={selectedProductId}
               onChange={(e) => handleSelectMasterProduct(e.target.value)}
             >
-              <option value="">-- Chọn mẫu hoa có sẵn trong kho --</option>
+              <option value="">-- Chọn sản phẩm có sẵn trong kho --</option>
               {masterProducts.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name} [{p.code}] — {p.pricing?.quotePriceVnd ? `${Number(p.pricing.quotePriceVnd).toLocaleString("vi-VN")} đ` : "Chưa có giá"} ({p.category})
@@ -278,15 +278,15 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
 
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <label className="font-semibold text-text">Mẫu hoa và phụ kiện *</label>
+            <label className="font-semibold text-text">Sản phẩm và phụ kiện *</label>
             <button type="button" onClick={addItem} className="inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline">
-              <Plus className="h-3.5 w-3.5" /> Thêm mẫu hoa
+              <Plus className="h-3.5 w-3.5" /> Thêm sản phẩm
             </button>
           </div>
           <div className="space-y-2">
             {items.map((it, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <input type="text" className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-body-sm" placeholder="Tên mẫu hoa hoặc mô tả yêu cầu" value={it.description} onChange={(e) => updateItem(idx, "description", e.target.value)} required />
+                <input type="text" className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-body-sm" placeholder="Tên sản phẩm hoặc mô tả yêu cầu" value={it.description} onChange={(e) => updateItem(idx, "description", e.target.value)} required />
                 <input type="number" min="1" className="w-16 rounded-md border border-border bg-surface px-2 py-1.5 text-center text-body-sm" value={it.quantity} onChange={(e) => updateItem(idx, "quantity", Math.max(1, parseInt(e.target.value) || 1))} />
                 <input type="number" step="10000" min="0" className="w-32 rounded-md border border-border bg-surface px-2 py-1.5 text-right text-body-sm" placeholder="Đơn giá (₫)" value={it.unitPriceVnd} onChange={(e) => updateItem(idx, "unitPriceVnd", parseInt(e.target.value) || 0)} />
                 {items.length > 1 && (
@@ -305,7 +305,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         </div>
 
         <div>
-          <label className="mb-1 block font-semibold text-text">Ghi chú cho thợ cắm hoa</label>
+          <label className="mb-1 block font-semibold text-text">Ghi chú cho thợ chế tác hoa</label>
           <input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Tông màu, giấy gói, hoa chính…" value={internalNote} onChange={(e) => setInternalNote(e.target.value)} />
         </div>
       </form>

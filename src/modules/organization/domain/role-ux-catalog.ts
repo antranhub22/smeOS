@@ -56,6 +56,7 @@ export type RoleUxHomepage =
   | "CRM_WORKSPACE"
   | "CUSTOMER_SERVICE_WORKSPACE"
   | "CONTROL_TOWER"
+  | "TOOLKIT_HOME"
   | "NOT_BUILT"
 
 export interface RoleUxDefinition {
@@ -96,7 +97,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     homepageModel: "Platform Journey Home",
     dominantActions: ["Cấu hình", "Kiểm tra", "Áp dụng"],
     status: "AVAILABLE",
-    homepage: "CONTROL_CENTER",
+    homepage: "PLATFORM_JOURNEY_HOME",
     // Không phải vai của tổ chức: cấp qua `platform_operators` (D-N6) hoặc roleKey platform_admin.
     systemRoleKeys: [],
     entryHref: "/van-hanh",
@@ -111,13 +112,13 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     supportingPhilosophies: ["Industry Benchmarks", "Plugin Contract SSOT"],
     mission: "Quản trị, chuẩn hóa và tối ưu hóa hệ sinh thái đa ngành (BOM, Taxonomy, AI Studio, Mẫu in ấn A6 và Tiêu chuẩn ngành).",
     primaryQuestion: "Hệ sinh thái ngành nào cần chuẩn hóa hoặc cập nhật tiêu chuẩn hôm nay?",
-    homepageModel: "Industry Journey Home",
+    homepageModel: "Toolkit Home (48 công cụ)",
     dominantActions: ["Chuẩn hóa", "Cấu hình AI", "Quản lý Ngành", "Định lượng BOM"],
     status: "AVAILABLE",
-    homepage: "INDUSTRY_JOURNEY_HOME",
+    homepage: "TOOLKIT_HOME",
     systemRoleKeys: [],
-    entryHref: "/",
-    navPriority: ["/van-hanh/nganh", "/kho-templates", "/san-pham", "/market-intelligence"],
+    entryHref: "/cong-cu",
+    navPriority: ["/cong-cu", "/van-hanh/nganh", "/kho-templates", "/san-pham", "/market-intelligence"],
     debtRefs: [],
   },
   {
@@ -128,13 +129,13 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     supportingPhilosophies: ["Executive Dashboard"],
     mission: "Vận hành và phát triển cửa hàng hoa hiệu quả, thúc đẩy kinh doanh toàn diện.",
     primaryQuestion: "Hôm nay tôi cần làm gì để cửa hàng phát triển?",
-    homepageModel: "Store Journey Home",
+    homepageModel: "Toolkit Home (48 công cụ)",
     dominantActions: ["Xem xét", "Ưu tiên", "Hành động"],
     status: "AVAILABLE",
-    homepage: "STORE_JOURNEY_HOME",
+    homepage: "TOOLKIT_HOME",
     systemRoleKeys: ["dieu_hanh"],
-    entryHref: "/",
-    navPriority: [],
+    entryHref: "/cong-cu",
+    navPriority: ["/cong-cu", "/don-hang", "/khach-hang", "/san-pham", "/cai-dat"],
     debtRefs: [163],
   },
   {
@@ -145,13 +146,13 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     supportingPhilosophies: ["Control Tower", "Exception Management"],
     mission: "Vận hành, giám sát, quản lý và điều hành toàn bộ hệ thống mạng lưới điện hoa.",
     primaryQuestion: "Toàn bộ hệ thống điện hoa đang hoạt động thế nào và tôi cần can thiệp ở đâu?",
-    homepageModel: "Network Journey Home",
+    homepageModel: "Toolkit Home (48 công cụ)",
     dominantActions: ["Điều phối", "Giám sát", "Quản lý", "Điều hành"],
     status: "AVAILABLE",
-    homepage: "NETWORK_JOURNEY_HOME",
+    homepage: "TOOLKIT_HOME",
     systemRoleKeys: [],
-    entryHref: "/",
-    navPriority: ["/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
+    entryHref: "/cong-cu",
+    navPriority: ["/cong-cu", "/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
     debtRefs: [],
   },
   {
@@ -184,7 +185,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "CRM_WORKSPACE",
     systemRoleKeys: ["crm"],
-    entryHref: "/khach-hang",
+    entryHref: "/",
     navPriority: ["/khach-hang", "/hoi-thoai", "/don-hang"],
     debtRefs: [],
   },
@@ -201,7 +202,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "CREATIVE_WORKSPACE",
     systemRoleKeys: ["marketing"],
-    entryHref: "/creative-studio",
+    entryHref: "/",
     navPriority: ["/creative-studio", "/noi-dung", "/lich-dang", "/market-intelligence"],
     debtRefs: [],
   },
@@ -252,7 +253,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "CONTROL_TOWER",
     systemRoleKeys: ["dieu_phoi"],
-    entryHref: "/dieu-phoi",
+    entryHref: "/",
     navPriority: ["/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
     debtRefs: [166],
   },
@@ -286,7 +287,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "CUSTOMER_SERVICE_WORKSPACE",
     systemRoleKeys: ["customer_service"],
-    entryHref: "/hoi-thoai",
+    entryHref: "/",
     navPriority: ["/hoi-thoai", "/khach-hang", "/don-hang"],
     debtRefs: [165],
   },
@@ -322,7 +323,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     // Chuỗi/CHAIN: Vai phân quyền "marketing" đã gắn cho lead_marketing
     // (ONE_STORE). Tổ chức CHAIN cần vai phân quyền riêng — nợ #165.
     systemRoleKeys: [],
-    entryHref: "/creative-studio",
+    entryHref: "/",
     navPriority: ["/creative-studio", "/noi-dung", "/lich-dang", "/market-intelligence"],
     debtRefs: [165],
   },
@@ -339,7 +340,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "PRODUCT_WORKSPACE",
     systemRoleKeys: ["product_manager"],
-    entryHref: "/san-pham",
+    entryHref: "/",
     navPriority: ["/san-pham", "/catalog", "/gia", "/kho-templates"],
     debtRefs: [],
   },
@@ -362,14 +363,14 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
   },
   {
     key: "florist",
-    label: "Thợ cắm",
+    label: "Thợ chế tác",
     group: "STORE",
     primaryPhilosophy: "Production Queue",
     supportingPhilosophies: [],
-    mission: "Cắm hoa đúng công thức, đúng tiến độ và chuẩn chất lượng theo từng phiếu cắm.",
+    mission: "Chế tác đúng công thức, đúng tiến độ và chuẩn chất lượng theo từng phiếu cắm.",
     primaryQuestion: "Hôm nay tôi cắm những đơn nào, theo thứ tự nào?",
     homepageModel: "Production Queue",
-    dominantActions: ["Nhận việc", "Cắm hoa", "Báo xong"],
+    dominantActions: ["Nhận việc", "Chế tác", "Báo xong"],
     status: "IN_DEVELOPMENT",
     homepage: "NOT_BUILT",
     systemRoleKeys: [],
@@ -392,7 +393,7 @@ export const ROLE_UX_GROUP_LABEL: Record<RoleUxGroup, string> = {
  */
 export function getRoleUxLabelByIndustry(roleKey: RoleUxKey, industryKey?: string | null): string {
   if (roleKey === "florist") {
-    if (!industryKey || industryKey === "FLORAL") return "Thợ cắm hoa"
+    if (!industryKey || industryKey === "FLORAL") return "Thợ chế tác"
     if (industryKey === "FASHION") return "Thợ may / Kỹ thuật cắt"
     if (industryKey === "FNB") return "Đầu bếp / Pha chế"
     if (industryKey === "CRAFT_GIFT") return "Nghệ nhân chế tác"
@@ -456,14 +457,26 @@ export function resolveRoleUx(
   const isNetwork =
     organizationType === "FLOWER_NETWORK" || organizationType === "CHAIN"
   if (
-    isNetwork &&
-    (systemRoleKey === "dieu_hanh" || systemRoleKey === "flower_network_admin")
+    (isNetwork && (systemRoleKey === "dieu_hanh" || systemRoleKey === "flower_network_admin" || systemRoleKey === "chain_admin")) ||
+    systemRoleKey === "flower_network_admin" ||
+    systemRoleKey === "chain_admin"
   ) {
     const fnAdmin = ROLE_UX_CATALOG.find((r) => r.key === "flower_network_admin")
     if (fnAdmin && fnAdmin.status === "AVAILABLE") return fnAdmin
   }
 
-  const found = ROLE_UX_CATALOG.find((r) => r.systemRoleKeys.includes(systemRoleKey ?? ""))
+  // Khi là Quản trị cửa hàng cơ sở (StoreOS / SINGLE):
+  if (
+    systemRoleKey === "store_admin" ||
+    (organizationType === "SINGLE" && systemRoleKey === "dieu_hanh")
+  ) {
+    const sAdmin = ROLE_UX_CATALOG.find((r) => r.key === "store_admin")
+    if (sAdmin && sAdmin.status === "AVAILABLE") return sAdmin
+  }
+
+  const found = ROLE_UX_CATALOG.find(
+    (r) => r.key === systemRoleKey || r.systemRoleKeys.includes(systemRoleKey ?? "")
+  )
   if (!found || found.status !== "AVAILABLE") return null
   return found
 }

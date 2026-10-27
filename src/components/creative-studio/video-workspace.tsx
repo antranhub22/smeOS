@@ -46,7 +46,7 @@ export function VideoWorkspace() {
   }
 
   const [format, setFormat] = useState<VideoFormat>("REEL_15S")
-  const [title, setTitle] = useState(context?.productName ? `Video giới thiệu ${context.productName}` : "Video giới thiệu bó hoa tươi")
+  const [title, setTitle] = useState(context?.productName ? `Video giới thiệu ${context.productName}` : "Video giới thiệu bó sản phẩm")
   const [captionStyle, setCaptionStyle] = useState<CaptionStyle>("MODERN_BADGE")
   const [hasSubtitle, setHasSubtitle] = useState(true)
   const [hasWatermark, setHasWatermark] = useState(true)

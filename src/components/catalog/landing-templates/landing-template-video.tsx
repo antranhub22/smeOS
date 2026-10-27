@@ -92,7 +92,7 @@ export function LandingTemplateVideo({
           <div>
             <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 ${badgeStyle}`}>
               <Sparkles size={11} />
-              <span>{isLuxury ? "Thước Phim Chế Tác Nghệ Thuật" : isFestive ? "Video Cận Cảnh Mẫu Hoa Sale" : "Thước Phim Chân Thực"}</span>
+              <span>{isLuxury ? "Thước Phim Chế Tác Nghệ Thuật" : isFestive ? "Video Cận Cảnh Sản Phẩm Sale" : "Thước Phim Chân Thực"}</span>
             </span>
             <h3 className={`text-text mt-1 leading-snug ${titleFont}`}>
               {title}

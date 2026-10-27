@@ -67,13 +67,13 @@ export function LandingTemplateStory({
         }`}>
           <img
             src={displayImage}
-            alt="Nghệ nhân cắm hoa"
+            alt="Nghệ nhân chế tác"
             className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
           <div className="absolute bottom-3 left-3 text-caption font-bold text-white bg-black/60 px-2.5 py-1 rounded-lg backdrop-blur-sm flex items-center gap-1.5">
             <Scissors size={12} />
-            <span>Nghệ thuật cắm hoa thủ công</span>
+            <span>Nghệ thuật chế tác thủ công</span>
           </div>
         </div>
 

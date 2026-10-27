@@ -41,7 +41,7 @@ export function LandingTemplateHero({
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-white text-caption font-extrabold uppercase tracking-widest border border-white/10 shadow-xs">
             <Sparkles size={12} className="text-white animate-pulse" />
-            <span>Chiến Dịch Hoa Tươi Tuyển Chọn</span>
+            <span>Chiến Dịch Sản Phẩm Tuyển Chọn</span>
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-xs">
@@ -60,11 +60,11 @@ export function LandingTemplateHero({
                 {headline || "Gửi Trọn Tình Yêu — Ngọt Ngào & Tinh Tế"}
               </h2>
               <p className="text-body-sm text-white/90 leading-relaxed">
-                Tuyển chọn những đóa hoa tươi nhập khẩu rực rỡ nhất, cắm thủ công bởi nghệ nhân và chăm sóc theo tiêu chuẩn chuyên biệt.
+                Tuyển chọn những đóa sản phẩm nhập khẩu rực rỡ nhất, cắm thủ công bởi nghệ nhân và chăm sóc theo tiêu chuẩn chuyên biệt.
               </p>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-caption font-bold text-white">
                 <Award size={14} className="text-warning" />
-                <span>Cam kết hoa tươi loại 1 & chụp duyệt trước khi giao</span>
+                <span>Cam kết sản phẩm loại 1 & chụp duyệt trước khi giao</span>
               </div>
             </div>
 
@@ -85,7 +85,7 @@ export function LandingTemplateHero({
                   <Sparkles size={12} className="text-warning animate-pulse" />
                   <span>Ảnh tác phẩm thực tế</span>
                 </div>
-                <span className="text-caption text-white/80 font-mono">100% hoa tươi mới</span>
+                <span className="text-caption text-white/80 font-mono">100% sản phẩm mới</span>
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@ export function LandingTemplateHero({
               {headline || "Gửi Trọn Tình Yêu — Ngọt Ngào & Tinh Tế"}
             </h2>
             <p className="text-body-sm text-white/90 leading-relaxed max-w-md mx-auto">
-              Tuyển chọn những đóa hoa tươi nhập khẩu rực rỡ nhất, thay bạn gửi trao ngàn lời yêu thương sâu sắc.
+              Tuyển chọn những đóa sản phẩm nhập khẩu rực rỡ nhất, thay bạn gửi trao ngàn lời yêu thương sâu sắc.
             </p>
 
             {/* Featured Flower Image Showcase — Tỷ lệ Chân Dung 4:5 Triệt Tiêu Khoảng Trống Thừa */}

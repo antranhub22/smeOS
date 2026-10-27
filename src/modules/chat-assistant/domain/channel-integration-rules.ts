@@ -31,7 +31,7 @@ export const CHANNEL_PRICING_CATALOG: Record<SupportedChatChannel, ChannelPricin
   LANDING_PAGE: {
     channel: "LANDING_PAGE",
     name: "Landing Pages Chiến Dịch",
-    description: "Trợ lý ảo chốt đơn tự động gắn trên các landing page hoa tươi dịp lễ",
+    description: "Trợ lý ảo chốt đơn tự động gắn trên các landing page sản phẩm dịp lễ",
     isFree: true,
     monthlyCreditCost: 0,
     messageCreditCost: 1,
@@ -40,7 +40,7 @@ export const CHANNEL_PRICING_CATALOG: Record<SupportedChatChannel, ChannelPricin
   FACEBOOK_MESSENGER: {
     channel: "FACEBOOK_MESSENGER",
     name: "Facebook Messenger Fanpage",
-    description: "Tự động trả lời tin nhắn Fanpage Facebook 24/7, gửi mẫu hoa kèm giá và chốt đơn",
+    description: "Tự động trả lời tin nhắn Fanpage Facebook 24/7, gửi sản phẩm kèm giá và chốt đơn",
     isFree: false,
     monthlyCreditCost: 50, // 50 credit/tháng (~150.000 đ)
     messageCreditCost: 1,

@@ -1,0 +1,25 @@
+# Báo nhầm của gitleaks (quét 22/10/2026): tên trường cấu hình, khoá localStorage, khoá
+# idempotency và giá trị test — không phải bí mật. Thêm dòng mới chỉ sau khi đã đọc tận mắt.
+4db22f8c9b248ebf4347c7d77c83c5ac2fbb7fe8:tests/unit/market-intelligence/analyze-product-vision.test.ts:generic-api-key:91
+9ce8d9a13654d2ab6ba2c10fb207bb7db3fcfe0b:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:24
+9ce8d9a13654d2ab6ba2c10fb207bb7db3fcfe0b:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:29
+9ce8d9a13654d2ab6ba2c10fb207bb7db3fcfe0b:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:32
+9ce8d9a13654d2ab6ba2c10fb207bb7db3fcfe0b:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:37
+9ce8d9a13654d2ab6ba2c10fb207bb7db3fcfe0b:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:40
+9ce8d9a13654d2ab6ba2c10fb207bb7db3fcfe0b:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:45
+9ce8d9a13654d2ab6ba2c10fb207bb7db3fcfe0b:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:48
+9ce8d9a13654d2ab6ba2c10fb207bb7db3fcfe0b:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:53
+a52cabe907914328a9b457d536bcb86a01344fe2:src/components/coordinator/control-tower-dashboard.tsx:generic-api-key:257
+c789802572c6f8dff1dda61964f1098f85ea44e9:src/modules/avi-gift-import/domain/analysis-mapping.ts:generic-api-key:63
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/dispatch-reminder-policy-card.tsx:generic-api-key:41
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/dispatch-reminder-policy-card.tsx:generic-api-key:51
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/dispatch-reminder-policy-card.tsx:generic-api-key:61
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/dispatch-reminder-policy-card.tsx:generic-api-key:71
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:46
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:52
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:56
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:62
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:66
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:72
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:76
+defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:82

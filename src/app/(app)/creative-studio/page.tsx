@@ -193,7 +193,7 @@ export default function CreativeStudioPage() {
         // Build from report components/attributes if commercialPassport missing
         const commercialPassport = {
           // 23/09/2026: chỉ lấy dữ liệu THẬT của report — thiếu thì để trống cho
-          // ValidationScreen báo thiếu, không điền "Hoa tươi thiết kế"/"Tone màu hài hòa".
+          // ValidationScreen báo thiếu, không điền "Sản phẩm thiết kế"/"Tone màu hài hòa".
           // `category` là hình dáng sản phẩm (bó/giỏ/kệ), không phải phân khúc giá.
           category: report.attributes?.shape || report.commercialPassport?.tags?.[0] || "",
           style: report.commercialPassport?.style || report.attributes?.style || "",

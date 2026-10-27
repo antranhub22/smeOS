@@ -4,19 +4,19 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
   identity: {
     key: "FLORAL",
     name: "Hoa & Cây cảnh",
-    description: "Cửa hàng hoa tươi, cây cảnh, hoa sự kiện và điện hoa",
+    description: "Cửa hàng sản phẩm, cây cảnh, hoa sự kiện và điện hoa",
     iconName: "Flower2",
   },
   terminology: {
-    makerTitle: "Thợ cắm hoa",
+    makerTitle: "Thợ chế tác",
     makerAction: "Cắm hoa",
     productRecipe: "Công thức cành hoa",
-    sampleProduct: "Mẫu hoa chuẩn",
+    sampleProduct: "Sản phẩm chuẩn",
     rawMaterialItem: "Cành/Loại hoa",
     completedProductPhoto: "Ảnh hoa hoàn thành",
     printablesTitle: "Thiệp chúc mừng",
-    catalogTitle: "Kho mẫu hoa",
-    createButtonLabel: "Thêm mẫu hoa",
+    catalogTitle: "Kho sản phẩm",
+    createButtonLabel: "Thêm sản phẩm",
     scanButtonLabel: "Quét ảnh hoa",
     defaultMeasurementUnits: ["cành", "bó", "chậu", "giỏ", "kệ", "nhánh", "hộp"],
     defaultComponentRoles: [
@@ -28,7 +28,7 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
   },
   taxonomy: {
     defaultCategories: [
-      { key: "BOUQUET", label: "Bó hoa", defaultUnit: "bó" },
+      { key: "BOUQUET", label: "Sản phẩm", defaultUnit: "bó" },
       { key: "BASKET", label: "Giỏ hoa", defaultUnit: "giỏ" },
       { key: "STAND", label: "Kệ hoa khai trương", defaultUnit: "kệ" },
       { key: "VASE", label: "Bình hoa", defaultUnit: "bình" },
@@ -49,6 +49,16 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
       { label: "1.000.000 – 2.000.000 ₫", min: 1000000, max: 2000000 },
       { label: "Trên 2.000.000 ₫", min: 2000000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: false,
+      variantDimensions: [
+        { key: "SIZE", label: "Kích cỡ", values: ["Mini", "Nhỏ", "Vừa", "Lớn", "Đại / VIP"] },
+        { key: "COLOR", label: "Màu chủ đạo", values: ["Hồng", "Đỏ", "Trắng", "Vàng", "Cam", "Tím", "Xanh", "Pastel", "Phối nhiều màu"] },
+        { key: "MAIN_FLOWER", label: "Loại hoa chính", values: ["Hoa hồng", "Tulip", "Cẩm tú cầu", "Mẫu đơn", "Hướng dương", "Lan hồ điệp", "Hoa ly", "Cúc", "Baby"] },
+        { key: "STEM_COUNT", label: "Số bông", values: ["10 bông", "20 bông", "30 bông", "50 bông", "99 bông"] },
+        { key: "WRAP", label: "Kiểu gói", values: ["Giấy gói", "Giấy kraft", "Hộp", "Giỏ", "Bình", "Kệ / Lẵng"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["cành", "bó", "chậu", "giỏ", "kệ", "nhánh", "hộp"],
@@ -75,7 +85,7 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
       {
         type: "CARE_GUIDE",
         title: "Thẻ hướng dẫn dưỡng hoa",
-        description: "Thẻ hướng dẫn khách hàng giữ hoa tươi lâu tại nhà",
+        description: "Thẻ hướng dẫn khách hàng giữ sản phẩm lâu tại nhà",
         defaultFrontTitle: "Bí Quyết Giữ Hoa Tươi Lâu",
         defaultBackInstructions: [
           "Dùng gói dưỡng hoa kèm theo pha với 500ml nước sạch",
@@ -88,16 +98,31 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
     visionFocus: "Nhận diện độ nở cánh hoa, màu sắc chủ đạo, tỷ lệ phối hoa chính/hoa phụ và ước tính cành hoa",
     studioBackgroundStyles: ["Không gian phòng khách hiện đại", "Bàn tiệc trà chiều kiểu Pháp", "Ánh sáng tự nhiên buổi sớm"],
     marketingToneExamples: [
-      "Trao gửi yêu thương tinh tế qua từng đóa hoa tươi rạng rỡ",
+      "Trao gửi yêu thương tinh tế qua từng đóa sản phẩm rạng rỡ",
       "Thiết kế hoa độc bản mang dấu ấn riêng cho sự kiện đặc biệt của bạn",
     ],
     sampleProductNames: [
-      "Bó hoa hồng Ohara đỏ nhung cao cấp",
+      "Sản phẩm hồng Ohara đỏ nhung cao cấp",
       "Giỏ hoa cúc mẫu đơn kết hợp hoa tulip pastel",
       "Kệ hoa khai trương Đại Cát Đại Lợi 2 tầng",
     ],
   },
   navigation: {
     hiddenNavKeys: [],
+  },
+  craftFee: {
+    feeLabel: "Phí cắm hoa",
+    defaultPercent: 50,
+    minVnd: 150_000,
+    maxVnd: 2_000_000,
+    partnerPercent: 75,
+    complexityLabels: { EASY: "Bó nhỏ, hoa cầm tay", MEDIUM: "Giỏ, hộp, bình", HARD: "Kệ, lẵng sự kiện" },
+    laborByComplexityVnd: { EASY: 80_000, MEDIUM: 150_000, HARD: 300_000 },
+    peakDays: [
+      { monthDay: "02-14", label: "Lễ Tình nhân" },
+      { monthDay: "03-08", label: "Quốc tế Phụ nữ" },
+      { monthDay: "10-20", label: "Phụ nữ Việt Nam" },
+      { monthDay: "11-20", label: "Nhà giáo Việt Nam" },
+    ],
   },
 }

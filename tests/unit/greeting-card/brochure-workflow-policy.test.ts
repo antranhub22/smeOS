@@ -13,6 +13,7 @@ import {
   canBypassFinishedPhoto,
   canBypassDeliveryPhoto,
   shouldBlockDispatchForBalance,
+  isChainOrganizationType,
   type BrochureWorkflowPolicy,
 } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 
@@ -216,5 +217,23 @@ describe("Brochure Workflow Policy Domain Tests", () => {
         expect(shouldBlockDispatchForBalance(STANDARD_WORKFLOW_POLICY, partialMoney, true)).toBe(false)
       })
     })
+  })
+})
+
+/** Chuỗi / 1 cửa hàng theo loại tổ chức Admin SaaS duyệt, không theo công tắc hay gói (PO 22/10/2026). */
+describe("chế độ Chuỗi theo loại tổ chức", () => {
+  const stored = (policy: typeof STRICT_WORKFLOW_POLICY) => ({ [BROCHURE_WORKFLOW_POLICY_KEY]: serializeWorkflowPolicy(policy) })
+
+  it("gói Nghiêm ngặt không bật Chuỗi cho tổ chức 1 cửa hàng; gói Tiêu chuẩn không tắt Chuỗi", () => {
+    expect(parseBrochureWorkflowPolicy(stored(STRICT_WORKFLOW_POLICY), "SINGLE")).toMatchObject({ preset: "STRICT", requireCoordinatorAcceptance: false })
+    expect(parseBrochureWorkflowPolicy(stored(STANDARD_WORKFLOW_POLICY), "CHAIN")).toMatchObject({ preset: "STANDARD", requireCoordinatorAcceptance: true })
+    expect(parseBrochureWorkflowPolicy(stored(LEAN_WORKFLOW_POLICY), "FLOWER_NETWORK").requireCoordinatorAcceptance).toBe(true)
+  })
+
+  it("công tắc lưu trong cài đặt bị bỏ qua khi biết loại tổ chức", () => {
+    const settings = { [BROCHURE_WORKFLOW_POLICY_KEY]: { ...serializeWorkflowPolicy(STANDARD_WORKFLOW_POLICY), preset: "CUSTOM", require_coordinator_acceptance: true } }
+    expect(parseBrochureWorkflowPolicy(settings, "STORE").requireCoordinatorAcceptance).toBe(false)
+    expect(isChainOrganizationType("CHAIN")).toBe(true)
+    expect(isChainOrganizationType(null)).toBe(false)
   })
 })

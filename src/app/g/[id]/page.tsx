@@ -34,8 +34,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-import { I18nProvider } from "@/lib/i18n"
-
 export default async function PublicGreetingCatalogPage({ params }: PageProps) {
   const { id } = await params
   const data = await getPublicGreetingCatalog(id)
@@ -49,19 +47,11 @@ export default async function PublicGreetingCatalogPage({ params }: PageProps) {
     )
   }
 
-  const initialLocale = data.shop?.languagePolicy?.defaultLocale ?? "vi"
-  const industryKey = data.shop?.industry ?? undefined
-
   return (
-    <I18nProvider initialLocale={initialLocale} industryKey={industryKey}>
+    <>
       {data.shop && <ShopContactBar shop={data.shop} />}
-      <BrochurePublicView
-        catalog={data.catalog}
-        products={data.products}
-        shipping={data.shipping}
-        internationalGuide={data.shop?.languagePolicy?.internationalPaymentGuide}
-      />
-    </I18nProvider>
+      <BrochurePublicView catalog={data.catalog} products={data.products} shipping={data.shipping} shop={data.shop} />
+    </>
   )
 }
 

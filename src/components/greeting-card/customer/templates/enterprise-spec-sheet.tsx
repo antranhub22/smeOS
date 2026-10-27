@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { X } from "lucide-react"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
-import { formatVnd } from "./product-info/product-display"
+import { productPriceText } from "./product-info/product-display"
 import { ProductImage } from "./aux/aux-kit"
 import { ProductInfo } from "./product-info/product-info"
 
@@ -15,7 +15,7 @@ interface EnterpriseSpecSheetProps {
 }
 
 /**
- * Bảng chi tiết mẫu hoa (trượt từ dưới lên). Chỉ hiển thị dữ liệu có thật
+ * Bảng chi tiết sản phẩm (trượt từ dưới lên). Chỉ hiển thị dữ liệu có thật
  * của sản phẩm — không tự thêm kích thước, thành phần hay cam kết.
  */
 export function EnterpriseSpecSheet({ product, isOpen, onClose, onSelectProduct }: EnterpriseSpecSheetProps) {
@@ -69,7 +69,7 @@ export function EnterpriseSpecSheet({ product, isOpen, onClose, onSelectProduct 
             className="flex h-12 w-full items-center justify-between rounded-2xl bg-primary px-5 text-body font-bold text-white shadow-md active:scale-[0.99]"
           >
             <span>Đặt mẫu này</span>
-            <span className="tabular-nums">{formatVnd(product.price)}</span>
+            <span className="tabular-nums">{productPriceText(product)}</span>
           </button>
         </div>
       </div>

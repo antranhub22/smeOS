@@ -1,34 +1,18 @@
 import { NextResponse } from "next/server"
-import { checkDatabaseHealth } from "@/core/tenancy/infra/health"
 
+import { pingDatabase } from "@/core/tenancy/infra/database-ping"
+
+/**
+ * GET /api/health — healthCheckPath của Render.
+ *
+ * Công khai, nên chỉ trả trạng thái: không host/tên CSDL, không lỗi/stack, không đếm bảng
+ * (rà soát 21/10/2026, H2). Chi tiết lỗi chỉ vào log máy chủ.
+ */
 export async function GET() {
-  let dbStatus = "ok"
-  let dbError: any = null
-  let userCount = 0
-  const url = new URL(process.env.DATABASE_URL || "http://none")
-  const maskedHost = `${url.protocol}//${url.username ? "***:***@" : ""}${url.host}${url.pathname}`
-
-  try {
-    userCount = await checkDatabaseHealth()
-  } catch (err: any) {
-    dbStatus = "error"
-    dbError = {
-      name: err?.name,
-      message: err?.message,
-      code: err?.code,
-      meta: err?.meta,
-      stack: String(err?.stack || err).slice(0, 500),
-    }
-  }
+  const databaseUp = await pingDatabase()
 
   return NextResponse.json(
-    {
-      status: dbStatus === "ok" ? "ok" : "degraded",
-      commit: "5506c701",
-      dbTarget: maskedHost,
-      database: { status: dbStatus, userCount, error: dbError },
-      timestamp: new Date().toISOString(),
-    },
-    { status: dbStatus === "ok" ? 200 : 500 }
+    { status: databaseUp ? "ok" : "degraded", timestamp: new Date().toISOString() },
+    { status: databaseUp ? 200 : 503, headers: { "cache-control": "no-store" } }
   )
 }

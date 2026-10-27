@@ -19,7 +19,7 @@ export interface SessionRow {
 }
 
 export function getSessionStatusBadge(status: string, sampleProductTerm?: string): { label: string; className: string } {
-  const itemLabel = (sampleProductTerm || "mẫu hoa").replace(/ chuẩn$/i, "").toLowerCase()
+  const itemLabel = (sampleProductTerm || "sản phẩm").replace(/ chuẩn$/i, "").toLowerCase()
   const badges: Record<string, { label: string; className: string }> = {
     CREATED: { label: "Chưa mở link", className: "bg-surface-muted text-text-muted" },
     OPENED: { label: `Đang xem ${itemLabel}`, className: "bg-warning/15 text-warning" },

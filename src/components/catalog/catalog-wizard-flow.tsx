@@ -41,7 +41,7 @@ export function CatalogWizardFlow({
   initialStep,
 }: CatalogWizardFlowProps) {
   const { business } = useTenantProfile()
-  const currentShopName = business?.display_name || "Tiệm hoa FloraOS"
+  const currentShopName = business?.display_name || "Tiệm hoa smeOS"
 
   const [currentStep, setCurrentStep] = useState<number>(initialStep ?? 1)
 

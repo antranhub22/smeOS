@@ -116,23 +116,23 @@ export function generateFlowerContent(input: FlowerContentInput): GeneratedConte
 
   if (input.format === "VIDEO_SCRIPT") {
     platform = "TikTok / Reels"
-    body = `Kịch bản video 30 giây quảng bá mẫu hoa "${input.productName}"`
-    cta = "Nhấp vào liên kết trong hồ sơ hoặc nhắn tin ngay để nhận mẫu hoa thiết kế riêng!"
+    body = `Kịch bản video 30 giây quảng bá sản phẩm "${input.productName}"`
+    cta = "Nhấp vào liên kết trong hồ sơ hoặc nhắn tin ngay để nhận sản phẩm thiết kế riêng!"
     const scenes = [
       {
         timeRange: "0s - 3s (Hook)",
-        visualDesc: `Cận cảnh mở cánh hoa nở rộ với ${color}, ánh sáng tự nhiên lấp lánh.`,
+        visualDesc: `Cận cảnh góc quay chi tiết sản phẩm với tông màu ${color}, ánh sáng tự nhiên lấp lánh.`,
         voiceover: `Nếu bạn đang tìm món quà chạm đến trái tim người nhận dịp ${occasion}...`,
       },
       {
         timeRange: "4s - 18s (Chi tiết)",
-        visualDesc: `Thợ cắm hoa tỉ mỉ phối từng cành ${flowers} với giấy gói cao cấp.`,
-        voiceover: `Mỗi nhánh hoa tại ${brand} đều được chắt lọc kỹ lưỡng, giữ trọn độ tươi hoàn hảo.`,
+        visualDesc: `Nghệ nhân tỉ mỉ chăm chút từng chi tiết ${flowers} cùng chất liệu cao cấp.`,
+        voiceover: `Mỗi sản phẩm tại ${brand} đều được chắt lọc kỹ lưỡng, giữ trọn chất lượng tinh xảo.`,
       },
       {
         timeRange: "19s - 30s (Thành phẩm & CTA)",
         visualDesc: `Góc máy xoay 360 độ ngắm trọn vẹn ${input.productName}, kèm thiệp chữ viết tay.`,
-        voiceover: `Giao hoa hoả tốc 60 phút. Nhắn tin cho chúng mình để trao gửi yêu thương nhé!`,
+        voiceover: `Giao hàng hoả tốc tận nơi. Nhắn tin cho chúng mình để trao gửi yêu thương nhé!`,
       },
     ]
 
@@ -158,26 +158,26 @@ export function generateFlowerContent(input: FlowerContentInput): GeneratedConte
       input.tone === "SANG_TRONG"
         ? `Từng cánh ${flowers} khẽ chạm cảm xúc. ${input.productName} mang sắc thái riêng biệt cho những tâm hồn trân quý cái đẹp.`
         : `Gói ghém bình yên vào từng đóa hoa. ${input.productName} sẵn sàng mang nụ cười đến người bạn yêu thương nhất. ✨`
-    cta = "Direct để chúng mình chuẩn bị hoa tươi cho bạn trong ngày."
+    cta = "Direct để chúng mình chuẩn bị sản phẩm cho bạn trong ngày."
   } else if (input.format === "SHORT_STATUS") {
     platform = "Story / Zalo Feed"
     body = `Hôm nay tiệm vừa hoàn thiện mẫu ${input.productName} với ${color}. Tươi tắn và đong đầy ý nghĩa cho dịp ${occasion}!`
-    cta = "Chạm để nhắn tin đặt giữ mẫu hoa này nhé!"
+    cta = "Chạm để nhắn tin đặt giữ sản phẩm này nhé!"
   } else if (input.format === "WEB_DESCRIPTION") {
     platform = "Website Catalog"
-    body = `Sản phẩm ${input.productName} là sự kết hợp nghệ thuật giữa ${flowers} trên nền ${color}.\nĐược cắm theo phong cách hiện đại, phù hợp hoàn hảo cho ${occasion}.\nCam kết: Hoa tươi mới mỗi ngày, tặng kèm thiệp thiết kế và banner chúc mừng cao cấp.\nGiá niêm yết: ${priceFormatted}.`
-    cta = "Thêm vào giỏ hàng hoặc liên hệ chuyên viên cắm hoa để tùy chỉnh màu sắc."
+    body = `Sản phẩm ${input.productName} là sự kết hợp nghệ thuật giữa ${flowers} trên nền ${color}.\nĐược cắm theo phong cách hiện đại, phù hợp hoàn hảo cho ${occasion}.\nCam kết: Sản phẩm mới mỗi ngày, tặng kèm thiệp thiết kế và banner chúc mừng cao cấp.\nGiá niêm yết: ${priceFormatted}.`
+    cta = "Thêm vào giỏ hàng hoặc liên hệ chuyên viên chế tác để tùy chỉnh màu sắc."
   } else {
     // FB_POST, FB_ADS, SALES_PITCH, LONG_STORY
     platform = "Facebook"
     if (input.tone === "SANG_TRONG") {
-      body = `Hoa không chỉ là món quà, hoa là ngôn ngữ của sự trân quý.\n\nThiết kế ${input.productName} được nghệ nhân cắm hoa của ${brand} sáng tạo riêng với ${flowers}. Trên nền ${color}, mỗi cành hoa mở ra một phong thái đài các, trang nhã khó hòa lẫn.\n\nCho dù là lời tri ân đối tác hay lời yêu thương gửi tới người trân quý, ${input.productName} chính là thông điệp đẳng cấp nhất.`
+      body = `Hoa không chỉ là món quà, hoa là ngôn ngữ của sự trân quý.\n\nThiết kế ${input.productName} được nghệ nhân chế tác của ${brand} sáng tạo riêng với ${flowers}. Trên nền ${color}, mỗi thành phần mở ra một phong thái đài các, trang nhã khó hòa lẫn.\n\nCho dù là lời tri ân đối tác hay lời yêu thương gửi tới người trân quý, ${input.productName} chính là thông điệp đẳng cấp nhất.`
     } else if (input.tone === "TRE_TRUNG") {
       body = `Ai bảo tặng hoa là sến sẩm? Ngắm ngay mẫu ${input.productName} này là xiêu lòng liền nè! 🌸\n\nPhối màu ${color} siêu ngọt ngào cùng ${flowers}, cầm trên tay check-in là bảo đảm trăm like. Nhất là dịp ${occasion}, tặng bó này thì người ấy chỉ có "say đắm" thui!`
     } else if (input.tone === "AM_AP") {
       body = `Có những điều khó nói thành lời, hãy để những đóa hoa thì thầm thay bạn.\n\n${input.productName} gói ghém sự chân thành với ${flowers} tươi thắm hòa cùng ${color}, rạng rỡ như nụ cười của người nhận trong ngày ${occasion}.\n\nMỗi sản phẩm trao đi là một niềm hạnh phúc được nhân đôi.`
     } else {
-      body = `Bạn đang tìm kiếm mẫu hoa hoàn hảo cho dịp ${occasion}?\n\n${input.productName} là lựa chọn hàng đầu tại ${brand} với ${flowers}, phối sắc ${color} sang trọng và bền tươi suốt nhiều ngày.\n\nĐặc quyền đặt hoa hôm nay: Miễn phí thiệp viết tay cao cấp + Giao nhanh tận nơi chuẩn hẹn.`
+      body = `Bạn đang tìm kiếm sản phẩm hoàn hảo cho dịp ${occasion}?\n\n${input.productName} là lựa chọn hàng đầu tại ${brand} với ${flowers}, phối sắc ${color} sang trọng và bền tươi suốt nhiều ngày.\n\nĐặc quyền đặt hoa hôm nay: Miễn phí thiệp viết tay cao cấp + Giao nhanh tận nơi chuẩn hẹn.`
     }
     cta = `👉 Nhắn tin cho Fanpage hoặc Hotline để đặt hoa và giao nhanh trong 2 giờ!`
   }

@@ -7,7 +7,7 @@
  *   BOOKING_CALENDAR  → query product_bookings
  *   SCHEDULE_SLOTS    → đếm đơn theo slot
  */
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { AvailabilityCheckRepository } from "@/modules/greeting-card/infra/availability-check-repository"
 import {
   parseAvailabilityConfig,
   hasCalendarConflict,
@@ -19,8 +19,8 @@ import {
   type AvailabilityMode,
 } from "../domain/product-availability-config"
 import { notFound } from "@/core/http/errors"
-import { ProductBookingRepository, getProductBookingRepository } from "../infra/product-booking-repository"
-import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { ProductBookingRepository } from "../infra/product-booking-repository"
+import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { fullSlotsOn } from "./slot-availability"
 import { loadPublicSession } from "./brochure-session-access"
 
@@ -59,16 +59,11 @@ const LOOKUP_DAYS = 90 // số ngày tìm kiếm lịch tới
 
 export async function checkProductAvailability(
   req: AvailabilityCheckRequest,
-  db: typeof prisma = prisma,
-  bookingRepo = getProductBookingRepository(),
+  db = new AvailabilityCheckRepository(),
+  bookingRepo = new ProductBookingRepository(),
 ): Promise<AvailabilityCheckResult> {
   // 1. Đọc cấu hình sản phẩm
-  const product = await db.products.findFirst({
-    where: { id: req.productId, organization_id: req.organizationId },
-    select: { availability_config: true, branch_id: true, inventory: {
-      select: { branch_id: true, status: true, quantity_available: true },
-    }},
-  })
+  const product = await db.findProduct(req.organizationId, req.productId)
 
   if (!product) return { available: false, mode: "STOCK_QUANTITY", message: "Sản phẩm không tồn tại" }
 
@@ -192,14 +187,11 @@ async function checkBookingCalendar(
 
 async function checkDailyCapacity(
   req: AvailabilityCheckRequest,
-  db: typeof prisma,
+  db: AvailabilityCheckRepository,
 ): Promise<AvailabilityCheckResult> {
   // Dùng lại fullSlotsOn() đã có — wrap vào interface mới
-  const shopSettings = await db.organizations.findFirst({
-    where: { id: req.organizationId },
-    select: { settings: true },
-  })
-  const fullSlots = await fullSlotsOn(req.organizationId, req.deliveryDate, shopSettings?.settings)
+  const shopSettings = await db.findOrganizationSettings(req.organizationId)
+  const fullSlots = await fullSlotsOn(req.organizationId, req.deliveryDate, shopSettings)
   const isFull = req.deliveryTimeSlot ? fullSlots.includes(req.deliveryTimeSlot) : false
   return {
     available: !isFull,
@@ -214,7 +206,7 @@ async function checkDailyCapacity(
 async function checkScheduleSlots(
   req: AvailabilityCheckRequest,
   config: ScheduleSlotsConfig,
-  db: typeof prisma,
+  db: AvailabilityCheckRepository,
 ): Promise<AvailabilityCheckResult> {
   if (!req.deliveryDate || !req.deliveryTimeSlot) {
     return { available: true, mode: "SCHEDULE_SLOTS" }
@@ -223,16 +215,7 @@ async function checkScheduleSlots(
   if (!slot) return { available: true, mode: "SCHEDULE_SLOTS" }
 
   // Đếm số đơn đã có trong ngày này
-  const count = await db.orders.count({
-    where: {
-      organization_id: req.organizationId,
-      status: { not: "CANCELLED" },
-      delivery_window: {
-        path: ["date"],
-        equals: req.deliveryDate,
-      },
-    },
-  })
+  const count = await db.countActiveOrdersOnDate(req.organizationId, req.deliveryDate)
 
   const available = count < slot.maxPerSlot
   return {
@@ -296,7 +279,7 @@ function findNextAvailableDate(
 export async function checkPublicCatalogProductAvailability(
   catalogId: string,
   req: Omit<AvailabilityCheckRequest, "organizationId">,
-  repo = getGreetingCardRepository(),
+  repo = new GreetingCardRepository(),
 ): Promise<AvailabilityCheckResult> {
   const catalog = await repo.getPublicCatalogById(catalogId)
   if (!catalog) throw notFound()
@@ -306,7 +289,8 @@ export async function checkPublicCatalogProductAvailability(
 
   const orgSettings = (catalog.organization.settings as Record<string, unknown>) ?? {}
   const orgIndustry = typeof orgSettings.industry === "string" ? orgSettings.industry : null
-  const industryKey = req.industryKey || orgIndustry
+  // Ngành luôn theo tiệm — client gửi ngành khác từng đổi được chế độ khả dụng mặc định (rà soát cụm E)
+  const industryKey = orgIndustry
 
   return checkProductAvailability({
     ...req,
@@ -319,12 +303,13 @@ export async function checkPublicCatalogProductAvailability(
 export async function checkPublicBrochureProductAvailability(
   sendCode: string,
   req: Omit<AvailabilityCheckRequest, "organizationId">,
-  repo = getGreetingCardRepository(),
+  repo = new GreetingCardRepository(),
 ): Promise<AvailabilityCheckResult> {
   const session = await loadPublicSession(sendCode, repo)
   const orgSettings = (session.organization?.settings as Record<string, unknown>) ?? {}
   const orgIndustry = typeof orgSettings.industry === "string" ? orgSettings.industry : null
-  const industryKey = req.industryKey || orgIndustry
+  // Ngành luôn theo tiệm — client gửi ngành khác từng đổi được chế độ khả dụng mặc định (rà soát cụm E)
+  const industryKey = orgIndustry
 
   return checkProductAvailability({
     ...req,

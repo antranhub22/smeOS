@@ -244,6 +244,17 @@ ${sampleNames}
   navigation: {
     hiddenNavKeys: [],
   },
+  // Phí trả cho bên làm thay (chi nhánh/đối tác). Ngành không thuê ngoài sản xuất → \`craftFee: null\`.
+  craftFee: {
+    feeLabel: "Phí gia công",
+    defaultPercent: 50,
+    minVnd: 100_000,
+    maxVnd: 2_000_000,
+    partnerPercent: 75,
+    complexityLabels: { EASY: "Đơn giản", MEDIUM: "Trung bình", HARD: "Phức tạp" },
+    laborByComplexityVnd: { EASY: 50_000, MEDIUM: 150_000, HARD: 300_000 },
+    peakDays: [],
+  },
 }
 `
 }

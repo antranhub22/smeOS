@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "@/lib/session"
+import { isChainOrganizationType } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 import { BulkImportHeader } from "@/components/products/bulk-import/bulk-import-header"
 import { ImportDropzones } from "@/components/products/bulk-import/import-dropzones"
 import { ImportPreview, importStats } from "@/components/products/bulk-import/import-preview"
@@ -17,7 +18,7 @@ import { validateSpreadsheetSecurity } from "@/modules/platform/domain/spreadshe
 
 type ActiveTab = "products" | "branches"
 
-const TEMPLATE_PATH = "/templates/FloraOS_Template_Master_Kho_San_Pham.xlsx"
+const TEMPLATE_PATH = "/templates/smeOS_Template_Master_Kho_San_Pham.xlsx"
 
 /** Đối chiếu ảnh: ưu tiên tên file ghi trong Excel, sau đó mã SKU trùng tên ảnh. */
 function matchImages(rows: ParsedProductRow[], images: Map<string, File>): ParsedProductRow[] {
@@ -33,7 +34,9 @@ function matchImages(rows: ParsedProductRow[], images: Map<string, File>): Parse
 
 export default function BulkImportProductsPage() {
   const router = useRouter()
-  const orgId = useSession().organization?.id
+  const session = useSession()
+  const orgId = session.organization?.id
+  const isChain = isChainOrganizationType(session.organizationType)
   const [activeTab, setActiveTab] = useState<ActiveTab>("products")
 
   const [excelFile, setExcelFile] = useState<File | null>(null)
@@ -201,9 +204,10 @@ export default function BulkImportProductsPage() {
         onImport={() => void handleExecuteImport()}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        showBranchesTab={isChain}
       />
       <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-w-6xl mx-auto w-full">
-        {activeTab === "branches" ? (
+        {activeTab === "branches" && isChain ? (
           <BranchImportPanel />
         ) : (
           <>

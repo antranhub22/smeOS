@@ -256,7 +256,7 @@ export function exportAdPerformanceCSV(campaigns: CampaignMetric[]): string {
 }
 
 /**
- * Dữ liệu chiến dịch quảng cáo mẫu thực tế cho tiệm hoa
+ * Dữ liệu chiến dịch quảng cáo mẫu thực tế cho cửa hàng
  */
 export const SAMPLE_FLOWER_AD_CAMPAIGNS: RawCampaignInput[] = [
   {
@@ -272,7 +272,7 @@ export const SAMPLE_FLOWER_AD_CAMPAIGNS: RawCampaignInput[] = [
   },
   {
     id: "CAMP-TT-02",
-    campaignName: "Bó Hoa Sinh Nhật Pastel 30s Viral Video",
+    campaignName: "Sản Phẩm Sinh Nhật Pastel 30s Viral Video",
     channel: "TIKTOK",
     impressions: 92000,
     clicks: 3680,
@@ -283,7 +283,7 @@ export const SAMPLE_FLOWER_AD_CAMPAIGNS: RawCampaignInput[] = [
   },
   {
     id: "CAMP-GG-03",
-    campaignName: "Tìm kiếm 'Đặt hoa tươi giao nhanh Q1 Q3'",
+    campaignName: "Tìm kiếm 'Đặt sản phẩm giao nhanh Q1 Q3'",
     channel: "GOOGLE",
     impressions: 14200,
     clicks: 1136,
@@ -305,7 +305,7 @@ export const SAMPLE_FLOWER_AD_CAMPAIGNS: RawCampaignInput[] = [
   },
   {
     id: "CAMP-FB-05",
-    campaignName: "Bó Hoa Cưới Cầm Tay Cô Dâu Tinh Khôi",
+    campaignName: "Sản Phẩm Cưới Cầm Tay Cô Dâu Tinh Khôi",
     channel: "FACEBOOK",
     impressions: 21000,
     clicks: 525,

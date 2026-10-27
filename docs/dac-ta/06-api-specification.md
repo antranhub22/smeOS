@@ -48,8 +48,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/auth/signup` | — | Tạo người dùng và tổ chức trải nghiệm |
-| POST | `/auth/login` | — | Chặn dò mật khẩu: 10 lần/15 phút mỗi email, 40 lần/15 phút mỗi IP → 429 (08/10/2026) |
+| POST | `/auth/signup` | — | Tạo người dùng và tổ chức trải nghiệm. Từ 22/10/2026 tài khoản **chờ superadmin duyệt** (`approval_status = PENDING`): trả `202 { status: "PENDING_APPROVAL", message }`, không đặt cookie, không tạo phiên. Giới hạn 20 lần/giờ/IP (429); `industry_key` phải có trong danh mục ngành, chuỗi giới hạn độ dài (email 254, tên/tên tổ chức 120) → sai: 400 (rà soát cụm B, 22/10/2026) |
+| POST | `/auth/login` | — | Chặn dò mật khẩu: 10 lần/15 phút mỗi email, 40 lần/15 phút mỗi IP → 429 (08/10/2026). Đúng mật khẩu nhưng tài khoản chưa duyệt / bị từ chối → 403 kèm câu báo; sai mật khẩu vẫn 401 như cũ, nên không dò được trạng thái |
 | POST | `/auth/logout` | — | |
 | GET | `/auth/me` | — | Người dùng, tổ chức hiện tại, danh sách năng lực đã tính |
 | GET | `/auth/session-status` | — | Kiểm nhanh phiên còn sống; giao diện hỏi mỗi 15 giây và khi quay lại tab |
@@ -57,11 +57,11 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | POST | `/session/organization` | — | Đổi tổ chức đang hoạt động |
 | POST | `/session/password` | `A2` | Tự đổi mật khẩu `{ current_password, new_password }` (≥ 10 ký tự, khác mật khẩu cũ); sai mật khẩu hiện tại → 400; giữ phiên đang dùng, đăng xuất các máy khác; ghi audit (08/10/2026) |
 | GET | `/organizations/current` | `F1` | |
-| PATCH | `/organizations/current` | `F2` | |
+| PATCH | `/organizations/current` | `F2` | `{ name?, settings? }` — `settings` hợp nhất nông. Tenant không sửa được khoá do nền tảng quản lý (`industry_locked`, `pending_model_change`, `is_instant_trial`, `lead_*`); đổi `industry` khi đã khoá ngành chỉ dành cho người vận hành nền tảng `N1`/`N12`. Vi phạm → 403 (21/10/2026) |
 
 **Mỗi tài khoản chỉ một phiên.** `POST /auth/login` thu hồi mọi phiên còn hiệu lực của người dùng rồi mới cấp phiên mới (người đăng nhập sau thắng). Phiên cũ gọi bất kỳ endpoint nào nhận `401 UNAUTHENTICATED` kèm `details.reason = "SESSION_SUPERSEDED"`; giao diện hiện cảnh báo "đăng nhập trên thiết bị khác" và đưa về trang đăng nhập. Phiên tự đăng xuất hoặc hết hạn trả 401 không có `reason`.
 
-`GET /auth/me` trả **danh sách mã năng lực đã tính sẵn** cho phiên hiện tại. Giao diện đọc danh sách này để ẩn hiện nút; máy chủ vẫn kiểm lại ở mọi endpoint. Giao diện ẩn nút không phải là phép kiểm quyền.
+`GET /auth/me` trả **danh sách mã năng lực đã tính sẵn** cho phiên hiện tại. Giao diện đọc danh sách này để ẩn hiện nút; máy chủ vẫn kiểm lại ở mọi endpoint. Giao diện ẩn nút không phải là phép kiểm quyền. Phần tổ chức chỉ gồm `id`, `name`, `slug`, `type`, `industry`, `industry_locked`, `pending_model_change` — không trả nguyên `settings` (SĐT, chat id, chính sách nội bộ).
 
 ```json
 {
@@ -85,6 +85,9 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | POST | `/members/:id/reset-password` | `A7` |
 | PATCH | `/members/:id/status` | `A5` |
 | PATCH | `/members/:id/role` | `F5` |
+| PUT | `/members/:id/chain-branch` | `F5` |
+| GET | `/members/chain-branches` | `F5` |
+| GET | `/branch-portal/orders` | `R14` |
 | GET | `/roles` | `F1` |
 | POST | `/roles` | `F5` |
 | PATCH | `/roles/:id/capabilities` | `F5` |
@@ -93,6 +96,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | PATCH | `/branches/:id` | `F7` |
 | GET | `/workspaces` | `F1` |
 | POST | `/workspaces` | `F8` |
+
+**Tài khoản cửa hàng nhận gia công (PO 22/10/2026).** Vai hệ thống `cua_hang`; `PUT /members/:id/chain-branch` `{ chain_branch_code | null }` gắn tài khoản với một chi nhánh chuỗi (`memberships.chain_branch_code`) — chi nhánh hoặc thành viên không thuộc tổ chức → 404; `GET /members/chain-branches` liệt kê chi nhánh để chọn. `GET /branch-portal/orders` (`R14`) trả `{ branch, orders[] }` cho trang `/cua-hang`: đơn đang mời chi nhánh (`OPEN`, có trong `invitedBranchIds` vòng hiện tại, chưa từ chối, chưa hết hạn), đơn chi nhánh đã nhận (`CLAIMED_GRACE`) hoặc đang làm (`COMMITTED`); lọc trong DB theo JSON, tối đa 100 đơn; chi nhánh lấy từ phiên, không nhận tham số. Mỗi đơn có `cardUrl` — link Thẻ Gia Công đã ký cho đúng chi nhánh (dựng từ `NEXT_PUBLIC_APP_URL`). Trang tự làm mới 30 giây/lần; chi nhánh không có Telegram/Zalo vẫn thấy lời mời ở đây (kết quả phát lệnh ghi kênh `APP`).
 
 **Tài khoản nhân viên (PO 08/10/2026).** `POST /members` `{ name, email, role_id, branch_id? }` tạo người dùng + thành viên **đang hoạt động** trong một giao dịch, trả `temporaryPassword` (12 ký tự, hiện một lần, `Cache-Control: no-store`); email đã có tài khoản FloraOS → 409 (không chiếm tài khoản người khác — dùng `/members/invite`). `POST /members/:id/reset-password` cấp mật khẩu tạm mới và đăng xuất người đó ở mọi máy; người đó còn là thành viên tiệm khác → 409; chính mình → 422. `PATCH /members/:id/status` `{ active }` tạm khoá (`SUSPENDED`, thu hồi ngay phiên ở tiệm này, giữ dữ liệu) hoặc mở lại. `A3`/`A5`/`A7` trần cứng Điều hành; thành viên tiệm khác → 404; mọi thao tác ghi `audit_logs` (không ghi mật khẩu).
 
@@ -109,10 +114,20 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/products` | `L1` | Lọc theo `branch_id`, `status`, `category` |
-| POST | `/products` | `L2` | |
-| GET · PATCH | `/products/:id` | `L1` · `L3` | PATCH `image_asset_id` thay ảnh chính; asset của tổ chức khác → 404. Thiếu `L5`: `attributes` bỏ `bom` và `priceGuard` (kê trong `redacted_fields`), giá bán niêm yết vẫn trả; PATCH của người thiếu `L5` không ghi đè hai khoá này (PO 14/10/2026) |
-| POST | `/products/batch-import` | `L2` | Nhập đồng loạt tối đa 500 sản phẩm (Excel/thư mục ảnh đã parse); `skip_duplicates` mặc định `true`. Mã đã có + kèm `image_asset_id` → chỉ bù ảnh chính nếu sản phẩm chưa có ảnh (không ghi đè dữ liệu/ảnh sẵn có), trả `images_attached_count`; link ảnh đang lưu không phải Google Drive (trống/trang web) được thay bằng link Drive trong file → `drive_links_updated_count` (09/10/2026). Bổ sung vào đặc tả 05/10/2026 |
+| GET | `/products` | `L1` | Lọc theo `branch_id`, `status`, `category`; `proposal=pending/rejected/expired` lọc mẫu đề xuất theo `attributes.proposal.status` (hàng chờ duyệt, PO 23/10/2026) |
+| POST | `/products` | `L2` | Người thiếu `H3` tạo → mẫu mang nhãn đề xuất (`attributes.proposal`, chỉ máy chủ ghi), dùng được ngay, báo Điều hành sự kiện `PRODUCT_PROPOSED` (PO 23/10/2026) |
+| GET · PATCH | `/products/:id` | `L1` · `L3` | PATCH `image_asset_id` thay ảnh chính; asset của tổ chức khác → 404. Thiếu `L5`: `attributes` bỏ `bom`, `priceGuard` và `craft_fee_vnd` (phí làm thay của mẫu, PO 22/10/2026) (kê trong `redacted_fields`), giá bán niêm yết vẫn trả; PATCH của người thiếu `L5` không ghi đè các khoá này (PO 14/10/2026). `craft_complexity` (`EASY`/`MEDIUM`/`HARD`) không bị ẩn. Thiếu `H3`: chỉ sửa nội dung mẫu đề xuất của chính mình; trên mẫu chính thức chỉ đổi `status` ACTIVE↔DRAFT và `availability_config`, còn lại `CAPABILITY_DENIED` (PO 23/10/2026) |
+| POST | `/products/:id/approve` | `H3` | Duyệt mẫu đề xuất vào danh mục chính thức, ghi `audit_logs` `product.approve`; không có đề xuất chờ duyệt → 422; tổ chức khác → 404 (PO 23/10/2026) |
+| POST | `/products/:id/reject` | `H3` | Body `{ reason }` (bắt buộc). Từ chối mẫu đề xuất: tạm ẩn (`DRAFT`), báo người đề xuất, 30 ngày sau tác vụ quét chuyển vào thùng rác; tổ chức khác → 404 (PO 23/10/2026) |
+| GET · POST | `/products/:id/change-requests` | `H3` · `L3` | POST: người không có `H3` đề xuất sửa mẫu chính thức (body như PATCH, không có `status`); bản gốc giữ nguyên, báo Điều hành `PRODUCT_CHANGE_REQUESTED`. Không có thay đổi → 422. GET: đề xuất đang chờ của mẫu |
+| GET | `/product-change-requests` | `H3` | Hàng chờ đề xuất sửa của tổ chức; `?status=` mặc định `PENDING` |
+| POST | `/product-change-requests/:id/approve` | `H3` | Body `{ fields? }` — áp toàn bộ hoặc một phần; lưu `product_revisions` trước khi ghi; bản gốc đã đổi sau lúc gửi → 409 |
+| POST | `/product-change-requests/:id/reject` | `H3` | Body `{ reason }` (bắt buộc) |
+| GET | `/products/:id/revisions` | `H3` | 50 phiên bản gần nhất của mẫu |
+| POST | `/products/:id/revisions/:revisionId/restore` | `H3` | Khôi phục nội dung (giữ trạng thái bán và nhãn đề xuất hiện tại); bản hiện tại được lưu thành phiên bản trước khi ghi |
+| GET | `/products/import-batches` | `H3` | 10 lô nhập Excel gần nhất, `canUndo` trong 24 giờ |
+| POST | `/products/import-batches/:id/undo` | `H3` | Hoàn tác lô: mẫu tạo ra vào thùng rác, mẫu bị cập nhật trả về bản trước lô; quá 24 giờ hoặc đã hoàn tác → 422 |
+| POST | `/products/batch-import` | `L2` + `H3` | Chỉ Điều hành nhập Excel (PO 23/10/2026). Mỗi lần gọi là một lô (`batch_id` trong phản hồi), hoàn tác được 24 giờ; mẫu bị cập nhật được lưu phiên bản trước; tệp không gắn/gỡ được nhãn đề xuất. Nhập đồng loạt tối đa 500 sản phẩm (Excel/thư mục ảnh đã parse); `skip_duplicates` mặc định `true`. Mã đã có + kèm `image_asset_id` → chỉ bù ảnh chính nếu sản phẩm chưa có ảnh (không ghi đè dữ liệu/ảnh sẵn có), trả `images_attached_count`; link ảnh đang lưu không phải Google Drive (trống/trang web) được thay bằng link Drive trong file → `drive_links_updated_count` (09/10/2026). Bổ sung vào đặc tả 05/10/2026 |
 | POST | `/products/drive-thumbnails` | `L2` | Body `{ folder_ids: string[] }` (1–50 Drive id) → `{ thumbnails: { [folder_id]: url \| null } }`; màn nhập hàng loạt gom lô thay cho gọi `/public/drive-thumbnail` từng folder (trần 120/phút/IP làm file >120 dòng mất ảnh). 60 lần/phút/người dùng; server phân giải tối đa 6 luồng song song; client thử lại 429/5xx tối đa 4 lần (09/10/2026) |
 | GET | `/products/:id/images` | **CHƯA XÂY** `G1` | |
 | PUT | `/products/:id/images` | **CHƯA XÂY** `G2` | Đặt lại thứ tự và vai trò ảnh |
@@ -674,6 +689,8 @@ P25a chỉ đọc (D-N5 áp dụng cho toàn bộ P25a, không riêng `/health`)
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/platform/organizations` | `N1` | Danh sách mọi tổ chức — tên, slug, loại, số dư credit, số thành viên |
+| GET | `/platform/registrations` | `N13` | Tài khoản tự đăng ký đang chờ duyệt (cũ trước) — email, tên, tổ chức, đăng ký thường hay dùng thử, SĐT lead |
+| POST | `/platform/registrations/:userId/decision` | `N13` | `{ decision: "APPROVE" \| "REJECT" }`. Chỉ quyết được tài khoản `PENDING` (đã quyết → 409, không có → 404). Duyệt dùng thử trả `temporaryPassword` đúng một lần, không lưu, không ghi nhật ký. Ghi `platform_audit_logs` (`platform.registration.approve`/`reject`) |
 | GET | `/platform/organizations/:id` | `N1` | Chi tiết một tổ chức bất kỳ — không lọc theo tổ chức của người gọi |
 | GET | `/platform/usage` | `N4` | Usage & chi phí gộp theo (tổ chức, tính năng), toàn hệ thống |
 | GET | `/platform/health` | `N5` | Đếm job theo trạng thái + danh sách job treo (chỉ đọc — không đánh dấu FAILED, xem `scripts/scan-stuck-jobs.ts`) |
@@ -802,9 +819,9 @@ Trang công khai ngoài `/api/v1` (06/10/2026): **`/s/<mã>`** — link bộ sư
 | GET | `/greeting-card/cancellation-requests` | `R6` hoặc `R10`; `R5` chỉ thấy đề xuất huỷ đơn đang giao | Đề xuất đang chờ duyệt (tối đa 200, cũ trước), kèm `delivery_status` của đơn (08/10/2026; 15/10/2026) |
 | POST | `/greeting-card/cancellation-requests/:id/decision` | `R6` (hủy đơn) · `R10` (chỉ hoàn một phần) · đơn đang giao: thêm `R5` (không tự duyệt đề xuất của mình) | `{ approve, note?, actualRefundVnd? }`. Số hoàn do máy chủ tính: `CANCEL_ONLY` = 0, `FULL_REFUND` = đúng số đã thu, `PARTIAL_REFUND` = `actualRefundVnd` hoặc số đề xuất, không vượt số đã thu. Một giao dịch: ghi sổ thu `REFUND`, cập nhật `paid_vnd`/`balance_vnd`, hủy đơn khi cần, khóa đề xuất (đã xử lý → 409), báo kết quả cho người đề xuất, audit (08/10/2026). Đơn đã giao/hoàn tất không duyệt hủy được (409); hai lần duyệt hoàn tiền đồng thời → lần sau 409 (khoá lạc quan `paid_vnd`); hủy đơn trả lại mã giảm giá và báo khách mốc `CANCELLED` · **PO 15/10/2026:** duyệt KHÔNG ghi sổ hoàn — tạo việc "Cần hoàn tiền" (`followUp`), hoàn ở `follow-up`; đơn đang giao không tự duyệt khi quá hạn |
 | POST | `/greeting-card/cancellation-requests/:id/follow-up` | `R6` · thêm `R10` khi còn tiền phải hoàn | `{ note? }` — Điều hành xác nhận đã xử lý đơn hệ thống tự huỷ (đề xuất từ chối nhận đơn của Điều phối quá hạn chưa duyệt). Khoản hoàn chỉ ghi vào sổ thu lúc này; bấm lặp → 409; tổ chức khác → 404 (14/10/2026) · Từ 15/10/2026 dùng cho MỌI khoản hoàn sau khi duyệt (không chỉ đơn tự huỷ) |
-| POST | `/greeting-card/orders/:id/confirm-deposit` | `R4` + (`R11` hoặc chính sách cho Điều phối duyệt cọc) | Điều phối xác nhận tiền cọc (hoặc toàn phần) theo ảnh bill khách gửi; gắn ảnh bill làm chứng từ (14/10/2026). Người có `R11` (Điều hành) luôn duyệt được dù tiệm bật "chỉ Điều hành duyệt cọc"; cũng áp dụng khi Điều hành bấm Tiếp nhận đơn (16/10/2026) |
+| POST | `/greeting-card/orders/:id/confirm-deposit` | `R4` + (`R11` hoặc chính sách cho Điều phối duyệt cọc) | Điều phối xác nhận tiền cọc (hoặc toàn phần) theo ảnh bill khách gửi; gắn ảnh bill làm chứng từ (14/10/2026). Người có `R11` (Điều hành) luôn duyệt được dù tiệm bật "chỉ Điều hành duyệt cọc"; cũng áp dụng khi Điều hành bấm Tiếp nhận đơn (16/10/2026) · Nhận `manualDispatch?`; với Chuỗi, xác nhận xong tự chọn cửa hàng như `accept` (trả `dispatch`) — cùng áp cho `confirm-payment`, SePay khớp tiền và tự duyệt sau 15 phút (22/10/2026) |
 | POST | `/greeting-card/orders/:id/confirm-balance` | `R4` + chính sách | Điều phối xác nhận thanh toán Lần 2; cùng luật chặn thu sớm như Điều hành (hoa xong + khách duyệt ảnh, hoặc đã giao, hoặc khách đã báo chuyển khoản) (14/10/2026) |
-| POST | `/greeting-card/orders/:id/accept` | `R4` | `{ note? }` — Điều phối tiếp nhận đơn |
+| POST | `/greeting-card/orders/:id/accept` | `R4` | `{ note?, manualDispatch? }` — 1 Cửa hàng: Điều phối tiếp nhận đơn (→ Đã phân công, báo khách "đã nhận đơn"). **Chuỗi (PO 22/10/2026): "Xác nhận đã nhận tiền"** — chỉ ghi `COORDINATOR_PAYMENT_CONFIRMED`, không vào sản xuất, không báo khách; rồi chọn cửa hàng theo `chain_dispatch_policy.enabled` (bật = tự động phát lệnh, tắt = Điều phối chọn tay; `manualDispatch: true` = thủ công cho riêng đơn này). Trả thêm `dispatch: { mode: NOT_CHAIN\|MANUAL\|ALREADY_DISPATCHED\|AUTO, dispatched?, sentCount?, reason? }`. Đã ghi nhận tiền → 409. Khách nhận "đã nhận đơn" khi chi nhánh chốt làm |
 | POST | `/greeting-card/orders/:id/reject` | `R4` | `{ reason }` (bắt buộc) — Điều phối từ chối nhận đơn → tạo đề xuất huỷ gửi Điều hành; quá hạn chưa duyệt thì hệ thống tự huỷ và giao việc hoàn tiền/liên hệ khách cho Điều hành (`/cancellation-requests/:id/follow-up`) |
 | POST | `/greeting-card/tracking/dismiss` | `R1` (đề xuất) · có `R6` (Điều hành) thì bỏ trực tiếp | `{ id, type: ORDER\|SESSION, reasonId, reasonText, note? }` — bỏ hiển thị đơn/link CHƯA thu tiền, chưa vào khâu cắm. Đề xuất của Sale quá 5 phút chưa ai duyệt → bộ quét nền tự duyệt (ghi DB + lịch sử đơn + audit). Đang có đề xuất chờ → 409; tổ chức khác → 404 (14/10/2026); đơn/link ngoài phạm vi xem (sale "chỉ khách của mình") → 404 (16/10/2026) |
 | POST | `/greeting-card/tracking/decide-dismiss` | `R6` (chỉ Điều hành) | `{ id, type, approve, note? }` — duyệt/từ chối đề xuất. Khách đã trả tiền hoặc đơn đổi trạng thái kể từ lúc đề xuất → 409, đơn giữ nguyên |
@@ -837,6 +854,8 @@ Trang công khai ngoài `/api/v1` (06/10/2026): **`/s/<mã>`** — link bộ sư
 | POST | `/public/brochure/tracking/:code/substitute-response` | — | Người đặt trả lời đề xuất đổi mẫu: `{ proposalId, choice: OPTION\|SHOP_DECIDES\|CANCEL, productId? (bắt buộc khi OPTION, phải thuộc các mẫu đề xuất), note? (≤ 300, bắt buộc khi CANCEL), phoneLast4? }`. Chứng minh như `change-request` (cùng bộ đếm); sai, đề xuất lạ hoặc đã trả lời → 404; hoa đã giao shipper → 409. Một giao dịch: chốt payload (`status = ANSWERED`, `choice`, `chosenProductId`, `customerNote`, `answeredAt` — bằng chứng khách đồng ý), dòng `[Đổi mẫu] …` vào ghi chú nội bộ; `OPTION` đổi `order_items` (`product_id`, `description`, `metadata` = bản chụp mẫu mới, giữ `price`, thêm `substitutedFrom`) và `greeting_sessions.product_snapshot`; tin `SUBSTITUTE_RESPONSE` gửi Điều phối. `CANCEL` không tự huỷ — tiệm dùng luồng đề xuất huỷ/hoàn tiền. 10 lần/10 phút/IP. Trang theo dõi bản đầy đủ trả `order.substitute = { pending, history }` (không mã nội bộ, không người đề xuất) (08/10/2026) |
 | POST | `/public/greeting-catalog/:id/quote` | — | Như trên cho link bộ sưu tập công khai, kèm `productId` |
 | POST | `/public/greeting-catalog/:id/order` | — | Đặt hoa từ link bộ sưu tập công khai · Cùng SĐT + mẫu + người nhận + ngày giao trong 10 phút → trả lại đơn vừa tạo (không tạo trùng); cùng ô bẫy, trần SĐT, chặn hết hàng như link riêng | · Cùng luật ưu đãi, miễn phí giao, trần khung giờ (kiểm trước khi tạo phiên) (08/10/2026)
+| POST | `/public/greeting-catalog/:id/inquiry` | — | `{ productId, customerName, customerPhone, message, variantName?, website? }` → 201 `{ conversationId }`. Yêu cầu tư vấn mẫu "Liên hệ"/phiên bản theo ý khách (22/10/2026): tổ chức suy từ bộ sưu tập, mẫu ngoài bộ sưu tập → 404; khớp/tạo khách theo SĐT + hội thoại kênh `STOREFRONT_CATALOG`. 10 lượt/10 phút/IP, 5 yêu cầu/giờ/SĐT/tiệm (`RATE_LIMITED`), ô bẫy `website` |
+| POST | `/public/brochure/:sendCode/inquiry` | — *(chủ phiên)* | Như `/public/greeting-catalog/:id/inquiry` cho link chào riêng: chỉ trình duyệt chủ phiên hoặc nhân viên (khác → 404); tổ chức và danh sách mẫu suy từ phiên của mã; hội thoại ghi kèm `sendCode` |
 | GET | `/public/drive-thumbnail` | — | `?folder_id=` (Drive id `[A-Za-z0-9_-]{10,128}`, sai → 400) → `{ folder_id, file_id, thumbnail_url }` của file đầu tiên trong folder Drive công khai; dùng cho trang khách (màn nhập hàng loạt chuyển sang `POST /products/drive-thumbnails` từ 09/10/2026). 120 lần/phút/IP; cache trong tiến trình có trần (3000 mục, 6 giờ; kết quả rỗng chỉ nhớ 5 phút); gọi Drive timeout 5 giây (07/10/2026) |
 | GET | `/public/drive-thumb-proxy` | — | `?folder_id=` như trên, hoặc `?file_id=` (link tệp `/file/d/<id>`, từ 09/10/2026) → trả thẳng ảnh thumbnail (trang khách Thẻ chào). Chỉ nhận `content-type: image/*`, tối đa 5 MB, `nosniff`; không có ảnh → 404. 120 lần/phút/IP (07/10/2026) |
 | POST | `/public/payments/sepay` | — | Webhook SePay, `Authorization: Apikey <khoá>`; idempotent theo mã giao dịch; tự ghi thu theo mã đơn trong nội dung chuyển khoản |
@@ -877,3 +896,62 @@ Bảng hiện trạng 05/10/2026 của Thẻ chào (phía tiệm và phía khác
 | POST | `/storage/trash/:id/restore` | như trên | Khôi phục `{ type }` |
 | DELETE | `/storage/trash/:id` | như trên | Xoá vĩnh viễn, `?type=` bắt buộc |
 
+
+## 26. Bổ sung đợt smeOS đa ngành (17–21/10/2026)
+
+Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38`) nhưng chưa được ghi vào đặc tả. Mục này ghi theo mã thật sau đợt vá bảo mật ngày 21/10/2026. Năng lực là mã thật mà route kiểm. Với route công khai, cột năng lực ghi cơ chế gác thay cho mã.
+
+### 26.1 Dùng thử và khả dụng theo ngành
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP. Từ 22/10/2026 **chờ superadmin duyệt**: trả `202`, không cấp phiên; lúc duyệt hệ thống sinh mật khẩu tạm để superadmin gửi cho khách. `industry_key` phải có trong danh mục ngành, `phone` đúng dạng số điện thoại, tên ≤ 120 ký tự → sai: 400 (rà soát cụm B) |
+| POST | `/business-profile/mock-data` | `F2` (hoặc `H4`/`N1`/`N12`) | Nạp hồ sơ và sản phẩm mẫu theo ngành `{ industry_key? }`, ghi đè hồ sơ hiện có. **Chỉ tổ chức dùng thử (`EXPERIENCE`)** — tiệm thật → 403 (PO 21/10/2026) |
+| GET | `/availability/board` | `L1` | `?month=YYYY-MM` — bảng khả dụng theo tháng (đặt phòng, khung giờ, tồn kho) |
+| POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ productId, checkInDate, checkOutDate, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |
+| DELETE | `/availability/blocks/:id` | `L3` | Bỏ chặn thủ công. Chỉ xoá được dòng không gắn đơn |
+| POST | `/public/brochure/:sendCode/check-availability` | — *(chủ phiên Thẻ chào)* | Kiểm khả dụng sản phẩm trên link chào. 120 lần/phút/IP |
+| POST | `/public/greeting-catalog/:id/check-availability` | — *(công khai)* | Kiểm khả dụng sản phẩm trên form đặt hàng của danh mục. 120 lần/phút/IP |
+
+### 26.2 Thẻ chào — xác nhận đơn và điều phối chuỗi
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| POST · DELETE | `/greeting-card/orders/:id/confirm-order` | `R11` | Điều hành xác nhận (POST) hoặc từ chối đơn `{ reason }` (DELETE) — mô hình 1 cửa hàng. Từ chối tạo đề xuất huỷ (kèm hoàn tiền nếu có cọc) ở trạng thái chờ duyệt; khách chỉ nhận tin huỷ khi đề xuất được duyệt (`cancellation-requests/:id/decision`). Đơn còn đề xuất huỷ chờ duyệt → xác nhận đơn (và Điều phối nhận đơn) trả 409 (rà soát cụm G, 22/10/2026) |
+| GET · POST | `/greeting-card/orders/:id/chain-dispatch` | `R4` | GET: danh sách chi nhánh đã sàng lọc và xếp hạng theo địa chỉ giao — toạ độ người nhận tra qua Goong (`GOONG_API_KEY`), đệm trong `order_coordinations.metadata.delivery_geo` theo địa chỉ chuẩn hoá ("không tìm thấy" thử lại sau 6 giờ); có toạ độ thì lọc theo bán kính chính sách, không thì `distanceKm: null`, `deliveryLocationResolved: false` và xếp hạng theo khu vực: `areaMatch` = `WARD` (cùng phường hoặc phường phục vụ) › `DISTRICT` › `PROVINCE` › `UNKNOWN`; chi nhánh khác tỉnh bị loại. POST: duyệt danh sách và gửi lời mời 1:1 cho từng chi nhánh, link kèm token chi nhánh (26.3). Mở vòng mời mới (giữ danh sách chi nhánh đã từ chối, không mời lại họ); đơn đã có chi nhánh nhận/chốt hoặc đơn đã huỷ/hoàn tất → 409. Phí gia công: GET trả `craftFee` (`suggestedVnd`, `lines`, `adjustPercent`, `finalVnd`); POST không gửi `subcontractPriceVnd` → chốt phí gợi ý theo `settings.craft_fee_policy`; gửi số ngoài ±`coordinatorAdjustPercent`% → 422 trừ khi người gửi có `R11` (ghi `overrideApprovedBy`); bản ghi lưu ở `subcontract_dispatch.craftFee`. Chỉ tổ chức mô hình Chuỗi (`organizations.type` = `CHAIN`/`FLOWER_NETWORK`, do Admin SaaS duyệt); 1 cửa hàng → 409 |
+| GET | `/greeting-card/orders/:id/craft-fee` | `R4` | Phí gia công gợi ý của đơn theo phương án tiệm cài (6 cách tính, dùng chung mọi ngành; ngành khai nhãn và số khởi điểm): `{ feeLabel, suggestedVnd, lines, adjustPercent }`. Giá hàng luôn trước VAT, không gồm phí giao. Đơn của tổ chức khác → 404 |
+| POST | `/greeting-card/chain-branches/bulk-import` | `R4` | Nhập danh sách chi nhánh vào bảng `chain_branches` (trùng mã → cập nhật, giữ lịch sử phạt). Tối đa 500 dòng, mã không trùng trong tệp, toạ độ/điểm KPI trong khoảng hợp lệ, SĐT và Telegram Chat ID đúng dạng; sai → 422. Chat ID nhập ở đây chỉ được dùng khi chat đó đã liên kết với tổ chức. Chi nhánh có địa chỉ mà thiếu vĩ độ/kinh độ được tự tra toạ độ qua Goong (tối đa 200 chi nhánh/lần); phản hồi có `geocoded`, `geocodeNotFound`, `geocodeSkipped`. Nhận thêm `ward`, `district`, `province` (hoặc `city` của file mẫu cũ), `serviceWards[]` (tối đa 50); ô vĩ độ/kinh độ trống → không lưu toạ độ. Tổ chức 1 cửa hàng → 409 |
+| GET | `/greeting-card/integrations/zalo-dispatch` | `F2` | Trạng thái Zalo OA chung của nền tảng + mã liên kết (`ZL` + 8 ký tự, duy nhất toàn nền tảng, cột `chain_branches.zalo_link_code`) của từng chi nhánh, có cờ đã liên kết |
+| GET · PUT | `/greeting-card/integrations/staff-notifications` | `F2` | Đọc / sửa cấu hình kênh thông báo nhân viên trong phạm vi các kênh mà SaaS cho phép |
+| PUT | `/greeting-card/integrations/staff-notifications/saas-policy` | *(phiên nền tảng)* `N2` | Người vận hành nền tảng cấp danh sách kênh cho `{ targetOrganizationId, allowedChannels }`. Không nhận phiên tenant |
+| GET · POST · DELETE | `/greeting-card/integrations/telegram-dispatch` | `F2` | GET: trạng thái bot, `linkCode` của tổ chức, và các nhóm **đã gửi mã đó**. POST `{ chatId, message? }`: gửi thử, chỉ tới chat đã liên kết; chat khác (kể cả chat ID nhập cho chi nhánh) → 422. Chat đã nhắn mã được nhớ vào `settings.telegram_linked_chat_ids` (máy chủ ghi, tenant không sửa qua PATCH). Mọi tin của bot điều phối chung chỉ đi tới chat trong danh sách này. DELETE `?chatId=`: gỡ chat khỏi danh sách (chat không thuộc tổ chức → 404), ghi thời điểm gỡ vào `settings.telegram_unlinked_chats`; quét lại bỏ qua mã gửi trước lúc gỡ |
+
+### 26.3 Thẻ Gia Công — Điều phối và link công khai cho chi nhánh
+
+Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<token>`. Token có dạng `<organizationId>.<hạn>.<HMAC(SESSION_SECRET)>`, ký cho đúng (tổ chức, mã đơn, chi nhánh), hạn 14 ngày (`subcontract-link-token.ts`). Mọi route công khai dưới đây kiểm token qua `loadSubcontractOrderForBranch`: tra đơn theo `(organization_id, code)` và chỉ chấp nhận đơn đang có phiên điều phối gia công. Token thiếu, sai, hết hạn, hoặc đơn không có phiên điều phối đều trả cùng một 404. Trang gửi token bằng header `x-subcontract-token` (POST) hoặc `?t=` (GET).
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | Thẻ Gia Công của chi nhánh. Chỉ chi nhánh đã nhận đơn thấy SĐT người nhận (từ khi đơn sẵn sàng giao), ảnh QC/giao hàng, shipper và yêu cầu bỏ qua; chi nhánh được mời khác chỉ thấy thông tin mời. 120 lần/phút/IP |
+| POST | `/public/subcontract/:orderCode` | — *(token chi nhánh)* | `{ action: CLAIM \| CANCEL \| COMMIT \| DELETE_QC, branchId, photoUrl? }`. `DELETE_QC` chỉ dành cho chi nhánh đã nhận đơn, xoá đúng một ảnh khớp nguyên khoá, và chỉ khi ảnh chưa được duyệt (khác → 409). `COMMIT` lần hai không gửi lại tin (`alreadyCommitted`). `CANCEL`/`COMMIT` kiểm và ghi dưới khoá dòng. `CLAIM`: chỉ chi nhánh có trong lời mời vòng hiện tại (khác → 422); hai lượt nhận cùng lúc khoá dòng điều phối, chỉ một lượt thắng (lượt sau → 409). Thẻ mời Telegram lưu riêng theo chi nhánh (`inviteCards`): có chi nhánh nhận → thẻ các chi nhánh khác sửa thành "đã có chi nhánh khác nhận", gỡ nút; `CANCEL` trong hạn → thẻ các chi nhánh chưa từ chối trở về lời mời có nút "Nhận đơn ngay"; sang vòng mới/chuyển Điều phối → thẻ vòng cũ báo hết hạn. 30 lần/phút/IP |
+| POST | `/public/subcontract/:orderCode/upload-qc` | — *(token, chi nhánh đã nhận)* | multipart `{ file, branchId }`. Ảnh thành phẩm ≤ 10MB (JPG/PNG/WebP), AI đối chiếu với ảnh mẫu. Chỉ khi đơn đã chốt, đang làm (`ASSIGNED`…`READY`) và chưa giao; khác → 409 |
+| POST | `/public/subcontract/:orderCode/submit-shipper` | — *(token, chi nhánh đã nhận)* | `{ branchId, shipperName, shipperPhone, shipperNote? }`. Chỉ khi hoa `READY`, chưa giao, đơn chưa huỷ/hoàn tất; khác → 409. Đã có shipper → trả lại thông tin cũ |
+| POST | `/public/subcontract/:orderCode/submit-delivery` | — *(token, chi nhánh đã nhận)* | multipart `{ file, branchId, note? }`. Ảnh giao hàng, AI kiểm; đạt thì đơn `DELIVERED/COMPLETED`. Chỉ sau bước shipper (`DELIVERING`), đơn chưa huỷ/hoàn tất; khác → 409 |
+| POST | `/public/subcontract/:orderCode/request-bypass` | — *(token, chi nhánh đã nhận)* | `{ branchId, step, reason }`. Xin bỏ qua bằng chứng vì bất khả kháng, chờ Điều phối duyệt. Chỉ chi nhánh đã nhận đơn; công đoạn đang chờ duyệt hoặc đã duyệt → 409. Báo qua kênh điều phối của tổ chức (không rơi về nhóm chung); trả `coordinatorNotified` |
+| POST | `/coordinator/orders/:id/approve-bypass` | `R3` | Điều phối duyệt hoặc từ chối yêu cầu bỏ qua bằng chứng. Chỉ yêu cầu đang `PENDING` (đã quyết → 409; duyệt đúp chỉ một lần thắng); duyệt mở bước tiếp theo khi đơn đang ở đúng bước và trừ 2 điểm KPI chi nhánh đúng một lần |
+| POST | `/coordinator/orders/:id/approve-customer-photo` | `R3` | Điều phối duyệt ảnh thành phẩm thay khách: ghi `order_qc_records` `CUSTOMER_PHOTO_APPROVED` (cùng bản ghi khách tự duyệt trên trang theo dõi, `inspector_id` = người duyệt), bấm lại → `alreadyApproved: true`. Chưa có ảnh thành phẩm hoặc đơn đã huỷ → 409. Đơn gia công chuỗi: ảnh QC đạt được ghi thành ảnh thành phẩm (`assets` + `PRODUCT_PHOTO_UPLOADED`); nhập shipper (chi nhánh, Điều phối, duyệt bỏ qua) bị chặn 409 khi còn chờ khách theo chế độ duyệt ảnh của tiệm (PO 22/10/2026) |
+| POST | `/coordinator/orders/:id/upload-qc-subcontract` | `R3` | Điều phối tải ảnh QC thay chi nhánh. Cùng điều kiện bước như `upload-qc` |
+| POST | `/coordinator/orders/:id/set-shipper` | `R5` | Điều phối nhập thông tin shipper thay chi nhánh. Cùng điều kiện bước như `submit-shipper` |
+| POST | `/coordinator/orders/:id/confirm-delivery` | `R5` | Điều phối xác nhận đã giao, kèm ảnh giao hàng nếu có. Hoa phải `READY`, đơn chưa huỷ/hoàn tất (được xác nhận cả khi chưa nhập shipper); khác → 409. Giao sau giờ hẹn (`delivery_window`) → tự trừ `lateDeliveryDeductionPercent`% phí gia công (mặc định 0%, mỗi đơn một lần; áp cả cho `submit-delivery` và duyệt bỏ qua ảnh giao hàng) |
+| POST | `/coordinator/orders/:id/craft-fee-complaint` | `R3` | Điều phối ghi nhận khiếu nại `{ reason }` (5–500 ký tự) vào `craft_fee_complaints`; trừ `complaintDeductionPercent`% phí gia công một lần (mặc định 0% → chỉ ghi nhận). Đơn chưa có chi nhánh nhận → 409; đơn tổ chức khác → 404. Trả `{ deducted, payableVnd }` |
+| POST | `/public/zalo-oa/webhook` | — *(chữ ký `X-ZEvent-Signature` = sha256(appId + thân + timestamp + OA secret key))* | Sự kiện Zalo OA chung. Tin `user_send_text` chứa mã liên kết → gắn `channels.zaloUserId` cho chi nhánh có mã (tổ chức suy từ mã). Sai chữ ký, sai `app_id` hoặc sự kiện lệch > 10 phút → 401. Lời mời gia công gửi qua OA khi chi nhánh không có Telegram; token OA niêm phong trong `platform_secrets`, làm mới dưới khoá dòng. 600 lần/phút/IP |
+| POST | `/internal/chain-dispatch-sweep` | — *(cron, header `x-cron-secret`)* | Quét nhắc mốc M1–M4. Chỉ lấy phiên điều phối `OPEN`/`CLAIMED_GRACE`/`COMMITTED` của đơn chưa huỷ, chưa hoàn tất, chưa giao xong (lọc trong DB), duyệt hết theo trang 50 dòng (keyset theo `id`, tối đa 200 trang, ngân sách 90 giây — dưới `--max-time 120` của cron); lượt chồng lượt đang chạy bị bỏ qua nhờ khoá `pg_try_advisory_xact_lock` (phản hồi `skipped`). Phản hồi có `pages`, `complete`, `errorCount`; đơn còn `OPEN` đã hết hạn vòng nhận → mời vòng sau (không mời lại chi nhánh đã mời/đã từ chối) hoặc chuyển `ESCALATED` và báo `coordinator_channel.telegramChatId` khi hết vòng/hết ứng viên, do Render cron `smeos-cron-dispatch-sweep` gọi 5 phút/lần qua mạng nội bộ. Link trong tin nhắc dựng từ `NEXT_PUBLIC_APP_URL`. Production thiếu `CRON_SECRET` → luôn 401. `?forceStep=` chỉ có hiệu lực ngoài production. Phiên `CLAIMED_GRACE` đã hết `graceExpiresAt` mà chi nhánh không huỷ → hệ thống chốt `COMMITTED` dưới khoá dòng (cùng use-case với nút Chốt của chi nhánh, `commit-subcontract-claim.ts`), gửi tin bắt đầu làm một lần; phản hồi có `graceCommitted` (PO 22/10/2026). Giờ giao để tính mốc = cuối khung giờ (`parseDeliveryTimestampMs`, cùng hàm với thẻ chi nhánh) |
+| GET | `/internal/health` | — *(cron, header `x-cron-secret`)* | Sức khoẻ chi tiết: độ trễ CSDL, Redis, job `PENDING`/`PROCESSING` quá 15 phút. `200` khi ổn, `503` khi `degraded`/`down` kèm `issues`. Cron `smeos-cron-dispatch-sweep` gọi sau mỗi lượt quét để Render báo lỗi. Không trả dữ liệu tenant |
+
+### 26.4 Console Vận hành Nền tảng
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/platform/nav-matrix` | *(phiên nền tảng)* | Ma trận điều hướng mặc định theo ngành và các ghi đè đang áp dụng |
+| PUT | `/platform/nav-matrix` | `N12` | `{ overrides: { [industryKey]: navKey[] } }` — ẩn mục điều hướng theo ngành, áp cho mọi tổ chức của ngành đó. Ghi nhật ký kiểm toán nền tảng |
+| PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |

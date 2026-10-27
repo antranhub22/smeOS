@@ -97,8 +97,8 @@ export const NEXT_ACTIONS_REGISTRY: Record<string, RegisteredNextAction[]> = {
   "order-created": [
     {
       id: "print-work-ticket",
-      label: "In phiếu giao việc cho thợ hoa",
-      description: "Xuất phiếu yêu cầu cắm hoa cho thợ thực hiện",
+      label: "In phiếu giao việc cho thợ chế tác",
+      description: "Xuất phiếu yêu cầu chế tác cho thợ thực hiện",
       targetHref: "/don-hang",
       isPrimary: true,
     },

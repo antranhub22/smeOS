@@ -94,7 +94,7 @@ describe("resolveRoleUx", () => {
     expect(resolveRoleUx("platform_admin")?.key).toBe("platform_admin")
     expect(resolveRoleUx(null, "PLATFORM")?.key).toBe("platform_admin")
     expect(resolveRoleUx("dieu_hanh", "PLATFORM")?.key).toBe("platform_admin")
-    expect(resolveRoleUx("platform_admin")?.homepage).toBe("CONTROL_CENTER")
+    expect(resolveRoleUx("platform_admin")?.homepage).toBe("PLATFORM_JOURNEY_HOME")
     expect(resolveRoleUx("platform_admin")?.entryHref).toBe("/van-hanh")
   })
 

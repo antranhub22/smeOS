@@ -14,7 +14,7 @@ interface EditorialStoryDeckProps {
   onSelectProduct: (product: GreetingCatalogProduct) => void
 }
 
-/** Câu chuyện: dàn trang như tạp chí — ảnh lớn, số thứ tự, lời kể về ý nghĩa mẫu hoa. */
+/** Câu chuyện: dàn trang như tạp chí — ảnh lớn, số thứ tự, lời kể về ý nghĩa sản phẩm. */
 export function EditorialStoryDeck({ products, catalogName, onSelectProduct }: EditorialStoryDeckProps) {
   const embedded = useEmbeddedPreview()
   const shortlist = useShortlist()
@@ -28,7 +28,7 @@ export function EditorialStoryDeck({ products, catalogName, onSelectProduct }: E
         <header className="px-6 pb-8 pt-10 text-center">
           <p className="text-caption font-semibold uppercase tracking-[0.3em] text-primary">Câu chuyện bộ sưu tập</p>
           <h1 className="mt-3 font-serif text-display-lg font-medium leading-[1.05] tracking-tight">{catalogName}</h1>
-          <p className="mt-3 text-body-sm text-text-muted">{products.length} mẫu hoa, mỗi mẫu một lời nhắn</p>
+          <p className="mt-3 text-body-sm text-text-muted">{products.length} sản phẩm, mỗi mẫu một lời nhắn</p>
           <span aria-hidden="true" className="mx-auto mt-6 block h-10 w-px bg-border" />
         </header>
 

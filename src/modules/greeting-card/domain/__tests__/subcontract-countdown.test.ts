@@ -64,3 +64,12 @@ describe("subcontract-countdown", () => {
     expect(state?.formatted).toBe("Quá 12 phút")
   })
 })
+
+describe("giờ giao dùng chung cho sweep (rà soát cụm G, G-c)", () => {
+  it("lấy cuối khung giờ; khung dạng chữ (\"Trước 12h\") vẫn ra giờ", async () => {
+    const { parseDeliveryTimestampMs } = await import("../subcontract-countdown")
+    expect(parseDeliveryTimestampMs("2027-01-10", "16:00 - 18:00")).toBe(new Date("2027-01-10T18:00:00+07:00").getTime())
+    expect(parseDeliveryTimestampMs("2027-01-10", "Trước 12h")).toBe(new Date("2027-01-10T12:00:00+07:00").getTime())
+    expect(parseDeliveryTimestampMs(null, "16:00 - 18:00")).toBeNull()
+  })
+})

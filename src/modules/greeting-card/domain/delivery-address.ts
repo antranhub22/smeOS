@@ -91,6 +91,25 @@ export function formatDeliveryAddress(raw: unknown): string {
 }
 
 /**
+ * Phường / quận / tỉnh của địa chỉ giao (form 5 ô lưu `{ parts }` hoặc các trường phẳng). Địa chỉ cũ chỉ
+ * có một dòng chữ → null: không đoán từ chuỗi, để sàng lọc khu vực không khớp nhầm.
+ */
+export function deliveryAreaOf(raw: unknown): { ward?: string; district?: string; province?: string } | null {
+  if (!raw || typeof raw !== "object") return null
+  const obj = raw as Record<string, unknown>
+  const src = (obj.parts && typeof obj.parts === "object" ? obj.parts : obj) as Record<string, unknown>
+  const pick = (k: string) => (typeof src[k] === "string" && (src[k] as string).trim() ? (src[k] as string).trim() : undefined)
+  const area = { ward: pick("ward"), district: pick("district"), province: pick("province") }
+  if (!area.ward && !area.province) return null
+  return Object.fromEntries(Object.entries(area).filter(([, v]) => v)) as { ward?: string; district?: string; province?: string }
+}
+
+/** Có địa chỉ thật để tra toạ độ (không phải giá trị mặc định "Theo thỏa thuận") */
+export function hasDeliveryAddress(formatted: string): boolean {
+  return Boolean(formatted.trim()) && formatted !== "Theo thỏa thuận"
+}
+
+/**
  * Che 4 chữ số cuối của số điện thoại (ví dụ: "0912121212" -> "091212****").
  */
 export function maskPhoneNumber(phone?: string | null): string {

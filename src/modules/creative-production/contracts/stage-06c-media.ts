@@ -61,7 +61,7 @@ export const mediaVariantBodySchema = z.object({
   composition: z
     .object({
       shot: z.enum(VARIANT_SHOTS).optional().describe("Cỡ cảnh: cận / trung / toàn — mặc định theo kịch bản, không có thì medium"),
-      placement: z.enum(VARIANT_PLACEMENTS).optional().describe("Vị trí bó hoa — mặc định center"),
+      placement: z.enum(VARIANT_PLACEMENTS).optional().describe("Vị trí sản phẩm — mặc định center"),
     })
     .optional(),
   lighting: z
@@ -102,12 +102,12 @@ export const mediaVariantBodySchema = z.object({
   upscale: z
     .enum(VARIANT_UPSCALES)
     .default("none")
-    .describe("2x = khung xuất gấp đôi (9:16 → 2160×3840), tăng nét HẬU CẢNH; bó hoa không qua mô hình siêu phân giải"),
+    .describe("2x = khung xuất gấp đôi (9:16 → 2160×3840), tăng nét HẬU CẢNH; sản phẩm không qua mô hình siêu phân giải"),
   compose_mode: z
     .enum(COMPOSE_MODES)
     .optional()
     .describe(
-      "Bỏ trống = theo engine: cloud_provider → relight (NHÀ CUNG CẤP LÀM TRỌN GÓI: tách nền, dựng cảnh, chỉnh sáng, tăng nét; cổng đo hình dáng + cấu trúc + màu), local_studio → paste. paste = tự dán nguyên khối bó hoa (giữ từng điểm ảnh); harmonize = paste + hoà bóng/độ nét cục bộ"
+      "Bỏ trống = theo engine: cloud_provider → relight (NHÀ CUNG CẤP LÀM TRỌN GÓI: tách nền, dựng cảnh, chỉnh sáng, tăng nét; cổng đo hình dáng + cấu trúc + màu), local_studio → paste. paste = tự dán nguyên khối sản phẩm (giữ từng điểm ảnh); harmonize = paste + hoà bóng/độ nét cục bộ"
     ),
 })
 

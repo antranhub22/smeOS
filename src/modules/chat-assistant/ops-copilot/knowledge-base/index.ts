@@ -43,7 +43,7 @@ export function normalizeUserRole(role?: string): OpsTargetRole {
   if (lower.includes("bán hàng") || lower.includes("sales") || lower.includes("sale")) {
     return "BAN_HANG"
   }
-  if (lower.includes("thợ cắm") || lower.includes("florist") || lower.includes("thợ")) {
+  if (lower.includes("thợ chế tác") || lower.includes("florist") || lower.includes("thợ")) {
     return "THO_CAM"
   }
   if (lower.includes("giao hàng") || lower.includes("shipper") || lower.includes("điều phối")) {
@@ -86,15 +86,15 @@ const ACTION_INTENT_MAP: Array<{ patterns: string[]; nodeId: string }> = [
     patterns: [
       "bộ sưu tập", "tạo thẻ", "thẻ chào", "tạo bộ sưu tập", "thẻ bộ sưu tập",
       "link chào", "link gửi khách", "gửi zalo", "chọn hoa", "cọc tiền", "đặt cọc",
-      "vietqr cọc", "phễu cọc", "duyệt cọc", "brochure", "link đặt hoa", "gửi nhanh",
+      "vietqr cọc", "phễu cọc", "duyệt cọc", "brochure", "link đặt hàng", "gửi nhanh",
       "journeywizard", "inboxbutton", "hộp việc", "shopprofilereadiness"
     ],
     nodeId: "node-03-the-chao",
   },
   {
     patterns: [
-      "đơn hàng", "in phiếu", "phiếu xưởng", "phiếu cắm hoa", "thợ cắm", "giấu giá",
-      "ẩn giá", "phiếu giao", "in thiệp", "khổ a6", "kanban", "sla", "chậm đơn",
+      "đơn hàng", "in phiếu", "phiếu xưởng", "phiếu chế tác", "thợ chế tác", "giấu giá",
+      "ẩn giá", "phiếu giao", "in thiệp", "khổ A6", "kanban", "sla", "chậm đơn",
       "trễ đơn", "tiến độ đơn", "xác nhận tiền về", "đối soát cọc",
       "gửi ảnh", "ảnh hoàn thành", "ảnh thành phẩm", "số lượng ảnh", "duyệt ảnh",
       "ảnh tp", "ảnh nhận", "nghiệm thu ảnh", "hoàn thành sản phẩm",
@@ -105,8 +105,8 @@ const ACTION_INTENT_MAP: Array<{ patterns: string[]; nodeId: string }> = [
   },
   {
     patterns: [
-      "tạo hoa mới", "tạo mẫu hoa", "thêm sản phẩm", "công thức cành", "bóc tách cành",
-      "bom", "atomic bom", "bông hoa", "dáng cắm", "giá vốn", "costing", "tính giá hoa",
+      "tạo hoa mới", "tạo sản phẩm", "thêm sản phẩm", "công thức cành", "bóc tách cành",
+      "bom", "atomic bom", "thành phần", "kiểu dáng", "giá vốn", "costing", "tính giá hoa",
       "fl-xxxx", "lưu và xuất bản", "vai trò cành"
     ],
     nodeId: "node-05-tao-mau-hoa-moi",

@@ -145,7 +145,7 @@ export function SettingsOutputTab({
               checked={keywordOutput.recommendedFormats}
               onChange={(e) => setKeywordOutput({ ...keywordOutput, recommendedFormats: e.target.checked })}
             />
-            Gợi ý định dạng mẫu hoa (Bó, Giỏ, Kệ, Bình)
+            Gợi ý định dạng sản phẩm (Bó, Giỏ, Kệ, Bình)
           </label>
         </div>
       )}

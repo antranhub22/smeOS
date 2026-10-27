@@ -2,17 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import type { TenantContext } from "@/core/tenancy"
 
-const { findById, findLatest } = vi.hoisted(() => ({
-  findById: vi.fn(),
-  findLatest: vi.fn(),
+const findById = vi.fn()
+const findLatest = vi.fn()
+vi.mock("@/modules/content-engine/infra/content-generation-repository", () => ({
+  ContentGenerationRepository: vi.fn().mockImplementation(function () { return { findById, findLatest } }),
 }))
-vi.mock("@/modules/content-engine/infra/content-generation-repository", () => {
-  const instance = { findById, findLatest }
-  return {
-    ContentGenerationRepository: vi.fn().mockImplementation(() => instance),
-    getContentGenerationRepository: vi.fn().mockImplementation(() => instance),
-  }
-})
 
 import { findLatestContentGeneration, getContentGenerationById } from "@/modules/content-engine/use-cases/get-content-generation"
 

@@ -50,7 +50,7 @@ export function OrderEvidencePrint({
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "2px solid #111", paddingBottom: 12, marginBottom: 16 }}>
         <div>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#555" }}>
-            {storeName ?? "FloraOS"}
+            {storeName ?? "smeOS"}
           </div>
           <div style={{ fontSize: 20, fontWeight: 900, marginTop: 2 }}>
             BẰNG CHỨNG ĐƠN HÀNG
@@ -194,7 +194,7 @@ export function OrderEvidencePrint({
 
       {/* Footer */}
       <div style={{ borderTop: "1px solid #ddd", paddingTop: 10, fontSize: 9, color: "#aaa", display: "flex", justifyContent: "space-between" }}>
-        <span>Hệ thống đối soát xác nhận tự động · FloraOS Core</span>
+        <span>Hệ thống đối soát xác nhận tự động · smeOS Core</span>
         <span>{printedAt}</span>
       </div>
     </div>

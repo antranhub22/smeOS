@@ -1,10 +1,10 @@
 /**
- * Flower Consultant Rules (Luật tư vấn ngành hoa và bóc tách ý định người dùng).
+ * Product Consultant Rules (Luật tư vấn sản phẩm và bóc tách ý định người dùng).
  * Thuần logic, không import Prisma hay thư viện ngoài.
  */
 
 import type { ProductMasterIndex } from "@/modules/products/domain/product-master-index"
-import type { SuggestedFlowerCard } from "./chat-types"
+import type { SuggestedProductCard } from "./chat-types"
 
 /**
  * `quotePriceVnd = null` nghĩa là sản phẩm CHƯA có giá bán lẻ thật cấu hình — đúng quyết
@@ -62,7 +62,7 @@ export function extractBudgetFromQuery(query: string): number | null {
 }
 
 /**
- * Trích xuất dịp tặng hoa từ tin nhắn
+ * Trích xuất dịp mua hàng từ tin nhắn
  */
 export function extractOccasionFromQuery(query: string): string | null {
   const lower = query.toLowerCase()
@@ -76,13 +76,13 @@ export function extractOccasionFromQuery(query: string): string | null {
 }
 
 /**
- * Khớp và chọn lọc 1–3 mẫu hoa tối ưu nhất từ Product Master Index
+ * Khớp và chọn lọc 1–3 sản phẩm tối ưu nhất từ Product Master Index
  */
 export function matchProductsFromMasterIndex(
   products: ProductMasterIndex[],
   budget: number | null,
   occasion: string | null
-): SuggestedFlowerCard[] {
+): SuggestedProductCard[] {
   if (products.length === 0) return []
 
   // Lọc theo ngân sách (biên độ +/- 35%) và dịp sử dụng
@@ -112,15 +112,15 @@ export function matchProductsFromMasterIndex(
       }
     }
 
-    let reason = "Mẫu hoa thiết kế tinh tế, phù hợp ngân sách của bạn"
+    let reason = "Sản phẩm thiết kế tinh tế, phù hợp ngân sách của bạn"
     if (occasion && budget && priceKnown) {
-      reason = `Thiết kế hoa tặng ${occasion} lý tưởng trong tầm giá ${formatQuotePriceForChat(price)}`
+      reason = `Sản phẩm dành cho ${occasion} lý tưởng trong tầm giá ${formatQuotePriceForChat(price)}`
     } else if (occasion) {
-      reason = `Mẫu hoa được ưa chuộng hàng đầu cho dịp ${occasion}`
+      reason = `Sản phẩm được ưa chuộng hàng đầu cho dịp ${occasion}`
     } else if (budget && priceKnown) {
-      reason = `Mẫu hoa đẹp xuất sắc trong phân khúc ${formatQuotePriceForChat(price)}`
+      reason = `Sản phẩm đẹp xuất sắc trong phân khúc ${formatQuotePriceForChat(price)}`
     } else if (!priceKnown) {
-      reason = "Mẫu hoa đẹp, tiệm chưa cập nhật giá bán — liên hệ để được báo giá chính xác"
+      reason = "Sản phẩm đẹp, tiệm chưa cập nhật giá bán — liên hệ để được báo giá chính xác"
     }
 
     return {

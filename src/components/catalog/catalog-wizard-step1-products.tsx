@@ -4,6 +4,7 @@ import React, { useMemo } from "react"
 import { Sparkles, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { ProductThumb } from "@/components/products/product-thumb"
 import type { CatalogProduct } from "./catalog-management-tab"
 
 interface CatalogWizardStep1ProductsProps {
@@ -160,15 +161,14 @@ export function CatalogWizardStep1Products({
               }`}
             >
               <div className="aspect-square w-full rounded-lg bg-surface-alt overflow-hidden mb-2 relative">
-                {p.imageUrl ? (
-                  <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover" />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center text-text-muted text-caption">
-                    Không có ảnh
-                  </div>
-                )}
+                <ProductThumb
+                  name={p.name}
+                  masterImageUrl={p.imageUrl ?? undefined}
+                  driveLink={p.driveLink ?? undefined}
+                  size="card"
+                />
                 {isSelected && (
-                  <div className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-primary text-surface flex items-center justify-center">
+                  <div className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-primary text-surface flex items-center justify-center shadow-xs">
                     <Check className="h-3 w-3" />
                   </div>
                 )}

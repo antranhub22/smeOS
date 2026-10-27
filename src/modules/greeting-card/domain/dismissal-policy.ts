@@ -81,7 +81,7 @@ export function canProposeDismissal(item: {
   if (item.currentStepId && postPaymentSteps.includes(item.currentStepId)) {
     return {
       allowed: false,
-      reason: "Đơn đã bước vào giai đoạn cắm hoa/giao hàng, không thể loại bỏ theo quy trình chưa thanh toán.",
+      reason: "Đơn đã bước vào giai đoạn chế tác/giao hàng, không thể loại bỏ theo quy trình chưa thanh toán.",
     }
   }
   return { allowed: true }

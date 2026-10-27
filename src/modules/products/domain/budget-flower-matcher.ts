@@ -10,7 +10,7 @@ export interface BudgetMatchCriteria {
   occasion?: string | undefined // Sinh nhật, Khai trương, Tình yêu, Kỷ niệm, Chia buồn...
   colorTone?: string | undefined // Pastel, Đỏ, Vàng, Trắng, Cam, Tím...
   recipient?: string | undefined // Bạn gái, Mẹ, Sếp, Đối tác, Bạn bè...
-  arrangementStyle?: string | undefined // Bó hoa, Giỏ hoa, Hộp hoa, Kệ hoa...
+  arrangementStyle?: string | undefined // Sản phẩm, Giỏ hoa, Hộp hoa, Kệ hoa...
 }
 
 export interface ProductMatchCandidate {
@@ -97,7 +97,7 @@ export function calculateProductMatchScore(
     score += 10
   }
 
-  // 4. Điểm kiểu dáng cắm hoa (tối đa 15 điểm)
+  // 4. Điểm kiểu dáng chế tác (tối đa 15 điểm)
   if (criteria.arrangementStyle) {
     const normStyle = normalizeText(criteria.arrangementStyle)
     if (normalizeText(product.style).includes(normStyle) || normalizeText(product.category).includes(normStyle)) {

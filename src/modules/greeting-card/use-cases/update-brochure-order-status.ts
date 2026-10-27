@@ -1,27 +1,27 @@
 import type { TenantContext } from "@/core/tenancy"
+import { qcAiOutcome } from "../domain/qc-ai-outcome"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { mediaSelectionError } from "../domain/media-limits"
-import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
-import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, type CoordinatorAction } from "../domain/brochure-commerce-rules"
+import { BrochureOrderRepository } from "../infra/brochure-order-repository"
+import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, coordinatorRejectionBlocker, type CoordinatorAction } from "../domain/brochure-commerce-rules"
 import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payment-policy"
-import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
+import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
 import { queueStaffNotification } from "./notify-staff"
-import {
-  DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason,
-} from "../domain/delivery-failure"
-import { DeliveryFailureRepository, getDeliveryFailureRepository } from "../infra/delivery-failure-repository"
+import { DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason } from "../domain/delivery-failure"
+import { DeliveryFailureRepository } from "../infra/delivery-failure-repository"
 import { orderPhotoApproval, photoApprovalDispatchBlocker } from "../domain/photo-approval"
-import { BrochurePaymentRepository, getBrochurePaymentRepository } from "../infra/brochure-payment-repository"
-import { CancellationRepository, getCancellationRepository } from "../infra/cancellation-repository"
+import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
+import { CancellationRepository } from "../infra/cancellation-repository"
 import { coordinatorConfirmDepositPayment } from "./confirm-brochure-payment"
 import { canBypassDeliveryPhoto, canBypassFinishedPhoto, canRoleApproveDeposit, depositApproverRole, isUrgentOrder, parseBrochureWorkflowPolicy } from "../domain/brochure-workflow-policy"
 import { hasCapability } from "@/core/rbac/capabilities"
 import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
 import { verifyQcPhotoWithAi } from "./verify-qc-photo-ai"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { OrderPhotoRepository } from "@/modules/greeting-card/infra/order-photo-repository"
 import { log } from "@/core/observability/log"
+import { confirmChainPaymentAndDispatch } from "./coordinator-confirm-chain-payment"
 
 /** Đơn của tổ chức + kiểm đúng thứ tự tác vụ xưởng (409 nếu sai bước). */
 async function loadForAction(
@@ -33,7 +33,7 @@ async function loadForAction(
   const order = await repo.findBrochureOrder(ctx, orderId)
   if (!order) throw notFound()
   // Chính sách thu tiền và kiểm định ảnh của tiệm
-  const shop = await getGreetingCardRepository().getShopProfile(ctx.organizationId)
+  const shop = await new GreetingCardRepository().getShopProfile(ctx.organizationId)
   const policy = parsePaymentPolicy(shop.settings)
   const blocker = coordinatorActionBlocker(
     action,
@@ -58,10 +58,9 @@ async function loadForAction(
   return order
 }
 
-
 /** Gói Nghiêm ngặt bắt buộc ảnh — gọi thẳng API bỏ qua ảnh cũng bị chặn (PO 15/10/2026). */
 async function assertSkipAllowed(ctx: TenantContext, kind: "product" | "recipient") {
-  const workflow = parseBrochureWorkflowPolicy((await getGreetingCardRepository().getShopProfile(ctx.organizationId)).settings)
+  const workflow = parseBrochureWorkflowPolicy((await new GreetingCardRepository().getShopProfile(ctx.organizationId)).settings)
   const allowed = kind === "product" ? canBypassFinishedPhoto(workflow) : canBypassDeliveryPhoto(workflow)
   if (!allowed) throw conflict(kind === "product" ? "Tiệm bắt buộc ảnh thành phẩm — không bỏ qua được" : "Tiệm bắt buộc ảnh bàn giao — không bỏ qua được")
 }
@@ -92,7 +91,7 @@ export async function assignBrochureFlorist(
   ctx: TenantContext,
   orderId: string,
   input: { floristNote: string },
-  repo = getBrochureOrderRepository()
+  repo = new BrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "assign-florist", repo)
   return repo.applyProgress(ctx, order, {
@@ -106,7 +105,7 @@ export async function uploadBrochureProductPhoto(
   ctx: TenantContext,
   orderId: string,
   input: PhotoInput,
-  repo = getBrochureOrderRepository()
+  repo = new BrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "product-photo", repo)
   if (input.skipPhoto) {
@@ -134,20 +133,11 @@ export async function uploadBrochureProductPhoto(
       // Lấy storage_key của ảnh đầu tiên để sign URL gửi AI
       const firstImageId = assetIds[0]
       const assetRow = firstImageId
-        ? await prisma.assets.findFirst({
-            where: { id: firstImageId, organization_id: ctx.organizationId },
-            select: { storage_key: true, mime_type: true },
-          })
+        ? await new OrderPhotoRepository().findAsset(ctx.organizationId, firstImageId)
         : null
 
       // Lấy ảnh mẫu gốc: query riêng vì findBrochureOrder không include items/product_snapshot
-      const orderDetail = await prisma.orders.findFirst({
-        where: { id: orderId, organization_id: ctx.organizationId },
-        select: {
-          items: { select: { description: true, metadata: true }, take: 1 },
-          greeting_sessions: { select: { product_snapshot: true }, take: 1 },
-        },
-      })
+      const orderDetail = await new OrderPhotoRepository().findOrderSampleSource(ctx.organizationId, orderId)
       const snapshot = (orderDetail?.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
       const itemMeta = (orderDetail?.items?.[0]?.metadata as Record<string, unknown> | null) ?? {}
       const productName = orderDetail?.items?.[0]?.description || (snapshot.name as string | undefined) || "Sản phẩm"
@@ -175,6 +165,8 @@ export async function uploadBrochureProductPhoto(
       const qcMimeType = assetRow?.mime_type || "image/jpeg"
 
       return await verifyQcPhotoWithAi({
+        organizationId: ctx.organizationId,
+        orderId: orderId,
         productName,
         sampleImageUrl,
         qcPhotoBytes: qcBytes,
@@ -189,22 +181,12 @@ export async function uploadBrochureProductPhoto(
     }
   })()
 
-  // Nếu AI xác nhận ảnh SAI sản phẩm → chặn ngay lập tức
-  if (aiVerify && !aiVerify.isMatch) {
-    log.warn("coordinator.product_photo.ai_rejected", {
-      orderId,
-      orderCode: order.code,
-      confidenceScore: aiVerify.confidenceScore,
-      reason: aiVerify.reason,
-    })
-    throw conflict(
-      `❌ AI kiểm định phát hiện ảnh thành phẩm không khớp với mẫu sản phẩm: ${aiVerify.reason} (Độ tin cậy: ${aiVerify.confidenceScore}%). Vui lòng kiểm tra và chụp đúng sản phẩm của đơn hàng này!`
-    )
+  const outcome = qcAiOutcome(aiVerify)
+  if (outcome.blockReason) {
+    log.warn("coordinator.product_photo.ai_rejected", { orderId, orderCode: order.code, confidenceScore: aiVerify?.confidenceScore, reason: aiVerify?.reason })
+    throw conflict(outcome.blockReason)
   }
-
-  const aiNote = aiVerify
-    ? `[AI ✅ ${aiVerify.confidenceScore}%] ${aiVerify.reason}`
-    : `[AI Bỏ qua — lỗi kết nối]`
+  const aiNote = outcome.note
 
   const result = await repo.applyProgress(ctx, order, {
     eventType: "PRODUCT_PHOTO_UPLOADED",
@@ -226,7 +208,7 @@ export async function dispatchBrochureShipping(
   ctx: TenantContext,
   orderId: string,
   input: { trackingNote: string },
-  repo = getBrochureOrderRepository()
+  repo = new BrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "dispatch-shipping", repo)
   const result = await repo.applyProgress(ctx, order, {
@@ -242,7 +224,7 @@ export async function uploadBrochureRecipientPhoto(
   ctx: TenantContext,
   orderId: string,
   input: PhotoInput,
-  repo = getBrochureOrderRepository()
+  repo = new BrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "recipient-photo", repo)
   if (input.skipPhoto) {
@@ -275,14 +257,14 @@ export async function markBrochureDeliveryFailed(
   ctx: TenantContext,
   orderId: string,
   input: { reason: DeliveryFailureReason; note?: string | undefined; chargeFee?: boolean | undefined },
-  repo = getBrochureOrderRepository(),
+  repo = new BrochureOrderRepository(),
 ) {
   const error = deliveryFailureError(input)
   if (error) throw validationFailed({ note: error })
   const order = await loadForAction(ctx, orderId, "delivery-failed", repo)
-  const shop = await getGreetingCardRepository().getShopProfile(ctx.organizationId)
+  const shop = await new GreetingCardRepository().getShopProfile(ctx.organizationId)
   const feeVnd = redeliveryFeeFor({ chargeFee: input.chargeFee === true, configuredFeeVnd: parseRedeliveryFee(shop.settings), totalVnd: Number(order.total_vnd) })
-  const result = await getDeliveryFailureRepository().recordFailure(ctx, order, {
+  const result = await new DeliveryFailureRepository().recordFailure(ctx, order, {
     failure: {
       at: new Date().toISOString(), reason: input.reason, reasonLabel: DELIVERY_FAILURE_LABEL[input.reason],
       note: input.note?.trim() || null, feeVnd, by: ctx.userId,
@@ -307,9 +289,10 @@ export async function markBrochureDeliveryFailed(
 export async function coordinatorAcceptBrochureOrder(
   ctx: TenantContext,
   orderId: string,
-  input: { note?: string | undefined } = {},
-  repo = getBrochureOrderRepository(),
-  shops = getGreetingCardRepository()
+  input: { note?: string | undefined; manualDispatch?: boolean | undefined } = {},
+  repo = new BrochureOrderRepository(),
+  shops = new GreetingCardRepository(),
+  cancellations: Pick<CancellationRepository, "listPending"> = new CancellationRepository()
 ) {
   const [order, shop] = await Promise.all([
     repo.findBrochureOrder(ctx, orderId),
@@ -325,9 +308,9 @@ export async function coordinatorAcceptBrochureOrder(
     workflow
   )
   if (acceptBlocker) throw conflict(acceptBlocker)
+  if ((await cancellations.listPending(ctx)).some((r) => r.order_id === orderId)) throw conflict("Đơn đang có đề xuất huỷ chờ duyệt. Duyệt hoặc từ chối đề xuất trước khi nhận đơn.")
 
-  // Nếu đơn chưa ghi nhận tiền cọc mà khách đã có bill hoặc báo chuyển khoản:
-  // Tự động phê duyệt tiền cọc tương đương với sự phê duyệt của Điều hành!
+  // Đơn chưa ghi cọc mà khách đã có bill/báo chuyển khoản → tự duyệt cọc như Điều hành
   const paid = Number(order.paid_vnd)
   const total = Number(order.total_vnd)
   const session = order.greeting_sessions?.[0]
@@ -348,13 +331,14 @@ export async function coordinatorAcceptBrochureOrder(
   const moneyBlocker = paymentGateBlocker("assign-florist", parsePaymentPolicy(shop.settings), { totalVnd: total, paidVnd: paidNow })
   if (moneyBlocker) throw conflict(`${moneyBlocker}. Chờ Điều hành xác nhận tiền cọc rồi tiếp nhận đơn.`)
 
+  // Chuỗi (PO 22/10/2026): chỉ xác nhận đã nhận tiền rồi chọn cửa hàng; "đã nhận đơn" báo khi chi nhánh chốt làm
+  if (workflow.requireCoordinatorAcceptance) return confirmChainPaymentAndDispatch(ctx, order, input, repo)
   const result = await repo.applyProgress(ctx, order, {
-    eventType: "COORDINATOR_ACCEPTED",
-    productionStatus: "ASSIGNED",
-    orderStatus: order.status === "DRAFT" ? "CONFIRMED" : order.status,
+    eventType: "COORDINATOR_ACCEPTED", productionStatus: "ASSIGNED", orderStatus: order.status === "DRAFT" ? "CONFIRMED" : order.status,
     noteAppend: `[Điều phối tiếp nhận] ${input.note?.trim() || "Xác nhận xưởng nhận đơn"}`,
   })
   queueOrderNotification(ctx.organizationId, order.id, "ORDER_ACCEPTED")
+  queueStaffNotification(ctx.organizationId, "ORDER_ACCEPTED", { orderId: order.id, orderCode: order.code, amountVnd: total, assignedSaleId: session?.sale_id ?? null })
   return result
 }
 
@@ -366,12 +350,12 @@ export async function coordinatorRejectBrochureOrder(
   ctx: TenantContext,
   orderId: string,
   input: { reason: string },
-  cancellationRepo = getCancellationRepository(),
-  repo = getBrochureOrderRepository()
+  cancellationRepo = new CancellationRepository(),
+  repo = new BrochureOrderRepository()
 ) {
   const order = await repo.findBrochureOrder(ctx, orderId)
   if (!order) throw notFound()
-  if (order.status === "CANCELLED") throw conflict("Đơn hàng đã được huỷ trước đó")
+  const rejectBlocker = coordinatorRejectionBlocker({ status: order.status, productionStatus: order.production_status, deliveryStatus: order.delivery_status }); if (rejectBlocker) throw conflict(rejectBlocker)
   const reasonText = input.reason?.trim() || "Điều phối từ chối nhận đơn (quá tải hoặc không đáp ứng mẫu hoa)"
   // Bấm lặp / hai người cùng bấm → không tạo hai đề xuất huỷ cho một đơn
   if ((await cancellationRepo.listPending(ctx)).some((r) => r.order_id === orderId)) {

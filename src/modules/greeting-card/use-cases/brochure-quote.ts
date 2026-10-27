@@ -17,6 +17,7 @@ import { holidayOn, holidaySurcharge, parseHolidayPolicy } from "../domain/holid
 import { paymentSplit } from "../domain/payment-schedule"
 import { findPaymentCode, parsePaymentPlans, type PaymentCodeRule } from "../domain/payment-plan"
 import { resolvePaymentPlan } from "./payment-plan-quote"
+import { isWeekend, unitPriceFor } from "@/modules/products/domain/product-pricing"
 
 export interface QuoteRequest {
   variantId?: string | undefined
@@ -120,7 +121,20 @@ async function priceProduct(
     if (!zone) errors.shippingZoneId = "Vui lòng chọn khu vực giao hàng"
   }
 
-  const unitPriceVnd = variant?.priceVnd ?? product.price
+  if (product.priceMode === "CONTACT") {
+    errors.product = "Mẫu này cửa hàng tư vấn giá trực tiếp — vui lòng gọi, nhắn Zalo hoặc gửi tin nhắn cho cửa hàng"
+  }
+  if (product.priceMode === "RANGE" && !variant && !errors.variantId) {
+    errors.variantId = "Vui lòng chọn phiên bản"
+  }
+  const deliveryDate = req.deliveryDate?.trim() ?? ""
+  const holiday = deliveryDate ? holidayOn(deliveryDate, parseHolidayPolicy(shopSettings)) : null
+  // Ngày cao điểm: ngày lễ cửa hàng khai, hoặc cuối tuần khi sản phẩm bật
+  const isPeakDay = holiday !== null || (product.weekendIsPeak === true && isWeekend(deliveryDate))
+  const basePrice = variant?.priceVnd ?? product.price
+  const peakPrice = variant ? variant.peakPriceVnd ?? null : product.peakPriceVnd ?? null
+  const unitPriceVnd = basePrice === null ? null : unitPriceFor(basePrice, peakPrice, isPeakDay)
+  const peakApplied = isPeakDay && peakPrice !== null
   const quantity = req.quantity ?? 1
   // Tiệm tắt mã giảm giá (mặc định): ô nhập bị ẩn, mã gửi thẳng API cũng bị bỏ qua
   const code = shipping.vouchersEnabled ? req.voucherCode?.trim() : undefined
@@ -145,7 +159,7 @@ async function priceProduct(
     }
   }
 
-  const holiday = req.deliveryDate ? holidayOn(req.deliveryDate.trim(), parseHolidayPolicy(shopSettings)) : null
-  const surcharge = holidaySurcharge(holiday, catalogFilters)
+  // Đã tính giá cao điểm riêng của sản phẩm thì không cộng thêm phụ phí ngày lễ (tránh thu hai lần)
+  const surcharge = peakApplied ? null : holidaySurcharge(holiday, catalogFilters)
   return { quote: computeQuote({ unitPriceVnd, quantity, zone, shipping, voucher, promotion, surcharge }), variant, voucher, errors }
 }

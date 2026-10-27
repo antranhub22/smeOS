@@ -45,7 +45,7 @@ export function ProductConfirmationCard({
   const [packaging, setPackaging] = useState<ProductPackaging>(initialPackaging);
   const [context, setContext] = useState<ProductInferredContext>(initialContext);
   const [commercialPassport, setCommercialPassport] = useState<CommercialPassport>(() =>
-    buildCommercialPassport(productTitle || "Bó hoa tươi", initialComponents, initialAttributes, initialPackaging, initialContext)
+    buildCommercialPassport(productTitle || "Sản phẩm tươi", initialComponents, initialAttributes, initialPackaging, initialContext)
   );
 
   // Đồng bộ lại state khi initial props từ Vision AI thay đổi
@@ -56,7 +56,7 @@ export function ProductConfirmationCard({
     setPackaging(initialPackaging);
     setContext(initialContext);
     setCommercialPassport(
-      buildCommercialPassport(productTitle || "Bó hoa tươi", initialComponents, initialAttributes, initialPackaging, initialContext)
+      buildCommercialPassport(productTitle || "Sản phẩm tươi", initialComponents, initialAttributes, initialPackaging, initialContext)
     );
   }, [productTitle, initialComponents, initialAttributes, initialPackaging, initialContext]);
 

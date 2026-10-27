@@ -9,7 +9,8 @@ import type { OptionalDisplayField } from "@/modules/greeting-card/domain/displa
 import { BrochureOrderForm } from "./brochure-order-form"
 import { BrochurePaymentView } from "./brochure-payment-view"
 import { BrochureTrackingView } from "./brochure-tracking-view"
-import { formatPriceVnd, readApiError } from "@/components/greeting-card/api-error"
+import { readApiError } from "@/components/greeting-card/api-error"
+import { productPriceText } from "./templates/product-info/product-display"
 import type {
   BrochurePaymentInstructions,
   GreetingCatalogProduct,
@@ -17,6 +18,8 @@ import type {
   ProductSnapshot,
 } from "@/modules/greeting-card/domain/greeting-card-types"
 import { ShoppingBag } from "lucide-react"
+import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
+import { ProductContactActions } from "./product-contact-actions"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { useCatalogTracking } from "./use-catalog-tracking"
@@ -26,14 +29,15 @@ import { rememberCatalogOrder, useResumeCatalogOrder } from "./use-remembered-or
 interface Props {
   catalog: { id: string; code: string; name: string; description: string | null; filters?: Record<string, unknown> | null }
   products: GreetingCatalogProduct[]
+  /** Liên hệ cửa hàng — nút Gọi / Zalo cho mẫu "Liên hệ" */
+  shop?: ShopContact | null | undefined
   shipping: ShippingConfig
-  internationalGuide?: string | null | undefined
 }
 
 
 const SELECTED_KEY = "public-selected"
 
-export function BrochurePublicView({ catalog, products, shipping, internationalGuide }: Props) {
+export function BrochurePublicView({ catalog, products, shipping, shop }: Props) {
   const [step, setStep] = useState<PublicStep>("SWIPING")
   // Mẫu đang chọn + bước đang đứng nhớ trên máy: rời trang lúc xem mẫu đã chọn / điền form thì quay lại đúng chỗ
   const [selectedId, setSelectedId] = useSavedState<string | null>(SELECTED_KEY, null)
@@ -118,6 +122,7 @@ export function BrochurePublicView({ catalog, products, shipping, internationalG
         <BrochureOrderForm
           productSnapshot={activeSnapshot}
           variants={selected?.variants ?? []}
+          priceDimensions={selected?.priceDimensions}
           shipping={shipping}
           appliedPolicies={appliedPolicies}
           quoteUrl={`/api/v1/public/greeting-catalog/${catalog.id}/quote`}
@@ -138,7 +143,6 @@ export function BrochurePublicView({ catalog, products, shipping, internationalG
           sendCode={orderResult.sendCode}
           totalVnd={orderResult.totalVnd}
           vietQr={orderResult.vietQr}
-          internationalGuide={internationalGuide}
           onReportPaid={async (proofAssetId?: string) => {
             const res = await fetch(`/api/v1/public/brochure/${orderResult.sendCode}/payment-notify`, {
               method: "POST",
@@ -185,15 +189,29 @@ export function BrochurePublicView({ catalog, products, shipping, internationalG
                 <p className="text-body-sm text-text-muted mt-1">{selected.description}</p>
               )}
               <p className="text-display font-extrabold text-primary mt-3">
-                {formatPriceVnd(selected.price)}
+                {productPriceText(selected)}
               </p>
-              {selected.price === null && (
+              {selected.priceMode === "RANGE" && (
+                <p className="text-body-sm text-text-muted mt-1">Giá tùy phiên bản — bạn chọn phiên bản ở bước đặt hàng để biết giá chính xác.</p>
+              )}
+              {selected.priceMode === "CONTACT" && (
+                <p className="text-body-sm text-text-muted mt-1">
+                  Mẫu này cửa hàng tư vấn giá trực tiếp. Bạn gọi điện, nhắn Zalo hoặc để lại tin nhắn nhé.
+                </p>
+              )}
+              {selected.priceMode === "CONTACT" && (
+                <div className="mt-3">
+                  <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
+                </div>
+              )}
+              {selected.price === null && selected.priceMode !== "CONTACT" && (
                 <p className="text-body-sm text-text-muted mt-1">
                   Mẫu này chưa niêm yết giá — bạn cứ đặt, cửa hàng sẽ liên hệ báo giá trước khi thu tiền.
                 </p>
               )}
             </div>
 
+            {selected.priceMode !== "CONTACT" && (
             <button
               type="button"
               onClick={() => {
@@ -205,6 +223,16 @@ export function BrochurePublicView({ catalog, products, shipping, internationalG
               <ShoppingBag size={18} />
               <span>Đặt ngay</span>
             </button>
+            )}
+
+            {selected.priceMode === "RANGE" && (
+              <details className="rounded-xl border border-border px-3 py-2">
+                <summary className="cursor-pointer text-body-sm font-semibold text-foreground">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
+                <div className="mt-2">
+                  <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
+                </div>
+              </details>
+            )}
 
             <button
               type="button"

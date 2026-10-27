@@ -5,11 +5,12 @@
 // trình) nhưng ở trạng thái vô hiệu — không bấm, không gán được — cho tới khi
 // phát triển xong (PO 26/09/2026, nợ #165).
 //
-// Màn chỉ ĐỌC danh mục trong mã (`ROLE_UX_CATALOG`), không gọi API, không đổi
-// vai của ai: đổi vai vẫn là `A4 access.user.change_role`.
+// Khi chọn "Mở" hoặc "Console", hệ thống sẽ kích hoạt vai tương ứng và điều hướng
+// về đúng Homepage của tầng kiến trúc / vai đó (SaaS Mother, SaaS Đa Ngành, ChainOS, StoreOS).
 
+import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Lock } from "lucide-react"
+import { ArrowLeft, Lock, Loader2 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import {
@@ -23,6 +24,37 @@ const NHOM: RoleUxGroup[] = ["PLATFORM", "STORE", "FLOWER_NETWORK"]
 
 function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: boolean }) {
   const dungDuoc = role.status === "AVAILABLE"
+  const [opening, setOpening] = useState(false)
+
+  const handleOpenRole = async () => {
+    setOpening(true)
+    let orgType = "SINGLE"
+    if (role.key === "platform_admin") {
+      orgType = "PLATFORM"
+    } else if (role.key === "industry_admin") {
+      orgType = "INDUSTRY"
+    } else if (role.group === "FLOWER_NETWORK") {
+      orgType = "FLOWER_NETWORK"
+    }
+
+    try {
+      await fetch("/api/dev/role-override", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roleKey: role.key,
+          organizationType: orgType,
+          orgNameSuffix: `[${role.label}]`,
+        }),
+      })
+    } catch {
+      // Tiếp tục chuyển hướng dù lỗi dev endpoint
+    }
+
+    const targetHref = role.key === "platform_admin" ? "/van-hanh" : (role.entryHref || "/")
+    window.location.href = targetHref
+  }
+
   return (
     <li
       aria-disabled={!dungDuoc || undefined}
@@ -58,13 +90,16 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
           {role.homepageModel} · {role.primaryQuestion}
         </div>
       </div>
-      {dungDuoc && role.entryHref && (
-        <Link
-          href={role.entryHref as never}
-          className="flex min-h-11 flex-shrink-0 items-center rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+      {dungDuoc && (
+        <button
+          type="button"
+          onClick={handleOpenRole}
+          disabled={opening}
+          className="flex min-h-11 flex-shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50 cursor-pointer"
         >
+          {opening && <Loader2 size={13} className="animate-spin" />}
           {role.group === "PLATFORM" ? "Console" : "Mở"}
-        </Link>
+        </button>
       )}
     </li>
   )

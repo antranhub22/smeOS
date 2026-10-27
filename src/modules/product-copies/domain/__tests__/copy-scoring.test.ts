@@ -4,7 +4,7 @@ import { projectAnalysisForCopy } from "../analysis-projection"
 import { chamBaKenh, chamBrand, chamFactual, chamReadability, type CopyOutput } from "../copy-scoring"
 
 const analysis = projectAnalysisForCopy({
-  identity: { category: "Bó hoa", container: "giấy gói", phong_cach: "Cổ điển" },
+  identity: { category: "Sản phẩm", container: "giấy gói", phong_cach: "Cổ điển" },
   bom: {
     flowers: [{ name: "Hồng đỏ", quantity: 20 }],
     foliage: [],
@@ -24,7 +24,7 @@ const ctx = {
 }
 
 const MO_TA_TOT =
-  "Bó hoa hồng đỏ được gói trong lớp giấy mộc mạc, dựng theo lối cổ điển với dáng tròn đầy đặn. " +
+  "Sản phẩm hồng đỏ được gói trong lớp giấy mộc mạc, dựng theo lối cổ điển với dáng tròn đầy đặn. " +
   "Từng bông được chọn theo độ nở đồng đều, xếp tầng để mặt hoa hướng về một phía. " +
   "Món quà hợp với những dịp cần một lời chúc giản dị mà chỉn chu."
 

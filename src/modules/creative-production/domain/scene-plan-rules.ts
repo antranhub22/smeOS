@@ -814,7 +814,7 @@ export function inferLocalBackdrop(setting: string): LocalBackdrop {
 export function buildRuleScenePlan(input: ScenePlanInput): ScenePlan {
   const occasion = detectOccasion(input)
   const palette = detectPalette(input)
-  const name = input.productName || "bó hoa"
+  const name = input.productName || "sản phẩm"
   const main = occasion.spaces[0]!
   const alt = occasion.spaces[1] ?? main
   const cta = input.topic.cta || "Nhắn tin cho tiệm để đặt hoa"
@@ -822,7 +822,7 @@ export function buildRuleScenePlan(input: ScenePlanInput): ScenePlan {
   const byBeat: Record<ScenePlanBeat, Omit<ScenePlanScene, "sceneIndex" | "beat" | "durationSeconds" | "transition" | "shot" | "musicCue">> = {
     SETUP: {
       title: "Giới thiệu sản phẩm",
-      setting: "Phông studio sáng, đổ bóng mềm, tông màu hoà với bó hoa",
+      setting: "Phông studio sáng, đổ bóng mềm, tông màu hoà với sản phẩm",
       lighting: "Ánh sáng tản đều",
       palette: palette.vi,
       purpose: "Ảnh catalog, bài giới thiệu",
@@ -890,7 +890,7 @@ export function buildRuleScenePlan(input: ScenePlanInput): ScenePlan {
     topicId: input.topic.id,
     topicTitle: input.topic.title,
     emotionalTone: occasion.name,
-    reasoning: `Kịch bản cơ bản (không dùng AI): dịp "${occasion.name}", tông màu ${palette.vi.join(", ") || "theo bó hoa"}.`,
+    reasoning: `Kịch bản cơ bản (không dùng AI): dịp "${occasion.name}", tông màu ${palette.vi.join(", ") || "theo sản phẩm"}.`,
     ...completeScenePlanV2({
       mode: input.mode,
       topic: input.topic,

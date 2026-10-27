@@ -9,7 +9,7 @@ const assignSchema = z.object({
   difficulty: z.enum(["co_ban", "trung_binh", "kho", "vip"]).optional(),
 })
 
-/** `POST /api/v1/orders/:id/assign` (R4) — Phân công thợ cắm */
+/** `POST /api/v1/orders/:id/assign` (R4) — Phân công thợ chế tác */
 export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "R4")

@@ -26,7 +26,7 @@ export function TrashConfirmModal({ target, onClose, onConfirm }: TrashConfirmMo
 
   const typeLabel =
     target.type === "PRODUCT"
-      ? "Sản phẩm mẫu hoa"
+      ? "Sản phẩm sản phẩm"
       : target.type === "RAW_ASSET"
       ? "Ảnh gốc"
       : "Ảnh phân tích"

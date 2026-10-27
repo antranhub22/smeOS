@@ -121,7 +121,7 @@ RÀNG BUỘC
 - flower_meaning_story: câu chuyện ngắn 2-3 câu về ý nghĩa, nguồn gốc hoặc cảm hứng của sản phẩm (tùy ngành: ý nghĩa loài hoa, nghề thủ công, công thức gia truyền, v.v.).
 - key_selling_points: 3 điểm bán hàng độc nhất (USP) để nhân viên chốt sale nhanh.
 - card_message_suggestions: 3 mẫu lời chúc viết thiệp (romantic, subtle, congratulatory).
-- care_instructions: 2-3 mẹo sử dụng, bảo quản hoặc kết hợp sản phẩm phù hợp với ngành hàng (ví dụ: bảo quản hoa tươi, cách dùng sản phẩm thủ công, cách bảo quản bánh, v.v.).
+- care_instructions: 2-3 mẹo sử dụng, bảo quản hoặc kết hợp sản phẩm phù hợp với ngành hàng (ví dụ: bảo quản sản phẩm, cách dùng sản phẩm thủ công, cách bảo quản bánh, v.v.).
 - suggested_price_segment: đúng một trong ${PHAN_KHUC.join(" | ")}.
 - suggested_price_range: dải giá đề xuất VNĐ (min_price, target_price, max_price).
 - recommended_upsells: 2-3 sản phẩm gợi ý bán kèm.

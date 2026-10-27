@@ -13,7 +13,7 @@ export const NODE_08_KHO_DU_LIEU: OpsKnowledgeNode = {
     "xóa tạm 30 ngày", "khôi phục ảnh", "xóa vĩnh viễn"
   ],
   intents: ["quan_ly_kho_du_lieu", "tim_kiem_anh_cu", "khoi_phuc_thung_rac", "xoa_vinh_vien_tai_nguyen"],
-  summary: "Kho lưu trữ ảnh và bài viết của tiệm trên đám mây với 4 khu vực: Ảnh gốc chưa xử lý, Ảnh đã có công thức cắm hoa, Bài viết Zalo hoàn chỉnh, và Thùng rác lưu tạm 30 ngày.",
+  summary: "Kho lưu trữ ảnh và bài viết của tiệm trên đám mây với 4 khu vực: Ảnh gốc chưa xử lý, Ảnh đã có công thức chế tác, Bài viết Zalo hoàn chỉnh, và Thùng rác lưu tạm 30 ngày.",
   stepByStepSOP: [
     {
       stepNumber: 1,
@@ -27,7 +27,7 @@ export const NODE_08_KHO_DU_LIEU: OpsKnowledgeNode = {
     },
     {
       stepNumber: 3,
-      actionText: "Khu vực Ảnh Đã Duyệt: Xem các mẫu hoa đã có công thức cắm hoa chuẩn, bấm 'Tạo kịch bản bán hàng' để viết bài",
+      actionText: "Khu vực Ảnh Đã Duyệt: Xem các sản phẩm đã có công thức chế tác chuẩn, bấm 'Tạo kịch bản bán hàng' để viết bài",
       expectedResult: "Tạo ngay bài viết bán hàng mà không cần tải lại ảnh",
     },
     {

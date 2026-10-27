@@ -66,24 +66,24 @@ export function CoordinatorCardDecisionBlocks({
         <div className="flex flex-col gap-2 p-3 rounded-xl border-2 border-dashed border-success/40 bg-success-bg/30">
           <p className="text-body-sm font-bold text-success text-center flex items-center justify-center gap-1.5">
             <ShieldCheck size={16} />
-            Đơn hàng chờ Điều phối liên hệ chuỗi & Xác nhận nhận đơn
+            Đơn hàng chờ Điều phối xác nhận đã nhận tiền
           </p>
           <div className="grid grid-cols-2 gap-2">
             <Button
               type="button"
               variant="primary"
               size="sm"
-              onClick={() => onOpen({ type: "accept-order", orderId: order.id, orderCode: order.code })}
+              onClick={() => onOpen({ type: "accept-order", flow: "coordinator", orderId: order.id, orderCode: order.code })}
               className="h-9 text-body-sm font-extrabold gap-1.5 bg-success hover:bg-success/90 text-white"
             >
               <CheckCircle2 size={15} />
-              Xác nhận Nhận đơn
+              Xác nhận đã nhận tiền
             </Button>
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => onOpen({ type: "reject-order", orderId: order.id, orderCode: order.code })}
+              onClick={() => onOpen({ type: "reject-order", flow: "coordinator", orderId: order.id, orderCode: order.code })}
               className="h-9 text-body-sm font-bold gap-1.5 border-danger/40 text-danger hover:bg-danger-bg"
             >
               <XCircle size={15} />
@@ -105,7 +105,7 @@ export function CoordinatorCardDecisionBlocks({
               type="button"
               variant="primary"
               size="sm"
-              onClick={() => onOpen({ type: "accept-order", orderId: order.id, orderCode: order.code })}
+              onClick={() => onOpen({ type: "accept-order", flow: "admin", orderId: order.id, orderCode: order.code })}
               className="h-9 text-body-sm font-extrabold gap-1.5 bg-success hover:bg-success/90 text-white"
             >
               <CheckCircle2 size={15} />
@@ -115,7 +115,7 @@ export function CoordinatorCardDecisionBlocks({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => onOpen({ type: "reject-order", orderId: order.id, orderCode: order.code })}
+              onClick={() => onOpen({ type: "reject-order", flow: "admin", orderId: order.id, orderCode: order.code })}
               className="h-9 text-body-sm font-bold gap-1.5 border-danger/40 text-danger hover:bg-danger-bg"
             >
               <XCircle size={15} />

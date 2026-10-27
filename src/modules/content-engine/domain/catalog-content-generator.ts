@@ -55,17 +55,17 @@ export const CATALOG_STYLE_OPTIONS: Array<{
  */
 export function generateCatalogContent(input: CatalogContentInput): GeneratedCatalogContent {
   const shop = input.shopName || "Siin Store"
-  const collection = input.collectionName || "Bộ Sưu Tập Mẫu Hoa Tuyển Chọn"
+  const collection = input.collectionName || "Bộ Sưu Tập Sản Phẩm Tuyển Chọn"
   const occasion = input.occasion ? `cho dịp ${input.occasion}` : "dành cho những khoảnh khắc đáng nhớ"
 
   switch (input.styleVariant) {
     case "EDITORIAL_LOOKBOOK":
       return {
         styleVariant: "EDITORIAL_LOOKBOOK",
-        badge: "Editorial Lookbook • Nghệ Thuật Hoa Tươi",
+        badge: "Editorial Lookbook • Nghệ Thuật Chế Tác",
         title: collection,
         description: `Mỗi tác phẩm là một bản hòa ca thị giác giữa màu sắc và hương thơm, được tạo tác thủ công bởi nghệ nhân ${shop} ${occasion}.`,
-        curatorNote: "Từng cành hoa mang một rung cảm riêng biệt, tôn vinh gu thẩm mỹ thanh lịch của người trao và người nhận.",
+        curatorNote: "Mỗi sản phẩm mang một rung cảm riêng biệt, tôn vinh gu thẩm mỹ thanh lịch của người trao và người nhận.",
         ctaText: "Khám phá tác phẩm",
       }
 
@@ -74,19 +74,19 @@ export function generateCatalogContent(input: CatalogContentInput): GeneratedCat
         styleVariant: "COMPACT_LIST",
         badge: "Bảng Danh Mục Đặt Nhanh • Ưu Đãi Sự Kiện",
         title: collection,
-        description: `Danh mục ${input.productCount} mẫu hoa tiêu chuẩn, tối ưu thời gian chọn mẫu và đặt số lượng lớn cho công ty, sự kiện và hội nghị.`,
+        description: `Danh mục ${input.productCount} sản phẩm tiêu chuẩn, tối ưu thời gian chọn mẫu và đặt số lượng lớn cho công ty, sự kiện và hội nghị.`,
         curatorNote: "Hỗ trợ xuất hóa đơn VAT điện tử, in logo thương hiệu lên banner nhũ và giao đồng loạt nhiều địa điểm.",
-        ctaText: "Đặt nhanh mẫu hoa",
+        ctaText: "Đặt nhanh sản phẩm",
       }
 
     case "MODERN_SHOWROOM":
     default:
       return {
         styleVariant: "MODERN_SHOWROOM",
-        badge: "Catalog Mẫu Hoa Trực Tuyến",
+        badge: "Catalog Sản Phẩm Trực Tuyến",
         title: collection,
-        description: `Khám phá bộ sưu tập ${input.productCount} mẫu hoa tươi mới nhất từ ${shop} ${occasion}. Chụp duyệt thực tế trước khi giao.`,
-        curatorNote: "Cam kết hoa tươi giữ độ bung nở 3–5 ngày, giao nhanh trong 2 giờ nội thành.",
+        description: `Khám phá bộ sưu tập ${input.productCount} sản phẩm tươi mới nhất từ ${shop} ${occasion}. Chụp duyệt thực tế trước khi giao.`,
+        curatorNote: "Cam kết sản phẩm giữ độ bung nở 3–5 ngày, giao nhanh trong 2 giờ nội thành.",
         ctaText: "Tư vấn qua Zalo",
       }
   }

@@ -50,6 +50,8 @@ const TENANT_TABLES = [
   "template_overrides",
   "catalog_links",
   "product_inventory",
+  "product_bookings",
+  "chain_branches",
   "customer_consents",
   "customer_occasions",
   // Chức năng 12 — Điều phối đơn hàng (25/09/2026)
@@ -79,6 +81,9 @@ const TENANT_TABLES = [
   "product_images",
   "product_variants",
   "pricing_rules",
+  "product_change_requests",
+  "product_revisions",
+  "product_import_batches",
   "products",
   "audit_logs",
   "usage",

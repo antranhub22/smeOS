@@ -72,7 +72,7 @@ export const FEATURE_CATALOG: SubFeature[] = [
   // ============================================================
   {
     key: "vision.identify_flowers",
-    label: "Nhận diện loại hoa & giống",
+    label: "Nhận diện nguyên liệu & giống",
     description: "Phân loại 86 loài hoa, trả species/variety/count/confidence/bbox",
     aiCapability: "AIC-01",
     rbacRun: "H1",
@@ -176,7 +176,7 @@ export const FEATURE_CATALOG: SubFeature[] = [
   },
   {
     key: "vision.suggest_description",
-    label: "Đề xuất mô tả bó hoa",
+    label: "Đề xuất mô tả sản phẩm",
     description: "Marketing copy: cảm xúc, ý nghĩa, từ khóa SEO, độ dài phù hợp",
     aiCapability: "AIC-08",
     rbacRun: "H5",

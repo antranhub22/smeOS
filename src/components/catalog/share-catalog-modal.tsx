@@ -27,8 +27,8 @@ export function ShareCatalogModal({ slug, name, description, onClose }: ShareCat
 
   const sampleCaption = `🌸 Tiệm hoa vừa ra mắt Bộ sưu tập mới: ${name}!
 ${description ? `\n"${description}"\n` : ""}
-✨ Hoa tươi tuyển chọn mỗi ngày, tặng kèm thiệp thiết kế & banner in màu.
-👉 Xem trọn bộ mẫu hoa và đặt trực tuyến tại:
+✨ Sản phẩm tuyển chọn mỗi ngày, tặng kèm thiệp thiết kế & banner in màu.
+👉 Xem trọn bộ sản phẩm và đặt trực tuyến tại:
 ${catalogUrl}`
 
   const handleCopyLink = () => {

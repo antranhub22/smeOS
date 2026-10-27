@@ -19,18 +19,27 @@ import {
 } from "./nav-model"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { DesktopNavFooter } from "./desktop-nav-footer"
-import { ArchitectureNametag } from "./architecture-nametag"
 import { loadNavGroups, loadReportsOpen, navStorageKeys, persistNavGroups } from "./nav-storage"
 import { NAV_ICONS as ICONS } from "./nav-icons"
+import { SuperadminHomepageBadge } from "./superadmin-homepage-badge"
 
-export function DesktopNav({ isDev = false }: { isDev?: boolean }) {
+type DesktopNavProps = {
+  /** Hiển thị trong ngăn kéo trên điện thoại (thay vì cột cố định trên màn hình lớn) */
+  drawer?: boolean
+  onNavigate?: () => void
+  onClose?: () => void
+  /** Truyền từ Server Component: process.env.NODE_ENV !== "production" */
+  isDev?: boolean
+}
+
+export function DesktopNav({ drawer = false, onNavigate, onClose, isDev = false }: DesktopNavProps = {}) {
   const pathname = usePathname()
   const router = useRouter()
   const { can, roleUx, orgName, organization } = useSession()
   const orgId = organization?.id
   const { groupsKey, reportsKey } = useMemo(() => navStorageKeys(orgId), [orgId])
 
-  const navView = useMemo(() => buildNav(can, roleUx, organization?.industry), [can, roleUx, organization?.industry])
+  const navView = useMemo(() => buildNav(can, roleUx, organization?.industry, organization?.navHiddenKeys), [can, roleUx, organization?.industry, organization?.navHiddenKeys])
 
   const [searchQuery, setSearchQuery] = useState("")
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
@@ -113,12 +122,16 @@ export function DesktopNav({ isDev = false }: { isDev?: boolean }) {
   function navigateTo(href: string) {
     if (searchQuery) setSearchQuery("")
     router.push(href as never)
+    onNavigate?.()
   }
 
   return (
     <aside
       aria-label="Điều hướng chính"
-      className="hidden h-dvh w-60 flex-shrink-0 flex-col border-r border-border bg-surface md:flex"
+      className={cn(
+        "h-dvh flex-shrink-0 flex-col border-r border-border bg-surface",
+        drawer ? "flex w-72 max-w-[85vw]" : "hidden w-60 md:flex"
+      )}
     >
       {/* Brand Header */}
       <div className="flex h-14 items-center justify-between border-b border-border px-4">
@@ -127,17 +140,27 @@ export function DesktopNav({ isDev = false }: { isDev?: boolean }) {
             <Sparkles size={16} strokeWidth={2.2} />
           </div>
           <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <span className="text-body-sm font-extrabold text-primary leading-tight">
-                smeOS
-              </span>
-              <ArchitectureNametag isDev={isDev} />
+            <div className="text-body-sm font-extrabold text-primary leading-tight">
+              smeOS
             </div>
-            <div className="truncate text-caption text-text-muted font-medium">
-              {(orgName || "Doanh nghiệp SME").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
+            <div className="flex items-center gap-1 min-w-0">
+              <span className="truncate text-caption text-text-muted font-medium">
+                {(orgName || "Doanh nghiệp SME").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
+              </span>
+              <SuperadminHomepageBadge isDev={isDev} />
             </div>
           </div>
         </div>
+        {drawer && onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Đóng menu"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-text-muted hover:bg-surface-alt hover:text-text"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* Quick Search */}

@@ -18,16 +18,61 @@ import type {
   LiveCardSendResult,
 } from "../use-cases/dispatch-subcontract-order"
 import { getStaffChannelProvider } from "../adapters/staff-channels"
+import { listLinkedTelegramChatIds } from "./telegram-linked-chats"
+import { ZaloOaPlatformClient } from "../adapters/staff-channels/zalo-oa-platform"
+import { ZaloOaTokenVault } from "./platform-secret-repository"
 
 export class MultiChannelDispatchNotifier implements IDispatchNotifier {
+  constructor(
+    private readonly linkedChatIds: (organizationId: string) => Promise<string[]> = listLinkedTelegramChatIds,
+    private readonly zalo = new ZaloOaPlatformClient(new ZaloOaTokenVault())
+  ) {}
+
+  async editInviteCard(
+    _ctx: TenantContext,
+    card: { msgId: string; chatId: string; isCaption: boolean },
+    text: string,
+    actions: Array<{ text: string; url: string }>
+  ): Promise<boolean> {
+    const botToken = process.env.TELEGRAM_DISPATCH_BOT_TOKEN || process.env.TELEGRAM_STAFF_BOT_TOKEN
+    const telegramProvider = getStaffChannelProvider("TELEGRAM")
+    if (!botToken || !telegramProvider?.editMessage) return false
+    try {
+      const res = await telegramProvider.editMessage({
+        messageId: card.msgId,
+        chatId: card.chatId,
+        text,
+        isCaption: card.isCaption,
+        actions,
+        channelConfig: { botToken },
+      })
+      if (!res.ok) log.warn("dispatch_notify.invite_card_edit_failed", { msgId: card.msgId, error: res.error })
+      return res.ok
+    } catch (err) {
+      log.warn("dispatch_notify.invite_card_edit_exception", { error: err instanceof Error ? err.message : String(err) })
+      return false
+    }
+  }
+
   async sendSubcontractInvite(
     ctx: TenantContext,
     target: DispatchNotificationTarget
   ): Promise<LiveCardSendResult> {
     const branch = target.branch
-    const channels = branch.channels
     const botToken = process.env.TELEGRAM_DISPATCH_BOT_TOKEN || process.env.TELEGRAM_STAFF_BOT_TOKEN
-    const existingCard = target.existingTelegramCard
+    // Bot điều phối là bot chung của nền tảng: chỉ gửi tới chat đã nhắn mã liên kết của CHÍNH tổ
+    // chức này, không tin chat ID nhập từ Excel/cấu hình (rà soát 22/10/2026, cụm G)
+    const requestedChatId = branch.channels?.telegramChatId
+    const linked = requestedChatId ? new Set(await this.linkedChatIds(ctx.organizationId)) : new Set<string>()
+    if (requestedChatId && !linked.has(requestedChatId)) {
+      log.warn("dispatch_notify.telegram_chat_not_linked", { organizationId: ctx.organizationId, orderCode: target.orderCode })
+    }
+    const channels = branch.channels && {
+      ...branch.channels,
+      telegramChatId: requestedChatId && linked.has(requestedChatId) ? requestedChatId : null,
+    }
+    const existingCard =
+      target.existingTelegramCard && linked.has(target.existingTelegramCard.chatId) ? target.existingTelegramCard : null
 
     const actions =
       target.actions && target.actions.length > 0
@@ -111,37 +156,40 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
       }
     }
 
-    // Zalo fallback (không hỗ trợ edit, vẫn gửi mới)
-    if (channels?.zaloPhone) {
-      const zaloProvider = getStaffChannelProvider("ZALO")
-      if (zaloProvider) {
-        try {
-          const res = await zaloProvider.sendMessage({
-            recipientId: branch.branchId,
-            recipientName: branch.branchName,
-            recipientPhone: channels.zaloPhone,
-            title: `Đơn gia công #${target.orderCode}`,
-            message: target.messageText,
-          })
-          if (res.sent) {
-            return { sent: true }
-          }
-        } catch (err) {
-          log.warn("dispatch_notify.zalo_err", {
-            branchId: branch.branchId,
-            error: err instanceof Error ? err.message : String(err),
-          })
-        }
-      }
+    // Zalo OA chung (không hỗ trợ sửa tin → luôn gửi mới). Nút bấm Telegram → link trong thân tin.
+    if (channels?.zaloUserId) {
+      const links = actions.filter((a) => a.url).map((a) => `${a.text}: ${a.url}`).join("\n")
+      const title = target.title ?? `Đơn gia công #${target.orderCode}`
+      const res = await this.zalo.sendText(channels.zaloUserId, [title, target.messageText, links].filter(Boolean).join("\n\n"))
+      if (res.sent) return { sent: true }
+      log.warn("dispatch_notify.zalo_err", { branchId: branch.branchId, error: res.error })
     }
 
-    log.info("dispatch_notify.simulated_or_dispatched", {
+    // Không kênh nào gửi được (chưa cấu hình hoặc đều lỗi) — báo đúng là CHƯA gửi, để mốc nhắc
+    // không bị đánh dấu đã gửi và được thử lại ở lượt quét sau (rà soát M4)
+    log.warn("dispatch_notify.not_delivered", {
       branchId: branch.branchId,
-      branchName: branch.branchName,
       orderCode: target.orderCode,
-      channels: branch.channels,
+      hasTelegram: Boolean(channels?.telegramChatId),
+      hasZalo: Boolean(channels?.zaloUserId),
     })
 
-    return { sent: true }
+    return { sent: false, error: notDeliveredReason({ requestedChatId, telegramLinked: Boolean(channels?.telegramChatId), botConfigured: Boolean(botToken), hasZalo: Boolean(channels?.zaloUserId) }) }
   }
+}
+
+/** Lý do không gửi được, viết cho người điều phối — chỉ ra việc cần làm thay vì báo chung chung */
+export function notDeliveredReason(input: {
+  requestedChatId: string | null | undefined
+  telegramLinked: boolean
+  botConfigured: boolean
+  hasZalo: boolean
+}): string {
+  if (input.requestedChatId && !input.telegramLinked) {
+    return "Nhóm Telegram chưa liên kết — gửi mã liên kết vào nhóm rồi bấm \"Quét Chat ID mới\" trong Cài đặt"
+  }
+  if (input.requestedChatId && !input.botConfigured) return "Hệ thống chưa bật bot Telegram"
+  if (input.requestedChatId) return "Telegram từ chối gửi — kiểm tra bot còn trong nhóm và chưa bị chặn"
+  if (input.hasZalo) return "Zalo không gửi được — nhân viên cần nhắn tin cho trang Zalo trong 7 ngày gần nhất"
+  return "Chi nhánh chưa có Telegram hoặc Zalo"
 }

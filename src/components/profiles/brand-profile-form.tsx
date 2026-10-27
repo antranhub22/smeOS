@@ -41,7 +41,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
   const [fontBody, setFontBody] = useState("Inter")
   const [toneOfVoice, setToneOfVoice] = useState("romantic")
   const [hashtagsText, setHashtagsText] = useState("#hoatuoi, #tiemhoa, #hoathietke, #hoasinhnhat")
-  const [ctaText, setCtaText] = useState("Ghé thăm tiệm hoa hoặc nhắn Zalo để được nghệ nhân tư vấn riêng!")
+  const [ctaText, setCtaText] = useState("Ghé thăm cửa hàng hoặc nhắn Zalo để được nghệ nhân tư vấn riêng!")
   const [forbiddenWords, setForbiddenWords] = useState("hoa rẻ, xả hàng tồn, phá giá")
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [saveSuccess, setSaveSuccess] = useState(false)
@@ -289,7 +289,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
             <AiRewriteInput
               value={ctaText}
               onChange={setCtaText}
-              placeholder="Nhắn tin ngay cho tiệm để nhận ưu đãi cắm hoa theo yêu cầu"
+              placeholder="Nhắn tin ngay cho tiệm để nhận ưu đãi chế tác theo yêu cầu"
               fieldType="cta"
               label="Mẫu câu kêu gọi hành động mặc định (Default Call-to-Action)"
               helperText="Tự động gắn vào cuối các bài viết tạo bởi AI và tin nhắn chăm sóc khách hàng"

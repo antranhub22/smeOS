@@ -562,7 +562,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
               {masterApproved && (
                 <div className="rounded-xl bg-surface-alt p-4 mb-3 border border-border">
                   <div className="text-meta font-bold text-primary">
-                    Ranh giới cứng: Biến thể marketing không thay đổi bản chất bó hoa. Nếu cần chỉnh ánh sáng hoặc hình dáng sản phẩm, hãy quay lại Tab 1.
+                    Ranh giới cứng: Biến thể marketing không thay đổi bản chất sản phẩm. Nếu cần chỉnh ánh sáng hoặc hình dáng sản phẩm, hãy quay lại Tab 1.
                   </div>
                   <Button size="sm" variant="ghost" onClick={() => setShowBoundary(!showBoundary)} className="mt-2">
                     {showBoundary ? "Ẩn ghi chú" : "Xem chi tiết ranh giới"}

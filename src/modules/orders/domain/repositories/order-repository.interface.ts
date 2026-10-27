@@ -43,7 +43,7 @@ export interface IOrderRepository {
     input: UpdateOrderInput
   ): Promise<OrderRecord>
 
-  /** Phân công nhân sự thực hiện đơn (thợ cắm, thợ may, đầu bếp...). */
+  /** Phân công nhân sự thực hiện đơn (thợ chế tác, thợ may, đầu bếp...). */
   createAssignment(
     organizationId: string,
     orderId: string,

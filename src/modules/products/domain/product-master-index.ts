@@ -15,7 +15,7 @@ import type { DeliveryReceiptCardProps } from "@/components/templates/orders/del
 /** Đơn vị đếm — đúng `dvt_dem` của hợp đồng Vision (`Bông|Cành|Lá|Cây`), viết thường. */
 export type DemUnit = "bông" | "cành" | "lá" | "cây"
 
-/** Thành phần cành hoa nguyên tử trong công thức cắm hoa (Atomic BOM) */
+/** Thành phần cành hoa nguyên tử trong công thức chế tác (Atomic BOM) */
 export interface FlowerBomItem {
   flowerName: string
   quantity: number
@@ -103,7 +103,7 @@ export interface ProductVariant {
 /**
  * Một ảnh phụ ngoài ảnh chính (`masterImageUrl`) — vai trò của `product_images.role`.
  * MI-4 (ĐP-2.2, 26/09/2026): thêm `REFERENCE` — ảnh mẫu thiết kế đã DUYỆT, dùng làm chuẩn
- * đối chiếu cho thợ cắm (T07) và QC (T14/T15). `product_images.role` là cột chuỗi tự do nên
+ * đối chiếu cho thợ chế tác (T07) và QC (T14/T15). `product_images.role` là cột chuỗi tự do nên
  * không cần migration để thêm giá trị mới.
  */
 export interface ProductGalleryImage {
@@ -128,7 +128,7 @@ export interface ProductMasterIndex {
   status: "DRAFT" | "ACTIVE" | "ARCHIVED"
 
   // 2. Định danh dáng hoa & phong cách (Hợp đồng Vision Schema.json)
-  category: string // Bó hoa, Giỏ hoa, Kệ khai trương, Hộp hoa, Bình hoa
+  category: string // Sản phẩm, Giỏ hoa, Kệ khai trương, Hộp hoa, Bình hoa
   shape: string // Tròn, Bán cầu, Tam giác, Thác đổ, Chữ L, Thẳng đứng, Tự do
   facing: string // Một mặt, Hai mặt, Toàn diện 360
   container?: string | undefined // Giỏ mây, Bình gốm, Hộp mica, Kệ gỗ, Kệ sắt
@@ -146,7 +146,7 @@ export interface ProductMasterIndex {
     // chưa có tiêu chí thật — xoá khỏi type, thêm lại khi có luật thật.
   }
 
-  // 4. Công thức cắm hoa xưởng (Florist Recipe / Atomic BOM)
+  // 4. Công thức chế tác xưởng (Florist Recipe / Atomic BOM)
   bom: {
     flowers: FlowerBomItem[]
     /** Lá/cành trang trí — cấu trúc đầy đủ số lượng/màu/vai trò (nợ #88, đã trả 17/09). */
@@ -324,7 +324,7 @@ export function projectDeliveryReceipt(order: {
 
 /**
  * 3. PROJECTION CHO TẠO ĐƠN HÀNG (Order Checkout)
- * Khi nhân viên chọn 1 mẫu hoa từ Catalog, trích xuất cấu trúc đơn hàng chuẩn
+ * Khi nhân viên chọn 1 sản phẩm từ Catalog, trích xuất cấu trúc đơn hàng chuẩn
  * tự động điền sẵn tên hoa, giá tiền, BOM và ảnh mẫu.
  */
 export function projectOrderLineItem(product: ProductMasterIndex) {
@@ -351,7 +351,7 @@ export function projectOrderLineItem(product: ProductMasterIndex) {
  * (`masterUpdatedAt`) để về sau so sánh phát hiện Master đã đổi (Hợp đồng MI §6 — Override).
  *
  * CỐ Ý KHÔNG có `costPriceVnd` — giá vốn không bao giờ được phép rời khỏi Master Index để đi
- * vào một đơn cụ thể (đối tác/thợ cắm có thể đọc được đơn).
+ * vào một đơn cụ thể (đối tác/thợ chế tác có thể đọc được đơn).
  */
 export interface CoordinatorProductSnapshot {
   productId: string

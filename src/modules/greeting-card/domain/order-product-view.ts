@@ -48,7 +48,7 @@ function liveImageUrl(url: string | null, nowMs: number): string | null {
  * Ưu tiên: ảnh chụp mẫu lúc khách chọn → metadata dòng đơn → ảnh hiện tại trong kho (`images`, theo productId)
  * — đơn tạo tay hoặc mẫu chọn trước khi có ảnh vẫn hiện được ảnh cho mọi vai trò.
  */
-export function orderProductView(source: OrderProductSource, images: ReadonlyMap<string, string>, fallbackName = "Hoa tươi theo mẫu", now = new Date()): OrderProductView {
+export function orderProductView(source: OrderProductSource, images: ReadonlyMap<string, string>, fallbackName = "Sản phẩm theo mẫu", now = new Date()): OrderProductView {
   const snap = obj(source.greeting_sessions[0]?.product_snapshot)
   const item = source.items[0]
   const meta = obj(item?.metadata)

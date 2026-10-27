@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx"
 import type { ParsedProductRow } from "./types"
+import { mergeVariantRows, readPriceCells } from "./parse-price-columns"
 
 /**
  * Đọc file Excel/CSV kho sản phẩm → các dòng xem trước. Phần ánh xạ là hàm thuần (có unit test):
@@ -9,7 +10,7 @@ import type { ParsedProductRow } from "./types"
 /** Tên cột chấp nhận cho từng trường, theo thứ tự ưu tiên. */
 const COLUMNS = {
   code: ["Mã SKU Chuẩn (FloraOS) *", "Mã SKU Chuẩn (FloraOS)", "Mã SKU *", "Mã sản phẩm (SKU) *", "Mã Lovi (Loviinet)", "Mã Siin (Siin Store)", "Mã Lovi", "Mã Siin", "Mã sản phẩm", "SKU", "code"],
-  name: ["Tên mẫu hoa *", "Tên mẫu hoa", "Tên sản phẩm *", "Tên sản phẩm", "name"],
+  name: ["Tên sản phẩm *", "Tên sản phẩm", "Tên sản phẩm *", "Tên sản phẩm", "name"],
   price: ["Giá niêm yết B2C (VNĐ) *", "Giá niêm yết B2C (VNĐ)", "Giá niêm yết B2C", "Giá bán (VNĐ)", "Giá bán", "price"],
   category: ["Danh mục chuẩn *", "Danh mục chuẩn", "Danh mục", "Kiểu cách", "category"],
   shape: ["Kiểu dáng / Dáng cắm", "Kiểu dáng", "Kiểu cách", "shape"],
@@ -17,7 +18,7 @@ const COLUMNS = {
   container: ["Quy cách đóng gói & Bảo quản", "Quy cách đóng gói", "Vật chứa / Giá đỡ", "Vật chứa", "container"],
   color: ["Tone màu chủ đạo", "Màu sắc / Tone màu", "Màu sắc", "color"],
   description: ["Câu chuyện hoa (Copywriting bán hàng)", "Câu chuyện hoa (copy bán hàng)", "Mô tả / Ý nghĩa hoa", "Mô tả / Ghi chú", "Mô tả", "description"],
-  flowersText: ["Hoa chính (BOM)", "Hoa chính (nguyên liệu quyết định)", "Công thức cắm hoa (BOM)", "Công thức hoa (BOM)", "BOM"],
+  flowersText: ["Hoa chính (BOM)", "Hoa chính (nguyên liệu quyết định)", "Công thức chế tác (BOM)", "Công thức hoa (BOM)", "BOM"],
   imageFileName: ["Tên file ảnh (hoặc URL ảnh) *", "Tên file ảnh chuẩn hóa ( FloraOS Media )", "Tên file ảnh chuẩn hóa", "Ảnh thành phẩm chuẩn", "Tên file ảnh (tuỳ chọn)", "Tên file ảnh", "Tên ảnh", "image"],
   loviCode: ["Mã Lovi (Loviinet)", "Mã Lovi"],
   siinCode: ["Mã Siin (Siin Store)", "Mã Siin"],
@@ -95,7 +96,7 @@ export function mapRecordToRow(d: RawRecord, index: number): ParsedProductRow {
     siinCode: siinCode || undefined,
     name,
     price: parsePrice(priceRaw),
-    category: pick(d, COLUMNS.category, "Bó hoa"),
+    category: pick(d, COLUMNS.category, "Sản phẩm"),
     shape: pick(d, COLUMNS.shape, "Dáng tròn"),
     facing: pick(d, COLUMNS.facing, "Một mặt"),
     container: pick(d, COLUMNS.container),
@@ -129,7 +130,8 @@ export function parseProductMatrix(matrix: unknown[][]): ParsedProductRow[] {
   if (matrix.length === 0) throw new Error("File không chứa dữ liệu sản phẩm.")
   const records = matrixToRecords(matrix)
   if (records.length === 0) throw new Error("File không chứa bản ghi dữ liệu sản phẩm hợp lệ.")
-  return markDuplicateCodes(records.map(mapRecordToRow))
+  const rows = records.map((r, i) => ({ ...mapRecordToRow(r, i), priceCells: readPriceCells(r, parsePrice) }))
+  return markDuplicateCodes(mergeVariantRows(rows))
 }
 
 /** Đọc nội dung file (.xlsx/.xls/.csv) → các dòng xem trước. */

@@ -4,7 +4,7 @@ import { useState } from "react"
 import { MessageCircle, Sparkles } from "lucide-react"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { similarProducts } from "@/modules/greeting-card/domain/collection-browse"
-import { formatVnd } from "./swipe-card"
+import { productPriceText } from "../product-info/product-display"
 import type { SwipeTheme } from "./swipe-themes"
 
 interface UnavailablePanelProps {
@@ -60,7 +60,7 @@ export function UnavailablePanel({ theme, product, products, onJump, onContact }
                 style={{ borderColor: theme.controlBorder, background: theme.controlBg }}
               >
                 <span className="truncate font-semibold">{p.name}</span>
-                <span className="shrink-0 tabular-nums">{formatVnd(p.price)}</span>
+                <span className="shrink-0 tabular-nums">{productPriceText(p)}</span>
               </button>
             </li>
           ))}

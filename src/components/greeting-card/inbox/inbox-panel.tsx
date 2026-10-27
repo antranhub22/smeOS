@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import { useRouter } from "next/navigation"
 import { AlertTriangle, ChevronRight, MessageSquare } from "lucide-react"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import type { InboxAction, InboxTab } from "@/modules/greeting-card/domain/inbox"
@@ -29,8 +30,10 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
     { id: "messages", label: "Tin nhắn", count: data?.counts.unreadMessages ?? 0 },
     { id: "updates", label: "Cập nhật", count: data?.updates.length ?? 0 },
   ]
-  const open = (a: { tab: InboxTab; orderId: string | null; sessionId: string | null }) => {
-    onOpenTarget(a)
+  const router = useRouter()
+  const open = (a: { tab: InboxTab; orderId: string | null; sessionId: string | null; href?: string | undefined }) => {
+    if (a.href) router.push(a.href as never)
+    else onOpenTarget(a)
     onClose()
   }
 
@@ -136,6 +139,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
 }
 
 const ACTION_LABEL: Partial<Record<InboxAction["kind"], string>> = {
+  PRODUCT_PROPOSALS: "Xem mẫu chờ duyệt",
   CLAIM_ORDER: "Nhận đơn",
   REMIND_DEPOSIT: "Nhắc cọc",
   FOLLOW_UP_LEAD: "Tư vấn",
@@ -164,7 +168,7 @@ function ActionRow({ action, onOpen, onMessage, onDecided }: { action: InboxActi
       <div className="flex items-center gap-3">
         {action.imageUrl !== null || action.orderId ? (
           <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border">
-            <FlowerImage src={action.imageUrl} alt={action.customerName ?? "Mẫu hoa"} sizes="48px" fallback="icon" className="h-full w-full" />
+            <FlowerImage src={action.imageUrl} alt={action.customerName ?? "Sản phẩm"} sizes="48px" fallback="icon" className="h-full w-full" />
           </div>
         ) : (
           <AlertTriangle size={22} className="shrink-0 text-danger" aria-hidden="true" />

@@ -176,7 +176,7 @@ export function CoordinatorReminderSettingsModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-caption font-bold text-warning uppercase">
-                      M1 · Bắt đầu cắm hoa
+                      M1 · Bắt đầu chế tác
                     </span>
                     <h4 className="text-body-sm font-bold text-text">
                       Trước giờ giao hẹn

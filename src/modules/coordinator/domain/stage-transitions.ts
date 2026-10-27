@@ -98,7 +98,7 @@ export function checkStageTransition(
   }
 
   if (to === "IN_PRODUCTION" && from === "ASSIGNING" && !facts.partnerAssigned) {
-    return { ok: false, reason: "Chưa phân công đối tác/thợ cắm cho đơn." }
+    return { ok: false, reason: "Chưa phân công đối tác/thợ chế tác cho đơn." }
   }
   if (to === "DISPATCHING" && facts.latestQcStatus !== "PASSED") {
     return { ok: false, reason: "Đơn chưa có lượt QC đạt — không được giao." }

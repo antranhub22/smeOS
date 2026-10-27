@@ -23,9 +23,9 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
 
   it("buildSalesPitchData tổng hợp chuẩn từ M01a và M01b", () => {
     const analysisRaw = {
-      product_name: "Bó hoa hồng đỏ",
+      product_name: "Sản phẩm hồng đỏ",
       identity: {
-        category: "Bó hoa",
+        category: "Sản phẩm",
         container: "Bình gốm",
         phong_cach: "Cổ điển",
         dip_su_dung: "Valentine",
@@ -42,7 +42,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
 
     const copyRaw = {
       suggested_name: "Tình Yêu Nồng Cháy",
-      suggested_description: "Bó hoa thể hiện tình yêu bất diệt.",
+      suggested_description: "Sản phẩm thể hiện tình yêu bất diệt.",
       suggested_style: "Lãng mạn & Quý phái",
       suggested_occasions: ["Valentine", "Kỷ niệm ngày cưới"],
       suggested_price_segment: "premium",
@@ -53,7 +53,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
     expect(pitch.productName).toBe("Tình Yêu Nồng Cháy")
     expect(pitch.style).toBe("Lãng mạn & Quý phái")
     expect(pitch.occasions).toEqual(["Valentine", "Kỷ niệm ngày cưới"])
-    expect(pitch.description).toBe("Bó hoa thể hiện tình yêu bất diệt.")
+    expect(pitch.description).toBe("Sản phẩm thể hiện tình yêu bất diệt.")
     expect(pitch.imageUrl).toBe("https://example.com/flower.jpg")
     expect(pitch.mainFlowers.length).toBe(1)
     expect(pitch.mainFlowers[0]?.name).toBe("Hoa hồng đỏ")
@@ -97,7 +97,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
         priceVnd: 2800000,
         originalPriceVnd: 3200000,
         freeGifts: ["Tặng biển tên đồng cao cấp", "Tặng đế xoay hoa"],
-        guarantees: ["Cam kết hoa tươi trên 7 ngày", "Giao xe hơi chuyên dụng"],
+        guarantees: ["Cam kết sản phẩm trên 7 ngày", "Giao xe hơi chuyên dụng"],
         shopHotline: "0909 888 999",
         customNote: "Áp dụng giảm 10% cho khách hàng thân thiết",
         status: "FINALIZED",
@@ -130,7 +130,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
     expect(script).toContain("2.800.000")
     expect(script).toContain("3.200.000")
     expect(script).toContain("Tặng biển tên đồng cao cấp")
-    expect(script).toContain("Cam kết hoa tươi trên 7 ngày")
+    expect(script).toContain("Cam kết sản phẩm trên 7 ngày")
     expect(script).toContain("0909 888 999")
     expect(script).toContain("Áp dụng giảm 10% cho khách hàng thân thiết")
   })
@@ -192,7 +192,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
       shopName: "Tiệm Hoa Sen Vàng Luxury",
       shopHotline: "0988 777 666",
       freeGifts: ["Tặng thiệp nghệ thuật thư pháp dát vàng", "Tặng bình xịt dưỡng hoa cao cấp"],
-      guarantees: ["Cam kết hoa tươi trên 10 ngày", "Bảo hành 1 đổi 1 trong 24h"],
+      guarantees: ["Cam kết sản phẩm trên 10 ngày", "Bảo hành 1 đổi 1 trong 24h"],
     }
 
     const pitch = buildSalesPitchData(analysisRaw, null, undefined, null, tenantDefaults)
@@ -209,7 +209,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
 
   it("KHÔNG được rơi về tên tiệm/hotline giả trông như thật khi tenantDefaults là null", () => {
     const pitch = buildSalesPitchData(
-      { product_name: "Bó hoa bất kỳ", bom: { flowers: [{ name: "Hoa cúc", quantity: 5, dvt_dem: "cành" }] } },
+      { product_name: "Sản phẩm bất kỳ", bom: { flowers: [{ name: "Hoa cúc", quantity: 5, dvt_dem: "cành" }] } },
       null,
       undefined,
       null,
@@ -227,7 +227,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
   it("KHÔNG được tự bịa giá theo phân khúc khi chưa có giá cấu hình thật", () => {
     const pitch = buildSalesPitchData(
       {
-        product_name: "Bó hoa cao cấp",
+        product_name: "Sản phẩm cao cấp",
         bom: { flowers: [{ name: "Lan hồ điệp", quantity: 3, dvt_dem: "cành" }] },
       },
       { suggested_price_segment: "luxury" },
@@ -247,7 +247,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
 
   it("dùng câu kêu gọi hành động riêng của thương hiệu khi tenant đã cấu hình cta_templates", () => {
     const pitch = buildSalesPitchData(
-      { product_name: "Bó hoa sinh nhật", bom: { flowers: [{ name: "Hoa hồng", quantity: 10, dvt_dem: "cành" }] } },
+      { product_name: "Sản phẩm sinh nhật", bom: { flowers: [{ name: "Hoa hồng", quantity: 10, dvt_dem: "cành" }] } },
       null,
       undefined,
       null,
@@ -269,7 +269,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
 
   it("giữ nguyên câu đóng mặc định hệ thống khi tenant CHƯA cấu hình cta_templates", () => {
     const pitch = buildSalesPitchData(
-      { product_name: "Bó hoa chúc mừng", bom: { flowers: [{ name: "Hoa cúc", quantity: 8, dvt_dem: "cành" }] } },
+      { product_name: "Sản phẩm chúc mừng", bom: { flowers: [{ name: "Hoa cúc", quantity: 8, dvt_dem: "cành" }] } },
       null,
       undefined,
       null,
@@ -302,7 +302,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
 
   it("occasionRegister mặc định NEUTRAL khi tenant chưa cấu hình danh mục dịp", () => {
     const pitch = buildSalesPitchData(
-      { product_name: "Bó hoa bất kỳ", identity: { dip_su_dung: "Chia buồn" }, bom: { flowers: [] } },
+      { product_name: "Sản phẩm bất kỳ", identity: { dip_su_dung: "Chia buồn" }, bom: { flowers: [] } },
       null,
       undefined,
       null,
@@ -335,7 +335,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
     const pitch = buildSalesPitchData(
       // Dịp gợi ý chứa chữ "buồn" nhưng KHÔNG khớp nguyên văn "Chia buồn" —
       // không được tự suy diễn ra SOLEMN.
-      { product_name: "Bó hoa", identity: { dip_su_dung: "Xin lỗi vì đã làm em buồn" }, bom: { flowers: [] } },
+      { product_name: "Sản phẩm", identity: { dip_su_dung: "Xin lỗi vì đã làm em buồn" }, bom: { flowers: [] } },
       null,
       undefined,
       null,
@@ -405,7 +405,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
 
   it("greetingLine (nợ #99) hiện đúng câu chào tenant ghi đè ở đầu kịch bản — cả hai tông", () => {
     const base = buildSalesPitchData(
-      { product_name: "Bó hoa", bom: { flowers: [] } },
+      { product_name: "Sản phẩm", bom: { flowers: [] } },
       null,
       undefined,
       null,
@@ -441,7 +441,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
 
   it("hiển thị thiệp chúc mừng có nội dung printed_text riêng biệt trên kịch bản Zalo", () => {
     const analysisRaw = {
-      product_name: "Bó hoa tulip cam",
+      product_name: "Sản phẩm tulip cam",
       bom: {
         flowers: [{ name: "Hoa tulip cam", quantity: 10 }],
         foliage: [{ name: "Lá chanh", quantity: 3 }],

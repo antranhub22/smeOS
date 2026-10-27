@@ -138,3 +138,14 @@ describe("chain-dispatch-policy", () => {
     )
   })
 })
+
+describe("renderDispatchMessage — thoát ký tự HTML của Telegram", () => {
+  it("giữ thẻ của mẫu, thoát giá trị người nhập", async () => {
+    const { renderDispatchMessage } = await import("../chain-dispatch-policy")
+    const out = renderDispatchMessage("<b>Giao tới:</b> {{deliveryAddress}} · {{orderCode}} · {{missing}}", {
+      deliveryAddress: 'Hẻm 5 <cạnh chợ> & <a href="https://lua.dao">bấm</a>',
+      orderCode: "DH1",
+    })
+    expect(out).toBe('<b>Giao tới:</b> Hẻm 5 &lt;cạnh chợ&gt; &amp; &lt;a href="https://lua.dao"&gt;bấm&lt;/a&gt; · DH1 · {{missing}}')
+  })
+})

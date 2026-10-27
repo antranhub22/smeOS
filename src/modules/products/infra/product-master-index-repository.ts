@@ -122,7 +122,7 @@ function mapFlowerRole(raw: string | null | undefined): FlowerBomItem["role"] {
       return "Lấp đầy"
     default:
       // AI chưa xác định được vai trò (null/thiếu) — xếp tạm vào nhóm ít quan trọng nhất
-      // thay vì đoán "Chủ đạo", để không đánh lừa thợ cắm hoa về hoa nào là hoa chính.
+      // thay vì đoán "Chủ đạo", để không đánh lừa thợ chế tác về hoa nào là hoa chính.
       return "Lấp đầy"
   }
 }
@@ -399,7 +399,7 @@ export class ProductMasterIndexRepository {
       status: row.status,
       // MI-3 (ĐP-2.1, 26/09/2026): phiên bản Master Index cho snapshot của Điều phối (Hợp đồng MI §5).
       updatedAt: row.updated_at.toISOString(),
-      category: row.category ?? "Bó hoa",
+      category: row.category ?? "Sản phẩm",
       shape: row.shape ?? "Tròn",
       facing: row.facing ?? "Một mặt",
       container: row.container ?? undefined,

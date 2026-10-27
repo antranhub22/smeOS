@@ -1,3 +1,4 @@
+import { lockedUpdate } from "./locked-state-store"
 import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import { processOrderDispatchReminders } from "../process-dispatch-reminders"
@@ -22,12 +23,13 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
     isActive: true,
     channels: {
       phone: "0977234567",
-      telegramChatId: "-1003889928264",
+      telegramChatId: "-1000000000001",
     },
   }
 
   it("Lần 1 (M2_QC): Gửi nhắc chụp ảnh QC kèm nút tải ảnh khi chưa có ảnh", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -74,7 +76,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
       ctx,
       expect.objectContaining({
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "📸 Chụp & Tải ảnh thành phẩm" }),
+          expect.objectContaining({ text: "Chụp và tải ảnh thành phẩm" }),
         ]),
       })
     )
@@ -88,6 +90,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
 
   it("Không gửi nhắc QC nếu cửa hàng ĐÃ CÓ ẢNH THÀNH PHẨM (hasQcPhoto: true)", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -134,6 +137,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
 
   it("Lần 2 (M2_QC_RETRY): Nhắc giục khẩn cấp sau 5 phút nếu chưa có ảnh", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -184,9 +188,9 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        messageText: expect.stringContaining("NHẮC LẦN 2"),
+        messageText: expect.stringContaining("Nhắc lần 2"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: expect.stringContaining("TẢI ẢNH THÀNH PHẨM NGAY (LẦN 2)") }),
+          expect.objectContaining({ text: expect.stringContaining("Tải ảnh thành phẩm ngay") }),
         ]),
       })
     )
@@ -200,6 +204,7 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
 
   it("Báo động Điều phối (M2_QC_ESCALATED): Sau Lần 2 5 phút vẫn chưa có ảnh -> Cảnh báo Điều phối kèm nút gọi Hotline", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -255,11 +260,11 @@ describe("processOrderDispatchReminders — Leo thang giám sát QC ảnh", () =
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("BÁO ĐỘNG ĐIỀU PHỐI"),
-        messageText: expect.stringContaining("CHƯA CÓ ẢNH THÀNH PHẨM"),
+        title: expect.stringContaining("Khẩn cấp"),
+        messageText: expect.stringContaining("chưa có ảnh thành phẩm"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: expect.stringContaining("Gọi cửa hàng: 0977234567") }),
-          expect.objectContaining({ text: "🔍 Xem chi tiết đơn" }),
+          expect.objectContaining({ text: expect.stringContaining("Gọi chi nhánh: 0977234567") }),
+          expect.objectContaining({ text: "Xem chi tiết đơn" }),
         ]),
       })
     )
@@ -282,12 +287,13 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     isActive: true,
     channels: {
       phone: "0977234567",
-      telegramChatId: "-1003889928264",
+      telegramChatId: "-1000000000001",
     },
   }
 
   it("Lần 1 (M3_SHIPPER): Gửi nhắc cung cấp thông tin shipper trước giờ giao N phút khi chưa có shipper", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -338,10 +344,10 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("YÊU CẦU SHIPPER"),
-        messageText: expect.stringContaining("Vui lòng cung cấp Họ tên & SĐT Shipper"),
+        title: expect.stringContaining("Cần thông tin shipper"),
+        messageText: expect.stringContaining("Vui lòng nhập họ tên và số điện thoại shipper"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "🛵 Nhập Thông Tin Shipper" }),
+          expect.objectContaining({ text: "Nhập thông tin shipper" }),
         ]),
       })
     )
@@ -355,6 +361,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Không gửi nhắc shipper nếu cửa hàng ĐÃ CÓ THÔNG TIN SHIPPER (hasShipperInfo: true)", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -407,6 +414,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Lần 2 (M3_SHIPPER_RETRY): Nhắc giục khẩn cấp sau 5 phút nếu chưa có shipper", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -457,9 +465,9 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("NHẮC LẦN 2 - KHẨN CẤP"),
+        title: expect.stringContaining("Nhắc lần 2"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "🚨 NHẬP THÔNG TIN SHIPPER NGAY (LẦN 2)" }),
+          expect.objectContaining({ text: "Nhập thông tin shipper ngay" }),
         ]),
       })
     )
@@ -473,6 +481,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Báo động đỏ Điều phối (M3_SHIPPER_ESCALATED): Sau Lần 2 5 phút vẫn chưa có shipper -> Cảnh báo đỏ Điều phối kèm hotline gọi trực tiếp", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -528,10 +537,10 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("CẢNH BÁO ĐỎ - THIẾU SHIPPER"),
-        messageText: expect.stringContaining("CHƯA CUNG CẤP SHIPPER"),
+        title: expect.stringContaining("Khẩn cấp"),
+        messageText: expect.stringContaining("vẫn chưa có shipper"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: expect.stringContaining("Gọi cửa hàng: 0977234567") }),
+          expect.objectContaining({ text: expect.stringContaining("Gọi chi nhánh: 0977234567") }),
           expect.objectContaining({ text: expect.stringContaining("Xem chi tiết đơn") }),
         ]),
       })
@@ -546,6 +555,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Mốc M4 Giao hàng (M4_DELIVERY): Đến/quá giờ hẹn giao mà chưa có ảnh POD -> Nhắc lần 1 tải ảnh giao hàng", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -598,10 +608,10 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("NHẮC BÀN GIAO & POD"),
-        messageText: expect.stringContaining("tải ảnh xác nhận giao hàng (POD)"),
+        title: expect.stringContaining("Nhắc bàn giao"),
+        messageText: expect.stringContaining("tải ảnh xác nhận đã giao"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "📸 Tải Ảnh Giao Hàng (POD)" }),
+          expect.objectContaining({ text: "Tải ảnh đã giao" }),
         ]),
       })
     )
@@ -615,6 +625,7 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
 
   it("Mốc M4 Giao hàng (M4_DELIVERY_ESCALATION): Quá hạn 2 lần nhắc chưa có ảnh POD -> Cảnh báo đỏ Điều phối", async () => {
     const mockStore: ISubcontractStateStore = {
+      updateSubcontractState: lockedUpdate(() => mockStore),
       saveSubcontractState: vi.fn().mockResolvedValue(undefined),
       loadSubcontractState: vi.fn().mockResolvedValue(null),
     }
@@ -669,10 +680,10 @@ describe("processOrderDispatchReminders — Nhắc cung cấp thông tin Shipper
     expect(mockNotifier.sendSubcontractInvite).toHaveBeenCalledWith(
       ctx,
       expect.objectContaining({
-        title: expect.stringContaining("CẢNH BÁO ĐỎ - CHƯA GIAO HÀNG"),
-        messageText: expect.stringContaining("đã quá hạn giao nhưng chưa có ảnh xác nhận"),
+        title: expect.stringContaining("Khẩn cấp"),
+        messageText: expect.stringContaining("đã quá hạn giao mà chưa có ảnh xác nhận"),
         actions: expect.arrayContaining([
-          expect.objectContaining({ text: "📞 Gọi Cửa Hàng Ngay" }),
+          expect.objectContaining({ text: "Gọi chi nhánh" }),
         ]),
       })
     )

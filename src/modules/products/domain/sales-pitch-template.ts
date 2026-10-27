@@ -138,12 +138,12 @@ export interface SalesPitchOverrides {
 
 export const DEFAULT_FREE_GIFTS = [
   "Tặng thiệp / banner chúc mừng thiết kế riêng theo thông điệp",
-  "Tặng gói nước dưỡng hoa Chrysal giúp hoa tươi lâu 5 - 7 ngày",
+  "Tặng gói nước dưỡng hoa Chrysal giúp sản phẩm lâu 5 - 7 ngày",
   "Ruy băng lụa cao cấp in nhũ sang trọng",
 ]
 
 export const DEFAULT_GUARANTEES = [
-  "100% hoa tươi mới tuyển chọn nhập trong ngày",
+  "100% sản phẩm mới tuyển chọn nhập trong ngày",
   "Chụp hình hoa thực tế gửi quý khách duyệt trước khi giao",
   "Giao hoa hỏa tốc đúng giờ (60 - 90 phút nội thành)",
   "Bảo hành đổi mới nếu hoa bị dập héo khi vận chuyển",
@@ -203,7 +203,7 @@ export function buildSalesPitchData(
     (c.suggested_name as string) ||
     (a.product_name as string) ||
     (identity.category as string) ||
-    "Bó hoa thiết kế cao cấp"
+    "Sản phẩm thiết kế cao cấp"
   const productName = overrides?.productName ?? defaultName
   const sku = overrides?.sku ?? (a.sku as string) ?? (a.code as string) ?? null
 
@@ -224,14 +224,14 @@ export function buildSalesPitchData(
   const defaultDescription =
     (c.suggested_description as string) ||
     (a.description as string) ||
-    "Thiết kế hoa tươi được tuyển chọn kỹ lưỡng từ những bông hoa tươi thắm nhất, mang thông điệp trao gửi yêu thương và trân trọng."
+    "Thiết kế sản phẩm được tuyển chọn kỹ lưỡng từ những bông sản phẩm thắm nhất, mang thông điệp trao gửi yêu thương và trân trọng."
   const description = overrides?.description ?? defaultDescription
 
   // 4. Hoa chính
   const rawFlowers = Array.isArray(bom.flowers) ? bom.flowers : []
   const defaultMainFlowers: SalesPitchItem[] = rawFlowers.map((f: RawBomItem, idx: number) => ({
     id: f.id || `flower-${idx}`,
-    name: f.name || f.nhom_hoa || "Hoa tươi",
+    name: f.name || f.nhom_hoa || "Sản phẩm",
     quantity: f.quantity ?? f.count ?? null,
     unit: f.dvt_dem || "cành",
     color: f.mo_ta_mau || f.mau || f.color || null,
@@ -401,7 +401,7 @@ export function generateZaloPitchScript(pitch: SalesPitchData): string {
 
   const flowersStr = pitch.mainFlowers.length > 0
     ? pitch.mainFlowers.map((f) => `  • ${f.name}${f.quantity ? ` (${f.quantity} ${f.unit})` : ""}${f.color ? ` — Tone ${f.color}` : ""}`).join("\n")
-    : "  • Hoa tươi tuyển chọn theo mẫu"
+    : "  • Sản phẩm tuyển chọn theo mẫu"
 
   const foliageStr = pitch.foliageItems.length > 0
     ? `\n🌿 Lá đệm: ${pitch.foliageItems.map((f) => `${f.name}${f.quantity ? ` (${f.quantity} ${f.unit})` : ""}`).join(", ")}`

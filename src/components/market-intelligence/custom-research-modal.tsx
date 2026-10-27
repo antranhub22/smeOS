@@ -22,7 +22,7 @@ interface CustomResearchModalProps {
 const QUICK_SUGGESTIONS = [
   "Hoa tulip pastel",
   "Hoa mẫu đơn nhập khẩu",
-  "Bó hoa tốt nghiệp Hàn Quốc",
+  "Sản phẩm tốt nghiệp Hàn Quốc",
   "Lan hồ điệp khai trương",
   "Hoa cẩm tú cầu tone xanh",
 ];
@@ -44,7 +44,7 @@ export function CustomResearchModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onTrigger({
-      keyword: keyword.trim() || "hoa tươi xu hướng",
+      keyword: keyword.trim() || "sản phẩm xu hướng",
       geo,
       timeframe,
       channel,
@@ -88,7 +88,7 @@ export function CustomResearchModal({
               type="text"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              placeholder="VD: Hoa tulip pastel, Bó hoa tốt nghiệp, Lan hồ điệp..."
+              placeholder="VD: Hoa tulip pastel, Sản phẩm tốt nghiệp, Lan hồ điệp..."
               className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-xs text-text outline-none focus:border-primary transition"
             />
             {/* Quick Suggestions */}

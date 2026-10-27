@@ -1,5 +1,7 @@
 import { conflict } from "@/core/http/errors"
+import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
+import { newProposal, PROPOSAL_KEY, stripProposal } from "@/modules/products/domain/product-proposal"
 import type { IProductRepository, CreateProductInput } from "@/modules/products/domain/repositories/product-repository.interface"
 import { getProductRepository } from "@/modules/products/infra/product-repository"
 
@@ -19,5 +21,12 @@ export async function createProduct(
   const existing = await repo.findByCode(ctx, input.code)
   if (existing) throw conflict(`Mã sản phẩm "${input.code}" đã tồn tại trong tổ chức`)
 
-  return repo.create(ctx, input)
+  // Người không có H3 (duyệt vào danh mục) tạo mẫu → dùng được ngay nhưng mang
+  // nhãn đề xuất chờ Điều hành duyệt (`product-proposal.ts`).
+  const isProposal = !hasCapability(ctx, "H3")
+  const attributes = stripProposal(input.attributes) ?? null
+  return repo.create(ctx, {
+    ...input,
+    attributes: isProposal ? { ...(attributes ?? {}), [PROPOSAL_KEY]: newProposal(ctx.userId) } : attributes,
+  })
 }

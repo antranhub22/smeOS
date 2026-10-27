@@ -172,8 +172,8 @@
 | Mã | Tên | ĐH | ĐP | Sale | PM | Mkt | CRM | CSKH | Exp | Trần cứng | Được kiểm ở mã |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | L1 | `product.read` | ● | ● | ● | ● | ● | ● | · | · | — | server + UI |
-| L2 | `product.create` | ● | ● | · | ● | · | · | · | · | — | server + UI |
-| L3 | `product.update` | ● | ● | · | ● | · | · | · | · | — | server |
+| L2 | `product.create` | ● | ● | ● | ● | · | · | · | · | — | server + UI |
+| L3 | `product.update` | ● | ● | ● | ● | · | · | · | · | — | server |
 | L4 | `product.archive` | ● | · | · | · | · | · | · | · | ĐH | server + UI |
 | L5 | `pricing.read` | ● | ● | · | ● | · | · | · | · | — | server + UI |
 | L6 | `pricing.manage` | ● | · | · | · | · | · | · | · | ĐH | server + UI |
@@ -211,6 +211,7 @@
 | R11 | `order.transfer.confirm` | ● | · | · | · | · | · | · | · | ĐH | server + UI |
 | R12 | `order.coordinator_reminder.configure` | ● | ● | · | · | · | · | · | · | — | server (14/10/2026) |
 | R13 | `data.export` | ● | · | · | · | · | · | · | · | — | server + UI (14/10/2026: xuất Excel đơn hàng/khách hàng chỉ Điều hành; cấp cho người khác qua màn phân quyền) |
+| R14 | `order.branch_inbox` | ● | · | · | · | · | · | · | · | ĐH + `cua_hang` | server + UI (22/10/2026: trang `/cua-hang` — vai mới `cua_hang` "Cửa hàng nhận gia công", không có cột riêng trong bảng này) |
 
 ### Q — CRM
 

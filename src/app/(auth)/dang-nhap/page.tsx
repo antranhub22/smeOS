@@ -3,7 +3,7 @@
 // Trang xác thực smeOS — Hỗ trợ 3 luồng:
 // 1. Đăng nhập tài khoản có sẵn (POST /api/v1/auth/login)
 // 2. Đăng ký tài khoản chính thức (POST /api/v1/auth/signup)
-// 3. Trải nghiệm tức thì không cần mật khẩu (POST /api/v1/auth/instant-trial)
+// 3. Đăng ký dùng thử, chờ quản trị viên duyệt (POST /api/v1/auth/instant-trial)
 // Cấp session cookie và điều hướng vào Dashboard ("/").
 
 import { Suspense, useState, useEffect } from "react"
@@ -46,7 +46,7 @@ export default function DangNhapPage() {
           <div className="text-display-xl font-extrabold tracking-tight text-primary">smeOS</div>
           <div className="text-center text-body-sm text-text-muted">
             {cheDo === "dung-thu"
-              ? "Trải nghiệm tức thì Cửa hàng mẫu theo ngành nghề — Không cần mật khẩu"
+              ? "Đăng ký dùng thử Cửa hàng mẫu theo ngành nghề — quản trị viên duyệt trước khi dùng"
               : cheDo === "dang-ky"
                 ? "Đăng ký không gian vận hành cho doanh nghiệp của bạn"
                 : "Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ"}
@@ -89,7 +89,7 @@ export default function DangNhapPage() {
             }`}
           >
             <Zap size={14} className={cheDo === "dung-thu" ? "text-text-inverse" : "text-primary"} />
-            <span>Trải nghiệm ngay</span>
+            <span>Dùng thử</span>
           </button>
         </div>
 

@@ -8,7 +8,7 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 
 | Việc | Lệnh |
 |---|---|
-| Cài | `docker compose up -d && npm i && npx prisma generate && npx prisma db push && npx prisma db seed` |
+| Cài | `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npx prisma db seed` |
 | Chạy toàn bộ (Web + DB + Workers + SocialFlow M07) | `npm run dev:all` (tự bật Docker DB + Ollama Qwen + Web 3100 + Worker Vision + Worker Media + Worker Video + SocialFlow 8000) |
 | Chạy web | `npm run dev` |
 | Chạy worker media | `npm run worker:media` |
@@ -69,6 +69,8 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 
   **Nguyên tắc cốt lõi**: Mỗi thực thể nghiệp vụ chỉ có **DUY NHẤT MỘT TIN NHẮN / THẺ THÔNG BÁO** trên kênh ngoài. Tất cả cập nhật trạng thái tiếp theo đều **chỉnh sửa (EDIT) tin nhắn đó tại chỗ**, không bao giờ tạo tin mới. Khi có mốc hành động cần phản hồi ngay, hệ thống gửi **notification ping riêng** (thông báo đẩy) kèm nút dẫn vào thẻ đang tồn tại — không gửi thêm thẻ.
 
+  **Một thẻ cho mỗi người nhận (rà soát cụm G, 22/10/2026)**: khi cùng một thực thể gửi tới nhiều chat (vd. mời nhiều chi nhánh), mỗi chat giữ thẻ RIÊNG của mình (`subcontract_dispatch.inviteCards[branchId]`) và chỉ thẻ đó được sửa — không sửa thẻ của chat khác, không mang link đã ký của người khác.
+
   **Lý do bắt buộc**: Spam tin nhắn mới làm mất ngữ cảnh, cửa hàng/đối tác phải cuộn ngược để biết đơn đang ở bước nào; thẻ duy nhất giữ toàn bộ lịch sử tiến độ có thể nhìn một lần và hành động ngay.
 
   **Kiến trúc triển khai (SSOT: `src/modules/greeting-card/`):**
@@ -110,6 +112,7 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
        - `bomSpec`: đơn vị đo lường (`measurementUnits`), danh sách vai trò thành phần nguyên vật liệu (`componentRoles` có `isRequired`).
        - `templates`: mẫu ấn phẩm A6 in ấn (`printables` thuộc loại `TAG`, `CARD`, `MENU`, `WARRANTY`, `CARE_GUIDE`, `DISPATCH` kèm hướng dẫn mặc định).
        - `aiConfig`: trọng tâm phân tích thị giác (`visionFocus`), bối cảnh ảnh Studio (`studioBackgroundStyles`), văn phong tiếp thị mẫu (`marketingToneExamples`), danh sách tên sản phẩm mẫu (`sampleProductNames`).
+       - `craftFee` (PO 22/10/2026): nhãn phí trả cho bên làm thay (`feeLabel`: "Phí cắm hoa", "Phí may đo"…), % mặc định, sàn/trần, % đối tác, nhãn + tiền công theo độ khó, ngày cao điểm cố định. Ngành không thuê làm thay thì để `null` (mục Phí gia công ẩn khỏi cài đặt). Cách tính (6 phương án, phụ cấp, khấu trừ) dùng chung mọi ngành ở `greeting-card/domain/craft-fee-policy.ts` — KHÔNG viết cách tính riêng cho ngành.
     2. **Bước 2 — Đăng ký vào Registry**: Mở `src/modules/organization/domain/industries/index.ts`, import file vừa tạo và bổ sung vào `INDUSTRY_REGISTRY`. Đồng thời thêm key vào `IndustryKey` trong `industry-profile.ts`.
     3. **Bước 3 — Xác nhận kiểm thử & Typecheck**: Chạy `npm run check:industry` (hoặc `npx vitest run src/modules/organization/domain/industry-plugin-contract.test.ts` và `npx tsc -p tsconfig.json --noEmit`). Toàn bộ giao diện Đăng ký, Hồ sơ cửa hàng, Bộ lọc danh mục sản phẩm, Định lượng BOM, Ấn phẩm in ấn và Trợ lý AI sẽ tự động thích ứng với ngành mới mà không cần chạm vào bất kỳ file UI nào.
     4. **Công cụ tự động hóa**:

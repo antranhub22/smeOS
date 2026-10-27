@@ -7,19 +7,17 @@ import {
 } from "@/modules/organization/domain/experience"
 import { slugCandidates } from "@/modules/organization/domain/slug"
 import { FOUNDER_ROLE_KEY } from "@/modules/organization/domain/system-roles"
-import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
-import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
-import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
-import { OccasionRepository, getOccasionRepository } from "@/modules/organization/infra/occasion-repository"
-import { hashSessionToken, newSessionToken } from "@/modules/organization/infra/session-token"
+import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
-import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
-import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { UserRepository } from "@/modules/organization/infra/user-repository"
+import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { seedExperienceMasterProfile } from "@/modules/profiles/use-cases/seed-experience-profile"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
-import { getMockAssetsForIndustry } from "@/modules/profiles/domain/mock-data-catalog"
+import { seedSampleProductsForIndustry } from "@/modules/organization/infra/sample-product-seeder"
 import crypto from "crypto"
 
 export type InstantTrialInput = {
@@ -30,7 +28,6 @@ export type InstantTrialInput = {
 }
 
 export type InstantTrialResult = {
-  token: string
   userId: string
   organizationId: string
   organizationName: string
@@ -64,24 +61,27 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
   const randomPassword = `trial_${crypto.randomBytes(12).toString("hex")}!`
   const passwordHash = await hashPassword(randomPassword)
   const now = new Date()
-  const token = newSessionToken()
 
   return runInTransaction(async (tx) => {
-    const users = getUserRepository(tx)
-    const organizations = getOrganizationRepository(tx)
-    const workspaces = getWorkspaceRepository(tx)
-    const roles = getRoleRepository(tx)
-    const memberships = getMembershipRepository(tx)
-    const sessions = getSessionRepository(tx)
+    const users = new UserRepository(tx)
+    const organizations = new OrganizationRepository(tx)
+    const workspaces = new WorkspaceRepository(tx)
+    const roles = new RoleRepository(tx)
+    const memberships = new MembershipRepository(tx)
 
-    let user = await users.findByEmail(email)
-    if (!user) {
-      user = await users.create({
-        email,
-        password_hash: passwordHash,
-        name,
-      })
+    // Dùng thử không có mật khẩu — nên KHÔNG BAO GIỜ được gắn phiên vào một tài khoản có sẵn:
+    // làm vậy là ai biết email cũng vào được tiệm thật của người đó.
+    if (await users.findByEmail(email)) {
+      throw conflict("Địa chỉ thư này đã có tài khoản. Vui lòng đăng nhập để tiếp tục.")
     }
+    const user = await users.create({
+      email,
+      password_hash: passwordHash,
+      name,
+      // PO 22/10/2026: dùng thử cũng chờ superadmin duyệt. Lúc duyệt, hệ thống cấp mật khẩu tạm
+      // (dùng thử không có mật khẩu) để superadmin gửi cho khách — xem account-approval-repository.
+      approval_status: "PENDING",
+    })
 
     const orgBaseName = `${name} - Demo ${industryPlugin.identity.name}`
     let slug: string | null = null
@@ -118,7 +118,7 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
       trial_status: "ACTIVE",
     })
 
-    await getOccasionRepository(tx).seedDefault({
+    await new OccasionRepository(tx).seedDefault({
       organizationId: organization.id,
       workspaceId: workspace.id,
       userId: user.id,
@@ -145,104 +145,11 @@ export async function startInstantTrial(input: InstantTrialInput): Promise<Insta
       joinedAt: now,
     })
 
-    await sessions.create({
-      user_id: user.id,
-      token_hash: hashSessionToken(token),
-      organization_id: organization.id,
-      expires_at: new Date(now.getTime() + 7 * 24 * 3600 * 1000), // 7 ngày trải nghiệm
-    })
-
     return {
-      token,
       userId: user.id,
       organizationId: organization.id,
       organizationName: orgBaseName,
       industryKey: chosenIndustry,
     }
   })
-}
-
-/**
- * Nạp 3-4 sản phẩm mẫu sống động cho ngành vào bảng products (kèm ảnh và giá chuẩn)
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function seedSampleProductsForIndustry(tx: any, organizationId: string, industryKey: string) {
-  const plugin = getIndustryPlugin(industryKey)
-  const mockAssets = getMockAssetsForIndustry(industryKey)
-  const categories = plugin.taxonomy.defaultCategories
-
-  if (mockAssets && mockAssets.products.length > 0) {
-    for (let i = 0; i < mockAssets.products.length; i++) {
-      const p = mockAssets.products[i]!
-      const code = `DEMO-${industryKey.slice(0, 3)}-${String(i + 1).padStart(3, "0")}`
-
-      const product = await tx.products.create({
-        data: {
-          organization_id: organizationId,
-          code,
-          name: p.name,
-          category: p.category,
-          status: "ACTIVE",
-          attributes: {
-            sample: true,
-            imageUrl: p.image,
-            price: p.price,
-            original_price: p.originalPrice,
-            description: p.description,
-            unit: categories[0]?.defaultUnit || "món",
-          },
-        },
-      })
-
-      await tx.product_variants.create({
-        data: {
-          organization_id: organizationId,
-          product_id: product.id,
-          name: "Tiêu chuẩn",
-          multiplier: 1.0,
-          attributes: {
-            price: p.price,
-            original_price: p.originalPrice,
-          },
-        },
-      })
-    }
-    return
-  }
-
-  // Fallback nếu ngành chưa có mock assets catalog
-  const sampleNames = plugin.aiConfig.sampleProductNames.slice(0, 3)
-  for (let i = 0; i < sampleNames.length; i++) {
-    const name = sampleNames[i]!
-    const cat = categories[i % categories.length]
-    const code = `DEMO-${industryKey.slice(0, 3)}-${String(i + 1).padStart(3, "0")}`
-
-    const product = await tx.products.create({
-      data: {
-        organization_id: organizationId,
-        code,
-        name,
-        category: cat?.key || "GENERAL",
-        status: "ACTIVE",
-        attributes: {
-          sample: true,
-          unit: cat?.defaultUnit || "món",
-          description: `Sản phẩm mẫu phục vụ trải nghiệm tính năng của ${plugin.identity.name}`,
-        },
-      },
-    })
-
-    await tx.product_variants.create({
-      data: {
-        organization_id: organizationId,
-        product_id: product.id,
-        name: "Tiêu chuẩn",
-        multiplier: 1.0,
-        attributes: {
-          price: (i + 1) * 150000 + 100000,
-          original_price: (i + 1) * 180000 + 100000,
-        },
-      },
-    })
-  }
 }

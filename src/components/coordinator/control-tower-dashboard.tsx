@@ -31,6 +31,7 @@ import {
 } from "./coordinator-api"
 import { useCustomFieldDefinitions, visibleCustomFieldsForAudience } from "./custom-fields-section"
 import type { FlowerBomItem, StructuredAddress } from "@/modules/products/domain/product-master-index"
+import { useCraftFeeSuggestion } from "@/components/greeting-card/subcontract/use-craft-fee-suggestion"
 
 /**
  * Control Tower — Chức năng 12 (Điều phối đơn hàng).
@@ -71,7 +72,7 @@ function asFlowers(order: CoordinationOrder): FlowerBomItem[] {
 }
 
 /**
- * ĐP-2.12 (26/09/2026): BOM cành hoa THẬT cho T07 — ưu tiên snapshot Master
+ * ĐP-2.12 (26/09/2026): BOM thành phần THẬT cho T07 — ưu tiên snapshot Master
  * Index (`order.product.bom.flowers`, có `shade`/`budCount`) khi đơn chọn mẫu
  * từ danh mục; đơn mẫu ngoài danh mục (không có `productId`) thì dùng BOM
  * nhập tay như cũ (`asFlowers`), không có `shade`/`budCount` vì chưa từng có
@@ -123,6 +124,7 @@ export function ControlTowerDashboard({
   const [isCraftAcceptModalOpen, setIsCraftAcceptModalOpen] = useState(false)
   const [isCraftCancelModalOpen, setIsCraftCancelModalOpen] = useState(false)
   const [suggestedFeeForAccept, setSuggestedFeeForAccept] = useState(0)
+  const craftFeeSuggestion = useCraftFeeSuggestion(selectedId)
   const [partners, setPartners] = useState<import("./coordinator-api").CoordinationPartner[]>([])
   const [resolutionDrafts, setResolutionDrafts] = useState<Record<string, string>>({})
   const [newException, setNewException] = useState({ type: "CUSTOMER_CHANGE", severity: "MEDIUM", description: "" })
@@ -425,13 +427,13 @@ export function ControlTowerDashboard({
       {/* 1. Feature Guidance Card */}
       <FeatureGuidanceCard
         badgeLabel="HƯỚNG DẪN ĐIỀU PHỐI ĐƠN HÀNG (M12)"
-        title="Tháp Vận Hành Điều Phối & Giám Sát Đơn Hàng Ngành Hoa"
-        description="Quản lý toàn bộ tiến trình từ thẩm định đơn, phân công đối tác xưởng ngoài, AI QC kiểm định chất lượng đến trao hoa tận tay người nhận (POD)."
+        title="Tháp Vận Hành Điều Phối & Giám Sát Đơn Hàng Vận Hành"
+        description="Quản lý toàn bộ tiến trình từ thẩm định đơn, phân công đối tác xưởng ngoài, AI QC kiểm định chất lượng đến trao hàng tận tay người nhận (POD)."
         tips={[
           "⚡ Một Đơn Hàng Duy Nhất (SSOT): Tự động đồng bộ với 11 chức năng còn lại",
-          "🎯 Công thức cắm hoa: Đối tác nhìn thấy chính xác danh sách nguyên liệu từ đơn",
+          "🎯 Công thức chế tác: Đối tác nhìn thấy chính xác danh sách nguyên liệu từ đơn",
           "🤖 AI QC ảnh: So khớp ảnh thành phẩm của thợ với ảnh mẫu trước khi cho phép giao",
-          "📋 28 Templates chuẩn hóa: T01 (Tiếp nhận) ➔ T02-T06 (Kế hoạch & Phân công) ➔ T07-T11 (Cắm hoa) ➔ T14-T15 (AI QC) ➔ T20-T21 (POD) ➔ T25-T27 (Đóng đơn)",
+          "📋 28 Templates chuẩn hóa: T01 (Tiếp nhận) ➔ T02-T06 (Kế hoạch & Phân công) ➔ T07-T11 (Chế tác) ➔ T14-T15 (AI QC) ➔ T20-T21 (POD) ➔ T25-T27 (Đóng đơn)",
         ]}
       />
 
@@ -484,7 +486,7 @@ export function ControlTowerDashboard({
             CÓ NGUY CƠ TRỄ (AT RISK)
           </span>
           <div className="text-3xl font-black text-warning mt-1">{atRiskCount}</div>
-          <span className="text-caption text-warning mt-2 font-medium">Cần thúc đẩy thợ cắm</span>
+          <span className="text-caption text-warning mt-2 font-medium">Cần thúc đẩy thợ chế tác</span>
         </Card>
 
         <Card className="rounded-2xl border border-success/30 bg-success/10 p-4 flex flex-col justify-between shadow-sm">
@@ -504,7 +506,7 @@ export function ControlTowerDashboard({
             { id: "ALL", label: "Tất cả đơn" },
             { id: "INTAKE", label: "P1 • Nhận đơn (T01)" },
             { id: "PLANNING", label: "P2-P3 • Kế hoạch & Xưởng (T02-T06)" },
-            { id: "IN_PRODUCTION", label: "P4 • Đang cắm hoa (T07-T11)" },
+            { id: "IN_PRODUCTION", label: "P4 • Đang chế tác (T07-T11)" },
             { id: "QUALITY_CHECK", label: "P5 • Kiểm định QC (T14-T15)" },
             { id: "DISPATCHING", label: "P6 • Giao hàng (T20-T21)" },
             { id: "DELIVERED", label: "P7 • Đóng đơn & SLA (T25-T27)" },
@@ -531,7 +533,7 @@ export function ControlTowerDashboard({
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
-              placeholder="Tìm theo mã đơn, khách hàng, mẫu hoa..."
+              placeholder="Tìm theo mã đơn, khách hàng, sản phẩm..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-border bg-surface text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
@@ -641,7 +643,7 @@ export function ControlTowerDashboard({
             <div className="p-4 border-b border-border bg-surface-alt/40 flex items-center gap-2 overflow-x-auto">
               {tabButton("SALES_INTAKE", "P1 • Tiếp nhận (T01)")}
               {tabButton("BRIEF", "P2 • Thẻ sản phẩm (T02)")}
-              {tabButton("PRODUCTION", "P4 • Phiếu cắm hoa (T07)")}
+              {tabButton("PRODUCTION", "P4 • Phiếu chế tác (T07)")}
               {tabButton("QC", "P5 • Kiểm định QC (T14)")}
               {tabButton("DELIVERY", "P6 • Giao hàng & POD (T21)")}
               {tabButton("EXCEPTION", `Sự cố (${selectedOrder.exceptions.filter((e) => e.status === "OPEN" || e.status === "IN_PROGRESS").length})`, selectedOrder.hasException ? "text-danger bg-danger/10" : "")}
@@ -747,7 +749,7 @@ export function ControlTowerDashboard({
                   <FloristJobCard
                     orderCode={selectedOrder.orderCode}
                     recipeTitle={selectedOrder.productTitle}
-                    unitPriceVnd={selectedOrder.unitPriceVnd}
+                    unitPriceVnd={selectedOrder.unitPriceVnd} suggestedFeeVnd={craftFeeSuggestion?.suggestedVnd}
                     targetReadyTime={selectedOrder.deliveryTargetTime}
                     deliveryTargetTime={selectedOrder.deliveryTargetTime}
                     sampleImageUrl={selectedOrder.sampleImageUrl}
@@ -962,7 +964,7 @@ export function ControlTowerDashboard({
             orderCode={selectedOrder.orderCode}
             recipeTitle={selectedOrder.productTitle}
             unitPriceVnd={selectedOrder.unitPriceVnd}
-            suggestedCraftFeeVnd={suggestedFeeForAccept || Math.round(selectedOrder.unitPriceVnd * 0.5)}
+            suggestedCraftFeeVnd={suggestedFeeForAccept || craftFeeSuggestion?.suggestedVnd || Math.round(selectedOrder.unitPriceVnd * 0.5)}
             partners={partners}
             currentPartnerId={selectedOrder.partner?.id ?? null}
             onConfirm={handleCraftAccept}

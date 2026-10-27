@@ -1,15 +1,16 @@
 import { AppError, sessionSuperseded, unauthenticated } from "@/core/http/errors"
 import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
 import type { TenantContext } from "@/core/tenancy"
+import { canSignIn } from "@/modules/organization/domain/account-approval"
 import { isUsable } from "@/modules/organization/domain/session-policy"
 import type { memberships, sessions, users } from "@/modules/organization/infra/entities"
-import { CapabilityRepository, getCapabilityRepository } from "@/modules/organization/infra/capability-repository"
-import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
-import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
-import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
+import { CapabilityRepository } from "@/modules/organization/infra/capability-repository"
+import { MembershipRepository } from "@/modules/organization/infra/membership-repository"
+import { RoleRepository } from "@/modules/organization/infra/role-repository"
+import { SessionRepository } from "@/modules/organization/infra/session-repository"
 import { hashSessionToken } from "@/modules/organization/infra/session-token"
-import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
-import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { UserRepository } from "@/modules/organization/infra/user-repository"
+import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 
 export type ResolvedSession = {
   readonly user: users
@@ -32,7 +33,7 @@ export async function resolveSession(request: Request): Promise<ResolvedSession>
   const token = sessionTokenFrom(request)
   if (!token) throw unauthenticated()
 
-  const sessions = getSessionRepository()
+  const sessions = new SessionRepository()
   const session = await sessions.findByTokenHash(hashSessionToken(token))
   if (!session) throw unauthenticated()
   if (!isUsable(session, new Date())) {
@@ -42,8 +43,9 @@ export async function resolveSession(request: Request): Promise<ResolvedSession>
     throw unauthenticated()
   }
 
-  const user = await getUserRepository().findById(session.user_id)
-  if (!user) throw unauthenticated()
+  const user = await new UserRepository().findById(session.user_id)
+  // Tài khoản chưa duyệt / bị từ chối không dùng được phiên nào (kể cả phiên cũ khi bị thu quyền)
+  if (!user || !canSignIn(user.approval_status)) throw unauthenticated()
 
   if (!session.organization_id) {
     return { user, session, membership: null, ctx: null }
@@ -77,20 +79,20 @@ export async function tenantContextFor(
 ): Promise<{ ctx: TenantContext; membership: memberships } | null> {
   // Tư cách thành viên kiểm lại ở mỗi lần giải ngữ cảnh: người bị gỡ khỏi tổ
   // chức mất quyền đọc ngay, không phải chờ phiên hết hạn.
-  const membership = await getMembershipRepository().findForUserInOrganization(
+  const membership = await new MembershipRepository().findForUserInOrganization(
     userId,
     organizationId
   )
   if (!membership || membership.status !== "ACTIVE") return null
 
-  const workspace = await getWorkspaceRepository().findDefaultForSessionOrganization(
+  const workspace = await new WorkspaceRepository().findDefaultForSessionOrganization(
     organizationId
   )
   if (!workspace) {
     throw new AppError("INTERNAL", "Tổ chức không có workspace nào")
   }
 
-  const role = await getRoleRepository().findAssignableByIdForOrganization(
+  const role = await new RoleRepository().findAssignableByIdForOrganization(
     organizationId,
     membership.role_id
   )
@@ -101,7 +103,7 @@ export async function tenantContextFor(
   // Ba lớp quyền tính một lần ở biên (đặc tả 02 mục 1): switchboard của vai,
   // đè bằng ngoại lệ của tổ chức, rồi trần cứng cắt sau cùng. `ctx.capabilities`
   // là kết quả cuối, chỉ còn việc `hasCapability`/`requireCapability` tra cứu.
-  const grants = await getCapabilityRepository().resolveGrants(organizationId, role.id, role.key)
+  const grants = await new CapabilityRepository().resolveGrants(organizationId, role.id, role.key)
 
   return {
     ctx: {

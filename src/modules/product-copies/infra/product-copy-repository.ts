@@ -161,7 +161,7 @@ export class ProductCopyRepository implements IProductCopyRepository {
       // Đọc `attributes` hiện có TRƯỚC khi ghi. Duyệt phân tích ảnh (`H3`) đã
       // đặt `bom`, `confidence`, `checklist`, `san_xuat` vào đúng cột này và
       // M02/M03 đọc chúng — ghi đè nguyên cột ở đây sẽ xoá trắng định mức vật
-      // tư của bó hoa mà không ai biết. Hợp nhất nông, giữ mọi khoá cũ.
+      // tư của sản phẩm mà không ai biết. Hợp nhất nông, giữ mọi khoá cũ.
       const current = await tx.products.findFirst({
         where: { id: copy.product_id, organization_id: ctx.organizationId },
         select: { attributes: true },

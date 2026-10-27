@@ -1,6 +1,9 @@
 import { cache } from "react"
 
 import type { MockSession } from "@/lib/mock-data"
+import { getNavHiddenOverride } from "@/modules/platform/infra/nav-matrix-store"
+import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
+import { canOverrideIndustryLock } from "@/modules/organization/domain/organization-settings-policy"
 import { describeSession } from "./describe-session"
 import { resolveSession } from "./resolve-session"
 import { parseDevRoleOverride, applyDevRoleOverride, DEV_ROLE_COOKIE } from "@/lib/dev-role-override"
@@ -41,10 +44,13 @@ export const resolveAppSession = cache(async function resolveAppSession(
 
   const rawOrgName = described.organization?.name ?? "smeOS"
   const cleanOrgName = rawOrgName.replace(/\s*\(\s*dev\s*\)/gi, "").trim()
-  const orgSettings = (described.organization?.settings as Record<string, unknown> | null) ?? null
-  const industry = typeof orgSettings?.industry === "string" ? orgSettings.industry : "FLORAL"
-  const isSuperUser = described.user.email === "tuans2@dev.com" || Boolean(described.user.email?.endsWith("@dev.com"))
-  const industryLocked = isSuperUser ? false : Boolean(orgSettings?.industry_locked)
+  const industry = described.organization?.industry ?? "FLORAL"
+  // Quyền vượt khoá ngành lấy từ mã năng lực nền tảng (N1/N12), không từ đuôi email (rà soát H11)
+  const operator = await new PlatformOperatorRepository().findActiveByUserId(described.user.id)
+  const platformCapabilities = operator?.capabilityCodes ?? []
+  const industryLocked = canOverrideIndustryLock(platformCapabilities) ? false : (described.organization?.industry_locked ?? false)
+  // Ma trận điều hướng Admin SaaS ghi đè cho ngành này — đọc ở máy chủ, không đóng gói lúc build (M13)
+  const navHiddenKeys = await getNavHiddenOverride(industry)
 
   const session: MockSession = {
     userName: described.user.name ?? described.user.email,
@@ -53,12 +59,14 @@ export const resolveAppSession = cache(async function resolveAppSession(
     orgName: cleanOrgName,
     workspaceKind: (described.workspace?.kind as MockSession["workspaceKind"]) ?? "PRODUCTION",
     capabilities: described.capabilities,
+    platformCapabilities,
     organization: described.organization
       ? {
           id: described.organization.id,
           name: cleanOrgName,
           industry,
           industryLocked,
+          navHiddenKeys,
         }
       : undefined,
     // Đặc tả 03b (Role UX): khoá vai + loại tổ chức để chọn trang chủ/thứ tự
@@ -66,7 +74,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
     roleKey: described.membership?.role_key ?? null,
     organizationType: described.organization?.type ?? null,
     pendingModelChange:
-      (orgSettings?.pending_model_change as MockSession["pendingModelChange"]) ?? null,
+      (described.organization?.pending_model_change as MockSession["pendingModelChange"]) ?? null,
   }
 
   // Dev-only: merge role override cookie nếu có.

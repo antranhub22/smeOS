@@ -1,3 +1,5 @@
+import type { ProductPricing } from "@/modules/products/domain/product-pricing"
+
 export interface ParsedProductRow {
   index: number
   code: string
@@ -19,6 +21,10 @@ export interface ParsedProductRow {
   uploadedAssetId?: string | null | undefined
   status: "MATCHED" | "DRIVE_SYNC" | "NO_IMAGE" | "ERROR"
   errorMsg?: string | undefined
+  /** Có cột "Kiểu giá": kiểu giá đã dựng (Khoảng giá gộp nhiều dòng cùng mã) */
+  pricing?: ProductPricing | undefined
+  /** Số dòng phiên bản đã gộp */
+  variantCount?: number | undefined
 }
 
 export interface ImportResult {

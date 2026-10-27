@@ -1,4 +1,5 @@
 import { expect, test, type APIRequestContext } from "@playwright/test"
+import { approveAndLogin } from "./ux/helpers"
 
 /**
  * E2E Test — Swipe Brochure / Thẻ Chào (03/10/2026, cập nhật 08/10 cho lễ 20/10)
@@ -20,11 +21,12 @@ async function registerTenant(request: APIRequestContext, suffix: string) {
   const email = `brochure-test-${suffix}@floraos-e2e.local`
   const orgName = `BrochureTest ${suffix}`
 
-  // Đăng ký đặt luôn cookie phiên (đường /auth/register cũ không tồn tại)
+  // Đăng ký chờ superadmin duyệt (PO 22/10/2026): duyệt trong CSDL test rồi đăng nhập lấy cookie phiên
   const regRes = await request.post(`${BASE}/api/v1/auth/signup`, {
     data: { email, password: "Test@12345!", organization_name: orgName },
   })
-  expect(regRes.status()).toBe(201)
+  expect(regRes.status()).toBe(202)
+  await approveAndLogin(request, email, "Test@12345!", BASE)
   return { email, orgName }
 }
 

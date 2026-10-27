@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import {
-  Camera,
   CheckCircle2,
   UploadCloud,
   ImageIcon,
@@ -15,14 +14,16 @@ import {
   Sparkles,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PhotoSourcePicker } from "./photo-source-picker"
 import { cn } from "@/lib/utils"
-import type { DeliveryProofInfo } from "./delivery-proof-card"
+import type { DeliveryProofInfo } from "./subcontract-card-types"
 import { SubcontractPodPreview } from "./subcontract-pod-preview"
 import { SubcontractPodSuccess } from "./subcontract-pod-success"
 import { useStepCountdown } from "./use-step-countdown"
 import { StepCountdownBadge } from "./step-countdown-badge"
 
 import { SubcontractBypassControl, type StepBypassRequestInfo } from "./subcontract-bypass-control"
+import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 export interface SubcontractStepProofProps {
   orderCode: string
@@ -57,7 +58,6 @@ export function SubcontractStepProof({
   onDelivered,
   onBypassRequested,
 }: SubcontractStepProofProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [note, setNote] = useState("")
@@ -100,9 +100,6 @@ export function SubcontractStepProof({
     }
     setSelectedFile(null)
     setPreviewUrl(null)
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
   }
 
   async function handleSubmitProof() {
@@ -124,6 +121,7 @@ export function SubcontractStepProof({
 
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}/submit-delivery`, {
         method: "POST",
+        headers: subcontractAccessHeaders(),
         body: formData,
       })
 
@@ -144,7 +142,7 @@ export function SubcontractStepProof({
 
   return (
     <section
-      aria-label="Công đoạn 4: Bằng chứng giao hàng & Nghiệm thu (POD)"
+      aria-label="Công đoạn 4: Bằng chứng giao hàng & Nghiệm thu"
       className={cn(
         "rounded-2xl border transition-all duration-300 overflow-hidden",
         isActive
@@ -180,7 +178,7 @@ export function SubcontractStepProof({
           </div>
           <div>
             <span className="text-body-sm font-extrabold text-foreground block">
-              4. Bằng chứng giao hàng & Nghiệm thu (POD)
+              4. Bằng chứng giao hàng & Nghiệm thu
             </span>
             <span className="text-caption text-text-muted">
               {isActuallyDelivered
@@ -202,7 +200,7 @@ export function SubcontractStepProof({
               <StepCountdownBadge countdown={countdown} labelPrefix="Giao trước" />
             ) : (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
-                <Clock size={12} /> Chờ ảnh POD
+                <Clock size={12} /> Chờ ảnh giao hàng
               </span>
             )
           ) : (
@@ -235,7 +233,7 @@ export function SubcontractStepProof({
             <div className="flex items-center gap-2">
               <Clock size={16} className={countdown.isOverdue ? "text-danger" : "text-primary"} />
               <span>
-                Hạn chót giao hàng (POD): <strong>{countdown.targetTimeStr || "Đang tính"}</strong>
+                Hạn chót giao hàng: <strong>{countdown.targetTimeStr || "Đang tính"}</strong>
               </span>
             </div>
             <strong className={cn("text-body-sm font-black", countdown.isOverdue ? "text-danger" : "text-primary")}>
@@ -264,15 +262,6 @@ export function SubcontractStepProof({
               </div>
             )}
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-
             {previewUrl ? (
               <SubcontractPodPreview
                 previewUrl={previewUrl}
@@ -280,19 +269,10 @@ export function SubcontractStepProof({
                 onCancel={handleCancelPreview}
               />
             ) : (
-              <Button
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full h-20 border-2 border-dashed border-primary/50 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-2 text-primary font-bold text-body-sm">
-                  <Camera size={20} />
-                  <span>CHỤP ẢNH BẰNG CHỨNG GIAO HÀNG (POD)</span>
-                </div>
-                <span className="text-caption text-text-muted">
-                  Ảnh chụp người nhận nhận hoa hoặc ảnh hoa tại cửa/cổng địa chỉ nhận
-                </span>
-              </Button>
+              <PhotoSourcePicker
+                hint="Ảnh người nhận nhận hoa hoặc ảnh hoa tại cửa/cổng địa chỉ nhận"
+                onChange={handleFileChange}
+              />
             )}
 
             <div>
@@ -333,7 +313,7 @@ export function SubcontractStepProof({
           orderCode={orderCode}
           branchId={branchId}
           stepKey="POD"
-          stepTitle="Bằng chứng giao hàng (POD)"
+          stepTitle="Bằng chứng giao hàng"
           existingRequest={bypassRequest}
           isCompleted={isActuallyDelivered}
           onBypassRequested={onBypassRequested}

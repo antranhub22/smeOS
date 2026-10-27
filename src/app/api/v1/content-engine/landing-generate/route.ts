@@ -42,7 +42,7 @@ export const POST = handle(async (request) => {
     getBrandProfile(ctx).catch(() => null),
   ])
 
-  const shopName = bizProfile?.display_name || "Tiệm Hoa Tươi"
+  const shopName = bizProfile?.display_name || "Tiệm Sản Phẩm"
   const shopTone = brandProfile?.tone_of_voice || undefined
 
   const result = await executeGenerateLandingContent(

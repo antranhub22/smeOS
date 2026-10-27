@@ -369,10 +369,10 @@ function getTrendRationale(item: OpportunityItem): string {
   const lower = item.topicName.toLowerCase();
 
   if (lower.includes("cưới") || lower.includes("kỷ niệm")) {
-    return "Mùa cưới và các dịp kỷ niệm thu-đông đang bước vào giai đoạn cao điểm. Khách hàng sẵn sàng chi trả cho các mẫu hoa mang tính cá nhân hóa cao, phối màu trang nhã và lưu giữ khoảnh khắc ý nghĩa.";
+    return "Mùa cưới và các dịp kỷ niệm thu-đông đang bước vào giai đoạn cao điểm. Khách hàng sẵn sàng chi trả cho các sản phẩm mang tính cá nhân hóa cao, phối màu trang nhã và lưu giữ khoảnh khắc ý nghĩa.";
   }
   if (lower.includes("20/10") || lower.includes("8/3") || lower.includes("phụ nữ")) {
-    return "Lực đẩy từ sự kiện ngày lễ lớn tạo ra lượng tìm kiếm đột biến. Tỷ lệ chốt đơn của các mẫu hoa quà tặng thiết kế sẵn và đặt trước hỏa tốc đạt mức cao nhất trong tháng.";
+    return "Lực đẩy từ sự kiện ngày lễ lớn tạo ra lượng tìm kiếm đột biến. Tỷ lệ chốt đơn của các sản phẩm quà tặng thiết kế sẵn và đặt trước hỏa tốc đạt mức cao nhất trong tháng.";
   }
   if (lower.includes("tốt nghiệp") || lower.includes("cử nhân")) {
     return "Mùa tốt nghiệp các trường đại học và THPT tạo ra nhu cầu mua hoa chúc mừng chụp kỷ yếu rực rỡ, ưu tiên các tone màu tươi sáng và hoa giữ form tốt khi di chuyển ngoài trời.";

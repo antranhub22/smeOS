@@ -5,8 +5,9 @@
 // 2. Workspace THẬT → khuôn trải nghiệm của vai (`resolveRoleUx`):
 //    - `store_manager` (vai `dieu_hanh`) → Business & Operations Command Center
 //    - `sales` (vai `sale`)             → Pipeline Workspace
-//    - `coordinator` (vai `dieu_phoi`)  → Control Tower — chuyển sang tuyến có
-//      sẵn `/dieu-phoi`, không dựng màn thứ hai cho cùng một việc (03b §4.4)
+//    - `coordinator` (vai `dieu_phoi`)  → trang chủ chuỗi (`/dieu-phoi` mở từ menu)
+//    - `cua_hang` (cửa hàng nhận gia công) → trang chủ cửa hàng (`/cua-hang` mở từ menu)
+//    PO 23/10/2026: mọi tài khoản luôn thấy trang chủ sau đăng nhập — không chuyển tiếp.
 //    - vai chưa gắn khuôn (vai riêng của tổ chức…) → Command Center, giữ đúng
 //      hành vi trước 26/09.
 // Khuôn chỉ chọn MÀN; năng lực (`capabilities`) vẫn quyết định nút nào hiện
@@ -16,7 +17,6 @@
 // tài khoản tự đăng ký (`POST /auth/signup`) luôn có workspace `EXPERIENCE`.
 
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
 
 import { ExperienceGrid } from "@/components/dashboard/experience-grid"
 import { SalesWorkspace } from "@/components/dashboard/sales-workspace"
@@ -30,6 +30,7 @@ import { StoreJourneyHome } from "@/components/dashboard/store-journey-home"
 import { NetworkJourneyHome } from "@/components/dashboard/network-journey-home"
 import { PlatformJourneyHome } from "@/components/dashboard/platform-journey-home"
 import { IndustryJourneyHome } from "@/components/dashboard/industry-journey-home"
+import { ToolkitHome } from "@/components/dashboard/toolkit-home"
 import { resolveRoleUx } from "@/modules/organization/domain/role-ux-catalog"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
 
@@ -45,20 +46,23 @@ export default async function DashboardPage() {
   // sang /dang-nhap trước khi tới đây — nhánh này chỉ để tsc yên tâm về kiểu.
   if (!session) return null
 
+  if (session.roleKey === "cua_hang") return <StoreJourneyHome />
+
   const roleUx = resolveRoleUx(session.roleKey, session.organizationType)
 
   switch (roleUx?.homepage) {
+    case "TOOLKIT_HOME":
+      return <ToolkitHome />
     case "STORE_JOURNEY_HOME":
       return <StoreJourneyHome />
     case "NETWORK_JOURNEY_HOME":
       return <NetworkJourneyHome />
+    case "PLATFORM_JOURNEY_HOME":
+      return <PlatformJourneyHome />
     case "INDUSTRY_JOURNEY_HOME":
       return <IndustryJourneyHome />
-    case "PLATFORM_JOURNEY_HOME":
-    case "CONTROL_CENTER":
-      return redirect("/van-hanh" as never)
     case "CONTROL_TOWER":
-      return redirect("/dieu-phoi" as never)
+      return <NetworkJourneyHome />
     case "FLOWER_NETWORK_COMMAND_CENTER":
       return <FlowerNetworkCommandCenter />
     case "SALES_WORKSPACE":
@@ -71,6 +75,7 @@ export default async function DashboardPage() {
       return <CrmWorkspace />
     case "CUSTOMER_SERVICE_WORKSPACE":
       return <CustomerServiceWorkspace />
+    case "CONTROL_CENTER":
     case "STORE_GROWTH_CENTER":
     case "STORE_COMMAND_CENTER":
     default:

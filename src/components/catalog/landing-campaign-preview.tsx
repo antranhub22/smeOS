@@ -183,7 +183,7 @@ export function LandingCampaignPreview({
                   <LandingTemplateVideo
                     videoUrl={videoUrl}
                     archetypeId={archetypeId}
-                    title="Video Cận Cảnh Mẫu Hoa Thực Tế"
+                    title="Video Cận Cảnh Sản Phẩm Thực Tế"
                   />
                 )}
 
@@ -223,7 +223,7 @@ export function LandingCampaignPreview({
             />
           )}
 
-          {/* Section: Khoảnh Khắc Hoa Tươi Tại Xưởng (Gallery) */}
+          {/* Section: Khoảnh Khắc Sản Phẩm Tại Xưởng (Gallery) */}
           {enabledSections.gallery !== false && (
             <LandingTemplateGallery
               archetypeId={archetypeId}

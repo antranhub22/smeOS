@@ -108,7 +108,7 @@ export function InviteMemberDialog({
             required
           />
           <span className="text-caption text-text-muted">
-            Nếu email chưa từng đăng ký FloraOS, hệ thống sẽ tự động khởi tạo tài khoản mới.
+            Nếu email chưa từng đăng ký smeOS, hệ thống sẽ tự động khởi tạo tài khoản mới.
           </span>
         </div>
 

@@ -83,7 +83,7 @@ export function SalesPitchCard({
   const [mainFlowers, setMainFlowers] = useState<SalesPitchItem[]>(
     pitchData.mainFlowers.length > 0
       ? pitchData.mainFlowers
-      : [{ id: "f-0", name: "Hoa tươi", quantity: 10, unit: "cành", color: "Tự nhiên", role: "Chủ đạo" }]
+      : [{ id: "f-0", name: "Sản phẩm", quantity: 10, unit: "cành", color: "Tự nhiên", role: "Chủ đạo" }]
   )
   const [foliageItems, setFoliageItems] = useState<SalesPitchItem[]>(pitchData.foliageItems)
   const [accessoryItems, setAccessoryItems] = useState<SalesPitchItem[]>(pitchData.accessoryItems)
@@ -618,7 +618,7 @@ export function SalesPitchCard({
             <CheckCircle2 size={22} strokeWidth={2.5} />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold">Lưu thẻ chào mẫu hoa thành công!</h4>
+            <h4 className="text-sm font-bold">Lưu thẻ chào sản phẩm thành công!</h4>
             <p className="text-xs opacity-90">
               Thẻ đã được duyệt và lưu vào <strong>Kho ảnh & nội dung</strong>.
             </p>
@@ -635,7 +635,7 @@ export function SalesPitchCard({
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-bold">Tạo đơn hàng thành công!</h4>
             <p className="text-xs opacity-90">
-              Đơn hàng đã được chuyển sang mục <strong>Đơn hàng</strong> với đầy đủ thành phần hoa để chuẩn bị cắm hoa.
+              Đơn hàng đã được chuyển sang mục <strong>Đơn hàng</strong> với đầy đủ thành phần hoa để chuẩn bị chế tác.
             </p>
           </div>
         </div>
@@ -657,7 +657,7 @@ export function SalesPitchCard({
               </Badge>
             )}
           </div>
-          <h2 className="mt-0.5 text-lg sm:text-xl font-extrabold text-text tracking-tight">Thẻ chào mẫu hoa và kịch bản tư vấn</h2>
+          <h2 className="mt-0.5 text-lg sm:text-xl font-extrabold text-text tracking-tight">Thẻ chào sản phẩm và kịch bản tư vấn</h2>
           <p className="text-xs text-text-muted mt-0.5">
             Chỉnh sửa thông tin hoa, giá bán và quà tặng trước khi sử dụng.
           </p>
@@ -717,7 +717,7 @@ export function SalesPitchCard({
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="sm:col-span-2">
-                  <label className="text-caption font-bold text-text-muted block mb-1">Tên mẫu hoa</label>
+                  <label className="text-caption font-bold text-text-muted block mb-1">Tên sản phẩm</label>
                   <input
                     type="text"
                     value={productName}
@@ -792,7 +792,7 @@ export function SalesPitchCard({
                     value={shopName}
                     onChange={(e) => setShopName(e.target.value)}
                     className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="FloraOS Boutique"
+                    placeholder="smeOS Boutique"
                   />
                 </div>
               </div>
@@ -877,7 +877,7 @@ export function SalesPitchCard({
                     🌺 Hoa chính ({mainFlowers.length} loại)
                   </span>
                   <Button variant="outline" size="sm" onClick={addFlower} className="h-7 text-xs gap-1">
-                    <Plus size={13} /> Thêm loại hoa
+                    <Plus size={13} /> Thêm nguyên liệu
                   </Button>
                 </div>
 
@@ -928,7 +928,7 @@ export function SalesPitchCard({
                           type="button"
                           onClick={() => removeFlower(idx)}
                           className="p-1 text-text-muted hover:text-danger transition-colors"
-                          title="Xóa dòng hoa này"
+                          title="Xóa dòng này"
                         >
                           <Trash2 size={15} />
                         </button>
@@ -1006,7 +1006,7 @@ export function SalesPitchCard({
                     value={container}
                     onChange={(e) => setContainer(e.target.value)}
                     className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="Bình gốm, Giỏ mây, Bó hoa..."
+                    placeholder="Bình gốm, Giỏ mây, Sản phẩm..."
                   />
                 </div>
 

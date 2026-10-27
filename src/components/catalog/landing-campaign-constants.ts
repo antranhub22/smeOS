@@ -13,7 +13,7 @@ export interface CampaignArchetype {
 export const CAMPAIGN_OCCASIONS: CampaignOccasion[] = [
   { id: "20-10", label: "Phụ nữ Việt Nam 20/10", defaultHeadline: "Trao Yêu Thương — Tôn Vinh Phái Đẹp 20/10" },
   { id: "valentine", label: "Valentine 14/2", defaultHeadline: "Gửi Trọn Tình Yêu — Ngọt Ngào Lễ Tình Nhân" },
-  { id: "8-3", label: "Quốc tế Phụ nữ 8/3", defaultHeadline: "Ngàn Hoa Tươi Thắm — Chúc Mừng Ngày 8/3" },
+  { id: "8-3", label: "Quốc tế Phụ nữ 8/3", defaultHeadline: "Ngàn Sản Phẩm Thắm — Chúc Mừng Ngày 8/3" },
   { id: "ngay-cua-me", label: "Ngày của Mẹ", defaultHeadline: "Tri Ân Tình Mẹ — Yêu Thương Vô Bờ" },
   { id: "khai-truong", label: "Khai trương hồng phát", defaultHeadline: "Khai Trương Đại Cát — Tài Lộc Tấn Tới" },
   { id: "hoa-cuoi", label: "Hoa cưới trọn gói", defaultHeadline: "Hạnh Phúc Bất Tận — Ngày Chung Đôi Rạng Rỡ" },

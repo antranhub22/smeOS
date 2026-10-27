@@ -1,7 +1,9 @@
 /**
  * Định nghĩa các bộ lọc sản phẩm: Giá, Dịp, Danh mục, Sắp xếp
- * và các tiện ích chuẩn hóa tìm kiếm tiếng Việt cho Kho Sản Phẩm Mẫu Hoa FloraOS.
+ * và các tiện ích chuẩn hóa tìm kiếm tiếng Việt cho Kho Sản Phẩm Sản Phẩm FloraOS.
  */
+
+import { productPriceSpan, spanOverlaps } from "./product-price-span"
 
 export type OccasionId =
   | "all"
@@ -361,29 +363,22 @@ export function matchProductOccasion(
   return false
 }
 
-/** Khớp khoảng giá */
+/** Khớp khoảng giá — sản phẩm Khoảng giá khớp khi khoảng của nó giao với khoảng lọc */
 export function matchProductPrice(
-  price: number | null,
+  price: { min: number; max: number } | number | null,
   priceRangeId: PriceRangeId,
   customMin: number | null,
   customMax: number | null
 ): boolean {
   if (priceRangeId === "all") return true
 
-  if (priceRangeId === "custom") {
-    if (price === null) return false
-    if (customMin !== null && price < customMin) return false
-    if (customMax !== null && price > customMax) return false
-    return true
-  }
+  const span = typeof price === "number" ? { min: price, max: price } : price
+  if (priceRangeId === "custom") return spanOverlaps(span, customMin, customMax)
 
   const def = PRICE_RANGES.find((p) => p.id === priceRangeId)
   if (!def) return true
 
-  if (price === null) return false
-  if (def.min !== null && price < def.min) return false
-  if (def.max !== null && price > def.max) return false
-  return true
+  return spanOverlaps(span, def.min, def.max)
 }
 
 /** Lọc và sắp xếp danh sách sản phẩm */
@@ -427,7 +422,7 @@ export function filterAndSortProducts<T extends MinimalProductItem>(
   if (filters.priceRange !== "all") {
     result = result.filter((p) =>
       matchProductPrice(
-        p.price_vnd,
+        productPriceSpan(p),
         filters.priceRange,
         filters.customMinPrice,
         filters.customMaxPrice
@@ -438,14 +433,15 @@ export function filterAndSortProducts<T extends MinimalProductItem>(
   // 5. Sắp xếp
   if (filters.sortBy === "price_asc") {
     result = [...result].sort((a, b) => {
-      const pA = a.price_vnd ?? Number.MAX_SAFE_INTEGER
-      const pB = b.price_vnd ?? Number.MAX_SAFE_INTEGER
+      const pA = productPriceSpan(a)?.min ?? Number.MAX_SAFE_INTEGER
+      const pB = productPriceSpan(b)?.min ?? Number.MAX_SAFE_INTEGER
       return pA - pB
     })
   } else if (filters.sortBy === "price_desc") {
     result = [...result].sort((a, b) => {
-      const pA = a.price_vnd ?? -1
-      const pB = b.price_vnd ?? -1
+      // Giá cao → thấp: xếp theo giá cao nhất của khoảng
+      const pA = productPriceSpan(a)?.max ?? -1
+      const pB = productPriceSpan(b)?.max ?? -1
       return pB - pA
     })
   } else if (filters.sortBy === "name_asc") {

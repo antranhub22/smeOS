@@ -43,7 +43,14 @@ describe("SubcontractOrderRepository", () => {
       branches: {
         findFirst: vi.fn().mockResolvedValue({ id: "branch-abc" }),
       },
+      organizations: { findUnique: vi.fn().mockResolvedValue({ settings: {} }) },
     }
+    // Giao dịch giả: chạy thẳng trên mock; SELECT … FOR UPDATE trả dòng mà findFirst đang giả lập
+    mockDb.$transaction = (fn: (tx: unknown) => unknown) => fn(mockDb)
+    mockDb.$queryRaw = vi.fn(async () => {
+      const row = await mockDb.order_coordinations.findFirst()
+      return row ? [row] : []
+    })
     repo = new SubcontractOrderRepository(mockDb)
   })
 
@@ -118,9 +125,9 @@ describe("SubcontractOrderRepository", () => {
 
   it("findSubcontractByCode tìm đơn với include relations", async () => {
     mockDb.orders.findFirst.mockResolvedValue({ id: "ord-123", code: "DH123" })
-    const order = await repo.findSubcontractByCode("DH123")
+    const order = await repo.findSubcontractByCode("DH123", "org-1")
     expect(mockDb.orders.findFirst).toHaveBeenCalledWith({
-      where: { code: "DH123" },
+      where: { organization_id: "org-1", code: "DH123" },
       include: {
         coordination: true,
         items: true,

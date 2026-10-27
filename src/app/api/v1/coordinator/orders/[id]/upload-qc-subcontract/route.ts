@@ -4,17 +4,21 @@
  * Coordinator-Stream M2: Điều phối viên tự upload ảnh thành phẩm thay cho cửa hàng.
  * Hành động này triệt tiêu (First-Wins Mutex) toàn bộ reminder M2 đang pending.
  *
- * Yêu cầu: Session đăng nhập với capability "coordinator_subcontract_act"
+ * Yêu cầu: Session đăng nhập có mã năng lực R3
  * hoặc "can_upload_qc_photo" (fallback: bất kỳ member có vai coordinator).
  */
 
 import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
+import { SUBCONTRACT_STEP_NOT_ALLOWED, SUBCONTRACT_STEP_PRECONDITION, subcontractStepAllowed } from "@/modules/greeting-card/domain/subcontract-order"
+import { ownStorageKey } from "@/modules/greeting-card/use-cases/sign-subcontract-photo"
+import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { log } from "@/core/observability/log"
 import {
   cancelSubcontractReminderSteps,
@@ -22,7 +26,6 @@ import {
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { verifyQcPhotoWithAi } from "@/modules/greeting-card/use-cases/verify-qc-photo-ai"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
-import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 
 const MAX_QC_PHOTO_BYTES = 10 * 1024 * 1024
 
@@ -40,6 +43,7 @@ function sniffImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; mimeType:
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R3")
   const { id: orderId } = await context.params
 
   const repo = new SubcontractOrderRepository()
@@ -66,6 +70,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   const sniffed = sniffImage(bytes)
   if (!sniffed) throw validationFailed({ file: "Định dạng không hợp lệ (JPG/PNG/WebP)" })
+  if (!subcontractStepAllowed("QC", order)) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.QC)
 
   // AI Verify — coordinator upload cũng phải pass AI để đảm bảo chất lượng
   const snapshot = (order.greeting_sessions?.[0]?.product_snapshot as Record<string, unknown> | null) ?? {}
@@ -74,17 +79,22 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
 
   const storage = getStorageProvider()
   if (sampleImageUrl?.startsWith("org/")) {
-    sampleImageUrl = await storage.signedUrl(sampleImageUrl, 3600, "GET").catch(() => sampleImageUrl)
+    // Chỉ ký ảnh trong thư mục của chính tổ chức (rà soát cụm G)
+    const ownKey = ownStorageKey(sampleImageUrl, order.organization_id)
+    sampleImageUrl = ownKey ? await storage.signedUrl(ownKey, 3600, "GET").catch(() => undefined) : undefined
   }
 
   const aiVerify = await verifyQcPhotoWithAi({
+    organizationId: order.organization_id,
+    orderId: order.id,
     productName,
     sampleImageUrl,
     qcPhotoBytes: bytes,
     qcPhotoMimeType: sniffed.mimeType,
   })
 
-  if (!aiVerify.isMatch) {
+  // Điều phối là người duyệt: chỉ chặn khi AI kết luận SAI ảnh; AI không chạy được thì người tự quyết
+  if (aiVerify.verdict === "MISMATCH") {
     throw unprocessable(
       `❌ AI xác nhận ảnh không khớp sản phẩm: ${aiVerify.reason} (${aiVerify.confidenceScore}%). Vui lòng kiểm tra lại.`
     )
@@ -94,36 +104,34 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const assetId = randomUUID()
   const storageKey = `org/${order.organization_id}/subcontract/${order.id}/coord-qc-${assetId}.${sniffed.ext}`
   await storage.put(storageKey, Buffer.from(bytes), sniffed.mimeType)
-  const publicPhotoUrl = await storage.signedUrl(storageKey, 604800, "GET")
+  const publicPhotoUrl = await storage.signedUrl(storageKey, 3600, "GET")
 
   // Cập nhật DB — giống store upload nhưng actor là coordinator
-  const coord = await repo.findCoordination(order.id)
-  const existingMeta = (coord?.metadata as Record<string, unknown> | null) ?? {}
-  const existingQcPhotos = Array.isArray(existingMeta.qc_photos) ? (existingMeta.qc_photos as string[]) : []
-
-  const orderRepo = getOrderRepository()
-
-  await repo.upsertCoordinationMeta(order.id, order.organization_id, {
-    qc_photos: [...existingQcPhotos, storageKey],
-    last_qc_uploaded_at: new Date().toISOString(),
-    last_qc_uploaded_by: `coordinator:${ctx.userId}`,
-    last_qc_note: note || null,
-    auto_bypassed_coordinator: false,
+  const store = new SubcontractStepStore()
+  const saved = await store.applyStep({
+    organizationId: order.organization_id,
+    orderId: order.id,
+    order: { production_status: "READY" },
+    require: SUBCONTRACT_STEP_PRECONDITION.QC,
+    recordProductPhoto: { createdBy: ctx.userId },
+    metadata: (current) => ({
+      ...current,
+      qc_photos: [...(Array.isArray(current.qc_photos) ? (current.qc_photos as string[]) : []), storageKey],
+      last_qc_uploaded_at: new Date().toISOString(),
+      last_qc_uploaded_by: `coordinator:${ctx.userId}`,
+      last_qc_note: note || null,
+      auto_bypassed_coordinator: false, // coordinator thực hiện trực tiếp
+    }),
+    events: [{
+      axis: "production",
+      fromValue: order.production_status,
+      toValue: "READY",
+      actorId: `coordinator:${ctx.userId}`,
+      reason: `[Coordinator Upload QC] ${aiVerify.reason} (${aiVerify.confidenceScore}%). Ghi chú: ${note || "Không có"}`,
+    }],
   })
 
-  await orderRepo.update(order.organization_id, order.id, {
-    productionStatus: "READY",
-  })
-
-  await orderRepo.recordEvent(
-    order.organization_id,
-    order.id,
-    "production",
-    "READY",
-    `coordinator:${ctx.userId}`,
-    order.production_status,
-    `[Coordinator Upload QC] ${aiVerify.reason} (${aiVerify.confidenceScore}%). Ghi chú: ${note || "Không có"}`
-  )
+  if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.QC)
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M2 reminders đang pending
   await cancelSubcontractReminderSteps({

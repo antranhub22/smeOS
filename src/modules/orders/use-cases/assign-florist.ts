@@ -1,5 +1,5 @@
 /**
- * Use-case: Assign Florist (Phân công thợ cắm hoa — M10, R4).
+ * Use-case: Assign Florist (Phân công thợ chế tác — M10, R4).
  */
 
 import { brochureLockReason } from "../domain/order-rules"
@@ -29,7 +29,7 @@ export async function assignFlorist(
   if (brochureLock) throw new AppError("CONFLICT", brochureLock)
 
   if (existing.status === "CANCELLED" || existing.status === "COMPLETED") {
-    throw new AppError("UNPROCESSABLE_ENTITY", "Không thể phân công thợ cắm cho đơn đã kết thúc.")
+    throw new AppError("UNPROCESSABLE_ENTITY", "Không thể phân công thợ chế tác cho đơn đã kết thúc.")
   }
 
   // Tạo phân công mới qua repository
@@ -49,7 +49,7 @@ export async function assignFlorist(
     "ASSIGNED",
     ctx.userId,
     existing.productionStatus,
-    `Phân công thợ cắm (ID: ${input.assigneeId})`
+    `Phân công thợ chế tác (ID: ${input.assigneeId})`
   )
 
   return repo.update(ctx.organizationId, orderId, {

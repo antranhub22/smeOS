@@ -36,7 +36,7 @@ export function DirectResearchPanel({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const query = keyword.trim() || "Hoa tươi xu hướng";
+    const query = keyword.trim() || "Sản phẩm xu hướng";
     await onTriggerRun({
       keyword: query,
       geo,
@@ -89,7 +89,7 @@ export function DirectResearchPanel({
               type="text"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              placeholder="Nhập từ khóa hoặc chọn từ 210 từ khóa chuẩn (VD: Bó hoa tốt nghiệp hướng dương, Hoa 20/10...)"
+              placeholder="Nhập từ khóa hoặc chọn từ 210 từ khóa chuẩn (VD: Sản phẩm tốt nghiệp hướng dương, Hoa 20/10...)"
               className="h-10 w-full rounded-xl border border-cool-200 bg-cool-50/60 pl-9 pr-3 text-xs text-cool-900 placeholder:text-cool-400 outline-none focus:border-blush-500 focus:bg-white focus:ring-2 focus:ring-blush-100 transition"
             />
           </div>

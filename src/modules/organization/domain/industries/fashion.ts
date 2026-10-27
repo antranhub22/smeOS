@@ -48,6 +48,15 @@ export const FASHION_INDUSTRY: IndustryPluginContract = {
       { label: "1.500.000 – 3.000.000 ₫", min: 1500000, max: 3000000 },
       { label: "Trên 3.000.000 ₫", min: 3000000 },
     ],
+    pricingPresets: {
+      weekendIsPeak: false,
+      variantDimensions: [
+        { key: "SIZE", label: "Size", values: ["XS", "S", "M", "L", "XL", "XXL", "Freesize"] },
+        { key: "COLOR", label: "Màu", values: ["Đen", "Trắng", "Be", "Xám", "Xanh navy", "Đỏ", "Hồng", "Nâu"] },
+        { key: "MATERIAL", label: "Chất liệu", values: ["Cotton", "Lụa", "Linen", "Kaki", "Jean", "Len", "Da"] },
+        { key: "FIT", label: "Kiểu dáng", values: ["Ôm", "Suông", "Rộng (oversize)"] },
+      ],
+    },
   },
   bomSpec: {
     measurementUnits: ["cái", "bộ", "mét", "cuộn", "chiếc", "set"],
@@ -99,5 +108,18 @@ export const FASHION_INDUSTRY: IndustryPluginContract = {
   },
   navigation: {
     hiddenNavKeys: [],
+  },
+  craftFee: {
+    feeLabel: "Phí may đo",
+    defaultPercent: 40,
+    minVnd: 100_000,
+    maxVnd: 3_000_000,
+    partnerPercent: 70,
+    complexityLabels: { EASY: "Sửa, chỉnh đồ", MEDIUM: "May cơ bản", HARD: "Đo may cao cấp" },
+    laborByComplexityVnd: { EASY: 50_000, MEDIUM: 200_000, HARD: 600_000 },
+    peakDays: [
+      { monthDay: "03-08", label: "Quốc tế Phụ nữ" },
+      { monthDay: "10-20", label: "Phụ nữ Việt Nam" },
+    ],
   },
 }

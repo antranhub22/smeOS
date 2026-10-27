@@ -64,6 +64,7 @@ export function BypassRequestModal({
             type="button"
             onClick={onClose}
             disabled={submitting}
+            aria-label="Đóng"
             className="p-1 rounded-lg hover:bg-black/5 text-text-muted hover:text-foreground cursor-pointer"
           >
             <X size={16} />

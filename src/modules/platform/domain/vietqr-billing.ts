@@ -30,7 +30,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: "plan-starter",
     code: "STARTER",
-    name: "Tiệm Hoa Khởi Nghiệp",
+    name: "Gói Khởi Nghiệp",
     priceMonthlyVnd: 299_000,
     includedCreditsMonthly: 300,
     description: "Dành cho shop hoa mới mở, phục vụ nhu cầu bán hàng & đăng bài cơ bản",
@@ -44,7 +44,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: "plan-growth",
     code: "GROWTH",
-    name: "Tiệm Hoa Tăng Trưởng",
+    name: "Gói Tăng Trưởng",
     priceMonthlyVnd: 599_000,
     includedCreditsMonthly: 800,
     description: "Gói bán chạy nhất — Tự động hóa tiếp thị, CRM chăm sóc và studio AI",

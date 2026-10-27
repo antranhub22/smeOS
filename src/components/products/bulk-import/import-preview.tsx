@@ -2,6 +2,7 @@
 
 import { AlertTriangle, Check, FileSpreadsheet, Image as ImageIcon, RefreshCw } from "lucide-react"
 import { parseDriveLink, type ParsedProductRow } from "./types"
+import { priceLabel, summarizePricing } from "@/modules/products/domain/product-pricing"
 import type { DriveThumbState } from "./use-drive-thumbs"
 
 export type ImportStats = { total: number; matched: number; driveSynced: number; noImage: number; errors: number; notDriveLinks: number }
@@ -64,8 +65,8 @@ export function ImportPreview({ rows, stats, isImporting, progressPhase, driveTh
                 <tr>
                   <th className="px-3 py-2.5 w-12 text-center">#</th>
                   <th className="px-3 py-2.5 w-20">Ảnh</th>
-                  <th className="px-3 py-2.5 w-28">Mã mẫu hoa</th>
-                  <th className="px-3 py-2.5">Tên mẫu hoa</th>
+                  <th className="px-3 py-2.5 w-28">Mã sản phẩm</th>
+                  <th className="px-3 py-2.5">Tên sản phẩm</th>
                   <th className="px-3 py-2.5 w-28">Danh mục</th>
                   <th className="px-3 py-2.5 w-28 text-right">Giá niêm yết (₫)</th>
                   <th className="px-3 py-2.5">Thành phần hoa</th>
@@ -156,7 +157,7 @@ export function ImportPreview({ rows, stats, isImporting, progressPhase, driveTh
                       {row.category}
                     </td>
                     <td className="px-3 py-2.5 text-right font-semibold text-primary">
-                      {row.price ? `${row.price.toLocaleString("vi-VN")}đ` : "—"}
+                      {row.pricing ? `${priceLabel(summarizePricing(row.pricing))}${row.variantCount ? ` · ${row.variantCount} phiên bản` : ""}` : row.price ? `${row.price.toLocaleString("vi-VN")}đ` : "—"}
                     </td>
                     <td className="px-3 py-2.5 text-caption text-text-muted max-w-[220px] truncate" title={row.flowersText}>
                       {row.flowersText || "Chưa có"}

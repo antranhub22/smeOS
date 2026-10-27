@@ -9,7 +9,7 @@ export const M04B_VARIANT_PRESETS: StudioVariantItem[] = [
     name: "Tách nền trong suốt (PNG)",
     thumbnailUrl:
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cpattern id='c' width='20' height='20' patternUnits='userSpaceOnUse'%3E%3Crect width='10' height='10' fill='%23eee'/%3E%3Crect x='10' y='10' width='10' height='10' fill='%23eee'/%3E%3Crect x='10' width='10' height='10' fill='%23fff'/%3E%3Crect y='10' width='10' height='10' fill='%23fff'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23c)'/%3E%3Ccircle cx='50' cy='50' r='24' fill='%23e11d48' opacity='0.2'/%3E%3Ctext x='50' y='55' font-family='sans-serif' font-size='12' font-weight='bold' text-anchor='middle' fill='%23be123c'%3EPNG%3C/text%3E%3C/svg%3E",
-    description: "Khử nền U2-Net, giữ trọn chi tiết cành hoa, xuất định dạng PNG trong suốt",
+    description: "Khử nền U2-Net, giữ trọn chi tiết thành phần, xuất định dạng PNG trong suốt",
     tag: "AIC-11 Lõi",
   },
   {

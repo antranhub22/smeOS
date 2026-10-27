@@ -85,4 +85,13 @@ describe("IndustryPluginContract SSOT Verification", () => {
     expect(fnb.templates.printables.some((p) => p.type === "MENU")).toBe(true)
     expect(fnb.bomSpec.measurementUnits).toContain("gram")
   })
+
+  it("mỗi ngành có gợi ý nhóm đặc điểm cho giá theo phiên bản", () => {
+    for (const plugin of Object.values(INDUSTRY_REGISTRY)) {
+      const dims = plugin.taxonomy.pricingPresets.variantDimensions
+      expect(dims.length).toBeGreaterThanOrEqual(3)
+      expect(new Set(dims.map((d) => d.key)).size).toBe(dims.length)
+      for (const d of dims) expect(d.values.length).toBeGreaterThanOrEqual(3)
+    }
+  })
 })

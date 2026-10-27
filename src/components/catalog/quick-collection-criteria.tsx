@@ -248,7 +248,7 @@ export function QuickCollectionCriteriaPanel({
         </div>
       </div>
 
-      {/* Giao diện Thẻ Chào Mẫu Hoa (Dropdown) */}
+      {/* Giao diện Thẻ Chào Sản Phẩm (Dropdown) */}
       <div className="pt-2 border-t border-border">
         <div className="flex items-center justify-between mb-1.5">
           <label className="text-caption font-bold text-text flex items-center gap-1.5">

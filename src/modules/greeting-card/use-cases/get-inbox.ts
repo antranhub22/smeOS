@@ -1,19 +1,20 @@
 import type { TenantContext } from "@/core/tenancy"
-import { GreetingMessageRepository, getGreetingMessageRepository } from "../infra/greeting-message-repository"
-import { GreetingIntegrationRepository, getGreetingIntegrationRepository } from "../infra/greeting-integration-repository"
+import { GreetingMessageRepository } from "../infra/greeting-message-repository"
+import { GreetingIntegrationRepository } from "../infra/greeting-integration-repository"
 import { roleOf, MESSAGE_ROLE_LABEL, CUSTOMER_SENDER_ID, CUSTOMER_SENDER_LABEL, type MessageRole } from "../domain/internal-message"
 import { inboxActions, inboxUpdates, type InboxAction } from "../domain/inbox"
 import { getTrackingPipeline } from "./get-tracking-pipeline"
 import { resolveSaleScope } from "./order-scope"
-import { DiscountRepository, getDiscountRepository } from "../infra/discount-repository"
-import { CancellationRepository, getCancellationRepository } from "../infra/cancellation-repository"
-import { CancellationFollowUpRepository, getCancellationFollowUpRepository } from "../infra/cancellation-follow-up-repository"
+import { DiscountRepository } from "../infra/discount-repository"
+import { CancellationRepository } from "../infra/cancellation-repository"
+import { CancellationFollowUpRepository } from "../infra/cancellation-follow-up-repository"
 import { CANCELLATION_TYPE_LABEL, type CancellationPayload, type CancellationType } from "../domain/cancellation-request"
 import { describeDiscount, parseMaxDiscountPercent, type DiscountPayload } from "../domain/discount-request"
 import { getCurrentOrganization } from "@/modules/organization/use-cases/get-current-organization"
 import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
 import { changeRequestActions } from "./order-change"
-import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
+import { BrochureOrderRepository } from "../infra/brochure-order-repository"
+import { countPendingProposals } from "@/modules/products/use-cases/count-pending-proposals"
 
 export interface InboxThread {
   key: string
@@ -36,7 +37,7 @@ export async function getInbox(ctx: TenantContext, targetRole?: MessageRole | un
   const canSwitchRole = ctx.capabilities.has("F2")
   const defaultRole: MessageRole = roleOf(ctx.capabilities) ?? "SALE"
   const role: MessageRole = canSwitchRole && targetRole ? targetRole : defaultRole
-  const repo = getGreetingMessageRepository()
+  const repo = new GreetingMessageRepository()
   const [pipeline, messages, members, scope] = await Promise.all([
     getTrackingPipeline(ctx),
     repo.listAddressed(ctx, role),
@@ -49,9 +50,9 @@ export async function getInbox(ctx: TenantContext, targetRole?: MessageRole | un
   if (ctx.capabilities.has(GREETING_CARD_CAPABILITY.orderUpdate)) actions.unshift(...(await changeRequestActions(ctx, pipeline)))
   if (role === "ADMIN") {
     const [pending, pendingCancellations, followUps, org] = await Promise.all([
-      getDiscountRepository().listPending(ctx),
-      getCancellationRepository().listPending(ctx),
-      getCancellationFollowUpRepository().listPending(ctx),
+      new DiscountRepository().listPending(ctx),
+      new CancellationRepository().listPending(ctx),
+      new CancellationFollowUpRepository().listPending(ctx),
       getCurrentOrganization(ctx),
     ])
     const maxPercent = parseMaxDiscountPercent(org?.settings)
@@ -99,7 +100,15 @@ export async function getInbox(ctx: TenantContext, targetRole?: MessageRole | un
         },
       })
     }
-    const unmatched = await getGreetingIntegrationRepository().listPaymentEvents(ctx, { status: "UNMATCHED", limit: 50 })
+    const proposals = ctx.capabilities.has("H3") ? await countPendingProposals(ctx) : 0 // mẫu mới + đề xuất sửa
+    if (proposals > 0) {
+      actions.push({
+        id: "product-proposals", kind: "PRODUCT_PROPOSALS", title: `${proposals >= 100 ? "100+" : proposals} đề xuất mẫu sản phẩm chờ duyệt`,
+        detail: "Mẫu mới và đề xuất sửa của nhân viên; duyệt hoặc từ chối trước hạn 30 ngày", orderId: null, sessionId: null, customerName: null, imageUrl: null,
+        tab: "payment", urgency: 300, href: "/san-pham?duyet=1",
+      })
+    }
+    const unmatched = await new GreetingIntegrationRepository().listPaymentEvents(ctx, { status: "UNMATCHED", limit: 50 })
     if (unmatched.length > 0) {
       actions.unshift({
         id: "unmatched", kind: "UNMATCHED_PAYMENTS", title: `${unmatched.length >= 50 ? "50+" : unmatched.length} khoản tiền vào chưa khớp đơn`,
@@ -111,7 +120,7 @@ export async function getInbox(ctx: TenantContext, targetRole?: MessageRole | un
   // Đơn đã giao còn nợ ngoài cửa sổ 7 ngày của bảng theo dõi — nhắc tới khi thu đủ (mục 3, PO 15/10/2026)
   if (role === "ADMIN" || role === "SALE") {
     const seen = new Set(actions.map((a) => a.id))
-    const debts = await getBrochureOrderRepository().listDeliveredWithDebt(ctx, role === "SALE" ? ctx.userId : scope)
+    const debts = await new BrochureOrderRepository().listDeliveredWithDebt(ctx, role === "SALE" ? ctx.userId : scope)
     for (const d of debts) {
       const id = `collect-post-delivery:${d.orderId}`
       if (seen.has(id)) continue

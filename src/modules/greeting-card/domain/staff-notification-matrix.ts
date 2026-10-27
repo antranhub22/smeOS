@@ -193,6 +193,63 @@ export const STAFF_NOTIFY_MATRIX: Record<StaffNotifyEvent, StaffRecipientTarget[
       priority: "NORMAL",
     },
   ],
+
+  // Mẫu mới do nhân viên tạo đã dùng được ngay — Điều hành chỉ cần duyệt sau.
+  PRODUCT_PROPOSED: [
+    {
+      role: "ADMIN",
+      dispatchMode: "BROADCAST",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "NORMAL",
+    },
+  ],
+
+  PRODUCT_PROPOSAL_REMINDER: [
+    {
+      role: "ADMIN",
+      dispatchMode: "BROADCAST",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "NORMAL",
+    },
+  ],
+
+  // Người đề xuất có thể là Sale hoặc Điều phối: OWNER + `assignedSaleId` = người đề xuất
+  // gửi đúng người đó bất kể vai (`findRecipientsByRole` lọc theo user khi có id).
+  PRODUCT_PROPOSAL_REJECTED: [
+    {
+      role: "SALE",
+      dispatchMode: "OWNER",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "NORMAL",
+    },
+  ],
+
+  PRODUCT_PROPOSAL_EXPIRED: [
+    {
+      role: "SALE",
+      dispatchMode: "OWNER",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "NORMAL",
+    },
+  ],
+
+  PRODUCT_CHANGE_REQUESTED: [
+    {
+      role: "ADMIN",
+      dispatchMode: "BROADCAST",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "NORMAL",
+    },
+  ],
+
+  PRODUCT_CHANGE_REVIEWED: [
+    {
+      role: "SALE",
+      dispatchMode: "OWNER",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "NORMAL",
+    },
+  ],
 }
 
 import { formatIndustryStaffNotificationText } from "./industry-notification-formatter"
@@ -246,7 +303,7 @@ export function resolveStaffNotificationTargets(
           recipientUserId: null,
           channels: effectiveChannels,
           priority: spec.priority,
-          title: `[Chưa nhận] ${title}`,
+          title,
           message: `${message} (Đơn chưa có người phụ trách — nhân viên Sale nhận đơn ngay).`,
         })
       }

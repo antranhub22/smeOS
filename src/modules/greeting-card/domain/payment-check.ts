@@ -76,7 +76,7 @@ export function paymentCheckOf(order: {
         : `${promoTitle} (tặng kèm, không đổi tiền)`
 
   return {
-    productName: order.product?.name ?? str(snap.name) ?? str(meta.name) ?? "Mẫu hoa",
+    productName: order.product?.name ?? str(snap.name) ?? str(meta.name) ?? "Sản phẩm",
     productCode: order.product ? order.product.code : str(snap.code) ?? str(meta.code),
     imageUrl: order.product ? order.product.imageUrl : str(snap.imageUrl) ?? str(meta.imageUrl),
     variantName,

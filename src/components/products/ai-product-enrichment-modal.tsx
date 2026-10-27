@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react"
 import { Sparkles, CheckCircle2, AlertCircle, X, Loader2 } from "lucide-react"
+import { AiProductModalFooter, type SubmitMode } from "./ai-product-modal-footer"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
+import { useSession } from "@/lib/session"
+import { isPendingProposal } from "@/modules/products/domain/product-proposal"
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"
 import {
   type ProductFormValues,
@@ -16,6 +19,7 @@ import {
 import { getDesignFieldsConfig } from "./create-product-types"
 import { AiProductFormFields } from "./ai-product-form-fields"
 import { extractInitialFormValues, type InitialProductInput } from "./ai-product-initial"
+import { buildSaveAsPayload, createProductCopy, type CreatedProduct } from "./ai-product-save-as"
 
 interface AiProductEnrichmentModalProps {
   isOpen: boolean
@@ -23,6 +27,8 @@ interface AiProductEnrichmentModalProps {
   productId: string
   initialProduct: InitialProductInput
   onSuccess: () => void
+  /** Sau "Lưu thành mẫu mới": nơi gọi mở mẫu vừa tạo. */
+  onSavedAsNew?: (created: CreatedProduct) => void
 }
 
 export function AiProductEnrichmentModal({
@@ -31,8 +37,12 @@ export function AiProductEnrichmentModal({
   productId,
   initialProduct,
   onSuccess,
+  onSavedAsNew,
 }: AiProductEnrichmentModalProps) {
   const { ti, industry } = useI18n()
+  const { can } = useSession()
+  // Máy chủ kiểm lại; ở đây chỉ ẩn nút người dùng chắc chắn bị từ chối.
+  const canOverwrite = can("H3") || isPendingProposal(initialProduct.attributes as Record<string, unknown> | null)
   const designConfig = getDesignFieldsConfig(industry.identity.key)
   const defaultCategory = industry.taxonomy.defaultCategories[0]?.label || ""
   const defaultShape = designConfig.shapeOptions[0] || ""
@@ -57,7 +67,7 @@ export function AiProductEnrichmentModal({
   const [uploadingImage, setUploadingImage] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [isGeneratingContent, setIsGeneratingContent] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState<false | SubmitMode>(false)
   const [notice, setNotice] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [contentSuggestions, setContentSuggestions] = useState<string[]>([])
@@ -178,7 +188,7 @@ export function AiProductEnrichmentModal({
     }
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (mode: SubmitMode) => {
     if (!values.name.trim()) {
       setErrorMsg(`Vui lòng nhập tên ${ti("sampleProduct").toLowerCase()}.`)
       return
@@ -188,7 +198,7 @@ export function AiProductEnrichmentModal({
       return
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(mode)
     setErrorMsg(null)
 
     try {
@@ -203,8 +213,20 @@ export function AiProductEnrichmentModal({
       const currentAttrs = (initialProduct.attributes as Record<string, unknown> | null) ?? {}
       const patchData = buildProductPatchPayload(values, currentAttrs, finalAssetId, finalImageUrl)
 
-      const res = await fetch(`/api/v1/products/${productId}`, {
-        method: "PATCH",
+      if (mode === "saveAs") {
+        const created = await createProductCopy(
+          buildSaveAsPayload(patchData, initialProduct),
+          ti("sampleProduct").toLowerCase()
+        )
+        onSuccess()
+        onSavedAsNew?.(created)
+        if (!onSavedAsNew) onClose()
+        return
+      }
+
+      // Không được ghi đè → gửi đề xuất sửa; bản đang bán giữ nguyên tới khi Điều hành duyệt.
+      const res = await fetch(mode === "propose" ? `/api/v1/products/${productId}/change-requests` : `/api/v1/products/${productId}`, {
+        method: mode === "propose" ? "POST" : "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patchData),
       })
@@ -221,6 +243,10 @@ export function AiProductEnrichmentModal({
         throw new Error(msg)
       }
 
+      if (mode === "propose") {
+        setNotice("Đã gửi đề xuất sửa. Mẫu đang bán giữ nguyên tới khi Điều hành duyệt.")
+        return
+      }
       await new Promise((r) => setTimeout(r, 400))
 
       onSuccess()
@@ -305,22 +331,7 @@ export function AiProductEnrichmentModal({
           />
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-3 border-t border-border px-5 py-3.5 bg-surface-alt/50">
-          <Button variant="outline" size="sm" onClick={onClose} disabled={isSubmitting}>
-            Hủy
-          </Button>
-          <Button size="sm" onClick={handleSubmit} disabled={isSubmitting} className="font-bold">
-            {isSubmitting ? (
-              <>
-                <Loader2 size={15} className="animate-spin" />
-                <span>Đang lưu...</span>
-              </>
-            ) : (
-              "Lưu thay đổi"
-            )}
-          </Button>
-        </div>
+        <AiProductModalFooter canOverwrite={canOverwrite} submitting={isSubmitting} onCancel={onClose} onSubmit={(mode) => void handleSubmit(mode)} />
       </div>
     </div>
   )

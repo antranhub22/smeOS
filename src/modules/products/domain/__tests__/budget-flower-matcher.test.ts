@@ -14,10 +14,10 @@ describe("Budget Flower Matcher Domain (SP-18, SP-19, BH-04)", () => {
       code: "FL-001",
       name: "Bó Hoa Tình Nồng",
       sellingPriceVnd: 650_000,
-      category: "Bó hoa",
+      category: "Sản phẩm",
       colorTheme: "Đỏ rực rỡ",
       occasions: ["Sinh nhật", "Kỷ niệm", "Tình yêu"],
-      style: "Bó hoa tròn",
+      style: "Sản phẩm tròn",
       highlightFlowers: ["Hồng đỏ Ohara", "Baby trắng"],
       isFeatured: true,
     },
@@ -37,10 +37,10 @@ describe("Budget Flower Matcher Domain (SP-18, SP-19, BH-04)", () => {
       code: "FL-003",
       name: "Bó Hoa Hồng Juliet VIP",
       sellingPriceVnd: 850_000, // Cao hơn ngân sách 700k (Upsell +21%)
-      category: "Bó hoa",
+      category: "Sản phẩm",
       colorTheme: "Cam pastel",
       occasions: ["Sinh nhật", "Kỷ niệm"],
-      style: "Bó hoa dài",
+      style: "Sản phẩm dài",
       highlightFlowers: ["Hồng Juliet", "Lan hồ điệp"],
       isFeatured: true,
     },
@@ -63,7 +63,7 @@ describe("Budget Flower Matcher Domain (SP-18, SP-19, BH-04)", () => {
       maxPriceVnd: 700_000,
       occasion: "Sinh nhật",
       colorTone: "Đỏ",
-      arrangementStyle: "Bó hoa",
+      arrangementStyle: "Sản phẩm",
     }
 
     const evaluation = calculateProductMatchScore(mockCandidates[0]!, criteria)

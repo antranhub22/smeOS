@@ -658,7 +658,7 @@ export function AccountStorageHub({
                 item.product?.name ||
                 (effective.product_name as string) ||
                 (identity.category as string) ||
-                "Bó hoa thiết kế"
+                "Sản phẩm thiết kế"
               const displayStyle = (identity.phong_cach as string) || "Hiện đại"
               const displayOccasion = identity.dip_su_dung ? String(identity.dip_su_dung) : null
 
@@ -778,7 +778,7 @@ export function AccountStorageHub({
               <CheckCircle2 size={32} className="mx-auto text-success mb-2 opacity-60" />
               <div className="text-sm font-bold text-text">Chưa có kịch bản tư vấn nào</div>
               <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto">
-                Khi bạn duyệt thẻ chào mẫu hoa và kịch bản tư vấn, nội dung sẽ được lưu vào đây để dùng lại.
+                Khi bạn duyệt thẻ chào sản phẩm và kịch bản tư vấn, nội dung sẽ được lưu vào đây để dùng lại.
               </p>
             </Card>
           )}
