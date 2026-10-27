@@ -58,6 +58,32 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Công cụ",
   },
 
+  // 3. GIÁM SÁT SẢN PHẨM & KHO (toàn nền tảng)
+  {
+    href: "/van-hanh/san-pham",
+    label: "Catalog & Sản phẩm toàn hệ thống",
+    group: "san-pham-kho-platform",
+    iconKey: "Package",
+    navKey: "platform-products",
+    mobileLabel: "Sản phẩm",
+  },
+  {
+    href: "/van-hanh/truong-du-lieu",
+    label: "Schema & Taxonomy toàn cầu",
+    group: "san-pham-kho-platform",
+    iconKey: "Layers",
+    navKey: "platform-taxonomy",
+    mobileLabel: "Schema",
+  },
+  {
+    href: "/van-hanh/du-lieu",
+    label: "Tổng hợp Kho & Tồn kho",
+    group: "san-pham-kho-platform",
+    iconKey: "Folder",
+    navKey: "platform-inventory",
+    mobileLabel: "Tồn kho",
+  },
+
   // 3. HẠ TẦNG & TÀI NGUYÊN
   {
     href: "/cai-dat-ai",
@@ -114,12 +140,14 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
 ] as const
 
 export const MOTHER_GROUPS_CONFIG = [
-  { key: "tong-quan", label: "Tổng quan" },
-  { key: "to-chuc-dich-vu", label: "Tổ chức & Dịch vụ" },
-  { key: "ha-tang-tai-nguyen", label: "Hạ tầng & Tài nguyên" },
-  { key: "do-tin-cay-bao-mat", label: "Độ tin cậy & Bảo mật" },
-  { key: "thiet-lap-platform", label: "Thiết lập" },
+  { key: "tong-quan", label: "TỔNG QUAN" },
+  { key: "to-chuc-dich-vu", label: "TỔ CHỨC & DỊCH VỤ" },
+  { key: "san-pham-kho-platform", label: "SẢN PHẨM & KHO" },
+  { key: "ha-tang-tai-nguyen", label: "HẠ TẦNG & TÀI NGUYÊN" },
+  { key: "do-tin-cay-bao-mat", label: "ĐỘ TIN CẬY & BẢO MẬT" },
+  { key: "thiet-lap-platform", label: "THIẾT LẬP" },
 ] as const
+
 
 export function buildMotherNav(can: (code: string) => boolean): NavView {
   const groups: NavGroup[] = []

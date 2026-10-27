@@ -779,6 +779,56 @@ nhom_5:
 3. **Tiêu thụ Động theo Tầng (Dynamic Tier Projection):**
    - Các thanh sidebar của **SaaS Ngành (Tầng 2)**, **ChainOS (Tầng 3)**, và **StoreOS (Tầng 4)** sử dụng hàm chiếu `getSidebarToolsForTier(tier)` từ SSOT Registry để tự động lọc và hiển thị đúng các công cụ được chỉ định cho tầng đó mà không phụ thuộc vào mã nguồn cứng.
 
+### 4.8 KIẾN TRÚC SSOT SẢN PHẨM & KHO (PRODUCT & INVENTORY SSOT ARCHITECTURE)
+
+Để bảo đảm tính toàn vẹn dữ liệu, phân quyền quản lý và khả năng mở rộng xuyên suốt từ Tầng 1 đến Tầng 4, toàn bộ khối **Sản phẩm & Kho** được chuẩn hóa thành một hệ thống phân cấp SSOT độc lập (`src/modules/products/domain/product-nav-contract.ts`):
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                             🏛️ TẦNG 1: SAAS MOTHER                                │
+│                     (GIÁM SÁT SẢN PHẨM & KHO TOÀN NỀN TẢNG)                      │
+│  - Thu thập toàn bộ dữ liệu về sản phẩm và kho của các tầng 2-3-4                │
+│  - Tổng hợp tài nguyên lưu trữ, dữ liệu và mức tiêu thụ tài nguyên               │
+│  - Giám sát trường thuộc tính động và catalog xuyên tenant                       │
+└────────────────────────────────────────┬─────────────────────────────────────────┘
+                                         │ Thu thập & Đồng bộ dữ liệu
+                                         ▼
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                             🌐 TẦNG 2: SAAS NGÀNH                                │
+│                     (CHUẨN HÓA SẢN PHẨM & QUY CHUẨN NGÀNH)                       │
+│  - Thu thập dữ liệu và chuẩn hóa danh mục, taxonomy theo từng ngành hàng         │
+│  - Thư viện sản phẩm mẫu, định lượng BOM Spec chuẩn theo ngành                   │
+│  - Khung chính sách giá và cấu hình trường dữ liệu đặc thù ngành                │
+└────────────────────────────────────────┬─────────────────────────────────────────┘
+                                         │ Kế thừa & Phân bổ bộ sưu tập
+                                         ▼
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                               🔗 TẦNG 3: CHAINOS                                 │
+│                      (SẢN PHẨM & KHO HỆ THỐNG CHUỖI)                             │
+│  - Thu thập, quản lý dữ liệu của riêng chuỗi (bản thân chuỗi & chi nhánh/xưởng)  │
+│  - Quản lý Bộ sưu tập Chuỗi (Chain Collections) & Chính sách giá niêm yết        │
+│  - Giám sát khả dụng, tồn kho nguyên liệu và năng lực của các chi nhánh          │
+└────────────────────────────────────────┬─────────────────────────────────────────┘
+                                         │ Đồng bộ khả dụng & Bán lẻ
+                                         ▼
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                               🏪 TẦNG 4: STOREOS                                 │
+│                  (SẢN PHẨM BÁN LẺ & KHO NGUYÊN LIỆU TẠI TIỆM)                    │
+│  - Quản lý trực tiếp danh mục sản phẩm bán tại quầy & công thức BOM              │
+│  - Khối KHO riêng biệt: Quản lý kho nguyên vật liệu, tài nguyên ảnh/video        │
+│  - Cập nhật tồn kho khả dụng ngày & công cụ tính giá thành chi tiết              │
+└──────────────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Bảng Đối Chiếu Ma Trận Sản Phẩm & Kho 4 Tầng:
+
+| Tầng | Nhóm Sidebar | Mục tiêu cốt lõi | Chức năng thành phần |
+|---|---|---|---|
+| **Tầng 1 (SaaS Mother)** | `san-pham-kho-platform` | Thu thập & giám sát toàn diện dữ liệu tầng 2-3-4 | Dữ liệu nền tảng, Lưu trữ & Kho tài nguyên, Thuộc tính động |
+| **Tầng 2 (SaaS Ngành)** | `san-pham-nganh` | Chuẩn hóa danh mục, taxonomy & định lượng theo ngành | Danh mục & Sản phẩm mẫu, Taxonomy & Quy chuẩn, Trường dữ liệu ngành |
+| **Tầng 3 (ChainOS)** | `san-pham-kho-chuoi` | Quản lý sản phẩm chuỗi & tổng hợp kho chi nhánh | Bộ sưu tập & Giá chuỗi, Khả dụng & Tồn kho chi nhánh |
+| **Tầng 4 (StoreOS)** | `san-pham` + `kho` | Quản trị trực tiếp sản phẩm & kho nguyên vật liệu tiệm | Danh mục tiệm, Khả dụng ngày, Kho nguyên liệu, Tính giá thành |
+
 ---
 
 ### 4.6 QUY CHUẨN THIẾT KẾ SIDEBAR ENTERPRISE GRADE & UX STANDARDS

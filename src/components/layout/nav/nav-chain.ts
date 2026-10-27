@@ -92,11 +92,11 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   {
     href: "/san-pham",
     label: "Quản lý bộ sưu tập & Giá",
-    group: "cong-cu-chuoi",
+    group: "san-pham-kho-chuoi",
     iconKey: "Tag",
     navKey: "chain-collections",
     capability: "L1",
-    mobileLabel: "Bộ sưu tập",
+    mobileLabel: "Sưu tập",
   },
 
   // 03 · KINH DOANH & KHÁCH HÀNG
@@ -129,11 +129,31 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   {
     href: "/san-pham/kha-dung",
     label: "Khả dụng & Năng lực",
-    group: "kinh-doanh-chuoi",
+    group: "san-pham-kho-chuoi",
     iconKey: "CalendarCheck",
     navKey: "chain-availability",
     capability: "L1",
     mobileLabel: "Khả dụng",
+  },
+
+  // SẢN PHẨM & KHO CHUỘI (tiếp theo)
+  {
+    href: "/gia",
+    label: "Chính sách giá & Chiết khấu chuỗi",
+    group: "san-pham-kho-chuoi",
+    iconKey: "WalletCards",
+    navKey: "chain-pricing",
+    capability: "L6",
+    mobileLabel: "Giá chuỗi",
+  },
+  {
+    href: "/kho-du-lieu",
+    label: "Kho nguyên liệu chuỗi",
+    group: "san-pham-kho-chuoi",
+    iconKey: "Folder",
+    navKey: "chain-storage",
+    capability: "G1",
+    mobileLabel: "Kho",
   },
 
   // 04 · BÁO CÁO & TÀI CHÍNH
@@ -170,9 +190,10 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
 export const CHAIN_GROUPS_CONFIG = [
   { key: "dieu-hanh-chuoi", label: "01 · ĐIỀU HÀNH" },
   { key: "cong-cu-chuoi", label: "02 · CÔNG CỤ" },
-  { key: "kinh-doanh-chuoi", label: "03 · KINH DOANH & KHÁCH" },
-  { key: "bao-cao-tai-chinh-chuoi", label: "04 · BÁO CÁO & TÀI CHÍNH" },
-  { key: "thiet-lap-chuoi", label: "05 · THIẾT LẬP" },
+  { key: "san-pham-kho-chuoi", label: "03 · SẢN PHẨM & KHO" },
+  { key: "kinh-doanh-chuoi", label: "04 · KINH DOANH & KHÁCH" },
+  { key: "bao-cao-tai-chinh-chuoi", label: "05 · BÁO CÁO & TÀI CHÍNH" },
+  { key: "thiet-lap-chuoi", label: "06 · THIẾT LẬP" },
 ] as const
 
 export function buildChainNav(

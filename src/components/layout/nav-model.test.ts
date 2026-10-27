@@ -14,12 +14,13 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
   const roleSales = ROLE_UX_CATALOG.find((r) => r.key === "sales")!
   const roleCoordinator = ROLE_UX_CATALOG.find((r) => r.key === "coordinator")!
 
-  it("1. can = () => true + role = null → đủ 5 nhóm (trừ viec-chinh), không mục trùng", () => {
+  it("1. can = () => true + role = null → đủ 6 nhóm (trừ viec-chinh), không mục trùng", () => {
     const nav = buildNav(() => true, null)
     expect(nav.groups.map((g) => g.key)).toEqual([
       "cong-cu",
       "ban-hang",
       "san-pham",
+      "kho",
       "van-hanh",
       "quan-tri",
     ])
@@ -124,13 +125,14 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     expect(floralEntries.find((e) => e.href === "/the-chao")?.label).toBe("Thẻ chào sản phẩm")
   })
 
-  it("9. Vai platform_admin → đủ 5 nhóm quản trị nền tảng (tong-quan, to-chuc-dich-vu, ha-tang-tai-nguyen, do-tin-cay-bao-mat, thiet-lap-platform)", () => {
+  it("9. Vai platform_admin → đủ 6 nhóm quản trị nền tảng (tong-quan, to-chuc-dich-vu, san-pham-kho-platform, ha-tang-tai-nguyen, do-tin-cay-bao-mat, thiet-lap-platform)", () => {
     const rolePlatform = ROLE_UX_CATALOG.find((r) => r.key === "platform_admin")!
     const nav = buildNav(() => true, rolePlatform)
 
     expect(nav.groups.map((g) => g.key)).toEqual([
       "tong-quan",
       "to-chuc-dich-vu",
+      "san-pham-kho-platform",
       "ha-tang-tai-nguyen",
       "do-tin-cay-bao-mat",
       "thiet-lap-platform",
@@ -154,14 +156,14 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     expect(slot2.href).toBe("/van-hanh/to-chuc")
   })
 
-  it("10. Vai industry_admin → đủ 6 nhóm quản trị SaaS Đa Ngành (trung-tam-dieu-hanh, cong-cu-ban-hang, chuan-hoa-nganh, mang-luoi-dieu-phoi, hieu-qua-thuong-mai, thiet-lap-nganh)", () => {
+  it("10. Vai industry_admin → đủ 6 nhóm quản trị SaaS Đa Ngành (trung-tam-dieu-hanh, cong-cu-ban-hang, san-pham-nganh, mang-luoi-dieu-phoi, hieu-qua-thuong-mai, thiet-lap-nganh)", () => {
     const roleIndustry = ROLE_UX_CATALOG.find((r) => r.key === "industry_admin")!
     const nav = buildNav(() => true, roleIndustry)
 
     expect(nav.groups.map((g) => g.key)).toEqual([
       "trung-tam-dieu-hanh",
       "cong-cu-ban-hang",
-      "chuan-hoa-nganh",
+      "san-pham-nganh",
       "mang-luoi-dieu-phoi",
       "hieu-qua-thuong-mai",
       "thiet-lap-nganh",
@@ -189,13 +191,14 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     expect(slot2.href).toBe("/van-hanh/nganh")
   })
 
-  it("11. Vai ChainOS (flower_network_admin hoặc organizationType=CHAIN) → đủ 5 nhóm điều hành chuỗi theo chuẩn", () => {
+  it("11. Vai ChainOS (flower_network_admin hoặc organizationType=CHAIN) → đủ 6 nhóm điều hành chuỗi theo chuẩn", () => {
     const roleChain = ROLE_UX_CATALOG.find((r) => r.key === "flower_network_admin")!
     const nav = buildNav(() => true, roleChain, null, null, "CHAIN")
 
     expect(nav.groups.map((g) => g.key)).toEqual([
       "dieu-hanh-chuoi",
       "cong-cu-chuoi",
+      "san-pham-kho-chuoi",
       "kinh-doanh-chuoi",
       "bao-cao-tai-chinh-chuoi",
       "thiet-lap-chuoi",
