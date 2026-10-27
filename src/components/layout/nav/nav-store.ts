@@ -262,8 +262,17 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Tri thức",
   },
   {
+    href: "/cai-dat?tab=INFO",
+    label: "Hồ sơ doanh nghiệp / Cửa hàng",
+    group: "quan-tri",
+    iconKey: "Building2",
+    navKey: "business-profile",
+    capability: "F1",
+    mobileLabel: "Hồ sơ",
+  },
+  {
     href: "/cai-dat",
-    label: "Thiết lập & Kết nối",
+    label: "Cài đặt & Thiết lập tiệm",
     group: "quan-tri",
     iconKey: "Settings2",
     navKey: "settings",
@@ -278,6 +287,51 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "store-notifications",
     capability: "F1",
     mobileLabel: "Thông báo",
+  },
+  {
+    href: "/cai-dat/ma-tran-uudai",
+    label: "Ma trận ưu đãi & voucher",
+    group: "quan-tri",
+    iconKey: "Tag",
+    navKey: "store-matrix-promotions",
+    capability: "F1",
+    mobileLabel: "Ưu đãi",
+  },
+  {
+    href: "/cai-dat/ma-tran-camket",
+    label: "Ma trận cam kết chất lượng",
+    group: "quan-tri",
+    iconKey: "ShieldCheck",
+    navKey: "store-matrix-commitments",
+    capability: "F1",
+    mobileLabel: "Cam kết",
+  },
+  {
+    href: "/cai-dat/ma-tran-chinhsach",
+    label: "Ma trận chính sách & thỏa thuận",
+    group: "quan-tri",
+    iconKey: "FileText",
+    navKey: "store-matrix-policies",
+    capability: "F1",
+    mobileLabel: "Chính sách",
+  },
+  {
+    href: "/cai-dat/ma-tran-thanhtoan-datco",
+    label: "Ma trận thanh toán & đặt cọc",
+    group: "quan-tri",
+    iconKey: "CreditCard",
+    navKey: "store-matrix-payments",
+    capability: "F1",
+    mobileLabel: "Thanh toán",
+  },
+  {
+    href: "/cai-dat/ma-tran-phigiacong",
+    label: "Ma trận phí gia công & thợ",
+    group: "quan-tri",
+    iconKey: "Wrench",
+    navKey: "store-matrix-craft-fees",
+    capability: "F1",
+    mobileLabel: "Phí thợ",
   },
 ] as const
 
@@ -387,7 +441,8 @@ export function buildStoreNav(
     const groupEntries = entries.filter(
       (entry) =>
         entry.group === config.key &&
-        !pinnedHrefs.has(entry.href) &&
+        // Nhóm quản trị tiệm (cài đặt, hồ sơ, ma trận) luôn luôn hiển thị đầy đủ, không bị loại bởi pinnedHrefs
+        (config.key === "quan-tri" || !pinnedHrefs.has(entry.href)) &&
         isAccessible(entry)
     )
     if (groupEntries.length > 0) {

@@ -135,6 +135,7 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
       "san-pham-kho-platform",
       "ha-tang-tai-nguyen",
       "do-tin-cay-bao-mat",
+      "ma-tran-governance",
       "thiet-lap-platform",
     ])
 

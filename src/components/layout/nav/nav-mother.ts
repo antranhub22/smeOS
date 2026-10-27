@@ -137,13 +137,54 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "platform-custom-fields",
     mobileLabel: "Cấu hình",
   },
+  // 5. MA TRẬN QUẢN TRỊ 4 TẦNG
   {
     href: "/van-hanh/thong-bao",
     label: "Ma trận thông báo",
-    group: "thiet-lap-platform",
+    group: "ma-tran-governance",
     iconKey: "Bell",
     navKey: "platform-notifications",
     mobileLabel: "Thông báo",
+  },
+  {
+    href: "/van-hanh/ma-tran-uudai",
+    label: "Ma trận ưu đãi & voucher",
+    group: "ma-tran-governance",
+    iconKey: "Tag",
+    navKey: "platform-matrix-promotions",
+    mobileLabel: "Ưu đãi",
+  },
+  {
+    href: "/van-hanh/ma-tran-camket",
+    label: "Ma trận cam kết chất lượng",
+    group: "ma-tran-governance",
+    iconKey: "ShieldCheck",
+    navKey: "platform-matrix-commitments",
+    mobileLabel: "Cam kết",
+  },
+  {
+    href: "/van-hanh/ma-tran-chinhsach",
+    label: "Ma trận chính sách & thỏa thuận",
+    group: "ma-tran-governance",
+    iconKey: "FileText",
+    navKey: "platform-matrix-policies",
+    mobileLabel: "Chính sách",
+  },
+  {
+    href: "/van-hanh/ma-tran-thanhtoan-datco",
+    label: "Ma trận thanh toán & đặt cọc",
+    group: "ma-tran-governance",
+    iconKey: "CreditCard",
+    navKey: "platform-matrix-payments",
+    mobileLabel: "Thanh toán",
+  },
+  {
+    href: "/van-hanh/ma-tran-phigiacong",
+    label: "Ma trận phí gia công & thợ",
+    group: "ma-tran-governance",
+    iconKey: "Wrench",
+    navKey: "platform-matrix-craft-fees",
+    mobileLabel: "Phí thợ",
   },
 ] as const
 
@@ -153,6 +194,7 @@ export const MOTHER_GROUPS_CONFIG = [
   { key: "san-pham-kho-platform", label: "SẢN PHẨM & KHO" },
   { key: "ha-tang-tai-nguyen", label: "HẠ TẦNG & TÀI NGUYÊN" },
   { key: "do-tin-cay-bao-mat", label: "ĐỘ TIN CẬY & BẢO MẬT" },
+  { key: "ma-tran-governance", label: "MA TRẬN QUẢN TRỊ 4 TẦNG" },
   { key: "thiet-lap-platform", label: "THIẾT LẬP" },
 ] as const
 
