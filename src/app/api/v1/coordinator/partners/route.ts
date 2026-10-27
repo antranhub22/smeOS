@@ -25,6 +25,18 @@ const provisionSchema = z.object({
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   const url = new URL(request.url)
+
+  // 1. Luồng coordinator workshop partners truyền thống (?active=1)
+  if (url.searchParams.has("active")) {
+    const { requireCapability } = await import("@/core/rbac/capabilities")
+    const { listPartners } = await import("@/modules/coordinator/use-cases/manage-partners")
+    requireCapability(ctx, "R1")
+    const activeOnly = url.searchParams.get("active") === "1"
+    const partners = await listPartners(ctx, { activeOnly })
+    return jsonResponse({ partners })
+  }
+
+  // 2. Luồng Chain Partnership mới
   const status = url.searchParams.get("status") as any
   const province = url.searchParams.get("province") ?? undefined
   const query = url.searchParams.get("q") ?? undefined
@@ -42,48 +54,68 @@ export const GET = handle(async (request) => {
   return jsonResponse({
     success: true,
     data: result.items,
+    partners: result.items,
     total: result.total,
   })
 })
 
+
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   const body = await request.json().catch(() => null)
-  const parsed = provisionSchema.safeParse(body)
 
-  if (!parsed.success) {
-    const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
-    throw validationFailed({ reason: errorDetails })
+  // 1. Nếu là luồng Provision tài khoản đối tác chuỗi mới (Chain Partnership)
+  if (body && ("partnerStoreName" in body || "contactEmail" in body)) {
+    const parsed = provisionSchema.safeParse(body)
+    if (!parsed.success) {
+      const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
+      throw validationFailed({ reason: errorDetails })
+    }
+
+    const partnershipRepo = getChainPartnershipRepository()
+    const chatRepo = getInternalChatRepository()
+    const useCase = new ProvisionPartnerAccountUseCase(partnershipRepo, chatRepo)
+
+    const partnership = await useCase.execute(
+      {
+        chainOrgId: ctx.organizationId,
+        partnerStoreName: parsed.data.partnerStoreName,
+        partnerCode: parsed.data.partnerCode,
+        partnershipType: parsed.data.partnershipType,
+        contactName: parsed.data.contactName,
+        contactPhone: parsed.data.contactPhone,
+        contactEmail: parsed.data.contactEmail,
+        password: parsed.data.password,
+        address: parsed.data.address,
+        province: parsed.data.province,
+        district: parsed.data.district,
+        capacityDaily: parsed.data.capacityDaily,
+        commissionRate: parsed.data.commissionRate,
+      },
+      ctx.userId
+    )
+
+    return jsonResponse(
+      {
+        success: true,
+        data: partnership,
+      },
+      { status: 201 }
+    )
   }
 
-  const partnershipRepo = getChainPartnershipRepository()
-  const chatRepo = getInternalChatRepository()
-  const useCase = new ProvisionPartnerAccountUseCase(partnershipRepo, chatRepo)
+  // 2. Luồng quản lý đối tác gia công truyền thống của Điều phối (Coordinator Workshop Partners)
+  const { requireCapability } = await import("@/core/rbac/capabilities")
+  const { createPartnerSchema } = await import("@/modules/coordinator/adapters/http-schemas")
+  const { createPartner } = await import("@/modules/coordinator/use-cases/manage-partners")
 
-  const partnership = await useCase.execute(
-    {
-      chainOrgId: ctx.organizationId,
-      partnerStoreName: parsed.data.partnerStoreName,
-      partnerCode: parsed.data.partnerCode,
-      partnershipType: parsed.data.partnershipType,
-      contactName: parsed.data.contactName,
-      contactPhone: parsed.data.contactPhone,
-      contactEmail: parsed.data.contactEmail,
-      password: parsed.data.password,
-      address: parsed.data.address,
-      province: parsed.data.province,
-      district: parsed.data.district,
-      capacityDaily: parsed.data.capacityDaily,
-      commissionRate: parsed.data.commissionRate,
-    },
-    ctx.userId
-  )
+  requireCapability(ctx, "R4")
+  const parsed = createPartnerSchema.safeParse(body)
+  if (!parsed.success) {
+    throw validationFailed({ issues: parsed.error.issues })
+  }
 
-  return jsonResponse(
-    {
-      success: true,
-      data: partnership,
-    },
-    { status: 201 }
-  )
+  const partner = await createPartner(ctx, parsed.data)
+  return jsonResponse({ partner }, { status: 201 })
 })
+
