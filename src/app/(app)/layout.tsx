@@ -50,10 +50,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           >
             Bỏ qua tới nội dung
           </a>
-          <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-none md:flex-row">
+          <div className="mx-auto flex min-h-dvh w-full flex-col md:flex-row">
             <MobileNavDrawer>
               <DesktopNav isDev={process.env.NODE_ENV !== "production"} />
-              <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-hidden focus:outline-none">
+              <div
+                id="noi-dung-chinh"
+                tabIndex={-1}
+                className="min-h-0 min-w-0 flex-1 focus:outline-none pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0"
+              >
                 {children}
               </div>
             </MobileNavDrawer>

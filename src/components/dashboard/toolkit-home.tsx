@@ -161,13 +161,13 @@ export function ToolkitHome() {
       {/* Filter + Search */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Status filter tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none]">
           {(isDev ? FILTER_OPTIONS : FILTER_OPTIONS.slice(0, 1)).map((opt) => (
             <button
               key={opt.id}
               type="button"
               onClick={() => setStatusFilter(opt.id)}
-              className={`px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
+              className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
                 statusFilter === opt.id
                   ? "bg-primary text-surface font-semibold"
                   : "bg-surface border border-border text-text hover:bg-surface-alt"

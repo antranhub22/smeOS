@@ -45,7 +45,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Điều hướng nhanh"
-      className="flex h-16 flex-shrink-0 items-stretch border-t border-border bg-surface px-1 md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch border-t border-border bg-surface/95 backdrop-blur-md px-1 pb-[env(safe-area-inset-bottom)] md:hidden shadow-lg shadow-black/5"
     >
       {/* 1. Trang chủ */}
       <Link

@@ -162,9 +162,9 @@ export function DesktopNavHeader({
               type="button"
               onClick={onClose}
               aria-label="Đóng menu"
-              className="relative ml-auto flex h-8 w-8 items-center justify-center rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+              className="relative ml-auto flex h-10 w-10 items-center justify-center rounded-xl text-text-muted hover:bg-surface-alt hover:text-text active:scale-95 transition-all cursor-pointer"
             >
-              <X size={17} />
+              <X size={18} />
             </button>
           ) : (
             <button

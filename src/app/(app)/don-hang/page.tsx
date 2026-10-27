@@ -102,17 +102,19 @@ export default function DonHangPage() {
         </div>
 
         {/* Top-Right Action Header: 1 primary + 2 secondary/ghost */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <Button size="sm" onClick={() => setCreateOpen(true)} className="flex items-center gap-1.5 font-semibold">
-            <Plus size={16} /> {t("orders.header.createOrder")}
+            <Plus size={16} /> <span className="text-caption sm:text-body-sm">{t("orders.header.createOrder")}</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setChatModalOpen(true)}
+            title={t("orders.header.createFromChat")}
             className="flex items-center gap-1.5 font-semibold text-primary border-primary/30 hover:bg-primary/5"
           >
-            <MessageSquarePlus size={14} /> {t("orders.header.createFromChat")}
+            <MessageSquarePlus size={15} />
+            <span className="hidden sm:inline">{t("orders.header.createFromChat")}</span>
           </Button>
           <Button
             variant="outline"
@@ -141,11 +143,11 @@ export default function DonHangPage() {
       </header>
 
       {/* Tabs Chuyên Biệt cho Sale & Điều Hành */}
-      <div className="flex items-center gap-2 border-b border-border bg-surface px-4 sm:px-6 pt-2 pb-0">
+      <div className="flex items-center gap-2 border-b border-border bg-surface px-4 sm:px-6 pt-2 pb-0 overflow-x-auto scrollbar-none [scrollbar-width:none]">
         <button
           type="button"
           onClick={() => setActiveTab("kanban")}
-          className={`flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors ${
+          className={`shrink-0 flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
             activeTab === "kanban"
               ? "border-primary text-primary"
               : "border-transparent text-text-muted hover:text-foreground"
@@ -158,7 +160,7 @@ export default function DonHangPage() {
         <button
           type="button"
           onClick={() => setActiveTab("brochure_sales")}
-          className={`flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors ${
+          className={`shrink-0 flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
             activeTab === "brochure_sales"
               ? "border-primary text-primary"
               : "border-transparent text-text-muted hover:text-foreground"
@@ -168,18 +170,20 @@ export default function DonHangPage() {
           <span>{ti("sampleProduct") ? `Link đặt ${ti("sampleProduct").toLowerCase()}` : t("orders.tabs.brochureLinks")}</span>
         </button>
 
-        {canConfirmTransfer && <button
-          type="button"
-          onClick={() => setActiveTab("brochure_payment")}
-          className={`flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors ${
-            activeTab === "brochure_payment"
-              ? "border-primary text-primary"
-              : "border-transparent text-text-muted hover:text-foreground"
-          }`}
-        >
-          <ShieldCheck size={16} />
-          <span>{t("orders.tabs.paymentApproval")}</span>
-        </button>}
+        {canConfirmTransfer && (
+          <button
+            type="button"
+            onClick={() => setActiveTab("brochure_payment")}
+            className={`shrink-0 flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === "brochure_payment"
+                ? "border-primary text-primary"
+                : "border-transparent text-text-muted hover:text-foreground"
+            }`}
+          >
+            <ShieldCheck size={16} />
+            <span>{t("orders.tabs.paymentApproval")}</span>
+          </button>
+        )}
       </div>
 
       {/* 2. Nội dung chính cuộn dọc */}
@@ -208,7 +212,7 @@ export default function DonHangPage() {
             </div>
 
             {/* Bộ lọc trạng thái trên Mobile (< lg) */}
-            <div className="flex lg:hidden overflow-x-auto gap-2 pb-1 text-caption">
+            <div className="flex lg:hidden overflow-x-auto gap-2 pb-1 text-caption scrollbar-none [scrollbar-width:none]">
               {[
                 { id: "all" as const, label: t("orders.filters.mobile.all"), count: filteredOrders.length },
                 { id: "new" as const, label: t("orders.filters.mobile.new"), count: colNew.length },
@@ -220,7 +224,7 @@ export default function DonHangPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setMobileTab(tab.id)}
-                  className={`flex min-h-11 items-center gap-1.5 rounded-full px-3.5 py-1 font-semibold whitespace-nowrap transition-colors ${
+                  className={`shrink-0 flex min-h-10 items-center gap-1.5 rounded-full px-3.5 py-1 font-semibold whitespace-nowrap transition-colors ${
                     mobileTab === tab.id
                       ? "bg-primary text-white"
                       : "bg-surface border border-border text-text-muted hover:bg-surface-alt"

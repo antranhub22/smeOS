@@ -325,3 +325,20 @@ body {
 img:not([data-no-zoom="true"]) {
   cursor: zoom-in;
 }
+
+/* Tối ưu Mobile: Ngăn chặn iOS Safari tự phóng to khung nhìn khi focus input */
+@media screen and (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
