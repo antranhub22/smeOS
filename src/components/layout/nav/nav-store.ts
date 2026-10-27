@@ -270,6 +270,15 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     capability: "F1",
     mobileLabel: "Cài đặt",
   },
+  {
+    href: "/cai-dat/thong-bao",
+    label: "Ma trận thông báo",
+    group: "quan-tri",
+    iconKey: "Bell",
+    navKey: "store-notifications",
+    capability: "F1",
+    mobileLabel: "Thông báo",
+  },
 ] as const
 
 export const NAV_GROUP_CONFIG = [

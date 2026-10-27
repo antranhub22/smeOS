@@ -1,0 +1,276 @@
+/**
+ * USE NOTIFICATION MATRIX — Hook fetch dữ liệu ma trận + actions
+ *
+ * Hook này load events, preferences, hard locks từ API,
+ * rồi build thành MatrixEventGroupSection[] cho UI component.
+ */
+"use client"
+
+import { useMemo, useCallback } from "react"
+import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
+import type {
+  MatrixViewerTier,
+  MatrixCellState,
+  MatrixEventRow,
+  MatrixEventGroupSection,
+} from "./notification-matrix-types"
+import { EVENT_GROUP_LABELS } from "./notification-matrix-types"
+import type {
+  NotifyChannel,
+  NotificationTier,
+  NotificationEventGroup,
+  NotificationEventDefinition,
+} from "@/modules/notification/domain/events/_contract"
+
+/** Shape trả về từ API */
+interface HardLockRecord {
+  event_key: string
+  channel: string
+  tier: string
+  scope_id: string
+  enabled: boolean
+  reason?: string
+}
+
+interface PolicyRecord {
+  event_key: string
+  channel: string
+  role_key: string
+  enabled: boolean
+  priority_override?: string
+}
+
+interface UseNotificationMatrixParams {
+  viewerTier: MatrixViewerTier
+  scopeId: string
+}
+
+interface UseNotificationMatrixReturn {
+  sections: MatrixEventGroupSection[]
+  activeChannels: NotifyChannel[]
+  loading: boolean
+  error: string | null
+  toggleCell: (eventKey: string, channel: NotifyChannel, enabled: boolean) => Promise<void>
+  toggleHardLock: (eventKey: string, channel: NotifyChannel, enabled: boolean, reason?: string) => Promise<void>
+  removeHardLock: (eventKey: string, channel: NotifyChannel) => Promise<void>
+  refresh: () => void
+}
+
+/** API endpoints per tier */
+function getApiPaths(tier: MatrixViewerTier): {
+  events: string
+  policy: string
+  hardLocks: string
+  channels: string
+} {
+  switch (tier) {
+    case "MOTHER":
+      return {
+        events: "/api/v1/platform/notification/visibility",
+        policy: "/api/v1/platform/notification/channels",
+        hardLocks: "/api/v1/platform/notification/hard-locks",
+        channels: "/api/v1/platform/notification/channels",
+      }
+    case "INDUSTRY":
+    case "CHAIN":
+      return {
+        events: "/api/v1/notification/org-policy",
+        policy: "/api/v1/notification/org-policy",
+        hardLocks: "/api/v1/notification/org-hard-locks",
+        channels: "/api/v1/platform/notification/channels",
+      }
+    case "STORE":
+      return {
+        events: "/api/v1/notification/store-defaults",
+        policy: "/api/v1/notification/store-defaults",
+        hardLocks: "/api/v1/notification/store-hard-locks",
+        channels: "/api/v1/platform/notification/channels",
+      }
+  }
+}
+
+/** Default channels luôn hiện */
+const DEFAULT_CHANNELS: NotifyChannel[] = [
+  "APP_INBOX",
+  "EMAIL",
+  "PUSH",
+  "TELEGRAM",
+]
+
+export function useNotificationMatrix({
+  viewerTier,
+  scopeId,
+}: UseNotificationMatrixParams): UseNotificationMatrixReturn {
+  const paths = getApiPaths(viewerTier)
+
+  // Fetch events visible to this tier
+  const eventsRes = useApi<{ data: NotificationEventDefinition[] }>(paths.events)
+
+  // Fetch hard locks
+  const hardLocksRes = useApi<{ data: HardLockRecord[] }>(paths.hardLocks)
+
+  // Fetch policies / defaults
+  const policyRes = useApi<{ data: PolicyRecord[] }>(paths.policy)
+
+  // Fetch active channels
+  const channelsRes = useApi<{ data: { channels?: NotifyChannel[] } }>(paths.channels)
+
+  const loading =
+    eventsRes.isLoading || hardLocksRes.isLoading || policyRes.isLoading || channelsRes.isLoading
+
+  const error =
+    eventsRes.error?.message ??
+    hardLocksRes.error?.message ??
+    policyRes.error?.message ??
+    channelsRes.error?.message ??
+    null
+
+  const activeChannels = useMemo<NotifyChannel[]>(
+    () => channelsRes.data?.data?.channels ?? DEFAULT_CHANNELS,
+    [channelsRes.data]
+  )
+
+  // Build matrix sections
+  const sections = useMemo<MatrixEventGroupSection[]>(() => {
+    const events = eventsRes.data?.data ?? []
+    const hardLocks = hardLocksRes.data?.data ?? []
+    const policies = policyRes.data?.data ?? []
+
+    if (events.length === 0) return []
+
+    // Group events by NotificationEventGroup
+    const groupMap = new Map<NotificationEventGroup, MatrixEventRow[]>()
+
+    for (const evt of events) {
+      const channels: Record<string, MatrixCellState> = {}
+
+      for (const ch of activeChannels) {
+        // Find hard lock
+        const lock = hardLocks.find(
+          (l) => l.event_key === evt.key && l.channel === ch
+        )
+
+        // Find policy
+        const pol = policies.find(
+          (p) => p.event_key === evt.key && p.channel === ch
+        )
+
+        // Determine hard lock status
+        let hardLockedBy: NotificationTier | null = null
+        let isOwnHardLock = false
+        let hardLockReason: string | undefined
+
+        if (lock) {
+          hardLockedBy = lock.tier as NotificationTier
+          isOwnHardLock = lock.tier === viewerTier
+          hardLockReason = lock.reason
+        }
+
+        channels[ch] = {
+          eventKey: evt.key,
+          channel: ch as NotifyChannel,
+          enabled: lock ? lock.enabled : (pol?.enabled ?? getDefaultEnabled(evt, ch)),
+          priority: (pol?.priority_override as MatrixCellState["priority"]) ?? "NORMAL",
+          decidedBy: lock ? `HARD_LOCK_${lock.tier}` : (pol ? viewerTier : "SYSTEM_DEFAULT"),
+          hardLockedBy,
+          hardLockReason,
+          isOwnHardLock,
+        }
+      }
+
+      const row: MatrixEventRow = {
+        eventKey: evt.key,
+        label: evt.label,
+        description: evt.description,
+        group: evt.group,
+        tier: evt.tier,
+        iconName: evt.iconName,
+        channels,
+      }
+
+      if (!groupMap.has(evt.group)) {
+        groupMap.set(evt.group, [])
+      }
+      groupMap.get(evt.group)!.push(row)
+    }
+
+    // Convert to sections
+    return Array.from(groupMap.entries()).map(([groupKey, groupEvents]) => ({
+      groupKey,
+      groupLabel: EVENT_GROUP_LABELS[groupKey] ?? groupKey,
+      events: groupEvents,
+    }))
+  }, [eventsRes.data, hardLocksRes.data, policyRes.data, activeChannels, viewerTier])
+
+  // Actions
+  const toggleCell = useCallback(
+    async (eventKey: string, channel: NotifyChannel, enabled: boolean) => {
+      await apiSend(paths.policy, "PATCH", {
+        eventKey,
+        channel,
+        roleKey: "*",
+        enabled,
+      })
+      await policyRes.mutate()
+    },
+    [paths.policy, policyRes]
+  )
+
+  const toggleHardLock = useCallback(
+    async (
+      eventKey: string,
+      channel: NotifyChannel,
+      enabled: boolean,
+      reason?: string
+    ) => {
+      await apiSend(paths.hardLocks, "POST", {
+        eventKey,
+        channel,
+        enabled,
+        reason,
+      })
+      await hardLocksRes.mutate()
+    },
+    [paths.hardLocks, hardLocksRes]
+  )
+
+  const removeHardLock = useCallback(
+    async (eventKey: string, channel: NotifyChannel) => {
+      await apiSend(paths.hardLocks, "DELETE", {
+        eventKey,
+        channel,
+      })
+      await hardLocksRes.mutate()
+    },
+    [paths.hardLocks, hardLocksRes]
+  )
+
+  const refresh = useCallback(() => {
+    eventsRes.mutate()
+    hardLocksRes.mutate()
+    policyRes.mutate()
+    channelsRes.mutate()
+  }, [eventsRes, hardLocksRes, policyRes, channelsRes])
+
+  return {
+    sections,
+    activeChannels,
+    loading,
+    error,
+    toggleCell,
+    toggleHardLock,
+    removeHardLock,
+    refresh,
+  }
+}
+
+/** Default enabled: APP_INBOX always on, others check roleDefaults */
+function getDefaultEnabled(
+  evt: NotificationEventDefinition,
+  channel: string
+): boolean {
+  if (channel === "APP_INBOX") return true
+  const wildcard = evt.roleDefaults.find((rd) => rd.roleKey === "*")
+  if (wildcard) return wildcard.channels.includes(channel as NotifyChannel)
+  return false
+}

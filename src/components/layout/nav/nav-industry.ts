@@ -189,6 +189,15 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
     capability: "F1",
     mobileLabel: "Cài đặt",
   },
+  {
+    href: "/cai-dat/thong-bao",
+    label: "Ma trận thông báo",
+    group: "thiet-lap-nganh",
+    iconKey: "Bell",
+    navKey: "industry-notifications",
+    capability: "F1",
+    mobileLabel: "Thông báo",
+  },
 ] as const
 
 export const INDUSTRY_GROUPS_CONFIG = [

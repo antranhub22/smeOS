@@ -202,6 +202,15 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
     capability: "F1",
     mobileLabel: "Cài đặt",
   },
+  {
+    href: "/cai-dat/thong-bao",
+    label: "Ma trận thông báo",
+    group: "thiet-lap-chuoi",
+    iconKey: "Bell",
+    navKey: "chain-notifications",
+    capability: "F1",
+    mobileLabel: "Thông báo",
+  },
 ] as const
 
 export const CHAIN_GROUPS_CONFIG = [
