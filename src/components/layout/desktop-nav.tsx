@@ -287,6 +287,7 @@ export function DesktopNav({
               expanded={isGroupExpanded(group)}
               pathname={pathname}
               reportsOpen={reportsOpen}
+              orgId={orgId}
               onToggleGroup={(key, current) => toggleGroup(key, current)}
               onToggleReports={toggleReports}
               onNavigate={navigateTo}

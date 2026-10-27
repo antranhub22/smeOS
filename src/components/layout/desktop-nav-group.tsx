@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import type { NavEntry, NavGroup as NavGroupType } from "./nav-model"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { NAV_ICONS as ICONS } from "./nav-icons"
+import { ToolkitShortcutsGroup } from "./toolkit-shortcuts-group"
 
 export interface DesktopNavGroupProps {
   group: NavGroupType
@@ -16,6 +17,8 @@ export interface DesktopNavGroupProps {
   expanded: boolean
   pathname: string
   reportsOpen: boolean
+  /** ID tổ chức hiện tại — dùng để lưu shortcuts per-org */
+  orgId?: string | null | undefined
   onToggleGroup: (key: string, current: boolean) => void
   onToggleReports: (next: boolean) => void
   onNavigate: (href: string) => void
@@ -27,12 +30,32 @@ export function DesktopNavGroup({
   expanded,
   pathname,
   reportsOpen,
+  orgId,
   onToggleGroup,
   onToggleReports,
   onNavigate,
 }: DesktopNavGroupProps) {
   const isActive = (entry: NavEntry) =>
     pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
+
+  // ── Nhóm "cong-cu" — Thư viện + Shortcuts user tự pin ───────
+  if (group.key === "cong-cu") {
+    // Mục đầu tiên là Thư viện cố định (href=/cong-cu, navKey=toolkit)
+    const libraryEntry = group.entries.find((e) => e.navKey === "toolkit") ?? group.entries[0]!
+    const toolEntries = group.entries.filter((e) => e.navKey !== "toolkit")
+    return (
+      <ToolkitShortcutsGroup
+        libraryEntry={libraryEntry}
+        toolEntries={toolEntries}
+        collapsed={collapsed}
+        expanded={expanded}
+        pathname={pathname}
+        orgId={orgId}
+        onNavigate={onNavigate}
+        onToggleGroup={onToggleGroup}
+      />
+    )
+  }
 
   // ── Collapsed: chỉ hiện icon stack ──────────────────────────
   if (collapsed) {
