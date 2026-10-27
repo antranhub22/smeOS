@@ -73,6 +73,12 @@ export function DesktopNav({
     [can, roleUx, organization?.industry, organization?.navHiddenKeys, organizationType]
   )
 
+  // Toàn bộ entries đã lọc (capability + hidden) — nguồn cho picker shortcuts
+  const allNavEntries = useMemo(
+    () => navView.groups.flatMap((g) => g.entries),
+    [navView]
+  )
+
   // ── Hydrate from localStorage ──────────────────────────────────
   useEffect(() => {
     setOpenGroups(loadNavGroups(groupsKey))
@@ -288,6 +294,7 @@ export function DesktopNav({
               pathname={pathname}
               reportsOpen={reportsOpen}
               orgId={orgId}
+              allNavEntries={allNavEntries}
               onToggleGroup={(key, current) => toggleGroup(key, current)}
               onToggleReports={toggleReports}
               onNavigate={navigateTo}

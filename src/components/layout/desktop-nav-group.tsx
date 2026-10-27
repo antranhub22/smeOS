@@ -19,6 +19,11 @@ export interface DesktopNavGroupProps {
   reportsOpen: boolean
   /** ID tổ chức hiện tại — dùng để lưu shortcuts per-org */
   orgId?: string | null | undefined
+  /**
+   * Toàn bộ NavEntry từ mọi nhóm (đã lọc qua capability) — dùng cho picker shortcuts.
+   * Chỉ cần khi group.key === "cong-cu".
+   */
+  allNavEntries?: NavEntry[]
   onToggleGroup: (key: string, current: boolean) => void
   onToggleReports: (next: boolean) => void
   onNavigate: (href: string) => void
@@ -31,6 +36,7 @@ export function DesktopNavGroup({
   pathname,
   reportsOpen,
   orgId,
+  allNavEntries,
   onToggleGroup,
   onToggleReports,
   onNavigate,
@@ -40,13 +46,15 @@ export function DesktopNavGroup({
 
   // ── Nhóm "cong-cu" — Thư viện + Shortcuts user tự pin ───────
   if (group.key === "cong-cu") {
-    // Mục đầu tiên là Thư viện cố định (href=/cong-cu, navKey=toolkit)
     const libraryEntry = group.entries.find((e) => e.navKey === "toolkit") ?? group.entries[0]!
     const toolEntries = group.entries.filter((e) => e.navKey !== "toolkit")
+    // allNavEntries trừ Thư viện — dùng cho picker để hiển toàn bộ công cụ
+    const pickerSource = (allNavEntries ?? toolEntries).filter((e) => e.navKey !== "toolkit")
     return (
       <ToolkitShortcutsGroup
         libraryEntry={libraryEntry}
         toolEntries={toolEntries}
+        allNavEntries={pickerSource}
         collapsed={collapsed}
         expanded={expanded}
         pathname={pathname}

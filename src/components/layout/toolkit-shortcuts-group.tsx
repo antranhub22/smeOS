@@ -34,6 +34,12 @@ import {
 export interface ToolkitShortcutsGroupProps {
   /** Toàn bộ NavEntry thuộc nhóm cong-cu (không gồm mục Thư viện) */
   toolEntries: NavEntry[]
+  /**
+   * Toàn bộ NavEntry từ MỌI nhóm trong nav (đã lọc qua capability).
+   * Dùng làm nguồn cho picker và resolve shortcut href.
+   * Không bao gồm mục Thư viện (/cong-cu).
+   */
+  allNavEntries: NavEntry[]
   /** Mục "Thư viện 51 công cụ" cố định */
   libraryEntry: NavEntry
   collapsed: boolean
@@ -50,6 +56,7 @@ export interface ToolkitShortcutsGroupProps {
 
 export function ToolkitShortcutsGroup({
   toolEntries,
+  allNavEntries,
   libraryEntry,
   collapsed,
   expanded,
@@ -104,12 +111,15 @@ export function ToolkitShortcutsGroup({
   }, [orgId])
 
   // Shortcut entries hiển thị theo thứ tự đã pin
+  // Lookup trong allNavEntries để resolve shortcuts từ mọi nhóm (không chỉ cong-cu)
   const shortcutEntries: NavEntry[] = shortcutKeys
-    .map((key) => toolEntries.find((e) => e.navKey === key))
+    .map((key) => allNavEntries.find((e) => e.navKey === key))
     .filter((e): e is NavEntry => e !== undefined)
 
-  // Entries chưa pin (để hiện trong picker)
-  const unpinnedEntries = toolEntries.filter((e) => !shortcutKeys.includes(e.navKey))
+  // Entries khả dụng cho picker: toàn bộ allNavEntries, trừ Thư viện và đã pin
+  const unpinnedEntries = allNavEntries.filter(
+    (e) => e.navKey !== "toolkit" && !shortcutKeys.includes(e.navKey)
+  )
 
   const isActive = (entry: NavEntry) =>
     pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
