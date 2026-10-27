@@ -14,7 +14,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   // 01 · CÔNG CỤ
   {
     href: "/cong-cu",
-    label: "Thư viện công cụ",
+    label: "Thư viện 51 công cụ (9 nhóm)",
     group: "cong-cu",
     iconKey: "LayoutGrid",
     navKey: "toolkit",

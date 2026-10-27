@@ -18,6 +18,14 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 2. CÔNG CỤ BÁN HÀNG
   {
+    href: "/cong-cu",
+    label: "Thư viện 51 công cụ (9 nhóm)",
+    group: "cong-cu-ban-hang",
+    iconKey: "LayoutGrid",
+    navKey: "industry-toolkit",
+    mobileLabel: "Công cụ",
+  },
+  {
     href: "/creative-studio",
     label: "Chế tác tự động A-Z",
     group: "cong-cu-ban-hang",

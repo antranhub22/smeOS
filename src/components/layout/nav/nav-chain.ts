@@ -46,6 +46,14 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 02 · CÔNG CỤ
   {
+    href: "/cong-cu",
+    label: "Thư viện 51 công cụ (9 nhóm)",
+    group: "cong-cu-chuoi",
+    iconKey: "LayoutGrid",
+    navKey: "chain-toolkit",
+    mobileLabel: "Công cụ",
+  },
+  {
     href: "/creative-studio",
     label: "Chế tác tự động A-Z",
     group: "cong-cu-chuoi",

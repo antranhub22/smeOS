@@ -134,8 +134,8 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "TOOLKIT_HOME",
     systemRoleKeys: ["dieu_hanh"],
-    entryHref: "/cong-cu",
-    navPriority: ["/cong-cu", "/don-hang", "/khach-hang", "/san-pham", "/cai-dat"],
+    entryHref: "/",
+    navPriority: ["/don-hang", "/khach-hang", "/san-pham", "/cai-dat"],
     debtRefs: [163],
   },
   {
@@ -151,8 +151,8 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     status: "AVAILABLE",
     homepage: "TOOLKIT_HOME",
     systemRoleKeys: [],
-    entryHref: "/cong-cu",
-    navPriority: ["/cong-cu", "/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
+    entryHref: "/",
+    navPriority: ["/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang"],
     debtRefs: [],
   },
   {
