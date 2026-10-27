@@ -150,7 +150,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
         skip: filter.offset ?? 0,
         include: {
           partner_organization: {
-            select: { name: true, slug: true },
+            select: { name: true, slug: true, settings: true },
           },
         },
       }),
@@ -158,7 +158,14 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     ])
 
     return {
-      items: rows.map((r) => this.mapEntity(r, r.partner_organization?.name, r.partner_organization?.slug)),
+      items: rows.map((r) =>
+        this.mapEntity(
+          r,
+          r.partner_organization?.name,
+          r.partner_organization?.slug,
+          r.partner_organization?.settings
+        )
+      ),
       total,
     }
   }
@@ -168,11 +175,18 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       where: { id },
       include: {
         partner_organization: {
-          select: { name: true, slug: true },
+          select: { name: true, slug: true, settings: true },
         },
       },
     })
-    return row ? this.mapEntity(row, row.partner_organization?.name, row.partner_organization?.slug) : null
+    return row
+      ? this.mapEntity(
+          row,
+          row.partner_organization?.name,
+          row.partner_organization?.slug,
+          row.partner_organization?.settings
+        )
+      : null
   }
 
   async updateStatus(id: string, status: PartnershipStatus): Promise<ChainPartnershipEntity> {
@@ -308,7 +322,17 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
 
 
 
-  private mapEntity(row: any, partnerOrgName?: string, partnerOrgSlug?: string): ChainPartnershipEntity {
+  private mapEntity(
+    row: any,
+    partnerOrgName?: string,
+    partnerOrgSlug?: string,
+    partnerSettings?: any
+  ): ChainPartnershipEntity {
+    const s = partnerSettings && typeof partnerSettings === "object" ? partnerSettings : {}
+    const unlocked = Array.isArray(s.unlocked_tools)
+      ? (s.unlocked_tools as unknown[]).filter((x): x is string => typeof x === "string")
+      : null
+
     return {
       id: row.id,
       chainOrgId: row.chain_org_id,
@@ -326,6 +350,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       district: row.district ?? undefined,
       partnerOrgName: partnerOrgName ?? undefined,
       partnerOrgSlug: partnerOrgSlug ?? undefined,
+      unlockedTools: unlocked,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     }
