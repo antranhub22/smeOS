@@ -65,7 +65,7 @@ interface UseNotificationMatrixReturn {
 /** API endpoints per tier */
 function getApiPaths(tier: MatrixViewerTier): {
   events: string
-  policy: string
+  policy: string | null
   hardLocks: string
   channels: string
 } {
@@ -73,7 +73,9 @@ function getApiPaths(tier: MatrixViewerTier): {
     case "MOTHER":
       return {
         events: "/api/v1/platform/notification/visibility",
-        policy: "/api/v1/platform/notification/channels",
+        // MOTHER không có policy endpoint riêng — dùng hard-locks làm proxy
+        // (hard-locks đủ để render trạng thái bật/tắt ở tầng Mother)
+        policy: null,
         hardLocks: "/api/v1/platform/notification/hard-locks",
         channels: "/api/v1/platform/notification/channels",
       }
@@ -115,8 +117,8 @@ export function useNotificationMatrix({
   // Fetch hard locks
   const hardLocksRes = useApi<{ data: HardLockRecord[] }>(paths.hardLocks)
 
-  // Fetch policies / defaults
-  const policyRes = useApi<{ data: PolicyRecord[] }>(paths.policy)
+  // Fetch policies / defaults (null khi tier không có policy endpoint riêng)
+  const policyRes = useApi<{ data: PolicyRecord[] }>(paths.policy ?? null)
 
   // Fetch active channels
   const channelsRes = useApi<{ data: Record<string, boolean> }>(paths.channels)
@@ -138,9 +140,11 @@ export function useNotificationMatrix({
   // Build matrix sections
   const sections = useMemo<MatrixEventGroupSection[]>(() => {
     const events = eventsRes.data?.data ?? []
-    // Tolerate errors: fallback về empty array nếu API phụ fail
-    const hardLocks = hardLocksRes.data?.data ?? []
-    const policies = policyRes.data?.data ?? []
+    // Tolerate errors: fallback về empty array nếu API phụ fail hoặc trả wrong format
+    const rawHardLocks = hardLocksRes.data?.data
+    const rawPolicies = policyRes.data?.data
+    const hardLocks: HardLockRecord[] = Array.isArray(rawHardLocks) ? rawHardLocks : []
+    const policies: PolicyRecord[] = Array.isArray(rawPolicies) ? rawPolicies : []
 
     if (events.length === 0) return []
 
@@ -211,6 +215,7 @@ export function useNotificationMatrix({
   // Actions
   const toggleCell = useCallback(
     async (eventKey: string, channel: NotifyChannel, enabled: boolean) => {
+      if (!paths.policy) return // MOTHER tier không có policy endpoint riêng
       await apiSend(paths.policy, "PATCH", {
         eventKey,
         channel,
