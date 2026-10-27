@@ -109,6 +109,20 @@ documents:
     dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
+  - id: "DOC-02-4TIER-NAV-SSOT"
+    path: "docs/kien-truc/SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md"
+    title: "smeOS 4-Tier Architecture & Navigation SSOT"
+    domain: "Master Architecture & Navigation"
+    layer: "Level 2"
+    purpose: "Đặc tả chuẩn hóa kiến trúc 4 tầng (SaaS Mother, SaaS Ngành Affiliate, ChainOS, StoreOS) và ma trận cấu trúc điều hướng sidebar"
+    status: "CANONICAL"
+    authority: "Level 2"
+    canonical: true
+    ssot: true
+    owner: "Product Owner / Chief Architect"
+    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md", "docs/dac-ta/03b-role-ux.md"]
+    supersedes: []
+
   - id: "DOC-02-PRODUCT-JOURNEY"
     path: "docs/dac-ta/FLORAOS_PRODUCT_TO_MARKET_USER_JOURNEY.md"
     title: "FloraOS Product-to-Market User Journey (14 Chặng)"

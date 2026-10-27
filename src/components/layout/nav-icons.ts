@@ -37,6 +37,16 @@ import {
   SlidersHorizontal,
   Activity,
   LayoutDashboard,
+  LayoutGrid,
+  Inbox,
+  Printer,
+  QrCode,
+  CreditCard,
+  Plug,
+  Gauge,
+  Lock,
+  Network,
+  DollarSign,
 } from "lucide-react"
 
 export type NavIconComponent = LucideIcon
@@ -79,4 +89,14 @@ export const NAV_ICONS: Record<string, LucideIcon> = {
   SlidersHorizontal,
   Activity,
   LayoutDashboard,
+  LayoutGrid,
+  Inbox,
+  Printer,
+  QrCode,
+  CreditCard,
+  Plug,
+  Gauge,
+  Lock,
+  Network,
+  DollarSign,
 }

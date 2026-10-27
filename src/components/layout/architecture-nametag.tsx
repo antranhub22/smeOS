@@ -160,11 +160,19 @@ export function ArchitectureNametag({ isDev = false }: Props) {
 
       {/* Dropdown panel */}
       {open && (
-        <div
-          role="listbox"
-          aria-label="Chọn vai dev"
-          className="absolute left-0 top-full z-[9999] mt-1.5 w-64 overflow-hidden rounded-xl border border-amber-300 bg-amber-50 shadow-xl dark:border-amber-700 dark:bg-amber-950"
-        >
+        <>
+          {/* Lớp phủ bấm ra ngoài để đóng menu */}
+          <div
+            aria-hidden="true"
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-[9990] bg-transparent cursor-default"
+          />
+
+          <div
+            role="listbox"
+            aria-label="Chọn vai dev"
+            className="absolute left-0 top-full z-[9999] mt-2 w-64 overflow-hidden rounded-xl border border-amber-300 bg-amber-50 shadow-2xl dark:border-amber-700 dark:bg-amber-950"
+          >
           {/* Header */}
           <div className="flex items-center gap-1.5 border-b border-amber-200 px-3 py-2 dark:border-amber-800">
             <FlaskConical size={11} className="text-amber-600 dark:text-amber-400" aria-hidden />
@@ -217,7 +225,8 @@ export function ArchitectureNametag({ isDev = false }: Props) {
             </button>
           </div>
         </div>
-      )}
+      </>
+    )}
     </div>
   )
 }
