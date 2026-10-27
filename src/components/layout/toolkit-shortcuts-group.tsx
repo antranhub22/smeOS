@@ -123,16 +123,38 @@ export function ToolkitShortcutsGroup({
     setPickerOpen(false)
   }, [orgId, tierDefaultKeys])
 
-  // Shortcut entries hiển thị theo thứ tự đã pin
-  // Lookup trong allNavEntries để resolve shortcuts từ mọi nhóm (không chỉ cong-cu)
-  const shortcutEntries: NavEntry[] = shortcutKeys
-    .map((key) => allNavEntries.find((e) => e.navKey === key))
-    .filter((e): e is NavEntry => e !== undefined)
+  // Shortcut entries hiển thị theo thứ tự đã pin.
+  // Lookup trong allNavEntries để resolve shortcuts từ toàn bộ 51 công cụ.
+  const shortcutEntries: NavEntry[] = useMemo(() => {
+    return shortcutKeys
+      .map((key) => allNavEntries.find((e) => e.navKey === key))
+      .filter((e): e is NavEntry => e !== undefined)
+  }, [shortcutKeys, allNavEntries])
 
-  // Entries khả dụng cho picker: toàn bộ allNavEntries, trừ Thư viện và đã pin
-  const unpinnedEntries = allNavEntries.filter(
-    (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey && !shortcutKeys.includes(e.navKey)
+  // Lấy danh sách keys hợp lệ đang tồn tại trong allNavEntries
+  const validPinnedKeys = useMemo(
+    () => shortcutEntries.map((e) => e.navKey),
+    [shortcutEntries]
   )
+
+  // Entries khả dụng cho picker: toàn bộ allNavEntries, trừ Thư viện và đã pin (loại trừ trùng lặp navKey)
+  const unpinnedEntries = useMemo(() => {
+    const seenNavKeys = new Set<string>()
+    return allNavEntries.filter((e) => {
+      if (
+        e.href === libraryEntry.href ||
+        e.navKey === libraryEntry.navKey ||
+        validPinnedKeys.includes(e.navKey)
+      ) {
+        return false
+      }
+      if (seenNavKeys.has(e.navKey)) {
+        return false
+      }
+      seenNavKeys.add(e.navKey)
+      return true
+    })
+  }, [allNavEntries, libraryEntry, validPinnedKeys])
 
   const isActive = (entry: NavEntry) =>
     pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
@@ -241,7 +263,7 @@ export function ToolkitShortcutsGroup({
           ))}
 
           {/* 4. Nút thêm shortcut */}
-          {shortcutKeys.length < MAX_SHORTCUTS && (
+          {shortcutEntries.length < MAX_SHORTCUTS && (
             <div className="relative" ref={pickerRef}>
               <button
                 type="button"
@@ -259,7 +281,7 @@ export function ToolkitShortcutsGroup({
                 <Plus size={13} strokeWidth={2.5} aria-hidden />
                 <span>Thêm lối tắt</span>
                 <span className="ml-auto text-caption text-text-muted/60">
-                  {shortcutKeys.length}/{MAX_SHORTCUTS}
+                  {shortcutEntries.length}/{MAX_SHORTCUTS}
                 </span>
               </button>
 
@@ -267,7 +289,7 @@ export function ToolkitShortcutsGroup({
               {pickerOpen && (
                 <ToolkitPicker
                   entries={unpinnedEntries}
-                  pinnedKeys={shortcutKeys}
+                  pinnedKeys={validPinnedKeys}
                   isCustomized={hasCustomShortcuts(orgId)}
                   onPin={handlePin}
                   onReset={handleReset}
@@ -278,7 +300,7 @@ export function ToolkitShortcutsGroup({
           )}
 
           {/* Khi đã đủ MAX: chỉ hiện nút reset nếu đã tùy chỉnh */}
-          {mounted && shortcutKeys.length >= MAX_SHORTCUTS && hasCustomShortcuts(orgId) && (
+          {mounted && shortcutEntries.length >= MAX_SHORTCUTS && hasCustomShortcuts(orgId) && (
             <button
               type="button"
               onClick={handleReset}

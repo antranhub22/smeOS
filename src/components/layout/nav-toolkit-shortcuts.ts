@@ -8,6 +8,9 @@
  * - Tất cả operations đều safe với SSR (typeof window guard).
  */
 
+import { getAllTools } from "@/modules/toolkit/domain/toolkit-catalog"
+import type { NavEntry } from "./nav-model"
+
 export const MAX_SHORTCUTS = 5
 
 /** Mặc định hiển thị nếu user chưa tự chọn (StoreOS) */
@@ -18,6 +21,45 @@ export const DEFAULT_SHORTCUT_KEYS: readonly string[] = [
   "templates",         // Kho mẫu & Ấn phẩm
   "scan-photo",        // Phân tích ảnh bằng AI
 ]
+
+/**
+ * Ánh xạ toàn bộ 51 công cụ từ SSOT toolkit-catalog sang danh sách NavEntry
+ * để hiển thị đầy đủ trong danh sách chọn lối tắt (mini picker) và sidebar shortcuts.
+ */
+export function getAllToolkitNavEntries(): NavEntry[] {
+  return getAllTools().map((t) => {
+    // Map các route quen thuộc sang navKey tương thích với sidebar StoreOS
+    const navKey =
+      t.href === "/creative-studio"
+        ? "creative-studio"
+        : t.href === "/the-chao" || t.href === "/the-chao?quick=true"
+        ? "greeting-card"
+        : t.href === "/catalog"
+        ? "catalog"
+        : t.href === "/tai-anh" || t.href?.startsWith("/tai-anh")
+        ? "scan-photo"
+        : t.href === "/video"
+        ? "video"
+        : t.href === "/noi-dung"
+        ? "content"
+        : t.href === "/market-intelligence"
+        ? "market-intel"
+        : t.href === "/kho-templates"
+        ? "templates"
+        : t.href === "/cong-cu/toi-uu-he-thong"
+        ? "system-optimizer"
+        : `tool-${t.id}`
+
+    return {
+      href: t.href || `/cong-cu#tool-${t.id}`,
+      label: t.name,
+      group: "cong-cu",
+      iconKey: t.icon,
+      navKey,
+      mobileLabel: t.name.slice(0, 8),
+    }
+  })
+}
 
 function storageKey(orgId?: string | null): string {
   const suffix = orgId ? `__${orgId}` : ""

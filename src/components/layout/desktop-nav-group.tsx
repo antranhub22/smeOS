@@ -11,6 +11,7 @@ import { isToolkitGroupKey } from "./nav/nav-types"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { ToolkitShortcutsGroup } from "./toolkit-shortcuts-group"
+import { getAllToolkitNavEntries } from "./nav-toolkit-shortcuts"
 
 export interface DesktopNavGroupProps {
   group: NavGroupType
@@ -59,17 +60,15 @@ export function DesktopNavGroup({
     const toolEntries = group.entries.filter(
       (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey
     )
-    // allNavEntries trừ Thư viện — dùng cho picker để hiển thị toàn bộ công cụ
-    const pickerSource = (allNavEntries ?? toolEntries).filter(
-      (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey
-    )
+    // Cung cấp toàn bộ danh mục 51 công cụ (SSOT toolkit-catalog) cho picker và shortcut resolution
+    const toolkitNavEntries = getAllToolkitNavEntries()
     return (
       <ToolkitShortcutsGroup
         groupKey={group.key}
         groupLabel={group.label}
         libraryEntry={libraryEntry}
         toolEntries={toolEntries}
-        allNavEntries={pickerSource}
+        allNavEntries={toolkitNavEntries}
         collapsed={collapsed}
         expanded={expanded}
         pathname={pathname}

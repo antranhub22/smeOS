@@ -306,7 +306,7 @@ const GROUP_7_TOOLS: readonly ToolDefinition[] = [
   {
     id: 38, name: "Tạo link duyệt ảnh trước khi giao",
     description: "Gửi ảnh sản phẩm thật cho khách duyệt trước khi giao",
-    icon: "ImageCheck", label: "STORE", status: "PLANNED", progress: 0,
+    icon: "Image", label: "STORE", status: "PLANNED", progress: 0,
     href: null, statusNote: "Chức năng mới — link duyệt ảnh độc lập trước khi giao hàng",
   },
   {

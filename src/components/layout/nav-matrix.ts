@@ -54,6 +54,13 @@ export const ALL_NAV_KEYS = [
   "channels",
   "engine",
   "settings",
+  "business-profile",
+  "store-notifications",
+  "store-matrix-promotions",
+  "store-matrix-commitments",
+  "store-matrix-policies",
+  "store-matrix-payments",
+  "store-matrix-craft-fees",
   "system-optimizer",
 ] as const
 
@@ -99,6 +106,13 @@ export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/ket-noi": "channels",
   "/bo-may": "engine",
   "/cai-dat": "settings",
+  "/cai-dat?tab=INFO": "business-profile",
+  "/cai-dat/thong-bao": "store-notifications",
+  "/cai-dat/ma-tran-uudai": "store-matrix-promotions",
+  "/cai-dat/ma-tran-camket": "store-matrix-commitments",
+  "/cai-dat/ma-tran-chinhsach": "store-matrix-policies",
+  "/cai-dat/ma-tran-thanhtoan-datco": "store-matrix-payments",
+  "/cai-dat/ma-tran-phigiacong": "store-matrix-craft-fees",
 }
 
 /**
