@@ -181,6 +181,15 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 6. THIẾT LẬP
   {
+    href: "/cai-dat?tab=INFO",
+    label: "Hồ sơ & Tiêu chuẩn ngành",
+    group: "thiet-lap-nganh",
+    iconKey: "Building2",
+    navKey: "industry-standard-profile",
+    capability: "F1",
+    mobileLabel: "Hồ sơ",
+  },
+  {
     href: "/cai-dat",
     label: "Chính sách & Cấu hình ngành",
     group: "thiet-lap-nganh",
@@ -197,6 +206,51 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "industry-notifications",
     capability: "F1",
     mobileLabel: "Thông báo",
+  },
+  {
+    href: "/cai-dat/ma-tran-uudai",
+    label: "Ma trận ưu đãi & voucher",
+    group: "thiet-lap-nganh",
+    iconKey: "Tag",
+    navKey: "industry-matrix-promotions",
+    capability: "F1",
+    mobileLabel: "Ưu đãi",
+  },
+  {
+    href: "/cai-dat/ma-tran-camket",
+    label: "Ma trận cam kết chất lượng",
+    group: "thiet-lap-nganh",
+    iconKey: "ShieldCheck",
+    navKey: "industry-matrix-commitments",
+    capability: "F1",
+    mobileLabel: "Cam kết",
+  },
+  {
+    href: "/cai-dat/ma-tran-chinhsach",
+    label: "Ma trận chính sách ngành",
+    group: "thiet-lap-nganh",
+    iconKey: "FileText",
+    navKey: "industry-matrix-policies",
+    capability: "F1",
+    mobileLabel: "Chính sách",
+  },
+  {
+    href: "/cai-dat/ma-tran-thanhtoan-datco",
+    label: "Ma trận thanh toán & đặt cọc",
+    group: "thiet-lap-nganh",
+    iconKey: "CreditCard",
+    navKey: "industry-matrix-payments",
+    capability: "F1",
+    mobileLabel: "Thanh toán",
+  },
+  {
+    href: "/cai-dat/ma-tran-phigiacong",
+    label: "Ma trận phí gia công & thợ",
+    group: "thiet-lap-nganh",
+    iconKey: "Wrench",
+    navKey: "industry-matrix-craft-fees",
+    capability: "F1",
+    mobileLabel: "Phí thợ",
   },
 ] as const
 
