@@ -7,6 +7,7 @@
 import { ChevronDown, BarChart3 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { NavEntry, NavGroup as NavGroupType } from "./nav-model"
+import { isToolkitGroupKey } from "./nav/nav-types"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { ToolkitShortcutsGroup } from "./toolkit-shortcuts-group"
@@ -21,7 +22,7 @@ export interface DesktopNavGroupProps {
   orgId?: string | null | undefined
   /**
    * Toàn bộ NavEntry từ mọi nhóm (đã lọc qua capability) — dùng cho picker shortcuts.
-   * Chỉ cần khi group.key === "cong-cu".
+   * Chỉ cần khi nhóm là ToolkitGroupKey.
    */
   allNavEntries?: NavEntry[]
   onToggleGroup: (key: string, current: boolean) => void
@@ -45,12 +46,7 @@ export function DesktopNavGroup({
     pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
 
   // ── Nhóm Công cụ (StoreOS: "cong-cu", ChainOS: "cong-cu-chuoi", SaaS Ngành: "cong-cu-ban-hang") ───────
-  const isToolkitGroup =
-    group.key === "cong-cu" ||
-    group.key === "cong-cu-chuoi" ||
-    group.key === "cong-cu-ban-hang"
-
-  if (isToolkitGroup) {
+  if (isToolkitGroupKey(group.key)) {
     const libraryEntry =
       group.entries.find(
         (e) =>

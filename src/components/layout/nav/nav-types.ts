@@ -100,3 +100,21 @@ export const HOME_ENTRY: NavEntry = {
   navKey: "home",
   mobileLabel: "Trang chủ",
 }
+
+/**
+ * Danh sách khóa nhóm Công cụ (Toolkit Groups) trên toàn bộ các tầng (SSOT).
+ * Bất kỳ nhóm nào thuộc danh mục này sẽ tự động được gắn cấu trúc:
+ * Thư viện cố định (/cong-cu) + Danh sách Shortcuts người dùng tự ghim + Mini picker.
+ */
+export const TOOLKIT_GROUP_KEYS = [
+  "cong-cu",           // Tầng 4: StoreOS
+  "cong-cu-chuoi",     // Tầng 3: ChainOS
+  "cong-cu-ban-hang",  // Tầng 2: SaaS Ngành
+] as const
+
+export type ToolkitGroupKey = (typeof TOOLKIT_GROUP_KEYS)[number]
+
+export function isToolkitGroupKey(key: string): key is ToolkitGroupKey {
+  return (TOOLKIT_GROUP_KEYS as readonly string[]).includes(key)
+}
+
