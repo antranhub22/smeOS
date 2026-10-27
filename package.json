@@ -22,6 +22,7 @@
     "audit:industry:baseline": "tsx scripts/industry-term-audit.ts --update-baseline",
     "audit:industry:json": "tsx scripts/industry-term-audit.ts --json",
     "check:industry": "tsx scripts/check-industry.ts --check",
+    "check:layers": "tsx scripts/check-layer-boundaries.ts",
     "new:industry": "tsx scripts/new-industry.ts",
     "setup:hooks": "tsx scripts/setup-hooks.ts",
     "typecheck": "tsc --noEmit",
