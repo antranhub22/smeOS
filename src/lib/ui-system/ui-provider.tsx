@@ -8,6 +8,7 @@ import type {
   UiLayoutMode,
   UiColorMode,
   UiSystemContextValue,
+  UiPresetScope,
 } from "./types"
 import { DEFAULT_UI_CONFIG, getUiPreset, UI_PRESETS } from "./presets"
 
@@ -83,17 +84,35 @@ export function UiSystemProvider({
 
   const currentPreset = useMemo(() => getUiPreset(config.preset), [config.preset])
 
+  // Detect platform scope từ URL path
+  const platformScope = useMemo<UiPresetScope>(() => {
+    if (typeof window === "undefined") return "all"
+    const path = window.location.pathname
+    if (path.startsWith("/chain") || path.startsWith("/store")) return "chain-store"
+    return "saas-mother"
+  }, [])
+
+  // Filter presets hiển thị theo scope: 'all' luôn show, scope-specific chỉ show đúng platform
+  const availablePresets = useMemo(
+    () =>
+      Object.values(UI_PRESETS).filter(
+        (p) => p.scope === "all" || p.scope === platformScope
+      ),
+    [platformScope]
+  )
+
   const value = useMemo<UiSystemContextValue>(
     () => ({
       config,
       currentPreset,
+      availablePresets,
       setPreset,
       setDensity,
       setLayoutMode,
       setColorMode,
       resetToDefault,
     }),
-    [config, currentPreset, setPreset, setDensity, setLayoutMode, setColorMode, resetToDefault]
+    [config, currentPreset, availablePresets, setPreset, setDensity, setLayoutMode, setColorMode, resetToDefault]
   )
 
   return <UiSystemContext.Provider value={value}>{children}</UiSystemContext.Provider>
@@ -107,6 +126,7 @@ export function useUiSystem() {
     return {
       config: DEFAULT_UI_CONFIG,
       currentPreset: defaultPreset,
+      availablePresets: [defaultPreset],
       setPreset: () => {},
       setDensity: () => {},
       setLayoutMode: () => {},

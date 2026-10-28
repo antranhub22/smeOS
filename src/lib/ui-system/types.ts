@@ -7,7 +7,10 @@
  * - Layout: Sidebar (mặc định), TopNav, CompactDock
  */
 
-export type UiPresetId = "moc-lan" | "modern-slate" | "pure-swiss"
+export type UiPresetId = "moc-lan" | "modern-slate" | "pure-swiss" | "aurora-ui" | "editorial-grid"
+
+/** Scope xác định preset này dành cho platform nào */
+export type UiPresetScope = "saas-mother" | "chain-store" | "all"
 
 export type UiDensity = "compact" | "comfortable" | "spacious"
 
@@ -64,8 +67,14 @@ export interface PresetDefinition {
   tagline: string
   description: string
   isDefault?: boolean
+  /** Platform scope: saas-mother (console /van-hanh), chain-store (ChainOS/StoreOS), all */
+  scope: UiPresetScope
+  /** Source style từ ui-ux-pro-max catalog */
+  sourceStyleId?: string
   fontSans: string
   fontDisplay?: string
+  /** CSS animation keyframe string cho styles có ambient animation (e.g. aurora) */
+  animationCss?: string
   tokens: PresetTokenValues
   radius: PresetRadiusValues
   shadows: {
@@ -78,6 +87,8 @@ export interface PresetDefinition {
 export interface UiSystemContextValue {
   config: UiSystemConfig
   currentPreset: PresetDefinition
+  /** Tất cả presets có scope phù hợp với platform hiện tại */
+  availablePresets: PresetDefinition[]
   setPreset: (preset: UiPresetId) => void
   setDensity: (density: UiDensity) => void
   setLayoutMode: (mode: UiLayoutMode) => void

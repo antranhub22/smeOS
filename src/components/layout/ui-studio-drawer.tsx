@@ -22,6 +22,7 @@ export function UiStudioDrawer() {
   const {
     config,
     currentPreset,
+    availablePresets,
     setPreset,
     setDensity,
     setLayoutMode,
@@ -52,11 +53,7 @@ export function UiStudioDrawer() {
             UI Studio
           </span>
           <span className="text-caption uppercase font-mono px-1.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-primary/20">
-            {currentPreset.id === "moc-lan"
-              ? "Mộc Lan"
-              : currentPreset.id === "modern-slate"
-              ? "Slate"
-              : "Swiss"}
+            {currentPreset.name.split(" ")[0]}
           </span>
         </button>
       </div>
@@ -101,13 +98,19 @@ export function UiStudioDrawer() {
                       Phong cách giao diện
                     </label>
                     <span className="text-caption text-text-muted">
-                      3 Phong cách chuẩn
+                      {availablePresets.length} Phong cách
                     </span>
                   </div>
 
                   <div className="space-y-3">
-                    {Object.values(UI_PRESETS).map((preset) => {
+                    {availablePresets.map((preset) => {
                       const isSelected = config.preset === preset.id
+                      const scopeLabel =
+                        preset.scope === "saas-mother"
+                          ? "SaaS Mother"
+                          : preset.scope === "chain-store"
+                          ? "ChainOS / StoreOS"
+                          : null
                       return (
                         <button
                           key={preset.id}
@@ -121,13 +124,18 @@ export function UiStudioDrawer() {
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 <h3 className="text-meta font-bold text-text">
                                   {preset.name}
                                 </h3>
                                 {preset.isDefault && (
                                   <span className="text-caption font-semibold px-2 py-0.5 rounded-full bg-primary text-primary-fg">
                                     Mặc định
+                                  </span>
+                                )}
+                                {scopeLabel && (
+                                  <span className="text-caption font-medium px-2 py-0.5 rounded-full bg-surface-alt border border-border text-text-muted">
+                                    {scopeLabel}
                                   </span>
                                 )}
                               </div>
