@@ -81,7 +81,7 @@ export interface NotificationEventDefinition {
   defaultVisibleToTiers: NotificationSubTier[]
   /** Ma trận vai → kênh mặc định */
   roleDefaults: EventRoleDefault[]
-  /** Template URL deep link, VD: "/don-hang/{orderId}" */
+  /** Template URL deep link, VD: "/don-hang" */
   deepLinkTemplate?: string
   /** Icon từ lucide-react */
   iconName?: string

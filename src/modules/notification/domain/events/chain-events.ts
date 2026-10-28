@@ -22,7 +22,7 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: ["STORE"],
       iconName: "ShoppingBag",
-      deepLinkTemplate: "/don-hang/{orderId}",
+      deepLinkTemplate: "/don-hang",
       roleDefaults: [
         {
           roleKey: "manager",
@@ -53,7 +53,7 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: ["STORE"],
       iconName: "Clock",
-      deepLinkTemplate: "/don-hang/{orderId}",
+      deepLinkTemplate: "/don-hang",
       roleDefaults: [
         {
           roleKey: "manager",
@@ -80,7 +80,7 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: ["STORE"],
       iconName: "Send",
-      deepLinkTemplate: "/don-hang/{orderId}",
+      deepLinkTemplate: "/don-hang",
       roleDefaults: [
         {
           roleKey: "coordinator",
@@ -99,7 +99,7 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: [],
       iconName: "XCircle",
-      deepLinkTemplate: "/don-hang/{orderId}",
+      deepLinkTemplate: "/don-hang",
       roleDefaults: [
         {
           roleKey: "manager",
@@ -126,7 +126,7 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: ["STORE"],
       iconName: "Camera",
-      deepLinkTemplate: "/qc/{jobId}",
+      deepLinkTemplate: "/dieu-phoi",
       roleDefaults: [
         {
           roleKey: "quality_control",
@@ -151,7 +151,7 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: ["STORE"],
       iconName: "CheckCircle",
-      deepLinkTemplate: "/qc/{jobId}",
+      deepLinkTemplate: "/dieu-phoi",
       roleDefaults: [
         {
           roleKey: "florist",
@@ -178,7 +178,7 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: [],
       iconName: "WifiOff",
-      deepLinkTemplate: "/mang-luoi/chi-nhanh/{branchId}",
+      deepLinkTemplate: "/dieu-phoi/doi-tac",
       roleDefaults: [
         {
           roleKey: "manager",
@@ -205,7 +205,7 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: ["STORE"],
       iconName: "FileText",
-      deepLinkTemplate: "/tai-chinh/doi-soat",
+      deepLinkTemplate: "/so-lieu",
       roleDefaults: [
         {
           roleKey: "manager",

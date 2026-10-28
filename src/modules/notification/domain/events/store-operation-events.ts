@@ -19,7 +19,7 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Network",
-    deepLinkTemplate: "/don-gia-cong/{orderId}",
+    deepLinkTemplate: "/dieu-phoi",
     roleDefaults: [
       {
         roleKey: "store_admin",
@@ -44,7 +44,7 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "AlertClock",
-    deepLinkTemplate: "/don-gia-cong/{orderId}",
+    deepLinkTemplate: "/dieu-phoi",
     roleDefaults: [
       {
         roleKey: "store_admin",
@@ -71,7 +71,7 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Package",
-    deepLinkTemplate: "/san-pham/de-xuat/{productId}",
+    deepLinkTemplate: "/duyet",
     roleDefaults: [
       {
         roleKey: "store_admin",
@@ -117,7 +117,7 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Sparkles",
-    deepLinkTemplate: "/creative-studio/{jobId}",
+    deepLinkTemplate: "/job/{jobId}",
     roleDefaults: [
       {
         roleKey: "*",
@@ -136,7 +136,7 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "AlertCircle",
-    deepLinkTemplate: "/creative-studio/{jobId}",
+    deepLinkTemplate: "/job/{jobId}",
     roleDefaults: [
       {
         roleKey: "*",
@@ -157,7 +157,7 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Cake",
-    deepLinkTemplate: "/crm/khach-hang/{customerId}",
+    deepLinkTemplate: "/khach-hang",
     roleDefaults: [
       {
         roleKey: "crm",
@@ -182,7 +182,7 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Heart",
-    deepLinkTemplate: "/crm/khach-hang/{customerId}",
+    deepLinkTemplate: "/khach-hang",
     roleDefaults: [
       {
         roleKey: "crm",
@@ -209,7 +209,7 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "BarChart3",
-    deepLinkTemplate: "/bao-cao/doanh-thu",
+    deepLinkTemplate: "/so-lieu",
     roleDefaults: [
       {
         roleKey: "store_admin",

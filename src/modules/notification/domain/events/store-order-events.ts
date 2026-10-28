@@ -19,7 +19,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "ShoppingBag",
-    deepLinkTemplate: "/don-hang/{orderId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "store_admin",
@@ -50,7 +50,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "CheckCircle",
-    deepLinkTemplate: "/don-hang/{orderId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "coordinator",
@@ -75,7 +75,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "XCircle",
-    deepLinkTemplate: "/don-hang/{orderId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "store_admin",
@@ -106,7 +106,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Clock",
-    deepLinkTemplate: "/don-hang/{orderId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "store_admin",
@@ -137,7 +137,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Truck",
-    deepLinkTemplate: "/don-hang/{orderId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "sales",
@@ -164,7 +164,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "CreditCard",
-    deepLinkTemplate: "/don-hang/{orderId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "sales",
@@ -189,7 +189,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "DollarSign",
-    deepLinkTemplate: "/don-hang/{orderId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "sales",
@@ -214,7 +214,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "RotateCcw",
-    deepLinkTemplate: "/don-hang/{orderId}/hoan-tien",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "store_admin",
@@ -241,7 +241,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Hammer",
-    deepLinkTemplate: "/phieu-che-tac/{taskId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "florist",
@@ -266,7 +266,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
     version: 1,
     defaultVisibleToTiers: [],
     iconName: "Package",
-    deepLinkTemplate: "/don-hang/{orderId}",
+    deepLinkTemplate: "/don-hang",
     roleDefaults: [
       {
         roleKey: "coordinator",

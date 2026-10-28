@@ -5,7 +5,7 @@ import type { IOrderRepository } from "../../domain/repositories/order-repositor
 import { createOrder } from "../create-order"
 import { getOrder } from "../get-order"
 import { listOrders } from "../list-orders"
-import { updateOrderProgress } from "../update-order-progress"
+import { progressEvents, updateOrderProgress } from "../update-order-progress"
 import { assignFlorist } from "../assign-florist"
 
 const mockTenant: TenantContext = {
@@ -208,5 +208,14 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     const res = await listOrders(mockTenant, { status: "CONFIRMED" }, mockRepo)
     expect(res.total).toBe(1)
     expect(mockRepo.list).toHaveBeenCalledWith("org-1", { status: "CONFIRMED" })
+  })
+})
+
+describe("progressEvents — mốc tiến độ sinh thông báo", () => {
+  const base = { status: "DRAFT", productionStatus: "WAITING", deliveryStatus: "PENDING" } as unknown as OrderRecord
+  it("chỉ báo khi chuyển sang mốc mới", () => {
+    expect(progressEvents(base, { status: "CONFIRMED" })).toEqual(["ORDER_ACCEPTED"])
+    expect(progressEvents(base, { productionStatus: "READY", deliveryStatus: "DELIVERED" })).toEqual(["PRODUCT_READY_FOR_DELIVERY", "ORDER_DELIVERED"])
+    expect(progressEvents({ ...base, status: "CONFIRMED" } as OrderRecord, { status: "CONFIRMED" })).toEqual([])
   })
 })
