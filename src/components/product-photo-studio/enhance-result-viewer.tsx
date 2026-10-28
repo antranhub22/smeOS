@@ -1,5 +1,6 @@
 "use client"
 
+import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
 import { CheckCircle2, AlertCircle, Download, RotateCcw } from "lucide-react"
 import type { PhotoEnhanceQcEvaluation } from "@/modules/product-photo-studio/domain/photo-enhance-rules"
@@ -77,7 +78,7 @@ export function EnhanceResultViewer({
       ) : (
         <div className="max-w-lg mx-auto rounded-2xl overflow-hidden border border-border shadow-md bg-surface-alt aspect-square">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={masterUrl} alt="Ảnh sản phẩm studio hoàn chỉnh" className="w-full h-full object-contain" />
+          <img src={safeImageSrc(masterUrl)} alt="Ảnh sản phẩm studio hoàn chỉnh" className="w-full h-full object-contain" />
         </div>
       )}
 

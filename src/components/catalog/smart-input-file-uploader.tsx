@@ -1,5 +1,6 @@
 "use client"
 
+import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef } from "react"
 import { UploadCloud, X } from "lucide-react"
 
@@ -90,7 +91,7 @@ export function SmartInputFileUploader({
               className="relative h-20 w-20 rounded-lg overflow-hidden border border-border group bg-surface"
             >
               <img
-                src={url}
+                src={safeImageSrc(url)}
                 alt={`Ảnh sản phẩm ${idx + 1}`}
                 className="h-full w-full object-cover"
               />

@@ -1,5 +1,6 @@
 "use client"
 
+import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef, useState } from "react"
 import { Upload, CheckCircle, AlertTriangle, XCircle } from "lucide-react"
 
@@ -103,7 +104,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
           <div className="flex flex-col sm:flex-row items-center gap-6 justify-center">
             <div className="relative w-36 h-36 rounded-xl overflow-hidden border border-border shadow-xs bg-surface shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={preview} alt="Ảnh sản phẩm gốc" className="w-full h-full object-contain" />
+              <img src={safeImageSrc(preview)} alt="Ảnh sản phẩm gốc" className="w-full h-full object-contain" />
             </div>
             <div className="text-left space-y-1.5">
               <div className="font-semibold text-text text-body-sm">{fileDetails?.name}</div>

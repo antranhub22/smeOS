@@ -13,41 +13,39 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const eventName = body.event_name
-    const oaId = body.oa_id
+    // AUD-028: chữ ký X-ZEvent-Signature theo App ID + Secret Key của chính OA tiệm đã cấu hình, kèm
+    // chống phát lại theo timestamp — kiểm TRƯỚC khi đọc nội dung sự kiện. OA lạ / sai chữ ký → 401.
+    const oaId = typeof body.oa_id === "string" ? body.oa_id : ""
+    const channelIntegration = oaId ? await new ChatChannelRepository().findActiveByZaloOaId(oaId) : null
+    const zaloAppId = channelIntegration?.config.zaloAppId
+    const signed =
+      !!channelIntegration &&
+      verifyZaloSignature({
+        rawBody,
+        header: req.headers.get("x-zevent-signature"),
+        appId: zaloAppId,
+        oaSecretKey: channelIntegration.config.zaloSecretKey,
+        timestamp: body.timestamp,
+      }) &&
+      String(body.app_id) === String(zaloAppId) &&
+      isFreshEvent(body.timestamp)
+    if (!channelIntegration || !signed) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const senderId = body.sender?.id || body.user_id_by_app
     const messageText = body.message?.text
+    if (body.event_name === "user_send_text" && senderId && messageText) {
+      const result = await handleIncomingChannelMessage({
+        organizationId: channelIntegration.organizationId,
+        channel: "ZALO_OA",
+        externalSenderId: senderId,
+        messageText,
+      })
 
-    if (eventName === "user_send_text" && oaId && senderId && messageText) {
-      const channelRepo = new ChatChannelRepository()
-      const channelIntegration = await channelRepo.findActiveByZaloOaId(oaId)
-
-      // AUD-028: chữ ký X-ZEvent-Signature theo App ID + Secret Key của chính OA tiệm đã cấu hình,
-      // kèm chống phát lại theo timestamp. Sai/thiếu → 401, không gọi AI, không gửi tin.
-      if (channelIntegration) {
-        const { zaloAppId, zaloSecretKey } = channelIntegration.config
-        const signed = verifyZaloSignature({
-          rawBody,
-          header: req.headers.get("x-zevent-signature"),
-          appId: zaloAppId,
-          oaSecretKey: zaloSecretKey,
-          timestamp: body.timestamp,
-        })
-        if (!signed || String(body.app_id) !== String(zaloAppId) || !isFreshEvent(body.timestamp)) {
-          return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-        }
-
-        const result = await handleIncomingChannelMessage({
-          organizationId: channelIntegration.organizationId,
-          channel: "ZALO_OA",
-          externalSenderId: senderId,
-          messageText,
-        })
-
-        const accessToken = channelIntegration.config.zaloAccessToken
-        if (accessToken) {
-          await sendZaloOaReply(accessToken, senderId, result.replyText)
-        }
+      const accessToken = channelIntegration.config.zaloAccessToken
+      if (accessToken) {
+        await sendZaloOaReply(accessToken, senderId, result.replyText)
       }
     }
 

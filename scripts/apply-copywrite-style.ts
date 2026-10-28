@@ -82,10 +82,6 @@ async function main() {
 
   for (const [namespace, nsOverrides] of Object.entries(overrides)) {
     const filePath = path.join(localesDir, `${namespace === "greetingCard" ? "greeting-card" : namespace}.ts`)
-    if (!fs.existsSync(filePath)) {
-      continue
-    }
-
     const currentModule = (viDictionary as unknown as Record<string, unknown>)[namespace]
     if (!isDict(currentModule)) continue
 
@@ -100,7 +96,19 @@ async function main() {
 
 export const ${varName} = ${JSON.stringify(merged, null, 2)} as const
 `
-    fs.writeFileSync(filePath, fileContent, "utf-8")
+    // Mở-rồi-ghi trên cùng một file descriptor (không kiểm tồn tại rồi mới ghi — tránh race, CodeQL)
+    let fd: number
+    try {
+      fd = fs.openSync(filePath, "r+")
+    } catch {
+      continue
+    }
+    try {
+      fs.ftruncateSync(fd, 0)
+      fs.writeSync(fd, fileContent, 0, "utf-8")
+    } finally {
+      fs.closeSync(fd)
+    }
     console.log(`  ✓ Đã cập nhật namespace: ${namespace} (${path.basename(filePath)})`)
   }
 

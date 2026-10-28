@@ -1,5 +1,6 @@
 "use client"
 
+import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
 
 export interface EnhanceComparisonProps {
@@ -15,7 +16,7 @@ export function EnhanceComparison({ originalUrl, enhancedUrl }: EnhanceCompariso
       {/* Enhanced Image (Background/Base) */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={enhancedUrl}
+        src={safeImageSrc(enhancedUrl)}
         alt="Ảnh hoàn chỉnh đã tăng cường"
         className="absolute inset-0 w-full h-full object-contain pointer-events-none"
       />
@@ -27,7 +28,7 @@ export function EnhanceComparison({ originalUrl, enhancedUrl }: EnhanceCompariso
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={originalUrl}
+          src={safeImageSrc(originalUrl)}
           alt="Ảnh gốc trước khi tăng cường"
           className="absolute inset-0 w-full h-full object-contain max-w-none"
           style={{ width: "100%", height: "100%" }}

@@ -1,5 +1,6 @@
 "use client"
 
+import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
 import { Download, CheckCircle2 } from "lucide-react"
 import type { ProductSetVariantResult, ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
@@ -74,7 +75,7 @@ export function ImageSetViewer({
           <div className="relative aspect-square max-w-lg mx-auto rounded-2xl overflow-hidden border border-border shadow-md bg-surface-alt flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={selectedVariant.url || originalUrl}
+              src={safeImageSrc(selectedVariant.url || originalUrl)}
               alt={selectedVariant.name}
               className="w-full h-full object-contain"
             />

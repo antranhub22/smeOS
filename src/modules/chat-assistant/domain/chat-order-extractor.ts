@@ -63,8 +63,8 @@ export function extractVietnamesePhone(text: string): string | null {
  */
 export function extractRecipientName(text: string): string | null {
   const patterns = [
-    /(?:người nhận|nguoi nhan|tên người nhận|tên là|ten la|giao cho|cho bạn|cho chị|cho anh|cho em)\s*(?:là|la|:|=|-)?\s*([A-ZÀ-Ỹa-zà-ỹ\s]{2,25}?)(?=\s*(?:sđt|sdt|số|nha|nhé|nhe|giúp|shop|ở|tại|địa chỉ|\d|,|\.|\n|$))/i,
-    /(?:chị|anh|bạn|em)\s+([A-ZÀ-Ỹ][a-zà-ỹ]+(?:\s+[A-ZÀ-Ỹ][a-zà-ỹ]+){0,2})(?=\s*(?:sđt|sdt|số|nha|nhé|nhe|giúp|shop|ở|tại|địa chỉ|\d|,|\.|\n|$))/i,
+    /(?:người nhận|nguoi nhan|tên người nhận|tên là|ten la|giao cho|cho bạn|cho chị|cho anh|cho em)\s*(?:là|la|:|=|-)?\s*([\p{L}\s]{2,25}?)(?=\s*(?:sđt|sdt|số|nha|nhé|nhe|giúp|shop|ở|tại|địa chỉ|\d|,|\.|\n|$))/iu,
+    /(?:chị|anh|bạn|em)\s+(\p{Lu}\p{Ll}+(?:\s+\p{Lu}\p{Ll}+){0,2})(?=\s*(?:sđt|sdt|số|nha|nhé|nhe|giúp|shop|ở|tại|địa chỉ|\d|,|\.|\n|$))/iu,
   ]
 
   for (const regex of patterns) {
