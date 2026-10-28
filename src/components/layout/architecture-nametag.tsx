@@ -62,14 +62,28 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: "SaaS Mother",
         title: "Hệ điều hành Nền tảng Mẹ",
         badgeClass:
-          "bg-purple-50 text-purple-700 border-purple-200/90 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/50",
+          "bg-orchid-50 text-orchid-700 border-orchid-200/90 dark:bg-orchid-950/40 dark:text-orchid-300 dark:border-orchid-800/50",
       }
     }
 
     const industryKey = (organization?.industry || "FLORAL").toUpperCase()
     const industryShort = INDUSTRY_SHORT_NAME[industryKey] || "Sản phẩm"
 
-    // 2. ChainOS
+    // 2. SaaS Ngành (Tầng 2)
+    const isIndustry =
+      organizationType === "INDUSTRY" ||
+      roleKey === "industry_admin"
+
+    if (isIndustry) {
+      return {
+        label: `SaaS Ngành • ${industryShort}`,
+        title: `Hệ điều hành Chuẩn hóa & Mạng lưới Ngành`,
+        badgeClass:
+          "bg-lagoon-50 text-lagoon-700 border-lagoon-200/90 dark:bg-lagoon-950/40 dark:text-lagoon-300 dark:border-lagoon-800/50",
+      }
+    }
+
+    // 3. ChainOS (Tầng 3)
     const isChain =
       organizationType === "FLOWER_NETWORK" ||
       organizationType === "CHAIN" ||
@@ -81,16 +95,16 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: `ChainOS • ${industryShort}`,
         title: `Hệ điều hành Mạng lưới Chuỗi`,
         badgeClass:
-          "bg-sky-50 text-sky-700 border-sky-200/90 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/50",
+          "bg-azure-50 text-azure-700 border-azure-200/90 dark:bg-azure-950/40 dark:text-azure-300 dark:border-azure-800/50",
       }
     }
 
-    // 3. StoreOS
+    // 4. StoreOS (Tầng 4)
     return {
       label: `StoreOS • ${industryShort}`,
       title: `Hệ điều hành Cửa hàng Cơ sở`,
       badgeClass:
-        "bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50",
+        "bg-mint-50 text-mint-700 border-mint-200/90 dark:bg-mint-950/40 dark:text-mint-300 dark:border-mint-800/50",
     }
   }, [pathname, organizationType, roleKey, organization?.industry])
 
@@ -125,7 +139,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
     <span
       title={nametag.title}
       className={cn(
-        "inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tracking-tight leading-none shadow-2xs whitespace-nowrap select-none transition-colors",
+        "inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-caption font-semibold tracking-tight leading-none shadow-2xs whitespace-nowrap select-none transition-colors",
         nametag.badgeClass,
         isDev && "cursor-pointer hover:opacity-80"
       )}
@@ -160,64 +174,79 @@ export function ArchitectureNametag({ isDev = false }: Props) {
 
       {/* Dropdown panel */}
       {open && (
-        <div
-          role="listbox"
-          aria-label="Chọn vai dev"
-          className="absolute left-0 top-full z-[9999] mt-1.5 w-64 overflow-hidden rounded-xl border border-amber-300 bg-amber-50 shadow-xl dark:border-amber-700 dark:bg-amber-950"
-        >
+        <>
+          {/* Lớp phủ bấm ra ngoài để đóng menu */}
+          <div
+            aria-hidden="true"
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-[9990] bg-transparent cursor-default"
+          />
+
+          <div
+            role="listbox"
+            aria-label="Chọn vai dev"
+            className="absolute left-0 top-full z-[9999] mt-2 w-64 overflow-hidden rounded-xl border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-700 dark:bg-sand-950"
+          >
           {/* Header */}
-          <div className="flex items-center gap-1.5 border-b border-amber-200 px-3 py-2 dark:border-amber-800">
-            <FlaskConical size={11} className="text-amber-600 dark:text-amber-400" aria-hidden />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-300">
+          <div className="flex items-center gap-1.5 border-b border-sand-200 px-3 py-2 dark:border-sand-800">
+            <FlaskConical size={11} className="text-sand-600 dark:text-sand-400" aria-hidden />
+            <span className="text-caption font-bold uppercase tracking-widest text-sand-700 dark:text-sand-300">
               Dev Role Override
             </span>
           </div>
 
           {/* Presets */}
-          <ul className="divide-y divide-amber-100 dark:divide-amber-900">
-            {DEV_ROLE_PRESETS.map((preset) => {
-              const isActive = roleKey === preset.roleKey
-              const isLoading = loading === preset.roleKey
-              return (
-                <li key={preset.roleKey} role="option" aria-selected={isActive}>
-                  <button
-                    onClick={() => applyOverride(preset)}
-                    disabled={isLoading}
-                    className={cn(
-                      "flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] transition-colors",
-                      isActive
-                        ? "bg-amber-200 font-bold text-amber-900 dark:bg-amber-800 dark:text-amber-100"
-                        : "text-amber-800 hover:bg-amber-100 dark:text-amber-200 dark:hover:bg-amber-900",
-                      isLoading && "opacity-50"
-                    )}
-                  >
-                    {isActive ? (
-                      <Check size={11} className="flex-shrink-0 text-amber-700" aria-hidden />
-                    ) : (
-                      <span className="h-[11px] w-[11px] flex-shrink-0" aria-hidden />
-                    )}
-                    <span className="flex-1">{preset.label}</span>
-                    {isLoading && (
-                      <span className="text-[10px] text-amber-500">Loading…</span>
-                    )}
-                  </button>
-                </li>
-              )
-            })}
+          <ul className="divide-y divide-sand-100 dark:divide-sand-900">
+            {DEV_ROLE_PRESETS.length === 0 ? (
+              <li className="px-3 py-2 text-caption text-text-muted">Chưa có vai dev mẫu</li>
+            ) : (
+              DEV_ROLE_PRESETS.map((preset) => {
+                const isActive = roleKey === preset.roleKey
+                const isLoading = loading === preset.roleKey
+                return (
+                  <li key={preset.roleKey} role="option" aria-selected={isActive}>
+                    <button
+                      type="button"
+                      onClick={() => applyOverride(preset)}
+                      disabled={isLoading}
+                      className={cn(
+                        "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors",
+                        isActive
+                          ? "bg-sand-200 font-bold text-sand-900 dark:bg-sand-800 dark:text-sand-100"
+                          : "text-sand-800 hover:bg-sand-100 dark:text-sand-200 dark:hover:bg-sand-900",
+                        isLoading && "opacity-50"
+                      )}
+                    >
+                      {isActive ? (
+                        <Check size={11} className="flex-shrink-0 text-sand-700" aria-hidden />
+                      ) : (
+                        <span className="h-[11px] w-[11px] flex-shrink-0" aria-hidden />
+                      )}
+                      <span className="flex-1">{preset.label}</span>
+                      {isLoading && (
+                        <span className="text-caption text-sand-500">Đang lưu…</span>
+                      )}
+                    </button>
+                  </li>
+                )
+              })
+            )}
           </ul>
 
           {/* Clear override */}
-          <div className="border-t border-amber-200 p-2 dark:border-amber-800">
+          <div className="border-t border-sand-200 p-2 dark:border-sand-800">
             <button
+              type="button"
               onClick={() => applyOverride(null)}
               disabled={loading === "clear"}
-              className="w-full rounded-lg px-3 py-1.5 text-center text-[11px] text-amber-700 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900"
+              className="w-full rounded-lg px-3 py-1.5 text-center text-caption text-sand-700 hover:bg-sand-100 dark:text-sand-300 dark:hover:bg-sand-900"
             >
               {loading === "clear" ? "Đang xoá…" : "↩ Xoá override — dùng session thật"}
             </button>
           </div>
         </div>
-      )}
+      </>
+    )}
     </div>
   )
 }

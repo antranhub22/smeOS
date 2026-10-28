@@ -1,31 +1,51 @@
 import { NextRequest, NextResponse } from "next/server"
 import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-channel-repository"
 import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
+import { isFreshEvent, verifyZaloSignature } from "@/modules/greeting-card/use-cases/zalo-oa-link"
 
 export async function POST(req: NextRequest) {
+  const rawBody = await req.text()
+  let body
   try {
-    const body = await req.json()
-    const eventName = body.event_name
-    const oaId = body.oa_id
+    body = JSON.parse(rawBody)
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+  }
+
+  try {
+    // AUD-028: chữ ký X-ZEvent-Signature theo App ID + Secret Key của chính OA tiệm đã cấu hình, kèm
+    // chống phát lại theo timestamp — kiểm TRƯỚC khi đọc nội dung sự kiện. OA lạ / sai chữ ký → 401.
+    const oaId = typeof body.oa_id === "string" ? body.oa_id : ""
+    const channelIntegration = oaId ? await new ChatChannelRepository().findActiveByZaloOaId(oaId) : null
+    const zaloAppId = channelIntegration?.config.zaloAppId
+    const signed =
+      !!channelIntegration &&
+      verifyZaloSignature({
+        rawBody,
+        header: req.headers.get("x-zevent-signature"),
+        appId: zaloAppId,
+        oaSecretKey: channelIntegration.config.zaloSecretKey,
+        timestamp: body.timestamp,
+      }) &&
+      String(body.app_id) === String(zaloAppId) &&
+      isFreshEvent(body.timestamp)
+    if (!channelIntegration || !signed) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const senderId = body.sender?.id || body.user_id_by_app
     const messageText = body.message?.text
+    if (body.event_name === "user_send_text" && senderId && messageText) {
+      const result = await handleIncomingChannelMessage({
+        organizationId: channelIntegration.organizationId,
+        channel: "ZALO_OA",
+        externalSenderId: senderId,
+        messageText,
+      })
 
-    if (eventName === "user_send_text" && oaId && senderId && messageText) {
-      const channelRepo = new ChatChannelRepository()
-      const channelIntegration = await channelRepo.findActiveByZaloOaId(oaId)
-
-      if (channelIntegration) {
-        const result = await handleIncomingChannelMessage({
-          organizationId: channelIntegration.organizationId,
-          channel: "ZALO_OA",
-          externalSenderId: senderId,
-          messageText,
-        })
-
-        const accessToken = channelIntegration.config.zaloAccessToken
-        if (accessToken) {
-          await sendZaloOaReply(accessToken, senderId, result.replyText)
-        }
+      const accessToken = channelIntegration.config.zaloAccessToken
+      if (accessToken) {
+        await sendZaloOaReply(accessToken, senderId, result.replyText)
       }
     }
 

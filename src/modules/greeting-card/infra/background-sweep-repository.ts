@@ -166,7 +166,7 @@ export class BackgroundSweepRepository {
       return {
         activeCoords: [],
         orgMap: new Map<string, { id: string; settings: unknown }>(),
-        orderMap: new Map<string, any>(),
+        orderMap: new Map(),
       }
     }
 

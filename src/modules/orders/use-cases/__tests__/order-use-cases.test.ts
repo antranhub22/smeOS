@@ -5,7 +5,7 @@ import type { IOrderRepository } from "../../domain/repositories/order-repositor
 import { createOrder } from "../create-order"
 import { getOrder } from "../get-order"
 import { listOrders } from "../list-orders"
-import { updateOrderProgress } from "../update-order-progress"
+import { progressEvents, updateOrderProgress } from "../update-order-progress"
 import { assignFlorist } from "../assign-florist"
 
 const mockTenant: TenantContext = {
@@ -51,6 +51,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
       recordEvent: vi.fn(),
     }
 
+    const notify = vi.fn().mockResolvedValue(1)
     const order = await createOrder(
       mockTenant,
       {
@@ -58,9 +59,11 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
           { description: "Sản phẩm hồng", quantity: 2, unitPriceVnd: 250000 },
         ],
       },
-      mockRepo
+      mockRepo,
+      notify
     )
 
+    expect(notify).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", eventKey: "ORDER_RECEIVED" }))
     expect(mockRepo.countTodayOrders).toHaveBeenCalledWith("org-1")
     expect(mockRepo.create).toHaveBeenCalled()
     expect(order.totalVnd).toBe(500000)
@@ -161,12 +164,16 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
       }),
     }
 
+    const notifyAssign = vi.fn().mockResolvedValue(1)
     const result = await assignFlorist(
       mockTenant,
       "ord-123",
       { assigneeId: "user-2", difficulty: "trung_binh" },
-      mockRepo
+      mockRepo,
+      notifyAssign
     )
+
+    expect(notifyAssign).toHaveBeenCalledWith(expect.objectContaining({ eventKey: "FLORIST_TASK_ASSIGNED", ownerUserId: "user-2" }))
 
     expect(mockRepo.createAssignment).toHaveBeenCalledWith(
       "org-1",
@@ -201,5 +208,14 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     const res = await listOrders(mockTenant, { status: "CONFIRMED" }, mockRepo)
     expect(res.total).toBe(1)
     expect(mockRepo.list).toHaveBeenCalledWith("org-1", { status: "CONFIRMED" })
+  })
+})
+
+describe("progressEvents — mốc tiến độ sinh thông báo", () => {
+  const base = { status: "DRAFT", productionStatus: "WAITING", deliveryStatus: "PENDING" } as unknown as OrderRecord
+  it("chỉ báo khi chuyển sang mốc mới", () => {
+    expect(progressEvents(base, { status: "CONFIRMED" })).toEqual(["ORDER_ACCEPTED"])
+    expect(progressEvents(base, { productionStatus: "READY", deliveryStatus: "DELIVERED" })).toEqual(["PRODUCT_READY_FOR_DELIVERY", "ORDER_DELIVERED"])
+    expect(progressEvents({ ...base, status: "CONFIRMED" } as OrderRecord, { status: "CONFIRMED" })).toEqual([])
   })
 })

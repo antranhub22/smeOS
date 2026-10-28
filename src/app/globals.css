@@ -105,11 +105,7 @@
   --color-guidance-border: #FCA5A5;
   --color-guidance-tag-bg: #FEE2E2;
 
-  /* Sub-token phụ (PO 29/09/2026): cho phép thay thế 100% màu Tailwind gốc
-     mà không cần hardcode. Bổ sung theo nhu cầu thực tế của UX Lint R1.
-     primary-muted/#FFFFFF = nền nhạt brand trên card/badge;
-     *-border = viền phân khu tông chức năng;
-     *-text = chữ đậm trên nền *-bg (đạt WCAG AA ≥ 4.5:1). */
+  /* ── Sub-token phụ (PO 29/09/2026) ─────────────────────────────────── */
   --color-primary-muted: #F5E6EA;
   --color-primary-border: #E0B4C0;
   --color-danger-border: #F5C6C2;
@@ -123,6 +119,31 @@
   --color-accent-bg: #FBF5E9;
   --color-accent-border: #E8D5A8;
   --color-accent-text: #6B4F1A;
+
+  /* ── Tương thích ngược Shadcn Tokens (Legacy Compatibility) ──────────
+   * Tự động ánh xạ 203 file dùng bg-background, text-foreground,
+   * border-input, text-muted-foreground về đúng Semantic Tokens của hệ thống.
+   * ───────────────────────────────────────────────────────────────── */
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-input: var(--color-border);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-text);
+  --color-destructive: var(--color-danger);
+  --color-destructive-foreground: #FFFFFF;
+  --color-ring: var(--color-primary);
+
+  /* ── Radius Tokens ────────────────────────────────────────────────── */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
 
   /* ── Màu nhận diện nền tảng (Platform Brand Colors — R3 compliance) ─────
    * Dùng fill="var(--color-linkedin)" thay vì fill="#0A66C2" trong JSX.
@@ -325,3 +346,101 @@ body {
 img:not([data-no-zoom="true"]) {
   cursor: zoom-in;
 }
+
+/* Tối ưu Mobile: Ngăn chặn iOS Safari tự phóng to khung nhìn khi focus input */
+@media screen and (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Multi-Preset Runtime Architecture ──────────────────────────────
+ * Hoán đổi theme ở Runtime mà không cần reload trang hoặc rebuild bundle.
+ * ───────────────────────────────────────────────────────────────── */
+
+[data-theme="modern-slate"] {
+  --color-primary: #2563EB;
+  --color-primary-dark: #1D4ED8;
+  --color-primary-muted: #EFF6FF;
+  --color-primary-border: #BFDBFE;
+  --color-secondary: #475569;
+  --color-secondary-text: #334155;
+  --color-accent: #EA580C;
+  --color-accent-bg: #FFF7ED;
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F1F5F9;
+  --color-border: #E2E8F0;
+  --color-text: #0F172A;
+  --color-text-muted: #64748B;
+  --color-selected: #EFF6FF;
+  --color-selected-text: #2563EB;
+  --radius-card: 0.75rem;
+  --radius-button: 0.5rem;
+  --radius-dialog: 0.75rem;
+}
+
+[data-theme="pure-swiss"] {
+  --color-primary: #18181B;
+  --color-primary-dark: #09090B;
+  --color-primary-muted: #F4F4F5;
+  --color-primary-border: #E4E4E7;
+  --color-secondary: #71717A;
+  --color-secondary-text: #52525B;
+  --color-accent: #059669;
+  --color-accent-bg: #ECFDF5;
+  --color-bg: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F4F4F5;
+  --color-border: #E4E4E7;
+  --color-text: #09090B;
+  --color-text-muted: #71717A;
+  --color-selected: #F4F4F5;
+  --color-selected-text: #18181B;
+  --radius-card: 0.25rem;
+  --radius-button: 0.25rem;
+  --radius-dialog: 0.375rem;
+}
+
+/* ── UI Density Tokens ────────────────────────────────────────────── */
+[data-density="compact"] {
+  --table-py: 0.375rem;
+  --table-px: 0.75rem;
+  --card-padding: 0.875rem;
+}
+
+[data-density="comfortable"] {
+  --table-py: 0.75rem;
+  --table-px: 1rem;
+  --card-padding: 1.25rem;
+}
+
+[data-density="spacious"] {
+  --table-py: 1rem;
+  --table-px: 1.25rem;
+  --card-padding: 1.75rem;
+}
+
+/* ── UI Background Texture Overlays ────────────────────────────────── */
+[data-bg-texture="paper-grain"] body {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 0);
+  background-size: 8px 8px;
+}
+
+[data-bg-texture="grid-lines"] body {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+

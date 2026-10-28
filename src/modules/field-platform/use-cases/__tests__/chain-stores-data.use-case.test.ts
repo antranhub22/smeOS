@@ -15,7 +15,7 @@ describe("Consolidated Chain Stores Data Use-Cases (/du-lieu)", () => {
         is_active: true,
         created_at: new Date("2026-01-01"),
         _count: { inventory: 5 },
-      } as any,
+      } as never,
     ])
 
     const res = await getChainStoresData("org-test")
@@ -50,7 +50,7 @@ describe("Consolidated Chain Stores Data Use-Cases (/du-lieu)", () => {
           },
         },
       ],
-    } as any)
+    } as never)
 
     const res = await getStoreFolderData("branch-01", "org-test")
     expect(res).not.toBeNull()

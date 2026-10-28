@@ -23,6 +23,7 @@ import {
   CATALOG_STYLE_OPTIONS,
   type CatalogStyleVariant,
 } from "@/modules/content-engine/domain/catalog-content-generator"
+import { formatDate } from "@/lib/i18n/formatters"
 
 export interface CatalogLinkItem {
   slug: string
@@ -97,7 +98,7 @@ export function PublishedCatalogLinks({ catalogLinks, onRefresh }: PublishedCata
                   </div>
                   <div className="text-xs text-text-muted mt-1 flex flex-wrap items-center gap-2">
                     <span>Đường dẫn: <code>/c/{link.slug}</code></span>
-                    <span>· Tạo: {new Date(link.created_at).toLocaleDateString("vi-VN")}</span>
+                    <span>· Tạo: {formatDate(link.created_at)}</span>
                     {link.description && <span>· {link.description}</span>}
                   </div>
                 </div>

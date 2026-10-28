@@ -14,7 +14,7 @@ export function LandingGuidanceCard() {
               Công cụ 08: Tạo Landing Page Cửa hàng hoặc Chuỗi
             </h3>
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-              <Sparkles className="h-3 w-3" /> Chuẩn SSOT v3
+              <Sparkles className="h-3 w-3" /> Bản chuẩn v3
             </span>
           </div>
           <p className="text-sm text-text-muted leading-relaxed">

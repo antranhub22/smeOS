@@ -162,7 +162,7 @@ export function HomestayCalendarMatrix({
                       isWeekend ? "bg-surface-alt/80 font-bold text-primary" : "text-text"
                     }`}
                   >
-                    <div className="text-[10px] text-text-muted uppercase">{dayOfWeek}</div>
+                    <div className="text-caption text-text-muted uppercase">{dayOfWeek}</div>
                     <div className="text-xs font-semibold">{dayNum}</div>
                   </th>
                 )
@@ -182,7 +182,7 @@ export function HomestayCalendarMatrix({
                   <tr key={prod.id} className="border-b border-border hover:bg-surface-alt/40 transition-colors">
                     <td className="sticky left-0 z-10 bg-surface p-3 border-r border-border font-medium">
                       <div className="truncate font-semibold text-text text-sm">{prod.name}</div>
-                      <div className="text-[11px] text-text-muted">Mã: {prod.code}</div>
+                      <div className="text-caption text-text-muted">Mã: {prod.code}</div>
                     </td>
                     {safeDays.map((day) => {
                       const matchedBookings = safeBookings.filter(

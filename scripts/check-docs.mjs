@@ -113,6 +113,7 @@ const COVERED_VIA_ROUTE = {
   order_qc_records: "tests/tenant/coordinator.test.ts — POST /coordinator/orders/:id/qc",
   order_exceptions: "tests/tenant/coordinator.test.ts — resolve sự cố của tổ chức khác → 404",
   order_payments: "tests/tenant/coordinator.test.ts — sổ thu: cách ly tổ chức — tổ chức khác không đọc/ghi được (404)",
+  internal_chat_conversations: "tests/tenant/internal-chat-isolation.test.ts — đọc/gửi/tham gia hội thoại tổ chức khác → 404",
 }
 for (const t of tenant) {
   if (t in COVERED_VIA_ROUTE) continue
@@ -133,13 +134,17 @@ const claudeMd = readFileSync("CLAUDE.md", "utf8")
 if (Buffer.byteLength(claudeMd) > CLAUDE_MD_MAX)
   bao(`CLAUDE.md ${Buffer.byteLength(claudeMd)} byte > ${CLAUDE_MD_MAX} — chuyển chi tiết sang skill/tài liệu tham chiếu`)
 const scripts = JSON.parse(readFileSync("package.json", "utf8")).scripts
-const agentDocs = ["CLAUDE.md", ".agents/AGENT_RULES.md",
-  ...readdirSync(".agents/skills").map((d) => `.agents/skills/${d}/SKILL.md`)]
+// .agents/ không còn trong git (.gitignore — chủ sản phẩm giữ riêng); chỉ kiểm khi có trên máy
+const hasAgents = existsSync(".agents/skills")
+const agentDocs = ["CLAUDE.md", ...(hasAgents ? [".agents/AGENT_RULES.md",
+  ...readdirSync(".agents/skills").map((d) => `.agents/skills/${d}/SKILL.md`)] : [])]
 for (const f of agentDocs) {
   const t = readFileSync(f, "utf8")
   for (const m of t.matchAll(/npm run ([\w:.-]+)/g)) if (!(m[1] in scripts)) bao(`${f}: "npm run ${m[1]}" không có trong package.json`)
   for (const m of t.matchAll(/`((?:src|tests|scripts|workers|prisma|docs|\.agents|\.claude)\/[^`\s*{}<>|]+?)`/g)) {
     const pth = m[1].replace(/[:#].*$/, "").replace(/\/$/, "")
+    // .claude/skills là symlink tới .agents/skills
+    if (!hasAgents && (pth.startsWith(".agents/") || pth.startsWith(".claude/skills"))) continue
     if (!existsSync(pth)) bao(`${f}: đường dẫn \`${m[1]}\` không tồn tại`)
   }
   for (const m of t.matchAll(/\]\(((?!https?:|#)[^)\s]+)\)/g)) {

@@ -28,8 +28,6 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState<string | null>(null)
 
-  // Guard: không render gì ở production
-  if (!isDev) return null
 
   const applyOverride = useCallback(
     async (override: DevRoleOverride | null) => {
@@ -51,12 +49,17 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
           window.location.href = "/"
         }
         setOpen(false)
+      } catch (err) {
+        console.error("Lỗi cập nhật vai dev:", err)
       } finally {
         setLoading(null)
       }
     },
     [router]
   )
+
+  // Guard: không render gì ở production (đặt sau mọi hook — rules-of-hooks)
+  if (!isDev) return null
 
   return (
     <div
@@ -68,17 +71,18 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
         <div
           role="dialog"
           aria-label="Chọn vai dev"
-          className="flex w-64 flex-col overflow-hidden rounded-xl border border-amber-300 bg-amber-50 shadow-xl dark:border-amber-700 dark:bg-amber-950"
+          className="flex w-64 flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-50 shadow-xl dark:border-sand-700 dark:bg-sand-950"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-amber-200 px-3 py-2 dark:border-amber-800">
-            <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-300">
+          <div className="flex items-center justify-between border-b border-sand-200 px-3 py-2 dark:border-sand-800">
+            <span className="flex items-center gap-1.5 text-caption font-bold uppercase tracking-widest text-sand-700 dark:text-sand-300">
               <FlaskConical size={12} aria-hidden />
               Dev Role Override
             </span>
             <button
+              type="button"
               onClick={() => setOpen(false)}
-              className="rounded p-0.5 text-amber-600 hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-900"
+              className="rounded p-0.5 text-sand-600 hover:bg-sand-100 dark:text-sand-400 dark:hover:bg-sand-900"
               aria-label="Đóng"
             >
               <X size={13} />
@@ -86,33 +90,34 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
           </div>
 
           {/* Presets */}
-          <ul className="divide-y divide-amber-100 dark:divide-amber-900">
+          <ul className="divide-y divide-sand-100 dark:divide-sand-900">
             {DEV_ROLE_PRESETS.map((preset) => {
               const isActive = activeRoleKey === preset.roleKey
               const isLoading = loading === preset.roleKey
               return (
                 <li key={preset.roleKey}>
                   <button
+                    type="button"
                     onClick={() => applyOverride(preset)}
                     disabled={isLoading}
                     className={cn(
-                      "flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] transition-colors",
+                      "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors",
                       isActive
-                        ? "bg-amber-200 font-bold text-amber-900 dark:bg-amber-800 dark:text-amber-100"
-                        : "text-amber-800 hover:bg-amber-100 dark:text-amber-200 dark:hover:bg-amber-900",
+                        ? "bg-sand-200 font-bold text-sand-900 dark:bg-sand-800 dark:text-sand-100"
+                        : "text-sand-800 hover:bg-sand-100 dark:text-sand-200 dark:hover:bg-sand-900",
                       isLoading && "opacity-50"
                     )}
                   >
                     <span
                       className={cn(
                         "inline-block h-2 w-2 flex-shrink-0 rounded-full",
-                        isActive ? "bg-amber-600" : "bg-amber-300"
+                        isActive ? "bg-sand-600" : "bg-sand-300"
                       )}
                       aria-hidden
                     />
                     <span className="flex-1">{preset.label}</span>
                     {isActive && (
-                      <span className="rounded bg-amber-600 px-1 py-0.5 text-[9px] font-bold text-white">
+                      <span className="rounded bg-sand-600 px-1 py-0.5 text-caption font-bold text-white">
                         ACTIVE
                       </span>
                     )}
@@ -124,11 +129,12 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
 
           {/* Clear override */}
           {activeRoleKey && (
-            <div className="border-t border-amber-200 p-2 dark:border-amber-800">
+            <div className="border-t border-sand-200 p-2 dark:border-sand-800">
               <button
+                type="button"
                 onClick={() => applyOverride(null)}
                 disabled={loading === "clear"}
-                className="w-full rounded-lg px-3 py-1.5 text-center text-[11px] font-semibold text-amber-700 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900"
+                className="w-full rounded-lg px-3 py-1.5 text-center text-caption font-semibold text-sand-700 hover:bg-sand-100 dark:text-sand-300 dark:hover:bg-sand-900"
               >
                 {loading === "clear" ? "Đang xoá…" : "✕ Xoá override — dùng session thật"}
               </button>
@@ -139,10 +145,11 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
 
       {/* Toggle button */}
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "flex items-center gap-1.5 rounded-full border border-amber-400 bg-amber-100 px-3 py-1.5 text-[11px] font-bold text-amber-800 shadow-md transition-all hover:bg-amber-200 dark:border-amber-600 dark:bg-amber-900 dark:text-amber-200 dark:hover:bg-amber-800",
-          open && "bg-amber-200 dark:bg-amber-800"
+          "flex items-center gap-1.5 rounded-full border border-sand-400 bg-sand-100 px-3 py-1.5 text-caption font-bold text-sand-800 shadow-md transition-all hover:bg-sand-200 dark:border-sand-600 dark:bg-sand-900 dark:text-sand-200 dark:hover:bg-sand-800",
+          open && "bg-sand-200 dark:bg-sand-800"
         )}
         aria-expanded={open}
         aria-haspopup="dialog"

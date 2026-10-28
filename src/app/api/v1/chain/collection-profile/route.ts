@@ -6,6 +6,7 @@
  * - PUT: Validates and publishes a new immutable profile version
  */
 
+import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"
@@ -15,6 +16,7 @@ import { type CollectionRule } from "@/modules/field-platform/domain/chain-colle
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F1")
   const repo = new ChainCollectionProfileRepository()
 
   const result = await getChainCollectionProfile(ctx.organizationId, repo)
@@ -23,6 +25,7 @@ export const GET = handle(async (request) => {
 
 export const PUT = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
   const repo = new ChainCollectionProfileRepository()
 
   const body = (await request.json()) as { rules?: CollectionRule[] }

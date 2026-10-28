@@ -15,84 +15,156 @@ export interface ProductTableViewProps {
 
 export function ProductTableView({ products, isExecutive, onTrash, onImageClick }: ProductTableViewProps) {
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-surface">
-      <table className="w-full text-left text-body-sm">
-        <thead className="border-b border-border bg-surface-alt text-caption font-bold uppercase tracking-wider text-text-muted">
-          <tr>
-            <th scope="col" className="px-4 py-3">Sản phẩm</th>
-            <th scope="col" className="px-4 py-3">Danh mục</th>
-            <th scope="col" className="px-4 py-3">Giá</th>
-            <th scope="col" className="px-4 py-3">Trạng thái</th>
-            <th scope="col" className="px-4 py-3 text-right">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {products.map((p) => (
-            <tr key={p.id} className="transition-colors hover:bg-surface-alt/50">
-              <td className="px-4 py-3 font-semibold text-text">
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => onImageClick?.(p)}
-                    title={`Xem bảng thông số & phân tích AI cho ${p.name}`}
-                    aria-label={`Xem bảng thông số & phân tích AI cho ${p.name}`}
-                    className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden bg-surface-alt border border-border hover:border-primary/50 transition-colors focus-visible:outline-2 focus-visible:outline-primary cursor-pointer text-left"
-                  >
-                    <ProductThumb
-                      name={p.name}
-                      masterImageUrl={p.masterImageUrl}
-                      driveLink={p.driveLink}
-                      size="row"
-                    />
-                  </button>
-                  <div className="min-w-0">
-                    <div className="truncate font-semibold text-text">{p.name}</div>
-                    <div className="text-caption text-text-muted font-mono">#{p.code}</div>
-                  </div>
+    <>
+      {/* Mobile view: Card List */}
+      <div className="space-y-3 md:hidden">
+        {products.map((p) => (
+          <div
+            key={p.id}
+            className="rounded-xl border border-border bg-surface p-3.5 shadow-xs transition-colors hover:border-primary/40 space-y-3"
+          >
+            <div className="flex items-start gap-3">
+              <button
+                type="button"
+                onClick={() => onImageClick?.(p)}
+                title={`Xem bảng thông số & phân tích AI cho ${p.name}`}
+                aria-label={`Xem bảng thông số & phân tích AI cho ${p.name}`}
+                className="h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden bg-surface-alt border border-border cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-primary"
+              >
+                <ProductThumb
+                  name={p.name}
+                  masterImageUrl={p.masterImageUrl}
+                  driveLink={p.driveLink}
+                  size="row"
+                />
+              </button>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="truncate font-bold text-body text-text">{p.name}</div>
+                  <StatusBadge status={p.status} />
                 </div>
-              </td>
-              <td className="px-4 py-3 text-caption text-text">{p.category ?? "—"}</td>
-              <td className="px-4 py-3">
-                <PriceLabel price={p.price_vnd} attributes={p.attributes} />
-              </td>
-              <td className="px-4 py-3">
-                <StatusBadge status={p.status} />
-              </td>
-              <td className="px-4 py-3 text-right">
-                <div className="flex items-center justify-end gap-1.5">
-                  <Link
-                    href={`/san-pham/${p.id}` as never}
-                    className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-caption font-semibold text-text-muted hover:bg-surface-alt hover:text-text transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-                    title="Xem chi tiết"
-                  >
-                    <Eye size={13} />
-                    <span>Chi tiết</span>
-                  </Link>
-                  <Link
-                    href={`/san-pham/${p.id}/tinh-nang` as never}
-                    className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-caption font-semibold text-text hover:border-primary/40 hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-                    title="Mở Studio Tính Năng"
-                  >
-                    <Sparkles size={13} />
-                    <span>Studio</span>
-                  </Link>
-                  {isExecutive && onTrash && (
+                <div className="mt-0.5 text-caption text-text-muted font-mono">#{p.code}</div>
+                <div className="mt-1.5 flex flex-wrap items-center gap-2 text-caption">
+                  <span className="rounded-md bg-surface-alt px-2 py-0.5 font-medium text-text-muted">
+                    {p.category ?? "Chung"}
+                  </span>
+                  <PriceLabel price={p.price_vnd} attributes={p.attributes} />
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Actions: Touch targets ≥ 40px */}
+            <div className="flex items-center gap-2 pt-2 border-t border-border/60">
+              <Link
+                href={`/san-pham/${p.id}` as never}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 h-10 rounded-lg border border-border bg-surface px-3 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              >
+                <Eye size={15} />
+                <span>Chi tiết</span>
+              </Link>
+              <Link
+                href={`/san-pham/${p.id}/tinh-nang` as never}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 h-10 rounded-lg bg-primary text-white px-3 text-body-sm font-semibold hover:bg-primary-dark transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              >
+                <Sparkles size={15} />
+                <span>Studio</span>
+              </Link>
+              {isExecutive && onTrash && (
+                <button
+                  type="button"
+                  onClick={() => onTrash(p)}
+                  aria-label={`Xóa ${p.name}`}
+                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-danger/30 text-danger hover:bg-danger-bg transition-colors focus-visible:outline-2 focus-visible:outline-danger"
+                  title="Chuyển vào thùng rác"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop view: Table */}
+      <div className="hidden md:block overflow-hidden rounded-xl border border-border bg-surface">
+        <table className="w-full text-left text-body-sm">
+          <thead className="border-b border-border bg-surface-alt text-caption font-bold uppercase tracking-wider text-text-muted">
+            <tr>
+              <th scope="col" className="px-4 py-3">Sản phẩm</th>
+              <th scope="col" className="px-4 py-3">Danh mục</th>
+              <th scope="col" className="px-4 py-3">Giá</th>
+              <th scope="col" className="px-4 py-3">Trạng thái</th>
+              <th scope="col" className="px-4 py-3 text-right">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {products.map((p) => (
+              <tr key={p.id} className="transition-colors hover:bg-surface-alt/50">
+                <td className="px-4 py-3 font-semibold text-text">
+                  <div className="flex items-center gap-3">
                     <button
                       type="button"
-                      onClick={() => onTrash(p)}
-                      aria-label={`Xóa ${p.name}`}
-                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-caption font-semibold text-text-muted hover:bg-danger-bg hover:text-danger transition-colors focus-visible:outline-2 focus-visible:outline-danger"
-                      title="Chuyển vào thùng rác (Chỉ Điều hành)"
+                      onClick={() => onImageClick?.(p)}
+                      title={`Xem bảng thông số & phân tích AI cho ${p.name}`}
+                      aria-label={`Xem bảng thông số & phân tích AI cho ${p.name}`}
+                      className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden bg-surface-alt border border-border hover:border-primary/50 transition-colors focus-visible:outline-2 focus-visible:outline-primary cursor-pointer text-left"
                     >
-                      <Trash2 size={13} />
+                      <ProductThumb
+                        name={p.name}
+                        masterImageUrl={p.masterImageUrl}
+                        driveLink={p.driveLink}
+                        size="row"
+                      />
                     </button>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-semibold text-text">{p.name}</div>
+                      <div className="text-caption text-text-muted font-mono">#{p.code}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-caption text-text">{p.category ?? "—"}</td>
+                <td className="px-4 py-3">
+                  <PriceLabel price={p.price_vnd} attributes={p.attributes} />
+                </td>
+                <td className="px-4 py-3">
+                  <StatusBadge status={p.status} />
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1.5">
+                    <Link
+                      href={`/san-pham/${p.id}` as never}
+                      className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-caption font-semibold text-text-muted hover:bg-surface-alt hover:text-text transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+                      title="Xem chi tiết"
+                    >
+                      <Eye size={13} />
+                      <span>Chi tiết</span>
+                    </Link>
+                    <Link
+                      href={`/san-pham/${p.id}/tinh-nang` as never}
+                      className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-caption font-semibold text-text hover:border-primary/40 hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+                      title="Mở Studio Tính Năng"
+                    >
+                      <Sparkles size={13} />
+                      <span>Studio</span>
+                    </Link>
+                    {isExecutive && onTrash && (
+                      <button
+                        type="button"
+                        onClick={() => onTrash(p)}
+                        aria-label={`Xóa ${p.name}`}
+                        className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-caption font-semibold text-text-muted hover:bg-danger-bg hover:text-danger transition-colors focus-visible:outline-2 focus-visible:outline-danger"
+                        title="Chuyển vào thùng rác (Chỉ Điều hành)"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   )
 }

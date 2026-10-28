@@ -1,5 +1,6 @@
 "use client"
 
+import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
 
 export interface EnhanceComparisonProps {
@@ -11,11 +12,11 @@ export function EnhanceComparison({ originalUrl, enhancedUrl }: EnhanceCompariso
   const [sliderPos, setSliderPos] = useState(50)
 
   return (
-    <div className="relative w-full aspect-square max-w-lg mx-auto rounded-2xl overflow-hidden border border-slate-200 shadow-md select-none group bg-slate-900">
+    <div className="relative w-full aspect-square max-w-lg mx-auto rounded-2xl overflow-hidden border border-border shadow-md select-none group bg-surface-alt">
       {/* Enhanced Image (Background/Base) */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={enhancedUrl}
+        src={safeImageSrc(enhancedUrl)}
         alt="Ảnh hoàn chỉnh đã tăng cường"
         className="absolute inset-0 w-full h-full object-contain pointer-events-none"
       />
@@ -27,7 +28,7 @@ export function EnhanceComparison({ originalUrl, enhancedUrl }: EnhanceCompariso
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={originalUrl}
+          src={safeImageSrc(originalUrl)}
           alt="Ảnh gốc trước khi tăng cường"
           className="absolute inset-0 w-full h-full object-contain max-w-none"
           style={{ width: "100%", height: "100%" }}
@@ -39,16 +40,16 @@ export function EnhanceComparison({ originalUrl, enhancedUrl }: EnhanceCompariso
         className="absolute top-0 bottom-0 w-0.5 bg-white shadow-lg pointer-events-none flex items-center justify-center"
         style={{ left: `${sliderPos}%` }}
       >
-        <div className="w-8 h-8 rounded-full bg-white text-slate-800 shadow-md flex items-center justify-center text-[10px] font-bold border border-slate-300">
+        <div className="w-8 h-8 rounded-full bg-surface text-text shadow-md flex items-center justify-center text-caption font-bold border border-border">
           ↔
         </div>
       </div>
 
       {/* Labels */}
-      <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-xs text-white text-[11px] font-medium px-2.5 py-1 rounded-md pointer-events-none">
+      <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-xs text-white text-caption font-medium px-2.5 py-1 rounded-md pointer-events-none">
         Ảnh gốc
       </div>
-      <div className="absolute top-3 right-3 bg-amber-600/80 backdrop-blur-xs text-white text-[11px] font-medium px-2.5 py-1 rounded-md pointer-events-none">
+      <div className="absolute top-3 right-3 bg-primary/90 backdrop-blur-xs text-white text-caption font-medium px-2.5 py-1 rounded-md pointer-events-none">
         Ảnh Studio ✨
       </div>
 

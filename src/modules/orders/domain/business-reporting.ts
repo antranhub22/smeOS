@@ -4,6 +4,8 @@
  * Pure logic — không import Prisma hay thư viện ngoài.
  */
 
+import { formatDate } from "@/lib/i18n/formatters"
+
 export interface OrderReportingItem {
   id: string
   code: string
@@ -108,7 +110,7 @@ export function generateReportCsvContent(
   shopName: string,
   exportDate = new Date()
 ): string {
-  const dateStr = exportDate.toLocaleDateString("vi-VN")
+  const dateStr = formatDate(exportDate)
 
   const lines = [
     `BÁO CÁO HIỆU NĂNG KINH DOANH — ${shopName.toUpperCase()}`,

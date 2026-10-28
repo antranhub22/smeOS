@@ -1,0 +1,41 @@
+{
+  "catalog": {
+    "catalog_id": "cat-demo-001",
+    "title": "Spring Collection",
+    "purpose": "collection",
+    "audience": "consumer",
+    "language": "vi-VN",
+    "style_id": "S01",
+    "page_size": "A4_PORTRAIT",
+    "output_profile": "DIGITAL_PDF",
+    "brand_id": "brand-demo",
+    "product_ids": [
+      "prod-001",
+      "prod-002"
+    ],
+    "chapter_order": [
+      "flowers",
+      "gifts"
+    ]
+  },
+  "product": {
+    "product_id": "prod-001",
+    "name": "Tên sản phẩm mẫu",
+    "category": "flowers",
+    "primary_image": "assets/products/prod-001-main.jpg",
+    "gallery_images": [],
+    "short_description": "Mô tả ngắn đã được duyệt",
+    "description": "",
+    "price": 850000,
+    "currency": "VND",
+    "unit": "bó",
+    "variants": [],
+    "attributes": {
+      "color": "hồng"
+    },
+    "product_url": "",
+    "qr_target": "",
+    "sort_order": 1,
+    "status": "active"
+  }
+}

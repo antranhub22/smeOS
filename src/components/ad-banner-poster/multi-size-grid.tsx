@@ -60,21 +60,21 @@ export function MultiSizeGrid({
                     {spec.name}
                   </span>
                   {spec.isPrintable && (
-                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-caption font-semibold bg-success-bg text-success border border-success/20">
                       <Printer className="h-2.5 w-2.5" /> Chuẩn in
                     </span>
                   )}
                 </div>
-                <span className="text-[11px] text-text-muted font-medium">
+                <span className="text-caption text-text-muted font-medium">
                   {spec.recommendedPx}
                 </span>
               </div>
 
-              <p className="text-[11px] text-text-muted mt-1.5 mb-3 line-clamp-1">
+              <p className="text-caption text-text-muted mt-1.5 mb-3 line-clamp-1">
                 {spec.description}
               </p>
 
-              <div className="relative flex-1 flex items-center justify-center p-3 bg-stone-900/5 rounded-xl overflow-hidden min-h-[300px]">
+              <div className="relative flex-1 flex items-center justify-center p-3 bg-surface-alt rounded-xl overflow-hidden min-h-[300px]">
                 <div className="w-full max-w-[340px]">
                   <BannerPreviewCard
                     ref={(el) => registerCardRef(spec.id, el)}

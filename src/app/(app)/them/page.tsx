@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useState, useMemo, type ComponentType } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -67,6 +68,7 @@ const ICONS: Record<string, ComponentType<{ size?: number; className?: string; s
 }
 
 export default function ThemPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { can, roleUx, organization } = useSession()
   const ti = getIndustryTerminology(organization?.industry)
@@ -79,12 +81,38 @@ export default function ThemPage() {
   const [dangGui, setDangGui] = useState(false)
 
   const navView = useMemo(
-    () => buildNav(can, roleUx, organization?.industry, organization?.navHiddenKeys),
-    [can, roleUx, organization?.industry, organization?.navHiddenKeys]
+    () =>
+      buildNav(
+        can,
+        roleUx,
+        organization?.industry,
+        organization?.navHiddenKeys,
+        undefined,
+        organization?.unlockedTools
+      ),
+    [
+      can,
+      roleUx,
+      organization?.industry,
+      organization?.navHiddenKeys,
+      organization?.unlockedTools,
+    ]
   )
   const slot2 = useMemo(
-    () => mobileSecondSlot(can, roleUx, organization?.industry, organization?.navHiddenKeys),
-    [can, roleUx, organization?.industry, organization?.navHiddenKeys]
+    () =>
+      mobileSecondSlot(
+        can,
+        roleUx,
+        organization?.industry,
+        organization?.navHiddenKeys,
+        undefined
+      ),
+    [
+      can,
+      roleUx,
+      organization?.industry,
+      organization?.navHiddenKeys,
+    ]
   )
   const canApprove = can("H3") || can("I2")
 

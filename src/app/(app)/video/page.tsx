@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/lib/i18n"
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Film,
@@ -39,6 +40,7 @@ interface VideoJobDetail extends VideoJobSummary {
 }
 
 export default function VideoStudioPage() {
+  const { t } = useI18n()
   const [jobs, setJobs] = useState<VideoJobSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);

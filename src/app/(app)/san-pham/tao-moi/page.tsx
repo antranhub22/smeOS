@@ -51,6 +51,7 @@ export default function CreateProductPage() {
           </Button>
           <Button
             type="button"
+            variant="secondary"
             size="sm"
             onClick={form.handleSubmit}
             disabled={form.submitting}

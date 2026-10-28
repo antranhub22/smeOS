@@ -56,7 +56,7 @@ export function ChainDataHub() {
   }
 
   useEffect(() => {
-    void loadStores()
+    void Promise.resolve().then(() => loadStores())
   }, [])
 
   const handleOpenStore = async (store: ChainStoreSummary) => {
@@ -137,7 +137,7 @@ export function ChainDataHub() {
             <>
               <ChevronRight size={13} className="text-text-muted/60" />
               <span className="flex items-center gap-1.5 text-primary font-extrabold">
-                <Folder size={14} className="fill-current text-amber-500" />
+                <Folder size={14} className="fill-current text-primary" />
                 <span>{selectedFolder.domainNameVi}</span>
               </span>
             </>
@@ -150,7 +150,7 @@ export function ChainDataHub() {
             <h1 className="text-2xl font-black text-text tracking-tight flex items-center gap-2.5">
               {selectedFolder ? (
                 <>
-                  <Folder className="text-amber-500 fill-current" size={26} />
+                  <Folder className="text-primary fill-current" size={26} />
                   <span>{selectedFolder.domainNameVi}</span>
                 </>
               ) : selectedStore ? (
@@ -213,7 +213,7 @@ export function ChainDataHub() {
                 <Button
                   size="sm"
                   onClick={() => setIsAddPartnerOpen(true)}
-                  className="gap-1.5 font-bold h-9 text-xs bg-amber-600 hover:bg-amber-700 text-white"
+                  className="gap-1.5 font-bold h-9 text-xs"
                 >
                   <Handshake size={14} />
                   <span>+ Kết Nối Đối Tác (DSA)</span>
@@ -299,7 +299,7 @@ export function ChainDataHub() {
                 onClick={() => setFilterType("PARTNER")}
                 className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "PARTNER"
-                    ? "bg-amber-600 text-white"
+                    ? "bg-primary text-white"
                     : "bg-surface border border-border text-text-muted hover:text-text"
                 }`}
               >

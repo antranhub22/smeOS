@@ -18,6 +18,7 @@ import { getIndustryPlugin } from "@/modules/organization/domain/industry-profil
  */
 export const ALL_NAV_KEYS = [
   "home",
+  "toolkit",
   "customers",
   "orders",
   "chat",
@@ -39,6 +40,9 @@ export const ALL_NAV_KEYS = [
   "templates",
   "coordinator",
   "branch-portal",
+  "internal-chat",
+  "connect-identity",
+  "chain-data",
   "jobs",
   "approval",
   "stats",
@@ -50,6 +54,15 @@ export const ALL_NAV_KEYS = [
   "channels",
   "engine",
   "settings",
+  "business-profile",
+  "store-notifications",
+  "store-matrix-promotions",
+  "store-matrix-commitments",
+  "store-matrix-policies",
+  "store-matrix-payments",
+  "store-matrix-craft-fees",
+  "system-optimizer",
+  "platform-config",
 ] as const
 
 export type NavKey = (typeof ALL_NAV_KEYS)[number]
@@ -57,6 +70,8 @@ export type NavKey = (typeof ALL_NAV_KEYS)[number]
 /** Ánh xạ href → navKey để liên kết NAV_ENTRIES với matrix. */
 export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/": "home",
+  "/cong-cu": "toolkit",
+  "/cong-cu/toi-uu-he-thong": "system-optimizer",
   "/khach-hang": "customers",
   "/don-hang": "orders",
   "/hoi-thoai": "chat",
@@ -78,6 +93,9 @@ export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/kho-templates": "templates",
   "/dieu-phoi": "coordinator",
   "/cua-hang": "branch-portal",
+  "/tin-nhan": "internal-chat",
+  "/noi-bo/ket-noi": "connect-identity",
+  "/du-lieu": "chain-data",
   "/job": "jobs",
   "/duyet": "approval",
   "/so-lieu": "stats",
@@ -89,6 +107,14 @@ export const HREF_TO_NAV_KEY: Record<string, NavKey> = {
   "/ket-noi": "channels",
   "/bo-may": "engine",
   "/cai-dat": "settings",
+  "/cai-dat?tab=INFO": "business-profile",
+  "/cai-dat/thong-bao": "store-notifications",
+  "/cai-dat/ma-tran-uudai": "store-matrix-promotions",
+  "/cai-dat/ma-tran-camket": "store-matrix-commitments",
+  "/cai-dat/ma-tran-chinhsach": "store-matrix-policies",
+  "/cai-dat/ma-tran-thanhtoan-datco": "store-matrix-payments",
+  "/cai-dat/ma-tran-phigiacong": "store-matrix-craft-fees",
+  "/van-hanh/cau-hinh": "platform-config",
 }
 
 /**

@@ -177,7 +177,7 @@ describe("inboxActions — cơ chế thanh toán lần 2 và thu nợ sau giao",
       const actions = inboxActions([step6Order], "COORDINATOR", "coord-1")
       const check = actions.find((a) => a.kind === "CHECK_ARRANGING_PROGRESS")
       expect(check).toBeDefined()
-      expect(check?.title).toContain("Theo dõi tiến độ thợ cắm hoa")
+      expect(check?.title).toContain("Theo dõi tiến độ nghệ nhân")
     })
 
     it("Bước 7 nhưng chưa xong QC → Điều phối nhận action QC_INSPECTION", () => {

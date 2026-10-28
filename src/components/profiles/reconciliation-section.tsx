@@ -18,7 +18,7 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
           <HelpCircle size={16} className="text-primary" /> Cơ chế xác nhận & đối soát giao dịch
         </h3>
         <p className="text-caption text-text-muted mt-0.5">
-          Lựa chọn quy trình kiểm tra tiền về để chuyển trạng thái đơn hàng sang "Đã thanh toán"
+          Lựa chọn quy trình kiểm tra tiền về để chuyển trạng thái đơn hàng sang “Đã thanh toán”
         </p>
       </div>
 
@@ -27,14 +27,14 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
           className={`p-4 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
             config.reconciliationMode === "MANUAL_PROOF"
               ? "border-primary bg-primary/5"
-              : "border-border bg-background hover:bg-surface-alt"
+              : "border-border bg-surface hover:bg-surface-alt"
           }`}
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold text-text">Xác nhận bằng chứng từ thủ công</p>
+              <p className="text-body-sm font-bold text-text">Xác nhận bằng chứng từ thủ công</p>
               <p className="text-caption text-text-muted mt-1 leading-relaxed">
-                Khách chuyển khoản rồi tải ảnh bill hoặc bấm "Tôi đã chuyển". Nhân viên đối soát sao kê app và bấm Duyệt tiền.
+                Khách chuyển khoản rồi tải ảnh bill hoặc bấm “Tôi đã chuyển”. Nhân viên đối soát sao kê app và bấm Duyệt tiền.
               </p>
             </div>
             <input
@@ -51,19 +51,19 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
           className={`p-4 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
             config.reconciliationMode === "AUTO_WEBHOOK"
               ? "border-primary bg-primary/5"
-              : "border-border bg-background hover:bg-surface-alt"
+              : "border-border bg-surface hover:bg-surface-alt"
           }`}
         >
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1.5">
-                <p className="text-xs font-bold text-text">Tự động khớp lệnh tức thì (Webhook)</p>
-                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-600">
+                <p className="text-body-sm font-bold text-text">Tự động khớp lệnh tức thì (Webhook)</p>
+                <span className="text-caption font-bold px-1.5 py-0.5 rounded-full bg-success-bg text-success border border-success-border">
                   Khuyên dùng
                 </span>
               </div>
               <p className="text-caption text-text-muted mt-1 leading-relaxed">
-                Bắt biến động số dư qua Open Banking / SePay / PayOS. Đơn hàng tự động đổi sang "Đã thanh toán" trong 3 giây.
+                Bắt biến động số dư qua Open Banking / SePay / PayOS. Đơn hàng tự động đổi sang “Đã thanh toán” trong 3 giây.
               </p>
             </div>
             <input

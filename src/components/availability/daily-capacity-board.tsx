@@ -114,13 +114,13 @@ export function DailyCapacityBoard({
                 >
                   <div className="text-left">
                     <div className="font-semibold">{day}</div>
-                    <div className={`text-[10px] ${isSelected ? "text-white/80" : "text-text-muted"}`}>
+                    <div className={`text-caption ${isSelected ? "text-white/80" : "text-text-muted"}`}>
                       {getDayOfWeek(day)}
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                      className={`rounded-full px-2 py-0.5 text-caption font-bold ${
                         isSelected
                           ? "bg-white/20 text-white"
                           : isFull
@@ -207,7 +207,7 @@ export function DailyCapacityBoard({
                         {b.customerPhone && ` · SĐT: ${b.customerPhone}`}
                       </div>
                     </div>
-                    <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary">
+                    <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-caption font-bold text-primary">
                       {b.orderId ? "Đã xác nhận" : "Khóa bảo trì"}
                     </span>
                   </div>

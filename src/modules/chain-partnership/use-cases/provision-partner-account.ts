@@ -10,7 +10,10 @@ export class ProvisionPartnerAccountUseCase {
     private readonly chatRepo: IInternalChatRepository = getInternalChatRepository()
   ) {}
 
-  async execute(input: ProvisionPartnerInput, coordinatorUserId: string): Promise<ChainPartnershipEntity> {
+  async execute(
+    input: ProvisionPartnerInput,
+    coordinatorUserId: string
+  ): Promise<{ partnership: ChainPartnershipEntity; temporaryPassword?: string | undefined }> {
     // 1. Cấp tài khoản Cửa hàng đối tác & Tạo quan hệ chuỗi
     const result = await this.partnershipRepo.provisionPartner(input)
 
@@ -42,6 +45,6 @@ export class ProvisionPartnerAccountUseCase {
       // Ignored if chat creation fails; partnership remains valid
     }
 
-    return result.partnership
+    return { partnership: result.partnership, temporaryPassword: result.temporaryPassword }
   }
 }

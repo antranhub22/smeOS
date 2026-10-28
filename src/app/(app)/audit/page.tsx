@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useEffect, useState, useCallback, useMemo } from "react"
 import {
   ShieldCheck,
@@ -32,6 +33,7 @@ interface AuditLogRow {
 }
 
 export default function AuditLogsPage() {
+  const { t } = useI18n()
   const { can, orgName } = useSession()
   const canView = can("G9")
 

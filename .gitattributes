@@ -1,0 +1,7 @@
+# Tệp dành riêng cho quy trình phát triển — không nằm trong bản bàn giao cho khách
+# (`git archive` bỏ qua; xem docs/handover/OPERATIONS_RUNBOOK.md §9)
+CLAUDE.md export-ignore
+.claude/ export-ignore
+.agents/ export-ignore
+AGENTS.md export-ignore
+.agent-studio/ export-ignore

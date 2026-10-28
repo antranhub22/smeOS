@@ -6,9 +6,11 @@ import { Badge } from "@/components/ui/badge"
 import { MatrixToolbar } from "./_components/matrix-toolbar"
 import { MatrixGrid } from "./_components/matrix-grid"
 import { MatrixDiffModal } from "./_components/matrix-diff-modal"
+import { useI18n } from "@/lib/i18n"
 import type { NavMatrixApiResponse, MatrixDiffItem } from "./_lib/types"
 
 export default function NganhNavMatrixPage() {
+  const { t, dict } = useI18n()
   const [data, setData] = useState<NavMatrixApiResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

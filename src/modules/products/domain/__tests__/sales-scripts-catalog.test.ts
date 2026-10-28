@@ -43,7 +43,7 @@ describe("sales-scripts-catalog (KB-01 -> KB-14)", () => {
     const rawTemplate = "Chào {{customerName}} từ {{shopName}}!"
     const rendered = renderSalesScript(rawTemplate, {})
 
-    expect(rendered).toBe("Chào anh/chị từ Flora Tiệm Hoa!")
+    expect(rendered).toBe("Chào anh/chị từ Flora Cửa Hàng!")
   })
 
   it("getScriptById tìm chính xác kịch bản theo id hoặc code", () => {

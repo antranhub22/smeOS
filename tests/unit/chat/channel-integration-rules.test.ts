@@ -90,9 +90,20 @@ describe("Omnichannel Chat Integration & Monetization Rules (M08)", () => {
       expect(res.valid).toBe(false)
     })
 
-    it("hợp lệ khi có Zalo OA ID và Access Token", () => {
+    it("chỉ có Access Token thì chưa đủ: thiếu App ID + Secret Key, webhook không kiểm được chữ ký (AUD-028)", () => {
       const res = validateChannelCredentials("ZALO_OA", {
         zaloOaId: "987654",
+        zaloAccessToken: "oa_token_123",
+      })
+      expect(res.valid).toBe(false)
+      expect(res.errors).toContain("Chưa nhập Zalo Secret Key để xác thực tin nhắn đến")
+    })
+
+    it("hợp lệ khi có Zalo OA ID, App ID và Secret Key", () => {
+      const res = validateChannelCredentials("ZALO_OA", {
+        zaloOaId: "987654",
+        zaloAppId: "app-1",
+        zaloSecretKey: "secret-1",
         zaloAccessToken: "oa_token_123",
       })
       expect(res.valid).toBe(true)

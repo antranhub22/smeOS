@@ -5,6 +5,18 @@ import { ensureSystemRoles } from "@/modules/organization/use-cases/ensure-syste
 import { seedAiCapabilities, seedVisionModels } from "@/core/ai/infra/seed-ai-registry"
 
 const TENANT_TABLES = [
+  // Chat nội bộ (26/10/2026) — con trước cha để TRUNCATE gọn
+  "internal_chat_messages",
+  "internal_chat_participants",
+  "internal_chat_conversations",
+  // Thông báo đa tầng (27/10/2026) — bảng tenant + bảng cấu hình nền tảng dùng chung
+  "notification_inbox",
+  "notification_user_preferences",
+  "notification_store_defaults",
+  "notification_org_policies",
+  "notification_hard_locks",
+  "notification_event_visibility",
+  "notification_channel_activations",
   // Phân hệ Market Intelligence — Đợt A
   "content_opportunities",
   // Product Intelligence (Quét theo ảnh sản phẩm) — nợ #113, đã trả 21/09/2026

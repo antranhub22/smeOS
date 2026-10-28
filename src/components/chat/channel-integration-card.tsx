@@ -5,6 +5,7 @@ import { Settings, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"
+import { formatDate } from "@/lib/i18n/formatters"
 
 interface ChannelIntegrationCardProps {
   item: ChannelStatusItem
@@ -68,7 +69,7 @@ export function ChannelIntegrationCard({
             <div className="flex items-center justify-between border-t border-border pt-1.5 text-caption">
               <span className="text-muted-foreground">Hạn thuê bao:</span>
               <span className="text-muted-foreground font-mono">
-                {new Date(subscriptionExpiresAt).toLocaleDateString("vi-VN")}
+                {formatDate(subscriptionExpiresAt)}
               </span>
             </div>
           )}

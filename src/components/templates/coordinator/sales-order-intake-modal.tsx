@@ -1,5 +1,6 @@
 "use client"
 
+import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState, useEffect } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
 import {
@@ -717,7 +718,7 @@ export function SalesOrderIntakeModal({
                     <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={sampleImageUrl}
+                        src={safeImageSrc(sampleImageUrl)}
                         alt="Ảnh mẫu sản phẩm đầu vào"
                         className="w-full h-full object-cover"
                       />
@@ -896,7 +897,7 @@ export function SalesOrderIntakeModal({
             {/* Atomic Flowers Table */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="font-bold text-text">Công thức định lượng chi tiết (BOM):</label>
+                <label className="font-bold text-text">Công thức định lượng chi tiết:</label>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddFlower} className="h-6 text-caption gap-1">
                   <Plus size={11} />
                   Thêm nguyên phụ liệu
@@ -1250,7 +1251,7 @@ export function SalesOrderIntakeModal({
                   : "bg-sand-50 text-sand-800 border-sand-200"
               }`}>
                 <span>{flowers.length > 0 ? "✓" : "!"}</span>
-                <span className="truncate">6. Công thức BOM</span>
+                <span className="truncate">6. Định mức nguyên liệu</span>
               </div>
 
               <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border font-semibold ${

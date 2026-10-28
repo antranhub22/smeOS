@@ -1,3 +1,4 @@
+import { getDictionary, translate } from "@/lib/i18n/server"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { isPrivacyNoticeEnabled } from "@/lib/privacy-notice"
@@ -43,6 +44,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
 
 /** Chính sách bảo mật mẫu chung FloraOS cho trang đặt hoa — chỉ mở khi bật cờ D13. */
 export default function PrivacyPolicyPage() {
+  const dict = getDictionary("vi")
   if (!isPrivacyNoticeEnabled()) notFound()
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-5 px-4 py-8 text-text">

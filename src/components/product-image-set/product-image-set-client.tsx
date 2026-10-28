@@ -1,14 +1,16 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { Sparkles, Images, Loader2, RefreshCw } from "lucide-react"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { BundleSelector } from "@/components/product-image-set/bundle-selector"
 import { ImageSetViewer } from "@/components/product-image-set/image-set-viewer"
+import { useI18n } from "@/lib/i18n"
 import type { ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
 
 export function ProductImageSetClient() {
+  const { t, dict } = useI18n()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [bundleId, setBundleId] = useState("omnichannel_default")
@@ -16,13 +18,13 @@ export function ProductImageSetClient() {
 
   const [isUploading, setIsUploading] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [jobId, setJobId] = useState<string | null>(null)
+  const [, setJobId] = useState<string | null>(null)
   const [jobResult, setJobResult] = useState<ProductImageSetResult | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const handlePhotoSelected = (file: File, url: string) => {
+  const handlePhotoSelected = (file: File) => {
     setSelectedFile(file)
-    setPreviewUrl(url)
+    setPreviewUrl(URL.createObjectURL(file))
     setJobResult(null)
     setErrorMsg(null)
   }
@@ -59,64 +61,51 @@ export function ProductImageSetClient() {
         throw new Error(err.message || "Không thể tạo bộ ảnh thương mại")
       }
 
-      const data = await res.json()
-      setJobId(data.job_id)
+      const { data } = await res.json()
+      setJobId(data.jobId)
+
+      // Polling job
+      const pollInterval = setInterval(async () => {
+        try {
+          const pollRes = await fetch(`/api/v1/product-image-set/${data.jobId}`)
+          if (pollRes.ok) {
+            const pollData = await pollRes.json()
+            if (pollData.data?.status === "COMPLETED") {
+              clearInterval(pollInterval)
+              setIsProcessing(false)
+              setJobResult(pollData.data)
+            } else if (pollData.data?.status === "FAILED") {
+              clearInterval(pollInterval)
+              setIsProcessing(false)
+              setErrorMsg(pollData.data.errorMessage || "Xử lý bộ ảnh thất bại.")
+            }
+          }
+        } catch {
+          // Poll retry
+        }
+      }, 2500)
     } catch (err: unknown) {
       setIsUploading(false)
       setIsProcessing(false)
-      setErrorMsg(err instanceof Error ? err.message : "Đã có lỗi xảy ra khi tạo bộ ảnh")
+      setErrorMsg(err instanceof Error ? err.message : "Có lỗi xảy ra khi tạo bộ ảnh.")
     }
   }
-
-  // Polling kết quả job
-  useEffect(() => {
-    if (!jobId || !isProcessing) return
-
-    let cancelled = false
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/v1/product-image-set/${jobId}`)
-        if (!res.ok) return
-        const data: ProductImageSetResult = await res.json()
-
-        if (cancelled) return
-
-        if (data.status === "COMPLETED" || data.status === "FAILED") {
-          setIsProcessing(false)
-          setJobResult(data)
-          if (data.status === "FAILED") {
-            setErrorMsg(data.error || "Quá trình sinh bộ ảnh không thành công")
-          }
-          clearInterval(interval)
-        }
-      } catch {
-        // network retry
-      }
-    }, 2500)
-
-    return () => {
-      cancelled = true
-      clearInterval(interval)
-    }
-  }, [jobId, isProcessing])
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shadow-xs">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
             <Images className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-slate-900">
-                Tạo bộ ảnh sản phẩm từ một ảnh gốc
-              </h1>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+              <h1 className="text-title font-bold text-text">Tạo bộ ảnh sản phẩm đa kênh</h1>
+              <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                 Công cụ 02
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-caption text-text-muted mt-0.5">
               Sinh trọn gói ảnh đa tỉ lệ, đa góc cạnh và đa phong cách đồng bộ từ một ảnh duy nhất
             </p>
           </div>
@@ -135,7 +124,7 @@ export function ProductImageSetClient() {
       />
 
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
+        <div className="p-4 rounded-xl bg-danger-bg border border-danger-border text-danger text-caption font-semibold">
           {errorMsg}
         </div>
       )}
@@ -144,7 +133,7 @@ export function ProductImageSetClient() {
       {!jobResult && !isProcessing && (
         <div className="space-y-6">
           <PhotoUploadPanel
-            onPhotoSelected={handlePhotoSelected}
+            onFileSelected={handlePhotoSelected}
             disabled={isUploading || isProcessing}
           />
 
@@ -162,7 +151,7 @@ export function ProductImageSetClient() {
                   type="button"
                   disabled={isUploading || isProcessing}
                   onClick={handleStartGenerateSet}
-                  className="px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold text-body-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" /> Tạo trọn bộ ảnh ngay ✨
                 </button>
@@ -173,13 +162,13 @@ export function ProductImageSetClient() {
       )}
 
       {isProcessing && (
-        <div className="p-12 rounded-2xl border border-amber-200 bg-amber-50/50 text-center space-y-4 max-w-md mx-auto my-6 shadow-xs">
-          <Loader2 className="w-10 h-10 mx-auto text-amber-600 animate-spin" />
+        <div className="p-12 rounded-2xl border border-primary/20 bg-primary-subtle/30 text-center space-y-4 max-w-md mx-auto my-6 shadow-xs">
+          <Loader2 className="w-10 h-10 mx-auto text-primary animate-spin" />
           <div>
-            <div className="font-bold text-slate-800 text-base">
+            <div className="font-bold text-text text-base">
               AI đang sinh bộ ảnh đa kênh & kiểm định nhất quán...
             </div>
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-caption text-text-muted mt-1">
               Đang xuất các tỉ lệ 1:1, 4:5, 9:16 và đối chiếu độ trung thực sản phẩm.
             </div>
           </div>
@@ -197,7 +186,7 @@ export function ProductImageSetClient() {
                 setSelectedFile(null)
                 setPreviewUrl(null)
               }}
-              className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5"
+              className="text-caption font-semibold text-text-muted hover:text-text flex items-center gap-1.5 cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Tạo bộ ảnh sản phẩm khác
             </button>

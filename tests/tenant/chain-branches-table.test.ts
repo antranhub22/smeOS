@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { POST as bulkImport } from "@/app/api/v1/greeting-card/chain-branches/bulk-import/route"
+import { PATCH as patchBranch } from "@/app/api/v1/greeting-card/chain-branches/[branchCode]/route"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 
@@ -87,5 +88,22 @@ describe("bảng chain_branches", () => {
     expect(row.cancellation_count).toBe(5)
     expect(row.quality_score).toBe(80)
     expect((row.cancellation_history as unknown[]).length).toBe(5)
+  })
+
+  it("tạm dừng đối tác: chỉ đổi chi nhánh của chính tổ chức, cùng mã ở tổ chức khác → 404", async () => {
+    await importBranches(a, [{ branchId: "CN1", branchName: "Quận 1" }])
+    await importBranches(b, [{ branchId: "CN1", branchName: "Chi nhánh của B" }])
+    const call = (tenant: Tenant, code: string) =>
+      patchBranch(
+        withSession(`http://localhost/api/v1/greeting-card/chain-branches/${code}`, tenant.token, {
+          method: "PATCH",
+          body: JSON.stringify({ isActive: false }),
+        }),
+        { params: Promise.resolve({ branchCode: code }) }
+      )
+    expect((await call(a, "CN1")).status).toBe(200)
+    expect((await repo.listCandidates(a.organizationId))[0]?.isActive).toBe(false)
+    expect((await repo.listCandidates(b.organizationId))[0]?.isActive).toBe(true)
+    expect((await call(a, "CN-KHONG-CO")).status).toBe(404)
   })
 })

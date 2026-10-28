@@ -112,6 +112,28 @@ export function ChannelConfigModal({
                   }
                 />
               </div>
+              <div>
+                <label className="mb-1 block font-bold text-text-muted">Zalo App ID</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="App ID trong Zalo for Developers"
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-body-sm focus-visible:outline-2 focus-visible:outline-primary"
+                  value={configForm.zaloAppId || ""}
+                  onChange={(e) => onChangeForm({ ...configForm, zaloAppId: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block font-bold text-text-muted">Zalo Secret Key (OA)</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Dùng để xác thực tin nhắn Zalo gửi về"
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 font-mono text-caption focus-visible:outline-2 focus-visible:outline-primary"
+                  value={configForm.zaloSecretKey || ""}
+                  onChange={(e) => onChangeForm({ ...configForm, zaloSecretKey: e.target.value })}
+                />
+              </div>
               <div className="rounded-lg bg-surface-alt p-2 text-caption text-text-muted">
                 Webhook Callback URL: <code className="text-primary font-mono">https://floraos.vn/api/v1/chat/webhooks/zalo</code>
               </div>

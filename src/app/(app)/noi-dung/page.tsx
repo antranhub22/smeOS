@@ -12,6 +12,7 @@
  *  - useImageUploadFlow  → use-image-upload-flow.ts
  */
 
+import { useI18n } from "@/lib/i18n"
 import React, { useState, Suspense } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles, ArrowLeft, Calendar, Database, Upload, CheckCircle2 } from "lucide-react"
@@ -285,6 +286,7 @@ function ContentEngineContent() {
 }
 
 export default function ContentEnginePage() {
+  const { t } = useI18n()
   return (
     <Suspense
       fallback={

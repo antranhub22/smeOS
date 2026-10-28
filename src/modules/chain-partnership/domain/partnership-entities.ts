@@ -18,6 +18,7 @@ export interface ChainPartnershipEntity {
   district?: string | undefined
   partnerOrgName?: string | undefined
   partnerOrgSlug?: string | undefined
+  unlockedTools?: string[] | null | undefined
   createdAt: Date
   updatedAt: Date
 }

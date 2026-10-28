@@ -141,8 +141,12 @@ export function validateChannelCredentials(
     if (!config.zaloOaId?.trim()) {
       errors.push("Chưa nhập Zalo Official Account ID")
     }
-    if (!config.zaloAccessToken?.trim() && !config.zaloSecretKey?.trim()) {
-      errors.push("Cần ít nhất Zalo Access Token hoặc Secret Key")
+    // App ID + Secret Key bắt buộc: webhook dùng chúng để kiểm chữ ký tin nhắn đến (audit AUD-028)
+    if (!config.zaloAppId?.trim()) {
+      errors.push("Chưa nhập Zalo App ID")
+    }
+    if (!config.zaloSecretKey?.trim()) {
+      errors.push("Chưa nhập Zalo Secret Key để xác thực tin nhắn đến")
     }
   }
 

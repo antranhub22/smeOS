@@ -11,6 +11,7 @@ import {
   type ToolGroup,
 } from "@/modules/toolkit/domain/toolkit-catalog"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { UserMenu } from "@/components/layout/user-menu"
 import { ToolCard } from "./toolkit-card"
 
@@ -99,6 +100,7 @@ function ToolGroupSection({ group, isDev }: { group: ToolGroup; isDev: boolean }
 export function ToolkitHome() {
   const isDev = useIsDev()
   const { userInitials } = useSession()
+  const { t, dict } = useI18n()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
 
@@ -136,17 +138,17 @@ export function ToolkitHome() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>48 công cụ kinh doanh</span>
+            <span>{dict.toolkit.header.badge}</span>
           </div>
           <h1 className="text-display font-extrabold text-text tracking-tight">
             {isDev
-              ? "Hệ thống chức năng smeOS"
-              : "Hôm nay bạn muốn làm gì?"}
+              ? dict.toolkit.header.titleDev
+              : dict.toolkit.header.titleProd}
           </h1>
           <p className="text-body text-text-muted mt-1">
             {isDev
-              ? "Toàn bộ 48 chức năng phân nhóm theo lộ trình phát triển"
-              : "Chọn công cụ bên dưới để bắt đầu."}
+              ? dict.toolkit.header.descDev
+              : dict.toolkit.header.descProd}
           </p>
         </div>
 
@@ -161,13 +163,13 @@ export function ToolkitHome() {
       {/* Filter + Search */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Status filter tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none]">
           {(isDev ? FILTER_OPTIONS : FILTER_OPTIONS.slice(0, 1)).map((opt) => (
             <button
               key={opt.id}
               type="button"
               onClick={() => setStatusFilter(opt.id)}
-              className={`px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
+              className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
                 statusFilter === opt.id
                   ? "bg-primary text-surface font-semibold"
                   : "bg-surface border border-border text-text hover:bg-surface-alt"
@@ -190,7 +192,7 @@ export function ToolkitHome() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tìm kiếm chức năng..."
+            placeholder={dict.toolkit.filters.searchPlaceholder}
             className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border bg-surface text-body-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary transition-colors"
           />
         </div>
@@ -219,8 +221,8 @@ export function ToolkitHome() {
       {isDev && (
         <div className="mt-8 pt-4 border-t border-border text-center">
           <p className="text-caption text-text-muted">
-            🔧 Đang chạy môi trường phát triển — Hiển thị toàn bộ 48 chức năng kèm trạng thái.
-            Trên production chỉ hiển thị các chức năng đã hoàn thiện.
+            🔧 Đang chạy môi trường phát triển — Hiển thị toàn bộ 51 công cụ phân 9 nhóm kèm trạng thái.
+            Trên production chỉ hiển thị các công cụ đã hoàn thiện.
           </p>
         </div>
       )}

@@ -111,11 +111,11 @@ export function BrochureLanguageSettings() {
         {/* Badge trạng thái gói quốc tế */}
         <div className="shrink-0">
           {isEnUnlocked ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-bold bg-success-bg text-success border border-success/20">
               <CheckCircle2 size={13} /> Gói Quốc Tế: Đã Kích Hoạt
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-bold bg-warning-bg text-warning border border-warning/20">
               <Lock size={13} /> Gói Quốc Tế: Cần Admin SaaS Mở Khóa
             </span>
           )}
@@ -137,7 +137,7 @@ export function BrochureLanguageSettings() {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-body-sm font-bold text-foreground">Tiếng Việt</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded font-semibold bg-primary/10 text-primary">
+                    <span className="text-caption px-1.5 py-0.2 rounded font-semibold bg-primary/10 text-primary">
                       Mặc định
                     </span>
                   </div>
@@ -181,7 +181,7 @@ export function BrochureLanguageSettings() {
                   <div className="flex items-center gap-2">
                     <span className="text-body-sm font-bold text-foreground">English (Tiếng Anh)</span>
                     {!isEnUnlocked && (
-                      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.2 rounded font-semibold bg-surface-alt text-text-muted border border-border">
+                      <span className="inline-flex items-center gap-1 text-caption px-1.5 py-0.2 rounded font-semibold bg-surface-alt text-text-muted border border-border">
                         <Lock size={10} /> Khóa
                       </span>
                     )}
@@ -214,7 +214,7 @@ export function BrochureLanguageSettings() {
                     className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer"
                   />
                 ) : policy.pendingRequest ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-caption font-bold bg-warning-bg text-warning border border-warning/20">
                     <Clock size={12} /> Đang chờ Admin duyệt
                   </span>
                 ) : (
@@ -280,7 +280,7 @@ export function BrochureLanguageSettings() {
           <div
             className={`p-3 rounded-xl text-caption font-semibold flex items-center gap-2 ${
               message.ok
-                ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+                ? "bg-success-bg text-success border border-success/20"
                 : "bg-danger/10 text-danger border border-danger/20"
             }`}
           >
@@ -314,6 +314,7 @@ export function BrochureLanguageSettings() {
               <button
                 type="button"
                 onClick={() => setOpenUnlockModal(false)}
+                aria-label="Đóng cửa sổ"
                 className="p-1.5 rounded-lg text-text-muted hover:bg-surface"
               >
                 <X size={16} />
@@ -321,15 +322,16 @@ export function BrochureLanguageSettings() {
             </div>
 
             {unlockSuccess ? (
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
-                <CheckCircle2 size={32} className="text-emerald-500 mx-auto" />
-                <p className="text-body-sm font-bold text-emerald-600">Đã gửi yêu cầu thành công!</p>
+              <div className="p-4 rounded-xl bg-success-bg border border-success/20 text-center space-y-2">
+                <CheckCircle2 size={32} className="text-success mx-auto" />
+                <p className="text-body-sm font-bold text-success">Đã gửi yêu cầu thành công!</p>
                 <p className="text-caption text-text-muted">
                   Yêu cầu đã được chuyển tới Admin của SaaS để phê duyệt. Hệ thống sẽ tự động kích hoạt Tiếng Anh ngay khi được duyệt.
                 </p>
                 <Button
                   type="button"
                   size="sm"
+                  variant="outline"
                   onClick={() => setOpenUnlockModal(false)}
                   className="mt-2"
                 >
@@ -385,6 +387,7 @@ export function BrochureLanguageSettings() {
                   </Button>
                   <Button
                     type="submit"
+                    variant="secondary"
                     disabled={requesting}
                     className="gap-2 font-bold shadow-xs"
                   >

@@ -43,7 +43,7 @@ describe("customer notifications", () => {
     })
     expect(msg).toContain("DH123")
     expect(msg).toContain("700.000 đ")
-    expect(msg).toContain("ảnh hoa thực tế")
+    expect(msg).toContain("ảnh thực tế")
     expect(msg).toContain("https://x.vn/b/T1")
   })
   it("tin nhắn mẫu Sale gửi Zalo nhắc khách thanh toán lần 2 khi giao gấp (bỏ qua ảnh)", () => {
@@ -79,7 +79,7 @@ describe("customer notifications", () => {
     expect(text).toContain("https://x.vn/b/T8")
 
     const zaloMsg = customerOrderAcceptedMessage({ orderCode: "DH888", trackingUrl: "https://x.vn/b/T8" })
-    expect(zaloMsg).toContain("Đã xác nhận nhận đơn hoa DH888")
+    expect(zaloMsg).toContain("Đã xác nhận nhận đơn DH888")
     expect(zaloMsg).toContain("https://x.vn/b/T8")
   })
 })

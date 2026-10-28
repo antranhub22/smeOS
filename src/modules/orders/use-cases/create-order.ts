@@ -8,11 +8,13 @@ import { calculateOrderTotal, generateOrderCode } from "../domain/order-rules"
 import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
+import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
 export async function createOrder(
   ctx: TenantContext,
   input: CreateOrderInput,
-  repo: IOrderRepository = getOrderRepository()
+  repo: IOrderRepository = getOrderRepository(),
+  notify: typeof notifyOrganization = notifyOrganization
 ): Promise<OrderRecord> {
   if (!input.items || input.items.length === 0) {
     throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc sản phẩm.")
@@ -26,5 +28,14 @@ export async function createOrder(
   const countToday = await repo.countTodayOrders(ctx.organizationId)
   const code = generateOrderCode(countToday + 1)
 
-  return repo.create(ctx.organizationId, code, input, totalVnd, ctx.userId)
+  const order = await repo.create(ctx.organizationId, code, input, totalVnd, ctx.userId)
+  // Không chờ: thông báo chậm/lỗi không được làm chậm hay hỏng việc tạo đơn
+  void notify({
+    organizationId: ctx.organizationId,
+    eventKey: "ORDER_RECEIVED",
+    ownerUserId: ctx.userId,
+    message: `Đơn ${order.code} vừa được tạo.`,
+    deepLink: "/don-hang",
+  })
+  return order
 }

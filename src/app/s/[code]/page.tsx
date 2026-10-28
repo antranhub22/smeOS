@@ -1,3 +1,4 @@
+import { getDictionary, translate } from "@/lib/i18n/server"
 import type { Metadata } from "next"
 import { linkPreviewText } from "@/modules/greeting-card/domain/link-preview-text"
 import { getPublicGreetingCatalog } from "@/modules/greeting-card/use-cases/get-public-greeting-catalog"
@@ -44,6 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  * trình duyệt của khách tự chuyển sang /s/<mã>/mo để mở phiên riêng tính cho người sao chép.
  */
 export default async function ShareLinkPage({ params }: PageProps) {
+  const dict = getDictionary("vi")
   const code = (await params).code.toUpperCase()
   const preview = await shareLinkPreview(code)
   if (!preview) {

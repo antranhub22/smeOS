@@ -102,7 +102,7 @@ describe("Asset Use-Cases with IAssetRepository Port", () => {
     it("trả về danh sách asset kèm phân trang", async () => {
       const assetRepo = createMockAssetRepo()
       const productRepo: IProductRepository = {
-        findById: vi.fn().mockResolvedValue({ id: "prod_1", name: "Sản phẩm A" } as any),
+        findById: vi.fn().mockResolvedValue({ id: "prod_1", name: "Sản phẩm A" } as never),
         findByCode: vi.fn().mockResolvedValue(null),
         listExistingCodes: vi.fn().mockResolvedValue(new Set()),
         list: vi.fn().mockResolvedValue([]),

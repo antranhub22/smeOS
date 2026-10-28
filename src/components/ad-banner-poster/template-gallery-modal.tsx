@@ -55,6 +55,7 @@ export function TemplateGalleryModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Đóng cửa sổ"
             className="rounded-lg p-1.5 text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
           >
             <X className="h-5 w-5" />
@@ -99,11 +100,11 @@ export function TemplateGalleryModal({
                 {/* Card Header */}
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-caption font-bold bg-primary/10 text-primary">
                       {tpl.categoryLabel}
                     </span>
                     {tpl.isChainReady && (
-                      <span className="text-[10px] font-semibold text-text-muted">
+                      <span className="text-caption font-semibold text-text-muted">
                         🏢 Chuỗi sẵn sàng
                       </span>
                     )}
@@ -114,12 +115,12 @@ export function TemplateGalleryModal({
                   </h3>
 
                   {/* Visual Preview Box */}
-                  <div className="relative mt-2 aspect-[4/3] rounded-lg overflow-hidden border border-border bg-gradient-to-br from-stone-100 to-stone-200 flex flex-col justify-between p-2.5">
-                    <div className="flex justify-between items-center text-[9px] font-extrabold uppercase">
+                  <div className="relative mt-2 aspect-[4/3] rounded-lg overflow-hidden border border-border bg-gradient-to-br from-surface-alt to-surface flex flex-col justify-between p-2.5">
+                    <div className="flex justify-between items-center text-caption font-extrabold uppercase">
                       <span className="px-1.5 py-0.5 rounded bg-black/70 text-white truncate max-w-[70%]">
                         {tpl.defaultCopy.headline}
                       </span>
-                      <span className="px-1.5 py-0.5 rounded bg-amber-400 text-black font-black">
+                      <span className="px-1.5 py-0.5 rounded bg-warning text-black font-black">
                         {tpl.defaultCopy.promotionBadge}
                       </span>
                     </div>
@@ -133,7 +134,7 @@ export function TemplateGalleryModal({
                       />
                     </div>
 
-                    <div className="flex justify-between items-center text-[8px] text-stone-600">
+                    <div className="flex justify-between items-center text-caption text-text-muted">
                       <span className="px-1 rounded bg-white/80 font-bold">
                         {tpl.defaultCopy.ctaText}
                       </span>
@@ -146,7 +147,7 @@ export function TemplateGalleryModal({
                     {tpl.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[9px] text-text-muted bg-surface-alt px-1.5 py-0.5 rounded"
+                        className="text-caption text-text-muted bg-surface-alt px-1.5 py-0.5 rounded"
                       >
                         #{tag}
                       </span>

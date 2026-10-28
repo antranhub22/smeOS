@@ -23,6 +23,7 @@ import {
   Loader2,
   FileSpreadsheet,
 } from "lucide-react"
+import { formatDateTime } from "@/lib/i18n/formatters"
 import type { PlatformOrgRecordsResult, RecordDomain } from "@/modules/platform/use-cases/get-platform-org-records"
 import type { RecordColumn } from "@/modules/platform/use-cases/get-platform-org-records"
 
@@ -75,7 +76,7 @@ function CellValue({
     const s = String(value)
     return (
       <span
-        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${STATUS_COLOR[s] ?? "bg-surface-alt text-text-muted"}`}
+        className={`inline-flex items-center px-2 py-0.5 rounded-full text-caption font-bold ${STATUS_COLOR[s] ?? "bg-surface-alt text-text-muted"}`}
       >
         {s}
       </span>
@@ -97,13 +98,7 @@ function CellValue({
     if (isNaN(d.getTime())) return <span>{String(value)}</span>
     return (
       <span className="text-text-muted">
-        {d.toLocaleDateString("vi-VN", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
+        {formatDateTime(d)}
       </span>
     )
   }
@@ -143,7 +138,7 @@ function CellValue({
         href={src}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary hover:underline text-[11px] font-mono truncate max-w-[180px] inline-block"
+        className="text-primary hover:underline text-caption font-mono truncate max-w-[180px] inline-block"
       >
         Xem ảnh ↗
       </a>
@@ -157,7 +152,7 @@ function CellValue({
       <a
         href={src}
         download
-        className="inline-flex items-center gap-1 text-primary hover:underline font-bold text-[11px] bg-primary/10 px-2.5 py-1 rounded-lg transition-colors"
+        className="inline-flex items-center gap-1 text-primary hover:underline font-bold text-caption bg-primary/10 px-2.5 py-1 rounded-lg transition-colors"
       >
         <Download size={12} />
         Tải file (.xlsx)
@@ -209,7 +204,7 @@ export function PlatformRecordsViewer({
   )
 
   useEffect(() => {
-    void loadPage(1)
+    void Promise.resolve().then(() => loadPage(1))
   }, [loadPage])
 
   const handleExportCsv = async () => {
@@ -274,7 +269,7 @@ export function PlatformRecordsViewer({
             size="sm"
             onClick={() => void handleExportCsv()}
             disabled={exporting || !data}
-            className="gap-1.5 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shrink-0"
+            className="gap-1.5 font-bold bg-primary hover:bg-primary-dark text-white shrink-0"
           >
             {exporting ? (
               <Loader2 size={14} className="animate-spin" />
@@ -359,6 +354,7 @@ export function PlatformRecordsViewer({
                 <Button
                   variant="outline"
                   size="sm"
+                  aria-label="Trang trước"
                   onClick={() => void loadPage(page - 1)}
                   disabled={page <= 1 || loading}
                   className="h-8 w-8 p-0"
@@ -391,6 +387,7 @@ export function PlatformRecordsViewer({
                 <Button
                   variant="outline"
                   size="sm"
+                  aria-label="Trang tiếp"
                   onClick={() => void loadPage(page + 1)}
                   disabled={page >= data.totalPages || loading}
                   className="h-8 w-8 p-0"

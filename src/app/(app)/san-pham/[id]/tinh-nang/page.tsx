@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Info, RefreshCw } from "lucide-react";
@@ -25,6 +26,7 @@ interface ProductData {
 }
 
 export default function ProductFeatureDashboardPage() {
+  const { t } = useI18n()
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();

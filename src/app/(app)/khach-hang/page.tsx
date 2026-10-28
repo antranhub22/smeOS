@@ -11,12 +11,14 @@ import { CustomerDetailModal } from "@/components/crm/customer-detail-modal"
 import { OccasionCarePanel } from "@/components/crm/occasion-care-panel"
 import { ExportCustomersButton } from "@/components/crm/export-customers-button"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { getIndustryPlugin, getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { CustomerMasterIndex, OccasionReminder } from "@/modules/crm/domain/customer-master-index"
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
 
 export default function CRMPage() {
   const { orgName, can, organization } = useSession()
+  const { t, dict } = useI18n()
   const ti = getIndustryTerminology(organization?.industry)
   const [customers, setCustomers] = useState<CustomerMasterIndex[]>([])
   const [loading, setLoading] = useState(true)

@@ -553,8 +553,9 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/exceptions/:id/resolve` | `R3` | Hết sự cố mở → đơn tự về bước cũ |
 | POST | `/coordinator/orders/:id/close` | `R3` | Chỉ khi `DELIVERED` và không còn sự cố; chốt điểm + tiền công đối tác |
 | POST | `/coordinator/orders/:id/cancel` | `R6` | Trần cứng điều hành; bắt buộc lý do; không huỷ đơn đã giao |
-| GET | `/coordinator/partners` | `R1` | `?active=1` |
-| POST | `/coordinator/partners` | `R4` | Trùng mã trong tổ chức → 409 |
+| GET | `/coordinator/partners` | `R1` · `F1` | `?active=1`: đối tác gia công (`R1`); không tham số: đối tác chuỗi (`F1`) |
+| POST | `/coordinator/partners` | `R4` · `F2` | Đối tác gia công (`R4`): trùng mã trong tổ chức → 409. Cấp tài khoản đối tác chuỗi (thân có `partnerStoreName`/`contactEmail`, `F2`): không gửi `password` → sinh mật khẩu ngẫu nhiên, trả `temporaryPassword` đúng một lần (email đã có tài khoản thì giữ mật khẩu cũ, không trả); `password` gửi lên tối thiểu 10 ký tự |
+| POST | `/coordinator/partners/link-existing` | `F2` | Liên kết cửa hàng đã có tài khoản (email hoặc slug) làm đối tác chuỗi; mở phòng chat nội bộ 1-1 |
 | PATCH | `/coordinator/partners/:id` | `R4` | Sửa hồ sơ, tạm ngưng/mở lại |
 | GET | `/field-config` | `R1` | ĐP-3 — cấu hình trường hiệu lực cho tổ chức của người gọi (lớp mã + cấu hình nền tảng + ghi đè theo tổ chức đã cộng sẵn), `?entity=ORDER\|PARTNER`. CHỈ ĐỌC — route tenant không ghi được vào `field_definitions`/`field_config_overrides`, xem mục 21b |
 | GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi đăng nhập tổ chức, không có thao tác ghi |
@@ -664,6 +665,7 @@ Khuôn video là enum `video_format`: `REEL_15S` · `TIKTOK_30S` · `STORY_15S` 
 | PATCH | `/occasions/:id` | `F2` | |
 | POST | `/content-guard/validate` | — | Từ điển từ cấm ngành hoa |
 | POST | `/organizations/current/upgrade-request` | `F2` | Xin nâng hạng workspace |
+| GET · PUT | `/organizations/current/governance-matrix` | `F1` · `F2` | Query `system` = ma trận quản trị theo tầng (`PROMOTIONS`, `COMMITMENTS`, `POLICIES`, `PAYMENTS`, `CRAFT_FEES`, `TEMPLATES`). GET → `{ tier, own, upper[] }` (khoá của Mẹ và chuỗi mà tổ chức là đối tác ACTIVE). PUT `{ decisions: { overrides: {key: bool}, locks: {key: {enabled}} } }` ghi `organizations.settings.governance_matrix.<system>`; ghi đè mục tầng trên đã khoá hoặc cửa hàng tự đặt khoá → 422. Ghi audit_logs (28/10/2026) |
 | GET | `/products/master-index` | `L1` | Product Master Index — toàn tổ chức |
 | GET | `/products/:id/master-index` | `L1` | Một sản phẩm |
 | GET | `/assets` | `G1` | Liệt kê asset, lọc theo sản phẩm và `kind` |
@@ -920,6 +922,8 @@ Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38
 | POST · DELETE | `/greeting-card/orders/:id/confirm-order` | `R11` | Điều hành xác nhận (POST) hoặc từ chối đơn `{ reason }` (DELETE) — mô hình 1 cửa hàng. Từ chối tạo đề xuất huỷ (kèm hoàn tiền nếu có cọc) ở trạng thái chờ duyệt; khách chỉ nhận tin huỷ khi đề xuất được duyệt (`cancellation-requests/:id/decision`). Đơn còn đề xuất huỷ chờ duyệt → xác nhận đơn (và Điều phối nhận đơn) trả 409 (rà soát cụm G, 22/10/2026) |
 | GET · POST | `/greeting-card/orders/:id/chain-dispatch` | `R4` | GET: danh sách chi nhánh đã sàng lọc và xếp hạng theo địa chỉ giao — toạ độ người nhận tra qua Goong (`GOONG_API_KEY`), đệm trong `order_coordinations.metadata.delivery_geo` theo địa chỉ chuẩn hoá ("không tìm thấy" thử lại sau 6 giờ); có toạ độ thì lọc theo bán kính chính sách, không thì `distanceKm: null`, `deliveryLocationResolved: false` và xếp hạng theo khu vực: `areaMatch` = `WARD` (cùng phường hoặc phường phục vụ) › `DISTRICT` › `PROVINCE` › `UNKNOWN`; chi nhánh khác tỉnh bị loại. POST: duyệt danh sách và gửi lời mời 1:1 cho từng chi nhánh, link kèm token chi nhánh (26.3). Mở vòng mời mới (giữ danh sách chi nhánh đã từ chối, không mời lại họ); đơn đã có chi nhánh nhận/chốt hoặc đơn đã huỷ/hoàn tất → 409. Phí gia công: GET trả `craftFee` (`suggestedVnd`, `lines`, `adjustPercent`, `finalVnd`); POST không gửi `subcontractPriceVnd` → chốt phí gợi ý theo `settings.craft_fee_policy`; gửi số ngoài ±`coordinatorAdjustPercent`% → 422 trừ khi người gửi có `R11` (ghi `overrideApprovedBy`); bản ghi lưu ở `subcontract_dispatch.craftFee`. Chỉ tổ chức mô hình Chuỗi (`organizations.type` = `CHAIN`/`FLOWER_NETWORK`, do Admin SaaS duyệt); 1 cửa hàng → 409 |
 | GET | `/greeting-card/orders/:id/craft-fee` | `R4` | Phí gia công gợi ý của đơn theo phương án tiệm cài (6 cách tính, dùng chung mọi ngành; ngành khai nhãn và số khởi điểm): `{ feeLabel, suggestedVnd, lines, adjustPercent }`. Giá hàng luôn trước VAT, không gồm phí giao. Đơn của tổ chức khác → 404 |
+| GET | `/greeting-card/chain-branches` | `R4` | Danh sách đối tác (chi nhánh / xưởng) của tổ chức: mã, tên, địa chỉ, SĐT, `isActive`, `telegramChatId`, `telegramLinked` (chat đã liên kết với tổ chức), `zalo`. Gồm cả chi nhánh không còn trong file Excel (nhập chỉ thêm / cập nhật) |
+| PATCH | `/greeting-card/chain-branches/:branchCode` | `R4` | `{ isActive }` — bật / tạm dừng đối tác; tạm dừng → không được sàng lọc mời nhận đơn. Mã không thuộc tổ chức → 404; thiếu `isActive` → 400 |
 | POST | `/greeting-card/chain-branches/bulk-import` | `R4` | Nhập danh sách chi nhánh vào bảng `chain_branches` (trùng mã → cập nhật, giữ lịch sử phạt). Tối đa 500 dòng, mã không trùng trong tệp, toạ độ/điểm KPI trong khoảng hợp lệ, SĐT và Telegram Chat ID đúng dạng; sai → 422. Chat ID nhập ở đây chỉ được dùng khi chat đó đã liên kết với tổ chức. Chi nhánh có địa chỉ mà thiếu vĩ độ/kinh độ được tự tra toạ độ qua Goong (tối đa 200 chi nhánh/lần); phản hồi có `geocoded`, `geocodeNotFound`, `geocodeSkipped`. Nhận thêm `ward`, `district`, `province` (hoặc `city` của file mẫu cũ), `serviceWards[]` (tối đa 50); ô vĩ độ/kinh độ trống → không lưu toạ độ. Tổ chức 1 cửa hàng → 409 |
 | GET | `/greeting-card/integrations/zalo-dispatch` | `F2` | Trạng thái Zalo OA chung của nền tảng + mã liên kết (`ZL` + 8 ký tự, duy nhất toàn nền tảng, cột `chain_branches.zalo_link_code`) của từng chi nhánh, có cờ đã liên kết |
 | GET · PUT | `/greeting-card/integrations/staff-notifications` | `F2` | Đọc / sửa cấu hình kênh thông báo nhân viên trong phạm vi các kênh mà SaaS cho phép |
@@ -954,4 +958,62 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 |---|---|---|---|
 | GET | `/platform/nav-matrix` | *(phiên nền tảng)* | Ma trận điều hướng mặc định theo ngành và các ghi đè đang áp dụng |
 | PUT | `/platform/nav-matrix` | `N12` | `{ overrides: { [industryKey]: navKey[] } }` — ẩn mục điều hướng theo ngành, áp cho mọi tổ chức của ngành đó. Ghi nhật ký kiểm toán nền tảng |
+| GET | `/platform/governance-matrix` | *(phiên nền tảng)* | Quyết định tầng Mẹ của ma trận quản trị |
+| PUT | `/platform/governance-matrix` | `N12` | `{ decisions }` như trên, lưu `platform_settings` khoá `governance_matrix:<system>`, áp xuống mọi tổ chức. Ghi nhật ký kiểm toán nền tảng |
 | PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |
+
+
+## Thông báo đa tầng (27/10/2026)
+
+Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28/10/2026 (audit AUD-002/003/004/009): đọc cấu hình cấp tổ chức `F1`, ghi `F2` (chỉ Điều hành); ghi cấu hình toàn sàn `N2`.
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/notification/events` | — (phiên tenant) | Danh mục sự kiện hiển thị cho tầng `?tier=` (mặc định `STORE`), đã áp ma trận hiển thị của SaaS Mother |
+| GET | `/notification/channels` | — (phiên tenant) | Trạng thái bật/tắt kênh toàn sàn (chỉ đọc) |
+| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page`, `limit` (≤ 100), `unreadOnly` |
+| PATCH | `/notification/inbox/:id/read` | — (của chính mình) | Đánh dấu đã đọc; tin của người/tổ chức khác → không đổi |
+| POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |
+| GET | `/notification/stream` | — (của chính mình) | SSE tin mới; ping 25 giây. Hub trong bộ nhớ tiến trình (AUD-007) |
+| GET · PATCH | `/notification/preferences` | — (của chính mình) | Tuỳ chọn theo sự kiện × kênh; sự kiện bị khoá cứng trong phạm vi của tổ chức → 403 |
+| GET · PATCH | `/notification/org-policy` | `F1` · `F2` | Chính sách tổ chức theo sự kiện × kênh × vai (`roleKey`, `*` = mọi vai) |
+| GET · PATCH | `/notification/store-defaults` | `F1` · `F2` | Mặc định cửa hàng theo vai, có khung giờ |
+| GET · POST · DELETE | `/notification/org-hard-locks` | `F1` · `F2` | Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên |
+| GET · POST · DELETE | `/notification/store-hard-locks` | `F1` · `F2` | Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên |
+| GET | `/platform/notification/events` | phiên nền tảng | Toàn bộ danh mục sự kiện |
+| GET · PATCH | `/platform/notification/channels` | đọc: phiên nền tảng · ghi: `N2` | Bật/tắt kênh toàn sàn |
+| GET · PATCH | `/platform/notification/visibility` | đọc: phiên nền tảng · ghi: `N2` | Ma trận hiển thị sự kiện theo tầng |
+| GET · POST · DELETE | `/platform/notification/hard-locks` | đọc: phiên nền tảng · ghi: `N2` | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
+| PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |
+
+## 27. Đối tác chuỗi, chat nội bộ, dữ liệu chuỗi, ảnh sản phẩm (26–28/10/2026)
+
+Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm trong danh sách nợ #170). Tổ chức khác → 404.
+
+| Phương thức | Đường dẫn | Năng lực | Ghi chú |
+|---|---|---|---|
+| POST | `/ad-banner-poster/copy` | `I1` | Sinh chữ cho banner quảng cáo |
+| POST | `/ad-banner-poster/render` | `I1` | Dựng ảnh banner |
+| GET · PUT | `/chain/collection-profile` | `F1` · `F2` | Hồ sơ thu thập dữ liệu chuỗi |
+| POST | `/chain/collection-profile/preview` | `F1` | Xem trước theo hồ sơ |
+| POST | `/chain/partner-stores` | `F2` | Tạo chi nhánh đối tác |
+| GET | `/chain/stores-data` | `F1` | Tóm tắt dữ liệu các cửa hàng của chuỗi |
+| GET | `/chain/stores-data/:id` | `F1` | Thư mục dữ liệu một cửa hàng; cửa hàng của tổ chức khác → 404 |
+| POST | `/coordinator/orders/:id/dispatch-to-chat` | `R3` | Đẩy thẻ đơn sang chat với đối tác; chỉ đối tác ACTIVE của chính chuỗi (người nhận phải thuộc đối tác), khác → 404 |
+| PATCH | `/coordinator/partners/:id/status` | `F2` | `{ status: ACTIVE\|SUSPENDED\|TERMINATED }`; chỉ chuỗi sở hữu quan hệ, khác → 404 |
+| GET · POST | `/internal-chat/conversations` | *(thành viên)* | GET: hội thoại mình tham gia. POST: tạo/lấy hội thoại; `orderId` của tổ chức khác hoặc `targetUserId` ngoài tổ chức/đối tác liên kết → 404 |
+| GET · POST | `/internal-chat/conversations/:id/messages` | *(người tham gia)* | Không phải người tham gia → 404 |
+| POST | `/internal-chat/messages/:id/action` | *(người tham gia)* | Bấm nút trên thẻ hành động |
+| GET | `/noi-bo/identity` | *(phiên)* | Danh tính nội bộ của phiên; lỗi không trả chi tiết/stack |
+| POST | `/organizations/current/language-unlock-request` | `F2` | Xin mở thêm ngôn ngữ |
+| GET | `/platform/orgs-data` | `N1` | Trung tâm dữ liệu xuyên tổ chức |
+| GET | `/platform/orgs-data/:id` | `N1` | |
+| GET | `/platform/orgs-data/:id/records/:id` | `N1` | |
+| GET | `/platform/orgs-data/:id/export` | `N1` | Tải ZIP (CSV + ảnh) |
+| GET | `/platform/pending-approvals` | `N1` | Tài khoản chờ duyệt |
+| GET · POST | `/product-image-set` | *(phiên)* · `I1` | GET: danh sách gói ảnh (tĩnh); POST: tạo bộ ảnh |
+| GET | `/product-image-set/:id` | `G1` | |
+| GET · POST | `/product-photo` | *(phiên)* · `I1` | GET: nền/tỉ lệ có sẵn (tĩnh); POST: tạo ảnh studio |
+| GET | `/product-photo/:id` | `G1` | |
+| POST | `/product-photo/:id/retry` | `I1` | |
+| GET | `/store/collection-transparency` | `F1` | Dữ liệu chuỗi đang thu của cửa hàng |

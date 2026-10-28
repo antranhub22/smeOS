@@ -77,7 +77,7 @@ export function ChoiceGrid({
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Bắt đầu nhanh</span>
+            <span>{dict.home.header.badge}</span>
           </div>
           <h1 className="text-display font-extrabold text-text tracking-tight">
             {title}
@@ -104,11 +104,11 @@ export function ChoiceGrid({
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none]">
           <button
             type="button"
             onClick={() => setSelectedCategory("ALL")}
-            className={`px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
+            className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
               selectedCategory === "ALL"
                 ? "bg-primary text-surface font-semibold"
                 : "bg-surface border border-border text-text hover:bg-surface-alt"
@@ -119,7 +119,7 @@ export function ChoiceGrid({
           <button
             type="button"
             onClick={() => setSelectedCategory("SINGLE")}
-            className={`px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
+            className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
               selectedCategory === "SINGLE"
                 ? "bg-primary text-surface font-semibold"
                 : "bg-surface border border-border text-text hover:bg-surface-alt"
@@ -130,7 +130,7 @@ export function ChoiceGrid({
           <button
             type="button"
             onClick={() => setSelectedCategory("COMBO")}
-            className={`px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
+            className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
               selectedCategory === "COMBO"
                 ? "bg-primary text-surface font-semibold"
                 : "bg-surface border border-border text-text hover:bg-surface-alt"
@@ -141,7 +141,7 @@ export function ChoiceGrid({
           <button
             type="button"
             onClick={() => setSelectedCategory("AI_SUGGEST")}
-            className={`px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
+            className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
               selectedCategory === "AI_SUGGEST"
                 ? "bg-primary text-surface font-semibold"
                 : "bg-surface border border-border text-text hover:bg-surface-alt"

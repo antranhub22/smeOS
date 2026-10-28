@@ -24,6 +24,8 @@ export interface IChainPartnershipRepository {
     partnership: ChainPartnershipEntity
     partnerOrgId: string
     founderUserId: string
+    /** Mật khẩu sinh ngẫu nhiên khi chuỗi không đặt — chỉ trả về đúng một lần (AUD-009). */
+    temporaryPassword?: string | undefined
   }>
   listPartnerships(filter: ListPartnershipsFilter): Promise<{
     items: ChainPartnershipEntity[]

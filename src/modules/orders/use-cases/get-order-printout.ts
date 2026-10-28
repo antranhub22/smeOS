@@ -6,6 +6,7 @@ import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
+import { formatDate } from "@/lib/i18n/formatters"
 
 export interface OrderPrintData {
   orderCode: string
@@ -49,7 +50,7 @@ export async function getOrderPrintout(
 
   return {
     orderCode: order.code,
-    createdDate: new Date(order.createdAt).toLocaleDateString("vi-VN"),
+    createdDate: formatDate(order.createdAt),
     deliveryWindow: order.deliveryWindow
       ? `${order.deliveryWindow.timeSlot ? order.deliveryWindow.timeSlot + " " : ""}${order.deliveryWindow.date}`
       : "Giao tiêu chuẩn",

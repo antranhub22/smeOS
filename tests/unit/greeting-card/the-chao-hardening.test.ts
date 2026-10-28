@@ -53,7 +53,7 @@ describe("canProposeCancellation & rào chắn trước khi cắm hoa", () => {
   it("chặn đề xuất khi thợ đang cắm (ARRANGING); đã cắm xong chưa giao (READY) thì được (PO 15/10/2026)", () => {
     const arranging = canProposeCancellation({ status: "CONFIRMED", productionStatus: "ARRANGING" })
     expect(arranging.allowed).toBe(false)
-    expect(arranging.reason).toMatch(/cắm/i)
+    expect(arranging.reason).toMatch(/chế tác/i)
 
     const ready = canProposeCancellation({ status: "CONFIRMED", productionStatus: "READY" })
     expect(ready.allowed).toBe(true)
@@ -74,7 +74,7 @@ describe("validateCancellationProposal", () => {
     expect(validateCancellationProposal({ type: "CANCEL_ONLY", reason: "Trùng đơn", refundAmountVnd: 0 }, { ...order, status: "CANCELLED" })).not.toBeNull()
   })
   it("chặn đề xuất khi hoa đã bắt đầu cắm", () => {
-    expect(validateCancellationProposal({ type: "CANCEL_ONLY", reason: "Khách xin hủy", refundAmountVnd: 0 }, { ...order, productionStatus: "ARRANGING" })).toMatch(/cắm/i)
+    expect(validateCancellationProposal({ type: "CANCEL_ONLY", reason: "Khách xin hủy", refundAmountVnd: 0 }, { ...order, productionStatus: "ARRANGING" })).toMatch(/chế tác/i)
   })
   it("nhận hoàn một phần hợp lệ", () => {
     expect(validateCancellationProposal({ type: "PARTIAL_REFUND", reason: "Thiếu hoa", refundAmountVnd: 100_000 }, order)).toBeNull()

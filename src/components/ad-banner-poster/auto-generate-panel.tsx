@@ -62,14 +62,15 @@ export function AutoGeneratePanel({
       <div className="space-y-1.5">
         <label className="text-xs font-bold text-text flex items-center justify-between">
           <span>1. Tải ảnh sản phẩm của bạn</span>
-          <span className="text-[11px] text-primary font-normal">
+          <span className="text-caption text-primary font-normal">
             Bắt buộc để tạo poster
           </span>
         </label>
 
-        <div
+        <button
+          type="button"
           onClick={() => fileInputRef.current?.click()}
-          className={`relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+          className={`w-full relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
             productImageUrl
               ? "border-primary/50 bg-primary/5"
               : "border-border hover:border-primary hover:bg-surface-alt"
@@ -93,9 +94,9 @@ export function AutoGeneratePanel({
               />
               <div className="text-left">
                 <span className="text-xs font-bold text-text flex items-center gap-1">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Đã nạp ảnh thành công
+                  <CheckCircle2 className="h-3.5 w-3.5 text-success" /> Đã nạp ảnh thành công
                 </span>
-                <p className="text-[11px] text-text-muted mt-0.5">
+                <p className="text-caption text-text-muted mt-0.5">
                   Nhấp để chọn ảnh khác từ máy tính
                 </p>
               </div>
@@ -108,12 +109,12 @@ export function AutoGeneratePanel({
               <span className="text-xs font-bold text-text">
                 Kéo thả hoặc nhấp để chọn ảnh sản phẩm từ máy
               </span>
-              <p className="text-[11px] text-text-muted mt-0.5">
+              <p className="text-caption text-text-muted mt-0.5">
                 Hỗ trợ PNG, JPG, WebP chất lượng cao
               </p>
             </div>
           )}
-        </div>
+        </button>
 
         {/* Nút chọn ảnh mẫu nhanh nếu chưa có ảnh */}
         {!productImageUrl && (
@@ -125,7 +126,7 @@ export function AutoGeneratePanel({
                   "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80"
                 )
               }
-              className="text-[11px] text-primary hover:underline inline-flex items-center gap-1"
+              className="text-caption text-primary hover:underline inline-flex items-center gap-1"
             >
               <ImagePlus className="h-3 w-3" /> Dùng thử ảnh mẫu demo
             </button>
@@ -142,7 +143,7 @@ export function AutoGeneratePanel({
           <button
             type="button"
             onClick={onOpenTemplateGallery}
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline"
           >
             <LayoutGrid className="h-3 w-3" /> Xem Kho Template
           </button>
@@ -209,13 +210,13 @@ export function AutoGeneratePanel({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-text flex items-center gap-1">
-                  <Zap className="h-3.5 w-3.5 text-amber-500" /> Bố cục Template
+                  <Zap className="h-3.5 w-3.5 text-warning" /> Bố cục Template
                 </span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold">
+                <span className="text-caption px-1.5 py-0.2 rounded bg-success-bg text-success font-bold">
                   Khuyên dùng
                 </span>
               </div>
-              <p className="text-[10px] text-text-muted leading-relaxed">
+              <p className="text-caption text-text-muted leading-relaxed">
                 Tự động ghép ảnh thật + chữ tiếng Việt sắc nét chuẩn in & mạng xã hội, sửa được từng từ.
               </p>
             </div>
@@ -236,11 +237,11 @@ export function AutoGeneratePanel({
                 <span className="text-xs font-bold text-text flex items-center gap-1">
                   <Sparkles className="h-3.5 w-3.5 text-primary" /> AI Provider Single-Call
                 </span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold">
+                <span className="text-caption px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold">
                   Sáng tạo AI
                 </span>
               </div>
-              <p className="text-[10px] text-text-muted leading-relaxed">
+              <p className="text-caption text-text-muted leading-relaxed">
                 Gửi ảnh + prompt qua AI Provider trong 1 lần gọi, tự động kiểm định chất lượng QC.
               </p>
             </div>
@@ -263,13 +264,13 @@ export function AutoGeneratePanel({
             </>
           ) : (
             <>
-              <Zap className="h-4 w-4 text-amber-300" />
+              <Zap className="h-4 w-4 text-warning" />
               <span>⚡ TỰ ĐỘNG TẠO BỘ POSTER & BANNER (1-CHẠM)</span>
             </>
           )}
         </button>
         {!productImageUrl && (
-          <p className="text-[11px] text-amber-600 text-center mt-1.5">
+          <p className="text-caption text-warning text-center mt-1.5">
             ⚠️ Hãy tải ảnh sản phẩm lên trước để kích hoạt tạo tự động
           </p>
         )}

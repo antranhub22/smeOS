@@ -1,5 +1,6 @@
 "use client"
  
+import { useI18n } from "@/lib/i18n"
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, RefreshCw, Sparkles, CheckCircle2, Share2, Calendar } from "lucide-react"
@@ -38,6 +39,7 @@ interface SocialFlowPostRow {
 }
 
 export default function SocialPublishingPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<LichDangTab>("board")
   const [autoApprove, setAutoApprove] = useState(false)

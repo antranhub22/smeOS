@@ -1,0 +1,15 @@
+import { describe, expect, it } from "vitest"
+import { resolveNotificationViewerTier } from "./notification-viewer-tier"
+
+describe("tầng ma trận thông báo theo loại tổ chức (AUD-024)", () => {
+  it("chuỗi FLOWER_NETWORK và CHAIN dùng ma trận Chuỗi", () => {
+    expect(resolveNotificationViewerTier("FLOWER_NETWORK")).toBe("CHAIN")
+    expect(resolveNotificationViewerTier("CHAIN")).toBe("CHAIN")
+  })
+
+  it("cửa hàng đơn lẻ và mặc định dùng ma trận Cửa hàng", () => {
+    expect(resolveNotificationViewerTier("SINGLE")).toBe("STORE")
+    expect(resolveNotificationViewerTier("STORE")).toBe("STORE")
+    expect(resolveNotificationViewerTier(null)).toBe("STORE")
+  })
+})

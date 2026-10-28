@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Eye } from "lucide-react"
+import { useI18n } from "@/lib/i18n"
 
 export interface OrderItemCardProps {
   id: string
@@ -24,6 +25,8 @@ export function OrderCard({
   order: OrderItemCardProps
   onSelect: () => void
 }) {
+  const { dict, formatCurrency, formatTime } = useI18n()
+
   return (
     <button
       type="button"
@@ -33,19 +36,16 @@ export function OrderCard({
       <div className="flex items-center justify-between">
         <span className="font-mono font-bold text-primary">{order.code}</span>
         <span className="text-caption text-text-muted">
-          {new Date(order.createdAt).toLocaleTimeString("vi-VN", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
+          {formatTime(order.createdAt)}
         </span>
       </div>
 
       <div>
         <div className="font-bold text-text">
-          {order.deliveryAddress?.recipientName ?? "Khách lẻ"}
+          {order.deliveryAddress?.recipientName ?? dict.orders.actions.walkInCustomer}
         </div>
         <div className="text-text-muted truncate text-caption">
-          {order.deliveryAddress?.street ?? "Nhận tại cửa hàng"}
+          {order.deliveryAddress?.street ?? dict.orders.actions.pickupAtShop}
         </div>
       </div>
 
@@ -64,12 +64,13 @@ export function OrderCard({
 
       <div className="flex items-center justify-between border-t border-border pt-2">
         <span className="font-bold text-primary">
-          {order.totalVnd.toLocaleString("vi-VN")} đ
+          {formatCurrency(order.totalVnd)}
         </span>
         <span className="text-caption text-primary flex items-center gap-1 font-semibold">
-          <Eye size={13} aria-hidden="true" /> Xem chi tiết
+          <Eye size={13} aria-hidden="true" /> {dict.orders.actions.viewDetails}
         </span>
       </div>
     </button>
   )
 }
+

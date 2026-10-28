@@ -30,7 +30,7 @@ export function IndustryEcosystemBoard() {
           <div className="text-2xl font-black text-text tracking-tight">
             {industries.length} / 7
           </div>
-          <p className="text-caption text-text-muted mt-1">100% chuẩn SSOT Plugin</p>
+          <p className="text-caption text-text-muted mt-1">100% chuẩn hóa Plugin</p>
         </div>
 
         <div className="p-4 rounded-xl bg-surface border border-border shadow-xs">
@@ -75,7 +75,7 @@ export function IndustryEcosystemBoard() {
               Ma trận 7 Ngành Hàng Độc Lập (Industry Plugin Registry)
             </h3>
             <p className="text-caption text-text-muted mt-0.5">
-              Hệ thống tự động thích ứng terminology, BOM, taxonomy và AI prompt theo từng ngành mà không cần sửa CSDL.
+              Hệ thống tự động thích ứng terminology, định mức nguyên liệu, taxonomy và AI prompt theo từng ngành mà không cần sửa CSDL.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -96,9 +96,9 @@ export function IndustryEcosystemBoard() {
                 <th className="py-3 px-4">Ngành hàng</th>
                 <th className="py-3 px-4">Người làm / Sản phẩm mẫu</th>
                 <th className="py-3 px-4">Danh mục & Dịp</th>
-                <th className="py-3 px-4">Đơn vị & BOM</th>
+                <th className="py-3 px-4">Đơn vị & Định mức</th>
                 <th className="py-3 px-4">Ấn phẩm A6</th>
-                <th className="py-3 px-4">Chuẩn SSOT</th>
+                <th className="py-3 px-4">Đặc tả chuẩn</th>
                 <th className="py-3 px-4 text-right">Thao tác</th>
               </tr>
             </thead>
@@ -136,7 +136,7 @@ export function IndustryEcosystemBoard() {
                       {ind.bomSpec.measurementUnits.length > 3 ? "..." : ""}
                     </div>
                     <div className="text-caption text-text-muted">
-                      {ind.bomSpec.componentRoles.length} vai trò BOM
+                      {ind.bomSpec.componentRoles.length} vai trò nguyên liệu
                     </div>
                   </td>
                   <td className="py-3.5 px-4">

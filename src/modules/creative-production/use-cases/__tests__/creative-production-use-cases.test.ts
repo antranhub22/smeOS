@@ -53,7 +53,7 @@ describe("creative-production: Content Draft use-cases with DI", () => {
       kind: "MASTER",
       status: "READY",
       approval_state: "APPROVED",
-    } as any)
+    } as never)
 
     vi.mocked(mockDraftRepo.upsert).mockResolvedValue({
       id: "draft-01",
@@ -64,7 +64,7 @@ describe("creative-production: Content Draft use-cases with DI", () => {
       topic_title: "Chủ đề thử nghiệm",
       posts: [],
       updated_at: new Date("2026-10-25T12:00:00Z"),
-    } as any)
+    } as never)
 
     const result = await saveContentDraft(
       ctx,
@@ -119,7 +119,7 @@ describe("creative-production: Campaign Package use-cases with DI", () => {
         master_asset_id: "asset-01",
         approved_at: null,
         created_at: new Date("2026-10-25T10:00:00Z"),
-      } as any,
+      } as never,
     ])
 
     const result = await listCampaignPackages(ctx, { limit: 10 }, mockPackageRepo)
@@ -132,7 +132,7 @@ describe("creative-production: Campaign Package use-cases with DI", () => {
     vi.mocked(mockPackageRepo.findById).mockResolvedValue({
       id: "pkg-01",
       status: "DRAFT",
-    } as any)
+    } as never)
 
     await expect(
       saveLaunchPlan(

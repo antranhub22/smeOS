@@ -107,6 +107,11 @@ services:
         sync: false
       - key: ZALO_OA_FOLLOW_URL
         sync: false
+      # Chat bán hàng qua Facebook Messenger — chữ ký webhook (audit AUD-028); thiếu thì webhook từ chối mọi sự kiện
+      - key: FB_APP_SECRET
+        sync: false
+      - key: FB_WEBHOOK_VERIFY_TOKEN
+        sync: false
       - key: TELEGRAM_STAFF_BOT_TOKEN
         sync: false
 

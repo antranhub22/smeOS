@@ -10,12 +10,14 @@ import { ChoiceGrid } from "@/components/journey/choice-grid"
 import { JourneyShell } from "@/components/journey/journey-shell"
 import { IndustryEcosystemBoard } from "./industry-ecosystem-board"
 import { INDUSTRY_REGISTRY } from "@/modules/organization/domain/industries"
+import { useI18n } from "@/lib/i18n"
 import { Badge } from "@/components/ui/badge"
 
 const STORAGE_KEY_EXPERT_MODE = "smeos_expert_mode_industry"
 
 export function IndustryJourneyHome() {
   const router = useRouter()
+  const { t } = useI18n()
   const [isExpertMode, setIsExpertMode] = useState<boolean>(false)
   const [activeJourney, setActiveJourney] = useState<JourneyDefinition | null>(null)
   const [journeyState, setJourneyState] = useState(() =>
@@ -26,14 +28,17 @@ export function IndustryJourneyHome() {
   const selectedPlugin = INDUSTRY_REGISTRY[selectedIndustryKey] ?? INDUSTRY_REGISTRY.FLORAL!
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_EXPERT_MODE)
-      if (saved === "true") {
-        setIsExpertMode(true)
+    // Chạy sau lượt render (không setState đồng bộ trong effect)
+    void Promise.resolve().then(() => {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_EXPERT_MODE)
+        if (saved === "true") {
+          setIsExpertMode(true)
+        }
+      } catch {
+        // Bỏ qua lỗi storage
       }
-    } catch {
-      // Bỏ qua lỗi storage
-    }
+    })
   }, [])
 
   const handleToggleExpertMode = (enabled: boolean) => {
@@ -150,7 +155,7 @@ export function IndustryJourneyHome() {
             <div className="text-text-muted flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>Người làm: <strong className="text-text font-semibold">{selectedPlugin.terminology.makerTitle}</strong></span>
               <span>Sản phẩm mẫu: <strong className="text-text font-semibold">{selectedPlugin.terminology.sampleProduct}</strong></span>
-              <span>BOM: <strong className="text-text font-semibold">{selectedPlugin.bomSpec.measurementUnits.slice(0, 3).join(", ")}</strong></span>
+              <span>Định mức: <strong className="text-text font-semibold">{selectedPlugin.bomSpec.measurementUnits.slice(0, 3).join(", ")}</strong></span>
               <span>Mẫu in: <strong className="text-text font-semibold">{selectedPlugin.templates.printables.length} loại</strong></span>
             </div>
           </div>
@@ -168,8 +173,8 @@ export function IndustryJourneyHome() {
       </div>
 
       <ChoiceGrid
-        title="BẠN MUỐN LÀM GÌ VỚI HỆ SINH THÁI SAAS ĐA NGÀNH?"
-        subtitle="Trung tâm quản trị hợp đồng plugin, cấu hình AI Studio, mẫu ấn phẩm A6 và chuẩn hóa BOM cho 7 ngành hàng."
+        title={t("home.tiers.industry.title")}
+        subtitle={t("home.tiers.industry.subtitle")}
         journeys={INDUSTRY_JOURNEYS}
         onSelectJourney={handleSelectJourney}
         onSwitchToExpertMode={() => handleToggleExpertMode(true)}

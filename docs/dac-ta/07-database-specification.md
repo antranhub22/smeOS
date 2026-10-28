@@ -2642,3 +2642,231 @@ model product_import_batches {
   @@index([organization_id, created_at])
 }
 ```
+
+
+## 33. Thông báo đa tầng (`notification`, 27/10/2026)
+
+Migration `20261027000000_notification_system`. Ba bảng cấp nền tảng (không có `organization_id`, chỉ SaaS Mother ghi qua `/platform/notification/*`): kích hoạt kênh, hiển thị sự kiện theo tầng, khoá cứng. Bốn bảng tenant lọc theo `organization_id` của phiên.
+
+Khoá cứng (`notification_hard_locks.scope_id`) chỉ áp đúng phạm vi đã đặt: `MOTHER` → `"GLOBAL"`; `INDUSTRY`/`CHAIN` → tổ chức đặt khoá và cửa hàng trực thuộc; `STORE` → chính cửa hàng (audit AUD-014, 28/10/2026). Migration `20261028000000_notification_org_index_and_names` (PO duyệt 28/10/2026): thêm `@@index([organization_id])` cho `notification_inbox` và `notification_user_preferences` (AUD-008), đổi tên chỉ mục/ràng buộc về đúng tên Prisma (AUD-032) — idempotent.
+
+```prisma
+model notification_channel_activations {
+  channel     String   // APP_INBOX | EMAIL | PUSH | TELEGRAM | ZALO | SMS | WHATSAPP | MESSENGER
+  activated   Boolean  @default(false)
+  updated_by  String   // platform_admin user_id
+  updated_at  DateTime @updatedAt
+
+  @@id([channel])
+}
+```
+
+```prisma
+model notification_event_visibility {
+  event_key   String
+  tier        String   // INDUSTRY | CHAIN | STORE
+  visible     Boolean  @default(true)
+  updated_by  String
+  updated_at  DateTime @updatedAt
+
+  @@id([event_key, tier])
+}
+```
+
+```prisma
+model notification_hard_locks {
+  id          String   @id @default(uuid())
+  event_key   String
+  channel     String
+  tier        String   // MOTHER | INDUSTRY | CHAIN | STORE
+  scope_id    String   // organization_id hoặc "GLOBAL" nếu tier = MOTHER
+  enabled     Boolean  // true = bắt buộc BẬT | false = bắt buộc TẮT
+  locked_by   String   // user_id người đặt khóa
+  reason      String?  // Lý do khóa
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@unique([event_key, channel, tier, scope_id])
+  @@index([tier, scope_id])
+}
+```
+
+```prisma
+model notification_org_policies {
+  id                String   @id @default(uuid())
+  organization_id   String
+  event_key         String
+  channel           String
+  role_key          String   // RoleUxKey hoặc "*" cho all roles
+  enabled           Boolean  @default(true)
+  priority_override String?  // NORMAL | URGENT | CRITICAL
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, event_key, channel, role_key])
+  @@index([organization_id])
+}
+```
+
+```prisma
+model notification_store_defaults {
+  id              String   @id @default(uuid())
+  organization_id String
+  event_key       String
+  channel         String
+  role_key        String
+  enabled         Boolean  @default(true)
+  schedule_start  String?  // "08:00"
+  schedule_end    String?  // "22:00"
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, event_key, channel, role_key])
+  @@index([organization_id, role_key])
+}
+```
+
+```prisma
+model notification_user_preferences {
+  id              String    @id @default(uuid())
+  user_id         String
+  organization_id String
+  event_key       String
+  channel         String
+  enabled         Boolean
+  mute_until      DateTime?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, organization_id, event_key, channel])
+  @@index([user_id, organization_id])
+  @@index([organization_id])
+}
+```
+
+```prisma
+model notification_inbox {
+  id              String    @id @default(uuid())
+  user_id         String
+  organization_id String
+  event_key       String
+  title           String
+  message         String
+  deep_link       String?
+  priority        String    @default("NORMAL")
+  is_read         Boolean   @default(false)
+  read_at         DateTime?
+  created_at      DateTime  @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, organization_id, is_read])
+  @@index([organization_id])
+  @@index([user_id, organization_id, created_at])
+}
+```
+
+
+## 34. Đối tác chuỗi và chat nội bộ (26/10/2026)
+
+`chain_partnerships`: quan hệ chuỗi ↔ cửa hàng đối tác (`chain_org_id`, `partner_org_id`), mỗi cặp một dòng. Chỉ chuỗi sở hữu quan hệ được đổi trạng thái / mở khoá công cụ; tổ chức khác → 404 (audit 28/10/2026).
+
+Chat nội bộ: `internal_chat_conversations` thuộc tổ chức tạo (`organization_id`); `internal_chat_participants` ghi người tham gia kèm tổ chức của họ (cho phép đối tác chuỗi cùng một luồng đơn); `internal_chat_messages` theo cuộc hội thoại. Chỉ người tham gia đọc/gửi tin; luồng đơn của tổ chức khác không tự tham gia được; chỉ mời được người của chính tổ chức hoặc chuỗi/đối tác đang liên kết ACTIVE. Ca thử: `tests/tenant/internal-chat-isolation.test.ts`.
+
+```prisma
+model chain_partnerships {
+  id               String   @id @default(uuid())
+  chain_org_id     String
+  partner_org_id   String
+  partner_code     String
+  partnership_type String   @default("SUBCONTRACTOR") // SUBCONTRACTOR | FRANCHISE | BRANCH
+  status           String   @default("ACTIVE")         // PENDING | ACTIVE | SUSPENDED | TERMINATED
+  capacity_daily   Int      @default(10)
+  commission_rate  Decimal?
+  contact_name     String?
+  contact_phone    String?
+  contact_email    String?
+  address          String?
+  province         String?
+  district         String?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  chain_organization   organizations @relation("ChainOrg", fields: [chain_org_id], references: [id], onDelete: Cascade)
+  partner_organization organizations @relation("PartnerOrg", fields: [partner_org_id], references: [id], onDelete: Cascade)
+
+  @@unique([chain_org_id, partner_code])
+  @@unique([chain_org_id, partner_org_id])
+  @@index([chain_org_id, status])
+  @@index([partner_org_id])
+}
+```
+
+```prisma
+model internal_chat_conversations {
+  id                String   @id @default(uuid())
+  organization_id   String
+  conversation_type String   // PLATFORM_TENANT | CHAIN_PARTNER | ORDER_THREAD
+  title             String?
+  order_id          String?
+  metadata          Json     @default("{}")
+  created_by        String   // user_id of creator
+  last_message_at   DateTime @default(now())
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  organization organizations                @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  participants internal_chat_participants[]
+  messages     internal_chat_messages[]
+
+  @@index([organization_id, conversation_type])
+  @@index([order_id])
+}
+```
+
+```prisma
+model internal_chat_participants {
+  id              String   @id @default(uuid())
+  conversation_id String
+  user_id         String
+  organization_id String
+  role_in_chat    String   @default("MEMBER") // OWNER | ADMIN | MEMBER | GUEST_PARTNER
+  last_read_at    DateTime @default(now())
+  is_muted        Boolean  @default(false)
+  joined_at       DateTime @default(now())
+
+  conversation internal_chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user         users                       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([conversation_id, user_id])
+  @@index([user_id, organization_id])
+}
+```
+
+```prisma
+model internal_chat_messages {
+  id              String   @id @default(uuid())
+  conversation_id String
+  sender_user_id  String
+  sender_role     String
+  message_type    String   @default("TEXT") // TEXT | IMAGE | ACTION_CARD_ORDER | ACTION_CARD_QC | SYSTEM_NOTICE
+  content         String   @default("")
+  attachments     String[] @default([])
+  action_payload  Json?
+  is_deleted      Boolean  @default(false)
+  created_at      DateTime @default(now())
+
+  conversation internal_chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  sender       users                       @relation("ChatSender", fields: [sender_user_id], references: [id], onDelete: Cascade)
+
+  @@index([conversation_id, created_at])
+}
+```
+

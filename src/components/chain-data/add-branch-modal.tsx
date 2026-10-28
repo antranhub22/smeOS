@@ -97,7 +97,7 @@ export function AddBranchModal({ isOpen, onClose, onSuccess }: AddBranchModalPro
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             className="w-full text-body-sm font-mono h-10 px-3 rounded-xl border border-border bg-surface focus:outline-primary"
           />
-          <p className="text-[11px] text-text-muted">Mã duy nhất dùng để phân biệt các đơn hàng và hàng tồn kho.</p>
+          <p className="text-caption text-text-muted">Mã duy nhất dùng để phân biệt các đơn hàng và hàng tồn kho.</p>
         </div>
 
         <div className="space-y-1.5">

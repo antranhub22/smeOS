@@ -14,9 +14,12 @@ const ctx: TenantContext = {
 const startInline = vi.fn()
 const finishInline = vi.fn()
 const setStage = vi.fn()
-vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(function () { return { startInline, finishInline, setStage } }),
-}))
+vi.mock("@/modules/jobs/infra/generation-job-repository", () => {
+  const mocked = {
+    GenerationJobRepository: vi.fn().mockImplementation(function () { return { startInline, finishInline, setStage } }),
+  }
+  return { ...mocked, getGenerationJobRepository: vi.fn(() => new mocked.GenerationJobRepository()) }
+})
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({ enqueueJob: vi.fn() }))
 vi.mock("@/modules/usage/use-cases/refund-job", () => ({ refundJob: vi.fn().mockResolvedValue(undefined) }))
 vi.mock("@/core/ai/gateway", () => ({ callCapability: vi.fn() }))
@@ -26,9 +29,12 @@ vi.mock("@/modules/content-engine/use-cases/get-content-brief", () => ({ getCont
 
 const createGeneration = vi.fn()
 const findByIdGeneration = vi.fn()
-vi.mock("@/modules/content-engine/infra/content-generation-repository", () => ({
-  ContentGenerationRepository: vi.fn().mockImplementation(function () { return { create: createGeneration, findById: findByIdGeneration } }),
-}))
+vi.mock("@/modules/content-engine/infra/content-generation-repository", () => {
+  const mocked = {
+    ContentGenerationRepository: vi.fn().mockImplementation(function () { return { create: createGeneration, findById: findByIdGeneration } }),
+  }
+  return { ...mocked, getContentGenerationRepository: vi.fn(() => new mocked.ContentGenerationRepository()) }
+})
 
 import { callCapability } from "@/core/ai/gateway"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"

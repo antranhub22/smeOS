@@ -42,10 +42,12 @@ export function StorePoliciesEditor({
   const [activeSection, setActiveSection] = useState<"promo" | "commit" | "agree">(initialSection)
   const [saveSuccess, setSaveSuccess] = useState(false)
 
-  // Sync activeSection when initialSection changes from outside
-  React.useEffect(() => {
+  // Đồng bộ activeSection khi initialSection đổi từ bên ngoài — điều chỉnh ngay lúc render, không dùng effect
+  const [syncedInitial, setSyncedInitial] = useState(initialSection)
+  if (syncedInitial !== initialSection) {
+    setSyncedInitial(initialSection)
     setActiveSection(initialSection)
-  }, [initialSection])
+  }
 
   const handleResetDefaults = () => {
     if (!window.confirm("Khôi phục danh sách Ưu đãi, Cam kết và Thỏa thuận về mặc định theo ngành?")) return

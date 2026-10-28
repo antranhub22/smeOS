@@ -12,6 +12,7 @@ import {
 import { Dialog } from "@/components/ui/dialog"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { SmartFlowerImage } from "./smart-flower-image"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 interface ProductDetailModalProps {
   product: PublicCatalogProduct
@@ -22,7 +23,7 @@ interface ProductDetailModalProps {
 
 function formatVnd(amount: number | null) {
   if (!amount) return "Liên hệ báo giá"
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount)
+  return formatCurrency(amount)
 }
 
 function getZaloUrl(

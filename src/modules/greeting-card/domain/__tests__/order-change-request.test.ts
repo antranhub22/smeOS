@@ -49,8 +49,8 @@ describe("changeLockReason", () => {
   })
 
   it("khoá từ lúc bắt đầu cắm hoa (PO chốt), khi đã giao ship, đã xong hoặc đã huỷ", () => {
-    expect(changeLockReason({ status: "PROCESSING", productionStatus: "ARRANGING", deliveryStatus: "PENDING" })).toMatch(/cắm hoa/)
-    expect(changeLockReason({ status: "PROCESSING", productionStatus: "READY", deliveryStatus: "PENDING" })).toMatch(/cắm hoa/)
+    expect(changeLockReason({ status: "PROCESSING", productionStatus: "ARRANGING", deliveryStatus: "PENDING" })).toMatch(/chế tác/)
+    expect(changeLockReason({ status: "PROCESSING", productionStatus: "READY", deliveryStatus: "PENDING" })).toMatch(/chế tác/)
     expect(changeLockReason({ status: "PROCESSING", productionStatus: "READY", deliveryStatus: "DISPATCHED" })).not.toBeNull()
     expect(changeLockReason({ status: "COMPLETED", productionStatus: "READY", deliveryStatus: "DELIVERED" })).toMatch(/giao xong/)
     expect(changeLockReason({ status: "CANCELLED", productionStatus: "WAITING", deliveryStatus: "PENDING" })).toMatch(/huỷ/)

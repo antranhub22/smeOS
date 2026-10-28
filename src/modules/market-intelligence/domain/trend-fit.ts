@@ -22,6 +22,7 @@
 
 import { getTopicDualRealVideoEvidence } from "./video-evidence-catalog";
 import { determineTrendLifecycle, type TrendLifecycle } from "./trend-lifecycle";
+import { formatDate } from "@/lib/i18n/formatters";
 import type {
   ProductFlowerComponent,
   ProductVisualAttributes,
@@ -183,7 +184,7 @@ export function buildCommercialPassport(
  * không làm tròn sai lệch quá mức, ghi rõ ngày thu thập để người đọc tự đánh giá độ mới).
  */
 function describeRealSignal(real: RealAttributeSignal): string {
-  const date = new Date(real.capturedAt).toLocaleDateString("vi-VN");
+  const date = formatDate(real.capturedAt);
   const growth = real.growthRate;
   const growthText =
     growth === null || growth === undefined

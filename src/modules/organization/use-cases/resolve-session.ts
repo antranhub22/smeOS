@@ -11,6 +11,8 @@ import { SessionRepository } from "@/modules/organization/infra/session-reposito
 import { hashSessionToken } from "@/modules/organization/infra/session-token"
 import { UserRepository } from "@/modules/organization/infra/user-repository"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { lockedToolForPath, toolForPath, unlockedToolsFrom } from "@/modules/organization/domain/tool-route-entitlement"
 
 export type ResolvedSession = {
   readonly user: users
@@ -125,5 +127,20 @@ export async function requireTenantContext(
   if (!resolved.ctx) {
     throw new AppError("CONFLICT", "Phiên chưa chọn tổ chức đang hoạt động")
   }
+  await assertToolUnlocked(request, resolved.ctx)
   return { resolved, ctx: resolved.ctx }
+}
+
+/**
+ * API riêng của công cụ mà cấp trên chưa mở khoá cho tổ chức → 403 ENTITLEMENT_REQUIRED.
+ * Chỉ đọc settings khi đường dẫn thuộc một công cụ, để các API khác không tốn thêm truy vấn.
+ */
+async function assertToolUnlocked(request: Request, ctx: TenantContext): Promise<void> {
+  const pathname = new URL(request.url).pathname
+  if (!toolForPath(pathname)) return
+  const org = await new OrganizationRepository().findById(ctx.organizationId)
+  const locked = lockedToolForPath(pathname, unlockedToolsFrom(org?.settings))
+  if (locked) {
+    throw new AppError("ENTITLEMENT_REQUIRED", "Công cụ này chưa được cấp quản lý mở cho cửa hàng", { tool: locked })
+  }
 }

@@ -8,8 +8,16 @@ import React, { createContext, useContext, useState, useEffect, useMemo, useCall
 import { getDictionary, translate, interpolate } from "./server"
 import type { SupportedLocale, I18nContextValue, TranslationKey, InterpolationParams } from "./types"
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "./types"
+import {
+  formatCurrency as baseFormatCurrency,
+  formatDate as baseFormatDate,
+  formatTime as baseFormatTime,
+  formatDateTime as baseFormatDateTime,
+  formatNumber as baseFormatNumber,
+} from "./formatters"
 
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
+import { getTierTerminology } from "@/core/terminology"
 
 const STORAGE_KEY = "floraos_locale"
 
@@ -72,6 +80,12 @@ export function I18nProvider({ children, initialLocale = DEFAULT_LOCALE, industr
       industryKey,
       industry: industryPlugin,
       ti,
+      tierTerm: getTierTerminology,
+      formatCurrency: (amount, currency) => baseFormatCurrency(amount, locale, currency),
+      formatDate: (date, options) => baseFormatDate(date, locale, options),
+      formatTime: (date, options) => baseFormatTime(date, locale, options),
+      formatDateTime: (date) => baseFormatDateTime(date, locale),
+      formatNumber: (value, options) => baseFormatNumber(value, locale, options),
     }),
     [locale, setLocale, t, dict, industryKey, industryPlugin, ti]
   )
@@ -96,6 +110,12 @@ export function useI18n(): I18nContextValue {
       industryKey: "FLORAL",
       industry: fallbackPlugin,
       ti: (termKey) => fallbackPlugin.terminology[termKey] || "",
+      tierTerm: getTierTerminology,
+      formatCurrency: (amount, currency) => baseFormatCurrency(amount, DEFAULT_LOCALE, currency),
+      formatDate: (date, options) => baseFormatDate(date, DEFAULT_LOCALE, options),
+      formatTime: (date, options) => baseFormatTime(date, DEFAULT_LOCALE, options),
+      formatDateTime: (date) => baseFormatDateTime(date, DEFAULT_LOCALE),
+      formatNumber: (value, options) => baseFormatNumber(value, DEFAULT_LOCALE, options),
     }
   }
   return context

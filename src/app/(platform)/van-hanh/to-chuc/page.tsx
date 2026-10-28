@@ -6,6 +6,8 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useI18n } from "@/lib/i18n"
+import { formatDate } from "@/lib/i18n/formatters"
 
 type PlatformOrganizationSummary = {
   id: string
@@ -24,6 +26,7 @@ async function layJson<T>(url: string): Promise<T | null> {
 }
 
 export default function DanhSachToChucPage() {
+  const { t, dict } = useI18n()
   const [orgs, setOrgs] = useState<PlatformOrganizationSummary[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
 
@@ -44,7 +47,7 @@ export default function DanhSachToChucPage() {
   return (
     <Card className="overflow-x-auto p-4">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <h1 className="text-base font-bold text-text">Danh sách tổ chức</h1>
+        <h1 className="text-base font-bold text-text">{dict.platform.organizations.title}</h1>
         <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hệ thống</span>
       </div>
       <table className="w-full text-left text-xs">
@@ -76,7 +79,7 @@ export default function DanhSachToChucPage() {
               </td>
               <td className="py-2 pr-3">{org.memberCount}</td>
               <td className="py-2 pr-3">{org.creditBalance}</td>
-              <td className="py-2 pr-3">{new Date(org.createdAt).toLocaleDateString("vi-VN")}</td>
+              <td className="py-2 pr-3">{formatDate(org.createdAt)}</td>
             </tr>
           ))}
           {orgs.length === 0 && (

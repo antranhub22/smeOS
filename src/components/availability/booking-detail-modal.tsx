@@ -4,6 +4,7 @@ import { X, Calendar, User, Phone, Home, Moon, CreditCard, FileText, Trash2, Ext
 import Link from "next/link"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 import { calculateNights } from "@/components/greeting-card/customer/homestay-order-fields"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 export interface BookingDetailModalProps {
   isOpen: boolean
@@ -14,7 +15,7 @@ export interface BookingDetailModalProps {
 }
 
 function formatVnd(amount: number): string {
-  return new Intl.NumberFormat("vi-VN").format(amount) + " đ"
+  return formatCurrency(amount)
 }
 
 function formatDateVi(dateStr: string): string {

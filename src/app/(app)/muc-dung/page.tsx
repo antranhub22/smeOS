@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useEffect, useState, useCallback } from "react"
 import {
   WalletCards,
@@ -37,6 +38,7 @@ interface UsageRow {
 }
 
 export default function MucDungPage() {
+  const { t } = useI18n()
   const { can, orgName } = useSession()
   const canView = can("G8")
 

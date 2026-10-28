@@ -9,6 +9,7 @@
 // là chất lượng, chi phí, và ảnh có rời khỏi hạ tầng của tổ chức hay không —
 // nên màn này nói thẳng cả ba, thay vì bày ba lựa chọn trông ngang nhau.
 
+import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AlertTriangle, ArrowLeft, Check, Cloud, Server } from "lucide-react"
@@ -36,6 +37,7 @@ const NHAN_TRANG_THAI: Record<TrangThai, { chu: string; lop: string }> = {
 }
 
 export default function BoMayPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { can } = useSession()
   const [danhSach, setDanhSach] = useState<MoTaBoMay[] | null>(null)

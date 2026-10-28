@@ -16,6 +16,7 @@ import { toPublicCatalogFilters } from "../domain/greeting-template-registry"
 import type { ShopContact } from "../domain/shop-contact"
 import { getShopContact } from "./get-shop-contact"
 import { parsePaymentPolicy, resolveTrackingTriggerPolicy, type TrackingTriggerPolicy } from "../domain/brochure-payment-policy"
+import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
 
 export type CustomerBrochureView = {
   status: "ACTIVE"
@@ -99,7 +100,7 @@ export async function getGreetingCatalogForCustomer(
       code: session.catalog.code,
       name: session.catalog.name,
       description: session.catalog.description,
-      filters: toPublicCatalogFilters(session.catalog.filters, session.organization?.settings),
+      filters: toPublicCatalogFilters(session.catalog.filters, session.organization?.settings, undefined, await loadPolicyGovernance(session.organization_id)),
     },
     products,
     shipping: withPaymentCodeFlag(shop.settings),

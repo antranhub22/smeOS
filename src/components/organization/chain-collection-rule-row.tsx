@@ -34,8 +34,8 @@ export function ChainCollectionRuleRow({ field, rule, onChangeRule }: RuleRowPro
           <span className="font-bold text-body-sm text-text">{field.fieldName.vi}</span>
           {getSensitivityBadge()}
           {field.pii.isPii && (
-            <span className="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-danger/10 text-danger border border-danger/20">
-              PII
+            <span className="px-1.5 py-0.5 rounded text-caption font-semibold bg-danger/10 text-danger border border-danger/20">
+              Cá nhân
             </span>
           )}
         </div>
@@ -44,7 +44,7 @@ export function ChainCollectionRuleRow({ field, rule, onChangeRule }: RuleRowPro
         {isS2 && (
           <input
             type="text"
-            placeholder="Mục đích thu thập (bắt buộc với S2/PII)…"
+            placeholder="Mục đích thu thập (bắt buộc với dữ liệu cá nhân)…"
             value={rule.purpose ?? ""}
             onChange={(e) => onChangeRule({ ...rule, purpose: e.target.value })}
             className="mt-2 w-full text-caption px-2.5 py-1.5 rounded-lg border border-border bg-surface-alt focus:outline-primary focus:border-primary"
@@ -54,7 +54,7 @@ export function ChainCollectionRuleRow({ field, rule, onChangeRule }: RuleRowPro
 
       <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
         <div className="flex flex-col items-start gap-1">
-          <label className="text-[11px] font-semibold text-text-muted">Sàn (Tối thiểu)</label>
+          <label className="text-caption font-semibold text-text-muted">Sàn (Tối thiểu)</label>
           <select
             value={rule.minForm}
             onChange={(e) => onChangeRule({ ...rule, minForm: e.target.value as PropagationTarget })}
@@ -68,7 +68,7 @@ export function ChainCollectionRuleRow({ field, rule, onChangeRule }: RuleRowPro
         </div>
 
         <div className="flex flex-col items-start gap-1">
-          <label className="text-[11px] font-semibold text-text-muted">Trần của chuỗi</label>
+          <label className="text-caption font-semibold text-text-muted">Trần của chuỗi</label>
           <select
             value={rule.maxForm ?? field.propagation.ceiling.toChain}
             onChange={(e) => onChangeRule({ ...rule, maxForm: e.target.value as PropagationTarget })}

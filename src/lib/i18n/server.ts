@@ -51,6 +51,11 @@ export function translate(
         if (fallbackCurrent && typeof fallbackCurrent === "object" && fallbackSeg in fallbackCurrent) {
           fallbackCurrent = (fallbackCurrent as Record<string, unknown>)[fallbackSeg]
         } else {
+          // Báo cảnh báo trong môi trường dev nếu khóa hoàn toàn không tồn tại
+          if (process.env.NODE_ENV === "development") {
+            // eslint-disable-next-line no-console
+            console.warn(`[i18n] Missing translation key: "${key}" for locale "${locale}"`)
+          }
           return key
         }
       }

@@ -10,6 +10,7 @@ import { ChoiceGrid } from "@/components/journey/choice-grid"
 import { JourneyShell } from "@/components/journey/journey-shell"
 import { FlowerNetworkCommandCenter } from "./flower-network-command-center"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
 const STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_network"
@@ -17,6 +18,7 @@ const STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_network"
 export function NetworkJourneyHome() {
   const router = useRouter()
   const { organization } = useSession()
+  const { t } = useI18n()
   const industryKey = organization?.industry
 
   const journeys = useMemo(
@@ -30,12 +32,10 @@ export function NetworkJourneyHome() {
     const maker = plugin.terminology.makerTitle
     const orgName = organization?.name
     return {
-      title: orgName
-        ? `BẠN MUỐN LÀM GÌ VỚI MẠNG LƯỚI ${orgName.toUpperCase()}?`
-        : `BẠN MUỐN LÀM GÌ VỚI MẠNG LƯỚI ${maker.toUpperCase()}?`,
-      subtitle: `Chọn một tác vụ để bắt đầu điều phối hoặc quản lý mạng lưới ${product}`,
+      title: t("home.tiers.chain.title", { name: (orgName || maker).toUpperCase() }),
+      subtitle: t("home.tiers.chain.subtitle", { product }),
     }
-  }, [industryKey, organization?.name])
+  }, [industryKey, organization?.name, t])
   const [isExpertMode, setIsExpertMode] = useState<boolean>(false)
   const [activeJourney, setActiveJourney] = useState<JourneyDefinition | null>(null)
   const [journeyState, setJourneyState] = useState<ReturnType<typeof createJourneyState> | null>(null)

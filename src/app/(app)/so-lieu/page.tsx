@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Check, ArrowLeft, BarChart3, ChevronRight, TrendingUp } from "lucide-react"
@@ -61,6 +62,7 @@ function metricLabel(feature: string): string {
 }
 
 export default function AnalyticsPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { can, orgName } = useSession()
   const [orders, setOrders] = useState<OrderReportingItem[]>([])

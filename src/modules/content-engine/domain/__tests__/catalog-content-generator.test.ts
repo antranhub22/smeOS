@@ -48,6 +48,6 @@ describe("Catalog Content Generator (3 Styles)", () => {
     }
     const result = generateCatalogContent(input)
     expect(result.styleVariant).toBe("MODERN_SHOWROOM")
-    expect(result.badge).toContain("Catalog Mẫu Hoa")
+    expect(result.badge).toContain("Catalog Sản Phẩm")
   })
 })

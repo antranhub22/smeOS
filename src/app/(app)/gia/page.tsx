@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, RefreshCw } from "lucide-react"
@@ -21,6 +22,7 @@ type PricingRulesResponse = {
 }
 
 export default function GiaPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { can } = useSession()
   const coQuyenSua = can("L6")
