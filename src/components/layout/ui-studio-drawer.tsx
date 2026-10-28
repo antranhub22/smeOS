@@ -34,6 +34,8 @@ export function UiStudioDrawer() {
     setSurfaceEffect,
     setBorderWidth,
     setMotionSpeed,
+    setShadowStyle,
+    setBackgroundTexture,
     resetToDefault,
   } = useUiSystem()
 
@@ -204,11 +206,15 @@ export function UiStudioDrawer() {
                     surfaceEffect={config.surfaceEffect}
                     borderWidth={config.borderWidth}
                     motionSpeed={config.motionSpeed}
+                    shadowStyle={config.shadowStyle}
+                    backgroundTexture={config.backgroundTexture}
                     colorMode={config.colorMode}
                     onChangeFont={setFontPairing}
                     onChangeSurface={setSurfaceEffect}
                     onChangeBorder={setBorderWidth}
                     onChangeMotion={setMotionSpeed}
+                    onChangeShadow={setShadowStyle}
+                    onChangeTexture={setBackgroundTexture}
                     onChangeColorMode={setColorMode}
                   />
                 )}
@@ -222,9 +228,9 @@ export function UiStudioDrawer() {
                     <div>Preset: <span className="text-text font-bold">{config.preset}</span></div>
                     <div>Density: <span className="text-text font-bold">{config.density}</span></div>
                     <div>Font: <span className="text-text font-bold">{config.fontPairing || "sans-clean"}</span></div>
-                    <div>Border: <span className="text-text font-bold">{config.borderWidth || "thin"}</span></div>
+                    <div>Shadow: <span className="text-text font-bold">{config.shadowStyle || "soft"}</span></div>
+                    <div>Texture: <span className="text-text font-bold">{config.backgroundTexture || "none"}</span></div>
                     <div>Material: <span className="text-text font-bold">{config.surfaceEffect || "flat"}</span></div>
-                    <div>Motion: <span className="text-text font-bold">{config.motionSpeed || "snappy"}</span></div>
                   </div>
                 </Card>
               </div>

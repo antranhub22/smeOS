@@ -430,3 +430,17 @@ img:not([data-no-zoom="true"]) {
   --table-px: 1.25rem;
   --card-padding: 1.75rem;
 }
+
+/* ── UI Background Texture Overlays ────────────────────────────────── */
+[data-bg-texture="paper-grain"] body {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 0);
+  background-size: 8px 8px;
+}
+
+[data-bg-texture="grid-lines"] body {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+

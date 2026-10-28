@@ -38,6 +38,12 @@ export type UiBorderWidth = "none" | "thin" | "bold"
 /** Tốc độ chuyển động */
 export type UiMotionSpeed = "reduced" | "snappy" | "smooth"
 
+/** Kiểu đổ bóng đặc trưng */
+export type UiShadowStyle = "none" | "soft" | "hard-block" | "neumorphic"
+
+/** Chất liệu bề mặt nền */
+export type UiBackgroundTexture = "none" | "paper-grain" | "grid-lines"
+
 export interface UiSystemConfig {
   preset: UiPresetId
   density: UiDensity
@@ -47,6 +53,8 @@ export interface UiSystemConfig {
   surfaceEffect?: UiSurfaceEffect
   borderWidth?: UiBorderWidth
   motionSpeed?: UiMotionSpeed
+  shadowStyle?: UiShadowStyle
+  backgroundTexture?: UiBackgroundTexture
 }
 
 export interface PresetTokenValues {
@@ -121,5 +129,7 @@ export interface UiSystemContextValue {
   setSurfaceEffect: (effect: UiSurfaceEffect) => void
   setBorderWidth: (width: UiBorderWidth) => void
   setMotionSpeed: (speed: UiMotionSpeed) => void
+  setShadowStyle: (style: UiShadowStyle) => void
+  setBackgroundTexture: (texture: UiBackgroundTexture) => void
   resetToDefault: () => void
 }

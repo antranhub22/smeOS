@@ -1,13 +1,15 @@
 "use client"
 
 import React from "react"
-import { Type, Sparkles, Square, Zap, Sun, Moon } from "lucide-react"
+import { Type, Sparkles, Square, Zap, Sun, Moon, Layers, Grid } from "lucide-react"
 import type {
   UiFontPairing,
   UiSurfaceEffect,
   UiBorderWidth,
   UiMotionSpeed,
   UiColorMode,
+  UiShadowStyle,
+  UiBackgroundTexture,
 } from "@/lib/ui-system/types"
 
 interface UiStudioFineTuneSectionProps {
@@ -15,11 +17,15 @@ interface UiStudioFineTuneSectionProps {
   surfaceEffect?: UiSurfaceEffect | undefined
   borderWidth?: UiBorderWidth | undefined
   motionSpeed?: UiMotionSpeed | undefined
+  shadowStyle?: UiShadowStyle | undefined
+  backgroundTexture?: UiBackgroundTexture | undefined
   colorMode: UiColorMode
   onChangeFont: (font: UiFontPairing) => void
   onChangeSurface: (surface: UiSurfaceEffect) => void
   onChangeBorder: (border: UiBorderWidth) => void
   onChangeMotion: (motion: UiMotionSpeed) => void
+  onChangeShadow: (shadow: UiShadowStyle) => void
+  onChangeTexture: (texture: UiBackgroundTexture) => void
   onChangeColorMode: (mode: UiColorMode) => void
 }
 
@@ -28,11 +34,15 @@ export function UiStudioFineTuneSection({
   surfaceEffect = "flat",
   borderWidth = "thin",
   motionSpeed = "snappy",
+  shadowStyle = "soft",
+  backgroundTexture = "none",
   colorMode,
   onChangeFont,
   onChangeSurface,
   onChangeBorder,
   onChangeMotion,
+  onChangeShadow,
+  onChangeTexture,
   onChangeColorMode,
 }: UiStudioFineTuneSectionProps) {
   return (
@@ -66,11 +76,70 @@ export function UiStudioFineTuneSection({
         </div>
       </div>
 
-      {/* 2. Surface & Material */}
+      {/* 2. Shadow Signature (Đổ bóng đặc trưng) */}
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
+          <Layers className="w-3.5 h-3.5 text-primary" />
+          <span>Kiểu đổ bóng (Shadow Profile)</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { id: "none" as UiShadowStyle, label: "Không bóng", desc: "Swiss / Phẳng tuyệt đối" },
+            { id: "soft" as UiShadowStyle, label: "Bóng mềm", desc: "Mộc Lan / SaaS khuếch tán" },
+            { id: "hard-block" as UiShadowStyle, label: "Khối cứng", desc: "Brutalist dập nổi 4px" },
+            { id: "neumorphic" as UiShadowStyle, label: "Âm dương 3D", desc: "Neumorph đa tầng" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onChangeShadow(item.id)}
+              className={`p-2.5 rounded-xl border text-left transition-all ${
+                shadowStyle === item.id
+                  ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
+                  : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
+              }`}
+            >
+              <div className="text-caption font-semibold">{item.label}</div>
+              <div className="text-caption text-text-muted text-[11px] truncate">{item.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. Background Texture (Chất liệu nền) */}
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
+          <Grid className="w-3.5 h-3.5 text-primary" />
+          <span>Lớp phủ nền (Texture & Grid)</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: "none" as UiBackgroundTexture, label: "Trơn phẳng", desc: "Pure Solid" },
+            { id: "paper-grain" as UiBackgroundTexture, label: "Hạt giấy", desc: "Paper Grain" },
+            { id: "grid-lines" as UiBackgroundTexture, label: "Lưới toạ độ", desc: "Grid Lines" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onChangeTexture(item.id)}
+              className={`p-2.5 rounded-xl border text-left transition-all ${
+                backgroundTexture === item.id
+                  ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
+                  : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
+              }`}
+            >
+              <div className="text-caption font-semibold">{item.label}</div>
+              <div className="text-caption text-text-muted text-[11px] truncate">{item.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 4. Surface & Material */}
       <div className="space-y-2.5">
         <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
           <Sparkles className="w-3.5 h-3.5 text-primary" />
-          <span>Chất liệu bề mặt (Material)</span>
+          <span>Chất liệu thẻ (Card Material)</span>
         </div>
         <div className="grid grid-cols-3 gap-2">
           {[
@@ -95,7 +164,7 @@ export function UiStudioFineTuneSection({
         </div>
       </div>
 
-      {/* 3. Border Stroke */}
+      {/* 5. Border Stroke */}
       <div className="space-y-2.5">
         <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
           <Square className="w-3.5 h-3.5 text-primary" />
@@ -124,7 +193,7 @@ export function UiStudioFineTuneSection({
         </div>
       </div>
 
-      {/* 4. Motion Speed */}
+      {/* 6. Motion Speed */}
       <div className="space-y-2.5">
         <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
           <Zap className="w-3.5 h-3.5 text-primary" />
@@ -153,7 +222,7 @@ export function UiStudioFineTuneSection({
         </div>
       </div>
 
-      {/* 5. Color Mode Light / Dark */}
+      {/* 7. Color Mode Light / Dark */}
       <div className="space-y-2.5">
         <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
           <Sun className="w-3.5 h-3.5 text-primary" />

@@ -9,6 +9,8 @@ export const DEFAULT_UI_CONFIG: UiSystemConfig = {
   surfaceEffect: "flat",
   borderWidth: "thin",
   motionSpeed: "snappy",
+  shadowStyle: "soft",
+  backgroundTexture: "none",
 }
 
 export const PRESET_MOC_LAN: PresetDefinition = {

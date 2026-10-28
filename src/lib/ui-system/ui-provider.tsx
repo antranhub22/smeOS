@@ -11,6 +11,8 @@ import type {
   UiSurfaceEffect,
   UiBorderWidth,
   UiMotionSpeed,
+  UiShadowStyle,
+  UiBackgroundTexture,
   UiSystemContextValue,
   UiPresetScope,
 } from "./types"
@@ -61,6 +63,43 @@ export function UiSystemProvider({
     root.setAttribute("data-surface-effect", config.surfaceEffect || "flat")
     root.setAttribute("data-border-width", config.borderWidth || "thin")
     root.setAttribute("data-motion-speed", config.motionSpeed || "snappy")
+    root.setAttribute("data-shadow-style", config.shadowStyle || "soft")
+    root.setAttribute("data-bg-texture", config.backgroundTexture || "none")
+
+    // 1. Dynamic Injection 100% Token Colors từ Preset
+    const activePreset = getUiPreset(config.preset)
+    if (activePreset) {
+      const t = activePreset.tokens
+      root.style.setProperty("--color-primary", t.primary)
+      root.style.setProperty("--color-primary-dark", t.primaryDark)
+      root.style.setProperty("--color-primary-muted", t.primaryMuted)
+      root.style.setProperty("--color-primary-border", t.primaryBorder)
+      root.style.setProperty("--color-secondary", t.secondary)
+      root.style.setProperty("--color-secondary-text", t.secondaryText)
+      root.style.setProperty("--color-accent", t.accent)
+      root.style.setProperty("--color-accent-bg", t.accentBg)
+      root.style.setProperty("--color-bg", t.bg)
+      root.style.setProperty("--color-surface", t.surface)
+      root.style.setProperty("--color-surface-alt", t.surfaceAlt)
+      root.style.setProperty("--color-border", t.border)
+      root.style.setProperty("--color-text", t.text)
+      root.style.setProperty("--color-text-muted", t.textMuted)
+      root.style.setProperty("--color-selected", t.selected)
+      root.style.setProperty("--color-selected-text", t.selectedText)
+
+      // Radius
+      root.style.setProperty("--radius-sm", activePreset.radius.sm)
+      root.style.setProperty("--radius-md", activePreset.radius.md)
+      root.style.setProperty("--radius-lg", activePreset.radius.lg)
+      root.style.setProperty("--radius-card", activePreset.radius.card)
+      root.style.setProperty("--radius-button", activePreset.radius.button)
+      root.style.setProperty("--radius-dialog", activePreset.radius.dialog)
+
+      // Shadows
+      root.style.setProperty("--shadow-subtle", activePreset.shadows.subtle)
+      root.style.setProperty("--shadow-card", activePreset.shadows.card)
+      root.style.setProperty("--shadow-dialog", activePreset.shadows.dialog)
+    }
 
     // Dynamic Border Width CSS Var
     if (config.borderWidth === "none") {
@@ -78,6 +117,21 @@ export function UiSystemProvider({
       root.style.setProperty("--ui-transition-duration", "350ms")
     } else {
       root.style.setProperty("--ui-transition-duration", "150ms")
+    }
+
+    // Dynamic Shadow Style Override (nếu người dùng tùy chỉnh riêng)
+    if (config.shadowStyle === "none") {
+      root.style.setProperty("--shadow-subtle", "none")
+      root.style.setProperty("--shadow-card", "none")
+      root.style.setProperty("--shadow-dialog", "none")
+    } else if (config.shadowStyle === "hard-block") {
+      root.style.setProperty("--shadow-subtle", "2px 2px 0px 0px #000000")
+      root.style.setProperty("--shadow-card", "4px 4px 0px 0px #000000")
+      root.style.setProperty("--shadow-dialog", "8px 8px 0px 0px #000000")
+    } else if (config.shadowStyle === "neumorphic") {
+      root.style.setProperty("--shadow-subtle", "3px 3px 6px #d1d9e2, -3px -3px 6px #ffffff")
+      root.style.setProperty("--shadow-card", "6px 6px 14px #d1d9e2, -6px -6px 14px #ffffff")
+      root.style.setProperty("--shadow-dialog", "10px 10px 24px #d1d9e2, -10px -10px 24px #ffffff")
     }
 
     try {
@@ -121,6 +175,14 @@ export function UiSystemProvider({
     setConfig((prev) => ({ ...prev, motionSpeed }))
   }, [])
 
+  const setShadowStyle = useCallback((shadowStyle: UiShadowStyle) => {
+    setConfig((prev) => ({ ...prev, shadowStyle }))
+  }, [])
+
+  const setBackgroundTexture = useCallback((backgroundTexture: UiBackgroundTexture) => {
+    setConfig((prev) => ({ ...prev, backgroundTexture }))
+  }, [])
+
   const resetToDefault = useCallback(() => {
     setConfig(DEFAULT_UI_CONFIG)
   }, [])
@@ -155,6 +217,8 @@ export function UiSystemProvider({
       setSurfaceEffect,
       setBorderWidth,
       setMotionSpeed,
+      setShadowStyle,
+      setBackgroundTexture,
       resetToDefault,
     }),
     [
@@ -169,6 +233,8 @@ export function UiSystemProvider({
       setSurfaceEffect,
       setBorderWidth,
       setMotionSpeed,
+      setShadowStyle,
+      setBackgroundTexture,
       resetToDefault,
     ]
   )
@@ -193,6 +259,8 @@ export function useUiSystem() {
       setSurfaceEffect: () => {},
       setBorderWidth: () => {},
       setMotionSpeed: () => {},
+      setShadowStyle: () => {},
+      setBackgroundTexture: () => {},
       resetToDefault: () => {},
     }
   }
