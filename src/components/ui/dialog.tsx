@@ -44,7 +44,7 @@ export function Dialog({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
           <BaseDialog.Popup
             className={cn(
-              "relative flex max-h-[90vh] w-full flex-col rounded-2xl border border-border bg-surface shadow-2xl transition-all duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
+              "relative flex max-h-[90dvh] w-full flex-col rounded-2xl border border-border bg-surface shadow-2xl transition-all duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
               sizeClasses[size],
               className
             )}
@@ -52,7 +52,7 @@ export function Dialog({
             {/* Header */}
             <div className="flex items-center justify-between border-b border-border px-5 py-3.5 sm:px-6 sm:py-4 flex-shrink-0">
               <div className="min-w-0 flex-1 pr-2">
-                <BaseDialog.Title className="text-title-sm sm:text-base font-bold text-foreground truncate">
+                <BaseDialog.Title className="text-title-sm sm:text-base font-bold text-text truncate">
                   {title}
                 </BaseDialog.Title>
                 {description && (

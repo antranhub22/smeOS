@@ -176,6 +176,7 @@ export default function ChiTietToChucPage() {
             <Button
               type="button"
               size="sm"
+              variant="secondary"
               disabled={dangDuyet}
               onClick={async () => {
                 setDangDuyet(true)
@@ -261,10 +262,10 @@ export default function ChiTietToChucPage() {
               <span className="text-base">🇻🇳</span>
               <div>
                 <p className="text-caption font-bold text-foreground">Tiếng Việt (vi)</p>
-                <p className="text-[11px] text-text-muted">Mặc định cho toàn bộ cửa hàng nội địa</p>
+                <p className="text-caption text-text-muted">Mặc định cho toàn bộ cửa hàng nội địa</p>
               </div>
             </div>
-            <span className="text-caption font-semibold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            <span className="text-caption font-semibold text-success bg-success-bg px-2 py-0.5 rounded-full border border-success/20">
               Luôn mở
             </span>
           </label>
@@ -274,7 +275,7 @@ export default function ChiTietToChucPage() {
               <span className="text-base">🇬🇧</span>
               <div>
                 <p className="text-caption font-bold text-foreground">Tiếng Anh (en — Quốc tế / Kiều bào)</p>
-                <p className="text-[11px] text-text-muted">Cho phép cửa hàng tạo Thẻ chào & nhận đơn từ nước ngoài</p>
+                <p className="text-caption text-text-muted">Cho phép cửa hàng tạo Thẻ chào & nhận đơn từ nước ngoài</p>
               </div>
             </div>
             <input

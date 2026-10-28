@@ -106,7 +106,7 @@ export function CatalogImageExportButton({
             </>
           )}
         </Button>
-        {error && <span className="text-[11px] text-destructive">{error}</span>}
+        {error && <span className="text-caption text-destructive">{error}</span>}
       </div>
 
       {/* Off-screen 1080px poster — fixed outside viewport for clean rendering */}

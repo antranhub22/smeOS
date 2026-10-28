@@ -147,26 +147,26 @@ function OrgCard({
             <p className="font-bold text-body-sm text-text truncate group-hover:text-primary transition-colors">
               {org.name}
             </p>
-            <p className="text-[11px] text-text-muted font-mono truncate">/{org.slug}</p>
+            <p className="text-caption text-text-muted font-mono truncate">/{org.slug}</p>
           </div>
         </div>
-        <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface-alt border border-border text-text-muted">
+        <span className="shrink-0 text-caption font-bold px-2 py-0.5 rounded-full bg-surface-alt border border-border text-text-muted">
           {typeLabel[org.type] ?? org.type}
         </span>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-2 text-[11px]">
+      <div className="grid grid-cols-2 gap-2 text-caption">
         <div className="flex items-center gap-1.5 text-text-muted">
-          <Package size={11} className="text-emerald-600 shrink-0" />
+          <Package size={11} className="text-primary shrink-0" />
           <span>{org.productCount.toLocaleString("vi-VN")} sản phẩm</span>
         </div>
         <div className="flex items-center gap-1.5 text-text-muted">
-          <ShoppingCart size={11} className="text-blue-600 shrink-0" />
+          <ShoppingCart size={11} className="text-primary shrink-0" />
           <span>{org.orderCount.toLocaleString("vi-VN")} đơn hàng</span>
         </div>
         <div className="flex items-center gap-1.5 text-text-muted">
-          <Users size={11} className="text-violet-600 shrink-0" />
+          <Users size={11} className="text-primary shrink-0" />
           <span>{org.memberCount} thành viên</span>
         </div>
         <div className="flex items-center gap-1.5 text-text-muted">
@@ -176,7 +176,7 @@ function OrgCard({
       </div>
 
       {/* Total records hint */}
-      <div className="flex items-center gap-1.5 text-[10px] text-text-muted bg-surface-alt rounded-lg px-2.5 py-1.5">
+      <div className="flex items-center gap-1.5 text-caption text-text-muted bg-surface-alt rounded-lg px-2.5 py-1.5">
         <Database size={11} />
         <span>
           ~{totalRecords.toLocaleString("vi-VN")} bản ghi có thể xem &amp; tải về
@@ -186,7 +186,7 @@ function OrgCard({
 
       {/* Readiness bar */}
       <div className="space-y-1">
-        <div className="flex items-center justify-between text-[10px]">
+        <div className="flex items-center justify-between text-caption">
           <span className="text-text-muted font-medium">Hoàn thiện hồ sơ</span>
           <span className={`font-bold ${readinessColor}`}>{org.readinessScore}%</span>
         </div>
@@ -205,7 +205,7 @@ function OrgCard({
       </div>
 
       {/* Profile status */}
-      <div className="flex items-center gap-3 pt-1 border-t border-border/60 text-[10px]">
+      <div className="flex items-center gap-3 pt-1 border-t border-border/60 text-caption">
         <span className={`flex items-center gap-1 ${org.hasBusinessProfile ? "text-success" : "text-text-muted"}`}>
           {org.hasBusinessProfile ? <CheckCircle2 size={11} /> : <AlertCircle size={11} />}
           Hồ sơ pháp lý
@@ -242,7 +242,7 @@ function DomainPicker({
           <Card key={s.label} className="p-3 flex items-center gap-2.5">
             <s.icon size={18} className={`${s.color} shrink-0`} />
             <div>
-              <p className="text-[11px] text-text-muted">{s.label}</p>
+              <p className="text-caption text-text-muted">{s.label}</p>
               <p className="font-bold text-body-sm">{s.value}</p>
             </div>
           </Card>
@@ -299,15 +299,15 @@ function DomainPicker({
                     <p className="font-bold text-body-sm text-text group-hover:text-primary transition-colors">
                       {d.label}
                     </p>
-                    <p className="text-[11px] text-text-muted font-bold">
+                    <p className="text-caption text-text-muted font-bold">
                       {typeof count === "number" ? `~${count.toLocaleString("vi-VN")} bản ghi` : "—"}
                     </p>
                   </div>
                 </div>
                 <ChevronRight size={16} className="text-text-muted group-hover:text-primary transition-colors" />
               </div>
-              <p className="text-[11px] text-text-muted leading-relaxed">{d.description}</p>
-              <div className="flex items-center gap-1.5 text-[10px] text-emerald-700 font-bold bg-emerald-50 rounded-lg px-2 py-1 w-fit">
+              <p className="text-caption text-text-muted leading-relaxed">{d.description}</p>
+              <div className="flex items-center gap-1.5 text-caption text-success font-bold bg-success-bg rounded-lg px-2 py-1 w-fit">
                 <FileDown size={11} />
                 Xem chi tiết + Tải CSV
               </div>
@@ -473,6 +473,7 @@ export function PlatformDataHub() {
                 <Button
                   variant="outline"
                   size="sm"
+                  aria-label="Làm mới dữ liệu"
                   onClick={() => void loadOrgs()}
                   className="h-9 w-9 p-0"
                 >

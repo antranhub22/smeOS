@@ -226,7 +226,7 @@ export function ToolkitShortcutsGroup({
           {shortcutEntries.length > 0 && (
             <div className="flex items-center gap-2 px-2.5 pt-1 pb-0.5">
               <div className="flex-1 h-px bg-border/50" />
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-text-muted/70 flex items-center gap-1">
+              <span className="text-caption font-semibold uppercase tracking-widest text-text-muted/70 flex items-center gap-1">
                 <Pin size={8} aria-hidden />
                 Lối tắt
               </span>

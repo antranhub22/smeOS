@@ -80,11 +80,10 @@ export function DesktopNavHeader({
 
   return (
     <div
-      onClick={collapsed ? onToggleCollapse : undefined}
       className={cn(
         "relative z-30 flex h-14 flex-shrink-0 items-center border-b border-border transition-all duration-200",
         collapsed
-          ? "justify-center px-0 cursor-pointer"
+          ? "justify-center px-0"
           : "gap-2.5 px-3"
       )}
     >

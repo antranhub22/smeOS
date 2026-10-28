@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Shield, Sparkles, X, Check, CheckCircle2 } from "lucide-react"
+import { Shield, X, Check } from "lucide-react"
 import { STORE_NAV_ENTRIES } from "@/components/layout/nav/nav-store"
+import { Button } from "@/components/ui/button"
 
 interface PartnerToolMatrixModalProps {
   partnerId: string
@@ -60,10 +61,9 @@ export function PartnerToolMatrixModal({
   const handleSave = async () => {
     setSaving(true)
     setErrorMsg("")
-
     try {
-      const res = await fetch(`/api/v1/coordinator/partners/${partnerId}/tools`, {
-        method: "PATCH",
+      const res = await fetch(`/api/v1/network/partners/${partnerId}/unlocked-tools`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           unlockedTools: Array.from(selectedKeys),
@@ -87,53 +87,54 @@ export function PartnerToolMatrixModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-neutral-200 animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-surface rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-border animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-start justify-between pb-3 border-b border-neutral-100">
+        <div className="flex items-start justify-between pb-3 border-b border-border">
           <div>
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-rose-600" />
-              <h3 className="font-bold text-base text-neutral-800">
+              <Shield className="w-5 h-5 text-primary" />
+              <h3 className="font-bold text-title text-text">
                 Phân quyền Công cụ Chi nhánh
               </h3>
             </div>
-            <p className="text-xs text-neutral-500 mt-1">
-              Cửa hàng: <span className="font-semibold text-neutral-700">{partnerName}</span> ({partnerCode})
+            <p className="text-body-sm text-text-muted mt-1">
+              Cửa hàng: <span className="font-semibold text-text">{partnerName}</span> ({partnerCode})
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-neutral-400 hover:text-neutral-600 p-1 rounded-lg"
+            className="text-text-muted hover:text-text p-1 rounded-lg"
+            aria-label="Đóng"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {errorMsg && (
-          <div className="p-3 my-3 text-xs bg-rose-50 text-rose-600 rounded-xl border border-rose-100">
+          <div className="p-3 my-3 text-body-sm bg-danger-bg text-danger rounded-xl border border-danger-border">
             {errorMsg}
           </div>
         )}
 
         {/* Quick action bar */}
-        <div className="flex items-center justify-between py-3 border-b border-neutral-100 text-xs">
-          <span className="text-neutral-500">
-            Đã mở khóa: <b className="text-neutral-800">{selectedKeys.size}/{availableTools.length}</b> công cụ
+        <div className="flex items-center justify-between py-3 border-b border-border text-meta">
+          <span className="text-text-muted">
+            Đã mở khóa: <b className="text-text">{selectedKeys.size}/{availableTools.length}</b> công cụ
           </span>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={selectAll}
-              className="text-rose-600 hover:text-rose-700 font-medium"
+              className="text-primary hover:text-primary-dark font-medium"
             >
               Chọn tất cả
             </button>
-            <span className="text-neutral-300">|</span>
+            <span className="text-text-muted">|</span>
             <button
               type="button"
               onClick={deselectAll}
-              className="text-neutral-500 hover:text-neutral-700 font-medium"
+              className="text-text-muted hover:text-text font-medium"
             >
               Bỏ chọn tất cả
             </button>
@@ -150,40 +151,40 @@ export function PartnerToolMatrixModal({
                 onClick={() => toggleTool(tool.navKey)}
                 className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
                   isChecked
-                    ? "bg-rose-50/40 border-rose-200"
-                    : "bg-neutral-50/50 border-neutral-200/80 hover:bg-neutral-50"
+                    ? "bg-primary-muted/40 border-primary-border"
+                    : "bg-surface-alt/50 border-border hover:bg-surface-alt"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
                       isChecked
-                        ? "bg-rose-600 border-rose-600 text-white"
-                        : "border-neutral-300 bg-white"
+                        ? "bg-primary border-primary text-white"
+                        : "border-border bg-surface"
                     }`}
                   >
                     {isChecked && <Check size={11} strokeWidth={3} />}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-neutral-800 flex items-center gap-1.5">
+                    <div className="text-body-sm font-bold text-text flex items-center gap-1.5">
                       <span>{tool.label}</span>
                       {tool.capability && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-neutral-100 text-neutral-500 font-mono">
+                        <span className="text-caption px-1.5 py-0.2 rounded bg-surface-alt text-text-muted font-mono">
                           {tool.capability}
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] text-neutral-400 font-mono">
+                    <span className="text-caption text-text-muted font-mono">
                       {tool.href}
                     </span>
                   </div>
                 </div>
 
                 <span
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                  className={`text-caption font-semibold px-2 py-0.5 rounded-full ${
                     isChecked
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                      : "bg-neutral-100 text-neutral-400"
+                      ? "bg-success-bg text-success border border-success-border"
+                      : "bg-surface-alt text-text-muted"
                   }`}
                 >
                   {isChecked ? "Cho phép" : "Khóa"}
@@ -194,22 +195,24 @@ export function PartnerToolMatrixModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-2 pt-4 border-t border-neutral-100 mt-2">
-          <button
+        <div className="flex items-center justify-end gap-2 pt-4 border-t border-border mt-2">
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-100 rounded-xl transition-colors"
           >
             Hủy
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="primary"
+            size="sm"
             disabled={saving}
             onClick={handleSave}
-            className="px-5 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 rounded-xl transition-colors flex items-center gap-1.5"
           >
             {saving ? "Đang lưu..." : "Lưu phân quyền"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

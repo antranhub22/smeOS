@@ -47,9 +47,9 @@ export function StoreCard({ store, onOpenStore }: StoreCardProps) {
               {store.isActive ? "Hoạt động" : "Tạm dừng"}
             </Badge>
             <span
-              className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${
+              className={`text-caption font-bold px-1.5 py-0.5 rounded border ${
                 store.isPartner
-                  ? "bg-amber-500/10 text-amber-700 border-amber-500/30"
+                  ? "bg-warning-bg text-warning-text border-warning-border"
                   : "bg-surface-alt text-text-muted border-border"
               }`}
             >
@@ -66,7 +66,7 @@ export function StoreCard({ store, onOpenStore }: StoreCardProps) {
 
         {/* Readiness Bar */}
         <div className="space-y-1.5 mb-4">
-          <div className="flex items-center justify-between text-[11px] font-semibold text-text-muted">
+          <div className="flex items-center justify-between text-caption font-semibold text-text-muted">
             <span>Độ sẵn sàng dữ liệu</span>
             <span className="text-primary font-bold">{store.readinessPercentage}%</span>
           </div>

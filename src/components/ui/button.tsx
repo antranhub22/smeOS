@@ -12,11 +12,16 @@ const buttonVariants = cva(
         outline: "border border-border bg-transparent text-text hover:bg-surface-alt",
         ghost: "text-text hover:bg-surface-alt",
         warning: "bg-warning text-white hover:opacity-90",
+        danger: "bg-danger text-white hover:opacity-90",
+        subtle: "bg-surface-alt text-text hover:bg-border/70 border border-transparent",
       },
       size: {
         default: "h-12 px-5 text-title-sm",
         sm: "h-11 px-4 text-sm",
+        xs: "h-8 px-2.5 text-caption rounded-lg",
+        lg: "h-14 px-6 text-base",
         icon: "h-11 w-11",
+        "icon-sm": "h-8 w-8 rounded-lg",
       },
     },
     defaultVariants: {

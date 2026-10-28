@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { Sparkles, Camera, Loader2, RefreshCw } from "lucide-react"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
@@ -17,13 +17,13 @@ export function ProductPhotoStudioClient() {
 
   const [isUploading, setIsUploading] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [jobId, setJobId] = useState<string | null>(null)
+  const [, setJobId] = useState<string | null>(null)
   const [jobResult, setJobResult] = useState<ProductPhotoResult | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const handlePhotoSelected = (file: File, url: string) => {
+  const handlePhotoSelected = (file: File) => {
     setSelectedFile(file)
-    setPreviewUrl(url)
+    setPreviewUrl(URL.createObjectURL(file))
     setJobResult(null)
     setErrorMsg(null)
   }
@@ -58,92 +58,61 @@ export function ProductPhotoStudioClient() {
 
       if (!enhanceRes.ok) {
         const err = await enhanceRes.json().catch(() => ({}))
-        throw new Error(err.message || "Không thể tạo phiên xử lý ảnh studio")
+        throw new Error(err.message || "Không thể khởi tạo tiến trình xử lý ảnh.")
       }
 
-      const enhanceData = await enhanceRes.json()
-      setJobId(enhanceData.job_id)
+      const { data } = await enhanceRes.json()
+      setJobId(data.jobId)
+
+      // Polling job status
+      const pollInterval = setInterval(async () => {
+        try {
+          const pollRes = await fetch(`/api/v1/product-photo/${data.jobId}`)
+          if (pollRes.ok) {
+            const pollData = await pollRes.json()
+            if (pollData.data?.status === "COMPLETED") {
+              clearInterval(pollInterval)
+              setIsProcessing(false)
+              setJobResult(pollData.data)
+            } else if (pollData.data?.status === "FAILED") {
+              clearInterval(pollInterval)
+              setIsProcessing(false)
+              setErrorMsg(pollData.data.errorMessage || "Xử lý ảnh thất bại. Vui lòng thử lại.")
+            }
+          }
+        } catch {
+          // Poll retry silently
+        }
+      }, 2000)
     } catch (err: unknown) {
       setIsUploading(false)
       setIsProcessing(false)
-      setErrorMsg(err instanceof Error ? err.message : "Đã có lỗi xảy ra khi xử lý")
+      setErrorMsg(err instanceof Error ? err.message : "Có lỗi xảy ra trong quá trình xử lý.")
     }
   }
 
-  // Polling kết quả job
-  useEffect(() => {
-    if (!jobId || !isProcessing) return
-
-    let cancelled = false
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/v1/product-photo/${jobId}`)
-        if (!res.ok) return
-        const data: ProductPhotoResult = await res.json()
-
-        if (cancelled) return
-
-        if (data.status === "COMPLETED" || data.status === "FAILED") {
-          setIsProcessing(false)
-          setJobResult(data)
-          if (data.status === "FAILED") {
-            setErrorMsg(data.error || "Quá trình nâng cấp ảnh không thành công")
-          }
-          clearInterval(interval)
-        }
-      } catch {
-        // network retry
-      }
-    }, 2500)
-
-    return () => {
-      cancelled = true
-      clearInterval(interval)
-    }
-  }, [jobId, isProcessing])
-
   const handleRetry = async (retryHint?: string) => {
-    if (!jobId) return
-    setIsProcessing(true)
-    setErrorMsg(null)
-
-    try {
-      const res = await fetch(`/api/v1/product-photo/${jobId}/retry`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Idempotency-Key": `photo-retry-${Date.now()}`,
-        },
-        body: JSON.stringify({ retry_hint: retryHint }),
-      })
-
-      if (!res.ok) {
-        throw new Error("Không thể gửi yêu cầu điều chỉnh lại")
-      }
-
-      const data = await res.json()
-      setJobId(data.job_id)
-    } catch (err: unknown) {
-      setIsProcessing(false)
-      setErrorMsg(err instanceof Error ? err.message : "Lỗi khi chạy lại")
+    if (retryHint) {
+      setCustomNote((prev) => (prev ? `${prev}. ${retryHint}` : retryHint))
     }
+    await handleStartEnhance()
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shadow-xs">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
             <Camera className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-slate-900">Tạo ảnh sản phẩm chuyên nghiệp</h1>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+              <h1 className="text-title font-bold text-text">Tạo ảnh sản phẩm chuyên nghiệp</h1>
+              <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                 Công cụ 01
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-caption text-text-muted mt-0.5">
               Biến ảnh chụp thô bằng điện thoại thành ảnh studio thương mại đạt chuẩn sàn bằng AI
             </p>
           </div>
@@ -162,7 +131,7 @@ export function ProductPhotoStudioClient() {
       />
 
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
+        <div className="p-4 rounded-xl bg-danger-bg border border-danger-border text-danger text-caption font-semibold">
           {errorMsg}
         </div>
       )}
@@ -171,7 +140,7 @@ export function ProductPhotoStudioClient() {
       {!jobResult && !isProcessing && (
         <div className="space-y-6">
           <PhotoUploadPanel
-            onPhotoSelected={handlePhotoSelected}
+            onFileSelected={handlePhotoSelected}
             disabled={isUploading || isProcessing}
           />
 
@@ -191,7 +160,7 @@ export function ProductPhotoStudioClient() {
                   type="button"
                   disabled={isUploading || isProcessing}
                   onClick={handleStartEnhance}
-                  className="px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold text-body-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" /> Tạo ảnh chuyên nghiệp ✨
                 </button>
@@ -202,13 +171,13 @@ export function ProductPhotoStudioClient() {
       )}
 
       {isProcessing && (
-        <div className="p-12 rounded-2xl border border-amber-200 bg-amber-50/50 text-center space-y-4 max-w-md mx-auto my-6 shadow-xs">
-          <Loader2 className="w-10 h-10 mx-auto text-amber-600 animate-spin" />
+        <div className="p-12 rounded-2xl border border-primary/20 bg-primary-subtle/30 text-center space-y-4 max-w-md mx-auto my-6 shadow-xs">
+          <Loader2 className="w-10 h-10 mx-auto text-primary animate-spin" />
           <div>
-            <div className="font-bold text-slate-800 text-base">
+            <div className="font-bold text-text text-base">
               AI đang hoàn thiện ảnh sản phẩm studio...
             </div>
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-caption text-text-muted mt-1">
               Đang tối ưu ánh sáng, xóa phông nền và đối chiếu chuẩn kiểm định QC.
             </div>
           </div>
@@ -226,7 +195,7 @@ export function ProductPhotoStudioClient() {
                 setSelectedFile(null)
                 setPreviewUrl(null)
               }}
-              className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5"
+              className="text-caption font-semibold text-text-muted hover:text-text flex items-center gap-1.5 cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Tạo ảnh sản phẩm khác
             </button>

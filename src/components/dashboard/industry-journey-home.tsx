@@ -150,7 +150,7 @@ export function IndustryJourneyHome() {
             <div className="text-text-muted flex flex-wrap items-center gap-x-4 gap-y-1">
               <span>Người làm: <strong className="text-text font-semibold">{selectedPlugin.terminology.makerTitle}</strong></span>
               <span>Sản phẩm mẫu: <strong className="text-text font-semibold">{selectedPlugin.terminology.sampleProduct}</strong></span>
-              <span>BOM: <strong className="text-text font-semibold">{selectedPlugin.bomSpec.measurementUnits.slice(0, 3).join(", ")}</strong></span>
+              <span>Định mức: <strong className="text-text font-semibold">{selectedPlugin.bomSpec.measurementUnits.slice(0, 3).join(", ")}</strong></span>
               <span>Mẫu in: <strong className="text-text font-semibold">{selectedPlugin.templates.printables.length} loại</strong></span>
             </div>
           </div>

@@ -23,7 +23,7 @@ export function PresetStyleSelector({
     <div className="space-y-2">
       <label className="text-xs font-semibold text-text flex items-center justify-between">
         <span>Phong cách thiết kế</span>
-        <span className="text-[11px] font-normal text-text-muted">
+        <span className="text-caption font-normal text-text-muted">
           5 phong cách chuẩn sàn
         </span>
       </label>
@@ -56,7 +56,7 @@ export function PresetStyleSelector({
               <div className="text-xs font-bold text-text truncate w-full">
                 {preset.name}
               </div>
-              <div className="text-[10px] text-text-muted truncate w-full mt-0.5">
+              <div className="text-caption text-text-muted truncate w-full mt-0.5">
                 {preset.tag}
               </div>
             </button>

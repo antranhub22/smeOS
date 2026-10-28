@@ -3,6 +3,9 @@
 import React, { useState } from "react"
 import type { ActionCardOrderPayload } from "@/modules/internal-chat/domain/chat-entities"
 import { CheckCircle2, XCircle, Clock, MapPin, DollarSign, Package } from "lucide-react"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface ActionCardOrderProps {
   messageId: string
@@ -48,18 +51,18 @@ export function ActionCardOrder({
   const isRejected = payload.status === "REJECTED"
 
   return (
-    <div className="rounded-xl border border-rose-100 bg-white p-4 shadow-sm max-w-sm text-neutral-800">
-      <div className="flex items-center justify-between border-b border-rose-50 pb-2 mb-3">
-        <span className="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+    <Card className="p-4 max-w-sm text-text" variant="default">
+      <div className="flex items-center justify-between border-b border-border pb-2 mb-3">
+        <span className="text-caption font-semibold text-primary bg-primary-subtle px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-primary/20">
           <Package className="w-3.5 h-3.5" /> Lệnh gia công #{payload.orderCode}
         </span>
         <span
-          className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
+          className={`text-caption font-medium px-2 py-0.5 rounded-full ${
             isPending
-              ? "bg-amber-100 text-amber-700"
+              ? "bg-warning-subtle text-warning-text border border-warning/20"
               : isAccepted
-              ? "bg-emerald-100 text-emerald-700"
-              : "bg-neutral-100 text-neutral-600"
+              ? "bg-success-subtle text-success border border-success/20"
+              : "bg-surface-muted text-text-muted"
           }`}
         >
           {isPending ? "Chờ phản hồi" : isAccepted ? "Đã nhận đơn" : "Đã từ chối"}
@@ -71,29 +74,29 @@ export function ActionCardOrder({
           <img
             src={payload.thumbnailUrl}
             alt={payload.orderCode}
-            className="w-16 h-16 object-cover rounded-lg border border-neutral-100 shrink-0"
+            className="w-16 h-16 object-cover rounded-lg border border-border shrink-0"
           />
         ) : (
-          <div className="w-16 h-16 bg-neutral-100 rounded-lg flex items-center justify-center text-neutral-400 text-xs shrink-0">
+          <div className="w-16 h-16 bg-surface-muted rounded-lg flex items-center justify-center text-text-muted text-caption shrink-0">
             Không ảnh
           </div>
         )}
-        <div className="text-xs space-y-1 overflow-hidden">
+        <div className="text-caption space-y-1 overflow-hidden">
           {payload.deliveryTime && (
-            <div className="flex items-center gap-1.5 text-neutral-600 truncate">
-              <Clock className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+            <div className="flex items-center gap-1.5 text-text-muted truncate">
+              <Clock className="w-3.5 h-3.5 shrink-0" />
               <span>Giao: {new Date(payload.deliveryTime).toLocaleString("vi-VN")}</span>
             </div>
           )}
           {payload.deliveryAddress && (
-            <div className="flex items-center gap-1.5 text-neutral-600 truncate">
-              <MapPin className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+            <div className="flex items-center gap-1.5 text-text-muted truncate">
+              <MapPin className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">{payload.deliveryAddress}</span>
             </div>
           )}
           {payload.priceVnd !== undefined && (
-            <div className="flex items-center gap-1.5 font-semibold text-rose-700">
-              <DollarSign className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+            <div className="flex items-center gap-1.5 font-semibold text-primary">
+              <DollarSign className="w-3.5 h-3.5 shrink-0" />
               <span>{payload.priceVnd.toLocaleString("vi-VN")} đ</span>
             </div>
           )}
@@ -101,51 +104,56 @@ export function ActionCardOrder({
       </div>
 
       {isPending && !isSender && (
-        <div className="pt-2 border-t border-neutral-100">
+        <div className="pt-2 border-t border-border">
           {!rejecting ? (
             <div className="flex gap-2">
-              <button
+              <Button
                 type="button"
                 onClick={() => handleAction("ACCEPT_ORDER")}
                 disabled={loading}
-                className="flex-1 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-medium flex items-center justify-center gap-1 transition-colors"
+                size="sm"
+                className="flex-1"
               >
-                <CheckCircle2 className="w-3.5 h-3.5" /> Nhận đơn
-              </button>
-              <button
+                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Nhận đơn
+              </Button>
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => setRejecting(true)}
                 disabled={loading}
-                className="px-3 py-1.5 border border-neutral-200 hover:bg-neutral-50 text-neutral-600 rounded-lg text-xs font-medium transition-colors"
               >
                 Từ chối
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="space-y-2">
-              <input
+              <Input
                 type="text"
                 placeholder="Lý do từ chối (bận việc, quá tải...)"
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
-                className="w-full text-xs px-2.5 py-1.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-rose-500"
+                inputSize="sm"
               />
               <div className="flex gap-2">
-                <button
+                <Button
                   type="button"
+                  variant="danger"
+                  size="sm"
                   onClick={() => handleAction("REJECT_ORDER")}
                   disabled={loading}
-                  className="flex-1 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs"
+                  className="flex-1"
                 >
                   Xác nhận từ chối
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setRejecting(false)}
-                  className="px-2 py-1 text-xs text-neutral-500 hover:underline"
                 >
                   Hủy
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -153,17 +161,17 @@ export function ActionCardOrder({
       )}
 
       {isAccepted && (
-        <div className="pt-2 border-t border-neutral-100 text-[11px] text-emerald-600 flex items-center gap-1 font-medium">
+        <div className="pt-2 border-t border-border text-caption text-success flex items-center gap-1 font-medium">
           <CheckCircle2 className="w-3.5 h-3.5" /> Đã tiếp nhận đơn hàng, đối tác đang xử lý
         </div>
       )}
 
       {isRejected && (
-        <div className="pt-2 border-t border-neutral-100 text-[11px] text-neutral-500 flex items-center gap-1">
-          <XCircle className="w-3.5 h-3.5 text-neutral-400" />
+        <div className="pt-2 border-t border-border text-caption text-text-muted flex items-center gap-1">
+          <XCircle className="w-3.5 h-3.5 shrink-0" />
           <span>Đơn đã từ chối: {payload.rejectedReason || "Không nhận việc"}</span>
         </div>
       )}
-    </div>
+    </Card>
   )
 }

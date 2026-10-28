@@ -70,7 +70,8 @@ export function DirectProductUpload({
       />
 
       {!selectedFile || !previewUrl ? (
-        <div
+        <button
+          type="button"
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -79,7 +80,7 @@ export function DirectProductUpload({
               fileInputRef.current?.click()
             }
           }}
-          className={`border-2 border-dashed rounded-2xl p-6 transition-all text-center flex flex-col items-center justify-center gap-3 cursor-pointer ${
+          className={`w-full border-2 border-dashed rounded-2xl p-6 transition-all text-center flex flex-col items-center justify-center gap-3 cursor-pointer ${
             isDragOver
               ? "border-primary bg-primary/10 scale-[0.99]"
               : "border-border hover:border-primary/50 hover:bg-surface-alt/60 bg-surface/40"
@@ -97,16 +98,11 @@ export function DirectProductUpload({
               Hỗ trợ JPG, PNG, WEBP. AI sẽ tự động phân tích thị giác và lưu vào danh mục sản phẩm.
             </p>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="text-xs gap-1.5 pointer-events-none mt-1"
-          >
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-surface text-caption font-semibold text-text shadow-2xs mt-1">
             <ImageIcon size={14} />
             Chọn ảnh từ thiết bị
-          </Button>
-        </div>
+          </span>
+        </button>
       ) : (
         <div className="relative rounded-2xl border border-border bg-surface p-4 flex flex-col sm:flex-row items-center gap-4">
           <div className="relative w-28 h-28 rounded-xl overflow-hidden border border-border shrink-0 bg-background">

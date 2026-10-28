@@ -29,11 +29,11 @@ const CONFIDENCE_COLOR: Record<StyleSuggestion["confidence"], string> = {
 }
 
 const TEMPLATE_BADGE_COLOR: Record<string, string> = {
-  T01_SIGNATURE_COLLECTION: "bg-amber-50 text-amber-800 border-amber-200",
-  T02_MINIMAL_PRODUCT_LIST: "bg-zinc-50 text-zinc-700 border-zinc-200",
-  T03_PREMIUM_LOOKBOOK: "bg-stone-50 text-stone-700 border-stone-200",
-  T04_BENTO_SHOWCASE: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  T05_DARK_CINEMATIC: "bg-zinc-900 text-amber-400 border-zinc-700",
+  T01_SIGNATURE_COLLECTION: "bg-surface-alt text-primary border-primary/20",
+  T02_MINIMAL_PRODUCT_LIST: "bg-surface-alt text-text border-border",
+  T03_PREMIUM_LOOKBOOK: "bg-surface-alt text-text-muted border-border",
+  T04_BENTO_SHOWCASE: "bg-primary-muted text-primary border-primary/20",
+  T05_DARK_CINEMATIC: "bg-surface-dark text-warning border-border",
 }
 
 const STYLE_PREVIEW_BG: Record<string, string> = {
@@ -132,7 +132,7 @@ export function CatalogAutoStylePicker({
                     style={{ backgroundColor: accentColor }}
                   />
                   <span
-                    className="text-[9px] font-bold tracking-widest uppercase text-center leading-tight"
+                    className="text-caption font-bold tracking-widest uppercase text-center leading-tight"
                     style={{ color: accentColor }}
                   >
                     {suggestion.emoji}
@@ -145,18 +145,18 @@ export function CatalogAutoStylePicker({
                     <div className="flex flex-wrap items-center gap-1.5">
                       {/* AI top pick badge */}
                       {suggestion === topSuggestion && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-primary text-white text-[10px] font-black uppercase tracking-wider">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-primary text-white text-caption font-black uppercase tracking-wider">
                           <Zap className="h-2.5 w-2.5" />
                           AI Chọn
                         </span>
                       )}
                       <span
-                        className={`inline-block px-2 py-0.5 rounded-md border text-[10px] font-bold uppercase ${badgeClass}`}
+                        className={`inline-block px-2 py-0.5 rounded-md border text-caption font-bold uppercase ${badgeClass}`}
                       >
                         {suggestion.templateName}
                       </span>
                       <span
-                        className={`inline-block px-2 py-0.5 rounded-md border text-[10px] font-semibold ${
+                        className={`inline-block px-2 py-0.5 rounded-md border text-caption font-semibold ${
                           CONFIDENCE_COLOR[suggestion.confidence]
                         }`}
                       >

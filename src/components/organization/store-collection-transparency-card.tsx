@@ -77,13 +77,13 @@ export function StoreCollectionTransparencyCard({ storeId }: TransparencyCardPro
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-text">{item.fieldNameVi}</span>
                 {item.isMandatory && (
-                  <span className="text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.2 rounded">
+                  <span className="text-caption font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
                     Bắt buộc
                   </span>
                 )}
               </div>
               {item.purpose && (
-                <p className="text-text-muted italic flex items-center gap-1 text-[11px]">
+                <p className="text-text-muted italic flex items-center gap-1 text-caption">
                   <Lock size={10} />
                   <span>Mục đích: {item.purpose}</span>
                 </p>
@@ -91,7 +91,7 @@ export function StoreCollectionTransparencyCard({ storeId }: TransparencyCardPro
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-surface-alt border border-border">
+              <span className="text-caption font-mono font-semibold px-2 py-0.5 rounded bg-surface-alt border border-border">
                 Dạng: {item.effectiveTarget}
               </span>
             </div>

@@ -35,25 +35,25 @@ export function FieldDataTable({ fields }: FieldDataTableProps) {
     switch (target) {
       case "RAW":
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-success-bg text-primary border border-primary/20">
+          <span className="px-2 py-0.5 rounded text-caption font-bold bg-success-bg text-primary border border-primary/20">
             RAW (Nguyên bản)
           </span>
         )
       case "MASKED":
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-warning-bg text-warning border border-warning/30">
+          <span className="px-2 py-0.5 rounded text-caption font-bold bg-warning-bg text-warning border border-warning/30">
             MASKED (Đã che)
           </span>
         )
       case "AGGREGATED":
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-surface-alt text-text-muted border border-border">
+          <span className="px-2 py-0.5 rounded text-caption font-bold bg-surface-alt text-text-muted border border-border">
             AGGREGATED (Tổng hợp)
           </span>
         )
       default:
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-surface-alt text-text-muted">
+          <span className="px-2 py-0.5 rounded text-caption font-bold bg-surface-alt text-text-muted">
             {target}
           </span>
         )
@@ -64,7 +64,7 @@ export function FieldDataTable({ fields }: FieldDataTableProps) {
     <div className="overflow-x-auto rounded-xl border border-border bg-surface">
       <table className="w-full text-left border-collapse text-body-sm">
         <thead>
-          <tr className="border-b border-border bg-surface-alt text-text-muted text-[11px] uppercase tracking-wider font-bold">
+          <tr className="border-b border-border bg-surface-alt text-text-muted text-caption uppercase tracking-wider font-bold">
             <th className="py-3 px-4">Tên trường & Mã khóa</th>
             <th className="py-3 px-4">Giá trị thu thập thực tế</th>
             <th className="py-3 px-4">Độ nhạy</th>
@@ -77,9 +77,9 @@ export function FieldDataTable({ fields }: FieldDataTableProps) {
             <tr key={field.fieldKey} className="hover:bg-surface-alt/50 transition-colors">
               <td className="py-3.5 px-4">
                 <div className="font-bold text-text">{field.fieldNameVi}</div>
-                <div className="text-[11px] font-mono text-text-muted mt-0.5">{field.fieldKey}</div>
+                <div className="text-caption font-mono text-text-muted mt-0.5">{field.fieldKey}</div>
                 {field.purpose && (
-                  <div className="text-[11px] text-text-muted italic flex items-center gap-1 mt-1">
+                  <div className="text-caption text-text-muted italic flex items-center gap-1 mt-1">
                     <Lock size={10} />
                     <span>Mục đích: {field.purpose}</span>
                   </div>
@@ -96,8 +96,8 @@ export function FieldDataTable({ fields }: FieldDataTableProps) {
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {getSensitivityBadge(field.sensitivity)}
                   {field.isPii && (
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger border border-danger/20">
-                      PII
+                    <span className="px-1.5 py-0.5 rounded text-caption font-bold bg-danger/10 text-danger border border-danger/20">
+                      Cá nhân
                     </span>
                   )}
                 </div>

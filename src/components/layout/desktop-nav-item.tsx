@@ -64,14 +64,14 @@ function NavTooltip({
         className={cn(
           "pointer-events-none absolute left-full ml-2 z-50",
           "flex items-center gap-1.5 whitespace-nowrap rounded-lg",
-          "bg-[#2A1E22] px-2.5 py-1.5 text-body-sm font-medium text-white",
+          "bg-text px-2.5 py-1.5 text-body-sm font-medium text-white",
           "shadow-lg opacity-0 transition-opacity duration-150",
           "group-hover:opacity-100",
           "-translate-y-1/2 top-1/2"
         )}
       >
         <span>{label}</span>
-        <span className="h-0 w-0 border-y-4 border-y-transparent border-r-4 border-r-[#2A1E22] absolute -left-1" />
+        <span className="h-0 w-0 border-y-4 border-y-transparent border-r-4 border-r-text absolute -left-1" />
       </div>
     </div>
   )

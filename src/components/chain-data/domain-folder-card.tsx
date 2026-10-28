@@ -26,7 +26,7 @@ export function DomainFolderCard({ folder, onOpenFolder }: DomainFolderCardProps
     >
       <div>
         <div className="flex items-center justify-between mb-3">
-          <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 group-hover:bg-amber-500 group-hover:text-white transition-colors shadow-xs">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-colors shadow-xs">
             <Folder size={20} className="fill-current" />
           </div>
 
@@ -44,7 +44,7 @@ export function DomainFolderCard({ folder, onOpenFolder }: DomainFolderCardProps
       </div>
 
       <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-caption font-bold text-primary">
-        <span className="flex items-center gap-1.5 text-text-muted font-medium text-[11px]">
+        <span className="flex items-center gap-1.5 text-text-muted font-medium text-caption">
           <FileSpreadsheet size={13} />
           <span>Bấm để mở thư mục</span>
         </span>

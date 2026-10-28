@@ -145,7 +145,7 @@ export function CatalogTemplateSelector({
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="text-body-sm font-bold text-text">{tpl.name}</span>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                          <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                             {tpl.badge}
                           </span>
                         </div>
@@ -158,7 +158,7 @@ export function CatalogTemplateSelector({
 
                     <p className="text-caption text-text-muted leading-relaxed">{tpl.description}</p>
 
-                    <div className="pt-2 border-t border-border/60 flex items-center justify-between text-[11px] text-text-muted">
+                    <div className="pt-2 border-t border-border/60 flex items-center justify-between text-caption text-text-muted">
                       <span>Cấu trúc: <strong>{tpl.structure.length} trang chuyên biệt</strong></span>
                       <span className="italic text-primary font-medium">{tpl.recommendedFor.slice(0, 45)}...</span>
                     </div>
@@ -175,7 +175,7 @@ export function CatalogTemplateSelector({
                     key={cat.id}
                     type="button"
                     onClick={() => setStyleCategory(cat.id)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-caption font-bold transition-all cursor-pointer ${
                       styleCategory === cat.id
                         ? "bg-primary text-surface shadow-xs"
                         : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface-alt"
@@ -204,7 +204,7 @@ export function CatalogTemplateSelector({
                       >
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface-alt text-text-muted">
+                            <span className="text-caption font-mono font-bold px-1.5 py-0.5 rounded bg-surface-alt text-text-muted">
                               {s.number}
                             </span>
                             <span className="text-caption font-bold text-text truncate max-w-[130px]">{s.name}</span>
@@ -212,13 +212,13 @@ export function CatalogTemplateSelector({
                           {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
                         </div>
 
-                        <p className="text-[11px] text-text-muted line-clamp-2 leading-relaxed mb-2">{s.description}</p>
+                        <p className="text-caption text-text-muted line-clamp-2 leading-relaxed mb-2">{s.description}</p>
 
                         <div className="flex items-center gap-1.5 mt-auto">
                           <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.background }} />
                           <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.accent }} />
                           <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.textPrimary }} />
-                          <span className="text-[10px] text-text-muted font-mono ml-auto">{s.typography.fontDisplay.replace("font-", "")}</span>
+                          <span className="text-caption text-text-muted font-mono ml-auto">{s.typography.fontDisplay.replace("font-", "")}</span>
                         </div>
                       </button>
                     )
@@ -236,7 +236,7 @@ export function CatalogTemplateSelector({
                 <Eye className="h-4 w-4 text-primary" />
                 <span>Xem trước thời gian thực (Live Preview)</span>
               </div>
-              <span className="text-[11px] font-mono text-text-muted">
+              <span className="text-caption font-mono text-text-muted">
                 Trang {previewPageIdx + 1} / {resolved.pages.length}
               </span>
             </div>

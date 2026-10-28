@@ -136,7 +136,7 @@ function CaiDatTiemContent() {
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-extrabold text-text">Hồ Sơ & Cài Đặt Cửa Hàng</h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-bold bg-primary/10 text-primary border border-primary/20">
-              <Sparkles size={11} /> Trung Tâm All-In-One SSOT
+              <Sparkles size={11} /> Trung Tâm Cấu Hình Tập Trung
             </span>
           </div>
           <p className="text-xs text-text-muted mt-1">
@@ -145,14 +145,14 @@ function CaiDatTiemContent() {
         </div>
 
         {/* Readiness Score Progress Pill */}
-        <div className="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-background border border-border shrink-0">
+        <div className="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-surface-alt border border-border shrink-0">
           <div className="flex flex-col text-right">
-            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Độ sẵn sàng (G1)</span>
-            <span className="text-xs font-black text-text">{readiness.totalScore} / 100 điểm</span>
+            <span className="text-caption font-semibold text-text-muted uppercase tracking-wider">Độ sẵn sàng (G1)</span>
+            <span className="text-body-sm font-black text-text">{readiness.totalScore} / 100 điểm</span>
           </div>
-          <div className="w-16 h-2 bg-surface-alt rounded-full overflow-hidden border border-border/40">
+          <div className="w-16 h-2 bg-surface rounded-full overflow-hidden border border-border/40">
             <div
-              className={`h-full transition-all duration-500 ${readiness.totalScore >= 90 ? "bg-emerald-500" : "bg-primary"}`}
+              className={`h-full transition-all duration-500 ${readiness.totalScore >= 90 ? "bg-success" : "bg-primary"}`}
               style={{ width: `${readiness.totalScore}%` }}
             />
           </div>

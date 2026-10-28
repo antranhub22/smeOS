@@ -60,10 +60,10 @@ export function CatalogPageRenderer({
             <span className="text-caption font-bold tracking-widest uppercase" style={{ color: tokens.accent }}>
               {brand.name}
             </span>
-            <span className="text-caption text-zinc-400">•</span>
-            <span className="text-caption text-zinc-500 truncate max-w-[200px]">{page.subtitle || page.title}</span>
+            <span className="text-caption text-text-muted">•</span>
+            <span className="text-caption text-text-muted truncate max-w-[200px]">{page.subtitle || page.title}</span>
           </div>
-          <span className="text-caption font-mono font-medium text-zinc-400">
+          <span className="text-caption font-mono font-medium text-text-muted">
             {page.pageNumber} / {totalPages}
           </span>
         </header>
@@ -109,12 +109,12 @@ export function CatalogPageRenderer({
                 />
               </div>
             ) : (
-              <div className="w-full h-64 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400">
+              <div className="w-full h-64 rounded-xl bg-surface-alt flex items-center justify-center text-text-muted">
                 <Flower2 className="h-12 w-12 stroke-[1.5]" />
               </div>
             )}
 
-            <div className="pt-4 text-caption text-zinc-400 font-mono tracking-wider">
+            <div className="pt-4 text-caption text-text-muted font-mono tracking-wider">
               {brand.slogan || "Tác phẩm thủ công tuyển chọn • Thiết kế độc bản"}
             </div>
           </div>
@@ -172,7 +172,7 @@ export function CatalogPageRenderer({
             )}
 
             <div className="flex items-baseline justify-between pt-2">
-              <div className="text-caption font-mono font-bold text-zinc-400">
+              <div className="text-caption font-mono font-bold text-text-muted">
                 Mã: {page.products[0].code}
               </div>
               <div className="text-title font-bold" style={{ color: tokens.price }}>
@@ -205,12 +205,12 @@ export function CatalogPageRenderer({
                   style={{ borderColor: tokens.border }}
                 >
                   <div
-                    className={`w-full aspect-[4/5] overflow-hidden mb-2 rounded-lg bg-zinc-50 ${imageRules.shadow}`}
+                    className={`w-full aspect-[4/5] overflow-hidden mb-2 rounded-lg bg-surface-alt ${imageRules.shadow}`}
                   >
                     {prod.primaryImage ? (
                       <img src={prod.primaryImage} alt={prod.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-zinc-300">
+                      <div className="w-full h-full flex items-center justify-center text-text-muted">
                         <Flower2 className="h-8 w-8 stroke-[1.5]" />
                       </div>
                     )}
@@ -218,8 +218,8 @@ export function CatalogPageRenderer({
 
                   <div className="flex flex-col flex-1 justify-between">
                     <div>
-                      <div className="text-[11px] font-mono text-zinc-400 font-bold">{prod.code}</div>
-                      <div className="text-caption font-bold text-zinc-800 line-clamp-2 leading-snug">{prod.name}</div>
+                      <div className="text-caption font-mono text-text-muted font-bold">{prod.code}</div>
+                      <div className="text-caption font-bold text-text line-clamp-2 leading-snug">{prod.name}</div>
                     </div>
                     <div className="mt-1.5 text-body-sm font-black" style={{ color: tokens.price }}>
                       {formatPrice(prod.price)}
@@ -248,29 +248,29 @@ export function CatalogPageRenderer({
             </div>
 
             <div className="w-full rounded-2xl p-4 border space-y-2.5 text-left text-caption" style={{ backgroundColor: tokens.surface, borderColor: tokens.border }}>
-              <div className="font-bold uppercase tracking-wider text-zinc-400">Liên hệ đặt mẫu nhanh</div>
+              <div className="font-bold uppercase tracking-wider text-text-muted">Liên hệ đặt mẫu nhanh</div>
               {brand.contacts.hotline && (
-                <div className="flex items-center gap-2 text-zinc-700">
-                  <Phone className="h-4 w-4 text-zinc-400" />
-                  <span>Hotline: <strong className="text-zinc-900">{brand.contacts.hotline}</strong></span>
+                <div className="flex items-center gap-2 text-text">
+                  <Phone className="h-4 w-4 text-text-muted" />
+                  <span>Hotline: <strong className="text-text">{brand.contacts.hotline}</strong></span>
                 </div>
               )}
               {brand.contacts.zalo && (
-                <div className="flex items-center gap-2 text-zinc-700">
-                  <span className="font-bold text-blue-600 font-mono text-[11px] px-1 bg-blue-50 rounded">Zalo</span>
-                  <span>Tư vấn: <strong className="text-zinc-900">{brand.contacts.zalo}</strong></span>
+                <div className="flex items-center gap-2 text-text">
+                  <span className="font-bold text-primary font-mono text-caption px-1 bg-primary-muted rounded">Zalo</span>
+                  <span>Tư vấn: <strong className="text-text">{brand.contacts.zalo}</strong></span>
                 </div>
               )}
               {brand.contacts.address && (
-                <div className="flex items-center gap-2 text-zinc-700">
-                  <MapPin className="h-4 w-4 text-zinc-400 shrink-0" />
+                <div className="flex items-center gap-2 text-text">
+                  <MapPin className="h-4 w-4 text-text-muted shrink-0" />
                   <span className="truncate">{brand.contacts.address}</span>
                 </div>
               )}
             </div>
 
             {page.contentBlock?.quote && (
-              <div className="text-[11px] font-medium text-zinc-400 italic">
+              <div className="text-caption font-medium text-text-muted italic">
                 {page.contentBlock.quote}
               </div>
             )}
@@ -279,7 +279,7 @@ export function CatalogPageRenderer({
       </main>
 
       {/* Footer / Page Number */}
-      <footer className="flex items-center justify-between text-[11px] text-zinc-400 pt-3 border-t" style={{ borderColor: tokens.border }}>
+      <footer className="flex items-center justify-between text-caption text-text-muted pt-3 border-t" style={{ borderColor: tokens.border }}>
         <span>{brand.name} • smeOS Universal Catalog Studio</span>
         <span className="font-mono">Trang {page.pageNumber}</span>
       </footer>

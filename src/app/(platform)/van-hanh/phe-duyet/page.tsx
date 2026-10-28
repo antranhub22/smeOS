@@ -357,7 +357,7 @@ export default function PheQuyetPage() {
                   </>
                 )}
                 <span
-                  className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                  className={`ml-0.5 px-1.5 py-0.5 rounded-full text-caption font-bold ${
                     filter === t ? "bg-white/20" : "bg-muted text-text"
                   }`}
                 >

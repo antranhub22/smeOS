@@ -76,7 +76,7 @@ export function CatalogCardGlass({
         <div className="p-4 pb-2">
           {product.category && (
             <span
-              className="text-[11px] uppercase tracking-wider font-semibold block mb-1"
+              className="text-caption uppercase tracking-wider font-semibold block mb-1"
               style={{ color: textSecondary }}
             >
               {product.category}
@@ -104,7 +104,7 @@ export function CatalogCardGlass({
         className="p-4 pt-3 border-t border-white/10 flex items-center justify-between mt-auto"
       >
         <div>
-          <div className="text-[10px] uppercase tracking-wider opacity-75" style={{ color: textSecondary }}>
+          <div className="text-caption uppercase tracking-wider opacity-75" style={{ color: textSecondary }}>
             Giá niêm yết
           </div>
           <div className="text-sm md:text-base font-black tracking-tight" style={{ color: priceColor }}>
