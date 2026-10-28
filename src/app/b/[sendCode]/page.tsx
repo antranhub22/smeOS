@@ -1,3 +1,4 @@
+import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
 import { linkPreviewText } from "@/modules/greeting-card/domain/link-preview-text"
 import { cookies, headers } from "next/headers"
@@ -62,6 +63,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PublicBrochurePage({ params, searchParams }: PageProps) {
+  const dict = getDictionary("vi")
   const { sendCode } = await params
   // Phiên thuộc trình duyệt đã mở đầu tiên: người nhận link chuyển tiếp không thấy lựa chọn / đơn
   // của người trước. Dữ liệu phiên chỉ được dựng ra HTML sau khi đã xác định là chủ phiên.

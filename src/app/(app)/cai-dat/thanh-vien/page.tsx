@@ -18,6 +18,7 @@ import {
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useI18n } from "@/lib/i18n"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { type RoleOption, type BranchOption } from "./_components/invite-member-dialog"
 import { AddStaffDialog } from "./_components/add-staff-dialog"
@@ -26,6 +27,7 @@ import { MemberTable, type MemberListItem } from "./_components/member-table"
 
 export default function QuanLyThanhVienPage() {
   const { can } = useSession()
+  const { t, dict } = useI18n()
   // PO 08/10/2026: Điều hành tạo tài khoản dùng được ngay (A3) thay cho lời mời chưa có bước nhận
   const canInvite = can("A3")
   const canRemove = can("F4")
@@ -139,10 +141,10 @@ export default function QuanLyThanhVienPage() {
             size="sm"
             onClick={() => void fetchData()}
             disabled={loading}
-            aria-label="Tải lại danh sách"
+            aria-label={dict.common.actions.refresh}
           >
             <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
-            <span>Làm mới</span>
+            <span>{dict.common.actions.refresh}</span>
           </Button>
 
           {canInvite && (
@@ -153,7 +155,7 @@ export default function QuanLyThanhVienPage() {
               onClick={() => setInviteOpen(true)}
             >
               <UserPlus size={16} />
-              <span>Thêm nhân viên</span>
+              <span>{dict.settings.members.addMemberButton}</span>
             </Button>
           )}
         </div>

@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import useSWR from "swr"
 import { Calendar, LayoutGrid, Loader2, Sparkles, RefreshCw } from "lucide-react"
@@ -21,6 +22,7 @@ const fetcher = async (url: string): Promise<AvailabilityBoardResult> => {
 }
 
 export default function AvailabilityPage() {
+  const { t } = useI18n()
   const { organization } = useSession()
   const industryKey = organization?.industry
   const terms = getIndustryTerminology(industryKey)

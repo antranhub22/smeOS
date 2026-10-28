@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { use, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
@@ -40,6 +41,7 @@ const fetcher = (url: string) =>
   })
 
 export default function SubcontractClaimPage({ params }: PageProps) {
+  const { t } = useI18n()
   const { orderCode } = use(params)
   const searchParams = useSearchParams()
   const branchId = searchParams.get("branch") ?? ""

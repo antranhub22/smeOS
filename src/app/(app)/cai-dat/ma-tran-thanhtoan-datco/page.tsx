@@ -1,11 +1,11 @@
+"use client"
+
+import { useI18n } from "@/lib/i18n"
 import { TierGovernanceMatrixClient } from "@/components/governance/tier-governance-matrix-client"
 
-export const metadata = {
-  title: "Ma Trận Thanh Toán & Đặt Cọc | smeOS",
-  description: "Quản lý kế hoạch thanh toán và tỷ lệ cọc đơn hàng.",
-}
 
 export default function PaymentsPage() {
+  const { t } = useI18n()
   return (
     <TierGovernanceMatrixClient
       systemKey="PAYMENTS"

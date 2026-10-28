@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import {
@@ -334,6 +335,7 @@ function CaiDatTiemContent() {
 }
 
 export default function CaiDatTiemPage() {
+  const { t } = useI18n()
   return (
     <Suspense
       fallback={

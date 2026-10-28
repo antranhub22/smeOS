@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState, useCallback } from "react"
 import {
   Building2,
@@ -100,6 +101,7 @@ function OrgTypeBadge({ type }: { type: string }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function KetNoiPage() {
+  const { t } = useI18n()
   const [data, setData] = useState<IdentityData | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<"identity" | "chain" | "members">("identity")

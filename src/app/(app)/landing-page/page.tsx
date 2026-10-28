@@ -1,3 +1,4 @@
+import { getDictionary, translate } from "@/lib/i18n/server"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
@@ -9,6 +10,7 @@ export const metadata = {
 }
 
 export default async function LandingPageStudioRoute() {
+  const dict = getDictionary("vi")
   const cookieStore = await cookies()
   const cookieHeader = cookieStore
     .getAll()

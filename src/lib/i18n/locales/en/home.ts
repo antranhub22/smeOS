@@ -11,6 +11,24 @@ export const homeEn = {
     journeyModeButton: "Back to Task Journey",
     expertModeBanner: "You are currently viewing the live metric dashboard.",
   },
+  tiers: {
+    mother: {
+      title: "WHAT WOULD YOU LIKE TO DO WITH SMEOS PLATFORM?",
+      subtitle: "Task direction center for Platform Operations Administrators",
+    },
+    industry: {
+      title: "WHAT WOULD YOU LIKE TO DO WITH MULTI-INDUSTRY SAAS ECOSYSTEM?",
+      subtitle: "Governance center for plugin contracts, AI Studio configuration, A6 printable templates, and BOM standardization across 7 industries.",
+    },
+    chain: {
+      title: "WHAT WOULD YOU LIKE TO DO WITH {name} NETWORK?",
+      subtitle: "Select a task to dispatch or manage the {product} network",
+    },
+    store: {
+      title: "What would you like to do for {name} today?",
+      subtitle: "Choose a task below to get started.",
+    },
+  },
   filters: {
     all: "All ({count})",
     singleTask: "Single Tasks",

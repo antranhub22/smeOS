@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, AlertTriangle, RotateCcw, XCircle } from "lucide-react"
@@ -90,6 +91,7 @@ function layTrangThaiCacBuoc(steps: FlowStep[], job: JobDetail): FlowStepStatus[
 }
 
 export default function JobDetailPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { organization } = useSession()
   const ti = getIndustryTerminology(organization?.industry)

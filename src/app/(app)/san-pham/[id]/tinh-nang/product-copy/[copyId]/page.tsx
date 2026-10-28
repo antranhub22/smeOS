@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Save, CheckCircle2, XCircle, AlertCircle, Loader2, RefreshCw } from "lucide-react"
@@ -51,6 +52,7 @@ const FIELD_LABELS: Record<ProductCopyField, string> = {
 const PRICE_SEGMENTS = ["budget", "standard", "premium", "luxury"] as const
 
 export default function ProductCopyDetailPage() {
+  const { t } = useI18n()
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()

@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useI18n } from "@/lib/i18n"
 
 type PlatformAuditRow = {
   id: string
@@ -25,6 +26,7 @@ async function layJson<T>(url: string): Promise<T | null> {
 }
 
 export default function NhatKyPage() {
+  const { t, dict } = useI18n()
   const [rows, setRows] = useState<PlatformAuditRow[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
 
@@ -45,7 +47,7 @@ export default function NhatKyPage() {
   return (
     <Card className="overflow-x-auto p-4">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <h1 className="text-base font-bold text-text">Nhật ký vận hành nền tảng</h1>
+        <h1 className="text-base font-bold text-text">{dict.layout.reports.audit}</h1>
         <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hệ thống</span>
       </div>
       <table className="w-full text-left text-xs">

@@ -6,9 +6,11 @@ import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guida
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { PresetSelector } from "@/components/product-photo-studio/preset-selector"
 import { EnhanceResultViewer } from "@/components/product-photo-studio/enhance-result-viewer"
+import { useI18n } from "@/lib/i18n"
 import type { ProductPhotoResult } from "@/modules/product-photo-studio/use-cases/get-product-photo-result"
 
 export function ProductPhotoStudioClient() {
+  const { t, dict } = useI18n()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [presetId, setPresetId] = useState("auto")

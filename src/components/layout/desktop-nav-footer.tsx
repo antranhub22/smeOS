@@ -11,6 +11,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Bot, LogOut } from "lucide-react"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { UserMenu } from "./user-menu"
 
@@ -21,6 +22,7 @@ interface DesktopNavFooterProps {
 export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
   const router = useRouter()
   const { userName, userInitials, orgName, roleUx } = useSession()
+  const { t } = useI18n()
   const [loggingOut, setLoggingOut] = useState(false)
 
   const handleQuickLogout = async () => {
@@ -128,8 +130,8 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
           type="button"
           onClick={handleQuickLogout}
           disabled={loggingOut}
-          title="Đăng xuất khỏi hệ thống"
-          aria-label="Đăng xuất"
+          title={t("layout.userMenu.logout")}
+          aria-label={t("layout.userMenu.logout")}
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
             "text-text-muted hover:bg-danger-bg hover:text-danger",

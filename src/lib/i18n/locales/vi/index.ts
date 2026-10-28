@@ -4,6 +4,9 @@
 
 import { commonVi } from "./common"
 import { homeVi } from "./home"
+import { layoutVi } from "./layout"
+import { toolkitVi } from "./toolkit"
+import { platformVi } from "./platform"
 import { ordersVi } from "./orders"
 import { greetingCardVi } from "./greeting-card"
 import { productsVi } from "./products"
@@ -15,6 +18,9 @@ import { notificationsVi } from "./notifications"
 export const viDictionary = {
   common: commonVi,
   home: homeVi,
+  layout: layoutVi,
+  toolkit: toolkitVi,
+  platform: platformVi,
   orders: ordersVi,
   greetingCard: greetingCardVi,
   products: productsVi,

@@ -8,6 +8,7 @@ import { CoordinatorReminderBar } from "@/components/coordinator/coordinator-rem
 import { CoordinatorBrochureTab } from "@/components/greeting-card/coordinator/coordinator-brochure-tab"
 import { UserMenu } from "@/components/layout/user-menu"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 
 type CoordinatorTab = "tower" | "brochure"
 
@@ -15,6 +16,7 @@ export default function DieuPhoiPage() {
   const [activeTab, setActiveTab] = useState<CoordinatorTab>("tower")
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const { userInitials } = useSession()
+  const { t, dict } = useI18n()
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
@@ -46,7 +48,7 @@ export default function DieuPhoiPage() {
             className="text-xs gap-1.5 h-9"
           >
             <RefreshCw size={13} />
-            <span>Làm mới</span>
+            <span>{dict.common.actions.refresh}</span>
           </Button>
           <Button
             size="sm"

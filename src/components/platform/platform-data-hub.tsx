@@ -34,6 +34,7 @@ import {
 } from "lucide-react"
 import type { PlatformOrgDataSummary } from "@/modules/platform/use-cases/get-platform-orgs-data"
 import type { RecordDomain } from "@/modules/platform/use-cases/get-platform-org-records"
+import { useI18n } from "@/lib/i18n"
 import { PlatformRecordsViewer } from "./platform-records-viewer"
 
 // ─── Domain Definitions ───────────────────────────────────────────────────
@@ -322,6 +323,7 @@ function DomainPicker({
 // ─── Main Component ────────────────────────────────────────────────────────
 
 export function PlatformDataHub() {
+  const { t, dict } = useI18n()
   const [orgs, setOrgs] = useState<readonly PlatformOrgDataSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")

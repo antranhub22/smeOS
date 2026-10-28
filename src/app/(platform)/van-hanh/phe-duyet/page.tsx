@@ -20,6 +20,7 @@ import {
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useI18n } from "@/lib/i18n"
 
 type PendingApprovalItem = {
   id: string
@@ -175,6 +176,7 @@ function ApprovalCard({
 }
 
 export default function PheQuyetPage() {
+  const { t, dict } = useI18n()
   const [items, setItems] = useState<PendingApprovalItem[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [processing, setProcessing] = useState<string | null>(null)
@@ -288,9 +290,9 @@ export default function PheQuyetPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-title font-bold text-text">Yêu cầu Phê duyệt</h1>
+          <h1 className="text-title font-bold text-text">{dict.platform.approval.title}</h1>
           <p className="text-body-sm text-text-muted mt-0.5">
-            Tất cả yêu cầu mở khóa & chuyển đổi từ các cửa hàng đang chờ Admin SaaS xét duyệt
+            {dict.platform.approval.subtitle}
           </p>
         </div>
         <button

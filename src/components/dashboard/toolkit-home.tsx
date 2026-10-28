@@ -11,6 +11,7 @@ import {
   type ToolGroup,
 } from "@/modules/toolkit/domain/toolkit-catalog"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { UserMenu } from "@/components/layout/user-menu"
 import { ToolCard } from "./toolkit-card"
 
@@ -99,6 +100,7 @@ function ToolGroupSection({ group, isDev }: { group: ToolGroup; isDev: boolean }
 export function ToolkitHome() {
   const isDev = useIsDev()
   const { userInitials } = useSession()
+  const { t, dict } = useI18n()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
 
@@ -136,17 +138,17 @@ export function ToolkitHome() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Toàn bộ 51 công cụ kinh doanh (9 nhóm)</span>
+            <span>{dict.toolkit.header.badge}</span>
           </div>
           <h1 className="text-display font-extrabold text-text tracking-tight">
             {isDev
-              ? "Hệ thống công cụ kinh doanh smeOS"
-              : "Hôm nay bạn muốn làm gì?"}
+              ? dict.toolkit.header.titleDev
+              : dict.toolkit.header.titleProd}
           </h1>
           <p className="text-body text-text-muted mt-1">
             {isDev
-              ? "Toàn bộ 51 công cụ phân theo 9 nhóm tác nghiệp chuẩn hóa đa tầng"
-              : "Chọn công cụ bên dưới để bắt đầu."}
+              ? dict.toolkit.header.descDev
+              : dict.toolkit.header.descProd}
           </p>
         </div>
 
@@ -190,7 +192,7 @@ export function ToolkitHome() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tìm kiếm chức năng..."
+            placeholder={dict.toolkit.filters.searchPlaceholder}
             className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border bg-surface text-body-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary transition-colors"
           />
         </div>

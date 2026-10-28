@@ -1,3 +1,4 @@
+import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
 import { getPublicCatalog } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { CatalogStorefront } from "@/components/catalog/catalog-storefront"
@@ -32,6 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PublicCatalogPage({ params }: PageProps) {
+  const dict = getDictionary("vi")
   const { slug } = await params
   const data = await getPublicCatalog(slug)
 

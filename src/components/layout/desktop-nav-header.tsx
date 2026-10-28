@@ -8,6 +8,7 @@
 
 import { Sparkles, PanelLeftClose, PanelLeftOpen, X } from "lucide-react"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { ArchitectureNametag } from "./architecture-nametag"
 
@@ -73,6 +74,7 @@ export function DesktopNavHeader({
   isDev = false,
 }: DesktopNavHeaderProps) {
   const { orgName, organizationType, roleKey } = useSession()
+  const { t } = useI18n()
 
   const tier = resolveTier(organizationType, roleKey)
   const styles = TIER_STYLES[tier]
@@ -160,7 +162,7 @@ export function DesktopNavHeader({
             <button
               type="button"
               onClick={onClose}
-              aria-label="Đóng menu"
+              aria-label={t("common.actions.close")}
               className="relative ml-auto flex h-10 w-10 items-center justify-center rounded-xl text-text-muted hover:bg-surface-alt hover:text-text active:scale-95 transition-all cursor-pointer"
             >
               <X size={18} />
@@ -169,8 +171,8 @@ export function DesktopNavHeader({
             <button
               type="button"
               onClick={onToggleCollapse}
-              aria-label="Thu gọn menu (⌘B)"
-              title="Thu gọn menu (⌘B)"
+              aria-label={t("layout.collapseSidebar")}
+              title={t("layout.collapseSidebar")}
               className="relative ml-auto flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
             >
               <PanelLeftClose size={16} aria-hidden />

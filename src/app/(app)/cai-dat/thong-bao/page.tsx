@@ -1,9 +1,11 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { TierNotificationMatrixClient } from "@/components/notification/tier-notification-matrix-client"
 import { useSession } from "@/lib/session"
 
 export default function NotificationSettingsPage() {
+  const { t } = useI18n()
   const { organizationType, organization } = useSession()
 
   // Xác định viewer tier tương ứng

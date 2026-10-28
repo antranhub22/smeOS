@@ -8,6 +8,7 @@ import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { createJourneyState } from "@/modules/journey/domain/journey-state"
 import { ChoiceGrid } from "@/components/journey/choice-grid"
 import { JourneyShell } from "@/components/journey/journey-shell"
+import { useI18n } from "@/lib/i18n"
 import {
   PlatformOverviewMetrics,
   type PlatformOrganizationSummary,
@@ -26,6 +27,7 @@ export function PlatformJourneyHome({
   initialHealth = null,
 }: PlatformJourneyHomeProps) {
   const router = useRouter()
+  const { t } = useI18n()
   const [isExpertMode, setIsExpertMode] = useState<boolean>(false)
   const [activeJourney, setActiveJourney] = useState<JourneyDefinition | null>(null)
   const [journeyState, setJourneyState] = useState(() =>
@@ -171,8 +173,8 @@ export function PlatformJourneyHome({
   // 3. Mặc định: Lưới lựa chọn Hành trình tác vụ Nền tảng (ChoiceGrid)
   return (
     <ChoiceGrid
-      title="BẠN MUỐN LÀM GÌ VỚI NỀN TẢNG SMEOS?"
-      subtitle="Trung tâm định hướng tác vụ cho Quản trị viên Vận hành Nền tảng"
+      title={t("home.tiers.mother.title")}
+      subtitle={t("home.tiers.mother.subtitle")}
       journeys={PLATFORM_JOURNEYS}
       featuredJourneyId="view-platform-overview"
       onSelectJourney={handleSelectJourney}

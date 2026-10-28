@@ -17,6 +17,7 @@ import {
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
+import { useI18n } from "@/lib/i18n"
 
 type PlatformUsageRow = {
   organizationId: string
@@ -33,6 +34,7 @@ async function layJson<T>(url: string): Promise<T | null> {
 }
 
 export default function MucDungPage() {
+  const { t, dict } = useI18n()
   const [rows, setRows] = useState<PlatformUsageRow[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [selectedFeature, setSelectedFeature] = useState<string>("ALL")

@@ -23,6 +23,7 @@ import { PresetStyleSelector } from "./preset-style-selector"
 import { MultiSizeGrid } from "./multi-size-grid"
 import { SinglePreviewModal } from "./single-preview-modal"
 import { TemplateGalleryModal } from "./template-gallery-modal"
+import { useI18n } from "@/lib/i18n"
 import type { GenerationEngine } from "./auto-generate-panel"
 
 const FORMAT_TABS: TabItem[] = [
@@ -36,6 +37,7 @@ const FORMAT_TABS: TabItem[] = [
 
 export function PosterBannerClient() {
   const { orgName } = useSession()
+  const { t, dict } = useI18n()
 
   // ── State ──────────────────────────────────────────────────────────
   const [industryKey] = useState("FLORAL")

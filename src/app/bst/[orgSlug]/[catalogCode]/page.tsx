@@ -1,3 +1,4 @@
+import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
 import { getPublicGreetingCatalogBySlug } from "@/modules/greeting-card/use-cases/get-public-greeting-catalog-by-slug"
 import { LinkUnavailable } from "@/components/greeting-card/customer/link-unavailable"
@@ -36,6 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PublicGreetingCatalogSlugPage({ params }: PageProps) {
+  const dict = getDictionary("vi")
   const { orgSlug, catalogCode } = await params
   const data = await getPublicGreetingCatalogBySlug(orgSlug, catalogCode)
 

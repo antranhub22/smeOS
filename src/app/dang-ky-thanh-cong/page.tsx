@@ -1,16 +1,16 @@
+"use client"
+
+import { useI18n } from "@/lib/i18n"
 import Link from "next/link"
 import { CheckCircle2, Clock, Mail } from "lucide-react"
 
-export const metadata = {
-  title: "Đăng ký thành công — Chờ xét duyệt | smeOS",
-  description: "Đơn đăng ký tài khoản của bạn đang được xem xét. Chúng tôi sẽ thông báo qua email khi được duyệt.",
-}
 
 /**
  * Trang xác nhận sau khi đăng ký — public, không cần auth.
  * Hiển thị thông báo chờ Super Admin duyệt.
  */
 export default function DangKyThanhCongPage() {
+  const { t } = useI18n()
   return (
     <main className="min-h-screen flex items-center justify-center bg-bg px-4 py-12">
       <div className="w-full max-w-[460px] space-y-6">

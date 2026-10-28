@@ -9,6 +9,7 @@
 // có năng lực `N12`, không phải lỗi trang.
 
 import { useState } from "react"
+import { useI18n } from "@/lib/i18n"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { TruongLoiTab } from "./_components/truong-loi-tab"
 import { TruongTuTaoTab } from "./_components/truong-tu-tao-tab"
@@ -23,6 +24,7 @@ const TABS: TabItem[] = [
 ]
 
 export default function TruongDuLieuPage() {
+  const { t } = useI18n()
   const [tab, setTab] = useState<string>("loi")
 
   return (

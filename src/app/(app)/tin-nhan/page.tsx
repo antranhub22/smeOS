@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState, useRef } from "react"
 import {
   MessageSquare,
@@ -21,6 +22,7 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 
 export default function InternalChatPage() {
+  const { t } = useI18n()
   const [conversations, setConversations] = useState<InternalChatConversation[]>([])
   const [activeConv, setActiveConv] = useState<InternalChatConversation | null>(null)
   const [messages, setMessages] = useState<InternalChatMessage[]>([])

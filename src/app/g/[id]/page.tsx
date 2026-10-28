@@ -1,3 +1,4 @@
+import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
 import { getPublicGreetingCatalog } from "@/modules/greeting-card/use-cases/get-public-greeting-catalog"
 import { ShopContactBar } from "@/components/greeting-card/customer/shop-contact-bar"
@@ -35,6 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PublicGreetingCatalogPage({ params }: PageProps) {
+  const dict = getDictionary("vi")
   const { id } = await params
   const data = await getPublicGreetingCatalog(id)
 

@@ -6,9 +6,11 @@ import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guida
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { BundleSelector } from "@/components/product-image-set/bundle-selector"
 import { ImageSetViewer } from "@/components/product-image-set/image-set-viewer"
+import { useI18n } from "@/lib/i18n"
 import type { ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
 
 export function ProductImageSetClient() {
+  const { t, dict } = useI18n()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [bundleId, setBundleId] = useState("omnichannel_default")

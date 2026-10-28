@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AlertTriangle, CheckCircle2, Download, Edit, RefreshCw, Folder, Camera } from "lucide-react"
@@ -18,6 +19,7 @@ import {
 } from "./approval-tab-panels"
 
 export default function DuyetPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { announce } = useAnnounce()
   const [analyses, setAnalyses] = useState<PendingAnalysis[] | null>(null)

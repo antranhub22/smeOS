@@ -13,6 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { mobileSecondSlot, NAV_ENTRIES, type NavEntry } from "./nav-model"
 import { NAV_ICONS as ICONS } from "./nav-icons"
@@ -20,6 +21,7 @@ import { NAV_ICONS as ICONS } from "./nav-icons"
 export function BottomNav() {
   const pathname = usePathname()
   const { can, roleUx, organizationType } = useSession()
+  const { t } = useI18n()
   const canApprove = can("H3") || can("I2")
 
   const slot2 = mobileSecondSlot(can, roleUx, undefined, undefined, organizationType)
@@ -60,7 +62,7 @@ export function BottomNav() {
           <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" aria-hidden="true" />
         )}
         <Home size={20} strokeWidth={pathname === "/" ? 2.4 : 1.9} />
-        <span className="text-caption">Trang chủ</span>
+        <span className="text-caption">{t("layout.home")}</span>
       </Link>
 
       {/* 2. Ô thứ hai theo vai */}
@@ -120,7 +122,7 @@ export function BottomNav() {
                 <CheckCircle2 size={20} strokeWidth={isDuyetActive ? 2.4 : 1.9} />
                 <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary" />
               </div>
-              <span className="text-caption">Duyệt</span>
+              <span className="text-caption">{t("layout.approve")}</span>
             </Link>
           )
         })()
@@ -140,7 +142,7 @@ export function BottomNav() {
                 <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" aria-hidden="true" />
               )}
               <Clock size={20} strokeWidth={isJobActive ? 2.4 : 1.9} />
-              <span className="text-caption">Job của tôi</span>
+              <span className="text-caption">{t("layout.myJobs")}</span>
             </Link>
           )
         })()
@@ -162,7 +164,7 @@ export function BottomNav() {
               <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" aria-hidden="true" />
             )}
             <Plus size={20} strokeWidth={isThemActive ? 2.4 : 1.9} />
-            <span className="text-caption">Thêm</span>
+            <span className="text-caption">{t("layout.more")}</span>
           </Link>
         )
       })()}

@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState } from "react"
 import {
   Users,
@@ -23,6 +24,7 @@ import { Card } from "@/components/ui/card"
 import { ChainPartnerCreateModal } from "./chain-partner-create-modal"
 
 export default function ChainPartnersPage() {
+  const { t } = useI18n()
   const [partners, setPartners] = useState<ChainPartnershipEntity[]>([])
   const [selectedToolPartner, setSelectedToolPartner] = useState<ChainPartnershipEntity | null>(null)
   const [loading, setLoading] = useState(true)

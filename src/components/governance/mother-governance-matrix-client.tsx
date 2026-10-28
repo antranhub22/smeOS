@@ -6,6 +6,7 @@
 
 import { useState } from "react"
 import { GovernanceMatrixTable } from "@/components/governance/governance-matrix-table"
+import { useI18n } from "@/lib/i18n"
 import type { GovernanceMatrixState, GovernanceMatrixGroup } from "@/components/governance/governance-matrix-types"
 import {
   buildSSOTGovernanceGroups,
@@ -21,6 +22,7 @@ interface MotherGovernanceMatrixClientProps {
 export function MotherGovernanceMatrixClient({
   defaultTab = "PROMOTIONS",
 }: MotherGovernanceMatrixClientProps) {
+  const { t, dict } = useI18n()
   const [activeTab] = useState<MatrixTab>(defaultTab)
 
   // Kết nối trực tiếp với SSOT Governance Catalog Registry (Zero hardcode)

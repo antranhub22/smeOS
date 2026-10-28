@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useState, useMemo, type ComponentType } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -67,6 +68,7 @@ const ICONS: Record<string, ComponentType<{ size?: number; className?: string; s
 }
 
 export default function ThemPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { can, roleUx, organization } = useSession()
   const ti = getIndustryTerminology(organization?.industry)

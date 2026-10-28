@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -27,6 +28,7 @@ import type { ChatConversation, ChatMessage } from "@/modules/chat-assistant/dom
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
 
 export default function ChatAssistantPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { organization } = useSession()
   const ti = getIndustryTerminology(organization?.industry)

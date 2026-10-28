@@ -77,7 +77,7 @@ export function ChoiceGrid({
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Bắt đầu nhanh</span>
+            <span>{dict.home.header.badge}</span>
           </div>
           <h1 className="text-display font-extrabold text-text tracking-tight">
             {title}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
+import { useI18n } from "@/lib/i18n"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -48,6 +49,7 @@ function Dong({ nhan, giaTri }: { nhan: string; giaTri: React.ReactNode }) {
 }
 
 export default function ChiTietToChucPage() {
+  const { t } = useI18n()
   const params = useParams<{ id: string }>()
   const [org, setOrg] = useState<PlatformOrganizationDetail | null>(null)
   const [loi, setLoi] = useState<string | null>(null)

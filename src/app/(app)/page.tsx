@@ -16,6 +16,7 @@
 // Trước đây chọn màn theo tham số URL thủ công `?che_do=trai-nghiem` — đã gỡ:
 // tài khoản tự đăng ký (`POST /auth/signup`) luôn có workspace `EXPERIENCE`.
 
+import { getDictionary, translate } from "@/lib/i18n/server"
 import { cookies } from "next/headers"
 
 import { ExperienceGrid } from "@/components/dashboard/experience-grid"
@@ -35,6 +36,7 @@ import { resolveRoleUx } from "@/modules/organization/domain/role-ux-catalog"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
 
 export default async function DashboardPage() {
+  const dict = getDictionary("vi")
   const cookieStore = await cookies()
   const cookieHeader = cookieStore
     .getAll()

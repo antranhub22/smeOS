@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { decodeScopeParam } from "@/modules/creative-production/domain/build-handoff-url"
 import { areaScopeStatus, resolvePublishing } from "@/modules/creative-production/domain/publishing-rules"
 import React, { useState, useMemo, useEffect, useCallback } from "react"
@@ -115,6 +116,7 @@ const CREATIVE_STUDIO_TABS: Record<
 // ============================================================
 
 export default function CreativeStudioPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const searchParams = useSearchParams()
   const data = useCreativeStudioData()

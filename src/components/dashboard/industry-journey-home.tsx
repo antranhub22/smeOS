@@ -10,12 +10,14 @@ import { ChoiceGrid } from "@/components/journey/choice-grid"
 import { JourneyShell } from "@/components/journey/journey-shell"
 import { IndustryEcosystemBoard } from "./industry-ecosystem-board"
 import { INDUSTRY_REGISTRY } from "@/modules/organization/domain/industries"
+import { useI18n } from "@/lib/i18n"
 import { Badge } from "@/components/ui/badge"
 
 const STORAGE_KEY_EXPERT_MODE = "smeos_expert_mode_industry"
 
 export function IndustryJourneyHome() {
   const router = useRouter()
+  const { t } = useI18n()
   const [isExpertMode, setIsExpertMode] = useState<boolean>(false)
   const [activeJourney, setActiveJourney] = useState<JourneyDefinition | null>(null)
   const [journeyState, setJourneyState] = useState(() =>
@@ -168,8 +170,8 @@ export function IndustryJourneyHome() {
       </div>
 
       <ChoiceGrid
-        title="BẠN MUỐN LÀM GÌ VỚI HỆ SINH THÁI SAAS ĐA NGÀNH?"
-        subtitle="Trung tâm quản trị hợp đồng plugin, cấu hình AI Studio, mẫu ấn phẩm A6 và chuẩn hóa BOM cho 7 ngành hàng."
+        title={t("home.tiers.industry.title")}
+        subtitle={t("home.tiers.industry.subtitle")}
         journeys={INDUSTRY_JOURNEYS}
         onSelectJourney={handleSelectJourney}
         onSwitchToExpertMode={() => handleToggleExpertMode(true)}

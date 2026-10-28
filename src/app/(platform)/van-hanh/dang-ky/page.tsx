@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useI18n } from "@/lib/i18n"
 
 type PendingRegistration = {
   userId: string
@@ -26,6 +27,7 @@ async function taiDanhSach(): Promise<{ data: PendingRegistration[] } | { loi: s
 }
 
 export default function DuyetDangKyPage() {
+  const { t, dict } = useI18n()
   const [items, setItems] = useState<PendingRegistration[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [dangXuLy, setDangXuLy] = useState<string | null>(null)
@@ -69,7 +71,7 @@ export default function DuyetDangKyPage() {
   return (
     <Card className="overflow-x-auto p-4">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <h1 className="text-base font-bold text-text">Duyệt đăng ký</h1>
+        <h1 className="text-base font-bold text-text">{dict.platform.registration.title}</h1>
         <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">{items?.length ?? 0} đang chờ</span>
       </div>
       <p className="mb-3 text-xs text-text-muted">
