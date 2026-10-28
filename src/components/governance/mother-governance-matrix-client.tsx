@@ -9,6 +9,7 @@ import { GovernanceMatrixTable } from "@/components/governance/governance-matrix
 import { useI18n } from "@/lib/i18n"
 import type { GovernanceMatrixState } from "@/components/governance/governance-matrix-types"
 import { useGovernanceMatrix } from "./use-governance-matrix"
+import { GovernanceScopeNote } from "./governance-scope-note"
 import {
   buildSSOTGovernanceGroups,
   type GovernanceSystemKey,
@@ -82,6 +83,8 @@ export function MotherGovernanceMatrixClient({
           {currentInfo.desc}
         </p>
       </div>
+
+      <GovernanceScopeNote system={activeTab} />
 
       {matrix.error && (
         <p role="alert" className="rounded-xl border border-danger-border bg-danger-bg px-4 py-2.5 text-body-sm text-danger-text">

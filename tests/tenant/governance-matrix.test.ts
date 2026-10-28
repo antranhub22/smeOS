@@ -1,6 +1,8 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { GET, PUT } from "@/app/api/v1/organizations/current/governance-matrix/route"
+import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
+import { resolveAppliedPolicies } from "@/modules/greeting-card/domain/store-policy"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
@@ -62,5 +64,16 @@ describe("organizations/current/governance-matrix", () => {
   it("sai loại ma trận → 400", async () => {
     const res = await GET(withSession("http://localhost/api/v1/organizations/current/governance-matrix?system=X", store.token))
     expect(res.status).toBe(400)
+  })
+
+  it("luồng bán hàng: ưu đãi chuỗi khoá tắt biến khỏi trang khách của cửa hàng đối tác, không ảnh hưởng tiệm ngoài", async () => {
+    const PROMO = "http://localhost/api/v1/organizations/current/governance-matrix?system=PROMOTIONS"
+    const lock = await PUT(withSession(PROMO, chain.token, { method: "PUT", body: JSON.stringify({ decisions: { overrides: {}, locks: { "promo-free-card": { enabled: false } } } }) }))
+    expect(lock.status).toBe(200)
+    const settings = { industry: "FLORAL" }
+    const forStore = resolveAppliedPolicies(null, settings, "FLORAL", await loadPolicyGovernance(store.organizationId))
+    const forOutsider = resolveAppliedPolicies(null, settings, "FLORAL", await loadPolicyGovernance(outsider.organizationId))
+    expect(forStore.promotions.map((p) => p.id)).not.toContain("promo-free-card")
+    expect(forOutsider.promotions.map((p) => p.id)).toContain("promo-free-card")
   })
 })

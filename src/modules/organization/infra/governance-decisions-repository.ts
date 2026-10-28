@@ -9,8 +9,11 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import {
   decisionsFromSettings,
   parseDecisions,
+  withBuiltInLocks,
   type GovernanceDecisions,
   type GovernanceSystem,
+  type PolicyGovernanceUpper,
+  type PolicySystem,
   type UpperLayer,
 } from "../domain/governance-decisions"
 
@@ -50,7 +53,7 @@ export async function saveMotherGovernance(system: GovernanceSystem, decisions: 
 
 /** Các tầng trên của tổ chức, thứ tự từ cao xuống: Mẹ, rồi Chuỗi (nếu tổ chức là đối tác của một chuỗi). */
 export async function getUpperLayers(organizationId: string, system: GovernanceSystem, includeChain: boolean): Promise<UpperLayer[]> {
-  const layers: UpperLayer[] = [{ tier: "MOTHER", decisions: await getMotherGovernance(system) }]
+  const layers: UpperLayer[] = withBuiltInLocks(system, [{ tier: "MOTHER", decisions: await getMotherGovernance(system) }])
   if (!includeChain) return layers
   const link = await prisma.chain_partnerships.findFirst({
     where: { partner_org_id: organizationId, status: "ACTIVE" },
@@ -59,4 +62,27 @@ export async function getUpperLayers(organizationId: string, system: GovernanceS
   })
   if (link) layers.push({ tier: "CHAIN", decisions: decisionsFromSettings(link.chain_organization.settings, system) })
   return layers
+}
+
+/**
+ * Tầng trên của nhiều ma trận cùng lúc (2 truy vấn) — dùng ở luồng bán hàng công khai, nơi mỗi lần
+ * tải trang/báo giá cần cả Ưu đãi, Cam kết và Chính sách.
+ */
+export async function getPolicyGovernanceUpper(organizationId: string, systems: readonly PolicySystem[]): Promise<PolicyGovernanceUpper> {
+  const [motherRows, link] = await Promise.all([
+    prisma.platform_settings.findMany({ where: { key: { in: systems.map(motherKey) } } }),
+    prisma.chain_partnerships.findFirst({
+      where: { partner_org_id: organizationId, status: "ACTIVE" },
+      orderBy: { created_at: "asc" },
+      select: { chain_organization: { select: { settings: true } } },
+    }),
+  ])
+  const out: PolicyGovernanceUpper = {}
+  for (const system of systems) {
+    const mother = motherRows.find((r) => r.key === motherKey(system))
+    const layers: UpperLayer[] = withBuiltInLocks(system, [{ tier: "MOTHER", decisions: parseDecisions(mother?.value) }])
+    if (link) layers.push({ tier: "CHAIN", decisions: decisionsFromSettings(link.chain_organization.settings, system) })
+    out[system] = layers
+  }
+  return out
 }

@@ -15,6 +15,7 @@ import { DUPLICATE_ORDER_WINDOW_MS, isSameOrder } from "../domain/order-guard"
 import type { ProductSnapshot } from "../domain/greeting-card-types"
 import { promotionForQuote, quoteForProduct, type QuoteRequest, type QuoteResult } from "./brochure-quote"
 import { assertSlotOpen, fullSlotsOn } from "./slot-availability"
+import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
 
 export interface PublicCatalogOrderInput extends CustomerOrderSubmitInput {
   productId: string
@@ -132,6 +133,7 @@ export async function submitPublicCatalogOrder(
     shopSettings: shop.settings,
     catalogFilters: catalog.filters,
     catalogId: catalog.id,
+    governanceUpper: await loadPolicyGovernance(catalog.organization_id),
   })
 }
 
@@ -144,7 +146,7 @@ export async function quotePublicCatalog(
 ): Promise<QuoteResult> {
   const { catalog, product } = await orderableFromCatalog(catalogId, productId, repo)
   const shop = await repo.getShopProfile(catalog.organization_id)
-  const promo = promotionForQuote(catalog.filters, shop.settings, req.selectedPromotionId)
+  const promo = promotionForQuote(catalog.filters, shop.settings, req.selectedPromotionId, await loadPolicyGovernance(catalog.organization_id))
   const result = await quoteForProduct(catalog.organization_id, product, req, shop.settings, undefined, promo.promotion, catalog.filters, catalog.id)
   const fullSlots = await fullSlotsOn(catalog.organization_id, req.deliveryDate, shop.settings)
   return { ...result, fullSlots, ...(promo.error ? { errors: { ...result.errors, selectedPromotionId: promo.error } } : {}) }

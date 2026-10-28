@@ -19,6 +19,7 @@ import { GovernanceMatrixTable } from "@/components/governance/governance-matrix
 import type { GovernanceMatrixState, GovernanceViewerTier } from "@/components/governance/governance-matrix-types"
 import { buildSSOTGovernanceGroups, type GovernanceSystemKey } from "./governance-catalog-registry"
 import { useGovernanceMatrix } from "./use-governance-matrix"
+import { GovernanceScopeNote } from "./governance-scope-note"
 import { useSession } from "@/lib/session"
 
 interface TierGovernanceMatrixClientProps {
@@ -60,6 +61,8 @@ export function TierGovernanceMatrixClient({ systemKey, title, description }: Ti
         <h1 className="text-display font-extrabold text-text">{title}</h1>
         <p className="text-body-sm text-text-muted mt-1">{description}</p>
       </div>
+
+      <GovernanceScopeNote system={systemKey} />
 
       {matrix.error && (
         <p role="alert" className="rounded-xl border border-danger-border bg-danger-bg px-4 py-2.5 text-body-sm text-danger-text">

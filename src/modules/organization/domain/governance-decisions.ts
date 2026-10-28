@@ -106,3 +106,44 @@ export function effectiveDecision(
   if (key in own.overrides) return { enabled: own.overrides[key]!, source: "OWN_OVERRIDE", lockedBy: null }
   return { enabled: defaultEnabled, source: "DEFAULT", lockedBy: null }
 }
+
+/** Các ma trận mà luồng bán hàng (trang khách, báo giá, đặt đơn) đọc khi lọc mục hiện cho khách. */
+export const POLICY_SYSTEMS = ["PROMOTIONS", "COMMITMENTS", "POLICIES"] as const
+export type PolicySystem = (typeof POLICY_SYSTEMS)[number]
+export type PolicyGovernanceUpper = Partial<Record<PolicySystem, UpperLayer[]>>
+
+/** Trần chiết khấu nền tảng (mục `MAX_DISCOUNT_PERCENT` của ma trận Ưu đãi). */
+export const PLATFORM_MAX_DISCOUNT_PERCENT = 50
+
+/**
+ * Quy chuẩn bất biến của nền tảng — danh mục ma trận hiển thị là "Mẹ khoá cứng". Luôn đứng đầu các
+ * tầng trên nên không tầng nào (kể cả quyết định Mẹ đã lưu) mở được.
+ */
+export const BUILT_IN_MOTHER_LOCKS: Partial<Record<GovernanceSystem, readonly string[]>> = {
+  PROMOTIONS: ["MAX_DISCOUNT_PERCENT"],
+  COMMITMENTS: ["MANDATORY_QC_PHOTO"],
+  POLICIES: ["SLA_DISPUTE_24H"],
+  PAYMENTS: ["VIETQR_PAYMENT_ENABLED"],
+  CRAFT_FEES: ["MAX_PENALTY_DEDUCTION_30"],
+}
+
+export function builtInMotherLayer(system: GovernanceSystem): UpperLayer {
+  const locks: Record<string, GovernanceLock> = {}
+  for (const key of BUILT_IN_MOTHER_LOCKS[system] ?? []) locks[key] = { enabled: true }
+  return { tier: "MOTHER", decisions: { overrides: {}, locks } }
+}
+
+/** Tầng trên đầy đủ: quy chuẩn bất biến trước, rồi các tầng đã lưu. */
+export function withBuiltInLocks(system: GovernanceSystem, upper: readonly UpperLayer[]): UpperLayer[] {
+  return [builtInMotherLayer(system), ...upper]
+}
+
+/** Mục của ma trận có đang bật cho tổ chức có `settings` này không (mặc định bật). */
+export function isGovernedItemEnabled(
+  key: string,
+  settings: unknown,
+  system: GovernanceSystem,
+  upper: readonly UpperLayer[] = []
+): boolean {
+  return effectiveDecision(key, true, decisionsFromSettings(settings, system), "STORE", withBuiltInLocks(system, upper)).enabled
+}

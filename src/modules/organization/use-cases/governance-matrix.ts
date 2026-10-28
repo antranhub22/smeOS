@@ -10,9 +10,11 @@ import {
   type GovernanceDecisions,
   type GovernanceLayerTier,
   type GovernanceSystem,
+  type PolicyGovernanceUpper,
   type UpperLayer,
+  POLICY_SYSTEMS,
 } from "../domain/governance-decisions"
-import { getOrgGovernance, getUpperLayers, saveOrgGovernance } from "../infra/governance-decisions-repository"
+import { getOrgGovernance, getPolicyGovernanceUpper, getUpperLayers, saveOrgGovernance } from "../infra/governance-decisions-repository"
 import { OrganizationRepository } from "../infra/organization-repository"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 
@@ -61,4 +63,16 @@ export async function saveGovernanceMatrix(ctx: TenantContext, system: Governanc
     after: { system, ...next },
   })
   return { system, tier, own: next, upper }
+}
+
+/**
+ * Khoá tầng trên của Ưu đãi / Cam kết / Chính sách cho luồng bán hàng công khai. Lỗi đọc → coi như
+ * không có khoá tầng trên (quyết định của chính tiệm vẫn áp), không làm hỏng trang khách.
+ */
+export async function loadPolicyGovernance(organizationId: string): Promise<PolicyGovernanceUpper> {
+  try {
+    return await getPolicyGovernanceUpper(organizationId, POLICY_SYSTEMS)
+  } catch {
+    return {}
+  }
 }

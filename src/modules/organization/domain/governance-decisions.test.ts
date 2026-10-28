@@ -38,3 +38,12 @@ describe("governance-decisions", () => {
     expect(decisionsFromSettings(null, "PAYMENTS")).toEqual({ overrides: {}, locks: {} })
   })
 })
+
+describe("quy chuẩn bất biến của nền tảng", () => {
+  it("tầng dưới không ghi đè được, kể cả tầng Mẹ đã lưu mở", async () => {
+    const { withBuiltInLocks, isGovernedItemEnabled, validateDecisions: v } = await import("./governance-decisions")
+    const upper = withBuiltInLocks("PROMOTIONS", [{ tier: "MOTHER", decisions: { overrides: {}, locks: { MAX_DISCOUNT_PERCENT: { enabled: false } } } }])
+    expect(isGovernedItemEnabled("MAX_DISCOUNT_PERCENT", { governance_matrix: { PROMOTIONS: { overrides: { MAX_DISCOUNT_PERCENT: false } } } }, "PROMOTIONS", upper)).toBe(true)
+    expect(v({ overrides: { MAX_DISCOUNT_PERCENT: false }, locks: {} }, "CHAIN", upper)).toEqual([{ key: "MAX_DISCOUNT_PERCENT", reason: "LOCKED_BY_UPPER" }])
+  })
+})

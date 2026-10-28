@@ -63,8 +63,8 @@ Cách ly tenant (`organization_id` lấy từ phiên, tổ chức khác → 404;
 
 ## 7. Giới hạn đã biết khi bàn giao
 
-- Ma trận chính sách (governance) đã lưu và áp khoá theo tầng (Mẹ → Chuỗi → Cửa hàng), nhưng **chưa** được luồng giá/thanh toán/đơn đọc khi tính toán (nợ #185).
-- Ma trận thông báo tự gửi cho 3 sự kiện (đơn mới, đơn huỷ, giao việc chế tác); các sự kiện khác chưa nối (nợ #185).
+- Ma trận Ưu đãi / Cam kết / Chính sách áp vào trang khách, báo giá, đặt đơn; ma trận Thanh toán / Phí gia công / Mẫu mới lưu và khoá cấp dưới, chưa đổi cách tính tiền (nợ #185).
+- Thông báo tự gửi cho 6 sự kiện đơn hàng; sự kiện chuỗi/nền tảng chưa nối (nợ #185).
 - Mở khoá công cụ chi nhánh đã chặn ở máy chủ (403) và ở trang.
 - 95 tệp mã > 350 dòng (nợ kỹ thuật có từ trước, không ảnh hưởng chức năng).
 - Ảnh mẫu kiểm thử giao diện `/vai-tro` cần chụp lại trên CI.

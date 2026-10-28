@@ -11,6 +11,7 @@ import { loadPublicSession, resolveOrderableProduct, type PublicSession } from "
 import { placeBrochureOrder, type BrochureOrderResult } from "./place-brochure-order"
 import { promotionForQuote, quoteForProduct, type QuoteRequest, type QuoteResult } from "./brochure-quote"
 import { fullSlotsOn } from "./slot-availability"
+import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
 
 export { DEFAULT_TIME_SLOT, type BrochureOrderResult } from "./place-brochure-order"
 
@@ -62,6 +63,7 @@ export async function submitBrochureOrder(
       shopSettings: shop.settings,
       catalogFilters: session.catalog.filters,
       catalogId: session.catalog_id,
+      governanceUpper: await loadPolicyGovernance(session.organization_id),
     })
   } catch (error) {
     // Hai tab/hai lần bấm gửi cùng lúc: giao dịch chỉ cho một đơn gắn vào phiên, lần kia bị
@@ -104,7 +106,7 @@ export async function quoteBrochureSession(
   if (!session.selected_product_id) throw unprocessable("Vui lòng chọn sản phẩm trước")
   const product = await resolveOrderableProduct(session, session.selected_product_id, repo)
   const shop = await repo.getShopProfile(session.organization_id)
-  const promo = promotionForQuote(session.catalog.filters, shop.settings, req.selectedPromotionId)
+  const promo = promotionForQuote(session.catalog.filters, shop.settings, req.selectedPromotionId, await loadPolicyGovernance(session.organization_id))
   const result = await quoteForProduct(session.organization_id, product, req, shop.settings, undefined, promo.promotion, session.catalog.filters, session.catalog_id)
   const fullSlots = await fullSlotsOn(session.organization_id, req.deliveryDate, shop.settings)
   return { ...result, fullSlots, ...(promo.error ? { errors: { ...result.errors, selectedPromotionId: promo.error } } : {}) }

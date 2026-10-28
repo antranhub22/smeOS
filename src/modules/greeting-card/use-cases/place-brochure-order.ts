@@ -14,6 +14,7 @@ import type { BrochureQuote } from "../domain/brochure-pricing"
 import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 import { quoteForProduct } from "./brochure-quote"
 import { resolveAppliedPolicies } from "../domain/store-policy"
+import type { PolicyGovernanceUpper } from "@/modules/organization/domain/governance-decisions"
 import { promotionNote, resolveOrderPolicies } from "../domain/order-policies"
 import { snapshotOf } from "./brochure-product-mapper"
 import { deliveryNoteFields } from "../domain/delivery-note"
@@ -57,6 +58,8 @@ export async function placeBrochureOrder(
     catalogFilters: unknown
     /** Bộ sưu tập — phạm vi áp dụng của mã thanh toán. */
     catalogId?: string | null | undefined
+    /** Khoá tầng trên của ma trận Ưu đãi / Cam kết / Chính sách. */
+    governanceUpper?: PolicyGovernanceUpper | undefined
   },
   checkout = getBrochureCheckoutRepository()
 ): Promise<BrochureOrderResult> {
@@ -67,7 +70,7 @@ export async function placeBrochureOrder(
   if (input.checkOutDate && input.deliveryDate) {
     await assertBookingDatesAvailable({ organizationId, productId: product.id, checkInDate: input.deliveryDate, checkOutDate: input.checkOutDate })
   }
-  const policies = resolveOrderPolicies(resolveAppliedPolicies(params.catalogFilters, params.shopSettings), input)
+  const policies = resolveOrderPolicies(resolveAppliedPolicies(params.catalogFilters, params.shopSettings, undefined, params.governanceUpper), input)
   if (!policies.ok) throw validationFailed({ [policies.field]: policies.message })
   const promotion = policies.snapshot.promotion
   const priced = await quoteForProduct(
