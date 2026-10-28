@@ -22,11 +22,11 @@ export const homeVi = {
       "subtitle": "Cấu hình plugin ngành và chuẩn hóa dữ liệu."
     },
     "chain": {
-      "title": "MẠNG LƯỚI {name}",
+      "title": "BẠN MUỐN LÀM GÌ VỚI MẠNG LƯỚI {name}?",
       "subtitle": "Điều phối mạng lưới {product}."
     },
     "store": {
-      "title": "Cửa hàng {name}",
+      "title": "Hôm nay bạn muốn làm gì cho {name}?",
       "subtitle": "Chọn việc để làm."
     }
   },

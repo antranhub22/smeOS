@@ -68,5 +68,7 @@ describe("i18n Engine — Động cơ đa ngôn ngữ & SSOT từ điển", () =
 describe("Câu chữ Journey-First của trang chủ", () => {
   it("tiêu đề trang chủ chủ tiệm vẫn là câu hỏi 'Bạn muốn làm gì?' (đổi văn phong không được làm mất)", () => {
     expect(viDictionary.toolkit.header.titleProd).toMatch(/bạn muốn làm gì/i)
+    expect(viDictionary.home.tiers.store.title).toMatch(/bạn muốn làm gì/i)
+    expect(viDictionary.home.tiers.chain.title).toMatch(/bạn muốn làm gì/i)
   })
 })
