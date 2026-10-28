@@ -27,14 +27,15 @@ test.describe("UX Role-based Homepage (03b Role UX §4)", () => {
     await expect(contactBlock.first()).toBeVisible({ timeout: 15_000 })
   })
 
-  test("vai Điều phối (dieu_phoi, PRODUCTION) tự động chuyển hướng sang /dieu-phoi (Control Tower)", async ({ page }) => {
+  test("vai Điều phối (dieu_phoi, PRODUCTION) ở lại trang chủ chuỗi, không tự chuyển sang /dieu-phoi", async ({ page }) => {
     await createTestUserAndLogin(page, {
       roleKey: "dieu_phoi",
       workspaceKind: "PRODUCTION",
     })
     await page.goto("/")
 
-    // Chuyển hướng sang /dieu-phoi
-    await expect(page).toHaveURL(/\/dieu-phoi/)
+    // PO 23/10/2026: mọi vai luôn thấy trang chủ sau đăng nhập; /dieu-phoi mở từ menu
+    await expect(page.getByText(/Bạn muốn làm gì cho hoạt động điện hoa/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page).not.toHaveURL(/\/dieu-phoi/)
   })
 })
