@@ -14,7 +14,8 @@ export const PLATFORM_OWNED_SETTING_KEYS = [
   "lead_name",
   "lead_phone",
   "lead_email",
-  "lead_captured_at",
+  // Quyền mở khóa công cụ đa tầng — chỉ cấp quản lý (Chuỗi/SaaS Mother) mới được phê duyệt
+  "unlocked_tools",
   // Chat Telegram đã chứng minh thuộc tổ chức — chỉ máy chủ ghi (greeting-card/infra/telegram-linked-chats.ts)
   "telegram_linked_chat_ids",
   "telegram_unlinked_chats",

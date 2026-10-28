@@ -14,9 +14,9 @@
  * Platform Admin có quyền RAW — không qua DSA filter.
  */
 
-import { prisma } from "@/core/tenancy/infra/prisma"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
+import { getPlatformRecordsRepository } from "@/modules/platform/infra/platform-records-repository"
 import {
   getPlatformOrgRecords,
   exportPlatformOrgRecordsCsv,
@@ -24,6 +24,7 @@ import {
 } from "./get-platform-org-records"
 import { strToU8, zipSync } from "fflate"
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
+
 
 const CSV_DOMAINS: RecordDomain[] = [
   "catalog",
@@ -51,10 +52,8 @@ export async function exportOrgDataAsZip(
 ): Promise<{ zip: Uint8Array; manifest: ZipManifest }> {
   requirePlatformCapability(pctx, "N1")
 
-  const org = await prisma.organizations.findUnique({
-    where: { id: orgId },
-    select: { name: true },
-  })
+  const repo = getPlatformRecordsRepository()
+  const { org, products, assets, uploadedSpreadsheets } = await repo.fetchExportZipData(orgId)
   if (!org) throw new Error("Organization not found")
 
   const files: Record<string, Uint8Array> = {}
@@ -73,29 +72,6 @@ export async function exportOrgDataAsZip(
   }
 
   // ─── 2. Export product images ────────────────────────────────────────────
-  // Lấy danh sách tất cả sản phẩm
-  const products = await prisma.products.findMany({
-    where: { organization_id: orgId },
-    select: {
-      id: true,
-      code: true,
-      attributes: true,
-      images: {
-        where: { role: "MAIN" },
-        take: 1,
-        select: { asset_id: true },
-      },
-    },
-  })
-
-  const assetIds = products
-    .map((p) => p.images[0]?.asset_id)
-    .filter((id): id is string => Boolean(id))
-
-  const assets = await prisma.assets.findMany({
-    where: { id: { in: assetIds } },
-    select: { id: true, storage_key: true, mime_type: true },
-  })
   const assetMap = new Map(assets.map((a) => [a.id, a]))
 
   // Map product_id → code để đặt tên file ảnh
@@ -104,6 +80,7 @@ export async function exportOrgDataAsZip(
     const assetId = p.images[0]?.asset_id
     if (assetId) productByAsset.set(assetId, p.code)
   }
+
 
   // Danh sách các mục ảnh cần tải
   interface ImageTarget {
@@ -187,26 +164,9 @@ export async function exportOrgDataAsZip(
   }
 
   // ─── 3. Export uploaded Excel spreadsheets ──────────────────────────────
-  const uploadedSpreadsheets = await prisma.assets.findMany({
-    where: {
-      organization_id: orgId,
-      mime_type: {
-        in: [
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          "application/vnd.ms-excel",
-          "text/csv",
-        ],
-      },
-    },
-    select: {
-      id: true,
-      storage_key: true,
-      parameters: true,
-    },
-  })
-
   for (const sheet of uploadedSpreadsheets) {
     try {
+
       const params = (sheet.parameters as Record<string, unknown> | null) ?? {}
       const origName = typeof params.original_filename === "string" ? params.original_filename : sheet.storage_key.split("/").pop() ?? `${sheet.id}.xlsx`
       const safeSheetName = origName.replace(/[^a-zA-Z0-9._\-]/g, "_")

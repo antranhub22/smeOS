@@ -25,13 +25,27 @@ export function validateFilters(filters: CatalogLinkFilters): string | "" {
   return ""
 }
 
-export function normalizeSlug(input: string): string {
-  return input
+export function slugifyVietnamese(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[đĐ]/g, "d")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9-]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "")
+}
+
+export function generateAutoSlug(name: string): string {
+  const base = slugifyVietnamese(name) || "catalog"
+  const rand = Math.random().toString(36).substring(2, 7)
+  const trimmedBase = base.slice(0, 40).replace(/-$/, "")
+  return `${trimmedBase || "catalog"}-${rand}`
+}
+
+export function normalizeSlug(input: string): string {
+  return slugifyVietnamese(input)
 }
 
 export interface CatalogLinkResult {

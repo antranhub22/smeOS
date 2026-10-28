@@ -1,6 +1,7 @@
 import type { ICatalogLinkRepository } from "../domain/repositories/catalog-link-repository.interface"
 import { getCatalogLinkRepository } from "../infra/catalog-link-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import type { CatalogTemplateId, CatalogStyleId } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 
 export interface PublicCatalogShop {
   name: string
@@ -52,6 +53,8 @@ export type PublicCatalogResult =
         name?: string | undefined
         greeting?: string | undefined
       } | undefined
+      templateId?: CatalogTemplateId | undefined
+      styleId?: CatalogStyleId | undefined
     }
   | {
       status: "REVOKED"
@@ -299,5 +302,13 @@ export async function getPublicCatalog(
             greeting: typeof filters.personalizedGreeting === "string" ? filters.personalizedGreeting : undefined,
           }
         : undefined,
+    templateId:
+      (filters.template_id as CatalogTemplateId) ||
+      (filters.templateId as CatalogTemplateId) ||
+      "T01_SIGNATURE_COLLECTION",
+    styleId:
+      (filters.style_id as CatalogStyleId) ||
+      (filters.styleId as CatalogStyleId) ||
+      "S01_EDITORIAL_MAGAZINE",
   }
 }

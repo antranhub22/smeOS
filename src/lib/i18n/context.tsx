@@ -10,6 +10,7 @@ import type { SupportedLocale, I18nContextValue, TranslationKey, InterpolationPa
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "./types"
 
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
+import { getTierTerminology } from "@/core/terminology"
 
 const STORAGE_KEY = "floraos_locale"
 
@@ -72,6 +73,7 @@ export function I18nProvider({ children, initialLocale = DEFAULT_LOCALE, industr
       industryKey,
       industry: industryPlugin,
       ti,
+      tierTerm: getTierTerminology,
     }),
     [locale, setLocale, t, dict, industryKey, industryPlugin, ti]
   )
@@ -96,6 +98,7 @@ export function useI18n(): I18nContextValue {
       industryKey: "FLORAL",
       industry: fallbackPlugin,
       ti: (termKey) => fallbackPlugin.terminology[termKey] || "",
+      tierTerm: getTierTerminology,
     }
   }
   return context

@@ -78,8 +78,9 @@ describe("greeting-card: giao không thành công", () => {
 
     const anon = await getBrochureTracking(order.orderCode)
     expect(anon.status === "FOUND" && anon.order.deliveryFailure).toMatchObject({ reasonLabel: "Người nhận không nghe máy", note: null })
-    expect(anon.status === "FOUND" && anon.trackingStep.title).toBe("Giao hoa chưa thành công")
+    expect(anon.status === "FOUND" && anon.trackingStep.title).toBe("Giao hàng chưa thành công")
   })
+
 
   it("khách đổi được giờ giao sau khi giao hỏng nhưng không đổi lời nhắn thiệp; giao lại không tính phí khi bỏ chọn", async () => {
     const order = await deliveringOrder()
