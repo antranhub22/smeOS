@@ -2,6 +2,12 @@
 
 Statuses: NOT_STARTED · IN_REVIEW · REVIEWED · FIX_REQUIRED · FIXED · VERIFIED · BLOCKED · NOT_APPLICABLE. Any status other than VERIFIED needs a reason.
 
+## Checkpoint (2026-10-28)
+
+- CURRENT lineage (70): 53 non-merge statically reviewed (`03` §A–C); 17 merge commits IN_REVIEW; gates for the tips pending (`07`).
+- LEGACY (543, `TINH`): NOT_STARTED — resume here, batch 01.
+- Review order is CURRENT first, LEGACY second (see `03`); inventory order is unchanged.
+
 ## Batch summary
 
 | Batch | Range | Status | Notes |
@@ -567,73 +573,73 @@ Statuses: NOT_STARTED · IN_REVIEW · REVIEWED · FIX_REQUIRED · FIXED · VERIF
 | 541 | `076bab87` | TINH | NOT_STARTED | — | |
 | 542 | `7bc06352` | TINH | NOT_STARTED | — | |
 | 543 | `7f6c8f8c` | TINH | NOT_STARTED | — | |
-| 544 | `9776fe85` | UPB | NOT_STARTED | — | |
-| 545 | `c8cd41f3` | UPB | NOT_STARTED | — | |
-| 546 | `f216d1f2` | UPB | NOT_STARTED | — | |
-| 547 | `407f454a` | UPB | NOT_STARTED | — | |
-| 548 | `805c8fbe` | UPB | NOT_STARTED | — | |
-| 549 | `e4b6246d` | UPB | NOT_STARTED | — | |
-| 550 | `507ab590` | UPB | NOT_STARTED | — | |
-| 551 | `2664eadc` | UPB | NOT_STARTED | — | |
-| 552 | `44dacbaf` | UPB | NOT_STARTED | — | |
-| 553 | `a99c9617` | UPB | NOT_STARTED | — | |
-| 554 | `a1b61be1` | UPB | NOT_STARTED | — | |
-| 555 | `800183b5` | UPB | NOT_STARTED | — | |
-| 556 | `ef1914fb` | UPB | NOT_STARTED | — | |
-| 557 | `721b8179` | UPB | NOT_STARTED | — | |
-| 558 | `ddda38f3` | UPB | NOT_STARTED | — | |
-| 559 | `b4858c21` | UPB | NOT_STARTED | — | |
-| 560 | `5fbc6df7` | UPB | NOT_STARTED | — | |
-| 561 | `ccb2059a` | UPB | NOT_STARTED | — | |
-| 562 | `869a97bb` | UPB | NOT_STARTED | — | |
-| 563 | `ffb1d587` | DTORCH | NOT_STARTED | — | |
-| 564 | `4ad5628b` | DTV | NOT_STARTED | — | |
-| 565 | `151585e5` | DTIMM | NOT_STARTED | — | |
-| 566 | `22e76e31` | DNPM | NOT_STARTED | — | |
-| 567 | `fe0d74aa` | INT | NOT_STARTED | — | |
-| 568 | `e7545157` | INT | NOT_STARTED | — | |
-| 569 | `cc937f20` | INT | NOT_STARTED | — | |
-| 570 | `610b1711` | INT | NOT_STARTED | — | |
-| 571 | `39803b71` | INT | NOT_STARTED | — | |
-| 572 | `21e1a08b` | INT | NOT_STARTED | — | |
-| 573 | `198f7b3a` | INT | NOT_STARTED | — | |
-| 574 | `46bd3e95` | INT | NOT_STARTED | — | |
-| 575 | `cd858f2c` | INT | NOT_STARTED | — | |
-| 576 | `20f155c7` | INT | NOT_STARTED | — | |
-| 577 | `0a64ae02` | INT | NOT_STARTED | — | |
-| 578 | `f0dce714` | INT | NOT_STARTED | — | |
-| 579 | `307ab6fa` | INT | NOT_STARTED | — | |
-| 580 | `0cf2b2f3` | INT | NOT_STARTED | — | |
-| 581 | `6b8d284f` | INT | NOT_STARTED | — | |
-| 582 | `f4154e3a` | INT | NOT_STARTED | — | |
-| 583 | `05c46b24` | INT | NOT_STARTED | — | |
-| 584 | `4b38648a` | INT | NOT_STARTED | — | |
-| 585 | `267944f1` | INT | NOT_STARTED | — | |
-| 586 | `5def12db` | INT | NOT_STARTED | — | |
-| 587 | `8492c065` | INT | NOT_STARTED | — | |
-| 588 | `f6ca2782` | INT | NOT_STARTED | — | |
-| 589 | `405f15cf` | INT | NOT_STARTED | — | |
-| 590 | `6d87a403` | INT | NOT_STARTED | — | |
-| 591 | `87c8b675` | INT | NOT_STARTED | — | |
-| 592 | `9bb7cc80` | INT | NOT_STARTED | — | |
-| 593 | `7c3f0585` | INT | NOT_STARTED | — | |
-| 594 | `c6b2a4c2` | INT | NOT_STARTED | — | |
-| 595 | `666b370d` | INT | NOT_STARTED | — | |
-| 596 | `4fcd5a7c` | INT | NOT_STARTED | — | |
-| 597 | `f56024ca` | INT | NOT_STARTED | — | |
-| 598 | `99db1dfc` | INT | NOT_STARTED | — | |
-| 599 | `83fd26ce` | INT | NOT_STARTED | — | |
-| 600 | `cebcb057` | INT | NOT_STARTED | — | |
-| 601 | `db9592b9` | INT | NOT_STARTED | — | |
-| 602 | `4bb56239` | INT | NOT_STARTED | — | |
-| 603 | `383b4f3f` | INT | NOT_STARTED | — | |
-| 604 | `52cd3477` | INT | NOT_STARTED | — | |
-| 605 | `d279148c` | INT | NOT_STARTED | — | |
-| 606 | `0c6a5c5f` | INT | NOT_STARTED | — | |
-| 607 | `0968c691` | INT | NOT_STARTED | — | |
-| 608 | `0625c8e1` | INT | NOT_STARTED | — | |
-| 609 | `086c1e3a` | INT | NOT_STARTED | — | |
-| 610 | `ec71f9b7` | INT | NOT_STARTED | — | |
-| 611 | `e0b8008b` | INT | NOT_STARTED | — | |
-| 612 | `36f80373` | INT | NOT_STARTED | — | |
-| 613 | `d4212e74` | INT | NOT_STARTED | — | |
+| 544 | `9776fe85` | UPB | REVIEWED | PASS_WITH_CONCERNS (gates pending) | static review done; gates pending (07) |
+| 545 | `c8cd41f3` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 546 | `f216d1f2` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 547 | `407f454a` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 548 | `805c8fbe` | UPB | REVIEWED | PASS_WITH_CONCERNS | AUD-013 |
+| 549 | `e4b6246d` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 550 | `507ab590` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 551 | `2664eadc` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 552 | `44dacbaf` | UPB | REVIEWED | PASS | static review done; gates pending (07) |
+| 553 | `a99c9617` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 554 | `a1b61be1` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 555 | `800183b5` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 556 | `ef1914fb` | UPB | REVIEWED | PASS | static review done; gates pending (07) |
+| 557 | `721b8179` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 558 | `ddda38f3` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 559 | `b4858c21` | UPB | NOT_APPLICABLE | NOT_APPLICABLE (docs) | NOT_APPLICABLE (docs) |
+| 560 | `5fbc6df7` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 561 | `ccb2059a` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 562 | `869a97bb` | UPB | REVIEWED | PASS_WITH_CONCERNS (E2E not run) | static review done; gates pending (07) |
+| 563 | `ffb1d587` | DTORCH | BLOCKED | BLOCKED | dependency change needs PO approval (AUD-012) |
+| 564 | `4ad5628b` | DTV | BLOCKED | BLOCKED | dependency change needs PO approval (AUD-012) |
+| 565 | `151585e5` | DTIMM | BLOCKED | BLOCKED | dependency change needs PO approval (AUD-012) |
+| 566 | `22e76e31` | DNPM | BLOCKED | BLOCKED — dependency change needs PO approval (CLAUDE.md); gates not run on it | BLOCKED — dependency change needs PO approval (CLAUDE.md); gates not run on it |
+| 567 | `fe0d74aa` | INT | REVIEWED | PASS_WITH_CONCERNS (visual not verified) | static review done; gates pending (07) |
+| 568 | `e7545157` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 569 | `cc937f20` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 570 | `610b1711` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 571 | `39803b71` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 572 | `21e1a08b` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 573 | `198f7b3a` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 574 | `46bd3e95` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 575 | `cd858f2c` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 576 | `20f155c7` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 577 | `0a64ae02` | INT | REVIEWED | PASS_WITH_CONCERNS | AUD-009 |
+| 578 | `f0dce714` | INT | NOT_APPLICABLE | NOT_APPLICABLE (docs) | NOT_APPLICABLE (docs) |
+| 579 | `307ab6fa` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 580 | `0cf2b2f3` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 581 | `6b8d284f` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 582 | `f4154e3a` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 583 | `05c46b24` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 584 | `4b38648a` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 585 | `267944f1` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 586 | `5def12db` | INT | FIX_REQUIRED | FAIL | AUD-005 |
+| 587 | `8492c065` | INT | FIX_REQUIRED | FAIL | AUD-004 |
+| 588 | `f6ca2782` | INT | FIX_REQUIRED | FAIL | AUD-002, AUD-003, AUD-007, AUD-008 |
+| 589 | `405f15cf` | INT | REVIEWED | PASS_WITH_CONCERNS | AUD-002 |
+| 590 | `6d87a403` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 591 | `87c8b675` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 592 | `9bb7cc80` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 593 | `7c3f0585` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 594 | `c6b2a4c2` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 595 | `666b370d` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 596 | `4fcd5a7c` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 597 | `f56024ca` | INT | NOT_APPLICABLE | NOT_APPLICABLE (docs) | NOT_APPLICABLE (docs) |
+| 598 | `99db1dfc` | INT | FIX_REQUIRED | FAIL | AUD-006, AUD-011 |
+| 599 | `83fd26ce` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 600 | `cebcb057` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 601 | `db9592b9` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 602 | `4bb56239` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 603 | `383b4f3f` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 604 | `52cd3477` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 605 | `d279148c` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 606 | `0c6a5c5f` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 607 | `0968c691` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 608 | `0625c8e1` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 609 | `086c1e3a` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 610 | `ec71f9b7` | INT | REVIEWED | PASS_WITH_CONCERNS | AUD-010 |
+| 611 | `e0b8008b` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
+| 612 | `36f80373` | INT | REVIEWED | PASS | static review done; gates pending (07) |
+| 613 | `d4212e74` | INT | REVIEWED | PASS | static review done; gates pending (07) |
