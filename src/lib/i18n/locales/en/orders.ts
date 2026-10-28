@@ -61,4 +61,14 @@ export const ordersEn = {
     deliveryInfo: "Delivery Schedule & Address",
     notes: "Internal Notes for Florist",
   },
+  coordinator: {
+    title: "Order Dispatch & Coordination",
+    statusBadge: "Live",
+    subtitle: "Control Tower · Subcontract Workshops & Brochure Orders",
+    receiveNewOrder: "Receive New Order",
+    tabs: {
+      tower: "Dispatch Control Tower",
+      brochure: "Brochure Orders",
+    },
+  },
 } as const

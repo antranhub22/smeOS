@@ -61,5 +61,15 @@ export const ordersVi = {
     "productInfo": "Sản phẩm & Công thức chế tác",
     "deliveryInfo": "Thời gian & Địa chỉ giao hoa",
     "notes": "Ghi chú nội bộ cho thợ"
+  },
+  "coordinator": {
+    "title": "Điều phối đơn hàng",
+    "statusBadge": "Đang vận hành",
+    "subtitle": "Tháp điều phối đơn hàng · Kết nối đối tác gia công & Đơn đặt từ thẻ chào",
+    "receiveNewOrder": "Tiếp nhận đơn mới",
+    "tabs": {
+      "tower": "Tháp điều phối đơn hàng",
+      "brochure": "Đơn từ thẻ chào"
+    }
   }
 } as const

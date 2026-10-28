@@ -28,13 +28,13 @@ export default function DieuPhoiPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold text-text">Điều Phối Đơn Hàng</h1>
+              <h1 className="text-xl font-extrabold text-text">{dict.orders.coordinator.title}</h1>
               <span className="px-2 py-0.5 rounded-full bg-warning/15 text-warning text-caption font-bold">
-                Đang triển khai
+                {dict.orders.coordinator.statusBadge}
               </span>
             </div>
             <p className="text-xs text-text-muted mt-0.5">
-              Tháp Vận Hành Control Tower · Kết nối Đối tác Xưởng Ngoài & Đơn từ Thẻ Chào
+              {dict.orders.coordinator.subtitle}
             </p>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function DieuPhoiPage() {
             className="bg-primary hover:bg-primary-dark text-white text-xs gap-1.5 h-9 font-bold shadow-sm"
           >
             <Plus size={14} />
-            <span>Tiếp nhận đơn mới</span>
+            <span>{dict.orders.coordinator.receiveNewOrder}</span>
           </Button>
           <UserMenu initials={userInitials} />
         </div>
@@ -77,7 +77,7 @@ export default function DieuPhoiPage() {
           }`}
         >
           <LayoutDashboard size={16} />
-          <span>Tháp Điều Phối Tổng Thể (Control Tower)</span>
+          <span>{dict.orders.coordinator.tabs.tower}</span>
         </button>
 
         <button
@@ -90,7 +90,7 @@ export default function DieuPhoiPage() {
           }`}
         >
           <Sparkles size={16} />
-          <span>Đơn từ Thẻ Chào (Brochure Orders)</span>
+          <span>{dict.orders.coordinator.tabs.brochure}</span>
         </button>
       </div>
 

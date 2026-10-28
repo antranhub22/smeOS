@@ -64,4 +64,16 @@ export const commonEn = {
     minCharacters: "Minimum {min} characters",
     uploadFailed: "Upload failed, please try again",
   },
+  apiErrors: {
+    VALIDATION_FAILED: "Invalid payload provided. Please check again.",
+    UNAUTHENTICATED: "Session has expired. Please sign in again.",
+    CAPABILITY_DENIED: "You do not have permission to perform this action.",
+    ENTITLEMENT_REQUIRED: "This feature requires a plan upgrade.",
+    NOT_FOUND: "The requested data was not found or has been deleted.",
+    CONFLICT: "Duplicate entry or conflict with current state.",
+    QUOTA_EXCEEDED: "Quota limit exceeded. Please try again later.",
+    UNPROCESSABLE_ENTITY: "Cannot process request due to business rule validation.",
+    RATE_LIMITED: "Too many requests. Please wait a moment.",
+    INTERNAL: "System is busy. Please try again later.",
+  },
 } as const

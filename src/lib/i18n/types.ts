@@ -42,5 +42,10 @@ export interface I18nContextValue {
   industry: IndustryPluginContract
   ti: (termKey: "makerTitle" | "makerAction" | "productRecipe" | "sampleProduct" | "rawMaterialItem" | "completedProductPhoto" | "printablesTitle" | "catalogTitle" | "createButtonLabel" | "scanButtonLabel") => string
   tierTerm: typeof getTierTerminology
+  formatCurrency: (amount: number | null | undefined, currency?: string) => string
+  formatDate: (date: Date | string | number | null | undefined, options?: Intl.DateTimeFormatOptions) => string
+  formatTime: (date: Date | string | number | null | undefined, options?: Intl.DateTimeFormatOptions) => string
+  formatDateTime: (date: Date | string | number | null | undefined) => string
+  formatNumber: (value: number | null | undefined, options?: Intl.NumberFormatOptions) => string
 }
 

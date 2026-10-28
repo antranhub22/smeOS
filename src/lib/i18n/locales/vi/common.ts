@@ -64,5 +64,17 @@ export const commonVi = {
     "invalidPhone": "Số điện thoại không hợp lệ",
     "minCharacters": "Tối thiểu {min} ký tự",
     "uploadFailed": "Tải lên không thành công, vui lòng thử lại"
+  },
+  "apiErrors": {
+    "VALIDATION_FAILED": "Dữ liệu gửi lên không hợp lệ. Vui lòng kiểm tra lại.",
+    "UNAUTHENTICATED": "Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.",
+    "CAPABILITY_DENIED": "Bạn không có quyền thực hiện hành động này.",
+    "ENTITLEMENT_REQUIRED": "Tính năng yêu cầu nâng cấp gói dịch vụ.",
+    "NOT_FOUND": "Không tìm thấy dữ liệu yêu cầu hoặc đã bị xóa.",
+    "CONFLICT": "Dữ liệu bị trùng lặp hoặc xung đột với trạng thái hiện tại.",
+    "QUOTA_EXCEEDED": "Đã sử dụng hết hạn mức cho phép. Vui lòng thử lại sau.",
+    "UNPROCESSABLE_ENTITY": "Không thể xử lý dữ liệu do vi phạm quy tắc nghiệp vụ.",
+    "RATE_LIMITED": "Bạn đã gửi quá nhiều yêu cầu. Vui lòng chờ trong giây lát.",
+    "INTERNAL": "Hệ thống đang bận. Vui lòng thử lại sau."
   }
 } as const
