@@ -70,8 +70,8 @@ describe("Flower Content Presets Domain (ND-01 -> ND-10)", () => {
     expect(res.videoScenes).toBeDefined()
     expect(res.videoScenes).toHaveLength(3)
     expect(res.videoScenes?.[0]?.timeRange).toContain("0s - 3s (Hook)")
-    expect(res.videoScenes?.[1]?.visualDesc).toContain("Thợ cắm hoa")
-    expect(res.videoScenes?.[2]?.voiceover).toContain("Giao hoa hoả tốc")
+    expect(res.videoScenes?.[1]?.visualDesc).toContain("Nghệ nhân")
+    expect(res.videoScenes?.[2]?.voiceover).toContain("Giao hàng hoả tốc")
   })
 
   it("sinh caption Instagram súc tích, tinh tế (ND-02)", () => {

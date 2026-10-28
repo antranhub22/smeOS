@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { listApprovedAnalyses } from "../list-approved-analyses"
 import type { TenantContext } from "@/core/tenancy"
-import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
+import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
 
 vi.mock("@/modules/products/infra/product-analysis-repository")
 
@@ -11,9 +11,10 @@ vi.mock("@/modules/products/infra/product-analysis-repository")
 // ở đầu tệp: automock của Vitest vẫn nạp module thật trước khi thay export, nên nó ném lỗi
 // "cannot be imported from a Client Component" ngay lúc collect test, trước khi chạy bất kỳ ca
 // thử nào — ba ca thử phía dưới không dùng `asset_id` nên không cần hành vi thật của hai mock này.
-vi.mock("@/modules/assets/infra/asset-repository", () => ({
-  AssetRepository: vi.fn().mockImplementation(function () { return { findById: vi.fn() } }),
-}))
+vi.mock("@/modules/assets/infra/asset-repository", () => {
+  const AssetRepository = vi.fn().mockImplementation(function () { return { findById: vi.fn() } })
+  return { AssetRepository, getAssetRepository: vi.fn(() => new AssetRepository()) }
+})
 vi.mock("@/modules/assets/adapters/storage-provider-factory", () => ({
   getStorageProvider: vi.fn().mockReturnValue({ signedUrl: vi.fn() }),
 }))
@@ -27,6 +28,12 @@ const ctx: TenantContext = {
 }
 
 describe("listApprovedAnalyses", () => {
+  // Use-case lấy repo qua getProductAnalysisRepository(); trả về instance của class đã mock
+  // để mockImplementation trong từng ca thử vẫn có hiệu lực.
+  beforeEach(() => {
+    vi.mocked(getProductAnalysisRepository).mockImplementation(() => new ProductAnalysisRepository())
+  })
+
   it("từ chối limit ngoài khoảng 1..100", async () => {
     await expect(listApprovedAnalyses(ctx, { limit: 0 })).rejects.toMatchObject({
       code: "VALIDATION_FAILED",

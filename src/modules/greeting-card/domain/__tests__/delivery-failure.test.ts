@@ -63,7 +63,7 @@ describe("thứ tự tác vụ khi giao hỏng", () => {
   })
 
   it("trang theo dõi báo giao chưa thành công; tin SMS không dấu", () => {
-    expect(mapOrderStatusToTrackingStep("PROCESSING", "READY", "FAILED")).toMatchObject({ stepIndex: 4, title: "Giao hoa chưa thành công" })
+    expect(mapOrderStatusToTrackingStep("PROCESSING", "READY", "FAILED")).toMatchObject({ stepIndex: 4, title: "Giao hàng chưa thành công" })
     const sms = smsText("DELIVERY_FAILED", { order_code: "DH1", customer_name: "A", shop_name: "Hoa", status: "", amount: "", tracking_url: "" })
     expect(sms).toMatch(/chua giao duoc/)
   })

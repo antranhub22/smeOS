@@ -25,7 +25,7 @@ describe("balanceCollectionBlocker — thu phần còn lại (Lần 2)", () => {
   })
 
   it("thu trước giao: hoa chưa xong → chặn", () => {
-    expect(balanceCollectionBlocker(base, BEFORE_DISPATCH, NOW)).toMatch(/hoàn thành cắm hoa/)
+    expect(balanceCollectionBlocker(base, BEFORE_DISPATCH, NOW)).toMatch(/hoàn thành chế tác/)
   })
 
   it("thu trước giao: hoa xong, tiệm bỏ qua ảnh thành phẩm → thu được", () => {

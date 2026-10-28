@@ -20,7 +20,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     id: "m10_florist_ticket",
     moduleCode: "M10",
     title: "In phiếu chế tác xưởng (ẩn giá tiền)",
-    keywords: ["phiếu chế tác", "thợ chế tác", "giấu giá", "ẩn giá", "phiếu xưởng", "florist ticket", "công thức định lượng BOM"],
+    keywords: ["phiếu chế tác", "thợ chế tác", "phiếu cắm hoa", "thợ cắm", "giấu giá", "ẩn giá", "phiếu xưởng", "florist ticket", "công thức định lượng BOM", "công thức hoa"],
     summary: "Hệ thống tự động trích xuất công thức định lượng BOM nguyên tử (BOM) và ảnh mẫu từ M01 sang phiếu xưởng, đồng thời ẩn 100% giá vốn và giá bán để bảo mật thông tin tài chính của cửa hàng.",
     steps: [
       "Vào mục 'Đơn hàng' trên thanh điều hướng bên trái",

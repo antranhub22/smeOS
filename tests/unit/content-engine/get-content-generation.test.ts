@@ -4,9 +4,12 @@ import type { TenantContext } from "@/core/tenancy"
 
 const findById = vi.fn()
 const findLatest = vi.fn()
-vi.mock("@/modules/content-engine/infra/content-generation-repository", () => ({
-  ContentGenerationRepository: vi.fn().mockImplementation(function () { return { findById, findLatest } }),
-}))
+vi.mock("@/modules/content-engine/infra/content-generation-repository", () => {
+  const mocked = {
+    ContentGenerationRepository: vi.fn().mockImplementation(function () { return { findById, findLatest } }),
+  }
+  return { ...mocked, getContentGenerationRepository: vi.fn(() => new mocked.ContentGenerationRepository()) }
+})
 
 import { findLatestContentGeneration, getContentGenerationById } from "@/modules/content-engine/use-cases/get-content-generation"
 

@@ -4,6 +4,10 @@ import type { IProductRepository, ProductEntity } from "../../domain/repositorie
 import { createProduct } from "../create-product"
 import { getProduct } from "../get-product"
 import { updateProduct } from "../update-product"
+import { saveRevision } from "../product-revisions"
+
+// Ghi lịch sử phiên bản đi qua repository riêng (DB) — unit test chỉ kiểm có gọi hay không.
+vi.mock("../product-revisions", () => ({ saveRevision: vi.fn().mockResolvedValue(undefined) }))
 
 const mockTenant: TenantContext = {
   organizationId: "org-1",
@@ -125,8 +129,10 @@ describe("Product Use Cases with Clean Repository", () => {
 
   it("updateProduct cập nhật sản phẩm thành công", async () => {
     const mockRepo = createMockProductRepo()
+    // Mẫu chính thức chỉ Điều hành (H3) sửa được — luật product-proposal
+    const executive = { ...mockTenant, capabilities: new Set([...mockTenant.capabilities, "H3"]) }
     const updated = await updateProduct(
-      mockTenant,
+      executive,
       "prod-1",
       {
         name: "Sản phẩm hồng đỏ cao cấp",
@@ -136,6 +142,7 @@ describe("Product Use Cases with Clean Repository", () => {
 
     expect(updated.name).toBe("Sản phẩm hồng đỏ cao cấp")
     expect(mockRepo.update).toHaveBeenCalled()
+    expect(saveRevision).toHaveBeenCalledWith(executive, expect.objectContaining({ id: "prod-1" }), "EDIT")
   })
 
   it("getPricingRules trả về cấu hình giá hiệu lực qua IPricingRuleRepository", async () => {

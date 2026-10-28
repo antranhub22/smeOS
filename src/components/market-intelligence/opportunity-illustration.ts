@@ -38,7 +38,7 @@ const CATEGORIES: IllustrationCategory[] = [
     ],
   },
   {
-    keywords: ["tốt nghiệp", "cử nhân", "sản phẩm"],
+    keywords: ["tốt nghiệp", "cử nhân", "bó hoa"],
     images: [
       {
         url: "https://images.unsplash.com/photo-1543409777-30250849aa3e?auto=format&fit=crop&w=600&q=80",

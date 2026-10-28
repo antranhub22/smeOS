@@ -150,7 +150,7 @@ function CreativeResultViewerBody({
   )
 
   // Trích xuất thông tin sản phẩm và topic
-  const productName = ctx?.productName || currentResult.topicTitle || "Bó sản phẩm thiết kế"
+  const productName = ctx?.productName || currentResult.topicTitle || "Sản phẩm thiết kế"
   const components =
     ctx?.commercialPassport?.components ||
     ctx?.report?.components?.map((c) => c.flowerType) ||

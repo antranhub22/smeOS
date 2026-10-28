@@ -61,7 +61,7 @@ describe("generate-catalog-content.use-case (Option B Full)", () => {
 
     expect(result.styleVariant).toBe("COMPACT_LIST")
     expect(result.badge).toContain("Đặt Nhanh")
-    expect(result.description).toContain("8 mẫu hoa")
+    expect(result.description).toContain("8 sản phẩm")
     expect(result.curatorNote).toContain("VAT")
   })
 })

@@ -9,12 +9,15 @@ const mockTenantContext: TenantContext = {
   capabilities: new Set(["H6"]),
 }
 
-vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
-  ProductCopyRepository: vi.fn().mockImplementation(function () { return {
-    approve: vi.fn(),
-    reject: vi.fn(),
-  } }),
-}))
+vi.mock("@/modules/product-copies/infra/product-copy-repository", () => {
+  const mocked = {
+    ProductCopyRepository: vi.fn().mockImplementation(function () { return {
+      approve: vi.fn(),
+      reject: vi.fn(),
+    } }),
+  }
+  return { ...mocked, getProductCopyRepository: vi.fn(() => new mocked.ProductCopyRepository()) }
+})
 
 vi.mock("@/modules/audit/use-cases/record-audit-log", () => ({
   recordAuditLog: vi.fn(),

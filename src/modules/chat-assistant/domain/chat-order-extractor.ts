@@ -170,9 +170,9 @@ export function extractOrderDraftFromChat(
   else if (lowerAll.includes("trắng") || lowerAll.includes("tinh khôi")) flowerStyleOrTone = "Tone Trắng tinh khôi thanh lịch"
   else if (lowerAll.includes("vàng") || lowerAll.includes("cam")) flowerStyleOrTone = "Tone Vàng cam may mắn"
   else if (lowerAll.includes("xanh")) flowerStyleOrTone = "Tone Xanh hy vọng"
-  else if (lowerAll.includes("tulip")) flowerStyleOrTone = "Sản phẩm Tulip Hà Lan"
-  else if (lowerAll.includes("hướng dương")) flowerStyleOrTone = "Sản phẩm Hướng Dương rạng rỡ"
-  else if (lowerAll.includes("hồng đỏ")) flowerStyleOrTone = "Sản phẩm Hồng đỏ Ecuador"
+  else if (lowerAll.includes("tulip")) flowerStyleOrTone = "Bó hoa Tulip Hà Lan"
+  else if (lowerAll.includes("hướng dương")) flowerStyleOrTone = "Bó hoa Hướng Dương rạng rỡ"
+  else if (lowerAll.includes("hồng đỏ")) flowerStyleOrTone = "Bó hoa Hồng đỏ Ecuador"
 
   return {
     recipientName,

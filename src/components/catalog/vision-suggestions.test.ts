@@ -14,7 +14,7 @@ const vision = {
 describe("vision-suggestions", () => {
   it("đổi kết quả phân tích thành giá trị từng trường", () => {
     const f = visionToFields(vision)
-    expect(f).toMatchObject({ name: "Bó hồng Juliet", category: "Bó sản phẩm", occasion: "Sinh nhật", style: "Lãng mạn" })
+    expect(f).toMatchObject({ name: "Bó hồng Juliet", category: "Bó hoa tươi", occasion: "Sinh nhật", style: "Lãng mạn" })
     expect(f.components).toBe("Hồng Juliet (~10 cành), Cát tường")
     expect(f.colors).toBe("Hồng pastel, Trắng")
     expect(f.description).toContain("Gồm Hồng Juliet")
