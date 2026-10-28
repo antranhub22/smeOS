@@ -2,17 +2,18 @@ import { expect, test } from "@playwright/test"
 import { createTestUserAndLogin } from "./helpers"
 
 test.describe("UX Role-based Homepage (03b Role UX §4)", () => {
-  test("vai Điều hành (dieu_hanh, PRODUCTION) vào trang chủ Journey-First của cửa hàng (ChoiceGrid)", async ({ page }) => {
+  test("vai Điều hành (dieu_hanh, PRODUCTION) vào trang chủ lựa chọn công việc của cửa hàng", async ({ page }) => {
     await createTestUserAndLogin(page, {
       roleKey: "dieu_hanh",
       workspaceKind: "PRODUCTION",
     })
     await page.goto("/")
 
-    // Từ 30/09/2026 (Journey-First, PO duyệt) trang chủ chủ tiệm là ChoiceGrid
-    // "Bạn muốn làm gì?" thay cho khối "Cần can thiệp" cũ.
+    // Trang chủ chủ tiệm: "Bạn muốn làm gì?" (Journey-First 30/09/2026); từ PO 27/10/2026 lưới lựa chọn
+    // là Thư viện công cụ chia theo nhóm (role-ux-catalog: TOOLKIT_HOME) thay cho thẻ "Xem báo cáo".
     await expect(page.getByRole("heading", { level: 1, name: /Bạn muốn làm gì/i })).toBeVisible({ timeout: 15_000 })
-    await expect(page.getByRole("heading", { level: 3, name: "Xem báo cáo" })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 2, name: /^Nhóm 1/ })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 3 }).first()).toBeVisible()
   })
 
   test("vai Bán hàng (sale, PRODUCTION) vào trang chủ Pipeline Workspace", async ({ page }) => {
@@ -35,7 +36,7 @@ test.describe("UX Role-based Homepage (03b Role UX §4)", () => {
     await page.goto("/")
 
     // PO 23/10/2026: mọi vai luôn thấy trang chủ sau đăng nhập; /dieu-phoi mở từ menu
-    await expect(page.getByText(/Bạn muốn làm gì cho hoạt động điện hoa/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole("heading", { level: 1, name: /Bạn muốn làm gì/i })).toBeVisible({ timeout: 15_000 })
     await expect(page).not.toHaveURL(/\/dieu-phoi/)
   })
 })
