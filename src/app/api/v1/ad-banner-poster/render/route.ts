@@ -1,3 +1,4 @@
+import { requireCapability } from "@/core/rbac/capabilities"
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -35,7 +36,8 @@ const renderSchema = z.object({
 })
 
 export const POST = handle(async (request) => {
-  await requireTenantContext(request)
+  const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "I1")
 
   const body = await request.json().catch(() => null)
   const parsed = renderSchema.safeParse(body)

@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { validationFailed } from "@/core/http/errors"
+import { notFound, validationFailed } from "@/core/http/errors"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
 
@@ -9,7 +10,8 @@ const statusSchema = z.object({
 })
 
 export const PATCH = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
-  await requireTenantContext(request)
+  const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
   const { id: partnershipId } = await context.params
   const body = await request.json().catch(() => null)
   const parsed = statusSchema.safeParse(body)
@@ -20,6 +22,9 @@ export const PATCH = handle<[{ params: Promise<{ id: string }> }]>(async (reques
   }
 
   const partnershipRepo = getChainPartnershipRepository()
+  // Chỉ chuỗi sở hữu quan hệ đối tác được đổi trạng thái; chuỗi khác → 404 (không lộ id tồn tại)
+  const partnership = await partnershipRepo.findPartnershipById(partnershipId)
+  if (!partnership || partnership.chainOrgId !== ctx.organizationId) throw notFound()
   const updated = await partnershipRepo.updateStatus(partnershipId, parsed.data.status)
 
   return jsonResponse({

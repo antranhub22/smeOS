@@ -5,6 +5,7 @@
  * Stores can view all data points the chain collects from them and the effective format.
  */
 
+import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"
@@ -13,6 +14,7 @@ import { getBranchRepository } from "@/modules/organization/infra/branch-reposit
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F1")
   const repo = new ChainCollectionProfileRepository()
 
   const url = new URL(request.url)

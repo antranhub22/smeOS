@@ -1,3 +1,4 @@
+import { requireCapability } from "@/core/rbac/capabilities"
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -15,6 +16,7 @@ const postSchema = z.object({
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "I1")
 
   const idempotencyKey = readIdempotencyKey(request)
   if (!idempotencyKey) {

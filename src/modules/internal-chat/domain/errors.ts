@@ -1,24 +1,30 @@
-export class ChatDomainError extends Error {
-  constructor(message: string, public readonly code: string) {
-    super(message)
+import { AppError, type ErrorCode } from "@/core/http/errors"
+
+/**
+ * Lỗi miền chat nội bộ — kế thừa AppError để route trả đúng mã HTTP (trước đây rơi vào 500).
+ * Không phải thành viên / cuộc hội thoại của tổ chức khác → 404, không lộ là cuộc hội thoại tồn tại.
+ */
+export class ChatDomainError extends AppError {
+  constructor(message: string, httpCode: ErrorCode, public readonly chatCode: string) {
+    super(httpCode, message)
     this.name = "ChatDomainError"
   }
 }
 
 export class ConversationNotFoundError extends ChatDomainError {
   constructor(conversationId: string) {
-    super(`Không tìm thấy cuộc hội thoại ID: ${conversationId}`, "CONVERSATION_NOT_FOUND")
+    super(`Không tìm thấy cuộc hội thoại ID: ${conversationId}`, "NOT_FOUND", "CONVERSATION_NOT_FOUND")
   }
 }
 
 export class ChatAccessDeniedError extends ChatDomainError {
-  constructor(reason = "Bạn không có quyền tham gia hoặc xem cuộc hội thoại này") {
-    super(reason, "CHAT_ACCESS_DENIED")
+  constructor(reason = "Không tìm thấy cuộc hội thoại") {
+    super(reason, "NOT_FOUND", "CHAT_ACCESS_DENIED")
   }
 }
 
 export class InvalidMessageContentError extends ChatDomainError {
   constructor(reason = "Nội dung tin nhắn không hợp lệ") {
-    super(reason, "INVALID_MESSAGE_CONTENT")
+    super(reason, "VALIDATION_FAILED", "INVALID_MESSAGE_CONTENT")
   }
 }

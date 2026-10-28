@@ -985,3 +985,35 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | GET · PATCH | `/platform/notification/visibility` | đọc: phiên nền tảng · ghi: `N2` | Ma trận hiển thị sự kiện theo tầng |
 | GET · POST · DELETE | `/platform/notification/hard-locks` | đọc: phiên nền tảng · ghi: `N2` | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
 | PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |
+
+## 27. Đối tác chuỗi, chat nội bộ, dữ liệu chuỗi, ảnh sản phẩm (26–28/10/2026)
+
+Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm trong danh sách nợ #170). Tổ chức khác → 404.
+
+| Phương thức | Đường dẫn | Năng lực | Ghi chú |
+|---|---|---|---|
+| POST | `/ad-banner-poster/copy` | `I1` | Sinh chữ cho banner quảng cáo |
+| POST | `/ad-banner-poster/render` | `I1` | Dựng ảnh banner |
+| GET · PUT | `/chain/collection-profile` | `F1` · `F2` | Hồ sơ thu thập dữ liệu chuỗi |
+| POST | `/chain/collection-profile/preview` | `F1` | Xem trước theo hồ sơ |
+| POST | `/chain/partner-stores` | `F2` | Tạo chi nhánh đối tác |
+| GET | `/chain/stores-data` | `F1` | Tóm tắt dữ liệu các cửa hàng của chuỗi |
+| GET | `/chain/stores-data/:id` | `F1` | Thư mục dữ liệu một cửa hàng; cửa hàng của tổ chức khác → 404 |
+| POST | `/coordinator/orders/:id/dispatch-to-chat` | `R3` | Đẩy thẻ đơn sang chat với đối tác; chỉ đối tác ACTIVE của chính chuỗi (người nhận phải thuộc đối tác), khác → 404 |
+| PATCH | `/coordinator/partners/:id/status` | `F2` | `{ status: ACTIVE\|SUSPENDED\|TERMINATED }`; chỉ chuỗi sở hữu quan hệ, khác → 404 |
+| GET · POST | `/internal-chat/conversations` | *(thành viên)* | GET: hội thoại mình tham gia. POST: tạo/lấy hội thoại; `orderId` của tổ chức khác hoặc `targetUserId` ngoài tổ chức/đối tác liên kết → 404 |
+| GET · POST | `/internal-chat/conversations/:id/messages` | *(người tham gia)* | Không phải người tham gia → 404 |
+| POST | `/internal-chat/messages/:id/action` | *(người tham gia)* | Bấm nút trên thẻ hành động |
+| GET | `/noi-bo/identity` | *(phiên)* | Danh tính nội bộ của phiên; lỗi không trả chi tiết/stack |
+| POST | `/organizations/current/language-unlock-request` | `F2` | Xin mở thêm ngôn ngữ |
+| GET | `/platform/orgs-data` | `N1` | Trung tâm dữ liệu xuyên tổ chức |
+| GET | `/platform/orgs-data/:id` | `N1` | |
+| GET | `/platform/orgs-data/:id/records/:id` | `N1` | |
+| GET | `/platform/orgs-data/:id/export` | `N1` | Tải ZIP (CSV + ảnh) |
+| GET | `/platform/pending-approvals` | `N1` | Tài khoản chờ duyệt |
+| GET · POST | `/product-image-set` | *(phiên)* · `I1` | GET: danh sách gói ảnh (tĩnh); POST: tạo bộ ảnh |
+| GET | `/product-image-set/:id` | `G1` | |
+| GET · POST | `/product-photo` | *(phiên)* · `I1` | GET: nền/tỉ lệ có sẵn (tĩnh); POST: tạo ảnh studio |
+| GET | `/product-photo/:id` | `G1` | |
+| POST | `/product-photo/:id/retry` | `I1` | |
+| GET | `/store/collection-transparency` | `F1` | Dữ liệu chuỗi đang thu của cửa hàng |

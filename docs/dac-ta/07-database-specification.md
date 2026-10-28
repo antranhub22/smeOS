@@ -2771,3 +2771,102 @@ model notification_inbox {
   @@index([user_id, organization_id, created_at])
 }
 ```
+
+
+## 34. Đối tác chuỗi và chat nội bộ (26/10/2026)
+
+`chain_partnerships`: quan hệ chuỗi ↔ cửa hàng đối tác (`chain_org_id`, `partner_org_id`), mỗi cặp một dòng. Chỉ chuỗi sở hữu quan hệ được đổi trạng thái / mở khoá công cụ; tổ chức khác → 404 (audit 28/10/2026).
+
+Chat nội bộ: `internal_chat_conversations` thuộc tổ chức tạo (`organization_id`); `internal_chat_participants` ghi người tham gia kèm tổ chức của họ (cho phép đối tác chuỗi cùng một luồng đơn); `internal_chat_messages` theo cuộc hội thoại. Chỉ người tham gia đọc/gửi tin; luồng đơn của tổ chức khác không tự tham gia được; chỉ mời được người của chính tổ chức hoặc chuỗi/đối tác đang liên kết ACTIVE. Ca thử: `tests/tenant/internal-chat-isolation.test.ts`.
+
+```prisma
+model chain_partnerships {
+  id               String   @id @default(uuid())
+  chain_org_id     String
+  partner_org_id   String
+  partner_code     String
+  partnership_type String   @default("SUBCONTRACTOR") // SUBCONTRACTOR | FRANCHISE | BRANCH
+  status           String   @default("ACTIVE")         // PENDING | ACTIVE | SUSPENDED | TERMINATED
+  capacity_daily   Int      @default(10)
+  commission_rate  Decimal?
+  contact_name     String?
+  contact_phone    String?
+  contact_email    String?
+  address          String?
+  province         String?
+  district         String?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  chain_organization   organizations @relation("ChainOrg", fields: [chain_org_id], references: [id], onDelete: Cascade)
+  partner_organization organizations @relation("PartnerOrg", fields: [partner_org_id], references: [id], onDelete: Cascade)
+
+  @@unique([chain_org_id, partner_code])
+  @@unique([chain_org_id, partner_org_id])
+  @@index([chain_org_id, status])
+  @@index([partner_org_id])
+}
+```
+
+```prisma
+model internal_chat_conversations {
+  id                String   @id @default(uuid())
+  organization_id   String
+  conversation_type String   // PLATFORM_TENANT | CHAIN_PARTNER | ORDER_THREAD
+  title             String?
+  order_id          String?
+  metadata          Json     @default("{}")
+  created_by        String   // user_id of creator
+  last_message_at   DateTime @default(now())
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  organization organizations                @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  participants internal_chat_participants[]
+  messages     internal_chat_messages[]
+
+  @@index([organization_id, conversation_type])
+  @@index([order_id])
+}
+```
+
+```prisma
+model internal_chat_participants {
+  id              String   @id @default(uuid())
+  conversation_id String
+  user_id         String
+  organization_id String
+  role_in_chat    String   @default("MEMBER") // OWNER | ADMIN | MEMBER | GUEST_PARTNER
+  last_read_at    DateTime @default(now())
+  is_muted        Boolean  @default(false)
+  joined_at       DateTime @default(now())
+
+  conversation internal_chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user         users                       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([conversation_id, user_id])
+  @@index([user_id, organization_id])
+}
+```
+
+```prisma
+model internal_chat_messages {
+  id              String   @id @default(uuid())
+  conversation_id String
+  sender_user_id  String
+  sender_role     String
+  message_type    String   @default("TEXT") // TEXT | IMAGE | ACTION_CARD_ORDER | ACTION_CARD_QC | SYSTEM_NOTICE
+  content         String   @default("")
+  attachments     String[] @default([])
+  action_payload  Json?
+  is_deleted      Boolean  @default(false)
+  created_at      DateTime @default(now())
+
+  conversation internal_chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  sender       users                       @relation("ChatSender", fields: [sender_user_id], references: [id], onDelete: Cascade)
+
+  @@index([conversation_id, created_at])
+}
+```
+

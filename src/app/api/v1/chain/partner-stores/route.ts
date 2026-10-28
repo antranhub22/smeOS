@@ -4,6 +4,7 @@
  * Implements registration of a partner / franchise store bound by a Data Sharing Agreement (DSA).
  */
 
+import { requireCapability } from "@/core/rbac/capabilities"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -21,6 +22,7 @@ const schema = z.object({
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
 
   const parsed = schema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) {

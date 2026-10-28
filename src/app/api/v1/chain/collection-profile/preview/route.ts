@@ -7,6 +7,7 @@
  * - Calculates affected store counts and risk classification (R1 vs R2)
  */
 
+import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"
@@ -15,6 +16,7 @@ import { type CollectionRule } from "@/modules/field-platform/domain/chain-colle
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F1")
   const repo = new ChainCollectionProfileRepository()
 
   const body = (await request.json()) as { rules?: CollectionRule[] }
