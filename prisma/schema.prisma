@@ -3257,6 +3257,7 @@ model notification_user_preferences {
 
   @@unique([user_id, organization_id, event_key, channel])
   @@index([user_id, organization_id])
+  @@index([organization_id])
 }
 
 model notification_inbox {
@@ -3275,6 +3276,7 @@ model notification_inbox {
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([user_id, organization_id, is_read])
+  @@index([organization_id])
   @@index([user_id, organization_id, created_at])
 }
 

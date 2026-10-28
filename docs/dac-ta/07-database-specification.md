@@ -2648,7 +2648,7 @@ model product_import_batches {
 
 Migration `20261027000000_notification_system`. Ba bảng cấp nền tảng (không có `organization_id`, chỉ SaaS Mother ghi qua `/platform/notification/*`): kích hoạt kênh, hiển thị sự kiện theo tầng, khoá cứng. Bốn bảng tenant lọc theo `organization_id` của phiên.
 
-Khoá cứng (`notification_hard_locks.scope_id`) chỉ áp đúng phạm vi đã đặt: `MOTHER` → `"GLOBAL"`; `INDUSTRY`/`CHAIN` → tổ chức đặt khoá và cửa hàng trực thuộc; `STORE` → chính cửa hàng (audit AUD-014, 28/10/2026). Còn mở: thiếu `@@index([organization_id])` riêng trên `notification_inbox` và `notification_user_preferences` (AUD-008, chờ PO duyệt thay đổi lược đồ).
+Khoá cứng (`notification_hard_locks.scope_id`) chỉ áp đúng phạm vi đã đặt: `MOTHER` → `"GLOBAL"`; `INDUSTRY`/`CHAIN` → tổ chức đặt khoá và cửa hàng trực thuộc; `STORE` → chính cửa hàng (audit AUD-014, 28/10/2026). Migration `20261028000000_notification_org_index_and_names` (PO duyệt 28/10/2026): thêm `@@index([organization_id])` cho `notification_inbox` và `notification_user_preferences` (AUD-008), đổi tên chỉ mục/ràng buộc về đúng tên Prisma (AUD-032) — idempotent.
 
 ```prisma
 model notification_channel_activations {
@@ -2746,6 +2746,7 @@ model notification_user_preferences {
 
   @@unique([user_id, organization_id, event_key, channel])
   @@index([user_id, organization_id])
+  @@index([organization_id])
 }
 ```
 
@@ -2766,6 +2767,7 @@ model notification_inbox {
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([user_id, organization_id, is_read])
+  @@index([organization_id])
   @@index([user_id, organization_id, created_at])
 }
 ```
