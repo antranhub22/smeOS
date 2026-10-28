@@ -8,6 +8,7 @@
  */
 "use client"
 
+import { PreviewNotice } from "@/components/ui/preview-notice"
 import { useState, useMemo } from "react"
 import {
   BellRing,
@@ -138,6 +139,9 @@ export function NotificationMatrixPage({
 
   return (
     <div className="flex flex-col gap-6 p-6 max-w-7xl mx-auto w-full">
+      <PreviewNotice>
+        Cài đặt được lưu, nhưng hệ thống chưa tự gửi thông báo theo ma trận này. Các thông báo hiện có (Thẻ chào, điều phối) vẫn chạy theo cài đặt riêng của từng chức năng.
+      </PreviewNotice>
       {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl border border-border bg-surface shadow-xs">
         <div>

@@ -14,6 +14,7 @@
  */
 "use client"
 
+import { PreviewNotice } from "@/components/ui/preview-notice"
 import { useState } from "react"
 import { GovernanceMatrixTable } from "@/components/governance/governance-matrix-table"
 import type {
@@ -127,6 +128,8 @@ export function TierGovernanceMatrixClient({
         <h1 className="text-display font-extrabold text-text">{title}</h1>
         <p className="text-body-sm text-text-muted mt-1">{description}</p>
       </div>
+
+      <PreviewNotice>Thay đổi trên ma trận này chưa được lưu và chưa áp vào giá, thanh toán hay chính sách đơn hàng — tải lại trang sẽ trở về mặc định.</PreviewNotice>
 
       <GovernanceMatrixTable
         state={currentState}

@@ -1,5 +1,6 @@
 "use client"
 
+import { PreviewNotice } from "@/components/ui/preview-notice"
 import React, { useState } from "react"
 import { Shield, Sparkles, X, Check, CheckCircle2 } from "lucide-react"
 import { STORE_NAV_ENTRIES } from "@/components/layout/nav/nav-store"
@@ -115,6 +116,10 @@ export function PartnerToolMatrixModal({
             {errorMsg}
           </div>
         )}
+
+        <div className="mt-3">
+          <PreviewNotice>Danh sách này chỉ ẩn/hiện công cụ trên thanh điều hướng của cửa hàng, chưa chặn truy cập trực tiếp.</PreviewNotice>
+        </div>
 
         {/* Quick action bar */}
         <div className="flex items-center justify-between py-3 border-b border-neutral-100 text-xs">

@@ -4,6 +4,7 @@
  */
 "use client"
 
+import { PreviewNotice } from "@/components/ui/preview-notice"
 import { useState } from "react"
 import { GovernanceMatrixTable } from "@/components/governance/governance-matrix-table"
 import type { GovernanceMatrixState, GovernanceMatrixGroup } from "@/components/governance/governance-matrix-types"
@@ -121,6 +122,8 @@ export function MotherGovernanceMatrixClient({
           {currentInfo.desc}
         </p>
       </div>
+
+      <PreviewNotice>Thay đổi trên ma trận này chưa được lưu và chưa áp vào giá, thanh toán hay chính sách đơn hàng — tải lại trang sẽ trở về mặc định.</PreviewNotice>
 
       {/* Bảng Ma Trận Quản Trị Tương Ứng — Hoàn toàn đọc từ SSOT Registry */}
       <GovernanceMatrixTable
