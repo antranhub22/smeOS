@@ -84,7 +84,7 @@ export function UiSystemProvider({
 
   const currentPreset = useMemo(() => getUiPreset(config.preset), [config.preset])
 
-  // Detect platform scope từ URL path
+  // Detect platform scope từ URL path (dùng cho badge "Gợi ý cho")
   const platformScope = useMemo<UiPresetScope>(() => {
     if (typeof window === "undefined") return "all"
     const path = window.location.pathname
@@ -92,13 +92,11 @@ export function UiSystemProvider({
     return "saas-mother"
   }, [])
 
-  // Filter presets hiển thị theo scope: 'all' luôn show, scope-specific chỉ show đúng platform
+  // Hiển thị TẤT CẢ presets — scope chỉ là gợi ý, không ẩn preset
+  // Preset có scope trùng với platform hiện tại được đánh dấu "Gợi ý"
   const availablePresets = useMemo(
-    () =>
-      Object.values(UI_PRESETS).filter(
-        (p) => p.scope === "all" || p.scope === platformScope
-      ),
-    [platformScope]
+    () => Object.values(UI_PRESETS),
+    []
   )
 
   const value = useMemo<UiSystemContextValue>(

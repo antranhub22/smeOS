@@ -133,9 +133,17 @@ export function UiStudioDrawer() {
                                     Mặc định
                                   </span>
                                 )}
-                                {scopeLabel && (
-                                  <span className="text-caption font-medium px-2 py-0.5 rounded-full bg-surface-alt border border-border text-text-muted">
-                                    {scopeLabel}
+                                {preset.scope !== "all" && (
+                                  <span
+                                    className={`text-caption font-medium px-2 py-0.5 rounded-full border ${
+                                      preset.scope === "saas-mother"
+                                        ? "bg-indigo-50 border-indigo-200 text-indigo-600"
+                                        : "bg-amber-50 border-amber-200 text-amber-700"
+                                    }`}
+                                  >
+                                    {preset.scope === "saas-mother"
+                                      ? "✦ SaaS Mother"
+                                      : "✦ ChainOS / StoreOS"}
                                   </span>
                                 )}
                               </div>
