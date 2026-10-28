@@ -2642,3 +2642,130 @@ model product_import_batches {
   @@index([organization_id, created_at])
 }
 ```
+
+
+## 33. Thông báo đa tầng (`notification`, 27/10/2026)
+
+Migration `20261027000000_notification_system`. Ba bảng cấp nền tảng (không có `organization_id`, chỉ SaaS Mother ghi qua `/platform/notification/*`): kích hoạt kênh, hiển thị sự kiện theo tầng, khoá cứng. Bốn bảng tenant lọc theo `organization_id` của phiên.
+
+Khoá cứng (`notification_hard_locks.scope_id`) chỉ áp đúng phạm vi đã đặt: `MOTHER` → `"GLOBAL"`; `INDUSTRY`/`CHAIN` → tổ chức đặt khoá và cửa hàng trực thuộc; `STORE` → chính cửa hàng (audit AUD-014, 28/10/2026). Còn mở: thiếu `@@index([organization_id])` riêng trên `notification_inbox` và `notification_user_preferences` (AUD-008, chờ PO duyệt thay đổi lược đồ).
+
+```prisma
+model notification_channel_activations {
+  channel     String   // APP_INBOX | EMAIL | PUSH | TELEGRAM | ZALO | SMS | WHATSAPP | MESSENGER
+  activated   Boolean  @default(false)
+  updated_by  String   // platform_admin user_id
+  updated_at  DateTime @updatedAt
+
+  @@id([channel])
+}
+```
+
+```prisma
+model notification_event_visibility {
+  event_key   String
+  tier        String   // INDUSTRY | CHAIN | STORE
+  visible     Boolean  @default(true)
+  updated_by  String
+  updated_at  DateTime @updatedAt
+
+  @@id([event_key, tier])
+}
+```
+
+```prisma
+model notification_hard_locks {
+  id          String   @id @default(uuid())
+  event_key   String
+  channel     String
+  tier        String   // MOTHER | INDUSTRY | CHAIN | STORE
+  scope_id    String   // organization_id hoặc "GLOBAL" nếu tier = MOTHER
+  enabled     Boolean  // true = bắt buộc BẬT | false = bắt buộc TẮT
+  locked_by   String   // user_id người đặt khóa
+  reason      String?  // Lý do khóa
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@unique([event_key, channel, tier, scope_id])
+  @@index([tier, scope_id])
+}
+```
+
+```prisma
+model notification_org_policies {
+  id                String   @id @default(uuid())
+  organization_id   String
+  event_key         String
+  channel           String
+  role_key          String   // RoleUxKey hoặc "*" cho all roles
+  enabled           Boolean  @default(true)
+  priority_override String?  // NORMAL | URGENT | CRITICAL
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, event_key, channel, role_key])
+  @@index([organization_id])
+}
+```
+
+```prisma
+model notification_store_defaults {
+  id              String   @id @default(uuid())
+  organization_id String
+  event_key       String
+  channel         String
+  role_key        String
+  enabled         Boolean  @default(true)
+  schedule_start  String?  // "08:00"
+  schedule_end    String?  // "22:00"
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, event_key, channel, role_key])
+  @@index([organization_id, role_key])
+}
+```
+
+```prisma
+model notification_user_preferences {
+  id              String    @id @default(uuid())
+  user_id         String
+  organization_id String
+  event_key       String
+  channel         String
+  enabled         Boolean
+  mute_until      DateTime?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, organization_id, event_key, channel])
+  @@index([user_id, organization_id])
+}
+```
+
+```prisma
+model notification_inbox {
+  id              String    @id @default(uuid())
+  user_id         String
+  organization_id String
+  event_key       String
+  title           String
+  message         String
+  deep_link       String?
+  priority        String    @default("NORMAL")
+  is_read         Boolean   @default(false)
+  read_at         DateTime?
+  created_at      DateTime  @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, organization_id, is_read])
+  @@index([user_id, organization_id, created_at])
+}
+```

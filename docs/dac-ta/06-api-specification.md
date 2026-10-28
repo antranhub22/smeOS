@@ -955,3 +955,27 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | GET | `/platform/nav-matrix` | *(phiên nền tảng)* | Ma trận điều hướng mặc định theo ngành và các ghi đè đang áp dụng |
 | PUT | `/platform/nav-matrix` | `N12` | `{ overrides: { [industryKey]: navKey[] } }` — ẩn mục điều hướng theo ngành, áp cho mọi tổ chức của ngành đó. Ghi nhật ký kiểm toán nền tảng |
 | PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |
+
+
+## Thông báo đa tầng (27/10/2026)
+
+Bảng `notification_*` (đặc tả 07 mục 33). Route ghi cấu hình cấp tổ chức **chưa có mã năng lực** — AUD-002/AUD-004 (P1), chờ PO chốt mã; tạm khai trong `NO_CAPABILITY_GUARD`.
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/notification/events` | — (phiên tenant) | Danh mục sự kiện hiển thị cho tầng `?tier=` (mặc định `STORE`), đã áp ma trận hiển thị của SaaS Mother |
+| GET | `/notification/channels` | — (phiên tenant) | Trạng thái bật/tắt kênh toàn sàn (chỉ đọc) |
+| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page`, `limit` (≤ 100), `unreadOnly` |
+| PATCH | `/notification/inbox/:id/read` | — (của chính mình) | Đánh dấu đã đọc; tin của người/tổ chức khác → không đổi |
+| POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |
+| GET | `/notification/stream` | — (của chính mình) | SSE tin mới; ping 25 giây. Hub trong bộ nhớ tiến trình (AUD-007) |
+| GET · PATCH | `/notification/preferences` | — (của chính mình) | Tuỳ chọn theo sự kiện × kênh; sự kiện bị khoá cứng trong phạm vi của tổ chức → 403 |
+| GET · PATCH | `/notification/org-policy` | **chưa có** (AUD-002) | Chính sách tổ chức theo sự kiện × kênh × vai (`roleKey`, `*` = mọi vai) |
+| GET · PATCH | `/notification/store-defaults` | **chưa có** (AUD-002) | Mặc định cửa hàng theo vai, có khung giờ |
+| GET · POST · DELETE | `/notification/org-hard-locks` | **chưa có** (AUD-002) | Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên |
+| GET · POST · DELETE | `/notification/store-hard-locks` | **chưa có** (AUD-002) | Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên |
+| GET | `/platform/notification/events` | phiên nền tảng | Toàn bộ danh mục sự kiện |
+| GET · PATCH | `/platform/notification/channels` | phiên nền tảng (AUD-003) | Bật/tắt kênh toàn sàn |
+| GET · PATCH | `/platform/notification/visibility` | phiên nền tảng (AUD-003) | Ma trận hiển thị sự kiện theo tầng |
+| GET · POST · DELETE | `/platform/notification/hard-locks` | phiên nền tảng (AUD-003) | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
+| PATCH | `/coordinator/partners/:id/tools` | **chưa có** (AUD-004) | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |

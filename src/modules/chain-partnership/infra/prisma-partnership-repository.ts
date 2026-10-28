@@ -213,7 +213,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     const trimmed = identifier.trim().toLowerCase()
 
     // 1. Thử tìm qua slug hoặc tên tổ chức
-    let org = await this.prisma.organizations.findFirst({
+    const org = await this.prisma.organizations.findFirst({
       where: {
         OR: [{ slug: trimmed }, { name: { equals: identifier.trim(), mode: "insensitive" } }],
       },
@@ -326,9 +326,9 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     row: any,
     partnerOrgName?: string,
     partnerOrgSlug?: string,
-    partnerSettings?: any
+    partnerSettings?: unknown
   ): ChainPartnershipEntity {
-    const s = partnerSettings && typeof partnerSettings === "object" ? partnerSettings : {}
+    const s = partnerSettings && typeof partnerSettings === "object" ? (partnerSettings as Record<string, unknown>) : {}
     const unlocked = Array.isArray(s.unlocked_tools)
       ? (s.unlocked_tools as unknown[]).filter((x): x is string => typeof x === "string")
       : null

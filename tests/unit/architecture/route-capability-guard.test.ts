@@ -19,6 +19,8 @@ const GUARD =
   /\b(requireCapability|hasCapability|requireExecutiveRole|requirePlatformCapability|requirePlatformContext|requireIntegrationContext|requireIntegrationClient)\(|\bcapabilities\.has\(/
 
 const DEBT_170 = "nợ #170 — chưa gác mã năng lực, chờ PO chốt mã"
+/** Audit 28/10/2026 (docs/audit/05-revision-plan.md): route ghi cấu hình cấp tổ chức, chưa có mã năng lực. */
+const AUD_002 = "AUD-002/AUD-004 (P1) — ghi cấu hình cấp tổ chức, chờ PO chốt mã năng lực"
 
 /** Route không gọi gác quyền nào — có chủ đích hoặc đang là nợ. */
 const NO_CAPABILITY_GUARD: Record<string, string> = {
@@ -42,6 +44,20 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "field-config/catalogs": "chỉ đọc nhãn danh mục đang active cho form nhập liệu (ĐP-4a.1)",
   "chat/public/widget": "widget chat công khai trên website ngoài — tổ chức suy từ slug (đặc tả 06 mục 17)",
   "media/background-removal": "đã đóng ở P24 — luôn trả 409",
+  // Thông báo của CHÍNH người dùng — truy vấn luôn lọc theo user + tổ chức của phiên.
+  "notification/inbox": "hộp thư thông báo của chính mình (lọc user_id + organization_id của phiên)",
+  "notification/inbox/[id]/read": "đánh dấu đã đọc tin của chính mình",
+  "notification/inbox/mark-all-read": "đánh dấu đã đọc tin của chính mình",
+  "notification/preferences": "tuỳ chọn nhận thông báo của chính mình",
+  "notification/stream": "luồng SSE tin của chính mình",
+  "notification/events": "chỉ đọc danh mục sự kiện tĩnh",
+  "notification/channels": "chỉ đọc trạng thái bật kênh toàn sàn",
+  // Audit 28/10/2026 — còn mở, xem AUD_002.
+  "notification/org-policy": AUD_002,
+  "notification/store-defaults": AUD_002,
+  "notification/org-hard-locks": AUD_002,
+  "notification/store-hard-locks": AUD_002,
+  "coordinator/partners/[id]/tools": AUD_002,
   // Nợ #170.
   "content-engine/catalog-generate": DEBT_170,
   "content-engine/landing-generate": DEBT_170,

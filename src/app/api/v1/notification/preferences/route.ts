@@ -43,7 +43,8 @@ export const PATCH = handle(async (request) => {
     locks,
     body.eventKey,
     body.channel as NotifyChannel,
-    "STORE"
+    "STORE",
+    { storeOrgId: ctx.organizationId }
   )
 
   if (appliedLock) {

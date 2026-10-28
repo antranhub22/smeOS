@@ -10,6 +10,7 @@ import { log } from "@/core/observability/log"
 import { sendEmail } from "@/core/notifications/email-service"
 import type { INotificationChannelAdapter } from "./_channel-adapter.interface"
 import type { NotificationPayload, ChannelSendResult } from "../../domain/notification-payload"
+import { escapeNotificationHtml, safeHttpLink } from "../../domain/notification-text"
 
 export class EmailNotificationAdapter implements INotificationChannelAdapter {
   readonly channel = "EMAIL" as const
@@ -28,14 +29,16 @@ export class EmailNotificationAdapter implements INotificationChannelAdapter {
     }
 
     try {
+      const title = escapeNotificationHtml(payload.title)
+      const link = safeHttpLink(payload.deepLink)
       const htmlContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #1a1a1a;">${payload.title}</h2>
-          <p style="color: #4a4a4a; line-height: 1.6;">${payload.message}</p>
+          <h2 style="color: #1a1a1a;">${title}</h2>
+          <p style="color: #4a4a4a; line-height: 1.6;">${escapeNotificationHtml(payload.message)}</p>
           ${
-            payload.deepLink
+            link
               ? `<div style="margin-top: 24px;">
-                   <a href="${payload.deepLink}" style="background-color: #2563eb; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                   <a href="${escapeNotificationHtml(link ?? "")}" style="background-color: #2563eb; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
                      Xem chi tiết
                    </a>
                  </div>`
@@ -55,8 +58,9 @@ export class EmailNotificationAdapter implements INotificationChannelAdapter {
         success: true,
       }
     } catch (err) {
+      // Không ghi địa chỉ email vào log (dữ liệu cá nhân)
       log.warn("Lỗi gửi Email notification", {
-        email,
+        userId: payload.recipient.userId,
         error: err instanceof Error ? err.message : String(err),
       })
       return {

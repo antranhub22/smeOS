@@ -389,7 +389,7 @@ export function buildStoreNav(
 ): NavView {
   const baseEntries = adaptStoreEntries(industryKey)
   const extraHidden = new Set<string>(navHiddenKeys ?? [])
-  const hasWhitelist = unlockedToolKeys && unlockedToolKeys.length > 0
+  const hasWhitelist = Array.isArray(unlockedToolKeys) // [] = cấp trên khoá hết, chỉ null mới là mặc định
   const allowedWhitelist = new Set<string>(unlockedToolKeys ?? [])
 
   const entries = baseEntries.filter((e) => {

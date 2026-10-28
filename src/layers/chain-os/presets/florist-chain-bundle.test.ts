@@ -7,13 +7,15 @@
 import { describe, it, expect } from "vitest"
 import { FloristChainEngine } from "./florist-chain-bundle"
 import type { SubcontractOrderPayload } from "@/layers/contracts"
+import { FLORAL_INDUSTRY } from "@/modules/organization/domain/industries/floral"
 
 describe("FloristChainEngine — ChainOS Bundle Test", () => {
   const engine = new FloristChainEngine()
 
   it("sử dụng đúng đặc tả ngành FLORAL", () => {
     expect(engine.industry.identity.key).toBe("FLORAL")
-    expect(engine.industry.terminology.makerTitle).toBe("Thợ cắm hoa")
+    // Thuật ngữ lấy từ SSOT ngành (chuẩn hoá đa ngành 26/10/2026), không viết cứng ở đây
+    expect(engine.industry.terminology.makerTitle).toBe(FLORAL_INDUSTRY.terminology.makerTitle)
   })
 
   it("tính phí gia công cắm hoa chuẩn xác", () => {

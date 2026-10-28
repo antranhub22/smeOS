@@ -26,9 +26,9 @@ export function PartnerToolMatrixModal({
     (e) => e.group === "cong-cu" && e.navKey !== "toolkit"
   )
 
-  // Nếu initialUnlockedTools là null hoặc rỗng -> mặc định chọn tất cả
+  // Chưa cấu hình (null) -> mặc định chọn tất cả; mảng rỗng nghĩa là đã khoá hết
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => {
-    if (initialUnlockedTools && initialUnlockedTools.length > 0) {
+    if (Array.isArray(initialUnlockedTools)) {
       return new Set(initialUnlockedTools)
     }
     return new Set(availableTools.map((t) => t.navKey))
