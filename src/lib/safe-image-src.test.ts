@@ -12,4 +12,8 @@ describe("safeImageSrc", () => {
       expect(safeImageSrc(bad)).toBe("")
     }
   })
+  it("mã hoá ký tự meta HTML, giữ nguyên query ký số", () => {
+    expect(safeImageSrc('https://cdn.vi-du.test/a.png?x="><b>')).toBe("https://cdn.vi-du.test/a.png?x=%22%3E%3Cb%3E")
+    expect(safeImageSrc("/api/v1/storage/a.png?exp=1&sig=ab")).toBe("/api/v1/storage/a.png?exp=1&sig=ab")
+  })
 })

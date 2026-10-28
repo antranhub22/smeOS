@@ -8,5 +8,7 @@ const SAFE_IMAGE_SRC = /^(blob:|data:image\/[a-z0-9.+-]+;|https?:\/\/|\/(?!\/))/
 export function safeImageSrc(raw: string | null | undefined): string {
   if (!raw) return ""
   const value = raw.trim()
-  return SAFE_IMAGE_SRC.test(value) ? value : ""
+  if (!SAFE_IMAGE_SRC.test(value)) return ""
+  // Mã hoá ký tự meta HTML — URL hợp lệ không chứa chúng ở dạng thô (không đụng tới & của query ký số)
+  return value.replace(/[<>"']/g, (c) => encodeURIComponent(c))
 }
