@@ -1,6 +1,5 @@
 "use client"
 
-import { PreviewNotice } from "@/components/ui/preview-notice"
 import React, { useState } from "react"
 import { Shield, X, Check } from "lucide-react"
 import { STORE_NAV_ENTRIES } from "@/components/layout/nav/nav-store"
@@ -127,7 +126,7 @@ export function PartnerToolMatrixModal({
         )}
 
         <div className="mt-3">
-          <PreviewNotice>Danh sách này chỉ ẩn/hiện công cụ trên thanh điều hướng của cửa hàng, chưa chặn truy cập trực tiếp.</PreviewNotice>
+          <p className="text-caption text-text-muted mt-2">Công cụ bị khoá sẽ ẩn khỏi menu và không mở được kể cả khi gõ thẳng địa chỉ.</p>
         </div>
 
         {/* Quick action bar */}
