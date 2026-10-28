@@ -54,17 +54,17 @@ export function MobileNavDrawer({ children }: { children: React.ReactNode }) {
   return (
     <MobileNavContext.Provider value={api}>
       {ownHeaders === 0 && (
-        <header className="sticky top-0 z-30 flex h-12 flex-shrink-0 items-center gap-2 border-b border-border bg-surface px-2 md:hidden">
+        <header className="sticky top-0 z-30 flex h-13 flex-shrink-0 items-center gap-2.5 border-b border-border/80 bg-surface/95 backdrop-blur-md px-3 pt-[env(safe-area-inset-top)] md:hidden">
           <button
             type="button"
             onClick={api.openMenu}
             aria-label="Mở menu"
             aria-expanded={open}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-text hover:bg-surface-alt active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all cursor-pointer"
           >
             <Menu size={22} />
           </button>
-          <span className="truncate text-body-sm font-bold text-text">
+          <span className="truncate text-title-sm font-bold text-text">
             {(orgName || "smeOS").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
           </span>
         </header>
@@ -74,14 +74,14 @@ export function MobileNavDrawer({ children }: { children: React.ReactNode }) {
 
       {open && (
         <div ref={drawerRef} className="fixed inset-0 z-50 flex md:hidden" role="dialog" aria-modal="true" aria-label="Menu điều hướng">
-          <div className="flex animate-in slide-in-from-left duration-200">
+          <div className="flex animate-in slide-in-from-left duration-200 z-10 shadow-2xl">
             <DesktopNav drawer onNavigate={close} onClose={close} />
           </div>
           <button
             type="button"
             aria-label="Đóng menu"
             onClick={close}
-            className="flex-1 bg-black/40 animate-in fade-in duration-200"
+            className="flex-1 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200 cursor-pointer"
           />
         </div>
       )}

@@ -44,24 +44,28 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <SessionProvider session={session}>
       <I18nProvider industryKey={session.organization?.industry}>
         <LiveRegionProvider>
-          <a
-            href="#noi-dung-chinh"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            Bỏ qua tới nội dung
-          </a>
-          <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-none md:flex-row">
-            <MobileNavDrawer>
-              <DesktopNav isDev={process.env.NODE_ENV !== "production"} />
-              <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-hidden focus:outline-none">
-                {children}
-              </div>
-            </MobileNavDrawer>
-            <BottomNav />
-          </div>
-          <GlobalImageZoom />
-          <SessionTakeoverWatcher />
-          <FloraOSGlobalCopilot />
+            <a
+              href="#noi-dung-chinh"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Bỏ qua tới nội dung
+            </a>
+            <div className="mx-auto flex min-h-dvh w-full flex-col md:flex-row">
+              <MobileNavDrawer>
+                <DesktopNav isDev={process.env.NODE_ENV !== "production"} />
+                <div
+                  id="noi-dung-chinh"
+                  tabIndex={-1}
+                  className="min-h-0 min-w-0 flex-1 focus:outline-none pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0"
+                >
+                  {children}
+                </div>
+              </MobileNavDrawer>
+              <BottomNav />
+            </div>
+            <GlobalImageZoom />
+            <SessionTakeoverWatcher />
+            <FloraOSGlobalCopilot />
         </LiveRegionProvider>
       </I18nProvider>
     </SessionProvider>

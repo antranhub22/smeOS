@@ -88,8 +88,8 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
       title="Kết Nối Cửa Hàng Đối Tác / Nhượng Quyền (Kèm Thỏa Thuận DSA)"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-900 flex items-start gap-2.5">
-          <Handshake size={18} className="shrink-0 mt-0.5 text-amber-700" />
+        <div className="p-3.5 rounded-xl bg-warning-bg border border-warning-border text-warning-text flex items-start gap-2.5">
+          <Handshake size={18} className="shrink-0 mt-0.5 text-warning" />
           <p className="text-caption leading-relaxed">
             Áp dụng cho cửa hàng thuộc pháp nhân khác (§4.3). Dữ liệu thu thập bị giới hạn bởi <strong>Thỏa thuận chia sẻ dữ liệu (DSA)</strong> để bảo vệ bí mật kinh doanh và thông tin cá nhân của đối tác.
           </p>
@@ -173,7 +173,7 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
             <span>Cam kết giới hạn chia sẻ dữ liệu (DSA Ceilings):</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-caption">
             <div className="space-y-1">
               <span className="font-semibold text-text-muted">Giá bán sản phẩm:</span>
               <select

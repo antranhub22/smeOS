@@ -27,12 +27,12 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
           className={`p-4 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
             config.reconciliationMode === "MANUAL_PROOF"
               ? "border-primary bg-primary/5"
-              : "border-border bg-background hover:bg-surface-alt"
+              : "border-border bg-surface hover:bg-surface-alt"
           }`}
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold text-text">Xác nhận bằng chứng từ thủ công</p>
+              <p className="text-body-sm font-bold text-text">Xác nhận bằng chứng từ thủ công</p>
               <p className="text-caption text-text-muted mt-1 leading-relaxed">
                 Khách chuyển khoản rồi tải ảnh bill hoặc bấm "Tôi đã chuyển". Nhân viên đối soát sao kê app và bấm Duyệt tiền.
               </p>
@@ -51,14 +51,14 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
           className={`p-4 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
             config.reconciliationMode === "AUTO_WEBHOOK"
               ? "border-primary bg-primary/5"
-              : "border-border bg-background hover:bg-surface-alt"
+              : "border-border bg-surface hover:bg-surface-alt"
           }`}
         >
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1.5">
-                <p className="text-xs font-bold text-text">Tự động khớp lệnh tức thì (Webhook)</p>
-                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-600">
+                <p className="text-body-sm font-bold text-text">Tự động khớp lệnh tức thì (Webhook)</p>
+                <span className="text-caption font-bold px-1.5 py-0.5 rounded-full bg-success-bg text-success border border-success-border">
                   Khuyên dùng
                 </span>
               </div>

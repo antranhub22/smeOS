@@ -1,3 +1,4 @@
+import { getDictionary, translate } from "@/lib/i18n/server"
 import { cookies } from "next/headers"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
 import { PosterBannerClient } from "@/components/ad-banner-poster/poster-banner-client"
@@ -8,6 +9,7 @@ export const metadata = {
 }
 
 export default async function PosterBannerPage() {
+  const dict = getDictionary("vi")
   const cookieStore = await cookies()
   const cookieHeader = cookieStore
     .getAll()

@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import {
@@ -21,6 +22,7 @@ import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-
 import type { ChannelConfig } from "@/modules/chat-assistant/domain/channel-integration-types"
 
 export default function ChatChannelsIntegrationPage() {
+  const { t } = useI18n()
   const [channels, setChannels] = useState<ChannelStatusItem[]>([])
   const [loading, setLoading] = useState(true)
   const [updatingChannel, setUpdatingChannel] = useState<string | null>(null)

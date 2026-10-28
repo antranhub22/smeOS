@@ -36,19 +36,19 @@ export function ManualEditPanel({
             type="button"
             disabled={isAiLoading}
             onClick={onTriggerAiCopy}
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline disabled:opacity-50"
+            className="inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline disabled:opacity-50"
           >
             {isAiLoading ? (
               <Loader2 className="h-3 w-3 animate-spin" />
             ) : (
-              <Sparkles className="h-3 w-3 text-amber-500" />
+              <Sparkles className="h-3 w-3 text-warning" />
             )}
             <span>AI viết lại</span>
           </button>
         </div>
 
         <div>
-          <label className="text-[11px] text-text-muted block mb-1">
+          <label className="text-caption text-text-muted block mb-1">
             Tiêu đề chính (Headline)
           </label>
           <input
@@ -61,7 +61,7 @@ export function ManualEditPanel({
         </div>
 
         <div>
-          <label className="text-[11px] text-text-muted block mb-1">
+          <label className="text-caption text-text-muted block mb-1">
             Thông điệp phụ (Subheadline)
           </label>
           <textarea
@@ -75,7 +75,7 @@ export function ManualEditPanel({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-[11px] text-text-muted block mb-1">
+            <label className="text-caption text-text-muted block mb-1">
               Badge ưu đãi
             </label>
             <input
@@ -88,7 +88,7 @@ export function ManualEditPanel({
           </div>
 
           <div>
-            <label className="text-[11px] text-text-muted block mb-1">
+            <label className="text-caption text-text-muted block mb-1">
               Thời gian áp dụng
             </label>
             <input
@@ -102,7 +102,7 @@ export function ManualEditPanel({
         </div>
 
         <div>
-          <label className="text-[11px] text-text-muted block mb-1">
+          <label className="text-caption text-text-muted block mb-1">
             Nút kêu gọi hành động (CTA)
           </label>
           <input
@@ -123,7 +123,7 @@ export function ManualEditPanel({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-[11px] text-text-muted block mb-1">
+            <label className="text-caption text-text-muted block mb-1">
               Tên cửa hàng
             </label>
             <input
@@ -136,7 +136,7 @@ export function ManualEditPanel({
           </div>
 
           <div>
-            <label className="text-[11px] text-text-muted block mb-1">
+            <label className="text-caption text-text-muted block mb-1">
               Hotline liên hệ
             </label>
             <input
@@ -150,7 +150,7 @@ export function ManualEditPanel({
         </div>
 
         <div>
-          <label className="text-[11px] text-text-muted block mb-1">
+          <label className="text-caption text-text-muted block mb-1">
             Địa chỉ hiển thị
           </label>
           <input

@@ -7,6 +7,8 @@
  * Pure domain — không import Prisma, không gọi mạng.
  */
 
+import { formatCurrency } from "@/lib/i18n/formatters"
+
 export interface LandingWriterInput {
   readonly shopName: string
   readonly shopTone: string | undefined
@@ -37,7 +39,7 @@ function buildPrompt(input: LandingWriterInput): string {
     .map((p) => {
       const parts: string[] = [`- ${p.name}`]
       if (p.code) parts.push(`(mã: ${p.code})`)
-      if (p.price) parts.push(`— ${new Intl.NumberFormat("vi-VN").format(p.price)}đ`)
+      if (p.price) parts.push(`— ${formatCurrency(p.price)}`)
       if (p.category) parts.push(`[${p.category}]`)
       return parts.join(" ")
     })

@@ -29,11 +29,11 @@ const CONFIDENCE_COLOR: Record<StyleSuggestion["confidence"], string> = {
 }
 
 const TEMPLATE_BADGE_COLOR: Record<string, string> = {
-  T01_SIGNATURE_COLLECTION: "bg-warning-bg text-amber-800 border-warning-border",
+  T01_SIGNATURE_COLLECTION: "bg-surface-alt text-primary border-primary/20",
   T02_MINIMAL_PRODUCT_LIST: "bg-surface-alt text-text border-border",
-  T03_PREMIUM_LOOKBOOK: "bg-stone-50 text-stone-700 border-stone-200",
-  T04_BENTO_SHOWCASE: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  T05_DARK_CINEMATIC: "bg-zinc-900 text-amber-400 border-text",
+  T03_PREMIUM_LOOKBOOK: "bg-surface-alt text-text-muted border-border",
+  T04_BENTO_SHOWCASE: "bg-primary-muted text-primary border-primary/20",
+  T05_DARK_CINEMATIC: "bg-surface-dark text-warning border-border",
 }
 
 const STYLE_PREVIEW_BG: Record<string, string> = {

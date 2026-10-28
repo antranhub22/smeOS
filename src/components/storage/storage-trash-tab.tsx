@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import type { TrashItem } from "@/modules/storage/domain/trash-types"
 import { readApiError } from "@/components/greeting-card/api-error"
+import { formatDate } from "@/lib/i18n/formatters"
 
 interface StorageTrashTabProps {
   onItemRestored?: () => void
@@ -236,7 +237,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
                     </p>
 
                     <p className="text-caption text-text-muted mt-0.5">
-                      Xóa: {new Date(item.trashedAt).toLocaleDateString("vi-VN")}
+                      Xóa: {formatDate(item.trashedAt)}
                     </p>
                   </div>
                 </div>

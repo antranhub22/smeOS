@@ -1,11 +1,11 @@
+"use client"
+
+import { useI18n } from "@/lib/i18n"
 import { TierGovernanceMatrixClient } from "@/components/governance/tier-governance-matrix-client"
 
-export const metadata = {
-  title: "Ma Trận Phí Gia Công & Thợ | smeOS",
-  description: "Quản lý biểu phí khoán thợ và chính sách gia công.",
-}
 
 export default function CraftFeesPage() {
+  const { t } = useI18n()
   return (
     <TierGovernanceMatrixClient
       systemKey="CRAFT_FEES"

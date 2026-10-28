@@ -1,3 +1,5 @@
+import { formatCurrency as _formatCurrency, formatDateTime as _formatDateTime } from "@/lib/i18n/formatters"
+
 export type ApiErrorBody = {
   error?: {
     message?: string
@@ -29,7 +31,7 @@ export function isForbidden(response: Response): boolean {
 
 export function formatDate(value: string | null | undefined): string {
   if (!value) return "—"
-  return new Date(value).toLocaleString("vi-VN")
+  return _formatDateTime(value)
 }
 
 export function shortId(value: string): string {

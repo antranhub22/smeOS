@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { KeyRound, LogOut, ShieldCheck, UserRound } from "lucide-react"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { ChangePasswordDialog } from "./change-password-dialog"
 
@@ -23,6 +24,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
   const [doiMatKhau, setDoiMatKhau] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { roleUx, userName, userEmail, orgName, can, platformCapabilities } = useSession()
+  const { t } = useI18n()
 
   useEffect(() => {
     if (!mo) return
@@ -135,6 +137,26 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
               </span>
             </button>
 
+            {/* Mở UI Studio (Theme & Style Switcher) */}
+            <button
+              type="button"
+              onClick={() => {
+                setMo(false)
+                window.dispatchEvent(new CustomEvent("open-ui-studio"))
+              }}
+              className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+            >
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-fg text-caption font-bold">
+                🎨
+              </span>
+              <span className="min-w-0">
+                <span className="block">Giao diện (UI Studio)</span>
+                <span className="block truncate text-caption font-medium text-text-muted">
+                  Đổi Theme, Font, Mật độ
+                </span>
+              </span>
+            </button>
+
             {can("A2") && (
               <button
                 type="button"
@@ -157,7 +179,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
               className="flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-body-sm font-semibold text-danger hover:bg-danger-bg transition-colors disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
             >
               <LogOut size={16} strokeWidth={1.8} aria-hidden="true" />
-              <span>{dangXuat ? "Đang đăng xuất…" : "Đăng xuất"}</span>
+              <span>{dangXuat ? "Đang đăng xuất…" : t("layout.userMenu.logout")}</span>
             </button>
           </div>
         </>

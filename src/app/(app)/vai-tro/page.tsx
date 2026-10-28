@@ -8,6 +8,7 @@
 // Khi chọn "Mở" hoặc "Console", hệ thống sẽ kích hoạt vai tương ứng và điều hướng
 // về đúng Homepage của tầng kiến trúc / vai đó (SaaS Mother, SaaS Đa Ngành, ChainOS, StoreOS).
 
+import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Lock, Loader2 } from "lucide-react"
@@ -106,6 +107,7 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
 }
 
 export default function VaiTroPage() {
+  const { t } = useI18n()
   const { roleUx } = useSession()
   const soDungDuoc = ROLE_UX_CATALOG.filter((r) => r.status === "AVAILABLE").length
 

@@ -43,7 +43,7 @@ export function GenerationResults({
           <h2 className="text-lg font-black text-text">Xem trước & Biên tập nội dung</h2>
         </div>
         <Button
-          variant="primary"
+          variant="outline"
           size="sm"
           onClick={onReset}
           className="text-xs gap-1.5 shadow-xs"

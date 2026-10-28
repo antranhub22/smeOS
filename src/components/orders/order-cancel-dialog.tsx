@@ -4,6 +4,7 @@ import { useState } from "react"
 import { AlertCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { useI18n } from "@/lib/i18n"
 
 interface OrderCancelDialogProps {
   open: boolean
@@ -20,6 +21,7 @@ export function OrderCancelDialog({
   onConfirm,
   loading,
 }: OrderCancelDialogProps) {
+  const { dict, t } = useI18n()
   const [reason, setReason] = useState("")
 
   function handleClose() {
@@ -35,14 +37,14 @@ export function OrderCancelDialog({
   const dialogTitle = (
     <span className="flex items-center gap-2 text-danger">
       <AlertCircle className="h-4 w-4" />
-      Xác nhận hủy đơn #{orderCode}
+      {t("orders.actions.cancelTitle", { code: orderCode ?? "" })}
     </span>
   )
 
   const dialogFooter = (
     <div className="flex justify-end gap-2">
       <Button variant="outline" size="sm" onClick={handleClose} disabled={loading}>
-        Hủy bỏ
+        {dict.common.actions.cancel}
       </Button>
       <Button
         variant="outline"
@@ -52,7 +54,7 @@ export function OrderCancelDialog({
         onClick={handleConfirm}
       >
         {loading && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
-        Xác nhận hủy đơn
+        {dict.orders.actions.confirmCancel}
       </Button>
     </div>
   )
@@ -67,12 +69,12 @@ export function OrderCancelDialog({
     >
       <div className="space-y-3">
         <p className="text-caption text-text-muted">
-          Hành động này sẽ hủy đơn hàng vĩnh viễn và ghi log vào chuỗi sự kiện SLA.
+          {dict.orders.actions.cancelWarning}
         </p>
         <textarea
           rows={3}
           className="w-full rounded-md border border-border bg-surface p-2.5 text-caption focus:outline-none focus:ring-1 focus:ring-primary"
-          placeholder="Nhập lý do hủy đơn (bắt buộc)..."
+          placeholder={dict.orders.actions.cancelReasonPlaceholder}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
         />
@@ -80,3 +82,4 @@ export function OrderCancelDialog({
     </Dialog>
   )
 }
+

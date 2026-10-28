@@ -14,6 +14,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from "react"
 import { Plus, X, Pin, RotateCcw, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { DesktopNavItem } from "./desktop-nav-item"
 import type { NavEntry } from "./nav-model"
@@ -73,6 +74,11 @@ export function ToolkitShortcutsGroup({
   onNavigate,
   onToggleGroup,
 }: ToolkitShortcutsGroupProps) {
+  const { dict } = useI18n()
+  const displayLibraryEntry = useMemo(() => ({
+    ...libraryEntry,
+    label: dict.layout.toolkitShortcuts.libraryLabel || libraryEntry.label,
+  }), [libraryEntry, dict.layout.toolkitShortcuts.libraryLabel])
   // Gợi ý default keys từ chính nhóm công cụ hiện tại nếu chưa custom
   const tierDefaultKeys = useMemo(
     () => toolEntries.map((e) => e.navKey).slice(0, MAX_SHORTCUTS),
@@ -172,11 +178,11 @@ export function ToolkitShortcutsGroup({
       <div className="flex flex-col gap-1">
         {/* Thư viện */}
         <DesktopNavItem
-          item={libraryEntry}
-          active={isActive(libraryEntry)}
+          item={displayLibraryEntry}
+          active={isActive(displayLibraryEntry)}
           collapsed
-          iconComponent={ICONS[libraryEntry.iconKey]}
-          onClick={() => onNavigate(libraryEntry.href)}
+          iconComponent={ICONS[displayLibraryEntry.iconKey]}
+          onClick={() => onNavigate(displayLibraryEntry.href)}
         />
         {/* Shortcuts */}
         {shortcutEntries.map((entry) => (
@@ -223,10 +229,10 @@ export function ToolkitShortcutsGroup({
         <div className="space-y-0.5">
           {/* 1. Thư viện cố định */}
           <DesktopNavItem
-            item={libraryEntry}
-            active={isActive(libraryEntry)}
-            iconComponent={ICONS[libraryEntry.iconKey]}
-            onClick={() => onNavigate(libraryEntry.href)}
+            item={displayLibraryEntry}
+            active={isActive(displayLibraryEntry)}
+            iconComponent={ICONS[displayLibraryEntry.iconKey]}
+            onClick={() => onNavigate(displayLibraryEntry.href)}
           />
 
           {/* 2. Divider */}

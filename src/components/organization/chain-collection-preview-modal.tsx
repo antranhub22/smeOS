@@ -61,17 +61,17 @@ export function ChainCollectionPreviewModal({
           <div className="p-3 rounded-xl border border-border bg-surface-alt text-center">
             <Store size={16} className="mx-auto text-primary mb-1" />
             <div className="text-title-sm font-black text-text">{affectedStoreCount}</div>
-            <div className="text-[11px] text-text-muted">Cửa hàng áp dụng</div>
+            <div className="text-caption text-text-muted">Cửa hàng áp dụng</div>
           </div>
           <div className="p-3 rounded-xl border border-border bg-surface-alt text-center">
             <Layers size={16} className="mx-auto text-primary mb-1" />
             <div className="text-title-sm font-black text-text">{summary.activeRuleCount}</div>
-            <div className="text-[11px] text-text-muted">Trường thu thập</div>
+            <div className="text-caption text-text-muted">Trường thu thập</div>
           </div>
           <div className="p-3 rounded-xl border border-border bg-surface-alt text-center">
             <ShieldAlert size={16} className="mx-auto text-warning mb-1" />
             <div className="text-title-sm font-black text-warning">{summary.s2FieldsCollected}</div>
-            <div className="text-[11px] text-text-muted">Trường S2/PII</div>
+            <div className="text-caption text-text-muted">Trường S2/Cá nhân</div>
           </div>
         </div>
 

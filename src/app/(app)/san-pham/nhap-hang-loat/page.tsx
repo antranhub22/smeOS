@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "@/lib/session"
@@ -33,6 +34,7 @@ function matchImages(rows: ParsedProductRow[], images: Map<string, File>): Parse
 }
 
 export default function BulkImportProductsPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const session = useSession()
   const orgId = session.organization?.id

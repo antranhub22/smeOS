@@ -1,10 +1,12 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { Suspense } from "react"
 import { ChainDataHub } from "@/components/chain-data/chain-data-hub"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 
 export default function DuLieuChuoiPage() {
+  const { t } = useI18n()
   return (
     <Suspense
       fallback={

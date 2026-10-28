@@ -2,8 +2,9 @@
 
 import { PreviewNotice } from "@/components/ui/preview-notice"
 import React, { useState } from "react"
-import { Shield, Sparkles, X, Check, CheckCircle2 } from "lucide-react"
+import { Shield, X, Check } from "lucide-react"
 import { STORE_NAV_ENTRIES } from "@/components/layout/nav/nav-store"
+import { Button } from "@/components/ui/button"
 
 interface PartnerToolMatrixModalProps {
   partnerId: string
@@ -61,10 +62,9 @@ export function PartnerToolMatrixModal({
   const handleSave = async () => {
     setSaving(true)
     setErrorMsg("")
-
     try {
-      const res = await fetch(`/api/v1/coordinator/partners/${partnerId}/tools`, {
-        method: "PATCH",
+      const res = await fetch(`/api/v1/network/partners/${partnerId}/unlocked-tools`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           unlockedTools: Array.from(selectedKeys),
@@ -102,11 +102,11 @@ export function PartnerToolMatrixModal({
           <div>
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-primary" />
-              <h3 id="partner-tool-matrix-title" className="font-bold text-base text-text">
+              <h3 id="partner-tool-matrix-title" className="font-bold text-title text-text">
                 Phân quyền Công cụ Chi nhánh
               </h3>
             </div>
-            <p className="text-xs text-text-muted mt-1">
+            <p className="text-body-sm text-text-muted mt-1">
               Cửa hàng: <span className="font-semibold text-text">{partnerName}</span> ({partnerCode})
             </p>
           </div>
@@ -131,7 +131,7 @@ export function PartnerToolMatrixModal({
         </div>
 
         {/* Quick action bar */}
-        <div className="flex items-center justify-between py-3 border-b border-border text-xs">
+        <div className="flex items-center justify-between py-3 border-b border-border text-meta">
           <span className="text-text-muted">
             Đã mở khóa: <b className="text-text">{selectedKeys.size}/{availableTools.length}</b> công cụ
           </span>
@@ -179,7 +179,7 @@ export function PartnerToolMatrixModal({
                     {isChecked && <Check size={11} strokeWidth={3} />}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-text flex items-center gap-1.5">
+                    <div className="text-body-sm font-bold text-text flex items-center gap-1.5">
                       <span>{tool.label}</span>
                       {tool.capability && (
                         <span className="text-caption px-1.5 py-0.2 rounded bg-surface-alt text-text-muted font-mono">
@@ -209,21 +209,23 @@ export function PartnerToolMatrixModal({
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-2 pt-4 border-t border-border mt-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-text hover:bg-surface-alt rounded-xl transition-colors"
           >
             Hủy
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="primary"
+            size="sm"
             disabled={saving}
             onClick={handleSave}
-            className="px-5 py-2 text-xs font-semibold text-white bg-primary hover:bg-primary-dark disabled:opacity-50 rounded-xl transition-colors flex items-center gap-1.5"
           >
             {saving ? "Đang lưu..." : "Lưu phân quyền"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

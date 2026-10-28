@@ -8,6 +8,7 @@
 
 import { Sparkles, PanelLeftClose, PanelLeftOpen, X } from "lucide-react"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { ArchitectureNametag } from "./architecture-nametag"
 
@@ -73,6 +74,7 @@ export function DesktopNavHeader({
   isDev = false,
 }: DesktopNavHeaderProps) {
   const { orgName, organizationType, roleKey } = useSession()
+  const { t } = useI18n()
 
   const tier = resolveTier(organizationType, roleKey)
   const styles = TIER_STYLES[tier]
@@ -93,7 +95,7 @@ export function DesktopNavHeader({
       className={cn(
         "relative z-30 flex h-14 flex-shrink-0 items-center border-b border-border transition-all duration-200",
         collapsed
-          ? "justify-center px-0 cursor-pointer"
+          ? "justify-center px-0"
           : "gap-2.5 px-3"
       )}
     >
@@ -170,17 +172,17 @@ export function DesktopNavHeader({
             <button
               type="button"
               onClick={onClose}
-              aria-label="Đóng menu"
-              className="relative ml-auto flex h-8 w-8 items-center justify-center rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+              aria-label={t("common.actions.close")}
+              className="relative ml-auto flex h-10 w-10 items-center justify-center rounded-xl text-text-muted hover:bg-surface-alt hover:text-text active:scale-95 transition-all cursor-pointer"
             >
-              <X size={17} />
+              <X size={18} />
             </button>
           ) : (
             <button
               type="button"
               onClick={onToggleCollapse}
-              aria-label="Thu gọn menu (⌘B)"
-              title="Thu gọn menu (⌘B)"
+              aria-label={t("layout.collapseSidebar")}
+              title={t("layout.collapseSidebar")}
               className="relative ml-auto flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
             >
               <PanelLeftClose size={16} aria-hidden />

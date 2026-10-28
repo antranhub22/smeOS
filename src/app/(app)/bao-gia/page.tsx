@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
@@ -83,6 +84,7 @@ const SAMPLE_PRODUCTS: ProductItem[] = [
 ]
 
 export default function BaoGiaPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { organization } = useSession()
   const ti = getIndustryTerminology(organization?.industry)

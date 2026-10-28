@@ -1,161 +1,297 @@
-# BÁO CÁO AUDIT TOÀN DIỆN HỆ THỐNG VÀ NĂNG LỰC CÔNG NGHỆ SMEOS
-## Phục Vụ Hoàn Thiện Bản Chào Giá Khách Hàng (Commercial & Technical Audit)
+BẢN MÔ TẢ CHỨC NĂNG CHI TIẾT CHUẨN HÓA NỀN TẢNG SAAS ĐIỆN HOA ALG
 
-> **Mã văn bản**: `AUDIT-SMEOS-COMMERCIAL-2026-10-27`  
-> **Thời điểm thẩm tra**: 27/10/2026  
-> **Cấp độ xác thực**: Codebase line-by-line verification (100% đối chiếu mã nguồn thật, không suy đoán)  
-> **Quy mô rà soát**:
-> - **40 Modules nghiệp vụ** (`src/modules/*`)
-> - **364 API v1 Route Handlers** (`src/app/api/v1/*`)
-> - **73 Màn hình giao diện** (`src/app/*`)
-> - **109 Models CSDL & 47 Enums** (`prisma/schema.prisma`)
-> - **159 Tệp Python AI Workers** (`workers/*`)
-> - **155 Mã năng lực RBAC** (`src/core/rbac/capability-catalog.ts`)
-> - **17 Vai trải nghiệm (Role UX)** (`src/modules/organization/domain/role-ux-catalog.ts`)
-> - **7 Ngành hàng chuẩn hóa (Industry Plugins SSOT)** (`src/modules/organization/domain/industries/`)
-> - **51 Công cụ tác nghiệp (Toolkit Catalog)** (`src/modules/toolkit/domain/toolkit-catalog.ts`)
+1. TỔNG QUAN DỰ ÁN, CẤU TRÚC TÀI CHÍNH VÀ LỘ TRÌNH ĐÓNG GÓI SẢN PHẨM
 
----
+Nền tảng SaaS Điện hoa ALG được định hướng thiết kế nhằm chuẩn hóa toàn bộ 153 mục chức năng vận hành bán lẻ và kết nối mạng lưới điện hoa thành một giải pháp phần mềm thương mại hoàn chỉnh. Trong bối cảnh ngành kinh doanh hoa tươi truyền thống đang gặp nhiều rào cản do phụ thuộc vào sổ sách thủ công, bảng tính Excel và các hội nhóm Zalo rời rạc, dự án đóng vai trò chiến lược trong việc số hóa toàn diện quy trình vận hành cửa hàng. Hệ thống không chỉ giúp tối ưu hóa quản lý tồn kho nguyên liệu đặc thù mà còn tự động hóa luồng điều phối đơn hàng điện hoa, áp dụng trí tuệ nhân tạo (AI) vào định giá và hỗ trợ tiếp thị, tạo nền tảng vững chắc để mở rộng chuỗi và thương mại hóa hạ tầng công nghệ.
 
-## 1. TỔNG QUAN HIỆN TRẠNG & ĐỊNH VỊ NỀN TẢNG (EXECUTIVE SUMMARY)
+Tổng quy mô đầu tư của dự án được xác định là 200.000.000 VNĐ, phân bổ qua 3 giai đoạn triển khai với phạm vi chức năng cốt lõi và giá trị nghiệm thu được chuẩn hóa chi tiết.
 
-Hệ thống **smeOS** hiện nay không còn là một ứng dụng đơn lẻ cho cửa hàng hoa (FloraOS cũ) mà đã được nâng cấp thành **Nền tảng SaaS Đa tầng & Đa ngành toàn diện (Enterprise Multi-Tenant Multi-Industry Platform)** với 4 tầng kiến trúc:
-1. **Tầng 1: SaaS Mother** — Quản trị nền tảng tối cao, kiểm soát tenant, quota token AI, gói cước và bảo mật.
-2. **Tầng 2: SaaS Ngành** — Chuẩn hóa ngành hàng (Taxonomy, BOM, AI Studio Blueprints, Mẫu in A6) và vận hành cỗ máy Affiliate tự động bắn đơn về tiệm.
-3. **Tầng 3: ChainOS** — Không gian điều hành chuỗi thương hiệu tập trung: Bán hàng chuỗi, Tháp điều phối (Control Tower), và đối soát gia công chi nhánh.
-4. **Tầng 4: StoreOS** — Hệ điều hành toàn diện cho từng cửa hàng: Bán hàng tại tiệm, Thư viện 51 công cụ tác nghiệp, Cổng nhận đơn từ mạng lưới và in ấn A6 tại chỗ.
+Giai đoạn	Phạm vi chức năng cốt lõi	Số lượng mục chức năng (153 mục)	Giá trị nghiệm thu (VNĐ)
+Giai đoạn 1	Nền tảng kinh doanh cốt lõi (Đang hoàn thiện ở mức bàn giao 3/4)	101 mục	85.000.000 đ
+Giai đoạn 2	Quản lý khách hàng và tiếp thị (Giai đoạn MVP 1/4)	30 mục	85.000.000 đ
+Giai đoạn 3	Tự động hóa và thương mại hóa (Hoàn thiện ở mức cơ bản 1/2)	22 mục	30.000.000 đ
+TỔNG CỘNG	Toàn bộ hệ thống SaaS Điện hoa ALG	153 mục	200.000.000 đ
 
-### Chỉ số trưởng thành kỹ thuật (Technical Maturity):
-- **Cơ chế Đa ngành (Multi-Industry First)**: Hỗ trợ linh hoạt 7 ngành hàng chuẩn hóa (`FLORAL`, `FASHION`, `FNB`, `CRAFT_GIFT`, `RETAIL_GENERAL`, `SERVICES`, `HOMESTAY`) qua cơ chế Plugin Contract không sửa schema.
-- **Bảo mật & Cách ly dữ liệu (Tenant Isolation)**: 100% dữ liệu tenant có `organization_id` giải từ session máy chủ, có bộ test `npm run test:tenant` với 283/283 ca pass.
-- **Hạ tầng AI Providers**: Triển khai theo chuẩn **Provider Single-Call** kết hợp Circuit Breaker, hỗ trợ OpenAI (GPT-4o), Google Gemini 2.0/1.5 Flash, Anthropic Claude, Photoroom, fal.ai và Local Workers (SAM2, Rembg, SDXL, CosyVoice, Video Worker).
+Cơ chế thanh toán cho đợt hiện tại được đối chiếu chính xác dựa trên các mốc khối lượng hoàn thành và các khoản đã thanh toán trước đó:
 
----
+* 90% giá trị Giai đoạn 1: 76.500.000 VNĐ
+* 50% giá trị Giai đoạn 3: 15.000.000 VNĐ
+* Tổng nghĩa vụ cần thanh toán đợt này: 91.500.000 VNĐ
+* Trừ khoản đơn vị ALG đã thanh toán trước đó: -23.000.000 VNĐ
+* Trừ khoản đại diện (anh Tuấn) đã thanh toán trước đó: -26.000.000 VNĐ
+* Số tiền còn phải thanh toán thực tế đợt này: 42.500.000 VNĐ
 
-## 2. MA TRẬN 51 CÔNG CỤ TÁC NGHIỆP TRONG HỆ THỐNG
-*(Căn cứ theo SSOT `src/modules/toolkit/domain/toolkit-catalog.ts` và bản hợp nhất 14 Chặng Product-to-Market)*
+Các khoản thanh toán tiếp theo được cấu trúc theo tiến độ bàn giao sản phẩm thực tế:
 
-| ID | Tên công cụ | Nhóm chức năng | Trạng thái kỹ thuật | Mức độ hoàn thành | Mức độ công nghệ & Kỹ thuật đã làm được | Giá trị thương mại khi chào giá |
-|:---|:---|:---|:---:|:---:|:---|:---|
-| **#00** | **Chế tác tự động trọn gói từ A-Z** | Nhóm 1: AI & Nội dung | ✅ **DONE** | **100%** | Workflow Pipeline tự động: 1 ảnh thô $\rightarrow$ Bóc tách BOM $\rightarrow$ Tạo ảnh Studio $\rightarrow$ Dựng video ngắn $\rightarrow$ Viết bài 4 kênh MXH $\rightarrow$ Thẻ chào A6 & Link bán hàng. Use-case: `planProduction()`. | **VŨ KHÍ BÁN HÀNG ĐỈNH CAO**: Tự động hóa 100% phòng marketing cho cửa hàng. |
-| **#01** | **Tạo ảnh sản phẩm chuyên nghiệp** | Nhóm 1: AI & Nội dung | ✅ **DONE** | **100%** | AI Single-Call Studio (`/cong-cu/anh-san-pham`): Tách nền, cân chỉnh ánh sáng, đổ bóng tự nhiên, giữ nguyên sản phẩm (Identity Guard). Tích hợp OpenAI/Gemini/Photoroom. | Thay thế thợ chụp ảnh & designer studio đắt đỏ. |
-| **#02** | **Tạo bộ ảnh sản phẩm từ 1 ảnh gốc** | Nhóm 1: AI & Nội dung | ✅ **DONE** | **100%** | Image Set Engine (`/cong-cu/bo-anh-san-pham`): Sinh 4–8 biến thể bối cảnh (nội thất, ngoài trời, sự kiện, cận cảnh chi tiết), đổi tỉ lệ 1:1, 4:5, 9:16, 16:9. | Tạo kho tư liệu hình ảnh phong phú để chạy quảng cáo. |
-| **#03** | **Tạo thẻ chào sản phẩm** | Nhóm 1: AI & Nội dung | ✅ **DONE** | **100%** | M01c Greeting Card (`/the-chao`, `/tai-anh?tab=m01c`): Render thẻ chào đa kích thước (A6 in ấn, Vuông 1:1, Story 9:16), copy kịch bản Zalo chốt đơn 1-chạm cho Sales. | Tăng tỷ lệ chốt sale qua Zalo/Messenger lên gấp 3 lần. |
-| **#04** | **Tạo nội dung bán hàng** | Nhóm 1: AI & Nội dung | ✅ **DONE** | **100%** | Content Engine M04 (`/noi-dung`): Sinh Caption, Headline, USP, Story, Hashtag cho 4+ nền tảng (Facebook, Instagram, TikTok, Zalo). Tùy biến giọng văn theo ngành. | Nhân viên bán hàng không mất thời gian nghĩ bài đăng. |
-| **#05** | **Tạo poster & banner quảng cáo** | Nhóm 1: AI & Nội dung | ✅ **DONE** | **100%** | Hybrid Engine (`/cong-cu/poster-banner`): Ghép ảnh sản phẩm AI vào khung template chương trình khuyến mãi, sự kiện, lễ tết. Xuất file in và đăng mạng. | Tự thiết kế banner khuyến mãi trong 30 giây. |
-| **#06** | **Tạo video giới thiệu sản phẩm** | Nhóm 1: AI & Nội dung | ⚠️ **IN_PROGRESS** | **50%** | Video Studio (`/video`, `workers/media_ai/video`): Dựng storyboard từ ảnh, chuyển động góc quay (motion), ghép nhạc nền và lồng tiếng AI (TTS). | Đón đầu xu hướng bán hàng video ngắn TikTok/Reels. |
-| **#07** | **Tạo thiệp và lời chúc** | Nhóm 1: AI & Nội dung | 📋 **PLANNED** | **0%** | Chức năng thiệp cá nhân hóa kèm lời chúc theo dịp (sinh nhật, kỷ niệm, chia buồn). Hiện logic tạo lời chúc nằm trong Chat/M01b, chưa có UI riêng. | Giá trị gia tăng cho đơn hàng quà tặng/hoa tươi. |
-| **#08** | **Tạo landing page cửa hàng** | Nhóm 2: Web & Hiện diện | ⚠️ **IN_PROGRESS** | **60%** | Clean Architecture Module (`/landing-page`): Sinh trang giới thiệu sản phẩm/chiến dịch chuyển đổi cao, tối ưu di động, chuẩn SEO, có link chia sẻ. | Kênh bán hàng trực tiếp độc lập không phụ thuộc sàn. |
-| **#09** | **Tạo catalog và bộ sưu tập** | Nhóm 2: Web & Hiện diện | ⚠️ **IN_PROGRESS** | **60%** | Catalog Studio (`/catalog`): Quản lý BST mẫu, bộ lọc danh mục, link chia sẻ showroom số hóa cho khách xem và đặt hàng trực tiếp. | Showroom số hóa tiện lợi, chuyên nghiệp. |
-| **#10** | **Tạo trang giới thiệu dịch vụ** | Nhóm 2: Web & Hiện diện | 📋 **PLANNED** | **0%** | Trang công khai giới thiệu quy trình, bảng giá dịch vụ trọn gói (trang trí tiệc, may đo, dịch vụ định kỳ). | Mở rộng bán dịch vụ B2B doanh nghiệp. |
-| **#11** | **Tạo hồ sơ cửa hàng chia sẻ nhanh** | Nhóm 2: Web & Hiện diện | 📋 **PLANNED** | **0%** | Trang One-page rút gọn (Bio Link): Giới thiệu tiệm, bản đồ chỉ đường, nút gọi hotline, link Zalo OA và các liên kết mạng xã hội. | Card visit điện tử cho chủ cửa hàng và nhân viên. |
-| **#12** | **Tạo QR code cửa hàng & sản phẩm** | Nhóm 2: Web & Hiện diện | ⚠️ **IN_PROGRESS** | **20%** | Sinh QR code động dẫn vào Catalog/Landing page. Chưa có tính năng tùy biến logo thương hiệu và đo lường lượt quét theo vị trí. | Kết nối khách hàng từ offline (tại tiệm) lên online. |
-| **#13** | **Tạo link bán hàng 1-chạm** | Nhóm 3: Bán hàng & Chốt đơn | 📋 **PLANNED** | **0%** | Link thanh toán cho từng sản phẩm riêng lẻ: Chọn size/màu $\rightarrow$ Nhập địa chỉ $\rightarrow$ Thanh toán. (Hiện đã có trong flow Thẻ chào `/b/[sendCode]`). | Chốt đơn nhanh trong tin nhắn chat. |
-| **#14** | **Tạo catalog bán hàng theo nhu cầu** | Nhóm 3: Bán hàng & Chốt đơn | ✅ **DONE** | **100%** | Quick Consultation (`/the-chao?quick=true`): Lọc và tạo nhanh BST 3–5 mẫu theo đúng ngân sách và dịp của khách chỉ trong < 10 giây. | Vũ khí tư vấn 1-1 tăng tỷ lệ chuyển đổi thần tốc. |
-| **#15** | **Tạo báo giá theo yêu cầu** | Nhóm 3: Bán hàng & Chốt đơn | 📋 **PLANNED** | **0%** | Báo giá cá nhân hóa nhiều phương án từ công thức giá vốn. (Hiện nằm trong chức năng `/bao-gia` và `/gia`). | Báo giá chuyên nghiệp, minh bạch chi phí. |
-| **#16** | **Tạo báo giá sự kiện & doanh nghiệp** | Nhóm 3: Bán hàng & Chốt đơn | 🧱 **FOUNDATION** | **25%** | Bảng giá nhiều hạng mục cho sự kiện lớn (hội nghị, tiệc cưới, hợp đồng năm). Đã có nền tảng cấu trúc giá trong DB. | Chinh phục các hợp đồng B2B giá trị lớn. |
-| **#17** | **Tạo form đặt hoa/hàng theo yêu cầu** | Nhóm 3: Bán hàng & Chốt đơn | 📋 **PLANNED** | **0%** | Form public nhận yêu cầu riêng (ngân sách, màu sắc, phong cách, ngày giao), tự động bắn thông báo về cửa hàng. | Thu thập yêu cầu khách hàng bài bản, không sót đơn. |
-| **#18** | **Tạo gói sản phẩm & combo quà tặng** | Nhóm 3: Bán hàng & Chốt đơn | 🧱 **FOUNDATION** | **30%** | Ghép các sản phẩm đơn lẻ thành combo (hoa + bánh + thiệp, quần áo + phụ kiện) kèm chính sách giá ưu đãi. Đã có data quan hệ sản phẩm. | Tăng giá trị trung bình trên mỗi đơn hàng (AOV). |
-| **#19** | **Tạo gói đặt hàng định kỳ** | Nhóm 3: Bán hàng & Chốt đơn | 📋 **PLANNED** | **0%** | Gói hoa tuần/tháng, giao định kỳ cho văn phòng, khách sạn, căn hộ. Tự sinh lịch giao và nhắc thanh toán. | Tạo dòng tiền doanh thu định kỳ đều đặn (MRR). |
-| **#20** | **Tạo trang xác nhận & thanh toán** | Nhóm 3: Bán hàng & Chốt đơn | 📋 **PLANNED** | **0%** | Trang tóm tắt đơn riêng cho khách duyệt mẫu, xác nhận tiền cọc qua VietQR Napas và ký nhận trực tuyến. (Hiện nằm trong `/b/[sendCode]`). | Giảm tỷ lệ boom hàng, bảo vệ quyền lợi cửa hàng. |
-| **#21** | **Form thu thập khách tiềm năng (Lead)** | Nhóm 4: Thu hút khách hàng | 🧱 **FOUNDATION** | **30%** | Form thu thập SĐT/Email đổi voucher giảm giá. Đã có module CRM lưu trữ khách hàng, cần UI landing form riêng. | Xây dựng tệp data khách hàng tiềm năng bền vững. |
-| **#22** | **Chiến dịch thu hút khách hàng mùa vụ** | Nhóm 4: Thu hút khách hàng | ⚠️ **IN_PROGRESS** | **40%** | Quản lý chiến dịch (`/lich-dang`, SocialFlow M07): Lập kế hoạch đăng bài, khuyến mãi trước các dịp lễ lớn (8/3, 20/10, Valentine, Tết). | Bùng nổ doanh số vào các dịp cao điểm. |
-| **#23** | **Chương trình giới thiệu khách hàng** | Nhóm 4: Thu hút khách hàng | 📋 **PLANNED** | **0%** | Cấp mã/link giới thiệu cho khách quen, tự động tích điểm hoặc thưởng voucher khi có bạn bè mua hàng. | Tận dụng kênh marketing truyền miệng chi phí 0đ. |
-| **#24** | **Khảo sát nhu cầu khách hàng** | Nhóm 4: Thu hút khách hàng | 📋 **PLANNED** | **0%** | Form khảo sát online tìm hiểu thị hiếu và mức độ hài lòng của khách sau mua. | Nâng cao chất lượng dịch vụ theo ý kiến khách. |
-| **#25** | **Điểm thu hút khách qua QR Code** | Nhóm 4: Thu hút khách hàng | 🧱 **FOUNDATION** | **20%** | Standee QR đặt tại quầy/bàn để khách quét nhận quà hoặc xem menu số. Đã có QR cơ bản, thiếu trang đích chuyên biệt. | Tối ưu trải nghiệm mua sắm tại điểm bán offline. |
-| **#26** | **Nội dung chăm sóc khách hàng tự động** | Nhóm 5: Chăm sóc & Giữ chân | 📋 **PLANNED** | **0%** | Kịch bản tin nhắn mẫu (cảm ơn sau mua, hướng dẫn bảo quản, chúc mừng sinh nhật) gửi tự động qua Zalo/SMS. | Duy trì tương tác thân thiết với khách hàng. |
-| **#27** | **Chiến dịch chăm sóc và bán lại** | Nhóm 5: Chăm sóc & Giữ chân | 🧱 **FOUNDATION** | **35%** | Lọc danh sách khách hàng không quay lại sau 30-60 ngày trong CRM (`src/modules/crm/`) để gửi thông điệp kích hoạt lại. | Tăng tỷ lệ khách hàng quay lại mua tiếp. |
-| **#28** | **Lịch nhắc các dịp quan trọng** | Nhóm 5: Chăm sóc & Giữ chân | 🧱 **FOUNDATION** | **30%** | Use-case `scan-upcoming-reminders.ts` trong CRM: Tự động quét sinh nhật, ngày cưới của khách trước 7-14 ngày để nhắc nhân viên tư vấn. | Bán hàng tinh tế đúng thời điểm khách có nhu cầu. |
-| **#29** | **Chương trình khách hàng thân thiết** | Nhóm 5: Chăm sóc & Giữ chân | 🧱 **FOUNDATION** | **20%** | Phân hạng thành viên theo RFM (Đồng, Bạc, Vàng, VIP) trong CRM. Cần hoàn thiện UI tích điểm đổi quà. | Giữ chân khách hàng trung thành trọn đời. |
-| **#30** | **Gợi ý bán thêm và bán chéo (Up/Cross-sell)** | Nhóm 5: Chăm sóc & Giữ chân | 🧱 **FOUNDATION** | **25%** | Thuật toán gợi ý mua kèm quà tặng/phụ kiện dựa trên lịch sử giỏ hàng. Đã có dữ liệu sản phẩm liên quan. | Gia tăng lợi nhuận trên từng lượt khách mua. |
-| **#31** | **Công thức & Định mức nguyên liệu (BOM)** | Nhóm 6: Định giá & Lợi nhuận | 📋 **PLANNED** | **0%** | Quản lý công thức chuẩn cho từng mẫu sản phẩm (định lượng, tỉ lệ hao hụt, thời gian hoàn thành). (Hiện lưu trong JSON của Product Master). | Chuẩn hóa chất lượng và kiểm soát thất thoát vật tư. |
-| **#32** | **Quản lý bảng giá nguyên liệu** | Nhóm 6: Định giá & Lợi nhuận | ⚠️ **IN_PROGRESS** | **50%** | Quản lý giá nhập nguyên phụ liệu trong `/san-pham`, cập nhật biến động giá theo ngày. | Kiểm soát biến động giá vốn thị trường. |
-| **#33** | **Tính giá vốn sản phẩm tự động** | Nhóm 6: Định giá & Lợi nhuận | ⚠️ **IN_PROGRESS** | **45%** | Pricing Engine (`/bao-gia`, `/gia`): Tính tổng giá thành = Nguyên liệu + Nhân công chế tác + Bao bì + Hao hụt. | Tránh tình trạng bán lỗ mà không biết. |
-| **#34** | **Đề xuất giá bán và biên lợi nhuận** | Nhóm 6: Định giá & Lợi nhuận | ⚠️ **IN_PROGRESS** | **40%** | Mô phỏng nhiều mức giá bán (Giá gốc, Giá ưu đãi, Giá đối tác) và cảnh báo khi lợi nhuận dưới ngưỡng an toàn. | Đảm bảo hiệu quả tài chính tối ưu cho tiệm. |
-| **#35** | **Lập dự toán & nhu cầu mua nguyên liệu** | Nhóm 6: Định giá & Lợi nhuận | 📋 **PLANNED** | **0%** | Tổng hợp danh sách nguyên liệu cần nhập dựa trên các đơn đã đặt trước trong tuần. | Tránh tồn kho ứ đọng hoặc thiếu hụt giờ chót. |
-| **#36** | **Tạo phiếu sản xuất & Hướng dẫn thợ** | Nhóm 7: Chế tác & Giao vận | 🧱 **FOUNDATION** | **35%** | Mẫu phiếu A6/Mobile cho thợ xem công thức, ảnh mẫu thành phẩm và các lưu ý đặc biệt của khách (`/don-hang`). | Thợ cắm/làm đúng 100% theo mẫu khách đã duyệt. |
-| **#37** | **Checklist kiểm soát chất lượng (QC)** | Nhóm 7: Chế tác & Giao vận | 🧱 **FOUNDATION** | **30%** | Bảng kiểm soát chất lượng trước khi xuất xưởng (`order_qc_records`): Kiểm tra màu sắc, quy cách, thiệp chúc và độ tươi mới. | Loại trừ rủi ro khách khiếu nại hoặc từ chối nhận. |
-| **#38** | **Link duyệt ảnh sản phẩm trước khi giao** | Nhóm 7: Chế tác & Giao vận | 📋 **PLANNED** | **0%** | Gửi ảnh thành phẩm thực tế cho khách duyệt qua link trước khi bàn giao shipper. (Hiện nằm trong flow duyệt `/duyet`). | Khách hàng an tâm tuyệt đối trước khi nhận hàng. |
-| **#39** | **Tạo phiếu giao hàng chuyên nghiệp** | Nhóm 7: Chế tác & Giao vận | ⚠️ **IN_PROGRESS** | **45%** | Phiếu in A6 (`/don-hang`) kèm mã vận đơn, thông tin người nhận, lưu ý bảo mật giá và tích hợp bằng chứng giao hàng (POD). | Vận hành giao vận chuyên nghiệp, không nhầm lẫn. |
-| **#40** | **Lập lịch sản xuất và giao vận** | Nhóm 7: Chế tác & Giao vận | ⚠️ **IN_PROGRESS** | **40%** | Kanban Board quản lý tiến độ xử lý đơn hàng theo mốc giờ hẹn giao khách trong ngày (`/don-hang`). | Không bao giờ bị trễ hẹn giao hàng cho khách. |
-| **#41** | **Theo dõi kết quả & Tiến độ đơn hàng** | Nhóm 7: Chế tác & Giao vận | ⚠️ **IN_PROGRESS** | **55%** | Realtime Order Tracking (`/don-hang`, `/dieu-phoi`): Theo dõi trạng thái đơn từ Mới nhận $\rightarrow$ Sản xuất $\rightarrow$ Giao hàng $\rightarrow$ Hoàn tất. | Nắm bắt toàn bộ luồng công việc tại tiệm theo thời gian thực. |
-| **#42** | **Danh bạ & Bản đồ mạng lưới chi nhánh** | Nhóm 8: Quản trị Chuỗi | 🧱 **FOUNDATION** | **20%** | Multi-branch model trong DB (`branches`, `chain_branches`). Đã có quản trị nội bộ tại `/dieu-phoi/doi-tac`. | Mở rộng mạng lưới điểm bán và xưởng gia công. |
-| **#43** | **Catalog sản phẩm chung toàn chuỗi** | Nhóm 8: Quản trị Chuỗi | 🧱 **FOUNDATION** | **20%** | Đồng bộ bộ sưu tập mẫu dùng chung cho toàn bộ các cửa hàng thành viên trong chuỗi thương hiệu. | Giữ vững chuẩn mực thương hiệu đồng nhất toàn chuỗi. |
-| **#44** | **Chiến dịch bán hàng chung toàn chuỗi** | Nhóm 8: Quản trị Chuỗi | 📋 **PLANNED** | **0%** | Phát động chương trình marketing toàn hệ thống, phân bổ chỉ tiêu và link theo dõi cho từng chi nhánh. | Sức mạnh cộng hưởng từ toàn bộ hệ thống bán hàng. |
-| **#45** | **Bộ nhận diện & Thư viện nội dung chuỗi** | Nhóm 8: Quản trị Chuỗi | 🧱 **FOUNDATION** | **15%** | Quản lý Brand Kit tập trung (Logo, màu sắc, font chữ, quy chuẩn thiết kế, kho ảnh mẫu). Đã có bảng `brand_profiles`. | Tiết kiệm chi phí thiết kế cho các chi nhánh mới. |
-| **#46** | **Chuẩn hóa báo giá & Tiêu chuẩn dịch vụ** | Nhóm 8: Quản trị Chuỗi | 🧱 **FOUNDATION** | **20%** | Phát hành khung chính sách giá trần/sàn và quy chuẩn dịch vụ chung bắt buộc các chi nhánh tuân thủ. | Đảm bảo uy tín thương hiệu không bị phá giá. |
-| **#47** | **Báo cáo hiệu quả cửa hàng thành viên** | Nhóm 8: Quản trị Chuỗi | 🧱 **FOUNDATION** | **15%** | So sánh doanh thu, sản lượng, tỷ lệ hoàn thành đơn và mức độ hài lòng khách hàng giữa các cơ sở. | Đánh giá chính xác năng lực từng chi nhánh. |
-| **#48** | **Phát triển & Kích hoạt cơ sở mới** | Nhóm 8: Quản trị Chuỗi | 📋 **PLANNED** | **0%** | Bộ quy trình đóng gói nhượng quyền: Form tiếp nhận đại lý, checklist set-up cơ sở và cấp tài khoản vận hành. | Nhân bản chuỗi cửa hàng nhanh chóng và chuẩn xác. |
-| **#49** | **Khám phá xu hướng & Cơ hội thị trường** | Nhóm 4: Thu hút khách hàng | ✅ **DONE** | **100%** | AI Market Intelligence (`/market-intelligence`): Thu thập tín hiệu xu hướng từ TikTok/YouTube/Instagram, bóc tách bảng màu hot, phong cách thịnh hành và cơ hội kinh doanh theo dịp. | Đi trước đối thủ thị trường về mẫu mã và sản phẩm mới. |
-| **#50** | **Trợ lý Học máy & Tối ưu Tác nghiệp** | Nhóm 9: Tối ưu & Học máy | 🧱 **FOUNDATION** | **30%** | Module phân tích thói quen sử dụng (`/cong-cu/toi-uu-he-thong`): Nhận diện điểm nghẽn (tạo nhiều ảnh nhưng ít gửi thẻ chào, chưa tính giá vốn) và đề xuất bước hành động tiếp theo. | Hệ thống thông minh tự học và giúp chủ tiệm nâng cao năng suất. |
+* Mốc Bàn giao mã nguồn Giai đoạn 1 – Giai đoạn 3 (Dự kiến 45–60 ngày): Thanh toán 10% GĐ1 + 10% GĐ3, tương đương 11.500.000 VNĐ.
+* Mốc Hoàn thiện và bàn giao chức năng Giai đoạn 3 (Dự kiến 15–30 ngày): Thanh toán 40% GĐ3 còn lại, tương đương 12.000.000 VNĐ.
+* Tổng giá trị các đợt thanh toán tiếp theo: 23.500.000 VNĐ.
 
----
+Đối với từng giai đoạn nghiệm thu, quy trình bàn giao đòi hỏi bộ hồ sơ và tài sản kỹ thuật bàn giao đầy đủ bao gồm:
 
-## 3. CÁC PHÂN HỆ NỀN TẢNG CỐT LÕI ĐÃ HOÀN THIỆN ĐẠT CHUẨN ENTERPRISE
+1. Danh mục chức năng đã hoàn thành, được đối chiếu trực tiếp theo phạm vi cam kết.
+2. Tài khoản và quyền quản trị cao nhất (Admin) cần thiết để đơn vị ALG trực tiếp vận hành, kiểm tra và khai thác hệ thống.
+3. Toàn bộ Mã nguồn (Source Code) theo phạm vi và điều kiện thỏa thuận khi hoàn thiện 100%.
+4. Danh sách các chức năng còn tồn đọng lỗi, còn thiếu hoặc chưa hoàn thiện kèm theo kế hoạch xử lý chi tiết.
 
-Ngoài 51 công cụ tác nghiệp mặt tiền, hệ thống smeOS đã xây dựng hoàn chỉnh **5 trụ cột công nghệ nền tảng cực kỳ phức tạp**, có thể dùng làm luận cứ kỹ thuật đắt giá khi đàm phán giá:
+Nền tảng tài chính và lộ trình đóng gói sản phẩm này là cơ sở để triển khai hạ tầng kỹ thuật và kiến trúc hệ thống ở cấp độ doanh nghiệp.
 
-### 3.1. Phân Hệ Tháp Điều Phối Đơn Hàng Liên Chi Nhánh (Control Tower M12)
-- **Vị trí mã nguồn**: `src/modules/coordinator/`, `src/app/(app)/dieu-phoi/`, 67 tệp TypeScript.
-- **Năng lực kỹ thuật**:
-  - Giám sát trạng thái đơn hàng thời gian thực (Realtime SLA Monitor) theo 4 gói cam kết (`OFFSET`, `EXACT`, `WINDOW`, `END_OF_DAY`).
-  - Cảnh báo đơn sắp trễ hạn giao (Near Breach SLA < 30 phút).
-  - Thuật toán định tuyến đơn tự động (Auto-Dispatch Engine) tới xưởng/chi nhánh tối ưu vị trí địa lý.
-  - Sổ thu tài chính đơn hàng (Payment Ledger): Tách bạch Tổng tiền, Đã thu cọc (`DEPOSIT`), Thu nốt (`BALANCE`), và Hoàn trả (`REFUND`). Ràng buộc SQL CHECK `balance_vnd = total_vnd - paid_vnd` chống gian lận tài chính.
-  - Cơ chế **Single Living Dashboard Card** trên Telegram/Zalo: 1 đơn hàng chỉ dùng duy nhất 1 tin nhắn ngoài, cập nhật tại chỗ qua `editMessage`, chống spam nhóm chat.
+2. KIẾN TRÚC HỆ THỐNG VÀ THIẾT KẾ HẠ TẦNG KỸ THUẬT
 
-### 3.2. Động Cơ Thị Giác Máy Tính & Nhận Diện Cấu Phần (AI Vision Engine M01)
-- **Vị trí mã nguồn**: `workers/vision/`, `src/modules/products/`, `src/app/(app)/tai-anh/`.
-- **Năng lực kỹ thuật**:
-  - Nhận diện chi tiết cấu phần vật liệu (BOM Recognition): Tên loại hoa/nguyên liệu, số lượng cành, màu sắc, tình trạng nụ/nở, loại bao bì đóng gói.
-  - Trích xuất bảng màu kế toán (`palette_accounting`) và OCR trích xuất nội dung chữ trên thiệp chúc.
-  - Cơ chế **Atomic Disaggregated Fields**: Phân tách từng trường dữ liệu độc lập (số lượng riêng, đơn vị tính riêng, tên riêng), cho phép sửa trực tiếp (inline edit) trước khi duyệt ghi vào Product Master.
+Hạ tầng kỹ thuật của Nền tảng SaaS Điện hoa ALG được thiết kế đóng vai trò như một xương sống công nghệ chuẩn doanh nghiệp, đảm bảo khả năng mở rộng linh hoạt, an toàn dữ liệu và đáp ứng độ ổn định cao trong các đợt cao điểm lễ tết cho từ 200 đến 1.000 cửa hàng hoa cùng lúc.
 
-### 3.3. Khung Hợp Đồng Đa Ngành Chuẩn Hóa (Multi-Industry Plugin Contract SSOT)
-- **Vị trí mã nguồn**: `src/modules/organization/domain/industry-plugin-contract.ts`, `src/modules/organization/domain/industries/`.
-- **Năng lực kỹ thuật**:
-  - Thiết kế theo triết lý "Đa ngành từ trong lõi" (Multi-Industry First).
-  - Đã tích hợp sẵn 7 ngành: Hoa tươi, Thời trang, F&B, Quà tặng thủ công, Bán lẻ tổng hợp, Dịch vụ, Homestay du lịch.
-  - Mỗi ngành cấu hình độc lập 6 khối: Danh mục từ ngữ (Terminology), Taxonomy, Định mức BOM, Bộ mẫu in A6, Bối cảnh chụp ảnh AI Studio, và Chính sách tiền công thợ.
-  - Mở rộng thêm 1 ngành mới chỉ mất 30 phút viết file plugin cấu hình, 0 dòng lệnh sửa CSDL, 0 rủi ro hồi quy hệ thống.
+Hệ thống được tổ chức thành 5 lớp kiến trúc chuyên biệt kết nối qua Cổng tích hợp (Integration Gateway):
 
-### 3.4. Hệ Thống Thông Báo Đa Tầng Theo Thác Đổ (4-Tier Cascading Governance Notification Matrix)
-- **Vị trí mã nguồn**: `src/modules/notification/`, `src/app/api/v1/platform/notification/`, `src/components/notification/`.
-- **Năng lực kỹ thuật**:
-  - Kiến trúc phân quyền thông báo 4 tầng: Mẹ $\rightarrow$ Ngành $\rightarrow$ Chuỗi $\rightarrow$ Tiệm.
-  - Khóa cứng tối cao (Hard Locks): Quản trị viên cấp trên có thể khóa cứng sự kiện an ninh/vận hành (bắt buộc bật qua SMS/Email), cấp dưới không thể tắt.
-  - Phân luồng kênh thông báo thông minh: In-App Popup, Sound, Email, SMS Brandname, Telegram Bot, Zalo ZNS.
+* 01. Lớp Kênh truy cập (Client Layer): Gồm Shop App (ứng dụng đa nền tảng cho cửa hàng), Admin Avi (màn hình điều phối trung tâm), Landing Page bán hàng, Kênh điện hoa Avi và các Hệ thống bên thứ 3.
+* 02. Lớp Cổng vào (API Gateway & Ingress Layer): Mạng phân phối nội dung (CDN) kết hợp Bức tường lửa bảo vệ ứng dụng Web (WAF), Cổng API Gateway, Web API và Cổng tích hợp chuyên dụng (Integration Gateway).
+* 03. Lớp Lõi xử lý (Node.js NestJS Core Framework): Quản trị đa thuê bao (Tenant) & phân quyền, Quản lý sản phẩm & Công thức định mức (BOM), Quản lý kho, Quản lý đơn hàng, Động cơ chia đơn & SLA, Quản lý hoa hồng & ví, Xử lý trí tuệ nhân tạo AI Gemini, Quản trị Landing Page & Mã QR.
+* 04. Lớp Xử lý bất đồng bộ (Asynchronous & Messaging Layer): Mẫu kiến trúc Inbox/Outbox đảm bảo tính toàn vẹn dữ liệu, Hệ thống hàng đợi (Message Queue), Tiến trình hẹn giờ (Cron Job định kỳ 12h), Tiến trình đối chiếu giao dịch SePay tự động.
+* 05. Lớp Dữ liệu & Lưu trữ (Data & Storage Layer): Cơ sở dữ liệu quan hệ PostgreSQL, Bộ lưu trữ đối tượng (Object Storage), Mạng CDN phân phối hình ảnh, Hệ thống sao lưu phục hồi theo mốc thời gian (PITR).
 
-### 3.5. Trợ Lý Khám Phá Thị Trường & Xu Hướng Tự Động (Market Intelligence Engine M03)
-- **Vị trí mã nguồn**: `src/modules/market-intelligence/`, `src/app/(app)/market-intelligence/`.
-- **Năng lực kỹ thuật**:
-  - Tự động quét và phân tích xu hướng thịnh hành từ các nền tảng mạng xã hội video (TikTok, YouTube, Reels).
-  - Phân tích bảng màu thị hiếu, phong cách tạo hình mới nổi và các chủ đề nội dung kích cầu theo mùa vụ.
-  - Gợi ý trực tiếp các cơ hội kinh doanh để đưa ngay vào quy trình sản xuất của Studio.
+Cổng tích hợp Integration Gateway kết nối an toàn với các dịch vụ bên ngoài bao gồm: Gemini AI, Telegram Bot, SePay cho từng shop, Server gửi thư SMTP; đồng thời sẵn sàng mở rộng cho Zalo, Facebook, Hóa đơn điện tử và Cổng thanh toán thẻ tín dụng trong các giai đoạn sau.
 
----
+Hạ tầng hiện tại sử dụng máy chủ FPT Cloud với cấu hình phần cứng: 8 vCPU Xeon Gold, 16 GB RAM, 220 GB ổ cứng NVMe, Hệ điều hành Windows Server 2022. Cấu hình này đáp ứng hoàn hảo cho tải vận hành của 200 shop và có định hướng mở rộng khi đạt mốc 1.000 shop.
 
-## 4. TỔNG KẾT MỨC ĐỘ SẴN SÀNG KINH DOANH (COMMERCIAL READINESS)
+Chỉ số vận hành kỹ thuật	Mức cơ sở (200 Shop)	Mức mở rộng mục tiêu (1.000 Shop)
+Người dùng nội bộ đồng thời	~600 người (Trung bình 3 người/shop)	~3.000 người
+Khách xem Landing Page đồng thời	~2.000 người	~10.000 người
+Số lượng đơn hàng ngày cao điểm Lễ	~20.000 đơn (100 đơn/shop trong 8 giờ)	~100.000 đơn
+Tải yêu cầu API hệ thống	~150 req/s (20–50 request/đơn)	~750 req/s
+Giao dịch ghi cơ sở dữ liệu (TPS)	~5 TPS	~25 TPS
+Lượt AI phân tích/ngày	~4.000 lượt	~20.000 lượt
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                    TỔNG HỢP MỨC ĐỘ HOÀN THIỆN TOÀN BỘ HỆ THỐNG                  │
-├──────────────────────────┬──────────────┬─────────────┬────────────────────────┤
-│ Phân loại trạng thái     │ Số lượng     │ Tỷ lệ (%)   │ Đánh giá thương mại    │
-├──────────────────────────┼──────────────┼─────────────┼────────────────────────┤
-│ ✅ DONE (Hoàn chỉnh 100%)│ 8 công cụ    │ 15.7%       │ Sử dụng ngay lập tức   │
-│ ⚠️ IN_PROGRESS (40-60%)  │ 11 công cụ   │ 21.6%       │ Đã có khung & logic    │
-│ 🧱 FOUNDATION (15-35%)   │ 16 công cụ   │ 31.4%       │ Đã có backend/schema   │
-│ 📋 PLANNED (Đang lên KH) │ 16 công cụ   │ 31.4%       │ Đặc tả chức năng sẵn   │
-├──────────────────────────┼──────────────┼─────────────┼────────────────────────┤
-│ TỔNG CỘNG                │ 51 công cụ   │ 100%        │ Hệ thống quy mô lớn    │
-└──────────────────────────┴──────────────┴─────────────┴────────────────────────┘
-```
+Chiến lược Tách cơ sở dữ liệu và Mở rộng quy mô (Database Scaling Strategy): Khi hệ thống phát triển vượt ngưỡng 200 shop và tiến tới mốc 1.000 shop, cơ sở dữ liệu PostgreSQL sẽ được tách ra máy chủ dữ liệu vật lý/mây chuyên dụng độc lập. Để bảo vệ dung lượng ghi (~25 Write TPS) trong các đợt cao điểm như Valentine (14/2) hay Quốc tế Phụ nữ (8/3), kiến trúc sẽ triển khai cơ chế Phân tách Đọc/Ghi (Read/Write Splitting). Mọi tác vụ truy vấn báo cáo, phân tích dữ liệu, tra cứu lịch sử và duyệt catalog của khách hàng trên Landing Page được điều hướng sang các máy chủ bản sao chỉ đọc (Read Replicas), giải phóng hoàn toàn tài nguyên cho máy chủ Master xử lý các giao dịch ghi đơn hàng và đối soát tiền tệ.
 
-### Kết luận cho bản chào giá:
-1. **Giá trị đã có thể thương mại hóa ngay (Go-To-Market Ready)**:
-   - Toàn bộ nhóm **AI Studio & Tạo nội dung** (Chế tác tự động A-Z, Tạo ảnh Studio, Bộ ảnh sản phẩm, Thẻ chào chốt đơn Zalo, Viết bài đa kênh, Market Intelligence).
-   - Hệ thống **Quản trị đa chi nhánh & Tháp điều phối đơn hàng (Control Tower)** chuyên nghiệp ngang tầm các phần mềm điều phối vận tải/F&B lớn.
-   - Nền tảng **Đa ngành 7 lĩnh vực** sẵn sàng triển khai cho chuỗi bán lẻ hoặc nhượng quyền.
-2. **Lộ trình hoàn thiện các mục còn lại**:
-   - 11 công cụ `IN_PROGRESS` và 16 công cụ `FOUNDATION` đã có nền tảng CSDL (109 models) và 364 APIs. Chỉ cần tập trung hoàn thiện tầng UI Frontend là có thể bàn giao trọn gói 100% trong vòng 4-6 tuần.
+Nhằm đảm bảo chất lượng dịch vụ thương mại, hệ thống thiết lập bộ Mục tiêu chất lượng vận hành (SLA Kỹ thuật) nghiêm ngặt:
+
+* Độ trễ xử lý API (p95): Dưới 300 ms.
+* Thời gian phát thông báo đơn hàng mới qua Telegram Bot: Dưới 3 giây.
+* Thời gian xử lý tác vụ AI chạy nền: Dưới 20 giây.
+* Mức độ sẵn sàng của toàn hệ thống (Availability): Đạt 99,5%.
+
+Chiến lược Sẵn sàng cao (HA) và Phương án Dự phòng:
+
+* Giai đoạn 1: Vận hành 01 máy chủ đơn lẻ kết hợp cơ chế sao lưu dữ liệu liên tục. Mức độ mất dữ liệu tối đa (RPO) \le 5 phút, thời gian khôi phục dịch vụ (RTO) \le 4 giờ.
+* Trước cao điểm Lễ 14/2/2027: Thiết lập Máy chủ dự phòng nóng (Hot-standby). Giảm RPO tối đa \le 1 phút, RTO \le 30 phút.
+* Quy mô trên 1.000 shop: Nâng cấp kiến trúc HA đầy đủ, tự động chuyển vùng khi có sự cố, RPO gần như bằng 0, RTO tính bằng phút.
+
+Chính sách Sao lưu dữ liệu (Backup): Thực hiện ghi nhật ký giao dịch (Log) liên tục kết hợp bản sao lưu đầy đủ (Full Backup) hằng ngày. Dữ liệu được lưu trữ phân tầng: giữ bản sao 7 ngày, 4 tuần và 6 tháng; đồng thời đẩy một bản sao lưu Offsite sang hạ tầng FPT Cloud độc lập. Định kỳ hằng tháng tổ chức diễn tập khôi phục dữ liệu từ bản sao lưu.
+
+Mô hình Replay Giao dịch Tiền và Đơn hàng: Áp dụng mô hình Inbox Pattern để lưu trữ nguyên bản mọi dữ liệu tiếp nhận từ Đơn hàng Avi, Webhook SePay và Telegram Bot nhằm chống trùng lặp dữ liệu tuyệt đối. Hệ thống sử dụng hàng đợi có cơ chế gửi lại (Retry mechanism), cho phép Admin chạy lại các tác vụ lỗi manual. Tất cả dữ liệu đơn hàng và ví tiền được ghi nhận theo dạng sổ cái chỉ ghi thêm (Append-only ledger). Định kỳ 15 phút một lần, hệ thống tự động đối chiếu dữ liệu giao dịch SePay với đơn hàng nhằm đảm bảo cân bằng dòng tiền hằng ngày.
+
+Kiến trúc hạ tầng vững chắc này là nền tảng trực tiếp nâng đỡ cho các module nghiệp vụ cốt lõi ở Giai đoạn 1.
+
+3. CHI TIẾT CHỨC NĂNG GIAI ĐOẠN 1: NỀN TẢNG KINH DOANH CỐT LÕI (85 TRIỆU VNĐ - 101 MỤC CHỨC NĂNG)
+
+Giai đoạn 1 tập trung xây dựng trục vận hành nghiệp vụ cốt lõi, giải quyết triệt để bài toán số hóa dữ liệu hàng tồn kho đặc thù, tự động hóa luồng điều phối đơn điện hoa và tối ưu hóa trải nghiệm tương tác với khách hàng.
+
+3.1. Quản lý Định mức Nguyên liệu (BOM) & Kho Hoa Tươi Chuyên Sâu
+
+Phần mềm quản lý bán lẻ thông thường không thể ứng dụng cho ngành hoa do không hỗ trợ bóc tách công thức bó hoa và tính toán tỷ lệ hao hụt tự nhiên của hoa tươi. Hệ thống giải quyết bài toán này bằng cách:
+
+* Quản lý tồn kho đa tầng chi tiết: Quản lý số lượng tồn kho chính xác tới từng cành hoa, loại lá và phụ liệu trang trí (giấy gói, nơ, xốp, đôn gỗ).
+* Tự động trừ kho theo định mức BOM: Ngay khi đơn hàng được xác nhận tạo, hệ thống căn cứ vào Định mức nguyên liệu (Bill of Materials - BOM) gắn liền với mẫu hoa đó để tự động trừ lùi nguyên liệu tương ứng trong kho chi nhánh.
+* Quản lý Lô/Hạn dùng & Cảnh báo hao hụt: Quản lý nhập kho theo từng lô hoa, theo dõi độ tươi và thời gian lưu kho. Hệ thống tự động phát cảnh báo khi lượng tồn kho xuống dưới ngưỡng tối thiểu hoặc khi hoa đến thời điểm có rủi ro hư hỏng cao, giúp chủ shop chủ động điều chỉnh kế hoạch kinh doanh.
+
+3.2. Cơ chế Điều phối Đơn hàng Điện hoa Hybrid & Quản trị SLA
+
+Hệ thống kết hợp giữa động cơ chia đơn tự động theo SLA và quyền can thiệp thủ công (Manual Override).
+
+Ma trận Trạng thái Đơn hàng & Tác nhân Kích hoạt Kỹ thuật (State Machine Mapping):
+
+Trạng thái Đơn hàng (State)	Mô tả Nghiệp vụ	Tác nhân Kích hoạt Kỹ thuật (Technical Event Drivers)
+Pending_Accept	Đơn điện hoa mới từ Avi chờ shop xác nhận	Avi Order Gateway đẩy Event -> Cron SLA Worker kích hoạt đếm ngược -> Telegram Bot Webhook & Socket App phát tín hiệu báo động đến Shop.
+Accepted	Shop đồng ý tiếp nhận đơn cắm hoa	Thợ cắm/Chủ shop nhấn "Nhận đơn" trên App hoặc tương tác qua Telegram Bot Webhook -> Kích hoạt API cập nhật trạng thái đơn.
+Arranging	Cửa hàng đang tiến hành gia công sản phẩm	Event chuyển trạng thái cắm hoa -> Hệ thống ghi nhận tiến độ, bắt đầu tính giờ gia công dự kiến.
+QC_Pending	Hoa đã cắm xong, chờ duyệt chất lượng	Thợ cắm chụp ảnh thành phẩm và tải lên qua App -> Kích hoạt QC Review Gateway, mở đếm ngược 10 phút chờ khách duyệt.
+Delivering	Đơn hàng đang được vận chuyển	Shipper nhận đơn giao hoặc shop bấm xác nhận bàn giao cho đơn vị vận chuyển -> Hệ thống gửi Live Tracking Link cho khách.
+Completed	Giao hoa thành công, hoàn tất đơn	Shipper tải ảnh xác nhận đã giao -> Ledger Event kích hoạt, hệ thống tự động tính toán và cộng tiền hoa hồng vào Ví chi nhánh.
+
+* Xử lý ngoại lệ & SLA: Nếu chi nhánh từ chối hoặc quá thời hạn xác nhận (Timeout ở trạng thái Pending_Accept), hệ thống tự động chuyển tiếp đơn sang chi nhánh khác. Trường hợp vượt quá số lần chuyển tiếp hoặc vượt quá khoảng cách tối đa, đơn hàng sẽ trả về cho trung tâm Avi xử lý.
+* Trường hợp đặc biệt:
+  * Đơn chỉ định chi nhánh: Bỏ qua bước xác nhận, chỉ phát thông báo và tính thời gian SLA xử lý ngay lập tức.
+  * Đơn sự kiện nhiều shop: Avi chia đơn hàng cha thành các đơn hàng con; từng chi nhánh nhận trách nhiệm cắm hoa và giao hàng độc lập cho phần việc của mình.
+
+3.3. Bộ Công cụ Thẻ Chào Mẫu Hoa Tương Tác & Trải nghiệm Khách hàng
+
+* Khởi tạo Thẻ sản phẩm linh hoạt: Cho phép lọc các mẫu hoa trong kho để đóng gói thành tập Thẻ sản phẩm trực quan, chia sẻ qua đường dẫn (link) ngắn hoặc mã QR dynamic. Liên kết này tồn tại vĩnh viễn cho đến khi cửa hàng chủ động xóa.
+* Trải nghiệm Khách hàng tương tác trên Landing Page:
+  * Khách hàng có thể đặt hoa theo yêu cầu bằng cách tải ảnh mẫu, nhập mô tả chi tiết, ngân sách dự kiến và thời gian giao hoa mong muốn.
+  * Tùy chọn kích thước sản phẩm (S/M/L), nhập nội dung băng rôn/thẻ chúc mừng.
+  * Kiểm soát chất lượng (QC) 10 phút: Khi shop tải ảnh thành phẩm lên, khách hàng có 10 phút để xem và duyệt ảnh thực tế trước khi đi giao.
+  * Theo dõi hành trình đơn hàng theo thời gian thực (Real-time order tracking).
+
+3.4. Payment Hub VietQR Auto-Matching & Tự động hóa Dòng tiền
+
+Hệ thống tích hợp giải pháp VietQR tự động thông qua Cổng SePay riêng cho từng cửa hàng:
+
+* Chế độ thanh toán đa dạng: Shop chủ động cấu hình 3 hình thức thanh toán trên Landing Page bao gồm:
+  1. Thanh toán một lần: Trả đủ 100% trước khi shop tiến hành cắm hoa.
+  2. Đặt cọc: Cho phép trả trước theo % hoặc một số tiền cố định (bắt buộc khi đơn vượt ngưỡng giá trị cấu hình).
+  3. Thanh toán ngoài: Shop tự thu qua COD, đơn vị vận chuyển trung gian hoặc chuyển khoản riêng.
+* Xác nhận dòng tiền tự động qua Webhook: Khi khách chuyển khoản qua VietQR, Webhook từ SePay bắn về hệ thống giúp đối chiếu tức thì nội dung và số tiền, tự động chuyển trạng thái đơn sang "Đã cọc" hoặc "Đã thanh toán đủ".
+* Đơn hàng từ Avi mặc định coi như đã thanh toán. Đơn từ Landing Page chưa thanh toán sẽ không tự động xóa; hệ thống tự động chạy tiến trình lúc 7:00 sáng hằng ngày để nhắc shop xử lý.
+
+3.5. AI Dynamic Pricing & Quality Control (QC) Thành phẩm (Powered by Gemini AI)
+
+* Định giá tự động từ Ảnh & Mô tả: Tích hợp mô hình Google Gemini AI. Khách hàng hoặc shop tải ảnh bó hoa kèm mô tả (ví dụ: "99 bông hồng đỏ"), AI tự động bóc tách thành phần (99 bông hồng, giấy gói, phụ liệu), tính toán giá vốn (COGS) dựa trên giá nhập nguyên liệu hiện tại, cộng thêm chi phí nhân công và biên lợi nhuận tối thiểu cấu hình của shop để đề xuất giá bán chuẩn xác.
+* Cơ chế Dự phòng Vận hành Doanh nghiệp (Enterprise Fallback Mechanism): Trong trường hợp kết nối Gemini API vượt quá ngưỡng phản hồi quy định (>20 giây) hoặc dịch vụ AI gặp sự cố ngắt kết nối, hệ thống sẽ tự động kích hoạt Cơ chế Báo giá Dự phòng (Rule-based Fallback Engine). Động cơ này tự động tra cứu công thức định mức BOM cố định từ danh mục sản phẩm lưu trong cơ sở dữ liệu, áp bảng giá niêm yết hiện hành và gắn nhãn Fallback_Calculated để thông báo cho chủ shop duyệt lại báo giá trước khi gửi khách.
+* Cơ chế Học máy nâng cao (Machine Learning Loop): Mỗi khi chủ shop chỉnh sửa lại bảng thành phần hoặc giá đề xuất của AI, dữ liệu hiệu chỉnh sẽ được lưu lại để huấn luyện mô hình cho các lần định giá sau.
+* Động cơ Thiết lập Giá linh hoạt: Cho phép thiết lập giá sàn, giá trần, hệ số phụ thu ngày Lễ (14/2, 8/3, 20/10), biên chiết khấu cho đối tác và tự động điều chỉnh theo biến động giá nguyên liệu đầu vào theo mùa.
+* AI Photo QC: So sánh hình ảnh hoa do thợ cắm chụp thực tế với hình ảnh mẫu trong danh mục để phát hiện mức độ tương đồng, đảm bảo tiêu chuẩn chất lượng đồng nhất toàn mạng lưới.
+
+BẢNG TỔNG HỢP CHỨC NĂNG GIAI ĐOẠN 1 (101 MỤC CHỨC NĂNG CỐT LÕI)
+
+Mã Chức Năng	Tên Chức Năng	Mô Tả Luồng Nghiệp Vụ	Đầu Ra Kỹ Thuật
+FN-G1-01	Quản lý Đa Chi nhánh & Tenant	Thiết lập cấu trúc chuỗi cửa hàng, khởi tạo tenant độc lập, phân quyền tài khoản (Tenant Admin, Quản lý chi nhánh, Thợ cắm hoa, Kế toán).	Database Schema Multi-tenant, Middleware phân quyền RBAC.
+FN-G1-02	Quản lý Kho Nguyên liệu & BOM	Cấu hình định mức hoa tươi (cành/bông), lá, phụ liệu. Tự động trừ kho ngay khi phát sinh đơn hàng; cảnh báo ngưỡng tồn và rủi ro hỏng.	Module BOM, API trừ kho tự động, Alert Notification System.
+FN-G1-03	Động cơ Chia đơn Điện hoa SLA	Tiếp nhận đơn Avi, định vị tìm shop gần nhất, gửi thông báo Telegram/App đếm ngược thời gian nhận. Tự chuyển tiếp đơn nếu quá giờ/từ chối.	Workflow Engine, Telegram Bot Integration, SLA Countdown Timer.
+FN-G1-04	Ví Hoa hồng & Lịch Rút tiền	Ghi nhận chi tiết hoa hồng từng đơn về ví của chuỗi/chi nhánh. Hỗ trợ rút tiền tự động theo khung giờ quy định hoặc rút nhanh có phí.	Module Ledger Ví tiền, Cron Job đối soát định kỳ, API Rút tiền.
+FN-G1-05	Bộ Thẻ Sản phẩm Tương tác & QR	Gom chọn danh mục hoa thành bộ Thẻ gửi khách. Sinh đường dẫn ngắn và mã QR động tồn tại lâu dài cho shop khai thác.	Dynamic QR Generator, Short link Service, Micro-landing View.
+FN-G1-06	Đặt hoa Theo yêu cầu	Màn hình tiếp nhận yêu cầu riêng: Khách tải ảnh, nhập mô tả, ngân sách, hẹn giờ. AI phân tích đề xuất giá cho shop duyệt gửi báo giá.	Customer Portal, Gemini API Parser, Dynamic Quote Generator.
+FN-G1-07	Payment Hub SePay Auto-Match	Tích hợp cổng SePay cá nhân hóa từng shop. Tạo mã VietQR động, nhận Webhook ngân hàng tự động cập nhật trạng thái đơn.	Webhook Receiver, VietQR Builder, Payment Auto-reconciliation.
+FN-G1-08	Định giá Thông minh AI Gemini	Phân tích hình ảnh + văn bản mô tả để bóc tách BOM, tính COGS, gợi ý giá bán. Có Fallback định mức tĩnh và lưu dữ liệu huấn luyện AI.	Gemini Vision Integration, Rule Engine Fallback, Pricing Engine.
+FN-G1-09	Khởi tạo Landing Page Bán hàng	Cho phép chọn 1 trong 4 Template mẫu (72 biến thể màu/góc giai đoạn MVP). Chạy trên tên miền con, hỗ trợ đặt hoa và thanh toán trực tuyến.	Landing Page Engine, Subdomain Routing, Template Renderer.
+FN-G1-10	Quản lý Trạng thái Đơn & QC Ảnh	Quản lý luồng đơn 6 bước. Cho phép thợ cắm tải ảnh thành phẩm, kích hoạt 10 phút chờ khách duyệt QC trước khi phân công Shipper giao.	QC Review Gateway, PWA Notification, Live Tracking Page.
+
+Nền tảng vận hành cốt lõi này là điều kiện cần để triển khai các công cụ tự động hóa tiếp thị và quản trị quan hệ khách hàng ở Giai đoạn 2.
+
+4. CHI TIẾT CHỨC NĂNG GIAI ĐOẠN 2: QUẢN LÝ KHÁCH HÀNG VÀ TỰ ĐỘNG HÓA MARKETING AI (85 TRIỆU VNĐ - 30 MỤC CHỨC NĂNG)
+
+Giai đoạn 2 mở rộng sức mạnh hệ thống từ quản trị vận hành thuần túy sang tự động hóa thu hút, chăm sóc và tối ưu hóa giá trị vòng đời khách hàng (LTV) nhờ trí tuệ nhân tạo.
+
+4.1. Hệ thống CRM Phân nhóm Chuyên sâu & Chăm sóc Khách hàng Tự động
+
+* Hồ sơ Khách hàng 360 độ: Lưu trữ toàn bộ lịch sử mua hàng, tần suất đặt hoa, giá trị trung bình đơn (AOV), phong cách hoa yêu thích và các dịp đặc biệt (sinh nhật, ngày kỷ niệm thành lập, ngày cưới, Valentine, 8/3, 20/10).
+* Phân nhóm Khách hàng Tự động (Segmentation): Phân loại khách hàng theo nhóm tiêu dùng (Khách lẻ VIP, Khách doanh nghiệp/Công ty, Khách vãng lai).
+* Kịch bản Chăm sóc Tự động (Automated Triggers):
+  * Hệ thống tự động quét lịch và kích hoạt tin nhắn/email nhắc nhở trước 3–5 ngày diễn ra sự kiện/kỷ niệm của khách.
+  * Tự động phát hành Mã giảm giá (Voucher) được cá nhân hóa theo từng nhóm khách.
+  * Gửi thông điệp chăm sóc và tri ân qua hạ tầng máy chủ email SMTP được cấu hình riêng.
+
+4.2. Bộ Công cụ AI Content Marketing Trọn gói & Chatbot Tư vấn Đơn nháp
+
+* AI Marketing Suite All-in-One:
+  * AI Copywriting: Tự động tạo bài viết bán hàng đa phong cách (lãng mạn, sang trọng, hài hước) phù hợp với từng mẫu hoa.
+  * AI Voice Synthesis: Chuyển đổi văn bản mô tả thành giọng đọc quảng cáo truyền cảm phục vụ truyền thông.
+  * AI Image Banner: Tự động ghép mẫu hoa vào các phông nền quảng cáo nghệ thuật theo chủ đề Lễ.
+  * AI Video Generation: Khởi tạo các video ngắn giới thiệu sản phẩm từ tập hợp ảnh thành phẩm.
+  * Đăng tải Đa kênh: Tích hợp công cụ xuất bản nội dung trực tiếp lên các nền tảng mạng xã hội bên thứ ba (trong phạm vi thỏa thuận thống nhất).
+* Chatbot AI Tư vấn & Tiếp nhận Đơn nháp:
+  * Tự động trò chuyện, giải đáp thắc mắc và tư vấn mẫu hoa cho khách hàng theo kịch bản kinh doanh bán lẻ hoa tươi.
+  * Tiếp nhận các yêu cầu hoa tùy chỉnh, tự động khởi tạo Đơn hàng nháp (Draft Order) chứa đầy đủ thông tin khách hàng, mẫu hoa, địa chỉ giao và ngân sách, chờ nhân viên xác nhận.
+* Bộ dựng Landing Page Nâng cao:
+  * Cung cấp hệ thống giao diện chuẩn hóa với 4 Phong cách thiết kế: Sang trọng, Hiện đại tối giản, Lãng mạn vintage, Tươi trẻ.
+  * Mỗi phong cách có 3 Template bố cục chuẩn \rightarrow Tổng cộng 12 Templates.
+  * Kết hợp với 6 Bảng phối màu chọn lọc và 3 Dạng bo góc đường viền \rightarrow Tạo ra 216 biến thể giao diện độc bản (12 \times 6 \times 3). (Trong Giai đoạn 1 triển khai MVP 4 templates \times 6 màu \times 3 bo góc = 72 biến thể).
+  * Tích hợp Form khảo sát ngắn cho shop; AI tự động phân tích câu trả lời để gợi ý Template giao diện tối ưu nhất.
+
+BẢNG TỔNG HỢP CHỨC NĂNG GIAI ĐOẠN 2 (30 MỤC CHỨC NĂNG MARKETING AI & CRM)
+
+STT	Phân Hệ Chức Năng	Mô Tả Nghiệp Vụ AI/CRM	Tác Động Vận Hành
+01	CRM Hồ sơ Khách hàng	Quản lý thông tin cá nhân, lưu trữ sở thích hoa, lịch sử mua hàng và tự động theo dõi các ngày kỷ niệm/sinh nhật.	Tăng tỷ lệ khách hàng quay lại mua đơn hàng tiếp theo.
+02	Phân nhóm & Auto Trigger	Tự động phân loại khách hàng, kích hoạt gửi tin nhắn nhắc Lễ/Kỷ niệm kèm Voucher cá nhân hóa qua SMTP Email.	Tự động hóa 100% khâu chăm sóc khách hàng cũ.
+03	AI Content Generation	Động cơ sinh văn bản tự động tạo bài viết bán hàng, thông điệp chúc mừng độc đáo theo ngữ cảnh sản phẩm.	Rút ngắn 90% thời gian làm nội dung tiếp thị cho shop.
+04	AI Voice & Video Creator	Chuyển văn bản thành giọng đọc truyền thông; ghép tập ảnh thành phẩm thành Video quảng cáo ngắn.	Tạo tài liệu truyền thông đa phương tiện chuyên nghiệp.
+05	AI Image Ad Banner	Tự động tách nền hoa thành phẩm, ghép vào khung hình quảng cáo chủ đề Lễ tết/Kỷ niệm.	Nâng cao hình ảnh thương hiệu cửa hàng trên không gian mạng.
+06	Chatbot Đơn nháp	Chatbot tư vấn theo kịch bản, tự phân tích nhu cầu và tạo Đơn hàng nháp trên hệ thống.	Giảm thiểu thời gian trực tin nhắn, tránh bỏ lỡ khách hàng.
+07	Landing Page Builder (216 Variants)	Trình dựng trang bán hàng 4 phong cách, 12 template, 6 màu, 3 bo góc. AI gợi ý template theo khảo sát shop.	Tối ưu hóa tỷ lệ chuyển đổi đơn hàng từ kênh Online.
+08	Đăng tải Đa kênh (Social Publish)	Tích hợp công cụ xuất bản bài viết, hình ảnh tiếp thị lên các trang mạng xã hội đã kết nối.	Quản lý truyền thông tập trung tại một màn hình duy nhất.
+
+Sau khi hoàn thiện năng lực tiếp thị và giữ chân khách hàng, hệ thống được nâng cấp lên Giai đoạn 3 để phục vụ quản trị chuỗi quy mô lớn và thương mại hóa nền tảng.
+
+5. CHI TIẾT CHỨC NĂNG GIAI ĐOẠN 3: CONSOLE QUẢN TRỊ ĐA CHUỖI VÀ THƯƠNG MẠI HÓA SAAS (30 TRIỆU VNĐ - 22 MỤC CHỨC NĂNG)
+
+Giai đoạn 3 hoàn thiện Nền tảng SaaS Điện hoa ALG thành một hệ điều hành doanh nghiệp hoàn chỉnh, hỗ trợ quản trị tập trung nhiều chi nhánh và mở ra các kênh doanh thu thương mại hóa công nghệ.
+
+5.1. Console Quản trị Đa chi nhánh & Phân quyền 2 Bước
+
+* Trung tâm Điều hành Tập trung (Multi-Chain Console): Màn hình Console cho phép Chủ chuỗi theo dõi toàn bộ chỉ số kinh doanh theo thời gian thực từ tất cả chi nhánh: tổng doanh thu, số lượng đơn điện hoa, hiệu suất làm việc của thợ cắm hoa, số dư ví hoa hồng và báo cáo tồn kho nguyên liệu toàn chuỗi.
+* Cơ chế Phân quyền 2 Bước (2-Step Authorization & RBAC):
+  * Bước 1: Phân quyền theo Vai trò người dùng (Tenant Admin, Quản lý Chi nhánh, Thợ cắm hoa, Kế toán, Nhân viên giao hàng).
+  * Bước 2: Phân quyền truy cập Phạm vi dữ liệu (Chỉ xem dữ liệu chi nhánh hiện tại hoặc Xem toàn bộ dữ liệu hệ thống).
+  * Đảm bảo tính bảo mật dữ liệu tuyệt đối giữa các cửa hàng độc lập trong cùng hệ thống SaaS.
+* Quản lý Hạn mức Lượt dùng AI (AI Credit Quota Management): Hệ thống phân bổ và kiểm soát hạn mức sử dụng các tính năng AI (phân tích ảnh, tạo bài viết, sinh video, voice) cho từng chi nhánh. Khi hết hạn mức, chi nhánh có thể mua thêm gói Add-on.
+
+5.2. Mô hình Thu phí Thuê bao SaaS & Hệ sinh thái Avi Supply
+
+* Mô hình Kinh doanh Thuê bao (SaaS Subscription Engine):
+  * Phí thuê bao cơ bản: Tính theo số lượng chi nhánh đăng ký (Miễn phí hoàn toàn trong giai đoạn thí điểm).
+  * Các gói Dịch vụ gia tăng (Add-ons): Mua thêm lượt dùng AI, gói tích hợp Hóa đơn điện tử, gói gửi tin nhắn Zalo ZNS, đăng ký Tên miền riêng (Custom Domain).
+  * Phí rút tiền tức thì: Miễn phí rút hoa hồng theo khung giờ cố định; thu phí dịch vụ nếu chuỗi có nhu cầu rút tiền nhanh ngoài khung giờ quy định.
+  * Lưu ý: Khoản hoa hồng đơn điện hoa do trung tâm Avi chi trả cho shop là dòng tiền luân chuyển nghiệp vụ, không tính vào doanh thu vận hành nền tảng SaaS.
+* Hệ sinh thái Bán buôn Nguyên liệu "Avi Supply":
+  * Tích hợp sàn nguyên liệu bán buôn Avi Supply trực tiếp ngay trên giao diện quản lý của Shop App.
+  * Chủ shop có thể sử dụng trực tiếp Số dư Ví hoa hồng tích lũy từ các đơn điện hoa để đặt mua nguyên liệu (hoa tươi nhập khẩu, giấy gói, phụ kiện) với giá ưu đãi.
+  * Dữ liệu tiêu thụ nguyên liệu và tồn kho thực tế từ hệ thống SaaS giúp Avi dự báo chính xác nhu cầu thị trường để tối ưu hóa chuỗi cung ứng trước các dịp Lễ lớn.
+
+BẢNG TỔNG HỢP CHỨC NĂNG GIAI ĐOẠN 3 (22 MỤC CHỨC NĂNG CONSOLE & THƯƠNG MẠI HÓA)
+
+STT	Chức Năng Console/SaaS	Quy Trình Xử Lý	Giá Trị Thương Mại
+01	Multi-Chain Admin Console	Gom tụ dữ liệu toàn bộ cửa hàng thuộc chuỗi, hiển thị báo cáo doanh thu, tồn kho, đơn hàng cross-branch.	Cung cấp bức tranh tổng thể điều hành cho chủ chuỗi doanh nghiệp.
+02	Phân quyền Bảo mật 2 Bước	Kiểm soát truy cập theo Vai trò (Role) kết hợp Phạm vi chi nhánh (Scope); mã hóa dữ liệu tenant.	Đảm bảo an toàn thông tin, chống thất thoát dữ liệu kinh doanh.
+03	Quản lý AI Credit Quota	Bảng điều khiển cấp phát, theo dõi và giới hạn lượt gọi API AI Gemini cho từng tài khoản cửa hàng.	Kiểm soát chi phí hạ tầng AI và tạo nguồn thu từ bán Add-on lượt AI.
+04	SaaS Billing Engine	Thu phí thuê bao theo chi nhánh; tự động tính phí các gói Add-on (Hóa đơn, ZNS, Domain riêng).	Mở rộng dòng thu Recurring Revenue cho Nền tảng SaaS.
+05	Rút tiền Ví Hoa hồng	Xử lý lệnh rút tiền hoa hồng điện hoa về tài khoản ngân hàng; áp phí khi rút ngoài khung giờ cố định.	Tự động hóa quản trị dòng tiền và tối ưu hóa doanh thu tài chính.
+06	Tích hợp Chợ Avi Supply	Kết nối trực tiếp cửa hàng mua sắm nguyên liệu; cho phép cấn trừ thanh toán bằng số dư Ví hoa hồng.	Khép kín chuỗi giá trị: Phần mềm \rightarrow Mạng lưới \rightarrow Cung ứng nguyên liệu.
+
+Toàn bộ các phân hệ chức năng nêu trên được cụ thể hóa bằng kế hoạch phân bổ nhân sự và lộ trình triển khai kỹ thuật chi tiết.
+
+6. PHÂN BỔ CÔNG SỨC LẬP TRÌNH, LỘ TRÌNH TRIỂN KHAI VÀ KẾ HOẠCH BÀN GIAO
+
+Để đảm bảo dự án hoàn thành đúng tiến độ cam kết và đạt tiêu chuẩn chất lượng cao nhất, công tác quản trị dự án được tính toán chi tiết dựa trên chỉ số Công sức Lập trình (Man-Days - MD). Tổng công sức lập trình cho riêng Giai đoạn 1 được xác định là 60 MD Dev (tương đương 2 Lập trình viên làm việc liên tục trong 6 tuần), kết hợp với ~30 MD Business Analyst (BA) và ~30 MD Tester (QC).
+
+BẢNG PHÂN RÃ MD LẬP TRÌNH LÕI & TÍCH HỢP (60 MD DEV GIAI ĐOẠN 1)
+
+Khối Lượng Phát Triển	Hạng Mục Công Việc Chi Tiết	Công Sức Dev (MD)	Tỷ Tọng (%)
+01. Lõi Nghiệp Vụ (Core Logic)	Landing Page, Thanh toán linh hoạt, Thẻ sản phẩm, Mã QR	7 MD	
+	Quản trị Tenant, Phân quyền RBAC, Màn hình Admin	5 MD	
+	Quản lý Sản phẩm, Công thức định mức BOM, Quản lý Kho	5 MD	
+	Quản lý Đơn hàng, Luồng trạng thái xử lý	5 MD	
+	Quản lý Hoa hồng, Ví tiền, Replay giao dịch	5 MD	
+	Quản lý Khuyến mại, CRM cơ bản, Báo cáo	4 MD	
+TỔNG LÕI NGHIỆP VỤ	Phát triển tính năng nội bộ hệ thống	31 MD	51,7%
+02. Tích Hợp Bên Thứ Ba (3rd Integration)	Bộ Skill Set AI Gemini (Định giá, Bóc tách BOM, Vision)	9 MD	
+	Cổng tiếp nhận đơn Điện hoa Avi (Order Gateway)	8 MD	
+	Tích hợp Telegram Bot tương tác nhận đơn	4 MD	
+	Tích hợp Cổng thanh toán VietQR & Webhook SePay	4 MD	
+	Tích hợp Email SMTP, Storage, Backup PITR	4 MD	
+TỔNG TÍCH HỢP BÊN THỨ 3	Kết nối, Xử lý ngoại lệ & Kiểm thử tích hợp	29 MD	48,3%
+TỔNG CỘNG	Toàn bộ khối lượng Dev Giai đoạn 1	60 MD	100,0%
+
+Giải trình Chuyên môn Kỹ thuật về Công sức Tích hợp (29 MD)
+
+Khâu tích hợp dịch vụ bên thứ ba chiếm tới 48,3% (gần một nửa) tổng thời gian lập trình do đòi hỏi khắt khe về kỹ thuật ở 3 góc độ:
+
+* Rủi ro phụ thuộc API bên thứ ba: Phụ thuộc vào tài liệu kỹ thuật, độ ổn định và môi trường thử nghiệm (Sandbox) của từng nhà cung cấp bên thứ ba (Gemini API, SePay, Telegram). Lập trình viên phải viết các bộ adapter xử lý chuẩn hóa dữ liệu đầu vào/đầu ra.
+* Cơ chế Idempotency & Replay: Xây dựng logic xử lý phức tạp để ứng phó với lỗi mạng, gián đoạn kết nối, quá thời hạn phản hồi (timeout); thiết lập cơ chế tự động gửi lại (retry queue), chống trùng lặp dữ liệu giao dịch tài chính (Idempotency Key) và ghi log sổ cái phục vụ Replay.
+* Kiểm thử Tích hợp End-to-End: Tiến hành kiểm thử liên hoàn giữa môi trường giả lập và dịch vụ thật, đảm bảo dòng tiền từ SePay và luồng đơn từ Avi đồng bộ 100% về cơ sở dữ liệu hệ thống mà không có sai lệch.
+
+BẢNG MA TRẬN TIẾN ĐỘ TRIỂN KHAI 6 TUẦN (GIAI ĐOẠN 1)
+
+Tiến Độ	Hạng Mục Bàn Giao & Mốc Nghiệm Thu	Công Việc Kỹ Thuật Chi Tiết
+Tuần 1 – 2<br>(Mốc 1: 15 ngày Thí điểm)	Hạ tầng, Chuỗi, BOM & Luồng Đơn cơ bản	• Thiết lập Hạ tầng FPT Cloud, PostgreSQL, Kiến trúc Multi-tenant.<br>• Cấu hình Chuỗi - Chi nhánh, Phân quyền RBAC.<br>• Hoàn thiện Quản lý Sản phẩm, Định mức BOM, Kho tươi.<br>• Tích hợp Cổng nhận đơn Avi, Telegram Bot, Luồng chuyển tiếp đơn.<br>• Dựng Động cơ Ví hoa hồng baseline, Cron Job đối soát 12h.<br>• Tích hợp AI Gemini (Ảnh + Mô tả \rightarrow Giá bán & BOM).<br>• Màn hình Đặt hoa theo yêu cầu & Engine Landing Page (4 Templates MVP, Subdomain, PWA Notification).
+Tuần 3 – 6<br>(Mốc 2: Bàn giao Tổng thể)	Payment Hub, Ví, AI Marketing & Test Tải	• Tích hợp SePay từng shop, Xử lý Webhook Auto-match VietQR.<br>• Hoàn thiện Ví hoa hồng, Xử lý lệnh Rút tiền tự động/thủ công.<br>• Phát triển AI Báo giá nâng cao, Content Marketing, Gợi ý Template.<br>• Đóng gói Thẻ sản phẩm tương tác, Sinh mã QR động.<br>• Phát triển CRM, Quản lý Khuyến mại, Cấu hình SMTP Email.<br>• Xây dựng Chatbot tư vấn theo kịch bản, Tạo đơn nháp.<br>• Màn hình Báo cáo tổng hợp, Cơ chế Replay sự kiện.<br>• Kiểm thử tải cao điểm (Load Testing), Diễn tập khôi phục sự cố (DR).
+
+Phân định Trách nhiệm Chi phí Dịch vụ Bên thứ ba (Third-Party Cost Ownership)
+
+Để đảm bảo minh bạch tài chính trong quá trình vận hành, chi phí dịch vụ bên thứ ba được phân định rõ ràng:
+
+1. Chi phí Hạ tầng Máy chủ & Gemini AI: Chi phí thuê máy chủ FPT Cloud (8 vCPU Xeon Gold, 16 GB RAM, 220 GB NVMe) và chi phí API Google Gemini AI do đơn vị Avi trực tiếp chi trả.
+2. Chi phí Cổng Thanh toán SePay: Chi phí đăng ký và duy trì tài khoản kết nối SePay do từng cửa hàng (Shop) tự đăng ký và chi trả trực tiếp cho nhà cung cấp SePay theo gói dịch vụ họ lựa chọn.
+3. Chi phí Khuyến nghị thêm: Chi phí lưu trữ hình ảnh Object Storage, hạ tầng CDN và máy chủ gửi thư SMTP Email khuyến nghị sử dụng do bên yêu cầu chi trả để đảm bảo SLA vận hành.
+
+Cơ cấu Đội ngũ Triển khai (4 Nhân sự Chuyên trách):
+
+1. 01 Senior BA Lead: Trực tiếp thiết kế giải pháp, phân tích nghiệp vụ chi tiết, điều phối tiến độ và làm đầu mối nghiệm thu.
+2. 02 Middle/Senior Developers: Chuyên trách Node.js, Next.js, kiến trúc tích hợp hệ thống (làm việc bán thời gian, quy đổi chính xác theo tổng 60 MD thực tế).
+3. 01 Junior/Middle Tester: Tham gia kiểm thử liên tục từ ngày thứ 4 của dự án, thực hiện kiểm thử tích hợp và hỗ trợ vận hành.
+
+Kế hoạch Bàn giao & Sẵn sàng Vận hành:
+
+* Mục tiêu thí điểm: Đạt quy mô 200 shop tham gia vận hành thực tế vào Tháng 1/2027.
+* Sẵn sàng cao điểm: Hoàn thiện cài đặt Máy chủ dự phòng nóng (Hot-standby) trước ngày 14/2/2027 để phục vụ mùa Lễ Valentine.
+* Quyền sở hữu mã nguồn: Đơn vị Avi sở hữu toàn bộ Mã nguồn hệ thống khi hoàn thiện 100%.
+* Điều khoản chấm dứt: Trường hợp dừng hợp tác ở các phương án vận hành nâng cao, bên yêu cầu cần phát thông báo trước 30 ngày theo quy định.
+
+Nền tảng SaaS Điện hoa ALG đã được thiết kế chuẩn hóa toàn diện từ kiến trúc hạ tầng, mô hình dữ liệu đến từng luồng nghiệp vụ chi tiết, sẵn sàng đưa vào vận hành thương mại quy mô lớn và khẳng định vị thế dẫn đầu trong chuyển đổi số ngành hoa tươi tại Việt Nam.

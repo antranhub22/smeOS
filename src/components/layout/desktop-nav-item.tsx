@@ -64,7 +64,7 @@ function NavTooltip({
         className={cn(
           "pointer-events-none absolute left-full ml-2 z-50",
           "flex items-center gap-1.5 whitespace-nowrap rounded-lg",
-          "bg-[#2A1E22] px-2.5 py-1.5 text-body-sm font-medium text-white",
+          "bg-text px-2.5 py-1.5 text-body-sm font-medium text-white",
           "shadow-lg opacity-0 transition-opacity duration-150",
           "group-hover:opacity-100",
           "-translate-y-1/2 top-1/2"

@@ -13,6 +13,8 @@
  * Đây là điểm lệch tài liệu/mã thứ 10, thêm vào `RA_SOAT_THU_HOACH.md`.
  */
 
+import { formatCurrency } from "@/lib/i18n/formatters"
+
 /** Sàn/Trần tra được cho một mã sản phẩm. */
 export interface FloorCeilingLookup {
   /** Có tra được hay không — mã chưa có quy tắc giá riêng thì `false`. */
@@ -31,7 +33,7 @@ export interface PriceGuardResult {
 }
 
 function formatVnd(value: number): string {
-  return new Intl.NumberFormat("vi-VN").format(Math.round(value)) + " đ"
+  return formatCurrency(Math.round(value))
 }
 
 /**

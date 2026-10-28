@@ -6,6 +6,7 @@
 // 3. Đăng ký dùng thử, chờ quản trị viên duyệt (POST /api/v1/auth/instant-trial)
 // Cấp session cookie và điều hướng vào Dashboard ("/").
 
+import { useI18n } from "@/lib/i18n"
 import { Suspense, useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { Zap } from "lucide-react"
@@ -16,6 +17,7 @@ import { InstantTrialForm } from "./components/instant-trial-form"
 type CheDo = "dang-nhap" | "dang-ky" | "dung-thu"
 
 export default function DangNhapPage() {
+  const { t } = useI18n()
   const [cheDo, setCheDo] = useState<CheDo>("dang-nhap")
 
   useEffect(() => {

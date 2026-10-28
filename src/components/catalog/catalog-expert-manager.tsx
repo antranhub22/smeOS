@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { PublishedCatalogLinks, type CatalogLinkItem } from "./catalog-link-widgets"
 import type { CatalogProduct } from "./catalog-management-tab"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 interface CatalogExpertManagerProps {
   products: CatalogProduct[]
@@ -186,7 +187,7 @@ export function CatalogExpertManager({
                 </div>
                 {p.price != null && (
                   <div className="text-body-sm font-black text-primary shrink-0">
-                    {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(p.price)}
+                    {formatCurrency(p.price)}
                   </div>
                 )}
               </button>

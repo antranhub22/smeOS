@@ -13,6 +13,7 @@ import { redirect } from "next/navigation"
 
 import { resolvePlatformSession } from "@/modules/platform/use-cases/resolve-platform-session"
 import { SessionProvider } from "@/lib/session"
+import { I18nProvider } from "@/lib/i18n"
 import { DesktopNav } from "@/components/layout/desktop-nav"
 import { MobileNavDrawer } from "@/components/layout/mobile-nav-drawer"
 import { BottomNav } from "@/components/layout/bottom-nav"
@@ -42,15 +43,17 @@ export default async function PlatformLayout({ children }: { children: React.Rea
 
   return (
     <SessionProvider session={platformSession}>
-      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-none md:flex-row">
-        <MobileNavDrawer>
-          <DesktopNav isDev={isDev} />
-          <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-hidden focus:outline-none">
-            <main className="h-full overflow-auto">{children}</main>
-          </div>
-        </MobileNavDrawer>
-        <BottomNav />
-      </div>
+      <I18nProvider>
+        <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-none md:flex-row">
+          <MobileNavDrawer>
+            <DesktopNav isDev={isDev} />
+            <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-hidden focus:outline-none">
+              <main className="h-full overflow-auto">{children}</main>
+            </div>
+          </MobileNavDrawer>
+          <BottomNav />
+        </div>
+      </I18nProvider>
     </SessionProvider>
   )
 }

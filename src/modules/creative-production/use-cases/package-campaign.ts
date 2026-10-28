@@ -17,6 +17,7 @@ import type {
 } from "../domain/production-types"
 import type { ProduceAuthenticResult } from "./produce-authentic"
 import type { ProduceCreativeResult } from "./produce-creative"
+import { formatDate } from "@/lib/i18n/formatters"
 
 // ============================================================
 // INPUT / OUTPUT
@@ -157,10 +158,7 @@ function collectTopicIds(
 
 function generateCampaignName(mode: ProductionMode, topicCount: number): string {
   const modeLabel = mode === "AUTHENTIC" ? "Chân thật" : "Sáng tạo"
-  const date = new Date().toLocaleDateString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-  })
+  const date = formatDate(new Date())
   return `Chiến dịch ${modeLabel} — ${topicCount} chủ đề — ${date}`
 }
 

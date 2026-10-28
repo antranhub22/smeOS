@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { AlertTriangle } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useI18n } from "@/lib/i18n"
 
 type PlatformSystemHealth = {
   jobCountsByStatus: Record<string, number>
@@ -22,6 +23,7 @@ async function layJson<T>(url: string): Promise<T | null> {
 }
 
 export default function SucKhoeHeThongPage() {
+  const { t, dict } = useI18n()
   const [health, setHealth] = useState<PlatformSystemHealth | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
 
@@ -42,7 +44,7 @@ export default function SucKhoeHeThongPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-base font-bold text-text">Sức khỏe hệ thống & hạ tầng</h1>
+        <h1 className="text-base font-bold text-text">{dict.platform.health.title}</h1>
         <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hạ tầng</span>
       </div>
 

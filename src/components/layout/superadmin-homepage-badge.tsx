@@ -121,6 +121,8 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
           window.location.href = "/"
         }
         setOpen(false)
+      } catch (err) {
+        console.error("Lỗi cập nhật vai dev:", err)
       } finally {
         setLoading(null)
       }
@@ -151,7 +153,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
     <span
       title={`Homepage đang active: ${homepageKey}${isDev ? " (Click để đổi tầng/vai)" : ""}`}
       className={cn(
-        "inline-flex items-center gap-0.5 rounded border px-1 py-0.5 text-[9px] font-bold tracking-tight leading-none whitespace-nowrap select-none transition-opacity",
+        "inline-flex items-center gap-0.5 rounded border px-1 py-0.5 text-caption font-bold tracking-tight leading-none whitespace-nowrap select-none transition-opacity",
         config.color,
         isDev && "cursor-pointer hover:opacity-80"
       )}
@@ -192,7 +194,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
           {/* Header */}
           <div className="flex items-center gap-1.5 border-b border-border bg-surface-alt px-3 py-2">
             <FlaskConical size={12} className="text-primary" aria-hidden />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-text">
+            <span className="text-caption font-bold uppercase tracking-widest text-text">
               Chuyển Tầng & Vai Trò
             </span>
           </div>
@@ -222,7 +224,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
                     )}
                     <span className="flex-1 truncate">{preset.label}</span>
                     {isLoading && (
-                      <span className="text-[10px] text-primary animate-pulse">Đang nạp…</span>
+                      <span className="text-caption text-primary animate-pulse">Đang nạp…</span>
                     )}
                   </button>
                 </li>

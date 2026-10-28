@@ -70,6 +70,14 @@ Claude outputs/
 !.claude/settings.json
 .kilo/
 
+# ╔══════════════════════════════════════════════════════╗
+# ║  AGENT CONFIG — INTERNAL IP, KHÔNG GIAO CHO KHÁCH  ║
+# ║  Không commit .agents/, AGENTS.md, .agent-studio/  ║
+# ╚══════════════════════════════════════════════════════╝
+.agents/
+AGENTS.md
+.agent-studio/
+
 # Kết quả đo chất lượng ảnh biến thể (scripts/cham-bien-the.py) — ảnh sinh ra, không commit
 var/cham-bien-the/
 

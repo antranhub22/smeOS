@@ -59,6 +59,7 @@ export function SinglePreviewModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Đóng cửa sổ"
             className="rounded-lg p-1 text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
           >
             <X className="h-5 w-5" />

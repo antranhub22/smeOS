@@ -148,12 +148,12 @@ export function StoreGrowthCenter() {
   const phanTramCredit = tongCredit > 0 ? Math.round(((usage?.credit_used ?? 0) / tongCredit) * 100) : 0
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 p-6">
+    <div className="mx-auto max-w-6xl space-y-5 sm:space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-display font-extrabold text-text">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-title sm:text-display font-extrabold text-text">
               {orgName || "Trung tâm Tăng trưởng Cửa hàng"}
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
@@ -165,7 +165,7 @@ export function StoreGrowthCenter() {
             {roleUx?.primaryQuestion ?? "Hôm nay tôi cần làm gì để cửa hàng phát triển?"}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between sm:justify-end gap-2.5">
           <Button
             type="button"
             variant="outline"
@@ -174,7 +174,7 @@ export function StoreGrowthCenter() {
             className="flex items-center gap-1.5"
           >
             <TrendingUp className="h-4 w-4 text-primary" />
-            <span>Xu hướng thị trường</span>
+            <span className="text-caption sm:text-body-sm">Xu hướng thị trường</span>
           </Button>
           <UserMenu initials={userInitials || "CH"} />
         </div>

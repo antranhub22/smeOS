@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -67,6 +68,7 @@ function buildGuidanceMap(ti: IndustryTerminology): Record<FeatureKey, { badge: 
 }
 
 export default function MarketIntelligencePage() {
+  const { t } = useI18n()
   const router = useRouter();
   const { organization } = useSession();
   const ti = getIndustryTerminology(organization?.industry);

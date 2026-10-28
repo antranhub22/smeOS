@@ -119,7 +119,13 @@ export function ImageUploadTab({
                   hoặc nhấp để chọn từ thiết bị · JPG, PNG, WEBP · Tối đa 10MB
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="text-xs gap-1.5 mt-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs gap-1.5 mt-1"
+              >
                 <Upload size={13} />
                 Chọn ảnh từ máy
               </Button>
@@ -175,7 +181,7 @@ export function ImageUploadTab({
                         : "bg-border"
                     }`}
                   />
-                  <span className="text-[10px] text-text-muted text-center leading-tight hidden sm:block">
+                  <span className="text-caption text-text-muted text-center leading-tight hidden sm:block">
                     {s === "uploading"
                       ? "Tải lên"
                       : s === "registering"

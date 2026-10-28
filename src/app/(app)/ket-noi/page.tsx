@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import {
@@ -73,6 +74,7 @@ function getSupportedPlatforms(ti: IndustryTerminology): PlatformConfig[] {
 }
 
 export default function PlatformConnectionsPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const { organization } = useSession()
   const ti = getIndustryTerminology(organization?.industry)

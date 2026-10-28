@@ -87,11 +87,11 @@ export function FeaturedSpotlightCard({
               <>
                 <div className="flex items-center gap-2 text-body-sm font-medium text-text">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
-                  <span>7 Ngành hàng chuẩn hóa SSOT</span>
+                  <span>7 Ngành hàng chuẩn hóa thống nhất</span>
                 </div>
                 <div className="flex items-center gap-2 text-body-sm font-medium text-text">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
-                  <span>Đồng bộ BOM & ấn phẩm in A6</span>
+                  <span>Đồng bộ định mức nguyên liệu & ấn phẩm in A6</span>
                 </div>
                 <div className="flex items-center gap-2 text-body-sm font-medium text-text">
                   <CheckCircle2 className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />

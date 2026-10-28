@@ -71,7 +71,8 @@
     "check:field-registry": "tsx --env-file-if-exists=.env scripts/check-field-registry.ts",
     "lint:decisions": "tsx scripts/lint-decision-registry.ts",
     "lint:manifests": "tsx scripts/lint-journey-manifests.ts",
-    "lint:ratchet": "node scripts/eslint-ratchet.mjs"
+    "lint:ratchet": "node scripts/eslint-ratchet.mjs",
+    "copywrite:style": "tsx scripts/apply-copywrite-style.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.137.0",

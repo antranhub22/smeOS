@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -78,6 +79,7 @@ function JobCard({ job }: { job: Job }) {
 }
 
 export default function JobListPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const [jobs, setJobs] = useState<Job[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)

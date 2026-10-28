@@ -83,7 +83,7 @@ export function QuickStockBoard({ products }: QuickStockBoardProps) {
                     <td className="p-3 text-text-muted font-mono">{p.code}</td>
                     <td className="p-3 text-text-muted">{p.category || "Mặc định"}</td>
                     <td className="p-3">
-                      <span className="rounded-lg bg-surface-alt px-2 py-1 text-[11px] font-medium text-text">
+                      <span className="rounded-lg bg-surface-alt px-2 py-1 text-caption font-medium text-text">
                         {p.mode === "HOMESTAY_CALENDAR"
                           ? "Lịch phòng"
                           : p.mode === "DAILY_CAPACITY"
@@ -92,7 +92,7 @@ export function QuickStockBoard({ products }: QuickStockBoardProps) {
                       </span>
                     </td>
                     <td className="p-3">
-                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${badgeColor}`}>
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-caption font-bold ${badgeColor}`}>
                         <Icon size={12} />
                         <span>{label}</span>
                       </span>
@@ -100,7 +100,7 @@ export function QuickStockBoard({ products }: QuickStockBoardProps) {
                     <td className="p-3 text-right">
                       <Link
                         href={`/san-pham/${p.id}`}
-                        className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1 text-[11px] font-medium text-text hover:bg-surface-alt transition-colors"
+                        className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1 text-caption font-medium text-text hover:bg-surface-alt transition-colors"
                       >
                         <span>Thiết lập</span>
                         <ExternalLink size={11} />

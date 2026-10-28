@@ -1,11 +1,11 @@
+"use client"
+
+import { useI18n } from "@/lib/i18n"
 import { TierGovernanceMatrixClient } from "@/components/governance/tier-governance-matrix-client"
 
-export const metadata = {
-  title: "Ma Trận Cam Kết Chất Lượng | smeOS",
-  description: "Quản lý tiêu chuẩn cam kết chất lượng sản phẩm.",
-}
 
 export default function CommitmentsPage() {
+  const { t } = useI18n()
   return (
     <TierGovernanceMatrixClient
       systemKey="COMMITMENTS"

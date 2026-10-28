@@ -148,7 +148,7 @@ export function SmartInputStyleSelector({
                     {item.name}
                   </span>
                   {item.badge && (
-                    <span className="text-caption font-black px-1 py-0.2 rounded bg-warning/10 text-warning border border-warning-border">
+                    <span className="text-caption font-bold px-1.5 py-0.5 rounded bg-warning-bg text-warning-text border border-warning-border">
                       {item.badge}
                     </span>
                   )}

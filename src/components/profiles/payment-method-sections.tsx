@@ -155,7 +155,7 @@ export function InternationalCardSection({ config, updateConfig }: SectionProps)
     <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-border">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <CreditCard size={18} />
           </div>
           <div>
@@ -181,7 +181,7 @@ export function InternationalCardSection({ config, updateConfig }: SectionProps)
             <select
               value={config.cardProvider}
               onChange={(e) => updateConfig({ cardProvider: e.target.value as CardProviderKey })}
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text"
+              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-surface text-text"
             >
               <option value="ONEPAY">OnePay (Hỗ trợ Visa, Master, JCB, Napas)</option>
               <option value="VNPAY">VNPay Gateway (Cổng thanh toán quốc tế & QR)</option>
@@ -196,7 +196,7 @@ export function InternationalCardSection({ config, updateConfig }: SectionProps)
               type="text"
               value={config.cardInstructions}
               onChange={(e) => updateConfig({ cardInstructions: e.target.value })}
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text"
+              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-surface text-text"
             />
           </div>
         </div>
@@ -212,7 +212,7 @@ export function InStoreAndEWalletSection({ config, updateConfig }: SectionProps)
       <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-success-bg text-success">
               <Store size={18} />
             </div>
             <div>
@@ -238,7 +238,7 @@ export function InStoreAndEWalletSection({ config, updateConfig }: SectionProps)
               type="text"
               value={config.inStoreInstructions}
               onChange={(e) => updateConfig({ inStoreInstructions: e.target.value })}
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text"
+              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-surface text-text"
             />
           </div>
         )}
@@ -247,7 +247,7 @@ export function InStoreAndEWalletSection({ config, updateConfig }: SectionProps)
       <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-500/10 text-pink-600">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/15 text-accent">
               <Smartphone size={18} />
             </div>
             <div>

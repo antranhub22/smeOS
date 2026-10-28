@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: "Nền tảng cho cửa hàng hoa",
 }
 
+import { UiSystemProvider } from "@/lib/ui-system"
+import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
+
 export default function RootLayout({
   children,
 }: {
@@ -27,7 +30,12 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Caveat:wght@600;700&display=swap"
         />
       </head>
-      <body className="min-h-dvh bg-bg text-text antialiased">{children}</body>
+      <body className="min-h-dvh bg-bg text-text antialiased">
+        <UiSystemProvider>
+          {children}
+          <UiStudioDrawer />
+        </UiSystemProvider>
+      </body>
     </html>
   )
 }

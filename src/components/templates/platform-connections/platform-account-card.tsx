@@ -13,6 +13,7 @@ import {
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { formatDateTime } from "@/lib/i18n/formatters"
 
 export interface PlatformConfig {
   id: string
@@ -64,7 +65,7 @@ export function PlatformAccountCard({
     try {
       const d = new Date(iso)
       if (isNaN(d.getTime())) return iso
-      return `${d.toLocaleDateString("vi-VN")} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`
+      return formatDateTime(d)
     } catch {
       return iso
     }

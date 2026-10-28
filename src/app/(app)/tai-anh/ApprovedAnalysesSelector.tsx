@@ -5,6 +5,7 @@ import { Sparkles, Search, RefreshCw, Layers, Calendar, CheckCircle2, AlertCircl
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { formatDate } from "@/lib/i18n/formatters"
 
 export interface ApprovedAnalysisItem {
   id: string
@@ -198,13 +199,7 @@ export function ApprovedAnalysesSelector({
                         <span>•</span>
                         <Calendar size={11} />
                         <span>
-                          {item.approved_at
-                            ? new Date(item.approved_at).toLocaleDateString("vi-VN", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              })
-                            : "Đã duyệt"}
+                          {item.approved_at ? formatDate(item.approved_at) : "Đã duyệt"}
                         </span>
                       </div>
                     </div>

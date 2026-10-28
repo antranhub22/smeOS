@@ -9,6 +9,8 @@
  *    trước khi chốt duyệt xuất bản final (status: DRAFT | FINALIZED).
  */
 
+import { formatCurrency } from "@/lib/i18n/formatters"
+
 /**
  * Một dòng BOM thô trong kết quả phân tích (JSON do mô hình trả — chưa kiểm
  * dạng; mọi trường đều có thể vắng). Chỉ liệt kê các trường mẫu này đọc.
@@ -374,7 +376,7 @@ export function buildSalesPitchData(
  */
 export function formatCurrencyVnd(amount: number | null | undefined): string {
   if (amount == null) return "Chưa có giá, liên hệ shop"
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount)
+  return formatCurrency(amount)
 }
 
 /**

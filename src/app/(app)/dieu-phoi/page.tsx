@@ -8,6 +8,7 @@ import { CoordinatorReminderBar } from "@/components/coordinator/coordinator-rem
 import { CoordinatorBrochureTab } from "@/components/greeting-card/coordinator/coordinator-brochure-tab"
 import { UserMenu } from "@/components/layout/user-menu"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 
 type CoordinatorTab = "tower" | "brochure"
 
@@ -15,6 +16,7 @@ export default function DieuPhoiPage() {
   const [activeTab, setActiveTab] = useState<CoordinatorTab>("tower")
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const { userInitials } = useSession()
+  const { t, dict } = useI18n()
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
@@ -26,13 +28,13 @@ export default function DieuPhoiPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold text-text">Điều Phối Đơn Hàng</h1>
+              <h1 className="text-xl font-extrabold text-text">{dict.orders.coordinator.title}</h1>
               <span className="px-2 py-0.5 rounded-full bg-warning/15 text-warning text-caption font-bold">
-                Đang triển khai
+                {dict.orders.coordinator.statusBadge}
               </span>
             </div>
             <p className="text-xs text-text-muted mt-0.5">
-              Tháp Vận Hành Control Tower · Kết nối Đối tác Xưởng Ngoài & Đơn từ Thẻ Chào
+              {dict.orders.coordinator.subtitle}
             </p>
           </div>
         </div>
@@ -46,7 +48,7 @@ export default function DieuPhoiPage() {
             className="text-xs gap-1.5 h-9"
           >
             <RefreshCw size={13} />
-            <span>Làm mới</span>
+            <span>{dict.common.actions.refresh}</span>
           </Button>
           <Button
             size="sm"
@@ -54,7 +56,7 @@ export default function DieuPhoiPage() {
             className="bg-primary hover:bg-primary-dark text-white text-xs gap-1.5 h-9 font-bold shadow-sm"
           >
             <Plus size={14} />
-            <span>Tiếp nhận đơn mới</span>
+            <span>{dict.orders.coordinator.receiveNewOrder}</span>
           </Button>
           <UserMenu initials={userInitials} />
         </div>
@@ -75,7 +77,7 @@ export default function DieuPhoiPage() {
           }`}
         >
           <LayoutDashboard size={16} />
-          <span>Tháp Điều Phối Tổng Thể (Control Tower)</span>
+          <span>{dict.orders.coordinator.tabs.tower}</span>
         </button>
 
         <button
@@ -88,7 +90,7 @@ export default function DieuPhoiPage() {
           }`}
         >
           <Sparkles size={16} />
-          <span>Đơn từ Thẻ Chào (Brochure Orders)</span>
+          <span>{dict.orders.coordinator.tabs.brochure}</span>
         </button>
       </div>
 

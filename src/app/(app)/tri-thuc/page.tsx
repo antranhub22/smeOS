@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react"
 import Link from "next/link"
 import {
@@ -24,6 +25,7 @@ import type { Route } from "next"
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
 
 export default function KnowledgeBasePage() {
+  const { t } = useI18n()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>("ALL")
   const { organization } = useSession()

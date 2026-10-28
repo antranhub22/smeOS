@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState } from "react"
 import {
   Shield,
@@ -46,6 +47,7 @@ interface CapabilityPolicy {
 }
 
 export default function AiSettingsPage() {
+  const { t } = useI18n()
   const { can, orgName } = useSession()
   const canView = can("U1")
   const canEdit = can("U2")

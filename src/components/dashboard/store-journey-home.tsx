@@ -10,6 +10,7 @@ import { ChoiceGrid } from "@/components/journey/choice-grid"
 import { JourneyShell } from "@/components/journey/journey-shell"
 import { WorkflowPreview } from "@/components/journey/workflow-preview"
 import { useSession } from "@/lib/session"
+import { useI18n } from "@/lib/i18n"
 import { StoreGrowthCenter } from "./store-growth-center"
 
 const STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_store"
@@ -17,6 +18,7 @@ const STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_store"
 export function StoreJourneyHome() {
   const router = useRouter()
   const { organization } = useSession()
+  const { t } = useI18n()
   const journeys = useMemo(
     () => getStoreJourneys(organization?.industry),
     [organization?.industry]
@@ -167,14 +169,14 @@ export function StoreJourneyHome() {
   }
 
   // 4. Mặc định: Lưới lựa chọn Hành trình tác vụ (ChoiceGrid)
-  const homeTitle = organization?.name
-    ? `Hôm nay bạn muốn làm gì cho ${organization.name}?`
-    : "Hôm nay bạn muốn làm gì cho cửa hàng?"
+  const homeTitle = t("home.tiers.store.title", {
+    name: organization?.name || t("common.terms.shop"),
+  })
 
   return (
     <ChoiceGrid
       title={homeTitle}
-      subtitle="Chọn một công việc bên dưới để bắt đầu."
+      subtitle={t("home.tiers.store.subtitle")}
       journeys={journeys}
       onSelectJourney={handleSelectJourney}
       onSwitchToExpertMode={() => handleToggleExpertMode(true)}

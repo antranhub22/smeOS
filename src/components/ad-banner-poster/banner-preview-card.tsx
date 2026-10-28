@@ -95,18 +95,18 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
                   className="h-6 w-6 rounded-full object-cover ring-1 ring-white/50 shadow-sm shrink-0"
                 />
               ) : (
-                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-[10px] font-black ring-1 ring-white/40 shadow-sm shrink-0 text-white">
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-caption font-black ring-1 ring-white/40 shadow-sm shrink-0 text-white">
                   {brandInfo.shopName.charAt(0).toUpperCase()}
                 </div>
               )}
-              <span className="text-[10px] font-semibold tracking-wider uppercase truncate text-white/90 drop-shadow-sm">
+              <span className="text-caption font-semibold tracking-wider uppercase truncate text-white/90 drop-shadow-sm">
                 {brandInfo.shopName || "Thương hiệu"}
               </span>
             </div>
 
             {copy.promotionBadge && (
               <div
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 shadow-md ring-1 ring-white/30 backdrop-blur-md ${preset.badgeBgClass} ${preset.badgeTextClass}`}
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-black uppercase tracking-wider shrink-0 shadow-md ring-1 ring-white/30 backdrop-blur-md ${preset.badgeBgClass} ${preset.badgeTextClass}`}
               >
                 <Sparkles className="h-2.5 w-2.5 shrink-0" />
                 <span className="truncate max-w-[90px]">{copy.promotionBadge}</span>
@@ -120,28 +120,27 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
           /* BẢN NGANG 16:9: TÁCH 2 CỘT HOÀN TOÀN (NÚT CTA NẰM LUÔN BÊN CỘT TRÁI) */
           <div className="relative z-20 flex-1 min-h-0 my-1 flex flex-row items-center justify-between gap-3 overflow-hidden">
             <div className="flex flex-col justify-center w-3/5 text-left pr-1">
-              <p className="text-[7px] font-bold uppercase tracking-[0.2em] text-amber-200/90">
+              <p className="text-caption font-bold uppercase tracking-[0.2em] text-warning/90">
                 ✦ TUYỂN CHỌN ĐẶC QUYỀN ✦
               </p>
               <h3 className={`font-serif uppercase tracking-tight font-black text-xs leading-tight line-clamp-1 mt-0.5 ${preset.textPrimaryClass}`}>
                 {copy.headline || "TIÊU ĐỀ QUẢNG CÁO BÙNG NỔ"}
               </h3>
-              <p className={`text-[8px] mt-0.5 line-clamp-1 font-normal ${preset.textMutedClass}`}>
+              <p className={`text-caption mt-0.5 line-clamp-1 font-normal ${preset.textMutedClass}`}>
                 {copy.subHeadline || "Ưu đãi đặc biệt áp dụng cho sản phẩm tuyển chọn."}
               </p>
 
               {/* Nút CTA tích hợp trong cột trái cho 16:9 */}
               {copy.ctaText && (
                 <div className="mt-1.5 flex items-center gap-2">
-                  <button
-                    type="button"
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shadow-sm ring-1 ring-white/30 ${preset.ctaBgClass} ${preset.ctaTextClass}`}
+                  <div
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-black uppercase tracking-wider shadow-sm ring-1 ring-white/30 ${preset.ctaBgClass} ${preset.ctaTextClass}`}
                   >
                     <span>{copy.ctaText}</span>
                     <ArrowRight className="h-2 w-2 shrink-0" />
-                  </button>
+                  </div>
                   {brandInfo.hotline && (
-                    <span className="text-[7.5px] text-white/80 font-medium truncate">
+                    <span className="text-caption text-white/80 font-medium truncate">
                       📞 {brandInfo.hotline}
                     </span>
                   )}
@@ -183,20 +182,20 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
               ) : (
                 <div className="flex flex-col items-center justify-center p-2 text-center rounded-xl bg-white/10 h-full w-full">
                   <span className="text-2xl mb-0.5">💐</span>
-                  <span className="text-[9px] text-white/90 font-bold uppercase tracking-wider">Mẫu thực tế</span>
+                  <span className="text-caption text-white/90 font-bold uppercase tracking-wider">Mẫu thực tế</span>
                 </div>
               )}
             </div>
 
             {/* Typography */}
             <div className="text-center w-full px-1 flex flex-col justify-center shrink-0">
-              <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-amber-200/90">
+              <p className="text-caption font-bold uppercase tracking-[0.2em] text-warning/90">
                 ✦ TUYỂN CHỌN ĐẶC QUYỀN ✦
               </p>
               <h3 className={`font-serif uppercase tracking-tight font-black text-xs leading-tight line-clamp-1 mt-0.5 ${preset.textPrimaryClass}`}>
                 {copy.headline || "TIÊU ĐỀ QUẢNG CÁO BÙNG NỔ"}
               </h3>
-              <p className={`text-[8.5px] line-clamp-1 mt-0.5 leading-tight font-normal ${preset.textMutedClass}`}>
+              <p className={`text-caption line-clamp-1 mt-0.5 leading-tight font-normal ${preset.textMutedClass}`}>
                 {copy.subHeadline || "Ưu đãi đặc biệt áp dụng cho sản phẩm chất lượng cao."}
               </p>
             </div>
@@ -209,27 +208,26 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
             {/* CTA Action Button */}
             {copy.ctaText && (
               <div className="flex justify-center">
-                <button
-                  type="button"
-                  className={`inline-flex items-center justify-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md w-full sm:w-auto text-center transform transition active:scale-95 ring-1 ring-white/30 ${preset.ctaBgClass} ${preset.ctaTextClass}`}
+                <div
+                  className={`inline-flex items-center justify-center gap-1 px-3 py-1 rounded-full text-caption font-black uppercase tracking-wider shadow-md w-full sm:w-auto text-center ring-1 ring-white/30 ${preset.ctaBgClass} ${preset.ctaTextClass}`}
                 >
                   <span className="truncate max-w-[140px]">{copy.ctaText}</span>
                   <ArrowRight className="h-2.5 w-2.5 shrink-0" />
-                </button>
+                </div>
               </div>
             )}
 
             {/* Contact Hotline & Address */}
-            <div className="flex items-center justify-between text-[8px] text-white/80 px-0.5 font-medium">
+            <div className="flex items-center justify-between text-caption text-white/80 px-0.5 font-medium">
               {brandInfo.hotline && (
                 <span className="inline-flex items-center gap-0.5 truncate">
-                  <Phone className="h-2 w-2 shrink-0 text-amber-300" />
+                  <Phone className="h-2 w-2 shrink-0 text-warning" />
                   <span className="tracking-wider">{brandInfo.hotline}</span>
                 </span>
               )}
               {brandInfo.address && (
                 <span className="inline-flex items-center gap-0.5 truncate max-w-[65%]">
-                  <MapPin className="h-2 w-2 shrink-0 text-amber-300" />
+                  <MapPin className="h-2 w-2 shrink-0 text-warning" />
                   <span className="truncate">{brandInfo.address}</span>
                 </span>
               )}
