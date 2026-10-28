@@ -5,6 +5,7 @@ import { MessageCircle, Flower2, Sparkles } from "lucide-react"
 import type { CatalogProduct } from "../catalog-management-tab"
 import { resolveFlowerImage } from "../flower-image-fallback"
 import { SmartFlowerImage } from "../smart-flower-image"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 interface LandingTemplateProductsProps {
   products: CatalogProduct[]
@@ -13,7 +14,7 @@ interface LandingTemplateProductsProps {
 
 function formatVnd(amount: number | null | undefined): string {
   if (amount == null) return "Liên hệ báo giá"
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount)
+  return formatCurrency(amount)
 }
 
 export function LandingTemplateProducts({

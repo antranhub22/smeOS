@@ -62,6 +62,26 @@ export const ordersVi = {
     "deliveryInfo": "Thời gian & Địa chỉ giao hoa",
     "notes": "Ghi chú nội bộ cho thợ"
   },
+  "actions": {
+    "viewDetails": "Xem chi tiết",
+    "printA6": "In phiếu A6",
+    "cancelOrder": "Hủy đơn hàng",
+    "confirmCancel": "Xác nhận hủy đơn",
+    "cancelReasonPlaceholder": "Nhập lý do hủy đơn (bắt buộc)...",
+    "cancelWarning": "Hành động này sẽ hủy đơn hàng vĩnh viễn và ghi nhận vào lịch sử xử lý đơn.",
+    "cancelTitle": "Xác nhận hủy đơn #{code}",
+    "receiveProduction": "Nhận chế tác",
+    "finishArranging": "Đã hoàn thành",
+    "startDelivery": "Bắt đầu giao",
+    "deliverySuccess": "Giao thành công",
+    "walkInCustomer": "Khách lẻ",
+    "pickupAtShop": "Nhận tại cửa hàng"
+  },
+  "empty": {
+    "title": "Chưa có đơn hàng nào",
+    "reason": "Chưa có đơn hàng nào ở trạng thái này hoặc không khớp với từ khóa tìm kiếm. Bạn có thể tạo đơn hàng mới ngay.",
+    "action": "Tạo đơn mới"
+  },
   "coordinator": {
     "title": "Điều phối đơn hàng",
     "statusBadge": "Đang vận hành",

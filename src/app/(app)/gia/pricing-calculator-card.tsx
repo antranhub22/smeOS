@@ -16,6 +16,7 @@ import {
   SIZE_VARIANT_CONFIGS,
   type ProductSizeKey,
 } from "@/modules/products/domain/product-size-variants"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 export interface PricingCalculatorCardProps {
   partnerTierBonus: Record<string, number>
@@ -26,7 +27,7 @@ export interface PricingCalculatorCardProps {
 }
 
 function formatVnd(value: number): string {
-  return new Intl.NumberFormat("vi-VN").format(Math.round(value || 0)) + " đ"
+  return formatCurrency(Math.round(value || 0))
 }
 
 export function PricingCalculatorCard({

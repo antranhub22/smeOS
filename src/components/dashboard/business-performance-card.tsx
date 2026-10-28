@@ -21,15 +21,12 @@ import {
 } from "@/modules/orders/domain/business-reporting"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 export interface BusinessPerformanceCardProps {
   orders: OrderReportingItem[]
   aiCreditUsed?: number | undefined
   shopName: string
-}
-
-function formatVnd(amount: number): string {
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount)
 }
 
 export function BusinessPerformanceCard({
@@ -116,10 +113,10 @@ export function BusinessPerformanceCard({
             <span>Tổng Doanh Thu</span>
           </div>
           <div className="text-body-sm sm:text-title-sm font-black text-text mt-1 truncate">
-            {formatVnd(report.totalRevenueVnd)}
+            {formatCurrency(report.totalRevenueVnd)}
           </div>
           <div className="text-caption text-text-muted mt-0.5">
-            AOV: {formatVnd(report.averageOrderValueVnd)}
+            AOV: {formatCurrency(report.averageOrderValueVnd)}
           </div>
         </div>
 
@@ -200,7 +197,7 @@ export function BusinessPerformanceCard({
 
                 <div className="text-right">
                   <span className="font-extrabold text-caption sm:text-body-sm text-text">
-                    {formatVnd(item.totalRevenueVnd)}
+                    {formatCurrency(item.totalRevenueVnd)}
                   </span>
                 </div>
               </div>

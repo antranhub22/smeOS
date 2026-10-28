@@ -2,6 +2,7 @@
 
 import { Printer, Ban, CheckCircle, Truck, Flower2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useI18n } from "@/lib/i18n"
 
 interface OrderStatusPatch {
   status?: string
@@ -31,6 +32,7 @@ export function OrderActionButtons({
   onCancelRequest,
   onUpdateStatus,
 }: OrderActionButtonsProps) {
+  const { dict } = useI18n()
   const canCancel = orderStatus !== "CANCELLED" && orderStatus !== "COMPLETED"
 
   function renderPrimaryAction() {
@@ -38,7 +40,7 @@ export function OrderActionButtons({
       return (
         <Button size="sm" variant="primary" disabled={actionLoading}
           onClick={() => onUpdateStatus({ productionStatus: "IN_PRODUCTION", status: "CONFIRMED" })}>
-          <Flower2 className="mr-1.5 h-4 w-4" /> Nhận chế tác
+          <Flower2 className="mr-1.5 h-4 w-4" /> {dict.orders.actions.receiveProduction}
         </Button>
       )
     }
@@ -46,7 +48,7 @@ export function OrderActionButtons({
       return (
         <Button size="sm" variant="outline" disabled={actionLoading}
           onClick={() => onUpdateStatus({ productionStatus: "COMPLETED" })}>
-          <CheckCircle className="mr-1.5 h-4 w-4" /> Đã cắm xong
+          <CheckCircle className="mr-1.5 h-4 w-4" /> {dict.orders.actions.finishArranging}
         </Button>
       )
     }
@@ -54,7 +56,7 @@ export function OrderActionButtons({
       return (
         <Button size="sm" variant="outline" disabled={actionLoading}
           onClick={() => onUpdateStatus({ deliveryStatus: "SHIPPING", status: "IN_PROGRESS" })}>
-          <Truck className="mr-1.5 h-4 w-4" /> Bắt đầu giao
+          <Truck className="mr-1.5 h-4 w-4" /> {dict.orders.actions.startDelivery}
         </Button>
       )
     }
@@ -62,7 +64,7 @@ export function OrderActionButtons({
       return (
         <Button size="sm" variant="outline" disabled={actionLoading}
           onClick={() => onUpdateStatus({ deliveryStatus: "DELIVERED", status: "COMPLETED" })}>
-          <CheckCircle className="mr-1.5 h-4 w-4" /> Giao thành công
+          <CheckCircle className="mr-1.5 h-4 w-4" /> {dict.orders.actions.deliverySuccess}
         </Button>
       )
     }
@@ -73,13 +75,13 @@ export function OrderActionButtons({
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div className="flex gap-2">
         <Button variant="outline" size="sm" onClick={onPrint}>
-          <Printer className="mr-1.5 h-4 w-4" /> In phiếu A6
+          <Printer className="mr-1.5 h-4 w-4" /> {dict.orders.actions.printA6}
         </Button>
         {canCancel && (
           <Button variant="outline" size="sm"
             className="text-danger hover:bg-danger-bg border-danger/30"
             onClick={onCancelRequest}>
-            <Ban className="mr-1.5 h-4 w-4" /> Hủy đơn
+            <Ban className="mr-1.5 h-4 w-4" /> {dict.orders.actions.cancelOrder}
           </Button>
         )}
       </div>
@@ -87,3 +89,4 @@ export function OrderActionButtons({
     </div>
   )
 }
+

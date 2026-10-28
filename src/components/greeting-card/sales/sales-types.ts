@@ -1,3 +1,5 @@
+import { formatTime, formatDate } from "@/lib/i18n/formatters"
+
 export interface CatalogOption {
   id: string
   name: string
@@ -50,5 +52,5 @@ export const LINK_LIFETIME_HINT =
 export function linkExpiryLabel(expiresAt: string | null | undefined): string | null {
   if (!expiresAt) return null
   const d = new Date(expiresAt)
-  return `Link dùng được đến ${d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })} ${d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })}`
+  return `Link dùng được đến ${formatTime(d)} ${formatDate(d)}`
 }

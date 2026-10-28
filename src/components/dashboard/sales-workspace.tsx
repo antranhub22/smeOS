@@ -10,6 +10,7 @@ import { UserMenu } from "@/components/layout/user-menu"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 type Reminder = {
   customerId: string
@@ -38,7 +39,6 @@ async function layJson<T>(url: string): Promise<T | null> {
   return (await res.json()) as T
 }
 
-const dinhDangTien = new Intl.NumberFormat("vi-VN")
 
 function nhanNgayConLai(daysLeft: number): string {
   if (daysLeft === 0) return "Hôm nay"
@@ -181,8 +181,7 @@ export function SalesWorkspace() {
                       >
                         <span className="text-body font-semibold">{o.code}</span>
                         <span className="flex items-center gap-1 text-body-sm font-bold text-text">
-                          {dinhDangTien.format(o.totalVnd)} đ
-                          <ChevronRight size={15} className="text-text-muted" aria-hidden="true" />
+                          {formatCurrency(o.totalVnd)}                          <ChevronRight size={15} className="text-text-muted" aria-hidden="true" />
                         </span>
                       </button>
                     </li>

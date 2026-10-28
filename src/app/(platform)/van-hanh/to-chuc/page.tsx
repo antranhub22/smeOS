@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useI18n } from "@/lib/i18n"
+import { formatDate } from "@/lib/i18n/formatters"
 
 type PlatformOrganizationSummary = {
   id: string
@@ -78,7 +79,7 @@ export default function DanhSachToChucPage() {
               </td>
               <td className="py-2 pr-3">{org.memberCount}</td>
               <td className="py-2 pr-3">{org.creditBalance}</td>
-              <td className="py-2 pr-3">{new Date(org.createdAt).toLocaleDateString("vi-VN")}</td>
+              <td className="py-2 pr-3">{formatDate(org.createdAt)}</td>
             </tr>
           ))}
           {orgs.length === 0 && (

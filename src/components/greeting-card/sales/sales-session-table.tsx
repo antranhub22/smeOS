@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { getSessionStatusBadge, SESSION_STATUS_BADGE, type SessionRow } from "./sales-types"
 import { useI18n } from "@/lib/i18n"
+import { formatDate as _formatDate } from "@/lib/i18n/formatters"
 
 interface Props {
   sessions: SessionRow[]
@@ -21,7 +22,7 @@ const ACTION_BTN =
   "inline-flex items-center justify-center h-8 rounded-lg border border-border text-text-muted hover:bg-surface-muted hover:text-foreground disabled:opacity-40"
 
 function formatDate(iso: string | null): string {
-  return iso ? new Date(iso).toLocaleDateString("vi-VN") : "Không hết hạn"
+  return iso ? _formatDate(iso) : "Không hết hạn"
 }
 
 /** Bảng link đã gửi: trạng thái khách, hạn dùng, đơn, sao chép/thu hồi link. */

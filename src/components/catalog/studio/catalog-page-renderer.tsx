@@ -8,6 +8,7 @@ import type {
   CatalogProductItem,
 } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { Flower2, Phone, MapPin, Sparkles, ShoppingBag, CheckCircle2 } from "lucide-react"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 interface CatalogPageRendererProps {
   page: CatalogPageModel
@@ -28,7 +29,7 @@ export function CatalogPageRenderer({
 
   const formatPrice = (price: number | null | undefined) => {
     if (price == null || price === 0) return "Liên hệ"
-    return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price)
+    return formatCurrency(price)
   }
 
   // Base A4 container styles (210mm x 297mm proportion: 1 / 1.414)

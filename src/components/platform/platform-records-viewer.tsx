@@ -23,6 +23,7 @@ import {
   Loader2,
   FileSpreadsheet,
 } from "lucide-react"
+import { formatDateTime } from "@/lib/i18n/formatters"
 import type { PlatformOrgRecordsResult, RecordDomain } from "@/modules/platform/use-cases/get-platform-org-records"
 import type { RecordColumn } from "@/modules/platform/use-cases/get-platform-org-records"
 
@@ -97,13 +98,7 @@ function CellValue({
     if (isNaN(d.getTime())) return <span>{String(value)}</span>
     return (
       <span className="text-text-muted">
-        {d.toLocaleDateString("vi-VN", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
+        {formatDateTime(d)}
       </span>
     )
   }

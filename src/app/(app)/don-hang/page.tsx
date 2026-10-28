@@ -23,7 +23,7 @@ type ActiveMainTab = "kanban" | "brochure_sales" | "brochure_payment"
 export default function DonHangPage() {
   const router = useRouter()
   const session = useSession()
-  const { t, ti } = useI18n()
+  const { t, ti, dict } = useI18n()
   // Tab xác nhận tiền Thẻ chào chỉ dành cho Điều hành (R11 — PO 08/10/2026); máy chủ vẫn kiểm ở mọi endpoint
   const canConfirmTransfer = session.can("R11")
   const canExport = session.can("R1")
@@ -246,10 +246,10 @@ export default function DonHangPage() {
             <div className="flex flex-col gap-3 lg:hidden">
               {mobileOrders.length === 0 ? (
                 <EmptyState
-                  title="Chưa có đơn hàng nào"
-                  reason="Chưa có đơn hàng nào ở trạng thái này hoặc không khớp với từ khóa tìm kiếm. Bạn có thể tạo đơn hàng mới ngay."
+                  title={dict.orders.empty.title}
+                  reason={dict.orders.empty.reason}
                   action={{
-                    label: "Tạo đơn mới",
+                    label: dict.orders.empty.action,
                     onClick: () => setCreateOpen(true),
                   }}
                 />

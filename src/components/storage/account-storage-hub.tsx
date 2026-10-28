@@ -47,6 +47,7 @@ import {
 import { TrashConfirmModal, type TrashConfirmTarget } from "@/components/storage/trash-confirm-modal"
 import { StorageTrashTab } from "@/components/storage/storage-trash-tab"
 import { readApiError } from "@/components/greeting-card/api-error"
+import { formatDate } from "@/lib/i18n/formatters"
 
 export type StorageTab = "raw" | "approved" | "finalized" | "trash"
 
@@ -711,7 +712,7 @@ export function AccountStorageHub({
 
                       <div className="text-caption text-text-muted flex items-center gap-1 mt-1">
                         <Clock size={11} />
-                        {item.approved_at ? new Date(item.approved_at).toLocaleDateString("vi-VN") : "Gần đây"}
+                        {item.approved_at ? formatDate(item.approved_at) : "Gần đây"}
                       </div>
                     </div>
                   </div>
@@ -847,7 +848,7 @@ export function AccountStorageHub({
 
                       <div className="text-caption text-text-muted flex items-center justify-between mt-1">
                         <span>{pitch.style}</span>
-                        <span>{pitch.finalizedAt ? new Date(pitch.finalizedAt).toLocaleDateString("vi-VN") : "Hôm nay"}</span>
+                        <span>{pitch.finalizedAt ? formatDate(pitch.finalizedAt) : "Hôm nay"}</span>
                       </div>
                     </div>
                   </div>

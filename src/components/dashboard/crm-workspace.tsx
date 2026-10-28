@@ -24,6 +24,7 @@ import {
   type CustomerLifecycleStage,
 } from "@/modules/crm/domain/crm-rules"
 import type { CustomerMasterIndex } from "@/modules/crm/domain/customer-master-index"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 class ChuaDangNhap extends Error {}
 
@@ -318,7 +319,7 @@ export function CrmWorkspace() {
                             </span>
                           </div>
                           <div className="text-xs text-text-muted">
-                            SĐT: {customer.phone} · Đã mua: {customer.metrics.orderCount} đơn · Chi tiêu: {new Intl.NumberFormat("vi-VN").format(customer.metrics.totalSpentVnd)} đ
+                            SĐT: {customer.phone} · Đã mua: {customer.metrics.orderCount} đơn · Chi tiêu: {formatCurrency(customer.metrics.totalSpentVnd)}
                           </div>
                         </div>
                         <span className={`rounded-full px-2 py-0.5 text-caption font-bold ${badge.cls}`}>

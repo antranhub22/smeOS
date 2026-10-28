@@ -4,6 +4,8 @@
  * Quản lý chi phí đơn hàng, tiền công gia công, đối soát công nợ xưởng và biên lợi nhuận.
  */
 
+import { formatDate } from "@/lib/i18n/formatters"
+
 export type SettlementStatus = "CHO_DOI_SOAT" | "DA_DOI_SOAT" | "DA_THANH_TOAN" | "TRANH_CHAP"
 
 export type FlowerArrangementType =
@@ -285,7 +287,7 @@ export function generateSettlementCsv(period: PartnerSettlementPeriod): string {
 
   const rows = period.items.map((item) => [
     `"${item.orderCode}"`,
-    `"${new Date(item.completedAt).toLocaleDateString("vi-VN")}"`,
+    `"${formatDate(item.completedAt)}"`,
     `"${typeLabels[item.arrangementType] ?? item.arrangementType}"`,
     item.orderPriceVnd,
     item.craftFeeVnd,
