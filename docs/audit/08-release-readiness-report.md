@@ -1,6 +1,6 @@
 # 08 — Release readiness report
 
-**Overall status: NOT_READY.** Not ready for client handover.
+**Overall status: BLOCKED** — code and automated gates are ready (07 final run on `a1e6b756`); handover waits only on items outside the repository (§2b).
 
 ## 1. Executive summary
 1. **Scope:** every commit reachable from 7 tips and not in `main` (`c76aab97`): `integration/all-features-oct27` (already contains `Nangcap_kientruc4tang_…`, `Nangcap_hethongnotification`, `Nangcap_hethongchucnang`, `Thietke_sidebar_ALL`, `Nangcap_chucnangCatalog`), `claude/upbeat-clarke-2zx8tb`, `Tinh_chinh_cac_tinh_nang`, 4 dependabot branches.
@@ -31,7 +31,14 @@
 | F Deployment readiness | BLOCKED | `build` ✅, `migrate deploy` ✅ on an empty DB, `render.yaml` gates dev seed ✅. Not run against a production-like DB/Render; rollback/backup procedure not reviewed |
 | G Client handover | **FAIL** | No client-facing runbook / SLA / incident procedure found; client documents in `docs/Audit` (AUD-011); demo passwords in seed source (AUD-033) |
 
-## 3. Approved items still to do (PO approval 28/10/2026)
+## 2b. Remaining before READY_FOR_HANDOVER (outside the repository)
+1. Set `FB_APP_SECRET` and `FB_WEBHOOK_VERIFY_TOKEN` on Render; shops using Zalo OA chat enter App ID + Secret Key in *Kênh tích hợp* (webhooks fail closed until then — AUD-028 fixed in `a1e6b756`).
+2. Regenerate the `/vai-tro` visual snapshot on the CI runner.
+3. Archive `Tinh_chinh_cac_tinh_nang` on GitHub (tag push is blocked from this session).
+4. Fill the [CẦN XÁC NHẬN] items in `docs/handover/OPERATIONS_RUNBOOK.md` (backups/PITR, SLA, access transfer); run a load test and a restore drill.
+5. PO acceptance of the known limitations (runbook §7).
+
+## 3. Approved items (status 28/10/2026 — all done except where noted) (PO approval 28/10/2026)
 1. AUD-028 webhook signatures (needs the app secrets set in Render).
 2. AUD-023 add `nodemailer`; AUD-012 dependabot bumps; AUD-035 `npm audit fix`.
 3. AUD-005/006/007: label as preview (or wire). AUD-008 + AUD-032: one schema migration.

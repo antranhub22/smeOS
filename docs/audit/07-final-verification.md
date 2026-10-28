@@ -40,3 +40,22 @@ Notes
 | FIXED | 3 | `5def12db`, `8492c065`, `f6ca2782` — fixed on this branch; open remainder named in the ledger |
 | NOT_APPLICABLE | 38 | 35 superseded legacy commits (< 10 % of lines in main / no code) + 3 docs-only |
 | BLOCKED | 4 | dependabot bumps awaiting PO (AUD-012) |
+
+## Final run on the release head `a1e6b756` (28/10/2026, after all approved fixes)
+
+| Gate | Result | vs main |
+|---|---|---|
+| typecheck | ✅ | main ❌ (nodemailer) — fixed |
+| `npm test` | ✅ **3,040 / 3,040** | main 103 failed — fixed |
+| `test:tenant` | ✅ **576 / 576** | main 12 failed — fixed |
+| `test:platform` | ✅ 28 / 28 | = |
+| `build` | ✅ | = |
+| `check:template-ssot`, `check:schemas:creative` | ✅ | = |
+| `lint:ratchet` | exit 1: 35 baseline entries, **0 new** | main 38 |
+| `lint:ux -- --check` | exit 1: 751 violations, **0 new** | main 860 |
+| `check:docs` | exit 1: 38 drifts, **0 new** | main 39 |
+| E2E UX (Playwright, CI recipe) | 11 / 12 | the 1 red is the `/vai-tro` visual snapshot, which ci.yml says must be regenerated on the CI runner |
+| worker pytest | ✅ 471 (workers unchanged since) | — |
+| gitleaks / `npm audit` (high) | 0 new / 0 high | — |
+
+Remaining reds are pre-existing ratchet baselines on main (lint, UX, docs) — each now strictly smaller than on main.
