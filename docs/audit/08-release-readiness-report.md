@@ -37,7 +37,7 @@
 3. AUD-005/006/007: label as preview (or wire). AUD-008 + AUD-032: one schema migration.
 4. AUD-001: archive `Tinh_chinh_cac_tinh_nang`. Merge `claude/upbeat-clarke-2zx8tb` separately (it also fixes main's 3 E2E reds).
 5. AUD-031 colours, AUD-030 main's red suites.
-6. **Partner provisioning UI:** the API now returns a one-time `temporaryPassword`, but the `/dieu-phoi/doi-tac` screen does not show it yet. The UI change was declined in this session, so a new chain partner's first password is currently only visible in the API response. Needs a decision before release.
+6. ~~Partner provisioning UI~~ — **done** (`67da882a`): `/dieu-phoi/doi-tac` shows the one-time password in a dialog with copy. Verified in Chromium against a seeded build: dialog shows store, email and a 16-char password; that password logs the partner in (HTTP 200); E2E UX suite unchanged (same 3 reds as main).
 
 ## 4. Traceability (fixed items)
 | Intended behaviour | Commit | Finding | Fix | Regression test | Result |
