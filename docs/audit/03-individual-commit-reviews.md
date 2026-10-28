@@ -42,7 +42,7 @@ Evidence base for this pass: `git show` diffs plus the file at the branch tip (`
 | `36f80373` | Remove `/cai-dat` duplicate from store_admin priority | 1-line | PASS |
 | `d4212e74` | Remove duplicate sidebar hrefs, all 4 tiers | adds `nav-duplicate-audit.test.ts` | PASS |
 
-Merge commits in integration (9) — reviewed for conflict resolution in pass 2 (`git show --cc`), status IN_REVIEW.
+Merge commits (9 in integration, 8 in upbeat-clarke): `git show --remerge-diff` shows 0 changed lines for every one — no hand-made conflict resolution; content is exactly the union of the parents. VERIFIED.
 
 ## B. claude/upbeat-clarke-2zx8tb — 11 non-merge commits (not in main)
 

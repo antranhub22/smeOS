@@ -4,7 +4,7 @@ Statuses: NOT_STARTED · IN_REVIEW · REVIEWED · FIX_REQUIRED · FIXED · VERIF
 
 ## Checkpoint (2026-10-28)
 
-- CURRENT lineage (70): 53 non-merge statically reviewed (`03` §A–C); 17 merge commits IN_REVIEW; gates for the tips pending (`07`).
+- CURRENT lineage (70): 53 non-merge statically reviewed (`03` §A–C); 17 merge commits VERIFIED via `--remerge-diff` (no manual resolution); line-by-line pass 2 done for all integration server files + API-calling UI; gates running.
 - LEGACY (543, `TINH`): NOT_STARTED — resume here, batch 01.
 - Review order is CURRENT first, LEGACY second (see `03`); inventory order is unchanged.
 
@@ -574,22 +574,22 @@ Statuses: NOT_STARTED · IN_REVIEW · REVIEWED · FIX_REQUIRED · FIXED · VERIF
 | 542 | `7bc06352` | TINH | NOT_STARTED | — | |
 | 543 | `7f6c8f8c` | TINH | NOT_STARTED | — | |
 | 544 | `9776fe85` | UPB | REVIEWED | PASS_WITH_CONCERNS (gates pending) | static review done; gates pending (07) |
-| 545 | `c8cd41f3` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 545 | `c8cd41f3` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 546 | `f216d1f2` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
-| 547 | `407f454a` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 547 | `407f454a` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 548 | `805c8fbe` | UPB | REVIEWED | PASS_WITH_CONCERNS | AUD-013 |
-| 549 | `e4b6246d` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 549 | `e4b6246d` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 550 | `507ab590` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
-| 551 | `2664eadc` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 551 | `2664eadc` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 552 | `44dacbaf` | UPB | REVIEWED | PASS | static review done; gates pending (07) |
-| 553 | `a99c9617` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 553 | `a99c9617` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 554 | `a1b61be1` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
-| 555 | `800183b5` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 555 | `800183b5` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 556 | `ef1914fb` | UPB | REVIEWED | PASS | static review done; gates pending (07) |
-| 557 | `721b8179` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 557 | `721b8179` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 558 | `ddda38f3` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
 | 559 | `b4858c21` | UPB | NOT_APPLICABLE | NOT_APPLICABLE (docs) | NOT_APPLICABLE (docs) |
-| 560 | `5fbc6df7` | UPB | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 560 | `5fbc6df7` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 561 | `ccb2059a` | UPB | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
 | 562 | `869a97bb` | UPB | REVIEWED | PASS_WITH_CONCERNS (E2E not run) | static review done; gates pending (07) |
 | 563 | `ffb1d587` | DTORCH | BLOCKED | BLOCKED | dependency change needs PO approval (AUD-012) |
@@ -629,16 +629,16 @@ Statuses: NOT_STARTED · IN_REVIEW · REVIEWED · FIX_REQUIRED · FIXED · VERIF
 | 597 | `f56024ca` | INT | NOT_APPLICABLE | NOT_APPLICABLE (docs) | NOT_APPLICABLE (docs) |
 | 598 | `99db1dfc` | INT | FIX_REQUIRED | FAIL | AUD-006, AUD-011 |
 | 599 | `83fd26ce` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
-| 600 | `cebcb057` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 600 | `cebcb057` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 601 | `db9592b9` | INT | REVIEWED | PASS | static review done; gates pending (07) |
-| 602 | `4bb56239` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
-| 603 | `383b4f3f` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
-| 604 | `52cd3477` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
-| 605 | `d279148c` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
-| 606 | `0c6a5c5f` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
-| 607 | `0968c691` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
-| 608 | `0625c8e1` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
-| 609 | `086c1e3a` | INT | IN_REVIEW | — | merge commit: conflict-resolution review (pass 2) |
+| 602 | `4bb56239` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
+| 603 | `383b4f3f` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
+| 604 | `52cd3477` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
+| 605 | `d279148c` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
+| 606 | `0c6a5c5f` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
+| 607 | `0968c691` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
+| 608 | `0625c8e1` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
+| 609 | `086c1e3a` | INT | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 610 | `ec71f9b7` | INT | REVIEWED | PASS_WITH_CONCERNS | AUD-010 |
 | 611 | `e0b8008b` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
 | 612 | `36f80373` | INT | REVIEWED | PASS | static review done; gates pending (07) |
