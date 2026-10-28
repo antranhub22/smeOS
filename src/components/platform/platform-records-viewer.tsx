@@ -204,7 +204,7 @@ export function PlatformRecordsViewer({
   )
 
   useEffect(() => {
-    void loadPage(1)
+    void Promise.resolve().then(() => loadPage(1))
   }, [loadPage])
 
   const handleExportCsv = async () => {

@@ -1,3 +1,4 @@
+import { log } from "@/core/observability/log"
 /**
  * GET /api/v1/noi-bo/identity
  *
@@ -26,14 +27,15 @@ export const GET = handle(async (request) => {
       success: true,
       data: identityData,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    log.error("noi-bo.identity_failed", { error: error instanceof Error ? error.message : String(error) })
     return jsonResponse(
       {
         success: false,
         error: {
           code: "IDENTITY_ERROR",
-          message: error?.message ?? String(error),
-          stack: error?.stack?.slice(0, 300),
+          // Không trả chi tiết/stack lỗi nội bộ ra client
+          message: "Không lấy được danh tính nội bộ",
         },
       },
       { status: 500 }

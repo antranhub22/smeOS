@@ -28,14 +28,17 @@ export function IndustryJourneyHome() {
   const selectedPlugin = INDUSTRY_REGISTRY[selectedIndustryKey] ?? INDUSTRY_REGISTRY.FLORAL!
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_EXPERT_MODE)
-      if (saved === "true") {
-        setIsExpertMode(true)
+    // Chạy sau lượt render (không setState đồng bộ trong effect)
+    void Promise.resolve().then(() => {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_EXPERT_MODE)
+        if (saved === "true") {
+          setIsExpertMode(true)
+        }
+      } catch {
+        // Bỏ qua lỗi storage
       }
-    } catch {
-      // Bỏ qua lỗi storage
-    }
+    })
   }, [])
 
   const handleToggleExpertMode = (enabled: boolean) => {

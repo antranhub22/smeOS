@@ -5,12 +5,38 @@
  * organization configuration settings.
  */
 
+import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type {
   ChainCollectionProfile,
   CollectionRule,
   DataSharingAgreement,
 } from "../domain/chain-collection-profile"
+
+const FULL_BRANCH_INCLUDE = {
+  organization: {
+    include: {
+      business_profile: true,
+      brand_profile: true,
+    },
+  },
+  inventory: {
+    include: {
+      product: {
+        select: {
+          id: true,
+          name: true,
+          code: true,
+          status: true,
+          attributes: true,
+        },
+      },
+    },
+    take: 10,
+  },
+} satisfies Prisma.branchesInclude
+
+export type FullBranch = Prisma.branchesGetPayload<{ include: typeof FULL_BRANCH_INCLUDE }>
 
 export interface IChainCollectionProfileRepository {
   getProfile(organizationId: string): Promise<ChainCollectionProfile | null>
@@ -27,7 +53,7 @@ export interface IChainCollectionProfileRepository {
     _count: { inventory: number }
   }>>
   findBranchBasic(storeId: string): Promise<{ id: string; name: string; organization_id: string } | null>
-  findBranchWithFullProfiles(storeId: string): Promise<any | null>
+  findBranchWithFullProfiles(storeId: string): Promise<FullBranch | null>
   countActiveBranches(organizationId: string): Promise<number>
   createPartnerBranch(data: {
     organizationId: string
@@ -145,28 +171,7 @@ export class ChainCollectionProfileRepository implements IChainCollectionProfile
   async findBranchWithFullProfiles(storeId: string) {
     return prisma.branches.findUnique({
       where: { id: storeId },
-      include: {
-        organization: {
-          include: {
-            business_profile: true,
-            brand_profile: true,
-          },
-        },
-        inventory: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                code: true,
-                status: true,
-                attributes: true,
-              },
-            },
-          },
-          take: 10,
-        },
-      },
+      include: FULL_BRANCH_INCLUDE,
     })
   }
 

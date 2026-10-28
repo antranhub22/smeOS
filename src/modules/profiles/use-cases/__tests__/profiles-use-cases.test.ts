@@ -74,7 +74,7 @@ describe("profiles: Brand Profile use-cases with DI", () => {
   })
 
   it("putBrandProfile gọi repo.upsert và trả về detail mới", async () => {
-    vi.mocked(mockBrandRepo.upsert).mockResolvedValue({} as any)
+    vi.mocked(mockBrandRepo.upsert).mockResolvedValue({} as never)
     vi.mocked(mockBrandRepo.current).mockResolvedValue({
       id: "bp-01",
       organization_id: "org-profiles-01",
@@ -123,7 +123,7 @@ describe("profiles: Business Profile use-cases with DI", () => {
   })
 
   it("putBusinessProfile gọi repo.upsert và trả về detail", async () => {
-    vi.mocked(mockBizRepo.upsert).mockResolvedValue({} as any)
+    vi.mocked(mockBizRepo.upsert).mockResolvedValue({} as never)
     vi.mocked(mockBizRepo.current).mockResolvedValue({
       id: "biz-01",
       organization_id: "org-profiles-01",

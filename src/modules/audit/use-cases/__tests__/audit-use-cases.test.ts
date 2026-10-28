@@ -35,7 +35,7 @@ describe("audit: use-cases with DI", () => {
       ip: null,
       user_agent: null,
       created_at: new Date(),
-    } as any)
+    } as never)
 
     const result = await recordAuditLog(
       ctx,
@@ -67,7 +67,7 @@ describe("audit: use-cases with DI", () => {
         ip: null,
         user_agent: null,
         created_at: new Date(),
-      } as any,
+      } as never,
     ])
 
     const result = await listAuditLogs(ctx, { limit: 10 }, mockAuditRepo)

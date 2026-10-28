@@ -50,7 +50,7 @@ export const POST = handle(async (request) => {
       },
       { status: 201 }
     )
-  } catch (err: any) {
-    throw validationFailed({ reason: err.message || "Không thể liên kết cửa hàng này" })
+  } catch (err: unknown) {
+    throw validationFailed({ reason: (err instanceof Error && err.message) || "Không thể liên kết cửa hàng này" })
   }
 })

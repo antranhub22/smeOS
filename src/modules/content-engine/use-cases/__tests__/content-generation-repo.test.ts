@@ -30,7 +30,7 @@ describe("content-engine: Content Generation use-cases with DI", () => {
       id: "gen-01",
       organization_id: "org-ce-01",
       status: "DRAFT",
-    } as any)
+    } as never)
 
     const result = await getContentGenerationById(ctx, "gen-01", mockRepo)
     expect(result.id).toBe("gen-01")

@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@/generated/prisma/client"
+import type { Prisma, PrismaClient } from "@/generated/prisma/client"
 import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import type {
   IInternalChatRepository,
@@ -25,7 +25,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
         conversation_type: params.conversationType,
         title: params.title ?? null,
         order_id: params.orderId ?? null,
-        metadata: (params.metadata ?? {}) as any,
+        metadata: (params.metadata ?? {}) as never,
         created_by: params.createdBy,
         participants: {
           create: params.participantUserIds.map((p) => ({
@@ -56,7 +56,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
   }
 
   async listConversations(filter: ListConversationsFilter): Promise<{ items: InternalChatConversation[]; total: number }> {
-    const where: any = {
+    const where: Prisma.internal_chat_conversationsWhereInput = {
       participants: {
         some: {
           user_id: filter.userId,
@@ -173,8 +173,8 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
           sender_role: params.senderRole,
           message_type: params.messageType ?? "TEXT",
           content: params.content,
-          attachments: (params.attachments ?? []) as any,
-          action_payload: (params.actionPayload ?? {}) as any,
+          attachments: (params.attachments ?? []) as never,
+          action_payload: (params.actionPayload ?? {}) as never,
           created_at: now,
         },
         include: {
@@ -204,7 +204,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
   }
 
   async listMessages(conversationId: string, limit = 50, before?: Date | undefined): Promise<InternalChatMessage[]> {
-    const where: any = {
+    const where: Prisma.internal_chat_messagesWhereInput = {
       conversation_id: conversationId,
       is_deleted: false,
     }
@@ -242,7 +242,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     const row = await this.prisma.internal_chat_messages.update({
       where: { id: messageId },
       data: {
-        action_payload: newPayload as any,
+        action_payload: newPayload as Prisma.InputJsonValue,
       },
       include: {
         sender: {
@@ -253,7 +253,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     return this.mapMessage(row)
   }
 
-  private mapConversation(row: any): InternalChatConversation {
+  private mapConversation(row: Prisma.internal_chat_conversationsGetPayload<object>): InternalChatConversation {
     return {
       id: row.id,
       organizationId: row.organization_id,
@@ -268,7 +268,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     }
   }
 
-  private mapMessage(row: any): InternalChatMessage {
+  private mapMessage(row: Prisma.internal_chat_messagesGetPayload<object> & { sender?: { name: string | null } | null }): InternalChatMessage {
     return {
       id: row.id,
       conversationId: row.conversation_id,
@@ -278,7 +278,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
       messageType: row.message_type as InternalChatMessageKind,
       content: row.content,
       attachments: (row.attachments as string[]) ?? [],
-      actionPayload: (row.action_payload as any) ?? {},
+      actionPayload: (row.action_payload as Record<string, unknown> | null) ?? {},
       isDeleted: row.is_deleted,
       createdAt: row.created_at,
     }

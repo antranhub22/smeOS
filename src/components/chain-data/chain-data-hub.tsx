@@ -56,7 +56,7 @@ export function ChainDataHub() {
   }
 
   useEffect(() => {
-    void loadStores()
+    void Promise.resolve().then(() => loadStores())
   }, [])
 
   const handleOpenStore = async (store: ChainStoreSummary) => {

@@ -28,8 +28,6 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState<string | null>(null)
 
-  // Guard: không render gì ở production
-  if (!isDev) return null
 
   const applyOverride = useCallback(
     async (override: DevRoleOverride | null) => {
@@ -59,6 +57,9 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
     },
     [router]
   )
+
+  // Guard: không render gì ở production (đặt sau mọi hook — rules-of-hooks)
+  if (!isDev) return null
 
   return (
     <div

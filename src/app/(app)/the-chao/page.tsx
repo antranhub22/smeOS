@@ -59,16 +59,19 @@ export default function TheChaoPage() {
 
   // Đồng bộ reactive khi chuyển trang / đổi query params
   React.useEffect(() => {
-    if (isQuickParam) {
-      setViewMode("wizard")
-    } else if (requestedMode === "manager" || requestedMode === "wizard") {
-      setViewMode(requestedMode)
-    } else if (requestedTab) {
-      setViewMode("manager")
-    }
-    if (requestedTab && ["sales", "payment", "catalog", "coordinator", "tracking"].includes(requestedTab)) {
-      setActiveTab(requestedTab)
-    }
+    // Chạy sau lượt render (không setState đồng bộ trong effect)
+    void Promise.resolve().then(() => {
+      if (isQuickParam) {
+        setViewMode("wizard")
+      } else if (requestedMode === "manager" || requestedMode === "wizard") {
+        setViewMode(requestedMode)
+      } else if (requestedTab) {
+        setViewMode("manager")
+      }
+      if (requestedTab && ["sales", "payment", "catalog", "coordinator", "tracking"].includes(requestedTab)) {
+        setActiveTab(requestedTab)
+      }
+    })
   }, [isQuickParam, requestedMode, requestedTab])
   const [selectedCatalog, setSelectedCatalog] = useState<CatalogBasic | null>(null)
   // Số đếm cho huy hiệu tab (SWR). Danh sách phân trang: quá 100 thì hiện "100+".

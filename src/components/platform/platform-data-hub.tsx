@@ -349,7 +349,7 @@ export function PlatformDataHub() {
   }
 
   useEffect(() => {
-    void loadOrgs()
+    void Promise.resolve().then(() => loadOrgs())
   }, [])
 
   const handleOpenOrg = (org: PlatformOrgDataSummary) => {

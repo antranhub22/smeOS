@@ -196,7 +196,7 @@ export default function PheQuyetPage() {
   }, [])
 
   useEffect(() => {
-    void tai()
+    void Promise.resolve().then(() => tai())
   }, [tai])
 
   const showToast = (result: ApproveResult) => {

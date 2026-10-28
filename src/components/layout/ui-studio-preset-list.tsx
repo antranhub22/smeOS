@@ -44,8 +44,8 @@ export function UiStudioPresetList({
                     <span
                       className={`text-caption font-medium px-2 py-0.5 rounded-full border ${
                         preset.scope === "saas-mother"
-                          ? "bg-indigo-50 border-indigo-200 text-indigo-600"
-                          : "bg-amber-50 border-amber-200 text-amber-700"
+                          ? "bg-info-bg border-border text-info"
+                          : "bg-warning-bg border-warning-border text-warning-text"
                       }`}
                     >
                       {preset.scope === "saas-mother" ? "✦ SaaS Mother" : "✦ ChainOS / StoreOS"}

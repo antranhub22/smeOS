@@ -17,7 +17,7 @@ const createConversationSchema = z.object({
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   const url = new URL(request.url)
-  const conversationType = url.searchParams.get("type") as any
+  const conversationType = url.searchParams.get("type") as never
   const orderId = url.searchParams.get("orderId") ?? undefined
 
   const chatRepo = getInternalChatRepository()

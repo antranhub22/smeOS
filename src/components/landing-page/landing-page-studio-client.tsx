@@ -78,7 +78,7 @@ export function LandingPageStudioClient() {
   }, [router])
 
   useEffect(() => {
-    fetchProducts()
+    void Promise.resolve().then(() => fetchProducts())
   }, [fetchProducts])
 
   if (loading) {

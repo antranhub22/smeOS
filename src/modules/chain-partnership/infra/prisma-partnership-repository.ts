@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto"
-import type { PrismaClient } from "@/generated/prisma/client"
+import type { Prisma, PrismaClient } from "@/generated/prisma/client"
 import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { slugCandidates } from "@/modules/organization/domain/slug"
@@ -13,6 +13,8 @@ import type {
   PartnershipStatus,
   PartnershipType,
 } from "../domain/partnership-entities"
+
+type PartnershipRow = Prisma.chain_partnershipsGetPayload<object>
 
 export class PrismaChainPartnershipRepository implements IChainPartnershipRepository {
   constructor(private readonly prisma: PrismaClient = defaultPrisma) {}
@@ -126,7 +128,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     items: ChainPartnershipEntity[]
     total: number
   }> {
-    const where: any = {
+    const where: Prisma.chain_partnershipsWhereInput = {
       chain_org_id: filter.chainOrgId,
     }
 
@@ -280,7 +282,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     contactPhone?: string | undefined
     contactEmail?: string | undefined
   }): Promise<ChainPartnershipEntity> {
-    const updateData: any = {
+    const updateData: Prisma.chain_partnershipsUncheckedUpdateInput = {
       status: "ACTIVE",
       partner_code: params.partnerCode,
       partnership_type: params.partnershipType ?? "SUBCONTRACTOR",
@@ -318,12 +320,12 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       },
     })
 
-    const partnerName = (row as any).partner_organization?.name
+    const partnerName = row.partner_organization?.name
     return this.mapEntity(row, partnerName)
   }
 
   private mapEntity(
-    row: any,
+    row: PartnershipRow,
     partnerOrgName?: string,
     partnerOrgSlug?: string,
     partnerSettings?: unknown

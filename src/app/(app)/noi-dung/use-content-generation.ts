@@ -48,17 +48,20 @@ export function useContentGeneration({
 
   // Theo dõi upload flow → chuyển sang phase results khi hoàn tất
   useEffect(() => {
-    if (uploadFlow.state.step === "done" && uploadFlow.state.posts.length > 0) {
-      setPosts(uploadFlow.state.posts)
-      setGenerationId(uploadFlow.state.generationId)
-      setCriticScore(uploadFlow.state.criticScore)
-      setModelInfo({
-        provider: "vision_content_engine",
-        modelName: "Vision → Content Engine (P27)",
-        isFallback: false,
-      })
-      setPhase("results")
-    }
+    // Chạy sau lượt render (không setState đồng bộ trong effect)
+    void Promise.resolve().then(() => {
+      if (uploadFlow.state.step === "done" && uploadFlow.state.posts.length > 0) {
+        setPosts(uploadFlow.state.posts)
+        setGenerationId(uploadFlow.state.generationId)
+        setCriticScore(uploadFlow.state.criticScore)
+        setModelInfo({
+          provider: "vision_content_engine",
+          modelName: "Vision → Content Engine (P27)",
+          isFallback: false,
+        })
+        setPhase("results")
+      }
+    })
   }, [
     uploadFlow.state.step,
     uploadFlow.state.posts,

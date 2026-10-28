@@ -38,7 +38,7 @@ export const GET = handle(async (request) => {
 
   // 2. Luồng Chain Partnership mới
   requireCapability(ctx, "F1")
-  const status = url.searchParams.get("status") as any
+  const status = url.searchParams.get("status") as never
   const province = url.searchParams.get("province") ?? undefined
   const query = url.searchParams.get("q") ?? undefined
 

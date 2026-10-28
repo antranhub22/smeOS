@@ -70,7 +70,7 @@ export function UiStudioFineTuneSection({
               }`}
             >
               <div className="text-caption font-semibold">{item.label}</div>
-              <div className="text-caption text-text-muted text-[11px] truncate">{item.desc}</div>
+              <div className="text-caption text-text-muted text-caption truncate">{item.desc}</div>
             </button>
           ))}
         </div>
@@ -100,7 +100,7 @@ export function UiStudioFineTuneSection({
               }`}
             >
               <div className="text-caption font-semibold">{item.label}</div>
-              <div className="text-caption text-text-muted text-[11px] truncate">{item.desc}</div>
+              <div className="text-caption text-text-muted text-caption truncate">{item.desc}</div>
             </button>
           ))}
         </div>
@@ -129,7 +129,7 @@ export function UiStudioFineTuneSection({
               }`}
             >
               <div className="text-caption font-semibold">{item.label}</div>
-              <div className="text-caption text-text-muted text-[11px] truncate">{item.desc}</div>
+              <div className="text-caption text-text-muted text-caption truncate">{item.desc}</div>
             </button>
           ))}
         </div>
@@ -158,7 +158,7 @@ export function UiStudioFineTuneSection({
               }`}
             >
               <div className="text-caption font-semibold">{item.label}</div>
-              <div className="text-caption text-text-muted text-[11px] truncate">{item.desc}</div>
+              <div className="text-caption text-text-muted text-caption truncate">{item.desc}</div>
             </button>
           ))}
         </div>
@@ -187,7 +187,7 @@ export function UiStudioFineTuneSection({
               }`}
             >
               <div className="text-caption font-semibold">{item.label}</div>
-              <div className="text-caption text-text-muted text-[11px] truncate">{item.desc}</div>
+              <div className="text-caption text-text-muted text-caption truncate">{item.desc}</div>
             </button>
           ))}
         </div>
@@ -216,7 +216,7 @@ export function UiStudioFineTuneSection({
               }`}
             >
               <div className="text-caption font-semibold">{item.label}</div>
-              <div className="text-caption text-text-muted text-[11px] truncate">{item.desc}</div>
+              <div className="text-caption text-text-muted text-caption truncate">{item.desc}</div>
             </button>
           ))}
         </div>
