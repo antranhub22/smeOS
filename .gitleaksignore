@@ -23,3 +23,7 @@ defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-remi
 defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:72
 defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:76
 defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-reminder-override-card.tsx:generic-api-key:82
+# Audit 28/10/2026 (docs/audit/07): mã chính sách governance và khoá localStorage — đã đọc tận mắt, không phải bí mật.
+99db1dfc1ddfb3e0291572344316a00b981c7488:src/components/governance/governance-catalog-registry.ts:generic-api-key:139
+99db1dfc1ddfb3e0291572344316a00b981c7488:src/components/governance/governance-catalog-registry.ts:generic-api-key:280
+610b171176351a39b13505d3b859226e09736138:src/components/layout/nav-storage.ts:generic-api-key:11
