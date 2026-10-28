@@ -7,6 +7,10 @@ import type {
   UiDensity,
   UiLayoutMode,
   UiColorMode,
+  UiFontPairing,
+  UiSurfaceEffect,
+  UiBorderWidth,
+  UiMotionSpeed,
   UiSystemContextValue,
   UiPresetScope,
 } from "./types"
@@ -46,12 +50,35 @@ export function UiSystemProvider({
     }
   }, [])
 
-  // Sync DOM data-attributes whenever config changes
+  // Sync DOM data-attributes & CSS Variables whenever config changes
   useEffect(() => {
     const root = document.documentElement
     root.setAttribute("data-theme", config.preset)
     root.setAttribute("data-density", config.density)
     root.setAttribute("data-layout-mode", config.layoutMode)
+    root.setAttribute("data-color-mode", config.colorMode)
+    root.setAttribute("data-font-pairing", config.fontPairing || "sans-clean")
+    root.setAttribute("data-surface-effect", config.surfaceEffect || "flat")
+    root.setAttribute("data-border-width", config.borderWidth || "thin")
+    root.setAttribute("data-motion-speed", config.motionSpeed || "snappy")
+
+    // Dynamic Border Width CSS Var
+    if (config.borderWidth === "none") {
+      root.style.setProperty("--ui-border-width", "0px")
+    } else if (config.borderWidth === "bold") {
+      root.style.setProperty("--ui-border-width", "2px")
+    } else {
+      root.style.setProperty("--ui-border-width", "1px")
+    }
+
+    // Dynamic Motion Speed CSS Var
+    if (config.motionSpeed === "reduced") {
+      root.style.setProperty("--ui-transition-duration", "0ms")
+    } else if (config.motionSpeed === "smooth") {
+      root.style.setProperty("--ui-transition-duration", "350ms")
+    } else {
+      root.style.setProperty("--ui-transition-duration", "150ms")
+    }
 
     try {
       localStorage.setItem(UI_CONFIG_STORAGE_KEY, JSON.stringify(config))
@@ -76,6 +103,22 @@ export function UiSystemProvider({
 
   const setColorMode = useCallback((colorMode: UiColorMode) => {
     setConfig((prev) => ({ ...prev, colorMode }))
+  }, [])
+
+  const setFontPairing = useCallback((fontPairing: UiFontPairing) => {
+    setConfig((prev) => ({ ...prev, fontPairing }))
+  }, [])
+
+  const setSurfaceEffect = useCallback((surfaceEffect: UiSurfaceEffect) => {
+    setConfig((prev) => ({ ...prev, surfaceEffect }))
+  }, [])
+
+  const setBorderWidth = useCallback((borderWidth: UiBorderWidth) => {
+    setConfig((prev) => ({ ...prev, borderWidth }))
+  }, [])
+
+  const setMotionSpeed = useCallback((motionSpeed: UiMotionSpeed) => {
+    setConfig((prev) => ({ ...prev, motionSpeed }))
   }, [])
 
   const resetToDefault = useCallback(() => {
@@ -108,9 +151,26 @@ export function UiSystemProvider({
       setDensity,
       setLayoutMode,
       setColorMode,
+      setFontPairing,
+      setSurfaceEffect,
+      setBorderWidth,
+      setMotionSpeed,
       resetToDefault,
     }),
-    [config, currentPreset, availablePresets, setPreset, setDensity, setLayoutMode, setColorMode, resetToDefault]
+    [
+      config,
+      currentPreset,
+      availablePresets,
+      setPreset,
+      setDensity,
+      setLayoutMode,
+      setColorMode,
+      setFontPairing,
+      setSurfaceEffect,
+      setBorderWidth,
+      setMotionSpeed,
+      resetToDefault,
+    ]
   )
 
   return <UiSystemContext.Provider value={value}>{children}</UiSystemContext.Provider>
@@ -129,6 +189,10 @@ export function useUiSystem() {
       setDensity: () => {},
       setLayoutMode: () => {},
       setColorMode: () => {},
+      setFontPairing: () => {},
+      setSurfaceEffect: () => {},
+      setBorderWidth: () => {},
+      setMotionSpeed: () => {},
       resetToDefault: () => {},
     }
   }

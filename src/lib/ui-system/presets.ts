@@ -5,6 +5,10 @@ export const DEFAULT_UI_CONFIG: UiSystemConfig = {
   density: "comfortable",
   layoutMode: "sidebar",
   colorMode: "light",
+  fontPairing: "sans-clean",
+  surfaceEffect: "flat",
+  borderWidth: "thin",
+  motionSpeed: "snappy",
 }
 
 export const PRESET_MOC_LAN: PresetDefinition = {
@@ -274,12 +278,180 @@ export const PRESET_EDITORIAL_GRID: PresetDefinition = {
   },
 }
 
+// =============================================================================
+// PRESET 6: GLASSMORPHISM LUXE (Translucent frosted glass, Z-depth)
+// Source: ui-ux-pro-max catalog style "glassmorphism"
+// =============================================================================
+export const PRESET_GLASSMORPHISM: PresetDefinition = {
+  id: "glassmorphism",
+  name: "Glassmorphism Luxe",
+  tagline: "Kính mờ xuyên thấu, ánh sáng phân tầng cao cấp",
+  description:
+    "Lấy cảm hứng từ giao diện Frosted Glass. Thẻ kính bán trong suốt, hiệu ứng đổ bóng mờ Z-depth, viền phản quang vi mô sang trọng.",
+  scope: "all",
+  sourceStyleId: "glassmorphism",
+  fontSans: '"Be Vietnam Pro", system-ui, sans-serif',
+  fontDisplay: '"Plus Jakarta Sans", system-ui, sans-serif',
+  tokens: {
+    primary: "#0284C7",
+    primaryDark: "#0369A1",
+    primaryMuted: "#E0F2FE",
+    primaryBorder: "#BAE6FD",
+    secondary: "#64748B",
+    secondaryText: "#334155",
+    accent: "#8B5CF6",
+    accentBg: "#F5F3FF",
+    bg: "#F0F4F8",
+    surface: "rgba(255, 255, 255, 0.78)",
+    surfaceAlt: "rgba(255, 255, 255, 0.55)",
+    border: "rgba(255, 255, 255, 0.65)",
+    text: "#0F172A",
+    textMuted: "#64748B",
+    warning: "#F59E0B",
+    warningBg: "#FEF3C7",
+    danger: "#EF4444",
+    dangerBg: "#FEE2E2",
+    success: "#10B981",
+    successBg: "#D1FAE5",
+    info: "#0284C7",
+    infoBg: "#E0F2FE",
+    selected: "rgba(2, 132, 199, 0.12)",
+    selectedText: "#0369A1",
+  },
+  radius: {
+    sm: "0.5rem",
+    md: "0.875rem",
+    lg: "1.25rem",
+    card: "1.25rem",
+    button: "0.875rem",
+    dialog: "1.5rem",
+  },
+  shadows: {
+    subtle: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+    card: "0 12px 32px 0 rgba(31, 38, 135, 0.08)",
+    dialog: "0 24px 48px -12px rgba(15, 23, 42, 0.25)",
+  },
+}
+
+// =============================================================================
+// PRESET 7: NEO-BRUTALISM SHARP (High contrast, 0px radius, stark borders)
+// Source: ui-ux-pro-max catalog style "brutalism"
+// =============================================================================
+export const PRESET_NEO_BRUTALISM: PresetDefinition = {
+  id: "neo-brutalism",
+  name: "Neo-Brutalism Stark",
+  tagline: "Cực kỳ sắc nét, tương phản tuyệt đối, viền khối dứt khoát",
+  description:
+    "Ảnh hưởng từ phong cách Brutalist hiện đại. Góc phẳng 0px, viền khối dập nổi, không chuyển màu rườm rà, tối ưu tốc độ đọc dữ liệu.",
+  scope: "all",
+  sourceStyleId: "brutalism",
+  fontSans: '"Space Grotesk", "Be Vietnam Pro", monospace, sans-serif',
+  fontDisplay: '"Space Grotesk", sans-serif',
+  tokens: {
+    primary: "#000000",
+    primaryDark: "#18181B",
+    primaryMuted: "#F4F4F5",
+    primaryBorder: "#000000",
+    secondary: "#3F3F46",
+    secondaryText: "#18181B",
+    accent: "#E11D48",
+    accentBg: "#FFE4E6",
+    bg: "#FFFFFF",
+    surface: "#FFFFFF",
+    surfaceAlt: "#F4F4F5",
+    border: "#000000",
+    text: "#000000",
+    textMuted: "#52525B",
+    warning: "#CA8A04",
+    warningBg: "#FEF08A",
+    danger: "#DC2626",
+    dangerBg: "#FEE2E2",
+    success: "#16A34A",
+    successBg: "#DCFCE7",
+    info: "#2563EB",
+    infoBg: "#DBEAFE",
+    selected: "#000000",
+    selectedText: "#FFFFFF",
+  },
+  radius: {
+    sm: "0rem",
+    md: "0rem",
+    lg: "0rem",
+    card: "0rem",
+    button: "0rem",
+    dialog: "0rem",
+  },
+  shadows: {
+    subtle: "2px 2px 0px 0px #000000",
+    card: "4px 4px 0px 0px #000000",
+    dialog: "8px 8px 0px 0px #000000",
+  },
+}
+
+// =============================================================================
+// PRESET 8: SOFT NEUMORPHISM (Mềm mại, dập nổi 3D, thanh tịnh)
+// Source: ui-ux-pro-max catalog style "neumorphism"
+// =============================================================================
+export const PRESET_SOFT_NEUMORPHISM: PresetDefinition = {
+  id: "soft-neumorphism",
+  name: "Soft Neumorphism",
+  tagline: "Đổ bóng nổi chìm mềm mại, nhẹ nhàng và thư thái",
+  description:
+    "Giao diện xúc giác Soft UI. Nút bấm và thẻ như được đúc liền khối trên bề mặt chất liệu mịn, mang lại cảm giác dễ chịu và tập trung cao.",
+  scope: "all",
+  sourceStyleId: "neumorphism",
+  fontSans: '"Be Vietnam Pro", system-ui, sans-serif',
+  fontDisplay: '"Plus Jakarta Sans", system-ui, sans-serif',
+  tokens: {
+    primary: "#4F46E5",
+    primaryDark: "#4338CA",
+    primaryMuted: "#EEF2FF",
+    primaryBorder: "#C7D2FE",
+    secondary: "#6B7280",
+    secondaryText: "#374151",
+    accent: "#06B6D4",
+    accentBg: "#ECFEFF",
+    bg: "#EBF0F5",
+    surface: "#EBF0F5",
+    surfaceAlt: "#E2E8F0",
+    border: "#CBD5E1",
+    text: "#1E293B",
+    textMuted: "#64748B",
+    warning: "#D97706",
+    warningBg: "#FEF3C7",
+    danger: "#E11D48",
+    dangerBg: "#FFE4E6",
+    success: "#059669",
+    successBg: "#D1FAE5",
+    info: "#3B82F6",
+    infoBg: "#EFF6FF",
+    selected: "#E2E8F0",
+    selectedText: "#4F46E5",
+  },
+  radius: {
+    sm: "0.75rem",
+    md: "1rem",
+    lg: "1.25rem",
+    card: "1.25rem",
+    button: "1rem",
+    dialog: "1.5rem",
+  },
+  shadows: {
+    subtle: "3px 3px 6px #d1d9e2, -3px -3px 6px #ffffff",
+    card: "6px 6px 14px #d1d9e2, -6px -6px 14px #ffffff",
+    dialog: "10px 10px 24px #d1d9e2, -10px -10px 24px #ffffff",
+  },
+}
+
 export const UI_PRESETS: Record<UiPresetId, PresetDefinition> = {
   "moc-lan": PRESET_MOC_LAN,
   "modern-slate": PRESET_MODERN_SLATE,
   "pure-swiss": PRESET_PURE_SWISS,
   "aurora-ui": PRESET_AURORA_UI,
   "editorial-grid": PRESET_EDITORIAL_GRID,
+  "glassmorphism": PRESET_GLASSMORPHISM,
+  "neo-brutalism": PRESET_NEO_BRUTALISM,
+  "soft-neumorphism": PRESET_SOFT_NEUMORPHISM,
 }
 
 export function getUiPreset(id?: string | null): PresetDefinition {

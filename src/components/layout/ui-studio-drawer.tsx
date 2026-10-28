@@ -4,21 +4,24 @@ import React, { useState } from "react"
 import {
   Palette,
   X,
-  Check,
   RotateCcw,
   Sparkles,
   Minimize2,
   Maximize2,
   Eye,
+  SlidersHorizontal,
 } from "lucide-react"
 import { useUiSystem } from "@/lib/ui-system/ui-provider"
-import { UI_PRESETS } from "@/lib/ui-system/presets"
 import type { UiPresetId, UiDensity, UiLayoutMode } from "@/lib/ui-system/types"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { UiStudioPresetList } from "./ui-studio-preset-list"
+import { UiStudioFineTuneSection } from "./ui-studio-fine-tune-section"
 
 export function UiStudioDrawer() {
   const [isOpen, setIsOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState<"presets" | "finetune">("presets")
+
   const {
     config,
     currentPreset,
@@ -26,6 +29,11 @@ export function UiStudioDrawer() {
     setPreset,
     setDensity,
     setLayoutMode,
+    setColorMode,
+    setFontPairing,
+    setSurfaceEffect,
+    setBorderWidth,
+    setMotionSpeed,
     resetToDefault,
   } = useUiSystem()
 
@@ -74,7 +82,7 @@ export function UiStudioDrawer() {
                       smeOS UI Studio
                     </h2>
                     <p className="text-caption text-text-muted mt-0.5">
-                      Chuyển đổi phong cách & mật độ hiển thị tức thì
+                      Chuyển đổi phong cách & tinh chỉnh thông số giao diện
                     </p>
                   </div>
                 </div>
@@ -89,220 +97,134 @@ export function UiStudioDrawer() {
                 </Button>
               </div>
 
-              {/* Drawer Content */}
-              <div className="flex-1 overflow-y-auto p-5 space-y-6">
-                {/* 1. Chọn UI Preset Phong cách */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="text-caption font-bold text-text uppercase tracking-wider">
-                      Phong cách giao diện
-                    </label>
-                    <span className="text-caption text-text-muted">
-                      {availablePresets.length} Phong cách
-                    </span>
-                  </div>
+              {/* Navigation Tabs */}
+              <div className="flex border-b border-border bg-surface-muted/30 p-1 mx-4 mt-3 rounded-xl gap-1">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("presets")}
+                  className={`flex-1 py-1.5 text-caption font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    activeTab === "presets"
+                      ? "bg-surface text-primary shadow-xs font-bold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  <Palette className="w-3.5 h-3.5" />
+                  <span>Bộ phong cách ({availablePresets.length})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("finetune")}
+                  className={`flex-1 py-1.5 text-caption font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    activeTab === "finetune"
+                      ? "bg-surface text-primary shadow-xs font-bold"
+                      : "text-text-muted hover:text-text"
+                  }`}
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                  <span>Tinh chỉnh thông số</span>
+                </button>
+              </div>
 
-                  <div className="space-y-3">
-                    {availablePresets.map((preset) => {
-                      const isSelected = config.preset === preset.id
-                      const scopeLabel =
-                        preset.scope === "saas-mother"
-                          ? "SaaS Mother"
-                          : preset.scope === "chain-store"
-                          ? "ChainOS / StoreOS"
-                          : null
-                      return (
-                        <button
-                          key={preset.id}
-                          type="button"
-                          onClick={() => setPreset(preset.id as UiPresetId)}
-                          className={`w-full text-left p-3.5 rounded-2xl cursor-pointer transition-all border ${
-                            isSelected
-                              ? "border-primary ring-1 ring-primary bg-primary-subtle/30"
-                              : "border-border bg-surface hover:border-border-strong hover:bg-surface-muted/40"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <h3 className="text-meta font-bold text-text">
-                                  {preset.name}
-                                </h3>
-                                {preset.isDefault && (
-                                  <span className="text-caption font-semibold px-2 py-0.5 rounded-full bg-primary text-primary-fg">
-                                    Mặc định
-                                  </span>
-                                )}
-                                {preset.scope !== "all" && (
-                                  <span
-                                    className={`text-caption font-medium px-2 py-0.5 rounded-full border ${
-                                      preset.scope === "saas-mother"
-                                        ? "bg-indigo-50 border-indigo-200 text-indigo-600"
-                                        : "bg-amber-50 border-amber-200 text-amber-700"
-                                    }`}
-                                  >
-                                    {preset.scope === "saas-mother"
-                                      ? "✦ SaaS Mother"
-                                      : "✦ ChainOS / StoreOS"}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-caption text-text-muted mt-0.5 font-medium">
-                                {preset.tagline}
-                              </p>
-                            </div>
-                            <div
-                              className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+              {/* Drawer Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-5 space-y-6">
+                {activeTab === "presets" ? (
+                  <>
+                    <UiStudioPresetList
+                      availablePresets={availablePresets}
+                      selectedPresetId={config.preset}
+                      onSelectPreset={(id: UiPresetId) => setPreset(id)}
+                    />
+
+                    {/* Density Control */}
+                    <div className="space-y-3 pt-2 border-t border-border">
+                      <label className="text-caption font-bold text-text uppercase tracking-wider block">
+                        Mật độ khoảng cách (Density)
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { id: "compact" as UiDensity, label: "Nhỏ gọn", desc: "Cao độ", icon: Minimize2 },
+                          { id: "comfortable" as UiDensity, label: "Tiêu chuẩn", desc: "Cân bằng", icon: Eye },
+                          { id: "spacious" as UiDensity, label: "Rộng rãi", desc: "Thoáng đãng", icon: Maximize2 },
+                        ].map((item) => {
+                          const isSelected = config.density === item.id
+                          const Icon = item.icon
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => setDensity(item.id)}
+                              className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
                                 isSelected
-                                  ? "bg-primary text-primary-fg"
-                                  : "border border-border bg-surface"
+                                  ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
+                                  : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
                               }`}
                             >
-                              {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                            </div>
-                          </div>
+                              <Icon className="w-3.5 h-3.5" />
+                              <span className="text-caption font-semibold leading-tight">{item.label}</span>
+                              <span className="text-caption text-text-muted text-[10px] leading-tight">{item.desc}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
 
-                          {/* Preview Color Swatches */}
-                          <div className="flex items-center gap-1.5 mt-3 pt-2.5 border-t border-border">
-                            <div
-                              className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                              style={{ backgroundColor: preset.tokens.primary }}
-                              title="Primary color"
-                            />
-                            <div
-                              className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                              style={{ backgroundColor: preset.tokens.accent }}
-                              title="Accent color"
-                            />
-                            <div
-                              className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                              style={{ backgroundColor: preset.tokens.bg }}
-                              title="Background"
-                            />
-                            <div
-                              className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                              style={{ backgroundColor: preset.tokens.surface }}
-                              title="Surface"
-                            />
-                            <div
-                              className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                              style={{ backgroundColor: preset.tokens.text }}
-                              title="Text"
-                            />
-                            <span className="text-caption font-mono text-text-muted ml-auto">
-                              Radius: {preset.radius.button}
-                            </span>
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-
-                {/* 2. Mật độ hiển thị (Density) */}
-                <div className="space-y-3">
-                  <label className="text-caption font-bold text-text uppercase tracking-wider block">
-                    Mật độ khoảng cách (Density)
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      {
-                        id: "compact" as UiDensity,
-                        label: "Nhỏ gọn",
-                        desc: "Cao độ dữ liệu",
-                        icon: Minimize2,
-                      },
-                      {
-                        id: "comfortable" as UiDensity,
-                        label: "Tiêu chuẩn",
-                        desc: "Cân bằng",
-                        icon: Eye,
-                      },
-                      {
-                        id: "spacious" as UiDensity,
-                        label: "Rộng rãi",
-                        desc: "Thoáng đãng",
-                        icon: Maximize2,
-                      },
-                    ].map((item) => {
-                      const isSelected = config.density === item.id
-                      const Icon = item.icon
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => setDensity(item.id)}
-                          className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-1.5 ${
-                            isSelected
-                              ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
-                              : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
-                          }`}
-                        >
-                          <Icon className="w-4 h-4" />
-                          <span className="text-caption font-semibold leading-tight">
-                            {item.label}
-                          </span>
-                          <span className="text-caption text-text-muted font-normal leading-tight">
-                            {item.desc}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-
-                {/* 3. Bố cục điều hướng (Layout Mode) */}
-                <div className="space-y-3">
-                  <label className="text-caption font-bold text-text uppercase tracking-wider block">
-                    Kiểu điều hướng (Navigation Mode)
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      {
-                        id: "sidebar" as UiLayoutMode,
-                        label: "Thanh bên (Sidebar)",
-                        desc: "Tiêu chuẩn cho Desktop",
-                      },
-                      {
-                        id: "top-bar" as UiLayoutMode,
-                        label: "Thanh trên (Top-bar)",
-                        desc: "Mở rộng không gian làm việc",
-                      },
-                    ].map((item) => {
-                      const isSelected = config.layoutMode === item.id
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => setLayoutMode(item.id)}
-                          className={`p-3 rounded-xl border text-left transition-all ${
-                            isSelected
-                              ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
-                              : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
-                          }`}
-                        >
-                          <div className="text-caption font-semibold leading-tight">
-                            {item.label}
-                          </div>
-                          <div className="text-caption text-text-muted font-normal mt-0.5">
-                            {item.desc}
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
+                    {/* Navigation Mode */}
+                    <div className="space-y-3">
+                      <label className="text-caption font-bold text-text uppercase tracking-wider block">
+                        Kiểu điều hướng (Navigation Mode)
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { id: "sidebar" as UiLayoutMode, label: "Thanh bên (Sidebar)", desc: "Tiêu chuẩn Desktop" },
+                          { id: "top-nav" as UiLayoutMode, label: "Thanh trên (Top-bar)", desc: "Không gian rộng" },
+                        ].map((item) => {
+                          const isSelected = config.layoutMode === item.id
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => setLayoutMode(item.id)}
+                              className={`p-2.5 rounded-xl border text-left transition-all ${
+                                isSelected
+                                  ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
+                                  : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
+                              }`}
+                            >
+                              <div className="text-caption font-semibold leading-tight">{item.label}</div>
+                              <div className="text-caption text-text-muted text-[11px] mt-0.5">{item.desc}</div>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <UiStudioFineTuneSection
+                    fontPairing={config.fontPairing}
+                    surfaceEffect={config.surfaceEffect}
+                    borderWidth={config.borderWidth}
+                    motionSpeed={config.motionSpeed}
+                    colorMode={config.colorMode}
+                    onChangeFont={setFontPairing}
+                    onChangeSurface={setSurfaceEffect}
+                    onChangeBorder={setBorderWidth}
+                    onChangeMotion={setMotionSpeed}
+                    onChangeColorMode={setColorMode}
+                  />
+                )}
 
                 {/* Live Preview Specs */}
                 <Card className="p-3.5 space-y-2 bg-surface-muted/50" variant="default">
                   <div className="text-caption font-bold text-text uppercase tracking-wider">
                     Thông số hiển thị thực tế
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-caption font-mono text-text-muted">
-                    <div>Theme: <span className="text-text font-bold">{config.preset}</span></div>
+                  <div className="grid grid-cols-2 gap-2 text-caption font-mono text-text-muted text-[11px]">
+                    <div>Preset: <span className="text-text font-bold">{config.preset}</span></div>
                     <div>Density: <span className="text-text font-bold">{config.density}</span></div>
-                    <div>Font: <span className="text-text font-bold">Be Vietnam Pro</span></div>
-                    <div>Layout: <span className="text-text font-bold">{config.layoutMode}</span></div>
+                    <div>Font: <span className="text-text font-bold">{config.fontPairing || "sans-clean"}</span></div>
+                    <div>Border: <span className="text-text font-bold">{config.borderWidth || "thin"}</span></div>
+                    <div>Material: <span className="text-text font-bold">{config.surfaceEffect || "flat"}</span></div>
+                    <div>Motion: <span className="text-text font-bold">{config.motionSpeed || "snappy"}</span></div>
                   </div>
                 </Card>
               </div>

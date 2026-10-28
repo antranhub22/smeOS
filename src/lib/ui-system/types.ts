@@ -7,7 +7,15 @@
  * - Layout: Sidebar (mặc định), TopNav, CompactDock
  */
 
-export type UiPresetId = "moc-lan" | "modern-slate" | "pure-swiss" | "aurora-ui" | "editorial-grid"
+export type UiPresetId =
+  | "moc-lan"
+  | "modern-slate"
+  | "pure-swiss"
+  | "aurora-ui"
+  | "editorial-grid"
+  | "glassmorphism"
+  | "neo-brutalism"
+  | "soft-neumorphism"
 
 /** Scope xác định preset này dành cho platform nào */
 export type UiPresetScope = "saas-mother" | "chain-store" | "all"
@@ -18,11 +26,27 @@ export type UiLayoutMode = "sidebar" | "top-nav" | "compact-dock"
 
 export type UiColorMode = "light" | "dark" | "system"
 
+/** Cặp phông chữ UI */
+export type UiFontPairing = "sans-clean" | "editorial-serif" | "tech-mono"
+
+/** Kiểu chất liệu bề mặt */
+export type UiSurfaceEffect = "flat" | "glass" | "aurora"
+
+/** Độ dày viền hệ thống */
+export type UiBorderWidth = "none" | "thin" | "bold"
+
+/** Tốc độ chuyển động */
+export type UiMotionSpeed = "reduced" | "snappy" | "smooth"
+
 export interface UiSystemConfig {
   preset: UiPresetId
   density: UiDensity
   layoutMode: UiLayoutMode
   colorMode: UiColorMode
+  fontPairing?: UiFontPairing
+  surfaceEffect?: UiSurfaceEffect
+  borderWidth?: UiBorderWidth
+  motionSpeed?: UiMotionSpeed
 }
 
 export interface PresetTokenValues {
@@ -93,5 +117,9 @@ export interface UiSystemContextValue {
   setDensity: (density: UiDensity) => void
   setLayoutMode: (mode: UiLayoutMode) => void
   setColorMode: (mode: UiColorMode) => void
+  setFontPairing: (font: UiFontPairing) => void
+  setSurfaceEffect: (effect: UiSurfaceEffect) => void
+  setBorderWidth: (width: UiBorderWidth) => void
+  setMotionSpeed: (speed: UiMotionSpeed) => void
   resetToDefault: () => void
 }
