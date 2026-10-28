@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import {
   getVisibilityMatrix,
   updateEventVisibility,
@@ -21,6 +22,7 @@ export const GET = handle(async (request) => {
 
 export const PATCH = handle(async (request) => {
   const platform = await requirePlatformContext(request)
+  requirePlatformCapability(platform, "N2")
   const body = patchVisibilitySchema.parse(await request.json())
 
   await updateEventVisibility({

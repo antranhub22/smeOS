@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto"
 import type { PrismaClient } from "@/generated/prisma/client"
 import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
@@ -20,9 +21,10 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     partnership: ChainPartnershipEntity
     partnerOrgId: string
     founderUserId: string
+    temporaryPassword?: string | undefined
   }> {
-    const rawPassword = input.password || "SmeOS@Partner2026"
-    const passwordHash = await hashPassword(rawPassword)
+    const temporaryPassword = input.password ? undefined : randomBytes(12).toString("base64url") // AUD-009: không dùng mật khẩu chung
+    const passwordHash = await hashPassword(input.password || temporaryPassword!)
 
     // Generate unique slug for partner store
     const candidateSlugs = slugCandidates(input.partnerStoreName)
@@ -116,10 +118,10 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
         partnership: this.mapEntity(row, partnerOrg.name),
         partnerOrgId: partnerOrg.id,
         founderUserId: user.id,
+        temporaryPassword: user.password_hash === passwordHash ? temporaryPassword : undefined, // email đã có tài khoản → giữ mật khẩu cũ
       }
     })
   }
-
   async listPartnerships(filter: ListPartnershipsFilter): Promise<{
     items: ChainPartnershipEntity[]
     total: number
@@ -319,8 +321,6 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     const partnerName = (row as any).partner_organization?.name
     return this.mapEntity(row, partnerName)
   }
-
-
 
   private mapEntity(
     row: any,

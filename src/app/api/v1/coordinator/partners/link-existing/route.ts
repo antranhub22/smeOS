@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
@@ -16,6 +17,7 @@ const linkSchema = z.object({
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
   const body = await request.json().catch(() => null)
   const parsed = linkSchema.safeParse(body)
 

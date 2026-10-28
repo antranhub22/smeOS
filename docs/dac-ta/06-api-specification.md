@@ -553,8 +553,9 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/exceptions/:id/resolve` | `R3` | Hết sự cố mở → đơn tự về bước cũ |
 | POST | `/coordinator/orders/:id/close` | `R3` | Chỉ khi `DELIVERED` và không còn sự cố; chốt điểm + tiền công đối tác |
 | POST | `/coordinator/orders/:id/cancel` | `R6` | Trần cứng điều hành; bắt buộc lý do; không huỷ đơn đã giao |
-| GET | `/coordinator/partners` | `R1` | `?active=1` |
-| POST | `/coordinator/partners` | `R4` | Trùng mã trong tổ chức → 409 |
+| GET | `/coordinator/partners` | `R1` · `F1` | `?active=1`: đối tác gia công (`R1`); không tham số: đối tác chuỗi (`F1`) |
+| POST | `/coordinator/partners` | `R4` · `F2` | Đối tác gia công (`R4`): trùng mã trong tổ chức → 409. Cấp tài khoản đối tác chuỗi (thân có `partnerStoreName`/`contactEmail`, `F2`): không gửi `password` → sinh mật khẩu ngẫu nhiên, trả `temporaryPassword` đúng một lần (email đã có tài khoản thì giữ mật khẩu cũ, không trả); `password` gửi lên tối thiểu 10 ký tự |
+| POST | `/coordinator/partners/link-existing` | `F2` | Liên kết cửa hàng đã có tài khoản (email hoặc slug) làm đối tác chuỗi; mở phòng chat nội bộ 1-1 |
 | PATCH | `/coordinator/partners/:id` | `R4` | Sửa hồ sơ, tạm ngưng/mở lại |
 | GET | `/field-config` | `R1` | ĐP-3 — cấu hình trường hiệu lực cho tổ chức của người gọi (lớp mã + cấu hình nền tảng + ghi đè theo tổ chức đã cộng sẵn), `?entity=ORDER\|PARTNER`. CHỈ ĐỌC — route tenant không ghi được vào `field_definitions`/`field_config_overrides`, xem mục 21b |
 | GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi đăng nhập tổ chức, không có thao tác ghi |
@@ -959,7 +960,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 
 ## Thông báo đa tầng (27/10/2026)
 
-Bảng `notification_*` (đặc tả 07 mục 33). Route ghi cấu hình cấp tổ chức **chưa có mã năng lực** — AUD-002/AUD-004 (P1), chờ PO chốt mã; tạm khai trong `NO_CAPABILITY_GUARD`.
+Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28/10/2026 (audit AUD-002/003/004/009): đọc cấu hình cấp tổ chức `F1`, ghi `F2` (chỉ Điều hành); ghi cấu hình toàn sàn `N2`.
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
@@ -970,12 +971,12 @@ Bảng `notification_*` (đặc tả 07 mục 33). Route ghi cấu hình cấp t
 | POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |
 | GET | `/notification/stream` | — (của chính mình) | SSE tin mới; ping 25 giây. Hub trong bộ nhớ tiến trình (AUD-007) |
 | GET · PATCH | `/notification/preferences` | — (của chính mình) | Tuỳ chọn theo sự kiện × kênh; sự kiện bị khoá cứng trong phạm vi của tổ chức → 403 |
-| GET · PATCH | `/notification/org-policy` | **chưa có** (AUD-002) | Chính sách tổ chức theo sự kiện × kênh × vai (`roleKey`, `*` = mọi vai) |
-| GET · PATCH | `/notification/store-defaults` | **chưa có** (AUD-002) | Mặc định cửa hàng theo vai, có khung giờ |
-| GET · POST · DELETE | `/notification/org-hard-locks` | **chưa có** (AUD-002) | Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên |
-| GET · POST · DELETE | `/notification/store-hard-locks` | **chưa có** (AUD-002) | Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên |
+| GET · PATCH | `/notification/org-policy` | `F1` · `F2` | Chính sách tổ chức theo sự kiện × kênh × vai (`roleKey`, `*` = mọi vai) |
+| GET · PATCH | `/notification/store-defaults` | `F1` · `F2` | Mặc định cửa hàng theo vai, có khung giờ |
+| GET · POST · DELETE | `/notification/org-hard-locks` | `F1` · `F2` | Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên |
+| GET · POST · DELETE | `/notification/store-hard-locks` | `F1` · `F2` | Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên |
 | GET | `/platform/notification/events` | phiên nền tảng | Toàn bộ danh mục sự kiện |
-| GET · PATCH | `/platform/notification/channels` | phiên nền tảng (AUD-003) | Bật/tắt kênh toàn sàn |
-| GET · PATCH | `/platform/notification/visibility` | phiên nền tảng (AUD-003) | Ma trận hiển thị sự kiện theo tầng |
-| GET · POST · DELETE | `/platform/notification/hard-locks` | phiên nền tảng (AUD-003) | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
-| PATCH | `/coordinator/partners/:id/tools` | **chưa có** (AUD-004) | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |
+| GET · PATCH | `/platform/notification/channels` | đọc: phiên nền tảng · ghi: `N2` | Bật/tắt kênh toàn sàn |
+| GET · PATCH | `/platform/notification/visibility` | đọc: phiên nền tảng · ghi: `N2` | Ma trận hiển thị sự kiện theo tầng |
+| GET · POST · DELETE | `/platform/notification/hard-locks` | đọc: phiên nền tảng · ghi: `N2` | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
+| PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |

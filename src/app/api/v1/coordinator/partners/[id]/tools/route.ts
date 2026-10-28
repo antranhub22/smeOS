@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, validationFailed } from "@/core/http/errors"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { setPartnerUnlockedTools } from "@/modules/chain-partnership/infra/partner-tool-settings-repository"
 import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
@@ -12,6 +13,7 @@ const updateToolsSchema = z.object({
 
 export const PATCH = handle(async (request, { params }: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
   const { id: partnershipId } = await params
 
   const partnershipRepo = getChainPartnershipRepository()

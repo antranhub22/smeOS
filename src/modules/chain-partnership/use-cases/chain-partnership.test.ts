@@ -112,7 +112,7 @@ describe("Chain Partnership Use Cases", () => {
       chatRepo as unknown as IInternalChatRepository
     )
 
-    const partnership = await useCase.execute(
+    const { partnership } = await useCase.execute(
       {
         chainOrgId: "chain-hq-1",
         partnerStoreName: "Tiệm Hoa Cầu Giấy",

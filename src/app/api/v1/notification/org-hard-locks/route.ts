@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import {
   listHardLocks,
@@ -40,6 +41,7 @@ const deleteHardLockSchema = z.object({
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F1")
   const locks = await listHardLocks({
     tier: "CHAIN",
     scopeId: ctx.organizationId,
@@ -49,6 +51,7 @@ export const GET = handle(async (request) => {
 
 export const POST = handle(async (request) => {
   const { ctx, resolved } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
   const body = postHardLockSchema.parse(await request.json())
 
   await setHardLock({
@@ -66,6 +69,7 @@ export const POST = handle(async (request) => {
 
 export const DELETE = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
   const body = deleteHardLockSchema.parse(await request.json())
 
   await removeHardLock({
