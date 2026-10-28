@@ -3,40 +3,41 @@
 **Overall status: NOT_READY.** Not ready for client handover.
 
 ## 1. Executive summary
-1. **Scope:** every commit reachable from 7 tips and not in `main` (`c76aab97`): `integration/all-features-oct27` (which already contains `Nangcap_kientruc4tang_…`, `Nangcap_hethongnotification`, `Nangcap_hethongchucnang`, `Thietke_sidebar_ALL`, `Nangcap_chucnangCatalog`), `claude/upbeat-clarke-2zx8tb`, `Tinh_chinh_cac_tinh_nang`, 4 dependabot branches.
-2. **Commits:** 613 found (519 non-merge, 94 merge).
-   - Current lineage (could ship): 70. 53 non-merge reviewed diff by diff, and integration's server code read line by line. 17 merges verified (`--remerge-diff`).
-   - Legacy lineage (`Tinh_chinh`, no common ancestor with main): 543. 77 merges verified, 35 superseded. For the other 431, the share of their code that still lives in main was measured; that code is judged in the current-state audit.
-3. **Verdicts (current lineage, non-merge):** PASS 13 · PASS_WITH_CONCERNS 29 · FAIL 4 (`5def12db`, `8492c065`, `f6ca2782`, `99db1dfc`; `405f15cf` also carries AUD-024) · NOT_APPLICABLE 3 (docs) · BLOCKED 4 (dependabot) — see `03`.
-4. **Findings (31):** P1 × 9 · P2 × 9 · P3 × 9 · P4 × 4 — see `05`.
-5. **Fixed on `claude/dreamy-pasteur-004l8i`:**
-   - Findings: AUD-014, 015, 016, 017, 021, 024, 025, 029, 004 b–d.
-   - Gate regressions from integration: guard test, ESLint ratchet, `check:docs`, Prisma outside infra.
-   - 19 new tests, 7 of them on real Postgres.
-6. **Checks:** see `07`. On the fixed branch: **0 new failures vs main** in typecheck, unit, ESLint, docs, tenant, platform and build. `lint:ux` still has ~105 new violations.
-7. **Not executed:** Playwright E2E/visual, worker pytest, dependency CVE scan, CodeQL results, browser/responsive review, load test.
-8. **Remaining risks / approvals:** below.
-9. **Reports:** `docs/audit/00`–`08`.
-10. **Justification:** gates A, B, C, D and G fail (below).
+1. **Scope:** every commit reachable from 7 tips and not in `main` (`c76aab97`): `integration/all-features-oct27` (already contains `Nangcap_kientruc4tang_…`, `Nangcap_hethongnotification`, `Nangcap_hethongchucnang`, `Thietke_sidebar_ALL`, `Nangcap_chucnangCatalog`), `claude/upbeat-clarke-2zx8tb`, `Tinh_chinh_cac_tinh_nang`, 4 dependabot branches.
+2. **Commits: 613 found, 613 audited (100 %), every one with a terminal status** (`02`, per commit in `03b`):
+   - Current lineage (could ship), 70: diff-by-diff review; integration server code read line by line; 17 merges verified with `--remerge-diff`.
+   - Legacy lineage (`Tinh_chinh`, no common ancestor with main), 543: every added line rule-audited; survival in main measured; 77 merges verified (7 hand-resolved, no conflict markers left).
+   - Totals: VERIFIED 465 · FIX_REQUIRED 103 (102 = pre-existing oversized files/`any`, AUD-034) · FIXED 3 · NOT_APPLICABLE 38 · BLOCKED 4 (dependabot).
+3. **Verdicts (current lineage, non-merge):** PASS 13 · PASS_WITH_CONCERNS 29 · FAIL 4 (`5def12db`, `8492c065`, `f6ca2782` → now FIXED; `99db1dfc` open) · NOT_APPLICABLE 3 · BLOCKED 4.
+4. **Findings: 36** (`05`).
+5. **Fixed on `claude/dreamy-pasteur-004l8i`** (`b4eba228`, `61859c8f`, `3a6477fa`):
+   - Findings: AUD-002, 003, 004 a–d, 009, 014, 015, 016, 017, 021, 024, 025, 029, 036.
+   - Gate regressions from integration: guard test, ESLint ratchet, `check:docs`, Prisma outside infra, gitleaks, E2E contrast.
+   - 23 new tests, 11 of them on real Postgres.
+6. **Checks (`07`):** on the fixed branch **0 new failures vs main** in typecheck, unit, ESLint, docs, tenant, platform, build, worker pytest (471 ✅), E2E, gitleaks and `npm audit` (high). Exception: `lint:ux` still has ~105 new violations (AUD-031).
+7. **Not executed:** CodeQL results (CI only), manual browser/responsive walk-through, load test, deploy to a production-like Render/DB.
+8. **Remaining risks:** below.
+9. **Reports:** `docs/audit/00`–`08` + `03b`.
+10. **Overall: NOT_READY.** Gates C, D and G still fail (below).
 
 ## 2. Gates
 | Gate | Status | Evidence / reason |
 |---|---|---|
-| A Functional correctness | **FAIL** | Notification dispatch has no producer (AUD-007); governance matrices don't persist (AUD-006); tool entitlement is display-only (AUD-005) |
-| B Business logic & data integrity | **FAIL** | Capability checks missing on org-wide writes (AUD-002/004a). Cross-tenant lock logic fixed (AUD-014/015 ✅). Merging `Tinh_chinh` would corrupt migrations (AUD-001) |
-| C Security | **FAIL** | AUD-028 unsigned Facebook/Zalo webhooks (pre-existing). AUD-009 partner provisioning without capability + shared default password. AUD-002/003. Fixed: AUD-016, 017 |
-| D Automated quality | **FAIL** | main itself red: 95 unit, 12 tenant, typecheck, ESLint 38, docs 39. Fixed branch adds 0 new failures but `lint:ux` +105. E2E not run |
+| A Functional correctness | **FAIL** | Inert features: notification dispatch has no producer (AUD-007); governance matrices don't persist (AUD-006); tool entitlement only hides nav items (AUD-005) |
+| B Business logic & data integrity | PASS (assessed scope) | Capability checks on every org-wide write ✅; cross-tenant locks fixed ✅; 11 tenant-isolation tests on Postgres ✅; migrations deploy ✅, no column drift ✅. Do **not** merge `Tinh_chinh` (AUD-001) |
+| C Security | **FAIL** | AUD-028: unsigned Facebook/Zalo webhooks (pre-existing on main). Fixed: AUD-002/003/004/009/014–017; gitleaks 0 new; `npm audit` high 0 |
+| D Automated quality | **FAIL** | main's own suites are red (95 unit, 12 tenant, 3 E2E, typecheck `nodemailer`, ESLint 38, docs 39 — AUD-030/023); fixed branch adds 0 new failures; `lint:ux` +105 (AUD-031) |
 | E Reliability & performance | NOT_ASSESSED | Static notes only: ~36 queries per notification, in-memory SSE hub. No load test |
-| F Deployment readiness | BLOCKED | Build ✅, migrations ✅ on an empty DB. Not verified against a production-like DB or Render; rollback/backup procedure not reviewed |
-| G Client handover | **FAIL** | No client-facing ops runbook / SLA / incident procedure found; client documents in `docs/Audit` need a decision (AUD-011) |
+| F Deployment readiness | BLOCKED | `build` ✅, `migrate deploy` ✅ on an empty DB, `render.yaml` gates dev seed ✅. Not run against a production-like DB/Render; rollback/backup procedure not reviewed |
+| G Client handover | **FAIL** | No client-facing runbook / SLA / incident procedure found; client documents in `docs/Audit` (AUD-011); demo passwords in seed source (AUD-033) |
 
-## 3. Decisions needed from the PO (blocking)
-1. Capability codes for: notification org-policy, store-defaults, hard-locks (tenant + platform), partner tools, partner provisioning (AUD-002/003/004a/009). Also replace the provisioning default password with an invite or one-time password.
-2. Webhook signature secrets for Facebook/Zalo in `render.yaml` and env (AUD-028).
-3. Add `nodemailer` + `@types/nodemailer` (AUD-023); approve or reject the 4 dependabot bumps (AUD-012).
-4. Scope for the inert features: wire them or label them "preview" (AUD-005/006/007). Add the schema index (AUD-008).
-5. Archive `Tinh_chinh_cac_tinh_nang` (AUD-001). Merge `claude/upbeat-clarke-2zx8tb` separately after rebasing on main (good quality, 50 commits behind).
-6. Catalog poster colours: semantic tokens or an allow-list entry (AUD-031). Schedule repair of main's red suites (AUD-030).
+## 3. Approved items still to do (PO approval 28/10/2026)
+1. AUD-028 webhook signatures (needs the app secrets set in Render).
+2. AUD-023 add `nodemailer`; AUD-012 dependabot bumps; AUD-035 `npm audit fix`.
+3. AUD-005/006/007: label as preview (or wire). AUD-008 + AUD-032: one schema migration.
+4. AUD-001: archive `Tinh_chinh_cac_tinh_nang`. Merge `claude/upbeat-clarke-2zx8tb` separately (it also fixes main's 3 E2E reds).
+5. AUD-031 colours, AUD-030 main's red suites.
+6. **Partner provisioning UI:** the API now returns a one-time `temporaryPassword`, but the `/dieu-phoi/doi-tac` screen does not show it yet. The UI change was declined in this session, so a new chain partner's first password is currently only visible in the API response. Needs a decision before release.
 
 ## 4. Traceability (fixed items)
 | Intended behaviour | Commit | Finding | Fix | Regression test | Result |
@@ -50,7 +51,8 @@
 | Partner tool update is atomic, validated and kept in infra | `8492c065` | AUD-004 b–d | `partner-tool-settings-repository.ts` | `tests/tenant/partner-tool-unlock.test.ts` | ✅ |
 | Bounded retries | `fe0d74aa` | AUD-021 | 5-attempt cap | `catalog-links-use-cases.test.ts` | ✅ |
 | Test follows the industry SSOT | `83fd26ce` | AUD-029 | read `FLORAL_INDUSTRY` | itself | ✅ |
-| Every new route declared in the capability guard | `f6ca2782`, `8492c065` | AUD-002 (open) | guard list + reasons | `route-capability-guard.test.ts` | ✅ (new-route case) |
+| Org-wide writes need F2 / platform writes N2; no shared partner password | `f6ca2782`, `8492c065`, pre-existing provisioning | AUD-002/003/004a/009 | `requireCapability`/`requirePlatformCapability`, random one-time password | `tests/tenant/notification-partner-capabilities.test.ts`, guard test | ✅ |
+| Sidebar text meets WCAG AA contrast | `f4154e3a` | AUD-036 | caption token | `tests/e2e/ux/a11y.spec.ts` | ✅ |
 
 ## 5. Historical vs current
 - Historical defects already fixed later in range: hydration errors (`6d87a403`, `9bb7cc80`); matrix crashes (`666b370d`, `4fcd5a7c`, `7c3f0585`). The current system is not counted as defective for these.
