@@ -118,7 +118,7 @@ export function CatalogPdfExportButton({
             </>
           )}
         </Button>
-        {error && <span className="text-[11px] text-destructive">{error}</span>}
+        {error && <span className="text-caption text-destructive">{error}</span>}
       </div>
 
       {/* Off-screen high-res container for rendering clean A4 pages */}

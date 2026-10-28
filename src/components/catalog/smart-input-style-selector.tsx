@@ -81,7 +81,7 @@ export function SmartInputStyleSelector({
           <Palette className="h-4 w-4 text-primary" />
           <span>4. Phong cách thiết kế Catalog (Tùy chọn)</span>
         </label>
-        <span className="text-[11px] text-text-muted">
+        <span className="text-caption text-text-muted">
           {currentId === "auto"
             ? "Mặc định AI sẽ gợi ý phong cách phù hợp nhất"
             : "Đã chọn phong cách cố định"}
@@ -148,12 +148,12 @@ export function SmartInputStyleSelector({
                     {item.name}
                   </span>
                   {item.badge && (
-                    <span className="text-[9px] font-black px-1 py-0.2 rounded bg-amber-500/10 text-amber-700 border border-amber-500/20">
+                    <span className="text-caption font-black px-1 py-0.2 rounded bg-warning/10 text-warning border border-warning-border">
                       {item.badge}
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] text-text-muted line-clamp-1 leading-tight">
+                <p className="text-caption text-text-muted line-clamp-1 leading-tight">
                   {item.subtitle}
                 </p>
               </div>

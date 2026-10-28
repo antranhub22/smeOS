@@ -98,7 +98,7 @@ export function CatalogCardOverlay({
         <div className="absolute inset-x-0 bottom-0 z-20 p-5 pt-0 flex flex-col gap-1.5">
           {product.category && (
             <span
-              className="text-[11px] uppercase tracking-widest font-semibold"
+              className="text-caption uppercase tracking-widest font-semibold"
               style={{ color: textSecondary }}
             >
               {product.category}
@@ -112,7 +112,7 @@ export function CatalogCardOverlay({
           </h4>
           <div className="flex items-center justify-between pt-2">
             <div>
-              <div className="text-[10px] uppercase tracking-wider opacity-80" style={{ color: textSecondary }}>
+              <div className="text-caption uppercase tracking-wider opacity-80" style={{ color: textSecondary }}>
                 Giá niêm yết
               </div>
               <div className="text-base font-black tracking-tight" style={{ color: priceColor }}>

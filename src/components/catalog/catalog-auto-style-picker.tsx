@@ -29,26 +29,26 @@ const CONFIDENCE_COLOR: Record<StyleSuggestion["confidence"], string> = {
 }
 
 const TEMPLATE_BADGE_COLOR: Record<string, string> = {
-  T01_SIGNATURE_COLLECTION: "bg-amber-50 text-amber-800 border-amber-200",
-  T02_MINIMAL_PRODUCT_LIST: "bg-zinc-50 text-zinc-700 border-zinc-200",
+  T01_SIGNATURE_COLLECTION: "bg-warning-bg text-amber-800 border-warning-border",
+  T02_MINIMAL_PRODUCT_LIST: "bg-surface-alt text-text border-border",
   T03_PREMIUM_LOOKBOOK: "bg-stone-50 text-stone-700 border-stone-200",
   T04_BENTO_SHOWCASE: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  T05_DARK_CINEMATIC: "bg-zinc-900 text-amber-400 border-zinc-700",
+  T05_DARK_CINEMATIC: "bg-zinc-900 text-amber-400 border-text",
 }
 
 const STYLE_PREVIEW_BG: Record<string, string> = {
   S01_EDITORIAL_MAGAZINE: "bg-[#FAF8F5]",
-  S02_PURE_MINIMAL: "bg-white",
+  S02_PURE_MINIMAL: "bg-surface",
   S03_QUIET_LUXURY: "bg-[#F7F5F0]",
   S04_BOLD_POP: "bg-[#FFFBEB]",
   S05_ORGANIC_NATURAL: "bg-[#F4F1EA]",
   S06_BOTANICAL_ATELIER: "bg-[#FAFDF7]",
-  S07_SWISS_GRID: "bg-white",
+  S07_SWISS_GRID: "bg-surface",
   S08_BENTO_GALLERY: "bg-[#F8FAFC]",
   S09_MODERN_RETRO: "bg-[#FEFCE8]",
   S10_PLAYFUL_ILLUSTRATION: "bg-[#FFF1F2]",
   S11_DARK_SHOWCASE: "bg-[#09090B]",
-  S12_MODERN_COMMERCE: "bg-white",
+  S12_MODERN_COMMERCE: "bg-surface",
 }
 
 const STYLE_ACCENT_COLOR: Record<string, string> = {
@@ -132,7 +132,7 @@ export function CatalogAutoStylePicker({
                     style={{ backgroundColor: accentColor }}
                   />
                   <span
-                    className="text-[9px] font-bold tracking-widest uppercase text-center leading-tight"
+                    className="text-caption font-bold tracking-widest uppercase text-center leading-tight"
                     style={{ color: accentColor }}
                   >
                     {suggestion.emoji}
@@ -145,18 +145,18 @@ export function CatalogAutoStylePicker({
                     <div className="flex flex-wrap items-center gap-1.5">
                       {/* AI top pick badge */}
                       {suggestion === topSuggestion && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-primary text-white text-[10px] font-black uppercase tracking-wider">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-primary text-white text-caption font-black uppercase tracking-wider">
                           <Zap className="h-2.5 w-2.5" />
                           AI Chọn
                         </span>
                       )}
                       <span
-                        className={`inline-block px-2 py-0.5 rounded-md border text-[10px] font-bold uppercase ${badgeClass}`}
+                        className={`inline-block px-2 py-0.5 rounded-md border text-caption font-bold uppercase ${badgeClass}`}
                       >
                         {suggestion.templateName}
                       </span>
                       <span
-                        className={`inline-block px-2 py-0.5 rounded-md border text-[10px] font-semibold ${
+                        className={`inline-block px-2 py-0.5 rounded-md border text-caption font-semibold ${
                           CONFIDENCE_COLOR[suggestion.confidence]
                         }`}
                       >

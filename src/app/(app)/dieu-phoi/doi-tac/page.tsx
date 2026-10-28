@@ -124,15 +124,15 @@ export default function ChainPartnersPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-neutral-200 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-bold text-neutral-800">Cửa hàng & Đối tác trực thuộc Chuỗi</h1>
-            <span className="text-xs bg-rose-50 text-rose-700 font-semibold px-2.5 py-0.5 rounded-full border border-rose-100">
+            <h1 className="text-lg font-bold text-text">Cửa hàng & Đối tác trực thuộc Chuỗi</h1>
+            <span className="text-xs bg-primary-muted text-primary-dark font-semibold px-2.5 py-0.5 rounded-full border border-primary-border">
               Mô hình Phân Tầng
             </span>
           </div>
-          <p className="text-xs text-neutral-500 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             Quản lý mạng lưới chi nhánh, xưởng gia công vệ tinh và liên kết trò chuyện trực tiếp trên nền tảng.
           </p>
         </div>
@@ -140,7 +140,7 @@ export default function ChainPartnersPage() {
         <button
           type="button"
           onClick={() => setShowModal(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-colors"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-semibold shadow-sm transition-colors"
         >
           <Plus className="w-4 h-4" /> Thêm / Liên kết đối tác
         </button>
@@ -149,28 +149,28 @@ export default function ChainPartnersPage() {
       {/* Filter / Search Bar */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
             type="text"
             placeholder="Tìm theo tên cửa hàng, mã đối tác, người liên hệ..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full text-xs pl-9 pr-4 py-2 bg-white border border-neutral-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500 shadow-2xs"
+            className="w-full text-xs pl-9 pr-4 py-2 bg-surface border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
           />
         </div>
-        <div className="text-xs text-neutral-500 font-medium">
-          Tổng số: <span className="font-bold text-neutral-800">{partners.length}</span> đối tác
+        <div className="text-xs text-text-muted font-medium">
+          Tổng số: <span className="font-bold text-text">{partners.length}</span> đối tác
         </div>
       </div>
 
       {/* Partner Cards Grid */}
       {loading ? (
-        <div className="text-center py-16 text-xs text-neutral-400">Đang tải danh bạ đối tác chuỗi...</div>
+        <div className="text-center py-16 text-xs text-text-muted">Đang tải danh bạ đối tác chuỗi...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-neutral-200 p-8 space-y-3">
-          <Store className="w-12 h-12 text-neutral-300 mx-auto" />
-          <h3 className="text-sm font-semibold text-neutral-700">Chưa có cửa hàng/đối tác nào</h3>
-          <p className="text-xs text-neutral-400 max-w-sm mx-auto">
+        <div className="text-center py-16 bg-surface rounded-2xl border border-border p-8 space-y-3">
+          <Store className="w-12 h-12 text-text-muted mx-auto" />
+          <h3 className="text-sm font-semibold text-text">Chưa có cửa hàng/đối tác nào</h3>
+          <p className="text-xs text-text-muted max-w-sm mx-auto">
             Bấm &quot;Thêm / Liên kết đối tác&quot; để cấp tài khoản hoặc kết nối cửa hàng đã có sẵn trên hệ thống.
           </p>
         </div>
@@ -179,59 +179,59 @@ export default function ChainPartnersPage() {
           {filtered.map((p) => (
             <div
               key={p.id}
-              className="bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs hover:border-rose-200 hover:shadow-sm transition-all space-y-4"
+              className="bg-surface rounded-2xl border border-border p-5 shadow-xs hover:border-primary-border hover:shadow-sm transition-all space-y-4"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm">
+                  <div className="w-10 h-10 rounded-xl bg-primary-muted text-primary flex items-center justify-center font-bold text-sm">
                     <Store className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-neutral-800 leading-tight">
+                    <h3 className="text-sm font-bold text-text leading-tight">
                       {p.partnerOrgName || "Cửa hàng đối tác"}
                     </h3>
-                    <span className="text-[11px] text-neutral-400 font-mono mt-0.5 inline-block">
+                    <span className="text-caption text-text-muted font-mono mt-0.5 inline-block">
                       Mã: {p.partnerCode}
                     </span>
                   </div>
                 </div>
 
                 <span
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                  className={`text-caption font-semibold px-2 py-0.5 rounded-full ${
                     p.status === "ACTIVE"
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                      : "bg-neutral-100 text-neutral-600"
+                      ? "bg-success-bg text-success border border-success-border"
+                      : "bg-surface-alt text-text"
                   }`}
                 >
                   {p.status === "ACTIVE" ? "Đang hoạt động" : "Tạm ngưng"}
                 </span>
               </div>
 
-              <div className="text-xs space-y-1.5 text-neutral-600 border-t border-b border-neutral-100 py-3">
+              <div className="text-xs space-y-1.5 text-text border-t border-b border-border py-3">
                 <div className="flex items-center gap-2">
-                  <Users className="w-3.5 h-3.5 text-neutral-400" />
+                  <Users className="w-3.5 h-3.5 text-text-muted" />
                   <span>Đại diện: {p.contactName || "Chưa cập nhật"}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-neutral-400" />
+                  <Phone className="w-3.5 h-3.5 text-text-muted" />
                   <span>{p.contactPhone || "Chưa có SĐT"}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail className="w-3.5 h-3.5 text-neutral-400" />
+                  <Mail className="w-3.5 h-3.5 text-text-muted" />
                   <span className="truncate">{p.contactEmail || "Chưa có Email"}</span>
                 </div>
                 {p.address && (
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-neutral-400" />
+                    <MapPin className="w-3.5 h-3.5 text-text-muted" />
                     <span className="truncate">{p.address} ({p.province})</span>
                   </div>
                 )}
                 {p.partnerOrgSlug && (
-                  <div className="flex items-center justify-between pt-1 border-t border-neutral-100/80 mt-1">
+                  <div className="flex items-center justify-between pt-1 border-t border-border/80 mt-1">
                     <div className="flex items-center gap-1.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                      <span className="text-[11px] text-neutral-500">Mã kết nối:</span>
-                      <span className="font-mono font-bold text-neutral-700 text-[11px]">
+                      <ShieldCheck className="w-3.5 h-3.5 text-success" />
+                      <span className="text-caption text-text-muted">Mã kết nối:</span>
+                      <span className="font-mono font-bold text-text text-caption">
                         {p.partnerOrgSlug.toUpperCase()}
                       </span>
                     </div>
@@ -243,21 +243,21 @@ export default function ChainPartnersPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedToolPartner(p)}
-                  className="flex-1 py-2 bg-neutral-100 hover:bg-neutral-200/80 text-neutral-800 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                  className="flex-1 py-2 bg-surface-alt hover:bg-border/80 text-text rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-rose-600" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-primary" />
                   <span>Phân quyền công cụ</span>
                 </button>
                 <Link
                   href={"/tin-nhan" as any}
-                  className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-semibold flex items-center justify-center transition-colors"
+                  className="p-2 bg-primary-muted hover:bg-primary-muted text-primary-dark rounded-xl text-xs font-semibold flex items-center justify-center transition-colors"
                   title="Nhắn tin nội bộ"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                 </Link>
                 <Link
                   href="/dieu-phoi"
-                  className="px-3 py-2 border border-neutral-200 hover:bg-neutral-50 text-neutral-700 rounded-xl text-xs font-medium transition-colors"
+                  className="px-3 py-2 border border-border hover:bg-surface-alt text-text rounded-xl text-xs font-medium transition-colors"
                 >
                   Bắn đơn
                 </Link>
@@ -292,23 +292,24 @@ export default function ChainPartnersPage() {
       {/* Modal Thêm Đối tác */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-neutral-200 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+          <div className="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-border animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-rose-600" />
-                <h3 className="font-bold text-sm text-neutral-800">Thêm Cửa hàng Đối tác vào Chuỗi</h3>
+                <Building2 className="w-5 h-5 text-primary" />
+                <h3 className="font-bold text-sm text-text">Thêm Cửa hàng Đối tác vào Chuỗi</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="text-neutral-400 hover:text-neutral-600"
+                aria-label="Đóng"
+                className="text-text-muted hover:text-text"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Tabs chuyển đổi giữa Tạo mới vs Đã có tài khoản */}
-            <div className="flex border-b border-neutral-200 mt-3">
+            <div className="flex border-b border-border mt-3">
               <button
                 type="button"
                 onClick={() => {
@@ -317,8 +318,8 @@ export default function ChainPartnersPage() {
                 }}
                 className={`flex-1 py-2 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === "NEW"
-                    ? "border-rose-600 text-rose-600"
-                    : "border-transparent text-neutral-500 hover:text-neutral-800"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-text-muted hover:text-text"
                 }`}
               >
                 <Plus className="w-3.5 h-3.5" /> Cấp tài khoản mới
@@ -331,8 +332,8 @@ export default function ChainPartnersPage() {
                 }}
                 className={`flex-1 py-2 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === "EXISTING"
-                    ? "border-rose-600 text-rose-600"
-                    : "border-transparent text-neutral-500 hover:text-neutral-800"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-text-muted hover:text-text"
                 }`}
               >
                 <Link2 className="w-3.5 h-3.5" /> Mời tiệm đã có tài khoản
@@ -340,7 +341,7 @@ export default function ChainPartnersPage() {
             </div>
 
             {errorMsg && (
-              <div className="mt-3 p-3 bg-red-50 text-red-700 rounded-xl text-xs flex items-center gap-2 border border-red-100">
+              <div className="mt-3 p-3 bg-danger-bg text-danger-text rounded-xl text-xs flex items-center gap-2 border border-danger-border">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{errorMsg}</span>
               </div>
@@ -350,7 +351,7 @@ export default function ChainPartnersPage() {
               {activeTab === "NEW" ? (
                 <>
                   <div>
-                    <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                    <label className="text-xs font-semibold text-text block mb-1">
                       Tên cửa hàng / Chi nhánh đối tác *
                     </label>
                     <input
@@ -359,13 +360,13 @@ export default function ChainPartnersPage() {
                       placeholder="Ví dụ: Cửa Hàng Nhỏ - Chi nhánh Cầu Giấy"
                       value={partnerStoreName}
                       onChange={(e) => setPartnerStoreName(e.target.value)}
-                      className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                      <label className="text-xs font-semibold text-text block mb-1">
                         Mã đối tác (Mã định danh) *
                       </label>
                       <input
@@ -374,11 +375,11 @@ export default function ChainPartnersPage() {
                         placeholder="VD: DT-CG-01"
                         value={partnerCode}
                         onChange={(e) => setPartnerCode(e.target.value)}
-                        className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                        className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                      <label className="text-xs font-semibold text-text block mb-1">
                         Khu vực (Tỉnh / Thành phố)
                       </label>
                       <input
@@ -386,13 +387,13 @@ export default function ChainPartnersPage() {
                         placeholder="Hà Nội, TP.HCM..."
                         value={province}
                         onChange={(e) => setProvince(e.target.value)}
-                        className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                        className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                    <label className="text-xs font-semibold text-text block mb-1">
                       Người đại diện / Quản lý *
                     </label>
                     <input
@@ -401,13 +402,13 @@ export default function ChainPartnersPage() {
                       placeholder="Họ và tên chủ cửa hàng đối tác"
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
-                      className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                      <label className="text-xs font-semibold text-text block mb-1">
                         Email đăng nhập *
                       </label>
                       <input
@@ -416,11 +417,11 @@ export default function ChainPartnersPage() {
                         placeholder="partner@shop.vn"
                         value={contactEmail}
                         onChange={(e) => setContactEmail(e.target.value)}
-                        className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                        className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                      <label className="text-xs font-semibold text-text block mb-1">
                         Số điện thoại liên hệ *
                       </label>
                       <input
@@ -429,13 +430,13 @@ export default function ChainPartnersPage() {
                         placeholder="0912345678"
                         value={contactPhone}
                         onChange={(e) => setContactPhone(e.target.value)}
-                        className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                        className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                    <label className="text-xs font-semibold text-text block mb-1">
                       Địa chỉ tiệm
                     </label>
                     <input
@@ -443,21 +444,21 @@ export default function ChainPartnersPage() {
                       placeholder="Số nhà, ngõ, đường phố..."
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
-                      className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="p-3 bg-amber-50 rounded-xl text-[11px] text-amber-800 border border-amber-200/60 flex items-start gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="p-3 bg-warning-bg rounded-xl text-caption text-warning-text border border-warning-border/60 flex items-start gap-2">
+                    <Sparkles className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                     <span>
                       Dành cho cửa hàng đã có tài khoản trên hệ thống smeOS. Dữ liệu sản phẩm và cài đặt của tiệm sẽ được giữ nguyên hoàn toàn.
                     </span>
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                    <label className="text-xs font-semibold text-text block mb-1">
                       Email đại diện hoặc Mã / Slug cửa hàng *
                     </label>
                     <input
@@ -466,12 +467,12 @@ export default function ChainPartnersPage() {
                       placeholder="Nhập email tài khoản hoặc slug tiệm (VD: chutiem@shop.vn)"
                       value={existingIdentifier}
                       onChange={(e) => setExistingIdentifier(e.target.value)}
-                      className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                    <label className="text-xs font-semibold text-text block mb-1">
                       Mã đối tác gán trong Chuỗi *
                     </label>
                     <input
@@ -480,14 +481,14 @@ export default function ChainPartnersPage() {
                       placeholder="VD: DT-QN-05"
                       value={existingPartnerCode}
                       onChange={(e) => setExistingPartnerCode(e.target.value)}
-                      className="w-full text-xs px-3 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full text-xs px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </>
               )}
 
-              <div className="p-3 bg-neutral-50 rounded-xl text-[11px] text-neutral-500 flex items-start gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="p-3 bg-surface-alt rounded-xl text-caption text-text-muted flex items-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-success shrink-0 mt-0.5" />
                 <span>
                   Sau khi liên kết, hệ thống sẽ tự động mở kênh Chat nội bộ giữa Chuỗi và Cửa hàng này.
                 </span>
@@ -497,7 +498,7 @@ export default function ChainPartnersPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition-colors disabled:opacity-50"
+                  className="flex-1 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-semibold transition-colors disabled:opacity-50"
                 >
                   {submitting
                     ? "Đang xử lý..."
@@ -508,7 +509,7 @@ export default function ChainPartnersPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2.5 border border-neutral-200 text-neutral-600 rounded-xl text-xs font-medium hover:bg-neutral-50"
+                  className="px-4 py-2.5 border border-border text-text rounded-xl text-xs font-medium hover:bg-surface-alt"
                 >
                   Hủy
                 </button>

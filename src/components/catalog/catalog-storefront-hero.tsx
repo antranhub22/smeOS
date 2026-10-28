@@ -62,7 +62,7 @@ export function CatalogStorefrontHero({
           )}
 
           <span
-            className="text-[11px] font-mono px-2.5 py-0.5 rounded-full border backdrop-blur-sm opacity-90"
+            className="text-caption font-mono px-2.5 py-0.5 rounded-full border backdrop-blur-sm opacity-90"
             style={{
               borderColor: style.tokens.border,
               backgroundColor: isDarkStage ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.03)",

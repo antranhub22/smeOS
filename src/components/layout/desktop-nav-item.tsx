@@ -71,7 +71,7 @@ function NavTooltip({
         )}
       >
         <span>{label}</span>
-        <span className="h-0 w-0 border-y-4 border-y-transparent border-r-4 border-r-[#2A1E22] absolute -left-1" />
+        <span className="h-0 w-0 border-y-4 border-y-transparent border-r-4 border-r-text absolute -left-1" />
       </div>
     </div>
   )
