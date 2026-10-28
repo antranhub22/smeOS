@@ -79,3 +79,13 @@ Cách ly tenant (`organization_id` lấy từ phiên, tổ chức khác → 404;
 | Kênh báo sự cố | |
 | Người nhận cảnh báo Render / CI | |
 | Bàn giao quyền truy cập (Render, GitHub, nhà cung cấp AI, lưu trữ, Facebook App, Zalo OA) | |
+
+## 9. Xuất mã nguồn bàn giao
+
+Tệp dành riêng cho quy trình phát triển (`CLAUDE.md`, `.claude/`, `.agents/`, `AGENTS.md`) được đánh dấu `export-ignore` trong `.gitattributes`. Bản giao khách tạo bằng:
+
+```bash
+git archive --format=zip -o smeos-handover.zip main
+```
+
+Trên máy dev có `.agents/` riêng: chạy `npm run dev:link-skills` một lần để tạo lại `.claude/skills`.

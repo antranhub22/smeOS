@@ -65,7 +65,6 @@ test-results/
 Claude outputs/
 .venv-iopaint/
 .claude/*
-!.claude/skills
 !.claude/hooks
 !.claude/settings.json
 .kilo/

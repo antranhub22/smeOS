@@ -33,6 +33,7 @@
     "db:test:setup": "bash scripts/dung-db-test.sh",
     "test:e2e": "playwright test",
     "test:e2e:ux": "playwright test tests/e2e/ux",
+    "dev:link-skills": "node scripts/dev-link-skills.mjs",
     "nap:danh-muc": "tsx --env-file-if-exists=.env scripts/nap-avi-gift-vao-core.ts",
     "nap:phan-tich": "tsx --env-file-if-exists=.env scripts/nap-avi-gift-phan-tich.ts",
     "nap:credit": "tsx --env-file-if-exists=.env scripts/nap-credit.ts",
