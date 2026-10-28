@@ -5,7 +5,7 @@ Statuses: NOT_STARTED · IN_REVIEW · REVIEWED · FIX_REQUIRED · FIXED · VERIF
 ## Checkpoint (2026-10-28)
 
 - CURRENT lineage (70): 53 non-merge statically reviewed (`03` §A–C); 17 merge commits VERIFIED via `--remerge-diff` (no manual resolution); line-by-line pass 2 done for all integration server files + API-calling UI; gates running.
-- LEGACY (543, `TINH`): NOT_STARTED — resume here, batch 01.
+- LEGACY (543, `TINH`): 77 merges VERIFIED, 35 NOT_APPLICABLE, 431 IN_REVIEW (survival measured; per-commit historical re-read pending — resume here).
 - Review order is CURRENT first, LEGACY second (see `03`); inventory order is unchanged.
 
 ## Batch summary
@@ -615,9 +615,9 @@ Statuses: NOT_STARTED · IN_REVIEW · REVIEWED · FIX_REQUIRED · FIXED · VERIF
 | 583 | `05c46b24` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
 | 584 | `4b38648a` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
 | 585 | `267944f1` | INT | REVIEWED | PASS | static review done; gates pending (07) |
-| 586 | `5def12db` | INT | FIX_REQUIRED | FAIL | AUD-005 |
-| 587 | `8492c065` | INT | FIX_REQUIRED | FAIL | AUD-004 |
-| 588 | `f6ca2782` | INT | FIX_REQUIRED | FAIL | AUD-002, AUD-003, AUD-007, AUD-008 |
+| 586 | `5def12db` | INT | FIXED | FAIL | partly fixed on claude/dreamy-pasteur-004l8i (06); capability part open (PO) — AUD-005 |
+| 587 | `8492c065` | INT | FIXED | FAIL | partly fixed on claude/dreamy-pasteur-004l8i (06); capability part open (PO) — AUD-004 |
+| 588 | `f6ca2782` | INT | FIXED | FAIL | partly fixed on claude/dreamy-pasteur-004l8i (06); capability part open (PO) — AUD-002, AUD-003, AUD-007, AUD-008 |
 | 589 | `405f15cf` | INT | REVIEWED | PASS_WITH_CONCERNS | AUD-002 |
 | 590 | `6d87a403` | INT | REVIEWED | PASS | static review done; gates pending (07) |
 | 591 | `87c8b675` | INT | REVIEWED | PASS_WITH_CONCERNS | static review done; gates pending (07) |
