@@ -665,6 +665,7 @@ Khuôn video là enum `video_format`: `REEL_15S` · `TIKTOK_30S` · `STORY_15S` 
 | PATCH | `/occasions/:id` | `F2` | |
 | POST | `/content-guard/validate` | — | Từ điển từ cấm ngành hoa |
 | POST | `/organizations/current/upgrade-request` | `F2` | Xin nâng hạng workspace |
+| GET · PUT | `/organizations/current/governance-matrix` | `F1` · `F2` | Query `system` = ma trận quản trị theo tầng (`PROMOTIONS`, `COMMITMENTS`, `POLICIES`, `PAYMENTS`, `CRAFT_FEES`, `TEMPLATES`). GET → `{ tier, own, upper[] }` (khoá của Mẹ và chuỗi mà tổ chức là đối tác ACTIVE). PUT `{ decisions: { overrides: {key: bool}, locks: {key: {enabled}} } }` ghi `organizations.settings.governance_matrix.<system>`; ghi đè mục tầng trên đã khoá hoặc cửa hàng tự đặt khoá → 422. Ghi audit_logs (28/10/2026) |
 | GET | `/products/master-index` | `L1` | Product Master Index — toàn tổ chức |
 | GET | `/products/:id/master-index` | `L1` | Một sản phẩm |
 | GET | `/assets` | `G1` | Liệt kê asset, lọc theo sản phẩm và `kind` |
@@ -957,6 +958,8 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 |---|---|---|---|
 | GET | `/platform/nav-matrix` | *(phiên nền tảng)* | Ma trận điều hướng mặc định theo ngành và các ghi đè đang áp dụng |
 | PUT | `/platform/nav-matrix` | `N12` | `{ overrides: { [industryKey]: navKey[] } }` — ẩn mục điều hướng theo ngành, áp cho mọi tổ chức của ngành đó. Ghi nhật ký kiểm toán nền tảng |
+| GET | `/platform/governance-matrix` | *(phiên nền tảng)* | Quyết định tầng Mẹ của ma trận quản trị |
+| PUT | `/platform/governance-matrix` | `N12` | `{ decisions }` như trên, lưu `platform_settings` khoá `governance_matrix:<system>`, áp xuống mọi tổ chức. Ghi nhật ký kiểm toán nền tảng |
 | PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |
 
 

@@ -14,18 +14,11 @@
  */
 "use client"
 
-import { PreviewNotice } from "@/components/ui/preview-notice"
-import { useState } from "react"
+import { useMemo } from "react"
 import { GovernanceMatrixTable } from "@/components/governance/governance-matrix-table"
-import type {
-  GovernanceMatrixState,
-  GovernanceMatrixGroup,
-  GovernanceViewerTier,
-} from "@/components/governance/governance-matrix-types"
-import {
-  buildSSOTGovernanceGroups,
-  type GovernanceSystemKey,
-} from "./governance-catalog-registry"
+import type { GovernanceMatrixState, GovernanceViewerTier } from "@/components/governance/governance-matrix-types"
+import { buildSSOTGovernanceGroups, type GovernanceSystemKey } from "./governance-catalog-registry"
+import { useGovernanceMatrix } from "./use-governance-matrix"
 import { useSession } from "@/lib/session"
 
 interface TierGovernanceMatrixClientProps {
@@ -34,92 +27,31 @@ interface TierGovernanceMatrixClientProps {
   description: string
 }
 
-export function TierGovernanceMatrixClient({
-  systemKey,
-  title,
-  description,
-}: TierGovernanceMatrixClientProps) {
+export function TierGovernanceMatrixClient({ systemKey, title, description }: TierGovernanceMatrixClientProps) {
   const { organizationType, organization } = useSession()
+  // Tầng thật do máy chủ trả về; giá trị này chỉ dùng trong lúc tải
+  const fallbackTier: GovernanceViewerTier =
+    organizationType === "CHAIN" || organizationType === "FLOWER_NETWORK" ? "CHAIN" : "STORE"
+  const industryKey = organization?.industry ?? "FLORAL"
 
-  const viewerTier: GovernanceViewerTier =
-    organizationType === "INDUSTRY"
-      ? "INDUSTRY"
-      : organizationType === "CHAIN" || organizationType === "HEADQUARTERS"
-      ? "CHAIN"
-      : "STORE"
-
-  const canManageHardLocks = viewerTier === "CHAIN" || viewerTier === "INDUSTRY"
-
-  // Đọc dữ liệu trực tiếp từ SSOT Governance Catalog Registry theo đúng ngành của tiệm
-  const [groups, setGroups] = useState<GovernanceMatrixGroup[]>(() =>
-    buildSSOTGovernanceGroups({
-      systemKey,
-      viewerTier,
-      industryKey: organization?.industry ?? "FLORAL",
-      storePoliciesRaw: null,
-    })
+  const base = useMemo(
+    () => buildSSOTGovernanceGroups({ systemKey, viewerTier: fallbackTier, industryKey, storePoliciesRaw: null }),
+    [systemKey, fallbackTier, industryKey]
   )
+  const matrix = useGovernanceMatrix("/api/v1/organizations/current/governance-matrix", systemKey, base, fallbackTier)
+  const { groups } = matrix
 
   const currentState: GovernanceMatrixState = {
     systemKey,
     systemTitle: title,
-    viewerTier,
+    viewerTier: matrix.tier,
     scopeId: organization?.id ?? "CURRENT_ORG",
     groups,
     totalItems: groups.reduce((acc, g) => acc + g.items.length, 0),
-    lockedCount: groups.reduce(
-      (acc, g) => acc + g.items.filter((i) => i.isLocked).length,
-      0
-    ),
-    overrideCount: groups.reduce(
-      (acc, g) => acc + g.items.filter((i) => i.hasLocalOverride).length,
-      0
-    ),
-    loading: false,
-    error: null,
-  }
-
-  async function handleToggleItem(key: string, enabled: boolean) {
-    setGroups((prev) =>
-      prev.map((g) => ({
-        ...g,
-        items: g.items.map((item) =>
-          item.key === key ? { ...item, enabled, hasLocalOverride: true } : item
-        ),
-      }))
-    )
-  }
-
-  async function handleResetItem(key: string) {
-    setGroups((prev) =>
-      prev.map((g) => ({
-        ...g,
-        items: g.items.map((item) =>
-          item.key === key
-            ? { ...item, hasLocalOverride: false, decidedBy: "INDUSTRY" }
-            : item
-        ),
-      }))
-    )
-  }
-
-  async function handleToggleLock(key: string, locked: boolean) {
-    setGroups((prev) =>
-      prev.map((g) => ({
-        ...g,
-        items: g.items.map((item) =>
-          item.key === key
-            ? {
-                ...item,
-                isLocked: locked,
-                hardLockedBy: locked ? viewerTier : null,
-                isOwnHardLock: locked,
-                lockReason: locked ? `Khóa cứng bởi ${viewerTier}` : undefined,
-              }
-            : item
-        ),
-      }))
-    )
+    lockedCount: groups.reduce((acc, g) => acc + g.items.filter((i) => i.isLocked).length, 0),
+    overrideCount: groups.reduce((acc, g) => acc + g.items.filter((i) => i.hasLocalOverride).length, 0),
+    loading: matrix.loading,
+    error: matrix.error,
   }
 
   return (
@@ -129,14 +61,18 @@ export function TierGovernanceMatrixClient({
         <p className="text-body-sm text-text-muted mt-1">{description}</p>
       </div>
 
-      <PreviewNotice>Thay đổi trên ma trận này chưa được lưu và chưa áp vào giá, thanh toán hay chính sách đơn hàng — tải lại trang sẽ trở về mặc định.</PreviewNotice>
+      {matrix.error && (
+        <p role="alert" className="rounded-xl border border-danger-border bg-danger-bg px-4 py-2.5 text-body-sm text-danger-text">
+          {matrix.error}
+        </p>
+      )}
 
       <GovernanceMatrixTable
         state={currentState}
-        canManageHardLocks={canManageHardLocks}
-        onToggleItem={handleToggleItem}
-        onResetItem={handleResetItem}
-        onToggleLock={handleToggleLock}
+        canManageHardLocks={matrix.tier === "CHAIN"}
+        onToggleItem={matrix.toggleItem}
+        onResetItem={matrix.resetItem}
+        onToggleLock={matrix.toggleLock}
       />
     </div>
   )

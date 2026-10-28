@@ -63,7 +63,9 @@ Cách ly tenant (`organization_id` lấy từ phiên, tổ chức khác → 404;
 
 ## 7. Giới hạn đã biết khi bàn giao
 
-- Ba màn hình gắn nhãn **Bản xem trước**: ma trận chính sách (governance), ma trận thông báo (chưa tự gửi), mở khoá công cụ chi nhánh (chỉ ẩn/hiện menu).
+- Ma trận chính sách (governance) đã lưu và áp khoá theo tầng (Mẹ → Chuỗi → Cửa hàng), nhưng **chưa** được luồng giá/thanh toán/đơn đọc khi tính toán (nợ #185).
+- Ma trận thông báo tự gửi cho 3 sự kiện (đơn mới, đơn huỷ, giao việc chế tác); các sự kiện khác chưa nối (nợ #185).
+- Mở khoá công cụ chi nhánh đã chặn ở máy chủ (403) và ở trang.
 - 95 tệp mã > 350 dòng (nợ kỹ thuật có từ trước, không ảnh hưởng chức năng).
 - Ảnh mẫu kiểm thử giao diện `/vai-tro` cần chụp lại trên CI.
 - Chưa làm: kiểm tải (load test), diễn tập khôi phục CSDL.
