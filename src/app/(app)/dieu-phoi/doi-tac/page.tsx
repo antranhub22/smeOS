@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import {
   Users,
   Plus,
@@ -20,16 +20,19 @@ import {
 import type { ChainPartnershipEntity } from "@/modules/chain-partnership/domain/partnership-entities"
 import Link from "next/link"
 import { PartnerToolMatrixModal } from "@/components/organization/partner-tool-matrix-modal"
+import { PartnerCredentialDialog, type PartnerCredential } from "@/components/organization/partner-credential-dialog"
+import { useChainPartners } from "@/components/organization/use-chain-partners"
 
 export default function ChainPartnersPage() {
-  const [partners, setPartners] = useState<ChainPartnershipEntity[]>([])
+  const { partners, setPartners, loading, refresh: fetchPartners } = useChainPartners()
   const [selectedToolPartner, setSelectedToolPartner] = useState<ChainPartnershipEntity | null>(null)
-  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [activeTab, setActiveTab] = useState<"NEW" | "EXISTING">("NEW")
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
+  // Mật khẩu ban đầu của đối tác mới — máy chủ chỉ trả về một lần (audit AUD-009)
+  const [credential, setCredential] = useState<PartnerCredential | null>(null)
 
   // Form fields: Tạo mới
   const [partnerStoreName, setPartnerStoreName] = useState("")
@@ -43,25 +46,6 @@ export default function ChainPartnersPage() {
   // Form fields: Mời cửa hàng có sẵn
   const [existingIdentifier, setExistingIdentifier] = useState("")
   const [existingPartnerCode, setExistingPartnerCode] = useState("")
-
-  const fetchPartners = async () => {
-    try {
-      setLoading(true)
-      const res = await fetch("/api/v1/coordinator/partners")
-      const json = await res.json()
-      if (json.success && Array.isArray(json.data)) {
-        setPartners(json.data)
-      }
-    } catch {
-      // Ignored
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchPartners()
-  }, [])
 
   const handleCreatePartner = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,6 +73,9 @@ export default function ChainPartnersPage() {
         if (!res.ok) {
           setErrorMsg(json.message || "Không thể cấp tài khoản đối tác")
           return
+        }
+        if (json.temporaryPassword) {
+          setCredential({ storeName: partnerStoreName, email: contactEmail, temporaryPassword: json.temporaryPassword })
         }
       } else {
         // Liên kết cửa hàng đã có tài khoản
@@ -279,6 +266,8 @@ export default function ChainPartnersPage() {
           ))}
         </div>
       )}
+
+      <PartnerCredentialDialog credential={credential} onClose={() => setCredential(null)} />
 
       {/* Modal Phân quyền Công cụ Chi nhánh */}
       {selectedToolPartner && (
