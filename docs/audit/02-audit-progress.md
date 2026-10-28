@@ -592,10 +592,10 @@ Statuses: NOT_STARTED · IN_REVIEW · REVIEWED · FIX_REQUIRED · FIXED · VERIF
 | 560 | `5fbc6df7` | UPB | VERIFIED | PASS | merge: `git show --remerge-diff` = 0 lines — resolution identical to automatic merge |
 | 561 | `ccb2059a` | UPB | VERIFIED | PASS_WITH_CONCERNS | manual diff review (03) + all gates at HEAD 61859c8f/3a6477fa: 0 new failures vs main incl. E2E (07) |
 | 562 | `869a97bb` | UPB | VERIFIED | PASS_WITH_CONCERNS | manual diff review (03) + all gates at HEAD 61859c8f/3a6477fa: 0 new failures vs main incl. E2E (07) |
-| 563 | `ffb1d587` | DTORCH | BLOCKED | BLOCKED | dependency change needs PO approval (AUD-012) |
-| 564 | `4ad5628b` | DTV | BLOCKED | BLOCKED | dependency change needs PO approval (AUD-012) |
-| 565 | `151585e5` | DTIMM | BLOCKED | BLOCKED | dependency change needs PO approval (AUD-012) |
-| 566 | `22e76e31` | DNPM | BLOCKED | BLOCKED — dependency change needs PO approval (CLAUDE.md); gates not run on it | BLOCKED — dependency change needs PO approval (CLAUDE.md); gates not run on it |
+| 563 | `ffb1d587` | DTORCH | VERIFIED | PASS | applied on the release branch (ee616eec, PO approved 28/10); typecheck/unit/build/worker pytest green |
+| 564 | `4ad5628b` | DTV | VERIFIED | PASS | applied on the release branch (ee616eec, PO approved 28/10); typecheck/unit/build/worker pytest green |
+| 565 | `151585e5` | DTIMM | VERIFIED | PASS | applied on the release branch (ee616eec, PO approved 28/10); typecheck/unit/build/worker pytest green |
+| 566 | `22e76e31` | DNPM | VERIFIED | PASS | applied on the release branch (ee616eec, PO approved 28/10); typecheck/unit/build/worker pytest green |
 | 567 | `fe0d74aa` | INT | VERIFIED | PASS_WITH_CONCERNS | manual diff review (03) + all gates at HEAD 61859c8f/3a6477fa: 0 new failures vs main incl. E2E (07) |
 | 568 | `e7545157` | INT | VERIFIED | PASS_WITH_CONCERNS | manual diff review (03) + all gates at HEAD 61859c8f/3a6477fa: 0 new failures vs main incl. E2E (07) |
 | 569 | `cc937f20` | INT | VERIFIED | PASS_WITH_CONCERNS | manual diff review (03) + all gates at HEAD 61859c8f/3a6477fa: 0 new failures vs main incl. E2E (07) |
