@@ -223,6 +223,36 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 - **Cấm cỡ chữ tuỳ ý `text-[Npx]` (UX Lint R2, PO 29/09/2026)**: CẤM viết `text-[11px]`, `text-[10.5px]`, `text-[9px]`… trong className. BẮT BUỘC dùng thang token cỡ chữ chuẩn: 9–11.5px → `text-caption` (11px); 12–12.5px → `text-meta` (12px); 13px → `text-body-sm` (13px); 13.5–14px → `text-body` (13.5px); 14.5–15px → `text-title-sm` (14.5px); 16–18px → `text-title` (17px); 19–20px → `text-display` (20px). Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R2.
 - **Cấm mã kỹ thuật trên giao diện (UX Lint R8, PO 29/09/2026)**: Không hiển thị `M01a`, `Khu vực D`, `SSOT`, `Chặng 05`, `P2`… trên label/text mà người dùng cửa hàng hoa nhìn thấy. Chỉ dùng trong `data-testid`, `title` cho dev, hoặc comment code. Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R8.
 - **Cấm `onClick` trên phần tử phi tương tác (UX Lint R5 / WCAG 2.1.1, PO 29/09/2026)**: Không đặt `onClick` lên `<div>`, `<span>`, `<li>`, `<tr>`, `<td>`, `<img>`. Dùng `<button type="button">` thay thế. Nếu bất khả kháng (modal backdrop) thì PHẢI có `role="button"` + `tabIndex={0}` + `onKeyDown`. Kiểm bằng `npm run lint:ux -- --check` — cấm tăng vi phạm R5.
+- **Kiến trúc Chuẩn Hóa UI/UX Đa Phong Cách & Động Cơ Theme Độc Lập Nghiệp Vụ (Universal UI/UX Style-Engine Standard, PO 28/10/2026, Kế thừa Trí Tuệ ui-ux-pro-max)**:
+  Đây là **tiêu chuẩn kiến trúc giao diện phổ quát (Universal Architecture)** áp dụng cho toàn bộ `smeOS` và có thể tái sử dụng nguyên vẹn cho bất kỳ dự án phần mềm/SaaS nào trong tương lai:
+  1. **Tách Rời Hoàn Toàn Phong Cách Khỏi Logic Component (Zero Hardcoded Aesthetics)**:
+     - Tuyệt đối cấm code cứng các đặc tính thẩm mỹ cố định (màu hex, font chữ, độ bo góc, bóng đổ) vào trong thân Component.
+     - Toàn bộ Component (`Button`, `Card`, `Table`, `Input`, `Dialog`, `PageContainer`) chỉ tiêu thụ **Design Tokens ngữ nghĩa (Semantic Tokens)**: `bg-surface`, `bg-bg`, `text-text`, `text-text-muted`, `border-border`, `bg-primary`, `bg-success-bg`, `text-warning`, `text-caption`...
+  2. **Hợp Đồng Phong Cách Độc Lập (UIStyleContract - Pluggable Style Registry)**:
+     - Hệ thống quản lý phong cách giao diện tập trung tại `src/lib/ui-system/`. Mỗi phong cách thiết kế được đóng gói thành một Theme Preset độc lập triển khai theo hợp đồng chuẩn:
+       - **Màu sắc 60-30-10**: Nền chủ đạo (60%), Bề mặt card/panel (30%), Điểm nhấn tương tác/CTA (10%).
+       - **Typography Pairing**: Cặp font tiêu đề (Display) và font nội dung (Body) tuyển chọn từ Google Fonts (Inter, Plus Jakarta Sans, Outfit, Playfair, Be Vietnam Pro...).
+       - **Surface Geometry**: Thang bo góc (`radiusSm/Md/Lg`), độ dày viền (`borderWidth`), và độ sâu bóng đổ (`shadowCard`).
+       - **Aesthetic Effects**: Tùy biến linh hoạt hiệu ứng Kính mờ (Glassmorphism), Vân giấy nghệ thuật (Paper Texture), Viền phát sáng (Glow).
+       - **Motion & Easing**: Tham số gia tốc mượt mà cho hover, active, transition.
+  3. **Khả Năng Hoán Đổi Phong Cách Toàn Hệ Thống Không Cần Viết Lại Code (Style Switching Engine)**:
+     - Khi chuyển đổi phong cách (qua Cấu hình Tenant, Phân tầng 4 cấp, hoặc UI Switcher Drawer tại `src/components/layout/ui-studio-drawer.tsx`), động cơ Theme tự động inject tập CSS Custom Properties tương ứng vào container/root.
+     - Toàn bộ các trang từ SaaS Mother, SaaS Ngành (Thời trang, F&B, Hoa tươi...), ChainOS đến StoreOS tự động đổi mới diện mạo đồng bộ:
+       - *Modern Clean (Mặc định)*: Tinh gọn, tối ưu năng suất, chuẩn SaaS B2B.
+       - *Bento High-Tech*: Lưới phân khối sinh động, trực quan, chuyên sâu cho AI Studio & Dashboard.
+       - *Quiet Luxury & Editorial*: Tinh tế, khoảng thở thoáng đãng, chuẩn lookbook thời trang / hoa nghệ thuật.
+       - *Warm Cozy Organic*: Mộc mạc, gần gũi thiên nhiên, chuẩn ẩm thực & đồ thủ công.
+       - *Spatial Glassmorphism*: Chiều sâu kính mờ đa lớp, sang trọng cho ấn phẩm số & thẻ VIP.
+  4. **Cổng Kiểm Chuẩn Tự Động UX Lint Ratchet (Zero Violation Gate)**:
+     - Mọi thay đổi UI bắt buộc phải vượt qua `npm run lint:ux` với **chính xác 0 vi phạm**:
+       - **R1**: Không còn mã màu thô.
+       - **R2**: Cấm font size tùy ý dạng `text-[...px]`.
+       - **R4**: Duy nhất 1 nút chính `primary` trên mỗi viewport/modal.
+       - **R5**: Cấm gán `onClick` lên thẻ phi tương tác.
+       - **R6**: Nút icon bắt buộc có `aria-label` tiếng Việt rõ nghĩa.
+       - **R8/R12**: Không rò rỉ jargon kỹ thuật backend (`SSOT`, `BOM`, `PII`) ra màn hình.
+       - **R10**: Lời gọi API bất đồng bộ bắt buộc có xử lý lỗi/rỗng inline.
+       - **R11**: Nút `<button>` phải có hành động hoặc submit rõ ràng.
 - **Quy chuẩn Thiết Kế Trực Quan & Động Cơ Trưng Bày Cao Cấp (High-Fidelity Visual Storefront & Adaptive Presentation Standard, PO 26/10/2026)**:
   Đây là **tiêu chuẩn bắt buộc** áp dụng cho toàn bộ các màn hình hiển thị sản phẩm, storefront, bộ sưu tập, lookbook và ấn phẩm xuất bản (social poster/card/PDF) trên toàn hệ thống `smeOS` nhằm triệt tiêu lối thiết kế lưới bẹt (flat themed grid), mang lại trải nghiệm thị giác cao cấp tương đương tạp chí/lookbook:
   1. **Ảnh hòa nền Studio (Photo Blending Engine)**:
