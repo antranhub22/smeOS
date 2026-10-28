@@ -10,6 +10,8 @@
  * Pure TypeScript.
  */
 
+import { formatCurrency } from "@/lib/i18n/formatters"
+
 export const PRICING_KEY = "pricing"
 export const PRICE_MODES = ["FIXED", "RANGE", "CONTACT"] as const
 export type PriceMode = (typeof PRICE_MODES)[number]
@@ -268,7 +270,7 @@ export function unitPriceFor(priceVnd: number, peakPriceVnd: number | null, isPe
 }
 
 export function formatVnd(v: number): string {
-  return `${v.toLocaleString("vi-VN")} ₫`
+  return formatCurrency(v)
 }
 
 /** Nhãn giá ngắn cho thẻ sản phẩm. */

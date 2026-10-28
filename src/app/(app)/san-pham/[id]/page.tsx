@@ -206,20 +206,20 @@ export default function ProductDetailPage() {
               </Card>
             )}
 
-            {/* Nhóm 2: Định dạng thiết kế hoa */}
+            {/* Nhóm 2: Định dạng thiết kế */}
             <ProductDesignCard
               shape={product.shape}
               facing={product.facing}
               container={product.container}
             />
 
-            {/* Nhóm 3: Thành phần hoa (BOM) */}
+            {/* Nhóm 3: Thành phần & Định mức cấu thành */}
             <ProductBomCard
               flowers={rawFlowers}
               onOpenModal={() => setIsModalOpen(true)}
             />
 
-            {/* Nhóm 4: Câu chuyện và thông điệp sản phẩm (Content Engine) */}
+            {/* Nhóm 4: Câu chuyện và thông điệp sản phẩm (Tiếp thị) */}
             <ProductStoryCard
               description={description}
               onOpenModal={() => setIsModalOpen(true)}
