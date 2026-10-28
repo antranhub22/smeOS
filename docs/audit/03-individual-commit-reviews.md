@@ -2,13 +2,15 @@
 
 Review order: **CURRENT lineage first** (integration, upbeat-clarke, dependabot — 70 commits that could still reach production), then LEGACY (`Tinh_chinh_cac_tinh_nang`, 543 commits). Inventory order (`01`) stays fixed; this file is grouped by branch, chronological inside each group. Finding IDs → `05-revision-plan.md`.
 
+Pass 2 (line by line) covered every changed server file in integration: all `src/app/api/**`, `src/modules/**`, `src/core/**`, `src/lib/**`, `src/layers/**` (89 files). UI pass 2 so far covers the files that call APIs (notification matrix hook, partner tools modal, catalog wizard, nametag/dev endpoint).
+
 Evidence base for this pass: `git show` diffs plus the file at the branch tip (`git show <tip>:<path>`). Gate results for each tip are in `07`; until those exist, a verdict is never better than PASS_WITH_CONCERNS.
 
 ## A. integration/all-features-oct27 — 38 non-merge commits
 
 | Hash | Intent (from message + diff) | Findings | Verdict |
 |---|---|---|---|
-| `fe0d74aa` | Catalog: export 1080×1080 PNG poster for Zalo/Facebook (38 files, +3.6k) | Has a unit test (`resolve-catalog-brief`). No server-side code in scope beyond `catalog-links` route. Rendering not checked in a browser | PASS_WITH_CONCERNS (visual not verified) |
+| `fe0d74aa` | Catalog: export 1080×1080 PNG poster for Zalo/Facebook (38 files, +3.6k) | Unbounded slug-retry loop; unvalidated template/style ids — AUD-021. Has a unit test (`resolve-catalog-brief`). No server-side code in scope beyond `catalog-links` route. Rendering not checked in a browser | PASS_WITH_CONCERNS (visual not verified) |
 | `e7545157` | Storefront & poster swipe redesign | Test `auto-style-resolver`. Visual not verified | PASS_WITH_CONCERNS |
 | `cc937f20` | 4-tier sidebar architecture (Mother/Industry/Chain/Store) | Nav only; no test in this commit (added in `39803b71`) | PASS_WITH_CONCERNS |
 | `610b1711` | Collapsible tier-aware sidebar | UI only, no test | PASS_WITH_CONCERNS |
@@ -22,9 +24,9 @@ Evidence base for this pass: `git show` diffs plus the file at the branch tip (`
 | `f0dce714` | Docs: unify 14 stages + toolkit (PO 27/10) | docs only | NOT_APPLICABLE (docs) |
 | `307ab6fa` `0cf2b2f3` `6b8d284f` `f4154e3a` `05c46b24` `4b38648a` | Toolkit group in sidebar: 51 tools / 9 groups, user-pinned shortcuts | UI/nav only. `f4154e3a` adds 473 lines with no test; locked by `267944f1` | PASS_WITH_CONCERNS |
 | `267944f1` | Test: lock toolkit group sync | test-only | PASS |
-| `5def12db` | Multi-tier tool entitlement | `tool-entitlement.ts` has **0 non-test importers**; entitlement is only a nav filter (`desktop-nav.tsx:79`, `them/page.tsx:89`), not enforced server-side — AUD-005 | FAIL |
+| `5def12db` | Multi-tier tool entitlement | Regression: drops `lead_captured_at` from the platform-owned keys — AUD-017. `tool-entitlement.ts` has **0 non-test importers**; entitlement is only a nav filter (`desktop-nav.tsx:79`, `them/page.tsx:89`), not enforced server-side — AUD-005 | FAIL |
 | `8492c065` | ChainOS switchboard to unlock partner tools | `PATCH coordinator/partners/[id]/tools`: no capability check, imports Prisma in the route, accepts any string as a tool key, read-modify-write on `organizations.settings` — AUD-004 | FAIL |
-| `f6ca2782` | Multi-tier notification system: 7 tables, 41 events, 11 routes, SSE | Org-wide write routes have no capability check — AUD-002. Platform write routes lack `requirePlatformCapability` — AUD-003. `dispatchNotification` has no caller; the SSE hub is in-memory — AUD-007. Inbox/preferences lack `@@index([organization_id])` — AUD-008. Migration is additive (`CREATE … IF NOT EXISTS`, FKs to `organizations`) — safe | FAIL |
+| `f6ca2782` | Multi-tier notification system: 7 tables, 41 events, 11 routes, SSE | Org-wide write routes have no capability check — AUD-002. Platform write routes lack `requirePlatformCapability` — AUD-003. `dispatchNotification` has no caller; the SSE hub is in-memory — AUD-007. Inbox/preferences lack `@@index([organization_id])` — AUD-008. Migration is additive (`CREATE … IF NOT EXISTS`, FKs to `organizations`) — safe. Line-by-line pass 2: the cascade ignores `scopeId` (cross-tenant) — AUD-014; preferences PATCH reads other tenants' locks — AUD-015; unescaped HTML + PII in logs + shared default Telegram chat — AUD-016; tier semantics — AUD-019; validation gaps — AUD-022 | FAIL |
 | `405f15cf` | Notification matrix in sidebar + settings pages | UI wired to routes from `f6ca2782`; inherits AUD-002 | PASS_WITH_CONCERNS |
 | `6d87a403` `9bb7cc80` | Hydration-mismatch fixes in ToolkitShortcutsGroup | small, mounted-flag pattern | PASS |
 | `87c8b675` | Load event/channel catalog for Store/Chain/Industry | `channels` route needs only a tenant session (read-only catalog) — acceptable | PASS_WITH_CONCERNS |
