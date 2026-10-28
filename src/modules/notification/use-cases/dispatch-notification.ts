@@ -79,7 +79,8 @@ export async function dispatchNotification(
       recipient,
       title,
       message,
-      deepLink: deepLink ?? (eventDef?.deepLinkTemplate ?? undefined),
+      // Template còn biến chưa điền ({orderId}) thì không gắn — link hỏng tệ hơn không có link
+      deepLink: deepLink ?? (eventDef?.deepLinkTemplate?.includes("{") ? undefined : eventDef?.deepLinkTemplate ?? undefined),
       priority: resolve.priority,
       metadata,
     }

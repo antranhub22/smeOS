@@ -51,6 +51,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
       recordEvent: vi.fn(),
     }
 
+    const notify = vi.fn().mockResolvedValue(1)
     const order = await createOrder(
       mockTenant,
       {
@@ -58,9 +59,11 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
           { description: "Sản phẩm hồng", quantity: 2, unitPriceVnd: 250000 },
         ],
       },
-      mockRepo
+      mockRepo,
+      notify
     )
 
+    expect(notify).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", eventKey: "ORDER_RECEIVED" }))
     expect(mockRepo.countTodayOrders).toHaveBeenCalledWith("org-1")
     expect(mockRepo.create).toHaveBeenCalled()
     expect(order.totalVnd).toBe(500000)
@@ -161,12 +164,16 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
       }),
     }
 
+    const notifyAssign = vi.fn().mockResolvedValue(1)
     const result = await assignFlorist(
       mockTenant,
       "ord-123",
       { assigneeId: "user-2", difficulty: "trung_binh" },
-      mockRepo
+      mockRepo,
+      notifyAssign
     )
+
+    expect(notifyAssign).toHaveBeenCalledWith(expect.objectContaining({ eventKey: "FLORIST_TASK_ASSIGNED", ownerUserId: "user-2" }))
 
     expect(mockRepo.createAssignment).toHaveBeenCalledWith(
       "org-1",
