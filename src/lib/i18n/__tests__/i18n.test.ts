@@ -64,3 +64,9 @@ describe("i18n Engine — Động cơ đa ngôn ngữ & SSOT từ điển", () =
     expect(formatDateTime(testDate, "vi")).toContain("28/10/2026")
   })
 })
+
+describe("Câu chữ Journey-First của trang chủ", () => {
+  it("tiêu đề trang chủ chủ tiệm vẫn là câu hỏi 'Bạn muốn làm gì?' (đổi văn phong không được làm mất)", () => {
+    expect(viDictionary.toolkit.header.titleProd).toMatch(/bạn muốn làm gì/i)
+  })
+})

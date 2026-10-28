@@ -7,9 +7,9 @@ export const toolkitVi = {
   "header": {
     "badge": "51 Công cụ",
     "titleDev": "Thư viện công cụ",
-    "titleProd": "Chọn công cụ",
+    "titleProd": "Hôm nay bạn muốn làm gì?",
     "descDev": "51 công cụ theo 9 nhóm chức năng.",
-    "descProd": "Chọn công cụ làm việc."
+    "descProd": "Chọn công cụ bên dưới để bắt đầu."
   },
   "stats": {
     "done": "Hoàn thiện",
