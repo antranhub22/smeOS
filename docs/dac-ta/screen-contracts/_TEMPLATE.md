@@ -8,6 +8,7 @@
 - Việc chính: <một câu>
 - Câu hỏi chính: <một câu hỏi>
 - Mật độ: LOW | MEDIUM | HIGH | EXPERT (lý do)
+- Archetype (`ux-patterns/page-archetypes.md`): A Dashboard | B Danh sách | C Chi tiết | D Biểu mẫu | E Builder | F Cài đặt
 
 ## 2. Hiện trạng (audit)
 - API: <METHOD /api/v1/… → mã năng lực (route.ts:dòng)>
@@ -66,4 +67,7 @@ lint:ux sau: … · nợ mở: … · ảnh mốc: …
 Pattern dùng (`docs/dac-ta/ux-patterns/`): UX-P…
 | Trường/nút/thông tin | Tầng (L0–L4/SYS) | Lý do | Điều kiện hiện | Rủi ro R1–R3 | Cách xác minh |
 |---|---|---|---|---|---|
-Chi phí AI (UX-019): … · quyền/gói (UX-018): … · ngoại lệ: …
+Trường theo ngữ cảnh (03c §5c, nếu có):
+| Trường/nhóm | Hiện khi | Khóa khi | Mặc định | Khi điều kiện đổi (giữ/xóa có cảnh báo/hỏi) |
+|---|---|---|---|---|
+Chi phí AI (UX-019): … · quyền/gói (UX-018): … · ngoại lệ: … · review thị giác (`visual-review.md`): …

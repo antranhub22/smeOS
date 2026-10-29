@@ -16,6 +16,7 @@
 | **PD3** | Tài liệu chuẩn gọi sản phẩm theo tên trong 03a; prompt dành riêng công cụ (Antigravity) chỉ là tham khảo lưu trữ. Agent tuân thủ qua `CLAUDE.md`. | — |
 | **PD4** | 03c có cùng thứ bậc Level 3 CANONICAL với 03a; pattern specs là Level 3 SUPPORTING; Screen Contract tham chiếu cả hai. | Mở rộng §0.3 |
 | **PD5** | (29/10/2026) `FeatureGuidanceCard`: bỏ độ mờ `/60` ở chữ "Xem hướng dẫn"/"Thu gọn" để đạt WCAG AA (audit A15). Cấu trúc, vị trí, hành vi giữ nguyên theo K1 | Bổ sung K1 (03a §0.1) |
+| **PD6** | (29/10/2026) Hợp nhất bộ bổ sung MEUX/VDLS: **không** thành chuẩn riêng mang tên MEUX — tích hợp vào 03c (§5b, §5c, §7b, §9) và `ux-patterns/` (`page-archetypes.md`, `visual-review.md`, bảng chọn pattern). Lint giữ PASS/WARNING/FAIL/BLOCKED + ratchet; P0–P3 chỉ cho audit thủ công. Số liệu định lượng của bộ bổ sung là heuristic nội bộ. Bản gốc lưu `docs/archive/historical/SMEOS_MEUX_Supplemental_Kit/` | Mở rộng §35, §40–41 (qua tài liệu SUPPORTING, không sửa thân 03a) |
 
 ## §2. Ánh xạ tầng và khái niệm SYS (PD1)
 
@@ -69,6 +70,18 @@ idle → validating → submitting → queued → running → succeeded
 
 Không được ẩn vào tầng L2–L4: giá, phí, quota còn lại, điều khoản, quyền riêng tư, trạng thái thanh toán, hậu quả không hoàn tác, lý do một nút bị khóa. Ẩn nâng cao ≠ không tìm thấy: mọi vùng mở rộng có nhãn rõ, giữ giá trị khi đóng/mở, dùng được bằng bàn phím (`Disclosure`, lint R15).
 
+## §5b. Chọn đúng cách hiển thị thêm
+
+Bảng chọn pattern (accordion/Disclosure, drawer, modal, tab, wizard, tooltip, tùy chỉnh thêm) ở `ux-patterns/README.md`. Tooltip không bao giờ là nơi duy nhất chứa thông tin thiết yếu (bổ sung UX-017).
+
+## §5c. UX-027 — Trường theo ngữ cảnh
+
+Khi một lựa chọn (chế độ AI/thủ công, loại sản phẩm, kênh…) làm đổi các trường phía sau:
+- **MUST:** Screen Contract §15 khai cho mỗi trường/nhóm: điều kiện hiện, điều kiện khóa, mặc định, **xử lý giá trị cũ khi điều kiện đổi** (giữ / xóa có cảnh báo / hỏi người dùng).
+- **MUST:** đổi chế độ không âm thầm xóa dữ liệu đã nhập; không giữ được thì cảnh báo và xin xác nhận (`ConfirmDialog` nếu mất dữ liệu đáng kể).
+- **SHOULD:** báo ngắn điều vừa thay đổi ("Đã chuyển sang tự thiết kế — giữ lại ảnh và ghi chú").
+- **MUST:** trường bị ẩn vẫn không được gửi lên nếu không còn hợp lệ với chế độ mới.
+
 ## §6. Chuẩn Enterprise (E1–E16)
 
 ### 6.1. Bắt buộc từ đầu
@@ -104,6 +117,10 @@ Không được ẩn vào tầng L2–L4: giá, phí, quota còn lại, điều 
 | R15 | `<details>` tự viết cho cài đặt → dùng `Disclosure` | UX-017 |
 | R16 | Từ cấm theo từ điển thuật ngữ trong nhãn UI (Worker, render, job, P\d) | UX-026 |
 
+## §7b. Audit thủ công và review thị giác
+
+Mã IA-01…VD-05, thang P0–P3 và quy đổi sang PASS/WARNING/FAIL/BLOCKED, mẫu finding, checklist so sánh tham chiếu: `ux-patterns/visual-review.md`. Mẫu bố cục theo loại trang A–F và quy tắc bề mặt (UX-028): `ux-patterns/page-archetypes.md`. Không biến heuristic thị giác thành lint khi chưa đo tỉ lệ báo sai.
+
 ## §8. Sổ ngoại lệ UX
 
 Ngoại lệ ghi tại `docs/dac-ta/ux-patterns/exceptions.md`, mỗi dòng: ID, ngày, luật/pattern, lý do, tác động, giảm thiểu, người duyệt (PO), hạn xem lại. Không có ngoại lệ cho: bảo mật, tenancy, quyền, trợ năng, trạng thái giao dịch, UX-017.
@@ -117,6 +134,10 @@ Ngoại lệ ghi tại `docs/dac-ta/ux-patterns/exceptions.md`, mỗi dòng: ID,
 - [ ] Đạt ngân sách hiệu năng hoặc ghi ngoại lệ.
 - [ ] Sự kiện đo của pattern được phát.
 - [ ] Ngoại lệ (nếu có) ghi vào sổ, có hạn.
+- [ ] Screen Contract khai archetype A–F; trường theo ngữ cảnh có bảng UX-027 (nếu có).
+- [ ] Màn mới hoặc đổi bố cục: review `visual-review.md` ở 390px và 1280px, không còn P0/P1; ảnh trước/sau khi đổi bố cục màn có sẵn.
+- [ ] Không tuyên bố "đạt WCAG" chỉ dựa trên axe — ghi rõ kiểm tra thủ công đã làm/chưa làm.
+- [ ] Đổi shell hoặc component dùng chung: thí điểm một màn và PO duyệt trước khi áp rộng.
 
 ## §10. Thứ bậc khi xung đột
 An toàn dữ liệu & tenancy → quyền → UX-017 (không giấu) → công việc chính → trợ năng → nhất quán design system → thẩm mỹ (bổ sung 03a §49).
