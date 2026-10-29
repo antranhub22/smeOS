@@ -49,7 +49,7 @@ export default function GiaVonPage() {
             )}
           </div>
           {!ready.cost.complete && (
-            <div role="status" className="flex flex-col gap-1 rounded-xl bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning">
+            <div role="status" className="flex flex-col gap-1 rounded-xl bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning-text">
               <strong>Giá vốn chưa đầy đủ — con số trên đang thấp hơn thực tế.</strong>
               {ready.cost.missingPrices.length > 0 && (
                 <span>

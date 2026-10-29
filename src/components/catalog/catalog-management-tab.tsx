@@ -9,6 +9,7 @@ import { DualModeHeader } from "./dual-mode-header"
 import { SmartInputDropzone, type SmartInputData } from "./smart-input-dropzone"
 import { JourneyProcessingState } from "./journey-processing-state"
 import { CatalogWizardStep4Success } from "./catalog-wizard-step4-success"
+import { CatalogPdfExportButton } from "./studio/catalog-pdf-export-button"
 import { CatalogExpertManager } from "./catalog-expert-manager"
 import { CatalogAutoStylePicker } from "./catalog-auto-style-picker"
 import { generateQRCodeDataUrl, triggerDownload } from "@/core/media/qr-engine"
@@ -23,6 +24,7 @@ import type {
 } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { TaskStatus } from "@/components/ui/task-status"
 import { useAutonomousCatalogGenerator } from "./use-autonomous-catalog-generator"
+import { useConfirmPublish } from "./use-confirm-publish"
 
 export interface CatalogProduct {
   id: string
@@ -72,6 +74,7 @@ export function CatalogManagementTab({
   const activeProducts = useMemo(() => products.filter((p) => p.status === "ACTIVE"), [products])
 
   const {
+    publish,
     isAiAnalyzing,
     autonomousResult,
     setAutonomousResult,
@@ -88,6 +91,7 @@ export function CatalogManagementTab({
     business,
     onRefresh,
   })
+  const [confirmPublish, publishDialog] = useConfirmPublish(publish, "catalog")
 
   const handleDownloadQR = async () => {
     if (!autonomousResult?.publishedUrl || !autonomousResult?.publishedSlug) return
@@ -162,6 +166,19 @@ export function CatalogManagementTab({
                   AI chưa viết được lời giới thiệu nên catalog đang dùng lời giới thiệu mẫu — bạn nên chỉnh lại trước khi gửi khách.
                 </p>
               )}
+              {!autonomousResult.publishedUrl || !autonomousResult.publishedSlug ? (
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 className="text-title-sm font-bold text-text">{autonomousResult.name}</h3>
+                    <p className="text-body-sm text-text-muted">
+                      AI đã chọn {autonomousResult.products.length} {sampleProductTerm} và dựng bố cục. Tải bản PDF để xem lại, rồi xuất bản để có link gửi khách.
+                    </p>
+                  </div>
+                  <CatalogPdfExportButton pages={autonomousResult.pages} style={autonomousResult.style} brand={autonomousResult.brand} catalogTitle={autonomousResult.name} variant="outline" size="sm" />
+                  <Button onClick={() => void confirmPublish()} className="shrink-0">Xuất bản catalog</Button>
+                  {publishDialog}
+                </div>
+              ) : (
               <CatalogWizardStep4Success
                 publishedUrl={autonomousResult.publishedUrl}
                 publishedSlug={autonomousResult.publishedSlug}
@@ -180,6 +197,7 @@ export function CatalogManagementTab({
                   catalogTitle: autonomousResult.name,
                 }}
               />
+              )}
               <div className="pt-4 border-t border-border flex items-center justify-between">
                 <Button
                   variant="outline"
@@ -197,7 +215,8 @@ export function CatalogManagementTab({
                     setAutonomousResult(null)
                     onRefresh()
                   }}
-                  className="bg-primary text-surface font-semibold"
+                  variant="outline"
+                  className="font-semibold"
                 >
                   Quản lý danh sách Catalog →
                 </Button>
@@ -231,7 +250,7 @@ export function CatalogManagementTab({
               setAutonomousResult(null)
             }}
             onCreated={() => {
-              setJourneyPhase("mode-selection")
+              // Giữ wizard ở bước 4 để người dùng thấy link + QR vừa xuất bản (trước đây bị đưa về màn chọn chế độ).
               onRefresh()
             }}
             onCancelToManage={() => {

@@ -34,8 +34,8 @@ describe("Landing Content Generator (7 Sections)", () => {
 
     // 3. 4 Perks
     expect(result.perks).toHaveLength(4)
-    expect(result.perks[0]?.title).toBe("Chụp ảnh duyệt trước khi giao")
-    expect(result.perks[1]?.title).toBe("Giao hỏa tốc chuẩn hẹn 2h")
+    expect(result.perks[0]?.title).toBe("Xem ảnh mẫu trước khi đặt")
+    expect(result.perks[1]?.title).toBe("Giao tận nơi theo hẹn")
 
     // 4. 3 Steps
     expect(result.steps).toHaveLength(3)
@@ -44,11 +44,17 @@ describe("Landing Content Generator (7 Sections)", () => {
 
     // 5. FAQ
     expect(result.faq.length).toBeGreaterThanOrEqual(4)
-    expect(result.faq[0]?.question).toContain("giống 100%")
+    expect(result.faq[0]?.question).toContain("giống hình mẫu")
 
     // 6. Lead Section
     expect(result.lead.discountBadge).toBe("GIẢM 15%")
     expect(result.lead.title).toContain("15%")
+  })
+
+  it("không tự hứa giảm giá khi tiệm chưa bật ưu đãi", () => {
+    const result = generateLandingPageContent({ ...mockInput, discountPercent: undefined })
+    expect(result.lead.discountBadge).toBe("")
+    expect(JSON.stringify(result.lead)).not.toMatch(/%|giảm|ưu đãi/i)
   })
 
   it("should adapt headline dynamically for Valentine", () => {

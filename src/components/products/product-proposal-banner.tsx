@@ -60,7 +60,7 @@ export function ProductProposalBanner({ productId, attributes, onChanged }: Prod
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning">
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning-text">
       <span className="flex-1 font-medium">
         Mẫu do nhân viên đề xuất, đang dùng được để bán và chờ Điều hành duyệt. Còn {conLai} ngày trước khi tự tạm ẩn.
       </span>

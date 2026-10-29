@@ -111,19 +111,19 @@ export function OpportunityCard({ item, onSelect }: OpportunityCardProps) {
       {/* 3 Trục Điểm số Xu hướng Tinh gọn */}
       <div className="grid grid-cols-3 gap-2 py-2 px-3 bg-cool-50/80 rounded-xl border border-cool-100 text-center text-xs">
         <div>
-          <span className="text-cool-400 block text-caption font-semibold">Độ nóng</span>
+          <span className="text-text-muted block text-caption font-semibold">Độ nóng</span>
           <span className="font-bold text-cool-800 text-xs sm:text-sm">
             {Math.round(item.trendScore)}/100
           </span>
         </div>
         <div>
-          <span className="text-cool-400 block text-caption font-semibold">Lan tỏa</span>
+          <span className="text-text-muted block text-caption font-semibold">Lan tỏa</span>
           <span className="font-bold text-blush-600 text-xs sm:text-sm">
             {Math.round(item.viralScore)}/100
           </span>
         </div>
         <div>
-          <span className="text-cool-400 block text-caption font-semibold">Thương mại</span>
+          <span className="text-text-muted block text-caption font-semibold">Thương mại</span>
           <span className="font-bold text-mint-700 text-xs sm:text-sm">
             {Math.round(item.commercialScore)}/100
           </span>
@@ -138,7 +138,7 @@ export function OpportunityCard({ item, onSelect }: OpportunityCardProps) {
               <strong className="text-cool-700">Khách:</strong> {item.audience}
             </span>
           ) : (
-            <span className="italic text-cool-400">{references.length} nguồn dẫn chứng</span>
+            <span className="italic text-text-muted">{references.length} nguồn dẫn chứng</span>
           )}
         </div>
 

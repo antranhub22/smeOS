@@ -72,7 +72,7 @@ export function TemplateSection({ catalog, onSave, canEditSharedDisplay = true }
         "flex flex-col gap-3 rounded-2xl p-4 sm:p-5 border transition-all duration-300 cursor-pointer",
         isBlock2Active
           ? "border-primary/50 bg-surface shadow-sm ring-2 ring-primary/20 opacity-100"
-          : "border-border/60 bg-surface/80 opacity-60 hover:opacity-95"
+          : "border-border/60 bg-transparent hover:bg-surface/60"
       )}
     >
       <TemplateSelectorSplitPane

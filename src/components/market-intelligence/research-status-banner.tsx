@@ -103,7 +103,7 @@ export function ResearchStatusBanner({
             <button
               type="button"
               onClick={onDismiss}
-              className="rounded-lg p-1 text-cool-400 hover:text-cool-700 hover:bg-black/5 transition text-xs"
+              className="rounded-lg p-1 text-text-muted hover:text-cool-700 hover:bg-black/5 transition text-xs"
             >
               ✕
             </button>

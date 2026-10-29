@@ -18,6 +18,7 @@
 | **PD5** | (29/10/2026) `FeatureGuidanceCard`: bỏ độ mờ `/60` ở chữ "Xem hướng dẫn"/"Thu gọn" để đạt WCAG AA (audit A15). Cấu trúc, vị trí, hành vi giữ nguyên theo K1 | Bổ sung K1 (03a §0.1) |
 | **PD6** | (29/10/2026) Hợp nhất bộ bổ sung MEUX/VDLS: **không** thành chuẩn riêng mang tên MEUX — tích hợp vào 03c (§5b, §5c, §7b, §9) và `ux-patterns/` (`page-archetypes.md`, `visual-review.md`, bảng chọn pattern). Lint giữ PASS/WARNING/FAIL/BLOCKED + ratchet; P0–P3 chỉ cho audit thủ công. Số liệu định lượng của bộ bổ sung là heuristic nội bộ. Bản gốc lưu `docs/archive/historical/SMEOS_MEUX_Supplemental_Kit/` | Mở rộng §35, §40–41 (qua tài liệu SUPPORTING, không sửa thân 03a) |
 | **PD7** | (29/10/2026) `TabActionHeader`: huy hiệu tone `accent` chuyển sang cặp token `selected` (2,25:1 → 7,15:1, audit MEUX `/tai-anh`). Cấu trúc, vị trí, quy tắc nút K2 giữ nguyên | Bổ sung K2 (03a §0.1) |
+| **PD8** | (29/10/2026) Sau audit sâu: (a) chuẩn Spotlight không làm mờ chữ (`opacity`) — khối chưa chọn chỉ chìm nền/viền; (b) ấn phẩm cho khách (landing, poster, catalog, thẻ) chỉ in ưu đãi tiệm **đang bật** trong Cài đặt → Ưu đãi, không mặc định, AI không tự đặt; (c) không dữ liệu giả (đánh giá, cam kết, đếm ngược, liên hệ, ảnh kho) trên bề mặt khách thấy; (d) Progressive Disclosure là nguyên tắc vận hành của agent: `ux-patterns/OPERATING_PRINCIPLES.md`, trỏ từ `CLAUDE.md` | Bổ sung 03a §0.1, UX-017 |
 
 ## §2. Ánh xạ tầng và khái niệm SYS (PD1)
 
@@ -139,6 +140,7 @@ Ngoại lệ ghi tại `docs/dac-ta/ux-patterns/exceptions.md`, mỗi dòng: ID,
 - [ ] Màn mới hoặc đổi bố cục: review `visual-review.md` ở 390px và 1280px, không còn P0/P1; ảnh trước/sau khi đổi bố cục màn có sẵn.
 - [ ] Không tuyên bố "đạt WCAG" chỉ dựa trên axe — ghi rõ kiểm tra thủ công đã làm/chưa làm.
 - [ ] Đổi shell hoặc component dùng chung: thí điểm một màn và PO duyệt trước khi áp rộng.
+- [ ] Audit sâu **mọi trạng thái** (rỗng, đang chạy, có kết quả, lỗi, hộp thoại mở/đóng, trang khách) — không chỉ màn đầu (PD8).
 
 ## §10. Thứ bậc khi xung đột
 An toàn dữ liệu & tenancy → quyền → UX-017 (không giấu) → công việc chính → trợ năng → nhất quán design system → thẩm mỹ (bổ sung 03a §49).

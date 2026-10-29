@@ -105,7 +105,7 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
               aria-label="Đóng"
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-cool-400 hover:bg-cool-100 hover:text-cool-700 transition"
+            className="rounded-lg p-1.5 text-text-muted hover:bg-cool-100 hover:text-cool-700 transition"
           >
             <X className="h-5 w-5" />
           </button>
@@ -155,17 +155,17 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
             {/* 3 Trục Điểm số với diễn giải ý nghĩa */}
             <div className="grid grid-cols-3 gap-2 pt-1 text-center">
               <div className="bg-white p-2.5 rounded-xl border border-cool-200/70 shadow-2xs">
-                <span className="text-cool-400 text-caption block font-semibold">Độ nóng</span>
+                <span className="text-text-muted text-caption block font-semibold">Độ nóng</span>
                 <span className="text-cool-900 font-bold text-sm">{Math.round(item.trendScore)}/100</span>
                 <span className="text-caption text-cool-500 block mt-0.5">Xu hướng thị trường</span>
               </div>
               <div className="bg-white p-2.5 rounded-xl border border-cool-200/70 shadow-2xs">
-                <span className="text-cool-400 text-caption block font-semibold">Lan tỏa</span>
+                <span className="text-text-muted text-caption block font-semibold">Lan tỏa</span>
                 <span className="text-blush-600 font-bold text-sm">{Math.round(item.viralScore)}/100</span>
                 <span className="text-caption text-blush-600/80 block mt-0.5">Tiềm năng video</span>
               </div>
               <div className="bg-white p-2.5 rounded-xl border border-cool-200/70 shadow-2xs">
-                <span className="text-cool-400 text-caption block font-semibold">Thương mại</span>
+                <span className="text-text-muted text-caption block font-semibold">Thương mại</span>
                 <span className="text-mint-700 font-bold text-sm">{Math.round(item.commercialScore)}/100</span>
                 <span className="text-caption text-mint-600 block mt-0.5">Sức mua thực tế</span>
               </div>
@@ -256,7 +256,7 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
               </div>
               <ChevronDown
                 size={15}
-                className={`text-cool-400 transition-transform duration-200 ${isEvidenceOpen ? "rotate-180" : ""}`}
+                className={`text-text-muted transition-transform duration-200 ${isEvidenceOpen ? "rotate-180" : ""}`}
               />
             </button>
 
@@ -264,7 +264,7 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
               <div className="p-4 border-t border-cool-100 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {references.length > 0 ? (
                   references.map((ref, idx) => {
-                    let icon = <ExternalLink className="h-3.5 w-3.5 flex-shrink-0 text-cool-400" />;
+                    let icon = <ExternalLink className="h-3.5 w-3.5 flex-shrink-0 text-text-muted" />;
                     let badgeBg = "bg-cool-50 hover:bg-cool-100 text-cool-700 border-cool-200";
 
                     if (ref.type === "TIKTOK_REELS") {
@@ -307,7 +307,7 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 text-caption text-cool-500 uppercase tracking-wider font-bold">
                             <span>{ref.platform}</span>
-                            {ref.metrics ? <span className="text-cool-400 font-normal">• {ref.metrics}</span> : null}
+                            {ref.metrics ? <span className="text-text-muted font-normal">• {ref.metrics}</span> : null}
                           </div>
                           <div className="font-bold text-cool-800 truncate group-hover:text-blush-600 transition">
                             {ref.title || ref.platform}

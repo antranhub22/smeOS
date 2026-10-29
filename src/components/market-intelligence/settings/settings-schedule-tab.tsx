@@ -89,14 +89,14 @@ export function SettingsScheduleTab({
               type="checkbox"
               checked={marketSchedule.enabled}
               onChange={(e) => setMarketSchedule({ ...marketSchedule, enabled: e.target.checked })}
-              className="h-4 w-4 rounded text-blush-600 focus:ring-blush-500"
+              aria-label="Bật quét xu hướng tự động" className="h-6 w-6 rounded text-blush-600 focus:ring-blush-500"
             />
           </div>
           <div className="pt-2 border-t border-cool-200 flex items-center gap-3">
-            <label className="font-semibold text-cool-700">Khung giờ chạy cron:</label>
+            <label className="font-semibold text-cool-700">Giờ quét tự động:</label>
             <input
               type="time"
-              value={marketSchedule.time}
+              value={marketSchedule.time} aria-label="Giờ quét xu hướng tự động"
               onChange={(e) => setMarketSchedule({ ...marketSchedule, time: e.target.value })}
               className="h-8 rounded-lg border border-cool-300 px-2 font-bold text-cool-800 bg-white"
             />
@@ -115,14 +115,14 @@ export function SettingsScheduleTab({
               type="checkbox"
               checked={keywordSchedule.enabled}
               onChange={(e) => setKeywordSchedule({ ...keywordSchedule, enabled: e.target.checked })}
-              className="h-4 w-4 rounded text-blush-600 focus:ring-blush-500"
+              aria-label="Bật quét từ khóa tự động" className="h-6 w-6 rounded text-blush-600 focus:ring-blush-500"
             />
           </div>
           <div className="pt-2 border-t border-cool-200 flex items-center gap-3">
             <label className="font-semibold text-cool-700">Giờ quét mở cửa:</label>
             <input
               type="time"
-              value={keywordSchedule.time}
+              value={keywordSchedule.time} aria-label="Giờ quét từ khóa tự động"
               onChange={(e) => setKeywordSchedule({ ...keywordSchedule, time: e.target.value })}
               className="h-8 rounded-lg border border-cool-300 px-2 font-bold text-cool-800 bg-white"
             />
@@ -153,7 +153,7 @@ export function SettingsScheduleTab({
                 >
                   {kw}
                   <button
-              aria-label="Xóa" type="button" onClick={() => handleRemoveKeyword(kw)} className="text-cool-400 hover:text-blush-600">
+              aria-label="Xóa" type="button" onClick={() => handleRemoveKeyword(kw)} className="text-text-muted hover:text-blush-600">
                     <Trash2 size={11} />
                   </button>
                 </span>

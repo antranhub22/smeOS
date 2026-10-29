@@ -15,6 +15,10 @@ interface RawProductRow {
   category?: string
   shape?: string
   pricing?: { selling_price?: number }
+  // Hợp đồng thật của GET /api/v1/products (list-products.ts): `price_vnd`, `masterImageUrl`, `attributes.imageUrl`
+  price_vnd?: number | null
+  masterImageUrl?: string | null
+  attributes?: { imageUrl?: unknown } | null
   master_image_url?: string
   image_url?: string
   images?: Array<{ url?: string }>
@@ -63,7 +67,7 @@ export function useProductData(sampleProductLabel: string) {
             id: p.id,
             name: p.name,
             code: p.code,
-            price: p.pricing?.selling_price || 0,
+            price: p.price_vnd ?? p.pricing?.selling_price ?? 0,
             flowers: p.category
               ? `Danh mục: ${p.category}`
               : p.shape || sampleProductLabel,
@@ -71,6 +75,8 @@ export function useProductData(sampleProductLabel: string) {
             imageUrl:
               imageMap[p.id] ||
               (p.code ? imageMap[p.code] : undefined) ||
+              p.masterImageUrl ||
+              (typeof p.attributes?.imageUrl === "string" ? p.attributes.imageUrl : undefined) ||
               p.master_image_url ||
               p.image_url ||
               p.images?.[0]?.url,

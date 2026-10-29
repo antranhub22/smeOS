@@ -188,7 +188,7 @@ export function BriefRisingView({
               {/* Cột giữa: Tín hiệu sóng (Trend vs Viral) */}
               <div className="flex items-center gap-4 text-xs flex-shrink-0 bg-cool-50/80 px-3.5 py-2 rounded-xl border border-cool-100">
                 <div>
-                  <span className="text-caption text-cool-400 block font-semibold">Độ nóng sóng</span>
+                  <span className="text-caption text-text-muted block font-semibold">Độ nóng sóng</span>
                   <div className="flex items-center gap-1 font-bold text-cool-800">
                     <TrendingUp size={13} className="text-ocean-600" />
                     <span>{Math.round(item.trendScore)}/100</span>
@@ -196,7 +196,7 @@ export function BriefRisingView({
                 </div>
 
                 <div className="border-l border-cool-200 pl-4">
-                  <span className="text-caption text-cool-400 block font-semibold">Tốc độ Viral</span>
+                  <span className="text-caption text-text-muted block font-semibold">Tốc độ Viral</span>
                   <div className="flex items-center gap-1 font-bold text-blush-600">
                     <Video size={13} className="text-petal-600" />
                     <span>{Math.round(item.viralScore)}/100</span>

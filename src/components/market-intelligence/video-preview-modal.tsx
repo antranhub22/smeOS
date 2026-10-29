@@ -77,7 +77,7 @@ export function VideoPreviewModal({ isOpen, onClose, data }: VideoPreviewModalPr
                   Dẫn chứng video
                 </span>
                 {data.topicName && (
-                  <span className="text-xs font-semibold text-cool-400 truncate">
+                  <span className="text-xs font-semibold text-text-muted truncate">
                     • {data.topicName}
                   </span>
                 )}
@@ -92,7 +92,7 @@ export function VideoPreviewModal({ isOpen, onClose, data }: VideoPreviewModalPr
             type="button"
             onClick={onClose}
             aria-label="Đóng video"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-cool-400 hover:text-white hover:bg-cool-800 transition-colors shrink-0"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-text-muted hover:text-white hover:bg-cool-800 transition-colors shrink-0"
           >
             <X size={18} />
           </button>
@@ -117,7 +117,7 @@ export function VideoPreviewModal({ isOpen, onClose, data }: VideoPreviewModalPr
             />
           ) : (
             <div className="text-center p-6 space-y-3">
-              <div className="w-12 h-12 rounded-full bg-cool-800 text-cool-400 flex items-center justify-center mx-auto">
+              <div className="w-12 h-12 rounded-full bg-cool-800 text-text-muted flex items-center justify-center mx-auto">
                 <Play size={20} className="translate-x-0.5" />
               </div>
               <p className="text-xs text-cool-300">
@@ -140,7 +140,7 @@ export function VideoPreviewModal({ isOpen, onClose, data }: VideoPreviewModalPr
 
         {/* Footer Meta & Controls */}
         <div className="px-4 py-2.5 bg-cool-900/90 border-t border-cool-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-3 text-cool-400 text-caption">
+          <div className="flex items-center gap-3 text-text-muted text-caption">
             {data.author && (
               <span>
                 Kênh: <strong className="text-cool-200">{data.author}</strong>

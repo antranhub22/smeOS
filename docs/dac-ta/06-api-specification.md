@@ -997,7 +997,8 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 
 | Phương thức | Đường dẫn | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/ad-banner-poster/copy` | `I1` | Sinh chữ cho banner quảng cáo |
+| POST | `/ad-banner-poster/copy` | `I1` | Sinh chữ cho banner quảng cáo — nhãn ưu đãi chỉ lấy từ ưu đãi tiệm đang bật (Hồ sơ tiệm), không tự đặt |
+| GET | `/ad-banner-poster/copy` | `I1` | Danh sách tên ưu đãi tiệm đang bật — nguồn duy nhất cho ô "Ưu đãi của tiệm" trên poster |
 | POST | `/ad-banner-poster/render` | `I1` | Dựng ảnh banner |
 | GET · PUT | `/chain/collection-profile` | `F1` · `F2` | Hồ sơ thu thập dữ liệu chuỗi |
 | POST | `/chain/collection-profile/preview` | `F1` | Xem trước theo hồ sơ |

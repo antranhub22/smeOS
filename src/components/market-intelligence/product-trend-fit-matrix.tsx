@@ -74,7 +74,7 @@ export function ProductTrendFitMatrix({
                   <td className="px-3.5 py-3 text-cool-600 font-medium">{item.productValue}</td>
                   <td className="px-3.5 py-3 text-cool-600">
                     <div>{item.marketSignal}</div>
-                    <div className="text-caption text-cool-400 italic mt-0.5">{item.note}</div>
+                    <div className="text-caption text-text-muted italic mt-0.5">{item.note}</div>
                   </td>
                   <td className="px-3.5 py-3">
                     <span className={`inline-flex px-2 py-0.5 rounded-full text-caption font-bold border ${spec.bgClass} ${spec.colorClass} ${spec.borderClass}`}>

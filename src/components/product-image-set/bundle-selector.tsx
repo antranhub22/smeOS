@@ -54,6 +54,7 @@ export function BundleSelector({
                   key={b.id}
                   type="button"
                   onClick={() => onBundleChange(b.id)}
+                  aria-pressed={isSelected}
                   className={`p-3.5 rounded-xl border text-left transition-all relative cursor-pointer ${
                     isSelected
                       ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"

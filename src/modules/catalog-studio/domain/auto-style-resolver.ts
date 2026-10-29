@@ -56,7 +56,7 @@ const KEYWORD_RULES: KeywordRule[] = [
     keywords: ["bento", "gen z", "trẻ", "năng động", "sinh động", "f&b", "fnb", "đồ ăn", "đồ uống", "bán lẻ", "đa dạng", "nhiều sản phẩm", "hot trend", "trending"],
     templateId: "T04_BENTO_SHOWCASE",
     styleId: "S08_BENTO_GALLERY",
-    reason: "Bento 2026 — hiện đại, năng động, tối ưu lướt nhanh và chốt đơn tức thì",
+    reason: "Bố cục chia khối hiện đại, dễ lướt xem trên điện thoại",
     emoji: "⚡",
   },
   // Tối giản / B2B / Báo giá / Kỹ thuật
@@ -89,35 +89,38 @@ const KEYWORD_RULES: KeywordRule[] = [
 const DEFAULT_SUGGESTION: StyleSuggestion = {
   templateId: "T01_SIGNATURE_COLLECTION",
   styleId: "S01_EDITORIAL_MAGAZINE",
-  templateName: "Signature Collection",
-  styleName: "Editorial Magazine",
+  templateName: "Bộ sưu tập đặc trưng",
+  styleName: "Tạp chí thời trang",
   reason: "Template phổ biến nhất, phù hợp đa dạng loại sản phẩm và ngành hàng",
   confidence: "MEDIUM",
   emoji: "✨",
 }
 
 export const TEMPLATE_NAMES: Record<CatalogTemplateId, string> = {
-  T01_SIGNATURE_COLLECTION: "Signature Collection",
-  T02_MINIMAL_PRODUCT_LIST: "Minimal Product List",
-  T03_PREMIUM_LOOKBOOK: "Premium Lookbook",
-  T04_BENTO_SHOWCASE: "Bento Showcase",
-  T05_DARK_CINEMATIC: "Dark Cinematic",
+  T01_SIGNATURE_COLLECTION: "Bộ sưu tập đặc trưng",
+  T02_MINIMAL_PRODUCT_LIST: "Danh sách tối giản",
+  T03_PREMIUM_LOOKBOOK: "Lookbook cao cấp",
+  T04_BENTO_SHOWCASE: "Lưới khối nổi bật",
+  T05_DARK_CINEMATIC: "Nền tối điện ảnh",
 }
 
 export const STYLE_NAMES: Record<CatalogStyleId, string> = {
-  S01_EDITORIAL_MAGAZINE: "Editorial Magazine",
-  S02_PURE_MINIMAL: "Pure Minimal",
-  S03_QUIET_LUXURY: "Quiet Luxury",
-  S04_BOLD_POP: "Bold Pop",
-  S05_ORGANIC_NATURAL: "Organic Natural",
-  S06_BOTANICAL_ATELIER: "Botanical Atelier",
-  S07_SWISS_GRID: "Swiss Grid",
-  S08_BENTO_GALLERY: "Bento Gallery",
-  S09_MODERN_RETRO: "Modern Retro",
-  S10_PLAYFUL_ILLUSTRATION: "Playful Illustration",
-  S11_DARK_SHOWCASE: "Dark Showcase",
-  S12_MODERN_COMMERCE: "Modern Commerce",
+  S01_EDITORIAL_MAGAZINE: "Tạp chí thời trang",
+  S02_PURE_MINIMAL: "Tối giản",
+  S03_QUIET_LUXURY: "Sang trọng nhẹ nhàng",
+  S04_BOLD_POP: "Màu nổi bật",
+  S05_ORGANIC_NATURAL: "Tự nhiên mộc mạc",
+  S06_BOTANICAL_ATELIER: "Xưởng thực vật",
+  S07_SWISS_GRID: "Lưới chuẩn mực",
+  S08_BENTO_GALLERY: "Thư viện khối",
+  S09_MODERN_RETRO: "Cổ điển hiện đại",
+  S10_PLAYFUL_ILLUSTRATION: "Minh họa vui tươi",
+  S11_DARK_SHOWCASE: "Trưng bày nền tối",
+  S12_MODERN_COMMERCE: "Thương mại hiện đại",
 }
+
+/** Tên hiển thị tiếng Việt của mẫu catalog (không hiện mã T0x trên màn). */
+export const templateDisplayName = (id: string): string => TEMPLATE_NAMES[id as CatalogTemplateId] ?? "Mẫu catalog"
 
 /**
  * Phân tích userDirectives và trả về tối đa 3 gợi ý style/template.
@@ -170,15 +173,15 @@ export function resolveAutoStyleSuggestions(
     suggestions.push(DEFAULT_SUGGESTION)
   }
 
-  // Add T04_BENTO_SHOWCASE as a trending alternative if not already included
+  // Thêm T04 làm lựa chọn thứ hai nếu chưa có
   const hasT04 = suggestions.some((s) => s.templateId === "T04_BENTO_SHOWCASE")
   if (!hasT04 && suggestions.length < maxSuggestions) {
     suggestions.push({
       templateId: "T04_BENTO_SHOWCASE",
       styleId: "S08_BENTO_GALLERY",
-      templateName: "Bento Showcase",
-      styleName: "Bento Gallery",
-      reason: "Phong cách Bento 2026 đang trending — năng động và hiện đại, thu hút khách hàng trẻ",
+      templateName: "Lưới khối nổi bật",
+      styleName: "Thư viện khối",
+      reason: "Bố cục chia khối năng động, hợp với khách hàng trẻ",
       confidence: "LOW",
       emoji: "⚡",
     })

@@ -20,8 +20,8 @@ export const CAMPAIGN_OCCASIONS: CampaignOccasion[] = [
 ]
 
 export const CAMPAIGN_ARCHETYPES: CampaignArchetype[] = [
-  { id: "minimal-luxury", name: "Minimal Luxury", desc: "Tối giản sang trọng, tinh tế chuẩn gallery cao cấp" },
-  { id: "modern-split", name: "Modern Split", desc: "Hiện đại chia khối, tương phản mạnh mẽ ấn tượng" },
-  { id: "festive-sale", name: "Festive Flash Sale", desc: "Sôi động rực rỡ, nhấn mạnh ưu đãi ngày lễ" },
-  { id: "pastel-romantic", name: "Pastel Romantic", desc: "Lãng mạn dịu dàng, ánh sáng tự nhiên ấm áp" },
+  { id: "minimal-luxury", name: "Tối giản sang trọng", desc: "Tối giản sang trọng, tinh tế chuẩn gallery cao cấp" },
+  { id: "modern-split", name: "Hiện đại chia khối", desc: "Hiện đại chia khối, tương phản mạnh mẽ ấn tượng" },
+  { id: "festive-sale", name: "Lễ hội ưu đãi", desc: "Sôi động rực rỡ, nhấn mạnh ưu đãi ngày lễ" },
+  { id: "pastel-romantic", name: "Lãng mạn pastel", desc: "Lãng mạn dịu dàng, ánh sáng tự nhiên ấm áp" },
 ]

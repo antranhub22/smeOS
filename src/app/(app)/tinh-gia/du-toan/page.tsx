@@ -11,7 +11,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { costingFetch, formatVnd, useCostingResource } from "@/components/costing/use-costing-api"
 import { parseNumberInput } from "@/components/costing/costing-ui-types"
-import type { MaterialNeedsResult } from "@/modules/costing/domain/material-needs"
+import { noPurchaseMessage, type MaterialNeedsResult } from "@/modules/costing/domain/material-needs"
 
 type NeedsResponse = MaterialNeedsResult & { perishable: boolean; orderCount: number }
 
@@ -101,13 +101,13 @@ export default function DuToanPage() {
           </p>
           {state.data.perishable && <p className="text-body-sm text-text-muted">Nguyên liệu tươi dễ hư — nên mua sát ngày giao, đã tính sẵn hao hụt theo từng nhóm.</p>}
           {state.data.productsWithoutRecipe.length > 0 && (
-            <p role="status" className="rounded-xl bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning">
+            <p role="status" className="rounded-xl bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning-text">
               {state.data.productsWithoutRecipe.length} mẫu trong các đơn này chưa có công thức nên chưa được cộng vào dự toán.{" "}
               <Link href="/tinh-gia/cong-thuc" className="font-semibold underline">Ghi công thức</Link>
             </p>
           )}
           {toBuy.length === 0 ? (
-            <p className="text-body-sm text-text-muted">Tồn kho đã đủ cho các đơn này.</p>
+            <p className="text-body-sm text-text-muted">{noPurchaseMessage(state.data.needs.length, state.data.productsWithoutRecipe.length)}</p>
           ) : (
             <ul className="flex flex-col" aria-label="Nguyên liệu cần mua">
               {toBuy.map((n) => {

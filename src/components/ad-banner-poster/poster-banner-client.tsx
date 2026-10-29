@@ -4,6 +4,7 @@ import React, { useState, useRef, useCallback, useMemo } from "react"
 import { Download, RefreshCw, Share2, LayoutGrid } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
+import { POSTER_EXPORT_WIDTH } from "./scaled-frame"
 import { TabActionHeader, type TabItem, type TabAction, type TabOverflowAction } from "@/components/ui/tab-header"
 import {
   type BannerAspectRatio,
@@ -20,6 +21,8 @@ import {
 import type { BannerTemplateItem } from "@/modules/ad-banner-poster/domain/template-catalog"
 import { BannerGuidanceCallout } from "./banner-guidance-callout"
 import { BannerFormPanel } from "./banner-form-panel"
+import { useShopPromotions } from "./use-shop-promotions"
+import { shopPromotionBadge } from "@/modules/ad-banner-poster/domain/promotion-guard"
 import { PresetStyleSelector } from "./preset-style-selector"
 import { MultiSizeGrid } from "./multi-size-grid"
 import { SinglePreviewModal } from "./single-preview-modal"
@@ -55,12 +58,14 @@ export function PosterBannerClient() {
     generateInstantBannerCopy({
       occasionKey: "OPENING",
       shopName: orgName || "Cửa Hàng Của Bạn",
-      suggestedPromotion: "Tặng kèm băng rôn thiết kế riêng",
     })
   )
 
   // Hotline/địa chỉ lấy từ hồ sơ cửa hàng — không điền số mẫu (poster tải về sẽ mang thông tin giả).
   const { business } = useTenantProfile()
+  const shopPromotions = useShopPromotions()
+  // Nhãn ưu đãi chỉ lấy từ ưu đãi tiệm đang bật — giữ lựa chọn hiện tại nếu còn hợp lệ
+  const ownBadge = () => shopPromotionBadge(shopPromotions, copy.promotionBadge)
   const [brandEdits, setBrandEdits] = useState<Partial<BannerBrandInfo>>({})
   const brandInfo = useMemo<BannerBrandInfo>(() => ({
     shopName: brandEdits.shopName ?? (business?.display_name || orgName || "Cửa Hàng Của Bạn"),
@@ -99,6 +104,7 @@ export function PosterBannerClient() {
     const newCopy = generateInstantBannerCopy({
       occasionKey: key,
       shopName: brandInfo.shopName,
+      suggestedPromotion: ownBadge(),
     })
     setCopy(newCopy)
     setStatusMessage(`Đã chọn dịp "${label}" — tự động chuyển phong cách và thông điệp phù hợp!`)
@@ -107,7 +113,7 @@ export function PosterBannerClient() {
   const handleSelectTemplate = (tpl: BannerTemplateItem) => {
     setSelectedTemplateId(tpl.id)
     setSelectedPresetId(tpl.stylePresetId)
-    setCopy(tpl.defaultCopy)
+    setCopy({ ...tpl.defaultCopy, promotionBadge: ownBadge(), validityText: "" })
     setStatusMessage(`Đã áp dụng mẫu: "${tpl.name}"`)
   }
 
@@ -138,6 +144,7 @@ export function PosterBannerClient() {
         const fallback = generateInstantBannerCopy({
           occasionKey,
           shopName: brandInfo.shopName,
+          suggestedPromotion: ownBadge(),
         })
         setCopy(fallback)
       }
@@ -151,6 +158,7 @@ export function PosterBannerClient() {
       const fallback = generateInstantBannerCopy({
         occasionKey,
         shopName: brandInfo.shopName,
+        suggestedPromotion: ownBadge(),
       })
       setCopy(fallback)
       setStatusMessage(`Đã tự động dàn trang 5 kích thước chuẩn cho dịp "${occasionLabel}"!`)
@@ -159,21 +167,11 @@ export function PosterBannerClient() {
     }
   }
 
-  const downloadElementAsImage = async (
-    element: HTMLElement,
-    filename: string,
-    formatType: "png" | "jpeg" = "png"
-  ) => {
-    const { toPng, toJpeg } = await import("html-to-image")
-    const exportOptions = {
-      pixelRatio: 2,
-      cacheBust: true,
-      skipFonts: true,
-      fontEmbedCSS: "",
-    }
-    const dataUrl = formatType === "png"
-      ? await toPng(element, exportOptions)
-      : await toJpeg(element, { ...exportOptions, quality: 0.92 })
+  /** Xuất PNG đúng bề rộng ghi trên nhãn (1080/1920 px…) thay vì 2× khung xem trước. */
+  const downloadElementAsImage = async (element: HTMLElement, filename: string, format: string) => {
+    const { toPng } = await import("html-to-image")
+    const pixelRatio = (POSTER_EXPORT_WIDTH[format] ?? 1080) / Math.max(1, element.offsetWidth)
+    const dataUrl = await toPng(element, { pixelRatio, cacheBust: true, skipFonts: true, fontEmbedCSS: "" })
 
     const link = document.createElement("a")
     link.download = filename
@@ -193,7 +191,7 @@ export function PosterBannerClient() {
     setExportingFormat(format)
     try {
       const filename = `banner-${format.replace(":", "x")}-${Date.now()}.png`
-      await downloadElementAsImage(targetEl, filename, "png")
+      await downloadElementAsImage(targetEl, filename, format)
       setStatusMessage(`Đã xuất ảnh ${format} thành công!`)
     } catch {
       setStatusMessage(`Không thể xuất ảnh định dạng ${format}.`)
@@ -210,7 +208,7 @@ export function PosterBannerClient() {
         const targetEl = cardRefs.current.get(spec.id)
         if (targetEl) {
           const filename = `banner-${spec.id.replace(":", "x")}.png`
-          await downloadElementAsImage(targetEl, filename, "png")
+          await downloadElementAsImage(targetEl, filename, spec.id)
           await new Promise((r) => setTimeout(r, 300))
         }
       }
@@ -295,6 +293,7 @@ export function PosterBannerClient() {
             onBrandInfoChange={handleBrandInfoChange}
             productImageUrl={productImageUrl}
             onProductImageChange={setProductImageUrl}
+            shopPromotions={shopPromotions}
             onTriggerAiCopy={handleTriggerAutoGenerate}
             onTriggerAutoGenerate={handleTriggerAutoGenerate}
             isGenerating={isGenerating}
@@ -338,6 +337,7 @@ export function PosterBannerClient() {
         onClose={() => setIsGalleryOpen(false)}
         onSelectTemplate={handleSelectTemplate}
         selectedTemplateId={selectedTemplateId}
+        previewImageUrl={productImageUrl}
       />
     </div>
   )

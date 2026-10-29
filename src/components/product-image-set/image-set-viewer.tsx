@@ -105,6 +105,7 @@ export function ImageSetViewer({
                   key={v.id}
                   type="button"
                   onClick={() => setSelectedVariant(v)}
+                  aria-pressed={isSelected}
                   className={`p-2 rounded-xl border text-left transition-all relative group overflow-hidden cursor-pointer ${
                     isSelected
                       ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"

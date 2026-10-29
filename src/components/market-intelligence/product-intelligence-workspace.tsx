@@ -208,35 +208,35 @@ export function ProductIntelligenceWorkspace() {
       {/* Visual Pipeline Header Indicator — 5 Chặng tuần tự */}
       <div className="rounded-2xl border border-cool-200 bg-white p-3.5 shadow-xs">
         <div className="flex items-center justify-between text-xs font-bold overflow-x-auto gap-2">
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 1 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-cool-400"}`}>
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 1 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-text-muted"}`}>
             <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 2 ? "bg-mint-600 text-white" : "bg-blush-600 text-white"}`}>
               {currentStep >= 2 ? "✓" : "1"}
             </span>
             <span>01. Tải ảnh (BRING)</span>
           </div>
           <ArrowRight size={14} className="text-cool-300 shrink-0" />
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 2 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-cool-400"}`}>
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 2 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-text-muted"}`}>
             <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 3 ? "bg-mint-600 text-white" : "bg-blush-600 text-white"}`}>
               {currentStep >= 3 ? "✓" : "2"}
             </span>
             <span>02. Vision AI bóc tách (UNDERSTAND)</span>
           </div>
           <ArrowRight size={14} className="text-cool-300 shrink-0" />
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 3 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-cool-400"}`}>
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 3 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-text-muted"}`}>
             <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 4 ? "bg-mint-600 text-white" : "bg-blush-600 text-white"}`}>
               {currentStep >= 4 ? "✓" : "3"}
             </span>
             <span>03. Trend Fit (DISCOVER)</span>
           </div>
           <ArrowRight size={14} className="text-cool-300 shrink-0" />
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 4 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-cool-400"}`}>
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 4 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-text-muted"}`}>
             <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 5 ? "bg-mint-600 text-white" : "bg-blush-600 text-white"}`}>
               {currentStep >= 5 ? "✓" : "4"}
             </span>
             <span>04. 10 Chủ đề & Video (IDEATE)</span>
           </div>
           <ArrowRight size={14} className="text-cool-300 shrink-0" />
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 5 ? "bg-orchid-50 text-orchid-700 font-extrabold" : "text-cool-400"}`}>
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 5 ? "bg-orchid-50 text-orchid-700 font-extrabold" : "text-text-muted"}`}>
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orchid-600 text-white text-caption">5</span>
             <span>05. Chọn định hướng (CHOOSE)</span>
           </div>

@@ -173,7 +173,7 @@ function ContentEngineContent() {
                 <div>
                   <div className="text-xs font-semibold text-text-muted">Bước 1: Tải ảnh sản phẩm</div>
                   <div className="text-title-sm font-extrabold text-text">
-                    AI Vision sẽ tự phân tích & sinh nội dung
+                    AI đọc ảnh và soạn bài
                   </div>
                 </div>
                 <ImageUploadTab

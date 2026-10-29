@@ -268,7 +268,7 @@ export function ProductUploadCard({
                   </>
                 )}
               </p>
-              <p className="text-caption text-cool-400">Hỗ trợ JPG, PNG, WebP (Tối đa 10MB)</p>
+              <p className="text-caption text-text-muted">Hỗ trợ JPG, PNG, WebP (Tối đa 10MB)</p>
             </div>
           </div>
 
@@ -298,7 +298,7 @@ export function ProductUploadCard({
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-caption font-bold truncate leading-tight">{flower.name}</p>
-                      <p className="text-caption text-cool-400 truncate mt-0.5">{flower.style}</p>
+                      <p className="text-caption text-text-muted truncate mt-0.5">{flower.style}</p>
                     </div>
                     {isSelected && <Check size={14} className="text-blush-600 shrink-0" />}
                   </button>
@@ -327,7 +327,7 @@ export function ProductUploadCard({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full flex flex-col items-center justify-center text-cool-400 gap-1 text-xs">
+              <div className="h-full w-full flex flex-col items-center justify-center text-text-muted gap-1 text-xs">
                 <ImageIcon size={24} />
                 <span>Chưa chọn ảnh</span>
               </div>
@@ -371,7 +371,7 @@ export function ProductUploadCard({
               aria-label="Đóng"
                 type="button"
                 onClick={() => setIsCatalogModalOpen(false)}
-                className="rounded-lg p-1 text-cool-400 hover:bg-cool-100"
+                className="rounded-lg p-1 text-text-muted hover:bg-cool-100"
               >
                 <X size={18} />
               </button>
@@ -384,7 +384,7 @@ export function ProductUploadCard({
                   <span>Đang tải danh sách sản phẩm tiệm...</span>
                 </div>
               ) : catalogProducts.length === 0 ? (
-                <div className="text-center py-12 text-cool-400 text-xs">
+                <div className="text-center py-12 text-text-muted text-xs">
                   Chưa có {ti("sampleProduct")} nào trong Catalog. Bạn có thể kéo thả ảnh mới từ máy tính.
                 </div>
               ) : (
@@ -400,7 +400,7 @@ export function ProductUploadCard({
                       {p.imageUrl ? (
                         <img src={p.imageUrl} alt={p.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
                       ) : (
-                        <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-cool-100 text-cool-400 flex-shrink-0">
+                        <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-cool-100 text-text-muted flex-shrink-0">
                           <ImageIcon size={18} />
                         </span>
                       )}

@@ -498,7 +498,7 @@ documents:
     title: "UX Patterns — Thư viện luồng chuẩn UX-P01…P12"
     domain: "UX/UI"
     layer: "Level 3"
-    purpose: "Chỉ mục đặc tả luồng chuẩn, bảng chọn cách hiển thị thêm, loại trang A–F (page-archetypes.md), review thị giác/audit thủ công P0–P3 (visual-review.md), từ điển thuật ngữ và sổ ngoại lệ; README đóng vai trò chỉ mục tổng hợp"
+    purpose: "Chỉ mục đặc tả luồng chuẩn, bảng chọn cách hiển thị thêm, loại trang A–F (page-archetypes.md), review thị giác/audit thủ công P0–P3 (visual-review.md), nguyên tắc vận hành UX cho agent (OPERATING_PRINCIPLES.md), từ điển thuật ngữ và sổ ngoại lệ; README đóng vai trò chỉ mục tổng hợp"
     status: "SUPPORTING"
     authority: "Level 3"
     canonical: false

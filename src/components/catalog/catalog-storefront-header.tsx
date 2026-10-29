@@ -164,6 +164,7 @@ export function CatalogStorefrontHeader({
           {shop.phone && (
             <a
               href={`tel:${shop.phone}`}
+              aria-label={`Gọi ${shop.phone}`}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm transition-colors"
               style={{
                 backgroundColor: style?.tokens.accent || "#9A3412",

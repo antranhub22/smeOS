@@ -65,8 +65,12 @@ describe("banner-template-generator", () => {
   it("sinh copy tức thì chuẩn theo dịp FLASH_SALE", () => {
     const copy = generateInstantBannerCopy({ occasionKey: "FLASH_SALE" })
     expect(copy.headline).toContain("FLASH SALE")
-    expect(copy.promotionBadge).toContain("GIẢM")
     expect(copy.ctaText).toBeTruthy()
+  })
+
+  it("không tự in ưu đãi/thời hạn lên ấn phẩm khi cửa hàng chưa nhập", () => {
+    expect(generateInstantBannerCopy({ occasionKey: "FLASH_SALE" })).toMatchObject({ promotionBadge: "", validityText: "" })
+    expect(generateInstantBannerCopy({ occasionKey: "FLASH_SALE", suggestedPromotion: "Giảm 15%" }).promotionBadge).toBe("Giảm 15%")
   })
 
   it("gợi ý preset VIBRANT_SALE cho dịp FLASH_SALE", () => {

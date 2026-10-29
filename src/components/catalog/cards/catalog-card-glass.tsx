@@ -104,7 +104,7 @@ export function CatalogCardGlass({
         className="p-4 pt-3 border-t border-white/10 flex items-center justify-between mt-auto"
       >
         <div>
-          <div className="text-caption uppercase tracking-wider opacity-75" style={{ color: textSecondary }}>
+          <div className="text-caption uppercase tracking-wider" style={{ color: textSecondary }}>
             Giá niêm yết
           </div>
           <div className="text-sm md:text-base font-black tracking-tight" style={{ color: priceColor }}>

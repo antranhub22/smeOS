@@ -110,7 +110,6 @@ function FacebookPreview({
           <div>
             <div className="flex items-center gap-1">
               <span className="text-sm font-bold leading-none">{shopName}</span>
-              <CheckCircle2 size={14} className="text-ocean-500 fill-ocean-500 text-white" />
             </div>
             <div className="flex items-center gap-1 text-caption text-text-muted mt-0.5">
               <span>Vừa xong</span>
@@ -119,10 +118,9 @@ function FacebookPreview({
             </div>
           </div>
         </div>
-        <button
-              aria-label="Thêm tùy chọn" className="text-cool-400 hover:text-cool-600 p-1" type="button" onClick={() => undefined}>
+        <span className="text-cool-400 hover:text-cool-600 p-1" aria-hidden="true">
           <MoreHorizontal size={18} />
-        </button>
+        </span>
       </div>
 
       {/* Post Content */}
@@ -169,36 +167,20 @@ function FacebookPreview({
         )}
       </div>
 
-      {/* Post Social Stats */}
-      <div className="px-3.5 py-2 flex items-center justify-between text-caption text-text-muted border-b border-border dark:border-cool-800">
-        <div className="flex items-center gap-1.5">
-          <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-ocean-500 text-white text-caption">
-            👍
-          </span>
-          <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-blush-500 text-white text-caption">
-            ❤️
-          </span>
-          <span className="font-medium">128</span>
-        </div>
-        <div>
-          <span>16 bình luận</span> • <span>5 chia sẻ</span>
-        </div>
-      </div>
-
       {/* Action Buttons */}
       <div className="px-1 py-1 grid grid-cols-3 text-cool-600 dark:text-cool-400 font-semibold text-xs text-center">
-        <button className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" type="button" onClick={() => undefined}>
+        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" aria-hidden="true">
           <ThumbsUp size={15} />
           <span>Thích</span>
-        </button>
-        <button className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" type="button" onClick={() => undefined}>
+        </span>
+        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" aria-hidden="true">
           <MessageCircle size={15} />
           <span>Bình luận</span>
-        </button>
-        <button className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" type="button" onClick={() => undefined}>
+        </span>
+        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" aria-hidden="true">
           <Share2 size={15} />
           <span>Chia sẻ</span>
-        </button>
+        </span>
       </div>
     </div>
   )
@@ -226,10 +208,9 @@ function InstagramPreview({
             <div className="text-caption text-text-muted mt-0.5">{shopName}</div>
           </div>
         </div>
-        <button
-              aria-label="Thêm tùy chọn" className="text-cool-400 p-1" type="button" onClick={() => undefined}>
+        <span className="text-cool-400 p-1" aria-hidden="true">
           <MoreHorizontal size={16} />
-        </button>
+        </span>
       </div>
 
       {/* 1:1 Aspect Media */}
@@ -489,12 +470,12 @@ function ZaloOAPreview({
 
           {/* Interactive OA Quick Action Buttons */}
           <div className="pt-2 border-t border-cool-100 dark:border-cool-800 grid grid-cols-2 gap-2">
-            <button className="py-2 px-3 rounded-lg bg-[var(--color-zalo)] text-white text-xs font-bold hover:bg-ocean-700 transition flex items-center justify-center gap-1" type="button" onClick={() => undefined}>
+            <span className="py-2 px-3 rounded-lg bg-[var(--color-zalo)] text-white text-xs font-bold hover:bg-ocean-700 transition flex items-center justify-center gap-1" aria-hidden="true">
               <span>Nhắn tin tư vấn</span>
-            </button>
-            <button className="py-2 px-3 rounded-lg bg-cool-100 dark:bg-cool-800 text-cool-800 dark:text-cool-200 text-xs font-bold hover:bg-cool-200 transition flex items-center justify-center gap-1" type="button" onClick={() => undefined}>
+            </span>
+            <span className="py-2 px-3 rounded-lg bg-cool-100 dark:bg-cool-800 text-cool-800 dark:text-cool-200 text-xs font-bold hover:bg-cool-200 transition flex items-center justify-center gap-1" aria-hidden="true">
               <span>Xem album mẫu</span>
-            </button>
+            </span>
           </div>
         </div>
       </div>

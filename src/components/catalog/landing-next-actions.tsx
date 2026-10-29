@@ -7,7 +7,6 @@ import {
   Check,
   Download,
   Share2,
-  Bot,
   PlusCircle,
   Sparkles,
 } from "lucide-react"
@@ -80,12 +79,13 @@ export function LandingNextActions({
         {/* Link công khai */}
         <div className="rounded-xl border border-border bg-surface-alt/60 p-4 space-y-2.5">
           <div className="text-caption font-bold text-text-muted uppercase tracking-wider">
-            Đường dẫn công khai (Public URL)
+            Đường dẫn công khai
           </div>
           <div className="flex items-center gap-2">
             <input
               type="text"
               readOnly
+              aria-label="Đường dẫn công khai của trang"
               value={publishedUrl}
               className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-body-sm text-text font-mono truncate select-all"
             />
@@ -140,10 +140,10 @@ export function LandingNextActions({
       <div className="pt-2 border-t border-border space-y-3">
         <div className="flex items-center gap-2 text-primary font-bold text-body-sm uppercase tracking-wider">
           <Sparkles className="h-4 w-4" />
-          <span>Hành động đề xuất tiếp theo (Next Best Actions)</span>
+          <span>Việc nên làm tiếp</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
             onClick={handleShareZalo}
@@ -172,15 +172,6 @@ export function LandingNextActions({
             </span>
           </button>
 
-          <div className="flex flex-col items-start p-3.5 rounded-xl border border-border bg-surface text-left">
-            <div className="h-8 w-8 rounded-lg bg-primary-muted text-primary flex items-center justify-center mb-2">
-              <Bot className="h-4 w-4" />
-            </div>
-            <span className="text-body-sm font-bold text-text">Đã đồng bộ vào AI Chatbot</span>
-            <span className="text-caption text-text-muted mt-1">
-              Trợ lý AI bán hàng tự động nắm bắt chiến dịch này để tư vấn chốt đơn cho khách.
-            </span>
-          </div>
         </div>
       </div>
     </div>

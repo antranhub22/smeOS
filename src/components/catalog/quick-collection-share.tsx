@@ -65,6 +65,7 @@ export function QuickCollectionShare({
         <div className="flex items-center gap-2">
           <input
             readOnly
+            aria-label="Link xem bộ sưu tập"
             value={publishedUrl || ""}
             className="flex-1 px-3 py-2 rounded-xl bg-surface border border-border text-body-sm text-text focus:outline-none select-all font-mono"
           />
@@ -115,6 +116,7 @@ export function QuickCollectionShare({
         </div>
         <textarea
           readOnly
+          aria-label="Tin nhắn mẫu gửi khách"
           rows={3}
           value={finalMessage}
           className="w-full p-2.5 rounded-xl bg-surface border border-border text-body-sm text-text focus:outline-none leading-relaxed"

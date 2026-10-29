@@ -123,7 +123,7 @@ export function CatalogCardPaper({
         style={{ borderColor: border }}
       >
         <div>
-          <div className="text-caption uppercase tracking-wider opacity-75" style={{ color: textSecondary }}>
+          <div className="text-caption uppercase tracking-wider" style={{ color: textSecondary }}>
             Giá niêm yết
           </div>
           <div className="text-sm md:text-base font-extrabold tracking-tight" style={{ color: priceColor }}>

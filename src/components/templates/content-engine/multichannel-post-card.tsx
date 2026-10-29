@@ -32,6 +32,8 @@ export interface MultichannelPostCardProps {
     isFallback?: boolean | undefined
   } | undefined
   criticScore?: number | undefined
+  /** Tên tiệm thật cho bản xem trước bài đăng. */
+  shopName?: string | undefined
   onSchedulePost?: (post: MultichannelPostItem) => void
   onUpdatePost?: (channel: string, updated: Partial<MultichannelPostItem>) => void
 }
@@ -46,6 +48,7 @@ export function MultichannelPostCard({
   productImageUrl,
   modelInfo,
   criticScore,
+  shopName,
   onSchedulePost,
   onUpdatePost,
 }: MultichannelPostCardProps) {
@@ -84,32 +87,15 @@ export function MultichannelPostCard({
       <div className="flex items-center justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-text-muted">AI Content Engine</span>
-            {modelInfo?.isFallback ? (
-              <span className="inline-flex items-center gap-1 text-caption font-bold text-sand-700 dark:text-sand-400 bg-sand-500/10 px-2.5 py-0.5 rounded-full border border-sand-500/30">
-                🛡️ Offline Fallback
-              </span>
-            ) : modelInfo?.provider === "ollama" ? (
-              <span className="inline-flex items-center gap-1.5 text-caption font-bold text-mint-700 dark:text-mint-400 bg-mint-500/10 px-2.5 py-0.5 rounded-full border border-mint-500/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-mint-500 animate-pulse" />
-                🤖 Local LLM: {modelInfo.modelName || "qwen2.5:7b"} (GPU Metal)
-              </span>
-            ) : modelInfo?.provider === "openai" ? (
-              <span className="inline-flex items-center gap-1 text-caption font-bold text-ocean-700 dark:text-ocean-400 bg-ocean-500/10 px-2.5 py-0.5 rounded-full border border-ocean-500/30">
-                ⚡ Cloud AI: OpenAI ({modelInfo.modelName || "gpt-4o"})
-              </span>
-            ) : modelInfo?.provider === "gemini" ? (
-              <span className="inline-flex items-center gap-1 text-caption font-bold text-orchid-700 dark:text-orchid-400 bg-orchid-500/10 px-2.5 py-0.5 rounded-full border border-orchid-500/30">
-                ✨ Cloud AI: Google Gemini ({modelInfo.modelName || "gemini-flash"})
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-caption font-bold text-cool-700 dark:text-cool-400 bg-cool-500/10 px-2.5 py-0.5 rounded-full border border-cool-500/30">
-                🚀 AI: {modelInfo?.provider} ({modelInfo?.modelName})
+            {/* Không hiện tên nhà cung cấp/model/GPU cho chủ tiệm; chỉ báo khi đang dùng nội dung mẫu (03c UX-017). */}
+            {modelInfo?.isFallback && (
+              <span role="status" className="inline-flex items-center gap-1 text-caption font-semibold text-warning-text bg-warning-bg px-2.5 py-0.5 rounded-full border border-warning-border">
+                AI chưa chạy được — đang dùng nội dung mẫu, nên chỉnh lại trước khi đăng
               </span>
             )}
-            {typeof criticScore === "number" && (
+            {!modelInfo?.isFallback && typeof criticScore === "number" && (
               <span className="inline-flex items-center gap-1 text-caption font-medium text-text-muted bg-surface-alt px-2 py-0.5 rounded-md border border-border">
-                Điểm duyệt Critic: {(criticScore * 10).toFixed(1)}/10
+                Điểm kiểm tra chất lượng: {(criticScore * 10).toFixed(1)}/10
               </span>
             )}
           </div>
@@ -138,10 +124,6 @@ export function MultichannelPostCard({
                   : "bg-surface text-text-muted hover:text-text hover:bg-surface-alt border border-border/50"
               }`}
             >
-              {post.channel === "facebook" && "📘"}
-              {post.channel === "instagram" && "📸"}
-              {post.channel === "tiktok" && "🎵"}
-              {post.channel === "zalo" && "💬"}
               {post.channel === "linkedin" && "💼"}
               {post.channelLabel}
             </button>
@@ -200,6 +182,7 @@ export function MultichannelPostCard({
             post={currentPost}
             productName={displayProductName}
             productImageUrl={productImageUrl}
+            shopName={shopName}
           />
         </div>
       ) : (
@@ -326,7 +309,7 @@ export function MultichannelPostCard({
             className="gap-1.5 text-xs text-ocean-700 border-ocean-200 bg-ocean-50/50 hover:bg-ocean-50"
           >
             {copiedZalo ? <Check size={14} className="text-secondary-text" /> : <MessageCircle size={14} />}
-            {copiedZalo ? "Đã chép mẫu Zalo" : "Copy nhanh Zalo"}
+            {copiedZalo ? "Đã chép mẫu Zalo" : "Chép mẫu Zalo"}
           </Button>
           <Button variant="secondary" size="sm" onClick={handleCopyAll} className="gap-1.5 text-xs">
             {copied ? <Check size={14} className="text-secondary-text" /> : <Copy size={14} />}
