@@ -27,7 +27,7 @@
 |---|---|
 | 1.1 Inventory màn × pattern × component đang dùng | `docs/ui-ux/PD_AUDIT_INVENTORY.md` |
 | 1.2 Bảng phân tầng L0–L4/SYS cho trường/nút chính từng màn | §15 trong Screen Contract của màn đã có; màn chưa có → danh sách cần tạo |
-| 1.3 Gắn mức rủi ro R1–R3 cho mọi hành động có hậu quả; liệt kê 26 file dùng `confirm()` | Issue register |
+| 1.3 Gắn mức rủi ro R1–R3 cho mọi hành động có hậu quả; liệt kê 28 điểm `confirm()` trong 25 tệp | Issue register |
 | 1.4 Liệt kê giá trị trạng thái tác vụ theo từng API/worker → bảng ánh xạ | Đầu vào cho `task-state.ts` |
 | 1.5 Kiểm tra E5: khóa `localStorage`/cache không gắn tổ chức (bắt đầu từ `smeos_ui_config`) | Issue register (P0 nếu rò chéo tổ chức) |
 | 1.6 Baseline: lint:ux, axe trên luồng cốt lõi, web-vitals nếu đo được | Số liệu nền |
@@ -84,7 +84,7 @@ Mỗi nhóm: cập nhật Screen Contract §15 → áp component → xóa vi ph�
 | Giai đoạn | Trạng thái | PR |
 |---|---|---|
 | 0 Chuẩn & tài liệu | Xong | nhánh `NangcapkientrucUX_progressiveDisclosure` |
-| 1 Audit | Chưa bắt đầu | — |
+| 1 Audit | Xong — `PD_AUDIT_REPORT.md`, `PD_AUDIT_INVENTORY.md`; chờ PO duyệt §7 | nhánh này |
 | 2 Nền tảng | Chưa bắt đầu | — |
 | 3 Pilot | Chờ PO xác nhận chặng | — |
 | 4 Rollout | — | — |
