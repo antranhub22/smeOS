@@ -15,8 +15,8 @@ Mỗi Screen Contract khai báo pattern dùng (template §15). Không tạo patt
 | UX-P08 | Empty State | `p08-empty-state.md` | `EmptyState` |
 | UX-P09 | Search & Filter | `p09-search-filter.md` | `Disclosure` |
 | UX-P10 | Bulk Actions | `p10-bulk-actions.md` | `ConfirmDialog` |
-| UX-P11 | Entitlement & Permission Gate | `p11-entitlement-gate.md` | (cần xây) |
-| UX-P12 | AI Cost Preview | `p12-ai-cost-preview.md` | (cần xây) |
+| UX-P11 | Entitlement & Permission Gate | `p11-entitlement-gate.md` | `EntitlementGate` (+ 403 `ENTITLEMENT_REQUIRED` sẵn có ở server) |
+| UX-P12 | AI Cost Preview | `p12-ai-cost-preview.md` | `CostPreview` |
 
 Tài liệu kèm: `glossary.md` (từ điển thuật ngữ), `exceptions.md` (sổ ngoại lệ).
 Mẫu audit & ma trận phân tầng gốc: `docs/archive/historical/SMEOS_UX_Progressive_Disclosure_Kit/templates/`.

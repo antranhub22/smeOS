@@ -50,6 +50,7 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "notification/stream": "luồng SSE tin của chính mình",
   "notification/events": "chỉ đọc danh mục sự kiện tĩnh",
   "notification/channels": "chỉ đọc trạng thái bật kênh toàn sàn",
+  "ux-rollout-flags": "chỉ đọc cờ giao diện đang bật cho chính tổ chức của phiên (03c E9)",
   // Nợ #170.
   "content-engine/catalog-generate": DEBT_170,
   "content-engine/landing-generate": DEBT_170,

@@ -72,7 +72,7 @@ Không được ẩn vào tầng L2–L4: giá, phí, quota còn lại, điều 
 
 ### 6.1. Bắt buộc từ đầu
 - **UX-018 — Hiển thị theo quyền và gói (E1).** Chức năng ngoài quyền/gói không biến mất âm thầm: hiển thị trạng thái khóa + lý do ("Cần quyền quản lý đơn", "Có trong gói …") + đường đi tiếp (xin quyền/nâng gói), trừ khi bản thân sự tồn tại của tài nguyên là thông tin chéo tổ chức (khi đó giữ quy tắc 404). Quyết định hiển thị dựa trên capability, không dựa `roleKey`.
-- **UX-019 — Minh bạch chi phí AI (E2).** Trước tác vụ tốn quota: hiển thị chi phí/lượt dự kiến và lượt còn lại ở L0/L1; vượt hạn mức → chặn trước khi gửi, kèm hướng xử lý.
+- **UX-019 — Minh bạch chi phí AI (E2).** Trước tác vụ tốn quota: hiển thị số credit dự kiến và số credit còn lại ở L0/L1 (`CostPreview`); vượt hạn mức → chặn trước khi gửi, kèm hướng xử lý.
 - **UX-020 — Nhật ký & mã tham chiếu (E3).** Hành động R3 được ghi nhật ký (ai, khi nào, đối tượng). Thông báo lỗi kèm **mã tham chiếu** an toàn để CSKH tra cứu; không lộ stack trace, ID nội bộ nhạy cảm, dữ liệu khách hàng.
 - **UX-021 — Hoàn tác & tự lưu nháp (E4).** Ưu tiên Hoàn tác/soft delete cho R2; form dài và trình soạn tự lưu nháp; không báo "đã lưu" trước khi server xác nhận.
 - **UX-022 — Cô lập tổ chức trên client (E5).** Không lưu cache, `localStorage`, nháp hay trạng thái tác vụ dùng chung giữa các tổ chức; khóa lưu trữ phải gắn organization; đổi tổ chức → xóa trạng thái cũ.
@@ -101,7 +101,7 @@ Không được ẩn vào tầng L2–L4: giá, phí, quota còn lại, điều 
 | R13 | `confirm(`/`window.confirm` trong `.tsx` → dùng `ConfirmDialog` | UX-015 |
 | R14 | Chuỗi trạng thái tác vụ ngoài từ vựng chuẩn trong component → dùng `task-state.ts` | UX-016 |
 | R15 | `<details>` tự viết cho cài đặt → dùng `Disclosure` | UX-017 |
-| R16 | Từ cấm theo từ điển thuật ngữ trong nhãn UI | UX-026 |
+| R16 | Từ cấm theo từ điển thuật ngữ trong nhãn UI (Worker, render, job, P\d) | UX-026 |
 
 ## §8. Sổ ngoại lệ UX
 

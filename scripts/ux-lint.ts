@@ -15,6 +15,7 @@ import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "
 import { extname, join, relative } from "node:path"
 import ts from "typescript"
 import { ALL_RULES, type Violation } from "./ux-lint/rules"
+import { PD_RULES } from "./ux-lint/rules-pd"
 import {
   type AllowlistConfig,
   type BaselineData,
@@ -88,7 +89,7 @@ function runLint(): Violation[] {
       sourceCode: code,
     }
 
-    for (const [ruleId, ruleFn] of Object.entries(ALL_RULES)) {
+    for (const [ruleId, ruleFn] of Object.entries({ ...ALL_RULES, ...PD_RULES })) {
       try {
         const violations = ruleFn(sourceFile, context)
         for (const v of violations) {

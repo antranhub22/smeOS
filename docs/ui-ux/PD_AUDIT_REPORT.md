@@ -37,17 +37,29 @@
 | A03 | P1 | Mã kỹ thuật & jargon trên UI: "Đã render — chưa duyệt P4", "job ${id}", "Worker đang dựng video...", "Worker đang đọc lời thoại...", "Đang render" | `creative-studio/package-review-section.tsx:459`, `creative-studio/package-workspace.tsx:595`, `creative-studio/video-job-lifecycle.tsx:34`, `:166`, `creative-studio/package-revise-panels.tsx:232` | CLAUDE.md #6, 03a §39, UX-026 | Sửa nhãn theo `glossary.md`; mở rộng lint R8 để bắt "P\d", "Worker", "job " |
 | A04 | P1 | Hộp `confirm()` của trình duyệt cho hành động R3: xóa tài khoản thành viên, đặt lại mật khẩu, thu hồi link khách, xóa mẫu khỏi bộ sưu tập, ngắt kết nối, tạo khóa thanh toán mới, duyệt dữ liệu bán hàng, từ chối đăng ký… | 28 điểm gọi trong 25 tệp, ví dụ `cai-dat/thanh-vien/_components/member-account-actions.tsx:37,51,65`, `greeting-card/sales/sales-session-table.tsx:43`, `greeting-card/admin/brochure-bank-sync-settings.tsx:26`, `ket-noi/page.tsx:227`, `(platform)/van-hanh/dang-ky/page.tsx:46` | UX-015, R13, P07 | Thay bằng `ConfirmDialog`; giữ nguyên câu chữ hậu quả; R3 ghi nhật ký (UX-020) |
 | A05 | P1 | Hỏi chi phí AI bằng `confirm()` thay vì hiển thị cạnh nút; không màn tiệm nào hiện **lượt còn lại** cạnh CTA (số dư chỉ có ở `platform/platform-data-hub.tsx:241`) | `catalog/quick-product-upload-modal.tsx:79` | UX-019, P12 | `CostPreview` cạnh CTA: "Dùng 1 lượt · còn N" |
-| A06 | P2 | Từ "credit", "Vision AI" trên nhãn người dùng | `market-intelligence/product-upload-card.tsx:354`, `catalog/quick-product-upload-modal.tsx:223` | UX-026 | Đổi thành "lượt" theo `glossary.md` |
+| A06 | P2 | Tên kỹ thuật "Vision AI" trên nhãn nút ("credit" là thuật ngữ sản phẩm đã thiết lập — giữ) | `market-intelligence/product-upload-card.tsx:354` | UX-026 | Đổi thành "phân tích ảnh" |
 | A07 | P2 | 15 màn ứng dụng chưa có Screen Contract, gồm công cụ chủ lực | `/creative-studio`, `/cong-cu`, `/cong-cu/anh-san-pham`, `/cong-cu/bo-anh-san-pham`, `/cong-cu/poster-banner`, `/landing-page`, `/dieu-phoi`, `/dieu-phoi/doi-tac`, `/bao-gia`, `/chat`, `/tin-nhan`, `/du-lieu`, `/cua-hang`, `/noi-bo/ket-noi`, `/dang-nhap` | 03a §37, 03c §9 | Tạo contract theo template mới (§15) trước khi nâng cấp màn đó |
 | A08 | P2 | Vùng mở rộng tự viết bằng `<details>` (10 tệp) — hành vi giữ giá trị/bàn phím không đồng nhất | Chi tiết theo màn: `PD_AUDIT_INVENTORY.md` cột `<details>` | UX-017, R15, P03 | `Disclosure` dùng chung |
 | A09 | P2 | 41 màn có gọi dữ liệu nhưng không dùng `EmptyState`/`Skeleton`/`InlineError` (tự xử lý hoặc thiếu) | `PD_AUDIT_INVENTORY.md` | 03a §24, P06, P08 | Xem tay khi nâng cấp từng nhóm |
 | A10 | P2 | Tùy chọn hiển thị "chế độ chuyên gia" lưu theo trình duyệt, không theo người dùng/tổ chức; khóa cấu hình giao diện `smeos_ui_config` dùng chung trên máy | `dashboard/store-journey-home.tsx:16`, `src/lib/ui-system/ui-provider.tsx:21` | UX-022 (mức thấp — chỉ là tùy chọn hiển thị, không phải dữ liệu nghiệp vụ) | Gắn hậu tố tổ chức khi chạm tới các tệp này |
 | A11 | P2 | Khóa `floraos_finalized_pitches_${orgKey}` rơi về `"default"` khi phiên chưa có tổ chức | `src/app/(app)/tai-anh/page.tsx:184`, `components/storage/account-storage-hub.tsx:167` | UX-022 | Không đọc/ghi khi chưa có `organization.id` (như `job-storage-key.ts`) |
 | A12 | P2 | Không có cơ chế cờ tính năng trong `src/` | Không tìm thấy `featureFlag`/`feature_flag` | E9 | **[PO]** chọn cơ chế (cấu hình tổ chức sẵn có hay bảng mới) |
-| A13 | P2 | Chưa có trung tâm thông báo trong ứng dụng cho tác vụ nền — `components/notification/` là ma trận cấu hình kênh, không phải hộp thông báo | `src/components/notification/notification-matrix-page.tsx` | UX-024 | Giai đoạn 5 |
+| A13 | P2 | Backend hộp thông báo đã có (`api/v1/notification/inbox`, `notification/stream` SSE) nhưng chưa thấy giao diện nào trong `src/components`/`src/app` gọi tới; tác vụ nền chưa đẩy thông báo hoàn tất | `src/app/api/v1/notification/inbox/` | UX-024 | Giai đoạn 5: dựng giao diện trên API sẵn có |
 | A14 | P2 | Chưa đo web-vitals; axe (`@axe-core/playwright`) mới phủ 3 màn: 404, `/`, `/vai-tro`; ảnh so sánh (`toHaveScreenshot`) mới có 1 tệp | `tests/e2e/ux/a11y.spec.ts:6,18,32` | E6, E8 | Giai đoạn 2.8 |
 
 Không phát hiện P0 về rò dữ liệu chéo tổ chức trên client.
+
+### 3.1. Baseline trợ năng thật — axe trên 7 công cụ Hoàn thiện (29/10/2026)
+
+Chạy `@axe-core/playwright` (WCAG 2.2 AA, khổ 390px) trên máy chủ dev + Postgres cục bộ, tài khoản mới đăng ký. **7/7 màn có lỗi mức serious/critical** → spec `a11y-done-tools` chưa được thêm vào CI (sẽ đỏ); bổ sung khi từng màn được sửa trong đợt rollout A.
+
+| ID | Mức | Phát hiện | Màn | Bằng chứng | Hướng sửa |
+|---|---|---|---|---|---|
+| A15 | P1 | Chữ "mẹo" của `FeatureGuidanceCard` dùng `text-guidance/60` — tương phản **2,98:1** (cần 4,5:1) | 5/7: anh-san-pham, bo-anh-san-pham, tai-anh, noi-dung, market-intelligence | `src/components/templates/shared/feature-guidance-card.tsx:142,144,172` | Bỏ độ mờ `/60` (dùng `text-guidance` đủ đậm). **Component PO khóa (K1) → chờ PO duyệt** |
+| A16 | P1 | Poster & banner: chữ tối trên nền đỏ đô — **1,75:1** (7 chỗ); `<select>` thiếu nhãn (critical) | `/cong-cu/poster-banner` | axe `color-contrast`, `select-name` | Sửa trong đợt A-1 |
+| A17 | P1 | Catalog theo nhu cầu: chữ cảnh báo `text-warning` 2,98:1, link hồ sơ 3,32:1, chữ phụ 2,49:1; `<select>` thiếu nhãn (critical) | `/the-chao?quick=true` | axe `color-contrast`, `select-name` | Sửa trong đợt A-4 |
+| A18 | P2 | Nội dung bán hàng: nhãn `bg-[#FBEAEC]` 4,07:1 | `/noi-dung` | axe `color-contrast` | Sửa trong đợt A-3 |
+
 
 ## 4. Bảng ánh xạ trạng thái backend → UI (đầu vào `task-state.ts`)
 
