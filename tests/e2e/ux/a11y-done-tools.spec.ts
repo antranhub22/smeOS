@@ -51,7 +51,11 @@ test.describe("Công cụ Hoàn thiện theo chuẩn 03c — trợ năng ở kh�
       // Máy chủ giữ cờ trong bộ nhớ đệm tối đa 30 giây (ux-rollout-flag-store.ts).
       await expect(async () => {
         await page.goto(tool.path)
-        await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1)
+        // `/the-chao?quick=true` tự mở hộp thoại tạo nhanh: nền phía sau bị ẩn khỏi cây trợ năng (đúng chuẩn),
+        // nên chỉ đòi đúng một <h1> khi không có hộp thoại đang mở.
+        if ((await page.getByRole("dialog").count()) === 0) {
+          await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1)
+        }
         await expect(page.getByText(/Công cụ 0\d/)).toHaveCount(0)
       }).toPass({ timeout: 45_000, intervals: [5_000] })
 
