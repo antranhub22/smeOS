@@ -5,6 +5,11 @@ import { ensureSystemRoles } from "@/modules/organization/use-cases/ensure-syste
 import { seedAiCapabilities, seedVisionModels } from "@/core/ai/infra/seed-ai-registry"
 
 const TENANT_TABLES = [
+  // Nhóm công cụ 6 — tính giá (29/10/2026) — con trước cha
+  "product_recipe_items",
+  "product_recipes",
+  "material_price_history",
+  "materials",
   // Chat nội bộ (26/10/2026) — con trước cha để TRUNCATE gọn
   "internal_chat_messages",
   "internal_chat_participants",

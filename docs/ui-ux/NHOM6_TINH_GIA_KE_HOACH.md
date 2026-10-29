@@ -1,6 +1,6 @@
 # Kế hoạch hoàn thiện Nhóm 6 — Tính giá và tối ưu lợi nhuận (công cụ #31–#35)
 
-> Trạng thái: **ĐỀ XUẤT — chờ PO duyệt** · Ngày: 29/10/2026 · Cơ sở: `main` @ `27319ba`
+> Trạng thái: **ĐÃ DUYỆT** (PO 29/10/2026, quyết định 1–7 theo đề xuất) · Cơ sở: `main` @ `27319ba`
 > Chuẩn áp dụng: `docs/dac-ta/03a-ux-constitution.md` + `docs/dac-ta/03c-ux-progressive-disclosure.md` + `docs/dac-ta/ux-patterns/`
 > Mục tiêu nhóm (toolkit): "Biết rõ chi phí, định giá có căn cứ và chuẩn bị nguyên liệu đúng nhu cầu"
 
@@ -18,6 +18,20 @@
 - `REQ-BND-007/008` (`docs/spec/requirements.md`): *định mức chuẩn (master) chỉ tồn tại ở Industry Pack; Store OS chỉ đọc.* → Công thức của **cửa hàng** là dữ liệu riêng của tổ chức (không phải "định mức chuẩn"); Industry Pack chỉ cung cấp **gợi ý** (đơn vị, vai trò cấu phần — `IndustryTerminology.defaultMeasurementUnits`, `defaultComponentRoles`).
 - Tenancy: mọi bảng mới có `organization_id` + `@@index([organization_id])`; truy cập chéo tổ chức → 404.
 - Quyền theo mã năng lực: tận dụng `L1/L3` (sản phẩm), `L5/L6` (quy tắc giá), `D16` (định mức tiền công).
+
+## 1b. Kiến trúc đa ngành (yêu cầu PO 29/10/2026)
+
+Nhóm công cụ là **một lõi dùng chung + hồ sơ theo ngành**. Ngành hoa làm chuẩn đầu tiên; ngành mới chỉ khai hồ sơ, không sửa lõi.
+
+| Lớp | Vị trí | Vai trò |
+|---|---|---|
+| Hợp đồng ngành | `IndustryPluginContract.costing: IndustryCostingSpec \| null` (`organization/domain/industry-costing-spec.ts`) | **Bắt buộc khai** — ngành mới quên khai thì TypeScript báo lỗi. `null` = chưa hỗ trợ (API trả 422, giao diện hiện "Ngành của bạn chưa được hỗ trợ"). |
+| Hồ sơ ngành hoa | `industries/floral.ts` | 6 nhóm nguyên liệu (hoa chính/phụ, lá, giấy gói, giỏ/hộp, phụ kiện) với hao hụt mặc định; công theo độ khó (`craftFee.laborByComplexityVnd`); chi phí chung 10%; 3 kịch bản biên 50/40/30%; làm tròn 5.000đ; tươi/dễ hỏng; bộ đọc BOM `FLORAL_VISION`; nguyên liệu gợi ý lần đầu. |
+| Lõi dùng chung | `src/modules/costing/domain/` | Giá vốn (không đoán số khi thiếu giá), kịch bản giá, dự toán mua, cảnh báo biến động, cấu hình chi phí = ngành ⊕ cửa hàng. |
+| Bộ đọc BOM theo ngành | `costing/domain/bom-adapters.ts` | Đăng ký theo khoá ngành (`FLORAL_VISION`, `GENERIC`). Ngành mới có BOM khác → thêm một bộ đọc, khai khoá trong hồ sơ. |
+| Ghi đè của cửa hàng | `pricing_rules` (4 khoá mới) | Đơn giá công/giờ, % chi phí chung, bao bì mặc định, ngưỡng cảnh báo giá. |
+
+**Thêm ngành mới:** (1) khai `costing` trong tệp ngành; (2) nếu BOM khác cấu trúc, thêm bộ đọc vào `bom-adapters.ts`; (3) `industry-costing-spec.test.ts` tự kiểm tính nhất quán. Không cần migration, không sửa giao diện.
 
 ## 2. Kiến trúc đích — một luồng thống nhất thay vì 5 màn rời
 

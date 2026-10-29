@@ -147,84 +147,88 @@ model organizations {
   // Khoá ngoại tới organizations mở lại ở P3 (TECHNICAL_DEBT #8) — bốn bảng
   // dưới đây là bốn bảng nợ đó; assets/generation_jobs/usage/audit_logs khai
   // khoá ngoại ngay từ khi tạo, không nợ.
-  workspaces                workspaces[]
-  branches                  branches[]
-  chain_branches            chain_branches[]
-  capability_overrides      capability_overrides[]
-  memberships               memberships[]
-  assets                    assets[]
-  generation_jobs           generation_jobs[]
-  usage                     usage[]
-  audit_logs                audit_logs[]
-  business_profile          business_profiles?
-  brand_profile             brand_profiles?
-  products                  products[]
-  product_variants          product_variants[]
-  product_images            product_images[]
-  product_analyses          product_analyses[]
-  product_inventory         product_inventory[]
-  product_bookings          product_bookings[]
-  pricing_rules             pricing_rules[]
-  integration_tokens        integration_tokens[]
-  ai_policies               ai_policies[]
-  ai_requests               ai_requests[]
-  ai_evaluations            ai_evaluations[]
-  occasions                 occasions[]
-  template_overrides        template_overrides[]
-  catalog_links             catalog_links[]
-  product_copies            product_copies[]
-  content_metrics           content_metrics[]
-  video_jobs                video_jobs[]
-  orders                    orders[]
-  order_items               order_items[]
-  order_assignments         order_assignments[]
-  order_events              order_events[]
-  customers                 customers[]
-  customer_occasions        customer_occasions[]
-  journey_runs              journey_runs[]
-  customer_consents         customer_consents[]
-  vouchers                  vouchers[]
-  chat_conversations        chat_conversations[]
-  chat_messages             chat_messages[]
-  chat_channel_integrations chat_channel_integrations[]
-  content_opportunities     content_opportunities[]
-  product_analysis_runs     product_analysis_runs[]
-  campaign_packages         campaign_packages[]
-  content_drafts            content_drafts[]
-  content_generations       content_generations[]
-  voice_clones              voice_clones[]
-  music_tracks              music_tracks[]
-  partners                  partners[]
-  order_coordinations       order_coordinations[]
-  order_qc_records          order_qc_records[]
-  order_payments            order_payments[]
-  order_exceptions          order_exceptions[]
-  field_config_overrides    field_config_overrides[]
-  order_info_requests       order_info_requests[]
-  order_change_requests     order_change_requests[]
-  product_change_requests   product_change_requests[]
-  product_revisions         product_revisions[]
-  product_import_batches    product_import_batches[]
-  greeting_catalogs         greeting_catalogs[]
-  greeting_catalog_products greeting_catalog_products[]
-  greeting_sessions         greeting_sessions[]
-  greeting_journey_events   greeting_journey_events[]
-  greeting_integration      greeting_integrations?
-  greeting_payment_events   greeting_payment_events[]
-  greeting_notifications    greeting_notifications[]
-  greeting_catalog_events greeting_catalog_events[]
-  greeting_messages       greeting_messages[]
-  greeting_share_links    greeting_share_links[]
-  greeting_message_reads  greeting_message_reads[]
-  staff_notifications     staff_notifications[]
-  chain_partnerships_as_chain   chain_partnerships[] @relation("ChainOrg")
-  chain_partnerships_as_partner chain_partnerships[] @relation("PartnerOrg")
+  workspaces                    workspaces[]
+  branches                      branches[]
+  chain_branches                chain_branches[]
+  capability_overrides          capability_overrides[]
+  memberships                   memberships[]
+  assets                        assets[]
+  generation_jobs               generation_jobs[]
+  usage                         usage[]
+  audit_logs                    audit_logs[]
+  business_profile              business_profiles?
+  brand_profile                 brand_profiles?
+  products                      products[]
+  product_variants              product_variants[]
+  product_images                product_images[]
+  product_analyses              product_analyses[]
+  product_inventory             product_inventory[]
+  product_bookings              product_bookings[]
+  pricing_rules                 pricing_rules[]
+  integration_tokens            integration_tokens[]
+  ai_policies                   ai_policies[]
+  ai_requests                   ai_requests[]
+  ai_evaluations                ai_evaluations[]
+  occasions                     occasions[]
+  template_overrides            template_overrides[]
+  catalog_links                 catalog_links[]
+  product_copies                product_copies[]
+  content_metrics               content_metrics[]
+  video_jobs                    video_jobs[]
+  orders                        orders[]
+  order_items                   order_items[]
+  order_assignments             order_assignments[]
+  order_events                  order_events[]
+  customers                     customers[]
+  customer_occasions            customer_occasions[]
+  journey_runs                  journey_runs[]
+  customer_consents             customer_consents[]
+  vouchers                      vouchers[]
+  chat_conversations            chat_conversations[]
+  chat_messages                 chat_messages[]
+  chat_channel_integrations     chat_channel_integrations[]
+  content_opportunities         content_opportunities[]
+  product_analysis_runs         product_analysis_runs[]
+  campaign_packages             campaign_packages[]
+  content_drafts                content_drafts[]
+  content_generations           content_generations[]
+  voice_clones                  voice_clones[]
+  music_tracks                  music_tracks[]
+  partners                      partners[]
+  order_coordinations           order_coordinations[]
+  order_qc_records              order_qc_records[]
+  order_payments                order_payments[]
+  order_exceptions              order_exceptions[]
+  field_config_overrides        field_config_overrides[]
+  order_info_requests           order_info_requests[]
+  order_change_requests         order_change_requests[]
+  product_change_requests       product_change_requests[]
+  product_revisions             product_revisions[]
+  product_import_batches        product_import_batches[]
+  greeting_catalogs             greeting_catalogs[]
+  greeting_catalog_products     greeting_catalog_products[]
+  greeting_sessions             greeting_sessions[]
+  greeting_journey_events       greeting_journey_events[]
+  greeting_integration          greeting_integrations?
+  greeting_payment_events       greeting_payment_events[]
+  greeting_notifications        greeting_notifications[]
+  greeting_catalog_events       greeting_catalog_events[]
+  greeting_messages             greeting_messages[]
+  greeting_share_links          greeting_share_links[]
+  greeting_message_reads        greeting_message_reads[]
+  staff_notifications           staff_notifications[]
+  chain_partnerships_as_chain   chain_partnerships[]            @relation("ChainOrg")
+  chain_partnerships_as_partner chain_partnerships[]            @relation("PartnerOrg")
   internal_chat_conversations   internal_chat_conversations[]
   internal_chat_participations  internal_chat_participants[]
   notification_org_policies     notification_org_policies[]
   notification_store_defaults   notification_store_defaults[]
   notification_user_preferences notification_user_preferences[]
   notification_inbox            notification_inbox[]
+  materials                     materials[]
+  material_price_history        material_price_history[]
+  product_recipes               product_recipes[]
+  product_recipe_items          product_recipe_items[]
 }
 
 model workspaces {
@@ -357,17 +361,17 @@ model capability_overrides {
 }
 
 model memberships {
-  id              String            @id @default(uuid())
-  organization_id String
-  user_id         String
-  role_id         String
-  branch_id       String? // null = phạm vi toàn tổ chức
+  id                String            @id @default(uuid())
+  organization_id   String
+  user_id           String
+  role_id           String
+  branch_id         String? // null = phạm vi toàn tổ chức
   /// Chi nhánh chuỗi (`chain_branches.branch_code`) của tài khoản vai `cua_hang` — trang cửa hàng chỉ
   /// hiện đơn gia công của chi nhánh này. Khác `branch_id` (bảng `branches`, dùng cho giá/tồn kho).
   chain_branch_code String?
-  status          membership_status @default(INVITED)
-  invited_at      DateTime          @default(now())
-  joined_at       DateTime?
+  status            membership_status @default(INVITED)
+  invited_at        DateTime          @default(now())
+  joined_at         DateTime?
 
   user         users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
   organization organizations @relation(fields: [organization_id], references: [id])
@@ -703,7 +707,9 @@ model products {
   container           String?
   status              product_status @default(DRAFT)
   attributes          Json?
-  /** Cấu hình kiểm tra khả dụng theo ngành (PO 18/10/2026). Xem product-availability-config.ts. */
+  /**
+   * Cấu hình kiểm tra khả dụng theo ngành (PO 18/10/2026). Xem product-availability-config.ts.
+   */
   availability_config Json?
   created_at          DateTime       @default(now())
   updated_at          DateTime       @updatedAt
@@ -717,6 +723,7 @@ model products {
   greeting_catalog_products greeting_catalog_products[]
   change_requests           product_change_requests[]
   revisions                 product_revisions[]
+  recipes                   product_recipes[]
 
   @@unique([organization_id, code])
   @@index([organization_id])
@@ -2829,6 +2836,7 @@ model greeting_catalogs {
 
   catalog_events greeting_catalog_events[]
   share_links    greeting_share_links[]
+
   @@unique([organization_id, code])
   @@index([organization_id])
 }
@@ -2853,30 +2861,30 @@ model greeting_catalog_products {
 
 /// Phiên tương tác của khách hàng khi mở link Thẻ chào (Send Code)
 model greeting_sessions {
-  id                  String    @id @default(uuid())
-  organization_id     String
-  catalog_id          String
-  send_code           String // T01-001, T01-002...
-  sale_id             String // Người tạo link chào khách
-  customer_name       String?
-  customer_phone      String?
-  status              String    @default("CREATED") // CREATED | OPENED | BROWSING | SELECTED | ORDER_SUBMITTED | PAYMENT_REPORTED | COMPLETED
-  selected_product_id String?
-  product_snapshot    Json? // Đóng băng ảnh, tên, giá mẫu hoa lúc khách chốt
-  order_id            String?
+  id                             String    @id @default(uuid())
+  organization_id                String
+  catalog_id                     String
+  send_code                      String // T01-001, T01-002...
+  sale_id                        String // Người tạo link chào khách
+  customer_name                  String?
+  customer_phone                 String?
+  status                         String    @default("CREATED") // CREATED | OPENED | BROWSING | SELECTED | ORDER_SUBMITTED | PAYMENT_REPORTED | COMPLETED
+  selected_product_id            String?
+  product_snapshot               Json? // Đóng băng ảnh, tên, giá mẫu hoa lúc khách chốt
+  order_id                       String?
   /// Ảnh chuyển khoản lần 1 (đặt cọc / trả đủ) do khách tải lên
-  payment_proof_asset_id          String?
+  payment_proof_asset_id         String?
   /// Ảnh chuyển khoản lần 2 (phần còn lại) do khách tải lên
-  payment_proof_balance_asset_id  String?
-  opened_at           DateTime?
-  selected_at         DateTime?
+  payment_proof_balance_asset_id String?
+  opened_at                      DateTime?
+  selected_at                    DateTime?
   /// Hết hạn link (null = không hết hạn). Hết hạn/thu hồi mà chưa có đơn → link trả 404.
-  expires_at          DateTime?
-  revoked_at          DateTime?
-  revoked_by          String?
-  last_active_at      DateTime  @default(now())
-  created_at          DateTime  @default(now())
-  updated_at          DateTime  @updatedAt
+  expires_at                     DateTime?
+  revoked_at                     DateTime?
+  revoked_by                     String?
+  last_active_at                 DateTime  @default(now())
+  created_at                     DateTime  @default(now())
+  updated_at                     DateTime  @updatedAt
 
   organization organizations             @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   catalog      greeting_catalogs         @relation(fields: [catalog_id], references: [id], onDelete: Cascade)
@@ -2893,22 +2901,22 @@ model greeting_sessions {
 /// thông báo khách. Khoá webhook chỉ lưu BĂM (sha256); thông tin đăng nhập
 /// Zalo/eSMS lưu MÃ HOÁ (AES-256-GCM) — không bao giờ trả ra client.
 model greeting_integrations {
-  id                       String   @id @default(uuid())
-  organization_id          String   @unique
-  payment_provider         String? // SEPAY
-  payment_webhook_key_hash String?  @unique
-  payment_webhook_key_hint String? // 4 ký tự cuối, để nhận diện khoá
-  payment_webhook_enabled  Boolean  @default(false)
-  notify_channel           String? // ZNS | ESMS
-  notify_enabled           Boolean  @default(false)
-  notify_config_encrypted  String?
-  notify_templates         Json? // mã mẫu tin theo sự kiện — không bí mật
+  id                            String   @id @default(uuid())
+  organization_id               String   @unique
+  payment_provider              String? // SEPAY
+  payment_webhook_key_hash      String?  @unique
+  payment_webhook_key_hint      String? // 4 ký tự cuối, để nhận diện khoá
+  payment_webhook_enabled       Boolean  @default(false)
+  notify_channel                String? // ZNS | ESMS
+  notify_enabled                Boolean  @default(false)
+  notify_config_encrypted       String?
+  notify_templates              Json? // mã mẫu tin theo sự kiện — không bí mật
   staff_notify_enabled          Boolean  @default(false)
   staff_notify_channels         Json? // Mảng kênh đã bật: ["TELEGRAM", "ZALO", ...]
   staff_notify_config_encrypted String? // Thông tin kết nối mã hoá (Bot Token, Chat ID, App Secret...)
   staff_notify_events           Json? // Bật/tắt theo sự kiện
-  created_at               DateTime @default(now())
-  updated_at               DateTime @updatedAt
+  created_at                    DateTime @default(now())
+  updated_at                    DateTime @updatedAt
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -3038,7 +3046,9 @@ model greeting_messages {
   @@index([organization_id, to_role, created_at])
 }
 
-/** Ai đã đọc tin nào — lưu ở máy chủ để điện thoại và máy tính cùng hết báo. */
+/**
+ * Ai đã đọc tin nào — lưu ở máy chủ để điện thoại và máy tính cùng hết báo.
+ */
 model greeting_message_reads {
   id              String   @id @default(uuid())
   organization_id String
@@ -3093,7 +3103,7 @@ model chain_partnerships {
   partner_org_id   String
   partner_code     String
   partnership_type String   @default("SUBCONTRACTOR") // SUBCONTRACTOR | FRANCHISE | BRANCH
-  status           String   @default("ACTIVE")         // PENDING | ACTIVE | SUSPENDED | TERMINATED
+  status           String   @default("ACTIVE") // PENDING | ACTIVE | SUSPENDED | TERMINATED
   capacity_daily   Int      @default(10)
   commission_rate  Decimal?
   contact_name     String?
@@ -3118,11 +3128,11 @@ model chain_partnerships {
 model internal_chat_conversations {
   id                String   @id @default(uuid())
   organization_id   String
-  conversation_type String   // PLATFORM_TENANT | CHAIN_PARTNER | ORDER_THREAD
+  conversation_type String // PLATFORM_TENANT | CHAIN_PARTNER | ORDER_THREAD
   title             String?
   order_id          String?
   metadata          Json     @default("{}")
-  created_by        String   // user_id of creator
+  created_by        String // user_id of creator
   last_message_at   DateTime @default(now())
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
@@ -3173,35 +3183,35 @@ model internal_chat_messages {
 
 // ─── Notification System (Multi-Tier, Multi-Role) ──────────────────────────
 model notification_channel_activations {
-  channel     String   // APP_INBOX | EMAIL | PUSH | TELEGRAM | ZALO | SMS | WHATSAPP | MESSENGER
-  activated   Boolean  @default(false)
-  updated_by  String   // platform_admin user_id
-  updated_at  DateTime @updatedAt
+  channel    String // APP_INBOX | EMAIL | PUSH | TELEGRAM | ZALO | SMS | WHATSAPP | MESSENGER
+  activated  Boolean  @default(false)
+  updated_by String // platform_admin user_id
+  updated_at DateTime @updatedAt
 
   @@id([channel])
 }
 
 model notification_event_visibility {
-  event_key   String
-  tier        String   // INDUSTRY | CHAIN | STORE
-  visible     Boolean  @default(true)
-  updated_by  String
-  updated_at  DateTime @updatedAt
+  event_key  String
+  tier       String // INDUSTRY | CHAIN | STORE
+  visible    Boolean  @default(true)
+  updated_by String
+  updated_at DateTime @updatedAt
 
   @@id([event_key, tier])
 }
 
 model notification_hard_locks {
-  id          String   @id @default(uuid())
-  event_key   String
-  channel     String
-  tier        String   // MOTHER | INDUSTRY | CHAIN | STORE
-  scope_id    String   // organization_id hoặc "GLOBAL" nếu tier = MOTHER
-  enabled     Boolean  // true = bắt buộc BẬT | false = bắt buộc TẮT
-  locked_by   String   // user_id người đặt khóa
-  reason      String?  // Lý do khóa
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id         String   @id @default(uuid())
+  event_key  String
+  channel    String
+  tier       String // MOTHER | INDUSTRY | CHAIN | STORE
+  scope_id   String // organization_id hoặc "GLOBAL" nếu tier = MOTHER
+  enabled    Boolean // true = bắt buộc BẬT | false = bắt buộc TẮT
+  locked_by  String // user_id người đặt khóa
+  reason     String? // Lý do khóa
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@unique([event_key, channel, tier, scope_id])
   @@index([tier, scope_id])
@@ -3212,9 +3222,9 @@ model notification_org_policies {
   organization_id   String
   event_key         String
   channel           String
-  role_key          String   // RoleUxKey hoặc "*" cho all roles
+  role_key          String // RoleUxKey hoặc "*" cho all roles
   enabled           Boolean  @default(true)
-  priority_override String?  // NORMAL | URGENT | CRITICAL
+  priority_override String? // NORMAL | URGENT | CRITICAL
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
@@ -3231,8 +3241,8 @@ model notification_store_defaults {
   channel         String
   role_key        String
   enabled         Boolean  @default(true)
-  schedule_start  String?  // "08:00"
-  schedule_end    String?  // "22:00"
+  schedule_start  String? // "08:00"
+  schedule_end    String? // "22:00"
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
@@ -3280,3 +3290,86 @@ model notification_inbox {
   @@index([user_id, organization_id, created_at])
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// Nhóm công cụ 6 — Tính giá và tối ưu lợi nhuận (#31–#35), PO duyệt 29/10/2026.
+// Đặc điểm theo ngành nằm ở `IndustryCostingSpec` (organization/domain/industry-costing-spec.ts);
+// các bảng dưới đây là dữ liệu RIÊNG của từng cửa hàng (REQ-BND-007/008).
+// ─────────────────────────────────────────────────────────────────────────
+
+/// #32 — Nguyên liệu của cửa hàng. `unit_cost_vnd` null = chưa nhập giá (giá vốn báo thiếu, không đoán).
+model materials {
+  id              String   @id @default(uuid())
+  organization_id String
+  name            String
+  unit            String
+  category_key    String // khoá trong IndustryCostingSpec.materialCategories của ngành
+  unit_cost_vnd   Decimal? @db.Decimal(14, 2)
+  supplier_name   String? // PO 29/10/2026: chỉ ghi tên nhà cung cấp, quản lý đầy đủ làm sau
+  on_hand_qty     Decimal? @db.Decimal(14, 3) // tồn nhập tay (#35)
+  active          Boolean  @default(true)
+  created_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization  organizations            @relation(fields: [organization_id], references: [id])
+  price_history material_price_history[]
+  recipe_items  product_recipe_items[]
+
+  @@unique([organization_id, name])
+  @@index([organization_id])
+  @@index([organization_id, category_key])
+}
+
+/// #32 — Lịch sử đơn giá: mỗi lần đổi giá ghi một dòng (cảnh báo biến động, truy vết).
+model material_price_history {
+  id              String   @id @default(uuid())
+  organization_id String
+  material_id     String
+  unit_cost_vnd   Decimal  @db.Decimal(14, 2)
+  source          String // MANUAL · IMPORT · PURCHASE
+  effective_at    DateTime @default(now())
+  created_by      String
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  material     materials     @relation(fields: [material_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, material_id, effective_at])
+}
+
+/// #31 — Công thức (định mức) của một sản phẩm tại cửa hàng; một công thức hiện hành mỗi sản phẩm.
+model product_recipes {
+  id              String   @id @default(uuid())
+  organization_id String
+  product_id      String
+  version         Int      @default(1)
+  waste_percent   Decimal? @db.Decimal(5, 2) // null = dùng mặc định theo nhóm nguyên liệu của ngành
+  labor_minutes   Int? // dùng khi ngành tính công theo phút
+  note            String?
+  updated_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations          @relation(fields: [organization_id], references: [id])
+  product      products               @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  items        product_recipe_items[]
+
+  @@unique([organization_id, product_id])
+  @@index([organization_id])
+}
+
+/// #31 — Một dòng định mức: nguyên liệu × số lượng cho một sản phẩm.
+model product_recipe_items {
+  id              String  @id @default(uuid())
+  organization_id String
+  recipe_id       String
+  material_id     String
+  quantity        Decimal @db.Decimal(14, 3)
+
+  organization organizations   @relation(fields: [organization_id], references: [id])
+  recipe       product_recipes @relation(fields: [recipe_id], references: [id], onDelete: Cascade)
+  material     materials       @relation(fields: [material_id], references: [id])
+
+  @@unique([recipe_id, material_id])
+  @@index([organization_id])
+}

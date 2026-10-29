@@ -1020,3 +1020,22 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | GET | `/product-photo/:id` | `G1` | |
 | POST | `/product-photo/:id/retry` | `I1` | |
 | GET | `/store/collection-transparency` | `F1` | Dữ liệu chuỗi đang thu của cửa hàng |
+
+## 28. Nhóm công cụ 6 — Tính giá và tối ưu lợi nhuận (29/10/2026)
+
+Mọi route trả 422 "Ngành của cửa hàng chưa được hỗ trợ cho công cụ tính giá" khi ngành khai `costing: null` (trừ `/costing/profile`). Tài nguyên khác tổ chức → 404.
+
+| Phương thức | Đường dẫn | Mã năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/costing/profile` | `L1` | `{ supported, industryKey, spec, config }` — hồ sơ tính giá của ngành ⊕ ghi đè của cửa hàng |
+| GET | `/costing/materials` | `L5` | Nguyên liệu kèm `priceChange` (cảnh báo biến động); `?include_inactive=true` |
+| POST | `/costing/materials` | `L6` | `{ name, unit, category_key, unit_cost_vnd?, supplier_name?, on_hand_qty? }` — có đơn giá thì ghi mốc lịch sử đầu |
+| PATCH | `/costing/materials/:id` | `L6` | Sửa từng trường; đổi `unit_cost_vnd` ghi một dòng `material_price_history` |
+| GET | `/costing/materials/:id/history` | `L5` | Lịch sử đơn giá, mới nhất trước |
+| GET | `/costing/recipes/:productId` | `L1` | `{ product, recipe, draft }` — chưa có công thức thì `draft` đọc từ BOM AI qua bộ chuyển đổi của ngành |
+| PUT | `/costing/recipes/:productId` | `L3` | `{ lines: [{ material_id, quantity }], waste_percent?, labor_minutes?, note? }` — thay toàn bộ, tăng phiên bản |
+| GET | `/costing/products/:productId/cost` | `L5` | Giá vốn phân rã + `missingPrices` + kịch bản giá (chỉ khi đủ dữ liệu); `?competitor_vnd=` |
+| GET | `/costing/needs` | `L5` | `?from=YYYY-MM-DD&to=YYYY-MM-DD` — dự toán mua cho đơn `CONFIRMED`/`PROCESSING` giao trong khoảng |
+
+`PUT /pricing-rules` nhận thêm 4 khoá của nhóm này: `labor_rate_per_hour`, `default_packaging_vnd` (VNĐ ≥ 0), `overhead_percent` [0,100], `price_change_alert_percent` [1,100].
+

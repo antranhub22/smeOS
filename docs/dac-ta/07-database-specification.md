@@ -2870,3 +2870,89 @@ model internal_chat_messages {
 }
 ```
 
+## 35. Nhóm công cụ 6 — Tính giá và tối ưu lợi nhuận (29/10/2026)
+
+PO duyệt schema 29/10/2026. Migration `20261029061403_costing_materials_recipes` — chỉ thêm bảng, không đụng dữ liệu cũ.
+Cả bốn bảng là **dữ liệu riêng của cửa hàng** (có `organization_id` + chỉ mục). Đặc điểm theo ngành (nhóm nguyên liệu, hao hụt mặc định, cách tính công, kịch bản giá) **không** lưu ở đây mà khai trong `IndustryCostingSpec` của Industry Pack (`src/modules/organization/domain/industry-costing-spec.ts`) — đúng REQ-BND-007/008. Ghi đè chi phí của cửa hàng nằm ở `pricing_rules` (khoá `labor_rate_per_hour`, `overhead_percent`, `default_packaging_vnd`, `price_change_alert_percent`).
+
+- `materials.unit_cost_vnd = null` nghĩa là **chưa nhập giá**: giá vốn báo "thiếu đơn giá", không đoán.
+- `material_price_history` chèn-chỉ: mỗi lần đổi đơn giá một dòng (cảnh báo biến động #32).
+- `product_recipes` một công thức hiện hành mỗi sản phẩm; lưu lại thì tăng `version` và thay toàn bộ `product_recipe_items`.
+- Lưu công thức kiểm mọi `material_id` thuộc đúng tổ chức — khác tổ chức trả 404.
+
+```prisma
+model materials {
+  id              String   @id @default(uuid())
+  organization_id String
+  name            String
+  unit            String
+  category_key    String // khoá trong IndustryCostingSpec.materialCategories của ngành
+  unit_cost_vnd   Decimal? @db.Decimal(14, 2)
+  supplier_name   String? // PO 29/10/2026: chỉ ghi tên nhà cung cấp, quản lý đầy đủ làm sau
+  on_hand_qty     Decimal? @db.Decimal(14, 3) // tồn nhập tay (#35)
+  active          Boolean  @default(true)
+  created_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization  organizations            @relation(fields: [organization_id], references: [id])
+  price_history material_price_history[]
+  recipe_items  product_recipe_items[]
+
+  @@unique([organization_id, name])
+  @@index([organization_id])
+  @@index([organization_id, category_key])
+}
+
+model material_price_history {
+  id              String   @id @default(uuid())
+  organization_id String
+  material_id     String
+  unit_cost_vnd   Decimal  @db.Decimal(14, 2)
+  source          String // MANUAL · IMPORT · PURCHASE
+  effective_at    DateTime @default(now())
+  created_by      String
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  material     materials     @relation(fields: [material_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, material_id, effective_at])
+}
+
+model product_recipes {
+  id              String   @id @default(uuid())
+  organization_id String
+  product_id      String
+  version         Int      @default(1)
+  waste_percent   Decimal? @db.Decimal(5, 2) // null = dùng mặc định theo nhóm nguyên liệu của ngành
+  labor_minutes   Int? // dùng khi ngành tính công theo phút
+  note            String?
+  updated_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations          @relation(fields: [organization_id], references: [id])
+  product      products               @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  items        product_recipe_items[]
+
+  @@unique([organization_id, product_id])
+  @@index([organization_id])
+}
+
+model product_recipe_items {
+  id              String  @id @default(uuid())
+  organization_id String
+  recipe_id       String
+  material_id     String
+  quantity        Decimal @db.Decimal(14, 3)
+
+  organization organizations   @relation(fields: [organization_id], references: [id])
+  recipe       product_recipes @relation(fields: [recipe_id], references: [id], onDelete: Cascade)
+  material     materials       @relation(fields: [material_id], references: [id])
+
+  @@unique([recipe_id, material_id])
+  @@index([organization_id])
+}
+```
+

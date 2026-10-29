@@ -17,6 +17,11 @@ export const PRICING_RULE_KEYS = [
   "surcharge_groups",
   "optimal_price_ratio",
   "floor_ceiling_ratio",
+  // Nhóm công cụ 6 — cửa hàng ghi đè mặc định ngành (costing/domain/cost-config.ts).
+  "labor_rate_per_hour",
+  "overhead_percent",
+  "default_packaging_vnd",
+  "price_change_alert_percent",
 ] as const
 
 export type PricingRuleKey = (typeof PRICING_RULE_KEYS)[number]
@@ -184,6 +189,13 @@ export function validatePricingRuleValue(key: PricingRuleKey, value: unknown): s
       }
       return ""
     }
+    case "labor_rate_per_hour":
+    case "default_packaging_vnd":
+      return typeof value === "number" && Number.isFinite(value) && value >= 0 ? "" : `${key} phải là số không âm (VNĐ)`
+    case "overhead_percent":
+      return typeof value === "number" && value >= 0 && value <= 100 ? "" : "overhead_percent phải trong khoảng [0, 100]"
+    case "price_change_alert_percent":
+      return typeof value === "number" && value >= 1 && value <= 100 ? "" : "price_change_alert_percent phải trong khoảng [1, 100]"
     default:
       return `Khoá không nhận diện được`
   }
