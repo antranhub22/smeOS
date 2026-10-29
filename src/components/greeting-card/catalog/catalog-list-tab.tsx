@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { BookOpen, Plus, RefreshCw, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { BrochurePreviewModal } from "@/components/greeting-card/customer/brochure-preview-modal"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { CATALOG_CHANNELS } from "@/modules/greeting-card/domain/catalog-channel"
@@ -19,6 +20,7 @@ type Props = {
 }
 
 export function CatalogListTab({ onSelectCatalog }: Props) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const { can } = useSession()
   const { ti } = useI18n()
   const rawCatalogTitle = ti("catalogTitle") || "Bộ sưu tập"
@@ -93,7 +95,12 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Ẩn bộ sưu tập này? Các link đã gửi vẫn hoạt động; bạn hoặc Điều hành có thể khôi phục trong mục “Đã ẩn”.")) return
+    const ok = await confirm({
+      title: "Ẩn bộ sưu tập này?",
+      consequence: "Các link đã gửi vẫn hoạt động; bạn hoặc Điều hành có thể khôi phục trong mục “Đã ẩn”.",
+      confirmLabel: "Ẩn bộ sưu tập",
+    })
+    if (!ok) return
     setDeletingId(id)
     setActionError(null)
     try {
@@ -268,6 +275,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
           onClose={() => setPreviewUrl(null)}
         />
       )}
+      {confirmDialog}
     </div>
   )
 }

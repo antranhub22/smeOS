@@ -79,10 +79,10 @@ function ContentEngineContent() {
           <div className="text-caption font-bold tracking-wider text-text-muted uppercase">
             Máy nội dung tiếp thị
           </div>
-          <div className="text-title font-black text-primary flex items-center gap-2">
-            <Sparkles size={18} />
-            AI Content Engine — Cỗ Máy Nội Dung Đa Kênh
-          </div>
+          <h1 className="text-title font-black text-primary flex items-center gap-2">
+            <Sparkles size={18} aria-hidden="true" />
+            Tạo nội dung bán hàng đa kênh
+          </h1>
         </div>
         <div className="flex items-center gap-2">
           <Button

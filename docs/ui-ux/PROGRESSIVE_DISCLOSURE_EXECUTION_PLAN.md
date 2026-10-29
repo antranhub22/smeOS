@@ -130,5 +130,5 @@ Mỗi đợt: Screen Contract §15 → áp component → xóa vi phạm R13–R1
 | 1 Audit | Xong — `PD_AUDIT_REPORT.md`, `PD_AUDIT_INVENTORY.md`; chờ PO duyệt §7 | nhánh này |
 | 2 Nền tảng | Xong phần mã (2.1–2.7, 2.9, 2.10); 2.8 có baseline axe (A15–A18), spec vào CI khi từng màn hết lỗi; trang quản trị cờ ở `/van-hanh` làm đầu Giai đoạn 3 | nhánh này |
 | 3 Pilot | Đã triển khai sau cờ `ux_pd_anh_san_pham`; axe 0 lỗi; sửa lỗi hợp đồng API; trang cờ `/van-hanh/cau-hinh`. Chờ PO bật cho tổ chức thật để đo E7 — `PD_PILOT_REPORT.md` | nhánh này |
-| 4 Rollout | Đợt A-1 xong: Bộ ảnh sản phẩm (cờ `ux_pd_bo_anh_san_pham`), Poster & banner (trợ năng + câu chữ, không cờ); hook dùng chung `useGenerationJob`; token `primary-foreground` | nhánh này |
+| 4 Rollout | **Đợt A xong — 7/7 công cụ Hoàn thiện** đạt axe 0 lỗi ở 390px (`a11y-done-tools.spec.ts`). A-1: Tạo ảnh & Bộ ảnh (cờ), Poster. A-2…A-5: Thẻ chào, Nội dung, Catalog theo nhu cầu, Xu hướng thị trường (sửa trợ năng, `ConfirmDialog` cho R2/R3, trạng thái thật). Tiếp theo: đợt B | nhánh này |
 | 5 Enterprise & quản trị | — | — |

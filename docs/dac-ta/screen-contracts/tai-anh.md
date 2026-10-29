@@ -76,3 +76,6 @@
 | Dữ liệu | PASS | Kết nối API Vision và Copywriting thực tế |
 | Quyền | PASS | Gating theo năng lực H1, H2, H3, H5, H6 |
 | Nhất quán | PASS | Dùng 100% token Semantic và font token |
+
+## 15. Progressive disclosure & rủi ro (03c) — 29/10/2026
+Thẻ chào sản phẩm (`/tai-anh?tab=m01c`, đợt A-2). Pattern: UX-P01, UX-P04 (khoá job gắn tổ chức `job-storage-key.ts` đã có). Thay đổi: hộp xoá vĩnh viễn trong Kho (`storage-trash-tab.tsx`) chuyển sang `ConfirmDialog` (R3). axe 390px: 0 lỗi (`tests/e2e/ux/a11y-done-tools.spec.ts`). Rủi ro: tải ảnh R1, tạo thẻ R2, xoá vĩnh viễn R3.

@@ -90,3 +90,6 @@
 | Chiều | Kết quả | Ghi chú |
 |---|---|---|
 | Vai · Việc · IA · Mật độ · Thứ bậc · CTA · Luồng · Trạng thái · Responsive · Trợ năng · Dữ liệu · Quyền · AI · Nhất quán | PASS | Đạt chuẩn 100% |
+
+## 15. Progressive disclosure & rủi ro (03c) — 29/10/2026
+Nội dung bán hàng (đợt A-3). Thay đổi: tiêu đề trang thành `<h1>` tiếng Việt (bỏ "AI Content Engine"); nhãn `Badge accent` đạt AA (`badge.tsx` dùng `text-primary`). axe 390px: 0 lỗi. Rủi ro: tạo nội dung R2.

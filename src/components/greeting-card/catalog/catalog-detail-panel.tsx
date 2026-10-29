@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { ArrowLeft, Package, Plus, Trash2, Search, Loader2, X, CheckCircle, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useSession } from "@/lib/session"
 import { useCatalogItems } from "./use-catalog-items"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
@@ -43,6 +44,7 @@ type Props = {
 }
 
 export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const { ti } = useI18n()
   const [showPolicies, setShowPolicies] = useState(false)
   // Chính sách theo bộ sưu tập ghi đè chính sách tiệm → chỉ người sửa được cấu hình tiệm (máy chủ cũng kiểm)
@@ -61,8 +63,9 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
   const addingId = ci.busyId
   const removingId = ci.busyId
   const handleAddProduct = (productId: string) => void ci.add(productId)
-  function handleRemoveProduct(productId: string) {
-    if (!window.confirm("Xoá mẫu này khỏi bộ sưu tập? Mẫu sẽ biến mất khỏi mọi link đã gửi khách.")) return
+  async function handleRemoveProduct(productId: string) {
+    const ok = await confirm({ title: "Xoá mẫu khỏi bộ sưu tập?", consequence: "Mẫu sẽ biến mất khỏi mọi link đã gửi khách.", confirmLabel: "Xoá mẫu", tone: "danger" })
+    if (!ok) return
     void ci.remove(productId)
   }
   const filteredProducts = ci.available
@@ -304,6 +307,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
           </p>
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

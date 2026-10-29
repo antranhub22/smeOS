@@ -262,6 +262,7 @@ export function QuickCollectionCriteriaPanel({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="sm:col-span-2">
             <select
+              aria-label="Mẫu giao diện bộ sưu tập"
               value={templateId}
               onChange={(e) => onChange({ templateId: e.target.value })}
               className="w-full h-9 rounded-xl border border-border bg-surface px-3 text-body-sm text-text font-medium focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"

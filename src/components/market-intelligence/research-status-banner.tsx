@@ -2,8 +2,10 @@
 
 import React from "react";
 import { Sparkles, Loader2, CheckCircle2, AlertCircle, ArrowDown, ExternalLink } from "lucide-react";
+import type { TaskUiState } from "@/lib/ui-system/task-state";
 
-export type ResearchBannerState = "idle" | "running" | "completed" | "error";
+/** Tập con của từ vựng trạng thái chuẩn (03c UX-016). */
+export type ResearchBannerState = Extract<TaskUiState, "idle" | "running" | "succeeded" | "failed">;
 
 export interface ResearchStatusInfo {
   state: ResearchBannerState;
@@ -27,10 +29,11 @@ export function ResearchStatusBanner({
 
   return (
     <div
+      role={status.state === "failed" ? "alert" : "status"}
       className={`relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 shadow-sm ${
         status.state === "running"
           ? "border-blush-200 bg-gradient-to-r from-blush-50/90 via-petal-50/70 to-blush-50/90 text-blush-950"
-          : status.state === "completed"
+          : status.state === "succeeded"
           ? "border-mint-200 bg-gradient-to-r from-mint-50/90 via-lagoon-50/70 to-mint-50/90 text-mint-950"
           : "border-alert-200 bg-alert-50 text-alert-950"
       }`}
@@ -45,7 +48,7 @@ export function ResearchStatusBanner({
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-blush-500"></span>
               </span>
             </div>
-          ) : status.state === "completed" ? (
+          ) : status.state === "succeeded" ? (
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-mint-600 text-white shadow-sm">
               <CheckCircle2 className="h-5 w-5" />
             </div>
@@ -59,8 +62,8 @@ export function ResearchStatusBanner({
             <div className="flex items-center gap-2">
               <h3 className="text-xs font-extrabold tracking-tight">
                 {status.state === "running" && "Đang nghiên cứu đa kênh..."}
-                {status.state === "completed" && "Nghiên cứu hoàn tất, đã cập nhật dữ liệu"}
-                {status.state === "error" && "Lỗi trong quá trình nghiên cứu"}
+                {status.state === "succeeded" && "Nghiên cứu hoàn tất, đã cập nhật dữ liệu"}
+                {status.state === "failed" && "Nghiên cứu chưa xong được"}
               </h3>
               {status.keyword && (
                 <span className="rounded-md bg-white/80 px-2 py-0.5 text-caption font-bold shadow-xs">
@@ -78,7 +81,7 @@ export function ResearchStatusBanner({
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-center">
-          {status.state === "completed" && onViewResults && (
+          {status.state === "succeeded" && onViewResults && (
             <button
               type="button"
               onClick={onViewResults}
@@ -92,7 +95,7 @@ export function ResearchStatusBanner({
           {status.state === "running" && (
             <div className="inline-flex items-center gap-1.5 rounded-lg bg-blush-100/80 px-2.5 py-1 text-caption font-bold text-blush-800">
               <span className="h-1.5 w-1.5 rounded-full bg-blush-600 animate-pulse" />
-              Đang cào dữ liệu...
+              Đang thu thập dữ liệu...
             </div>
           )}
 

@@ -32,11 +32,10 @@
     },
     "components/greeting-card": {
       "R15": 7,
-      "R13": 13,
+      "R13": 9,
       "R14": 6
     },
     "components/market-intelligence": {
-      "R14": 4,
       "R16": 1
     },
     "components/products": {
@@ -45,9 +44,6 @@
     "components/profiles": {
       "R15": 2,
       "R13": 2
-    },
-    "components/storage": {
-      "R13": 1
     },
     "components/templates": {
       "R16": 16
@@ -59,6 +55,6 @@
       "R16": 1
     }
   },
-  "total": 142,
-  "updatedAt": "2026-10-29T03:27:15.790Z"
+  "total": 133,
+  "updatedAt": "2026-10-29T04:40:33.379Z"
 }

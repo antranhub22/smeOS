@@ -63,3 +63,6 @@
 | Trợ năng | PASS | Touch target ≥ 44px, focus visible, aria-hidden |
 | Dữ liệu | PASS | Dữ liệu thật từ `content_opportunities` |
 | Quyền | PASS | Cách ly tenant qua `organization_id` chặt chẽ |
+
+## 15. Progressive disclosure & rủi ro (03c) — 29/10/2026
+Xu hướng thị trường (đợt A-5). Thay đổi: banner phiên quét dùng tập con `TaskUiState` (`succeeded`/`failed`), có `role=status/alert`; hết 25 lượt hỏi mà phiên chưa xong thì báo thật (trước đây banner "đang nghiên cứu" mãi); bỏ "cào dữ liệu". axe 390px: 0 lỗi. Rủi ro: chạy phiên quét R2.

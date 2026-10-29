@@ -24,6 +24,10 @@ const DONE_TOOLS: Array<{ name: string; path: string; flag?: string; upload: boo
   { name: "Tạo ảnh sản phẩm", path: "/cong-cu/anh-san-pham", flag: "ux_pd_anh_san_pham", upload: true },
   { name: "Tạo bộ ảnh sản phẩm", path: "/cong-cu/bo-anh-san-pham", flag: "ux_pd_bo_anh_san_pham", upload: true },
   { name: "Poster và banner", path: "/cong-cu/poster-banner", upload: false },
+  { name: "Thẻ chào sản phẩm", path: "/tai-anh?tab=m01c", upload: false },
+  { name: "Nội dung bán hàng", path: "/noi-dung", upload: false },
+  { name: "Catalog bán hàng theo nhu cầu", path: "/the-chao?quick=true", upload: false },
+  { name: "Xu hướng thị trường", path: "/market-intelligence", upload: false },
 ]
 
 async function enableFlag(flag: string, orgId: string) {
