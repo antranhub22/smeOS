@@ -49,9 +49,8 @@ import {
   libraryTypeOf,
   type StorageTab,
 } from "@/components/storage/storage-hub-tabs"
-import { LibraryTab } from "@/components/storage/library/library-tab"
-import { LibraryScopeSelect } from "@/components/storage/library/library-scope-select"
-import type { LibraryType } from "@/modules/storage/domain/library"
+import { LibraryPanel } from "@/components/storage/library/library-panel"
+import { useLibrarySummary } from "@/components/storage/library/use-library-summary"
 
 export type { StorageTab }
 
@@ -162,19 +161,11 @@ export function AccountStorageHub({
     session.can("L4")
 
   // Kho dữ liệu v2 — thư viện tập trung (Screen Contract kho-du-lieu.md §4–§5)
-  const [library, setLibrary] = useState<{ types: LibraryType[]; isChain: boolean; viewerBranchId: string | null; branches: { id: string; name: string }[] }>({ types: [], isChain: false, viewerBranchId: null, branches: [] })
-  const [libraryScope, setLibraryScope] = useState("all")
-  const [libraryRefresh, setLibraryRefresh] = useState(0)
-  useEffect(() => {
-    fetch("/api/v1/storage/library/summary")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((body: { data: { types: LibraryType[]; is_chain: boolean; viewer_branch_id: string | null; branches: { id: string; name: string }[] } } | null) => {
-        if (body) setLibrary({ types: body.data.types, isChain: body.data.is_chain, viewerBranchId: body.data.viewer_branch_id, branches: body.data.branches })
-      })
-      .catch(() => undefined)
-  }, [])
+  const library = useLibrarySummary()
   const activeLibraryType = libraryTypeOf(activeTab)
   const showScope = library.isChain && !library.viewerBranchId
+  // Tab Ảnh gốc của chuỗi khi chọn trụ sở/chi nhánh: dùng lưới thư viện (lọc được theo người tạo)
+  const scopedRawType = activeTab === "raw" && showScope && library.scope !== "all" ? "original" : null
 
   useEffect(() => {
     if (finalizedPitches.length > 0) {
@@ -311,6 +302,7 @@ export function AccountStorageHub({
     } else if (target.type === "APPROVED_ANALYSIS") {
       setApprovedItems((prev) => prev.filter((i) => i.id !== target.id))
     }
+    library.refresh()
     await fetchTrashCount()
   }
 
@@ -327,7 +319,7 @@ export function AccountStorageHub({
     go: (href: string) => router.push(href as Route),
     refreshRaw: () => void fetchRawAssets(),
     refreshApproved: () => void fetchApprovedAnalyses(),
-    refreshLibrary: () => setLibraryRefresh((n) => n + 1),
+    refreshLibrary: library.refresh,
   }
 
   // All raw assets combined (local uploads + server assets)
@@ -431,6 +423,7 @@ export function AccountStorageHub({
             counts: { raw: allRawAssets.length, approved: approvedItems.length, finalized: internalFinalizedPitches.length, trash: trashCount },
             isExecutive,
             libraryTypes: library.types,
+            libraryCounts: library.counts,
           })}
           activeTab={activeTab}
           onTabChange={(tabId) => setActiveTab(tabId as StorageTab)}
@@ -439,25 +432,21 @@ export function AccountStorageHub({
         />
       </div>
 
-      {activeLibraryType && (
-        <div className="flex flex-col gap-4">
-          {showScope && <LibraryScopeSelect value={libraryScope} onChange={setLibraryScope} branches={library.branches} />}
-          <LibraryTab
-            type={activeLibraryType}
-            scope={libraryScope}
-            showBranch={library.isChain && libraryScope === "all"}
-            refreshKey={libraryRefresh}
-            onTrash={
-              isExecutive && activeLibraryType === "ai_image"
-                ? (item) => setTrashTarget({ id: item.id, name: item.title || "Ảnh AI", imageUrl: item.thumbnail_url, type: "RAW_ASSET" })
-                : undefined
-            }
-          />
-        </div>
+      {(activeLibraryType || (activeTab === "raw" && showScope)) && (
+        <LibraryPanel
+          library={library}
+          type={activeLibraryType ?? scopedRawType}
+          showScope={showScope}
+          onTrash={
+            isExecutive && (activeLibraryType === "ai_image" || scopedRawType)
+              ? (item) => setTrashTarget({ id: item.id, name: item.title || "Ảnh", imageUrl: item.thumbnail_url, type: "RAW_ASSET" })
+              : undefined
+          }
+        />
       )}
 
       {/* TAB CONTENT 1: Ảnh Gốc */}
-      {activeTab === "raw" && (
+      {activeTab === "raw" && !scopedRawType && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">

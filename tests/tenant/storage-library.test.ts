@@ -2,7 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import type { TenantContext } from "@/core/tenancy"
 import { saveLandingPage } from "@/modules/landing-page/use-cases/save-landing-page"
-import { listLibrary } from "@/modules/storage/use-cases/list-library"
+import { getLibrarySummary, listLibrary } from "@/modules/storage/use-cases/list-library"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
@@ -23,7 +23,7 @@ describe("cách ly tenant — Kho dữ liệu v2 (thư viện)", () => {
   })
 
   const all = (ctx: TenantContext, type: string, scope: Parameters<typeof listLibrary>[1]["scope"] = "all") =>
-    listLibrary({ ...ctx, capabilities: new Set([...ctx.capabilities, "J1"]) }, { type, scope, q: null, from: null, cursor: null })
+    listLibrary({ ...ctx, capabilities: new Set([...ctx.capabilities, "J1", "L1"]) }, { type, scope, q: null, from: null, cursor: null })
 
   async function seedCatalog(ctx: TenantContext, name: string, createdBy: string) {
     return prisma.catalog_links.create({
@@ -47,6 +47,24 @@ describe("cách ly tenant — Kho dữ liệu v2 (thư viện)", () => {
     expect(id).toEqual(expect.any(String))
     expect((await all(a.ctx, "landing")).items.map((i) => [i.id, i.title, i.open_href])).toEqual([[id, "Mừng khai trương", "/landing-page"]])
     expect((await all(b.ctx, "landing")).items).toEqual([])
+  })
+
+  it("thẻ chào có ảnh bìa = ảnh MAIN của sản phẩm đầu tiên", async () => {
+    const product = await prisma.products.create({ data: { organization_id: a.organizationId, code: "SP-1", name: "Bó hồng" } })
+    const asset = await prisma.assets.create({
+      data: {
+        organization_id: a.organizationId, kind: "MASTER", state: "READY", mime_type: "image/jpeg",
+        storage_key: `org/${a.organizationId}/${product.id}/main.jpg`, created_by: a.ctx.userId,
+      },
+    })
+    await prisma.product_images.create({ data: { organization_id: a.organizationId, product_id: product.id, asset_id: asset.id, role: "MAIN" } })
+    const catalog = await prisma.greeting_catalogs.create({
+      data: { organization_id: a.organizationId, code: "8-3", name: "Mừng 8/3", created_by: a.ctx.userId },
+    })
+    await prisma.greeting_catalog_products.create({ data: { organization_id: a.organizationId, catalog_id: catalog.id, product_id: product.id } })
+
+    const [item] = (await all(a.ctx, "greeting_catalog")).items
+    expect(item?.thumbnail_url).toContain(`org/${a.organizationId}/${product.id}/main.jpg`)
   })
 
   it("phân loại theo chi nhánh của người tạo; nhân viên chi nhánh chỉ thấy chi nhánh mình + trụ sở", async () => {
@@ -77,5 +95,20 @@ describe("cách ly tenant — Kho dữ liệu v2 (thư viện)", () => {
 
     const q1Staff: TenantContext = { ...a.ctx, userId: s1, branchId: q1.id }
     expect(titles(await all(q1Staff, "catalog", { branchId: q3.id }))).toEqual(["Của Q1", "Trụ sở"])
+
+    // Video có người tạo (từ 29/10/2026) được xếp đúng chi nhánh; video cũ (null) tính là trụ sở
+    const video = (title: string, createdBy: string | null) =>
+      prisma.video_jobs.create({
+        data: { organization_id: a.organizationId, title, format: "REEL_15S", duration_seconds: 15, created_by: createdBy },
+      })
+    await video("Video Q1", s1)
+    await video("Video cũ", null)
+    const withCaps = { ...a.ctx, capabilities: new Set([...a.ctx.capabilities, "I1", "J1"]) }
+    expect(titles(await listLibrary(withCaps, { type: "video", scope: { branchId: q1.id }, q: null, from: null, cursor: null }))).toEqual(["Video Q1"])
+    expect(titles(await listLibrary(withCaps, { type: "video", scope: "hq", q: null, from: null, cursor: null }))).toEqual(["Video cũ"])
+
+    const summary = await getLibrarySummary(withCaps, { branchId: q1.id })
+    expect(summary.counts).toMatchObject({ catalog: 1, video: 1 })
+    expect((await getLibrarySummary(withCaps, "all")).counts).toMatchObject({ catalog: 3, video: 2 })
   })
 })

@@ -324,6 +324,8 @@ model assets {
 }
 ```
 
+`video_jobs.created_by String?` (29/10/2026, migration `20261029200000_video_jobs_created_by`): người tạo video để Kho dữ liệu xếp theo chi nhánh; job trước đó null (tính là trụ sở).
+
 ### 5.0 Landing page đã sinh — `landing_pages` (Kho dữ liệu v2, L-1)
 
 `POST /content-engine/landing-generate` lưu mỗi lượt sinh để tìm lại trong Kho dữ liệu (`GET /storage/library?type=landing`, `J1`). Lỗi lưu không chặn kết quả sinh.

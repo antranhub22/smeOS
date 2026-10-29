@@ -1396,6 +1396,8 @@ model video_jobs {
   // Tài sản đầu ra & Hạch toán
   final_video_url String?
   final_asset_id  String?
+  // Kho dữ liệu v2: người tạo để phân loại theo chi nhánh; job cũ null (tính là trụ sở).
+  created_by      String?
   cost_credits    Int     @default(0)
   error_message   String?
 

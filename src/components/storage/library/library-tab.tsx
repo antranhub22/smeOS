@@ -3,11 +3,12 @@
 import type { Route } from "next"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
-import { AlertCircle, ExternalLink, FileText, Search, Trash2 } from "lucide-react"
+import { AlertCircle, ExternalLink, FileText, Music, Search, Trash2 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { ProductThumb } from "@/components/products/product-thumb"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatDate } from "@/lib/i18n/formatters"
 import type { LibraryType } from "@/modules/storage/domain/library"
@@ -22,6 +23,7 @@ export type LibraryItemView = {
   created_at: string
   branch: { id: string; name: string } | null
   thumbnail_url: string | null
+  drive_link: string | null
   open_href: string
 }
 
@@ -135,13 +137,12 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
           return (
             <Card key={item.id} className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
               <div className="relative aspect-square w-full overflow-hidden bg-surface-alt">
-                {item.thumbnail_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.thumbnail_url} alt={name} className="h-full w-full object-cover" />
-                ) : (
+                {type === "audio" ? (
                   <div className="flex h-full w-full items-center justify-center text-text-muted">
-                    <FileText size={24} className="opacity-40" aria-hidden />
+                    <Music size={28} className="opacity-50" aria-hidden />
                   </div>
+                ) : (
+                  <ProductThumb name={name} masterImageUrl={item.thumbnail_url ?? undefined} driveLink={item.drive_link ?? undefined} size="card" />
                 )}
                 {showBranch && (
                   <Badge className="absolute left-2 top-2 border-none bg-surface px-1.5 py-0 text-caption font-bold text-text">

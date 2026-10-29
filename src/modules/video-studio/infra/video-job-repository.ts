@@ -45,6 +45,7 @@ export class VideoJobRepository implements IVideoJobRepository {
     input: CreateVideoJobDbInput
   ): Promise<VideoJobWithScenes> {
     const jobData = scopedData(ctx, {
+      created_by: ctx.userId,
       product_id: input.productId ?? null,
       title: input.title,
       format: input.format,

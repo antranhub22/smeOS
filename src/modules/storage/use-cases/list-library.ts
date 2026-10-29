@@ -6,13 +6,14 @@ import {
   creatorFilterForScope,
   isLibraryType,
   LIBRARY_CAPABILITY,
-  LIBRARY_OPEN_HREF,
+  libraryOpenHref,
   LIBRARY_PAGE_SIZE,
   visibleLibraryTypes,
   type LibraryScope,
   type LibraryType,
 } from "../domain/library"
-import { listLibraryRows, loadBranchDirectory } from "../infra/library-repository"
+import { loadLibraryCovers } from "../infra/library-covers"
+import { countLibraryRows, listLibraryRows, loadBranchDirectory } from "../infra/library-repository"
 
 const THUMBNAIL_TTL_SECONDS = 3600
 
@@ -25,12 +26,15 @@ export type LibraryItem = {
   created_at: string
   branch: { id: string; name: string } | null
   thumbnail_url: string | null
+  /** Ảnh dự phòng trên Google Drive (như `ProductThumb`). */
+  drive_link: string | null
   open_href: string
 }
 
 export type LibraryDeps = {
   listRows: typeof listLibraryRows
   loadDirectory: typeof loadBranchDirectory
+  loadCovers: typeof loadLibraryCovers
   signUrl: (key: string) => Promise<string>
 }
 
@@ -38,6 +42,7 @@ function defaultDeps(): LibraryDeps {
   return {
     listRows: listLibraryRows,
     loadDirectory: loadBranchDirectory,
+    loadCovers: loadLibraryCovers,
     signUrl: (key) => getStorageProvider().signedUrl(key, THUMBNAIL_TTL_SECONDS, "GET"),
   }
 }
@@ -61,11 +66,15 @@ export async function listLibrary(
   const creator = creatorFilterForScope(input.scope, directory.branchOfUser, ctx.branchId)
 
   const rows = await deps.listRows(ctx, type, { creator, q: input.q, from: input.from, cursor: input.cursor, take: LIBRARY_PAGE_SIZE })
+  // Ảnh/ảnh AI tự là ảnh; loại khác lấy ảnh bìa (sản phẩm đầu, cảnh đầu, ảnh hero…)
+  const covers = type === "original" || type === "ai_image" ? new Map() : await deps.loadCovers(ctx, type, rows)
   const items = await Promise.all(
     rows.map(async (row): Promise<LibraryItem> => {
       const branchId = row.createdBy ? (directory.branchOfUser.get(row.createdBy) ?? null) : null
       const branchName = branchId ? directory.branchNames.get(branchId) : undefined
       const isImage = row.storageKey && row.mimeType?.startsWith("image/")
+      const cover = covers.get(row.id)
+      const coverKey = isImage ? row.storageKey! : cover?.storageKey
       return {
         id: row.id,
         type,
@@ -74,8 +83,9 @@ export async function listLibrary(
         status: row.status,
         created_at: row.createdAt.toISOString(),
         branch: branchId && branchName ? { id: branchId, name: branchName } : null,
-        thumbnail_url: isImage ? await deps.signUrl(row.storageKey!).catch(() => null) : null,
-        open_href: LIBRARY_OPEN_HREF[type],
+        thumbnail_url: coverKey ? await deps.signUrl(coverKey).catch(() => null) : (cover?.imageUrl ?? null),
+        drive_link: cover?.driveLink ?? null,
+        open_href: libraryOpenHref(type, row.id, row.subtype),
       }
     })
   )
@@ -83,19 +93,29 @@ export async function listLibrary(
   return { items, next_cursor: pageable ? rows[rows.length - 1]!.id : null }
 }
 
-/** `GET /storage/library/summary` — loại được xem, chi nhánh, phạm vi của người xem. */
+/** `GET /storage/library/summary` — loại được xem, số mục mỗi loại theo phạm vi, chi nhánh. */
 export async function getLibrarySummary(
   ctx: TenantContext,
-  loadDirectory: typeof loadBranchDirectory = loadBranchDirectory
+  scope: LibraryScope = "all",
+  deps: { loadDirectory: typeof loadBranchDirectory; countRows: typeof countLibraryRows } = {
+    loadDirectory: loadBranchDirectory,
+    countRows: countLibraryRows,
+  }
 ): Promise<{
   types: LibraryType[]
+  counts: Partial<Record<LibraryType, number>>
   is_chain: boolean
   viewer_branch_id: string | null
   branches: { id: string; name: string }[]
 }> {
-  const directory = await loadDirectory(ctx)
+  const directory = await deps.loadDirectory(ctx)
+  if (typeof scope === "object" && !directory.branchNames.has(scope.branchId)) throw notFound()
+  const creator = creatorFilterForScope(scope, directory.branchOfUser, ctx.branchId)
+  const types = visibleLibraryTypes(ctx.capabilities)
+  const counts = await Promise.all(types.map((type) => deps.countRows(ctx, type, { creator, q: null, from: null })))
   return {
-    types: visibleLibraryTypes(ctx.capabilities),
+    types,
+    counts: Object.fromEntries(types.map((type, i) => [type, counts[i]!])),
     is_chain: directory.isChain,
     viewer_branch_id: ctx.branchId,
     branches: [...directory.branchNames].map(([id, name]) => ({ id, name })),

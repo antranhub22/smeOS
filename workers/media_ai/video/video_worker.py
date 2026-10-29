@@ -25,11 +25,25 @@ import psycopg
 from psycopg.rows import dict_row
 
 from media_ai.video.providers import get_video_provider, VideoProviderError
+from shared.storage import dang_dung_kho_dung_chung, ghi_bytes
 
 FEATURE = "video.render"
 REPO_ROOT = Path(__file__).resolve().parents[3]
 STORAGE_ROOT = REPO_ROOT / "var" / "storage"
 RENDER_DIR = STORAGE_ROOT / "videos"
+
+
+def publish_render(out_file: Path, storage_key: str) -> None:
+    """Đưa video vừa dựng lên kho dùng chung (R2/S3) dưới đúng khoá web đọc.
+
+    Web và worker là hai dịch vụ Render khác máy: tệp chỉ nằm trên đĩa worker
+    thì `/api/v1/storage/videos/...` không đọc được (audit SDAGF R-14). Chạy
+    đĩa cục bộ (dev) thì tệp đã ở đúng chỗ `var/storage/<khoá>` — không làm gì.
+    """
+    if not dang_dung_kho_dung_chung():
+        return
+    ghi_bytes(storage_key, out_file.read_bytes(), "video/mp4", STORAGE_ROOT)
+    out_file.unlink(missing_ok=True)
 
 
 def notify_channel_for(feature: str) -> str:
@@ -130,7 +144,9 @@ def process_video_job(conn: psycopg.Connection, job: Dict[str, Any]):
                 out_file=out_file,
                 progress_callback=handle_progress,
             )
-            video_url = f"/api/v1/storage/videos/{org_id}/{video_job_id}.mp4"
+            storage_key = f"videos/{org_id}/{video_job_id}.mp4"
+            publish_render(out_file, storage_key)
+            video_url = f"/api/v1/storage/{storage_key}"
 
             # 5. Cập nhật video_jobs sang RENDER_COMPLETED
             cur.execute(

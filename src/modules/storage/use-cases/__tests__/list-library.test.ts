@@ -28,6 +28,7 @@ const row = (over: Partial<LibraryRow>): LibraryRow => ({
 function deps(rows: LibraryRow[]): LibraryDeps {
   return {
     listRows: vi.fn(async () => rows),
+    loadCovers: async () => new Map([["c1", { storageKey: "org/org-a/p/cover.jpg" }], ["c2", { driveLink: "https://drive.google.com/file/d/x/view" }]]),
     loadDirectory: async () => ({
       isChain: true,
       branchOfUser: new Map([["staff-a", "branch-a"], ["owner", null]]),
@@ -43,7 +44,7 @@ describe("listLibrary", () => {
     expect(result.items[0]).toMatchObject({
       branch: { id: "branch-a", name: "Chi nhánh Quận 1" },
       thumbnail_url: "/signed/org/org-a/p/r1.jpg",
-      open_href: "/creative-studio",
+      open_href: "/creative-studio?area=d&assetId=r1",
     })
     expect(result.next_cursor).toBeNull()
   })
@@ -68,14 +69,31 @@ describe("listLibrary", () => {
   })
 })
 
+describe("listLibrary — ảnh bìa", () => {
+  it("mục không phải ảnh lấy ảnh bìa: khoá kho → URL ký, không có thì link Drive", async () => {
+    const input = { type: "greeting_catalog", scope: "all" as const, q: null, from: null, cursor: null }
+    const rows = [row({ id: "c1", type: "greeting_catalog", storageKey: null, mimeType: null }), row({ id: "c2", type: "greeting_catalog", storageKey: null, mimeType: null })]
+    const result = await listLibrary(ctx(["L1"]), input, deps(rows))
+    expect(result.items.map((i) => [i.thumbnail_url, i.drive_link])).toEqual([
+      ["/signed/org/org-a/p/cover.jpg", null],
+      [null, "https://drive.google.com/file/d/x/view"],
+    ])
+  })
+})
+
 describe("getLibrarySummary", () => {
-  it("chỉ trả loại có quyền + chi nhánh của tổ chức", async () => {
-    const summary = await getLibrarySummary(ctx(["G1", "J1"]), deps([]).loadDirectory)
+  it("chỉ trả loại có quyền, đếm theo phạm vi, chi nhánh của tổ chức", async () => {
+    const countRows = vi.fn(async () => 3)
+    const summary = await getLibrarySummary(ctx(["G1", "J1"]), "all", { loadDirectory: deps([]).loadDirectory, countRows })
     expect(summary).toEqual({
       types: ["original", "ai_image", "catalog", "landing"],
+      counts: { original: 3, ai_image: 3, catalog: 3, landing: 3 },
       is_chain: true,
       viewer_branch_id: null,
       branches: [{ id: "branch-a", name: "Chi nhánh Quận 1" }],
     })
+    await expect(
+      getLibrarySummary(ctx(["G1"]), { branchId: "x" }, { loadDirectory: deps([]).loadDirectory, countRows })
+    ).rejects.toMatchObject({ code: "NOT_FOUND" })
   })
 })
