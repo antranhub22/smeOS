@@ -24,9 +24,8 @@ const WRITERS: Record<string, (typeof STORAGE_REFERENCE_SOURCES)[number]> = {
   "workers/media_ai/jobs/worker.py": "assets.storage_key",
   "workers/media_ai/jobs/variant_worker.py": "assets.storage_key",
   "workers/media_ai/audio/audio_worker.py": "generation_jobs.output.audio_storage_key",
+  "workers/media_ai/video/video_worker.py": "video_jobs.final_video_url",
 }
-// Biết trước, ngoài phạm vi SDAGF P4: `workers/media_ai/video/video_worker.py` ghi video ra đĩa
-// cục bộ của worker (`var/storage/videos`), không qua kho dùng chung — xem 05-risk-register R-14.
 
 const ROOT = path.resolve(__dirname, "../../..")
 const TS_WRITE = /\b(getStorageProvider\(\)|storage|deps\.storage)\.put\(/
