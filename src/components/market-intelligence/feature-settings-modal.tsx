@@ -138,7 +138,7 @@ export function FeatureSettingsModal({
               aria-label="Đóng"
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-cool-400 hover:bg-cool-200/60 hover:text-cool-700 transition"
+            className="rounded-lg p-1.5 text-text-muted hover:bg-cool-200/60 hover:text-cool-700 transition"
           >
             <X size={18} />
           </button>

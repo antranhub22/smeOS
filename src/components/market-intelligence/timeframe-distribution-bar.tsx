@@ -164,7 +164,7 @@ export function TimeframeDistributionBar({
               </span>
               {selectedBucket && (
                 <>
-                  <ChevronRight size={12} className="text-cool-400" />
+                  <ChevronRight size={12} className="text-text-muted" />
                   <span className="text-xs font-bold text-sand-800 bg-sand-50 px-2 py-0.5 rounded-full border border-sand-200">
                     {selectedBucket.label}
                   </span>
@@ -197,7 +197,7 @@ export function TimeframeDistributionBar({
                     : "text-cool-600 hover:text-cool-900 hover:bg-white/80"
                 }`}
               >
-                <Icon size={13} className={isSelected ? "animate-pulse" : "text-cool-400"} />
+                <Icon size={13} className={isSelected ? "animate-pulse" : "text-text-muted"} />
                 <span>{btn.label}</span>
                 <span
                   className={`ml-0.5 px-1.5 py-0.2 rounded-full text-caption font-black ${
@@ -260,7 +260,7 @@ export function TimeframeDistributionBar({
                       ? "bg-sand-600 text-white border-sand-600 font-bold shadow-xs ring-2 ring-sand-300/60"
                       : hasItems
                       ? "bg-white text-cool-800 border-cool-200 hover:border-sand-400 hover:bg-sand-50/40 font-semibold"
-                      : "bg-cool-50 text-cool-400 border-cool-200/60 hover:bg-cool-100"
+                      : "bg-cool-50 text-text-muted border-cool-200/60 hover:bg-cool-100"
                   }`}
                 >
                   <span>{bucket.label}</span>

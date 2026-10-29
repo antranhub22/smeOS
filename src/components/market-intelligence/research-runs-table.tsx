@@ -55,7 +55,7 @@ export function ResearchRunsTable({ runs }: ResearchRunsTableProps) {
               </td>
               <td className="px-4 py-3 text-cool-600">{r.records_collected}</td>
               <td className="px-4 py-3 text-cool-600">{r.opportunities_created}</td>
-              <td className="px-4 py-3 text-cool-400">
+              <td className="px-4 py-3 text-text-muted">
                 {new Date(r.created_at).toLocaleTimeString("vi-VN", {
                   hour: "2-digit",
                   minute: "2-digit",

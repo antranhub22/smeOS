@@ -54,7 +54,7 @@ export function BriefImportantView({
             Xếp hạng theo tín hiệu thị trường kết hợp tệp khách hàng của tiệm
           </p>
         </div>
-        <span className="text-xs font-bold text-cool-400">
+        <span className="text-xs font-bold text-text-muted">
           Top {topItems.length} cơ hội
         </span>
       </div>
@@ -200,17 +200,17 @@ export function BriefImportantView({
               {/* Cột giữa: 3 chỉ số thương mại */}
               <div className="flex items-center gap-3.5 text-xs flex-shrink-0 bg-cool-50/80 px-3.5 py-2 rounded-xl border border-cool-100">
                 <div>
-                  <span className="text-caption text-cool-400 block font-semibold">Độ nóng</span>
+                  <span className="text-caption text-text-muted block font-semibold">Độ nóng</span>
                   <div className="font-bold text-cool-800">{Math.round(item.trendScore)}/100</div>
                 </div>
 
                 <div className="border-l border-cool-200 pl-3.5">
-                  <span className="text-caption text-cool-400 block font-semibold">Lan tỏa</span>
+                  <span className="text-caption text-text-muted block font-semibold">Lan tỏa</span>
                   <div className="font-bold text-blush-600">{Math.round(item.viralScore)}/100</div>
                 </div>
 
                 <div className="border-l border-cool-200 pl-3.5">
-                  <span className="text-caption text-cool-400 block font-semibold">Sức mua</span>
+                  <span className="text-caption text-text-muted block font-semibold">Sức mua</span>
                   <div className="font-bold text-mint-700">{Math.round(item.commercialScore)}/100</div>
                 </div>
               </div>
@@ -221,7 +221,7 @@ export function BriefImportantView({
                   <span className="text-lg font-black text-blush-600 leading-none block">
                     {Math.round(item.contentOpportunityScore)}
                   </span>
-                  <span className="text-caption text-cool-400 uppercase font-bold tracking-wider">
+                  <span className="text-caption text-text-muted uppercase font-bold tracking-wider">
                     Điểm cơ hội
                   </span>
                 </div>

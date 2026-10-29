@@ -88,5 +88,16 @@ Chọn sản phẩm, kết quả bài viết (AI không chạy → nội dung m�
 
 Ngoài phạm vi (đề xuất task riêng): `text-accent` dùng làm chữ ở ~35 nơi khác ngoài công cụ Hoàn thiện, cùng lỗi tương phản 2,25:1 — cần token chữ riêng, PO duyệt.
 
+## #49 Xu hướng thị trường — 10 trạng thái
+
+Quét từ khóa (trống, đang chạy), cài đặt lịch quét, tiêu chí vĩ mô, làm mới. Sau sửa: axe sạch ở mọi trạng thái của công cụ.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D49-01 | P1 | 6 ô nhập/thanh trượt/select trong "Tiêu chí vĩ mô" và 2 ô giờ + 2 checkbox lịch quét không có nhãn truy cập; checkbox 16px (target-size) | `aria-label`; checkbox 24px |
+| D49-02 | P2 | `text-cool-400` (71 chỗ) và tab con thiếu tương phản; "Khung giờ chạy cron" | Token `text-text-muted`/`text-primary`; "Giờ quét tự động" |
+
+Ghi chú: nút "Cài Đặt & Biểu Mẫu" mở `/cai-dat` (hồ sơ cửa hàng) — trang đó còn 8 lỗi tương phản + 2 ô thiếu nhãn, thuộc nhóm Cài đặt của đợt rollout sau.
+
 ## Tiếp theo
-#49 → #14 → #31–#35.
+#14 → #31–#35.

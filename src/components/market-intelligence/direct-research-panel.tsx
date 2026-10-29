@@ -84,13 +84,13 @@ export function DirectResearchPanel({
         {/* Thanh tìm kiếm chính 1 dòng */}
         <div className="flex flex-col sm:flex-row gap-2 items-center">
           <div className="relative flex-1 w-full">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-cool-400" />
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               placeholder="Nhập từ khóa hoặc chọn từ 210 từ khóa chuẩn (VD: Sản phẩm tốt nghiệp hướng dương, Hoa 20/10...)"
-              className="h-10 w-full rounded-xl border border-cool-200 bg-cool-50/60 pl-9 pr-3 text-xs text-cool-900 placeholder:text-cool-400 outline-none focus:border-blush-500 focus:bg-white focus:ring-2 focus:ring-blush-100 transition"
+              className="h-10 w-full rounded-xl border border-cool-200 bg-cool-50/60 pl-9 pr-3 text-xs text-cool-900 placeholder:text-text-muted outline-none focus:border-blush-500 focus:bg-white focus:ring-2 focus:ring-blush-100 transition"
             />
           </div>
 
@@ -116,7 +116,7 @@ export function DirectResearchPanel({
         {/* Category switcher for quick suggestions */}
         <div className="space-y-1.5 pt-1">
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-            <span className="text-caption text-cool-400 font-medium flex-shrink-0 flex items-center gap-1">
+            <span className="text-caption text-text-muted font-medium flex-shrink-0 flex items-center gap-1">
               <Layers size={11} /> Nhóm từ khóa:
             </span>
             <button
