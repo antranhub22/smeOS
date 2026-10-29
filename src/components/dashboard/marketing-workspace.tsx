@@ -283,7 +283,7 @@ export function MarketingWorkspace() {
                         </div>
                       </div>
                       {typeof opp.trendScore === "number" && (
-                        <span className="rounded-full bg-accent/10 px-2 py-0.5 text-caption font-bold text-accent">
+                        <span className="rounded-full bg-accent/10 px-2 py-0.5 text-caption font-bold text-accent-text">
                           {opp.trendScore} điểm
                         </span>
                       )}

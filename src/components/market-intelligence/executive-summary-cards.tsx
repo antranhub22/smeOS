@@ -183,7 +183,7 @@ export function ExecutiveSummaryCards({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-caption font-bold text-text group-hover:text-accent transition">
+            <span className="text-caption font-bold text-text group-hover:text-accent-text transition">
               Mùa vụ &amp; Dịp tới
             </span>
             <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-orchid-50 text-orchid-600 group-hover:scale-110 transition">

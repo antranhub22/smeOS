@@ -693,6 +693,8 @@ P25a chỉ đọc (D-N5 áp dụng cho toàn bộ P25a, không riêng `/health`)
 | GET | `/platform/organizations` | `N1` | Danh sách mọi tổ chức — tên, slug, loại, số dư credit, số thành viên |
 | GET | `/platform/registrations` | `N13` | Tài khoản tự đăng ký đang chờ duyệt (cũ trước) — email, tên, tổ chức, đăng ký thường hay dùng thử, SĐT lead |
 | POST | `/platform/registrations/:userId/decision` | `N13` | `{ decision: "APPROVE" \| "REJECT" }`. Chỉ quyết được tài khoản `PENDING` (đã quyết → 409, không có → 404). Duyệt dùng thử trả `temporaryPassword` đúng một lần, không lưu, không ghi nhật ký. Ghi `platform_audit_logs` (`platform.registration.approve`/`reject`) |
+| POST | `/platform/tier-preview` | `N1` | `{ roleKey }` — xem trước tầng/vai (SaaS Mother, SaaS Ngành, ChainOS, StoreOS). Đặt cookie `smeos_tier_preview` (HttpOnly); chỉ đổi khuôn trải nghiệm, không đổi tổ chức hay quyền. Vai không có/đang phát triển → 400. Trả `entryHref` |
+| DELETE | `/platform/tier-preview` | người vận hành | Xoá xem trước, về vai thật |
 | GET | `/platform/organizations/:id` | `N1` | Chi tiết một tổ chức bất kỳ — không lọc theo tổ chức của người gọi |
 | GET | `/platform/usage` | `N4` | Usage & chi phí gộp theo (tổ chức, tính năng), toàn hệ thống |
 | GET | `/platform/health` | `N5` | Đếm job theo trạng thái + danh sách job treo (chỉ đọc — không đánh dấu FAILED, xem `scripts/scan-stuck-jobs.ts`) |
