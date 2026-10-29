@@ -72,7 +72,7 @@ describe("getLibrarySummary", () => {
   it("chỉ trả loại có quyền + chi nhánh của tổ chức", async () => {
     const summary = await getLibrarySummary(ctx(["G1", "J1"]), deps([]).loadDirectory)
     expect(summary).toEqual({
-      types: ["original", "ai_image", "catalog"],
+      types: ["original", "ai_image", "catalog", "landing"],
       is_chain: true,
       viewer_branch_id: null,
       branches: [{ id: "branch-a", name: "Chi nhánh Quận 1" }],

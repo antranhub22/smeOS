@@ -29,7 +29,7 @@ describe("creatorFilterForScope", () => {
 describe("visibleLibraryTypes / parseLibraryScope", () => {
   it("chỉ hiện loại có quyền đọc của công cụ gốc", () => {
     expect(visibleLibraryTypes(new Set(["G1"]))).toEqual(["original", "ai_image"])
-    expect(visibleLibraryTypes(new Set(["I1", "J1"]))).toEqual(["video", "audio", "content", "catalog"])
+    expect(visibleLibraryTypes(new Set(["I1", "J1"]))).toEqual(["video", "audio", "content", "catalog", "landing"])
   })
 
   it("đọc phạm vi", () => {

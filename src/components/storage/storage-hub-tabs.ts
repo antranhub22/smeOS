@@ -1,5 +1,5 @@
 import { CheckCircle2, ExternalLink, Folder, Layers, Plus, RefreshCw, Trash2 } from "lucide-react"
-import { Clapperboard, FileText, Images, LayoutGrid, Music, Sparkles, type LucideIcon } from "lucide-react"
+import { Clapperboard, FileText, Globe, Images, LayoutGrid, Music, Sparkles, type LucideIcon } from "lucide-react"
 
 import type { TabAction, TabItem, TabOverflowAction } from "@/components/ui/tab-header"
 import { LIBRARY_OPEN_HREF as OPEN_HREF, type LibraryType } from "@/modules/storage/domain/library"
@@ -10,7 +10,7 @@ export type LibraryTabId = `lib:${LibraryType}`
 export type StorageTab = "raw" | "approved" | "finalized" | "trash" | LibraryTabId
 
 /** Thứ tự tab thư viện mới (ảnh gốc giữ tab v1). */
-const LIBRARY_TAB_ORDER: LibraryType[] = ["ai_image", "video", "audio", "content", "catalog", "greeting_catalog"]
+const LIBRARY_TAB_ORDER: LibraryType[] = ["ai_image", "video", "audio", "content", "catalog", "greeting_catalog", "landing"]
 const LIBRARY_ICON: Record<LibraryType, LucideIcon> = {
   original: Folder,
   ai_image: Sparkles,
@@ -19,6 +19,7 @@ const LIBRARY_ICON: Record<LibraryType, LucideIcon> = {
   content: FileText,
   catalog: LayoutGrid,
   greeting_catalog: Images,
+  landing: Globe,
 }
 
 export function libraryTypeOf(tab: StorageTab): LibraryType | null {

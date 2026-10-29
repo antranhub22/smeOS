@@ -9,6 +9,7 @@ export const LIBRARY_TAB_LABEL: Readonly<Record<LibraryType, string>> = {
   content: "Nội dung",
   catalog: "Catalog",
   greeting_catalog: "Thẻ chào",
+  landing: "Landing page",
 }
 
 export const LIBRARY_CREATE_LABEL: Readonly<Record<LibraryType, string>> = {
@@ -19,6 +20,7 @@ export const LIBRARY_CREATE_LABEL: Readonly<Record<LibraryType, string>> = {
   content: "Tạo nội dung mới",
   catalog: "Tạo catalog",
   greeting_catalog: "Tạo thẻ chào",
+  landing: "Tạo landing page",
 }
 
 const SUBTYPE_LABEL: Readonly<Record<string, string>> = {

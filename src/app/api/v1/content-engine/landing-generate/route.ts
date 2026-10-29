@@ -7,6 +7,7 @@ import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-pr
 import { getBrandProfile } from "@/modules/profiles/use-cases/get-brand-profile"
 import { executeGenerateLandingContent } from "@/modules/content-engine/use-cases/generate-landing-page-content.use-case"
 import { LANDING_TYPE_OPTIONS } from "@/modules/landing-page/domain/preset-catalog"
+import { saveLandingPage } from "@/modules/landing-page/use-cases/save-landing-page"
 
 const PAGE_TYPES = LANDING_TYPE_OPTIONS.map((o) => o.type) as [string, ...string[]]
 
@@ -70,7 +71,16 @@ export const POST = handle(async (request) => {
     ctx
   )
 
+  // Kho dữ liệu v2 (L-1): lưu để tìm lại; lỗi lưu không chặn kết quả sinh.
+  const landingPageId = await saveLandingPage(ctx, {
+    title: result.hero?.headline || parsed.data.occasionLabel,
+    pageType: parsed.data.pageType ?? null,
+    occasionLabel: parsed.data.occasionLabel,
+    input: parsed.data,
+    content: result,
+  })
+
   return jsonResponse({
-    data: result,
+    data: { ...result, landing_page_id: landingPageId },
   })
 })

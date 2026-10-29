@@ -4,7 +4,7 @@
  *
  * Thuần: không import hạ tầng.
  */
-export const LIBRARY_TYPES = ["original", "ai_image", "video", "audio", "content", "catalog", "greeting_catalog"] as const
+export const LIBRARY_TYPES = ["original", "ai_image", "video", "audio", "content", "catalog", "greeting_catalog", "landing"] as const
 export type LibraryType = (typeof LIBRARY_TYPES)[number]
 
 /** Mã quyền ĐỌC của công cụ gốc — thư viện không mở rộng quyền so với màn gốc. */
@@ -16,6 +16,7 @@ export const LIBRARY_CAPABILITY: Readonly<Record<LibraryType, string>> = {
   content: "I1",
   catalog: "J1",
   greeting_catalog: "L1",
+  landing: "J1",
 }
 
 /** Nơi mở lại mục trong công cụ đã tạo ra nó. */
@@ -27,6 +28,7 @@ export const LIBRARY_OPEN_HREF: Readonly<Record<LibraryType, string>> = {
   content: "/noi-dung",
   catalog: "/catalog",
   greeting_catalog: "/the-chao",
+  landing: "/landing-page",
 }
 
 export const AI_IMAGE_KINDS = ["ENHANCED", "MASTER", "MARKETING", "CATALOG", "LANDING", "SOCIAL", "RATIO"] as const

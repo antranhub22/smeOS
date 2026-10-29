@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import type { TenantContext } from "@/core/tenancy"
+import { saveLandingPage } from "@/modules/landing-page/use-cases/save-landing-page"
 import { listLibrary } from "@/modules/storage/use-cases/list-library"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
@@ -37,6 +38,15 @@ describe("cách ly tenant — Kho dữ liệu v2 (thư viện)", () => {
 
     const branchA = await prisma.branches.create({ data: { organization_id: a.organizationId, name: "CN A", code: "A1" } })
     await expect(all(b.ctx, "catalog", { branchId: branchA.id })).rejects.toMatchObject({ code: "NOT_FOUND" })
+  })
+
+  it("landing page đã lưu (`landing_pages`) hiện trong thư viện, chỉ của tổ chức mình", async () => {
+    const id = await saveLandingPage(a.ctx, {
+      title: "Mừng khai trương", pageType: null, occasionLabel: "Khai trương", input: { occasionId: "khai-truong" }, content: { hero: {} },
+    })
+    expect(id).toEqual(expect.any(String))
+    expect((await all(a.ctx, "landing")).items.map((i) => [i.id, i.title, i.open_href])).toEqual([[id, "Mừng khai trương", "/landing-page"]])
+    expect((await all(b.ctx, "landing")).items).toEqual([])
   })
 
   it("phân loại theo chi nhánh của người tạo; nhân viên chi nhánh chỉ thấy chi nhánh mình + trụ sở", async () => {

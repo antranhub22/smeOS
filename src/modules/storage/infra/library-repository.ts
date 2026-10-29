@@ -126,6 +126,14 @@ export async function listLibraryRows(ctx: TenantContext, type: LibraryType, que
       })
       return rows.map((r) => ({ id: r.id, type, title: r.name, createdAt: r.created_at, createdBy: r.created_by, status: r.is_revoked ? "REVOKED" : "ACTIVE", subtype: null, storageKey: null, mimeType: null }))
     }
+    case "landing": {
+      const rows = await prisma.landing_pages.findMany({
+        where: scopedWhere(ctx, { ...since(query.from), ...titleLike("title", query.q), ...creatorWhere("created_by", query.creator) }),
+        ...page(query),
+        select: { id: true, title: true, occasion_label: true, created_at: true, created_by: true },
+      })
+      return rows.map((r) => ({ id: r.id, type, title: r.title, createdAt: r.created_at, createdBy: r.created_by, status: null, subtype: null, storageKey: null, mimeType: null }))
+    }
     case "greeting_catalog": {
       const rows = await prisma.greeting_catalogs.findMany({
         where: scopedWhere(ctx, { ...since(query.from), ...titleLike("name", query.q), ...creatorWhere("created_by", query.creator) }),

@@ -39,7 +39,7 @@
 | 7 | Catalog | `catalog_links` (kể cả đã thu hồi, có nhãn) | J1 | `/catalog` |
 | 8 | Thẻ chào | `greeting_catalogs` | quyền đọc thẻ chào | `/the-chao` |
 | 9 | Kịch bản tư vấn | như v1 (§14 L-2) | như v1 | — |
-| 10 | Landing page | §14 L-1 — chỉ hiện khi đã có nơi lưu | J1 | `/landing-page` |
+| 10 | Landing page | `landing_pages` (L-1, từ 29/10/2026 — lượt sinh trước đó không có) | J1 | `/landing-page` |
 | 11 | Thùng rác (30 ngày) | `GET /api/v1/storage/trash` | Điều hành (như v1) | — |
 
 - Tab không có quyền xem: **ẩn**, không hiện tab khoá.
@@ -90,6 +90,8 @@
 - Tab mới chưa có huy hiệu số lượng (cần thêm truy vấn đếm theo phạm vi — đợt sau).
 - Video không lưu người tạo → luôn tính là "Trụ sở", không hiện khi chọn một chi nhánh cụ thể. Âm thanh: người tạo = người cam kết bản quyền/đồng ý giọng.
 - Tìm theo tên: video, âm thanh, catalog, thẻ chào. Ảnh và nội dung chưa có trường tên để tìm.
+- Landing page (L-1): bảng `landing_pages`, migration `20261029180000_landing_pages`; chỉ landing page sinh từ nay về sau mới có trong thư viện.
+- "Mở" đưa về công cụ gốc, chưa mở đúng mục — đợt sau cho mọi loại.
 - Tách `storage-hub-tabs.ts`, `library/*`: `account-storage-hub.tsx` giảm 914 → ~870 dòng.
 
 ## 14. Quyết định PO (duyệt 29/10/2026 — chọn phương án đề xuất)

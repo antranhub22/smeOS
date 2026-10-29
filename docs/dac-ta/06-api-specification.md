@@ -899,7 +899,7 @@ Bảng hiện trạng 05/10/2026 của Thẻ chào (phía tiệm và phía khác
 | GET · POST | `/storage/trash` | `G3` \| `L4` \| `A3` \| `B6` *(kiểm ở use-case)* | Liệt kê / chuyển vào thùng rác `{ id, type: RAW_ASSET \| APPROVED_ANALYSIS \| PRODUCT }`. Chỉ vai Điều hành (một trong bốn mã) |
 | POST | `/storage/trash/:id/restore` | như trên | Khôi phục `{ type }` |
 | DELETE | `/storage/trash/:id` | như trên | Xoá vĩnh viễn, `?type=` bắt buộc |
-| GET | `/storage/library` | theo `type` *(kiểm ở use-case)*: `original`,`ai_image` → `G1`; `video`,`audio`,`content` → `I1`; `catalog` → `J1`; `greeting_catalog` → `L1` | Kho dữ liệu v2. `?type=&scope=all\|hq\|<branchId>&q=&from=<ISO>&cursor=` → `{ items: [{ id, type, subtype, title, status, created_at, branch, thumbnail_url, open_href }], next_cursor }`, 50/trang. Chi nhánh lấy theo người tạo (`memberships.branch_id`); nhân viên chi nhánh luôn chỉ thấy chi nhánh mình + trụ sở; id chi nhánh ngoài tổ chức → 404 |
+| GET | `/storage/library` | theo `type` *(kiểm ở use-case)*: `original`,`ai_image` → `G1`; `video`,`audio`,`content` → `I1`; `catalog`,`landing` → `J1`; `greeting_catalog` → `L1` | Kho dữ liệu v2. `?type=&scope=all\|hq\|<branchId>&q=&from=<ISO>&cursor=` → `{ items: [{ id, type, subtype, title, status, created_at, branch, thumbnail_url, open_href }], next_cursor }`, 50/trang. Chi nhánh lấy theo người tạo (`memberships.branch_id`); nhân viên chi nhánh luôn chỉ thấy chi nhánh mình + trụ sở; id chi nhánh ngoài tổ chức → 404 |
 | GET | `/storage/library/summary` | phiên | `{ types, is_chain, viewer_branch_id, branches }` — loại người xem có quyền, chi nhánh của tổ chức |
 
 
