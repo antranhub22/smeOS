@@ -17,6 +17,7 @@
 | **PD4** | 03c có cùng thứ bậc Level 3 CANONICAL với 03a; pattern specs là Level 3 SUPPORTING; Screen Contract tham chiếu cả hai. | Mở rộng §0.3 |
 | **PD5** | (29/10/2026) `FeatureGuidanceCard`: bỏ độ mờ `/60` ở chữ "Xem hướng dẫn"/"Thu gọn" để đạt WCAG AA (audit A15). Cấu trúc, vị trí, hành vi giữ nguyên theo K1 | Bổ sung K1 (03a §0.1) |
 | **PD6** | (29/10/2026) Hợp nhất bộ bổ sung MEUX/VDLS: **không** thành chuẩn riêng mang tên MEUX — tích hợp vào 03c (§5b, §5c, §7b, §9) và `ux-patterns/` (`page-archetypes.md`, `visual-review.md`, bảng chọn pattern). Lint giữ PASS/WARNING/FAIL/BLOCKED + ratchet; P0–P3 chỉ cho audit thủ công. Số liệu định lượng của bộ bổ sung là heuristic nội bộ. Bản gốc lưu `docs/archive/historical/SMEOS_MEUX_Supplemental_Kit/` | Mở rộng §35, §40–41 (qua tài liệu SUPPORTING, không sửa thân 03a) |
+| **PD7** | (29/10/2026) `TabActionHeader`: huy hiệu tone `accent` chuyển sang cặp token `selected` (2,25:1 → 7,15:1, audit MEUX `/tai-anh`). Cấu trúc, vị trí, quy tắc nút K2 giữ nguyên | Bổ sung K2 (03a §0.1) |
 
 ## §2. Ánh xạ tầng và khái niệm SYS (PD1)
 
