@@ -45,7 +45,7 @@
 | A11 | P2 | Khóa `floraos_finalized_pitches_${orgKey}` rơi về `"default"` khi phiên chưa có tổ chức | `src/app/(app)/tai-anh/page.tsx:184`, `components/storage/account-storage-hub.tsx:167` | UX-022 | Không đọc/ghi khi chưa có `organization.id` (như `job-storage-key.ts`) |
 | A12 | P2 | Không có cơ chế cờ tính năng trong `src/` | Không tìm thấy `featureFlag`/`feature_flag` | E9 | **[PO]** chọn cơ chế (cấu hình tổ chức sẵn có hay bảng mới) |
 | A13 | P2 | Chưa có trung tâm thông báo trong ứng dụng cho tác vụ nền — `components/notification/` là ma trận cấu hình kênh, không phải hộp thông báo | `src/components/notification/notification-matrix-page.tsx` | UX-024 | Giai đoạn 5 |
-| A14 | P2 | Chưa đo web-vitals; chưa có kiểm tra axe; ảnh so sánh (`toHaveScreenshot`) mới có 1 tệp | grep toàn repo | E6, E8 | Giai đoạn 2.8 |
+| A14 | P2 | Chưa đo web-vitals; axe (`@axe-core/playwright`) mới phủ 3 màn: 404, `/`, `/vai-tro`; ảnh so sánh (`toHaveScreenshot`) mới có 1 tệp | `tests/e2e/ux/a11y.spec.ts:6,18,32` | E6, E8 | Giai đoạn 2.8 |
 
 Không phát hiện P0 về rò dữ liệu chéo tổ chức trên client.
 
@@ -95,7 +95,7 @@ Chuỗi viết thường trong component (`"done"`, `"processing"`…) phần l�
 1. Duyệt thứ tự rollout §6 và việc sửa A01 sớm.
 2. Pilot Tải ảnh: những chặng nào trong 14 chặng journey sẽ chạy (bắt buộc theo CLAUDE.md).
 3. Cơ chế cờ tính năng (A12): dùng cấu hình tổ chức sẵn có hay thêm bảng mới (đụng `prisma/schema.prisma`).
-4. Kiểm tra trợ năng tự động (E8): repo **chưa có** axe — cần duyệt thêm dependency dev (`@axe-core/playwright`) hoặc chấp nhận kiểm tra tay.
+4. Kiểm tra trợ năng tự động (E8): repo đã có `@axe-core/playwright` (`tests/e2e/ux/a11y.spec.ts`) — mở rộng ra luồng cốt lõi, **không cần thêm dependency**.
 
 ## 8. Giới hạn
 

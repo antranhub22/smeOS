@@ -45,7 +45,7 @@
 | 2.5 `ResultPanel` | `src/components/ui/result-panel.tsx` | Unit |
 | 2.6 `EntitlementGate`, `CostPreview` (P11, P12) | `src/components/ui/` | Unit; dữ liệu quota/capability lấy từ API sẵn có |
 | 2.7 Lint R13–R16 dạng ratchet, khóa baseline | `scripts/ux-lint.ts` | Unit cho từng luật |
-| 2.8 axe trong E2E luồng cốt lõi (E8) | `tests/e2e/` | Dùng công cụ có sẵn trong repo; **[PO]** nếu phải thêm dependency |
+| 2.8 axe trong E2E luồng cốt lõi (E8) | `tests/e2e/` | Mở rộng `tests/e2e/ux/a11y.spec.ts` (đã có `@axe-core/playwright`) |
 | 2.9 Cờ tính năng theo tổ chức (E9) | theo cơ chế sẵn có | **[PO]** nếu cần bảng/cột mới (`prisma/schema.prisma`) |
 
 **Exit gate:** typecheck, lint:ratchet, lint:ux --check, `npm test` xanh; không đổi API public component cũ.
