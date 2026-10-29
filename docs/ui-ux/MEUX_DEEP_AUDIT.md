@@ -55,5 +55,24 @@ AI: nhập, chọn phong cách, sẵn sàng, đã xuất bản · **trang công 
 
 Còn mở (đề xuất PO): ảnh minh họa trong kho mẫu là ảnh stock máy ảnh/tai nghe/đồng hồ (Unsplash) — lệch ngành hoa, và là tài nguyên ngoài. Luồng "AI vẽ bố cục mới" có thể tự đề xuất ưu đãi trong nội dung AI — chưa có kiểm tra sự thật như landing.
 
+## #01 Ảnh sản phẩm, #02 Bộ ảnh — 8 trạng thái (+ gửi job)
+
+Đã chọn ảnh, mở tùy chọn (390/1280px), gửi tạo. Không có AI thật ở môi trường kiểm → không xem được ảnh kết quả; trạng thái sau gửi hiện đúng "Đã chờ N giây" (không tiến độ giả), mở lại trang khôi phục job đang chạy và khóa nút gửi. 8/8 axe sạch.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D01-01 | P2 | Lựa chọn phông nền/tỉ lệ/gói bộ ảnh chỉ phân biệt bằng màu viền, không `aria-pressed` | `aria-pressed` + dấu ✓ |
+
+## #04 Nội dung bán hàng — 8 trạng thái
+
+Chọn sản phẩm, kết quả bài viết (AI không chạy → nội dung mẫu), tab tải ảnh, hộp giọng văn. Sau sửa: 8/8 axe sạch.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D04-01 | **P1** | Đọc sai hợp đồng `GET /api/v1/products` (`master_image_url`, `pricing.selling_price`; API trả `masterImageUrl`, `price_vnd`) → ảnh và giá sản phẩm không bao giờ có | Đọc đúng trường; xem trước hiện ảnh thật |
+| D04-02 | **P1** | Khi AI không chạy: "🛡️ Offline Fallback" + "Điểm duyệt Critic: 0.0/10"; khi chạy: tên model/"GPU Metal" | Một dòng "AI chưa chạy được — đang dùng nội dung mẫu, nên chỉnh lại trước khi đăng"; điểm chất lượng chỉ khi có AI |
+| D04-03 | P2 | Xem trước bài đăng: "128" lượt thích, "16 bình luận • 5 chia sẻ", dấu xác minh, tên "Cửa hàng trực tuyến"; 7 nút giả bấm không làm gì | Bỏ số liệu/dấu giả; tên tiệm thật; nút minh họa thành `span` trang trí |
+| D04-04 | P2 | Ô tải ảnh `role=button` lồng nút khác; cảnh báo thiếu tương phản + emoji; khung cuộn giọng văn không focus được; "AI Vision", "Social Publishing", "Copy nhanh Zalo", emoji kênh | Sửa tương ứng |
+
 ## Tiếp theo
-#09 catalog → #05 poster (tùy biến, kho mẫu, xem phóng to) → #01/#02 (sau khi chọn ảnh, kết quả) → #04 → #03 (4 tab) → #49 → #14 → #31–#35.
+#03 (4 tab) → #49 → #14 → #31–#35.

@@ -119,16 +119,10 @@ export function ImageUploadTab({
                   hoặc nhấp để chọn từ thiết bị · JPG, PNG, WEBP · Tối đa 10MB
                 </div>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                className="text-xs gap-1.5 mt-1"
-              >
+              <span className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-text" aria-hidden="true">
                 <Upload size={13} />
                 Chọn ảnh từ máy
-              </Button>
+              </span>
             </>
           )}
         </div>
@@ -222,7 +216,7 @@ export function ImageUploadTab({
         <div className="flex items-center justify-between gap-3 p-4 rounded-2xl border border-border bg-surface shadow-sm">
           <div className="text-xs text-text-muted">
             {!selectedFile ? (
-              <span className="text-warning font-semibold">⚠️ Vui lòng chọn ảnh sản phẩm ở trên.</span>
+              <span className="text-warning-text font-semibold">Hãy chọn ảnh sản phẩm ở trên.</span>
             ) : selectedChannels.length === 0 ? (
               <span className="text-warning font-semibold">⚠️ Vui lòng chọn ít nhất 1 kênh ở Bước 2.</span>
             ) : (

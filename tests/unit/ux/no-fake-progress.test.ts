@@ -121,3 +121,13 @@ describe("Poster #05 — ấn phẩm tải về không cắt hotline, không t�
     expect(read("src/components/ad-banner-poster/poster-banner-client.tsx")).not.toContain("Tặng kèm băng rôn")
   })
 })
+
+describe("Nội dung #04 — đọc đúng hợp đồng /api/v1/products, xem trước không số liệu giả (audit sâu 29/10/2026)", () => {
+  it("đọc price_vnd và masterImageUrl; xem trước không còn 128 lượt thích giả", () => {
+    const src = read("src/app/(app)/noi-dung/use-product-data.ts")
+    expect(src).toContain("p.price_vnd")
+    expect(src).toContain("p.masterImageUrl")
+    expect(read("src/components/templates/content-engine/social-post-preview.tsx")).not.toMatch(/>128<|16 bình luận/)
+    expect(read("src/components/templates/content-engine/multichannel-post-card.tsx")).not.toMatch(/Offline Fallback|Critic|GPU Metal/)
+  })
+})
