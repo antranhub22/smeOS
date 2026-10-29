@@ -14,7 +14,7 @@ export type TrashSweepDeps = {
 
 const defaultTrashDeps: TrashSweepDeps = {
   findExpired: findExpiredTrashedAssets,
-  remove: deleteAssetAndEnqueuePayloads,
+  remove: (ctx, asset) => deleteAssetAndEnqueuePayloads(ctx, asset, "trash.auto_purge"),
 }
 
 function systemContext(organizationId: string): TenantContext {

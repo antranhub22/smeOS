@@ -88,7 +88,7 @@ describe("Asset Use-Cases with IAssetRepository Port", () => {
       const repo = createMockAssetRepo()
       const remove = vi.fn().mockResolvedValue(true)
       await expect(deleteAsset(mockTenant, "ast_123", repo, remove)).resolves.toBeUndefined()
-      expect(remove).toHaveBeenCalledWith(mockTenant, mockAsset)
+      expect(remove).toHaveBeenCalledWith(mockTenant, mockAsset, "asset.delete")
     })
 
     it("ném lỗi 404 khi không thấy asset, không xoá gì", async () => {

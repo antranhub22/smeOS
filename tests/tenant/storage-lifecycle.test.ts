@@ -43,15 +43,18 @@ describe("cách ly tenant — vòng đời kho tệp (SDAGF P1)", () => {
 
   it("xoá asset của tổ chức khác: không xoá gì, không ghi hàng đợi", async () => {
     const asset = await seedAsset(a.ctx)
-    expect(await deleteAssetAndEnqueuePayloads(b.ctx, asset)).toBe(false)
+    expect(await deleteAssetAndEnqueuePayloads(b.ctx, asset, "asset.delete")).toBe(false)
     expect(await prisma.assets.count({ where: { id: asset.id } })).toBe(1)
     expect(await prisma.storage_outbox.count()).toBe(0)
+    expect(await prisma.audit_logs.count({ where: { entity_id: asset.id } })).toBe(0)
   })
 
   it("xoá asset: dòng mất và hàng đợi có khoá payload trong cùng transaction", async () => {
     const asset = await seedAsset(a.ctx)
-    expect(await deleteAssetAndEnqueuePayloads(a.ctx, asset)).toBe(true)
+    expect(await deleteAssetAndEnqueuePayloads(a.ctx, asset, "trash.permanent_delete")).toBe(true)
     expect(await prisma.assets.count({ where: { id: asset.id } })).toBe(0)
+    const audit = await prisma.audit_logs.findMany({ where: { entity_id: asset.id } })
+    expect(audit).toEqual([expect.objectContaining({ organization_id: a.organizationId, action: "trash.permanent_delete" })])
     const pending = await listPendingOutbox(10)
     expect(pending).toEqual([expect.objectContaining({ organization_id: a.organizationId, storage_key: asset.storage_key })])
   })

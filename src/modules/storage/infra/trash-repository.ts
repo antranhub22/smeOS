@@ -270,7 +270,7 @@ export class TrashRepository implements ITrashRepository {
       })
       if (!asset) return "not_found"
       if (isUnderLegalHold(asset, new Date())) return "legal_hold"
-      return (await deleteAssetAndEnqueuePayloads(ctx, asset)) ? "deleted" : "not_found"
+      return (await deleteAssetAndEnqueuePayloads(ctx, asset, "trash.permanent_delete")) ? "deleted" : "not_found"
     }
 
     if (input.type === "PRODUCT") {

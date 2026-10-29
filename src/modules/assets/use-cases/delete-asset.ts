@@ -21,5 +21,5 @@ export async function deleteAsset(
   const asset = await repo.findById(ctx, id)
   if (!asset) throw notFound()
   if (isUnderLegalHold(asset, now)) throw conflict(LEGAL_HOLD_MESSAGE)
-  if (!(await remove(ctx, asset))) throw notFound()
+  if (!(await remove(ctx, asset, "asset.delete"))) throw notFound()
 }

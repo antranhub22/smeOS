@@ -1,4 +1,4 @@
-import type { StorageProvider, StorageMethod } from "@/core/ports"
+import type { StorageListPage, StorageProvider, StorageMethod } from "@/core/ports"
 
 /** Ném khi kho tệp trả 404 — route serve ảnh bắt để trả HTTP 404 thay vì 500. */
 export class StorageFileNotFoundError extends Error {
@@ -10,6 +10,7 @@ export class StorageFileNotFoundError extends Error {
 }
 
 import {
+  chuoiTruyVanChuanTac,
   maHoaDuongDan,
   sha256Hex,
   tieuDeUyQuyen,
@@ -137,6 +138,32 @@ export class S3StorageProvider implements StorageProvider {
     }
   }
 
+  async list(prefix: string, cursor?: string | null): Promise<StorageListPage> {
+    const canonicalUri = `/${maHoaDuongDan(this.config.bucket)}`
+    const query = chuoiTruyVanChuanTac({
+      "list-type": "2",
+      "max-keys": "1000",
+      prefix,
+      ...(cursor ? { "continuation-token": cursor } : {}),
+    })
+    const headers = tieuDeUyQuyen({
+      info: this.info,
+      method: "GET",
+      host: this.host,
+      canonicalUri,
+      canonicalQuery: query,
+      headers: {},
+      payloadHash: sha256Hex(""),
+      now: new Date(),
+    })
+
+    const res = await fetch(`${this.protocol}://${this.host}${canonicalUri}?${query}`, { method: "GET", headers })
+    if (!res.ok) {
+      throw new Error(`Kho tệp từ chối liệt kê ${prefix}: ${res.status}`)
+    }
+    return parseListObjectsV2(await res.text())
+  }
+
   async signedUrl(
     key: string,
     expiresInSeconds: number,
@@ -154,4 +181,24 @@ export class S3StorageProvider implements StorageProvider {
       protocol: this.protocol,
     })
   }
+}
+
+function xmlText(text: string): string {
+  return text
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, "&")
+}
+
+/** Đọc phản hồi XML của ListObjectsV2 (S3/R2) — chỉ các trường cần cho đối soát. */
+export function parseListObjectsV2(xml: string): StorageListPage {
+  const items = [...xml.matchAll(/<Contents>([\s\S]*?)<\/Contents>/g)].map((m) => ({
+    key: xmlText(/<Key>([\s\S]*?)<\/Key>/.exec(m[1]!)?.[1] ?? ""),
+    size: Number(/<Size>(\d+)<\/Size>/.exec(m[1]!)?.[1] ?? 0),
+  }))
+  const truncated = /<IsTruncated>true<\/IsTruncated>/.test(xml)
+  const token = /<NextContinuationToken>([\s\S]*?)<\/NextContinuationToken>/.exec(xml)?.[1]
+  return { items, nextCursor: truncated && token ? xmlText(token) : null }
 }

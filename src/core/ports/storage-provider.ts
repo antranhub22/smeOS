@@ -14,12 +14,19 @@
  */
 export type StorageMethod = "GET" | "PUT";
 
+export type StoredObject = { key: string; size: number };
+
+/** Một trang liệt kê tệp; `nextCursor = null` là hết. */
+export type StorageListPage = { items: StoredObject[]; nextCursor: string | null };
+
 export interface StorageProvider {
   readonly name: string;
   put(key: string, body: Uint8Array, contentType: string): Promise<void>;
   get(key: string): Promise<Uint8Array>;
   /** Xoá payload. Idempotent: tệp không còn thì coi như đã xoá. */
   delete(key: string): Promise<void>;
+  /** Liệt kê tệp theo tiền tố — chỉ dùng cho đối soát (SDAGF-017), không cho request người dùng. */
+  list(prefix: string, cursor?: string | null): Promise<StorageListPage>;
   signedUrl(
     key: string,
     expiresInSeconds: number,

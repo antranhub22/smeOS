@@ -13,7 +13,7 @@ Xếp theo thứ tự ưu tiên của Master Prompt Phase 4. Khả năng xảy r
 | R-04 | Mất tệp không khôi phục được | 2 | C — mất toàn bộ ảnh/video nếu bucket lỗi hoặc bị xoá nhầm | L–M | Runbook chỉ có DB; versioning bucket: ? | 020, 021 | P1-4 |
 | R-05 | Restore DB chưa từng diễn tập | 2 | H | M | `VAN_HANH_SU_CO_VA_SAO_LUU.md:28` | 021 | P1-5 |
 | R-06 (**đã xử lý P1-6 + legal hold**) | Purge thùng rác không tin cậy và không có legal hold | 6 | H — xoá sai lúc hoặc không xoá; không giữ được khi tranh chấp | H | Lazy purge fire-and-forget `trash-repository.ts:53,93` | 011, 013 | P1-6, P2 |
-| R-07 | Không đối soát registry↔payload | 5 | H — dòng trỏ tệp không tồn tại, tệp mồ côi không ai biết | H | Không có job | 017 | P2 |
+| R-07 (**giảm: đối soát report-only P2-1**) | Không đối soát registry↔payload | 5 | H — dòng trỏ tệp không tồn tại, tệp mồ côi không ai biết | H | Không có job | 017 | P2 |
 | R-08 | Cấu hình bucket (public, SSE, quyền key) chưa xác minh | 1, 3 | H nếu bucket public | ? | Ngoài repo | 019, 027 | P0-4 (thu bằng chứng) |
 
 ## Medium / Low

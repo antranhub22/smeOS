@@ -22,9 +22,13 @@ import {
 } from "@/modules/platform/use-cases/get-platform-org-records"
 import { strToU8, zipSync } from "fflate"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
+import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 
 export const GET = handle(async (request, { params }) => {
   const pctx = await requirePlatformContext(request)
+  // Gác ngay đầu: nhánh CSV nuốt lỗi từng miền nên thiếu N1 từng ra ZIP rỗng thay vì 403.
+  requirePlatformCapability(pctx, "N1")
   const { orgId } = await params
 
   const url = new URL(request.url)
@@ -49,6 +53,12 @@ export const GET = handle(async (request, { params }) => {
       }
     }
     const zip = zipSync(files, { level: 6 })
+    await recordPlatformAuditLog(pctx, {
+      action: "organization.data.export",
+      entityType: "organization",
+      entityId: orgId as string,
+      after: { type: "csv" },
+    })
     return new NextResponse(Buffer.from(zip), {
       status: 200,
       headers: {
@@ -60,6 +70,12 @@ export const GET = handle(async (request, { params }) => {
 
   // Full export: CSV + images
   const { zip } = await exportOrgDataAsZip(pctx, orgId as string)
+  await recordPlatformAuditLog(pctx, {
+    action: "organization.data.export",
+    entityType: "organization",
+    entityId: orgId as string,
+    after: { type: "full" },
+  })
 
   return new NextResponse(Buffer.from(zip), {
     status: 200,
