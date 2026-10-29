@@ -23,3 +23,13 @@ describe("Không tiến độ giả / link giả ở công cụ Landing page & C
     expect(src).toContain("setUsedFallbackContent(true)")
   })
 })
+
+describe("Thẻ báo giá /bao-gia — không dữ liệu giả, không AI giả (PO 29/10/2026)", () => {
+  it("đọc đúng `{ data }` của /api/v1/products, không sản phẩm mẫu cài cứng, không giả lập phân tích ảnh", () => {
+    const src = read("src/app/(app)/bao-gia/page.tsx")
+    expect(src).toContain("body.data")
+    expect(src).not.toContain("SAMPLE_PRODUCTS")
+    expect(src).not.toContain("unsplash.com")
+    expect(src).not.toMatch(/setTimeout\(\(\) => \{\s*setAnalyzing/)
+  })
+})

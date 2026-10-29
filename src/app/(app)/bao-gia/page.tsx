@@ -2,10 +2,10 @@
 
 import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
   ArrowLeft,
-  Camera,
   Check,
   Copy,
   Download,
@@ -16,7 +16,6 @@ import {
   Send,
   SlidersHorizontal,
   Sparkles,
-  UploadCloud,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -24,6 +23,9 @@ import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { extractComponentNames } from "@/modules/products/domain/bom"
+import { EmptyState } from "@/components/ui/empty-state"
+import { InlineError } from "@/components/ui/inline-error"
 
 type ProductItem = {
   id: string
@@ -35,54 +37,6 @@ type ProductItem = {
   composition?: string[]
 }
 
-const SAMPLE_PRODUCTS: ProductItem[] = [
-  {
-    id: "p1",
-    title: "Sản phẩm mẫu 01",
-    price: 599000,
-    category: "Danh mục A",
-    image_url: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80",
-    description: "Nguyên liệu cao cấp tuyển chọn, tinh tế từng chi tiết",
-    composition: ["Thành phần chính", "Phụ liệu nhập", "Bao bì cao cấp"],
-  },
-  {
-    id: "p2",
-    title: "Sản phẩm mẫu 02",
-    price: 850000,
-    category: "Danh mục B",
-    image_url: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=600&q=80",
-    description: "Tone màu nổi bật, sang trọng và ý nghĩa",
-    composition: ["Nguyên liệu chính", "Phụ liệu trang trí", "Bao bì"],
-  },
-  {
-    id: "p3",
-    title: "Sản phẩm mẫu 03",
-    price: 649000,
-    category: "Danh mục A",
-    image_url: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80",
-    description: "Phối hợp hài hòa, tinh tế và thanh lịch",
-    composition: ["Nguyên liệu chính", "Phụ liệu", "Trang trí"],
-  },
-  {
-    id: "p4",
-    title: "Sản phẩm mẫu 04",
-    price: 699000,
-    category: "Danh mục C",
-    image_url: "https://images.unsplash.com/photo-1533616688419-b7a585564566?auto=format&fit=crop&w=600&q=80",
-    description: "Thiết kế thanh lịch, nữ tính và phong cách",
-    composition: ["Nguyên liệu A", "Nguyên liệu B", "Trang trí", "Hộp quà"],
-  },
-  {
-    id: "p5",
-    title: "Sản phẩm mẫu 05",
-    price: 1200000,
-    category: "Danh mục D",
-    image_url: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=600&q=80",
-    description: "Tinh tế, sang trọng và đẳng cấp",
-    composition: ["Nguyên liệu chính", "Phụ liệu", "Trang trí", "Bình/Hộp đựng"],
-  },
-]
-
 export default function BaoGiaPage() {
   const { t } = useI18n()
   const router = useRouter()
@@ -90,23 +44,12 @@ export default function BaoGiaPage() {
   const ti = getIndustryTerminology(organization?.industry)
   const [activeTab, setActiveTab] = useState<"CUSTOMER" | "PARTNER">("CUSTOMER")
   const [dangTai, setDangTai] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [products, setProducts] = useState<ProductItem[]>([])
   const [budgetFilter, setBudgetFilter] = useState<string>("ALL")
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL")
-  const [selectedIds, setSelectedIds] = useState<string[]>(["p1", "p3", "p4"])
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [copied, setCopied] = useState(false)
-
-  // Source Mode per Tab: "LIBRARY" vs "UPLOAD"
-  const [customerSourceMode, setCustomerSourceMode] = useState<"LIBRARY" | "UPLOAD">("LIBRARY")
-  const [partnerSourceMode, setPartnerSourceMode] = useState<"LIBRARY" | "UPLOAD">("LIBRARY")
-
-  // Upload & AI Analysis State
-  const [analyzing, setAnalyzing] = useState(false)
-  const [analyzedSuccess, setAnalyzedSuccess] = useState(false)
-  const [uploadedPreview, setUploadedPreview] = useState<string | null>(null)
-  const [analyzedTitle, setAnalyzedTitle] = useState("Sản phẩm vừa phân tích")
-  const [analyzedPrice, setAnalyzedPrice] = useState("680000")
-  const [analyzedComposition, setAnalyzedComposition] = useState("7 cành hướng dương, hoa mõm sói trắng, lá bạc")
 
   // Partner form state
   const [partnerItemName, setPartnerItemName] = useState("Sản phẩm đặt hàng")
@@ -114,31 +57,28 @@ export default function BaoGiaPage() {
   const [deliveryFee, setDeliveryFee] = useState("30000")
   const [deadlineTime, setDeadlineTime] = useState("14:30 hôm nay")
 
+  // `/api/v1/products` trả `{ data: [...] }` — trước đây đọc `data.products` nên luôn rơi về sản phẩm mẫu giả.
   const napDuLieu = useCallback(async () => {
     try {
-      const res = await fetch("/api/v1/products")
-      if (res.ok) {
-        const data = await res.json()
-        const rawList = Array.isArray(data) ? data : data.products || []
-        if (rawList.length > 0) {
-          const mapped: ProductItem[] = rawList.map((item: Record<string, unknown>, idx: number) => ({
-            id: String(item.id || `prod-${idx}`),
-            title: String(item.title || item.name || ti.sampleProduct),
-            price: Number(item.price || 500000),
-            category: String(item.category || ti.catalogTitle),
-            image_url: String(item.thumbnail_url || item.image_url || (SAMPLE_PRODUCTS[idx % SAMPLE_PRODUCTS.length]?.image_url ?? "")),
-            description: String(item.description || `${ti.sampleProduct} tuyển chọn`),
-            composition: Array.isArray(item.composition) ? (item.composition as string[]) : ["Nguyên liệu chính", "Phụ liệu", "Trang trí"],
-          }))
-          setProducts(mapped)
-          return
-        }
-      }
+      const res = await fetch("/api/v1/products?status=ACTIVE&limit=100")
+      if (!res.ok) throw new Error(String(res.status))
+      const body = (await res.json()) as { data?: Array<Record<string, unknown>> }
+      setProducts(
+        (body.data ?? [])
+          .filter((item) => typeof item.price_vnd === "number")
+          .map((item) => ({
+            id: String(item.id),
+            title: String(item.name ?? ""),
+            price: Number(item.price_vnd),
+            category: typeof item.category === "string" ? item.category : ti.catalogTitle,
+            image_url: typeof item.masterImageUrl === "string" ? item.masterImageUrl : "",
+            composition: extractComponentNames((item.attributes as Record<string, unknown> | null)?.bom),
+          })),
+      )
     } catch {
-      // Fallback
+      setLoadError("Chưa tải được danh sách sản phẩm. Hãy thử tải lại trang.")
     }
-    setProducts(SAMPLE_PRODUCTS)
-  }, [])
+  }, [ti.catalogTitle])
 
   useEffect(() => {
     let cancelled = false
@@ -163,52 +103,6 @@ export default function BaoGiaPage() {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     )
-  }
-
-  const handleSimulateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const url = event.target?.result as string
-      setUploadedPreview(url)
-      setAnalyzing(true)
-      setAnalyzedSuccess(false)
-
-      // Simulate vision AI analysis
-      setTimeout(() => {
-        setAnalyzing(false)
-        setAnalyzedSuccess(true)
-        setAnalyzedTitle(`${ti.sampleProduct} nghệ thuật mới`)
-        setAnalyzedPrice("720000")
-        setAnalyzedComposition("Hoa hồng Ohara nhập, baby trắng, lá bạc cao cấp")
-      }, 1200)
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const handleAddAnalyzedToCustomerQuote = () => {
-    const newId = `upload-${Date.now()}`
-    const newItem: ProductItem = {
-      id: newId,
-      title: analyzedTitle,
-      price: Number(analyzedPrice) || 700000,
-      category: ti.catalogTitle,
-      image_url: uploadedPreview || (SAMPLE_PRODUCTS[0]?.image_url ?? ""),
-      description: `${ti.sampleProduct} vừa phân tích từ ảnh`,
-
-      composition: analyzedComposition.split(",").map((s) => s.trim()),
-    }
-    setProducts((prev) => [newItem, ...prev])
-    setSelectedIds((prev) => [newId, ...prev])
-    setCustomerSourceMode("LIBRARY")
-  }
-
-  const handleApplyAnalyzedToPartner = () => {
-    setPartnerItemName(analyzedTitle)
-    setPartnerPrice(String(Math.round((Number(analyzedPrice) || 600000) * 0.75)))
-    setPartnerSourceMode("LIBRARY")
   }
 
   const selectedProducts = products.filter((p) => selectedIds.includes(p.id))
@@ -308,138 +202,13 @@ export default function BaoGiaPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column: Source Selection + Filter & Products (7 cols) */}
             <div className="lg:col-span-7 space-y-4">
-              {/* Dual Source Selector */}
-              <div className="flex items-center gap-2 p-1.5 rounded-xl border border-border bg-surface">
-                <button
-                  type="button"
-                  onClick={() => setCustomerSourceMode("LIBRARY")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
-                    customerSourceMode === "LIBRARY"
-                      ? "bg-primary text-surface font-semibold shadow-xs"
-                      : "text-text hover:bg-surface-alt"
-                  }`}
-                >
-                  <Layers className="w-4 h-4" aria-hidden="true" />
-                  <span>Ảnh từ kho Sản phẩm</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCustomerSourceMode("UPLOAD")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
-                    customerSourceMode === "UPLOAD"
-                      ? "bg-primary text-surface font-semibold shadow-xs"
-                      : "text-text hover:bg-surface-alt"
-                  }`}
-                >
-                  <Camera className="w-4 h-4" aria-hidden="true" />
-                  <span>Ảnh sản phẩm mới (Tải ảnh & phân tích)</span>
-                </button>
-              </div>
-
-              {/* Source View 1: UPLOAD NEW PHOTO */}
-              {customerSourceMode === "UPLOAD" && (
-                <Card className="p-4 bg-surface border-border space-y-4">
-                  <div className="flex items-center justify-between border-b border-border pb-2">
-                    <div className="flex items-center gap-2 text-body-sm font-semibold text-text">
-                      <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" />
-                      <span>Tải ảnh {ti.sampleProduct} mới để hệ thống nhận diện & tạo thẻ báo giá</span>
-                    </div>
-                  </div>
-
-                  <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary transition-colors bg-surface-alt">
-                    <input
-                      id="customer-photo-upload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleSimulateUpload}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="customer-photo-upload"
-                      className="cursor-pointer flex flex-col items-center justify-center space-y-2"
-                    >
-                      <UploadCloud className="w-8 h-8 text-primary" aria-hidden="true" />
-                      <div className="text-body-sm font-bold text-text">
-                        Bấm để tải ảnh {ti.sampleProduct} hoặc kéo thả vào đây
-                      </div>
-                      <div className="text-caption text-text-muted">
-                        Hỗ trợ ảnh chụp điện thoại (JPG, PNG, WebP)
-                      </div>
-                    </label>
-                  </div>
-
-                  {analyzing && (
-                    <div className="p-4 rounded-xl border border-border bg-selected/30 flex items-center justify-center gap-3">
-                      <RefreshCw className="w-4 h-4 text-primary animate-spin" aria-hidden="true" />
-                      <span className="text-body-sm font-medium text-primary">
-                        Hệ thống đang phân tích loài hoa, đếm số cành và ước tính giá...
-                      </span>
-                    </div>
-                  )}
-
-                  {analyzedSuccess && (
-                    <div className="p-4 rounded-xl border border-primary/40 bg-selected/20 space-y-3">
-                      <div className="flex items-center gap-3">
-                        {uploadedPreview && (
-                          <img
-                            src={uploadedPreview}
-                            alt="Ảnh vừa tải"
-                            className="w-16 h-16 rounded-lg object-cover border border-border"
-                          />
-                        )}
-                        <div className="flex-1 space-y-1">
-                          <label htmlFor="analyzed-title-input" className="text-caption text-text-muted block">Tên sản phẩm nhận diện:</label>
-                          <input
-                            id="analyzed-title-input"
-                            type="text"
-                            value={analyzedTitle}
-                            onChange={(e) => setAnalyzedTitle(e.target.value)}
-                            className="w-full px-2.5 py-1 rounded-md border border-border bg-surface text-body-sm font-bold text-text"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label htmlFor="analyzed-price-input" className="text-caption text-text-muted block mb-1">Giá báo đề xuất (đ):</label>
-                          <input
-                            id="analyzed-price-input"
-                            type="number"
-                            value={analyzedPrice}
-                            onChange={(e) => setAnalyzedPrice(e.target.value)}
-                            className="w-full px-2.5 py-1 rounded-md border border-border bg-surface text-body-sm font-bold text-primary"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor="analyzed-comp-input" className="text-caption text-text-muted block mb-1">Thành phần hoa nhận diện:</label>
-                          <input
-                            id="analyzed-comp-input"
-                            type="text"
-                            value={analyzedComposition}
-                            onChange={(e) => setAnalyzedComposition(e.target.value)}
-                            className="w-full px-2.5 py-1 rounded-md border border-border bg-surface text-caption text-text"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex justify-end pt-1">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleAddAnalyzedToCustomerQuote}
-                          className="bg-primary text-surface font-semibold hover:bg-primary-hover"
-                        >
-                          <Check className="w-4 h-4 mr-1.5" aria-hidden="true" />
-                          Thêm vào bảng báo giá khách hàng
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </Card>
-              )}
-
+              <p className="text-body-sm text-text-muted">
+                Mẫu chưa có trong kho?{" "}
+                <Link href="/san-pham/tao-moi" className="font-semibold text-primary underline">Thêm sản phẩm bằng ảnh</Link>{" "}
+                — AI phân tích thành phần thật rồi đưa vào kho.
+              </p>
               {/* Source View 2: PRODUCT LIBRARY & FILTER */}
-              {customerSourceMode === "LIBRARY" && (
+              {(
                 <>
                   <Card className="p-4 bg-surface border-border space-y-3">
                     <div className="flex items-center justify-between">
@@ -507,6 +276,14 @@ export default function BaoGiaPage() {
                     </div>
                   </Card>
 
+                  {loadError && <InlineError message={loadError} onRetry={() => void napDuLieu()} />}
+                  {!loadError && products.length === 0 && (
+                    <EmptyState
+                      title="Kho chưa có sản phẩm đang bán có giá"
+                      reason="Thêm sản phẩm và giá bán trước, rồi quay lại đây để tạo thẻ báo giá gửi khách."
+                      action={{ label: "Thêm sản phẩm", href: "/san-pham/tao-moi" }}
+                    />
+                  )}
                   {/* Product list */}
                   <div className="space-y-2.5">
                     {filteredProducts.map((p) => {
@@ -669,80 +446,8 @@ export default function BaoGiaPage() {
         ) : (
           /* Partner Quote Form (Tab 2) */
           <div className="max-w-3xl mx-auto space-y-6">
-            {/* Dual Source Selector for Partner */}
-            <div className="flex items-center gap-2 p-1.5 rounded-xl border border-border bg-surface">
-              <button
-                type="button"
-                onClick={() => setPartnerSourceMode("LIBRARY")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
-                  partnerSourceMode === "LIBRARY"
-                    ? "bg-primary text-surface font-semibold shadow-xs"
-                    : "text-text hover:bg-surface-alt"
-                }`}
-              >
-                <Layers className="w-4 h-4" aria-hidden="true" />
-                <span>Chọn mẫu từ kho hoa tiệm</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPartnerSourceMode("UPLOAD")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
-                  partnerSourceMode === "UPLOAD"
-                    ? "bg-primary text-surface font-semibold shadow-xs"
-                    : "text-text hover:bg-surface-alt"
-                }`}
-              >
-                <Camera className="w-4 h-4" aria-hidden="true" />
-                <span>Tải ảnh mẫu gia công mới</span>
-              </button>
-            </div>
-
-            {/* Partner Upload Section */}
-            {partnerSourceMode === "UPLOAD" && (
-              <Card className="p-4 bg-surface border-border space-y-3">
-                <div className="border-2 border-dashed border-border rounded-xl p-5 text-center bg-surface-alt">
-                  <input
-                    id="partner-photo-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleSimulateUpload}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="partner-photo-upload"
-                    className="cursor-pointer flex flex-col items-center justify-center space-y-1.5"
-                  >
-                    <UploadCloud className="w-6 h-6 text-primary" aria-hidden="true" />
-                    <span className="text-body-sm font-bold text-text">
-                      Tải ảnh {ti.sampleProduct} khách yêu cầu để phân tích thành phần
-                    </span>
-                    <span className="text-caption text-text-muted">
-                      Hệ thống tự động trích xuất thành phần và gợi ý giá gia công
-                    </span>
-                  </label>
-                </div>
-
-                {analyzedSuccess && (
-                  <div className="p-3 rounded-lg border border-primary/40 bg-selected/20 flex items-center justify-between">
-                    <div>
-                      <div className="text-body-sm font-bold text-text">{analyzedTitle}</div>
-                      <div className="text-caption text-text-muted">{analyzedComposition}</div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleApplyAnalyzedToPartner}
-                      className="bg-primary text-surface font-semibold"
-                    >
-                      Áp dụng vào phiếu giao việc
-                    </Button>
-                  </div>
-                )}
-              </Card>
-            )}
-
             {/* Partner Quick Select from Library */}
-            {partnerSourceMode === "LIBRARY" && (
+            {(
               <Card className="p-4 bg-surface border-border space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-caption font-semibold text-text">

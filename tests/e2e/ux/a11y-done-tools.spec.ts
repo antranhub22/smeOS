@@ -27,6 +27,18 @@ const DONE_TOOLS: Array<{ name: string; path: string; flag?: string; upload: boo
   { name: "Tạo catalog và bộ sưu tập", path: "/catalog", upload: false },
 ]
 
+/**
+ * Nhóm 6 (#31–#35) là một màn 5 tab: kiểm cả 5 tab bằng MỘT tài khoản. Mỗi ca đăng ký một tài khoản
+ * mới làm bộ test chạm giới hạn đăng ký (429 RATE_LIMITED, CI 29/10/2026).
+ */
+const COSTING_TABS = [
+  "/tinh-gia/nguyen-lieu",
+  "/tinh-gia/cong-thuc",
+  "/tinh-gia/gia-von",
+  "/tinh-gia/gia-ban",
+  "/tinh-gia/du-toan",
+]
+
 async function enableFlag(flag: string, orgId: string) {
   const client = new Client({ connectionString: dbUrl })
   await client.connect()
@@ -73,4 +85,14 @@ test.describe("Công cụ Hoàn thiện theo chuẩn 03c — trợ năng ở kh�
       }
     })
   }
+
+  test("Giá vốn & định giá (5 tab /tinh-gia) không có lỗi trợ năng critical hoặc serious", async ({ page }) => {
+    await createTestUserAndLogin(page)
+    for (const path of COSTING_TABS) {
+      await page.goto(path)
+      await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1)
+      const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()
+      expect(r.violations.filter((v) => v.impact === "critical" || v.impact === "serious").map((v) => `${path}: ${v.id}`)).toEqual([])
+    }
+  })
 })

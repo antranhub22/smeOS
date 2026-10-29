@@ -114,4 +114,5 @@ export const SERVICES_INDUSTRY: IndustryPluginContract = {
     laborByComplexityVnd: { EASY: 100_000, MEDIUM: 300_000, HARD: 800_000 },
     peakDays: [],
   },
+  costing: null,
 }
