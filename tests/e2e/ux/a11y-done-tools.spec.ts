@@ -1,6 +1,3 @@
-import { writeFileSync } from "node:fs"
-import { tmpdir } from "node:os"
-import { join } from "node:path"
 import { expect, test } from "@playwright/test"
 import AxeBuilder from "@axe-core/playwright"
 import { Client } from "pg"
@@ -8,12 +5,10 @@ import { createTestUserAndLogin } from "./helpers"
 
 const dbUrl = process.env.DATABASE_URL || "postgresql://floraos:floraos@localhost:5432/floraos"
 
-/** Ảnh PNG 2×2 hợp lệ để chọn file — không cần tệp mẫu trong repo. */
-function tinyPng(): string {
-  const path = join(tmpdir(), "e2e-anh-san-pham.png")
+/** Ảnh PNG 2×2 hợp lệ, truyền thẳng bằng buffer — không ghi tệp tạm. */
+function tinyPng() {
   const b64 = "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGP8z8DAwMDAxMDAwMDAAAANHQEDK+mmyAAAAABJRU5ErkJggg=="
-  writeFileSync(path, Buffer.from(b64, "base64"))
-  return path
+  return { name: "e2e-anh-san-pham.png", mimeType: "image/png", buffer: Buffer.from(b64, "base64") }
 }
 
 /**

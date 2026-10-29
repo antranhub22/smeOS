@@ -13,21 +13,21 @@ import {
 export interface TaskStatusProps {
   state: TaskUiState
   /** Tên việc đang làm, ví dụ "Dựng video" — ghép trước nhãn trạng thái. */
-  title?: string
+  title?: string | undefined
   /** Mô tả thêm bằng ngôn ngữ nghiệp vụ (lý do lỗi, bước hiện tại). */
-  detail?: string
+  detail?: string | undefined
   /** Kết quả đã xong nhưng còn chờ duyệt. */
-  needsReview?: boolean
-  failureKind?: TaskFailureKind
+  needsReview?: boolean | undefined
+  failureKind?: TaskFailureKind | undefined
   /** Chỉ truyền khi backend báo tiến độ thật — không truyền số ước lượng. */
-  progress?: number | null
-  elapsedSeconds?: number
+  progress?: number | null | undefined
+  elapsedSeconds?: number | undefined
   /** Mã hỗ trợ an toàn để người dùng báo CSKH (03c UX-020). */
-  supportCode?: string
-  onRetry?: () => void
-  retryLabel?: string
-  onCancel?: () => void
-  className?: string
+  supportCode?: string | undefined
+  onRetry?: (() => void) | undefined
+  retryLabel?: string | undefined
+  onCancel?: (() => void) | undefined
+  className?: string | undefined
 }
 
 const TONE: Record<TaskUiState, string> = {
