@@ -99,5 +99,18 @@ Quét từ khóa (trống, đang chạy), cài đặt lịch quét, tiêu chí v
 
 Ghi chú: nút "Cài Đặt & Biểu Mẫu" mở `/cai-dat` (hồ sơ cửa hàng) — trang đó còn 8 lỗi tương phản + 2 ô thiếu nhãn, thuộc nhóm Cài đặt của đợt rollout sau.
 
+## #14 Thẻ chào & catalog nhanh — `/the-chao?quick=true`
+
+Trạng thái kiểm: mở, lọc, tạo link (hộp thoại), sau khi đóng, trang khách.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D14-01 | P1 | Ô link chỉ đọc và ô lời nhắn trong hộp chia sẻ không có nhãn | `aria-label` |
+| D14-02 | P1 | Admin thanh toán brochure dùng `role="tab"` nhưng không có tabpanel | Nhóm nút `aria-pressed` |
+| D14-03 | P2 | Tên 20 mẫu giao diện bằng tiếng Anh ("Editorial Luxury"…) | Tên tiếng Việt (`greeting-template-catalog.ts`) |
+| D14-04 | P2 | Nhãn mã kỹ thuật "#01…#12" trên thẻ mẫu (chữ 7px, tương phản thấp) | Bỏ nhãn |
+| D14-05 | P2 | Chấm chọn sản phẩm 6px, nút trước/sau 24px sát nhau (target-size) | Vùng bấm 24px cho chấm; nút 32px ở di động |
+| D14-06 | P1 | Khối chưa tới lượt (`opacity-60`, chuẩn Spotlight PO 23/10) làm chữ dưới 4,5:1 — axe 27–39 lỗi | **Chưa sửa — cần PO** (chuẩn Spotlight bị khóa trong Screen Contract) |
+
 ## Tiếp theo
-#14 → #31–#35.
+#31–#35.

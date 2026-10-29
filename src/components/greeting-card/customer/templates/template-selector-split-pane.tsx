@@ -30,12 +30,6 @@ const PHONE_INNER_H = Math.round(CARD_NATURAL_H * CARD_SCALE) // ≈ 308px
 /** Total height of the split pane panel */
 const PANEL_H = 520
 
-const ACCENT: Record<string, string> = {
-  "01": "#c8a87a", "02": "#777", "03": "#c8a050", "04": "#d81b60",
-  "05": "#5c7a3e", "06": "#5090e8", "07": "#e8a030", "08": "#8a7060",
-  "09": "#e09820", "10": "#aaa",  "11": "#7a6040", "12": "#c0b080",
-}
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -158,7 +152,6 @@ function TemplateListItem({
   onClick: () => void
   photo: string | null
 }) {
-  const accent = ACCENT[tpl.styleNumber ?? ""] ?? "#888"
   const ref = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -184,18 +177,6 @@ function TemplateListItem({
         style={{ width: 40, height: 52 }}
       >
         <TemplateThumb templateId={tpl.id} photo={photo} />
-        {tpl.styleNumber && (
-          <div
-            className="absolute bottom-0.5 right-0.5 text-white font-mono font-bold"
-            style={{
-              fontSize: 7, lineHeight: 1,
-              background: isActive ? accent : "rgba(0,0,0,0.65)",
-              padding: "1.5px 3px", borderRadius: 3,
-            }}
-          >
-            #{tpl.styleNumber}
-          </div>
-        )}
       </div>
 
       {/* Label */}
@@ -300,14 +281,6 @@ function LivePreviewPane({
       <div className="flex flex-col justify-center gap-4 flex-1 min-w-0">
         {/* Name + style badge */}
         <div className="flex flex-col gap-1">
-          {tpl.styleNumber && (
-            <span
-              className="text-caption font-mono font-bold px-2 py-0.5 rounded-md text-white self-start"
-              style={{ background: ACCENT[tpl.styleNumber] ?? "#888" }}
-            >
-              #{tpl.styleNumber}
-            </span>
-          )}
           <h3 className="text-body font-bold text-foreground leading-tight">{tpl.name}</h3>
         </div>
 
@@ -318,7 +291,7 @@ function LivePreviewPane({
               <button
                 type="button"
                 onClick={prev}
-                className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-foreground transition-colors cursor-pointer"
+                className="size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-foreground transition-colors cursor-pointer"
                 aria-label="Sản phẩm trước"
               >
                 <ChevronLeft size={12} />
@@ -329,19 +302,16 @@ function LivePreviewPane({
                     key={i}
                     type="button"
                     onClick={() => setProductIdx(i)}
-                    className={`rounded-full transition-all cursor-pointer ${
-                      i === safeIdx
-                        ? "bg-primary w-3.5 h-1.5"
-                        : "bg-border w-1.5 h-1.5 hover:bg-border-focus"
-                    }`}
+                    className="group flex h-6 min-w-6 items-center justify-center cursor-pointer"
                     aria-label={`Sản phẩm ${i + 1}`}
-                  />
+                    aria-current={i === safeIdx ? "true" : undefined}
+                  ><span className={`rounded-full transition-all ${i === safeIdx ? "bg-primary w-3.5 h-1.5" : "bg-border w-1.5 h-1.5 group-hover:bg-border-focus"}`} /></button>
                 ))}
               </div>
               <button
                 type="button"
                 onClick={next}
-                className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-foreground transition-colors cursor-pointer"
+                className="size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-foreground transition-colors cursor-pointer"
                 aria-label="Sản phẩm tiếp"
               >
                 <ChevronRight size={12} />

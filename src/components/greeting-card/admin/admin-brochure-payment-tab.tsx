@@ -76,13 +76,12 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
             <button type="button" onClick={onClearFocus} className="min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</button>
           </div>
         )}
-        <div className="p-4 border-b border-border flex flex-wrap items-center gap-2" role="tablist" aria-label="Lọc đơn">
+        <div className="p-4 border-b border-border flex flex-wrap items-center gap-2" role="group" aria-label="Lọc đơn">
           {ORDER_FILTERS.map((f) => (
             <button
               key={f.id}
               type="button"
-              role="tab"
-              aria-selected={filter === f.id}
+              aria-pressed={filter === f.id}
               onClick={() => { setFilter(f.id); onClearFocus?.() }}
               className={`px-3 h-8 rounded-lg text-caption font-bold border ${
                 filter === f.id ? "bg-primary text-white border-primary" : "border-border text-text-muted hover:bg-surface-muted"
