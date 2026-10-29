@@ -71,12 +71,12 @@ export function QuickProductUploadModal({
 
   /**
    * Chỉ chạy khi người dùng bấm. Lần đầu: dùng lại kết quả cũ của ảnh nếu có (miễn phí).
-   * Bấm lại trên ảnh đã có kết quả: hỏi xác nhận — đồng ý thì phân tích mới và trừ credit.
+   * Bấm lại trên ảnh đã có kết quả: phân tích mới và trừ credit — chi phí ghi sẵn trên nút "Phân tích lại (1 credit)"
+   * nên không hỏi thêm bằng confirm() (03c UX-015: R2 báo chi phí tại chỗ, không chặn bằng hộp thoại).
    */
   const handleVisionAnalyze = async () => {
     if (!selectedFile) return
     const again = analyzed
-    if (again && !window.confirm("Ảnh này đã có kết quả phân tích. Phân tích mới sẽ tốn 1 credit — bạn có muốn tiếp tục?")) return
     setIsAnalyzing(true)
     setErrorMessage(null)
     setNotice(null)

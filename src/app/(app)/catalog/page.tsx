@@ -178,7 +178,7 @@ function PageHeader({
 
   return (
     <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-[18px] py-4">
-      <div className="text-title font-extrabold text-primary">Tạo catalog & bộ sưu tập</div>
+      <h1 className="text-title font-extrabold text-primary">Tạo catalog & bộ sưu tập</h1>
       <div className="flex items-center gap-2">
         {onOpenBudgetMatcher && (
           <Button

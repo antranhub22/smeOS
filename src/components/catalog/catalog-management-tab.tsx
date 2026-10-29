@@ -21,6 +21,7 @@ import type {
   CatalogTemplateId,
   CatalogStyleId,
 } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
+import { TaskStatus } from "@/components/ui/task-status"
 import { useAutonomousCatalogGenerator } from "./use-autonomous-catalog-generator"
 
 export interface CatalogProduct {
@@ -74,6 +75,9 @@ export function CatalogManagementTab({
     isAiAnalyzing,
     autonomousResult,
     setAutonomousResult,
+    publishError,
+    clearPublishError,
+    usedFallbackIntro,
     catalogAiSteps,
     executeGeneration,
   } = useAutonomousCatalogGenerator({
@@ -149,8 +153,15 @@ export function CatalogManagementTab({
               title={`AI đang phân tích & tuyển chọn ${sampleProductTerm} cho Catalog`}
               steps={catalogAiSteps}
             />
+          ) : publishError ? (
+            <TaskStatus state="failed" title="Xuất bản catalog" detail={publishError} onRetry={clearPublishError} retryLabel="Làm lại" />
           ) : autonomousResult ? (
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-xs space-y-6">
+              {usedFallbackIntro && (
+                <p role="status" className="rounded-xl border border-warning-border bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning-text">
+                  AI chưa viết được lời giới thiệu nên catalog đang dùng lời giới thiệu mẫu — bạn nên chỉnh lại trước khi gửi khách.
+                </p>
+              )}
               <CatalogWizardStep4Success
                 publishedUrl={autonomousResult.publishedUrl}
                 publishedSlug={autonomousResult.publishedSlug}

@@ -131,4 +131,5 @@ Mỗi đợt: Screen Contract §15 → áp component → xóa vi phạm R13–R1
 | 2 Nền tảng | Xong phần mã (2.1–2.7, 2.9, 2.10); 2.8 có baseline axe (A15–A18), spec vào CI khi từng màn hết lỗi; trang quản trị cờ ở `/van-hanh` làm đầu Giai đoạn 3 | nhánh này |
 | 3 Pilot | Đã triển khai sau cờ `ux_pd_anh_san_pham`; axe 0 lỗi; sửa lỗi hợp đồng API; trang cờ `/van-hanh/cau-hinh`. Chờ PO bật cho tổ chức thật để đo E7 — `PD_PILOT_REPORT.md` | nhánh này |
 | 4 Rollout | **Đợt A xong — 7/7 công cụ Hoàn thiện** đạt axe 0 lỗi ở 390px (`a11y-done-tools.spec.ts`). A-1: Tạo ảnh & Bộ ảnh (cờ), Poster. A-2…A-5: Thẻ chào, Nội dung, Catalog theo nhu cầu, Xu hướng thị trường (sửa trợ năng, `ConfirmDialog` cho R2/R3, trạng thái thật). Tiếp theo: đợt B | nhánh này |
+| 4b #08–#09 | PO 29/10/2026 chuyển Landing page & Catalog sang Hoàn thiện; áp chuẩn: bỏ bước/khoảng chờ giả, không bịa link khi xuất bản lỗi, báo khi dùng nội dung mẫu, `<h1>`, bỏ mã kỹ thuật; axe 9/9 công cụ Hoàn thiện | nhánh này |
 | 5 Enterprise & quản trị | — | — |

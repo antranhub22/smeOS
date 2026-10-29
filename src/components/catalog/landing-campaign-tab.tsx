@@ -70,15 +70,15 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
   })
 
   const [isAiGenerating, setIsAiGenerating] = useState(false)
+  // Chỉ liệt kê bước có việc thật (03c UX-016) — trước đây có 2 bước "thị giác/chất lượng ảnh" tự chuyển xong theo giờ.
   const [aiSteps, setAiSteps] = useState<ProcessingStep[]>([
-    { id: "vision", label: "Phân tích thị giác (hoa, màu sắc, phong cách)", status: "pending" },
-    { id: "quality", label: "Tối ưu chất lượng ảnh sản phẩm", status: "pending" },
     { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "pending" },
     { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "pending" },
   ])
   const [isPublishing, setIsPublishing] = useState(false)
   const [isPublished, setIsPublished] = useState(false)
   const [publishError, setPublishError] = useState<string | null>(null)
+  const [usedFallbackContent, setUsedFallbackContent] = useState(false)
   const [publishedUrl, setPublishedUrl] = useState<string | null>(null)
   const [downloadingQR, setDownloadingQR] = useState(false)
 
@@ -86,10 +86,9 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
     setIsAiGenerating(true)
     setPublishError(null)
 
+    setUsedFallbackContent(false)
     setAiSteps([
-      { id: "vision", label: "Phân tích thị giác (hoa, màu sắc, phong cách)", status: "running" },
-      { id: "quality", label: "Tối ưu chất lượng ảnh sản phẩm", status: "pending" },
-      { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "pending" },
+      { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "running" },
       { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "pending" },
     ])
 
@@ -109,22 +108,6 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
 
       const preSelectedIds = activeProducts.slice(0, 4).map((p) => p.id)
       setSelectedProductIds(preSelectedIds)
-
-      // Step 1 — Vision done
-      await new Promise((r) => setTimeout(r, 900))
-      setAiSteps((prev) =>
-        prev.map((s) =>
-          s.id === "vision" ? { ...s, status: "done" } : s.id === "quality" ? { ...s, status: "running" } : s
-        )
-      )
-
-      // Step 2 — Quality done
-      await new Promise((r) => setTimeout(r, 700))
-      setAiSteps((prev) =>
-        prev.map((s) =>
-          s.id === "quality" ? { ...s, status: "done" } : s.id === "content" ? { ...s, status: "running" } : s
-        )
-      )
 
       // Step 3 — Gọi API sinh nội dung (content step đang running)
       const occObj = CAMPAIGN_OCCASIONS.find((o) => o.id === matchedOccasion)
@@ -149,6 +132,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
         setGeneratedPackage(json.data)
         if (json.data?.hero?.headline) setHeadline(json.data.hero.headline)
       } else {
+        setUsedFallbackContent(true)
         setGeneratedPackage(generateLandingPageContent({
           shopName: currentShopName,
           occasionId: matchedOccasion,
@@ -165,8 +149,6 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
         )
       )
 
-      // Step 4 — Layout/config done
-      await new Promise((r) => setTimeout(r, 500))
       setAiSteps((prev) =>
         prev.map((s) => (s.id === "layout" ? { ...s, status: "done" } : s))
       )
@@ -309,7 +291,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
             <div className="p-3.5 rounded-xl bg-primary-muted border border-primary-border flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-primary text-body-sm font-semibold">
                 <Sparkles className="h-4 w-4 shrink-0" />
-                <span>AI đã phân tích nguyên liệu và điền sẵn các lựa chọn tối ưu. Bạn có thể kiểm tra từng bước trước khi xuất bản!</span>
+                <span>{usedFallbackContent ? "AI chưa soạn được nội dung nên đang dùng nội dung mẫu — hãy chỉnh lại ở từng bước trước khi xuất bản." : "AI đã soạn nội dung và điền sẵn các lựa chọn. Bạn có thể kiểm tra từng bước trước khi xuất bản."}</span>
               </div>
               <button
                 type="button"

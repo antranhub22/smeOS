@@ -23,6 +23,8 @@ const DONE_TOOLS: Array<{ name: string; path: string; flag?: string; upload: boo
   { name: "Nội dung bán hàng", path: "/noi-dung", upload: false },
   { name: "Catalog bán hàng theo nhu cầu", path: "/the-chao?quick=true", upload: false },
   { name: "Xu hướng thị trường", path: "/market-intelligence", upload: false },
+  { name: "Tạo landing page cửa hàng", path: "/landing-page", upload: false },
+  { name: "Tạo catalog và bộ sưu tập", path: "/catalog", upload: false },
 ]
 
 async function enableFlag(flag: string, orgId: string) {
