@@ -30,13 +30,19 @@ export function buildStorageTabs(input: {
   counts: { raw: number; approved: number; finalized: number; trash: number }
   isExecutive: boolean
   libraryTypes: readonly LibraryType[]
+  libraryCounts: Partial<Record<LibraryType, number>>
 }): TabItem[] {
   const { counts } = input
   const library = LIBRARY_TAB_ORDER.filter((t) => input.libraryTypes.includes(t))
   return [
     { id: "raw", label: "Ảnh gốc", icon: Folder, badge: counts.raw, badgeTone: "neutral" },
     { id: "approved", label: "Ảnh đã duyệt", icon: Layers, badge: counts.approved, badgeTone: "accent" },
-    ...library.map((t) => ({ id: `lib:${t}`, label: LIBRARY_TAB_LABEL[t], icon: LIBRARY_ICON[t] })),
+    ...library.map((t) => ({
+      id: `lib:${t}`,
+      label: LIBRARY_TAB_LABEL[t],
+      icon: LIBRARY_ICON[t],
+      ...(input.libraryCounts[t] !== undefined ? { badge: input.libraryCounts[t], badgeTone: "neutral" as const } : {}),
+    })),
     { id: "finalized", label: "Kịch bản tư vấn", icon: CheckCircle2, badge: counts.finalized, badgeTone: "success" },
     ...(input.isExecutive
       ? [{ id: "trash", label: "Thùng rác (30 ngày)", icon: Trash2, badge: counts.trash, badgeTone: "danger" as const }]

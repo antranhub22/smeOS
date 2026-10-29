@@ -31,6 +31,19 @@ export const LIBRARY_OPEN_HREF: Readonly<Record<LibraryType, string>> = {
   landing: "/landing-page",
 }
 
+/**
+ * Mở đúng mục khi công cụ gốc nhận tham số chọn mục (Creative Studio: `assetId`,
+ * `videoJobId`, `voiceId`); công cụ chưa nhận thì mở trang công cụ.
+ */
+export function libraryOpenHref(type: LibraryType, id: string, subtype: string | null): string {
+  const q = encodeURIComponent(id)
+  if (type === "ai_image") return `/creative-studio?area=d&assetId=${q}`
+  if (type === "video") return `/creative-studio?area=e&videoJobId=${q}`
+  if (type === "audio" && subtype === "VOICE") return `/creative-studio?area=c&voiceId=${q}`
+  if (type === "audio") return "/creative-studio?area=c"
+  return LIBRARY_OPEN_HREF[type]
+}
+
 export const AI_IMAGE_KINDS = ["ENHANCED", "MASTER", "MARKETING", "CATALOG", "LANDING", "SOCIAL", "RATIO"] as const
 
 export const LIBRARY_PAGE_SIZE = 50

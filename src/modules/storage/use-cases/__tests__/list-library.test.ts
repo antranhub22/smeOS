@@ -43,7 +43,7 @@ describe("listLibrary", () => {
     expect(result.items[0]).toMatchObject({
       branch: { id: "branch-a", name: "Chi nhánh Quận 1" },
       thumbnail_url: "/signed/org/org-a/p/r1.jpg",
-      open_href: "/creative-studio",
+      open_href: "/creative-studio?area=d&assetId=r1",
     })
     expect(result.next_cursor).toBeNull()
   })
@@ -69,13 +69,18 @@ describe("listLibrary", () => {
 })
 
 describe("getLibrarySummary", () => {
-  it("chỉ trả loại có quyền + chi nhánh của tổ chức", async () => {
-    const summary = await getLibrarySummary(ctx(["G1", "J1"]), deps([]).loadDirectory)
+  it("chỉ trả loại có quyền, đếm theo phạm vi, chi nhánh của tổ chức", async () => {
+    const countRows = vi.fn(async () => 3)
+    const summary = await getLibrarySummary(ctx(["G1", "J1"]), "all", { loadDirectory: deps([]).loadDirectory, countRows })
     expect(summary).toEqual({
       types: ["original", "ai_image", "catalog", "landing"],
+      counts: { original: 3, ai_image: 3, catalog: 3, landing: 3 },
       is_chain: true,
       viewer_branch_id: null,
       branches: [{ id: "branch-a", name: "Chi nhánh Quận 1" }],
     })
+    await expect(
+      getLibrarySummary(ctx(["G1"]), { branchId: "x" }, { loadDirectory: deps([]).loadDirectory, countRows })
+    ).rejects.toMatchObject({ code: "NOT_FOUND" })
   })
 })

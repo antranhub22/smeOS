@@ -86,13 +86,15 @@
 - Tạo mới: `LibraryGrid` (lưới chung), `LibraryScopeSelect` (bộ chọn phạm vi chuỗi). `account-storage-hub.tsx` đang 914 dòng (> 350): tách tab mới ra tệp riêng, không làm tệp này dài thêm.
 
 ## 13a. Ghi chú dựng v2 (29/10/2026)
-- Đã dựng: API `GET /storage/library` + `/summary`; 6 tab mới (Ảnh AI, Video, Âm thanh, Nội dung, Catalog, Thẻ chào) với tìm theo tên, lọc thời gian, "Xem thêm"; bộ chọn phạm vi chuỗi; nhãn chi nhánh; chuyển ảnh AI vào thùng rác (Điều hành). Tab Ảnh gốc/Ảnh đã duyệt/Kịch bản tư vấn/Thùng rác giữ nguyên v1 — **chưa lọc theo phạm vi chi nhánh**.
-- Tab mới chưa có huy hiệu số lượng (cần thêm truy vấn đếm theo phạm vi — đợt sau).
-- Video không lưu người tạo → luôn tính là "Trụ sở", không hiện khi chọn một chi nhánh cụ thể. Âm thanh: người tạo = người cam kết bản quyền/đồng ý giọng.
-- Tìm theo tên: video, âm thanh, catalog, thẻ chào. Ảnh và nội dung chưa có trường tên để tìm.
-- Landing page (L-1): bảng `landing_pages`, migration `20261029180000_landing_pages`; chỉ landing page sinh từ nay về sau mới có trong thư viện.
-- "Mở" đưa về công cụ gốc, chưa mở đúng mục — đợt sau cho mọi loại.
-- Tách `storage-hub-tabs.ts`, `library/*`: `account-storage-hub.tsx` giảm 914 → ~870 dòng.
+- Đã dựng: API `GET /storage/library` + `/summary?scope=` (kèm số mục theo phạm vi); 7 tab mới (Ảnh AI, Video, Âm thanh, Nội dung, Catalog, Thẻ chào, Landing page) có huy hiệu số lượng, tìm theo tên, lọc thời gian, "Xem thêm"; bộ chọn phạm vi chuỗi; nhãn chi nhánh; chuyển ảnh vào thùng rác (Điều hành).
+- **Ảnh gốc theo phạm vi:** chuỗi chọn Trụ sở/chi nhánh thì tab Ảnh gốc dùng lưới thư viện (lọc theo người tạo; nút "Mở" về `/tai-anh`, không có nút "Phân tích" tại chỗ). Toàn chuỗi giữ lưới v1.
+- **Không lọc theo phạm vi (cố ý):** Ảnh đã duyệt (dữ liệu sản phẩm dùng chung toàn tổ chức), Kịch bản tư vấn (L-2, còn ở trình duyệt), Thùng rác (theo quyền Điều hành toàn tổ chức).
+- **Mở đúng mục:** Ảnh AI → `/creative-studio?area=d&assetId=`, Video → `?area=e&videoJobId=`, Giọng đọc → `?area=c&voiceId=`. Nội dung, catalog, thẻ chào, landing page: mở trang công cụ (công cụ chưa nhận tham số chọn mục).
+- **Video:** `video_jobs.created_by` (migration `20261029200000`) — video tạo từ nay xếp đúng chi nhánh; video cũ tính là "Trụ sở".
+- Tìm theo tên: video, âm thanh, catalog, thẻ chào, landing page. Ảnh và nội dung chưa có trường tên.
+- Landing page (L-1): bảng `landing_pages`, migration `20261029180000_landing_pages`; chỉ landing page sinh từ 29/10/2026.
+- Tách `storage-hub-tabs.ts`, `library/*`: `account-storage-hub.tsx` giảm 914 → ~855 dòng.
+- **Chưa làm, cần PO:** L-2 (kịch bản tư vấn lên máy chủ — đụng luồng tải ảnh `/tai-anh`, CLAUDE.md yêu cầu hỏi PO các chặng hành trình); L-4 (thùng rác cho video/nội dung/catalog/thẻ chào/landing — mỗi loại có ràng buộc riêng, ví dụ thẻ chào đang gắn đơn).
 
 ## 14. Quyết định PO (duyệt 29/10/2026 — chọn phương án đề xuất)
 | ID | Câu hỏi | Đề xuất |
