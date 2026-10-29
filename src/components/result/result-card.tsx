@@ -246,7 +246,7 @@ function FieldCard({
               const defaultUnit = field.key === "flowers" ? "bông" : field.key === "accessories" ? "cái" : "cành"
               onFieldAdd?.(field.key, { id: crypto.randomUUID(), name: "", unit: defaultUnit, quantity: 1, value: "" })
             }}
-            className="mt-0.5 flex items-center gap-1.5 text-meta font-bold text-accent"
+            className="mt-0.5 flex items-center gap-1.5 text-meta font-bold text-accent-text"
           >
             <Plus size={14} strokeWidth={2.4} /> Thêm dòng
           </button>
