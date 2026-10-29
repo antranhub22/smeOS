@@ -84,27 +84,33 @@ describe("Asset Use-Cases with IAssetRepository Port", () => {
   })
 
   describe("deleteAsset", () => {
-    it("xóa asset thành công", async () => {
+    it("xóa asset: xoá dòng và ghi hàng đợi xoá payload qua một lệnh", async () => {
       const repo = createMockAssetRepo()
-      const purge = vi.fn().mockResolvedValue(undefined)
-      await expect(deleteAsset(mockTenant, "ast_123", repo, purge)).resolves.toBeUndefined()
-      expect(repo.delete).toHaveBeenCalledWith(mockTenant, "ast_123")
-      expect(purge).toHaveBeenCalledWith(mockTenant, mockAsset)
+      const remove = vi.fn().mockResolvedValue(true)
+      await expect(deleteAsset(mockTenant, "ast_123", repo, remove)).resolves.toBeUndefined()
+      expect(remove).toHaveBeenCalledWith(mockTenant, mockAsset)
     })
 
     it("ném lỗi 404 khi không thấy asset, không xoá gì", async () => {
       const repo = createMockAssetRepo({ findById: vi.fn().mockResolvedValue(null) })
-      const purge = vi.fn()
-      await expect(deleteAsset(mockTenant, "ast_unknown", repo, purge)).rejects.toThrow()
-      expect(repo.delete).not.toHaveBeenCalled()
-      expect(purge).not.toHaveBeenCalled()
+      const remove = vi.fn()
+      await expect(deleteAsset(mockTenant, "ast_unknown", repo, remove)).rejects.toThrow()
+      expect(remove).not.toHaveBeenCalled()
     })
 
-    it("ném lỗi 404 khi xóa thất bại", async () => {
+    it("ném lỗi 404 khi xoá thất bại", async () => {
+      const repo = createMockAssetRepo()
+      await expect(deleteAsset(mockTenant, "ast_123", repo, vi.fn().mockResolvedValue(false))).rejects.toThrow()
+    })
+
+    it("chặn xoá khi asset đang legal hold (409), không xoá gì", async () => {
+      const now = new Date("2026-10-29T00:00:00Z")
       const repo = createMockAssetRepo({
-        delete: vi.fn().mockResolvedValue(false),
+        findById: vi.fn().mockResolvedValue({ ...mockAsset, legal_hold_until: new Date("2027-01-01T00:00:00Z") }),
       })
-      await expect(deleteAsset(mockTenant, "ast_unknown", repo)).rejects.toThrow()
+      const remove = vi.fn()
+      await expect(deleteAsset(mockTenant, "ast_123", repo, remove, now)).rejects.toMatchObject({ code: "CONFLICT" })
+      expect(remove).not.toHaveBeenCalled()
     })
   })
 

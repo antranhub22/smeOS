@@ -33,6 +33,8 @@ const DEFINITIONS: Record<string, Omit<PlatformCapabilityDefinition, "code">> = 
   N12: { name: "platform.field_catalog.manage", label: "Quản trị trường dữ liệu, danh mục & trường tự tạo (ĐP-3)" },
   // PO 22/10/2026: mọi tài khoản tự đăng ký/dùng thử chờ duyệt trước khi đăng nhập được
   N13: { name: "platform.registrations.manage", label: "Duyệt/từ chối tài khoản tự đăng ký" },
+  // PO 29/10/2026 (SDAGF D-04): giữ dữ liệu theo yêu cầu pháp lý — chặn mọi lệnh xoá
+  N14: { name: "platform.legal_hold.manage", label: "Đặt/gỡ giữ dữ liệu theo yêu cầu pháp lý" },
 }
 
 export const PLATFORM_CAPABILITIES: Record<string, PlatformCapabilityDefinition> = Object.fromEntries(

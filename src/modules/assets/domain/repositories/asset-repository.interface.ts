@@ -43,6 +43,8 @@ export interface AssetEntity {
   approved_at: Date | null
   created_by: string
   created_at: Date
+  /** SDAGF D-04 — còn hạn thì không xoá vĩnh viễn. */
+  legal_hold_until?: Date | null
 }
 
 export interface CreateAssetInput {

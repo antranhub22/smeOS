@@ -8,10 +8,14 @@ import {
 } from "./platform-capability-catalog"
 
 describe("platform-capability-catalog", () => {
-  it("có đúng mười mã (N1..N8, N12, N13), không nhiều hơn không ít hơn", () => {
+  it("có đúng mười một mã (N1..N8, N12, N13, N14), không nhiều hơn không ít hơn", () => {
     expect(ALL_PLATFORM_CAPABILITY_CODES).toEqual([
-      "N1", "N12", "N13", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
+      "N1", "N12", "N13", "N14", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
     ])
+  })
+
+  it("N14 là mã giữ dữ liệu theo yêu cầu pháp lý (PO 29/10/2026, SDAGF D-04)", () => {
+    expect(platformCapability("N14").name).toBe("platform.legal_hold.manage")
   })
 
   it("N13 là mã duyệt tài khoản tự đăng ký (PO 22/10/2026)", () => {

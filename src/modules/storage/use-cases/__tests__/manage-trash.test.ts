@@ -23,7 +23,7 @@ function createMockRepo(overrides: Partial<ITrashRepository> = {}): ITrashReposi
     listTrash: vi.fn().mockResolvedValue([]),
     moveToTrash: vi.fn().mockResolvedValue(true),
     restoreFromTrash: vi.fn().mockResolvedValue(true),
-    permanentDelete: vi.fn().mockResolvedValue(true),
+    permanentDelete: vi.fn().mockResolvedValue("deleted"),
     ...overrides,
   }
 }
@@ -127,7 +127,7 @@ describe("Storage Use-Cases with ITrashRepository Port", () => {
     it("xóa vĩnh viễn đối tượng khỏi thùng rác", async () => {
       const ctx = createMockContext(["B6"])
       const repo = createMockRepo({
-        permanentDelete: vi.fn().mockResolvedValue(true),
+        permanentDelete: vi.fn().mockResolvedValue("deleted"),
       })
 
       await expect(
@@ -143,12 +143,23 @@ describe("Storage Use-Cases with ITrashRepository Port", () => {
     it("ném lỗi 404 khi xóa vĩnh viễn thất bại", async () => {
       const ctx = createMockContext(["B6"])
       const repo = createMockRepo({
-        permanentDelete: vi.fn().mockResolvedValue(false),
+        permanentDelete: vi.fn().mockResolvedValue("not_found"),
       })
 
       await expect(
         permanentDelete(ctx, { id: "asset_nonexistent", type: "RAW_ASSET" }, repo)
       ).rejects.toMatchObject({ status: 404 })
+    })
+
+    it("chặn xoá vĩnh viễn khi asset đang legal hold (409)", async () => {
+      const ctx = createMockContext(["B6"])
+      const repo = createMockRepo({
+        permanentDelete: vi.fn().mockResolvedValue("legal_hold"),
+      })
+
+      await expect(
+        permanentDelete(ctx, { id: "asset_hold", type: "RAW_ASSET" }, repo)
+      ).rejects.toMatchObject({ status: 409 })
     })
   })
 })

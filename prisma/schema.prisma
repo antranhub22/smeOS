@@ -153,6 +153,7 @@ model organizations {
   capability_overrides          capability_overrides[]
   memberships                   memberships[]
   assets                        assets[]
+  storage_outbox                storage_outbox[]
   generation_jobs               generation_jobs[]
   usage                         usage[]
   audit_logs                    audit_logs[]
@@ -472,13 +473,45 @@ model assets {
   created_by String
   created_at DateTime @default(now())
 
+  // SDAGF P1 (audit docs/audit/sdagf-2026-10): vòng đời thùng rác thành cột
+  // (trước chỉ nằm trong `metadata` JSON, không index, không quét được) và
+  // legal hold — còn hạn giữ thì không xoá vĩnh viễn, kể cả cron dọn rác.
+  trashed_at       DateTime?
+  purge_after      DateTime?
+  legal_hold_until DateTime?
+
   organization organizations @relation(fields: [organization_id], references: [id])
 
   @@index([organization_id])
+  @@index([purge_after])
   @@index([organization_id, product_id])
   @@index([parent_asset_id])
   @@index([output_sha256])
   @@index([organization_id, product_id, kind, approval_state])
+}
+
+/**
+ * SDAGF P1 — hàng đợi xoá payload trên kho tệp. Xoá dòng `assets` và ghi
+ * hàng đợi trong cùng một transaction; cron (`/internal/chain-dispatch-sweep`)
+ * mới xoá tệp thật, có thử lại giới hạn. Còn bản ghi khác trỏ tới khoá thì
+ * bỏ qua, không xoá.
+ */
+model storage_outbox {
+  id              String    @id @default(uuid())
+  organization_id String
+  op              String // DELETE
+  storage_key     String
+  asset_id        String?
+  attempts        Int       @default(0)
+  last_error      String?
+  created_at      DateTime  @default(now())
+  done_at         DateTime?
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@unique([op, storage_key])
+  @@index([organization_id])
+  @@index([done_at, created_at])
 }
 
 /**

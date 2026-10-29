@@ -311,12 +311,42 @@ model assets {
   created_by       String
   created_at       DateTime   @default(now())
 
+  // SDAGF P1 — vòng đời thùng rác thành cột và legal hold
+  trashed_at       DateTime?
+  purge_after      DateTime?            // quá hạn → cron xoá vĩnh viễn
+  legal_hold_until DateTime?            // còn hạn → không xoá vĩnh viễn
+
   @@index([organization_id])
+  @@index([purge_after])
   @@index([organization_id, product_id])
   @@index([parent_asset_id])
   @@index([output_sha256])
 }
 ```
+
+### 5.1 Hàng đợi xoá payload — `storage_outbox` (SDAGF P1)
+
+Xoá vĩnh viễn một asset (API, thùng rác, cron dọn rác) xoá dòng `assets` và ghi hàng đợi trong **cùng một transaction**. Cron `/internal/chain-dispatch-sweep` xoá tệp thật khi cờ `STORAGE_DELETE_PAYLOADS=enabled`, thử lại tối đa 5 lần. Khoá còn bản ghi khác trỏ tới (Master dùng chung tệp gốc) thì đóng việc mà không xoá tệp.
+
+```prisma
+model storage_outbox {
+  id              String    @id @default(uuid())
+  organization_id String
+  op              String               // DELETE
+  storage_key     String
+  asset_id        String?
+  attempts        Int       @default(0)
+  last_error      String?
+  created_at      DateTime  @default(now())
+  done_at         DateTime?
+
+  @@unique([op, storage_key])
+  @@index([organization_id])
+  @@index([done_at, created_at])
+}
+```
+
+Legal hold (`assets.legal_hold_until`) chỉ người vận hành nền tảng có `N14` được đặt hoặc gỡ, kèm lý do, ghi `platform_audit_logs` (SDAGF D-04).
 
 `generated_flags` không bao giờ mặc định ngầm. Ảnh phải dùng generative fill vì chất lượng quá kém được đánh dấu ở cả metadata lẫn giao diện.
 
