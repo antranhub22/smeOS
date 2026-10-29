@@ -17,3 +17,18 @@
 | **P3** | Chuyển dần video-studio, audio-studio, greeting-card, avi-gift-import, worker Python sang contract | Backend | P2 | Mọi `put` có dòng registry | Test kiến trúc | Theo module | — |
 | **P4** | CI: negative test route storage; test kiến trúc cấm `put` ngoài port; kiểm cột bắt buộc | Backend | P3 | CI chặn vi phạm | — | — | ci.yml |
 | **P5** | Kiểm lại 30 control, checklist bàn giao kho tệp, diễn tập restore kho | Architect + PO | P4 | Không còn FAIL Critical/High | — | — | Báo cáo audit lại |
+
+## Tiến độ
+| Task | Trạng thái | Bằng chứng |
+|---|---|---|
+| P0-1 | **Xong**: bỏ miễn chữ ký `videos/`; chữ ký gắn phương thức (URL GET không dùng để PUT được); thêm `STORAGE_SIGNING_SECRET` | `src/app/api/v1/storage/[...key]/route.ts`, `src/modules/assets/infra/storage-signing.ts`, `tests/unit/storage/storage-route-signature.test.ts` |
+| P0-2 | **Xong**: giới hạn byte theo kiểu tệp (ảnh 20MB, video 100MB, bảng tính 25MB), đọc body có giới hạn, kiểm magic-byte, kiểu tệp lấy từ key, SVG có CSP sandbox. *Chưa làm:* ghi một lần (P1) | `src/modules/assets/domain/upload-content-rules.ts` (+ test) |
+| P0-3, P0-4 | Chờ DevOps (D-08) | — |
+
+## Tiêu chí sẵn sàng bàn giao (map `docs/governance/sdagf/15-readiness-and-handover.md`)
+| Cổng | Điều kiện đạt |
+|---|---|
+| Commercial-ready | Không còn FAIL ở control Critical (007, 021, 028); DPA ghi rõ retention D-03 và backup D-01/02 |
+| Production-ready | P0 + P1 xong; diễn tập PITR và restore R2 có biên bản; cron purge và job đối soát chạy |
+| Enterprise-grade | P2–P4 xong: legal hold, audit sự kiện bắt buộc, CI chặn vi phạm contract kho; rà quyền mỗi quý |
+| Handover-ready | P5: audit lại 30 control không còn FAIL Critical/High; checklist bàn giao gồm quét secret, đối soát kho, biên bản xác nhận xoá mẫu, runbook restore đã chạy thử |

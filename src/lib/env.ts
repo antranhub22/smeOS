@@ -29,6 +29,9 @@ const schema = z.object({
   // cùng lý do đã ghi ở INTEGRATION_TOKEN_SECRET — ba khoá, ba vòng đời xoay
   // độc lập.
   SSO_SESSION_SECRET: z.string().min(16),
+  // Khoá ký URL kho tệp (`/api/v1/storage/...`, SDAGF D-07). Tách khỏi
+  // SESSION_SECRET để xoay độc lập; thiếu thì lùi về SESSION_SECRET.
+  STORAGE_SIGNING_SECRET: z.string().min(16).optional(),
   OPENAI_API_KEY: z.string().optional(),
   // Nhà cung cấp nội dung tương đương OpenAI (PO 25/09/2026) — thiếu khoá thì
   // bên đó bị bỏ qua trong chuỗi lùi, không làm hỏng khởi động.

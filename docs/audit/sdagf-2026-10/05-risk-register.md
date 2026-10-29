@@ -6,8 +6,9 @@ Xếp theo thứ tự ưu tiên của Master Prompt Phase 4. Khả năng xảy r
 
 | ID | Rủi ro | Nhóm | Tác động | Khả năng | Root cause (bằng chứng) | Control | Xử lý |
 |---|---|---|---|---|---|---|---|
-| R-01 | Đọc/**ghi đè** video không cần xác thực qua `/api/v1/storage/videos/<org>/<job>.mp4` | 1 xuyên tenant, 4 truy cập trái phép | C — phá hoại hoặc thay nội dung video khách, lộ video | M — key là 2 UUID nhưng URL nằm trong trang công khai/catalog nên rò được; biết URL là PUT được | Ngoại lệ `route.ts:15` áp cho cả PUT; URL ổn định `video_worker.py:133` | 007, 014 | P0-1 |
-| R-02 | Upload không giới hạn kích thước, không kiểm nội dung; SVG phục vụ inline cùng origin | 4 | H — DoS bộ nhớ web (`arrayBuffer`), stored XSS qua SVG nếu key `.svg` được ký | M | `route.ts:28-30,52` | 008 | P0-2 |
+| R-01 (**đã xử lý P0-1**) | Đọc/**ghi đè** video không cần xác thực qua `/api/v1/storage/videos/<org>/<job>.mp4` | 1 xuyên tenant, 4 truy cập trái phép | C — phá hoại hoặc thay nội dung video khách, lộ video | M — key là 2 UUID nhưng URL nằm trong trang công khai/catalog nên rò được; biết URL là PUT được | Ngoại lệ `route.ts:15` áp cho cả PUT; URL ổn định `video_worker.py:133` | 007, 014 | P0-1 |
+| R-01b (**đã xử lý P0-1**) | Chữ ký HMAC không gắn phương thức: URL **xem** đã ký (kể cả trên catalog công khai) dùng được để **PUT ghi đè** tệp | 1, 4 | C | M | `storage-signing.ts` ký `key:exp` cho mọi phương thức (phát hiện khi triển khai P0-1) | 007, 014 | P0-1 |
+| R-02 (**đã xử lý P0-2**) | Upload không giới hạn kích thước, không kiểm nội dung; SVG phục vụ inline cùng origin | 4 | H — DoS bộ nhớ web (`arrayBuffer`), stored XSS qua SVG nếu key `.svg` được ký | M | `route.ts:28-30,52` | 008 | P0-2 |
 | R-03 | Xoá không xoá payload/bản phái sinh | 5, 8 | H — dữ liệu khách tồn tại sau khi "xoá vĩnh viễn"; chi phí tăng | C (luôn xảy ra) | Provider không có `delete`; `trash-repository.ts:264`, `asset-repository.ts:102` | 012, 026 | P1-3 |
 | R-04 | Mất tệp không khôi phục được | 2 | C — mất toàn bộ ảnh/video nếu bucket lỗi hoặc bị xoá nhầm | L–M | Runbook chỉ có DB; versioning bucket: ? | 020, 021 | P1-4 |
 | R-05 | Restore DB chưa từng diễn tập | 2 | H | M | `VAN_HANH_SU_CO_VA_SAO_LUU.md:28` | 021 | P1-5 |

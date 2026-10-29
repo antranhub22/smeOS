@@ -45,15 +45,15 @@ export class LocalDiskStorageProvider implements StorageProvider {
     }
   }
 
-  /** `_method` bỏ qua: route `/api/v1/storage/[...key]` nhận cả PUT lẫn GET
-   *  trên cùng một đường đã ký. */
+  /** Route `/api/v1/storage/[...key]` nhận cả PUT lẫn GET trên cùng đường;
+   *  chữ ký gắn với phương thức nên URL xem không dùng để ghi được. */
   async signedUrl(
     key: string,
     expiresInSeconds: number,
-    _method: StorageMethod = "GET"
+    method: StorageMethod = "GET"
   ): Promise<string> {
     const expiresAt = Date.now() + expiresInSeconds * 1000
-    const signature = signStorageUrl(key, expiresAt)
+    const signature = signStorageUrl(key, expiresAt, method)
     return `/api/v1/storage/${key}?exp=${expiresAt}&sig=${signature}`
   }
 }
