@@ -176,6 +176,8 @@ export type MockSession = {
   capabilities: string[]
   /** Mã năng lực nền tảng (N…) nếu người dùng là người vận hành nền tảng — rỗng nếu không. */
   platformCapabilities?: string[] | undefined
+  /** Người vận hành nền tảng đang xem trước một tầng/vai khác vai thật. */
+  tierPreviewActive?: boolean | undefined
   organization?: {
     id: string
     name?: string

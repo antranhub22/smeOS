@@ -7,6 +7,12 @@ import { canOverrideIndustryLock } from "@/modules/organization/domain/organizat
 import { describeSession } from "./describe-session"
 import { resolveSession } from "./resolve-session"
 import { parseDevRoleOverride, applyDevRoleOverride, DEV_ROLE_COOKIE } from "@/lib/dev-role-override"
+import { TIER_PREVIEW_COOKIE, canUseTierPreview, parseTierPreview } from "@/modules/platform/domain/tier-preview"
+
+function readCookieValue(cookieHeader: string, name: string): string | null {
+  const segment = cookieHeader.split(";").map((c) => c.trim()).find((c) => c.startsWith(`${name}=`))
+  return segment ? decodeURIComponent(segment.slice(name.length + 1)) : null
+}
 
 function viettatTen(name: string | null, email: string): string {
   const nguon = (name ?? email).trim()
@@ -76,6 +82,13 @@ export const resolveAppSession = cache(async function resolveAppSession(
     organizationType: described.organization?.type ?? null,
     pendingModelChange:
       (described.organization?.pending_model_change as MockSession["pendingModelChange"]) ?? null,
+  }
+
+  // Người vận hành nền tảng (N1) xem trước tầng — chạy cả production. Kiểm
+  // lại quyền ở mỗi request: thu hồi N1 thì cookie cũ hết tác dụng.
+  if (canUseTierPreview(platformCapabilities)) {
+    const preview = parseTierPreview(readCookieValue(cookieHeader, TIER_PREVIEW_COOKIE))
+    if (preview !== null) return { ...applyDevRoleOverride(session, preview), tierPreviewActive: true }
   }
 
   // Dev-only: merge role override cookie nếu có.
