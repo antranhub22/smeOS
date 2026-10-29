@@ -28,6 +28,7 @@ const row = (over: Partial<LibraryRow>): LibraryRow => ({
 function deps(rows: LibraryRow[]): LibraryDeps {
   return {
     listRows: vi.fn(async () => rows),
+    loadCovers: async () => new Map([["c1", { storageKey: "org/org-a/p/cover.jpg" }], ["c2", { driveLink: "https://drive.google.com/file/d/x/view" }]]),
     loadDirectory: async () => ({
       isChain: true,
       branchOfUser: new Map([["staff-a", "branch-a"], ["owner", null]]),
@@ -65,6 +66,18 @@ describe("listLibrary", () => {
       "original",
       expect.objectContaining({ creator: { kind: "exclude", userIds: [], includeUnknown: true } })
     )
+  })
+})
+
+describe("listLibrary — ảnh bìa", () => {
+  it("mục không phải ảnh lấy ảnh bìa: khoá kho → URL ký, không có thì link Drive", async () => {
+    const input = { type: "greeting_catalog", scope: "all" as const, q: null, from: null, cursor: null }
+    const rows = [row({ id: "c1", type: "greeting_catalog", storageKey: null, mimeType: null }), row({ id: "c2", type: "greeting_catalog", storageKey: null, mimeType: null })]
+    const result = await listLibrary(ctx(["L1"]), input, deps(rows))
+    expect(result.items.map((i) => [i.thumbnail_url, i.drive_link])).toEqual([
+      ["/signed/org/org-a/p/cover.jpg", null],
+      [null, "https://drive.google.com/file/d/x/view"],
+    ])
   })
 })
 

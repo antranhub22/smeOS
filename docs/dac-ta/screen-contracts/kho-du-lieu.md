@@ -91,6 +91,7 @@
 - **Không lọc theo phạm vi (cố ý):** Ảnh đã duyệt (dữ liệu sản phẩm dùng chung toàn tổ chức), Kịch bản tư vấn (L-2, còn ở trình duyệt), Thùng rác (theo quyền Điều hành toàn tổ chức).
 - **Mở đúng mục:** Ảnh AI → `/creative-studio?area=d&assetId=`, Video → `?area=e&videoJobId=`, Giọng đọc → `?area=c&voiceId=`. Nội dung, catalog, thẻ chào, landing page: mở trang công cụ (công cụ chưa nhận tham số chọn mục).
 - **Video:** `video_jobs.created_by` (migration `20261029200000`) — video tạo từ nay xếp đúng chi nhánh; video cũ tính là "Trụ sở".
+- **Ảnh bìa** (29/10/2026, sau phản hồi PO): lưới dùng `ProductThumb` (ảnh lưu trữ → `attributes.imageUrl` → Google Drive → "Chưa có ảnh"). Ảnh gốc/Ảnh AI: chính ảnh. Thẻ chào: ảnh MAIN sản phẩm đầu tiên. Nội dung: ảnh nguồn (`asset_id`), không có thì ảnh sản phẩm. Video: ảnh cảnh đầu tiên. Catalog: ảnh hero tuỳ chỉnh. Landing page: ảnh sản phẩm đầu tiên trong yêu cầu. Âm thanh: biểu tượng nhạc.
 - Tìm theo tên: video, âm thanh, catalog, thẻ chào, landing page. Ảnh và nội dung chưa có trường tên.
 - Landing page (L-1): bảng `landing_pages`, migration `20261029180000_landing_pages`; chỉ landing page sinh từ 29/10/2026.
 - Tách `storage-hub-tabs.ts`, `library/*`: `account-storage-hub.tsx` giảm 914 → ~855 dòng.
