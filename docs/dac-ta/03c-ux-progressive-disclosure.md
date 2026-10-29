@@ -15,6 +15,7 @@
 | **PD2** | Không tạo `docs/ux-standard/`. Luật nằm ở 03a + 03c; đặc tả luồng ở `docs/dac-ta/ux-patterns/`; bộ kit gốc chuyển về `docs/archive/historical/`. | Mở rộng §0.2 |
 | **PD3** | Tài liệu chuẩn gọi sản phẩm theo tên trong 03a; prompt dành riêng công cụ (Antigravity) chỉ là tham khảo lưu trữ. Agent tuân thủ qua `CLAUDE.md`. | — |
 | **PD4** | 03c có cùng thứ bậc Level 3 CANONICAL với 03a; pattern specs là Level 3 SUPPORTING; Screen Contract tham chiếu cả hai. | Mở rộng §0.3 |
+| **PD5** | (29/10/2026) `FeatureGuidanceCard`: bỏ độ mờ `/60` ở chữ "Xem hướng dẫn"/"Thu gọn" để đạt WCAG AA (audit A15). Cấu trúc, vị trí, hành vi giữ nguyên theo K1 | Bổ sung K1 (03a §0.1) |
 
 ## §2. Ánh xạ tầng và khái niệm SYS (PD1)
 
