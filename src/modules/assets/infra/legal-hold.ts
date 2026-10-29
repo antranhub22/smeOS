@@ -21,3 +21,26 @@ export async function setLegalHoldUntil(
   })
   return { before: asset.legal_hold_until }
 }
+
+/** Hạn legal hold cấp tổ chức (SDAGF D-04), `null` khi không giữ. */
+export async function organizationLegalHoldUntil(organizationId: string): Promise<Date | null> {
+  const org = await prisma.organizations.findUnique({
+    where: { id: organizationId },
+    select: { legal_hold_until: true },
+  })
+  return org?.legal_hold_until ?? null
+}
+
+/** Đặt/gỡ legal hold cấp tổ chức. Trả `null` khi không có tổ chức đó. */
+export async function setOrganizationLegalHoldUntil(
+  organizationId: string,
+  until: Date | null
+): Promise<{ before: Date | null } | null> {
+  const before = await prisma.organizations.findUnique({
+    where: { id: organizationId },
+    select: { legal_hold_until: true },
+  })
+  if (!before) return null
+  await prisma.organizations.update({ where: { id: organizationId }, data: { legal_hold_until: until } })
+  return { before: before.legal_hold_until }
+}

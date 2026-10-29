@@ -141,6 +141,9 @@ model organizations {
   credit_plan    String?
   settings       Json? // bảng công tắc cấp tổ chức, gồm cho_phep_tu_duyet
   data_region    String?           @default("vn") // ADR-006: Vùng dữ liệu tenant
+  // SDAGF D-04 — legal hold cấp tổ chức: còn hạn thì không xoá vĩnh viễn dữ
+  // liệu nào của tổ chức (asset, sản phẩm trong thùng rác, dọn bàn giao).
+  legal_hold_until DateTime?
   created_at     DateTime          @default(now())
   updated_at     DateTime          @updatedAt
 

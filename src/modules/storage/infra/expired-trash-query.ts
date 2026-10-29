@@ -8,7 +8,7 @@ export type ExpiredTrashedAsset = {
 }
 
 /**
- * Asset trong thùng rác đã quá `purge_after`, không còn legal hold — của MỌI
+ * Asset trong thùng rác đã quá `purge_after`, không còn legal hold (của asset lẫn của tổ chức) — của MỌI
  * tổ chức. Chỉ cron hệ thống gọi (`sweep-expired-trash.ts`); mỗi dòng mang
  * `organization_id` của chính nó để xoá dưới ngữ cảnh đúng tổ chức.
  */
@@ -18,6 +18,7 @@ export function findExpiredTrashedAssets(now: Date, limit: number): Promise<Expi
       state: "ARCHIVED",
       purge_after: { lte: now },
       OR: [{ legal_hold_until: null }, { legal_hold_until: { lte: now } }],
+      organization: { OR: [{ legal_hold_until: null }, { legal_hold_until: { lte: now } }] },
     },
     orderBy: { purge_after: "asc" },
     take: limit,

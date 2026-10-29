@@ -24,6 +24,31 @@ const pageArgs = (cursor: string | undefined) => ({
 })
 
 /**
+ * SSOT các nơi trỏ tới tệp trên kho (SDAGF-002/022). Thêm nơi ghi tệp mới
+ * thì thêm nguồn ở đây VÀ ở `countPayloadReferences` (`payload-references.ts`);
+ * test kiến trúc `storage-write-contract.test.ts` giữ danh sách nơi ghi.
+ */
+export const STORAGE_REFERENCE_SOURCES = [
+  "assets.storage_key",
+  "assets.thumb_key",
+  "music_tracks.storage_key",
+  "voice_clones.sample_storage_key",
+  "video_jobs.audio_storage_key",
+  "video_jobs.final_video_url",
+  "generation_jobs.output.audio_storage_key",
+  "generation_jobs.output.voice_only_storage_key",
+  "order_coordinations.metadata.qc_photos",
+  "order_coordinations.metadata.pod_photos",
+] as const
+
+function stringsAt(json: unknown, field: string): string[] {
+  if (!json || typeof json !== "object") return []
+  const value = (json as Record<string, unknown>)[field]
+  if (typeof value === "string") return [value]
+  return Array.isArray(value) ? value.filter((v): v is string => typeof v === "string") : []
+}
+
+/**
  * Mọi khoá kho mà registry đang trỏ tới, của MỌI tổ chức — chỉ script đối
  * soát hệ thống dùng (`scripts/storage-reconcile.ts`), chỉ đọc.
  */
@@ -44,6 +69,14 @@ export async function loadRegistryKeys(): Promise<{ registry: Set<string>; pendi
     prisma.video_jobs.findMany({ ...pageArgs(c), select: { id: true, audio_storage_key: true, final_video_url: true } })
   )
   videos.forEach((r) => (add(r.audio_storage_key), add(r.final_video_url)))
+  const jobs = await paged((c) =>
+    prisma.generation_jobs.findMany({ ...pageArgs(c), select: { id: true, output: true } })
+  )
+  jobs.forEach((r) => [...stringsAt(r.output, "audio_storage_key"), ...stringsAt(r.output, "voice_only_storage_key")].forEach(add))
+  const coordinations = await paged((c) =>
+    prisma.order_coordinations.findMany({ ...pageArgs(c), select: { id: true, metadata: true } })
+  )
+  coordinations.forEach((r) => [...stringsAt(r.metadata, "qc_photos"), ...stringsAt(r.metadata, "pod_photos")].forEach(add))
 
   const pending = await prisma.storage_outbox.findMany({ where: { done_at: null }, select: { storage_key: true } })
   return { registry, pendingDeletes: new Set(pending.map((r) => r.storage_key)) }

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
 
 import type { PlatformContext } from "@/core/platform/platform-context"
-import { setAssetLegalHold, type SetLegalHoldDeps } from "../set-asset-legal-hold"
+import { setAssetLegalHold, setOrganizationLegalHold, type SetLegalHoldDeps } from "../set-asset-legal-hold"
 
 const now = new Date("2026-10-29T00:00:00Z")
 const until = new Date("2027-01-01T00:00:00Z")
@@ -40,5 +40,24 @@ describe("setAssetLegalHold", () => {
       setAssetLegalHold(pctx(["N14"]), { ...input, until: new Date("2026-01-01T00:00:00Z") }, deps(), now)
     ).rejects.toMatchObject({ code: "VALIDATION_FAILED" })
     await expect(setAssetLegalHold(pctx(["N14"]), input, deps(false), now)).rejects.toMatchObject({ code: "NOT_FOUND" })
+  })
+})
+
+describe("setOrganizationLegalHold", () => {
+  it("đòi N14; đặt giữ cả tổ chức và ghi nhật ký kèm lý do; tổ chức lạ trả 404", async () => {
+    const audit = vi.fn(async () => ({}) as never)
+    const setHold = vi.fn(async () => ({ before: null }))
+    await expect(
+      setOrganizationLegalHold(pctx(["N1"]), { organizationId: "org-a", until, reason: "Thanh tra" }, { setHold, audit }, now)
+    ).rejects.toMatchObject({ code: "CAPABILITY_DENIED" })
+    await setOrganizationLegalHold(pctx(["N14"]), { organizationId: "org-a", until, reason: "Thanh tra" }, { setHold, audit }, now)
+    expect(setHold).toHaveBeenCalledWith("org-a", until)
+    expect(audit).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ action: "organization.legal_hold.set", entityId: "org-a" })
+    )
+    await expect(
+      setOrganizationLegalHold(pctx(["N14"]), { organizationId: "x", until, reason: "Thanh tra" }, { setHold: async () => null, audit }, now)
+    ).rejects.toMatchObject({ code: "NOT_FOUND" })
   })
 })

@@ -45,7 +45,13 @@ export async function deleteAssetAndEnqueuePayloads(
 /** Việc chờ xử lý của mọi tổ chức — chỉ cron hệ thống gọi. */
 export function listPendingOutbox(limit: number): Promise<OutboxItem[]> {
   return prisma.storage_outbox.findMany({
-    where: { op: DELETE_OP, done_at: null, attempts: { lt: MAX_OUTBOX_ATTEMPTS } },
+    where: {
+      op: DELETE_OP,
+      done_at: null,
+      attempts: { lt: MAX_OUTBOX_ATTEMPTS },
+      // Tổ chức đang legal hold: giữ nguyên tệp, việc chờ tới khi gỡ giữ (D-04).
+      organization: { OR: [{ legal_hold_until: null }, { legal_hold_until: { lte: new Date() } }] },
+    },
     orderBy: { created_at: "asc" },
     take: limit,
     select: { id: true, organization_id: true, storage_key: true, attempts: true },

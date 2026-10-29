@@ -1015,6 +1015,7 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | GET | `/platform/orgs-data/:id` | `N1` | |
 | GET | `/platform/orgs-data/:id/records/:id` | `N1` | |
 | GET | `/platform/orgs-data/:id/export` | `N1` | Tải ZIP (CSV + ảnh) |
+| PUT | `/platform/orgs-data/:id/legal-hold` | `N14` | Đặt/gỡ legal hold cho cả tổ chức; thân `{ until: ISO \| null, reason }`; chặn mọi xoá vĩnh viễn của tổ chức (API, thùng rác, cron, hàng đợi xoá tệp, dọn bàn giao) |
 | PUT | `/platform/orgs-data/:id/assets/:id/legal-hold` | `N14` | Đặt/gỡ legal hold cho một asset; thân `{ until: ISO \| null, reason }`; ghi nhật ký nền tảng (SDAGF D-04) |
 | GET | `/platform/pending-approvals` | `N1` | Tài khoản chờ duyệt |
 | GET · POST | `/product-image-set` | *(phiên)* · `I1` | GET: danh sách gói ảnh (tĩnh); POST: tạo bộ ảnh |

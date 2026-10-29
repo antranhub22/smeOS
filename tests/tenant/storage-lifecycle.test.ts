@@ -3,7 +3,8 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import { countPayloadReferences } from "@/modules/assets/infra/payload-references"
 import { deleteAssetAndEnqueuePayloads, listPendingOutbox } from "@/modules/assets/infra/payload-outbox"
-import { setLegalHoldUntil } from "@/modules/assets/infra/legal-hold"
+import { setLegalHoldUntil, setOrganizationLegalHoldUntil } from "@/modules/assets/infra/legal-hold"
+import { loadRegistryKeys } from "@/modules/assets/infra/storage-registry-keys"
 import { findExpiredTrashedAssets } from "@/modules/storage/infra/expired-trash-query"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
@@ -66,6 +67,33 @@ describe("cách ly tenant — vòng đời kho tệp (SDAGF P1)", () => {
     expect(await countPayloadReferences(b.ctx, original.storage_key)).toBe(0)
   })
 
+  it("tham chiếu trong JSON được đếm: ảnh QC/POD của đơn gia công, audio của job", async () => {
+    const qc = `org/${a.organizationId}/subcontract/o1/qc-1.jpg`
+    const pod = `org/${a.organizationId}/subcontract/o1/pod-1.jpg`
+    const audio = `org/${a.organizationId}/audio/j1_audio.m4a`
+    const order = await prisma.orders.create({
+      data: {
+        organization_id: a.organizationId, code: "SDAGF-1", source: "BROCHURE", status: "CONFIRMED",
+        total_vnd: 1, paid_vnd: 1, balance_vnd: 0, created_by: "test",
+      },
+    })
+    await prisma.order_coordinations.create({
+      data: { organization_id: a.organizationId, order_id: order.id, metadata: { qc_photos: [qc], pod_photos: [pod] } },
+    })
+    await prisma.generation_jobs.create({
+      data: {
+        organization_id: a.organizationId, workspace_id: a.ctx.workspaceId, user_id: a.ctx.userId,
+        feature: "audio.generate", payload: {}, output: { audio_storage_key: audio },
+      },
+    })
+    for (const key of [qc, pod, audio]) {
+      expect(await countPayloadReferences(a.ctx, key)).toBe(1)
+      expect(await countPayloadReferences(b.ctx, key)).toBe(0)
+    }
+    const { registry } = await loadRegistryKeys()
+    expect([qc, pod, audio].every((k) => registry.has(k))).toBe(true)
+  })
+
   it("quét thùng rác: chỉ lấy asset quá hạn và không còn legal hold", async () => {
     const now = new Date()
     const past = new Date(now.getTime() - 86400000)
@@ -75,6 +103,21 @@ describe("cách ly tenant — vòng đời kho tệp (SDAGF P1)", () => {
     await seedAsset(b.ctx, { purgeAfter: past, hold: future })
     const found = await findExpiredTrashedAssets(now, 10)
     expect(found.map((x) => x.id)).toEqual([expired.id])
+  })
+
+  it("legal hold cấp tổ chức: cron không quét asset hết hạn của tổ chức đó, hàng đợi xoá giữ nguyên", async () => {
+    const now = new Date()
+    const past = new Date(now.getTime() - 86400000)
+    const future = new Date(now.getTime() + 86400000)
+    const expiredA = await seedAsset(a.ctx, { purgeAfter: past })
+    const expiredB = await seedAsset(b.ctx, { purgeAfter: past })
+    expect(await deleteAssetAndEnqueuePayloads(a.ctx, await seedAsset(a.ctx), "asset.delete")).toBe(true)
+    await setOrganizationLegalHoldUntil(a.organizationId, future)
+    expect((await findExpiredTrashedAssets(now, 10)).map((x) => x.id)).toEqual([expiredB.id])
+    expect(await listPendingOutbox(10)).toEqual([])
+    await setOrganizationLegalHoldUntil(a.organizationId, null)
+    expect((await findExpiredTrashedAssets(now, 10)).map((x) => x.id).sort()).toEqual([expiredA.id, expiredB.id].sort())
+    expect(await listPendingOutbox(10)).toHaveLength(1)
   })
 
   it("legal hold chỉ đặt được cho asset đúng tổ chức", async () => {

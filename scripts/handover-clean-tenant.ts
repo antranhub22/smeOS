@@ -216,6 +216,13 @@ export async function runHandoverCleanPipeline(options: HandoverCleanOptions = {
     process.exit(1)
   }
 
+  // SDAGF D-04: tổ chức đang legal hold thì không dọn — không có cờ vượt.
+  if (org.legal_hold_until && org.legal_hold_until.getTime() > Date.now()) {
+    console.error(`🚫 Tổ chức đang được giữ dữ liệu theo yêu cầu pháp lý tới ${org.legal_hold_until.toISOString()}.`)
+    console.error("   Gỡ giữ qua console vận hành (N14) trước khi dọn.\n")
+    process.exit(1)
+  }
+
   if (stats.orders > 50 && !process.argv.includes(`--danger-override=${org.slug}`)) {
     console.error(`🚨 CẢNH BÁO: Cửa hàng có ${stats.orders} đơn (nghi vấn đang kinh doanh thật)!`)
     console.error(`   Để đảm bảo không xóa nhầm, hãy truyền: --danger-override=${org.slug}\n`)

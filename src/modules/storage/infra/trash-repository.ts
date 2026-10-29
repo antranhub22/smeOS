@@ -11,6 +11,7 @@ import {
 
 import { isUnderLegalHold } from "@/modules/assets/domain/asset-lifecycle"
 import { deleteAssetAndEnqueuePayloads } from "@/modules/assets/infra/payload-outbox"
+import { organizationLegalHoldUntil } from "@/modules/assets/infra/legal-hold"
 import type { ITrashRepository, TrashDeleteResult } from "../domain/repositories/trash-repository.interface"
 
 const PREVIEW_EXPIRES_IN = 86400
@@ -264,12 +265,16 @@ export class TrashRepository implements ITrashRepository {
     ctx: TenantContext,
     input: { id: string; type: TrashItemType }
   ): Promise<TrashDeleteResult> {
+    const now = new Date()
+    if (isUnderLegalHold({ legal_hold_until: await organizationLegalHoldUntil(ctx.organizationId) }, now)) {
+      return "legal_hold"
+    }
     if (input.type === "RAW_ASSET" || input.type === "APPROVED_ANALYSIS") {
       const asset = await prisma.assets.findFirst({
         where: scopedWhere(ctx, { id: input.id }),
       })
       if (!asset) return "not_found"
-      if (isUnderLegalHold(asset, new Date())) return "legal_hold"
+      if (isUnderLegalHold(asset, now)) return "legal_hold"
       return (await deleteAssetAndEnqueuePayloads(ctx, asset, "trash.permanent_delete")) ? "deleted" : "not_found"
     }
 

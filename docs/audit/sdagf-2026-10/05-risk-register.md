@@ -25,5 +25,8 @@ Xếp theo thứ tự ưu tiên của Master Prompt Phase 4. Khả năng xảy r
 | R-12 | Một số module ghi tệp không qua registry `assets` | audio, collage, video (C-002) |
 | R-13 | Log có thể chứa payload/PII | Chưa đánh giá (C-029) |
 
+| R-14 | Worker video ghi tệp ra đĩa cục bộ của worker (`workers/media_ai/video/video_worker.py:31-32,102`), không lên kho dùng chung; web (dịch vụ Render khác) nhiều khả năng không đọc được video đã render | Ngoài phạm vi SDAGF P3 — đề xuất task riêng |
+| R-15 | `npm run nap:phan-tich` nạp `storage-provider-factory` (`import "server-only"`) qua `tsx` không có `--conditions=react-server` — nhiều khả năng lỗi khi chạy | Ngoài phạm vi; `storage:reconcile` đã dùng cờ này |
+
 ## Hypothesis (chưa có bằng chứng)
 - H-1: ngoại lệ `videos/` được thêm để thẻ `<video>` trên trang công khai phát được mà không cần ký lại. Cần xác nhận với người viết.

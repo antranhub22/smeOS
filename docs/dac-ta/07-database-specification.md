@@ -326,7 +326,7 @@ model assets {
 
 ### 5.1 Hàng đợi xoá payload — `storage_outbox` (SDAGF P1)
 
-Xoá vĩnh viễn một asset (API, thùng rác, cron dọn rác) xoá dòng `assets` và ghi hàng đợi trong **cùng một transaction**. Cron `/internal/chain-dispatch-sweep` xoá tệp thật khi cờ `STORAGE_DELETE_PAYLOADS=enabled`, thử lại tối đa 5 lần. Khoá còn bản ghi khác trỏ tới (Master dùng chung tệp gốc) thì đóng việc mà không xoá tệp.
+Xoá vĩnh viễn một asset (API, thùng rác, cron dọn rác) xoá dòng `assets` và ghi hàng đợi trong **cùng một transaction**. Nơi trỏ tới tệp (registry) gồm cả hai nguồn JSON: `generation_jobs.output.audio_storage_key/voice_only_storage_key` và `order_coordinations.metadata.qc_photos/pod_photos` — danh sách SSOT `STORAGE_REFERENCE_SOURCES` (`src/modules/assets/infra/storage-registry-keys.ts`), test kiến trúc `storage-write-contract.test.ts`. Cron `/internal/chain-dispatch-sweep` xoá tệp thật khi cờ `STORAGE_DELETE_PAYLOADS=enabled`, thử lại tối đa 5 lần. Khoá còn bản ghi khác trỏ tới (Master dùng chung tệp gốc) thì đóng việc mà không xoá tệp.
 
 ```prisma
 model storage_outbox {
@@ -346,7 +346,7 @@ model storage_outbox {
 }
 ```
 
-Legal hold (`assets.legal_hold_until`) chỉ người vận hành nền tảng có `N14` được đặt hoặc gỡ, kèm lý do, ghi `platform_audit_logs` (SDAGF D-04).
+Legal hold cấp tổ chức nằm ở `organizations.legal_hold_until` (chặn mọi xoá vĩnh viễn của tổ chức, kể cả `handover-clean-tenant`). Legal hold (`assets.legal_hold_until`) chỉ người vận hành nền tảng có `N14` được đặt hoặc gỡ, kèm lý do, ghi `platform_audit_logs` (SDAGF D-04).
 
 `generated_flags` không bao giờ mặc định ngầm. Ảnh phải dùng generative fill vì chất lượng quá kém được đánh dấu ở cả metadata lẫn giao diện.
 

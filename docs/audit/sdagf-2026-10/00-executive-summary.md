@@ -26,6 +26,9 @@ SMEOS có nền tảng tenancy ở tầng dữ liệu khá tốt: `scopedWhere`,
 ### Bảng control (chi tiết ở `04-control-assessment.md`)
 PASS 7 · PARTIAL 12 · FAIL 8 · NOT_ASSESSED 3. Không gộp thành điểm trung bình.
 
+### Trạng thái thực thi (29/10/2026)
+P0–P4 đã làm trong repo (PR antranhub22/smeOS#72), P5 có đánh giá lại và checklist bàn giao: **PASS 15 · PARTIAL 11 · FAIL 1 (021 — chưa diễn tập khôi phục) · NOT_ASSESSED 3** (`13-reassessment.md`). Chưa đạt cổng Commercial/Production/Handover — phần còn lại nằm ngoài repo (backup R2, diễn tập, bằng chứng Render/R2, DPA), xem `14-handover-checklist.md`.
+
 ### Đề xuất ưu tiên
 1. **P0 (ngay):** bỏ ngoại lệ `videos/` (chuyển sang URL ký có hạn), chặn PUT không chữ ký, giới hạn kích thước, kiểm magic-byte, ngừng phục vụ SVG inline.
 2. **P1:** thêm `delete` vào `StorageProvider`, xoá payload theo outbox, job purge định kỳ, bật versioning hoặc sao chép kho R2.
