@@ -6,6 +6,8 @@ import { GET as getHistory } from "@/app/api/v1/costing/materials/[id]/history/r
 import { GET as getRecipe, PUT as putRecipe } from "@/app/api/v1/costing/recipes/[productId]/route"
 import { GET as getCost } from "@/app/api/v1/costing/products/[productId]/cost/route"
 import { GET as getNeeds } from "@/app/api/v1/costing/needs/route"
+import { POST as postPurchase } from "@/app/api/v1/costing/needs/purchase/route"
+import { POST as postPrice } from "@/app/api/v1/costing/products/[productId]/price/route"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
@@ -122,5 +124,27 @@ describe("tính giá — cách ly tổ chức", () => {
     }
     expect(needs.data.orderCount).toBe(1)
     expect(needs.data.needs[0]?.toBuyQty).toBe(10)
+  })
+
+  it("áp giá và đánh dấu đã mua: tổ chức khác → 404, không ghi gì; tổ chức mình ghi nhật ký + lịch sử", async () => {
+    const productA = await newProduct(a, "A3", { price: 100000 })
+    const roseA = await newMaterial(a, { name: "Hoa hồng", unit: "cành", category_key: "MAIN_FLOWER", unit_cost_vnd: 10000, on_hand_qty: 2 })
+    const priceReq = (t: Tenant) =>
+      postPrice(withSession(`${BASE}/products/${productA}/price`, t.token, { method: "POST", body: JSON.stringify({ price_vnd: 350000, scenario: "RECOMMENDED" }) }), params({ productId: productA }))
+    expect((await priceReq(b)).status).toBe(404)
+    expect((await priceReq(a)).status).toBe(200)
+    const product = await prisma.products.findUniqueOrThrow({ where: { id: productA } })
+    expect((product.attributes as { price: number }).price).toBe(350000)
+    expect(await prisma.audit_logs.count({ where: { organization_id: a.organizationId, action: "product.price.apply" } })).toBe(1)
+    expect(await prisma.audit_logs.count({ where: { organization_id: b.organizationId } })).toBe(0)
+
+    const buy = (t: Tenant) =>
+      postPurchase(withSession(`${BASE}/needs/purchase`, t.token, { method: "POST", body: JSON.stringify({ items: [{ material_id: roseA, quantity: 8, unit_cost_vnd: 11000 }] }) }))
+    expect((await buy(b)).status).toBe(404)
+    expect((await buy(a)).status).toBe(200)
+    const rose = await prisma.materials.findUniqueOrThrow({ where: { id: roseA } })
+    expect(Number(rose.on_hand_qty)).toBe(10)
+    expect(Number(rose.unit_cost_vnd)).toBe(11000)
+    expect(await prisma.material_price_history.count({ where: { material_id: roseA, source: "PURCHASE" } })).toBe(1)
   })
 })

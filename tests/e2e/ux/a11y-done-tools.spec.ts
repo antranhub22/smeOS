@@ -25,6 +25,11 @@ const DONE_TOOLS: Array<{ name: string; path: string; flag?: string; upload: boo
   { name: "Xu hướng thị trường", path: "/market-intelligence", upload: false },
   { name: "Tạo landing page cửa hàng", path: "/landing-page", upload: false },
   { name: "Tạo catalog và bộ sưu tập", path: "/catalog", upload: false },
+  { name: "Bảng giá nguyên liệu", path: "/tinh-gia/nguyen-lieu", upload: false },
+  { name: "Công thức và định mức", path: "/tinh-gia/cong-thuc", upload: false },
+  { name: "Giá vốn sản phẩm", path: "/tinh-gia/gia-von", upload: false },
+  { name: "Giá bán và lợi nhuận", path: "/tinh-gia/gia-ban", upload: false },
+  { name: "Dự toán mua nguyên liệu", path: "/tinh-gia/du-toan", upload: false },
 ]
 
 async function enableFlag(flag: string, orgId: string) {

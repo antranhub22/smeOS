@@ -261,32 +261,32 @@ const GROUP_6_TOOLS: readonly ToolDefinition[] = [
   {
     id: 31, name: "Tạo công thức và định mức nguyên liệu",
     description: "Ghi công thức chuẩn cho từng mẫu: thành phần, số lượng, thời gian",
-    icon: "FlaskConical", label: "BOTH", status: "IN_PROGRESS", progress: 30,
-    href: null, statusNote: "Đang xây — đã có lõi tính định mức theo ngành và API, đang làm giao diện",
+    icon: "FlaskConical", label: "BOTH", status: "DONE", progress: 100,
+    href: "/tinh-gia/cong-thuc", statusNote: "Công thức theo mẫu, bản nháp đọc từ ảnh, hao hụt và thời gian làm",
   },
   {
     id: 32, name: "Quản lý bảng giá nguyên liệu",
     description: "Lưu giá nhập, lịch sử biến động, cảnh báo khi giá thay đổi",
-    icon: "Table", label: "BOTH", status: "IN_PROGRESS", progress: 30,
-    href: null, statusNote: "Đang xây — đã có bảng nguyên liệu, lịch sử giá và cảnh báo biến động, đang làm giao diện",
+    icon: "Table", label: "BOTH", status: "DONE", progress: 100,
+    href: "/tinh-gia/nguyen-lieu", statusNote: "Nguyên liệu, đơn giá, nhà cung cấp, lịch sử giá và cảnh báo biến động",
   },
   {
     id: 33, name: "Tính giá vốn sản phẩm",
     description: "Tự tính giá vốn từ công thức × đơn giá + nhân công + bao bì",
-    icon: "Calculator", label: "STORE", status: "IN_PROGRESS", progress: 30,
-    href: "/gia", statusNote: "Đang xây — lõi tính giá vốn đủ nguyên liệu, hao hụt, công, chi phí chung; máy tính giá hiện tại ở trang Tính giá",
+    icon: "Calculator", label: "STORE", status: "DONE", progress: 100,
+    href: "/tinh-gia/gia-von", statusNote: "Giá vốn đủ nguyên liệu, hao hụt, tiền công, bao bì, chi phí chung",
   },
   {
     id: 34, name: "Đề xuất giá bán và lợi nhuận",
     description: "Mô phỏng nhiều mức giá, tính lợi nhuận dự kiến, cảnh báo ngưỡng",
-    icon: "TrendingUp", label: "BOTH", status: "IN_PROGRESS", progress: 30,
-    href: "/gia", statusNote: "Đang xây — lõi 3 kịch bản giá theo ngành đã có, đang làm giao diện",
+    icon: "TrendingUp", label: "BOTH", status: "DONE", progress: 100,
+    href: "/tinh-gia/gia-ban", statusNote: "3 mức giá theo ngành, so với đối thủ, áp giá có xác nhận và ghi nhật ký",
   },
   {
     id: 35, name: "Lập dự toán và nhu cầu mua nguyên liệu",
     description: "Cộng dồn nguyên liệu theo đơn, trừ tồn kho, ước chi phí mua",
-    icon: "ClipboardList", label: "STORE", status: "IN_PROGRESS", progress: 30,
-    href: null, statusNote: "Đang xây — lõi cộng dồn nguyên liệu theo đơn và trừ tồn đã có, đang làm giao diện",
+    icon: "ClipboardList", label: "STORE", status: "DONE", progress: 100,
+    href: "/tinh-gia/du-toan", statusNote: "Cộng dồn nguyên liệu theo đơn sắp giao, trừ tồn, ghi nhận đã mua",
   },
 ] as const
 

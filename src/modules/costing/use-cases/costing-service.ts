@@ -130,6 +130,18 @@ export async function productCostAndPrice(ctx: TenantContext, productId: string,
   return { product: { id: product.id, name: product.name, priceVnd: product.priceVnd }, hasRecipe: true, cost, scenarios }
 }
 
+/** #34 — áp một mức giá cho sản phẩm (người dùng đã xác nhận ở giao diện). Ghi nhật ký kèm giá vốn lúc áp. */
+export async function applyPrice(ctx: TenantContext, productId: string, priceVnd: number, scenarioKey: string) {
+  if (!(priceVnd > 0) || !Number.isFinite(priceVnd)) throw validationFailed({ priceVnd: "Giá bán phải lớn hơn 0" })
+  const current = await productCostAndPrice(ctx, productId, null)
+  const result = await getCostingRepository().applyProductPrice(ctx, productId, Math.round(priceVnd), {
+    costVnd: current.cost?.totalVnd ?? 0,
+    scenarioKey,
+  })
+  if (!result) throw notFound()
+  return result
+}
+
 /** #35 — dự toán mua nguyên liệu cho đơn giao trong khoảng ngày. */
 export async function materialNeeds(ctx: TenantContext, from: string, to: string) {
   const { config, spec } = await requireSpec(ctx)
@@ -139,4 +151,13 @@ export async function materialNeeds(ctx: TenantContext, from: string, to: string
   const recipes = await repo.listRecipes(ctx, [...new Set(demand.map((d) => d.productId))])
   const result = aggregateMaterialNeeds(demand, recipes, await repo.listMaterials(ctx, true), config.wastePercentByCategory)
   return { ...result, perishable: spec.perishable, orderCount: new Set(demand.map((d) => d.orderId)).size }
+}
+
+/** #35 — ghi nhận đã mua theo dự toán: cộng tồn, cập nhật đơn giá thực mua. */
+export async function recordPurchase(ctx: TenantContext, items: { materialId: string; quantity: number; unitCostVnd: number | null }[]) {
+  await requireSpec(ctx)
+  if (items.length === 0) throw validationFailed({ items: "Chưa chọn nguyên liệu nào" })
+  const result = await getCostingRepository().recordPurchase(ctx, items, ctx.userId)
+  if (!result) throw notFound()
+  return result
 }

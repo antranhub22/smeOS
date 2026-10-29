@@ -1,6 +1,6 @@
 # Kế hoạch hoàn thiện Nhóm 6 — Tính giá và tối ưu lợi nhuận (công cụ #31–#35)
 
-> Trạng thái: **ĐÃ DUYỆT** (PO 29/10/2026, quyết định 1–7 theo đề xuất) · Cơ sở: `main` @ `27319ba`
+> Trạng thái: **ĐÃ TRIỂN KHAI** đợt 1–7 trên nhánh `NangcapkientrucUX_progressiveDisclosure` (29/10/2026) — PO duyệt 1–7 · Cơ sở: `main` @ `27319ba`
 > Chuẩn áp dụng: `docs/dac-ta/03a-ux-constitution.md` + `docs/dac-ta/03c-ux-progressive-disclosure.md` + `docs/dac-ta/ux-patterns/`
 > Mục tiêu nhóm (toolkit): "Biết rõ chi phí, định giá có căn cứ và chuẩn bị nguyên liệu đúng nhu cầu"
 
@@ -86,6 +86,14 @@ Cấu hình chi phí **không cần bảng mới**: thêm khoá vào `pricing_ru
 | **7. Hoàn thiện** | Screen Contract §15 cả 5 màn, thêm vào `a11y-done-tools.spec.ts`, toolkit #31–#35 → DONE 100% | PR | Mọi gate CLAUDE.md xanh |
 
 Thứ tự 2 → 3 → 4 → 5 → 6 là bắt buộc vì mỗi công cụ dùng dữ liệu của công cụ trước. Mỗi đợt một PR, merge được độc lập; màn chưa xong ẩn khỏi toolkit (`href: null`) để không lộ màn dở.
+
+### 4b. Kết quả triển khai và chênh lệch so với kế hoạch
+
+- Màn: `/tinh-gia/{nguyen-lieu,cong-thuc,gia-von,gia-ban,du-toan}` — Screen Contract `docs/dac-ta/screen-contracts/tinh-gia.md`.
+- "Nhập Excel" (#32) làm bằng **dán bảng** từ Excel/Google Sheets (`material-import.ts`, có unit test) — không thêm thư viện đọc `.xlsx` (thêm dependency cần PO duyệt).
+- "Tự điền vào máy tính `/gia`" (#33) thay bằng **liên kết** từ `/gia` sang `/tinh-gia/gia-von`: `pricing-calculator-card.tsx` đã 349 dòng, thêm prop sẽ vượt giới hạn 350 dòng. "Hiện trên trang sản phẩm" chưa làm — để đợt sau.
+- "Xuất danh sách" (#35) là nút **Sao chép danh sách mua** (dán Zalo/tin nhắn).
+- Đợt 1–7 gộp chung một nhánh thay vì mỗi đợt một PR; PR chỉ tạo khi PO cho phép.
 
 ## 5. Việc sửa ngay, độc lập với Nhóm 6
 - `/bao-gia` đang **giả lập AI** (`setTimeout` + kết quả cố định) và dùng **sản phẩm mẫu cài cứng** khi API trả rỗng — vi phạm 03c UX-016 trên một màn đang chạy. Đề xuất: bỏ giả lập, dùng `/api/v1/market-intelligence/vision-extract` thật hoặc ẩn nút tải ảnh; rỗng thì `EmptyState`. Màn này thuộc công cụ báo giá (#15/#16), không thuộc #33/#34 — toolkit #33/#34 đang trỏ nhầm vào đây.

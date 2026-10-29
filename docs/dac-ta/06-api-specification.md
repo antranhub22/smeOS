@@ -1036,6 +1036,8 @@ Mọi route trả 422 "Ngành của cửa hàng chưa được hỗ trợ cho c�
 | PUT | `/costing/recipes/:productId` | `L3` | `{ lines: [{ material_id, quantity }], waste_percent?, labor_minutes?, note? }` — thay toàn bộ, tăng phiên bản |
 | GET | `/costing/products/:productId/cost` | `L5` | Giá vốn phân rã + `missingPrices` + kịch bản giá (chỉ khi đủ dữ liệu); `?competitor_vnd=` |
 | GET | `/costing/needs` | `L5` | `?from=YYYY-MM-DD&to=YYYY-MM-DD` — dự toán mua cho đơn `CONFIRMED`/`PROCESSING` giao trong khoảng |
+| POST | `/costing/needs/purchase` | `L6` | `{ items: [{ material_id, quantity, unit_cost_vnd? }] }` — "đã mua": cộng `on_hand_qty`; có giá mua thì cập nhật đơn giá + lịch sử nguồn `PURCHASE`. Nguyên liệu khác tổ chức → 404, không ghi gì |
+| POST | `/costing/products/:productId/price` | `L3` | `{ price_vnd, scenario }` — áp giá bán (R3, giao diện bắt xác nhận) vào `attributes.price`; ghi `audit_logs` `product.price.apply` (giá cũ/mới, giá vốn lúc áp) cùng giao dịch |
 
 `PUT /pricing-rules` nhận thêm 4 khoá của nhóm này: `labor_rate_per_hour`, `default_packaging_vnd` (VNĐ ≥ 0), `overhead_percent` [0,100], `price_change_alert_percent` [1,100].
 

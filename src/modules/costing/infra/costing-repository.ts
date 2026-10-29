@@ -1,6 +1,7 @@
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
+import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import type { Material, Recipe } from "../domain/costing-types"
 import type { DemandItem } from "../domain/material-needs"
 import type { PricePoint } from "../domain/price-change"
@@ -193,6 +194,59 @@ export class CostingRepository {
       priceVnd: price,
       complexity: complexity === "EASY" || complexity === "MEDIUM" || complexity === "HARD" ? complexity : null,
     } as const
+  }
+
+  /**
+   * #35 — "đã mua": cộng tồn kho; có đơn giá mua thì cập nhật đơn giá + mốc lịch sử nguồn `PURCHASE`.
+   * Mọi nguyên liệu phải thuộc tổ chức; không thì không ghi gì và trả `null`.
+   */
+  async recordPurchase(ctx: TenantContext, items: readonly { materialId: string; quantity: number; unitCostVnd: number | null }[], userId: string) {
+    return this.db.$transaction(async (tx) => {
+      const ids = [...new Set(items.map((i) => i.materialId))]
+      const rows = await tx.materials.findMany({ where: scopedWhere(ctx, { id: { in: ids } }) })
+      if (rows.length !== ids.length || ids.length !== items.length) return null
+      for (const item of items) {
+        const row = rows.find((r) => r.id === item.materialId)!
+        const onHand = (toNum(row.on_hand_qty) ?? 0) + item.quantity
+        const priceChanged = item.unitCostVnd !== null && item.unitCostVnd !== toNum(row.unit_cost_vnd)
+        await tx.materials.update({
+          where: { id: row.id },
+          data: { on_hand_qty: onHand, ...(item.unitCostVnd !== null ? { unit_cost_vnd: item.unitCostVnd } : {}) },
+        })
+        if (priceChanged) {
+          await tx.material_price_history.create({
+            data: scopedData(ctx, { material_id: row.id, unit_cost_vnd: item.unitCostVnd as number, source: "PURCHASE", created_by: userId }),
+          })
+        }
+      }
+      return { updated: items.length }
+    })
+  }
+
+  /**
+   * #34 — áp giá bán vào `products.attributes.price` và ghi `audit_logs` trong cùng giao dịch
+   * (R3: đổi giá ảnh hưởng báo giá/đơn mới). Trả `null` khi sản phẩm không thuộc tổ chức.
+   */
+  async applyProductPrice(ctx: TenantContext, productId: string, priceVnd: number, basis: { costVnd: number; scenarioKey: string }) {
+    return this.db.$transaction(async (tx) => {
+      const row = await tx.products.findFirst({ where: scopedWhere(ctx, { id: productId }), select: { id: true, attributes: true } })
+      if (!row) return null
+      const attrs = (row.attributes as Record<string, unknown> | null) ?? {}
+      const before = typeof attrs.price === "number" ? attrs.price : null
+      await tx.products.update({ where: { id: row.id }, data: { attributes: { ...attrs, price: priceVnd } as Prisma.InputJsonValue } })
+      await recordAuditLog(
+        ctx,
+        {
+          action: "product.price.apply",
+          entityType: "products",
+          entityId: row.id,
+          before: { price: before },
+          after: { price: priceVnd, cost_vnd: basis.costVnd, scenario: basis.scenarioKey },
+        },
+        tx,
+      )
+      return { previousPriceVnd: before, priceVnd }
+    })
   }
 
   /** Đơn đã xác nhận/đang làm có ngày giao trong khoảng [from, to] (YYYY-MM-DD) — nhu cầu cho #35. */
