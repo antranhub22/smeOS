@@ -75,7 +75,9 @@ Chuỗi viết thường trong component (`"done"`, `"processing"`…) phần l�
 | **R2** | Phân tích lại ảnh (tốn lượt) · tạo biến thể/video · khôi phục chính sách về mặc định · nạp dữ liệu mẫu · ẩn bộ sưu tập · mở khóa ngày lịch |
 | **R1** | Đổi bộ lọc, mở chi tiết, tạo bản nháp, chọn mẫu |
 
-## 6. Thứ tự rollout đề xuất (chờ PO duyệt)
+## 6. Thứ tự rollout đề xuất ban đầu
+
+> **Đã được thay bằng phán quyết PO vòng 2 (V1–V5)** — xem `PROGRESSIVE_DISCLOSURE_EXECUTION_PLAN.md`: công cụ Hoàn thiện trước, Đang phát triển sau; pilot `/cong-cu/anh-san-pham`.
 
 | Thứ tự | Nhóm | Lý do | Vấn đề chính |
 |---|---|---|---|

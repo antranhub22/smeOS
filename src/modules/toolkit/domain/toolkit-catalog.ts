@@ -54,8 +54,8 @@ const GROUP_1_TOOLS: readonly ToolDefinition[] = [
   {
     id: 0, name: "Chế tác tự động trọn gói từ A-Z",
     description: "Quy trình AI tự động trọn gói từ 1 ảnh thô ra bộ tư liệu bán hàng đa kênh",
-    icon: "Sparkles", label: "BOTH", status: "DONE", progress: 100,
-    href: "/creative-studio", statusNote: "Workflow Pipeline — Tự động bóc tách BOM, tạo ảnh studio, video, caption và thẻ chào",
+    icon: "Sparkles", label: "BOTH", status: "IN_PROGRESS", progress: 80,
+    href: "/creative-studio", statusNote: "Đang hoàn thiện — hành trình 14 chặng: bóc tách BOM, ảnh studio, video, caption và thẻ chào",
   },
   {
     id: 1, name: "Tạo ảnh sản phẩm chuyên nghiệp",

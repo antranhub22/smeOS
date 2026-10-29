@@ -45,28 +45,71 @@
 | 2.5 `ResultPanel` | `src/components/ui/result-panel.tsx` | Unit |
 | 2.6 `EntitlementGate`, `CostPreview` (P11, P12) | `src/components/ui/` | Unit; dữ liệu quota/capability lấy từ API sẵn có |
 | 2.7 Lint R13–R16 dạng ratchet, khóa baseline | `scripts/ux-lint.ts` | Unit cho từng luật |
-| 2.8 axe trong E2E luồng cốt lõi (E8) | `tests/e2e/` | Mở rộng `tests/e2e/ux/a11y.spec.ts` (đã có `@axe-core/playwright`) |
-| 2.9 Cờ tính năng theo tổ chức (E9) | theo cơ chế sẵn có | **[PO]** nếu cần bảng/cột mới (`prisma/schema.prisma`) |
+| 2.8 axe trong E2E luồng cốt lõi (E8, PO V5) | `tests/e2e/` | Mở rộng `tests/e2e/ux/a11y.spec.ts` (đã có `@axe-core/playwright`) |
+| 2.9 Cờ tính năng theo tổ chức (E9) | `platform_settings` khóa `ux_rollout_flags` (§V4) | Unit: off/allowlist/all, cô lập tổ chức |
+| 2.10 Sửa sớm A01 (tiến độ giả ở `/video`) | `src/components/video-studio/video-rendering-progress.tsx` | Unit |
 
 **Exit gate:** typecheck, lint:ratchet, lint:ux --check, `npm test` xanh; không đổi API public component cũ.
 
-## Giai đoạn 3 — Pilot: Tải ảnh → xử lý → kết quả
-- Phạm vi: `/tai-anh`, `src/components/upload/upload-wizard.tsx`, P01 + P04 + P05 + P06 + P12.
-- **[PO] bắt buộc trước khi bắt đầu:** xác nhận các chặng trong 14 chặng journey sẽ chạy (quy định CLAUDE.md cho tính năng tải ảnh).
+## Phán quyết PO vòng 2 (29/10/2026)
+
+| # | Phán quyết | Áp dụng |
+|---|---|---|
+| V1 | **Rollout theo trạng thái công cụ** trong `src/modules/toolkit/domain/toolkit-catalog.ts`: **Hoàn thiện (DONE) trước, Đang phát triển (IN_PROGRESS) sau**; ưu tiên tốc độ đưa vào sử dụng | Giai đoạn 3–4 dưới đây |
+| V2 | Công cụ #00 "Chế tác tự động trọn gói" (`/creative-studio`, hành trình 14 chặng) chuyển **DONE → IN_PROGRESS** ("Đang hoàn thiện", 80%) | Đã sửa trong `toolkit-catalog.ts` |
+| V3 | Chặng nào chạy trong pilot/rollout: agent quyết theo tính chất từng chặng | Bảng §V3 |
+| V4 | Cờ tính năng: phương án tối ưu đạt chuẩn enterprise | §V4 |
+| V5 | Mở rộng axe (`@axe-core/playwright` đã có) ra luồng cốt lõi | Giai đoạn 2.8 |
+
+### §V3. Quyết định theo tính chất từng chặng (journey `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_JOURNEY.md`)
+
+| Chặng | Tính chất | Rủi ro | Pattern | Quyết định |
+|---|---|---|---|---|
+| 01 BRING | Tải ảnh, lưu kho, kiểm tra file | R1 | P01, SYS | **Chạy** trong pilot và mọi công cụ ảnh DONE |
+| 02 UNDERSTAND | Vision AI bóc tách, người dùng sửa được | R2 (tốn lượt) | P02, P12 | **Chạy** — thêm xem trước lượt |
+| 03 DISCOVER · 04 IDEATE · 05 CHOOSE | Phân tích thị trường, chọn chủ đề, kịch bản (tốn lượt) | R2 | P02, P03, P12 | **Hoãn** — chỉ có trong Creative Studio (đang hoàn thiện) |
+| 06a–06d (tạo nội dung/âm thanh/ảnh/video) | Tác vụ nền tạo kết quả | R2 | P01, P04, P05, P12 | **Chạy** phần tương đương trong công cụ DONE (#01, #02, #05: bước "Tạo ảnh"); phần trong Creative Studio hoãn |
+| 07 PACKAGE · 08 QA | Gom tài sản, kiểm tra máy chủ | R1–R2 | P05, P06 | **Hoãn** (Creative Studio) |
+| 09 APPROVE | Duyệt, ghi nhật ký, khóa gói | R3 | P07, UX-020 | **Hoãn** (Creative Studio) |
+| 10 LAUNCH | Đăng/lên lịch ra kênh ngoài | R3 | P07 | **Hoãn** (Lịch đăng đang phát triển) |
+| 11–14 SELL · MEASURE · LEARN · NEXT | Chỉ đọc số liệu, gợi ý | R1 | P08 (chưa có số liệu) | **Hoãn**, rủi ro thấp |
+
+→ Pilot chỉ đụng **Chặng 01, 02 và bước tạo ảnh** của công cụ DONE; không đụng luồng 14 chặng.
+
+### §V4. Cờ tính năng — phương án chọn
+- Lưu ở bảng `platform_settings` **đã có** (khóa `ux_rollout_flags`), cùng cơ chế với `src/modules/platform/infra/nav-matrix-store.ts` (cache 30 giây, ghi `updated_by` làm vết kiểm toán). **Không đổi `prisma/schema.prisma`, không migration.**
+- Mỗi cờ: `off` · `allowlist` (danh sách `organization_id`) · `all`. Đọc ở server qua `requireTenantContext()`; client chỉ nhận kết quả bật/tắt, không nhận danh sách tổ chức.
+- Quản trị nền tảng bật/tắt ở Console `/van-hanh` (capability nền tảng); tắt có hiệu lực ≤ 30 giây.
+- Lý do chọn: không có rủi ro migration, cô lập tổ chức đúng chuẩn, có vết kiểm toán, rollback tức thì — đạt E9 mà không tăng bề mặt hạ tầng.
+
+## Giai đoạn 3 — Pilot: Tạo ảnh sản phẩm chuyên nghiệp (`/cong-cu/anh-san-pham`, công cụ #01, DONE)
+- Lý do chọn: công cụ DONE, đúng nguyên mẫu P01 (tải ảnh → tạo → kết quả), nhỏ (7 tệp, ~980 dòng) nên nhanh; kết quả nhân bản ngay sang #02, #05.
+- Phạm vi: Chặng 01 + 02 + bước tạo ảnh (§V3); P01 + P04 + P05 + P06 + P12; tạo Screen Contract (đang thiếu — A07).
 - Đo trước/sau (E7): tỷ lệ hoàn thành, bỏ ngang, thời gian hoàn thành, retry, lỗi axe, LCP/INP/CLS.
-- Bật bằng cờ cho 1–2 tổ chức thử.
+- Bật bằng cờ `ux_pd_anh_san_pham` cho 1–2 tổ chức thử.
 
 **Exit gate:** acceptance criteria P01 đạt; E2E UX xanh; báo cáo `docs/ui-ux/PD_PILOT_REPORT.md`; **[PO]** quyết rollout / sửa / dừng.
 
-## Giai đoạn 4 — Rollout theo nhóm (mỗi nhóm một PR, có cờ)
-1. Creative Studio (ảnh, video, biến thể, âm thanh)
-2. Catalog / Landing / QR
-3. Market Intelligence
-4. Đơn hàng / CRM / Khách hàng (nhiều hành động R3 → `ConfirmDialog`, nhật ký)
-5. Nội dung & lịch đăng, Hội thoại
-6. Cài đặt, Tổ chức, Nền tảng (quyền/gói → P11)
+## Giai đoạn 4 — Rollout (mỗi đợt một PR, có cờ)
 
-Mỗi nhóm: cập nhật Screen Contract §15 → áp component → xóa vi phạm R13–R15 → hạ baseline lint → E2E + axe → bật cờ dần.
+**Đợt A — công cụ Hoàn thiện (đưa vào dùng sớm nhất)**
+1. #02 Bộ ảnh sản phẩm (`/cong-cu/bo-anh-san-pham`) · #05 Poster & banner (`/cong-cu/poster-banner`) — dùng lại kết quả pilot
+2. #03 Thẻ chào sản phẩm (`/tai-anh?tab=m01c`)
+3. #04 Nội dung bán hàng (`/noi-dung`)
+4. #14 Catalog bán hàng theo nhu cầu (`/the-chao?quick=true`)
+5. #49 Xu hướng thị trường (`/market-intelligence`)
+6. Nền dùng chung mọi công cụ: Cài đặt / Thành viên / Kết nối (R3 → `ConfirmDialog`, A04)
+
+**Đợt B — công cụ Đang phát triển** (áp chuẩn ngay khi phát triển tiếp, theo DoD 03c §9)
+1. #06 Video (`/video`) — kèm sửa A01 (đã làm sớm ở Giai đoạn 2)
+2. #08 Landing page · #09 Catalog · #12 QR
+3. #22 Chiến dịch (`/lich-dang`)
+4. #32–#34 Giá nguyên liệu / giá vốn / giá bán (`/san-pham`, `/bao-gia`)
+5. #39–#41 Đơn hàng & giao hàng (`/don-hang`)
+6. #00 Creative Studio 14 chặng — **cuối cùng**, khi hoàn thiện; áp các chặng đã hoãn ở §V3
+7. Nền tảng `/van-hanh/*` và trang công khai
+
+Mỗi đợt: Screen Contract §15 → áp component → xóa vi phạm R13–R15 → hạ baseline lint → E2E + axe → bật cờ dần.
 
 ## Giai đoạn 5 — Enterprise bổ sung & quản trị
 | Việc | Đề xuất | Ghi chú |
@@ -86,6 +129,6 @@ Mỗi nhóm: cập nhật Screen Contract §15 → áp component → xóa vi ph�
 | 0 Chuẩn & tài liệu | Xong | nhánh `NangcapkientrucUX_progressiveDisclosure` |
 | 1 Audit | Xong — `PD_AUDIT_REPORT.md`, `PD_AUDIT_INVENTORY.md`; chờ PO duyệt §7 | nhánh này |
 | 2 Nền tảng | Chưa bắt đầu | — |
-| 3 Pilot | Chờ PO xác nhận chặng | — |
+| 3 Pilot | Đã chốt: `/cong-cu/anh-san-pham`, chặng 01 + 02 + tạo ảnh | — |
 | 4 Rollout | — | — |
 | 5 Enterprise & quản trị | — | — |
