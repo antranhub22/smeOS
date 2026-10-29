@@ -3,7 +3,7 @@
 **Tuyến:** `/landing-page` · **Tệp chính:** `src/components/landing-page/landing-page-studio-client.tsx`, `src/components/catalog/landing-campaign-tab.tsx` · **Cập nhật:** 29/10/2026 · **Thẻ:** công cụ #08 chuyển Hoàn thiện (PO 29/10/2026)
 
 ## 1. Vai và mục đích
-- Vai chính: chủ tiệm, marketing · Phạm vi: organization · Mật độ: MEDIUM
+- Vai chính: chủ tiệm, marketing · Phạm vi: organization · Mật độ: MEDIUM · Archetype: **E — Builder** (`ux-patterns/page-archetypes.md`)
 - Việc chính: tạo trang giới thiệu/chiến dịch có link chia sẻ và QR
 - Câu hỏi chính: "Trang của tôi đã xuất bản và gửi khách được chưa?"
 
@@ -23,3 +23,10 @@
 
 ## 15. Progressive disclosure & rủi ro (03c)
 Pattern: UX-P01 (đầu vào → tạo), UX-P02, UX-P05, UX-P06. Rủi ro: soạn nội dung R2 (AI), **xuất bản công khai R3** (link khách xem được). axe 390px: 0 lỗi (`tests/e2e/ux/a11y-done-tools.spec.ts`). Test bước giả: `tests/unit/ux/no-fake-progress.test.ts`.
+
+Trường theo ngữ cảnh (03c §5c, pilot MEUX 29/10/2026):
+| Trường/nhóm | Hiện khi | Khóa khi | Mặc định | Khi điều kiện đổi |
+|---|---|---|---|---|
+| Mục đích trang (radio) | Luôn | — | Trang giới thiệu cửa hàng | Đổi bất kỳ lúc nào trước khi soạn; giá trị gửi kèm lần soạn kế tiếp (`pageType`) |
+| Đầu vào AI (ảnh, video, ghi chú) | Chế độ "AI làm cho tôi" | Đang soạn | Trống | Chuyển sang "Tự chọn từng bước": ghi chú/video giữ nguyên — hai chế độ dùng chung state của `LandingCampaignTab`, không có lệnh xóa (đọc mã; chưa có E2E) |
+Review thị giác: `docs/ui-ux/MEUX_PILOT_LANDING_PAGE.md` §7.

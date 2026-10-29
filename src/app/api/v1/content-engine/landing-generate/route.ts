@@ -6,6 +6,9 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
 import { getBrandProfile } from "@/modules/profiles/use-cases/get-brand-profile"
 import { executeGenerateLandingContent } from "@/modules/content-engine/use-cases/generate-landing-page-content.use-case"
+import { LANDING_TYPE_OPTIONS } from "@/modules/landing-page/domain/preset-catalog"
+
+const PAGE_TYPES = LANDING_TYPE_OPTIONS.map((o) => o.type) as [string, ...string[]]
 
 const requestSchema = z.object({
   occasionId: z.string().min(1),
@@ -25,6 +28,7 @@ const requestSchema = z.object({
   guarantees: z.array(z.string()).optional(),
   targetAudience: z.string().optional(),
   designDirection: z.string().optional(),
+  pageType: z.enum(PAGE_TYPES).optional(),
 })
 
 export const POST = handle(async (request) => {
@@ -42,6 +46,8 @@ export const POST = handle(async (request) => {
     getBrandProfile(ctx).catch(() => null),
   ])
 
+  // Mục đích trang (bộ chọn loại trang trên /landing-page) → một dòng chỉ dẫn cho Writer AI.
+  const pageOption = LANDING_TYPE_OPTIONS.find((o) => o.type === parsed.data.pageType)
   const shopName = bizProfile?.display_name || "Tiệm Sản Phẩm"
   const shopTone = brandProfile?.tone_of_voice || undefined
 
@@ -59,6 +65,7 @@ export const POST = handle(async (request) => {
       guarantees: parsed.data.guarantees,
       targetAudience: parsed.data.targetAudience,
       designDirection: parsed.data.designDirection,
+      pageGoal: pageOption ? `${pageOption.title} — ${pageOption.subTitle}` : undefined,
     },
     ctx
   )

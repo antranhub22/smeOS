@@ -21,6 +21,7 @@ export interface LandingContentInput {
   }>
   userDirectives?: string | undefined
   discountPercent?: number | undefined
+  pageGoal?: string | undefined
   usps?: string[] | undefined
   guarantees?: string[] | undefined
   targetAudience?: string | undefined

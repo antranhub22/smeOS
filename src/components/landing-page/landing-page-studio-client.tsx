@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, QrCode } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { LandingGuidanceCard } from "./landing-guidance-card"
+import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
+import { InlineError } from "@/components/ui/inline-error"
 import { LandingTypeSelector } from "./landing-type-selector"
 import { LandingCampaignTab } from "@/components/catalog/landing-campaign-tab"
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
@@ -101,12 +102,13 @@ export function LandingPageStudioClient() {
             variant="ghost"
             size="sm"
             onClick={() => router.push("/cong-cu" as never)}
+            aria-label="Về thư viện công cụ"
             className="flex items-center gap-1.5 text-text-muted hover:text-text"
           >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Về Công cụ
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> <span className="hidden sm:inline">Về Công cụ</span>
           </Button>
-          <div className="h-4 w-px bg-border" />
-          <h1 className="font-extrabold text-base text-text">Tạo landing page cửa hàng</h1>
+          <div className="hidden h-4 w-px bg-border sm:block" />
+          <h1 className="text-title font-extrabold text-text">Tạo landing page cửa hàng</h1>
         </div>
 
         <div className="flex items-center gap-2">
@@ -114,9 +116,10 @@ export function LandingPageStudioClient() {
             variant="outline"
             size="sm"
             onClick={() => router.push("/the-chao" as never)}
-            className="flex items-center gap-1.5 text-xs font-semibold"
+            aria-label="Thẻ chào và mã QR"
+            className="flex items-center gap-1.5 text-caption font-semibold"
           >
-            <QrCode className="h-3.5 w-3.5" /> Thẻ chào & QR
+            <QrCode className="h-3.5 w-3.5" aria-hidden="true" /> <span className="hidden sm:inline">Thẻ chào & QR</span>
           </Button>
         </div>
       </div>
@@ -124,28 +127,25 @@ export function LandingPageStudioClient() {
       {/* Main Workspace */}
       <div className="flex flex-1 flex-col overflow-y-auto p-4 sm:p-6 space-y-5">
         {error && (
-          <div className="rounded-xl bg-destructive-bg p-3 text-sm text-destructive flex items-center gap-2">
-            ⚠️ {error}
-          </div>
+          <InlineError
+            message={`${error}. Bạn vẫn tạo được trang; danh sách sản phẩm sẽ trống.`}
+            onRetry={() => {
+              setError(null)
+              void fetchProducts()
+            }}
+          />
         )}
 
-        {/* Khối hướng dẫn SSOT */}
-        <LandingGuidanceCard />
+        <FeatureGuidanceCard
+          guidanceId="landing-page"
+          title="Trang giới thiệu có link chia sẻ và mã QR"
+          description="Khách mở trên điện thoại để gọi, nhắn Zalo hoặc đặt hàng. Thông tin tiệm lấy sẵn từ hồ sơ cửa hàng."
+        />
 
-        {/* Lựa chọn loại trang */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
-              Chọn mục đích trang Landing Page
-            </span>
-          </div>
-          <LandingTypeSelector selectedType={pageType} onSelectType={setPageType} />
-        </div>
+        {/* Mục đích trang — gửi cho AI soạn nội dung (03c UX-027) */}
+        <LandingTypeSelector selectedType={pageType} onSelectType={setPageType} />
 
-        {/* Bộ dựng Landing Page chuyên biệt */}
-        <div className="pt-2">
-          <LandingCampaignTab products={products} onRefresh={fetchProducts} />
-        </div>
+        <LandingCampaignTab products={products} onRefresh={fetchProducts} pageType={pageType} />
       </div>
     </div>
   )
