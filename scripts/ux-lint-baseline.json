@@ -13,8 +13,7 @@
       "R13": 1
     },
     "components/catalog": {
-      "R14": 3,
-      "R13": 1
+      "R14": 3
     },
     "components/coordinator": {
       "R16": 7
@@ -55,6 +54,6 @@
       "R16": 1
     }
   },
-  "total": 133,
-  "updatedAt": "2026-10-29T04:40:33.379Z"
+  "total": 132,
+  "updatedAt": "2026-10-29T06:09:16.824Z"
 }
