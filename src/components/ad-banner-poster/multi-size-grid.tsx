@@ -45,7 +45,7 @@ export function MultiSizeGrid({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         {visibleFormats.map((spec) => {
           const isDownloading = isExportingFormat === spec.id
 

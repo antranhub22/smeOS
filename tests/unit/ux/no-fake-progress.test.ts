@@ -33,3 +33,13 @@ describe("Thẻ báo giá /bao-gia — không dữ liệu giả, không AI giả
     expect(src).not.toMatch(/setTimeout\(\(\) => \{\s*setAnalyzing/)
   })
 })
+
+describe("Poster & banner #05 — không dữ liệu mẫu trên ấn phẩm tải về (MEUX rollout 29/10/2026)", () => {
+  it("không cài sẵn hotline/địa chỉ/ảnh mẫu; lấy từ hồ sơ cửa hàng; không báo đã lưu mẫu khi không lưu", () => {
+    const src = read("src/components/ad-banner-poster/poster-banner-client.tsx")
+    expect(src).not.toMatch(/0901 234 567|123 Đường Trung Tâm|images\.unsplash\.com/)
+    expect(src).not.toContain("setProductImageUrl(tpl.sampleImageUrl)")
+    expect(src).not.toContain("Đã lưu mẫu thiết kế thành công")
+    expect(src).toContain("useTenantProfile()")
+  })
+})

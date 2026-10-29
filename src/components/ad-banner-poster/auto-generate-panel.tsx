@@ -21,10 +21,10 @@ export interface AutoGeneratePanelProps {
 }
 
 const PURPOSE_QUICK_TAGS = [
-  { key: "OPENING", label: "🎉 Khai trương hồng phát" },
-  { key: "FLASH_SALE", label: "🔥 Flash Sale / Giảm sốc" },
-  { key: "NEW_ARRIVAL", label: "✨ Mẫu mới ra mắt" },
-  { key: "WOMEN_DAY", label: "💐 Ngày lễ 20/10 & 8/3" },
+  { key: "OPENING", label: "Khai trương hồng phát" },
+  { key: "FLASH_SALE", label: "Flash Sale / Giảm sốc" },
+  { key: "NEW_ARRIVAL", label: "Mẫu mới ra mắt" },
+  { key: "WOMEN_DAY", label: "Ngày lễ 20/10 & 8/3" },
 ] as const
 
 export function AutoGeneratePanel({
@@ -258,7 +258,7 @@ export function AutoGeneratePanel({
           type="button"
           disabled={isGenerating || !productImageUrl}
           onClick={onTriggerAutoGenerate}
-          className="w-full py-3 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer"
+          className="w-full py-3 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer"
         >
           {isGenerating ? (
             <>
@@ -267,14 +267,14 @@ export function AutoGeneratePanel({
             </>
           ) : (
             <>
-              <Zap className="h-4 w-4 text-warning" />
-              <span>⚡ TỰ ĐỘNG TẠO BỘ POSTER & BANNER (1-CHẠM)</span>
+              <Zap className="h-4 w-4" aria-hidden="true" />
+              <span>Tạo bộ poster và banner</span>
             </>
           )}
         </button>
         {!productImageUrl && (
           <p className="text-caption text-warning-text text-center mt-1.5">
-            ⚠️ Hãy tải ảnh sản phẩm lên trước để kích hoạt tạo tự động
+            Hãy tải ảnh sản phẩm lên trước để kích hoạt tạo tự động
           </p>
         )}
       </div>

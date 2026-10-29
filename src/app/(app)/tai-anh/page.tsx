@@ -1623,7 +1623,7 @@ export default function TaiAnhPage() {
               <Sparkles size={32} strokeWidth={1.5} className="mx-auto mb-3 text-primary" />
               <div className="text-title-sm font-semibold">Sinh nội dung bán hàng</div>
               <div className="mt-1 text-meta text-text-muted">
-                Đọc từ Product Master vừa duyệt → Tên, mô tả, thẻ, tone, dịp, phân khúc giá
+                Đọc từ sản phẩm vừa duyệt → Tên, mô tả, thẻ, tone, dịp, phân khúc giá
               </div>
               <Button className="mt-5 w-full" onClick={goResult2}>
                 Tiếp tục sang Nội dung bán hàng
@@ -1643,7 +1643,7 @@ export default function TaiAnhPage() {
             </div>
             <div className="text-center">
               <div className="text-title font-extrabold">Đã lưu vào Kho</div>
-              <div className="mt-1 text-body-sm text-text-muted">Đặc điểm nhận diện đã được lưu vào Product Master</div>
+              <div className="mt-1 text-body-sm text-text-muted">Đặc điểm nhận diện đã được lưu vào kho sản phẩm</div>
             </div>
             <div className="flex gap-3">
               <Button variant="secondary" onClick={() => setPhase("upload")}>
@@ -1759,7 +1759,7 @@ export default function TaiAnhPage() {
                 </div>
                 <div className="text-center">
                   <div className="text-title font-extrabold">Đã lưu vào Kho sản phẩm</div>
-                  <div className="mt-1 text-body-sm text-text-muted">Product Master + Thư viện nội dung bán hàng đã được cập nhật</div>
+                  <div className="mt-1 text-body-sm text-text-muted">Kho sản phẩm và thư viện nội dung bán hàng đã được cập nhật</div>
                 </div>
                 <div className="flex gap-3">
                   <Button
