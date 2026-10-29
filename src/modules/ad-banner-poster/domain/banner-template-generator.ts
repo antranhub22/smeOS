@@ -17,7 +17,7 @@ interface TemplatePresetOption {
 const DEFAULT_TEMPLATES_BY_OCCASION: Record<string, TemplatePresetOption> = {
   FLASH_SALE: {
     headline: "FLASH SALE — CHỚP NGAY DEAL ĐỈNH",
-    subHeadline: "Số lượng có hạn, ưu đãi độc quyền dành riêng cho khách hàng nhanh tay nhất",
+    subHeadline: "Ưu đãi dành cho khách hàng nhanh tay",
     promotionBadge: "GIẢM ĐẾN 50%",
     ctaText: "MUA NGAY KẺO LỠ",
     validityText: "Chỉ áp dụng trong hôm nay",
@@ -25,7 +25,7 @@ const DEFAULT_TEMPLATES_BY_OCCASION: Record<string, TemplatePresetOption> = {
   },
   GRAND_OPENING: {
     headline: "MỪNG KHAI TRƯƠNG — RỘN RÀNG ƯU ĐÃI",
-    subHeadline: "Chào đón quý khách với hàng trăm quà tặng độc quyền và trải nghiệm sản phẩm tuyệt vời",
+    subHeadline: "Hân hạnh chào đón quý khách ghé thăm cửa hàng",
     promotionBadge: "TẶNG BĂNG RÔN & GIẢM 20%",
     ctaText: "GHÉ CỬA HÀNG NGAY",
     validityText: "Tuần lễ khai trương",
@@ -118,8 +118,9 @@ export function generateInstantBannerCopy(params: {
     subHeadline: params.productTitle
       ? `${tpl.subHeadline} với sản phẩm nổi bật "${params.productTitle}".`
       : tpl.subHeadline,
-    promotionBadge: params.suggestedPromotion || tpl.promotionBadge,
+    // Ưu đãi và thời hạn in lên ấn phẩm chỉ khi cửa hàng nhập — mẫu không tự hứa "giảm 50%", "chỉ hôm nay"…
+    promotionBadge: params.suggestedPromotion ?? "",
     ctaText: tpl.ctaText,
-    validityText: tpl.validityText,
+    validityText: "",
   }
 }

@@ -49,7 +49,7 @@ export function ManualEditPanel({
 
         <div>
           <label className="text-caption text-text-muted block mb-1">
-            Tiêu đề chính (Headline)
+            Tiêu đề chính
           </label>
           <input
             type="text"
@@ -62,7 +62,7 @@ export function ManualEditPanel({
 
         <div>
           <label className="text-caption text-text-muted block mb-1">
-            Thông điệp phụ (Subheadline)
+            Thông điệp phụ
           </label>
           <textarea
             rows={2}
@@ -76,7 +76,7 @@ export function ManualEditPanel({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="text-caption text-text-muted block mb-1">
-              Badge ưu đãi
+              Ưu đãi (để trống nếu không có)
             </label>
             <input
               type="text"
@@ -103,7 +103,7 @@ export function ManualEditPanel({
 
         <div>
           <label className="text-caption text-text-muted block mb-1">
-            Nút kêu gọi hành động (CTA)
+            Lời kêu gọi trên nút
           </label>
           <input
             type="text"

@@ -42,5 +42,18 @@ AI: nhập, chọn phong cách, sẵn sàng, đã xuất bản · **trang công 
 | D09-07 | P2 | Hai nút chính ở trạng thái kết quả; lưới 4 cột bước 4 làm gãy nút ("Sao chép" bị cắt); "Copy", "(Next Best Actions)" | Một nút chính; lưới 2 cột; chữ tiếng Việt |
 | D09-08 | P2 | Chấm chuyển trang xem trước 8px (WCAG 2.5.8 target-size); ô link chỉ đọc không nhãn | Vùng nhấn 24px + `aria-current`; `aria-label` |
 
+## #05 Poster & banner — 12 trạng thái + kiểm ảnh xuất
+
+Đã tải ảnh, đã tạo, tùy biến chi tiết, kho mẫu, xem phóng to, menu `…` (390/1280px) + tải thật 2 định dạng. Sau sửa: 12/12 axe sạch; ảnh xuất đo được **1080×1080** và **1920×1080**.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D05-01 | **P1** | Ảnh tải về chụp khung xem trước ×2 (~440–680px) trong khi nhãn ghi "1080 × 1080 px", "1920 × 1080 px" | Dựng ở bề rộng thiết kế cố định (`ScaledFrame`), xuất với `pixelRatio` theo kích thước đích (A4: 1240px) |
+| D05-02 | **P1** | Chữ trên ấn phẩm bị cắt: tên tiệm, tiêu đề, **hotline "0283 555 …"**, địa chỉ; banner 16:9 mất tiêu đề và nút | Bố cục cố định không phụ thuộc cột; dòng liên hệ không cắt; tiêu đề 2 dòng; 16:9 chiếm hai cột |
+| D05-03 | **P1** | Ưu đãi/thời hạn tự in lên ấn phẩm khi tiệm chưa nhập ("Tặng kèm băng rôn", "GIẢM ĐẾN 50%", "Chỉ áp dụng trong hôm nay", "hàng trăm quà tặng độc quyền", "✦ TUYỂN CHỌN ĐẶC QUYỀN ✦") | Ưu đãi/thời hạn rỗng tới khi người dùng nhập (mẫu trong kho người dùng chủ động chọn vẫn giữ); bỏ khẩu hiệu cố định |
+| D05-04 | P2 | Nhãn trường "(Headline)", "(Subheadline)", "Badge", "(CTA)"; emoji 📞 trên ấn phẩm | Chữ tiếng Việt |
+
+Còn mở (đề xuất PO): ảnh minh họa trong kho mẫu là ảnh stock máy ảnh/tai nghe/đồng hồ (Unsplash) — lệch ngành hoa, và là tài nguyên ngoài. Luồng "AI vẽ bố cục mới" có thể tự đề xuất ưu đãi trong nội dung AI — chưa có kiểm tra sự thật như landing.
+
 ## Tiếp theo
 #09 catalog → #05 poster (tùy biến, kho mẫu, xem phóng to) → #01/#02 (sau khi chọn ảnh, kết quả) → #04 → #03 (4 tab) → #49 → #14 → #31–#35.

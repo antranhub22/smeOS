@@ -4,6 +4,7 @@ import React, { useState, useRef, useCallback, useMemo } from "react"
 import { Download, RefreshCw, Share2, LayoutGrid } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
+import { POSTER_EXPORT_WIDTH } from "./scaled-frame"
 import { TabActionHeader, type TabItem, type TabAction, type TabOverflowAction } from "@/components/ui/tab-header"
 import {
   type BannerAspectRatio,
@@ -55,7 +56,6 @@ export function PosterBannerClient() {
     generateInstantBannerCopy({
       occasionKey: "OPENING",
       shopName: orgName || "Cửa Hàng Của Bạn",
-      suggestedPromotion: "Tặng kèm băng rôn thiết kế riêng",
     })
   )
 
@@ -159,21 +159,11 @@ export function PosterBannerClient() {
     }
   }
 
-  const downloadElementAsImage = async (
-    element: HTMLElement,
-    filename: string,
-    formatType: "png" | "jpeg" = "png"
-  ) => {
-    const { toPng, toJpeg } = await import("html-to-image")
-    const exportOptions = {
-      pixelRatio: 2,
-      cacheBust: true,
-      skipFonts: true,
-      fontEmbedCSS: "",
-    }
-    const dataUrl = formatType === "png"
-      ? await toPng(element, exportOptions)
-      : await toJpeg(element, { ...exportOptions, quality: 0.92 })
+  /** Xuất PNG đúng bề rộng ghi trên nhãn (1080/1920 px…) thay vì 2× khung xem trước. */
+  const downloadElementAsImage = async (element: HTMLElement, filename: string, format: string) => {
+    const { toPng } = await import("html-to-image")
+    const pixelRatio = (POSTER_EXPORT_WIDTH[format] ?? 1080) / Math.max(1, element.offsetWidth)
+    const dataUrl = await toPng(element, { pixelRatio, cacheBust: true, skipFonts: true, fontEmbedCSS: "" })
 
     const link = document.createElement("a")
     link.download = filename
@@ -193,7 +183,7 @@ export function PosterBannerClient() {
     setExportingFormat(format)
     try {
       const filename = `banner-${format.replace(":", "x")}-${Date.now()}.png`
-      await downloadElementAsImage(targetEl, filename, "png")
+      await downloadElementAsImage(targetEl, filename, format)
       setStatusMessage(`Đã xuất ảnh ${format} thành công!`)
     } catch {
       setStatusMessage(`Không thể xuất ảnh định dạng ${format}.`)
@@ -210,7 +200,7 @@ export function PosterBannerClient() {
         const targetEl = cardRefs.current.get(spec.id)
         if (targetEl) {
           const filename = `banner-${spec.id.replace(":", "x")}.png`
-          await downloadElementAsImage(targetEl, filename, "png")
+          await downloadElementAsImage(targetEl, filename, spec.id)
           await new Promise((r) => setTimeout(r, 300))
         }
       }

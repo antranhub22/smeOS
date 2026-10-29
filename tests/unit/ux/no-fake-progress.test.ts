@@ -112,3 +112,12 @@ describe("Catalog #09 — xuất bản do người dùng quyết, thấy đượ
     expect(read("src/components/catalog/catalog-wizard-step4-success.tsx")).not.toContain("Tích hợp Chatbot AI")
   })
 })
+
+describe("Poster #05 — ấn phẩm tải về không cắt hotline, không tự in ưu đãi (audit sâu 29/10/2026)", () => {
+  it("dòng liên hệ không bị truncate; không ưu đãi mặc định", () => {
+    const card = read("src/components/ad-banner-poster/banner-preview-card.tsx")
+    const contact = card.slice(card.indexOf("Hotline không bao giờ bị cắt"))
+    expect(contact.slice(0, 400)).not.toContain("truncate")
+    expect(read("src/components/ad-banner-poster/poster-banner-client.tsx")).not.toContain("Tặng kèm băng rôn")
+  })
+})

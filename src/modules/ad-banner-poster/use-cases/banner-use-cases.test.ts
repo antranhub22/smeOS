@@ -15,7 +15,7 @@ describe("generateBannerCopyUseCase", () => {
 
     expect(result.copy).toBeDefined()
     expect(result.copy.headline).toBeTruthy()
-    expect(result.copy.promotionBadge).toBeTruthy()
+    expect(result.copy.promotionBadge).toBe("") // không tự hứa ưu đãi khi cửa hàng chưa nhập
     expect(result.copy.ctaText).toBeTruthy()
     expect(["AI_CONTENT_ENGINE", "INSTANT_TEMPLATE"]).toContain(result.source)
   })
