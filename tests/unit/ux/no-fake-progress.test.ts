@@ -92,3 +92,23 @@ describe("Mẫu trang công khai không cam kết thay cửa hàng", () => {
     }
   })
 })
+
+describe("Catalog #09 — xuất bản do người dùng quyết, thấy được link sau xuất bản (audit sâu 29/10/2026)", () => {
+  it("chế độ AI không tự tạo link công khai trong lúc dựng; chỉ tạo trong publish()", () => {
+    const src = read("src/components/catalog/use-autonomous-catalog-generator.ts")
+    const generate = src.slice(src.indexOf("executeGeneration"), src.indexOf("const publish = async"))
+    expect(generate).not.toContain('fetch("/api/v1/catalog-links"')
+    expect(src).toContain("publishedUrl: null")
+  })
+
+  it("xuất bản catalog có xác nhận; sau xuất bản ở luồng tự chọn không bị đưa về màn chọn chế độ", () => {
+    expect(read("src/components/catalog/catalog-wizard-flow.tsx")).toContain("useConfirmPublish(handlePublishCatalog")
+    const tab = read("src/components/catalog/catalog-management-tab.tsx")
+    expect(tab).toContain('useConfirmPublish(publish, "catalog")')
+    expect(tab.slice(tab.indexOf("onCreated={"), tab.indexOf("onCancelToManage"))).not.toContain("setJourneyPhase")
+  })
+
+  it("không hứa tích hợp chatbot không có thật", () => {
+    expect(read("src/components/catalog/catalog-wizard-step4-success.tsx")).not.toContain("Tích hợp Chatbot AI")
+  })
+})

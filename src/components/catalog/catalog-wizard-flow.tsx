@@ -12,6 +12,7 @@ import { getIndustryTerminology } from "@/modules/organization/domain/industry-p
 import { CatalogWizardStep1Products } from "./catalog-wizard-step1-products"
 import { CatalogWizardStep3Intro } from "./catalog-wizard-step3-intro"
 import { CatalogWizardStep4Success } from "./catalog-wizard-step4-success"
+import { useConfirmPublish } from "./use-confirm-publish"
 import { CatalogTemplateSelector } from "./studio/catalog-template-selector"
 import type {
   CatalogTemplateId,
@@ -20,6 +21,7 @@ import type {
   BrandProfile,
 } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { resolveCatalogBrief } from "@/modules/catalog-studio/use-cases/resolve-catalog-brief"
+import { templateDisplayName } from "@/modules/catalog-studio/domain/auto-style-resolver"
 
 interface CatalogWizardFlowProps {
   products: CatalogProduct[]
@@ -135,12 +137,7 @@ export function CatalogWizardFlow({
         body: JSON.stringify({
           name: name.trim(),
           description: desc.trim() || null,
-          filters: {
-            product_ids: selectedIds,
-            style_variant: styleVariant,
-            template_id: templateId,
-            style_id: styleId,
-          },
+          filters: { product_ids: selectedIds, style_variant: styleVariant, template_id: templateId, style_id: styleId },
         }),
       })
       if (!res.ok) {
@@ -157,6 +154,7 @@ export function CatalogWizardFlow({
       setIsSubmitting(false)
     }
   }
+  const [confirmPublish, publishDialog] = useConfirmPublish(handlePublishCatalog, "catalog") // R3: link công khai
 
   const publishedUrl = publishedSlug ? `${window.location.origin}/c/${publishedSlug}` : ""
 
@@ -227,7 +225,7 @@ export function CatalogWizardFlow({
         <div>
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-muted text-primary text-caption font-bold uppercase tracking-wider mb-1">
             <BookOpen className="h-3.5 w-3.5" />
-            <span>Hành trình Tạo Catalog Số Trực Tuyến</span>
+            <span>Tạo catalog</span>
           </div>
           <h2 className="text-title font-bold text-text">
             {currentStep === 1 && `Bước 1: Tuyển chọn ${sampleTerm} vào Catalog`}
@@ -321,7 +319,7 @@ export function CatalogWizardFlow({
             setDesc={setDesc}
             selectedCount={selectedIds.length}
             sampleProductTerm={sampleTerm}
-            styleName={`${templateId.replace("T0", "T")}`}
+            styleName={templateDisplayName(templateId)}
             isAiGenerating={isAiGenerating}
             onAiWriteIntro={handleAiWriteIntro}
           />
@@ -379,16 +377,16 @@ export function CatalogWizardFlow({
                   <span>Tiếp tục ({selectedIds.length} {sampleTerm} đã chọn)</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-              ) : (
+              ) : (<>
                 <Button
                   type="button"
-                  onClick={handlePublishCatalog}
+                  onClick={() => void confirmPublish()}
                   disabled={isSubmitting || !name.trim()}
                   className="bg-primary text-surface hover:bg-primary-dark flex items-center gap-1.5 text-body-sm font-semibold px-6"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>{isSubmitting ? "Đang xuất bản..." : "Xuất bản Catalog ngay →"}</span>
-                </Button>
+                </Button>{publishDialog}</>
               )}
             </div>
           </div>

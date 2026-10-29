@@ -27,5 +27,20 @@ Test chặn tái phát: `tests/unit/ux/no-fake-progress.test.ts` (slug, xác nh�
 
 **Cần PO quyết (chưa đổi):** nội dung mẫu và prompt AI mặc định ghi **"Giảm 10%"** khi cửa hàng không nhập ưu đãi (`discountPercent ?? 10`) — tức trang công khai hứa giảm giá mà tiệm chưa đặt. Đề xuất: không ưu đãi khi tiệm không nhập.
 
+## #09 Tạo catalog — 20 trạng thái
+
+AI: nhập, chọn phong cách, sẵn sàng, đã xuất bản · **trang công khai** · Tự chọn: bước 1–4 · quản lý. Sau sửa: 20/20 axe sạch, không tràn ngang.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D09-01 | **P1** | Chế độ "AI làm cho tôi" **tự xuất bản link công khai** khi đang dựng — trước khi người dùng xem lại (thẻ chế độ hứa "Bạn kiểm tra và chỉnh trước khi chia sẻ") | Dựng bản xem trước (tải PDF để xem), xuất bản chỉ khi bấm "Xuất bản catalog" + xác nhận |
+| D09-02 | **P1** | Luồng tự chọn: xuất bản xong bị đưa về màn chọn chế độ → **không bao giờ thấy link/QR** vừa tạo | Giữ wizard ở bước 4 |
+| D09-03 | **P1** | Xuất bản catalog (R3) không xác nhận | `useConfirmPublish` |
+| D09-04 | P1 | "Tích hợp Chatbot AI — tư vấn 24/7 bằng catalog này" — không có tích hợp | Gỡ |
+| D09-05 | P2 | Mã "T1" hiện làm tên phong cách; tên mẫu/phong cách tiếng Anh ("Signature Collection", "Bento 2026 đang trending"…); trang công khai hiện "EDITORIAL HIGH-FASHION • EDITORIAL MAGAZINE"; khẩu hiệu "smeOS 2026" trên catalog của tiệm | Tên tiếng Việt (id giữ nguyên), `templateDisplayName`, bỏ nhãn kỹ thuật trên trang công khai |
+| D09-06 | P2 | Tên catalog "Bộ sưu tập: Mẫu kho: Bó hồng đỏ Ohara..." | Bỏ phần ô nhập tự ghép, chỉ "…" khi cắt |
+| D09-07 | P2 | Hai nút chính ở trạng thái kết quả; lưới 4 cột bước 4 làm gãy nút ("Sao chép" bị cắt); "Copy", "(Next Best Actions)" | Một nút chính; lưới 2 cột; chữ tiếng Việt |
+| D09-08 | P2 | Chấm chuyển trang xem trước 8px (WCAG 2.5.8 target-size); ô link chỉ đọc không nhãn | Vùng nhấn 24px + `aria-current`; `aria-label` |
+
 ## Tiếp theo
 #09 catalog → #05 poster (tùy biến, kho mẫu, xem phóng to) → #01/#02 (sau khi chọn ảnh, kết quả) → #04 → #03 (4 tab) → #49 → #14 → #31–#35.

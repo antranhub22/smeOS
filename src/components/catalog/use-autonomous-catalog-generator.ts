@@ -13,9 +13,12 @@ import { resolveCatalogBrief } from "@/modules/catalog-studio/use-cases/resolve-
 import type { CatalogProduct } from "./catalog-management-tab"
 
 export interface AutonomousResult {
-  publishedUrl: string
-  publishedSlug: string
+  /** `null` cho tới khi người dùng xem lại và bấm "Xuất bản" (R3) — AI không tự tạo link công khai. */
+  publishedUrl: string | null
+  publishedSlug: string | null
   name: string
+  /** Dữ liệu gửi `POST /catalog-links` khi người dùng xác nhận xuất bản. */
+  publishPayload: { name: string; description: string; filters: Record<string, unknown> }
   pages: CatalogPageModel[]
   style: StyleDefinition
   brand: BrandProfile
@@ -106,12 +109,14 @@ export function useAutonomousCatalogGenerator({
         )
       )
 
-      let generatedName = `Bộ sưu tập ${sampleProductTerm} Tinh Tuyển`
+      let generatedName = `Bộ sưu tập ${sampleProductTerm} tuyển chọn`
       if (matchedOccasion) {
         const occName = matchedOccasion === "20-10" ? "Ngày Phụ Nữ 20/10" : matchedOccasion
         generatedName = `Bộ sưu tập ${sampleProductTerm} ${occName}`
-      } else if (data.userDirectives) {
-        generatedName = `Bộ sưu tập: ${data.userDirectives.slice(0, 30)}...`
+      } else {
+        // Bỏ phần "Mẫu kho: …" do ô nhập tự ghép; chỉ thêm "…" khi thật sự cắt bớt.
+        const note = (data.userDirectives ?? "").replace(/\(?Mẫu kho: [^)]*\)?/g, "").trim()
+        if (note) generatedName = `Bộ sưu tập: ${note.length > 40 ? `${note.slice(0, 40).trimEnd()}…` : note}`
       }
 
       let generatedDesc = `Tuyển chọn ${chosenIds.length} ${sampleProductTerm} nghệ thuật được thiết kế tinh tế nhất từ ${currentShopName}.`
@@ -144,36 +149,12 @@ export function useAutonomousCatalogGenerator({
         )
       )
 
-      // Step 4: Tự động xuất bản tạo liên kết Catalog luôn trong luồng Autonomous
-      let createdSlug: string | null = null
-      try {
-        const createRes = await fetch("/api/v1/catalog-links", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: generatedName,
-            description: generatedDesc,
-            filters: {
-              product_ids: chosenIds,
-              style_variant: "EDITORIAL_LOOKBOOK",
-              template_id: templateId,
-              style_id: styleId,
-            },
-          }),
-        })
-        if (createRes.ok) {
-          const json = await createRes.json()
-          createdSlug = json.data?.slug || json.slug || null
-        }
-      } catch {
-        createdSlug = null
+      // Bước 4: chỉ dựng bản xem trước — link công khai tạo ở `publish()` sau khi người dùng xác nhận.
+      const publishPayload = {
+        name: generatedName,
+        description: generatedDesc,
+        filters: { product_ids: chosenIds, style_variant: "EDITORIAL_LOOKBOOK", template_id: templateId, style_id: styleId },
       }
-      if (!createdSlug) {
-        setPublishError("Chưa xuất bản được catalog nên chưa có link để gửi khách. Hãy thử lại.")
-        return
-      }
-
-      const publishedUrl = `${window.location.origin}/c/${createdSlug}`
 
       const studioProducts: CatalogProductItem[] = chosenProducts.map((p, idx) => ({
         productId: p.id,
@@ -190,7 +171,7 @@ export function useAutonomousCatalogGenerator({
       const brandProfile: BrandProfile = {
         brandId: organizationId || "brand",
         name: currentShopName,
-        slogan: "Bộ Sưu Tập Tuyển Chọn • smeOS 2026",
+        slogan: "Bộ sưu tập tuyển chọn",
         brandColors: { primary: "#9A3412" },
         contacts: {
           phone: business?.phone || null,
@@ -202,7 +183,7 @@ export function useAutonomousCatalogGenerator({
 
       const resolved = resolveCatalogBrief(
         {
-          catalogId: createdSlug,
+          catalogId: `draft-${Date.now()}`,
           title: generatedName,
           purpose: "COLLECTION",
           audience: "CONSUMER",
@@ -221,9 +202,10 @@ export function useAutonomousCatalogGenerator({
       setCatalogAiSteps((prev) => prev.map((s) => (s.id === "layout" ? { ...s, status: "done" } : s)))
 
       setAutonomousResult({
-        publishedUrl,
-        publishedSlug: createdSlug,
+        publishedUrl: null,
+        publishedSlug: null,
         name: generatedName,
+        publishPayload,
         pages: resolved.pages,
         style: resolved.style,
         brand: resolved.brand,
@@ -235,7 +217,27 @@ export function useAutonomousCatalogGenerator({
     }
   }
 
+  /** Xuất bản catalog đã xem lại (gọi sau `ConfirmDialog`). */
+  const publish = async () => {
+    if (!autonomousResult) return
+    setPublishError(null)
+    const res = await fetch("/api/v1/catalog-links", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(autonomousResult.publishPayload),
+    }).catch(() => null)
+    const json = res ? await res.json().catch(() => null) : null
+    const slug: string | undefined = res?.ok ? json?.data?.slug : undefined
+    if (!slug) {
+      setPublishError(json?.error?.message || "Chưa xuất bản được catalog nên chưa có link để gửi khách. Hãy thử lại.")
+      return
+    }
+    setAutonomousResult({ ...autonomousResult, publishedSlug: slug, publishedUrl: `${window.location.origin}/c/${slug}` })
+    onRefresh()
+  }
+
   return {
+    publish,
     isAiAnalyzing,
     autonomousResult,
     setAutonomousResult,

@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Check, Copy, ExternalLink, Download, Share2, Bot, Sparkles, ImageDown } from "lucide-react"
+import { Check, Copy, ExternalLink, Download, Share2, Sparkles, ImageDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CatalogPdfExportButton } from "./studio/catalog-pdf-export-button"
 import { CatalogImageExportButton } from "./studio/catalog-image-export-button"
@@ -63,18 +63,19 @@ export function CatalogWizardStep4Success({
       </div>
 
       {/* Link, QR, Ảnh Poster & PDF */}
-      <div className={`grid grid-cols-1 ${pdfExportProps || imageExportProps ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-2"} gap-4`}>
+      <div className={`grid grid-cols-1 md:grid-cols-2 gap-4`}>
         <div className="rounded-xl border border-border bg-surface-alt/60 p-4 space-y-2">
           <div className="text-caption font-bold text-text-muted uppercase">Link xem trực tiếp</div>
           <div className="flex items-center gap-2">
             <input
               type="text"
               readOnly
+              aria-label="Đường dẫn công khai của catalog"
               value={publishedUrl}
               className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-body-sm font-mono truncate"
             />
             <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="text-caption">
-              {copied ? "Đã chép" : "Copy"}
+              {copied ? "Đã chép" : "Sao chép"}
             </Button>
           </div>
           <a
@@ -137,7 +138,7 @@ export function CatalogWizardStep4Success({
             <div>
               <div className="text-caption font-bold text-text-muted uppercase">Bản In / File PDF</div>
               <p className="text-caption text-text-muted mt-1 max-w-[160px]">
-                Xuất file PDF A4 chuẩn thiết kế 2026.
+                Xuất file PDF khổ A4.
               </p>
             </div>
             <CatalogPdfExportButton
@@ -156,7 +157,7 @@ export function CatalogWizardStep4Success({
       <div className="pt-2 border-t border-border space-y-3">
         <div className="text-body-sm font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
           <Sparkles className="h-4 w-4" />
-          <span>Hành động đề xuất tiếp theo (Next Best Actions)</span>
+          <span>Việc nên làm tiếp</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <button
@@ -192,11 +193,6 @@ export function CatalogWizardStep4Success({
             <div className="text-caption text-text-muted mt-0.5">Đặt tại quầy để khách quét xem menu sản phẩm.</div>
           </button>
 
-          <div className="p-3.5 rounded-xl border border-border bg-surface text-left">
-            <Bot className="h-4 w-4 text-primary mb-1.5" />
-            <div className="text-body-sm font-bold text-text">Tích hợp Chatbot AI</div>
-            <div className="text-caption text-text-muted mt-0.5">AI tự động dùng catalog này tư vấn chốt đơn 24/7.</div>
-          </div>
         </div>
       </div>
     </div>

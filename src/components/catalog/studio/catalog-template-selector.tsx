@@ -262,11 +262,13 @@ export function CatalogTemplateSelector({
                   key={p.pageNumber}
                   type="button"
                   onClick={() => setPreviewPageIdx(idx)}
-                  className={`h-2 rounded-full transition-all cursor-pointer ${
-                    previewPageIdx === idx ? "w-6 bg-primary" : "w-2 bg-border hover:bg-text-muted"
-                  }`}
+                  className="flex h-6 min-w-6 cursor-pointer items-center justify-center"
                   aria-label={`Trang ${idx + 1}`}
-                />
+                  aria-current={previewPageIdx === idx ? "page" : undefined}
+                >
+                  {/* Vùng nhấn 24px (WCAG 2.5.8), chấm hiển thị giữ kích thước cũ */}
+                  <span className={`h-2 rounded-full transition-all ${previewPageIdx === idx ? "w-6 bg-primary" : "w-2 bg-border"}`} />
+                </button>
               ))}
             </div>
           </div>
