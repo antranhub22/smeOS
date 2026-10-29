@@ -15,7 +15,7 @@ Status `CANONICAL` · owner: Product Owner (PO) · changes need PO approval. Loa
 8. **No secrets / customer data / `.env` content** in code, logs, commits or replies.
 9. **Never report done with a red gate**; never skip/disable a test.
 
-**UI work follows Progressive Disclosure as an operating principle** — read `docs/dac-ta/ux-patterns/OPERATING_PRINCIPLES.md` before any screen/tool change (no fake data, offers only from shop settings, audit every state).
+UI work: Progressive Disclosure is mandatory — read `docs/dac-ta/ux-patterns/OPERATING_PRINCIPLES.md` first.
 
 Full rulebook (anti-patterns A1–A12, security, performance, Journey-First UX, known failures): `.agents/AGENT_RULES.md` — read the sections relevant to the task.
 
