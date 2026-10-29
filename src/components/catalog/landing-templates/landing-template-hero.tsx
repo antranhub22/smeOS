@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, Clock, ShieldCheck, Truck, HeartHandshake, Award } from "lucide-react"
+import { Sparkles, ShieldCheck, Truck, HeartHandshake } from "lucide-react"
 
 interface LandingTemplateHeroProps {
   headline: string
@@ -37,18 +37,13 @@ export function LandingTemplateHero({
       <div className="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-accent/20 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 space-y-4">
-        {/* Top Badges & Countdown */}
+        {/* Nhãn chiến dịch — không đồng hồ đếm ngược giả (chưa có hạn ưu đãi thật) */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-white text-caption font-extrabold uppercase tracking-widest border border-white/10 shadow-xs">
             <Sparkles size={12} className="text-white animate-pulse" />
             <span>Chiến Dịch Sản Phẩm Tuyển Chọn</span>
           </div>
 
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-xs">
-            <Clock size={12} className="text-white" />
-            <span className="text-caption font-medium">Ưu đãi đặt sớm:</span>
-            <span className="font-mono font-black text-caption text-white tracking-wider">02 : 14 : 35</span>
-          </div>
         </div>
 
         {/* Hero Main Body: Split or Centered with Image */}
@@ -60,12 +55,8 @@ export function LandingTemplateHero({
                 {headline || "Gửi Trọn Tình Yêu — Ngọt Ngào & Tinh Tế"}
               </h2>
               <p className="text-body-sm text-white/90 leading-relaxed">
-                Tuyển chọn những đóa sản phẩm nhập khẩu rực rỡ nhất, cắm thủ công bởi nghệ nhân và chăm sóc theo tiêu chuẩn chuyên biệt.
+                Những mẫu được tiệm chọn riêng cho dịp này — xem ảnh, chọn mẫu và đặt nhanh.
               </p>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-caption font-bold text-white">
-                <Award size={14} className="text-warning" />
-                <span>Cam kết sản phẩm loại 1 & chụp duyệt trước khi giao</span>
-              </div>
             </div>
 
             {/* Split Right Column: Portrait Showcase Card */}
@@ -85,7 +76,7 @@ export function LandingTemplateHero({
                   <Sparkles size={12} className="text-warning animate-pulse" />
                   <span>Ảnh tác phẩm thực tế</span>
                 </div>
-                <span className="text-caption text-white/80 font-mono">100% sản phẩm mới</span>
+                
               </div>
             </div>
           </div>
@@ -96,7 +87,7 @@ export function LandingTemplateHero({
               {headline || "Gửi Trọn Tình Yêu — Ngọt Ngào & Tinh Tế"}
             </h2>
             <p className="text-body-sm text-white/90 leading-relaxed max-w-md mx-auto">
-              Tuyển chọn những đóa sản phẩm nhập khẩu rực rỡ nhất, thay bạn gửi trao ngàn lời yêu thương sâu sắc.
+              Những mẫu được tiệm chọn riêng, thay bạn gửi trao lời yêu thương.
             </p>
 
             {/* Featured Flower Image Showcase — Tỷ lệ Chân Dung 4:5 Triệt Tiêu Khoảng Trống Thừa */}
@@ -129,19 +120,19 @@ export function LandingTemplateHero({
           </div>
         )}
 
-        {/* 3 Core Trust Badges */}
+        {/* 3 điểm dịch vụ trung tính — không cam kết giờ giao/độ tươi/quà tặng khi tiệm chưa khai */}
         <div className="pt-3 border-t border-white/10 grid grid-cols-3 gap-2 text-caption text-white/85">
           <div className="flex items-center justify-center gap-1">
             <Truck size={12} className="text-white shrink-0" />
-            <span className="truncate">Giao nhanh 2h</span>
+            <span className="truncate">Giao tận nơi</span>
           </div>
           <div className="flex items-center justify-center gap-1">
             <ShieldCheck size={12} className="text-white shrink-0" />
-            <span className="truncate">Tươi 3–5 ngày</span>
+            <span className="truncate">Xem mẫu thật</span>
           </div>
           <div className="flex items-center justify-center gap-1">
             <HeartHandshake size={12} className="text-white shrink-0" />
-            <span className="truncate">Tặng thiệp & banner</span>
+            <span className="truncate">Kèm lời chúc</span>
           </div>
         </div>
       </div>

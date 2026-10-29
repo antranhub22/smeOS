@@ -138,18 +138,14 @@ export interface SalesPitchOverrides {
   finalizedAt?: string | null | undefined
 }
 
-export const DEFAULT_FREE_GIFTS = [
-  "Tặng thiệp / banner chúc mừng thiết kế riêng theo thông điệp",
-  "Tặng gói nước dưỡng hoa Chrysal giúp sản phẩm lâu 5 - 7 ngày",
-  "Ruy băng lụa cao cấp in nhũ sang trọng",
-]
+/**
+ * Không có quà tặng/cam kết "mặc định hệ thống": thẻ chào gửi thẳng cho khách, nên chỉ in những gì
+ * cửa hàng tự khai (hồ sơ hoặc chỉnh tay). Trước đây in sẵn "nước dưỡng Chrysal", "giao 60–90 phút",
+ * "bảo hành đổi mới"… mà tiệm chưa hề cam kết (audit sâu MEUX 29/10/2026).
+ */
+export const DEFAULT_FREE_GIFTS: string[] = []
 
-export const DEFAULT_GUARANTEES = [
-  "100% sản phẩm mới tuyển chọn nhập trong ngày",
-  "Chụp hình hoa thực tế gửi quý khách duyệt trước khi giao",
-  "Giao hoa hỏa tốc đúng giờ (60 - 90 phút nội thành)",
-  "Bảo hành đổi mới nếu hoa bị dập héo khi vận chuyển",
-]
+export const DEFAULT_GUARANTEES: string[] = []
 
 export interface TenantSalesDefaults {
   shopName?: string | null | undefined
@@ -269,13 +265,13 @@ export function buildSalesPitchData(
   const accessoryItems = overrides?.accessoryItems ?? defaultAcc
 
   // 6. Vật chứa & Giấy gói
-  const defaultContainer = (identity.container as string) || "Giấy gói cao cấp"
+  const defaultContainer = (identity.container as string) || ""
   const container = overrides?.container ?? defaultContainer
 
   const rawWrapping = Array.isArray(bom.wrapping) ? bom.wrapping : []
   const defaultWrapping = rawWrapping.length > 0
     ? rawWrapping.map((w: RawBomItem) => w.material || w.name || "Giấy gói").filter(Boolean).join(", ")
-    : "Giấy gói phong cách Hàn Quốc cao cấp"
+    : ""
   const wrapping = overrides?.wrapping ?? defaultWrapping
 
   // 7. Kích thước — KHÔNG bịa mặc định 55×40cm nữa (nợ #96, đã trả 18/09).
@@ -421,8 +417,12 @@ export function generateZaloPitchScript(pitch: SalesPitchData): string {
     ? `\n🎀 Phụ kiện: ${pitch.accessoryItems.map((a) => `${a.name}${a.quantity ? ` (${a.quantity} ${a.unit})` : ""}`).join(", ")}`
     : ""
 
+  // Chỉ in mục quà tặng/cam kết khi tiệm đã khai — không để tiêu đề rỗng gửi khách.
   const giftsStr = pitch.freeGifts.map((g) => `  🎁 ${g}`).join("\n")
   const guaranteesStr = pitch.guarantees.map((g) => `  ✓ ${g}`).join("\n")
+  const giftsBlock = giftsStr ? `\n🎁 QUÀ TẶNG KÈM THEO:\n${giftsStr}\n` : ""
+  const guaranteesBlock = guaranteesStr ? `\n🛡️ CAM KẾT DỊCH VỤ TỪ SHOP:\n${guaranteesStr}` : ""
+  const plainGuarantees = guaranteesStr ? `\nCAM KẾT DỊCH VỤ TỪ SHOP:\n${guaranteesStr}` : ""
 
   const noteStr = pitch.customNote ? `\n📌 LƯU Ý / ƯU ĐÃI RIÊNG:\n${pitch.customNote}\n` : ""
   const hotlineStr = pitch.shopHotline ? ` 📞 Hotline: ${pitch.shopHotline}` : ""
@@ -461,9 +461,7 @@ THÀNH PHẦN HOA CHÍNH:
 ${flowersStr}${foliageStr}${cardStr}${accStr}
 
 GIÁ: ${priceStr}${origPriceStr}
-
-CAM KẾT DỊCH VỤ TỪ SHOP:
-${guaranteesStr}
+${plainGuarantees}
 ${noteStr}
 ────────────────────
 ${solemnClosingStr}`
@@ -474,21 +472,15 @@ ${solemnClosingStr}`
 ✨ Phong cách: ${pitch.style}
 🎯 Phù hợp dịp: ${pitch.occasions.join(", ")}
 📐 Kích thước ước tính: ${formatDimensions(pitch.dimensions.heightCm, pitch.dimensions.widthCm)}
-🎀 Quy cách: ${pitch.container} (${pitch.wrapping})
-
+${pitch.container || pitch.wrapping ? `🎀 Quy cách: ${[pitch.container, pitch.wrapping].filter(Boolean).join(" — ")}\n` : ""}
 💬 Ý NGHĨA & MÔ TẢ:
 "${pitch.description}"
 
 🌺 THÀNH PHẦN HOA CHÍNH:
 ${flowersStr}${foliageStr}${cardStr}${accStr}
 
-💰 GIÁ ƯU ĐÃI: ${priceStr}${origPriceStr}
-
-🎁 QUÀ TẶNG KÈM THEO:
-${giftsStr}
-
-🛡️ CAM KẾT DỊCH VỤ TỪ SHOP:
-${guaranteesStr}
+💰 GIÁ: ${priceStr}${origPriceStr}
+${giftsBlock}${guaranteesBlock}
 ${noteStr}
 ━━━━━━━━━━━━━━━━━━━━
 ${closingStr}`

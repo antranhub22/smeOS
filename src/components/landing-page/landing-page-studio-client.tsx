@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { InlineError } from "@/components/ui/inline-error"
+import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { LandingTypeSelector } from "./landing-type-selector"
 import { LandingCampaignTab } from "@/components/catalog/landing-campaign-tab"
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
@@ -19,6 +20,7 @@ export function LandingPageStudioClient() {
   const [products, setProducts] = useState<CatalogProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { business, loading: profileLoading } = useTenantProfile()
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -82,7 +84,7 @@ export function LandingPageStudioClient() {
     void Promise.resolve().then(() => fetchProducts())
   }, [fetchProducts])
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="flex h-full flex-col p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-border pb-4">
@@ -145,7 +147,7 @@ export function LandingPageStudioClient() {
         {/* Mục đích trang — gửi cho AI soạn nội dung (03c UX-027) */}
         <LandingTypeSelector selectedType={pageType} onSelectType={setPageType} />
 
-        <LandingCampaignTab products={products} onRefresh={fetchProducts} pageType={pageType} />
+        <LandingCampaignTab products={products} onRefresh={fetchProducts} pageType={pageType} shopName={business?.display_name} />
       </div>
     </div>
   )

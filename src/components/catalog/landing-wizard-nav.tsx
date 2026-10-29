@@ -3,6 +3,7 @@
 import React from "react"
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useConfirmPublish } from "./use-confirm-publish"
 
 interface LandingWizardNavProps {
   currentStep: number
@@ -19,6 +20,7 @@ export function LandingWizardNav({
   onNext,
   onPublish,
 }: LandingWizardNavProps) {
+  const [publish, publishDialog] = useConfirmPublish(onPublish)
   if (currentStep >= 5) return null
 
   return (
@@ -48,7 +50,7 @@ export function LandingWizardNav({
         ) : (
           <Button
             type="button"
-            onClick={onPublish}
+            onClick={() => void publish()}
             disabled={isPublishing}
             className="bg-primary text-surface hover:bg-primary-dark flex items-center gap-1.5 text-body-sm font-semibold px-6"
           >
@@ -57,6 +59,7 @@ export function LandingWizardNav({
           </Button>
         )}
       </div>
+      {publishDialog}
     </div>
   )
 }

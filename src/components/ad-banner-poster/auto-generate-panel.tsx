@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef } from "react"
-import { UploadCloud, Sparkles, Loader2, ImagePlus, LayoutGrid, CheckCircle2, Zap } from "lucide-react"
+import { UploadCloud, Sparkles, Loader2, LayoutGrid, CheckCircle2, Zap } from "lucide-react"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
 export type GenerationEngine = "TEMPLATE_ENGINE" | "AI_PROVIDER"
@@ -116,22 +116,6 @@ export function AutoGeneratePanel({
           )}
         </button>
 
-        {/* Nút chọn ảnh mẫu nhanh nếu chưa có ảnh */}
-        {!productImageUrl && (
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() =>
-                onProductImageChange(
-                  "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80"
-                )
-              }
-              className="text-caption text-primary hover:underline inline-flex items-center gap-1"
-            >
-              <ImagePlus className="h-3 w-3" /> Dùng thử ảnh mẫu demo
-            </button>
-          </div>
-        )}
       </div>
 
       {/* ── 2. CHỌN MỤC ĐÍCH / DỊP CHIẾN DỊCH ────────────────────────── */}

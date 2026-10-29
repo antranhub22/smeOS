@@ -163,7 +163,7 @@ export function ProductTopicsList({
                     <span className={`inline-flex px-2 py-0.5 rounded-full text-caption font-bold border ${angle.colorClass}`}>
                       #{index + 1} · {angle.label}
                     </span>
-                    <span className="text-caption font-semibold text-cool-400 uppercase tracking-wider">
+                    <span className="text-caption font-semibold text-text-muted uppercase tracking-wider">
                       {topic.format === "REELS_TIKTOK_9_16" ? "Video 9:16" : "Ảnh 1:1"}
                     </span>
                   </div>

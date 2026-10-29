@@ -113,8 +113,8 @@ export function KeywordResearchWorkspace({
             onClick={() => setActiveSubTab("results")}
             className={`pb-2 flex items-center gap-1.5 border-b-2 transition ${
               activeSubTab === "results"
-                ? "border-blush-600 text-blush-600 font-extrabold"
-                : "border-transparent text-cool-500 hover:text-cool-800"
+                ? "border-primary text-primary font-extrabold"
+                : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             <Sparkles size={14} />
@@ -125,8 +125,8 @@ export function KeywordResearchWorkspace({
             onClick={() => setActiveSubTab("runs")}
             className={`pb-2 flex items-center gap-1.5 border-b-2 transition ${
               activeSubTab === "runs"
-                ? "border-blush-600 text-blush-600 font-extrabold"
-                : "border-transparent text-cool-500 hover:text-cool-800"
+                ? "border-primary text-primary font-extrabold"
+                : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             <Activity size={14} />
@@ -136,7 +136,7 @@ export function KeywordResearchWorkspace({
 
         {activeSubTab === "results" && (
           <div className="flex items-center gap-1.5 text-caption font-bold">
-            <span className="text-cool-400">Lọc nhanh:</span>
+            <span className="text-text-muted">Lọc nhanh:</span>
             <button
               type="button"
               onClick={() => setActiveFilter("ALL")}
@@ -185,7 +185,7 @@ export function KeywordResearchWorkspace({
               <p className="text-cool-700 text-sm font-bold">
                 Chưa có kết quả quét trong &ldquo;{currentFilterLabel}&rdquo;
               </p>
-              <p className="text-cool-400 text-xs mt-1">
+              <p className="text-text-muted text-xs mt-1">
                 {selectedBucket || selectedTimeframe !== "ALL"
                   ? "Hãy chọn mốc ngày/tuần khác hoặc chọn 'Tất cả' để xem toàn bộ kết quả đã quét."
                   : "Hãy nhập từ khóa hoa ở khung trên và nhấn 'Quét Xu Hướng'."}

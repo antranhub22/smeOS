@@ -37,42 +37,42 @@ export function ProductReadinessCard({
       {/* Grid Tiêu chí */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 text-xs">
         <div className="rounded-xl bg-white/5 border border-white/10 p-2.5 text-center space-y-1">
-          <span className="text-caption text-cool-400 block">Nhận diện hoa</span>
+          <span className="text-caption text-text-muted block">Nhận diện hoa</span>
           <span className="font-bold text-mint-400 flex items-center justify-center gap-1">
             <CheckCircle2 size={13} /> Hoàn tất
           </span>
         </div>
 
         <div className="rounded-xl bg-white/5 border border-white/10 p-2.5 text-center space-y-1">
-          <span className="text-caption text-cool-400 block">Khớp xu hướng</span>
+          <span className="text-caption text-text-muted block">Khớp xu hướng</span>
           <span className="font-bold text-mint-400 flex items-center justify-center gap-1">
             <CheckCircle2 size={13} /> Trend Fit Cao
           </span>
         </div>
 
         <div className="rounded-xl bg-white/5 border border-white/10 p-2.5 text-center space-y-1">
-          <span className="text-caption text-cool-400 block">Khách hàng mục tiêu</span>
+          <span className="text-caption text-text-muted block">Khách hàng mục tiêu</span>
           <span className="font-bold text-mint-400 flex items-center justify-center gap-1">
             <CheckCircle2 size={13} /> Đã xác lập
           </span>
         </div>
 
         <div className="rounded-xl bg-white/5 border border-white/10 p-2.5 text-center space-y-1">
-          <span className="text-caption text-cool-400 block">Định vị & Dịp tặng</span>
+          <span className="text-caption text-text-muted block">Định vị & Dịp tặng</span>
           <span className="font-bold text-mint-400 flex items-center justify-center gap-1">
             <CheckCircle2 size={13} /> Đã chuẩn hóa
           </span>
         </div>
 
         <div className="rounded-xl bg-white/5 border border-white/10 p-2.5 text-center space-y-1">
-          <span className="text-caption text-cool-400 block">Chất lượng ảnh</span>
+          <span className="text-caption text-text-muted block">Chất lượng ảnh</span>
           <span className="font-bold text-mint-400 flex items-center justify-center gap-1">
             <CheckCircle2 size={13} /> Sắc nét (HD)
           </span>
         </div>
 
         <div className="rounded-xl bg-white/5 border border-white/10 p-2.5 text-center space-y-1">
-          <span className="text-caption text-cool-400 block">Tiềm năng Video</span>
+          <span className="text-caption text-text-muted block">Tiềm năng Video</span>
           <span className="font-bold text-mint-400 flex items-center justify-center gap-1">
             <CheckCircle2 size={13} /> Rất cao
           </span>

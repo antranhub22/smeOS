@@ -119,15 +119,9 @@ export function SmartInputDropzone({
     <div className="rounded-2xl border border-primary-border bg-surface p-6 shadow-xs space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary-muted text-primary text-caption font-bold uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Tiếp nhận nguyên liệu AI • Chuẩn Dual-Source</span>
-          </div>
-          <h3 className="text-title font-bold text-text mt-2">
-            Đưa nguyên liệu đầu vào — AI tự động phân tích & thiết lập
-          </h3>
+          <h3 className="text-title-sm font-bold text-text">Đầu vào cho AI</h3>
           <p className="text-body-sm text-text-muted mt-1 max-w-2xl">
-            Lựa chọn lấy mẫu từ kho cửa hàng hoặc tải ảnh mới từ máy. Trợ lý AI sẽ tối ưu chất lượng, nhận diện sự kiện và tự động chuẩn bị toàn bộ các bước.
+            Chọn sản phẩm có sẵn hoặc tải ảnh mới — AI chuẩn bị các bước, bạn xem lại trước khi xuất bản.
           </p>
         </div>
         {onSwitchToManual && (
@@ -167,7 +161,7 @@ export function SmartInputDropzone({
               }`}
             >
               <Store className="h-4 w-4" />
-              <span>🛍️ Chọn từ Kho tiệm ({selectedProducts.length > 0 ? `Đã chọn ${selectedProducts.length}` : `${availableProducts.length} mẫu`})</span>
+              <span>Chọn từ kho tiệm ({selectedProducts.length > 0 ? `Đã chọn ${selectedProducts.length}` : `${availableProducts.length} mẫu`})</span>
             </button>
             <button
               type="button"
@@ -179,7 +173,7 @@ export function SmartInputDropzone({
               }`}
             >
               <UploadCloud className="h-4 w-4" />
-              <span>💻 Tải từ máy / thiết bị ({imageFiles.length > 0 ? `${imageFiles.length} ảnh` : "Kéo thả"})</span>
+              <span>Tải từ máy ({imageFiles.length > 0 ? `${imageFiles.length} ảnh` : "Kéo thả"})</span>
             </button>
           </div>
 
@@ -255,24 +249,24 @@ export function SmartInputDropzone({
         />
 
         {/* Nút hành động chính */}
-        <div className="flex items-center justify-between pt-3 border-t border-border">
+        <div className="flex flex-col-reverse gap-3 pt-3 border-t border-border sm:flex-row sm:items-center sm:justify-between">
           <span className="text-caption text-text-muted">
             Sau khi AI phân tích, bạn sẽ được xem và chỉnh sửa toàn bộ các bước trước khi xuất bản.
           </span>
           <Button
             type="submit"
             disabled={!hasAnyInput || isAnalyzing}
-            className="bg-primary text-surface hover:bg-primary-dark flex items-center gap-2 px-6"
+            className="w-full shrink-0 bg-primary text-surface hover:bg-primary-dark flex items-center justify-center gap-2 px-6 sm:w-auto"
           >
             {isAnalyzing ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Đang phân tích & tối ưu...</span>
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                <span>Đang phân tích...</span>
               </>
             ) : (
               <>
                 <Sparkles className="h-4 w-4" />
-                <span>AI Phân tích & Tự động thiết lập →</span>
+                <span>Phân tích và thiết lập</span>
               </>
             )}
           </Button>

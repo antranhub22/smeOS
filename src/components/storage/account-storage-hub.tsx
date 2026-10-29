@@ -401,7 +401,7 @@ export function AccountStorageHub({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-meta font-bold text-accent uppercase tracking-wider">Kho ảnh & nội dung</span>
+              <span className="text-meta font-bold text-accent-text uppercase tracking-wider">Kho ảnh & nội dung</span>
               <Badge tone="neutral" className="font-semibold text-caption">{library.isChain ? "Chuỗi" : "Cửa hàng"}</Badge>
             </div>
             <h2 className="mt-1 text-xl font-extrabold text-text tracking-tight">

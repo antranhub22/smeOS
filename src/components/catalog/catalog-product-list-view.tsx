@@ -85,7 +85,7 @@ export function CatalogProductListView({
         </span>
         <span className="flex items-center gap-1 font-medium" style={{ color: accentColor }}>
           <Check size={13} />
-          Sản phẩm tuyển chọn chính hãng
+          Sản phẩm của tiệm
         </span>
       </div>
 

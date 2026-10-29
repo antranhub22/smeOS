@@ -11,6 +11,7 @@ import {
 } from "@/modules/ad-banner-poster/domain/banner-types"
 import type { BannerStylePreset } from "@/modules/ad-banner-poster/domain/banner-presets"
 import { BannerPreviewCard } from "./banner-preview-card"
+import { ScaledFrame, designWidthOf } from "./scaled-frame"
 
 export interface MultiSizeGridProps {
   readonly copy: BannerCopyPayload
@@ -52,7 +53,7 @@ export function MultiSizeGrid({
           return (
             <div
               key={spec.id}
-              className="flex flex-col rounded-xl border border-border bg-surface p-4 shadow-sm transition-shadow hover:shadow-md"
+              className={`${spec.id === "16:9" ? "sm:col-span-2 " : ""}flex flex-col rounded-xl border border-border bg-surface p-4 shadow-sm transition-shadow hover:shadow-md`}
             >
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-2">
@@ -75,7 +76,8 @@ export function MultiSizeGrid({
               </p>
 
               <div className="relative flex-1 flex items-center justify-center p-3 bg-surface-alt rounded-xl overflow-hidden min-h-[300px]">
-                <div className="w-full max-w-[340px]">
+                <div className={`w-full ${spec.id === "16:9" ? "max-w-[560px]" : "max-w-[340px]"}`}>
+                  <ScaledFrame designWidth={designWidthOf(spec.id)} ratio={spec.ratioValue}>
                   <BannerPreviewCard
                     ref={(el) => registerCardRef(spec.id, el)}
                     format={spec.id}
@@ -84,6 +86,7 @@ export function MultiSizeGrid({
                     preset={preset}
                     productImageUrl={productImageUrl}
                   />
+                  </ScaledFrame>
                 </div>
 
                 {isGenerating && (

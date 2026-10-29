@@ -91,7 +91,7 @@ export function ProductPackagingCard({ packaging, onChange }: ProductPackagingCa
           <Gift size={14} className="text-blush-600" />
           Phụ liệu, Thiệp & Đóng gói
         </span>
-        <span className="text-caption font-medium text-cool-400">Atomic Disaggregated</span>
+        <span className="text-caption font-medium text-text-muted">Atomic Disaggregated</span>
       </div>
 
       {/* 1. KHỐI THIỆP & BIỂN CHỮ OCR */}
@@ -117,7 +117,7 @@ export function ProductPackagingCard({ packaging, onChange }: ProductPackagingCa
               </>
             ) : (
               <>
-                <Square size={13} className="text-cool-400" /> Không thiệp
+                <Square size={13} className="text-text-muted" /> Không thiệp
               </>
             )}
           </button>
@@ -250,12 +250,12 @@ export function ProductPackagingCard({ packaging, onChange }: ProductPackagingCa
                   onChange={(e) => handleUpdateDecor(idx, "quantity", parseInt(e.target.value) || 1)}
                   className="w-10 text-center bg-white border border-cool-200 rounded px-1 text-caption font-bold"
                 />
-                <span className="text-caption text-cool-400">{decor.unit}</span>
+                <span className="text-caption text-text-muted">{decor.unit}</span>
                 <button
               aria-label="Xóa"
                   type="button"
                   onClick={() => handleRemoveDecor(decor.id)}
-                  className="text-cool-400 hover:text-alert-600 p-0.5"
+                  className="text-text-muted hover:text-alert-600 p-0.5"
                 >
                   <Trash2 size={12} />
                 </button>
@@ -263,7 +263,7 @@ export function ProductPackagingCard({ packaging, onChange }: ProductPackagingCa
             ))}
           </div>
         ) : (
-          <div className="text-caption text-cool-400 italic p-2 rounded bg-cool-50/50 text-center border border-dashed border-cool-200">
+          <div className="text-caption text-text-muted italic p-2 rounded bg-cool-50/50 text-center border border-dashed border-cool-200">
             Không có phụ kiện phụ đặc biệt (Bấm &quot;Thêm phụ kiện&quot; nếu có đèn led, gấu bông, topper...)
           </div>
         )}

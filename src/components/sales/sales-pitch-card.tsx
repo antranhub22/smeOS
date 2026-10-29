@@ -645,7 +645,7 @@ export function SalesPitchCard({
       <div className="flex items-center justify-between gap-4 rounded-2xl bg-surface p-4 border border-border shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-caption font-bold text-accent uppercase tracking-wider">Tư vấn bán hàng</span>
+            <span className="text-caption font-bold text-accent-text uppercase tracking-wider">Tư vấn bán hàng</span>
             {status === "FINALIZED" ? (
               <Badge className="bg-success/15 text-success dark:text-success border border-success/30 font-bold text-caption gap-1 py-0.5">
                 <CheckCircle2 size={12} strokeWidth={2.5} />

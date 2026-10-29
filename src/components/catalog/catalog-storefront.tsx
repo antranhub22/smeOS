@@ -208,6 +208,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
             archetypeId={campaign.archetype || "minimal-luxury"}
             occasionTitle={catalog.name}
             catalogSlug={catalog.slug}
+            lead={generatedPackage?.lead}
           />
         )}
       </div>

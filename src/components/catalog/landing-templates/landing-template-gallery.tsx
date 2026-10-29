@@ -47,9 +47,6 @@ export function LandingTemplateGallery({
             {isLuxury ? "Triển Lãm Ảnh Tác Phẩm Thực Tế" : "Khoảnh Khắc Sản Phẩm Tại Xưởng"}
           </span>
         </div>
-        <span className={`text-caption font-medium ${isLuxury ? "font-serif text-primary" : "text-text-muted"}`}>
-          100% Ảnh chụp thực tế
-        </span>
       </div>
 
       {/* Photo Grid */}

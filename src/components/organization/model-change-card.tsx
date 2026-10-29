@@ -69,7 +69,7 @@ export function ModelChangeCard() {
         <span
           className={`px-3 py-1 rounded-full text-caption font-bold border ${
             isChain
-              ? "bg-accent/10 text-accent border-accent/20"
+              ? "bg-accent/10 text-accent-text border-accent/20"
               : "bg-primary/10 text-primary border-primary/20"
           }`}
         >

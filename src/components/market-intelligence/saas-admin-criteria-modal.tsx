@@ -153,7 +153,7 @@ export function SaaSAdminCriteriaModal({
               aria-label="Đóng"
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-cool-400 hover:bg-cool-100 transition"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-text-muted hover:bg-cool-100 transition"
           >
             <X size={16} />
           </button>
@@ -238,10 +238,10 @@ export function SaaSAdminCriteriaModal({
             {/* Tìm kiếm & Thao tác chọn theo nhóm hiện tại */}
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
-                <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-cool-400" />
+                <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
                 <input
                   type="text"
-                  value={filterQuery}
+                  value={filterQuery} aria-label="Lọc từ khóa trong nhóm"
                   onChange={(e) => setFilterQuery(e.target.value)}
                   placeholder="Lọc từ khóa trong nhóm này..."
                   className="h-8 w-full rounded-lg border border-cool-200 bg-cool-50/70 pl-7 pr-3 text-xs outline-none focus:border-orchid-600 focus:bg-white transition"
@@ -285,7 +285,7 @@ export function SaaSAdminCriteriaModal({
                 );
               })}
               {displayKeywords.length === 0 && (
-                <p className="text-xs text-cool-400 py-3 text-center w-full">
+                <p className="text-xs text-text-muted py-3 text-center w-full">
                   Không tìm thấy từ khóa phù hợp với bộ lọc
                 </p>
               )}
@@ -295,7 +295,7 @@ export function SaaSAdminCriteriaModal({
             <div className="flex gap-2 pt-1">
               <input
                 type="text"
-                value={newCustomInput}
+                value={newCustomInput} aria-label="Thêm từ khóa tùy chỉnh"
                 onChange={(e) => setNewCustomInput(e.target.value)}
                 placeholder="Thêm từ khóa tùy chỉnh khác ngoài 210 từ SSOT..."
                 className="h-8 flex-1 rounded-lg border border-cool-200 bg-white px-3 text-xs text-cool-800 outline-none focus:border-orchid-600 transition"
@@ -337,7 +337,7 @@ export function SaaSAdminCriteriaModal({
                   type="range"
                   min={10}
                   max={80}
-                  value={trendWeight}
+                  value={trendWeight} aria-label="Trọng số độ nóng tìm kiếm"
                   onChange={(e) => setTrendWeight(Number(e.target.value))}
                   className="w-full accent-purple-600"
                 />
@@ -350,7 +350,7 @@ export function SaaSAdminCriteriaModal({
                   type="range"
                   min={10}
                   max={80}
-                  value={viralWeight}
+                  value={viralWeight} aria-label="Trọng số lan truyền"
                   onChange={(e) => setViralWeight(Number(e.target.value))}
                   className="w-full accent-purple-600"
                 />
@@ -363,7 +363,7 @@ export function SaaSAdminCriteriaModal({
                   type="range"
                   min={10}
                   max={80}
-                  value={commercialWeight}
+                  value={commercialWeight} aria-label="Trọng số thương mại"
                   onChange={(e) => setCommercialWeight(Number(e.target.value))}
                   className="w-full accent-purple-600"
                 />
@@ -379,7 +379,7 @@ export function SaaSAdminCriteriaModal({
                 Khu vực địa lý tổng thể
               </label>
               <select
-                value={geoScope}
+                value={geoScope} aria-label="Khu vực địa lý tổng thể"
                 onChange={(e) => setGeoScope(e.target.value)}
                 className="h-8 w-full rounded-lg border border-cool-200 bg-white px-2.5 text-xs text-cool-800 outline-none focus:border-orchid-600 transition"
               >

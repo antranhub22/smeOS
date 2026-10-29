@@ -6,6 +6,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
 import { getBrandProfile } from "@/modules/profiles/use-cases/get-brand-profile"
 import { executeGenerateLandingContent } from "@/modules/content-engine/use-cases/generate-landing-page-content.use-case"
+import { listActiveShopPromotions, shopDiscountPercent } from "@/modules/greeting-card/use-cases/active-shop-promotions"
 import { LANDING_TYPE_OPTIONS } from "@/modules/landing-page/domain/preset-catalog"
 import { saveLandingPage } from "@/modules/landing-page/use-cases/save-landing-page"
 
@@ -42,9 +43,10 @@ export const POST = handle(async (request) => {
   }
 
   // Lấy Nguồn 1: Cốt lõi Business Profile & Brand Profile của tiệm
-  const [bizProfile, brandProfile] = await Promise.all([
+  const [bizProfile, brandProfile, promotions] = await Promise.all([
     getBusinessProfile(ctx).catch(() => null),
     getBrandProfile(ctx).catch(() => null),
+    listActiveShopPromotions(ctx.organizationId).catch(() => []),
   ])
 
   // Mục đích trang (bộ chọn loại trang trên /landing-page) → một dòng chỉ dẫn cho Writer AI.
@@ -61,7 +63,8 @@ export const POST = handle(async (request) => {
       archetypeId: parsed.data.archetypeId,
       selectedProducts: parsed.data.selectedProducts,
       userDirectives: parsed.data.userDirectives,
-      discountPercent: parsed.data.discountPercent,
+      // Ưu đãi chỉ lấy từ Hồ sơ tiệm (đang bật) — không nhận % từ trình duyệt, không mặc định
+      discountPercent: shopDiscountPercent(promotions),
       usps: parsed.data.usps,
       guarantees: parsed.data.guarantees,
       targetAudience: parsed.data.targetAudience,
