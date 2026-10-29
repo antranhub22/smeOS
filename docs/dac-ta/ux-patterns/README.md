@@ -32,3 +32,5 @@ Mỗi Screen Contract khai báo pattern dùng (template §15). Không tạo patt
 
 Tài liệu kèm: `glossary.md` (từ điển thuật ngữ), `exceptions.md` (sổ ngoại lệ), `page-archetypes.md` (loại trang A–F, shell, bề mặt — UX-028), `visual-review.md` (audit thủ công P0–P3, review thị giác, so sánh tham chiếu).
 Mẫu audit & ma trận phân tầng gốc: `docs/archive/historical/SMEOS_UX_Progressive_Disclosure_Kit/templates/`.
+
+Nguyên tắc vận hành UX cho agent (bắt buộc, PD8): `OPERATING_PRINCIPLES.md`.
