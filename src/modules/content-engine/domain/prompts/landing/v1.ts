@@ -138,7 +138,7 @@ function normalize(raw: unknown): LandingWriterResult {
       hero: { badge: s(hero?.badge, 60), headline, subHeadline: s(hero?.subHeadline, 150) },
       story: { title: s(story?.title, 70), paragraph1: p1, paragraph2: s(story?.paragraph2, 250), quote: s(story?.quote, 150) },
       perks: perks.length > 0 ? perks : [{ title: "Chụp ảnh duyệt trước khi giao", description: "Đảm bảo hoa đúng mẫu 100% trước khi xuất xưởng." }],
-      faq: faq.length > 0 ? faq : [{ question: "Hoa giao trong bao lâu?", answer: "Giao hỏa tốc trong 2 giờ nội thành." }],
+      faq: faq.length > 0 ? faq : [{ question: "Hoa giao trong bao lâu?", answer: "Vui lòng nhắn tin cho tiệm để được báo thời gian giao phù hợp với địa chỉ của bạn." }],
       lead: { title: s(lead?.title, 80), description: s(lead?.description, 150) },
     },
   }

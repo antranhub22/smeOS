@@ -165,6 +165,7 @@ export function LandingCampaignPreview({
                 {/* Section 1: Hero Section */}
                 <LandingTemplateHero
                   headline={headline}
+                  subHeadline={subHeadline || generatedPackage?.hero?.subHeadline}
                   occasionId={occasionId}
                   archetypeId={archetypeId}
                   heroImageUrl={heroImg}

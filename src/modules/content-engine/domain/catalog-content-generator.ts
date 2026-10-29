@@ -86,7 +86,7 @@ export function generateCatalogContent(input: CatalogContentInput): GeneratedCat
         badge: "Catalog Sản Phẩm Trực Tuyến",
         title: collection,
         description: `Khám phá bộ sưu tập ${input.productCount} sản phẩm tươi mới nhất từ ${shop} ${occasion}. Chụp duyệt thực tế trước khi giao.`,
-        curatorNote: "Cam kết sản phẩm giữ độ bung nở 3–5 ngày, giao nhanh trong 2 giờ nội thành.",
+        curatorNote: "Mỗi mẫu được nghệ nhân chọn lựa và chụp ảnh duyệt trước khi giao.",
         ctaText: "Tư vấn qua Zalo",
       }
   }

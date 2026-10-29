@@ -5,6 +5,8 @@ import { Sparkles, ShieldCheck, Truck, HeartHandshake } from "lucide-react"
 
 interface LandingTemplateHeroProps {
   headline: string
+  /** Dòng phụ do AI viết; trống thì dùng câu mặc định */
+  subHeadline?: string | undefined
   occasionId: string
   archetypeId: string
   heroImageUrl?: string | undefined
@@ -12,6 +14,7 @@ interface LandingTemplateHeroProps {
 
 export function LandingTemplateHero({
   headline,
+  subHeadline,
   occasionId,
   archetypeId,
   heroImageUrl,
@@ -55,7 +58,7 @@ export function LandingTemplateHero({
                 {headline || "Gửi Trọn Tình Yêu — Ngọt Ngào & Tinh Tế"}
               </h2>
               <p className="text-body-sm text-white/90 leading-relaxed">
-                Những mẫu được tiệm chọn riêng cho dịp này — xem ảnh, chọn mẫu và đặt nhanh.
+                {subHeadline || "Những mẫu được tiệm chọn riêng cho dịp này — xem ảnh, chọn mẫu và đặt nhanh."}
               </p>
             </div>
 
@@ -87,7 +90,7 @@ export function LandingTemplateHero({
               {headline || "Gửi Trọn Tình Yêu — Ngọt Ngào & Tinh Tế"}
             </h2>
             <p className="text-body-sm text-white/90 leading-relaxed max-w-md mx-auto">
-              Những mẫu được tiệm chọn riêng, thay bạn gửi trao lời yêu thương.
+              {subHeadline || "Những mẫu được tiệm chọn riêng, thay bạn gửi trao lời yêu thương."}
             </p>
 
             {/* Featured Flower Image Showcase — Tỷ lệ Chân Dung 4:5 Triệt Tiêu Khoảng Trống Thừa */}

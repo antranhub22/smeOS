@@ -65,7 +65,6 @@ export function LandingTemplateProducts({
           <Sparkles size={14} className={isRomantic ? "text-primary" : "text-warning"} />
           <span>Danh Sách Thiết Kế Tuyển Chọn ({products.length})</span>
         </div>
-        <span className="text-caption text-text-muted font-medium">Bảo đảm sản phẩm giống mẫu 95%+</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -87,12 +86,6 @@ export function LandingTemplateProducts({
               <div className="absolute top-2 left-2 z-20 max-w-[55%] truncate px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-sm text-white text-caption font-mono font-bold tracking-wide shadow-xs pointer-events-none">
                 {p.code}
               </div>
-
-              {idx === 0 && (
-                <div className="absolute top-2 right-2 z-20 px-2 py-0.5 rounded-full bg-primary text-white text-caption font-black uppercase tracking-wider shadow-xs animate-pulse pointer-events-none">
-                  Bán chạy #1
-                </div>
-              )}
             </div>
 
             {/* Content Details */}

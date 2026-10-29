@@ -30,6 +30,8 @@ export function LandingTemplateReviews({
   const isLuxury = archetypeId === "minimal-luxury"
   const isRomantic = archetypeId === "pastel-romantic"
   const isFestive = archetypeId === "festive-sale"
+  // Điểm & số lượng tính từ đánh giá thật — không hiển thị con số cố định
+  const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
 
   return (
     <section className="space-y-4">
@@ -46,8 +48,8 @@ export function LandingTemplateReviews({
               <Star key={i} size={11} fill="currentColor" />
             ))}
           </div>
-          <span className={`font-bold ${isLuxury ? "font-serif text-primary" : "text-text"}`}>4.9/5</span>
-          <span className={isLuxury ? "font-serif" : ""}>(500+ đánh giá)</span>
+          <span className={`font-bold ${isLuxury ? "font-serif text-primary" : "text-text"}`}>{avgRating.toFixed(1)}/5</span>
+          <span className={isLuxury ? "font-serif" : ""}>({reviews.length} đánh giá)</span>
         </div>
       </div>
 

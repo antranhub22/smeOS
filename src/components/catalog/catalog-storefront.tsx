@@ -139,7 +139,8 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         {/* Hero */}
         {campaign ? (
           <LandingTemplateHero
-            headline={catalog.name}
+            headline={generatedPackage?.hero?.headline || catalog.name}
+            subHeadline={generatedPackage?.hero?.subHeadline}
             occasionId={campaign.occasion || "20-10"}
             archetypeId={campaign.archetype || "minimal-luxury"}
             heroImageUrl={customHeroImageUrl || resolveFlowerImage(products.find((p) => p.imageUrl)?.imageUrl, 0)}
@@ -234,7 +235,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         style={{ color: currentStyle.tokens.textSecondary }}
       >
         <div className="border-t pt-6" style={{ borderColor: currentStyle.tokens.border }}>
-          <p className="font-medium">{shop.name} — Nền tảng Catalog Đa ngành Thông minh smeOS</p>
+          <p className="font-medium">{shop.name}</p>
         </div>
       </footer>
     </div>
