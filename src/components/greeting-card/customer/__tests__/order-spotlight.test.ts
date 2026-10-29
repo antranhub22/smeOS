@@ -39,8 +39,9 @@ describe("Chuẩn Spotlight", () => {
     expect(on.block).toContain("ring-2 ring-primary/20")
     expect(on.badge).toBe("bg-primary text-white")
     const off = spotlightClasses(false)
-    expect(off.block).toContain("opacity-60")
-    expect(off.block).toContain("hover:opacity-95")
+    // Không làm mờ chữ — khối chưa chọn vẫn đủ tương phản (PO 29/10/2026)
+    expect(off.block).not.toMatch(/opacity-/)
+    expect(off.block).toContain("bg-transparent")
   })
 })
 

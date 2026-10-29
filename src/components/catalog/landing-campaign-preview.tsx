@@ -242,6 +242,7 @@ export function LandingCampaignPreview({
             <LandingTemplateLead
               archetypeId={archetypeId}
               occasionTitle={headline}
+              lead={generatedPackage?.lead}
             />
           )}
         </div>

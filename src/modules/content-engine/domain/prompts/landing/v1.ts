@@ -51,7 +51,7 @@ function buildPrompt(input: LandingWriterInput): string {
     ? `Giọng văn bắt buộc: ${input.shopTone}.`
     : "Giọng văn: ấm áp, chuyên nghiệp, gần gũi — phong cách thương hiệu Việt Nam cao cấp."
 
-  const discount = input.discountPercent ?? 10
+  const discount = input.discountPercent
   const directive = input.userDirectives ? `\nCHỈ ĐẠO NGỮ CẢNH TỪ CHỦ TIỆM:\n${input.userDirectives}` : ""
 
   return `Bạn là chuyên gia viết nội dung marketing cho tiệm hoa cao cấp Việt Nam.
@@ -61,7 +61,7 @@ TIỆM HOA: ${input.shopName}
 ${toneGuide}
 ${input.pageGoal ? `MỤC ĐÍCH TRANG: ${input.pageGoal}\n` : ""}DỊP LỄ: ${input.occasionLabel} (mã: ${input.occasionId})
 PHONG CÁCH: ${input.archetypeId ?? "minimal-luxury"}
-ƯU ĐÃI: Giảm ${discount}% cho khách đặt sớm${directive}
+${discount ? `ƯU ĐÃI (từ Hồ sơ tiệm): Giảm ${discount}% — chỉ dùng đúng ưu đãi này` : "ƯU ĐÃI: Tiệm chưa bật ưu đãi nào — tuyệt đối không nhắc giảm giá, quà tặng, freeship hay mã ưu đãi"}${directive}
 
 SẢN PHẨM THẬT (chỉ dùng tên/giá từ đây, không tự bịa sản phẩm khác):
 ${products || "(Chưa có sản phẩm cụ thể — viết theo dịp lễ và tên tiệm)"}

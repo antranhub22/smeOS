@@ -45,9 +45,11 @@ export function buildBannerCopyPrompt(params: {
   occasionLabel: string
   shopName: string
   productTitle?: string | undefined
-  desiredPromotion?: string | undefined
+  /** Ưu đãi tiệm đang bật trong Hồ sơ tiệm — AI chỉ được dùng các ưu đãi này */
+  shopPromotions?: readonly string[] | undefined
 }): string {
-  const { industryKey, occasionLabel, shopName, productTitle, desiredPromotion } = params
+  const { industryKey, occasionLabel, shopName, productTitle } = params
+  const promos = params.shopPromotions ?? []
 
   return `Bạn là Giám đốc Sáng tạo và Chuyên gia Tiếp thị trực tuyến hàng đầu cho doanh nghiệp vừa và nhỏ (SME).
 Hãy sáng tạo 1 bộ thông điệp quảng cáo (Banner/Poster Copy) cực kỳ bắt mắt, kích thích khách hàng mua sắm cho dịp "${occasionLabel}".
@@ -57,15 +59,15 @@ Hãy sáng tạo 1 bộ thông điệp quảng cáo (Banner/Poster Copy) cực k
 - Ngành hàng: ${industryKey}
 - Dịp sự kiện: ${occasionLabel}
 ${productTitle ? `- Sản phẩm trọng tâm: ${productTitle}` : ""}
-${desiredPromotion ? `- Mong muốn ưu đãi: ${desiredPromotion}` : "- Ưu đãi: Hãy đề xuất 1 ưu đãi phù hợp, hấp dẫn"}
+${promos.length > 0 ? `- Ưu đãi của tiệm (chỉ chọn đúng 1 trong các ưu đãi sau, không tự đặt ưu đãi khác): ${promos.join("; ")}` : "- Ưu đãi: Tiệm chưa bật ưu đãi nào — promotionBadge để chuỗi rỗng, không nhắc giảm giá, quà tặng, freeship hay sale ở bất kỳ trường nào"}
 
 === YÊU CẦU ĐẦU RA (JSON FORMAT) ===
 Chỉ trả về duy nhất 1 JSON hợp lệ, không giải thích thêm:
 {
-  "headline": "Tiêu đề giật tít, ngắn gọn, dưới 10 từ (VD: BÙNG NỔ ƯU ĐÃI THÁNG 10)",
+  "headline": "Tiêu đề giật tít, ngắn gọn, dưới 10 từ",
   "subHeadline": "Thông điệp phụ truyền cảm hứng, nêu bật giá trị sản phẩm (1-2 câu súc tích)",
-  "promotionBadge": "Nhãn ưu đãi cực ngắn gọn (VD: GIẢM 20%, MUA 1 TẶNG 1, FREESHIP TOÀN QUỐC)",
-  "ctaText": "Lời kêu gọi hành động mạnh mẽ (VD: ĐẶT HÀNG NGAY, NHẮN TIN NHẬN ƯU ĐÃI)",
-  "validityText": "Thời gian áp dụng (VD: Duy nhất từ 20/10 - 25/10)"
+  "promotionBadge": "Đúng tên 1 ưu đãi của tiệm ở trên, hoặc chuỗi rỗng",
+  "ctaText": "Lời kêu gọi hành động mạnh mẽ (VD: ĐẶT HÀNG NGAY)",
+  "validityText": ""
 }`
 }

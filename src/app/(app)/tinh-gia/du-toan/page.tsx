@@ -11,7 +11,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { costingFetch, formatVnd, useCostingResource } from "@/components/costing/use-costing-api"
 import { parseNumberInput } from "@/components/costing/costing-ui-types"
-import type { MaterialNeedsResult } from "@/modules/costing/domain/material-needs"
+import { noPurchaseMessage, type MaterialNeedsResult } from "@/modules/costing/domain/material-needs"
 
 type NeedsResponse = MaterialNeedsResult & { perishable: boolean; orderCount: number }
 
@@ -107,7 +107,7 @@ export default function DuToanPage() {
             </p>
           )}
           {toBuy.length === 0 ? (
-            <p className="text-body-sm text-text-muted">Tồn kho đã đủ cho các đơn này.</p>
+            <p className="text-body-sm text-text-muted">{noPurchaseMessage(state.data.needs.length, state.data.productsWithoutRecipe.length)}</p>
           ) : (
             <ul className="flex flex-col" aria-label="Nguyên liệu cần mua">
               {toBuy.map((n) => {

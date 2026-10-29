@@ -123,4 +123,18 @@ Trạng thái kiểm: 5 tab ở 390/1280px, chọn mẫu → bản nháp công t
 Ghi chú (chưa đổi, cần PO): dự toán khi mọi đơn đều chưa có công thức vẫn hiện "Tồn kho đã đủ cho các đơn này" — dễ hiểu nhầm.
 
 ## Kết luận
-Đã audit sâu xong toàn bộ công cụ Hoàn thiện. Các mục còn chờ PO: D14-06 (Spotlight làm mờ), mặc định "Giảm 10%", ảnh mẫu Unsplash ở kho poster, đường AI poster có thể tự đặt ưu đãi, token `text-accent`, `/cai-dat`, câu "Tồn kho đã đủ" ở dự toán.
+Đã audit sâu xong toàn bộ công cụ Hoàn thiện.
+
+### PO quyết 29/10/2026 — đã làm
+| Mục | Đã làm |
+|---|---|
+| D14-06 Spotlight | Khối chưa chọn không còn `opacity-60`: chỉ nền trong suốt + viền nhạt, chữ giữ tương phản; Screen Contract `the-chao.md` cập nhật. axe `/the-chao` 0 lỗi ở mọi trạng thái |
+| Ưu đãi landing page | Bỏ mặc định "Giảm 10%": % giảm lấy ở máy chủ từ ưu đãi tiệm đang bật (`listActiveShopPromotions`), không nhận từ trình duyệt; không bật → khối đăng ký không hứa giảm giá, prompt cấm tự đặt ưu đãi |
+| Ảnh kho poster | Bỏ ảnh Unsplash và nút "ảnh mẫu demo"; ô xem trước dùng ảnh sản phẩm tiệm đã chọn |
+| Ưu đãi poster | AI và mẫu chỉ in ưu đãi tiệm đang bật (`enforceShopPromotion`); ô "Ưu đãi của tiệm" là danh sách chọn + link Cài đặt; bỏ ưu đãi/thời hạn soạn sẵn trong kho mẫu |
+| Dự toán | Không còn báo "Tồn kho đã đủ" khi các mẫu chưa có công thức (`noPurchaseMessage`) |
+
+### Còn lưu lại
+- `/cai-dat`: 8 lỗi tương phản + 2 ô thiếu nhãn — làm ở đợt rollout nhóm Cài đặt (PO 29/10/2026).
+- Hồ sơ tiệm chưa lưu chính sách thì bộ ưu đãi mặc định (gồm "Giảm 10%") được coi là đang bật — tiệm tắt trong Cài đặt → Ưu đãi.
+- Ngoài phạm vi: `generate-banner-copy` gọi LLM trực tiếp, chưa qua `callCapability`.

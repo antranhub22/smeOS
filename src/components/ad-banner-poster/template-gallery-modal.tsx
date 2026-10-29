@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { X, Sparkles, Check, LayoutGrid } from "lucide-react"
+import { X, Sparkles, Check, LayoutGrid, ImageIcon } from "lucide-react"
 import {
   BANNER_TEMPLATE_CATEGORIES,
   BANNER_TEMPLATE_CATALOG,
@@ -15,6 +15,8 @@ export interface TemplateGalleryModalProps {
   readonly onClose: () => void
   readonly onSelectTemplate: (template: BannerTemplateItem) => void
   readonly selectedTemplateId?: string | undefined
+  /** Ảnh sản phẩm tiệm đã chọn — ô xem trước dùng ảnh thật thay ảnh kho */
+  readonly previewImageUrl?: string | undefined
 }
 
 export function TemplateGalleryModal({
@@ -22,6 +24,7 @@ export function TemplateGalleryModal({
   onClose,
   onSelectTemplate,
   selectedTemplateId,
+  previewImageUrl,
 }: TemplateGalleryModalProps) {
   const [activeCategory, setActiveCategory] = useState<BannerPurposeCategory>("ALL")
 
@@ -120,25 +123,21 @@ export function TemplateGalleryModal({
                       <span className="px-1.5 py-0.5 rounded bg-black/70 text-white truncate max-w-[70%]">
                         {tpl.defaultCopy.headline}
                       </span>
-                      <span className="px-1.5 py-0.5 rounded bg-warning text-black font-black">
-                        {tpl.defaultCopy.promotionBadge}
-                      </span>
                     </div>
 
                     <div className="flex items-center justify-center my-auto">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={tpl.sampleImageUrl}
-                        alt={tpl.name}
-                        className="h-16 w-16 object-cover rounded-md shadow-sm border border-white/60"
-                      />
+                      {previewImageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={previewImageUrl} alt="" className="h-16 w-16 object-cover rounded-md shadow-sm border border-white/60" />
+                      ) : (
+                        <ImageIcon aria-hidden className="h-8 w-8 text-text-muted" />
+                      )}
                     </div>
 
                     <div className="flex justify-between items-center text-caption text-text-muted">
                       <span className="px-1 rounded bg-white/80 font-bold">
                         {tpl.defaultCopy.ctaText}
                       </span>
-                      <span className="italic">{tpl.defaultCopy.validityText}</span>
                     </div>
                   </div>
 

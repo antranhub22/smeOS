@@ -10,12 +10,15 @@ interface LandingTemplateLeadProps {
   occasionTitle?: string
   /** Slug của catalog đang xem — dùng để gọi API lưu lead */
   catalogSlug?: string | undefined
+  /** Nội dung khối do AI/mẫu soạn — ưu đãi chỉ có khi tiệm bật trong Hồ sơ tiệm */
+  lead?: { tag?: string; title?: string; description?: string } | undefined
 }
 
 export function LandingTemplateLead({
   archetypeId,
   occasionTitle,
   catalogSlug,
+  lead,
 }: LandingTemplateLeadProps) {
   const [phone, setPhone] = useState("")
   const [submitted, setSubmitted] = useState(false)
@@ -98,13 +101,13 @@ export function LandingTemplateLead({
       <div className="text-center max-w-md mx-auto space-y-2">
         <div className={`inline-flex items-center gap-1.5 px-3 py-1 ${badgeStyle}`}>
           <Gift size={12} className="shrink-0" />
-          <span>{isFestive ? "Chớp Cơ Hội Duy Nhất Hôm Nay" : isLuxury ? "Đặc Quyền Riêng Tư Cho Bạn" : "Đặc Quyền Đặt Hoa Sớm"}</span>
+          <span>{lead?.tag || "Đặt trước"}</span>
         </div>
         <h3 className={`tracking-tight leading-snug ${titleFont}`}>
-          {isFestive ? "Ưu Đãi Siêu Tốc 10% & Tặng Thiệp Thiết Kế Riêng" : "Nhận Ngay Ưu Đãi 10% & Tặng Thiệp Thiết Kế Riêng"}
+          {lead?.title || "Để lại số điện thoại để được tư vấn mẫu"}
         </h3>
         <p className={`text-caption sm:text-body-sm text-text-muted leading-relaxed ${isLuxury ? "font-serif italic" : ""}`}>
-          Áp dụng cho khách hàng đặt trước trong chiến dịch {occasionTitle ? `"${occasionTitle}"` : "này"}. Số lượng ưu đãi có hạn mỗi ngày!
+          {lead?.description || `Tiệm sẽ liên hệ lại để tư vấn và giữ mẫu${occasionTitle ? ` cho "${occasionTitle}"` : ""}.`}
         </p>
       </div>
 
@@ -115,7 +118,7 @@ export function LandingTemplateLead({
             <span>Đã ghi nhận số điện thoại thành công!</span>
           </div>
           <p className="text-caption opacity-90">
-            Chuyên viên tư vấn sản phẩm sẽ liên hệ Zalo lại ngay trong vòng 5 phút để xác nhận mẫu và áp dụng mã giảm giá 10% cho bạn.
+            Tiệm sẽ liên hệ lại qua Zalo để xác nhận mẫu cho bạn.
           </p>
         </div>
       ) : (
@@ -140,7 +143,7 @@ export function LandingTemplateLead({
                 <Loader2 size={13} className="animate-spin" />
               ) : (
                 <>
-                  <span>{isFestive ? "Nhận ưu đãi ngay" : "Tư vấn ngay"}</span>
+                  <span>Tư vấn ngay</span>
                   <ArrowRight size={13} />
                 </>
               )}

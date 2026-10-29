@@ -16,15 +16,15 @@ interface TemplatePresetOption {
 
 const DEFAULT_TEMPLATES_BY_OCCASION: Record<string, TemplatePresetOption> = {
   FLASH_SALE: {
-    headline: "FLASH SALE — CHỚP NGAY DEAL ĐỈNH",
-    subHeadline: "Ưu đãi dành cho khách hàng nhanh tay",
+    headline: "FLASH SALE CUỐI TUẦN",
+    subHeadline: "Ghé tiệm hoặc nhắn tin để chọn mẫu ưng ý",
     promotionBadge: "GIẢM ĐẾN 50%",
     ctaText: "MUA NGAY KẺO LỠ",
     validityText: "Chỉ áp dụng trong hôm nay",
     recommendedPreset: "VIBRANT_SALE",
   },
   GRAND_OPENING: {
-    headline: "MỪNG KHAI TRƯƠNG — RỘN RÀNG ƯU ĐÃI",
+    headline: "MỪNG KHAI TRƯƠNG — HÂN HẠNH ĐÓN KHÁCH",
     subHeadline: "Hân hạnh chào đón quý khách ghé thăm cửa hàng",
     promotionBadge: "TẶNG BĂNG RÔN & GIẢM 20%",
     ctaText: "GHÉ CỬA HÀNG NGAY",
@@ -48,8 +48,8 @@ const DEFAULT_TEMPLATES_BY_OCCASION: Record<string, TemplatePresetOption> = {
     recommendedPreset: "ELEGANT_LUXURY",
   },
   SEASON_CLEARANCE: {
-    headline: "ĐÓN MÙA MỚI — DỌN KHO GIÁ SỐC",
-    subHeadline: "Cơ hội sở hữu những sản phẩm tuyển chọn với mức giá tốt nhất trong năm",
+    headline: "ĐÓN MÙA MỚI — LÀM MỚI BỘ SƯU TẬP",
+    subHeadline: "Những mẫu tuyển chọn đang có sẵn tại tiệm",
     promotionBadge: "MUA 1 TẶNG 1",
     ctaText: "XEM MẪU NGAY",
     validityText: "Đến khi hết số lượng quà tặng",
@@ -64,10 +64,10 @@ const DEFAULT_TEMPLATES_BY_OCCASION: Record<string, TemplatePresetOption> = {
     recommendedPreset: "MODERN_MINIMAL",
   },
   DEFAULT: {
-    headline: "ƯU ĐÃI ĐẶC BIỆT — DÀNH RIÊNG CHO BẠN",
-    subHeadline: "Tuyển chọn những sản phẩm chất lượng cao với mức giá ưu đãi hấp dẫn",
+    headline: "MẪU ĐẸP — DÀNH RIÊNG CHO BẠN",
+    subHeadline: "Tuyển chọn những sản phẩm chất lượng cao từ tiệm",
     promotionBadge: "ƯU ĐÃI ĐỘC QUYỀN",
-    ctaText: "NHẬN ƯU ĐÃI NGAY",
+    ctaText: "XEM MẪU NGAY",
     validityText: "Số lượng có hạn",
     recommendedPreset: "MODERN_MINIMAL",
   },

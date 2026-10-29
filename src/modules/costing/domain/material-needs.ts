@@ -75,3 +75,13 @@ export function aggregateMaterialNeeds(
   needs.sort((a, b) => b.toBuyQty - a.toBuyQty || a.name.localeCompare(b.name, "vi"))
   return { needs, productsWithoutRecipe: [...missing], totalEstimatedVnd: total, costIncomplete }
 }
+
+/**
+ * Câu báo khi dự toán không còn gì phải mua. Mẫu chưa có công thức thì chưa tính được nguyên liệu —
+ * không được báo "tồn kho đã đủ" (dễ hiểu nhầm là không cần mua gì).
+ */
+export function noPurchaseMessage(needsCount: number, productsWithoutRecipe: number): string {
+  if (needsCount === 0 && productsWithoutRecipe > 0) return "Chưa tính được nguyên liệu cần mua vì các mẫu trong đơn chưa có công thức."
+  if (productsWithoutRecipe > 0) return "Tồn kho đủ cho các mẫu đã có công thức; mẫu chưa có công thức chưa được tính."
+  return "Tồn kho đã đủ cho các đơn này."
+}

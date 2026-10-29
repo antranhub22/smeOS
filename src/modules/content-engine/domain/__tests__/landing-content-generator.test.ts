@@ -51,6 +51,12 @@ describe("Landing Content Generator (7 Sections)", () => {
     expect(result.lead.title).toContain("15%")
   })
 
+  it("không tự hứa giảm giá khi tiệm chưa bật ưu đãi", () => {
+    const result = generateLandingPageContent({ ...mockInput, discountPercent: undefined })
+    expect(result.lead.discountBadge).toBe("")
+    expect(JSON.stringify(result.lead)).not.toMatch(/%|giảm|ưu đãi/i)
+  })
+
   it("should adapt headline dynamically for Valentine", () => {
     const valInput: LandingContentInput = {
       ...mockInput,

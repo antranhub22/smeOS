@@ -21,6 +21,8 @@ import {
 import type { BannerTemplateItem } from "@/modules/ad-banner-poster/domain/template-catalog"
 import { BannerGuidanceCallout } from "./banner-guidance-callout"
 import { BannerFormPanel } from "./banner-form-panel"
+import { useShopPromotions } from "./use-shop-promotions"
+import { shopPromotionBadge } from "@/modules/ad-banner-poster/domain/promotion-guard"
 import { PresetStyleSelector } from "./preset-style-selector"
 import { MultiSizeGrid } from "./multi-size-grid"
 import { SinglePreviewModal } from "./single-preview-modal"
@@ -61,6 +63,9 @@ export function PosterBannerClient() {
 
   // Hotline/địa chỉ lấy từ hồ sơ cửa hàng — không điền số mẫu (poster tải về sẽ mang thông tin giả).
   const { business } = useTenantProfile()
+  const shopPromotions = useShopPromotions()
+  // Nhãn ưu đãi chỉ lấy từ ưu đãi tiệm đang bật — giữ lựa chọn hiện tại nếu còn hợp lệ
+  const ownBadge = () => shopPromotionBadge(shopPromotions, copy.promotionBadge)
   const [brandEdits, setBrandEdits] = useState<Partial<BannerBrandInfo>>({})
   const brandInfo = useMemo<BannerBrandInfo>(() => ({
     shopName: brandEdits.shopName ?? (business?.display_name || orgName || "Cửa Hàng Của Bạn"),
@@ -99,6 +104,7 @@ export function PosterBannerClient() {
     const newCopy = generateInstantBannerCopy({
       occasionKey: key,
       shopName: brandInfo.shopName,
+      suggestedPromotion: ownBadge(),
     })
     setCopy(newCopy)
     setStatusMessage(`Đã chọn dịp "${label}" — tự động chuyển phong cách và thông điệp phù hợp!`)
@@ -107,7 +113,7 @@ export function PosterBannerClient() {
   const handleSelectTemplate = (tpl: BannerTemplateItem) => {
     setSelectedTemplateId(tpl.id)
     setSelectedPresetId(tpl.stylePresetId)
-    setCopy(tpl.defaultCopy)
+    setCopy({ ...tpl.defaultCopy, promotionBadge: ownBadge(), validityText: "" })
     setStatusMessage(`Đã áp dụng mẫu: "${tpl.name}"`)
   }
 
@@ -138,6 +144,7 @@ export function PosterBannerClient() {
         const fallback = generateInstantBannerCopy({
           occasionKey,
           shopName: brandInfo.shopName,
+          suggestedPromotion: ownBadge(),
         })
         setCopy(fallback)
       }
@@ -151,6 +158,7 @@ export function PosterBannerClient() {
       const fallback = generateInstantBannerCopy({
         occasionKey,
         shopName: brandInfo.shopName,
+        suggestedPromotion: ownBadge(),
       })
       setCopy(fallback)
       setStatusMessage(`Đã tự động dàn trang 5 kích thước chuẩn cho dịp "${occasionLabel}"!`)
@@ -285,6 +293,7 @@ export function PosterBannerClient() {
             onBrandInfoChange={handleBrandInfoChange}
             productImageUrl={productImageUrl}
             onProductImageChange={setProductImageUrl}
+            shopPromotions={shopPromotions}
             onTriggerAiCopy={handleTriggerAutoGenerate}
             onTriggerAutoGenerate={handleTriggerAutoGenerate}
             isGenerating={isGenerating}
@@ -328,6 +337,7 @@ export function PosterBannerClient() {
         onClose={() => setIsGalleryOpen(false)}
         onSelectTemplate={handleSelectTemplate}
         selectedTemplateId={selectedTemplateId}
+        previewImageUrl={productImageUrl}
       />
     </div>
   )

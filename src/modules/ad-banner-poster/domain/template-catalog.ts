@@ -27,7 +27,6 @@ export interface BannerTemplateItem {
   readonly stylePresetId: BannerStylePresetId
   readonly layout: BannerLayoutArrangement
   readonly defaultCopy: BannerCopyPayload
-  readonly sampleImageUrl: string
   readonly tags: readonly string[]
   readonly isChainReady?: boolean | undefined
 }
@@ -55,31 +54,29 @@ export const BANNER_TEMPLATE_CATALOG: readonly BannerTemplateItem[] = [
     stylePresetId: "VIBRANT_SALE",
     layout: "HERO_CENTER",
     defaultCopy: {
-      headline: "FLASH SALE — CHỚP NGAY DEAL ĐỈNH",
-      subHeadline: "Ưu đãi độc quyền áp dụng số lượng có hạn, nhanh tay săn ngay hôm nay.",
-      promotionBadge: "GIẢM ĐẾN 50%",
+      headline: "FLASH SALE CUỐI TUẦN",
+      subHeadline: "Ghé tiệm hoặc nhắn tin để chọn mẫu ưng ý.",
+      promotionBadge: "",
       ctaText: "MUA NGAY KẺO LỠ",
-      validityText: "Chỉ trong 24 giờ",
+      validityText: "",
     },
-    sampleImageUrl: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80",
-    tags: ["Giảm 50%", "Flash sale", "Khuyến mãi", "Giá sốc"],
+    tags: ["Flash sale", "Khuyến mãi"],
   },
   {
     id: "tpl-sale-bogo",
-    name: "Ưu Đãi Mua 1 Tặng 1",
+    name: "Quà Tặng Yêu Thương",
     category: "PROMOTION_SALE",
     categoryLabel: "Khuyến mãi",
     stylePresetId: "VIBRANT_SALE",
     layout: "CARD_INSET",
     defaultCopy: {
-      headline: "SIÊU ƯU ĐÃI — MUA 1 TẶNG 1",
-      subHeadline: "Tặng kèm quà giá trị khi đặt mua bất kỳ sản phẩm nào trong tuần này.",
-      promotionBadge: "MUA 1 TẶNG 1",
+      headline: "QUÀ TẶNG Ý NGHĨA CHO NGƯỜI THƯƠNG",
+      subHeadline: "Chọn mẫu ưng ý, tiệm chuẩn bị chu đáo đến tận tay người nhận.",
+      promotionBadge: "",
       ctaText: "NHẬN QUÀ NGAY",
-      validityText: "Số lượng quà tặng có hạn",
+      validityText: "",
     },
-    sampleImageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
-    tags: ["Mua 1 tặng 1", "Tặng quà", "Quà tặng độc quyền"],
+    tags: ["Quà tặng", "Khuyến mãi"],
   },
 
   // ── 2. NEW COLLECTION ────────────────────────────────────────────
@@ -93,11 +90,10 @@ export const BANNER_TEMPLATE_CATALOG: readonly BannerTemplateItem[] = [
     defaultCopy: {
       headline: "BỘ SƯU TẬP MỚI RA MẮT",
       subHeadline: "Thiết kế tinh xảo, đường nét đương đại tôn vinh phong cách sống của bạn.",
-      promotionBadge: "NEW ARRIVAL",
+      promotionBadge: "",
       ctaText: "KHÁM PHÁ NGAY",
-      validityText: "Phiên bản giới hạn",
+      validityText: "",
     },
-    sampleImageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
     tags: ["Mẫu mới", "Tối giản", "Phong cách", "Mới về"],
   },
   {
@@ -110,11 +106,10 @@ export const BANNER_TEMPLATE_CATALOG: readonly BannerTemplateItem[] = [
     defaultCopy: {
       headline: "TUYỂN CHỌN ĐỘC BẢN CAO CẤP",
       subHeadline: "Được tạo tác tỉ mỉ từ những nguyên liệu tuyển chọn khắt khe nhất.",
-      promotionBadge: "BOUTIQUE LUXURY",
+      promotionBadge: "",
       ctaText: "TRẢI NGHIỆM NGAY",
-      validityText: "Độc quyền tại cửa hàng",
+      validityText: "",
     },
-    sampleImageUrl: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600&auto=format&fit=crop&q=80",
     tags: ["Sang trọng", "Độc bản", "Quý phái", "Boutique"],
   },
 
@@ -129,12 +124,11 @@ export const BANNER_TEMPLATE_CATALOG: readonly BannerTemplateItem[] = [
     defaultCopy: {
       headline: "TRAO GỬI YÊU THƯƠNG TRỌN VẸN",
       subHeadline: "Món quà tinh tế thay lời tri ân ngọt ngào nhất gửi đến những người trân quý.",
-      promotionBadge: "TẶNG THIỆP & FREESHIP",
+      promotionBadge: "",
       ctaText: "ĐẶT QUÀ NGAY",
-      validityText: "Ưu đãi đặt sớm trước lễ",
+      validityText: "",
     },
-    sampleImageUrl: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop&q=80",
-    tags: ["20/10", "8/3", "Lễ hội", "Tặng thiệp", "Freeship"],
+    tags: ["20/10", "8/3", "Lễ hội"],
   },
 
   // ── 4. OPENING & EVENTS ──────────────────────────────────────────
@@ -146,14 +140,13 @@ export const BANNER_TEMPLATE_CATALOG: readonly BannerTemplateItem[] = [
     stylePresetId: "FESTIVE_SEASON",
     layout: "CARD_INSET",
     defaultCopy: {
-      headline: "MỪNG KHAI TRƯƠNG — RỘN RÀNG ƯU ĐÃI",
-      subHeadline: "Chào đón quý khách ghé trải nghiệm với hàng ngàn ưu đãi và quà tặng hấp dẫn.",
-      promotionBadge: "GIẢM 20% TOÀN BỘ ĐƠN",
+      headline: "MỪNG KHAI TRƯƠNG — HÂN HẠNH ĐÓN KHÁCH",
+      subHeadline: "Chào đón quý khách ghé tiệm xem mẫu và đặt hàng.",
+      promotionBadge: "",
       ctaText: "GHÉ CỬA HÀNG NGAY",
-      validityText: "Tuần lễ khai trương",
+      validityText: "",
     },
-    sampleImageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=80",
-    tags: ["Khai trương", "Sự kiện", "Mừng chi nhánh mới", "Giảm 20%"],
+    tags: ["Khai trương", "Sự kiện", "Mừng chi nhánh mới"],
   },
 
   // ── 5. CHAIN BRAND ACCENT ────────────────────────────────────────
@@ -167,11 +160,10 @@ export const BANNER_TEMPLATE_CATALOG: readonly BannerTemplateItem[] = [
     defaultCopy: {
       headline: "CHẤT LƯỢNG ĐỒNG BỘ TOÀN HỆ THỐNG",
       subHeadline: "Cam kết trải nghiệm dịch vụ và sản phẩm tiêu chuẩn hàng đầu tại mọi chi nhánh.",
-      promotionBadge: "TIÊU CHUẨN HỆ THỐNG",
+      promotionBadge: "",
       ctaText: "TÌM CHI NHÁNH GẦN BẠN",
-      validityText: "Áp dụng toàn bộ hệ thống",
+      validityText: "",
     },
-    sampleImageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&auto=format&fit=crop&q=80",
     tags: ["Chuỗi", "Thương hiệu", "Hệ thống", "Đồng bộ"],
     isChainReady: true,
   },

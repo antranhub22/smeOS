@@ -84,7 +84,8 @@ export function generateLandingPageContent(input: LandingContentInput): Generate
   const shop = input.shopName || "Tiệm hoa smeOS"
   const occasion = input.occasionLabel || "Dịp Đặc Biệt"
   const directive = input.userDirectives ? sanitizeFlowerText(input.userDirectives) : ""
-  const discount = input.discountPercent || 10
+  // Ưu đãi chỉ khi tiệm bật "Giảm %" trong Hồ sơ tiệm — không có thì không hứa giảm giá
+  const discount = input.discountPercent
 
   const primaryProduct = input.selectedProducts[0]?.name || "những tác phẩm sản phẩm tuyển chọn"
   const flowerCount = input.selectedProducts.length
@@ -264,13 +265,21 @@ export function generateLandingPageContent(input: LandingContentInput): Generate
   ]
 
   // 6. Lead Capture & Special Promotion
-  const lead: LandingSectionLead = {
-    tag: "Đặc Quyền Đặt Hoa Sớm",
-    title: `Nhận Ngay Ưu Đãi ${discount}%`,
-    description: `Áp dụng cho quý khách hàng đăng ký đặt trước trong chiến dịch "${occasion}". Số lượng hoa tuyển chọn mỗi ngày có hạn để đảm bảo chất lượng phục vụ tốt nhất!`,
-    discountBadge: `GIẢM ${discount}%`,
-    urgencyNotice: "Ưu đãi có thể đóng sớm khi xưởng đạt hạn mức nhận đơn trong ngày.",
-  }
+  const lead: LandingSectionLead = discount
+    ? {
+        tag: "Đặt trước",
+        title: `Nhận Ngay Ưu Đãi ${discount}%`,
+        description: `Áp dụng cho quý khách đăng ký đặt trước trong chiến dịch "${occasion}" theo ưu đãi đang áp dụng của ${shop}.`,
+        discountBadge: `GIẢM ${discount}%`,
+        urgencyNotice: "",
+      }
+    : {
+        tag: "Đặt trước",
+        title: "Để lại số điện thoại để được tư vấn mẫu",
+        description: `${shop} sẽ liên hệ lại để tư vấn và giữ mẫu cho chiến dịch "${occasion}".`,
+        discountBadge: "",
+        urgencyNotice: "",
+      }
 
   return {
     hero: {

@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import { Sparkles, Loader2 } from "lucide-react"
 import type {
   BannerCopyPayload,
@@ -14,6 +15,8 @@ export interface ManualEditPanelProps {
   readonly onBrandInfoChange: (field: keyof BannerBrandInfo, value: string) => void
   readonly onTriggerAiCopy: () => Promise<void>
   readonly isAiLoading: boolean
+  /** Ưu đãi tiệm đang bật trong Hồ sơ tiệm — chỉ được chọn trong danh sách này */
+  readonly shopPromotions: readonly string[]
 }
 
 export function ManualEditPanel({
@@ -23,6 +26,7 @@ export function ManualEditPanel({
   onBrandInfoChange,
   onTriggerAiCopy,
   isAiLoading,
+  shopPromotions,
 }: ManualEditPanelProps) {
   return (
     <div className="space-y-4">
@@ -75,16 +79,21 @@ export function ManualEditPanel({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-caption text-text-muted block mb-1">
-              Ưu đãi (để trống nếu không có)
+            <label htmlFor="poster-promotion" className="text-caption text-text-muted block mb-1">
+              Ưu đãi của tiệm
             </label>
-            <input
-              type="text"
+            <select
+              id="poster-promotion"
               value={copy.promotionBadge}
               onChange={(e) => onCopyChange("promotionBadge", e.target.value)}
-              placeholder="VD: GIẢM 20% / MUA 1 TẶNG 1"
               className="w-full text-xs font-bold rounded-lg border border-border bg-background px-3 py-2 text-text focus:outline-none focus:ring-1 focus:ring-primary"
-            />
+            >
+              <option value="">Không in ưu đãi</option>
+              {shopPromotions.map((t) => <option key={t} value={t.toUpperCase()}>{t}</option>)}
+            </select>
+            <Link href={{ pathname: "/cai-dat", query: { tab: "PROMOTIONS" } }} className="mt-1 inline-block text-caption text-primary underline">
+              {shopPromotions.length ? "Sửa ưu đãi trong Cài đặt" : "Chưa bật ưu đãi nào — bật trong Cài đặt"}
+            </Link>
           </div>
 
           <div>
