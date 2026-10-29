@@ -87,7 +87,7 @@ export function LandingPageStudioClient() {
         <div className="flex items-center justify-between border-b border-border pb-4">
           <div className="h-8 w-48 bg-surface-alt rounded animate-pulse" />
         </div>
-        <SkeletonBlock lines={5} label="Đang khởi tạo Landing Page Studio" />
+        <SkeletonBlock lines={5} label="Đang mở công cụ tạo landing page" />
       </div>
     )
   }
@@ -103,15 +103,10 @@ export function LandingPageStudioClient() {
             onClick={() => router.push("/cong-cu" as never)}
             className="flex items-center gap-1.5 text-text-muted hover:text-text"
           >
-            <ArrowLeft className="h-4 w-4" /> Về Hub Công cụ
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Về Công cụ
           </Button>
           <div className="h-4 w-px bg-border" />
-          <div className="flex items-center gap-2">
-            <span className="font-extrabold text-base text-text">Landing Page Studio</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold">
-              Công cụ 08
-            </span>
-          </div>
+          <h1 className="font-extrabold text-base text-text">Tạo landing page cửa hàng</h1>
         </div>
 
         <div className="flex items-center gap-2">

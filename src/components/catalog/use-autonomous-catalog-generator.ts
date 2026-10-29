@@ -44,6 +44,10 @@ export function useAutonomousCatalogGenerator({
 }: UseAutonomousCatalogGeneratorOptions) {
   const [isAiAnalyzing, setIsAiAnalyzing] = useState(false)
   const [autonomousResult, setAutonomousResult] = useState<AutonomousResult | null>(null)
+  // Lỗi thật khi xuất bản — không bao giờ hiện link giả (03c UX-016).
+  const [publishError, setPublishError] = useState<string | null>(null)
+  // AI chưa viết được lời giới thiệu → đang dùng lời mẫu, người dùng cần biết để chỉnh (UX-017).
+  const [usedFallbackIntro, setUsedFallbackIntro] = useState(false)
 
   const [catalogAiSteps, setCatalogAiSteps] = useState<ProcessingStep[]>([
     { id: "analyze", label: "Phân tích yêu cầu & sự kiện", status: "pending" },
@@ -59,6 +63,8 @@ export function useAutonomousCatalogGenerator({
   ) => {
     setIsAiAnalyzing(true)
     setAutonomousResult(null)
+    setPublishError(null)
+    setUsedFallbackIntro(false)
     setCatalogAiSteps([
       { id: "analyze", label: "Phân tích yêu cầu & sự kiện", status: "running" },
       { id: "select", label: `Tuyển chọn các ${sampleProductTerm} phù hợp nhất`, status: "pending" },
@@ -75,8 +81,7 @@ export function useAutonomousCatalogGenerator({
       else if (lower.includes("khai trương")) matchedOccasion = "grand-opening"
       else if (lower.includes("sinh nhật")) matchedOccasion = "birthday"
 
-      // Step 1 done
-      await new Promise((r) => setTimeout(r, 600))
+      // Bước 1 xong ngay khi đọc xong yêu cầu — không chờ giả lập.
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
           s.id === "analyze" ? { ...s, status: "done" } : s.id === "select" ? { ...s, status: "running" } : s
@@ -95,8 +100,6 @@ export function useAutonomousCatalogGenerator({
       }
       const chosenIds = chosenProducts.map((p) => p.id)
 
-      // Step 2 done
-      await new Promise((r) => setTimeout(r, 600))
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
           s.id === "select" ? { ...s, status: "done" } : s.id === "intro" ? { ...s, status: "running" } : s
@@ -112,6 +115,7 @@ export function useAutonomousCatalogGenerator({
       }
 
       let generatedDesc = `Tuyển chọn ${chosenIds.length} ${sampleProductTerm} nghệ thuật được thiết kế tinh tế nhất từ ${currentShopName}.`
+      let aiIntroOk = false
       try {
         const res = await fetch("/api/v1/content-engine/catalog-generate", {
           method: "POST",
@@ -124,14 +128,16 @@ export function useAutonomousCatalogGenerator({
         })
         if (res.ok) {
           const json = await res.json()
-          if (json.data?.description) generatedDesc = json.data.description
+          if (json.data?.description) {
+            generatedDesc = json.data.description
+            aiIntroOk = true
+          }
         }
       } catch {
-        // Fallback
+        // Mạng lỗi: dùng lời giới thiệu mẫu và báo cho người dùng bên dưới.
       }
+      setUsedFallbackIntro(!aiIntroOk)
 
-      // Step 3 done
-      await new Promise((r) => setTimeout(r, 600))
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
           s.id === "intro" ? { ...s, status: "done" } : s.id === "layout" ? { ...s, status: "running" } : s
@@ -139,7 +145,7 @@ export function useAutonomousCatalogGenerator({
       )
 
       // Step 4: Tự động xuất bản tạo liên kết Catalog luôn trong luồng Autonomous
-      let createdSlug = "catalog"
+      let createdSlug: string | null = null
       try {
         const createRes = await fetch("/api/v1/catalog-links", {
           method: "POST",
@@ -157,10 +163,14 @@ export function useAutonomousCatalogGenerator({
         })
         if (createRes.ok) {
           const json = await createRes.json()
-          createdSlug = json.data?.slug || json.slug || "catalog"
+          createdSlug = json.data?.slug || json.slug || null
         }
       } catch {
-        // Fallback
+        createdSlug = null
+      }
+      if (!createdSlug) {
+        setPublishError("Chưa xuất bản được catalog nên chưa có link để gửi khách. Hãy thử lại.")
+        return
       }
 
       const publishedUrl = `${window.location.origin}/c/${createdSlug}`
@@ -208,7 +218,6 @@ export function useAutonomousCatalogGenerator({
         studioProducts
       )
 
-      await new Promise((r) => setTimeout(r, 500))
       setCatalogAiSteps((prev) => prev.map((s) => (s.id === "layout" ? { ...s, status: "done" } : s)))
 
       setAutonomousResult({
@@ -230,6 +239,9 @@ export function useAutonomousCatalogGenerator({
     isAiAnalyzing,
     autonomousResult,
     setAutonomousResult,
+    publishError,
+    clearPublishError: () => setPublishError(null),
+    usedFallbackIntro,
     catalogAiSteps,
     executeGeneration,
   }

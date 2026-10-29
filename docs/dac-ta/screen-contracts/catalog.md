@@ -79,3 +79,6 @@
 - Toàn bộ modal đã chuyển sang `Dialog`.
 - `Card onClick` đã tuân thủ chuẩn T1.7.
 - Không còn bất kỳ cảnh báo unused variable nào.
+
+## 15. Progressive disclosure & rủi ro (03c) — 29/10/2026 (công cụ #09 chuyển Hoàn thiện)
+Đã sửa: tạo catalog tự động **bịa link `/c/catalog`** khi xuất bản lỗi (slug mặc định `"catalog"`) → nay báo `TaskStatus` thất bại + "Làm lại", không có link; bỏ các khoảng chờ giả lập 600 ms giữa các bước; AI không viết được lời giới thiệu thì báo đang dùng lời mẫu; bỏ `confirm()` khi phân tích lại ảnh (chi phí đã ghi trên nút, R2); tiêu đề trang thành `<h1>`. Rủi ro: xuất bản link R3. axe 390px: 0 lỗi. Test: `tests/unit/ux/no-fake-progress.test.ts`.

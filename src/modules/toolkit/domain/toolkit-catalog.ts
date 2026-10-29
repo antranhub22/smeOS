@@ -105,14 +105,14 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
   {
     id: 8, name: "Tạo landing page cửa hàng",
     description: "Tạo trang giới thiệu trực tuyến có link chia sẻ",
-    icon: "Globe", label: "BOTH", status: "IN_PROGRESS", progress: 60,
-    href: "/landing-page", statusNote: "Đang phát triển — tách trang /landing-page độc lập và hoàn thiện theo SSOT v3",
+    icon: "Globe", label: "BOTH", status: "DONE", progress: 100,
+    href: "/landing-page", statusNote: "Trang giới thiệu cửa hàng có link chia sẻ — chuẩn UX 03c",
   },
   {
     id: 9, name: "Tạo catalog và bộ sưu tập",
     description: "Tổ chức sản phẩm theo danh mục với link chia sẻ và bộ lọc",
-    icon: "BookOpen", label: "STORE", status: "IN_PROGRESS", progress: 60,
-    href: "/catalog", statusNote: "Đang phát triển — tách trang /catalog độc lập và hoàn thiện showroom số hóa",
+    icon: "BookOpen", label: "STORE", status: "DONE", progress: 100,
+    href: "/catalog", statusNote: "Showroom số hoá theo danh mục, link chia sẻ và bộ lọc — chuẩn UX 03c",
   },
   {
     id: 10, name: "Tạo trang giới thiệu dịch vụ",
