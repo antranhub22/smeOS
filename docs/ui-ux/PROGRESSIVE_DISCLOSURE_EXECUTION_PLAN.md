@@ -129,6 +129,6 @@ Mỗi đợt: Screen Contract §15 → áp component → xóa vi phạm R13–R1
 | 0 Chuẩn & tài liệu | Xong | nhánh `NangcapkientrucUX_progressiveDisclosure` |
 | 1 Audit | Xong — `PD_AUDIT_REPORT.md`, `PD_AUDIT_INVENTORY.md`; chờ PO duyệt §7 | nhánh này |
 | 2 Nền tảng | Xong phần mã (2.1–2.7, 2.9, 2.10); 2.8 có baseline axe (A15–A18), spec vào CI khi từng màn hết lỗi; trang quản trị cờ ở `/van-hanh` làm đầu Giai đoạn 3 | nhánh này |
-| 3 Pilot | Đã chốt: `/cong-cu/anh-san-pham`, chặng 01 + 02 + tạo ảnh | — |
+| 3 Pilot | Đã triển khai sau cờ `ux_pd_anh_san_pham`; axe 0 lỗi; sửa lỗi hợp đồng API; trang cờ `/van-hanh/cau-hinh`. Chờ PO bật cho tổ chức thật để đo E7 — `PD_PILOT_REPORT.md` | nhánh này |
 | 4 Rollout | — | — |
 | 5 Enterprise & quản trị | — | — |

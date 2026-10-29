@@ -2,7 +2,7 @@
   "summary": {
     "app/(app)": {
       "R13": 6,
-      "R14": 4,
+      "R14": 3,
       "R16": 7
     },
     "app/(platform)": {
@@ -13,7 +13,7 @@
       "R13": 1
     },
     "components/catalog": {
-      "R14": 5,
+      "R14": 3,
       "R13": 1
     },
     "components/coordinator": {
@@ -36,7 +36,7 @@
       "R14": 6
     },
     "components/market-intelligence": {
-      "R14": 10,
+      "R14": 4,
       "R16": 1
     },
     "components/products": {
@@ -53,12 +53,12 @@
       "R16": 16
     },
     "components/upload": {
-      "R14": 4
+      "R14": 1
     },
     "components/video-studio": {
       "R16": 1
     }
   },
-  "total": 154,
-  "updatedAt": "2026-10-29T00:33:17.223Z"
+  "total": 142,
+  "updatedAt": "2026-10-29T03:27:15.790Z"
 }

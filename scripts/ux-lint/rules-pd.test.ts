@@ -12,6 +12,7 @@ describe("UX Lint R13–R16 (03c §7)", () => {
     expect(run(checkR13, `if (!window.confirm("Xoá?")) return`)).toHaveLength(1)
     expect(run(checkR13, `if (!confirm("Xoá?")) return`)).toHaveLength(1)
     expect(run(checkR13, `async function confirm() {}\nvoid confirm()`)).toHaveLength(0)
+    expect(run(checkR13, `const [confirm, dialog] = useConfirmDialog()\nawait confirm({})`)).toHaveLength(0)
     expect(run(checkR13, `window.confirm("x")`, "src/components/ui/confirm-dialog.tsx")).toHaveLength(0)
   })
 
@@ -19,6 +20,7 @@ describe("UX Lint R13–R16 (03c §7)", () => {
     expect(run(checkR14, `if (s.status === "done") {}`)).toHaveLength(1)
     expect(run(checkR14, `if ("processing" !== step) {}`)).toHaveLength(1)
     expect(run(checkR14, `if (s.status === "COMPLETED") {}`)).toHaveLength(0)
+    expect(run(checkR14, `if (state === "succeeded") {}`)).toHaveLength(0)
     expect(run(checkR14, `const label = "done"`)).toHaveLength(0)
   })
 

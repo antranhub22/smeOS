@@ -32,7 +32,7 @@ export const checkR13: RuleFunction = (sourceFile, context) => {
   if (isSharedUi(context)) return []
   const out: Violation[] = []
   // Hàm cục bộ tên `confirm` (vd hành động "Xác nhận" của màn) không phải hộp của trình duyệt.
-  const declaresLocalConfirm = /\b(?:function|const|let)\s+confirm\b/.test(context.sourceCode)
+  const declaresLocalConfirm = /\b(?:function|const|let)\s+(?:\[\s*)?confirm\b/.test(context.sourceCode)
   function visit(node: ts.Node) {
     if (ts.isCallExpression(node)) {
       const callee = node.expression
@@ -54,7 +54,8 @@ export const checkR13: RuleFunction = (sourceFile, context) => {
   return out
 }
 
-const RAW_TASK_STATES = new Set(["done", "completed", "processing", "running", "queued", "succeeded", "cancelled"])
+// Chỉ các tên ngoài từ vựng chuẩn — `queued`/`running`/`succeeded`/`canceled` là TaskUiState hợp lệ.
+const RAW_TASK_STATES = new Set(["done", "completed", "processing", "cancelled"])
 
 /** R14 — so sánh với chuỗi trạng thái tác vụ tự đặt → dùng `task-state.ts` (UX-016). */
 export const checkR14: RuleFunction = (sourceFile, context) => {

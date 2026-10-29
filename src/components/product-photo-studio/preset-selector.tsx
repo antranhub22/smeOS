@@ -28,6 +28,7 @@ export function PresetSelector({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
         className="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-surface-alt/60 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5">
