@@ -127,6 +127,7 @@ Mọi logic gom nhóm và sắp xếp điều hướng theo vai được tập t
 ## 6. Vai chưa có và mục chưa có màn: hiện nhưng vô hiệu
 
 - Màn **`/vai-tro`** (mở từ menu tài khoản) liệt kê đủ 15 vai theo ba nhóm. Vai đang dùng được có nhãn "Đang dùng được" và nút mở nơi vào. Vai chưa có có nhãn "Đang phát triển", `aria-disabled`, mờ đi, không bấm được.
+- **Chuyển tầng (xem trước vai)** — quản trị nền tảng có năng lực `N1` bấm "Mở"/"Console" thì `POST /api/v1/platform/tier-preview { roleKey }` đặt cookie `smeos_tier_preview` (HttpOnly) và chuyển về nơi vào của tầng (SaaS Mother `/van-hanh`; SaaS Ngành, ChainOS, StoreOS `/`). Chỉ đổi khuôn trải nghiệm (vai + loại tổ chức); tổ chức, mã năng lực và dữ liệu vẫn theo phiên thật. Quyền `N1` được kiểm lại ở mỗi request. `DELETE` cùng đường dẫn (nút "Về vai thật của bạn") xoá xem trước. Chuyển thất bại thì báo lỗi ngay dưới dòng vai, không chuyển trang.
 - Màn này **chỉ đọc danh mục trong mã**. Nó không gọi API và không đổi vai của ai; đổi vai vẫn cần `A4`.
 - Vai đang phát triển **không bao giờ** được dùng làm trang chủ, dù có vai phân quyền trỏ tới (`resolveRoleUx` chỉ trả vai `AVAILABLE`).
 - Ba mục điều hướng trước đây trỏ vào tuyến không tồn tại (`/muc-dung`, `/audit`, `/cai-dat`) nay hiện nhãn "Sắp có" và không bấm được (nợ #167).
@@ -171,7 +172,7 @@ Mô hình mục tiêu theo contract §12–§16: thông báo P0–P3, ngoại l�
 | Khuôn marketing / lead_marketing | `src/components/dashboard/marketing-workspace.tsx` |
 | Khuôn crm | `src/components/dashboard/crm-workspace.tsx` |
 | Điều hướng theo vai | `src/components/layout/desktop-nav.tsx`, `src/components/layout/bottom-nav.tsx` |
-| Danh mục vai | `src/app/(app)/vai-tro/page.tsx`, lối vào ở `src/components/layout/user-menu.tsx` |
+| Danh mục vai | `src/app/(app)/vai-tro/page.tsx`, `src/app/(app)/vai-tro/chuyen-tang.ts`, `src/modules/platform/domain/tier-preview.ts`, `src/app/api/v1/platform/tier-preview/route.ts`, lối vào ở `src/components/layout/user-menu.tsx` |
 
 ## 11. Kiểm soát thay đổi
 
