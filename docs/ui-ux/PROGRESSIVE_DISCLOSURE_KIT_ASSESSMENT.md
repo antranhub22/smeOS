@@ -1,7 +1,8 @@
 # Đánh giá bộ SMEOS UX Progressive Disclosure Kit — khả năng áp dụng toàn hệ thống
 
-> Trạng thái: **ĐỀ XUẤT** (chờ PO duyệt) · Ngày: 28/10/2026
-> Đối tượng đánh giá: `docs/SMEOS_UX_Progressive_Disclosure_Kit/` (20 file, v1.0)
+> Trạng thái: **ĐÃ DUYỆT** (PO 29/10/2026 — toàn bộ đề xuất) · Ngày đánh giá: 28/10/2026
+> Kết quả: chuẩn `docs/dac-ta/03c-ux-progressive-disclosure.md`, pattern `docs/dac-ta/ux-patterns/`, kế hoạch `docs/ui-ux/PROGRESSIVE_DISCLOSURE_EXECUTION_PLAN.md`
+> Đối tượng đánh giá: `docs/archive/historical/SMEOS_UX_Progressive_Disclosure_Kit/` (v1.0; `patterns/` đã chuyển sang `docs/dac-ta/ux-patterns/`)
 > Đối chiếu với: `docs/dac-ta/03a-ux-constitution.md` (CANONICAL), `docs/dac-ta/03-ux-architecture.md`,
 > `docs/dac-ta/screen-contracts/`, `docs/ui-ux/COMPONENT_CONTRACTS.md`, `scripts/ux-lint.ts`, `src/components/ui/`.
 
@@ -141,3 +142,24 @@ Phần **không làm**: đại tu toàn bộ giao diện một lần; đổi `Fe
 - Đánh giá dựa trên **đọc tài liệu và quét mã tĩnh**; chưa chạy ứng dụng, chưa kiểm thử với người dùng thật.
 - Các con số ở mục 4 là số lần xuất hiện chuỗi trong `src/**/*.tsx`, dùng để chỉ ra mức phân mảnh, không phải số màn bị lỗi.
 - `CLAUDE.md` tham chiếu `.agents/AGENT_RULES.md` và `.claude/skills/`, nhưng hai đường dẫn này **không tồn tại** trong repo hiện tại — nên kiểm tra riêng.
+
+## 9. Bổ sung để đạt commercial / production-ready / enterprise (đã duyệt)
+
+| Nhóm | Mã | Đề xuất | Luật trong 03c |
+|---|---|---|---|
+| Enterprise bắt buộc | E1 | Hiển thị theo quyền và gói | UX-018, UX-P11 |
+| | E2 | Minh bạch chi phí AI | UX-019, UX-P12 |
+| | E3 | Nhật ký hành động R3 + mã hỗ trợ | UX-020 |
+| | E4 | Hoàn tác & tự lưu nháp | UX-021 |
+| | E5 | Cô lập tổ chức trên client | UX-022 |
+| Production-ready | E6 | Ngân sách hiệu năng LCP/INP/CLS | §6.2 |
+| | E7 | Đo hành vi theo pattern | §6.2 |
+| | E8 | axe + ảnh so sánh + 3 preset ở 390px | §6.1 |
+| | E9 | Rollout bằng cờ tính năng | §6.1 |
+| | E10 | Mạng yếu, idempotency | UX-016, §6.2 |
+| Commercial | E11 | Lần dùng đầu có dữ liệu mẫu | UX-023 |
+| | E12 | Trung tâm thông báo | UX-024 |
+| | E13 | Trợ giúp tại chỗ | UX-025 |
+| | E14 | Từ điển thuật ngữ + lint R16 | UX-026 |
+| Quản trị | E15 | Bảng điểm UX từng màn trong CI | §6.4 |
+| | E16 | Phiên bản component dùng chung | §6.4 |

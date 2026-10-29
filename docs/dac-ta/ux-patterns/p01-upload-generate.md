@@ -4,10 +4,11 @@
 Cho phép người dùng đưa đầu vào và yêu cầu hệ thống tạo kết quả với ít thao tác nhất.
 
 ## Lớp disclosure
-- L1: tải/chọn đầu vào, CTA chính, trạng thái, kết quả.
-- L2: lựa chọn chỉ liên quan đến ngữ cảnh.
-- L3: tùy chỉnh nâng cao.
-- L4: validation, tạo task, xử lý nền, lưu kết quả, retry theo chính sách.
+Theo thang L0–L4 + SYS (03c §2):
+- L0/L1: tải/chọn đầu vào, CTA chính, chi phí/lượt dự kiến (UX-019), trạng thái, kết quả.
+- L2: lựa chọn chỉ liên quan đến ngữ cảnh (ví dụ tỷ lệ ảnh theo kênh).
+- L3/L4: tùy chỉnh nâng cao trong `Disclosure` "Tùy chỉnh thêm".
+- SYS: validation, tạo task, xử lý nền, lưu kết quả, retry theo chính sách — chỉ hiện trạng thái qua `TaskStatus`.
 
 ## Luồng
 1. Chưa có đầu vào: hướng dẫn ngắn và vùng tải/chọn.

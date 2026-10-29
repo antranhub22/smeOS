@@ -22,3 +22,7 @@
 - Lỗi quyền.
 - Retry an toàn và retry không an toàn.
 - Khôi phục dữ liệu nhập.
+
+## Thực thi trong repo
+- Mã tham chiếu hỗ trợ theo 03c UX-020; lỗi quyền chéo tổ chức giữ quy tắc 404.
+- Dùng `InlineError`/`EmptyState` hiện có trong `src/components/ui/`, không tạo biến thể mới.

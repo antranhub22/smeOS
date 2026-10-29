@@ -25,3 +25,7 @@ Chọn các trạng thái cần thiết theo backend: pending/queued/running/suc
 - Retry.
 - Hai lần submit.
 - Người dùng không còn quyền truy cập tác vụ.
+
+## Thực thi trong repo
+- Từ vựng và ánh xạ trạng thái: `src/lib/ui-system/task-state.ts` (03c UX-016).
+- Hiển thị: `src/components/ui/task-status.tsx`; hoàn tất khi ở màn khác → trung tâm thông báo (UX-024).

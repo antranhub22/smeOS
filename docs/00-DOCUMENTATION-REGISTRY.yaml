@@ -479,6 +479,34 @@ documents:
     dependencies: ["docs/dac-ta/03-ux-architecture.md", "docs/dac-ta/03b-role-ux.md"]
     supersedes: ["docs/archive/drafts/FLORAOS_UX_CONSTITUTION_DRAFT.md"]
 
+  - id: "DOC-03-UX-PROGRESSIVE-DISCLOSURE"
+    path: "docs/dac-ta/03c-ux-progressive-disclosure.md"
+    title: "Progressive Disclosure & Enterprise UX — mở rộng của UX Constitution"
+    domain: "UX/UI"
+    layer: "Level 3"
+    purpose: "Phán quyết PD1–PD4, khái niệm SYS, UX-015…UX-026 (rủi ro, trạng thái tác vụ, không giấu, quyền/gói, chi phí AI, nhật ký, hoàn tác, cô lập tổ chức), lint R13–R16, sổ ngoại lệ, DoD"
+    status: "CANONICAL"
+    authority: "Level 3"
+    canonical: true
+    ssot: true
+    owner: "Product Owner"
+    dependencies: ["docs/dac-ta/03a-ux-constitution.md"]
+    supersedes: ["docs/archive/historical/SMEOS_UX_Progressive_Disclosure_Kit/README.md"]
+
+  - id: "DOC-03-UX-PATTERNS"
+    path: "docs/dac-ta/ux-patterns/README.md"
+    title: "UX Patterns — Thư viện luồng chuẩn UX-P01…P12"
+    domain: "UX/UI"
+    layer: "Level 3"
+    purpose: "Chỉ mục đặc tả luồng chuẩn, từ điển thuật ngữ và sổ ngoại lệ; README đóng vai trò chỉ mục tổng hợp"
+    status: "SUPPORTING"
+    authority: "Level 3"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/dac-ta/03a-ux-constitution.md", "docs/dac-ta/03c-ux-progressive-disclosure.md"]
+    supersedes: []
+
   - id: "DOC-03-ROLE-UX-CONTRACT"
     path: "docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md"
     title: "FLORAOS-UX-ROLE-001 — Role UX AI Agent Execution Contract v1.1"
