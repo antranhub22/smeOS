@@ -150,7 +150,7 @@ export function VideoPlayerCard({
 
           <div className="flex flex-col gap-2">
             <div className="text-sm font-extrabold text-white">{productName}</div>
-            <div className="text-xs font-semibold text-accent">{price}</div>
+            <div className="text-xs font-semibold text-accent-text">{price}</div>
             <div className="mt-1 flex items-center justify-center">
               <button
                 type="button"

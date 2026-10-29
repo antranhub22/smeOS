@@ -206,7 +206,7 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
         <button
           type="button"
           onClick={onSwitchToLogin}
-          className="font-bold text-accent hover:underline"
+          className="font-bold text-accent-text hover:underline"
         >
           Đăng nhập
         </button>

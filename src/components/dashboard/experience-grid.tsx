@@ -226,7 +226,7 @@ export function ExperienceGrid() {
                 </div>
                 <StatusBadge status={mod.status ?? "chua_co"} />
                 {isWaiting && (
-                  <div className="text-caption font-bold text-accent">
+                  <div className="text-caption font-bold text-accent-text">
                     ● Đang chờ xử lý
                   </div>
                 )}

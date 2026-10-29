@@ -443,7 +443,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
               {accessories.length > 0 && (
                 <div className="p-2.5 rounded-lg bg-accent-bg/60 border border-accent-border">
                   <span className="font-bold text-accent-text block mb-1">✨ Phụ kiện</span>
-                  <div className="text-accent space-y-0.5">
+                  <div className="text-accent-text space-y-0.5">
                     {accessories.map((a, i) => (
                       <div key={i}>• {a.name} ({a.material}, {a.color}){a.printedText ? ` — "${a.printedText}"` : ""}</div>
                     ))}
@@ -518,7 +518,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             <div className="p-3 rounded-xl bg-accent-bg/60 border border-accent-border flex items-start gap-2">
               <ClipboardList size={14} className="text-accent shrink-0 mt-0.5" />
               <div>
-                <div className="text-caption font-bold text-accent uppercase mb-0.5">
+                <div className="text-caption font-bold text-accent-text uppercase mb-0.5">
                   Ghi chú kỹ thuật từ Điều phối
                 </div>
                 <div className="text-xs text-accent-text font-medium leading-relaxed whitespace-pre-line">

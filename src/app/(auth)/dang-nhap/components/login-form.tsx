@@ -135,7 +135,7 @@ export function LoginForm({ onSwitchToSignup, onSwitchToInstantTrial }: LoginFor
           <button
             type="button"
             onClick={onSwitchToSignup}
-            className="font-bold text-accent hover:underline"
+            className="font-bold text-accent-text hover:underline"
           >
             Đăng ký tài khoản mới
           </button>

@@ -145,7 +145,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             <div className="text-body-sm font-bold text-text">
               2. Chọn mô hình vận hành <span className="text-danger">*</span>
             </div>
-            <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+            <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-accent/10 text-accent-text border border-accent/20">
               {organizationType === "SINGLE" ? "1 Cửa hàng độc lập" : "Chuỗi nhiều chi nhánh"}
             </span>
           </div>
@@ -284,7 +284,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
         <button
           type="button"
           onClick={onSwitchToLogin}
-          className="font-bold text-accent hover:underline"
+          className="font-bold text-accent-text hover:underline"
         >
           Đăng nhập
         </button>
