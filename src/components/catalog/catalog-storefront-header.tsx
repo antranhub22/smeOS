@@ -151,6 +151,7 @@ export function CatalogStorefrontHeader({
 
           <button
             onClick={onOpenShareModal}
+            aria-label="Chia sẻ"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors"
             style={{
               backgroundColor: style?.tokens.badgeBg || "rgba(154, 52, 18, 0.1)",
@@ -158,7 +159,7 @@ export function CatalogStorefrontHeader({
             }}
           >
             <Share2 size={14} />
-            <span>Chia sẻ</span>
+            <span className="hidden sm:inline">Chia sẻ</span>
           </button>
 
           {shop.phone && (

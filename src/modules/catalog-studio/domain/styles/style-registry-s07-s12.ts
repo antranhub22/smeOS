@@ -139,7 +139,7 @@ export const CATALOG_STYLES_S07_S12: Partial<Record<CatalogStyleId, StyleDefinit
       shadowCard: "0 6px 18px rgba(66,32,6,0.12)",
     },
     typography: {
-      fontDisplay: "font-serif",
+      fontDisplay: "font-display",
       fontBody: "font-sans",
       fontAccent: "font-serif font-black",
       scale: {

@@ -114,7 +114,8 @@ export function CatalogPdfExportButton({
           ) : (
             <>
               <Download className="h-4 w-4" />
-              <span>Xuất Catalog PDF (A4)</span>
+              <span className="whitespace-nowrap sm:hidden">Tải PDF</span>
+              <span className="hidden whitespace-nowrap sm:inline">Xuất Catalog PDF (A4)</span>
             </>
           )}
         </Button>

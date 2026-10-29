@@ -33,7 +33,7 @@ export const CATALOG_STYLES_S01_S06: Partial<Record<CatalogStyleId, StyleDefinit
       shadowCard: "0 4px 24px rgba(28,25,23,0.10), 0 1px 4px rgba(28,25,23,0.06)",
     },
     typography: {
-      fontDisplay: "font-serif",
+      fontDisplay: "font-display",
       fontBody: "font-sans",
       fontAccent: "font-serif italic",
       scale: {
@@ -141,7 +141,7 @@ export const CATALOG_STYLES_S01_S06: Partial<Record<CatalogStyleId, StyleDefinit
       shadowCard: "0 6px 28px rgba(41,37,36,0.12), 0 1px 4px rgba(41,37,36,0.06)",
     },
     typography: {
-      fontDisplay: "font-serif",
+      fontDisplay: "font-display",
       fontBody: "font-sans",
       fontAccent: "font-serif italic",
       scale: {
@@ -248,7 +248,7 @@ export const CATALOG_STYLES_S01_S06: Partial<Record<CatalogStyleId, StyleDefinit
       shadowCard: "0 4px 20px rgba(45,40,35,0.10)",
     },
     typography: {
-      fontDisplay: "font-serif",
+      fontDisplay: "font-display",
       fontBody: "font-sans",
       fontAccent: "font-serif",
       scale: {
@@ -302,7 +302,7 @@ export const CATALOG_STYLES_S01_S06: Partial<Record<CatalogStyleId, StyleDefinit
       shadowCard: "0 4px 20px rgba(20,51,36,0.10)",
     },
     typography: {
-      fontDisplay: "font-serif",
+      fontDisplay: "font-display",
       fontBody: "font-sans",
       fontAccent: "font-serif italic",
       scale: {
