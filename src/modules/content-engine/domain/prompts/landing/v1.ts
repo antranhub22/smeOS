@@ -23,6 +23,8 @@ export interface LandingWriterInput {
   }>
   readonly userDirectives: string | undefined
   readonly discountPercent: number | undefined
+  /** Mục đích trang người dùng chọn (vd. "Trang giới thiệu cửa hàng chính thức — …"); không có thì để AI theo dịp lễ. */
+  readonly pageGoal?: string | undefined
 }
 
 export interface LandingWriterOutput {
@@ -57,7 +59,7 @@ Viết nội dung đầy đủ cho Landing Page chiến dịch dưới đây. T�
 
 TIỆM HOA: ${input.shopName}
 ${toneGuide}
-DỊP LỄ: ${input.occasionLabel} (mã: ${input.occasionId})
+${input.pageGoal ? `MỤC ĐÍCH TRANG: ${input.pageGoal}\n` : ""}DỊP LỄ: ${input.occasionLabel} (mã: ${input.occasionId})
 PHONG CÁCH: ${input.archetypeId ?? "minimal-luxury"}
 ƯU ĐÃI: Giảm ${discount}% cho khách đặt sớm${directive}
 

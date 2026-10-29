@@ -95,6 +95,7 @@ export async function executeGenerateLandingContent(
       selectedProducts: input.selectedProducts,
       userDirectives: input.userDirectives,
       discountPercent: input.discountPercent,
+      pageGoal: input.pageGoal,
     }
 
     // 1. Writer AI

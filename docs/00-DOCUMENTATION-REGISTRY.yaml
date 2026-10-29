@@ -484,7 +484,7 @@ documents:
     title: "Progressive Disclosure & Enterprise UX — mở rộng của UX Constitution"
     domain: "UX/UI"
     layer: "Level 3"
-    purpose: "Phán quyết PD1–PD4, khái niệm SYS, UX-015…UX-026 (rủi ro, trạng thái tác vụ, không giấu, quyền/gói, chi phí AI, nhật ký, hoàn tác, cô lập tổ chức), lint R13–R16, sổ ngoại lệ, DoD"
+    purpose: "Phán quyết PD1–PD6, khái niệm SYS, UX-015…UX-028 (gồm trường theo ngữ cảnh, loại trang) (rủi ro, trạng thái tác vụ, không giấu, quyền/gói, chi phí AI, nhật ký, hoàn tác, cô lập tổ chức), lint R13–R16, sổ ngoại lệ, DoD"
     status: "CANONICAL"
     authority: "Level 3"
     canonical: true
@@ -498,7 +498,7 @@ documents:
     title: "UX Patterns — Thư viện luồng chuẩn UX-P01…P12"
     domain: "UX/UI"
     layer: "Level 3"
-    purpose: "Chỉ mục đặc tả luồng chuẩn, từ điển thuật ngữ và sổ ngoại lệ; README đóng vai trò chỉ mục tổng hợp"
+    purpose: "Chỉ mục đặc tả luồng chuẩn, bảng chọn cách hiển thị thêm, loại trang A–F (page-archetypes.md), review thị giác/audit thủ công P0–P3 (visual-review.md), từ điển thuật ngữ và sổ ngoại lệ; README đóng vai trò chỉ mục tổng hợp"
     status: "SUPPORTING"
     authority: "Level 3"
     canonical: false

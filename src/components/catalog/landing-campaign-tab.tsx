@@ -27,9 +27,11 @@ import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 interface LandingCampaignTabProps {
   products: CatalogProduct[]
   onRefresh?: () => void
+  /** Mục đích trang chọn ở /landing-page — gửi cho AI soạn nội dung. */
+  pageType?: string | undefined
 }
 
-export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabProps) {
+export function LandingCampaignTab({ products, onRefresh, pageType }: LandingCampaignTabProps) {
   const { business } = useTenantProfile()
   const currentShopName = business?.display_name || "Tiệm hoa smeOS"
 
@@ -50,10 +52,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
   const [campaignSlug, setCampaignSlug] = useState("campaign-20-10")
 
   const [createdProducts, setCreatedProducts] = useState<CatalogProduct[]>([])
-  const activeProducts = React.useMemo(() => {
-    const combined = [...createdProducts, ...products]
-    return combined.filter((p) => p.status !== "ARCHIVED")
-  }, [createdProducts, products])
+  const activeProducts = React.useMemo(() => [...createdProducts, ...products].filter((p) => p.status !== "ARCHIVED"), [createdProducts, products])
   const [isQuickUploadOpen, setIsQuickUploadOpen] = useState(false)
 
   const [generatedPackage, setGeneratedPackage] = useState<GeneratedLandingPackage | null>(() =>
@@ -124,6 +123,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
           userDirectives: data.userDirectives || undefined,
           targetAudience: data.userDirectives || undefined,
           designDirection: selectedArchetype,
+          pageType,
         }),
       }).catch(() => null)
 
