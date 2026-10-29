@@ -18,6 +18,8 @@ export interface StorageProvider {
   readonly name: string;
   put(key: string, body: Uint8Array, contentType: string): Promise<void>;
   get(key: string): Promise<Uint8Array>;
+  /** Xoá payload. Idempotent: tệp không còn thì coi như đã xoá. */
+  delete(key: string): Promise<void>;
   signedUrl(
     key: string,
     expiresInSeconds: number,

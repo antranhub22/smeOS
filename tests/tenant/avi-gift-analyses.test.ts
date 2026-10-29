@@ -39,6 +39,9 @@ describe("nạp phân tích ảnh lịch sử AVI GIFT (P8, nợ #34)", () => {
         if (!found) throw new Error(`không có ${key}`)
         return found
       },
+      async delete(key) {
+        written.delete(key)
+      },
       async signedUrl(key) {
         return `/fake/${key}`
       },

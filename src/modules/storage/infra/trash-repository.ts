@@ -9,6 +9,7 @@ import {
   type TrashItemType,
 } from "../domain/trash-types"
 
+import { purgeAssetPayloads } from "@/modules/assets/use-cases/purge-asset-payloads"
 import type { ITrashRepository } from "../domain/repositories/trash-repository.interface"
 
 const PREVIEW_EXPIRES_IN = 86400
@@ -264,6 +265,7 @@ export class TrashRepository implements ITrashRepository {
       await prisma.assets.deleteMany({
         where: scopedWhere(ctx, { id: asset.id }),
       })
+      await purgeAssetPayloads(ctx, asset)
       return true
     }
 

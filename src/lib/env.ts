@@ -32,6 +32,9 @@ const schema = z.object({
   // Khoá ký URL kho tệp (`/api/v1/storage/...`, SDAGF D-07). Tách khỏi
   // SESSION_SECRET để xoay độc lập; thiếu thì lùi về SESSION_SECRET.
   STORAGE_SIGNING_SECRET: z.string().min(16).optional(),
+  // Xoá payload trên kho khi xoá vĩnh viễn asset (SDAGF P1-3). Chỉ bật
+  // ("enabled") sau khi kho đã có bản sao lưu (D-06); thiếu = tắt.
+  STORAGE_DELETE_PAYLOADS: z.enum(["enabled", "disabled"]).optional(),
   OPENAI_API_KEY: z.string().optional(),
   // Nhà cung cấp nội dung tương đương OpenAI (PO 25/09/2026) — thiếu khoá thì
   // bên đó bị bỏ qua trong chuỗi lùi, không làm hỏng khởi động.

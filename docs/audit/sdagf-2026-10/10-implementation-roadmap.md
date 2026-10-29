@@ -24,6 +24,8 @@
 | P0-1 | **Xong**: bỏ miễn chữ ký `videos/`; chữ ký gắn phương thức (URL GET không dùng để PUT được); thêm `STORAGE_SIGNING_SECRET` | `src/app/api/v1/storage/[...key]/route.ts`, `src/modules/assets/infra/storage-signing.ts`, `tests/unit/storage/storage-route-signature.test.ts` |
 | P0-2 | **Xong**: giới hạn byte theo kiểu tệp (ảnh 20MB, video 100MB, bảng tính 25MB), đọc body có giới hạn, kiểm magic-byte, kiểu tệp lấy từ key, SVG có CSP sandbox. *Chưa làm:* ghi một lần (P1) | `src/modules/assets/domain/upload-content-rules.ts` (+ test) |
 | P0-3, P0-4 | Chờ DevOps (D-08) | — |
+| P1-3 (một phần, không đổi schema) | **Xong, tắt mặc định**: `StorageProvider.delete` (S3/R2 + đĩa); xoá vĩnh viễn asset (API và thùng rác) dọn payload + thumbnail dưới `org/<org>/` khi **không còn bản ghi nào trỏ tới** (assets, music_tracks, voice_clones, video_jobs). Best-effort, lỗi kho chỉ ghi log. Bật bằng `STORAGE_DELETE_PAYLOADS=enabled` **sau khi P1-4 (backup R2) xong**. *Chưa làm:* outbox để thử lại (cần schema P1-2), hàm xoá phía Python (chưa có nơi gọi) | `src/modules/assets/use-cases/purge-asset-payloads.ts`, `domain/payload-deletion.ts`, `infra/payload-references.ts` (+ test) |
+| P1-2, P1-6 | **Chờ PO duyệt schema** (`09-metadata-and-contract-proposal.md`) | — |
 
 ## Tiêu chí sẵn sàng bàn giao (map `docs/governance/sdagf/15-readiness-and-handover.md`)
 | Cổng | Điều kiện đạt |
