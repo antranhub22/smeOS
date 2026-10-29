@@ -33,7 +33,7 @@ export function ProposalQueueBar({ active, onToggle }: { active: boolean; onTogg
   const label = count === null ? "" : count >= COUNT_LIMIT ? `${COUNT_LIMIT}+` : String(count)
 
   return (
-    <div className="mx-4 mt-3 flex flex-wrap items-center gap-3 rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning">
+    <div className="mx-4 mt-3 flex flex-wrap items-center gap-3 rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning-text">
       <ClipboardCheck size={16} className="flex-shrink-0" aria-hidden="true" />
       <span className="flex-1 font-medium">
         {active ? "Đang xem các mẫu nhân viên đề xuất chờ duyệt" : `${label} mẫu nhân viên đề xuất đang chờ bạn duyệt`}

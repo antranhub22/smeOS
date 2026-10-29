@@ -105,7 +105,7 @@ export function RecipeEditor({ data, materials, onSaved, onMaterialsChanged }: {
         </p>
       </div>
       {active.length === 0 && (
-        <p className="rounded-xl bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning">
+        <p className="rounded-xl bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning-text">
           Chưa có nguyên liệu nào. <Link href="/tinh-gia/nguyen-lieu" className="font-semibold underline">Thêm nguyên liệu trước</Link>.
         </p>
       )}

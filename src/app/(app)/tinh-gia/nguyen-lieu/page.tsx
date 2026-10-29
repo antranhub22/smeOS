@@ -98,7 +98,7 @@ export default function NguyenLieuPage() {
       {state.status === "ready" && (all.length > 0 || showInactive) && (
         <>
           {(missing > 0 || alerts > 0) && (
-            <p className="rounded-xl bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning" role="status">
+            <p className="rounded-xl bg-warning-bg px-3.5 py-2.5 text-body-sm text-warning-text" role="status">
               {missing > 0 && `${missing} nguyên liệu chưa có giá — giá vốn của mẫu dùng chúng sẽ chưa đầy đủ. `}
               {alerts > 0 && `${alerts} nguyên liệu vừa đổi giá mạnh — nên xem lại giá bán.`}
             </p>

@@ -112,5 +112,15 @@ Trạng thái kiểm: mở, lọc, tạo link (hộp thoại), sau khi đóng, t
 | D14-05 | P2 | Chấm chọn sản phẩm 6px, nút trước/sau 24px sát nhau (target-size) | Vùng bấm 24px cho chấm; nút 32px ở di động |
 | D14-06 | P1 | Khối chưa tới lượt (`opacity-60`, chuẩn Spotlight PO 23/10) làm chữ dưới 4,5:1 — axe 27–39 lỗi | **Chưa sửa — cần PO** (chuẩn Spotlight bị khóa trong Screen Contract) |
 
-## Tiếp theo
-#31–#35.
+## #31–#35 Giá vốn & định giá — `/tinh-gia/*`
+
+Trạng thái kiểm: 5 tab ở 390/1280px, chọn mẫu → bản nháp công thức từ ảnh, dự toán có đơn chưa có công thức.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D31-01 | P1 | Hộp cảnh báo `text-warning` trên `bg-warning-bg` dưới 4,5:1 (dự toán, giá vốn, nguyên liệu, công thức, đề xuất sản phẩm) | `text-warning-text` |
+
+Ghi chú (chưa đổi, cần PO): dự toán khi mọi đơn đều chưa có công thức vẫn hiện "Tồn kho đã đủ cho các đơn này" — dễ hiểu nhầm.
+
+## Kết luận
+Đã audit sâu xong toàn bộ công cụ Hoàn thiện. Các mục còn chờ PO: D14-06 (Spotlight làm mờ), mặc định "Giảm 10%", ảnh mẫu Unsplash ở kho poster, đường AI poster có thể tự đặt ưu đãi, token `text-accent`, `/cai-dat`, câu "Tồn kho đã đủ" ở dự toán.
