@@ -13,6 +13,7 @@ import { handle } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { exportOrdersToExcel } from "@/modules/orders/use-cases/export-orders"
+import { recordDataExport } from "@/modules/audit/use-cases/record-data-export"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -25,6 +26,7 @@ export const GET = handle(async (request) => {
   requireCapability(ctx, "R13")
 
   const buffer = await exportOrdersToExcel(ctx, { fromDate, toDate, source })
+  await recordDataExport(ctx, "orders", { from_date: fromDate, to_date: toDate, source })
 
   const now = new Date()
   const dateSuffix = now.toISOString().slice(0, 10).replace(/-/g, "")

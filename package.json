@@ -45,6 +45,7 @@
     "mat-khau": "tsx --env-file-if-exists=.env scripts/dat-lai-mat-khau.ts",
     "them-thanh-vien": "tsx --env-file-if-exists=.env scripts/them-thanh-vien.ts",
     "quet-job-treo": "tsx --env-file-if-exists=.env scripts/scan-stuck-jobs.ts",
+    "storage:reconcile": "tsx --conditions=react-server --env-file-if-exists=.env scripts/storage-reconcile.ts",
     "gan-van-hanh-nen-tang": "tsx --env-file-if-exists=.env scripts/gan-van-hanh-nen-tang.ts",
     "db:push": "prisma db push",
     "db:deploy": "node scripts/db-deploy.mjs",

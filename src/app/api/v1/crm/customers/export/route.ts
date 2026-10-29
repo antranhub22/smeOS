@@ -14,6 +14,7 @@ import { handle } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { exportCustomers } from "@/modules/crm/use-cases/export-customers"
+import { recordDataExport } from "@/modules/audit/use-cases/record-data-export"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -28,6 +29,7 @@ export const GET = handle(async (request) => {
   const search = url.searchParams.get("search") ?? undefined
 
   const result = await exportCustomers(ctx, { format, tier, search })
+  await recordDataExport(ctx, "crm_customers", { format, tier, search })
 
   return new Response(result.data as unknown as BodyInit, {
     status: 200,

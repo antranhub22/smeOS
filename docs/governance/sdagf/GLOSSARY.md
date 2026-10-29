@@ -1,0 +1,21 @@
+# Glossary
+
+- **Asset:** đối tượng số được quản trị, có thể là dữ liệu nghiệp vụ, file, output hoặc artifact kỹ thuật.
+- **Artifact:** sản phẩm trung gian hoặc đầu ra của một hoạt động/công cụ.
+- **Input:** dữ liệu được tiếp nhận để sử dụng hoặc xử lý.
+- **Business data:** dữ liệu biểu diễn thực thể và trạng thái nghiệp vụ.
+- **Intermediate artifact:** dữ liệu phát sinh trong quá trình xử lý, thường có thể tái tạo.
+- **Output:** kết quả được tạo ra từ nghiệp vụ hoặc công cụ.
+- **Asset Registry:** danh mục metadata và tham chiếu quản trị tài sản.
+- **System of Record:** nguồn chuẩn có thẩm quyền cho một loại dữ liệu.
+- **Storage Profile:** bộ chính sách logic quyết định đặc tính lưu trữ.
+- **Tenant isolation:** ngăn truy cập hoặc rò rỉ dữ liệu giữa các tenant.
+- **Provenance/Lineage:** nguồn gốc và quan hệ biến đổi của dữ liệu/tài sản.
+- **Retention:** thời gian hoặc điều kiện giữ dữ liệu.
+- **Legal hold:** yêu cầu ngăn xóa/biến đổi một phạm vi dữ liệu.
+- **RPO:** lượng dữ liệu tối đa có thể chấp nhận mất theo thời gian.
+- **RTO:** thời gian mục tiêu để phục hồi dịch vụ.
+- **Orphan object:** payload không có registry reference hợp lệ.
+- **Dangling reference:** metadata/reference trỏ đến payload hoặc version không còn tồn tại.
+- **Policy enforcement:** cơ chế thực thi quy tắc tại backend/runtime/CI.
+- **Evidence:** bằng chứng có thể kiểm tra để hỗ trợ kết luận audit.

@@ -311,12 +311,63 @@ model assets {
   created_by       String
   created_at       DateTime   @default(now())
 
+  // SDAGF P1 — vòng đời thùng rác thành cột và legal hold
+  trashed_at       DateTime?
+  purge_after      DateTime?            // quá hạn → cron xoá vĩnh viễn
+  legal_hold_until DateTime?            // còn hạn → không xoá vĩnh viễn
+
   @@index([organization_id])
+  @@index([purge_after])
   @@index([organization_id, product_id])
   @@index([parent_asset_id])
   @@index([output_sha256])
 }
 ```
+
+### 5.0 Landing page đã sinh — `landing_pages` (Kho dữ liệu v2, L-1)
+
+`POST /content-engine/landing-generate` lưu mỗi lượt sinh để tìm lại trong Kho dữ liệu (`GET /storage/library?type=landing`, `J1`). Lỗi lưu không chặn kết quả sinh.
+
+```prisma
+model landing_pages {
+  id              String   @id @default(uuid())
+  organization_id String
+  title           String               // tiêu đề hero, thiếu thì nhãn dịp
+  page_type       String?
+  occasion_label  String?
+  input           Json                 // yêu cầu đã gửi
+  content         Json                 // GeneratedLandingPackage
+  created_by      String
+  created_at      DateTime @default(now())
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+```
+
+### 5.1 Hàng đợi xoá payload — `storage_outbox` (SDAGF P1)
+
+Xoá vĩnh viễn một asset (API, thùng rác, cron dọn rác) xoá dòng `assets` và ghi hàng đợi trong **cùng một transaction**. Nơi trỏ tới tệp (registry) gồm cả hai nguồn JSON: `generation_jobs.output.audio_storage_key/voice_only_storage_key` và `order_coordinations.metadata.qc_photos/pod_photos` — danh sách SSOT `STORAGE_REFERENCE_SOURCES` (`src/modules/assets/infra/storage-registry-keys.ts`), test kiến trúc `storage-write-contract.test.ts`. Cron `/internal/chain-dispatch-sweep` xoá tệp thật khi cờ `STORAGE_DELETE_PAYLOADS=enabled`, thử lại tối đa 5 lần. Khoá còn bản ghi khác trỏ tới (Master dùng chung tệp gốc) thì đóng việc mà không xoá tệp.
+
+```prisma
+model storage_outbox {
+  id              String    @id @default(uuid())
+  organization_id String
+  op              String               // DELETE
+  storage_key     String
+  asset_id        String?
+  attempts        Int       @default(0)
+  last_error      String?
+  created_at      DateTime  @default(now())
+  done_at         DateTime?
+
+  @@unique([op, storage_key])
+  @@index([organization_id])
+  @@index([done_at, created_at])
+}
+```
+
+Legal hold cấp tổ chức nằm ở `organizations.legal_hold_until` (chặn mọi xoá vĩnh viễn của tổ chức, kể cả `handover-clean-tenant`). Legal hold (`assets.legal_hold_until`) chỉ người vận hành nền tảng có `N14` được đặt hoặc gỡ, kèm lý do, ghi `platform_audit_logs` (SDAGF D-04).
 
 `generated_flags` không bao giờ mặc định ngầm. Ảnh phải dùng generative fill vì chất lượng quá kém được đánh dấu ở cả metadata lẫn giao diện.
 

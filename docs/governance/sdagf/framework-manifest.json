@@ -1,0 +1,28 @@
+{
+  "framework": "SMEOS Storage, Data & Artifact Governance Framework",
+  "acronym": "SDAGF",
+  "version": "0.1.0-draft",
+  "status": "draft; requires repository audit and owner approval",
+  "documents": [
+    "README.md",
+    "01-framework-charter.md",
+    "02-reference-frameworks.md",
+    "03-target-architecture.md",
+    "04-asset-taxonomy.md",
+    "05-storage-routing.md",
+    "06-identity-metadata-schema.md",
+    "07-access-control-and-operations.md",
+    "08-lifecycle-versioning-retention.md",
+    "09-provenance-and-processing.md",
+    "10-security-integrity-recovery.md",
+    "11-integration-contracts.md",
+    "12-audit-observability.md",
+    "13-assessment-controls.md",
+    "14-implementation-roadmap.md",
+    "15-readiness-and-handover.md",
+    "16-templates.md",
+    "GLOSSARY.md",
+    "AI_AGENT_MASTER_PROMPT.md"
+  ],
+  "principle": "Audit first; no destructive changes without explicit approval."
+}

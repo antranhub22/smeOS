@@ -1,80 +1,108 @@
-# Screen Contract — Kho Dữ Liệu Sản Phẩm & Sale Pitch
+# Screen Contract — Kho Dữ Liệu (Thư viện tập trung) — v2
 
-**Tuyến:** `/kho-du-lieu` · **Tệp chính:** `src/app/(app)/kho-du-lieu/page.tsx` · **Thành phần:** `src/components/storage/account-storage-hub.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D6
+**Tuyến:** `/kho-du-lieu` · **Tệp chính:** `src/app/(app)/kho-du-lieu/page.tsx` · **Thành phần:** `src/components/storage/account-storage-hub.tsx` · **Cập nhật:** 29/10/2026 · **Trạng thái:** v2 đã duyệt 29/10/2026 — đang dựng (§13a) · **v1:** 27/09/2026, thẻ T5.D6 (3 tab + thùng rác)
+
+> PO 29/10/2026: (1) mở rộng Kho dữ liệu, không tạo màn mới; (2) dùng tab; (3) tầng chuỗi xem toàn bộ của chuỗi và các chi nhánh, có phân loại riêng; (4) có Screen Contract + cập nhật SSOT (`docs/production-feature-map/Tài liệu kỹ thuật gốc hiện tại/08-kho-du-lieu.md`).
 
 ## 1. Vai và mục đích
-- Vai chính (03b): `store_manager`, `florist`, `sales_specialist`
-- Phạm vi: organization
-- Việc chính: Quản lý và tra cứu 3 phân vùng dữ liệu tài sản của cửa hàng:
-  1. Ảnh gốc tải lên chưa qua phân tích
-  2. Ảnh đã được AI nhận diện và duyệt kết quả (chờ sinh nội dung/catalog)
-  3. Kịch bản chào hàng (Sale Pitch) đã chốt hoàn thiện
-- Câu hỏi chính: Tiệm đã có bao nhiêu ảnh gốc, ảnh nào đã duyệt xong chờ lên bài, kịch bản tư vấn nào đã sẵn sàng copy gửi khách?
-- Mật độ: MEDIUM (lưới thẻ ảnh trực quan, hỗ trợ tìm kiếm nhanh theo tên sản phẩm, loại hoa, dịp tặng).
+- Vai chính (03b): `store_manager`, `marketing`, `sales_specialist`, `florist` · Vai phụ: `dieu_phoi`
+- Phạm vi: organization (cửa hàng) · organization + branch (chuỗi)
+- Việc chính: Tìm lại, xem và quản lý **mọi đầu vào và đầu ra** tiệm đã tạo — ảnh, ảnh AI, video, âm thanh, nội dung, catalog, thẻ chào, kịch bản tư vấn — ở một chỗ.
+- Câu hỏi chính: "Cái mình (hoặc chi nhánh) đã tạo trước đây đang ở đâu, và mở lại nó thế nào?"
+- Mật độ: MEDIUM (lưới thẻ + tìm kiếm + lọc phạm vi chi nhánh)
+- Archetype: B Danh sách
 
-## 2. Hiện trạng (audit)
-- API:
-  - `GET /api/v1/assets` → Tải danh mục ảnh gốc của tổ chức
-  - `GET /api/v1/vision/analyses?approval_state=APPROVED` → Tải danh sách kết quả phân tích đã duyệt
-  - Đồng bộ localStorage cho các kịch bản chào hàng Sale Pitch đã chốt
-- Khối: 3 khối chính (Header trang, Khung điều hướng 3 Tab `TabActionHeader` chuẩn hóa K2, Lưới thẻ nội dung theo từng phân vùng)
-- Nút primary: Đúng 1 nút primary cho mỗi tab (Tab 1: "+ Tải ảnh mới", Tab 2: "Làm mới", Tab 3: "+ Tạo Thẻ Chào mới")
-- TabActionHeader: Chuẩn hóa K2 (Tabs ở bên trái + Actions ở góc trên cùng bên phải + menu `...` overflow)
-- Trạng thái có sẵn: tải ☑ rỗng ☑ lỗi ☑ thành công ☑
+## 2. Hiện trạng (audit 29/10/2026)
+- v1 có 4 tab: Ảnh gốc (`GET /api/v1/assets`, G1), Ảnh đã duyệt (`GET /api/v1/vision/analyses?approval_state=APPROVED`, H3/H5/L1), Kịch bản tư vấn (**chỉ localStorage trình duyệt** — mất khi đổi máy), Thùng rác (`GET /api/v1/storage/trash`, Điều hành).
+- Các đầu ra khác nằm rải ở màn riêng: video `/video` (`video_jobs`, I1), âm thanh trong Creative Studio (`music_tracks`, `voice_clones`, I1), nội dung `/noi-dung` (`content_generations`, I1), catalog `/catalog` (`catalog_links`, J1), thẻ chào `/the-chao` (`greeting_catalogs`, quyền thẻ chào).
+- **Landing page không được lưu**: `POST /api/v1/content-engine/landing-generate` trả kết quả rồi bỏ — không có gì để liệt kê (§14 L-1).
+- Chi nhánh (`branches`) nằm trong cùng tổ chức với chuỗi; các bảng đầu ra **không có `branch_id`**. Người tạo có `memberships.branch_id` (null = toàn tổ chức).
 
 ## 3. Thứ bậc thông tin
 | Lớp | Nội dung | Vị trí hiển thị |
 |---|---|---|
-| L0 Thiết yếu | Thumbnail ảnh, tên sản phẩm, số lượng hoa | Thẻ từng tài sản trong lưới |
-| L1 Hành động | Tải ảnh mới, Phân tích ảnh, Copy kịch bản Zalo 1-chạm | Nút tác vụ chính trên thẻ & Top Header |
-| L2 Ngữ cảnh | Huy hiệu trạng thái (Mới tải lên, Đã duyệt, Đang có kịch bản), phong cách, dịp tặng | Badge trên ảnh & Thông tin chi tiết |
-| L3 Chi tiết | Bảng danh sách thành phần hoa (BOM), mã sản phẩm, giá bán dự kiến | Modal / Drawer chi tiết |
+| L0 Thiết yếu | Ảnh xem trước / biểu tượng loại, tên, ngày tạo | Thẻ trong lưới, khung nhìn đầu |
+| L1 Hành động | Mở trong công cụ gốc, tải về (nếu là tệp), chuyển vào thùng rác | Nút trên thẻ |
+| L2 Ngữ cảnh | Huy hiệu chi nhánh (chuỗi), trạng thái (nháp/đã duyệt/đã đăng), sản phẩm gắn kèm, người tạo | Badge trên thẻ |
+| L3 Chi tiết | Thông số riêng của loại (thời lượng video, kênh nội dung, số mẫu trong catalog) | Drawer chi tiết |
+| L4 Nâng cao | — | — |
 
-## 4. Hành động
-- Chính (1): `+ Tải ảnh mới để phân tích` (`variant: "primary"` ở header).
-- Phụ (≤ 2):
-  - `Làm mới kho ảnh` (`variant: "outline"`).
-  - `Sao chép kịch bản Zalo` (`variant: "outline"`).
-  - `Xem chi tiết` / `Chỉnh sửa`.
-- Menu `…`: `TabActionHeader` overflow actions cho các tác vụ phụ.
-
-## 5. Content budget
-- Nút nổi: Đúng 1 primary action trên mỗi view.
-- Khối chính: Bố cục lưới thẻ cân đối, responsive từ 2 cột (mobile) đến 5 cột (desktop).
-
-## 6. Trạng thái
-- Tải: Spinner quay nhẹ ở nút làm mới, giữ trạng thái mượt mà.
-- Rỗng: Khối nét đứt với icon và mô tả hướng dẫn tải ảnh hoặc tạo kịch bản mới.
-- Thành công: Hiệu ứng tích xanh "Đã sao chép" khi copy kịch bản Zalo.
-
-## 7. Responsive
-- 390px: Lưới 2 cột cho ảnh gốc, 1 cột cho thẻ kịch bản sale pitch.
-- 768px: Lưới 3-4 cột.
-- 1280px+: Lưới 5 cột rộng rãi, tối đa chiều rộng `max-w-7xl`.
-
-## 8. Trợ năng
-- Bàn phím: Các tab và nút đều hỗ trợ điều hướng phím Tab.
-- Focus: `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`.
-- Nhãn ảnh: Toàn bộ ảnh đều có thuộc tính `alt` mô tả tên sản phẩm.
-
-## 9. AI
-- Là kho lưu trữ kết nối trực tiếp với kết quả nhận diện AI Vision và kịch bản Sale Pitch tạo từ AI.
-
-## 10. Dữ liệu và quyền
-- Nguồn sự thật: Bảng `assets`, `vision_analyses`, và local storage pitch.
-- Quyền: Mọi nhân viên trong tổ chức có thể xem và khai thác kho dữ liệu sản phẩm.
-
-## 11. Component
-- Dùng lại: `Button`, `Card`, `Badge`, `TabActionHeader`.
-- Tạo mới: Không.
-
-## 12. Ma trận quyết định
-| Hiện tại | Mục tiêu | Quyết định | Lý do | Bằng chứng |
+## 4. Tab (TabActionHeader, K2) — thứ tự cố định
+| # | Tab (nhãn) | Nguồn sự thật | Quyền xem | Mở lại ở |
 |---|---|---|---|---|
-| Button dùng class `bg-primary hover:bg-primary/90` | Token ngữ nghĩa | Chuyển sang `variant="primary"` | Tuân thủ Design Tokens của hệ thống | `kho-du-lieu/page.tsx` |
-| Quản lý 3 phân vùng riêng lẻ | Tập trung hóa trải nghiệm | Duy trì 3 tab chuẩn hóa `TabActionHeader` | Đạt chuẩn K2 với góc trên bên phải nhất quán | `account-storage-hub.tsx` |
+| 1 | Ảnh gốc | `assets` kind `ORIGINAL` | G1 | `/tai-anh` |
+| 2 | Ảnh đã duyệt | `vision_analyses` APPROVED | như v1 (H3/H5/L1) | `/san-pham` |
+| 3 | Ảnh AI | `assets` kind `ENHANCED, MASTER, MARKETING, CATALOG, LANDING, SOCIAL, RATIO` | G1 | Creative Studio |
+| 4 | Video | `video_jobs` | I1 | `/video` |
+| 5 | Âm thanh | `music_tracks`, `voice_clones` | I1 | Creative Studio |
+| 6 | Nội dung | `content_generations` | I1 | `/noi-dung` |
+| 7 | Catalog | `catalog_links` (kể cả đã thu hồi, có nhãn) | J1 | `/catalog` |
+| 8 | Thẻ chào | `greeting_catalogs` | quyền đọc thẻ chào | `/the-chao` |
+| 9 | Kịch bản tư vấn | như v1 (§14 L-2) | như v1 | — |
+| 10 | Landing page | `landing_pages` (L-1, từ 29/10/2026 — lượt sinh trước đó không có) | J1 | `/landing-page` |
+| 11 | Thùng rác (30 ngày) | `GET /api/v1/storage/trash` | Điều hành (như v1) | — |
 
-## 13. QA Matrix (03a §34)
+- Tab không có quyền xem: **ẩn**, không hiện tab khoá.
+- Mỗi tab có huy hiệu số lượng; 390px: thanh tab cuộn ngang, tab đang chọn luôn trong khung nhìn.
+
+## 5. Phạm vi chuỗi và chi nhánh
+- Chỉ hiện khi tổ chức là chuỗi (`organizations.type = CHAIN`): bộ chọn **Phạm vi** ngay dưới tiêu đề, trên thanh tab: `Toàn chuỗi` · `Trụ sở` · từng chi nhánh (`branches`, đang hoạt động).
+- **Phân loại** mỗi mục theo chi nhánh của người tạo (`memberships.branch_id` của `created_by`; null → "Trụ sở"). Mục không có người tạo rõ (job hệ thống) → "Trụ sở". Thẻ có huy hiệu tên chi nhánh khi phạm vi là `Toàn chuỗi`.
+- Người dùng có `memberships.branch_id` (nhân viên chi nhánh): §14 L-3.
+- Cửa hàng đơn (`SINGLE`/`STORE`): không có bộ chọn, không có huy hiệu.
+- Chi nhánh gia công ngoài tổ chức (đối tác chuỗi) **không** nằm trong phạm vi — khác tổ chức, luật cách ly tenant.
+
+## 6. Hành động
+- Chính (1, theo tab): Ảnh gốc `+ Tải ảnh mới`; Ảnh AI/Video/Âm thanh/Nội dung `+ Tạo mới` (dẫn tới công cụ tương ứng); Catalog `+ Tạo catalog`; Thẻ chào `+ Tạo thẻ chào`; Thùng rác: không có.
+- Phụ (≤ 2): `Làm mới`, `Tải về` (tab có tệp).
+- Trên thẻ: `Mở` (về công cụ gốc), `Chuyển vào thùng rác` (Điều hành; loại hỗ trợ thùng rác — v2: ảnh gốc, ảnh AI, ảnh đã duyệt, sản phẩm như v1; các loại khác §14 L-4).
+- Menu `…`: tác vụ phụ còn lại.
+
+## 7. Content budget
+- 1 primary/tab; lưới 2 cột (390px) → 3–4 (768px) → 5 (1280px+), `max-w-7xl`.
+- Tìm kiếm theo tên trong tab đang chọn; lọc ngày (7/30/90 ngày, tất cả).
+
+## 8. Trạng thái
+- Tải: skeleton lưới; Rỗng: khối nét đứt + nút primary của tab; Lỗi: thông báo + `Thử lại`; Không quyền: tab ẩn; Một phần: nếu một nguồn lỗi, tab đó báo lỗi, tab khác vẫn chạy; Thành công: toast khi chuyển vào thùng rác/khôi phục.
+
+## 9. Responsive
+- 390px: tab cuộn ngang, bộ chọn phạm vi dạng select toàn chiều rộng; 768px: lưới 3–4 cột; 1280px+: 5 cột.
+
+## 10. Trợ năng
+- Tab và bộ chọn phạm vi dùng được bằng bàn phím; `focus-visible` token chuẩn; ảnh có `alt` = tên mục; huy hiệu chi nhánh có văn bản, không chỉ màu.
+
+## 11. AI
+- Không gọi AI. Chỉ liệt kê kết quả AI đã tạo.
+
+## 12. Dữ liệu, API và quyền
+- API mới: `GET /api/v1/storage/library?type=<tab>&scope=<all|hq|branchId>&q=&from=&cursor=` → `{ items: [{ id, type, title, thumbnail_url?, created_at, created_by, branch: { id, name } | null, status?, open_href }], next_cursor, counts }`.
+  - `organization_id` chỉ từ `requireTenantContext()`; xuyên tổ chức → 404.
+  - Mỗi `type` kiểm đúng mã quyền ở §4; thiếu quyền → 403 cho type đó, `counts` bỏ type đó.
+  - Ảnh xem trước: URL ký có hạn (như v1). Phân trang con trỏ, tối đa 50/trang.
+- Không đổi schema cho tab 1–9, 11.
+
+## 13. Component
+- Dùng lại: `TabActionHeader` (PO khoá — không đổi cấu trúc, chỉ thêm tab), `Button`, `Card`, `Badge`, `StorageTrashTab`, `TrashConfirmModal`.
+- Tạo mới: `LibraryGrid` (lưới chung), `LibraryScopeSelect` (bộ chọn phạm vi chuỗi). `account-storage-hub.tsx` đang 914 dòng (> 350): tách tab mới ra tệp riêng, không làm tệp này dài thêm.
+
+## 13a. Ghi chú dựng v2 (29/10/2026)
+- Đã dựng: API `GET /storage/library` + `/summary`; 6 tab mới (Ảnh AI, Video, Âm thanh, Nội dung, Catalog, Thẻ chào) với tìm theo tên, lọc thời gian, "Xem thêm"; bộ chọn phạm vi chuỗi; nhãn chi nhánh; chuyển ảnh AI vào thùng rác (Điều hành). Tab Ảnh gốc/Ảnh đã duyệt/Kịch bản tư vấn/Thùng rác giữ nguyên v1 — **chưa lọc theo phạm vi chi nhánh**.
+- Tab mới chưa có huy hiệu số lượng (cần thêm truy vấn đếm theo phạm vi — đợt sau).
+- Video không lưu người tạo → luôn tính là "Trụ sở", không hiện khi chọn một chi nhánh cụ thể. Âm thanh: người tạo = người cam kết bản quyền/đồng ý giọng.
+- Tìm theo tên: video, âm thanh, catalog, thẻ chào. Ảnh và nội dung chưa có trường tên để tìm.
+- Landing page (L-1): bảng `landing_pages`, migration `20261029180000_landing_pages`; chỉ landing page sinh từ nay về sau mới có trong thư viện.
+- "Mở" đưa về công cụ gốc, chưa mở đúng mục — đợt sau cho mọi loại.
+- Tách `storage-hub-tabs.ts`, `library/*`: `account-storage-hub.tsx` giảm 914 → ~870 dòng.
+
+## 14. Quyết định PO (duyệt 29/10/2026 — chọn phương án đề xuất)
+| ID | Câu hỏi | Đề xuất |
+|---|---|---|
+| L-1 | Landing page không được lưu. Lưu lại để tìm được? | **Có** — bảng `landing_pages` (đổi schema, cần duyệt riêng). Trước khi có: ẩn tab Landing page |
+| L-2 | Kịch bản tư vấn chỉ ở localStorage (đổi máy là mất). Đưa lên máy chủ? | Đề xuất lưu máy chủ ở đợt sau; v2 giữ như v1 |
+| L-3 | Nhân viên chi nhánh thấy gì? | Chỉ mục của chi nhánh mình + mục "Trụ sở"; không có bộ chọn phạm vi |
+| L-4 | Thùng rác cho video/nội dung/catalog/thẻ chào? | Đợt sau; v2 các loại này chỉ có `Mở` |
+
+## 15. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |
 |---|---|---|
-| Vai · Việc · IA · Mật độ · Thứ bậc · CTA · Luồng · Trạng thái · Responsive · Trợ năng · Dữ liệu · Quyền · AI · Nhất quán | PASS | Đạt chuẩn 100% |
+| Vai · Việc · IA · Mật độ · Thứ bậc · CTA · Luồng · Trạng thái · Responsive · Trợ năng · Dữ liệu · Quyền · AI · Nhất quán | CHƯA ĐÁNH GIÁ | Đánh giá sau khi dựng v2 |

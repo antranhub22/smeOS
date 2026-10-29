@@ -38,6 +38,7 @@ import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { sweepProductProposalsIfDue } from "@/modules/products/use-cases/sweep-product-proposals"
 import { scanStuckJobs } from "@/modules/jobs/use-cases/scan-stuck-jobs"
+import { sweepStorageLifecycle } from "@/modules/storage/use-cases/sweep-storage-lifecycle"
 
 /** Kích thước một trang truy vấn — nhỏ để giới hạn bộ nhớ, lặp tới khi hết tập cần xử lý */
 const PAGE_SIZE = 50
@@ -309,6 +310,8 @@ export const POST = handle(async (request) => {
     log.error("chain_dispatch_sweep.stuck_jobs_failed", { error: error instanceof Error ? error.message : String(error) })
     return null
   })
+  // SDAGF P1: dọn thùng rác quá hạn + xoá payload trong hàng đợi.
+  const storageLifecycle = await sweepStorageLifecycle(now)
 
   return jsonResponse({
     ok: true,
@@ -318,6 +321,7 @@ export const POST = handle(async (request) => {
     graceCommitted,
     pages: sweep.pages,
     stuckJobsFailed,
+    storageLifecycle,
     complete: sweep.complete,
     productProposals: productProposals ?? undefined,
     sentDetails: sentDetails.length > 0 ? sentDetails.slice(0, MAX_REPORTED) : undefined,

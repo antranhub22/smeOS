@@ -1,7 +1,7 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises"
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import path from "node:path"
 
-import type { StorageProvider, StorageMethod } from "@/core/ports"
+import type { StorageListPage, StorageProvider, StorageMethod } from "@/core/ports"
 
 import { signStorageUrl } from "@/modules/assets/infra/storage-signing"
 
@@ -45,15 +45,34 @@ export class LocalDiskStorageProvider implements StorageProvider {
     }
   }
 
-  /** `_method` bỏ qua: route `/api/v1/storage/[...key]` nhận cả PUT lẫn GET
-   *  trên cùng một đường đã ký. */
+  async delete(key: string): Promise<void> {
+    const target = absolutePathFor(key)
+    await rm(target, { force: true })
+    await rm(`${target}.meta.json`, { force: true })
+  }
+
+  /** Đĩa cục bộ chỉ dùng khi phát triển: trả một trang duy nhất. */
+  async list(prefix: string): Promise<StorageListPage> {
+    const entries = await readdir(STORAGE_ROOT, { recursive: true }).catch(() => [] as string[])
+    const items = []
+    for (const entry of entries) {
+      const key = entry.split(path.sep).join("/")
+      if (!key.startsWith(prefix) || key.endsWith(".meta.json")) continue
+      const info = await stat(path.join(STORAGE_ROOT, entry))
+      if (info.isFile()) items.push({ key, size: info.size })
+    }
+    return { items, nextCursor: null }
+  }
+
+  /** Route `/api/v1/storage/[...key]` nhận cả PUT lẫn GET trên cùng đường;
+   *  chữ ký gắn với phương thức nên URL xem không dùng để ghi được. */
   async signedUrl(
     key: string,
     expiresInSeconds: number,
-    _method: StorageMethod = "GET"
+    method: StorageMethod = "GET"
   ): Promise<string> {
     const expiresAt = Date.now() + expiresInSeconds * 1000
-    const signature = signStorageUrl(key, expiresAt)
+    const signature = signStorageUrl(key, expiresAt, method)
     return `/api/v1/storage/${key}?exp=${expiresAt}&sig=${signature}`
   }
 }

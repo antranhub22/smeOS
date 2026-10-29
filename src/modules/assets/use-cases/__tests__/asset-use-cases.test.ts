@@ -84,17 +84,50 @@ describe("Asset Use-Cases with IAssetRepository Port", () => {
   })
 
   describe("deleteAsset", () => {
-    it("xóa asset thành công", async () => {
+    it("xóa asset: xoá dòng và ghi hàng đợi xoá payload qua một lệnh", async () => {
       const repo = createMockAssetRepo()
-      await expect(deleteAsset(mockTenant, "ast_123", repo)).resolves.toBeUndefined()
-      expect(repo.delete).toHaveBeenCalledWith(mockTenant, "ast_123")
+      const remove = vi.fn().mockResolvedValue(true)
+      await expect(deleteAsset(mockTenant, "ast_123", repo, { remove, organizationHoldUntil: async () => null })).resolves.toBeUndefined()
+      expect(remove).toHaveBeenCalledWith(mockTenant, mockAsset, "asset.delete")
     })
 
-    it("ném lỗi 404 khi xóa thất bại", async () => {
+    it("ném lỗi 404 khi không thấy asset, không xoá gì", async () => {
+      const repo = createMockAssetRepo({ findById: vi.fn().mockResolvedValue(null) })
+      const remove = vi.fn()
+      await expect(deleteAsset(mockTenant, "ast_unknown", repo, { remove, organizationHoldUntil: async () => null })).rejects.toThrow()
+      expect(remove).not.toHaveBeenCalled()
+    })
+
+    it("ném lỗi 404 khi xoá thất bại", async () => {
+      const repo = createMockAssetRepo()
+      await expect(
+        deleteAsset(mockTenant, "ast_123", repo, { remove: vi.fn().mockResolvedValue(false), organizationHoldUntil: async () => null })
+      ).rejects.toThrow()
+    })
+
+    it("chặn xoá khi asset đang legal hold (409), không xoá gì", async () => {
+      const now = new Date("2026-10-29T00:00:00Z")
       const repo = createMockAssetRepo({
-        delete: vi.fn().mockResolvedValue(false),
+        findById: vi.fn().mockResolvedValue({ ...mockAsset, legal_hold_until: new Date("2027-01-01T00:00:00Z") }),
       })
-      await expect(deleteAsset(mockTenant, "ast_unknown", repo)).rejects.toThrow()
+      const remove = vi.fn()
+      await expect(
+        deleteAsset(mockTenant, "ast_123", repo, { remove, organizationHoldUntil: async () => null, now })
+      ).rejects.toMatchObject({ code: "CONFLICT" })
+      expect(remove).not.toHaveBeenCalled()
+    })
+
+    it("chặn xoá khi cả tổ chức đang legal hold (409)", async () => {
+      const now = new Date("2026-10-29T00:00:00Z")
+      const remove = vi.fn()
+      await expect(
+        deleteAsset(mockTenant, "ast_123", createMockAssetRepo(), {
+          remove,
+          organizationHoldUntil: async () => new Date("2027-01-01T00:00:00Z"),
+          now,
+        })
+      ).rejects.toMatchObject({ code: "CONFLICT" })
+      expect(remove).not.toHaveBeenCalled()
     })
   })
 

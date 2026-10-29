@@ -31,6 +31,16 @@
 Ảnh và video không nằm trong Postgres mà ở kho đối tượng (`STORAGE_*`). Bật versioning hoặc sao
 chép chéo vùng ở nhà cung cấp kho.
 
+**Vòng đời kho tệp (SDAGF, `docs/audit/sdagf-2026-10`):**
+
+- Cron `/internal/chain-dispatch-sweep` (5 phút) xoá vĩnh viễn ảnh quá hạn thùng rác (`purge_after`),
+  bỏ qua ảnh đang legal hold, và xử lý hàng đợi `storage_outbox`.
+- Xoá tệp thật chỉ chạy khi `STORAGE_DELETE_PAYLOADS=enabled`. **Chỉ bật sau khi kho đã có bản sao**
+  (D-06); trước đó hàng đợi vẫn được ghi, bật cờ là cron xử lý dồn. Việc thất bại 5 lần dừng lại ở
+  `storage_outbox` (`attempts`, `last_error`) để xem tay.
+- Đối soát registry ↔ kho, **chỉ đọc**: `npm run storage:reconcile` (thêm `-- --json` cho toàn bộ
+  báo cáo). Chạy hằng tuần và trước mỗi lần bàn giao; tệp mồ côi và bản ghi thiếu tệp ghi vào biên bản.
+
 ## 2. Quan trắc
 
 Mọi log máy chủ là một dòng JSON (`src/core/observability/log.ts`): `ts`, `level`, `event` và

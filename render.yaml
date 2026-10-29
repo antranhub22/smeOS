@@ -32,6 +32,9 @@ services:
         generateValue: true
       - key: INTEGRATION_TOKEN_SECRET
         generateValue: true
+      # Khoá ký URL kho tệp, tách khỏi SESSION_SECRET (SDAGF D-07).
+      - key: STORAGE_SIGNING_SECRET
+        generateValue: true
       # Redis dùng chung cho giới hạn tần suất (đăng nhập, link công khai) giữa các instance.
       # Thiếu thì rate-limit chỉ đếm trong bộ nhớ từng tiến trình (rà soát 21/10/2026, H7).
       - key: REDIS_URL

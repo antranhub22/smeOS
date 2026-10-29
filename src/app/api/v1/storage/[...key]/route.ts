@@ -1,33 +1,73 @@
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
-import { verifyStorageSignature } from "@/modules/assets/infra/storage-signing"
+import { verifyStorageSignature, type StorageUrlMethod } from "@/modules/assets/infra/storage-signing"
 import { StorageFileNotFoundError } from "@/modules/assets/adapters/s3-storage-provider"
+import { checkUploadContent, maxUploadBytes } from "@/modules/assets/domain/upload-content-rules"
 
 /**
  * Đích của URL ký sẵn do `LocalDiskStorageProvider.signedUrl` sinh ra — xem
  * ghi chú nợ kỹ thuật ở tệp đó. Route này KHÔNG đọc phiên đăng nhập: chữ ký
- * HMAC theo `key` + hạn dùng (`exp`) là cơ chế xác thực duy nhất, đúng tinh
- * thần "URL ký sẵn, client tải thẳng lên kho" (đặc tả 06 mục 6) — con đường
- * này không đi qua cookie phiên dù chạy trên cùng máy chủ.
+ * HMAC theo `key` + hạn dùng (`exp`) + phương thức là cơ chế xác thực duy
+ * nhất, đúng tinh thần "URL ký sẵn, client tải thẳng lên kho" (đặc tả 06
+ * mục 6). Không có tiền tố nào được miễn chữ ký (audit SDAGF R-01: `videos/`
+ * từng được miễn cả đọc lẫn ghi).
  */
-function verifyOrThrow(key: string, url: URL): void {
-  if (key.startsWith("videos/")) return
+function verifyOrThrow(key: string, url: URL, method: StorageUrlMethod): void {
   const exp = Number(url.searchParams.get("exp"))
   const sig = url.searchParams.get("sig")
-  if (!exp || !sig || !verifyStorageSignature(key, exp, sig)) {
+  if (!exp || !sig || !verifyStorageSignature(key, exp, sig, method)) {
     throw validationFailed({ signature: "URL ký sẵn không hợp lệ hoặc đã hết hạn" })
   }
+}
+
+const UPLOAD_ERRORS = {
+  unsupported_type: "Kiểu tệp không được hỗ trợ",
+  too_large: "Tệp vượt quá dung lượng cho phép",
+  content_mismatch: "Nội dung tệp không khớp kiểu tệp",
+} as const
+
+/** Đọc thân yêu cầu, dừng ngay khi vượt `maxBytes` — không nạp cả tệp quá cỡ vào bộ nhớ. */
+async function readBodyCapped(request: Request, maxBytes: number): Promise<Uint8Array | null> {
+  const declared = Number(request.headers.get("content-length"))
+  if (declared > maxBytes) return null
+  if (!request.body) return new Uint8Array()
+  const reader = request.body.getReader()
+  const chunks: Uint8Array[] = []
+  let total = 0
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    total += value.length
+    if (total > maxBytes) {
+      await reader.cancel()
+      return null
+    }
+    chunks.push(value)
+  }
+  const body = new Uint8Array(total)
+  let offset = 0
+  for (const chunk of chunks) {
+    body.set(chunk, offset)
+    offset += chunk.length
+  }
+  return body
 }
 
 export const PUT = handle(async (request, context: { params: Promise<{ key: string[] }> }) => {
   const { key: segments } = await context.params
   const key = segments.join("/")
-  verifyOrThrow(key, new URL(request.url))
+  verifyOrThrow(key, new URL(request.url), "PUT")
 
-  const contentType = request.headers.get("content-type") ?? "application/octet-stream"
-  const body = new Uint8Array(await request.arrayBuffer())
-  await getStorageProvider().put(key, body, contentType)
+  const maxBytes = maxUploadBytes(key)
+  if (maxBytes === null) throw validationFailed({ file: UPLOAD_ERRORS.unsupported_type })
+  const body = await readBodyCapped(request, maxBytes)
+  if (!body) throw validationFailed({ file: UPLOAD_ERRORS.too_large })
+
+  // Kiểu tệp lấy từ phần mở rộng của key đã ký, không từ `content-type` client gửi.
+  const check = checkUploadContent(key, body)
+  if (!check.ok) throw validationFailed({ file: UPLOAD_ERRORS[check.reason] })
+  await getStorageProvider().put(key, body, check.contentType)
 
   return jsonResponse({ ok: true, key })
 })
@@ -35,7 +75,7 @@ export const PUT = handle(async (request, context: { params: Promise<{ key: stri
 export const GET = handle(async (request, context: { params: Promise<{ key: string[] }> }) => {
   const { key: segments } = await context.params
   const key = segments.join("/")
-  verifyOrThrow(key, new URL(request.url))
+  verifyOrThrow(key, new URL(request.url), "GET")
 
   const bytes = await getStorageProvider().get(key).catch((err: unknown) => {
     if (err instanceof StorageFileNotFoundError) return null
@@ -71,6 +111,8 @@ export const GET = handle(async (request, context: { params: Promise<{ key: stri
     "accept-ranges": "bytes",
     "x-content-type-options": "nosniff",
     ...(isSpreadsheet ? { "content-disposition": `attachment; filename="${filename}"` } : {}),
+    // SVG mở trực tiếp chạy được script cùng origin: chặn bằng CSP sandbox (audit SDAGF R-02).
+    ...(key.endsWith(".svg") ? { "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox" } : {}),
   }
 
   // Hỗ trợ `Range` — trình phát <audio>/<video> (nhất là Safari) đòi 206 để

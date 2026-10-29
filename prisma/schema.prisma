@@ -141,6 +141,9 @@ model organizations {
   credit_plan    String?
   settings       Json? // bảng công tắc cấp tổ chức, gồm cho_phep_tu_duyet
   data_region    String?           @default("vn") // ADR-006: Vùng dữ liệu tenant
+  // SDAGF D-04 — legal hold cấp tổ chức: còn hạn thì không xoá vĩnh viễn dữ
+  // liệu nào của tổ chức (asset, sản phẩm trong thùng rác, dọn bàn giao).
+  legal_hold_until DateTime?
   created_at     DateTime          @default(now())
   updated_at     DateTime          @updatedAt
 
@@ -153,6 +156,8 @@ model organizations {
   capability_overrides          capability_overrides[]
   memberships                   memberships[]
   assets                        assets[]
+  storage_outbox                storage_outbox[]
+  landing_pages                 landing_pages[]
   generation_jobs               generation_jobs[]
   usage                         usage[]
   audit_logs                    audit_logs[]
@@ -472,13 +477,67 @@ model assets {
   created_by String
   created_at DateTime @default(now())
 
+  // SDAGF P1 (audit docs/audit/sdagf-2026-10): vòng đời thùng rác thành cột
+  // (trước chỉ nằm trong `metadata` JSON, không index, không quét được) và
+  // legal hold — còn hạn giữ thì không xoá vĩnh viễn, kể cả cron dọn rác.
+  trashed_at       DateTime?
+  purge_after      DateTime?
+  legal_hold_until DateTime?
+
   organization organizations @relation(fields: [organization_id], references: [id])
 
   @@index([organization_id])
+  @@index([purge_after])
   @@index([organization_id, product_id])
   @@index([parent_asset_id])
   @@index([output_sha256])
   @@index([organization_id, product_id, kind, approval_state])
+}
+
+/**
+ * Kho dữ liệu v2 (Screen Contract `kho-du-lieu.md` §14 L-1, PO duyệt 29/10/2026):
+ * landing page đã sinh được lưu để tìm lại trong Kho dữ liệu. `content` là gói
+ * `GeneratedLandingPackage`, `input` là yêu cầu đã gửi (dịp, sản phẩm, chỉ dẫn).
+ */
+model landing_pages {
+  id              String   @id @default(uuid())
+  organization_id String
+  title           String
+  page_type       String?
+  occasion_label  String?
+  input           Json
+  content         Json
+  created_by      String
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+
+/**
+ * SDAGF P1 — hàng đợi xoá payload trên kho tệp. Xoá dòng `assets` và ghi
+ * hàng đợi trong cùng một transaction; cron (`/internal/chain-dispatch-sweep`)
+ * mới xoá tệp thật, có thử lại giới hạn. Còn bản ghi khác trỏ tới khoá thì
+ * bỏ qua, không xoá.
+ */
+model storage_outbox {
+  id              String    @id @default(uuid())
+  organization_id String
+  op              String // DELETE
+  storage_key     String
+  asset_id        String?
+  attempts        Int       @default(0)
+  last_error      String?
+  created_at      DateTime  @default(now())
+  done_at         DateTime?
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@unique([op, storage_key])
+  @@index([organization_id])
+  @@index([done_at, created_at])
 }
 
 /**

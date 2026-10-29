@@ -5,7 +5,7 @@
 export const storageEn = {
   header: {
     title: "Media & Content Storage",
-    description: "Stores raw photos, approved images, and sales scripts. Deleted items stay 30 days in Trash.",
+    description: "Find every photo, video, audio, content, catalog and greeting card your shop has created. Deleted items stay 30 days in Trash.",
     uploadButton: "Upload New Photo",
   },
   tabs: {
