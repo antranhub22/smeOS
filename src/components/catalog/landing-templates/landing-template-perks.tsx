@@ -52,7 +52,7 @@ export function LandingTemplatePerks({
             }`}
           >
             {isLuxury ? (
-              <span className="font-serif text-title font-bold text-primary/70 shrink-0 block w-7 text-center">
+              <span className="font-serif text-title font-bold text-primary shrink-0 block w-7 text-center">
                 0{idx + 1}.
               </span>
             ) : (

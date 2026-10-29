@@ -27,13 +27,12 @@ import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 interface LandingCampaignTabProps {
   products: CatalogProduct[]
   onRefresh?: () => void
-  /** Mục đích trang chọn ở /landing-page — gửi cho AI soạn nội dung. */
-  pageType?: string | undefined
+  pageType?: string | undefined // mục đích trang ở /landing-page — gửi cho AI soạn nội dung
+  shopName?: string | undefined // tên tiệm đã tải sẵn: nội dung mẫu dựng lúc mount, không được rơi về tên nền tảng
 }
-
-export function LandingCampaignTab({ products, onRefresh, pageType }: LandingCampaignTabProps) {
+export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: LandingCampaignTabProps) {
   const { business } = useTenantProfile()
-  const currentShopName = business?.display_name || "Tiệm hoa smeOS"
+  const currentShopName = shopName || business?.display_name || "Tiệm hoa smeOS"
 
   // Phase: mode-selection → input → (executing via wizard) → published
   const [journeyPhase, setJourneyPhase] = useState<"mode-selection" | "input" | "wizard">("mode-selection")
@@ -199,7 +198,6 @@ export function LandingCampaignTab({ products, onRefresh, pageType }: LandingCam
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          slug: campaignSlug,
           name: headline || `Chiến dịch ${selectedOccasion}`,
           description: `Landing page chiến dịch ${selectedOccasion} — Phong cách ${selectedArchetype}`,
           filters: {
@@ -216,9 +214,10 @@ export function LandingCampaignTab({ products, onRefresh, pageType }: LandingCam
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error(data.message || "Không thể xuất bản chiến dịch.")
+        throw new Error(data.error?.message || data.message || "Không thể xuất bản chiến dịch.")
       }
-      setPublishedUrl(`${window.location.origin}/c/${campaignSlug}`)
+      const slug = ((await res.json().catch(() => ({}))) as { data?: { slug?: string } }).data?.slug ?? campaignSlug; setCampaignSlug(slug)
+      setPublishedUrl(`${window.location.origin}/c/${slug}`)
       setIsPublished(true)
       setCurrentStep(5)
       onRefresh?.()

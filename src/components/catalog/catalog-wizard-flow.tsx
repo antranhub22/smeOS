@@ -148,7 +148,7 @@ export function CatalogWizardFlow({
         throw new Error(data.message || data.error?.message || "Không thể tạo liên kết catalog.")
       }
       const json = await res.json()
-      setPublishedSlug(json.data?.slug || json.slug || "catalog")
+      const slug: string | undefined = json.data?.slug || json.slug; if (!slug) throw new Error("Chưa nhận được đường dẫn catalog — hãy thử lại."); setPublishedSlug(slug)
       setCurrentStep(4)
       onCreated()
     } catch (err) {

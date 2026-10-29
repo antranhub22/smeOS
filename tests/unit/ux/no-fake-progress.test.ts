@@ -43,3 +43,52 @@ describe("Poster & banner #05 — không dữ liệu mẫu trên ấn phẩm t�
     expect(src).toContain("useTenantProfile()")
   })
 })
+
+describe("Xuất bản landing/catalog — link thật, có xác nhận (audit sâu MEUX 29/10/2026)", () => {
+  it("landing không gửi slug cố định (slug duy nhất toàn hệ thống) và dùng slug server trả về; lỗi hiện đúng lý do", () => {
+    const src = read("src/components/catalog/landing-campaign-tab.tsx")
+    expect(src).not.toMatch(/slug: campaignSlug/)
+    expect(src).toContain("data?.slug")
+    expect(src).toContain("data.error?.message")
+  })
+
+  it("catalog không bịa link /c/catalog khi thiếu slug", () => {
+    expect(read("src/components/catalog/catalog-wizard-flow.tsx")).not.toMatch(/\|\|\s*"catalog"\)/)
+  })
+
+  it("xuất bản landing đi qua hộp xác nhận R3", () => {
+    expect(read("src/components/catalog/landing-wizard-nav.tsx")).toContain("useConfirmPublish(onPublish)")
+    expect(read("src/components/catalog/landing-campaign-preview.tsx")).not.toContain("Duyệt & Xuất bản Landing Page")
+  })
+})
+
+describe("Nội dung mẫu landing không bịa khẳng định về cửa hàng (audit sâu MEUX 29/10/2026)", () => {
+  it("không xuất xứ, giờ giấc, số ngày tươi cụ thể khi cửa hàng chưa cung cấp", () => {
+    const src = read("src/modules/content-engine/domain/landing-content-generator.ts")
+    expect(src).not.toMatch(/nhập khẩu|Ecuador|Hà Lan|từ 5:00|3–5 ngày|hẹn 2h|hoàn tiền 100%|miễn phí|7 năm|90–120 phút/)
+  })
+})
+
+describe("Trang landing công khai không có đồng hồ đếm ngược giả", () => {
+  it("không còn chuỗi giờ cố định trong hero", () => {
+    expect(read("src/components/catalog/landing-templates/landing-template-hero.tsx")).not.toMatch(/\d\d : \d\d : \d\d/)
+  })
+})
+
+describe("Không đánh giá khách hàng giả trên trang công khai", () => {
+  it("mục đánh giá không có dữ liệu viết cứng và ẩn khi chưa có đánh giá thật", () => {
+    const src = read("src/components/catalog/landing-templates/landing-template-reviews.tsx")
+    expect(src).not.toContain("DEFAULT_REVIEWS")
+    expect(src).not.toMatch(/verified: true/)
+    expect(src).toContain("if (reviews.length === 0) return null")
+  })
+})
+
+describe("Mẫu trang công khai không cam kết thay cửa hàng", () => {
+  it("hero, lead, gallery, video không còn giờ giao/độ tươi/100%/nhập khẩu viết cứng", () => {
+    for (const f of ["hero", "lead", "gallery", "video"]) {
+      const src = read(`src/components/catalog/landing-templates/landing-template-${f}.tsx`)
+      expect(src, f).not.toMatch(/hẹn 2h|nhanh 2h|3–5 ngày|100%|nhập khẩu|loại 1/)
+    }
+  })
+})

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Eye, CheckCircle2, ExternalLink, QrCode, Smartphone, Monitor } from "lucide-react"
+import { Eye, ExternalLink, QrCode, Smartphone, Monitor } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { CatalogProduct } from "./catalog-management-tab"
@@ -119,16 +119,8 @@ export function LandingCampaignPreview({
           </div>
 
           {/* Action Buttons */}
-          {!isPublished ? (
-            <Button
-              onClick={onPublish}
-              disabled={isPublishing}
-              className="bg-success hover:bg-success/90 text-white gap-1.5 h-8 text-xs font-bold"
-            >
-              <CheckCircle2 size={14} />
-              <span>{isPublishing ? "Đang xuất bản..." : "Duyệt & Xuất bản Landing Page"}</span>
-            </Button>
-          ) : (
+          {/* Xuất bản: chỉ một nút, ở thanh điều hướng của wizard, có hộp xác nhận (R3). */}
+          {!isPublished ? null : (
             <>
               <Button
                 variant="ghost"

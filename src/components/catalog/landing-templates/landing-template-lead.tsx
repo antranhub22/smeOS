@@ -152,19 +152,19 @@ export function LandingTemplateLead({
         </div>
       )}
 
-      {/* 3 Guarantees */}
+      {/* 3 điểm dịch vụ trung tính — không cam kết khi tiệm chưa khai */}
       <div className={`pt-3 border-t border-border/50 grid grid-cols-3 gap-2 text-caption text-text-muted text-center ${isLuxury ? "font-serif" : ""}`}>
         <div className="flex flex-col items-center gap-1">
           <Camera size={14} className={isFestive ? "text-danger" : "text-warning"} />
-          <span className="font-medium">Chụp ảnh duyệt trước</span>
+          <span className="font-medium">Xem mẫu thật</span>
         </div>
         <div className="flex flex-col items-center gap-1">
           <Clock size={14} className="text-primary" />
-          <span className="font-medium">Giao chuẩn hẹn 2h</span>
+          <span className="font-medium">Giao tận nơi</span>
         </div>
         <div className="flex flex-col items-center gap-1">
           <CheckCircle2 size={14} className="text-success" />
-          <span className="font-medium">Sản phẩm 3–5 ngày</span>
+          <span className="font-medium">Kèm lời chúc</span>
         </div>
       </div>
     </div>

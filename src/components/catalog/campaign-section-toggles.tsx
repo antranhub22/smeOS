@@ -14,9 +14,9 @@ const SECTION_ITEMS = [
   { id: "perks", label: "4 Cam kết vàng" },
   { id: "process", label: "Quy trình 3 bước" },
   { id: "gallery", label: "Khoảnh khắc xưởng hoa" },
-  { id: "reviews", label: "Đánh giá khách hàng" },
-  { id: "faq", label: "FAQ hỏi đáp" },
-  { id: "lead", label: "Bắt lead nhận voucher" },
+  { id: "reviews", label: "Đánh giá khách hàng (chỉ hiện khi có đánh giá thật)" },
+  { id: "faq", label: "Hỏi đáp" },
+  { id: "lead", label: "Đăng ký nhận ưu đãi" },
 ]
 
 export function CampaignSectionToggles({

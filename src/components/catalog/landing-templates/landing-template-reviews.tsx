@@ -3,7 +3,7 @@
 import React from "react"
 import { Star, MessageSquareQuote, CheckCircle2 } from "lucide-react"
 
-interface ReviewItem {
+export interface ReviewItem {
   id: string
   author: string
   occasion: string
@@ -14,38 +14,19 @@ interface ReviewItem {
 
 interface LandingTemplateReviewsProps {
   archetypeId?: string | undefined
+  reviews?: readonly ReviewItem[] | undefined
 }
 
-const DEFAULT_REVIEWS: ReviewItem[] = [
-  {
-    id: "rev-1",
-    author: "Thanh Hằng",
-    occasion: "Tặng sinh nhật mẹ",
-    rating: 5,
-    comment: "Hoa giao đến còn tươi rói, mẹ mình khen tấm tắc. Đội ngũ chế tác chụp ảnh gửi duyệt trước rất nhiệt tình và chu đáo!",
-    verified: true,
-  },
-  {
-    id: "rev-2",
-    author: "Quốc Anh",
-    occasion: "Kỷ niệm ngày cưới",
-    rating: 5,
-    comment: "Bó hồng Ohara thơm nức và đóng gói rất sang. Giao đúng giờ hẹn dù thời tiết mưa gió. Sẽ tiếp tục ủng hộ tiệm dài dài.",
-    verified: true,
-  },
-  {
-    id: "rev-3",
-    author: "Chị Minh Thư",
-    occasion: "Hoa khai trương đối tác",
-    rating: 5,
-    comment: "Lẵng hoa nổi bật nhất buổi lễ khai trương, banner in chữ nhũ rất sắc nét. Tiệm có xuất hóa đơn VAT đầy đủ cho công ty.",
-    verified: true,
-  },
-]
+/**
+ * Chỉ hiển thị đánh giá THẬT do cửa hàng cung cấp. Trước đây mục này luôn hiện 3 đánh giá 5 sao viết cứng
+ * gắn nhãn "đã xác minh" trên mọi trang công khai — đánh giá giả (audit sâu MEUX 29/10/2026).
+ */
 
 export function LandingTemplateReviews({
   archetypeId = "minimal-luxury",
+  reviews = [],
 }: LandingTemplateReviewsProps) {
+  if (reviews.length === 0) return null
   const isLuxury = archetypeId === "minimal-luxury"
   const isRomantic = archetypeId === "pastel-romantic"
   const isFestive = archetypeId === "festive-sale"
@@ -71,7 +52,7 @@ export function LandingTemplateReviews({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-        {DEFAULT_REVIEWS.map((rev) => (
+        {reviews.map((rev) => (
           <div
             key={rev.id}
             className={`p-4 rounded-2xl border shadow-xs flex flex-col justify-between space-y-3 transition-all ${
@@ -105,7 +86,7 @@ export function LandingTemplateReviews({
               isLuxury ? "border-primary/15 font-serif" : "border-border"
             }`}>
               <span className={`font-bold ${isLuxury ? "text-primary" : "text-text"}`}>{rev.author}</span>
-              <span className={isLuxury ? "text-text-muted/80 italic" : "text-text-muted"}>{rev.occasion}</span>
+              <span className={isLuxury ? "text-text-muted italic" : "text-text-muted"}>{rev.occasion}</span>
             </div>
           </div>
         ))}

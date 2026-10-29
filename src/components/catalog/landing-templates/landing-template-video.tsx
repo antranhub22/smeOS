@@ -136,7 +136,7 @@ export function LandingTemplateVideo({
       </div>
 
       <div className={`text-center text-caption text-text-muted ${isLuxury ? "font-serif italic" : ""}`}>
-        Video được ghi lại thực tế tại xưởng hoa, không qua chỉnh sửa màu quá mức nhằm đảm bảo khách hàng nhận đúng mẫu 100%.
+        Video do tiệm cung cấp.
       </div>
     </section>
   )
