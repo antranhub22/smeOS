@@ -39,3 +39,6 @@ Thư mục này chứa các bản hợp đồng giao diện (Screen Contracts) c
 | `_journey-home-store.md` | `/` | `store_admin` | J1–J7 | **PASS** |
 | `_journey-home-network.md` | `/` | `flower_network_admin` | J1–J7 | **PASS** |
 | `_journey-home-platform.md` | `/van-hanh` | `platform_admin` | J1–J7 | **PASS** |
+| `cong-cu-anh-san-pham.md` | `/cong-cu/anh-san-pham` | chủ tiệm / marketing | PD Giai đoạn 3 (pilot 03c) | Chờ đo pilot |
+| `cong-cu-bo-anh-san-pham.md` | `/cong-cu/bo-anh-san-pham` | chủ tiệm / marketing | PD đợt A-1 | axe đạt |
+| `cong-cu-poster-banner.md` | `/cong-cu/poster-banner` | chủ tiệm / marketing | PD đợt A-1 | axe đạt |

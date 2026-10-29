@@ -47,7 +47,8 @@ export function ShareSummaryPanel(props: ShareSummaryPanelProps) {
           "rounded-2xl border p-5 transition-all duration-300 cursor-pointer",
           isBlock3Active
             ? "border-primary/50 bg-surface shadow-sm ring-2 ring-primary/20 opacity-100"
-            : "border-border/60 bg-surface/80 opacity-60 hover:opacity-95",
+            // Khối chưa tới lượt: làm nhạt nền/viền, không làm mờ chữ — chữ mờ chỉ đạt 2,49:1 (axe, audit A17).
+            : "border-border/60 bg-surface-alt/60 hover:bg-surface",
         )}
       >
         <div className="flex items-center gap-2.5">

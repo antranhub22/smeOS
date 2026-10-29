@@ -139,9 +139,9 @@ export function FeatureGuidanceCard({
         >
           <BookOpen
             size={15}
-            className="text-guidance/60 group-hover:text-guidance transition-colors duration-200"
+            className="text-guidance transition-colors duration-200"
           />
-          <span className="text-meta font-bold tracking-wider uppercase text-guidance/60 group-hover:text-guidance transition-colors duration-200">
+          <span className="text-meta font-bold tracking-wider uppercase text-guidance transition-colors duration-200">
             Xem hướng dẫn
           </span>
           <ChevronDown
@@ -169,7 +169,7 @@ export function FeatureGuidanceCard({
           <button
             type="button"
             onClick={handleToggle}
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-semibold text-guidance/60 hover:text-guidance hover:bg-guidance-tag-bg/60 transition-all duration-200 cursor-pointer"
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-semibold text-guidance hover:bg-guidance-tag-bg/60 transition-all duration-200 cursor-pointer"
             title="Thu gọn hướng dẫn"
           >
             <ChevronDown size={12} className="rotate-180" />

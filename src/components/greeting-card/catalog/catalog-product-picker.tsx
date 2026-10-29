@@ -3,6 +3,7 @@
 import React from "react"
 import { Search, Plus, Trash2, Loader2, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useCatalogItems } from "./use-catalog-items"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { ExcludeCatalogsFilter } from "./exclude-catalogs-filter"
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export function CatalogProductPicker({ catalogId, compact = false, onItemCountChange, readOnly = false }: Props) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const { ti, industry } = useI18n()
   const activeIndustry = industry || getIndustryPlugin()
   const ci = useCatalogItems<{ items: CatalogItem[] }>(catalogId, onItemCountChange)
@@ -39,9 +41,8 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
   const removingId = ci.busyId
   const handleAdd = (productId: string) => void ci.add(productId)
   // Bộ sưu tập dùng chung cho mọi link đã gửi: xoá mẫu phải hỏi lại (PO 08/10/2026)
-  const handleRemove = (productId: string, name: string) => {
-    if (!window.confirm(`Xoá "${name}" khỏi bộ sưu tập? Mẫu sẽ biến mất khỏi mọi link đã gửi khách.`)) return
-    void ci.remove(productId)
+  const handleRemove = async (productId: string, name: string) => {
+    if (await confirm({ title: `Xoá "${name}" khỏi bộ sưu tập?`, consequence: "Mẫu sẽ biến mất khỏi mọi link đã gửi khách.", confirmLabel: "Xoá mẫu", tone: "danger" })) void ci.remove(productId)
   }
 
   if (loadingItems) {
@@ -132,14 +133,12 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
 
       {/* Inline picker panel */}
       {ci.error && <p role="alert" className="p-2.5 rounded-xl bg-danger-bg text-danger text-body-sm">{ci.error}</p>}
-
       {showPicker && (
         <div className="rounded-2xl border border-border bg-surface-muted p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <p className="text-body-sm font-bold text-text">Chọn từ kho sản phẩm</p>
             <button type="button" onClick={() => setShowPicker(false)} className="text-caption text-text-muted hover:text-text font-medium underline">Đóng</button>
           </div>
-
           {/* Search */}
           <div className="relative">
             <Search
@@ -362,6 +361,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
           </div>
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

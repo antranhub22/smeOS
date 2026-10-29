@@ -62,6 +62,8 @@
      hạ thêm); text-muted/surface = 5.03:1. */
   --color-primary: #7A2E42;
   --color-primary-dark: #57202F;
+  /* Chữ/icon trên nền primary — 19 tệp dùng `text-primary-foreground` mà token chưa từng được khai báo (audit A16). Cả 3 preset có primary tối nên trắng đạt AA. */
+  --color-primary-foreground: #FFFFFF;
   --color-secondary: #9CAF88;
   /* Chữ nhỏ/đậm trên nền trắng dùng tông này thay vì --color-secondary —
      #9CAF88 trên trắng chỉ đạt 2.36:1, dưới ngưỡng AA 4.5:1 cho chữ nhỏ. */

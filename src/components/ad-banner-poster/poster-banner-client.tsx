@@ -270,6 +270,7 @@ export function PosterBannerClient() {
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6">
+      <h1 className="sr-only">Tạo poster và banner quảng cáo</h1>
       <TabActionHeader
         tabs={FORMAT_TABS}
         activeTab={activeFormatTab}
@@ -277,7 +278,6 @@ export function PosterBannerClient() {
         primaryActions={primaryActions}
         overflowActions={overflowActions}
       />
-
       <BannerGuidanceCallout />
 
       {statusMessage && (

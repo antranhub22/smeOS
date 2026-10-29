@@ -958,6 +958,8 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 |---|---|---|---|
 | GET | `/platform/nav-matrix` | *(phiên nền tảng)* | Ma trận điều hướng mặc định theo ngành và các ghi đè đang áp dụng |
 | PUT | `/platform/nav-matrix` | `N12` | `{ overrides: { [industryKey]: navKey[] } }` — ẩn mục điều hướng theo ngành, áp cho mọi tổ chức của ngành đó. Ghi nhật ký kiểm toán nền tảng |
+| GET | `/platform/ux-rollout-flags` | *(phiên nền tảng)* | Cờ rollout giao diện chuẩn Progressive Disclosure (03c E9): `{ keys, flags }` |
+| PUT | `/platform/ux-rollout-flags` | `N12` | `{ flags: { [flagKey]: { mode: "off" \| "allowlist" \| "all", organizationIds } } }` — giá trị lạ thành `off`. Ghi nhật ký kiểm toán nền tảng |
 | GET | `/platform/governance-matrix` | *(phiên nền tảng)* | Quyết định tầng Mẹ của ma trận quản trị |
 | PUT | `/platform/governance-matrix` | `N12` | `{ decisions }` như trên, lưu `platform_settings` khoá `governance_matrix:<system>`, áp xuống mọi tổ chức. Ghi nhật ký kiểm toán nền tảng |
 | PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |
@@ -971,6 +973,7 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 |---|---|---|---|
 | GET | `/notification/events` | — (phiên tenant) | Danh mục sự kiện hiển thị cho tầng `?tier=` (mặc định `STORE`), đã áp ma trận hiển thị của SaaS Mother |
 | GET | `/notification/channels` | — (phiên tenant) | Trạng thái bật/tắt kênh toàn sàn (chỉ đọc) |
+| GET | `/ux-rollout-flags` | — (phiên tenant) | Khoá các cờ rollout giao diện đang bật cho tổ chức của phiên `{ enabled: string[] }` — không trả danh sách tổ chức |
 | GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page`, `limit` (≤ 100), `unreadOnly` |
 | PATCH | `/notification/inbox/:id/read` | — (của chính mình) | Đánh dấu đã đọc; tin của người/tổ chức khác → không đổi |
 | POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |

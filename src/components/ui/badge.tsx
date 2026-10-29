@@ -8,7 +8,7 @@ const badgeVariants = cva("inline-flex items-center rounded-full px-2.5 py-1 tex
       success: "bg-success-bg text-primary",
       warning: "bg-warning-bg text-warning",
       danger: "bg-danger-bg text-danger",
-      accent: "bg-[#FBEAEC] text-[#B45566]",
+      accent: "bg-[#FBEAEC] text-primary",
       neutral: "bg-surface-alt text-text",
     },
   },

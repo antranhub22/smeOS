@@ -43,7 +43,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
 
       if (width < 800 || height < 800) {
         status = "warn"
-        statusText = "Ảnh nhỏ, AI sẽ tự upscale tăng nét"
+        statusText = "Ảnh nhỏ, hệ thống sẽ tự làm nét thêm"
       } else if (file.size > 15 * 1024 * 1024) {
         status = "fail"
         statusText = "Ảnh vượt quá 15MB, vui lòng nén bớt"
@@ -85,6 +85,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => !disabled && fileInputRef.current?.click()}
+        disabled={disabled}
         className={`w-full relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer ${
           dragOver
             ? "border-primary bg-primary/10 scale-[1.01]"
@@ -113,17 +114,17 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
               </div>
               <div className="flex items-center gap-1.5 text-caption font-medium pt-1">
                 {fileDetails?.status === "pass" && (
-                  <span className="text-success flex items-center gap-1">
+                  <span className="text-success-text flex items-center gap-1">
                     <CheckCircle className="w-3.5 h-3.5" /> {fileDetails.statusText}
                   </span>
                 )}
                 {fileDetails?.status === "warn" && (
-                  <span className="text-warning flex items-center gap-1">
+                  <span className="text-warning-text flex items-center gap-1">
                     <AlertTriangle className="w-3.5 h-3.5" /> {fileDetails.statusText}
                   </span>
                 )}
                 {fileDetails?.status === "fail" && (
-                  <span className="text-danger flex items-center gap-1">
+                  <span className="text-danger-text flex items-center gap-1">
                     <XCircle className="w-3.5 h-3.5" /> {fileDetails.statusText}
                   </span>
                 )}

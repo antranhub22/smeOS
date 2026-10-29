@@ -24,6 +24,7 @@ Tài liệu này xác lập chuẩn chất lượng UX toàn cục cho FloraOS, 
 - **Trải nghiệm theo 14 vai**: `docs/dac-ta/03b-role-ux.md` (Level 3, CANONICAL).
 - **Khung kiến trúc UX & Bản đồ màn**: `docs/dac-ta/03-ux-architecture.md` (Level 3, CANONICAL).
 - **Hồ sơ hợp đồng từng màn (Screen Contracts)**: `docs/dac-ta/screen-contracts/` (Level 3, SUPPORTING).
+- **Progressive Disclosure & Enterprise UX (mở rộng bắt buộc của tệp này, PO 29/10/2026)**: `docs/dac-ta/03c-ux-progressive-disclosure.md` (Level 3, CANONICAL) · thư viện luồng `docs/dac-ta/ux-patterns/` (Level 3, SUPPORTING).
 
 ### 3. Thứ bậc giải quyết xung đột
 

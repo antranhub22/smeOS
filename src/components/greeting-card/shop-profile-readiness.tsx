@@ -47,7 +47,7 @@ export function ShopProfileReadiness() {
 
   return (
     <div role="status" className="flex flex-col gap-2 rounded-xl border border-warning-border bg-warning-bg p-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="flex items-start gap-2 text-body-sm text-warning">
+      <p className="flex items-start gap-2 text-body-sm text-warning-text">
         <AlertTriangle size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
         <span>{gap}</span>
       </p>
@@ -64,7 +64,7 @@ export function ShopProfileReadiness() {
           </button>
         )}
         {can("F2") ? (
-          <Link href={"/ho-so" as Route} className="shrink-0 rounded-lg border border-warning-border bg-surface px-3 py-2 text-body-sm font-bold text-warning hover:bg-surface-alt">
+          <Link href={"/ho-so" as Route} className="shrink-0 rounded-lg border border-warning-border bg-surface px-3 py-2 text-body-sm font-bold text-warning-text hover:bg-surface-alt">
             Mở hồ sơ cửa hàng
           </Link>
         ) : (

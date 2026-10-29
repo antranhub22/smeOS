@@ -104,3 +104,5 @@ dùng lại: `FlowerImage`, `TrackingStepperView` · tạo mới: `sales/sales-k
 ## 14. Kết quả
 lint:ux sau: không tăng vi phạm · nợ mở: thông báo đẩy/Zalo cho tin nhắn chưa làm
 
+## 15. Progressive disclosure & rủi ro (03c) — 29/10/2026
+Catalog bán hàng theo nhu cầu (`/the-chao?quick=true`, đợt A-4). Thay đổi: `ConfirmDialog` cho ẩn bộ sưu tập (R2), xoá mẫu khỏi bộ sưu tập (R3), thu hồi link khách (R3); `<select>` mẫu giao diện có nhãn; khối chưa tới lượt không còn làm mờ chữ (2,49:1 → đạt); cảnh báo hồ sơ dùng `text-warning-text`. axe 390px: 0 lỗi.

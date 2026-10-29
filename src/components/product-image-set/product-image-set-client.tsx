@@ -7,6 +7,7 @@ import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload
 import { BundleSelector } from "@/components/product-image-set/bundle-selector"
 import { ImageSetViewer } from "@/components/product-image-set/image-set-viewer"
 import { useI18n } from "@/lib/i18n"
+import { parseCreatedJob, parsePolledJob } from "@/components/generation-job/generation-job-logic"
 import type { ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
 
 export function ProductImageSetClient() {
@@ -61,7 +62,10 @@ export function ProductImageSetClient() {
         throw new Error(err.message || "Không thể tạo bộ ảnh thương mại")
       }
 
-      const { data } = await res.json()
+      // API trả `{ job_id, … }` (không bọc `data`) — đọc lệch khiến công cụ không bao giờ ra kết quả (audit đợt A-1).
+      const created = parseCreatedJob(await res.json().catch(() => null))
+      if (!created) throw new Error("Hệ thống chưa xác nhận đã nhận yêu cầu. Hãy thử lại sau ít phút.")
+      const data = { jobId: created.jobId }
       setJobId(data.jobId)
 
       // Polling job
@@ -69,15 +73,15 @@ export function ProductImageSetClient() {
         try {
           const pollRes = await fetch(`/api/v1/product-image-set/${data.jobId}`)
           if (pollRes.ok) {
-            const pollData = await pollRes.json()
-            if (pollData.data?.status === "COMPLETED") {
+            const polled = parsePolledJob<ProductImageSetResult>(await pollRes.json())
+            if (polled.state === "succeeded" && polled.result) {
               clearInterval(pollInterval)
               setIsProcessing(false)
-              setJobResult(pollData.data)
-            } else if (pollData.data?.status === "FAILED") {
+              setJobResult(polled.result)
+            } else if (polled.state === "failed") {
               clearInterval(pollInterval)
               setIsProcessing(false)
-              setErrorMsg(pollData.data.errorMessage || "Xử lý bộ ảnh thất bại.")
+              setErrorMsg(polled.error || "Xử lý bộ ảnh thất bại.")
             }
           }
         } catch {
