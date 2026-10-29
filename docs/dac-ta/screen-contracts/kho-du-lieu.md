@@ -1,6 +1,6 @@
 # Screen Contract — Kho Dữ Liệu (Thư viện tập trung) — v2
 
-**Tuyến:** `/kho-du-lieu` · **Tệp chính:** `src/app/(app)/kho-du-lieu/page.tsx` · **Thành phần:** `src/components/storage/account-storage-hub.tsx` · **Cập nhật:** 29/10/2026 · **Trạng thái:** DỰ THẢO v2 — chờ PO duyệt (§14) · **v1:** 27/09/2026, thẻ T5.D6 (3 tab + thùng rác)
+**Tuyến:** `/kho-du-lieu` · **Tệp chính:** `src/app/(app)/kho-du-lieu/page.tsx` · **Thành phần:** `src/components/storage/account-storage-hub.tsx` · **Cập nhật:** 29/10/2026 · **Trạng thái:** v2 đã duyệt 29/10/2026 — đang dựng (§13a) · **v1:** 27/09/2026, thẻ T5.D6 (3 tab + thùng rác)
 
 > PO 29/10/2026: (1) mở rộng Kho dữ liệu, không tạo màn mới; (2) dùng tab; (3) tầng chuỗi xem toàn bộ của chuỗi và các chi nhánh, có phân loại riêng; (4) có Screen Contract + cập nhật SSOT (`docs/production-feature-map/Tài liệu kỹ thuật gốc hiện tại/08-kho-du-lieu.md`).
 
@@ -85,7 +85,14 @@
 - Dùng lại: `TabActionHeader` (PO khoá — không đổi cấu trúc, chỉ thêm tab), `Button`, `Card`, `Badge`, `StorageTrashTab`, `TrashConfirmModal`.
 - Tạo mới: `LibraryGrid` (lưới chung), `LibraryScopeSelect` (bộ chọn phạm vi chuỗi). `account-storage-hub.tsx` đang 914 dòng (> 350): tách tab mới ra tệp riêng, không làm tệp này dài thêm.
 
-## 14. Quyết định cần PO duyệt trước khi code
+## 13a. Ghi chú dựng v2 (29/10/2026)
+- Đã dựng: API `GET /storage/library` + `/summary`; 6 tab mới (Ảnh AI, Video, Âm thanh, Nội dung, Catalog, Thẻ chào) với tìm theo tên, lọc thời gian, "Xem thêm"; bộ chọn phạm vi chuỗi; nhãn chi nhánh; chuyển ảnh AI vào thùng rác (Điều hành). Tab Ảnh gốc/Ảnh đã duyệt/Kịch bản tư vấn/Thùng rác giữ nguyên v1 — **chưa lọc theo phạm vi chi nhánh**.
+- Tab mới chưa có huy hiệu số lượng (cần thêm truy vấn đếm theo phạm vi — đợt sau).
+- Video không lưu người tạo → luôn tính là "Trụ sở", không hiện khi chọn một chi nhánh cụ thể. Âm thanh: người tạo = người cam kết bản quyền/đồng ý giọng.
+- Tìm theo tên: video, âm thanh, catalog, thẻ chào. Ảnh và nội dung chưa có trường tên để tìm.
+- Tách `storage-hub-tabs.ts`, `library/*`: `account-storage-hub.tsx` giảm 914 → ~870 dòng.
+
+## 14. Quyết định PO (duyệt 29/10/2026 — chọn phương án đề xuất)
 | ID | Câu hỏi | Đề xuất |
 |---|---|---|
 | L-1 | Landing page không được lưu. Lưu lại để tìm được? | **Có** — bảng `landing_pages` (đổi schema, cần duyệt riêng). Trước khi có: ẩn tab Landing page |
