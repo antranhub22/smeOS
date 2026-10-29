@@ -168,13 +168,10 @@ export function ApprovedAnalysesSelector({
 
           return (
             <Card
-              role="button"
-              tabIndex={0}
               key={item.id}
-              className={`p-4 flex flex-col justify-between transition-all hover:border-primary/60 cursor-pointer ${
+              className={`p-4 flex flex-col justify-between transition-all ${
                 isSelected ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "bg-surface"
               }`}
-              onClick={() => onSelect(item)}
             >
               <div className="space-y-3">
                 {/* Header */}

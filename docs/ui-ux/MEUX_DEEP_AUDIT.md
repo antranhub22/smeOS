@@ -74,5 +74,19 @@ Chọn sản phẩm, kết quả bài viết (AI không chạy → nội dung m�
 | D04-03 | P2 | Xem trước bài đăng: "128" lượt thích, "16 bình luận • 5 chia sẻ", dấu xác minh, tên "Cửa hàng trực tuyến"; 7 nút giả bấm không làm gì | Bỏ số liệu/dấu giả; tên tiệm thật; nút minh họa thành `span` trang trí |
 | D04-04 | P2 | Ô tải ảnh `role=button` lồng nút khác; cảnh báo thiếu tương phản + emoji; khung cuộn giọng văn không focus được; "AI Vision", "Social Publishing", "Copy nhanh Zalo", emoji kênh | Sửa tương ứng |
 
+## #03 Thẻ chào / tư vấn khách (`/tai-anh`) — 12 trạng thái
+
+4 tab (Nhận diện ảnh, Bài giới thiệu, Tư vấn khách, Kho ảnh) + đã chọn ảnh + mở một mẫu đã duyệt. Sau sửa: 12/12 axe sạch.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D03-01 | **P1** | Thẻ chào **gửi khách** in quà tặng/cam kết "mặc định hệ thống" tiệm chưa hề khai: "nước dưỡng Chrysal", "thiệp/banner", "100% hàng mới nhập", "giao 60–90 phút", "bảo hành đổi mới", "giấy gói Hàn Quốc" — cả trên thẻ A6 và kịch bản Zalo | Mặc định rỗng; mục quà tặng/cam kết/quy cách/kích thước chỉ hiện khi tiệm khai |
+| D03-02 | **P1** | Chọn mẫu đã duyệt → thẻ ghi "Sản phẩm thiết kế cao cấp" thay tên thật, không mã SP; dùng `raw` bỏ qua bản người dùng đã sửa (`edited`) | Dùng `edited ?? raw` + tên/mã sản phẩm thật |
+| D03-03 | **P1** | Lỗi lộ mã nội bộ "Cổng AI không chạy được: HET_DUONG_DU_PHONG" (3 use-case) | "AI chưa chạy được lúc này — hãy thử lại sau ít phút" |
+| D03-04 | P2 | Giá trống hiện "—"; kích thước "~ × cm" | "Liên hệ để báo giá"; ẩn kích thước khi chưa có |
+| D03-05 | P2 | Thẻ phân tích và ô tải ảnh `role=button` lồng nút; tiêu đề `text-accent` và hộp lỗi thiếu tương phản | Một điều khiển; token đạt tương phản |
+
+Ngoài phạm vi (đề xuất task riêng): `text-accent` dùng làm chữ ở ~35 nơi khác ngoài công cụ Hoàn thiện, cùng lỗi tương phản 2,25:1 — cần token chữ riêng, PO duyệt.
+
 ## Tiếp theo
-#03 (4 tab) → #49 → #14 → #31–#35.
+#49 → #14 → #31–#35.

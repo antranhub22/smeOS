@@ -127,7 +127,7 @@ export async function generateProductCopy(
     );
 
     if (aiResult.kind !== "xong") {
-      throw new AppError("INTERNAL", `Cổng AI không chạy được: ${aiResult.reason}`);
+      throw new AppError("INTERNAL", "AI chưa chạy được lúc này — hãy thử lại sau ít phút");
     }
 
     const raw = {
