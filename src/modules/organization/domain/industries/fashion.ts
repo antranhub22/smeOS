@@ -122,4 +122,5 @@ export const FASHION_INDUSTRY: IndustryPluginContract = {
       { monthDay: "10-20", label: "Phụ nữ Việt Nam" },
     ],
   },
+  costing: null,
 }

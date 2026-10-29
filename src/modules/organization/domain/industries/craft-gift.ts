@@ -121,4 +121,5 @@ export const CRAFT_GIFT_INDUSTRY: IndustryPluginContract = {
       { monthDay: "12-24", label: "Giáng sinh" },
     ],
   },
+  costing: null,
 }

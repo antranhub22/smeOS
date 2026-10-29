@@ -116,6 +116,8 @@ export interface IndustryCraftFeeSpec {
   readonly peakDays: readonly { readonly monthDay: string; readonly label: string }[]
 }
 
+import type { IndustryCostingSpec } from "./industry-costing-spec"
+
 export interface IndustryPluginContract {
   readonly identity: IndustryIdentity
   readonly terminology: IndustryTerminology
@@ -126,4 +128,9 @@ export interface IndustryPluginContract {
   readonly navigation: IndustryNavConfig
   /** `null` = ngành không thuê ngoài sản xuất (vd. homestay) — mục Phí gia công ẩn khỏi cài đặt. */
   readonly craftFee: IndustryCraftFeeSpec | null
+  /**
+   * Hồ sơ tính giá (Nhóm công cụ 6). `null` = ngành chưa hỗ trợ — các công cụ #31–#35 hiện
+   * "Ngành của bạn chưa được hỗ trợ" thay vì chạy với số không phù hợp ngành.
+   */
+  readonly costing: IndustryCostingSpec | null
 }
