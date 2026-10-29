@@ -107,15 +107,12 @@ export default function MarketIntelligencePage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold tracking-tight text-text flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              smeOS Intelligence Engine
+              <TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" />
+              Xu hướng & cơ hội thị trường
             </h1>
-            <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-              v2.0 Omnichannel
-            </span>
           </div>
           <p className="text-xs text-text-muted mt-0.5">
-            Cấu trúc 3 tính năng cốt lõi: 1. Xu hướng thị trường · 2. Quét theo từ khóa · 3. Quét theo ảnh sản phẩm
+            Tìm dịp, xu hướng và chủ đề nên làm — theo thời gian, từ khóa hoặc ảnh mẫu
           </p>
         </div>
 

@@ -38,10 +38,10 @@ export const BANNER_TEMPLATE_CATEGORIES: readonly {
   readonly icon: string
 }[] = [
   { id: "ALL", label: "Tất cả mẫu", icon: "LayoutGrid" },
-  { id: "PROMOTION_SALE", label: "🔥 Khuyến mãi & Sale", icon: "Flame" },
-  { id: "NEW_COLLECTION", label: "✨ Mẫu mới ra mắt", icon: "Sparkles" },
-  { id: "HOLIDAY_SEASON", label: "💐 Dịp lễ & Mùa vụ", icon: "Gift" },
-  { id: "OPENING_EVENT", label: "🎉 Khai trương & Sự kiện", icon: "PartyPopper" },
+  { id: "PROMOTION_SALE", label: "Khuyến mãi & Sale", icon: "Flame" },
+  { id: "NEW_COLLECTION", label: "Mẫu mới ra mắt", icon: "Sparkles" },
+  { id: "HOLIDAY_SEASON", label: "Dịp lễ & Mùa vụ", icon: "Gift" },
+  { id: "OPENING_EVENT", label: "Khai trương & Sự kiện", icon: "PartyPopper" },
   { id: "CHAIN_BRAND", label: "🏢 Chuỗi & Thương hiệu", icon: "Building2" },
 ] as const
 

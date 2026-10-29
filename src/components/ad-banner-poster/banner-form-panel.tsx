@@ -64,7 +64,7 @@ export function BannerFormPanel({
           }`}
         >
           <Zap className="h-3.5 w-3.5" />
-          <span>⚡ Tạo tự động (Hybrid)</span>
+          <span>Tạo tự động</span>
         </button>
 
         <button
@@ -77,7 +77,7 @@ export function BannerFormPanel({
           }`}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
-          <span>🛠️ Tùy biến chi tiết</span>
+          <span>Tùy biến chi tiết</span>
         </button>
       </div>
 

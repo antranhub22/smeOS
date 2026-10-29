@@ -39,7 +39,7 @@ export function GenerationResults({
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-xs font-semibold text-text-muted">Kết quả từ Content Engine</span>
+          <span className="text-xs font-semibold text-text-muted">Bài đã soạn</span>
           <h2 className="text-lg font-black text-text">Xem trước & Biên tập nội dung</h2>
         </div>
         <Button

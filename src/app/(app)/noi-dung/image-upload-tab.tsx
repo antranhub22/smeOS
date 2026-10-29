@@ -16,7 +16,7 @@ const STEP_LABELS: Record<string, string> = {
   uploading: "Đang tải ảnh lên lưu trữ...",
   registering: "Đang đăng ký ảnh vào hệ thống...",
   analyzing: "AI đang phân tích thị giác sản phẩm...",
-  generating: "Content Engine đang soạn bài đa kênh...",
+  generating: "Đang soạn bài cho các kênh đã chọn...",
   done: "Hoàn tất — kéo xuống xem kết quả!",
   error: "Đã có lỗi xảy ra",
 }
@@ -227,7 +227,7 @@ export function ImageUploadTab({
               <span className="text-warning font-semibold">⚠️ Vui lòng chọn ít nhất 1 kênh ở Bước 2.</span>
             ) : (
               <span>
-                💡 AI sẽ phân tích ảnh → khởi tạo thông số sản phẩm → sinh bài cho{" "}
+                AI sẽ phân tích ảnh → khởi tạo thông số sản phẩm → sinh bài cho{" "}
                 <strong>{selectedChannels.length} kênh</strong>.
               </span>
             )}

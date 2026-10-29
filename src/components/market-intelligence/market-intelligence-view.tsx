@@ -142,13 +142,13 @@ export function MarketIntelligenceView({
           </div>
           <div className="max-w-md mx-auto">
             <h4 className="text-sm font-bold text-cool-800">
-              Không có cơ hội nào trong &ldquo;{currentFilterLabel}&rdquo;
+              {opportunities.length === 0 ? "Chưa có tín hiệu thị trường" : <>Không có cơ hội nào trong &ldquo;{currentFilterLabel}&rdquo;</>}
             </h4>
             <p className="text-xs text-cool-500 mt-1">
-              Hãy chọn mốc ngày/tuần khác có cơ hội phát hiện hoặc chọn &ldquo;Tất cả&rdquo; để xem toàn bộ {opportunities.length} cơ hội thị trường.
+              {opportunities.length === 0 ? "Bấm “Làm mới” ở đầu trang để quét xu hướng mới nhất." : <>Hãy chọn mốc khác hoặc chọn &ldquo;Tất cả&rdquo; để xem toàn bộ {opportunities.length} cơ hội.</>}
             </p>
           </div>
-          <button
+          {opportunities.length > 0 && <button
             type="button"
             onClick={() => {
               setSelectedTimeframe("ALL");
@@ -158,7 +158,7 @@ export function MarketIntelligenceView({
           >
             <RefreshCw size={13} />
             Xem tất cả ({opportunities.length})
-          </button>
+          </button>}
         </div>
       )}
 

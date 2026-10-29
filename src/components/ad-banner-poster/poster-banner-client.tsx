@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState, useRef, useCallback } from "react"
-import { Download, Save, RefreshCw, Share2, LayoutGrid } from "lucide-react"
+import React, { useState, useRef, useCallback, useMemo } from "react"
+import { Download, RefreshCw, Share2, LayoutGrid } from "lucide-react"
 import { useSession } from "@/lib/session"
+import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { TabActionHeader, type TabItem, type TabAction, type TabOverflowAction } from "@/components/ui/tab-header"
 import {
   type BannerAspectRatio,
@@ -58,15 +59,16 @@ export function PosterBannerClient() {
     })
   )
 
-  const [brandInfo, setBrandInfo] = useState<BannerBrandInfo>({
-    shopName: orgName || "Cửa Hàng Của Bạn",
-    hotline: "0901 234 567",
-    address: "123 Đường Trung Tâm",
-  })
-
-  const [productImageUrl, setProductImageUrl] = useState<string | undefined>(
-    "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80"
-  )
+  // Hotline/địa chỉ lấy từ hồ sơ cửa hàng — không điền số mẫu (poster tải về sẽ mang thông tin giả).
+  const { business } = useTenantProfile()
+  const [brandEdits, setBrandEdits] = useState<Partial<BannerBrandInfo>>({})
+  const brandInfo = useMemo<BannerBrandInfo>(() => ({
+    shopName: brandEdits.shopName ?? (business?.display_name || orgName || "Cửa Hàng Của Bạn"),
+    hotline: brandEdits.hotline ?? business?.phone ?? "",
+    address: brandEdits.address ?? business?.address ?? "",
+  }), [brandEdits, business, orgName])
+  // Chưa có ảnh cho tới khi người dùng tải lên — không dùng ảnh mẫu thay ảnh sản phẩm.
+  const [productImageUrl, setProductImageUrl] = useState<string | undefined>(undefined)
 
   const [isGenerating, setIsGenerating] = useState(false)
   const [exportingFormat, setExportingFormat] = useState<string | null>(null)
@@ -85,7 +87,7 @@ export function PosterBannerClient() {
   }
 
   const handleBrandInfoChange = (field: keyof BannerBrandInfo, value: string) => {
-    setBrandInfo((prev) => ({ ...prev, [field]: value }))
+    setBrandEdits((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleOccasionChange = (key: string, label: string) => {
@@ -99,20 +101,19 @@ export function PosterBannerClient() {
       shopName: brandInfo.shopName,
     })
     setCopy(newCopy)
-    setStatusMessage(`🎯 Đã chọn dịp "${label}" — tự động chuyển phong cách và thông điệp phù hợp!`)
+    setStatusMessage(`Đã chọn dịp "${label}" — tự động chuyển phong cách và thông điệp phù hợp!`)
   }
 
   const handleSelectTemplate = (tpl: BannerTemplateItem) => {
     setSelectedTemplateId(tpl.id)
     setSelectedPresetId(tpl.stylePresetId)
     setCopy(tpl.defaultCopy)
-    if (!productImageUrl) setProductImageUrl(tpl.sampleImageUrl)
-    setStatusMessage(`⚡ Đã áp dụng mẫu: "${tpl.name}"`)
+    setStatusMessage(`Đã áp dụng mẫu: "${tpl.name}"`)
   }
 
   const handleTriggerAutoGenerate = async () => {
     setIsGenerating(true)
-    setStatusMessage(`⚡ Đang tạo poster & banner cho dịp "${occasionLabel}"...`)
+    setStatusMessage(`Đang tạo poster & banner cho dịp "${occasionLabel}"...`)
 
     const tpl = getInstantBannerTemplate(occasionKey)
     setSelectedPresetId(tpl.recommendedPreset)
@@ -143,8 +144,8 @@ export function PosterBannerClient() {
 
       setStatusMessage(
         generationEngine === "AI_PROVIDER"
-          ? `✨ AI Single-Call đã hoàn thiện trọn bộ 5 kích thước cho dịp "${occasionLabel}"!`
-          : `🎉 Đã tạo mới thành công trọn bộ 5 kích thước cho dịp "${occasionLabel}"!`
+          ? `AI đã hoàn thiện trọn bộ 5 kích thước cho dịp "${occasionLabel}"!`
+          : `Đã tạo mới thành công trọn bộ 5 kích thước cho dịp "${occasionLabel}"!`
       )
     } catch {
       const fallback = generateInstantBannerCopy({
@@ -152,7 +153,7 @@ export function PosterBannerClient() {
         shopName: brandInfo.shopName,
       })
       setCopy(fallback)
-      setStatusMessage(`⚡ Đã tự động dàn trang 5 kích thước chuẩn cho dịp "${occasionLabel}"!`)
+      setStatusMessage(`Đã tự động dàn trang 5 kích thước chuẩn cho dịp "${occasionLabel}"!`)
     } finally {
       setIsGenerating(false)
     }
@@ -193,9 +194,9 @@ export function PosterBannerClient() {
     try {
       const filename = `banner-${format.replace(":", "x")}-${Date.now()}.png`
       await downloadElementAsImage(targetEl, filename, "png")
-      setStatusMessage(`✅ Đã xuất ảnh ${format} thành công!`)
+      setStatusMessage(`Đã xuất ảnh ${format} thành công!`)
     } catch {
-      setStatusMessage(`❌ Không thể xuất ảnh định dạng ${format}.`)
+      setStatusMessage(`Không thể xuất ảnh định dạng ${format}.`)
     } finally {
       setExportingFormat(null)
     }
@@ -213,9 +214,9 @@ export function PosterBannerClient() {
           await new Promise((r) => setTimeout(r, 300))
         }
       }
-      setStatusMessage("🎉 Đã tải trọn bộ 5 kích thước quảng cáo thành công!")
+      setStatusMessage("Đã tải trọn bộ 5 kích thước quảng cáo thành công!")
     } catch {
-      setStatusMessage("❌ Có lỗi khi tải hàng loạt. Hãy thử tải từng kích thước.")
+      setStatusMessage("Có lỗi khi tải hàng loạt. Hãy thử tải từng kích thước.")
     } finally {
       setIsExportingAll(false)
     }
@@ -230,23 +231,10 @@ export function PosterBannerClient() {
       onClick: handleDownloadAll,
       disabled: isExportingAll,
     },
-    {
-      id: "open-gallery",
-      label: "Kho Template",
-      icon: LayoutGrid,
-      variant: "secondary",
-      onClick: () => setIsGalleryOpen(true),
-    },
-    {
-      id: "save-template",
-      label: "Lưu mẫu chuỗi",
-      icon: Save,
-      variant: "outline",
-      onClick: () => setStatusMessage("✅ Đã lưu mẫu thiết kế thành công vào kho mẫu của chuỗi!"),
-    },
   ]
 
   const overflowActions: TabOverflowAction[] = [
+    { id: "open-gallery", label: "Kho mẫu thiết kế", icon: LayoutGrid, onClick: () => setIsGalleryOpen(true) },
     {
       id: "reset",
       label: "Đặt lại ban đầu",
@@ -261,7 +249,7 @@ export function PosterBannerClient() {
       icon: Share2,
       onClick: () => {
         navigator.clipboard?.writeText(window.location.href)
-        setStatusMessage("📋 Đã sao chép liên kết vào bộ nhớ tạm!")
+        setStatusMessage("Đã sao chép liên kết vào bộ nhớ tạm!")
       },
     },
   ]
