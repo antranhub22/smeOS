@@ -13,7 +13,8 @@ import { ResultPanel } from "@/components/ui/result-panel"
 import { TaskStatus } from "@/components/ui/task-status"
 import { isTaskBusy } from "@/lib/ui-system/task-state"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
-import { useProductPhotoJob } from "./use-product-photo-job"
+import { useGenerationJob } from "@/components/generation-job/use-generation-job"
+import type { ProductPhotoResult } from "@/modules/product-photo-studio/use-cases/get-product-photo-result"
 
 /** Bộ máy đám mây tính giá cao nhất — báo trước mức tối đa để không thiếu credit giữa chừng. */
 const MAX_COST = Math.max(costCreditForFeature("media.optimize"), costCreditForFeature("media.optimize.cloud"))
@@ -23,7 +24,7 @@ const MAX_COST = Math.max(costCreditForFeature("media.optimize"), costCreditForF
  * (Chặng 01 tải ảnh + Chặng 02 + bước tạo ảnh). Bật theo cờ `ux_pd_anh_san_pham`.
  */
 export function ProductPhotoStudioFlow() {
-  const job = useProductPhotoJob()
+  const job = useGenerationJob<ProductPhotoResult>({ tool: "anh-san-pham", createUrl: "/api/v1/product-photo" })
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [presetId, setPresetId] = useState("auto")
@@ -39,7 +40,7 @@ export function ProductPhotoStudioFlow() {
     const note = extraHint ? (customNote ? `${customNote}. ${extraHint}` : extraHint) : customNote
     if (extraHint) setCustomNote(note)
     setAccepted(false)
-    void job.start({ file, presetId, ratioId, customNote: note })
+    void job.start({ file, body: { preset_id: presetId, aspect_ratio: ratioId, custom_note: note } })
   }
 
   const startOver = () => {

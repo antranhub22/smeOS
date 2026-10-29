@@ -56,7 +56,7 @@ Chạy `@axe-core/playwright` (WCAG 2.2 AA, khổ 390px) trên máy chủ dev + 
 | ID | Mức | Phát hiện | Màn | Bằng chứng | Hướng sửa |
 |---|---|---|---|---|---|
 | A15 | P1 | Chữ "mẹo" của `FeatureGuidanceCard` dùng `text-guidance/60` — tương phản **2,98:1** (cần 4,5:1) | 5/7: anh-san-pham, bo-anh-san-pham, tai-anh, noi-dung, market-intelligence | `src/components/templates/shared/feature-guidance-card.tsx:142,144,172` | Bỏ độ mờ `/60` (dùng `text-guidance` đủ đậm). **Component PO khóa (K1) → chờ PO duyệt** |
-| A16 | P1 | Poster & banner: chữ tối trên nền đỏ đô — **1,75:1** (7 chỗ); `<select>` thiếu nhãn (critical) | `/cong-cu/poster-banner` | axe `color-contrast`, `select-name` | Sửa trong đợt A-1 |
+| A16 | P1 | Poster & banner: chữ tối trên nền đỏ đô — **1,75:1** (7 chỗ); `<select>` thiếu nhãn (critical) | `/cong-cu/poster-banner` | axe `color-contrast`, `select-name` | **Đã sửa (đợt A-1)** — gốc là token `--color-primary-foreground` chưa khai báo |
 | A17 | P1 | Catalog theo nhu cầu: chữ cảnh báo `text-warning` 2,98:1, link hồ sơ 3,32:1, chữ phụ 2,49:1; `<select>` thiếu nhãn (critical) | `/the-chao?quick=true` | axe `color-contrast`, `select-name` | Sửa trong đợt A-4 |
 | A18 | P2 | Nội dung bán hàng: nhãn `bg-[#FBEAEC]` 4,07:1 | `/noi-dung` | axe `color-contrast` | Sửa trong đợt A-3 |
 

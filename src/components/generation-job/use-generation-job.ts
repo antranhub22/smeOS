@@ -3,21 +3,26 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useSession } from "@/lib/session"
 import { type TaskFailureKind, type TaskUiState } from "@/lib/ui-system/task-state"
-import type { ProductPhotoResult } from "@/modules/product-photo-studio/use-cases/get-product-photo-result"
 import {
   MAX_POLLS,
   POLL_INTERVAL_MS,
+  jobStorageKey,
   newIdempotencyKey,
-  parseCreatedPhotoJob,
-  parsePolledPhotoJob,
-  photoJobStorageKey,
-} from "./product-photo-flow-logic"
+  parseCreatedJob,
+  parsePolledJob,
+} from "./generation-job-logic"
 
-export interface PhotoJobInput {
+export interface GenerationJobConfig {
+  /** Tên ngắn của công cụ — dùng cho khoá nhớ và idempotency key. */
+  tool: string
+  /** Route tạo job, ví dụ `/api/v1/product-photo`. Poll ở `${createUrl}/:id`. */
+  createUrl: string
+}
+
+export interface GenerationJobInput {
   file: File
-  presetId: string
-  ratioId: string
-  customNote: string
+  /** Các trường gửi kèm `asset_id` khi tạo job. */
+  body: Record<string, unknown>
 }
 
 function readStored(key: string | null): string | null {
@@ -39,13 +44,13 @@ function writeStored(key: string | null, value: string | null) {
   }
 }
 
-/** Luồng tải ảnh → tạo job → hỏi trạng thái thật (UX-P01, UX-P04). */
-export function useProductPhotoJob() {
+/** Luồng tải ảnh → tạo job → hỏi trạng thái thật, dùng chung cho các công cụ ảnh (UX-P01, UX-P04). */
+export function useGenerationJob<R>({ tool, createUrl }: GenerationJobConfig) {
   const { organization } = useSession()
-  const storageKey = photoJobStorageKey(organization?.id)
+  const storageKey = jobStorageKey(tool, organization?.id)
 
   const [state, setState] = useState<TaskUiState>("idle")
-  const [result, setResult] = useState<ProductPhotoResult | null>(null)
+  const [result, setResult] = useState<R | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [failureKind, setFailureKind] = useState<TaskFailureKind>("retryable")
   const [elapsed, setElapsed] = useState(0)
@@ -87,14 +92,14 @@ export function useProductPhotoJob() {
       }
       timerRef.current = setTimeout(async () => {
         try {
-          const res = await fetch(`/api/v1/product-photo/${jobId}`, { cache: "no-store" })
+          const res = await fetch(`${createUrl}/${jobId}`, { cache: "no-store" })
           if (res.status === 404) {
             writeStored(storageKey, null)
             fail("Không tìm thấy tác vụ này nữa. Hãy tải ảnh và tạo lại.", "needs_action")
             return
           }
           if (res.ok) {
-            const polled = parsePolledPhotoJob(await res.json())
+            const polled = parsePolledJob<R>(await res.json())
             if (polled.state === "succeeded" && polled.result) {
               busyRef.current = false
               writeStored(storageKey, null)
@@ -115,7 +120,7 @@ export function useProductPhotoJob() {
         pollRef.current(jobId, attempt + 1)
       }, attempt === 0 ? 0 : POLL_INTERVAL_MS)
     },
-    [fail, storageKey],
+    [createUrl, fail, storageKey],
   )
 
   useEffect(() => {
@@ -147,7 +152,7 @@ export function useProductPhotoJob() {
   }, [])
 
   const start = useCallback(
-    async (input: PhotoJobInput) => {
+    async (input: GenerationJobInput) => {
       if (busyRef.current) return
       busyRef.current = true
       setError(null)
@@ -157,15 +162,10 @@ export function useProductPhotoJob() {
       try {
         const { uploadBrandAsset } = await import("@/components/profiles/upload-brand-asset")
         const { assetId } = await uploadBrandAsset(input.file)
-        const res = await fetch("/api/v1/product-photo", {
+        const res = await fetch(createUrl, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "Idempotency-Key": newIdempotencyKey() },
-          body: JSON.stringify({
-            asset_id: assetId,
-            preset_id: input.presetId,
-            aspect_ratio: input.ratioId,
-            custom_note: input.customNote,
-          }),
+          headers: { "Content-Type": "application/json", "Idempotency-Key": newIdempotencyKey(tool) },
+          body: JSON.stringify({ ...input.body, asset_id: assetId }),
         })
         const body = await res.json().catch(() => null)
         if (!res.ok) {
@@ -173,7 +173,7 @@ export function useProductPhotoJob() {
           fail(message ?? "Chưa gửi được yêu cầu tạo ảnh. Ảnh của bạn vẫn được giữ, hãy thử lại.")
           return
         }
-        const created = parseCreatedPhotoJob(body)
+        const created = parseCreatedJob(body)
         if (!created) {
           fail("Hệ thống chưa xác nhận đã nhận yêu cầu. Hãy thử lại sau ít phút.", "needs_action")
           return
@@ -186,7 +186,7 @@ export function useProductPhotoJob() {
         fail(err instanceof Error ? err.message : "Có lỗi khi tải ảnh lên. Ảnh của bạn vẫn được giữ, hãy thử lại.")
       }
     },
-    [fail, poll, storageKey],
+    [createUrl, fail, poll, storageKey, tool],
   )
 
   const reset = useCallback(() => {

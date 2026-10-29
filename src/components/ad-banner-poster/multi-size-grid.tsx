@@ -60,7 +60,7 @@ export function MultiSizeGrid({
                     {spec.name}
                   </span>
                   {spec.isPrintable && (
-                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-caption font-semibold bg-success-bg text-success border border-success/20">
+                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-caption font-semibold bg-success-bg text-success-text border border-success/20">
                       <Printer className="h-2.5 w-2.5" /> Chuẩn in
                     </span>
                   )}

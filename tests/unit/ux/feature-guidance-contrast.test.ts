@@ -15,3 +15,10 @@ describe("FeatureGuidanceCard — tương phản chữ (WCAG 1.4.3)", () => {
     expect(src).not.toMatch(/text-guidance\/[1-8]\d\b/) // /90 vẫn đạt AA trên nền guidance-bg
   })
 })
+
+describe("Token màu chữ trên nền primary (audit A16)", () => {
+  it("globals.css khai báo --color-primary-foreground cho lớp text-primary-foreground", () => {
+    const css = readFileSync(path.resolve(__dirname, "../../../src/app/globals.css"), "utf-8")
+    expect(css).toMatch(/--color-primary-foreground:\s*#FFFFFF/i)
+  })
+})

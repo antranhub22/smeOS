@@ -173,6 +173,7 @@ export function AutoGeneratePanel({
         {/* Dropdown dịp chi tiết */}
         <div className="mt-1.5">
           <select
+            aria-label="Dịp cụ thể"
             value={occasionKey}
             onChange={(e) => {
               const selected = e.target.value
@@ -201,6 +202,7 @@ export function AutoGeneratePanel({
           <button
             type="button"
             onClick={() => onEngineChange("TEMPLATE_ENGINE")}
+            aria-pressed={generationEngine === "TEMPLATE_ENGINE"}
             className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all ${
               generationEngine === "TEMPLATE_ENGINE"
                 ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
@@ -212,7 +214,7 @@ export function AutoGeneratePanel({
                 <span className="text-xs font-bold text-text flex items-center gap-1">
                   <Zap className="h-3.5 w-3.5 text-warning" /> Bố cục Template
                 </span>
-                <span className="text-caption px-1.5 py-0.2 rounded bg-success-bg text-success font-bold">
+                <span className="text-caption px-1.5 py-0.2 rounded bg-success-bg text-success-text font-bold">
                   Khuyên dùng
                 </span>
               </div>
@@ -226,6 +228,7 @@ export function AutoGeneratePanel({
           <button
             type="button"
             onClick={() => onEngineChange("AI_PROVIDER")}
+            aria-pressed={generationEngine === "AI_PROVIDER"}
             className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all ${
               generationEngine === "AI_PROVIDER"
                 ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
@@ -235,14 +238,14 @@ export function AutoGeneratePanel({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-text flex items-center gap-1">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" /> AI Provider Single-Call
+                  <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" /> AI vẽ bố cục mới
                 </span>
                 <span className="text-caption px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold">
                   Sáng tạo AI
                 </span>
               </div>
               <p className="text-caption text-text-muted leading-relaxed">
-                Gửi ảnh + prompt qua AI Provider trong 1 lần gọi, tự động kiểm định chất lượng QC.
+                AI vẽ bố cục mới từ ảnh và mô tả của bạn trong một lần, có kiểm tra chất lượng tự động.
               </p>
             </div>
           </button>
@@ -270,7 +273,7 @@ export function AutoGeneratePanel({
           )}
         </button>
         {!productImageUrl && (
-          <p className="text-caption text-warning text-center mt-1.5">
+          <p className="text-caption text-warning-text text-center mt-1.5">
             ⚠️ Hãy tải ảnh sản phẩm lên trước để kích hoạt tạo tự động
           </p>
         )}

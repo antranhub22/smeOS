@@ -7,7 +7,7 @@ import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload
 import { PresetSelector } from "@/components/product-photo-studio/preset-selector"
 import { EnhanceResultViewer } from "@/components/product-photo-studio/enhance-result-viewer"
 import { useI18n } from "@/lib/i18n"
-import { parseCreatedPhotoJob, parsePolledPhotoJob } from "./product-photo-flow-logic"
+import { parseCreatedJob, parsePolledJob } from "@/components/generation-job/generation-job-logic"
 import type { ProductPhotoResult } from "@/modules/product-photo-studio/use-cases/get-product-photo-result"
 
 export function ProductPhotoStudioClient() {
@@ -65,7 +65,7 @@ export function ProductPhotoStudioClient() {
       }
 
       // API trả `{ job_id, … }` (không bọc `data`) — đọc lệch khiến công cụ không bao giờ ra kết quả (audit pilot).
-      const created = parseCreatedPhotoJob(await enhanceRes.json().catch(() => null))
+      const created = parseCreatedJob(await enhanceRes.json().catch(() => null))
       if (!created) throw new Error("Hệ thống chưa xác nhận đã nhận yêu cầu. Hãy thử lại sau ít phút.")
       const data = { jobId: created.jobId }
       setJobId(data.jobId)
@@ -75,7 +75,7 @@ export function ProductPhotoStudioClient() {
         try {
           const pollRes = await fetch(`/api/v1/product-photo/${data.jobId}`)
           if (pollRes.ok) {
-            const polled = parsePolledPhotoJob(await pollRes.json())
+            const polled = parsePolledJob<ProductPhotoResult>(await pollRes.json())
             if (polled.state === "succeeded" && polled.result) {
               clearInterval(pollInterval)
               setIsProcessing(false)

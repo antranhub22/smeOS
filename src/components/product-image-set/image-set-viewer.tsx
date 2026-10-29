@@ -44,7 +44,7 @@ export function ImageSetViewer({
           <div className="text-body-sm font-bold text-text">{result.bundleName}</div>
           <div className="text-caption text-text-muted mt-0.5">
             Đã sinh {result.variants.length} ảnh biến thể đồng nhất • Điểm nhất quán bộ:{" "}
-            <span className="text-success font-bold">
+            <span className="text-success-text font-bold">
               {(result.qcEvaluation.setConsistencyScore * 100).toFixed(0)}% (Cùng 1 SP)
             </span>
           </div>
@@ -118,7 +118,7 @@ export function ImageSetViewer({
                   <div className="text-caption font-bold text-text line-clamp-1">{v.name}</div>
                   <div className="text-caption text-text-muted flex items-center justify-between mt-0.5">
                     <span>{v.channelTarget}</span>
-                    <span className="font-semibold text-success">✅ Đạt</span>
+                    <span className="font-semibold text-success-text">✅ Đạt</span>
                   </div>
                 </button>
               )
@@ -126,12 +126,12 @@ export function ImageSetViewer({
           </div>
 
           {/* Set Consistency Banner */}
-          <div className="p-4 rounded-xl border border-success-border bg-success-bg text-success space-y-1.5">
-            <div className="flex items-center gap-2 text-caption font-bold text-success">
+          <div className="p-4 rounded-xl border border-success-border bg-success-bg text-success-text space-y-1.5">
+            <div className="flex items-center gap-2 text-caption font-bold text-success-text">
               <CheckCircle2 className="w-4 h-4 text-success" />
               Đạt chứng chỉ Nhất Quán Bộ Ảnh
             </div>
-            <p className="text-caption text-success/90 leading-relaxed">
+            <p className="text-caption text-success-text leading-relaxed">
               Mọi ảnh biến thể đã được AI kiểm định khớp 100% hình thái sản phẩm gốc, cùng thành phần cấu tạo, cấu trúc và màu sắc.
             </p>
           </div>
