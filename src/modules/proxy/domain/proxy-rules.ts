@@ -78,3 +78,15 @@ export function isAllowedProxyPath(client: ProxyClient, path: string): boolean {
   if (normalized.split("/").some((seg) => seg === ".." || seg === ".")) return false
   return PROXY_ALLOWED_PREFIX[client].some((prefix) => normalized === prefix || normalized.startsWith(prefix + "/"))
 }
+
+/**
+ * Mã năng lực core kiểm TRƯỚC khi forward (thao tác ghi nhạy cảm). Kết nối/đăng nhập/ngắt
+ * tài khoản mạng xã hội của cửa hàng (công cụ 54) cần J5 "Đăng bài lên mạng xã hội";
+ * đọc danh sách thì không. `null` = không yêu cầu thêm, sibling tự kiểm theo JWT.
+ */
+export function proxyCapabilityFor(client: ProxyClient, method: string, path: string): string | null {
+  const normalized = path.replace(/^\/+/, "")
+  const isRead = method === "GET" || method === "HEAD"
+  if (client === "SOCIALFLOW" && !isRead && (normalized === "api/accounts" || normalized.startsWith("api/accounts/"))) return "J5"
+  return null
+}

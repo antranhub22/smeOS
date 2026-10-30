@@ -208,7 +208,7 @@ export function PlatformAccountCard({
         ) : (
           <div className="w-full flex items-center justify-between">
             <span className="text-caption text-text-muted flex items-center gap-1">
-              <Lock size={12} /> Mã hóa an toàn AES-256
+              <Lock size={12} aria-hidden="true" /> Mật khẩu được mã hoá
             </span>
             <Button
               size="sm"

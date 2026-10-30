@@ -147,6 +147,21 @@ Kịch bản `scripts/ux-audit/scenarios/thu-vien-thuong-hieu.mjs`. Trạng thá
 Kiểm lại: 10/12 sạch. Còn lại ngoài phạm vi: số đếm `0/5` (`text-text-muted/60`) trên thanh lối tắt công cụ ở chế độ chuỗi dưới 4,5:1 — `toolkit-shortcuts-group.tsx` / `toolkit-picker.tsx`, có từ trước.
 Chưa kiểm thủ công: bàn phím, phóng to 200%, trình đọc màn hình; tải ảnh thật lên kho (audit chỉ dùng loại văn bản).
 
+## Bước 4 Thu hút khách — `/thu-hut-khach`, `/c/:slug` (form để lại thông tin), `/ket-noi` (30/10/2026)
+
+Kịch bản `scripts/ux-audit/scenarios/thu-hut-khach.mjs`, `scripts/ux-audit/scenarios/ket-noi.mjs`. Trạng thái kiểm ở 390/1280px: mã trống, form tạo (mở phần thêm), có mã + thống kê mở, hộp xác nhận tắt, khách trống, có khách; trang catalog công khai: form, thiếu đồng ý, đã gửi (gửi thật vào database test); `/ket-noi`: dịch vụ đăng bài không phản hồi (lỗi tải), hộp thêm tài khoản.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| B4-01 | P1 | Huy hiệu "Đang tắt"/"Đã hết hạn" dùng `text-warning` trên nền nhạt (axe tương phản) | `text-warning-text` (`short-link-row.tsx`) |
+| B4-02 | P1 | Thông báo "đã gửi" của form để lại thông tin dùng `opacity-90` lên chữ (axe tương phản) | `text-text` (`landing-template-lead.tsx`) |
+| B4-03 | P1 | `InlineError` dùng `text-danger` trên `bg-danger-bg` (axe tương phản) — ảnh hưởng mọi màn dùng component chuẩn | `text-danger-text` (`src/components/ui/inline-error.tsx`) |
+| B4-04 | P2 | `/ket-noi` lộ chữ kỹ thuật/tiếng Anh: "AES-256", "Playwright Session", "Thought Leadership", "Visual Branding", "Format Hook-Body-CTA" | Viết lại tiếng Việt (`ket-noi/page.tsx`, `platform-account-card.tsx`, `connect-account-modal.tsx`) |
+
+Kiểm lại: 22/22 sạch. Cảnh báo "số điện thoại mẫu" ở tab khách là dữ liệu kịch bản nạp vào, không phải chữ cứng trên màn.
+Ngoài phạm vi (ghi lại): mô tả nền tảng ở `/ket-noi` dùng từ ngành chung ("Sản phẩm chuẩn") nghe gượng; nút trợ lý nổi che một phần nút "Thêm tài khoản" ở 390px — có từ trước.
+Chưa kiểm thủ công: bàn phím, phóng to 200%, trình đọc màn hình; widget Turnstile (chưa khai khoá); quét QR có logo bằng điện thoại thật.
+
 ## Kết luận
 Đã audit sâu xong toàn bộ công cụ Hoàn thiện.
 
