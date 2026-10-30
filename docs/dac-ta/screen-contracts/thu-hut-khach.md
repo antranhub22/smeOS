@@ -42,7 +42,7 @@ tải: `SkeletonBlock` · rỗng: `EmptyState` "Chưa có mã QR hay link nào" 
 390px: hàng xếp dọc, nút quấn dòng · 768px+: hàng hai cột (thông tin | số liệu) · 1280px: `max-w-5xl`.
 
 ## 8. Trợ năng
-bàn phím: nút lọc/khoảng thời gian dùng `aria-pressed`; "Thống kê" có `aria-expanded` · nhãn: mọi ô nhập có `<label>` · vùng thông báo: `InlineError` `role="alert"` · axe: chưa chạy (xem báo cáo Bước 4).
+bàn phím: nút lọc/khoảng thời gian dùng `aria-pressed`; "Thống kê" có `aria-expanded` · nhãn: mọi ô nhập có `<label>` · vùng thông báo: `InlineError` `role="alert"` · axe: sạch 18/18 (MEUX_DEEP_AUDIT, mục Bước 4).
 
 ## 9. AI
 không áp dụng.
@@ -63,4 +63,4 @@ dùng lại: `FeatureGuidanceCard`, `TabActionHeader`, `EmptyState`, `InlineErro
 | Chiều | Kết quả | Ghi chú |
 |---|---|---|
 | Quyền · Dữ liệu · Trạng thái | PASS | tenant test + unit test |
-| Responsive · Trợ năng (axe) | CHƯA KIỂM | chưa chạy `ux:audit` trong phiên này |
+| Responsive · Trợ năng (axe) | PASS | `ux:audit -- thu-hut-khach` 18/18 (390 + 1280px); bàn phím, zoom, trình đọc màn hình chưa kiểm |

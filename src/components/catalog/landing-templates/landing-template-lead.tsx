@@ -94,7 +94,7 @@ export function LandingTemplateLead({
             <CheckCircle2 size={16} />
             <span>Cửa hàng đã nhận thông tin của bạn!</span>
           </div>
-          <p className="text-caption opacity-90">
+          <p className="text-caption text-text">
             Tiệm sẽ liên hệ lại qua Zalo để xác nhận mẫu cho bạn.
           </p>
         </div>

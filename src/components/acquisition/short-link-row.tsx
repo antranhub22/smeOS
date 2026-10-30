@@ -52,7 +52,7 @@ export function ShortLinkRow({ link, brand, onToggleActive }: Props) {
           <div className="flex flex-wrap items-center gap-2">
             <span className="truncate text-body font-semibold text-text">{link.name}</span>
             <Badge tone="neutral">{link.kind === "QR" ? "Mã QR" : "Link bán hàng"}</Badge>
-            {!live && <Badge tone="warning">{link.is_active ? "Đã hết hạn" : "Đang tắt"}</Badge>}
+            {!live && <Badge tone="warning" className="text-warning-text">{link.is_active ? "Đã hết hạn" : "Đang tắt"}</Badge>}
           </div>
           <p className="break-all text-caption text-text-muted">
             {url} → {link.target_path}
