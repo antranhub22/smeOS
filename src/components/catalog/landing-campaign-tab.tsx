@@ -22,6 +22,7 @@ import { LandingStepContentSettings } from "./landing-step-content-settings"
 import { LandingStepPreviewPane } from "./landing-step-preview-pane"
 import { LandingWizardNav } from "./landing-wizard-nav"
 
+import { buildLandingPublishBody } from "./landing-publish-payload"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 
 interface LandingCampaignTabProps {
@@ -196,20 +197,10 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
       const res = await fetch("/api/v1/catalog-links", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: headline || `Chiến dịch ${selectedOccasion}`,
-          description: `Landing page chiến dịch ${selectedOccasion} — Phong cách ${selectedArchetype}`,
-          filters: {
-            product_ids: selectedProductIds,
-            occasion: selectedOccasion,
-            archetype: selectedArchetype,
-            headline,
-            customHeroImageUrl: customHeroImageUrl || undefined,
-            videoUrl: videoUrl || undefined,
-            generatedPackage,
-            enabledSections,
-          },
-        }),
+        body: JSON.stringify(buildLandingPublishBody({
+          headline, occasionId: selectedOccasion, archetypeId: selectedArchetype, products: selectedProducts,
+          customHeroImageUrl, videoUrl, generatedPackage, enabledSections,
+        })),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

@@ -38,3 +38,8 @@ Review thị giác: `docs/ui-ux/MEUX_PILOT_LANDING_PAGE.md` §7.
 - Critic landing chấm "cụ thể, không sáo, không hứa ngoài hồ sơ" thay cho "đủ 4 cam kết".
 - **Mô tả sản phẩm đã duyệt** (Bước C, 30/10/2026): màn landing gửi `id` sản phẩm; máy chủ tự đọc bản dữ liệu bán hàng `APPROVED` mới nhất (`product-copies/use-cases/get-approved-selling-notes.ts`, trong tenant, tối đa 6 sản phẩm, ≤ 320 ký tự/sản phẩm) và đưa vào prompt v2 như dữ liệu. Người không có `H5` → bỏ qua, nội dung vẫn sinh. Route vẫn chưa gác quyền (nợ #170).
 - **Nội dung mẫu dự phòng** (khi AI không chạy) viết lại: cụ thể, không cụm sáo, không hứa điều tiệm chưa khai; test bảo đảm qua được `landing-copy-guard`. Nhật ký `landing_content.generated` / `catalog_content.generated` ghi `promptVersion` và nguồn (`ai` / `template` + lý do), không ghi nội dung.
+
+### Xem trước = trang khách (30/10/2026)
+- Bước 4 "Xem trước và xuất bản" vẽ **chính trang `/c/[slug]`** trong iframe (`/xem-truoc-trang`, không đọc dữ liệu máy chủ, chỉ nhận dữ liệu qua `postMessage` cùng nguồn gốc, `noindex`) ở bề rộng thật 390px / 1280px. Dữ liệu xem trước và dữ liệu xuất bản dựng từ một hàm (`landing-publish-payload.ts`).
+- Phong cách landing → phong cách + mẫu catalog (`landing-page/domain/archetype-style.ts`): Tối giản sang trọng → S03 + T03; Hiện đại chia khối → S12 + T04; Lễ hội ưu đãi → S04 + T04; Lãng mạn pastel → S10 + T01. Xuất bản lưu `style_id`/`template_id`; link cũ chưa lưu thì suy từ phong cách landing.
+- Mô tả link (hiện khi chia sẻ) = dòng phụ do AI viết; không còn "Phong cách minimal-luxury".

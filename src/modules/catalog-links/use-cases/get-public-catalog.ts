@@ -1,6 +1,7 @@
 import type { ICatalogLinkRepository } from "../domain/repositories/catalog-link-repository.interface"
 import { getCatalogLinkRepository } from "../infra/catalog-link-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { landingVisualFor } from "@/modules/landing-page/domain/archetype-style"
 import type { CatalogTemplateId, CatalogStyleId } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 
 export interface PublicCatalogShop {
@@ -302,13 +303,14 @@ export async function getPublicCatalog(
             greeting: typeof filters.personalizedGreeting === "string" ? filters.personalizedGreeting : undefined,
           }
         : undefined,
+    // Link landing cũ chưa lưu phong cách → suy từ phong cách landing đã chọn
     templateId:
       (filters.template_id as CatalogTemplateId) ||
       (filters.templateId as CatalogTemplateId) ||
-      "T01_SIGNATURE_COLLECTION",
+      (typeof filters.archetype === "string" ? landingVisualFor(filters.archetype).templateId : "T01_SIGNATURE_COLLECTION"),
     styleId:
       (filters.style_id as CatalogStyleId) ||
       (filters.styleId as CatalogStyleId) ||
-      "S01_EDITORIAL_MAGAZINE",
+      (typeof filters.archetype === "string" ? landingVisualFor(filters.archetype).styleId : "S01_EDITORIAL_MAGAZINE"),
   }
 }

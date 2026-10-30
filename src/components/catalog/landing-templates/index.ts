@@ -1,5 +1,3 @@
-export { LandingTemplateHero } from "./landing-template-hero"
-export { LandingTemplateProducts } from "./landing-template-products"
 export { LandingTemplateLead } from "./landing-template-lead"
 export { LandingTemplateStory } from "./landing-template-story"
 export { LandingTemplatePerks } from "./landing-template-perks"
