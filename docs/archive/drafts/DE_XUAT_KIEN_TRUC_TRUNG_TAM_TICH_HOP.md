@@ -1,6 +1,6 @@
 # Đề xuất kiến trúc — Trung tâm Tích hợp SMEOS (Integration Hub)
 
-> **Trạng thái:** `DRAFT` — đề xuất chờ PO duyệt, chưa phải căn cứ lập trình.
+> **Trạng thái:** `DRAFT` — PO đã duyệt hướng ngày 30/10/2026; kế hoạch chi tiết: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`.
 > **Ngày:** 2026-10-30 · **Phạm vi:** 4 tầng (SaaS Mẹ → SaaS Ngành → ChainOS → StoreOS)
 > **Khi được duyệt:** chuyển thành spec `docs/dac-ta/2x-integration-hub-spec.md` (CANONICAL) và đăng ký trong registry. Phần kênh ngoài của `08-integration-specification.md` sẽ trỏ sang spec đó.
 
