@@ -91,12 +91,12 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 
 ---
 
-## Quyết định PO cần trước G1
-| # | Quyết định | Ảnh hưởng |
-|---|---|---|
-| Q1 | Công cụ theo dõi lỗi / metrics (SaaS hay tự host, ngân sách) | E1.5, E1.6 |
-| Q2 | Thêm cột `request_id` vào `generation_jobs` | E1.1 |
-| Q3 | Môi trường staging + nâng gói Render cho 2 instance | E2.5, E4.3 |
-| Q4 | Bật PITR, backup object store | E3 |
-| Q5 | Đưa `audit:industry:check` vào CI | E0.2 |
-| Q6 | Chọn động cơ quản trị phân tầng duy nhất | E0.4 |
+## Quyết định PO (cập nhật 30/10/2026)
+| # | Quyết định | Kết quả PO | Ảnh hưởng |
+|---|---|---|---|
+| Q1 | Công cụ theo dõi lỗi / metrics | ✅ **Dịch vụ ngoài** — chọn nhà cung cấp cụ thể trước khi làm E1.5 (đề xuất Sentry: có SDK Next.js + Python, gói miễn phí) | E1.5, E1.6 |
+| Q2 | Cột `request_id` trên `generation_jobs` | ✅ Đồng ý | E1.1 |
+| Q3 | Staging + 2 instance Render | ⏸ **Làm khi bàn giao** — code E2 vẫn viết và test cục bộ; nghiệm thu 2 instance dời tới lúc bàn giao | E2.5, E4.3 |
+| Q4 | PITR Postgres + backup object store | ✅ Đồng ý — bật trên dashboard Render/R2 (chủ tài khoản thao tác), agent ghi RPO/RTO vào runbook | E3 |
+| Q5 | `audit:industry:check` vào CI | ✅ Đồng ý — thêm vào CI **sau** khi E0.1 hạ vi phạm về baseline, để CI không đỏ ngay | E0.2 |
+| Q6 | Chọn động cơ quản trị phân tầng duy nhất | ⏳ Chờ PO | E0.4 |
