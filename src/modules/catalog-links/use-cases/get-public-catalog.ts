@@ -279,7 +279,8 @@ export async function getPublicCatalog(
     catalog: {
       slug: link.slug,
       name: link.name,
-      description: link.description,
+      // Link landing cũ lưu mô tả kỹ thuật ("Landing page chiến dịch … — Phong cách minimal-luxury") → ẩn
+      description: link.description && !/^Landing page chiến dịch .* — Phong cách /.test(link.description) ? link.description : null,
       createdAt: link.created_at.toISOString(),
     },
     shop,

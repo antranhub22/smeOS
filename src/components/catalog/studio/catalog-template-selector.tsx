@@ -159,7 +159,7 @@ export function CatalogTemplateSelector({
                     <p className="text-caption text-text-muted leading-relaxed">{tpl.description}</p>
 
                     <div className="pt-2 border-t border-border/60 flex items-center justify-between text-caption text-text-muted">
-                      <span>Cấu trúc: <strong>{tpl.structure.length} trang chuyên biệt</strong></span>
+                      <span>Gồm <strong>{tpl.structure.length} loại trang</strong></span>
                       <span className="italic text-primary font-medium">{tpl.recommendedFor.slice(0, 45)}...</span>
                     </div>
                   </button>
