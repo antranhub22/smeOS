@@ -73,8 +73,10 @@ Chuẩn "enterprise grade" chung: cách ly tenant (404 khi khác tenant), audit 
 | Xác minh người thật: cổng + ô bẫy + Turnstile | `src/core/ports/human-verification.ts`, `src/modules/acquisition/adapters/human-verifier.ts`, `src/components/acquisition/turnstile-widget.tsx` | `human-verifier.test.ts` |
 | Link/QR động (#12/#13/#25): `/r/<mã>`, chặn open redirect, hạn, bật/tắt, thống kê ngày/thiết bị/khách riêng, không lưu IP thô | `src/modules/acquisition/{domain,infra,use-cases}`, `src/app/r/[code]/route.ts`, `/api/v1/short-links/**` | `short-link-rules.test.ts`, `resolve-short-link.test.ts`, tenant test |
 | QR logo + dòng mời (EC "H"), bản in SVG | `src/components/acquisition/qr-branding.ts`, `src/core/media/qr-engine.ts` | chưa kiểm bằng máy quét thật |
-| Màn `/thu-hut-khach` (khoá production qua `feature-lock.ts` chờ PO mở) | `src/components/acquisition/*`, Screen Contract `thu-hut-khach.md` | typecheck, lint, lint:ux; **chưa** chạy `ux:audit` |
+| Màn `/thu-hut-khach` (PO mở trên production 30/10/2026) | `src/components/acquisition/*`, Screen Contract `thu-hut-khach.md` | typecheck, lint, lint:ux; **chưa** chạy `ux:audit` |
 | Quản lý lead: lọc trạng thái, đổi trạng thái, giao người phụ trách (API) + audit | `manage-leads.ts`, `/api/v1/leads/**` | tenant test |
 | #54 `/ket-noi`: lỗi tải hiện rõ + thử lại, `ConfirmDialog` khi ngắt, cảnh báo phiên >30 ngày, bỏ chữ kỹ thuật, J5 cho thao tác ghi ở proxy | `ket-noi/page.tsx`, `use-channel-accounts.ts`, `channel-session-health.ts`, `proxy-rules.ts` | `channel-session-health.test.ts`, `proxy-rules.test.ts` |
 
 **Chưa làm (để sau):** trình dựng form riêng + mã nhúng; tự phân công lead xoay vòng + thông báo lead mới; chọn phiên bản/thanh toán ngay trên link bán hàng (#13); chuyển lead cũ trong `catalog_links.filters.leads` (không có đồng ý liên hệ → giữ nguyên, không tự nhập); P2 Facebook Ads.
+
+**PO 30/10/2026:** mở `/thu-hut-khach` trên production; đồng ý yêu cầu J5 cho kết nối/đăng nhập/ngắt kênh ở `/ket-noi`.

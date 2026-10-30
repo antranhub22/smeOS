@@ -38,8 +38,6 @@ export const LOCKED_ROUTE_PREFIXES: readonly string[] = [
   // Chat nội bộ & Profile kết nối — PO 25/10/2026
   "/tin-nhan",
   "/noi-bo/ket-noi",
-  // Thu hút khách (Bước 4: QR/link động, khách để lại thông tin) — chờ PO mở trên production
-  "/thu-hut-khach",
 ]
 
 /**
