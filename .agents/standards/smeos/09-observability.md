@@ -17,7 +17,7 @@
 |---|---|---|
 | Log JSON + che khoá | ✅ | — |
 | `request_id` xuyên web → job → worker | ✅ `src/proxy.ts` gắn `x-request-id` (request + phản hồi); `handle()` chạy trong `request-context.ts` (AsyncLocalStorage) nên `log` tự thêm `requestId`; `generation_jobs.request_id`; worker in `job.claimed` (`workers/shared/job_trace.py`) | Route không bọc `handle()` chưa có `requestId` trong log |
-| Không `console.*` trong mã sản phẩm | 🔴 31 tệp còn `console.*`; ESLint chưa có `no-console` | Ratchet `no-console` (giống `i18n-direct-intl-ratchet`) |
+| Không `console.*` trong mã sản phẩm | 🟡 còn tệp dùng `console.*`, khoá bằng `tests/unit/architecture/no-console-ratchet.test.ts` (chỉ giảm) | Dọn dần sang `log`, hạ BASELINE |
 | Công cụ theo dõi lỗi | ✅ Sentry (PO Q1): cổng `core/observability/error-tracker.ts`, adapter `core/observability/adapters/sentry-error-tracker.ts` bật trong `instrumentation.ts` khi có `SENTRY_DSN`; bắt lỗi từ `handle()` và `onRequestError`; worker `shared/log_json.py` (`bat_sentry`). Lọc body/cookie/header/người dùng/breadcrumb/biến cục bộ; không đo hiệu năng | Lỗi phía trình duyệt chưa gửi (cần `instrumentation-client.ts`) |
 | Metrics RED / hàng đợi / kênh / chi phí AI | 🟡 `/van-hanh/suc-khoe`: bộ xử lý nền + hàng đợi theo loại việc (đang chờ, chờ từ lúc, lỗi 24 giờ); `/van-hanh/muc-dung`: chi phí AI theo tổ chức. Kênh thông báo chưa có số liệu lưu (chỉ log `notification.dispatched`) | Bước 2: exporter/metrics khi có công cụ (E1.5) |
 | Readiness tách liveness | ✅ `/api/health` (liveness, healthCheckPath Render) · `/api/health/ready` (CSDL + Redis trên production, `isReady`) | Đổi healthCheckPath sang `/ready` khi chạy nhiều instance — PO (`render.yaml`) |
