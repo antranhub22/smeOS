@@ -129,8 +129,8 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
   {
     id: 12, name: "Tạo QR code cửa hàng và sản phẩm",
     description: "Sinh mã QR với logo, khung thiết kế và thống kê lượt quét",
-    icon: "QrCode", label: "BOTH", status: "IN_PROGRESS", progress: 20,
-    href: null, statusNote: "QR cơ bản trong catalog, thiếu tùy chỉnh + thống kê",
+    icon: "QrCode", label: "BOTH", status: "IN_PROGRESS", progress: 80,
+    href: "/thu-hut-khach", statusNote: "QR động (đổi đích không in lại), logo + dòng mời, bản in SVG, thống kê lượt quét theo ngày/thiết bị",
   },
 ] as const
 
@@ -138,8 +138,8 @@ const GROUP_3_TOOLS: readonly ToolDefinition[] = [
   {
     id: 13, name: "Tạo link bán hàng",
     description: "Link bán hàng riêng cho từng sản phẩm với tùy chọn và nút đặt mua",
-    icon: "Link", label: "STORE", status: "PLANNED", progress: 0,
-    href: null, statusNote: "Chức năng mới — tạo link bán hàng độc lập cho từng sản phẩm đơn lẻ",
+    icon: "Link", label: "STORE", status: "IN_PROGRESS", progress: 50,
+    href: "/thu-hut-khach", statusNote: "Link ngắn có thống kê và nguồn chiến dịch trỏ tới catalog/trang sản phẩm; chưa có chọn phiên bản + thanh toán ngay trên link",
   },
   {
     id: 14, name: "Tạo catalog bán hàng theo nhu cầu",
@@ -189,8 +189,8 @@ const GROUP_4_TOOLS: readonly ToolDefinition[] = [
   {
     id: 21, name: "Tạo form thu thập khách hàng tiềm năng",
     description: "Form thu lead kèm ưu đãi, theo dõi nguồn và gán người phụ trách",
-    icon: "UserPlus", label: "BOTH", status: "FOUNDATION", progress: 30,
-    href: null, statusNote: "CRM có, thiếu UI form thu lead riêng",
+    icon: "UserPlus", label: "BOTH", status: "IN_PROGRESS", progress: 70,
+    href: "/thu-hut-khach?tab=leads", statusNote: "Form trên trang catalog: chống spam, đồng ý liên hệ, ghi nguồn; khách vào CRM; theo dõi trạng thái. Chưa có trình dựng form riêng, tự phân công",
   },
   {
     id: 22, name: "Tạo chiến dịch thu hút khách hàng",
@@ -213,8 +213,8 @@ const GROUP_4_TOOLS: readonly ToolDefinition[] = [
   {
     id: 25, name: "Tạo điểm thu hút khách qua QR code",
     description: "QR kèm lời mời, trang đích ưu đãi và thống kê theo vị trí",
-    icon: "ScanLine", label: "BOTH", status: "FOUNDATION", progress: 20,
-    href: null, statusNote: "QR cơ bản có, thiếu trang đích + thống kê vị trí",
+    icon: "ScanLine", label: "BOTH", status: "IN_PROGRESS", progress: 75,
+    href: "/thu-hut-khach", statusNote: "Mỗi điểm đặt một mã, thống kê lượt quét và số khách để lại thông tin theo vị trí",
   },
   {
     id: 49, name: "Khám phá xu hướng & cơ hội thị trường",

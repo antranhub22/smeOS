@@ -35,12 +35,6 @@ export interface UpdateCatalogLinkInput {
   filters?: Record<string, unknown> | null | undefined
 }
 
-export interface CatalogLeadInput {
-  phone: string
-  message: string | null
-  submittedAt: string
-}
-
 export type PublicCatalogRawData =
   | {
       link: { name: string; [key: string]: unknown }
@@ -89,5 +83,4 @@ export interface ICatalogLinkRepository {
   update(ctx: TenantContext, slug: string, input: UpdateCatalogLinkInput): Promise<CatalogLinkRecord | null>
   revoke(ctx: TenantContext, slug: string, revokedBy: string): Promise<boolean>
   getPublicCatalogRaw(slug: string): Promise<PublicCatalogRawData | null>
-  recordLead(slug: string, lead: CatalogLeadInput): Promise<boolean | null>
 }

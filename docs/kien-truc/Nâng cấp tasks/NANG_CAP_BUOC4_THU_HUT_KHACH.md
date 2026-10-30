@@ -1,6 +1,6 @@
 # Nâng cấp Bước 4 — Thu hút khách hàng (công cụ 12, 13, 21, 25, 54 + Kết nối quảng cáo Facebook)
 
-Status `DRAFT` · chờ PO duyệt · 30/10/2026. Tài liệu rà soát + đề xuất; chưa thay đổi mã nguồn.
+Status `DRAFT` · 30/10/2026. Rà soát + đề xuất; PO đã quyết (§5) và P0 + P1 đã triển khai (§6).
 Phạm vi lấy từ `src/modules/toolkit/domain/growth-modules.ts:48-50` (module `acquisition`) và
 `growth-module-roadmap.ts:29` (Facebook Ads ở giai đoạn 2).
 
@@ -57,9 +57,24 @@ Chuẩn "enterprise grade" chung: cách ly tenant (404 khi khác tenant), audit 
 - Conversions API: gửi sự kiện `Purchase`/`Lead` server-side, chỉ cho khách đã đồng ý, dữ liệu băm.
 - Capability mới (ví dụ nhóm "Quảng cáo": xem chỉ số / kết nối tài khoản quảng cáo) — trần ADMIN cho kết nối.
 
-## 5. Quyết định PO cần đưa ra
+## 5. Quyết định PO (30/10/2026)
 
-1. Duyệt thay đổi `prisma/schema.prisma` (bảng `short_links`, `link_events`, `leads`) cho P1.
-2. Captcha: chỉ honeypot + rate-limit (miễn phí) hay thêm Cloudflare Turnstile (dependency/provider mới)?
-3. Facebook Ads: tự đăng ký Meta App + App Review (2–6 tuần) hay mở rộng SocialFlow?
-4. Tiếp tục phụ thuộc SocialFlow cho #54 hay đưa OAuth Meta về lõi?
+1. **Duyệt** thêm bảng `short_links`, `link_events`, `leads`.
+2. **Miễn phí** (ô bẫy + giới hạn tần suất) làm mặc định; **dựng sẵn đầu nối Cloudflare Turnstile**, bật bằng biến môi trường.
+3. **Facebook Ads: hoãn**, làm sau.
+4. **#54 giữ kiến trúc hiện tại** (proxy SocialFlow), chỉ hoàn thiện; thay đổi lớn PO sẽ báo sau.
+
+## 6. Đã triển khai (nhánh `Nang_cap_buoc4`)
+
+| Hạng mục | Mã nguồn | Kiểm chứng |
+|---|---|---|
+| Bảng + migration | `prisma/schema.prisma`, `prisma/migrations/20261030211053_acquisition_leads_short_links/` | `migrate dev` sạch; đặc tả 07 |
+| Lead → CRM (#21): đồng ý liên hệ, SĐT VN, 3 lead/giờ/SĐT, nguồn `ref`/UTM, bỏ ghi JSON | `src/modules/acquisition/use-cases/capture-lead.ts`, route `public/catalog/[slug]/lead` | `capture-lead.test.ts`, `tests/tenant/acquisition-isolation.test.ts` (gồm gửi đồng thời) |
+| Xác minh người thật: cổng + ô bẫy + Turnstile | `src/core/ports/human-verification.ts`, `src/modules/acquisition/adapters/human-verifier.ts`, `src/components/acquisition/turnstile-widget.tsx` | `human-verifier.test.ts` |
+| Link/QR động (#12/#13/#25): `/r/<mã>`, chặn open redirect, hạn, bật/tắt, thống kê ngày/thiết bị/khách riêng, không lưu IP thô | `src/modules/acquisition/{domain,infra,use-cases}`, `src/app/r/[code]/route.ts`, `/api/v1/short-links/**` | `short-link-rules.test.ts`, `resolve-short-link.test.ts`, tenant test |
+| QR logo + dòng mời (EC "H"), bản in SVG | `src/components/acquisition/qr-branding.ts`, `src/core/media/qr-engine.ts` | chưa kiểm bằng máy quét thật |
+| Màn `/thu-hut-khach` (khoá production qua `feature-lock.ts` chờ PO mở) | `src/components/acquisition/*`, Screen Contract `thu-hut-khach.md` | typecheck, lint, lint:ux; **chưa** chạy `ux:audit` |
+| Quản lý lead: lọc trạng thái, đổi trạng thái, giao người phụ trách (API) + audit | `manage-leads.ts`, `/api/v1/leads/**` | tenant test |
+| #54 `/ket-noi`: lỗi tải hiện rõ + thử lại, `ConfirmDialog` khi ngắt, cảnh báo phiên >30 ngày, bỏ chữ kỹ thuật, J5 cho thao tác ghi ở proxy | `ket-noi/page.tsx`, `use-channel-accounts.ts`, `channel-session-health.ts`, `proxy-rules.ts` | `channel-session-health.test.ts`, `proxy-rules.test.ts` |
+
+**Chưa làm (để sau):** trình dựng form riêng + mã nhúng; tự phân công lead xoay vòng + thông báo lead mới; chọn phiên bản/thanh toán ngay trên link bán hàng (#13); chuyển lead cũ trong `catalog_links.filters.leads` (không có đồng ý liên hệ → giữ nguyên, không tự nhập); P2 Facebook Ads.

@@ -7,7 +7,7 @@
 
 export const INQUIRY_NAME_MAX = 100
 export const INQUIRY_MESSAGE_MAX = 500
-const VN_PHONE = /^(0|\+84)[35789][0-9]{8}$/
+export const VN_PHONE = /^(0|\+84)[35789][0-9]{8}$/
 
 export interface ProductInquiryInput {
   customerName: string
