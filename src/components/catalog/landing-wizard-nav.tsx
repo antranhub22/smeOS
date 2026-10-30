@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
+import { ArrowLeft, ArrowRight, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useConfirmPublish } from "./use-confirm-publish"
 

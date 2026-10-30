@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect } from "react"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle } from "@/components/ui/icons"
 import { useOrderFocus, type OrderFocusBlock } from "./order-focus-context"
 
 /** Lớp giao diện theo chuẩn Spotlight: khối đang chọn nổi bật; khối khác chỉ dịu nền/viền, chữ giữ nguyên độ tương phản (PO 29/10/2026). */

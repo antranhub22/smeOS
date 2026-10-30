@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo, useEffect } from "react"
-import { QrCode, Copy, Check, Clock, Sparkles, CheckCircle2, ShieldCheck, Zap } from "lucide-react"
+import { QrCode, Copy, Check, Clock, Sparkles, CheckCircle2, ShieldCheck, Zap } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

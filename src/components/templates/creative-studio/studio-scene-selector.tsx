@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Camera, Sun, TreePine, Palette } from "lucide-react"
+import { Sparkles, Camera, Sun, TreePine, Palette } from "@/components/ui/icons"
 
 export interface StudioScenePreset {
   id: string

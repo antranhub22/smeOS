@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { MapPin, Star, Layers } from "lucide-react"
+import { MapPin, Star, Layers } from "@/components/ui/icons"
 const AREA_LABEL: Record<string, string> = {
   WARD: "Cùng phường",
   DISTRICT: "Cùng quận",

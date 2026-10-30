@@ -1,12 +1,13 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, SlidersHorizontal, Search } from "lucide-react"
+import { Sparkles, SlidersHorizontal, Search } from "@/components/ui/icons"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { useSession } from "@/lib/session"
 import { isJourneyLocked } from "@/lib/feature-lock"
 import { UserMenu } from "@/components/layout/user-menu"
 import { useI18n } from "@/lib/i18n"
+import { InfoTip } from "@/components/ui/info-tip"
 import { ActionCard } from "./action-card"
 import { FeaturedSpotlightCard } from "./featured-spotlight-card"
 
@@ -71,7 +72,7 @@ export function ChoiceGrid({
   })
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-6 md:py-8 space-y-6">
+    <div className="w-full max-w-7xl mx-auto px-4 py-6 md:py-10 space-y-8">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
@@ -79,12 +80,12 @@ export function ChoiceGrid({
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
             <span>{dict.home.header.badge}</span>
           </div>
-          <h1 className="text-display font-extrabold text-text tracking-tight">
-            {title}
-          </h1>
-          <p className="text-body text-text-muted mt-1">
-            {subtitle}
-          </p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-display font-extrabold text-text tracking-tight">
+              {title}
+            </h1>
+            <InfoTip label={title} side="bottom">{subtitle}</InfoTip>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 self-start md:self-auto">
@@ -174,7 +175,7 @@ export function ChoiceGrid({
 
       {/* Grid Cards */}
       {filteredJourneys.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
           {filteredJourneys.map((journey) => (
             <ActionCard
               key={journey.id}

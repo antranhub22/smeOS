@@ -1,6 +1,6 @@
 "use client"
 
-import { X, Calendar, User, Phone, Home, Moon, CreditCard, FileText, Trash2, ExternalLink, Wrench, Clock } from "lucide-react"
+import { X, Calendar, User, Phone, Home, Moon, CreditCard, FileText, Trash2, ExternalLink, Wrench, Clock } from "@/components/ui/icons"
 import Link from "next/link"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 import { calculateNights } from "@/components/greeting-card/customer/homestay-order-fields"

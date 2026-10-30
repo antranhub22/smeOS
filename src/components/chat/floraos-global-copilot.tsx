@@ -9,7 +9,7 @@ import {
   Sparkles,
   Loader2,
   ArrowRight,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { CopilotMessageItem } from "@/components/chat/copilot-message-item"
 import { errorText } from "@/lib/error-text"

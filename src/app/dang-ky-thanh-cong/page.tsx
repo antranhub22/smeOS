@@ -2,7 +2,7 @@
 
 import { useI18n } from "@/lib/i18n"
 import Link from "next/link"
-import { CheckCircle2, Clock, Mail } from "lucide-react"
+import { CheckCircle2, Clock, Mail } from "@/components/ui/icons"
 
 
 /**

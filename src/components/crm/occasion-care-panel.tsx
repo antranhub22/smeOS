@@ -10,7 +10,7 @@ import {
   Gift,
   ChevronDown,
   ChevronUp,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { OccasionReminder } from "@/modules/crm/domain/customer-master-index"

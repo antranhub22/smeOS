@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertTriangle, Check, FileSpreadsheet, Image as ImageIcon, RefreshCw } from "lucide-react"
+import { AlertTriangle, Check, FileSpreadsheet, Image as ImageIcon, RefreshCw } from "@/components/ui/icons"
 import { parseDriveLink, type ParsedProductRow } from "./types"
 import { priceLabel, summarizePricing } from "@/modules/products/domain/product-pricing"
 import type { DriveThumbState } from "./use-drive-thumbs"

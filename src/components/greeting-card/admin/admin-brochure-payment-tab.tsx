@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { RefreshCw, Settings, ShieldCheck, Search, X } from "lucide-react"
+import { RefreshCw, Settings, ShieldCheck, Search, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi, usePagedList } from "@/components/greeting-card/greeting-api"
 import { parsePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"

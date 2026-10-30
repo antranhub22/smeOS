@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sliders } from "lucide-react"
+import { Sliders } from "@/components/ui/icons"
 import type { EnabledSectionsConfig } from "./landing-campaign-preview"
 
 interface CampaignSectionTogglesProps {

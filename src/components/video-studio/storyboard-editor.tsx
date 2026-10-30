@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Clock, Plus, Trash2, AlertTriangle, Sparkles, Check, Image as ImageIcon } from "lucide-react";
+import { Clock, Plus, Trash2, AlertTriangle, Sparkles, Check, Image as ImageIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

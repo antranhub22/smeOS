@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { UserCheck, Truck, Image as ImageIcon, Camera, PackageX, Shuffle } from "lucide-react"
+import { UserCheck, Truck, Image as ImageIcon, Camera, PackageX, Shuffle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { CoordinatorAction } from "@/modules/greeting-card/domain/brochure-commerce-rules"
 import type { BrochurePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"

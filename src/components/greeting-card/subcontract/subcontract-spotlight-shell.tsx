@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useMemo, useState } from "react"
-import { Sparkles, ShieldCheck } from "lucide-react"
+import { Sparkles, ShieldCheck } from "@/components/ui/icons"
 import {
   SubcontractSpotlightStepper,
   type SubcontractStepId,

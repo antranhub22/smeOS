@@ -13,7 +13,7 @@
 
 import React, { useCallback, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { BarChart3, Brain, Loader2, MessageCircle, Plus, Rocket, Save, Target, Trash2 } from "lucide-react"
+import { BarChart3, Brain, Loader2, MessageCircle, Plus, Rocket, Save, Target, Trash2 } from "@/components/ui/icons"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

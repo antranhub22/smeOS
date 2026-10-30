@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import type { Route } from "next"
-import { AlertTriangle, Check, Loader2 } from "lucide-react"
+import { AlertTriangle, Check, Loader2 } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { useSession } from "@/lib/session"
 import {

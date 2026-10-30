@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import type { CalendarDay, TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"

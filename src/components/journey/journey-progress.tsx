@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Check, Lock, AlertCircle, Loader2 } from "lucide-react"
+import { Check, Lock, AlertCircle, Loader2 } from "@/components/ui/icons"
 import type { JourneyStepStatus } from "@/modules/journey/domain/journey-model"
 
 interface StepItem {

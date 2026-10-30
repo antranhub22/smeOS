@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react"
 import Image from "next/image"
-import { Camera, CheckCircle2, Image as ImageIcon, Loader2, RefreshCw } from "lucide-react"
+import { Camera, CheckCircle2, Image as ImageIcon, Loader2, RefreshCw } from "@/components/ui/icons"
 
 interface PaymentProofUploaderProps {
   sendCode: string

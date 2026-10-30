@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Play, Check, ChevronRight, X } from "lucide-react"
+import { Play, Check, ChevronRight, X } from "@/components/ui/icons"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 
 interface WorkflowPreviewProps {

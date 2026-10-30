@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Heart, Award, Tag, Sparkles } from "lucide-react"
+import { Heart, Award, Tag, Sparkles } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { useI18n } from "@/lib/i18n"
 

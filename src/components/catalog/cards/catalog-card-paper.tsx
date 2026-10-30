@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { MessageCircle } from "lucide-react"
+import { MessageCircle } from "@/components/ui/icons"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { SmartFlowerImage } from "../smart-flower-image"

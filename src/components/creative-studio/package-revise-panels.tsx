@@ -8,7 +8,7 @@
  */
 
 import { useState } from "react"
-import { Loader2, Mic, Wand2 } from "lucide-react"
+import { Loader2, Mic, Wand2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 import type { ScenePlanScene } from "@/modules/creative-production/domain/scene-plan-rules"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Search, SlidersHorizontal, Sparkles } from "lucide-react"
+import { Search, SlidersHorizontal, Sparkles } from "@/components/ui/icons"
 import {
   countByStatus,
   STATUS_DISPLAY,
@@ -14,6 +14,7 @@ import {
 } from "@/modules/toolkit/domain/growth-modules"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
+import { InfoTip } from "@/components/ui/info-tip"
 import { UserMenu } from "@/components/layout/user-menu"
 import { ModuleGrid } from "./toolkit-module-grid"
 import { ModuleDetail } from "./toolkit-module-detail"
@@ -112,7 +113,7 @@ export function ToolkitHome() {
   )
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-6 md:py-8 space-y-6">
+    <div className="w-full max-w-7xl mx-auto px-4 py-6 md:py-10 space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
@@ -120,16 +121,18 @@ export function ToolkitHome() {
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
             <span>{dict.toolkit.header.badge}</span>
           </div>
-          <h1 className="text-display font-extrabold text-text tracking-tight">
-            {isDev
-              ? dict.toolkit.header.titleDev
-              : dict.toolkit.header.titleProd}
-          </h1>
-          <p className="text-body text-text-muted mt-1">
-            {isDev
-              ? dict.toolkit.header.descDev
-              : dict.toolkit.header.descProd}
-          </p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-display font-extrabold text-text tracking-tight">
+              {isDev
+                ? dict.toolkit.header.titleDev
+                : dict.toolkit.header.titleProd}
+            </h1>
+            <InfoTip label={isDev ? dict.toolkit.header.titleDev : dict.toolkit.header.titleProd} side="bottom">
+              {isDev
+                ? dict.toolkit.header.descDev
+                : dict.toolkit.header.descProd}
+            </InfoTip>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 self-start md:self-auto">

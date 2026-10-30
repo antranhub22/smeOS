@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { ShieldAlert, RefreshCw } from "lucide-react"
+import { ShieldAlert, RefreshCw } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { SlaMonitorPanel, type SlaMonitorOrder } from "./sla-monitor-panel"

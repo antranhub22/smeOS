@@ -72,8 +72,11 @@ describe("journey-catalog domain", () => {
     const scanFashion = fashionJourneys.find((j) => j.id === "analyze-product-photo")
     const orderFashion = fashionJourneys.find((j) => j.id === "create-order")
 
-    expect(hubFashion?.goal).toBe("Thẻ chào & Bộ sưu tập Lookbook")
-    expect(scanFashion?.goal).toBe("Tạo mẫu thiết kế lookbook từ ảnh chụp")
+    // Tên việc ngắn, chung mọi ngành; thuật ngữ ngành nằm ở mô tả (OPERATING_PRINCIPLES §6)
+    expect(hubFashion?.goal).toBe("Thẻ chào sản phẩm")
+    expect(hubFashion?.description).toContain("bộ sưu tập lookbook")
+    expect(scanFashion?.goal).toBe("Sản phẩm từ ảnh")
+    expect(scanFashion?.steps[0]?.description).toContain("mẫu thiết kế lookbook")
     expect(orderFashion?.description).toContain("thợ may / kỹ thuật cắt")
 
     // Ngành Mặc định (FLORAL)

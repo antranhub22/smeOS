@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Flower2 } from "lucide-react"
+import { Flower2 } from "@/components/ui/icons"
 import type { CatalogPageModel, StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { formatCurrency } from "@/lib/i18n/formatters"
 

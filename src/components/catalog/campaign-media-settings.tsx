@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef } from "react"
-import { Image as ImageIcon, Video, UploadCloud, Trash2, CheckCircle2, Film } from "lucide-react"
+import { Image as ImageIcon, Video, UploadCloud, Trash2, CheckCircle2, Film } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import type { CatalogProduct } from "./catalog-management-tab"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { BarChart3 } from "lucide-react"
+import { BarChart3 } from "@/components/ui/icons"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import type { SaleFunnelRow } from "@/modules/greeting-card/domain/sales-funnel"
 

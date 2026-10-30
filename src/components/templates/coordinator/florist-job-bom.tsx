@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Layers } from "lucide-react"
+import { Layers } from "@/components/ui/icons"
 import type { FlowerBomItem, FoliageBomItem, WrappingLayer, AccessoryBomItem } from "@/modules/products/domain/product-master-index"
 
 export function formatAddress(addr: unknown): string {

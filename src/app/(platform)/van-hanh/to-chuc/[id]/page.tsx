@@ -6,7 +6,7 @@ import { useI18n } from "@/lib/i18n"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { Building2, Store, Clock, CheckCircle2 } from "lucide-react"
+import { Building2, Store, Clock, CheckCircle2 } from "@/components/ui/icons"
 import { formatDateTime } from "@/lib/i18n/formatters"
 
 type PlatformOrganizationDetail = {

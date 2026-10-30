@@ -11,7 +11,7 @@ import {
   TrendingUp,
   Search,
   Camera,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import {
   FeatureKey,
   SettingsScheduleTab,

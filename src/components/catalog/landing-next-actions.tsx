@@ -9,7 +9,7 @@ import {
   Share2,
   PlusCircle,
   Sparkles,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 interface LandingNextActionsProps {

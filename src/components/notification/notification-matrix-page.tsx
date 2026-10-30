@@ -18,7 +18,7 @@ import {
   Sparkles,
   AlertTriangle,
   RefreshCw,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { NotificationMatrixGroupTable } from "./notification-matrix-group-table"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef } from "react"
-import { ImageDown, Loader2, Check } from "lucide-react"
+import { ImageDown, Loader2, Check } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { toPng } from "html-to-image"
 import type {

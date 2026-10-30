@@ -13,7 +13,7 @@ import {
   Sparkles,
   Music,
   CheckCircle2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { MultichannelPostItem } from "./multichannel-post-card"
 import { LinkedInPreview } from "./linkedin-post-preview"
 import { useI18n } from "@/lib/i18n"

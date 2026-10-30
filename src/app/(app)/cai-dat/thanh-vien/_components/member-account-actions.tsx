@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { KeyRound, Lock, Trash2, Unlock } from "lucide-react"
+import { KeyRound, Lock, Trash2, Unlock } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { TemporaryPasswordNotice } from "./temporary-password-notice"

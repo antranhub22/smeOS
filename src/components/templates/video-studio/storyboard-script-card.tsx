@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Film, Clock, Music, Copy } from "lucide-react"
+import { Film, Clock, Music, Copy } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

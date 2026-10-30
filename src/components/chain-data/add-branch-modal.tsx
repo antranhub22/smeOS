@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Store, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Store, AlertCircle, CheckCircle2 } from "@/components/ui/icons"
 
 interface AddBranchModalProps {
   readonly isOpen: boolean

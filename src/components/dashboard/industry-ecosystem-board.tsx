@@ -11,7 +11,7 @@ import {
   Printer,
   SlidersHorizontal,
   PlusCircle,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { INDUSTRY_REGISTRY } from "@/modules/organization/domain/industries"
 import { Badge } from "@/components/ui/badge"
 

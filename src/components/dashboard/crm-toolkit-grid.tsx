@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import type { Route } from "next"
-import { Users, MessageSquare, ShoppingBag, Gift } from "lucide-react"
+import { Users, MessageSquare, ShoppingBag, Gift } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 
 export function CrmToolkitGrid() {

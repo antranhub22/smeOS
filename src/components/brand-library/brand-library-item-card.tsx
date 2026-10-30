@@ -1,6 +1,6 @@
 "use client"
 
-import { Download, History, Share2 } from "lucide-react"
+import { Download, History, Share2 } from "@/components/ui/icons"
 import { CATEGORY_LABEL, isFileCategory, parseColorList, type BrandLibraryItemView } from "@/modules/profiles/domain/brand-library"
 
 function Preview({ item }: { item: BrandLibraryItemView }) {

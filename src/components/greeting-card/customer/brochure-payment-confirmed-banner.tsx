@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, ArrowRight } from "lucide-react"
+import { CheckCircle2, ArrowRight } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, Check, Gift, ShieldCheck, FileText } from "lucide-react"
+import { ArrowLeft, Check, Gift, ShieldCheck, FileText } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
 import type { CustomerOrderSubmitInput, ProductSnapshot } from "@/modules/greeting-card/domain/greeting-card-types"

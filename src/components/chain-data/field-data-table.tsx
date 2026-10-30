@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { Copy, Check, Lock, ShieldCheck } from "lucide-react"
+import { Copy, Check, Lock, ShieldCheck } from "@/components/ui/icons"
 import type { StoreFieldRecord } from "@/modules/field-platform/use-cases/get-store-folder-data"
 
 interface FieldDataTableProps {

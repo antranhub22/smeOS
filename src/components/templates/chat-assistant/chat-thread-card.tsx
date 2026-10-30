@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Bot, User, Send, Sparkles } from "lucide-react"
+import { Bot, User, Send, Sparkles } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

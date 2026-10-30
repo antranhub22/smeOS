@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, AlertTriangle, FlaskConical, Lightbulb, Sparkles } from "lucide-react";
+import { CheckCircle2, AlertTriangle, FlaskConical, Lightbulb, Sparkles } from "@/components/ui/icons";
 import type { ProductImprovement } from "@/modules/market-intelligence/domain/product-intelligence-types";
 
 interface ProductImprovementCardProps {

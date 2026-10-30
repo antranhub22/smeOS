@@ -24,7 +24,7 @@ import {
   ShieldCheck,
   ChevronRight,
   Trash2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

@@ -10,7 +10,7 @@ import {
   Search,
   Camera,
   Settings,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card";
 import { CustomResearchModal } from "@/components/market-intelligence/custom-research-modal";
 import { MarketIntelligenceView } from "@/components/market-intelligence/market-intelligence-view";

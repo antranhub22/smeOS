@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Layers, ChevronDown, Check } from "lucide-react"
+import { Layers, ChevronDown, Check } from "@/components/ui/icons"
 import { IMAGE_SET_BUNDLES } from "@/modules/product-image-set/domain/bundle-catalog"
 
 export interface BundleSelectorProps {

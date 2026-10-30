@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckCircle2, Eye } from "lucide-react"
+import { CheckCircle2, Eye } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { EmptyState } from "@/components/ui/empty-state"

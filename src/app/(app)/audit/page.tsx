@@ -11,7 +11,7 @@ import {
   Eye,
   Calendar,
   FileCode,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

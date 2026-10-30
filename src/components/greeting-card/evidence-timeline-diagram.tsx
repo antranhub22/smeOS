@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { CheckCircle2, Clock, Copy, Check, ShieldCheck, Printer } from "lucide-react"
+import { CheckCircle2, Clock, Copy, Check, ShieldCheck, Printer } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { OrderEvidencePrint } from "./order-evidence-print"

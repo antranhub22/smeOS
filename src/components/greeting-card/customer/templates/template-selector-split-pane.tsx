@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useCallback, useRef } from "react"
-import { Check, ChevronLeft, ChevronRight, Layers, Settings2, Sparkles } from "lucide-react"
+import { Check, ChevronLeft, ChevronRight, Layers, Settings2, Sparkles } from "@/components/ui/icons"
 import { enabledFieldsFor, type DisplaySettings, type OptionalDisplayField } from "@/modules/greeting-card/domain/display-fields"
 import {
   GreetingTemplateId,

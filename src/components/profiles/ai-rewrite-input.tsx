@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, Loader2, Check, ArrowRight, Wand2 } from "lucide-react"
+import { Sparkles, Loader2, Check, ArrowRight, Wand2 } from "@/components/ui/icons"
 
 export interface AiRewriteInputProps {
   value: string

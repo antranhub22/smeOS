@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BadgePercent, FileSpreadsheet, Ticket } from "lucide-react"
+import { BadgePercent, FileSpreadsheet, Ticket } from "@/components/ui/icons"
 
 const LINKS = [
   { key: "uu-dai", href: "/uu-dai", label: "Chương trình ưu đãi", icon: BadgePercent },

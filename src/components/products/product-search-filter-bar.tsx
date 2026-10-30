@@ -11,7 +11,7 @@ import {
   CircleDollarSign,
   RotateCcw,
   SlidersHorizontal,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import {
   OCCASIONS,
   PRICE_RANGES,

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { BookOpen, Plus, RefreshCw, Loader2 } from "lucide-react"
+import { BookOpen, Plus, RefreshCw, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { BrochurePreviewModal } from "@/components/greeting-card/customer/brochure-preview-modal"

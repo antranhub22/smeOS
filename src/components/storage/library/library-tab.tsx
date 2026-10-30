@@ -3,7 +3,7 @@
 import type { Route } from "next"
 import Link from "next/link"
 import { useCallback, useEffect, useState } from "react"
-import { AlertCircle, ExternalLink, FileText, Music, Search, Trash2 } from "lucide-react"
+import { AlertCircle, ExternalLink, FileText, Music, Search, Trash2 } from "@/components/ui/icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

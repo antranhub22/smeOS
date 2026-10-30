@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Hourglass } from "lucide-react"
+import { Hourglass } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
   LINK_LIFETIME_SETTINGS_KEY, MAX_LINK_LIFETIME_HOURS, MIN_LINK_LIFETIME_HOURS,

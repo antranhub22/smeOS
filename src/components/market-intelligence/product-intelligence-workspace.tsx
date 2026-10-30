@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, CheckCircle2, ArrowRight, Layers, Flame, Video, AlertCircle } from "lucide-react";
+import { Sparkles, CheckCircle2, ArrowRight, Layers, Flame, Video, AlertCircle } from "@/components/ui/icons";
 import { ProductUploadCard } from "./product-upload-card";
 import { ProductConfirmationCard } from "./product-confirmation-card";
 import { CommercialPassportCard } from "./commercial-passport-card";

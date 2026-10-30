@@ -18,7 +18,7 @@ import React, { useRef, useState } from "react"
 import {
   Camera, Truck, CheckCircle2, Clock, AlertTriangle,
   Upload, UserCheck, PackageCheck, ChevronDown, ChevronUp,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { readApiError } from "@/components/greeting-card/api-error"
 

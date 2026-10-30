@@ -5,7 +5,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { KeyRound, LogOut, ShieldCheck, UserRound } from "lucide-react"
+import { KeyRound, LogOut, ShieldCheck, UserRound } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"

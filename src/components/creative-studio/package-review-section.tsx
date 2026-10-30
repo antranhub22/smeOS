@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useState } from "react"
-import { Check, CheckCircle2, Film, Headphones, ImageIcon, Loader2, RefreshCw, ShieldCheck, Wand2 } from "lucide-react"
+import { Check, CheckCircle2, Film, Headphones, ImageIcon, Loader2, RefreshCw, ShieldCheck, Wand2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { CampaignPackageDto } from "./package-client"

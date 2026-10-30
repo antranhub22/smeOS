@@ -10,7 +10,7 @@ import {
   Clock,
   ChevronRight,
   Filter,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import {
   type MarketTimeframeKey,
   type TimeframeDistribution,

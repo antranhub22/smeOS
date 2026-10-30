@@ -3,7 +3,7 @@
 import { parsePricing, priceLabel, summarizePricing } from "@/modules/products/domain/product-pricing"
 import React from "react"
 import Link from "next/link"
-import { Trash2 } from "lucide-react"
+import { Trash2 } from "@/components/ui/icons"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { readProposal, type ProposalStatus } from "@/modules/products/domain/product-proposal"
 import { formatCurrency } from "@/lib/i18n/formatters"

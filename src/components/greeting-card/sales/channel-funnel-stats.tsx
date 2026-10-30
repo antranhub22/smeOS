@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Share2 } from "lucide-react"
+import { Share2 } from "@/components/ui/icons"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import type { ChannelFunnelRow } from "@/modules/greeting-card/domain/catalog-channel"
 import { useI18n } from "@/lib/i18n"

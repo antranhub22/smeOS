@@ -12,7 +12,7 @@ import {
   Loader2,
   CheckCircle2,
   Lock,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {

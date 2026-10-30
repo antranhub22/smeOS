@@ -21,7 +21,7 @@ import {
   BarChart3,
   TrendingUp,
   type LucideIcon,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { FEATURES, TRIAL_LIMIT, STATUS_META, type ModuleStatus } from "@/lib/mock-data"
 import { Card } from "@/components/ui/card"

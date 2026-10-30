@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Radio, RefreshCw, Plus, LayoutDashboard, Sparkles } from "lucide-react"
+import { Radio, RefreshCw, Plus, LayoutDashboard, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ControlTowerDashboard } from "@/components/coordinator/control-tower-dashboard"
 import { CoordinatorReminderBar } from "@/components/coordinator/coordinator-reminder-bar"

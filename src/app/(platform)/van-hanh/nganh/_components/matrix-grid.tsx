@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, X, RotateCcw, CheckSquare, Square } from "lucide-react"
+import { Check, X, RotateCcw, CheckSquare, Square } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 import type { MatrixIndustry, MatrixNavItem, MatrixGroup } from "../_lib/types"
 

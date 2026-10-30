@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef } from "react"
-import { Check, Download, FileCheck, FileSpreadsheet, FolderUp, ShieldCheck } from "lucide-react"
+import { Check, Download, FileCheck, FileSpreadsheet, FolderUp, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 

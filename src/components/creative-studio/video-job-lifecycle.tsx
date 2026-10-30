@@ -10,7 +10,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { CheckCircle2, Clapperboard, Download, Loader2, RotateCcw, ShieldCheck } from "lucide-react"
+import { CheckCircle2, Clapperboard, Download, Loader2, RotateCcw, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

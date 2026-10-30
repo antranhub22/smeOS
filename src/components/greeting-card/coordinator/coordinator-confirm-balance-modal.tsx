@@ -4,7 +4,7 @@ import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import Image from "next/image"
-import { Banknote, CheckCircle2 } from "lucide-react"
+import { Banknote, CheckCircle2 } from "@/components/ui/icons"
 
 interface CoordinatorConfirmBalanceModalProps {
   orderId: string

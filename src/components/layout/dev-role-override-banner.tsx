@@ -12,7 +12,7 @@
 
 import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronDown, FlaskConical, X } from "lucide-react"
+import { ChevronDown, FlaskConical, X } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
 

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Camera, Sparkles, Image as ImageIcon, ZoomIn, X } from "lucide-react"
+import { Camera, Sparkles, Image as ImageIcon, ZoomIn, X } from "@/components/ui/icons"
 import { SmartFlowerImage } from "../smart-flower-image"
 
 const GALLERY_SLOT_COUNT = 6

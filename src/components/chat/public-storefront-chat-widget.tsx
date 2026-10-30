@@ -11,7 +11,7 @@ import {
   Loader2,
   Bot,
   ArrowRight,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { SuggestedProductCard } from "@/modules/chat-assistant/domain/chat-types"
 import {

@@ -7,7 +7,7 @@
 "use client"
 
 import { useState } from "react"
-import { Lock, Unlock, Loader2 } from "lucide-react"
+import { Lock, Unlock, Loader2 } from "@/components/ui/icons"
 import type { MatrixCellState } from "./notification-matrix-types"
 import { TIER_LABELS } from "./notification-matrix-types"
 

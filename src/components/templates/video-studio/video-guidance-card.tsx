@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Video } from "lucide-react"
+import { Video } from "@/components/ui/icons"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 
 export function VideoGuidanceCard() {

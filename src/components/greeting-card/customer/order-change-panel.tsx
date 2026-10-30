@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { BellRing, Clock, History, PencilLine } from "lucide-react"
+import { BellRing, Clock, History, PencilLine } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import type { ChangeItem, ChangeStatus, OrderChangeSnapshot } from "@/modules/greeting-card/domain/order-change-request"

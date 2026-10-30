@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Trash2, Calendar, User, Wrench, ChevronLeft, ChevronRight } from "lucide-react"
+import { Plus, Trash2, Calendar, User, Wrench, ChevronLeft, ChevronRight } from "@/components/ui/icons"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 import { ManualBlockModal } from "./manual-block-modal"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Type, Sparkles, ShieldAlert, Check, MessageSquareQuote, CheckCircle2 } from "lucide-react"
+import { Type, Sparkles, ShieldAlert, Check, MessageSquareQuote, CheckCircle2 } from "@/components/ui/icons"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/infra/brand-profile-repository"
 import { isValidHexColor } from "@/modules/profiles/domain/profile-rules"

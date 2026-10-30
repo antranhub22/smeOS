@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Check } from "lucide-react"
+import { Check } from "@/components/ui/icons"
 import type { PresetDefinition, UiPresetId } from "@/lib/ui-system/types"
 
 interface UiStudioPresetListProps {

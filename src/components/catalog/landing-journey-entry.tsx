@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, SlidersHorizontal, ArrowRight } from "lucide-react"
+import { Sparkles, SlidersHorizontal, ArrowRight } from "@/components/ui/icons"
 
 export type LandingExecutionMode = "autonomous" | "guided"
 

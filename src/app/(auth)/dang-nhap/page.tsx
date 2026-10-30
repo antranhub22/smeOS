@@ -9,7 +9,7 @@
 import { useI18n } from "@/lib/i18n"
 import { Suspense, useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
-import { Zap } from "lucide-react"
+import { Zap } from "@/components/ui/icons"
 import { LoginForm } from "./components/login-form"
 import { SignupForm } from "./components/signup-form"
 import { InstantTrialForm } from "./components/instant-trial-form"

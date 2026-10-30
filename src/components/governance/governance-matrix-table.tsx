@@ -8,7 +8,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Lock, AlertTriangle, RefreshCw } from "lucide-react"
+import { Search, Lock, AlertTriangle, RefreshCw } from "@/components/ui/icons"
 import type { GovernanceMatrixState, GovernanceViewerTier } from "./governance-matrix-types"
 import { GovernanceMatrixCell } from "./governance-matrix-cell"
 

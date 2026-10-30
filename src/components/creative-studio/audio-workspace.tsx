@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useContext, useEffect, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Headphones, Send, Loader2, CheckCircle2, AlertCircle, Music, Mic, Volume2 } from "lucide-react"
+import { Headphones, Send, Loader2, CheckCircle2, AlertCircle, Music, Mic, Volume2 } from "@/components/ui/icons"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

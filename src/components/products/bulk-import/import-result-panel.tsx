@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertTriangle, CheckCircle2 } from "lucide-react"
+import { AlertTriangle, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { ImportResult } from "./types"
 import { RecentImportBatches } from "./recent-import-batches"

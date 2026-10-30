@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Check, Sparkles, Zap, ShieldCheck } from "lucide-react"
+import { Check, Sparkles, Zap, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { PendingApprovalNotice } from "./pending-approval-notice"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"

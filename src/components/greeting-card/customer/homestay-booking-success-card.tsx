@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, Calendar, MapPin, Phone, Clock, User, ShieldCheck, Home } from "lucide-react"
+import { CheckCircle2, Calendar, MapPin, Phone, Clock, User, ShieldCheck, Home } from "@/components/ui/icons"
 import { formatCompactVnd } from "@/modules/greeting-card/domain/customer-order-slip"
 
 export interface HomestayBookingSuccessCardProps {

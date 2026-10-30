@@ -3,7 +3,7 @@
 import React from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Store, ChevronRight, MapPin, Database, Sparkles, CheckCircle2 } from "lucide-react"
+import { Store, ChevronRight, MapPin, Database, Sparkles, CheckCircle2 } from "@/components/ui/icons"
 import type { ChainStoreSummary } from "@/modules/field-platform/use-cases/get-chain-stores-data"
 
 interface StoreCardProps {

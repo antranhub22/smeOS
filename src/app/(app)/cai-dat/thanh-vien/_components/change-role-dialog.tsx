@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, type FormEvent } from "react"
-import { ShieldCheck, AlertTriangle, Trash2 } from "lucide-react"
+import { ShieldCheck, AlertTriangle, Trash2 } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import type { RoleOption } from "./invite-member-dialog"

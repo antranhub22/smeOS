@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useCallback, useContext, useEffect } from "react"
-import { Sparkles, Wand2, FileText, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
+import { Sparkles, Wand2, FileText, Send, Loader2, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { useRouter, useSearchParams } from "next/navigation"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"
 import { CreativeResultViewer, type CreativeResultViewerProps } from "./creative-result-viewer"

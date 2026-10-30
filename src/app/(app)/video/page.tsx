@@ -11,7 +11,7 @@ import {
   RotateCcw,
   Check,
   ChevronLeft,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Clock } from "lucide-react"
+import { Clock } from "@/components/ui/icons"
 
 function remaining(until: string): number {
   return Math.max(0, Date.parse(until) - Date.now())

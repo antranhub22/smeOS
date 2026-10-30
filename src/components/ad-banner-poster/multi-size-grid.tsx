@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Eye, Download, Printer, Loader2, Sparkles } from "lucide-react"
+import { Eye, Download, Printer, Loader2, Sparkles } from "@/components/ui/icons"
 import {
   BANNER_FORMATS,
   type BannerAspectRatio,

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle, Loader2, X, DollarSign } from "lucide-react"
+import { AlertTriangle, Loader2, X, DollarSign } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import {

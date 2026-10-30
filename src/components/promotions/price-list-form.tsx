@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "@/components/ui/icons"
 
 import { ActiveSwitch } from "@/components/promotions/active-switch"
 import { Button } from "@/components/ui/button"

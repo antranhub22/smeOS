@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Layers, ShieldCheck } from "lucide-react"
+import { Layers, ShieldCheck } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { getDesignFieldsConfig } from "./create-product-types"
 import { MultiSelectDropdown } from "./multi-select-dropdown"

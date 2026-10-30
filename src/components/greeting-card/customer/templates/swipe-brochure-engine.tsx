@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { ChevronLeft, ChevronRight, Heart, Info } from "lucide-react"
+import { ChevronLeft, ChevronRight, Heart, Info } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { EnterpriseSpecSheet } from "./enterprise-spec-sheet"
 import { SwipeCard } from "./swipe/swipe-card"

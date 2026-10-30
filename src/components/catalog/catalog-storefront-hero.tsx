@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles } from "lucide-react"
+import { Sparkles } from "@/components/ui/icons"
 import type { StyleDefinition, CatalogTemplatePrototype } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 
 interface CatalogStorefrontHeroProps {

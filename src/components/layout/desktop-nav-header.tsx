@@ -6,7 +6,7 @@
  * và dải gradient nhẹ để người dùng nhận biết ngay mình đang ở tầng nào.
  */
 
-import { Sparkles, PanelLeftClose, PanelLeftOpen, X } from "lucide-react"
+import { Sparkles, PanelLeftClose, PanelLeftOpen, X } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"

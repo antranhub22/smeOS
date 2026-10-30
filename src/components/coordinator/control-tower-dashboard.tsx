@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useCallback, useEffect, useState } from "react"
-import { Radio, Search, CheckCircle2, AlertTriangle, AlertCircle, X, Plus, RefreshCw, Ban, Wallet } from "lucide-react"
+import { Radio, Search, CheckCircle2, AlertTriangle, AlertCircle, X, Plus, RefreshCw, Ban, Wallet } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"

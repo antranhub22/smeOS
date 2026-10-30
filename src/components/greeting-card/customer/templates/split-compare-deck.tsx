@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowLeftRight } from "lucide-react"
+import { ArrowLeftRight } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { AuxPage, EmptyCatalog, ProductImage } from "./aux/aux-kit"
 import { comparisonRows } from "./product-info/product-display"

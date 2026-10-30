@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useMemo } from "react"
-import { Sparkles, Check } from "lucide-react"
+import { Sparkles, Check } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ProductThumb } from "@/components/products/product-thumb"

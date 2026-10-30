@@ -10,7 +10,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { Monitor, ChevronDown, Check, FlaskConical } from "lucide-react"
+import { Monitor, ChevronDown, Check, FlaskConical } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"

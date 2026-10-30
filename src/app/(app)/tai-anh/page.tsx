@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Camera, ChevronRight, Check, AlertTriangle, Sparkles, ArrowLeft, X, Upload, Image as ImageIcon, FileText, Folder, Info } from "lucide-react"
+import { Camera, ChevronRight, Check, AlertTriangle, Sparkles, ArrowLeft, X, Upload, Image as ImageIcon, FileText, Folder, Info } from "@/components/ui/icons"
 import { type ResultField, type ResultFieldItem, type ResultImage, type JudgmentState } from "@/components/result/result-card"
 import { mapAnalysisFromSchema } from "@/modules/products/domain/analysis-schema-mapper"
 import { SalesPitchCard } from "@/components/sales/sales-pitch-card"

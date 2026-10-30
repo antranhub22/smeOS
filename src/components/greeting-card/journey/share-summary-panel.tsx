@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, CheckCircle2, Circle, Copy, CopyPlus, Eye, Link as LinkIcon } from "lucide-react"
+import { Check, CheckCircle2, Circle, Copy, CopyPlus, Eye, Link as LinkIcon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 import { useJourneyFocus } from "./journey-focus-context"

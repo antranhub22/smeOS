@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Calendar, Clock, CheckCircle2, AlertCircle, Sparkles, Filter, ArrowRight, Send, RefreshCw } from "lucide-react"
+import { Calendar, Clock, CheckCircle2, AlertCircle, Sparkles, Filter, ArrowRight, Send, RefreshCw } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

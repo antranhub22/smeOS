@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Settings2, Clock, Check, RefreshCw, X, ShieldAlert } from "lucide-react"
+import { Settings2, Clock, Check, RefreshCw, X, ShieldAlert } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { DispatchReminderPolicyConfig } from "@/modules/coordinator/domain/dispatch-reminder-types"
 

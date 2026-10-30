@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowLeft, Loader2, Send } from "lucide-react"
+import { ArrowLeft, Loader2, Send } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { InlineError } from "@/components/ui/inline-error"
 import { LINK_LIFETIME_HINT } from "@/components/greeting-card/sales/sales-types"

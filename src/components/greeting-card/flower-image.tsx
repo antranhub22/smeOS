@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Image from "next/image"
-import { Flower2 } from "lucide-react"
+import { Flower2 } from "@/components/ui/icons"
 import { driveThumbProxySrc } from "./drive-thumb-image"
 
 interface FlowerImageProps {

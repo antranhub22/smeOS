@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef, useEffect } from "react"
-import { ChevronDown, Check, Plus } from "lucide-react"
+import { ChevronDown, Check, Plus } from "@/components/ui/icons"
 
 interface SingleSelectCustomProps {
   options: string[]

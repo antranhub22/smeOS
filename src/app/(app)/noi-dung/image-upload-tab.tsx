@@ -6,7 +6,7 @@
  */
 
 import React, { useRef, useCallback } from "react"
-import { Upload, ImageIcon, Loader2, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react"
+import { Upload, ImageIcon, Loader2, CheckCircle2, AlertCircle, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import type { UploadFlowState } from "./use-image-upload-flow"

@@ -1,4 +1,4 @@
-import { AlertCircle, Ban, CheckCircle2, Clock, Loader2 } from "lucide-react"
+import { AlertCircle, Ban, CheckCircle2, Clock, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"

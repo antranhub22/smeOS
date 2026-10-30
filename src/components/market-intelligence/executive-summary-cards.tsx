@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Flame, TrendingUp, Lightbulb, CalendarDays, Sparkles, LayoutGrid } from "lucide-react";
+import { Flame, TrendingUp, Lightbulb, CalendarDays, Sparkles, LayoutGrid } from "@/components/ui/icons";
 
 export type ExecutiveFilterType = "ALL" | "IMPORTANT" | "RISING" | "TOPICS" | "OCCASIONS";
 

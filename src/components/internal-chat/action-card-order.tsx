@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import type { ActionCardOrderPayload } from "@/modules/internal-chat/domain/chat-entities"
-import { CheckCircle2, XCircle, Clock, MapPin, DollarSign, Package } from "lucide-react"
+import { CheckCircle2, XCircle, Clock, MapPin, DollarSign, Package } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

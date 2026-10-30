@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Trash2, Loader2, Sparkles, Flower2 } from "lucide-react"
+import { Plus, Trash2, Loader2, Sparkles, Flower2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { errorText } from "@/lib/error-text"

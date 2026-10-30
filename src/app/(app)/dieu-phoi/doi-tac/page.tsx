@@ -11,7 +11,7 @@ import {
   MapPin,
   MessageSquare,
   ShieldCheck,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { ChainPartnershipEntity } from "@/modules/chain-partnership/domain/partnership-entities"
 import Link from "next/link"
 import { PartnerToolMatrixModal } from "@/components/organization/partner-tool-matrix-modal"

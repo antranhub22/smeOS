@@ -3,7 +3,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, Save, CheckCircle2, XCircle, AlertCircle, Loader2, RefreshCw } from "lucide-react"
+import { ArrowLeft, Save, CheckCircle2, XCircle, AlertCircle, Loader2, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { XCircle } from "lucide-react"
+import { XCircle } from "@/components/ui/icons"
 
 /**
  * Đơn không hoàn thành: hết hạn thanh toán mà cửa hàng chưa nhận được chuyển khoản và khách chưa

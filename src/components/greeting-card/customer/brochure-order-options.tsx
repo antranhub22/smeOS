@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Minus, Plus, Ticket } from "lucide-react"
+import { Minus, Plus, Ticket } from "@/components/ui/icons"
 import type { ShippingConfig, BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
 import { MAX_ORDER_QUANTITY } from "@/modules/greeting-card/domain/brochure-pricing"
 import type { QuoteSelection } from "./use-brochure-quote"

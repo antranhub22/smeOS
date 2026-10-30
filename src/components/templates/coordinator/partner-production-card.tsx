@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Clock, Printer, CheckCircle2, MessageSquare, Layers } from "lucide-react"
+import { Clock, Printer, CheckCircle2, MessageSquare, Layers } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

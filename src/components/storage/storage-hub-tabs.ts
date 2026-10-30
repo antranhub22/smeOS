@@ -1,5 +1,5 @@
-import { CheckCircle2, ExternalLink, Folder, Layers, Plus, RefreshCw, Trash2 } from "lucide-react"
-import { Clapperboard, FileText, Globe, Images, LayoutGrid, Music, Sparkles, type LucideIcon } from "lucide-react"
+import { CheckCircle2, ExternalLink, Folder, Layers, Plus, RefreshCw, Trash2 } from "@/components/ui/icons"
+import { Clapperboard, FileText, Globe, Images, LayoutGrid, Music, Sparkles, type LucideIcon } from "@/components/ui/icons"
 
 import type { TabAction, TabItem, TabOverflowAction } from "@/components/ui/tab-header"
 import { LIBRARY_OPEN_HREF as OPEN_HREF, type LibraryType } from "@/modules/storage/domain/library"

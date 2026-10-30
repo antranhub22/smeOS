@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Timer } from "lucide-react"
+import { Timer } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { PIPELINE_STEPS, type TrackingPipelineStepId } from "@/modules/greeting-card/domain/tracking-pipeline-types"
 import {

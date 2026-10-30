@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { X, Calendar, AlertCircle, Loader2 } from "lucide-react"
+import { X, Calendar, AlertCircle, Loader2 } from "@/components/ui/icons"
 
 export interface ManualBlockModalProps {
   isOpen: boolean

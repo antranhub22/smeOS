@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Sparkles, Activity, Clock, RefreshCw } from "lucide-react";
+import { Sparkles, Activity, Clock, RefreshCw } from "@/components/ui/icons";
 import {
   ExecutiveSummaryCards,
   type ExecutiveFilterType,

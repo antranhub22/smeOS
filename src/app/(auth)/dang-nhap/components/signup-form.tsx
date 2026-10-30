@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Check, Store, Building2 } from "lucide-react"
+import { Eye, EyeOff, Check, Store, Building2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { PendingApprovalNotice } from "./pending-approval-notice"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"

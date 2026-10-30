@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Gift, UserCheck } from "lucide-react"
+import { Gift, UserCheck } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
 import type { SwipeTheme } from "./swipe-themes"
 

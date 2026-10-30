@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { CheckCircle2, Copy, Trash2 } from "lucide-react"
+import { CheckCircle2, Copy, Trash2 } from "@/components/ui/icons"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 
 interface LinkedChat {

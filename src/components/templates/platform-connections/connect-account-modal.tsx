@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Lock, ShieldCheck, AlertCircle } from "lucide-react"
+import { Lock, ShieldCheck, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 

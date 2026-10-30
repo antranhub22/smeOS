@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, Layers } from "lucide-react"
+import { Sparkles, Layers } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import {
   GreetingTemplateId,

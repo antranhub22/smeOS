@@ -19,7 +19,7 @@ import {
   Image as ImageIcon,
   Camera,
   Eye,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type {
   AccessoryBomItem,

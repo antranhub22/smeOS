@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Lock, Phone, User } from "lucide-react"
+import { Lock, Phone, User } from "@/components/ui/icons"
 
 interface SubcontractRecipientContactProps {
   recipientName?: string | null | undefined

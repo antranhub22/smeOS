@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Info } from "lucide-react"
+import { Eye, EyeOff, Info } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 interface LoginFormProps {

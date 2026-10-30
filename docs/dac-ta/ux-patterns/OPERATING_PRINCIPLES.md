@@ -49,3 +49,17 @@ Làm đủ, đúng thứ tự; báo cáo theo mẫu ở cuối.
 9. **Commit** (Conventional Commits, code + test + tài liệu cùng commit); không tạo PR/merge khi PO chưa cho phép.
 
 Mẫu báo cáo cho PO (tiếng Việt): trang · các trạng thái đã kiểm · findings đã sửa (P0–P3) · kết quả audit lại + gate · phần **chưa** kiểm (bàn phím, zoom, đọc màn hình) · **Cần PO quyết**.
+
+## 6. Phong cách hiển thị "Thoáng – Ít chữ – Icon lớn" (PO duyệt 30/10/2026, mẫu chuẩn `/cong-cu`)
+Áp dụng cho màn tổng quan, lưới thẻ, trang chủ công cụ; không thay §1–§3 (khi lệch, §1–§3 thắng).
+1. **Nhãn ≤ 5 từ** (tiêu đề thẻ, nút, chỉ số). Câu giải thích, mục đích, cách tính → đưa vào `InfoTip` (`src/components/ui/info-tip.tsx`, icon "?" cạnh nhãn). **Ngoại lệ:** lỗi, chi phí, điều kiện, rủi ro, quyền vẫn phải hiện trực tiếp (UX-017) — không giấu vào "?".
+2. **Icon lớn làm điểm nhìn**: thẻ điều hướng dùng ô icon 64px trên máy tính, 48px trên điện thoại (`w-12 h-12 sm:w-16 sm:h-16`) trên nền `bg-primary-muted`; mỗi thẻ đúng 1 icon, cùng một bộ icon (lucide), icon chỉ trang trí thì `aria-hidden`.
+3. **Nổi khối nội dung chính**: nền trang `bg-bg`, khối chính `bg-surface` + `shadow-sm` + `rounded-2xl`; không kẻ viền dày, không nhiều lớp khung lồng nhau. Mỗi màn chỉ 1 khối nhấn mạnh (màu `bg-primary`) cho việc chính L0.
+4. **Khoảng trống**: padding thẻ ≥ 20px (`p-5`, desktop `p-6`), khoảng cách lưới ≥ 16px (desktop 24px), giữa các khu ≥ 32px. Một khu = một ý.
+5. **Tooltip dùng được trên điện thoại**: chạm mở/đóng, vùng bấm ≥ 32px, có nhãn truy cập "Giải thích: …"; không lồng `InfoTip` trong nút — thẻ bấm được dùng nút phủ `after:absolute after:inset-0`.
+6. **Số liệu**: con số to (`text-display`), nhãn nhỏ phía trên, đơn vị rõ; dữ liệu nhạy cảm (số dư, doanh thu) có nút ẩn/hiện.
+7. **Chuẩn thương mại**: mọi thẻ có trạng thái hover/focus nhìn thấy; trạng thái rỗng dùng `EmptyState` (icon lớn + 1 câu + 1 nút); khung xương (`Skeleton`) khi tải; kiểm 390/1280px, cả chế độ màu của ngành.
+8. **Điện thoại**: lưới thẻ 2 cột (`grid-cols-2`), không để một thẻ chiếm gần hết màn hình; nhãn không xuống quá 2 dòng.
+9. **Tên công cụ**: dùng tên ngắn từ `src/modules/toolkit/domain/tool-short-names.ts`; tên đầy đủ đưa vào `InfoTip`. Không hiện nhãn vô nghĩa với khách (vd. "Cả hai") hay mã số (`#01`, "Công cụ 01").
+10. **Đầu trang công cụ**: dùng `ToolHero` (`src/components/ui/tool-hero.tsx`) — icon 64px, tên ≤ 5 từ, giải thích trong "?". Giữ nguyên K1 `FeatureGuidanceCard` và K2 `TabActionHeader`.
+11. **Bộ icon chuẩn: Phosphor** qua `AppIcon`/`IconTile` (`src/components/ui/app-icon.tsx`) — không import icon thư viện khác cho icon mới ở nội dung chính. Kiểu `duotone` (ô nhạt, `variant="soft"`) là mặc định; ô đặc `fill` trắng trên nền màu (`variant="solid"`) **chỉ** cho lưới điều hướng chính và icon đầu trang. Màu nhóm dùng token `--color-tone-*` (10 màu, mỗi bước một màu — `MODULE_TONES`); nơi khác dùng màu chính. Icon nhỏ trong nút/menu/bảng: import từ `@/components/ui/icons` (tên kiểu lucide, vẽ bằng Phosphor; `weight="fill"` cho mục đang chọn). Cấm import `lucide-react` (test `tests/unit/architecture/icon-library.test.ts`). Sidebar: icon 20px, mục đang chọn dùng icon đặc. Trang chủ: `ActionCard` dùng ô đặc theo `toneFor(id)`.

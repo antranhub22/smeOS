@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Sparkles, Activity, Target, Clock, RefreshCw } from "lucide-react";
+import { Sparkles, Activity, Target, Clock, RefreshCw } from "@/components/ui/icons";
 import { DirectResearchPanel } from "./direct-research-panel";
 import { ResearchStatusBanner, type ResearchStatusInfo } from "./research-status-banner";
 import { OpportunityCard, type OpportunityItem } from "./opportunity-card";

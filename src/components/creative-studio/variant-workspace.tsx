@@ -21,7 +21,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   Camera,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"
 import type { PublishRatio } from "@/modules/creative-production/domain/publishing-rules"
 import {

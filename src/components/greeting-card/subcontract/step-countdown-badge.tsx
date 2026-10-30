@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Clock, AlertTriangle } from "lucide-react"
+import { Clock, AlertTriangle } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import type { CountdownState } from "@/modules/greeting-card/domain/subcontract-countdown"
 

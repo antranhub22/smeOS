@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { BarChart3, Copy, Download, Power } from "lucide-react"
+import { BarChart3, Copy, Download, Power } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { triggerDownload } from "@/core/media/qr-engine"

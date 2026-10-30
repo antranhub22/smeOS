@@ -31,7 +31,7 @@ import {
   MessageSquareText,
   ShoppingBag,
   BookOpen,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { toBlob, toPng, toJpeg } from "html-to-image"
 import jsPDF from "jspdf"
 import {

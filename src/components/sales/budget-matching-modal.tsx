@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Search, Sparkles, Copy, Check, TrendingUp, Filter } from "lucide-react"
+import { Search, Sparkles, Copy, Check, TrendingUp, Filter } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

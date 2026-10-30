@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Upload, Image as ImageIcon, Sparkles, Check, Flower2, Library, Loader2, X } from "lucide-react";
+import { Upload, Image as ImageIcon, Sparkles, Check, Flower2, Library, Loader2, X } from "@/components/ui/icons";
 import { useI18n } from "@/lib/i18n/context";
 
 interface ProductUploadCardProps {

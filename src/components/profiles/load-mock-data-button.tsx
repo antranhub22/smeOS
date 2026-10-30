@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Database, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react"
+import { Database, RefreshCw, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 interface LoadMockDataButtonProps {

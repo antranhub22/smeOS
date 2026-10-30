@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { BadgeCheck, Clock, Gift, Truck, Flower2 } from "lucide-react"
+import { BadgeCheck, Clock, Gift, Truck, Flower2 } from "@/components/ui/icons"
 import { TRACKING_STEP_COUNT } from "@/modules/greeting-card/domain/greeting-card-rules"
 import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
 

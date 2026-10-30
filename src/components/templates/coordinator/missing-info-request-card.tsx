@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { HelpCircle, Send, CheckCircle2, AlertTriangle } from "lucide-react"
+import { HelpCircle, Send, CheckCircle2, AlertTriangle } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

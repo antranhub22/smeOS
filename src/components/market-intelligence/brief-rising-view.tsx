@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, Zap, Video, ArrowRight, Tag, Play } from "lucide-react";
+import { TrendingUp, Zap, Video, ArrowRight, Tag, Play } from "@/components/ui/icons";
 import type { OpportunityItem } from "./opportunity-card";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getDualOpportunityEvidencePreview, getOpportunityHeadline } from "./opportunity-illustration";

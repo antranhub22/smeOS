@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

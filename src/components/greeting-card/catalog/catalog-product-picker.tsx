@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Search, Plus, Trash2, Loader2, CheckCircle } from "lucide-react"
+import { Search, Plus, Trash2, Loader2, CheckCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useCatalogItems } from "./use-catalog-items"

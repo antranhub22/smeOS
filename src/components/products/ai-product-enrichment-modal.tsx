@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Sparkles, CheckCircle2, AlertCircle, X, Loader2 } from "lucide-react"
+import { Sparkles, CheckCircle2, AlertCircle, X, Loader2 } from "@/components/ui/icons"
 import { AiProductModalFooter, type SubmitMode } from "./ai-product-modal-footer"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"

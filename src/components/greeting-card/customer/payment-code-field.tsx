@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { CheckCircle2, Wallet } from "lucide-react"
+import { CheckCircle2, Wallet } from "@/components/ui/icons"
 import type { BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
 import { useI18n } from "@/lib/i18n"
 

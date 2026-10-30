@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Send } from "lucide-react"
+import { Send } from "@/components/ui/icons"
 import { BrochureLanguageSettings } from "@/components/greeting-card/admin/brochure-language-settings"
 import { BrochureWorkflowSettings } from "@/components/greeting-card/admin/brochure-workflow-settings"
 import { BrochureStepTimeoutSettings } from "@/components/greeting-card/admin/brochure-step-timeout-settings"

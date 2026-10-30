@@ -8,7 +8,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ShieldCheck,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 import type { TransitionValidationResult, TransitionField } from "@/modules/creative-production/domain/validate-transition"

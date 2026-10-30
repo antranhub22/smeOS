@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ArrowRight, CheckCircle2 } from "lucide-react"
+import { ArrowRight, CheckCircle2 } from "@/components/ui/icons"
 
 export interface NextActionItem {
   id: string

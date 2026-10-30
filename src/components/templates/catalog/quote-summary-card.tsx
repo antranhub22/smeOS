@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Calculator, CheckCircle2 } from "lucide-react"
+import { Calculator, CheckCircle2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useI18n } from "@/lib/i18n"

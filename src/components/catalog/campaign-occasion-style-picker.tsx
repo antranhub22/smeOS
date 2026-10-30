@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Calendar, Palette } from "lucide-react"
+import { Calendar, Palette } from "@/components/ui/icons"
 import { CAMPAIGN_OCCASIONS, CAMPAIGN_ARCHETYPES } from "./landing-campaign-constants"
 
 interface CampaignOccasionStylePickerProps {

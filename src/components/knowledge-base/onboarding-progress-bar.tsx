@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, Circle, Sparkles, ShieldCheck } from "lucide-react"
+import { CheckCircle2, Circle, Sparkles, ShieldCheck } from "@/components/ui/icons"
 
 interface OnboardingStep {
   id: string

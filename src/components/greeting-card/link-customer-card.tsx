@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { useSWRConfig } from "swr"
-import { Clock, Pencil, Phone, Send, User } from "lucide-react"
+import { Clock, Pencil, Phone, Send, User } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { vnDeadlineLabel } from "@/modules/greeting-card/domain/customer-cancellation-notice"

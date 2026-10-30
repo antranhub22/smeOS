@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef } from "react"
-import { UploadCloud, Sparkles, X, Check, Image as ImageIcon, Flower2 } from "lucide-react"
+import { UploadCloud, Sparkles, X, Check, Image as ImageIcon, Flower2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { readApiError } from "@/components/greeting-card/api-error"

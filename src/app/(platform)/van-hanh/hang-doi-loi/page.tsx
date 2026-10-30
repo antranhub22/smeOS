@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"

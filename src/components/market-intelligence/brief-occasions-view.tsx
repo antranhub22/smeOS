@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CalendarDays, Tag, ArrowRight, Sparkles, CheckCircle2, Video, Play } from "lucide-react";
+import { CalendarDays, Tag, ArrowRight, Sparkles, CheckCircle2, Video, Play } from "@/components/ui/icons";
 import type { OpportunityItem } from "./opportunity-card";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getDualOpportunityEvidencePreview, getOpportunityHeadline } from "./opportunity-illustration";

@@ -21,7 +21,7 @@ import {
   Upload,
   Loader2,
   Cloud,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { ResultCard } from "@/components/result/result-card"
 import { FlowSteps } from "@/components/flow/flow-steps"
 import { Button } from "@/components/ui/button"

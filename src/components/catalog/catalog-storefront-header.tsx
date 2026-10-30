@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useMemo } from "react"
-import { Phone, Share2, MapPin, Flower2 } from "lucide-react"
+import { Phone, Share2, MapPin, Flower2 } from "@/components/ui/icons"
 import { CatalogPdfExportButton } from "./studio/catalog-pdf-export-button"
 import type {
   CatalogTemplateId,

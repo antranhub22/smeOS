@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Check, ImageIcon, Loader2 } from "lucide-react"
+import { Check, ImageIcon, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
 

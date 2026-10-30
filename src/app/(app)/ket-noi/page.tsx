@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Share2, RefreshCw, CheckCircle2, AlertCircle, ArrowRight, Calendar } from "lucide-react"
+import { Share2, RefreshCw, CheckCircle2, AlertCircle, ArrowRight, Calendar } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"

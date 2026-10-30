@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { useSWRConfig } from "swr"
-import { RefreshCw, X } from "lucide-react"
+import { RefreshCw, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { MessageThread } from "@/components/greeting-card/inbox/message-thread"

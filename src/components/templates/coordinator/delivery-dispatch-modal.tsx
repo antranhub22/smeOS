@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { X, Truck, CheckCircle2, Upload, PackageCheck, Navigation, AlertOctagon } from "lucide-react"
+import { X, Truck, CheckCircle2, Upload, PackageCheck, Navigation, AlertOctagon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import {
   errorMessage,

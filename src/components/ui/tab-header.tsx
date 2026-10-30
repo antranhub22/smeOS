@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useState, useRef, useEffect } from "react"
-import { MoreHorizontal, Loader2 } from "lucide-react"
+import { MoreHorizontal, Loader2 } from "@/components/ui/icons"
 
 export interface TabItem {
   id: string
   label: string
-  icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>
+  icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number; weight?: "regular" | "fill" }>
   badge?: string | number
   badgeTone?: "neutral" | "success" | "warning" | "danger" | "accent"
   disabled?: boolean
@@ -15,7 +15,7 @@ export interface TabItem {
 export interface TabAction {
   id: string
   label: string
-  icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>
+  icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number; weight?: "regular" | "fill" }>
   variant?: "primary" | "secondary" | "outline" | "danger" | "success"
   onClick: () => void | Promise<void>
   disabled?: boolean
@@ -26,7 +26,7 @@ export interface TabAction {
 export interface TabOverflowAction {
   id: string
   label: string
-  icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>
+  icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number; weight?: "regular" | "fill" }>
   onClick: () => void | Promise<void>
   disabled?: boolean
   destructive?: boolean
@@ -152,7 +152,7 @@ export function TabActionHeader({
                   : "text-text-muted hover:text-text hover:bg-surface/60"
               } ${tab.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-              {Icon && <Icon size={15} strokeWidth={isActive ? 2.2 : 1.8} className={isActive ? "text-primary" : "text-text-muted"} />}
+              {Icon && <Icon size={15} weight={isActive ? "fill" : "regular"} className={isActive ? "text-primary" : "text-text-muted"} />}
               <span>{tab.label}</span>
               {tab.badge !== undefined && (
                 <span

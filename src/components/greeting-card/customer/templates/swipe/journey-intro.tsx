@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Hand, Heart, ShoppingBag } from "lucide-react"
+import { Hand, Heart, ShoppingBag } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
 import { SWIPE_SIGNAL, type SwipeTheme } from "./swipe-themes"
 import { JourneyContactForm } from "./journey-contact-form"

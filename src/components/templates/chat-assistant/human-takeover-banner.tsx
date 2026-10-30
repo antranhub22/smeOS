@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { AlertCircle, UserCheck } from "lucide-react"
+import { AlertCircle, UserCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export interface HumanTakeoverBannerProps {

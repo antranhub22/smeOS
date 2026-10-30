@@ -10,7 +10,7 @@ import {
   ChevronUp,
   Settings2,
   RefreshCw,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useSession } from "@/lib/session"

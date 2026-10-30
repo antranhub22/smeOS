@@ -9,7 +9,7 @@ import {
   Download,
   Maximize2,
   Minimize2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 
 interface ZoomState {
   isOpen: boolean

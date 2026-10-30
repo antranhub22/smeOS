@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, Cpu, TrendingUp } from "lucide-react"
+import { AlertTriangle, Cpu, TrendingUp } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Search, LayoutGrid, BookOpen, List } from "lucide-react"
+import { Search, LayoutGrid, BookOpen, List } from "@/components/ui/icons"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 
 interface CatalogStorefrontToolbarProps {

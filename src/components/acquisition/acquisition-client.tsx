@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useState } from "react"
-import { Plus, QrCode, UserPlus } from "lucide-react"
+import { Plus, QrCode, UserPlus } from "@/components/ui/icons"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { TabActionHeader } from "@/components/ui/tab-header"
 import { LeadsTab } from "./leads-tab"

@@ -3,7 +3,7 @@
 import React from "react"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, CheckCircle2, ShieldAlert, Store, Layers } from "lucide-react"
+import { AlertTriangle, CheckCircle2, ShieldAlert, Store, Layers } from "@/components/ui/icons"
 import type { PreviewChainCollectionProfileResult } from "@/modules/field-platform/use-cases/preview-chain-collection-profile"
 
 interface PreviewModalProps {

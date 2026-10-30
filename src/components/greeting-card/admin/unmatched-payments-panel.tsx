@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend, usePagedList } from "@/components/greeting-card/greeting-api"
 import { vnd } from "./admin-order-types"

@@ -1,6 +1,6 @@
 "use client"
 
-import { Heart, FileText, CheckCircle2 } from "lucide-react"
+import { Heart, FileText, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ReorderButton } from "./reorder-button"
 

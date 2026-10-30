@@ -1,6 +1,6 @@
 "use client"
 
-import { Users, Building, Shield, UserCog } from "lucide-react"
+import { Users, Building, Shield, UserCog } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"

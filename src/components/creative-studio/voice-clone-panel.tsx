@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Headphones, Loader2, Trash2, Upload } from "lucide-react"
+import { Headphones, Loader2, Trash2, Upload } from "@/components/ui/icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

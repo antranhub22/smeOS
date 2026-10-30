@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Building2, Phone, Mail, MapPin, Globe, Clock, FileText, Check, Store, Lock, Unlock, Sparkles, Database } from "lucide-react"
+import { Building2, Phone, Mail, MapPin, Globe, Clock, FileText, Check, Store, Lock, Unlock, Sparkles, Database } from "@/components/ui/icons"
 import type { BusinessProfileDetail } from "@/modules/profiles/use-cases/get-business-profile"
 import type { UpsertBusinessProfileInput } from "@/modules/profiles/infra/business-profile-repository"
 import { useSession } from "@/lib/session"

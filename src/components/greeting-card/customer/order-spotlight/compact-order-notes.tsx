@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Plus, X } from "lucide-react"
+import { Plus, X } from "@/components/ui/icons"
 import { OrderNoteField, orderNoteLabel } from "../order-notes-fields"
 import { availableNoteKinds, initialOpenNoteKinds, type OrderNoteKind } from "./order-note-kinds"
 

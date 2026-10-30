@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Camera, Image as ImageIcon, Truck, UserCheck, X } from "lucide-react"
+import { Camera, Image as ImageIcon, Truck, UserCheck, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { CoordinatorImageUpload } from "./coordinator-image-upload"

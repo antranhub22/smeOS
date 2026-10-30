@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef } from "react"
-import { Plus, Trash2, Loader2 } from "lucide-react"
+import { Plus, Trash2, Loader2 } from "@/components/ui/icons"
 import { PhotoUploadGuidance, STOREFRONT_GUIDANCE } from "./photo-upload-guidance"
 import { uploadBrandAsset } from "./upload-brand-asset"
 

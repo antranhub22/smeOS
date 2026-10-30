@@ -8,7 +8,7 @@
 "use client"
 
 import { useState } from "react"
-import { Lock, RotateCcw, Loader2 } from "lucide-react"
+import { Lock, RotateCcw, Loader2 } from "@/components/ui/icons"
 import type { GovernanceMatrixItem, GovernanceViewerTier } from "./governance-matrix-types"
 import { GOVERNANCE_TIER_LABELS } from "./governance-matrix-types"
 

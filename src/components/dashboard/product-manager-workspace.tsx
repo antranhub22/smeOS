@@ -12,7 +12,7 @@ import {
   ChevronRight,
   Package,
   Layers,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { Card } from "@/components/ui/card"

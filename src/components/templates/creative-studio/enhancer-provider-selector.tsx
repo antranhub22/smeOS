@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Cpu, Cloud, Zap } from "lucide-react"
+import { Sparkles, Cpu, Cloud, Zap } from "@/components/ui/icons"
 import { optimizationPriceKey } from "@/modules/media/domain/optimization-rules"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 

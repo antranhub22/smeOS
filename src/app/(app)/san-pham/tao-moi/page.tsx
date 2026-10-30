@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { ArrowLeft, CheckCircle2, Sparkles, AlertCircle } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Sparkles, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"

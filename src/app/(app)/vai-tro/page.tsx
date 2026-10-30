@@ -12,7 +12,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Lock, Loader2 } from "lucide-react"
+import { ArrowLeft, Lock, Loader2 } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { chuyenTang, veVaiThat } from "./chuyen-tang"

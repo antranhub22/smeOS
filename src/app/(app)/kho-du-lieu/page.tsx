@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { AccountStorageHub } from "@/components/storage/account-storage-hub"
 import { Button } from "@/components/ui/button"
-import { Camera, Plus, Sparkles, Folder } from "lucide-react"
+import { Camera, Plus, Sparkles, Folder } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
 
 export default function KhoDuLieuPage() {

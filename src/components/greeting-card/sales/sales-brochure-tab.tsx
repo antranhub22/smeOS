@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ChevronDown, Plus, RefreshCw, Search, X } from "lucide-react"
+import { ChevronDown, Plus, RefreshCw, Search, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi, usePagedList } from "@/components/greeting-card/greeting-api"
 import { WorkItemCard } from "@/components/greeting-card/work/work-item-card"

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ArrowDown, ArrowUp } from "lucide-react"
+import { ArrowDown, ArrowUp } from "@/components/ui/icons"
 import { usePagedList } from "@/components/greeting-card/greeting-api"
 import { formatMinutes } from "@/modules/greeting-card/domain/step-sla"
 import type { SortField, TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"

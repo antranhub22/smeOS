@@ -15,7 +15,7 @@ import {
   Server,
   DollarSign,
   Sliders,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { Button } from "@/components/ui/button"

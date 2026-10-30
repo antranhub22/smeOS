@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
-import { RefreshCw, Search, Sparkles, X } from "lucide-react"
+import { RefreshCw, Search, Sparkles, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { CoordinatorActionModal } from "./coordinator-action-modal"
 import { CoordinatorOrderCard, type BrochureOrder, type ModalState } from "./coordinator-order-card"

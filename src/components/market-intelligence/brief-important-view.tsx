@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Flame, ArrowRight, Tag, Play, Video, ExternalLink } from "lucide-react";
+import { Flame, ArrowRight, Tag, Play, Video, ExternalLink } from "@/components/ui/icons";
 import type { OpportunityItem } from "./opportunity-card";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getDualOpportunityEvidencePreview, getOpportunityHeadline } from "./opportunity-illustration";

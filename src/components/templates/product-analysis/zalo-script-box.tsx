@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Copy, Check, MessageSquareText, Sparkles, RefreshCw } from "lucide-react"
+import { Copy, Check, MessageSquareText, Sparkles, RefreshCw } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 

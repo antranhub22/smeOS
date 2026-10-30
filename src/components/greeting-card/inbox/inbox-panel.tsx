@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, ChevronRight, MessageSquare } from "lucide-react"
+import { AlertTriangle, ChevronRight, MessageSquare } from "@/components/ui/icons"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import type { InboxAction, InboxTab } from "@/modules/greeting-card/domain/inbox"
 import { Sheet } from "./sheet"

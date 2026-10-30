@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { ArrowRight, BookOpen, Check, Plus } from "lucide-react"
+import { ArrowRight, BookOpen, Check, Plus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"

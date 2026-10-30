@@ -10,7 +10,7 @@
  */
 
 import { useState } from "react"
-import { Clapperboard, Film, Loader2, Megaphone, Music, Save } from "lucide-react"
+import { Clapperboard, Film, Loader2, Megaphone, Music, Save } from "@/components/ui/icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

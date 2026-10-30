@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Check } from "lucide-react"
+import { Check } from "@/components/ui/icons"
 
 export interface WizardStepItem {
   id: number

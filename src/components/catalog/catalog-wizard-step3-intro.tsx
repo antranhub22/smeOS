@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Wand2, Check } from "lucide-react"
+import { Wand2, Check } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

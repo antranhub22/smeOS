@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Share2 } from "lucide-react"
+import { Share2 } from "@/components/ui/icons"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { useI18n } from "@/lib/i18n"
 

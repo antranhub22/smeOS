@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useContext, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Film, Sparkles, Send, Loader2, CheckCircle2, AlertCircle, Play, Clock, Coins } from "lucide-react"
+import { Film, Sparkles, Send, Loader2, CheckCircle2, AlertCircle, Play, Clock, Coins } from "@/components/ui/icons"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"
 import { StoryboardEditor } from "@/components/video-studio/storyboard-editor"
 import { VideoJobList, type VideoJobSummary } from "@/components/video-studio/video-job-list"

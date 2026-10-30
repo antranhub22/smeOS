@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Check, Copy, ExternalLink, Share2 } from "lucide-react"
+import { Check, Copy, ExternalLink, Share2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 /** Kết quả "Tạo nhanh bộ sưu tập": chép link, chép tin nhắn mẫu, gửi qua Zalo. */

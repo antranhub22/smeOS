@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { CheckCircle2, Copy, ExternalLink, MessageCircle, RefreshCw } from "lucide-react"
+import { CheckCircle2, Copy, ExternalLink, MessageCircle, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi } from "@/components/greeting-card/greeting-api"
 

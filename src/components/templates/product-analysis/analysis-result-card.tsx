@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ClipboardCheck, CheckCircle2 } from "lucide-react"
+import { ClipboardCheck, CheckCircle2 } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 import { ResultCard, type ResultField, type ResultFieldItem, type JudgmentState } from "@/components/result/result-card"
 

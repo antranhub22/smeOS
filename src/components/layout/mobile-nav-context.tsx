@@ -4,7 +4,7 @@
 // thay vì hiện thêm thanh burger chung của layout (tránh hai thanh chồng nhau).
 
 import { createContext, useContext, useEffect } from "react"
-import { Menu } from "lucide-react"
+import { Menu } from "@/components/ui/icons"
 
 type MobileNavApi = {
   openMenu: () => void
