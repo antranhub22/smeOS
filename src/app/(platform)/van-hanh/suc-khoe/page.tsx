@@ -6,6 +6,7 @@
 // chạy ngoài request HTTP. Xem đặc tả 06 mục 21.
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { AlertTriangle, Server } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -77,7 +78,12 @@ export default function SucKhoeHeThongPage() {
       </Card>
 
       <Card className="p-4">
-        <p className="mb-3 text-sm font-semibold">Hàng đợi theo loại việc</p>
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold">Hàng đợi theo loại việc</p>
+          <Link href="/van-hanh/hang-doi-loi" className="text-body-sm text-primary underline underline-offset-2">
+            Xem việc bị lỗi
+          </Link>
+        </div>
         {health.queue.length === 0 ? (
           <p className="text-xs text-text-muted">Không có việc đang chờ hay lỗi trong 24 giờ qua.</p>
         ) : (

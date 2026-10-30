@@ -1,6 +1,6 @@
 # Screen Contract — Console Vận Hành Nền Tảng (Platform Console)
 
-**Tuyến:** `/van-hanh` (và `/van-hanh/to-chuc`, `/van-hanh/muc-dung`, `/van-hanh/nhat-ky`, `/van-hanh/suc-khoe`) · **Cập nhật:** 30/10/2026 · **Thẻ:** T5.D10
+**Tuyến:** `/van-hanh` (và `/van-hanh/to-chuc`, `/van-hanh/muc-dung`, `/van-hanh/nhat-ky`, `/van-hanh/suc-khoe`, `/van-hanh/hang-doi-loi`) · **Cập nhật:** 30/10/2026 · **Thẻ:** T5.D10
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `platform_admin` (Người vận hành nền tảng SaaS)
@@ -26,6 +26,7 @@
 | L1 Hành động | Chuyển tab điều hướng (/to-chuc, /suc-khoe, /muc-dung, /nhat-ky) | Top Header Navbar |
 | L2 Ngữ cảnh | Huy hiệu phạm vi (Toàn hệ thống / Tổ chức cụ thể) | Tiêu đề mỗi trang |
 | L3 Chi tiết | Bảng danh sách tổ chức, bảng job treo, nhật ký hệ thống | Bảng dữ liệu có cấu trúc |
+| L3 Chi tiết (`/hang-doi-loi`) | Job lỗi xuyên tổ chức: loại việc · tổ chức · loại lỗi · số lần thử · lý do; nút Chạy lại / Gác lại (cần `N15`, qua `ConfirmDialog`, ghi nhật ký nền tảng). Vào từ liên kết "Xem việc bị lỗi" ở `/suc-khoe` (chưa có mục menu — shell khoá) | Danh sách + 2 nút mỗi dòng |
 | L3 Chi tiết (`/suc-khoe`) | Bộ xử lý nền (đang chạy / không chạy) → Hàng đợi theo loại việc → Job theo trạng thái → Job treo | Thẻ trạng thái + bảng; chỉ đọc (D-N5) |
 
 ## 4. Hành động

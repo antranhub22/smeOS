@@ -686,7 +686,7 @@ Khác biệt với mọi route còn lại trong tài liệu này:
 - Truy vấn xuyên tổ chức chỉ đi qua `src/modules/platform/infra/platform-query.ts` — điểm DUY NHẤT trong repo được phép truy vấn nhiều tổ chức cùng lúc (kế hoạch mục 4.4).
 - Chưa đăng nhập → 401 `UNAUTHENTICATED`. Đã đăng nhập nhưng không có dòng `platform_operators` đang hoạt động, hoặc thiếu đúng mã N ở cột dưới → 403 `CAPABILITY_DENIED` — giống hệt một thành viên tổ chức thiếu năng lực, không phải "chưa xác thực".
 
-P25a chỉ đọc (D-N5 áp dụng cho toàn bộ P25a, không riêng `/health`): không route nào trong nhóm này ghi dữ liệu. Duyệt yêu cầu nâng cấp, nạp/hoàn credit, tạo tổ chức (`N2`, `N3`, `N7`) thuộc P25b/P25c, chưa có ở bản này.
+P25a chỉ đọc (D-N5 áp dụng cho toàn bộ P25a, không riêng `/health`): không route nào trong nhóm này ghi dữ liệu. Ngoại lệ có mã riêng: `POST /platform/jobs/:id/action` (`N15`, E5.2) — `N5` vẫn chỉ đọc. Duyệt yêu cầu nâng cấp, nạp/hoàn credit, tạo tổ chức (`N2`, `N3`, `N7`) thuộc P25b/P25c, chưa có ở bản này.
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
@@ -698,6 +698,8 @@ P25a chỉ đọc (D-N5 áp dụng cho toàn bộ P25a, không riêng `/health`)
 | GET | `/platform/organizations/:id` | `N1` | Chi tiết một tổ chức bất kỳ — không lọc theo tổ chức của người gọi |
 | GET | `/platform/usage` | `N4` | Usage & chi phí gộp theo (tổ chức, tính năng), toàn hệ thống |
 | GET | `/platform/health` | `N5` | Đếm job theo trạng thái + danh sách job treo (chỉ đọc — không đánh dấu FAILED, xem `scripts/scan-stuck-jobs.ts`) |
+| GET | `/platform/jobs/failed` | `N5` | Hàng đợi lỗi (E5.2): tối đa 100 job `FAILED` mới nhất xuyên tổ chức — tổ chức, loại việc, `failureKind`, lỗi (cắt 300 ký tự), số lần thử. Không trả `payload`/`output` |
+| POST | `/platform/jobs/:id/action` | `N15` | `{ action: "RETRY" \| "DISMISS" }`. RETRY: `FAILED` → `PENDING` lượt mới (`attempts` 0), đánh thức worker, nền tảng chịu chi phí (không trừ credit tiệm). DISMISS: → `CANCELLED`. Job không còn `FAILED` → 404. Ghi `platform_audit_logs` (`platform.job.retry`/`dismiss`) |
 | GET | `/platform/audit-logs` | `N6` | Nhật ký xuyên tổ chức — hợp `audit_logs` mọi tổ chức và `platform_audit_logs` |
 
 ## 21b. Nền quản trị trường (ĐP-3, 26/09/2026)

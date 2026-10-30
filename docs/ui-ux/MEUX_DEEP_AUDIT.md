@@ -150,3 +150,15 @@ Kịch bản `scripts/ux-audit/scenarios/suc-khoe.mjs` (hàng đợi rỗng; có
 | SK-02 | P2 | Khối "Job theo trạng thái" (có từ trước) hiện mã `FAILED`, `PENDING` | Chưa sửa — ngoài phạm vi E1.6 |
 
 Chưa kiểm: bàn phím, zoom 200%, đọc màn hình.
+
+## /van-hanh/hang-doi-loi — Hàng đợi lỗi (30/10/2026, ROADMAP E5.2)
+
+Kịch bản `scripts/ux-audit/scenarios/hang-doi-loi.mjs` (rỗng; có 2 job lỗi; hộp xác nhận chạy lại), 390/1280px, axe sạch, không cuộn ngang.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| HDL-01 | P2 | Câu trạng thái rỗng khẳng định "mọi việc đều đã tự chạy lại thành công" — không kiểm chứng được | Đổi thành mô tả trung tính khi nào việc hiện ở đây |
+| HDL-02 | P3 | Thanh bên tô "Tổng quan nền tảng" vì trang chưa có mục menu | Chưa sửa — thêm mục menu là shell khoá, cần PO |
+
+Chưa kiểm: bàn phím, zoom 200%, đọc màn hình.
+

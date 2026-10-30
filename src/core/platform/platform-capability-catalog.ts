@@ -35,6 +35,8 @@ const DEFINITIONS: Record<string, Omit<PlatformCapabilityDefinition, "code">> = 
   N13: { name: "platform.registrations.manage", label: "Duyệt/từ chối tài khoản tự đăng ký" },
   // PO 29/10/2026 (SDAGF D-04): giữ dữ liệu theo yêu cầu pháp lý — chặn mọi lệnh xoá
   N14: { name: "platform.legal_hold.manage", label: "Đặt/gỡ giữ dữ liệu theo yêu cầu pháp lý" },
+  // ROADMAP E5.2 (30/10/2026): N5 vẫn chỉ đọc (D-N5) — hành động trên job lỗi cần mã riêng
+  N15: { name: "platform.jobs.manage", label: "Chạy lại hoặc gác lại job lỗi (hàng đợi lỗi)" },
 }
 
 export const PLATFORM_CAPABILITIES: Record<string, PlatformCapabilityDefinition> = Object.fromEntries(
