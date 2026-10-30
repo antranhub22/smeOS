@@ -49,3 +49,13 @@ Làm đủ, đúng thứ tự; báo cáo theo mẫu ở cuối.
 9. **Commit** (Conventional Commits, code + test + tài liệu cùng commit); không tạo PR/merge khi PO chưa cho phép.
 
 Mẫu báo cáo cho PO (tiếng Việt): trang · các trạng thái đã kiểm · findings đã sửa (P0–P3) · kết quả audit lại + gate · phần **chưa** kiểm (bàn phím, zoom, đọc màn hình) · **Cần PO quyết**.
+
+## 6. Phong cách hiển thị "Thoáng – Ít chữ – Icon lớn" (PO 30/10/2026, thử trên `/cong-cu`)
+Áp dụng cho màn tổng quan, lưới thẻ, trang chủ công cụ; không thay §1–§3 (khi lệch, §1–§3 thắng).
+1. **Nhãn ≤ 5 từ** (tiêu đề thẻ, nút, chỉ số). Câu giải thích, mục đích, cách tính → đưa vào `InfoTip` (`src/components/ui/info-tip.tsx`, icon "?" cạnh nhãn). **Ngoại lệ:** lỗi, chi phí, điều kiện, rủi ro, quyền vẫn phải hiện trực tiếp (UX-017) — không giấu vào "?".
+2. **Icon lớn làm điểm nhìn**: thẻ điều hướng dùng ô icon 64px (`w-16 h-16`, icon 32px) trên nền `bg-primary-muted`; mỗi thẻ đúng 1 icon, cùng một bộ icon (lucide), icon chỉ trang trí thì `aria-hidden`.
+3. **Nổi khối nội dung chính**: nền trang `bg-bg`, khối chính `bg-surface` + `shadow-sm` + `rounded-2xl`; không kẻ viền dày, không nhiều lớp khung lồng nhau. Mỗi màn chỉ 1 khối nhấn mạnh (màu `bg-primary`) cho việc chính L0.
+4. **Khoảng trống**: padding thẻ ≥ 20px (`p-5`, desktop `p-6`), khoảng cách lưới ≥ 16px (desktop 24px), giữa các khu ≥ 32px. Một khu = một ý.
+5. **Tooltip dùng được trên điện thoại**: chạm mở/đóng, vùng bấm ≥ 32px, có nhãn truy cập "Giải thích: …"; không lồng `InfoTip` trong nút — thẻ bấm được dùng nút phủ `after:absolute after:inset-0`.
+6. **Số liệu**: con số to (`text-display`), nhãn nhỏ phía trên, đơn vị rõ; dữ liệu nhạy cảm (số dư, doanh thu) có nút ẩn/hiện.
+7. **Chuẩn thương mại**: mọi thẻ có trạng thái hover/focus nhìn thấy; trạng thái rỗng dùng `EmptyState` (icon lớn + 1 câu + 1 nút); khung xương (`Skeleton`) khi tải; kiểm 390/1280px, cả chế độ màu của ngành.
