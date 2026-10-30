@@ -2,6 +2,7 @@ import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
 import { executeGenerateCatalogContent } from "@/modules/content-engine/use-cases/generate-catalog-content.use-case"
@@ -16,6 +17,8 @@ const requestSchema = z.object({
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  // J7 — sinh nội dung AI cho landing/catalog (PO 30/10/2026, trả nợ #170)
+  requireCapability(ctx, "J7")
 
   const body = await request.json().catch(() => null)
   const parsed = requestSchema.safeParse(body)

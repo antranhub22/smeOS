@@ -77,7 +77,7 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
   const [isPublishing, setIsPublishing] = useState(false)
   const [isPublished, setIsPublished] = useState(false)
   const [publishError, setPublishError] = useState<string | null>(null)
-  const [usedFallbackContent, setUsedFallbackContent] = useState(false)
+  const [fallbackReason, setFallbackReason] = useState<null | "ai" | "quyen">(null) // vì sao dùng nội dung mẫu
   const [publishedUrl, setPublishedUrl] = useState<string | null>(null)
   const [downloadingQR, setDownloadingQR] = useState(false)
 
@@ -85,7 +85,7 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
     setIsAiGenerating(true)
     setPublishError(null)
 
-    setUsedFallbackContent(false)
+    setFallbackReason(null)
     setAiSteps([
       { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "running" },
       { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "pending" },
@@ -131,7 +131,7 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
         setGeneratedPackage(json.data)
         if (json.data?.hero?.headline) setHeadline(json.data.hero.headline)
       } else {
-        setUsedFallbackContent(true)
+        setFallbackReason(res?.status === 403 ? "quyen" : "ai")
         setGeneratedPackage(generateLandingPageContent({
           shopName: currentShopName,
           occasionId: matchedOccasion,
@@ -280,7 +280,7 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
             <div className="p-3.5 rounded-xl bg-primary-muted border border-primary-border flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-primary text-body-sm font-semibold">
                 <Sparkles className="h-4 w-4 shrink-0" />
-                <span>{usedFallbackContent ? "AI chưa soạn được nội dung nên đang dùng nội dung mẫu — hãy chỉnh lại ở từng bước trước khi xuất bản." : "AI đã soạn nội dung và điền sẵn các lựa chọn. Bạn có thể kiểm tra từng bước trước khi xuất bản."}</span>
+                <span>{fallbackReason === "quyen" ? "Tài khoản của bạn chưa được cấp quyền tạo nội dung bằng AI nên đang dùng nội dung mẫu — nhờ Điều hành bật quyền, hoặc chỉnh lại ở từng bước." : fallbackReason ? "AI chưa soạn được nội dung nên đang dùng nội dung mẫu — hãy chỉnh lại ở từng bước trước khi xuất bản." : "AI đã soạn nội dung và điền sẵn các lựa chọn. Bạn có thể kiểm tra từng bước trước khi xuất bản."}</span>
               </div>
               <button
                 type="button"

@@ -20,15 +20,6 @@ const GUARD =
 
 const DEBT_170 = "nợ #170 — chưa gác mã năng lực, chờ PO chốt mã"
 
-/**
- * Route vẫn CHƯA gác quyền dù có gọi `hasCapability` — lời gọi đó chỉ quyết định có làm giàu dữ liệu
- * hay không (thiếu quyền thì bỏ qua, không chặn). Giữ mục nợ trong NO_CAPABILITY_GUARD, không coi là "đã gác".
- */
-const OPTIONAL_CHECK_ONLY: Record<string, string> = {
-  // H5: đọc mô tả bán hàng đã duyệt để AI viết cụ thể hơn (30/10/2026)
-  "content-engine/landing-generate": "kiểm H5 tuỳ chọn trong getApprovedSellingNotes",
-}
-
 /** Route không gọi gác quyền nào — có chủ đích hoặc đang là nợ. */
 const NO_CAPABILITY_GUARD: Record<string, string> = {
   // Có chủ đích: chưa có phiên/tổ chức, hoặc gác bằng cơ chế khác.
@@ -61,8 +52,6 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "notification/channels": "chỉ đọc trạng thái bật kênh toàn sàn",
   "ux-rollout-flags": "chỉ đọc cờ giao diện đang bật cho chính tổ chức của phiên (03c E9)",
   // Nợ #170.
-  "content-engine/catalog-generate": DEBT_170,
-  "content-engine/landing-generate": DEBT_170,
   "content-engine/rewrite": DEBT_170,
   "internal-chat/conversations/[id]/messages": "chỉ thành viên cuộc hội thoại (isParticipant trong use-case)",
   "internal-chat/conversations": "chat nội bộ cho mọi nhân viên; danh sách lọc theo người tham gia",
@@ -130,7 +119,7 @@ describe("route /api/v1 gác bằng mã năng lực (đặc tả 06 luật 3)", 
     const byKey = new Map(routes.map((file) => [key(file), file]))
     const stale = Object.keys(NO_CAPABILITY_GUARD).filter((k) => {
       const file = byKey.get(k)
-      return !file || (isGuarded(file, 2) && !(k in OPTIONAL_CHECK_ONLY))
+      return !file || isGuarded(file, 2)
     })
     expect(stale).toEqual([])
   })

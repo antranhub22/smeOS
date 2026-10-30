@@ -34,3 +34,11 @@ describe("landing: xem trước trùng trang khách", () => {
     expect(JSON.stringify(buildLandingPublishBody(draft).description)).not.toMatch(/festive|minimal|archetype/)
   })
 })
+
+describe("quyền J7 — sinh nội dung AI landing/catalog (PO 30/10/2026)", () => {
+  it("mặc định cho Điều hành, Điều phối, Marketing, Sale; không trần cứng", async () => {
+    const { capability, hardCapOf } = await import("@/core/rbac/capability-catalog")
+    expect([...capability("J7").defaultRoles].sort()).toEqual(["dieu_hanh", "dieu_phoi", "marketing", "sale"])
+    expect(hardCapOf("J7")).toBeNull()
+  })
+})

@@ -118,11 +118,11 @@ Phần tiếp: [09b-api-j-w.md](09b-api-j-w.md).
 
 | Method | Endpoint | Use-case xử lý | Xác thực | Mã quyền | Input | Consumer trong repo |
 |---|---|---|---|---|---|---|
-| POST | `/content-engine/catalog-generate` | getBusinessProfile | Phiên | không mã (nợ #170) | collectionName, occasion, productCount, styleVariant, userDirectives | 3 tệp: `catalog/catalog-link-widgets.tsx`, `catalog/catalog-management-tab.tsx` … |
+| POST | `/content-engine/catalog-generate` | getBusinessProfile | Phiên | `J7` | collectionName, occasion, productCount, styleVariant, userDirectives | 3 tệp: `catalog/catalog-link-widgets.tsx`, `catalog/catalog-management-tab.tsx` … |
 | GET · POST | `/content-engine/generations` | generateContent, findLatestContentGeneration | Phiên | I1 | query: asset_id, topic_id, scene_plan_id, mode | 2 tệp: `noi-dung/page.tsx`, `creative-studio/creative-result-viewer.tsx` |
 | GET | `/content-engine/generations/[id]` | getContentGenerationById | Phiên | I1 | — | — |
 | POST | `/content-engine/generations/[id]/approve` | approveContentGeneration | Phiên | J5 | — | 1 tệp: `noi-dung/page.tsx` |
-| POST | `/content-engine/landing-generate` | getBusinessProfile, getBrandProfile | Phiên | không mã (nợ #170) | occasionId, occasionLabel, archetypeId, selectedProducts, userDirectives, discou | 1 tệp: `catalog/landing-campaign-tab.tsx` |
+| POST | `/content-engine/landing-generate` | getBusinessProfile, getBrandProfile | Phiên | `J7` | occasionId, occasionLabel, archetypeId, selectedProducts, userDirectives, discou | 1 tệp: `catalog/landing-campaign-tab.tsx` |
 | POST | `/content-engine/rewrite` | getBrandProfile, getBusinessProfile | Phiên | không mã (nợ #170) | text, field_type, style | 1 tệp: `profiles/ai-rewrite-input.tsx` |
 
 #### `content-guard`

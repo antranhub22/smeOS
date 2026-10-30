@@ -20,7 +20,7 @@ describe("Không tiến độ giả / link giả ở công cụ Landing page & C
     const src = read("src/components/catalog/landing-campaign-tab.tsx")
     expect(src).not.toMatch(/setTimeout\(r,\s*\d+\)/)
     expect(src).not.toMatch(/id: "vision"/)
-    expect(src).toContain("setUsedFallbackContent(true)")
+    expect(src).toContain("setFallbackReason(res?.status === 403 ? \"quyen\" : \"ai\")")
   })
 })
 

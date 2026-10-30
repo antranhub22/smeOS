@@ -878,8 +878,8 @@ Endpoint mang khoá nhà cung cấp riêng của tổ chức. Quyết định D2
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/content-engine/catalog-generate` | **chưa gác** (nợ #170) | Writer→Critic qua `callCapability` (`content_generation`, `content_qa`) sinh badge/mô tả/CTA cho catalog. Chạy tại chỗ, **không trừ credit, không ghi `usage`, không có `Idempotency-Key`** |
-| POST | `/content-engine/landing-generate` | **chưa gác** (nợ #170) | Như trên cho landing page (hero/story/perks/faq/lead), lấy ngữ cảnh từ hồ sơ kinh doanh + thương hiệu |
+| POST | `/content-engine/catalog-generate` | `J7` (PO 30/10/2026) | Writer→Critic qua `callCapability` (`content_generation`, `content_qa`) sinh badge/mô tả/CTA cho catalog. Chạy tại chỗ, **không trừ credit, không ghi `usage`, không có `Idempotency-Key`** |
+| POST | `/content-engine/landing-generate` | `J7` (PO 30/10/2026) | Như trên cho landing page (hero/story/perks/faq/lead), lấy ngữ cảnh từ hồ sơ kinh doanh + thương hiệu |
 | POST | `/content-engine/rewrite` | **chưa gác** (nợ #170) | Viết lại MỘT câu ≤ 500 ký tự theo `field_type`/`style`, trả 3 gợi ý; parse lỗi thì trả gợi ý dựng sẵn |
 
 ### 25.2–25.3 Thẻ chào (đã gộp)
