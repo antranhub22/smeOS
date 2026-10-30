@@ -54,6 +54,7 @@ import psycopg
 from PIL import Image
 from psycopg.rows import dict_row
 
+from shared.job_failure import ghi_job_loi
 from shared.storage import doc_bytes, ghi_bytes
 from media_ai.image.auto_retouch import tu_dong_can_bang_sang
 from media_ai.image.brand_watermark import dong_dau
@@ -1443,13 +1444,6 @@ def process_variant_job(conn: psycopg.Connection, job: dict[str, Any]) -> None:
     except Exception as exc:  # noqa: BLE001 — hỏng KỸ THUẬT, không phải phán quyết
         conn.rollback()
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                UPDATE generation_jobs
-                   SET status = 'FAILED', error = %s, stage = NULL, attempts = attempts + 1
-                 WHERE id = %s
-                """,
-                (str(exc), job["id"]),
-            )
+            thu_lai = ghi_job_loi(cur, job["id"], exc)
         conn.commit()
-        _emit_event(conn, job["id"], "done", {"status": "FAILED", "error": str(exc)})
+        _emit_event(conn, job["id"], "retry" if thu_lai else "done", {"status": "PENDING" if thu_lai else "FAILED", "error": str(exc)})

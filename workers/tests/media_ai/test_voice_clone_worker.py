@@ -80,7 +80,7 @@ def test_mau_qua_ngan_bi_tu_choi(monkeypatch):
     assert goi["n"] == 0
     failed = [p for sql, p in conn.log if sql.startswith("UPDATE voice_clones")]
     assert failed[-1][0] == "FAILED" and "quá ngắn" in failed[-1][2]
-    assert any("SET status = 'FAILED'" in sql for sql, _ in conn.log)
+    assert any("failure_kind = %(loai)s" in sql for sql, _ in conn.log)
 
 
 def test_mau_cua_to_chuc_khac_bi_chan(monkeypatch):

@@ -168,7 +168,7 @@ class TestProcessJob:
 
         worker.process_job(conn, self._job(), provider)
 
-        failed = conn.sql_containing("SET status = 'FAILED'")
+        failed = conn.sql_containing("failure_kind = %(loai)s")
         assert len(failed) == 1
         # Ảnh duy nhất của lô lỗi ngay nên không có kết quả nào để giữ lại.
         assert conn.sql_containing("INSERT INTO product_analyses") == []
@@ -194,7 +194,7 @@ class TestProcessJob:
         worker.process_job(conn, self._job(asset_ids=("a1", "a2", "a3")), provider)
 
         assert len(conn.sql_containing("INSERT INTO product_analyses")) == 1
-        assert conn.sql_containing("SET status = 'FAILED'")
+        assert conn.sql_containing("failure_kind = %(loai)s")
         assert conn.sql_containing("SET status = 'COMPLETED'") == []
 
     def test_chay_lai_bo_qua_anh_da_co_ket_qua(self, monkeypatch):
@@ -242,7 +242,7 @@ class TestProcessJob:
 
         worker.process_job(conn, self._job(), provider)
 
-        assert conn.sql_containing("SET status = 'FAILED'")
+        assert conn.sql_containing("failure_kind = %(loai)s")
         assert provider.calls == []  # chưa từng gọi provider vì asset bị chặn trước
 
     def test_process_job_nganh_fashion(self, monkeypatch):

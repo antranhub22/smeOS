@@ -308,7 +308,11 @@ export class GenerationJobRepository implements IGenerationJobRepository {
         stage: null,
         result: null,
         error: null,
-        attempts: current.attempts + 1,
+        // Chạy lại thủ công = một lượt mới: worker lại có đủ số lần tự thử lại (E5.1). Worker đã đếm
+        // lần lỗi trước vào `attempts`; cộng thêm ở đây từng làm mỗi lượt lỗi bị tính hai lần.
+        attempts: 0,
+        run_after: null,
+        failure_kind: null,
         started_at: null,
         completed_at: null,
       },
@@ -332,6 +336,7 @@ export class GenerationJobRepository implements IGenerationJobRepository {
       const rows = await tx.$queryRaw<generation_jobs[]>`
         SELECT * FROM generation_jobs
          WHERE status = 'PENDING' AND feature = ${feature}
+           AND (run_after IS NULL OR run_after <= now())
          ORDER BY created_at
          FOR UPDATE SKIP LOCKED
          LIMIT 1

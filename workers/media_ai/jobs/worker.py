@@ -50,6 +50,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 from shared.job_trace import log_job_claimed
+from shared.job_failure import ghi_job_loi
 from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import doc_bytes, ghi_bytes
 from media_ai.guard.compare import REJECTED
@@ -109,6 +110,7 @@ def claim_next(conn: psycopg.Connection, feature: str) -> dict[str, Any] | None:
                 """
                 SELECT * FROM generation_jobs
                  WHERE status = 'PENDING' AND feature = %s
+                    AND (run_after IS NULL OR run_after <= now())
                  ORDER BY created_at
                  FOR UPDATE SKIP LOCKED
                  LIMIT 1
@@ -428,16 +430,9 @@ def process_job(
     except Exception as exc:  # noqa: BLE001 — hỏng KỸ THUẬT, không phải phán quyết
         conn.rollback()
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                UPDATE generation_jobs
-                   SET status = 'FAILED', error = %s, stage = NULL, attempts = attempts + 1
-                 WHERE id = %s
-                """,
-                (str(exc), job["id"]),
-            )
+            thu_lai = ghi_job_loi(cur, job["id"], exc)
         conn.commit()
-        _emit_event(conn, job["id"], "done", {"status": "FAILED", "error": str(exc)})
+        _emit_event(conn, job["id"], "retry" if thu_lai else "done", {"status": "PENDING" if thu_lai else "FAILED", "error": str(exc)})
 
 
 def _clean_database_url(url: str) -> str:

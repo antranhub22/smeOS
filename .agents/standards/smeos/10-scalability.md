@@ -19,7 +19,7 @@
 | Hạn mức + ghi usage khi enqueue | ✅ | `enqueue-job.ts` |
 | Job treo → `FAILED` sau 15 phút | ✅ | `markStuckAsFailed` (YC-J10) |
 | Hoàn credit job lỗi | ✅ | `listRefundable` / `refundJob` |
-| Chạy lại | 🟡 **chỉ thủ công** (job `FAILED`, YC-J3); không tự thử lại có backoff | ROADMAP E5 |
+| Chạy lại | ✅ tự thử lại lỗi tạm thời (hết giờ, mất kết nối, 429/5xx): `workers/shared/job_failure.py` → `PENDING` + `run_after` (30 s × 2ⁿ, trần 10 phút, ngẫu nhiên ×0,5–1), tối đa 3 lần; còn lại `FAILED` + `failure_kind` (`RETRYABLE`/`NEEDS_ACTION`). Video và nhân bản giọng chỉ phân loại, không tự thử lại (bảng trạng thái riêng). Chạy lại thủ công (YC-J3) = lượt mới, `attempts` về 0 | `workers/shared/job_failure.py`, `generation-job-repository.ts` (`claimNext`, `retryIfFailed`) |
 | Dead-letter + màn xem/chạy lại | 🟡 trạng thái `FAILED` có lý do, chưa có màn vận hành chung | ROADMAP E5 |
 | Outbox xoá payload, trần 5 lần | ✅ | `storage_outbox`, `MAX_OUTBOX_ATTEMPTS` |
 

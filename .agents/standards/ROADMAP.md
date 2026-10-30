@@ -57,7 +57,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 4. Kiểm tải (k6/Artillery — **PO: dependency**) kịch bản cao điểm lễ; ngưỡng ghi vào runbook.
 
 **E5 — Hàng đợi có kỷ luật**
-1. Tự thử lại job lỗi tạm thời: `attempts` + trần + backoff có jitter; phân loại lỗi `retryable` / `needs_action` (khớp `task-state.ts`).
+1. ✅ (30/10/2026) Tự thử lại job lỗi tạm thời: `generation_jobs.run_after` + `failure_kind` (PO duyệt schema), `workers/shared/job_failure.py` (một câu UPDATE nguyên tử), tối đa 3 lần, backoff có ngẫu nhiên; worker nhận việc lọc `run_after`. Video/nhân bản giọng chỉ phân loại. Chạy lại thủ công đặt `attempts` về 0 (sửa lỗi cộng hai lần).
 2. Màn dead-letter trong `/van-hanh`: xem lý do, chạy lại (dùng luồng YC-J3), huỷ — audit.
 3. Khoá idempotent chung cho webhook đến và thao tác thanh toán (dùng ở E6).
 *Nghiệm thu:* test chạy lại job không nhân đôi kết quả/credit.

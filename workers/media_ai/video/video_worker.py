@@ -25,6 +25,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 from media_ai.video.providers import get_video_provider, VideoProviderError
+from shared.job_failure import phan_loai_loi
 from shared.job_trace import log_job_claimed
 from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import dang_dung_kho_dung_chung, ghi_bytes
@@ -62,6 +63,7 @@ def claim_next(conn: psycopg.Connection, feature: str = FEATURE) -> Optional[Dic
                 """
                 SELECT * FROM generation_jobs
                  WHERE status = 'PENDING' AND feature = %s
+                    AND (run_after IS NULL OR run_after <= now())
                  ORDER BY created_at
                  FOR UPDATE SKIP LOCKED
                  LIMIT 1
@@ -200,10 +202,10 @@ def process_video_job(conn: psycopg.Connection, job: Dict[str, Any]):
                 """
                 UPDATE generation_jobs
                 SET status = 'FAILED', stage = NULL, result = NULL,
-                    error = %s, completed_at = NOW()
+                    error = %s, failure_kind = %s, completed_at = NOW()
                 WHERE id = %s
                 """,
-                (err_msg[:500], job_id),
+                (err_msg[:500], phan_loai_loi(exc), job_id),
             )
 
 

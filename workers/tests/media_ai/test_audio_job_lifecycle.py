@@ -93,6 +93,6 @@ def test_loi_phoi_tron_thanh_failed_co_ly_do(monkeypatch):
     )
     conn = _Conn()
     audio_worker.process_audio_generation_job(conn, _job())
-    failed = [p for sql, p in conn.log if "SET status = 'FAILED'" in sql]
-    assert failed and "phối trộn" in failed[0][0]
+    failed = [p for sql, p in conn.log if "failure_kind = %(loai)s" in sql]
+    assert failed and "phối trộn" in failed[0]["loi"]
     assert not any("SET status = 'COMPLETED'" in sql for sql, _ in conn.log)

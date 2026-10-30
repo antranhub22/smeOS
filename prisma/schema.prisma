@@ -595,6 +595,11 @@ model generation_jobs {
   // Mã yêu cầu web tạo job (`x-request-id`, ROADMAP E1.1) — nối log web ↔ worker. NULL cho job tạo ngoài request.
   request_id String?
 
+  // E5.1 — lỗi tạm thời được worker tự thử lại sau `run_after` (backoff có ngẫu nhiên, tối đa 3 lần);
+  // NULL = chạy ngay. `failure_kind`: RETRYABLE | NEEDS_ACTION (khớp TaskFailureKind phía UI).
+  run_after    DateTime?
+  failure_kind String?
+
   payload  Json
   output   Json?
   error    String?
@@ -611,6 +616,7 @@ model generation_jobs {
   @@unique([organization_id, feature, idempotency_key])
   @@index([organization_id])
   @@index([status, created_at]) // worker quét bằng index này
+  @@index([status, run_after]) // job hẹn thử lại (E5.1)
   @@index([organization_id, user_id])
   @@index([organization_id, job_group_id]) // gom màn tiến độ bộ, nợ #108
 }
