@@ -4,11 +4,11 @@
 
 export const toolkitEn = {
   header: {
-    badge: "Full 51 Business Tools (9 Groups)",
+    badge: "10 store growth steps",
     titleDev: "smeOS Business Toolkit System",
     titleProd: "What would you like to do today?",
-    descDev: "51 standardized multi-tier operational tools categorized across 9 groups",
-    descProd: "Select a tool below to get started.",
+    descDev: "Every existing tool plus the roadmap, arranged by 10 store growth steps",
+    descProd: "Pick a step below to see its tools.",
   },
   stats: {
     done: "Completed",

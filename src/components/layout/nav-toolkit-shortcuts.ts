@@ -23,7 +23,7 @@ export const DEFAULT_SHORTCUT_KEYS: readonly string[] = [
 ]
 
 /**
- * Ánh xạ toàn bộ 51 công cụ từ SSOT toolkit-catalog sang danh sách NavEntry
+ * Ánh xạ toàn bộ công cụ từ SSOT toolkit-catalog sang danh sách NavEntry
  * để hiển thị đầy đủ trong danh sách chọn lối tắt (mini picker) và sidebar shortcuts.
  */
 export function getAllToolkitNavEntries(): NavEntry[] {
