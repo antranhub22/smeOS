@@ -18,6 +18,7 @@ import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { useI18n } from "@/lib/i18n"
+import { formatNumber } from "@/lib/i18n/formatters"
 
 type PlatformUsageRow = {
   organizationId: string
@@ -122,7 +123,7 @@ export default function MucDungPage() {
           <div>
             <div className="text-caption font-medium text-text-muted">Tổng Credit Tiêu Thụ</div>
             <div className="text-title font-extrabold text-text mt-0.5">
-              {metrics.totalCredits.toLocaleString("vi-VN")}
+              {formatNumber(metrics.totalCredits)}
             </div>
           </div>
         </Card>
@@ -134,7 +135,7 @@ export default function MucDungPage() {
           <div>
             <div className="text-caption font-medium text-text-muted">Tổng Lượt Gọi AI</div>
             <div className="text-title font-extrabold text-text mt-0.5">
-              {metrics.totalCalls.toLocaleString("vi-VN")}
+              {formatNumber(metrics.totalCalls)}
             </div>
           </div>
         </Card>

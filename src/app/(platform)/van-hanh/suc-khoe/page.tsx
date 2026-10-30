@@ -10,6 +10,7 @@ import { AlertTriangle } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useI18n } from "@/lib/i18n"
+import { formatDateTime } from "@/lib/i18n/formatters"
 
 type PlatformSystemHealth = {
   jobCountsByStatus: Record<string, number>
@@ -71,7 +72,7 @@ export default function SucKhoeHeThongPage() {
             <div key={job.id} className="flex items-center justify-between py-2 text-body-sm">
               <span>{job.feature} · tổ chức {job.organizationId}</span>
               <span className="text-text-muted">
-                {job.startedAt ? new Date(job.startedAt).toLocaleString("vi-VN") : "—"}
+                {job.startedAt ? formatDateTime(job.startedAt) : "—"}
               </span>
             </div>
           ))}

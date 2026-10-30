@@ -21,6 +21,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useI18n } from "@/lib/i18n"
+import { formatDateTime } from "@/lib/i18n/formatters"
 
 type PendingApprovalItem = {
   id: string
@@ -56,13 +57,7 @@ const TYPE_META: Record<
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
+  return formatDateTime(iso)
 }
 
 function ApprovalCard({

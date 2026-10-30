@@ -34,12 +34,12 @@ export default function DanhSachToChucPage() {
     void (async () => {
       const res = await layJson<{ data: PlatformOrganizationSummary[] }>("/api/v1/platform/organizations")
       if (!res) {
-        setLoi("Không tải được danh sách tổ chức.")
+        setLoi(dict.platform.organizations.loadError)
         return
       }
       setOrgs(res.data)
     })()
-  }, [])
+  }, [dict.platform.organizations.loadError])
 
   if (loi) return <p className="text-sm text-danger">{loi}</p>
   if (!orgs) return <div className="py-4"><SkeletonBlock lines={4} /></div>
@@ -48,16 +48,16 @@ export default function DanhSachToChucPage() {
     <Card className="overflow-x-auto p-4">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
         <h1 className="text-base font-bold text-text">{dict.platform.organizations.title}</h1>
-        <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hệ thống</span>
+        <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">{dict.platform.organizations.scopeSystem}</span>
       </div>
       <table className="w-full text-left text-xs">
         <thead>
           <tr className="border-b border-border text-text-muted">
-            <th className="py-2 pr-3">Tổ chức</th>
-            <th className="py-2 pr-3">Loại</th>
-            <th className="py-2 pr-3">Thành viên</th>
-            <th className="py-2 pr-3">Credit</th>
-            <th className="py-2 pr-3">Tạo lúc</th>
+            <th className="py-2 pr-3">{dict.platform.organizations.table.org}</th>
+            <th className="py-2 pr-3">{dict.platform.organizations.table.type}</th>
+            <th className="py-2 pr-3">{dict.platform.organizations.table.members}</th>
+            <th className="py-2 pr-3">{dict.platform.organizations.table.credit}</th>
+            <th className="py-2 pr-3">{dict.platform.organizations.table.createdAt}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
@@ -71,10 +71,10 @@ export default function DanhSachToChucPage() {
               </td>
               <td className="py-2 pr-3">
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded text-caption font-medium bg-muted text-text">
-                  {org.type === "STORE" || org.type === "SINGLE" ? "Cửa hàng" :
-                   org.type === "FLOWER_NETWORK" || org.type === "CHAIN" ? "Mạng lưới điện hoa" :
-                   org.type === "PLATFORM" ? "Nền tảng" :
-                   org.type === "EXPERIENCE" ? "Trải nghiệm" : org.type}
+                  {org.type === "STORE" || org.type === "SINGLE" ? dict.platform.organizations.types.store :
+                   org.type === "FLOWER_NETWORK" || org.type === "CHAIN" ? dict.platform.organizations.types.network :
+                   org.type === "PLATFORM" ? dict.platform.organizations.types.platform :
+                   org.type === "EXPERIENCE" ? dict.platform.organizations.types.experience : org.type}
                 </span>
               </td>
               <td className="py-2 pr-3">{org.memberCount}</td>
@@ -85,7 +85,7 @@ export default function DanhSachToChucPage() {
           {orgs.length === 0 && (
             <tr>
               <td colSpan={5} className="py-4 text-center text-text-muted">
-                Chưa có tổ chức nào.
+                {dict.platform.organizations.empty}
               </td>
             </tr>
           )}

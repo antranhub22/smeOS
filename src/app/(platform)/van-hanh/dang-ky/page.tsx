@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useI18n } from "@/lib/i18n"
+import { formatDateTime } from "@/lib/i18n/formatters"
 
 type PendingRegistration = {
   userId: string
@@ -117,7 +118,7 @@ export default function DuyetDangKyPage() {
                 <td className="py-2 pr-3">
                   {item.instantTrial ? `Dùng thử${item.leadPhone ? ` · ${item.leadPhone}` : ""}` : "Đăng ký"}
                 </td>
-                <td className="py-2 pr-3">{new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+                <td className="py-2 pr-3">{formatDateTime(item.createdAt)}</td>
                 <td className="py-2 pr-3">
                   <div className="flex justify-end gap-2">
                     <Button type="button" disabled={dangXuLy === item.userId} onClick={() => void quyet(item, "APPROVE")}>

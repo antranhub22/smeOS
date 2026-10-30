@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Building2, Store, Clock, CheckCircle2 } from "lucide-react"
+import { formatDateTime } from "@/lib/i18n/formatters"
 
 type PlatformOrganizationDetail = {
   id: string
@@ -132,7 +133,7 @@ export default function ChiTietToChucPage() {
                 {org.pendingModelChange.requested_type === "CHAIN" ? "Chuỗi cửa hàng (CHAIN)" : "1 Cửa hàng độc lập (SINGLE)"}
               </strong>
             </div>
-            <div>Thời gian gửi: {new Date(org.pendingModelChange.requested_at).toLocaleString("vi-VN")}</div>
+            <div>Thời gian gửi: {formatDateTime(org.pendingModelChange.requested_at)}</div>
             {org.pendingModelChange.note && (
               <div className="italic">Lý do: &ldquo;{org.pendingModelChange.note}&rdquo;</div>
             )}
@@ -168,7 +169,7 @@ export default function ChiTietToChucPage() {
                 Tiếng Anh ({org.pendingLanguageUnlock.requested_locales.join(", ")})
               </strong>
             </div>
-            <div>Thời gian gửi: {new Date(org.pendingLanguageUnlock.requested_at).toLocaleString("vi-VN")}</div>
+            <div>Thời gian gửi: {formatDateTime(org.pendingLanguageUnlock.requested_at)}</div>
             {org.pendingLanguageUnlock.note && (
               <div className="italic">Ghi chú từ cửa hàng: &ldquo;{org.pendingLanguageUnlock.note}&rdquo;</div>
             )}
@@ -244,7 +245,7 @@ export default function ChiTietToChucPage() {
         <Dong nhan="Thành viên" giaTri={org.memberCount} />
         <Dong nhan="Chi nhánh" giaTri={org.branchCount} />
         <Dong nhan="Workspace" giaTri={org.workspaceKinds.join(", ") || "—"} />
-        <Dong nhan="Tạo lúc" giaTri={new Date(org.createdAt).toLocaleString("vi-VN")} />
+        <Dong nhan="Tạo lúc" giaTri={formatDateTime(org.createdAt)} />
       </Card>
 
       {/* Khối quản trị mở khóa ngôn ngữ đa quốc gia (SaaS Admin Language Unlock) */}

@@ -49,4 +49,16 @@ export const settingsEn = {
       actions: "Actions",
     },
   },
+  tabs: {
+    info: "1. Store Info",
+    branding: "2. Branding",
+    payment: "3. Payments",
+    deposit: "4. Deposit & Pricing",
+    promotions: "5. Promotions",
+    commitments: "6. Commitments",
+    agreements: "7. Agreements",
+    brochureFlow: "8. Brochure Flow",
+    aiChannels: "9. AI & Channels",
+    collectionProfile: "10. Chain Collection",
+  },
 } as const

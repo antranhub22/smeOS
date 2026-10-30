@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useI18n } from "@/lib/i18n"
+import { formatDateTime } from "@/lib/i18n/formatters"
 
 type PlatformAuditRow = {
   id: string
@@ -63,7 +64,7 @@ export default function NhatKyPage() {
         <tbody className="divide-y divide-border">
           {rows.map((row) => (
             <tr key={row.id} className="hover:bg-surface-alt">
-              <td className="py-2 pr-3">{new Date(row.createdAt).toLocaleString("vi-VN")}</td>
+              <td className="py-2 pr-3">{formatDateTime(row.createdAt)}</td>
               <td className="py-2 pr-3">{row.source === "platform" ? "Vận hành" : "Tổ chức"}</td>
               <td className="py-2 pr-3 font-medium">{row.action}</td>
               <td className="py-2 pr-3">{row.entityType} · {row.entityId}</td>
