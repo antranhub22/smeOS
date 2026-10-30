@@ -34,7 +34,7 @@ function ScaledPreview({ children, label }: { children: React.ReactNode; label: 
     return () => ro.disconnect()
   }, [])
   return (
-    <figure className="flex flex-col gap-2">
+    <figure className="flex flex-col gap-2 min-w-0">
       <div ref={boxRef} className="w-full rounded-lg border border-border shadow-sm overflow-hidden"
         style={{ aspectRatio: `${BUSINESS_CARD_MM.width} / ${BUSINESS_CARD_MM.height}` }}>
         <div style={{ transform: `scale(${scale})`, transformOrigin: "top left", width: BUSINESS_CARD_PRINT_PX.width }}>{children}</div>
@@ -113,9 +113,9 @@ export function BusinessCardStudio() {
       } else {
         const { width, height } = BUSINESS_CARD_MM
         const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: [width, height] })
-        pdf.addImage(await snap(frontRef.current), "PNG", 0, 0, width, height)
+        pdf.addImage(await snap(frontRef.current), "PNG", 0, 0, width, height, undefined, "FAST")
         pdf.addPage([width, height], "landscape")
-        pdf.addImage(await snap(backRef.current), "PNG", 0, 0, width, height)
+        pdf.addImage(await snap(backRef.current), "PNG", 0, 0, width, height, undefined, "FAST")
         pdf.save(`${baseName}.pdf`)
       }
     } catch {
@@ -145,7 +145,7 @@ export function BusinessCardStudio() {
         </section>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
             <ScaledPreview label="Mặt trước"><BusinessCardFront ref={frontRef} card={card} logoOk={logoOk} /></ScaledPreview>
             <ScaledPreview label="Mặt sau"><BusinessCardBack ref={backRef} card={card} qrDataUrl={qrDataUrl} logoOk={logoOk} /></ScaledPreview>
           </div>

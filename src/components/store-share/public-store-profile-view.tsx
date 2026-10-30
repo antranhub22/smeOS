@@ -59,16 +59,22 @@ export function PublicStoreProfileView({ profile }: { profile: PublicStoreProfil
           <section aria-label="Thông tin liên hệ" className="mt-4 bg-surface rounded-3xl border border-border p-5">
             <dl className="flex flex-col gap-3 text-body-sm">
               {profile.address && (
-                <div className="flex gap-3"><MapPin size={18} aria-hidden className="shrink-0 text-text-muted" />
-                  <div><dt className="sr-only">Địa chỉ</dt><dd className="text-text">{profile.address}</dd></div></div>
+                <div className="flex gap-3">
+                  <dt className="shrink-0 text-text-muted"><MapPin size={18} aria-hidden /><span className="sr-only">Địa chỉ</span></dt>
+                  <dd className="text-text">{profile.address}</dd>
+                </div>
               )}
               {profile.phone && (
-                <div className="flex gap-3"><Phone size={18} aria-hidden className="shrink-0 text-text-muted" />
-                  <div><dt className="sr-only">Điện thoại</dt><dd className="text-text">{profile.phone}</dd></div></div>
+                <div className="flex gap-3">
+                  <dt className="shrink-0 text-text-muted"><Phone size={18} aria-hidden /><span className="sr-only">Điện thoại</span></dt>
+                  <dd className="text-text">{profile.phone}</dd>
+                </div>
               )}
               {profile.hours && (
-                <div className="flex gap-3"><Clock size={18} aria-hidden className="shrink-0 text-text-muted" />
-                  <div><dt className="sr-only">Giờ mở cửa</dt><dd className="text-text">{profile.hours}</dd></div></div>
+                <div className="flex gap-3">
+                  <dt className="shrink-0 text-text-muted"><Clock size={18} aria-hidden /><span className="sr-only">Giờ mở cửa</span></dt>
+                  <dd className="text-text">{profile.hours}</dd>
+                </div>
               )}
             </dl>
           </section>
