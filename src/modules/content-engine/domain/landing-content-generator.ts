@@ -102,7 +102,7 @@ export function generateLandingPageContent(input: LandingContentInput): Generate
     },
     "valentine": {
       headline: `Hoa cho người thương — ${occasion}`,
-      sub: `Bó hoa ${shop} chuẩn bị cho ngày Lễ Tình Nhân. Chọn mẫu bạn thích, tiệm kèm lời nhắn của bạn.`,
+      sub: `Những mẫu ${shop} chuẩn bị cho ngày Lễ Tình Nhân. Chọn mẫu bạn thích, tiệm kèm lời nhắn của bạn.`,
     },
     "khai-truong": {
       headline: `Hoa chúc mừng ${occasion}`,
@@ -123,7 +123,7 @@ export function generateLandingPageContent(input: LandingContentInput): Generate
   // 2. Câu chuyện — ngắn, thật, không phóng đại
   const storyTitle = `Về ${shop}`
   const storyParagraphs = [
-    `${shop} cắm hoa cho những dịp quan trọng của khách quen. Với ${occasion}, tiệm chọn mẫu theo màu và kiểu dáng dễ tặng, dễ trưng.`,
+    `${shop} chuẩn bị quà cho những dịp quan trọng của khách quen. Với ${occasion}, tiệm chọn mẫu theo màu và kiểu dáng dễ tặng, dễ trưng.`,
     `${flowerCount > 0 ? `Bộ sưu tập có ${flowerCount} mẫu` : "Bộ sưu tập"}, tiêu biểu như ${primaryProduct}. Bạn cần đổi màu hay thêm thiệp, cứ nhắn tiệm.`,
   ]
   const storyQuote = "Hoa đẹp nhất là khi đến đúng người, đúng lúc."

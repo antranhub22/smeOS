@@ -24,7 +24,7 @@ describe("Catalog Content Generator (3 Styles)", () => {
     const result = generateCatalogContent(input)
     expect(result.styleVariant).toBe("EDITORIAL_LOOKBOOK")
     expect(result.badge).toBe("Bộ sưu tập chọn lọc")
-    expect(result.description).toContain("mẫu hoa")
+    expect(result.description).toContain("12 mẫu của Flora Boutique")
   })
 
   it("should generate content for Compact List B2B style", () => {
