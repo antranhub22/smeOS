@@ -66,9 +66,20 @@ describe("filterProductLookup", () => {
         "attributes",
         // Cấu hình kiểm tra khả dụng theo ngành (tồn kho/lịch/khung giờ) — không chứa giá vốn
         "availability_config",
+        // Cột bán hàng chuẩn — giá vốn bị cắt khi thiếu L5 (test riêng bên dưới)
+        "commerce",
       ].sort()
     )
     expect(serialized).toBeDefined()
+  })
+  it("không có L5: giá vốn trong commerce bị cắt và ghi vào redacted_fields; có L5 thì giữ", () => {
+    const raw: ProductLookupRaw = { ...PRODUCT, commerce: { barcode: "8930001", cost_price_vnd: 150_000, vat_percent: 8, weight_grams: 900, tags: ["Sinh nhật"] } }
+    const hidden = filterProductLookup(raw, RULE_ROWS, { canReadPricing: false, branchId: null })
+    expect(hidden.commerce).toEqual({ barcode: "8930001", cost_price_vnd: null, vat_percent: 8, weight_grams: 900, tags: ["Sinh nhật"] })
+    expect(hidden.redacted_fields).toContain("cost_price_vnd")
+    const shown = filterProductLookup(raw, RULE_ROWS, { canReadPricing: true, branchId: null })
+    expect(shown.commerce.cost_price_vnd).toBe(150_000)
+    expect(shown.redacted_fields).not.toContain("cost_price_vnd")
   })
   it("không có L5: ẩn BOM, giá sàn/trần và phí làm thay trong attributes, vẫn giữ giá bán niêm yết", () => {
     const withAttrs: ProductLookupRaw = {

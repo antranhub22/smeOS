@@ -67,10 +67,12 @@ export default function SanPhamPage() {
     reload: napLai,
     loadMore: handleLoadMore,
     removeLocal,
+    total: serverTotal,
   } = useProductList<ProductItem>(
     filters.search,
     filters.category === "Tất cả" ? null : filters.category,
-    onlyProposals ? "pending" : null
+    onlyProposals ? "pending" : null,
+    filters
   )
 
   const handleConfirmTrash = async (target: TrashConfirmTarget) => {
@@ -279,8 +281,9 @@ export default function SanPhamPage() {
             )}
             {filteredProducts.length > 0 && (
               <div className="text-caption text-text-muted">
-                Hiển thị {filteredProducts.length} {ti("sampleProduct").toLowerCase()}
-                {nextCursor ? " — còn nhiều hơn" : " (tất cả)"}
+                Hiển thị {filteredProducts.length}
+                {serverTotal ? ` / ${serverTotal.count}${serverTotal.truncated ? "+" : ""}` : ""} {ti("sampleProduct").toLowerCase()}
+                {serverTotal ? "" : nextCursor ? " — còn nhiều hơn" : " (tất cả)"}
               </div>
             )}
           </div>

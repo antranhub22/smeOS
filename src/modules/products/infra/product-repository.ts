@@ -1,5 +1,4 @@
 import type { InputJsonValue, product_status, products } from "./entities"
-
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { signStorageUrl } from "@/modules/assets/infra/storage-signing"
@@ -9,6 +8,7 @@ import type { DbClient } from "./db-client"
 import { assertOwnedAsset, attachMainImageIfMissing, linkMainImage, refreshDriveLinkIfNotDrive, refreshDriveLink, replaceMainImage, upsertMainImage } from "./product-main-image"
 import { updateExistingProductFromBatch, type BatchUpdateItemInput } from "./product-batch-update"
 import type { IProductRepository } from "../domain/repositories/product-repository.interface"
+import type { ProductCommerceInput } from "../domain/product-commerce"
 
 /** Kết quả trả về từ `listWithPreview` — bản ghi sản phẩm kèm ảnh chính và giá. */
 export type ProductPreviewRow = products & {
@@ -29,6 +29,7 @@ export type CreateProductInput = {
   status?: product_status | undefined
   attributes?: Record<string, unknown> | null | undefined
   imageAssetId?: string | null | undefined
+  commerce?: ProductCommerceInput | undefined
 }
 
 export type UpdateProductIdentityInput = {
@@ -52,6 +53,7 @@ export type UpdateProductInput = {
   attributes?: Record<string, unknown> | null | undefined
   imageAssetId?: string | null | undefined
   availabilityConfig?: unknown | undefined
+  commerce?: ProductCommerceInput | undefined
 }
 
 export type ListProductsFilters = {
@@ -271,6 +273,7 @@ export class ProductRepository implements IProductRepository {
         container: input.container ?? null,
         status: input.status ?? "DRAFT",
         attributes: (input.attributes ?? null) as InputJsonValue,
+        ...(input.commerce ?? {}),
       }),
     })
 
@@ -305,12 +308,9 @@ export class ProductRepository implements IProductRepository {
         ...(input.facing !== undefined ? { facing: input.facing } : {}),
         ...(input.container !== undefined ? { container: input.container } : {}),
         ...(input.status !== undefined ? { status: input.status } : {}),
-        ...(input.attributes !== undefined
-          ? { attributes: input.attributes as InputJsonValue }
-          : {}),
-        ...(input.availabilityConfig !== undefined
-          ? { availability_config: input.availabilityConfig as InputJsonValue }
-          : {}),
+        ...(input.attributes !== undefined ? { attributes: input.attributes as InputJsonValue } : {}),
+        ...(input.availabilityConfig !== undefined ? { availability_config: input.availabilityConfig as InputJsonValue } : {}),
+        ...(input.commerce ?? {}),
       },
     })
     if (result.count === 0) return null

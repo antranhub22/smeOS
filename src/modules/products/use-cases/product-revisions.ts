@@ -34,6 +34,10 @@ export async function writeSnapshot(ctx: TenantContext, current: products, snap:
     container: snap.container,
     attributes,
     availabilityConfig: snap.availability_config ?? undefined,
+    // Phiên bản trước 30/10/2026 không có cột bán hàng — giữ giá trị hiện tại thay vì xoá.
+    ...("tags" in snap
+      ? { commerce: { barcode: snap.barcode ?? null, cost_price_vnd: snap.cost_price_vnd ?? null, vat_percent: snap.vat_percent ?? null, weight_grams: snap.weight_grams ?? null, tags: snap.tags ?? [] } }
+      : {}),
     ...(opts.withStatus ? { status: snap.status } : {}),
   })
   if (!updated) throw notFound()

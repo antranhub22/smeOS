@@ -18,6 +18,7 @@
 
 import type { FloorCeilingRatio, PricingRuleRow } from "./pricing-rules"
 import { mergeEffectiveFloorCeilingRatio, mergeEffectivePricingConfig } from "./pricing-rules"
+import { commerceFromRow, redactCommerce, type ProductCommerceFields } from "./product-commerce"
 
 export interface ProductLookupRaw {
   id: string
@@ -46,6 +47,8 @@ export interface ProductLookupRaw {
   driveLink?: string | undefined
   attributes?: Record<string, unknown> | null
   availability_config?: unknown
+  /** Cột bán hàng chuẩn (mã vạch, giá vốn, VAT, khối lượng, thẻ) — vắng thì coi như chưa khai. */
+  commerce?: Partial<ProductCommerceFields> | undefined
 }
 
 export interface ProductPricingSummary {
@@ -77,6 +80,8 @@ export interface ProductLookupResult {
   redacted_fields: string[]
   attributes?: Record<string, unknown> | null | undefined
   availability_config?: unknown
+  /** Giá vốn `null` + có trong `redacted_fields` khi thiếu `L5`. */
+  commerce: ProductCommerceFields
 }
 
 /**
@@ -122,6 +127,9 @@ export function filterProductLookup(
     }
   }
 
+  const { commerce, redacted } = redactCommerce(commerceFromRow(product.commerce ?? {}), options.canReadPricing)
+  redactedFields.push(...redacted)
+
   return {
     id: product.id,
     code: product.code,
@@ -139,5 +147,6 @@ export function filterProductLookup(
     pricing,
     redacted_fields: redactedFields,
     availability_config: product.availability_config,
+    commerce,
   }
 }
