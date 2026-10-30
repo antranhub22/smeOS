@@ -119,7 +119,7 @@ export function useAutonomousCatalogGenerator({
         if (note) generatedName = `Bộ sưu tập: ${note.length > 40 ? `${note.slice(0, 40).trimEnd()}…` : note}`
       }
 
-      let generatedDesc = `Tuyển chọn ${chosenIds.length} ${sampleProductTerm} nghệ thuật được thiết kế tinh tế nhất từ ${currentShopName}.`
+      let generatedDesc = `${chosenIds.length} ${sampleProductTerm} từ ${currentShopName} — xem ảnh, chọn mẫu và nhắn tiệm để đặt.`
       let aiIntroOk = false
       try {
         const res = await fetch("/api/v1/content-engine/catalog-generate", {
@@ -128,6 +128,7 @@ export function useAutonomousCatalogGenerator({
           body: JSON.stringify({
             collectionName: generatedName,
             productCount: chosenIds.length,
+            productIds: chosenIds,
             styleVariant: "EDITORIAL_LOOKBOOK",
           }),
         })

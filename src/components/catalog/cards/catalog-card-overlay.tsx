@@ -46,11 +46,8 @@ export function CatalogCardOverlay({
         boxShadow: shadowCard,
       }}
     >
-      <button
-        type="button"
-        onClick={() => onSelectProduct(product)}
-        className="block w-full text-left relative aspect-4/5 overflow-hidden"
-      >
+      {/* Nút xem chi tiết phủ cả thẻ; nút Zalo là phần tử ngang hàng (không lồng nút trong nút) */}
+      <div className="relative aspect-4/5 overflow-hidden">
         <SmartFlowerImage
           src={product.imageUrl}
           alt={product.name}
@@ -94,8 +91,15 @@ export function CatalogCardOverlay({
           }}
         />
 
+        <button
+          type="button"
+          onClick={() => onSelectProduct(product)}
+          aria-label={`Xem chi tiết ${product.name}`}
+          className="absolute inset-0 z-[15] cursor-pointer"
+        />
+
         {/* Overlay Content */}
-        <div className="absolute inset-x-0 bottom-0 z-20 p-5 pt-0 flex flex-col gap-1.5">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 p-5 pt-0 flex flex-col gap-1.5">
           {product.category && (
             <span
               className="text-caption uppercase tracking-widest font-semibold"
@@ -112,10 +116,7 @@ export function CatalogCardOverlay({
           </h4>
           <div className="flex items-center justify-between pt-2">
             <div>
-              <div className="text-caption uppercase tracking-wider opacity-80" style={{ color: textSecondary }}>
-                Giá niêm yết
-              </div>
-              <div className="text-base font-black tracking-tight" style={{ color: priceColor }}>
+              <div className="text-base font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
                 {formatVnd(product.price)}
               </div>
             </div>
@@ -123,16 +124,16 @@ export function CatalogCardOverlay({
               href={getZaloUrl(product, shop)}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95"
+              aria-label="Đặt ngay qua Zalo"
+              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95"
               style={{ backgroundColor: ctaBg, color: ctaText }}
             >
-              <MessageCircle size={14} />
-              Đặt ngay
+              <MessageCircle size={14} aria-hidden="true" />
+              <span className="hidden sm:inline">Đặt ngay</span>
             </a>
           </div>
         </div>
-      </button>
+      </div>
     </article>
   )
 }

@@ -20,7 +20,7 @@ describe("Không tiến độ giả / link giả ở công cụ Landing page & C
     const src = read("src/components/catalog/landing-campaign-tab.tsx")
     expect(src).not.toMatch(/setTimeout\(r,\s*\d+\)/)
     expect(src).not.toMatch(/id: "vision"/)
-    expect(src).toContain("setUsedFallbackContent(true)")
+    expect(src).toContain("setFallbackReason(res?.status === 403 ? \"quyen\" : \"ai\")")
   })
 })
 
@@ -71,7 +71,7 @@ describe("Nội dung mẫu landing không bịa khẳng định về cửa hàng
 
 describe("Trang landing công khai không có đồng hồ đếm ngược giả", () => {
   it("không còn chuỗi giờ cố định trong hero", () => {
-    expect(read("src/components/catalog/landing-templates/landing-template-hero.tsx")).not.toMatch(/\d\d : \d\d : \d\d/)
+    expect(read("src/components/catalog/public/public-hero.tsx")).not.toMatch(/\d\d : \d\d : \d\d/)
   })
 })
 
@@ -86,8 +86,13 @@ describe("Không đánh giá khách hàng giả trên trang công khai", () => {
 
 describe("Mẫu trang công khai không cam kết thay cửa hàng", () => {
   it("hero, lead, gallery, video không còn giờ giao/độ tươi/100%/nhập khẩu viết cứng", () => {
-    for (const f of ["hero", "lead", "gallery", "video"]) {
-      const src = read(`src/components/catalog/landing-templates/landing-template-${f}.tsx`)
+    for (const f of [
+      "public/public-hero",
+      "landing-templates/landing-template-lead",
+      "landing-templates/landing-template-gallery",
+      "landing-templates/landing-template-video",
+    ]) {
+      const src = read(`src/components/catalog/${f}.tsx`)
       expect(src, f).not.toMatch(/hẹn 2h|nhanh 2h|3–5 ngày|100%|nhập khẩu|loại 1/)
     }
   })

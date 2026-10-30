@@ -36,9 +36,8 @@ export function LandingTemplatePerks({
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-1.5 text-xs font-bold text-text uppercase tracking-wider">
           <CheckCircle2 size={14} className="text-success" />
-          <span>{isLuxury ? "Giá Trị Cốt Lõi & Cam Kết Vàng" : "4 Cam Kết Vàng Về Dịch Vụ"}</span>
+          <span>Vì sao chọn tiệm</span>
         </div>
-        <span className="text-caption text-text-muted font-medium">Bảo vệ quyền lợi khách hàng</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -52,7 +51,7 @@ export function LandingTemplatePerks({
             }`}
           >
             {isLuxury ? (
-              <span className="font-serif text-title font-bold text-primary shrink-0 block w-7 text-center">
+              <span className="font-display text-title font-bold text-primary shrink-0 block w-7 text-center">
                 0{idx + 1}.
               </span>
             ) : (

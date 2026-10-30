@@ -15,6 +15,7 @@ import type {
 } from "../domain/entities/catalog-studio.types"
 import { CATALOG_STYLES } from "../domain/styles/style-registry"
 import { CATALOG_TEMPLATES } from "../domain/templates/template-registry"
+import { planProductPages } from "../domain/page-planner"
 import { validateCatalogBrief } from "../domain/validation/catalog-validator"
 
 export interface ResolvedCatalogResult {
@@ -52,7 +53,7 @@ export function resolveCatalogBrief(
     pageNumber: currentPage++,
     layoutId: "L01_COVER",
     title: brief.title,
-    subtitle: brief.coverCopy?.subtitle || brand.slogan || "Bộ Sưu Tập Tinh Tuyển",
+    subtitle: brief.coverCopy?.subtitle || brand.slogan || brand.name,
     heroImage: primaryHeroImage,
     products: [],
     styleId: style.id,
@@ -63,15 +64,14 @@ export function resolveCatalogBrief(
     pages.push({
       pageNumber: currentPage++,
       layoutId: "L02_BRAND_STORY",
-      title: "Triết Lý & Nghệ Thuật Chế Tác",
-      subtitle: brand.name,
+      title: "Câu chuyện của tiệm",
+      subtitle: brief.title,
       heroImage: activeProducts[1]?.primaryImage || primaryHeroImage,
       contentBlock: {
-        heading: `Tuyển tập tinh hoa từ ${brand.name}`,
+        heading: `Về ${brand.name}`,
         body:
           brand.description ||
-          `Mỗi tác phẩm trong bộ sưu tập "${brief.title}" đều được chăm chút tỉ mỉ từ những nguyên liệu tuyển chọn khắt khe nhất, gửi gắm trọn vẹn cảm xúc và thẩm mỹ thanh lịch đến người nhận.`,
-        quote: "Nơi vẻ đẹp và sự tinh tế giao hòa trong từng chi tiết độc bản.",
+          `Bộ sưu tập "${brief.title}" gồm những mẫu ${brand.name} chọn theo màu và kiểu dáng dễ tặng. Cần đổi tông màu hay thêm thiệp, cứ liên hệ tiệm.`,
       },
       products: [],
       styleId: style.id,
@@ -84,12 +84,12 @@ export function resolveCatalogBrief(
     pages.push({
       pageNumber: currentPage++,
       layoutId: "L04_HERO_PRODUCT",
-      title: "Tác Phẩm Chủ Đạo",
+      title: "Mẫu nổi bật",
       subtitle: heroProd.name,
       heroImage: heroProd.primaryImage,
       contentBlock: {
         heading: heroProd.name,
-        body: heroProd.shortDescription || heroProd.description || "Tác phẩm tiêu biểu đại diện cho phong cách thiết kế độc bản của bộ sưu tập.",
+        body: heroProd.shortDescription || heroProd.description || "",
       },
       products: [heroProd],
       styleId: style.id,
@@ -104,32 +104,29 @@ export function resolveCatalogBrief(
       : activeProducts
 
   const itemsPerPage = style.id === "S02_PURE_MINIMAL" ? 6 : 4
-  const totalGridPages = Math.ceil(Math.max(1, gridProducts.length) / itemsPerPage)
-
-  for (let i = 0; i < totalGridPages; i++) {
-    const pageSlice = gridProducts.slice(i * itemsPerPage, (i + 1) * itemsPerPage)
-    pages.push({
-      pageNumber: currentPage++,
-      layoutId: "L05_PRODUCT_GRID",
-      title: totalGridPages > 1 ? `Danh Mục Sản Phẩm (${i + 1}/${totalGridPages})` : "Danh Mục Sản Phẩm",
-      subtitle: brief.title,
-      products: pageSlice,
-      styleId: style.id,
-    })
+  const has = (id: string) => template.structure.some((s) => s.layoutId === id)
+  for (const planned of planProductPages(gridProducts, {
+    itemsPerPage,
+    withDividers: has("L03_COLLECTION_DIVIDER"),
+    withDetails: has("L06_PRODUCT_DETAIL"),
+    collectionTitle: brief.title,
+  })) {
+    pages.push({ ...planned, pageNumber: currentPage++, styleId: style.id })
   }
 
   // 5. Page: Closing (L08)
   pages.push({
     pageNumber: currentPage++,
     layoutId: "L08_CLOSING",
-    title: "Thông Tin & Đặt Hàng",
-    subtitle: brand.name,
+    title: "Đặt hoa",
+    subtitle: brief.title,
     contentBlock: {
-      heading: "Trân trọng cảm ơn quý khách",
+      heading: "Cảm ơn bạn đã xem bộ sưu tập",
       body:
         brief.closingCopy?.thankYouNote ||
-        "Chúng tôi hân hạnh đồng hành cùng quý khách tạo nên những khoảnh khắc đáng nhớ và ý nghĩa nhất.",
-      quote: brief.closingCopy?.policyNote || "Hỗ trợ xuất hóa đơn VAT điện tử • Giao hàng chuyên nghiệp đúng hẹn.",
+        "Chọn mẫu bạn thích, gửi mã mẫu cho tiệm qua điện thoại hoặc Zalo để được xác nhận.",
+      // Chính sách chỉ in khi tiệm tự nhập — không tự hứa hóa đơn/giao đúng hẹn
+      ...(brief.closingCopy?.policyNote ? { quote: brief.closingCopy.policyNote } : {}),
     },
     products: [],
     styleId: style.id,

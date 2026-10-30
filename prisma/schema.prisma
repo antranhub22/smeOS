@@ -158,6 +158,7 @@ model organizations {
   assets                        assets[]
   storage_outbox                storage_outbox[]
   landing_pages                 landing_pages[]
+  shop_reviews                  shop_reviews[]
   generation_jobs               generation_jobs[]
   usage                         usage[]
   audit_logs                    audit_logs[]
@@ -514,6 +515,29 @@ model landing_pages {
 
   @@index([organization_id])
   @@index([organization_id, created_at])
+}
+
+/**
+ * Đánh giá khách do CHỦ TIỆM tự nhập (PO 30/10/2026) — hiện ở mục "Khách hàng nói gì"
+ * trên trang khách Landing (08) / Catalog (09). Không có form khách tự gửi; chỉ dòng
+ * `is_visible = true` lên trang công khai. Không lưu số điện thoại khách.
+ */
+model shop_reviews {
+  id              String   @id @default(uuid())
+  organization_id String
+  author_name     String
+  occasion        String?
+  rating          Int // 1–5, kiểm ở domain
+  comment         String
+  is_visible      Boolean  @default(true)
+  created_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, is_visible])
 }
 
 /**

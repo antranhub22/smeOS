@@ -23,8 +23,8 @@ describe("Catalog Content Generator (3 Styles)", () => {
     }
     const result = generateCatalogContent(input)
     expect(result.styleVariant).toBe("EDITORIAL_LOOKBOOK")
-    expect(result.badge).toContain("Editorial Lookbook")
-    expect(result.description).toContain("bản hòa ca thị giác")
+    expect(result.badge).toBe("Bộ sưu tập chọn lọc")
+    expect(result.description).toContain("mẫu hoa")
   })
 
   it("should generate content for Compact List B2B style", () => {
@@ -36,7 +36,7 @@ describe("Catalog Content Generator (3 Styles)", () => {
     }
     const result = generateCatalogContent(input)
     expect(result.styleVariant).toBe("COMPACT_LIST")
-    expect(result.curatorNote).toContain("hóa đơn VAT")
+    expect(result.curatorNote).toContain("nhắn tiệm để được xác nhận")
   })
 
   it("should generate content for Modern Showroom style", () => {
@@ -48,6 +48,6 @@ describe("Catalog Content Generator (3 Styles)", () => {
     }
     const result = generateCatalogContent(input)
     expect(result.styleVariant).toBe("MODERN_SHOWROOM")
-    expect(result.badge).toContain("Catalog Sản Phẩm")
+    expect(result.badge).toBe("Bộ sưu tập trực tuyến")
   })
 })

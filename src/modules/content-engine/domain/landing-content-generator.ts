@@ -18,6 +18,8 @@ export interface LandingContentInput {
     code?: string | undefined
     price?: number | null | undefined
     category?: string | null | undefined
+    /** Ghi chú bán hàng đã duyệt (máy chủ tự đọc, không nhận từ trình duyệt) */
+    sellingNote?: string | undefined
   }>
   userDirectives?: string | undefined
   discountPercent?: number | undefined
@@ -87,115 +89,44 @@ export function generateLandingPageContent(input: LandingContentInput): Generate
   // Ưu đãi chỉ khi tiệm bật "Giảm %" trong Hồ sơ tiệm — không có thì không hứa giảm giá
   const discount = input.discountPercent
 
-  const primaryProduct = input.selectedProducts[0]?.name || "những tác phẩm sản phẩm tuyển chọn"
+  const primaryProduct = input.selectedProducts[0]?.name || "các mẫu của tiệm"
   const flowerCount = input.selectedProducts.length
 
-  // 1. Hero Content — Đa dạng biến thể (Stochastic Variant Pool)
-  const heroBadgeOptions = [
-    `Bộ Sưu Tập Giới Hạn • Mừng ${occasion}`,
-    `Tuyệt Tác Thiết Kế • Dịp ${occasion}`,
-    `Bộ Sưu Tập Độc Bản • Mùa ${occasion}`,
-    `Tuyển Chọn Tinh Hoa • Chào ${occasion}`,
-  ]
-  const heroBadge = heroBadgeOptions[Math.floor(Math.random() * heroBadgeOptions.length)] ?? `Bộ Sưu Tập Giới Hạn • Mừng ${occasion}`
-
-  const headlinePools: Record<string, Array<{ headline: string; sub: string }>> = {
-    "20-10": [
-      {
-        headline: `Tôn Vinh Phái Đẹp — Ngàn Lời Tri Ân Gửi Trao Ngày ${occasion}`,
-        sub: `Mỗi cánh hoa là một lời cảm ơn sâu sắc gửi đến người phụ nữ tuyệt vời nhất trong cuộc đời bạn. Thiết kế độc bản bởi nghệ nhân ${shop}.`,
-      },
-      {
-        headline: `Thay Ngàn Lời Yêu — Tuyệt Tác Sản Phẩm Dành Riêng Cho Nàng`,
-        sub: `Những thiết kế được ${shop} chọn riêng cho dịp này, thay bạn gửi gắm trọn vẹn tình cảm chân thành và sự tinh tế.`,
-      },
-      {
-        headline: `Đóa Hoa Cảm Xúc — Tỏa Sáng Nét Duyên Dáng Của Người Phụ Nữ Bạn Yêu`,
-        sub: `Sự kết hợp hoàn mỹ giữa nét đẹp thanh tao và nghệ thuật chế tác hiện đại tại ${shop}, món quà xứng tầm trao gửi trân quý.`,
-      },
-      {
-        headline: `Trao Gửi Trân Quý — Món Quà Hoàn Hảo Chạm Đến Trái Tim`,
-        sub: `Dành tặng mẹ, vợ, đối tác hay người thương những đóa sản phẩm sớm tinh khôi từ ${shop}, lưu giữ khoảnh khắc ngọt ngào ngày ${occasion}.`,
-      },
-    ],
-    "valentine": [
-      {
-        headline: `Gửi Trọn Tình Yêu — Ngọt Ngào & Nồng Nàn Mùa Lễ Tình Nhân`,
-        sub: `Những đóa hồng được ${shop} chọn lựa kỹ, minh chứng cho tình yêu và sự chân thành sâu sắc nhất.`,
-      },
-      {
-        headline: `Khoảnh Khắc Tỏ Tình — Rung Động Con Tim Mùa Lễ Tình Nhân`,
-        sub: `Từng cánh hồng nhung đỏ thắm được phối cùng hoa baby dịu dàng từ ${shop}, tạo nên bản hòa ca lãng mạn bất tận.`,
-      },
-    ],
-    "khai-truong": [
-      {
-        headline: `Khai Trương Hồng Phát — Tài Lộc Tấn Tới, Vạn Sự Hanh Thông`,
-        sub: `Kệ hoa và giỏ hoa chúc mừng từ ${shop} mang sắc màu đại cát, chúc đối tác kinh doanh phát tài, may mắn khởi sắc.`,
-      },
-      {
-        headline: `Khai Trương Hồng Phát — Đại Cát Đại Lợi, Đón Đầu Thịnh Vượng`,
-        sub: `Thiết kế hoa chúc mừng sang trọng, nổi bật và trang nghiêm từ ${shop}, thay lời chúc đối tác mã đáo thành công.`,
-      },
-    ],
+  // 1. Hero — câu cụ thể, không sáo rỗng, không hứa điều tiệm chưa khai (bản dự phòng khi AI không chạy)
+  const heroBadge = `Mùa ${occasion}`
+  const named = input.selectedProducts[0]?.name
+  const heroByOccasion: Record<string, { headline: string; sub: string }> = {
+    "20-10": {
+      headline: `Hoa tặng mẹ, vợ, người thương dịp ${occasion}`,
+      sub: `${shop} chọn sẵn ${flowerCount > 0 ? `${flowerCount} mẫu` : "những mẫu"} cho ngày này — xem ảnh thật, chọn mẫu và nhắn tiệm để giữ hoa.`,
+    },
+    "valentine": {
+      headline: `Hoa cho người thương — ${occasion}`,
+      sub: `Bó hoa ${shop} chuẩn bị cho ngày Lễ Tình Nhân. Chọn mẫu bạn thích, tiệm kèm lời nhắn của bạn.`,
+    },
+    "khai-truong": {
+      headline: `Hoa chúc mừng ${occasion}`,
+      sub: `Kệ và giỏ hoa chúc mừng từ ${shop} — chọn mẫu, gửi tên người nhận và lời chúc, tiệm liên hệ xác nhận.`,
+    },
   }
-
-  const defaultOccasionPool = [
-    {
-      headline: `Trao Yêu Thương Trọn Vẹn — Tôn Vinh Khoảnh Khắc ${occasion}`,
-      sub: `Những mẫu được ${shop} chọn riêng, gửi gắm trọn vẹn tình cảm và sự tinh tế đến người bạn trân quý.`,
-    },
-    {
-      headline: `Sắc Sản Phẩm Mới — Rạng Rỡ Khoảnh Khắc Kỷ Niệm ${occasion}`,
-      sub: `Mỗi tác phẩm hoa tại ${shop} là một bản giao hưởng màu sắc, đem niềm vui bất ngờ và hạnh phúc ngập tràn đến người nhận.`,
-    },
-    {
-      headline: `Món Quà Tinh Tế — Gắn Kết Yêu Thương Dịp ${occasion}`,
-      sub: `Trao sản phẩm, gửi tấm lòng. Những thiết kế độc quyền từ nghệ nhân ${shop} giúp lời chúc mừng của bạn trở nên đáng nhớ hơn bao giờ hết.`,
-    },
-  ]
-
-  const activePool = headlinePools[input.occasionId] || defaultOccasionPool
-  const pickedVariant = activePool[Math.floor(Math.random() * activePool.length)] ?? activePool[0]!
-  let heroHeadline = pickedVariant.headline
+  const pickedVariant = heroByOccasion[input.occasionId] ?? {
+    headline: named ? `${named} cho dịp ${occasion}` : `Hoa cho dịp ${occasion}`,
+    sub: `Những mẫu ${shop} chọn cho dịp này — xem ảnh thật, chọn mẫu và nhắn tiệm để đặt.`,
+  }
+  const heroHeadline = pickedVariant.headline
   let heroSubHeadline = pickedVariant.sub
 
   if (directive) {
     heroSubHeadline += ` Điểm nhấn: ${directive}.`
   }
 
-  // 2. Brand & Florist Craftsmanship Story — Biến thể góc kể chuyện
-  const storyAngles = [
-    {
-      title: `Nghệ Thuật Chế Tác & Triết Lý Thương Hiệu Tại ${shop}`,
-      paragraphs: [
-        `Tại ${shop}, chúng tôi tin rằng sản phẩm không đơn thuần là một món quà, mà là chiếc cầu nối cảm xúc vô giá giữa hai tâm hồn. Mỗi thiết kế trong bộ sưu tập ${occasion} đều được chăm chút tỉ mỉ từ khâu chọn lọc từng đóa sản phẩm sớm tinh khôi đến cách phối màu hài hòa chuẩn phong cách hiện đại.`,
-        `Với hơn ${flowerCount > 0 ? `${flowerCount} thiết kế tâm điểm` : "nhiều sản phẩm độc bản"}, tiêu biểu như ${primaryProduct}, mỗi thiết kế tại ${shop} được cắm và kiểm tra kỹ trước khi giao đến người nhận.`,
-      ],
-      quote: `“Chúng tôi không chỉ tạo ra sản phẩm, chúng tôi gửi gắm cả sự trân trọng và tấm lòng của người tặng vào từng chi tiết sản phẩm.”`,
-    },
-    {
-      title: `Đam Mê Bất Tận Với Từng Đóa Sản Phẩm Tại ${shop}`,
-      paragraphs: [
-        `Đội ngũ ${shop} tự tay chọn lựa từng thành phần cho mỗi thiết kế. Chúng tôi tin rằng sự chăm chút là điều tạo nên khác biệt cho món quà ${occasion}.`,
-        `Tác phẩm ${primaryProduct} cùng các sản phẩm trong chiến dịch lần này mang phong cách tự nhiên, bay bổng nhưng vô cùng thanh lịch, sẵn sàng làm xiêu lòng bất kỳ ai ngay từ ánh nhìn đầu tiên.`,
-      ],
-      quote: `“Một đóa hoa đẹp có thể thay vạn lời muốn nói, xua tan mọi mỏi mệt và sưởi ấm những trái tim.”`,
-    },
-    {
-      title: `Tiêu Chuẩn Sản Phẩm Cao Cấp & Tinh Hoa Sáng Tạo Tại ${shop}`,
-      paragraphs: [
-        `Mỗi thiết kế tại ${shop} được chọn thành phần, cắm và kiểm tra kỹ trước khi đến tay người nhận.`,
-        `Với bộ sưu tập ${occasion}, ${shop} mong muốn đồng hành cùng quý khách tạo nên những ký ức trọn vẹn, đáng nhớ thông qua các tuyệt tác như ${primaryProduct}.`,
-      ],
-      quote: `“Sự hài lòng và nụ cười rạng ngời của người nhận chính là thước đo giá trị cao nhất cho tâm huyết của chúng tôi.”`,
-    },
+  // 2. Câu chuyện — ngắn, thật, không phóng đại
+  const storyTitle = `Về ${shop}`
+  const storyParagraphs = [
+    `${shop} cắm hoa cho những dịp quan trọng của khách quen. Với ${occasion}, tiệm chọn mẫu theo màu và kiểu dáng dễ tặng, dễ trưng.`,
+    `${flowerCount > 0 ? `Bộ sưu tập có ${flowerCount} mẫu` : "Bộ sưu tập"}, tiêu biểu như ${primaryProduct}. Bạn cần đổi màu hay thêm thiệp, cứ nhắn tiệm.`,
   ]
-
-  const pickedStory = storyAngles[Math.floor(Math.random() * storyAngles.length)] ?? storyAngles[0]!
-  const storyTitle = pickedStory.title
-  const storyParagraphs = pickedStory.paragraphs
-  const storyQuote = pickedStory.quote
+  const storyQuote = "Hoa đẹp nhất là khi đến đúng người, đúng lúc."
 
   // 3. Điểm nổi bật mẫu — không cam kết số giờ, số ngày hay quà tặng khi cửa hàng chưa xác nhận (nội dung lên trang công khai).
   const perks: LandingSectionPerk[] = [
@@ -229,18 +160,18 @@ export function generateLandingPageContent(input: LandingContentInput): Generate
   const steps: LandingSectionStep[] = [
     {
       step: 1,
-      title: "Chọn mẫu & Gửi thông điệp",
+      title: "Chọn mẫu và lời nhắn",
       description: `Lựa chọn thiết kế yêu thích trong bộ sưu tập ${occasion} và để lại nội dung chúc mừng mong muốn.`,
     },
     {
       step: 2,
-      title: "Nghệ nhân thực hiện & Chụp duyệt",
-      description: `Florist tay nghề cao tại ${shop} tuyển hoa mới cắm và gửi ảnh thực tế qua Zalo cho bạn duyệt trước.`,
+      title: "Tiệm xác nhận đơn",
+      description: `${shop} liên hệ xác nhận mẫu, địa chỉ và giờ giao với bạn.`,
     },
     {
       step: 3,
-      title: "Giao hoa tận tay & Báo cáo",
-      description: "Shipper giao hoa nâng niu đến tận tay người nhận và gửi ảnh xác nhận hoàn tất giao hàng tức thì.",
+      title: "Giao hoa",
+      description: "Hoa được giao đến người nhận theo giờ đã hẹn.",
     },
   ]
 

@@ -111,6 +111,7 @@ export function CatalogWizardFlow({
         body: JSON.stringify({
           collectionName: name.trim(),
           productCount: selectedIds.length,
+          productIds: selectedIds,
           styleVariant,
         }),
       })
@@ -120,7 +121,7 @@ export function CatalogWizardFlow({
         setDesc(json.data.description)
       }
     } catch {
-      setDesc(`Chào mừng quý khách đến với ${name}. Tuyển chọn những ${sampleTerm} nghệ thuật được thiết kế tinh tế nhất từ ${currentShopName}.`)
+      setDesc(`${name} — ${selectedIds.length} ${sampleTerm} từ ${currentShopName}. Xem ảnh, chọn mẫu và nhắn tiệm để đặt.`)
     } finally {
       setIsAiGenerating(false)
     }

@@ -2,8 +2,10 @@ import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
+import { getApprovedSellingNotes } from "@/modules/product-copies/use-cases/get-approved-selling-notes"
 import { executeGenerateCatalogContent } from "@/modules/content-engine/use-cases/generate-catalog-content.use-case"
 
 const requestSchema = z.object({
@@ -12,10 +14,14 @@ const requestSchema = z.object({
   productCount: z.number().int().nonnegative().default(0),
   styleVariant: z.enum(["EDITORIAL_LOOKBOOK", "MODERN_SHOWROOM", "COMPACT_LIST"]).default("MODERN_SHOWROOM"),
   userDirectives: z.string().optional(),
+  /** Chỉ để máy chủ tự đọc mô tả bán hàng đã duyệt của tenant */
+  productIds: z.array(z.string().min(1).max(64)).max(50).optional(),
 })
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  // J7 — sinh nội dung AI cho landing/catalog (PO 30/10/2026, trả nợ #170)
+  requireCapability(ctx, "J7")
 
   const body = await request.json().catch(() => null)
   const parsed = requestSchema.safeParse(body)
@@ -23,7 +29,11 @@ export const POST = handle(async (request) => {
     throw validationFailed({ issues: parsed.error.issues })
   }
 
-  const bizProfile = await getBusinessProfile(ctx).catch(() => null)
+  const [bizProfile, sellingNotes] = await Promise.all([
+    getBusinessProfile(ctx).catch(() => null),
+    // Thiếu quyền đọc dữ liệu bán hàng (H5) hoặc lỗi → viết như cũ
+    getApprovedSellingNotes(ctx, parsed.data.productIds ?? []).catch(() => new Map<string, string>()),
+  ])
   const shopName = bizProfile?.display_name || "Tiệm Sản Phẩm"
 
   const result = await executeGenerateCatalogContent(
@@ -34,6 +44,7 @@ export const POST = handle(async (request) => {
       productCount: parsed.data.productCount,
       styleVariant: parsed.data.styleVariant,
       userDirectives: parsed.data.userDirectives,
+      sellingNotes: [...sellingNotes.values()],
     },
     ctx
   )

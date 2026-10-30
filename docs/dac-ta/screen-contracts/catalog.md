@@ -82,3 +82,21 @@
 
 ## 15. Progressive disclosure & rủi ro (03c) — 29/10/2026 (công cụ #09 chuyển Hoàn thiện)
 Đã sửa: tạo catalog tự động **bịa link `/c/catalog`** khi xuất bản lỗi (slug mặc định `"catalog"`) → nay báo `TaskStatus` thất bại + "Làm lại", không có link; bỏ các khoảng chờ giả lập 600 ms giữa các bước; AI không viết được lời giới thiệu thì báo đang dùng lời mẫu; bỏ `confirm()` khi phân tích lại ảnh (chi phí đã ghi trên nút, R2); tiêu đề trang thành `<h1>`. Rủi ro: xuất bản link R3. axe 390px: 0 lỗi. Test: `tests/unit/ux/no-fake-progress.test.ts`.
+
+### Trang khách xem `/c/[slug]` (Landing 08 / Catalog 09) — nâng cấp thiết kế 29/10/2026
+- **Hero tràn màn hình** (`src/components/catalog/public/public-hero.tsx`): nền là ảnh thật (ảnh hero tiệm tải lên, không có thì ảnh sản phẩm đầu tiên); không có ảnh thật → khối hero cũ theo phong cách catalog, không dùng ảnh minh hoạ. Tiêu đề/dòng phụ lấy từ nội dung AI đã duyệt, không có thì tên/mô tả catalog. Nút chính "Xem bộ sưu tập" cuộn tới vùng sản phẩm. Màu theo token phong cách catalog (S01–S12), không dùng màu giao diện quản trị.
+- **Thanh hành động cố định đáy** (chỉ di động, `public-sticky-actions.tsx`): "Nhắn Zalo đặt hoa" + "Gọi", chỉ hiện khi Hồ sơ tiệm có số điện thoại.
+- **Chữ tiêu đề** các phong cách serif dùng `font-display` (Fraunces, PO duyệt thêm font 29/10/2026).
+- **Màu đồng bộ:** vùng trang khách ghi đè biến màu ngữ nghĩa bằng token phong cách catalog (`public-theme-vars.ts`) — các khối Câu chuyện/Ưu điểm/Quy trình/Hỏi đáp/Form theo phong cách tiệm. Màu nhấn/nút các phong cách được làm đậm (cùng tông) để đạt tương phản: S03 `#92400E`, S04 `#9A3412`, S05 `#3F6212`, S07 `#1D4ED8`, S08 `#4F46E5`, S09 `#854D0E`, S10 `#BE123C`, S12 `#115E59`; chữ phụ S03 `#6B655D`, S05 `#5F584F` (PO duyệt 30/10/2026). Ngưỡng: chữ ≥ 4,5:1, màu nhấn trên nền trang ≥ 5,5:1 (vì còn đặt trên nền pha 10%). Chữ trên nút dùng `ctaText` / `text-primary-foreground`, không viết cứng màu trắng.
+- **Lưới sản phẩm:** 2 cột trên di động, 3 cột desktop, ảnh dọc 4:5; bỏ nhãn "Giá niêm yết", nút đặt chỉ còn biểu tượng trên di động (có nhãn truy cập).
+- Kiểm: 390/1280px không cuộn ngang; axe 390px không lỗi critical/serious thuộc trang.
+
+### Việt hoá & PDF/poster (30/10/2026)
+- Tên 5 mẫu, 12 phong cách, 8 bố cục hiển thị bằng tiếng Việt (vd. "Sách ảnh cao cấp", "Sang trọng tĩnh lặng"); bỏ mã `S01…` trên màn chọn; bỏ "Universal Catalog Studio 2026", "(Live Preview)", "(Hero Banner)".
+- PDF (`catalog-page-renderer.tsx`): màu ngữ nghĩa theo phong cách (`publicThemeVars`), tiêu đề dùng chữ của phong cách; bỏ "2026 Collection", "smeOS Universal Catalog Studio", câu sáo và lời hứa mặc định ("hóa đơn VAT", "giao đúng hẹn", "độc bản") — chỉ in khi tiệm tự nhập.
+- Poster 1080×1080: bỏ "smeOS Catalog"; thanh trên dùng màu nút + `ctaText` (đạt tương phản ở mọi phong cách); chữ tiêu đề Fraunces/Be Vietnam Pro (font đã nạp).
+- Trang PDF sinh 7 loại theo mẫu chọn: bìa, câu chuyện, mẫu nổi bật, phân chương theo nhóm (khi ≥ 2 nhóm), lưới mẫu, chi tiết mẫu (tối đa 4), trang kết (`catalog-studio/domain/page-planner.ts`). Trang combo (L07) chưa dựng — chưa có dữ liệu combo.
+
+### Đánh giá khách (30/10/2026)
+- Mục mở rộng "Đánh giá khách hiện trên trang" ở màn quản lý catalog và màn tạo landing (`components/catalog/reviews/`): thêm, sửa, ẩn/hiện, xoá (hộp xác nhận R3). Quyền `J1`.
+- Trang khách hiện tối đa 6 đánh giá đang bật, điểm trung bình và số lượng tính từ dữ liệu thật; không có đánh giá thì mục tự ẩn. Không gắn nhãn "Đã mua hàng" (chủ tiệm tự nhập, không đối chiếu được đơn).

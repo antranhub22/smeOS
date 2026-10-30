@@ -50,6 +50,8 @@ export function CatalogStorefrontHeader({
       code: p.code || p.id,
       category: p.category,
       primaryImage: p.imageUrl || null,
+      description: p.description,
+      ...(p.stemCount ? { attributes: { stemCount: p.stemCount } } : {}),
       price: p.price ?? null,
       currency: "VND",
       sortOrder: idx + 1,
@@ -60,7 +62,7 @@ export function CatalogStorefrontHeader({
   const brandProfile: BrandProfile = useMemo(() => ({
     brandId: shop.id || "shop",
     name: shop.name,
-    slogan: catalog.description || "Bộ Sưu Tập Tinh Tuyển 2026",
+    slogan: catalog.description || null,
     brandColors: { primary: style?.tokens.accent || "#9A3412" },
     contacts: {
       phone: shop.phone || null,
@@ -151,6 +153,7 @@ export function CatalogStorefrontHeader({
 
           <button
             onClick={onOpenShareModal}
+            aria-label="Chia sẻ"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors"
             style={{
               backgroundColor: style?.tokens.badgeBg || "rgba(154, 52, 18, 0.1)",
@@ -158,7 +161,7 @@ export function CatalogStorefrontHeader({
             }}
           >
             <Share2 size={14} />
-            <span>Chia sẻ</span>
+            <span className="hidden sm:inline">Chia sẻ</span>
           </button>
 
           {shop.phone && (

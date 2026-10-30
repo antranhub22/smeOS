@@ -29,7 +29,7 @@ export function CatalogStorefrontToolbar({
   hasCampaign,
   style,
 }: CatalogStorefrontToolbarProps) {
-  const activeStyle = { backgroundColor: style.tokens.accent, color: "#FFFFFF" }
+  const activeStyle = { backgroundColor: style.tokens.ctaBg, color: style.tokens.ctaText }
   const inactiveStyle = { backgroundColor: "transparent", color: style.tokens.textSecondary }
 
   return (
@@ -70,7 +70,7 @@ export function CatalogStorefrontToolbar({
                 key={mode}
                 type="button"
                 onClick={() => onStyleChange(mode)}
-                title={mode === "grid" ? "Lưới tiêu chuẩn" : mode === "lookbook" ? "Tạp chí Lookbook" : "Đặt nhanh B2B"}
+                title={mode === "grid" ? "Lưới tiêu chuẩn" : mode === "lookbook" ? "Tạp chí ảnh" : "Danh sách đặt nhanh"}
                 style={catalogStyle === mode ? activeStyle : inactiveStyle}
                 className="p-1.5 rounded-xl transition-colors"
               >

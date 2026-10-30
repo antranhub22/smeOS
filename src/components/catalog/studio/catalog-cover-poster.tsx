@@ -39,13 +39,16 @@ export function CatalogCoverPoster({
   const showcaseProducts = products.slice(0, 6)
   const totalCount = productCount ?? products.length
 
-  const isSerif = style.typography.fontDisplay.includes("serif")
+  // "font-display" (Fraunces) và "font-serif" là chữ có chân; còn lại dùng chữ không chân đã nạp sẵn
+  const isSerif = /serif|display/.test(style.typography.fontDisplay)
   const displayFont = isSerif
-    ? '"Playfair Display", "Cormorant Garamond", Georgia, serif'
-    : '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    ? '"Fraunces", "Playfair Display", Georgia, serif'
+    : '"Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
 
   const accentColor = tokens.ctaBg || tokens.accent || "#9A3412"
-  const stageBg = tokens.stage || tokens.accent
+  // Thanh trên in chữ trắng → nền phải là màu nút đậm (đã đạt tương phản), không dùng nền sân khấu nhạt
+  const stageBg = accentColor
+  const barText = tokens.ctaText || "#FFFFFF"
 
   return (
     <div
@@ -77,7 +80,7 @@ export function CatalogCoverPoster({
         <div>
           <div
             style={{
-              color: "#FFFFFF",
+              color: barText,
               fontSize: "20px",
               fontWeight: 800,
               letterSpacing: "0.22em",
@@ -89,7 +92,7 @@ export function CatalogCoverPoster({
           </div>
           <div
             style={{
-              color: "rgba(255,255,255,0.8)",
+              color: barText,
               fontSize: "12px",
               marginTop: "4px",
               letterSpacing: "0.12em",
@@ -97,7 +100,7 @@ export function CatalogCoverPoster({
               fontFamily: "system-ui, sans-serif",
             }}
           >
-            Bộ sưu tập độc quyền • {new Date().getFullYear()}
+            Bộ sưu tập {new Date().getFullYear()}
           </div>
         </div>
 
@@ -108,14 +111,14 @@ export function CatalogCoverPoster({
             border: "1px solid rgba(255,255,255,0.25)",
             borderRadius: "30px",
             padding: "8px 20px",
-            color: "#FFFFFF",
+            color: barText,
             fontSize: "13px",
             fontWeight: 700,
             letterSpacing: "0.06em",
             fontFamily: "system-ui, sans-serif",
           }}
         >
-          {totalCount} Tác phẩm
+          {totalCount} mẫu
         </div>
       </div>
 
@@ -179,7 +182,7 @@ export function CatalogCoverPoster({
                   whiteSpace: "nowrap",
                 }}
               >
-                🔗 {cleanDisplayUrl(catalogUrl)}
+                {cleanDisplayUrl(catalogUrl)}
               </span>
             ) : (
               <span style={{ fontStyle: "italic" }}>Quét mã QR để xem trọn bộ sưu tập</span>
@@ -207,7 +210,7 @@ export function CatalogCoverPoster({
           }}
         >
           <span style={{ color: accentColor }}>✦</span>
-          <span>smeOS Catalog</span>
+          <span>{brand.contacts.phone ? "Nhắn Zalo để đặt" : "Bộ sưu tập mới"}</span>
         </div>
       </div>
     </div>
