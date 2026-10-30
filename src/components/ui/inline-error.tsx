@@ -18,7 +18,7 @@ export function InlineError({
     <div
       role="alert"
       className={cn(
-        "flex items-center justify-between gap-3 rounded-xl border border-danger/30 bg-danger-bg px-3.5 py-2.5 text-body-sm font-medium text-danger",
+        "flex items-center justify-between gap-3 rounded-xl border border-danger/30 bg-danger-bg px-3.5 py-2.5 text-body-sm font-medium text-danger-text",
         className
       )}
     >

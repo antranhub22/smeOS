@@ -1,5 +1,5 @@
 {
-  "total": 59,
+  "total": 58,
   "files": {
     "scripts/check-industry.ts": {
       "@typescript-eslint/no-explicit-any": 5
@@ -124,9 +124,6 @@
     },
     "src/components/templates/shared/feature-guidance-card.tsx": {
       "react-hooks/set-state-in-effect": 1
-    },
-    "src/modules/content-engine/domain/landing-content-generator.ts": {
-      "prefer-const": 1
     },
     "src/modules/greeting-card/infra/__tests__/subcontract-order-repository.test.ts": {
       "@typescript-eslint/no-explicit-any": 1

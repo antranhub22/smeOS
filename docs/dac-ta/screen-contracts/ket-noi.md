@@ -1,6 +1,6 @@
 # Screen Contract — Kết Nối Nền Tảng Mạng Xã Hội
 
-**Tuyến:** `/ket-noi` · **Tệp chính:** `src/app/(app)/ket-noi/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D2
+**Tuyến:** `/ket-noi` · **Tệp chính:** `src/app/(app)/ket-noi/page.tsx` + `src/components/channel-connections/use-channel-accounts.ts` · **Cập nhật:** 30/10/2026 · **Thẻ:** T5.D2
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `marketing_specialist` · Vai phụ: `social_media_manager`
@@ -16,6 +16,7 @@
   - `POST /api/v1/proxy/api/accounts/[id]/login?client=SOCIALFLOW` → Mở phiên đăng nhập Playwright tự động
   - `POST /api/v1/proxy/api/accounts/[id]/check?client=SOCIALFLOW` → Kiểm tra tính hợp lệ của phiên
   - `DELETE /api/v1/proxy/api/accounts/[id]?client=SOCIALFLOW` → Ngắt kết nối tài khoản
+  - Thao tác ghi (POST/DELETE) cần năng lực **J5** — core kiểm trước khi chuyển tiếp (`proxyCapabilityFor`, `src/modules/proxy/domain/proxy-rules.ts`); đọc danh sách không cần thêm (30/10/2026)
 - Khối: 3 khối chính (Header & Tổng quan số tài khoản đã kích hoạt, Hướng dẫn K1 `FeatureGuidanceCard`, Lưới thẻ 5 nền tảng mạng xã hội)
 - Nút primary: Nút "Bảng lịch đăng" ở header (`variant: "primary"`), nút "Lưu & Kết nối ngay" trong modal
 - FeatureGuidanceCard: 1 card duy nhất theo chuẩn K1
@@ -27,7 +28,7 @@
 |---|---|---|
 | L0 Thiết yếu | Trạng thái kết nối bằng chữ + màu (Sẵn sàng đăng, Cần đăng nhập lại, Chưa kết nối), tên tài khoản | Thẻ từng nền tảng |
 | L1 Hành động | Đăng nhập ngay / Kết nối tài khoản / Bảng lịch đăng | Nút tác vụ chính trên thẻ & Top Header |
-| L2 Ngữ cảnh | Hướng dẫn K1, thông báo bảo mật mã hóa AES-256 nội bộ, thời gian đăng nhập gần nhất | FeatureGuidanceCard & Box chi tiết |
+| L2 Ngữ cảnh | Hướng dẫn K1 (không tên kỹ thuật), cảnh báo kênh cần đăng nhập lại / quá 30 ngày chưa đăng nhập lại, thời gian đăng nhập gần nhất | FeatureGuidanceCard & Box chi tiết |
 | L3 Chi tiết | Form nhập tên đăng nhập, mật khẩu, Fanpage ID, Access Token | ConnectAccountModal |
 | L4 Nâng cao | Kiểm tra phiên, Cập nhật mật khẩu mới, Ngắt kết nối | Menu tác vụ phụ trên thẻ |
 
@@ -49,7 +50,11 @@
 - Chưa kết nối: Huy hiệu "Chưa kết nối" màu xám trung tính, nút kêu gọi "Kết nối tài khoản".
 - Hết hạn phiên: Huy hiệu "Cần đăng nhập lại" màu đỏ kèm icon đồng hồ cảnh báo và nút nổi bật "Đăng nhập ngay".
 - Sẵn sàng: Huy hiệu "Sẵn sàng đăng" màu xanh lá kèm tích xanh, hiển thị thời điểm đăng nhập gần nhất.
-- Lỗi: Thông báo toast màu đỏ khi đăng nhập hoặc kiểm tra phiên thất bại.
+- Lỗi: Thông báo màu đỏ (`role="alert"`) khi đăng nhập hoặc kiểm tra phiên thất bại, kèm tên nền tảng.
+- Không tải được danh sách: `InlineError` có "Tải lại" — không coi như "chưa kết nối" (30/10/2026).
+- Không quyền J5: dòng "chế độ chỉ đọc"; máy chủ trả 403, thông báo hướng dẫn xin quyền.
+- Phiên cũ: quá `STALE_AFTER_DAYS` (30) ngày chưa đăng nhập lại → cảnh báo vàng, nhắc "Kiểm tra" trước khi lên lịch (`src/modules/integration/domain/channel-session-health.ts`).
+- Ngắt kết nối: `ConfirmDialog` tone danger (R3), thay `window.confirm`.
 
 ## 7. Responsive
 - 390px: Lưới 1 cột, form modal co giãn vừa màn hình mobile.
@@ -67,7 +72,7 @@
 ## 10. Dữ liệu và quyền
 - Nguồn sự thật: Bảng `social_accounts` (qua proxy SocialFlow).
 - Trường dùng: `platform`, `username`, `is_logged_in`, `last_login`, `page_id`.
-- Quyền: `marketing_specialist`, `store_manager`.
+- Quyền: xem — mọi vai vào được trang; kết nối/đăng nhập/ngắt — năng lực J5 (`social.publish`).
 
 ## 11. Component
 - Dùng lại: `Button`, `Card`, `Badge`, `Dialog`, `FeatureGuidanceCard`.
@@ -79,6 +84,9 @@
 |---|---|---|---|---|
 | Modal kết nối dùng `div` cố định tự chế | Chuẩn hóa Base-UI Dialog | Nâng cấp sang `<Dialog>` Base-UI | Đồng bộ UX-006, hỗ trợ backdrop, ESC, focus-trap | `connect-account-modal.tsx` |
 | Header chứa mã "SocialFlow M07" | Không lộ mã kỹ thuật | Đổi sang "Tích hợp Đa nền tảng Mạng xã hội" | Quy ước UX không lộ mã nội bộ | `ket-noi/page.tsx` |
+| Lỗi tải danh sách bị nuốt, hiện như "chưa kết nối" | Báo lỗi rõ, cho thử lại | `InlineError` + `loadState` | Không đánh lừa trạng thái (UX-017) | `use-channel-accounts.ts` |
+| Ai đăng nhập cũng kết nối/ngắt được kênh của tiệm | Gác theo mã năng lực | J5 ở proxy cho thao tác ghi `api/accounts` | Non-negotiable #3 (capability) | `proxy-rules.ts`, `proxy-rules.test.ts` |
+| Hướng dẫn lộ "SocialFlow", "Playwright", "AES-256" | Chữ tự nhiên | Viết lại K1 | Non-negotiable #6 | `ket-noi/page.tsx` |
 | Trạng thái kết nối | Thể hiện bằng chữ + màu chuẩn WCAG | Duy trì Badge chữ tiếng Việt + icon + tone màu | Tuân thủ luật trạng thái không dùng màu đơn độc | `platform-account-card.tsx` |
 
 ## 13. QA Matrix (03a §34)

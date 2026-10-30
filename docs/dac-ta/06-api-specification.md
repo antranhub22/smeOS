@@ -479,13 +479,18 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | PATCH | `/integration/catalog-links/:slug` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) |
 | POST | `/integration/catalog-links/:slug/revoke` | `J2` (nhánh SSO) | Mới 18/09 (RS-3) |
 | GET | `/public/catalog/:slug` | — *(công khai)* | Storefront khách xem; ảnh ký HMAC; `customer` chỉ có tên/lời chào, không bao giờ có số điện thoại |
-| POST | `/public/catalog/:slug/lead` | — *(công khai)* | Form Lead Capture: `{ phone, message? }` ghi vào `metadata.leads` của `catalog_links`; tổ chức suy từ bản ghi, không nhận từ client. Bổ sung vào đặc tả 05/10/2026 |
+| POST | `/public/catalog/:slug/lead` | — *(công khai)* | Bước 4 (30/10/2026): `{ name, phone, consent: true, message?, ref?, utm?, verificationToken?, website }` → bảng `leads` + khách CRM (tìm/tạo theo SĐT) + `customer_consents` PHONE_CALL. Tổ chức suy từ catalog; catalog thu hồi → 404. Chặn máy: 10 lần/10 phút/IP, ô bẫy `website`, Cloudflare Turnstile khi khai `TURNSTILE_SECRET_KEY`; mỗi SĐT 3 lead/giờ/tiệm → 429. `ref` = mã link động cùng tổ chức → nguồn `SHORT_LINK` |
 | GET · POST | `/store-share-link` | `F1` · `F2` | Công cụ 11 (30/10/2026): xem / tạo link hồ sơ cửa hàng công khai. POST từ chối khi hồ sơ thiếu mục thiết yếu; đã có link đang hoạt động thì trả link đó |
 | GET · POST | `/brand-library` | `F1` · `F2` | Công cụ 45 (30/10/2026): thư viện nhận diện thương hiệu của tổ chức; `?include_archived=true`. POST tạo mục + phiên bản 1; loại LOGO/IMAGE/TEMPLATE cần `asset_id` là ảnh JPG/PNG/WebP của chính tổ chức, loại còn lại cần `text_value` (COLOR chỉ nhận mã hex) |
 | GET · PATCH | `/brand-library/:id` | `F1` · `F2` | Xem kèm các phiên bản; sửa tên/mô tả, `share_with_members`, `status` ACTIVE/ARCHIVED. Mục của tổ chức khác → 404. Ghi nhật ký kiểm toán |
 | POST | `/brand-library/:id/versions` | `F2` | Thêm phiên bản mới (bản cũ giữ nguyên); mục đã lưu trữ → 400 |
 | GET | `/brand-library/chain` | `F1` | Cửa hàng thành viên: mục chuỗi đã chia sẻ, đang dùng (chuỗi suy từ `chain_partnerships` ACTIVE sớm nhất, không nhận từ client); `data: null` khi không thuộc chuỗi |
 | POST | `/store-share-link/revoke` | `F2` | Ngừng link đang hoạt động; trang `/ch/:slug` cũ báo đã ngừng. Không có link → 404 |
+| GET · POST | `/short-links` | `J1` | Bước 4 — công cụ 12/13/25 (30/10/2026): link/QR động. `?kind=QR\|SALES_LINK`, cursor + `limit` ≤ 100. POST `{ kind, name, targetPath, placementLabel?, utmSource?, utmMedium?, utmCampaign?, expiresAt? }`; `targetPath` chỉ nhận đường dẫn nội bộ bắt đầu bằng `/` (chặn open redirect) |
+| PATCH | `/short-links/:id` | `J1` | Đổi tên/đích/vị trí/UTM/hạn, `isActive`. Mã đã in giữ nguyên. Link tổ chức khác → 404 |
+| GET | `/short-links/:id/stats` | `J1` | `?days=1..90` (mặc định 30): tổng lượt quét, khách riêng (băm theo ngày), số lead, theo thiết bị, theo ngày (giờ VN) |
+| GET | `/leads` | `Q1` | Bước 4 — công cụ 21: khách để lại thông tin; `?status=NEW\|CONTACTED\|WON\|LOST`, cursor + `limit` ≤ 100; kèm `counts` theo trạng thái |
+| PATCH | `/leads/:id` | `Q3` | `{ status?, assigneeUserId? }` — người phụ trách phải là thành viên ACTIVE của tổ chức; lead tổ chức khác → 404; ghi `audit_logs` `lead.update` |
 
 **Chưa có:** `GET /catalog-links/:slug/qr` (ảnh PNG mã QR để in) ở core — `LocalBudd` tự sinh QR phía route của nó (`qrcode`, trỏ về `/c/:slug` của chính nó), core cũng có `src/core/media/qr-engine.ts` sinh QR phía giao diện, không qua endpoint. Xem **RS-7**.
 

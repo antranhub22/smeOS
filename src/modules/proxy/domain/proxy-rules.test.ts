@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import { requireProxyUrl, isAllowedProxyPath, NO_BODY_METHODS, SSO_HEADER, AUTHORIZATION_HEADER } from "./proxy-rules"
+import { requireProxyUrl, isAllowedProxyPath, proxyCapabilityFor, NO_BODY_METHODS, SSO_HEADER, AUTHORIZATION_HEADER } from "./proxy-rules"
 import { AppError } from "@/core/http/errors"
 
 describe("proxy-rules", () => {
@@ -52,5 +52,17 @@ describe("isAllowedProxyPath", () => {
     expect(isAllowedProxyPath("SOCIALFLOW", "api/m07postsx/generate")).toBe(false)
     expect(isAllowedProxyPath("SOCIALFLOW", "api/m07/posts/../admin")).toBe(false)
     expect(isAllowedProxyPath("LOCALBUDD", "api/m07/posts")).toBe(false)
+  })
+})
+
+describe("proxyCapabilityFor — công cụ 54", () => {
+  it("ghi vào tài khoản mạng xã hội cần J5; đọc thì không", () => {
+    expect(proxyCapabilityFor("SOCIALFLOW", "POST", "api/accounts")).toBe("J5")
+    expect(proxyCapabilityFor("SOCIALFLOW", "POST", "/api/accounts/facebook/login")).toBe("J5")
+    expect(proxyCapabilityFor("SOCIALFLOW", "DELETE", "api/accounts/facebook")).toBe("J5")
+    expect(proxyCapabilityFor("SOCIALFLOW", "GET", "api/accounts")).toBeNull()
+    expect(proxyCapabilityFor("SOCIALFLOW", "POST", "api/posts")).toBeNull()
+    expect(proxyCapabilityFor("SOCIALFLOW", "POST", "api/accountsX")).toBeNull()
+    expect(proxyCapabilityFor("LOCALBUDD", "POST", "api/accounts")).toBeNull()
   })
 })

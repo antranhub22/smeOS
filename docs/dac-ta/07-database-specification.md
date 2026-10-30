@@ -1036,6 +1036,72 @@ model store_share_links {
   @@index([organization_id, is_revoked])
 }
 
+// Bước 4 — thu hút khách (30/10/2026). Lead từ trang công khai (trước đây nằm trong
+// catalog_links.filters.leads — bỏ vì mất khi gửi đồng thời). Lưu thời điểm + phiên bản
+// lời đồng ý liên hệ (ND 13/2023).
+model leads {
+  id                String    @id @default(uuid())
+  organization_id   String
+  customer_id       String?
+  name              String
+  phone             String
+  message           String?
+  source            String // CATALOG_LINK | SHORT_LINK
+  source_ref        String?
+  short_link_id     String?
+  utm_source        String?
+  utm_medium        String?
+  utm_campaign      String?
+  consent_at        DateTime
+  consent_version   String
+  status            String    @default("NEW") // NEW | CONTACTED | WON | LOST
+  assignee_user_id  String?
+  status_changed_at DateTime?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  @@index([organization_id])
+  @@index([organization_id, status, created_at])
+  @@index([organization_id, phone, created_at])
+}
+
+// Link/QR động `/r/<code>` — đích chỉ là đường dẫn nội bộ.
+model short_links {
+  id              String    @id @default(uuid())
+  organization_id String
+  code            String    @unique
+  kind            String // QR | SALES_LINK
+  name            String
+  target_path     String
+  placement_label String?
+  utm_source      String?
+  utm_medium      String?
+  utm_campaign    String?
+  expires_at      DateTime?
+  is_active       Boolean   @default(true)
+  scan_count      Int       @default(0)
+  created_by      String
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+
+// Lượt quét/bấm — không lưu IP thô (visitor_hash băm IP+trình duyệt+ngày+mã).
+model link_events {
+  id              String   @id @default(uuid())
+  organization_id String
+  short_link_id   String
+  device          String // MOBILE | TABLET | DESKTOP | UNKNOWN
+  referrer_host   String?
+  visitor_hash    String?
+  created_at      DateTime @default(now())
+
+  @@index([organization_id])
+  @@index([organization_id, short_link_id, created_at])
+}
+
 // ĐỔI TÊN: bảng này từng được đặc tả là `content_metrics`. Tên thật trong
 // lược đồ là `content_metrics`, và hình dạng cột cũng khác. Sửa 18/09.
 model content_metrics {

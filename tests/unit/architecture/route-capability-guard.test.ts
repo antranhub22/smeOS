@@ -37,7 +37,6 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "chat/webhooks/facebook": "webhook nhà cung cấp — xác thực bằng chữ ký",
   "chat/webhooks/zalo": "webhook nhà cung cấp — xác thực bằng chữ ký",
   "storage/[...key]": "URL ký sẵn — verifyStorageSignature",
-  "proxy/[...path]": "proxy sang engine ngoài — whitelist đường dẫn, chuyển danh tính (proxy-rules.ts)",
   "content-guard/validate": "kiểm từ cấm trên văn bản gửi lên — không đọc/ghi dữ liệu tổ chức",
   "field-config/catalogs": "chỉ đọc nhãn danh mục đang active cho form nhập liệu (ĐP-4a.1)",
   "chat/public/widget": "widget chat công khai trên website ngoài — tổ chức suy từ slug (đặc tả 06 mục 17)",

@@ -39,7 +39,6 @@ function createMockCatalogRepo(overrides?: Partial<ICatalogLinkRepository>): ICa
     update: vi.fn().mockResolvedValue(mockLink),
     revoke: vi.fn().mockResolvedValue(true),
     getPublicCatalogRaw: vi.fn().mockResolvedValue(null),
-    recordLead: vi.fn().mockResolvedValue(true),
     ...overrides,
   }
 }
