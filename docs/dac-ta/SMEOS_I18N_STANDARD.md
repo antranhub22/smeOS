@@ -5,6 +5,23 @@
 
 ---
 
+## 0. TRẠNG THÁI TRIỂN KHAI (đối chiếu code 30/10/2026)
+
+| Mục | Trạng thái | Bằng chứng / cưỡng chế |
+|---|---|---|
+| §2 Catalog vi/en theo phân hệ | ✅ Đã có | `src/lib/i18n/locales/{vi,en}/` |
+| §3.1 Nội suy `{var}` | ✅ Đã có | `interpolate()` — `server.ts` |
+| §3.2 Số nhiều `tp()` | 🟡 **Lộ trình — chưa có hàm** | Không dùng `tp()` cho tới khi được thêm |
+| §4 Fallback locale → vi → nhãn thân thiện (production) | ✅ Đã có | `translate()`, `missingKeyLabel()` — `i18n-integrity.test.ts` |
+| §4 Đối xứng vi/en mọi cấp khóa | ✅ Đã có | `i18n-integrity.test.ts` |
+| §5 Formatter SSOT, múi giờ GMT+7 | ✅ Đã có · 🟡 áp dụng một phần | Ratchet `tests/unit/architecture/i18n-direct-intl-ratchet.test.ts` (baseline 173 file, chỉ được giảm) |
+| §6 Mã lỗi API `{ code, message }` | 🟡 **Lộ trình — 0 route áp dụng** | Route mới nên theo; không refactor route cũ khi chưa có lệnh |
+| §1.1 `domain/` không phụ thuộc i18n | 🔴 **Đang vi phạm — 9 file `domain/` import `@/lib/i18n`** | Nợ kỹ thuật; không thêm import mới vào `domain/` — truyền chuỗi/formatter từ use-case hoặc UI |
+
+> Agent: chỉ coi là "chuẩn đang chạy" những mục ✅. Mục 🟡/🔴 là đích đến, không phải thực tế.
+
+---
+
 ## 1. MỤC TIÊU & NGUYÊN TẮC CỐT LÕI
 
 1. **Clean Separation of Concerns**: Tách biệt hoàn toàn Business Logic với chuỗi hiển thị giao diện. Tuyệt đối không import thư viện giao diện hoặc i18n context vào tầng `domain/`.
@@ -90,9 +107,10 @@ itemCount: {
    - Bước 2: Nếu không thấy (hoặc chuỗi rỗng), fallback về từ điển gốc Tiếng Việt (`vi`).
    - Bước 3: Nếu trong `vi` vẫn không có:
      - Trong môi trường `production`: Trả về phần nhãn cuối cùng của key (sau khi viết hoa chữ cái đầu và thay dấu chấm bằng khoảng trắng) hoặc chuỗi thân thiện, **tuyệt đối không hiển thị mã `module.feature.key` thô**.
-     - Trong môi trường `development` / `test`: Console cảnh báo `[i18n-warn] Missing key: <key> in locale: <locale>` và hiển thị `[Missing: <key>]` để developer phát hiện ngay lập tức.
+     - Trong môi trường `development` / `test`: trả nguyên key (dev kèm `console.warn("[i18n] Missing translation key …")`) để developer phát hiện ngay lập tức.
+   - Chuỗi rỗng `""` được coi là thiếu và fallback về `vi`.
 2. **Kiểm thử tự động đối xứng (Symmetry Test)**:
-   - File test `src/lib/i18n/__tests__/i18n.test.ts` bắt buộc kiểm tra 100% key của `viDictionary` phải tồn tại tương ứng trong `enDictionary` (Zero Missing Keys).
+   - File test `src/lib/i18n/__tests__/i18n.test.ts` bắt buộc kiểm tra 100% key (mọi cấp, xem `i18n-integrity.test.ts`) của `viDictionary` phải tồn tại tương ứng trong `enDictionary` (Zero Missing Keys).
 
 ---
 

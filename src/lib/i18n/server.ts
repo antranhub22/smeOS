@@ -29,39 +29,42 @@ export function interpolate(text: string, params?: InterpolationParams): string 
   })
 }
 
+function lookup(dict: I18nDictionary, segments: string[]): string | undefined {
+  let current: unknown = dict
+  for (const segment of segments) {
+    if (!current || typeof current !== "object" || !(segment in current)) return undefined
+    current = (current as Record<string, unknown>)[segment]
+  }
+  return typeof current === "string" && current !== "" ? current : undefined
+}
+
 /**
- * Tra cứu khóa dạng dot-notation trong từ điển và áp dụng nội suy
+ * Nhãn thay thế khi thiếu khóa ở production — không lộ mã `module.feature.key`.
+ * "orders.list.emptyState" -> "Empty state"
+ */
+export function missingKeyLabel(key: string): string {
+  const last = key.split(".").pop() ?? ""
+  const words = last.replace(/([a-z0-9])([A-Z])/g, "$1 $2").replace(/[_-]+/g, " ").trim().toLowerCase()
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : ""
+}
+
+/**
+ * Tra cứu khóa dạng dot-notation trong từ điển và áp dụng nội suy.
+ * Thứ tự: locale hiện tại → tiếng Việt gốc → (production) nhãn thân thiện / (dev, test) trả nguyên key.
  */
 export function translate(
   locale: SupportedLocale = "vi",
   key: TranslationKey,
   params?: InterpolationParams
 ): string {
-  const dict = getDictionary(locale)
   const segments = key.split(".")
-  let current: unknown = dict
+  const text = lookup(getDictionary(locale), segments) ?? lookup(DICTIONARIES.vi, segments)
+  if (text !== undefined) return interpolate(text, params)
 
-  for (const segment of segments) {
-    if (current && typeof current === "object" && segment in current) {
-      current = (current as Record<string, unknown>)[segment]
-    } else {
-      // Fallback về từ điển tiếng Việt gốc nếu ngôn ngữ phụ chưa có
-      let fallbackCurrent: unknown = DICTIONARIES.vi
-      for (const fallbackSeg of segments) {
-        if (fallbackCurrent && typeof fallbackCurrent === "object" && fallbackSeg in fallbackCurrent) {
-          fallbackCurrent = (fallbackCurrent as Record<string, unknown>)[fallbackSeg]
-        } else {
-          // Báo cảnh báo trong môi trường dev nếu khóa hoàn toàn không tồn tại
-          if (process.env.NODE_ENV === "development") {
-            // eslint-disable-next-line no-console
-            console.warn(`[i18n] Missing translation key: "${key}" for locale "${locale}"`)
-          }
-          return key
-        }
-      }
-      return typeof fallbackCurrent === "string" ? interpolate(fallbackCurrent, params) : key
-    }
+  if (process.env.NODE_ENV === "production") return missingKeyLabel(key)
+  if (process.env.NODE_ENV === "development") {
+    // eslint-disable-next-line no-console
+    console.warn(`[i18n] Missing translation key: "${key}" for locale "${locale}"`)
   }
-
-  return typeof current === "string" ? interpolate(current, params) : key
+  return key
 }
