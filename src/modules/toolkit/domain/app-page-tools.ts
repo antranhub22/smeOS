@@ -22,6 +22,11 @@ export const APP_PAGE_TOOLS: readonly ToolDefinition[] = [
     status: "DONE", progress: 100,
     statusNote: "Tổng quan mức hoàn thiện hồ sơ, mục cần điền tiếp và dẫn đến chỗ sửa",
   },
+  {
+    ...appPage(64, "Danh thiếp cửa hàng", "Danh thiếp 90×54 mm từ hồ sơ cửa hàng: bản in PDF, ảnh và danh bạ điện tử", "IdCard", "/ho-so/danh-thiep"),
+    status: "DONE", progress: 100,
+    statusNote: "Xem trước hai mặt, mã QR trỏ trang chia sẻ, tải PDF in, ảnh 300 dpi và tệp danh bạ",
+  },
   appPage(52, "Kho mẫu ấn phẩm", "Mẫu thiết kế có sẵn để tạo ấn phẩm theo thương hiệu", "LayoutTemplate", "/kho-templates"),
   appPage(53, "Quản lý sản phẩm và hình ảnh", "Danh sách sản phẩm, ảnh và nhập hàng loạt từ Excel", "Package", "/san-pham"),
   appPage(54, "Kết nối kênh bán hàng", "Kết nối trang mạng xã hội và kênh nhắn tin của cửa hàng", "Link", "/ket-noi"),

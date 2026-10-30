@@ -6,7 +6,7 @@
  * vẫn ở Cài đặt (một nơi lưu duy nhất) — trang này chỉ đọc và dẫn đường.
  */
 import Link from "next/link"
-import { BadgeCheck, CheckCircle2, Circle, ArrowRight, Store, Palette } from "lucide-react"
+import { BadgeCheck, CheckCircle2, Circle, ArrowRight, Store, Palette, IdCard } from "lucide-react"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { evaluateStoreProfile, type ProfileChecklistItem } from "@/modules/profiles/domain/store-profile-completeness"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
@@ -120,7 +120,7 @@ export function StoreProfileOverview() {
         missingEssentials={result.missing.filter((i) => i.essential).map((i) => i.label)}
       />
 
-      <nav aria-label="Sửa hồ sơ" className="grid gap-3 sm:grid-cols-2">
+      <nav aria-label="Hồ sơ và ấn phẩm" className="grid gap-3 sm:grid-cols-2">
         <Link href={SECTION_HREF.INFO} className="flex items-center gap-3 p-4 rounded-2xl border border-border bg-surface hover:border-primary">
           <Store size={20} aria-hidden className="text-primary" />
           <span>
@@ -133,6 +133,13 @@ export function StoreProfileOverview() {
           <span>
             <span className="block text-body-sm font-bold text-text">Nhận diện thương hiệu</span>
             <span className="block text-caption text-text-muted">Logo, màu sắc, giọng văn</span>
+          </span>
+        </Link>
+        <Link href="/ho-so/danh-thiep" className="flex items-center gap-3 p-4 rounded-2xl border border-border bg-surface hover:border-primary">
+          <IdCard size={20} aria-hidden className="text-primary" />
+          <span>
+            <span className="block text-body-sm font-bold text-text">Danh thiếp cửa hàng</span>
+            <span className="block text-caption text-text-muted">Tải bản in, ảnh và danh bạ điện tử</span>
           </span>
         </Link>
       </nav>

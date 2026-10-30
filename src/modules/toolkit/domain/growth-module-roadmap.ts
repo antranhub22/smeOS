@@ -14,7 +14,7 @@ export type RoadmapByPhase = Readonly<Record<GrowthPhase, readonly string[]>>
 
 export const GROWTH_MODULE_ROADMAP: Readonly<Record<GrowthModuleKey, RoadmapByPhase>> = {
   brand: {
-    1: ["Danh thiếp cửa hàng"],
+    1: [],
     2: [],
     3: ["Trợ lý thương hiệu AI", "Gợi ý nội dung theo thương hiệu", "Kiểm tra tính nhất quán thương hiệu"],
   },
