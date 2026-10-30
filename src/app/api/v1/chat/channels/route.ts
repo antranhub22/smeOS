@@ -4,6 +4,7 @@ import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { listChatChannels } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import { configureChatChannel } from "@/modules/chat-assistant/use-cases/configure-chat-channel"
+import { maskChannelSecrets } from "@/modules/chat-assistant/domain/channel-secret-fields"
 import type { SupportedChatChannel } from "@/modules/chat-assistant/domain/channel-integration-types"
 
 const configureSchema = z.object({
@@ -54,5 +55,8 @@ export const POST = handle(async (req) => {
     config: parsed.data.config,
   })
 
-  return jsonResponse({ channel: result }, { status: 200 })
+  return jsonResponse(
+    { channel: { ...result, config: maskChannelSecrets(result.config) } },
+    { status: 200 }
+  )
 })

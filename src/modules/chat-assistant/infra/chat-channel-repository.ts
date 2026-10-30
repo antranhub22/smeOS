@@ -11,6 +11,7 @@ import type {
   SupportedChatChannel,
   ChannelConfig,
 } from "../domain/channel-integration-types"
+import { openChannelConfig, sealChannelConfig, type StoredChannelConfig } from "./channel-config-vault"
 
 /** Đối tượng thuần (cấu hình kênh, metadata tin nhắn) → giá trị cột Json của Prisma. */
 function toJson(value: object): Prisma.InputJsonObject {
@@ -66,12 +67,12 @@ export class ChatChannelRepository {
         organization_id: ctx.organizationId,
         channel: input.channel,
         is_enabled: input.isEnabled,
-        config: toJson(input.config),
+        config: toJson(sealChannelConfig(input.config)),
         subscription_expires_at: input.subscriptionExpiresAt ?? null,
       },
       update: {
         is_enabled: input.isEnabled,
-        config: toJson(input.config),
+        config: toJson(sealChannelConfig(input.config)),
         ...(input.subscriptionExpiresAt !== undefined
           ? { subscription_expires_at: input.subscriptionExpiresAt }
           : {}),
@@ -218,7 +219,7 @@ export class ChatChannelRepository {
       organizationId: row.organization_id,
       channel: row.channel as SupportedChatChannel,
       isEnabled: row.is_enabled,
-      config: (row.config as ChannelConfig) || {},
+      config: openChannelConfig(row.config as StoredChannelConfig | null),
       subscriptionExpiresAt: row.subscription_expires_at
         ? new Date(row.subscription_expires_at).toISOString()
         : null,
