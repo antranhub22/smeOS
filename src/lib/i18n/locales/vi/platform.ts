@@ -14,6 +14,22 @@ export const platformVi = {
     filterAll: "Tất cả tổ chức",
     statusActive: "Đang hoạt động",
     statusSuspended: "Tạm dừng",
+    scopeSystem: "Phạm vi: Toàn hệ thống",
+    table: {
+      org: "Tổ chức",
+      type: "Loại",
+      members: "Thành viên",
+      credit: "Credit",
+      createdAt: "Tạo lúc",
+    },
+    types: {
+      store: "Cửa hàng",
+      network: "Mạng lưới điện hoa",
+      platform: "Nền tảng",
+      experience: "Trải nghiệm",
+    },
+    empty: "Chưa có tổ chức nào.",
+    loadError: "Không tải được danh sách tổ chức.",
   },
   registration: {
     title: "Đơn đăng ký tài khoản",

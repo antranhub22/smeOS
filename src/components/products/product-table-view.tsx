@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Eye, Sparkles, Trash2 } from "lucide-react"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { PriceLabel, type ProductItem, StatusBadge } from "@/components/products/product-card"
+import { useI18n } from "@/lib/i18n"
 
 export interface ProductTableViewProps {
   products: ProductItem[]
@@ -14,6 +15,7 @@ export interface ProductTableViewProps {
 }
 
 export function ProductTableView({ products, isExecutive, onTrash, onImageClick }: ProductTableViewProps) {
+  const { dict } = useI18n()
   return (
     <>
       {/* Mobile view: Card List */}
@@ -60,14 +62,14 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick 
                 className="flex-1 inline-flex items-center justify-center gap-1.5 h-10 rounded-lg border border-border bg-surface px-3 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
               >
                 <Eye size={15} />
-                <span>Chi tiết</span>
+                <span>{dict.products.card.viewDetails}</span>
               </Link>
               <Link
                 href={`/san-pham/${p.id}/tinh-nang` as never}
                 className="flex-1 inline-flex items-center justify-center gap-1.5 h-10 rounded-lg bg-primary text-white px-3 text-body-sm font-semibold hover:bg-primary-dark transition-colors focus-visible:outline-2 focus-visible:outline-primary"
               >
                 <Sparkles size={15} />
-                <span>Studio</span>
+                <span>{dict.products.card.openStudio}</span>
               </Link>
               {isExecutive && onTrash && (
                 <button
@@ -90,11 +92,11 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick 
         <table className="w-full text-left text-body-sm">
           <thead className="border-b border-border bg-surface-alt text-caption font-bold uppercase tracking-wider text-text-muted">
             <tr>
-              <th scope="col" className="px-4 py-3">Sản phẩm</th>
-              <th scope="col" className="px-4 py-3">Danh mục</th>
-              <th scope="col" className="px-4 py-3">Giá</th>
-              <th scope="col" className="px-4 py-3">Trạng thái</th>
-              <th scope="col" className="px-4 py-3 text-right">Thao tác</th>
+              <th scope="col" className="px-4 py-3">{dict.products.table.product}</th>
+              <th scope="col" className="px-4 py-3">{dict.products.table.category}</th>
+              <th scope="col" className="px-4 py-3">{dict.products.table.price}</th>
+              <th scope="col" className="px-4 py-3">{dict.products.table.status}</th>
+              <th scope="col" className="px-4 py-3 text-right">{dict.products.table.actions}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -134,18 +136,18 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick 
                     <Link
                       href={`/san-pham/${p.id}` as never}
                       className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-caption font-semibold text-text-muted hover:bg-surface-alt hover:text-text transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-                      title="Xem chi tiết"
+                      title={dict.products.card.viewDetails}
                     >
                       <Eye size={13} />
-                      <span>Chi tiết</span>
+                      <span>{dict.products.card.viewDetails}</span>
                     </Link>
                     <Link
                       href={`/san-pham/${p.id}/tinh-nang` as never}
                       className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-caption font-semibold text-text hover:border-primary/40 hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-                      title="Mở Studio Tính Năng"
+                      title={dict.products.card.openStudio}
                     >
                       <Sparkles size={13} />
-                      <span>Studio</span>
+                      <span>{dict.products.card.openStudio}</span>
                     </Link>
                     {isExecutive && onTrash && (
                       <button
@@ -153,7 +155,7 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick 
                         onClick={() => onTrash(p)}
                         aria-label={`Xóa ${p.name}`}
                         className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-caption font-semibold text-text-muted hover:bg-danger-bg hover:text-danger transition-colors focus-visible:outline-2 focus-visible:outline-danger"
-                        title="Chuyển vào thùng rác (Chỉ Điều hành)"
+                        title={dict.products.card.moveToTrashConfirm}
                       >
                         <Trash2 size={13} />
                       </button>

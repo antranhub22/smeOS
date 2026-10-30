@@ -25,9 +25,9 @@ export function formatCurrency(
   const intlLocale = LOCALE_MAP[locale] ?? "vi-VN"
 
   if (currency === "VND") {
-    // Với VND: tiếng Việt hiển thị "100.000 đ", tiếng Anh hiển thị "100,000 VND"
+    // Với VND: tiếng Việt hiển thị "100.000 ₫", tiếng Anh hiển thị "100,000 VND"
     if (locale === "vi") {
-      return new Intl.NumberFormat("vi-VN").format(Math.round(value)) + " đ"
+      return new Intl.NumberFormat("vi-VN").format(Math.round(value)) + " ₫"
     }
     return new Intl.NumberFormat("en-US", {
       style: "currency",

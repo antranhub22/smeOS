@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Trash2 } from "lucide-react"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { readProposal, type ProposalStatus } from "@/modules/products/domain/product-proposal"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 export type ProductItem = {
   id: string
@@ -76,7 +77,7 @@ export function PriceLabel({ price, attributes }: { price: number | null; attrib
   }
   return (
     <span className="text-caption font-semibold text-primary">
-      {price.toLocaleString("vi-VN")} ₫
+      {formatCurrency(price)}
     </span>
   )
 }

@@ -47,9 +47,9 @@ describe("i18n Engine — Động cơ đa ngôn ngữ & SSOT từ điển", () =
   })
 
   it("định dạng tiền tệ chuẩn xác qua formatCurrency", () => {
-    expect(formatCurrency(150000, "vi")).toBe("150.000 đ")
+    expect(formatCurrency(150000, "vi")).toBe("150.000 ₫")
     expect(formatCurrency(150000, "en")).toContain("150,000")
-    expect(formatCurrency(0, "vi")).toBe("0 đ")
+    expect(formatCurrency(0, "vi")).toBe("0 ₫")
   })
 
   it("định dạng số lượng phân cách hàng ngàn chuẩn xác qua formatNumber", () => {

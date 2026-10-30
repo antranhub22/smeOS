@@ -12,6 +12,7 @@ import {
   Send,
   Cpu,
 } from "lucide-react"
+import { useI18n } from "@/lib/i18n"
 
 export type SettingsTab =
   | "INFO"          // 1. Thông tin cơ sở & Pháp lý (L1 Master)
@@ -40,17 +41,19 @@ export function SettingsTabsNav({
   onSelectTab,
   policyCounts,
 }: SettingsTabsNavProps) {
+  const { dict } = useI18n()
+
   const tabs = [
-    { key: "INFO" as const, label: "1. Thông Tin Tiệm", icon: Store },
-    { key: "BRANDING" as const, label: "2. Thương Hiệu", icon: Palette },
-    { key: "PAYMENT" as const, label: "3. Nhận Thanh Toán", icon: QrCode },
-    { key: "DEPOSIT" as const, label: "4. Đặt Cọc & Giá", icon: DollarSign },
-    { key: "PROMOTIONS" as const, label: `5. Ưu Đãi (${policyCounts.promotions})`, icon: Gift },
-    { key: "COMMITMENTS" as const, label: `6. Cam Kết (${policyCounts.commitments})`, icon: ShieldCheck },
-    { key: "AGREEMENTS" as const, label: `7. Thỏa Thuận (${policyCounts.agreements})`, icon: FileText },
-    { key: "BROCHURE_FLOW" as const, label: "8. Thẻ Chào & Quy Trình", icon: Send },
-    { key: "AI_CHANNELS" as const, label: "9. AI & Kênh", icon: Cpu },
-    { key: "COLLECTION_PROFILE" as const, label: "10. Thu Thập Chuỗi", icon: ShieldCheck },
+    { key: "INFO" as const, label: dict.settings.tabs.info, icon: Store },
+    { key: "BRANDING" as const, label: dict.settings.tabs.branding, icon: Palette },
+    { key: "PAYMENT" as const, label: dict.settings.tabs.payment, icon: QrCode },
+    { key: "DEPOSIT" as const, label: dict.settings.tabs.deposit, icon: DollarSign },
+    { key: "PROMOTIONS" as const, label: `${dict.settings.tabs.promotions} (${policyCounts.promotions})`, icon: Gift },
+    { key: "COMMITMENTS" as const, label: `${dict.settings.tabs.commitments} (${policyCounts.commitments})`, icon: ShieldCheck },
+    { key: "AGREEMENTS" as const, label: `${dict.settings.tabs.agreements} (${policyCounts.agreements})`, icon: FileText },
+    { key: "BROCHURE_FLOW" as const, label: dict.settings.tabs.brochureFlow, icon: Send },
+    { key: "AI_CHANNELS" as const, label: dict.settings.tabs.aiChannels, icon: Cpu },
+    { key: "COLLECTION_PROFILE" as const, label: dict.settings.tabs.collectionProfile, icon: ShieldCheck },
   ]
 
   return (

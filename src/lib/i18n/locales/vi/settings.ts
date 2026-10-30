@@ -49,6 +49,18 @@ export const settingsVi = {
       actions: "Thao tác",
     },
   },
+  tabs: {
+    info: "1. Thông Tin Tiệm",
+    branding: "2. Thương Hiệu",
+    payment: "3. Nhận Thanh Toán",
+    deposit: "4. Đặt Cọc & Giá",
+    promotions: "5. Ưu Đãi",
+    commitments: "6. Cam Kết",
+    agreements: "7. Thỏa Thuận",
+    brochureFlow: "8. Thẻ Chào & Quy Trình",
+    aiChannels: "9. AI & Kênh",
+    collectionProfile: "10. Thu Thập Chuỗi",
+  },
 } as const
 
 export type SettingsDictionary = typeof settingsVi

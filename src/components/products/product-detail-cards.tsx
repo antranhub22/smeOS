@@ -5,6 +5,7 @@ import { Layers, Flower2, FileText, Sparkles } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FlowerPlaceholder } from "@/components/ui/flower-placeholder"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 export function ProductStatusBadge({ status }: { status: "ACTIVE" | "ARCHIVED" | "DRAFT" }) {
   if (status === "ACTIVE") {
@@ -61,7 +62,7 @@ export function ProductOverviewCard({
           <div className="mt-0.5 text-body-sm text-text-muted">Mã định danh: {code}</div>
           <div className="mt-1 flex items-center gap-2">
             <span className="text-body-sm font-bold text-primary">
-              {priceVnd ? `${priceVnd.toLocaleString("vi-VN")} ₫` : "Liên hệ báo giá"}
+              {priceVnd ? formatCurrency(priceVnd) : "Liên hệ báo giá"}
             </span>
             {primaryColor && (
               <span className="rounded-md bg-surface-alt px-2 py-0.5 text-caption font-semibold text-text">

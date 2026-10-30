@@ -14,6 +14,22 @@ export const platformEn = {
     filterAll: "All Organizations",
     statusActive: "Active",
     statusSuspended: "Suspended",
+    scopeSystem: "Scope: System-wide",
+    table: {
+      org: "Organization",
+      type: "Type",
+      members: "Members",
+      credit: "Credit",
+      createdAt: "Created At",
+    },
+    types: {
+      store: "Store",
+      network: "Floral Network",
+      platform: "Platform",
+      experience: "Experience",
+    },
+    empty: "No organizations found.",
+    loadError: "Failed to load organizations.",
   },
   registration: {
     title: "Account Registrations",
