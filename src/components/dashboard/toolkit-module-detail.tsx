@@ -4,6 +4,7 @@ import React from "react"
 import * as LucideIcons from "lucide-react"
 import { ArrowLeft } from "lucide-react"
 import type { GrowthModule } from "@/modules/toolkit/domain/growth-modules"
+import { InfoTip } from "@/components/ui/info-tip"
 import { ToolCard } from "./toolkit-card"
 
 interface ModuleDetailProps {
@@ -20,7 +21,7 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
   const showPhaseNames = module.order !== null
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-8">
       {onBack && (
         <button
           type="button"
@@ -32,29 +33,32 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
         </button>
       )}
 
-      <div className="flex items-center gap-3 pb-2 border-b border-border">
-        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-muted text-primary">
-          <Icon className="w-5 h-5" aria-hidden="true" />
+      <div className="flex items-center gap-4 p-5 sm:p-6 rounded-2xl bg-surface shadow-sm ring-1 ring-border/60">
+        <div className="flex items-center justify-center w-16 h-16 shrink-0 rounded-2xl bg-primary text-primary-foreground">
+          <Icon className="w-8 h-8" aria-hidden="true" />
         </div>
-        <div>
-          <h2 className="text-title font-bold text-text">
-            {module.order !== null ? `Bước ${module.order} — ${module.name}` : module.name}
-          </h2>
-          <p className="text-body-sm text-text-muted">{module.purpose}</p>
+        <div className="min-w-0">
+          {module.order !== null && (
+            <span className="text-caption font-semibold text-text-muted">Bước {module.order}</span>
+          )}
+          <div className="flex items-center gap-2">
+            <h2 className="text-display font-extrabold text-text tracking-tight">{module.name}</h2>
+            <InfoTip label={module.name} side="bottom">{module.purpose}</InfoTip>
+          </div>
         </div>
       </div>
 
       {module.phases.map((phase) => (
-        <div key={phase.phase} className="space-y-3">
+        <div key={phase.phase} className="space-y-4">
           {showPhaseNames && (
-            <h3 className="text-body font-semibold text-text">
+            <h3 className="text-title-sm font-bold text-text">
               {phase.name}
               <span className="ml-2 text-caption font-medium text-text-muted">
-                {phase.tools.length} công cụ
+                {phase.tools.length}
               </span>
             </h3>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {phase.tools.map((tool) => (
               <ToolCard key={tool.id} tool={tool} isDev={isDev} />
             ))}
