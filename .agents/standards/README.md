@@ -25,5 +25,5 @@ Dự án mới: chép `universal/`, viết thư mục áp dụng riêng theo m�
 |---|---|---|---|
 | 01 | Quản trị phân tầng SaaS (Mother → Ngành → Chuỗi → Cửa hàng) | [universal/01-tiered-saas-governance.md](universal/01-tiered-saas-governance.md) | [smeos/01-tier-governance.md](smeos/01-tier-governance.md) |
 | 02 | Storage (vòng đời tệp, ký URL, registry, legal hold) | [universal/02-storage.md](universal/02-storage.md) | [smeos/02-storage.md](smeos/02-storage.md) |
-| 03 | UX (Progressive Disclosure, Journey-First, UI System) | _đang soạn_ | _đang soạn_ |
+| 03 | UX (Progressive Disclosure, Journey-First, UI System) | [universal/03-ux.md](universal/03-ux.md) | [smeos/03-ux.md](smeos/03-ux.md) |
 | 04 | i18n · l10n · UX Writing | _đang soạn_ | _đang soạn_ |
