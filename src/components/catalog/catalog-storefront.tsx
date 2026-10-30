@@ -8,7 +8,6 @@ import { ProductDetailModal } from "./product-detail-modal"
 import { ShareCatalogModal } from "./share-catalog-modal"
 import { CatalogStorefrontHeader } from "./catalog-storefront-header"
 import {
-  LandingTemplateHero,
   LandingTemplateStory,
   LandingTemplatePerks,
   LandingTemplateProcess,
@@ -18,14 +17,17 @@ import {
   LandingTemplateVideo,
   LandingTemplateGallery,
 } from "./landing-templates"
-import { resolveFlowerImage } from "./flower-image-fallback"
 import type { GalleryPhotoItem } from "./landing-templates/landing-template-gallery"
 import { CatalogProductListView } from "./catalog-product-list-view"
 import { CATALOG_STYLES } from "@/modules/catalog-studio/domain/styles/style-registry"
 import { CATALOG_TEMPLATES } from "@/modules/catalog-studio/domain/templates/template-registry"
 import { CatalogStorefrontHero } from "./catalog-storefront-hero"
 import { CatalogStorefrontToolbar } from "./catalog-storefront-toolbar"
+import { PublicHero } from "./public/public-hero"
+import { publicThemeVars } from "./public/public-theme-vars"
+import { PublicStickyActions } from "./public/public-sticky-actions"
 
+const PRODUCTS_ANCHOR_ID = "bo-suu-tap"
 const EMPTY_PRODUCTS: PublicCatalogProduct[] = []
 
 export interface CatalogStorefrontProps {
@@ -119,11 +121,15 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
     .map((p) => ({ src: p.imageUrl, title: p.name, caption: p.category ?? "Sản phẩm tuyển chọn" }))
 
   const storyImageUrl = realProductImageUrls[0] ?? null
+  // Hero chỉ dùng ảnh thật (ảnh tiệm tải lên hoặc ảnh sản phẩm) — không ảnh minh hoạ thay thế
+  const heroImageUrl = customHeroImageUrl || realProductImageUrls[0] || null
+  const heroHeadline = generatedPackage?.hero?.headline || catalog.name
+  const heroSubHeadline = generatedPackage?.hero?.subHeadline || catalog.description
 
   return (
     <div
-      className="min-h-screen antialiased transition-colors pb-16"
-      style={{ backgroundColor: currentStyle.tokens.background, color: currentStyle.tokens.textPrimary }}
+      className="min-h-screen antialiased transition-colors pb-28 md:pb-16"
+      style={{ ...publicThemeVars(currentStyle), backgroundColor: currentStyle.tokens.background, color: currentStyle.tokens.textPrimary }}
     >
       <CatalogStorefrontHeader
         shop={shop}
@@ -135,19 +141,24 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         styleId={styleId}
       />
 
+      {heroImageUrl && (
+        <PublicHero
+          headline={heroHeadline}
+          subHeadline={heroSubHeadline}
+          imageUrl={heroImageUrl}
+          shopName={shop.name}
+          productCount={products.length}
+          customerName={initialData.customer?.name ?? null}
+          style={currentStyle}
+          productsAnchorId={PRODUCTS_ANCHOR_ID}
+        />
+      )}
+
       <div className="max-w-4xl mx-auto px-4 pt-6 space-y-6">
-        {/* Hero */}
-        {campaign ? (
-          <LandingTemplateHero
-            headline={catalog.name}
-            occasionId={campaign.occasion || "20-10"}
-            archetypeId={campaign.archetype || "minimal-luxury"}
-            heroImageUrl={customHeroImageUrl || resolveFlowerImage(products.find((p) => p.imageUrl)?.imageUrl, 0)}
-          />
-        ) : (
+        {!heroImageUrl && (
           <CatalogStorefrontHero
-            catalogName={catalog.name}
-            catalogDescription={catalog.description}
+            catalogName={heroHeadline}
+            catalogDescription={heroSubHeadline}
             style={currentStyle}
             template={currentTemplate}
             customerName={initialData.customer?.name ?? null}
@@ -157,7 +168,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         )}
 
         {campaign && videoUrl && (
-          <LandingTemplateVideo videoUrl={videoUrl} archetypeId={campaign.archetype} title="Video Cận Cảnh Mẫu Thực Tế" />
+          <LandingTemplateVideo videoUrl={videoUrl} archetypeId={campaign.archetype} title="Video mẫu thật" />
         )}
 
         {campaign && enabledSections?.story !== false && generatedPackage?.story && storyImageUrl && (
@@ -165,6 +176,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         )}
 
         {/* Filter & Layout Toolbar */}
+        <div id={PRODUCTS_ANCHOR_ID} className="scroll-mt-20" />
         <CatalogStorefrontToolbar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -197,8 +209,9 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         {campaign && enabledSections?.gallery !== false && galleryPhotos.length > 0 && (
           <LandingTemplateGallery archetypeId={campaign.archetype} photos={galleryPhotos} />
         )}
-        {campaign && enabledSections?.reviews !== false && (
-          <LandingTemplateReviews archetypeId={campaign.archetype} />
+        {/* Đánh giá do chủ tiệm nhập và đang bật — cả landing lẫn catalog; rỗng thì khối tự ẩn */}
+        {enabledSections?.reviews !== false && (
+          <LandingTemplateReviews archetypeId={campaign?.archetype} reviews={initialData.reviews ?? []} />
         )}
         {campaign && enabledSections?.faq !== false && generatedPackage?.faq && (
           <LandingTemplateFaq faq={generatedPackage.faq} archetypeId={campaign.archetype} />
@@ -208,6 +221,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
             archetypeId={campaign.archetype || "minimal-luxury"}
             occasionTitle={catalog.name}
             catalogSlug={catalog.slug}
+            lead={generatedPackage?.lead}
           />
         )}
       </div>
@@ -228,12 +242,13 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           onClose={() => setShowShareModal(false)}
         />
       )}
+      <PublicStickyActions shopName={shop.name} phone={shop.phone} topic={catalog.name} style={currentStyle} />
       <footer
         className="mt-12 text-center text-xs max-w-4xl mx-auto px-4"
         style={{ color: currentStyle.tokens.textSecondary }}
       >
         <div className="border-t pt-6" style={{ borderColor: currentStyle.tokens.border }}>
-          <p className="font-medium">{shop.name} — Nền tảng Catalog Đa ngành Thông minh smeOS</p>
+          <p className="font-medium">{shop.name}</p>
         </div>
       </footer>
     </div>

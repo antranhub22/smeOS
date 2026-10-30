@@ -9,7 +9,10 @@ import {
   type TrashItemType,
 } from "../domain/trash-types"
 
-import type { ITrashRepository } from "../domain/repositories/trash-repository.interface"
+import { isUnderLegalHold } from "@/modules/assets/domain/asset-lifecycle"
+import { deleteAssetAndEnqueuePayloads } from "@/modules/assets/infra/payload-outbox"
+import { organizationLegalHoldUntil } from "@/modules/assets/infra/legal-hold"
+import type { ITrashRepository, TrashDeleteResult } from "../domain/repositories/trash-repository.interface"
 
 const PREVIEW_EXPIRES_IN = 86400
 
@@ -42,17 +45,18 @@ export class TrashRepository implements ITrashRepository {
     // Xử lý assets
     for (const asset of trashedAssets) {
       const meta = (asset.metadata as Record<string, unknown> | null) ?? {}
-      const trashedAt = typeof meta.trashed_at === "string" ? meta.trashed_at : asset.created_at.toISOString()
+      const trashedAt =
+        asset.trashed_at?.toISOString() ??
+        (typeof meta.trashed_at === "string" ? meta.trashed_at : asset.created_at.toISOString())
       const expiresAt =
-        typeof meta.expires_at === "string"
+        asset.purge_after?.toISOString() ??
+        (typeof meta.expires_at === "string"
           ? meta.expires_at
-          : new Date(new Date(trashedAt).getTime() + 30 * 86400000).toISOString()
+          : new Date(new Date(trashedAt).getTime() + 30 * 86400000).toISOString())
 
-      // Tự động dọn dẹp nếu đã quá 30 ngày
-      if (new Date(expiresAt).getTime() < now.getTime()) {
-        void this.permanentDelete(ctx, { id: asset.id, type: "RAW_ASSET" }).catch(() => {})
-        continue
-      }
+      // Quá hạn thì ẩn khỏi danh sách; xoá vĩnh viễn do cron dọn rác làm
+      // (`sweep-expired-trash.ts`, có legal hold) — không xoá lúc đang đọc.
+      if (new Date(expiresAt).getTime() < now.getTime()) continue
 
       let imageUrl: string | null = null
       if (asset.storage_key) {
@@ -148,6 +152,8 @@ export class TrashRepository implements ITrashRepository {
         data: {
           state: "ARCHIVED" as asset_state,
           metadata: { ...existingMeta, ...trashMeta } as any,
+          trashed_at: new Date(trashMeta.trashed_at),
+          purge_after: new Date(trashMeta.expires_at),
         },
       })
       return true
@@ -169,6 +175,8 @@ export class TrashRepository implements ITrashRepository {
           data: {
             state: "ARCHIVED" as asset_state,
             metadata: { ...existingMeta, ...trashMeta } as any,
+            trashed_at: new Date(trashMeta.trashed_at),
+            purge_after: new Date(trashMeta.expires_at),
           },
         })
       }
@@ -222,6 +230,8 @@ export class TrashRepository implements ITrashRepository {
         data: {
           state: "READY" as asset_state,
           metadata: meta as any,
+          trashed_at: null,
+          purge_after: null,
         },
       })
       return true
@@ -254,24 +264,25 @@ export class TrashRepository implements ITrashRepository {
   async permanentDelete(
     ctx: TenantContext,
     input: { id: string; type: TrashItemType }
-  ): Promise<boolean> {
+  ): Promise<TrashDeleteResult> {
+    const now = new Date()
+    if (isUnderLegalHold({ legal_hold_until: await organizationLegalHoldUntil(ctx.organizationId) }, now)) {
+      return "legal_hold"
+    }
     if (input.type === "RAW_ASSET" || input.type === "APPROVED_ANALYSIS") {
       const asset = await prisma.assets.findFirst({
         where: scopedWhere(ctx, { id: input.id }),
       })
-      if (!asset) return false
-
-      await prisma.assets.deleteMany({
-        where: scopedWhere(ctx, { id: asset.id }),
-      })
-      return true
+      if (!asset) return "not_found"
+      if (isUnderLegalHold(asset, now)) return "legal_hold"
+      return (await deleteAssetAndEnqueuePayloads(ctx, asset, "trash.permanent_delete")) ? "deleted" : "not_found"
     }
 
     if (input.type === "PRODUCT") {
       const product = await prisma.products.findFirst({
         where: scopedWhere(ctx, { id: input.id }),
       })
-      if (!product) return false
+      if (!product) return "not_found"
 
       await prisma.$transaction(async (tx) => {
         await tx.product_images.deleteMany({ where: { product_id: product.id } })
@@ -279,10 +290,10 @@ export class TrashRepository implements ITrashRepository {
         await tx.product_inventory.deleteMany({ where: { product_id: product.id } })
         await tx.products.deleteMany({ where: scopedWhere(ctx, { id: product.id }) })
       })
-      return true
+      return "deleted"
     }
 
-    return false
+    return "not_found"
   }
 }
 

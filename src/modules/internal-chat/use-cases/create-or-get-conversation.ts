@@ -1,6 +1,6 @@
 import type { IInternalChatRepository } from "../domain/chat-repository.interface"
 import type { InternalChatConversation, ConversationType } from "../domain/chat-entities"
-import { ChatDomainError } from "../domain/errors"
+import { ChatAccessDeniedError } from "../domain/errors"
 
 export interface CreateOrGetConversationInput {
   organizationId: string
@@ -23,6 +23,9 @@ export class CreateOrGetConversationUseCase {
       if (existing) {
         // Ensure user is participant
         const isPart = await this.chatRepo.isParticipant(existing.id, input.userId)
+        // Chỉ tự tham gia luồng đơn của CHÍNH tổ chức mình; luồng của tổ chức khác thì phải được mời
+        // trước (vd. đối tác nhận đơn qua dispatch-to-chat) — không thì như không tồn tại.
+        if (!isPart && existing.organizationId !== input.organizationId) throw new ChatAccessDeniedError()
         if (!isPart) {
           await this.chatRepo.addParticipant(existing.id, {
             userId: input.userId,

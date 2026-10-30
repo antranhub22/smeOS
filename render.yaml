@@ -32,6 +32,9 @@ services:
         generateValue: true
       - key: INTEGRATION_TOKEN_SECRET
         generateValue: true
+      # Khoá ký URL kho tệp, tách khỏi SESSION_SECRET (SDAGF D-07).
+      - key: STORAGE_SIGNING_SECRET
+        generateValue: true
       # Redis dùng chung cho giới hạn tần suất (đăng nhập, link công khai) giữa các instance.
       # Thiếu thì rate-limit chỉ đếm trong bộ nhớ từng tiến trình (rà soát 21/10/2026, H7).
       - key: REDIS_URL
@@ -106,6 +109,11 @@ services:
       - key: ZALO_OA_WEBHOOK_SECRET
         sync: false
       - key: ZALO_OA_FOLLOW_URL
+        sync: false
+      # Chat bán hàng qua Facebook Messenger — chữ ký webhook (audit AUD-028); thiếu thì webhook từ chối mọi sự kiện
+      - key: FB_APP_SECRET
+        sync: false
+      - key: FB_WEBHOOK_VERIFY_TOKEN
         sync: false
       - key: TELEGRAM_STAFF_BOT_TOKEN
         sync: false
@@ -229,7 +237,7 @@ services:
   # 5. CRON — nhắc mốc tiến độ đơn gia công chuỗi (M1–M4), 5 phút/lần
   # ══════════════════════════════════════════════
   # Gọi web qua mạng nội bộ Render. Không có job này thì nhắc việc M1–M4 không bao giờ chạy.
-  # Sau lượt quét, kiểm /internal/health: không khoẻ → 503 → lượt cron thất bại → Render báo lỗi.
+  # Lượt quét cũng dọn job treo quá 15 phút (YC-J10). Sau lượt quét, kiểm /internal/health: không khoẻ → 503 → lượt cron thất bại → Render báo lỗi.
   - type: cron
     name: smeos-cron-dispatch-sweep
     runtime: node

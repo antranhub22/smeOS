@@ -11,6 +11,7 @@ import {
 import type { GreetingCatalogProduct } from "../domain/greeting-card-types"
 import type { PromotionPricing } from "../domain/promotion-pricing"
 import { resolveAppliedPolicies } from "../domain/store-policy"
+import type { PolicyGovernanceUpper } from "@/modules/organization/domain/governance-decisions"
 import { selectPromotion } from "../domain/order-policies"
 import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 import { holidayOn, holidaySurcharge, parseHolidayPolicy } from "../domain/holiday-policy"
@@ -52,9 +53,10 @@ export interface QuoteResult {
 export function promotionForQuote(
   catalogFilters: unknown,
   shopSettings: unknown,
-  selectedPromotionId: string | undefined
+  selectedPromotionId: string | undefined,
+  governanceUpper?: PolicyGovernanceUpper
 ): { promotion: PromotionPricing | null; error: string | null } {
-  const chosen = selectPromotion(resolveAppliedPolicies(catalogFilters, shopSettings), selectedPromotionId)
+  const chosen = selectPromotion(resolveAppliedPolicies(catalogFilters, shopSettings, undefined, governanceUpper), selectedPromotionId)
   if (!chosen.ok) return { promotion: null, error: chosen.message }
   return { promotion: chosen.promotion ? { kind: chosen.promotion.kind, percent: chosen.promotion.percent } : null, error: null }
 }

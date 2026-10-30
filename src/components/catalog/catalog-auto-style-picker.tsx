@@ -38,17 +38,17 @@ const TEMPLATE_BADGE_COLOR: Record<string, string> = {
 
 const STYLE_PREVIEW_BG: Record<string, string> = {
   S01_EDITORIAL_MAGAZINE: "bg-[#FAF8F5]",
-  S02_PURE_MINIMAL: "bg-white",
+  S02_PURE_MINIMAL: "bg-surface",
   S03_QUIET_LUXURY: "bg-[#F7F5F0]",
   S04_BOLD_POP: "bg-[#FFFBEB]",
   S05_ORGANIC_NATURAL: "bg-[#F4F1EA]",
   S06_BOTANICAL_ATELIER: "bg-[#FAFDF7]",
-  S07_SWISS_GRID: "bg-white",
+  S07_SWISS_GRID: "bg-surface",
   S08_BENTO_GALLERY: "bg-[#F8FAFC]",
   S09_MODERN_RETRO: "bg-[#FEFCE8]",
   S10_PLAYFUL_ILLUSTRATION: "bg-[#FFF1F2]",
   S11_DARK_SHOWCASE: "bg-[#09090B]",
-  S12_MODERN_COMMERCE: "bg-white",
+  S12_MODERN_COMMERCE: "bg-surface",
 }
 
 const STYLE_ACCENT_COLOR: Record<string, string> = {

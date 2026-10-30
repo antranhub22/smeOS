@@ -1269,7 +1269,7 @@ export default function TaiAnhPage() {
       </div>
 
       {errorMsg && (
-        <div className="mx-[18px] mt-3 rounded-xl border-[1.5px] border-danger/30 bg-danger-bg px-3.5 py-2.5 text-body-sm font-medium text-danger">
+        <div className="mx-[18px] mt-3 rounded-xl border-[1.5px] border-danger/30 bg-danger-bg px-3.5 py-2.5 text-body-sm font-medium text-danger-text">
           {errorMsg}
           <Button variant="ghost" size="sm" className="ml-2" onClick={() => setErrorMsg(null)}>Đóng</Button>
         </div>
@@ -1293,11 +1293,7 @@ export default function TaiAnhPage() {
             <M01aGuidanceCard />
 
             <Card
-              role="button"
-              tabIndex={0}
-              onClick={() => fileInputRef.current?.click()}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInputRef.current?.click() } }}
-              className="w-full max-w-md flex flex-col items-center gap-3 border-dashed border-2 border-border bg-surface-alt p-8 cursor-pointer hover:border-primary/50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="w-full max-w-md flex flex-col items-center gap-3 border-dashed border-2 border-border bg-surface-alt p-8"
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-surface shadow-sm">
                 <Camera size={28} strokeWidth={1.5} className="text-primary" />
@@ -1623,7 +1619,7 @@ export default function TaiAnhPage() {
               <Sparkles size={32} strokeWidth={1.5} className="mx-auto mb-3 text-primary" />
               <div className="text-title-sm font-semibold">Sinh nội dung bán hàng</div>
               <div className="mt-1 text-meta text-text-muted">
-                Đọc từ Product Master vừa duyệt → Tên, mô tả, thẻ, tone, dịp, phân khúc giá
+                Đọc từ sản phẩm vừa duyệt → Tên, mô tả, thẻ, tone, dịp, phân khúc giá
               </div>
               <Button className="mt-5 w-full" onClick={goResult2}>
                 Tiếp tục sang Nội dung bán hàng
@@ -1643,7 +1639,7 @@ export default function TaiAnhPage() {
             </div>
             <div className="text-center">
               <div className="text-title font-extrabold">Đã lưu vào Kho</div>
-              <div className="mt-1 text-body-sm text-text-muted">Đặc điểm nhận diện đã được lưu vào Product Master</div>
+              <div className="mt-1 text-body-sm text-text-muted">Đặc điểm nhận diện đã được lưu vào kho sản phẩm</div>
             </div>
             <div className="flex gap-3">
               <Button variant="secondary" onClick={() => setPhase("upload")}>
@@ -1759,7 +1755,7 @@ export default function TaiAnhPage() {
                 </div>
                 <div className="text-center">
                   <div className="text-title font-extrabold">Đã lưu vào Kho sản phẩm</div>
-                  <div className="mt-1 text-body-sm text-text-muted">Product Master + Thư viện nội dung bán hàng đã được cập nhật</div>
+                  <div className="mt-1 text-body-sm text-text-muted">Kho sản phẩm và thư viện nội dung bán hàng đã được cập nhật</div>
                 </div>
                 <div className="flex gap-3">
                   <Button
@@ -1801,7 +1797,7 @@ export default function TaiAnhPage() {
                       return
                     }
                     setAnalysisId(item.id)
-                    setAnalysisData(item.raw)
+                    setAnalysisData({ ...(item.edited ?? item.raw), ...(item.product?.name ? { product_name: item.product.name } : {}), ...(item.product?.code ? { code: item.product.code } : {}) })
                     if (item.image_url) {
                       setAnalysisImageUrl(item.image_url)
                     }
@@ -1848,7 +1844,7 @@ export default function TaiAnhPage() {
                   selectedAnalysisId={analysisId}
                   onSelect={async (item) => {
                     setAnalysisId(item.id)
-                    setAnalysisData(item.raw)
+                    setAnalysisData({ ...(item.edited ?? item.raw), ...(item.product?.name ? { product_name: item.product.name } : {}), ...(item.product?.code ? { code: item.product.code } : {}) })
                     if (item.image_url) {
                       setAnalysisImageUrl(item.image_url)
                     }

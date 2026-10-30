@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-channel-repository"
 import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
+import { matchesVerifyToken, verifyFacebookSignature } from "@/core/http/webhook-signature"
 
 // 1. Xác thực Webhook từ Facebook Developers
 export async function GET(req: NextRequest) {
@@ -9,10 +10,8 @@ export async function GET(req: NextRequest) {
   const token = searchParams.get("hub.verify_token")
   const challenge = searchParams.get("hub.challenge")
 
-  // Token xác thực mặc định hoặc theo cấu hình
-  const expectedToken = process.env.FB_WEBHOOK_VERIFY_TOKEN || "floraos_facebook_verify_token"
-
-  if (mode === "subscribe" && token === expectedToken) {
+  // Không còn token mặc định viết cứng (AUD-028): chưa cấu hình FB_WEBHOOK_VERIFY_TOKEN thì từ chối
+  if (mode === "subscribe" && matchesVerifyToken(token, process.env.FB_WEBHOOK_VERIFY_TOKEN)) {
     return new NextResponse(challenge, { status: 200 })
   }
 
@@ -21,8 +20,14 @@ export async function GET(req: NextRequest) {
 
 // 2. Tiếp nhận sự kiện tin nhắn từ Facebook Messenger
 export async function POST(req: NextRequest) {
+  // AUD-028: chỉ nhận sự kiện có chữ ký X-Hub-Signature-256 hợp lệ (HMAC thân gốc với App Secret)
+  const rawBody = await req.text()
+  if (!verifyFacebookSignature(rawBody, req.headers.get("x-hub-signature-256"), process.env.FB_APP_SECRET)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
-    const body = await req.json()
+    const body = JSON.parse(rawBody)
     if (body.object !== "page") {
       return NextResponse.json({ status: "ignored" }, { status: 200 })
     }

@@ -1,6 +1,9 @@
 import type { ICatalogLinkRepository } from "../domain/repositories/catalog-link-repository.interface"
 import { getCatalogLinkRepository } from "../infra/catalog-link-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
+import { landingVisualFor } from "@/modules/landing-page/domain/archetype-style"
+import { getPublicReviewsForOrganization } from "@/modules/shop-reviews/use-cases/get-public-reviews"
+import type { PublicShopReview } from "@/modules/shop-reviews/domain/review-rules"
 import type { CatalogTemplateId, CatalogStyleId } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 
 export interface PublicCatalogShop {
@@ -55,6 +58,8 @@ export type PublicCatalogResult =
       } | undefined
       templateId?: CatalogTemplateId | undefined
       styleId?: CatalogStyleId | undefined
+      /** Đánh giá khách do chủ tiệm nhập, đang bật hiển thị */
+      reviews?: PublicShopReview[] | undefined
     }
   | {
       status: "REVOKED"
@@ -278,11 +283,13 @@ export async function getPublicCatalog(
     catalog: {
       slug: link.slug,
       name: link.name,
-      description: link.description,
+      // Link landing cũ lưu mô tả kỹ thuật ("Landing page chiến dịch … — Phong cách minimal-luxury") → ẩn
+      description: link.description && !/^Landing page chiến dịch .* — Phong cách /.test(link.description) ? link.description : null,
       createdAt: link.created_at.toISOString(),
     },
     shop,
     products,
+    reviews: await getPublicReviewsForOrganization(link.organization_id),
     campaignConfig:
       filters.occasion || filters.archetype || filters.generatedPackage || resolvedHeroImageUrl || filters.videoUrl
         ? {
@@ -302,13 +309,14 @@ export async function getPublicCatalog(
             greeting: typeof filters.personalizedGreeting === "string" ? filters.personalizedGreeting : undefined,
           }
         : undefined,
+    // Link landing cũ chưa lưu phong cách → suy từ phong cách landing đã chọn
     templateId:
       (filters.template_id as CatalogTemplateId) ||
       (filters.templateId as CatalogTemplateId) ||
-      "T01_SIGNATURE_COLLECTION",
+      (typeof filters.archetype === "string" ? landingVisualFor(filters.archetype).templateId : "T01_SIGNATURE_COLLECTION"),
     styleId:
       (filters.style_id as CatalogStyleId) ||
       (filters.styleId as CatalogStyleId) ||
-      "S01_EDITORIAL_MAGAZINE",
+      (typeof filters.archetype === "string" ? landingVisualFor(filters.archetype).styleId : "S01_EDITORIAL_MAGAZINE"),
   }
 }

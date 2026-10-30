@@ -44,7 +44,7 @@ export function ChainCollectionProfileManager() {
   }
 
   useEffect(() => {
-    void loadData()
+    void Promise.resolve().then(() => loadData())
   }, [])
 
   const handleUpdateRule = (updated: CollectionRule) => {

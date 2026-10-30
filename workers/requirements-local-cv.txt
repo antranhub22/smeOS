@@ -32,8 +32,8 @@
 # Trọng số Florence-2 tải tự động qua `from_pretrained` khi máy có mạng tới
 # huggingface.co — không cần tải tay.
 
-torch>=2.3
-torchvision>=0.18
+torch>=2.14.1
+torchvision>=0.29.1
 # Ghim đúng 5.15.1 — ĐÃ CHẠY THỬ THẬT 2026-09-11 trên máy thật (MPS).
 # 5.17.0 vỡ generate() của Florence-2 (encoder-decoder): 'EncoderDecoderCache'
 # object has no attribute 'layers', bên trong chính transformers.generation.utils,
@@ -42,7 +42,7 @@ torchvision>=0.18
 # thành >= khi chưa thử lại.
 transformers==5.15.1
 einops>=0.7
-timm>=1.0
+timm>=1.0.30
 pytest>=9.1.1
 numpy>=1.26
 pillow>=13.0.0

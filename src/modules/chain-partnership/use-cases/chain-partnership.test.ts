@@ -47,14 +47,14 @@ class InMemoryPartnershipRepository implements IChainPartnershipRepository {
     return this.partnerships.find((p) => p.id === id) ?? null
   }
 
-  async updateStatus(id: string, status: any): Promise<ChainPartnershipEntity> {
+  async updateStatus(id: string, status: Parameters<IChainPartnershipRepository["updateStatus"]>[1]): Promise<ChainPartnershipEntity> {
     const p = this.partnerships.find((x) => x.id === id)
     if (!p) throw new Error("Not found")
     p.status = status
     return p
   }
 
-  async findStoreByIdentifier(identifier: string): Promise<any> {
+  async findStoreByIdentifier(identifier: string): ReturnType<IChainPartnershipRepository["findStoreByIdentifier"]> {
     if (identifier === "existing@shop.vn" || identifier === "existing-shop") {
       return {
         orgId: "existing-org-1",
@@ -66,13 +66,13 @@ class InMemoryPartnershipRepository implements IChainPartnershipRepository {
     return null
   }
 
-  async linkExistingStore(params: any): Promise<ChainPartnershipEntity> {
+  async linkExistingStore(params: Parameters<IChainPartnershipRepository["linkExistingStore"]>[0]): Promise<ChainPartnershipEntity> {
     const entity: ChainPartnershipEntity = {
       id: "part-linked-1",
       chainOrgId: params.chainOrgId,
       partnerOrgId: params.partnerOrgId,
       partnerCode: params.partnerCode,
-      partnershipType: params.partnershipType ?? "SUBCONTRACTOR",
+      partnershipType: (params.partnershipType ?? "SUBCONTRACTOR") as ChainPartnershipEntity["partnershipType"],
       status: "ACTIVE",
       capacityDaily: params.capacityDaily ?? 10,
       contactName: params.contactName,
@@ -91,9 +91,9 @@ class InMemoryPartnershipRepository implements IChainPartnershipRepository {
 class InMemoryChatRepoMock implements Partial<IInternalChatRepository> {
   public createdConversations: CreateConversationParams[] = []
 
-  async createConversation(params: CreateConversationParams): Promise<any> {
+  async createConversation(params: CreateConversationParams): ReturnType<IInternalChatRepository["createConversation"]> {
     this.createdConversations.push(params)
-    return { id: "conv-mock-1" }
+    return { id: "conv-mock-1" } as Awaited<ReturnType<IInternalChatRepository["createConversation"]>>
   }
 }
 
@@ -112,7 +112,7 @@ describe("Chain Partnership Use Cases", () => {
       chatRepo as unknown as IInternalChatRepository
     )
 
-    const partnership = await useCase.execute(
+    const { partnership } = await useCase.execute(
       {
         chainOrgId: "chain-hq-1",
         partnerStoreName: "Tiệm Hoa Cầu Giấy",

@@ -376,7 +376,7 @@ export function CreativeHandoffModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 text-cool-400 hover:bg-cool-100 hover:text-cool-700 transition"
+            className="rounded-full p-1.5 text-text-muted hover:bg-cool-100 hover:text-cool-700 transition"
             aria-label="Đóng"
           >
             <X size={18} />
@@ -446,7 +446,7 @@ export function CreativeHandoffModal({
                 />
               </div>
             ) : (
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-cool-200 bg-cool-100 text-cool-400">
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-cool-200 bg-cool-100 text-text-muted">
                 <ImageIcon size={20} />
               </div>
             )}
@@ -552,7 +552,7 @@ export function CreativeHandoffModal({
                     <span className="text-caption mt-1 font-semibold leading-tight">
                       {area.label}
                     </span>
-                    <span className="text-caption text-cool-400 mt-0.5">
+                    <span className="text-caption text-text-muted mt-0.5">
                       {area.description}
                     </span>
                   </button>

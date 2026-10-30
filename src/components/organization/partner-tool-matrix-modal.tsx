@@ -27,9 +27,9 @@ export function PartnerToolMatrixModal({
     (e) => e.group === "cong-cu" && e.navKey !== "toolkit"
   )
 
-  // Nếu initialUnlockedTools là null hoặc rỗng -> mặc định chọn tất cả
+  // Chưa cấu hình (null) -> mặc định chọn tất cả; mảng rỗng nghĩa là đã khoá hết
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => {
-    if (initialUnlockedTools && initialUnlockedTools.length > 0) {
+    if (Array.isArray(initialUnlockedTools)) {
       return new Set(initialUnlockedTools)
     }
     return new Set(availableTools.map((t) => t.navKey))
@@ -86,14 +86,22 @@ export function PartnerToolMatrixModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="partner-tool-matrix-title"
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose()
+      }}
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
+    >
       <div className="bg-surface rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-border animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex items-start justify-between pb-3 border-b border-border">
           <div>
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-primary" />
-              <h3 className="font-bold text-title text-text">
+              <h3 id="partner-tool-matrix-title" className="font-bold text-title text-text">
                 Phân quyền Công cụ Chi nhánh
               </h3>
             </div>
@@ -104,18 +112,22 @@ export function PartnerToolMatrixModal({
           <button
             type="button"
             onClick={onClose}
-            className="text-text-muted hover:text-text p-1 rounded-lg"
             aria-label="Đóng"
+            className="text-text-muted hover:text-text p-1 rounded-lg"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {errorMsg && (
-          <div className="p-3 my-3 text-body-sm bg-danger-bg text-danger rounded-xl border border-danger-border">
+          <div className="p-3 my-3 text-xs bg-primary-muted text-primary rounded-xl border border-primary-border">
             {errorMsg}
           </div>
         )}
+
+        <div className="mt-3">
+          <p className="text-caption text-text-muted mt-2">Công cụ bị khoá sẽ ẩn khỏi menu và không mở được kể cả khi gõ thẳng địa chỉ.</p>
+        </div>
 
         {/* Quick action bar */}
         <div className="flex items-center justify-between py-3 border-b border-border text-meta">

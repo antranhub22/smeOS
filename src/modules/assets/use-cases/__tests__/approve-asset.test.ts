@@ -43,17 +43,23 @@ const mockAsset: assets = {
   approved_at: null,
   created_by: "user-1",
   created_at: new Date(),
+  trashed_at: null,
+  purge_after: null,
+  legal_hold_until: null,
 }
 
 const mockFindById = vi.fn()
 const mockApprove = vi.fn()
 
-vi.mock("@/modules/assets/infra/asset-repository", () => ({
-  AssetRepository: vi.fn().mockImplementation(function () { return {
-    findById: mockFindById,
-    approve: mockApprove,
-  } }),
-}))
+vi.mock("@/modules/assets/infra/asset-repository", () => {
+  const mocked = {
+    AssetRepository: vi.fn().mockImplementation(function () { return {
+      findById: mockFindById,
+      approve: mockApprove,
+    } }),
+  }
+  return { ...mocked, getAssetRepository: vi.fn(() => new mocked.AssetRepository()) }
+})
 
 vi.mock("@/modules/assets/adapters/storage-provider-factory", () => ({
   getStorageProvider: vi.fn().mockImplementation(function () { return {

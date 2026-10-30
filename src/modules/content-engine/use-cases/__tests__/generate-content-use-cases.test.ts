@@ -46,9 +46,9 @@ describe("generate-catalog-content.use-case (Option B Full)", () => {
     })
 
     expect(result.styleVariant).toBe("EDITORIAL_LOOKBOOK")
-    expect(result.badge).toContain("Editorial Lookbook")
+    expect(result.badge).toBe("Bộ sưu tập chọn lọc")
     expect(result.title).toBe("Sắc Hoa Mùa Thu")
-    expect(result.ctaText).toBe("Khám phá tác phẩm")
+    expect(result.ctaText).toBe("Xem mẫu và nhắn tiệm")
   })
 
   it("trả về đúng template cho phong cách COMPACT_LIST cho B2B khi không có ctx", async () => {
@@ -60,8 +60,8 @@ describe("generate-catalog-content.use-case (Option B Full)", () => {
     })
 
     expect(result.styleVariant).toBe("COMPACT_LIST")
-    expect(result.badge).toContain("Đặt Nhanh")
-    expect(result.description).toContain("8 mẫu hoa")
-    expect(result.curatorNote).toContain("VAT")
+    expect(result.badge).toBe("Danh mục đặt nhanh")
+    expect(result.description).toContain("8 sản phẩm")
+    expect(result.curatorNote).toContain("nhắn tiệm để được xác nhận")
   })
 })

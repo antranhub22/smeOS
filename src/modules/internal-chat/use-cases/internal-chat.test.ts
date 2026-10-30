@@ -32,7 +32,7 @@ class InMemoryChatRepository implements IInternalChatRepository {
         conversationId: conv.id,
         userId: p.userId,
         organizationId: p.organizationId,
-        roleInChat: (p.roleInChat as any) ?? "MEMBER",
+        roleInChat: (p.roleInChat as InternalChatParticipant["roleInChat"] | undefined) ?? "MEMBER",
         lastReadAt: new Date(),
         isMuted: false,
         joinedAt: new Date(),
@@ -68,7 +68,7 @@ class InMemoryChatRepository implements IInternalChatRepository {
       conversationId,
       userId: participant.userId,
       organizationId: participant.organizationId,
-      roleInChat: (participant.roleInChat as any) ?? "MEMBER",
+      roleInChat: (participant.roleInChat as InternalChatParticipant["roleInChat"] | undefined) ?? "MEMBER",
       lastReadAt: new Date(),
       isMuted: false,
       joinedAt: new Date(),
@@ -81,7 +81,7 @@ class InMemoryChatRepository implements IInternalChatRepository {
       conversationId: params.conversationId,
       senderUserId: params.senderUserId,
       senderRole: params.senderRole,
-      messageType: (params.messageType as any) ?? "TEXT",
+      messageType: (params.messageType as InternalChatMessage["messageType"] | undefined) ?? "TEXT",
       content: params.content,
       attachments: params.attachments ?? [],
       actionPayload: params.actionPayload ?? {},
@@ -200,7 +200,7 @@ describe("Internal Chat Use Cases", () => {
       action: "ACCEPT_ORDER",
     })
 
-    expect((updated.actionPayload as any).status).toBe("ACCEPTED")
+    expect((updated.actionPayload as { status?: string }).status).toBe("ACCEPTED")
     expect(repo.messages).toHaveLength(2) // 1 card msg + 1 system announcement
   })
 })

@@ -5,6 +5,12 @@
  * - Thỏa thuận = Tình huống có thể xảy ra và khách đã được thông báo trước (bắt buộc xác nhận trước khi đặt).
  * Pure TypeScript.
  */
+import {
+  isGovernedItemEnabled,
+  PLATFORM_MAX_DISCOUNT_PERCENT,
+  type PolicyGovernanceUpper,
+  type PolicySystem,
+} from "@/modules/organization/domain/governance-decisions"
 import { promotionPricingOf, type PromotionKind } from "./promotion-pricing"
 
 export interface PromotionItem {
@@ -231,8 +237,15 @@ export function resolveAppliedPolicies(
   catalogFilters: unknown,
   orgSettings: unknown,
   industryKey?: string | null,
+  /** Khoá của tầng Mẹ / chuỗi trên ma trận quản trị; quyết định của chính tiệm đọc từ `orgSettings`. */
+  governanceUpper: PolicyGovernanceUpper = {},
 ): PublicAppliedPolicies {
   const all = parseStorePolicies(orgSettings, industryKey)
+  const governed = (system: PolicySystem) => (id: string) => isGovernedItemEnabled(id, orgSettings, system, governanceUpper[system])
+  const promoOn = governed("PROMOTIONS")
+  const commitOn = governed("COMMITMENTS")
+  const agreeOn = governed("POLICIES")
+  const capDiscount = promoOn("MAX_DISCOUNT_PERCENT")
   const filters = catalogFilters && typeof catalogFilters === "object" ? (catalogFilters as Record<string, unknown>) : {}
   const applied = filters.appliedPolicies as {
     promotionIds?: string[]
@@ -246,14 +259,19 @@ export function resolveAppliedPolicies(
   const commitFilter = applied?.commitmentIds
   const agreeFilter = applied?.agreementIds
 
-  const activePromotions = all.promotions.filter((p) => p.active !== false)
-  const promotions = (promoFilter ? activePromotions.filter((p) => promoFilter.includes(p.id)) : activePromotions).map(
-    (p) => ({ id: p.id, title: p.title, customerText: p.description, ...promotionPricingOf(p) })
-  )
-  const commitments = (commitFilter ? all.commitments.filter((c) => commitFilter.includes(c.id)) : all.commitments).map(
+  const activePromotions = all.promotions.filter((p) => p.active !== false && promoOn(p.id))
+  const promotions = (promoFilter ? activePromotions.filter((p) => promoFilter.includes(p.id)) : activePromotions).map((p) => {
+    const pricing = promotionPricingOf(p)
+    // Trần chiết khấu toàn sàn: tắt được chỉ khi Mẹ mở khoá và tầng dưới tắt mục này
+    const percent = capDiscount && pricing.percent !== null ? Math.min(pricing.percent, PLATFORM_MAX_DISCOUNT_PERCENT) : pricing.percent
+    return { id: p.id, title: p.title, customerText: p.description, ...pricing, percent }
+  })
+  const visibleCommitments = all.commitments.filter((c) => commitOn(c.id))
+  const visibleAgreements = all.agreements.filter((a) => agreeOn(a.id))
+  const commitments = (commitFilter ? visibleCommitments.filter((c) => commitFilter.includes(c.id)) : visibleCommitments).map(
     ({ id, title, customerText }) => ({ id, title, customerText })
   )
-  const agreements = (agreeFilter ? all.agreements.filter((a) => agreeFilter.includes(a.id)) : all.agreements).map(
+  const agreements = (agreeFilter ? visibleAgreements.filter((a) => agreeFilter.includes(a.id)) : visibleAgreements).map(
     ({ id, title, customerText }) => ({ id, title, customerText })
   )
 

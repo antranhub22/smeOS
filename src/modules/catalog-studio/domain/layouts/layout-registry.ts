@@ -8,7 +8,7 @@ import type { CatalogLayoutId, LayoutDefinition } from "../entities/catalog-stud
 export const CATALOG_LAYOUTS: Record<CatalogLayoutId, LayoutDefinition> = {
   L01_COVER: {
     id: "L01_COVER",
-    name: "Cover (Trang Bìa)",
+    name: "Trang bìa",
     description: "Trang bìa chính của bộ sưu tập với tên catalog, logo, ảnh chủ đạo (hero) và slogan.",
     requiredFields: ["title"],
     optionalFields: ["subtitle", "logo", "heroImage", "badge", "seasonYear"],
@@ -19,7 +19,7 @@ export const CATALOG_LAYOUTS: Record<CatalogLayoutId, LayoutDefinition> = {
 
   L02_BRAND_STORY: {
     id: "L02_BRAND_STORY",
-    name: "Brand Story (Câu Chuyện Thương Hiệu)",
+    name: "Câu chuyện thương hiệu",
     description: "Giới thiệu triết lý chế tác, nguồn gốc nguyên liệu và thông điệp gửi gắm.",
     requiredFields: ["heading", "body"],
     optionalFields: ["quote", "heroImage", "authorName"],
@@ -30,7 +30,7 @@ export const CATALOG_LAYOUTS: Record<CatalogLayoutId, LayoutDefinition> = {
 
   L03_COLLECTION_DIVIDER: {
     id: "L03_COLLECTION_DIVIDER",
-    name: "Collection Divider (Phân Chương)",
+    name: "Phân chương",
     description: "Trang chuyển mục / chủ đề mới với tiêu đề lớn và ảnh đại diện chương.",
     requiredFields: ["title"],
     optionalFields: ["subtitle", "heroImage"],
@@ -41,7 +41,7 @@ export const CATALOG_LAYOUTS: Record<CatalogLayoutId, LayoutDefinition> = {
 
   L04_HERO_PRODUCT: {
     id: "L04_HERO_PRODUCT",
-    name: "Hero Product (Tác Phẩm Chủ Đạo)",
+    name: "Tác phẩm chủ đạo",
     description: "Trưng bày 1 sản phẩm nổi bật nhất trang với ảnh cực đại và lời tự sự chi tiết.",
     requiredFields: ["product"],
     optionalFields: ["curatorNote", "attributes", "qrTarget"],
@@ -52,7 +52,7 @@ export const CATALOG_LAYOUTS: Record<CatalogLayoutId, LayoutDefinition> = {
 
   L05_PRODUCT_GRID: {
     id: "L05_PRODUCT_GRID",
-    name: "Product Grid (Lưới Sản Phẩm)",
+    name: "Lưới sản phẩm",
     description: "Bố cục lưới sản phẩm cân đối (2 đến 6 sản phẩm/trang) với thông tin tên, mã và giá.",
     requiredFields: ["products"],
     optionalFields: ["categoryBadge", "unit"],
@@ -63,7 +63,7 @@ export const CATALOG_LAYOUTS: Record<CatalogLayoutId, LayoutDefinition> = {
 
   L06_PRODUCT_DETAIL: {
     id: "L06_PRODUCT_DETAIL",
-    name: "Product Detail (Chi Tiết Sản Phẩm & BOM)",
+    name: "Chi tiết sản phẩm",
     description: "Hiển thị 1–2 sản phẩm kèm ảnh chi tiết, phân tích nguyên liệu và bảng thông số.",
     requiredFields: ["product"],
     optionalFields: ["galleryImages", "attributes", "variants"],
@@ -74,7 +74,7 @@ export const CATALOG_LAYOUTS: Record<CatalogLayoutId, LayoutDefinition> = {
 
   L07_BUNDLE: {
     id: "L07_BUNDLE",
-    name: "Bundle / Combo (Gói Quà Tặng)",
+    name: "Gói quà tặng",
     description: "Trang combo quà tặng phối hợp nhiều thành phần với giá ưu đãi đặc biệt.",
     requiredFields: ["products", "bundlePrice"],
     optionalFields: ["discountBadge", "componentsList"],
@@ -85,7 +85,7 @@ export const CATALOG_LAYOUTS: Record<CatalogLayoutId, LayoutDefinition> = {
 
   L08_CLOSING: {
     id: "L08_CLOSING",
-    name: "Closing (Trang Kết & Đặt Hàng)",
+    name: "Trang kết & đặt hàng",
     description: "Trang kết thúc với thông tin liên hệ, hotline, địa chỉ, website và mã QR quét đặt hàng.",
     requiredFields: ["contacts"],
     optionalFields: ["qrTarget", "policyNote", "thankYouNote"],

@@ -11,13 +11,26 @@ describe("generateBannerCopyUseCase", () => {
       occasionLabel: "Flash Sale Cuối Tuần",
       shopName: "Xinh Boutique",
       productTitle: "Váy Lụa Cao Cấp",
+      shopPromotions: [],
     })
 
     expect(result.copy).toBeDefined()
     expect(result.copy.headline).toBeTruthy()
-    expect(result.copy.promotionBadge).toBeTruthy()
+    expect(result.copy.promotionBadge).toBe("") // không tự hứa ưu đãi khi cửa hàng chưa nhập
     expect(result.copy.ctaText).toBeTruthy()
     expect(["AI_CONTENT_ENGINE", "INSTANT_TEMPLATE"]).toContain(result.source)
+  })
+
+  it("mẫu dự phòng in đúng ưu đãi tiệm đang bật, bỏ ưu đãi trình duyệt gửi lên", async () => {
+    const result = await generateBannerCopyUseCase({
+      industryKey: "FASHION",
+      occasionKey: "BIRTHDAY",
+      occasionLabel: "Sinh nhật",
+      shopName: "Xinh Boutique",
+      desiredPromotion: "GIẢM 50%",
+      shopPromotions: ["Tặng thiệp"],
+    })
+    expect(result.copy.promotionBadge).toBe("TẶNG THIỆP")
   })
 })
 

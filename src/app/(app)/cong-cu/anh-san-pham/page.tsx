@@ -1,7 +1,7 @@
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { cookies } from "next/headers"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
-import { ProductPhotoStudioClient } from "@/components/product-photo-studio/product-photo-studio-client"
+import { ProductPhotoStudioEntry } from "@/components/product-photo-studio/product-photo-studio-entry"
 
 export const metadata = {
   title: "Tạo ảnh sản phẩm chuyên nghiệp | smeOS",
@@ -21,7 +21,7 @@ export default async function ProductPhotoStudioPage() {
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8">
-      <ProductPhotoStudioClient />
+      <ProductPhotoStudioEntry />
     </div>
   )
 }

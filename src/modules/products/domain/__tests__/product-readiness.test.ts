@@ -69,7 +69,7 @@ describe("computeProductReadiness (T6.1 / Role UX Product Manager)", () => {
     })
     expect(res.isReady).toBe(false)
     expect(res.score).toBe(75)
-    expect(res.missingReasons).toContain("Chưa có giá niêm yết hoặc công thức cành hoa (BOM)")
+    expect(res.missingReasons).toContain("Chưa có giá niêm yết hoặc công thức thành phần (BOM)")
   })
 
   it("tính đúng số điểm khi thiếu nhiều tiêu chí cùng lúc", () => {

@@ -1,16 +1,19 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, validationFailed } from "@/core/http/errors"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import { setPartnerUnlockedTools } from "@/modules/chain-partnership/infra/partner-tool-settings-repository"
 import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
 
 const updateToolsSchema = z.object({
-  unlockedTools: z.array(z.string()),
+  // Mã công cụ là navKey dạng chữ thường-gạch-ngang; giới hạn độ dài để không ghi rác vào settings
+  unlockedTools: z.array(z.string().regex(/^[a-z0-9-]{1,64}$/)).max(200),
 })
 
 export const PATCH = handle(async (request, { params }: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
   const { id: partnershipId } = await params
 
   const partnershipRepo = getChainPartnershipRepository()
@@ -32,39 +35,16 @@ export const PATCH = handle(async (request, { params }: { params: Promise<{ id: 
     throw validationFailed({ reason: "Dữ liệu danh mục công cụ không hợp lệ" })
   }
 
-  // Lấy settings hiện tại của partner organization
-  const partnerOrg = await prisma.organizations.findUnique({
-    where: { id: partnership.partnerOrgId },
-    select: { id: true, settings: true },
-  })
-
-  if (!partnerOrg) {
+  const saved = await setPartnerUnlockedTools(partnership.partnerOrgId, [...new Set(parsed.data.unlockedTools)])
+  if (!saved) {
     throw notFound()
   }
-
-  const currentSettings =
-    partnerOrg.settings && typeof partnerOrg.settings === "object"
-      ? (partnerOrg.settings as Record<string, unknown>)
-      : {}
-
-  const updatedSettings = {
-    ...currentSettings,
-    unlocked_tools: parsed.data.unlockedTools,
-  }
-
-  // Cập nhật unlocked_tools cho partner organization
-  await prisma.organizations.update({
-    where: { id: partnerOrg.id },
-    data: {
-      settings: updatedSettings,
-    },
-  })
 
   return jsonResponse({
     success: true,
     data: {
       partnershipId,
-      partnerOrgId: partnerOrg.id,
+      partnerOrgId: partnership.partnerOrgId,
       unlockedTools: parsed.data.unlockedTools,
     },
   })

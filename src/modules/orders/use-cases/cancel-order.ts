@@ -11,12 +11,14 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
+import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
 export async function cancelOrder(
   ctx: TenantContext,
   orderId: string,
   reason: string,
-  repo: IOrderRepository = getOrderRepository()
+  repo: IOrderRepository = getOrderRepository(),
+  notify: typeof notifyOrganization = notifyOrganization
 ): Promise<OrderRecord> {
   // Gác quyền R6 (Trần cứng)
   requireCapability(ctx, "R6")
@@ -63,6 +65,14 @@ export async function cancelOrder(
     entityId: orderId,
     before: { status: existing.status },
     after: { status: "CANCELLED", reason },
+  })
+
+  void notify({
+    organizationId: ctx.organizationId,
+    eventKey: "ORDER_CANCELLED",
+    ownerUserId: existing.createdBy ?? null,
+    message: `Đơn ${existing.code} đã bị huỷ.`,
+    deepLink: "/don-hang",
   })
 
   return updated

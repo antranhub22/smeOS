@@ -121,14 +121,14 @@ export default function KetNoiPage() {
         }
         setData(res.data)
       })
-      .catch((err: any) => {
-        setErrorMsg(err.message ?? "Không thể kết nối máy chủ")
+      .catch((err: unknown) => {
+        setErrorMsg(err instanceof Error ? err.message : "Không thể kết nối máy chủ")
       })
       .finally(() => setLoading(false))
   }, [])
 
   useEffect(() => {
-    loadData()
+    void Promise.resolve().then(() => loadData())
   }, [loadData])
 
   if (loading) {

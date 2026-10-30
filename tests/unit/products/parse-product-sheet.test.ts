@@ -25,7 +25,9 @@ describe("parse-product-sheet — nhập kho sản phẩm từ Excel", () => {
 
   it("ánh xạ cột mẫu mới và mẫu cũ; thiếu mã/tên → ERROR; có link Drive → DRIVE_SYNC", () => {
     const fresh = mapRecordToRow({ "Mã SKU Chuẩn (FloraOS) *": " FL-1 ", "Tên mẫu hoa *": "Hồng", "Giá niêm yết B2C (VNĐ) *": "350.000", "Link ảnh thành phẩm chuẩn (Drive)": "https://drive.google.com/drive/folders/abc" }, 0)
-    expect(fresh).toMatchObject({ index: 1, code: "FL-1", name: "Hồng", price: 350000, status: "DRIVE_SYNC", category: "Bó hoa" })
+    expect(fresh).toMatchObject({ index: 1, code: "FL-1", name: "Hồng", price: 350000, status: "DRIVE_SYNC", category: "Sản phẩm" })
+    // Tiêu đề mới (đa ngành) cũng được nhận
+    expect(mapRecordToRow({ "Mã SKU Chuẩn (FloraOS) *": "SP-1", "Tên sản phẩm *": "Áo thun" }, 0)).toMatchObject({ code: "SP-1", name: "Áo thun" })
     const legacy = mapRecordToRow({ "Mã Lovi": "LV9", "Tên sản phẩm": "Cúc", "Giá bán": 200000 }, 4)
     expect(legacy).toMatchObject({ index: 5, code: "LV9", loviCode: "LV9", price: 200000, status: "NO_IMAGE" })
     expect(mapRecordToRow({ "Tên mẫu hoa": "Không mã" }, 0)).toMatchObject({ status: "ERROR", errorMsg: "Thiếu mã hoặc tên sản phẩm" })

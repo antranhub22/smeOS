@@ -20,6 +20,7 @@ export interface BannerFormPanelProps {
   readonly onBrandInfoChange: (field: keyof BannerBrandInfo, value: string) => void
   readonly productImageUrl?: string | undefined
   readonly onProductImageChange: (url: string) => void
+  readonly shopPromotions: readonly string[]
   readonly onTriggerAiCopy: () => Promise<void>
   readonly onTriggerAutoGenerate: () => Promise<void>
   readonly isGenerating: boolean
@@ -41,6 +42,7 @@ export function BannerFormPanel({
   onBrandInfoChange,
   productImageUrl,
   onProductImageChange,
+  shopPromotions,
   onTriggerAiCopy,
   onTriggerAutoGenerate,
   isGenerating,
@@ -64,7 +66,7 @@ export function BannerFormPanel({
           }`}
         >
           <Zap className="h-3.5 w-3.5" />
-          <span>⚡ Tạo tự động (Hybrid)</span>
+          <span>Tạo tự động</span>
         </button>
 
         <button
@@ -77,7 +79,7 @@ export function BannerFormPanel({
           }`}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
-          <span>🛠️ Tùy biến chi tiết</span>
+          <span>Tùy biến chi tiết</span>
         </button>
       </div>
 
@@ -104,6 +106,7 @@ export function BannerFormPanel({
           onBrandInfoChange={onBrandInfoChange}
           onTriggerAiCopy={onTriggerAiCopy}
           isAiLoading={isGenerating}
+          shopPromotions={shopPromotions}
         />
       )}
     </div>

@@ -122,7 +122,8 @@ export function TabActionHeader({
       case "danger":
         return "bg-alert-500/15 text-alert-700 dark:text-alert-400 border-alert-500/30"
       case "accent":
-        return "bg-accent/15 text-accent border-accent/30"
+        // PD7 (PO 29/10/2026): chữ accent trên nền kem chỉ 2,25:1 — dùng cặp token `selected` (7,15:1, 03a §0.5).
+        return "bg-selected text-selected-text border-primary/30"
       case "neutral":
       default:
         return "bg-surface-alt text-text-muted border-border"

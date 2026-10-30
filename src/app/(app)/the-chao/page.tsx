@@ -59,16 +59,19 @@ export default function TheChaoPage() {
 
   // Đồng bộ reactive khi chuyển trang / đổi query params
   React.useEffect(() => {
-    if (isQuickParam) {
-      setViewMode("wizard")
-    } else if (requestedMode === "manager" || requestedMode === "wizard") {
-      setViewMode(requestedMode)
-    } else if (requestedTab) {
-      setViewMode("manager")
-    }
-    if (requestedTab && ["sales", "payment", "catalog", "coordinator", "tracking"].includes(requestedTab)) {
-      setActiveTab(requestedTab)
-    }
+    // Chạy sau lượt render (không setState đồng bộ trong effect)
+    void Promise.resolve().then(() => {
+      if (isQuickParam) {
+        setViewMode("wizard")
+      } else if (requestedMode === "manager" || requestedMode === "wizard") {
+        setViewMode(requestedMode)
+      } else if (requestedTab) {
+        setViewMode("manager")
+      }
+      if (requestedTab && ["sales", "payment", "catalog", "coordinator", "tracking"].includes(requestedTab)) {
+        setActiveTab(requestedTab)
+      }
+    })
   }, [isQuickParam, requestedMode, requestedTab])
   const [selectedCatalog, setSelectedCatalog] = useState<CatalogBasic | null>(null)
   // Số đếm cho huy hiệu tab (SWR). Danh sách phân trang: quá 100 thì hiện "100+".
@@ -212,7 +215,7 @@ export default function TheChaoPage() {
             }}
             aria-label="Làm mới"
             title="Làm mới"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-foreground active:bg-surface active:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-foreground active:bg-surface active:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <RefreshCw size={16} aria-hidden="true" />
           </button>

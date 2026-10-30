@@ -36,6 +36,8 @@ export function UiSystemProvider({
 
   // Hydrate from localStorage once mounted
   useEffect(() => {
+    // Đọc storage sau lượt render đầu (tránh lệch hydrate), không setState đồng bộ trong effect
+    void Promise.resolve().then(() => {
     try {
       const stored = localStorage.getItem(UI_CONFIG_STORAGE_KEY)
       if (stored) {
@@ -50,6 +52,7 @@ export function UiSystemProvider({
     } catch {
       // Fallback silently if storage unavailable
     }
+    })
   }, [])
 
   // Sync DOM data-attributes & CSS Variables whenever config changes

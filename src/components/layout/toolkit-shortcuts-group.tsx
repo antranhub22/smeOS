@@ -11,7 +11,7 @@
  * SRP: File này chỉ phụ trách render nhóm Công cụ. Storage ở nav-toolkit-shortcuts.ts.
  */
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from "react"
 import { Plus, X, Pin, RotateCcw, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"
@@ -59,6 +59,8 @@ export interface ToolkitShortcutsGroupProps {
 // Component
 // ────────────────────────────────────────────────────────────────
 
+const noopSubscribe = () => () => {}
+
 export function ToolkitShortcutsGroup({
   groupKey = "cong-cu",
   groupLabel = "01 · CÔNG CỤ",
@@ -83,17 +85,22 @@ export function ToolkitShortcutsGroup({
     [toolEntries]
   )
 
-  // Bắt đầu bằng tierDefaultKeys để HTML trên Server và Client khớp nhau 100% khi hydrate
-  const [shortcutKeys, setShortcutKeys] = useState<string[]>(tierDefaultKeys)
+  // Server và lần hydrate đầu dùng tierDefaultKeys (HTML khớp 100%); sau khi chạy trên client mới
+  // đọc localStorage. useSyncExternalStore thay cho setState trong effect (luật react-hooks).
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false)
+  const [pinned, setPinned] = useState<{ orgId: typeof orgId; keys: string[] } | null>(null)
+  const shortcutKeys = useMemo(
+    () =>
+      pinned && pinned.orgId === orgId
+        ? pinned.keys
+        : mounted
+          ? getEffectiveShortcutKeys(orgId, tierDefaultKeys)
+          : tierDefaultKeys,
+    [pinned, orgId, mounted, tierDefaultKeys]
+  )
+  const setShortcutKeys = useCallback((keys: string[]) => setPinned({ orgId, keys }), [orgId])
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const pickerRef = useRef<HTMLDivElement>(null)
-
-  // Đồng bộ lại từ localStorage sau khi mounted trên client
-  useEffect(() => {
-    setMounted(true)
-    setShortcutKeys(getEffectiveShortcutKeys(orgId, tierDefaultKeys))
-  }, [orgId, tierDefaultKeys])
 
   // Đóng picker khi click ngoài
   useEffect(() => {
@@ -112,7 +119,7 @@ export function ToolkitShortcutsGroup({
       const next = pinShortcut(orgId, navKey)
       setShortcutKeys([...next])
     },
-    [orgId]
+    [orgId, setShortcutKeys]
   )
 
   const handleUnpin = useCallback(
@@ -120,14 +127,14 @@ export function ToolkitShortcutsGroup({
       const next = unpinShortcut(orgId, navKey)
       setShortcutKeys([...next])
     },
-    [orgId]
+    [orgId, setShortcutKeys]
   )
 
   const handleReset = useCallback(() => {
     resetShortcuts(orgId)
     setShortcutKeys([...tierDefaultKeys])
     setPickerOpen(false)
-  }, [orgId, tierDefaultKeys])
+  }, [orgId, tierDefaultKeys, setShortcutKeys])
 
   // Shortcut entries hiển thị theo thứ tự đã pin.
   // Lookup trong allNavEntries để resolve shortcuts từ toàn bộ 51 công cụ.
@@ -232,7 +239,7 @@ export function ToolkitShortcutsGroup({
           {shortcutEntries.length > 0 && (
             <div className="flex items-center gap-2 px-2.5 pt-1 pb-0.5">
               <div className="flex-1 h-px bg-border/50" />
-              <span className="text-caption font-semibold uppercase tracking-widest text-text-muted/70 flex items-center gap-1">
+              <span className="text-caption font-semibold uppercase tracking-widest text-text-muted flex items-center gap-1">
                 <Pin size={8} aria-hidden />
                 Lối tắt
               </span>

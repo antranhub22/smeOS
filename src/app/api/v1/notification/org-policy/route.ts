@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import {
   getOrgNotificationPolicies,
@@ -26,12 +27,14 @@ const patchOrgPolicySchema = z.object({
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F1")
   const policies = await getOrgNotificationPolicies(ctx.organizationId)
   return jsonResponse({ data: policies })
 })
 
 export const PATCH = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F2")
   const body = patchOrgPolicySchema.parse(await request.json())
 
   await updateOrgNotificationPolicy({

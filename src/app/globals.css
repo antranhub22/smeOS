@@ -21,6 +21,7 @@
 @theme {
   --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", Georgia, Cambria, serif;
+  --font-display: "Fraunces", "Playfair Display", Georgia, serif;
   --font-cursive: "Caveat", "Dancing Script", cursive;
 
   /*
@@ -62,6 +63,8 @@
      hạ thêm); text-muted/surface = 5.03:1. */
   --color-primary: #7A2E42;
   --color-primary-dark: #57202F;
+  /* Chữ/icon trên nền primary — 19 tệp dùng `text-primary-foreground` mà token chưa từng được khai báo (audit A16). Cả 3 preset có primary tối nên trắng đạt AA. */
+  --color-primary-foreground: #FFFFFF;
   --color-secondary: #9CAF88;
   /* Chữ nhỏ/đậm trên nền trắng dùng tông này thay vì --color-secondary —
      #9CAF88 trên trắng chỉ đạt 2.36:1, dưới ngưỡng AA 4.5:1 cho chữ nhỏ. */
@@ -118,6 +121,8 @@
   --color-info-text: #1E3A5F;
   --color-accent-bg: #FBF5E9;
   --color-accent-border: #E8D5A8;
+  /* Chữ màu accent trên nền sáng — dùng `text-accent-text` thay `text-accent`.
+     accent-text/surface = 7.61:1; /bg = 7.09:1; /surface-alt = 6.53:1 (đạt AA). */
   --color-accent-text: #6B4F1A;
 
   /* ── Tương thích ngược Shadcn Tokens (Legacy Compatibility) ──────────
@@ -377,6 +382,7 @@ img:not([data-no-zoom="true"]) {
   --color-secondary-text: #334155;
   --color-accent: #EA580C;
   --color-accent-bg: #FFF7ED;
+  --color-accent-text: #9A3412; /* surface 7.31:1 · bg 6.98:1 */
   --color-bg: #F8FAFC;
   --color-surface: #FFFFFF;
   --color-surface-alt: #F1F5F9;
@@ -399,6 +405,7 @@ img:not([data-no-zoom="true"]) {
   --color-secondary-text: #52525B;
   --color-accent: #059669;
   --color-accent-bg: #ECFDF5;
+  --color-accent-text: #047857; /* surface 5.48:1 · bg 5.25:1 */
   --color-bg: #FAFAFA;
   --color-surface: #FFFFFF;
   --color-surface-alt: #F4F4F5;

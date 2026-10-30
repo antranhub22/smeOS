@@ -23,6 +23,9 @@ describe("luật sửa settings của tổ chức", () => {
     expect(settingsPatchViolation({ industry_locked: false }, locked, tenant)).toMatch(/industry_locked/)
     expect(settingsPatchViolation({ pending_model_change: { requested_type: "CHAIN" } }, {}, tenant)).toMatch(/pending_model_change/)
     expect(settingsPatchViolation({ is_instant_trial: true }, {}, tenant)).toMatch(/is_instant_trial/)
+    // AUD-017: thêm unlocked_tools từng làm rơi lead_captured_at khỏi danh sách
+    expect(settingsPatchViolation({ lead_captured_at: "2026-01-01T00:00:00Z" }, {}, tenant)).toMatch(/lead_captured_at/)
+    expect(settingsPatchViolation({ unlocked_tools: [] }, {}, tenant)).toMatch(/unlocked_tools/)
   })
 
   it("ngành chưa khoá: tenant đổi được; khoá cấu hình thường luôn được", () => {

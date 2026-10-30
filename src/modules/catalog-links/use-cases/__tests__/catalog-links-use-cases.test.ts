@@ -74,6 +74,16 @@ describe("Catalog Links Use-Cases with ICatalogLinkRepository Port", () => {
         createCatalogLink(mockTenant, { slug: "bo-suu-tap-tet", name: "Trùng" }, repo)
       ).rejects.toThrow(/không hợp lệ/)
     })
+
+    it("slug tự sinh: dừng sau số lần thử có giới hạn thay vì lặp mãi (AUD-021)", async () => {
+      const repo = createMockCatalogRepo({
+        findBySlug: vi.fn().mockResolvedValue(mockLink),
+      })
+
+      await expect(createCatalogLink(mockTenant, { name: "Luôn trùng" }, repo)).rejects.toThrow(/không hợp lệ/)
+      expect(vi.mocked(repo.findBySlug).mock.calls.length).toBeLessThanOrEqual(6)
+      expect(repo.create).not.toHaveBeenCalled()
+    })
   })
 
   describe("getCatalogLinkBySlug", () => {

@@ -1,4 +1,5 @@
-import { AppError, notFound } from "@/core/http/errors"
+import { AppError, conflict, notFound } from "@/core/http/errors"
+import { LEGAL_HOLD_MESSAGE } from "@/modules/assets/use-cases/delete-asset"
 import type { TenantContext } from "@/core/tenancy"
 import type { ITrashRepository } from "../domain/repositories/trash-repository.interface"
 import { getTrashRepository } from "../infra/trash-repository"
@@ -64,7 +65,8 @@ export async function permanentDelete(
 ): Promise<void> {
   requireExecutiveRole(ctx)
   requireProductArchive(ctx, input.type)
-  const ok = await repo.permanentDelete(ctx, input)
-  if (!ok) throw notFound()
+  const result = await repo.permanentDelete(ctx, input)
+  if (result === "legal_hold") throw conflict(LEGAL_HOLD_MESSAGE)
+  if (result === "not_found") throw notFound()
 }
 

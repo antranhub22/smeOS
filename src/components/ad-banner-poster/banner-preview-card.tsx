@@ -99,7 +99,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
                   {brandInfo.shopName.charAt(0).toUpperCase()}
                 </div>
               )}
-              <span className="text-caption font-semibold tracking-wider uppercase truncate text-white/90 drop-shadow-sm">
+              <span className="text-caption font-semibold tracking-wider uppercase line-clamp-2 text-white/90 drop-shadow-sm">
                 {brandInfo.shopName || "Thương hiệu"}
               </span>
             </div>
@@ -120,14 +120,11 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
           /* BẢN NGANG 16:9: TÁCH 2 CỘT HOÀN TOÀN (NÚT CTA NẰM LUÔN BÊN CỘT TRÁI) */
           <div className="relative z-20 flex-1 min-h-0 my-1 flex flex-row items-center justify-between gap-3 overflow-hidden">
             <div className="flex flex-col justify-center w-3/5 text-left pr-1">
-              <p className="text-caption font-bold uppercase tracking-[0.2em] text-warning/90">
-                ✦ TUYỂN CHỌN ĐẶC QUYỀN ✦
-              </p>
-              <h3 className={`font-serif uppercase tracking-tight font-black text-xs leading-tight line-clamp-1 mt-0.5 ${preset.textPrimaryClass}`}>
+              <h3 className={`font-serif uppercase tracking-tight font-black text-xs leading-tight line-clamp-2 mt-0.5 ${preset.textPrimaryClass}`}>
                 {copy.headline || "TIÊU ĐỀ QUẢNG CÁO BÙNG NỔ"}
               </h3>
               <p className={`text-caption mt-0.5 line-clamp-1 font-normal ${preset.textMutedClass}`}>
-                {copy.subHeadline || "Ưu đãi đặc biệt áp dụng cho sản phẩm tuyển chọn."}
+                {copy.subHeadline}
               </p>
 
               {/* Nút CTA tích hợp trong cột trái cho 16:9 */}
@@ -140,8 +137,8 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
                     <ArrowRight className="h-2 w-2 shrink-0" />
                   </div>
                   {brandInfo.hotline && (
-                    <span className="text-caption text-white/80 font-medium truncate">
-                      📞 {brandInfo.hotline}
+                    <span className="shrink-0 whitespace-nowrap text-caption text-white/80 font-medium">
+                      ĐT {brandInfo.hotline}
                     </span>
                   )}
                 </div>
@@ -189,10 +186,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
 
             {/* Typography */}
             <div className="text-center w-full px-1 flex flex-col justify-center shrink-0">
-              <p className="text-caption font-bold uppercase tracking-[0.2em] text-warning/90">
-                ✦ TUYỂN CHỌN ĐẶC QUYỀN ✦
-              </p>
-              <h3 className={`font-serif uppercase tracking-tight font-black text-xs leading-tight line-clamp-1 mt-0.5 ${preset.textPrimaryClass}`}>
+              <h3 className={`font-serif uppercase tracking-tight font-black text-xs leading-tight line-clamp-2 mt-0.5 ${preset.textPrimaryClass}`}>
                 {copy.headline || "TIÊU ĐỀ QUẢNG CÁO BÙNG NỔ"}
               </h3>
               <p className={`text-caption line-clamp-1 mt-0.5 leading-tight font-normal ${preset.textMutedClass}`}>
@@ -218,17 +212,18 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
             )}
 
             {/* Contact Hotline & Address */}
-            <div className="flex items-center justify-between text-caption text-white/80 px-0.5 font-medium">
+            {/* Hotline không bao giờ bị cắt — ảnh tải về chụp đúng khung này */}
+            <div className="flex flex-wrap items-center justify-between gap-x-2 text-caption text-white/80 px-0.5 font-medium">
               {brandInfo.hotline && (
-                <span className="inline-flex items-center gap-0.5 truncate">
+                <span className="inline-flex shrink-0 items-center gap-0.5">
                   <Phone className="h-2 w-2 shrink-0 text-warning" />
                   <span className="tracking-wider">{brandInfo.hotline}</span>
                 </span>
               )}
               {brandInfo.address && (
-                <span className="inline-flex items-center gap-0.5 truncate max-w-[65%]">
+                <span className="inline-flex min-w-0 items-center gap-0.5">
                   <MapPin className="h-2 w-2 shrink-0 text-warning" />
-                  <span className="truncate">{brandInfo.address}</span>
+                  <span className="line-clamp-2">{brandInfo.address}</span>
                 </span>
               )}
             </div>

@@ -311,12 +311,87 @@ model assets {
   created_by       String
   created_at       DateTime   @default(now())
 
+  // SDAGF P1 — vòng đời thùng rác thành cột và legal hold
+  trashed_at       DateTime?
+  purge_after      DateTime?            // quá hạn → cron xoá vĩnh viễn
+  legal_hold_until DateTime?            // còn hạn → không xoá vĩnh viễn
+
   @@index([organization_id])
+  @@index([purge_after])
   @@index([organization_id, product_id])
   @@index([parent_asset_id])
   @@index([output_sha256])
 }
 ```
+
+`video_jobs.created_by String?` (29/10/2026, migration `20261029200000_video_jobs_created_by`): người tạo video để Kho dữ liệu xếp theo chi nhánh; job trước đó null (tính là trụ sở).
+
+### 5.0 Landing page đã sinh — `landing_pages` (Kho dữ liệu v2, L-1)
+
+`POST /content-engine/landing-generate` lưu mỗi lượt sinh để tìm lại trong Kho dữ liệu (`GET /storage/library?type=landing`, `J1`). Lỗi lưu không chặn kết quả sinh.
+
+```prisma
+model landing_pages {
+  id              String   @id @default(uuid())
+  organization_id String
+  title           String               // tiêu đề hero, thiếu thì nhãn dịp
+  page_type       String?
+  occasion_label  String?
+  input           Json                 // yêu cầu đã gửi
+  content         Json                 // GeneratedLandingPackage
+  created_by      String
+  created_at      DateTime @default(now())
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+```
+
+### 5.0b Đánh giá khách do chủ tiệm nhập — `shop_reviews` (PO 30/10/2026)
+
+Hiện ở mục "Khách hàng nói gì" trên trang khách `/c/[slug]` (Landing 08 / Catalog 09). Chủ tiệm chép lại nhận xét thật; không có form khách tự gửi, không lưu số điện thoại khách. Quản lý qua `/shop-reviews` (`J1`); trang công khai chỉ đọc dòng `is_visible = true` của tổ chức sở hữu link (tối đa 6). Bản ghi tổ chức khác → 404.
+
+```prisma
+model shop_reviews {
+  id              String   @id @default(uuid())
+  organization_id String
+  author_name     String               // ≤ 60 ký tự
+  occasion        String?              // ≤ 60 ký tự
+  rating          Int                  // 1–5, kiểm ở domain
+  comment         String               // 5–500 ký tự
+  is_visible      Boolean  @default(true)
+  created_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@index([organization_id])
+  @@index([organization_id, is_visible])
+}
+```
+
+### 5.1 Hàng đợi xoá payload — `storage_outbox` (SDAGF P1)
+
+Xoá vĩnh viễn một asset (API, thùng rác, cron dọn rác) xoá dòng `assets` và ghi hàng đợi trong **cùng một transaction**. Nơi trỏ tới tệp (registry) gồm cả hai nguồn JSON: `generation_jobs.output.audio_storage_key/voice_only_storage_key` và `order_coordinations.metadata.qc_photos/pod_photos` — danh sách SSOT `STORAGE_REFERENCE_SOURCES` (`src/modules/assets/infra/storage-registry-keys.ts`), test kiến trúc `storage-write-contract.test.ts`. Cron `/internal/chain-dispatch-sweep` xoá tệp thật khi cờ `STORAGE_DELETE_PAYLOADS=enabled`, thử lại tối đa 5 lần. Khoá còn bản ghi khác trỏ tới (Master dùng chung tệp gốc) thì đóng việc mà không xoá tệp.
+
+```prisma
+model storage_outbox {
+  id              String    @id @default(uuid())
+  organization_id String
+  op              String               // DELETE
+  storage_key     String
+  asset_id        String?
+  attempts        Int       @default(0)
+  last_error      String?
+  created_at      DateTime  @default(now())
+  done_at         DateTime?
+
+  @@unique([op, storage_key])
+  @@index([organization_id])
+  @@index([done_at, created_at])
+}
+```
+
+Legal hold cấp tổ chức nằm ở `organizations.legal_hold_until` (chặn mọi xoá vĩnh viễn của tổ chức, kể cả `handover-clean-tenant`). Legal hold (`assets.legal_hold_until`) chỉ người vận hành nền tảng có `N14` được đặt hoặc gỡ, kèm lý do, ghi `platform_audit_logs` (SDAGF D-04).
 
 `generated_flags` không bao giờ mặc định ngầm. Ảnh phải dùng generative fill vì chất lượng quá kém được đánh dấu ở cả metadata lẫn giao diện.
 
@@ -2512,7 +2587,7 @@ model staff_notifications {
 
 > - `product_bookings` — kiểu dữ liệu chặt (rà soát M5). `check_in_date`/`check_out_date` là `DATE`; code vẫn dùng chuỗi `YYYY-MM-DD` và chỉ đổi ở biên repository (`src/modules/availability/domain/booking-day.ts`; ngày không có thật trên lịch → 422). `status` là enum `booking_status`. `order_id` có khoá ngoại sang `orders`, `ON DELETE CASCADE`: đơn chỉ bị xoá cứng khi dọn tenant bàn giao, và đặt chỗ sinh từ đơn đi theo; khoá thủ công (`order_id = null`) ở lại. Migration `20261022110000_product_bookings_typed` VIẾT TAY: đổi kiểu tại chỗ (`ALTER … TYPE … USING`), không để Prisma xoá và tạo lại cột. Ngày sai thì migration dừng, không đoán. Trạng thái lạ chuyển thành `CANCELLED`. Đặt chỗ trỏ tới đơn đã xoá được giải phóng (`CANCELLED`, ghi chú "Đơn gốc đã bị xoá"). Ca thử: `tests/tenant/availability-typed-dates.test.ts`.
 > - `users.approval_status` (enum `user_approval_status`, PO 22/10/2026) — duyệt tài khoản tự đăng ký. `/auth/signup` và `/auth/instant-trial` tạo tài khoản `PENDING`. Chỉ `APPROVED` đăng nhập được (`log-in.ts`) và dùng được phiên (`resolve-session.ts`; tài khoản bị chuyển về `PENDING`/`REJECTED` mất luôn phiên đang mở). Mặc định cột là `APPROVED`: tài khoản có sẵn, nhân viên được mời và tài khoản tạo bằng script vận hành không phải duyệt. Superadmin mã `N13` duyệt ở `/van-hanh/dang-ky`; `approval_decided_by` lưu `user_id` của superadmin. Migration `20261022120000_user_approval` chỉ thêm cột. Ca thử: `tests/tenant/registration-approval.test.ts`, `tests/platform/registration-approval.test.ts`.
-> - `platform_settings` — **NỀN TẢNG** (không có `organization_id`, mục 1). Khoá `nav_matrix_overrides`: ma trận điều hướng theo ngành do Admin SaaS ghi đè ở Console `/van-hanh` (`PUT /platform/nav-matrix`, mã `N12`). Trước 22/10 lưu vào một tệp trên máy chủ: mất khi deploy, mỗi instance một bản, và menu không đọc nó. Giờ máy chủ đọc (bộ nhớ đệm 30 giây) và gửi danh sách mục ẩn xuống qua phiên (`organization.navHiddenKeys`). Chưa có dòng thì dùng `src/lib/data/industry-nav-matrix-overrides.json` làm giá trị khởi đầu. Migration `20261022100000_platform_settings`. Ca thử: `tests/platform/nav-matrix-overrides.test.ts`.
+> - `platform_settings` — **NỀN TẢNG** (không có `organization_id`, mục 1). Khoá `nav_matrix_overrides`: ma trận điều hướng theo ngành do Admin SaaS ghi đè ở Console `/van-hanh` (`PUT /platform/nav-matrix`, mã `N12`). Trước 22/10 lưu vào một tệp trên máy chủ: mất khi deploy, mỗi instance một bản, và menu không đọc nó. Giờ máy chủ đọc (bộ nhớ đệm 30 giây) và gửi danh sách mục ẩn xuống qua phiên (`organization.navHiddenKeys`). Chưa có dòng thì dùng `src/lib/data/industry-nav-matrix-overrides.json` làm giá trị khởi đầu. Migration `20261022100000_platform_settings`. Ca thử: `tests/platform/nav-matrix-overrides.test.ts`. Khoá `ux_rollout_flags`: cờ rollout giao diện chuẩn Progressive Disclosure theo tổ chức (`PUT /platform/ux-rollout-flags`, mã `N12`; bộ nhớ đệm 30 giây; giá trị lạ thành tắt) — ca thử `tests/platform/ux-rollout-flags.test.ts`.
 
 > - `chain_branches` — **TENANT** (rà soát M5, PO duyệt 22/10/2026). Chi nhánh nhận gia công của điều phối chuỗi, trước nằm trong `organizations.settings.chain_branches`: mỗi lần trừ điểm ghi đè cả mảng JSON, hai lần phạt cùng lúc mất một. Giờ mỗi chi nhánh một dòng, khoá `(organization_id, branch_code)`; `branch_code` là `branchId` phía domain (mã trên link gia công `?branch=`), khác `branches.id`. Nhập Excel (`POST /greeting-card/chain-branches/bulk-import`) cập nhật theo mã, giữ số lần phạt và lịch sử phạt. Trừ điểm (`ChainBranchRepository.applyPenalty`) khoá dòng `FOR UPDATE`: −2 điểm, sàn 10, lịch sử tối đa 50 mục. Migration `20261022130000_chain_branches_table` VIẾT TAY: chép từng phần tử JSON có mã và tên sang bảng (trùng mã giữ phần tử cuối), rồi xoá khoá `chain_branches` khỏi `settings`. Ca thử: `tests/tenant/chain-branches-table.test.ts`.
 
@@ -2642,3 +2717,317 @@ model product_import_batches {
   @@index([organization_id, created_at])
 }
 ```
+
+
+## 33. Thông báo đa tầng (`notification`, 27/10/2026)
+
+Migration `20261027000000_notification_system`. Ba bảng cấp nền tảng (không có `organization_id`, chỉ SaaS Mother ghi qua `/platform/notification/*`): kích hoạt kênh, hiển thị sự kiện theo tầng, khoá cứng. Bốn bảng tenant lọc theo `organization_id` của phiên.
+
+Khoá cứng (`notification_hard_locks.scope_id`) chỉ áp đúng phạm vi đã đặt: `MOTHER` → `"GLOBAL"`; `INDUSTRY`/`CHAIN` → tổ chức đặt khoá và cửa hàng trực thuộc; `STORE` → chính cửa hàng (audit AUD-014, 28/10/2026). Migration `20261028000000_notification_org_index_and_names` (PO duyệt 28/10/2026): thêm `@@index([organization_id])` cho `notification_inbox` và `notification_user_preferences` (AUD-008), đổi tên chỉ mục/ràng buộc về đúng tên Prisma (AUD-032) — idempotent.
+
+```prisma
+model notification_channel_activations {
+  channel     String   // APP_INBOX | EMAIL | PUSH | TELEGRAM | ZALO | SMS | WHATSAPP | MESSENGER
+  activated   Boolean  @default(false)
+  updated_by  String   // platform_admin user_id
+  updated_at  DateTime @updatedAt
+
+  @@id([channel])
+}
+```
+
+```prisma
+model notification_event_visibility {
+  event_key   String
+  tier        String   // INDUSTRY | CHAIN | STORE
+  visible     Boolean  @default(true)
+  updated_by  String
+  updated_at  DateTime @updatedAt
+
+  @@id([event_key, tier])
+}
+```
+
+```prisma
+model notification_hard_locks {
+  id          String   @id @default(uuid())
+  event_key   String
+  channel     String
+  tier        String   // MOTHER | INDUSTRY | CHAIN | STORE
+  scope_id    String   // organization_id hoặc "GLOBAL" nếu tier = MOTHER
+  enabled     Boolean  // true = bắt buộc BẬT | false = bắt buộc TẮT
+  locked_by   String   // user_id người đặt khóa
+  reason      String?  // Lý do khóa
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@unique([event_key, channel, tier, scope_id])
+  @@index([tier, scope_id])
+}
+```
+
+```prisma
+model notification_org_policies {
+  id                String   @id @default(uuid())
+  organization_id   String
+  event_key         String
+  channel           String
+  role_key          String   // RoleUxKey hoặc "*" cho all roles
+  enabled           Boolean  @default(true)
+  priority_override String?  // NORMAL | URGENT | CRITICAL
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, event_key, channel, role_key])
+  @@index([organization_id])
+}
+```
+
+```prisma
+model notification_store_defaults {
+  id              String   @id @default(uuid())
+  organization_id String
+  event_key       String
+  channel         String
+  role_key        String
+  enabled         Boolean  @default(true)
+  schedule_start  String?  // "08:00"
+  schedule_end    String?  // "22:00"
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, event_key, channel, role_key])
+  @@index([organization_id, role_key])
+}
+```
+
+```prisma
+model notification_user_preferences {
+  id              String    @id @default(uuid())
+  user_id         String
+  organization_id String
+  event_key       String
+  channel         String
+  enabled         Boolean
+  mute_until      DateTime?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, organization_id, event_key, channel])
+  @@index([user_id, organization_id])
+  @@index([organization_id])
+}
+```
+
+```prisma
+model notification_inbox {
+  id              String    @id @default(uuid())
+  user_id         String
+  organization_id String
+  event_key       String
+  title           String
+  message         String
+  deep_link       String?
+  priority        String    @default("NORMAL")
+  is_read         Boolean   @default(false)
+  read_at         DateTime?
+  created_at      DateTime  @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, organization_id, is_read])
+  @@index([organization_id])
+  @@index([user_id, organization_id, created_at])
+}
+```
+
+
+## 34. Đối tác chuỗi và chat nội bộ (26/10/2026)
+
+`chain_partnerships`: quan hệ chuỗi ↔ cửa hàng đối tác (`chain_org_id`, `partner_org_id`), mỗi cặp một dòng. Chỉ chuỗi sở hữu quan hệ được đổi trạng thái / mở khoá công cụ; tổ chức khác → 404 (audit 28/10/2026).
+
+Chat nội bộ: `internal_chat_conversations` thuộc tổ chức tạo (`organization_id`); `internal_chat_participants` ghi người tham gia kèm tổ chức của họ (cho phép đối tác chuỗi cùng một luồng đơn); `internal_chat_messages` theo cuộc hội thoại. Chỉ người tham gia đọc/gửi tin; luồng đơn của tổ chức khác không tự tham gia được; chỉ mời được người của chính tổ chức hoặc chuỗi/đối tác đang liên kết ACTIVE. Ca thử: `tests/tenant/internal-chat-isolation.test.ts`.
+
+```prisma
+model chain_partnerships {
+  id               String   @id @default(uuid())
+  chain_org_id     String
+  partner_org_id   String
+  partner_code     String
+  partnership_type String   @default("SUBCONTRACTOR") // SUBCONTRACTOR | FRANCHISE | BRANCH
+  status           String   @default("ACTIVE")         // PENDING | ACTIVE | SUSPENDED | TERMINATED
+  capacity_daily   Int      @default(10)
+  commission_rate  Decimal?
+  contact_name     String?
+  contact_phone    String?
+  contact_email    String?
+  address          String?
+  province         String?
+  district         String?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  chain_organization   organizations @relation("ChainOrg", fields: [chain_org_id], references: [id], onDelete: Cascade)
+  partner_organization organizations @relation("PartnerOrg", fields: [partner_org_id], references: [id], onDelete: Cascade)
+
+  @@unique([chain_org_id, partner_code])
+  @@unique([chain_org_id, partner_org_id])
+  @@index([chain_org_id, status])
+  @@index([partner_org_id])
+}
+```
+
+```prisma
+model internal_chat_conversations {
+  id                String   @id @default(uuid())
+  organization_id   String
+  conversation_type String   // PLATFORM_TENANT | CHAIN_PARTNER | ORDER_THREAD
+  title             String?
+  order_id          String?
+  metadata          Json     @default("{}")
+  created_by        String   // user_id of creator
+  last_message_at   DateTime @default(now())
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  organization organizations                @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  participants internal_chat_participants[]
+  messages     internal_chat_messages[]
+
+  @@index([organization_id, conversation_type])
+  @@index([order_id])
+}
+```
+
+```prisma
+model internal_chat_participants {
+  id              String   @id @default(uuid())
+  conversation_id String
+  user_id         String
+  organization_id String
+  role_in_chat    String   @default("MEMBER") // OWNER | ADMIN | MEMBER | GUEST_PARTNER
+  last_read_at    DateTime @default(now())
+  is_muted        Boolean  @default(false)
+  joined_at       DateTime @default(now())
+
+  conversation internal_chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user         users                       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([conversation_id, user_id])
+  @@index([user_id, organization_id])
+}
+```
+
+```prisma
+model internal_chat_messages {
+  id              String   @id @default(uuid())
+  conversation_id String
+  sender_user_id  String
+  sender_role     String
+  message_type    String   @default("TEXT") // TEXT | IMAGE | ACTION_CARD_ORDER | ACTION_CARD_QC | SYSTEM_NOTICE
+  content         String   @default("")
+  attachments     String[] @default([])
+  action_payload  Json?
+  is_deleted      Boolean  @default(false)
+  created_at      DateTime @default(now())
+
+  conversation internal_chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  sender       users                       @relation("ChatSender", fields: [sender_user_id], references: [id], onDelete: Cascade)
+
+  @@index([conversation_id, created_at])
+}
+```
+
+## 35. Nhóm công cụ 6 — Tính giá và tối ưu lợi nhuận (29/10/2026)
+
+PO duyệt schema 29/10/2026. Migration `20261029061403_costing_materials_recipes` — chỉ thêm bảng, không đụng dữ liệu cũ.
+Cả bốn bảng là **dữ liệu riêng của cửa hàng** (có `organization_id` + chỉ mục). Đặc điểm theo ngành (nhóm nguyên liệu, hao hụt mặc định, cách tính công, kịch bản giá) **không** lưu ở đây mà khai trong `IndustryCostingSpec` của Industry Pack (`src/modules/organization/domain/industry-costing-spec.ts`) — đúng REQ-BND-007/008. Ghi đè chi phí của cửa hàng nằm ở `pricing_rules` (khoá `labor_rate_per_hour`, `overhead_percent`, `default_packaging_vnd`, `price_change_alert_percent`).
+
+- `materials.unit_cost_vnd = null` nghĩa là **chưa nhập giá**: giá vốn báo "thiếu đơn giá", không đoán.
+- `material_price_history` chèn-chỉ: mỗi lần đổi đơn giá một dòng (cảnh báo biến động #32).
+- `product_recipes` một công thức hiện hành mỗi sản phẩm; lưu lại thì tăng `version` và thay toàn bộ `product_recipe_items`.
+- Lưu công thức kiểm mọi `material_id` thuộc đúng tổ chức — khác tổ chức trả 404.
+
+```prisma
+model materials {
+  id              String   @id @default(uuid())
+  organization_id String
+  name            String
+  unit            String
+  category_key    String // khoá trong IndustryCostingSpec.materialCategories của ngành
+  unit_cost_vnd   Decimal? @db.Decimal(14, 2)
+  supplier_name   String? // PO 29/10/2026: chỉ ghi tên nhà cung cấp, quản lý đầy đủ làm sau
+  on_hand_qty     Decimal? @db.Decimal(14, 3) // tồn nhập tay (#35)
+  active          Boolean  @default(true)
+  created_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization  organizations            @relation(fields: [organization_id], references: [id])
+  price_history material_price_history[]
+  recipe_items  product_recipe_items[]
+
+  @@unique([organization_id, name])
+  @@index([organization_id])
+  @@index([organization_id, category_key])
+}
+
+model material_price_history {
+  id              String   @id @default(uuid())
+  organization_id String
+  material_id     String
+  unit_cost_vnd   Decimal  @db.Decimal(14, 2)
+  source          String // MANUAL · IMPORT · PURCHASE
+  effective_at    DateTime @default(now())
+  created_by      String
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  material     materials     @relation(fields: [material_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, material_id, effective_at])
+}
+
+model product_recipes {
+  id              String   @id @default(uuid())
+  organization_id String
+  product_id      String
+  version         Int      @default(1)
+  waste_percent   Decimal? @db.Decimal(5, 2) // null = dùng mặc định theo nhóm nguyên liệu của ngành
+  labor_minutes   Int? // dùng khi ngành tính công theo phút
+  note            String?
+  updated_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations          @relation(fields: [organization_id], references: [id])
+  product      products               @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  items        product_recipe_items[]
+
+  @@unique([organization_id, product_id])
+  @@index([organization_id])
+}
+
+model product_recipe_items {
+  id              String  @id @default(uuid())
+  organization_id String
+  recipe_id       String
+  material_id     String
+  quantity        Decimal @db.Decimal(14, 3)
+
+  organization organizations   @relation(fields: [organization_id], references: [id])
+  recipe       product_recipes @relation(fields: [recipe_id], references: [id], onDelete: Cascade)
+  material     materials       @relation(fields: [material_id], references: [id])
+
+  @@unique([recipe_id, material_id])
+  @@index([organization_id])
+}
+```
+

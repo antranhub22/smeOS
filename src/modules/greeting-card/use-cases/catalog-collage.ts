@@ -139,7 +139,8 @@ type CollageSource = {
   products: Array<{ price: number | null; imageUrl: string | null; driveLink?: string | null | undefined }>
 }
 
-async function buildCollage(data: CollageSource): Promise<CatalogCollageData> {
+/** Dùng chung cho ảnh chia sẻ catalog `/c/[slug]` (Công cụ 09) — cùng cách nạp ảnh an toàn. */
+export async function buildCollage(data: CollageSource): Promise<CatalogCollageData> {
   const logoUrl = data.shop?.logoUrl
   return {
     catalogName: data.catalog.name,

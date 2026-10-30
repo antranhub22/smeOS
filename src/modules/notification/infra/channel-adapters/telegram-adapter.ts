@@ -9,6 +9,7 @@
 import { log } from "@/core/observability/log"
 import type { INotificationChannelAdapter } from "./_channel-adapter.interface"
 import type { NotificationPayload, ChannelSendResult } from "../../domain/notification-payload"
+import { escapeNotificationHtml } from "../../domain/notification-text"
 
 function normalizeButtonUrl(rawUrl: string): string {
   try {
@@ -28,7 +29,8 @@ export class TelegramNotificationAdapter implements INotificationChannelAdapter 
 
   async send(payload: NotificationPayload): Promise<ChannelSendResult> {
     const botToken = process.env.TELEGRAM_BOT_TOKEN
-    const chatId = payload.recipient.telegramChatId || process.env.TELEGRAM_DEFAULT_CHAT_ID
+    // Không rơi về một chat dùng chung: thiếu chatId thì bỏ qua, tránh lộ thông báo sang tổ chức khác
+    const chatId = payload.recipient.telegramChatId
 
     if (!botToken || !chatId) {
       log.warn("Telegram adapter skipped: missing bot token or recipient chatId", {
@@ -42,7 +44,7 @@ export class TelegramNotificationAdapter implements INotificationChannelAdapter 
     }
 
     try {
-      const text = `<b>${payload.title}</b>\n\n${payload.message}`
+      const text = `<b>${escapeNotificationHtml(payload.title)}</b>\n\n${escapeNotificationHtml(payload.message)}`
       const inlineButtons: Array<{ text: string; url: string }> = []
 
       if (payload.deepLink) {

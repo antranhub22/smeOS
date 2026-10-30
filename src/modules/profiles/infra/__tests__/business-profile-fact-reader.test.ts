@@ -37,7 +37,7 @@ describe('BusinessProfileFactReader (Fact: PROJECTED)', () => {
       operating_hours: { mon_fri: '8:00 - 21:00' },
       created_at: new Date('2026-01-01'),
       updated_at: new Date('2026-02-01'),
-    } as any)
+    } as never)
 
     const facts = await reader.readFacts(orgId, { subject: 'shop' })
 
@@ -70,7 +70,7 @@ describe('BusinessProfileFactReader (Fact: PROJECTED)', () => {
       default_offers: { guarantees: ['Giao trong 2h'] },
       created_at: new Date('2026-01-01'),
       updated_at: new Date('2026-02-01'),
-    } as any)
+    } as never)
 
     const facts = await reader.readFacts(orgId, { subject: 'brand' })
 
@@ -90,7 +90,7 @@ describe('BusinessProfileFactReader (Fact: PROJECTED)', () => {
       phone: '0988888888',
       created_at: new Date(),
       updated_at: new Date(),
-    } as any)
+    } as never)
 
     const fact = await reader.getFact(orgId, 'shop', 'phone')
 

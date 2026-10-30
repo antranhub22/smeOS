@@ -7,6 +7,10 @@
 
 ---
 
+> **v2 — Thư viện tập trung (PO duyệt hướng 29/10/2026, đang chờ duyệt Screen Contract):** mở rộng màn này thành nơi duy nhất tìm lại mọi đầu vào/đầu ra: Ảnh gốc · Ảnh đã duyệt · Ảnh AI · Video · Âm thanh · Nội dung · Catalog · Thẻ chào · Kịch bản tư vấn · (Landing page khi có nơi lưu) · Thùng rác. Chuỗi có bộ chọn phạm vi `Toàn chuỗi / Trụ sở / từng chi nhánh`, mỗi mục gắn nhãn chi nhánh. Hợp đồng màn hình: `docs/dac-ta/screen-contracts/kho-du-lieu.md` (v2). Mục 1–7 dưới đây mô tả v1 đang chạy.
+
+---
+
 ## 1. Cấu trúc trang (Page Structure)
 
 Màn hình Kho Dữ Liệu đóng vai trò là kho lưu trữ số trung tâm của tiệm hoa. Giao diện gồm thanh tiêu đề trên cùng và **Bộ điều hướng phân vùng (`AccountStorageHub`)** phân cấp theo vai trò người dùng:

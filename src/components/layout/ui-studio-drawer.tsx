@@ -163,7 +163,7 @@ export function UiStudioDrawer() {
                             >
                               <Icon className="w-3.5 h-3.5" />
                               <span className="text-caption font-semibold leading-tight">{item.label}</span>
-                              <span className="text-caption text-text-muted text-[10px] leading-tight">{item.desc}</span>
+                              <span className="text-caption text-text-muted text-caption leading-tight">{item.desc}</span>
                             </button>
                           )
                         })}
@@ -193,7 +193,7 @@ export function UiStudioDrawer() {
                               }`}
                             >
                               <div className="text-caption font-semibold leading-tight">{item.label}</div>
-                              <div className="text-caption text-text-muted text-[11px] mt-0.5">{item.desc}</div>
+                              <div className="text-caption text-text-muted text-caption mt-0.5">{item.desc}</div>
                             </button>
                           )
                         })}
@@ -224,7 +224,7 @@ export function UiStudioDrawer() {
                   <div className="text-caption font-bold text-text uppercase tracking-wider">
                     Thông số hiển thị thực tế
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-caption font-mono text-text-muted text-[11px]">
+                  <div className="grid grid-cols-2 gap-2 text-caption font-mono text-text-muted text-caption">
                     <div>Preset: <span className="text-text font-bold">{config.preset}</span></div>
                     <div>Density: <span className="text-text font-bold">{config.density}</span></div>
                     <div>Font: <span className="text-text font-bold">{config.fontPairing || "sans-clean"}</span></div>

@@ -130,7 +130,7 @@ export function ScheduledPulsePanel({
                 onChange={(e) => setScheduleTime(e.target.value)}
                 className="h-10 w-full rounded-xl border border-cool-200 bg-cool-50/50 px-3 text-xs font-semibold text-cool-900 outline-none focus:border-blush-500 focus:bg-white transition"
               />
-              <span className="text-caption text-cool-400 block">
+              <span className="text-caption text-text-muted block">
                 Khuyến nghị: 06:00 - 07:00 sáng trước giờ mở cửa tiệm
               </span>
             </div>
@@ -171,7 +171,7 @@ export function ScheduledPulsePanel({
                 <Layers size={14} className="text-sand-600" />
                 Từ khóa & Chủ đề hoa tiệm theo dõi thường trực ({trackedKeywords.length}/10)
               </label>
-              <span className="text-caption text-cool-400">
+              <span className="text-caption text-text-muted">
                 AI sẽ quét sâu các từ khóa này để tạo Bản Tin Sáng
               </span>
             </div>
@@ -186,7 +186,7 @@ export function ScheduledPulsePanel({
                   <button
                     type="button"
                     onClick={() => handleRemoveKeyword(kw)}
-                    className="text-cool-400 hover:text-blush-600 transition"
+                    className="text-text-muted hover:text-blush-600 transition"
                   >
                     ×
                   </button>
@@ -295,13 +295,13 @@ export function ScheduledPulsePanel({
             <History size={16} className="text-cool-500" />
             <span>Lịch Sử Các Phiên Quét Tự Động & Hàng Đợi Hệ Thống</span>
           </div>
-          <span className="text-xs text-cool-400">
+          <span className="text-xs text-text-muted">
             Tổng cộng: {runs.length} phiên đã lưu
           </span>
         </div>
 
         {runs.length === 0 ? (
-          <p className="text-center py-8 text-xs text-cool-400">
+          <p className="text-center py-8 text-xs text-text-muted">
             Chưa có phiên quét tự động nào được ghi nhận.
           </p>
         ) : (
@@ -315,7 +315,7 @@ export function ScheduledPulsePanel({
                     </span>
                     <span>Lượt quét lúc {new Date(r.created_at).toLocaleString("vi-VN")}</span>
                   </div>
-                  <span className="text-caption text-cool-400">
+                  <span className="text-caption text-text-muted">
                     Thu thập {r.records_collected || 0} tín hiệu · Tạo {r.opportunities_created || 0} cơ hội
                   </span>
                 </div>

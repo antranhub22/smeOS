@@ -15,6 +15,7 @@ import {
   ShieldCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { TrashItem } from "@/modules/storage/domain/trash-types"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { formatDate } from "@/lib/i18n/formatters"
@@ -24,6 +25,7 @@ interface StorageTrashTabProps {
 }
 
 export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const [items, setItems] = useState<TrashItem[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
@@ -80,9 +82,12 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
   }
 
   async function handlePermanentDelete(item: TrashItem) {
-    const confirmed = window.confirm(
-      `CẢNH BÁO: Bạn có chắc chắn muốn xóa VĨNH VIỄN "${item.name}"?\nHành động này không thể hoàn tác!`
-    )
+    const confirmed = await confirm({
+      title: `Xoá vĩnh viễn "${item.name}"?`,
+      consequence: "Tệp bị xoá hẳn khỏi kho và không khôi phục được.",
+      confirmLabel: "Xoá vĩnh viễn",
+      tone: "danger",
+    })
     if (!confirmed) return
 
     setPurgingId(item.id)
@@ -282,6 +287,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
           })}
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

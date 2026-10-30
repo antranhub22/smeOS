@@ -35,7 +35,7 @@ export async function createUploadUrl(
   // Luôn dùng URL proxy server để tránh CORS khi browser PUT thẳng lên R2.
   // Route PUT /api/v1/storage/[...key] nhận file rồi server ghi lên kho sau.
   const expiresAt = Date.now() + UPLOAD_URL_TTL_SECONDS * 1000
-  const signature = signStorageUrl(storageKey, expiresAt)
+  const signature = signStorageUrl(storageKey, expiresAt, "PUT")
   const uploadUrl = `/api/v1/storage/${storageKey}?exp=${expiresAt}&sig=${signature}`
 
   return {

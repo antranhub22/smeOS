@@ -141,8 +141,8 @@ export function ApprovedAnalysesSelector({
           </div>
           <div className="text-title-sm font-bold">Chưa có phân tích nào được duyệt</div>
           <div className="mt-1.5 text-body-sm text-text-muted max-w-md mx-auto">
-            Để sử dụng tính năng Sinh dữ liệu bán hàng, bạn cần thực hiện phân tích ảnh ở tab{" "}
-            <span className="font-semibold text-primary">Phân tích ảnh mới</span> và phê duyệt kết quả trước.
+            Vào tab <span className="font-semibold text-primary">Nhận diện ảnh</span>, phân tích một ảnh sản phẩm và duyệt kết quả —
+            ảnh đã duyệt sẽ hiện ở đây để tạo kịch bản tư vấn.
           </div>
         </Card>
       )}
@@ -168,13 +168,10 @@ export function ApprovedAnalysesSelector({
 
           return (
             <Card
-              role="button"
-              tabIndex={0}
               key={item.id}
-              className={`p-4 flex flex-col justify-between transition-all hover:border-primary/60 cursor-pointer ${
+              className={`p-4 flex flex-col justify-between transition-all ${
                 isSelected ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "bg-surface"
               }`}
-              onClick={() => onSelect(item)}
             >
               <div className="space-y-3">
                 {/* Header */}

@@ -5,6 +5,7 @@
  * Tách ra khỏi page.tsx để tuân thủ SRP ≤350 dòng.
  */
 
+import Link from "next/link"
 import React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
@@ -42,7 +43,7 @@ export function ProductSelector({
       <div className="flex items-center justify-between">
         <div>
           <div className="text-xs font-semibold text-text-muted">Bước 1: Chọn sản phẩm</div>
-          <div className="text-title-sm font-extrabold text-text">Dữ liệu từ Product Master</div>
+          <div className="text-title-sm font-extrabold text-text">Sản phẩm trong kho</div>
         </div>
         <Badge tone="accent" className="text-xs">
           {products.length} sản phẩm sẵn sàng
@@ -59,7 +60,8 @@ export function ProductSelector({
         </div>
       ) : products.length === 0 ? (
         <div className="py-8 text-center text-xs text-text-muted bg-surface/50 rounded-lg p-4">
-          Chưa có sản phẩm nào trong Product Master.
+          Chưa có sản phẩm nào.{" "}
+          <Link href="/san-pham/tao-moi" className="font-semibold text-primary underline">Thêm sản phẩm</Link> hoặc chọn &ldquo;Tải ảnh sản phẩm mới&rdquo;.
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 max-h-[280px] overflow-y-auto pr-1">

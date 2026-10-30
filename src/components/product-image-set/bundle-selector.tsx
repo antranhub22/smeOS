@@ -26,6 +26,7 @@ export function BundleSelector({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
         className="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-surface-alt/60 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5">
@@ -53,6 +54,7 @@ export function BundleSelector({
                   key={b.id}
                   type="button"
                   onClick={() => onBundleChange(b.id)}
+                  aria-pressed={isSelected}
                   className={`p-3.5 rounded-xl border text-left transition-all relative cursor-pointer ${
                     isSelected
                       ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"

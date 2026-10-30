@@ -156,7 +156,7 @@ export function CampaignMediaSettings({
         <div className="space-y-3">
           <label className="block text-xs font-bold text-text flex items-center gap-1.5">
             <ImageIcon size={13} className="text-primary" />
-            <span>Ảnh Banner Tiêu Điểm (Hero Banner)</span>
+            <span>Ảnh đầu trang</span>
           </label>
 
           {customHeroImageUrl ? (

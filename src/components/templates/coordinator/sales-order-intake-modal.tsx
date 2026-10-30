@@ -1,5 +1,6 @@
 "use client"
 
+import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState, useEffect } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
 import {
@@ -717,7 +718,7 @@ export function SalesOrderIntakeModal({
                     <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={sampleImageUrl}
+                        src={safeImageSrc(sampleImageUrl)}
                         alt="Ảnh mẫu sản phẩm đầu vào"
                         className="w-full h-full object-cover"
                       />

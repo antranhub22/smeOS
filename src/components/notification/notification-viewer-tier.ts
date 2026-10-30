@@ -1,0 +1,18 @@
+import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"
+import { isChainOrganization } from "@/components/layout/nav"
+
+export type TenantViewerTier = "INDUSTRY" | "CHAIN" | "STORE"
+
+/**
+ * Tầng ma trận thông báo của tổ chức đang đăng nhập — cùng luật với điều hướng 4 tầng
+ * (`buildNav`). AUD-024: trước đây so với "HEADQUARTERS" (không có trong enum) nên
+ * chuỗi FLOWER_NETWORK rơi xuống ma trận Cửa hàng.
+ */
+export function resolveNotificationViewerTier(
+  organizationType?: string | null,
+  role?: RoleUxDefinition | null
+): TenantViewerTier {
+  if (organizationType === "INDUSTRY" || role?.key === "industry_admin") return "INDUSTRY"
+  if (isChainOrganization(organizationType, role)) return "CHAIN"
+  return "STORE"
+}

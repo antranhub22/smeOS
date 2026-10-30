@@ -47,7 +47,7 @@ export function StepCatalog(props: StepCatalogProps) {
           "flex flex-col gap-5 rounded-2xl p-4 sm:p-5 transition-all duration-300 border cursor-pointer",
           isBlock1Active
             ? "border-primary/50 bg-surface shadow-sm ring-2 ring-primary/20 opacity-100"
-            : "border-border/60 bg-surface/80 opacity-60 hover:opacity-95"
+            : "border-border/60 bg-transparent hover:bg-surface/60"
         )}
       >
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -165,7 +165,7 @@ export function StepCatalog(props: StepCatalogProps) {
             "flex flex-col gap-3 rounded-2xl p-4 sm:p-5 sm:flex-row sm:items-center sm:justify-between border transition-all duration-300 cursor-pointer",
             isBlock3Active
               ? "border-primary/50 bg-surface shadow-sm ring-2 ring-primary/20 opacity-100"
-              : "border-border/60 bg-surface/80 opacity-60 hover:opacity-95"
+              : "border-border/60 bg-transparent hover:bg-surface/60"
           )}
         >
           <div className="flex items-center gap-2.5">

@@ -69,3 +69,7 @@
 | Chiều | Kết quả | Ghi chú |
 |---|---|---|
 | Vai · Việc · IA · Mật độ · Thứ bậc · CTA · Luồng · Trạng thái · Responsive · Trợ năng · Dữ liệu · Quyền · AI · Nhất quán | PASS | Đạt chuẩn 100% |
+
+
+## Bổ sung 29/10/2026 — `/van-hanh/cau-hinh` (Cấu hình nền tảng)
+Trang trước đây có trong menu nhưng chưa tồn tại (404). Nay chứa bật/tắt giao diện chuẩn mới theo công cụ và theo tổ chức (03c E9): mỗi công cụ một `<select>` có nhãn (Tắt · Chỉ tổ chức được chọn · Mọi tổ chức) và danh sách tổ chức dạng ô chọn. Lưu cần `N12`, có nhật ký kiểm toán; bật cho mọi tổ chức phải qua `ConfirmDialog` (R3).

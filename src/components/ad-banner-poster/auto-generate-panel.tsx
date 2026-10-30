@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef } from "react"
-import { UploadCloud, Sparkles, Loader2, ImagePlus, LayoutGrid, CheckCircle2, Zap } from "lucide-react"
+import { UploadCloud, Sparkles, Loader2, LayoutGrid, CheckCircle2, Zap } from "lucide-react"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
 export type GenerationEngine = "TEMPLATE_ENGINE" | "AI_PROVIDER"
@@ -21,10 +21,10 @@ export interface AutoGeneratePanelProps {
 }
 
 const PURPOSE_QUICK_TAGS = [
-  { key: "OPENING", label: "🎉 Khai trương hồng phát" },
-  { key: "FLASH_SALE", label: "🔥 Flash Sale / Giảm sốc" },
-  { key: "NEW_ARRIVAL", label: "✨ Mẫu mới ra mắt" },
-  { key: "WOMEN_DAY", label: "💐 Ngày lễ 20/10 & 8/3" },
+  { key: "OPENING", label: "Khai trương hồng phát" },
+  { key: "FLASH_SALE", label: "Flash Sale / Giảm sốc" },
+  { key: "NEW_ARRIVAL", label: "Mẫu mới ra mắt" },
+  { key: "WOMEN_DAY", label: "Ngày lễ 20/10 & 8/3" },
 ] as const
 
 export function AutoGeneratePanel({
@@ -116,22 +116,6 @@ export function AutoGeneratePanel({
           )}
         </button>
 
-        {/* Nút chọn ảnh mẫu nhanh nếu chưa có ảnh */}
-        {!productImageUrl && (
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() =>
-                onProductImageChange(
-                  "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80"
-                )
-              }
-              className="text-caption text-primary hover:underline inline-flex items-center gap-1"
-            >
-              <ImagePlus className="h-3 w-3" /> Dùng thử ảnh mẫu demo
-            </button>
-          </div>
-        )}
       </div>
 
       {/* ── 2. CHỌN MỤC ĐÍCH / DỊP CHIẾN DỊCH ────────────────────────── */}
@@ -173,6 +157,7 @@ export function AutoGeneratePanel({
         {/* Dropdown dịp chi tiết */}
         <div className="mt-1.5">
           <select
+            aria-label="Dịp cụ thể"
             value={occasionKey}
             onChange={(e) => {
               const selected = e.target.value
@@ -201,6 +186,7 @@ export function AutoGeneratePanel({
           <button
             type="button"
             onClick={() => onEngineChange("TEMPLATE_ENGINE")}
+            aria-pressed={generationEngine === "TEMPLATE_ENGINE"}
             className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all ${
               generationEngine === "TEMPLATE_ENGINE"
                 ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
@@ -212,7 +198,7 @@ export function AutoGeneratePanel({
                 <span className="text-xs font-bold text-text flex items-center gap-1">
                   <Zap className="h-3.5 w-3.5 text-warning" /> Bố cục Template
                 </span>
-                <span className="text-caption px-1.5 py-0.2 rounded bg-success-bg text-success font-bold">
+                <span className="text-caption px-1.5 py-0.2 rounded bg-success-bg text-success-text font-bold">
                   Khuyên dùng
                 </span>
               </div>
@@ -226,6 +212,7 @@ export function AutoGeneratePanel({
           <button
             type="button"
             onClick={() => onEngineChange("AI_PROVIDER")}
+            aria-pressed={generationEngine === "AI_PROVIDER"}
             className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all ${
               generationEngine === "AI_PROVIDER"
                 ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
@@ -235,14 +222,14 @@ export function AutoGeneratePanel({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-text flex items-center gap-1">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" /> AI Provider Single-Call
+                  <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" /> AI vẽ bố cục mới
                 </span>
                 <span className="text-caption px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold">
                   Sáng tạo AI
                 </span>
               </div>
               <p className="text-caption text-text-muted leading-relaxed">
-                Gửi ảnh + prompt qua AI Provider trong 1 lần gọi, tự động kiểm định chất lượng QC.
+                AI vẽ bố cục mới từ ảnh và mô tả của bạn trong một lần, có kiểm tra chất lượng tự động.
               </p>
             </div>
           </button>
@@ -255,7 +242,7 @@ export function AutoGeneratePanel({
           type="button"
           disabled={isGenerating || !productImageUrl}
           onClick={onTriggerAutoGenerate}
-          className="w-full py-3 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer"
+          className="w-full py-3 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer"
         >
           {isGenerating ? (
             <>
@@ -264,14 +251,14 @@ export function AutoGeneratePanel({
             </>
           ) : (
             <>
-              <Zap className="h-4 w-4 text-warning" />
-              <span>⚡ TỰ ĐỘNG TẠO BỘ POSTER & BANNER (1-CHẠM)</span>
+              <Zap className="h-4 w-4" aria-hidden="true" />
+              <span>Tạo bộ poster và banner</span>
             </>
           )}
         </button>
         {!productImageUrl && (
-          <p className="text-caption text-warning text-center mt-1.5">
-            ⚠️ Hãy tải ảnh sản phẩm lên trước để kích hoạt tạo tự động
+          <p className="text-caption text-warning-text text-center mt-1.5">
+            Hãy tải ảnh sản phẩm lên trước để kích hoạt tạo tự động
           </p>
         )}
       </div>

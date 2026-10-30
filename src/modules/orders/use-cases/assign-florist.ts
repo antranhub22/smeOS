@@ -8,6 +8,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
+import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
 export interface AssignFloristInput {
   assigneeId: string
@@ -18,7 +19,8 @@ export async function assignFlorist(
   ctx: TenantContext,
   orderId: string,
   input: AssignFloristInput,
-  repo: IOrderRepository = getOrderRepository()
+  repo: IOrderRepository = getOrderRepository(),
+  notify: typeof notifyOrganization = notifyOrganization
 ): Promise<OrderRecord> {
   const existing = await repo.findById(ctx.organizationId, orderId)
   if (!existing) {
@@ -52,7 +54,15 @@ export async function assignFlorist(
     `Phân công thợ chế tác (ID: ${input.assigneeId})`
   )
 
-  return repo.update(ctx.organizationId, orderId, {
+  const updated = await repo.update(ctx.organizationId, orderId, {
     productionStatus: "ASSIGNED",
   })
+  void notify({
+    organizationId: ctx.organizationId,
+    eventKey: "FLORIST_TASK_ASSIGNED",
+    ownerUserId: input.assigneeId,
+    message: `Bạn được giao chế tác đơn ${existing.code}.`,
+    deepLink: "/don-hang",
+  })
+  return updated
 }

@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import {
   listHardLocks,
   setHardLock,
@@ -54,6 +55,7 @@ export const GET = handle(async (request) => {
 
 export const POST = handle(async (request) => {
   const platform = await requirePlatformContext(request)
+  requirePlatformCapability(platform, "N2")
   const body = postHardLockSchema.parse(await request.json())
 
   await setHardLock({
@@ -70,7 +72,8 @@ export const POST = handle(async (request) => {
 })
 
 export const DELETE = handle(async (request) => {
-  await requirePlatformContext(request)
+  const pctx = await requirePlatformContext(request)
+  requirePlatformCapability(pctx, "N2")
   const body = deleteHardLockSchema.parse(await request.json())
 
   await removeHardLock({

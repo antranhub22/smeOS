@@ -1,7 +1,7 @@
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { cookies } from "next/headers"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
-import { ProductImageSetClient } from "@/components/product-image-set/product-image-set-client"
+import { ProductImageSetEntry } from "@/components/product-image-set/product-image-set-entry"
 
 export const metadata = {
   title: "Tạo bộ ảnh sản phẩm từ một ảnh gốc | smeOS",
@@ -21,7 +21,7 @@ export default async function ProductImageSetPage() {
 
   return (
     <div className="py-6 px-4 sm:px-6 lg:px-8">
-      <ProductImageSetClient />
+      <ProductImageSetEntry />
     </div>
   )
 }

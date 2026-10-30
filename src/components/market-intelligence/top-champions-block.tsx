@@ -131,8 +131,8 @@ export function TopChampionsBlock({
                   key={champ.key}
                   className="rounded-xl border border-dashed border-cool-200 bg-cool-50/50 p-4 text-center flex flex-col justify-center items-center min-h-[220px]"
                 >
-                  <div className="text-caption font-bold text-cool-400 mb-1">{champ.label}</div>
-                  <p className="text-xs text-cool-400 font-medium">Chưa có cơ hội trong {champ.subLabel}</p>
+                  <div className="text-caption font-bold text-text-muted mb-1">{champ.label}</div>
+                  <p className="text-xs text-text-muted font-medium">Chưa có cơ hội trong {champ.subLabel}</p>
                 </div>
               );
             }
@@ -173,7 +173,7 @@ export function TopChampionsBlock({
                     <Crown size={11} className="fill-current" />
                     {champ.label}
                   </span>
-                  <span className="text-caption font-bold text-cool-400">
+                  <span className="text-caption font-bold text-text-muted">
                     {champ.subLabel}
                   </span>
                 </div>

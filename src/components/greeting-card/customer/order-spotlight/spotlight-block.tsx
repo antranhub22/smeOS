@@ -4,7 +4,7 @@ import React, { useEffect } from "react"
 import { AlertCircle } from "lucide-react"
 import { useOrderFocus, type OrderFocusBlock } from "./order-focus-context"
 
-/** Lớp giao diện theo chuẩn Spotlight: khối đang chọn nổi bật, khối khác chìm xuống. */
+/** Lớp giao diện theo chuẩn Spotlight: khối đang chọn nổi bật; khối khác chỉ dịu nền/viền, chữ giữ nguyên độ tương phản (PO 29/10/2026). */
 export function spotlightClasses(active: boolean): { block: string; badge: string } {
   return active
     ? {
@@ -12,7 +12,7 @@ export function spotlightClasses(active: boolean): { block: string; badge: strin
         badge: "bg-primary text-white",
       }
     : {
-        block: "bg-surface/80 border-border opacity-60 hover:opacity-95",
+        block: "bg-transparent border-border/60 hover:bg-surface/60",
         badge: "bg-surface-muted text-text-muted",
       }
 }

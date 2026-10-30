@@ -5,6 +5,7 @@ import { collectImageAssetIds, toCatalogProduct } from "./brochure-product-mappe
 import { toPublicCatalogFilters } from "../domain/greeting-template-registry"
 import type { ShopContact } from "../domain/shop-contact"
 import { getShopContact } from "./get-shop-contact"
+import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
 
 export type PublicGreetingCatalogResult =
   | {
@@ -50,7 +51,7 @@ export async function mapCatalogToPublicResult(
       name: catalog.name,
       description: catalog.description,
       orgSlug: catalog.organization.slug,
-      filters: toPublicCatalogFilters(catalog.filters, catalog.organization.settings),
+      filters: toPublicCatalogFilters(catalog.filters, catalog.organization.settings, undefined, await loadPolicyGovernance(catalog.organization_id)),
     },
     products,
   }

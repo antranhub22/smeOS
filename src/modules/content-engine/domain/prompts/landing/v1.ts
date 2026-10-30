@@ -23,6 +23,8 @@ export interface LandingWriterInput {
   }>
   readonly userDirectives: string | undefined
   readonly discountPercent: number | undefined
+  /** Mục đích trang người dùng chọn (vd. "Trang giới thiệu cửa hàng chính thức — …"); không có thì để AI theo dịp lễ. */
+  readonly pageGoal?: string | undefined
 }
 
 export interface LandingWriterOutput {
@@ -49,7 +51,7 @@ function buildPrompt(input: LandingWriterInput): string {
     ? `Giọng văn bắt buộc: ${input.shopTone}.`
     : "Giọng văn: ấm áp, chuyên nghiệp, gần gũi — phong cách thương hiệu Việt Nam cao cấp."
 
-  const discount = input.discountPercent ?? 10
+  const discount = input.discountPercent
   const directive = input.userDirectives ? `\nCHỈ ĐẠO NGỮ CẢNH TỪ CHỦ TIỆM:\n${input.userDirectives}` : ""
 
   return `Bạn là chuyên gia viết nội dung marketing cho tiệm hoa cao cấp Việt Nam.
@@ -57,9 +59,9 @@ Viết nội dung đầy đủ cho Landing Page chiến dịch dưới đây. T�
 
 TIỆM HOA: ${input.shopName}
 ${toneGuide}
-DỊP LỄ: ${input.occasionLabel} (mã: ${input.occasionId})
+${input.pageGoal ? `MỤC ĐÍCH TRANG: ${input.pageGoal}\n` : ""}DỊP LỄ: ${input.occasionLabel} (mã: ${input.occasionId})
 PHONG CÁCH: ${input.archetypeId ?? "minimal-luxury"}
-ƯU ĐÃI: Giảm ${discount}% cho khách đặt sớm${directive}
+${discount ? `ƯU ĐÃI (từ Hồ sơ tiệm): Giảm ${discount}% — chỉ dùng đúng ưu đãi này` : "ƯU ĐÃI: Tiệm chưa bật ưu đãi nào — tuyệt đối không nhắc giảm giá, quà tặng, freeship hay mã ưu đãi"}${directive}
 
 SẢN PHẨM THẬT (chỉ dùng tên/giá từ đây, không tự bịa sản phẩm khác):
 ${products || "(Chưa có sản phẩm cụ thể — viết theo dịp lễ và tên tiệm)"}
@@ -136,7 +138,7 @@ function normalize(raw: unknown): LandingWriterResult {
       hero: { badge: s(hero?.badge, 60), headline, subHeadline: s(hero?.subHeadline, 150) },
       story: { title: s(story?.title, 70), paragraph1: p1, paragraph2: s(story?.paragraph2, 250), quote: s(story?.quote, 150) },
       perks: perks.length > 0 ? perks : [{ title: "Chụp ảnh duyệt trước khi giao", description: "Đảm bảo hoa đúng mẫu 100% trước khi xuất xưởng." }],
-      faq: faq.length > 0 ? faq : [{ question: "Hoa giao trong bao lâu?", answer: "Giao hỏa tốc trong 2 giờ nội thành." }],
+      faq: faq.length > 0 ? faq : [{ question: "Hoa giao trong bao lâu?", answer: "Vui lòng nhắn tin cho tiệm để được báo thời gian giao phù hợp với địa chỉ của bạn." }],
       lead: { title: s(lead?.title, 80), description: s(lead?.description, 150) },
     },
   }

@@ -24,6 +24,7 @@ Tài liệu này xác lập chuẩn chất lượng UX toàn cục cho FloraOS, 
 - **Trải nghiệm theo 14 vai**: `docs/dac-ta/03b-role-ux.md` (Level 3, CANONICAL).
 - **Khung kiến trúc UX & Bản đồ màn**: `docs/dac-ta/03-ux-architecture.md` (Level 3, CANONICAL).
 - **Hồ sơ hợp đồng từng màn (Screen Contracts)**: `docs/dac-ta/screen-contracts/` (Level 3, SUPPORTING).
+- **Progressive Disclosure & Enterprise UX (mở rộng bắt buộc của tệp này, PO 29/10/2026)**: `docs/dac-ta/03c-ux-progressive-disclosure.md` (Level 3, CANONICAL) · thư viện luồng `docs/dac-ta/ux-patterns/` (Level 3, SUPPORTING).
 
 ### 3. Thứ bậc giải quyết xung đột
 
@@ -69,6 +70,7 @@ Toàn bộ cỡ chữ và màu sắc trong FloraOS bắt buộc tuân theo bản
 | `--color-guidance` / `--color-guidance-bg` | `text-guidance`, `bg-guidance-bg` | Khối hướng dẫn thao tác `FeatureGuidanceCard` | 5.42:1 (Đạt AA) |
 | `--color-guidance-border` | `border-guidance-border` | Viền nét đứt của khối hướng dẫn | Phân biệt rõ rệt |
 | `--color-guidance-text` | `text-guidance-text` | Tiêu đề chính của khối hướng dẫn | 12.80:1 (Đạt AAA) |
+| `--color-accent-text` | `text-accent-text` | Chữ mang màu nhấn (nhãn, liên kết, badge) trên nền sáng. `text-accent` (#C89B3C, ~2.4:1) chỉ dành cho icon/trang trí | Mộc Lan 7.61:1 surface · 7.09:1 background; modern-slate 7.31 · 6.98; pure-swiss 5.48 · 5.25 (Đạt AA) |
 
 ---
 

@@ -10,7 +10,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "editorial-luxury": {
     id: "editorial-luxury",
     styleNumber: "01",
-    name: "Editorial Luxury",
+    name: "Tạp chí sang trọng",
     subtitle: "Sang trọng, tạp chí thời trang",
     badge: "Editorial",
     category: "swipe-style",
@@ -29,7 +29,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "minimal-clean": {
     id: "minimal-clean",
     styleNumber: "02",
-    name: "Minimal Clean",
+    name: "Tối giản",
     subtitle: "Tối giản, hiện đại",
     badge: "Minimal",
     category: "swipe-style",
@@ -47,7 +47,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "cinematic-dark": {
     id: "cinematic-dark",
     styleNumber: "03",
-    name: "Cinematic Dark",
+    name: "Điện ảnh tông tối",
     subtitle: "Điện ảnh, ấn tượng",
     badge: "Cinematic",
     category: "swipe-style",
@@ -65,7 +65,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "romantic-pastel": {
     id: "romantic-pastel",
     styleNumber: "04",
-    name: "Romantic Pastel",
+    name: "Lãng mạn pastel",
     subtitle: "Lãng mạn, mềm mại",
     badge: "Pastel",
     category: "swipe-style",
@@ -83,7 +83,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "botanical-frame": {
     id: "botanical-frame",
     styleNumber: "05",
-    name: "Botanical Frame",
+    name: "Khung lá cây",
     subtitle: "Thiên nhiên, tinh tế",
     badge: "Botanical",
     category: "swipe-style",
@@ -101,7 +101,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "glassmorphism": {
     id: "glassmorphism",
     styleNumber: "06",
-    name: "Glassmorphism",
+    name: "Kính mờ",
     subtitle: "Hiện đại, trong suốt",
     badge: "Glass",
     category: "swipe-style",
@@ -119,7 +119,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "real-life-shop": {
     id: "real-life-shop",
     styleNumber: "07",
-    name: "Real Life - Shop Photo",
+    name: "Ảnh thật tại tiệm",
     subtitle: "Ảnh chụp thực tế, tự nhiên",
     badge: "Shop Photo",
     category: "swipe-style",
@@ -137,7 +137,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "real-life-daylight": {
     id: "real-life-daylight",
     styleNumber: "08",
-    name: "Real Life - Daylight",
+    name: "Ảnh thật ánh sáng tự nhiên",
     subtitle: "Ánh sáng tự nhiên, đời thực",
     badge: "Daylight",
     category: "swipe-style",
@@ -155,7 +155,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "real-life-in-store": {
     id: "real-life-in-store",
     styleNumber: "09",
-    name: "Real Life - In Store",
+    name: "Ảnh thật trong cửa hàng",
     subtitle: "Trong cửa hàng, gần gũi",
     badge: "In Store",
     category: "swipe-style",
@@ -173,7 +173,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "real-life-handheld": {
     id: "real-life-handheld",
     styleNumber: "10",
-    name: "Real Life - Handheld",
+    name: "Ảnh thật cầm tay",
     subtitle: "Cầm tay, góc chụp casual",
     badge: "Handheld",
     category: "swipe-style",
@@ -191,7 +191,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "lifestyle-context": {
     id: "lifestyle-context",
     styleNumber: "11",
-    name: "Lifestyle Context",
+    name: "Bối cảnh đời thường",
     subtitle: "Trong bối cảnh sử dụng",
     badge: "Lifestyle",
     category: "swipe-style",
@@ -209,7 +209,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   "mixed-media": {
     id: "mixed-media",
     styleNumber: "12",
-    name: "Mixed Media Style",
+    name: "Phối nhiều chất liệu",
     subtitle: "Kết hợp thật và thiết kế",
     badge: "Mixed Media",
     category: "swipe-style",
@@ -227,7 +227,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   // Legacy & Auxiliary Exploratory Decks
   "enterprise-luxury": {
     id: "enterprise-luxury",
-    name: "Enterprise Luxury Deck",
+    name: "Bộ trình bày cao cấp",
     subtitle: "Giao diện Doanh Nghiệp Sang Trọng",
     badge: "Enterprise",
     category: "swipe-style",
@@ -243,7 +243,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   },
   "swipe-classic": {
     id: "swipe-classic",
-    name: "Classic Swipe Brochure",
+    name: "Brochure vuốt cổ điển",
     subtitle: "Lướt Thẻ Cổ Điển Tinh Gọn",
     badge: "Classic",
     category: "swipe-style",
@@ -254,7 +254,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   },
   "lookbook-grid": {
     id: "lookbook-grid",
-    name: "Commercial Lookbook Grid",
+    name: "Lưới lookbook",
     subtitle: "Lưới Trưng Bày Thương Mại",
     badge: "Catalog Lookbook",
     category: "interactive-deck",
@@ -265,7 +265,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   },
   "editorial-story": {
     id: "editorial-story",
-    name: "Editorial Magazine & Story",
+    name: "Tạp chí & câu chuyện",
     subtitle: "Tạp Chí Nghệ Thuật & Cảm Xúc",
     badge: "Editorial Story",
     category: "interactive-deck",
@@ -276,7 +276,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   },
   "video-reels": {
     id: "video-reels",
-    name: "Video-First Reels & 360",
+    name: "Video ngắn & 360°",
     subtitle: "Lướt Video Dọc Toàn Màn Hình",
     badge: "Video Reels",
     category: "interactive-deck",
@@ -287,7 +287,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   },
   "occasion-budget-quiz": {
     id: "occasion-budget-quiz",
-    name: "Occasion & Budget Matcher",
+    name: "Chọn theo dịp & ngân sách",
     subtitle: "Trợ Lý Gợi Ý Theo Dịp & Ngân Sách",
     badge: "Smart Matcher",
     category: "interactive-deck",
@@ -298,7 +298,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   },
   "event-moodboard": {
     id: "event-moodboard",
-    name: "Color Moodboard Gallery",
+    name: "Bảng màu cảm hứng",
     subtitle: "Bảng Phối Màu & Concept Sự Kiện",
     badge: "Moodboard",
     category: "interactive-deck",
@@ -309,7 +309,7 @@ export const GREETING_TEMPLATES: Record<GreetingTemplateId, GreetingCardTemplate
   },
   "split-compare": {
     id: "split-compare",
-    name: "Split-Screen Lens & Focus",
+    name: "Chia đôi màn hình",
     subtitle: "Soi Chi Tiết Chia Đôi Màn Hình",
     badge: "Detail Lens",
     category: "interactive-deck",

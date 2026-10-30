@@ -62,14 +62,14 @@ export default function InternalChatPage() {
   }
 
   useEffect(() => {
-    fetchConversations()
+    void Promise.resolve().then(() => fetchConversations())
     const timer = setInterval(fetchConversations, 15000)
     return () => clearInterval(timer)
   }, [])
 
   useEffect(() => {
     if (activeConv) {
-      fetchMessages(activeConv.id)
+      void Promise.resolve().then(() => fetchMessages(activeConv.id))
       const msgTimer = setInterval(() => fetchMessages(activeConv.id), 5000)
       return () => clearInterval(msgTimer)
     }

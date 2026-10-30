@@ -5,8 +5,9 @@
 // trình) nhưng ở trạng thái vô hiệu — không bấm, không gán được — cho tới khi
 // phát triển xong (PO 26/09/2026, nợ #165).
 //
-// Khi chọn "Mở" hoặc "Console", hệ thống sẽ kích hoạt vai tương ứng và điều hướng
-// về đúng Homepage của tầng kiến trúc / vai đó (SaaS Mother, SaaS Đa Ngành, ChainOS, StoreOS).
+// Khi chọn "Mở" hoặc "Console", quản trị nền tảng (N1) xem trước vai đó qua
+// `POST /api/v1/platform/tier-preview` (chạy cả production) rồi về Homepage của
+// tầng (SaaS Mother, SaaS Đa Ngành, ChainOS, StoreOS). Lỗi hiện ngay dưới dòng vai.
 
 import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
@@ -14,6 +15,7 @@ import Link from "next/link"
 import { ArrowLeft, Lock, Loader2 } from "lucide-react"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
+import { chuyenTang, veVaiThat } from "./chuyen-tang"
 import {
   ROLE_UX_CATALOG,
   ROLE_UX_GROUP_LABEL,
@@ -27,8 +29,11 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
   const dungDuoc = role.status === "AVAILABLE"
   const [opening, setOpening] = useState(false)
 
+  const [loi, setLoi] = useState<string | null>(null)
+
   const handleOpenRole = async () => {
     setOpening(true)
+    setLoi(null)
     let orgType = "SINGLE"
     if (role.key === "platform_admin") {
       orgType = "PLATFORM"
@@ -38,22 +43,13 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
       orgType = "FLOWER_NETWORK"
     }
 
-    try {
-      await fetch("/api/dev/role-override", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roleKey: role.key,
-          organizationType: orgType,
-          orgNameSuffix: `[${role.label}]`,
-        }),
-      })
-    } catch {
-      // Tiếp tục chuyển hướng dù lỗi dev endpoint
+    const ketQua = await chuyenTang(role, orgType)
+    if (ketQua.ok) {
+      window.location.href = ketQua.href
+      return
     }
-
-    const targetHref = role.key === "platform_admin" ? "/van-hanh" : (role.entryHref || "/")
-    window.location.href = targetHref
+    setLoi(ketQua.loi)
+    setOpening(false)
   }
 
   return (
@@ -90,6 +86,11 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
         <div className="mt-0.5 line-clamp-2 text-caption text-text-muted">
           {role.homepageModel} · {role.primaryQuestion}
         </div>
+        {loi && (
+          <p role="alert" className="mt-1 text-caption font-semibold text-danger">
+            {loi}
+          </p>
+        )}
       </div>
       {dungDuoc && (
         <button
@@ -108,7 +109,14 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
 
 export default function VaiTroPage() {
   const { t } = useI18n()
-  const { roleUx } = useSession()
+  const { roleUx, tierPreviewActive } = useSession()
+  const [dangVe, setDangVe] = useState(false)
+
+  const handleVeVaiThat = async () => {
+    setDangVe(true)
+    await veVaiThat()
+    window.location.href = "/"
+  }
   const soDungDuoc = ROLE_UX_CATALOG.filter((r) => r.status === "AVAILABLE").length
 
   return (
@@ -127,6 +135,17 @@ export default function VaiTroPage() {
             {soDungDuoc}/{ROLE_UX_CATALOG.length} vai đang dùng được
           </div>
         </div>
+        {tierPreviewActive && (
+          <button
+            type="button"
+            onClick={handleVeVaiThat}
+            disabled={dangVe}
+            className="ml-auto flex min-h-11 items-center gap-1.5 rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
+          >
+            {dangVe && <Loader2 size={13} className="animate-spin" />}
+            Về vai thật của bạn
+          </button>
+        )}
       </header>
 
       <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 xl:grid xl:grid-cols-3 xl:items-start">

@@ -1,3 +1,4 @@
+import { requireCapability } from "@/core/rbac/capabilities"
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -11,6 +12,7 @@ const retrySchema = z.object({
 
 export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "I1")
   const params = await context.params
   const id = params.id
 

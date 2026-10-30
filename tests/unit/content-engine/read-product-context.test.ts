@@ -6,9 +6,12 @@ const { getProductAnalysisRun, findFirst } = vi.hoisted(() => ({
   getProductAnalysisRun: vi.fn(),
   findFirst: vi.fn(),
 }))
-vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", () => ({
-  MarketIntelligenceRepository: vi.fn().mockImplementation(function () { return { getProductAnalysisRun } }),
-}))
+vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", () => {
+  const mocked = {
+    MarketIntelligenceRepository: vi.fn().mockImplementation(function () { return { getProductAnalysisRun } }),
+  }
+  return { ...mocked, getMarketIntelligenceRepository: vi.fn(() => new mocked.MarketIntelligenceRepository()) }
+})
 vi.mock("@/core/tenancy/infra/prisma", () => ({ prisma: { products: { findFirst } } }))
 
 import { readProductContext, projectTopicFromReport } from "@/modules/content-engine/infra/read-product-context"
@@ -83,7 +86,7 @@ describe("readProductContext", () => {
     getProductAnalysisRun.mockResolvedValue(null)
     findFirst.mockResolvedValue(null)
     const result = await readProductContext(ctx, {})
-    expect(result.product.name).toBe("Bó hoa")
+    expect(result.product.name).toBe("Sản phẩm") // trung tính đa ngành (7189612e)
     expect(result.product.price.exact).toBeNull()
   })
 })

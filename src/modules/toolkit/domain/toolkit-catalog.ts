@@ -54,8 +54,8 @@ const GROUP_1_TOOLS: readonly ToolDefinition[] = [
   {
     id: 0, name: "Chế tác tự động trọn gói từ A-Z",
     description: "Quy trình AI tự động trọn gói từ 1 ảnh thô ra bộ tư liệu bán hàng đa kênh",
-    icon: "Sparkles", label: "BOTH", status: "DONE", progress: 100,
-    href: "/creative-studio", statusNote: "Workflow Pipeline — Tự động bóc tách BOM, tạo ảnh studio, video, caption và thẻ chào",
+    icon: "Sparkles", label: "BOTH", status: "IN_PROGRESS", progress: 80,
+    href: "/creative-studio", statusNote: "Đang hoàn thiện — hành trình 14 chặng: bóc tách BOM, ảnh studio, video, caption và thẻ chào",
   },
   {
     id: 1, name: "Tạo ảnh sản phẩm chuyên nghiệp",
@@ -105,14 +105,14 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
   {
     id: 8, name: "Tạo landing page cửa hàng",
     description: "Tạo trang giới thiệu trực tuyến có link chia sẻ",
-    icon: "Globe", label: "BOTH", status: "IN_PROGRESS", progress: 60,
-    href: "/landing-page", statusNote: "Đang phát triển — tách trang /landing-page độc lập và hoàn thiện theo SSOT v3",
+    icon: "Globe", label: "BOTH", status: "DONE", progress: 100,
+    href: "/landing-page", statusNote: "Trang giới thiệu cửa hàng có link chia sẻ — chuẩn UX 03c",
   },
   {
     id: 9, name: "Tạo catalog và bộ sưu tập",
     description: "Tổ chức sản phẩm theo danh mục với link chia sẻ và bộ lọc",
-    icon: "BookOpen", label: "STORE", status: "IN_PROGRESS", progress: 60,
-    href: "/catalog", statusNote: "Đang phát triển — tách trang /catalog độc lập và hoàn thiện showroom số hóa",
+    icon: "BookOpen", label: "STORE", status: "DONE", progress: 100,
+    href: "/catalog", statusNote: "Showroom số hoá theo danh mục, link chia sẻ và bộ lọc — chuẩn UX 03c",
   },
   {
     id: 10, name: "Tạo trang giới thiệu dịch vụ",
@@ -261,32 +261,32 @@ const GROUP_6_TOOLS: readonly ToolDefinition[] = [
   {
     id: 31, name: "Tạo công thức và định mức nguyên liệu",
     description: "Ghi công thức chuẩn cho từng mẫu: thành phần, số lượng, thời gian",
-    icon: "FlaskConical", label: "BOTH", status: "PLANNED", progress: 0,
-    href: null, statusNote: "Chức năng mới — công thức và định mức nguyên liệu độc lập",
+    icon: "FlaskConical", label: "BOTH", status: "DONE", progress: 100,
+    href: "/tinh-gia/cong-thuc", statusNote: "Công thức theo mẫu, bản nháp đọc từ ảnh, hao hụt và thời gian làm",
   },
   {
     id: 32, name: "Quản lý bảng giá nguyên liệu",
     description: "Lưu giá nhập, lịch sử biến động, cảnh báo khi giá thay đổi",
-    icon: "Table", label: "BOTH", status: "IN_PROGRESS", progress: 50,
-    href: "/san-pham", statusNote: "Giá nguyên liệu trong BOM, thiếu quản lý nhà cung cấp",
+    icon: "Table", label: "BOTH", status: "DONE", progress: 100,
+    href: "/tinh-gia/nguyen-lieu", statusNote: "Nguyên liệu, đơn giá, nhà cung cấp, lịch sử giá và cảnh báo biến động",
   },
   {
     id: 33, name: "Tính giá vốn sản phẩm",
     description: "Tự tính giá vốn từ công thức × đơn giá + nhân công + bao bì",
-    icon: "Calculator", label: "STORE", status: "IN_PROGRESS", progress: 45,
-    href: "/bao-gia", statusNote: "Có tính giá vốn cơ bản, thiếu nhân công + chi phí khác",
+    icon: "Calculator", label: "STORE", status: "DONE", progress: 100,
+    href: "/tinh-gia/gia-von", statusNote: "Giá vốn đủ nguyên liệu, hao hụt, tiền công, bao bì, chi phí chung",
   },
   {
     id: 34, name: "Đề xuất giá bán và lợi nhuận",
     description: "Mô phỏng nhiều mức giá, tính lợi nhuận dự kiến, cảnh báo ngưỡng",
-    icon: "TrendingUp", label: "BOTH", status: "IN_PROGRESS", progress: 40,
-    href: "/bao-gia", statusNote: "Biên lợi nhuận cơ bản, thiếu mô phỏng đa kịch bản",
+    icon: "TrendingUp", label: "BOTH", status: "DONE", progress: 100,
+    href: "/tinh-gia/gia-ban", statusNote: "3 mức giá theo ngành, so với đối thủ, áp giá có xác nhận và ghi nhật ký",
   },
   {
     id: 35, name: "Lập dự toán và nhu cầu mua nguyên liệu",
     description: "Cộng dồn nguyên liệu theo đơn, trừ tồn kho, ước chi phí mua",
-    icon: "ClipboardList", label: "STORE", status: "PLANNED", progress: 0,
-    href: null, statusNote: "Chức năng mới hoàn toàn",
+    icon: "ClipboardList", label: "STORE", status: "DONE", progress: 100,
+    href: "/tinh-gia/du-toan", statusNote: "Cộng dồn nguyên liệu theo đơn sắp giao, trừ tồn, ghi nhận đã mua",
   },
 ] as const
 

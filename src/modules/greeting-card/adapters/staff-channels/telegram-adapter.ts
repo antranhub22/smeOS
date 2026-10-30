@@ -27,6 +27,33 @@ function normalizeTelegramButtonUrl(rawUrl: string): string {
   }
 }
 
+/**
+ * Telegram chỉ nhận nút có URL http(s)/tg — nút `tel:` làm cả tin bị từ
+ * chối ("Wrong port number specified in the URL"), tin nhắc mốc không tới
+ * chi nhánh. Nút `tel:` chuyển thành dòng chữ: Telegram tự biến số điện
+ * thoại trong tin thành chỗ bấm để gọi.
+ */
+export function splitTelegramActions(actions: readonly { text: string; url: string }[] | undefined): {
+  buttons: { text: string; url: string }[]
+  phoneLines: string[]
+} {
+  const buttons: { text: string; url: string }[] = []
+  const phoneLines: string[] = []
+  for (const act of actions ?? []) {
+    const url = act.url?.trim()
+    if (!url) continue
+    if (/^tel:/i.test(url)) {
+      const phone = url.slice(4).replace(/\s+/g, "")
+      const line = act.text.includes(phone) ? `📞 ${act.text}` : `📞 ${act.text}: ${phone}`
+      // Tin gửi với parse_mode HTML — thoát ký tự đặc biệt từ dữ liệu chi nhánh
+      phoneLines.push(line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"))
+    } else if (/^(https?|tg):/i.test(url)) {
+      buttons.push({ text: act.text, url: normalizeTelegramButtonUrl(url) })
+    }
+  }
+  return { buttons, phoneLines }
+}
+
 /** URL ảnh Telegram được phép tự tải: chỉ https, không phải địa chỉ máy nội bộ. */
 export const safeRemotePhotoUrl = safeRemoteUrl
 
@@ -46,15 +73,10 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
     }
 
     try {
-      const text = `<b>${msg.title}</b>\n\n${msg.message}`
-
-      // Tạo các nút bấm chuyển tiếp native (Inline Keyboard)
-      const inlineButtons = (msg.actions ?? [])
-        .filter((act) => Boolean(act.url && act.url.trim()))
-        .map((act) => ({
-          text: act.text,
-          url: normalizeTelegramButtonUrl(act.url),
-        }))
+      // Tạo các nút bấm chuyển tiếp native (Inline Keyboard); nút gọi điện thành dòng chữ
+      const { buttons: inlineButtons, phoneLines } = splitTelegramActions(msg.actions)
+      const phoneBlock = phoneLines.length > 0 ? `\n\n${phoneLines.join("\n")}` : ""
+      const text = `<b>${msg.title}</b>\n\n${msg.message}${phoneBlock}`
 
       const replyMarkup = inlineButtons.length > 0
         ? { inline_keyboard: [inlineButtons] }
@@ -146,9 +168,7 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
     const botToken = config?.botToken
     if (!botToken) return { ok: false, error: "Missing botToken" }
 
-    const inlineButtons = (payload.actions ?? [])
-      .filter((act) => Boolean(act.url?.trim()))
-      .map((act) => ({ text: act.text, url: normalizeTelegramButtonUrl(act.url) }))
+    const { buttons: inlineButtons } = splitTelegramActions(payload.actions)
     const replyMarkup = inlineButtons.length > 0 ? { inline_keyboard: [inlineButtons] } : undefined
 
     const endpoint = payload.isCaption ? "editMessageCaption" : "editMessageText"

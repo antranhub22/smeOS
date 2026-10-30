@@ -11,6 +11,7 @@ import { RefreshCw, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { MultichannelPostCard, type MultichannelPostItem } from "@/components/templates/content-engine"
 import { useRouter } from "next/navigation"
+import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 
 interface GenerationResultsProps {
   posts: MultichannelPostItem[]
@@ -34,12 +35,13 @@ export function GenerationResults({
   onReset,
 }: GenerationResultsProps) {
   const router = useRouter()
+  const { business } = useTenantProfile()
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-xs font-semibold text-text-muted">Kết quả từ Content Engine</span>
+          <span className="text-xs font-semibold text-text-muted">Bài đã soạn</span>
           <h2 className="text-lg font-black text-text">Xem trước & Biên tập nội dung</h2>
         </div>
         <Button
@@ -58,6 +60,7 @@ export function GenerationResults({
         productName={productName}
         productImageUrl={productImageUrl}
         modelInfo={modelInfo}
+        shopName={business?.display_name}
         criticScore={criticScore}
         onUpdatePost={onUpdatePost}
         onSchedulePost={onApprovePost}
@@ -69,7 +72,7 @@ export function GenerationResults({
             <span>🚀</span> Bước tiếp theo: Xuất bản đa nền tảng
           </div>
           <div className="text-xs text-text-muted mt-0.5">
-            Sau khi duyệt, bài viết sẽ tự động chuyển vào hàng đợi Social Publishing.
+            Sau khi duyệt, bài viết chuyển vào lịch đăng bài.
           </div>
         </div>
         <Button

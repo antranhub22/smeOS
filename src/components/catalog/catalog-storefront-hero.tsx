@@ -57,7 +57,7 @@ export function CatalogStorefrontHero({
               }}
             >
               <Sparkles size={13} />
-              <span>{template.badge} • {style.name}</span>
+              <span>Bộ sưu tập</span>
             </div>
           )}
 

@@ -4,10 +4,12 @@
  */
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { GovernanceMatrixTable } from "@/components/governance/governance-matrix-table"
 import { useI18n } from "@/lib/i18n"
-import type { GovernanceMatrixState, GovernanceMatrixGroup } from "@/components/governance/governance-matrix-types"
+import type { GovernanceMatrixState } from "@/components/governance/governance-matrix-types"
+import { useGovernanceMatrix } from "./use-governance-matrix"
+import { GovernanceScopeNote } from "./governance-scope-note"
 import {
   buildSSOTGovernanceGroups,
   type GovernanceSystemKey,
@@ -25,16 +27,12 @@ export function MotherGovernanceMatrixClient({
   const { t, dict } = useI18n()
   const [activeTab] = useState<MatrixTab>(defaultTab)
 
-  // Kết nối trực tiếp với SSOT Governance Catalog Registry (Zero hardcode)
-  const [matrixData, setMatrixData] = useState<Record<MatrixTab, GovernanceMatrixGroup[]>>({
-    PROMOTIONS: buildSSOTGovernanceGroups({ systemKey: "PROMOTIONS", viewerTier: "MOTHER", industryKey: "FLORAL" }),
-    COMMITMENTS: buildSSOTGovernanceGroups({ systemKey: "COMMITMENTS", viewerTier: "MOTHER", industryKey: "FLORAL" }),
-    POLICIES: buildSSOTGovernanceGroups({ systemKey: "POLICIES", viewerTier: "MOTHER", industryKey: "FLORAL" }),
-    PAYMENTS: buildSSOTGovernanceGroups({ systemKey: "PAYMENTS", viewerTier: "MOTHER", industryKey: "FLORAL" }),
-    CRAFT_FEES: buildSSOTGovernanceGroups({ systemKey: "CRAFT_FEES", viewerTier: "MOTHER", industryKey: "FLORAL" }),
-  })
-
-  const currentGroups = matrixData[activeTab]
+  const base = useMemo(
+    () => buildSSOTGovernanceGroups({ systemKey: activeTab, viewerTier: "MOTHER", industryKey: "FLORAL" }),
+    [activeTab]
+  )
+  const matrix = useGovernanceMatrix("/api/v1/platform/governance-matrix", activeTab, base, "MOTHER")
+  const currentGroups = matrix.groups
 
   const currentState: GovernanceMatrixState = {
     systemKey: activeTab,
@@ -43,48 +41,10 @@ export function MotherGovernanceMatrixClient({
     scopeId: "GLOBAL",
     groups: currentGroups,
     totalItems: currentGroups.reduce((acc, g) => acc + g.items.length, 0),
-    lockedCount: currentGroups.reduce(
-      (acc, g) => acc + g.items.filter((i) => i.isLocked).length,
-      0
-    ),
-    overrideCount: currentGroups.reduce(
-      (acc, g) => acc + g.items.filter((i) => i.hasLocalOverride).length,
-      0
-    ),
-    loading: false,
-    error: null,
-  }
-
-  async function handleToggleItem(key: string, enabled: boolean) {
-    setMatrixData((prev) => {
-      const groups = prev[activeTab].map((g) => ({
-        ...g,
-        items: g.items.map((item) =>
-          item.key === key ? { ...item, enabled } : item
-        ),
-      }))
-      return { ...prev, [activeTab]: groups }
-    })
-  }
-
-  async function handleToggleLock(key: string, locked: boolean) {
-    setMatrixData((prev) => {
-      const groups = prev[activeTab].map((g) => ({
-        ...g,
-        items: g.items.map((item) =>
-          item.key === key
-            ? {
-                ...item,
-                isLocked: locked,
-                hardLockedBy: locked ? "MOTHER" : null,
-                isOwnHardLock: locked,
-                lockReason: locked ? "Khóa cứng bởi Quản trị viên Nền tảng" : undefined,
-              }
-            : item
-        ),
-      }))
-      return { ...prev, [activeTab]: groups }
-    })
+    lockedCount: currentGroups.reduce((acc, g) => acc + g.items.filter((i) => i.isLocked).length, 0),
+    overrideCount: currentGroups.reduce((acc, g) => acc + g.items.filter((i) => i.hasLocalOverride).length, 0),
+    loading: matrix.loading,
+    error: matrix.error,
   }
 
   const pageTitleMap: Record<MatrixTab, { title: string; desc: string }> = {
@@ -124,12 +84,21 @@ export function MotherGovernanceMatrixClient({
         </p>
       </div>
 
+      <GovernanceScopeNote system={activeTab} />
+
+      {matrix.error && (
+        <p role="alert" className="rounded-xl border border-danger-border bg-danger-bg px-4 py-2.5 text-body-sm text-danger-text">
+          {matrix.error}
+        </p>
+      )}
+
       {/* Bảng Ma Trận Quản Trị Tương Ứng — Hoàn toàn đọc từ SSOT Registry */}
       <GovernanceMatrixTable
         state={currentState}
         canManageHardLocks={true}
-        onToggleItem={handleToggleItem}
-        onToggleLock={handleToggleLock}
+        onToggleItem={matrix.toggleItem}
+        onResetItem={matrix.resetItem}
+        onToggleLock={matrix.toggleLock}
       />
     </div>
   )

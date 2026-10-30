@@ -191,6 +191,8 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   J4: { name: "landing.publish", group: "channel", label: "Xuất bản landing page", defaultRoles: ["dieu_hanh"] },
   J5: { name: "social.publish", group: "channel", label: "Đăng bài lên mạng xã hội", defaultRoles: ["dieu_hanh", "marketing"] },
   J6: { name: "chat.manage", group: "channel", label: "Quản lý hội thoại khách hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing", "customer_service"] },
+  // PO 30/10/2026 (nợ #170): gác 2 route sinh nội dung AI của Công cụ 08/09 — tốn credit AI nên không mở cho mọi tài khoản
+  J7: { name: "content.landing_catalog.generate", group: "channel", label: "Tạo nội dung landing page và catalog bằng AI", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing", "sale"] },
   // L — Sản phẩm và giá
   L1: { name: "product.read", group: "product_pricing", label: "Xem sản phẩm trong Product Master", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "product_manager", "marketing", "crm"] },
   // PO 23/10/2026: Sale tạo được mẫu đề xuất. Không có H3 thì mẫu mang nhãn đề xuất và

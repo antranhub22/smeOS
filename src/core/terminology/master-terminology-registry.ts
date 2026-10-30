@@ -61,25 +61,21 @@ export const STORE_OS_TERMS: StoreOsTerminology = {
 /**
  * Tra cứu thuật ngữ theo từng Tầng trong hệ sinh thái
  */
-export function getTierTerminology<T extends SmeOsTier>(
-  tier: T
-): T extends "TIER_1_SAAS"
-  ? SaasMotherTerminology
-  : T extends "TIER_2_INDUSTRY"
-  ? SaasIndustryTerminology
-  : T extends "TIER_3_CHAIN"
-  ? ChainOsTerminology
-  : StoreOsTerminology {
-  switch (tier) {
-    case "TIER_1_SAAS":
-      return SAAS_MOTHER_TERMS as any
-    case "TIER_2_INDUSTRY":
-      return SAAS_INDUSTRY_TERMS as any
-    case "TIER_3_CHAIN":
-      return CHAIN_OS_TERMS as any
-    case "TIER_4_STORE":
-      return STORE_OS_TERMS as any
-    default:
-      return STORE_OS_TERMS as any
-  }
+/** Bảng tầng → bộ thuật ngữ; kiểu trả về suy ra theo khoá, không cần ép `any`. */
+export interface TierTerminologyMap {
+  TIER_1_SAAS: SaasMotherTerminology
+  TIER_2_INDUSTRY: SaasIndustryTerminology
+  TIER_3_CHAIN: ChainOsTerminology
+  TIER_4_STORE: StoreOsTerminology
+}
+
+const TIER_TERMS: TierTerminologyMap = {
+  TIER_1_SAAS: SAAS_MOTHER_TERMS,
+  TIER_2_INDUSTRY: SAAS_INDUSTRY_TERMS,
+  TIER_3_CHAIN: CHAIN_OS_TERMS,
+  TIER_4_STORE: STORE_OS_TERMS,
+}
+
+export function getTierTerminology<T extends SmeOsTier>(tier: T): TierTerminologyMap[T] {
+  return TIER_TERMS[tier]
 }

@@ -1,5 +1,5 @@
 {
-  "total": 66,
+  "total": 59,
   "files": {
     "scripts/check-industry.ts": {
       "@typescript-eslint/no-explicit-any": 5
@@ -131,17 +131,11 @@
     "src/modules/greeting-card/infra/__tests__/subcontract-order-repository.test.ts": {
       "@typescript-eslint/no-explicit-any": 1
     },
-    "src/modules/greeting-card/use-cases/__tests__/cancel-subcontract-reminder-steps.test.ts": {
-      "@typescript-eslint/no-explicit-any": 4
-    },
     "src/modules/journey/domain/journey-state.test.ts": {
       "prefer-const": 1
     },
     "src/modules/organization/domain/industry-profile.ts": {
       "@typescript-eslint/no-explicit-any": 1
-    },
-    "src/modules/profiles/adapters/business-profile-fact-reader.test.ts": {
-      "@typescript-eslint/no-explicit-any": 3
     },
     "src/modules/storage/infra/trash-repository.ts": {
       "@typescript-eslint/no-explicit-any": 5

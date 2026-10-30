@@ -110,7 +110,7 @@ export function useMarketIntelligenceData() {
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         setResearchStatus({
-          state: "error",
+          state: "failed",
           message:
             errData.error || `Lỗi máy chủ (${res.status}): Không thể khởi tạo phiên quét.`,
         });
@@ -122,7 +122,7 @@ export function useMarketIntelligenceData() {
       setResearchStatus({
         state: "running",
         message:
-          "Đã nạp vào hàng đợi! AI đang phân tích tín hiệu đa kênh và tính toán cơ hội nội dung mới...",
+          "Đã nhận yêu cầu. AI đang phân tích tín hiệu đa kênh và tìm cơ hội nội dung mới...",
         keyword: params.keyword,
       });
 
@@ -141,7 +141,7 @@ export function useMarketIntelligenceData() {
               clearInterval(pollTimer);
               await fetchOpportunities();
               setResearchStatus({
-                state: "completed",
+                state: "succeeded",
                 message: `Phân tích thành công! Đã phát hiện ${
                   currentRun.opportunities_created || "nhiều"
                 } cơ hội nội dung theo xu hướng cho chủ đề "${params.keyword}".`,
@@ -162,7 +162,7 @@ export function useMarketIntelligenceData() {
             if (currentRun && currentRun.status === "FAILED") {
               clearInterval(pollTimer);
               setResearchStatus({
-                state: "error",
+                state: "failed",
                 message: `Phiên quét thất bại: ${
                   currentRun.error_summary || "Lỗi dịch vụ"
                 }`,
@@ -179,11 +179,17 @@ export function useMarketIntelligenceData() {
           clearInterval(pollTimer);
           setTriggering(false);
           await fetchOpportunities();
+          // Hết lượt hỏi nhưng phiên chưa xong: báo thật, không để banner "đang chạy" mãi (03c UX-016).
+          setResearchStatus({
+            state: "failed",
+            message: "Phiên quét đang chạy lâu hơn bình thường. Kết quả sẽ hiện trong mục Lịch sử quét khi xong.",
+            keyword: params.keyword,
+          });
         }
       }, 2000);
     } catch (err: unknown) {
       setResearchStatus({
-        state: "error",
+        state: "failed",
         message: `Lỗi kết nối máy chủ: ${errorText(err)}`,
       });
       setTriggering(false);

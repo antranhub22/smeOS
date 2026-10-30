@@ -221,7 +221,7 @@ export default function ChiTietToChucPage() {
             <div className="flex items-center gap-2">
               <span
                 className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                  isChain ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"
+                  isChain ? "bg-accent/15 text-accent-text" : "bg-primary/15 text-primary"
                 }`}
               >
                 {isChain ? "Chuỗi cửa hàng (CHAIN)" : "1 Cửa hàng độc lập (SINGLE)"}

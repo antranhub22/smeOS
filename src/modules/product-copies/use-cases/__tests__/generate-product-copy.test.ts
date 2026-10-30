@@ -44,32 +44,47 @@ const PHAN_TICH_THAT = {
   confidence: 90,
 }
 
-vi.mock("@/modules/products/infra/product-analysis-repository", () => ({
-  ProductAnalysisRepository: vi.fn().mockImplementation(function () { return { findById: vi.fn() } }),
-}))
+vi.mock("@/modules/products/infra/product-analysis-repository", () => {
+  const mocked = {
+    ProductAnalysisRepository: vi.fn().mockImplementation(function () { return { findById: vi.fn() } }),
+  }
+  return { ...mocked, getProductAnalysisRepository: vi.fn(() => new mocked.ProductAnalysisRepository()) }
+})
 
-vi.mock("@/modules/profiles/infra/brand-profile-repository", () => ({
-  BrandProfileRepository: vi.fn().mockImplementation(function () { return { current: vi.fn() } }),
-}))
+vi.mock("@/modules/profiles/infra/brand-profile-repository", () => {
+  const mocked = {
+    BrandProfileRepository: vi.fn().mockImplementation(function () { return { current: vi.fn() } }),
+  }
+  return { ...mocked, getBrandProfileRepository: vi.fn(() => new mocked.BrandProfileRepository()) }
+})
 
-vi.mock("@/modules/organization/infra/occasion-repository", () => ({
-  OccasionRepository: vi.fn().mockImplementation(function () { return { list: vi.fn() } }),
-}))
+vi.mock("@/modules/organization/infra/occasion-repository", () => {
+  const mocked = {
+    OccasionRepository: vi.fn().mockImplementation(function () { return { list: vi.fn() } }),
+  }
+  return { ...mocked, getOccasionRepository: vi.fn(() => new mocked.OccasionRepository()) }
+})
 
-vi.mock("@/modules/product-copies/infra/product-copy-repository", () => ({
-  ProductCopyRepository: vi.fn().mockImplementation(function () { return {
-    db: {},
-    findByAnalysisId: vi.fn(),
-    createFromAnalysis: vi.fn(),
-  } }),
-}))
+vi.mock("@/modules/product-copies/infra/product-copy-repository", () => {
+  const mocked = {
+    ProductCopyRepository: vi.fn().mockImplementation(function () { return {
+      db: {},
+      findByAnalysisId: vi.fn(),
+      createFromAnalysis: vi.fn(),
+    } }),
+  }
+  return { ...mocked, getProductCopyRepository: vi.fn(() => new mocked.ProductCopyRepository()) }
+})
 
-vi.mock("@/modules/jobs/infra/generation-job-repository", () => ({
-  GenerationJobRepository: vi.fn().mockImplementation(function () { return {
-    startInline: vi.fn(),
-    finishInline: vi.fn(),
-  } }),
-}))
+vi.mock("@/modules/jobs/infra/generation-job-repository", () => {
+  const mocked = {
+    GenerationJobRepository: vi.fn().mockImplementation(function () { return {
+      startInline: vi.fn(),
+      finishInline: vi.fn(),
+    } }),
+  }
+  return { ...mocked, getGenerationJobRepository: vi.fn(() => new mocked.GenerationJobRepository()) }
+})
 
 vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({ enqueueJob: vi.fn() }))
 vi.mock("@/modules/usage/use-cases/refund-job", () => ({ refundJob: vi.fn() }))

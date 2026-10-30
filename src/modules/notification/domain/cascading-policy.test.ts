@@ -73,6 +73,7 @@ describe("Cascading Policy — Notification Resolution", () => {
       ]
       const res = resolveCascadingPreference({
         ...baseInput,
+        parentOrgId: "chain-org-1",
         hardLocks,
         userPreference: { eventKey: "ORDER_RECEIVED", channel: "TELEGRAM", enabled: false },
       })
@@ -136,7 +137,7 @@ describe("Cascading Policy — Notification Resolution", () => {
           enabled: false,
         },
       ]
-      const applied = getAppliedHardLock(locks, "ORDER_RECEIVED", "TELEGRAM", "STORE")
+      const applied = getAppliedHardLock(locks, "ORDER_RECEIVED", "TELEGRAM", "STORE", { storeOrgId: "store-1" })
       expect(applied).not.toBeNull()
       expect(applied?.tier).toBe("MOTHER")
     })
@@ -151,7 +152,39 @@ describe("Cascading Policy — Notification Resolution", () => {
           enabled: false,
         },
       ]
-      const applied = getAppliedHardLock(locks, "ORDER_RECEIVED", "TELEGRAM", "CHAIN")
+      const applied = getAppliedHardLock(locks, "ORDER_RECEIVED", "TELEGRAM", "CHAIN", { storeOrgId: "store-1" })
+      expect(applied).toBeNull()
+    })
+  })
+
+  describe("Phạm vi khoá cứng giữa các tổ chức (AUD-014/015)", () => {
+    const lockOf = (tier: HardLockEntry["tier"], scopeId: string): HardLockEntry => ({
+      eventKey: "ORDER_RECEIVED", channel: "TELEGRAM", tier, scopeId, enabled: false, reason: "lý do riêng",
+    })
+    const userOn = { eventKey: "ORDER_RECEIVED", channel: "TELEGRAM" as const, enabled: true }
+
+    it("khoá STORE/CHAIN của tổ chức khác không ảnh hưởng tổ chức này", () => {
+      const res = resolveCascadingPreference({
+        ...baseInput,
+        parentOrgId: "chain-A",
+        hardLocks: [lockOf("STORE", "store-org-OTHER"), lockOf("CHAIN", "chain-OTHER")],
+        userPreference: userOn,
+      })
+      expect(res.decidedBy).toBe("USER")
+      expect(res.enabled).toBe(true)
+    })
+
+    it("khoá CHAIN của chuỗi cấp trên áp xuống cửa hàng trực thuộc", () => {
+      const res = resolveCascadingPreference({
+        ...baseInput, parentOrgId: "chain-A", hardLocks: [lockOf("CHAIN", "chain-A")], userPreference: userOn,
+      })
+      expect(res.decidedBy).toBe("HARD_LOCK_CHAIN")
+    })
+
+    it("getAppliedHardLock không trả khoá (và lý do) của tenant khác", () => {
+      const applied = getAppliedHardLock(
+        [lockOf("CHAIN", "chain-OTHER")], "ORDER_RECEIVED", "TELEGRAM", "STORE", { storeOrgId: "store-org-1" }
+      )
       expect(applied).toBeNull()
     })
   })

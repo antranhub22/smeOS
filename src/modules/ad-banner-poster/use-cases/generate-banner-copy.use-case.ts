@@ -8,6 +8,7 @@ import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider"
 import type { BannerCopyPayload } from "../domain/banner-types"
 import { buildBannerCopyPrompt } from "../domain/prompt-builder"
 import { generateInstantBannerCopy } from "../domain/banner-template-generator"
+import { enforceShopPromotion, shopPromotionBadge } from "../domain/promotion-guard"
 
 export interface GenerateBannerCopyInput {
   readonly industryKey: string
@@ -16,6 +17,8 @@ export interface GenerateBannerCopyInput {
   readonly shopName: string
   readonly productTitle?: string | undefined
   readonly desiredPromotion?: string | undefined
+  /** Ưu đãi tiệm đang bật (Hồ sơ tiệm) — nguồn duy nhất cho nhãn ưu đãi */
+  readonly shopPromotions: readonly string[]
 }
 
 export interface GenerateBannerCopyOutput {
@@ -26,7 +29,7 @@ export interface GenerateBannerCopyOutput {
 const copyResponseSchema = z.object({
   headline: z.string().min(2),
   subHeadline: z.string().min(3),
-  promotionBadge: z.string().min(1),
+  promotionBadge: z.string(),
   ctaText: z.string().min(2),
   validityText: z.string().optional(),
 })
@@ -39,7 +42,7 @@ export async function generateBannerCopyUseCase(
     occasionLabel: input.occasionLabel,
     shopName: input.shopName,
     productTitle: input.productTitle,
-    desiredPromotion: input.desiredPromotion,
+    shopPromotions: input.shopPromotions,
   })
 
   // Thử gọi AI Content Engine
@@ -58,16 +61,18 @@ export async function generateBannerCopyUseCase(
         const rawJson = JSON.parse(jsonMatch[0])
         const parsed = copyResponseSchema.safeParse(rawJson)
         if (parsed.success) {
-          const bannerCopy: BannerCopyPayload = {
+          const bannerCopy: BannerCopyPayload | null = enforceShopPromotion({
             headline: parsed.data.headline,
             subHeadline: parsed.data.subHeadline,
             promotionBadge: parsed.data.promotionBadge,
             ctaText: parsed.data.ctaText,
             validityText: parsed.data.validityText,
-          }
-          return {
-            copy: bannerCopy,
-            source: "AI_CONTENT_ENGINE",
+          }, input.shopPromotions)
+          if (bannerCopy) {
+            return {
+              copy: bannerCopy,
+              source: "AI_CONTENT_ENGINE",
+            }
           }
         }
       }
@@ -81,6 +86,7 @@ export async function generateBannerCopyUseCase(
     occasionKey: input.occasionKey,
     shopName: input.shopName,
     productTitle: input.productTitle,
+    suggestedPromotion: shopPromotionBadge(input.shopPromotions, input.desiredPromotion),
   })
 
   return {

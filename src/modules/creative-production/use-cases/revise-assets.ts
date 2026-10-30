@@ -68,7 +68,7 @@ async function runInlineAiJob<O>(
       opts.adapter,
       aiGatewayDeps(ctx)
     )
-    if (ai.kind !== "xong") throw new AppError("INTERNAL", `Cổng AI không chạy được: ${ai.reason}`)
+    if (ai.kind !== "xong") throw new AppError("INTERNAL", "AI chưa chạy được lúc này — hãy thử lại sau ít phút")
     const output = ai.output as O
     await jobs.finishInline(ctx, enq.job.id, { ok: true, now: new Date(), output })
     return { jobId: enq.job.id, output, usage: enq.usage, deduped: false }

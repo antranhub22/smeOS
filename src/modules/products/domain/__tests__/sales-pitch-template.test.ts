@@ -156,8 +156,12 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
     expect(script).toContain("BÓ TULIP VÀNG NẮNG")
     expect(script).toContain("850.000")
     expect(script).toContain("Hoa Tulip (10 bông)")
-    expect(script).toContain("QUÀ TẶNG KÈM THEO")
-    expect(script).toContain("CAM KẾT DỊCH VỤ TỪ SHOP")
+    // Tiệm chưa khai quà tặng/cam kết → kịch bản không tự in (audit sâu MEUX 29/10/2026)
+    expect(script).not.toContain("QUÀ TẶNG KÈM THEO")
+    expect(script).not.toContain("Chrysal")
+    const withGifts = generateZaloPitchScript(buildSalesPitchData(null, null, undefined, null, { freeGifts: ["Thiệp viết tay"], guarantees: ["Đổi mới nếu dập"] }))
+    expect(withGifts).toContain("QUÀ TẶNG KÈM THEO")
+    expect(withGifts).toContain("CAM KẾT DỊCH VỤ TỪ SHOP")
     // Nợ #96: chưa có override kích thước thật -> KHÔNG hiện số bịa 55×40cm
     // nữa, phải hiện rõ đây là ô trống cần xác nhận.
     expect(script).toContain("chưa có kích thước cụ thể, liên hệ shop để xác nhận")

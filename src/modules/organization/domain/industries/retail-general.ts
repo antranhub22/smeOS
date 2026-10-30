@@ -114,4 +114,5 @@ export const RETAIL_GENERAL_INDUSTRY: IndustryPluginContract = {
     laborByComplexityVnd: { EASY: 20_000, MEDIUM: 80_000, HARD: 200_000 },
     peakDays: [],
   },
+  costing: null,
 }

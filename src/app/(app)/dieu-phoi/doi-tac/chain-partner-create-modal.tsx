@@ -21,11 +21,12 @@ import type { ChainPartnershipEntity } from "@/modules/chain-partnership/domain/
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import type { PartnerCredential } from "@/components/organization/partner-credential-dialog"
 
 interface ChainPartnerModalProps {
   showModal: boolean
   onClose: () => void
-  onSuccess: () => void
+  onSuccess: (credential?: PartnerCredential) => void
 }
 
 export function ChainPartnerCreateModal({
@@ -58,35 +59,46 @@ export function ChainPartnerCreateModal({
     setSubmitting(true)
 
     try {
-      let payload = {}
+      let credential: PartnerCredential | undefined
       if (activeTab === "NEW") {
-        payload = {
-          mode: "NEW",
-          partnerStoreName,
-          partnerCode,
-          contactName,
-          contactPhone,
-          contactEmail,
-          address,
-          province,
+        const res = await fetch("/api/v1/coordinator/partners", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            partnerStoreName,
+            partnerCode,
+            contactName,
+            contactPhone,
+            contactEmail,
+            address,
+            province,
+            partnershipType: "SUBCONTRACTOR",
+          }),
+        })
+        const json = await res.json()
+        if (!res.ok) {
+          setErrorMsg(json.message || "Không thể cấp tài khoản đối tác")
+          return
+        }
+        // Mật khẩu ban đầu — máy chủ chỉ trả về một lần (audit AUD-009)
+        if (json.temporaryPassword) {
+          credential = { storeName: partnerStoreName, email: contactEmail, temporaryPassword: json.temporaryPassword }
         }
       } else {
-        payload = {
-          mode: "EXISTING",
-          identifier: existingIdentifier,
-          partnerCode: existingPartnerCode,
+        const res = await fetch("/api/v1/coordinator/partners/link-existing", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            identifier: existingIdentifier,
+            partnerCode: existingPartnerCode,
+            partnershipType: "SUBCONTRACTOR",
+          }),
+        })
+        const json = await res.json()
+        if (!res.ok) {
+          setErrorMsg(json.message || "Không thể liên kết cửa hàng này")
+          return
         }
-      }
-
-      const res = await fetch("/api/v1/coordinator/partners", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-      const json = await res.json()
-      if (!json.success) {
-        setErrorMsg(json.error || "Không thể thực hiện liên kết")
-        return
       }
 
       onClose()
@@ -99,7 +111,7 @@ export function ChainPartnerCreateModal({
       setAddress("")
       setExistingIdentifier("")
       setExistingPartnerCode("")
-      onSuccess()
+      onSuccess(credential)
     } catch {
       setErrorMsg("Đã xảy ra lỗi kết nối máy chủ")
     } finally {

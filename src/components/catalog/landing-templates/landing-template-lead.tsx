@@ -10,12 +10,15 @@ interface LandingTemplateLeadProps {
   occasionTitle?: string
   /** Slug của catalog đang xem — dùng để gọi API lưu lead */
   catalogSlug?: string | undefined
+  /** Nội dung khối do AI/mẫu soạn — ưu đãi chỉ có khi tiệm bật trong Hồ sơ tiệm */
+  lead?: { tag?: string; title?: string; description?: string } | undefined
 }
 
 export function LandingTemplateLead({
   archetypeId,
   occasionTitle,
   catalogSlug,
+  lead,
 }: LandingTemplateLeadProps) {
   const [phone, setPhone] = useState("")
   const [submitted, setSubmitted] = useState(false)
@@ -30,7 +33,7 @@ export function LandingTemplateLead({
   const containerStyle = isLuxury
     ? "bg-surface-alt/60 text-text border-primary/30 rounded-3xl p-6 sm:p-8 shadow-md"
     : isFestive
-    ? "bg-danger-bg/15 text-text border-2 border-danger/40 rounded-2xl p-6 sm:p-7 shadow-md"
+    ? "bg-primary/10/15 text-text border-2 border-primary/40 rounded-2xl p-6 sm:p-7 shadow-md"
     : isRomantic
     ? "bg-surface-alt/70 text-text border-primary/20 rounded-3xl p-6 sm:p-7 shadow-xs"
     : isModern
@@ -38,30 +41,30 @@ export function LandingTemplateLead({
     : "bg-surface text-text border-border rounded-3xl p-5 sm:p-6 shadow-sm"
 
   const titleFont = isLuxury
-    ? "font-serif text-title sm:text-display font-normal"
+    ? "font-display text-title sm:text-display font-normal"
     : isFestive
-    ? "font-black text-title sm:text-display text-danger"
+    ? "font-semibold text-title sm:text-display text-primary"
     : isModern
-    ? "font-black text-title sm:text-display"
-    : "font-black text-title sm:text-title-lg"
+    ? "font-semibold text-title sm:text-display"
+    : "font-semibold text-title sm:text-title-lg"
 
   const badgeStyle = isLuxury
-    ? "bg-primary/10 text-primary border border-primary/20 rounded-full font-serif uppercase tracking-widest text-caption"
+    ? "bg-primary/10 text-primary border border-primary/20 rounded-full font-display uppercase tracking-widest text-caption"
     : isFestive
-    ? "bg-danger text-white rounded-md uppercase font-black tracking-wide text-caption shadow-xs"
+    ? "bg-primary text-primary-foreground rounded-md uppercase font-semibold tracking-wide text-caption shadow-xs"
     : isRomantic
-    ? "bg-primary/15 text-primary rounded-full font-bold text-caption"
+    ? "bg-primary/10 text-primary rounded-full font-bold text-caption"
     : "bg-surface-alt text-text border border-border rounded-md font-mono uppercase text-caption"
 
   const buttonStyle = isLuxury
-    ? "bg-primary hover:bg-primary-dark text-white rounded-full font-serif tracking-widest uppercase px-6"
+    ? "bg-primary hover:bg-primary-dark text-primary-foreground rounded-full font-display px-6"
     : isFestive
-    ? "bg-danger hover:bg-danger/90 text-white rounded-xl font-black uppercase tracking-wide px-5 shadow-sm"
+    ? "bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold px-5 shadow-sm"
     : isRomantic
-    ? "bg-primary hover:bg-primary-dark text-white rounded-full font-bold px-5"
+    ? "bg-primary hover:bg-primary-dark text-primary-foreground rounded-full font-bold px-5"
     : isModern
     ? "bg-text text-surface hover:bg-text/90 rounded-lg font-bold px-5"
-    : "bg-primary hover:bg-primary-dark text-white font-black px-4"
+    : "bg-primary hover:bg-primary-dark text-primary-foreground font-semibold px-4"
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -98,13 +101,13 @@ export function LandingTemplateLead({
       <div className="text-center max-w-md mx-auto space-y-2">
         <div className={`inline-flex items-center gap-1.5 px-3 py-1 ${badgeStyle}`}>
           <Gift size={12} className="shrink-0" />
-          <span>{isFestive ? "Chớp Cơ Hội Duy Nhất Hôm Nay" : isLuxury ? "Đặc Quyền Riêng Tư Cho Bạn" : "Đặc Quyền Đặt Hoa Sớm"}</span>
+          <span>{lead?.tag || "Đặt trước"}</span>
         </div>
         <h3 className={`tracking-tight leading-snug ${titleFont}`}>
-          {isFestive ? "Ưu Đãi Siêu Tốc 10% & Tặng Thiệp Thiết Kế Riêng" : "Nhận Ngay Ưu Đãi 10% & Tặng Thiệp Thiết Kế Riêng"}
+          {lead?.title || "Để lại số điện thoại để được tư vấn mẫu"}
         </h3>
-        <p className={`text-caption sm:text-body-sm text-text-muted leading-relaxed ${isLuxury ? "font-serif italic" : ""}`}>
-          Áp dụng cho khách hàng đặt trước trong chiến dịch {occasionTitle ? `"${occasionTitle}"` : "này"}. Số lượng ưu đãi có hạn mỗi ngày!
+        <p className={`text-caption sm:text-body-sm text-text-muted leading-relaxed ${isLuxury ? "font-display italic" : ""}`}>
+          {lead?.description || `Tiệm sẽ liên hệ lại để tư vấn và giữ mẫu${occasionTitle ? ` cho "${occasionTitle}"` : ""}.`}
         </p>
       </div>
 
@@ -115,7 +118,7 @@ export function LandingTemplateLead({
             <span>Đã ghi nhận số điện thoại thành công!</span>
           </div>
           <p className="text-caption opacity-90">
-            Chuyên viên tư vấn sản phẩm sẽ liên hệ Zalo lại ngay trong vòng 5 phút để xác nhận mẫu và áp dụng mã giảm giá 10% cho bạn.
+            Tiệm sẽ liên hệ lại qua Zalo để xác nhận mẫu cho bạn.
           </p>
         </div>
       ) : (
@@ -140,31 +143,31 @@ export function LandingTemplateLead({
                 <Loader2 size={13} className="animate-spin" />
               ) : (
                 <>
-                  <span>{isFestive ? "Nhận ưu đãi ngay" : "Tư vấn ngay"}</span>
+                  <span>Tư vấn ngay</span>
                   <ArrowRight size={13} />
                 </>
               )}
             </Button>
           </form>
           {submitError && (
-            <p className="text-center text-caption text-danger mt-1">{submitError}</p>
+            <p className="text-center text-caption text-primary mt-1">{submitError}</p>
           )}
         </div>
       )}
 
-      {/* 3 Guarantees */}
-      <div className={`pt-3 border-t border-border/50 grid grid-cols-3 gap-2 text-caption text-text-muted text-center ${isLuxury ? "font-serif" : ""}`}>
+      {/* 3 điểm dịch vụ trung tính — không cam kết khi tiệm chưa khai */}
+      <div className={`pt-3 border-t border-border/50 grid grid-cols-3 gap-2 text-caption text-text-muted text-center ${isLuxury ? "font-display" : ""}`}>
         <div className="flex flex-col items-center gap-1">
-          <Camera size={14} className={isFestive ? "text-danger" : "text-warning"} />
-          <span className="font-medium">Chụp ảnh duyệt trước</span>
+          <Camera size={14} className={isFestive ? "text-primary" : "text-warning"} />
+          <span className="font-medium">Xem mẫu thật</span>
         </div>
         <div className="flex flex-col items-center gap-1">
           <Clock size={14} className="text-primary" />
-          <span className="font-medium">Giao chuẩn hẹn 2h</span>
+          <span className="font-medium">Giao tận nơi</span>
         </div>
         <div className="flex flex-col items-center gap-1">
           <CheckCircle2 size={14} className="text-success" />
-          <span className="font-medium">Sản phẩm 3–5 ngày</span>
+          <span className="font-medium">Kèm lời chúc</span>
         </div>
       </div>
     </div>

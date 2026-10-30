@@ -71,7 +71,7 @@ dùng lại: `FlowerImage`, `TrackingStepperView` · tạo mới: `sales/sales-k
 - Đơn mới cọc: mở lại link vẫn ở bước thanh toán với QR phần còn lại; màn thanh toán báo "Cửa hàng đã nhận tiền cọc" + nút xem QR phần còn lại.
 - Theo dõi theo mã đơn: mặc định rút gọn (tên viết tắt, phường + tỉnh); ô "Nhập 4 số cuối số điện thoại" để xem đầy đủ; mở từ chính link của khách thì đầy đủ sẵn.
 - Form đặt hoa có ô bẫy ẩn chống máy tự điền (không hiện, không nhận Tab, trình đọc màn hình bỏ qua).
-- Form đặt mua (PO 23/10/2026) theo chuẩn Spotlight, 4 khối có số thứ tự: ① Chọn sản phẩm (tùy chọn, giá, ưu đãi) · ② Thông tin người mua (công tắc "Tôi cũng là người nhận", mặc định tắt — bật thì ẩn ô người nhận, đơn gửi tên/SĐT người mua làm người nhận; homestay: công tắc "Tôi là người nhận phòng" cũng nằm ở khối này) · ③ Giao hàng (homestay: Thông tin đặt phòng) · ④ Ghi chú dạng gọn: chỉ mở sẵn ô mặc định theo ngành (hoa, quà, thời trang, F&B, bán lẻ: lời nhắn trên thiệp; dịch vụ: ghi chú gia công; homestay: yêu cầu đặc biệt) + ô đã có nội dung, loại khác thêm qua menu "Thêm ghi chú…", bỏ ô thì xoá nội dung. Khối đang thao tác sáng lên, khối khác mờ; bấm "Xem lại đơn" bị lỗi → khối chứa trường lỗi tự sáng, cuộn tới và hiện lỗi ngay trong khối (`order-spotlight/`).
+- Form đặt mua (PO 23/10/2026) theo chuẩn Spotlight, 4 khối có số thứ tự: ① Chọn sản phẩm (tùy chọn, giá, ưu đãi) · ② Thông tin người mua (công tắc "Tôi cũng là người nhận", mặc định tắt — bật thì ẩn ô người nhận, đơn gửi tên/SĐT người mua làm người nhận; homestay: công tắc "Tôi là người nhận phòng" cũng nằm ở khối này) · ③ Giao hàng (homestay: Thông tin đặt phòng) · ④ Ghi chú dạng gọn: chỉ mở sẵn ô mặc định theo ngành (hoa, quà, thời trang, F&B, bán lẻ: lời nhắn trên thiệp; dịch vụ: ghi chú gia công; homestay: yêu cầu đặc biệt) + ô đã có nội dung, loại khác thêm qua menu "Thêm ghi chú…", bỏ ô thì xoá nội dung. Khối đang thao tác sáng lên, khối khác chìm nền (chữ không mờ); bấm "Xem lại đơn" bị lỗi → khối chứa trường lỗi tự sáng, cuộn tới và hiện lỗi ngay trong khối (`order-spotlight/`).
 
 ## 13c. Chuẩn bị 20/10 (PO 08/10/2026)
 - Tab "Điều hành" (thu tiền, báo giá, giao dịch ngân hàng) chỉ hiện với `R11` — trần cứng Điều hành; Sale và Điều phối không thấy nút "Thu tiền" (cả ở Sổ đơn hàng).
@@ -96,7 +96,7 @@ dùng lại: `FlowerImage`, `TrackingStepperView` · tạo mới: `sales/sales-k
 - **Kiến trúc Tiêu Điểm Khối Tương Tác (Active Block Spotlight / Focus-First Block UX)**:
   - Điều phối bởi `JourneyFocusContext` (`activeBlock: 1 | 2 | 3`).
   - Khi nhân viên click hoặc tương tác vào bất kỳ khối nào, khối đó sẽ trở thành **Tiêu điểm chính** (`opacity-100`, viền `ring-2 ring-primary/40`, đổ bóng `shadow-sm`, nền sáng).
-  - Các khối còn lại được làm mờ nhẹ (`opacity-60`, chuyển tiếp mượt mà `transition-all duration-300`, vẫn sáng rõ lên `hover:opacity-95` khi rê chuột) giúp người dùng dồn toàn bộ sự chú ý vào tác vụ hiện tại mà không bị xao nhãng.
+  - Các khối còn lại chìm xuống bằng nền trong suốt và viền nhạt (`bg-transparent border-border/60`, rê chuột thì nền sáng lên) — **không làm mờ chữ** (`opacity`) để chữ luôn đạt tương phản 4,5:1 (PO 29/10/2026, thay quy tắc `opacity-60` cũ).
 - **Tương thích Đa ngành SSOT (Multi-Industry Display & Preview)**:
   - Bản xem trước giao diện (`TemplateSelectorSplitPane` / `use-catalog-products.ts`) tự động hiển thị dữ liệu mẫu theo đúng ngành nghề của cửa hàng (Homestay: phòng & tiện ích; Thời trang: trang phục & chất liệu; F&B: món ăn; Hoa tươi: mẫu hoa), loại bỏ hiện tượng tràn hoa tươi sang các ngành khác.
   - Cấu hình hiển thị thông tin sản phẩm (`display-fields.ts`, `product-display.ts`, `product-info.tsx`) tự động thích ứng nhãn thuộc tính theo ngành (`ti.rawMaterialItem`, `ti.makerTitle`, `ti.makerAction`...).
@@ -104,3 +104,5 @@ dùng lại: `FlowerImage`, `TrackingStepperView` · tạo mới: `sales/sales-k
 ## 14. Kết quả
 lint:ux sau: không tăng vi phạm · nợ mở: thông báo đẩy/Zalo cho tin nhắn chưa làm
 
+## 15. Progressive disclosure & rủi ro (03c) — 29/10/2026
+Catalog bán hàng theo nhu cầu (`/the-chao?quick=true`, đợt A-4). Thay đổi: `ConfirmDialog` cho ẩn bộ sưu tập (R2), xoá mẫu khỏi bộ sưu tập (R3), thu hồi link khách (R3); `<select>` mẫu giao diện có nhãn; khối chưa tới lượt không còn làm mờ chữ (2,49:1 → đạt); cảnh báo hồ sơ dùng `text-warning-text`. axe 390px: 0 lỗi.

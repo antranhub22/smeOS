@@ -1,3 +1,4 @@
+import { requireCapability } from "@/core/rbac/capabilities"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed, notFound } from "@/core/http/errors"
@@ -5,6 +6,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { DispatchOrderToChatUseCase } from "@/modules/internal-chat/use-cases/dispatch-order-to-chat"
+import { isActivePartnerTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
 
 const dispatchSchema = z.object({
   targetPartnerOrgId: z.string().uuid(),
@@ -13,6 +15,7 @@ const dispatchSchema = z.object({
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { resolved, ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "R3")
   const { id: orderId } = await context.params
   const body = await request.json().catch(() => null)
   const parsed = dispatchSchema.safeParse(body)
@@ -27,6 +30,10 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const order = await orderRepo.findById(ctx.organizationId, orderId)
 
   if (!order) {
+    throw notFound()
+  }
+  // Chỉ gửi tới đối tác ACTIVE của chính chuỗi (và người nhận thuộc đối tác đó); khác → 404
+  if (!(await isActivePartnerTarget(ctx.organizationId, parsed.data.targetPartnerOrgId, parsed.data.targetPartnerUserId))) {
     throw notFound()
   }
 

@@ -28,7 +28,7 @@ export function PresetStyleSelector({
         </span>
       </label>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {presetsList.map((preset) => {
           const isSelected = preset.id === selectedPresetId
           return (
@@ -53,7 +53,7 @@ export function PresetStyleSelector({
                 className={`h-3 w-8 rounded-full mb-1.5 bg-gradient-to-r ${preset.decorativeAccent}`}
               />
 
-              <div className="text-xs font-bold text-text truncate w-full">
+              <div className="text-xs font-bold text-text line-clamp-2 w-full">
                 {preset.name}
               </div>
               <div className="text-caption text-text-muted truncate w-full mt-0.5">

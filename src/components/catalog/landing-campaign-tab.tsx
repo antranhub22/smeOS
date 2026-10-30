@@ -22,16 +22,18 @@ import { LandingStepContentSettings } from "./landing-step-content-settings"
 import { LandingStepPreviewPane } from "./landing-step-preview-pane"
 import { LandingWizardNav } from "./landing-wizard-nav"
 
+import { buildLandingPublishBody } from "./landing-publish-payload"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 
 interface LandingCampaignTabProps {
   products: CatalogProduct[]
   onRefresh?: () => void
+  pageType?: string | undefined // mục đích trang ở /landing-page — gửi cho AI soạn nội dung
+  shopName?: string | undefined // tên tiệm đã tải sẵn: nội dung mẫu dựng lúc mount, không được rơi về tên nền tảng
 }
-
-export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabProps) {
+export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: LandingCampaignTabProps) {
   const { business } = useTenantProfile()
-  const currentShopName = business?.display_name || "Tiệm hoa smeOS"
+  const currentShopName = shopName || business?.display_name || "Tiệm hoa smeOS"
 
   // Phase: mode-selection → input → (executing via wizard) → published
   const [journeyPhase, setJourneyPhase] = useState<"mode-selection" | "input" | "wizard">("mode-selection")
@@ -50,10 +52,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
   const [campaignSlug, setCampaignSlug] = useState("campaign-20-10")
 
   const [createdProducts, setCreatedProducts] = useState<CatalogProduct[]>([])
-  const activeProducts = React.useMemo(() => {
-    const combined = [...createdProducts, ...products]
-    return combined.filter((p) => p.status !== "ARCHIVED")
-  }, [createdProducts, products])
+  const activeProducts = React.useMemo(() => [...createdProducts, ...products].filter((p) => p.status !== "ARCHIVED"), [createdProducts, products])
   const [isQuickUploadOpen, setIsQuickUploadOpen] = useState(false)
 
   const [generatedPackage, setGeneratedPackage] = useState<GeneratedLandingPackage | null>(() =>
@@ -70,15 +69,15 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
   })
 
   const [isAiGenerating, setIsAiGenerating] = useState(false)
+  // Chỉ liệt kê bước có việc thật (03c UX-016) — trước đây có 2 bước "thị giác/chất lượng ảnh" tự chuyển xong theo giờ.
   const [aiSteps, setAiSteps] = useState<ProcessingStep[]>([
-    { id: "vision", label: "Phân tích thị giác (hoa, màu sắc, phong cách)", status: "pending" },
-    { id: "quality", label: "Tối ưu chất lượng ảnh sản phẩm", status: "pending" },
     { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "pending" },
     { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "pending" },
   ])
   const [isPublishing, setIsPublishing] = useState(false)
   const [isPublished, setIsPublished] = useState(false)
   const [publishError, setPublishError] = useState<string | null>(null)
+  const [fallbackReason, setFallbackReason] = useState<null | "ai" | "quyen">(null) // vì sao dùng nội dung mẫu
   const [publishedUrl, setPublishedUrl] = useState<string | null>(null)
   const [downloadingQR, setDownloadingQR] = useState(false)
 
@@ -86,10 +85,9 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
     setIsAiGenerating(true)
     setPublishError(null)
 
+    setFallbackReason(null)
     setAiSteps([
-      { id: "vision", label: "Phân tích thị giác (hoa, màu sắc, phong cách)", status: "running" },
-      { id: "quality", label: "Tối ưu chất lượng ảnh sản phẩm", status: "pending" },
-      { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "pending" },
+      { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "running" },
       { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "pending" },
     ])
 
@@ -110,22 +108,6 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
       const preSelectedIds = activeProducts.slice(0, 4).map((p) => p.id)
       setSelectedProductIds(preSelectedIds)
 
-      // Step 1 — Vision done
-      await new Promise((r) => setTimeout(r, 900))
-      setAiSteps((prev) =>
-        prev.map((s) =>
-          s.id === "vision" ? { ...s, status: "done" } : s.id === "quality" ? { ...s, status: "running" } : s
-        )
-      )
-
-      // Step 2 — Quality done
-      await new Promise((r) => setTimeout(r, 700))
-      setAiSteps((prev) =>
-        prev.map((s) =>
-          s.id === "quality" ? { ...s, status: "done" } : s.id === "content" ? { ...s, status: "running" } : s
-        )
-      )
-
       // Step 3 — Gọi API sinh nội dung (content step đang running)
       const occObj = CAMPAIGN_OCCASIONS.find((o) => o.id === matchedOccasion)
       const res = await fetch("/api/v1/content-engine/landing-generate", {
@@ -136,11 +118,11 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
           occasionLabel: occObj?.label || matchedOccasion,
           archetypeId: selectedArchetype,
           selectedProducts: activeProducts.slice(0, 4).map((p) => ({
-            name: p.name, code: p.code, price: p.price, category: p.category,
+            id: p.id, name: p.name, code: p.code, price: p.price, category: p.category,
           })),
           userDirectives: data.userDirectives || undefined,
-          targetAudience: data.userDirectives || undefined,
           designDirection: selectedArchetype,
+          pageType,
         }),
       }).catch(() => null)
 
@@ -149,6 +131,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
         setGeneratedPackage(json.data)
         if (json.data?.hero?.headline) setHeadline(json.data.hero.headline)
       } else {
+        setFallbackReason(res?.status === 403 ? "quyen" : "ai")
         setGeneratedPackage(generateLandingPageContent({
           shopName: currentShopName,
           occasionId: matchedOccasion,
@@ -165,8 +148,6 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
         )
       )
 
-      // Step 4 — Layout/config done
-      await new Promise((r) => setTimeout(r, 500))
       setAiSteps((prev) =>
         prev.map((s) => (s.id === "layout" ? { ...s, status: "done" } : s))
       )
@@ -216,27 +197,17 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
       const res = await fetch("/api/v1/catalog-links", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          slug: campaignSlug,
-          name: headline || `Chiến dịch ${selectedOccasion}`,
-          description: `Landing page chiến dịch ${selectedOccasion} — Phong cách ${selectedArchetype}`,
-          filters: {
-            product_ids: selectedProductIds,
-            occasion: selectedOccasion,
-            archetype: selectedArchetype,
-            headline,
-            customHeroImageUrl: customHeroImageUrl || undefined,
-            videoUrl: videoUrl || undefined,
-            generatedPackage,
-            enabledSections,
-          },
-        }),
+        body: JSON.stringify(buildLandingPublishBody({
+          headline, occasionId: selectedOccasion, archetypeId: selectedArchetype, products: selectedProducts,
+          customHeroImageUrl, videoUrl, generatedPackage, enabledSections,
+        })),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error(data.message || "Không thể xuất bản chiến dịch.")
+        throw new Error(data.error?.message || data.message || "Không thể xuất bản chiến dịch.")
       }
-      setPublishedUrl(`${window.location.origin}/c/${campaignSlug}`)
+      const slug = ((await res.json().catch(() => ({}))) as { data?: { slug?: string } }).data?.slug ?? campaignSlug; setCampaignSlug(slug)
+      setPublishedUrl(`${window.location.origin}/c/${slug}`)
       setIsPublished(true)
       setCurrentStep(5)
       onRefresh?.()
@@ -309,7 +280,7 @@ export function LandingCampaignTab({ products, onRefresh }: LandingCampaignTabPr
             <div className="p-3.5 rounded-xl bg-primary-muted border border-primary-border flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-primary text-body-sm font-semibold">
                 <Sparkles className="h-4 w-4 shrink-0" />
-                <span>AI đã phân tích nguyên liệu và điền sẵn các lựa chọn tối ưu. Bạn có thể kiểm tra từng bước trước khi xuất bản!</span>
+                <span>{fallbackReason === "quyen" ? "Tài khoản của bạn chưa được cấp quyền tạo nội dung bằng AI nên đang dùng nội dung mẫu — nhờ Điều hành bật quyền, hoặc chỉnh lại ở từng bước." : fallbackReason ? "AI chưa soạn được nội dung nên đang dùng nội dung mẫu — hãy chỉnh lại ở từng bước trước khi xuất bản." : "AI đã soạn nội dung và điền sẵn các lựa chọn. Bạn có thể kiểm tra từng bước trước khi xuất bản."}</span>
               </div>
               <button
                 type="button"

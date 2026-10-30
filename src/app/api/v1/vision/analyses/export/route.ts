@@ -2,6 +2,7 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import { handle } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { exportAnalyses } from "@/modules/products/use-cases/export-analyses"
+import { recordDataExport } from "@/modules/audit/use-cases/record-data-export"
 
 /**
  * `GET /vision/analyses/export` (`H3`) — tệp đối soát mở được bằng Excel.
@@ -24,6 +25,11 @@ export const GET = handle(async (request) => {
     .filter(Boolean)
 
   const { csv, soLuot, soDong, chamTran } = await exportAnalyses(ctx, {
+    states,
+    from: url.searchParams.get("from"),
+    to: url.searchParams.get("to"),
+  })
+  await recordDataExport(ctx, "vision_analyses", {
     states,
     from: url.searchParams.get("from"),
     to: url.searchParams.get("to"),

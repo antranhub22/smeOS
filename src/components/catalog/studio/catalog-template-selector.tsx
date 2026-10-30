@@ -91,7 +91,7 @@ export function CatalogTemplateSelector({
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary-muted text-primary text-caption font-bold uppercase tracking-wider mb-1">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Universal Catalog Studio 2026</span>
+            <span>Mẫu và phong cách catalog</span>
           </div>
           <h3 className="text-title font-bold text-text">Chọn Template & Ngôn Ngữ Thị Giác</h3>
           <p className="text-body-sm text-text-muted mt-0.5">
@@ -159,7 +159,7 @@ export function CatalogTemplateSelector({
                     <p className="text-caption text-text-muted leading-relaxed">{tpl.description}</p>
 
                     <div className="pt-2 border-t border-border/60 flex items-center justify-between text-caption text-text-muted">
-                      <span>Cấu trúc: <strong>{tpl.structure.length} trang chuyên biệt</strong></span>
+                      <span>Gồm <strong>{tpl.structure.length} loại trang</strong></span>
                       <span className="italic text-primary font-medium">{tpl.recommendedFor.slice(0, 45)}...</span>
                     </div>
                   </button>
@@ -204,9 +204,6 @@ export function CatalogTemplateSelector({
                       >
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-caption font-mono font-bold px-1.5 py-0.5 rounded bg-surface-alt text-text-muted">
-                              {s.number}
-                            </span>
                             <span className="text-caption font-bold text-text truncate max-w-[130px]">{s.name}</span>
                           </div>
                           {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
@@ -234,7 +231,7 @@ export function CatalogTemplateSelector({
             <div className="flex items-center justify-between w-full mb-3 pb-2 border-b border-border text-caption">
               <div className="flex items-center gap-1.5 font-bold text-text">
                 <Eye className="h-4 w-4 text-primary" />
-                <span>Xem trước thời gian thực (Live Preview)</span>
+                <span>Xem trước</span>
               </div>
               <span className="text-caption font-mono text-text-muted">
                 Trang {previewPageIdx + 1} / {resolved.pages.length}
@@ -242,7 +239,7 @@ export function CatalogTemplateSelector({
             </div>
 
             {/* Scale wrapper to simulate A4 mobile aspect ratio */}
-            <div className="w-full flex justify-center overflow-hidden max-h-[520px] rounded-xl border border-border bg-white shadow-md">
+            <div className="w-full flex justify-center overflow-hidden max-h-[520px] rounded-xl border border-border bg-surface shadow-md">
               <div className="transform scale-[0.68] sm:scale-[0.72] origin-top my-[-50px]">
                 {activePage && (
                   <CatalogPageRenderer
@@ -262,11 +259,13 @@ export function CatalogTemplateSelector({
                   key={p.pageNumber}
                   type="button"
                   onClick={() => setPreviewPageIdx(idx)}
-                  className={`h-2 rounded-full transition-all cursor-pointer ${
-                    previewPageIdx === idx ? "w-6 bg-primary" : "w-2 bg-border hover:bg-text-muted"
-                  }`}
+                  className="flex h-6 min-w-6 cursor-pointer items-center justify-center"
                   aria-label={`Trang ${idx + 1}`}
-                />
+                  aria-current={previewPageIdx === idx ? "page" : undefined}
+                >
+                  {/* Vùng nhấn 24px (WCAG 2.5.8), chấm hiển thị giữ kích thước cũ */}
+                  <span className={`h-2 rounded-full transition-all ${previewPageIdx === idx ? "w-6 bg-primary" : "w-2 bg-border"}`} />
+                </button>
               ))}
             </div>
           </div>

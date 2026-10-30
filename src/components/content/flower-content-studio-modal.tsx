@@ -228,7 +228,7 @@ export function FlowerContentStudioModal({
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto max-h-[380px] space-y-3 pr-1 text-body-sm">
+          <div tabIndex={0} aria-label="Nội dung giọng văn" className="flex-1 overflow-y-auto max-h-[380px] space-y-3 pr-1 text-body-sm focus-visible:outline-2 focus-visible:outline-primary">
             {/* Tiêu đề / Hook */}
             <div className="p-2.5 rounded-lg bg-surface-alt border border-border">
               <div className="text-caption text-muted font-medium mb-0.5">Tiêu đề (Headline):</div>

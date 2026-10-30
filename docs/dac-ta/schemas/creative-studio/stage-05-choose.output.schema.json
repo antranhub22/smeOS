@@ -658,7 +658,7 @@
             "sceneIndex": 1,
             "beat": "SETUP",
             "title": "Giới thiệu sản phẩm",
-            "setting": "Phông studio sáng, đổ bóng mềm, tông màu hoà với bó hoa",
+            "setting": "Phông studio sáng, đổ bóng mềm, tông màu hoà với sản phẩm",
             "lighting": "Ánh sáng tản đều",
             "palette": [
               "đỏ",
@@ -712,8 +712,8 @@
             "purpose": "Banner, ảnh kết video",
             "backgroundPrompt": "a minimal backdrop in deep red and ivory, blush pink and white, white and soft beige with generous empty space, soft light",
             "localBackdrop": "studio_white",
-            "voiceScript": "Nhắn tiệm để giữ bó hoa cho ngày kỷ niệm",
-            "textOverlay": "Nhắn tiệm để giữ bó hoa cho ngày kỷ niệm",
+            "voiceScript": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
+            "textOverlay": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
             "motionEffect": "static",
             "durationSeconds": 3.8,
             "transition": "fade",
@@ -724,7 +724,7 @@
         "revision": 1,
         "story": {
           "hook": "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
-          "cta": "Nhắn tiệm để giữ bó hoa cho ngày kỷ niệm",
+          "cta": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
           "logline": ""
         },
         "publishing": {
@@ -773,7 +773,7 @@
           "hasSubtitle": true,
           "hasWatermark": true,
           "coverSceneIndex": 1,
-          "endCardText": "Nhắn tiệm để giữ bó hoa cho ngày kỷ niệm"
+          "endCardText": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm"
         },
         "audio": {
           "voiceId": "flora-nu-truyen-cam",

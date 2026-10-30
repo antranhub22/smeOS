@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { validationFailed } from "@/core/http/errors"
+import { notFound, validationFailed } from "@/core/http/errors"
+import { isAllowedChatTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { ListUserConversationsUseCase } from "@/modules/internal-chat/use-cases/list-user-conversations"
@@ -17,7 +18,7 @@ const createConversationSchema = z.object({
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   const url = new URL(request.url)
-  const conversationType = url.searchParams.get("type") as any
+  const conversationType = url.searchParams.get("type") as never
   const orderId = url.searchParams.get("orderId") ?? undefined
 
   const chatRepo = getInternalChatRepository()
@@ -45,6 +46,12 @@ export const POST = handle(async (request) => {
   if (!parsed.success) {
     const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
     throw validationFailed({ reason: errorDetails })
+  }
+
+  // Người được mời phải thuộc tổ chức mình hoặc đối tác/chuỗi đang liên kết; khác → 404
+  const { targetUserId, targetOrganizationId } = parsed.data
+  if (targetUserId && !(await isAllowedChatTarget(ctx.organizationId, targetOrganizationId ?? ctx.organizationId, targetUserId))) {
+    throw notFound()
   }
 
   const chatRepo = getInternalChatRepository()

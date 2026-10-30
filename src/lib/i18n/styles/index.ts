@@ -114,11 +114,11 @@ export const minimalStyle: CopywritingStyleDefinition = {
           subtitle: "Cấu hình plugin ngành và chuẩn hóa dữ liệu.",
         },
         chain: {
-          title: "MẠNG LƯỚI {name}",
+          title: "BẠN MUỐN LÀM GÌ VỚI MẠNG LƯỚI {name}?",
           subtitle: "Điều phối mạng lưới {product}.",
         },
         store: {
-          title: "Cửa hàng {name}",
+          title: "Hôm nay bạn muốn làm gì cho {name}?",
           subtitle: "Chọn việc để làm.",
         },
       },
@@ -157,9 +157,9 @@ export const minimalStyle: CopywritingStyleDefinition = {
       header: {
         badge: "51 Công cụ",
         titleDev: "Thư viện công cụ",
-        titleProd: "Chọn công cụ",
+        titleProd: "Hôm nay bạn muốn làm gì?",
         descDev: "51 công cụ theo 9 nhóm chức năng.",
-        descProd: "Chọn công cụ làm việc.",
+        descProd: "Chọn công cụ bên dưới để bắt đầu.",
       },
       filters: {
         searchPlaceholder: "Tìm công cụ...",

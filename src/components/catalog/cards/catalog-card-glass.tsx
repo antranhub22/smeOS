@@ -104,10 +104,7 @@ export function CatalogCardGlass({
         className="p-4 pt-3 border-t border-white/10 flex items-center justify-between mt-auto"
       >
         <div>
-          <div className="text-caption uppercase tracking-wider opacity-75" style={{ color: textSecondary }}>
-            Giá niêm yết
-          </div>
-          <div className="text-sm md:text-base font-black tracking-tight" style={{ color: priceColor }}>
+          <div className="text-sm md:text-base font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
             {formatVnd(product.price)}
           </div>
         </div>
@@ -115,11 +112,12 @@ export function CatalogCardGlass({
           href={getZaloUrl(product, shop)}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Đặt ngay qua Zalo"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95"
           style={{ backgroundColor: ctaBg, color: ctaText }}
         >
-          <MessageCircle size={14} />
-          Đặt ngay
+          <MessageCircle size={14} aria-hidden="true" />
+          <span className="hidden sm:inline">Đặt ngay</span>
         </a>
       </div>
     </article>

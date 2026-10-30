@@ -54,7 +54,7 @@ describe("Ops Copilot Knowledge Base & Adaptive Persona Engine (10 Chức Năng 
       expect(match).not.toBeNull()
       expect(match?.moduleIndex).toBe(5)
       expect(match?.routePath).toBe("/san-pham/tao-moi")
-      expect(match?.topicTitle).toContain("Công Thức Cành Hoa BOM")
+      expect(match?.topicTitle).toContain("Công Thức Định Lượng BOM")
     })
 
     it("Chức năng 06: Nhập từ Excel & Ảnh ('/san-pham/nhap-hang-loat') — File mẫu & Google Drive", () => {

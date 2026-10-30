@@ -1,7 +1,6 @@
 "use client"
 
-import { useI18n } from "@/lib/i18n"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import {
   Users,
   Plus,
@@ -22,33 +21,15 @@ import { PageHeader } from "@/components/ui/page-header"
 import { PageContainer } from "@/components/ui/page-container"
 import { Card } from "@/components/ui/card"
 import { ChainPartnerCreateModal } from "./chain-partner-create-modal"
+import { PartnerCredentialDialog, type PartnerCredential } from "@/components/organization/partner-credential-dialog"
+import { useChainPartners } from "@/components/organization/use-chain-partners"
 
 export default function ChainPartnersPage() {
-  const { t } = useI18n()
-  const [partners, setPartners] = useState<ChainPartnershipEntity[]>([])
+  const { partners, setPartners, loading, refresh: fetchPartners } = useChainPartners()
   const [selectedToolPartner, setSelectedToolPartner] = useState<ChainPartnershipEntity | null>(null)
-  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [showModal, setShowModal] = useState(false)
-
-  const fetchPartners = async () => {
-    try {
-      setLoading(true)
-      const res = await fetch("/api/v1/coordinator/partners")
-      const json = await res.json()
-      if (json.success && Array.isArray(json.data)) {
-        setPartners(json.data)
-      }
-    } catch {
-      // Ignored
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchPartners()
-  }, [])
+  const [credential, setCredential] = useState<PartnerCredential | null>(null)
 
   const filtered = partners.filter(
     (p) =>
@@ -186,7 +167,7 @@ export default function ChainPartnersPage() {
                   <span>Phân quyền công cụ</span>
                 </Button>
                 <Link
-                  href={"/tin-nhan" as any}
+                  href={"/tin-nhan" as never}
                   className="p-2 bg-primary-subtle hover:bg-primary-subtle/80 text-primary rounded-xl text-caption font-semibold flex items-center justify-center transition-colors"
                   title="Nhắn tin nội bộ"
                 >
@@ -228,8 +209,13 @@ export default function ChainPartnersPage() {
       <ChainPartnerCreateModal
         showModal={showModal}
         onClose={() => setShowModal(false)}
-        onSuccess={fetchPartners}
+        onSuccess={(c) => {
+          if (c) setCredential(c)
+          fetchPartners()
+        }}
       />
+
+      <PartnerCredentialDialog credential={credential} onClose={() => setCredential(null)} />
     </PageContainer>
   )
 }

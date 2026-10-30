@@ -22,7 +22,7 @@ export const INDUSTRY_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: ["CHAIN", "STORE"],
       iconName: "ShoppingBag",
-      deepLinkTemplate: "/don-hang/{orderId}",
+      deepLinkTemplate: "/don-hang",
       roleDefaults: [
         {
           roleKey: "industry_admin",
@@ -49,7 +49,7 @@ export const INDUSTRY_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: ["CHAIN"],
       iconName: "AlertCircle",
-      deepLinkTemplate: "/dieu-phoi/{orderId}",
+      deepLinkTemplate: "/dieu-phoi",
       roleDefaults: [
         {
           roleKey: "industry_admin",
@@ -76,7 +76,7 @@ export const INDUSTRY_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: [],
       iconName: "UserPlus",
-      deepLinkTemplate: "/mang-luoi/doi-tac/{partnerId}",
+      deepLinkTemplate: "/dieu-phoi/doi-tac",
       roleDefaults: [
         {
           roleKey: "industry_admin",
@@ -95,7 +95,7 @@ export const INDUSTRY_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: [],
       iconName: "AlertTriangle",
-      deepLinkTemplate: "/mang-luoi/doi-tac/{partnerId}",
+      deepLinkTemplate: "/dieu-phoi/doi-tac",
       roleDefaults: [
         {
           roleKey: "industry_admin",
@@ -136,7 +136,7 @@ export const INDUSTRY_EVENT_CONTRACT: TierEventContract = {
       version: 1,
       defaultVisibleToTiers: [],
       iconName: "Banknote",
-      deepLinkTemplate: "/tai-chinh/doi-soat",
+      deepLinkTemplate: "/so-lieu",
       roleDefaults: [
         {
           roleKey: "industry_admin",

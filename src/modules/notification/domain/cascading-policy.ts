@@ -69,6 +69,23 @@ export interface ResolveResult {
 const ALWAYS_ACTIVATED_CHANNELS: NotifyChannel[] = ["APP_INBOX"]
 const DEFAULT_PRIORITY: NotifyPriority = "NORMAL"
 
+/** Tổ chức nhận thông báo + tổ chức cấp trên (Chuỗi/Ngành) nếu có. */
+export interface LockScope {
+  storeOrgId: string
+  parentOrgId?: string | undefined
+}
+
+/**
+ * Khoá cứng chỉ áp cho đúng phạm vi đã đặt (AUD-014): MOTHER áp toàn sàn ("GLOBAL"),
+ * INDUSTRY/CHAIN áp cho tổ chức đặt khoá và các cửa hàng trực thuộc, STORE chỉ cho chính cửa hàng.
+ * Trước đây khoá của MỘT tổ chức áp cho MỌI tenant.
+ */
+export function isLockInScope(lock: HardLockEntry, scope: LockScope): boolean {
+  if (lock.tier === "MOTHER") return lock.scopeId === "GLOBAL"
+  if (lock.tier === "STORE") return lock.scopeId === scope.storeOrgId
+  return lock.scopeId === scope.storeOrgId || (scope.parentOrgId !== undefined && lock.scopeId === scope.parentOrgId)
+}
+
 // ── Core resolve function ────────────────────────────────────────────────────
 
 /**
@@ -104,9 +121,10 @@ export function resolveCascadingPreference(input: ResolveCascadeInput): ResolveR
   // ── GATE 2: Hard Lock — kiểm tra từ cao xuống thấp ─────────────────────
   const tiers: NotificationTier[] = ["MOTHER", "INDUSTRY", "CHAIN", "STORE"]
 
+  const scope = { storeOrgId: input.storeOrgId, parentOrgId: input.parentOrgId }
   for (const tier of tiers) {
     const lock = hardLocks.find(
-      (l) => l.tier === tier && l.eventKey === eventKey && l.channel === channel
+      (l) => l.tier === tier && l.eventKey === eventKey && l.channel === channel && isLockInScope(l, scope)
     )
     if (lock) {
       return {
@@ -167,7 +185,8 @@ export function getAppliedHardLock(
   hardLocks: HardLockEntry[],
   eventKey: string,
   channel: NotifyChannel,
-  viewerTier: NotificationTier
+  viewerTier: NotificationTier,
+  scope: LockScope
 ): HardLockEntry | null {
   // Tier thứ tự từ cao xuống thấp
   const tierOrder: NotificationTier[] = ["MOTHER", "INDUSTRY", "CHAIN", "STORE"]
@@ -178,7 +197,7 @@ export function getAppliedHardLock(
   for (let i = 0; i < viewerIndex; i++) {
     const tier = tierOrder[i]
     const lock = hardLocks.find(
-      (l) => l.tier === tier && l.eventKey === eventKey && l.channel === channel
+      (l) => l.tier === tier && l.eventKey === eventKey && l.channel === channel && isLockInScope(l, scope)
     )
     if (lock) return lock
   }

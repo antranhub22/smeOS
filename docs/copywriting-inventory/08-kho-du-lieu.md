@@ -12,7 +12,7 @@
 | Mã Copy | Loại | Vị trí hiển thị | Nội dung HIỆN TẠI trên UI | Nội dung BẠN CHUẨN HÓA (Mới) | Ghi chú ngữ cảnh |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `MED-HDR-01` | `HDR` | Tiêu đề chính trang | `Kho Dữ Liệu Sản Phẩm` | `Kho ảnh & nội dung` | PO Decision 1: Phương án A |
-| `MED-HDR-02` | `HDR` | Mô tả phụ trang | `Kho lưu trữ trung tâm phân loại 3 phân vùng độc lập cho tài khoản của bạn.` | `Lưu ảnh gốc, ảnh đã duyệt và kịch bản tư vấn của cửa hàng. Mục đã xóa được giữ 30 ngày trong Thùng rác.` | Bỏ từ jargon "phân vùng" |
+| `MED-HDR-02` | `HDR` | Mô tả phụ trang | `Kho lưu trữ trung tâm phân loại 3 phân vùng độc lập cho tài khoản của bạn.` | `Tìm lại mọi ảnh, video, âm thanh, nội dung, catalog và thẻ chào cửa hàng đã tạo. Mục đã xóa được giữ 30 ngày trong Thùng rác.` | Bỏ từ jargon "phân vùng"; 29/10/2026: Kho dữ liệu v2 gom mọi loại dữ liệu |
 | `MED-BTN-01` | `BTN` | Nút tác vụ nhanh | `+ Tải ảnh mới để phân tích` | `Tải ảnh mới` | Bỏ dấu `+`, điều hướng `/tai-anh` |
 
 ---

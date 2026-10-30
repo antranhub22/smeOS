@@ -1,15 +1,59 @@
 {
   "summary": {
     "app/(app)": {
-      "R4": 1
+      "R13": 6,
+      "R14": 3,
+      "R16": 7
+    },
+    "app/(platform)": {
+      "R13": 2,
+      "R16": 2
     },
     "components/availability": {
-      "R2": 8
+      "R13": 1
+    },
+    "components/catalog": {
+      "R14": 3
+    },
+    "components/coordinator": {
+      "R16": 7
+    },
+    "components/creative-studio": {
+      "R16": 44,
+      "R13": 2,
+      "R15": 1
+    },
+    "components/dashboard": {
+      "R16": 5
+    },
+    "components/flow": {
+      "R14": 2
+    },
+    "components/greeting-card": {
+      "R15": 7,
+      "R13": 9,
+      "R14": 6
+    },
+    "components/market-intelligence": {
+      "R16": 1
+    },
+    "components/products": {
+      "R14": 2
+    },
+    "components/profiles": {
+      "R15": 2,
+      "R13": 2
     },
     "components/templates": {
-      "R12": 2
+      "R16": 16
+    },
+    "components/upload": {
+      "R14": 1
+    },
+    "components/video-studio": {
+      "R16": 1
     }
   },
-  "total": 11,
-  "updatedAt": "2026-10-18T13:48:49.337Z"
+  "total": 132,
+  "updatedAt": "2026-10-29T06:09:16.824Z"
 }

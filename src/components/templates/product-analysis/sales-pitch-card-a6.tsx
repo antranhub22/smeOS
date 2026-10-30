@@ -121,9 +121,9 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
           {/* Price Banner overlay at bottom of image */}
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 text-white flex items-end justify-between">
             <div>
-              <div className="text-caption text-white/80 font-medium uppercase tracking-wider">Mức giá chào ưu đãi</div>
+              <div className="text-caption text-white/80 font-medium uppercase tracking-wider">Giá</div>
               <div className="text-2xl font-black tracking-tight text-white flex items-baseline gap-2">
-                {formatCurrencyVnd(activePitch.priceVnd)}
+                {activePitch.priceVnd ? formatCurrencyVnd(activePitch.priceVnd) : <span className="text-body font-bold">Liên hệ để báo giá</span>}
                 {activePitch.originalPriceVnd && activePitch.priceVnd && activePitch.originalPriceVnd > activePitch.priceVnd && (
                   <span className="text-xs text-white/60 line-through font-normal">
                     {formatCurrencyVnd(activePitch.originalPriceVnd)}
@@ -132,12 +132,13 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
               </div>
             </div>
 
-            <div className="text-right">
-              <div className="text-caption text-white/70 font-mono">Kích thước chuẩn</div>
+            {/* Chỉ hiện kích thước khi tiệm đã nhập — không in "~ × cm" */}
+            {activePitch.dimensions.heightCm && activePitch.dimensions.widthCm ? <div className="text-right">
+              <div className="text-caption text-white/70 font-mono">Kích thước</div>
               <div className="text-xs font-bold text-white/95">
                 ~{activePitch.dimensions.heightCm} × {activePitch.dimensions.widthCm} cm
               </div>
-            </div>
+            </div> : null}
           </div>
         </div>
 
@@ -198,16 +199,19 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
                 </div>
               )}
 
-              <div className="pt-1.5 flex items-center justify-between text-caption text-text-muted">
-                <span>Quy cách gói:</span>
-                <span className="font-medium text-text truncate max-w-[200px]">{activePitch.wrapping}</span>
-              </div>
+              {activePitch.wrapping && (
+                <div className="pt-1.5 flex items-center justify-between text-caption text-text-muted">
+                  <span>Quy cách gói:</span>
+                  <span className="font-medium text-text truncate max-w-[200px]">{activePitch.wrapping}</span>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Gifts & Guarantees */}
+          {(activePitch.freeGifts.length > 0 || activePitch.guarantees.length > 0) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-caption">
-            <div className="rounded-xl bg-primary/[0.04] p-2.5 border border-primary/15">
+            {activePitch.freeGifts.length > 0 && <div className="rounded-xl bg-primary/[0.04] p-2.5 border border-primary/15">
               <div className="font-bold text-primary flex items-center gap-1 mb-1">
                 <Gift size={12} /> Quà tặng đính kèm
               </div>
@@ -216,9 +220,9 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
                   <li key={i} className="truncate">• {g}</li>
                 ))}
               </ul>
-            </div>
+            </div>}
 
-            <div className="rounded-xl bg-secondary/[0.08] p-2.5 border border-secondary/20">
+            {activePitch.guarantees.length > 0 && <div className="rounded-xl bg-secondary/[0.08] p-2.5 border border-secondary/20">
               <div className="font-bold text-secondary-text flex items-center gap-1 mb-1">
                 <ShieldCheck size={12} /> Cam kết chất lượng
               </div>
@@ -227,8 +231,9 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
                   <li key={i} className="truncate">• {g}</li>
                 ))}
               </ul>
-            </div>
+            </div>}
           </div>
+          )}
 
           {/* Custom note if present */}
           {activePitch.customNote && (

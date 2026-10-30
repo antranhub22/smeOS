@@ -1,4 +1,5 @@
-import type { PrismaClient } from "@/generated/prisma/client"
+import { randomBytes } from "node:crypto"
+import type { Prisma, PrismaClient } from "@/generated/prisma/client"
 import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { slugCandidates } from "@/modules/organization/domain/slug"
@@ -13,6 +14,8 @@ import type {
   PartnershipType,
 } from "../domain/partnership-entities"
 
+type PartnershipRow = Prisma.chain_partnershipsGetPayload<object>
+
 export class PrismaChainPartnershipRepository implements IChainPartnershipRepository {
   constructor(private readonly prisma: PrismaClient = defaultPrisma) {}
 
@@ -20,9 +23,10 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     partnership: ChainPartnershipEntity
     partnerOrgId: string
     founderUserId: string
+    temporaryPassword?: string | undefined
   }> {
-    const rawPassword = input.password || "SmeOS@Partner2026"
-    const passwordHash = await hashPassword(rawPassword)
+    const temporaryPassword = input.password ? undefined : randomBytes(12).toString("base64url") // AUD-009: không dùng mật khẩu chung
+    const passwordHash = await hashPassword(input.password || temporaryPassword!)
 
     // Generate unique slug for partner store
     const candidateSlugs = slugCandidates(input.partnerStoreName)
@@ -116,15 +120,15 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
         partnership: this.mapEntity(row, partnerOrg.name),
         partnerOrgId: partnerOrg.id,
         founderUserId: user.id,
+        temporaryPassword: user.password_hash === passwordHash ? temporaryPassword : undefined, // email đã có tài khoản → giữ mật khẩu cũ
       }
     })
   }
-
   async listPartnerships(filter: ListPartnershipsFilter): Promise<{
     items: ChainPartnershipEntity[]
     total: number
   }> {
-    const where: any = {
+    const where: Prisma.chain_partnershipsWhereInput = {
       chain_org_id: filter.chainOrgId,
     }
 
@@ -213,7 +217,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     const trimmed = identifier.trim().toLowerCase()
 
     // 1. Thử tìm qua slug hoặc tên tổ chức
-    let org = await this.prisma.organizations.findFirst({
+    const org = await this.prisma.organizations.findFirst({
       where: {
         OR: [{ slug: trimmed }, { name: { equals: identifier.trim(), mode: "insensitive" } }],
       },
@@ -278,7 +282,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     contactPhone?: string | undefined
     contactEmail?: string | undefined
   }): Promise<ChainPartnershipEntity> {
-    const updateData: any = {
+    const updateData: Prisma.chain_partnershipsUncheckedUpdateInput = {
       status: "ACTIVE",
       partner_code: params.partnerCode,
       partnership_type: params.partnershipType ?? "SUBCONTRACTOR",
@@ -316,19 +320,17 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       },
     })
 
-    const partnerName = (row as any).partner_organization?.name
+    const partnerName = row.partner_organization?.name
     return this.mapEntity(row, partnerName)
   }
 
-
-
   private mapEntity(
-    row: any,
+    row: PartnershipRow,
     partnerOrgName?: string,
     partnerOrgSlug?: string,
-    partnerSettings?: any
+    partnerSettings?: unknown
   ): ChainPartnershipEntity {
-    const s = partnerSettings && typeof partnerSettings === "object" ? partnerSettings : {}
+    const s = partnerSettings && typeof partnerSettings === "object" ? (partnerSettings as Record<string, unknown>) : {}
     const unlocked = Array.isArray(s.unlocked_tools)
       ? (s.unlocked_tools as unknown[]).filter((x): x is string => typeof x === "string")
       : null

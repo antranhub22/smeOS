@@ -39,14 +39,14 @@ export function SettingsSubsystemGrid() {
             <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
               <Cpu size={18} />
             </div>
-            <div className="text-sm font-bold text-text group-hover:text-accent transition-colors">
+            <div className="text-sm font-bold text-text group-hover:text-accent-text transition-colors">
               Thiết lập AI
             </div>
             <p className="text-xs text-text-muted leading-relaxed">
               Bảo vệ thông tin khách hàng, giới hạn chi phí dùng AI và chọn nhà cung cấp AI.
             </p>
           </div>
-          <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-accent pt-2 border-t border-border/60">
+          <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-accent-text pt-2 border-t border-border/60">
             <span>Thiết lập AI</span> <ArrowRight size={13} />
           </div>
         </Link>
@@ -59,14 +59,14 @@ export function SettingsSubsystemGrid() {
             <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
               <Share2 size={18} />
             </div>
-            <div className="text-sm font-bold text-text group-hover:text-accent transition-colors">
+            <div className="text-sm font-bold text-text group-hover:text-accent-text transition-colors">
               Kết nối mạng xã hội
             </div>
             <p className="text-xs text-text-muted leading-relaxed">
               Kết nối Facebook, Instagram, TikTok và Zalo OA.
             </p>
           </div>
-          <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-accent pt-2 border-t border-border/60">
+          <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-accent-text pt-2 border-t border-border/60">
             <span>Kết nối kênh</span> <ArrowRight size={13} />
           </div>
         </Link>

@@ -24,26 +24,26 @@ export function LandingTemplateProcess({
     : isRomantic
     ? "bg-surface border-primary/30 shadow-xs"
     : isFestive
-    ? "bg-surface border-danger/30 shadow-xs"
+    ? "bg-surface border-primary/30 shadow-xs"
     : "bg-surface border-border shadow-xs"
 
   const titleStyle = isLuxury
-    ? "font-serif text-title sm:text-display font-normal text-text mt-1"
-    : "text-title-sm sm:text-title font-extrabold text-text mt-1"
+    ? "font-display text-title sm:text-display font-normal text-text mt-1"
+    : "text-title-sm sm:text-title font-semibold text-text mt-1"
 
   return (
     <section className={`p-6 sm:p-8 rounded-3xl border space-y-6 ${containerStyle}`}>
       <div className="text-center max-w-md mx-auto space-y-1">
-        <div className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-caption font-extrabold uppercase tracking-wider ${
-          isLuxury ? "bg-primary/10 text-primary font-serif tracking-widest" : isFestive ? "bg-danger-bg text-danger" : "bg-primary/10 text-primary"
+        <div className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-caption font-semibold uppercase tracking-wider ${
+          isLuxury ? "bg-primary/10 text-primary font-display tracking-widest" : isFestive ? "bg-primary/10 text-primary" : "bg-primary/10 text-primary"
         }`}>
           <Sparkles size={12} />
-          <span>{isLuxury ? "Nghi Thức Chế Tác & Trao Gửi" : "Trải Nghiệm Đặt Hoa Đơn Giản"}</span>
+          <span>{"Đặt hoa trong vài bước"}</span>
         </div>
         <h3 className={titleStyle}>
-          3 Bước Hoàn Hảo Để Trao Yêu Thương
+          Chọn mẫu, tiệm lo phần còn lại
         </h3>
-        <p className={`text-caption ${isLuxury ? "font-serif text-text/75" : "text-text-muted"}`}>
+        <p className={`text-caption ${isLuxury ? "font-display text-text" : "text-text-muted"}`}>
           Quy trình chuẩn hóa từ lúc chọn mẫu đến khi sản phẩm thắm đến tay người nhận.
         </p>
       </div>
@@ -56,34 +56,34 @@ export function LandingTemplateProcess({
               isLuxury
                 ? "bg-surface border-primary/20 hover:border-primary/60"
                 : isFestive
-                ? "bg-surface border-danger/20 hover:border-danger"
+                ? "bg-surface border-primary/20 hover:border-primary"
                 : "bg-surface-alt border-border hover:border-primary"
             }`}
           >
             <div className="flex items-center justify-between">
               {isLuxury ? (
-                <span className="font-serif text-2xl text-primary font-bold">
+                <span className="font-display text-2xl text-primary font-bold">
                   0{st.step}.
                 </span>
               ) : (
-                <span className={`w-8 h-8 rounded-full text-white font-black text-caption flex items-center justify-center shadow-xs ${
-                  isFestive ? "bg-danger" : "bg-primary"
+                <span className={`w-8 h-8 rounded-full text-white font-semibold text-caption flex items-center justify-center shadow-xs ${
+                  isFestive ? "bg-primary" : "bg-primary"
                 }`}>
                   0{st.step}
                 </span>
               )}
               {idx < steps.length - 1 && (
-                <div className="hidden md:flex text-text-muted/40">
+                <div className="hidden md:flex text-text-muted">
                   <ArrowRight size={16} />
                 </div>
               )}
             </div>
 
             <div className="space-y-1">
-              <h4 className={`text-xs font-bold text-text group-hover:text-primary transition-colors ${isLuxury ? "font-serif text-sm" : ""}`}>
+              <h4 className={`text-xs font-bold text-text group-hover:text-primary transition-colors ${isLuxury ? "font-display text-sm" : ""}`}>
                 {st.title}
               </h4>
-              <p className={`text-caption leading-relaxed ${isLuxury ? "font-serif text-text/75" : "text-text-muted"}`}>
+              <p className={`text-caption leading-relaxed ${isLuxury ? "font-display text-text" : "text-text-muted"}`}>
                 {st.description}
               </p>
             </div>

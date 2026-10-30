@@ -166,6 +166,7 @@
 | J4 | `landing.publish` | ● | · | · | · | · | · | · | · | — | **không** |
 | J5 | `social.publish` | ● | · | · | · | ● | · | · | · | — | server + UI |
 | J6 | `chat.manage` | ● | ● | · | · | ● | · | ● | · | — | **không** |
+| J7 | `content.landing_catalog.generate` | ● | ● | ● | · | ● | · | · | · | — | server (PO 30/10/2026) |
 
 ### L — Sản phẩm & giá
 

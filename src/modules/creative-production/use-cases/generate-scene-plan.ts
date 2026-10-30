@@ -116,7 +116,7 @@ export async function generateScenePlan(
       aiGatewayDeps(ctx)
     )
     if (aiResult.kind !== "xong") {
-      throw new AppError("INTERNAL", `Cổng AI không chạy được: ${aiResult.reason}`)
+      throw new AppError("INTERNAL", "AI chưa chạy được lúc này — hãy thử lại sau ít phút")
     }
     const plan = aiResult.output as ScenePlan
     await jobRepo.finishInline(ctx, enq.job.id, { ok: true, now: new Date(), output: plan })

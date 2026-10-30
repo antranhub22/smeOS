@@ -57,7 +57,7 @@ describe("expectedPayment", () => {
 describe("paymentGateBlocker / cancelBlocker", () => {
   const policy = { depositPercent: 30, requirePaidBeforeProduction: true, requireFullBeforeDispatch: true }
   it("chặn cắm hoa khi chưa thu đồng nào, chặn giao khi chưa thu đủ", () => {
-    expect(paymentGateBlocker("assign-florist", policy, { totalVnd: 100, paidVnd: 0 })).toMatch(/cắm hoa/)
+    expect(paymentGateBlocker("assign-florist", policy, { totalVnd: 100, paidVnd: 0 })).toMatch(/chế tác/)
     expect(paymentGateBlocker("assign-florist", policy, { totalVnd: 100, paidVnd: 30 })).toBeNull()
     expect(paymentGateBlocker("dispatch-shipping", policy, { totalVnd: 100, paidVnd: 30 })).toMatch(/lần 2/)
     expect(paymentGateBlocker("recipient-photo", policy, { totalVnd: 100, paidVnd: 0 })).toBeNull()

@@ -37,6 +37,8 @@ import { deliveryAreaOf, formatDeliveryAddress, hasDeliveryAddress } from "@/mod
 import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { sweepProductProposalsIfDue } from "@/modules/products/use-cases/sweep-product-proposals"
+import { scanStuckJobs } from "@/modules/jobs/use-cases/scan-stuck-jobs"
+import { sweepStorageLifecycle } from "@/modules/storage/use-cases/sweep-storage-lifecycle"
 
 /** Kích thước một trang truy vấn — nhỏ để giới hạn bộ nhớ, lặp tới khi hết tập cần xử lý */
 const PAGE_SIZE = 50
@@ -302,6 +304,14 @@ export const POST = handle(async (request) => {
   if (!sweep.complete) log.warn("chain_dispatch_sweep.incomplete", { pages: sweep.pages, processed: totalProcessed })
   // Mẫu sản phẩm đề xuất (nhắc / hết hạn / dọn) — đi chung cron để không thêm dịch vụ Render.
   const productProposals = await sweepProductProposalsIfDue(now)
+  // YC-J10: job PROCESSING quá 15 phút → FAILED. Render không có cron riêng cho
+  // `scripts/scan-stuck-jobs.ts`, nên job kẹt làm /internal/health trả 503 mãi.
+  const stuckJobsFailed = await scanStuckJobs(now).catch((error: unknown) => {
+    log.error("chain_dispatch_sweep.stuck_jobs_failed", { error: error instanceof Error ? error.message : String(error) })
+    return null
+  })
+  // SDAGF P1: dọn thùng rác quá hạn + xoá payload trong hàng đợi.
+  const storageLifecycle = await sweepStorageLifecycle(now)
 
   return jsonResponse({
     ok: true,
@@ -310,6 +320,8 @@ export const POST = handle(async (request) => {
     roundsAdvanced,
     graceCommitted,
     pages: sweep.pages,
+    stuckJobsFailed,
+    storageLifecycle,
     complete: sweep.complete,
     productProposals: productProposals ?? undefined,
     sentDetails: sentDetails.length > 0 ? sentDetails.slice(0, MAX_REPORTED) : undefined,

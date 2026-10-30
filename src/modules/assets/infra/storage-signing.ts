@@ -3,24 +3,36 @@ import { createHmac, timingSafeEqual } from "node:crypto"
 import { env } from "@/lib/env"
 
 /**
- * Ký URL tạm cho `LocalDiskStorageProvider` (`adapters/local-disk-storage-provider.ts`)
- * — cùng kỹ thuật HMAC như `session-token.ts`, dùng lại `SESSION_SECRET` thay
- * vì đòi thêm biến môi trường mới. Đây là adapter tạm cho tới khi có khoá
- * kho thật (`STORAGE_ENDPOINT`/`STORAGE_ACCESS_KEY`/`STORAGE_SECRET_KEY`
- * trong `.env.example` đã có sẵn ô nhưng chưa có adapter đọc) — ghi ở
- * `docs/dac-ta/TECHNICAL_DEBT.md`.
+ * Ký URL tạm cho route `/api/v1/storage/[...key]` (HMAC theo key + hạn dùng
+ * + phương thức). Khoá: `STORAGE_SIGNING_SECRET`, thiếu thì lùi về
+ * `SESSION_SECRET` (SDAGF D-07 — xoay khoá kho độc lập với khoá phiên).
+ *
+ * Chữ ký `PUT` khác chữ ký `GET`: URL xem đã ký (kể cả URL nằm trên catalog
+ * công khai) không dùng được để ghi đè tệp (audit SDAGF-007/014). Chuỗi ký
+ * của `GET` giữ nguyên dạng cũ `key:exp`.
  */
-function signaturePayload(key: string, expiresAt: number): string {
-  return `${key}:${expiresAt}`
+export type StorageUrlMethod = "GET" | "PUT"
+
+function signaturePayload(key: string, expiresAt: number, method: StorageUrlMethod): string {
+  return method === "PUT" ? `PUT:${key}:${expiresAt}` : `${key}:${expiresAt}`
 }
 
-export function signStorageUrl(key: string, expiresAt: number): string {
-  return createHmac("sha256", env.SESSION_SECRET).update(signaturePayload(key, expiresAt)).digest("hex")
+function signingSecret(): string {
+  return env.STORAGE_SIGNING_SECRET ?? env.SESSION_SECRET
 }
 
-export function verifyStorageSignature(key: string, expiresAt: number, signature: string): boolean {
+export function signStorageUrl(key: string, expiresAt: number, method: StorageUrlMethod = "GET"): string {
+  return createHmac("sha256", signingSecret()).update(signaturePayload(key, expiresAt, method)).digest("hex")
+}
+
+export function verifyStorageSignature(
+  key: string,
+  expiresAt: number,
+  signature: string,
+  method: StorageUrlMethod = "GET"
+): boolean {
   if (Date.now() > expiresAt) return false
-  const expected = Buffer.from(signStorageUrl(key, expiresAt))
+  const expected = Buffer.from(signStorageUrl(key, expiresAt, method))
   const actual = Buffer.from(signature)
   if (expected.length !== actual.length) return false
   return timingSafeEqual(expected, actual)

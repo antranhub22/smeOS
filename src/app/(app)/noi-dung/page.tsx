@@ -34,14 +34,14 @@ import { useContentGeneration } from "./use-content-generation"
 
 const FLOW_STEPS_PRODUCT = [
   { key: "analyze", label: "Đọc thông số sản phẩm & Brand Kit" },
-  { key: "generate", label: "Content Engine (P27) sinh bài đa kênh" },
+  { key: "generate", label: "Soạn bài cho các kênh" },
   { key: "review", label: "Kiểm duyệt an toàn thương hiệu" },
 ]
 
 const FLOW_STEPS_UPLOAD = [
   { key: "upload", label: "Tải & Đăng ký ảnh sản phẩm" },
   { key: "vision", label: "AI Vision phân tích thị giác" },
-  { key: "generate", label: "Content Engine sinh bài đa kênh" },
+  { key: "generate", label: "Soạn bài cho các kênh" },
   { key: "review", label: "Kiểm duyệt an toàn thương hiệu" },
 ]
 
@@ -76,13 +76,10 @@ function ContentEngineContent() {
       {/* ─── Header ─── */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-3.5">
         <div>
-          <div className="text-caption font-bold tracking-wider text-text-muted uppercase">
-            Máy nội dung tiếp thị
-          </div>
-          <div className="text-title font-black text-primary flex items-center gap-2">
-            <Sparkles size={18} />
-            AI Content Engine — Cỗ Máy Nội Dung Đa Kênh
-          </div>
+          <h1 className="text-title font-black text-primary flex items-center gap-2">
+            <Sparkles size={18} aria-hidden="true" />
+            Tạo nội dung bán hàng đa kênh
+          </h1>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -92,7 +89,7 @@ function ContentEngineContent() {
             className="text-xs gap-1.5"
           >
             <Sparkles size={14} />
-            Studio 5 Tone giọng
+            Giọng văn
           </Button>
           <Button
             variant="outline"
@@ -176,7 +173,7 @@ function ContentEngineContent() {
                 <div>
                   <div className="text-xs font-semibold text-text-muted">Bước 1: Tải ảnh sản phẩm</div>
                   <div className="text-title-sm font-extrabold text-text">
-                    AI Vision sẽ tự phân tích & sinh nội dung
+                    AI đọc ảnh và soạn bài
                   </div>
                 </div>
                 <ImageUploadTab
@@ -211,7 +208,7 @@ function ContentEngineContent() {
                     </span>
                   ) : (
                     <span>
-                      💡 Content Engine sẽ viết bài cho{" "}
+                      AI sẽ viết bài cho{" "}
                       <strong>{selectedChannels.length} kênh</strong> đã chọn.
                     </span>
                   )}
@@ -223,7 +220,7 @@ function ContentEngineContent() {
                   className="w-full sm:w-auto gap-2 font-bold px-7 shadow-md whitespace-nowrap"
                 >
                   <Sparkles size={16} />
-                  {selectedChannels.length === 0 ? "Chưa chọn kênh nào" : "Sinh bài bằng Content Engine"}
+                  {selectedChannels.length === 0 ? "Chưa chọn kênh nào" : "Viết bài"}
                 </Button>
               </Card>
             )}
@@ -236,7 +233,7 @@ function ContentEngineContent() {
             {inputMode === "product" && (
               <div className="text-center">
                 <div className="text-sm font-semibold text-primary animate-pulse">
-                  Content Engine đang xử lý...
+                  Đang viết bài...
                 </div>
                 <div className="text-title font-black text-text mt-1">
                   Đang soạn thảo nội dung tiếp thị đa kênh

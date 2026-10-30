@@ -77,7 +77,7 @@ describe("adminConfirmBrochurePayment — bảo vệ đơn đặt cọc không b
       production_status: "ARRANGING",
     })
     await expect(adminConfirmBrochurePayment(ctx, "order-1", {}, payments, orders, repo)).rejects.toThrow(
-      /hoàn thành cắm hoa/i
+      /hoàn thành chế tác/i
     )
   })
 
@@ -172,7 +172,7 @@ describe("adminConfirmBrochurePayment — bảo vệ đơn đặt cọc không b
       production_status: "ARRANGING",
     })
     await expect(coordinatorConfirmBalancePayment(ctx, "order-1", {}, payments, orders, repo)).rejects.toThrow(
-      /hoàn thành cắm hoa/i
+      /hoàn thành chế tác/i
     )
     expect(payments.recordIncomingPayment).not.toHaveBeenCalled()
   })

@@ -28,6 +28,7 @@ export function PresetSelector({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
         className="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-surface-alt/60 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5">
@@ -58,6 +59,7 @@ export function PresetSelector({
                     key={p.id}
                     type="button"
                     onClick={() => onPresetChange(p.id)}
+                    aria-pressed={isSelected}
                     className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
                       isSelected
                         ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"
@@ -69,7 +71,7 @@ export function PresetSelector({
                       style={{ backgroundColor: p.colorHex ?? "#f8fafc" }}
                     />
                     <div className="min-w-0">
-                      <div className="text-body-sm font-semibold text-text">{p.name}</div>
+                      <div className="text-body-sm font-semibold text-text">{p.name}{isSelected && <span className="ml-1 text-primary" aria-hidden="true">✓</span>}</div>
                       <div className="text-caption text-text-muted line-clamp-1">{p.description}</div>
                     </div>
                   </button>
@@ -90,13 +92,14 @@ export function PresetSelector({
                     key={r.id}
                     type="button"
                     onClick={() => onRatioChange(r.id)}
+                    aria-pressed={isSelected}
                     className={`py-2 px-3 rounded-xl border text-center transition-all cursor-pointer ${
                       isSelected
                         ? "border-primary bg-primary-subtle font-semibold text-primary ring-1 ring-primary"
                         : "border-border bg-surface text-text hover:border-primary/40 text-caption"
                     }`}
                   >
-                    <div className="text-caption font-semibold">{r.label}</div>
+                    <div className="text-caption font-semibold">{isSelected && <span aria-hidden="true">✓ </span>}{r.label}</div>
                   </button>
                 )
               })}

@@ -1,24 +1,15 @@
 "use client"
 
-import React, { useState } from "react"
-import { Eye, CheckCircle2, ExternalLink, QrCode, Smartphone, Monitor } from "lucide-react"
+import React, { useEffect, useState } from "react"
+import { Eye, ExternalLink, QrCode, Smartphone, Monitor } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { CatalogProduct } from "./catalog-management-tab"
 import type { GeneratedLandingPackage } from "@/modules/content-engine/domain/landing-content-generator"
-import {
-  LandingTemplateHero,
-  LandingTemplateStory,
-  LandingTemplateProducts,
-  LandingTemplatePerks,
-  LandingTemplateProcess,
-  LandingTemplateReviews,
-  LandingTemplateFaq,
-  LandingTemplateLead,
-  LandingTemplateVideo,
-  LandingTemplateGallery,
-} from "./landing-templates"
-import { resolveFlowerImage, FLORIST_STORY_IMAGE } from "./flower-image-fallback"
+import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
+import { StorefrontPreviewIframe } from "./public/storefront-preview-iframe"
+import { buildLandingPreview } from "./landing-publish-payload"
+import { toPublicReview, type PublicShopReview, type ShopReview } from "@/modules/shop-reviews/domain/review-rules"
 
 export interface EnabledSectionsConfig {
   story: boolean
@@ -78,6 +69,15 @@ export function LandingCampaignPreview({
   onDownloadQR,
 }: LandingCampaignPreviewProps) {
   const [deviceView, setDeviceView] = useState<"mobile" | "desktop">("mobile")
+  const { business } = useTenantProfile()
+  // Đánh giá đang bật — giống đúng trang khách sẽ hiện; không có quyền đọc thì bỏ qua
+  const [reviews, setReviews] = useState<PublicShopReview[]>([])
+  useEffect(() => {
+    fetch("/api/v1/shop-reviews")
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((j: { data?: ShopReview[] }) => setReviews((j.data ?? []).filter((r) => r.isVisible).slice(0, 6).map(toPublicReview)))
+      .catch(() => setReviews([]))
+  }, [])
 
   return (
     <div className="p-5 rounded-2xl bg-white border border-border shadow-xs space-y-4 animate-in fade-in duration-200">
@@ -85,8 +85,8 @@ export function LandingCampaignPreview({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
         <div className="flex items-center gap-2">
           <Eye size={16} className="text-primary" />
-          <h3 className="text-sm font-bold text-text">Bản xem trước giao diện chiến dịch (Live Preview)</h3>
-          {isPublished && <Badge tone="success">ĐÃ XUẤT BẢN FINAL</Badge>}
+          <h3 className="text-sm font-bold text-text">Bản xem trước trang khách</h3>
+          {isPublished && <Badge tone="success">Đã xuất bản</Badge>}
         </div>
 
         <div className="flex items-center gap-2">
@@ -102,7 +102,7 @@ export function LandingCampaignPreview({
               }`}
             >
               <Smartphone size={13} />
-              <span>Mobile</span>
+              <span>Điện thoại</span>
             </button>
             <button
               type="button"
@@ -114,21 +114,13 @@ export function LandingCampaignPreview({
               }`}
             >
               <Monitor size={13} />
-              <span>Desktop</span>
+              <span>Máy tính</span>
             </button>
           </div>
 
           {/* Action Buttons */}
-          {!isPublished ? (
-            <Button
-              onClick={onPublish}
-              disabled={isPublishing}
-              className="bg-success hover:bg-success/90 text-white gap-1.5 h-8 text-xs font-bold"
-            >
-              <CheckCircle2 size={14} />
-              <span>{isPublishing ? "Đang xuất bản..." : "Duyệt & Xuất bản Landing Page"}</span>
-            </Button>
-          ) : (
+          {/* Xuất bản: chỉ một nút, ở thanh điều hướng của wizard, có hộp xác nhận (R3). */}
+          {!isPublished ? null : (
             <>
               <Button
                 variant="ghost"
@@ -154,105 +146,28 @@ export function LandingCampaignPreview({
         </div>
       </div>
 
-      {/* Visual Live Preview Frame */}
-      <div className="bg-surface-alt/80 p-4 sm:p-6 rounded-2xl border border-border flex justify-center">
-        <div
-          className={`w-full transition-all duration-300 space-y-6 ${
-            deviceView === "mobile"
-              ? "max-w-md bg-surface p-3.5 rounded-3xl shadow-lg border border-border"
-              : "max-w-2xl bg-surface p-6 rounded-3xl shadow-lg border border-border"
-          }`}
-        >
-          {/* Featured Hero Image: Ưu tiên ảnh tùy chỉnh, sau đó đến ảnh sản phẩm thật, fallback sang ảnh mẫu */}
-          {(() => {
-            const firstWithImage = selectedProducts.find((p) => p.imageUrl && p.imageUrl.trim().length > 0)
-            const heroImg = customHeroImageUrl || resolveFlowerImage(firstWithImage?.imageUrl || selectedProducts[0]?.imageUrl, 0)
-
-            return (
-              <>
-                {/* Section 1: Hero Section */}
-                <LandingTemplateHero
-                  headline={headline}
-                  occasionId={occasionId}
-                  archetypeId={archetypeId}
-                  heroImageUrl={heroImg}
-                />
-
-                {/* Section Video: Thước phim chân thực nếu có videoUrl */}
-                {videoUrl && (
-                  <LandingTemplateVideo
-                    videoUrl={videoUrl}
-                    archetypeId={archetypeId}
-                    title="Video Cận Cảnh Sản Phẩm Thực Tế"
-                  />
-                )}
-
-                {/* Section 2: Story Section */}
-                {enabledSections.story && generatedPackage?.story && (
-                  <LandingTemplateStory
-                    story={generatedPackage.story}
-                    archetypeId={archetypeId}
-                    storyImageUrl={FLORIST_STORY_IMAGE}
-                  />
-                )}
-              </>
-            )
-          })()}
-
-          {/* Section 3: Products Showcase */}
-          {enabledSections.products && (
-            <LandingTemplateProducts
-              products={selectedProducts}
-              archetypeId={archetypeId}
-            />
+      {/* Bản xem trước = chính trang khách sẽ thấy sau khi xuất bản */}
+      <div className="bg-surface-alt/80 p-4 sm:p-6 rounded-2xl border border-border">
+        <StorefrontPreviewIframe
+          device={deviceView}
+          data={buildLandingPreview(
+            {
+              headline, occasionId, archetypeId, products: selectedProducts, customHeroImageUrl, videoUrl,
+              generatedPackage, enabledSections,
+            },
+            {
+              name: business?.display_name || "Tiệm của bạn",
+              legalName: null,
+              phone: business?.phone ?? null,
+              email: business?.email ?? null,
+              address: business?.address ?? null,
+              website: business?.website ?? null,
+              primaryColor: "#7A2E42",
+              logoUrl: null,
+            },
+            reviews
           )}
-
-          {/* Section 4: 4 Service Perks */}
-          {enabledSections.perks && (
-            <LandingTemplatePerks
-              perks={generatedPackage?.perks}
-              archetypeId={archetypeId}
-            />
-          )}
-
-          {/* Section 5: 3-Step Process */}
-          {enabledSections.process && (
-            <LandingTemplateProcess
-              steps={generatedPackage?.steps}
-              archetypeId={archetypeId}
-            />
-          )}
-
-          {/* Section: Khoảnh Khắc Sản Phẩm Tại Xưởng (Gallery) */}
-          {enabledSections.gallery !== false && (
-            <LandingTemplateGallery
-              archetypeId={archetypeId}
-            />
-          )}
-
-          {/* Section 6: Customer Reviews */}
-          {enabledSections.reviews && (
-            <LandingTemplateReviews
-              archetypeId={archetypeId}
-            />
-          )}
-
-          {/* Section 7: FAQ */}
-          {enabledSections.faq && (
-            <LandingTemplateFaq
-              faq={generatedPackage?.faq}
-              archetypeId={archetypeId}
-            />
-          )}
-
-          {/* Section 8: Lead Voucher CTA */}
-          {enabledSections.lead && (
-            <LandingTemplateLead
-              archetypeId={archetypeId}
-              occasionTitle={headline}
-            />
-          )}
-        </div>
+        />
       </div>
     </div>
   )

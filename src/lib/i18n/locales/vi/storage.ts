@@ -5,7 +5,7 @@
 export const storageVi = {
   header: {
     title: "Kho ảnh & nội dung",
-    description: "Lưu ảnh gốc, ảnh đã duyệt và kịch bản tư vấn của cửa hàng. Mục đã xóa được giữ 30 ngày trong Thùng rác.",
+    description: "Tìm lại mọi ảnh, video, âm thanh, nội dung, catalog và thẻ chào cửa hàng đã tạo. Mục đã xóa được giữ 30 ngày trong Thùng rác.",
     uploadButton: "Tải ảnh mới",
   },
   tabs: {

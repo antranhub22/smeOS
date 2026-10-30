@@ -304,7 +304,8 @@ export async function getPlatformOrgRecords(
           const params = (f.parameters as Record<string, unknown> | null) ?? {}
           const originalName = typeof params.original_filename === "string" ? params.original_filename : f.storage_key.split("/").pop() ?? f.id
           const ext = f.storage_key.split(".").pop()?.toUpperCase() ?? "XLSX"
-          const fileSize = (f as any).file_size_bytes ?? (f as any).file_size
+          const sized = f as { file_size_bytes?: number | bigint | null; file_size?: number | bigint | null }
+          const fileSize = Number(sized.file_size_bytes ?? sized.file_size ?? 0)
           const sizeKb = fileSize ? `${(fileSize / 1024).toFixed(1)} KB` : "—"
           const sig = signStorageUrl(f.storage_key, exp)
           const downloadUrl = `/api/v1/storage/${f.storage_key}?exp=${exp}&sig=${sig}`

@@ -29,23 +29,24 @@ export function formatQuotePriceForChat(quotePriceVnd: number | null): string {
  * Hỗ trợ: "500k", "1 triệu", "1tr5", "800 ngàn", "tầm 600.000"...
  */
 export function extractBudgetFromQuery(query: string): number | null {
-  const lower = query.toLowerCase()
+  // Cắt độ dài + giới hạn số chữ số: tin nhắn do khách gửi, tránh regex chạy lâu (CodeQL ReDoS)
+  const lower = query.slice(0, 500).toLowerCase()
 
   // 1.5 triệu, 2 triệu
-  const trieuMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(?:triệu|trieu|tr)/)
+  const trieuMatch = lower.match(/(\d{1,6}(?:[.,]\d{1,3})?)\s{0,3}(?:triệu|trieu|tr)/)
   if (trieuMatch?.[1]) {
     const val = parseFloat(trieuMatch[1].replace(",", "."))
     return Math.round(val * 1_000_000)
   }
 
   // 500k, 650k
-  const kMatch = lower.match(/(\d+)\s*k\b/)
+  const kMatch = lower.match(/(\d{1,7})\s{0,3}k\b/)
   if (kMatch?.[1]) {
     return parseInt(kMatch[1], 10) * 1_000
   }
 
   // 500 ngàn, 700 nghìn
-  const nganMatch = lower.match(/(\d+)\s*(?:ngàn|nghìn|ngan|nghin)/)
+  const nganMatch = lower.match(/(\d{1,7})\s{0,3}(?:ngàn|nghìn|ngan|nghin)/)
   if (nganMatch?.[1]) {
     return parseInt(nganMatch[1], 10) * 1_000
   }

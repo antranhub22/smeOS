@@ -13,24 +13,9 @@
  */
 
 import { useMemo } from "react"
-import {
-  type SmeOsTier,
-  type SaasMotherTerminology,
-  type SaasIndustryTerminology,
-  type ChainOsTerminology,
-  type StoreOsTerminology,
-  getTierTerminology,
-} from "@/core/terminology"
+import { type SmeOsTier, type TierTerminologyMap, getTierTerminology } from "@/core/terminology"
 
-export function useTierTerminology<T extends SmeOsTier>(
-  tier: T
-): T extends "TIER_1_SAAS"
-  ? SaasMotherTerminology
-  : T extends "TIER_2_INDUSTRY"
-  ? SaasIndustryTerminology
-  : T extends "TIER_3_CHAIN"
-  ? ChainOsTerminology
-  : StoreOsTerminology {
+export function useTierTerminology<T extends SmeOsTier>(tier: T): TierTerminologyMap[T] {
   return useMemo(() => getTierTerminology(tier), [tier])
 }
 

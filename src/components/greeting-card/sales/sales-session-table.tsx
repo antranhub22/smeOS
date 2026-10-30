@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { markPersonalLinkCopied } from "@/components/greeting-card/share/tracked-copy"
 import { Check, Copy, ExternalLink, Ban, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { getSessionStatusBadge, SESSION_STATUS_BADGE, type SessionRow } from "./sales-types"
 import { useI18n } from "@/lib/i18n"
@@ -27,6 +28,7 @@ function formatDate(iso: string | null): string {
 
 /** Bảng link đã gửi: trạng thái khách, hạn dùng, đơn, sao chép/thu hồi link. */
 export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore, onChanged, emptyState }: Props) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const { ti } = useI18n()
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [revokingId, setRevokingId] = useState<string | null>(null)
@@ -40,7 +42,13 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
   }
 
   async function revoke(row: SessionRow) {
-    if (!window.confirm(`Thu hồi link ${row.send_code}? Khách mở link sẽ thấy link không còn hiệu lực.`)) return
+    const ok = await confirm({
+      title: `Thu hồi link ${row.send_code}?`,
+      consequence: "Khách mở link sẽ thấy link không còn hiệu lực.",
+      confirmLabel: "Thu hồi link",
+      tone: "danger",
+    })
+    if (!ok) return
     setRevokingId(row.id)
     setError(null)
     try {
@@ -152,6 +160,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
           </Button>
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

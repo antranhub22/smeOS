@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
+import type { Route } from "next"
 import {
-  Folder,
   Layers,
   Sparkles,
   CheckCircle2,
@@ -23,19 +23,12 @@ import {
   Gift,
   ShieldCheck,
   ChevronRight,
-  ExternalLink,
   Trash2,
-  Plus,
 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import {
-  TabActionHeader,
-  type TabItem,
-  type TabAction,
-  type TabOverflowAction,
-} from "@/components/ui/tab-header"
+import { TabActionHeader } from "@/components/ui/tab-header"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import {
@@ -49,7 +42,17 @@ import { StorageTrashTab } from "@/components/storage/storage-trash-tab"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { formatDate } from "@/lib/i18n/formatters"
 
-export type StorageTab = "raw" | "approved" | "finalized" | "trash"
+import {
+  buildOverflowActions,
+  buildPrimaryActions,
+  buildStorageTabs,
+  libraryTypeOf,
+  type StorageTab,
+} from "@/components/storage/storage-hub-tabs"
+import { LibraryPanel } from "@/components/storage/library/library-panel"
+import { useLibrarySummary } from "@/components/storage/library/use-library-summary"
+
+export type { StorageTab }
 
 /** Một dòng `GET /api/v1/assets` — chỉ các trường kho ảnh đọc. */
 interface AssetApiRow {
@@ -156,6 +159,13 @@ export function AccountStorageHub({
     session.roleKey === "store_admin" ||
     session.can("G3") ||
     session.can("L4")
+
+  // Kho dữ liệu v2 — thư viện tập trung (Screen Contract kho-du-lieu.md §4–§5)
+  const library = useLibrarySummary()
+  const activeLibraryType = libraryTypeOf(activeTab)
+  const showScope = library.isChain && !library.viewerBranchId
+  // Tab Ảnh gốc của chuỗi khi chọn trụ sở/chi nhánh: dùng lưới thư viện (lọc được theo người tạo)
+  const scopedRawType = activeTab === "raw" && showScope && library.scope !== "all" ? "original" : null
 
   useEffect(() => {
     if (finalizedPitches.length > 0) {
@@ -292,6 +302,7 @@ export function AccountStorageHub({
     } else if (target.type === "APPROVED_ANALYSIS") {
       setApprovedItems((prev) => prev.filter((i) => i.id !== target.id))
     }
+    library.refresh()
     await fetchTrashCount()
   }
 
@@ -303,6 +314,13 @@ export function AccountStorageHub({
       fetchTrashCount()
     }
   }, [isExecutive])
+
+  const tabHandlers = {
+    go: (href: string) => router.push(href as Route),
+    refreshRaw: () => void fetchRawAssets(),
+    refreshApproved: () => void fetchApprovedAnalyses(),
+    refreshLibrary: library.refresh,
+  }
 
   // All raw assets combined (local uploads + server assets)
   const allRawAssets: RawAssetItem[] = useMemo(() => {
@@ -375,14 +393,14 @@ export function AccountStorageHub({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-meta font-bold text-accent uppercase tracking-wider">Kho ảnh & nội dung</span>
-              <Badge tone="neutral" className="font-semibold text-caption">Cửa hàng</Badge>
+              <span className="text-meta font-bold text-accent-text uppercase tracking-wider">Kho ảnh & nội dung</span>
+              <Badge tone="neutral" className="font-semibold text-caption">{library.isChain ? "Chuỗi" : "Cửa hàng"}</Badge>
             </div>
             <h2 className="mt-1 text-xl font-extrabold text-text tracking-tight">
-              Kho ảnh và kịch bản tư vấn
+              Mọi thứ cửa hàng đã tạo, ở một chỗ
             </h2>
             <p className="text-body-sm text-text-muted mt-0.5">
-              Lưu ảnh gốc, ảnh đã duyệt và kịch bản tư vấn của cửa hàng. Mục đã xóa được giữ 30 ngày trong Thùng rác.
+              Ảnh, video, âm thanh, nội dung, catalog, thẻ chào và kịch bản tư vấn. Mục đã xóa được giữ 30 ngày trong Thùng rác.
             </p>
           </div>
 
@@ -401,112 +419,34 @@ export function AccountStorageHub({
 
         {/* Standardized SaaS Tab Action Header (Tabs on Left + Actions on Top-Right) */}
         <TabActionHeader
-          tabs={[
-            {
-              id: "raw",
-              label: "Ảnh gốc",
-              icon: Folder,
-              badge: allRawAssets.length,
-              badgeTone: "neutral",
-            },
-            {
-              id: "approved",
-              label: "Ảnh đã duyệt",
-              icon: Layers,
-              badge: approvedItems.length,
-              badgeTone: "accent",
-            },
-            {
-              id: "finalized",
-              label: "Kịch bản tư vấn",
-              icon: CheckCircle2,
-              badge: internalFinalizedPitches.length,
-              badgeTone: "success",
-            },
-            ...(isExecutive
-              ? [
-                  {
-                    id: "trash",
-                    label: "Thùng rác (30 ngày)",
-                    icon: Trash2,
-                    badge: trashCount,
-                    badgeTone: "danger" as const,
-                  },
-                ]
-              : []),
-          ]}
+          tabs={buildStorageTabs({
+            counts: { raw: allRawAssets.length, approved: approvedItems.length, finalized: internalFinalizedPitches.length, trash: trashCount },
+            isExecutive,
+            libraryTypes: library.types,
+            libraryCounts: library.counts,
+          })}
           activeTab={activeTab}
           onTabChange={(tabId) => setActiveTab(tabId as StorageTab)}
-          primaryActions={
-            activeTab === "raw"
-              ? [
-                  {
-                    id: "upload-new",
-                    label: "Tải ảnh mới",
-                    icon: Plus,
-                    variant: "primary",
-                    onClick: () => router.push("/tai-anh"),
-                  },
-                ]
-              : activeTab === "approved"
-              ? [
-                  {
-                    id: "refresh-approved",
-                    label: "Làm mới",
-                    icon: RefreshCw,
-                    variant: "outline",
-                    onClick: fetchApprovedAnalyses,
-                  },
-                ]
-              : [
-                  {
-                    id: "create-pitch",
-                    label: "Tạo thẻ chào mới",
-                    icon: Plus,
-                    variant: "primary",
-                    onClick: () => router.push("/tai-anh?tab=m01c"),
-                  },
-                ]
-          }
-          overflowActions={
-            activeTab === "raw"
-              ? [
-                  {
-                    id: "refresh-raw",
-                    label: "Làm mới danh sách ảnh",
-                    icon: RefreshCw,
-                    onClick: fetchRawAssets,
-                  },
-                  {
-                    id: "goto-tai-anh",
-                    label: "Chuyển tới trang Tải ảnh",
-                    icon: ExternalLink,
-                    onClick: () => router.push("/tai-anh"),
-                  },
-                ]
-              : activeTab === "approved"
-              ? [
-                  {
-                    id: "go-approval-queue",
-                    label: "Đi tới Hàng chờ duyệt",
-                    icon: ExternalLink,
-                    onClick: () => router.push("/duyet"),
-                  },
-                ]
-              : [
-                  {
-                    id: "refresh-finalized",
-                    label: "Tải lại danh sách",
-                    icon: RefreshCw,
-                    onClick: () => fetchApprovedAnalyses(),
-                  },
-                ]
-          }
+          primaryActions={buildPrimaryActions(activeTab, tabHandlers)}
+          overflowActions={buildOverflowActions(activeTab, tabHandlers)}
         />
       </div>
 
+      {(activeLibraryType || (activeTab === "raw" && showScope)) && (
+        <LibraryPanel
+          library={library}
+          type={activeLibraryType ?? scopedRawType}
+          showScope={showScope}
+          onTrash={
+            isExecutive && (activeLibraryType === "ai_image" || scopedRawType)
+              ? (item) => setTrashTarget({ id: item.id, name: item.title || "Ảnh", imageUrl: item.thumbnail_url, type: "RAW_ASSET" })
+              : undefined
+          }
+        />
+      )}
+
       {/* TAB CONTENT 1: Ảnh Gốc */}
-      {activeTab === "raw" && (
+      {activeTab === "raw" && !scopedRawType && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">

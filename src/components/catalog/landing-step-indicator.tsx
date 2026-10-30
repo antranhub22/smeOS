@@ -10,9 +10,9 @@ export interface WizardStepItem {
 }
 
 export const LANDING_WIZARD_STEPS: WizardStepItem[] = [
-  { id: 1, title: "Dịp & Phong cách", description: "Sự kiện & Archetype" },
+  { id: 1, title: "Dịp & Phong cách", description: "Sự kiện và kiểu trang" },
   { id: 2, title: "Chọn hoa", description: "Danh mục sản phẩm" },
-  { id: 3, title: "Nội dung & Section", description: "AI Storytelling & Khối" },
+  { id: 3, title: "Nội dung", description: "Lời giới thiệu và các phần" },
   { id: 4, title: "Xem trước", description: "Kiểm tra giao diện" },
   { id: 5, title: "Xuất bản", description: "Nhận Link & QR" },
 ]
@@ -41,13 +41,15 @@ export function LandingStepIndicator({
               <button
                 type="button"
                 disabled={!isClickable}
+                aria-label={`Bước ${step.id}: ${step.title}${isDone ? " (đã xong)" : ""}`}
+                aria-current={isCurrent ? "step" : undefined}
                 onClick={() => isClickable && onStepClick(step.id)}
                 className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors whitespace-nowrap ${
                   isCurrent
                     ? "bg-primary-muted text-primary font-bold"
                     : isDone
                     ? "text-text hover:bg-surface-alt cursor-pointer"
-                    : "text-text-muted opacity-60 cursor-not-allowed"
+                    : "text-text-muted cursor-not-allowed"
                 }`}
               >
                 <div
@@ -59,7 +61,7 @@ export function LandingStepIndicator({
                       : "bg-surface-alt border border-border text-text-muted"
                   }`}
                 >
-                  {isDone ? <Check className="h-3.5 w-3.5" /> : step.id}
+                  {isDone ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : step.id}
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-caption font-semibold leading-tight">{step.title}</div>

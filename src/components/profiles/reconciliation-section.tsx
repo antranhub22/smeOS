@@ -18,7 +18,7 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
           <HelpCircle size={16} className="text-primary" /> Cơ chế xác nhận & đối soát giao dịch
         </h3>
         <p className="text-caption text-text-muted mt-0.5">
-          Lựa chọn quy trình kiểm tra tiền về để chuyển trạng thái đơn hàng sang "Đã thanh toán"
+          Lựa chọn quy trình kiểm tra tiền về để chuyển trạng thái đơn hàng sang “Đã thanh toán”
         </p>
       </div>
 
@@ -34,7 +34,7 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
             <div>
               <p className="text-body-sm font-bold text-text">Xác nhận bằng chứng từ thủ công</p>
               <p className="text-caption text-text-muted mt-1 leading-relaxed">
-                Khách chuyển khoản rồi tải ảnh bill hoặc bấm "Tôi đã chuyển". Nhân viên đối soát sao kê app và bấm Duyệt tiền.
+                Khách chuyển khoản rồi tải ảnh bill hoặc bấm “Tôi đã chuyển”. Nhân viên đối soát sao kê app và bấm Duyệt tiền.
               </p>
             </div>
             <input
@@ -63,7 +63,7 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
                 </span>
               </div>
               <p className="text-caption text-text-muted mt-1 leading-relaxed">
-                Bắt biến động số dư qua Open Banking / SePay / PayOS. Đơn hàng tự động đổi sang "Đã thanh toán" trong 3 giây.
+                Bắt biến động số dư qua Open Banking / SePay / PayOS. Đơn hàng tự động đổi sang “Đã thanh toán” trong 3 giây.
               </p>
             </div>
             <input

@@ -16,22 +16,18 @@ import { STYLES_CATALOG, type CopywritingStyleKey } from "../src/lib/i18n/styles
 import { viDictionary } from "../src/lib/i18n/locales/vi"
 
 // Hàm đệ quy merge deep
-function deepMerge<T extends Record<string, any>>(target: T, source: Record<string, any>): T {
-  const output = { ...target }
+type Dict = Record<string, unknown>
+const isDict = (v: unknown): v is Dict => !!v && typeof v === "object" && !Array.isArray(v)
+
+function deepMerge<T extends Dict>(target: T, source: Dict): T {
+  const output: Dict = { ...target }
   for (const key of Object.keys(source)) {
-    if (
-      source[key] &&
-      typeof source[key] === "object" &&
-      !Array.isArray(source[key]) &&
-      target[key] &&
-      typeof target[key] === "object"
-    ) {
-      output[key as keyof T] = deepMerge(target[key], source[key])
-    } else if (source[key] !== undefined) {
-      output[key as keyof T] = source[key]
-    }
+    const from = source[key]
+    const into = target[key]
+    if (isDict(from) && isDict(into)) output[key] = deepMerge(into, from)
+    else if (from !== undefined) output[key] = from
   }
-  return output
+  return output as T
 }
 
 function printHelp() {
@@ -86,14 +82,10 @@ async function main() {
 
   for (const [namespace, nsOverrides] of Object.entries(overrides)) {
     const filePath = path.join(localesDir, `${namespace === "greetingCard" ? "greeting-card" : namespace}.ts`)
-    if (!fs.existsSync(filePath)) {
-      continue
-    }
+    const currentModule = (viDictionary as unknown as Record<string, unknown>)[namespace]
+    if (!isDict(currentModule)) continue
 
-    const currentModule = (viDictionary as any)[namespace]
-    if (!currentModule) continue
-
-    const merged = deepMerge(currentModule, nsOverrides)
+    const merged = deepMerge(currentModule, nsOverrides as Dict)
 
     // Tạo code xuất file TypeScript giữ nguyên cấu trúc
     const varName = `${namespace === "greetingCard" ? "greetingCard" : namespace}Vi`
@@ -104,7 +96,19 @@ async function main() {
 
 export const ${varName} = ${JSON.stringify(merged, null, 2)} as const
 `
-    fs.writeFileSync(filePath, fileContent, "utf-8")
+    // Mở-rồi-ghi trên cùng một file descriptor (không kiểm tồn tại rồi mới ghi — tránh race, CodeQL)
+    let fd: number
+    try {
+      fd = fs.openSync(filePath, "r+")
+    } catch {
+      continue
+    }
+    try {
+      fs.ftruncateSync(fd, 0)
+      fs.writeSync(fd, fileContent, 0, "utf-8")
+    } finally {
+      fs.closeSync(fd)
+    }
     console.log(`  ✓ Đã cập nhật namespace: ${namespace} (${path.basename(filePath)})`)
   }
 

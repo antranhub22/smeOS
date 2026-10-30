@@ -18,8 +18,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
-  const firstImage = data.products.find((p) => p.imageUrl)?.imageUrl
-
   return {
     title: `${data.catalog.name} — ${data.shop.name}`,
     description: data.catalog.description || `Xem bộ sưu tập sản phẩm mới nhất từ ${data.shop.name}`,
@@ -27,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${data.catalog.name} — ${data.shop.name}`,
       description: data.catalog.description || `Xem bộ sưu tập sản phẩm mới nhất từ ${data.shop.name}`,
       type: "website",
-      images: firstImage ? [{ url: firstImage }] : [],
+      // Ảnh chia sẻ dựng ở opengraph-image.tsx cùng thư mục (Next tự gắn)
     },
   }
 }

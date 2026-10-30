@@ -82,6 +82,16 @@ export function DesktopNavHeader({
 
   return (
     <div
+      onClick={collapsed ? onToggleCollapse : undefined}
+      role={collapsed ? "button" : undefined}
+      tabIndex={collapsed ? 0 : undefined}
+      aria-label={collapsed ? "Mở rộng thanh điều hướng" : undefined}
+      onKeyDown={(e) => {
+        if (collapsed && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault()
+          onToggleCollapse()
+        }
+      }}
       className={cn(
         "relative z-30 flex h-14 flex-shrink-0 items-center border-b border-border transition-all duration-200",
         collapsed
