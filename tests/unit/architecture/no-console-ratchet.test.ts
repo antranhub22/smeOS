@@ -8,7 +8,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join, relative } from "node:path"
 
 const ROOT = join(process.cwd(), "src")
-const BASELINE = 30
+const BASELINE = 29
 const PATTERN = /\bconsole\.(log|info|warn|error|debug)\(/
 const EXCLUDED = [/^core\/observability\/log\.ts$/, /^generated\//, /\.test\.tsx?$/, /__tests__\//]
 
