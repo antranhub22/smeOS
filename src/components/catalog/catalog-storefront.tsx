@@ -168,7 +168,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         )}
 
         {campaign && videoUrl && (
-          <LandingTemplateVideo videoUrl={videoUrl} archetypeId={campaign.archetype} title="Video Cận Cảnh Mẫu Thực Tế" />
+          <LandingTemplateVideo videoUrl={videoUrl} archetypeId={campaign.archetype} title="Video mẫu thật" />
         )}
 
         {campaign && enabledSections?.story !== false && generatedPackage?.story && storyImageUrl && (

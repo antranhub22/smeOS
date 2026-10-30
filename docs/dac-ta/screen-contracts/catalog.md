@@ -90,3 +90,9 @@
 - **Màu đồng bộ:** vùng trang khách ghi đè biến màu ngữ nghĩa bằng token phong cách catalog (`public-theme-vars.ts`) — các khối Câu chuyện/Ưu điểm/Quy trình/Hỏi đáp/Form theo phong cách tiệm. Màu nhấn/nút các phong cách được làm đậm (cùng tông) để đạt tương phản: S03 `#92400E`, S04 `#9A3412`, S05 `#3F6212`, S07 `#1D4ED8`, S08 `#4F46E5`, S09 `#854D0E`, S10 `#BE123C`, S12 `#115E59`; chữ phụ S03 `#6B655D`, S05 `#5F584F` (PO duyệt 30/10/2026). Ngưỡng: chữ ≥ 4,5:1, màu nhấn trên nền trang ≥ 5,5:1 (vì còn đặt trên nền pha 10%). Chữ trên nút dùng `ctaText` / `text-primary-foreground`, không viết cứng màu trắng.
 - **Lưới sản phẩm:** 2 cột trên di động, 3 cột desktop, ảnh dọc 4:5; bỏ nhãn "Giá niêm yết", nút đặt chỉ còn biểu tượng trên di động (có nhãn truy cập).
 - Kiểm: 390/1280px không cuộn ngang; axe 390px không lỗi critical/serious thuộc trang.
+
+### Việt hoá & PDF/poster (30/10/2026)
+- Tên 5 mẫu, 12 phong cách, 8 bố cục hiển thị bằng tiếng Việt (vd. "Sách ảnh cao cấp", "Sang trọng tĩnh lặng"); bỏ mã `S01…` trên màn chọn; bỏ "Universal Catalog Studio 2026", "(Live Preview)", "(Hero Banner)".
+- PDF (`catalog-page-renderer.tsx`): màu ngữ nghĩa theo phong cách (`publicThemeVars`), tiêu đề dùng chữ của phong cách; bỏ "2026 Collection", "smeOS Universal Catalog Studio", câu sáo và lời hứa mặc định ("hóa đơn VAT", "giao đúng hẹn", "độc bản") — chỉ in khi tiệm tự nhập.
+- Poster 1080×1080: bỏ "smeOS Catalog"; thanh trên dùng màu nút + `ctaText` (đạt tương phản ở mọi phong cách); chữ tiêu đề Fraunces/Be Vietnam Pro (font đã nạp).
+- Trang PDF thực tế sinh 5 loại: bìa, câu chuyện, mẫu nổi bật, lưới mẫu, trang kết (theo mẫu chọn).

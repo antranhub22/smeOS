@@ -42,9 +42,9 @@ export function LandingTemplateGallery({
       {/* Header */}
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-1.5 text-xs font-bold text-text uppercase tracking-wider">
-          <Camera size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-danger" : "text-warning"} />
-          <span className={isLuxury ? "font-serif" : ""}>
-            {isLuxury ? "Triển Lãm Ảnh Tác Phẩm Thực Tế" : "Khoảnh Khắc Sản Phẩm Tại Xưởng"}
+          <Camera size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-primary" : "text-warning"} />
+          <span className={isLuxury ? "font-display" : ""}>
+            {"Ảnh mẫu thật"}
           </span>
         </div>
       </div>
@@ -60,7 +60,7 @@ export function LandingTemplateGallery({
               isLuxury
                 ? "border-primary/20 bg-surface-alt/40 hover:border-primary/60"
                 : isFestive
-                ? "border-danger/20 bg-surface hover:border-danger"
+                ? "border-primary/20 bg-surface hover:border-primary"
                 : "border-border bg-surface hover:border-primary/60"
             }`}
           >
@@ -78,11 +78,11 @@ export function LandingTemplateGallery({
 
             <div className="p-2.5 bg-surface">
               <h5 className={`text-caption font-bold text-text line-clamp-1 group-hover:text-primary transition-colors ${
-                isLuxury ? "font-serif" : ""
+                isLuxury ? "font-display" : ""
               }`}>
                 {photo.title}
               </h5>
-              <p className={`text-caption line-clamp-1 mt-0.5 ${isLuxury ? "font-serif text-text/75 italic" : "text-text-muted"}`}>
+              <p className={`text-caption line-clamp-1 mt-0.5 ${isLuxury ? "font-display text-text italic" : "text-text-muted"}`}>
                 {photo.caption}
               </p>
             </div>

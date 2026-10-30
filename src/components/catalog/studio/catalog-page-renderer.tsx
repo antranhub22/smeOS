@@ -9,6 +9,7 @@ import type {
 } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { Flower2, Phone, MapPin, Sparkles, ShoppingBag, CheckCircle2 } from "lucide-react"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import { publicThemeVars } from "../public/public-theme-vars"
 
 interface CatalogPageRendererProps {
   page: CatalogPageModel
@@ -36,6 +37,8 @@ export function CatalogPageRenderer({
   return (
     <div
       style={{
+        // Class ngữ nghĩa (text-text-muted, bg-surface…) trong trang theo màu phong cách, không theo màu quản trị
+        ...publicThemeVars(style),
         backgroundColor: tokens.background,
         color: tokens.textPrimary,
         borderColor: tokens.border,
@@ -80,7 +83,7 @@ export function CatalogPageRenderer({
                 className="inline-block px-3 py-1 rounded-full text-caption font-bold tracking-widest uppercase"
                 style={{ backgroundColor: tokens.badgeBg, color: tokens.badgeText }}
               >
-                {style.name} • 2026 Collection
+                Bộ sưu tập {new Date().getFullYear()}
               </span>
               <div className="text-caption tracking-[0.2em] uppercase font-bold" style={{ color: tokens.accent }}>
                 {brand.name}
@@ -88,7 +91,7 @@ export function CatalogPageRenderer({
             </div>
 
             <div className="space-y-3 max-w-[440px]">
-              <h1 className={`${typography.scale.cover} font-bold`} style={{ color: tokens.textPrimary }}>
+              <h1 className={`${typography.scale.cover} ${typography.fontDisplay}`} style={{ color: tokens.textPrimary }}>
                 {page.title}
               </h1>
               {page.subtitle && (
@@ -115,9 +118,9 @@ export function CatalogPageRenderer({
               </div>
             )}
 
-            <div className="pt-4 text-caption text-text-muted font-mono tracking-wider">
-              {brand.slogan || "Tác phẩm thủ công tuyển chọn • Thiết kế độc bản"}
-            </div>
+            {brand.slogan && (
+              <div className="pt-4 text-caption text-text-muted tracking-wider">{brand.slogan}</div>
+            )}
           </div>
         )}
 
@@ -126,9 +129,9 @@ export function CatalogPageRenderer({
           <div className="flex flex-col justify-center h-full max-w-[480px] mx-auto space-y-6 text-left py-4">
             <div className="space-y-1">
               <span className="text-caption font-bold tracking-widest uppercase" style={{ color: tokens.accent }}>
-                Triết lý & Nghệ thuật
+                Câu chuyện của tiệm
               </span>
-              <h2 className={`${typography.scale.title} font-bold`} style={{ color: tokens.textPrimary }}>
+              <h2 className={`${typography.scale.title} ${typography.fontDisplay}`} style={{ color: tokens.textPrimary }}>
                 {page.contentBlock?.heading || page.title}
               </h2>
             </div>
@@ -159,9 +162,9 @@ export function CatalogPageRenderer({
           <div className="flex flex-col justify-between h-full space-y-4">
             <div className="space-y-1">
               <span className="text-caption font-bold tracking-widest uppercase" style={{ color: tokens.accent }}>
-                Tác Phẩm Chủ Đạo
+                Mẫu nổi bật
               </span>
-              <h2 className={`${typography.scale.title} font-bold`} style={{ color: tokens.textPrimary }}>
+              <h2 className={`${typography.scale.title} ${typography.fontDisplay}`} style={{ color: tokens.textPrimary }}>
                 {page.products[0].name}
               </h2>
             </div>
@@ -191,7 +194,7 @@ export function CatalogPageRenderer({
         {page.layoutId === "L05_PRODUCT_GRID" && (
           <div className="flex flex-col h-full justify-between space-y-4">
             <div className="border-b pb-2" style={{ borderColor: tokens.border }}>
-              <h3 className={`${typography.scale.heading} font-bold`} style={{ color: tokens.textPrimary }}>
+              <h3 className={`${typography.scale.heading} ${typography.fontDisplay}`} style={{ color: tokens.textPrimary }}>
                 {page.title}
               </h3>
             </div>
@@ -240,8 +243,8 @@ export function CatalogPageRenderer({
             </div>
 
             <div className="space-y-2">
-              <h2 className={`${typography.scale.title} font-bold`} style={{ color: tokens.textPrimary }}>
-                {page.contentBlock?.heading || "Thông Tin & Đặt Hàng"}
+              <h2 className={`${typography.scale.title} ${typography.fontDisplay}`} style={{ color: tokens.textPrimary }}>
+                {page.contentBlock?.heading || "Đặt hoa"}
               </h2>
               <p className={`${typography.scale.body}`} style={{ color: tokens.textSecondary }}>
                 {page.contentBlock?.body}
@@ -249,7 +252,7 @@ export function CatalogPageRenderer({
             </div>
 
             <div className="w-full rounded-2xl p-4 border space-y-2.5 text-left text-caption" style={{ backgroundColor: tokens.surface, borderColor: tokens.border }}>
-              <div className="font-bold uppercase tracking-wider text-text-muted">Liên hệ đặt mẫu nhanh</div>
+              <div className="font-bold text-text-muted">Liên hệ đặt hoa</div>
               {brand.contacts.hotline && (
                 <div className="flex items-center gap-2 text-text">
                   <Phone className="h-4 w-4 text-text-muted" />
@@ -281,7 +284,7 @@ export function CatalogPageRenderer({
 
       {/* Footer / Page Number */}
       <footer className="flex items-center justify-between text-caption text-text-muted pt-3 border-t" style={{ borderColor: tokens.border }}>
-        <span>{brand.name} • smeOS Universal Catalog Studio</span>
+        <span>{brand.name}</span>
         <span className="font-mono">Trang {page.pageNumber}</span>
       </footer>
     </div>

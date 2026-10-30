@@ -30,29 +30,29 @@ export function LandingTemplateFaq({
     : isRomantic
     ? "bg-surface border-primary/30 shadow-xs"
     : isFestive
-    ? "bg-surface border-danger/30 shadow-xs"
+    ? "bg-surface border-primary/30 shadow-xs"
     : "bg-surface border-border shadow-xs"
 
   const titleStyle = isLuxury
-    ? "font-serif text-title sm:text-display font-normal text-text mt-0.5"
-    : "text-title-sm sm:text-title font-extrabold text-text mt-0.5"
+    ? "font-display text-title sm:text-display font-normal text-text mt-0.5"
+    : "text-title-sm sm:text-title font-semibold text-text mt-0.5"
 
   return (
     <section className={`p-6 sm:p-8 rounded-3xl border space-y-5 ${containerStyle}`}>
       <div className="flex items-center gap-2">
         <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-          isLuxury ? "bg-primary/15 text-primary" : isFestive ? "bg-danger-bg text-danger" : "bg-primary-bg/30 text-primary"
+          isLuxury ? "bg-primary/10 text-primary" : isFestive ? "bg-primary/10 text-primary" : "bg-primary-bg/30 text-primary"
         }`}>
           <HelpCircle size={16} />
         </div>
         <div>
           <span className={`text-caption font-bold tracking-widest uppercase ${
-            isLuxury ? "font-serif text-primary" : isFestive ? "text-danger" : "text-primary"
+            isLuxury ? "font-display text-primary" : isFestive ? "text-primary" : "text-primary"
           }`}>
-            {isLuxury ? "Tường Minh Mọi Thắc Mắc" : "Giải Đáp Thắc Mắc"}
+            {"Câu hỏi thường gặp"}
           </span>
           <h3 className={titleStyle}>
-            Câu Hỏi Thường Gặp Của Khách Hàng
+            Bạn cần biết trước khi đặt
           </h3>
         </div>
       </div>
@@ -68,7 +68,7 @@ export function LandingTemplateFaq({
                   ? isLuxury
                     ? "border-primary/40 bg-surface shadow-xs"
                     : isFestive
-                    ? "border-danger/40 bg-danger-bg/10"
+                    ? "border-primary/40 bg-primary/10/10"
                     : "border-primary bg-surface-alt/50"
                   : isLuxury
                   ? "border-primary/15 bg-surface/70 hover:border-primary/30"
@@ -80,7 +80,7 @@ export function LandingTemplateFaq({
                 onClick={() => toggleFaq(idx)}
                 className="w-full p-4 flex items-center justify-between text-left gap-3 focus:outline-none"
               >
-                <span className={`text-xs font-bold text-text ${isLuxury ? "font-serif text-body-sm" : ""}`}>
+                <span className={`text-xs font-bold text-text ${isLuxury ? "font-display text-body-sm" : ""}`}>
                   {item.question}
                 </span>
                 <span className={`${isLuxury ? "text-primary" : "text-text-muted"} shrink-0`}>
@@ -90,7 +90,7 @@ export function LandingTemplateFaq({
 
               {isOpen && (
                 <div className={`px-4 pb-4 pt-1 text-caption leading-relaxed border-t animate-in fade-in duration-150 ${
-                  isLuxury ? "border-primary/10 font-serif text-text/80 text-body-sm" : "border-border/50 text-text-muted"
+                  isLuxury ? "border-primary/10 font-display text-text text-body-sm" : "border-border/50 text-text-muted"
                 }`}>
                   {item.answer}
                 </div>

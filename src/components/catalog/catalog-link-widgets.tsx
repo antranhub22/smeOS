@@ -93,7 +93,7 @@ export function PublishedCatalogLinks({ catalogLinks, onRefresh }: PublishedCata
                       <Badge tone="success">Đang mở</Badge>
                     )}
                     <span className="text-caption px-2 py-0.5 rounded-full bg-surface-alt border text-text-muted font-mono">
-                      {style === "EDITORIAL_LOOKBOOK" ? "Lookbook" : style === "COMPACT_LIST" ? "B2B List" : "Showroom"}
+                      {style === "EDITORIAL_LOOKBOOK" ? "Tạp chí ảnh" : style === "COMPACT_LIST" ? "Danh sách đặt nhanh" : "Trưng bày"}
                     </span>
                   </div>
                   <div className="text-xs text-text-muted mt-1 flex flex-wrap items-center gap-2">

@@ -9,7 +9,7 @@ export const CATALOG_STYLES_S07_S12: Partial<Record<CatalogStyleId, StyleDefinit
   S07_SWISS_GRID: {
     id: "S07_SWISS_GRID",
     number: "S07",
-    name: "Swiss Grid",
+    name: "Lưới gọn gàng",
     subtitle: "Lưới Thụy Sĩ, chuẩn xác kỹ thuật B2B",
     description: "Căn chỉnh chính xác tuyệt đối, typography sans trung tính, hiển thị thông số và quy cách rõ ràng.",
     visualLanguage: "Chuyên nghiệp, đáng tin cậy, phù hợp báo giá sự kiện và đặt hàng số lượng lớn.",
@@ -62,7 +62,7 @@ export const CATALOG_STYLES_S07_S12: Partial<Record<CatalogStyleId, StyleDefinit
   S08_BENTO_GALLERY: {
     id: "S08_BENTO_GALLERY",
     number: "S08",
-    name: "Bento Gallery",
+    name: "Ô lưới trưng bày",
     subtitle: "Khối Bento hiện đại, đa năng phong phú",
     description: "Bố cục chia ô Bento bất quy tắc cân bằng, kết hợp hình ảnh nổi bật với thẻ thông tin phụ trực quan.",
     visualLanguage: "Chuẩn thiết kế 2026, linh hoạt, tạo sự hào hứng khi lướt ngắm sản phẩm.",
@@ -115,7 +115,7 @@ export const CATALOG_STYLES_S07_S12: Partial<Record<CatalogStyleId, StyleDefinit
   S09_MODERN_RETRO: {
     id: "S09_MODERN_RETRO",
     number: "S09",
-    name: "Modern Retro",
+    name: "Hoài cổ hiện đại",
     subtitle: "Hoài cổ cách tân, typography cá tính",
     description: "Bảng màu ấm áp phong cách thập niên 70/80 được làm mới, font chữ uốn lượn có gu riêng.",
     visualLanguage: "Độc bản, hoài niệm, gợi nhắc kỷ niệm và giá trị bền vững.",
@@ -168,7 +168,7 @@ export const CATALOG_STYLES_S07_S12: Partial<Record<CatalogStyleId, StyleDefinit
   S10_PLAYFUL_ILLUSTRATION: {
     id: "S10_PLAYFUL_ILLUSTRATION",
     number: "S10",
-    name: "Playful Illustration",
+    name: "Vui tươi minh hoạ",
     subtitle: "Dễ thương, minh họa sinh động vui nhộn",
     description: "Nét vẽ doodle tay xinh xắn, sticker đáng yêu, màu sắc tươi vui như món quà bất ngờ.",
     visualLanguage: "Trẻ trung, Gen Z, ngọt ngào, tạo cảm giác thân mật vui vẻ.",
@@ -221,7 +221,7 @@ export const CATALOG_STYLES_S07_S12: Partial<Record<CatalogStyleId, StyleDefinit
   S11_DARK_SHOWCASE: {
     id: "S11_DARK_SHOWCASE",
     number: "S11",
-    name: "Dark Showcase",
+    name: "Trưng bày nền tối",
     subtitle: "Điện ảnh huyền bí, nền tối studio",
     description: "Nền đen huyền bí sang trọng, ánh sáng spotlight gom tiêu điểm, tương phản cao kịch tính.",
     visualLanguage: "Ấn tượng mạnh mẽ, tôn vinh độ chi tiết sắc sảo và phẩm cấp cao cấp nhất của sản phẩm.",
@@ -276,7 +276,7 @@ export const CATALOG_STYLES_S07_S12: Partial<Record<CatalogStyleId, StyleDefinit
   S12_MODERN_COMMERCE: {
     id: "S12_MODERN_COMMERCE",
     number: "S12",
-    name: "Modern Commerce",
+    name: "Cửa hàng hiện đại",
     subtitle: "Thương mại hiện đại, tối ưu chuyển đổi",
     description: "Ảnh rõ ràng, giá và mã số dễ tìm, huy hiệu nổi bật, bố cục tối ưu cho việc xem lướt và chốt đơn nhanh.",
     visualLanguage: "Thân thiện, tin cậy, tiện lợi và kích thích hành động mua hàng.",

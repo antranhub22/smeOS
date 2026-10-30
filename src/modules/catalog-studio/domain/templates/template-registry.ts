@@ -8,7 +8,7 @@ import type { CatalogTemplateId, CatalogTemplatePrototype } from "../entities/ca
 export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototype> = {
   T01_SIGNATURE_COLLECTION: {
     id: "T01_SIGNATURE_COLLECTION",
-    name: "Signature Collection",
+    name: "Bộ sưu tập đặc trưng",
     subtitle: "Bộ sưu tập nghệ thuật & Tạp chí thời trang",
     badge: "Editorial High-Fashion",
     defaultStyleId: "S01_EDITORIAL_MAGAZINE",
@@ -25,7 +25,7 @@ export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototy
 
   T02_MINIMAL_PRODUCT_LIST: {
     id: "T02_MINIMAL_PRODUCT_LIST",
-    name: "Minimal Product List",
+    name: "Danh sách tối giản",
     subtitle: "Danh mục tối giản, thông tin mạch lạc chuẩn Bắc Âu",
     badge: "Pure Minimalist",
     defaultStyleId: "S02_PURE_MINIMAL",
@@ -41,7 +41,7 @@ export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototy
 
   T03_PREMIUM_LOOKBOOK: {
     id: "T03_PREMIUM_LOOKBOOK",
-    name: "Premium Lookbook",
+    name: "Sách ảnh cao cấp",
     subtitle: "Lookbook sang trọng thầm lặng & Kể chuyện bằng hình ảnh",
     badge: "Quiet Luxury",
     defaultStyleId: "S03_QUIET_LUXURY",
@@ -58,7 +58,7 @@ export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototy
 
   T04_BENTO_SHOWCASE: {
     id: "T04_BENTO_SHOWCASE",
-    name: "Bento Showcase",
+    name: "Trưng bày ô lưới",
     subtitle: "Khối Bento năng động 2026 — Thương mại hiện đại đa năng",
     badge: "2026 Trending",
     defaultStyleId: "S08_BENTO_GALLERY",
@@ -75,7 +75,7 @@ export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototy
 
   T05_DARK_CINEMATIC: {
     id: "T05_DARK_CINEMATIC",
-    name: "Dark Cinematic",
+    name: "Điện ảnh nền tối",
     subtitle: "Điện ảnh studio huyền bí — Cao cấp không giới hạn",
     badge: "Premium Dark",
     defaultStyleId: "S11_DARK_SHOWCASE",

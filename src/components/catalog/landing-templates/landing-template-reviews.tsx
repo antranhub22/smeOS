@@ -37,9 +37,9 @@ export function LandingTemplateReviews({
     <section className="space-y-4">
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-1.5 text-xs font-bold text-text uppercase tracking-wider">
-          <MessageSquareQuote size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-danger" : "text-warning"} />
-          <span className={isLuxury ? "font-serif" : ""}>
-            {isLuxury ? "Cảm Nhận Tri Kỷ & Lời Trân Quý" : "Cảm Nhận Từ Khách Hàng"}
+          <MessageSquareQuote size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-primary" : "text-warning"} />
+          <span className={isLuxury ? "font-display" : ""}>
+            {"Khách hàng nói gì"}
           </span>
         </div>
         <div className="flex items-center gap-1 text-caption text-text-muted">
@@ -48,8 +48,8 @@ export function LandingTemplateReviews({
               <Star key={i} size={11} fill="currentColor" />
             ))}
           </div>
-          <span className={`font-bold ${isLuxury ? "font-serif text-primary" : "text-text"}`}>{avgRating.toFixed(1)}/5</span>
-          <span className={isLuxury ? "font-serif" : ""}>({reviews.length} đánh giá)</span>
+          <span className={`font-bold ${isLuxury ? "font-display text-primary" : "text-text"}`}>{avgRating.toFixed(1)}/5</span>
+          <span className={isLuxury ? "font-display" : ""}>({reviews.length} đánh giá)</span>
         </div>
       </div>
 
@@ -61,7 +61,7 @@ export function LandingTemplateReviews({
               isLuxury
                 ? "bg-surface-alt/60 border-primary/20 hover:border-primary/50"
                 : isFestive
-                ? "bg-surface border-danger/20 hover:border-danger"
+                ? "bg-surface border-primary/20 hover:border-primary"
                 : "bg-surface border-border hover:border-primary/50"
             }`}
           >
@@ -79,13 +79,13 @@ export function LandingTemplateReviews({
                   </span>
                 )}
               </div>
-              <p className={`text-caption leading-relaxed italic ${isLuxury ? "font-serif text-text/85 text-body-sm" : "text-text-muted"}`}>
+              <p className={`text-caption leading-relaxed italic ${isLuxury ? "font-display text-text text-body-sm" : "text-text-muted"}`}>
                 &ldquo;{rev.comment}&rdquo;
               </p>
             </div>
 
             <div className={`pt-2 border-t flex items-center justify-between text-caption ${
-              isLuxury ? "border-primary/15 font-serif" : "border-border"
+              isLuxury ? "border-primary/15 font-display" : "border-border"
             }`}>
               <span className={`font-bold ${isLuxury ? "text-primary" : "text-text"}`}>{rev.author}</span>
               <span className={isLuxury ? "text-text-muted italic" : "text-text-muted"}>{rev.occasion}</span>

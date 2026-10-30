@@ -48,7 +48,7 @@ const STYLE_CARDS: StyleCardItem[] = [
     id: "S03_QUIET_LUXURY",
     templateId: "T03_PREMIUM_LOOKBOOK",
     name: "Sang trọng nhẹ nhàng",
-    subtitle: "Lookbook tông ấm, sang trọng thầm lặng",
+    subtitle: "Sách ảnh tông ấm, sang trọng tĩnh lặng",
     palette: ["#F7F5F0", "#B45309", "#292524"],
   },
   {
