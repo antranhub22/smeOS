@@ -226,7 +226,7 @@ def run_worker(db_url: Optional[str] = None):
 
     while True:
         try:
-            with psycopg.connect(dsn, autocommit=True) as conn:
+            with psycopg.connect(dsn, autocommit=True, application_name="smeos-worker:video") as conn:
                 conn.execute(f"LISTEN {channel}")
                 print(f"📡 [VideoWorker] Đã kết nối Postgres và lắng nghe kênh {channel}", flush=True)
 

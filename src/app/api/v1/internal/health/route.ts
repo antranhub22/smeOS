@@ -13,7 +13,7 @@ import { log } from "@/core/observability/log"
 import { checkSystemHealth } from "@/core/observability/system-health"
 import { measureDatabaseLatency } from "@/core/tenancy/infra/database-ping"
 import { STUCK_JOB_TIMEOUT_MS } from "@/modules/jobs/domain/job-rules"
-import { countJobBacklog } from "@/modules/jobs/infra/job-health-query"
+import { countJobBacklog, countLiveWorkers } from "@/modules/jobs/infra/job-health-query"
 
 export const GET = handle(async (request) => {
   if (!isAuthorizedCronRequest(request)) {
@@ -25,6 +25,7 @@ export const GET = handle(async (request) => {
       databaseLatencyMs: measureDatabaseLatency,
       redis: pingRedis,
       jobBacklog: () => countJobBacklog(now, STUCK_JOB_TIMEOUT_MS),
+      workers: countLiveWorkers,
     },
     { production: process.env.NODE_ENV === "production", now }
   )

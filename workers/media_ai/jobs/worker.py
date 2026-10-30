@@ -493,7 +493,7 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
 
     while not co.dung:
         try:
-            with psycopg.connect(cleaned_url, autocommit=True) as conn:
+            with psycopg.connect(cleaned_url, autocommit=True, application_name="smeos-worker:media") as conn:
                 print(f"[media] Worker {FEATURE} đã kết nối CSDL, đang lắng nghe...", flush=True)
                 backoff = 1.0
                 with conn.cursor() as cur:

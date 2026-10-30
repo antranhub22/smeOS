@@ -10,6 +10,8 @@ export interface HealthProbes {
   databaseLatencyMs: () => Promise<number | null>
   redis: () => Promise<RedisState>
   jobBacklog: () => Promise<{ pendingTooLong: number; processingTooLong: number }>
+  /** Số kết nối đang mở của từng worker (`application_name` = `smeos-worker:<tên>`). */
+  workers?: () => Promise<Record<string, number>>
 }
 
 export interface SystemHealth {
@@ -19,6 +21,16 @@ export interface SystemHealth {
   database: { up: boolean; latencyMs: number | null }
   redis: RedisState
   jobs: { pendingTooLong: number; processingTooLong: number } | null
+  workers?: Record<string, number>
+}
+
+/** Worker phải chạy trên production (`render.yaml`). */
+export const EXPECTED_WORKERS = ["vision", "media", "video"] as const
+
+/** Sẵn sàng nhận request: CSDL trả lời; production còn cần Redis không sập. */
+export function isReady(databaseUp: boolean, redis: RedisState, production: boolean): boolean {
+  if (!databaseUp) return false
+  return !production || redis === "ok"
 }
 
 /** CSDL chậm hơn mức này vẫn sống nhưng đáng báo. */
@@ -49,5 +61,26 @@ export async function checkSystemHealth(
     issues.push("jobs_unreadable")
   }
 
-  return { status: issues.length ? "degraded" : "ok", timestamp, issues, database: { up: true, latencyMs }, redis, jobs }
+  let workers: Record<string, number> | undefined
+  if (probes.workers) {
+    try {
+      workers = await probes.workers()
+      // Ngoài production worker thường không chạy — chỉ báo, không coi là lỗi.
+      if (options.production) {
+        for (const name of EXPECTED_WORKERS) if (!workers[name]) issues.push(`worker_offline:${name}`)
+      }
+    } catch {
+      issues.push("workers_unreadable")
+    }
+  }
+
+  return {
+    status: issues.length ? "degraded" : "ok",
+    timestamp,
+    issues,
+    database: { up: true, latencyMs },
+    redis,
+    jobs,
+    ...(workers ? { workers } : {}),
+  }
 }

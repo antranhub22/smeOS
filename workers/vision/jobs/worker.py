@@ -497,7 +497,7 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
 
     while not co.dung:
         try:
-            with psycopg.connect(database_url, autocommit=True) as conn:
+            with psycopg.connect(database_url, autocommit=True, application_name="smeos-worker:vision") as conn:
                 log.info("worker %s đã nối cơ sở dữ liệu, chờ việc", FEATURE)
                 backoff = BACKOFF_DAU_GIAY
                 _vong_lap(conn, co, poll_interval_seconds)

@@ -20,8 +20,8 @@
 | Không `console.*` trong mã sản phẩm | 🔴 31 tệp còn `console.*`; ESLint chưa có `no-console` | Ratchet `no-console` (giống `i18n-direct-intl-ratchet`) |
 | Công cụ theo dõi lỗi | 🔴 chưa có | Chọn nhà cung cấp (PO) → adapter trong `instrumentation.ts` |
 | Metrics RED / hàng đợi / kênh / chi phí AI | 🔴 chưa có số đo; chỉ có dữ liệu thô trong DB | Bước 1: màn vận hành đọc từ DB (`job_events`, sổ AI); bước 2: exporter |
-| Readiness tách liveness | 🟡 một endpoint | `/api/health/ready` |
-| Worker heartbeat | 🟡 chỉ có quét job treo 15 phút (`markStuckAsFailed`) | Heartbeat từng worker |
+| Readiness tách liveness | ✅ `/api/health` (liveness, healthCheckPath Render) · `/api/health/ready` (CSDL + Redis trên production, `isReady`) | Đổi healthCheckPath sang `/ready` khi chạy nhiều instance — PO (`render.yaml`) |
+| Worker heartbeat | ✅ worker đặt `application_name` `smeos-worker:<tên>`; `/api/v1/internal/health` đếm qua `pg_stat_activity` (`countLiveWorkers`), production thiếu worker → `worker_offline:<tên>` → cron đỏ | — |
 | Log worker Python cùng định dạng | 🟡 `workers/shared/log_json.py`: mọi bản ghi `logging` thành JSON cùng trường web + ngữ cảnh job (`requestId`, `jobId`…), bật ở 3 worker; `print(...)` trong `media`/`video` chưa qua `logging` | Đổi dần `print` sang `logging.getLogger(...)` |
 | SLO + cảnh báo + runbook | 🔴 chưa có | 3–5 SLO trong `docs/handover/OPERATIONS_RUNBOOK.md` |
 

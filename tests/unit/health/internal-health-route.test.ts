@@ -5,7 +5,7 @@ const redis = vi.fn<() => Promise<"ok" | "down" | "not_configured">>()
 const backlog = vi.fn<() => Promise<{ pendingTooLong: number; processingTooLong: number }>>()
 vi.mock("@/core/tenancy/infra/database-ping", () => ({ measureDatabaseLatency: () => latency() }))
 vi.mock("@/core/cache/redis-client", () => ({ pingRedis: () => redis() }))
-vi.mock("@/modules/jobs/infra/job-health-query", () => ({ countJobBacklog: () => backlog() }))
+vi.mock("@/modules/jobs/infra/job-health-query", () => ({ countJobBacklog: () => backlog(), countLiveWorkers: async () => ({ vision: 1, media: 1, video: 1 }) }))
 
 import { GET } from "@/app/api/v1/internal/health/route"
 
@@ -32,7 +32,7 @@ describe("GET /api/v1/internal/health", () => {
   it("ổn → 200 kèm số đo", async () => {
     const res = await GET(new Request(URL, { headers: { "x-cron-secret": "s3cret-for-test" } }))
     expect(res.status).toBe(200)
-    expect(await res.json()).toMatchObject({ status: "ok", database: { up: true, latencyMs: 8 }, redis: "ok" })
+    expect(await res.json()).toMatchObject({ status: "ok", database: { up: true, latencyMs: 8 }, redis: "ok", workers: { vision: 1, media: 1, video: 1 } })
   })
 
   it("job treo → 503 để curl -f của cron thất bại", async () => {

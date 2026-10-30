@@ -15,3 +15,16 @@ export async function countJobBacklog(
   ])
   return { pendingTooLong, processingTooLong }
 }
+
+/**
+ * Worker còn sống = còn kết nối Postgres mang `application_name` `smeos-worker:<tên>` (kết nối
+ * `LISTEN` mở suốt vòng đời worker). Không cần bảng hay Redis riêng (ROADMAP E1.4).
+ */
+export async function countLiveWorkers(): Promise<Record<string, number>> {
+  const rows = await prisma.$queryRaw<{ name: string; n: bigint }[]>`
+    SELECT substr(application_name, 14) AS name, count(*) AS n
+      FROM pg_stat_activity
+     WHERE application_name LIKE 'smeos-worker:%'
+     GROUP BY 1`
+  return Object.fromEntries(rows.map((r) => [r.name, Number(r.n)]))
+}

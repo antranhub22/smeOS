@@ -30,7 +30,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 1. ✅ (30/10/2026) `request_id` — trước đó repo **chưa có** `proxy.ts`/middleware (Next 16 đổi tên middleware thành proxy — xem `node_modules/next/dist/docs/`) → thêm tệp này để sinh/nhận `x-request-id`, đưa vào ngữ cảnh `log`, header phản hồi `x-request-id`, cột `request_id` trên `generation_jobs` (**PO: schema**), worker đọc và log lại.
 2. Ratchet `no-console` (baseline 31 tệp, chỉ giảm).
 3. ✅ (30/10/2026) `workers/shared/log_json.py` — log JSON cùng trường với web, ngữ cảnh job theo `request_id`; còn `print` ở worker media/video cần đổi dần.
-4. `/api/health/ready` tách khỏi `/api/health`; worker heartbeat (bảng hoặc Redis key có TTL).
+4. ✅ (30/10/2026) `/api/health/ready` tách khỏi `/api/health`; worker heartbeat qua `application_name` + `pg_stat_activity` (không cần bảng/Redis/phụ thuộc mới).
 5. **PO:** chọn công cụ theo dõi lỗi (vd. Sentry / tự host) → adapter trong `instrumentation.ts`, che dữ liệu như `log.ts`.
 6. Màn vận hành mới trong `src/app/(platform)/van-hanh/`: hàng đợi job (độ dài, job già nhất, lỗi theo loại), kênh thông báo, chi phí AI theo tenant — đọc từ DB, chưa cần exporter.
 7. SLO v1 (tạo đơn, trang khách `/c/[slug]`, phân tích ảnh, gửi thông báo) + runbook trong `docs/handover/OPERATIONS_RUNBOOK.md`.

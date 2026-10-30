@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { checkSystemHealth, type HealthProbes } from "./system-health"
+import { checkSystemHealth, isReady, type HealthProbes } from "./system-health"
 
 const NOW = new Date("2026-10-22T08:00:00.000Z")
 
@@ -52,5 +52,33 @@ describe("checkSystemHealth", () => {
   it("đếm job lỗi → degraded, không ném ra ngoài", async () => {
     const h = await checkSystemHealth(probes({ jobBacklog: async () => Promise.reject(new Error("boom")) }), { production: true, now: NOW })
     expect(h).toMatchObject({ status: "degraded", issues: ["jobs_unreadable"], jobs: null })
+  })
+
+  it("production thiếu worker → degraded, nêu tên worker", async () => {
+    const h = await checkSystemHealth(probes({ workers: async () => ({ vision: 1, media: 2 }) }), { production: true, now: NOW })
+    expect(h).toMatchObject({ status: "degraded", issues: ["worker_offline:video"], workers: { vision: 1, media: 2 } })
+  })
+
+  it("ngoài production không có worker vẫn ok", async () => {
+    const h = await checkSystemHealth(probes({ workers: async () => ({}) }), { production: false, now: NOW })
+    expect(h).toMatchObject({ status: "ok", issues: [], workers: {} })
+  })
+
+  it("đếm worker lỗi → workers_unreadable", async () => {
+    const h = await checkSystemHealth(probes({ workers: async () => Promise.reject(new Error("x")) }), { production: true, now: NOW })
+    expect(h.issues).toEqual(["workers_unreadable"])
+  })
+})
+
+describe("isReady", () => {
+  it("CSDL sập → chưa sẵn sàng", () => {
+    expect(isReady(false, "ok", false)).toBe(false)
+  })
+
+  it("production cần Redis ok; ngoài production thì không", () => {
+    expect(isReady(true, "ok", true)).toBe(true)
+    expect(isReady(true, "down", true)).toBe(false)
+    expect(isReady(true, "not_configured", true)).toBe(false)
+    expect(isReady(true, "not_configured", false)).toBe(true)
   })
 })
