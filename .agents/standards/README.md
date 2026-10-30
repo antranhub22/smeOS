@@ -31,3 +31,9 @@ Dự án mới: chép `universal/`, viết thư mục áp dụng riêng theo m�
 | 06 | Thông báo đa tầng, đa kênh | [universal/06-notifications.md](universal/06-notifications.md) | [smeos/06-notifications.md](smeos/06-notifications.md) |
 | 07 | AI & sinh nội dung | [universal/07-ai-content.md](universal/07-ai-content.md) | [smeos/07-ai-content.md](smeos/07-ai-content.md) |
 | 08 | Plugin ngành & tính giá | [universal/08-industry-extensibility.md](universal/08-industry-extensibility.md) | [smeos/08-industry-extensibility.md](smeos/08-industry-extensibility.md) |
+| 09 | Giám sát & truy vết | [universal/09-observability.md](universal/09-observability.md) | [smeos/09-observability.md](smeos/09-observability.md) |
+| 10 | Mở rộng ngang & độ tin cậy | [universal/10-scalability.md](universal/10-scalability.md) | [smeos/10-scalability.md](smeos/10-scalability.md) |
+
+## Lộ trình
+
+[ROADMAP.md](ROADMAP.md) — 4 giai đoạn (G0 dọn nền → G1 production-ready → G2 commercial → G3 enterprise), 13 hạng mục E0–E12, quyết định PO Q1–Q6.
