@@ -120,6 +120,7 @@ const TENANT_TABLES = [
   "usage",
   "job_events",
   "generation_jobs",
+  "idempotency_keys",
   "assets",
   "business_profiles",
   "brand_profiles",

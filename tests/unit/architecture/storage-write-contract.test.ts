@@ -33,7 +33,7 @@ const PY_WRITE = /\b(ghi_bytes|_upload_to_storage|_ghi_kho)\(/
 
 function files(dir: string, ext: string): string[] {
   return readdirSync(dir).flatMap((name) => {
-    if (name === "node_modules" || name === "generated" || name === "tests" || name === "__pycache__") return []
+    if (name === "node_modules" || name === ".venv" || name === "generated" || name === "tests" || name === "__pycache__") return []
     const full = path.join(dir, name)
     if (statSync(full).isDirectory()) return files(full, ext)
     return full.endsWith(ext) && !/\.test\.tsx?$/.test(full) ? [full] : []

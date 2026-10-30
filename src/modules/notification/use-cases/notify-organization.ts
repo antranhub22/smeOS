@@ -45,6 +45,7 @@ export async function notifyOrganization(input: NotifyOrganizationInput, deps: N
     const recipients = selectRecipients(event, members, { organizationType, ownerUserId: input.ownerUserId ?? null })
     const deepLink = input.deepLink ?? fillDeepLink(event.deepLinkTemplate, input.linkVars ?? {})
     let sent = 0
+    let failed = 0
     for (const r of recipients) {
       try {
         const res = await deps.dispatch({
@@ -57,9 +58,12 @@ export async function notifyOrganization(input: NotifyOrganizationInput, deps: N
         })
         if (res.dispatchedChannels.length > 0) sent++
       } catch (err) {
+        failed++
         log.warn("Gửi thông báo cho một người nhận thất bại", { eventKey: input.eventKey, error: err instanceof Error ? err.message : String(err) })
       }
     }
+    // SLI gửi thông báo (SLO v1, OPERATIONS_RUNBOOK §10): tỉ lệ failed / recipients theo eventKey
+    log.info("notification.dispatched", { eventKey: input.eventKey, organizationId: input.organizationId, recipients: recipients.length, sent, failed })
     return sent
   } catch (err) {
     log.warn("Phát sự kiện thông báo thất bại", { eventKey: input.eventKey, error: err instanceof Error ? err.message : String(err) })

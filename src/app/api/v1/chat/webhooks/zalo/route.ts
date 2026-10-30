@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { claimIdempotencyKey } from "@/core/idempotency/infra/idempotency-repository"
 import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-channel-repository"
 import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
 import { isFreshEvent, verifyZaloSignature } from "@/modules/greeting-card/use-cases/zalo-oa-link"
@@ -35,7 +36,12 @@ export async function POST(req: NextRequest) {
 
     const senderId = body.sender?.id || body.user_id_by_app
     const messageText = body.message?.text
-    if (body.event_name === "user_send_text" && senderId && messageText) {
+    const messageId = body.message?.msg_id
+    // E5.3: Zalo gửi lại sự kiện khi phản hồi chậm — mỗi tin chỉ trả lời một lần.
+    const firstTime =
+      typeof messageId !== "string" ||
+      (await claimIdempotencyKey(channelIntegration.organizationId, "webhook.zalo", messageId))
+    if (body.event_name === "user_send_text" && senderId && messageText && firstTime) {
       const result = await handleIncomingChannelMessage({
         organizationId: channelIntegration.organizationId,
         channel: "ZALO_OA",

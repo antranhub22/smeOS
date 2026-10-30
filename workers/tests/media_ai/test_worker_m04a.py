@@ -220,7 +220,7 @@ class TestBiTuChoi:
 
         # `REJECTED` là PHÁN QUYẾT, không phải hỏng kỹ thuật. Ánh xạ sang
         # FAILED làm retry chạy lại vô ích và làm sai kế toán.
-        assert conn.cau_lenh("UPDATE generation_jobs SET status = 'FAILED'") == []
+        assert conn.cau_lenh("failure_kind = %(loai)s") == []
         ket = conn.tham_so("UPDATE generation_jobs SET status = 'COMPLETED'")
         assert ket and ket[0][0] == "REJECTED"
         assert conn.rolled_back == 0
@@ -240,7 +240,7 @@ class TestHongKyThuat:
         conn = FakeConnection(fetchone_queue=[])  # không trả dòng nào
         _chay(conn, AnalyzerGia(), gia_lap_kho)
 
-        assert conn.cau_lenh("UPDATE generation_jobs SET status = 'FAILED'")
+        assert conn.cau_lenh("failure_kind = %(loai)s")
         assert conn.tham_so("INSERT INTO assets") == []
 
 

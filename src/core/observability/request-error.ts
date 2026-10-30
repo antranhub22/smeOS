@@ -1,3 +1,4 @@
+import { captureError } from "./error-tracker"
 import { log } from "./log"
 
 type RequestInfo = { path: string; method: string; headers: Record<string, string | string[] | undefined> }
@@ -20,12 +21,15 @@ export function reportRequestError(error: unknown, request: RequestInfo, context
   const message = error instanceof Error ? error.message : String(error)
   const digest =
     typeof error === "object" && error !== null && "digest" in error ? String(error.digest) : undefined
+  const requestId = firstHeader(request.headers["x-request-id"]) ?? firstHeader(request.headers["rndr-id"])
+  const path = request.path.split("?")[0]
+  captureError(error, { method: request.method, path, routePath: context.routePath, requestId, digest })
   log.error("http.unhandled_error", {
     method: request.method,
-    path: request.path.split("?")[0],
+    path,
     routePath: context.routePath,
     routeType: context.routeType,
-    requestId: firstHeader(request.headers["x-request-id"]) ?? firstHeader(request.headers["rndr-id"]),
+    requestId,
     errorName: error instanceof Error ? error.name : typeof error,
     message: message.slice(0, MAX_MESSAGE_LENGTH),
     digest,

@@ -8,6 +8,15 @@ import { reportRequestError } from "@/core/observability/request-error"
  */
 export async function register(): Promise<void> {
   if (process.env["NEXT_RUNTIME"] !== "nodejs") return
+  // Theo dõi lỗi (E1.5): chỉ bật khi có SENTRY_DSN — thiếu thì chỉ còn log JSON như trước.
+  const dsn = process.env["SENTRY_DSN"]
+  if (dsn) {
+    const [{ initSentryErrorTracker }, { setErrorTracker }] = await Promise.all([
+      import("@/core/observability/adapters/sentry-error-tracker"),
+      import("@/core/observability/error-tracker"),
+    ])
+    setErrorTracker(initSentryErrorTracker(dsn))
+  }
   const { startBackgroundSweep } = await import("@/modules/greeting-card/use-cases/background-sweep-scheduler")
   startBackgroundSweep()
 }

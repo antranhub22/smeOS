@@ -3,7 +3,7 @@ import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositorie
 import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { lyDoHoanCredit, type LyDoHoan } from "@/modules/usage/domain/refund-policy"
+import { creditLuotHienTai, daHoanHetLuot, lyDoHoanCredit, luotHienTai, type LyDoHoan } from "@/modules/usage/domain/refund-policy"
 import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
 import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
 
@@ -48,23 +48,28 @@ export async function refundJob(
   if (lyDo === null) return { refunded: false, reason: "khong-thuoc-dien-hoan" }
 
   const dong = await repo.listByJob(ctx, jobId)
-  if (dong.some((d) => d.status === "REFUNDED")) {
+  // Hoàn theo lượt (nợ #200): chạy lại sau khi đã hoàn mở một lượt trừ tiền mới.
+  if (daHoanHetLuot(dong)) {
     return { refunded: false, reason: "da-hoan-truoc-do" }
   }
 
-  const daTru = dong.reduce((tong, d) => tong + (d.cost_credit as number), 0)
+  const daTru = creditLuotHienTai(dong)
   if (daTru <= 0) {
     // Workspace trải nghiệm đi đường hạn mức TRIAL, không trừ credit — không
     // có gì để hoàn, và ghi một dòng REFUNDED rỗng chỉ làm bẩn sổ.
     return { refunded: false, reason: "khong-co-gi-de-hoan" }
   }
 
-  const costUsd = dong.reduce<number | null>(
+  const costUsd = luotHienTai(dong).reduce<number | null>(
     (tong, d) => (d.cost_usd === null ? tong : (tong ?? 0) + (d.cost_usd as number)),
     null
   )
 
-  await runInTransaction(async (tx) => {
+  const daHoan = await runInTransaction(async (tx) => {
+    // Cùng khoá với chạy lại (`retry-job.ts`) và hoàn một phần: đọc lại sổ dưới khoá rồi mới ghi.
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`refund:${jobId}`}))`
+    const dongMoi = await getUsageRepository(tx).listByJob(ctx, jobId)
+    if (daHoanHetLuot(dongMoi) || creditLuotHienTai(dongMoi) !== daTru) return false
     await getUsageRepository(tx).recordRefund(ctx, {
       workspaceId: job.workspace_id,
       userId: job.user_id,
@@ -73,7 +78,9 @@ export async function refundJob(
       costUsd,
     })
     await getOrganizationRepository(tx).refundCredit(ctx, daTru)
+    return true
   })
+  if (!daHoan) return { refunded: false, reason: "da-hoan-truoc-do" }
 
   return { refunded: true, creditHoanLai: daTru, lyDo }
 }

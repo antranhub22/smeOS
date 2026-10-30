@@ -23,6 +23,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from shared.job_failure import ghi_job_loi
 from .tts_engine import generate_speech
 from .music_providers import mo_ta_nhac, sinh_nhac_theo_thu_tu
 from .mixing_engine import (
@@ -355,15 +356,8 @@ def process_audio_generation_job(conn: Any, job: Dict[str, Any]) -> None:
     except Exception as exc:  # noqa: BLE001 — hỏng kỹ thuật, không phải phán quyết
         conn.rollback()
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                UPDATE generation_jobs
-                   SET status = 'FAILED', error = %s, stage = NULL, attempts = attempts + 1
-                 WHERE id = %s
-                """,
-                (str(exc)[:1000], job_id),
-            )
+            thu_lai = ghi_job_loi(cur, job_id, exc)
         conn.commit()
-        _su_kien(conn, job_id, "done", {"status": "FAILED", "error": str(exc)[:1000]})
+        _su_kien(conn, job_id, "retry" if thu_lai else "done", {"status": "PENDING" if thu_lai else "FAILED", "error": str(exc)[:1000]})
     finally:
         shutil.rmtree(work_dir, ignore_errors=True)

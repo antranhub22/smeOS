@@ -26,6 +26,9 @@ from typing import Any
 import psycopg
 from psycopg.rows import dict_row
 
+from shared.job_trace import log_job_claimed
+from shared.job_failure import ghi_job_loi
+from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import dang_dung_kho_dung_chung, doc_bytes
 from vision.providers.chung import MucDung, nap_json, tinh_cost_usd
 from vision.providers.registry import lay_provider, lay_provider_co_du_phong
@@ -89,12 +92,14 @@ def claim_next(conn: psycopg.Connection, feature: str) -> dict[str, Any] | None:
     dịch — đúng cơ chế `GenerationJobRepository.claimNext` phía TS (đặc tả 07
     mục 6), worker chạy thẳng câu SQL này, không gọi lại hàm TS (`YC-J8`).
     """
+    xoa_ngu_canh_job()
     with conn.transaction():
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
                 """
                 SELECT * FROM generation_jobs
                  WHERE status = 'PENDING' AND feature = %s
+                    AND (run_after IS NULL OR run_after <= now())
                  ORDER BY created_at
                  FOR UPDATE SKIP LOCKED
                  LIMIT 1
@@ -109,6 +114,7 @@ def claim_next(conn: psycopg.Connection, feature: str) -> dict[str, Any] | None:
                 "UPDATE generation_jobs SET status = 'PROCESSING', started_at = now() WHERE id = %s",
                 (job["id"],),
             )
+    log_job_claimed(job)
     return job
 
 
@@ -311,16 +317,9 @@ def process_job(conn: psycopg.Connection, job: dict[str, Any], provider: Any = N
         # `_da_phan_tich` và `ON CONFLICT`.
         log.exception("job %s hỏng", job["id"])
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                UPDATE generation_jobs
-                   SET status = 'FAILED', error = %s, attempts = attempts + 1
-                 WHERE id = %s
-                """,
-                (str(exc), job["id"]),
-            )
+            thu_lai = ghi_job_loi(cur, job["id"], exc)
         conn.commit()
-        _emit_event(conn, job["id"], "done", {"status": "FAILED", "error": str(exc)})
+        _emit_event(conn, job["id"], "retry" if thu_lai else "done", {"status": "PENDING" if thu_lai else "FAILED", "error": str(exc)})
 
 
 def _so_do_chi_phi(provider: Any) -> dict[str, Any]:
@@ -493,7 +492,7 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
 
     while not co.dung:
         try:
-            with psycopg.connect(database_url, autocommit=True) as conn:
+            with psycopg.connect(database_url, autocommit=True, application_name="smeos-worker:vision") as conn:
                 log.info("worker %s đã nối cơ sở dữ liệu, chờ việc", FEATURE)
                 backoff = BACKOFF_DAU_GIAY
                 _vong_lap(conn, co, poll_interval_seconds)
@@ -508,10 +507,7 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
 
 
 def main() -> None:
-    logging.basicConfig(
-        level=os.environ.get("LOG_LEVEL", "INFO"),
-        format="%(asctime)s %(levelname)s %(name)s %(message)s",
-    )
+    cau_hinh_log()
     database_url = os.environ["DATABASE_URL"]
     run_worker(database_url)
 

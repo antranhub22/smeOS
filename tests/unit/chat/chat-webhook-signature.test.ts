@@ -1,11 +1,21 @@
 import { createHash, createHmac } from "node:crypto"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-const { handleIncomingChannelMessage, findActiveByFbPageId, findActiveByZaloOaId } = vi.hoisted(() => ({
-  handleIncomingChannelMessage: vi.fn(async () => ({ replyText: "Dạ" })),
-  findActiveByFbPageId: vi.fn(),
-  findActiveByZaloOaId: vi.fn(),
-}))
+const { handleIncomingChannelMessage, findActiveByFbPageId, findActiveByZaloOaId, claimIdempotencyKey } = vi.hoisted(() => {
+  const seen = new Set<string>()
+  return {
+    handleIncomingChannelMessage: vi.fn(async () => ({ replyText: "Dạ" })),
+    findActiveByFbPageId: vi.fn(),
+    findActiveByZaloOaId: vi.fn(),
+    claimIdempotencyKey: vi.fn(async (org: string, scope: string, key: string) => {
+      const k = `${org}|${scope}|${key}`
+      if (seen.has(k)) return false
+      seen.add(k)
+      return true
+    }),
+  }
+})
+vi.mock("@/core/idempotency/infra/idempotency-repository", () => ({ claimIdempotencyKey }))
 vi.mock("@/modules/chat-assistant/use-cases/handle-incoming-channel-message", () => ({ handleIncomingChannelMessage }))
 vi.mock("@/modules/chat-assistant/infra/chat-channel-repository", () => ({
   ChatChannelRepository: vi.fn().mockImplementation(function () {
@@ -104,4 +114,24 @@ describe("chữ ký webhook chat Facebook/Zalo", () => {
     const replay = await zaloPost(req("http://x/api/v1/chat/webhooks/zalo", oldBody, { "x-zevent-signature": zaloMac(oldBody, old) }))
     expect(replay.status).toBe(401)
   })
+
+  it("E5.3: cùng một tin (mid / msg_id) gửi lại → chỉ trả lời một lần", async () => {
+    vi.stubEnv("FB_APP_SECRET", "app-secret")
+    const fb = JSON.stringify({ object: "page", entry: [{ id: "page-1", messaging: [{ sender: { id: "u1" }, message: { mid: "m.fb-1", text: "Giá?" } }] }] })
+    const sig = "sha256=" + createHmac("sha256", "app-secret").update(fb).digest("hex")
+    for (let i = 0; i < 2; i++) {
+      expect((await facebookPost(req("http://x/api/v1/chat/webhooks/facebook", fb, { "x-hub-signature-256": sig }))).status).toBe(200)
+    }
+    expect(handleIncomingChannelMessage).toHaveBeenCalledOnce()
+
+    handleIncomingChannelMessage.mockClear()
+    const ts = String(Date.now())
+    const zalo = JSON.stringify({ event_name: "user_send_text", app_id: "app-9", oa_id: "oa-1", timestamp: ts, sender: { id: "z1" }, message: { msg_id: "z-1", text: "Còn hàng?" } })
+    for (let i = 0; i < 2; i++) {
+      expect((await zaloPost(req("http://x/api/v1/chat/webhooks/zalo", zalo, { "x-zevent-signature": zaloMac(zalo, ts) }))).status).toBe(200)
+    }
+    expect(handleIncomingChannelMessage).toHaveBeenCalledOnce()
+    expect(claimIdempotencyKey).toHaveBeenCalledWith("org-1", "webhook.zalo", "z-1")
+  })
 })
+

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { claimIdempotencyKey } from "@/core/idempotency/infra/idempotency-repository"
 import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-channel-repository"
 import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
 import { matchesVerifyToken, verifyFacebookSignature } from "@/core/http/webhook-signature"
@@ -43,8 +44,11 @@ export async function POST(req: NextRequest) {
       for (const messagingEvent of entry.messaging || []) {
         const senderId = messagingEvent.sender?.id
         const messageText = messagingEvent.message?.text
+        const messageId = messagingEvent.message?.mid
 
         if (senderId && messageText) {
+          // E5.3: Facebook gửi lại sự kiện khi phản hồi chậm — mỗi tin (theo `mid`) chỉ trả lời một lần.
+          if (typeof messageId === "string" && !(await claimIdempotencyKey(channelIntegration.organizationId, "webhook.facebook", messageId))) continue
           const result = await handleIncomingChannelMessage({
             organizationId: channelIntegration.organizationId,
             channel: "FACEBOOK_MESSENGER",

@@ -27,13 +27,13 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 ## G1 · Production-ready
 
 **E1 — Giám sát** (chuẩn 09)
-1. `request_id`: repo **chưa có** `proxy.ts`/middleware (Next 16 đổi tên middleware thành proxy — xem `node_modules/next/dist/docs/`) → thêm tệp này để sinh/nhận `x-request-id`, đưa vào ngữ cảnh `log`, header phản hồi `x-request-id`, cột `request_id` trên `generation_jobs` (**PO: schema**), worker đọc và log lại.
-2. Ratchet `no-console` (baseline 31 tệp, chỉ giảm).
-3. Helper log JSON cho worker trong `workers/shared/` cùng trường với web.
-4. `/api/health/ready` tách khỏi `/api/health`; worker heartbeat (bảng hoặc Redis key có TTL).
-5. **PO:** chọn công cụ theo dõi lỗi (vd. Sentry / tự host) → adapter trong `instrumentation.ts`, che dữ liệu như `log.ts`.
-6. Màn vận hành mới trong `src/app/(platform)/van-hanh/`: hàng đợi job (độ dài, job già nhất, lỗi theo loại), kênh thông báo, chi phí AI theo tenant — đọc từ DB, chưa cần exporter.
-7. SLO v1 (tạo đơn, trang khách `/c/[slug]`, phân tích ảnh, gửi thông báo) + runbook trong `docs/handover/OPERATIONS_RUNBOOK.md`.
+1. ✅ (30/10/2026) `request_id` — trước đó repo **chưa có** `proxy.ts`/middleware (Next 16 đổi tên middleware thành proxy — xem `node_modules/next/dist/docs/`) → thêm tệp này để sinh/nhận `x-request-id`, đưa vào ngữ cảnh `log`, header phản hồi `x-request-id`, cột `request_id` trên `generation_jobs` (**PO: schema**), worker đọc và log lại.
+2. ✅ (30/10/2026) Ratchet `console.*` bằng test (`no-console-ratchet.test.ts`, chỉ giảm).
+3. ✅ (30/10/2026) `workers/shared/log_json.py` — log JSON cùng trường với web, ngữ cảnh job theo `request_id`; còn `print` ở worker media/video cần đổi dần.
+4. ✅ (30/10/2026) `/api/health/ready` tách khỏi `/api/health`; worker heartbeat qua `application_name` + `pg_stat_activity` (không cần bảng/Redis/phụ thuộc mới).
+5. ✅ (30/10/2026) Sentry (PO chọn): `@sentry/nextjs` 11.8.0 + `sentry-sdk` 2.72.0, cổng `error-tracker.ts` + adapter, bật khi có `SENTRY_DSN`, lọc dữ liệu khách. Chưa gửi lỗi phía trình duyệt.
+6. ✅ (30/10/2026) Mở rộng `/van-hanh/suc-khoe` (không tạo màn mới): bộ xử lý nền + hàng đợi theo loại việc; chi phí AI theo tenant đã có ở `/van-hanh/muc-dung`. Kênh thông báo chưa có số liệu lưu trong DB — dời sang khi có công cụ metrics (E1.5).
+7. ✅ (30/10/2026) SLO v1 S1–S4 + truy vết `request_id` trong `docs/handover/OPERATIONS_RUNBOOK.md` §10–11; thêm log `http.internal_error` (lỗi 500 trong `handle()`) và `notification.dispatched` làm SLI. PO duyệt mục tiêu 30/10/2026.
 *Nghiệm thu:* lần ngược một lỗi từ log web tới dòng log worker bằng một `request_id`.
 
 **E2 — Nhiều instance** (chuẩn 10)
@@ -57,9 +57,9 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 4. Kiểm tải (k6/Artillery — **PO: dependency**) kịch bản cao điểm lễ; ngưỡng ghi vào runbook.
 
 **E5 — Hàng đợi có kỷ luật**
-1. Tự thử lại job lỗi tạm thời: `attempts` + trần + backoff có jitter; phân loại lỗi `retryable` / `needs_action` (khớp `task-state.ts`).
-2. Màn dead-letter trong `/van-hanh`: xem lý do, chạy lại (dùng luồng YC-J3), huỷ — audit.
-3. Khoá idempotent chung cho webhook đến và thao tác thanh toán (dùng ở E6).
+1. ✅ (30/10/2026) Tự thử lại job lỗi tạm thời: `generation_jobs.run_after` + `failure_kind` (PO duyệt schema), `workers/shared/job_failure.py` (một câu UPDATE nguyên tử), tối đa 3 lần, backoff có ngẫu nhiên; worker nhận việc lọc `run_after`. Video/nhân bản giọng chỉ phân loại. Chạy lại thủ công đặt `attempts` về 0 (sửa lỗi cộng hai lần).
+2. ✅ (30/10/2026) `/van-hanh/hang-doi-loi`: xem lý do, Chạy lại (lượt mới, nền tảng chịu chi phí) / Gác lại (→ CANCELLED); mã mới `N15` để `N5` vẫn chỉ đọc; ghi `platform_audit_logs`. Lỗ hổng chạy lại miễn phí phía tiệm (YC-J3 sau khi đã hoàn credit) ghi nợ #200 — chờ PO.
+3. ✅ (30/10/2026) Bảng `idempotency_keys` (PO duyệt schema) + `claimIdempotencyKey` (`src/core/idempotency/infra/`); áp dụng webhook Facebook (`mid`) và Zalo (`msg_id`); cron dọn khoá > 30 ngày. E6 dùng cho thanh toán (ghi khoá trong cùng giao dịch).
 *Nghiệm thu:* test chạy lại job không nhân đôi kết quả/credit.
 
 ## G2 · Commercial
@@ -94,7 +94,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 ## Quyết định PO (cập nhật 30/10/2026)
 | # | Quyết định | Kết quả PO | Ảnh hưởng |
 |---|---|---|---|
-| Q1 | Công cụ theo dõi lỗi / metrics | ✅ **Dịch vụ ngoài** — chọn nhà cung cấp cụ thể trước khi làm E1.5 (đề xuất Sentry: có SDK Next.js + Python, gói miễn phí) | E1.5, E1.6 |
+| Q1 | Công cụ theo dõi lỗi / metrics | ✅ **Sentry** (PO chọn 30/10/2026) — SDK Next.js + Python | E1.5, E1.6 |
 | Q2 | Cột `request_id` trên `generation_jobs` | ✅ Đồng ý | E1.1 |
 | Q3 | Staging + 2 instance Render | ⏸ **Làm khi bàn giao** — code E2 vẫn viết và test cục bộ; nghiệm thu 2 instance dời tới lúc bàn giao | E2.5, E4.3 |
 | Q4 | PITR Postgres + backup object store | ✅ Đồng ý — bật trên dashboard Render/R2 (chủ tài khoản thao tác), agent ghi RPO/RTO vào runbook | E3 |

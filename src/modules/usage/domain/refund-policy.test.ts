@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest"
 
-import { duocHoanCredit, lyDoHoanCredit, soCreditHoanMotPhan } from "./refund-policy"
+import {
+  creditLuotHienTai,
+  creditTruKhiChayLai,
+  daHoanHetLuot,
+  duocHoanCredit,
+  lyDoHoanCredit,
+  soCreditHoanMotPhan,
+} from "./refund-policy"
 
 describe("lyDoHoanCredit", () => {
   it("job bị Identity Guard từ chối — quyết định D3", () => {
@@ -57,6 +64,35 @@ describe("hoàn một phần (25/09/2026)", () => {
   it("số xin không hợp lệ thì 0", () => {
     expect(soCreditHoanMotPhan([enq(2)], "cloud-lui-cuc-bo", 0)).toBe(0)
     expect(soCreditHoanMotPhan([enq(2)], "cloud-lui-cuc-bo", 1.5)).toBe(0)
+  })
+})
+
+describe("hoàn theo lượt + chạy lại sau hoàn (nợ #200)", () => {
+  const d = (status: string, cost_credit: number) => ({ status, cost_credit, metadata: null })
+
+  it("lượt đầu chưa hoàn: còn giữ credit, chạy lại không trừ thêm", () => {
+    const so = [d("ENQUEUED", 3)]
+    expect(daHoanHetLuot(so)).toBe(false)
+    expect(creditLuotHienTai(so)).toBe(3)
+    expect(creditTruKhiChayLai(so)).toBe(0)
+  })
+
+  it("đã hoàn: chạy lại trừ đúng giá lượt trước; không hoàn thêm cho tới khi có lượt mới", () => {
+    const so = [d("ENQUEUED", 3), d("REFUNDED", 0)]
+    expect(daHoanHetLuot(so)).toBe(true)
+    expect(creditTruKhiChayLai(so)).toBe(3)
+    expect(soCreditHoanMotPhan(so, "cloud-lui-cuc-bo", 1)).toBe(0)
+  })
+
+  it("lượt thứ hai chỉ hoàn phần của lượt đó, kể cả khi lượt đầu có hoàn một phần", () => {
+    const so = [d("ENQUEUED", 3), d("PARTIAL_REFUND", -1), d("REFUNDED", 0), d("ENQUEUED", 3)]
+    expect(daHoanHetLuot(so)).toBe(false)
+    expect(creditLuotHienTai(so)).toBe(3)
+    expect(creditTruKhiChayLai(so)).toBe(0)
+  })
+
+  it("đường dùng thử (0 credit): chạy lại không trừ gì", () => {
+    expect(creditTruKhiChayLai([d("ENQUEUED", 0), d("REFUNDED", 0)])).toBe(0)
   })
 })
 

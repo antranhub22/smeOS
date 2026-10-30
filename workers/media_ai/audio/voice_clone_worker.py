@@ -17,6 +17,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from shared.job_failure import ghi_job_loi
 from .tts_engine import _ensure_api_key
 
 VOICE_CLONE_FEATURE = "audio.voice_clone"
@@ -148,14 +149,8 @@ def process_voice_clone_job(conn: Any, job: Dict[str, Any]) -> None:
         loi = str(exc)[:1000]
         _cap_nhat_giong(conn, org, clone_id, "FAILED", None, loi)
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                UPDATE generation_jobs
-                   SET status = 'FAILED', error = %s, stage = NULL, attempts = attempts + 1
-                 WHERE id = %s
-                """,
-                (loi, job_id),
-            )
+            # Không tự thử lại: bản ghi giọng đã sang FAILED ở trên, chạy lại phải đặt lại nó trước.
+            ghi_job_loi(cur, job_id, exc, cho_phep_thu_lai=False)
         conn.commit()
     finally:
         shutil.rmtree(work, ignore_errors=True)

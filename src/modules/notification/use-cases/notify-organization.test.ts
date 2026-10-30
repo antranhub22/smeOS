@@ -37,4 +37,18 @@ describe("notifyOrganization", () => {
     expect(await notifyOrganization({ organizationId: "org-1", eventKey: "KHONG_CO" }, d)).toBe(0)
     expect(d.listMembers).not.toHaveBeenCalled()
   })
+
+  it("ghi notification.dispatched với số gửi được / thất bại (SLI SLO v1)", async () => {
+    const lines: string[] = []
+    const spy = vi.spyOn(console, "log").mockImplementation((line: string) => void lines.push(line))
+    const dispatch = vi
+      .fn()
+      .mockResolvedValueOnce({ eventKey: "ORDER_RECEIVED", recipientUserId: "x", dispatchedChannels: ["APP_INBOX"], results: [] })
+      .mockRejectedValueOnce(new Error("smtp"))
+    vi.spyOn(console, "warn").mockImplementation(() => {})
+    await notifyOrganization({ organizationId: "org-1", eventKey: "ORDER_RECEIVED", ownerUserId: "sale" }, deps({ dispatch }))
+    spy.mockRestore()
+    const summary = lines.map((l) => JSON.parse(l)).find((l) => l.event === "notification.dispatched")
+    expect(summary).toMatchObject({ eventKey: "ORDER_RECEIVED", organizationId: "org-1", recipients: 2, sent: 1, failed: 1 })
+  })
 })

@@ -57,7 +57,7 @@ ngữ cảnh. Khoá nhạy cảm (`password`, `token`, `cookie`, `phone`, `addre
 
 `issues` của `/internal/health`: `database_unreachable`, `database_slow` (> 1 giây), `redis_down`,
 `redis_not_configured` (chỉ production), `jobs_pending_too_long`, `jobs_processing_too_long`
-(> 15 phút), `jobs_unreadable`.
+(> 15 phút), `jobs_unreadable`, `worker_offline:<tên>` (production, worker không còn kết nối CSDL), `workers_unreadable`.
 
 **Cài đặt cần làm một lần:**
 1. Render → *Integrations → Notifications*: đích email (và Slack nếu có), mức *Only failure

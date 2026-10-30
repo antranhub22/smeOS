@@ -8,10 +8,15 @@ import {
 } from "./platform-capability-catalog"
 
 describe("platform-capability-catalog", () => {
-  it("có đúng mười một mã (N1..N8, N12, N13, N14), không nhiều hơn không ít hơn", () => {
+  it("có đúng mười hai mã (N1..N8, N12..N15), không nhiều hơn không ít hơn", () => {
     expect(ALL_PLATFORM_CAPABILITY_CODES).toEqual([
-      "N1", "N12", "N13", "N14", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
+      "N1", "N12", "N13", "N14", "N15", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
     ])
+  })
+
+  it("N15 là mã xử lý hàng đợi lỗi; N5 vẫn chỉ đọc (ROADMAP E5.2, D-N5)", () => {
+    expect(platformCapability("N15").name).toBe("platform.jobs.manage")
+    expect(platformCapability("N5").name).toBe("platform.health.read")
   })
 
   it("N14 là mã giữ dữ liệu theo yêu cầu pháp lý (PO 29/10/2026, SDAGF D-04)", () => {

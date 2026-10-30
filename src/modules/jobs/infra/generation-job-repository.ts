@@ -1,5 +1,6 @@
 import type { generation_jobs, InputJsonValue } from "./entities"
 
+import { currentRequestId } from "@/core/observability/request-context"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
@@ -82,6 +83,7 @@ export class GenerationJobRepository implements IGenerationJobRepository {
         status: "PENDING" as const,
         idempotency_key: input.idempotencyKey,
         job_group_id: input.jobGroupId ?? null,
+        request_id: currentRequestId() ?? null,
         payload: input.payload as InputJsonValue,
         attempts: 0,
       }),
@@ -306,7 +308,11 @@ export class GenerationJobRepository implements IGenerationJobRepository {
         stage: null,
         result: null,
         error: null,
-        attempts: current.attempts + 1,
+        // Chạy lại thủ công = một lượt mới: worker lại có đủ số lần tự thử lại (E5.1). Worker đã đếm
+        // lần lỗi trước vào `attempts`; cộng thêm ở đây từng làm mỗi lượt lỗi bị tính hai lần.
+        attempts: 0,
+        run_after: null,
+        failure_kind: null,
         started_at: null,
         completed_at: null,
       },
@@ -330,6 +336,7 @@ export class GenerationJobRepository implements IGenerationJobRepository {
       const rows = await tx.$queryRaw<generation_jobs[]>`
         SELECT * FROM generation_jobs
          WHERE status = 'PENDING' AND feature = ${feature}
+           AND (run_after IS NULL OR run_after <= now())
          ORDER BY created_at
          FOR UPDATE SKIP LOCKED
          LIMIT 1

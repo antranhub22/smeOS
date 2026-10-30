@@ -25,6 +25,9 @@ import psycopg
 from psycopg.rows import dict_row
 
 from media_ai.video.providers import get_video_provider, VideoProviderError
+from shared.job_failure import phan_loai_loi
+from shared.job_trace import log_job_claimed
+from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import dang_dung_kho_dung_chung, ghi_bytes
 
 FEATURE = "video.render"
@@ -53,12 +56,14 @@ def notify_channel_for(feature: str) -> str:
 
 def claim_next(conn: psycopg.Connection, feature: str = FEATURE) -> Optional[Dict[str, Any]]:
     """Lấy job video tiếp theo bằng SELECT FOR UPDATE SKIP LOCKED."""
+    xoa_ngu_canh_job()
     with conn.transaction():
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
                 """
                 SELECT * FROM generation_jobs
                  WHERE status = 'PENDING' AND feature = %s
+                    AND (run_after IS NULL OR run_after <= now())
                  ORDER BY created_at
                  FOR UPDATE SKIP LOCKED
                  LIMIT 1
@@ -72,6 +77,7 @@ def claim_next(conn: psycopg.Connection, feature: str = FEATURE) -> Optional[Dic
                 "UPDATE generation_jobs SET status = 'PROCESSING', started_at = now() WHERE id = %s",
                 (job["id"],),
             )
+    log_job_claimed(job)
     return job
 
 
@@ -196,10 +202,10 @@ def process_video_job(conn: psycopg.Connection, job: Dict[str, Any]):
                 """
                 UPDATE generation_jobs
                 SET status = 'FAILED', stage = NULL, result = NULL,
-                    error = %s, completed_at = NOW()
+                    error = %s, failure_kind = %s, completed_at = NOW()
                 WHERE id = %s
                 """,
-                (err_msg[:500], job_id),
+                (err_msg[:500], phan_loai_loi(exc), job_id),
             )
 
 
@@ -222,7 +228,7 @@ def run_worker(db_url: Optional[str] = None):
 
     while True:
         try:
-            with psycopg.connect(dsn, autocommit=True) as conn:
+            with psycopg.connect(dsn, autocommit=True, application_name="smeos-worker:video") as conn:
                 conn.execute(f"LISTEN {channel}")
                 print(f"📡 [VideoWorker] Đã kết nối Postgres và lắng nghe kênh {channel}", flush=True)
 
@@ -250,4 +256,5 @@ def run_worker(db_url: Optional[str] = None):
 
 
 if __name__ == "__main__":
+    cau_hinh_log()
     run_worker()

@@ -64,8 +64,8 @@ export function soCreditHoanMotPhan(
   soMuonHoan: number
 ): number {
   if (!Number.isInteger(soMuonHoan) || soMuonHoan <= 0) return 0
-  if (dong.some((d) => d.status === "REFUNDED")) return 0
-  const daHoanLyDoNay = dong.some(
+  if (daHoanHetLuot(dong)) return 0
+  const daHoanLyDoNay = luotHienTai(dong).some(
     (d) =>
       d.status === "PARTIAL_REFUND" &&
       typeof d.metadata === "object" &&
@@ -73,6 +73,41 @@ export function soCreditHoanMotPhan(
       (d.metadata as Record<string, unknown>).reason === lyDo
   )
   if (daHoanLyDoNay) return 0
-  const conLai = dong.reduce((tong, d) => tong + d.cost_credit, 0)
+  const conLai = creditLuotHienTai(dong)
   return Math.max(0, Math.min(soMuonHoan, conLai))
+}
+
+/**
+ * Hoàn theo LƯỢT (nợ #200, PO 30/10/2026: chạy lại job đã hoàn thì trừ credit lại). Mỗi lượt bắt
+ * đầu bằng một dòng `ENQUEUED` (lúc tạo job hoặc lúc chạy lại sau khi đã hoàn) và kết thúc bằng
+ * tối đa một dòng `REFUNDED`. Dòng sổ phải theo thứ tự `created_at` tăng dần.
+ */
+type DongSo = { status: string; cost_credit: number }
+
+/** Các dòng của lượt đang mở: sau dòng `REFUNDED` cuối cùng. */
+export function luotHienTai<T extends DongSo>(dong: readonly T[]): T[] {
+  const cuoi = dong.map((d) => d.status).lastIndexOf("REFUNDED")
+  return dong.slice(cuoi + 1)
+}
+
+/** Mọi lượt đã trừ tiền đều đã được hoàn — không còn gì để hoàn. */
+export function daHoanHetLuot(dong: readonly DongSo[]): boolean {
+  const luot = dong.filter((d) => d.status === "ENQUEUED").length
+  const hoan = dong.filter((d) => d.status === "REFUNDED").length
+  return hoan > 0 && hoan >= luot
+}
+
+/** Credit còn giữ của lượt đang mở (dòng hoàn một phần mang số âm). */
+export function creditLuotHienTai(dong: readonly DongSo[]): number {
+  return luotHienTai(dong).reduce((tong, d) => tong + d.cost_credit, 0)
+}
+
+/**
+ * Credit phải trừ khi tiệm chạy lại job: chỉ khi lượt trước ĐÃ được hoàn — trừ đúng giá lượt trừ
+ * tiền gần nhất. Chưa hoàn (credit lượt trước vẫn đang giữ) hoặc đi đường dùng thử (0 credit) → 0.
+ */
+export function creditTruKhiChayLai(dong: readonly DongSo[]): number {
+  if (!daHoanHetLuot(dong)) return 0
+  const luotTruTien = dong.filter((d) => d.status === "ENQUEUED")
+  return Math.max(0, luotTruTien.at(-1)?.cost_credit ?? 0)
 }

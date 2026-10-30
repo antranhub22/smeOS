@@ -367,6 +367,7 @@ không qua vai. Cấp lần đầu bằng script chạy tay
 | `N6` | `platform.audit.read` | Nhật ký xuyên tổ chức — hợp `audit_logs` và `platform_audit_logs` | — (gán thẳng) | — |
 | `N7` | `platform.organizations.create` | Tạo tổ chức mới — gói `organizations` + `workspaces` + thành viên điều hành đầu tiên | — (gán thẳng) | — |
 | `N8` | `platform.integration_tokens.manage` | Token tích hợp theo tổ chức, bọc use-case `integration/` đã có (`F9`) | — (gán thẳng) | — |
+| `N15` | `platform.jobs.manage` | Hàng đợi lỗi (ROADMAP E5.2, 30/10/2026): chạy lại hoặc gác lại job `FAILED`, ghi nhật ký nền tảng. Tách khỏi `N5` để `N5` vẫn chỉ đọc (D-N5) | — (gán thẳng) | — |
 
 Cột "Mặc định"/"Trần cứng" ghi "— (gán thẳng)" vì không có khái niệm vai ở
 đây: `platform_operators` + `platform_role_capabilities` không đi qua
