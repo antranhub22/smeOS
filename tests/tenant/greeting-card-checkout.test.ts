@@ -98,7 +98,7 @@ describe("greeting-card checkout", () => {
 
     await prisma.vouchers.create({ data: { organization_id: a.organizationId, code: "DADUNG", discount_value: 5, is_used: true } })
     const used = await quoteBrochureSession(link.sendCode, { shippingZoneId: "q1", voucherCode: "DADUNG" })
-    expect(used.errors.voucherCode).toMatch(/đã được sử dụng/)
+    expect(used.errors.voucherCode).toMatch(/hết lượt sử dụng/)
     expect(
       await codeOf(submitBrochureOrder(link.sendCode, { ...BASE_INPUT, deliveryDate: inTenDays(), shippingZoneId: "q1", voucherCode: "DADUNG" }))
     ).toBe("VALIDATION_FAILED")
