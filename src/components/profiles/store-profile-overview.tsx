@@ -15,6 +15,7 @@ import { Progress } from "@/components/ui/progress"
 import { Disclosure } from "@/components/ui/disclosure"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { StoreShareLinkCard } from "./store-share-link-card"
 
 const SECTION_HREF = { INFO: "/cai-dat?tab=INFO", BRANDING: "/cai-dat?tab=BRANDING" } as const
 
@@ -113,6 +114,11 @@ export function StoreProfileOverview() {
           </Disclosure>
         )}
       </section>
+
+      <StoreShareLinkCard
+        readyToShare={result.readyToShare}
+        missingEssentials={result.missing.filter((i) => i.essential).map((i) => i.label)}
+      />
 
       <nav aria-label="Sửa hồ sơ" className="grid gap-3 sm:grid-cols-2">
         <Link href={SECTION_HREF.INFO} className="flex items-center gap-3 p-4 rounded-2xl border border-border bg-surface hover:border-primary">

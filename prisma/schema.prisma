@@ -178,6 +178,7 @@ model organizations {
   occasions                     occasions[]
   template_overrides            template_overrides[]
   catalog_links                 catalog_links[]
+  store_share_links             store_share_links[]
   product_copies                product_copies[]
   content_metrics               content_metrics[]
   video_jobs                    video_jobs[]
@@ -1312,6 +1313,27 @@ model catalog_links {
 
   @@index([organization_id])
   @@index([slug])
+}
+
+/// Công cụ 11 — link công khai của hồ sơ cửa hàng (/ch/<slug>). Mỗi tổ chức tối đa
+/// một link đang hoạt động (kiểm ở use-case); link cũ thu hồi được, không xoá, để
+/// link đã phát ra trả "đã ngừng" thay vì 404 lẫn với link sai.
+model store_share_links {
+  id              String    @id @default(uuid())
+  organization_id String
+  slug            String    @unique
+  is_revoked      Boolean   @default(false)
+  revoked_at      DateTime?
+  revoked_by      String?
+  view_count      Int       @default(0)
+  created_by      String
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, is_revoked])
 }
 
 // ── M01b — Product Sales Data (Tên, Mô tả, Thẻ, Phân khúc giá) ────────────────

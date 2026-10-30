@@ -5,6 +5,8 @@ import { ensureSystemRoles } from "@/modules/organization/use-cases/ensure-syste
 import { seedAiCapabilities, seedVisionModels } from "@/core/ai/infra/seed-ai-registry"
 
 const TENANT_TABLES = [
+  // Công cụ 11 — link hồ sơ cửa hàng công khai (30/10/2026)
+  "store_share_links",
   // SDAGF P1 (29/10/2026) — hàng đợi xoá payload kho tệp
   "storage_outbox",
   // Kho dữ liệu v2 (29/10/2026) — landing page đã sinh

@@ -924,6 +924,24 @@ model catalog_links {
   @@index([slug])
 }
 
+// Công cụ 11 (30/10/2026) — link hồ sơ cửa hàng công khai /ch/<slug>. Tối đa một
+// link chưa thu hồi mỗi tổ chức (kiểm trong giao dịch Serializable ở repository).
+model store_share_links {
+  id              String    @id @default(uuid())
+  organization_id String
+  slug            String    @unique
+  is_revoked      Boolean   @default(false)
+  revoked_at      DateTime?
+  revoked_by      String?
+  view_count      Int       @default(0)
+  created_by      String
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@index([organization_id])
+  @@index([organization_id, is_revoked])
+}
+
 // ĐỔI TÊN: bảng này từng được đặc tả là `content_metrics`. Tên thật trong
 // lược đồ là `content_metrics`, và hình dạng cột cũng khác. Sửa 18/09.
 model content_metrics {
