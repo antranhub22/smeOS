@@ -117,7 +117,7 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
           occasionLabel: occObj?.label || matchedOccasion,
           archetypeId: selectedArchetype,
           selectedProducts: activeProducts.slice(0, 4).map((p) => ({
-            name: p.name, code: p.code, price: p.price, category: p.category,
+            id: p.id, name: p.name, code: p.code, price: p.price, category: p.category,
           })),
           userDirectives: data.userDirectives || undefined,
           designDirection: selectedArchetype,

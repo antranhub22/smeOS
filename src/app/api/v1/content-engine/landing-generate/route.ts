@@ -9,6 +9,7 @@ import { executeGenerateLandingContent } from "@/modules/content-engine/use-case
 import { listActiveShopPromotions, shopDiscountPercent } from "@/modules/greeting-card/use-cases/active-shop-promotions"
 import { LANDING_TYPE_OPTIONS } from "@/modules/landing-page/domain/preset-catalog"
 import { saveLandingPage } from "@/modules/landing-page/use-cases/save-landing-page"
+import { getApprovedSellingNotes } from "@/modules/product-copies/use-cases/get-approved-selling-notes"
 
 const PAGE_TYPES = LANDING_TYPE_OPTIONS.map((o) => o.type) as [string, ...string[]]
 
@@ -18,6 +19,8 @@ const requestSchema = z.object({
   archetypeId: z.string().optional(),
   selectedProducts: z.array(
     z.object({
+      /** Chỉ để máy chủ tự đọc mô tả bán hàng đã duyệt của tenant — không nhận mô tả từ trình duyệt */
+      id: z.string().min(1).max(64).optional(),
       name: z.string().min(1),
       code: z.string().optional(),
       price: z.number().nullable().optional(),
@@ -43,10 +46,13 @@ export const POST = handle(async (request) => {
   }
 
   // Lấy Nguồn 1: Cốt lõi Business Profile & Brand Profile của tiệm
-  const [bizProfile, brandProfile, promotions] = await Promise.all([
+  const productIds = parsed.data.selectedProducts.flatMap((p) => (p.id ? [p.id] : []))
+  const [bizProfile, brandProfile, promotions, sellingNotes] = await Promise.all([
     getBusinessProfile(ctx).catch(() => null),
     getBrandProfile(ctx).catch(() => null),
     listActiveShopPromotions(ctx.organizationId).catch(() => []),
+    // Thiếu quyền đọc dữ liệu bán hàng hoặc lỗi đọc → viết như cũ, không chặn
+    getApprovedSellingNotes(ctx, productIds).catch(() => new Map<string, string>()),
   ])
 
   // Mục đích trang (bộ chọn loại trang trên /landing-page) → một dòng chỉ dẫn cho Writer AI.
@@ -61,7 +67,10 @@ export const POST = handle(async (request) => {
       occasionId: parsed.data.occasionId,
       occasionLabel: parsed.data.occasionLabel,
       archetypeId: parsed.data.archetypeId,
-      selectedProducts: parsed.data.selectedProducts,
+      selectedProducts: parsed.data.selectedProducts.map(({ id, ...p }) => ({
+        ...p,
+        sellingNote: id ? sellingNotes.get(id) : undefined,
+      })),
       userDirectives: parsed.data.userDirectives,
       // Ưu đãi chỉ lấy từ Hồ sơ tiệm (đang bật) — không nhận % từ trình duyệt, không mặc định
       discountPercent: shopDiscountPercent(promotions),

@@ -18,6 +18,8 @@ export interface LandingContentInput {
     code?: string | undefined
     price?: number | null | undefined
     category?: string | null | undefined
+    /** Ghi chú bán hàng đã duyệt (máy chủ tự đọc, không nhận từ trình duyệt) */
+    sellingNote?: string | undefined
   }>
   userDirectives?: string | undefined
   discountPercent?: number | undefined

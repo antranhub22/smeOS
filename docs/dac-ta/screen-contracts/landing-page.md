@@ -36,3 +36,4 @@ Review thị giác: `docs/ui-ux/MEUX_PILOT_LANDING_PAGE.md` §7.
 - AI nhận điểm mạnh / cam kết / khách mục tiêu tiệm đã khai; chỉ được hứa cam kết đã khai.
 - Kiểm chữ tất định `landing-copy-guard.ts`: cụm sáo rỗng hoặc lời hứa chưa khai (giờ giao, độ tươi, miễn phí, 100%…) → viết lại 1 lần (gộp với lần sửa của Critic, không thêm lượt gọi); vẫn còn lời hứa → bỏ mục đó hoặc trả phần đó về bản mẫu. Catalog có lời hứa → dùng bản mẫu.
 - Critic landing chấm "cụ thể, không sáo, không hứa ngoài hồ sơ" thay cho "đủ 4 cam kết".
+- **Mô tả sản phẩm đã duyệt** (Bước C, 30/10/2026): màn landing gửi `id` sản phẩm; máy chủ tự đọc bản dữ liệu bán hàng `APPROVED` mới nhất (`product-copies/use-cases/get-approved-selling-notes.ts`, trong tenant, tối đa 6 sản phẩm, ≤ 320 ký tự/sản phẩm) và đưa vào prompt v2 như dữ liệu. Người không có `H5` → bỏ qua, nội dung vẫn sinh. Route vẫn chưa gác quyền (nợ #170).
