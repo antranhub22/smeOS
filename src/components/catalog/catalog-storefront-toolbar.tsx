@@ -29,7 +29,7 @@ export function CatalogStorefrontToolbar({
   hasCampaign,
   style,
 }: CatalogStorefrontToolbarProps) {
-  const activeStyle = { backgroundColor: style.tokens.accent, color: "#FFFFFF" }
+  const activeStyle = { backgroundColor: style.tokens.ctaBg, color: style.tokens.ctaText }
   const inactiveStyle = { backgroundColor: "transparent", color: style.tokens.textSecondary }
 
   return (

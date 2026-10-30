@@ -45,10 +45,10 @@ export function LandingTemplateProducts({
   const ctaBtnStyle = isLuxury
     ? "bg-text text-accent hover:bg-black"
     : isRomantic
-    ? "bg-primary text-white hover:bg-primary-dark"
+    ? "bg-primary text-primary-foreground hover:bg-primary-dark"
     : isFestive
     ? "bg-danger text-white hover:bg-danger-dark"
-    : "bg-primary text-white hover:bg-primary-dark"
+    : "bg-primary text-primary-foreground hover:bg-primary-dark"
 
   if (products.length === 0) {
     return (

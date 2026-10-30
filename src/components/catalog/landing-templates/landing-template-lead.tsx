@@ -57,14 +57,14 @@ export function LandingTemplateLead({
     : "bg-surface-alt text-text border border-border rounded-md font-mono uppercase text-caption"
 
   const buttonStyle = isLuxury
-    ? "bg-primary hover:bg-primary-dark text-white rounded-full font-serif tracking-widest uppercase px-6"
+    ? "bg-primary hover:bg-primary-dark text-primary-foreground rounded-full font-serif tracking-widest uppercase px-6"
     : isFestive
     ? "bg-danger hover:bg-danger/90 text-white rounded-xl font-black uppercase tracking-wide px-5 shadow-sm"
     : isRomantic
-    ? "bg-primary hover:bg-primary-dark text-white rounded-full font-bold px-5"
+    ? "bg-primary hover:bg-primary-dark text-primary-foreground rounded-full font-bold px-5"
     : isModern
     ? "bg-text text-surface hover:bg-text/90 rounded-lg font-bold px-5"
-    : "bg-primary hover:bg-primary-dark text-white font-black px-4"
+    : "bg-primary hover:bg-primary-dark text-primary-foreground font-black px-4"
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
