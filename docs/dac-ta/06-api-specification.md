@@ -150,7 +150,7 @@ Một họ endpoint dùng chung cho mọi module. Màn hình theo dõi job đọ
 | GET | `/jobs/:id` | `G4` | |
 | GET | `/jobs/:id/events` | `G4` | Luồng sự kiện, xem dưới |
 | POST | `/jobs/:id/cancel` | `G6` | Chỉ job còn `PENDING` |
-| POST | `/jobs/:id/retry` | `G7` | Chỉ job `FAILED`. Job `COMPLETED/REJECTED` trả 409 |
+| POST | `/jobs/:id/retry` | `G7` | Chỉ job `FAILED`. Job `COMPLETED/REJECTED` trả 409. Lượt mới: `attempts` về 0. Lượt trước đã được hoàn credit → trừ lại đúng giá lượt trước (không đủ → 422 `QUOTA_EXCEEDED`, job giữ `FAILED`); chưa hoàn → không trừ thêm (nợ #198) |
 
 `POST /jobs/:id/retry` trên một job `COMPLETED` với `result = REJECTED` trả **409**, không phải 200. Chạy lại cho ra đúng phán quyết cũ và chỉ tốn GPU.
 
