@@ -8,8 +8,9 @@
  *   GATE 2: Hard Lock (Mother → Industry → Chain → Store)?
  *   BOTTOM-UP: User > Store > Org/Chain > Mother Default
  *
- * Pure TypeScript — không import Prisma, không import module khác.
+ * Pure TypeScript — không import Prisma; quy luật khoá/ghi đè dùng lõi `@/core/governance/layered-resolver`.
  */
+import { isAbove, resolveLayered, winningLock } from "@/core/governance/layered-resolver"
 import type { NotifyChannel, NotifyPriority, NotificationTier } from "./events/_contract"
 
 // ── Domain Types ────────────────────────────────────────────────────────────
@@ -118,63 +119,29 @@ export function resolveCascadingPreference(input: ResolveCascadeInput): ResolveR
     }
   }
 
-  // ── GATE 2: Hard Lock — kiểm tra từ cao xuống thấp ─────────────────────
-  const tiers: NotificationTier[] = ["MOTHER", "INDUSTRY", "CHAIN", "STORE"]
-
+  // ── GATE 2 + BOTTOM-UP: lõi chung `core/governance/layered-resolver` ──────
+  // Khoá tầng cao nhất (trong phạm vi) thắng → User > Store > Org/Chain > Mother Default → tắt.
   const scope = { storeOrgId: input.storeOrgId, parentOrgId: input.parentOrgId }
-  for (const tier of tiers) {
-    const lock = hardLocks.find(
-      (l) => l.tier === tier && l.eventKey === eventKey && l.channel === channel && isLockInScope(l, scope)
-    )
-    if (lock) {
-      return {
-        enabled: lock.enabled,
-        priority: DEFAULT_PRIORITY,
-        decidedBy: `HARD_LOCK_${tier}` as ResolveResult["decidedBy"],
-        hardLockReason: lock.reason,
-      }
-    }
-  }
+  const locks = hardLocks
+    .filter((l) => l.eventKey === eventKey && l.channel === channel && isLockInScope(l, scope))
+    .map((l) => ({ tier: l.tier, value: l, source: `HARD_LOCK_${l.tier}` as ResolveResult["decidedBy"] }))
+  const r = resolveLayered<NotificationSetting & { reason?: string | undefined }, ResolveResult["decidedBy"]>({
+    locks,
+    overrides: [
+      { value: userPreference ?? undefined, source: "USER" },
+      { value: storeDefault ?? undefined, source: "STORE" },
+      { value: orgPolicy ?? undefined, source: "ORG" },
+      { value: motherDefault ?? undefined, source: "MOTHER_DEFAULT" },
+    ],
+    // Không có setting nào → tắt theo mặc định an toàn
+    fallback: { value: { enabled: false }, source: "SYSTEM_DEFAULT" },
+  })
 
-  // ── BOTTOM-UP RESOLUTION: Most specific setting wins ────────────────────
-  if (userPreference != null) {
-    return {
-      enabled: userPreference.enabled,
-      priority: userPreference.priority ?? DEFAULT_PRIORITY,
-      decidedBy: "USER",
-    }
+  if (r.lockedBy) {
+    // Khoá cứng: ưu tiên luôn NORMAL, kèm lý do khoá
+    return { enabled: r.value.enabled, priority: DEFAULT_PRIORITY, decidedBy: r.source, hardLockReason: r.value.reason }
   }
-
-  if (storeDefault != null) {
-    return {
-      enabled: storeDefault.enabled,
-      priority: storeDefault.priority ?? DEFAULT_PRIORITY,
-      decidedBy: "STORE",
-    }
-  }
-
-  if (orgPolicy != null) {
-    return {
-      enabled: orgPolicy.enabled,
-      priority: orgPolicy.priority ?? DEFAULT_PRIORITY,
-      decidedBy: "ORG",
-    }
-  }
-
-  if (motherDefault != null) {
-    return {
-      enabled: motherDefault.enabled,
-      priority: motherDefault.priority ?? DEFAULT_PRIORITY,
-      decidedBy: "MOTHER_DEFAULT",
-    }
-  }
-
-  // Không có setting nào → tắt theo mặc định an toàn
-  return {
-    enabled: false,
-    priority: DEFAULT_PRIORITY,
-    decidedBy: "SYSTEM_DEFAULT",
-  }
+  return { enabled: r.value.enabled, priority: r.value.priority ?? DEFAULT_PRIORITY, decidedBy: r.source }
 }
 
 /**
@@ -188,21 +155,12 @@ export function getAppliedHardLock(
   viewerTier: NotificationTier,
   scope: LockScope
 ): HardLockEntry | null {
-  // Tier thứ tự từ cao xuống thấp
-  const tierOrder: NotificationTier[] = ["MOTHER", "INDUSTRY", "CHAIN", "STORE"]
-
-  // Chỉ xét Hard Lock của tầng trên so với viewerTier
-  const viewerIndex = tierOrder.indexOf(viewerTier)
-
-  for (let i = 0; i < viewerIndex; i++) {
-    const tier = tierOrder[i]
-    const lock = hardLocks.find(
-      (l) => l.tier === tier && l.eventKey === eventKey && l.channel === channel && isLockInScope(l, scope)
+  // Chỉ xét khoá của tầng TRÊN viewerTier; tầng cao nhất thắng (lõi chung)
+  return winningLock(
+    hardLocks.filter(
+      (l) => isAbove(l.tier, viewerTier) && l.eventKey === eventKey && l.channel === channel && isLockInScope(l, scope)
     )
-    if (lock) return lock
-  }
-
-  return null
+  )
 }
 
 /**

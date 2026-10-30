@@ -15,7 +15,7 @@ description: >-
 2. `.agents/standards/universal/01-tiered-saas-governance.md` — nguyên tắc chung.
 
 Tóm tắt bắt buộc:
-- Động cơ đang chạy: `src/modules/organization/domain/governance-decisions.ts`. **Không** dùng `src/core/governance/cascading-resolver.ts` (không được gọi).
+- Động cơ đang chạy: `src/modules/organization/domain/governance-decisions.ts`. Quy luật khoá → ghi đè → mặc định nằm ở lõi chung `src/core/governance/layered-resolver.ts` (dùng chung với thông báo); hệ thống mới gọi lõi này, không viết resolver riêng.
 - Tầng trên thật trong ma trận: khoá dựng sẵn → Mẹ → Chuỗi (`chain_partnerships` ACTIVE). Tầng Ngành chỉ là plugin code.
 - Ghi quyết định: kiểm vi phạm ở server (422 + `violations`) + audit log.
 - Ba trục tách biệt: RBAC (capability) · Entitlement (gói / khoá công cụ) · Governance (ma trận).

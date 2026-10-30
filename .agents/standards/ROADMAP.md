@@ -21,7 +21,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 1. Sửa 91 thuật ngữ ngành hardcode (IT-F01…) bằng `ti.*` / plugin; hạ baseline ratchet. *(nhánh riêng, nhiều màn)*
 2. **PO:** đưa `audit:industry:check` vào CI (`ci.yml`).
 3. Hợp nhất xác định tầng: một `tierOf()` + một kiểu `Tier` trong `src/core/` (nợ #194), test 4 tầng.
-4. **PO:** chọn một động cơ quản trị phân tầng; xoá `core/governance/cascading-resolver.ts` + 4 tệp `cascading-*` nếu chọn `governance-decisions` (nợ #193).
+4. ✅ (30/10/2026) Gỡ `cascading-resolver.ts` + 4 tệp `cascading-*`; lõi chung `core/governance/layered-resolver.ts` cho ma trận quản trị và thông báo (nợ #193).
 5. Hằng `TRASH_RETENTION_DAYS` (nợ #196); mở rộng test chặn gọi AI trực tiếp ra toàn `src/` (nợ #197).
 
 ## G1 · Production-ready
@@ -99,4 +99,4 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 | Q3 | Staging + 2 instance Render | ⏸ **Làm khi bàn giao** — code E2 vẫn viết và test cục bộ; nghiệm thu 2 instance dời tới lúc bàn giao | E2.5, E4.3 |
 | Q4 | PITR Postgres + backup object store | ✅ Đồng ý — bật trên dashboard Render/R2 (chủ tài khoản thao tác), agent ghi RPO/RTO vào runbook | E3 |
 | Q5 | `audit:industry:check` vào CI | ✅ Đồng ý — thêm vào CI **sau** khi E0.1 hạ vi phạm về baseline, để CI không đỏ ngay | E0.2 |
-| Q6 | Chọn động cơ quản trị phân tầng duy nhất | ⏳ Chờ PO | E0.4 |
+| Q6 | Chọn động cơ quản trị phân tầng duy nhất | ✅ **Phương án 2** — gỡ động cơ chết, gộp A + B về lõi chung (đã làm) | E0.4 |

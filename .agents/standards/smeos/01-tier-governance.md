@@ -26,7 +26,7 @@ Quan hệ Chuỗi → Cửa hàng: bảng `chain_partnerships` (`status = ACTIVE
 - UI dùng chung: `src/components/governance/` (`use-governance-matrix.ts`, `apply-governance-decisions.ts`, `governance-scope-note.tsx`).
 - API: `/api/v1/platform/governance-matrix`, `/api/v1/organizations/current/governance-matrix`.
 
-**Không dùng** `src/core/governance/cascading-resolver.ts` và 4 file `greeting-card/domain/cascading-*.ts`, `templates/domain/cascading-template-resolver.ts`: không có lời gọi ngoài test (🔴 nợ #193). `AGENTS.md` §4-Tier còn hướng dẫn `domain/cascading-resolver.ts` — đã lỗi thời.
+**Lõi chung (30/10/2026, PO phương án 2):** `src/core/governance/layered-resolver.ts` — `resolveLayered` (khoá tầng cao nhất thắng → ghi đè cụ thể nhất → mặc định), `winningLock`, `isAbove`, `GOVERNANCE_TIERS`. `governance-decisions.ts` và `notification/domain/cascading-policy.ts` đều gọi lõi này. `cascading-resolver.ts` + 4 tệp `cascading-*` đã gỡ (nợ #193 ✅).
 
 ## 3. Trạng thái
 
@@ -38,7 +38,7 @@ Quan hệ Chuỗi → Cửa hàng: bảng `chain_partnerships` (`status = ACTIVE
 | Áp: Thanh toán, Phí gia công, Mẫu | 🟡 chỉ lưu + khoá; UI ghi rõ (`GovernanceScopeNote`) | nợ #185 |
 | Tầng Ngành trong ma trận | 🔴 không có dữ liệu; `governanceTierOf()` chỉ trả `CHAIN`/`STORE` | nợ #185, #195 |
 | Một hàm xác định tầng | 🔴 3 bản: `buildNav` (nav/index.ts), `governanceTierOf` (governance-matrix.ts), `resolveNotificationViewerTier` | nợ #194 |
-| Một kiểu Tier | 🔴 ≥ 6 khai báo (`PlatformTier`, `GovernanceLayerTier`, `GovernanceTier`, `NotificationTier`, `GovernanceViewerTier`, `MatrixViewerTier`) | nợ #194 |
+| Một kiểu Tier | 🟡 `GovernanceTier` trong lõi; `GovernanceLayerTier` đã là alias; còn ≥ 4 khai báo khác (`PlatformTier`, `GovernanceLayerTier`, `GovernanceTier`, `NotificationTier`, `GovernanceViewerTier`, `MatrixViewerTier`) | nợ #194 |
 | Khoá công cụ chuỗi → chi nhánh ở server | ✅ trang + API của công cụ: `organization/domain/tool-route-entitlement.ts`, `layout/tool-lock-guard.tsx`; `null` = không giới hạn, mảng (kể cả rỗng) = chỉ công cụ trong danh sách | `tool-route-entitlement.test.ts`, `require-tenant-tool-lock.test.ts` |
 | API dùng chung nhiều công cụ | Cố ý **không** khoá (vd. `content-engine/generations`) | nợ #185 (c) |
 | Gói dịch vụ | ✅ `core/entitlements/entitlement-service.ts` (`PLAN_FEATURES`), tách khỏi RBAC | `entitlement-service.test.ts` |
@@ -47,7 +47,7 @@ Quan hệ Chuỗi → Cửa hàng: bảng `chain_partnerships` (`status = ACTIVE
 
 ## 4. Quy tắc cho agent
 
-1. Hệ thống quản trị mới → thêm vào `GOVERNANCE_SYSTEMS` và dùng `governance-decisions.ts`. Không tạo resolver mới, không dùng `cascading-resolver.ts`.
+1. Hệ thống quản trị mới → thêm vào `GOVERNANCE_SYSTEMS` và dùng `governance-decisions.ts`; hệ thống có cấu trúc riêng (như thông báo) → gọi thẳng `resolveLayered`. Không viết resolver mới.
 2. Cần biết tầng → gọi hàm có sẵn của đúng ngữ cảnh; **không** viết thêm phép so `organization_type` mới. Khi hợp nhất (#194) chỉ còn một hàm.
 3. Hệ thống mới mà luồng thật chưa áp → bắt buộc `GovernanceScopeNote` nói "đã lưu, chưa áp dụng".
 4. Thuật ngữ ngành: `getIndustryPlugin(industryKey).terminology` / `ti.*` — không hardcode (ratchet `npm run audit:industry:check`).

@@ -59,7 +59,7 @@ src/modules/<system-name>/
 ├── domain/
 │   ├── registry/               # Master Catalog định nghĩa các Keys, Labels tiếng Việt
 │   ├── contracts.ts            # Domain Entities, DTOs, Enums thuần túy
-│   ├── cascading-resolver.ts   # Pure function giải thuật phân tầng (Gate -> HardLock -> Fallback)
+│   ├── layered-resolver.ts     # Lõi chung (30/10/2026): khoá tầng cao nhất thắng → ghi đè cụ thể nhất → mặc định
 │   └── __tests__/              # Unit test bao phủ 100% kịch bản resolve và hard-lock
 ├── infra/
 │   ├── repositories/           # Repository ports & Prisma implementations
@@ -112,5 +112,5 @@ src/modules/<system-name>/
 1. **100% Tuân thủ Clean Architecture**: Không có import `@prisma/client` trong thư mục `domain/`.
 2. **Kế thừa hoàn hảo (Zero Data Duplication)**: Khi một cửa hàng mới tạo lập chưa chỉnh sửa gì, toàn bộ ưu đãi, cam kết và mẫu in hiển thị trên Storefront kế thừa 100% từ Chuỗi và Ngành mà không phát sinh thêm bản ghi rác.
 3. **Hard-lock an toàn tuyệt đối**: Khi Tier 1 (Mother) hoặc Tier 3 (Chain) bật khóa cứng, StoreOS tại Tier 4 không thể gửi request ghi đè (Server-side validation từ chối, UI chuyển sang trạng thái disabled có badge giải thích lý do).
-4. **Kiểm thử tự động**: Đầy đủ bộ Unit Tests cho `cascading-resolver` đạt độ bao phủ nhánh $\ge 95\%$.
+4. **Kiểm thử tự động**: Đầy đủ bộ Unit Tests cho `layered-resolver` (thay `cascading-resolver` đã gỡ 30/10/2026, nợ #193) đạt độ bao phủ nhánh $\ge 95\%$.
 5. **Không hồi quy (No Regression)**: Chạy toàn bộ test suite `npm run test:tenant`, `npm run check:industry`, và `npx tsc --noEmit` đạt kết quả xanh 100%.

@@ -157,7 +157,7 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
     3. **Ghi đè Cục bộ An toàn (Safe Delta Overrides)**: Tầng dưới chỉ lưu trữ phần chênh lệch (Delta/Override) so với tầng trên. Thao tác khôi phục mặc định (Reset) đơn giản là xóa bản ghi override cục bộ.
   - **4 Khối Thành phần Chuẩn hóa trong Mã nguồn**:
     - `domain/registry/`: Định nghĩa danh mục mẫu (Keys, nhãn tiếng Việt, mô tả, vai trò mặc định) thuần TypeScript, zero-Prisma.
-    - Động cơ phân giải: **`src/modules/organization/domain/governance-decisions.ts`** (`effectiveDecision`, `validateDecisions`, `BUILT_IN_MOTHER_LOCKS`). ⚠️ `src/core/governance/cascading-resolver.ts` KHÔNG được gọi ở đâu ngoài test — không dùng (nợ #193).
+    - Động cơ phân giải: **`src/modules/organization/domain/governance-decisions.ts`** (`effectiveDecision`, `validateDecisions`, `BUILT_IN_MOTHER_LOCKS`). Quy luật khoá/ghi đè dùng lõi chung **`src/core/governance/layered-resolver.ts`** (cũng dùng cho thông báo). `cascading-resolver.ts` đã gỡ 30/10/2026 (nợ #193).
     - `infra/repositories/`: Repository port & adapter riêng biệt cho từng tầng dữ liệu (`platform_*`, `industry_*`, `chain_*`, `store_*`).
     - `components/use-<system>-matrix.ts`: Universal Hook nhận prop `tier: "MOTHER" | "INDUSTRY" | "CHAIN" | "STORE"` cùng context id, tự động map đúng API route, quản lý state và hiển thị ma trận thống nhất.
 - **Tách biệt trường dữ liệu nguyên tử (Atomic Disaggregated Fields) để tối ưu khả năng chỉnh sửa (Editable)**:
