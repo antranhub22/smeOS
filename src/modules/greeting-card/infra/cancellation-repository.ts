@@ -15,6 +15,7 @@ import {
 import { roleOf, type MessageRole } from "../domain/internal-message"
 import { cancelBlocker } from "../domain/brochure-payment-policy"
 import { saleCancellationReminder } from "../domain/customer-cancellation-notice"
+import { getVoucherRedemptionRepository } from "@/modules/promotions/infra/voucher-redemption-repository"
 
 type Loose = Record<string, unknown>
 const obj = (v: unknown): Loose => (v && typeof v === "object" ? (v as Loose) : {})
@@ -165,10 +166,7 @@ export class CancellationRepository {
         })
         if (cancelled.count === 0) throw conflict("Đơn hàng vừa thay đổi trạng thái, vui lòng tải lại")
         // Trả lại mã giảm giá khách đã dùng — như nút Huỷ của sổ thu
-        await tx.vouchers.updateMany({
-          where: { organization_id: ctx.organizationId, order_id: order.id },
-          data: { is_used: false, used_at: null, order_id: null },
-        })
+        await getVoucherRedemptionRepository(tx).releaseForOrder(ctx.organizationId, order.id)
 
         await tx.order_events.create({
           data: scopedData(ctx, {

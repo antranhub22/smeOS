@@ -132,6 +132,11 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | GET | `/products/:id/images` | **CHƯA XÂY** `G1` | |
 | PUT | `/products/:id/images` | **CHƯA XÂY** `G2` | Đặt lại thứ tự và vai trò ảnh |
 | GET · PUT | `/pricing-rules` | `L5` · `L6` | Theo tổ chức, có thể theo chi nhánh |
+| GET · POST | `/price-lists` | `L1` · `L3` | Bảng giá sản phẩm (30/10/2026). Lưu ở `pricing_rules` khoá `price_list:<id>` (chèn-chỉ, mỗi lần sửa là một phiên bản). GET trả `{ data, categories }` |
+| GET · PUT · PATCH · DELETE | `/price-lists/:id` | `L1` · `L3` | GET: bảng giá dựng từ giá đang bán của sản phẩm + ưu đãi đang bật; PATCH `{ active }`: công tắc Đang dùng; DELETE: bỏ khỏi danh sách, giữ lịch sử. Tổ chức khác → 404 |
+| GET · POST | `/vouchers/batches` | `Q8` | Phát hành mã giảm giá (30/10/2026). GET trả `{ batches, promotions, maxDiscountPercent }` (ưu đãi đang bật, cùng nguồn ma trận ưu đãi). POST: `mode` `SHARED` (một mã chung) · `UNIQUE` (tối đa 1000 mã riêng); trần % theo khoá nền tảng; `promotion_id` phải là ưu đãi đang bật |
+| GET · PATCH | `/vouchers/batches/:id` | `Q8` | GET: đợt + tối đa 1000 mã; PATCH `{ is_active }`: tạm dừng/mở lại cả đợt. Tổ chức khác → 404 |
+| GET | `/vouchers/batches/:id/export` | `Q8` | CSV (UTF-8 BOM) danh sách mã; ghi `audit_logs` `data.export` |
 | POST | `/assets/upload-url` | `G2` | Trả URL ký sẵn; client tải thẳng lên kho |
 | POST | `/assets` | `G2` | Ghi nhận asset sau khi tải xong |
 | GET | `/assets/:id` | `G1` | |

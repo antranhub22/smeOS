@@ -44,7 +44,7 @@ const GROWTH_MODULE_SPECS: readonly GrowthModuleSpec[] = [
     toolIds: { 1: [1, 2, 3, 4, 7, 53], 2: [5, 6], 3: [0] } },
   { key: "promotion", name: "Quảng bá sản phẩm", icon: "Megaphone",
     purpose: "Giới thiệu sản phẩm và chương trình ưu đãi đến khách một cách chuyên nghiệp",
-    toolIds: { 1: [9, 14, 61], 2: [22, 43, 44], 3: [] } },
+    toolIds: { 1: [9, 14, 61, 65, 66], 2: [22, 43, 44], 3: [] } },
   { key: "acquisition", name: "Thu hút khách hàng", icon: "Magnet",
     purpose: "Giúp nhiều khách biết đến cửa hàng và dễ dàng tìm thấy sản phẩm",
     toolIds: { 1: [8, 12, 13], 2: [10, 21, 25, 49, 54], 3: [] } },

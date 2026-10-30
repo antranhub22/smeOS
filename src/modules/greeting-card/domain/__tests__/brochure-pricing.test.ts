@@ -50,11 +50,25 @@ describe("parseShippingConfig", () => {
 describe("voucher", () => {
   const now = new Date("2026-10-05T00:00:00Z")
   it("chặn mã đã dùng, hết hạn, của khách khác, chưa đủ đơn tối thiểu", () => {
-    expect(voucherBlocker(voucher({ isUsed: true }), 1e6, null, now)).toMatch(/đã được sử dụng/)
+    expect(voucherBlocker(voucher({ isUsed: true }), 1e6, null, now)).toMatch(/hết lượt/)
     expect(voucherBlocker(voucher({ expiresAt: new Date("2026-10-01") }), 1e6, null, now)).toMatch(/hết hạn/)
     expect(voucherBlocker(voucher({ customerId: "c1" }), 1e6, "c2", now)).toMatch(/khách hàng khác/)
     expect(voucherBlocker(voucher({ minOrderVnd: 2e6 }), 1e6, null, now)).toMatch(/tối thiểu/)
     expect(voucherBlocker(voucher({ customerId: "c1" }), 1e6, "c1", now)).toBeNull()
+  })
+
+  it("mã thuộc đợt phát hành: tạm dừng, chưa đến ngày, ưu đãi đã tắt, hết lượt của khách", () => {
+    const now = new Date("2026-10-30T10:00:00Z")
+    expect(voucherBlocker(voucher({ isActive: false }), 1e6, null, now)).toMatch(/tạm dừng/)
+    expect(voucherBlocker(voucher({ startsAt: new Date("2026-11-01") }), 1e6, null, now)).toMatch(/chưa đến ngày/)
+    const linked = voucher({ promotionId: "promo-tet" })
+    expect(voucherBlocker(linked, 1e6, null, now, { activePromotionIds: new Set(["promo-khac"]) })).toMatch(/đã kết thúc/)
+    expect(voucherBlocker(linked, 1e6, null, now, { activePromotionIds: new Set(["promo-tet"]) })).toBeNull()
+    const perCustomer = voucher({ perCustomerLimit: 1 })
+    expect(voucherBlocker(perCustomer, 1e6, "c1", now, { customerUses: 1 })).toMatch(/hết lượt của mã/)
+    expect(voucherBlocker(perCustomer, 1e6, "c1", now, { customerUses: 0 })).toBeNull()
+    // Mã cũ (không có trường mới) vẫn dùng như trước
+    expect(voucherBlocker(voucher(), 1e6, null, now)).toBeNull()
   })
 
   it("giảm % có trần, giảm cố định không vượt tạm tính", () => {

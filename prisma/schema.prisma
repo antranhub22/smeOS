@@ -133,19 +133,19 @@ model sessions {
 }
 
 model organizations {
-  id             String            @id @default(uuid())
-  name           String
-  slug           String            @unique
-  type           organization_type @default(SINGLE)
-  credit_balance Int               @default(0)
-  credit_plan    String?
-  settings       Json? // bảng công tắc cấp tổ chức, gồm cho_phep_tu_duyet
-  data_region    String?           @default("vn") // ADR-006: Vùng dữ liệu tenant
+  id               String            @id @default(uuid())
+  name             String
+  slug             String            @unique
+  type             organization_type @default(SINGLE)
+  credit_balance   Int               @default(0)
+  credit_plan      String?
+  settings         Json? // bảng công tắc cấp tổ chức, gồm cho_phep_tu_duyet
+  data_region      String?           @default("vn") // ADR-006: Vùng dữ liệu tenant
   // SDAGF D-04 — legal hold cấp tổ chức: còn hạn thì không xoá vĩnh viễn dữ
   // liệu nào của tổ chức (asset, sản phẩm trong thùng rác, dọn bàn giao).
   legal_hold_until DateTime?
-  created_at     DateTime          @default(now())
-  updated_at     DateTime          @updatedAt
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @updatedAt
 
   // Khoá ngoại tới organizations mở lại ở P3 (TECHNICAL_DEBT #8) — bốn bảng
   // dưới đây là bốn bảng nợ đó; assets/generation_jobs/usage/audit_logs khai
@@ -192,6 +192,8 @@ model organizations {
   journey_runs                  journey_runs[]
   customer_consents             customer_consents[]
   vouchers                      vouchers[]
+  voucher_batches               voucher_batches[]
+  voucher_redemptions           voucher_redemptions[]
   chat_conversations            chat_conversations[]
   chat_messages                 chat_messages[]
   chat_channel_integrations     chat_channel_integrations[]
@@ -1757,25 +1759,83 @@ model customer_consents {
 }
 
 model vouchers {
-  id               String                @id @default(uuid())
-  organization_id  String
-  customer_id      String? // null nếu áp dụng công khai
-  code             String // FLORA10, VIP2026
-  discount_type    voucher_discount_type @default(PERCENTAGE)
-  discount_value   Decimal               @db.Decimal(14, 2)
-  min_order_vnd    Decimal               @default(0) @db.Decimal(14, 2)
-  max_discount_vnd Decimal?              @db.Decimal(14, 2)
-  expires_at       DateTime?
-  is_used          Boolean               @default(false)
-  used_at          DateTime?
-  order_id         String?
-  created_at       DateTime              @default(now())
+  id                 String                @id @default(uuid())
+  organization_id    String
+  customer_id        String? // null nếu áp dụng công khai
+  code               String // FLORA10, VIP2026
+  discount_type      voucher_discount_type @default(PERCENTAGE)
+  discount_value     Decimal               @db.Decimal(14, 2)
+  min_order_vnd      Decimal               @default(0) @db.Decimal(14, 2)
+  max_discount_vnd   Decimal?              @db.Decimal(14, 2)
+  expires_at         DateTime?
+  is_used            Boolean               @default(false)
+  used_at            DateTime?
+  order_id           String?
+  created_at         DateTime              @default(now())
+  /// Phát hành mã giảm giá (PO 30/10/2026): mã thuộc một đợt phát hành; null = mã lẻ cũ.
+  batch_id           String?
+  /// Ưu đãi trong danh mục `store_policies` mà mã thuộc về — tắt/khoá ưu đãi là mã ngừng nhận.
+  promotion_id       String?
+  starts_at          DateTime?
+  /// Tổng lượt dùng tối đa; null = không giới hạn. Mã cũ = 1 lượt.
+  usage_limit        Int?                  @default(1)
+  /// Lượt tối đa cho mỗi khách; null = không giới hạn.
+  per_customer_limit Int?
+  used_count         Int                   @default(0)
+  is_active          Boolean               @default(true)
 
-  organization organizations @relation(fields: [organization_id], references: [id])
-  customer     customers?    @relation(fields: [customer_id], references: [id])
+  organization organizations         @relation(fields: [organization_id], references: [id])
+  customer     customers?            @relation(fields: [customer_id], references: [id])
+  batch        voucher_batches?      @relation(fields: [batch_id], references: [id])
+  redemptions  voucher_redemptions[]
 
   @@unique([organization_id, code])
   @@index([organization_id, customer_id])
+  @@index([organization_id, batch_id])
+}
+
+/// Một đợt phát hành mã giảm giá — cùng điều kiện cho mọi mã trong đợt.
+model voucher_batches {
+  id                 String                @id @default(uuid())
+  organization_id    String
+  name               String
+  promotion_id       String?
+  code_prefix        String?
+  quantity           Int
+  discount_type      voucher_discount_type
+  discount_value     Decimal               @db.Decimal(14, 2)
+  min_order_vnd      Decimal               @default(0) @db.Decimal(14, 2)
+  max_discount_vnd   Decimal?              @db.Decimal(14, 2)
+  starts_at          DateTime?
+  expires_at         DateTime?
+  usage_limit        Int?
+  per_customer_limit Int?
+  is_active          Boolean               @default(true)
+  created_by         String
+  created_at         DateTime              @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  vouchers     vouchers[]
+
+  @@index([organization_id])
+}
+
+/// Mỗi lần một mã được dùng cho một đơn — để đếm lượt theo khách và trả lượt khi huỷ đơn.
+model voucher_redemptions {
+  id              String    @id @default(uuid())
+  organization_id String
+  voucher_id      String
+  order_id        String
+  customer_id     String?
+  redeemed_at     DateTime  @default(now())
+  released_at     DateTime?
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  voucher      vouchers      @relation(fields: [voucher_id], references: [id])
+
+  @@unique([voucher_id, order_id])
+  @@index([organization_id])
+  @@index([organization_id, order_id])
 }
 
 // ── M08 — AI Chat Assistant & Hội thoại (P23) ──────────────────────────────

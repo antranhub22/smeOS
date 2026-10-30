@@ -20,7 +20,7 @@ export const GROWTH_MODULE_ROADMAP: Readonly<Record<GrowthModuleKey, RoadmapByPh
   },
   content: { 1: [], 2: [], 3: [] },
   promotion: {
-    1: ["Bảng giá sản phẩm", "Phát hành mã giảm giá"],
+    1: [],
     2: [],
     3: ["Tự động hoá chiến dịch", "Tự động phân phối nội dung", "Tối ưu chiến dịch"],
   },

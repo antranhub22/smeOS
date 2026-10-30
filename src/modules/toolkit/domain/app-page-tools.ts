@@ -36,7 +36,18 @@ export const APP_PAGE_TOOLS: readonly ToolDefinition[] = [
   appPage(58, "Báo giá nhanh", "Lập báo giá từ sản phẩm có sẵn và gửi cho khách", "FileText", "/bao-gia"),
   appPage(59, "Quản lý đơn hàng", "Theo dõi đơn, xác nhận thanh toán và tạo đơn từ tin nhắn", "ShoppingBag", "/don-hang"),
   appPage(60, "Điều phối đơn hàng", "Chuyển đơn đến cửa hàng phù hợp để thực hiện", "Route", "/dieu-phoi"),
-  appPage(61, "Ưu đãi và giảm giá", "Thiết lập các chương trình ưu đãi đang áp dụng", "Percent", "/cai-dat/ma-tran-uudai"),
+  // Cùng dữ liệu với Cài đặt → Ưu đãi (`/cai-dat/ma-tran-uudai`) — hai nơi hiển thị, một nguồn
+  appPage(61, "Ưu đãi và giảm giá", "Thiết lập các chương trình ưu đãi đang áp dụng", "Percent", "/uu-dai"),
   appPage(62, "Thanh toán và đặt cọc", "Cách thanh toán và mức đặt cọc áp dụng cho đơn hàng", "Wallet", "/cai-dat/ma-tran-thanhtoan-datco"),
   appPage(63, "Số liệu kinh doanh", "Báo cáo hiệu quả bán hàng và khách hàng", "BarChart3", "/so-lieu"),
+  {
+    ...appPage(65, "Bảng giá sản phẩm", "Bảng giá gửi khách hoặc in tại quầy, lấy giá đang bán của sản phẩm", "FileSpreadsheet", "/bang-gia"),
+    status: "DONE", progress: 100,
+    statusNote: "Nhiều bảng giá theo loại sản phẩm, công tắc đang dùng, thời hạn, in kèm ưu đãi đang bật, in hoặc lưu PDF",
+  },
+  {
+    ...appPage(66, "Phát hành mã giảm giá", "Tạo mã chung hoặc hàng loạt mã riêng cho khách nhập khi đặt hàng", "Ticket", "/uu-dai/ma-giam-gia"),
+    status: "DONE", progress: 100,
+    statusNote: "Mã chung hoặc mã riêng, giới hạn lượt và thời hạn, gắn theo công tắc ưu đãi, tạm dừng cả đợt, tải CSV",
+  },
 ]

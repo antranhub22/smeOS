@@ -813,12 +813,58 @@ model vouchers {
   used_at          DateTime?
   order_id         String?
   created_at       DateTime              @default(now())
+  batch_id           String?             // đợt phát hành; null = mã lẻ cũ
+  promotion_id       String?             // ưu đãi trong store_policies — tắt/khoá ưu đãi là mã ngừng nhận
+  starts_at          DateTime?
+  usage_limit        Int?                @default(1)   // null = không giới hạn
+  per_customer_limit Int?
+  used_count         Int                 @default(0)
+  is_active          Boolean             @default(true)
 
 
   @@unique([organization_id, code])
   @@index([organization_id, customer_id])
+  @@index([organization_id, batch_id])
+}
+
+model voucher_batches {
+  id                 String                @id @default(uuid())
+  organization_id    String
+  name               String
+  promotion_id       String?
+  code_prefix        String?
+  quantity           Int
+  discount_type      voucher_discount_type
+  discount_value     Decimal               @db.Decimal(14, 2)
+  min_order_vnd      Decimal               @default(0) @db.Decimal(14, 2)
+  max_discount_vnd   Decimal?              @db.Decimal(14, 2)
+  starts_at          DateTime?
+  expires_at         DateTime?
+  usage_limit        Int?
+  per_customer_limit Int?
+  is_active          Boolean               @default(true)
+  created_by         String
+  created_at         DateTime              @default(now())
+
+  @@index([organization_id])
+}
+
+model voucher_redemptions {
+  id              String    @id @default(uuid())
+  organization_id String
+  voucher_id      String
+  order_id        String
+  customer_id     String?
+  redeemed_at     DateTime  @default(now())
+  released_at     DateTime?
+
+  @@unique([voucher_id, order_id])
+  @@index([organization_id])
+  @@index([organization_id, order_id])
 }
 ```
+
+**Phát hành mã giảm giá (30/10/2026).** Một đợt (`voucher_batches`) sinh một mã chung hoặc nhiều mã riêng (`vouchers.batch_id`). Trừ lượt bằng một câu `UPDATE … WHERE used_count < usage_limit` trong giao dịch đặt đơn, ghi `voucher_redemptions`; huỷ/từ chối đơn trả lượt theo `voucher_redemptions`. `is_used` giữ nghĩa "đã hết lượt" để chỗ đọc cũ (CRM) không đổi. Mã cũ được điền `used_count = 1` nếu đã dùng.
 
 **Bản ghi đồng ý là chèn-chỉ.** Rút lại đồng ý là một dòng mới mang `state = WITHDRAWN`, không phải một lượt `UPDATE` — câu hỏi "lúc gửi tin đó khách đã đồng ý chưa" chỉ trả lời được nếu lịch sử còn nguyên.
 
