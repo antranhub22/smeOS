@@ -142,6 +142,7 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
        - Trước khi bàn giao tính năng mới, bắt buộc chạy `npm run check:industry` và `npm run audit:industry`. Không để lọt các vi phạm hardcode ngành trong mã nguồn mới.
   - **Luồng dữ liệu chuẩn**: `QuoteSelection` (client state) → `useBrochureQuote` (SWR) → `POST /api/v1/public/[catalog]/quote` → `brochure-quote.ts` (use-case) → trả `BrochureQuote.paymentPlan` → `PaymentCodeField` hiện kết quả.
 - **Quy chuẩn Kiến trúc Quản trị Phân tầng 4 Cấp (4-Tier Cascading Governance SSOT Standard, PO 27/10/2026)**:
+  - 📌 **Đối chiếu code & trạng thái thật (30/10/2026):** `.agents/standards/smeos/01-tier-governance.md` · skill `tier-governance`. Mục dưới là đích kiến trúc; tầng Ngành **chưa** có trong dữ liệu ma trận (chỉ plugin code), tầng trên thật = khoá dựng sẵn → Mẹ → Chuỗi.
   - Đây là **tiêu chuẩn kiến trúc bất biến** áp dụng cho mọi hệ thống cấu hình, quy tắc và chính sách trên toàn bộ `smeOS` (bao gồm: **Thông báo / Notifications**, **Cài đặt / Settings**, **Ưu đãi / Khuyến mãi**, **Chính sách / Policies**, **Mẫu ấn phẩm / Templates**).
   - **4 Tầng Quản trị Phân cấp (Governance Hierarchy)**:
     1. **Tier 1 — SaaS Mother (Nền tảng / Console `/van-hanh`)**: Quản trị toàn sàn. Khai báo Danh mục SSOT, bật/tắt module/kênh toàn hệ thống, thiết lập trần cứng và khóa bất biến (`hard-locks`).
@@ -154,7 +155,7 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
     3. **Ghi đè Cục bộ An toàn (Safe Delta Overrides)**: Tầng dưới chỉ lưu trữ phần chênh lệch (Delta/Override) so với tầng trên. Thao tác khôi phục mặc định (Reset) đơn giản là xóa bản ghi override cục bộ.
   - **4 Khối Thành phần Chuẩn hóa trong Mã nguồn**:
     - `domain/registry/`: Định nghĩa danh mục mẫu (Keys, nhãn tiếng Việt, mô tả, vai trò mặc định) thuần TypeScript, zero-Prisma.
-    - `domain/cascading-resolver.ts`: Logic thuần túy tính toán cấu hình hiệu lực và kiểm tra vi phạm hard-lock.
+    - Động cơ phân giải: **`src/modules/organization/domain/governance-decisions.ts`** (`effectiveDecision`, `validateDecisions`, `BUILT_IN_MOTHER_LOCKS`). ⚠️ `src/core/governance/cascading-resolver.ts` KHÔNG được gọi ở đâu ngoài test — không dùng (nợ #193).
     - `infra/repositories/`: Repository port & adapter riêng biệt cho từng tầng dữ liệu (`platform_*`, `industry_*`, `chain_*`, `store_*`).
     - `components/use-<system>-matrix.ts`: Universal Hook nhận prop `tier: "MOTHER" | "INDUSTRY" | "CHAIN" | "STORE"` cùng context id, tự động map đúng API route, quản lý state và hiển thị ma trận thống nhất.
 - **Tách biệt trường dữ liệu nguyên tử (Atomic Disaggregated Fields) để tối ưu khả năng chỉnh sửa (Editable)**:
