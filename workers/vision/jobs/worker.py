@@ -26,6 +26,7 @@ from typing import Any
 import psycopg
 from psycopg.rows import dict_row
 
+from shared.job_trace import log_job_claimed
 from shared.storage import dang_dung_kho_dung_chung, doc_bytes
 from vision.providers.chung import MucDung, nap_json, tinh_cost_usd
 from vision.providers.registry import lay_provider, lay_provider_co_du_phong
@@ -109,6 +110,7 @@ def claim_next(conn: psycopg.Connection, feature: str) -> dict[str, Any] | None:
                 "UPDATE generation_jobs SET status = 'PROCESSING', started_at = now() WHERE id = %s",
                 (job["id"],),
             )
+    log_job_claimed(job)
     return job
 
 

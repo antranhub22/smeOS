@@ -25,6 +25,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 from media_ai.video.providers import get_video_provider, VideoProviderError
+from shared.job_trace import log_job_claimed
 from shared.storage import dang_dung_kho_dung_chung, ghi_bytes
 
 FEATURE = "video.render"
@@ -72,6 +73,7 @@ def claim_next(conn: psycopg.Connection, feature: str = FEATURE) -> Optional[Dic
                 "UPDATE generation_jobs SET status = 'PROCESSING', started_at = now() WHERE id = %s",
                 (job["id"],),
             )
+    log_job_claimed(job)
     return job
 
 

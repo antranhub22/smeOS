@@ -1,5 +1,6 @@
 import type { generation_jobs, InputJsonValue } from "./entities"
 
+import { currentRequestId } from "@/core/observability/request-context"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
@@ -82,6 +83,7 @@ export class GenerationJobRepository implements IGenerationJobRepository {
         status: "PENDING" as const,
         idempotency_key: input.idempotencyKey,
         job_group_id: input.jobGroupId ?? null,
+        request_id: currentRequestId() ?? null,
         payload: input.payload as InputJsonValue,
         attempts: 0,
       }),

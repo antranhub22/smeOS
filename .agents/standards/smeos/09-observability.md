@@ -16,7 +16,7 @@
 | Mục chuẩn | Trạng thái | Việc cần làm (xem ROADMAP E1) |
 |---|---|---|
 | Log JSON + che khoá | ✅ | — |
-| `request_id` xuyên web → job → worker | 🔴 không có | Sinh ở `proxy`/middleware, gắn vào `log`, lưu vào `generation_jobs`, worker đọc lại |
+| `request_id` xuyên web → job → worker | ✅ `src/proxy.ts` gắn `x-request-id` (request + phản hồi); `handle()` chạy trong `request-context.ts` (AsyncLocalStorage) nên `log` tự thêm `requestId`; `generation_jobs.request_id`; worker in `job.claimed` (`workers/shared/job_trace.py`) | Route không bọc `handle()` chưa có `requestId` trong log |
 | Không `console.*` trong mã sản phẩm | 🔴 31 tệp còn `console.*`; ESLint chưa có `no-console` | Ratchet `no-console` (giống `i18n-direct-intl-ratchet`) |
 | Công cụ theo dõi lỗi | 🔴 chưa có | Chọn nhà cung cấp (PO) → adapter trong `instrumentation.ts` |
 | Metrics RED / hàng đợi / kênh / chi phí AI | 🔴 chưa có số đo; chỉ có dữ liệu thô trong DB | Bước 1: màn vận hành đọc từ DB (`job_events`, sổ AI); bước 2: exporter |

@@ -15,6 +15,8 @@
  * lời gọi mô hình ở PRD mục 7.11.
  */
 
+import { currentRequestId } from "./request-context"
+
 export type MucDo = "debug" | "info" | "warn" | "error"
 
 export type NgữCảnhLog = {
@@ -62,6 +64,7 @@ function ghi(muc: MucDo, event: string, ctx: NgữCảnhLog = {}): void {
     ts: new Date().toISOString(),
     level: muc,
     event,
+    requestId: currentRequestId(),
     ...loc(ctx),
   })
   if (muc === "error") console.error(dong)

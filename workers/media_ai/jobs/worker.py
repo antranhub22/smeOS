@@ -49,6 +49,7 @@ from typing import Any
 import psycopg
 from psycopg.rows import dict_row
 
+from shared.job_trace import log_job_claimed
 from shared.storage import doc_bytes, ghi_bytes
 from media_ai.guard.compare import REJECTED
 from media_ai.guard.verifier import VisionIdentityVerifier
@@ -119,6 +120,7 @@ def claim_next(conn: psycopg.Connection, feature: str) -> dict[str, Any] | None:
                 "UPDATE generation_jobs SET status = 'PROCESSING', started_at = now() WHERE id = %s",
                 (job["id"],),
             )
+    log_job_claimed(job)
     return job
 
 

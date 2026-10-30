@@ -592,6 +592,9 @@ model generation_jobs {
   // NULL cho mọi job không đi qua đường chạy lô, không đổi hành vi cũ.
   job_group_id String?
 
+  // Mã yêu cầu web tạo job (`x-request-id`, ROADMAP E1.1) — nối log web ↔ worker. NULL cho job tạo ngoài request.
+  request_id String?
+
   payload  Json
   output   Json?
   error    String?

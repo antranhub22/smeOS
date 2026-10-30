@@ -1,3 +1,5 @@
+import { requestIdOf, runWithRequestId } from "@/core/observability/request-context"
+
 import { AppError } from "./errors"
 
 export function jsonResponse(
@@ -57,10 +59,13 @@ export function handle<Args extends unknown[]>(
   fn: (request: Request, ...args: Args) => Promise<Response>
 ) {
   return async (request: Request, ...args: Args): Promise<Response> => {
-    try {
-      return await fn(request, ...args)
-    } catch (error) {
-      return errorResponse(error)
-    }
+    // Mã yêu cầu do `src/proxy.ts` gắn — `log` và job tạo trong handler tự nhận (E1.1).
+    return runWithRequestId(requestIdOf(request), async () => {
+      try {
+        return await fn(request, ...args)
+      } catch (error) {
+        return errorResponse(error)
+      }
+    })
   }
 }
