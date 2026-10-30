@@ -38,7 +38,7 @@ export default async function MyPage() {
 ```tsx
 // src/components/<feature>/my-component.tsx
 "use client"
-import { Sparkles, MoreHorizontal } from "lucide-react"
+import { Sparkles, MoreHorizontal } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 
