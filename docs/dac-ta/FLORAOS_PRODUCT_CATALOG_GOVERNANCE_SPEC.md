@@ -103,6 +103,18 @@ REJECTED / EXPIRED quá 30 ngày nữa ─► chuyển vào thùng rác (khôi p
 - Trùng mã mặc định bỏ qua; cập nhật mã đã có thì lưu phiên bản trước khi ghi.
 - Hoàn tác lô trong 24 giờ: mẫu lô tạo ra vào thùng rác, mẫu bị cập nhật trả về phiên bản trước.
 
+## 8b. Xuất danh sách và đổi trạng thái hàng loạt (giai đoạn 4)
+
+- `GET /api/v1/products/export` — CSV (UTF-8 có BOM, mở thẳng bằng Excel) theo bộ lọc `status`/`category`/`search`.
+  Quyền `R13` như mọi route xuất khác; ghi `data.export` (`entityType: products`). Cột giá chỉ có khi có `L5`
+  (đi qua `listProducts`, cùng một chỗ cắt giá). Trần 5.000 dòng, vượt thì header `X-Export-Truncated: 1`.
+  Ô bắt đầu bằng `= + - @` được thêm dấu `'` để chặn chèn công thức.
+- `POST /api/v1/products/bulk-status` `{ ids (1..100), status }` — `L3`, chuyển `ARCHIVED` thêm `L4`. Mỗi dòng đi qua
+  `updateProduct` (cùng luật mẫu chính thức, phiên bản). Trả `{ updated, failed[{id, reason}] }`; mã của cửa hàng khác
+  báo "Không tìm thấy", không lộ tồn tại.
+- Giao diện: nút "Xuất Excel" ở đầu `/san-pham` (khi có `R13`); dạng bảng có cột chọn và thanh thao tác
+  "Mở bán / Chuyển về nháp / Ngừng bán" (khi có `L3`; "Ngừng bán" cần `L4`, có hộp xác nhận).
+
 ## 9. Nhật ký
 
 Mọi thao tác tạo, sửa, duyệt, từ chối, hết hạn, tạm ẩn, nhập lô, hoàn tác, khôi phục ghi `audit_logs`
@@ -115,3 +127,5 @@ Mọi thao tác tạo, sửa, duyệt, từ chối, hết hạn, tạm ẩn, nh�
 | 1 (đã xong 23/10/2026) | Nhãn đề xuất trong `attributes.proposal`, chặn ghi đè, Excel chỉ Điều hành, thùng rác cần `L4`, Sale có `L2`/`L3`, thông báo `PRODUCT_PROPOSED`, nút Duyệt | Không |
 | 2 (23/10/2026) | Từ chối kèm lý do, hàng chờ duyệt, hạn 30 ngày, nhắc 7/21/27, hết hạn, dọn vào thùng rác, việc trong Hộp việc | Không (dùng `attributes.proposal`) |
 | 3 (23/10/2026) | `product_change_requests` (duyệt toàn bộ/một phần, xung đột 409), `product_revisions` + khôi phục, `product_import_batches` + hoàn tác 24 giờ | Có — migration `20261023024723_product_catalog_governance` |
+| 4 (30/10/2026) | Xuất CSV, đổi trạng thái hàng loạt (mục 8b) | Không |
+| 5 (chờ PO duyệt) | Lọc Dịp/Giá/Sắp xếp chạy trên máy chủ (hiện lọc trên trang đã tải); thư viện nhiều ảnh (sắp xếp, mô tả ảnh, ảnh theo biến thể, `product_images` role `GALLERY`); trường bán hàng chuẩn (SKU biến thể, mã vạch, giá vốn, VAT, khối lượng); điểm hoàn thiện sản phẩm; nhật ký ảnh; đồng bộ kênh bán | Có — cần PO duyệt schema và chặng tải ảnh |

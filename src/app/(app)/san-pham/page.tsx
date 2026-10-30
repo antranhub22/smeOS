@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Sparkles, RefreshCw, FileSpreadsheet } from "lucide-react"
+import { Plus, Sparkles, RefreshCw, FileSpreadsheet, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -25,6 +25,7 @@ import {
   filterAndSortProducts,
   type ProductFilterState,
 } from "@/components/products/product-filter-types"
+import { ProductBulkStatusBar } from "@/components/products/product-bulk-status-bar"
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
 
 
@@ -39,6 +40,13 @@ export default function SanPhamPage() {
   const [trashTarget, setTrashTarget] = useState<TrashConfirmTarget | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null)
   const [onlyProposals, setOnlyProposals] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const toggleSelect = (ids: string[], on: boolean) =>
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      for (const id of ids) if (on) next.add(id); else next.delete(id)
+      return next
+    })
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- `?duyet=1` từ Hộp việc → mở thẳng hàng chờ duyệt; đọc URL một lần sau khi mount
     if (new URLSearchParams(window.location.search).get("duyet") === "1") setOnlyProposals(true)
@@ -117,6 +125,18 @@ export default function SanPhamPage() {
           >
             <RefreshCw size={15} />
           </button>
+          {/* Xuất Excel: quyền R13 như các màn khác (PO 14/10/2026) — máy chủ kiểm lại */}
+          {session.can("R13") && <a
+            href={`/api/v1/products/export?${new URLSearchParams({
+              ...(filters.search.trim() ? { search: filters.search.trim() } : {}),
+              ...(filters.category !== "Tất cả" ? { category: filters.category } : {}),
+            }).toString()}`}
+            className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 h-9 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            title="Tải danh sách sản phẩm (theo từ khoá và danh mục đang chọn) ra file CSV mở bằng Excel"
+          >
+            <Download size={14} className="text-text-muted" />
+            <span className="hidden sm:inline">Xuất Excel</span>
+          </a>}
           {/* Chỉ Điều hành nhập Excel (H3, PO 23/10/2026) — máy chủ kiểm lại */}
           {session.can("H3") && <button
             type="button"
@@ -209,8 +229,19 @@ export default function SanPhamPage() {
           </div>
         ) : (
           /* Dạng bảng quản trị */
+          <>
+          {session.can("L3") && (
+            <ProductBulkStatusBar
+              selectedIds={[...selectedIds]}
+              canArchive={session.can("L4")}
+              onClear={() => setSelectedIds(new Set())}
+              onDone={() => { setSelectedIds(new Set()); void napLai() }}
+            />
+          )}
           <ProductTableView
             products={filteredProducts}
+            selectedIds={session.can("L3") ? selectedIds : undefined}
+            onToggleSelect={session.can("L3") ? toggleSelect : undefined}
             isExecutive={isExecutive}
             onImageClick={(prod) => setSelectedProduct(prod)}
             onTrash={(prod) =>
@@ -223,6 +254,7 @@ export default function SanPhamPage() {
               })
             }
           />
+          </>
         )}
 
         {/* Phân trang / Tải thêm sản phẩm */}
