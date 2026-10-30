@@ -1,5 +1,5 @@
 /**
- * Danh mục 48 công cụ smeOS — SSOT cho trang chủ Toolkit.
+ * Danh mục công cụ smeOS (51 công cụ gốc + trang có sẵn ở app-page-tools.ts) — SSOT cho /cong-cu.
  *
  * Trạng thái mỗi công cụ:
  *   DONE        – Hoàn thiện, sẵn sàng dùng
@@ -7,7 +7,7 @@
  *   FOUNDATION  – Nền tảng code sẵn, cần cấu trúc lại
  *   PLANNED     – Chưa có gì, cần xây mới hoàn toàn
  */
-
+import { APP_PAGE_TOOLS } from "./app-page-tools"
 // ── Types ──────────────────────────────────────────────────────────
 
 export type ToolStatus = "DONE" | "IN_PROGRESS" | "FOUNDATION" | "PLANNED"
@@ -455,7 +455,7 @@ export const TOOLKIT_GROUPS: readonly ToolGroup[] = [
 
 /** Trả tất cả công cụ flat */
 export function getAllTools(): ToolDefinition[] {
-  return TOOLKIT_GROUPS.flatMap((g) => [...g.tools])
+  return [...TOOLKIT_GROUPS.flatMap((g) => [...g.tools]), ...APP_PAGE_TOOLS]
 }
 
 /**

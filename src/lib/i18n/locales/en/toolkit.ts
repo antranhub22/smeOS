@@ -7,7 +7,7 @@ export const toolkitEn = {
     badge: "10 store growth steps",
     titleDev: "smeOS Business Toolkit System",
     titleProd: "What would you like to do today?",
-    descDev: "51 existing tools plus the roadmap, arranged by 10 store growth steps",
+    descDev: "Every existing tool plus the roadmap, arranged by 10 store growth steps",
     descProd: "Pick a step below to see its tools.",
   },
   stats: {

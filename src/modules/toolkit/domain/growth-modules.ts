@@ -7,6 +7,7 @@
  * (quản lý chuỗi, tối ưu hệ thống) nằm ở khu riêng `EXTRA_SECTION`.
  *
  * Dev: hiện toàn bộ, kể cả công cụ mục tiêu chưa làm (`growth-module-roadmap.ts`).
+ * Giai đoạn không có công cụ nào thì không hiện, ở mọi môi trường.
  * Production: chỉ hiện công cụ DONE; module không còn công cụ nào thì ẩn.
  */
 
@@ -37,34 +38,34 @@ interface GrowthModuleSpec {
 const GROWTH_MODULE_SPECS: readonly GrowthModuleSpec[] = [
   { key: "brand", name: "Thương hiệu", icon: "BadgeCheck",
     purpose: "Xây dựng hình ảnh cửa hàng rõ ràng, nhất quán và đáng tin cậy",
-    toolIds: { 1: [11], 2: [45], 3: [] } },
+    toolIds: { 1: [11, 51], 2: [45, 52], 3: [] } },
   { key: "content", name: "Tạo nội dung", icon: "Camera",
     purpose: "Tạo hình ảnh, video và nội dung bán hàng mà không cần thuê thiết kế",
-    toolIds: { 1: [1, 2, 3, 4, 7], 2: [5, 6], 3: [0] } },
+    toolIds: { 1: [1, 2, 3, 4, 7, 53], 2: [5, 6], 3: [0] } },
   { key: "promotion", name: "Quảng bá sản phẩm", icon: "Megaphone",
     purpose: "Giới thiệu sản phẩm và chương trình ưu đãi đến khách một cách chuyên nghiệp",
-    toolIds: { 1: [9, 14], 2: [22, 43, 44], 3: [] } },
+    toolIds: { 1: [9, 14, 61], 2: [22, 43, 44], 3: [] } },
   { key: "acquisition", name: "Thu hút khách hàng", icon: "Magnet",
     purpose: "Giúp nhiều khách biết đến cửa hàng và dễ dàng tìm thấy sản phẩm",
-    toolIds: { 1: [8, 12, 13], 2: [10, 21, 25, 49], 3: [] } },
+    toolIds: { 1: [8, 12, 13], 2: [10, 21, 25, 49, 54], 3: [] } },
   { key: "consultation", name: "Tư vấn khách hàng", icon: "MessagesSquare",
     purpose: "Tư vấn nhanh, chính xác và không bỏ sót yêu cầu của khách",
-    toolIds: { 1: [24], 2: [30], 3: [] } },
+    toolIds: { 1: [24, 55, 56], 2: [30], 3: [57] } },
   { key: "quotation", name: "Báo giá", icon: "Calculator",
     purpose: "Tính giá và tạo báo giá nhanh, chính xác theo yêu cầu từng khách",
-    toolIds: { 1: [15, 31, 32, 33, 34, 35], 2: [16, 18, 46], 3: [] } },
+    toolIds: { 1: [15, 58, 31, 32, 33, 34, 35], 2: [16, 18, 46], 3: [] } },
   { key: "order", name: "Đơn hàng", icon: "ClipboardList",
     purpose: "Nhận đơn dễ dàng và kiểm soát toàn bộ quá trình làm và giao hàng",
-    toolIds: { 1: [17, 36], 2: [19, 37, 38, 39, 40, 41], 3: [] } },
+    toolIds: { 1: [17, 59, 36], 2: [19, 37, 38, 39, 40, 41, 60], 3: [] } },
   { key: "payment", name: "Thanh toán", icon: "Wallet",
     purpose: "Khách thanh toán thuận tiện, cửa hàng dễ kiểm tra tiền đã nhận",
-    toolIds: { 1: [20], 2: [], 3: [] } },
+    toolIds: { 1: [20, 62], 2: [], 3: [] } },
   { key: "care", name: "Chăm sóc khách hàng", icon: "HeartHandshake",
     purpose: "Hỗ trợ khách trước, trong và sau khi mua hàng",
     toolIds: { 1: [26], 2: [], 3: [] } },
   { key: "growth", name: "Tăng trưởng khách hàng", icon: "TrendingUp",
     purpose: "Khách cũ quay lại mua và giới thiệu thêm khách mới",
-    toolIds: { 1: [28], 2: [23, 27, 29], 3: [] } },
+    toolIds: { 1: [28, 63], 2: [23, 27, 29], 3: [] } },
 ]
 
 /** Công cụ chưa thuộc 10 module — khu riêng bên dưới (PO 30/10/2026). */
@@ -142,8 +143,10 @@ export function getAllGrowthModules(): GrowthModule[] {
     })),
   }))
 
+  const withTools = modules.map((m) => ({ ...m, phases: m.phases.filter((p) => p.tools.length > 0) }))
+
   return [
-    ...modules,
+    ...withTools,
     {
       key: EXTRA_SECTION_SPEC.key,
       order: null,

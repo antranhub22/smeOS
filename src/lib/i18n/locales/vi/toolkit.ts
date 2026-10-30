@@ -8,7 +8,7 @@ export const toolkitVi = {
     "badge": "10 bước phát triển cửa hàng",
     "titleDev": "Thư viện công cụ",
     "titleProd": "Hôm nay bạn muốn làm gì?",
-    "descDev": "51 công cụ hiện có và lộ trình công cụ mới, xếp theo 10 bước phát triển cửa hàng.",
+    "descDev": "Toàn bộ công cụ hiện có và lộ trình công cụ mới, xếp theo 10 bước phát triển cửa hàng.",
     "descProd": "Chọn một bước bên dưới để xem các công cụ."
   },
   "stats": {

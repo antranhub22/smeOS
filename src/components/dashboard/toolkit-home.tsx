@@ -204,7 +204,7 @@ export function ToolkitHome() {
       {isDev && (
         <div className="mt-8 pt-4 border-t border-border text-center">
           <p className="text-caption text-text-muted">
-            🔧 Môi trường phát triển — hiện 51 công cụ hiện có cùng các công cụ trong lộ trình, xếp theo 10 bước.
+            🔧 Môi trường phát triển — hiện toàn bộ công cụ hiện có cùng các công cụ trong lộ trình, xếp theo 10 bước.
             Trên production chỉ hiện công cụ đã hoàn thiện; bước chưa có công cụ nào sẽ ẩn.
           </p>
         </div>

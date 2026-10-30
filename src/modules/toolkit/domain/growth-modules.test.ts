@@ -15,10 +15,10 @@ describe("10 module quy trình trên /cong-cu", () => {
     expect(all.at(-1)?.order).toBeNull()
   })
 
-  it("mỗi công cụ trong danh mục 51 công cụ nằm đúng một chỗ", () => {
+  it("mỗi công cụ trong danh mục (51 gốc + 13 trang có sẵn) nằm đúng một chỗ", () => {
     const ids = existingIds(true)
     const catalogIds = getAllTools().map((t) => t.id)
-    expect(catalogIds).toHaveLength(51)
+    expect(catalogIds).toHaveLength(64)
     expect([...ids].sort((a, b) => a - b)).toEqual([...catalogIds].sort((a, b) => a - b))
   })
 
