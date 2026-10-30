@@ -95,7 +95,7 @@
 - Tên 5 mẫu, 12 phong cách, 8 bố cục hiển thị bằng tiếng Việt (vd. "Sách ảnh cao cấp", "Sang trọng tĩnh lặng"); bỏ mã `S01…` trên màn chọn; bỏ "Universal Catalog Studio 2026", "(Live Preview)", "(Hero Banner)".
 - PDF (`catalog-page-renderer.tsx`): màu ngữ nghĩa theo phong cách (`publicThemeVars`), tiêu đề dùng chữ của phong cách; bỏ "2026 Collection", "smeOS Universal Catalog Studio", câu sáo và lời hứa mặc định ("hóa đơn VAT", "giao đúng hẹn", "độc bản") — chỉ in khi tiệm tự nhập.
 - Poster 1080×1080: bỏ "smeOS Catalog"; thanh trên dùng màu nút + `ctaText` (đạt tương phản ở mọi phong cách); chữ tiêu đề Fraunces/Be Vietnam Pro (font đã nạp).
-- Trang PDF thực tế sinh 5 loại: bìa, câu chuyện, mẫu nổi bật, lưới mẫu, trang kết (theo mẫu chọn).
+- Trang PDF sinh 7 loại theo mẫu chọn: bìa, câu chuyện, mẫu nổi bật, phân chương theo nhóm (khi ≥ 2 nhóm), lưới mẫu, chi tiết mẫu (tối đa 4), trang kết (`catalog-studio/domain/page-planner.ts`). Trang combo (L07) chưa dựng — chưa có dữ liệu combo.
 
 ### Đánh giá khách (30/10/2026)
 - Mục mở rộng "Đánh giá khách hiện trên trang" ở màn quản lý catalog và màn tạo landing (`components/catalog/reviews/`): thêm, sửa, ẩn/hiện, xoá (hộp xác nhận R3). Quyền `J1`.

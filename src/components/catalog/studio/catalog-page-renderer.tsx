@@ -10,6 +10,7 @@ import type {
 import { Flower2, Phone, MapPin, Sparkles, ShoppingBag, CheckCircle2 } from "lucide-react"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import { publicThemeVars } from "../public/public-theme-vars"
+import { CollectionDividerLayout, ProductDetailLayout } from "./catalog-page-extra-layouts"
 
 interface CatalogPageRendererProps {
   page: CatalogPageModel
@@ -234,6 +235,9 @@ export function CatalogPageRenderer({
             </div>
           </div>
         )}
+
+        {page.layoutId === "L03_COLLECTION_DIVIDER" && <CollectionDividerLayout page={page} style={style} />}
+        {page.layoutId === "L06_PRODUCT_DETAIL" && <ProductDetailLayout page={page} style={style} />}
 
         {/* L08: CLOSING */}
         {page.layoutId === "L08_CLOSING" && (

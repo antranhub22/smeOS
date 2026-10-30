@@ -15,6 +15,7 @@ import type {
 } from "../domain/entities/catalog-studio.types"
 import { CATALOG_STYLES } from "../domain/styles/style-registry"
 import { CATALOG_TEMPLATES } from "../domain/templates/template-registry"
+import { planProductPages } from "../domain/page-planner"
 import { validateCatalogBrief } from "../domain/validation/catalog-validator"
 
 export interface ResolvedCatalogResult {
@@ -103,18 +104,14 @@ export function resolveCatalogBrief(
       : activeProducts
 
   const itemsPerPage = style.id === "S02_PURE_MINIMAL" ? 6 : 4
-  const totalGridPages = Math.ceil(Math.max(1, gridProducts.length) / itemsPerPage)
-
-  for (let i = 0; i < totalGridPages; i++) {
-    const pageSlice = gridProducts.slice(i * itemsPerPage, (i + 1) * itemsPerPage)
-    pages.push({
-      pageNumber: currentPage++,
-      layoutId: "L05_PRODUCT_GRID",
-      title: totalGridPages > 1 ? `Các mẫu trong bộ sưu tập (${i + 1}/${totalGridPages})` : "Các mẫu trong bộ sưu tập",
-      subtitle: brief.title,
-      products: pageSlice,
-      styleId: style.id,
-    })
+  const has = (id: string) => template.structure.some((s) => s.layoutId === id)
+  for (const planned of planProductPages(gridProducts, {
+    itemsPerPage,
+    withDividers: has("L03_COLLECTION_DIVIDER"),
+    withDetails: has("L06_PRODUCT_DETAIL"),
+    collectionTitle: brief.title,
+  })) {
+    pages.push({ ...planned, pageNumber: currentPage++, styleId: style.id })
   }
 
   // 5. Page: Closing (L08)

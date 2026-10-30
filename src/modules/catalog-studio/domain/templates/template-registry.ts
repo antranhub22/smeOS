@@ -34,6 +34,7 @@ export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototy
     structure: [
       { layoutId: "L01_COVER", title: "Bìa tối giản thanh lịch" },
       { layoutId: "L05_PRODUCT_GRID", title: "Lưới sản phẩm đa tầng" },
+      { layoutId: "L06_PRODUCT_DETAIL", title: "Chi tiết mẫu tiêu biểu" },
       { layoutId: "L08_CLOSING", title: "Thông tin thanh toán & Đặt hàng" },
     ],
   },
@@ -65,6 +66,7 @@ export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototy
     recommendedFor: "Thương mại tổng hợp, F&B, bán lẻ Gen Z, sản phẩm đa dạng cần trình bày sinh động không nhàm chán.",
     structure: [
       { layoutId: "L01_COVER", title: "Bìa ô lưới năng động" },
+      { layoutId: "L03_COLLECTION_DIVIDER", title: "Phân chương theo nhóm mẫu" },
       { layoutId: "L05_PRODUCT_GRID", title: "Lưới sản phẩm ô vuông" },
       { layoutId: "L08_CLOSING", title: "Gọi hành động & Đặt hàng ngay" },
     ],
@@ -82,6 +84,7 @@ export const CATALOG_TEMPLATES: Record<CatalogTemplateId, CatalogTemplatePrototy
       { layoutId: "L01_COVER", title: "Bìa điện ảnh huyền bí" },
       { layoutId: "L04_HERO_PRODUCT", title: "Mẫu nổi bật" },
       { layoutId: "L05_PRODUCT_GRID", title: "Các mẫu trong bộ sưu tập" },
+      { layoutId: "L06_PRODUCT_DETAIL", title: "Chi tiết mẫu tiêu biểu" },
       { layoutId: "L08_CLOSING", title: "Kết nối VIP & Đặt hàng riêng" },
     ],
   },

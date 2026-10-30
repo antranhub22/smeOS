@@ -50,6 +50,8 @@ export function CatalogStorefrontHeader({
       code: p.code || p.id,
       category: p.category,
       primaryImage: p.imageUrl || null,
+      description: p.description,
+      ...(p.stemCount ? { attributes: { stemCount: p.stemCount } } : {}),
       price: p.price ?? null,
       currency: "VND",
       sortOrder: idx + 1,
@@ -60,7 +62,7 @@ export function CatalogStorefrontHeader({
   const brandProfile: BrandProfile = useMemo(() => ({
     brandId: shop.id || "shop",
     name: shop.name,
-    slogan: catalog.description || "Bộ Sưu Tập Tinh Tuyển 2026",
+    slogan: catalog.description || null,
     brandColors: { primary: style?.tokens.accent || "#9A3412" },
     contacts: {
       phone: shop.phone || null,
