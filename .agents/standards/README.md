@@ -27,3 +27,7 @@ Dự án mới: chép `universal/`, viết thư mục áp dụng riêng theo m�
 | 02 | Storage (vòng đời tệp, ký URL, registry, legal hold) | [universal/02-storage.md](universal/02-storage.md) | [smeos/02-storage.md](smeos/02-storage.md) |
 | 03 | UX (Progressive Disclosure, Journey-First, UI System) | [universal/03-ux.md](universal/03-ux.md) | [smeos/03-ux.md](smeos/03-ux.md) |
 | 04 | i18n · l10n · UX Writing | [universal/04-i18n.md](universal/04-i18n.md) | [smeos/04-i18n.md](smeos/04-i18n.md) |
+| 05 | Bảo mật, phân quyền & nhật ký | [universal/05-security-authz.md](universal/05-security-authz.md) | [smeos/05-security-authz.md](smeos/05-security-authz.md) |
+| 06 | Thông báo đa tầng, đa kênh | [universal/06-notifications.md](universal/06-notifications.md) | [smeos/06-notifications.md](smeos/06-notifications.md) |
+| 07 | AI & sinh nội dung | [universal/07-ai-content.md](universal/07-ai-content.md) | [smeos/07-ai-content.md](smeos/07-ai-content.md) |
+| 08 | Plugin ngành & tính giá | [universal/08-industry-extensibility.md](universal/08-industry-extensibility.md) | [smeos/08-industry-extensibility.md](smeos/08-industry-extensibility.md) |

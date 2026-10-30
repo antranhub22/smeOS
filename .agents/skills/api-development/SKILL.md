@@ -6,6 +6,9 @@ description: >-
   trong src/app/api/ hoặc src/modules/*/use-cases/.
 ---
 
+> **Cập nhật 30/10/2026 — đọc trước.** Bảo mật/phân quyền/audit: `.agents/standards/smeos/05-security-authz.md` (capability + `route-capability-guard.test.ts`, `safe-remote-url`, `safeImageSrc`, chữ ký webhook, `secret-box`, rate limit, audit xuất dữ liệu). Kho tệp: skill `storage`. Ma trận quản trị / khoá công cụ: skill `tier-governance`.
+
+
 # API Development — FloraOS
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.

@@ -129,6 +129,8 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 | 8 | Business guard + its tests deleted inside an unrelated commit (balance-collection guard removed in a products commit) | Large mixed commits; deleted tests not noticed in review | Never delete a test to make a change pass; review `git diff --stat -- "*test*"` for deletions before pushing; restore guard + tests |
 | 9 | Foreign-tenant asset linked as a product image (14/10/2026: `PATCH /products/:id`, batch import, approve) | `product_images.asset_id` has no FK to `assets`, so an `assetId` from the body was never checked for ownership; the list then signed the other tenant's storage key | Before linking any client-supplied `assetId`, load it with `scopedWhere(ctx, { id })` and throw `notFound()` (`assertOwnedAsset` in `products/infra/product-main-image.ts`); scope every `assets.findMany` by `organization_id` |
 | 10 | Direct `fetch` to OpenAI/Ollama inside a module (Ops Copilot tone agent, 14/10/2026) | "LLM polish with template fallback" written as raw provider calls, bypassing `callCapability` (no privacy floor, metering, license filter, timeout) | Route through `callCapability` with a registered AI capability, or stay on the deterministic template; `tests/unit/architecture/ops-copilot-no-direct-ai.test.ts` guards Ops Copilot |
+| 11 | Agent followed `AGENTS.md` into dead code (`core/governance/cascading-resolver.ts`, Journey components that never existed — audit 30/10/2026) | Rule docs described the target architecture as if built; untracked agent files drifted from code | Check `.agents/standards/smeos/*` status column first; trust code over prose; a doc naming a file/function must be verified with `grep` before use |
+| 12 | Every local commit blocked by the industry-term pre-commit hook although no code was staged (30/10/2026) | Hook ran the whole-repo ratchet, already red on `main` | Hook runs only when `src/`, `workers/`, `scripts/`, `prisma/` are staged; fix the ratchet on its own branch, never `--no-verify` |
 
 ## 15. OPS COPILOT KNOWLEDGE SYNC & ZERO-LEAKAGE PERIMETER
 - **Mandatory Triad Sync**: Any modification to webapp UI, routes, action buttons, or business workflows (`src/app/(app)/`) MUST update both:
@@ -152,3 +154,7 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 | Writing tests, debugging Vitest / Playwright, tenant tests | [`testing`](skills/testing/SKILL.md) |
 | Creative Studio features, 14-step Product-to-Market Journey | [`creative-studio`](skills/creative-studio/SKILL.md) |
 | Feature mapping, production specs audit, UI documentation | [`feature-mapping`](skills/feature-mapping/SKILL.md) |
+| 4-tier governance, nav theo tầng, khoá công cụ, gói dịch vụ, plugin ngành | [`tier-governance`](skills/tier-governance/SKILL.md) |
+| Ghi/đọc/xoá tệp, thùng rác, legal hold, Kho dữ liệu | [`storage`](skills/storage/SKILL.md) |
+| Sự kiện & kênh thông báo | [`notifications`](skills/notifications/SKILL.md) |
+| Tiêu chuẩn kiến trúc (chung + SMEOS, trạng thái ✅/🟡/🔴) | [`standards/README.md`](standards/README.md) |

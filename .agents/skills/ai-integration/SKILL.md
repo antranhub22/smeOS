@@ -6,6 +6,9 @@ description: >-
   src/core/ports/, hoặc module adapters gọi AI services (OpenAI, Anthropic, ElevenLabs).
 ---
 
+> **Cập nhật 30/10/2026 — đọc trước.** `.agents/standards/smeos/07-ai-content.md` (prompt registry `content-engine/domain/prompts/active.ts`, copy guard, mẫu dự phòng qua guard, log promptId/version/source, J7) · nguyên tắc chung `universal/07-ai-content.md`. Test chặn gọi thẳng nhà cung cấp hiện chỉ quét Ops Copilot (nợ #197) — vẫn bắt buộc `callCapability` ở mọi nơi.
+
+
 # AI Integration — FloraOS
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
