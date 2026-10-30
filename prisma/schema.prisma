@@ -160,6 +160,7 @@ model organizations {
   landing_pages                 landing_pages[]
   shop_reviews                  shop_reviews[]
   generation_jobs               generation_jobs[]
+  idempotency_keys              idempotency_keys[]
   usage                         usage[]
   audit_logs                    audit_logs[]
   business_profile              business_profiles?
@@ -571,6 +572,22 @@ model storage_outbox {
  * `YC-U7` (chống trùng 24 giờ). Lược đồ là nguồn sự thật — tài liệu 07 đã cập
  * nhật theo cùng đợt commit này.
  */
+/// Khoá idempotent dùng chung (ROADMAP E5.3): sự kiện đến (webhook, thanh toán) chỉ xử lý một lần
+/// theo (tổ chức, phạm vi, khoá). Ghi dòng thành công = được xử lý; trùng → bỏ qua. Dọn sau 30 ngày.
+model idempotency_keys {
+  id              String   @id @default(uuid())
+  organization_id String
+  scope           String // vd "webhook.facebook", "webhook.zalo", "payment.<provider>"
+  key             String // mã sự kiện của nguồn gửi (message id, transaction id…)
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, scope, key])
+  @@index([organization_id])
+  @@index([created_at]) // dọn khoá cũ
+}
+
 model generation_jobs {
   id              String  @id @default(uuid())
   organization_id String

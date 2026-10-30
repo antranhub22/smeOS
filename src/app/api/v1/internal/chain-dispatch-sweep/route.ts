@@ -18,6 +18,7 @@
  */
 
 import { parseDeliveryTimestampMs } from "@/modules/greeting-card/domain/subcontract-countdown"
+import { purgeExpiredIdempotencyKeys } from "@/core/idempotency/infra/idempotency-repository"
 import { publicAppUrl } from "@/lib/public-url"
 import { jsonResponse } from "@/core/http/response"
 import { handle } from "@/core/http/response"
@@ -312,6 +313,8 @@ export const POST = handle(async (request) => {
   })
   // SDAGF P1: dọn thùng rác quá hạn + xoá payload trong hàng đợi.
   const storageLifecycle = await sweepStorageLifecycle(now)
+  // E5.3: khoá idempotent quá 30 ngày.
+  const idempotencyKeysPurged = await purgeExpiredIdempotencyKeys(now).catch(() => null)
 
   return jsonResponse({
     ok: true,
@@ -322,6 +325,7 @@ export const POST = handle(async (request) => {
     pages: sweep.pages,
     stuckJobsFailed,
     storageLifecycle,
+    idempotencyKeysPurged,
     complete: sweep.complete,
     productProposals: productProposals ?? undefined,
     sentDetails: sentDetails.length > 0 ? sentDetails.slice(0, MAX_REPORTED) : undefined,

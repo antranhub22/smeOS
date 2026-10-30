@@ -414,6 +414,9 @@ model generation_jobs {
   result          String?               // phán quyết nghiệp vụ, độc lập với status
 
   idempotency_key String?               // YC-U7 — chống trùng 24 giờ
+  request_id      String?               // E1.1 — x-request-id của request tạo job
+  run_after       DateTime?             // E5.1 — hẹn thử lại lỗi tạm thời; NULL = chạy ngay
+  failure_kind    String?               // E5.1 — RETRYABLE | NEEDS_ACTION
 
   payload         Json
   output          Json?
@@ -428,6 +431,7 @@ model generation_jobs {
   @@unique([organization_id, feature, idempotency_key])
   @@index([organization_id])
   @@index([status, created_at])         // worker quét bằng index này
+  @@index([status, run_after])          // job hẹn thử lại (E5.1)
   @@index([organization_id, user_id])
 }
 ```
@@ -487,6 +491,7 @@ Cổng **Subject Integrity** của M04b đo tỷ lệ điểm ảnh lõi chủ t
 ```sql
 SELECT * FROM generation_jobs
  WHERE status = 'PENDING' AND feature = $1
+   AND (run_after IS NULL OR run_after <= now())   -- E5.1
  ORDER BY created_at
  FOR UPDATE SKIP LOCKED
  LIMIT 1;
@@ -1368,6 +1373,24 @@ model integration_tokens {
 ```
 
 `integration_tokens` giữ `token_hash @unique`, không giữ token thô — token chỉ hiện một lần lúc cấp. `rotated_from_id` nối một token với token nó thay thế, để thu hồi được cả chuỗi.
+
+### Khoá idempotent dùng chung — `idempotency_keys` (E5.3, 30/10/2026)
+
+```prisma
+model idempotency_keys {
+  id              String   @id @default(uuid())
+  organization_id String
+  scope           String   // "webhook.facebook" · "webhook.zalo" · "payment.<provider>"
+  key             String   // mã sự kiện của nguồn gửi
+  created_at      DateTime @default(now())
+
+  @@unique([organization_id, scope, key])
+  @@index([organization_id])
+  @@index([created_at])
+}
+```
+
+Sự kiện đến chỉ xử lý một lần: `claimIdempotencyKey` (`src/core/idempotency/infra/idempotency-repository.ts`) chèn `ON CONFLICT DO NOTHING`, có dòng trả về = lần đầu. `organization_id` do máy chủ xác định (tra kênh theo page/OA id), không lấy từ thân sự kiện. Dùng ở webhook Facebook (`message.mid`) và Zalo (`message.msg_id`); luồng tiền (E6) phải ghi khoá trong cùng giao dịch. Cron `/internal/chain-dispatch-sweep` xoá khoá quá 30 ngày.
 
 ## 19. Kiểm chứng
 

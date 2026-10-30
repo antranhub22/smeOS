@@ -22,6 +22,7 @@
 | Chạy lại | ✅ tự thử lại lỗi tạm thời (hết giờ, mất kết nối, 429/5xx): `workers/shared/job_failure.py` → `PENDING` + `run_after` (30 s × 2ⁿ, trần 10 phút, ngẫu nhiên ×0,5–1), tối đa 3 lần; còn lại `FAILED` + `failure_kind` (`RETRYABLE`/`NEEDS_ACTION`). Video và nhân bản giọng chỉ phân loại, không tự thử lại (bảng trạng thái riêng). Chạy lại thủ công (YC-J3) = lượt mới, `attempts` về 0 | `workers/shared/job_failure.py`, `generation-job-repository.ts` (`claimNext`, `retryIfFailed`) |
 | Dead-letter + màn xem/chạy lại | ✅ `/van-hanh/hang-doi-loi`: job `FAILED` xuyên tổ chức, Chạy lại / Gác lại (`N15`, nhật ký nền tảng) | `platform-dead-letter-repository.ts`, `manage-failed-jobs.ts` |
 | Outbox xoá payload, trần 5 lần | ✅ | `storage_outbox`, `MAX_OUTBOX_ATTEMPTS` |
+| Sự kiện đến xử lý một lần | ✅ `idempotency_keys` (tổ chức, phạm vi, khoá) — webhook Facebook/Zalo; dọn sau 30 ngày | `src/core/idempotency/infra/idempotency-repository.ts` |
 
 ## 3. Cơ sở dữ liệu & hiệu năng
 | Mục | Trạng thái |
