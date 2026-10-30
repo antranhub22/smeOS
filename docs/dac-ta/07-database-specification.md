@@ -574,11 +574,17 @@ model products {
   container       String?
   status          product_status @default(DRAFT)
   attributes      Json?
+  barcode         String?                 // trường bán hàng chuẩn (30/10/2026, công cụ 53)
+  cost_price_vnd  Int?                    // giá vốn — đọc/ghi cần L5, cắt khi thiếu L5
+  vat_percent     Int?                    // 0..100
+  weight_grams    Int?
+  tags            String[] @default([])  // tối đa 20, bỏ trùng không phân biệt hoa-thường
   created_at      DateTime       @default(now())
   updated_at      DateTime       @updatedAt
 
   @@unique([organization_id, code])
   @@index([organization_id])
+  @@index([organization_id, barcode])
 }
 
 model product_variants {
@@ -589,7 +595,10 @@ model product_variants {
   size            String?
   multiplier      Float    @default(1)
   attributes      Json?
+  sku             String?                 // duy nhất trong tổ chức khi đã khai (30/10/2026)
+  barcode         String?
 
+  @@unique([organization_id, sku])
   @@index([organization_id, product_id])
 }
 

@@ -40,6 +40,7 @@ export async function getProduct(
       price_vnd: null,
       attributes: (product.attributes as Record<string, unknown>) ?? null,
       availability_config: product.availability_config,
+      commerce: product,
     },
     pricingRuleRows,
     { canReadPricing, branchId: ctx.branchId }

@@ -1,12 +1,14 @@
 import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
+import { commerceInputShape, pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { isPendingProposal } from "@/modules/products/domain/product-proposal"
 import { createProduct } from "@/modules/products/use-cases/create-product"
 import { listProducts } from "@/modules/products/use-cases/list-products"
+import { needsScan, parseScanParams, scanProducts } from "@/modules/products/use-cases/scan-products"
 import { notifyProductProposed } from "@/modules/products/use-cases/product-proposal-notifications"
 
 const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "ARCHIVED"] as const
@@ -43,22 +45,24 @@ export const GET = handle(async (request) => {
     throw validationFailed({ price_max: "Phải là số" })
   }
 
-  const result = await listProducts(
-    ctx,
-    {
-      ...(url.searchParams.has("branch_id") ? { branchId: url.searchParams.get("branch_id") } : {}),
-      ...(statusParam !== null ? { status: statusParam as (typeof PRODUCT_STATUS)[number] } : {}),
-      ...(url.searchParams.has("category") ? { category: url.searchParams.get("category") ?? "" } : {}),
-      ...(url.searchParams.has("occasion_code") ? { occasionCode: url.searchParams.get("occasion_code") ?? "" } : {}),
-      ...(url.searchParams.has("color") ? { color: url.searchParams.get("color") ?? "" } : {}),
-      ...(url.searchParams.has("collection") ? { collection: url.searchParams.get("collection") ?? "" } : {}),
-      ...(priceMinParam !== null ? { priceMin: Number(priceMinParam) } : {}),
-      ...(priceMaxParam !== null ? { priceMax: Number(priceMaxParam) } : {}),
-      ...(url.searchParams.has("search") ? { search: url.searchParams.get("search") ?? "" } : {}),
-      ...(proposalParam ? { proposalStatus: proposalParam as (typeof PROPOSAL_FILTERS)[number] } : {}),
-    },
-    { limit, cursor: url.searchParams.get("cursor") }
-  )
+  const filters = {
+    ...(url.searchParams.has("branch_id") ? { branchId: url.searchParams.get("branch_id") } : {}),
+    ...(statusParam !== null ? { status: statusParam as (typeof PRODUCT_STATUS)[number] } : {}),
+    ...(url.searchParams.has("category") ? { category: url.searchParams.get("category") ?? "" } : {}),
+    ...(url.searchParams.has("occasion_code") ? { occasionCode: url.searchParams.get("occasion_code") ?? "" } : {}),
+    ...(url.searchParams.has("color") ? { color: url.searchParams.get("color") ?? "" } : {}),
+    ...(url.searchParams.has("collection") ? { collection: url.searchParams.get("collection") ?? "" } : {}),
+    ...(priceMinParam !== null ? { priceMin: Number(priceMinParam) } : {}),
+    ...(priceMaxParam !== null ? { priceMax: Number(priceMaxParam) } : {}),
+    ...(url.searchParams.has("search") ? { search: url.searchParams.get("search") ?? "" } : {}),
+    ...(proposalParam ? { proposalStatus: proposalParam as (typeof PROPOSAL_FILTERS)[number] } : {}),
+  }
+  // Lọc Dịp/Khoảng giá/Sắp xếp chạy trên máy chủ cho toàn kho (công cụ 53 giai đoạn 5).
+  const scan = parseScanParams(url.searchParams)
+  if (needsScan(scan)) {
+    return jsonResponse(await scanProducts(ctx, filters, scan, { limit: limit ?? 25, cursor: url.searchParams.get("cursor") }))
+  }
+  const result = await listProducts(ctx, filters, { limit, cursor: url.searchParams.get("cursor") })
   return jsonResponse(result)
 })
 
@@ -73,6 +77,7 @@ const postSchema = z.object({
   status: z.enum(PRODUCT_STATUS).optional(),
   attributes: z.record(z.string(), z.unknown()).nullable().optional(),
   image_asset_id: z.string().min(1).nullable().optional(),
+  ...commerceInputShape,
 })
 
 /** `POST /products` (`L2`, đặc tả 06 mục 6). */
@@ -82,6 +87,7 @@ export const POST = handle(async (request) => {
 
   const parsed = postSchema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+  if (parsed.data.cost_price_vnd !== undefined) requireCapability(ctx, "L5")
 
   const product = await createProduct(ctx, {
     code: parsed.data.code,
@@ -94,9 +100,10 @@ export const POST = handle(async (request) => {
     status: parsed.data.status,
     attributes: parsed.data.attributes ?? null,
     imageAssetId: parsed.data.image_asset_id ?? null,
+    commerce: pickCommerceInput(parsed.data),
   })
 
   if (isPendingProposal(product.attributes as Record<string, unknown> | null)) notifyProductProposed(ctx, product)
 
-  return jsonResponse(product, { status: 201 })
+  return jsonResponse(stripCostPrice(product, hasCapability(ctx, "L5")), { status: 201 })
 })

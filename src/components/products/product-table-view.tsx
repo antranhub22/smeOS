@@ -12,10 +12,15 @@ export interface ProductTableViewProps {
   isExecutive?: boolean
   onTrash?: (product: ProductItem) => void
   onImageClick?: (product: ProductItem) => void
+  /** Có thì hiện cột chọn để thao tác hàng loạt (chỉ dạng bảng trên máy tính). */
+  selectedIds?: ReadonlySet<string> | undefined
+  onToggleSelect?: ((ids: string[], selected: boolean) => void) | undefined
 }
 
-export function ProductTableView({ products, isExecutive, onTrash, onImageClick }: ProductTableViewProps) {
+export function ProductTableView({ products, isExecutive, onTrash, onImageClick, selectedIds, onToggleSelect }: ProductTableViewProps) {
   const { dict } = useI18n()
+  const selectable = Boolean(selectedIds && onToggleSelect)
+  const allSelected = selectable && products.length > 0 && products.every((p) => selectedIds?.has(p.id))
   return (
     <>
       {/* Mobile view: Card List */}
@@ -92,6 +97,16 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick 
         <table className="w-full text-left text-body-sm">
           <thead className="border-b border-border bg-surface-alt text-caption font-bold uppercase tracking-wider text-text-muted">
             <tr>
+              {selectable && (
+                <th scope="col" className="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    aria-label="Chọn tất cả sản phẩm đang hiển thị"
+                    checked={allSelected}
+                    onChange={(e) => onToggleSelect?.(products.map((p) => p.id), e.target.checked)}
+                  />
+                </th>
+              )}
               <th scope="col" className="px-4 py-3">{dict.products.table.product}</th>
               <th scope="col" className="px-4 py-3">{dict.products.table.category}</th>
               <th scope="col" className="px-4 py-3">{dict.products.table.price}</th>
@@ -102,6 +117,16 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick 
           <tbody className="divide-y divide-border">
             {products.map((p) => (
               <tr key={p.id} className="transition-colors hover:bg-surface-alt/50">
+                {selectable && (
+                  <td className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      aria-label={`Chọn ${p.name}`}
+                      checked={selectedIds?.has(p.id) ?? false}
+                      onChange={(e) => onToggleSelect?.([p.id], e.target.checked)}
+                    />
+                  </td>
+                )}
                 <td className="px-4 py-3 font-semibold text-text">
                   <div className="flex items-center gap-3">
                     <button

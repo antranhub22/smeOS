@@ -798,6 +798,12 @@ model products {
    * Cấu hình kiểm tra khả dụng theo ngành (PO 18/10/2026). Xem product-availability-config.ts.
    */
   availability_config Json?
+  /// Trường bán hàng chuẩn (PO 30/10/2026, công cụ 53 giai đoạn 5) — tuỳ chọn, null khi chưa khai.
+  barcode             String?
+  cost_price_vnd      Int?
+  vat_percent         Int?
+  weight_grams        Int?
+  tags                String[]       @default([])
   created_at          DateTime       @default(now())
   updated_at          DateTime       @updatedAt
 
@@ -814,6 +820,7 @@ model products {
 
   @@unique([organization_id, code])
   @@index([organization_id])
+  @@index([organization_id, barcode])
 }
 
 /// Đề xuất sửa một mẫu CHÍNH THỨC của người không có `H3` (quản trị danh mục, giai đoạn 3 —
@@ -889,10 +896,14 @@ model product_variants {
   size            String?
   multiplier      Float   @default(1)
   attributes      Json?
+  /// SKU/mã vạch theo biến thể (PO 30/10/2026) — SKU duy nhất trong một tổ chức khi đã khai.
+  sku             String?
+  barcode         String?
 
   organization organizations @relation(fields: [organization_id], references: [id])
   product      products      @relation(fields: [product_id], references: [id])
 
+  @@unique([organization_id, sku])
   @@index([organization_id, product_id])
 }
 
