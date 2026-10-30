@@ -36,6 +36,7 @@ export type CapabilityGroup =
   | "crm"
   | "ai_chat"
   | "market_intelligence"
+  | "integration"
 
 export interface CapabilityDefinition {
   /** Mã chữ cái — định danh chính, ví dụ `B5`. */
@@ -263,6 +264,12 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   V1: { name: "market_intel.research.run", group: "market_intelligence", label: "Kích hoạt lượt nghiên cứu thị trường", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing"] },
   V2: { name: "market_intel.opportunity.read", group: "market_intelligence", label: "Xem gợi ý cơ hội nội dung theo xu hướng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
   V3: { name: "market_intel.config.manage", group: "market_intelligence", label: "Quản lý cấu hình nguồn và trọng số xu hướng", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
+  // W — Trung tâm Tích hợp (Integration Hub GĐ1, 30/10/2026 — docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md)
+  W1: { name: "integration.view", group: "integration", label: "Xem danh mục tích hợp và trạng thái kết nối", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
+  W2: { name: "integration.connect", group: "integration", label: "Kết nối hoặc ngắt kết nối dịch vụ bên ngoài", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
+  W3: { name: "integration.configure", group: "integration", label: "Sửa cấu hình và xoay khoá của kết nối", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
+  W4: { name: "integration.govern", group: "integration", label: "Khoá hoặc cấp sẵn tích hợp cho tầng dưới", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
+  W5: { name: "integration.events.replay", group: "integration", label: "Xử lý lại sự kiện tích hợp bị lỗi", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
 }
 
 const ALL: Record<string, Omit<CapabilityDefinition, "code">> = { ...HARVESTED, ...CORE_NEW }

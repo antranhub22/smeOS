@@ -89,6 +89,7 @@ const SCHEMA_ONLY_CHUA_NOI = new Set([
   "product_variants", // product-master-index-repository.ts: "chưa từng được nối"
   "product_images", // product-master-index-repository.ts: "chưa từng được nối"
   "product_inventory", // nợ #95: "chưa được nối"
+  "integration_sync_cursors", // 30/10/2026: Trung tâm Tích hợp GĐ1 — đường ghi đến ở GĐ4 (đồng bộ kênh bán hàng)
   "journey_runs", // 05/10/2026: grep src/ không có đường đọc/ghi nào — bảng Journey Engine mới khai ở lược đồ
 ])
 const tenant = [...sm].filter(([, b]) => /^\s*organization_id\s/m.test(b)).map(([n]) => n).filter((n) => !SCHEMA_ONLY_CHUA_NOI.has(n))
