@@ -1,0 +1,102 @@
+# Lộ trình Enterprise Readiness — SMEOS
+
+Nội bộ (không vào bản giao khách). Lập 30/10/2026 từ 8 chuẩn đã đối chiếu code + chuẩn 09/10. Mỗi hạng mục khi làm: **một nhánh, một PR**, kèm test/gate, cập nhật cột trạng thái trong `smeos/*.md` cùng commit. Ký hiệu: **PO** = cần Product Owner quyết trước khi làm (dependency, nhà cung cấp, schema, CI, `render.yaml`, chi phí).
+
+## Tổng quan
+
+| Giai đoạn | Mục tiêu | Hạng mục | Điều kiện hoàn thành |
+|---|---|---|---|
+| **G0 · Dọn nền** (1 tuần) | Gate xanh, chuẩn đúng code | E0 | `main` xanh mọi gate kể cả `audit:industry:check` |
+| **G1 · Production-ready** (3–5 tuần) | Biết lỗi trước khách, chạy được nhiều instance, khôi phục được | E1 E2 E3 E4 E5 | SLO đo được; 2 instance staging chạy đúng; diễn tập khôi phục đạt RTO |
+| **G2 · Commercial** (4–6 tuần) | Thu tiền thuê bao, kiểm soát chi phí, vòng đời tenant | E6 E7 E8 | Một tenant thật trả tiền qua cổng; trần chi phí AI chặn đúng |
+| **G3 · Enterprise** (theo hợp đồng) | Bán cho chuỗi lớn/doanh nghiệp | E9 E10 E11 E12 | Bộ hồ sơ bảo mật; SSO + MFA; API/webhook công khai |
+
+Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E6 → E7 · E10 trước E9/E11.
+
+---
+
+## G0 · Dọn nền
+
+**E0 — Gate xanh & nợ chuẩn**
+1. Sửa 91 thuật ngữ ngành hardcode (IT-F01…) bằng `ti.*` / plugin; hạ baseline ratchet. *(nhánh riêng, nhiều màn)*
+2. **PO:** đưa `audit:industry:check` vào CI (`ci.yml`).
+3. ✅ (30/10/2026) `core/governance/tier-of.ts` — `tierOf`, `isChainTier`, `organizationTierOf`; kiểu `GovernanceTier` (nợ #194).
+4. ✅ (30/10/2026) Gỡ `cascading-resolver.ts` + 4 tệp `cascading-*`; lõi chung `core/governance/layered-resolver.ts` cho ma trận quản trị và thông báo (nợ #193).
+5. Hằng `TRASH_RETENTION_DAYS` (nợ #196); mở rộng test chặn gọi AI trực tiếp ra toàn `src/` (nợ #197).
+
+## G1 · Production-ready
+
+**E1 — Giám sát** (chuẩn 09)
+1. `request_id`: repo **chưa có** `proxy.ts`/middleware (Next 16 đổi tên middleware thành proxy — xem `node_modules/next/dist/docs/`) → thêm tệp này để sinh/nhận `x-request-id`, đưa vào ngữ cảnh `log`, header phản hồi `x-request-id`, cột `request_id` trên `generation_jobs` (**PO: schema**), worker đọc và log lại.
+2. Ratchet `no-console` (baseline 31 tệp, chỉ giảm).
+3. Helper log JSON cho worker trong `workers/shared/` cùng trường với web.
+4. `/api/health/ready` tách khỏi `/api/health`; worker heartbeat (bảng hoặc Redis key có TTL).
+5. **PO:** chọn công cụ theo dõi lỗi (vd. Sentry / tự host) → adapter trong `instrumentation.ts`, che dữ liệu như `log.ts`.
+6. Màn vận hành mới trong `src/app/(platform)/van-hanh/`: hàng đợi job (độ dài, job già nhất, lỗi theo loại), kênh thông báo, chi phí AI theo tenant — đọc từ DB, chưa cần exporter.
+7. SLO v1 (tạo đơn, trang khách `/c/[slug]`, phân tích ảnh, gửi thông báo) + runbook trong `docs/handover/OPERATIONS_RUNBOOK.md`.
+*Nghiệm thu:* lần ngược một lỗi từ log web tới dòng log worker bằng một `request_id`.
+
+**E2 — Nhiều instance** (chuẩn 10)
+1. Hub SSE qua Redis pub/sub (`notification-sse-adapter.ts`), giữ fallback 1 instance khi không có Redis.
+2. Thông báo: resolve một lần cho mọi kênh, giảm ~36 → ≤ 6 truy vấn (nợ #183) + test đếm truy vấn.
+3. Cache cấu hình đọc nhiều (ma trận quản trị, quyền, plugin) trong Redis, khoá theo tenant, xoá khi ghi.
+4. Giới hạn pool `PrismaPg` theo biến môi trường; **PO:** pooler nếu > 2 instance.
+5. **PO:** staging 2 instance web (`render.yaml`) → kiểm SSE, rate limit, job không trùng.
+*Nghiệm thu:* test e2e thông báo thời gian thực qua 2 instance.
+
+**E3 — Sao lưu & khôi phục**
+1. **PO:** bật PITR Postgres + thời gian giữ; versioning/backup cho R2/S3.
+2. Diễn tập khôi phục trên staging, ghi RPO/RTO thật vào runbook (nợ #183).
+3. Sau khi có backup kho tệp: **PO** bật `STORAGE_DELETE_PAYLOADS` (SDAGF D-06).
+4. Lịch `npm run storage:reconcile` hằng tuần, báo kết quả.
+
+**E4 — Phát hành an toàn**
+1. Quy ước migration expand/contract trong skill `database-schema` + checklist PR.
+2. Cờ tính năng chung (mở rộng `ux-rollout-flags`): bật theo tenant / theo %, audit, đọc có cache — không đổi schema nếu dùng `platform_settings`.
+3. **PO:** môi trường staging cố định + dữ liệu mẫu; e2e chạy trên staging trước khi lên production.
+4. Kiểm tải (k6/Artillery — **PO: dependency**) kịch bản cao điểm lễ; ngưỡng ghi vào runbook.
+
+**E5 — Hàng đợi có kỷ luật**
+1. Tự thử lại job lỗi tạm thời: `attempts` + trần + backoff có jitter; phân loại lỗi `retryable` / `needs_action` (khớp `task-state.ts`).
+2. Màn dead-letter trong `/van-hanh`: xem lý do, chạy lại (dùng luồng YC-J3), huỷ — audit.
+3. Khoá idempotent chung cho webhook đến và thao tác thanh toán (dùng ở E6).
+*Nghiệm thu:* test chạy lại job không nhân đôi kết quả/credit.
+
+## G2 · Commercial
+
+**E6 — Tính tiền & đo sử dụng** *(chuẩn mới 11)*
+1. Sổ đo sử dụng thống nhất: AI (đã có sổ AI), dung lượng kho, tin nhắn kênh ngoài, số chi nhánh.
+2. Hạn mức theo gói (`PLAN_FEATURES` → thêm định mức), cảnh báo 80%/100%, chặn mềm.
+3. **PO:** cổng thanh toán (VietQR động / PayOS / VNPay) — adapter `adapters/`, webhook ký + idempotent (E5.3).
+4. Thuê bao: chu kỳ, hoá đơn, gia hạn, hạ/nâng gói không mất dữ liệu. **PO: schema.**
+
+**E7 — Vòng đời tenant**
+1. Trạng thái: dùng thử → hoạt động → quá hạn → tạm ngưng (chỉ đọc) → huỷ → xoá sau N ngày (tôn trọng legal hold).
+2. Xuất toàn bộ dữ liệu tenant (đã có export từng phần + audit) thành một gói.
+3. Quyền chủ thể dữ liệu theo Nghị định 13/2023: ghi nhận đồng ý, yêu cầu truy cập/xoá dữ liệu khách cuối. **PO + pháp lý.**
+
+**E8 — Chi phí AI theo tenant**
+1. Trần chi phí theo gói/tháng trong gateway (`callCapability`), cảnh báo, tự hạ mô hình rẻ hơn hoặc dừng tác vụ không thiết yếu.
+2. Báo cáo biên lợi nhuận theo tenant (doanh thu gói − chi phí AI − lưu trữ).
+
+## G3 · Enterprise
+
+**E9 — Định danh doanh nghiệp**: SSO SAML/OIDC theo tổ chức (mở rộng `modules/sso`), SCIM cấp/thu hồi, **MFA bắt buộc** cho chủ tiệm và operator, đăng xuất mọi thiết bị. **PO: auth/SSO.**
+
+**E10 — Hợp nhất mô hình phân tầng**: tầng Ngành có dữ liệu (nợ #195, **PO: schema**); lịch sử + hoàn tác quyết định quản trị; cân nhắc tầng Tập đoàn (nhiều chuỗi).
+
+**E11 — Tích hợp mở**: API công khai có phiên bản, khoá API theo tenant có phạm vi (mở rộng `modules/integration`), webhook gửi ra có ký + thử lại + dead-letter (dùng E5), tài liệu OpenAPI.
+
+**E12 — SLA & tuân thủ**: trang trạng thái; SLA theo gói đo từ SLO (E1); CSP chuyển từ Report-Only sang chặn; kiểm thử xâm nhập định kỳ; bộ hồ sơ bảo mật (chính sách, sổ rủi ro SDAGF, mẫu audit log, quy trình sự cố).
+
+---
+
+## Quyết định PO (cập nhật 30/10/2026)
+| # | Quyết định | Kết quả PO | Ảnh hưởng |
+|---|---|---|---|
+| Q1 | Công cụ theo dõi lỗi / metrics | ✅ **Dịch vụ ngoài** — chọn nhà cung cấp cụ thể trước khi làm E1.5 (đề xuất Sentry: có SDK Next.js + Python, gói miễn phí) | E1.5, E1.6 |
+| Q2 | Cột `request_id` trên `generation_jobs` | ✅ Đồng ý | E1.1 |
+| Q3 | Staging + 2 instance Render | ⏸ **Làm khi bàn giao** — code E2 vẫn viết và test cục bộ; nghiệm thu 2 instance dời tới lúc bàn giao | E2.5, E4.3 |
+| Q4 | PITR Postgres + backup object store | ✅ Đồng ý — bật trên dashboard Render/R2 (chủ tài khoản thao tác), agent ghi RPO/RTO vào runbook | E3 |
+| Q5 | `audit:industry:check` vào CI | ✅ Đồng ý — thêm vào CI **sau** khi E0.1 hạ vi phạm về baseline, để CI không đỏ ngay | E0.2 |
+| Q6 | Chọn động cơ quản trị phân tầng duy nhất | ✅ **Phương án 2** — gỡ động cơ chết, gộp A + B về lõi chung (đã làm) | E0.4 |

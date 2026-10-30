@@ -8,9 +8,11 @@
  * Pure — không phụ thuộc Prisma.
  */
 
+import { resolveLayered, winningLock, type GovernanceTier } from "@/core/governance/layered-resolver"
+
 export const GOVERNANCE_SYSTEMS = ["PROMOTIONS", "COMMITMENTS", "POLICIES", "PAYMENTS", "CRAFT_FEES", "TEMPLATES"] as const
 export type GovernanceSystem = (typeof GOVERNANCE_SYSTEMS)[number]
-export type GovernanceLayerTier = "MOTHER" | "INDUSTRY" | "CHAIN" | "STORE"
+export type GovernanceLayerTier = GovernanceTier
 
 export type GovernanceLock = { enabled: boolean }
 export type GovernanceDecisions = {
@@ -54,13 +56,14 @@ export function decisionsFromSettings(settings: unknown, system: GovernanceSyste
 
 export type UpperLayer = { tier: GovernanceLayerTier; decisions: GovernanceDecisions }
 
-/** Khoá đang áp xuống từ tầng trên gần nhất có khoá (tầng trên cùng thắng). */
+/** Khoá đang áp xuống từ tầng trên (tầng cao nhất thắng; cùng tầng → đứng trước) — lõi `core/governance/layered-resolver`. */
 export function upperLockFor(key: string, upper: readonly UpperLayer[]): { tier: GovernanceLayerTier; lock: GovernanceLock } | null {
+  const candidates: { tier: GovernanceLayerTier; lock: GovernanceLock }[] = []
   for (const layer of upper) {
     const lock = layer.decisions.locks[key]
-    if (lock) return { tier: layer.tier, lock }
+    if (lock) candidates.push({ tier: layer.tier, lock })
   }
-  return null
+  return winningLock(candidates)
 }
 
 export type DecisionViolation = { key: string; reason: "LOCKED_BY_UPPER" | "STORE_CANNOT_LOCK" | "BAD_KEY" | "TOO_MANY" }
@@ -91,7 +94,7 @@ export type EffectiveDecision = {
   lockedBy: GovernanceLayerTier | null
 }
 
-/** Trạng thái hiệu lực của một mục cho tầng đang xem. */
+/** Trạng thái hiệu lực của một mục cho tầng đang xem: khoá tầng trên → khoá của mình → ghi đè → mặc định. */
 export function effectiveDecision(
   key: string,
   defaultEnabled: boolean,
@@ -100,11 +103,16 @@ export function effectiveDecision(
   upper: readonly UpperLayer[]
 ): EffectiveDecision {
   const up = upperLockFor(key, upper)
-  if (up) return { enabled: up.lock.enabled, source: "UPPER_LOCK", lockedBy: up.tier }
   const ownLock = own.locks[key]
-  if (ownLock) return { enabled: ownLock.enabled, source: "OWN_LOCK", lockedBy: ownTier }
-  if (key in own.overrides) return { enabled: own.overrides[key]!, source: "OWN_OVERRIDE", lockedBy: null }
-  return { enabled: defaultEnabled, source: "DEFAULT", lockedBy: null }
+  const r = resolveLayered<boolean, EffectiveDecision["source"]>({
+    locks: [
+      ...(up ? [{ tier: up.tier, value: up.lock.enabled, source: "UPPER_LOCK" as const }] : []),
+      ...(ownLock ? [{ tier: ownTier, value: ownLock.enabled, source: "OWN_LOCK" as const }] : []),
+    ],
+    overrides: [{ value: key in own.overrides ? own.overrides[key] : undefined, source: "OWN_OVERRIDE" }],
+    fallback: { value: defaultEnabled, source: "DEFAULT" },
+  })
+  return { enabled: r.value, source: r.source, lockedBy: r.lockedBy }
 }
 
 /** Các ma trận mà luồng bán hàng (trang khách, báo giá, đặt đơn) đọc khi lọc mục hiện cho khách. */

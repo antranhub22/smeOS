@@ -41,6 +41,7 @@
   "exclude": [
     "node_modules",
     "workers",
+    ".agents",
     "tests/maChucNang.test.ts"
   ]
 }

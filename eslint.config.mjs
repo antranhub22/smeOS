@@ -13,6 +13,8 @@ const config = [
       "src/generated/**",
       "workers/**",
       "docker/**",
+      // Cấu hình agent nội bộ (skill bên thứ ba), không phải mã sản phẩm
+      ".agents/**",
       "next-env.d.ts",
       // Thu hoạch R2, chép nguyên vẹn — `npm run test:harvest` giữ nó xanh
       // không sửa một dòng (`YC-Q1`). Lint theo cấu hình của floraos-core

@@ -35,6 +35,7 @@
     "test:e2e:ux": "playwright test tests/e2e/ux",
     "ux:audit": "node scripts/ux-audit/run.mjs",
     "dev:link-skills": "node scripts/dev-link-skills.mjs",
+    "handover:check": "node scripts/handover-check.mjs",
     "nap:danh-muc": "tsx --env-file-if-exists=.env scripts/nap-avi-gift-vao-core.ts",
     "nap:phan-tich": "tsx --env-file-if-exists=.env scripts/nap-avi-gift-phan-tich.ts",
     "nap:credit": "tsx --env-file-if-exists=.env scripts/nap-credit.ts",

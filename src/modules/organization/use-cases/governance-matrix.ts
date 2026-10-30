@@ -2,6 +2,7 @@
  * Đọc/lưu quyết định ma trận quản trị của tổ chức đang đăng nhập, kèm khoá của các tầng trên.
  * `organizationId` luôn từ `TenantContext`.
  */
+import { organizationTierOf } from "@/core/governance/tier-of"
 import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import {
@@ -18,8 +19,9 @@ import { getOrgGovernance, getPolicyGovernanceUpper, getUpperLayers, saveOrgGove
 import { OrganizationRepository } from "../infra/organization-repository"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 
+/** Tầng dữ liệu của tổ chức — luật ở `core/governance/tier-of.ts`. */
 export function governanceTierOf(organizationType: string | null | undefined): GovernanceLayerTier {
-  return organizationType === "CHAIN" || organizationType === "FLOWER_NETWORK" ? "CHAIN" : "STORE"
+  return organizationTierOf(organizationType)
 }
 
 export type GovernanceMatrixView = {
