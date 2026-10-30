@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { History, X, ChevronRight } from "lucide-react"
+import { History, X, ChevronRight } from "@/components/ui/icons"
 import { customerOrderStatusLabel, type FamilyMember } from "@/modules/greeting-card/domain/order-family"
 import { familyHref } from "./use-order-family"
 

@@ -3,7 +3,7 @@
 import { IconTile } from "@/components/ui/app-icon"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef, useState } from "react"
-import { CheckCircle, AlertTriangle, XCircle } from "lucide-react"
+import { CheckCircle, AlertTriangle, XCircle } from "@/components/ui/icons"
 
 interface PhotoUploadPanelProps {
   onFileSelected: (file: File) => void

@@ -6,7 +6,7 @@
  * vẫn ở Cài đặt (một nơi lưu duy nhất) — trang này chỉ đọc và dẫn đường.
  */
 import Link from "next/link"
-import { BadgeCheck, CheckCircle2, Circle, ArrowRight, Store, Palette, IdCard, Library } from "lucide-react"
+import { BadgeCheck, CheckCircle2, Circle, ArrowRight, Store, Palette, IdCard, Library } from "@/components/ui/icons"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { evaluateStoreProfile, type ProfileChecklistItem } from "@/modules/profiles/domain/store-profile-completeness"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"

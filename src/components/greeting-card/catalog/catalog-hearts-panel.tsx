@@ -1,6 +1,6 @@
 "use client"
 
-import { Heart } from "lucide-react"
+import { Heart } from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useApi } from "@/components/greeting-card/greeting-api"
 

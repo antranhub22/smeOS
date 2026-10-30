@@ -11,7 +11,7 @@ import {
   Clock,
   Check,
   RotateCcw,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import { ChainBranchCard, type DispatchedCandidateBranch } from "./chain-branch-card"

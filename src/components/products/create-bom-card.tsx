@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Plus, Trash2, FileText } from "lucide-react"
+import { Plus, Trash2, FileText } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import type { BomItem, TerminologyGetter } from "./create-product-types"

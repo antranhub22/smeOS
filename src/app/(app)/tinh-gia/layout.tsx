@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { BookOpen, Calculator, ClipboardList, Package, TrendingUp } from "lucide-react"
+import { BookOpen, Calculator, ClipboardList, Package, TrendingUp } from "@/components/ui/icons"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { EntitlementGate } from "@/components/ui/entitlement-gate"
 import { InlineError } from "@/components/ui/inline-error"

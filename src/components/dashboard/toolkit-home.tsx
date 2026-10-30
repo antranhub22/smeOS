@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Search, SlidersHorizontal, Sparkles } from "lucide-react"
+import { Search, SlidersHorizontal, Sparkles } from "@/components/ui/icons"
 import {
   countByStatus,
   STATUS_DISPLAY,

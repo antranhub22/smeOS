@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Circle, AlertCircle, X, RotateCcw, Ban } from "lucide-react"
+import { Check, Circle, AlertCircle, X, RotateCcw, Ban } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

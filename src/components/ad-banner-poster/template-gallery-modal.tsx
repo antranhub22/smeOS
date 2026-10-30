@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { X, Sparkles, Check, LayoutGrid, ImageIcon } from "lucide-react"
+import { X, Sparkles, Check, LayoutGrid, ImageIcon } from "@/components/ui/icons"
 import {
   BANNER_TEMPLATE_CATEGORIES,
   BANNER_TEMPLATE_CATALOG,

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft } from "@/components/ui/icons"
 import type { GrowthModule } from "@/modules/toolkit/domain/growth-modules"
 import { InfoTip } from "@/components/ui/info-tip"
 import { IconTile } from "@/components/ui/app-icon"

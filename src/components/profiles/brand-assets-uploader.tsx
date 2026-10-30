@@ -7,7 +7,7 @@ import {
   Trash2,
   CheckCircle2,
   Loader2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { PhotoUploadGuidance, LOGO_GUIDANCE } from "./photo-upload-guidance"
 import { uploadBrandAsset, resolveAssetViewUrl } from "./upload-brand-asset"
 import { BrandStorefrontSection } from "./brand-storefront-section"

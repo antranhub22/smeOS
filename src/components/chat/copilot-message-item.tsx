@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Bot, BookOpen, ExternalLink, Flower2, ShoppingBag, Loader2 } from "lucide-react"
+import { Bot, BookOpen, ExternalLink, Flower2, ShoppingBag, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { ChatMessageMetadata } from "@/modules/chat-assistant/domain/chat-types"
 

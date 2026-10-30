@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, ImageIcon } from "lucide-react"
+import { CheckCircle2, ImageIcon } from "@/components/ui/icons"
 import type { DeliveryProofInfo } from "./subcontract-card-types"
 
 export interface SubcontractPodSuccessProps {

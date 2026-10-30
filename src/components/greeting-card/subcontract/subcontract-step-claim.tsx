@@ -13,7 +13,7 @@ import {
   XCircle,
   Sparkles,
   ChevronDown,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {

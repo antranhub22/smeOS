@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Wand2, CheckCircle2, Loader2, AlertCircle, RefreshCw, X } from "lucide-react"
+import { Wand2, CheckCircle2, Loader2, AlertCircle, RefreshCw, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import { useNormalizeImage } from "./use-normalize-image"

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Tag, Gift, Users, BookOpen, CheckCircle, DollarSign, PackagePlus } from "lucide-react";
+import { Sparkles, Tag, Gift, Users, BookOpen, CheckCircle, DollarSign, PackagePlus } from "@/components/ui/icons";
 import type { CommercialPassport } from "@/modules/market-intelligence/domain/product-intelligence-types";
 
 interface CommercialPassportCardProps {

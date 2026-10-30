@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { CalendarHeart, ChevronRight, ShoppingBag, Tag, UserPlus } from "lucide-react"
+import { CalendarHeart, ChevronRight, ShoppingBag, Tag, UserPlus } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

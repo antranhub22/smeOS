@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ShieldCheck } from "lucide-react"
+import { ShieldCheck } from "@/components/ui/icons"
 import type { TrackingTriggerPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
 
 export interface CatalogTrackingTriggerOverrideProps {

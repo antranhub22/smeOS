@@ -35,7 +35,7 @@ import {
   Wand2,
   Check,
   AlertTriangle,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { buildHandoffSearchParams } from "@/modules/creative-production/domain/build-handoff-url";
 import {

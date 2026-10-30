@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Zap, SlidersHorizontal } from "lucide-react"
+import { Zap, SlidersHorizontal } from "@/components/ui/icons"
 import type {
   BannerCopyPayload,
   BannerBrandInfo,

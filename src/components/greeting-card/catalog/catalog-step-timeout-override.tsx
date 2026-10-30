@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Timer, ArrowDownLeft } from "lucide-react"
+import { Timer, ArrowDownLeft } from "@/components/ui/icons"
 import {
   type StepTimeoutPolicy,
   type CatalogTimeoutOverride,

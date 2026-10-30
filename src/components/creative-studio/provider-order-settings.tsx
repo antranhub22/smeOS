@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ArrowDown, ArrowUp, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
+import { ArrowDown, ArrowUp, CheckCircle2, AlertCircle, Loader2 } from "@/components/ui/icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

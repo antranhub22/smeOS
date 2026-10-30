@@ -7,7 +7,7 @@ import {
   Truck,
   Store,
   Smartphone,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type {
   StorePaymentMethodsConfig,
   CardProviderKey,

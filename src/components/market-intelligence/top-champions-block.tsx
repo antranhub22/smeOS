@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Trophy, Crown, Play, Video, ArrowRight, Sparkles, ExternalLink } from "lucide-react";
+import { Trophy, Crown, Play, Video, ArrowRight, Sparkles, ExternalLink } from "@/components/ui/icons";
 import {
   findPeriodChampions,
   type PeriodChampion,

@@ -1,4 +1,4 @@
-import { MessageCircle, Phone } from "lucide-react"
+import { MessageCircle, Phone } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { ShopContactBar } from "./shop-contact-bar"
 

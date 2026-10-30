@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Check, Copy, ExternalLink, Download, Share2, Sparkles, ImageDown } from "lucide-react"
+import { Check, Copy, ExternalLink, Download, Share2, Sparkles, ImageDown } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { CatalogPdfExportButton } from "./studio/catalog-pdf-export-button"
 import { CatalogImageExportButton } from "./studio/catalog-image-export-button"

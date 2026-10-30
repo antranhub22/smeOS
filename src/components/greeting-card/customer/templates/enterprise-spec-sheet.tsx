@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { X } from "lucide-react"
+import { X } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { productPriceText } from "./product-info/product-display"
 import { ProductImage } from "./aux/aux-kit"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ShieldAlert, Clock, AlertTriangle, CheckCircle2 } from "lucide-react"
+import { ShieldAlert, Clock, AlertTriangle, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { BypassRequestModal } from "./bypass-request-modal"
 import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { MessageCircle, MessageSquareText, Phone } from "lucide-react"
+import { MessageCircle, MessageSquareText, Phone } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { ProductInquiryForm } from "./product-inquiry-form"
 

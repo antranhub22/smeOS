@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle, Trash2, X, Clock, ShieldCheck, Loader2 } from "lucide-react"
+import { AlertTriangle, Trash2, X, Clock, ShieldCheck, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export interface TrashConfirmTarget {

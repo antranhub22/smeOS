@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Loader2, CheckCircle2, AlertCircle, ArrowDown, ExternalLink } from "lucide-react";
+import { Sparkles, Loader2, CheckCircle2, AlertCircle, ArrowDown, ExternalLink } from "@/components/ui/icons";
 import type { TaskUiState } from "@/lib/ui-system/task-state";
 
 /** Tập con của từ vựng trạng thái chuẩn (03c UX-016). */

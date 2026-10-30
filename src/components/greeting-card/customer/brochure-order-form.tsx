@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useId, useState } from "react"
-import { ArrowLeft, Send, AlertCircle } from "lucide-react"
+import { ArrowLeft, Send, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ORDER_FIELD_MAX, MAX_DELIVERY_LEAD_DAYS } from "@/modules/greeting-card/domain/greeting-card-rules"
 import type { ProductSnapshot, CustomerOrderSubmitInput, GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"

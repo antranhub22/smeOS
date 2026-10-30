@@ -3,7 +3,7 @@
  * phía khách. Màu thương hiệu chỉ tô dải trang trí — chữ luôn dùng token để
  * giữ tương phản.
  */
-import { Phone, MessageCircle, MapPin, Mail, Globe, Clock, ExternalLink } from "lucide-react"
+import { Phone, MessageCircle, MapPin, Mail, Globe, Clock, ExternalLink } from "@/components/ui/icons"
 import type { ContactAction, PublicStoreProfile } from "@/modules/profiles/domain/store-share-page"
 
 const ACTION_ICON: Record<ContactAction["kind"], typeof Phone> = {

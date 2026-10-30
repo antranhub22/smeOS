@@ -2,7 +2,7 @@
 
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
-import { Download, CheckCircle2 } from "lucide-react"
+import { Download, CheckCircle2 } from "@/components/ui/icons"
 import type { ProductSetVariantResult, ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
 
 export interface ImageSetViewerProps {

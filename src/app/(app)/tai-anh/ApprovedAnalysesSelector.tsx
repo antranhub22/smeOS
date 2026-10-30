@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useMemo } from "react"
-import { Sparkles, Search, RefreshCw, Layers, Calendar, CheckCircle2, AlertCircle } from "lucide-react"
+import { Sparkles, Search, RefreshCw, Layers, Calendar, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

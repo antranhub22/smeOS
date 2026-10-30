@@ -1,4 +1,4 @@
-import { LucideIcon, ScanSearch, Sparkles, Video, FileText, Rss, LayoutGrid, Users, Package, MessageSquare, BarChart3, Zap, TrendingUp } from "lucide-react"
+import { LucideIcon, ScanSearch, Sparkles, Video, FileText, Rss, LayoutGrid, Users, Package, MessageSquare, BarChart3, Zap, TrendingUp } from "@/components/ui/icons"
 
 export type WorkspaceKind = "EXPERIENCE" | "PRODUCTION"
 export type FeatureId =

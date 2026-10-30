@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { BookOpen, ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
+import { BookOpen, ArrowLeft, ArrowRight, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { CatalogProduct } from "./catalog-management-tab"
 import { type CatalogStyleVariant } from "@/modules/content-engine/domain/catalog-content-generator"

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Flower2 } from "lucide-react"
+import { Flower2 } from "@/components/ui/icons"
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
 
 export { driveThumbProxySrc }

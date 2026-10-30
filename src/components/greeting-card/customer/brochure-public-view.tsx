@@ -17,7 +17,7 @@ import type {
   CustomerOrderSubmitInput,
   ProductSnapshot,
 } from "@/modules/greeting-card/domain/greeting-card-types"
-import { ShoppingBag } from "lucide-react"
+import { ShoppingBag } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { ProductContactActions } from "./product-contact-actions"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"

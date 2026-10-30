@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { CheckCircle2, ShieldCheck, XCircle, Banknote, Copy, Check } from "lucide-react"
+import { CheckCircle2, ShieldCheck, XCircle, Banknote, Copy, Check } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { coordinatorAcceptanceBlocker } from "@/modules/greeting-card/domain/brochure-commerce-rules"
 import type { BrochureOrder, ModalState } from "./coordinator-order-card"

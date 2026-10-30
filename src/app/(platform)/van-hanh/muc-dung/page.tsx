@@ -13,7 +13,7 @@ import {
   ArrowUpRight,
   Filter,
   CheckCircle2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"

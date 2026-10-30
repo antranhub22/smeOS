@@ -3,7 +3,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import useSWR from "swr"
-import { Calendar, LayoutGrid, Loader2, Sparkles, RefreshCw } from "lucide-react"
+import { Calendar, LayoutGrid, Loader2, Sparkles, RefreshCw } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { AvailabilityBoardResult } from "@/modules/availability/use-cases/get-availability-board"

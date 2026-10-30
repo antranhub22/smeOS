@@ -14,7 +14,7 @@ import {
   Flame,
   Shield,
   History,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import type { RunItem } from "./research-runs-table";
 
 /** Cấu hình lịch quét xu hướng định kỳ của tiệm, gửi lên khi bấm lưu. */

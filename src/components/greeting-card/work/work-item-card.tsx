@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { MessageSquare, Phone } from "lucide-react"
+import { MessageSquare, Phone } from "@/components/ui/icons"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { TrackingStepperView } from "@/components/greeting-card/tracking/tracking-stepper-view"
 import type { StepOwner } from "@/modules/greeting-card/domain/step-sla"

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Layers, Camera, CheckCircle2 } from "lucide-react"
+import { Layers, Camera, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"

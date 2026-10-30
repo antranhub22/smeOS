@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ArrowLeft, Loader2, AlertCircle, ArrowRight, RefreshCw } from "lucide-react"
+import { ArrowLeft, Loader2, AlertCircle, ArrowRight, RefreshCw } from "@/components/ui/icons"
 import { NextActions, type NextActionItem } from "./next-actions"
 
 interface ActionContractWrapperProps {

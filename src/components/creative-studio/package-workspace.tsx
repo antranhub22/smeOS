@@ -14,7 +14,7 @@
 
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { AlertTriangle, CheckCircle2, Loader2, Package, RefreshCw, Save, ShieldCheck } from "lucide-react"
+import { AlertTriangle, CheckCircle2, Loader2, Package, RefreshCw, Save, ShieldCheck } from "@/components/ui/icons"
 
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"
 import { Button } from "@/components/ui/button"

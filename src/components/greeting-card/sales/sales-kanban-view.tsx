@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle, Clock, MessageSquare, Phone } from "lucide-react"
+import { AlertTriangle, Clock, MessageSquare, Phone } from "@/components/ui/icons"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { zaloHref } from "@/components/greeting-card/work/work-item-card"
 import { groupSaleKanban } from "@/modules/greeting-card/domain/sale-kanban"

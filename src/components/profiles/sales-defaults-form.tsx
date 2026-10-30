@@ -10,7 +10,7 @@ import {
   Sparkles,
   Palette,
   Building2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/infra/brand-profile-repository"
 import {

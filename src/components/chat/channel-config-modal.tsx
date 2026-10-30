@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Settings, AlertCircle, Loader2 } from "lucide-react"
+import { Settings, AlertCircle, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"

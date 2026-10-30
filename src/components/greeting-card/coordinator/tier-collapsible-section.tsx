@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertCircle, ChevronDown, ChevronRight, Calendar, CheckCircle2 } from "lucide-react"
+import { AlertCircle, ChevronDown, ChevronRight, Calendar, CheckCircle2 } from "@/components/ui/icons"
 
 interface TierSectionProps {
   type: "OVERDUE" | "FUTURE" | "DONE"

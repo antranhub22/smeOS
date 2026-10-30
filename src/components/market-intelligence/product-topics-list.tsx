@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Copy, Check, Video, FileText, Play, Sparkles, Target, ArrowRight, Wand2 } from "lucide-react";
+import { Copy, Check, Video, FileText, Play, Sparkles, Target, ArrowRight, Wand2 } from "@/components/ui/icons";
 import type { ConcreteTopic, TopicAngleCategory } from "@/modules/market-intelligence/domain/product-intelligence-types";
 import { getTopicDualRealVideoEvidence } from "./video-evidence-catalog";
 

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Timer, CheckCircle2, AlertCircle } from "lucide-react"
+import { Timer, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
   STEP_TIMEOUT_SETTINGS_KEY,

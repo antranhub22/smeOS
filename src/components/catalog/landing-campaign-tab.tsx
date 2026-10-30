@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Sparkles } from "@/components/ui/icons"
 import { LandingJourneyEntry, type LandingExecutionMode } from "./landing-journey-entry"
 import { DualModeHeader } from "./dual-mode-header"
 import type { CatalogProduct } from "./catalog-management-tab"

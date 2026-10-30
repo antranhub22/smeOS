@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Gift, Camera, Clock, CheckCircle2, ArrowRight, Loader2 } from "lucide-react"
+import { Gift, Camera, Clock, CheckCircle2, ArrowRight, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

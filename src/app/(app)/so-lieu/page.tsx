@@ -3,7 +3,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Check, ArrowLeft, BarChart3, ChevronRight, TrendingUp } from "lucide-react"
+import { Check, ArrowLeft, BarChart3, ChevronRight, TrendingUp } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

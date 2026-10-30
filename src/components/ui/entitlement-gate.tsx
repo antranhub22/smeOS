@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Lock } from "lucide-react"
+import { Lock } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 
 export interface EntitlementGateProps {

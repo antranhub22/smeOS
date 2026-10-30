@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Store, Download, Upload, CheckCircle2, AlertCircle, Loader2, Bot, Phone, MapPin, Star, RotateCcw } from "lucide-react"
+import { Store, Download, Upload, CheckCircle2, AlertCircle, Loader2, Bot, Phone, MapPin, Star, RotateCcw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { generateBranchTemplateBuffer, parseBranchWorkbook, type ParsedBranchRow } from "./parse-branch-sheet"
 import { apiSend } from "@/components/greeting-card/greeting-api"

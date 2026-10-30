@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, AlertTriangle, Video, Image as ImageIcon, Sparkles, Send } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Video, Image as ImageIcon, Sparkles, Send } from "@/components/ui/icons";
 import type { ProductContentReadiness } from "@/modules/market-intelligence/domain/product-intelligence-types";
 
 interface ProductReadinessCardProps {

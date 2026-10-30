@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useId, useState } from "react"
-import { Send, X } from "lucide-react"
+import { Send, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"

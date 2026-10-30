@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { AlertTriangle, Banknote, CheckCircle2, ExternalLink, MessageSquare, ShieldCheck, XCircle } from "lucide-react"
+import { AlertTriangle, Banknote, CheckCircle2, ExternalLink, MessageSquare, ShieldCheck, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { useSWRConfig } from "swr"

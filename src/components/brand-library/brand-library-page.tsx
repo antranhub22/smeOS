@@ -7,7 +7,7 @@
  * khối "Từ chuỗi" chỉ đọc.
  */
 import { useState } from "react"
-import { Library, Plus } from "lucide-react"
+import { Library, Plus } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { isChainTier } from "@/core/governance/tier-of"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"

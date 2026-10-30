@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight, CheckCircle2 } from "lucide-react"
+import { ArrowRight, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 /** Bước thanh toán cho mẫu chưa niêm yết giá: nhận đơn, cửa hàng sẽ báo giá sau. */

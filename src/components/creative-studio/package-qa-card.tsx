@@ -5,7 +5,7 @@
  */
 
 import React from "react"
-import { AlertCircle, CheckCircle2, XCircle } from "lucide-react"
+import { AlertCircle, CheckCircle2, XCircle } from "@/components/ui/icons"
 
 import type { CampaignPackageDto } from "./package-client"
 

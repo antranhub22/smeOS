@@ -12,7 +12,7 @@ import {
   Store,
   Layers,
   CheckCircle2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { CatalogProduct } from "./catalog-management-tab"

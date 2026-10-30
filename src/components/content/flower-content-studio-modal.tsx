@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Copy, Check, Sparkles, Video, Share2, FileText, ShoppingBag } from "lucide-react"
+import { Copy, Check, Sparkles, Video, Share2, FileText, ShoppingBag } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

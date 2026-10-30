@@ -18,7 +18,7 @@ export const responsibleEmployee = (i: TrackingViewItem) => {
   return i.saleName
 }
 
-import { Clock, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Clock, AlertCircle, CheckCircle2 } from "@/components/ui/icons"
 
 const SLA_STYLE: Record<SlaInfo["state"], { label: string; cls: string }> = {
   OVERDUE: { label: "Quá hạn", cls: "bg-danger-bg text-danger font-bold" },

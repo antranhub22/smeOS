@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { EyeOff, AlertTriangle, X } from "lucide-react"
+import { EyeOff, AlertTriangle, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"
 import { DISMISSAL_REASONS, type DismissalReasonId } from "@/modules/greeting-card/domain/dismissal-policy"

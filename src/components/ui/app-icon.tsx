@@ -2,6 +2,7 @@ import * as React from "react"
 import * as Ph from "@phosphor-icons/react/dist/ssr"
 import type { Icon as PhosphorIcon, IconWeight } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
+import * as Compat from "./icons"
 
 /**
  * Bộ icon chuẩn SMEOS (Phosphor, PO 30/10/2026). Danh mục vẫn lưu tên icon kiểu lucide
@@ -27,7 +28,18 @@ const ICONS: Readonly<Record<string, PhosphorIcon>> = {
 }
 
 export function hasAppIcon(name: string): boolean {
-  return name in ICONS
+  return name in ICONS || name in Compat
+}
+
+const TONE_ORDER: readonly IconTone[] = [
+  "plum", "rose", "orange", "amber", "teal", "blue", "indigo", "green", "pink", "emerald",
+]
+
+/** Màu nhóm cố định theo khoá (vd. mã mục) — cùng khoá luôn cùng màu. */
+export function toneFor(key: string): IconTone {
+  let h = 0
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0
+  return TONE_ORDER[h % TONE_ORDER.length] ?? "plum"
 }
 
 interface AppIconProps {
@@ -37,8 +49,11 @@ interface AppIconProps {
 }
 
 export function AppIcon({ name, weight = "duotone", className }: AppIconProps) {
-  const Icon = ICONS[name] ?? Ph.Folder
-  return <Icon weight={weight} className={className} aria-hidden="true" />
+  const Icon = ICONS[name]
+  if (Icon) return <Icon weight={weight} className={className} aria-hidden="true" />
+  // Tên lucide khác đã có trong bộ chuyển đổi `icons.tsx`
+  const Fallback = (Compat as unknown as Record<string, Compat.LucideIcon | undefined>)[name] ?? Compat.Folder
+  return <Fallback weight={weight} className={className} aria-hidden="true" />
 }
 
 export type IconTone =

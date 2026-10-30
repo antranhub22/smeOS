@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Image from "next/image"
-import { Wallet } from "lucide-react"
+import { Wallet } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { readApiError } from "@/components/greeting-card/api-error"
 import type { BrochurePaymentInstructions } from "@/modules/greeting-card/domain/greeting-card-types"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { BadgePercent } from "lucide-react"
+import { BadgePercent } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { DISCOUNT_SETTINGS_KEY, parseMaxDiscountPercent } from "@/modules/greeting-card/domain/discount-request"
 

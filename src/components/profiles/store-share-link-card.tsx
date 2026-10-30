@@ -5,7 +5,7 @@
  * Xuất bản và ngừng chia sẻ là hành động R3 → luôn qua hộp xác nhận.
  */
 import { useState } from "react"
-import { Share2, Copy, Check, ExternalLink, Eye } from "lucide-react"
+import { Share2, Copy, Check, ExternalLink, Eye } from "@/components/ui/icons"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { InlineError } from "@/components/ui/inline-error"

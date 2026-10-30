@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Layers, CheckCircle2 } from "lucide-react"
+import { Layers, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { CatalogProduct } from "./catalog-management-tab"
 import { ProductThumb } from "@/components/products/product-thumb"

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Eye } from "lucide-react"
+import { Eye } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
 
 export interface OrderItemCardProps {

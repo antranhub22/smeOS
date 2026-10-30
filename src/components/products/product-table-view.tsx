@@ -2,7 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
-import { Eye, Sparkles, Trash2 } from "lucide-react"
+import { Eye, Sparkles, Trash2 } from "@/components/ui/icons"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { PriceLabel, type ProductItem, StatusBadge } from "@/components/products/product-card"
 import { useI18n } from "@/lib/i18n"

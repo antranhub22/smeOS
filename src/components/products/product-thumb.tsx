@@ -1,6 +1,6 @@
 "use client"
 
-import { ImageOff } from "lucide-react"
+import { ImageOff } from "@/components/ui/icons"
 import { DriveThumbImage } from "@/components/greeting-card/drive-thumb-image"
 
 type Props = {

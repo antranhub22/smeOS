@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { FileText, Plus, Trash2 } from "lucide-react"
+import { FileText, Plus, Trash2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FLOWER_ROLES, type FlowerItem } from "./ai-product-helpers"

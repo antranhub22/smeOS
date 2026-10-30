@@ -13,7 +13,7 @@
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { Search, X, ChevronDown, BarChart3 } from "lucide-react"
+import { Search, X, ChevronDown, BarChart3 } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { isRouteLocked } from "@/lib/feature-lock"
 import { cn, stripVietnamese } from "@/lib/utils"

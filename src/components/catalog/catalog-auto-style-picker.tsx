@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, CheckCircle2, ChevronRight, Zap } from "lucide-react"
+import { Sparkles, CheckCircle2, ChevronRight, Zap } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { CatalogTemplateId, CatalogStyleId } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import type { StyleSuggestion } from "@/modules/catalog-studio/domain/auto-style-resolver"

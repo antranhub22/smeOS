@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Star, MessageSquareQuote, CheckCircle2 } from "lucide-react"
+import { Star, MessageSquareQuote, CheckCircle2 } from "@/components/ui/icons"
 
 export interface ReviewItem {
   id: string

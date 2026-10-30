@@ -12,7 +12,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from "react"
-import { Plus, X, Pin, RotateCcw, ChevronDown } from "lucide-react"
+import { Plus, X, Pin, RotateCcw, ChevronDown } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"
 import { NAV_ICONS as ICONS } from "./nav-icons"

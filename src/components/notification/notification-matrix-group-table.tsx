@@ -6,7 +6,7 @@
  */
 "use client"
 
-import { ChevronDown, ChevronRight } from "lucide-react"
+import { ChevronDown, ChevronRight } from "@/components/ui/icons"
 import { useState } from "react"
 import { NotificationMatrixCell } from "./notification-matrix-cell"
 import type {

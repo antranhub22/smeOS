@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Loader2, Send, X } from "lucide-react"
+import { Loader2, Send, X } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { MAX_MESSAGE_LENGTH } from "@/modules/greeting-card/domain/internal-message"
 import { DiscountRequestForm } from "./discount-request-form"

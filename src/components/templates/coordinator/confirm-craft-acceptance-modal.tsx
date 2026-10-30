@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react"
+import { CheckCircle2, AlertTriangle, ShieldCheck } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import type { CoordinationPartner } from "@/components/coordinator/coordinator-api"

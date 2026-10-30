@@ -10,7 +10,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { AlertTriangle, CheckCircle2, Clapperboard, Loader2, RefreshCw } from "lucide-react"
+import { AlertTriangle, CheckCircle2, Clapperboard, Loader2, RefreshCw } from "@/components/ui/icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

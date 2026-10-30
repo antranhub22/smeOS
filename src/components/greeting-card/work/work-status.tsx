@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { AlertTriangle, Clock } from "lucide-react"
+import { AlertTriangle, Clock } from "@/components/ui/icons"
 import { STEP_OWNER_LABEL, formatMinutes, type StepOwner } from "@/modules/greeting-card/domain/step-sla"
 import type { TrackingPipelineItem } from "@/modules/greeting-card/domain/tracking-pipeline-types"
 

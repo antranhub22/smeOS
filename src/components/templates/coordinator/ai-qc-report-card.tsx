@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, XCircle, RotateCcw, Sparkles, Check, AlertTriangle } from "lucide-react"
+import { CheckCircle2, XCircle, RotateCcw, Sparkles, Check, AlertTriangle } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

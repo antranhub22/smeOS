@@ -15,7 +15,7 @@
 import { useI18n } from "@/lib/i18n"
 import React, { useState, Suspense } from "react"
 import { useRouter } from "next/navigation"
-import { Sparkles, ArrowLeft, Calendar, Database, Upload, CheckCircle2 } from "lucide-react"
+import { Sparkles, ArrowLeft, Calendar, Database, Upload, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { FlowSteps } from "@/components/flow/flow-steps"

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Info, AlertCircle } from "lucide-react"
+import { Info, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {

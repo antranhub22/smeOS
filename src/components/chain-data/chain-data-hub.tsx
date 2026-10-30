@@ -15,7 +15,7 @@ import {
   FileSpreadsheet,
   Layers,
   ArrowLeft,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { ChainStoreSummary } from "@/modules/field-platform/use-cases/get-chain-stores-data"
 import type { StoreFolderDataResult, StoreDomainFolder } from "@/modules/field-platform/use-cases/get-store-folder-data"
 import { StoreCard } from "./store-card"
@@ -23,7 +23,7 @@ import { DomainFolderCard } from "./domain-folder-card"
 import { FieldDataTable } from "./field-data-table"
 import { AddBranchModal } from "./add-branch-modal"
 import { AddPartnerStoreModal } from "./add-partner-store-modal"
-import { Plus, Handshake, Building2 } from "lucide-react"
+import { Plus, Handshake, Building2 } from "@/components/ui/icons"
 
 export function ChainDataHub() {
   const [stores, setStores] = useState<readonly ChainStoreSummary[]>([])

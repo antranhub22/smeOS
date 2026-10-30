@@ -2,7 +2,7 @@
 
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef } from "react"
-import { UploadCloud, X } from "lucide-react"
+import { UploadCloud, X } from "@/components/ui/icons"
 
 interface SmartInputFileUploaderProps {
   imageFiles: File[]

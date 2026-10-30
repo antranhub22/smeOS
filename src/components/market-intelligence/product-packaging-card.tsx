@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Mail, Gift, Scissors, Plus, Trash2, Sparkles, CheckSquare, Square } from "lucide-react";
+import { Mail, Gift, Scissors, Plus, Trash2, Sparkles, CheckSquare, Square } from "@/components/ui/icons";
 import type {
   ProductPackaging,
   ProductCardAccessory,

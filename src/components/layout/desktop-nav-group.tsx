@@ -4,7 +4,7 @@
  * desktop-nav-group.tsx — Render một nhóm điều hướng trong Sidebar (SRP)
  */
 
-import { ChevronDown, BarChart3 } from "lucide-react"
+import { ChevronDown, BarChart3 } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import type { NavEntry, NavGroup as NavGroupType } from "./nav-model"
 import { isToolkitGroupKey } from "./nav/nav-types"
@@ -137,8 +137,8 @@ export function DesktopNavGroup({
               )}
               <div className="flex items-center gap-2.5">
                 <BarChart3
-                  size={16}
-                  strokeWidth={isReportActive ? 2.4 : 1.9}
+                  size={20}
+                  weight={isReportActive ? "fill" : "regular"}
                   aria-hidden
                   className={isReportActive ? "text-primary" : "text-text-muted group-hover:text-text"}
                 />

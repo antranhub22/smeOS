@@ -3,7 +3,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, RefreshCw, Sparkles, CheckCircle2, Share2, Calendar } from "lucide-react"
+import { ArrowLeft, RefreshCw, Sparkles, CheckCircle2, Share2, Calendar } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

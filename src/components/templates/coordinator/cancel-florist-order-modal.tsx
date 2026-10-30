@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Ban, AlertCircle } from "lucide-react"
+import { Ban, AlertCircle } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"

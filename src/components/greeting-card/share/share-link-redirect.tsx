@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "@/components/ui/icons"
 
 /** Chuyển khách sang trang Thẻ chào (chạy trong trình duyệt, máy quét xem trước link không chạy). */
 export function ShareLinkRedirect({ href, name }: { href: string; name: string }) {

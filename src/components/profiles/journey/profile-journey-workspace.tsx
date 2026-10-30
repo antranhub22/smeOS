@@ -12,7 +12,7 @@ import {
   Layers,
   ChevronRight,
   ExternalLink,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import Link from "next/link"
 import type { BusinessProfileDetail } from "@/modules/profiles/use-cases/get-business-profile"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"

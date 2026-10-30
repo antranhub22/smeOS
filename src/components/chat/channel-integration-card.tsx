@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Settings, Loader2 } from "lucide-react"
+import { Settings, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"

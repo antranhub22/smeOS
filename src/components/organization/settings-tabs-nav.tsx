@@ -11,7 +11,7 @@ import {
   FileText,
   Send,
   Cpu,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
 
 export type SettingsTab =

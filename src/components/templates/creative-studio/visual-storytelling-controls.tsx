@@ -14,7 +14,7 @@ import {
   Sparkles,
   BookOpen,
   Check,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { CameraAngleType, HumanInteractionType, StorylineMode } from "@/modules/media/domain/creative-studio-schemas"
 
 export interface VisualStorytellingControlsProps {

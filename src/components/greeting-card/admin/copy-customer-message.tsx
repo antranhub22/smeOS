@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Check, Copy } from "lucide-react"
+import { Check, Copy } from "@/components/ui/icons"
 
 /** Nút "Sao chép tin báo khách" — dán gửi khách qua Zalo khi tiệm chưa bật Zalo ZNS/SMS. */
 export function CopyCustomerMessage({ text }: { text: string }) {

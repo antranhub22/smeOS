@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, SlidersHorizontal } from "lucide-react"
+import { Sparkles, SlidersHorizontal } from "@/components/ui/icons"
 
 interface DualModeHeaderProps {
   mode: "auto" | "manual"

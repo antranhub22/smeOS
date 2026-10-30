@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ChevronDown, Link2 } from "lucide-react"
+import { ChevronDown, Link2 } from "@/components/ui/icons"
 import { useApi } from "@/components/greeting-card/greeting-api"
 
 const hhmm = (iso: string | null) =>

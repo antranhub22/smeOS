@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { X, ExternalLink, Play, Film } from "lucide-react";
+import { X, ExternalLink, Play, Film } from "@/components/ui/icons";
 
 export interface VideoPreviewModalData {
   title: string;

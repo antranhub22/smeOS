@@ -3,7 +3,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, AlertTriangle, RotateCcw, XCircle } from "lucide-react"
+import { ArrowLeft, AlertTriangle, RotateCcw, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"

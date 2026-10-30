@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CircleHelp } from "lucide-react"
+import { CircleHelp } from "@/components/ui/icons"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip"
 import { cn } from "@/lib/utils"
 

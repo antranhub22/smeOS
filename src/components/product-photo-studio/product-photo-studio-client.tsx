@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, Loader2, RefreshCw } from "lucide-react"
+import { Sparkles, Loader2, RefreshCw } from "@/components/ui/icons"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { PresetSelector } from "@/components/product-photo-studio/preset-selector"

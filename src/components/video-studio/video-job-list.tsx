@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Film, CheckCircle2, Clock, AlertCircle, Sparkles, ChevronRight } from "lucide-react";
+import { Film, CheckCircle2, Clock, AlertCircle, Sparkles, ChevronRight } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

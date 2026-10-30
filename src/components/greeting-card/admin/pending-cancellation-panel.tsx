@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertOctagon, CheckCircle2, RefreshCw, XCircle } from "lucide-react"
+import { AlertOctagon, CheckCircle2, RefreshCw, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"

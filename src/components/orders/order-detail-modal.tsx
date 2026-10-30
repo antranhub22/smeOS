@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Clock, Loader2, Layers, FileText, Truck, Flower2 } from "lucide-react"
+import { Clock, Loader2, Layers, FileText, Truck, Flower2 } from "@/components/ui/icons"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog } from "@/components/ui/dialog"
 import { FloristTicketCard } from "@/components/templates/orders/florist-ticket-card"

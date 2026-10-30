@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Trash2 } from "lucide-react"
+import { Trash2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export interface SubcontractPodPreviewProps {

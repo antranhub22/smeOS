@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react"
+import type { LucideIcon } from "@/components/ui/icons"
 import {
   Home,
   Users,
@@ -77,7 +77,7 @@ import {
   Library,
   Palette,
   Shield,
-} from "lucide-react"
+} from "@/components/ui/icons"
 
 export type NavIconComponent = LucideIcon
 

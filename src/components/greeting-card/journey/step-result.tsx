@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, CheckCircle2, Copy, ExternalLink, Eye, Plus } from "lucide-react"
+import { Check, CheckCircle2, Copy, ExternalLink, Eye, Plus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 interface StepResultProps {

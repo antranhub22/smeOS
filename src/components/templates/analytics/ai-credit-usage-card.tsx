@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Cpu, ShieldCheck, Zap } from "lucide-react"
+import { Cpu, ShieldCheck, Zap } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 

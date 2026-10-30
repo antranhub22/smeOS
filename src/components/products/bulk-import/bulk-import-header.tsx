@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, CheckCircle2, Download, Store, FileSpreadsheet } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Download, Store, FileSpreadsheet } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 type ActiveTab = "products" | "branches"

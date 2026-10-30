@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Video, Play } from "lucide-react";
+import { Video, Play } from "@/components/ui/icons";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getOpportunityTimeframeMeta } from "@/modules/market-intelligence/domain/trend-timeframe";
 import { getOpportunityHeadline } from "./opportunity-illustration";

@@ -31,7 +31,7 @@ import {
   Database,
   FileDown,
   FileSpreadsheet,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { PlatformOrgDataSummary } from "@/modules/platform/use-cases/get-platform-orgs-data"
 import type { RecordDomain } from "@/modules/platform/use-cases/get-platform-org-records"
 import { useI18n } from "@/lib/i18n"

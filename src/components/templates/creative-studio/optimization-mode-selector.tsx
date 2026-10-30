@@ -13,7 +13,7 @@ import {
   Maximize2,
   Type,
   Sparkles,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 import {
   OPTIMIZATION_CAPABILITIES,

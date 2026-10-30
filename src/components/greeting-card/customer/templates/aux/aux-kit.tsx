@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
-import { Heart } from "lucide-react"
+import { Heart } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { cn } from "@/lib/utils"
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"

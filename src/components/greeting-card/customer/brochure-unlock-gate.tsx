@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react"
 import { useRouter } from "next/navigation"
-import { Loader2, LockKeyhole } from "lucide-react"
+import { Loader2, LockKeyhole } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { ShopContactBar } from "./shop-contact-bar"
 

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Gift, ShieldCheck, FileText, Plus, Trash2, Check, RotateCcw } from "lucide-react"
+import { Gift, ShieldCheck, FileText, Plus, Trash2, Check, RotateCcw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { PromotionKindField } from "./promotion-kind-field"
 import {

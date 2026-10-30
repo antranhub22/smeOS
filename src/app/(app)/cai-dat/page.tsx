@@ -11,7 +11,7 @@ import {
   ShieldCheck,
   Gift,
   FileText,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { ModelChangeCard } from "@/components/organization/model-change-card"

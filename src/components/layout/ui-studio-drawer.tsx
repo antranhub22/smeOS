@@ -10,7 +10,7 @@ import {
   Maximize2,
   Eye,
   SlidersHorizontal,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useUiSystem } from "@/lib/ui-system/ui-provider"
 import type { UiPresetId, UiDensity, UiLayoutMode } from "@/lib/ui-system/types"
 import { Button } from "@/components/ui/button"

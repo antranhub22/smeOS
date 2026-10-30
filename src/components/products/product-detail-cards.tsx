@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Layers, Flower2, FileText, Sparkles } from "lucide-react"
+import { Layers, Flower2, FileText, Sparkles } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FlowerPlaceholder } from "@/components/ui/flower-placeholder"

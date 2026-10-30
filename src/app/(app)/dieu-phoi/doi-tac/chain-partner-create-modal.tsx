@@ -16,7 +16,7 @@ import {
   X,
   Link2,
   Sparkles,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { ChainPartnershipEntity } from "@/modules/chain-partnership/domain/partnership-entities"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"

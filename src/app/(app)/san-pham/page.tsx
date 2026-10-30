@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Sparkles, RefreshCw, FileSpreadsheet, Download } from "lucide-react"
+import { Plus, Sparkles, RefreshCw, FileSpreadsheet, Download } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"

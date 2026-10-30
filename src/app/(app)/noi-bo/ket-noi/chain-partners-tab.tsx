@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import { Building2, Store, MessageSquare, ChevronRight, Layers } from "lucide-react"
+import { Building2, Store, MessageSquare, ChevronRight, Layers } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 
 export interface ChainRelation {

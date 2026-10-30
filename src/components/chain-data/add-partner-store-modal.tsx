@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { ShieldAlert, AlertCircle, FileText, CheckCircle2, Handshake } from "lucide-react"
+import { ShieldAlert, AlertCircle, FileText, CheckCircle2, Handshake } from "@/components/ui/icons"
 import type { PropagationTarget } from "@/modules/field-platform/domain/field-registry-v2"
 
 interface AddPartnerStoreModalProps {

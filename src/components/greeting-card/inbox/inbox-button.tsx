@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from "react"
-import { Bell } from "lucide-react"
+import { Bell } from "@/components/ui/icons"
 import { InboxPanel, type InboxTarget } from "./inbox-panel"
 import { useInbox } from "./use-inbox"
 import { cn } from "@/lib/utils"

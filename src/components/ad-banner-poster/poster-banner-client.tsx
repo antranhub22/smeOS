@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef, useCallback, useMemo } from "react"
-import { Download, RefreshCw, Share2, LayoutGrid } from "lucide-react"
+import { Download, RefreshCw, Share2, LayoutGrid } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { POSTER_EXPORT_WIDTH } from "./scaled-frame"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle, ShieldAlert, Loader2, X } from "lucide-react"
+import { AlertTriangle, ShieldAlert, Loader2, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export interface BypassRequestModalProps {

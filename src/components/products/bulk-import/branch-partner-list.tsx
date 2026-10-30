@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Bot, Loader2, MessageCircle, Phone, Store } from "lucide-react"
+import { Bot, Loader2, MessageCircle, Phone, Store } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 
 export const BRANCH_LIST_URL = "/api/v1/greeting-card/chain-branches"

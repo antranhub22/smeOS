@@ -9,7 +9,7 @@ import {
   Lock,
   ChevronDown,
   Trash2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { PhotoSourcePicker } from "./photo-source-picker"
 import { cn } from "@/lib/utils"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Coins, Loader2 } from "lucide-react"
+import { Coins, Loader2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { CraftComplexity, IndustryCraftFeeSpec } from "@/modules/organization/domain/industry-plugin-contract"

@@ -2,7 +2,7 @@
 
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
-import { CheckCircle2, AlertCircle, Download, RotateCcw } from "lucide-react"
+import { CheckCircle2, AlertCircle, Download, RotateCcw } from "@/components/ui/icons"
 import type { PhotoEnhanceQcEvaluation } from "@/modules/product-photo-studio/domain/photo-enhance-rules"
 import { EnhanceComparison } from "./enhance-comparison"
 

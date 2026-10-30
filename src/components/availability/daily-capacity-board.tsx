@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Calendar, ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle } from "lucide-react"
+import { Calendar, ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle } from "@/components/ui/icons"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 

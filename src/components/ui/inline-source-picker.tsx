@@ -9,7 +9,7 @@ import {
   Image as ImageIcon,
   Sparkles,
   Search,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

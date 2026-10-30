@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Eye, ExternalLink, QrCode, Smartphone, Monitor } from "lucide-react"
+import { Eye, ExternalLink, QrCode, Smartphone, Monitor } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { CatalogProduct } from "./catalog-management-tab"

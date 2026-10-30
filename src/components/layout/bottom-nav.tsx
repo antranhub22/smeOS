@@ -11,7 +11,7 @@ import {
   Clock,
   Package,
   type LucideIcon,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
@@ -61,7 +61,7 @@ export function BottomNav() {
         {pathname === "/" && (
           <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" aria-hidden="true" />
         )}
-        <Home size={20} strokeWidth={pathname === "/" ? 2.4 : 1.9} />
+        <Home size={20} weight={pathname === "/" ? "fill" : "regular"} />
         <span className="text-caption">{t("layout.home")}</span>
       </Link>
 
@@ -80,7 +80,7 @@ export function BottomNav() {
             {isSlot2Active && (
               <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" aria-hidden="true" />
             )}
-            <Slot2Icon size={20} strokeWidth={isSlot2Active ? 2.4 : 1.9} />
+            <Slot2Icon size={20} weight={isSlot2Active ? "fill" : "regular"} />
             <span className="text-caption truncate max-w-[64px]">
               {slot2.mobileLabel || slot2.label}
             </span>
@@ -119,7 +119,7 @@ export function BottomNav() {
                 <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" aria-hidden="true" />
               )}
               <div className="relative">
-                <CheckCircle2 size={20} strokeWidth={isDuyetActive ? 2.4 : 1.9} />
+                <CheckCircle2 size={20} weight={isDuyetActive ? "fill" : "regular"} />
                 <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary" />
               </div>
               <span className="text-caption">{t("layout.approve")}</span>
@@ -141,7 +141,7 @@ export function BottomNav() {
               {isJobActive && (
                 <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" aria-hidden="true" />
               )}
-              <Clock size={20} strokeWidth={isJobActive ? 2.4 : 1.9} />
+              <Clock size={20} weight={isJobActive ? "fill" : "regular"} />
               <span className="text-caption">{t("layout.myJobs")}</span>
             </Link>
           )
@@ -163,7 +163,7 @@ export function BottomNav() {
             {isThemActive && (
               <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" aria-hidden="true" />
             )}
-            <Plus size={20} strokeWidth={isThemActive ? 2.4 : 1.9} />
+            <Plus size={20} weight={isThemActive ? "fill" : "regular"} />
             <span className="text-caption">{t("layout.more")}</span>
           </Link>
         )

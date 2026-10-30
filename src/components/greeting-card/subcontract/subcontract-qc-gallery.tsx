@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ImageIcon, Trash2 } from "lucide-react"
+import { ImageIcon, Trash2 } from "@/components/ui/icons"
 
 interface SubcontractQcGalleryProps {
   photos: string[]

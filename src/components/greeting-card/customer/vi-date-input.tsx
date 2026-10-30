@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CalendarDays } from "lucide-react"
+import { CalendarDays } from "@/components/ui/icons"
 import { viDeliveryDate, viShortDate } from "@/modules/greeting-card/domain/delivery-schedule"
 import { useI18n } from "@/lib/i18n"
 

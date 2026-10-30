@@ -8,7 +8,7 @@ import {
   Layers,
   Check,
   Flower2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { SmartFlowerImage } from "./smart-flower-image"

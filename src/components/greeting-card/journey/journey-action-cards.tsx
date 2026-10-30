@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { BookOpen, Send, Sparkles, ArrowRight, ShieldCheck, Plus, CheckCircle2 } from "lucide-react"
+import { BookOpen, Send, Sparkles, ArrowRight, ShieldCheck, Plus, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Landmark, Save, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
+import { Landmark, Save, Loader2, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { BROCHURE_PAYMENT_SETTINGS_KEY } from "@/modules/greeting-card/domain/brochure-commerce-rules"

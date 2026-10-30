@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useId } from "react"
-import { Calendar, Home, Clock, Car, Bike, Plane, CheckCircle2 } from "lucide-react"
+import { Calendar, Home, Clock, Car, Bike, Plane, CheckCircle2 } from "@/components/ui/icons"
 import { ViDateInput } from "./vi-date-input"
 import { HomestayGuestFields } from "./homestay-guest-fields"
 import { AvailabilityIndicator } from "./availability-indicator"

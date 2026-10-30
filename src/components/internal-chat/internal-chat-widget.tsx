@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState, useRef } from "react"
-import { MessageSquare, X, Send, ChevronLeft, Building, Store, ShieldCheck } from "lucide-react"
+import { MessageSquare, X, Send, ChevronLeft, Building, Store, ShieldCheck } from "@/components/ui/icons"
 import type { InternalChatConversation, InternalChatMessage, ActionCardOrderPayload } from "@/modules/internal-chat/domain/chat-entities"
 import { ActionCardOrder } from "./action-card-order"
 import { Button } from "@/components/ui/button"

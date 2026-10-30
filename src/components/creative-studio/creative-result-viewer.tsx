@@ -24,7 +24,7 @@ import {
   MessageCircle,
   Send,
   Calendar,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { StageGateApprovalBar } from "@/components/ui/stage-gate-approval-bar"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"

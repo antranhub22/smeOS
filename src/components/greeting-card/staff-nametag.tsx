@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { UserCheck, Sparkles } from "lucide-react"
+import { UserCheck, Sparkles } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import type { TrackingPipelineStepId } from "@/modules/greeting-card/domain/tracking-pipeline-types"
 

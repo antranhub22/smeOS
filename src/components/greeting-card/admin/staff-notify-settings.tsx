@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Bell, Loader2, Save, ShieldCheck } from "lucide-react"
+import { Bell, Loader2, Save, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {

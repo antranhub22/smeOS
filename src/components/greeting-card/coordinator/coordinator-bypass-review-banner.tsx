@@ -9,7 +9,7 @@
  */
 
 import React, { useState } from "react"
-import { AlertTriangle, CheckCircle2, XCircle, Loader2, ShieldAlert } from "lucide-react"
+import { AlertTriangle, CheckCircle2, XCircle, Loader2, ShieldAlert } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export interface StepBypassRecord {
