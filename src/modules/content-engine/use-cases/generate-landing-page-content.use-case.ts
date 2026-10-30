@@ -26,6 +26,7 @@ import {
   createLandingCriticAdapter,
 } from "../adapters/landing-catalog-ai-adapter"
 import type { LandingWriterOutput } from "../domain/prompts/landing/v1"
+import { findCliches, findUndeclaredPromises } from "../domain/landing-copy-guard"
 
 const CRITIC_THRESHOLD = 0.65
 
@@ -72,6 +73,33 @@ function mergeWithTemplate(
   }
 }
 
+function copyGuardIssues(ai: LandingWriterOutput, declared: readonly string[]): string[] {
+  const text = [
+    ai.hero.badge, ai.hero.headline, ai.hero.subHeadline,
+    ai.story.title, ai.story.paragraph1, ai.story.paragraph2, ai.story.quote,
+    ...ai.perks.flatMap((p) => [p.title, p.description]),
+    ...ai.faq.flatMap((f) => [f.question, f.answer]),
+    ai.lead.title, ai.lead.description,
+  ].join("\n")
+  return [...findCliches(text), ...findUndeclaredPromises(text, declared)]
+}
+
+/** Sau lần viết lại vẫn còn lời hứa chưa khai → bỏ mục đó (perk/FAQ) hoặc trả phần đó về bản mẫu (hero/story). */
+function dropUndeclaredPromises(
+  pkg: GeneratedLandingPackage,
+  template: GeneratedLandingPackage,
+  declared: readonly string[]
+): GeneratedLandingPackage {
+  const has = (t: string) => findUndeclaredPromises(t, declared).length > 0
+  return {
+    ...pkg,
+    hero: has(`${pkg.hero.headline} ${pkg.hero.subHeadline} ${pkg.hero.badge}`) ? template.hero : pkg.hero,
+    story: has([pkg.story.title, ...pkg.story.paragraphs, pkg.story.quote].join(" ")) ? template.story : pkg.story,
+    perks: pkg.perks.filter((p) => !has(`${p.title} ${p.description}`)),
+    faq: pkg.faq.filter((f) => !has(`${f.question} ${f.answer}`)),
+  }
+}
+
 export async function executeGenerateLandingContent(
   input: LandingContentInput,
   ctx?: TenantContext
@@ -96,7 +124,12 @@ export async function executeGenerateLandingContent(
       userDirectives: input.userDirectives,
       discountPercent: input.discountPercent,
       pageGoal: input.pageGoal,
+      usps: input.usps,
+      guarantees: input.guarantees,
+      targetAudience: input.targetAudience,
     }
+    // Lời hứa chỉ hợp lệ khi tiệm đã tự khai trong điểm mạnh / cam kết
+    const declared = [...(input.usps ?? []), ...(input.guarantees ?? [])]
 
     // 1. Writer AI
     const writerResult = await callCapability(
@@ -138,26 +171,28 @@ export async function executeGenerateLandingContent(
       deps
     )
 
-    if (criticResult.kind === "xong") {
-      const { factual, completeness } = criticResult.output
-      const avgScore = (factual + completeness) / 2
-
-      // Nếu điểm thấp → thử Writer lần 2 với fix instructions
-      if (avgScore < CRITIC_THRESHOLD && criticResult.output.fixInstructions) {
-        const retryInput = {
-          ...writerInput,
-          userDirectives: [input.userDirectives, `[Sửa lỗi] ${criticResult.output.fixInstructions}`]
-            .filter(Boolean)
-            .join("\n"),
-        }
-        const retryResult = await callCapability(
-          { capability: "content_generation", privacy: "SHOP", source: "CORE", jobId: null },
-          createLandingWriterAdapter(llm, retryInput, ctx.organizationId),
-          deps
-        )
-        if (retryResult.kind === "xong") {
-          aiOutput = retryResult.output
-        }
+    // Kiểm chữ tất định: cụm sáo rỗng + lời hứa chưa khai → yêu cầu viết lại (tối đa 1 lần, gộp với Critic)
+    const guardIssues = copyGuardIssues(aiOutput, declared)
+    const criticLow =
+      criticResult.kind === "xong" &&
+      (criticResult.output.factual + criticResult.output.completeness) / 2 < CRITIC_THRESHOLD &&
+      !!criticResult.output.fixInstructions
+    if (criticLow || guardIssues.length > 0) {
+      const fixes = [
+        criticLow && criticResult.kind === "xong" ? criticResult.output.fixInstructions : "",
+        guardIssues.length > 0 ? `Bỏ hoặc viết lại các cụm: ${guardIssues.join("; ")}` : "",
+      ].filter(Boolean)
+      const retryInput = {
+        ...writerInput,
+        userDirectives: [input.userDirectives, `[Sửa lỗi] ${fixes.join(" | ")}`].filter(Boolean).join("\n"),
+      }
+      const retryResult = await callCapability(
+        { capability: "content_generation", privacy: "SHOP", source: "CORE", jobId: null },
+        createLandingWriterAdapter(llm, retryInput, ctx.organizationId),
+        deps
+      )
+      if (retryResult.kind === "xong") {
+        aiOutput = retryResult.output
       }
     }
 
@@ -175,7 +210,7 @@ export async function executeGenerateLandingContent(
       merged.hero.subHeadline = template.hero.subHeadline
     }
 
-    return merged
+    return dropUndeclaredPromises(merged, template, declared)
   } catch {
     // Mọi lỗi network / timeout → fallback template, không để job FAILED
     return template

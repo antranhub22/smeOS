@@ -120,7 +120,6 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
             name: p.name, code: p.code, price: p.price, category: p.category,
           })),
           userDirectives: data.userDirectives || undefined,
-          targetAudience: data.userDirectives || undefined,
           designDirection: selectedArchetype,
           pageType,
         }),

@@ -22,6 +22,7 @@ import {
   type GeneratedCatalogContent,
 } from "../domain/catalog-content-generator"
 import { findBannedPhrases } from "../domain/flower-banned-dictionary"
+import { findUndeclaredPromises } from "../domain/landing-copy-guard"
 import {
   createCatalogWriterAdapter,
   createCatalogCriticAdapter,
@@ -116,7 +117,8 @@ export async function executeGenerateCatalogContent(
     // 3. Kiểm từ cấm ngành hoa
     const combinedText = `${aiOutput.badge} ${aiOutput.description} ${aiOutput.curatorNote}`
     const banned = findBannedPhrases(combinedText)
-    if (banned.length > 0) {
+    // Lời hứa (giờ giao, độ tươi, miễn phí, 100%…) — catalog không có nơi tiệm khai cam kết nên không được hứa
+    if (banned.length > 0 || findUndeclaredPromises(combinedText).length > 0) {
       return template
     }
 

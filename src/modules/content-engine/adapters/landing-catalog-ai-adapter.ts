@@ -14,16 +14,10 @@ import type { AiModelCandidate } from "@/core/ai/domain/routing"
 import type { AdapterOutcome } from "@/core/ai/gateway"
 import type { LLMProvider, LLMResponse } from "@/core/ports/llm-provider"
 
-import {
-  LANDING_WRITER_PROMPT_V1,
-  type LandingWriterInput,
-  type LandingWriterOutput,
-} from "../domain/prompts/landing/v1"
-import {
-  CATALOG_WRITER_PROMPT_V1,
-  type CatalogWriterInput,
-  type CatalogWriterOutput,
-} from "../domain/prompts/catalog/v1"
+import { ACTIVE_PROMPTS } from "../domain/prompts/active"
+import type { LandingWriterInput, LandingWriterOutput } from "../domain/prompts/landing/v1"
+import type { LandingWriterInputV2 } from "../domain/prompts/landing/v2"
+import type { CatalogWriterInput, CatalogWriterOutput } from "../domain/prompts/catalog/v1"
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -65,19 +59,19 @@ const CATALOG_TIMEOUT_MS = 15_000
 
 // ── Landing Page Writer ───────────────────────────────────────────────────────
 
-export function createLandingWriterAdapter(llm: LLMProvider, input: LandingWriterInput, organizationId: string) {
+export function createLandingWriterAdapter(llm: LLMProvider, input: LandingWriterInputV2, organizationId: string) {
   return async (model: AiModelCandidate): Promise<AdapterOutcome<LandingWriterOutput>> => {
     const t0 = Date.now()
     try {
       const response = await llm.complete({
         organizationId,
-        prompt: LANDING_WRITER_PROMPT_V1.build(input),
+        prompt: ACTIVE_PROMPTS.landingWriter.build(input),
         model: model.key,
         timeoutMs: LANDING_TIMEOUT_MS,
-        jsonSchema: LANDING_WRITER_PROMPT_V1.jsonSchema(),
+        jsonSchema: ACTIVE_PROMPTS.landingWriter.jsonSchema(),
         maxTokens: 2000,
       })
-      const r = LANDING_WRITER_PROMPT_V1.normalize(parseJson(response.text))
+      const r = ACTIVE_PROMPTS.landingWriter.normalize(parseJson(response.text))
       if (!r.ok) throw new Error(r.reason)
 
       const knownPrices = input.selectedProducts
@@ -129,7 +123,7 @@ FAQ: ${input.output.faq.map((q) => q.question).slice(0, 2).join(" | ")}
 
 TIÊU CHÍ:
 - factual (0–1): Có bịa giá, tên sản phẩm, cam kết ngoài sự thật không?
-- completeness (0–1): Headline đủ cảm xúc, story đủ thuyết phục, perks đủ 4 cam kết?
+- completeness (0–1): Headline CỤ THỂ (loài hoa/màu/người nhận/dịp, không câu chung chung dùng được cho mọi tiệm), story có hình ảnh cụ thể, không cụm sáo rỗng, không hứa giờ giao/độ tươi/miễn phí/100% khi tiệm chưa khai?
 
 Trả về JSON: { "factual": number, "completeness": number, "issues": string[], "fix_instructions": string }. Không thêm lời dẫn.`
 
@@ -165,13 +159,13 @@ export function createCatalogWriterAdapter(llm: LLMProvider, input: CatalogWrite
     try {
       const response = await llm.complete({
         organizationId,
-        prompt: CATALOG_WRITER_PROMPT_V1.build(input),
+        prompt: ACTIVE_PROMPTS.catalogWriter.build(input),
         model: model.key,
         timeoutMs: CATALOG_TIMEOUT_MS,
-        jsonSchema: CATALOG_WRITER_PROMPT_V1.jsonSchema(),
+        jsonSchema: ACTIVE_PROMPTS.catalogWriter.jsonSchema(),
         maxTokens: 600,
       })
-      const r = CATALOG_WRITER_PROMPT_V1.normalize(parseJson(response.text))
+      const r = ACTIVE_PROMPTS.catalogWriter.normalize(parseJson(response.text))
       if (!r.ok) throw new Error(r.reason)
 
       return withUsage(
