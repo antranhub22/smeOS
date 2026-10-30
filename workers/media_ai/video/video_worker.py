@@ -26,6 +26,7 @@ from psycopg.rows import dict_row
 
 from media_ai.video.providers import get_video_provider, VideoProviderError
 from shared.job_trace import log_job_claimed
+from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import dang_dung_kho_dung_chung, ghi_bytes
 
 FEATURE = "video.render"
@@ -54,6 +55,7 @@ def notify_channel_for(feature: str) -> str:
 
 def claim_next(conn: psycopg.Connection, feature: str = FEATURE) -> Optional[Dict[str, Any]]:
     """Lấy job video tiếp theo bằng SELECT FOR UPDATE SKIP LOCKED."""
+    xoa_ngu_canh_job()
     with conn.transaction():
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
@@ -252,4 +254,5 @@ def run_worker(db_url: Optional[str] = None):
 
 
 if __name__ == "__main__":
+    cau_hinh_log()
     run_worker()

@@ -22,7 +22,7 @@
 | Metrics RED / hàng đợi / kênh / chi phí AI | 🔴 chưa có số đo; chỉ có dữ liệu thô trong DB | Bước 1: màn vận hành đọc từ DB (`job_events`, sổ AI); bước 2: exporter |
 | Readiness tách liveness | 🟡 một endpoint | `/api/health/ready` |
 | Worker heartbeat | 🟡 chỉ có quét job treo 15 phút (`markStuckAsFailed`) | Heartbeat từng worker |
-| Log worker Python cùng định dạng | 🟡 chưa thống nhất trường | Helper log JSON trong `workers/shared/` |
+| Log worker Python cùng định dạng | 🟡 `workers/shared/log_json.py`: mọi bản ghi `logging` thành JSON cùng trường web + ngữ cảnh job (`requestId`, `jobId`…), bật ở 3 worker; `print(...)` trong `media`/`video` chưa qua `logging` | Đổi dần `print` sang `logging.getLogger(...)` |
 | SLO + cảnh báo + runbook | 🔴 chưa có | 3–5 SLO trong `docs/handover/OPERATIONS_RUNBOOK.md` |
 
 ## 3. Quy tắc cho agent (áp dụng ngay)

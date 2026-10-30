@@ -50,6 +50,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 from shared.job_trace import log_job_claimed
+from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import doc_bytes, ghi_bytes
 from media_ai.guard.compare import REJECTED
 from media_ai.guard.verifier import VisionIdentityVerifier
@@ -101,6 +102,7 @@ def _set_stage(conn: psycopg.Connection, job_id: str, stage: str) -> None:
 
 
 def claim_next(conn: psycopg.Connection, feature: str) -> dict[str, Any] | None:
+    xoa_ngu_canh_job()
     with conn.transaction():
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
@@ -583,6 +585,7 @@ def _canh_bao_moi_truong() -> None:
 
 
 def main() -> None:
+    cau_hinh_log()
     _canh_bao_moi_truong()
     run_worker(os.environ["DATABASE_URL"])
 

@@ -27,6 +27,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 from shared.job_trace import log_job_claimed
+from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import dang_dung_kho_dung_chung, doc_bytes
 from vision.providers.chung import MucDung, nap_json, tinh_cost_usd
 from vision.providers.registry import lay_provider, lay_provider_co_du_phong
@@ -90,6 +91,7 @@ def claim_next(conn: psycopg.Connection, feature: str) -> dict[str, Any] | None:
     dịch — đúng cơ chế `GenerationJobRepository.claimNext` phía TS (đặc tả 07
     mục 6), worker chạy thẳng câu SQL này, không gọi lại hàm TS (`YC-J8`).
     """
+    xoa_ngu_canh_job()
     with conn.transaction():
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
@@ -510,10 +512,7 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
 
 
 def main() -> None:
-    logging.basicConfig(
-        level=os.environ.get("LOG_LEVEL", "INFO"),
-        format="%(asctime)s %(levelname)s %(name)s %(message)s",
-    )
+    cau_hinh_log()
     database_url = os.environ["DATABASE_URL"]
     run_worker(database_url)
 
