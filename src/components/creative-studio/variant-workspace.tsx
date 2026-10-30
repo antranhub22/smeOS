@@ -474,7 +474,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
             aiRelit: meta.ai_relit === true,
             integrityDetail:
               meta.integrity_method === "perceptual" && typeof item.identity_score === "number"
-                ? `Giữ nguyên bó hoa (đo hình dáng + cấu trúc + màu) · cấu trúc ${(item.identity_score * 100).toFixed(1)}% · đã chỉnh sáng bằng AI`
+                ? `Giữ nguyên sản phẩm (đo hình dáng + cấu trúc + màu) · cấu trúc ${(item.identity_score * 100).toFixed(1)}% · đã chỉnh sáng bằng AI`
                 : null,
           }
           const list = (candidates[idx] ??= [])
@@ -583,7 +583,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
         if (detail.result === "REJECTED") {
           const si = detail.subject_integrity
           failures.push(
-            `Cổng Subject Integrity từ chối${si ? ` (${describeIntegrity(si)})` : ""}: bó hoa bị thay đổi — không biến thể nào được ghi vào kho.`
+            `Cổng Subject Integrity từ chối${si ? ` (${describeIntegrity(si)})` : ""}: sản phẩm bị thay đổi — không biến thể nào được ghi vào kho.`
           )
           return
         }
@@ -883,7 +883,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
           <div className="w-full rounded-xl border-2 border-danger bg-danger-bg px-4 py-3 text-body-sm text-danger">
             <div className="font-bold">Không có biến thể nào được ghi</div>
             <div className="mt-1">
-              Cổng toàn vẹn đo thấy lõi bó hoa bị thay đổi trong lúc ghép bối cảnh, nên không
+              Cổng toàn vẹn đo thấy lõi sản phẩm bị thay đổi trong lúc ghép bối cảnh, nên không
               biến thể nào được lưu vào kho. Master Image của tiệm vẫn nguyên vẹn.
             </div>
             {variantIntegrity && variantIntegrity.ly_do.length > 0 && (
@@ -1051,7 +1051,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
                           title={
                             engine === "cloud_provider"
                               ? "Giữ cỡ cảnh, ánh sáng, phong cách — hậu cảnh mới (seed mới)"
-                              : "Giữ cỡ cảnh và phong cách — dời vị trí bó hoa / hướng sáng"
+                              : "Giữ cỡ cảnh và phong cách — dời vị trí sản phẩm / hướng sáng"
                           }
                         >
                           <RotateCcw size={12} /> Sinh lại giống thế này · {SIMILAR_CANDIDATE_COUNT} phương án ({similarCost} credit)
@@ -1075,7 +1075,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
                         {engine === "cloud_provider" && (
                           <label
                             className="flex items-center gap-1 cursor-pointer"
-                            title="Mặc định nhà cung cấp AI ghép và chỉnh sáng cả bó hoa (hài hoà nhất). Bật ô này để giữ nguyên từng điểm ảnh bó hoa — nhà cung cấp chỉ vẽ hậu cảnh."
+                            title="Mặc định nhà cung cấp AI ghép và chỉnh sáng cả sản phẩm (hài hoà nhất). Bật ô này để giữ nguyên từng điểm ảnh sản phẩm — nhà cung cấp chỉ vẽ hậu cảnh."
                           >
                             <input
                               type="checkbox"
@@ -1084,7 +1084,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
                                 setRenderOpts((o) => ({ ...o, composeMode: e.target.checked ? "paste" : undefined, quality: "standard" }))
                               }
                             />
-                            Giữ nguyên từng điểm ảnh bó hoa (không chỉnh sáng)
+                            Giữ nguyên từng điểm ảnh sản phẩm (không chỉnh sáng)
                           </label>
                         )}
                         {engine === "cloud_provider" && giuNguyenDiemAnh && (
@@ -1102,7 +1102,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
                           title={
                             engine === "cloud_provider" && !giuNguyenDiemAnh
                               ? `Khung xuất gấp đôi; nhà cung cấp tăng nét cả ảnh bằng mô hình của họ (+${variantUnitCostCredit("cloud_provider", { upscale: "2x" }) - variantUnitCostCredit("cloud_provider")} credit)`
-                              : "Khung xuất gấp đôi; chỉ tăng nét hậu cảnh, bó hoa giữ nguyên điểm ảnh"
+                              : "Khung xuất gấp đôi; chỉ tăng nét hậu cảnh, sản phẩm giữ nguyên điểm ảnh"
                           }
                         >
                           <input
@@ -1113,7 +1113,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
                           Xuất 2× độ phân giải
                         </label>
                         {(engine === "local_studio" || giuNguyenDiemAnh) && (
-                          <label className="flex items-center gap-1 cursor-pointer" title="Màu bóng theo hậu cảnh, khớp độ nét hậu cảnh — không đụng bó hoa (xử lý cục bộ)">
+                          <label className="flex items-center gap-1 cursor-pointer" title="Màu bóng theo hậu cảnh, khớp độ nét hậu cảnh — không đụng sản phẩm (xử lý cục bộ)">
                             <input
                               type="checkbox"
                               checked={renderOpts.composeMode === "harmonize"}
@@ -1125,7 +1125,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
                       </div>
                       {engine === "local_studio" && (
                         <p className="text-caption text-text-muted">
-                          Phông Studio cục bộ chỉ đổi vùng sáng, bố cục bokeh và vị trí bó hoa — muốn hậu cảnh khác hẳn
+                          Phông Studio cục bộ chỉ đổi vùng sáng, bố cục bokeh và vị trí sản phẩm — muốn hậu cảnh khác hẳn
                           nhau, dùng nhà cung cấp AI cho cảnh này.
                         </p>
                       )}
@@ -1523,7 +1523,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
               <span className="font-bold">Chưa tìm thấy kịch bản bối cảnh của chủ đề này.</span> Kịch bản được AI
               viết khi bấm &quot;Bắt đầu sáng tạo&quot; ở Chặng 05; phiên này mở Creative Studio mà chưa qua bước đó
               (hoặc lượt viết đã lỗi). Viết ngay tại đây — AI đọc chủ đề (dịp, tông màu, cảm xúc, hook, CTA) và thông
-              tin bó hoa để viết từng cảnh. Kịch bản được lưu, dùng chung cho Nội dung, C, D, E.
+              tin sản phẩm để viết từng cảnh. Kịch bản được lưu, dùng chung cho Nội dung, C, D, E.
             </div>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -1632,7 +1632,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
           )}
           <p className="mt-1.5 text-caption text-text-muted leading-relaxed">
             {sceneEngine === "cloud_provider"
-              ? `Nhà cung cấp (theo thứ tự ưu tiên của tiệm: fal / Stability / Gemini) dựng cảnh + hoà sáng quanh bó hoa thật; smeOS đo lại hình dáng, cấu trúc, màu. ${scenePlan?.mode === "AUTHENTIC" ? "AUTHENTIC: chỉ dựng nền và ánh sáng, không thêm đạo cụ vào bó hoa. " : ""}Mọi bên lỗi thì lùi phông cục bộ, ghi rõ trên ảnh và hoàn phần chênh credit.`
+              ? `Nhà cung cấp (theo thứ tự ưu tiên của tiệm: fal / Stability / Gemini) dựng cảnh + hoà sáng quanh sản phẩm thật; smeOS đo lại hình dáng, cấu trúc, màu. ${scenePlan?.mode === "AUTHENTIC" ? "AUTHENTIC: chỉ dựng nền và ánh sáng, không thêm đạo cụ vào sản phẩm. " : ""}Mọi bên lỗi thì lùi phông cục bộ, ghi rõ trên ảnh và hoàn phần chênh credit.`
               : "Dự phòng: mỗi cảnh dùng phông Studio dựng sẵn gần nhất (6 phông) — rẻ hơn nhưng chất lượng thấp hơn nhà cung cấp."}
           </p>
         </div>
@@ -1697,7 +1697,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
       <div className="w-full rounded-xl bg-primary/5 p-4 border border-primary/20 flex items-start gap-3">
         <ShieldCheck size={18} className="text-primary flex-shrink-0 mt-0.5" />
         <div className="text-xs text-primary/90 leading-relaxed">
-          <strong>Ranh giới bất biến:</strong> Biến thể marketing không thay đổi hình dáng hay màu sắc bó hoa thật. Bó hoa từ Master Image được bảo toàn 100%.
+          <strong>Ranh giới bất biến:</strong> Biến thể marketing không thay đổi hình dáng hay màu sắc sản phẩm thật. Sản phẩm từ Master Image được bảo toàn 100%.
         </div>
       </div>
 

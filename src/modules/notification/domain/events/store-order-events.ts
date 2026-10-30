@@ -235,7 +235,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
   {
     key: "FLORIST_TASK_ASSIGNED",
     label: "Phiếu chế tác mới",
-    description: "Khi thợ được phân công phiếu chế tác (cắm hoa, may đo, nấu...) mới",
+    description: "Khi thợ được phân công phiếu chế tác (cắm, may đo, nấu...) mới",
     group: "PRODUCTION",
     tier: "STORE",
     version: 1,
