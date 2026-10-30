@@ -5,6 +5,7 @@ import { Prisma } from "@/generated/prisma/client"
 import { isUniqueViolation } from "@/modules/coordinator/infra/transaction"
 import { randomCode } from "../domain/greeting-card-rules"
 import type { BrochureQuote, VoucherFacts } from "../domain/brochure-pricing"
+import { getVoucherRedemptionRepository } from "@/modules/promotions/infra/voucher-redemption-repository"
 import type { OrderPolicySnapshot } from "../domain/order-policies"
 import type { ProductSnapshot } from "../domain/greeting-card-types"
 import { countBySlot, slotFullMessage } from "../domain/slot-capacity"
@@ -84,6 +85,11 @@ export class BrochureCheckoutRepository {
     return row?.id ?? null
   }
 
+  /** Số lượt một khách đã dùng mã (chưa bị trả) — cho giới hạn lượt mỗi khách. */
+  countVoucherUses(organizationId: string, voucherId: string, customerId: string): Promise<number> {
+    return getVoucherRedemptionRepository(this.db).countCustomerUses(organizationId, voucherId, customerId)
+  }
+
   /** Mã giảm giá theo mã (không phân biệt hoa thường) trong đúng tổ chức. */
   async findVoucher(organizationId: string, code: string): Promise<VoucherFacts | null> {
     const v = await this.db.vouchers.findFirst({
@@ -100,6 +106,10 @@ export class BrochureCheckoutRepository {
       expiresAt: v.expires_at,
       isUsed: v.is_used,
       customerId: v.customer_id,
+      startsAt: v.starts_at,
+      isActive: v.is_active,
+      promotionId: v.promotion_id,
+      perCustomerLimit: v.per_customer_limit,
     }
   }
 
@@ -183,8 +193,8 @@ export class BrochureCheckoutRepository {
 
   /**
    * Tạo đơn + gắn vào phiên + dùng mã giảm giá trong MỘT giao dịch. Phiên chỉ
-   * nhận đơn khi chưa có đơn; mã giảm giá chỉ dùng được khi `is_used = false`
-   * — hai khách dùng cùng một mã cùng lúc thì một người nhận 409.
+   * nhận đơn khi chưa có đơn; mã giảm giá trừ lượt có điều kiện (còn lượt, đang bật)
+   * — hai khách tranh lượt cuối cùng lúc thì một người nhận 409.
    */
   async createBrochureOrder(data: CreateBrochureOrderData, customerId: string) {
     const { quote } = data
@@ -249,11 +259,10 @@ export class BrochureCheckoutRepository {
       })
 
       if (data.voucherId) {
-        const used = await tx.vouchers.updateMany({
-          where: { id: data.voucherId, organization_id: data.organizationId, is_used: false },
-          data: { is_used: true, used_at: new Date(), order_id: order.id },
+        const claimed = await getVoucherRedemptionRepository(tx).claim({
+          organizationId: data.organizationId, voucherId: data.voucherId, orderId: order.id, customerId,
         })
-        if (used.count === 0) throw conflict("Mã giảm giá vừa được sử dụng cho đơn khác")
+        if (!claimed) throw conflict("Mã giảm giá vừa hết lượt sử dụng")
       }
 
       const attached = await tx.greeting_sessions.updateMany({

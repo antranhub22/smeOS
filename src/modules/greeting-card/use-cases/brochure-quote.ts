@@ -18,6 +18,7 @@ import { holidayOn, holidaySurcharge, parseHolidayPolicy } from "../domain/holid
 import { paymentSplit } from "../domain/payment-schedule"
 import { findPaymentCode, parsePaymentPlans, type PaymentCodeRule } from "../domain/payment-plan"
 import { resolvePaymentPlan } from "./payment-plan-quote"
+import { listActiveShopPromotions } from "./active-shop-promotions"
 import { isWeekend, unitPriceFor } from "@/modules/products/domain/product-pricing"
 
 export interface QuoteRequest {
@@ -155,7 +156,15 @@ async function priceProduct(
         : "Mã giảm giá không tồn tại"
     } else {
       const customerId = await checkout.findCustomerIdByPhone(organizationId, normalizePhone(req.customerPhone))
-      const blocker = voucherBlocker(found, unitPriceVnd * quantity, customerId)
+      const blocker = voucherBlocker(found, unitPriceVnd * quantity, customerId, new Date(), {
+        // Mã thuộc một ưu đãi: đi theo công tắc của ưu đãi đó ở ma trận ưu đãi
+        activePromotionIds: found.promotionId
+          ? new Set((await listActiveShopPromotions(organizationId)).map((p) => p.id))
+          : undefined,
+        customerUses: found.perCustomerLimit != null && customerId
+          ? await checkout.countVoucherUses(organizationId, found.id, customerId)
+          : undefined,
+      })
       if (blocker) errors.voucherCode = blocker
       else voucher = found
     }

@@ -66,7 +66,10 @@ const TENANT_TABLES = [
   "chat_messages",
   "chat_conversations",
   "chat_channel_integrations",
+  // Phát hành mã giảm giá (30/10/2026) — con trước cha
+  "voucher_redemptions",
   "vouchers",
+  "voucher_batches",
   // Sáu bảng dưới đây có `organization_id` nhưng thiếu ở TRUNCATE cho tới
   // RS-2 18/09 (`check-docs.mjs` bắt được) — dữ liệu thử của chúng có thể
   // sót lại giữa các ca thử. `occasions` và `product_copies` đã có ca thử

@@ -136,6 +136,20 @@ export interface VoucherFacts {
   isUsed: boolean
   /** Mã gắn riêng một khách (null = công khai). */
   customerId: string | null
+  /** Phát hành mã giảm giá (30/10/2026) — thiếu = mã cũ: không có ngày bắt đầu, luôn bật. */
+  startsAt?: Date | null | undefined
+  isActive?: boolean | undefined
+  /** Ưu đãi trong danh mục mà mã thuộc về — ưu đãi tắt/bị khoá thì mã ngừng nhận. */
+  promotionId?: string | null | undefined
+  perCustomerLimit?: number | null | undefined
+}
+
+/** Bối cảnh kiểm thêm cho mã thuộc đợt phát hành; thiếu = bỏ qua (mã cũ). */
+export interface VoucherContext {
+  /** Ưu đãi đang bật (đã áp khoá tầng trên) */
+  activePromotionIds?: ReadonlySet<string> | undefined
+  /** Số lượt khách này đã dùng mã */
+  customerUses?: number | undefined
 }
 
 /** Lý do mã không dùng được (tiếng Việt) hoặc `null`. */
@@ -143,10 +157,19 @@ export function voucherBlocker(
   v: VoucherFacts,
   subtotalVnd: number,
   customerId: string | null,
-  now: Date = new Date()
+  now: Date = new Date(),
+  context: VoucherContext = {}
 ): string | null {
-  if (v.isUsed) return "Mã giảm giá đã được sử dụng"
+  if (v.isActive === false) return "Mã giảm giá đang tạm dừng"
+  if (v.isUsed) return "Mã giảm giá đã hết lượt sử dụng"
+  if (v.startsAt && v.startsAt.getTime() > now.getTime()) return "Mã giảm giá chưa đến ngày áp dụng"
   if (v.expiresAt && v.expiresAt.getTime() <= now.getTime()) return "Mã giảm giá đã hết hạn"
+  if (v.promotionId && context.activePromotionIds && !context.activePromotionIds.has(v.promotionId)) {
+    return "Chương trình ưu đãi của mã này đã kết thúc"
+  }
+  if (v.perCustomerLimit != null && (context.customerUses ?? 0) >= v.perCustomerLimit) {
+    return "Bạn đã dùng hết lượt của mã giảm giá này"
+  }
   if (v.customerId && v.customerId !== customerId) return "Mã giảm giá này dành riêng cho một khách hàng khác"
   if (subtotalVnd < v.minOrderVnd) {
     return `Đơn tối thiểu ${v.minOrderVnd.toLocaleString("vi-VN")} đ để dùng mã này`

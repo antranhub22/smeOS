@@ -6,6 +6,7 @@ import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { cancelBlocker, quoteBlocker } from "../domain/brochure-payment-policy"
 import { quotedTotalAfterPromotion } from "../domain/promotion-pricing"
 import { IN_TRANSIT_CANCEL_WARNING, isInTransit } from "../domain/cancellation-request"
+import { getVoucherRedemptionRepository } from "@/modules/promotions/infra/voucher-redemption-repository"
 
 export interface IncomingPayment {
   amountVnd: number
@@ -283,10 +284,7 @@ export class BrochurePaymentRepository {
         },
       })
       if (moved.count === 0) throw conflict("Đơn hàng vừa thay đổi trạng thái, vui lòng tải lại")
-      await tx.vouchers.updateMany({
-        where: { organization_id: ctx.organizationId, order_id: order.id },
-        data: { is_used: false, used_at: null, order_id: null },
-      })
+      await getVoucherRedemptionRepository(tx).releaseForOrder(ctx.organizationId, order.id)
       await tx.order_events.create({
         data: {
           organization_id: ctx.organizationId,
