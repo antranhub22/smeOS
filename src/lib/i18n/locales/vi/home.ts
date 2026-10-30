@@ -57,11 +57,11 @@ export const homeVi = {
       "desc": "Xem doanh thu, số đơn hàng và hoạt động trên FloraOS của cửa hàng."
     },
     "trends": {
-      "title": "Xem sản phẩm được ưa chuộng",
+      "title": "Xu hướng thị trường",
       "desc": "Biết khách thích kiểu hoa, màu sắc và mức giá nào để chuẩn bị hàng."
     },
     "scanPhoto": {
-      "title": "Tạo sản phẩm từ ảnh chụp",
+      "title": "Sản phẩm từ ảnh",
       "desc": "Chụp ảnh hoa, AI nhận diện các nguyên liệu và tạo sẵn sản phẩm để bán."
     },
     "quote": {
@@ -73,15 +73,15 @@ export const homeVi = {
       "desc": "Soạn bài cho Facebook, Instagram, TikTok đúng giọng văn của cửa hàng, kèm gợi ý hashtag."
     },
     "voiceover": {
-      "title": "Tạo giọng đọc cho bài đăng",
+      "title": "Giọng đọc",
       "desc": "Chuyển bài viết thành giọng đọc để ghép vào video giới thiệu sản phẩm."
     },
     "mockup": {
-      "title": "Tạo ảnh quảng cáo từ ảnh gốc",
+      "title": "Ảnh quảng cáo",
       "desc": "Tách nền và đặt hoa vào không gian studio hoặc sự kiện để có ảnh quảng cáo đẹp hơn."
     },
     "video": {
-      "title": "Tạo video từ ảnh hoa",
+      "title": "Video sản phẩm",
       "desc": "Tạo video ngắn từ ảnh hoa để đăng lên TikTok hoặc Reel."
     }
   }

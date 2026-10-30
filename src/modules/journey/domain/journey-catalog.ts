@@ -51,7 +51,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "market-intelligence-explore",
-    goal: "Xem xu hướng sản phẩm thịnh hành",
+    goal: "Xu hướng thị trường",
     description: "Biết khách thích kiểu dáng, màu sắc và mức giá nào để chuẩn bị hàng.",
     icon: "TrendingUp",
     roleScope: "STORE",
@@ -69,7 +69,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "analyze-product-photo",
-    goal: "Tạo sản phẩm từ ảnh chụp",
+    goal: "Sản phẩm từ ảnh",
     description: "Chụp ảnh hoa, AI nhận diện các nguyên liệu và tạo sẵn sản phẩm để bán.",
     icon: "Camera",
     roleScope: "STORE",
@@ -146,7 +146,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "create-audio-voiceover",
-    goal: "Tạo giọng đọc cho bài đăng",
+    goal: "Giọng đọc",
     description: "Chuyển bài viết thành giọng đọc để ghép vào video giới thiệu sản phẩm.",
     icon: "Volume2",
     roleScope: "STORE",
@@ -171,7 +171,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "create-marketing-image",
-    goal: "Tạo ảnh quảng cáo từ ảnh gốc",
+    goal: "Ảnh quảng cáo",
     description: "Tách nền và đặt hoa vào không gian studio hoặc sự kiện để có ảnh quảng cáo đẹp hơn.",
     icon: "Image",
     roleScope: "STORE",
@@ -196,7 +196,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "create-product-video",
-    goal: "Tạo video từ ảnh hoa",
+    goal: "Video sản phẩm",
     description: "Biến ảnh sản phẩm thành video ngắn để đăng Story, Reels, TikTok.",
     icon: "Video",
     roleScope: "STORE",
@@ -221,7 +221,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "create-catalog-collection",
-    goal: "Tạo trang giới thiệu và bán hoa",
+    goal: "Trang bán hàng",
     description: "Tạo trang web bộ sưu tập hoa kèm mã QR để in lên thiệp hoặc đặt ở quầy.",
     icon: "BookOpen",
     roleScope: "STORE",
@@ -410,7 +410,7 @@ export const PLATFORM_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "manage-ai-credit",
-    goal: "Trí tuệ nhân tạo & Định mức",
+    goal: "Định mức AI",
     description: "Cấu hình mô hình thông minh, giám sát lượt gọi và định mức tài nguyên",
     icon: "Bot",
     roleScope: "PLATFORM",
@@ -420,7 +420,7 @@ export const PLATFORM_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "manage-integrations",
-    goal: "Quản lý kết nối nền tảng",
+    goal: "Kết nối nền tảng",
     description: "Kết nối cổng thanh toán, mạng xã hội, kênh nhắn tin và giao vận",
     icon: "Plug",
     roleScope: "PLATFORM",
@@ -466,7 +466,7 @@ export const PLATFORM_JOURNEYS: JourneyDefinition[] = [
 export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   {
     id: "network-overview",
-    goal: "Báo cáo toàn hệ thống điện hoa",
+    goal: "Báo cáo mạng lưới",
     description: "Theo dõi dòng đơn điều phối, tỷ lệ nhận đơn và doanh số toàn mạng lưới",
     icon: "Network",
     roleScope: "FLOWER_NETWORK",
@@ -475,7 +475,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "network-products",
-    goal: "Quản lý sản phẩm mạng lưới",
+    goal: "Sản phẩm mạng lưới",
     description: "Chuẩn hóa danh mục sản phẩm chung cho các tiệm thành viên nhận làm",
     icon: "Flower2",
     roleScope: "FLOWER_NETWORK",
@@ -485,7 +485,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "network-sales",
-    goal: "Bán hàng & Đơn đặt",
+    goal: "Bán hàng",
     description: "Tiếp nhận đơn hàng điện hoa liên tỉnh và phân bổ nhanh chóng",
     icon: "ShoppingBag",
     roleScope: "FLOWER_NETWORK",
@@ -505,7 +505,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "network-partners",
-    goal: "Quản lý đối tác cửa hàng",
+    goal: "Đối tác cửa hàng",
     description: "Đánh giá chất lượng chế tác, tỷ lệ hoàn thành đúng hẹn của đối tác",
     icon: "Handshake",
     roleScope: "FLOWER_NETWORK",
@@ -515,7 +515,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "network-crm",
-    goal: "Khách hàng & Chăm sóc đối tác",
+    goal: "Chăm sóc khách hàng",
     description: "Hỗ trợ khách hàng VIP và giải quyết khiếu nại chất lượng sản phẩm",
     icon: "Users2",
     roleScope: "FLOWER_NETWORK",
@@ -525,7 +525,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "network-marketing",
-    goal: "Chiến dịch tiếp thị liên kết",
+    goal: "Tiếp thị liên kết",
     description: "Quảng bá thương hiệu mạng lưới và thúc đẩy lưu lượng đặt hoa toàn quốc",
     icon: "Megaphone",
     roleScope: "FLOWER_NETWORK",
@@ -535,7 +535,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "network-finance",
-    goal: "Đối soát tài chính & Hoa hồng",
+    goal: "Đối soát & hoa hồng",
     description: "Tính toán tiền chế tác, hoa hồng giới thiệu và thanh toán cho đối tác",
     icon: "Coins",
     roleScope: "FLOWER_NETWORK",
@@ -551,7 +551,7 @@ export const NETWORK_JOURNEYS: JourneyDefinition[] = [
 export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
   {
     id: "industry-ecosystem-overview",
-    goal: "Hệ sinh thái Đa Ngành",
+    goal: "Tổng quan ngành",
     description: "Theo dõi toàn diện 7 ngành hàng, tỷ lệ kích hoạt tenant và độ sẵn sàng của các plugin ngành",
     icon: "Layers",
     roleScope: "PLATFORM",
@@ -561,7 +561,7 @@ export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "industry-plugin-matrix",
-    goal: "Ma trận & Hợp đồng Plugin Ngành",
+    goal: "Gói mở rộng ngành",
     description: "Cấu hình phân quyền menu, điều hướng và công tắc tính năng theo từng ngành hàng",
     icon: "SlidersHorizontal",
     roleScope: "PLATFORM",
@@ -571,7 +571,7 @@ export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "industry-bom-specs",
-    goal: "Chuẩn hóa Định lượng BOM & Đơn vị",
+    goal: "Định lượng & đơn vị",
     description: "Cấu hình vai trò nguyên vật liệu, công thức chế tác và đơn vị đo lường theo ngành",
     icon: "Package",
     roleScope: "PLATFORM",
@@ -581,7 +581,7 @@ export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "industry-printables-templates",
-    goal: "Kho mẫu ấn phẩm A6 ngành",
+    goal: "Mẫu ấn phẩm",
     description: "Chuẩn hóa mẫu in ấn (Tag mác, Thiệp, Menu, Phiếu bảo hành) cho từng ngành hàng",
     icon: "LayoutTemplate",
     roleScope: "PLATFORM",
@@ -591,7 +591,7 @@ export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "industry-ai-studio-config",
-    goal: "Cấu hình AI Vision & Studio Ngành",
+    goal: "Cấu hình AI ngành",
     description: "Thiết lập góc nhìn thị giác, bối cảnh studio và phong cách tiếp thị AI theo từng ngành",
     icon: "Sparkles",
     roleScope: "PLATFORM",
@@ -601,7 +601,7 @@ export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "industry-market-benchmarks",
-    goal: "Nghiên cứu Thị trường & Xu hướng Ngành",
+    goal: "Xu hướng ngành",
     description: "Phân tích xu hướng thị hiếu, khoảng giá phổ biến và sản phẩm bán chạy theo từng ngành",
     icon: "TrendingUp",
     roleScope: "PLATFORM",
@@ -611,7 +611,7 @@ export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "industry-custom-fields",
-    goal: "Quản lý Trường dữ liệu mở rộng",
+    goal: "Trường dữ liệu",
     description: "Định nghĩa các trường thuộc tính tùy biến linh hoạt cho từng mô hình ngành hàng",
     icon: "Database",
     roleScope: "PLATFORM",
@@ -621,7 +621,7 @@ export const INDUSTRY_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "industry-new-wizard",
-    goal: "Khởi tạo & Đăng ký Ngành mới",
+    goal: "Thêm ngành mới",
     description: "Tạo ngành mới theo chuẩn Hợp đồng Plugin SSOT (3 bước chuẩn hóa, zero DB mutation)",
     icon: "CheckCircle2",
     roleScope: "PLATFORM",
