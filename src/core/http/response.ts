@@ -1,3 +1,4 @@
+import { log } from "@/core/observability/log"
 import { requestIdOf, runWithRequestId } from "@/core/observability/request-context"
 
 import { AppError } from "./errors"
@@ -26,7 +27,7 @@ export function jsonResponse(
   return new Response(JSON.stringify(body), { status, headers })
 }
 
-export function errorResponse(error: unknown): Response {
+export function errorResponse(error: unknown, where?: { method: string; path: string }): Response {
   if (error instanceof AppError) {
     return jsonResponse(
       {
@@ -41,7 +42,12 @@ export function errorResponse(error: unknown): Response {
   }
 
   // Lỗi ngoài dự kiến không lộ chi tiết ra ngoài (`YC-S`, đặc tả 06 mục 2).
-  console.error("[api] lỗi không lường trước", error)
+  // SLI lỗi máy chủ theo route (SLO v1, OPERATIONS_RUNBOOK §10); `requestId` tự gắn khi trong `handle()`.
+  log.error("http.internal_error", {
+    ...where,
+    error: error instanceof Error ? error.message : String(error),
+    stack: error instanceof Error ? error.stack : undefined,
+  })
   return jsonResponse(
     { error: { code: "INTERNAL", message: "Lỗi hệ thống" } },
     { status: 500 }
@@ -64,7 +70,7 @@ export function handle<Args extends unknown[]>(
       try {
         return await fn(request, ...args)
       } catch (error) {
-        return errorResponse(error)
+        return errorResponse(error, { method: request.method, path: new URL(request.url).pathname })
       }
     })
   }

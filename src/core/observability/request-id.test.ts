@@ -44,4 +44,23 @@ describe("mã yêu cầu (E1.1)", () => {
     log.info("cron.tick")
     expect(JSON.parse(lines[0] ?? "{}")).not.toHaveProperty("requestId")
   })
+
+  it("lỗi ngoài dự kiến trong handle() → 500 và log http.internal_error có path + requestId", async () => {
+    const lines: string[] = []
+    vi.spyOn(console, "error").mockImplementation((line: string) => void lines.push(line))
+    const route = handle(async () => {
+      throw new Error("boom")
+    })
+
+    const res = await route(new Request("http://localhost/api/v1/orders?x=1", { method: "POST", headers: { [REQUEST_ID_HEADER]: "req-err-12345" } }))
+
+    expect(res.status).toBe(500)
+    expect(JSON.parse(lines[0] ?? "{}")).toMatchObject({
+      event: "http.internal_error",
+      method: "POST",
+      path: "/api/v1/orders",
+      requestId: "req-err-12345",
+      error: "boom",
+    })
+  })
 })
