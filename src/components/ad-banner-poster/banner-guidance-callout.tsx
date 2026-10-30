@@ -1,88 +1,49 @@
 "use client"
 
-import React, { useState } from "react"
-import { Sparkles, ChevronDown, ChevronUp, Layers, Sliders, Download } from "lucide-react"
+import React from "react"
+import { Sliders, Layers, Download } from "lucide-react"
+import { InfoTip } from "@/components/ui/info-tip"
 
+const STEPS = [
+  {
+    icon: Sliders,
+    title: "Chọn dịp & ý tưởng",
+    detail: "Chọn dịp hoặc bấm nút AI để gợi ý tiêu đề, ưu đãi và câu kêu gọi hành động.",
+  },
+  {
+    icon: Layers,
+    title: "Chỉnh bố cục",
+    detail: "Đổi phong cách, tải ảnh sản phẩm; mọi thay đổi đồng bộ ngay trên cả 5 kích thước (1:1, 4:5, 9:16, 16:9, A4).",
+  },
+  {
+    icon: Download,
+    title: "Tải về & đăng bán",
+    detail: "Tải ảnh PNG/JPEG độ nét cao, tải trọn bộ một chạm hoặc lưu làm mẫu cho chuỗi.",
+  },
+] as const
+
+/** 3 bước tạo ấn phẩm — icon lớn, nhãn ngắn, giải thích trong "?" (thử phong cách thoáng). */
 export function BannerGuidanceCallout() {
-  const [isExpanded, setIsExpanded] = useState(false)
-
   return (
-    <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 transition-all">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-            <Sparkles className="h-4 w-4" aria-hidden="true" />
+    <section aria-label="Các bước tạo ấn phẩm" className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+      {STEPS.map((step, i) => {
+        const Icon = step.icon
+        return (
+          <div
+            key={step.title}
+            className="relative flex items-center gap-4 p-5 rounded-2xl bg-surface shadow-sm ring-1 ring-border/60"
+          >
+            <div className="flex items-center justify-center w-14 h-14 shrink-0 rounded-2xl bg-primary-muted text-primary">
+              <Icon className="w-7 h-7" aria-hidden="true" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-caption font-semibold text-text-muted">Bước {i + 1}</span>
+              <h2 className="text-title-sm font-bold text-text">{step.title}</h2>
+            </div>
+            <InfoTip label={step.title}>{step.detail}</InfoTip>
           </div>
-          <div>
-            <h2 className="text-sm font-semibold text-text">
-              Quy trình 3 bước tạo bộ ấn phẩm quảng cáo đa kênh
-            </h2>
-            <p className="text-xs text-text-muted mt-0.5">
-              Sinh trọn gói 5 kích thước chuẩn sàn (1:1, 4:5, 9:16, 16:9, A4) từ một nội dung duy nhất.
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline focus:outline-none"
-          aria-expanded={isExpanded}
-        >
-          <span>{isExpanded ? "Thu gọn" : "Xem chi tiết"}</span>
-          {isExpanded ? (
-            <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
-          ) : (
-            <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
-          )}
-        </button>
-      </div>
-
-      {isExpanded && (
-        <div className="mt-3.5 pt-3.5 border-t border-primary/10 grid grid-cols-1 md:grid-cols-3 gap-3 animate-in fade-in-50 duration-200">
-          <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-surface border border-border">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
-              1
-            </div>
-            <div className="text-xs">
-              <span className="font-semibold text-text flex items-center gap-1">
-                <Sliders className="h-3.5 w-3.5 text-primary" /> Chọn dịp & Ý tưởng
-              </span>
-              <p className="text-text-muted mt-0.5">
-                Chọn dịp hoặc bấm nút AI để tự động gợi ý tiêu đề, ưu đãi hấp dẫn và câu kêu gọi hành động.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-surface border border-border">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
-              2
-            </div>
-            <div className="text-xs">
-              <span className="font-semibold text-text flex items-center gap-1">
-                <Layers className="h-3.5 w-3.5 text-primary" /> Bố cục thời gian thực
-              </span>
-              <p className="text-text-muted mt-0.5">
-                Đổi phong cách thiết kế, tải ảnh sản phẩm; mọi thay đổi đồng bộ tức thì trên cả 5 kích thước.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-surface border border-border">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
-              3
-            </div>
-            <div className="text-xs">
-              <span className="font-semibold text-text flex items-center gap-1">
-                <Download className="h-3.5 w-3.5 text-primary" /> Xuất bản & Đăng bán
-              </span>
-              <p className="text-text-muted mt-0.5">
-                Tải ảnh PNG/JPEG độ nét cao, tải trọn bộ một chạm hoặc lưu làm mẫu phát hành cho chuỗi.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+        )
+      })}
+    </section>
   )
 }

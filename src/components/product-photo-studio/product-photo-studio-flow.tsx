@@ -15,6 +15,7 @@ import { isTaskBusy } from "@/lib/ui-system/task-state"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 import { useGenerationJob } from "@/components/generation-job/use-generation-job"
 import type { ProductPhotoResult } from "@/modules/product-photo-studio/use-cases/get-product-photo-result"
+import { ToolHero } from "@/components/ui/tool-hero"
 
 /** Bộ máy đám mây tính giá cao nhất — báo trước mức tối đa để không thiếu credit giữa chừng. */
 const MAX_COST = Math.max(costCreditForFeature("media.optimize"), costCreditForFeature("media.optimize.cloud"))
@@ -52,17 +53,7 @@ export function ProductPhotoStudioFlow() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <header className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-          <Camera className="w-5 h-5" aria-hidden="true" />
-        </div>
-        <div>
-          <h1 className="text-title font-bold text-text">Tạo ảnh sản phẩm chuyên nghiệp</h1>
-          <p className="text-caption text-text-muted mt-0.5">
-            Biến ảnh chụp bằng điện thoại thành ảnh studio đạt chuẩn sàn thương mại
-          </p>
-        </div>
-      </header>
+      <ToolHero icon={Camera} title="Ảnh sản phẩm studio" detail="Biến ảnh chụp bằng điện thoại thành ảnh studio đạt chuẩn sàn thương mại." />
 
       <FeatureGuidanceCard
         tag="HƯỚNG DẪN"

@@ -15,6 +15,7 @@ import { TaskStatus } from "@/components/ui/task-status"
 import { isTaskBusy } from "@/lib/ui-system/task-state"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 import type { ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
+import { ToolHero } from "@/components/ui/tool-hero"
 
 /** Bộ máy đám mây tính giá cao nhất — báo trước mức tối đa để không thiếu credit giữa chừng. */
 const MAX_COST = Math.max(costCreditForFeature("media.optimize"), costCreditForFeature("media.optimize.cloud"))
@@ -49,17 +50,7 @@ export function ProductImageSetFlow() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <header className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-          <Images className="w-5 h-5" aria-hidden="true" />
-        </div>
-        <div>
-          <h1 className="text-title font-bold text-text">Tạo bộ ảnh sản phẩm đa kênh</h1>
-          <p className="text-caption text-text-muted mt-0.5">
-            Từ một ảnh, nhận đủ bộ ảnh nhiều tỉ lệ cho sàn thương mại, bài đăng và Story
-          </p>
-        </div>
-      </header>
+      <ToolHero icon={Images} title="Bộ ảnh đa kênh" detail="Từ một ảnh, nhận đủ bộ ảnh nhiều tỉ lệ cho sàn thương mại, bài đăng và Story." />
 
       <FeatureGuidanceCard
         tag="HƯỚNG DẪN"

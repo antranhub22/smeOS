@@ -9,6 +9,7 @@ import { EnhanceResultViewer } from "@/components/product-photo-studio/enhance-r
 import { useI18n } from "@/lib/i18n"
 import { parseCreatedJob, parsePolledJob } from "@/components/generation-job/generation-job-logic"
 import type { ProductPhotoResult } from "@/modules/product-photo-studio/use-cases/get-product-photo-result"
+import { ToolHero } from "@/components/ui/tool-hero"
 
 export function ProductPhotoStudioClient() {
   const { t, dict } = useI18n()
@@ -106,29 +107,12 @@ export function ProductPhotoStudioClient() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-            <Camera className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-title font-bold text-text">Tạo ảnh sản phẩm chuyên nghiệp</h1>
-              <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                Công cụ 01
-              </span>
-            </div>
-            <p className="text-caption text-text-muted mt-0.5">
-              Biến ảnh chụp thô bằng điện thoại thành ảnh studio thương mại đạt chuẩn sàn bằng AI
-            </p>
-          </div>
-        </div>
-      </div>
+      <ToolHero icon={Camera} title="Ảnh sản phẩm studio" detail="Biến ảnh chụp bằng điện thoại thành ảnh studio đạt chuẩn sàn thương mại." />
 
       <FeatureGuidanceCard
-        tag="HƯỚNG DẪN CÔNG CỤ 01"
+        tag="HƯỚNG DẪN"
         title="Chụp ảnh thô → Tải lên → Nhận ảnh studio hoàn chỉnh"
-        description="Chỉ cần tải ảnh lên, hệ thống sẽ tự động dùng AI Provider tối ưu ánh sáng, xóa bỏ phông nền lộn xộn và đổ bóng studio mà vẫn giữ nguyên 100% hình thái sản phẩm."
+        description="Chỉ cần tải ảnh lên, hệ thống sẽ tự động tối ưu ánh sáng, xóa bỏ phông nền lộn xộn và đổ bóng studio mà vẫn giữ nguyên 100% hình thái sản phẩm."
         tips={[
           "📸 Chụp sản phẩm rõ nét, đủ sáng, tránh bị che khuất",
           "🎯 Sản phẩm nằm trọn trong khung hình (chiếm 60-80%)",

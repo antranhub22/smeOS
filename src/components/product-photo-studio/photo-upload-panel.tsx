@@ -86,10 +86,10 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
         onDrop={handleDrop}
         onClick={() => !disabled && fileInputRef.current?.click()}
         disabled={disabled}
-        className={`w-full relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer ${
+        className={`w-full relative border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center transition-all cursor-pointer ${
           dragOver
             ? "border-primary bg-primary/10 scale-[1.01]"
-            : "border-border hover:border-primary/50 bg-surface-alt/40"
+            : "border-border hover:border-primary/50 bg-surface shadow-sm"
         } ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
       >
         <input
@@ -135,18 +135,15 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
             </div>
           </div>
         ) : (
-          <div className="space-y-3">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-              <Upload className="w-6 h-6" />
+          <div className="space-y-4 py-4">
+            <div className="w-20 h-20 mx-auto rounded-2xl bg-primary-muted text-primary flex items-center justify-center">
+              <Upload className="w-10 h-10" aria-hidden="true" />
             </div>
             <div>
-              <p className="text-body font-semibold text-text">
-                Kéo thả ảnh chụp sản phẩm vào đây, hoặc{" "}
-                <span className="text-primary underline">chọn từ thiết bị</span>
+              <p className="text-title-sm font-bold text-text">
+                Kéo thả hoặc <span className="text-primary underline">chọn ảnh</span>
               </p>
-              <p className="text-caption text-text-muted mt-1">
-                Hỗ trợ ảnh chụp thô bằng điện thoại (JPG, PNG, WEBP). Dung lượng tối đa 15MB.
-              </p>
+              <p className="text-caption text-text-muted mt-1">JPG, PNG, WEBP · tối đa 15MB</p>
             </div>
           </div>
         )}
