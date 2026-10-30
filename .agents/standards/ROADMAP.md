@@ -31,7 +31,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 2. Ratchet `no-console` (baseline 31 tệp, chỉ giảm).
 3. ✅ (30/10/2026) `workers/shared/log_json.py` — log JSON cùng trường với web, ngữ cảnh job theo `request_id`; còn `print` ở worker media/video cần đổi dần.
 4. ✅ (30/10/2026) `/api/health/ready` tách khỏi `/api/health`; worker heartbeat qua `application_name` + `pg_stat_activity` (không cần bảng/Redis/phụ thuộc mới).
-5. **PO:** chọn công cụ theo dõi lỗi (vd. Sentry / tự host) → adapter trong `instrumentation.ts`, che dữ liệu như `log.ts`.
+5. ✅ (30/10/2026) Sentry (PO chọn): `@sentry/nextjs` 11.8.0 + `sentry-sdk` 2.72.0, cổng `error-tracker.ts` + adapter, bật khi có `SENTRY_DSN`, lọc dữ liệu khách. Chưa gửi lỗi phía trình duyệt.
 6. ✅ (30/10/2026) Mở rộng `/van-hanh/suc-khoe` (không tạo màn mới): bộ xử lý nền + hàng đợi theo loại việc; chi phí AI theo tenant đã có ở `/van-hanh/muc-dung`. Kênh thông báo chưa có số liệu lưu trong DB — dời sang khi có công cụ metrics (E1.5).
 7. ✅ (30/10/2026) SLO v1 S1–S4 + truy vết `request_id` trong `docs/handover/OPERATIONS_RUNBOOK.md` §10–11; thêm log `http.internal_error` (lỗi 500 trong `handle()`) và `notification.dispatched` làm SLI. PO duyệt mục tiêu 30/10/2026.
 *Nghiệm thu:* lần ngược một lỗi từ log web tới dòng log worker bằng một `request_id`.
@@ -94,7 +94,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 ## Quyết định PO (cập nhật 30/10/2026)
 | # | Quyết định | Kết quả PO | Ảnh hưởng |
 |---|---|---|---|
-| Q1 | Công cụ theo dõi lỗi / metrics | ✅ **Dịch vụ ngoài** — chọn nhà cung cấp cụ thể trước khi làm E1.5 (đề xuất Sentry: có SDK Next.js + Python, gói miễn phí) | E1.5, E1.6 |
+| Q1 | Công cụ theo dõi lỗi / metrics | ✅ **Sentry** (PO chọn 30/10/2026) — SDK Next.js + Python | E1.5, E1.6 |
 | Q2 | Cột `request_id` trên `generation_jobs` | ✅ Đồng ý | E1.1 |
 | Q3 | Staging + 2 instance Render | ⏸ **Làm khi bàn giao** — code E2 vẫn viết và test cục bộ; nghiệm thu 2 instance dời tới lúc bàn giao | E2.5, E4.3 |
 | Q4 | PITR Postgres + backup object store | ✅ Đồng ý — bật trên dashboard Render/R2 (chủ tài khoản thao tác), agent ghi RPO/RTO vào runbook | E3 |

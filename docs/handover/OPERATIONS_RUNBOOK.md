@@ -28,6 +28,7 @@ Danh sách đầy đủ và giải thích: `.env.example`; giá trị thật ch�
 | Lưu trữ | `STORAGE_ENDPOINT`, `STORAGE_BUCKET`, `STORAGE_ACCESS_KEY`, `STORAGE_SECRET_KEY`, `STORAGE_REGION` | không tải/xem được ảnh |
 | Chat Facebook | `FB_APP_SECRET`, `FB_WEBHOOK_VERIFY_TOKEN` | **webhook từ chối mọi sự kiện (401/403)** — cố ý, xem §5 |
 | Zalo OA nền tảng | `ZALO_OA_APP_ID`, `ZALO_OA_APP_SECRET`, `ZALO_OA_REFRESH_TOKEN`, `ZALO_OA_WEBHOOK_SECRET` | không mời/nhắc chi nhánh qua Zalo |
+| Theo dõi lỗi | `SENTRY_DSN`, `SENTRY_ENVIRONMENT` — đặt ở **cả** `smeos-web` và 3 worker | không gửi lỗi lên Sentry, chỉ còn log JSON |
 | Dữ liệu mẫu | `SEED_DEV_DATA` = `"false"` trên production | để `"true"` sẽ nạp tài khoản demo có mật khẩu cố định — **không bật trên production** |
 
 Zalo OA của **từng tiệm** (chat bán hàng) không dùng biến môi trường: tiệm nhập OA ID, App ID, Secret Key, Access Token trong *Hội thoại → Kênh tích hợp*.
@@ -115,12 +116,13 @@ SELECT count(*) FILTER (WHERE status = 'COMPLETED')::float
  WHERE feature = 'vision.analyze' AND created_at >= now() - interval '28 days';
 ```
 
-**Cảnh báo hiện có** (chưa có công cụ metrics — E1.5 chờ PO chọn nhà cung cấp):
+**Cảnh báo hiện có** (theo dõi lỗi: Sentry khi có `SENTRY_DSN`; chưa có công cụ metrics):
 
 | Tín hiệu | Kích hoạt | Xử lý |
 |---|---|---|
 | Lượt cron `smeos-cron-dispatch-sweep` thất bại | `/internal/health` 503: CSDL, Redis, job tồn đọng > 15 phút, `worker_offline:*` | §5 và `docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md` §3 |
 | Render health check đỏ | `/api/health` 503 | Render tự khởi động lại; kéo dài → CSDL |
+| Sentry: lỗi mới / tăng đột biến | lỗi 500 trong route (`http.internal_error`), lỗi không ai bắt (`http.unhandled_error`), `log.error`/`log.exception` ở worker; tag `requestId`, `jobId`, `path` | mở theo `requestId` → §11. Cài một lần: tạo dự án Sentry, bật cảnh báo "issue mới" gửi email người trực |
 | Xem tay hằng tuần | truy vấn S3; đếm `http.internal_error`, `notification.dispatched` có `failed > 0` trong log Render | ghi số vào bảng theo dõi SLO, so ngân sách lỗi |
 
 ## 11. Truy vết một sự cố bằng mã yêu cầu

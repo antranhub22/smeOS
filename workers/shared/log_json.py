@@ -22,10 +22,43 @@ _ngu_canh: ContextVar[dict[str, Any]] = ContextVar("smeos_job_log_context", defa
 
 # Thuộc tính có sẵn của LogRecord — không chép vào dòng JSON.
 _THUOC_TINH_GOC = set(vars(logging.makeLogRecord({}))) | {"message", "asctime"}
+_sentry_bat = False
+
+
+def loc_su_kien_sentry(event: dict[str, Any], _hint: Any = None) -> dict[str, Any]:
+    """Bỏ mọi thứ có thể chứa dữ liệu khách trước khi gửi: request, user, breadcrumb, extra, biến cục bộ."""
+    for khoa in ("request", "user", "breadcrumbs", "extra"):
+        event.pop(khoa, None)
+    for ngoai_le in (event.get("exception") or {}).get("values") or []:
+        for khung in (ngoai_le.get("stacktrace") or {}).get("frames") or []:
+            khung.pop("vars", None)
+    return event
+
+
+def bat_sentry() -> bool:
+    """Bật Sentry khi có `SENTRY_DSN` (E1.5). Log `error`/`exception` thành sự kiện lỗi; không đo hiệu năng."""
+    global _sentry_bat
+    dsn = os.environ.get("SENTRY_DSN")
+    if not dsn:
+        return False
+    import sentry_sdk
+
+    sentry_sdk.init(
+        dsn=dsn,
+        environment=os.environ.get("SENTRY_ENVIRONMENT", "production"),
+        release=os.environ.get("RENDER_GIT_COMMIT"),
+        send_default_pii=False,
+        include_local_variables=False,
+        max_breadcrumbs=0,
+        traces_sample_rate=0,
+        before_send=loc_su_kien_sentry,
+    )
+    _sentry_bat = True
+    return True
 
 
 def gan_ngu_canh_job(job: Mapping[str, Any]) -> None:
-    """Đặt ngữ cảnh cho mọi dòng log sau đó trong job này."""
+    """Đặt ngữ cảnh cho mọi dòng log sau đó trong job này (và tag lỗi gửi Sentry nếu bật)."""
     _ngu_canh.set(
         {
             k: v
@@ -38,10 +71,25 @@ def gan_ngu_canh_job(job: Mapping[str, Any]) -> None:
             if v is not None
         }
     )
+    _gan_tag_sentry(_ngu_canh.get())
 
 
 def xoa_ngu_canh_job() -> None:
     _ngu_canh.set({})
+    _gan_tag_sentry({"requestId": None, "jobId": None, "organizationId": None, "feature": None})
+
+
+def _gan_tag_sentry(tags: Mapping[str, Any]) -> None:
+    if not _sentry_bat:
+        return
+    import sentry_sdk
+
+    scope = sentry_sdk.get_isolation_scope()
+    for k, v in tags.items():
+        if v is None:
+            scope.remove_tag(k)
+        else:
+            scope.set_tag(k, str(v))
 
 
 def _loc(ctx: Mapping[str, Any]) -> dict[str, Any]:
@@ -70,3 +118,4 @@ def cau_hinh_log() -> None:
     root = logging.getLogger()
     root.handlers[:] = [handler]
     root.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
+    bat_sentry()

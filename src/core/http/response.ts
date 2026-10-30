@@ -1,3 +1,4 @@
+import { captureError } from "@/core/observability/error-tracker"
 import { log } from "@/core/observability/log"
 import { requestIdOf, runWithRequestId } from "@/core/observability/request-context"
 
@@ -43,6 +44,7 @@ export function errorResponse(error: unknown, where?: { method: string; path: st
 
   // Lỗi ngoài dự kiến không lộ chi tiết ra ngoài (`YC-S`, đặc tả 06 mục 2).
   // SLI lỗi máy chủ theo route (SLO v1, OPERATIONS_RUNBOOK §10); `requestId` tự gắn khi trong `handle()`.
+  captureError(error, where)
   log.error("http.internal_error", {
     ...where,
     error: error instanceof Error ? error.message : String(error),

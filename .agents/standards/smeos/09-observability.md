@@ -18,7 +18,7 @@
 | Log JSON + che khoá | ✅ | — |
 | `request_id` xuyên web → job → worker | ✅ `src/proxy.ts` gắn `x-request-id` (request + phản hồi); `handle()` chạy trong `request-context.ts` (AsyncLocalStorage) nên `log` tự thêm `requestId`; `generation_jobs.request_id`; worker in `job.claimed` (`workers/shared/job_trace.py`) | Route không bọc `handle()` chưa có `requestId` trong log |
 | Không `console.*` trong mã sản phẩm | 🔴 31 tệp còn `console.*`; ESLint chưa có `no-console` | Ratchet `no-console` (giống `i18n-direct-intl-ratchet`) |
-| Công cụ theo dõi lỗi | 🔴 chưa có | Chọn nhà cung cấp (PO) → adapter trong `instrumentation.ts` |
+| Công cụ theo dõi lỗi | ✅ Sentry (PO Q1): cổng `core/observability/error-tracker.ts`, adapter `core/observability/adapters/sentry-error-tracker.ts` bật trong `instrumentation.ts` khi có `SENTRY_DSN`; bắt lỗi từ `handle()` và `onRequestError`; worker `shared/log_json.py` (`bat_sentry`). Lọc body/cookie/header/người dùng/breadcrumb/biến cục bộ; không đo hiệu năng | Lỗi phía trình duyệt chưa gửi (cần `instrumentation-client.ts`) |
 | Metrics RED / hàng đợi / kênh / chi phí AI | 🟡 `/van-hanh/suc-khoe`: bộ xử lý nền + hàng đợi theo loại việc (đang chờ, chờ từ lúc, lỗi 24 giờ); `/van-hanh/muc-dung`: chi phí AI theo tổ chức. Kênh thông báo chưa có số liệu lưu (chỉ log `notification.dispatched`) | Bước 2: exporter/metrics khi có công cụ (E1.5) |
 | Readiness tách liveness | ✅ `/api/health` (liveness, healthCheckPath Render) · `/api/health/ready` (CSDL + Redis trên production, `isReady`) | Đổi healthCheckPath sang `/ready` khi chạy nhiều instance — PO (`render.yaml`) |
 | Worker heartbeat | ✅ worker đặt `application_name` `smeos-worker:<tên>`; `/api/v1/internal/health` đếm qua `pg_stat_activity` (`countLiveWorkers`), production thiếu worker → `worker_offline:<tên>` → cron đỏ | — |
@@ -29,4 +29,4 @@
 1. Dùng `log` của `core/observability/log.ts`; không thêm `console.*` mới.
 2. Đặt `event` dạng `module.hanh_dong`, không nhúng giá trị động; truyền `organizationId`, `jobId` qua ngữ cảnh.
 3. Không log nội dung khách, email, số điện thoại, prompt đầy đủ.
-4. Không thêm SDK giám sát khi PO chưa chọn nhà cung cấp.
+4. Lỗi cần theo dõi → để `handle()` bắt hoặc gọi `captureError()`; không import `@sentry/*` ngoài adapter; không đưa dữ liệu khách vào tag.
