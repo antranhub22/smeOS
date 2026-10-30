@@ -5,6 +5,7 @@ import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-f
 import {
   calculateDaysRemaining,
   createTrashMeta,
+  trashExpiresAt,
   type TrashItem,
   type TrashItemType,
 } from "../domain/trash-types"
@@ -52,7 +53,7 @@ export class TrashRepository implements ITrashRepository {
         asset.purge_after?.toISOString() ??
         (typeof meta.expires_at === "string"
           ? meta.expires_at
-          : new Date(new Date(trashedAt).getTime() + 30 * 86400000).toISOString())
+          : trashExpiresAt(new Date(trashedAt)).toISOString())
 
       // Quá hạn thì ẩn khỏi danh sách; xoá vĩnh viễn do cron dọn rác làm
       // (`sweep-expired-trash.ts`, có legal hold) — không xoá lúc đang đọc.
@@ -90,9 +91,9 @@ export class TrashRepository implements ITrashRepository {
       const expiresAt =
         typeof attrs.expires_at === "string"
           ? attrs.expires_at
-          : new Date(new Date(trashedAt).getTime() + 30 * 86400000).toISOString()
+          : trashExpiresAt(new Date(trashedAt)).toISOString()
 
-      // Tự động dọn dẹp nếu đã quá 30 ngày
+      // Tự động dọn dẹp nếu đã quá TRASH_RETENTION_DAYS
       if (new Date(expiresAt).getTime() < now.getTime()) {
         void this.permanentDelete(ctx, { id: prod.id, type: "PRODUCT" }).catch(() => {})
         continue

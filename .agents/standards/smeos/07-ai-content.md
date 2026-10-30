@@ -19,7 +19,7 @@
 | Mục | Trạng thái | Cưỡng chế |
 |---|---|---|
 | Gateway duy nhất | ✅ | `gateway.test.ts`; SDK chỉ import trong `core/ai/adapters/` |
-| Chặn gọi thẳng nhà cung cấp | 🟡 test kiến trúc **chỉ quét Ops Copilot** (`ops-copilot-no-direct-ai.test.ts`) | nợ #197 |
+| Chặn gọi thẳng nhà cung cấp | ✅ `no-direct-ai-provider.test.ts` quét toàn `src/` ngoài `adapters/`, `core/ai/`; 1 ngoại lệ (`voice-clones.ts` xoá giọng ElevenLabs) | nợ #197 (đã trả) |
 | Prompt có phiên bản + registry | ✅ landing, catalog | test registry v2 |
 | Copy guard + mẫu dự phòng qua guard | ✅ landing, catalog | test copy guard, fallback |
 | Log promptId/version/source | ✅ `landing_content.generated`, `catalog_content.generated` | test log |

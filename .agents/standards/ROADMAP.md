@@ -22,7 +22,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 2. **PO:** đưa `audit:industry:check` vào CI (`ci.yml`).
 3. ✅ (30/10/2026) `core/governance/tier-of.ts` — `tierOf`, `isChainTier`, `organizationTierOf`; kiểu `GovernanceTier` (nợ #194).
 4. ✅ (30/10/2026) Gỡ `cascading-resolver.ts` + 4 tệp `cascading-*`; lõi chung `core/governance/layered-resolver.ts` cho ma trận quản trị và thông báo (nợ #193).
-5. Hằng `TRASH_RETENTION_DAYS` (nợ #196); mở rộng test chặn gọi AI trực tiếp ra toàn `src/` (nợ #197).
+5. ✅ (30/10/2026) Hằng `TRASH_RETENTION_DAYS` (nợ #196); mở rộng test chặn gọi AI trực tiếp ra toàn `src/` (nợ #197).
 
 ## G1 · Production-ready
 
