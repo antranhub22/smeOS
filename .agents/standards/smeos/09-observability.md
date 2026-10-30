@@ -23,7 +23,7 @@
 | Readiness tách liveness | ✅ `/api/health` (liveness, healthCheckPath Render) · `/api/health/ready` (CSDL + Redis trên production, `isReady`) | Đổi healthCheckPath sang `/ready` khi chạy nhiều instance — PO (`render.yaml`) |
 | Worker heartbeat | ✅ worker đặt `application_name` `smeos-worker:<tên>`; `/api/v1/internal/health` đếm qua `pg_stat_activity` (`countLiveWorkers`), production thiếu worker → `worker_offline:<tên>` → cron đỏ | — |
 | Log worker Python cùng định dạng | 🟡 `workers/shared/log_json.py`: mọi bản ghi `logging` thành JSON cùng trường web + ngữ cảnh job (`requestId`, `jobId`…), bật ở 3 worker; `print(...)` trong `media`/`video` chưa qua `logging` | Đổi dần `print` sang `logging.getLogger(...)` |
-| SLO + cảnh báo + runbook | 🟡 SLO v1 (S1–S4) + truy vết `request_id` trong `docs/handover/OPERATIONS_RUNBOOK.md` §10–11; SLI từ `http.internal_error`, `notification.dispatched`, `generation_jobs`; mục tiêu chờ PO duyệt | Đo tự động + cảnh báo theo ngân sách lỗi khi có công cụ (E1.5) |
+| SLO + cảnh báo + runbook | 🟡 SLO v1 (S1–S4) + truy vết `request_id` trong `docs/handover/OPERATIONS_RUNBOOK.md` §10–11; SLI từ `http.internal_error`, `notification.dispatched`, `generation_jobs`; mục tiêu PO duyệt 30/10/2026 | Đo tự động + cảnh báo theo ngân sách lỗi khi có công cụ (E1.5) |
 
 ## 3. Quy tắc cho agent (áp dụng ngay)
 1. Dùng `log` của `core/observability/log.ts`; không thêm `console.*` mới.

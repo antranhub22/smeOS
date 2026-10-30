@@ -33,7 +33,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 4. ✅ (30/10/2026) `/api/health/ready` tách khỏi `/api/health`; worker heartbeat qua `application_name` + `pg_stat_activity` (không cần bảng/Redis/phụ thuộc mới).
 5. **PO:** chọn công cụ theo dõi lỗi (vd. Sentry / tự host) → adapter trong `instrumentation.ts`, che dữ liệu như `log.ts`.
 6. Màn vận hành mới trong `src/app/(platform)/van-hanh/`: hàng đợi job (độ dài, job già nhất, lỗi theo loại), kênh thông báo, chi phí AI theo tenant — đọc từ DB, chưa cần exporter.
-7. ✅ (30/10/2026) SLO v1 S1–S4 + truy vết `request_id` trong `docs/handover/OPERATIONS_RUNBOOK.md` §10–11; thêm log `http.internal_error` (lỗi 500 trong `handle()`) và `notification.dispatched` làm SLI. Mục tiêu chờ PO duyệt.
+7. ✅ (30/10/2026) SLO v1 S1–S4 + truy vết `request_id` trong `docs/handover/OPERATIONS_RUNBOOK.md` §10–11; thêm log `http.internal_error` (lỗi 500 trong `handle()`) và `notification.dispatched` làm SLI. PO duyệt mục tiêu 30/10/2026.
 *Nghiệm thu:* lần ngược một lỗi từ log web tới dòng log worker bằng một `request_id`.
 
 **E2 — Nhiều instance** (chuẩn 10)

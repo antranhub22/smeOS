@@ -93,7 +93,7 @@ Trên máy dev có `.agents/` riêng: chạy `npm run dev:link-skills` một l�
 
 ## 10. SLO v1 (30/10/2026 — ROADMAP E1.7)
 
-Đo trên **28 ngày trượt**. Ngân sách lỗi = 100% − mục tiêu; tiêu quá nửa ngân sách trong 7 ngày → dừng tính năng mới, ưu tiên sửa độ tin cậy. Mục tiêu v1 đặt theo hạ tầng hiện tại (1 instance web gói `starter`) và được xem lại sau 4 tuần có số thật. **[CẦN XÁC NHẬN]** PO duyệt con số trước khi đưa vào hợp đồng (§8).
+Đo trên **28 ngày trượt**. Ngân sách lỗi = 100% − mục tiêu; tiêu quá nửa ngân sách trong 7 ngày → dừng tính năng mới, ưu tiên sửa độ tin cậy. Mục tiêu v1 đặt theo hạ tầng hiện tại (1 instance web gói `starter`) và được xem lại sau 4 tuần có số thật. PO duyệt mục tiêu 30/10/2026.
 
 | # | Hành trình | SLI (tốt / tổng) | Mục tiêu | Nguồn đo |
 |---|---|---|---|---|
