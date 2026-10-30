@@ -112,10 +112,7 @@ export function CatalogCardOverlay({
           </h4>
           <div className="flex items-center justify-between pt-2">
             <div>
-              <div className="text-caption uppercase tracking-wider opacity-80" style={{ color: textSecondary }}>
-                Giá niêm yết
-              </div>
-              <div className="text-base font-black tracking-tight" style={{ color: priceColor }}>
+              <div className="text-base font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
                 {formatVnd(product.price)}
               </div>
             </div>
@@ -124,11 +121,12 @@ export function CatalogCardOverlay({
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
+              aria-label="Đặt ngay qua Zalo"
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95"
               style={{ backgroundColor: ctaBg, color: ctaText }}
             >
-              <MessageCircle size={14} />
-              Đặt ngay
+              <MessageCircle size={14} aria-hidden="true" />
+              <span className="hidden sm:inline">Đặt ngay</span>
             </a>
           </div>
         </div>

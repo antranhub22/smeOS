@@ -24,6 +24,7 @@ import { CATALOG_TEMPLATES } from "@/modules/catalog-studio/domain/templates/tem
 import { CatalogStorefrontHero } from "./catalog-storefront-hero"
 import { CatalogStorefrontToolbar } from "./catalog-storefront-toolbar"
 import { PublicHero } from "./public/public-hero"
+import { publicThemeVars } from "./public/public-theme-vars"
 import { PublicStickyActions } from "./public/public-sticky-actions"
 
 const PRODUCTS_ANCHOR_ID = "bo-suu-tap"
@@ -128,7 +129,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
   return (
     <div
       className="min-h-screen antialiased transition-colors pb-28 md:pb-16"
-      style={{ backgroundColor: currentStyle.tokens.background, color: currentStyle.tokens.textPrimary }}
+      style={{ ...publicThemeVars(currentStyle), backgroundColor: currentStyle.tokens.background, color: currentStyle.tokens.textPrimary }}
     >
       <CatalogStorefrontHeader
         shop={shop}

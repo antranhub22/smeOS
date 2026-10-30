@@ -174,9 +174,9 @@ export function CatalogProductListView({
           ))}
         </div>
       ) : (
-        /* Standard Grid Style — 1, 2, or 3 columns based on screen width */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {products.map((p, idx) => renderProductCard(p, idx, "square"))}
+        /* Lưới chuẩn thương mại: 2 cột trên di động, 3 cột desktop, ảnh dọc 4:5 */
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+          {products.map((p, idx) => renderProductCard(p, idx, "4/5"))}
         </div>
       )}
     </main>

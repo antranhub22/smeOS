@@ -87,4 +87,6 @@
 - **Hero tràn màn hình** (`src/components/catalog/public/public-hero.tsx`): nền là ảnh thật (ảnh hero tiệm tải lên, không có thì ảnh sản phẩm đầu tiên); không có ảnh thật → khối hero cũ theo phong cách catalog, không dùng ảnh minh hoạ. Tiêu đề/dòng phụ lấy từ nội dung AI đã duyệt, không có thì tên/mô tả catalog. Nút chính "Xem bộ sưu tập" cuộn tới vùng sản phẩm. Màu theo token phong cách catalog (S01–S12), không dùng màu giao diện quản trị.
 - **Thanh hành động cố định đáy** (chỉ di động, `public-sticky-actions.tsx`): "Nhắn Zalo đặt hoa" + "Gọi", chỉ hiện khi Hồ sơ tiệm có số điện thoại.
 - **Chữ tiêu đề** các phong cách serif dùng `font-display` (Fraunces, PO duyệt thêm font 29/10/2026).
+- **Màu đồng bộ:** vùng trang khách ghi đè biến màu ngữ nghĩa bằng token phong cách catalog (`public-theme-vars.ts`) — các khối Câu chuyện/Ưu điểm/Quy trình/Hỏi đáp/Form theo phong cách tiệm. S04 đổi màu nhấn `#EA580C` → `#C2410C` để đạt tương phản.
+- **Lưới sản phẩm:** 2 cột trên di động, 3 cột desktop, ảnh dọc 4:5; bỏ nhãn "Giá niêm yết", nút đặt chỉ còn biểu tượng trên di động (có nhãn truy cập).
 - Kiểm: 390/1280px không cuộn ngang; axe 390px không lỗi critical/serious thuộc trang.
