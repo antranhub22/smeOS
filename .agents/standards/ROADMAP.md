@@ -28,7 +28,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 
 **E1 — Giám sát** (chuẩn 09)
 1. `request_id`: repo **chưa có** `proxy.ts`/middleware (Next 16 đổi tên middleware thành proxy — xem `node_modules/next/dist/docs/`) → thêm tệp này để sinh/nhận `x-request-id`, đưa vào ngữ cảnh `log`, header phản hồi `x-request-id`, cột `request_id` trên `generation_jobs` (**PO: schema**), worker đọc và log lại.
-2. Ratchet `no-console` (baseline 31 tệp, chỉ giảm).
+2. ✅ (30/10/2026) Ratchet `console.*` bằng test (`no-console-ratchet.test.ts`, baseline 30 tệp, chỉ giảm).
 3. Helper log JSON cho worker trong `workers/shared/` cùng trường với web.
 4. `/api/health/ready` tách khỏi `/api/health`; worker heartbeat (bảng hoặc Redis key có TTL).
 5. **PO:** chọn công cụ theo dõi lỗi (vd. Sentry / tự host) → adapter trong `instrumentation.ts`, che dữ liệu như `log.ts`.

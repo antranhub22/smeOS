@@ -17,7 +17,7 @@
 |---|---|---|
 | Log JSON + che khoá | ✅ | — |
 | `request_id` xuyên web → job → worker | 🔴 không có | Sinh ở `proxy`/middleware, gắn vào `log`, lưu vào `generation_jobs`, worker đọc lại |
-| Không `console.*` trong mã sản phẩm | 🔴 31 tệp còn `console.*`; ESLint chưa có `no-console` | Ratchet `no-console` (giống `i18n-direct-intl-ratchet`) |
+| Không `console.*` trong mã sản phẩm | 🟡 30 tệp còn `console.*`, khoá bằng `tests/unit/architecture/no-console-ratchet.test.ts` (chỉ giảm) | Dọn dần sang `log`, hạ BASELINE |
 | Công cụ theo dõi lỗi | 🔴 chưa có | Chọn nhà cung cấp (PO) → adapter trong `instrumentation.ts` |
 | Metrics RED / hàng đợi / kênh / chi phí AI | 🔴 chưa có số đo; chỉ có dữ liệu thô trong DB | Bước 1: màn vận hành đọc từ DB (`job_events`, sổ AI); bước 2: exporter |
 | Readiness tách liveness | 🟡 một endpoint | `/api/health/ready` |
