@@ -67,14 +67,15 @@ Claude outputs/
 .claude/*
 !.claude/hooks
 !.claude/settings.json
+!.claude/skills
 .kilo/
 
 # ╔══════════════════════════════════════════════════════╗
 # ║  AGENT CONFIG — INTERNAL IP, KHÔNG GIAO CHO KHÁCH  ║
-# ║  Không commit .agents/, AGENTS.md, .agent-studio/  ║
+# ║  .agents/, AGENTS.md ĐƯỢC commit để mọi phiên dev  ║
+# ║  dùng; bản giao khách loại qua .gitattributes      ║
+# ║  export-ignore — kiểm bằng `npm run handover:check` ║
 # ╚══════════════════════════════════════════════════════╝
-.agents/
-AGENTS.md
 .agent-studio/
 
 # Kết quả đo chất lượng ảnh biến thể (scripts/cham-bien-the.py) — ảnh sinh ra, không commit
