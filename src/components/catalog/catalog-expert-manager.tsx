@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { PublishedCatalogLinks, type CatalogLinkItem } from "./catalog-link-widgets"
 import type { CatalogProduct } from "./catalog-management-tab"
+import { Disclosure } from "@/components/ui/disclosure"
+import { ShopReviewsManager } from "./reviews/shop-reviews-manager"
 import { formatCurrency } from "@/lib/i18n/formatters"
 
 interface CatalogExpertManagerProps {
@@ -195,6 +197,9 @@ export function CatalogExpertManager({
           })}
         </div>
       </div>
+      <Disclosure label="Đánh giá khách hiện trên trang catalog (Khách hàng nói gì)">
+        <ShopReviewsManager />
+      </Disclosure>
     </div>
   )
 }

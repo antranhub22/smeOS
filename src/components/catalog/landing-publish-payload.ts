@@ -6,6 +6,7 @@
 import type { GeneratedLandingPackage } from "@/modules/content-engine/domain/landing-content-generator"
 import type { PublicCatalogResult, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { landingVisualFor } from "@/modules/landing-page/domain/archetype-style"
+import type { PublicShopReview } from "@/modules/shop-reviews/domain/review-rules"
 import type { CatalogProduct } from "./catalog-management-tab"
 import type { EnabledSectionsConfig } from "./landing-campaign-preview"
 
@@ -42,7 +43,7 @@ export function buildLandingPublishBody(d: LandingDraft) {
 }
 
 /** Dựng đúng dữ liệu trang khách sẽ nhận sau khi xuất bản, để vẽ bản xem trước bằng chính trang đó. */
-export function buildLandingPreview(d: LandingDraft, shop: PublicCatalogShop): PublicCatalogResult {
+export function buildLandingPreview(d: LandingDraft, shop: PublicCatalogShop, reviews: PublicShopReview[] = []): PublicCatalogResult {
   const body = buildLandingPublishBody(d)
   return {
     status: "ACTIVE",
@@ -69,6 +70,7 @@ export function buildLandingPreview(d: LandingDraft, shop: PublicCatalogShop): P
       generatedPackage: (d.generatedPackage ?? undefined) as Record<string, unknown> | undefined,
       enabledSections: d.enabledSections as unknown as Record<string, boolean>,
     },
+    reviews,
     templateId: body.filters.template_id,
     styleId: body.filters.style_id,
   }

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Eye, ExternalLink, QrCode, Smartphone, Monitor } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,6 +9,7 @@ import type { GeneratedLandingPackage } from "@/modules/content-engine/domain/la
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { StorefrontPreviewIframe } from "./public/storefront-preview-iframe"
 import { buildLandingPreview } from "./landing-publish-payload"
+import { toPublicReview, type PublicShopReview, type ShopReview } from "@/modules/shop-reviews/domain/review-rules"
 
 export interface EnabledSectionsConfig {
   story: boolean
@@ -69,6 +70,14 @@ export function LandingCampaignPreview({
 }: LandingCampaignPreviewProps) {
   const [deviceView, setDeviceView] = useState<"mobile" | "desktop">("mobile")
   const { business } = useTenantProfile()
+  // Đánh giá đang bật — giống đúng trang khách sẽ hiện; không có quyền đọc thì bỏ qua
+  const [reviews, setReviews] = useState<PublicShopReview[]>([])
+  useEffect(() => {
+    fetch("/api/v1/shop-reviews")
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((j: { data?: ShopReview[] }) => setReviews((j.data ?? []).filter((r) => r.isVisible).slice(0, 6).map(toPublicReview)))
+      .catch(() => setReviews([]))
+  }, [])
 
   return (
     <div className="p-5 rounded-2xl bg-white border border-border shadow-xs space-y-4 animate-in fade-in duration-200">
@@ -155,7 +164,8 @@ export function LandingCampaignPreview({
               website: business?.website ?? null,
               primaryColor: "#7A2E42",
               logoUrl: null,
-            }
+            },
+            reviews
           )}
         />
       </div>

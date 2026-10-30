@@ -13,6 +13,8 @@ import { LandingCampaignTab } from "@/components/catalog/landing-campaign-tab"
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
 import type { CatalogProduct } from "@/components/catalog/catalog-management-tab"
 import type { LandingPageType } from "@/modules/landing-page/domain/preset-catalog"
+import { Disclosure } from "@/components/ui/disclosure"
+import { ShopReviewsManager } from "@/components/catalog/reviews/shop-reviews-manager"
 
 export function LandingPageStudioClient() {
   const router = useRouter()
@@ -148,6 +150,10 @@ export function LandingPageStudioClient() {
         <LandingTypeSelector selectedType={pageType} onSelectType={setPageType} />
 
         <LandingCampaignTab products={products} onRefresh={fetchProducts} pageType={pageType} shopName={business?.display_name} />
+
+        <Disclosure label="Đánh giá khách hiện trên trang (Khách hàng nói gì)">
+          <ShopReviewsManager />
+        </Disclosure>
       </div>
     </div>
   )

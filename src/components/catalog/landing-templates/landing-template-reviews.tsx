@@ -9,7 +9,8 @@ export interface ReviewItem {
   occasion: string
   rating: number
   comment: string
-  verified: boolean
+  /** Chỉ đánh dấu "Đã mua hàng" khi hệ thống đối chiếu được đơn thật — đánh giá chủ tiệm nhập thì không */
+  verified?: boolean | undefined
 }
 
 interface LandingTemplateReviewsProps {
@@ -45,7 +46,7 @@ export function LandingTemplateReviews({
         <div className="flex items-center gap-1 text-caption text-text-muted">
           <div className="flex text-warning">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={11} fill="currentColor" />
+              <Star key={i} size={11} fill={i < Math.round(avgRating) ? "currentColor" : "none"} aria-hidden="true" />
             ))}
           </div>
           <span className={`font-bold ${isLuxury ? "font-display text-primary" : "text-text"}`}>{avgRating.toFixed(1)}/5</span>

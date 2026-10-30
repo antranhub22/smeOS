@@ -209,8 +209,9 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         {campaign && enabledSections?.gallery !== false && galleryPhotos.length > 0 && (
           <LandingTemplateGallery archetypeId={campaign.archetype} photos={galleryPhotos} />
         )}
-        {campaign && enabledSections?.reviews !== false && (
-          <LandingTemplateReviews archetypeId={campaign.archetype} />
+        {/* Đánh giá do chủ tiệm nhập và đang bật — cả landing lẫn catalog; rỗng thì khối tự ẩn */}
+        {enabledSections?.reviews !== false && (
+          <LandingTemplateReviews archetypeId={campaign?.archetype} reviews={initialData.reviews ?? []} />
         )}
         {campaign && enabledSections?.faq !== false && generatedPackage?.faq && (
           <LandingTemplateFaq faq={generatedPackage.faq} archetypeId={campaign.archetype} />

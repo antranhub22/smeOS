@@ -2,6 +2,8 @@ import type { ICatalogLinkRepository } from "../domain/repositories/catalog-link
 import { getCatalogLinkRepository } from "../infra/catalog-link-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { landingVisualFor } from "@/modules/landing-page/domain/archetype-style"
+import { getPublicReviewsForOrganization } from "@/modules/shop-reviews/use-cases/get-public-reviews"
+import type { PublicShopReview } from "@/modules/shop-reviews/domain/review-rules"
 import type { CatalogTemplateId, CatalogStyleId } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 
 export interface PublicCatalogShop {
@@ -56,6 +58,8 @@ export type PublicCatalogResult =
       } | undefined
       templateId?: CatalogTemplateId | undefined
       styleId?: CatalogStyleId | undefined
+      /** Đánh giá khách do chủ tiệm nhập, đang bật hiển thị */
+      reviews?: PublicShopReview[] | undefined
     }
   | {
       status: "REVOKED"
@@ -285,6 +289,7 @@ export async function getPublicCatalog(
     },
     shop,
     products,
+    reviews: await getPublicReviewsForOrganization(link.organization_id),
     campaignConfig:
       filters.occasion || filters.archetype || filters.generatedPackage || resolvedHeroImageUrl || filters.videoUrl
         ? {

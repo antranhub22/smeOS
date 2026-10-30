@@ -9,6 +9,8 @@ const TENANT_TABLES = [
   "storage_outbox",
   // Kho dữ liệu v2 (29/10/2026) — landing page đã sinh
   "landing_pages",
+  // Đánh giá khách do chủ tiệm nhập (30/10/2026)
+  "shop_reviews",
   // Nhóm công cụ 6 — tính giá (29/10/2026) — con trước cha
   "product_recipe_items",
   "product_recipes",

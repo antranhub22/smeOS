@@ -345,6 +345,28 @@ model landing_pages {
 }
 ```
 
+### 5.0b Đánh giá khách do chủ tiệm nhập — `shop_reviews` (PO 30/10/2026)
+
+Hiện ở mục "Khách hàng nói gì" trên trang khách `/c/[slug]` (Landing 08 / Catalog 09). Chủ tiệm chép lại nhận xét thật; không có form khách tự gửi, không lưu số điện thoại khách. Quản lý qua `/shop-reviews` (`J1`); trang công khai chỉ đọc dòng `is_visible = true` của tổ chức sở hữu link (tối đa 6). Bản ghi tổ chức khác → 404.
+
+```prisma
+model shop_reviews {
+  id              String   @id @default(uuid())
+  organization_id String
+  author_name     String               // ≤ 60 ký tự
+  occasion        String?              // ≤ 60 ký tự
+  rating          Int                  // 1–5, kiểm ở domain
+  comment         String               // 5–500 ký tự
+  is_visible      Boolean  @default(true)
+  created_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@index([organization_id])
+  @@index([organization_id, is_visible])
+}
+```
+
 ### 5.1 Hàng đợi xoá payload — `storage_outbox` (SDAGF P1)
 
 Xoá vĩnh viễn một asset (API, thùng rác, cron dọn rác) xoá dòng `assets` và ghi hàng đợi trong **cùng một transaction**. Nơi trỏ tới tệp (registry) gồm cả hai nguồn JSON: `generation_jobs.output.audio_storage_key/voice_only_storage_key` và `order_coordinations.metadata.qc_photos/pod_photos` — danh sách SSOT `STORAGE_REFERENCE_SOURCES` (`src/modules/assets/infra/storage-registry-keys.ts`), test kiến trúc `storage-write-contract.test.ts`. Cron `/internal/chain-dispatch-sweep` xoá tệp thật khi cờ `STORAGE_DELETE_PAYLOADS=enabled`, thử lại tối đa 5 lần. Khoá còn bản ghi khác trỏ tới (Master dùng chung tệp gốc) thì đóng việc mà không xoá tệp.
