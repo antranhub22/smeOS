@@ -139,3 +139,14 @@ Ghi chú (chưa đổi, cần PO): dự toán khi mọi đơn đều chưa có c
 - `/cai-dat`: 8 lỗi tương phản + 2 ô thiếu nhãn — làm ở đợt rollout nhóm Cài đặt (PO 29/10/2026).
 - Hồ sơ tiệm chưa lưu chính sách thì bộ ưu đãi mặc định (gồm "Giảm 10%") được coi là đang bật — tiệm tắt trong Cài đặt → Ưu đãi.
 - Ngoài phạm vi: `generate-banner-copy` gọi LLM trực tiếp, chưa qua `callCapability`.
+
+## /van-hanh/suc-khoe — Sức khoẻ hệ thống (30/10/2026, ROADMAP E1.6)
+
+Kịch bản `scripts/ux-audit/scenarios/suc-khoe.mjs` (hàng đợi rỗng; có việc chờ + lỗi), 390/1280px, axe sạch, không cuộn ngang.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| SK-01 | P2 | Không thấy được worker nào đang chạy, hàng đợi từng loại việc dài bao nhiêu | Thêm khối "Bộ xử lý nền" và bảng "Hàng đợi theo loại việc" (tên tiếng Việt, `<th scope>`, cuộn ngang trong thẻ ở 390px) |
+| SK-02 | P2 | Khối "Job theo trạng thái" (có từ trước) hiện mã `FAILED`, `PENDING` | Chưa sửa — ngoài phạm vi E1.6 |
+
+Chưa kiểm: bàn phím, zoom 200%, đọc màn hình.

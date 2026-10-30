@@ -1,6 +1,6 @@
 # Screen Contract — Console Vận Hành Nền Tảng (Platform Console)
 
-**Tuyến:** `/van-hanh` (và `/van-hanh/to-chuc`, `/van-hanh/muc-dung`, `/van-hanh/nhat-ky`, `/van-hanh/suc-khoe`) · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D10
+**Tuyến:** `/van-hanh` (và `/van-hanh/to-chuc`, `/van-hanh/muc-dung`, `/van-hanh/nhat-ky`, `/van-hanh/suc-khoe`) · **Cập nhật:** 30/10/2026 · **Thẻ:** T5.D10
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `platform_admin` (Người vận hành nền tảng SaaS)
@@ -13,7 +13,7 @@
 - API:
   - `GET /api/v1/platform/organizations` → Danh sách toàn bộ tổ chức (cần quyền `N1`)
   - `GET /api/v1/platform/organizations/[id]` → Chi tiết một tổ chức cụ thể
-  - `GET /api/v1/platform/health` → Tình trạng job và job treo (cần quyền `N5`)
+  - `GET /api/v1/platform/health` → Tình trạng job, job treo, hàng đợi theo loại việc (đang chờ, chờ từ lúc, lỗi trong 24 giờ) và bộ xử lý nền đang chạy (cần quyền `N5`, ROADMAP E1.6)
   - `GET /api/v1/platform/usage` → Mức dùng credit toàn hệ thống (cần quyền `N4`)
   - `GET /api/v1/platform/audit-logs` → Nhật ký kiểm toán toàn hệ thống
 - Khối: Bố cục Header phân biệt rõ ràng "Vận hành nền tảng — Xuyên tổ chức" + Huy hiệu phạm vi trên từng trang con (Toàn hệ thống / Tổ chức cụ thể)
@@ -26,6 +26,7 @@
 | L1 Hành động | Chuyển tab điều hướng (/to-chuc, /suc-khoe, /muc-dung, /nhat-ky) | Top Header Navbar |
 | L2 Ngữ cảnh | Huy hiệu phạm vi (Toàn hệ thống / Tổ chức cụ thể) | Tiêu đề mỗi trang |
 | L3 Chi tiết | Bảng danh sách tổ chức, bảng job treo, nhật ký hệ thống | Bảng dữ liệu có cấu trúc |
+| L3 Chi tiết (`/suc-khoe`) | Bộ xử lý nền (đang chạy / không chạy) → Hàng đợi theo loại việc → Job theo trạng thái → Job treo | Thẻ trạng thái + bảng; chỉ đọc (D-N5) |
 
 ## 4. Hành động
 - Chính (0): View-only monitoring console.
