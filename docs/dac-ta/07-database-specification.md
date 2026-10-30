@@ -924,6 +924,40 @@ model catalog_links {
   @@index([slug])
 }
 
+// Công cụ 45 (30/10/2026) — thư viện nhận diện thương hiệu có phiên bản. Cửa hàng thành
+// viên chỉ đọc mục `share_with_members` + ACTIVE của chuỗi (chain_partnerships ACTIVE).
+model brand_library_items {
+  id                 String   @id @default(uuid())
+  organization_id    String
+  title              String
+  category           String // LOGO | COLOR | FONT | IMAGE | TEMPLATE | GUIDELINE | COPY
+  description        String?
+  share_with_members Boolean  @default(false)
+  status             String   @default("ACTIVE") // ACTIVE | ARCHIVED
+  current_version    Int      @default(1)
+  created_by         String
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+}
+
+model brand_library_versions {
+  id              String   @id @default(uuid())
+  organization_id String
+  item_id         String
+  version         Int
+  asset_id        String?
+  text_value      String?
+  note            String?
+  created_by      String
+  created_at      DateTime @default(now())
+
+  @@unique([item_id, version])
+  @@index([organization_id])
+}
+
 // Công cụ 11 (30/10/2026) — link hồ sơ cửa hàng công khai /ch/<slug>. Tối đa một
 // link chưa thu hồi mỗi tổ chức (kiểm trong giao dịch Serializable ở repository).
 model store_share_links {

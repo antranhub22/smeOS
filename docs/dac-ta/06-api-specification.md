@@ -474,6 +474,10 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | GET | `/public/catalog/:slug` | — *(công khai)* | Storefront khách xem; ảnh ký HMAC; `customer` chỉ có tên/lời chào, không bao giờ có số điện thoại |
 | POST | `/public/catalog/:slug/lead` | — *(công khai)* | Form Lead Capture: `{ phone, message? }` ghi vào `metadata.leads` của `catalog_links`; tổ chức suy từ bản ghi, không nhận từ client. Bổ sung vào đặc tả 05/10/2026 |
 | GET · POST | `/store-share-link` | `F1` · `F2` | Công cụ 11 (30/10/2026): xem / tạo link hồ sơ cửa hàng công khai. POST từ chối khi hồ sơ thiếu mục thiết yếu; đã có link đang hoạt động thì trả link đó |
+| GET · POST | `/brand-library` | `F1` · `F2` | Công cụ 45 (30/10/2026): thư viện nhận diện thương hiệu của tổ chức; `?include_archived=true`. POST tạo mục + phiên bản 1; loại LOGO/IMAGE/TEMPLATE cần `asset_id` là ảnh JPG/PNG/WebP của chính tổ chức, loại còn lại cần `text_value` (COLOR chỉ nhận mã hex) |
+| GET · PATCH | `/brand-library/:id` | `F1` · `F2` | Xem kèm các phiên bản; sửa tên/mô tả, `share_with_members`, `status` ACTIVE/ARCHIVED. Mục của tổ chức khác → 404. Ghi nhật ký kiểm toán |
+| POST | `/brand-library/:id/versions` | `F2` | Thêm phiên bản mới (bản cũ giữ nguyên); mục đã lưu trữ → 400 |
+| GET | `/brand-library/chain` | `F1` | Cửa hàng thành viên: mục chuỗi đã chia sẻ, đang dùng (chuỗi suy từ `chain_partnerships` ACTIVE sớm nhất, không nhận từ client); `data: null` khi không thuộc chuỗi |
 | POST | `/store-share-link/revoke` | `F2` | Ngừng link đang hoạt động; trang `/ch/:slug` cũ báo đã ngừng. Không có link → 404 |
 
 **Chưa có:** `GET /catalog-links/:slug/qr` (ảnh PNG mã QR để in) ở core — `LocalBudd` tự sinh QR phía route của nó (`qrcode`, trỏ về `/c/:slug` của chính nó), core cũng có `src/core/media/qr-engine.ts` sinh QR phía giao diện, không qua endpoint. Xem **RS-7**.

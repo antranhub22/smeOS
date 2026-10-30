@@ -351,8 +351,8 @@ const GROUP_8_TOOLS: readonly ToolDefinition[] = [
   {
     id: 45, name: "Tạo bộ nhận diện và thư viện nội dung",
     description: "Thư viện tài nguyên thương hiệu có phân quyền và phiên bản",
-    icon: "Palette", label: "CHAIN", status: "FOUNDATION", progress: 15,
-    href: null, statusNote: "Brand settings có, thiếu thư viện tài nguyên",
+    icon: "Palette", label: "BOTH", status: "DONE", progress: 100,
+    href: "/ho-so/thu-vien-thuong-hieu", statusNote: "Thư viện logo, màu, phông, mẫu, câu chữ có phiên bản; chuỗi chia sẻ cho cửa hàng thành viên",
   },
   {
     id: 46, name: "Chuẩn hóa báo giá và tiêu chuẩn dịch vụ",

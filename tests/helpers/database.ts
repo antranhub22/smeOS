@@ -7,6 +7,9 @@ import { seedAiCapabilities, seedVisionModels } from "@/core/ai/infra/seed-ai-re
 const TENANT_TABLES = [
   // Công cụ 11 — link hồ sơ cửa hàng công khai (30/10/2026)
   "store_share_links",
+  // Công cụ 45 — thư viện thương hiệu (30/10/2026) — con trước cha
+  "brand_library_versions",
+  "brand_library_items",
   // SDAGF P1 (29/10/2026) — hàng đợi xoá payload kho tệp
   "storage_outbox",
   // Kho dữ liệu v2 (29/10/2026) — landing page đã sinh
