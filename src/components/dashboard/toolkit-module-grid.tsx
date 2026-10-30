@@ -32,17 +32,17 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
   // Nhãn ngắn + icon lớn; mục đích dài nằm trong "?" (OPERATING_PRINCIPLES §6).
   // Nút chính phủ cả thẻ bằng ::after để InfoTip không bị lồng nút trong nút.
   return (
-    <div className="group relative flex flex-col items-center text-center p-5 sm:p-6 rounded-2xl bg-surface shadow-sm hover:shadow-md ring-1 ring-border/60 hover:ring-primary transition-all">
-      <InfoTip label={module.name} className="absolute top-3 right-3 m-0">
+    <div className="group relative flex flex-col items-center text-center p-4 pt-6 sm:p-6 rounded-2xl bg-surface shadow-sm hover:shadow-md ring-1 ring-border/60 hover:ring-primary transition-all">
+      <InfoTip label={module.name} className="absolute top-1 right-1 sm:top-3 sm:right-3 m-0">
         {module.purpose}
       </InfoTip>
-      <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-muted text-primary mb-4 transition-transform group-hover:scale-105">
-        <Icon className="w-8 h-8" aria-hidden="true" />
+      <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-primary-muted text-primary mb-3 sm:mb-4 transition-transform group-hover:scale-105">
+        <Icon className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
       </div>
       {module.order !== null && (
         <span className="text-caption font-semibold text-text-muted">Bước {module.order}</span>
       )}
-      <h3 className="text-title-sm font-bold text-text mt-0.5">
+      <h3 className="text-body-sm sm:text-title-sm font-bold leading-snug text-text mt-0.5">
         <button
           type="button"
           onClick={() => onOpen(module.key)}
@@ -51,7 +51,7 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
           {module.name}
         </button>
       </h3>
-      <span className="mt-2 text-caption text-text-muted">
+      <span className="mt-1 sm:mt-2 text-caption text-text-muted">
         {isDev ? `${ready}/${total} sẵn dùng` : `${total} công cụ`}
       </span>
     </div>
@@ -74,7 +74,7 @@ export function ModuleGrid({ modules, isDev, onOpen }: ModuleGridProps) {
   return (
     <div className="space-y-10">
       <section aria-label="Các bước phát triển cửa hàng">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-6">
           {steps.map((m) => (
             <ModuleCard key={m.key} module={m} isDev={isDev} onOpen={onOpen} />
           ))}
@@ -86,7 +86,7 @@ export function ModuleGrid({ modules, isDev, onOpen }: ModuleGridProps) {
           <h2 className="text-title-sm font-bold text-text pb-2 border-b border-border">
             Công cụ khác
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-6">
             {extras.map((m) => (
               <ModuleCard key={m.key} module={m} isDev={isDev} onOpen={onOpen} />
             ))}

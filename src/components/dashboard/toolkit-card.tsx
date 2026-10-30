@@ -5,7 +5,8 @@ import * as LucideIcons from "lucide-react"
 import { useRouter } from "next/navigation"
 import type { ToolDefinition, ToolStatus } from "@/modules/toolkit/domain/toolkit-catalog"
 import { InfoTip } from "@/components/ui/info-tip"
-import { STATUS_DISPLAY, LABEL_DISPLAY } from "@/modules/toolkit/domain/toolkit-catalog"
+import { toolShortName } from "@/modules/toolkit/domain/tool-short-names"
+import { STATUS_DISPLAY } from "@/modules/toolkit/domain/toolkit-catalog"
 
 // ── Status badge styling ───────────────────────────────────────────
 
@@ -46,15 +47,17 @@ export function ToolCard({ tool, isDev }: ToolCardProps) {
 
   // Icon lớn + tên ngắn; mô tả dài và ghi chú tiến độ nằm trong "?" (thử phong cách thoáng).
   // Nút phủ cả thẻ bằng ::after để InfoTip không bị lồng nút trong nút.
-  const tipText = isDev && tool.statusNote ? `${tool.description} — ${tool.statusNote}` : tool.description
+  const shortName = toolShortName(tool)
+  const detail = shortName === tool.name ? tool.description : `${tool.name}: ${tool.description}`
+  const tipText = isDev && tool.statusNote ? `${detail} — ${tool.statusNote}` : detail
 
   return (
     <div
-      className={`group relative flex flex-col items-center text-center p-5 sm:p-6 rounded-2xl bg-surface shadow-sm ring-1 transition-all ${
+      className={`group relative flex flex-col items-center text-center p-4 pt-6 sm:p-6 rounded-2xl bg-surface shadow-sm ring-1 transition-all ${
         isClickable ? "ring-border/60 hover:ring-primary hover:shadow-md" : "ring-border/40"
       }`}
     >
-      <InfoTip label={tool.name} className="absolute top-3 right-3 m-0">
+      <InfoTip label={shortName} className="absolute top-1 right-1 sm:top-3 sm:right-3 m-0">
         {tipText}
       </InfoTip>
       {isDev && (
@@ -66,29 +69,27 @@ export function ToolCard({ tool, isDev }: ToolCardProps) {
       )}
 
       <div
-        className={`flex items-center justify-center w-16 h-16 rounded-2xl mb-4 mt-4 transition-transform ${
+        className={`flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-2xl mb-3 sm:mb-4 sm:mt-4 transition-transform ${
           isClickable ? "bg-primary-muted text-primary group-hover:scale-105" : "bg-surface-alt text-text-muted"
         }`}
       >
-        <IconComponent className="w-8 h-8" aria-hidden="true" />
+        <IconComponent className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
       </div>
 
-      <h3 className={`text-title-sm font-bold ${isClickable ? "text-text group-hover:text-primary" : "text-text-muted"}`}>
+      <h3 className={`text-body-sm sm:text-title-sm font-bold leading-snug ${isClickable ? "text-text group-hover:text-primary" : "text-text-muted"}`}>
         {isClickable ? (
           <button
             type="button"
             onClick={handleClick}
             className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring cursor-pointer transition-colors"
           >
-            {tool.name}
+            {shortName}
           </button>
         ) : (
-          tool.name
+          shortName
         )}
       </h3>
-      <span className="mt-2 text-caption text-text-muted">
-        {isClickable ? LABEL_DISPLAY[tool.label] : "Sắp có"}
-      </span>
+      {!isClickable && <span className="mt-1 text-caption text-text-muted">Sắp có</span>}
 
       {isDev && (
         <div className="w-full mt-4 space-y-1">
