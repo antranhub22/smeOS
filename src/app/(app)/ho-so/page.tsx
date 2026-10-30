@@ -1,8 +1,10 @@
-import { getDictionary, translate } from "@/lib/i18n/server"
-import { redirect } from "next/navigation"
+import { StoreProfileOverview } from "@/components/profiles/store-profile-overview"
 
-export default function HoSoRedirectPage() {
-  const dict = getDictionary("vi")
-  // Option 1: Consolidate Profile into Settings as a Single Source of Truth
-  redirect("/cai-dat")
+/** Công cụ 51 — tổng quan hồ sơ cửa hàng và thương hiệu; sửa chi tiết ở /cai-dat. */
+export default function HoSoPage() {
+  return (
+    <div className="p-4 sm:p-6 max-w-3xl mx-auto w-full">
+      <StoreProfileOverview />
+    </div>
+  )
 }

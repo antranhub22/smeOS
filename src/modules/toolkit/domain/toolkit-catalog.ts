@@ -123,8 +123,8 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
   {
     id: 11, name: "Tạo hồ sơ cửa hàng chia sẻ nhanh",
     description: "Trang one-page có bản đồ, nút gọi/nhắn tin và link ngắn",
-    icon: "Store", label: "STORE", status: "PLANNED", progress: 0,
-    href: null, statusNote: "Chức năng mới — khác setting nội bộ hồ sơ cửa hàng",
+    icon: "Store", label: "STORE", status: "DONE", progress: 100,
+    href: "/ho-so", statusNote: "Trang công khai có nút gọi, Zalo, chỉ đường; tạo và ngừng link ở Hồ sơ cửa hàng",
   },
   {
     id: 12, name: "Tạo QR code cửa hàng và sản phẩm",
@@ -351,8 +351,8 @@ const GROUP_8_TOOLS: readonly ToolDefinition[] = [
   {
     id: 45, name: "Tạo bộ nhận diện và thư viện nội dung",
     description: "Thư viện tài nguyên thương hiệu có phân quyền và phiên bản",
-    icon: "Palette", label: "CHAIN", status: "FOUNDATION", progress: 15,
-    href: null, statusNote: "Brand settings có, thiếu thư viện tài nguyên",
+    icon: "Palette", label: "BOTH", status: "DONE", progress: 100,
+    href: "/ho-so/thu-vien-thuong-hieu", statusNote: "Thư viện logo, màu, phông, mẫu, câu chữ có phiên bản; chuỗi chia sẻ cho cửa hàng thành viên",
   },
   {
     id: 46, name: "Chuẩn hóa báo giá và tiêu chuẩn dịch vụ",
