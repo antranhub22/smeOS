@@ -48,7 +48,7 @@ export async function refundJob(
   if (lyDo === null) return { refunded: false, reason: "khong-thuoc-dien-hoan" }
 
   const dong = await repo.listByJob(ctx, jobId)
-  // Hoàn theo lượt (nợ #198): chạy lại sau khi đã hoàn mở một lượt trừ tiền mới.
+  // Hoàn theo lượt (nợ #200): chạy lại sau khi đã hoàn mở một lượt trừ tiền mới.
   if (daHoanHetLuot(dong)) {
     return { refunded: false, reason: "da-hoan-truoc-do" }
   }

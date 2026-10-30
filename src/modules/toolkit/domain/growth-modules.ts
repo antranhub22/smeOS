@@ -38,7 +38,7 @@ interface GrowthModuleSpec {
 const GROWTH_MODULE_SPECS: readonly GrowthModuleSpec[] = [
   { key: "brand", name: "Thương hiệu", icon: "BadgeCheck",
     purpose: "Xây dựng hình ảnh cửa hàng rõ ràng, nhất quán và đáng tin cậy",
-    toolIds: { 1: [11, 51], 2: [45, 52], 3: [] } },
+    toolIds: { 1: [11, 51, 64], 2: [45, 52], 3: [] } },
   { key: "content", name: "Tạo nội dung", icon: "Camera",
     purpose: "Tạo hình ảnh, video và nội dung bán hàng mà không cần thuê thiết kế",
     toolIds: { 1: [1, 2, 3, 4, 7, 53], 2: [5, 6], 3: [0] } },

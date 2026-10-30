@@ -12,7 +12,7 @@ import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
  * `COMPLETED` với `result = REJECTED` trả 409, không phải 200: chạy lại cho
  * ra đúng phán quyết cũ, chỉ tốn GPU (đặc tả 06 mục 7).
  *
- * Nợ #198 (PO 30/10/2026): lượt trước đã được hoàn credit thì chạy lại là một lượt trừ tiền mới —
+ * Nợ #200 (PO 30/10/2026): lượt trước đã được hoàn credit thì chạy lại là một lượt trừ tiền mới —
  * trừ đúng giá lượt trước, ghi dòng `usage` `ENQUEUED`, cùng giao dịch với đưa job về `PENDING`.
  * Không đủ credit → 422 `QUOTA_EXCEEDED` (như lúc tạo job), job giữ nguyên `FAILED`.
  */

@@ -6,18 +6,33 @@ import { useRouter } from "next/navigation"
 const PAGE_SIZE = "100"
 const SEARCH_DEBOUNCE_MS = 300
 
-type Page<T> = { data: T[]; next_cursor: string | null }
+type Page<T> = { data: T[]; next_cursor: string | null; total?: number; truncated?: boolean }
+
+/** Lọc Dịp/Khoảng giá/Sắp xếp — máy chủ áp cho toàn kho (`scan-products.ts`). */
+export interface ServerScanFilters {
+  occasion: string
+  priceRange: string
+  customMinPrice: number | null
+  customMaxPrice: number | null
+  sortBy: string
+}
 
 /**
  * Danh sách sản phẩm phía server: tìm kiếm (debounce 300ms) + danh mục + "tải thêm" theo cursor.
  * Mỗi lần tải mới huỷ yêu cầu cũ (AbortController) — gõ nhanh không bị kết quả cũ ghi đè kết quả mới.
  */
-export function useProductList<T extends { id: string }>(search: string, category: string | null, proposal: string | null = null) {
+export function useProductList<T extends { id: string }>(
+  search: string,
+  category: string | null,
+  proposal: string | null = null,
+  scan: ServerScanFilters | null = null
+) {
   const router = useRouter()
   const [items, setItems] = useState<T[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [total, setTotal] = useState<{ count: number; truncated: boolean } | null>(null)
   const [debounced, setDebounced] = useState(search)
   const controller = useRef<AbortController | null>(null)
 
@@ -31,9 +46,16 @@ export function useProductList<T extends { id: string }>(search: string, categor
     if (debounced.trim()) params.set("search", debounced.trim())
     if (category) params.set("category", category)
     if (proposal) params.set("proposal", proposal)
+    if (scan && scan.occasion !== "all") params.set("occasion", scan.occasion)
+    if (scan && scan.priceRange !== "all") {
+      params.set("price_range", scan.priceRange)
+      if (scan.priceRange === "custom" && scan.customMinPrice !== null) params.set("price_min", String(scan.customMinPrice))
+      if (scan.priceRange === "custom" && scan.customMaxPrice !== null) params.set("price_max", String(scan.customMaxPrice))
+    }
+    if (scan && scan.sortBy !== "default") params.set("sort", scan.sortBy)
     if (cursor) params.set("cursor", cursor)
     return `/api/v1/products?${params.toString()}`
-  }, [debounced, category, proposal])
+  }, [debounced, category, proposal, scan?.occasion, scan?.priceRange, scan?.customMinPrice, scan?.customMaxPrice, scan?.sortBy]) // eslint-disable-line react-hooks/exhaustive-deps -- so theo từng giá trị, không theo object
 
   const fetchPage = useCallback(async (cursor: string | null): Promise<Page<T> | null> => {
     controller.current?.abort()
@@ -57,6 +79,7 @@ export function useProductList<T extends { id: string }>(search: string, categor
       if (!page) return
       setItems(page.data)
       setNextCursor(page.next_cursor)
+      setTotal(typeof page.total === "number" ? { count: page.total, truncated: page.truncated === true } : null)
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") return
       setError(e instanceof Error ? e.message : "Không tải được danh sách sản phẩm")
@@ -86,5 +109,5 @@ export function useProductList<T extends { id: string }>(search: string, categor
 
   const removeLocal = useCallback((id: string) => setItems((prev) => (prev ? prev.filter((p) => p.id !== id) : prev)), [])
 
-  return { items, error, nextCursor, loadingMore, reload, loadMore, removeLocal }
+  return { items, error, nextCursor, loadingMore, reload, loadMore, removeLocal, total }
 }

@@ -1,7 +1,8 @@
 import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
+import { commerceInputShape, pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getProduct } from "@/modules/products/use-cases/get-product"
@@ -30,6 +31,7 @@ const patchSchema = z.object({
   attributes: z.record(z.string(), z.unknown()).nullable().optional(),
   image_asset_id: z.string().min(1).nullable().optional(),
   availability_config: z.unknown().optional(),
+  ...commerceInputShape,
 })
 
 /**
@@ -48,6 +50,8 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   if (parsed.data.status === "ARCHIVED") requireCapability(ctx, "L4")
+  // Giá vốn là dữ liệu giá: ghi cần `L5` như đọc (PO 30/10/2026).
+  if (parsed.data.cost_price_vnd !== undefined) requireCapability(ctx, "L5")
 
   const updated = await updateProduct(ctx, id, {
     code: parsed.data.code,
@@ -61,7 +65,8 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
     attributes: parsed.data.attributes,
     imageAssetId: parsed.data.image_asset_id,
     availabilityConfig: parsed.data.availability_config,
+    commerce: pickCommerceInput(parsed.data),
   })
 
-  return jsonResponse(updated)
+  return jsonResponse(stripCostPrice(updated, hasCapability(ctx, "L5")))
 })

@@ -78,7 +78,7 @@ export function soCreditHoanMotPhan(
 }
 
 /**
- * Hoàn theo LƯỢT (nợ #198, PO 30/10/2026: chạy lại job đã hoàn thì trừ credit lại). Mỗi lượt bắt
+ * Hoàn theo LƯỢT (nợ #200, PO 30/10/2026: chạy lại job đã hoàn thì trừ credit lại). Mỗi lượt bắt
  * đầu bằng một dòng `ENQUEUED` (lúc tạo job hoặc lúc chạy lại sau khi đã hoàn) và kết thúc bằng
  * tối đa một dòng `REFUNDED`. Dòng sổ phải theo thứ tự `created_at` tăng dần.
  */

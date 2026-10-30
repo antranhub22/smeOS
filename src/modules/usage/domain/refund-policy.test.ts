@@ -67,7 +67,7 @@ describe("hoàn một phần (25/09/2026)", () => {
   })
 })
 
-describe("hoàn theo lượt + chạy lại sau hoàn (nợ #198)", () => {
+describe("hoàn theo lượt + chạy lại sau hoàn (nợ #200)", () => {
   const d = (status: string, cost_credit: number) => ({ status, cost_credit, metadata: null })
 
   it("lượt đầu chưa hoàn: còn giữ credit, chạy lại không trừ thêm", () => {

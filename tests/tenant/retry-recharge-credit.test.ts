@@ -10,7 +10,7 @@ import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
 
 /**
- * Nợ #198 (PO 30/10/2026): tiệm chạy lại job lỗi ĐÃ được hoàn credit thì trừ credit lại; hoàn theo
+ * Nợ #200 (PO 30/10/2026): tiệm chạy lại job lỗi ĐÃ được hoàn credit thì trừ credit lại; hoàn theo
  * lượt — mỗi lượt trừ tiền được hoàn tối đa một lần, không bao giờ hoàn quá số đã trừ.
  */
 describe("chạy lại job đã hoàn credit", () => {

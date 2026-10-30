@@ -179,6 +179,8 @@ model organizations {
   occasions                     occasions[]
   template_overrides            template_overrides[]
   catalog_links                 catalog_links[]
+  store_share_links             store_share_links[]
+  brand_library_items           brand_library_items[]
   product_copies                product_copies[]
   content_metrics               content_metrics[]
   video_jobs                    video_jobs[]
@@ -820,6 +822,12 @@ model products {
    * Cấu hình kiểm tra khả dụng theo ngành (PO 18/10/2026). Xem product-availability-config.ts.
    */
   availability_config Json?
+  /// Trường bán hàng chuẩn (PO 30/10/2026, công cụ 53 giai đoạn 5) — tuỳ chọn, null khi chưa khai.
+  barcode             String?
+  cost_price_vnd      Int?
+  vat_percent         Int?
+  weight_grams        Int?
+  tags                String[]       @default([])
   created_at          DateTime       @default(now())
   updated_at          DateTime       @updatedAt
 
@@ -836,6 +844,7 @@ model products {
 
   @@unique([organization_id, code])
   @@index([organization_id])
+  @@index([organization_id, barcode])
 }
 
 /// Đề xuất sửa một mẫu CHÍNH THỨC của người không có `H3` (quản trị danh mục, giai đoạn 3 —
@@ -911,10 +920,14 @@ model product_variants {
   size            String?
   multiplier      Float   @default(1)
   attributes      Json?
+  /// SKU/mã vạch theo biến thể (PO 30/10/2026) — SKU duy nhất trong một tổ chức khi đã khai.
+  sku             String?
+  barcode         String?
 
   organization organizations @relation(fields: [organization_id], references: [id])
   product      products      @relation(fields: [product_id], references: [id])
 
+  @@unique([organization_id, sku])
   @@index([organization_id, product_id])
 }
 
@@ -1338,6 +1351,68 @@ model catalog_links {
 
   @@index([organization_id])
   @@index([slug])
+}
+
+/// Công cụ 11 — link công khai của hồ sơ cửa hàng (/ch/<slug>). Mỗi tổ chức tối đa
+/// một link đang hoạt động (kiểm ở use-case); link cũ thu hồi được, không xoá, để
+/// link đã phát ra trả "đã ngừng" thay vì 404 lẫn với link sai.
+model store_share_links {
+  id              String    @id @default(uuid())
+  organization_id String
+  slug            String    @unique
+  is_revoked      Boolean   @default(false)
+  revoked_at      DateTime?
+  revoked_by      String?
+  view_count      Int       @default(0)
+  created_by      String
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, is_revoked])
+}
+
+/// Công cụ 45 — thư viện nhận diện thương hiệu có phiên bản. Chuỗi bật
+/// `share_with_members` để cửa hàng thành viên (chain_partnerships ACTIVE) xem và tải;
+/// cửa hàng chỉ đọc, không sửa. Không xoá cứng: lưu trữ (ARCHIVED) để giữ lịch sử.
+model brand_library_items {
+  id                 String   @id @default(uuid())
+  organization_id    String
+  title              String
+  category           String // LOGO | COLOR | FONT | IMAGE | TEMPLATE | GUIDELINE | COPY
+  description        String?
+  share_with_members Boolean  @default(false)
+  status             String   @default("ACTIVE") // ACTIVE | ARCHIVED
+  current_version    Int      @default(1)
+  created_by         String
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  organization organizations            @relation(fields: [organization_id], references: [id])
+  versions     brand_library_versions[]
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+}
+
+/// Mỗi lần thay nội dung một tài nguyên là một phiên bản mới; bản cũ giữ nguyên.
+model brand_library_versions {
+  id              String   @id @default(uuid())
+  organization_id String
+  item_id         String
+  version         Int
+  asset_id        String? // ảnh trong `assets` của chính tổ chức
+  text_value      String? // mã màu, tên phông, câu chữ, hướng dẫn
+  note            String?
+  created_by      String
+  created_at      DateTime @default(now())
+
+  item brand_library_items @relation(fields: [item_id], references: [id], onDelete: Cascade)
+
+  @@unique([item_id, version])
+  @@index([organization_id])
 }
 
 // ── M01b — Product Sales Data (Tên, Mô tả, Thẻ, Phân khúc giá) ────────────────

@@ -58,7 +58,7 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 
 **E5 — Hàng đợi có kỷ luật**
 1. ✅ (30/10/2026) Tự thử lại job lỗi tạm thời: `generation_jobs.run_after` + `failure_kind` (PO duyệt schema), `workers/shared/job_failure.py` (một câu UPDATE nguyên tử), tối đa 3 lần, backoff có ngẫu nhiên; worker nhận việc lọc `run_after`. Video/nhân bản giọng chỉ phân loại. Chạy lại thủ công đặt `attempts` về 0 (sửa lỗi cộng hai lần).
-2. ✅ (30/10/2026) `/van-hanh/hang-doi-loi`: xem lý do, Chạy lại (lượt mới, nền tảng chịu chi phí) / Gác lại (→ CANCELLED); mã mới `N15` để `N5` vẫn chỉ đọc; ghi `platform_audit_logs`. Lỗ hổng chạy lại miễn phí phía tiệm (YC-J3 sau khi đã hoàn credit) ghi nợ #198 — chờ PO.
+2. ✅ (30/10/2026) `/van-hanh/hang-doi-loi`: xem lý do, Chạy lại (lượt mới, nền tảng chịu chi phí) / Gác lại (→ CANCELLED); mã mới `N15` để `N5` vẫn chỉ đọc; ghi `platform_audit_logs`. Lỗ hổng chạy lại miễn phí phía tiệm (YC-J3 sau khi đã hoàn credit) ghi nợ #200 — chờ PO.
 3. ✅ (30/10/2026) Bảng `idempotency_keys` (PO duyệt schema) + `claimIdempotencyKey` (`src/core/idempotency/infra/`); áp dụng webhook Facebook (`mid`) và Zalo (`msg_id`); cron dọn khoá > 30 ngày. E6 dùng cho thanh toán (ghi khoá trong cùng giao dịch).
 *Nghiệm thu:* test chạy lại job không nhân đôi kết quả/credit.
 

@@ -123,6 +123,30 @@ Trạng thái kiểm: 5 tab ở 390/1280px, chọn mẫu → bản nháp công t
 
 Ghi chú (chưa đổi, cần PO): dự toán khi mọi đơn đều chưa có công thức vẫn hiện "Tồn kho đã đủ cho các đơn này" — dễ hiểu nhầm.
 
+## #11 · #51 · #64 Module Thương hiệu — `/ho-so`, `/ho-so/danh-thiep`, `/ch/:slug` (30/10/2026)
+
+Kịch bản `scripts/ux-audit/scenarios/thuong-hieu.mjs`. Trạng thái kiểm ở 390/1280px: hồ sơ trống, danh thiếp khi hồ sơ chưa đủ, hồ sơ đủ, hộp xác nhận tạo link, đã có link, trang khách xem, danh thiếp, tải thật 4 tệp (PDF/PNG/PNG/vCF), hộp xác nhận ngừng, link đã ngừng, link sai.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D11-01 | P1 | Trang khách: `<dl>` bọc `dt/dd` trong `div` lồng hai cấp — axe `definition-list`, `dlitem` | Mỗi cặp là `div > dt + dd`, icon nằm trong `dt` kèm nhãn ẩn |
+| D64-01 | P1 | Danh thiếp 390px cuộn ngang 1081px — ô lưới giữ bề rộng thẻ in 1063px | `min-w-0` cho khung xem trước, lưới một cột trên di động |
+| D64-02 | P2 | PDF in nặng 4 MB do ảnh không nén | Nén ảnh khi ghép PDF: còn ≈106 KB |
+
+Kiểm lại: 23/24 trạng thái sạch. Còn lại (cần PO, không sửa ở đây): nút xác nhận tông `danger` của `ConfirmDialog` dùng chung — chữ trắng trên nền đỏ dưới 4,5:1 ở 390px (`thuong-hieu-xac-nhan-ngung`); đụng token/biến thể nút dùng toàn app.
+Chưa kiểm thủ công: bàn phím, phóng to 200%, trình đọc màn hình; logo từ kho lưu trữ thật (ở audit dùng ảnh cùng nguồn) — nếu kho chặn CORS, danh thiếp xuất không logo và báo cho người dùng.
+
+## #45 Bộ nhận diện thương hiệu — `/ho-so/thu-vien-thuong-hieu` (30/10/2026)
+
+Kịch bản `scripts/ux-audit/scenarios/thu-vien-thuong-hieu.mjs`. Trạng thái kiểm ở 390/1280px: trống, hộp thêm, có tài nguyên + mục đã lưu trữ, hộp phiên bản mới, chế độ chuỗi (hộp xác nhận chia sẻ, nhãn "Đang chia sẻ"). Khối "Từ chuỗi" phía cửa hàng thành viên kiểm bằng `tests/tenant/brand-library.test.ts`, chưa chụp ảnh.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| D45-01 | P1 | Ô chọn tệp hiện chữ mặc định tiếng Anh của trình duyệt ("Choose File") | Ẩn ô gốc, nhãn "Chọn ảnh" + tên tệp đã chọn, có viền khi nhận phím |
+
+Kiểm lại: 10/12 sạch. Còn lại ngoài phạm vi: số đếm `0/5` (`text-text-muted/60`) trên thanh lối tắt công cụ ở chế độ chuỗi dưới 4,5:1 — `toolkit-shortcuts-group.tsx` / `toolkit-picker.tsx`, có từ trước.
+Chưa kiểm thủ công: bàn phím, phóng to 200%, trình đọc màn hình; tải ảnh thật lên kho (audit chỉ dùng loại văn bản).
+
 ## Kết luận
 Đã audit sâu xong toàn bộ công cụ Hoàn thiện.
 
