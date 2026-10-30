@@ -11,9 +11,11 @@
  */
 
 import { callCapability } from "@/core/ai/gateway"
+import { log } from "@/core/observability/log"
 import { aiGatewayDeps } from "@/core/ai/wiring"
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider"
 import type { TenantContext } from "@/core/tenancy"
+import { ACTIVE_PROMPTS } from "../domain/prompts/active"
 
 import {
   generateLandingPageContent,
@@ -29,6 +31,17 @@ import type { LandingWriterOutput } from "../domain/prompts/landing/v1"
 import { findCliches, findUndeclaredPromises } from "../domain/landing-copy-guard"
 
 const CRITIC_THRESHOLD = 0.65
+
+/** Nhật ký nguồn nội dung + phiên bản prompt đang dùng (không ghi nội dung, không ghi dữ liệu khách). */
+function logSource(ctx: TenantContext, source: "ai" | "template", reason?: string): void {
+  log.info("landing_content.generated", {
+    organizationId: ctx.organizationId,
+    promptId: ACTIVE_PROMPTS.landingWriter.id,
+    promptVersion: ACTIVE_PROMPTS.landingWriter.version,
+    source,
+    ...(reason ? { reason } : {}),
+  })
+}
 
 /** Chuyển LandingWriterOutput → GeneratedLandingPackage (merge với template fallback cho section chưa có) */
 function mergeWithTemplate(
@@ -145,6 +158,7 @@ export async function executeGenerateLandingContent(
 
     if (writerResult.kind === "khong_chay_duoc") {
       // AI không chạy được → fallback template
+      logSource(ctx, "template", "ai_unavailable")
       return template
     }
 
@@ -210,8 +224,10 @@ export async function executeGenerateLandingContent(
       merged.hero.subHeadline = template.hero.subHeadline
     }
 
+    logSource(ctx, "ai")
     return dropUndeclaredPromises(merged, template, declared)
   } catch {
+    logSource(ctx, "template", "error")
     // Mọi lỗi network / timeout → fallback template, không để job FAILED
     return template
   }

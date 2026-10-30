@@ -4,6 +4,8 @@ import type { TenantContext } from "@/core/tenancy"
 vi.mock("@/core/ai/gateway", () => ({ callCapability: vi.fn() }))
 vi.mock("@/core/ai/wiring", () => ({ aiGatewayDeps: vi.fn() }))
 vi.mock("@/core/ai/adapters/multi-llm-provider", () => ({ createContentLLM: vi.fn() }))
+const { logInfo } = vi.hoisted(() => ({ logInfo: vi.fn() }))
+vi.mock("@/core/observability/log", () => ({ log: { info: logInfo, warn: vi.fn(), error: vi.fn() } }))
 
 import { callCapability } from "@/core/ai/gateway"
 import { executeGenerateLandingContent } from "@/modules/content-engine/use-cases/generate-landing-page-content.use-case"
@@ -51,5 +53,19 @@ describe("landing — kiểm chữ sau AI", () => {
       .mockResolvedValueOnce({ kind: "xong", output: draft("Nhắn tiệm để được báo.") } as never)
     const pkg = await executeGenerateLandingContent(input, ctx)
     expect(pkg.hero.headline).toBe("Hồng đỏ cho ngày 20/10 của mẹ")
+  })
+
+  it("ghi nhật ký phiên bản prompt và nguồn nội dung", async () => {
+    logInfo.mockReset()
+    vi.mocked(callCapability)
+      .mockResolvedValueOnce({ kind: "xong", output: draft("Nhắn tiệm để được báo.") } as never)
+      .mockResolvedValueOnce(critic as never)
+    await executeGenerateLandingContent(input, ctx)
+    expect(logInfo).toHaveBeenCalledWith("landing_content.generated", expect.objectContaining({ promptVersion: "v2", source: "ai" }))
+
+    logInfo.mockReset()
+    vi.mocked(callCapability).mockResolvedValueOnce({ kind: "khong_chay_duoc" } as never)
+    await executeGenerateLandingContent(input, ctx)
+    expect(logInfo).toHaveBeenCalledWith("landing_content.generated", expect.objectContaining({ source: "template", reason: "ai_unavailable" }))
   })
 })

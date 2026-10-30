@@ -49,3 +49,23 @@ describe("prompt landing/catalog v2 trong content engine", () => {
     expect(LANDING_WRITER_PROMPT_V2.build(base)).toContain("(tiệm chưa khai)")
   })
 })
+
+describe("nội dung mẫu dự phòng cũng qua được bộ kiểm chữ", () => {
+  it("landing và catalog: không cụm sáo, không lời hứa chưa khai", async () => {
+    const { generateLandingPageContent } = await import("@/modules/content-engine/domain/landing-content-generator")
+    const { generateCatalogContent } = await import("@/modules/content-engine/domain/catalog-content-generator")
+    for (const occasionId of ["20-10", "valentine", "khai-truong", "khac"]) {
+      const pkg = generateLandingPageContent({
+        shopName: "Tiệm A", occasionId, occasionLabel: "Dịp A", selectedProducts: [{ name: "Bó hồng đỏ" }],
+      })
+      const text = JSON.stringify(pkg)
+      expect(findCliches(text), occasionId).toEqual([])
+      expect(findUndeclaredPromises(text), occasionId).toEqual([])
+    }
+    for (const styleVariant of ["EDITORIAL_LOOKBOOK", "MODERN_SHOWROOM", "COMPACT_LIST"] as const) {
+      const c = JSON.stringify(generateCatalogContent({ shopName: "Tiệm A", collectionName: "BST", occasion: undefined, productCount: 4, styleVariant } as never))
+      expect(findCliches(c), styleVariant).toEqual([])
+      expect(findUndeclaredPromises(c), styleVariant).toEqual([])
+    }
+  })
+})

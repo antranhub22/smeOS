@@ -12,9 +12,11 @@
  */
 
 import { callCapability } from "@/core/ai/gateway"
+import { log } from "@/core/observability/log"
 import { aiGatewayDeps } from "@/core/ai/wiring"
 import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider"
 import type { TenantContext } from "@/core/tenancy"
+import { ACTIVE_PROMPTS } from "../domain/prompts/active"
 
 import {
   generateCatalogContent,
@@ -29,6 +31,17 @@ import {
 } from "../adapters/landing-catalog-ai-adapter"
 
 const CRITIC_THRESHOLD = 0.65
+
+/** Nhật ký nguồn nội dung + phiên bản prompt đang dùng (không ghi nội dung, không ghi dữ liệu khách). */
+function logSource(ctx: TenantContext, source: "ai" | "template", reason?: string): void {
+  log.info("catalog_content.generated", {
+    organizationId: ctx.organizationId,
+    promptId: ACTIVE_PROMPTS.catalogWriter.id,
+    promptVersion: ACTIVE_PROMPTS.catalogWriter.version,
+    source,
+    ...(reason ? { reason } : {}),
+  })
+}
 
 export async function executeGenerateCatalogContent(
   input: CatalogContentInput,
@@ -64,6 +77,7 @@ export async function executeGenerateCatalogContent(
     )
 
     if (writerResult.kind === "khong_chay_duoc") {
+      logSource(ctx, "template", "ai_unavailable")
       return template
     }
 
@@ -119,9 +133,11 @@ export async function executeGenerateCatalogContent(
     const banned = findBannedPhrases(combinedText)
     // Lời hứa (giờ giao, độ tươi, miễn phí, 100%…) — catalog không có nơi tiệm khai cam kết nên không được hứa
     if (banned.length > 0 || findUndeclaredPromises(combinedText).length > 0) {
+      logSource(ctx, "template", "copy_guard")
       return template
     }
 
+    logSource(ctx, "ai")
     return {
       styleVariant: input.styleVariant,
       badge: aiOutput.badge || template.badge,
@@ -131,6 +147,7 @@ export async function executeGenerateCatalogContent(
       ctaText: aiOutput.ctaText || template.ctaText,
     }
   } catch {
+    logSource(ctx, "template", "error")
     return template
   }
 }
