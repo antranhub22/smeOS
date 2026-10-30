@@ -1,9 +1,9 @@
 /**
- * Trang chủ 48 công cụ kinh doanh smeOS.
+ * Trang công cụ smeOS — 10 bước phát triển cửa hàng (growth-modules.ts).
  *
  * Route: /cong-cu
  *
- * - Dev: hiển thị toàn bộ 48 chức năng phân nhóm kèm trạng thái
+ * - Dev: hiển thị toàn bộ công cụ theo 10 bước kèm trạng thái và lộ trình
  * - Production: chỉ hiển thị các chức năng đã hoàn thiện
  *
  * Branch: Nangcap_hethongchucnang (KHÔNG PR/merge)

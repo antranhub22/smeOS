@@ -1,19 +1,22 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import * as LucideIcons from "lucide-react"
 import { Search, SlidersHorizontal, Sparkles } from "lucide-react"
 import {
-  getVisibleGroups,
   countByStatus,
   STATUS_DISPLAY,
   type ToolStatus,
-  type ToolGroup,
 } from "@/modules/toolkit/domain/toolkit-catalog"
+import {
+  getVisibleGrowthModules,
+  type GrowthModule,
+  type ModuleTool,
+} from "@/modules/toolkit/domain/growth-modules"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { UserMenu } from "@/components/layout/user-menu"
-import { ToolCard } from "./toolkit-card"
+import { ModuleGrid } from "./toolkit-module-grid"
+import { ModuleDetail } from "./toolkit-module-detail"
 
 // ── Environment check ──────────────────────────────────────────────
 
@@ -61,38 +64,18 @@ function ToolkitStats({ isDev }: { isDev: boolean }) {
   )
 }
 
-// ── Group section ──────────────────────────────────────────────────
+// ── Lọc công cụ trong module ───────────────────────────────────────
 
-function ToolGroupSection({ group, isDev }: { group: ToolGroup; isDev: boolean }) {
-  const iconsMap = LucideIcons as unknown as Record<string, React.ElementType>
-  const GroupIcon = iconsMap[group.icon] || LucideIcons.Folder
-
-  return (
-    <section className="space-y-4">
-      {/* Group header */}
-      <div className="flex items-center gap-3 pb-2 border-b border-border">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-muted text-primary">
-          <GroupIcon className="w-4.5 h-4.5" aria-hidden="true" />
-        </div>
-        <div>
-          <h2 className="text-title-sm font-bold text-text">
-            Nhóm {group.groupNumber} — {group.name}
-          </h2>
-          <p className="text-caption text-text-muted">{group.objective}</p>
-        </div>
-        <span className="ml-auto inline-flex items-center px-2 py-0.5 rounded-full bg-surface-alt text-caption font-semibold text-text-muted border border-border">
-          {group.tools.length} công cụ
-        </span>
-      </div>
-
-      {/* Tools grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {group.tools.map((tool) => (
-          <ToolCard key={tool.id} tool={tool} isDev={isDev} />
-        ))}
-      </div>
-    </section>
-  )
+function filterModule(
+  module: GrowthModule,
+  keep: (tool: ModuleTool) => boolean,
+): GrowthModule {
+  return {
+    ...module,
+    phases: module.phases
+      .map((p) => ({ ...p, tools: p.tools.filter(keep) }))
+      .filter((p) => p.tools.length > 0),
+  }
 }
 
 // ── Main component ─────────────────────────────────────────────────
@@ -100,36 +83,33 @@ function ToolGroupSection({ group, isDev }: { group: ToolGroup; isDev: boolean }
 export function ToolkitHome() {
   const isDev = useIsDev()
   const { userInitials } = useSession()
-  const { t, dict } = useI18n()
+  const { dict } = useI18n()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
+  const [openKey, setOpenKey] = useState<string | null>(null)
 
-  const allGroups = useMemo(() => getVisibleGroups(isDev), [isDev])
+  const modules = useMemo(() => getVisibleGrowthModules(isDev), [isDev])
+  const query = searchQuery.trim().toLowerCase()
+  const isFiltering = query !== "" || statusFilter !== "ALL"
 
-  // Apply search + status filter
-  const filteredGroups = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
+  // Tìm kiếm hoặc lọc trạng thái → hiện thẳng công cụ khớp, nhóm theo module
+  const filteredModules = useMemo(() => {
+    const keep = (tool: ModuleTool) => {
+      const matchesSearch =
+        query === "" ||
+        tool.name.toLowerCase().includes(query) ||
+        tool.description.toLowerCase().includes(query)
+      const matchesStatus = statusFilter === "ALL" || tool.status === statusFilter
+      return matchesSearch && matchesStatus
+    }
+    return modules.map((m) => filterModule(m, keep)).filter((m) => m.phases.length > 0)
+  }, [modules, query, statusFilter])
 
-    return allGroups
-      .map((group) => ({
-        ...group,
-        tools: group.tools.filter((tool) => {
-          const matchesSearch =
-            query === "" ||
-            tool.name.toLowerCase().includes(query) ||
-            tool.description.toLowerCase().includes(query) ||
-            String(tool.id).includes(query)
-
-          const matchesStatus =
-            statusFilter === "ALL" || tool.status === statusFilter
-
-          return matchesSearch && matchesStatus
-        }),
-      }))
-      .filter((group) => group.tools.length > 0)
-  }, [allGroups, searchQuery, statusFilter])
-
-  const totalVisible = filteredGroups.reduce((sum, g) => sum + g.tools.length, 0)
+  const openModule = modules.find((m) => m.key === openKey) ?? null
+  const totalTools = modules.reduce(
+    (sum, m) => sum + m.phases.reduce((s, p) => s + p.tools.length, 0),
+    0,
+  )
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 md:py-8 space-y-6">
@@ -162,27 +142,28 @@ export function ToolkitHome() {
 
       {/* Filter + Search */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {/* Status filter tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none]">
-          {(isDev ? FILTER_OPTIONS : FILTER_OPTIONS.slice(0, 1)).map((opt) => (
-            <button
-              key={opt.id}
-              type="button"
-              onClick={() => setStatusFilter(opt.id)}
-              className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
-                statusFilter === opt.id
-                  ? "bg-primary text-surface font-semibold"
-                  : "bg-surface border border-border text-text hover:bg-surface-alt"
-              }`}
-            >
-              {opt.id === "ALL"
-                ? `Tất cả (${totalVisible})`
-                : opt.label}
-            </button>
-          ))}
-        </div>
+        {isDev ? (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none]">
+            {FILTER_OPTIONS.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                aria-pressed={statusFilter === opt.id}
+                onClick={() => setStatusFilter(opt.id)}
+                className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
+                  statusFilter === opt.id
+                    ? "bg-primary text-surface font-semibold"
+                    : "bg-surface border border-border text-text hover:bg-surface-alt"
+                }`}
+              >
+                {opt.id === "ALL" ? `Tất cả (${totalTools})` : opt.label}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <span />
+        )}
 
-        {/* Search */}
         <div className="relative w-full sm:w-64">
           <Search
             className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
@@ -193,36 +174,38 @@ export function ToolkitHome() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={dict.toolkit.filters.searchPlaceholder}
+            aria-label={dict.toolkit.filters.searchPlaceholder}
             className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border bg-surface text-body-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary transition-colors"
           />
         </div>
       </div>
 
-      {/* Groups */}
-      {filteredGroups.length > 0 ? (
-        <div className="space-y-8">
-          {filteredGroups.map((group) => (
-            <ToolGroupSection
-              key={group.groupNumber}
-              group={group}
-              isDev={isDev}
-            />
-          ))}
-        </div>
+      {isFiltering ? (
+        filteredModules.length > 0 ? (
+          <div className="space-y-10">
+            {filteredModules.map((m) => (
+              <ModuleDetail key={m.key} module={m} isDev={isDev} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 border border-dashed border-border rounded-xl bg-surface">
+            <p className="text-body text-text-muted">
+              Không tìm thấy công cụ nào khớp với &quot;{searchQuery}&quot;
+            </p>
+          </div>
+        )
+      ) : openModule ? (
+        <ModuleDetail module={openModule} isDev={isDev} onBack={() => setOpenKey(null)} />
       ) : (
-        <div className="text-center py-12 border border-dashed border-border rounded-xl bg-surface">
-          <p className="text-body text-text-muted">
-            Không tìm thấy chức năng nào khớp với &quot;{searchQuery}&quot;
-          </p>
-        </div>
+        <ModuleGrid modules={modules} isDev={isDev} onOpen={setOpenKey} />
       )}
 
       {/* Dev footer */}
       {isDev && (
         <div className="mt-8 pt-4 border-t border-border text-center">
           <p className="text-caption text-text-muted">
-            🔧 Đang chạy môi trường phát triển — Hiển thị toàn bộ 51 công cụ phân 9 nhóm kèm trạng thái.
-            Trên production chỉ hiển thị các công cụ đã hoàn thiện.
+            🔧 Môi trường phát triển — hiện 51 công cụ hiện có cùng các công cụ trong lộ trình, xếp theo 10 bước.
+            Trên production chỉ hiện công cụ đã hoàn thiện; bước chưa có công cụ nào sẽ ẩn.
           </p>
         </div>
       )}

@@ -5,11 +5,11 @@
 
 export const toolkitVi = {
   "header": {
-    "badge": "51 Công cụ",
+    "badge": "10 bước phát triển cửa hàng",
     "titleDev": "Thư viện công cụ",
     "titleProd": "Hôm nay bạn muốn làm gì?",
-    "descDev": "51 công cụ theo 9 nhóm chức năng.",
-    "descProd": "Chọn công cụ bên dưới để bắt đầu."
+    "descDev": "51 công cụ hiện có và lộ trình công cụ mới, xếp theo 10 bước phát triển cửa hàng.",
+    "descProd": "Chọn một bước bên dưới để xem các công cụ."
   },
   "stats": {
     "done": "Hoàn thiện",
