@@ -110,6 +110,7 @@ Trạng thái kiểm: mở, lọc, tạo link (hộp thoại), sau khi đóng, t
 | D14-03 | P2 | Tên 20 mẫu giao diện bằng tiếng Anh ("Editorial Luxury"…) | Tên tiếng Việt (`greeting-template-catalog.ts`) |
 | D14-04 | P2 | Nhãn mã kỹ thuật "#01…#12" trên thẻ mẫu (chữ 7px, tương phản thấp) | Bỏ nhãn |
 | D14-05 | P2 | Chấm chọn sản phẩm 6px, nút trước/sau 24px sát nhau (target-size) | Vùng bấm 24px cho chấm; nút 32px ở di động |
+| D14-07 | P2 | Nút "Làm mới" bị co trong hàng nút ở 390px sau khi đóng hộp chia sẻ (target-size, phát hiện bằng `npm run ux:audit -- the-chao`) | `shrink-0`; kịch bản `the-chao` là kiểm tra hồi quy |
 | D14-06 | P1 | Khối chưa tới lượt (`opacity-60`, chuẩn Spotlight PO 23/10) làm chữ dưới 4,5:1 — axe 27–39 lỗi | **Chưa sửa — cần PO** (chuẩn Spotlight bị khóa trong Screen Contract) |
 
 ## #31–#35 Giá vốn & định giá — `/tinh-gia/*`
