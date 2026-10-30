@@ -4,7 +4,8 @@ import type { DbClient } from "./db-client"
 import type { InputJsonValue, product_change_requests, product_import_batches, product_revisions, products } from "./entities"
 
 /** Nội dung mẫu lưu trong `product_revisions.snapshot` — đủ để khôi phục. */
-export type ProductSnapshot = Pick<products, "name" | "code" | "category" | "shape" | "facing" | "container" | "status" | "attributes" | "availability_config">
+export type ProductSnapshot = Pick<products, "name" | "code" | "category" | "shape" | "facing" | "container" | "status" | "attributes" | "availability_config"> &
+  Partial<Pick<products, "barcode" | "cost_price_vnd" | "vat_percent" | "weight_grams" | "tags">>
 
 export function snapshotOf(p: products): ProductSnapshot {
   return {
@@ -17,6 +18,11 @@ export function snapshotOf(p: products): ProductSnapshot {
     status: p.status,
     attributes: p.attributes,
     availability_config: p.availability_config,
+    barcode: p.barcode,
+    cost_price_vnd: p.cost_price_vnd,
+    vat_percent: p.vat_percent,
+    weight_grams: p.weight_grams,
+    tags: p.tags,
   }
 }
 

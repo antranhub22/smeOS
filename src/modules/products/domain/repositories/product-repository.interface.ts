@@ -5,6 +5,7 @@
  */
 
 import type { TenantContext } from "@/core/tenancy"
+import type { ProductCommerceInput } from "../product-commerce"
 
 export interface ProductEntity {
   id: string
@@ -20,6 +21,11 @@ export interface ProductEntity {
   // Use unknown to stay compatible with Prisma's JsonValue
   attributes: unknown
   availability_config: unknown
+  barcode?: string | null
+  cost_price_vnd?: number | null
+  vat_percent?: number | null
+  weight_grams?: number | null
+  tags?: string[]
   created_at: Date
   updated_at: Date
 }
@@ -41,6 +47,7 @@ export interface CreateProductInput {
   status?: string | undefined
   attributes?: Record<string, unknown> | null | undefined
   imageAssetId?: string | null | undefined
+  commerce?: ProductCommerceInput | undefined
 }
 
 export interface UpdateProductInput {
@@ -55,6 +62,7 @@ export interface UpdateProductInput {
   attributes?: Record<string, unknown> | null | undefined
   imageAssetId?: string | null | undefined
   availabilityConfig?: unknown | undefined
+  commerce?: ProductCommerceInput | undefined
 }
 
 export interface UpdateProductIdentityInput {

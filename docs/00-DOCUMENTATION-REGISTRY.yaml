@@ -246,13 +246,13 @@ documents:
     title: "Quản trị danh mục sản phẩm theo vai trò"
     domain: "Products / RBAC"
     layer: "Level 3"
-    purpose: "Phân loại mẫu chính thức/đề xuất, quy trình duyệt 30 ngày, bảng quyền theo vai, phiên bản và nhập Excel theo lô"
+    purpose: "Phân loại mẫu chính thức/đề xuất, quy trình duyệt 30 ngày, bảng quyền theo vai, phiên bản và nhập Excel theo lô; xuất CSV, đổi trạng thái hàng loạt, trường bán hàng, lọc toàn kho, đầu nối kênh bán, đề xuất thư viện ảnh (công cụ 53, 30/10/2026)"
     status: "CANONICAL"
     authority: "Level 3"
     canonical: true
     ssot: true
     owner: "Product Owner"
-    dependencies: ["docs/dac-ta/02-function-catalog.md", "docs/dac-ta/06-api-specification.md", "src/modules/products/domain/product-proposal.ts"]
+    dependencies: ["docs/dac-ta/02-function-catalog.md", "docs/dac-ta/06-api-specification.md", "docs/dac-ta/07-database-specification.md", "src/modules/products/domain/product-proposal.ts", "src/modules/products/domain/product-commerce.ts", "src/core/ports/sales-channel-catalog-provider.ts"]
     supersedes: []
 
   - id: "DOC-03-AI-ORCHESTRATION"

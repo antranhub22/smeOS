@@ -226,7 +226,7 @@ Các nhóm dưới đây không tồn tại ở FloraOS v1. Chúng nhận nhóm 
 | `L2` | `product.create` | Thêm sản phẩm mới | Điều hành · Điều phối · Sale | — |
 | `L3` | `product.update` | Sửa thông tin sản phẩm | Điều hành · Điều phối · Sale | — |
 | `L4` | `product.archive` | Ngừng kinh doanh một sản phẩm | Điều hành | Điều hành |
-| `L5` | `pricing.read` | Xem quy tắc giá của tổ chức | Điều hành · Điều phối | — |
+| `L5` | `pricing.read` | Xem quy tắc giá của tổ chức; đọc/ghi giá vốn sản phẩm (`cost_price_vnd`, 30/10/2026) | Điều hành · Điều phối | — |
 | `L6` | `pricing.manage` | Sửa quy tắc giá của tổ chức | Điều hành | Điều hành |
 
 `product.approve` không nằm ở nhóm này — nó là `H3`, vì duyệt sản phẩm chính là duyệt kết quả phân tích ghi vào Product Master.

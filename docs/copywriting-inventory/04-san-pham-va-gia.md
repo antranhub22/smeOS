@@ -66,3 +66,15 @@
 | `PROD-DEL-02` | `LBL` | Nội dung cảnh báo | `Mẫu hoa này sẽ bị ẩn khỏi danh sách bán và catalog. Bạn có thể khôi phục sau trong phần Thùng rác.` | `Mẫu hoa sẽ được ẩn khỏi danh sách bán và bộ sưu tập. Bạn có thể khôi phục trong Thùng rác trong vòng 30 ngày.` | Nêu rõ hệ quả và thời hạn 30 ngày |
 | `PROD-DEL-03` | `BTN` | Nút hủy | `Giữ lại` | `Hủy` | Chuẩn nút hủy |
 | `PROD-DEL-04` | `BTN` | Nút đồng ý | `Đồng ý chuyển` | `Chuyển vào thùng rác` | Động từ hành động rõ ràng |
+
+## Xuất danh sách và thao tác hàng loạt (30/10/2026)
+
+| Mã | Loại | Vị trí | Hiện tại | Đề xuất | Ghi chú |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `PROD-EXP-01` | `BTN` | Đầu trang, nút xuất | `Xuất Excel` | `Xuất Excel` | Chỉ hiện khi có quyền xuất (`R13`) |
+| `PROD-BULK-01` | `LBL` | Thanh chọn nhiều | `Đã chọn {{n}}` | `Đã chọn {{n}}` | |
+| `PROD-BULK-02` | `BTN` | Thanh chọn nhiều | `Mở bán` · `Chuyển về nháp` · `Ngừng bán` | — | "Ngừng bán" cần `L4` |
+| `PROD-BULK-03` | `HDR` | Hộp xác nhận | `Ngừng bán {{n}} sản phẩm đã chọn?` | — | Hậu quả: khách không thấy nữa, mở bán lại được |
+| `PROD-BULK-04` | `LBL` | Kết quả | `Đã {{hành động}} {{n}} sản phẩm; {{m}} sản phẩm chưa đổi được ({{lý do}}).` | — | Lý do theo từng dòng từ máy chủ |
+| `PROD-LIST-01` | `LBL` | Cuối danh sách | `Hiển thị {{n}} / {{tổng}} sản phẩm` | — | Tổng tính trên toàn kho khi lọc Dịp/Giá/Sắp xếp; `+` khi vượt 3.000 |
+
