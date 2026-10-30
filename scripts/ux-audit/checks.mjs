@@ -7,9 +7,9 @@ export function assertTestDatabase(url) {
   return name
 }
 
-/** Dấu hiệu dữ liệu giả / mã kỹ thuật / ưu đãi tự đặt trên màn hình (OPERATING_PRINCIPLES §2). Chỉ là cảnh báo — người audit xác nhận. */
+/** Dấu hiệu dữ liệu giả (chuỗi = tìm nguyên văn, RegExp = mẫu) / mã kỹ thuật / ưu đãi tự đặt trên màn hình (OPERATING_PRINCIPLES §2). Chỉ là cảnh báo — người audit xác nhận. */
 export const RED_FLAGS = [
-  [/images\.unsplash\.com/i, "ảnh kho Unsplash"],
+  ["images.unsplash.com", "ảnh kho Unsplash"],
   [/\b(Offline )?Fallback\b|\bCritic\b|\bgpt-|\bclaude-|\bgemini/i, "tên kỹ thuật / model AI"],
   [/\b(M\d{2}[a-z]?|P[0-3])\b(?=\s|$)/, "mã kỹ thuật"],
   [/\d{2}\s*:\s*\d{2}\s*:\s*\d{2}/, "đồng hồ đếm ngược"],
@@ -19,7 +19,7 @@ export const RED_FLAGS = [
 ]
 
 export function scanRedFlags(text) {
-  return RED_FLAGS.filter(([re]) => re.test(text)).map(([, label]) => label)
+  return RED_FLAGS.filter(([p]) => (typeof p === "string" ? text.includes(p) : p.test(text))).map(([, label]) => label)
 }
 
 /** Một dòng kết quả cho một trạng thái ở một khổ màn hình. */

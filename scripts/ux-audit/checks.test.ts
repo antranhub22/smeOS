@@ -11,6 +11,7 @@ describe("ux-audit", () => {
     expect(scanRedFlags("Ưu đãi còn 02 : 14 : 35")).toContain("đồng hồ đếm ngược")
     expect(scanRedFlags("GIẢM 50% hôm nay")).toEqual(["ưu đãi — kiểm có bật trong Cài đặt → Ưu đãi không"])
     expect(scanRedFlags("Bó hồng đỏ · 650.000đ")).toEqual([])
+    expect(scanRedFlags("https://images.unsplash.com/photo-1.jpg")).toEqual(["ảnh kho Unsplash"])
   })
 
   it("trạng thái lỗi khi có cuộn ngang hoặc lỗi axe nghiêm trọng", () => {
