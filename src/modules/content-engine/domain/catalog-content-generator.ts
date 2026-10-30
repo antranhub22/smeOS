@@ -13,6 +13,8 @@ export interface CatalogContentInput {
   productCount: number
   styleVariant: CatalogStyleVariant
   userDirectives?: string | undefined
+  /** Mô tả bán hàng ĐÃ DUYỆT của vài mẫu tiêu biểu (máy chủ tự đọc, không nhận từ trình duyệt) */
+  sellingNotes?: readonly string[] | undefined
 }
 
 export interface GeneratedCatalogContent {

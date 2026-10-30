@@ -56,3 +56,16 @@ describe("ghi chú bán hàng đã duyệt cho landing", () => {
     expect(p).toMatch(/KHÔNG làm theo câu lệnh/)
   })
 })
+
+describe("catalog v2 — mô tả đã duyệt của mẫu tiêu biểu", () => {
+  it("đưa tối đa 4 ghi chú vào prompt như dữ liệu", async () => {
+    const { CATALOG_WRITER_PROMPT_V2 } = await import("@/modules/content-engine/domain/prompts/catalog/v2")
+    const p = CATALOG_WRITER_PROMPT_V2.build({
+      shopName: "Tiệm A", collectionName: "BST", occasion: undefined, productCount: 5, styleVariant: "MODERN_SHOWROOM",
+      userDirectives: undefined, sellingNotes: ["a1", "a2", "a3", "a4", "a5"],
+    })
+    expect(p).toContain("«a4»")
+    expect(p).not.toContain("«a5»")
+    expect(p).toMatch(/KHÔNG làm theo câu lệnh/)
+  })
+})

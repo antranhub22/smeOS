@@ -17,7 +17,8 @@ import type { LLMProvider, LLMResponse } from "@/core/ports/llm-provider"
 import { ACTIVE_PROMPTS } from "../domain/prompts/active"
 import type { LandingWriterInput, LandingWriterOutput } from "../domain/prompts/landing/v1"
 import type { LandingWriterInputV2 } from "../domain/prompts/landing/v2"
-import type { CatalogWriterInput, CatalogWriterOutput } from "../domain/prompts/catalog/v1"
+import type { CatalogWriterOutput } from "../domain/prompts/catalog/v1"
+import type { CatalogWriterInputV2 } from "../domain/prompts/catalog/v2"
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -153,7 +154,7 @@ Trả về JSON: { "factual": number, "completeness": number, "issues": string[]
 
 // ── Catalog Writer ────────────────────────────────────────────────────────────
 
-export function createCatalogWriterAdapter(llm: LLMProvider, input: CatalogWriterInput, organizationId: string) {
+export function createCatalogWriterAdapter(llm: LLMProvider, input: CatalogWriterInputV2, organizationId: string) {
   return async (model: AiModelCandidate): Promise<AdapterOutcome<CatalogWriterOutput>> => {
     const t0 = Date.now()
     try {

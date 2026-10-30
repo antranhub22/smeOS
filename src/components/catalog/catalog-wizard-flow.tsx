@@ -111,6 +111,7 @@ export function CatalogWizardFlow({
         body: JSON.stringify({
           collectionName: name.trim(),
           productCount: selectedIds.length,
+          productIds: selectedIds,
           styleVariant,
         }),
       })

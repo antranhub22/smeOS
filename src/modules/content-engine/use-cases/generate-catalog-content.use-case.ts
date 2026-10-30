@@ -62,6 +62,7 @@ export async function executeGenerateCatalogContent(
       productCount: input.productCount,
       styleVariant: input.styleVariant,
       userDirectives: input.userDirectives,
+      sellingNotes: input.sellingNotes,
     }
 
     // 1. Writer AI

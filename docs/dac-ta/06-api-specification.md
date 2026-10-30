@@ -878,7 +878,7 @@ Endpoint mang khoá nhà cung cấp riêng của tổ chức. Quyết định D2
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/content-engine/catalog-generate` | `J7` (PO 30/10/2026) | Writer→Critic qua `callCapability` (`content_generation`, `content_qa`) sinh badge/mô tả/CTA cho catalog. Chạy tại chỗ, **không trừ credit, không ghi `usage`, không có `Idempotency-Key`** |
+| POST | `/content-engine/catalog-generate` | `J7` (PO 30/10/2026) | Writer→Critic qua `callCapability` (`content_generation`, `content_qa`) sinh badge/mô tả/CTA cho catalog. Nhận `productIds?` (≤ 50) để máy chủ tự đọc mô tả bán hàng đã duyệt (cần `H5`, thiếu thì bỏ qua). Chạy tại chỗ, **không trừ credit, không ghi `usage`, không có `Idempotency-Key`** |
 | POST | `/content-engine/landing-generate` | `J7` (PO 30/10/2026) | Như trên cho landing page (hero/story/perks/faq/lead), lấy ngữ cảnh từ hồ sơ kinh doanh + thương hiệu |
 | GET | `/shop-reviews` | `J1` | Danh sách đánh giá khách do chủ tiệm nhập (cả đang ẩn), mới nhất trước |
 | POST | `/shop-reviews` | `J1` | Thêm đánh giá: `authorName` (1–60), `occasion?` (≤ 60), `rating` (1–5), `comment` (5–500), `isVisible?` |

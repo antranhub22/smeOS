@@ -170,6 +170,7 @@ export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCa
         body: JSON.stringify({
           collectionName: name.trim(),
           productCount: selectedIds.length,
+          productIds: selectedIds,
           styleVariant,
         }),
       })
