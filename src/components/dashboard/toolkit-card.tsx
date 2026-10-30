@@ -1,10 +1,10 @@
 "use client"
 
 import React from "react"
-import * as LucideIcons from "lucide-react"
 import { useRouter } from "next/navigation"
 import type { ToolDefinition, ToolStatus } from "@/modules/toolkit/domain/toolkit-catalog"
 import { InfoTip } from "@/components/ui/info-tip"
+import { IconTile, type IconTone } from "@/components/ui/app-icon"
 import { toolShortName } from "@/modules/toolkit/domain/tool-short-names"
 import { STATUS_DISPLAY } from "@/modules/toolkit/domain/toolkit-catalog"
 
@@ -29,12 +29,12 @@ const PROGRESS_BAR_STYLE: Record<ToolStatus, string> = {
 interface ToolCardProps {
   tool: ToolDefinition
   isDev: boolean
+  /** Màu nhóm của bước chứa công cụ */
+  tone?: IconTone
 }
 
-export function ToolCard({ tool, isDev }: ToolCardProps) {
+export function ToolCard({ tool, isDev, tone = "plum" }: ToolCardProps) {
   const router = useRouter()
-  const iconsMap = LucideIcons as unknown as Record<string, React.ElementType>
-  const IconComponent = iconsMap[tool.icon] || LucideIcons.Sparkles
 
   const isClickable = tool.href !== null
   const statusInfo = STATUS_DISPLAY[tool.status]
@@ -68,13 +68,11 @@ export function ToolCard({ tool, isDev }: ToolCardProps) {
         </span>
       )}
 
-      <div
-        className={`flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-2xl mb-3 sm:mb-4 sm:mt-4 transition-transform ${
-          isClickable ? "bg-primary-muted text-primary group-hover:scale-105" : "bg-surface-alt text-text-muted"
-        }`}
-      >
-        <IconComponent className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-      </div>
+      <IconTile
+        name={tool.icon}
+        tone={tone}
+        className={`mb-3 sm:mb-4 sm:mt-4 transition-transform ${isClickable ? "group-hover:scale-105" : "grayscale opacity-60"}`}
+      />
 
       <h3 className={`text-body-sm sm:text-title-sm font-bold leading-snug ${isClickable ? "text-text group-hover:text-primary" : "text-text-muted"}`}>
         {isClickable ? (

@@ -1,10 +1,11 @@
 "use client"
 
 import React from "react"
-import * as LucideIcons from "lucide-react"
 import { ArrowLeft } from "lucide-react"
 import type { GrowthModule } from "@/modules/toolkit/domain/growth-modules"
 import { InfoTip } from "@/components/ui/info-tip"
+import { IconTile } from "@/components/ui/app-icon"
+import { MODULE_TONES } from "./toolkit-module-grid"
 import { ToolCard } from "./toolkit-card"
 
 interface ModuleDetailProps {
@@ -16,8 +17,7 @@ interface ModuleDetailProps {
 
 /** Công cụ của một module, chia theo giai đoạn phát triển. */
 export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
-  const iconsMap = LucideIcons as unknown as Record<string, React.ElementType>
-  const Icon = iconsMap[module.icon] || LucideIcons.Folder
+  const tone = MODULE_TONES[module.key] ?? "plum"
   const showPhaseNames = module.order !== null
 
   return (
@@ -34,9 +34,7 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
       )}
 
       <div className="flex items-center gap-4 p-5 sm:p-6 rounded-2xl bg-surface shadow-sm ring-1 ring-border/60">
-        <div className="flex items-center justify-center w-16 h-16 shrink-0 rounded-2xl bg-primary text-primary-foreground">
-          <Icon className="w-8 h-8" aria-hidden="true" />
-        </div>
+        <IconTile name={module.icon} tone={tone} variant="solid" />
         <div className="min-w-0">
           {module.order !== null && (
             <span className="text-caption font-semibold text-text-muted">Bước {module.order}</span>
@@ -60,7 +58,7 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
           )}
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {phase.tools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} isDev={isDev} />
+              <ToolCard key={tool.id} tool={tool} isDev={isDev} tone={tone} />
             ))}
           </div>
         </div>

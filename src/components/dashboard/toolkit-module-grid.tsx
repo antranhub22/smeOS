@@ -1,12 +1,18 @@
 "use client"
 
 import React from "react"
-import * as LucideIcons from "lucide-react"
 import { InfoTip } from "@/components/ui/info-tip"
+import { IconTile, type IconTone } from "@/components/ui/app-icon"
 import {
   countModuleTools,
   type GrowthModule,
 } from "@/modules/toolkit/domain/growth-modules"
+
+/** Màu nhóm cho ô icon của từng bước (dùng cả ở trang chi tiết bước). */
+export const MODULE_TONES: Readonly<Record<string, IconTone>> = {
+  brand: "plum", content: "rose", promotion: "orange", acquisition: "amber", consultation: "teal",
+  quotation: "blue", order: "indigo", payment: "green", care: "pink", growth: "emerald", extra: "plum",
+}
 
 // ── Thẻ module ─────────────────────────────────────────────────────
 
@@ -24,8 +30,6 @@ function countReady(module: GrowthModule): number {
 }
 
 function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
-  const iconsMap = LucideIcons as unknown as Record<string, React.ElementType>
-  const Icon = iconsMap[module.icon] || LucideIcons.Folder
   const total = countModuleTools(module)
   const ready = countReady(module)
 
@@ -36,9 +40,7 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
       <InfoTip label={module.name} className="absolute top-1 right-1 sm:top-3 sm:right-3 m-0">
         {module.purpose}
       </InfoTip>
-      <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-primary-muted text-primary mb-3 sm:mb-4 transition-transform group-hover:scale-105">
-        <Icon className="w-6 h-6 sm:w-8 sm:h-8" aria-hidden="true" />
-      </div>
+      <IconTile name={module.icon} tone={MODULE_TONES[module.key] ?? "plum"} variant="solid" className="mb-3 sm:mb-4 transition-transform group-hover:scale-105" />
       {module.order !== null && (
         <span className="text-caption font-semibold text-text-muted">Bước {module.order}</span>
       )}

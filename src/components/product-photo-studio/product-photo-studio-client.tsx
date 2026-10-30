@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, Camera, Loader2, RefreshCw } from "lucide-react"
+import { Sparkles, Loader2, RefreshCw } from "lucide-react"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { PresetSelector } from "@/components/product-photo-studio/preset-selector"
@@ -107,7 +107,7 @@ export function ProductPhotoStudioClient() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <ToolHero icon={Camera} title="Ảnh sản phẩm studio" detail="Biến ảnh chụp bằng điện thoại thành ảnh studio đạt chuẩn sàn thương mại." />
+      <ToolHero icon="Camera" tone="rose" title="Ảnh sản phẩm studio" detail="Biến ảnh chụp bằng điện thoại thành ảnh studio đạt chuẩn sàn thương mại." />
 
       <FeatureGuidanceCard
         tag="HƯỚNG DẪN"

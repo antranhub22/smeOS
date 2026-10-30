@@ -1,8 +1,9 @@
 "use client"
 
+import { IconTile } from "@/components/ui/app-icon"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef, useState } from "react"
-import { Upload, CheckCircle, AlertTriangle, XCircle } from "lucide-react"
+import { CheckCircle, AlertTriangle, XCircle } from "lucide-react"
 
 interface PhotoUploadPanelProps {
   onFileSelected: (file: File) => void
@@ -136,9 +137,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
           </div>
         ) : (
           <div className="space-y-4 py-4">
-            <div className="w-20 h-20 mx-auto rounded-2xl bg-primary-muted text-primary flex items-center justify-center">
-              <Upload className="w-10 h-10" aria-hidden="true" />
-            </div>
+            <IconTile name="Upload" tone="rose" className="mx-auto w-20 h-20 sm:w-20 sm:h-20 [&>svg]:w-10 [&>svg]:h-10" />
             <div>
               <p className="text-title-sm font-bold text-text">
                 Kéo thả hoặc <span className="text-primary underline">chọn ảnh</span>

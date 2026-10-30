@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import { Images, RefreshCw, Sparkles } from "lucide-react"
+import { RefreshCw, Sparkles } from "lucide-react"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { BundleSelector } from "@/components/product-image-set/bundle-selector"
@@ -50,7 +50,7 @@ export function ProductImageSetFlow() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <ToolHero icon={Images} title="Bộ ảnh đa kênh" detail="Từ một ảnh, nhận đủ bộ ảnh nhiều tỉ lệ cho sàn thương mại, bài đăng và Story." />
+      <ToolHero icon="Images" tone="rose" title="Bộ ảnh đa kênh" detail="Từ một ảnh, nhận đủ bộ ảnh nhiều tỉ lệ cho sàn thương mại, bài đăng và Story." />
 
       <FeatureGuidanceCard
         tag="HƯỚNG DẪN"
