@@ -18,11 +18,11 @@ Thứ tự phụ thuộc: E0 → E1 → (E2, E5) → E4 → E3 · E1 → E8 · E
 ## G0 · Dọn nền
 
 **E0 — Gate xanh & nợ chuẩn**
-1. Sửa 91 thuật ngữ ngành hardcode (IT-F01…) bằng `ti.*` / plugin; hạ baseline ratchet. *(nhánh riêng, nhiều màn)*
-2. **PO:** đưa `audit:industry:check` vào CI (`ci.yml`).
+1. ✅ (30/10/2026) Thuật ngữ ngành hardcode: `b9b51f47` whitelist tệp giữ từ vựng hoa có chủ đích + câu trung tính; E0.1 đổi nốt 11 lỗi (Creative Studio, cam kết mặc định, sự kiện phiếu chế tác) sang ngôn từ trung tính. Baseline hạ 21 → 6 (0 lỗi, còn 6 cảnh báo IT-F07/F08).
+2. ✅ (30/10/2026) `audit:industry:check` chạy trong CI (`ci.yml`, sau `lint:ux`) — PO duyệt Q5.
 3. ✅ (30/10/2026) `core/governance/tier-of.ts` — `tierOf`, `isChainTier`, `organizationTierOf`; kiểu `GovernanceTier` (nợ #194).
 4. ✅ (30/10/2026) Gỡ `cascading-resolver.ts` + 4 tệp `cascading-*`; lõi chung `core/governance/layered-resolver.ts` cho ma trận quản trị và thông báo (nợ #193).
-5. Hằng `TRASH_RETENTION_DAYS` (nợ #196); mở rộng test chặn gọi AI trực tiếp ra toàn `src/` (nợ #197).
+5. ✅ (30/10/2026) Hằng `TRASH_RETENTION_DAYS` (nợ #196); mở rộng test chặn gọi AI trực tiếp ra toàn `src/` (nợ #197).
 
 ## G1 · Production-ready
 

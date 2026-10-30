@@ -356,7 +356,7 @@ export async function coordinatorRejectBrochureOrder(
   const order = await repo.findBrochureOrder(ctx, orderId)
   if (!order) throw notFound()
   const rejectBlocker = coordinatorRejectionBlocker({ status: order.status, productionStatus: order.production_status, deliveryStatus: order.delivery_status }); if (rejectBlocker) throw conflict(rejectBlocker)
-  const reasonText = input.reason?.trim() || "Điều phối từ chối nhận đơn (quá tải hoặc không đáp ứng mẫu hoa)"
+  const reasonText = input.reason?.trim() || "Điều phối từ chối nhận đơn (quá tải hoặc không đáp ứng mẫu yêu cầu)"
   // Bấm lặp / hai người cùng bấm → không tạo hai đề xuất huỷ cho một đơn
   if ((await cancellationRepo.listPending(ctx)).some((r) => r.order_id === orderId)) {
     throw conflict("Đơn này đã có đề xuất huỷ đang chờ Điều hành duyệt")

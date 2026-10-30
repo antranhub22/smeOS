@@ -66,7 +66,7 @@ export function generateCatalogContent(input: CatalogContentInput): GeneratedCat
         styleVariant: "EDITORIAL_LOOKBOOK",
         badge: "Bộ sưu tập chọn lọc",
         title: collection,
-        description: `${input.productCount} mẫu hoa ${shop} cắm tay ${occasion} — lướt ảnh, chọn mẫu hợp ý và nhắn tiệm để đặt.`,
+        description: `${input.productCount} mẫu của ${shop} cắm tay ${occasion} — lướt ảnh, chọn mẫu hợp ý và nhắn tiệm để đặt.`,
         curatorNote: "Mẫu được chọn theo màu và kiểu dáng dễ tặng; cần đổi tông màu, cứ nhắn tiệm.",
         ctaText: "Xem mẫu và nhắn tiệm",
       }
@@ -87,7 +87,7 @@ export function generateCatalogContent(input: CatalogContentInput): GeneratedCat
         styleVariant: "MODERN_SHOWROOM",
         badge: "Bộ sưu tập trực tuyến",
         title: collection,
-        description: `${input.productCount} mẫu hoa từ ${shop} ${occasion} — xem ảnh thật, chọn mẫu và nhắn tiệm để đặt.`,
+        description: `${input.productCount} mẫu từ ${shop} ${occasion} — xem ảnh thật, chọn mẫu và nhắn tiệm để đặt.`,
         curatorNote: "Mỗi mẫu do tiệm tự chọn và cắm; cần tư vấn thêm, cứ nhắn tiệm.",
         ctaText: "Tư vấn qua Zalo",
       }

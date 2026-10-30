@@ -73,6 +73,8 @@ jobs:
       - name: Đối chiếu tài liệu với mã (đặc tả 06/07, cách ly tenant, tài liệu agent)
         run: npm run check:docs
       - run: npm run lint:ux -- --check
+      - name: Thuật ngữ ngành hardcode (ratchet — không thêm vi phạm mới)
+        run: npm run audit:industry:check
       - run: npm test
       - name: Đối chiếu SSOT template với code thật
         run: npm run check:template-ssot

@@ -151,6 +151,15 @@ const WHITELIST_PATH_PATTERNS: RegExp[] = [
   /greeting-card\/og\//,
   // Vision suggestions (AI model output descriptions)
   /catalog\/vision-suggestions/,
+  // Từ vựng riêng ngành hoa có chủ đích (AUD-037, a3a1f0d5): thay bằng token đa ngành làm hỏng
+  // từ khoá tra xu hướng, tiêu đề cột Excel cũ của tiệm, từ khoá trợ lý và mẫu đơn trong chat
+  /market-intelligence\/domain\/market-taxonomy/,
+  /market-intelligence\/opportunity-illustration/,
+  /products\/bulk-import\/parse-product-sheet/,
+  /chat-assistant\/domain\/chat-order-extractor/,
+  /chat-assistant\/domain\/saas-knowledge-base/,
+  // Bộ cấu hình dành riêng chuỗi hoa
+  /chain-os\/presets\/florist-chain-bundle/,
 ]
 
 /** Các pattern trong code được coi là safe (comments, tên biến nội bộ, v.v.) */

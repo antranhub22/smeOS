@@ -69,9 +69,11 @@ export function ToolCard({ tool, isDev }: ToolCardProps) {
           >
             <IconComponent className="w-5 h-5" aria-hidden="true" />
           </div>
-          <span className="text-caption font-bold text-text-muted">
-            #{String(tool.id).padStart(2, "0")}
-          </span>
+          {tool.id >= 0 && (
+            <span className="text-caption font-bold text-text-muted">
+              #{String(tool.id).padStart(2, "0")}
+            </span>
+          )}
         </div>
 
         {isDev && (

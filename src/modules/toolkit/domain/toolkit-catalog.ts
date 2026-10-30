@@ -1,5 +1,5 @@
 /**
- * Danh mục 48 công cụ smeOS — SSOT cho trang chủ Toolkit.
+ * Danh mục công cụ smeOS (51 công cụ gốc + trang có sẵn ở app-page-tools.ts) — SSOT cho /cong-cu.
  *
  * Trạng thái mỗi công cụ:
  *   DONE        – Hoàn thiện, sẵn sàng dùng
@@ -7,7 +7,7 @@
  *   FOUNDATION  – Nền tảng code sẵn, cần cấu trúc lại
  *   PLANNED     – Chưa có gì, cần xây mới hoàn toàn
  */
-
+import { APP_PAGE_TOOLS } from "./app-page-tools"
 // ── Types ──────────────────────────────────────────────────────────
 
 export type ToolStatus = "DONE" | "IN_PROGRESS" | "FOUNDATION" | "PLANNED"
@@ -15,7 +15,7 @@ export type ToolStatus = "DONE" | "IN_PROGRESS" | "FOUNDATION" | "PLANNED"
 export type ToolLabel = "STORE" | "BOTH" | "CHAIN"
 
 export interface ToolDefinition {
-  /** Số thứ tự 01-48 */
+  /** Số thứ tự 00-50; số âm là công cụ trong lộ trình (growth-modules.ts) */
   readonly id: number
   /** Tên chức năng tiếng Việt */
   readonly name: string
@@ -123,8 +123,8 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
   {
     id: 11, name: "Tạo hồ sơ cửa hàng chia sẻ nhanh",
     description: "Trang one-page có bản đồ, nút gọi/nhắn tin và link ngắn",
-    icon: "Store", label: "STORE", status: "PLANNED", progress: 0,
-    href: null, statusNote: "Chức năng mới — khác setting nội bộ hồ sơ cửa hàng",
+    icon: "Store", label: "STORE", status: "DONE", progress: 100,
+    href: "/ho-so", statusNote: "Trang công khai có nút gọi, Zalo, chỉ đường; tạo và ngừng link ở Hồ sơ cửa hàng",
   },
   {
     id: 12, name: "Tạo QR code cửa hàng và sản phẩm",
@@ -351,8 +351,8 @@ const GROUP_8_TOOLS: readonly ToolDefinition[] = [
   {
     id: 45, name: "Tạo bộ nhận diện và thư viện nội dung",
     description: "Thư viện tài nguyên thương hiệu có phân quyền và phiên bản",
-    icon: "Palette", label: "CHAIN", status: "FOUNDATION", progress: 15,
-    href: null, statusNote: "Brand settings có, thiếu thư viện tài nguyên",
+    icon: "Palette", label: "BOTH", status: "DONE", progress: 100,
+    href: "/ho-so/thu-vien-thuong-hieu", statusNote: "Thư viện logo, màu, phông, mẫu, câu chữ có phiên bản; chuỗi chia sẻ cho cửa hàng thành viên",
   },
   {
     id: 46, name: "Chuẩn hóa báo giá và tiêu chuẩn dịch vụ",
@@ -455,7 +455,7 @@ export const TOOLKIT_GROUPS: readonly ToolGroup[] = [
 
 /** Trả tất cả công cụ flat */
 export function getAllTools(): ToolDefinition[] {
-  return TOOLKIT_GROUPS.flatMap((g) => [...g.tools])
+  return [...TOOLKIT_GROUPS.flatMap((g) => [...g.tools]), ...APP_PAGE_TOOLS]
 }
 
 /**

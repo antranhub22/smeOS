@@ -60,7 +60,7 @@ export function DesktopNavGroup({
     const toolEntries = group.entries.filter(
       (e) => e.href !== libraryEntry.href && e.navKey !== libraryEntry.navKey
     )
-    // Cung cấp toàn bộ danh mục 51 công cụ (SSOT toolkit-catalog) cho picker và shortcut resolution
+    // Cung cấp toàn bộ danh mục công cụ (SSOT toolkit-catalog) cho picker và shortcut resolution
     const toolkitNavEntries = getAllToolkitNavEntries()
     return (
       <ToolkitShortcutsGroup

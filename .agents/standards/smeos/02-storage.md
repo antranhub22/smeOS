@@ -32,7 +32,7 @@
 | Xoá vĩnh viễn + outbox + audit cùng transaction | ✅ | `tests/tenant/storage-lifecycle.test.ts` |
 | Legal hold tệp + tổ chức (API, thùng rác, cron, outbox, bàn giao) | ✅ | `tests/tenant/storage-lifecycle.test.ts` |
 | Xoá payload thật | 🟡 sau cờ `STORAGE_DELETE_PAYLOADS=enabled`, **mặc định tắt** tới khi có backup object store (SDAGF D-06) | — |
-| Số ngày thùng rác | 🟡 `30` viết cứng 3 chỗ (`trash-types.ts`, `trash-repository.ts` ×2) | nợ #196 |
+| Số ngày thùng rác | ✅ `TRASH_RETENTION_DAYS` + `trashExpiresAt()` (`storage/domain/trash-types.ts`) | nợ #196 (đã trả) |
 | `LocalDiskStorageProvider` cho production | 🟡 adapter tạm | nợ #15 |
 | Ảnh trang khách qua `next/image` | 🟡 URL ký mỗi lần khác nhau | nợ #187 |
 
