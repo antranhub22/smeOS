@@ -7,7 +7,7 @@
 |---|---|
 | Hợp đồng sự kiện (độc lập) | `domain/events/_contract.ts` (`NotificationTier`, `NotifyChannel`, nhóm, ưu tiên) |
 | Danh mục sự kiện | `domain/events/{mother,industry,chain,store,store-order,store-operation}-events.ts` |
-| Động cơ phân giải | `domain/cascading-policy.ts` (Gate 1 kích hoạt kênh → Gate 2 khoá cứng → bottom-up) — **riêng của notification**, khác `governance-decisions.ts` |
+| Động cơ phân giải | `domain/cascading-policy.ts`: Gate 1 kích hoạt kênh + phạm vi khoá (riêng notification) → khoá/ghi đè qua lõi chung `core/governance/layered-resolver.ts` |
 | Người nhận | `domain/notification-recipients.ts`, `infra/notification-recipient-repository.ts` |
 | Gửi | `use-cases/dispatch-notification.ts`, `notify-organization.ts` (trần 50 người, không ném lỗi) |
 | Nơi gọi | `orders/use-cases/create-order.ts`, `cancel-order.ts`, `assign-florist.ts`, `update-order-progress.ts` |
@@ -26,11 +26,11 @@
 | Sự kiện đang gửi: đơn mới, xác nhận, chế tác xong, đã giao, huỷ, giao việc chế tác | ✅ | `notify-organization.test.ts` |
 | Sự kiện chuỗi / nền tảng / khách hàng | 🟡 chưa nối | nợ #185 (b) |
 | SSE nhiều instance | 🟡 trong bộ nhớ một tiến trình | nợ #185 (b) |
-| Tầng của người xem ma trận | 🔴 hàm riêng `resolveNotificationViewerTier` | nợ #194 |
+| Tầng của người xem ma trận | ✅ `resolveNotificationViewerTier` dựa trên `core/governance/tier-of.ts` | nợ #194 ✅ |
 
 ## 3. Quy tắc cho agent
 1. Sự kiện mới → khai trong tệp `*-events.ts` của đúng tầng, có `deepLinkTemplate` trỏ trang thật (test kiểm).
 2. Gửi từ use-case nghiệp vụ → `notifyOrganization(...)`; không `await` để chặn luồng, không để lỗi lan ra.
 3. Kênh mới → adapter trong `infra/channel-adapters/` theo `_channel-adapter.interface.ts`, escape nội dung, test escape. Nối nhà cung cấp trả phí → hỏi PO.
-4. Không dùng `governance-decisions.ts` cho thông báo và ngược lại — hai động cơ tách biệt có chủ đích cho tới khi PO quyết hợp nhất (#193).
+4. Quy luật khoá/ghi đè dùng lõi chung `layered-resolver.ts` (PO 30/10, #193); phần riêng của thông báo (kênh, phạm vi, ưu tiên) giữ trong `cascading-policy.ts`.
 5. Đọc/ghi cấu hình thông báo: capability F1/F2 (tổ chức), N2 (nền tảng).

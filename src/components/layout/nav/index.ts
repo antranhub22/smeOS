@@ -3,6 +3,7 @@
  * Chuẩn hóa theo SSOT SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md
  */
 
+import { isChainTier, tierOf } from "@/core/governance/tier-of"
 import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"
 import type { NavEntry, NavGroup, NavView, NavGroupKey } from "./nav-types"
 import { HOME_ENTRY } from "./nav-types"
@@ -18,22 +19,13 @@ export * from "./nav-chain"
 export * from "./nav-store"
 
 /**
- * Kiểm tra xem tổ chức/vai trò có thuộc Tầng ChainOS hay không
+ * Kiểm tra xem tổ chức/vai trò có thuộc Tầng ChainOS hay không — luật ở `core/governance/tier-of.ts`.
  */
 export function isChainOrganization(
   organizationType?: string | null,
   role?: RoleUxDefinition | null
 ): boolean {
-  if (organizationType === "CHAIN" || organizationType === "FLOWER_NETWORK") {
-    return true
-  }
-  if (role?.group === "CHAIN" || role?.group === "FLOWER_NETWORK") {
-    return true
-  }
-  if (role?.key === "flower_network_admin") {
-    return true
-  }
-  return false
+  return isChainTier(organizationType, role)
 }
 
 /**
@@ -51,30 +43,16 @@ export function buildNav(
   organizationType?: string | null,
   unlockedToolKeys?: string[] | null
 ): NavView {
-  // Tầng 2: SaaS Ngành (Affiliate & Standardization Hub)
-  if (
-    organizationType === "INDUSTRY" ||
-    role?.key === "industry_admin"
-  ) {
-    return buildIndustryNav(can)
+  switch (tierOf(organizationType, role)) {
+    case "INDUSTRY":
+      return buildIndustryNav(can) // Tầng 2: SaaS Ngành
+    case "MOTHER":
+      return buildMotherNav(can) // Tầng 1: SaaS Mother
+    case "CHAIN":
+      return buildChainNav(can, role) // Tầng 3: ChainOS
+    case "STORE":
+      return buildStoreNav(can, role, industryKey, navHiddenKeys, unlockedToolKeys) // Tầng 4: StoreOS
   }
-
-  // Tầng 1: SaaS Mother
-  if (
-    organizationType === "PLATFORM" ||
-    role?.group === "PLATFORM" ||
-    role?.key === "platform_admin"
-  ) {
-    return buildMotherNav(can)
-  }
-
-  // Tầng 3: ChainOS (Chuỗi Thương hiệu Đơn ngành)
-  if (isChainOrganization(organizationType, role)) {
-    return buildChainNav(can, role)
-  }
-
-  // Tầng 4: StoreOS (Cửa hàng cơ sở)
-  return buildStoreNav(can, role, industryKey, navHiddenKeys, unlockedToolKeys)
 }
 
 /**
@@ -87,8 +65,9 @@ export function mobileSecondSlot(
   navHiddenKeys?: string[] | null,
   organizationType?: string | null
 ): NavEntry {
-  // Tầng 2: SaaS Ngành — phải kiểm tra TRƯỚC PLATFORM vì industry_admin có group="PLATFORM"
-  if (organizationType === "INDUSTRY" || role?.key === "industry_admin") {
+  const tier = tierOf(organizationType, role)
+  // Tầng 2: SaaS Ngành (tierOf kiểm trước Mẹ vì industry_admin có group="PLATFORM")
+  if (tier === "INDUSTRY") {
     return {
       href: "/van-hanh/nganh",
       label: "Taxonomy & Quy chuẩn",
@@ -99,8 +78,8 @@ export function mobileSecondSlot(
     }
   }
 
-  // Tầng 1: SaaS Mother (platform_admin thuần túy)
-  if (organizationType === "PLATFORM" || role?.key === "platform_admin") {
+  // Tầng 1: SaaS Mother
+  if (tier === "MOTHER") {
     return {
       href: "/van-hanh/to-chuc",
       label: "Tổ chức & Tenant",
@@ -111,7 +90,7 @@ export function mobileSecondSlot(
     }
   }
 
-  if (isChainOrganization(organizationType, role)) {
+  if (tier === "CHAIN") {
     return {
       href: "/dieu-phoi",
       label: "Điều phối",

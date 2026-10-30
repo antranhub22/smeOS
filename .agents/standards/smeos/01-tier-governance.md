@@ -7,7 +7,7 @@
 | Tầng | Nhận diện thật | Điều hướng | Trang |
 |---|---|---|---|
 | 1 · SaaS Mother | vai `platform_admin` / nhóm `PLATFORM` (không phải `organization_type`) | `components/layout/nav/nav-mother.ts` | `/van-hanh/*` |
-| 2 · SaaS Ngành | vai `industry_admin`; **không có tổ chức loại INDUSTRY** trong enum `organization_type` | `nav-industry.ts` | — |
+| 2 · SaaS Ngành | `tierOf()`: vai `industry_admin` (kiểm trước Mẹ); **không có tổ chức loại INDUSTRY** trong enum `organization_type` | `nav-industry.ts` | — |
 | 3 · ChainOS | `organization_type` `CHAIN` hoặc `FLOWER_NETWORK`, hoặc nhóm vai `CHAIN`/`FLOWER_NETWORK` (`isChainOrganization`) | `nav-chain.ts` | `/dieu-phoi/*` |
 | 4 · StoreOS | mọi trường hợp còn lại (`EXPERIENCE`, `SINGLE`, `STORE`) | `nav-store.ts` | — |
 
@@ -37,8 +37,8 @@ Quan hệ Chuỗi → Cửa hàng: bảng `chain_partnerships` (`status = ACTIVE
 | Áp vào trang khách, báo giá, đặt đơn: Ưu đãi / Cam kết / Chính sách | ✅ | `resolveAppliedPolicies` — `active-shop-promotions.ts`, `brochure-quote.ts`, `place-brochure-order.ts` |
 | Áp: Thanh toán, Phí gia công, Mẫu | 🟡 chỉ lưu + khoá; UI ghi rõ (`GovernanceScopeNote`) | nợ #185 |
 | Tầng Ngành trong ma trận | 🔴 không có dữ liệu; `governanceTierOf()` chỉ trả `CHAIN`/`STORE` | nợ #185, #195 |
-| Một hàm xác định tầng | 🔴 3 bản: `buildNav` (nav/index.ts), `governanceTierOf` (governance-matrix.ts), `resolveNotificationViewerTier` | nợ #194 |
-| Một kiểu Tier | 🟡 `GovernanceTier` trong lõi; `GovernanceLayerTier` đã là alias; còn ≥ 4 khai báo khác (`PlatformTier`, `GovernanceLayerTier`, `GovernanceTier`, `NotificationTier`, `GovernanceViewerTier`, `MatrixViewerTier`) | nợ #194 |
+| Một hàm xác định tầng | ✅ `src/core/governance/tier-of.ts` (`tierOf`, `isChainTier`, `organizationTierOf`) — 3 nơi cũ gọi lại | `tier-of.test.ts` |
+| Một kiểu Tier | ✅ `GovernanceTier` (lõi); `GovernanceLayerTier`, `PlatformTier`, `GovernanceViewerTier` là alias; `NotificationTier` riêng có chủ đích (hợp đồng độc lập) | tsc |
 | Khoá công cụ chuỗi → chi nhánh ở server | ✅ trang + API của công cụ: `organization/domain/tool-route-entitlement.ts`, `layout/tool-lock-guard.tsx`; `null` = không giới hạn, mảng (kể cả rỗng) = chỉ công cụ trong danh sách | `tool-route-entitlement.test.ts`, `require-tenant-tool-lock.test.ts` |
 | API dùng chung nhiều công cụ | Cố ý **không** khoá (vd. `content-engine/generations`) | nợ #185 (c) |
 | Gói dịch vụ | ✅ `core/entitlements/entitlement-service.ts` (`PLAN_FEATURES`), tách khỏi RBAC | `entitlement-service.test.ts` |
@@ -48,7 +48,7 @@ Quan hệ Chuỗi → Cửa hàng: bảng `chain_partnerships` (`status = ACTIVE
 ## 4. Quy tắc cho agent
 
 1. Hệ thống quản trị mới → thêm vào `GOVERNANCE_SYSTEMS` và dùng `governance-decisions.ts`; hệ thống có cấu trúc riêng (như thông báo) → gọi thẳng `resolveLayered`. Không viết resolver mới.
-2. Cần biết tầng → gọi hàm có sẵn của đúng ngữ cảnh; **không** viết thêm phép so `organization_type` mới. Khi hợp nhất (#194) chỉ còn một hàm.
+2. Cần biết tầng → `tierOf()` (trải nghiệm) hoặc `organizationTierOf()` (dữ liệu tổ chức) ở `core/governance/tier-of.ts`; **không** viết thêm phép so `organization_type`/vai mới.
 3. Hệ thống mới mà luồng thật chưa áp → bắt buộc `GovernanceScopeNote` nói "đã lưu, chưa áp dụng".
 4. Thuật ngữ ngành: `getIndustryPlugin(industryKey).terminology` / `ti.*` — không hardcode (ratchet `npm run audit:industry:check`).
 5. Đổi luật bất biến (`BUILT_IN_MOTHER_LOCKS`, trần 50%) hoặc thêm tầng Ngành vào dữ liệu = **hỏi PO** (đụng schema/tenancy).

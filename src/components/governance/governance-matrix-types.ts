@@ -4,7 +4,9 @@
  * Phục vụ hiển thị Ma trận Quản trị Phân tầng (Promotions, Commitments, Policies, Payment, Fees, Templates).
  */
 
-export type GovernanceViewerTier = "MOTHER" | "INDUSTRY" | "CHAIN" | "STORE"
+import type { GovernanceTier } from "@/core/governance/layered-resolver"
+
+export type GovernanceViewerTier = GovernanceTier
 
 export const GOVERNANCE_TIER_LABELS: Record<GovernanceViewerTier, string> = {
   MOTHER: "Nền tảng Mẹ",

@@ -11,9 +11,11 @@
  * - Tuân thủ Domain Purity: 100% thuần TypeScript, Zero ORM.
  */
 
+import type { GovernanceTier } from "@/core/governance/layered-resolver"
 import type { NavEntry } from "@/components/layout/nav/nav-types"
 
-export type PlatformTier = "MOTHER" | "INDUSTRY" | "CHAIN" | "STORE"
+/** Kiểu tầng duy nhất — `core/governance/layered-resolver.ts`. */
+export type PlatformTier = GovernanceTier
 
 export type ToolCategory =
   | "AI_CREATIVE"       // Studio AI, Ảnh, Video, Nội dung

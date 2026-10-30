@@ -1,5 +1,5 @@
 import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"
-import { isChainOrganization } from "@/components/layout/nav"
+import { isChainTier, tierOf } from "@/core/governance/tier-of"
 
 export type TenantViewerTier = "INDUSTRY" | "CHAIN" | "STORE"
 
@@ -12,7 +12,9 @@ export function resolveNotificationViewerTier(
   organizationType?: string | null,
   role?: RoleUxDefinition | null
 ): TenantViewerTier {
-  if (organizationType === "INDUSTRY" || role?.key === "industry_admin") return "INDUSTRY"
-  if (isChainOrganization(organizationType, role)) return "CHAIN"
+  // Luật tầng ở `core/governance/tier-of.ts`. Ma trận thông báo của tổ chức không có tầng Mẹ
+  // (Mẹ quản ở /van-hanh) — người vận hành rơi về theo loại tổ chức/vai còn lại như trước.
+  if (tierOf(organizationType, role) === "INDUSTRY") return "INDUSTRY"
+  if (isChainTier(organizationType, role)) return "CHAIN"
   return "STORE"
 }
