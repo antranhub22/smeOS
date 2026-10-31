@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Plus, RefreshCw, MessageSquarePlus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -19,6 +18,7 @@ import { LeadQueueTab } from "@/components/orders/workspace/lead-queue-tab"
 import { WorkbenchList } from "@/components/orders/workspace/workbench-list"
 import { ApprovalRequestsList } from "@/components/orders/workspace/approval-requests-list"
 import { DeliverBeforePaySettingsPanel } from "@/components/orders/workspace/deliver-before-pay-settings-panel"
+import { CoordinationQueueList } from "@/components/orders/workspace/coordination-queue-list"
 import {
   WORKSPACE_TAB_LABELS,
   defaultWorkspaceTab,
@@ -164,11 +164,7 @@ export default function DonHangPage() {
         {activeTab === "coordinate" && (
           <>
             <Section title="Thẻ chào"><CoordinatorBrochureTab /></Section>
-            <Section title="Đơn nguồn khác">
-              <Link href="/dieu-phoi" className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-body-sm font-semibold text-text hover:bg-surface-alt">
-                Mở Tháp điều phối
-              </Link>
-            </Section>
+            <Section title="Đơn nguồn khác"><CoordinationQueueList /></Section>
           </>
         )}
         {activeTab === "all" && <AllOrdersTab orders={orders} onSelect={setSelectedOrderId} onCreate={() => setCreateOpen(true)} />}

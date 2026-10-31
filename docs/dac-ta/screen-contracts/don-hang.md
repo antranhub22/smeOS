@@ -9,8 +9,8 @@ SSOT: `docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §6. Archetype: bản
 |---|---|---|---|
 | Khách tiềm năng | `Q1` | `LeadQueueTab` — `GET /orders/lead-queue`; nút "Mở để chăm" sang `/thu-hut-khach` hoặc `/the-chao?tab=sales` | Phiên chưa đặt — chỉ xem |
 | Sale chăm sóc | `R2` | "Đơn từ nguồn khác": `WorkbenchList mode="sale"` (Báo giá `R15`, Giao trước thu sau `R2`) · "Thẻ chào": `SalesBrochureTab` | Nhúng nguyên vẹn |
-| Phê duyệt | `R11` hoặc `R16` | "Chờ duyệt giao trước, thu sau" (`R16`) · "Xác nhận tiền — đơn nguồn khác" (`R11`) · "Thẻ chào": `AdminBrochurePaymentTab` (`R11`) | Nhúng nguyên vẹn |
-| Điều phối | `R4` hoặc `R5` | "Thẻ chào": `CoordinatorBrochureTab` · "Đơn nguồn khác": lối tắt Tháp điều phối `/dieu-phoi` | Nhúng nguyên vẹn |
+| Phê duyệt | `R11` hoặc `R16` | "Chờ duyệt giao trước, thu sau" (`R16`) + "Hạn mức Sale tự quyết" (thu gọn, `F2`) · "Xác nhận tiền — đơn nguồn khác" (`R11`) · "Thẻ chào": `AdminBrochurePaymentTab` (`R11`) | Nhúng nguyên vẹn |
+| Điều phối | `R4` hoặc `R5` | "Thẻ chào": `CoordinatorBrochureTab` · "Đơn nguồn khác": `CoordinationQueueList` (`GET /orders/coordination-queue`) + lối sang Tháp điều phối | Nhúng nguyên vẹn |
 | Tất cả | luôn | `AllOrdersTab` — kanban 4 cột / lọc trên điện thoại (tách nguyên từ trang cũ) | — |
 
 - Mở mặc định theo vai (`role-tabs.ts`): Điều hành → Phê duyệt · Điều phối → Điều phối · Sale → Khách tiềm năng; `?tab=` đè nếu người xem có tab đó.

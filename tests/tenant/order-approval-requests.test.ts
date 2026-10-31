@@ -8,6 +8,7 @@ import { GET as listRequests } from "@/app/api/v1/orders/approval-requests/route
 import { POST as postDecision } from "@/app/api/v1/orders/approval-requests/[requestId]/decision/route"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 import { remindCollectDue } from "@/modules/orders/use-cases/remind-collect-due"
+import { GET as getCoordinationQueue } from "@/app/api/v1/orders/coordination-queue/route"
 
 /**
  * Đơn hàng đa nguồn P3 — yêu cầu duyệt theo đơn (`order_approval_requests`), báo giá ngoài Thẻ chào.
@@ -66,6 +67,10 @@ describe("cách ly tenant — yêu cầu duyệt giao trước thu sau, báo gi�
     expect(coord).toMatchObject({ organization_id: a.organizationId, stage: "INTAKE", source: "MANUAL" })
     expect((await prisma.orders.findUniqueOrThrow({ where: { id: orderId } })).workflow).toBe("STANDARD")
     expect((await decide()).status).toBe(409)
+    const qa = (await readJson(await getCoordinationQueue(withSession(`${BASE}/orders/coordination-queue`, a.token)))) as { items: { orderId: string }[] }
+    const qb = (await readJson(await getCoordinationQueue(withSession(`${BASE}/orders/coordination-queue`, b.token)))) as { items: unknown[] }
+    expect(qa.items.map((i) => i.orderId)).toEqual([orderId])
+    expect(qb.items).toEqual([])
   })
 
   it("báo giá: chỉ đơn của mình; B → 404 và giá không đổi", async () => {
