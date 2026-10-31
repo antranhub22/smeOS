@@ -6,8 +6,7 @@
       "R16": 5
     },
     "app/(platform)": {
-      "R13": 2,
-      "R16": 2
+      "R13": 2
     },
     "components/availability": {
       "R13": 1
@@ -51,6 +50,6 @@
       "R16": 1
     }
   },
-  "total": 122,
-  "updatedAt": "2026-10-31T09:43:06.620Z"
+  "total": 120,
+  "updatedAt": "2026-10-31T13:07:25.808Z"
 }

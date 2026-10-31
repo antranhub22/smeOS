@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
+import { StatTile } from "@/components/ui/stat-tile"
 import { Building2, Clock, AlertTriangle, ArrowRight, Zap } from "@/components/ui/icons"
 import { VietQrTopupModal } from "@/components/platform/vietqr-topup-modal"
 
@@ -38,37 +39,28 @@ export function PlatformOverviewMetrics({
 
   return (
     <div className="space-y-6">
-      {/* 3 Metric Cards */}
+      {/* 3 Metric Cards - Chuẩn StatTile */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border shadow-xs">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-selected text-primary">
-            <Building2 className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-display font-extrabold text-text">{orgs.length}</p>
-            <p className="text-body-sm text-text-muted mt-0.5">Tổng số tổ chức</p>
-          </div>
-        </div>
+        <StatTile
+          label="Tổng tổ chức"
+          value={orgs.length}
+          tip="Tổng số doanh nghiệp, chuỗi và cửa hàng đã đăng ký trên nền tảng"
+          icon={<Building2 className="w-4 h-4 text-primary" aria-hidden="true" />}
+        />
 
-        <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border shadow-xs">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-selected text-primary">
-            <Clock className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-display font-extrabold text-text">{moiTrong7Ngay(orgs)}</p>
-            <p className="text-body-sm text-text-muted mt-0.5">Tổ chức mới (7 ngày qua)</p>
-          </div>
-        </div>
+        <StatTile
+          label="Tổ chức mới"
+          value={moiTrong7Ngay(orgs)}
+          tip="Số lượng tổ chức mới tạo trong vòng 7 ngày qua"
+          icon={<Clock className="w-4 h-4 text-primary" aria-hidden="true" />}
+        />
 
-        <div className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border shadow-xs">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-warning-bg text-warning-text">
-            <AlertTriangle className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-display font-extrabold text-text">{health.stuckJobs.length}</p>
-            <p className="text-body-sm text-text-muted mt-0.5">Tác vụ tồn đọng (Job treo)</p>
-          </div>
-        </div>
+        <StatTile
+          label="Tác vụ tồn đọng"
+          value={<span className={health.stuckJobs.length > 0 ? "text-warning" : "text-text"}>{health.stuckJobs.length}</span>}
+          tip="Các tác vụ xử lý ảnh/video nền bị treo hoặc cần can thiệp hệ thống"
+          icon={<AlertTriangle className="w-4 h-4 text-warning" aria-hidden="true" />}
+        />
       </div>
 
       {/* Danh sách tổ chức gần đây */}

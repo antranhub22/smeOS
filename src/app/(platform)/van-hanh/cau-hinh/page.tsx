@@ -4,6 +4,7 @@
 // Đọc: phiên nền tảng · Ghi: `N12`, có nhật ký kiểm toán. Xem đặc tả 06.
 
 import { useEffect, useState } from "react"
+import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { InlineError } from "@/components/ui/inline-error"
@@ -112,11 +113,11 @@ export default function CauHinhNenTangPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-2 sm:px-0">
-        <div>
+        <div className="flex items-center gap-2">
           <h1 className="text-base font-bold text-text">Cấu hình nền tảng</h1>
-          <p className="text-body-sm text-text-muted">
+          <InfoTip label="Cấu hình nền tảng">
             Bật giao diện chuẩn mới cho từng công cụ, theo từng tổ chức. Tắt có hiệu lực trong khoảng 30 giây.
-          </p>
+          </InfoTip>
         </div>
         <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hệ thống</span>
       </div>

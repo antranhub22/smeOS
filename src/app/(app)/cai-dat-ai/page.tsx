@@ -137,15 +137,15 @@ export default function AiSettingsPage() {
     <div className="flex flex-col gap-6 p-6 max-w-5xl mx-auto">
       {/* Guidance Card chuẩn hoá */}
       <FeatureGuidanceCard
-        badgeLabel="QUẢN TRỊ NỀN TẢNG AI"
+        badgeLabel="Cấu hình AI"
         badgeIcon={Shield}
-        title="Chính Sách & Trần Sử Dụng AI Tổ Chức"
+        title="Chính sách & hạn mức AI"
         titleIcon={Cpu}
-        description="Kiểm soát danh mục mô hình AI được phép chạy, sàn bảo vệ thông tin khách hàng và trần chi phí theo từng phân hệ nghiệp vụ."
+        description="Kiểm soát mô hình AI được phép chạy, sàn bảo vệ thông tin khách hàng và trần chi phí theo từng phân hệ nghiệp vụ."
         tips={[
-          "🔒 Năng lực chạm dữ liệu khách hàng luôn bị khóa sàn bảo mật SENSITIVE (Luật YC-K1)",
-          "⚡ Mô hình chỉ được gọi khi vượt qua 4 tiêu chuẩn cấp phép thương mại và kiểm định bộ ảnh vàng",
-          "🛡️ Phân quyền U1 (xem) và U2 (hiệu chỉnh trần) giải từ phiên máy chủ",
+          "🔒 Năng lực chạm dữ liệu khách hàng luôn bị khoá sàn bảo mật (Luật YC-K1)",
+          "⚡ Mô hình chỉ được gọi khi vượt qua 4 tiêu chuẩn cấp phép thương mại",
+          "🛡️ Phân quyền xem và chỉnh sửa giải từ phiên máy chủ",
         ]}
       />
 
@@ -177,7 +177,7 @@ export default function AiSettingsPage() {
       {/* Header hành động */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-extrabold text-text">Danh mục Năng lực AI</h1>
+          <h1 className="text-lg font-extrabold text-text">Cấu hình AI</h1>
           <p className="text-xs text-text-muted">
             Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span> (Phạm vi áp dụng chỉ trong tổ chức hiện tại)
           </p>
@@ -216,13 +216,7 @@ export default function AiSettingsPage() {
               >
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-muted text-muted-foreground">
-                      {cap.capability_code}
-                    </span>
                     <span className="text-sm font-bold text-text">{cap.capability_name}</span>
-                    <Badge tone="neutral" className="text-caption uppercase border border-border">
-                      {cap.module}
-                    </Badge>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted pt-1">

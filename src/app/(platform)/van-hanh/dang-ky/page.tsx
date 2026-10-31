@@ -3,6 +3,7 @@
 // Duyệt tài khoản tự đăng ký (`N13`, PO 22/10/2026). Xem đặc tả 06 mục 21.
 
 import { useCallback, useEffect, useState } from "react"
+import { InfoTip } from "@/components/ui/info-tip"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -70,14 +71,16 @@ export default function DuyetDangKyPage() {
   if (!items && !loi) return <div className="py-4"><SkeletonBlock lines={4} /></div>
 
   return (
-    <Card className="overflow-x-auto p-4">
+    <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <h1 className="text-base font-bold text-text">{dict.platform.registration.title}</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-base font-bold text-text">Duyệt đăng ký</h1>
+          <InfoTip label="Duyệt đăng ký">
+            Tài khoản tự đăng ký hoặc dùng thử chỉ đăng nhập được sau khi bạn duyệt.
+          </InfoTip>
+        </div>
         <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">{items?.length ?? 0} đang chờ</span>
       </div>
-      <p className="mb-3 text-xs text-text-muted">
-        Tài khoản tự đăng ký hoặc dùng thử chỉ đăng nhập được sau khi bạn duyệt.
-      </p>
 
       {loi && <p className="mb-3 text-sm text-danger">{loi}</p>}
 
