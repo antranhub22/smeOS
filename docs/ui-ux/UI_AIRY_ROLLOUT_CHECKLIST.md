@@ -32,7 +32,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | ✅ đầu trang + 3 thẻ con (mô tả pháp lý → (?), emoji → icon) |
 | 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 đầu trang (tên tiếng Việt, (?)) + nhãn thẻ K1 bỏ tiếng Anh; **còn khung hội thoại 3 cột** |
 | 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 thẻ số liệu `StatTile` + chữ K1 bỏ mã quyền/tiếng Anh; **còn đầu trang và phần phân tích** |
-| 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | 🟡 |
+| 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | ✅ đầu trang (mô tả → (?)); tab và thanh K2 giữ nguyên |
 | 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🟡 |
 | 9 | `/noi-dung` | Viết nội dung marketing | P2 | 🟡 |
 | 10 | `/video` | Tạo video | P2 — có tải ảnh, hỏi PO chặng | 🟡 |
@@ -109,3 +109,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Tạo sản phẩm (#4) — đầu trang (dòng phụ → (?)); thẻ Định mức / Đặc điểm niêm yết / Nội dung AI: mô tả dài → (?) trên dòng tiêu đề, emoji ✨ → icon. Badge cam kết vẫn hiện.
 - 31/10: Hội thoại (#5) — đầu trang: "AI Chat & Tư Vấn Bán Hàng" → "Tư vấn bán hàng", mô tả → (?); nhãn thẻ K1 "HƯỚNG DẪN AI CHAT ASSISTANT" → "HƯỚNG DẪN TƯ VẤN" (cần PO xác nhận đổi chuỗi trong thẻ K1). Chưa làm: khung 3 cột.
 - 31/10: Báo cáo kinh doanh (#6) — thẻ số đo theo tính năng dùng `StatTile` (số to, chi phí credit trong (?)); K1 bỏ mã quyền "learning.profile.manage" và tiếng Anh "Tone of Voice / Brand Kit". Còn: đầu trang, bảng chi tiết, phần phân tích.
+- 31/10: Thẻ chào (#7) — đầu trang: mô tả dài → (?) cạnh tiêu đề. K2 (TabActionHeader) giữ nguyên.
