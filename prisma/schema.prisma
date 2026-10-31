@@ -246,6 +246,7 @@ model organizations {
   product_recipes               product_recipes[]
   product_recipe_items          product_recipe_items[]
   leads                         leads[]
+  order_approval_requests       order_approval_requests[]
   short_links                   short_links[]
   link_events                   link_events[]
 }
@@ -1657,13 +1658,14 @@ model orders {
   /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —
   /// đơn Thẻ chào không đọc các cột này (sale phụ trách vẫn suy từ greeting_sessions.sale_id).
   /// Sale phụ trách đơn nguồn mới (user thuộc memberships của tổ chức — kiểm ở use-case).
-  owner_sale_id   String?
+  owner_sale_id     String?
   /// Lead gốc khi đơn sinh từ lead (cổng nhận đơn `ingestOrder`).
-  lead_id         String?
-  lead            leads?  @relation("order_origin_lead", fields: [lead_id], references: [id], onDelete: SetNull)
-  converted_leads leads[] @relation("lead_converted_order")
+  lead_id           String?
+  lead              leads?                    @relation("order_origin_lead", fields: [lead_id], references: [id], onDelete: SetNull)
+  converted_leads   leads[]                   @relation("lead_converted_order")
   /// `LEGACY` (kanban cũ, mặc định — mọi đơn hiện có) · `STANDARD` (quy trình chuẩn đa nguồn, P3).
-  workflow        String  @default("LEGACY")
+  workflow          String                    @default("LEGACY")
+  approval_requests order_approval_requests[]
 
   @@unique([organization_id, code])
   @@index([organization_id, status])
@@ -3931,4 +3933,35 @@ model partner_marketplace_stores {
   updated_at       DateTime @updatedAt
 
   @@index([tier])
+}
+
+/// Yêu cầu duyệt theo từng đơn — Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §5).
+/// Chỉ đơn NGOÀI Thẻ chào. `kind` hiện có: DELIVER_BEFORE_PAY (giao trước, thu sau cho đơn ngoài chính sách).
+model order_approval_requests {
+  id              String    @id @default(uuid())
+  organization_id String
+  order_id        String
+  /// DELIVER_BEFORE_PAY
+  kind            String
+  /// PENDING | APPROVED | REJECTED | AUTO_APPROVED
+  status          String    @default("PENDING")
+  /// Căn cứ duyệt: SELF_LIMIT (trong hạn mức Sale tự quyết) | URGENT (đơn hoả tốc) | ADMIN (Điều hành duyệt)
+  basis           String?
+  reason          String
+  requested_by    String
+  requested_at    DateTime  @default(now())
+  decided_by      String?
+  decided_at      DateTime?
+  decision_note   String?
+  /// Hạn thu tiền sau giao (Điều hành sửa được khi duyệt).
+  collect_due_at  DateTime?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, status, created_at])
+  @@index([organization_id, order_id])
 }

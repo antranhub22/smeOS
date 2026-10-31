@@ -570,6 +570,12 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | GET | `/orders/entry-actions` | `R1` | Đơn hàng đa nguồn §3.2 — nút Đặt hàng / Liên hệ trên trang khách: `{ settings, sources: [{ code, label, effective }] }` |
 | PUT | `/orders/entry-actions` | `F2` | `{ default?: { order?, contact? }, bySource?: { [nguồn]: { order?, contact? } } }` — mỗi nguồn còn ít nhất một nút (422); ghi `audit_logs` `orders.entry_actions_updated` |
 | GET | `/orders/lead-queue` | `Q1` | Đơn hàng đa nguồn §3.4 — hàng đợi "Khách tiềm năng": lead đang mở + phiên Thẻ chào chưa đặt (chỉ đọc), xếp quá hạn gọi lại → nóng → mới; phạm vi sale theo cài đặt "chỉ khách của mình" |
+| POST | `/orders/:id/quote` | `R15` | Đơn hàng đa nguồn P3 — Sale báo giá đơn **ngoài Thẻ chào** (Thẻ chào giữ `R11`): `{ totalVnd, note? }`; chỉ đơn nháp chưa thu; đơn Thẻ chào/tổ chức khác → 404 |
+| POST | `/orders/:id/deliver-before-pay` | `R2` | §5 — Sale xin "giao trước, thu sau" `{ reason }`: trong chính sách thu tiền của tiệm (COD/thu sau) · đơn hoả tốc · trong hạn mức tự quyết → `AUTO_APPROVED`, đơn sang Điều phối (`order_coordinations` INTAKE, `workflow = STANDARD`); ngoài → `PENDING` chờ Điều hành. 201 `{ request, message }`; đã có yêu cầu mở → 409 |
+| GET | `/orders/approval-requests` | `R1` | `?status=PENDING\|APPROVED\|REJECTED\|AUTO_APPROVED&limit≤100` — yêu cầu duyệt theo đơn kèm số tiền đơn |
+| POST | `/orders/approval-requests/:requestId/decision` | `R16` (trần cứng Điều hành) | `{ approve, note?, collectDueAt? }` — từ chối phải có lý do; duyệt → đơn sang Điều phối; đã xử lý → 409; tổ chức khác → 404 |
+| GET | `/orders/deliver-before-pay-settings` | `R1` | Hạn mức Sale tự quyết `{ allowSelfDecide, selfDecideMaxVnd, minCompletedOrders, collectDueDays }` (mặc định bật · 1.000.000đ · 2 đơn · 3 ngày) |
+| PUT | `/orders/deliver-before-pay-settings` | `F2` | Sửa hạn mức trên; ghi `audit_logs` `orders.deliver_before_pay_settings_updated` |
 | GET | `/orders/export` | `R13` (chỉ Điều hành; người khác cần Điều hành cấp quyền — PO 14/10/2026) | `?from_date` `?to_date` `?source=BROCHURE\|MANUAL\|CHAT` → tệp Excel đơn hàng của tổ chức |
 | POST | `/coordinator/orders/:id/exceptions` | `R3` | Đưa đơn về `EXCEPTION`, nhớ bước cũ |
 | POST | `/coordinator/exceptions/:id/resolve` | `R3` | Hết sự cố mở → đơn tự về bước cũ |

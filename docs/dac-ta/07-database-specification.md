@@ -928,6 +928,30 @@ model orders {
   @@index([organization_id, lead_id])
 }
 
+// Đơn hàng đa nguồn P3 (PO 31/10/2026 — KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §5). Yêu cầu duyệt theo đơn,
+// chỉ đơn NGOÀI Thẻ chào. kind: DELIVER_BEFORE_PAY.
+model order_approval_requests {
+  id              String    @id @default(uuid())
+  organization_id String
+  order_id        String                      // FK orders, CASCADE
+  kind            String                      // DELIVER_BEFORE_PAY
+  status          String    @default("PENDING") // PENDING | APPROVED | REJECTED | AUTO_APPROVED
+  basis           String?                     // POLICY | URGENT | SELF_LIMIT | ADMIN
+  reason          String
+  requested_by    String
+  requested_at    DateTime  @default(now())
+  decided_by      String?
+  decided_at      DateTime?
+  decision_note   String?
+  collect_due_at  DateTime?                   // hạn thu tiền sau giao
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@index([organization_id])
+  @@index([organization_id, status, created_at])
+  @@index([organization_id, order_id])
+}
+
 model order_items {
   id              String   @id @default(uuid())
   organization_id String

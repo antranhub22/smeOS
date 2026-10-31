@@ -1,7 +1,7 @@
 # Kiến trúc SSOT Đơn hàng đa nguồn — Lead → Đơn → Điều phối theo quy trình Thẻ chào
 
 > **Mã:** `ARCH-2026-ORDER-SSOT-MULTI-SOURCE-01` · **Ngày:** 31/10/2026
-> **Trạng thái:** ✅ PO duyệt kiến trúc (31/10/2026) · **đang xây** — P0, P1, P2 xong (xem §7).
+> **Trạng thái:** ✅ PO duyệt kiến trúc (31/10/2026) · **đang xây** — P0, P1, P2, P3a xong (xem §7).
 > **Căn cứ:** [`HIEN_TRANG_THE_CHAO.md`](HIEN_TRANG_THE_CHAO.md) (đường chuẩn) · [`KE_HOACH_MA_TRAN_QUY_TRINH_THE_CHAO.md`](KE_HOACH_MA_TRAN_QUY_TRINH_THE_CHAO.md) · `prisma/schema.prisma` (`orders`, `leads`, `greeting_sessions`, `order_coordinations`).
 
 ---
@@ -162,12 +162,24 @@ Hợp nhất code hai đường (nếu muốn) chỉ làm khi đường STANDARD
 
 ## 5. Phê duyệt và quyền
 
+### 5.0 Giao trước, thu sau — 3 tầng (PO 31/10/2026, đã xây P3a)
+
+Rà mã 31/10: Thẻ chào đã có chính sách thu tiền của tiệm — ma trận "Bắt buộc thu đủ trước khi giao" (`brochure_policy.require_full_before_dispatch`) + "Shipper thu tiền mặt" (`allow_shipper_cash`), có hiệu lực ở `paymentGateBlocker`/`balance-collection.ts`; "Bắt thu trước khi chế tác" (`require_paid_before_production`, mặc định tắt, chưa có trên giao diện); mục COD ở phương thức thanh toán (`brochure_payment.enable_cod`, `cod_requires_deposit`, `cod_max_vnd`) **chỉ được lưu, chưa nơi nào đọc**. Chưa có yêu cầu theo từng đơn. Ghi nhận: hai khoá cùng nghĩa "thu đủ trước khi giao" (`brochure_policy.require_full_before_dispatch` và `brochure_workflow_policy.require_full_payment_before_dispatch`) — Thẻ chào đóng băng nên chưa đối soát.
+
+Cho đơn ngoài Thẻ chào (`src/modules/orders/workflow/deliver-before-pay.ts`):
+1. **Chính sách sẵn có (dùng lại, chỉ đọc):** tiệm không bắt thu trước chế tác/trước giao, hoặc COD bật + trong `cod_max_vnd` + (không đòi cọc hoặc đã cọc) → tự duyệt, căn cứ `POLICY`.
+2. **Sale tự quyết:** đơn hoả tốc (`isUrgentOrder` của Thẻ chào, chỉ gọi) → `URGENT`; trong hạn mức `order_deliver_before_pay` (mặc định bật · ≤ 1.000.000đ · khách ≥ 2 đơn hoàn tất · không nợ quá hạn) → `SELF_LIMIT`.
+3. **Điều hành duyệt (R16):** còn lại → `PENDING`; duyệt (sửa hạn thu) → `ADMIN`; từ chối phải ghi lý do.
+
+Mỗi lần xin ghi một dòng `order_approval_requests` (ai xin, căn cứ, ai duyệt, hạn thu `collect_due_at` — mặc định +3 ngày). Được duyệt → `order_coordinations` (INTAKE) + `orders.workflow = STANDARD` + `order_events`, cùng giao dịch. Nợ quá hạn = yêu cầu đã duyệt có `collect_due_at` đã qua mà đơn còn `balance_vnd > 0`.
+
 ### 5.1 Chuyển sang Điều phối
 Đơn `STANDARD` sang Điều phối khi: (a) cọc/thu đủ được xác nhận (Điều hành, SePay, AI ảnh bill theo chính sách tự duyệt); hoặc (b) Điều hành bấm **"Duyệt giao trước, thu sau"** — bắt buộc lý do, ghi `order_events` (`axis = "order"`, `reason`). Với Thẻ chào, hành vi chuyển giữ nguyên (`dispatch-after-payment.ts`, Gate 5 `brochure-workflow-policy.ts`).
 
 ### 5.2 Mã năng lực mới (catalog `src/core/rbac/capability-catalog.ts`)
-- `order.quote` — báo giá đơn nguồn mới; mặc định `sale`, `dieu_hanh`. **Không** áp cho endpoint Thẻ chào (vẫn R11).
-- `order.deliver_before_pay.approve` — duyệt giao trước thu sau; mặc định `dieu_hanh`, trần cứng `dieu_hanh`.
+- `R15 order.quote` — báo giá đơn nguồn mới; mặc định `sale`, `dieu_hanh`. **Không** áp cho endpoint Thẻ chào (vẫn R11). *(đã thêm 31/10)*
+- `R16 order.deliver_before_pay.approve` — duyệt giao trước thu sau; mặc định `dieu_hanh`, trần cứng `dieu_hanh`. *(đã thêm 31/10)*
+- Xin giao trước dùng `R2` (tạo đơn — Sale, Điều phối, Điều hành).
 - `order.entry_actions.configure` — bật/tắt nút Đặt hàng/Liên hệ; mặc định `dieu_hanh`.
 - Lead dùng mã quyền hiện có của `/api/v1/leads` (`Q1`); route mới khai capability, hoặc được liệt kê trong `tests/unit/architecture/route-capability-guard.test.ts` kèm lý do.
 
@@ -216,6 +228,8 @@ Mỗi pha ship kèm test + cập nhật tài liệu này và `TRANG_THAI.md` tro
   - Lead nhóm B: phiên Thẻ chào chưa đặt (mở/xem/chọn mẫu) hiện thẳng trong hàng đợi (chỉ đọc); đơn tự huỷ vì quá hạn thanh toán → lead `PAYMENT_TIMEOUT` (bộ quét `src/modules/acquisition/use-cases/recover-payment-timeout-leads.ts`, mỗi 5 phút từ `src/instrumentation.ts`, tắt bằng `LEAD_RECOVERY_SWEEP=off`). Bộ quét chỉ đọc `order_events` (trục order → `CANCELLED`, lý do `AUTO_CANCEL_REASON`/`PAYMENT_TIMEOUT_REASON` import từ Thẻ chào), giao lead cho sale cũ, bỏ qua đơn đã có lead cứu đơn hoặc SĐT đã có lead mở; cơ sở liên hệ ghi `consent_version = ORDER_PLACED` (khách tự để SĐT khi đặt đơn — cơ chế đồng ý chung còn treo ở D13).
   - Hàng đợi lead chung: `GET /api/v1/orders/lead-queue` (`Q1`) — `src/modules/orders/use-cases/list-lead-queue.ts`, xếp quá hạn gọi lại → nóng → hạn gần → mới; phạm vi sale theo cài đặt "chỉ khách của mình" của Thẻ chào (`resolveSaleScope`, chỉ gọi).
   - Test: unit (miền + use-case), `tests/tenant/order-lead-queue.test.ts`.
+- **P3a xong (31/10).** Migration `order_approval_requests`; mã `R15`, `R16`; `src/modules/orders/workflow/deliver-before-pay.ts` (§5.0), use-case `deliver-before-pay.ts`, `quote-order.ts`, `deliver-before-pay-settings.ts`; route `POST /orders/:id/quote`, `POST /orders/:id/deliver-before-pay`, `GET /orders/approval-requests`, `POST /orders/approval-requests/:requestId/decision`, `GET/PUT /orders/deliver-before-pay-settings`. Test: unit + `tests/tenant/order-approval-requests.test.ts`.
+- **Còn lại P3:** giao diện (nút "Giao trước, thu sau" trên đơn, tab Phê duyệt — gộp P4); thông báo Điều hành khi có yêu cầu chờ duyệt và nhắc Sale khi tới hạn thu; ghi nhận tiền + SePay khớp giao dịch cho đơn `STANDARD`; trang đặt hàng cho catalog/landing; mục COD (bật/cọc/mức) mới được đọc ở cổng giao trước, chưa dùng ở trang khách.
 - **Còn lại sau P2:** nút Đặt hàng của catalog/landing chưa có trang đặt hàng trực tuyến (P3 — cài đặt đã lưu sẵn); lead từ chat (A3) chưa tự tạo; giao diện hàng đợi lead nằm ở P4 (mục Đơn hàng › Khách tiềm năng); khối "Liên hệ" mới ẩn ở giao diện, API `POST /public/catalog/:slug/lead` chưa kiểm cài đặt.
 - **Chưa làm (ghi rõ):** đơn nguồn mới vẫn `workflow = LEGACY` cho tới khi P3 có đường STANDARD; `NETWORK`/`CATALOG`/`LANDING` mới có mã, chưa có adapter tạo đơn (trang khách chưa có nút Đặt hàng — P2); Tháp điều phối (`coordinator-query-helper.ts`) còn ghi thẳng `orders.create` — chuyển ở P3 (có trong danh sách cho phép của test gác).
 
