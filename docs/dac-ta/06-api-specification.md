@@ -608,6 +608,7 @@ Mỗi chỉ số trả kèm `nguon` và `den_ngay`. Dữ liệu kế thừa từ
 | POST | `/chat/conversations/:id/create-order` | `T3` | Chuyển hội thoại thành đơn nháp — M10 |
 | GET · POST | `/chat/channels` | **chưa gác** — xem **RS-8** | Cấu hình kênh; `configure-chat-channel.ts` gác `T4` nhưng route `/chat/channels` không gọi qua nó |
 | POST | `/chat/public/widget` | — *(công khai)* | Khung chat AI trên trang công khai do công cụ SMEOS tạo. Thân: `slug`, `surface` (`catalog` · `landing_page` · `store_profile` · `sales_link` · `greeting_catalog` · `business_card`; `landing_page` tính kênh `LANDING_PAGE`, còn lại `STOREFRONT_CATALOG`), `visitorId`, `message`. Trang bị tắt trong `config.publicSurfaces` → 404 (chủ tiệm bật/tắt từng loại trang qua `POST /chat/channels` → `config.publicSurfaces`, màn Kênh tích hợp; trang bị tắt không vẽ khung chat — `PublicChatSlot`). Giới hạn mặc định 20 tin/khách và 60 tin/IP mỗi 10 phút, tách theo tiệm; nâng chỉ khi nền tảng duyệt (`config.publicChatLimits.approvedAt`, trần 200/600) → 429. Chỉ cùng nguồn gốc — chưa mở CORS cho website ngoài; lỗi 500 không trả chi tiết nội bộ |
+| GET · POST | `/chat/public-limits` | POST: `T4` | Hạn mức chat AI trên trang công khai của tiệm phiên. GET: mức đang áp dụng (`current`) và yêu cầu chờ duyệt (`pending`). POST `{ perVisitor, perIp, note? }`: xin nâng — chỉ nhận mức chọn sẵn (50/150, 100/300, 200/600) và cao hơn mức hiện tại (400); đang có yêu cầu chờ → 409. Lưu ở `organizations.settings.pending_public_chat_limits`; Admin nền tảng duyệt qua `PATCH /platform/organizations/:id` |
 | GET · POST | `/chat/webhooks/facebook` | — *(chữ ký nền tảng)* | |
 | POST | `/chat/webhooks/zalo` | — *(chữ ký nền tảng)* | |
 
@@ -990,7 +991,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | PUT | `/platform/ux-rollout-flags` | `N12` | `{ flags: { [flagKey]: { mode: "off" \| "allowlist" \| "all", organizationIds } } }` — giá trị lạ thành `off`. Ghi nhật ký kiểm toán nền tảng |
 | GET | `/platform/governance-matrix` | *(phiên nền tảng)* | Quyết định tầng Mẹ của ma trận quản trị |
 | PUT | `/platform/governance-matrix` | `N12` | `{ decisions }` như trên, lưu `platform_settings` khoá `governance_matrix:<system>`, áp xuống mọi tổ chức. Ghi nhật ký kiểm toán nền tảng |
-| PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |
+| PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này. `{ public_chat_limits_decision: "approve" \| "reject" }`: duyệt/từ chối yêu cầu nâng hạn mức chat công khai — duyệt ghi đúng mức đã xin (chỉ mức chọn sẵn, trần 200/600) vào `config.publicChatLimits` của kênh `STOREFRONT_CATALOG` và `LANDING_PAGE`; cả hai xoá `settings.pending_public_chat_limits`. Hiện ở màn `/van-hanh/phe-duyet` |
 
 
 ## Thông báo đa tầng (27/10/2026)

@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import { PublicChatLimitRequest } from "./public-chat-limit-request"
 import { MessageCircle } from "@/components/ui/icons"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import {
@@ -46,7 +47,7 @@ export function PublicChatSurfaceSettings({ channels, onChanged }: PublicChatSur
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError(data.error || "Chưa lưu được thay đổi, vui lòng thử lại")
+        setError(data.error?.message || "Chưa lưu được thay đổi, vui lòng thử lại")
       } else {
         onChanged()
       }
@@ -98,6 +99,7 @@ export function PublicChatSurfaceSettings({ channels, onChanged }: PublicChatSur
         })}
       </ul>
       {error && <p className="text-caption text-danger">{error}</p>}
+      <PublicChatLimitRequest />
     </div>
   )
 }

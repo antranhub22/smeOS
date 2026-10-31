@@ -4,6 +4,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { getOrganization } from "@/modules/platform/use-cases/get-organization"
 import { approveOrganizationModelChange } from "@/modules/platform/use-cases/approve-organization-model-change"
+import { decidePublicChatLimits } from "@/modules/platform/use-cases/decide-public-chat-limits"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
@@ -20,6 +21,8 @@ const patchSchema = z.object({
   clear_pending_language_unlock: z.boolean().optional(),
   /** Từ chối yêu cầu chuyển đổi mô hình — xóa pending field khỏi settings */
   clear_pending_model_change: z.boolean().optional(),
+  /** Duyệt hoặc từ chối yêu cầu nâng hạn mức chat công khai */
+  public_chat_limits_decision: z.enum(["approve", "reject"]).optional(),
 })
 
 export const PATCH = handle(async (request, context: { params: Promise<{ id: string }> }) => {
@@ -69,6 +72,13 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
       await orgRepo.updateTypeAndSettings(org.id, org.type, rest)
     }
     result = { success: true, action: "clear_pending_model_change" }
+  }
+
+  if (parsed.data.public_chat_limits_decision) {
+    result = await decidePublicChatLimits(pctx, {
+      organizationId: id,
+      approve: parsed.data.public_chat_limits_decision === "approve",
+    })
   }
 
   return jsonResponse({ data: result })

@@ -1,6 +1,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { STUCK_JOB_TIMEOUT_MS } from "@/modules/jobs/domain/job-rules"
 import type { PlatformContext } from "@/core/platform/platform-context"
+import { publicChatLimitApproval } from "@/modules/platform/domain/public-chat-limit-approval"
 
 /**
  * Chỗ DUY NHẤT trong repo được phép truy vấn NHIỀU tổ chức cùng lúc
@@ -49,7 +50,7 @@ export type PendingApprovalItem = {
   organizationId: string
   organizationName: string
   organizationSlug: string
-  type: "LANGUAGE_UNLOCK" | "MODEL_CHANGE"
+  type: "LANGUAGE_UNLOCK" | "MODEL_CHANGE" | "PUBLIC_CHAT_LIMITS"
   requestedAt: string
   requestedBy?: string
   note?: string | null
@@ -57,6 +58,8 @@ export type PendingApprovalItem = {
   requestedLocales?: string[]
   /** MODEL_CHANGE: loại mô hình yêu cầu chuyển */
   requestedModelType?: string
+  /** PUBLIC_CHAT_LIMITS: mức tin nhắn/10 phút tiệm xin nâng */
+  requestedLimits?: { perVisitor: number; perIp: number }
 }
 
 /** Lấy tất cả yêu cầu cần duyệt trong toàn hệ thống (cross-tenant, chỉ platform). */
@@ -108,6 +111,11 @@ export async function listPendingApprovals(
         ...(modelChange.note !== undefined ? { note: modelChange.note } : {}),
         requestedModelType: modelChange.requested_type,
       })
+    }
+
+    const chatLimits = publicChatLimitApproval(settings)
+    if (chatLimits) {
+      items.push({ id: `chat-limits-${org.id}`, organizationId: org.id, organizationName: org.name, organizationSlug: org.slug, ...chatLimits })
     }
   }
 
