@@ -45,7 +45,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 17 | `/duyet` | Việc chờ duyệt (QC) | P2 — bỏ "QC" | ✅ tiêu đề 'Hàng đợi duyệt' đã ngắn; bố cục chưa đổi |
 | 18 | `/job` | Giao hàng & Bàn giao | P2 | ✅ tiêu đề 'Job' → 'Tiến trình của tôi'; **PO: tiêu đề và tên menu 'Giao hàng & Bàn giao' chưa khớp nhau** |
 | 19 | `/cua-hang` | Đơn nhận từ mạng lưới | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 20 | `/san-pham/kha-dung` | Khả dụng & Lịch | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 20 | `/san-pham/kha-dung` | Khả dụng & Lịch | P3 | ✅ tiêu đề sentence-case (ngắn), mô tả → (?) |
 | 21 | `/san-pham/nhap-hang-loat` | Nhập từ Excel & Ảnh | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 22 | `/market-intelligence` | Xu hướng & Cơ hội thị trường | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 23 | `/muc-dung` | Sổ quỹ & Thu chi | P3 | ✅ tiêu đề 'Mức dùng' (chữ thường); bố cục chưa đổi |
@@ -121,3 +121,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Duyệt (#17) — tiêu đề đã ngắn. Giao hàng (#18) — 'Tiến trình Job của tôi' → 'Tiến trình của tôi'; PO quyết tên thống nhất với menu.
 - 31/10: Mức dùng (#23), Cẩm nang tri thức (#25), Hồ sơ & cài đặt (#27) — tiêu đề và mô tả đã chỉnh.
 - 31/10: Ma trận (#28): component chung `TierGovernanceMatrixClient` đưa mô tả vào (?); 5 trang rút tiêu đề (bỏ 'Ma Trận', chữ thường). Còn: `thong-bao` và bảng chi tiết.
+- 31/10: Khả dụng (#20) — tiêu đề chữ thường, mô tả → (?).
