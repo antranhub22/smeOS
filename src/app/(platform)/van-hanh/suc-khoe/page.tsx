@@ -8,9 +8,9 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { AlertTriangle, Server } from "@/components/ui/icons"
+import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { useI18n } from "@/lib/i18n"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import { tenTinhNang } from "@/lib/feature-labels"
 
@@ -34,7 +34,6 @@ async function layJson<T>(url: string): Promise<T | null> {
 }
 
 export default function SucKhoeHeThongPage() {
-  const { t, dict } = useI18n()
   const [health, setHealth] = useState<PlatformSystemHealth | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
 
@@ -55,11 +54,16 @@ export default function SucKhoeHeThongPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-base font-bold text-text">{dict.platform.health.title}</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-base font-bold text-text">Sức khoẻ hệ thống</h1>
+          <InfoTip label="Sức khoẻ hệ thống">
+            Tình trạng các bộ xử lý nền, hàng đợi tác vụ AI và cảnh báo tác vụ tồn đọng.
+          </InfoTip>
+        </div>
         <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hạ tầng</span>
       </div>
 
-      <Card className="p-4">
+      <Card className="p-4 rounded-2xl shadow-xs">
         <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
           <Server className="h-4 w-4 text-text-muted" aria-hidden /> Bộ xử lý nền
         </p>
@@ -77,7 +81,7 @@ export default function SucKhoeHeThongPage() {
         </ul>
       </Card>
 
-      <Card className="p-4">
+      <Card className="p-4 rounded-2xl shadow-xs">
         <div className="mb-3 flex items-center justify-between gap-2">
           <p className="text-sm font-semibold">Hàng đợi theo loại việc</p>
           <Link href="/van-hanh/hang-doi-loi" className="text-body-sm text-primary underline underline-offset-2">
@@ -112,8 +116,8 @@ export default function SucKhoeHeThongPage() {
         )}
       </Card>
 
-      <Card className="p-4">
-        <p className="mb-3 text-sm font-semibold">Job theo trạng thái</p>
+      <Card className="p-4 rounded-2xl shadow-xs">
+        <p className="mb-3 text-sm font-semibold">Tác vụ theo trạng thái</p>
         <div className="flex flex-wrap gap-3">
           {Object.entries(health.jobCountsByStatus).map(([status, count]) => (
             <div key={status} className="rounded-xl border border-border px-3 py-2 text-xs">
@@ -121,14 +125,14 @@ export default function SucKhoeHeThongPage() {
             </div>
           ))}
           {Object.keys(health.jobCountsByStatus).length === 0 && (
-            <p className="text-xs text-text-muted">Chưa có job nào.</p>
+            <p className="text-xs text-text-muted">Chưa có tác vụ nào.</p>
           )}
         </div>
       </Card>
 
-      <Card className="p-4">
+      <Card className="p-4 rounded-2xl shadow-xs">
         <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
-          <AlertTriangle className="h-4 w-4 text-warning" /> Job treo (chỉ đọc)
+          <AlertTriangle className="h-4 w-4 text-warning" /> Tác vụ tồn đọng (chỉ đọc)
         </p>
         <div className="flex flex-col divide-y divide-border">
           {health.stuckJobs.map((job) => (
@@ -140,7 +144,7 @@ export default function SucKhoeHeThongPage() {
             </div>
           ))}
           {health.stuckJobs.length === 0 && (
-            <p className="py-2 text-body-sm text-text-muted">Không có job treo.</p>
+            <p className="py-2 text-body-sm text-text-muted">Không có tác vụ tồn đọng.</p>
           )}
         </div>
       </Card>
