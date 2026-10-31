@@ -114,15 +114,19 @@ export default function CatalogWebsitePage() {
     )
   }
 
-  const matchCandidates: ProductMatchCandidate[] = products.map((p) => ({
+  // Sản phẩm chưa có giá không đưa vào gợi ý ngân sách — không báo giá bịa (OPERATING_PRINCIPLES §2)
+  const matchCandidates: ProductMatchCandidate[] = products
+    .filter((p): p is CatalogProduct & { price: number } => typeof p.price === "number")
+    .map((p) => ({
     id: p.id,
     code: p.code || p.id,
     name: p.name,
-    sellingPriceVnd: p.price ?? 500_000,
+    sellingPriceVnd: p.price,
     category: p.category || "Sản phẩm",
-    colorTheme: "Đa sắc",
-    occasions: ["Sinh nhật", "Kỷ niệm", "Khai trương"],
-    style: "Thiết kế hiện đại",
+    // Chỉ dùng dữ liệu thật của sản phẩm; thiếu thì để rỗng, không bịa (OPERATING_PRINCIPLES §2)
+    colorTheme: p.color ?? "",
+    occasions: p.occasion_code ? [p.occasion_code] : [],
+    style: typeof p.attributes?.style === "string" ? p.attributes.style : "",
     imageUrl: p.imageUrl || undefined,
     highlightFlowers: [],
   }))

@@ -113,7 +113,7 @@ export default function JobListPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center border-b border-border bg-surface px-4 py-4">
-        <h1 className="text-title font-extrabold text-primary">Tiến trình của tôi</h1>
+        <h1 className="text-title font-extrabold text-primary">Giao hàng & bàn giao</h1>
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">

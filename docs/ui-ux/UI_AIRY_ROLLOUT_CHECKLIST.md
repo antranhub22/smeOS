@@ -33,7 +33,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 5 | `/hoi-thoai` | Hội thoại | P1 | ✅ đầu trang (tên tiếng Việt, (?)), nhãn thẻ K1, khung 3 cột và thẻ gợi ý (bo `rounded-2xl`, nền rõ) |
 | 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | ✅ đầu trang (tiêu đề tiếng Việt, mô tả → (?), bỏ mã MK-10); thẻ `StatTile`; nhãn IN HOA và 'AI Diễn giải' → tiếng Việt thường; K1 đã sửa |
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | ✅ đầu trang (mô tả → (?)); tab và thanh K2 giữ nguyên |
-| 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | ✅ bộ ghép ngân sách dùng dữ liệu thật (màu, dịp, kiểu từ sản phẩm); sản phẩm chưa có giá không được gợi ý; câu gửi khách bỏ cam kết 'tươi lâu' |
 | 9 | `/noi-dung` | Viết nội dung marketing | P2 | ✅ tiêu đề rút còn 'Nội dung bán hàng' (6 từ → 2), mô tả → (?); bố cục chưa đổi |
 | 10 | `/video` | Tạo video | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 11 | `/tai-anh` | Phân tích ảnh bằng AI | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
@@ -43,7 +43,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 15 | `/kho-templates` | Kho mẫu & Ấn phẩm | P2 | ✅ tiêu đề 'Kho mẫu ấn phẩm' (bỏ 'Templates'), mô tả → (?); bố cục chưa đổi |
 | 16 | `/dieu-phoi` | Sản xuất & Điều phối | P2 | ✅ mô tả đầu trang → (?); bố cục chưa đổi |
 | 17 | `/duyet` | Việc chờ duyệt (QC) | P2 — bỏ "QC" | ✅ tiêu đề 'Hàng đợi duyệt' đã ngắn; bố cục chưa đổi |
-| 18 | `/job` | Giao hàng & Bàn giao | P2 | ✅ tiêu đề 'Job' → 'Tiến trình của tôi'; **PO: tiêu đề và tên menu 'Giao hàng & Bàn giao' chưa khớp nhau** |
+| 18 | `/job` | Giao hàng & Bàn giao | P2 | ✅ tiêu đề khớp menu: 'Giao hàng & bàn giao' (PO chọn) |
 | 19 | `/cua-hang` | Đơn nhận từ mạng lưới | P2 | ✅ tiêu đề 'Đơn gia công' ngắn; bố cục chưa đổi |
 | 20 | `/san-pham/kha-dung` | Khả dụng & Lịch | P3 | ✅ tiêu đề sentence-case (ngắn), mô tả → (?) |
 | 21 | `/san-pham/nhap-hang-loat` | Nhập từ Excel & Ảnh | P3 | ✅ đầu trang: bỏ dòng 'Kho sản phẩm', tiêu đề rút gọn ('Nhập từ Excel & ảnh' / 'Nhập danh sách chi nhánh'); bố cục chưa đổi |
@@ -51,7 +51,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 23 | `/muc-dung` | Sổ quỹ & Thu chi | P3 | ✅ tiêu đề 'Mức dùng' (chữ thường); bố cục chưa đổi |
 | 24 | `/tin-nhan` | Trao đổi nội bộ | P3 | ✅ tiêu đề 'Tin nhắn nội bộ' ngắn; bố cục chưa đổi |
 | 25 | `/tri-thuc` | Tri thức & Quy trình | P3 | ✅ bỏ dòng mã IN HOA, tiêu đề 'Cẩm nang tri thức', mô tả → (?) |
-| 26 | `/cong-cu/toi-uu-he-thong` | Trợ lý Tối ưu Tác nghiệp | P3 | ⚠️ **liên kết trong menu không có trang** (không có file `page.tsx`): PO quyết tạo trang hay gỡ mục menu |
+| 26 | `/cong-cu/toi-uu-he-thong` | Trợ lý Tối ưu Tác nghiệp | P3 | ⏸️ **PO: giữ nguyên trạng** (liên kết không có trang, không tạo mới) |
 | 27 | `/cai-dat` (+ `?tab=INFO`) | Cài đặt & Thiết lập tiệm | P2 | ✅ tiêu đề 'Hồ sơ & cài đặt', bỏ nhãn quảng cáo, mô tả → (?); bố cục chưa đổi |
 | 28 | `/cai-dat/ma-tran-*` (5 trang) + `/cai-dat/thong-bao` | Ma trận … | P3 — bảng dày, ưu tiên nhãn ngắn + (?) | 🟡 6 trang đã làm đầu trang (tiêu đề ngắn, mô tả → (?)): `TierGovernanceMatrixClient` và `NotificationMatrixPage` dùng chung, **cũng áp dụng cho trang Ma trận của Mother**. Còn: bảng chi tiết (cần đợt riêng) |
 
@@ -129,3 +129,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Sản phẩm (#3) — chế độ bảng (`ProductTableView`): bo góc, bóng, tiêu đề cột không viết hoa.
 - 31/10: Hội thoại (#5) — khung 3 cột và thẻ gợi ý: bo `rounded-2xl`, đệm và bóng.
 - 31/10: Báo cáo (#6) — nhãn phân tích: bỏ IN HOA, 'AI Diễn giải' → 'Diễn giải bằng AI'.
+- 31/10 (PO): #26 giữ nguyên trạng. #18 tiêu đề 'Giao hàng & bàn giao'. #8 dùng dữ liệu thật, không báo giá bịa. Được phép làm #10–#12 (có tải ảnh).
