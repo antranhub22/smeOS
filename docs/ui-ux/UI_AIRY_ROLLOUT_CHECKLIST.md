@@ -33,24 +33,24 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 đầu trang (tên tiếng Việt, (?)) + nhãn thẻ K1 bỏ tiếng Anh; **còn khung hội thoại 3 cột** |
 | 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 thẻ số liệu `StatTile` + chữ K1 bỏ mã quyền/tiếng Anh; **còn đầu trang và phần phân tích** |
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | ✅ đầu trang (mô tả → (?)); tab và thanh K2 giữ nguyên |
-| 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🟡 |
-| 9 | `/noi-dung` | Viết nội dung marketing | P2 | 🟡 |
-| 10 | `/video` | Tạo video | P2 — có tải ảnh, hỏi PO chặng | 🟡 |
-| 11 | `/tai-anh` | Phân tích ảnh bằng AI | P2 — có tải ảnh, hỏi PO chặng | 🟡 |
-| 12 | `/creative-studio` | Chế tác tự động A-Z | P2 — có tải ảnh, hỏi PO chặng | 🟡 |
-| 13 | `/gia` | Công thức BOM & Tính giá | P2 — bỏ "BOM" | 🟡 |
-| 14 | `/kho-du-lieu` | Kho & Nguyên liệu | P2 | 🟡 |
-| 15 | `/kho-templates` | Kho mẫu & Ấn phẩm | P2 | 🟡 |
-| 16 | `/dieu-phoi` | Sản xuất & Điều phối | P2 | 🟡 |
-| 17 | `/duyet` | Việc chờ duyệt (QC) | P2 — bỏ "QC" | 🟡 |
-| 18 | `/job` | Giao hàng & Bàn giao | P2 | 🟡 |
-| 19 | `/cua-hang` | Đơn nhận từ mạng lưới | P2 | 🟡 |
-| 20 | `/san-pham/kha-dung` | Khả dụng & Lịch | P3 | 🟡 |
-| 21 | `/san-pham/nhap-hang-loat` | Nhập từ Excel & Ảnh | P3 | 🟡 |
-| 22 | `/market-intelligence` | Xu hướng & Cơ hội thị trường | P3 | 🟡 |
-| 23 | `/muc-dung` | Sổ quỹ & Thu chi | P3 | 🟡 |
-| 24 | `/tin-nhan` | Trao đổi nội bộ | P3 | 🟡 |
-| 25 | `/tri-thuc` | Tri thức & Quy trình | P3 | 🟡 |
+| 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 9 | `/noi-dung` | Viết nội dung marketing | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 10 | `/video` | Tạo video | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 11 | `/tai-anh` | Phân tích ảnh bằng AI | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 12 | `/creative-studio` | Chế tác tự động A-Z | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 13 | `/gia` | Công thức BOM & Tính giá | P2 — bỏ "BOM" | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 14 | `/kho-du-lieu` | Kho & Nguyên liệu | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 15 | `/kho-templates` | Kho mẫu & Ấn phẩm | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 16 | `/dieu-phoi` | Sản xuất & Điều phối | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 17 | `/duyet` | Việc chờ duyệt (QC) | P2 — bỏ "QC" | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 18 | `/job` | Giao hàng & Bàn giao | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 19 | `/cua-hang` | Đơn nhận từ mạng lưới | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 20 | `/san-pham/kha-dung` | Khả dụng & Lịch | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 21 | `/san-pham/nhap-hang-loat` | Nhập từ Excel & Ảnh | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 22 | `/market-intelligence` | Xu hướng & Cơ hội thị trường | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 23 | `/muc-dung` | Sổ quỹ & Thu chi | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 24 | `/tin-nhan` | Trao đổi nội bộ | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 25 | `/tri-thuc` | Tri thức & Quy trình | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 26 | `/cong-cu/toi-uu-he-thong` | Trợ lý Tối ưu Tác nghiệp | P3 | 🟡 |
 | 27 | `/cai-dat` (+ `?tab=INFO`) | Cài đặt & Thiết lập tiệm | P2 | 🟡 |
 | 28 | `/cai-dat/ma-tran-*` (5 trang) + `/cai-dat/thong-bao` | Ma trận … | P3 — bảng dày, ưu tiên nhãn ngắn + (?) | 🟡 |
@@ -59,9 +59,9 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | # | Trang | Nhãn menu | Ưu tiên | Trạng thái |
 |---|---|---|---|---|
 | 1 | `/` Tổng quan chuỗi | Tổng quan chuỗi | P1 — số liệu chuỗi | ✅ thẻ việc · ⬜ khối số liệu |
-| 2 | `/dieu-phoi` | Tháp điều phối | P1 — giao diện riêng tầng chuỗi | 🟡 |
-| 3 | `/dieu-phoi/doi-tac` | Chi nhánh & Xưởng | P1 | 🟡 |
-| 4 | `/du-lieu` | Đối soát & Công nợ | P2 | 🟡 |
+| 2 | `/dieu-phoi` | Tháp điều phối | P1 — giao diện riêng tầng chuỗi | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 3 | `/dieu-phoi/doi-tac` | Chi nhánh & Xưởng | P1 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 4 | `/du-lieu` | Đối soát & Công nợ | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 5 | `/don-hang`, `/khach-hang`, `/san-pham`, `/gia`, `/so-lieu`, `/catalog`, `/duyet`, `/kho-du-lieu`, `/video`, `/cai-dat*`… | (nhãn riêng chuỗi) | P2 — kiểm nhãn/nội dung chuỗi | 🔁 |
 
 ## 3. SaaS ngành — chỉ phần riêng
@@ -71,7 +71,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 2 | `/van-hanh/nganh` | Taxonomy & Quy chuẩn | P1 — bỏ "Taxonomy" | 🟡 |
 | 3 | `/van-hanh/truong-du-lieu` | Trường dữ liệu ngành | P2 | 🟡 |
 | 4 | `/van-hanh/du-lieu` | Hoa hồng & Đối soát | P2 | 🟡 |
-| 5 | `/landing-page` | Landing Page & Kênh bán | P2 | 🟡 |
+| 5 | `/landing-page` | Landing Page & Kênh bán | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 6 | `/don-hang` (Affiliate), `/dieu-phoi`, `/dieu-phoi/doi-tac`, `/san-pham`, `/gia`, `/so-lieu`, `/kho-templates`, `/cai-dat*`… | (nhãn riêng ngành) | P3 — kiểm nhãn/thuật ngữ ngành | 🔁 |
 
 ## 4. SaaS Mother (Console `/van-hanh`)
@@ -110,3 +110,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Hội thoại (#5) — đầu trang: "AI Chat & Tư Vấn Bán Hàng" → "Tư vấn bán hàng", mô tả → (?); nhãn thẻ K1 "HƯỚNG DẪN AI CHAT ASSISTANT" → "HƯỚNG DẪN TƯ VẤN" (cần PO xác nhận đổi chuỗi trong thẻ K1). Chưa làm: khung 3 cột.
 - 31/10: Báo cáo kinh doanh (#6) — thẻ số đo theo tính năng dùng `StatTile` (số to, chi phí credit trong (?)); K1 bỏ mã quyền "learning.profile.manage" và tiếng Anh "Tone of Voice / Brand Kit". Còn: đầu trang, bảng chi tiết, phần phân tích.
 - 31/10: Thẻ chào (#7) — đầu trang: mô tả dài → (?) cạnh tiêu đề. K2 (TabActionHeader) giữ nguyên.
+- 31/10: Rà nhanh StoreOS: nhãn/jargon/emoji của các trang P2–P3 đã kiểm (có 22 trang). Đổi bố cục từng trang vẫn cần làm. Sửa: Xu hướng thị trường — tiêu đề admin bỏ 'Tenant'.

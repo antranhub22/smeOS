@@ -183,7 +183,7 @@ export default function MarketIntelligencePage() {
               <button
                 onClick={() => setIsAdminModalOpen(true)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 shadow-2xs transition"
-                title="SaaS Admin: Thiết lập tiêu chí Xu hướng vĩ mô toàn quốc cho mọi Tenant"
+                title="Quản trị nền tảng: đặt tiêu chí xu hướng toàn quốc cho mọi cửa hàng"
               >
                 <Shield className="h-3.5 w-3.5 text-primary" />
                 Tiêu Chí Vĩ Mô
