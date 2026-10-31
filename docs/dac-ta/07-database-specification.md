@@ -26,9 +26,10 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `flower_taxonomy` · `flower_confusable_pairs` | Tri thức ngành hoa, không phải dữ liệu của một cửa hàng — xem mục 16 |
 | `platform_secrets` | Bí mật cấp nền tảng đã niêm phong (token Zalo OA chung) — xem mục `chain_branches` |
 | `platform_operators` · `platform_role_capabilities` · `platform_audit_logs` | Console Vận hành Nền tảng (P25, 19/09) — dữ liệu của người vận hành xuyên tổ chức, không thuộc một tổ chức nào. Từ vựng năng lực `N1`–`N8` TÁCH HẲN khỏi `roles`/`role_capabilities` của tenant (D-N6) — không dùng `capability_scope`, không thêm giá trị `PLATFORM` vào enum đó. Xem `../kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md` mục 4.1 |
-| `partner_marketplace_stores` | Chợ đối tác (PO 31/10/2026): hồ sơ khảo sát cửa hàng TIỀM NĂNG, chưa là tenant nên không thuộc tổ chức nào. Đọc `N1`, ghi `N16`. `match_key` (tên chuẩn hoá) duy nhất; `profile` JSONB giữ đủ 75 cột khảo sát; `photo_keys` là nguồn registry kho (`platform/…`) |
+| `partner_marketplace_stores` | Chợ đối tác (PO 31/10/2026): hồ sơ khảo sát cửa hàng TIỀM NĂNG, chưa là tenant nên không thuộc tổ chức nào. Đọc `N1`, ghi `N17`. `match_key` (tên chuẩn hoá) duy nhất; `profile` JSONB giữ đủ 75 cột khảo sát; `photo_keys` là nguồn registry kho (`platform/…`) |
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Xem mục 22b |
+| `integration_governance` | Trung tâm Tích hợp (30/10/2026) — khoá/cấp sẵn tích hợp theo tầng `(connector_key, tier, scope_id)`; `scope_id` là `GLOBAL` (Mẹ), `industry:<key>` (Ngành) hoặc id tổ chức chuỗi. Cùng mẫu với `notification_*`. Xem mục 36 |
 
 | `platform_settings` | Cấu hình cấp nền tảng, một dòng mỗi khoá, chỉ Console vận hành ghi (mã `N12`) — vd ma trận điều hướng theo ngành áp cho MỌI tổ chức cùng ngành. Xem mục 31 |
 Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên là lỗi chặn ở review.
@@ -3248,6 +3249,199 @@ model product_recipe_items {
 
   @@unique([recipe_id, material_id])
   @@index([organization_id])
+}
+```
+
+## 36. Trung tâm Tích hợp — `integration_*` (30/10/2026)
+
+Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md` (GĐ1). Ba bảng thuộc tổ chức (`integration_connections`, `integration_events`, `integration_sync_cursors`) và một bảng cấp nền tảng (`integration_governance`, dùng từ GĐ3).
+
+- `integration_connections.credential_encrypted` là bản mã secret-box (AES-256-GCM, purpose `integration:<connector_key>`); `config` không chứa bí mật; API chỉ trả `credential_hint` (4 ký tự cuối). Ngắt kết nối xoá bản mã, giữ dòng để truy vết.
+- `connection_ref` là mã ngẫu nhiên 24 byte dùng trong URL webhook công khai — không lộ `organization_id`.
+- `integration_events` chống trùng bằng unique `(connection_id, direction, external_event_id)`; `payload_redacted` đã che bí mật, số điện thoại, email. Thử lại tối đa 6 lần rồi `DEAD`.
+- `integration_sync_cursors` chưa có đường ghi (GĐ4 — đồng bộ kênh bán hàng).
+
+```prisma
+enum integration_connection_status {
+  DRAFT
+  CONNECTING
+  ACTIVE
+  DEGRADED
+  EXPIRED
+  ERROR
+  DISCONNECTED
+  DISABLED_BY_UPPER
+}
+
+enum integration_event_direction {
+  IN
+  OUT
+}
+
+enum integration_event_status {
+  PENDING
+  DONE
+  FAILED
+  DEAD
+}
+
+enum integration_governance_mode {
+  FORBID
+  INHERIT_ONLY
+  ALLOW_OWN
+}
+
+/// Một kết nối của tổ chức tới dịch vụ ngoài. Bí mật chỉ nằm trong `credential_encrypted` (secret-box);
+/// `config` không chứa bí mật. `connection_ref` là mã ngẫu nhiên dùng trong URL webhook công khai.
+model integration_connections {
+  id                    String                        @id @default(uuid())
+  organization_id       String
+  connector_key         String
+  scope_tier            String
+  external_account_id   String                        @default("")
+  display_name          String
+  status                integration_connection_status @default(DRAFT)
+  config                Json                          @default("{}")
+  credential_encrypted  String?
+  credential_hint       String?
+  connection_ref        String                        @unique
+  inherited_from_org_id String?
+  expires_at            DateTime?
+  last_health_at        DateTime?
+  last_error_code       String?
+  created_by            String
+  created_at            DateTime                      @default(now())
+  updated_at            DateTime                      @updatedAt
+
+  organization organizations              @relation(fields: [organization_id], references: [id])
+  events       integration_events[]
+  cursors      integration_sync_cursors[]
+
+  @@unique([organization_id, connector_key, external_account_id])
+  @@index([organization_id])
+  @@index([status, last_health_at])
+}
+
+/// Nhật ký sự kiện vào (webhook) / ra (lệnh gọi) của một kết nối. Chống trùng theo
+/// (connection, direction, external_event_id). Payload đã che dữ liệu cá nhân.
+model integration_events {
+  id                String                      @id @default(uuid())
+  organization_id   String
+  connection_id     String
+  direction         integration_event_direction
+  event_type        String
+  external_event_id String?
+  status            integration_event_status    @default(PENDING)
+  attempts          Int                         @default(0)
+  next_retry_at     DateTime?
+  error_code        String?
+  payload_redacted  Json                        @default("{}")
+  created_at        DateTime                    @default(now())
+  updated_at        DateTime                    @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, direction, external_event_id])
+  @@index([organization_id])
+  @@index([organization_id, connection_id, created_at])
+  @@index([status, next_retry_at])
+}
+
+/// Con trỏ đồng bộ (đơn hàng, tồn kho…) theo kết nối.
+model integration_sync_cursors {
+  id              String   @id @default(uuid())
+  organization_id String
+  connection_id   String
+  resource        String
+  cursor          String
+  updated_at      DateTime @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, resource])
+  @@index([organization_id])
+}
+
+/// Bảng cấp nền tảng (không thuộc một tổ chức): khoá/cấp sẵn tích hợp theo tầng.
+/// scope_id: "GLOBAL" (Mẹ) · "industry:<key>" (Ngành) · id tổ chức chuỗi (Chuỗi). Cùng mẫu với notification_*.
+model integration_governance {
+  id            String                      @id @default(uuid())
+  connector_key String
+  tier          String
+  scope_id      String
+  mode          integration_governance_mode
+  updated_by    String
+  created_at    DateTime                    @default(now())
+  updated_at    DateTime                    @updatedAt
+
+  @@unique([connector_key, tier, scope_id])
+  @@index([scope_id])
+}
+```
+
+## 37. Kênh bán hàng — `sales_channel_*` (31/10/2026)
+
+Trung tâm Tích hợp GĐ4A (PO duyệt 31/10/2026). Hai bảng thuộc tổ chức, con của `integration_connections` (xoá kết nối → xoá theo).
+
+- `sales_channel_listings`: một sản phẩm một tin đăng mỗi kết nối (`@@unique([connection_id, product_id])`); `last_error` là lý do tiếng Việt khi thiếu dữ liệu hoặc kênh từ chối.
+- `sales_channel_orders`: unique `(connection_id, external_order_id)` — webhook hay lượt kéo gửi lại không tạo đơn trùng. Giữ chỗ trước khi tạo đơn (`FAILED` + `IN_PROGRESS`), xong thì `IMPORTED` kèm `order_id`; lỗi giữa chừng được nhận lại ở lượt sau.
+- Đơn nhập từ kênh ghi `orders.source = "CHANNEL"`.
+- `integration_sync_cursors` nay có đường ghi: con trỏ `orders` của lượt kéo đơn dự phòng.
+
+```prisma
+enum sales_listing_status {
+  PENDING
+  SYNCED
+  REJECTED
+  REMOVED
+}
+
+enum sales_channel_order_status {
+  IMPORTED
+  FAILED
+}
+
+/// Sản phẩm ↔ tin đăng trên một kênh bán (theo kết nối). Một sản phẩm một tin mỗi kết nối.
+model sales_channel_listings {
+  id              String               @id @default(uuid())
+  organization_id String
+  connection_id   String
+  product_id      String
+  external_id     String?
+  status          sales_listing_status @default(PENDING)
+  last_error      String?
+  last_synced_at  DateTime?
+  created_at      DateTime             @default(now())
+  updated_at      DateTime             @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, product_id])
+  @@index([organization_id])
+  @@index([organization_id, product_id])
+}
+
+/// Đơn trên kênh bán ↔ đơn nội bộ. Unique theo (kết nối, mã đơn ngoài) → webhook/lượt kéo gửi lại không tạo đơn trùng.
+model sales_channel_orders {
+  id                String                     @id @default(uuid())
+  organization_id   String
+  connection_id     String
+  external_order_id String
+  order_id          String?
+  status            sales_channel_order_status
+  error_code        String?
+  created_at        DateTime                   @default(now())
+  updated_at        DateTime                   @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, external_order_id])
+  @@index([organization_id])
+  @@index([organization_id, created_at])
 }
 ```
 

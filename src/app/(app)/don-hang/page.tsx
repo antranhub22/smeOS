@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, Plus, RefreshCw, MessageSquarePlus, ShoppingBag, Send, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { InfoTip } from "@/components/ui/info-tip"
 import { OrderGuidanceCard } from "@/components/templates/orders/order-guidance-card"
 import { CreateOrderModal } from "@/components/orders/create-order-modal"
 import { OrderDetailModal } from "@/components/orders/order-detail-modal"
@@ -94,11 +95,12 @@ export default function DonHangPage() {
     <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* 1. Header chuẩn FloraOS */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4">
-        <div>
-          <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
-            {t("orders.header.category")}
-          </div>
+        <div className="flex items-center gap-2">
           <h1 className="text-title font-extrabold text-foreground">{t("orders.header.title")}</h1>
+          {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
+          <InfoTip label={t("orders.header.title")} side="bottom">
+            Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong.
+          </InfoTip>
         </div>
 
         {/* Top-Right Action Header: 1 primary + 2 secondary/ghost */}
@@ -262,11 +264,11 @@ export default function DonHangPage() {
 
             {/* Chế độ Kanban Board 4 cột trên Desktop (lg+) */}
             <div className="hidden lg:grid lg:grid-cols-4 gap-4">
-              <div className="flex flex-col rounded-xl border border-border bg-surface-alt/40 p-3">
+              <div className="flex flex-col rounded-2xl bg-surface-alt/50 p-3 ring-1 ring-inset ring-border/60">
                 <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-info" aria-hidden="true" />
-                    <span className="font-bold text-caption uppercase text-text">{t("orders.columns.newOrders")}</span>
+                    <span className="text-body-sm font-bold text-text">{t("orders.columns.newOrders")}</span>
                   </div>
                   <Badge tone="neutral" className="text-caption font-bold">
                     {colNew.length}
@@ -279,11 +281,11 @@ export default function DonHangPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col rounded-xl border border-border bg-surface-alt/40 p-3">
+              <div className="flex flex-col rounded-2xl bg-surface-alt/50 p-3 ring-1 ring-inset ring-border/60">
                 <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden="true" />
-                    <span className="font-bold text-caption uppercase text-text">
+                    <span className="text-body-sm font-bold text-text">
                       {ti("makerAction") ? `Đang ${ti("makerAction").toLowerCase()}` : t("orders.columns.inProduction")}
                     </span>
                   </div>
@@ -298,11 +300,11 @@ export default function DonHangPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col rounded-xl border border-border bg-surface-alt/40 p-3">
+              <div className="flex flex-col rounded-2xl bg-surface-alt/50 p-3 ring-1 ring-inset ring-border/60">
                 <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-warning" aria-hidden="true" />
-                    <span className="font-bold text-caption uppercase text-text">{t("orders.columns.outForDelivery")}</span>
+                    <span className="text-body-sm font-bold text-text">{t("orders.columns.outForDelivery")}</span>
                   </div>
                   <Badge tone="neutral" className="text-caption font-bold">
                     {colDelivery.length}
@@ -315,11 +317,11 @@ export default function DonHangPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col rounded-xl border border-border bg-surface-alt/40 p-3">
+              <div className="flex flex-col rounded-2xl bg-surface-alt/50 p-3 ring-1 ring-inset ring-border/60">
                 <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
                   <div className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 rounded-full bg-success" aria-hidden="true" />
-                    <span className="font-bold text-caption uppercase text-text">{t("orders.columns.delivered")}</span>
+                    <span className="text-body-sm font-bold text-text">{t("orders.columns.delivered")}</span>
                   </div>
                   <Badge tone="neutral" className="text-caption font-bold">
                     {colCompleted.length}

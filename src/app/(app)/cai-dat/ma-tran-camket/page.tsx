@@ -9,7 +9,7 @@ export default function CommitmentsPage() {
   return (
     <TierGovernanceMatrixClient
       systemKey="COMMITMENTS"
-      title="Ma Trận Cam Kết Chất Lượng"
+      title="Cam kết chất lượng"
       description="Quản lý các cam kết chất lượng sản phẩm (đúng tone màu, đúng mẫu, kiểm tra QC) niêm yết công khai với khách hàng."
     />
   )

@@ -3,6 +3,8 @@ import { claimIdempotencyKey } from "@/core/idempotency/infra/idempotency-reposi
 import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-channel-repository"
 import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
 import { matchesVerifyToken, verifyFacebookSignature } from "@/core/http/webhook-signature"
+import { recordManagedWebhook } from "@/modules/integration-hub/use-cases/record-managed-webhook"
+import { isOwnConnectionAllowed } from "@/modules/integration-hub/use-cases/governance-mode"
 
 // 1. Xác thực Webhook từ Facebook Developers
 export async function GET(req: NextRequest) {
@@ -49,18 +51,35 @@ export async function POST(req: NextRequest) {
         if (senderId && messageText) {
           // E5.3: Facebook gửi lại sự kiện khi phản hồi chậm — mỗi tin (theo `mid`) chỉ trả lời một lần.
           if (typeof messageId === "string" && !(await claimIdempotencyKey(channelIntegration.organizationId, "webhook.facebook", messageId))) continue
-          const result = await handleIncomingChannelMessage({
-            organizationId: channelIntegration.organizationId,
-            channel: "FACEBOOK_MESSENGER",
-            externalSenderId: senderId,
-            messageText,
-          })
+          // Mỗi tin xử lý riêng: một tin lỗi không chặn các tin sau; kết quả ghi vào nhật ký Trung tâm Tích hợp.
+          let errorCode: string | undefined
+          // Trung tâm Tích hợp GĐ3: cấp trên (nền tảng, ngành, chuỗi) đã khoá kênh này → không trả lời, ghi lý do vào nhật ký.
+          if (!(await isOwnConnectionAllowed(channelIntegration.organizationId, "facebook_messenger"))) errorCode = "LOCKED_BY_UPPER"
+          else try {
+            const result = await handleIncomingChannelMessage({
+              organizationId: channelIntegration.organizationId,
+              channel: "FACEBOOK_MESSENGER",
+              externalSenderId: senderId,
+              messageText,
+            })
 
-          // Gửi phản hồi lại Facebook Send API nếu có page access token
-          const pageToken = channelIntegration.config.fbPageAccessToken
-          if (pageToken) {
-            await sendFacebookReply(pageToken, senderId, result.replyText)
+            // Gửi phản hồi lại Facebook Send API nếu có page access token
+            const pageToken = channelIntegration.config.fbPageAccessToken
+            if (pageToken && !(await sendFacebookReply(pageToken, senderId, result.replyText))) errorCode = "REPLY_FAILED"
+          } catch (err) {
+            console.error("Facebook message handling error:", err)
+            errorCode = "PROCESSING_FAILED"
           }
+          await recordManagedWebhook({
+            organizationId: channelIntegration.organizationId,
+            connectorKey: "facebook_messenger",
+            externalAccountId: String(pageId),
+            displayName: "Trang Facebook",
+            externalEventId: typeof messageId === "string" ? messageId : null,
+            eventType: "message",
+            ok: !errorCode,
+            ...(errorCode ? { errorCode } : {}),
+          })
         }
       }
     }
@@ -72,9 +91,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function sendFacebookReply(pageAccessToken: string, recipientId: string, text: string) {
+/** true = Facebook nhận tin trả lời. */
+async function sendFacebookReply(pageAccessToken: string, recipientId: string, text: string): Promise<boolean> {
   try {
-    await fetch(`https://graph.facebook.com/v19.0/me/messages?access_token=${pageAccessToken}`, {
+    const res = await fetch(`https://graph.facebook.com/v19.0/me/messages?access_token=${pageAccessToken}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -82,7 +102,9 @@ async function sendFacebookReply(pageAccessToken: string, recipientId: string, t
         message: { text },
       }),
     })
+    return res.ok
   } catch (err) {
     console.error("Failed to send Facebook reply:", err)
+    return false
   }
 }

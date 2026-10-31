@@ -3,6 +3,8 @@ import { claimIdempotencyKey } from "@/core/idempotency/infra/idempotency-reposi
 import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-channel-repository"
 import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
 import { isFreshEvent, verifyZaloSignature } from "@/modules/greeting-card/use-cases/zalo-oa-link"
+import { recordManagedWebhook } from "@/modules/integration-hub/use-cases/record-managed-webhook"
+import { isOwnConnectionAllowed } from "@/modules/integration-hub/use-cases/governance-mode"
 
 export async function POST(req: NextRequest) {
   const rawBody = await req.text()
@@ -42,17 +44,34 @@ export async function POST(req: NextRequest) {
       typeof messageId !== "string" ||
       (await claimIdempotencyKey(channelIntegration.organizationId, "webhook.zalo", messageId))
     if (body.event_name === "user_send_text" && senderId && messageText && firstTime) {
-      const result = await handleIncomingChannelMessage({
-        organizationId: channelIntegration.organizationId,
-        channel: "ZALO_OA",
-        externalSenderId: senderId,
-        messageText,
-      })
+      let errorCode: string | undefined
+      // Trung tâm Tích hợp GĐ3: cấp trên (nền tảng, ngành, chuỗi) đã khoá kênh này → không trả lời, ghi lý do vào nhật ký.
+      if (!(await isOwnConnectionAllowed(channelIntegration.organizationId, "zalo_oa"))) errorCode = "LOCKED_BY_UPPER"
+      else try {
+        const result = await handleIncomingChannelMessage({
+          organizationId: channelIntegration.organizationId,
+          channel: "ZALO_OA",
+          externalSenderId: senderId,
+          messageText,
+        })
 
-      const accessToken = channelIntegration.config.zaloAccessToken
-      if (accessToken) {
-        await sendZaloOaReply(accessToken, senderId, result.replyText)
+        const accessToken = channelIntegration.config.zaloAccessToken
+        if (accessToken && !(await sendZaloOaReply(accessToken, senderId, result.replyText))) errorCode = "REPLY_FAILED"
+      } catch (err) {
+        console.error("Zalo OA message handling error:", err)
+        errorCode = "PROCESSING_FAILED"
       }
+      // Nhật ký Trung tâm Tích hợp — không lưu nội dung tin.
+      await recordManagedWebhook({
+        organizationId: channelIntegration.organizationId,
+        connectorKey: "zalo_oa",
+        externalAccountId: oaId,
+        displayName: "Zalo OA",
+        externalEventId: typeof messageId === "string" ? messageId : null,
+        eventType: "message",
+        ok: !errorCode,
+        ...(errorCode ? { errorCode } : {}),
+      })
     }
 
     return NextResponse.json({ error: 0, message: "Success" }, { status: 200 })
@@ -62,9 +81,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function sendZaloOaReply(accessToken: string, userId: string, text: string) {
+/** true = Zalo nhận tin trả lời (HTTP 2xx và `error` = 0). */
+async function sendZaloOaReply(accessToken: string, userId: string, text: string): Promise<boolean> {
   try {
-    await fetch("https://openapi.zalo.me/v3.0/oa/message/cs", {
+    const res = await fetch("https://openapi.zalo.me/v3.0/oa/message/cs", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,7 +95,10 @@ async function sendZaloOaReply(accessToken: string, userId: string, text: string
         message: { text },
       }),
     })
+    const body = (await res.json().catch(() => null)) as { error?: number } | null
+    return res.ok && (body?.error ?? 0) === 0
   } catch (err) {
     console.error("Failed to send Zalo OA reply:", err)
+    return false
   }
 }

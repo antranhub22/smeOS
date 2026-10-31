@@ -147,6 +147,8 @@ export interface CreateOrderInput {
   internalNote?: string | null | undefined
   deliveryWindow?: DeliveryWindow | null | undefined
   deliveryAddress?: DeliveryAddress | null | undefined
+  /** Nguồn đơn (`orders.source`); vắng = MANUAL. Kênh bán ngoài ghi `CHANNEL` (Trung tâm Tích hợp GĐ4A). */
+  source?: "CHANNEL" | undefined
 }
 
 export interface UpdateOrderInput {

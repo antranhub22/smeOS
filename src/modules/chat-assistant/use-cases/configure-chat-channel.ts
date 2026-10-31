@@ -20,6 +20,7 @@ import type {
   ChannelConfig,
   ChatChannelIntegration,
 } from "../domain/channel-integration-types"
+import { dropUnchangedSecrets } from "../domain/channel-secret-fields"
 
 export interface ConfigureChatChannelInput {
   channel: SupportedChatChannel
@@ -49,7 +50,7 @@ export async function configureChatChannel(
 
   const mergedConfig: ChannelConfig = {
     ...(existing?.config || {}),
-    ...(input.config || {}),
+    ...dropUnchangedSecrets(input.config || {}),
   }
 
   // Nếu người dùng bật kích hoạt kênh

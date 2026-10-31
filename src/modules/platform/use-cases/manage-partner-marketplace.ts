@@ -1,6 +1,6 @@
 /**
  * Chợ đối tác (SaaS Mẹ): xem cần `N1`; đồng bộ Sheet / nhập Excel / tải ảnh cần
- * `N16` và luôn ghi nhật ký nền tảng. Ảnh chỉ phát qua URL ký có hạn.
+ * `N17` và luôn ghi nhật ký nền tảng. Ảnh chỉ phát qua URL ký có hạn.
  */
 import { unprocessable } from "@/core/http/errors"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
@@ -77,7 +77,7 @@ async function importRows(
 }
 
 export async function syncMarketplaceFromSheet(pctx: PlatformContext, deps: MarketplaceDeps = defaultDeps()): Promise<ImportSummary> {
-  requirePlatformCapability(pctx, "N16")
+  requirePlatformCapability(pctx, "N17")
   const sheetId = deps.env.PARTNER_SURVEY_SHEET_ID
   if (!sheetId) throw unprocessable("Chưa cấu hình Google Sheet khảo sát đối tác")
   let rows: string[][]
@@ -97,7 +97,7 @@ export async function importMarketplaceExcel(
   file: { name: string; bytes: Uint8Array },
   deps: Pick<MarketplaceDeps, "repo" | "audit"> = defaultDeps()
 ): Promise<ImportSummary> {
-  requirePlatformCapability(pctx, "N16")
+  requirePlatformCapability(pctx, "N17")
   if (!/\.(xlsx|xls|csv)$/i.test(file.name)) throw unprocessable("Chỉ nhận tệp .xlsx, .xls hoặc .csv")
   if (file.bytes.length === 0 || file.bytes.length > MAX_EXCEL_BYTES) throw unprocessable("Tệp trống hoặc vượt quá 10 MB")
   const rows = parseMarketplaceWorkbook(file.bytes)
@@ -112,7 +112,7 @@ export async function syncMarketplacePhotos(
   pctx: PlatformContext,
   deps: MarketplaceDeps = defaultDeps()
 ): Promise<{ stores: number; downloaded: number; failed: number; remaining: number }> {
-  requirePlatformCapability(pctx, "N16")
+  requirePlatformCapability(pctx, "N17")
   const { items, remaining } = await deps.repo.listPhotoPending(PHOTO_STORES_PER_RUN)
   let downloaded = 0
   let failed = 0

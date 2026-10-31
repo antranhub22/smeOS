@@ -14,7 +14,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   // 01 · CÔNG CỤ
   {
     href: "/cong-cu",
-    label: "Thư viện 51 công cụ (9 nhóm)",
+    label: "Công cụ",
     group: "cong-cu",
     iconKey: "LayoutGrid",
     navKey: "toolkit",
@@ -22,7 +22,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/creative-studio",
-    label: "Chế tác tự động A-Z",
+    label: "Chế tác tự động",
     group: "cong-cu",
     iconKey: "Sparkles",
     navKey: "creative-studio",
@@ -40,7 +40,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/catalog",
-    label: "Tạo Catalog & Link bán hàng",
+    label: "Tạo catalog",
     group: "cong-cu",
     iconKey: "Globe",
     navKey: "catalog",
@@ -76,7 +76,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/market-intelligence",
-    label: "Xu hướng & Cơ hội thị trường",
+    label: "Xu hướng thị trường",
     group: "cong-cu",
     iconKey: "TrendingUp",
     navKey: "market-intel",
@@ -85,7 +85,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/kho-templates",
-    label: "Kho mẫu & Ấn phẩm",
+    label: "Mẫu ấn phẩm",
     group: "cong-cu",
     iconKey: "LayoutTemplate",
     navKey: "templates",
@@ -93,7 +93,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cong-cu/toi-uu-he-thong",
-    label: "Trợ lý Tối ưu Tác nghiệp",
+    label: "Trợ lý tối ưu",
     group: "cong-cu",
     iconKey: "Brain",
     navKey: "system-optimizer",
@@ -181,7 +181,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/gia",
-    label: "Công thức BOM & Tính giá",
+    label: "Tính giá",
     group: "kho",
     iconKey: "Calculator",
     navKey: "pricing",
@@ -263,7 +263,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat?tab=INFO",
-    label: "Hồ sơ doanh nghiệp / Cửa hàng",
+    label: "Hồ sơ cửa hàng",
     group: "quan-tri",
     iconKey: "Building2",
     navKey: "business-profile",
@@ -272,7 +272,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat",
-    label: "Cài đặt & Thiết lập tiệm",
+    label: "Cài đặt tiệm",
     group: "quan-tri",
     iconKey: "Settings2",
     navKey: "settings",
@@ -290,7 +290,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-uudai",
-    label: "Ma trận ưu đãi & voucher",
+    label: "Ma trận ưu đãi",
     group: "quan-tri",
     iconKey: "Tag",
     navKey: "store-matrix-promotions",
@@ -299,7 +299,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-camket",
-    label: "Ma trận cam kết chất lượng",
+    label: "Ma trận cam kết",
     group: "quan-tri",
     iconKey: "ShieldCheck",
     navKey: "store-matrix-commitments",
@@ -308,7 +308,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-chinhsach",
-    label: "Ma trận chính sách & thỏa thuận",
+    label: "Ma trận chính sách",
     group: "quan-tri",
     iconKey: "FileText",
     navKey: "store-matrix-policies",
@@ -317,7 +317,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-thanhtoan-datco",
-    label: "Ma trận thanh toán & đặt cọc",
+    label: "Ma trận thanh toán",
     group: "quan-tri",
     iconKey: "CreditCard",
     navKey: "store-matrix-payments",
@@ -326,7 +326,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-phigiacong",
-    label: "Ma trận phí gia công & thợ",
+    label: "Ma trận phí gia công",
     group: "quan-tri",
     iconKey: "Wrench",
     navKey: "store-matrix-craft-fees",
@@ -372,7 +372,7 @@ function adaptStoreEntries(industryKey?: string | null): readonly NavEntry[] {
     }
     if (entry.href === "/san-pham/kha-dung") {
       if (industryKey === "HOMESTAY") return { ...entry, label: "Lịch phòng & Khả dụng", mobileLabel: "Lịch phòng" }
-      if (industryKey === "FNB") return { ...entry, label: "Lịch phục vụ & Khung giờ", mobileLabel: "Lịch bàn" }
+      if (industryKey === "FNB") return { ...entry, label: "Lịch phục vụ", mobileLabel: "Lịch bàn" }
       if (industryKey === "SERVICES") return { ...entry, label: "Lịch ca & Đặt hẹn", mobileLabel: "Lịch hẹn" }
       return { ...entry, label: "Khả dụng & Tồn kho", mobileLabel: "Khả dụng" }
     }

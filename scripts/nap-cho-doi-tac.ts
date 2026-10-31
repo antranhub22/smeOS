@@ -1,7 +1,7 @@
 /**
  * Nạp hồ sơ khảo sát chợ đối tác từ tệp JSON (định dạng PartnerStoreMarketplaceEntity[])
  * vào bảng `partner_marketplace_stores`. Chạy lại an toàn: upsert theo tên cửa hàng.
- * Ảnh không nạp ở đây — dùng nút "Tải ảnh khảo sát" (cần N16) sau khi nạp.
+ * Ảnh không nạp ở đây — dùng nút "Tải ảnh khảo sát" (cần N17) sau khi nạp.
  *
  *   npm run db:deploy
  *   npx tsx --env-file-if-exists=.env scripts/nap-cho-doi-tac.ts [đường-dẫn.json]

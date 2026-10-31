@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { getRecentTelegramMessages, TelegramUpdatesError } from "../telegram-bot-api"
+import { getRecentTelegramMessages, TelegramUpdatesError } from "./telegram-bot-api"
 
 function mockFetch(body: unknown) {
   const fn = vi.fn(async () => ({ json: async () => body }) as unknown as Response)

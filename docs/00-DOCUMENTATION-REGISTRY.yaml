@@ -196,6 +196,20 @@ documents:
     dependencies: ["docs/dac-ta/06-api-specification.md"]
     supersedes: []
 
+  - id: "DOC-02-INTEGRATION-HUB-SPEC"
+    path: "docs/dac-ta/22-integration-hub-spec.md"
+    title: "Integration Hub Specification"
+    domain: "Integration"
+    layer: "Level 2"
+    purpose: "Trung tâm Tích hợp 4 tầng: kết nối của tổ chức tới dịch vụ ngoài (kênh bán hàng, nhắn tin, thanh toán, thông báo)"
+    status: "CANONICAL"
+    authority: "Level 2"
+    canonical: true
+    ssot: true
+    owner: "Integration Lead"
+    dependencies: ["docs/dac-ta/06-api-specification.md", "docs/dac-ta/07-database-specification.md", "docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md"]
+    supersedes: []
+
   # =========================================================================
   # LEVEL 3: MODULE SPECIFICATIONS, CONTRACTS & TEMPLATES
   # =========================================================================

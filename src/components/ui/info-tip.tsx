@@ -34,7 +34,7 @@ export function InfoTip({ label, children, side = "top", className }: InfoTipPro
               setOpen((v) => !v)
             }}
             className={cn(
-              "relative z-10 inline-flex items-center justify-center w-8 h-8 -m-1.5 rounded-full text-text-muted hover:text-primary hover:bg-surface-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors",
+              "relative z-10 inline-flex shrink-0 items-center justify-center w-8 h-8 rounded-full text-text-muted hover:text-primary hover:bg-surface-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors",
               className,
             )}
           >

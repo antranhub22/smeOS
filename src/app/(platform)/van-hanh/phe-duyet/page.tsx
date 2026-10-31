@@ -2,173 +2,20 @@
 
 /**
  * /van-hanh/phe-duyet — Màn hình tổng hợp tất cả yêu cầu chờ Admin SaaS phê duyệt.
- * Bao gồm: mở khóa ngôn ngữ quốc tế, chuyển đổi mô hình cửa hàng.
+ * Bao gồm: mở khóa ngôn ngữ quốc tế, chuyển đổi mô hình cửa hàng, nâng hạn mức chat AI công khai.
  */
 
 import { useCallback, useEffect, useState } from "react"
-import Link from "next/link"
+import { CheckCircle2, XCircle, RefreshCw, InboxIcon } from "@/components/ui/icons"
 import {
-  Clock,
-  CheckCircle2,
-  XCircle,
-  Globe,
-  Store,
-  RefreshCw,
-  InboxIcon,
-  ExternalLink,
-} from "@/components/ui/icons"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+  ApprovalCard,
+  TYPE_META,
+  approvalRequestBody,
+  type ApproveResult,
+  type PendingApprovalItem,
+} from "@/components/platform/approval-card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useI18n } from "@/lib/i18n"
-import { formatDateTime } from "@/lib/i18n/formatters"
-
-type PendingApprovalItem = {
-  id: string
-  organizationId: string
-  organizationName: string
-  organizationSlug: string
-  type: "LANGUAGE_UNLOCK" | "MODEL_CHANGE"
-  requestedAt: string
-  requestedBy?: string
-  note?: string | null
-  requestedLocales?: string[]
-  requestedModelType?: string
-}
-
-type ApproveResult = { success: boolean; message: string }
-
-const TYPE_META: Record<
-  PendingApprovalItem["type"],
-  { label: string; icon: React.ReactNode; color: string; bg: string }
-> = {
-  LANGUAGE_UNLOCK: {
-    label: "Mở khóa Ngôn ngữ Quốc tế",
-    icon: <Globe size={15} aria-hidden />,
-    color: "text-primary",
-    bg: "bg-primary/5 border-primary/30",
-  },
-  MODEL_CHANGE: {
-    label: "Chuyển đổi Mô hình Cửa hàng",
-    icon: <Store size={15} aria-hidden />,
-    color: "text-warning",
-    bg: "bg-warning-bg border-warning/30",
-  },
-}
-
-function formatTime(iso: string) {
-  return formatDateTime(iso)
-}
-
-function ApprovalCard({
-  item,
-  onApprove,
-  onReject,
-  processing,
-}: {
-  item: PendingApprovalItem
-  onApprove: (item: PendingApprovalItem) => void
-  onReject: (item: PendingApprovalItem) => void
-  processing: boolean
-}) {
-  const meta = TYPE_META[item.type]
-
-  return (
-    <Card
-      className={`p-4 border rounded-2xl space-y-3 ${meta.bg}`}
-      role="article"
-      aria-label={`Yêu cầu ${meta.label} từ ${item.organizationName}`}
-    >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className={`${meta.color}`}>{meta.icon}</span>
-          <span className={`text-body-sm font-bold ${meta.color}`}>{meta.label}</span>
-        </div>
-        <span className="flex items-center gap-1 text-caption text-text-muted shrink-0">
-          <Clock size={12} aria-hidden />
-          {formatTime(item.requestedAt)}
-        </span>
-      </div>
-
-      {/* Thông tin tổ chức */}
-      <div className="flex items-center gap-2">
-        <div className="flex flex-col gap-0.5">
-          <Link
-            href={`/van-hanh/to-chuc/${item.organizationId}` as never}
-            className="text-body-sm font-semibold text-text hover:text-primary inline-flex items-center gap-1"
-          >
-            {item.organizationName}
-            <ExternalLink size={11} aria-hidden />
-          </Link>
-          <span className="text-caption text-text-muted">@{item.organizationSlug}</span>
-        </div>
-      </div>
-
-      {/* Chi tiết yêu cầu */}
-      <div className="rounded-xl bg-surface border border-border p-3 space-y-1.5 text-caption">
-        {item.type === "LANGUAGE_UNLOCK" && item.requestedLocales && (
-          <div>
-            <span className="text-text-muted">Gói ngôn ngữ yêu cầu: </span>
-            <strong className="text-text">
-              {item.requestedLocales
-                .filter((l) => l !== "vi")
-                .map((l) => (l === "en" ? "🇬🇧 Tiếng Anh (en)" : l))
-                .join(", ")}
-            </strong>
-          </div>
-        )}
-        {item.type === "MODEL_CHANGE" && item.requestedModelType && (
-          <div>
-            <span className="text-text-muted">Chuyển sang: </span>
-            <strong className="text-text">
-              {item.requestedModelType === "CHAIN"
-                ? "🏪 Chuỗi cửa hàng (CHAIN)"
-                : "🏬 1 Cửa hàng độc lập (SINGLE)"}
-            </strong>
-          </div>
-        )}
-        {item.requestedBy && (
-          <div>
-            <span className="text-text-muted">Người gửi: </span>
-            <span className="text-text">{item.requestedBy}</span>
-          </div>
-        )}
-        {item.note && (
-          <div>
-            <span className="text-text-muted">Ghi chú: </span>
-            <em className="text-text">&ldquo;{item.note}&rdquo;</em>
-          </div>
-        )}
-      </div>
-
-      {/* Action buttons */}
-      <div className="flex items-center justify-end gap-2 pt-1">
-        <button
-          type="button"
-          id={`reject-${item.id}`}
-          disabled={processing}
-          onClick={() => onReject(item)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-danger/30 bg-danger/5 text-caption font-semibold text-danger hover:bg-danger/10 transition-colors disabled:opacity-50 cursor-pointer"
-        >
-          <XCircle size={13} aria-hidden />
-          Từ chối
-        </button>
-        <Button
-          type="button"
-          id={`approve-${item.id}`}
-          size="sm"
-          disabled={processing}
-          onClick={() => onApprove(item)}
-          className="gap-1.5 font-bold shadow-xs"
-        >
-          <CheckCircle2 size={13} aria-hidden />
-          {processing ? "Đang xử lý…" : "Phê duyệt"}
-        </Button>
-      </div>
-    </Card>
-  )
-}
 
 export default function PheQuyetPage() {
   const { t, dict } = useI18n()
@@ -176,7 +23,7 @@ export default function PheQuyetPage() {
   const [loi, setLoi] = useState<string | null>(null)
   const [processing, setProcessing] = useState<string | null>(null)
   const [toast, setToast] = useState<ApproveResult | null>(null)
-  const [filter, setFilter] = useState<"ALL" | "LANGUAGE_UNLOCK" | "MODEL_CHANGE">("ALL")
+  const [filter, setFilter] = useState<"ALL" | PendingApprovalItem["type"]>("ALL")
 
   const tai = useCallback(async () => {
     setLoi(null)
@@ -202,16 +49,7 @@ export default function PheQuyetPage() {
   const handleApprove = async (item: PendingApprovalItem) => {
     setProcessing(item.id)
     try {
-      let body: Record<string, unknown>
-
-      if (item.type === "LANGUAGE_UNLOCK") {
-        body = { unlocked_locales: ["vi", ...(item.requestedLocales ?? [])] }
-      } else {
-        body = {
-          target_type: item.requestedModelType,
-          note: "Phê duyệt bởi Admin SaaS từ màn hình Phê duyệt",
-        }
-      }
+      const body = approvalRequestBody(item, "approve")
 
       const res = await fetch(`/api/v1/platform/organizations/${item.organizationId}`, {
         method: "PATCH",
@@ -243,14 +81,11 @@ export default function PheQuyetPage() {
 
     setProcessing(item.id)
     try {
-      // Từ chối = xóa pending field khỏi settings
-      const fieldKey =
-        item.type === "LANGUAGE_UNLOCK" ? "clear_pending_language_unlock" : "clear_pending_model_change"
-
+      // Từ chối = xóa yêu cầu chờ duyệt khỏi settings
       const res = await fetch(`/api/v1/platform/organizations/${item.organizationId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [fieldKey]: true }),
+        body: JSON.stringify(approvalRequestBody(item, "reject")),
       })
 
       if (!res.ok) throw new Error("Từ chối thất bại")
@@ -274,11 +109,8 @@ export default function PheQuyetPage() {
     (i) => filter === "ALL" || i.type === filter
   )
 
-  const countByType = {
-    ALL: (items ?? []).length,
-    LANGUAGE_UNLOCK: (items ?? []).filter((i) => i.type === "LANGUAGE_UNLOCK").length,
-    MODEL_CHANGE: (items ?? []).filter((i) => i.type === "MODEL_CHANGE").length,
-  }
+  const countOf = (t: "ALL" | PendingApprovalItem["type"]) =>
+    (items ?? []).filter((i) => t === "ALL" || i.type === t).length
 
   return (
     <div className="space-y-5 max-w-3xl mx-auto">
@@ -330,7 +162,7 @@ export default function PheQuyetPage() {
       {items && (
         <>
           <div className="flex items-center gap-1.5 flex-wrap">
-            {(["ALL", "LANGUAGE_UNLOCK", "MODEL_CHANGE"] as const).map((t) => (
+            {(["ALL", ...(Object.keys(TYPE_META) as PendingApprovalItem["type"][])] as const).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -342,15 +174,9 @@ export default function PheQuyetPage() {
                     : "bg-surface border border-border text-text-muted hover:bg-surface-alt"
                 }`}
               >
-                {t === "ALL" && "Tất cả"}
-                {t === "LANGUAGE_UNLOCK" && (
+                {t === "ALL" ? "Tất cả" : (
                   <>
-                    <Globe size={12} aria-hidden /> Mở khóa Ngôn ngữ
-                  </>
-                )}
-                {t === "MODEL_CHANGE" && (
-                  <>
-                    <Store size={12} aria-hidden /> Chuyển đổi Mô hình
+                    {TYPE_META[t].icon} {TYPE_META[t].tabLabel}
                   </>
                 )}
                 <span
@@ -358,7 +184,7 @@ export default function PheQuyetPage() {
                     filter === t ? "bg-white/20" : "bg-muted text-text"
                   }`}
                 >
-                  {countByType[t]}
+                  {countOf(t)}
                 </span>
               </button>
             ))}

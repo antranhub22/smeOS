@@ -14,7 +14,7 @@ import type {
   MarketplacePhotoState,
 } from "../domain/repositories/partner-marketplace-repository.interface"
 
-/** Bảng cấp nền tảng (không có organization_id) — chỉ console vận hành truy cập, qua N1/N16. */
+/** Bảng cấp nền tảng (không có organization_id) — chỉ console vận hành truy cập, qua N1/N17. */
 type Row = { id: string; profile: unknown; photo_keys: string[]; search_text: string }
 
 function toEntity(row: Pick<Row, "id" | "profile">): PartnerStoreMarketplaceEntity {

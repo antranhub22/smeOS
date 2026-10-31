@@ -9,7 +9,7 @@ export default function PaymentsPage() {
   return (
     <TierGovernanceMatrixClient
       systemKey="PAYMENTS"
-      title="Ma Trận Thanh Toán & Đặt Cọc"
+      title="Thanh toán & đặt cọc"
       description="Quản lý chính sách đặt cọc theo tỷ lệ %, thời hạn giữ đơn và hình thức thanh toán VietQR động."
     />
   )

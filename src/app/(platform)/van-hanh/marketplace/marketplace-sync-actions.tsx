@@ -1,6 +1,6 @@
 "use client"
 
-// Nút đồng bộ chợ đối tác — cần N16 (máy chủ kiểm, trả 403 nếu thiếu); mọi thao tác ghi nhật ký nền tảng.
+// Nút đồng bộ chợ đối tác — cần N17 (máy chủ kiểm, trả 403 nếu thiếu); mọi thao tác ghi nhật ký nền tảng.
 import React, { useRef, useState } from "react"
 import { AlertCircle, CheckCircle, Download, FileSpreadsheet, Images, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"

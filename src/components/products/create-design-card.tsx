@@ -1,5 +1,6 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
 import { Layers, ShieldCheck } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
@@ -43,10 +44,8 @@ export function CreateDesignCard({
               <ShieldCheck size={10} />
               Đặc điểm niêm yết cam kết *
             </span>
+            <InfoTip label="Đặc điểm niêm yết">Hiển thị công khai cho khách — phải khớp chính xác với sản phẩm bàn giao thực tế.</InfoTip>
           </div>
-          <p className="text-caption text-text-muted mt-0.5">
-            Hiển thị công khai cho khách — phải khớp chính xác với sản phẩm bàn giao thực tế.
-          </p>
         </div>
       </div>
 

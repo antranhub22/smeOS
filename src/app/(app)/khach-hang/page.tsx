@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Users, UserPlus, Sparkles, Search, Calendar, ArrowRight } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { InfoTip } from "@/components/ui/info-tip"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -15,6 +16,15 @@ import { useI18n } from "@/lib/i18n"
 import { getIndustryPlugin, getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { CustomerMasterIndex, OccasionReminder } from "@/modules/crm/domain/customer-master-index"
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
+
+/** Nhãn hạng khách hiển thị tiếng Việt, không để mã tiếng Anh trên màn hình (CLAUDE.md #6). */
+const TIER_LABEL: Record<string, string> = {
+  VIP: "VIP",
+  GOLD: "Vàng",
+  SILVER: "Bạc",
+  BRONZE: "Đồng",
+  NEW: "Mới",
+}
 
 export default function CRMPage() {
   const { orgName, can, organization } = useSession()
@@ -83,13 +93,13 @@ export default function CRMPage() {
       {/* 1. Header chuẩn có Top-Right Action Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-4 sm:px-6 py-4 backdrop-blur-sm">
         <div className="flex items-start"><MobileMenuButton /><div>
-          <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
-            Quản lý quan hệ khách hàng & Chăm sóc
+          {/* Tiêu đề ngắn; giải thích chi tiết trong "?" (OPERATING_PRINCIPLES §6.1) */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-title font-extrabold text-foreground">Khách hàng</h1>
+            <InfoTip label="Khách hàng" side="bottom">
+              Hồ sơ khách hàng hợp nhất · Phân tầng khách tự động · Nhắc ngày kỷ niệm · {industryName}
+            </InfoTip>
           </div>
-          <h1 className="text-title font-extrabold text-foreground">CRM & Khách Hàng — {industryName}</h1>
-          <p className="text-caption text-text-muted mt-0.5">
-            Hồ sơ khách hàng hợp nhất · Phân tầng RFM tự động · Nhắc hẹn ngày kỷ niệm
-          </p>
         </div></div>
 
         {/* Top-Right Action Header */}
@@ -121,14 +131,14 @@ export default function CRMPage() {
       <main className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
         {/* Khối hướng dẫn SSOT FeatureGuidanceCard */}
         <FeatureGuidanceCard
-          badgeLabel="HƯỚNG DẪN CRM KHÁCH HÀNG"
+          badgeLabel="HƯỚNG DẪN KHÁCH HÀNG"
           badgeIcon={Users}
-          title="Quy trình Quản lý Khách hàng & Tiếp thị Chăm sóc"
-          description="Lưu trữ hồ sơ khách hàng toàn diện từ lịch sử đơn hàng, tự động phân hạng RFM (VIP/Vàng/Bạc/Đồng) và bảo vệ tuyệt đối quyền riêng tư khi gửi tin tiếp thị (Consent Engine)."
+          title="Quản lý khách hàng và chăm sóc"
+          description="Lưu hồ sơ khách từ lịch sử đơn hàng, tự phân hạng khách (VIP, Vàng, Bạc, Đồng) và chỉ gửi tin khi khách đã đồng ý."
           tips={[
-            { icon: "💎", text: "Phân tầng tự động: Dựa trên tổng chi tiêu và số đơn hàng thật của khách" },
+            { icon: "💎", text: "Phân hạng tự động theo tổng chi tiêu và số đơn thật của khách" },
             { icon: "🎂", text: `Lưu ngày kỷ niệm: Nhắc trước 7-14 ngày để tư vấn ${ti.sampleProduct} và lời nhắn thiệp` },
-            { icon: "🛡️", text: "Bảo vệ Consent: Chỉ gửi tin nhắn qua Zalo/SMS khi khách đã đồng ý" },
+            { icon: "🛡️", text: "Chỉ gửi tin Zalo/SMS khi khách đã đồng ý nhận" },
           ]}
         />
 
@@ -166,10 +176,10 @@ export default function CRMPage() {
             </Button>
           </form>
 
-          {/* Bộ lọc phân tầng RFM */}
+          {/* Bộ lọc hạng khách */}
           <div className="flex items-center gap-1.5 text-xs font-semibold">
-            <span className="text-muted-foreground mr-1">Phân tầng:</span>
-            {["", "VIP", "GOLD", "SILVER", "BRONZE", "NEW"].map((t) => (
+            <span className="text-muted-foreground mr-1">Hạng:</span>
+            {(["", "VIP", "GOLD", "SILVER", "BRONZE", "NEW"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTierFilter(t)}
@@ -179,24 +189,24 @@ export default function CRMPage() {
                     : "bg-surface border border-border text-text-muted hover:bg-surface-alt hover:text-text"
                 }`}
               >
-                {t === "" ? "Tất cả" : t}
+                {TIER_LABEL[t] ?? "Tất cả"}
               </button>
             ))}
           </div>
         </div>
 
         {/* Bảng danh sách khách hàng */}
-        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs">
+        <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-sm">
           <table className="w-full text-left text-body-sm">
-            <thead className="border-b border-border bg-surface-alt font-bold text-caption uppercase tracking-wider text-text-muted">
+            <thead className="border-b border-border bg-surface-alt font-bold text-caption text-text-muted">
               <tr>
                 <th className="px-4 py-3">Mã KH</th>
                 <th className="px-4 py-3">Khách hàng</th>
-                <th className="px-4 py-3">Phân hạng RFM</th>
+                <th className="px-4 py-3">Hạng khách</th>
                 <th className="px-4 py-3">Tổng chi tiêu</th>
-                <th className="px-4 py-3">Số đơn</th>
-                <th className="px-4 py-3">Dịp kỷ niệm</th>
-                <th className="px-4 py-3">Sở thích & Gu chọn</th>
+                <th className="px-4 py-3 whitespace-nowrap">Số đơn</th>
+                <th className="hidden md:table-cell px-4 py-3">Dịp kỷ niệm</th>
+                <th className="hidden lg:table-cell px-4 py-3">Sở thích</th>
                 <th className="px-4 py-3 text-right">Thao tác</th>
               </tr>
             </thead>
@@ -216,7 +226,7 @@ export default function CRMPage() {
               ) : (
                 customers.map((c) => (
                   <tr key={c.id} className="hover:bg-surface-alt/50 transition-colors">
-                    <td className="px-4 py-3 font-mono font-bold text-primary">{c.code}</td>
+                    <td className="px-4 py-3 whitespace-nowrap font-mono font-bold text-primary">{c.code}</td>
                     <td className="px-4 py-3">
                       <div className="font-bold text-text">{c.name}</div>
                       <div className="text-caption text-text-muted">{c.phone}</div>
@@ -226,11 +236,11 @@ export default function CRMPage() {
                         {c.metrics?.tier === "VIP" ? "VIP" : c.metrics?.tier === "GOLD" ? "Vàng" : c.metrics?.tier === "SILVER" ? "Bạc" : c.metrics?.tier === "BRONZE" ? "Đồng" : "Khách mới"}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 font-bold text-primary">
+                    <td className="px-4 py-3 whitespace-nowrap font-bold text-primary">
                       {Number(c.metrics?.totalSpentVnd ?? 0).toLocaleString("vi-VN")} đ
                     </td>
-                    <td className="px-4 py-3 font-semibold text-foreground">{c.metrics?.orderCount ?? 0} đơn</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap font-semibold text-foreground">{c.metrics?.orderCount ?? 0} đơn</td>
+                    <td className="hidden md:table-cell px-4 py-3">
                       {c.occasions?.length > 0 ? (
                         <span className="inline-flex items-center gap-1 text-primary font-medium">
                           <Calendar className="h-3 w-3" /> {c.occasions[0]?.name} ({c.occasions[0]?.date})
@@ -239,7 +249,7 @@ export default function CRMPage() {
                         <span className="text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    <td className="hidden lg:table-cell px-4 py-3 text-muted-foreground">
                       {c.preferences?.preferredFlowers?.slice(0, 2).join(", ") || "—"}
                     </td>
                     <td className="px-4 py-3 text-right">

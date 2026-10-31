@@ -1,0 +1,98 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { connectWithSecret } from "../manage-connection"
+import { importChannelOrder, publishProducts } from "../sales-channel"
+import { processDueEvents } from "../process-due-events"
+import type { SalesDeps } from "../sales-channel-deps"
+import type { ListingView } from "../../infra/sales-channel-repository"
+import { ctxOf, makeFakeDeps } from "./fake-hub-deps"
+
+const SECRET = "shop-secret-0123456789abcd"
+let previous: string | undefined
+beforeEach(() => {
+  previous = process.env["INTEGRATION_TOKEN_SECRET"]
+  process.env["INTEGRATION_TOKEN_SECRET"] = "unit-test-integration-secret-xyz"
+})
+afterEach(() => {
+  if (previous === undefined) delete process.env["INTEGRATION_TOKEN_SECRET"]
+  else process.env["INTEGRATION_TOKEN_SECRET"] = previous
+})
+
+const product = (id: string, code: string, extra: Partial<{ price_vnd: number | null; masterImageUrl: string; status: string; name: string }> = {}) => ({
+  id, code, name: extra.name ?? `SP ${code}`, status: extra.status ?? "ACTIVE", price_vnd: extra.price_vnd === undefined ? 300000 : extra.price_vnd,
+  masterImageUrl: extra.masterImageUrl ?? "https://cdn.example/x.jpg", barcode: null, weight_grams: null, tags: [],
+})
+
+function makeSalesDeps(products: ReturnType<typeof product>[]) {
+  const base = makeFakeDeps()
+  const listings = new Map<string, ListingView>()
+  const claimed = new Map<string, string>()
+  const createOrder = vi.fn(async (_ctx: unknown, _input: unknown) => ({ id: `order-${createOrder.mock.calls.length}` }) as never)
+  const deps: SalesDeps = {
+    ...base.deps,
+    listProducts: async (_ctx, filters) => products.filter((p) => !filters.ids || filters.ids.includes(p.id)) as never,
+    createOrder,
+    sales: {
+      listListings: async (_ctx, _c, ids) => [...listings.values()].filter((l) => !ids || ids.includes(l.productId)),
+      saveListing: async (_ctx, _c, input) => {
+        listings.set(input.productId, { productId: input.productId, status: input.status, externalId: input.externalId ?? null, lastError: input.lastError ?? null, lastSyncedAt: null })
+      },
+      listOrders: async () => [],
+      claimOrderSystem: async (_o, _c, id) => {
+        const state = claimed.get(id)
+        if (state === "IMPORTED" || state === "IN_PROGRESS") return false
+        claimed.set(id, "IN_PROGRESS")
+        return true
+      },
+      finishOrderSystem: async (_c, id, outcome) => void claimed.set(id, "orderId" in outcome ? "IMPORTED" : "FAILED"),
+      productIdsBySkuSystem: async (_o, skus) => new Map(products.filter((p) => skus.includes(p.code)).map((p) => [p.code, p.id])),
+      cursorSystem: async () => null,
+      saveCursorSystem: async () => {},
+      activeSalesConnectionsSystem: async () => [],
+    },
+  }
+  return { ...base, deps, listings, claimed, createOrder }
+}
+
+const orgA = ctxOf("org-a")
+
+describe("Đăng sản phẩm lên kênh bán", () => {
+  it("sản phẩm đủ dữ liệu được đăng; thiếu giá/ảnh ghi lý do, không đẩy lên kênh; kênh từ chối ghi lý do của kênh", async () => {
+    const s = makeSalesDeps([product("p1", "HOA-01"), product("p2", "HOA-02", { price_vnd: null }), product("p3", "HOA-03", { name: "LOI tên" })])
+    const conn = await connectWithSecret(orgA, { connectorKey: "test_shop", secret: SECRET }, s.deps)
+    await publishProducts(orgA, { connectionId: conn.id, productIds: ["p1", "p2", "p3"] }, s.deps)
+    expect(s.listings.get("p1")).toMatchObject({ status: "SYNCED", externalId: "ts-p1" })
+    expect(s.listings.get("p2")).toMatchObject({ status: "REJECTED", lastError: "Chưa có giá" })
+    expect(s.listings.get("p3")).toMatchObject({ status: "REJECTED", lastError: "Kênh thử từ chối tên bắt đầu bằng LOI" })
+    expect(s.deps.audit).toHaveBeenCalledTimes(2) // kết nối + đăng
+  })
+
+  it("tổ chức khác không đăng được qua kết nối của mình (404); thiếu W3 bị chặn", async () => {
+    const s = makeSalesDeps([product("p1", "HOA-01")])
+    const conn = await connectWithSecret(orgA, { connectorKey: "test_shop", secret: SECRET }, s.deps)
+    await expect(publishProducts(ctxOf("org-b"), { connectionId: conn.id, productIds: ["p1"] }, s.deps)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    await expect(publishProducts(ctxOf("org-a", ["W1"]), { connectionId: conn.id, productIds: ["p1"] }, s.deps)).rejects.toMatchObject({ code: "CAPABILITY_DENIED" })
+  })
+})
+
+describe("Nhận đơn từ kênh bán", () => {
+  it("nhập đơn một lần, gửi lại không tạo đơn trùng; đơn lỗi nhận lại được ở lượt sau", async () => {
+    const s = makeSalesDeps([product("p1", "HOA-01")])
+    await connectWithSecret(orgA, { connectorKey: "test_shop", secret: SECRET }, s.deps)
+    const connection = s.connections[0]!
+    expect(await importChannelOrder(connection, "HOA-01x2", s.deps)).toBe("order-1")
+    expect(await importChannelOrder(connection, "HOA-01x2", s.deps)).toBeNull()
+    expect(s.createOrder).toHaveBeenCalledTimes(1)
+    expect(s.createOrder.mock.calls[0]![1]).toMatchObject({ source: "CHANNEL", items: [{ productId: "p1", quantity: 2 }] })
+    await expect(importChannelOrder(connection, "khong-hop-le", s.deps)).rejects.toThrow("ORDER_NOT_FOUND")
+    expect(s.claimed.get("khong-hop-le")).toBe("FAILED")
+  })
+
+  it("sự kiện order.created trong hàng chờ gọi nhập đơn theo mã đơn", async () => {
+    const s = makeSalesDeps([product("p1", "HOA-01")])
+    await connectWithSecret(orgA, { connectorKey: "test_shop", secret: SECRET }, s.deps)
+    await s.deps.events.recordInbound({ organizationId: "org-a", connectionId: s.connections[0]!.id, externalEventId: "e1", eventType: "order.created", payloadRedacted: { orderId: "HOA-01x1" } })
+    const importOrder = vi.fn(async () => "order-x")
+    expect(await processDueEvents(s.deps, importOrder)).toMatchObject({ done: 1 })
+    expect(importOrder).toHaveBeenCalledWith(s.connections[0], "HOA-01x1")
+  })
+})

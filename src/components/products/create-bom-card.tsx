@@ -1,5 +1,6 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
 import { Plus, Trash2, FileText } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
@@ -39,10 +40,8 @@ export function CreateBomCard({
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger border border-danger/30">
               Định mức bàn giao cam kết *
             </span>
+            <InfoTip label="Định mức công thức">Dữ liệu trọng yếu ràng buộc nghĩa vụ giữa cửa hàng và người mua. Không để xảy ra sai lệch khi bàn giao.</InfoTip>
           </div>
-          <p className="text-caption text-text-muted mt-0.5">
-            Dữ liệu trọng yếu ràng buộc nghĩa vụ giữa cửa hàng và người mua. Không để xảy ra sai lệch khi bàn giao.
-          </p>
         </div>
         <button
           type="button"

@@ -608,6 +608,7 @@ Mỗi chỉ số trả kèm `nguon` và `den_ngay`. Dữ liệu kế thừa từ
 | POST | `/chat/conversations/:id/create-order` | `T3` | Chuyển hội thoại thành đơn nháp — M10 |
 | GET · POST | `/chat/channels` | **chưa gác** — xem **RS-8** | Cấu hình kênh; `configure-chat-channel.ts` gác `T4` nhưng route `/chat/channels` không gọi qua nó |
 | POST | `/chat/public/widget` | — *(công khai)* | Khung chat AI trên trang công khai do công cụ SMEOS tạo. Thân: `slug`, `surface` (`catalog` · `landing_page` · `store_profile` · `sales_link` · `greeting_catalog` · `business_card`; `landing_page` tính kênh `LANDING_PAGE`, còn lại `STOREFRONT_CATALOG`), `visitorId`, `message`. Trang bị tắt trong `config.publicSurfaces` → 404 (chủ tiệm bật/tắt từng loại trang qua `POST /chat/channels` → `config.publicSurfaces`, màn Kênh tích hợp; trang bị tắt không vẽ khung chat — `PublicChatSlot`). Giới hạn mặc định 20 tin/khách và 60 tin/IP mỗi 10 phút, tách theo tiệm; nâng chỉ khi nền tảng duyệt (`config.publicChatLimits.approvedAt`, trần 200/600) → 429. Chỉ cùng nguồn gốc — chưa mở CORS cho website ngoài; lỗi 500 không trả chi tiết nội bộ |
+| GET · POST | `/chat/public-limits` | POST: `T4` | Hạn mức chat AI trên trang công khai của tiệm phiên. GET: mức đang áp dụng (`current`) và yêu cầu chờ duyệt (`pending`). POST `{ perVisitor, perIp, note? }`: xin nâng — chỉ nhận mức chọn sẵn (50/150, 100/300, 200/600) và cao hơn mức hiện tại (400); đang có yêu cầu chờ → 409. Lưu ở `organizations.settings.pending_public_chat_limits`; Admin nền tảng duyệt qua `PATCH /platform/organizations/:id` |
 | GET · POST | `/chat/webhooks/facebook` | — *(chữ ký nền tảng)* | |
 | POST | `/chat/webhooks/zalo` | — *(chữ ký nền tảng)* | |
 
@@ -719,9 +720,9 @@ P25a chỉ đọc (D-N5 áp dụng cho toàn bộ P25a, không riêng `/health`)
 | GET | `/platform/jobs/failed` | `N5` | Hàng đợi lỗi (E5.2): tối đa 100 job `FAILED` mới nhất xuyên tổ chức — tổ chức, loại việc, `failureKind`, lỗi (cắt 300 ký tự), số lần thử. Không trả `payload`/`output` |
 | POST | `/platform/jobs/:id/action` | `N15` | `{ action: "RETRY" \| "DISMISS" }`. RETRY: `FAILED` → `PENDING` lượt mới (`attempts` 0), đánh thức worker, nền tảng chịu chi phí (không trừ credit tiệm). DISMISS: → `CANCELLED`. Job không còn `FAILED` → 404. Ghi `platform_audit_logs` (`platform.job.retry`/`dismiss`) |
 | GET | `/platform/marketplace/stores` | `N1` | Chợ đối tác (PO 31/10/2026): mọi hồ sơ khảo sát cửa hàng trong `partner_marketplace_stores`; query `search` (≤200), `field` (chỉ các trường trong `SEARCHABLE_FIELD_PATHS`, lạ → tìm mọi thông tin), `tier`, `district`. Trả `{ stores, total, tierCounts }`; ảnh là URL ký GET hạn 1 giờ |
-| POST | `/platform/marketplace/sync` | `N16` | Đọc Google Sheet khảo sát (`PARTNER_SURVEY_SHEET_ID`/`_GID`, tài khoản dịch vụ `GOOGLE_SERVICE_ACCOUNT_JSON`), upsert theo tên cửa hàng. Trả `{ added, updated, total, skipped }`. Chưa cấu hình / Google lỗi → 422. Ghi `platform_audit_logs` (`platform.marketplace.sync_sheet`) |
-| POST | `/platform/marketplace/import-excel` | `N16` | `multipart/form-data` trường `file` (.xlsx/.xls/.csv, ≤10 MB, ≤5000 dòng, 75 cột như Sheet). Như `sync`; ghi `platform.marketplace.import_excel` |
-| POST | `/platform/marketplace/sync-photos` | `N16` | Tải ảnh khảo sát từ Drive vào kho (`platform/partner-stores/<id>/<driveId>.<ext>`, kiểm nội dung, ≤15 MB/ảnh, ≤12 ảnh/cửa hàng), mỗi lượt tối đa 8 cửa hàng. Trả `{ stores, downloaded, failed, remaining }`; `remaining` > 0 thì gọi tiếp. Ghi `platform.marketplace.sync_photos` |
+| POST | `/platform/marketplace/sync` | `N17` | Đọc Google Sheet khảo sát (`PARTNER_SURVEY_SHEET_ID`/`_GID`, tài khoản dịch vụ `GOOGLE_SERVICE_ACCOUNT_JSON`), upsert theo tên cửa hàng. Trả `{ added, updated, total, skipped }`. Chưa cấu hình / Google lỗi → 422. Ghi `platform_audit_logs` (`platform.marketplace.sync_sheet`) |
+| POST | `/platform/marketplace/import-excel` | `N17` | `multipart/form-data` trường `file` (.xlsx/.xls/.csv, ≤10 MB, ≤5000 dòng, 75 cột như Sheet). Như `sync`; ghi `platform.marketplace.import_excel` |
+| POST | `/platform/marketplace/sync-photos` | `N17` | Tải ảnh khảo sát từ Drive vào kho (`platform/partner-stores/<id>/<driveId>.<ext>`, kiểm nội dung, ≤15 MB/ảnh, ≤12 ảnh/cửa hàng), mỗi lượt tối đa 8 cửa hàng. Trả `{ stores, downloaded, failed, remaining }`; `remaining` > 0 thì gọi tiếp. Ghi `platform.marketplace.sync_photos` |
 | GET | `/platform/audit-logs` | `N6` | Nhật ký xuyên tổ chức — hợp `audit_logs` mọi tổ chức và `platform_audit_logs` |
 
 ## 21b. Nền quản trị trường (ĐP-3, 26/09/2026)
@@ -994,7 +995,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | PUT | `/platform/ux-rollout-flags` | `N12` | `{ flags: { [flagKey]: { mode: "off" \| "allowlist" \| "all", organizationIds } } }` — giá trị lạ thành `off`. Ghi nhật ký kiểm toán nền tảng |
 | GET | `/platform/governance-matrix` | *(phiên nền tảng)* | Quyết định tầng Mẹ của ma trận quản trị |
 | PUT | `/platform/governance-matrix` | `N12` | `{ decisions }` như trên, lưu `platform_settings` khoá `governance_matrix:<system>`, áp xuống mọi tổ chức. Ghi nhật ký kiểm toán nền tảng |
-| PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |
+| PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này. `{ public_chat_limits_decision: "approve" \| "reject" }`: duyệt/từ chối yêu cầu nâng hạn mức chat công khai — duyệt ghi đúng mức đã xin (chỉ mức chọn sẵn, trần 200/600) vào `config.publicChatLimits` của kênh `STOREFRONT_CATALOG` và `LANDING_PAGE`; cả hai xoá `settings.pending_public_chat_limits`. Hiện ở màn `/van-hanh/phe-duyet` |
 
 
 ## Thông báo đa tầng (27/10/2026)
@@ -1076,3 +1077,26 @@ Mọi route trả 422 "Ngành của cửa hàng chưa được hỗ trợ cho c�
 
 `PUT /pricing-rules` nhận thêm 4 khoá của nhóm này: `labor_rate_per_hour`, `default_packaging_vnd` (VNĐ ≥ 0), `overhead_percent` [0,100], `price_change_alert_percent` [1,100].
 
+## 29. Trung tâm Tích hợp (30/10/2026)
+
+Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`. Mọi route có phiên đọc `organization_id` từ `requireTenantContext`; kết nối/sự kiện của tổ chức khác trả 404. Không route nào trả bí mật.
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/integrations` | `W1` | Tổng quan, danh mục theo tầng và gói, kết nối hiện có |
+| POST | `/integrations/connections` | `W2` | Kết nối bằng khoá `{ connectorKey, secret }`; máy chủ kiểm khoá với nhà cung cấp rồi mới lưu (đã mã hoá); 201 |
+| DELETE | `/integrations/connections/:id` | `W2` | Ngắt kết nối, thu hồi phía nhà cung cấp nếu hỗ trợ, xoá khoá đã lưu |
+| POST | `/integrations/connections/:id/rotate` | `W3` | Đổi khoá — kiểm khoá mới trước khi thay |
+| POST | `/integrations/connections/:id/test` | `W3` | Kiểm tra kết nối ngay, cập nhật trạng thái |
+| GET | `/integrations/connections/:id/events` | `W1` | Nhật ký sự kiện, lọc `status`, `limit` tối đa 100 |
+| POST | `/integrations/events/:id/replay` | `W5` | Đưa sự kiện `FAILED`/`DEAD` về hàng chờ |
+| GET | `/integrations/governance` | `W4` | Chuỗi xem chế độ đặt cho cửa hàng thành viên theo từng đầu nối khoá được, kèm khoá tầng trên (`lockedByUpper`). Không phải chuỗi → 404 |
+| PUT | `/integrations/governance` | `W4` | `{ connectorKey, mode: FORBID \| INHERIT_ONLY \| ALLOW_OWN }`; phạm vi là chính chuỗi của phiên. Tầng trên đã khoá → 422 `violation: LOCKED_BY_UPPER`; cửa hàng → 422 `STORE_CANNOT_LOCK`; đầu nối chưa thực thi khoá → 422 `NOT_GOVERNABLE`. Báo cho cửa hàng thành viên, ghi audit |
+| GET | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | Tham số `scope` = `GLOBAL` hoặc `industry:<key>`; trả kèm danh sách ngành |
+| PUT | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | `{ scopeId, connectorKey, mode }`; ngành không đổi được khi Mẹ đã khoá (422). Ghi `platform_audit_logs` |
+| GET | `/integrations/connections/:id/sales` | `W1` | Kết nối kênh bán: tin đăng (tối đa 100) và 50 đơn gần nhất. Kết nối không phải kênh bán hoặc của tổ chức khác → 404 |
+| POST | `/integrations/connections/:id/sales/publish` | `W3` | `{ productIds }` 1–100. Sản phẩm thiếu dữ liệu (chưa mở bán/giá/ảnh) không đẩy lên kênh, ghi lý do; kênh từ chối → ghi lý do của kênh. Kết nối lỗi hoặc cấp trên khoá → 422. Ghi audit |
+| POST | `/integrations/connections/:id/sales/unpublish` | `W3` | `{ productIds }` 1–100 — gỡ tin đã đăng. Ghi audit |
+| POST | `/integrations/connections/:id/sales/availability` | `W3` | Đẩy còn/hết hàng (theo trạng thái mở bán — chưa có số tồn, nợ #95) cho mọi tin đã đăng, lô 100 |
+| POST | `/public/integrations/:connector/:ref` | — *(chữ ký của đầu nối)* | Cổng webhook chung: giới hạn tần suất theo IP và theo `ref`, thân tối đa 256 KB, xác thực chữ ký → ghi nhật ký (chống trùng) → 200. Sai chữ ký/sai `ref`/kết nối đã ngắt đều trả cùng một 401 |
+| POST | `/internal/integrations-sweep` | — *(cron, header `x-cron-secret`)* | Xử lý tối đa 100 sự kiện đến hạn (sự kiện `order.*` của kênh bán → lấy chi tiết đơn qua API rồi nhập vào Đơn hàng, chống trùng), kiểm sức khoẻ tối đa 50 kết nối và kéo đơn dự phòng cho tối đa 20 kết nối kênh bán mỗi lượt (mỗi kết nối tối đa 30 phút/lần). Gọi sau cùng trong cron `smeos-cron-dispatch-sweep` 5 phút/lần |

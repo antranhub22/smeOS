@@ -133,12 +133,14 @@ export function generateCustomerPitch(
   const occasion = criteria.occasion ? ` dịp ${criteria.occasion}` : ""
   const recipient = criteria.recipient ? ` tặng ${criteria.recipient}` : ""
   const flowers = product.highlightFlowers.length > 0 ? product.highlightFlowers.slice(0, 3).join(", ") : "hoa tuyển chọn"
+  // Chỉ nói tông màu khi sản phẩm thật có dữ liệu (không để "tone " trống — OPERATING_PRINCIPLES §2)
+  const tone = product.colorTheme.trim() ? ` tone ${product.colorTheme}` : ""
 
   if (isUpsell) {
-    return `Dạ bên em có thêm mẫu "${product.name}" giá ${product.sellingPriceVnd.toLocaleString("vi-VN")} đ. Mẫu này phối ${flowers} tone ${product.colorTheme} dáng hoành tráng và sang trọng hơn nhiều, rất xứng đáng để${recipient}${occasion} ạ!`
+    return `Dạ bên em có thêm mẫu "${product.name}" giá ${product.sellingPriceVnd.toLocaleString("vi-VN")} đ. Mẫu này phối ${flowers}${tone} dáng hoành tráng và sang trọng hơn nhiều, rất xứng đáng để${recipient}${occasion} ạ!`
   }
 
-  return `Dạ bên em có mẫu "${product.name}" rất hợp với ngân sách của mình, giá ${product.sellingPriceVnd.toLocaleString("vi-VN")} đ. Mẫu thiết kế tone ${product.colorTheme} với ${flowers}, tươi lâu và rất tinh tế để${recipient}${occasion} ạ!`
+  return `Dạ bên em có mẫu "${product.name}" rất hợp với ngân sách của mình, giá ${product.sellingPriceVnd.toLocaleString("vi-VN")} đ. Mẫu thiết kế${tone} với ${flowers}, rất tinh tế để${recipient}${occasion} ạ!`
 }
 
 /**

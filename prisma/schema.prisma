@@ -173,6 +173,11 @@ model organizations {
   product_bookings              product_bookings[]
   pricing_rules                 pricing_rules[]
   integration_tokens            integration_tokens[]
+  integration_connections       integration_connections[]
+  integration_events            integration_events[]
+  integration_sync_cursors      integration_sync_cursors[]
+  sales_channel_listings        sales_channel_listings[]
+  sales_channel_orders          sales_channel_orders[]
   ai_policies                   ai_policies[]
   ai_requests                   ai_requests[]
   ai_evaluations                ai_evaluations[]
@@ -3624,6 +3629,184 @@ model product_recipe_items {
   @@index([organization_id])
 }
 
+// ─── Trung tâm Tích hợp (Integration Hub, GĐ1 — 30/10/2026) ─────────────────
+// Kế hoạch: docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md
+
+enum integration_connection_status {
+  DRAFT
+  CONNECTING
+  ACTIVE
+  DEGRADED
+  EXPIRED
+  ERROR
+  DISCONNECTED
+  DISABLED_BY_UPPER
+}
+
+enum integration_event_direction {
+  IN
+  OUT
+}
+
+enum integration_event_status {
+  PENDING
+  DONE
+  FAILED
+  DEAD
+}
+
+enum integration_governance_mode {
+  FORBID
+  INHERIT_ONLY
+  ALLOW_OWN
+}
+
+/// Một kết nối của tổ chức tới dịch vụ ngoài. Bí mật chỉ nằm trong `credential_encrypted` (secret-box);
+/// `config` không chứa bí mật. `connection_ref` là mã ngẫu nhiên dùng trong URL webhook công khai.
+model integration_connections {
+  id                    String                        @id @default(uuid())
+  organization_id       String
+  connector_key         String
+  scope_tier            String
+  external_account_id   String                        @default("")
+  display_name          String
+  status                integration_connection_status @default(DRAFT)
+  config                Json                          @default("{}")
+  credential_encrypted  String?
+  credential_hint       String?
+  connection_ref        String                        @unique
+  inherited_from_org_id String?
+  expires_at            DateTime?
+  last_health_at        DateTime?
+  last_error_code       String?
+  created_by            String
+  created_at            DateTime                      @default(now())
+  updated_at            DateTime                      @updatedAt
+
+  organization   organizations              @relation(fields: [organization_id], references: [id])
+  events         integration_events[]
+  cursors        integration_sync_cursors[]
+  listings       sales_channel_listings[]
+  channel_orders sales_channel_orders[]
+
+  @@unique([organization_id, connector_key, external_account_id])
+  @@index([organization_id])
+  @@index([status, last_health_at])
+}
+
+/// Nhật ký sự kiện vào (webhook) / ra (lệnh gọi) của một kết nối. Chống trùng theo
+/// (connection, direction, external_event_id). Payload đã che dữ liệu cá nhân.
+model integration_events {
+  id                String                      @id @default(uuid())
+  organization_id   String
+  connection_id     String
+  direction         integration_event_direction
+  event_type        String
+  external_event_id String?
+  status            integration_event_status    @default(PENDING)
+  attempts          Int                         @default(0)
+  next_retry_at     DateTime?
+  error_code        String?
+  payload_redacted  Json                        @default("{}")
+  created_at        DateTime                    @default(now())
+  updated_at        DateTime                    @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, direction, external_event_id])
+  @@index([organization_id])
+  @@index([organization_id, connection_id, created_at])
+  @@index([status, next_retry_at])
+}
+
+/// Con trỏ đồng bộ (đơn hàng, tồn kho…) theo kết nối.
+model integration_sync_cursors {
+  id              String   @id @default(uuid())
+  organization_id String
+  connection_id   String
+  resource        String
+  cursor          String
+  updated_at      DateTime @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, resource])
+  @@index([organization_id])
+}
+
+/// Bảng cấp nền tảng (không thuộc một tổ chức): khoá/cấp sẵn tích hợp theo tầng.
+/// scope_id: "GLOBAL" (Mẹ) · "industry:<key>" (Ngành) · id tổ chức chuỗi (Chuỗi). Cùng mẫu với notification_*.
+model integration_governance {
+  id            String                      @id @default(uuid())
+  connector_key String
+  tier          String
+  scope_id      String
+  mode          integration_governance_mode
+  updated_by    String
+  created_at    DateTime                    @default(now())
+  updated_at    DateTime                    @updatedAt
+
+  @@unique([connector_key, tier, scope_id])
+  @@index([scope_id])
+}
+
+// ─── Kênh bán hàng — phần chung (Trung tâm Tích hợp GĐ4A, PO 31/10/2026) ─────
+
+enum sales_listing_status {
+  PENDING
+  SYNCED
+  REJECTED
+  REMOVED
+}
+
+enum sales_channel_order_status {
+  IMPORTED
+  FAILED
+}
+
+/// Sản phẩm ↔ tin đăng trên một kênh bán (theo kết nối). Một sản phẩm một tin mỗi kết nối.
+model sales_channel_listings {
+  id              String               @id @default(uuid())
+  organization_id String
+  connection_id   String
+  product_id      String
+  external_id     String?
+  status          sales_listing_status @default(PENDING)
+  last_error      String?
+  last_synced_at  DateTime?
+  created_at      DateTime             @default(now())
+  updated_at      DateTime             @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, product_id])
+  @@index([organization_id])
+  @@index([organization_id, product_id])
+}
+
+/// Đơn trên kênh bán ↔ đơn nội bộ. Unique theo (kết nối, mã đơn ngoài) → webhook/lượt kéo gửi lại không tạo đơn trùng.
+model sales_channel_orders {
+  id                String                     @id @default(uuid())
+  organization_id   String
+  connection_id     String
+  external_order_id String
+  order_id          String?
+  status            sales_channel_order_status
+  error_code        String?
+  created_at        DateTime                   @default(now())
+  updated_at        DateTime                   @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, external_order_id])
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+
 // ─── Thu hút khách hàng (Bước 4 — công cụ 12, 13, 21, 25) ─────────────────────
 // Khách tiềm năng để lại SĐT từ trang công khai. Trước đây nằm trong
 // catalog_links.filters.leads (JSON) — mất khi gửi đồng thời, không vào CRM.
@@ -3704,7 +3887,7 @@ model link_events {
 
 /// Chợ đối tác (SaaS Mẹ) — hồ sơ khảo sát cửa hàng tiềm năng, CẤP NỀN TẢNG:
 /// cửa hàng chưa là tenant nên không có organization_id (đặc tả 07).
-/// Đọc cần N1, ghi (đồng bộ/nhập/ảnh) cần N16.
+/// Đọc cần N1, ghi (đồng bộ/nhập/ảnh) cần N17.
 model partner_marketplace_stores {
   id               String   @id @default(uuid())
   /// Tên cửa hàng chuẩn hoá (thường, bỏ dấu cách thừa) — khoá khớp khi đồng bộ lại

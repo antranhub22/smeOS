@@ -48,9 +48,9 @@ function makeDeps(over: Partial<MarketplaceDeps> = {}) {
 }
 
 describe("chợ đối tác — phân quyền", () => {
-  it("xem cần N1; đồng bộ / nhập / ảnh cần N16 và không ghi gì khi thiếu", async () => {
+  it("xem cần N1; đồng bộ / nhập / ảnh cần N17 và không ghi gì khi thiếu", async () => {
     const d = makeDeps()
-    await expect(listMarketplaceStores(pctx(["N16"]), {}, d)).rejects.toMatchObject({ status: 403 })
+    await expect(listMarketplaceStores(pctx(["N17"]), {}, d)).rejects.toMatchObject({ status: 403 })
     await expect(syncMarketplaceFromSheet(pctx(["N1"]), d)).rejects.toMatchObject({ status: 403 })
     await expect(importMarketplaceExcel(pctx(["N1"]), { name: "a.xlsx", bytes: JPEG }, d)).rejects.toMatchObject({ status: 403 })
     await expect(syncMarketplacePhotos(pctx(["N1"]), d)).rejects.toMatchObject({ status: 403 })
@@ -72,16 +72,16 @@ describe("listMarketplaceStores", () => {
 describe("syncMarketplaceFromSheet", () => {
   it("upsert các dòng có tên và ghi nhật ký nền tảng", async () => {
     const d = makeDeps()
-    await expect(syncMarketplaceFromSheet(pctx(["N16"]), d)).resolves.toEqual({ added: 2, updated: 0, total: 2, skipped: 0 })
+    await expect(syncMarketplaceFromSheet(pctx(["N17"]), d)).resolves.toEqual({ added: 2, updated: 0, total: 2, skipped: 0 })
     expect(d.repo.upsertMany).toHaveBeenCalledWith(expect.any(Array), "SHEET")
     expect(d.audit).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ action: "platform.marketplace.sync_sheet" }))
   })
 
   it("thiếu cấu hình Sheet hoặc Google lỗi → 422 dễ hiểu, không ghi", async () => {
-    await expect(syncMarketplaceFromSheet(pctx(["N16"]), makeDeps({ env: {} }))).rejects.toMatchObject({ status: 422 })
+    await expect(syncMarketplaceFromSheet(pctx(["N17"]), makeDeps({ env: {} }))).rejects.toMatchObject({ status: 422 })
     const google = { readSheet: vi.fn(async () => { throw new GoogleWorkspaceError("Google trả lỗi 403", "request") }), downloadDriveFile: vi.fn() }
     const d = makeDeps({ google })
-    await expect(syncMarketplaceFromSheet(pctx(["N16"]), d)).rejects.toMatchObject({ status: 422 })
+    await expect(syncMarketplaceFromSheet(pctx(["N17"]), d)).rejects.toMatchObject({ status: 422 })
     expect(d.repo.upsertMany).not.toHaveBeenCalled()
   })
 })
@@ -89,15 +89,15 @@ describe("syncMarketplaceFromSheet", () => {
 describe("importMarketplaceExcel", () => {
   it("chặn đuôi tệp lạ, tệp rỗng và tệp không đọc được", async () => {
     const d = makeDeps()
-    await expect(importMarketplaceExcel(pctx(["N16"]), { name: "a.exe", bytes: JPEG }, d)).rejects.toMatchObject({ status: 422 })
-    await expect(importMarketplaceExcel(pctx(["N16"]), { name: "a.xlsx", bytes: new Uint8Array() }, d)).rejects.toMatchObject({ status: 422 })
+    await expect(importMarketplaceExcel(pctx(["N17"]), { name: "a.exe", bytes: JPEG }, d)).rejects.toMatchObject({ status: 422 })
+    await expect(importMarketplaceExcel(pctx(["N17"]), { name: "a.xlsx", bytes: new Uint8Array() }, d)).rejects.toMatchObject({ status: 422 })
     expect(d.repo.upsertMany).not.toHaveBeenCalled()
   })
 
   it("nhập CSV hợp lệ", async () => {
     const d = makeDeps()
     const csv = [sheetRow("Tiêu đề"), sheetRow("Hoa CSV")].map((r) => r.join(",")).join("\n")
-    const res = await importMarketplaceExcel(pctx(["N16"]), { name: "khao-sat.csv", bytes: new TextEncoder().encode(csv) }, d)
+    const res = await importMarketplaceExcel(pctx(["N17"]), { name: "khao-sat.csv", bytes: new TextEncoder().encode(csv) }, d)
     expect(res.added).toBe(1)
     expect(d.repo.upsertMany).toHaveBeenCalledWith([expect.objectContaining({ identity: expect.objectContaining({ shopName: "Hoa CSV" }) })], "EXCEL")
   })
@@ -106,7 +106,7 @@ describe("importMarketplaceExcel", () => {
 describe("syncMarketplacePhotos", () => {
   it("ghi ảnh hợp lệ vào kho khoá platform/, bỏ tệp không phải ảnh, giữ ảnh đã có, đánh dấu đã xử lý", async () => {
     const d = makeDeps()
-    const res = await syncMarketplacePhotos(pctx(["N16"]), d)
+    const res = await syncMarketplacePhotos(pctx(["N17"]), d)
     expect(res).toEqual({ stores: 1, downloaded: 1, failed: 1, remaining: 4 })
     expect(d.storage.put).toHaveBeenCalledTimes(1)
     expect(d.storage.put).toHaveBeenCalledWith("platform/partner-stores/s1/goodfile0001.jpg", JPEG, "image/jpeg")

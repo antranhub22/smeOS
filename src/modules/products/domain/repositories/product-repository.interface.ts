@@ -83,6 +83,8 @@ export interface ListProductsFilters {
   priceMin?: number | undefined
   priceMax?: number | undefined
   search?: string | undefined
+  /** Chỉ các sản phẩm này (tối đa 100). */
+  ids?: readonly string[] | undefined
 }
 
 export interface ListProductsPage {
