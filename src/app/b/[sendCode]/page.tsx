@@ -1,5 +1,6 @@
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
+import { PublicChatSlot } from "@/components/chat/public-chat-slot"
 import { linkPreviewText } from "@/modules/greeting-card/domain/link-preview-text"
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -117,6 +118,7 @@ export default async function PublicBrochurePage({ params, searchParams }: PageP
   return (
     <I18nProvider initialLocale={initialLocale} industryKey={industryKey}>
       <BrochureCustomerExperience initialData={data} preview={viewer?.viewer === "STAFF"} />
+      <PublicChatSlot pageKey={{ by: "send_code", value: sendCode }} surface="sales_link" />
     </I18nProvider>
   )
 }

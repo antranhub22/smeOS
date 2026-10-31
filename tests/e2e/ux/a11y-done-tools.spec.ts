@@ -15,9 +15,13 @@ function tinyPng() {
  * Công cụ Hoàn thiện đã áp chuẩn Progressive Disclosure (03c): không lỗi trợ năng critical/serious ở khổ 390px,
  * ở trạng thái đầu và sau khi chọn ảnh. Thêm công cụ vào DONE_TOOLS khi đợt rollout của nó xong.
  */
-const DONE_TOOLS: Array<{ name: string; path: string; flag?: string; upload: boolean }> = [
-  { name: "Tạo ảnh sản phẩm", path: "/cong-cu/anh-san-pham", flag: "ux_pd_anh_san_pham", upload: true },
-  { name: "Tạo bộ ảnh sản phẩm", path: "/cong-cu/bo-anh-san-pham", flag: "ux_pd_bo_anh_san_pham", upload: true },
+/**
+ * `ready`: tên vùng (role region) chỉ luồng chuẩn mới có — chờ nó thay cho dấu "Công cụ 0x" của giao diện cũ,
+ * vì giao diện cũ đã gỡ mã công cụ khỏi màn hình (8939f5f) nên không còn phân biệt được hai luồng bằng chữ đó.
+ */
+const DONE_TOOLS: Array<{ name: string; path: string; flag?: string; ready?: string; upload: boolean }> = [
+  { name: "Tạo ảnh sản phẩm", path: "/cong-cu/anh-san-pham", flag: "ux_pd_anh_san_pham", ready: "Tải ảnh và tạo", upload: true },
+  { name: "Tạo bộ ảnh sản phẩm", path: "/cong-cu/bo-anh-san-pham", flag: "ux_pd_bo_anh_san_pham", ready: "Tải ảnh và tạo bộ ảnh", upload: true },
   { name: "Poster và banner", path: "/cong-cu/poster-banner", upload: false },
   { name: "Thẻ chào sản phẩm", path: "/tai-anh?tab=m01c", upload: false },
   { name: "Nội dung bán hàng", path: "/noi-dung", upload: false },
@@ -71,8 +75,8 @@ test.describe("Công cụ Hoàn thiện theo chuẩn 03c — trợ năng ở kh�
           await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1)
         }
         await expect(page.getByText(/Công cụ 0\d/)).toHaveCount(0)
-        // Công cụ bật theo cờ: đợi đúng luồng mới hiện ra (máy chủ giữ cờ trong bộ nhớ đệm tới 30 giây).
-        if (tool.flag) await expect(page.locator("[data-ux-flow]")).toHaveCount(1)
+        // Cờ có thể chưa có hiệu lực (bộ đệm 30 giây) — chờ đến khi luồng chuẩn mới hiện ra
+        if (tool.ready) await expect(page.getByRole("region", { name: tool.ready, exact: true })).toBeVisible()
       }).toPass({ timeout: 45_000, intervals: [5_000] })
 
       const axe = () => new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()

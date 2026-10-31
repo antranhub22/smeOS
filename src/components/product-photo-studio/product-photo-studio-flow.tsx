@@ -52,8 +52,7 @@ export function ProductPhotoStudioFlow() {
   }
 
   return (
-    // `data-ux-flow`: dấu hiệu luồng chuẩn mới (cờ rollout) — E2E đợi dấu này thay vì đoán theo chữ
-    <div data-ux-flow="pd" className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       <ToolHero icon="Camera" tone="rose" title="Ảnh sản phẩm studio" detail="Biến ảnh chụp bằng điện thoại thành ảnh studio đạt chuẩn sàn thương mại." />
 
       <FeatureGuidanceCard

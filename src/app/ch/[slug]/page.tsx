@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { PublicChatSlot } from "@/components/chat/public-chat-slot"
 import { notFound } from "next/navigation"
 import { getPublicStoreProfile, recordStoreProfileView } from "@/modules/profiles/use-cases/get-public-store-profile"
 import { PublicStoreProfileView } from "@/components/store-share/public-store-profile-view"
@@ -37,5 +38,10 @@ export default async function StoreSharePage({ params }: PageProps) {
     )
   }
   await recordStoreProfileView(slug)
-  return <PublicStoreProfileView profile={result.profile} />
+  return (
+    <>
+      <PublicStoreProfileView profile={result.profile} />
+      <PublicChatSlot pageKey={{ by: "store_share_slug", value: slug }} surface="store_profile" />
+    </>
+  )
 }

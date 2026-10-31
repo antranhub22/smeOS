@@ -3,6 +3,7 @@
  * Lấy danh sách tất cả các kênh tích hợp, thông tin biểu phí và trạng thái kích hoạt hiện tại.
  */
 
+import { isChannelEnabledByDefault } from "../domain/public-chat-policy"
 import type { TenantContext } from "@/core/tenancy"
 import { ChatChannelRepository, getChatChannelRepository } from "../infra/chat-channel-repository"
 import {
@@ -36,7 +37,8 @@ export async function listChatChannels(
   return allChannels.map((channel) => {
     const existing = existingMap.get(channel)
     const pricing = CHANNEL_PRICING_CATALOG[channel]!
-    const isEnabled = existing ? existing.isEnabled : false
+    // Chưa cấu hình: theo mặc định của kênh — khớp với luồng xử lý tin nhắn
+    const isEnabled = existing ? existing.isEnabled : isChannelEnabledByDefault(channel)
     const expiresAtDate = existing?.subscriptionExpiresAt
       ? new Date(existing.subscriptionExpiresAt)
       : null

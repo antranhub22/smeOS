@@ -29,6 +29,6 @@ defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-remi
 610b171176351a39b13505d3b859226e09736138:src/components/layout/nav-storage.ts:generic-api-key:11
 # Mật khẩu mẫu trong test hộp thoại mật khẩu đối tác (audit AUD-009, 28/10/2026) — giá trị giả
 67da882a24738bf7a31f2f5198f82eeb28ec2035:src/components/organization/__tests__/partner-credential-dialog.test.ts:generic-api-key:17
-# 31/10/2026: khoá giả trong test Integration Hub (nhánh claude/festive-newton-srgq9i) — đã đọc, không phải bí mật.
+# Khoá HMAC giả trong unit test Integration hub (nhánh claude/festive-newton-srgq9i, 30–31/10/2026) — giá trị giả, không phải bí mật thật
 e3c27f6095e8e0e1366d67aeebf28040a951bc72:src/modules/integration-hub/use-cases/__tests__/integration-hub-use-cases.test.ts:generic-api-key:10
 0ccc5b8785a9920fe2a2d4b823a38b5e866ed418:src/modules/integration-hub/use-cases/__tests__/integration-governance.test.ts:generic-api-key:10

@@ -4,6 +4,7 @@ import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { listChatChannels } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import { configureChatChannel } from "@/modules/chat-assistant/use-cases/configure-chat-channel"
+import { PUBLIC_CHAT_SURFACES } from "@/modules/chat-assistant/domain/public-chat-policy"
 import type { SupportedChatChannel } from "@/modules/chat-assistant/domain/channel-integration-types"
 
 const configureSchema = z.object({
@@ -30,6 +31,7 @@ const configureSchema = z.object({
       zaloAccessToken: z.string().optional(),
       zaloRefreshToken: z.string().optional(),
       embedAllowedOrigins: z.array(z.string()).optional(),
+      publicSurfaces: z.array(z.enum(PUBLIC_CHAT_SURFACES)).optional(),
     })
     .optional(),
 })

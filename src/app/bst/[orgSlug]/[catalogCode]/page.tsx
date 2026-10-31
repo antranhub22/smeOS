@@ -1,5 +1,6 @@
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
+import { PublicChatSlot } from "@/components/chat/public-chat-slot"
 import { getPublicGreetingCatalogBySlug } from "@/modules/greeting-card/use-cases/get-public-greeting-catalog-by-slug"
 import { LinkUnavailable } from "@/components/greeting-card/customer/link-unavailable"
 import { ShopContactBar } from "@/components/greeting-card/customer/shop-contact-bar"
@@ -57,6 +58,7 @@ export default async function PublicGreetingCatalogSlugPage({ params }: PageProp
     <>
       {data.shop && <ShopContactBar shop={data.shop} />}
       <BrochurePublicView catalog={data.catalog} products={data.products} shipping={data.shipping} shop={data.shop} />
+      <PublicChatSlot pageKey={{ by: "org_slug", value: orgSlug }} surface="greeting_catalog" />
     </>
   )
 }
