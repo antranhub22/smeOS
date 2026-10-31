@@ -71,6 +71,8 @@ test.describe("Công cụ Hoàn thiện theo chuẩn 03c — trợ năng ở kh�
           await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1)
         }
         await expect(page.getByText(/Công cụ 0\d/)).toHaveCount(0)
+        // Công cụ bật theo cờ: đợi đúng luồng mới hiện ra (máy chủ giữ cờ trong bộ nhớ đệm tới 30 giây).
+        if (tool.flag) await expect(page.locator("[data-ux-flow]")).toHaveCount(1)
       }).toPass({ timeout: 45_000, intervals: [5_000] })
 
       const axe = () => new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()
