@@ -27,7 +27,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | # | Trang | Nhãn menu hiện tại | Ưu tiên | Trạng thái |
 |---|---|---|---|---|
 | 1 | `/don-hang` | Đơn hàng | P1 — dùng hằng ngày | ✅ đầu trang, thẻ đơn, cột kanban (chờ PO duyệt ảnh); thẻ hướng dẫn K1 giữ nguyên |
-| 2 | `/khach-hang` | Khách hàng | P1 | 🟡 |
+| 2 | `/khach-hang` | Khách hàng | P1 | ✅ đầu trang + bộ lọc hạng (nhãn tiếng Việt) + bảng trên điện thoại (cuộn ngang, ẩn cột phụ); thẻ hướng dẫn K1 giữ nguyên — chờ PO quyết nhãn "CRM" trong thẻ K1 |
 | 3 | `/san-pham` | Danh mục sản phẩm | P1 | 🟡 |
 | 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | 🟡 |
 | 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 |
@@ -101,3 +101,5 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: StoreOS #1 Đơn hàng — đầu trang đã làm (bỏ dòng phụ, (?) giải thích). Chưa làm: thẻ đơn và bộ lọc (cần xem thêm).
 - 31/10: Đơn hàng — thẻ đơn `OrderCard`: thay emoji 🌸/💌 bằng icon; bo góc `rounded-2xl`. Chưa có ảnh duyệt (không chạy được app).
 - 31/10: Đơn hàng — cột kanban: tiêu đề thường thay vì IN HOA, bo `rounded-2xl`, nền nhạt. Ảnh gửi PO: `don-hang-mobile.png`, `don-hang-desktop.png`, `don-hang-kanban-desktop.png`.
+- 31/10: Khách hàng — bộ lọc hạng dùng nhãn tiếng Việt (Vàng/Bạc/Đồng/Mới) thay mã GOLD/SILVER; bảng bo góc, ẩn cột phụ trên điện thoại, cuộn ngang. Ảnh gửi PO: `khach-hang-mobile-v2.png`.
+- Cần PO quyết: thẻ hướng dẫn K1 của Khách hàng có chữ "CRM" và "Consent Engine" (đang khoá, chưa đổi).
