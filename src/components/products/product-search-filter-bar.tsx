@@ -1,5 +1,6 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import React, { useState } from "react"
 import {
   Search,
@@ -244,8 +245,9 @@ export function ProductSearchFilterBar({
 
       {/* Hộp nhập khoảng giá tùy chọn nếu chọn "Tùy chọn khoảng giá" */}
       {showCustomPrice && (
-        <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-xl bg-surface-alt border border-border text-body-sm">
-          <span className="text-caption font-bold text-text">Khoảng giá tùy chọn:</span>
+        <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-surface-alt border border-border text-body-sm">
+          <span className="text-caption font-bold text-text">Khoảng giá:</span>
+          <InfoTip label="Khoảng giá">Ví dụ: từ 300.000 đến 1.500.000 ₫</InfoTip>
           <div className="flex items-center gap-1.5">
             <input
               type="number"
@@ -275,9 +277,6 @@ export function ProductSearchFilterBar({
               className="h-8 w-28 rounded-lg border border-border bg-surface px-2 text-caption text-text outline-none focus:border-primary"
             />
           </div>
-          <span className="text-caption text-text-muted italic">
-            (Ví dụ: 300000 đến 1500000)
-          </span>
         </div>
       )}
 
