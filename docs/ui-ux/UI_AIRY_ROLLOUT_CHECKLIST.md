@@ -46,7 +46,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 18 | `/job` | Giao hàng & Bàn giao | P2 | ✅ tiêu đề 'Job' → 'Tiến trình của tôi'; **PO: tiêu đề và tên menu 'Giao hàng & Bàn giao' chưa khớp nhau** |
 | 19 | `/cua-hang` | Đơn nhận từ mạng lưới | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 20 | `/san-pham/kha-dung` | Khả dụng & Lịch | P3 | ✅ tiêu đề sentence-case (ngắn), mô tả → (?) |
-| 21 | `/san-pham/nhap-hang-loat` | Nhập từ Excel & Ảnh | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 21 | `/san-pham/nhap-hang-loat` | Nhập từ Excel & Ảnh | P3 | ✅ đầu trang: bỏ dòng 'Kho sản phẩm', tiêu đề rút gọn ('Nhập từ Excel & ảnh' / 'Nhập danh sách chi nhánh'); bố cục chưa đổi |
 | 22 | `/market-intelligence` | Xu hướng & Cơ hội thị trường | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 23 | `/muc-dung` | Sổ quỹ & Thu chi | P3 | ✅ tiêu đề 'Mức dùng' (chữ thường); bố cục chưa đổi |
 | 24 | `/tin-nhan` | Trao đổi nội bộ | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
@@ -123,3 +123,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Ma trận (#28): component chung `TierGovernanceMatrixClient` đưa mô tả vào (?); 5 trang rút tiêu đề (bỏ 'Ma Trận', chữ thường). Còn: `thong-bao` và bảng chi tiết.
 - 31/10: Khả dụng (#20) — tiêu đề chữ thường, mô tả → (?).
 - 31/10: Báo cáo kinh doanh (#6) — đầu trang: 'Analytics & Learning' → 'Báo cáo kinh doanh', bỏ mã 'MK-10' trên nút.
+- 31/10: Nhập hàng loạt (#21) — đầu trang rút gọn.
