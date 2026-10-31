@@ -28,7 +28,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 |---|---|---|---|---|
 | 1 | `/don-hang` | Đơn hàng | P1 — dùng hằng ngày | ✅ đầu trang, thẻ đơn, cột kanban (chờ PO duyệt ảnh); thẻ hướng dẫn K1 giữ nguyên |
 | 2 | `/khach-hang` | Khách hàng | P1 | ✅ đầu trang + bộ lọc hạng (nhãn tiếng Việt) + bảng trên điện thoại (cuộn ngang, ẩn cột phụ); thẻ hướng dẫn K1 đã đổi chữ (PO đồng ý: bỏ CRM/RFM/Consent) |
-| 3 | `/san-pham` | Danh mục sản phẩm | P1 | 🟡 đầu trang, lưới thẻ, thẻ `ProductCard`, khoảng giá (ví dụ → (?)) đã làm; **còn chế độ bảng quản trị** |
+| 3 | `/san-pham` | Danh mục sản phẩm | P1 | ✅ đầu trang, lưới thẻ, thẻ `ProductCard`, khoảng giá (→ (?)), chế độ bảng (bo `rounded-2xl`, tiêu đề cột chữ thường, thẻ điện thoại) |
 | 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | ✅ đầu trang + 3 thẻ con (mô tả pháp lý → (?), emoji → icon) |
 | 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 đầu trang (tên tiếng Việt, (?)) + nhãn thẻ K1 bỏ tiếng Anh; **còn khung hội thoại 3 cột** |
 | 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 đầu trang (tiêu đề tiếng Việt, bỏ 'Analytics & Learning', mô tả → (?), bỏ mã MK-10); thẻ `StatTile`; K1 đã sửa. **Còn phần phân tích và bảng chi tiết** |
@@ -126,3 +126,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Nhập hàng loạt (#21) — đầu trang rút gọn.
 - 31/10: Thông báo (#28) — `NotificationMatrixPage` đưa mô tả vào (?); tiêu đề 'Thông báo — {tầng}'; emoji 🔒 trong gợi ý → chữ.
 - 31/10: Xu hướng thị trường (#22) — tiêu đề bỏ '&', mô tả → (?). Phát hiện: `/cong-cu/toi-uu-he-thong` trong menu không có trang (#26) — cần PO quyết.
+- 31/10: Sản phẩm (#3) — chế độ bảng (`ProductTableView`): bo góc, bóng, tiêu đề cột không viết hoa.
