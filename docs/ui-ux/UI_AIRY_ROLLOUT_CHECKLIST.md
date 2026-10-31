@@ -38,7 +38,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 10 | `/video` | Tạo video | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 11 | `/tai-anh` | Phân tích ảnh bằng AI | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 12 | `/creative-studio` | Chế tác tự động A-Z | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 13 | `/gia` | Công thức BOM & Tính giá | P2 — bỏ "BOM" | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 13 | `/gia` | Công thức BOM & Tính giá | P2 — bỏ "BOM" | ✅ đầu trang (mô tả → (?)); bố cục chưa đổi |
 | 14 | `/kho-du-lieu` | Kho & Nguyên liệu | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 15 | `/kho-templates` | Kho mẫu & Ấn phẩm | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 16 | `/dieu-phoi` | Sản xuất & Điều phối | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
@@ -114,3 +114,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Catalog (#8) — cảnh báo lỗi: emoji ⚠️ → icon. **Cần PO/kỹ thuật xem:** dữ liệu ứng viên bộ lọc ngân sách có giá trị mặc định cố định ("Đa sắc", "Thiết kế hiện đại", dịp Sinh nhật/Kỷ niệm/Khai trương) — không phải dữ liệu thật (OPERATING_PRINCIPLES §2).
 - 31/10: Video (#10) — thẻ K1: bỏ mã 'M04c' và thuật ngữ kỹ thuật, viết tiếng Việt (cần PO xác nhận nội dung). Lint UX giảm 131→129 vi phạm, đã cập nhật baseline.
 - 31/10: Phân tích ảnh (#11) — file 1.945 dòng, chỉ rà nhãn; cần đợt riêng và xác nhận PO vì có tải ảnh.
+- 31/10: Tính giá (#13) — mô tả đầu trang → (?).
