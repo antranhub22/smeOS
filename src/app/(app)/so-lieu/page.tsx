@@ -7,6 +7,7 @@ import { Check, ArrowLeft, BarChart3, ChevronRight, TrendingUp } from "@/compone
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { StatTile } from "@/components/ui/stat-tile"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
@@ -258,8 +259,8 @@ export default function AnalyticsPage() {
           description="Theo dõi mức sử dụng hạn mức, số liệu thực tế từ các tính năng và duyệt các đề xuất điều chỉnh phong cách nội dung sau các chu kỳ tiếp thị."
           tips={[
             "📊 Mọi số liệu hiển thị là số đo thực tế từ hệ thống (không dùng số liệu mô phỏng)",
-            "⚡ Vòng học phong cách đề xuất tinh chỉnh Tone of Voice và Brand Kit dựa trên phản hồi khách hàng",
-            "🛡️ Duyệt áp dụng chính sách cần quyền quản trị U2 (learning.profile.manage)",
+            "⚡ Vòng học phong cách đề xuất tinh chỉnh giọng điệu và bộ nhận diện thương hiệu dựa trên phản hồi khách hàng",
+            "🛡️ Chỉ người có quyền quản trị mới duyệt áp dụng chính sách",
           ]}
         />
 
@@ -315,19 +316,13 @@ export default function AnalyticsPage() {
                 ))
               ) : usage && usage.by_feature.length > 0 ? (
                 usage.by_feature.map((f) => (
-                  <Card key={f.feature} className="p-4 bg-surface border border-border flex flex-col justify-between gap-2">
-                    <div className="text-caption font-bold text-text-muted uppercase tracking-wider">
-                      {metricLabel(f.feature)}
-                    </div>
-                    <div className="flex items-baseline justify-between mt-1">
-                      <span className="text-display-lg font-black text-text">
-                        {f.quantity.toLocaleString("vi-VN")}
-                      </span>
-                      <span className="text-xs font-semibold text-text-muted">
-                        {f.cost_credit} credits
-                      </span>
-                    </div>
-                  </Card>
+                  // Số to + nhãn nhỏ; chi phí credit nằm trong "?" (OPERATING_PRINCIPLES §6.6)
+                  <StatTile
+                    key={f.feature}
+                    label={metricLabel(f.feature)}
+                    value={f.quantity.toLocaleString("vi-VN")}
+                    tip={`Mỗi lần dùng tốn ${f.cost_credit} credit.`}
+                  />
                 ))
               ) : (
                 <Card className="p-4 col-span-full text-center bg-surface border border-border">
