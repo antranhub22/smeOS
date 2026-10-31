@@ -7,7 +7,7 @@
 
 "use client"
 
-import { Image as ImageIcon, Loader2 } from "lucide-react"
+import { Image as ImageIcon, Loader2 } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 import type { AssetItem, MasterItem } from "./types"
 

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useCallback, useEffect, useState } from "react"
-import { Eye, EyeOff, Pencil, Star, Trash2 } from "lucide-react"
+import { Eye, EyeOff, Pencil, Star, Trash2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { EmptyState } from "@/components/ui/empty-state"

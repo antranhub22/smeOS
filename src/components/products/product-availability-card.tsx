@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Calendar, Layers, Clock, CheckCircle2, Plus, Trash2, ShieldCheck, AlertCircle, Loader2 } from "lucide-react"
+import { Calendar, Layers, Clock, CheckCircle2, Plus, Trash2, ShieldCheck, AlertCircle, Loader2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {

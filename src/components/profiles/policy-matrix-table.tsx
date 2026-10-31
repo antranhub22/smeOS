@@ -8,7 +8,7 @@ import {
   Clock,
   AlertTriangle,
   Camera,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import {
   applyHolidayAutoPreset,
   type BrochurePaymentPolicy,

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { HelpCircle, ChevronDown, ChevronUp } from "lucide-react"
+import { HelpCircle, ChevronDown, ChevronUp } from "@/components/ui/icons"
 import type { LandingSectionFaq } from "@/modules/content-engine/domain/landing-content-generator"
 
 interface LandingTemplateFaqProps {

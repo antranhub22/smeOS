@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { HelpCircle, X, BookOpen, Shield, Users, Sparkles } from "lucide-react"
+import { HelpCircle, X, BookOpen, Shield, Users, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"

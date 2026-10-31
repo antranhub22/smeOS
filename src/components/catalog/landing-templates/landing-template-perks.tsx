@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Camera, Clock, ShieldCheck, Gift, CheckCircle2 } from "lucide-react"
+import { Camera, Clock, ShieldCheck, Gift, CheckCircle2 } from "@/components/ui/icons"
 import type { LandingSectionPerk } from "@/modules/content-engine/domain/landing-content-generator"
 
 interface LandingTemplatePerksProps {

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { X, Smartphone, Monitor, ExternalLink, RefreshCw } from "lucide-react"
+import { X, Smartphone, Monitor, ExternalLink, RefreshCw } from "@/components/ui/icons"
 
 interface BrochurePreviewModalProps {
   url: string

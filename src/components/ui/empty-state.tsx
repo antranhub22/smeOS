@@ -1,6 +1,7 @@
-import type { LucideIcon } from "lucide-react"
+import type { LucideIcon } from "@/components/ui/icons"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { IconTile } from "@/components/ui/app-icon"
 import { cn } from "@/lib/utils"
 
 export interface EmptyStateProps {
@@ -19,12 +20,13 @@ export function EmptyState({ title, reason, action, icon: Icon, className }: Emp
   return (
     <div className={cn("flex flex-col items-center justify-center gap-2 p-6 text-center", className)}>
       {Icon && (
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-alt text-text-muted">
-          <Icon size={20} aria-hidden="true" />
+        // Icon lớn làm điểm nhìn (OPERATING_PRINCIPLES §6.2): ô nhạt 48px, icon 24px.
+        <div className="mb-1 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-muted text-primary ring-1 ring-inset ring-primary/15">
+          <Icon size={24} weight="duotone" aria-hidden="true" />
         </div>
       )}
-      <div className="text-body font-semibold text-text">{title}</div>
-      {reason && <p className="text-xs text-text-muted max-w-sm">{reason}</p>}
+      <div className="text-title-sm font-bold text-text">{title}</div>
+      {reason && <p className="text-body-sm text-text-muted max-w-sm">{reason}</p>}
       {action && (
         <div className="mt-1">
           {action.href ? (

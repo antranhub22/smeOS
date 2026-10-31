@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useMemo } from "react"
-import { Play, Video, Sparkles } from "lucide-react"
+import { Play, Video, Sparkles } from "@/components/ui/icons"
 
 interface LandingTemplateVideoProps {
   videoUrl?: string | undefined

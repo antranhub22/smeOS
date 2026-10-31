@@ -4,7 +4,7 @@ import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { AlertTriangle, CheckCircle2, Clock, Loader2, XCircle, ChevronRight } from "lucide-react"
+import { AlertTriangle, CheckCircle2, Clock, Loader2, XCircle, ChevronRight } from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
 import { NHAN_TINH_NANG } from "@/lib/feature-labels"
@@ -113,7 +113,7 @@ export default function JobListPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center border-b border-border bg-surface px-4 py-4">
-        <h1 className="text-title font-extrabold text-primary">Tiến trình Job của tôi</h1>
+        <h1 className="text-title font-extrabold text-primary">Giao hàng & bàn giao</h1>
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">

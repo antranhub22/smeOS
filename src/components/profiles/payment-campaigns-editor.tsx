@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { FULL_PAYMENT, policyLabel, type PolicyCampaign } from "@/modules/greeting-card/domain/payment-plan"
 

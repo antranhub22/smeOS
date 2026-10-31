@@ -9,7 +9,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   // 1. TRUNG TÂM ĐIỀU HÀNH
   {
     href: "/",
-    label: "Tổng quan ngành",
+    label: "Tổng quan",
     group: "trung-tam-dieu-hanh",
     iconKey: "LayoutDashboard",
     navKey: "industry-overview",
@@ -19,7 +19,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   // 2. CÔNG CỤ BÁN HÀNG
   {
     href: "/cong-cu",
-    label: "Thư viện 51 công cụ (9 nhóm)",
+    label: "Công cụ",
     group: "cong-cu-ban-hang",
     iconKey: "LayoutGrid",
     navKey: "industry-toolkit",
@@ -27,7 +27,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/creative-studio",
-    label: "Chế tác tự động A-Z",
+    label: "Chế tác tự động",
     group: "cong-cu-ban-hang",
     iconKey: "Sparkles",
     navKey: "industry-auto-campaign",
@@ -36,7 +36,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/landing-page",
-    label: "Landing Page & Kênh bán",
+    label: "Landing page",
     group: "cong-cu-ban-hang",
     iconKey: "Globe",
     navKey: "industry-landing",
@@ -62,7 +62,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/market-intelligence",
-    label: "Xu hướng & Cơ hội ngành",
+    label: "Xu hướng ngành",
     group: "cong-cu-ban-hang",
     iconKey: "TrendingUp",
     navKey: "industry-market",
@@ -71,7 +71,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/kho-templates",
-    label: "Thư viện Template",
+    label: "Thư viện mẫu",
     group: "cong-cu-ban-hang",
     iconKey: "LayoutTemplate",
     navKey: "industry-templates",
@@ -81,7 +81,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   // 3. SẢN PHẨM & DANH MỤC NGHÀNH
   {
     href: "/san-pham",
-    label: "Danh mục & Sản phẩm mẫu",
+    label: "Sản phẩm mẫu",
     group: "san-pham-nganh",
     iconKey: "Package",
     navKey: "industry-products",
@@ -90,7 +90,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/nganh",
-    label: "Taxonomy & Quy chuẩn",
+    label: "Quy chuẩn ngành",
     group: "san-pham-nganh",
     iconKey: "Layers",
     navKey: "industry-taxonomy",
@@ -98,7 +98,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/truong-du-lieu",
-    label: "Trường dữ liệu ngành",
+    label: "Trường dữ liệu",
     group: "san-pham-nganh",
     iconKey: "SlidersHorizontal",
     navKey: "industry-fields",
@@ -106,7 +106,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/gia",
-    label: "Chính sách giá & Chiết khấu ngành",
+    label: "Giá & chiết khấu",
     group: "san-pham-nganh",
     iconKey: "WalletCards",
     navKey: "industry-pricing",
@@ -117,7 +117,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   // 4. MẠNG LƯỚI & ĐIỀU PHỐI
   {
     href: "/dieu-phoi/doi-tac",
-    label: "Đối tác & Nhà cung cấp",
+    label: "Đối tác",
     group: "mang-luoi-dieu-phoi",
     iconKey: "Building2",
     navKey: "industry-partners",
@@ -125,7 +125,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/don-hang",
-    label: "Đơn hàng Affiliate",
+    label: "Đơn Affiliate",
     group: "mang-luoi-dieu-phoi",
     iconKey: "ShoppingBag",
     navKey: "industry-orders",
@@ -134,7 +134,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/dieu-phoi",
-    label: "Điều phối tự động",
+    label: "Điều phối",
     group: "mang-luoi-dieu-phoi",
     iconKey: "Radio",
     navKey: "industry-dispatch",
@@ -163,7 +163,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/du-lieu",
-    label: "Hoa hồng & Đối soát",
+    label: "Hoa hồng & đối soát",
     group: "hieu-qua-thuong-mai",
     iconKey: "DollarSign",
     navKey: "industry-clearing",
@@ -173,7 +173,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   // 6. THIẾT LẬP
   {
     href: "/cai-dat?tab=INFO",
-    label: "Hồ sơ & Tiêu chuẩn ngành",
+    label: "Hồ sơ ngành",
     group: "thiet-lap-nganh",
     iconKey: "Building2",
     navKey: "industry-standard-profile",
@@ -182,7 +182,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat",
-    label: "Chính sách & Cấu hình ngành",
+    label: "Cấu hình ngành",
     group: "thiet-lap-nganh",
     iconKey: "Settings2",
     navKey: "industry-settings",
@@ -200,7 +200,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-uudai",
-    label: "Ma trận ưu đãi & voucher",
+    label: "Ma trận ưu đãi",
     group: "thiet-lap-nganh",
     iconKey: "Tag",
     navKey: "industry-matrix-promotions",
@@ -209,7 +209,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-camket",
-    label: "Ma trận cam kết chất lượng",
+    label: "Ma trận cam kết",
     group: "thiet-lap-nganh",
     iconKey: "ShieldCheck",
     navKey: "industry-matrix-commitments",
@@ -218,7 +218,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-chinhsach",
-    label: "Ma trận chính sách ngành",
+    label: "Ma trận chính sách",
     group: "thiet-lap-nganh",
     iconKey: "FileText",
     navKey: "industry-matrix-policies",
@@ -227,7 +227,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-thanhtoan-datco",
-    label: "Ma trận thanh toán & đặt cọc",
+    label: "Ma trận thanh toán",
     group: "thiet-lap-nganh",
     iconKey: "CreditCard",
     navKey: "industry-matrix-payments",
@@ -236,7 +236,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-phigiacong",
-    label: "Ma trận phí gia công & thợ",
+    label: "Ma trận phí gia công",
     group: "thiet-lap-nganh",
     iconKey: "Wrench",
     navKey: "industry-matrix-craft-fees",
@@ -248,7 +248,7 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
 export const INDUSTRY_GROUPS_CONFIG = [
   { key: "trung-tam-dieu-hanh", label: "Trung tâm Điều hành" },
   { key: "cong-cu-ban-hang", label: "Công cụ Bán hàng" },
-  { key: "san-pham-nganh", label: "Sản phẩm & Danh mục Ngành" },
+  { key: "san-pham-nganh", label: "Sản phẩm ngành" },
   { key: "mang-luoi-dieu-phoi", label: "Mạng lưới & Điều phối" },
   { key: "hieu-qua-thuong-mai", label: "Hiệu quả Thương mại" },
   { key: "thiet-lap-nganh", label: "Thiết lập" },

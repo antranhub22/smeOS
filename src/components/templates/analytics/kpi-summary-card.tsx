@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { TrendingUp, ArrowUpRight, DollarSign, ShoppingCart, Percent } from "lucide-react"
+import { TrendingUp, ArrowUpRight, DollarSign, ShoppingCart, Percent } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 

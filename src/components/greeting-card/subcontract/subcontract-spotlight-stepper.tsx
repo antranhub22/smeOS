@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Check, Lock, ShieldCheck, Camera, Truck, FileCheck2 } from "lucide-react"
+import { Check, Lock, ShieldCheck, Camera, Truck, FileCheck2 } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 
 export type SubcontractStepId = 1 | 2 | 3 | 4

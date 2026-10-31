@@ -1,5 +1,5 @@
 import React from "react"
-import { UserRound } from "lucide-react"
+import { UserRound } from "@/components/ui/icons"
 
 /**
  * Hướng dẫn thêm chủ cửa hàng để nhận lời mời gia công NHẮN RIÊNG 1:1 (không qua nhóm).

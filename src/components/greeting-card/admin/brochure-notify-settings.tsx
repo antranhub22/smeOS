@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { BellRing, Loader2, Save, Send } from "lucide-react"
+import { BellRing, Loader2, Save, Send } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { NOTIFY_EVENTS, NOTIFY_EVENT_LABELS, type NotifyChannel } from "@/modules/greeting-card/domain/customer-notifications"

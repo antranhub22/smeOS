@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Archive, Filter, User } from "lucide-react"
+import { Archive, Filter, User } from "@/components/ui/icons"
 
 export type CatalogStatusFilter = "active" | "archived"
 export type CatalogDaysFilter = "3" | "all"

@@ -8,6 +8,7 @@
  */
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useState, useMemo } from "react"
 import {
   BellRing,
@@ -18,7 +19,7 @@ import {
   Sparkles,
   AlertTriangle,
   RefreshCw,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { NotificationMatrixGroupTable } from "./notification-matrix-group-table"
@@ -145,10 +146,11 @@ export function NotificationMatrixPage({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl border border-border bg-surface shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <BellRing size={20} className="text-primary" />
+            <BellRing size={20} className="text-primary" aria-hidden="true" />
             <h1 className="text-title-sm font-extrabold text-text">{title}</h1>
+            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+            <InfoTip label={title} side="bottom">{description}</InfoTip>
           </div>
-          <p className="text-caption text-text-muted mt-1">{description}</p>
         </div>
 
         {/* Stats Pill */}
@@ -181,7 +183,7 @@ export function NotificationMatrixPage({
         description="Thiết lập sự kiện nào được gửi qua kênh nào. Tầng dưới kế thừa cài đặt tầng trên, nhưng có thể ghi đè (Bottom-up Override). Khóa cứng (🔒) ngăn tầng dưới thay đổi."
         tips={[
           "Bật/tắt toggle để kích hoạt hoặc vô hiệu hóa thông báo cho từng kênh.",
-          `${canManageHardLocks ? "Bấm biểu tượng 🔒 để khóa cứng — tầng dưới không thể ghi đè." : "Biểu tượng 🔒 vàng nghĩa là tầng trên đã khóa cứng, bạn không thể thay đổi."}`,
+          `${canManageHardLocks ? "Bấm biểu tượng ổ khóa để khóa cứng — tầng dưới không thể ghi đè." : "Biểu tượng 🔒 vàng nghĩa là tầng trên đã khóa cứng, bạn không thể thay đổi."}`,
           "Tìm kiếm theo tên sự kiện hoặc lọc theo nhóm để nhanh chóng tìm đúng cài đặt.",
         ]}
       />

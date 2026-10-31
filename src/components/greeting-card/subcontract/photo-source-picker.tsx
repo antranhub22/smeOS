@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef } from "react"
-import { Camera, ImageUp } from "lucide-react"
+import { Camera, ImageUp } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 interface PhotoSourcePickerProps {

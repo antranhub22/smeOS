@@ -29,7 +29,7 @@ import {
   Settings2,
   BookOpen,
   Cpu,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { COMING_SOON_LABEL, isRouteLocked } from "@/lib/feature-lock"
 import { Button } from "@/components/ui/button"

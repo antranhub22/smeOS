@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Clock, ExternalLink, Inbox, MapPin, RefreshCw, Store } from "lucide-react"
+import { Clock, ExternalLink, Inbox, MapPin, RefreshCw, Store } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi } from "@/components/greeting-card/greeting-api"
 

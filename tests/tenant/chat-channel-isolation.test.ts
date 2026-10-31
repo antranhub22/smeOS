@@ -41,13 +41,14 @@ describe("cách ly tenant — Tích hợp Đa Kênh Chat & Định giá M08 (P23
   })
 
   it("cấu hình kênh và API credentials của Tổ chức A không bao giờ lộ sang Tổ chức B", async () => {
-    // Tổ chức A cấu hình kênh E-Catalog với thông điệp chào riêng
+    // Tổ chức A cấu hình kênh E-Catalog với thông điệp chào riêng và TẮT kênh — khác mặc định (bật),
+    // để nếu cấu hình của A lộ sang B thì B thấy trạng thái tắt
     const resA = await configureChannel(
       withSession(BASE, a.token, {
         method: "POST",
         body: JSON.stringify({
           channel: "STOREFRONT_CATALOG",
-          isEnabled: true,
+          isEnabled: false,
           config: {
             welcomeMessage: "Chào mừng bạn đến với Tiệm Hoa Alpha!",
             botName: "Bot Alpha",
@@ -64,7 +65,8 @@ describe("cách ly tenant — Tích hợp Đa Kênh Chat & Định giá M08 (P23
     const catalogB = dataB.channels.find((c) => c.channel === "STOREFRONT_CATALOG")
 
     expect(catalogB).toBeDefined()
-    expect(catalogB?.isEnabled).toBe(false)
+    // B chưa cấu hình → mặc định của kênh catalog (bật), không phải trạng thái của A
+    expect(catalogB?.isEnabled).toBe(true)
     expect(catalogB?.config?.welcomeMessage).toBeUndefined()
     expect(catalogB?.config?.botName).toBeUndefined()
   })

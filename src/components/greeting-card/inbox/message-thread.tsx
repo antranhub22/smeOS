@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from "react"
-import { CornerUpLeft } from "lucide-react"
+import { CornerUpLeft } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import type { ThreadMessageView } from "@/modules/greeting-card/use-cases/internal-messages"
 import { MessageComposer } from "./message-composer"

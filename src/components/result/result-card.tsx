@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Pencil, Plus, X, AlertTriangle, ShieldCheck, ChevronDown, ChevronUp } from "lucide-react"
+import { Pencil, Plus, X, AlertTriangle, ShieldCheck, ChevronDown, ChevronUp } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

@@ -12,7 +12,7 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { CalendarHeart, Plus, Check, AlertCircle, CheckCircle2, Power } from "lucide-react"
+import { CalendarHeart, Plus, Check, AlertCircle, CheckCircle2, Power } from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { OCCASION_REGISTER_LABELS, type OccasionRegisterValue } from "@/modules/organization/domain/occasion-rules"
 import { errorText } from "@/lib/error-text"

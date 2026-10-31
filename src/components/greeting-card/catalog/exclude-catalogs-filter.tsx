@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Layers, Loader2 } from "lucide-react"
+import { Layers, Loader2 } from "@/components/ui/icons"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 

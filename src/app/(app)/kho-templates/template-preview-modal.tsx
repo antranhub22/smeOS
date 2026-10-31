@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Info } from "lucide-react"
+import { Info } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 
 export interface TemplatePreviewModalProps {

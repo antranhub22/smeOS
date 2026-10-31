@@ -3,7 +3,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, CheckCircle2, Download, Edit, RefreshCw, Folder, Camera } from "lucide-react"
+import { AlertTriangle, CheckCircle2, Download, Edit, RefreshCw, Folder, Camera } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { TabActionHeader } from "@/components/ui/tab-header"
 import { SkeletonBlock } from "@/components/ui/skeleton"

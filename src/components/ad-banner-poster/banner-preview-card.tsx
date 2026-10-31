@@ -1,7 +1,7 @@
 "use client"
 
 import React, { forwardRef } from "react"
-import { Phone, MapPin, Sparkles, ArrowRight, ShieldCheck } from "lucide-react"
+import { Phone, MapPin, Sparkles, ArrowRight, ShieldCheck } from "@/components/ui/icons"
 import type {
   BannerAspectRatio,
   BannerCopyPayload,

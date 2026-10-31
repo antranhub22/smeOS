@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ArrowLeft, Package, Plus, Trash2, Search, Loader2, X, CheckCircle, ShieldCheck } from "lucide-react"
+import { ArrowLeft, Package, Plus, Trash2, Search, Loader2, X, CheckCircle, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useSession } from "@/lib/session"

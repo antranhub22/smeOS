@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle } from "@/components/ui/icons"
 import type { PublicCatalogResult, PublicCatalogProduct } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import type { GeneratedLandingPackage } from "@/modules/content-engine/domain/landing-content-generator"
 import { ProductDetailModal } from "./product-detail-modal"

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Search, CheckCircle2, Store, Plus } from "lucide-react"
+import { Search, CheckCircle2, Store, Plus } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ProductThumb } from "@/components/products/product-thumb"

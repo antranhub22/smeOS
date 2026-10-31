@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { ImagePlus, X } from "lucide-react"
+import { ImagePlus, X } from "@/components/ui/icons"
 import { uploadImageFile } from "../ai-product-helpers"
 
 interface Props {

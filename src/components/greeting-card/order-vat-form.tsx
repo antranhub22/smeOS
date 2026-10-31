@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Receipt } from "lucide-react"
+import { Receipt } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 

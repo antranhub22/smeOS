@@ -2,7 +2,7 @@
 
 import React from "react"
 import { Card } from "@/components/ui/card"
-import { Folder, ChevronRight, FileSpreadsheet } from "lucide-react"
+import { Folder, ChevronRight, FileSpreadsheet } from "@/components/ui/icons"
 import type { StoreDomainFolder } from "@/modules/field-platform/use-cases/get-store-folder-data"
 
 interface DomainFolderCardProps {

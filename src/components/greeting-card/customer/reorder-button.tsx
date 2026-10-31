@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Plus } from "lucide-react"
+import { Plus } from "@/components/ui/icons"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { familyHref } from "./use-order-family"
 

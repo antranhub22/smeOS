@@ -7,7 +7,7 @@ import type {
   BrandProfile,
   CatalogProductItem,
 } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
-import { Flower2, Phone, MapPin, Sparkles, ShoppingBag, CheckCircle2 } from "lucide-react"
+import { Flower2, Phone, MapPin, Sparkles, ShoppingBag, CheckCircle2 } from "@/components/ui/icons"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import { publicThemeVars } from "../public/public-theme-vars"
 import { CollectionDividerLayout, ProductDetailLayout } from "./catalog-page-extra-layouts"

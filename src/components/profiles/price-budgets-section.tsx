@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { DollarSign, Loader2, Plus, RotateCcw, Save, Trash2, Wand2 } from "lucide-react"
+import { DollarSign, Loader2, Plus, RotateCcw, Save, Trash2, Wand2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {

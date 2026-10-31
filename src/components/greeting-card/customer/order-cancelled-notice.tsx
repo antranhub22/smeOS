@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { XCircle } from "lucide-react"
+import { XCircle } from "@/components/ui/icons"
 import { vnDeadlineLabel } from "@/modules/greeting-card/domain/customer-cancellation-notice"
 
 export interface CancellationNoticeData {

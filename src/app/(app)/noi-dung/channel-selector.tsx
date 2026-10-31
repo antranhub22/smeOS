@@ -6,7 +6,7 @@
  */
 
 import React from "react"
-import { Check } from "lucide-react"
+import { Check } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 
 export const CHANNELS_CONFIG = [

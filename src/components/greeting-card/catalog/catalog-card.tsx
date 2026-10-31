@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Check, ChevronRight, Copy, Download, Edit2, Eye, Loader2, Package, RotateCcw, Trash2 } from "lucide-react"
+import { Check, ChevronRight, Copy, Download, Edit2, Eye, Loader2, Package, RotateCcw, Trash2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 

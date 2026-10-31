@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Heart, MessageCircle, Palette, RefreshCw, RotateCcw, Tags } from "lucide-react"
+import { Heart, MessageCircle, Palette, RefreshCw, RotateCcw, Tags } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { photoBackdrop } from "./swipe-card"
 import { ProductInfo } from "../product-info/product-info"

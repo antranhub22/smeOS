@@ -1,9 +1,12 @@
 "use client"
 
-import React, { useState } from "react"
-import { Gift, Camera, Clock, CheckCircle2, ArrowRight, Loader2 } from "lucide-react"
+import React from "react"
+import { Gift, Camera, Clock, CheckCircle2, ArrowRight, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { TurnstileWidget } from "@/components/acquisition/turnstile-widget"
+import { useLeadCapture } from "@/components/acquisition/use-lead-capture"
+import { LEAD_CONSENT_TEXT } from "@/modules/acquisition/domain/lead-rules"
 
 interface LandingTemplateLeadProps {
   archetypeId: string
@@ -20,10 +23,7 @@ export function LandingTemplateLead({
   catalogSlug,
   lead,
 }: LandingTemplateLeadProps) {
-  const [phone, setPhone] = useState("")
-  const [submitted, setSubmitted] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState<string | null>(null)
+  const { fields, update, setToken, submitted, submitting, error: submitError, submit } = useLeadCapture(catalogSlug)
 
   const isLuxury = archetypeId === "minimal-luxury"
   const isRomantic = archetypeId === "pastel-romantic"
@@ -66,34 +66,11 @@ export function LandingTemplateLead({
     ? "bg-text text-surface hover:bg-text/90 rounded-lg font-bold px-5"
     : "bg-primary hover:bg-primary-dark text-primary-foreground font-semibold px-4"
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const inputStyle = `h-10 text-xs bg-surface text-text border-border ${isLuxury ? "rounded-full px-4" : isModern ? "rounded-lg" : "rounded-xl"}`
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!phone.trim()) return
-
-    // Nếu không có catalogSlug (ví dụ: preview trong editor) → chỉ hiển thị UI success
-    if (!catalogSlug) {
-      setSubmitted(true)
-      return
-    }
-
-    setSubmitting(true)
-    setSubmitError(null)
-    try {
-      const res = await fetch(`/api/v1/public/catalog/${catalogSlug}/lead`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: phone.trim() }),
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error((data as { message?: string }).message || "Không thể gửi yêu cầu tư vấn.")
-      }
-      setSubmitted(true)
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Đã có lỗi xảy ra, vui lòng thử lại.")
-    } finally {
-      setSubmitting(false)
-    }
+    void submit()
   }
 
   return (
@@ -115,39 +92,74 @@ export function LandingTemplateLead({
         <div className="p-4 rounded-2xl bg-success/10 border border-success/30 text-success text-center space-y-1 animate-in fade-in">
           <div className="flex items-center justify-center gap-1.5 text-xs font-bold">
             <CheckCircle2 size={16} />
-            <span>Đã ghi nhận số điện thoại thành công!</span>
+            <span>Cửa hàng đã nhận thông tin của bạn!</span>
           </div>
-          <p className="text-caption opacity-90">
+          <p className="text-caption text-text">
             Tiệm sẽ liên hệ lại qua Zalo để xác nhận mẫu cho bạn.
           </p>
         </div>
       ) : (
         <div className="space-y-2">
-          <form onSubmit={handleSubmit} className="max-w-sm mx-auto flex flex-col sm:flex-row gap-2">
+          <form onSubmit={handleSubmit} className="max-w-sm mx-auto flex flex-col gap-2">
             <Input
-              type="tel"
-              placeholder="Nhập số điện thoại Zalo..."
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className={`h-10 text-xs bg-surface text-text border-border ${isLuxury ? "rounded-full px-4" : isModern ? "rounded-lg" : "rounded-xl"}`}
+              placeholder="Tên của bạn"
+              value={fields.name}
+              onChange={(e) => update("name", e.target.value)}
+              className={inputStyle}
+              autoComplete="name"
               required
               disabled={submitting}
             />
-            <Button
-              type="submit"
-              size="sm"
-              disabled={submitting}
-              className={`h-10 text-xs shrink-0 flex items-center justify-center gap-1.5 shadow-xs ${buttonStyle}`}
-            >
-              {submitting ? (
-                <Loader2 size={13} className="animate-spin" />
-              ) : (
-                <>
-                  <span>Tư vấn ngay</span>
-                  <ArrowRight size={13} />
-                </>
-              )}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Input
+                type="tel"
+                placeholder="Số điện thoại Zalo"
+                value={fields.phone}
+                onChange={(e) => update("phone", e.target.value)}
+                className={inputStyle}
+                autoComplete="tel"
+                required
+                disabled={submitting}
+              />
+              <Button
+                type="submit"
+                size="sm"
+                disabled={submitting}
+                className={`h-10 text-xs shrink-0 flex items-center justify-center gap-1.5 shadow-xs ${buttonStyle}`}
+              >
+                {submitting ? (
+                  <Loader2 size={13} className="animate-spin" />
+                ) : (
+                  <>
+                    <span>Tư vấn ngay</span>
+                    <ArrowRight size={13} />
+                  </>
+                )}
+              </Button>
+            </div>
+            {/* Ô bẫy: ẩn với người thật, máy tự điền sẽ bị từ chối */}
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+              value={fields.website}
+              onChange={(e) => update("website", e.target.value)}
+            />
+            <label className="flex items-start gap-2 text-left text-caption text-text-muted">
+              <input
+                type="checkbox"
+                className="mt-0.5 accent-primary"
+                checked={fields.consent}
+                onChange={(e) => update("consent", e.target.checked)}
+                required
+                disabled={submitting}
+              />
+              <span>{LEAD_CONSENT_TEXT}</span>
+            </label>
+            <TurnstileWidget onToken={setToken} />
           </form>
           {submitError && (
             <p className="text-center text-caption text-primary mt-1">{submitError}</p>

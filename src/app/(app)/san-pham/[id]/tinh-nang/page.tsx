@@ -3,7 +3,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Info, RefreshCw } from "lucide-react";
+import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Info, RefreshCw } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

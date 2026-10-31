@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { ShieldCheck, Info, CheckCircle2, Lock } from "lucide-react"
+import { ShieldCheck, Info, CheckCircle2, Lock } from "@/components/ui/icons"
 import type { StoreCollectionTransparencyResult } from "@/modules/field-platform/use-cases/get-store-collection-transparency"
 
 interface TransparencyCardProps {

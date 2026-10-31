@@ -1,10 +1,11 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, RefreshCw } from "lucide-react"
+import { ArrowLeft, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useSession } from "@/lib/session"
@@ -95,9 +96,12 @@ export default function GiaPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-        <div>
+        <div className="flex items-center gap-2">
           <h1 className="text-title font-extrabold text-primary">Tính giá sản phẩm</h1>
-          <div className="text-caption text-text-muted">Đối soát giá bán, hoa hồng xưởng và quy tắc sàn trần</div>
+          {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+          <InfoTip label="Tính giá sản phẩm" side="bottom">
+            Đối soát giá bán, hoa hồng xưởng và quy tắc giá sàn, giá trần.
+          </InfoTip>
         </div>
         <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
           <ArrowLeft size={16} /> Quay về Trang chủ

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ChevronLeft, ChevronRight, Play, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Play, X } from "@/components/ui/icons"
 
 /** URL ký sẵn có đuôi tệp trong đường dẫn; video nhận theo đuôi. */
 export function isVideoUrl(url: string): boolean {

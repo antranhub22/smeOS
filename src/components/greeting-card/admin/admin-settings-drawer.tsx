@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect } from "react"
-import { X } from "lucide-react"
+import { X } from "@/components/ui/icons"
 import { BrochureWorkflowSettings } from "./brochure-workflow-settings"
 import { BrochureStepTimeoutSettings } from "./brochure-step-timeout-settings"
 import { BrochureStepSlaSettings } from "./brochure-step-sla-settings"

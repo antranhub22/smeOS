@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Palette, RefreshCw } from "lucide-react"
+import { Palette, RefreshCw } from "@/components/ui/icons"
 import { isValidHexColor } from "@/modules/profiles/domain/profile-rules"
 
 export interface BrandColors {

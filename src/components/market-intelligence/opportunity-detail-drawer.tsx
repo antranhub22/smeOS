@@ -19,7 +19,7 @@ import {
   ShieldCheck,
   ChevronDown,
   ArrowRight,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import type { OpportunityItem, EvidenceReference } from "./opportunity-card";
 import { getOpportunityIllustration } from "./opportunity-illustration";

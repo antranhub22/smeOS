@@ -1,5 +1,6 @@
 "use client";
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,7 +11,7 @@ import {
   Search,
   Camera,
   Settings,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card";
 import { CustomResearchModal } from "@/components/market-intelligence/custom-research-modal";
 import { MarketIntelligenceView } from "@/components/market-intelligence/market-intelligence-view";
@@ -108,12 +109,13 @@ export default function MarketIntelligencePage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold tracking-tight text-text flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" />
-              Xu hướng & cơ hội thị trường
+              Xu hướng thị trường
             </h1>
+            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+            <InfoTip label="Xu hướng thị trường" side="bottom">
+              Tìm dịp, xu hướng và chủ đề nên làm — theo thời gian, từ khóa hoặc ảnh mẫu.
+            </InfoTip>
           </div>
-          <p className="text-xs text-text-muted mt-0.5">
-            Tìm dịp, xu hướng và chủ đề nên làm — theo thời gian, từ khóa hoặc ảnh mẫu
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -183,7 +185,7 @@ export default function MarketIntelligencePage() {
               <button
                 onClick={() => setIsAdminModalOpen(true)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 shadow-2xs transition"
-                title="SaaS Admin: Thiết lập tiêu chí Xu hướng vĩ mô toàn quốc cho mọi Tenant"
+                title="Quản trị nền tảng: đặt tiêu chí xu hướng toàn quốc cho mọi cửa hàng"
               >
                 <Shield className="h-3.5 w-3.5 text-primary" />
                 Tiêu Chí Vĩ Mô

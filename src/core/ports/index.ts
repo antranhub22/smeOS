@@ -11,3 +11,4 @@ export * from "./speech-provider";
 export * from "./embedding-provider";
 export * from "./trend-provider";
 export * from "./sales-channel-catalog-provider";
+export * from "./human-verification";

@@ -5,6 +5,8 @@ export interface QRCodeOptions {
   margin?: number
   darkColor?: string
   lightColor?: string
+  /** "H" khi đặt logo giữa mã (chịu che ~30%); mặc định "M". */
+  errorCorrectionLevel?: "L" | "M" | "Q" | "H"
 }
 
 /**
@@ -14,7 +16,7 @@ export async function generateQRCodeDataUrl(
   text: string,
   options: QRCodeOptions = {}
 ): Promise<string> {
-  const { width = 400, margin = 2, darkColor = "#000000", lightColor = "#ffffff" } = options
+  const { width = 400, margin = 2, darkColor = "#000000", lightColor = "#ffffff", errorCorrectionLevel = "M" } = options
   return QRCode.toDataURL(text, {
     width,
     margin,
@@ -22,7 +24,7 @@ export async function generateQRCodeDataUrl(
       dark: darkColor,
       light: lightColor,
     },
-    errorCorrectionLevel: "M",
+    errorCorrectionLevel,
   })
 }
 
@@ -33,7 +35,7 @@ export async function generateQRCodeSvg(
   text: string,
   options: QRCodeOptions = {}
 ): Promise<string> {
-  const { width = 400, margin = 2, darkColor = "#000000", lightColor = "#ffffff" } = options
+  const { width = 400, margin = 2, darkColor = "#000000", lightColor = "#ffffff", errorCorrectionLevel = "M" } = options
   return QRCode.toString(text, {
     type: "svg",
     width,
@@ -42,7 +44,7 @@ export async function generateQRCodeSvg(
       dark: darkColor,
       light: lightColor,
     },
-    errorCorrectionLevel: "M",
+    errorCorrectionLevel,
   })
 }
 

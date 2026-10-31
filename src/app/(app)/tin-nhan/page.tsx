@@ -10,7 +10,7 @@ import {
   ShieldCheck,
   Search,
   Package,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type {
   InternalChatConversation,
   InternalChatMessage,

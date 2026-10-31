@@ -12,7 +12,7 @@
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, ArrowLeft, Check, Cloud, Server } from "lucide-react"
+import { AlertTriangle, ArrowLeft, Check, Cloud, Server } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Dialog } from "@/components/ui/dialog"

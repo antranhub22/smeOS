@@ -22,7 +22,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Camera, X, Check, Pencil, Info, AlertTriangle, RotateCcw } from "lucide-react"
+import { Camera, X, Check, Pencil, Info, AlertTriangle, RotateCcw } from "@/components/ui/icons"
 import { FlowTopBar } from "@/components/layout/flow-top-bar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

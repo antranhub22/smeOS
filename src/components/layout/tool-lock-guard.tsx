@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { Lock } from "lucide-react"
+import { Lock } from "@/components/ui/icons"
 import { EmptyState } from "@/components/ui/empty-state"
 import { useSession } from "@/lib/session"
 import { lockedToolForPath } from "@/modules/organization/domain/tool-route-entitlement"

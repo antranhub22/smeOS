@@ -16,7 +16,7 @@ import {
   X,
   RefreshCw,
   SlidersHorizontal,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { useSession } from "@/lib/session"
 import { TRACKING_CATEGORIES, getIndustryTrackingCategories } from "@/modules/greeting-card/domain/tracking-filters"

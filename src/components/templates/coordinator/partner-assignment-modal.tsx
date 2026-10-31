@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { X, Users, CheckCircle2, MapPin, Star, Plus, AlertTriangle } from "lucide-react"
+import { X, Users, CheckCircle2, MapPin, Star, Plus, AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { StructuredAddress } from "@/modules/products/domain/product-master-index"

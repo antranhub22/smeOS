@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef } from "react"
-import { UploadCloud, Sparkles, Loader2, LayoutGrid, CheckCircle2, Zap } from "lucide-react"
+import { UploadCloud, Sparkles, Loader2, LayoutGrid, CheckCircle2, Zap } from "@/components/ui/icons"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
 export type GenerationEngine = "TEMPLATE_ENGINE" | "AI_PROVIDER"

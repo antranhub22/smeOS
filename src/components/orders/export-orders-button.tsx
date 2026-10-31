@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useRef, useEffect } from "react"
-import { Download, Loader2, CalendarRange, ChevronDown } from "lucide-react"
+import { Download, Loader2, CalendarRange, ChevronDown } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { Input } from "@/components/ui/input"

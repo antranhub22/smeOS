@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertOctagon, CheckCircle2, Loader2, XCircle } from "lucide-react"
+import { AlertOctagon, CheckCircle2, Loader2, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { CANCELLATION_TYPE_LABEL, type CancellationType } from "@/modules/greeting-card/domain/cancellation-request"

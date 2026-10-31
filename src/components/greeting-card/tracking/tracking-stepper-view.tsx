@@ -12,7 +12,7 @@ import {
   Truck,
   PartyPopper,
   MessageSquare,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { TrackingPipelineStepId, TrackingStepState } from "@/modules/greeting-card/domain/tracking-pipeline-types"
 import { STEP_OWNER_LABEL, STEP_SLA_RULES, type StepOwner } from "@/modules/greeting-card/domain/step-sla"
 

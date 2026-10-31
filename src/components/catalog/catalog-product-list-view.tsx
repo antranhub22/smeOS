@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Check, ShoppingBag, MessageCircle } from "lucide-react"
+import { Check, ShoppingBag, MessageCircle } from "@/components/ui/icons"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { formatVnd, getZaloUrl } from "./product-detail-modal"
 import { SmartFlowerImage } from "./smart-flower-image"

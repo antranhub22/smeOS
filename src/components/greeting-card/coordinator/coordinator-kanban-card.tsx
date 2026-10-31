@@ -2,7 +2,7 @@
 
 import { PhotoApprovalNote, photoWaitBlocker } from "./photo-approval-note"
 import React from "react"
-import { Clock, UserCheck, Camera, Truck, CheckCircle2, ShieldCheck, XCircle } from "lucide-react"
+import { Clock, UserCheck, Camera, Truck, CheckCircle2, ShieldCheck, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { BrochureOrder, ModalState } from "./coordinator-order-card"
 import { CoordinatorBypassReviewBanner } from "./coordinator-bypass-review-banner"

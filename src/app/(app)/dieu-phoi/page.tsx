@@ -1,7 +1,8 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import React, { useState } from "react"
-import { Radio, RefreshCw, Plus, LayoutDashboard, Sparkles } from "lucide-react"
+import { Radio, RefreshCw, Plus, LayoutDashboard, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ControlTowerDashboard } from "@/components/coordinator/control-tower-dashboard"
 import { CoordinatorReminderBar } from "@/components/coordinator/coordinator-reminder-bar"
@@ -32,10 +33,11 @@ export default function DieuPhoiPage() {
               <span className="px-2 py-0.5 rounded-full bg-warning/15 text-warning text-caption font-bold">
                 {dict.orders.coordinator.statusBadge}
               </span>
+              {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+              <InfoTip label={dict.orders.coordinator.title} side="bottom">
+                {dict.orders.coordinator.subtitle}
+              </InfoTip>
             </div>
-            <p className="text-xs text-text-muted mt-0.5">
-              {dict.orders.coordinator.subtitle}
-            </p>
           </div>
         </div>
 

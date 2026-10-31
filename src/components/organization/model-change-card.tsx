@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Store, Building2, Clock, Send, ShieldAlert, CheckCircle2 } from "lucide-react"
+import { Store, Building2, Clock, Send, ShieldAlert, CheckCircle2 } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

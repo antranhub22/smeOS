@@ -12,7 +12,7 @@ import {
   Check,
   RotateCcw,
   CheckSquare,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import {
   MARKET_TAXONOMY_CATEGORIES,
   ALL_CORE_KEYWORDS,

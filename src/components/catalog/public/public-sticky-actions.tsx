@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { MessageCircle, Phone } from "lucide-react"
+import { MessageCircle, Phone } from "@/components/ui/icons"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { shopCallUrl, shopZaloUrl } from "./public-contact-links"
 

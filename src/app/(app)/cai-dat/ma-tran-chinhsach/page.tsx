@@ -9,7 +9,7 @@ export default function PoliciesPage() {
   return (
     <TierGovernanceMatrixClient
       systemKey="POLICIES"
-      title="Ma Trận Chính Sách & Thỏa Thuận"
+      title="Chính sách & thỏa thuận"
       description="Quản lý chính sách đổi trả, bảo hành và các thỏa thuận cần khách hàng xác nhận trước khi thanh toán đơn hàng."
     />
   )

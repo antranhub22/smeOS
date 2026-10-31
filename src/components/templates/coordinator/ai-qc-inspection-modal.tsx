@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { X, ShieldCheck, CheckCircle2, RotateCcw, Ban, Info } from "lucide-react"
+import { X, ShieldCheck, CheckCircle2, RotateCcw, Ban, Info } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { errorMessage, type CoordinationOrder } from "@/components/coordinator/coordinator-api"
 

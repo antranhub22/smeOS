@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { markPersonalLinkCopied } from "@/components/greeting-card/share/tracked-copy"
-import { Check, Copy } from "lucide-react"
+import { Check, Copy } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { LINK_LIFETIME_HINT, linkExpiryLabel, type CatalogOption } from "./sales-types"

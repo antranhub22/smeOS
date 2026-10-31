@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ChevronDown, Globe, Mail, MapPin, Phone, ShieldCheck, X } from "lucide-react"
+import { ChevronDown, Globe, Mail, MapPin, Phone, ShieldCheck, X } from "@/components/ui/icons"
 import { websiteLabel, type ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 
 /** Sự kiện mở khung từ nơi khác trên trang (vd. "Xem cam kết của cửa hàng" ở bước xác nhận đơn). */

@@ -18,7 +18,9 @@
 import { handle } from "@/core/http/response"
 import { AppError } from "@/core/http/errors"
 import { callProxy, toProxyError } from "@/modules/proxy/use-cases/proxy-request"
-import { isAllowedProxyPath, type ProxyClient } from "@/modules/proxy/domain/proxy-rules"
+import { isAllowedProxyPath, proxyCapabilityFor, type ProxyClient } from "@/modules/proxy/domain/proxy-rules"
+import { requireCapability } from "@/core/rbac/capabilities"
+import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 
 /** Trả về Response từ proxy result. */
 function toResponse(res: { status: number; headers: Record<string, string>; body: string }): Response {
@@ -47,6 +49,12 @@ async function proxyHandler(
   const normalized = path.replace(/^\//, "")
   if (!isAllowedProxyPath(client, normalized)) {
     throw new AppError("NOT_FOUND", "Đường dẫn này không được proxy")
+  }
+
+  const capability = proxyCapabilityFor(client, request.method.toUpperCase(), normalized)
+  if (capability) {
+    const { ctx } = await requireTenantContext(request)
+    requireCapability(ctx, capability)
   }
 
   const res = await callProxy({ client, request, path })

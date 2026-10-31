@@ -5,6 +5,10 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { listChatChannels } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import { configureChatChannel } from "@/modules/chat-assistant/use-cases/configure-chat-channel"
 import { maskChannelSecrets } from "@/modules/chat-assistant/domain/channel-secret-fields"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { buildEmbedSnippet } from "@/modules/chat-assistant/domain/embed-snippet"
+import { publicAppUrl } from "@/lib/public-url"
+import { PUBLIC_CHAT_SURFACES } from "@/modules/chat-assistant/domain/public-chat-policy"
 import type { SupportedChatChannel } from "@/modules/chat-assistant/domain/channel-integration-types"
 
 const configureSchema = z.object({
@@ -31,14 +35,20 @@ const configureSchema = z.object({
       zaloAccessToken: z.string().optional(),
       zaloRefreshToken: z.string().optional(),
       embedAllowedOrigins: z.array(z.string()).optional(),
+      publicSurfaces: z.array(z.enum(PUBLIC_CHAT_SURFACES)).optional(),
     })
     .optional(),
 })
 
 export const GET = handle(async (req) => {
   const { ctx } = await requireTenantContext(req)
-  const channels = await listChatChannels(ctx)
-  return jsonResponse({ channels })
+  const [channels, org] = await Promise.all([
+    listChatChannels(ctx),
+    new OrganizationRepository().current(ctx),
+  ])
+  // Mã nhúng dựng từ slug thật của tiệm phiên — null khi tiệm chưa có slug.
+  const embedSnippet = buildEmbedSnippet({ shopSlug: org?.slug, appUrl: publicAppUrl() })
+  return jsonResponse({ channels, embedSnippet })
 })
 
 export const POST = handle(async (req) => {

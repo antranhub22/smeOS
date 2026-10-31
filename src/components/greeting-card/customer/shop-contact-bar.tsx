@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronDown, MessageCircle, QrCode, X } from "lucide-react"
+import { ChevronDown, MessageCircle, QrCode, X } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { generateQRCodeDataUrl } from "@/core/media/qr-engine"
 import { SHOP_INFO_EVENT, ShopInfoSheet, ShopLogo, type ShopInfoSection } from "./shop-info-sheet"

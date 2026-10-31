@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Check, Shuffle } from "lucide-react"
+import { Check, Shuffle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { apiSend } from "@/components/greeting-card/greeting-api"

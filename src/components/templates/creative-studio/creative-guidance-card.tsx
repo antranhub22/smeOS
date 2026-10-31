@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Wand2, Sparkles, Package, Camera } from "lucide-react"
+import { Wand2, Sparkles, Package, Camera } from "@/components/ui/icons"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"

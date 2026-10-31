@@ -8,7 +8,7 @@ import {
   Link2,
   ShieldCheck,
   Check,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/infra/brand-profile-repository"
 import {

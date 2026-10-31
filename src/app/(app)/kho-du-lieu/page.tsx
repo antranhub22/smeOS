@@ -1,9 +1,10 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import Link from "next/link"
 import { AccountStorageHub } from "@/components/storage/account-storage-hub"
 import { Button } from "@/components/ui/button"
-import { Camera, Plus, Sparkles, Folder } from "lucide-react"
+import { Camera, Plus, Sparkles, Folder } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
 
 export default function KhoDuLieuPage() {
@@ -17,10 +18,13 @@ export default function KhoDuLieuPage() {
             <Folder size={22} strokeWidth={2.2} />
           </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-text">{dict.storage.header.title}</h1>
-            <p className="text-body-sm text-text-muted mt-0.5">
-              {dict.storage.header.description}
-            </p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-black tracking-tight text-text">{dict.storage.header.title}</h1>
+              {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+              <InfoTip label={dict.storage.header.title} side="bottom">
+                {dict.storage.header.description}
+              </InfoTip>
+            </div>
           </div>
         </div>
 

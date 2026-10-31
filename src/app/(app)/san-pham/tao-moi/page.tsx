@@ -1,8 +1,9 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { ArrowLeft, CheckCircle2, Sparkles, AlertCircle } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Sparkles, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 import { CreateGeneralCard } from "@/components/products/create-general-card"
@@ -31,9 +32,12 @@ export default function CreateProductPage() {
           >
             <ArrowLeft size={16} />
           </button>
-          <div>
-            <div className="text-caption text-text-muted">{ti("catalogTitle")}</div>
+          <div className="flex items-center gap-2">
             <h1 className="text-title font-extrabold text-primary">{ti("createButtonLabel")}</h1>
+            {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
+            <InfoTip label={ti("createButtonLabel")} side="bottom">
+              Thêm {ti("sampleProduct").toLowerCase()} mới vào {ti("catalogTitle").toLowerCase()}. Có thể dùng AI nhận diện từ ảnh để điền sẵn.
+            </InfoTip>
           </div>
         </div>
 

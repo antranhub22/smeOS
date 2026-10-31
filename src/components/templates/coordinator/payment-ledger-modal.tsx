@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { X, Wallet, PlusCircle, Undo2 } from "lucide-react"
+import { X, Wallet, PlusCircle, Undo2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import {

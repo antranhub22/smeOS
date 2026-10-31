@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
-import { Menu } from "lucide-react"
+import { Menu } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { DesktopNav } from "./desktop-nav"
 import { MobileNavContext } from "./mobile-nav-context"

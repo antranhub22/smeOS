@@ -11,13 +11,14 @@ import {
   Loader2,
   Bot,
   ArrowRight,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { SuggestedProductCard } from "@/modules/chat-assistant/domain/chat-types"
 import {
   extractOrderDraftFromChat,
   type ChatOrderDraft,
 } from "@/modules/chat-assistant/domain/chat-order-extractor"
+import type { PublicChatSurface } from "@/modules/chat-assistant/domain/public-chat-policy"
 import { ChatOrderCheckoutModal } from "./chat-order-checkout-modal"
 
 interface WidgetMessage {
@@ -30,6 +31,8 @@ interface WidgetMessage {
 interface PublicStorefrontChatWidgetProps {
   shopSlug: string
   shopName?: string | undefined
+  /** Trang đang hiện khung chat — quyết định kênh tính phí và cài đặt bật/tắt. */
+  surface?: PublicChatSurface | undefined
 }
 
 // Visitor ID duy nhất theo phiên trình duyệt (sessionStorage). Đọc lúc gửi tin
@@ -50,6 +53,7 @@ function newMessageId(prefix: "usr" | "bot"): string {
 export function PublicStorefrontChatWidget({
   shopSlug,
   shopName = "Cửa Hàng",
+  surface = "catalog",
 }: PublicStorefrontChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<WidgetMessage[]>([])
@@ -94,21 +98,20 @@ export function PublicStorefrontChatWidget({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           slug: shopSlug,
+          surface,
           visitorId: getVisitorId(),
           message: text,
         }),
       })
 
-      if (res.ok) {
-        const data = await res.json()
-        const botMsg: WidgetMessage = {
-          id: newMessageId("bot"),
-          senderType: "ASSISTANT",
-          content: data.replyText,
-          suggestedProducts: data.suggestedProducts || [],
-        }
-        setMessages((prev) => [...prev, botMsg])
+      const data = await res.json().catch(() => ({}))
+      const botMsg: WidgetMessage = {
+        id: newMessageId("bot"),
+        senderType: "ASSISTANT",
+        content: res.ok ? data.replyText : data.error || "Trợ lý tạm thời gián đoạn, vui lòng thử lại sau",
+        suggestedProducts: res.ok ? data.suggestedProducts || [] : [],
       }
+      setMessages((prev) => [...prev, botMsg])
     } catch (err) {
       console.error("Lỗi gửi tin nhắn:", err)
     } finally {

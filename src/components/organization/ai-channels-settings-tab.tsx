@@ -3,7 +3,7 @@
 import React from "react"
 import Link from "next/link"
 import type { Route } from "next"
-import { Cpu, Share2 } from "lucide-react"
+import { Cpu, Share2 } from "@/components/ui/icons"
 import { DispatchReminderPolicyCard } from "@/components/coordinator/dispatch-reminder-policy-card"
 import { useSession } from "@/lib/session"
 

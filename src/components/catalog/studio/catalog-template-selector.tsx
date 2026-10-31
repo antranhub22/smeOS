@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Check, Sparkles, BookOpen, Layers, Eye, Smartphone, FileText } from "lucide-react"
+import { Check, Sparkles, BookOpen, Layers, Eye, Smartphone, FileText } from "@/components/ui/icons"
 import type {
   CatalogTemplateId,
   CatalogStyleId,

@@ -1,6 +1,6 @@
 "use client"
 
-import { Info } from "lucide-react"
+import { Info } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import type { SwipeTheme } from "./swipe-themes"
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"

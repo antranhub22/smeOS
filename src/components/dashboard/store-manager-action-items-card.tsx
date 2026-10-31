@@ -2,7 +2,7 @@
 
 import React from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, ChevronRight, Clock, ShoppingBag, type LucideIcon } from "lucide-react"
+import { AlertTriangle, ChevronRight, Clock, ShoppingBag, type LucideIcon } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 

@@ -18,7 +18,7 @@ export default function NotificationSettingsPage() {
   return (
     <TierNotificationMatrixClient
       viewerTier={viewerTier}
-      title={`Ma Trận Quản Lý Thông Báo — ${tierName}`}
+      title={`Thông báo — ${tierName}`}
       description={`Thiết lập cơ chế nhận thông báo cho tài khoản và nhân sự trực thuộc ${organization?.name ?? tierName}. Bạn có thể bật/tắt từng kênh gửi và khoá cố định cho toàn cấp ${tierName}.`}
     />
   )

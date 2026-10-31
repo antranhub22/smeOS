@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef } from "react"
-import { X, Download, Eye } from "lucide-react"
+import { X, Download, Eye } from "@/components/ui/icons"
 import {
   BANNER_FORMATS,
   type BannerAspectRatio,

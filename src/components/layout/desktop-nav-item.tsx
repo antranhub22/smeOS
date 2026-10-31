@@ -12,7 +12,7 @@
  */
 
 import type { ComponentType } from "react"
-import { Tag } from "lucide-react"
+import { Tag } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { COMING_SOON_LABEL, isRouteLocked } from "@/lib/feature-lock"
 import type { NavEntry } from "./nav-model"
@@ -22,7 +22,7 @@ interface DesktopNavItemProps {
   active: boolean
   isSubItem?: boolean
   collapsed?: boolean
-  iconComponent?: ComponentType<{ size?: number; className?: string; strokeWidth?: number }> | undefined
+  iconComponent?: ComponentType<{ size?: number; className?: string; strokeWidth?: number; weight?: "regular" | "fill" | "duotone" }> | undefined
   onClick: () => void
 }
 
@@ -34,10 +34,10 @@ function itemBaseClass(isSubItem: boolean, collapsed: boolean) {
     "group relative flex w-full items-center font-medium transition-all duration-150 text-left",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-inset",
     collapsed
-      ? "h-9 justify-center rounded-xl px-0"
+      ? "h-10 justify-center rounded-xl px-0"
       : isSubItem
-      ? "h-8 rounded-lg px-2.5 text-body-sm"
-      : "h-9 rounded-lg px-2.5 text-meta"
+      ? "h-9 rounded-xl px-3 text-body-sm"
+      : "h-10 rounded-xl px-3 text-body-sm"
   )
 }
 
@@ -89,7 +89,7 @@ function NavItemDisabled({
   item: NavEntry
   isSubItem: boolean
   collapsed: boolean
-  Icon: ComponentType<{ size?: number; className?: string; strokeWidth?: number }>
+  Icon: ComponentType<{ size?: number; className?: string; strokeWidth?: number; weight?: "regular" | "fill" | "duotone" }>
 }) {
   return (
     <NavTooltip label={item.label} collapsed={collapsed}>
@@ -99,14 +99,13 @@ function NavItemDisabled({
         className={cn(itemBaseClass(isSubItem, collapsed), "cursor-not-allowed opacity-50")}
       >
         <Icon
-          size={collapsed ? 18 : isSubItem ? 15 : 16}
-          strokeWidth={1.8}
+          size={collapsed ? 22 : isSubItem ? 18 : 20}
           className="shrink-0 text-text-muted"
           aria-hidden
         />
         {!collapsed && (
           <>
-            <span className="ml-2.5 flex-1 truncate text-text-muted">{item.label}</span>
+            <span className="ml-3 flex-1 truncate text-text-muted">{item.label}</span>
             <span className="ml-1 shrink-0 rounded-full bg-surface-alt px-1.5 py-0.5 text-caption font-extrabold uppercase tracking-wide text-text-muted">
               {COMING_SOON_LABEL}
             </span>
@@ -150,7 +149,7 @@ export function DesktopNavItem({
         className={cn(
           itemBaseClass(isSubItem, collapsed),
           active
-            ? "bg-selected text-primary border border-primary/20 shadow-xs"
+            ? "bg-selected text-primary font-semibold border border-transparent"
             : "text-text-muted border border-transparent hover:bg-surface-alt hover:text-text"
         )}
       >
@@ -164,8 +163,8 @@ export function DesktopNavItem({
 
         {/* Icon */}
         <Icon
-          size={collapsed ? 18 : isSubItem ? 15 : 16}
-          strokeWidth={active ? 2.4 : 1.9}
+          size={collapsed ? 22 : isSubItem ? 18 : 20}
+          weight={active ? "fill" : "regular"}
           aria-hidden
           className={cn(
             "shrink-0 transition-colors duration-150",
@@ -182,7 +181,7 @@ export function DesktopNavItem({
             />
           )
         ) : (
-          <span className="ml-2.5 flex-1 truncate">{item.label}</span>
+          <span className="ml-3 flex-1 truncate">{item.label}</span>
         )}
       </button>
     </NavTooltip>

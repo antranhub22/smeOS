@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
-import { CalendarHeart, Loader2, Plus, Save, Trash2 } from "lucide-react"
+import { CalendarHeart, Loader2, Plus, Save, Trash2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"

@@ -9,7 +9,7 @@ export default function PromotionsPage() {
   return (
     <TierGovernanceMatrixClient
       systemKey="PROMOTIONS"
-      title="Ma Trận Ưu Đãi & Khuyến Mãi"
+      title="Ưu đãi & khuyến mãi"
       description="Quản lý và kích hoạt các ưu đãi, voucher giảm giá áp dụng cho khách hàng khi đặt mua qua Thẻ chào và Catalog."
     />
   )

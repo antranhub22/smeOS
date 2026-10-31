@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ChevronDown, Sliders } from "lucide-react"
+import { ChevronDown, Sliders } from "@/components/ui/icons"
 import { BACKGROUND_PRESETS, ASPECT_RATIO_OPTIONS } from "@/modules/product-photo-studio/domain/preset-catalog"
 
 export interface PresetSelectorProps {

@@ -1,6 +1,6 @@
 "use client"
 
-import { Clock } from "lucide-react"
+import { Clock } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 /** Sau khi đăng ký / dùng thử: tài khoản chờ quản trị viên duyệt (PO 22/10/2026). */

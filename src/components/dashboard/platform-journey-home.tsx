@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Sparkles, SlidersHorizontal } from "lucide-react"
+import { Sparkles, SlidersHorizontal } from "@/components/ui/icons"
 import { PLATFORM_JOURNEYS } from "@/modules/journey/domain/journey-catalog"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { createJourneyState } from "@/modules/journey/domain/journey-state"

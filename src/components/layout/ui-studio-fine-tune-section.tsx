@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Type, Sparkles, Square, Zap, Sun, Moon, Layers, Grid } from "lucide-react"
+import { Type, Sparkles, Square, Zap, Sun, Moon, Layers, Grid } from "@/components/ui/icons"
 import type {
   UiFontPairing,
   UiSurfaceEffect,

@@ -7,7 +7,7 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { IdCard, FileDown, ImageDown, Contact, Loader2 } from "lucide-react"
+import { IdCard, FileDown, ImageDown, Contact, Loader2 } from "@/components/ui/icons"
 import { toPng } from "html-to-image"
 import jsPDF from "jspdf"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"

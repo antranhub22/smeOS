@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Clock, Coins, Film, Music, Mic, Type } from "lucide-react";
+import { Sparkles, Clock, Coins, Film, Music, Mic, Type } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";

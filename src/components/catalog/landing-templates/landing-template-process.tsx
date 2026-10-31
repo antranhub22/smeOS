@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight, Sparkles } from "@/components/ui/icons"
 import type { LandingSectionStep } from "@/modules/content-engine/domain/landing-content-generator"
 
 interface LandingTemplateProcessProps {

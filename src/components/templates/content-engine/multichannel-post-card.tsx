@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Copy, Check, Send, Sparkles, Edit3, MessageCircle, Eye } from "lucide-react"
+import { Copy, Check, Send, Sparkles, Edit3, MessageCircle, Eye } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

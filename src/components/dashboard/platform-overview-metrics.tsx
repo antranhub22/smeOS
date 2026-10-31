@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import { Building2, Clock, AlertTriangle, ArrowRight, Zap } from "lucide-react"
+import { Building2, Clock, AlertTriangle, ArrowRight, Zap } from "@/components/ui/icons"
 import { VietQrTopupModal } from "@/components/platform/vietqr-topup-modal"
 
 export interface PlatformOrganizationSummary {

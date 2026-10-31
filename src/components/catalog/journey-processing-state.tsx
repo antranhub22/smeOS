@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Loader2, CheckCircle2, Circle } from "lucide-react"
+import { Loader2, CheckCircle2, Circle } from "@/components/ui/icons"
 
 export interface ProcessingStep {
   id: string

@@ -9,7 +9,7 @@ import {
   MoreHorizontal,
   Globe,
   Building2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import type { SocialPostPreviewProps } from "./social-post-preview"
 
 /**

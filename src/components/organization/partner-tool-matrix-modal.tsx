@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Shield, X, Check } from "lucide-react"
+import { Shield, X, Check } from "@/components/ui/icons"
 import { STORE_NAV_ENTRIES } from "@/components/layout/nav/nav-store"
 import { Button } from "@/components/ui/button"
 

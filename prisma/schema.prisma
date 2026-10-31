@@ -245,6 +245,9 @@ model organizations {
   material_price_history        material_price_history[]
   product_recipes               product_recipes[]
   product_recipe_items          product_recipe_items[]
+  leads                         leads[]
+  short_links                   short_links[]
+  link_events                   link_events[]
 }
 
 model workspaces {
@@ -1757,6 +1760,7 @@ model customers {
   consents      customer_consents[]
   vouchers      vouchers[]
   conversations chat_conversations[]
+  leads         leads[]
 
   @@unique([organization_id, phone])
   @@unique([organization_id, code])
@@ -3801,4 +3805,82 @@ model sales_channel_orders {
   @@unique([connection_id, external_order_id])
   @@index([organization_id])
   @@index([organization_id, created_at])
+}
+
+// ─── Thu hút khách hàng (Bước 4 — công cụ 12, 13, 21, 25) ─────────────────────
+// Khách tiềm năng để lại SĐT từ trang công khai. Trước đây nằm trong
+// catalog_links.filters.leads (JSON) — mất khi gửi đồng thời, không vào CRM.
+model leads {
+  id                String    @id @default(uuid())
+  organization_id   String
+  customer_id       String?
+  name              String
+  phone             String
+  message           String?
+  source            String // CATALOG_LINK | SHORT_LINK
+  source_ref        String? // slug catalog hoặc mã link
+  short_link_id     String?
+  utm_source        String?
+  utm_medium        String?
+  utm_campaign      String?
+  consent_at        DateTime
+  consent_version   String
+  status            String    @default("NEW") // NEW | CONTACTED | WON | LOST
+  assignee_user_id  String? // user thuộc memberships của tổ chức — kiểm ở use-case
+  status_changed_at DateTime?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  customer     customers?    @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+  short_link   short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, status, created_at])
+  @@index([organization_id, phone, created_at])
+}
+
+// Link/QR động: in một lần, đổi đích sau; mỗi điểm đặt (quầy, tờ rơi…) một mã để
+// thống kê theo vị trí. Đích chỉ là đường dẫn nội bộ (chặn open redirect).
+model short_links {
+  id              String    @id @default(uuid())
+  organization_id String
+  code            String    @unique
+  kind            String // QR | SALES_LINK
+  name            String
+  target_path     String
+  placement_label String?
+  utm_source      String?
+  utm_medium      String?
+  utm_campaign    String?
+  expires_at      DateTime?
+  is_active       Boolean   @default(true)
+  scan_count      Int       @default(0)
+  created_by      String
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  events       link_events[]
+  leads        leads[]
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+
+// Lượt quét/bấm. Không lưu IP thô — chỉ băm theo ngày để đếm khách riêng.
+model link_events {
+  id              String   @id @default(uuid())
+  organization_id String
+  short_link_id   String
+  device          String // MOBILE | TABLET | DESKTOP | UNKNOWN
+  referrer_host   String?
+  visitor_hash    String?
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  short_link   short_links   @relation(fields: [short_link_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, short_link_id, created_at])
 }

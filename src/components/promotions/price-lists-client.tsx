@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
-import { FileSpreadsheet, Plus } from "lucide-react"
+import { FileSpreadsheet, Plus } from "@/components/ui/icons"
 
 import { ActiveSwitch } from "@/components/promotions/active-switch"
 import { EMPTY_PRICE_LIST, PriceListForm, type PriceListFormValue } from "@/components/promotions/price-list-form"

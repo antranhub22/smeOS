@@ -1,11 +1,12 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import React, { useState, useCallback } from "react"
 import Link from "next/link"
 import { useSWRConfig } from "swr"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, Sparkles, Send, ShieldCheck, BookOpen, RefreshCw, GitMerge, Wand2, LayoutList } from "lucide-react"
+import { ArrowLeft, Sparkles, Send, ShieldCheck, BookOpen, RefreshCw, GitMerge, Wand2, LayoutList } from "@/components/ui/icons"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { cn } from "@/lib/utils"
 import { useSession } from "@/lib/session"
@@ -171,14 +172,17 @@ export default function TheChaoPage() {
             <ArrowLeft size={14} aria-hidden="true" />
             {dict.greetingCard.header.breadcrumb}
           </Link>
-          <h1 className="text-title font-bold text-foreground">
+          {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-title font-bold text-foreground">
             {ti("sampleProduct") ? `Thẻ chào & ${ti("sampleProduct")}` : dict.greetingCard.header.title}
-          </h1>
-          <p className="mt-1 max-w-2xl text-body-sm text-text-muted">
-            {ti("sampleProduct")
+            </h1>
+            <InfoTip label={ti("sampleProduct") ? `Thẻ chào & ${ti("sampleProduct")}` : dict.greetingCard.header.title} side="bottom">
+              {ti("sampleProduct")
               ? `Gửi khách ${ti("catalogTitle").toLowerCase()} để xem, ${ti("makerAction").toLowerCase().includes("phòng") ? "chọn phòng, đặt phòng" : "chọn mẫu, đặt hàng"} và thanh toán ngay trên điện thoại.`
               : dict.greetingCard.header.description}
-          </p>
+            </InfoTip>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 xl:shrink-0 xl:flex-nowrap">

@@ -9,7 +9,7 @@ import {
   AlertCircle,
   RefreshCw,
   X,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

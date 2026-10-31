@@ -7,9 +7,10 @@ import {
   Copy,
   Check,
   Loader2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ChannelIntegrationCard } from "@/components/chat/channel-integration-card"
+import { PublicChatSurfaceSettings } from "@/components/chat/public-chat-surface-settings"
 import { ChannelConfigModal } from "@/components/chat/channel-config-modal"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import type { ChannelConfig } from "@/modules/chat-assistant/domain/channel-integration-types"
@@ -24,6 +25,7 @@ export function ChatChannelsPanel() {
   const [loading, setLoading] = useState(true)
   const [updatingChannel, setUpdatingChannel] = useState<string | null>(null)
   const [copiedScript, setCopiedScript] = useState(false)
+  const [embedSnippet, setEmbedSnippet] = useState<string | null>(null)
   const [configModalChannel, setConfigModalChannel] = useState<ChannelStatusItem | null>(null)
   const [modalConfigForm, setModalConfigForm] = useState<ChannelConfig>({})
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -34,6 +36,7 @@ export function ChatChannelsPanel() {
       .then((r) => r.json())
       .then((res) => {
         setChannels(res.channels || [])
+        setEmbedSnippet(typeof res.embedSnippet === "string" ? res.embedSnippet : null)
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false))
@@ -105,8 +108,8 @@ export function ChatChannelsPanel() {
   }
 
   function copyEmbedScript() {
-    const code = `<script src="https://floraos.vn/sdk/floraos-chat.js" data-shop-slug="tiem-hoa-moc-lan" defer></script>`
-    navigator.clipboard.writeText(code)
+    if (!embedSnippet) return
+    navigator.clipboard.writeText(embedSnippet)
     setCopiedScript(true)
     setTimeout(() => setCopiedScript(false), 2000)
   }
@@ -147,6 +150,8 @@ export function ChatChannelsPanel() {
         )}
       </div>
 
+      {!loading && <PublicChatSurfaceSettings channels={channels} onChanged={loadChannels} />}
+
       {/* Khối lấy mã nhúng cho website riêng */}
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-3 shadow-xs">
         <div className="flex items-center justify-between">
@@ -163,6 +168,7 @@ export function ChatChannelsPanel() {
               </p>
             </div>
           </div>
+          {embedSnippet && (
           <Button
             size="sm"
             onClick={copyEmbedScript}
@@ -171,11 +177,20 @@ export function ChatChannelsPanel() {
             {copiedScript ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             {copiedScript ? "Đã chép mã" : "Sao chép mã nhúng"}
           </Button>
+          )}
         </div>
 
-        <div className="rounded-xl bg-text p-3 font-mono text-caption text-success overflow-x-auto select-all">
-          &lt;script src=&quot;https://floraos.vn/sdk/floraos-chat.js&quot; data-shop-slug=&quot;tiem-hoa-moc-lan&quot; defer&gt;&lt;/script&gt;
-        </div>
+        {embedSnippet ? (
+          <div className="rounded-xl bg-text p-3 font-mono text-caption text-success overflow-x-auto select-all">
+            {embedSnippet}
+          </div>
+        ) : (
+          !loading && (
+            <p className="text-caption text-text-muted">
+              Mã nhúng tạm thời chưa sẵn sàng. Vui lòng liên hệ bộ phận hỗ trợ để được kích hoạt.
+            </p>
+          )
+        )}
       </div>
 
       <ChannelConfigModal

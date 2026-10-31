@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Film, AlertCircle, RotateCcw } from "lucide-react";
+import { Film, AlertCircle, RotateCcw } from "@/components/ui/icons";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TaskStatus } from "@/components/ui/task-status";

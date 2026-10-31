@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import Link from "next/link"
-import { Clock } from "lucide-react"
+import { Clock } from "@/components/ui/icons"
 import { COMING_SOON_LABEL, isRouteLocked } from "@/lib/feature-lock"
 
 /**

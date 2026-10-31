@@ -2,7 +2,7 @@
 
 import React from "react"
 import type { PaymentProofAnalysisResult } from "@/modules/greeting-card/domain/payment-proof-analysis"
-import { CheckCircle2, AlertTriangle, AlertCircle, Clock } from "lucide-react"
+import { CheckCircle2, AlertTriangle, AlertCircle, Clock } from "@/components/ui/icons"
 
 export interface PaymentProofBadgeProps {
   analysis?: PaymentProofAnalysisResult | null | undefined

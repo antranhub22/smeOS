@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Check, Copy } from "lucide-react"
+import { Check, Copy } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { OrderVatForm, type OrderVatData } from "./order-vat-form"

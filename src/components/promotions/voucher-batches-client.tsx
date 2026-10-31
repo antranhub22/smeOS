@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { Download, Plus, Ticket } from "lucide-react"
+import { Download, Plus, Ticket } from "@/components/ui/icons"
 
 import { ActiveSwitch } from "@/components/promotions/active-switch"
 import { VoucherBatchForm, type PromotionOption } from "@/components/promotions/voucher-batch-form"

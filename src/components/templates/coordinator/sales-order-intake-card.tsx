@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ShoppingCart, Clock, User, MapPin, Tag } from "lucide-react"
+import { ShoppingCart, Clock, User, MapPin, Tag } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, ListChecks, Sparkles } from "lucide-react"
+import { CheckCircle2, ListChecks, Sparkles } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 
 export interface AppliedChangesBreakdownProps {

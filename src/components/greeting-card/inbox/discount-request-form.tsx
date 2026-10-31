@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "@/components/ui/icons"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 
 /** Sale xin giảm giá cho đơn: theo % hoặc số tiền, kèm lý do — gửi thẳng Điều hành. */

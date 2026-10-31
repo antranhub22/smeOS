@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Calendar, RefreshCw, Sparkles, CheckCircle2 } from "lucide-react"
+import { Calendar, RefreshCw, Sparkles, CheckCircle2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SchedulePostItemCard } from "./schedule-post-item-card"

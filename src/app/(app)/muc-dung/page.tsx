@@ -11,7 +11,7 @@ import {
   AlertCircle,
   Lock,
   Calendar,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -117,7 +117,7 @@ export default function MucDungPage() {
       {/* Top Header & Tải lại */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-text">Mức Dùng Tổ Chức</h1>
+          <h1 className="text-xl font-extrabold text-text">Mức dùng</h1>
           <p className="text-xs text-text-muted">
             Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span>
           </p>

@@ -1,9 +1,10 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import useSWR from "swr"
-import { Calendar, LayoutGrid, Loader2, Sparkles, RefreshCw } from "lucide-react"
+import { Calendar, LayoutGrid, Loader2, Sparkles, RefreshCw } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { AvailabilityBoardResult } from "@/modules/availability/use-cases/get-availability-board"
@@ -39,11 +40,11 @@ export default function AvailabilityPage() {
   const isHomestay = industryKey === "HOMESTAY"
   const isFloralOrFnb = industryKey === "FLORAL" || industryKey === "FNB" || industryKey === "SERVICES"
 
-  let pageTitle = "Tình trạng khả dụng & Tồn kho"
+  let pageTitle = "Khả dụng & tồn kho"
   let pageDesc = "Theo dõi và quản lý khả năng cung ứng, đặt trước cho sản phẩm của tiệm."
 
   if (isHomestay) {
-    pageTitle = "Lịch phòng & Khả dụng"
+    pageTitle = "Lịch phòng & khả dụng"
     pageDesc = "Theo dõi lịch trống, đơn khách đặt tự động và khóa bảo trì các phòng homestay."
   } else if (industryKey === "FLORAL") {
     pageTitle = "Năng lực nhận đơn & Giờ hẹn"
@@ -63,11 +64,14 @@ export default function AvailabilityPage() {
             <span>/</span>
             <span className="text-primary font-bold">{pageTitle}</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-text flex items-center gap-2">
-            <span>{pageTitle}</span>
-            <Sparkles size={18} className="text-primary" />
-          </h1>
-          <p className="text-xs sm:text-sm text-text-muted mt-1">{pageDesc}</p>
+          {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-black text-text flex items-center gap-2">
+              <span>{pageTitle}</span>
+              <Sparkles size={18} className="text-primary" />
+            </h1>
+            <InfoTip label={pageTitle} side="bottom">{pageDesc}</InfoTip>
+          </div>
         </div>
 
         {/* View mode toggle & Refresh */}

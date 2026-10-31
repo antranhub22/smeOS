@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, Images, Loader2, RefreshCw } from "lucide-react"
+import { Sparkles, Loader2, RefreshCw } from "@/components/ui/icons"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { BundleSelector } from "@/components/product-image-set/bundle-selector"
@@ -9,6 +9,7 @@ import { ImageSetViewer } from "@/components/product-image-set/image-set-viewer"
 import { useI18n } from "@/lib/i18n"
 import { parseCreatedJob, parsePolledJob } from "@/components/generation-job/generation-job-logic"
 import type { ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
+import { ToolHero } from "@/components/ui/tool-hero"
 
 export function ProductImageSetClient() {
   const { t, dict } = useI18n()
@@ -97,31 +98,14 @@ export function ProductImageSetClient() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-            <Images className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-title font-bold text-text">Tạo bộ ảnh sản phẩm đa kênh</h1>
-              <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                Công cụ 02
-              </span>
-            </div>
-            <p className="text-caption text-text-muted mt-0.5">
-              Sinh trọn gói ảnh đa tỉ lệ, đa góc cạnh và đa phong cách đồng bộ từ một ảnh duy nhất
-            </p>
-          </div>
-        </div>
-      </div>
+      <ToolHero icon="Images" tone="rose" title="Bộ ảnh đa kênh" detail="Từ một ảnh, nhận đủ bộ ảnh nhiều tỉ lệ cho sàn thương mại, bài đăng và Story." />
 
       <FeatureGuidanceCard
-        tag="HƯỚNG DẪN CÔNG CỤ 02"
+        tag="HƯỚNG DẪN"
         title="Một ảnh gốc → Đủ bộ ảnh cho mọi kênh bán hàng"
         description="Từ 1 ảnh chụp chuẩn, AI sẽ tự động tạo đủ bộ ảnh cho sàn TMĐT (1:1), bài đăng MXH (4:5), Story/Reels (9:16) và ảnh cận cảnh với cam kết 100% cùng một sản phẩm."
         tips={[
-          "📸 Khuyên dùng ảnh đã qua xử lý chuẩn từ Công cụ 01",
+          "📸 Khuyên dùng ảnh đã qua xử lý chuẩn từ công cụ Ảnh sản phẩm studio",
           "✨ Mặc định tạo trọn gói 'Bộ Đăng Bán Đa Kênh'",
           "🔒 Tự động kiểm định tính nhất quán cả bộ (Set Consistency)",
         ]}

@@ -2,7 +2,7 @@
 
 import { PhotoApprovalNote, photoWaitBlocker, type PhotoApprovalState } from "./photo-approval-note"
 import React from "react"
-import { MapPin, Calendar, CheckCircle2, ExternalLink } from "lucide-react"
+import { MapPin, Calendar, CheckCircle2, ExternalLink } from "@/components/ui/icons"
 import { coordinatorActionBlocker, type CoordinatorAction } from "@/modules/greeting-card/domain/brochure-commerce-rules"
 import { paymentGateBlocker, type BrochurePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
 import { FlowerImage } from "@/components/greeting-card/flower-image"

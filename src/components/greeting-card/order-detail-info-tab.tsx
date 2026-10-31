@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { User, Phone, MapPin, Flower2, CheckCircle2, Home, Utensils, Shirt, Sparkles } from "lucide-react"
+import { User, Phone, MapPin, Flower2, CheckCircle2, Home, Utensils, Shirt, Sparkles } from "@/components/ui/icons"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { zaloHref } from "@/components/greeting-card/work/work-item-card"
 import { OrderPaymentProofView } from "./order-payment-proof-view"

@@ -6,7 +6,6 @@ import type {
   ICatalogLinkRepository,
   CreateCatalogLinkInput,
   UpdateCatalogLinkInput,
-  CatalogLeadInput,
   PublicCatalogRawData,
 } from "../domain/repositories/catalog-link-repository.interface"
 
@@ -155,27 +154,6 @@ export class CatalogLinkRepository implements ICatalogLinkRepository {
       productRows,
       assetRecords,
     } as unknown as PublicCatalogRawData
-  }
-
-  async recordLead(slug: string, lead: { phone: string; message: string | null; submittedAt: string }) {
-    const link = await this.db.catalog_links.findUnique({ where: { slug } })
-    if (!link || link.is_revoked) return null
-
-    const existing = (link.filters as Record<string, unknown>) ?? {}
-    const existingLeads = Array.isArray(existing.leads)
-      ? (existing.leads as Array<Record<string, unknown>>)
-      : []
-
-    await this.db.catalog_links.update({
-      where: { slug },
-      data: {
-        filters: {
-          ...existing,
-          leads: [...existingLeads, lead],
-        } as never,
-      },
-    })
-    return true
   }
 }
 

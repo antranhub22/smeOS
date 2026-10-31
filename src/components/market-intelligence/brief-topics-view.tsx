@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lightbulb, Copy, Check, Video, Play, Sparkles, ArrowRight } from "lucide-react";
+import { Lightbulb, Copy, Check, Video, Play, Sparkles, ArrowRight } from "@/components/ui/icons";
 import type { OpportunityItem } from "./opportunity-card";
 import { getDualOpportunityEvidencePreview } from "./opportunity-illustration";
 import type { Route } from "next"

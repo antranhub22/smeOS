@@ -4,7 +4,7 @@
  * toolkit-picker.tsx — Dropdown chọn công cụ để pin vào shortcuts (SRP)
  */
 
-import { RotateCcw, X, PinOff } from "lucide-react"
+import { RotateCcw, X, PinOff } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import type { NavEntry } from "./nav-model"

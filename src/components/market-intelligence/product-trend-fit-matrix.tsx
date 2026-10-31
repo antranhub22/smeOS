@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, AlertTriangle, XCircle, TrendingUp, BarChart3 } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, TrendingUp, BarChart3 } from "@/components/ui/icons";
 import type { ProductTrendFitItem } from "@/modules/market-intelligence/domain/product-intelligence-types";
 import { LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 

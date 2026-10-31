@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { Clock, UserCheck, Sparkles, Copy, Check, Eye, ChevronDown, ChevronRight, EyeOff, RotateCcw, Timer } from "lucide-react"
+import { Clock, UserCheck, Sparkles, Copy, Check, Eye, ChevronDown, ChevronRight, EyeOff, RotateCcw, Timer } from "@/components/ui/icons"
 import type { TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"
 import type { OrderTimeTier } from "@/modules/greeting-card/domain/order-time-tier"
 import { remainingDismissalMs } from "@/modules/greeting-card/domain/dismissal-policy"

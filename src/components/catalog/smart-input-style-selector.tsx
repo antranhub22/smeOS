@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, Palette, Check } from "lucide-react"
+import { Sparkles, Palette, Check } from "@/components/ui/icons"
 import type { CatalogTemplateId, CatalogStyleId } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 
 export type PreferredStyleChoice = "auto" | {

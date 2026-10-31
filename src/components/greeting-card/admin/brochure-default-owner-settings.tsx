@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { UserCheck } from "lucide-react"
+import { UserCheck } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { DEFAULT_OWNER_SETTINGS_KEY, parseDefaultOwnerId } from "@/modules/greeting-card/domain/link-ownership"
 

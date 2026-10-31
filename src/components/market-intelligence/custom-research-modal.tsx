@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Sparkles, Search, Zap, Compass } from "lucide-react";
+import { X, Sparkles, Search, Zap, Compass } from "@/components/ui/icons";
 import { ResearchParameterFields } from "./research-parameter-fields";
 
 export interface CustomResearchParams {

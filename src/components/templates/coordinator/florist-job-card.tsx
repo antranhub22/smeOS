@@ -15,7 +15,7 @@ import {
   Ban,
   CheckCircle2,
   FileText,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

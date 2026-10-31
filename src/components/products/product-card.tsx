@@ -3,7 +3,7 @@
 import { parsePricing, priceLabel, summarizePricing } from "@/modules/products/domain/product-pricing"
 import React from "react"
 import Link from "next/link"
-import { Trash2 } from "lucide-react"
+import { Trash2 } from "@/components/ui/icons"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { readProposal, type ProposalStatus } from "@/modules/products/domain/product-proposal"
 import { formatCurrency } from "@/lib/i18n/formatters"
@@ -91,7 +91,7 @@ export interface ProductCardProps {
 
 export function ProductCard({ product, isExecutive, onTrash, onImageClick }: ProductCardProps) {
   return (
-    <div className="group flex flex-col rounded-2xl border border-border bg-surface overflow-hidden transition-all hover:border-primary/40 hover:shadow-md relative">
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-surface shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
       {/* Vùng ảnh sản phẩm: Bấm để mở Bảng thông số sản phẩm & Phân tích AI */}
       <button
         type="button"

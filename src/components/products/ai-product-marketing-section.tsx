@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, Loader2 } from "lucide-react"
+import { Sparkles, Loader2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 

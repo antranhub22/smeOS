@@ -13,6 +13,7 @@
 
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import {
@@ -32,7 +33,7 @@ import {
   ArrowUpRight,
   Eye,
   X,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { TemplatePreviewModal } from "./template-preview-modal"
 import { TEMPLATE_PREVIEW_REGISTRY, SELF_MODAL_TEMPLATE_FILES } from "./preview-registry"
@@ -289,10 +290,13 @@ export default function KhoTemplatesPage() {
               <LayoutTemplate size={22} strokeWidth={2} />
             </div>
             <div>
-              <h1 className="text-lg font-extrabold text-text">Kho Templates</h1>
-              <p className="text-meta text-text-muted">
-                Thư viện xem trước {TOTAL_FILES} template trên {CATEGORIES.length} chức năng nghiệp vụ
-              </p>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-extrabold text-text">Kho mẫu ấn phẩm</h1>
+                {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+                <InfoTip label="Kho mẫu ấn phẩm" side="bottom">
+                  Xem trước {TOTAL_FILES} mẫu trên {CATEGORIES.length} nhóm chức năng.
+                </InfoTip>
+              </div>
             </div>
           </div>
 

@@ -479,13 +479,18 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | PATCH | `/integration/catalog-links/:slug` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) |
 | POST | `/integration/catalog-links/:slug/revoke` | `J2` (nhánh SSO) | Mới 18/09 (RS-3) |
 | GET | `/public/catalog/:slug` | — *(công khai)* | Storefront khách xem; ảnh ký HMAC; `customer` chỉ có tên/lời chào, không bao giờ có số điện thoại |
-| POST | `/public/catalog/:slug/lead` | — *(công khai)* | Form Lead Capture: `{ phone, message? }` ghi vào `metadata.leads` của `catalog_links`; tổ chức suy từ bản ghi, không nhận từ client. Bổ sung vào đặc tả 05/10/2026 |
+| POST | `/public/catalog/:slug/lead` | — *(công khai)* | Bước 4 (30/10/2026): `{ name, phone, consent: true, message?, ref?, utm?, verificationToken?, website }` → bảng `leads` + khách CRM (tìm/tạo theo SĐT) + `customer_consents` PHONE_CALL. Tổ chức suy từ catalog; catalog thu hồi → 404. Chặn máy: 10 lần/10 phút/IP, ô bẫy `website`, Cloudflare Turnstile khi khai `TURNSTILE_SECRET_KEY`; mỗi SĐT 3 lead/giờ/tiệm → 429. `ref` = mã link động cùng tổ chức → nguồn `SHORT_LINK` |
 | GET · POST | `/store-share-link` | `F1` · `F2` | Công cụ 11 (30/10/2026): xem / tạo link hồ sơ cửa hàng công khai. POST từ chối khi hồ sơ thiếu mục thiết yếu; đã có link đang hoạt động thì trả link đó |
 | GET · POST | `/brand-library` | `F1` · `F2` | Công cụ 45 (30/10/2026): thư viện nhận diện thương hiệu của tổ chức; `?include_archived=true`. POST tạo mục + phiên bản 1; loại LOGO/IMAGE/TEMPLATE cần `asset_id` là ảnh JPG/PNG/WebP của chính tổ chức, loại còn lại cần `text_value` (COLOR chỉ nhận mã hex) |
 | GET · PATCH | `/brand-library/:id` | `F1` · `F2` | Xem kèm các phiên bản; sửa tên/mô tả, `share_with_members`, `status` ACTIVE/ARCHIVED. Mục của tổ chức khác → 404. Ghi nhật ký kiểm toán |
 | POST | `/brand-library/:id/versions` | `F2` | Thêm phiên bản mới (bản cũ giữ nguyên); mục đã lưu trữ → 400 |
 | GET | `/brand-library/chain` | `F1` | Cửa hàng thành viên: mục chuỗi đã chia sẻ, đang dùng (chuỗi suy từ `chain_partnerships` ACTIVE sớm nhất, không nhận từ client); `data: null` khi không thuộc chuỗi |
 | POST | `/store-share-link/revoke` | `F2` | Ngừng link đang hoạt động; trang `/ch/:slug` cũ báo đã ngừng. Không có link → 404 |
+| GET · POST | `/short-links` | `J1` | Bước 4 — công cụ 12/13/25 (30/10/2026): link/QR động. `?kind=QR\|SALES_LINK`, cursor + `limit` ≤ 100. POST `{ kind, name, targetPath, placementLabel?, utmSource?, utmMedium?, utmCampaign?, expiresAt? }`; `targetPath` chỉ nhận đường dẫn nội bộ bắt đầu bằng `/` (chặn open redirect) |
+| PATCH | `/short-links/:id` | `J1` | Đổi tên/đích/vị trí/UTM/hạn, `isActive`. Mã đã in giữ nguyên. Link tổ chức khác → 404 |
+| GET | `/short-links/:id/stats` | `J1` | `?days=1..90` (mặc định 30): tổng lượt quét, khách riêng (băm theo ngày), số lead, theo thiết bị, theo ngày (giờ VN) |
+| GET | `/leads` | `Q1` | Bước 4 — công cụ 21: khách để lại thông tin; `?status=NEW\|CONTACTED\|WON\|LOST`, cursor + `limit` ≤ 100; kèm `counts` theo trạng thái |
+| PATCH | `/leads/:id` | `Q3` | `{ status?, assigneeUserId? }` — người phụ trách phải là thành viên ACTIVE của tổ chức; lead tổ chức khác → 404; ghi `audit_logs` `lead.update` |
 
 **Chưa có:** `GET /catalog-links/:slug/qr` (ảnh PNG mã QR để in) ở core — `LocalBudd` tự sinh QR phía route của nó (`qrcode`, trỏ về `/c/:slug` của chính nó), core cũng có `src/core/media/qr-engine.ts` sinh QR phía giao diện, không qua endpoint. Xem **RS-7**.
 
@@ -602,7 +607,8 @@ Mỗi chỉ số trả kèm `nguon` và `den_ngay`. Dữ liệu kế thừa từ
 | POST | `/chat/conversations/:id/messages` | `T2` | |
 | POST | `/chat/conversations/:id/create-order` | `T3` | Chuyển hội thoại thành đơn nháp — M10 |
 | GET · POST | `/chat/channels` | **chưa gác** — xem **RS-8** | Cấu hình kênh; `configure-chat-channel.ts` gác `T4` nhưng route `/chat/channels` không gọi qua nó |
-| POST | `/chat/public/widget` | — *(công khai)* | Mã nhúng một dòng cho website ngoài |
+| POST | `/chat/public/widget` | — *(công khai)* | Khung chat AI trên trang công khai do công cụ SMEOS tạo. Thân: `slug`, `surface` (`catalog` · `landing_page` · `store_profile` · `sales_link` · `greeting_catalog` · `business_card`; `landing_page` tính kênh `LANDING_PAGE`, còn lại `STOREFRONT_CATALOG`), `visitorId`, `message`. Trang bị tắt trong `config.publicSurfaces` → 404 (chủ tiệm bật/tắt từng loại trang qua `POST /chat/channels` → `config.publicSurfaces`, màn Kênh tích hợp; trang bị tắt không vẽ khung chat — `PublicChatSlot`). Giới hạn mặc định 20 tin/khách và 60 tin/IP mỗi 10 phút, tách theo tiệm; nâng chỉ khi nền tảng duyệt (`config.publicChatLimits.approvedAt`, trần 200/600) → 429. Chỉ cùng nguồn gốc — chưa mở CORS cho website ngoài; lỗi 500 không trả chi tiết nội bộ |
+| GET · POST | `/chat/public-limits` | POST: `T4` | Hạn mức chat AI trên trang công khai của tiệm phiên. GET: mức đang áp dụng (`current`) và yêu cầu chờ duyệt (`pending`). POST `{ perVisitor, perIp, note? }`: xin nâng — chỉ nhận mức chọn sẵn (50/150, 100/300, 200/600) và cao hơn mức hiện tại (400); đang có yêu cầu chờ → 409. Lưu ở `organizations.settings.pending_public_chat_limits`; Admin nền tảng duyệt qua `PATCH /platform/organizations/:id` |
 | GET · POST | `/chat/webhooks/facebook` | — *(chữ ký nền tảng)* | |
 | POST | `/chat/webhooks/zalo` | — *(chữ ký nền tảng)* | |
 
@@ -985,7 +991,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | PUT | `/platform/ux-rollout-flags` | `N12` | `{ flags: { [flagKey]: { mode: "off" \| "allowlist" \| "all", organizationIds } } }` — giá trị lạ thành `off`. Ghi nhật ký kiểm toán nền tảng |
 | GET | `/platform/governance-matrix` | *(phiên nền tảng)* | Quyết định tầng Mẹ của ma trận quản trị |
 | PUT | `/platform/governance-matrix` | `N12` | `{ decisions }` như trên, lưu `platform_settings` khoá `governance_matrix:<system>`, áp xuống mọi tổ chức. Ghi nhật ký kiểm toán nền tảng |
-| PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này |
+| PATCH | `/platform/organizations/:id` | `N2` *(kiểm ở use-case)* | Duyệt đổi mô hình tổ chức `{ target_type: SINGLE \| STORE \| CHAIN \| FLOWER_NETWORK, note? }`; xoá `settings.pending_model_change`. Đăng ký chọn "Chuỗi" chỉ tạo yêu cầu chờ duyệt này. `{ public_chat_limits_decision: "approve" \| "reject" }`: duyệt/từ chối yêu cầu nâng hạn mức chat công khai — duyệt ghi đúng mức đã xin (chỉ mức chọn sẵn, trần 200/600) vào `config.publicChatLimits` của kênh `STOREFRONT_CATALOG` và `LANDING_PAGE`; cả hai xoá `settings.pending_public_chat_limits`. Hiện ở màn `/van-hanh/phe-duyet` |
 
 
 ## Thông báo đa tầng (27/10/2026)

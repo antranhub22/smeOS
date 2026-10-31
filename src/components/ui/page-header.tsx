@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { InfoTip } from "@/components/ui/info-tip"
 
 export interface PageHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   title: React.ReactNode
@@ -7,10 +8,12 @@ export interface PageHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElemen
   breadcrumbs?: React.ReactNode
   badge?: React.ReactNode
   actions?: React.ReactNode
+  /** Giải thích chi tiết đặt trong dấu "?" cạnh tiêu đề (OPERATING_PRINCIPLES §6.1) */
+  tip?: React.ReactNode
 }
 
 export const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
-  function PageHeader({ className, title, description, breadcrumbs, badge, actions, ...props }, ref) {
+  function PageHeader({ className, title, description, breadcrumbs, badge, actions, tip, ...props }, ref) {
     return (
       <div
         ref={ref}
@@ -27,6 +30,7 @@ export const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
               {title}
             </h1>
             {badge}
+            {tip && <InfoTip label={typeof title === "string" ? title : "Giải thích"}>{tip}</InfoTip>}
           </div>
           {description && (
             <p className="text-body-sm text-text-muted max-w-3xl">

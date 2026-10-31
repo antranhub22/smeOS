@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Banknote, ArrowDownCircle } from "lucide-react"
+import { Banknote, ArrowDownCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export interface BalancePaymentBannerProps {

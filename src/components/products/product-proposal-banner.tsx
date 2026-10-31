@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { proposalExpiresAt, readProposal } from "@/modules/products/domain/product-proposal"

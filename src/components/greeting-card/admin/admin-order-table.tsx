@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Ban, Check, ClipboardCheck, RotateCcw, Tag, XCircle } from "lucide-react"
+import { Ban, Check, ClipboardCheck, RotateCcw, Tag, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { paymentCheckOf } from "@/modules/greeting-card/domain/payment-check"

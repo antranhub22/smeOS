@@ -11,7 +11,7 @@ import {
   Eye,
   Trash2,
   ArrowRight,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { errorMessage, uploadCoordinatorPhoto } from "@/components/coordinator/coordinator-api"
 

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Flower2 } from "lucide-react"
+import { Flower2 } from "@/components/ui/icons"
 import { resolveFlowerImage } from "./flower-image-fallback"
 
 interface SmartFlowerImageProps {

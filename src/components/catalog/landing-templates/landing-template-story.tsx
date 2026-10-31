@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, Flower2, HeartHandshake, Scissors } from "lucide-react"
+import { Sparkles, Flower2, HeartHandshake, Scissors } from "@/components/ui/icons"
 import type { LandingSectionStory } from "@/modules/content-engine/domain/landing-content-generator"
 
 interface LandingTemplateStoryProps {

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { markPersonalLinkCopied } from "@/components/greeting-card/share/tracked-copy"
-import { Check, Copy, ExternalLink, Ban, Send } from "lucide-react"
+import { Check, Copy, ExternalLink, Ban, Send } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"

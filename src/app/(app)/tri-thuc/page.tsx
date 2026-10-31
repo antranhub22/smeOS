@@ -1,5 +1,6 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react"
 import Link from "next/link"
@@ -12,7 +13,7 @@ import {
   CheckCircle2,
   ExternalLink,
   HelpCircle,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
@@ -63,16 +64,12 @@ export default function KnowledgeBasePage() {
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-6 py-4 backdrop-blur-sm">
         <div className="flex items-start"><MobileMenuButton /><div>
           <div className="flex items-center gap-2">
-            <span className="rounded bg-danger/15 px-2 py-0.5 text-xs font-mono font-bold text-danger uppercase tracking-wider">
-              KHO TRI THỨC HỆ THỐNG
-            </span>
-            <h1 className="text-xl font-extrabold text-foreground">
-              Cẩm Nang Tri Thức & Quy Chuẩn Nhập Liệu
-            </h1>
+            <h1 className="text-xl font-extrabold text-foreground">Cẩm nang tri thức</h1>
+            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+            <InfoTip label="Cẩm nang tri thức" side="bottom">
+              Bảng tra cứu các trường bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS.
+            </InfoTip>
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Bảng tra cứu các trường nguyên tử bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS
-          </p>
         </div></div>
 
         {/* Top-Right Action Toolbar (K2: 1 primary + 1 secondary) */}

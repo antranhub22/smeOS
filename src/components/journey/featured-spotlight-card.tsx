@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react"
+import { Sparkles, ArrowRight, CheckCircle2 } from "@/components/ui/icons"
 import { COMING_SOON_LABEL } from "@/lib/feature-lock"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { useSession } from "@/lib/session"

@@ -1,12 +1,14 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Check, ArrowLeft, BarChart3, ChevronRight, TrendingUp } from "lucide-react"
+import { Check, ArrowLeft, BarChart3, ChevronRight, TrendingUp } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { StatTile } from "@/components/ui/stat-tile"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
@@ -228,12 +230,15 @@ export default function AnalyticsPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-4">
-        <div>
-          <div className="text-xs text-text-muted font-bold tracking-wider uppercase">Báo cáo & Phân tích</div>
-          <div className="text-title font-extrabold text-primary flex items-center gap-2">
-            <BarChart3 size={18} />
-            Analytics & Learning
-          </div>
+        <div className="flex items-center gap-2">
+          <h1 className="text-title font-extrabold text-primary flex items-center gap-2">
+            <BarChart3 size={18} aria-hidden="true" />
+            Báo cáo kinh doanh
+          </h1>
+          {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+          <InfoTip label="Báo cáo kinh doanh" side="bottom">
+            Số liệu bán hàng, mức dùng và hiệu quả quảng cáo của cửa hàng.
+          </InfoTip>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -242,7 +247,7 @@ export default function AnalyticsPage() {
             onClick={() => setAdModalOpen(true)}
             className="flex items-center gap-1.5 text-xs font-semibold text-primary border-primary/30 hover:bg-primary/5"
           >
-            <TrendingUp size={14} /> Hiệu quả Ads (MK-10)
+            <TrendingUp size={14} /> Hiệu quả quảng cáo
           </Button>
           <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5 text-xs">
             <ArrowLeft size={16} strokeWidth={2} /> Trang chủ
@@ -258,8 +263,8 @@ export default function AnalyticsPage() {
           description="Theo dõi mức sử dụng hạn mức, số liệu thực tế từ các tính năng và duyệt các đề xuất điều chỉnh phong cách nội dung sau các chu kỳ tiếp thị."
           tips={[
             "📊 Mọi số liệu hiển thị là số đo thực tế từ hệ thống (không dùng số liệu mô phỏng)",
-            "⚡ Vòng học phong cách đề xuất tinh chỉnh Tone of Voice và Brand Kit dựa trên phản hồi khách hàng",
-            "🛡️ Duyệt áp dụng chính sách cần quyền quản trị U2 (learning.profile.manage)",
+            "⚡ Vòng học phong cách đề xuất tinh chỉnh giọng điệu và bộ nhận diện thương hiệu dựa trên phản hồi khách hàng",
+            "🛡️ Chỉ người có quyền quản trị mới duyệt áp dụng chính sách",
           ]}
         />
 
@@ -315,19 +320,13 @@ export default function AnalyticsPage() {
                 ))
               ) : usage && usage.by_feature.length > 0 ? (
                 usage.by_feature.map((f) => (
-                  <Card key={f.feature} className="p-4 bg-surface border border-border flex flex-col justify-between gap-2">
-                    <div className="text-caption font-bold text-text-muted uppercase tracking-wider">
-                      {metricLabel(f.feature)}
-                    </div>
-                    <div className="flex items-baseline justify-between mt-1">
-                      <span className="text-display-lg font-black text-text">
-                        {f.quantity.toLocaleString("vi-VN")}
-                      </span>
-                      <span className="text-xs font-semibold text-text-muted">
-                        {f.cost_credit} credits
-                      </span>
-                    </div>
-                  </Card>
+                  // Số to + nhãn nhỏ; chi phí credit nằm trong "?" (OPERATING_PRINCIPLES §6.6)
+                  <StatTile
+                    key={f.feature}
+                    label={metricLabel(f.feature)}
+                    value={f.quantity.toLocaleString("vi-VN")}
+                    tip={`Mỗi lần dùng tốn ${f.cost_credit} credit.`}
+                  />
                 ))
               ) : (
                 <Card className="p-4 col-span-full text-center bg-surface border border-border">
@@ -340,7 +339,7 @@ export default function AnalyticsPage() {
             {usage && usage.by_feature.length > 0 && (
               <Card className="p-4 bg-surface border border-border flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-text uppercase tracking-wider">
+                  <h3 className="text-body-sm font-bold text-text">
                     Bảng số liệu chi tiết theo tính năng
                   </h3>
                   <span className="text-caption text-text-muted">Đo lường thật từ backend</span>
@@ -379,7 +378,7 @@ export default function AnalyticsPage() {
             {usage && (
               <Card className="p-4 bg-surface border border-border flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-text-muted uppercase">Tổng mức sử dụng</div>
+                  <div className="text-body-sm font-bold text-text-muted">Tổng mức sử dụng</div>
                   <div className="text-lg font-black text-text mt-0.5">
                     {usage.credit_used} credit
                   </div>
@@ -407,7 +406,7 @@ export default function AnalyticsPage() {
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div>
-                <span className="text-xs text-text-muted font-bold uppercase">AI Diễn giải</span>
+                <span className="text-body-sm text-text-muted font-bold">Diễn giải bằng AI</span>
                 <h2 className="text-base font-bold text-text">Phân tích nguyên nhân & Chỉ số bất thường</h2>
               </div>
               <Badge tone="neutral">Tham khảo — không ghi đè</Badge>

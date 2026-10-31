@@ -21,19 +21,19 @@ export function getStoreJourneys(industryKey?: string | null): JourneyDefinition
       case "greeting-card-hub":
         return {
           ...j,
-          goal: `Thẻ chào & ${terms.catalogTitle}`,
+          goal: "Thẻ chào sản phẩm",
           description: `Gửi ${terms.catalogTitle.toLowerCase()} cho khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.`,
         }
       case "market-intelligence-explore":
         return {
           ...j,
-          goal: `Xem ${terms.sampleProduct.toLowerCase()} được ưa chuộng`,
+          goal: "Xu hướng thị trường",
           description: `Biết khách thích kiểu dáng, màu sắc và mức giá nào để chuẩn bị hàng.`,
         }
       case "analyze-product-photo":
         return {
           ...j,
-          goal: `Tạo ${terms.sampleProduct.toLowerCase()} từ ảnh chụp`,
+          goal: "Sản phẩm từ ảnh",
           description: `Chụp ảnh sản phẩm, AI nhận diện các chi tiết, ${terms.rawMaterialItem.toLowerCase()} và tạo sẵn mẫu để bán.`,
           steps: j.steps.map((s, idx) =>
             idx === 0
@@ -61,13 +61,13 @@ export function getStoreJourneys(industryKey?: string | null): JourneyDefinition
       case "create-product-video":
         return {
           ...j,
-          goal: `Tạo video từ ảnh ${terms.sampleProduct.toLowerCase()}`,
+          goal: "Video sản phẩm",
           description: `Biến ảnh ${terms.sampleProduct.toLowerCase()} thành video ngắn để đăng Story, Reels, TikTok.`,
         }
       case "create-catalog-collection":
         return {
           ...j,
-          goal: `Tạo trang giới thiệu & ${terms.catalogTitle.toLowerCase()}`,
+          goal: "Trang bán hàng",
           description: `Tạo trang web ${terms.catalogTitle.toLowerCase()} kèm mã QR để in ấn hoặc gửi khách.`,
           steps: j.steps.map((s, idx) =>
             idx === 0 ? { ...s, label: `Tuyển chọn danh sách ${terms.sampleProduct.toLowerCase()}` } : s
@@ -86,7 +86,7 @@ export function getStoreJourneys(industryKey?: string | null): JourneyDefinition
       case "launch-product-combo":
         return {
           ...j,
-          goal: `Ra mắt ${terms.sampleProduct.toLowerCase()} mới`,
+          goal: "Ra mắt sản phẩm mới",
           description: `Từ một ảnh chụp: nhận diện chi tiết, tạo ${terms.sampleProduct.toLowerCase()}, viết bài và làm ảnh quảng cáo.`,
         }
       case "customer-service-chatbot":
@@ -115,31 +115,31 @@ export function getNetworkJourneys(industryKey?: string | null): JourneyDefiniti
       case "network-overview":
         return {
           ...j,
-          goal: `Báo cáo toàn hệ thống mạng lưới`,
+          goal: "Báo cáo mạng lưới",
           description: `Theo dõi dòng đơn điều phối, tỷ lệ nhận đơn và doanh số toàn mạng lưới`,
         }
       case "network-products":
         return {
           ...j,
-          goal: `Quản lý ${terms.sampleProduct.toLowerCase()} mạng lưới`,
+          goal: "Sản phẩm mạng lưới",
           description: `Chuẩn hóa danh mục ${terms.sampleProduct.toLowerCase()} chung cho các thành viên nhận làm`,
         }
       case "network-sales":
         return {
           ...j,
-          goal: `Bán hàng & Đơn đặt ${terms.sampleProduct.toLowerCase()}`,
+          goal: "Bán hàng",
           description: `Tiếp nhận đơn hàng liên tỉnh và phân bổ nhanh chóng`,
         }
       case "network-dispatch":
         return {
           ...j,
-          goal: `Điều phối đơn ${terms.sampleProduct.toLowerCase()}`,
-          description: `Chuyển đơn thông minh tới đối tác gần điểm giao nhất`,
+          goal: "Điều phối đơn hàng",
+          description: `Chuyển đơn ${terms.sampleProduct.toLowerCase()} tới đối tác gần điểm giao nhất`,
         }
       case "network-partners":
         return {
           ...j,
-          goal: `Quản lý đối tác ${terms.makerTitle.toLowerCase()}`,
+          goal: "Đối tác làm hàng",
           description: `Đánh giá chất lượng, tỷ lệ hoàn thành đúng hẹn của ${terms.makerTitle.toLowerCase()} đối tác`,
         }
       case "network-marketing":

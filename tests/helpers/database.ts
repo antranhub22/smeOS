@@ -12,6 +12,10 @@ const TENANT_TABLES = [
   "integration_events",
   "integration_connections",
   "integration_governance",
+  // Bước 4 — thu hút khách (30/10/2026) — con trước cha
+  "link_events",
+  "leads",
+  "short_links",
   // Công cụ 11 — link hồ sơ cửa hàng công khai (30/10/2026)
   "store_share_links",
   // Công cụ 45 — thư viện thương hiệu (30/10/2026) — con trước cha

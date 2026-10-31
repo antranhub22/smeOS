@@ -11,7 +11,7 @@ import {
   ArrowRight,
   ShieldAlert,
   Sparkles,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

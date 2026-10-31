@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Hourglass } from "lucide-react"
+import { Hourglass } from "@/components/ui/icons"
 import type { PhotoApprovalState } from "@/modules/greeting-card/domain/photo-approval"
 
 export type { PhotoApprovalState }

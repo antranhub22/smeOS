@@ -1,4 +1,4 @@
-import { Check } from "lucide-react"
+import { Check } from "@/components/ui/icons"
 import { coordinatorProgress } from "@/modules/greeting-card/domain/coordinator-progress"
 
 /** Dải bước xưởng: ✓ bước đã xong, chấm đậm bước đang làm. */

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Play, Pause, Download, Share2, Volume2, VolumeX } from "lucide-react"
+import { Play, Pause, Download, Share2, Volume2, VolumeX } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

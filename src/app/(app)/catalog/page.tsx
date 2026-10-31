@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
+import { AlertTriangle, ArrowLeft } from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { CatalogGuidanceCard } from "@/components/templates/catalog/catalog-guidance-card"
@@ -114,15 +114,19 @@ export default function CatalogWebsitePage() {
     )
   }
 
-  const matchCandidates: ProductMatchCandidate[] = products.map((p) => ({
+  // Sản phẩm chưa có giá không đưa vào gợi ý ngân sách — không báo giá bịa (OPERATING_PRINCIPLES §2)
+  const matchCandidates: ProductMatchCandidate[] = products
+    .filter((p): p is CatalogProduct & { price: number } => typeof p.price === "number")
+    .map((p) => ({
     id: p.id,
     code: p.code || p.id,
     name: p.name,
-    sellingPriceVnd: p.price ?? 500_000,
+    sellingPriceVnd: p.price,
     category: p.category || "Sản phẩm",
-    colorTheme: "Đa sắc",
-    occasions: ["Sinh nhật", "Kỷ niệm", "Khai trương"],
-    style: "Thiết kế hiện đại",
+    // Chỉ dùng dữ liệu thật của sản phẩm; thiếu thì để rỗng, không bịa (OPERATING_PRINCIPLES §2)
+    colorTheme: p.color ?? "",
+    occasions: p.occasion_code ? [p.occasion_code] : [],
+    style: typeof p.attributes?.style === "string" ? p.attributes.style : "",
     imageUrl: p.imageUrl || undefined,
     highlightFlowers: [],
   }))
@@ -136,8 +140,9 @@ export default function CatalogWebsitePage() {
 
       <div className="flex flex-1 flex-col overflow-y-auto p-[18px] gap-5">
         {error && (
-          <div className="rounded-lg bg-destructive-bg px-4 py-2 text-body-sm text-destructive flex items-center gap-2">
-            ⚠️ {error}
+          <div className="flex items-center gap-2 rounded-xl bg-destructive-bg px-4 py-2.5 text-body-sm text-destructive">
+            <AlertTriangle size={16} weight="fill" className="shrink-0" aria-hidden="true" />
+            <span>{error}</span>
           </div>
         )}
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Search, ExternalLink, CheckCircle2, AlertTriangle, XCircle } from "lucide-react"
+import { Search, ExternalLink, CheckCircle2, AlertTriangle, XCircle } from "@/components/ui/icons"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 
 export interface QuickStockBoardProps {

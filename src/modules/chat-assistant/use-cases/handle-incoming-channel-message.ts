@@ -9,6 +9,7 @@ import { chatAnswerViaGateway } from "../adapters/chat-answer-gateway"
 import { ChatChannelRepository, getChatChannelRepository } from "../infra/chat-channel-repository"
 import { isChannelSubscriptionActive } from "../domain/channel-integration-rules"
 import type { SupportedChatChannel } from "../domain/channel-integration-types"
+import { isChannelEnabledByDefault } from "../domain/public-chat-policy"
 import type { SuggestedProductCard } from "../domain/chat-types"
 import { listProductMasterIndex } from "@/modules/products/use-cases/get-product-master-index"
 
@@ -38,7 +39,7 @@ export async function handleIncomingChannelMessage(
   // 1. Kiểm tra trạng thái kích hoạt của kênh đối với tổ chức
   const channelConfig = await deps.channelRepo.getChannelConfigForOrg(organizationId, channel)
 
-  const isEnabled = channelConfig?.isEnabled ?? (channel === "STOREFRONT_CATALOG" || channel === "INTERNAL_DASHBOARD")
+  const isEnabled = channelConfig?.isEnabled ?? isChannelEnabledByDefault(channel)
   const expiresAt = channelConfig?.subscriptionExpiresAt
     ? new Date(channelConfig.subscriptionExpiresAt)
     : null

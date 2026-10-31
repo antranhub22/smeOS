@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Lock, ShieldCheck, AlertCircle } from "lucide-react"
+import { Lock, ShieldCheck, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 
@@ -201,7 +201,7 @@ export function ConnectAccountModal({
         <div className="rounded-xl bg-surface-alt/70 p-3 border border-border/60 flex items-start gap-2.5 text-caption text-text-muted leading-relaxed">
           <ShieldCheck size={16} className="text-secondary flex-shrink-0 mt-0.5" />
           <div>
-            Thông tin đăng nhập được mã hóa hai chiều bằng thuật toán <strong>AES-256</strong> trên máy chủ nội bộ. Hệ thống sử dụng phiên duyệt tự động (Playwright Session) để đăng bài mà không lưu mật khẩu thô.
+            Thông tin đăng nhập được mã hoá trước khi lưu trên máy chủ và không hiện lại trên màn hình. Hệ thống giữ phiên đăng nhập để đăng bài thay bạn.
           </div>
         </div>
       </form>

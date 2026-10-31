@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, Cpu, TrendingUp, Sparkles, ShoppingBag, ArrowRight } from "lucide-react"
+import { AlertTriangle, Cpu, TrendingUp, Sparkles, ShoppingBag, ArrowRight } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { Card } from "@/components/ui/card"

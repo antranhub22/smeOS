@@ -125,6 +125,19 @@
      accent-text/surface = 7.61:1; /bg = 7.09:1; /surface-alt = 6.53:1 (đạt AA). */
   --color-accent-text: #6B4F1A;
 
+  /* ── Màu nhóm cho ô icon điều hướng (PO 30/10/2026, chỉ dùng trong IconTile) ──
+     Đều đạt ≥ 4.5:1 với chữ/icon trắng khi làm nền ô đặc. */
+  --color-tone-plum: #7A2E42;
+  --color-tone-rose: #A8445D;
+  --color-tone-orange: #B93B0B;
+  --color-tone-amber: #A04A06;
+  --color-tone-teal: #0F766E;
+  --color-tone-blue: #1D4ED8;
+  --color-tone-indigo: #4338CA;
+  --color-tone-green: #15803D;
+  --color-tone-pink: #BE185D;
+  --color-tone-emerald: #047857;
+
   /* ── Tương thích ngược Shadcn Tokens (Legacy Compatibility) ──────────
    * Tự động ánh xạ 203 file dùng bg-background, text-foreground,
    * border-input, text-muted-foreground về đúng Semantic Tokens của hệ thống.

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import type { Route } from "next"
-import { Building2, Cpu, Share2, Server, Users, ArrowRight } from "lucide-react"
+import { Building2, Cpu, Share2, Server, Users, ArrowRight } from "@/components/ui/icons"
 
 export function SettingsSubsystemGrid() {
   return (

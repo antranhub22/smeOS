@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Clock, UserCheck, Flower2, Camera, Truck, CheckCircle2, Home, Bed, Utensils, Scissors, Package, Sparkles } from "lucide-react"
+import { Clock, UserCheck, Flower2, Camera, Truck, CheckCircle2, Home, Bed, Utensils, Scissors, Package, Sparkles } from "@/components/ui/icons"
 import type { BrochureOrder, ModalState } from "./coordinator-order-card"
 import type { BrochurePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
 import type { TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"

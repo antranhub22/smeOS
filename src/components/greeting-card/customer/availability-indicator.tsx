@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, AlertCircle, CalendarX, Sparkles, Loader2 } from "lucide-react"
+import { CheckCircle2, AlertCircle, CalendarX, Sparkles, Loader2 } from "@/components/ui/icons"
 import type { AvailabilityMode } from "@/modules/greeting-card/domain/product-availability-config"
 import { useI18n } from "@/lib/i18n"
 

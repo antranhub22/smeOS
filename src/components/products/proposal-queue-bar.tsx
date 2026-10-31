@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ClipboardCheck } from "lucide-react"
+import { ClipboardCheck } from "@/components/ui/icons"
 
 const COUNT_LIMIT = 100
 

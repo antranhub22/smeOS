@@ -12,7 +12,7 @@ import { useMemo, useState, useCallback, useRef, useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
-import { FlaskConical, Check, ChevronDown } from "lucide-react"
+import { FlaskConical, Check, ChevronDown } from "@/components/ui/icons"
 import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
 
 const INDUSTRY_SHORT_NAME: Record<string, string> = {

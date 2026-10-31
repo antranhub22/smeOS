@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { UploadCloud, Image as ImageIcon, Sparkles, X, CheckCircle, RefreshCw } from "lucide-react"
+import { UploadCloud, Image as ImageIcon, Sparkles, X, CheckCircle, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export interface DirectProductUploadProps {

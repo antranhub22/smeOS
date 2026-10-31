@@ -7,7 +7,7 @@ import {
   Check,
   Sparkles,
   MessageCircle,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 

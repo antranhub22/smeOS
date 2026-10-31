@@ -51,6 +51,8 @@
 
 ## 4. Lưới thẻ chức năng (Action Cards — 13 Thẻ còn lại)
 
+> **Cập nhật 30/10/2026 (PO duyệt phong cách "Thoáng – Ít chữ – Icon lớn"):** tên thẻ rút gọn ≤ 5 từ, mô tả nằm trong dấu "?". Tên hiện hành: Xem báo cáo · Xu hướng thị trường · Sản phẩm từ ảnh · Tạo báo giá · Viết bài đăng · Giọng đọc · Ảnh quảng cáo · Video sản phẩm · Trang bán hàng · Xử lý đơn hàng · Quản lý khách hàng · Ra mắt sản phẩm mới · Hỏi trợ lý smeOS. Nguồn: `src/modules/journey/domain/journey-catalog.ts` (test `journey-short-goals.test.ts`); thuật ngữ theo ngành chỉ đổi ở mô tả. Cột "HIỆN TẠI" bên dưới là lịch sử.
+
 | Mã Copy | Loại | Tên thẻ (Goal) | Nội dung HIỆN TẠI trên UI | Nội dung BẠN CHUẨN HÓA (Mới) | Trạng thái Production |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `HOME-CRD-01T`| `HDR` | Báo cáo | `Xem báo cáo` | `Xem báo cáo` | Đang mở |

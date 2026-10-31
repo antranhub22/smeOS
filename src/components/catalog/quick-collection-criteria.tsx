@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { DollarSign, Sparkles, User } from "lucide-react"
+import { DollarSign, Sparkles, User } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { GREETING_TEMPLATE_LIST } from "@/modules/greeting-card/domain/greeting-template-registry"
 import { getIndustryQuickCollectionOptions } from "./quick-collection-options"

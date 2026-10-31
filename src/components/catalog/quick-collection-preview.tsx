@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { RefreshCw, Sparkles } from "lucide-react"
+import { RefreshCw, Sparkles } from "@/components/ui/icons"
 import type { QuickCollectionResult } from "@/modules/catalog-links/domain/quick-collection-engine"
 
 /** Mẫu hoa đề xuất theo tiêu chí — xem trước trước khi tạo link; "Chọn mẫu khác" đổi bộ mẫu. */

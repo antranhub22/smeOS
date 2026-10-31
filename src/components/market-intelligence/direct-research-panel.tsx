@@ -8,7 +8,7 @@ import {
   SlidersHorizontal,
   ChevronDown,
   Layers,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import type { CustomResearchParams } from "./custom-research-modal";
 import { ResearchParameterFields } from "./research-parameter-fields";
 import {

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ListFilter, Sparkles } from "lucide-react"
+import { ListFilter, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"

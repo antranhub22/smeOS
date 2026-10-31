@@ -10,7 +10,7 @@ import {
   Copy,
   ExternalLink,
   Sparkles,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

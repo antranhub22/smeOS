@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "@/components/ui/icons"
 
 /**
  * Lần đầu mở link riêng: trình duyệt này xin nhận phiên (cookie chủ phiên) rồi tải lại trang để

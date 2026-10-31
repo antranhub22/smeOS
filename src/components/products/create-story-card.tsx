@@ -1,7 +1,8 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
-import { Sparkles } from "lucide-react"
+import { Sparkles } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import type { TerminologyGetter } from "./create-product-types"
@@ -46,12 +47,10 @@ export function CreateStoryCard({
             <Sparkles size={18} className="text-primary" />
             <span>Câu chuyện và thông điệp {ti("sampleProduct").toLowerCase()}</span>
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border">
-              ✨ Nội dung AI hỗ trợ
+              <Sparkles size={13} aria-hidden="true" className="inline" /> Nội dung AI hỗ trợ
             </span>
+            <InfoTip label="Nội dung AI">Có thể do AI phân tích, gợi ý hoặc chủ cửa hàng viết — không ràng buộc giao kèo pháp lý.</InfoTip>
           </div>
-          <p className="text-caption text-text-muted mt-0.5">
-            Có thể do AI phân tích, gợi ý hoặc chủ cửa hàng viết — không ràng buộc giao kèo pháp lý.
-          </p>
         </div>
       </div>
       <div>

@@ -14,7 +14,7 @@ import {
   Shield,
   AlertCircle,
   RefreshCw,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

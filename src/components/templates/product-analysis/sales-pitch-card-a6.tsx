@@ -7,7 +7,7 @@ import {
   Gift,
   ShieldCheck,
   CheckCircle2,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { SalesPitchData } from "@/modules/products/domain/sales-pitch-template"

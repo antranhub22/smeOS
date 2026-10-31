@@ -3,7 +3,7 @@
 import React from "react"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import type { PaymentProofAnalysisResult } from "@/modules/greeting-card/domain/payment-proof-analysis"
-import { CheckCircle2, AlertTriangle, AlertCircle, Sparkles, ExternalLink, Clock } from "lucide-react"
+import { CheckCircle2, AlertTriangle, AlertCircle, Sparkles, ExternalLink, Clock } from "@/components/ui/icons"
 
 interface OrderPaymentProofViewProps {
   paymentProofUrl?: string | null | undefined

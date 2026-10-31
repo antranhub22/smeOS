@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useRef, useEffect } from "react"
-import { ChevronDown, X, Check, Plus } from "lucide-react"
+import { ChevronDown, X, Check, Plus } from "@/components/ui/icons"
 
 interface MultiSelectDropdownProps {
   options: string[]

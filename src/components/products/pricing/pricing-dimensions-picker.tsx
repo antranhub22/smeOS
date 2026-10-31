@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Plus, X } from "lucide-react"
+import { Plus, X } from "@/components/ui/icons"
 import type { IndustryVariantDimensionPreset } from "@/modules/organization/domain/industry-plugin-contract"
 import { MAX_DIMENSIONS, MAX_DIMENSION_VALUES, type PriceDimension } from "@/modules/products/domain/product-pricing"
 

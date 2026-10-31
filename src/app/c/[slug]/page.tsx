@@ -1,5 +1,6 @@
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
+import { PublicChatSlot } from "@/components/chat/public-chat-slot"
 import { getPublicCatalog } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { CatalogStorefront } from "@/components/catalog/catalog-storefront"
 
@@ -35,7 +36,17 @@ export default async function PublicCatalogPage({ params }: PageProps) {
   const { slug } = await params
   const data = await getPublicCatalog(slug)
 
-  return <CatalogStorefront initialData={data} />
+  // Landing page (Công cụ 08) và Catalog (09) dùng chung trang /c — phân biệt theo gói chiến dịch
+  const surface = data.status === "ACTIVE" && (data.campaignConfig?.archetype || data.campaignConfig?.generatedPackage)
+    ? "landing_page"
+    : "catalog"
+
+  return (
+    <>
+      <CatalogStorefront initialData={data} />
+      {data.status === "ACTIVE" && <PublicChatSlot pageKey={{ by: "catalog_slug", value: slug }} surface={surface} />}
+    </>
+  )
 }
 
 export const dynamic = "force-dynamic"

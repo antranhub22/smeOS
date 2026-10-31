@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Eye } from "lucide-react"
+import { Eye } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import type { SaleVisibilityView } from "@/modules/greeting-card/use-cases/sale-visibility"
 import type { VisibilityMode } from "@/modules/greeting-card/domain/order-visibility"

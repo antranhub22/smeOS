@@ -22,7 +22,7 @@ import {
   Cpu,
   Loader2,
   FileSpreadsheet,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import type { PlatformOrgRecordsResult, RecordDomain } from "@/modules/platform/use-cases/get-platform-org-records"
 import type { RecordColumn } from "@/modules/platform/use-cases/get-platform-org-records"

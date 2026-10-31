@@ -21,7 +21,7 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { MessageSquareText, Check, X, AlertCircle, CheckCircle2 } from "lucide-react"
+import { MessageSquareText, Check, X, AlertCircle, CheckCircle2 } from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { errorText } from "@/lib/error-text"
 

@@ -8,7 +8,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Lock, AlertTriangle, RefreshCw } from "lucide-react"
+import { Search, Lock, AlertTriangle, RefreshCw } from "@/components/ui/icons"
 import type { GovernanceMatrixState, GovernanceViewerTier } from "./governance-matrix-types"
 import { GovernanceMatrixCell } from "./governance-matrix-cell"
 
@@ -135,7 +135,7 @@ export function GovernanceMatrixTable({
         {filteredGroups.map((group) => (
           <div
             key={group.groupKey}
-            className="rounded-2xl border border-border bg-surface overflow-hidden shadow-xs"
+            className="rounded-2xl border border-border bg-surface overflow-hidden shadow-sm"
           >
             {/* Tiêu đề nhóm */}
             <div className="px-5 py-3.5 bg-surface-alt border-b border-border flex items-center justify-between">

@@ -13,7 +13,7 @@ import {
   ShoppingBag,
   Loader2,
   ShieldCheck,
-} from "lucide-react"
+} from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { TrashItem } from "@/modules/storage/domain/trash-types"
