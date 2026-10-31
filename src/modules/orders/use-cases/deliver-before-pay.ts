@@ -10,6 +10,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { isUrgentOrder } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 import { DELIVER_BEFORE_PAY, decideDeliverBeforePay as decide, defaultCollectDueAt } from "../workflow/deliver-before-pay"
 import { ApprovalRequestRepository } from "../infra/approval-request-repository"
+import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
 type Repo = Pick<ApprovalRequestRepository, "findOrder" | "orgSettings" | "customerStats" | "hasOpenRequest" | "create" | "findRequest" | "decide" | "list">
 const REASON_MAX = 500
@@ -28,6 +29,7 @@ export async function requestDeliverBeforePay(
   input: { reason?: string | undefined },
   repo: Repo = new ApprovalRequestRepository(),
   now = new Date(),
+  notify: typeof notifyOrganization = notifyOrganization,
 ) {
   const reason = input.reason?.trim() ?? ""
   if (!reason || reason.length > REASON_MAX) throw validationFailed({ reason: `Ghi lý do (tối đa ${REASON_MAX} ký tự)` })
@@ -61,6 +63,17 @@ export async function requestDeliverBeforePay(
     },
     autoApprove ? `Giao trước, thu sau — ${verdict.label}. Lý do: ${reason}` : "",
   )
+  if (!autoApprove) {
+    // Không chờ: thông báo chậm/lỗi không làm hỏng yêu cầu đã ghi
+    void notify({
+      organizationId: ctx.organizationId,
+      eventKey: "ORDER_DELIVER_BEFORE_PAY_REQUESTED",
+      ownerUserId: ctx.userId,
+      title: `Xin giao trước, thu sau — đơn ${order.code}`,
+      message: `${verdict.why}. Lý do: ${reason}`,
+      deepLink: "/don-hang?tab=approve",
+    })
+  }
   return {
     request: { id: row.id, status: row.status, basis: row.basis, collectDueAt: row.collect_due_at?.toISOString() ?? null },
     message: autoApprove ? `Đã chuyển đơn sang Điều phối (${verdict.label})` : `Đã gửi Điều hành duyệt: ${verdict.why}`,

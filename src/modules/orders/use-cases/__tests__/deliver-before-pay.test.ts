@@ -25,16 +25,20 @@ function repo(over: { total?: number; settings?: unknown; completed?: number; op
 describe("Sale xin giao trước, thu sau", () => {
   it("trong hạn mức → tự duyệt, đơn sang Điều phối cùng giao dịch", async () => {
     const r = repo()
-    const out = await requestDeliverBeforePay(ctx, "o-1", { reason: "Khách quen" }, r as never)
+    const notify = vi.fn(async () => 1)
+    const out = await requestDeliverBeforePay(ctx, "o-1", { reason: "Khách quen" }, r as never, new Date(), notify)
+    expect(notify).not.toHaveBeenCalled()
     expect(out.request).toMatchObject({ status: "AUTO_APPROVED", basis: "SELF_LIMIT" })
     expect(r.create.mock.calls[0]?.[3]).toContain("Trong hạn mức Sale tự quyết")
   })
 
   it("ngoài hạn mức → chờ Điều hành, không chuyển Điều phối", async () => {
     const r = repo({ total: 3_000_000 })
-    const out = await requestDeliverBeforePay(ctx, "o-1", { reason: "Khách công ty" }, r as never)
+    const notify = vi.fn(async () => 1)
+    const out = await requestDeliverBeforePay(ctx, "o-1", { reason: "Khách công ty" }, r as never, new Date(), notify)
     expect(out.request.status).toBe("PENDING")
     expect(r.create.mock.calls[0]?.[3]).toBe("")
+    expect(notify).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", eventKey: "ORDER_DELIVER_BEFORE_PAY_REQUESTED", deepLink: "/don-hang?tab=approve" }))
   })
 
   it("thiếu lý do → 422; đơn không thuộc tổ chức hoặc là Thẻ chào → 404; đã có yêu cầu mở → 409", async () => {

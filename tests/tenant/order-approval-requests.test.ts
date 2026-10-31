@@ -7,6 +7,7 @@ import { POST as postQuote } from "@/app/api/v1/orders/[id]/quote/route"
 import { GET as listRequests } from "@/app/api/v1/orders/approval-requests/route"
 import { POST as postDecision } from "@/app/api/v1/orders/approval-requests/[requestId]/decision/route"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
+import { remindCollectDue } from "@/modules/orders/use-cases/remind-collect-due"
 
 /**
  * Đơn hàng đa nguồn P3 — yêu cầu duyệt theo đơn (`order_approval_requests`), báo giá ngoài Thẻ chào.
@@ -74,5 +75,20 @@ describe("cách ly tenant — yêu cầu duyệt giao trước thu sau, báo gi�
     expect(Number((await prisma.orders.findUniqueOrThrow({ where: { id: draft.id } })).total_vnd)).toBe(0)
     expect((await quote(a)).status).toBe(200)
     expect(Number((await prisma.orders.findUniqueOrThrow({ where: { id: draft.id } })).total_vnd)).toBe(1_200_000)
+  })
+
+  it("quá hạn thu: nhắc đúng tổ chức của đơn, một lần", async () => {
+    await prisma.order_approval_requests.create({
+      data: {
+        organization_id: a.organizationId, order_id: orderId, kind: "DELIVER_BEFORE_PAY", status: "APPROVED", reason: "Khách công ty",
+        requested_by: a.userId, collect_due_at: new Date(Date.now() - 60_000),
+      },
+    })
+    const sent: { organizationId: string }[] = []
+    const notify = async (input: { organizationId: string }) => (sent.push(input), 1)
+    expect((await remindCollectDue(new Date(), undefined, notify as never)).reminded).toBe(1)
+    expect((await remindCollectDue(new Date(), undefined, notify as never)).reminded).toBe(0)
+    expect(sent.map((x) => x.organizationId)).toEqual([a.organizationId])
+    expect(await prisma.order_events.count({ where: { organization_id: b.organizationId } })).toBe(0)
   })
 })

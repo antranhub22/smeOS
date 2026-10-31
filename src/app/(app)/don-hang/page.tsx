@@ -18,6 +18,7 @@ import { AllOrdersTab } from "@/components/orders/workspace/all-orders-tab"
 import { LeadQueueTab } from "@/components/orders/workspace/lead-queue-tab"
 import { WorkbenchList } from "@/components/orders/workspace/workbench-list"
 import { ApprovalRequestsList } from "@/components/orders/workspace/approval-requests-list"
+import { DeliverBeforePaySettingsPanel } from "@/components/orders/workspace/deliver-before-pay-settings-panel"
 import {
   WORKSPACE_TAB_LABELS,
   defaultWorkspaceTab,
@@ -155,7 +156,7 @@ export default function DonHangPage() {
         )}
         {activeTab === "approve" && (
           <>
-            {can("R16") && <Section title="Chờ duyệt giao trước, thu sau"><ApprovalRequestsList /></Section>}
+            {can("R16") && <Section title="Chờ duyệt giao trước, thu sau"><ApprovalRequestsList /><DeliverBeforePaySettingsPanel /></Section>}
             {can("R11") && <Section title="Xác nhận tiền — đơn nguồn khác"><WorkbenchList mode="approve" /></Section>}
             {can("R11") && <Section title="Thẻ chào"><AdminBrochurePaymentTab /></Section>}
           </>
