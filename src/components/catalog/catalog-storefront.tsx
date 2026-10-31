@@ -216,7 +216,8 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         {campaign && enabledSections?.faq !== false && generatedPackage?.faq && (
           <LandingTemplateFaq faq={generatedPackage.faq} archetypeId={campaign.archetype} />
         )}
-        {campaign && enabledSections?.lead !== false && (
+        {/* Nút "Liên hệ / Cần tư vấn" — Điều hành bật tắt theo nguồn (Đơn hàng › Cài đặt) */}
+        {campaign && enabledSections?.lead !== false && initialData.entryActions?.contact !== false && (
           <LandingTemplateLead
             archetypeId={campaign.archetype || "minimal-luxury"}
             occasionTitle={catalog.name}
@@ -231,6 +232,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           product={selectedProduct}
           shop={shop}
           customer={initialData.customer}
+          orderSlug={initialData.entryActions?.order ? catalog.slug : undefined}
           onClose={() => setSelectedProduct(null)}
         />
       )}

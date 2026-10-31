@@ -9,13 +9,15 @@ import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import { LEAD_STATUS_LABELS } from "@/modules/acquisition/domain/lead-rules"
+import { leadSourceLabel } from "@/modules/orders/domain/lead-queue"
+import { EntryActionsSettingsPanel } from "@/components/orders/entry-actions-settings"
 import { acquisitionApi, type LeadItem, type LeadStatus } from "./acquisition-api"
 
-const STATUSES: LeadStatus[] = ["NEW", "CONTACTED", "WON", "LOST"]
+const STATUSES: LeadStatus[] = ["NEW", "IN_PROGRESS", "WON", "LOST"]
 
 function sourceLabel(lead: LeadItem): string {
   if (lead.short_link) return lead.short_link.placement_label ? `${lead.short_link.name} · ${lead.short_link.placement_label}` : lead.short_link.name
-  return lead.source === "CATALOG_LINK" ? "Trang catalog" : "Link/QR"
+  return lead.source === "CATALOG_LINK" ? "Trang catalog" : lead.source === "SHORT_LINK" ? "Link/QR" : leadSourceLabel(lead.source)
 }
 
 /** Khách để lại tên + SĐT trên trang công khai; nhân viên đổi trạng thái chăm sóc. */
@@ -63,6 +65,7 @@ export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<s
 
   return (
     <div className="space-y-4">
+      <EntryActionsSettingsPanel />
       <div role="group" aria-label="Lọc theo trạng thái" className="flex flex-wrap gap-1.5">
         {[undefined, ...STATUSES].map((s) => (
           <button

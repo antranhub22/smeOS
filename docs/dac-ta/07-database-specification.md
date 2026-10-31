@@ -913,9 +913,43 @@ model orders {
   created_at        DateTime          @default(now())
   updated_at        DateTime          @updatedAt
 
+  // Đơn hàng đa nguồn (PO 31/10/2026 — docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1).
+  // Chỉ THÊM; đơn Thẻ chào không đọc các cột này.
+  source            String?           @default("MANUAL") // mã ở src/modules/orders/domain/order-source.ts
+  owner_sale_id     String?                     // sale phụ trách đơn nguồn mới
+  lead_id           String?                     // lead gốc (FK leads, SET NULL)
+  workflow          String            @default("LEGACY") // LEGACY · STANDARD (P3)
+
   @@unique([organization_id, code])
   @@index([organization_id, status])
   @@index([organization_id, production_status])
+  @@index([organization_id, source])
+  @@index([organization_id, owner_sale_id])
+  @@index([organization_id, lead_id])
+}
+
+// Đơn hàng đa nguồn P3 (PO 31/10/2026 — KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §5). Yêu cầu duyệt theo đơn,
+// chỉ đơn NGOÀI Thẻ chào. kind: DELIVER_BEFORE_PAY.
+model order_approval_requests {
+  id              String    @id @default(uuid())
+  organization_id String
+  order_id        String                      // FK orders, CASCADE
+  kind            String                      // DELIVER_BEFORE_PAY
+  status          String    @default("PENDING") // PENDING | APPROVED | REJECTED | AUTO_APPROVED
+  basis           String?                     // POLICY | URGENT | SELF_LIMIT | ADMIN
+  reason          String
+  requested_by    String
+  requested_at    DateTime  @default(now())
+  decided_by      String?
+  decided_at      DateTime?
+  decision_note   String?
+  collect_due_at  DateTime?                   // hạn thu tiền sau giao
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@index([organization_id])
+  @@index([organization_id, status, created_at])
+  @@index([organization_id, order_id])
 }
 
 model order_items {
@@ -1048,7 +1082,7 @@ model leads {
   name              String
   phone             String
   message           String?
-  source            String // CATALOG_LINK | SHORT_LINK
+  source            String // CATALOG_LINK | SHORT_LINK | LANDING | CHAT | MANUAL
   source_ref        String?
   short_link_id     String?
   utm_source        String?
@@ -1056,15 +1090,22 @@ model leads {
   utm_campaign      String?
   consent_at        DateTime
   consent_version   String
-  status            String    @default("NEW") // NEW | CONTACTED | WON | LOST
+  status            String    @default("NEW") // NEW | IN_PROGRESS | WON | LOST (CONTACTED → IN_PROGRESS, 31/10/2026)
   assignee_user_id  String?
   status_changed_at DateTime?
+  // Đơn hàng đa nguồn (PO 31/10/2026, §3.3–3.4)
+  reason             String?   // CONTACT | QUOTE_REQUEST | ABANDONED | PAYMENT_TIMEOUT | WALK_IN | CHAT
+  next_follow_up_at  DateTime?
+  closed_reason      String?   // NO_NEED | UNREACHABLE | BOUGHT_ELSEWHERE | INVALID
+  converted_order_id String?   // đơn đã chuyển thành (FK orders, SET NULL)
   created_at        DateTime  @default(now())
   updated_at        DateTime  @updatedAt
 
   @@index([organization_id])
   @@index([organization_id, status, created_at])
   @@index([organization_id, phone, created_at])
+  @@index([organization_id, next_follow_up_at])
+  @@index([organization_id, converted_order_id])
 }
 
 // Link/QR động `/r/<code>` — đích chỉ là đường dẫn nội bộ.

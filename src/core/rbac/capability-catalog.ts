@@ -239,6 +239,10 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   // (chi nhánh lấy từ `memberships.chain_branch_code`, không từ yêu cầu). Điều hành có theo bất biến "mọi mã
   // trừ K1" và chỉ thấy đơn khi tự gắn chi nhánh. Trần cứng: hai vai này.
   R14: { name: "order.branch_inbox", group: "order_operations", label: "Xem và nhận đơn gia công của chi nhánh mình", defaultRoles: ["dieu_hanh", "cua_hang"], hardCap: ["dieu_hanh", "cua_hang"] },
+  // PO 31/10/2026 — Đơn hàng đa nguồn (KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §5.2). Chỉ áp cho đơn NGOÀI Thẻ chào
+  // (Thẻ chào giữ R11 cho báo giá). R15: Sale báo giá. R16: Điều hành duyệt "giao trước, thu sau" — trần cứng.
+  R15: { name: "order.quote", group: "order_operations", label: "Báo giá đơn hàng (ngoài Thẻ chào)", defaultRoles: ["dieu_hanh", "sale"] },
+  R16: { name: "order.deliver_before_pay.approve", group: "order_operations", label: "Duyệt giao trước, thu sau cho đơn ngoài chính sách", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // Q — CRM & Khách hàng ngành hoa (M09, P21)
   Q1: { name: "crm.customer.read", group: "crm", label: "Xem thông tin khách hàng và hồ sơ RFM", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
   Q2: { name: "crm.customer.create", group: "crm", label: "Thêm khách hàng mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },

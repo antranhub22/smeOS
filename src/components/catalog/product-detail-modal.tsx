@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import {
   Phone,
   MessageCircle,
@@ -13,11 +13,14 @@ import { Dialog } from "@/components/ui/dialog"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { SmartFlowerImage } from "./smart-flower-image"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import { PublicOrderForm } from "./public-order-form"
 
 interface ProductDetailModalProps {
   product: PublicCatalogProduct
   shop: PublicCatalogShop
   customer?: { name?: string | undefined; phone?: string | undefined } | undefined
+  /** Slug catalog khi Điều hành bật nút Đặt hàng cho trang này (Đơn hàng đa nguồn §3.2). */
+  orderSlug?: string | undefined
   onClose: () => void
 }
 
@@ -42,7 +45,8 @@ function getZaloUrl(
 
 export { formatVnd, getZaloUrl }
 
-export function ProductDetailModal({ product, shop, customer, onClose }: ProductDetailModalProps) {
+export function ProductDetailModal({ product, shop, customer, orderSlug, onClose }: ProductDetailModalProps) {
+  const [ordering, setOrdering] = useState(false)
   return (
     <Dialog
       open={true}
@@ -62,17 +66,27 @@ export function ProductDetailModal({ product, shop, customer, onClose }: Product
               <Phone size={15} /> Gọi Hotline
             </a>
           )}
+          {orderSlug && !ordering && (
+            <button type="button" onClick={() => setOrdering(true)} className="flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-white hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-primary">
+              Đặt hàng
+            </button>
+          )}
           <a
             href={getZaloUrl(product, shop, customer)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-white shadow-xs hover:bg-primary-dark transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            className={orderSlug
+              ? "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              : "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-white shadow-xs hover:bg-primary-dark transition-colors focus-visible:outline-2 focus-visible:outline-primary"}
           >
-            <MessageCircle size={18} /> Nhắn tin Zalo đặt mẫu này
+            <MessageCircle size={18} /> {orderSlug ? "Nhắn Zalo" : "Nhắn tin Zalo đặt mẫu này"}
           </a>
         </div>
       }
     >
+      {ordering && orderSlug ? (
+        <PublicOrderForm slug={orderSlug} productId={product.id} productName={product.name} onBack={() => setOrdering(false)} />
+      ) : (
       <div className="flex flex-col gap-4">
         {/* Product Image */}
         <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-surface-alt shrink-0">
@@ -134,6 +148,7 @@ export function ProductDetailModal({ product, shop, customer, onClose }: Product
           </div>
         </div>
       </div>
+      )}
     </Dialog>
   )
 }

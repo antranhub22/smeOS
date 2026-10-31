@@ -1,4 +1,5 @@
 import type { ICatalogLinkRepository } from "../domain/repositories/catalog-link-repository.interface"
+import { parseEntryActionsSettings, resolveEntryActions, type EntryActions } from "@/modules/orders/domain/entry-actions"
 import { getCatalogLinkRepository } from "../infra/catalog-link-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { landingVisualFor } from "@/modules/landing-page/domain/archetype-style"
@@ -58,6 +59,8 @@ export type PublicCatalogResult =
       } | undefined
       templateId?: CatalogTemplateId | undefined
       styleId?: CatalogStyleId | undefined
+      /** Nút Đặt hàng / Liên hệ theo cài đặt Điều hành cho nguồn LANDING hoặc CATALOG (§3.2). */
+      entryActions?: EntryActions | undefined
       /** Đánh giá khách do chủ tiệm nhập, đang bật hiển thị */
       reviews?: PublicShopReview[] | undefined
     }
@@ -278,8 +281,12 @@ export async function getPublicCatalog(
     if (signed) resolvedHeroImageUrl = signed
   }
 
+  const isLanding = Boolean(filters.occasion || filters.archetype || filters.generatedPackage)
+  const entryActions = resolveEntryActions(parseEntryActionsSettings(org?.settings), isLanding ? "LANDING" : "CATALOG")
+
   return {
     status: "ACTIVE",
+    entryActions,
     catalog: {
       slug: link.slug,
       name: link.name,

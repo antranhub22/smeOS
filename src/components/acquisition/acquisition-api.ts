@@ -28,7 +28,7 @@ export interface ShortLinkStats {
   days: number
 }
 
-export type LeadStatus = "NEW" | "CONTACTED" | "WON" | "LOST"
+export type LeadStatus = "NEW" | "IN_PROGRESS" | "WON" | "LOST"
 
 export interface LeadItem {
   id: string

@@ -213,6 +213,8 @@
 | R12 | `order.coordinator_reminder.configure` | ● | ● | · | · | · | · | · | · | — | server (14/10/2026) |
 | R13 | `data.export` | ● | · | · | · | · | · | · | · | — | server + UI (14/10/2026: xuất Excel đơn hàng/khách hàng chỉ Điều hành; cấp cho người khác qua màn phân quyền) |
 | R14 | `order.branch_inbox` | ● | · | · | · | · | · | · | · | ĐH + `cua_hang` | server + UI (22/10/2026: trang `/cua-hang` — vai mới `cua_hang` "Cửa hàng nhận gia công", không có cột riêng trong bảng này) |
+| R15 | `order.quote` | ● | · | ● | · | · | · | · | · | — | server (31/10/2026: báo giá đơn ngoài Thẻ chào; Thẻ chào giữ R11) |
+| R16 | `order.deliver_before_pay.approve` | ● | · | · | · | · | · | · | · | ĐH | server (31/10/2026: Điều hành duyệt "giao trước, thu sau" cho đơn ngoài chính sách — đơn ngoài Thẻ chào) |
 
 ### Q — CRM
 

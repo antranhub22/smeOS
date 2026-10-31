@@ -15,17 +15,18 @@ export const LEAD_PHONE_LIMIT_PER_HOUR = 3
 export const LEAD_CONSENT_VERSION = "2026-10-30"
 export const LEAD_CONSENT_TEXT = "Tôi đồng ý để cửa hàng dùng tên và số điện thoại này để liên hệ tư vấn."
 
-export const LEAD_STATUSES = ["NEW", "CONTACTED", "WON", "LOST"] as const
+/** `IN_PROGRESS` thay `CONTACTED` từ 31/10/2026 (migration `orders_multi_source_lead_link`). */
+export const LEAD_STATUSES = ["NEW", "IN_PROGRESS", "WON", "LOST"] as const
 export type LeadStatus = (typeof LEAD_STATUSES)[number]
 
 export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   NEW: "Mới",
-  CONTACTED: "Đã liên hệ",
+  IN_PROGRESS: "Đang chăm",
   WON: "Đã chốt",
   LOST: "Không thành",
 }
 
-export type LeadSource = "CATALOG_LINK" | "SHORT_LINK"
+export type LeadSource = "CATALOG_LINK" | "SHORT_LINK" | "LANDING" | "CHAT" | "MANUAL"
 
 export interface LeadInput {
   name: string

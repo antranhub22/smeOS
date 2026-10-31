@@ -5,7 +5,7 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { getProductMasterIndex } from "@/modules/products/use-cases/get-product-master-index"
-import { createOrder } from "@/modules/orders/use-cases/create-order"
+import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 import { hasRealPrice, formatQuotePriceForChat } from "../domain/flower-consultant-rules"
 import { ChatRepository, getChatRepository } from "../infra/chat-repository"
 
@@ -46,7 +46,8 @@ export async function convertChatToDraftOrder(
   }
 
   // Tạo đơn hàng nháp vào M10
-  const order = await createOrder(ctx, {
+  const order = await ingestOrder(ctx, {
+    source: "CHAT",
     customerId: conversation.customerId,
     cardMessage: customerInfo?.cardMessage || `Chúc mừng kỷ niệm / sinh nhật!`,
     internalNote: `[Tạo tự động từ AI Chatbot] Mẫu: ${product.name}. Gói: ${product.bom.wrapStyle}`,

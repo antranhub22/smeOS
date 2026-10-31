@@ -282,4 +282,32 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
       },
     ],
   },
+  // Đơn hàng đa nguồn (PO 31/10/2026) — giao trước, thu sau cho đơn ngoài Thẻ chào
+  {
+    key: "ORDER_DELIVER_BEFORE_PAY_REQUESTED",
+    label: "Xin giao trước, thu sau",
+    description: "Khi Sale xin giao trước, thu sau cho đơn ngoài chính sách — chờ Điều hành duyệt",
+    group: "PAYMENT",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "ShieldCheck",
+    deepLinkTemplate: "/don-hang",
+    roleDefaults: [{ roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" }],
+  },
+  {
+    key: "ORDER_COLLECT_DUE",
+    label: "Tới hạn thu tiền",
+    description: "Khi đơn được giao trước đã tới hạn thu mà còn nợ",
+    group: "PAYMENT",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "Clock",
+    deepLinkTemplate: "/don-hang",
+    roleDefaults: [
+      { roleKey: "sales", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "OWNER" },
+      { roleKey: "store_admin", channels: ["APP_INBOX"], priority: "NORMAL", dispatchMode: "BROADCAST" },
+    ],
+  },
 ]

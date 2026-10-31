@@ -3,6 +3,8 @@
  * Pure TypeScript — No Prisma or external infrastructure imports.
  */
 
+import type { OrderSourceCode } from "./order-source"
+
 export type OrderStatus =
   | "DRAFT"
   | "CONFIRMED"
@@ -147,8 +149,17 @@ export interface CreateOrderInput {
   internalNote?: string | null | undefined
   deliveryWindow?: DeliveryWindow | null | undefined
   deliveryAddress?: DeliveryAddress | null | undefined
-  /** Nguồn đơn (`orders.source`); vắng = MANUAL. Kênh bán ngoài ghi `CHANNEL` (Trung tâm Tích hợp GĐ4A). */
-  source?: "CHANNEL" | undefined
+  /** Nguồn đơn (`orders.source`, danh mục `order-source.ts`); vắng = MANUAL. Nguồn mới đi qua `ingestOrder`. */
+  source?: OrderSourceCode | undefined
+  /** Lead gốc — tạo đơn sẽ đánh dấu lead đã thành đơn (cùng giao dịch). */
+  leadId?: string | null | undefined
+  /** Sale phụ trách (thành viên đang hoạt động của tổ chức — `ingestOrder` kiểm). */
+  ownerSaleId?: string | null | undefined
+}
+
+/** Đầu vào cổng nhận đơn chung (`use-cases/ingest-order.ts`) — nguồn bắt buộc. */
+export interface IngestOrderInput extends Omit<CreateOrderInput, "source"> {
+  source: OrderSourceCode
 }
 
 export interface UpdateOrderInput {

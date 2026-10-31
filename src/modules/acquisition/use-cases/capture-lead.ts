@@ -92,6 +92,7 @@ export async function captureCatalogLead(
     utm: normalizeUtm(input.utm ?? {}),
     consentAt: now,
     consentVersion: LEAD_CONSENT_VERSION,
+    reason: "CONTACT",
   })
   return { leadId: lead.id }
 }

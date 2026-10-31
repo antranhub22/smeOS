@@ -23,6 +23,7 @@ import type {
   OrderEventAxis,
 } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import { linkLeadToOrder } from "./order-lead-link"
 
 /** Hàng `orders` kèm các quan hệ mà truy vấn nào `include` thì có. */
 type OrderRow = orders & {
@@ -126,6 +127,8 @@ export class OrderRepository implements IOrderRepository {
           delivery_address: (input.deliveryAddress as unknown as Prisma.InputJsonValue) ?? null,
           created_by: createdBy,
           ...(input.source ? { source: input.source } : {}),
+          owner_sale_id: input.ownerSaleId ?? null,
+          lead_id: input.leadId ?? null,
           events: {
             create: {
               organization_id: organizationId,
@@ -137,6 +140,8 @@ export class OrderRepository implements IOrderRepository {
           },
         },
       })
+
+      if (input.leadId) await linkLeadToOrder(tx, organizationId, input.leadId, ord.id)
 
       if (input.items && input.items.length > 0) {
         await tx.order_items.createMany({
