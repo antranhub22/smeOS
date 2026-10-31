@@ -27,6 +27,7 @@ export default function ChatChannelsIntegrationPage() {
   const [loading, setLoading] = useState(true)
   const [updatingChannel, setUpdatingChannel] = useState<string | null>(null)
   const [copiedScript, setCopiedScript] = useState(false)
+  const [embedSnippet, setEmbedSnippet] = useState<string | null>(null)
   const [configModalChannel, setConfigModalChannel] = useState<ChannelStatusItem | null>(null)
   const [modalConfigForm, setModalConfigForm] = useState<ChannelConfig>({})
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -37,6 +38,7 @@ export default function ChatChannelsIntegrationPage() {
       .then((r) => r.json())
       .then((res) => {
         setChannels(res.channels || [])
+        setEmbedSnippet(typeof res.embedSnippet === "string" ? res.embedSnippet : null)
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false))
@@ -108,8 +110,8 @@ export default function ChatChannelsIntegrationPage() {
   }
 
   function copyEmbedScript() {
-    const code = `<script src="https://floraos.vn/sdk/floraos-chat.js" data-shop-slug="tiem-hoa-moc-lan" defer></script>`
-    navigator.clipboard.writeText(code)
+    if (!embedSnippet) return
+    navigator.clipboard.writeText(embedSnippet)
     setCopiedScript(true)
     setTimeout(() => setCopiedScript(false), 2000)
   }
@@ -205,6 +207,7 @@ export default function ChatChannelsIntegrationPage() {
                 </p>
               </div>
             </div>
+            {embedSnippet && (
             <Button
               size="sm"
               onClick={copyEmbedScript}
@@ -213,11 +216,24 @@ export default function ChatChannelsIntegrationPage() {
               {copiedScript ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copiedScript ? "Đã chép mã" : "Sao chép mã nhúng"}
             </Button>
+            )}
           </div>
 
-          <div className="rounded-xl bg-text p-3 font-mono text-caption text-success overflow-x-auto select-all">
-            &lt;script src=&quot;https://floraos.vn/sdk/floraos-chat.js&quot; data-shop-slug=&quot;tiem-hoa-moc-lan&quot; defer&gt;&lt;/script&gt;
-          </div>
+          {embedSnippet ? (
+            <div className="rounded-xl bg-text p-3 font-mono text-caption text-success overflow-x-auto select-all">
+              {embedSnippet}
+            </div>
+          ) : (
+            !loading && (
+              <p className="text-caption text-text-muted">
+                Tiệm chưa có địa chỉ công khai nên chưa tạo được mã nhúng.{" "}
+                <Link href={"/cai-dat" as Route} className="font-semibold text-primary underline">
+                  Hoàn thiện hồ sơ cửa hàng
+                </Link>{" "}
+                để nhận mã.
+              </p>
+            )
+          )}
         </div>
       </div>
 
