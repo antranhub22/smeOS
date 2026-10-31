@@ -833,6 +833,20 @@ documents:
     dependencies: ["docs/kien-truc/HIEN_TRANG_THE_CHAO.md", "docs/dac-ta/03b-role-ux.md"]
     supersedes: []
 
+  - id: "DOC-05-ARCH-ORDER-SSOT-MULTI-SOURCE"
+    path: "docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md"
+    title: "Kiến trúc SSOT Đơn hàng đa nguồn — Lead → Đơn → Điều phối theo quy trình Thẻ chào"
+    domain: "Orders, Leads & Coordinator"
+    layer: "Level 5"
+    purpose: "Gom đơn mọi nguồn về orders qua một cổng nhận đơn; tách Lead khỏi Đơn; nút Đặt hàng/Liên hệ bật tắt theo nguồn; mục Đơn hàng theo vai (Sale, Điều hành phê duyệt, Điều phối); Thẻ chào đóng băng (PO 31/10/2026)"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: true
+    owner: "Product Owner / System Architect"
+    dependencies: ["docs/kien-truc/HIEN_TRANG_THE_CHAO.md", "docs/kien-truc/KE_HOACH_MA_TRAN_QUY_TRINH_THE_CHAO.md"]
+    supersedes: []
+
   - id: "DOC-05-SPEC-JOURNEY-UX-LANDING-CATALOG"
     path: "docs/dac-ta/FLORAOS_JOURNEY_FIRST_UX_LANDING_AND_CATALOG_SPEC.md"
     title: "Đặc tả Kiến trúc UX Journey-First: Tạo Landing Page & Catalog Số"
