@@ -18,7 +18,8 @@ export interface IPartnerMarketplaceRepository {
   listAll(): Promise<(SearchableEntry & { photoKeys: string[] })[]>
   /** Upsert theo khoá khớp tên; giữ id và ảnh đã tải. */
   upsertMany(profiles: PartnerStoreProfile[], source: MarketplaceImportSource): Promise<{ added: number; updated: number; total: number }>
-  /** Hồ sơ có ảnh Drive chưa tải (hoặc danh sách Drive đã đổi), tối đa `limit`. */
+  /** Hồ sơ còn ảnh Drive chưa có trong kho, lâu chưa xử lý nhất trước, tối đa `limit`. */
   listPhotoPending(limit: number): Promise<{ items: MarketplacePhotoState[]; remaining: number }>
+  /** `photoSourceIds`: Drive id ĐÃ có trong kho (song song `photoKeys`). Luôn cập nhật `updated_at`. */
   setPhotos(id: string, photoKeys: string[], photoSourceIds: string[]): Promise<void>
 }

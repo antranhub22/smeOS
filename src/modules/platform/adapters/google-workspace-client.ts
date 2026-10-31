@@ -48,6 +48,12 @@ export function signServiceAccountJwt(sa: ServiceAccount, nowSeconds: number): s
 }
 
 type FetchLike = typeof fetch
+
+async function readCapped(res: Response, maxBytes: number): Promise<Uint8Array | null> {
+  if (Number(res.headers.get("content-length")) > maxBytes) return null
+  const buf = new Uint8Array(await res.arrayBuffer())
+  return buf.length > maxBytes || buf.length === 0 ? null : buf
+}
 export type Env = Readonly<Record<string, string | undefined>>
 
 export function createGoogleWorkspaceClient(deps: { fetch?: FetchLike; env?: Env; now?: () => number } = {}) {
@@ -103,13 +109,26 @@ export function createGoogleWorkspaceClient(deps: { fetch?: FetchLike; env?: Env
       return values.values ?? []
     },
 
-    /** Tải nội dung một tệp Drive; vượt `maxBytes` thì trả null (không nạp quá cỡ). */
+    /**
+     * Tải nội dung một tệp Drive; vượt `maxBytes` thì trả null (không nạp quá cỡ).
+     * Có tài khoản dịch vụ thì đọc qua API (cả tệp riêng tư được chia sẻ cho nó);
+     * chưa cấu hình hoặc API từ chối thì thử link công khai ("ai có link đều xem được").
+     * Nội dung trả về có thể là trang HTML của Google — bên gọi phải kiểm nội dung.
+     */
     async downloadDriveFile(fileId: string, maxBytes: number): Promise<Uint8Array | null> {
       if (!/^[a-zA-Z0-9_-]{10,}$/.test(fileId)) return null
-      const res = await get(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&supportsAllDrives=true`)
-      if (Number(res.headers.get("content-length")) > maxBytes) return null
-      const buf = new Uint8Array(await res.arrayBuffer())
-      return buf.length > maxBytes ? null : buf
+      try {
+        const res = await get(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&supportsAllDrives=true`)
+        const viaApi = await readCapped(res, maxBytes)
+        if (viaApi) return viaApi
+      } catch {
+        // rơi xuống link công khai
+      }
+      const res = await doFetch(`https://drive.usercontent.google.com/download?id=${fileId}&export=download&confirm=t`, {
+        redirect: "follow",
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      })
+      return res.ok ? readCapped(res, maxBytes) : null
     },
   }
 }

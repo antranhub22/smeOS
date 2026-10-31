@@ -22,12 +22,15 @@ interface MarketplaceStoreCardProps {
 
 export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCardProps) {
   const { identity, contact, business, production, scoreAndTier, media } = store
-  const [imageError, setImageError] = useState(false)
+  // Ảnh lỗi (vd. Drive chưa chia sẻ công khai) → thử ảnh kế tiếp của cửa hàng
+  const [photoIndex, setPhotoIndex] = useState(0)
 
   const tier = scoreAndTier.suggestedTier || "Hạng Tiêu Chuẩn"
   const isCertified = tier.toLowerCase().includes("chứng nhận")
-  // Chỉ hiện ảnh khảo sát thật đã tải vào kho — không thay bằng ảnh mẫu
-  const coverUrl = !imageError ? media.coverPhotoUrl : undefined
+  // Chỉ hiện ảnh khảo sát thật (kho hoặc Drive công khai) — không thay bằng ảnh mẫu
+  const photos = media.photoGalleryUrls ?? []
+  const coverUrl = photos[photoIndex]
+  const allFailed = photos.length > 0 && photoIndex >= photos.length
 
   return (
     <Card
@@ -40,13 +43,14 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
             src={coverUrl}
             alt={`Cửa hàng ${identity.shopName}`}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={() => setImageError(true)}
+            onError={() => setPhotoIndex((i) => i + 1)}
+            referrerPolicy="no-referrer"
             loading="lazy"
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-text-muted">
             <Store className="h-12 w-12 opacity-40" />
-            <span className="text-caption">{media.driveImageIds.length > 0 ? "Ảnh khảo sát chưa tải về" : "Chưa có ảnh khảo sát"}</span>
+            <span className="text-caption">{allFailed ? "Không xem được ảnh — kiểm tra quyền chia sẻ Drive" : "Chưa có ảnh khảo sát"}</span>
           </div>
         )}
 

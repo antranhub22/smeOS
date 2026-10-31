@@ -12,9 +12,9 @@ import { getPartnerMarketplaceRepository } from "../infra/partner-marketplace-re
 import { parseMarketplaceWorkbook } from "../infra/parse-marketplace-excel"
 import { GoogleWorkspaceError, getGoogleWorkspaceClient, type GoogleWorkspaceClient } from "../adapters/google-workspace-client"
 import { filterMarketplaceStores, type ListMarketplaceStoresFilter, type ListMarketplaceStoresResult } from "../domain/partner-marketplace-filter"
-import { rowsToProfiles } from "../domain/partner-marketplace-row-mapper"
+import { MAX_PHOTOS_PER_STORE, driveThumbnailUrl, rowsToProfiles } from "../domain/partner-marketplace-row-mapper"
 import type { IPartnerMarketplaceRepository, MarketplaceImportSource } from "../domain/repositories/partner-marketplace-repository.interface"
-import { downloadStorePhotos } from "./partner-marketplace-photos"
+import { downloadStorePhotos, partnerPhotoKeyPrefix } from "./partner-marketplace-photos"
 
 export type MarketplaceDeps = {
   repo: IPartnerMarketplaceRepository
@@ -48,12 +48,30 @@ export async function listMarketplaceStores(
   const result = filterMarketplaceStores(entries, filter)
   const stores = await Promise.all(
     result.stores.map(async (store) => {
-      const keys = keysById.get(store.id) ?? []
-      const urls = await Promise.all(keys.map((k) => deps.storage.signedUrl(k, PHOTO_URL_TTL_SECONDS, "GET")))
+      const urls = await photoUrlsFor(store.id, store.media.driveImageIds ?? [], keysById.get(store.id) ?? [], deps.storage)
       return { ...store, media: { ...store.media, photoGalleryUrls: urls, coverPhotoUrl: urls[0] } }
     })
   )
   return { ...result, stores }
+}
+
+/**
+ * Ảnh theo thứ tự trên phiếu khảo sát: đã có trong kho → URL ký; chưa có → ảnh xem trước
+ * công khai của Drive, để hồ sơ luôn có ảnh kể cả trước khi bấm "Tải ảnh khảo sát".
+ */
+async function photoUrlsFor(storeId: string, driveIds: string[], keys: string[], storage: StorageProvider): Promise<string[]> {
+  const prefix = partnerPhotoKeyPrefix(storeId)
+  const ids = driveIds.slice(0, MAX_PHOTOS_PER_STORE)
+  const fromDrive = await Promise.all(
+    ids.map((id) => {
+      const key = keys.find((k) => k.startsWith(`${prefix}${id}.`))
+      return key ? storage.signedUrl(key, PHOTO_URL_TTL_SECONDS, "GET") : driveThumbnailUrl(id)
+    })
+  )
+  // Khoá kho không còn ứng với Drive id nào trên phiếu (phiếu đã sửa) vẫn hiển thị
+  const orphanKeys = keys.filter((k) => !ids.some((id) => k.startsWith(`${prefix}${id}.`)))
+  const extra = await Promise.all(orphanKeys.map((k) => storage.signedUrl(k, PHOTO_URL_TTL_SECONDS, "GET")))
+  return [...fromDrive, ...extra]
 }
 
 export type ImportSummary = { added: number; updated: number; total: number; skipped: number }
@@ -120,8 +138,8 @@ export async function syncMarketplacePhotos(
     const res = await downloadStorePhotos(store, deps)
     downloaded += res.downloaded
     failed += res.failed
-    // Đánh dấu đã xử lý cả khi có ảnh lỗi — tránh lặp mãi một cửa hàng; ảnh lỗi báo qua `failed`.
-    await deps.repo.setPhotos(store.id, res.photoKeys, store.driveImageIds)
+    // Chỉ ghi Drive id đã vào kho — ảnh lỗi được thử lại ở lượt sau (repo xếp cửa hàng vừa thử xuống cuối)
+    await deps.repo.setPhotos(store.id, res.photoKeys, res.sourceIds)
   }
   const summary = { stores: items.length, downloaded, failed, remaining }
   await deps.audit(pctx, {
