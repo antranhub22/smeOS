@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Users, UserPlus, Sparkles, Search, Calendar, ArrowRight } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { InfoTip } from "@/components/ui/info-tip"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -83,13 +84,13 @@ export default function CRMPage() {
       {/* 1. Header chuẩn có Top-Right Action Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-4 sm:px-6 py-4 backdrop-blur-sm">
         <div className="flex items-start"><MobileMenuButton /><div>
-          <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
-            Quản lý quan hệ khách hàng & Chăm sóc
+          {/* Tiêu đề ngắn; giải thích chi tiết trong "?" (OPERATING_PRINCIPLES §6.1) */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-title font-extrabold text-foreground">Khách hàng</h1>
+            <InfoTip label="Khách hàng" side="bottom">
+              Hồ sơ khách hàng hợp nhất · Phân tầng khách tự động · Nhắc ngày kỷ niệm · {industryName}
+            </InfoTip>
           </div>
-          <h1 className="text-title font-extrabold text-foreground">CRM & Khách Hàng — {industryName}</h1>
-          <p className="text-caption text-text-muted mt-0.5">
-            Hồ sơ khách hàng hợp nhất · Phân tầng RFM tự động · Nhắc hẹn ngày kỷ niệm
-          </p>
         </div></div>
 
         {/* Top-Right Action Header */}
