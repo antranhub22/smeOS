@@ -28,7 +28,7 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
         {products.map((p) => (
           <div
             key={p.id}
-            className="rounded-xl border border-border bg-surface p-3.5 shadow-xs transition-colors hover:border-primary/40 space-y-3"
+            className="rounded-2xl border border-border bg-surface p-4 shadow-sm transition-colors hover:border-primary/40 space-y-3"
           >
             <div className="flex items-start gap-3">
               <button
@@ -93,9 +93,9 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
       </div>
 
       {/* Desktop view: Table */}
-      <div className="hidden md:block overflow-hidden rounded-xl border border-border bg-surface">
+      <div className="hidden md:block overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
         <table className="w-full text-left text-body-sm">
-          <thead className="border-b border-border bg-surface-alt text-caption font-bold uppercase tracking-wider text-text-muted">
+          <thead className="border-b border-border bg-surface-alt text-caption font-bold text-text-muted">
             <tr>
               {selectable && (
                 <th scope="col" className="w-10 px-4 py-3">

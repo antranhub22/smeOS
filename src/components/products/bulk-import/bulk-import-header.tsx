@@ -34,9 +34,8 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
             <ArrowLeft size={16} />
           </button>
           <div>
-            <div className="text-caption text-text-muted">Kho sản phẩm</div>
             <h1 className="text-title font-extrabold text-primary">
-              {activeTab === "branches" ? "Nhập Danh Sách Cửa Hàng Chuỗi" : "Nhập sản phẩm từ Excel và ảnh"}
+              {activeTab === "branches" ? "Nhập danh sách chi nhánh" : "Nhập từ Excel & ảnh"}
             </h1>
             {restoredCount > 0 && activeTab === "products" && (
               <div className="mt-0.5 flex items-center gap-1.5 text-caption font-semibold text-success">

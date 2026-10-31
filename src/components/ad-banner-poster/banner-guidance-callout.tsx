@@ -37,7 +37,7 @@ export function BannerGuidanceCallout() {
               <span className="text-caption font-semibold text-text-muted">Bước {i + 1}</span>
               <h2 className="text-body-sm sm:text-title-sm font-bold leading-snug text-text">{step.title}</h2>
             </div>
-            <InfoTip label={step.title} className="absolute top-1 right-1 m-0 sm:static sm:-m-1.5">{step.detail}</InfoTip>
+            <InfoTip label={step.title} className="absolute top-1 right-1 sm:static">{step.detail}</InfoTip>
           </div>
         )
       })}

@@ -314,14 +314,14 @@ export default function VideoStudioPage() {
       <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 max-w-6xl w-full mx-auto">
         {/* Khối hướng dẫn chuẩn hóa (Standardized Feature Guidance Callout) */}
         <FeatureGuidanceCard
-          badgeLabel="HƯỚNG DẪN DỰNG VIDEO M04c"
+          badgeLabel="HƯỚNG DẪN TẠO VIDEO"
           title="Quy trình 2 cổng duyệt dựng video thương mại"
-          description="Dựng video ngắn (Reel, TikTok, Story, Slideshow) từ Master Image đã duyệt. Tuân thủ 2 cổng kiểm soát chất lượng: Duyệt Kịch bản trước khi render -> Duyệt Video thành phẩm trước khi xuất bản."
+          description="Tạo video ngắn (Reel, TikTok, Story, slideshow) từ ảnh gốc đã duyệt. Kiểm tra 2 bước: duyệt kịch bản trước, rồi duyệt video thành phẩm trước khi đăng."
           tips={[
-            "📸 Khung hình đầu và cuối luôn được khóa vào Master Image đã duyệt",
-            "⚡ Cổng 1: Duyệt kịch bản phân cảnh trước để không phát sinh chi phí render thừa",
-            "🎯 Slideshow FFmpeg nội bộ chi phí $0 credit; Veo/HeyGen trừ credit theo thời lượng",
-            "✨ Cổng 2: Chốt duyệt video thành phẩm để tự động lưu vào Kho Asset và Catalog",
+            "📸 Khung hình đầu và cuối luôn lấy từ ảnh gốc đã duyệt",
+            "⚡ Bước 1: Duyệt kịch bản trước để không tốn chi phí tạo video thừa",
+            "🎯 Slideshow không tốn credit; video AI trừ credit theo thời lượng",
+            "✨ Bước 2: Chốt video thành phẩm để tự động lưu vào kho và catalog",
           ]}
           maxWidthClassName="max-w-4xl"
         />
