@@ -607,7 +607,7 @@ Mỗi chỉ số trả kèm `nguon` và `den_ngay`. Dữ liệu kế thừa từ
 | POST | `/chat/conversations/:id/messages` | `T2` | |
 | POST | `/chat/conversations/:id/create-order` | `T3` | Chuyển hội thoại thành đơn nháp — M10 |
 | GET · POST | `/chat/channels` | **chưa gác** — xem **RS-8** | Cấu hình kênh; `configure-chat-channel.ts` gác `T4` nhưng route `/chat/channels` không gọi qua nó |
-| POST | `/chat/public/widget` | — *(công khai)* | Mã nhúng một dòng cho website ngoài |
+| POST | `/chat/public/widget` | — *(công khai)* | Khung chat AI trên trang công khai do công cụ SMEOS tạo. Thân: `slug`, `surface` (`catalog` · `landing_page` · `store_profile` · `sales_link` · `greeting_catalog` · `business_card`; `landing_page` tính kênh `LANDING_PAGE`, còn lại `STOREFRONT_CATALOG`), `visitorId`, `message`. Trang bị tắt trong `config.publicSurfaces` → 404. Giới hạn mặc định 20 tin/khách và 60 tin/IP mỗi 10 phút, tách theo tiệm; nâng chỉ khi nền tảng duyệt (`config.publicChatLimits.approvedAt`, trần 200/600) → 429. Chỉ cùng nguồn gốc — chưa mở CORS cho website ngoài; lỗi 500 không trả chi tiết nội bộ |
 | GET · POST | `/chat/webhooks/facebook` | — *(chữ ký nền tảng)* | |
 | POST | `/chat/webhooks/zalo` | — *(chữ ký nền tảng)* | |
 

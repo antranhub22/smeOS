@@ -1,58 +1,49 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
+import { AppError } from "@/core/http/errors"
+import { enforceRateLimit } from "@/core/http/rate-limit"
+import { log } from "@/core/observability/log"
+import { PUBLIC_CHAT_SURFACES } from "@/modules/chat-assistant/domain/public-chat-policy"
+import {
+  defaultPublicWidgetDeps,
+  handlePublicWidgetMessage,
+} from "@/modules/chat-assistant/use-cases/handle-public-widget-message"
 
+/**
+ * Khung chat AI trên trang công khai do công cụ SMEOS tạo (tổ chức suy từ slug).
+ * Chỉ phục vụ cùng nguồn gốc — chưa mở CORS cho website ngoài (giai đoạn sau).
+ */
 const publicChatSchema = z.object({
-  slug: z.string().min(1),
-  visitorId: z.string().min(1),
-  message: z.string().min(1),
+  slug: z.string().min(1).max(120),
+  surface: z.enum(PUBLIC_CHAT_SURFACES).default("catalog"),
+  visitorId: z.string().min(1).max(64),
+  message: z.string().trim().min(1).max(2000),
 })
 
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json().catch(() => null)
-    const parsed = publicChatSchema.safeParse(body)
-    if (!parsed.success) {
-      return NextResponse.json({ error: "Tham số không hợp lệ" }, { status: 400 })
-    }
-
-    const { slug, visitorId, message } = parsed.data
-    const orgRepo = new OrganizationRepository()
-    const org = await orgRepo.findBySlug(slug)
-
-    if (!org) {
-      return NextResponse.json({ error: "Không tìm thấy cửa hàng" }, { status: 404 })
-    }
-
-    const result = await handleIncomingChannelMessage({
-      organizationId: org.id,
-      channel: "STOREFRONT_CATALOG",
-      externalSenderId: visitorId,
-      messageText: message,
-    })
-
-    return NextResponse.json(result, {
-      status: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-      },
-    })
-  } catch (error: unknown) {
-    console.error("Public Chat Widget error:", error)
-    const message = error instanceof Error ? error.message : ""
-    return NextResponse.json({ error: message || "Lỗi xử lý tin nhắn" }, { status: 500 })
-  }
+const PUBLIC_MESSAGES: Partial<Record<string, string>> = {
+  NOT_FOUND: "Không tìm thấy cửa hàng",
+  RATE_LIMITED: "Bạn gửi tin nhắn hơi nhanh, vui lòng thử lại sau ít phút",
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
-  })
+export async function POST(req: NextRequest) {
+  const parsed = publicChatSchema.safeParse(await req.json().catch(() => null))
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Tham số không hợp lệ" }, { status: 400 })
+  }
+
+  try {
+    const deps = defaultPublicWidgetDeps((rule) => enforceRateLimit(req, rule))
+    const result = await handlePublicWidgetMessage(parsed.data, deps)
+    return NextResponse.json(result, { status: 200 })
+  } catch (error: unknown) {
+    if (error instanceof AppError && PUBLIC_MESSAGES[error.code]) {
+      return NextResponse.json({ error: PUBLIC_MESSAGES[error.code] }, { status: error.status })
+    }
+    // Không trả chi tiết lỗi nội bộ cho khách
+    log.error("public_chat_widget.failed", {
+      feature: "public-chat",
+      message: error instanceof Error ? error.message : String(error),
+    })
+    return NextResponse.json({ error: "Trợ lý tạm thời gián đoạn, vui lòng thử lại sau" }, { status: 500 })
+  }
 }
