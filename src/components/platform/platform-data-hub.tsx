@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useEffect } from "react"
+import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -422,31 +423,33 @@ export function PlatformDataHub() {
         {/* Title + Actions */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
           <div>
-            <h1 className="text-xl font-black text-text tracking-tight flex items-center gap-2.5">
-              {selectedDomain && selectedDomainMeta ? (
-                <>
-                  <selectedDomainMeta.icon className={selectedDomainMeta.color} size={22} />
-                  <span>{selectedDomainMeta.label}</span>
-                </>
-              ) : selectedOrg ? (
-                <>
-                  <Building2 className="text-primary" size={22} />
-                  <span>{selectedOrg.name}</span>
-                </>
-              ) : (
-                <>
-                  <Globe className="text-primary" size={22} />
-                  <span>Trung Tâm Dữ Liệu Toàn Nền Tảng</span>
-                </>
-              )}
-            </h1>
-            <p className="text-caption text-text-muted mt-0.5">
-              {selectedDomain
-                ? `Xem và tải toàn bộ bản ghi từ ${selectedOrg?.name} — Platform Admin có quyền RAW.`
-                : selectedOrg
-                ? "Chọn loại dữ liệu để xem chi tiết từng bản ghi và xuất file."
-                : `Xuyên tổ chức — ${orgs.length} tổ chức đã đăng ký. Bấm vào ô để xem và tải dữ liệu chi tiết.`}
-            </p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold text-text tracking-tight flex items-center gap-2">
+                {selectedDomain && selectedDomainMeta ? (
+                  <>
+                    <selectedDomainMeta.icon className={selectedDomainMeta.color} size={20} />
+                    <span>{selectedDomainMeta.label}</span>
+                  </>
+                ) : selectedOrg ? (
+                  <>
+                    <Building2 className="text-primary" size={20} />
+                    <span>{selectedOrg.name}</span>
+                  </>
+                ) : (
+                  <>
+                    <Globe className="text-primary" size={20} />
+                    <span>Dữ liệu toàn nền tảng</span>
+                  </>
+                )}
+              </h1>
+              <InfoTip label="Dữ liệu toàn nền tảng">
+                {selectedDomain
+                  ? `Xem và tải toàn bộ bản ghi từ ${selectedOrg?.name}.`
+                  : selectedOrg
+                  ? "Chọn loại dữ liệu để xem chi tiết từng bản ghi và xuất file."
+                  : `Xuyên tổ chức — ${orgs.length} tổ chức đã đăng ký.`}
+              </InfoTip>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
