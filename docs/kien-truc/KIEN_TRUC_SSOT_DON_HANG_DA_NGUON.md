@@ -1,7 +1,7 @@
 # Kiến trúc SSOT Đơn hàng đa nguồn — Lead → Đơn → Điều phối theo quy trình Thẻ chào
 
 > **Mã:** `ARCH-2026-ORDER-SSOT-MULTI-SOURCE-01` · **Ngày:** 31/10/2026
-> **Trạng thái:** ✅ PO duyệt kiến trúc (31/10/2026) · **chưa xây** — mọi mục dưới đây là thiết kế đích.
+> **Trạng thái:** ✅ PO duyệt kiến trúc (31/10/2026) · **đang xây** — P0 xong, P1 một phần (xem §7).
 > **Căn cứ:** [`HIEN_TRANG_THE_CHAO.md`](HIEN_TRANG_THE_CHAO.md) (đường chuẩn) · [`KE_HOACH_MA_TRAN_QUY_TRINH_THE_CHAO.md`](KE_HOACH_MA_TRAN_QUY_TRINH_THE_CHAO.md) · `prisma/schema.prisma` (`orders`, `leads`, `greeting_sessions`, `order_coordinations`).
 
 ---
@@ -205,6 +205,11 @@ Một mục sidebar `/don-hang`; mỗi tab là **hàng đợi lọc trên cùng 
 | Sau | Lead nhóm C (CRM); hợp nhất code hai đường (cần PO duyệt riêng) | — |
 
 Mỗi pha ship kèm test + cập nhật tài liệu này và `TRANG_THAI.md` trong cùng commit.
+
+**Tiến độ (31/10/2026):**
+- **P0 xong.** `tests/unit/architecture/the-chao-freeze.test.ts` băm toàn bộ tệp Thẻ chào (miền, giao diện, `/the-chao`, trang khách `/b` `/g` `/bst` `/s` `/subcontract`, API `greeting-card` + công khai + SePay) và định nghĩa các mã năng lực Thẻ chào dùng (vai mặc định, trần cứng), so với `the-chao-freeze.manifest.txt`. Bất kỳ thay đổi nào → đỏ. Chỉ cập nhật mốc khi PO duyệt: `UPDATE_THE_CHAO_FREEZE=1 npm test -- tests/unit/architecture/the-chao-freeze.test.ts`. Test hành vi Thẻ chào sẵn có (~96 tệp) giữ nguyên, xanh.
+- **P1 (phần thuần) xong.** `src/modules/orders/domain/order-source.ts` (danh mục nguồn §2.2) · `src/modules/orders/domain/entry-actions.ts` (§3.2) + test.
+- **Còn lại P1:** migration `orders`/`leads` (§3.4, §4.1) — chờ PO duyệt schema; `ingestOrder` + adapter.
 
 ---
 
