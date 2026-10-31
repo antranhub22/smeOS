@@ -26,7 +26,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 ## 1. StoreOS (cửa hàng) — ưu tiên cao nhất
 | # | Trang | Nhãn menu hiện tại | Ưu tiên | Trạng thái |
 |---|---|---|---|---|
-| 1 | `/don-hang` | Đơn hàng | P1 — dùng hằng ngày | ✅ đầu trang (dòng phụ → (?)); thẻ hướng dẫn K1 giữ nguyên |
+| 1 | `/don-hang` | Đơn hàng | P1 — dùng hằng ngày | ✅ đầu trang + thẻ đơn (icon thay emoji, bo góc, bóng); thẻ hướng dẫn K1 giữ nguyên |
 | 2 | `/khach-hang` | Khách hàng | P1 | 🟡 |
 | 3 | `/san-pham` | Danh mục sản phẩm | P1 | 🟡 |
 | 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | 🟡 |
@@ -99,3 +99,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 30/10: đã làm mục 0 (nhãn sidebar, EmptyState, PageHeader, Card, StatTile); StoreOS #2 Khách hàng (đầu trang).
 - Tiếp theo theo thứ tự: StoreOS #1 Đơn hàng → #2 Khách hàng (phần thân trang) → #3 … → #28.
 - 31/10: StoreOS #1 Đơn hàng — đầu trang đã làm (bỏ dòng phụ, (?) giải thích). Chưa làm: thẻ đơn và bộ lọc (cần xem thêm).
+- 31/10: Đơn hàng — thẻ đơn `OrderCard`: thay emoji 🌸/💌 bằng icon; bo góc `rounded-2xl`. Chưa có ảnh duyệt (không chạy được app).
