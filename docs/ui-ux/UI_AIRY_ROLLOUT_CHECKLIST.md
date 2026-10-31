@@ -112,3 +112,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Thẻ chào (#7) — đầu trang: mô tả dài → (?) cạnh tiêu đề. K2 (TabActionHeader) giữ nguyên.
 - 31/10: Rà nhanh StoreOS: nhãn/jargon/emoji của các trang P2–P3 đã kiểm (có 22 trang). Đổi bố cục từng trang vẫn cần làm. Sửa: Xu hướng thị trường — tiêu đề admin bỏ 'Tenant'.
 - 31/10: Catalog (#8) — cảnh báo lỗi: emoji ⚠️ → icon. **Cần PO/kỹ thuật xem:** dữ liệu ứng viên bộ lọc ngân sách có giá trị mặc định cố định ("Đa sắc", "Thiết kế hiện đại", dịp Sinh nhật/Kỷ niệm/Khai trương) — không phải dữ liệu thật (OPERATING_PRINCIPLES §2).
+- 31/10: Video (#10) — thẻ K1: bỏ mã 'M04c' và thuật ngữ kỹ thuật, viết tiếng Việt (cần PO xác nhận nội dung). Lint UX giảm 131→129 vi phạm, đã cập nhật baseline.
