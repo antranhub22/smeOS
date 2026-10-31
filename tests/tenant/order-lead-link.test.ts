@@ -21,6 +21,7 @@ describe("cách ly tenant — cổng nhận đơn chung và lead → đơn", () 
     await resetDatabase()
     a = await createTenant("alpha")
     b = await createTenant("beta")
+    a = { ...a, ctx: { ...a.ctx, capabilities: new Set([...a.ctx.capabilities, "J1"]) } }
     await createCatalogLink(a.ctx, { slug: "catalog-a", name: "A", description: null, filters: null })
     await captureCatalogLead("catalog-a", { name: "Lan", phone: "0901234567", consent: true }, undefined)
     leadId = (await prisma.leads.findFirstOrThrow({ where: { organization_id: a.organizationId } })).id
