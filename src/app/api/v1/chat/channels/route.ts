@@ -4,6 +4,9 @@ import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { listChatChannels } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import { configureChatChannel } from "@/modules/chat-assistant/use-cases/configure-chat-channel"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { buildEmbedSnippet } from "@/modules/chat-assistant/domain/embed-snippet"
+import { publicAppUrl } from "@/lib/public-url"
 import { PUBLIC_CHAT_SURFACES } from "@/modules/chat-assistant/domain/public-chat-policy"
 import type { SupportedChatChannel } from "@/modules/chat-assistant/domain/channel-integration-types"
 
@@ -38,8 +41,13 @@ const configureSchema = z.object({
 
 export const GET = handle(async (req) => {
   const { ctx } = await requireTenantContext(req)
-  const channels = await listChatChannels(ctx)
-  return jsonResponse({ channels })
+  const [channels, org] = await Promise.all([
+    listChatChannels(ctx),
+    new OrganizationRepository().current(ctx),
+  ])
+  // Mã nhúng dựng từ slug thật của tiệm phiên — null khi tiệm chưa có slug.
+  const embedSnippet = buildEmbedSnippet({ shopSlug: org?.slug, appUrl: publicAppUrl() })
+  return jsonResponse({ channels, embedSnippet })
 })
 
 export const POST = handle(async (req) => {
