@@ -30,7 +30,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 2 | `/khach-hang` | Khách hàng | P1 | ✅ đầu trang + bộ lọc hạng (nhãn tiếng Việt) + bảng trên điện thoại (cuộn ngang, ẩn cột phụ); thẻ hướng dẫn K1 đã đổi chữ (PO đồng ý: bỏ CRM/RFM/Consent) |
 | 3 | `/san-pham` | Danh mục sản phẩm | P1 | 🟡 đầu trang, lưới thẻ, thẻ `ProductCard`, khoảng giá (ví dụ → (?)) đã làm; **còn chế độ bảng quản trị** |
 | 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | ✅ đầu trang + 3 thẻ con (mô tả pháp lý → (?), emoji → icon) |
-| 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 |
+| 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 đầu trang (tên tiếng Việt, (?)) + nhãn thẻ K1 bỏ tiếng Anh; **còn khung hội thoại 3 cột** |
 | 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 |
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | 🟡 |
 | 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🟡 |
@@ -107,3 +107,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Sản phẩm (#3) — đầu trang (dòng phụ → (?)), lưới thẻ giãn `sm:gap-6`. Chưa làm: thẻ `ProductCard`, thanh bộ lọc, chế độ bảng.
 - 31/10: Sản phẩm — thẻ `ProductCard` (bóng `shadow-sm`), hộp khoảng giá (bỏ dòng ví dụ, đưa vào (?)). Còn: chế độ bảng quản trị.
 - 31/10: Tạo sản phẩm (#4) — đầu trang (dòng phụ → (?)); thẻ Định mức / Đặc điểm niêm yết / Nội dung AI: mô tả dài → (?) trên dòng tiêu đề, emoji ✨ → icon. Badge cam kết vẫn hiện.
+- 31/10: Hội thoại (#5) — đầu trang: "AI Chat & Tư Vấn Bán Hàng" → "Tư vấn bán hàng", mô tả → (?); nhãn thẻ K1 "HƯỚNG DẪN AI CHAT ASSISTANT" → "HƯỚNG DẪN TƯ VẤN" (cần PO xác nhận đổi chuỗi trong thẻ K1). Chưa làm: khung 3 cột.

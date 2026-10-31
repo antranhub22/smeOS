@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
+import { InfoTip } from "@/components/ui/info-tip"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { Route } from "next"
@@ -152,13 +153,13 @@ export default function ChatAssistantPage() {
       {/* 1. Header chuẩn Top-Right Action Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-4 sm:px-6 py-4 backdrop-blur-sm">
         <div className="flex items-start"><MobileMenuButton /><div>
-          <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
-            Trợ lý tư vấn AI & Bán hàng đa kênh
+          {/* Tiêu đề tiếng Việt, ngắn; giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-title font-extrabold text-foreground">Tư vấn bán hàng</h1>
+            <InfoTip label="Tư vấn bán hàng" side="bottom">
+              Trợ lý AI tra cứu sản phẩm và lịch sử khách, trả lời khách và chốt đơn nháp chỉ với một chạm.
+            </InfoTip>
           </div>
-          <h1 className="text-title font-extrabold text-foreground">AI Chat & Tư Vấn Bán Hàng</h1>
-          <p className="text-caption text-text-muted mt-0.5">
-            Tự động truy vấn sản phẩm và lịch sử khách hàng · Trả lời thông minh · 1-chạm chốt đơn sang xưởng hoa
-          </p>
         </div></div>
 
         {/* Top-Right Action Header */}
@@ -187,7 +188,7 @@ export default function ChatAssistantPage() {
       <main className="flex-1 p-4 sm:p-6 space-y-5 max-w-7xl mx-auto w-full flex flex-col">
         {/* Khối hướng dẫn SSOT FeatureGuidanceCard */}
         <FeatureGuidanceCard
-          badgeLabel="HƯỚNG DẪN AI CHAT ASSISTANT"
+          badgeLabel="HƯỚNG DẪN TƯ VẤN"
           badgeIcon={Bot}
           title={`Trợ Lý Tư Vấn ${ti.sampleProduct} & Tự Động Hóa Chốt Đơn`}
           description={`Hệ thống tích hợp AI đàm thoại chuyên sâu, tự động liên kết dữ liệu ${ti.sampleProduct}, công thức định lượng ${ti.rawMaterialItem} và lịch sử khách hàng để gợi ý chuẩn xác và đẩy đơn nháp 1-chạm sang xưởng.`}
