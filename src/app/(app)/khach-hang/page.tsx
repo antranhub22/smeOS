@@ -131,14 +131,14 @@ export default function CRMPage() {
       <main className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
         {/* Khối hướng dẫn SSOT FeatureGuidanceCard */}
         <FeatureGuidanceCard
-          badgeLabel="HƯỚNG DẪN CRM KHÁCH HÀNG"
+          badgeLabel="HƯỚNG DẪN KHÁCH HÀNG"
           badgeIcon={Users}
-          title="Quy trình Quản lý Khách hàng & Tiếp thị Chăm sóc"
-          description="Lưu trữ hồ sơ khách hàng toàn diện từ lịch sử đơn hàng, tự động phân hạng RFM (VIP/Vàng/Bạc/Đồng) và bảo vệ tuyệt đối quyền riêng tư khi gửi tin tiếp thị (Consent Engine)."
+          title="Quản lý khách hàng và chăm sóc"
+          description="Lưu hồ sơ khách từ lịch sử đơn hàng, tự phân hạng khách (VIP, Vàng, Bạc, Đồng) và chỉ gửi tin khi khách đã đồng ý."
           tips={[
-            { icon: "💎", text: "Phân tầng tự động: Dựa trên tổng chi tiêu và số đơn hàng thật của khách" },
+            { icon: "💎", text: "Phân hạng tự động theo tổng chi tiêu và số đơn thật của khách" },
             { icon: "🎂", text: `Lưu ngày kỷ niệm: Nhắc trước 7-14 ngày để tư vấn ${ti.sampleProduct} và lời nhắn thiệp` },
-            { icon: "🛡️", text: "Bảo vệ Consent: Chỉ gửi tin nhắn qua Zalo/SMS khi khách đã đồng ý" },
+            { icon: "🛡️", text: "Chỉ gửi tin Zalo/SMS khi khách đã đồng ý nhận" },
           ]}
         />
 
@@ -176,7 +176,7 @@ export default function CRMPage() {
             </Button>
           </form>
 
-          {/* Bộ lọc phân tầng RFM */}
+          {/* Bộ lọc hạng khách */}
           <div className="flex items-center gap-1.5 text-xs font-semibold">
             <span className="text-muted-foreground mr-1">Hạng:</span>
             {(["", "VIP", "GOLD", "SILVER", "BRONZE", "NEW"] as const).map((t) => (
