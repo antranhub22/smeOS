@@ -1,88 +1,97 @@
+import type { Prisma } from "@/generated/prisma/client"
+import { prisma } from "@/core/tenancy/infra/prisma"
+import type { PartnerStoreMarketplaceEntity } from "../domain/partner-marketplace.types"
+import {
+  DEFAULT_TIER,
+  MAX_IMPORT_ROWS,
+  matchKeyOf,
+  searchTextOf,
+  type PartnerStoreProfile,
+} from "../domain/partner-marketplace-row-mapper"
 import type {
   IPartnerMarketplaceRepository,
-  ListMarketplaceStoresFilter,
-  ListMarketplaceStoresResult,
+  MarketplaceImportSource,
+  MarketplacePhotoState,
 } from "../domain/repositories/partner-marketplace-repository.interface"
-import type { PartnerStoreMarketplaceEntity } from "../domain/partner-marketplace.types"
-import storesJson from "../domain/partner-marketplace-data.json"
 
-function matchStoreField(store: PartnerStoreMarketplaceEntity, field: string | undefined, q: string): boolean {
-  if (!field || field === "all") {
-    // Deep search across all 75 fields
-    const jsonStr = JSON.stringify(store).toLowerCase()
-    return jsonStr.includes(q)
-  }
+/** Bảng cấp nền tảng (không có organization_id) — chỉ console vận hành truy cập, qua N1/N16. */
+type Row = { id: string; profile: unknown; photo_keys: string[]; search_text: string }
 
-  // Nested property lookup e.g. 'identity.shopName', 'production.productLines'
-  const parts = field.split(".")
-  let current: unknown = store
-  for (const part of parts) {
-    if (current && typeof current === "object" && part in (current as Record<string, unknown>)) {
-      current = (current as Record<string, unknown>)[part]
-    } else {
-      return false
-    }
-  }
+function toEntity(row: Pick<Row, "id" | "profile">): PartnerStoreMarketplaceEntity {
+  return { ...(row.profile as PartnerStoreProfile), id: row.id }
+}
 
-  if (Array.isArray(current)) {
-    return current.some((item) => String(item).toLowerCase().includes(q))
-  }
-  return String(current ?? "").toLowerCase().includes(q)
+function sameList(a: readonly string[], b: readonly string[]): boolean {
+  return a.length === b.length && a.every((x, i) => x === b[i])
 }
 
 export class PartnerMarketplaceRepository implements IPartnerMarketplaceRepository {
-  private readonly stores: PartnerStoreMarketplaceEntity[] = storesJson as PartnerStoreMarketplaceEntity[]
-
-  async listStores(filter?: ListMarketplaceStoresFilter): Promise<ListMarketplaceStoresResult> {
-    const allStores = this.stores
-
-    // Thống kê phân hạng
-    const tierCounts: Record<string, number> = {
-      all: allStores.length,
-    }
-
-    for (const s of allStores) {
-      const tier = s.scoreAndTier.suggestedTier || "Hạng Tiêu Chuẩn"
-      tierCounts[tier] = (tierCounts[tier] || 0) + 1
-    }
-
-    let filtered = allStores
-
-    if (filter?.tier && filter.tier !== "ALL") {
-      filtered = filtered.filter(
-        (s) => (s.scoreAndTier.suggestedTier || "Hạng Tiêu Chuẩn") === filter.tier
-      )
-    }
-
-    if (filter?.search && filter.search.trim()) {
-      const q = filter.search.toLowerCase().trim()
-      filtered = filtered.filter((s) => matchStoreField(s, filter.field, q))
-    }
-
-    if (filter?.district && filter.district.trim() && filter.district !== "ALL") {
-      const d = filter.district.toLowerCase().trim()
-      filtered = filtered.filter((s) => s.contact.address.toLowerCase().includes(d))
-    }
-
-    return {
-      stores: filtered,
-      total: filtered.length,
-      tierCounts,
-    }
+  async listAll() {
+    const rows = await prisma.partner_marketplace_stores.findMany({
+      select: { id: true, profile: true, photo_keys: true, search_text: true },
+      orderBy: { shop_name: "asc" },
+      take: MAX_IMPORT_ROWS,
+    })
+    return rows.map((r) => ({ store: toEntity(r), searchText: r.search_text, photoKeys: r.photo_keys }))
   }
 
-  async getStoreById(id: string): Promise<PartnerStoreMarketplaceEntity | null> {
-    const store = this.stores.find((s) => s.id === id)
-    return store || null
+  async upsertMany(profiles: PartnerStoreProfile[], source: MarketplaceImportSource) {
+    const keys = profiles.map((p) => matchKeyOf(p.identity.shopName))
+    const existing = new Set(
+      (await prisma.partner_marketplace_stores.findMany({ where: { match_key: { in: keys } }, select: { match_key: true } })).map(
+        (r) => r.match_key
+      )
+    )
+    await prisma.$transaction(
+      profiles.map((profile, i) => {
+        const data = {
+          shop_name: profile.identity.shopName,
+          tier: profile.scoreAndTier.suggestedTier || DEFAULT_TIER,
+          address: profile.contact.address,
+          profile: profile as unknown as Prisma.InputJsonValue,
+          search_text: searchTextOf(profile),
+          source,
+        }
+        return prisma.partner_marketplace_stores.upsert({
+          where: { match_key: keys[i]! },
+          create: { match_key: keys[i]!, ...data },
+          update: data,
+        })
+      })
+    )
+    const added = keys.filter((k) => !existing.has(k)).length
+    const total = await prisma.partner_marketplace_stores.count()
+    return { added, updated: profiles.length - added, total }
+  }
+
+  async listPhotoPending(limit: number): Promise<{ items: MarketplacePhotoState[]; remaining: number }> {
+    const rows = await prisma.partner_marketplace_stores.findMany({
+      select: { id: true, profile: true, photo_keys: true, photo_source_ids: true },
+      orderBy: { created_at: "asc" },
+      take: MAX_IMPORT_ROWS,
+    })
+    const pending = rows
+      .map((r) => ({
+        id: r.id,
+        driveImageIds: toEntity(r).media.driveImageIds ?? [],
+        photoKeys: r.photo_keys,
+        photoSourceIds: r.photo_source_ids,
+      }))
+      .filter((s) => s.driveImageIds.length > 0 && !sameList(s.driveImageIds, s.photoSourceIds))
+    return { items: pending.slice(0, limit), remaining: Math.max(0, pending.length - limit) }
+  }
+
+  async setPhotos(id: string, photoKeys: string[], photoSourceIds: string[]) {
+    await prisma.partner_marketplace_stores.update({
+      where: { id },
+      data: { photo_keys: photoKeys, photo_source_ids: photoSourceIds },
+    })
   }
 }
 
-// Singleton Factory (Quy chuẩn ADR-001/002)
 let instance: IPartnerMarketplaceRepository | null = null
 
 export function getPartnerMarketplaceRepository(): IPartnerMarketplaceRepository {
-  if (!instance) {
-    instance = new PartnerMarketplaceRepository()
-  }
+  instance ??= new PartnerMarketplaceRepository()
   return instance
 }

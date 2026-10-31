@@ -1,22 +1,14 @@
-import { handle, jsonResponse } from "@/core/http/response"
-import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
-import { syncAllMarketplacePhotos } from "@/modules/platform/infra/sync-marketplace-photos"
-
 /**
- * POST /api/v1/platform/marketplace/sync-photos
- * Tải toàn bộ ảnh thực tế từ Google Drive về lưu trữ tại public/partner-stores/
+ * POST /api/v1/platform/marketplace/sync-photos — tải một lượt ảnh khảo sát từ Drive vào kho
+ * (`N16`). Mỗi lượt xử lý tối đa PHOTO_STORES_PER_RUN cửa hàng; `remaining` > 0 thì gọi tiếp.
  */
+import { handle, jsonResponse } from "@/core/http/response"
+import { syncMarketplacePhotos } from "@/modules/platform/use-cases/manage-partner-marketplace"
+import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+
 export const POST = handle(async (request) => {
   const pctx = await requirePlatformContext(request)
-  void pctx
-
-  const result = await syncAllMarketplacePhotos()
-
-  return jsonResponse({
-    success: true,
-    data: result,
-  })
+  return jsonResponse({ data: await syncMarketplacePhotos(pctx) })
 })
 
-export const dynamic = "force-dynamic" as const
-
+export const dynamic = "force-dynamic"

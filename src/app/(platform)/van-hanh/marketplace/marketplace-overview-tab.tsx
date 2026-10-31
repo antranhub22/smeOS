@@ -71,7 +71,7 @@ export function MarketplaceOverviewTab({
           </div>
           <div className="py-1 border-b border-border/50">
             <span className="text-text-muted block mb-1">Tuân thủ pháp lý & quy chuẩn:</span>
-            <span className="font-medium bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 px-2 py-1 rounded inline-block text-[11px]">
+            <span className="font-medium bg-success-bg text-success-text px-2 py-1 rounded inline-block text-caption">
               {identity.legalCompliance || "Đang cập nhật"}
             </span>
           </div>
@@ -136,7 +136,7 @@ export function MarketplaceOverviewTab({
           </div>
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">Followers Facebook:</span>
-            <span className="font-bold text-blue-600">{digital.facebookFollowers || "0"}</span>
+            <span className="font-bold text-info">{digital.facebookFollowers || "0"}</span>
           </div>
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">Kênh TikTok:</span>
@@ -203,7 +203,7 @@ export function MarketplaceOverviewTab({
         <div className="space-y-2 text-xs">
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">Doanh thu TB/tháng:</span>
-            <span className="font-bold text-emerald-600">{business.monthlyRevenue || "Chưa chia sẻ"}</span>
+            <span className="font-bold text-success">{business.monthlyRevenue || "Chưa chia sẻ"}</span>
           </div>
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">AOV (Giá trị đơn TB):</span>
@@ -234,7 +234,7 @@ export function MarketplaceOverviewTab({
           {business.challenges && (
             <div className="py-1 border-b border-border/50">
               <span className="text-text-muted block mb-0.5">Khó khăn / Thách thức:</span>
-              <span className="font-medium text-amber-700 dark:text-amber-300">{business.challenges}</span>
+              <span className="font-medium text-warning-text">{business.challenges}</span>
             </div>
           )}
           {business.goals12m && (

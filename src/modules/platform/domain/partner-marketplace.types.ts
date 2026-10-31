@@ -90,6 +90,7 @@ export interface PartnerStoreFacilityAndDelivery {
 
 export interface PartnerStoreMedia {
   requiredPhotoTypes?: string | undefined
+  /** URL ký có hạn của ảnh đã tải vào kho — chỉ có trong phản hồi đọc, không lưu. */
   coverPhotoUrl?: string | undefined
   photoGalleryUrls?: string[] | undefined
   rawImageUrls?: string | undefined

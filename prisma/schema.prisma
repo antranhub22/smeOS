@@ -3701,3 +3701,27 @@ model link_events {
   @@index([organization_id])
   @@index([organization_id, short_link_id, created_at])
 }
+
+/// Chợ đối tác (SaaS Mẹ) — hồ sơ khảo sát cửa hàng tiềm năng, CẤP NỀN TẢNG:
+/// cửa hàng chưa là tenant nên không có organization_id (đặc tả 07).
+/// Đọc cần N1, ghi (đồng bộ/nhập/ảnh) cần N16.
+model partner_marketplace_stores {
+  id               String   @id @default(uuid())
+  /// Tên cửa hàng chuẩn hoá (thường, bỏ dấu cách thừa) — khoá khớp khi đồng bộ lại
+  match_key        String   @unique
+  shop_name        String
+  tier             String
+  address          String   @default("")
+  /// Toàn bộ hồ sơ khảo sát (PartnerStoreMarketplaceEntity, trừ id)
+  profile          Json
+  /// Khoá kho ảnh đã tải (platform/partner-stores/<id>/…)
+  photo_keys       String[] @default([])
+  /// Drive id tương ứng photo_keys — đổi danh sách Drive thì tải lại
+  photo_source_ids String[] @default([])
+  search_text      String   @default("")
+  source           String // SHEET · EXCEL · SEED
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@index([tier])
+}

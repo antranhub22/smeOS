@@ -1,66 +1,52 @@
 "use client"
 
-import React, { useState, useEffect, useMemo } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import {
   Store,
   Search,
-  Sparkles,
   Award,
   MapPin,
-  Filter,
 } from "@/components/ui/icons"
 import { PageHeader } from "@/components/ui/page-header"
 import { PageContainer } from "@/components/ui/page-container"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import type { PartnerStoreMarketplaceEntity } from "@/modules/platform/domain/partner-marketplace.types"
+import { filterMarketplaceStores } from "@/modules/platform/domain/partner-marketplace-filter"
+import { searchTextOf } from "@/modules/platform/domain/partner-marketplace-row-mapper"
+import { InlineError } from "@/components/ui/inline-error"
 import { MarketplaceStoreCard } from "./marketplace-store-card"
 import { MarketplaceProfileModal } from "./marketplace-profile-modal"
 import { MarketplaceSyncActions } from "./marketplace-sync-actions"
 
-export const SEARCHABLE_FIELDS = [
-  { value: "all", label: "🔍 Tất cả các trường dữ liệu" },
-  { value: "identity.shopName", label: "🏷️ Tên cửa hàng" },
-  { value: "identity.ownerName", label: "👤 Chủ shop / Người đại diện" },
-  { value: "contact.phone", label: "📞 Số điện thoại / Hotline" },
-  { value: "contact.address", label: "📍 Địa chỉ / Khu vực" },
-  { value: "production.mainProductLine", label: "✨ Dòng sản phẩm chủ lực" },
-  { value: "production.productLines", label: "📦 Danh mục sản phẩm hiện có" },
-  { value: "production.floristCount", label: "✂️ Số lượng nhân sự thợ" },
-  { value: "production.flowerSupply", label: "🌸 Nguồn cung ứng hoa" },
-  { value: "business.monthlyRevenue", label: "💰 Mức doanh thu TB/tháng" },
-  { value: "business.targetCustomers", label: "🎯 Khách hàng mục tiêu" },
-  { value: "business.paymentMethods", label: "💳 Phương thức thanh toán" },
-  { value: "business.challenges", label: "⚠️ Khó khăn & Thách thức" },
-  { value: "business.goals12m", label: "🎯 Mục tiêu phát triển 12m" },
-  { value: "facilityAndDelivery.coolers", label: "❄️ Tủ mát bảo quản hoa" },
-  { value: "facilityAndDelivery.coldStorage", label: "🧊 Kho lạnh riêng" },
-  { value: "facilityAndDelivery.deliveryVehicles", label: "🚚 Phương tiện giao hàng" },
-  { value: "facilityAndDelivery.deliveryRadius", label: "🗺️ Bán kính giao hàng" },
-  { value: "identity.legalCompliance", label: "📜 Tuân thủ pháp lý & GPKD" },
-  { value: "audit.specialist", label: "📋 Chuyên viên khảo sát" },
+const SEARCHABLE_FIELDS: { value: string; label: string }[] = [
+  { value: "all", label: "Mọi thông tin" },
+  { value: "identity.shopName", label: "Tên cửa hàng" },
+  { value: "identity.ownerName", label: "Chủ cửa hàng / người đại diện" },
+  { value: "contact.phone", label: "Số điện thoại" },
+  { value: "contact.address", label: "Địa chỉ / khu vực" },
+  { value: "production.mainProductLine", label: "Dòng sản phẩm chủ lực" },
+  { value: "production.productLines", label: "Danh mục sản phẩm" },
+  { value: "production.floristCount", label: "Số thợ cắm hoa" },
+  { value: "production.flowerSupply", label: "Nguồn cung hoa" },
+  { value: "business.monthlyRevenue", label: "Doanh thu trung bình tháng" },
+  { value: "business.targetCustomers", label: "Khách hàng mục tiêu" },
+  { value: "business.paymentMethods", label: "Phương thức thanh toán" },
+  { value: "business.challenges", label: "Khó khăn hiện tại" },
+  { value: "business.goals12m", label: "Mục tiêu 12 tháng" },
+  { value: "facilityAndDelivery.coolers", label: "Tủ mát bảo quản" },
+  { value: "facilityAndDelivery.coldStorage", label: "Kho lạnh" },
+  { value: "facilityAndDelivery.deliveryVehicles", label: "Phương tiện giao hàng" },
+  { value: "facilityAndDelivery.deliveryRadius", label: "Bán kính giao hàng" },
+  { value: "identity.legalCompliance", label: "Giấy tờ pháp lý" },
+  { value: "audit.specialist", label: "Chuyên viên khảo sát" },
 ]
 
-function matchStoreValue(store: PartnerStoreMarketplaceEntity, field: string, q: string): boolean {
-  if (field === "all" || !field) {
-    return JSON.stringify(store).toLowerCase().includes(q)
-  }
-
-  const parts = field.split(".")
-  let current: unknown = store
-  for (const part of parts) {
-    if (current && typeof current === "object" && part in (current as Record<string, unknown>)) {
-      current = (current as Record<string, unknown>)[part]
-    } else {
-      return false
-    }
-  }
-
-  if (Array.isArray(current)) {
-    return current.some((item) => String(item).toLowerCase().includes(q))
-  }
-  return String(current ?? "").toLowerCase().includes(q)
-}
+const DISTRICTS: [string, string[]][] = [
+  ["Ba Đình", ["ba đình"]], ["Cầu Giấy", ["cầu giấy"]], ["Đống Đa", ["đống đa"]], ["Hà Đông", ["hà đông"]],
+  ["Hai Bà Trưng", ["hai bà trưng"]], ["Hoàn Kiếm", ["hoàn kiếm"]], ["Hoàng Mai", ["hoàng mai"]],
+  ["Tây Hồ", ["tây hồ"]], ["Thanh Xuân", ["thanh xuân"]], ["Từ Liêm", ["nam từ liêm", "bắc từ liêm"]],
+]
 
 export default function PlatformMarketplacePage() {
   const [stores, setStores] = useState<PartnerStoreMarketplaceEntity[]>([])
@@ -69,90 +55,56 @@ export default function PlatformMarketplacePage() {
   const [searchField, setSearchField] = useState("all")
   const [selectedTier, setSelectedTier] = useState<string>("ALL")
   const [selectedDistrict, setSelectedDistrict] = useState<string>("ALL")
-  const [tierCounts, setTierCounts] = useState<Record<string, number>>({})
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [selectedStore, setSelectedStore] = useState<PartnerStoreMarketplaceEntity | null>(null)
 
-  // Fetch stores
-  const fetchStores = async () => {
+  // Tải toàn bộ một lần; lọc tại chỗ bằng cùng bộ lọc domain với API.
+  const fetchStores = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch("/api/v1/platform/marketplace/stores")
-      if (res.ok) {
-        const json = await res.json()
-        setStores(json.data.stores || [])
-        setTierCounts(json.data.tierCounts || {})
+      const res = await fetch("/api/v1/platform/marketplace/stores", { cache: "no-store" })
+      if (!res.ok) {
+        setLoadError(res.status === 403 ? "Tài khoản chưa có quyền xem chợ đối tác." : "Không tải được danh sách cửa hàng.")
+        return
       }
+      const json = (await res.json()) as { data: { stores: PartnerStoreMarketplaceEntity[] } }
+      setStores(json.data.stores)
+      setLoadError(null)
     } catch {
-      // ignore
+      setLoadError("Không kết nối được máy chủ.")
     } finally {
       setLoading(false)
     }
-  }
-
-  useEffect(() => {
-    void fetchStores()
   }, [])
 
-  // Filter list locally for instant performance
-  const filteredStores = useMemo(() => {
-    return stores.filter((s) => {
-      // Tier filter
-      if (selectedTier !== "ALL") {
-        const storeTier = s.scoreAndTier.suggestedTier || "Hạng Tiêu Chuẩn"
-        if (storeTier !== selectedTier) return false
-      }
+  useEffect(() => {
+    void (async () => {
+      await fetchStores()
+    })()
+  }, [fetchStores])
 
-      // District filter
-      if (selectedDistrict !== "ALL") {
-        if (!s.contact.address.toLowerCase().includes(selectedDistrict.toLowerCase())) {
-          return false
-        }
-      }
+  const entries = useMemo(() => stores.map((store) => ({ store, searchText: searchTextOf(store) })), [stores])
 
-      // Dynamic Field Search
-      if (search.trim()) {
-        const q = search.toLowerCase().trim()
-        const match = matchStoreValue(s, searchField, q)
-        if (!match) return false
-      }
+  const districts = useMemo(
+    () => DISTRICTS.filter(([, keys]) => stores.some((s) => keys.some((k) => s.contact.address.toLowerCase().includes(k)))),
+    [stores]
+  )
 
-      return true
-    })
-  }, [stores, selectedTier, selectedDistrict, search, searchField])
-
-  // Extract unique districts
-  const districts = useMemo(() => {
-    const dMap = new Set<string>()
-    stores.forEach((s) => {
-      const addr = s.contact.address.toLowerCase()
-      if (addr.includes("cầu giấy")) dMap.add("Cầu Giấy")
-      else if (addr.includes("đống đa")) dMap.add("Đống Đa")
-      else if (addr.includes("ba đình")) dMap.add("Ba Đình")
-      else if (addr.includes("hà đông") || addr.includes("hđ")) dMap.add("Hà Đông")
-      else if (addr.includes("thanh xuân")) dMap.add("Thanh Xuân")
-      else if (addr.includes("hoàn kiếm")) dMap.add("Hoàn Kiếm")
-      else if (addr.includes("hai bà trưng") || addr.includes("hbt")) dMap.add("Hai Bà Trưng")
-      else if (addr.includes("hoàng mai")) dMap.add("Hoàng Mai")
-      else if (addr.includes("tây hồ")) dMap.add("Tây Hồ")
-      else if (addr.includes("nam từ liêm") || addr.includes("bắc từ liêm")) dMap.add("Từ Liêm")
-    })
-    return Array.from(dMap).sort()
-  }, [stores])
+  const { stores: filteredStores, tierCounts } = useMemo(() => {
+    const keys = DISTRICTS.find(([name]) => name === selectedDistrict)?.[1]
+    const byDistrict = keys ? entries.filter((e) => keys.some((k) => e.store.contact.address.toLowerCase().includes(k))) : entries
+    return filterMarketplaceStores(byDistrict, { search, field: searchField, tier: selectedTier })
+  }, [entries, search, searchField, selectedTier, selectedDistrict])
 
   const currentFieldLabel =
-    SEARCHABLE_FIELDS.find((f) => f.value === searchField)?.label ?? "Từ khóa"
+    SEARCHABLE_FIELDS.find((f) => f.value === searchField)?.label ?? "Từ khoá"
 
   return (
     <PageContainer className="space-y-6">
       {/* Top Header */}
       <PageHeader
-        title="Chợ Cửa hàng & Mạng lưới Đối tác"
-        description="Marketplace hiển thị toàn bộ 98 đối tác cửa hàng đã khảo sát trên toàn hệ thống với 100% dữ liệu năng lực thực tế."
-        badge={
-          <span className="text-caption bg-primary-subtle text-primary font-semibold px-2.5 py-0.5 rounded-full border border-primary/20 flex items-center gap-1">
-            <Sparkles className="h-3.5 w-3.5" /> SaaS Mother Marketplace
-          </span>
-        }
+        title="Chợ cửa hàng & đối tác"
+        description={`${stores.length} cửa hàng đã khảo sát — năng lực, cơ sở vật chất và phân hạng đối tác.`}
         actions={<MarketplaceSyncActions loading={loading} onRefresh={fetchStores} />}
       />
 
@@ -181,7 +133,7 @@ export default function PlatformMarketplacePage() {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <Input
               type="text"
-              placeholder={`Nhập nội dung lọc theo [${currentFieldLabel}]...`}
+              placeholder={`Tìm theo ${currentFieldLabel.toLowerCase()}...`}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 text-xs"
@@ -191,7 +143,7 @@ export default function PlatformMarketplacePage() {
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-text-muted hover:text-text px-1.5 py-0.5 rounded bg-surface-alt"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-caption font-bold text-text-muted hover:text-text px-1.5 py-0.5 rounded bg-surface-alt"
               >
                 Xóa
               </button>
@@ -208,9 +160,9 @@ export default function PlatformMarketplacePage() {
             className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-medium text-text focus:border-primary focus:outline-none shadow-2xs"
           >
             <option value="ALL">Tất cả quận/huyện ({stores.length})</option>
-            {districts.map((d) => (
+            {districts.map(([d]) => (
               <option key={d} value={d}>
-                Quận {d}
+                {d}
               </option>
             ))}
           </select>
@@ -224,7 +176,7 @@ export default function PlatformMarketplacePage() {
           onClick={() => setSelectedTier("ALL")}
           className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
             selectedTier === "ALL"
-              ? "bg-primary text-white shadow-sm font-bold"
+              ? "bg-primary text-primary-foreground shadow-sm font-bold"
               : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface-alt"
           }`}
         >
@@ -240,7 +192,7 @@ export default function PlatformMarketplacePage() {
               onClick={() => setSelectedTier(tier)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 ${
                 selectedTier === tier
-                  ? "bg-primary text-white shadow-sm font-bold"
+                  ? "bg-primary text-primary-foreground shadow-sm font-bold"
                   : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface-alt"
               }`}
             >
@@ -256,7 +208,7 @@ export default function PlatformMarketplacePage() {
           Hiển thị: <strong className="text-text">{filteredStores.length}</strong> / {stores.length} cửa hàng đối tác
           {search.trim() && (
             <span className="ml-2 text-primary font-medium">
-              (Lọc theo: &quot;{search}&quot; trong {currentFieldLabel})
+              (tìm “{search}” trong {currentFieldLabel.toLowerCase()})
             </span>
           )}
         </div>
@@ -264,6 +216,8 @@ export default function PlatformMarketplacePage() {
           <span className="text-primary font-medium">Đang lọc theo: {selectedTier}</span>
         )}
       </div>
+
+      {loadError && <InlineError message={loadError} />}
 
       {/* Stores Grid */}
       {loading ? (
@@ -277,7 +231,7 @@ export default function PlatformMarketplacePage() {
           <Store className="w-12 h-12 text-text-muted/40 mx-auto" />
           <h3 className="text-sm font-semibold text-text">Không tìm thấy cửa hàng nào phù hợp</h3>
           <p className="text-meta text-text-muted max-w-sm mx-auto">
-            Thử thay đổi từ khóa tìm kiếm hoặc chọn trường lọc khác như [🔍 Tất cả các trường dữ liệu].
+            Thử đổi từ khoá, hoặc chọn “Mọi thông tin” để tìm trên toàn bộ hồ sơ.
           </p>
         </Card>
       ) : (
@@ -294,6 +248,7 @@ export default function PlatformMarketplacePage() {
 
       {/* Quick View Profile Modal */}
       <MarketplaceProfileModal
+        key={selectedStore?.id ?? "none"}
         store={selectedStore}
         onClose={() => setSelectedStore(null)}
       />

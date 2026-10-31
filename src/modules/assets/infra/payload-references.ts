@@ -32,6 +32,8 @@ export async function countPayloadReferences(ctx: TenantContext, key: string): P
         ],
       }),
     }),
+    // Ảnh chợ đối tác: bảng cấp nền tảng, khoá `platform/…` — không trùng khoá `org/…`
+    prisma.partner_marketplace_stores.count({ where: { photo_keys: { has: key } } }),
   ])
   return counts.reduce((sum, n) => sum + n, 0)
 }

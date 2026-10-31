@@ -8,9 +8,9 @@ import {
 } from "./platform-capability-catalog"
 
 describe("platform-capability-catalog", () => {
-  it("có đúng mười hai mã (N1..N8, N12..N15), không nhiều hơn không ít hơn", () => {
+  it("có đúng mười ba mã (N1..N8, N12..N16), không nhiều hơn không ít hơn", () => {
     expect(ALL_PLATFORM_CAPABILITY_CODES).toEqual([
-      "N1", "N12", "N13", "N14", "N15", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
+      "N1", "N12", "N13", "N14", "N15", "N16", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
     ])
   })
 

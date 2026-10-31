@@ -21,6 +21,7 @@ const WRITERS: Record<string, (typeof STORAGE_REFERENCE_SOURCES)[number]> = {
   "src/app/api/v1/coordinator/orders/[id]/upload-qc-subcontract/route.ts": "order_coordinations.metadata.qc_photos",
   "src/app/api/v1/public/subcontract/[orderCode]/upload-qc/route.ts": "order_coordinations.metadata.qc_photos",
   "src/app/api/v1/public/subcontract/[orderCode]/submit-delivery/route.ts": "order_coordinations.metadata.pod_photos",
+  "src/modules/platform/use-cases/partner-marketplace-photos.ts": "partner_marketplace_stores.photo_keys",
   "workers/media_ai/jobs/worker.py": "assets.storage_key",
   "workers/media_ai/jobs/variant_worker.py": "assets.storage_key",
   "workers/media_ai/audio/audio_worker.py": "generation_jobs.output.audio_storage_key",

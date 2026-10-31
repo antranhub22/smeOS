@@ -14,7 +14,6 @@ import {
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { PartnerStoreMarketplaceEntity } from "@/modules/platform/domain/partner-marketplace.types"
-import { getStoreCoverImage } from "@/modules/platform/domain/marketplace-image-resolver"
 
 interface MarketplaceStoreCardProps {
   store: PartnerStoreMarketplaceEntity
@@ -22,77 +21,56 @@ interface MarketplaceStoreCardProps {
 }
 
 export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCardProps) {
-  const { id, identity, contact, business, production, scoreAndTier, media } = store
+  const { identity, contact, business, production, scoreAndTier, media } = store
   const [imageError, setImageError] = useState(false)
 
-  // Phân hạng đối tác
   const tier = scoreAndTier.suggestedTier || "Hạng Tiêu Chuẩn"
-  const isCertified = tier.toLowerCase().includes("chứng nhận") || tier.toLowerCase().includes("kim cương")
-
-  // Fallback banner color theo tên nếu không có ảnh
-  const charCode = identity.shopName.charCodeAt(0) || 65
-  const bgColors = [
-    "from-emerald-600 to-teal-800",
-    "from-blue-600 to-indigo-800",
-    "from-rose-600 to-pink-800",
-    "from-amber-600 to-orange-800",
-    "from-purple-600 to-violet-800",
-  ]
-  const bannerGradient = bgColors[charCode % bgColors.length]
-
-  // Ảnh mặt tiền cửa hàng thực tế (ưu tiên ảnh đã tải)
-  const storePhotoUrl = getStoreCoverImage(id, identity.shopName, media.coverPhotoUrl)
+  const isCertified = tier.toLowerCase().includes("chứng nhận")
+  // Chỉ hiện ảnh khảo sát thật đã tải vào kho — không thay bằng ảnh mẫu
+  const coverUrl = !imageError ? media.coverPhotoUrl : undefined
 
   return (
     <Card
       variant="interactive"
       className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/80 bg-surface transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg"
     >
-      {/* Top Banner / Store Photo Thumbnail */}
-      <div className={`relative h-40 w-full overflow-hidden bg-gradient-to-r ${bannerGradient}`}>
-        {!imageError ? (
-          <>
-            <img
-              src={storePhotoUrl}
-              alt={`Cửa hàng ${identity.shopName}`}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              onError={() => setImageError(true)}
-              loading="lazy"
-            />
-            {/* Dark gradient overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/40" />
-          </>
+      <div className="relative h-40 w-full overflow-hidden bg-surface-alt">
+        {coverUrl ? (
+          <img
+            src={coverUrl}
+            alt={`Cửa hàng ${identity.shopName}`}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={() => setImageError(true)}
+            loading="lazy"
+          />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center opacity-30">
-            <Store className="h-16 w-16 text-white" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-text-muted">
+            <Store className="h-12 w-12 opacity-40" />
+            <span className="text-caption">{media.driveImageIds.length > 0 ? "Ảnh khảo sát chưa tải về" : "Chưa có ảnh khảo sát"}</span>
           </div>
         )}
 
-        {/* Top Badges & Real Photo Tag */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
+        <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between">
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold backdrop-blur-md ${
-              isCertified
-                ? "bg-amber-400 text-amber-950 font-bold shadow-sm"
-                : "bg-black/50 text-white border border-white/20"
+            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-caption font-semibold ${
+              isCertified ? "border-warning-border bg-warning-bg text-warning-text" : "border-border bg-surface text-text"
             }`}
           >
             <Award className="h-3.5 w-3.5" />
             {tier}
           </span>
-
           <div className="flex items-center gap-1.5">
             {media.driveImageIds.length > 0 && (
-              <span className="flex items-center gap-1 rounded-full bg-black/50 px-2.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-md border border-white/20">
-                <Camera className="h-3 w-3 text-emerald-300" />
-                {media.driveImageIds.length} ảnh khảo sát
+              <span className="flex items-center gap-1 rounded-full border border-border bg-surface px-2.5 py-0.5 text-caption text-text">
+                <Camera className="h-3 w-3 text-success" />
+                {media.driveImageIds.length} ảnh
               </span>
             )}
             {scoreAndTier.totalScore && (
-              <div className="flex items-center gap-1 rounded-full bg-black/50 px-2 py-0.5 text-[11px] font-medium backdrop-blur-md border border-white/20 text-white">
-                <Sparkles className="h-3 w-3 text-amber-300" />
-                <span className="font-bold text-amber-200">{scoreAndTier.totalScore}</span>
-              </div>
+              <span className="flex items-center gap-1 rounded-full border border-border bg-surface px-2 py-0.5 text-caption font-bold text-text">
+                <Sparkles className="h-3 w-3 text-warning" />
+                {scoreAndTier.totalScore}
+              </span>
             )}
           </div>
         </div>
@@ -130,19 +108,19 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
         {/* Highlight Tags */}
         <div className="mb-3 flex flex-wrap gap-1.5">
           {production.mainProductLine && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-primary-subtle px-2 py-0.5 text-[11px] font-medium text-primary">
+            <span className="inline-flex items-center gap-1 rounded-md bg-primary-subtle px-2 py-0.5 text-caption font-medium text-primary">
               <Package className="h-3 w-3" />
               {production.mainProductLine}
             </span>
           )}
           {business.monthlyRevenue && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-surface-alt px-2 py-0.5 text-[11px] text-text-muted">
-              <TrendingUp className="h-3 w-3 text-emerald-600" />
+            <span className="inline-flex items-center gap-1 rounded-md bg-surface-alt px-2 py-0.5 text-caption text-text-muted">
+              <TrendingUp className="h-3 w-3 text-success" />
               {business.monthlyRevenue}
             </span>
           )}
           {production.floristCount && (
-            <span className="rounded-md bg-surface-alt px-2 py-0.5 text-[11px] text-text-muted">
+            <span className="rounded-md bg-surface-alt px-2 py-0.5 text-caption text-text-muted">
               {production.floristCount} thợ cắm
             </span>
           )}
@@ -155,7 +133,7 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
               <Phone className="h-3.5 w-3.5 text-primary" />
               {contact.phone || "---"}
             </span>
-            <span className="text-[11px] text-text-muted">
+            <span className="text-caption text-text-muted">
               {identity.scale || "1 cửa hàng"}
             </span>
           </div>
@@ -176,7 +154,7 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
           size="sm"
           className="px-2.5 text-xs"
           onClick={() => onQuickView(store)}
-          title="Xem chi tiết marketplace"
+          title="Xem hồ sơ chi tiết"
         >
           <ArrowRight className="h-4 w-4" />
         </Button>

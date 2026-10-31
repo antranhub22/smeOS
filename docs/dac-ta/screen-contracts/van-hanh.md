@@ -27,6 +27,7 @@
 | L2 Ngữ cảnh | Huy hiệu phạm vi (Toàn hệ thống / Tổ chức cụ thể) | Tiêu đề mỗi trang |
 | L3 Chi tiết | Bảng danh sách tổ chức, bảng job treo, nhật ký hệ thống | Bảng dữ liệu có cấu trúc |
 | L3 Chi tiết (`/hang-doi-loi`) | Job lỗi xuyên tổ chức: loại việc · tổ chức · loại lỗi · số lần thử · lý do; nút Chạy lại / Gác lại (cần `N15`, qua `ConfirmDialog`, ghi nhật ký nền tảng). Vào từ liên kết "Xem việc bị lỗi" ở `/suc-khoe` (chưa có mục menu — shell khoá) | Danh sách + 2 nút mỗi dòng |
+| L3 Chi tiết (`/marketplace`) | Chợ cửa hàng & đối tác (xem `N1`): lưới thẻ cửa hàng (ảnh khảo sát thật hoặc ô trống — không dùng ảnh mẫu) · lọc theo hạng, quận, từ khoá theo trường; mở hồ sơ 5 tab. Nút Nhập tệp Excel / Đồng bộ từ Sheet / Tải ảnh khảo sát cần `N16`, đồng bộ & nhập qua `ConfirmDialog`, ghi nhật ký nền tảng | Lưới thẻ + hộp hồ sơ |
 | L3 Chi tiết (`/suc-khoe`) | Bộ xử lý nền (đang chạy / không chạy) → Hàng đợi theo loại việc → Job theo trạng thái → Job treo | Thẻ trạng thái + bảng; chỉ đọc (D-N5) |
 
 ## 4. Hành động

@@ -1,7 +1,6 @@
 import React from "react"
 import { ExternalLink, Store } from "@/components/ui/icons"
 import type { PartnerStoreMedia } from "@/modules/platform/domain/partner-marketplace.types"
-import { MARKETPLACE_STORE_IMAGES } from "@/modules/platform/domain/marketplace-image-resolver"
 
 interface MarketplacePhotosTabProps {
   media: PartnerStoreMedia
@@ -9,11 +8,8 @@ interface MarketplacePhotosTabProps {
 }
 
 export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabProps) {
-  // Ưu tiên ảnh thực tế đã tải về từ Drive; nếu chưa có thì dùng bộ ảnh mẫu
-  const displayPhotos =
-    media.photoGalleryUrls && media.photoGalleryUrls.length > 0
-      ? media.photoGalleryUrls
-      : MARKETPLACE_STORE_IMAGES.slice(0, 6)
+  // Chỉ ảnh khảo sát thật đã tải vào kho (URL ký có hạn) — không dùng ảnh mẫu
+  const displayPhotos = media.photoGalleryUrls ?? []
 
   return (
     <div className="space-y-5">
@@ -22,7 +18,7 @@ export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabPr
           <h4 className="font-bold text-xs uppercase tracking-wider text-primary">
             Bộ Ảnh Khảo Sát Hiện Trường & Mặt Bằng Cửa Hàng
           </h4>
-          <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
+          <span className="text-caption font-semibold text-success-text bg-success-bg px-2 py-0.5 rounded-full">
             {media.driveImageIds.length} ảnh gốc trên Drive
           </span>
         </div>
@@ -36,6 +32,13 @@ export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabPr
         <h5 className="text-xs font-bold text-text mb-3 flex items-center gap-1.5">
           <Store className="h-4 w-4 text-primary" /> Ảnh chụp thực tế không gian & sản phẩm:
         </h5>
+        {displayPhotos.length === 0 && (
+          <p className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-text-muted">
+            {media.driveImageIds.length > 0
+              ? "Ảnh khảo sát chưa được tải về. Bấm “Tải ảnh khảo sát” ở đầu trang để tải."
+              : "Cửa hàng này chưa có ảnh khảo sát."}
+          </p>
+        )}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {displayPhotos.map((imgUrl, idx) => (
             <div
@@ -48,13 +51,13 @@ export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabPr
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-between p-3">
-                <span className="text-[11px] font-medium text-white">Ảnh khu vực {idx + 1}</span>
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-surface/90 p-2 opacity-0 transition-opacity group-hover:opacity-100">
+                <span className="text-caption font-medium text-text">Ảnh {idx + 1}</span>
                 <a
                   href={imgUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-white hover:text-amber-300 transition-colors p-1"
+                  className="p-1 text-text hover:text-primary transition-colors"
                   title="Mở xem ảnh lớn"
                 >
                   <ExternalLink className="h-4 w-4" />

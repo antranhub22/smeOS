@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   X,
   Store,
@@ -22,60 +22,68 @@ interface MarketplaceProfileModalProps {
 export function MarketplaceProfileModal({ store, onClose }: MarketplaceProfileModalProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "craft" | "facility" | "photos" | "score">("overview")
 
+  useEffect(() => {
+    if (!store) return
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [store, onClose])
+
   if (!store) return null
 
   const { identity, contact, digital, business, production, facilityAndDelivery, scoreAndTier, audit, media } = store
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-surface shadow-2xl border border-border">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4 backdrop-blur-sm animate-in fade-in duration-150" onClick={onClose}>
+      <div role="dialog" aria-modal="true" aria-label={`Hồ sơ ${store.identity.shopName}`} onClick={(e) => e.stopPropagation()} className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-surface shadow-2xl border border-border">
         {/* Modal Header Banner */}
-        <div className="relative bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700 p-6 text-white">
+        <div className="relative border-b border-border bg-primary-muted p-6 text-text">
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 rounded-full bg-black/20 p-2 text-white/80 hover:bg-black/40 hover:text-white transition-colors"
+            aria-label="Đóng hồ sơ"
+            className="absolute right-4 top-4 rounded-full bg-surface p-2 text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pr-8">
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-inner">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-surface border border-border text-primary shadow-inner">
                 <Store className="h-8 w-8" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl font-bold tracking-tight">{identity.shopName}</h2>
-                  <span className="rounded-full bg-amber-400 px-2.5 py-0.5 text-xs font-bold text-amber-950 shadow-sm">
+                  <span className="rounded-full border border-warning-border bg-warning-bg px-2.5 py-0.5 text-xs font-bold text-warning-text">
                     {scoreAndTier.suggestedTier || "Hạng Tiêu Chuẩn"}
                   </span>
                 </div>
-                <p className="text-xs text-white/80 mt-1">
-                  Chủ shop: <span className="font-semibold">{identity.ownerName}</span> • Liên hệ: {identity.contactPerson} ({identity.scale})
+                <p className="text-xs text-text-muted mt-1">
+                  Chủ cửa hàng: <span className="font-semibold">{identity.ownerName}</span> • Liên hệ: {identity.contactPerson} ({identity.scale})
                 </p>
               </div>
             </div>
 
             {/* Score pill */}
             {scoreAndTier.totalScore && (
-              <div className="flex items-center gap-2 rounded-xl bg-white/15 px-3 py-2 backdrop-blur-md border border-white/20">
-                <Award className="h-5 w-5 text-amber-300" />
+              <div className="flex items-center gap-2 rounded-xl bg-surface px-3 py-2 border border-border">
+                <Award className="h-5 w-5 text-warning" />
                 <div>
-                  <div className="text-[10px] uppercase font-bold text-white/70">Tổng điểm</div>
-                  <div className="text-lg font-black text-amber-200 leading-none">{scoreAndTier.totalScore}</div>
+                  <div className="text-caption uppercase font-bold text-text-muted">Tổng điểm</div>
+                  <div className="text-lg font-black text-text leading-none">{scoreAndTier.totalScore}</div>
                 </div>
               </div>
             )}
           </div>
 
           {/* Navigation Tabs */}
-          <div className="mt-6 flex flex-wrap border-b border-white/20 text-xs font-semibold">
+          <div className="mt-6 flex flex-wrap border-b border-border text-xs font-semibold">
             {[
               { key: "overview", label: "Tổng quan & Pháp lý" },
               { key: "craft", label: "Dòng sản phẩm & Tay nghề" },
               { key: "facility", label: "Cơ sở vật chất & Giao vận" },
-              { key: "photos", label: `Hình ảnh thực tế (${store.media.driveImageIds.length})` },
+              { key: "photos", label: `Ảnh khảo sát (${store.media.driveImageIds.length})` },
               { key: "score", label: "Bảng điểm & Đề xuất Hợp tác" },
             ].map((tab) => (
               <button
@@ -84,8 +92,8 @@ export function MarketplaceProfileModal({ store, onClose }: MarketplaceProfileMo
                 onClick={() => setActiveTab(tab.key as never)}
                 className={`px-4 py-2.5 border-b-2 transition-all ${
                   activeTab === tab.key
-                    ? "border-amber-300 text-amber-200 font-bold"
-                    : "border-transparent text-white/70 hover:text-white"
+                    ? "border-primary text-primary font-bold"
+                    : "border-transparent text-text-muted hover:text-text"
                 }`}
               >
                 {tab.label}

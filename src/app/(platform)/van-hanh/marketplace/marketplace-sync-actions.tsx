@@ -1,212 +1,127 @@
 "use client"
 
-import React, { useState, useRef } from "react"
-import {
-  Download,
-  Upload,
-  FileSpreadsheet,
-  Images,
-  RefreshCw,
-  CheckCircle,
-  AlertCircle,
-} from "@/components/ui/icons"
+// Nút đồng bộ chợ đối tác — cần N16 (máy chủ kiểm, trả 403 nếu thiếu); mọi thao tác ghi nhật ký nền tảng.
+import React, { useRef, useState } from "react"
+import { AlertCircle, CheckCircle, Download, FileSpreadsheet, Images, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
-interface SyncToast {
-  type: "success" | "error"
-  message: string
-}
+type Notice = { tone: "success" | "error"; message: string }
+type Summary = { added: number; updated: number; total: number; skipped: number }
+type PhotoSummary = { stores: number; downloaded: number; failed: number; remaining: number }
 
 interface MarketplaceSyncActionsProps {
   loading: boolean
   onRefresh: () => Promise<void>
 }
 
+/** Gọi API, trả dữ liệu hoặc câu báo lỗi dễ hiểu (API trả `{ error: { message } }`). */
+async function callApi<T>(url: string, init: RequestInit): Promise<{ data: T } | { error: string }> {
+  try {
+    const res = await fetch(url, init)
+    const json = (await res.json().catch(() => null)) as { data?: T; error?: { message?: string } } | null
+    if (res.ok && json?.data) return { data: json.data }
+    if (res.status === 403) return { error: "Tài khoản chưa có quyền cập nhật chợ đối tác." }
+    return { error: json?.error?.message ?? "Không thực hiện được. Vui lòng thử lại." }
+  } catch {
+    return { error: "Không kết nối được máy chủ." }
+  }
+}
+
+const importMessage = (from: string, s: Summary) =>
+  `${from}: ${s.added} cửa hàng mới, ${s.updated} cập nhật, tổng ${s.total}` + (s.skipped ? ` (bỏ qua ${s.skipped} dòng thiếu tên)` : "")
+
 export function MarketplaceSyncActions({ loading, onRefresh }: MarketplaceSyncActionsProps) {
-  const [syncingSheet, setSyncingSheet] = useState(false)
-  const [uploadingExcel, setUploadingExcel] = useState(false)
-  const [syncingPhotos, setSyncingPhotos] = useState(false)
-  const [toast, setToast] = useState<SyncToast | null>(null)
+  const [busy, setBusy] = useState<"sheet" | "excel" | "photos" | null>(null)
+  const [notice, setNotice] = useState<Notice | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [confirm, confirmDialog] = useConfirmDialog()
 
-  const showToast = (type: "success" | "error", message: string) => {
-    setToast({ type, message })
-    setTimeout(() => setToast(null), 7000)
-  }
-
-  // 1. Đồng bộ từ Google Sheet
-  const handleSyncSheet = async () => {
-    setSyncingSheet(true)
-    setToast(null)
-    try {
-      const res = await fetch("/api/v1/platform/marketplace/sync", { method: "POST" })
-      const json = await res.json()
-      if (res.ok && json.success) {
-        const { added, updated, total } = json.data as { added: number; updated: number; total: number }
-        showToast(
-          "success",
-          `✅ Đồng bộ Google Sheet: ${added} mới · ${updated} cập nhật · Tổng ${total} cửa hàng`
-        )
-        await onRefresh()
-      } else {
-        showToast("error", json.error ?? "Đồng bộ Sheet thất bại. Kiểm tra Service Account.")
-      }
-    } catch {
-      showToast("error", "Không thể kết nối đến máy chủ.")
-    } finally {
-      setSyncingSheet(false)
+  async function run<T>(kind: "sheet" | "excel" | "photos", call: () => Promise<{ data: T } | { error: string }>, ok: (d: T) => string) {
+    setBusy(kind)
+    setNotice(null)
+    const result = await call()
+    setBusy(null)
+    if ("error" in result) {
+      setNotice({ tone: "error", message: result.error })
+      return
     }
+    setNotice({ tone: "success", message: ok(result.data) })
+    await onRefresh()
   }
 
-  // 2. Upload file Excel
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  async function syncSheet() {
+    const yes = await confirm({
+      title: "Đồng bộ từ Google Sheet?",
+      consequence: "Hồ sơ cửa hàng trùng tên sẽ được ghi đè bằng dữ liệu mới nhất trên Sheet. Ảnh đã tải được giữ nguyên.",
+      confirmLabel: "Đồng bộ",
+    })
+    if (!yes) return
+    await run<Summary>("sheet", () => callApi("/api/v1/platform/marketplace/sync", { method: "POST" }), (s) => importMessage("Đã đồng bộ Sheet", s))
+  }
+
+  async function uploadExcel(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
+    if (fileInputRef.current) fileInputRef.current.value = ""
     if (!file) return
-
-    setUploadingExcel(true)
-    setToast(null)
-
-    try {
-      const formData = new FormData()
-      formData.append("file", file)
-
-      const res = await fetch("/api/v1/platform/marketplace/import-excel", {
-        method: "POST",
-        body: formData,
-      })
-      const json = await res.json()
-
-      if (res.ok && json.success) {
-        const { added, updated, total } = json.data as { added: number; updated: number; total: number }
-        showToast(
-          "success",
-          `✅ Đã nạp file Excel: ${added} mới · ${updated} cập nhật · Tổng ${total} cửa hàng`
-        )
-        await onRefresh()
-      } else {
-        showToast("error", json.error ?? "Không thể đọc dữ liệu file Excel.")
-      }
-    } catch {
-      showToast("error", "Lỗi tải file lên máy chủ.")
-    } finally {
-      setUploadingExcel(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
-    }
+    const yes = await confirm({
+      title: `Nhập tệp ${file.name}?`,
+      consequence: "Hồ sơ cửa hàng trùng tên sẽ được ghi đè bằng dữ liệu trong tệp. Ảnh đã tải được giữ nguyên.",
+      confirmLabel: "Nhập tệp",
+    })
+    if (!yes) return
+    const body = new FormData()
+    body.append("file", file)
+    await run<Summary>("excel", () => callApi("/api/v1/platform/marketplace/import-excel", { method: "POST", body }), (s) => importMessage("Đã nhập tệp", s))
   }
 
-  // 3. Tải ảnh thực tế từ Drive về máy chủ
-  const handleSyncPhotos = async () => {
-    setSyncingPhotos(true)
-    setToast(null)
-    try {
-      const res = await fetch("/api/v1/platform/marketplace/sync-photos", { method: "POST" })
-      const json = await res.json()
-      if (res.ok && json.success) {
-        const { totalDownloaded, totalFailed } = json.data as {
-          totalDownloaded: number
-          totalFailed: number
-        }
-        showToast(
-          "success",
-          `📸 Tải ảnh hoàn tất: ${totalDownloaded} ảnh thành công${
-            totalFailed > 0 ? ` (${totalFailed} ảnh cần quyền Drive)` : ""
-          }`
-        )
-        await onRefresh()
-      } else {
-        showToast("error", "Lỗi tải ảnh từ Google Drive.")
-      }
-    } catch {
-      showToast("error", "Không thể kết nối máy chủ để tải ảnh.")
-    } finally {
-      setSyncingPhotos(false)
-    }
+  async function syncPhotos() {
+    await run<PhotoSummary>(
+      "photos",
+      () => callApi("/api/v1/platform/marketplace/sync-photos", { method: "POST" }),
+      (s) =>
+        s.stores === 0
+          ? "Ảnh khảo sát đã được tải đủ."
+          : `Đã tải ${s.downloaded} ảnh của ${s.stores} cửa hàng` +
+            (s.failed ? `, ${s.failed} ảnh không tải được (kiểm tra quyền chia sẻ Drive)` : "") +
+            (s.remaining ? `. Còn ${s.remaining} cửa hàng — bấm lại để tải tiếp.` : ".")
+    )
   }
 
-  const isBusy = syncingSheet || uploadingExcel || syncingPhotos || loading
+  const disabled = busy !== null || loading
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {/* Toast Notification */}
-      {toast && (
+      {confirmDialog}
+      {notice && (
         <div
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium border animate-in fade-in slide-in-from-top-2 ${
-            toast.type === "success"
-              ? "bg-success/10 border-success/30 text-success"
-              : "bg-destructive/10 border-destructive/30 text-destructive"
+          role="status"
+          className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium ${
+            notice.tone === "success" ? "border-success-border bg-success-bg text-success-text" : "border-danger-border bg-danger-bg text-danger-text"
           }`}
         >
-          {toast.type === "success" ? (
-            <CheckCircle className="h-3.5 w-3.5 shrink-0" />
-          ) : (
-            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-          )}
-          <span>{toast.message}</span>
+          {notice.tone === "success" ? <CheckCircle className="h-3.5 w-3.5 shrink-0" /> : <AlertCircle className="h-3.5 w-3.5 shrink-0" />}
+          <span>{notice.message}</span>
         </div>
       )}
 
-      {/* Hidden file input for Excel upload */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".xlsx,.xls,.csv"
-        className="hidden"
-        onChange={(e) => void handleFileUpload(e)}
-      />
+      <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={(e) => void uploadExcel(e)} />
 
-      {/* Upload Excel Button */}
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => fileInputRef.current?.click()}
-        disabled={isBusy}
-        title="Tải lên file Excel (.xlsx, .xls, .csv) chứa dữ liệu khảo sát"
-      >
-        <FileSpreadsheet className="h-4 w-4 mr-1.5 text-emerald-600" />
-        {uploadingExcel ? "Đang đọc Excel..." : "Tải file Excel"}
+      <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={disabled} title="Nhập tệp khảo sát .xlsx, .xls hoặc .csv (tối đa 10 MB)">
+        <FileSpreadsheet className="mr-1.5 h-4 w-4 text-success" />
+        {busy === "excel" ? "Đang nhập tệp..." : "Nhập tệp Excel"}
       </Button>
-
-      {/* Sync from Google Sheet Button */}
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => void handleSyncSheet()}
-        disabled={isBusy}
-        title="Đồng bộ tự động từ Google Sheet (qua Google Service Account)"
-      >
-        <Download className={`h-4 w-4 mr-1.5 text-primary ${syncingSheet ? "animate-pulse" : ""}`} />
-        {syncingSheet ? "Đang đồng bộ..." : "Đồng bộ từ Sheet"}
+      <Button type="button" variant="outline" size="sm" onClick={() => void syncSheet()} disabled={disabled} title="Lấy dữ liệu khảo sát mới nhất từ Google Sheet">
+        <Download className={`mr-1.5 h-4 w-4 text-primary ${busy === "sheet" ? "animate-pulse" : ""}`} />
+        {busy === "sheet" ? "Đang đồng bộ..." : "Đồng bộ từ Sheet"}
       </Button>
-
-      {/* Sync Photos Button */}
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => void handleSyncPhotos()}
-        disabled={isBusy}
-        title="Tải ảnh thực tế từ Google Drive về lưu trữ trên máy chủ"
-      >
-        <Images className={`h-4 w-4 mr-1.5 text-blue-600 ${syncingPhotos ? "animate-pulse" : ""}`} />
-        {syncingPhotos ? "Đang tải ảnh..." : "Tải ảnh từ Drive"}
+      <Button type="button" variant="outline" size="sm" onClick={() => void syncPhotos()} disabled={disabled} title="Tải ảnh khảo sát từ Google Drive vào kho lưu trữ">
+        <Images className={`mr-1.5 h-4 w-4 text-info ${busy === "photos" ? "animate-pulse" : ""}`} />
+        {busy === "photos" ? "Đang tải ảnh..." : "Tải ảnh khảo sát"}
       </Button>
-
-      {/* Refresh Button */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={() => void onRefresh()}
-        disabled={isBusy}
-        title="Làm mới danh sách"
-      >
+      <Button type="button" variant="ghost" size="sm" onClick={() => void onRefresh()} disabled={disabled} title="Làm mới danh sách" aria-label="Làm mới danh sách">
         <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
       </Button>
     </div>
   )
 }
-

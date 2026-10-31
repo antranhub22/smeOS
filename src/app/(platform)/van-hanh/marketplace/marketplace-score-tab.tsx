@@ -32,7 +32,7 @@ export function MarketplaceScoreTab({ scoreAndTier, audit, business }: Marketpla
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {criteria.map((item, idx) => (
             <div key={idx} className="rounded-xl border border-border p-3.5 bg-surface text-center shadow-2xs">
-              <div className="text-[11px] text-text-muted font-medium mb-1 line-clamp-2 min-h-[32px]">
+              <div className="text-caption text-text-muted font-medium mb-1 line-clamp-2 min-h-[32px]">
                 {item.label}
               </div>
               <div className="text-base font-black text-primary">
@@ -44,23 +44,23 @@ export function MarketplaceScoreTab({ scoreAndTier, audit, business }: Marketpla
       </div>
 
       {/* Suggested Tier & Total Score Banner */}
-      <div className="rounded-xl border border-amber-300/40 bg-amber-50/50 dark:bg-amber-950/20 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="rounded-xl border border-warning-border bg-warning-bg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-amber-950 font-bold shadow-xs">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-warning-bg text-warning-text border border-warning-border font-bold shadow-xs">
             <Award className="h-6 w-6" />
           </div>
           <div>
-            <div className="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
+            <div className="text-caption font-bold uppercase tracking-wider text-warning-text">
               Phân Hạng Đề Xuất
             </div>
-            <div className="text-base font-black text-amber-900 dark:text-amber-100">
+            <div className="text-base font-black text-warning-text">
               {scoreAndTier.suggestedTier || "Hạng Tiêu Chuẩn"}
             </div>
           </div>
         </div>
         {scoreAndTier.totalScore && (
           <div className="text-right">
-            <div className="text-[11px] text-text-muted">Tổng điểm đánh giá</div>
+            <div className="text-caption text-text-muted">Tổng điểm đánh giá</div>
             <div className="text-xl font-black text-primary leading-none">{scoreAndTier.totalScore}</div>
           </div>
         )}

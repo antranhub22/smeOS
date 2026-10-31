@@ -15,7 +15,7 @@ export function MarketplaceCraftTab({ production }: MarketplaceCraftTabProps) {
           <div className="flex items-center gap-2.5">
             <Sparkles className="h-5 w-5 text-primary shrink-0" />
             <div>
-              <div className="text-[11px] font-bold uppercase tracking-wider text-primary">
+              <div className="text-caption font-bold uppercase tracking-wider text-primary">
                 Dòng Sản Phẩm Chủ Lực / Thế Mạnh Nhất
               </div>
               <div className="text-sm font-bold text-text mt-0.5">{production.mainProductLine}</div>
@@ -102,7 +102,7 @@ export function MarketplaceCraftTab({ production }: MarketplaceCraftTabProps) {
             </div>
             <div className="flex justify-between py-1 border-b border-border/50">
               <span className="text-text-muted">Tỷ lệ hao hụt ước tính:</span>
-              <span className="font-semibold text-amber-600 dark:text-amber-400">
+              <span className="font-semibold text-warning">
                 {production.lossRateEstimate || "---"}
               </span>
             </div>

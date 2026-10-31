@@ -30,5 +30,7 @@ describe("storageKeyFromReference / organizationOfKey", () => {
     expect(storageKeyFromReference("org/o1/../o2/a.jpg")).toBeNull()
     expect(organizationOfKey("videos/o1/j.mp4")).toBe("o1")
     expect(organizationOfKey("khac/x")).toBeNull()
+    expect(organizationOfKey("platform/partner-stores/s1/a.jpg")).toBeNull()
+    expect(storageKeyFromReference("platform/partner-stores/s1/a.jpg")).toBe("platform/partner-stores/s1/a.jpg")
   })
 })
