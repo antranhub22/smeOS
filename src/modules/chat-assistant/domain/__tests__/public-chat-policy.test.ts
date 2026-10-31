@@ -6,6 +6,8 @@ import {
   isSurfaceAllowed,
   resolvePublicChatLimits,
   surfaceChannel,
+  surfacesOfChannel,
+  toggleSurface,
 } from "../public-chat-policy"
 
 describe("public chat policy", () => {
@@ -44,5 +46,25 @@ describe("public chat policy", () => {
     expect(resolvePublicChatLimits(huge)).toMatchObject(PUBLIC_CHAT_LIMIT_CEILING)
     const bad = { publicChatLimits: { perVisitor: -1, perIp: 1.5, approvedAt: "2026-10-31" } }
     expect(resolvePublicChatLimits(bad)).toMatchObject({ perVisitor: 20, perIp: 60 })
+  })
+})
+
+describe("toggleSurface", () => {
+  it("tắt một trang khi chưa cài đặt → giữ các trang còn lại của cùng kênh", () => {
+    expect(toggleSurface(undefined, "catalog", false)).toEqual([
+      "store_profile",
+      "sales_link",
+      "greeting_catalog",
+      "business_card",
+    ])
+  })
+
+  it("bật lại trang đã tắt", () => {
+    expect(toggleSurface({ publicSurfaces: ["store_profile"] }, "catalog", true)).toEqual(["catalog", "store_profile"])
+  })
+
+  it("landing page là kênh riêng — chỉ chứa chính nó", () => {
+    expect(surfacesOfChannel("LANDING_PAGE")).toEqual(["landing_page"])
+    expect(toggleSurface(undefined, "landing_page", false)).toEqual([])
   })
 })
