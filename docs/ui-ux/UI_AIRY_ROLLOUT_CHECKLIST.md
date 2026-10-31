@@ -111,3 +111,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Báo cáo kinh doanh (#6) — thẻ số đo theo tính năng dùng `StatTile` (số to, chi phí credit trong (?)); K1 bỏ mã quyền "learning.profile.manage" và tiếng Anh "Tone of Voice / Brand Kit". Còn: đầu trang, bảng chi tiết, phần phân tích.
 - 31/10: Thẻ chào (#7) — đầu trang: mô tả dài → (?) cạnh tiêu đề. K2 (TabActionHeader) giữ nguyên.
 - 31/10: Rà nhanh StoreOS: nhãn/jargon/emoji của các trang P2–P3 đã kiểm (có 22 trang). Đổi bố cục từng trang vẫn cần làm. Sửa: Xu hướng thị trường — tiêu đề admin bỏ 'Tenant'.
+- 31/10: Catalog (#8) — cảnh báo lỗi: emoji ⚠️ → icon. **Cần PO/kỹ thuật xem:** dữ liệu ứng viên bộ lọc ngân sách có giá trị mặc định cố định ("Đa sắc", "Thiết kế hiện đại", dịp Sinh nhật/Kỷ niệm/Khai trương) — không phải dữ liệu thật (OPERATING_PRINCIPLES §2).

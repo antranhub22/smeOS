@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft } from "@/components/ui/icons"
+import { AlertTriangle, ArrowLeft } from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { CatalogGuidanceCard } from "@/components/templates/catalog/catalog-guidance-card"
@@ -136,8 +136,9 @@ export default function CatalogWebsitePage() {
 
       <div className="flex flex-1 flex-col overflow-y-auto p-[18px] gap-5">
         {error && (
-          <div className="rounded-lg bg-destructive-bg px-4 py-2 text-body-sm text-destructive flex items-center gap-2">
-            ⚠️ {error}
+          <div className="flex items-center gap-2 rounded-xl bg-destructive-bg px-4 py-2.5 text-body-sm text-destructive">
+            <AlertTriangle size={16} weight="fill" className="shrink-0" aria-hidden="true" />
+            <span>{error}</span>
           </div>
         )}
 
