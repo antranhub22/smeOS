@@ -44,14 +44,14 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 16 | `/dieu-phoi` | Sản xuất & Điều phối | P2 | ✅ mô tả đầu trang → (?); bố cục chưa đổi |
 | 17 | `/duyet` | Việc chờ duyệt (QC) | P2 — bỏ "QC" | ✅ tiêu đề 'Hàng đợi duyệt' đã ngắn; bố cục chưa đổi |
 | 18 | `/job` | Giao hàng & Bàn giao | P2 | ✅ tiêu đề 'Job' → 'Tiến trình của tôi'; **PO: tiêu đề và tên menu 'Giao hàng & Bàn giao' chưa khớp nhau** |
-| 19 | `/cua-hang` | Đơn nhận từ mạng lưới | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 19 | `/cua-hang` | Đơn nhận từ mạng lưới | P2 | ✅ tiêu đề 'Đơn gia công' ngắn; bố cục chưa đổi |
 | 20 | `/san-pham/kha-dung` | Khả dụng & Lịch | P3 | ✅ tiêu đề sentence-case (ngắn), mô tả → (?) |
 | 21 | `/san-pham/nhap-hang-loat` | Nhập từ Excel & Ảnh | P3 | ✅ đầu trang: bỏ dòng 'Kho sản phẩm', tiêu đề rút gọn ('Nhập từ Excel & ảnh' / 'Nhập danh sách chi nhánh'); bố cục chưa đổi |
-| 22 | `/market-intelligence` | Xu hướng & Cơ hội thị trường | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 22 | `/market-intelligence` | Xu hướng & Cơ hội thị trường | P3 | ✅ tiêu đề 'Xu hướng thị trường', mô tả → (?) |
 | 23 | `/muc-dung` | Sổ quỹ & Thu chi | P3 | ✅ tiêu đề 'Mức dùng' (chữ thường); bố cục chưa đổi |
-| 24 | `/tin-nhan` | Trao đổi nội bộ | P3 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 24 | `/tin-nhan` | Trao đổi nội bộ | P3 | ✅ tiêu đề 'Tin nhắn nội bộ' ngắn; bố cục chưa đổi |
 | 25 | `/tri-thuc` | Tri thức & Quy trình | P3 | ✅ bỏ dòng mã IN HOA, tiêu đề 'Cẩm nang tri thức', mô tả → (?) |
-| 26 | `/cong-cu/toi-uu-he-thong` | Trợ lý Tối ưu Tác nghiệp | P3 | 🟡 |
+| 26 | `/cong-cu/toi-uu-he-thong` | Trợ lý Tối ưu Tác nghiệp | P3 | ⚠️ **liên kết trong menu không có trang** (không có file `page.tsx`): PO quyết tạo trang hay gỡ mục menu |
 | 27 | `/cai-dat` (+ `?tab=INFO`) | Cài đặt & Thiết lập tiệm | P2 | ✅ tiêu đề 'Hồ sơ & cài đặt', bỏ nhãn quảng cáo, mô tả → (?); bố cục chưa đổi |
 | 28 | `/cai-dat/ma-tran-*` (5 trang) + `/cai-dat/thong-bao` | Ma trận … | P3 — bảng dày, ưu tiên nhãn ngắn + (?) | 🟡 6 trang đã làm đầu trang (tiêu đề ngắn, mô tả → (?)): `TierGovernanceMatrixClient` và `NotificationMatrixPage` dùng chung, **cũng áp dụng cho trang Ma trận của Mother**. Còn: bảng chi tiết (cần đợt riêng) |
 
@@ -125,3 +125,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Báo cáo kinh doanh (#6) — đầu trang: 'Analytics & Learning' → 'Báo cáo kinh doanh', bỏ mã 'MK-10' trên nút.
 - 31/10: Nhập hàng loạt (#21) — đầu trang rút gọn.
 - 31/10: Thông báo (#28) — `NotificationMatrixPage` đưa mô tả vào (?); tiêu đề 'Thông báo — {tầng}'; emoji 🔒 trong gợi ý → chữ.
+- 31/10: Xu hướng thị trường (#22) — tiêu đề bỏ '&', mô tả → (?). Phát hiện: `/cong-cu/toi-uu-he-thong` trong menu không có trang (#26) — cần PO quyết.
