@@ -719,6 +719,10 @@ P25a chỉ đọc (D-N5 áp dụng cho toàn bộ P25a, không riêng `/health`)
 | GET | `/platform/health` | `N5` | Đếm job theo trạng thái + danh sách job treo (chỉ đọc — không đánh dấu FAILED, xem `scripts/scan-stuck-jobs.ts`) |
 | GET | `/platform/jobs/failed` | `N5` | Hàng đợi lỗi (E5.2): tối đa 100 job `FAILED` mới nhất xuyên tổ chức — tổ chức, loại việc, `failureKind`, lỗi (cắt 300 ký tự), số lần thử. Không trả `payload`/`output` |
 | POST | `/platform/jobs/:id/action` | `N15` | `{ action: "RETRY" \| "DISMISS" }`. RETRY: `FAILED` → `PENDING` lượt mới (`attempts` 0), đánh thức worker, nền tảng chịu chi phí (không trừ credit tiệm). DISMISS: → `CANCELLED`. Job không còn `FAILED` → 404. Ghi `platform_audit_logs` (`platform.job.retry`/`dismiss`) |
+| GET | `/platform/marketplace/stores` | `N1` | Chợ đối tác (PO 31/10/2026): mọi hồ sơ khảo sát cửa hàng trong `partner_marketplace_stores`; query `search` (≤200), `field` (chỉ các trường trong `SEARCHABLE_FIELD_PATHS`, lạ → tìm mọi thông tin), `tier`, `district`. Trả `{ stores, total, tierCounts }`; ảnh là URL ký GET hạn 1 giờ |
+| POST | `/platform/marketplace/sync` | `N17` | Đọc Google Sheet khảo sát (`PARTNER_SURVEY_SHEET_ID`/`_GID`, tài khoản dịch vụ `GOOGLE_SERVICE_ACCOUNT_JSON`), upsert theo tên cửa hàng. Trả `{ added, updated, total, skipped }`. Chưa cấu hình / Google lỗi → 422. Ghi `platform_audit_logs` (`platform.marketplace.sync_sheet`) |
+| POST | `/platform/marketplace/import-excel` | `N17` | `multipart/form-data` trường `file` (.xlsx/.xls/.csv, ≤10 MB, ≤5000 dòng, 75 cột như Sheet). Như `sync`; ghi `platform.marketplace.import_excel` |
+| POST | `/platform/marketplace/sync-photos` | `N17` | Tải ảnh khảo sát từ Drive vào kho (`platform/partner-stores/<id>/<driveId>.<ext>`, kiểm nội dung, ≤15 MB/ảnh, ≤12 ảnh/cửa hàng), mỗi lượt tối đa 8 cửa hàng. Trả `{ stores, downloaded, failed, remaining }`; `remaining` > 0 thì gọi tiếp. Ghi `platform.marketplace.sync_photos` |
 | GET | `/platform/audit-logs` | `N6` | Nhật ký xuyên tổ chức — hợp `audit_logs` mọi tổ chức và `platform_audit_logs` |
 
 ## 21b. Nền quản trị trường (ĐP-3, 26/09/2026)

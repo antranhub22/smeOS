@@ -26,6 +26,7 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `flower_taxonomy` · `flower_confusable_pairs` | Tri thức ngành hoa, không phải dữ liệu của một cửa hàng — xem mục 16 |
 | `platform_secrets` | Bí mật cấp nền tảng đã niêm phong (token Zalo OA chung) — xem mục `chain_branches` |
 | `platform_operators` · `platform_role_capabilities` · `platform_audit_logs` | Console Vận hành Nền tảng (P25, 19/09) — dữ liệu của người vận hành xuyên tổ chức, không thuộc một tổ chức nào. Từ vựng năng lực `N1`–`N8` TÁCH HẲN khỏi `roles`/`role_capabilities` của tenant (D-N6) — không dùng `capability_scope`, không thêm giá trị `PLATFORM` vào enum đó. Xem `../kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md` mục 4.1 |
+| `partner_marketplace_stores` | Chợ đối tác (PO 31/10/2026): hồ sơ khảo sát cửa hàng TIỀM NĂNG, chưa là tenant nên không thuộc tổ chức nào. Đọc `N1`, ghi `N17`. `match_key` (tên chuẩn hoá) duy nhất; `profile` JSONB giữ đủ 75 cột khảo sát; `photo_keys` là nguồn registry kho (`platform/…`) |
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Xem mục 22b |
 | `integration_governance` | Trung tâm Tích hợp (30/10/2026) — khoá/cấp sẵn tích hợp theo tầng `(connector_key, tier, scope_id)`; `scope_id` là `GLOBAL` (Mẹ), `industry:<key>` (Ngành) hoặc id tổ chức chuỗi. Cùng mẫu với `notification_*`. Xem mục 36 |
@@ -1565,6 +1566,29 @@ model idempotency_keys {
 ```
 
 Sự kiện đến chỉ xử lý một lần: `claimIdempotencyKey` (`src/core/idempotency/infra/idempotency-repository.ts`) chèn `ON CONFLICT DO NOTHING`, có dòng trả về = lần đầu. `organization_id` do máy chủ xác định (tra kênh theo page/OA id), không lấy từ thân sự kiện. Dùng ở webhook Facebook (`message.mid`) và Zalo (`message.msg_id`); luồng tiền (E6) phải ghi khoá trong cùng giao dịch. Cron `/internal/chain-dispatch-sweep` xoá khoá quá 30 ngày.
+
+### Chợ đối tác — `partner_marketplace_stores` (PO 31/10/2026)
+
+```prisma
+model partner_marketplace_stores {
+  id               String   @id @default(uuid())
+  match_key        String   @unique // tên cửa hàng chuẩn hoá — khoá khớp khi đồng bộ lại
+  shop_name        String
+  tier             String
+  address          String   @default("")
+  profile          Json     // đủ 75 cột khảo sát (PartnerStoreMarketplaceEntity trừ id)
+  photo_keys       String[] @default([]) // khoá kho platform/partner-stores/<id>/…
+  photo_source_ids String[] @default([]) // Drive id đã xử lý — đổi danh sách thì tải lại
+  search_text      String   @default("")
+  source           String   // SHEET · EXCEL · SEED
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@index([tier])
+}
+```
+
+Bảng cấp nền tảng: cửa hàng khảo sát chưa là tenant nên không có `organization_id`. Chỉ console vận hành chạm tới — đọc `N1`, đồng bộ/nhập/ảnh `N16`, mọi lần ghi vào `platform_audit_logs`. `photo_keys` là một nguồn registry kho (`STORAGE_REFERENCE_SOURCES`); tiền tố `platform/` nằm trong `MANAGED_PREFIXES` để đối soát. Nạp lần đầu từ JSON: `scripts/nap-cho-doi-tac.ts`.
 
 ## 19. Kiểm chứng
 

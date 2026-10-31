@@ -39,6 +39,8 @@ const DEFINITIONS: Record<string, Omit<PlatformCapabilityDefinition, "code">> = 
   N15: { name: "platform.jobs.manage", label: "Chạy lại hoặc gác lại job lỗi (hàng đợi lỗi)" },
   // Trung tâm Tích hợp GĐ3 (PO 31/10/2026, D4): khoá/cấp sẵn tích hợp cho toàn nền tảng và từng ngành
   N16: { name: "platform.integrations.govern", label: "Khoá hoặc cấp sẵn tích hợp theo tầng (nền tảng, ngành)" },
+  // PO 31/10/2026: chợ đối tác — đồng bộ Sheet, nhập Excel, tải ảnh khảo sát (đọc vẫn là N1)
+  N17: { name: "platform.marketplace.manage", label: "Đồng bộ, nhập dữ liệu & ảnh chợ đối tác" },
 }
 
 export const PLATFORM_CAPABILITIES: Record<string, PlatformCapabilityDefinition> = Object.fromEntries(

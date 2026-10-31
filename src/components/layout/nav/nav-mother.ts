@@ -18,6 +18,14 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 2. TỔ CHỨC & DỊCH VỤ
   {
+    href: "/van-hanh/marketplace",
+    label: "Chợ đối tác",
+    group: "to-chuc-dich-vu",
+    iconKey: "Store",
+    navKey: "platform-marketplace",
+    mobileLabel: "Chợ Đối tác",
+  },
+  {
     href: "/van-hanh/to-chuc",
     label: "Tổ chức",
     group: "to-chuc-dich-vu",

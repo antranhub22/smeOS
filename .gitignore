@@ -87,3 +87,6 @@ docs/Nhập liệu/
 
 # Ảnh + báo cáo của npm run ux:audit (sinh ra, không commit)
 ux-audit-output/
+
+# Google Service Account key files (NEVER commit)
+secrets/

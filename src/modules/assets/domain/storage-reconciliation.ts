@@ -10,7 +10,7 @@
  *
  * Thuần: không import hạ tầng.
  */
-export const MANAGED_PREFIXES = ["org/", "videos/"] as const
+export const MANAGED_PREFIXES = ["org/", "videos/", "platform/"] as const
 
 const STORAGE_URL_PREFIX = "/api/v1/storage/"
 
@@ -36,8 +36,10 @@ export function storageKeyFromReference(reference: string): string | null {
   return key && isManagedKey(key) && !key.includes("..") ? key : null
 }
 
-/** Tổ chức sở hữu khoá (`org/<id>/…` hoặc `videos/<id>/…`). */
+/** Tổ chức sở hữu khoá (`org/<id>/…` hoặc `videos/<id>/…`); khoá `platform/…` → null. */
 export function organizationOfKey(key: string): string | null {
+  // `platform/…` (ảnh chợ đối tác) thuộc nền tảng, không thuộc tổ chức nào
+  if (key.startsWith("platform/")) return null
   return isManagedKey(key) ? (key.split("/")[1] ?? null) : null
 }
 

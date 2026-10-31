@@ -381,6 +381,7 @@ không qua vai. Cấp lần đầu bằng script chạy tay
 | `N8` | `platform.integration_tokens.manage` | Token tích hợp theo tổ chức, bọc use-case `integration/` đã có (`F9`) | — (gán thẳng) | — |
 | `N15` | `platform.jobs.manage` | Hàng đợi lỗi (ROADMAP E5.2, 30/10/2026): chạy lại hoặc gác lại job `FAILED`, ghi nhật ký nền tảng. Tách khỏi `N5` để `N5` vẫn chỉ đọc (D-N5) | — (gán thẳng) | — |
 | `N16` | `platform.integrations.govern` | Trung tâm Tích hợp GĐ3 (31/10/2026): khoá/cấp sẵn tích hợp cho toàn nền tảng (`GLOBAL`) hoặc một ngành (`industry:<key>`), ghi nhật ký nền tảng | — (gán thẳng) | — |
+| `N17` | `platform.marketplace.manage` | Chợ đối tác (PO 31/10/2026): đồng bộ Google Sheet khảo sát, nhập Excel, tải ảnh khảo sát từ Drive vào kho; ghi nhật ký nền tảng. Xem danh sách dùng `N1` | — (gán thẳng) | — |
 
 Cột "Mặc định"/"Trần cứng" ghi "— (gán thẳng)" vì không có khái niệm vai ở
 đây: `platform_operators` + `platform_role_capabilities` không đi qua
