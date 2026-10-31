@@ -72,42 +72,42 @@ const CREATIVE_STUDIO_TABS: Record<
     label: "Phân tích ảnh sản phẩm",
     icon: Camera,
     workspace: "area-a",
-    description: "Chặng 1-5 — Bóc tách Vision & Chọn chủ đề trọng tâm",
+    description: "Tải ảnh, phân tích sản phẩm và chọn chủ đề chính",
   },
   "area-b": {
     id: "area-b",
     label: "Viết nội dung (Copywriting)",
     icon: FileText,
     workspace: "area-b",
-    description: "Contents — CREATIVE / AUTHENTIC",
+    description: "Viết nội dung sáng tạo và chân thực",
   },
   "area-c": {
     id: "area-c",
     label: "Sản xuất âm thanh & Giọng đọc",
     icon: Headphones,
     workspace: "area-c",
-    description: "TTS + BGM + Phối trộn",
+    description: "Tạo giọng đọc, nhạc nền và phối âm thanh",
   },
   "area-d": {
     id: "area-d",
     label: "Biến thể marketing & Bối cảnh",
     icon: Wand2,
     workspace: "area-d",
-    description: "M04b — Biến thể marketing",
+    description: "Tạo các biến thể quảng cáo và bối cảnh",
   },
   "area-e": {
     id: "area-e",
     label: "Dựng video đa kênh",
     icon: Film,
     workspace: "area-e",
-    description: "M04c — Video Studio",
+    description: "Dựng video đa kênh",
   },
   "area-f": {
     id: "area-f",
     label: "Gói chiến dịch & Duyệt",
     icon: Package,
     workspace: "area-f",
-    description: "Chặng 07–09 — Đóng gói, QA, Duyệt (+ Chặng 10–14)",
+    description: "Đóng gói, kiểm tra chất lượng và duyệt chiến dịch",
   },
 }
 
@@ -440,14 +440,9 @@ export default function CreativeStudioPage() {
 
               {/* Context Info Bar — chỉ hiển thị tại Khu vực B-F khi đã có topic/product */}
               {activeTabId !== "area-a" && (context.topicId || context.productName) && (
-                <div className="w-full max-w-3xl mx-auto rounded-xl border border-border bg-surface-alt p-4">
-                  <p className="text-xs font-bold text-text uppercase tracking-wider mb-2">📦 Context carry-forward (Chặng 1-5)</p>
-                  <div className="grid grid-cols-2 gap-2 text-meta">
-                    <div><span className="text-text-muted">Topic:</span> <span className="font-medium">{context.topicId || "—"}</span></div>
-                    <div><span className="text-text-muted">Mode:</span> <span className="font-medium">{context.mode}</span></div>
-                    <div><span className="text-text-muted">Product:</span> <span className="font-medium">{context.productName || "—"}</span></div>
-                    <div><span className="text-text-muted">Source:</span> <span className="font-medium">{context.sourceImageUrl ? "Image" : context.sourceVideoUrl ? "Video" : "—"}</span></div>
-                  </div>
+                <div className="flex w-full max-w-3xl mx-auto flex-wrap items-center gap-x-4 gap-y-1 rounded-2xl border border-border bg-surface-alt px-4 py-3 text-body-sm">
+                  <span className="text-text-muted">Sản phẩm: <span className="font-semibold text-text">{context.productName || "Chưa chọn"}</span></span>
+                  <span className="text-text-muted">Nguồn: <span className="font-semibold text-text">{context.sourceImageUrl ? "Ảnh" : context.sourceVideoUrl ? "Video" : "Chưa có"}</span></span>
                 </div>
               )}
 

@@ -1221,7 +1221,7 @@ export default function TaiAnhPage() {
       {/* Header */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div>
-          <div className="text-caption text-text-muted">{ti("catalogTitle") || "Kho mẫu sản phẩm"}</div>
+          {/* Tiêu đề ngắn; dòng phụ bỏ (OPERATING_PRINCIPLES §6.1) */}
           <h1 className="text-title font-extrabold text-primary">{ti("scanButtonLabel") || "Quét ảnh sản phẩm"}</h1>
         </div>
         <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">

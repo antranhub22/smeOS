@@ -37,7 +37,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 9 | `/noi-dung` | Viết nội dung marketing | P2 | ✅ tiêu đề rút còn 'Nội dung bán hàng' (6 từ → 2), mô tả → (?); bố cục chưa đổi |
 | 10 | `/video` | Tạo video | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 11 | `/tai-anh` | Phân tích ảnh bằng AI | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 12 | `/creative-studio` | Chế tác tự động A-Z | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 12 | `/creative-studio` | Chế tác tự động A-Z | P2 — có tải ảnh (PO cho phép) | ✅ bỏ khối mã nội bộ 'Context carry-forward (Chặng 1-5)' → dòng tiếng Việt; mô tả khu vực viết lại không mã |
 | 13 | `/gia` | Công thức BOM & Tính giá | P2 — bỏ "BOM" | ✅ đầu trang (mô tả → (?)); bố cục chưa đổi |
 | 14 | `/kho-du-lieu` | Kho & Nguyên liệu | P2 | ✅ đầu trang (mô tả dài → (?)); bố cục chưa đổi |
 | 15 | `/kho-templates` | Kho mẫu & Ấn phẩm | P2 | ✅ tiêu đề 'Kho mẫu ấn phẩm' (bỏ 'Templates'), mô tả → (?); bố cục chưa đổi |
@@ -130,3 +130,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Hội thoại (#5) — khung 3 cột và thẻ gợi ý: bo `rounded-2xl`, đệm và bóng.
 - 31/10: Báo cáo (#6) — nhãn phân tích: bỏ IN HOA, 'AI Diễn giải' → 'Diễn giải bằng AI'.
 - 31/10 (PO): #26 giữ nguyên trạng. #18 tiêu đề 'Giao hàng & bàn giao'. #8 dùng dữ liệu thật, không báo giá bịa. Được phép làm #10–#12 (có tải ảnh).
+- 31/10 (PO): #10–#12 được phép làm. Chế tác A-Z: khối mã nội bộ → tiếng Việt. Phân tích ảnh: đầu trang.
