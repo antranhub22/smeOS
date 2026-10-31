@@ -34,7 +34,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 thẻ số liệu `StatTile` + chữ K1 bỏ mã quyền/tiếng Anh; **còn đầu trang và phần phân tích** |
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | ✅ đầu trang (mô tả → (?)); tab và thanh K2 giữ nguyên |
 | 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 9 | `/noi-dung` | Viết nội dung marketing | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 9 | `/noi-dung` | Viết nội dung marketing | P2 | ✅ tiêu đề rút còn 'Nội dung bán hàng' (6 từ → 2), mô tả → (?); bố cục chưa đổi |
 | 10 | `/video` | Tạo video | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 11 | `/tai-anh` | Phân tích ảnh bằng AI | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 12 | `/creative-studio` | Chế tác tự động A-Z | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |

@@ -12,6 +12,7 @@
  *  - useImageUploadFlow  → use-image-upload-flow.ts
  */
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import React, { useState, Suspense } from "react"
 import { useRouter } from "next/navigation"
@@ -76,10 +77,15 @@ function ContentEngineContent() {
       {/* ─── Header ─── */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-3.5">
         <div>
-          <h1 className="text-title font-black text-primary flex items-center gap-2">
-            <Sparkles size={18} aria-hidden="true" />
-            Tạo nội dung bán hàng đa kênh
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-title font-black text-primary flex items-center gap-2">
+              <Sparkles size={18} aria-hidden="true" />
+              Nội dung bán hàng
+            </h1>
+            <InfoTip label="Nội dung bán hàng" side="bottom">
+              Tạo nội dung bán hàng cho nhiều kênh từ một ý tưởng.
+            </InfoTip>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button
