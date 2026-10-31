@@ -20,8 +20,8 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 - ✅ `/cong-cu` (lưới 10 bước, chi tiết bước, thẻ công cụ) + `/cong-cu/anh-san-pham`, `/cong-cu/bo-anh-san-pham`, `/cong-cu/poster-banner`.
 
 ## 0. Việc chung làm trước (ảnh hưởng mọi tầng)
-- ⬜ **Rút gọn nhãn sidebar** (4 file `src/components/layout/nav/nav-*.ts`): vd. "Thư viện 51 công cụ (9 nhóm)" → "Công cụ"; "Công thức BOM & Tính giá" → "Tính giá"; "Schema & Taxonomy toàn cầu" → "Trường dữ liệu"; "AI Providers & Models" → "Cấu hình AI". Kèm test ≤ 5 từ, không jargon.
-- ⬜ Nâng component dùng chung: `EmptyState` (icon lớn `IconTile`), `PageHeader` (tiêu đề + `InfoTip`), `Card` (khối nổi), thẻ số liệu (số to, nhãn nhỏ, (?) giải thích).
+- ✅ **Rút gọn nhãn sidebar** (4 file `src/components/layout/nav/nav-*.ts`): vd. "Thư viện 51 công cụ (9 nhóm)" → "Công cụ"; "Công thức BOM & Tính giá" → "Tính giá"; "Schema & Taxonomy toàn cầu" → "Trường dữ liệu"; "AI Providers & Models" → "Cấu hình AI". Kèm test ≤ 5 từ, không jargon.
+- ✅ Nâng component dùng chung: `EmptyState` (ô icon 48px), `PageHeader` (prop `tip`), `Card` (bóng `shadow-sm`), `StatTile` (thẻ số liệu mới: số to, nhãn nhỏ, (?)).
 
 ## 1. StoreOS (cửa hàng) — ưu tiên cao nhất
 | # | Trang | Nhãn menu hiện tại | Ưu tiên | Trạng thái |
@@ -31,7 +31,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 3 | `/san-pham` | Danh mục sản phẩm | P1 | 🟡 |
 | 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | 🟡 |
 | 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 |
-| 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay | 🟡 |
+| 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 |
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | 🟡 |
 | 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🟡 |
 | 9 | `/noi-dung` | Viết nội dung marketing | P2 | 🟡 |
@@ -94,3 +94,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 
 ## Cách làm mỗi đợt
 Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệt → commit + cập nhật bảng này (đổi ⬜/🟡 thành ✅). Trang có tải ảnh: hỏi PO chặng trước khi sửa (CLAUDE.md).
+
+## Nhật ký tiến độ
+- 30/10: đã làm mục 0 (nhãn sidebar, EmptyState, PageHeader, Card, StatTile); StoreOS #2 Khách hàng (đầu trang).
+- Tiếp theo theo thứ tự: StoreOS #1 Đơn hàng → #2 Khách hàng (phần thân trang) → #3 … → #28.

@@ -17,3 +17,14 @@ describe("component dùng chung — phong cách thoáng (§6)", () => {
     expect(html).not.toContain("Theo dõi đơn từ lúc chốt")
   })
 })
+
+import { StatTile } from "../stat-tile"
+
+describe("StatTile (§6.6)", () => {
+  it("con số to, giải thích nằm trong ? chứ không hiện thẳng", () => {
+    const html = renderToStaticMarkup(<StatTile label="Doanh thu" value="12,4 tr" tip="Tổng đơn đã thanh toán trong kỳ." />)
+    expect(html).toContain("text-display")
+    expect(html).toContain('aria-label="Giải thích: Doanh thu"')
+    expect(html).not.toContain("Tổng đơn đã thanh toán")
+  })
+})
