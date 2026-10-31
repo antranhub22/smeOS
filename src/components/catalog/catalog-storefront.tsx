@@ -232,6 +232,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           product={selectedProduct}
           shop={shop}
           customer={initialData.customer}
+          orderSlug={initialData.entryActions?.order ? catalog.slug : undefined}
           onClose={() => setSelectedProduct(null)}
         />
       )}
