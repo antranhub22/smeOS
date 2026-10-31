@@ -182,6 +182,7 @@ export function IntegrationsHubClient() {
         key={selected?.id ?? "none"}
         connection={selected}
         connectorLabel={selected ? (labelOf.get(selected.connectorKey) ?? "Dịch vụ ngoài") : ""}
+        isSalesChannel={hub?.catalog.some((c) => c.key === selected?.connectorKey && c.category === "SALES_CHANNEL") ?? false}
         onClose={() => setSelected(null)}
         onChanged={() => void load()}
         askConfirm={confirm}

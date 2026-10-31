@@ -3,6 +3,9 @@
  * đi qua `withCircuitBreaker`; không phương thức nào được ghi log bí mật.
  */
 
+import type { ChannelListing, ListingSyncResult } from "@/core/ports/sales-channel-catalog-provider"
+import type { ChannelAvailability, ChannelOrder } from "@/core/ports/sales-channel-order-provider"
+
 export interface ConnectorCredential {
   /** Bí mật dạng rõ — chỉ tồn tại trong bộ nhớ của use-case, không bao giờ trả về client. */
   readonly secret: string
@@ -44,4 +47,16 @@ export interface Connector {
   parseWebhook?(request: InboundRequest): ParsedInboundEvent[]
   /** Xử lý một sự kiện đã ghi nhận; ném lỗi để kích hoạt thử lại. */
   processEvent?(event: { eventType: string; payload: unknown }): Promise<void>
+  /** Có khi đầu nối là kênh bán hàng. Sự kiện `order.*` được Hub xử lý bằng `getOrder` + nhập đơn. */
+  sales?: SalesChannelOps
+}
+
+/** Phần kênh bán hàng của một đầu nối (GĐ4A). Mỗi phương thức nhận khoá đã mở trong use-case. */
+export interface SalesChannelOps {
+  upsertListings(credential: ConnectorCredential, config: Record<string, unknown>, listings: readonly ChannelListing[]): Promise<ListingSyncResult[]>
+  removeListings(credential: ConnectorCredential, config: Record<string, unknown>, externalIds: readonly string[]): Promise<void>
+  getOrder(credential: ConnectorCredential, config: Record<string, unknown>, externalOrderId: string): Promise<ChannelOrder | null>
+  /** Lượt kéo dự phòng khi webhook lỡ: đơn mới hơn `cursor`, tối đa `MAX_ORDERS_PER_PULL`. */
+  pullOrders(credential: ConnectorCredential, config: Record<string, unknown>, cursor: string | null): Promise<{ orders: ChannelOrder[]; nextCursor: string | null }>
+  pushAvailability(credential: ConnectorCredential, config: Record<string, unknown>, items: readonly ChannelAvailability[]): Promise<void>
 }

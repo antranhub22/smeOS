@@ -12,18 +12,21 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import type { ConnectionView } from "@/modules/integration-hub/infra/connection-repository"
 import type { EventView } from "@/modules/integration-hub/infra/event-repository"
 import { integrationApi } from "./integration-api"
+import { SalesChannelPanel } from "./sales-channel-panel"
 import { EVENT_STATUS_LABEL, STATUS_LABEL, formatDateTime } from "./integration-labels"
 
 interface ConnectionDetailDialogProps {
   connection: ConnectionView | null
   connectorLabel: string
+  /** Kết nối kênh bán: hiện phần ánh xạ sản phẩm và đơn (GĐ4A). */
+  isSalesChannel?: boolean
   onClose: () => void
   onChanged: () => void
   askConfirm: (options: { title: string; consequence: string; confirmLabel: string; tone?: "danger" | "default" }) => Promise<boolean>
 }
 
 /** Chi tiết kết nối (L3): sức khoẻ, kiểm tra, nhật ký sự kiện + thử lại; đổi khoá và ngắt nằm sau. */
-export function ConnectionDetailDialog({ connection, connectorLabel, onClose, onChanged, askConfirm }: ConnectionDetailDialogProps) {
+export function ConnectionDetailDialog({ connection, connectorLabel, isSalesChannel = false, onClose, onChanged, askConfirm }: ConnectionDetailDialogProps) {
   const [events, setEvents] = useState<EventView[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -83,6 +86,10 @@ export function ConnectionDetailDialog({ connection, connectorLabel, onClose, on
           )}
         </div>
         {error && <InlineError message={error} />}
+
+        {isSalesChannel && !connection.managed && (
+          <SalesChannelPanel connectionId={connection.id} channelLabel={connectorLabel} askConfirm={askConfirm} />
+        )}
 
         <section aria-label="Nhật ký sự kiện" className="space-y-2">
           <h3 className="text-title-sm font-bold text-text">Dữ liệu nhận về gần đây</h3>

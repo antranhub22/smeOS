@@ -6,6 +6,8 @@
 const SECRET_KEY = /(token|secret|password|signature|authorization|api[_-]?key)/i
 const PHONE = /(\+?84|0)(\d[\s.-]?){8,10}\d/g
 const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
+/** Mã định danh (mã đơn, mã sự kiện): giữ nguyên — mã đơn số dài dễ bị nhầm là số điện thoại. */
+const ID_KEY = /(^id$|Id$|_id$|_sn$|^orderId$)/
 const MAX_DEPTH = 6
 const MAX_STRING = 500
 const MAX_KEYS = 100
@@ -22,7 +24,9 @@ export function redactPayload(value: unknown, depth = 0): unknown {
   if (value && typeof value === "object") {
     const out: Record<string, unknown> = {}
     for (const [key, item] of Object.entries(value).slice(0, MAX_KEYS)) {
-      out[key] = SECRET_KEY.test(key) ? "[đã ẩn]" : redactPayload(item, depth + 1)
+      if (SECRET_KEY.test(key)) out[key] = "[đã ẩn]"
+      else if (ID_KEY.test(key) && typeof item === "string") out[key] = item.slice(0, 120)
+      else out[key] = redactPayload(item, depth + 1)
     }
     return out
   }

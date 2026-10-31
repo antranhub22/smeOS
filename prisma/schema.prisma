@@ -176,6 +176,8 @@ model organizations {
   integration_connections       integration_connections[]
   integration_events            integration_events[]
   integration_sync_cursors      integration_sync_cursors[]
+  sales_channel_listings        sales_channel_listings[]
+  sales_channel_orders          sales_channel_orders[]
   ai_policies                   ai_policies[]
   ai_requests                   ai_requests[]
   ai_evaluations                ai_evaluations[]
@@ -3677,9 +3679,11 @@ model integration_connections {
   created_at            DateTime                      @default(now())
   updated_at            DateTime                      @updatedAt
 
-  organization organizations              @relation(fields: [organization_id], references: [id])
-  events       integration_events[]
-  cursors      integration_sync_cursors[]
+  organization   organizations              @relation(fields: [organization_id], references: [id])
+  events         integration_events[]
+  cursors        integration_sync_cursors[]
+  listings       sales_channel_listings[]
+  channel_orders sales_channel_orders[]
 
   @@unique([organization_id, connector_key, external_account_id])
   @@index([organization_id])
@@ -3742,4 +3746,59 @@ model integration_governance {
 
   @@unique([connector_key, tier, scope_id])
   @@index([scope_id])
+}
+
+// ─── Kênh bán hàng — phần chung (Trung tâm Tích hợp GĐ4A, PO 31/10/2026) ─────
+
+enum sales_listing_status {
+  PENDING
+  SYNCED
+  REJECTED
+  REMOVED
+}
+
+enum sales_channel_order_status {
+  IMPORTED
+  FAILED
+}
+
+/// Sản phẩm ↔ tin đăng trên một kênh bán (theo kết nối). Một sản phẩm một tin mỗi kết nối.
+model sales_channel_listings {
+  id              String               @id @default(uuid())
+  organization_id String
+  connection_id   String
+  product_id      String
+  external_id     String?
+  status          sales_listing_status @default(PENDING)
+  last_error      String?
+  last_synced_at  DateTime?
+  created_at      DateTime             @default(now())
+  updated_at      DateTime             @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, product_id])
+  @@index([organization_id])
+  @@index([organization_id, product_id])
+}
+
+/// Đơn trên kênh bán ↔ đơn nội bộ. Unique theo (kết nối, mã đơn ngoài) → webhook/lượt kéo gửi lại không tạo đơn trùng.
+model sales_channel_orders {
+  id                String                     @id @default(uuid())
+  organization_id   String
+  connection_id     String
+  external_order_id String
+  order_id          String?
+  status            sales_channel_order_status
+  error_code        String?
+  created_at        DateTime                   @default(now())
+  updated_at        DateTime                   @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, external_order_id])
+  @@index([organization_id])
+  @@index([organization_id, created_at])
 }

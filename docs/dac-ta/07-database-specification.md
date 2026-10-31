@@ -3290,3 +3290,68 @@ model integration_governance {
   @@index([scope_id])
 }
 ```
+
+## 37. Kênh bán hàng — `sales_channel_*` (31/10/2026)
+
+Trung tâm Tích hợp GĐ4A (PO duyệt 31/10/2026). Hai bảng thuộc tổ chức, con của `integration_connections` (xoá kết nối → xoá theo).
+
+- `sales_channel_listings`: một sản phẩm một tin đăng mỗi kết nối (`@@unique([connection_id, product_id])`); `last_error` là lý do tiếng Việt khi thiếu dữ liệu hoặc kênh từ chối.
+- `sales_channel_orders`: unique `(connection_id, external_order_id)` — webhook hay lượt kéo gửi lại không tạo đơn trùng. Giữ chỗ trước khi tạo đơn (`FAILED` + `IN_PROGRESS`), xong thì `IMPORTED` kèm `order_id`; lỗi giữa chừng được nhận lại ở lượt sau.
+- Đơn nhập từ kênh ghi `orders.source = "CHANNEL"`.
+- `integration_sync_cursors` nay có đường ghi: con trỏ `orders` của lượt kéo đơn dự phòng.
+
+```prisma
+enum sales_listing_status {
+  PENDING
+  SYNCED
+  REJECTED
+  REMOVED
+}
+
+enum sales_channel_order_status {
+  IMPORTED
+  FAILED
+}
+
+/// Sản phẩm ↔ tin đăng trên một kênh bán (theo kết nối). Một sản phẩm một tin mỗi kết nối.
+model sales_channel_listings {
+  id              String               @id @default(uuid())
+  organization_id String
+  connection_id   String
+  product_id      String
+  external_id     String?
+  status          sales_listing_status @default(PENDING)
+  last_error      String?
+  last_synced_at  DateTime?
+  created_at      DateTime             @default(now())
+  updated_at      DateTime             @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, product_id])
+  @@index([organization_id])
+  @@index([organization_id, product_id])
+}
+
+/// Đơn trên kênh bán ↔ đơn nội bộ. Unique theo (kết nối, mã đơn ngoài) → webhook/lượt kéo gửi lại không tạo đơn trùng.
+model sales_channel_orders {
+  id                String                     @id @default(uuid())
+  organization_id   String
+  connection_id     String
+  external_order_id String
+  order_id          String?
+  status            sales_channel_order_status
+  error_code        String?
+  created_at        DateTime                   @default(now())
+  updated_at        DateTime                   @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id])
+  connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  @@unique([connection_id, external_order_id])
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+```
+

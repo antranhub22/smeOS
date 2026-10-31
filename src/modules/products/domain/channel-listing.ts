@@ -30,7 +30,7 @@ export type ListingIssue = "Chưa mở bán" | "Chưa có giá" | "Chưa có ả
  */
 export function toChannelListing(
   p: ListingSource,
-  channel: SalesChannelId
+  channel: SalesChannelId | string
 ): { ok: true; listing: ChannelListing } | { ok: false; issues: ListingIssue[] } {
   const rule = SALES_CHANNELS.find((c) => c.id === channel)
   const issues: ListingIssue[] = []

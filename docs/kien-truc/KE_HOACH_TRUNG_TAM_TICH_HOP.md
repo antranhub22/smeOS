@@ -155,6 +155,8 @@ Thứ tự từ rủi ro thấp đến cao. Mỗi connector là một WP, đi qu
 
 ### 4A. Nền chung cho kênh bán hàng (khoảng 2 tuần)
 
+> **Xong 31/10/2026** (PO duyệt 2 bảng `sales_channel_listings`, `sales_channel_orders`). Khác kế hoạch: WP 4.4 đẩy còn/hết hàng theo trạng thái mở bán (chưa có số tồn — nợ #95) và chạy khi người dùng bấm, chưa tự đẩy theo sự kiện/đối soát đêm; webhook sàn chỉ mang mã đơn, chi tiết lấy lại qua API. Có kênh bán thử `test_shop` để kiểm trọn luồng.
+
 | WP | Việc |
 |---|---|
 | 4.1 | Mở rộng port: `SalesChannelCatalogProvider` (đã có), thêm mới `OrderSyncProvider` (`pullOrders(cursor)`, `ackOrder`, `updateFulfillment`) và `InventorySyncProvider` (`pushStock(items≤100)`) trong `src/core/ports/` |

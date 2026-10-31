@@ -51,6 +51,16 @@
 - **Chỉ đầu nối `governable`** (đường dùng thật có kiểm khoá) mới khoá được: kênh bán hàng, đầu nối khung Hub (cổng webhook từ chối), Facebook Messenger và Zalo OA (webhook riêng không trả lời, nhật ký ghi `LOCKED_BY_UPPER`). SePay, ZNS, eSMS, Telegram, token API chưa có điểm thực thi → không cho đặt khoá (422 `NOT_GOVERNABLE`).
 - Không đổi trạng thái kết nối đã lưu: khoá được tính lúc dùng, gỡ khoá là kết nối chạy lại ngay.
 
+## 3c. Kênh bán hàng — phần chung (GĐ4A, 31/10/2026)
+
+- Đầu nối kênh bán cài đặt `SalesChannelOps` (`adapters/connector-contract.ts`): đăng/gỡ tin, lấy một đơn, kéo đơn theo con trỏ, đẩy còn/hết hàng. Kiểu dữ liệu ở `core/ports/sales-channel-*-provider.ts`.
+- **Webhook của sàn chỉ là tín hiệu**: payload giữ mã đơn; chi tiết đơn (người nhận, SĐT) lấy lại qua API lúc xử lý — nhật ký không giữ dữ liệu cá nhân.
+- Nhập đơn (`use-cases/sales-channel.ts` → `importChannelOrder`) dùng `createOrder` sẵn có (`source = CHANNEL`), nối dòng theo SKU = `products.code`, dòng không khớp giữ dạng mô tả; chống trùng bằng `sales_channel_orders`.
+- Lượt cron kéo đơn dự phòng (`poll-channel-orders.ts`) cho tối đa 20 kết nối mỗi lượt, tôn trọng khoá theo tầng.
+- Màn ánh xạ: trong chi tiết kết nối kênh bán (chọn sản phẩm đang mở bán → đăng/gỡ có xác nhận, lý do từ chối, đơn đã nhận).
+- Kênh bán thử `test_shop` (chỉ ngoài production) chạy trọn luồng; sàn thật (Shopee…) chỉ cần cài `SalesChannelOps` + chữ ký webhook.
+- Giới hạn còn lại: còn/hết hàng theo trạng thái mở bán (chưa có số tồn — nợ #95); ảnh gửi kênh là URL ảnh chính hiện có — sàn thật cần URL công khai (làm cùng đầu nối Shopee).
+
 ## 4. Vai theo tầng
 
 Mỗi manifest khai vai của 4 tầng: `PROVIDE` (sở hữu app/khoá nền tảng) · `ENABLE` (bật/tắt cho tầng dưới) · `CONNECT` (tự kết nối) · `INHERIT` (dùng kết nối của chuỗi) · `NONE`. Ma trận đầy đủ ở đề xuất mục 5 và hiện chỉ-đọc tại `/van-hanh/tich-hop`.
@@ -70,5 +80,5 @@ Mỗi manifest khai vai của 4 tầng: `PROVIDE` (sở hữu app/khoá nền t�
 | GĐ1 — nền móng Hub | Xong 30/10/2026 (đầu nối thật đầu tiên đến ở GĐ2) |
 | GĐ2 — chuyển tích hợp hiện có | Xong 31/10/2026. GĐ2a: quản lý tại Hub. GĐ2b (PO chọn hướng A): webhook Facebook/Zalo **giữ route riêng** (trả lời tức thì, giữ dữ liệu chốt đơn) và ghi nhật ký vào Hub qua dòng theo dõi `config.source = "managed"` (không giữ khoá, không lưu nội dung tin); một client Telegram dùng chung |
 | GĐ3 — governance 4 tầng | Xong 31/10/2026 (mục 3b): chuỗi tại `/tich-hop`, nền tảng/ngành tại `/van-hanh/tich-hop` |
-| GĐ4 — kênh bán hàng | Chưa làm |
+| GĐ4 — kênh bán hàng | GĐ4A phần chung xong 31/10/2026 (mục 3c). GĐ4B (Shopee…) chờ D2: đăng ký ứng dụng đối tác và tài khoản sandbox |
 | GĐ5 — mở rộng | Chưa làm |

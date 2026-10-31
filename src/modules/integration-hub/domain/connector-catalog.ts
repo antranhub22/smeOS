@@ -166,6 +166,14 @@ export const CONNECTOR_CATALOG: readonly ConnectorManifest[] = [
     panel: "api_tokens",
   },
   {
+    // Kênh bán thử — chỉ ngoài production, để kiểm luồng chung trước khi có sàn thật.
+    ...SALES_CHANNEL("test_shop", "Kênh bán thử", "Kênh bán mẫu để thử đăng sản phẩm và nhận đơn (chỉ có ở môi trường thử)."),
+    auth: "WEBHOOK_KEY",
+    planFeature: null,
+    status: "BETA",
+    devOnly: true,
+  },
+  {
     key: "test_echo",
     category: "API_WEBHOOK",
     label: "Kết nối thử",
