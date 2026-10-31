@@ -1,5 +1,6 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
@@ -135,14 +136,12 @@ function CaiDatTiemContent() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl border border-border bg-surface shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-extrabold text-text">Hồ Sơ & Cài Đặt Cửa Hàng</h1>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption font-bold bg-primary/10 text-primary border border-primary/20">
-              <Sparkles size={11} /> Trung Tâm Cấu Hình Tập Trung
-            </span>
+            <h1 className="text-lg font-extrabold text-text">Hồ sơ & cài đặt</h1>
+            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+            <InfoTip label="Hồ sơ & cài đặt" side="bottom">
+              Thiết lập thông tin pháp lý, thương hiệu, thanh toán, ưu đãi, quy trình và tự động hóa của cửa hàng.
+            </InfoTip>
           </div>
-          <p className="text-xs text-text-muted mt-1">
-            Một nơi duy nhất để thiết lập toàn bộ thông số: pháp lý, thương hiệu, thanh toán, ưu đãi, quy trình và tự động hóa.
-          </p>
         </div>
 
         {/* Readiness Score Progress Pill */}
