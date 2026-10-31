@@ -5,6 +5,13 @@ import { ensureSystemRoles } from "@/modules/organization/use-cases/ensure-syste
 import { seedAiCapabilities, seedVisionModels } from "@/core/ai/infra/seed-ai-registry"
 
 const TENANT_TABLES = [
+  // Trung tâm Tích hợp GĐ1 (30/10/2026) + GĐ4A kênh bán (31/10/2026) — con trước cha; integration_governance là bảng nền tảng
+  "sales_channel_orders",
+  "sales_channel_listings",
+  "integration_sync_cursors",
+  "integration_events",
+  "integration_connections",
+  "integration_governance",
   // Bước 4 — thu hút khách (30/10/2026) — con trước cha
   "link_events",
   "leads",

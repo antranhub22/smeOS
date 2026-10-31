@@ -125,6 +125,7 @@ export class OrderRepository implements IOrderRepository {
           delivery_window: (input.deliveryWindow as unknown as Prisma.InputJsonValue) ?? null,
           delivery_address: (input.deliveryAddress as unknown as Prisma.InputJsonValue) ?? null,
           created_by: createdBy,
+          ...(input.source ? { source: input.source } : {}),
           events: {
             create: {
               organization_id: organizationId,

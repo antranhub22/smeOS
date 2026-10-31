@@ -237,6 +237,7 @@ services:
   # 5. CRON — nhắc mốc tiến độ đơn gia công chuỗi (M1–M4), 5 phút/lần
   # ══════════════════════════════════════════════
   # Gọi web qua mạng nội bộ Render. Không có job này thì nhắc việc M1–M4 không bao giờ chạy.
+  # Sau cùng chạy lượt Trung tâm Tích hợp (xử lý sự kiện đến hạn + kiểm sức khoẻ kết nối, có giới hạn mỗi lượt — PO 31/10/2026).
   # Lượt quét cũng dọn job treo quá 15 phút (YC-J10). Sau lượt quét, kiểm /internal/health: không khoẻ → 503 → lượt cron thất bại → Render báo lỗi.
   - type: cron
     name: smeos-cron-dispatch-sweep
@@ -249,6 +250,8 @@ services:
       -H "x-cron-secret: $CRON_SECRET" --max-time 120
       && curl -fsS "http://$WEB_HOSTPORT/api/v1/internal/health"
       -H "x-cron-secret: $CRON_SECRET" --max-time 20
+      && curl -fsS -X POST "http://$WEB_HOSTPORT/api/v1/internal/integrations-sweep"
+      -H "x-cron-secret: $CRON_SECRET" --max-time 60
     envVars:
       - key: WEB_HOSTPORT
         fromService:

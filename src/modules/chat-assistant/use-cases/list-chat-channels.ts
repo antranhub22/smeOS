@@ -15,6 +15,7 @@ import type {
   ChannelPricingInfo,
   ChannelConfig,
 } from "../domain/channel-integration-types"
+import { maskChannelSecrets } from "../domain/channel-secret-fields"
 
 export interface ChannelStatusItem {
   channel: SupportedChatChannel
@@ -51,7 +52,7 @@ export async function listChatChannels(
       isEnabled,
       isSubscriptionActive,
       subscriptionExpiresAt: existing?.subscriptionExpiresAt || null,
-      config: existing?.config || {},
+      config: maskChannelSecrets(existing?.config || {}),
     }
   })
 }

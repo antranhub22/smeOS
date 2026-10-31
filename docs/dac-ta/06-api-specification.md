@@ -1073,3 +1073,26 @@ Mọi route trả 422 "Ngành của cửa hàng chưa được hỗ trợ cho c�
 
 `PUT /pricing-rules` nhận thêm 4 khoá của nhóm này: `labor_rate_per_hour`, `default_packaging_vnd` (VNĐ ≥ 0), `overhead_percent` [0,100], `price_change_alert_percent` [1,100].
 
+## 29. Trung tâm Tích hợp (30/10/2026)
+
+Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`. Mọi route có phiên đọc `organization_id` từ `requireTenantContext`; kết nối/sự kiện của tổ chức khác trả 404. Không route nào trả bí mật.
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/integrations` | `W1` | Tổng quan, danh mục theo tầng và gói, kết nối hiện có |
+| POST | `/integrations/connections` | `W2` | Kết nối bằng khoá `{ connectorKey, secret }`; máy chủ kiểm khoá với nhà cung cấp rồi mới lưu (đã mã hoá); 201 |
+| DELETE | `/integrations/connections/:id` | `W2` | Ngắt kết nối, thu hồi phía nhà cung cấp nếu hỗ trợ, xoá khoá đã lưu |
+| POST | `/integrations/connections/:id/rotate` | `W3` | Đổi khoá — kiểm khoá mới trước khi thay |
+| POST | `/integrations/connections/:id/test` | `W3` | Kiểm tra kết nối ngay, cập nhật trạng thái |
+| GET | `/integrations/connections/:id/events` | `W1` | Nhật ký sự kiện, lọc `status`, `limit` tối đa 100 |
+| POST | `/integrations/events/:id/replay` | `W5` | Đưa sự kiện `FAILED`/`DEAD` về hàng chờ |
+| GET | `/integrations/governance` | `W4` | Chuỗi xem chế độ đặt cho cửa hàng thành viên theo từng đầu nối khoá được, kèm khoá tầng trên (`lockedByUpper`). Không phải chuỗi → 404 |
+| PUT | `/integrations/governance` | `W4` | `{ connectorKey, mode: FORBID \| INHERIT_ONLY \| ALLOW_OWN }`; phạm vi là chính chuỗi của phiên. Tầng trên đã khoá → 422 `violation: LOCKED_BY_UPPER`; cửa hàng → 422 `STORE_CANNOT_LOCK`; đầu nối chưa thực thi khoá → 422 `NOT_GOVERNABLE`. Báo cho cửa hàng thành viên, ghi audit |
+| GET | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | Tham số `scope` = `GLOBAL` hoặc `industry:<key>`; trả kèm danh sách ngành |
+| PUT | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | `{ scopeId, connectorKey, mode }`; ngành không đổi được khi Mẹ đã khoá (422). Ghi `platform_audit_logs` |
+| GET | `/integrations/connections/:id/sales` | `W1` | Kết nối kênh bán: tin đăng (tối đa 100) và 50 đơn gần nhất. Kết nối không phải kênh bán hoặc của tổ chức khác → 404 |
+| POST | `/integrations/connections/:id/sales/publish` | `W3` | `{ productIds }` 1–100. Sản phẩm thiếu dữ liệu (chưa mở bán/giá/ảnh) không đẩy lên kênh, ghi lý do; kênh từ chối → ghi lý do của kênh. Kết nối lỗi hoặc cấp trên khoá → 422. Ghi audit |
+| POST | `/integrations/connections/:id/sales/unpublish` | `W3` | `{ productIds }` 1–100 — gỡ tin đã đăng. Ghi audit |
+| POST | `/integrations/connections/:id/sales/availability` | `W3` | Đẩy còn/hết hàng (theo trạng thái mở bán — chưa có số tồn, nợ #95) cho mọi tin đã đăng, lô 100 |
+| POST | `/public/integrations/:connector/:ref` | — *(chữ ký của đầu nối)* | Cổng webhook chung: giới hạn tần suất theo IP và theo `ref`, thân tối đa 256 KB, xác thực chữ ký → ghi nhật ký (chống trùng) → 200. Sai chữ ký/sai `ref`/kết nối đã ngắt đều trả cùng một 401 |
+| POST | `/internal/integrations-sweep` | — *(cron, header `x-cron-secret`)* | Xử lý tối đa 100 sự kiện đến hạn (sự kiện `order.*` của kênh bán → lấy chi tiết đơn qua API rồi nhập vào Đơn hàng, chống trùng), kiểm sức khoẻ tối đa 50 kết nối và kéo đơn dự phòng cho tối đa 20 kết nối kênh bán mỗi lượt (mỗi kết nối tối đa 30 phút/lần). Gọi sau cùng trong cron `smeos-cron-dispatch-sweep` 5 phút/lần |

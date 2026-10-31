@@ -10,6 +10,7 @@ import { log } from "@/core/observability/log"
 import type { INotificationChannelAdapter } from "./_channel-adapter.interface"
 import type { NotificationPayload, ChannelSendResult } from "../../domain/notification-payload"
 import { escapeNotificationHtml } from "../../domain/notification-text"
+import { sendTelegramText } from "@/modules/integration-hub/adapters/connectors/telegram/telegram-bot-api"
 
 function normalizeButtonUrl(rawUrl: string): string {
   try {
@@ -57,38 +58,21 @@ export class TelegramNotificationAdapter implements INotificationChannelAdapter 
         })
       }
 
-      const body: Record<string, unknown> = {
-        chat_id: chatId,
-        text,
-        parse_mode: "HTML",
-      }
-
-      if (inlineButtons.length > 0) {
-        body.reply_markup = {
-          inline_keyboard: [inlineButtons],
-        }
-      }
-
-      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(8000),
-      })
-
-      const json = await res.json() as { ok: boolean; result?: { message_id: number }; description?: string }
-      if (!json.ok) {
+      const replyMarkup = inlineButtons.length > 0 ? { inline_keyboard: [inlineButtons] } : undefined
+      // Client Bot API dùng chung của Trung tâm Tích hợp (nợ #200): timeout, log không lộ token.
+      const sent = await sendTelegramText(botToken, chatId, text, replyMarkup)
+      if (!sent.ok) {
         return {
           channel: "TELEGRAM",
           success: false,
-          error: json.description ?? "Telegram API returned failure",
+          error: sent.error ?? "Telegram API returned failure",
         }
       }
 
       return {
         channel: "TELEGRAM",
         success: true,
-        messageId: String(json.result?.message_id),
+        messageId: String(sent.messageId),
       }
     } catch (err) {
       log.warn("Lỗi gửi Telegram notification", {

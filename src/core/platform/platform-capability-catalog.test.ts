@@ -8,10 +8,14 @@ import {
 } from "./platform-capability-catalog"
 
 describe("platform-capability-catalog", () => {
-  it("có đúng mười hai mã (N1..N8, N12..N15), không nhiều hơn không ít hơn", () => {
+  it("có đúng mười ba mã (N1..N8, N12..N16), không nhiều hơn không ít hơn", () => {
     expect(ALL_PLATFORM_CAPABILITY_CODES).toEqual([
-      "N1", "N12", "N13", "N14", "N15", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
+      "N1", "N12", "N13", "N14", "N15", "N16", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
     ])
+  })
+
+  it("N16 là mã khoá tích hợp theo tầng nền tảng/ngành (Trung tâm Tích hợp GĐ3)", () => {
+    expect(platformCapability("N16").name).toBe("platform.integrations.govern")
   })
 
   it("N15 là mã xử lý hàng đợi lỗi; N5 vẫn chỉ đọc (ROADMAP E5.2, D-N5)", () => {

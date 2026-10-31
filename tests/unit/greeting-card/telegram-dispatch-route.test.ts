@@ -7,7 +7,7 @@ vi.mock("@/core/rbac/capabilities", () => ({ requireCapability: () => undefined 
 const getTelegramBotInfo = vi.fn(async () => ({ id: 1, is_bot: true, first_name: "Bot", username: "smeos_bot" }))
 const getRecentTelegramMessages = vi.fn(async () => messages)
 const sendTelegramText = vi.fn(async () => ({ ok: true, messageId: 1 }))
-vi.mock("@/modules/greeting-card/adapters/staff-channels/telegram-bot-api", () => ({
+vi.mock("@/modules/integration-hub/adapters/connectors/telegram/telegram-bot-api", () => ({
   getTelegramBotInfo: () => getTelegramBotInfo(),
   sendTelegramText: (...args: unknown[]) => sendTelegramText(...(args as [])),
   getRecentTelegramMessages: () => getRecentTelegramMessages(),

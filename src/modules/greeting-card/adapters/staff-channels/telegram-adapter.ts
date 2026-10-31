@@ -1,6 +1,7 @@
 import { log } from "@/core/observability/log"
 import { safeRemoteUrl } from "@/lib/safe-remote-url"
 import { uploadTelegramPhoto } from "./telegram-photo-upload"
+import { callTelegramBotApi } from "@/modules/integration-hub/adapters/connectors/telegram/telegram-bot-api"
 import type {
   ChannelSendResult,
   EditMessagePayload,
@@ -90,18 +91,13 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
       // 1. Có ảnh -> sendPhoto, Telegram tự tải từ URL
       if (remotePhotoUrl) {
         try {
-          const photoRes = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              chat_id: chatId,
-              photo: remotePhotoUrl,
-              caption: text.slice(0, 1024),
-              parse_mode: "HTML",
-              ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
-            }),
+          const photoData = await callTelegramBotApi<{ message_id: number }>(botToken, "sendPhoto", {
+            chat_id: chatId,
+            photo: remotePhotoUrl,
+            caption: text.slice(0, 1024),
+            parse_mode: "HTML",
+            ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
           })
-          const photoData = (await photoRes.json()) as { ok: boolean; result?: { message_id: number }; description?: string }
           if (photoData.ok) {
             return {
               sent: true,
@@ -134,13 +130,7 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
         ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
       }
 
-      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyPayload),
-      })
-
-      const data = (await res.json()) as { ok: boolean; result?: { message_id: number }; description?: string }
+      const data = await callTelegramBotApi<{ message_id: number }>(botToken, "sendMessage", bodyPayload)
 
       if (!data.ok) {
         log.warn("staff_notify.telegram_failed", { error: data.description })
@@ -175,18 +165,13 @@ export class TelegramStaffAdapter implements IStaffNotificationProvider {
     const bodyKey = payload.isCaption ? "caption" : "text"
 
     try {
-      const res = await fetch(`https://api.telegram.org/bot${botToken}/${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: payload.chatId,
-          message_id: Number(payload.messageId),
-          [bodyKey]: payload.text.slice(0, payload.isCaption ? 1024 : 4096),
-          parse_mode: "HTML",
-          ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
-        }),
+      const data = await callTelegramBotApi(botToken, endpoint, {
+        chat_id: payload.chatId,
+        message_id: Number(payload.messageId),
+        [bodyKey]: payload.text.slice(0, payload.isCaption ? 1024 : 4096),
+        parse_mode: "HTML",
+        ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
       })
-      const data = (await res.json()) as { ok: boolean; description?: string }
       if (!data.ok) {
         log.warn("staff_notify.telegram_edit_failed", { error: data.description })
         const result: { ok: boolean; error?: string } = { ok: false }

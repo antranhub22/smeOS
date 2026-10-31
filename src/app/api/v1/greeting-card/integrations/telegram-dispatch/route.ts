@@ -4,7 +4,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-import { getTelegramBotInfo, sendTelegramText } from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
+import { getTelegramBotInfo, sendTelegramText } from "@/modules/integration-hub/adapters/connectors/telegram/telegram-bot-api"
 import { resolveTelegramDispatchAccess } from "@/modules/greeting-card/use-cases/telegram-dispatch-link"
 import { listLinkedTelegramChatIds, unlinkTelegramChat } from "@/modules/greeting-card/infra/telegram-linked-chats"
 

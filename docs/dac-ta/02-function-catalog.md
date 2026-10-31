@@ -347,6 +347,18 @@ Sổ đăng ký mô hình và sổ đăng ký giấy phép **không** thuộc d�
 
 `V3` có trần cứng Điều hành: việc thay đổi cấu hình nguồn dữ liệu hoặc trọng số chấm điểm xu hướng sẽ ảnh hưởng đến chất lượng phân tích của toàn bộ tổ chức về sau.
 
+### Trung tâm Tích hợp — nhóm W (Integration Hub, 30/10/2026)
+
+| Mã | Tên đọc được | Năng lực | Mặc định | Trần cứng |
+|---|---|---|---|---|
+| `W1` | `integration.view` | Xem danh mục tích hợp và trạng thái kết nối | Điều hành · Điều phối | — |
+| `W2` | `integration.connect` | Kết nối hoặc ngắt kết nối dịch vụ bên ngoài | Điều hành | Điều hành |
+| `W3` | `integration.configure` | Sửa cấu hình và xoay khoá của kết nối | Điều hành | Điều hành |
+| `W4` | `integration.govern` | Khoá hoặc cấp sẵn tích hợp cho tầng dưới | Điều hành | Điều hành |
+| `W5` | `integration.events.replay` | Xử lý lại sự kiện tích hợp bị lỗi | Điều hành · Điều phối | — |
+
+`W2`–`W4` có trần cứng Điều hành: kết nối cấp cho bên ngoài quyền thay mặt tổ chức (nhắn khách, nhận tiền, đăng sản phẩm). Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`.
+
 ### Vận hành nền tảng — dải N (P25)
 
 Từ vựng này **TÁCH HẲN** khỏi bảng ở mục 4 (D-N6, chốt 19/09): không nằm
@@ -368,6 +380,7 @@ không qua vai. Cấp lần đầu bằng script chạy tay
 | `N7` | `platform.organizations.create` | Tạo tổ chức mới — gói `organizations` + `workspaces` + thành viên điều hành đầu tiên | — (gán thẳng) | — |
 | `N8` | `platform.integration_tokens.manage` | Token tích hợp theo tổ chức, bọc use-case `integration/` đã có (`F9`) | — (gán thẳng) | — |
 | `N15` | `platform.jobs.manage` | Hàng đợi lỗi (ROADMAP E5.2, 30/10/2026): chạy lại hoặc gác lại job `FAILED`, ghi nhật ký nền tảng. Tách khỏi `N5` để `N5` vẫn chỉ đọc (D-N5) | — (gán thẳng) | — |
+| `N16` | `platform.integrations.govern` | Trung tâm Tích hợp GĐ3 (31/10/2026): khoá/cấp sẵn tích hợp cho toàn nền tảng (`GLOBAL`) hoặc một ngành (`industry:<key>`), ghi nhật ký nền tảng | — (gán thẳng) | — |
 
 Cột "Mặc định"/"Trần cứng" ghi "— (gán thẳng)" vì không có khái niệm vai ở
 đây: `platform_operators` + `platform_role_capabilities` không đi qua

@@ -37,6 +37,8 @@ const DEFINITIONS: Record<string, Omit<PlatformCapabilityDefinition, "code">> = 
   N14: { name: "platform.legal_hold.manage", label: "Đặt/gỡ giữ dữ liệu theo yêu cầu pháp lý" },
   // ROADMAP E5.2 (30/10/2026): N5 vẫn chỉ đọc (D-N5) — hành động trên job lỗi cần mã riêng
   N15: { name: "platform.jobs.manage", label: "Chạy lại hoặc gác lại job lỗi (hàng đợi lỗi)" },
+  // Trung tâm Tích hợp GĐ3 (PO 31/10/2026, D4): khoá/cấp sẵn tích hợp cho toàn nền tảng và từng ngành
+  N16: { name: "platform.integrations.govern", label: "Khoá hoặc cấp sẵn tích hợp theo tầng (nền tảng, ngành)" },
 }
 
 export const PLATFORM_CAPABILITIES: Record<string, PlatformCapabilityDefinition> = Object.fromEntries(

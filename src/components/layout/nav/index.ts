@@ -11,12 +11,14 @@ import { buildMotherNav, MOTHER_NAV_ENTRIES } from "./nav-mother"
 import { buildIndustryNav, INDUSTRY_NAV_ENTRIES } from "./nav-industry"
 import { buildChainNav, CHAIN_NAV_ENTRIES } from "./nav-chain"
 import { buildStoreNav, STORE_NAV_ENTRIES } from "./nav-store"
+import { withIntegrations } from "./nav-integrations"
 
 export * from "./nav-types"
 export * from "./nav-mother"
 export * from "./nav-industry"
 export * from "./nav-chain"
 export * from "./nav-store"
+export * from "./nav-integrations"
 
 /**
  * Kiểm tra xem tổ chức/vai trò có thuộc Tầng ChainOS hay không — luật ở `core/governance/tier-of.ts`.
@@ -43,15 +45,20 @@ export function buildNav(
   organizationType?: string | null,
   unlockedToolKeys?: string[] | null
 ): NavView {
-  switch (tierOf(organizationType, role)) {
-    case "INDUSTRY":
-      return buildIndustryNav(can) // Tầng 2: SaaS Ngành
-    case "MOTHER":
-      return buildMotherNav(can) // Tầng 1: SaaS Mother
-    case "CHAIN":
-      return buildChainNav(can, role) // Tầng 3: ChainOS
-    case "STORE":
-      return buildStoreNav(can, role, industryKey, navHiddenKeys, unlockedToolKeys) // Tầng 4: StoreOS
+  const tier = tierOf(organizationType, role)
+  return withIntegrations(buildTierNav(), tier, can, navHiddenKeys)
+
+  function buildTierNav(): NavView {
+    switch (tier) {
+      case "INDUSTRY":
+        return buildIndustryNav(can) // Tầng 2: SaaS Ngành
+      case "MOTHER":
+        return buildMotherNav(can) // Tầng 1: SaaS Mother
+      case "CHAIN":
+        return buildChainNav(can, role) // Tầng 3: ChainOS
+      case "STORE":
+        return buildStoreNav(can, role, industryKey, navHiddenKeys, unlockedToolKeys) // Tầng 4: StoreOS
+    }
   }
 }
 

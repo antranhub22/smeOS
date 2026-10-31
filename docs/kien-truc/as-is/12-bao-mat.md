@@ -35,7 +35,7 @@ Chỉ mô tả cơ chế đang có trong mã. Không đánh giá tốt/xấu.
 | `INTEGRATION_TOKEN_SECRET` (bắt buộc) | HMAC token tích hợp; khoá gốc HKDF-SHA256 cho mã hoá AES-256-GCM cấu hình thông báo | `token-crypto.ts`, `src/core/security/secret-box.ts` |
 | `SSO_SESSION_SECRET` (bắt buộc) | Ký/xác minh JWT SSO | `sso-jwt.ts` |
 | Khoá nhà cung cấp | `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `ELEVENLABS_API_KEY`, `FAL_KEY`, `REPLICATE_API_TOKEN`, `PHOTOROOM_API_KEY`, `STABILITY_API_KEY`, `RUNWAYML_API_SECRET`, `SERPAPI_API_KEY`, `MINIMAX_*`, `DIFY_API_KEY`, `HEYGEN_API_KEY`, `GOOGLE_VEO_API_KEY` | `process.env` ở core và worker; `render.yaml` khai `sync: false` |
-| Token kênh chat | FB page token, Zalo OA token/secret | Lưu trong cột JSON `chat_channel_integrations.config` (không thấy mã hoá ở repository) |
+| Token kênh chat | FB page token, Zalo OA token/secret | Mã hoá AES-256-GCM (secret-box, purpose `chat-channel:<trường>`) trong `chat_channel_integrations.config._sealed`; API chỉ trả 4 ký tự cuối. Bản ghi cũ dạng rõ: chạy `scripts/ma-hoa-lai-bi-mat-kenh-chat.ts` (30/10/2026) |
 | Cấu hình thông báo khách | Khoá Zalo ZNS / eSMS | Mã hoá AES-256-GCM trong `greeting_integrations.notify_config_encrypted` |
 
 `src/lib/env.ts` kiểm bằng `zod` lúc khởi động: thiếu biến bắt buộc → tiến trình không lên. Một số biến được đọc trực tiếp `process.env` ngoài schema (`DIFY_*`, `OLLAMA_URL`, `MINIMAX_*`, `FB_WEBHOOK_VERIFY_TOKEN`, `STORAGE_REGION`, `GREETING_CARD_SWEEP`, `NEXT_PUBLIC_*`).

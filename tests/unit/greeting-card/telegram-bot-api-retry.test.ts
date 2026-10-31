@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { getTelegramBotInfo, sendTelegramText } from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
+import { getTelegramBotInfo, sendTelegramText } from "@/modules/integration-hub/adapters/connectors/telegram/telegram-bot-api"
 
 const bot = { id: 1, is_bot: true, first_name: "Bot", username: "smeos_bot" }
 
