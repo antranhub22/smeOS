@@ -31,7 +31,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 3 | `/san-pham` | Danh mục sản phẩm | P1 | ✅ đầu trang, lưới thẻ, thẻ `ProductCard`, khoảng giá (→ (?)), chế độ bảng (bo `rounded-2xl`, tiêu đề cột chữ thường, thẻ điện thoại) |
 | 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | ✅ đầu trang + 3 thẻ con (mô tả pháp lý → (?), emoji → icon) |
 | 5 | `/hoi-thoai` | Hội thoại | P1 | ✅ đầu trang (tên tiếng Việt, (?)), nhãn thẻ K1, khung 3 cột và thẻ gợi ý (bo `rounded-2xl`, nền rõ) |
-| 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 đầu trang (tiêu đề tiếng Việt, bỏ 'Analytics & Learning', mô tả → (?), bỏ mã MK-10); thẻ `StatTile`; K1 đã sửa. **Còn phần phân tích và bảng chi tiết** |
+| 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | ✅ đầu trang (tiêu đề tiếng Việt, mô tả → (?), bỏ mã MK-10); thẻ `StatTile`; nhãn IN HOA và 'AI Diễn giải' → tiếng Việt thường; K1 đã sửa |
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | ✅ đầu trang (mô tả → (?)); tab và thanh K2 giữ nguyên |
 | 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 9 | `/noi-dung` | Viết nội dung marketing | P2 | ✅ tiêu đề rút còn 'Nội dung bán hàng' (6 từ → 2), mô tả → (?); bố cục chưa đổi |
@@ -128,3 +128,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Xu hướng thị trường (#22) — tiêu đề bỏ '&', mô tả → (?). Phát hiện: `/cong-cu/toi-uu-he-thong` trong menu không có trang (#26) — cần PO quyết.
 - 31/10: Sản phẩm (#3) — chế độ bảng (`ProductTableView`): bo góc, bóng, tiêu đề cột không viết hoa.
 - 31/10: Hội thoại (#5) — khung 3 cột và thẻ gợi ý: bo `rounded-2xl`, đệm và bóng.
+- 31/10: Báo cáo (#6) — nhãn phân tích: bỏ IN HOA, 'AI Diễn giải' → 'Diễn giải bằng AI'.

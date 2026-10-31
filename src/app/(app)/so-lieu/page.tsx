@@ -339,7 +339,7 @@ export default function AnalyticsPage() {
             {usage && usage.by_feature.length > 0 && (
               <Card className="p-4 bg-surface border border-border flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-text uppercase tracking-wider">
+                  <h3 className="text-body-sm font-bold text-text">
                     Bảng số liệu chi tiết theo tính năng
                   </h3>
                   <span className="text-caption text-text-muted">Đo lường thật từ backend</span>
@@ -378,7 +378,7 @@ export default function AnalyticsPage() {
             {usage && (
               <Card className="p-4 bg-surface border border-border flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-text-muted uppercase">Tổng mức sử dụng</div>
+                  <div className="text-body-sm font-bold text-text-muted">Tổng mức sử dụng</div>
                   <div className="text-lg font-black text-text mt-0.5">
                     {usage.credit_used} credit
                   </div>
@@ -406,7 +406,7 @@ export default function AnalyticsPage() {
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div>
-                <span className="text-xs text-text-muted font-bold uppercase">AI Diễn giải</span>
+                <span className="text-body-sm text-text-muted font-bold">Diễn giải bằng AI</span>
                 <h2 className="text-base font-bold text-text">Phân tích nguyên nhân & Chỉ số bất thường</h2>
               </div>
               <Badge tone="neutral">Tham khảo — không ghi đè</Badge>
