@@ -8,6 +8,15 @@ const sa = { client_email: "bot@x.iam.gserviceaccount.com", private_key: private
 const env = { GOOGLE_SERVICE_ACCOUNT_JSON: JSON.stringify(sa) }
 
 describe("google-workspace-client", () => {
+  it("chưa cấu hình tài khoản dịch vụ → vẫn tải được tệp Drive công khai qua link", async () => {
+    const fetch = vi.fn(async (url: string | URL | Request) =>
+      String(url).includes("drive.usercontent.google.com") ? new Response(new Uint8Array([0xff, 0xd8, 0xff])) : new Response("", { status: 500 })
+    )
+    const client = createGoogleWorkspaceClient({ fetch: fetch as typeof globalThis.fetch, env: {} })
+    await expect(client.downloadDriveFile("publicfile01", 100)).resolves.toEqual(new Uint8Array([0xff, 0xd8, 0xff]))
+    expect(fetch.mock.calls.some(([u]) => String(u).includes("oauth2"))).toBe(false)
+  })
+
   it("JWT RS256 ký đúng, đủ claim cho luồng service account", () => {
     const jwt = signServiceAccountJwt(sa, 1000)
     const [h, c, sig] = jwt.split(".")

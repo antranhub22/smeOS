@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { ExternalLink, Store } from "@/components/ui/icons"
 import type { PartnerStoreMedia } from "@/modules/platform/domain/partner-marketplace.types"
 
@@ -8,8 +8,9 @@ interface MarketplacePhotosTabProps {
 }
 
 export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabProps) {
-  // Chỉ ảnh khảo sát thật đã tải vào kho (URL ký có hạn) — không dùng ảnh mẫu
+  // Ảnh khảo sát thật: trong kho (URL ký) hoặc xem trước từ Drive công khai — không dùng ảnh mẫu
   const displayPhotos = media.photoGalleryUrls ?? []
+  const [failed, setFailed] = useState<ReadonlySet<number>>(new Set())
 
   return (
     <div className="space-y-5">
@@ -35,7 +36,7 @@ export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabPr
         {displayPhotos.length === 0 && (
           <p className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-text-muted">
             {media.driveImageIds.length > 0
-              ? "Ảnh khảo sát chưa được tải về. Bấm “Tải ảnh khảo sát” ở đầu trang để tải."
+              ? "Chưa hiển thị được ảnh khảo sát."
               : "Cửa hàng này chưa có ảnh khảo sát."}
           </p>
         )}
@@ -45,12 +46,21 @@ export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabPr
               key={idx}
               className="group relative overflow-hidden rounded-xl border border-border bg-surface-alt aspect-video shadow-sm"
             >
-              <img
-                src={imgUrl}
-                alt={`Ảnh ${shopName} - ${idx + 1}`}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-              />
+              {failed.has(idx) ? (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-1 p-3 text-center text-caption text-text-muted">
+                  <Store className="h-8 w-8 opacity-40" />
+                  Không xem được ảnh — kiểm tra quyền chia sẻ trên Drive
+                </div>
+              ) : (
+                <img
+                  src={imgUrl}
+                  alt={`Ảnh ${shopName} - ${idx + 1}`}
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  onError={() => setFailed((prev) => new Set(prev).add(idx))}
+                />
+              )}
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-surface/90 p-2 opacity-0 transition-opacity group-hover:opacity-100">
                 <span className="text-caption font-medium text-text">Ảnh {idx + 1}</span>
                 <a

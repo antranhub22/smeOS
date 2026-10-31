@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { filterMarketplaceStores } from "../partner-marketplace-filter"
-import { extractDriveIds, matchKeyOf, rowToProfile, rowsToProfiles, searchTextOf } from "../partner-marketplace-row-mapper"
+import { driveThumbnailUrl, extractDriveIds, matchKeyOf, normalizeTier, rowToProfile, rowsToProfiles, searchTextOf } from "../partner-marketplace-row-mapper"
 
 function row(overrides: Record<number, string>): string[] {
   const r = Array.from({ length: 75 }, () => "")
@@ -22,7 +22,7 @@ describe("rowToProfile — 75 cột khảo sát", () => {
     expect(p.media.driveImageIds).toEqual(["1-nA1o5JGhJUl0tKfNCpouAi0glR3qhRI", "1B32-1PUTZVhOs99vs-oPto1Sjh6VW08m"])
     expect(p.media.requiredDocuments).toBe("GPKD")
     expect(p.scoreAndTier.totalScore).toBe("80")
-    expect(p.scoreAndTier.suggestedTier).toBe("Hạng Tăng trưởng")
+    expect(p.scoreAndTier.suggestedTier).toBe("Hạng Tiêu Chuẩn") // Tăng trưởng đã gộp
     expect(p.scoreAndTier.additionalNotes).toBe("ghi chú")
     expect(p.identity.ownerName).toBe("Lucky Floris")
   })
@@ -39,6 +39,14 @@ describe("rowToProfile — 75 cột khảo sát", () => {
     expect(profiles[0]!.contact.phone).toBe("2")
   })
 
+  it("gộp Hạng Tăng trưởng vào Hạng Tiêu Chuẩn; hạng khác giữ nguyên", () => {
+    expect(normalizeTier("Hạng Tăng trưởng")).toBe("Hạng Tiêu Chuẩn")
+    expect(normalizeTier("  hạng tăng TRƯỞNG ")).toBe("Hạng Tiêu Chuẩn")
+    expect(normalizeTier("")).toBe("Hạng Tiêu Chuẩn")
+    expect(normalizeTier("Hạng Đạt Chứng nhận")).toBe("Hạng Đạt Chứng nhận")
+    expect(driveThumbnailUrl("abc_DEF-123")).toBe("https://drive.google.com/thumbnail?id=abc_DEF-123&sz=w1000")
+  })
+
   it("extractDriveIds bỏ trùng; matchKeyOf chuẩn hoá", () => {
     expect(extractDriveIds("x?id=abcdefghijk y?id=abcdefghijk")).toEqual(["abcdefghijk"])
     expect(matchKeyOf("  Lucky   FLORIS ")).toBe("lucky floris")
@@ -53,8 +61,11 @@ describe("filterMarketplaceStores", () => {
   const entries = [mk("Hoa A", "Hạng Tăng trưởng", "12 Cầu Giấy", "0911"), mk("Hoa B", "", "5 Đống Đa", "0922")]
 
   it("đếm theo hạng trên toàn bộ, lọc theo hạng/khu vực/từ khoá", () => {
-    expect(filterMarketplaceStores(entries).tierCounts).toEqual({ all: 2, "Hạng Tăng trưởng": 1, "Hạng Tiêu Chuẩn": 1 })
-    expect(filterMarketplaceStores(entries, { tier: "Hạng Tiêu Chuẩn" }).stores.map((s) => s.id)).toEqual(["Hoa B"])
+    expect(filterMarketplaceStores(entries).tierCounts).toEqual({ all: 2, "Hạng Tiêu Chuẩn": 2 })
+    // Hồ sơ cũ còn lưu "Hạng Tăng trưởng" vẫn được đếm/lọc vào Hạng Tiêu Chuẩn
+    const old = { ...entries[0]!, store: { ...entries[0]!.store, scoreAndTier: { ...entries[0]!.store.scoreAndTier, suggestedTier: "Hạng Tăng trưởng" } } }
+    expect(filterMarketplaceStores([old], { tier: "Hạng Tiêu Chuẩn" }).total).toBe(1)
+    expect(filterMarketplaceStores(entries, { tier: "Hạng Tiêu Chuẩn" }).total).toBe(2)
     expect(filterMarketplaceStores(entries, { district: "cầu giấy" }).total).toBe(1)
     expect(filterMarketplaceStores(entries, { search: "0922", field: "contact.phone" }).stores[0]!.id).toBe("Hoa B")
     expect(filterMarketplaceStores(entries, { search: "đống đa" }).total).toBe(1)

@@ -2,8 +2,9 @@ import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { PartnerStoreMarketplaceEntity } from "../domain/partner-marketplace.types"
 import {
-  DEFAULT_TIER,
   MAX_IMPORT_ROWS,
+  MAX_PHOTOS_PER_STORE,
+  normalizeTier,
   matchKeyOf,
   searchTextOf,
   type PartnerStoreProfile,
@@ -18,12 +19,12 @@ import type {
 type Row = { id: string; profile: unknown; photo_keys: string[]; search_text: string }
 
 function toEntity(row: Pick<Row, "id" | "profile">): PartnerStoreMarketplaceEntity {
-  return { ...(row.profile as PartnerStoreProfile), id: row.id }
+  const profile = row.profile as PartnerStoreProfile
+  // Hồ sơ cũ có thể còn hạng đã gộp — chuẩn hoá khi đọc
+  const scoreAndTier = { ...profile.scoreAndTier, suggestedTier: normalizeTier(profile.scoreAndTier?.suggestedTier) }
+  return { ...profile, scoreAndTier, id: row.id }
 }
 
-function sameList(a: readonly string[], b: readonly string[]): boolean {
-  return a.length === b.length && a.every((x, i) => x === b[i])
-}
 
 export class PartnerMarketplaceRepository implements IPartnerMarketplaceRepository {
   async listAll() {
@@ -46,7 +47,7 @@ export class PartnerMarketplaceRepository implements IPartnerMarketplaceReposito
       profiles.map((profile, i) => {
         const data = {
           shop_name: profile.identity.shopName,
-          tier: profile.scoreAndTier.suggestedTier || DEFAULT_TIER,
+          tier: normalizeTier(profile.scoreAndTier.suggestedTier),
           address: profile.contact.address,
           profile: profile as unknown as Prisma.InputJsonValue,
           search_text: searchTextOf(profile),
@@ -67,24 +68,26 @@ export class PartnerMarketplaceRepository implements IPartnerMarketplaceReposito
   async listPhotoPending(limit: number): Promise<{ items: MarketplacePhotoState[]; remaining: number }> {
     const rows = await prisma.partner_marketplace_stores.findMany({
       select: { id: true, profile: true, photo_keys: true, photo_source_ids: true },
-      orderBy: { created_at: "asc" },
+      // Lâu chưa xử lý nhất trước — cửa hàng vừa thử (kể cả lỗi) xuống cuối, không kẹt vòng
+      orderBy: { updated_at: "asc" },
       take: MAX_IMPORT_ROWS,
     })
     const pending = rows
       .map((r) => ({
         id: r.id,
-        driveImageIds: toEntity(r).media.driveImageIds ?? [],
+        driveImageIds: (toEntity(r).media.driveImageIds ?? []).slice(0, MAX_PHOTOS_PER_STORE),
         photoKeys: r.photo_keys,
         photoSourceIds: r.photo_source_ids,
       }))
-      .filter((s) => s.driveImageIds.length > 0 && !sameList(s.driveImageIds, s.photoSourceIds))
+      // Còn ảnh Drive chưa có trong kho (mới thêm hoặc lần trước tải lỗi) → cần tải
+      .filter((s) => s.driveImageIds.some((id) => !s.photoSourceIds.includes(id)))
     return { items: pending.slice(0, limit), remaining: Math.max(0, pending.length - limit) }
   }
 
   async setPhotos(id: string, photoKeys: string[], photoSourceIds: string[]) {
     await prisma.partner_marketplace_stores.update({
       where: { id },
-      data: { photo_keys: photoKeys, photo_source_ids: photoSourceIds },
+      data: { photo_keys: photoKeys, photo_source_ids: photoSourceIds, updated_at: new Date() },
     })
   }
 }

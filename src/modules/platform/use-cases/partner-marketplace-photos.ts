@@ -7,8 +7,10 @@ import type { StorageProvider } from "@/core/ports/storage-provider"
 import { checkUploadContent } from "@/modules/assets/domain/upload-content-rules"
 import type { GoogleWorkspaceClient } from "../adapters/google-workspace-client"
 import type { MarketplacePhotoState } from "../domain/repositories/partner-marketplace-repository.interface"
+import { MAX_PHOTOS_PER_STORE } from "../domain/partner-marketplace-row-mapper"
 
-export const MAX_PHOTOS_PER_STORE = 12
+export { MAX_PHOTOS_PER_STORE }
+
 export const MAX_PHOTO_BYTES = 15 * 1024 * 1024
 const EXTENSIONS = ["jpg", "png", "webp"] as const
 
@@ -19,15 +21,17 @@ export function partnerPhotoKeyPrefix(storeId: string): string {
 export async function downloadStorePhotos(
   store: MarketplacePhotoState,
   deps: { storage: StorageProvider; google: GoogleWorkspaceClient }
-): Promise<{ photoKeys: string[]; downloaded: number; failed: number }> {
+): Promise<{ photoKeys: string[]; sourceIds: string[]; downloaded: number; failed: number }> {
   const prefix = partnerPhotoKeyPrefix(store.id)
   const photoKeys: string[] = []
+  const sourceIds: string[] = []
   let downloaded = 0
   let failed = 0
   for (const driveId of store.driveImageIds.slice(0, MAX_PHOTOS_PER_STORE)) {
     const reused = store.photoKeys.find((k) => k.startsWith(`${prefix}${driveId}.`))
     if (reused) {
       photoKeys.push(reused)
+      sourceIds.push(driveId)
       continue
     }
     try {
@@ -40,10 +44,11 @@ export async function downloadStorePhotos(
       const check = checkUploadContent(key, bytes)
       await deps.storage.put(key, bytes, check.ok ? check.contentType : "application/octet-stream")
       photoKeys.push(key)
+      sourceIds.push(driveId)
       downloaded++
     } catch {
       failed++
     }
   }
-  return { photoKeys, downloaded, failed }
+  return { photoKeys, sourceIds, downloaded, failed }
 }

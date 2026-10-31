@@ -7,9 +7,32 @@ import type { PartnerStoreMarketplaceEntity } from "./partner-marketplace.types"
 export type PartnerStoreProfile = Omit<PartnerStoreMarketplaceEntity, "id">
 
 export const DEFAULT_TIER = "Hạng Tiêu Chuẩn"
+
+/** PO 31/10/2026: "Hạng Tăng trưởng" gộp vào "Hạng Tiêu Chuẩn". Khoá viết thường. */
+const MERGED_TIERS: Readonly<Record<string, string>> = {
+  "hạng tăng trưởng": DEFAULT_TIER,
+  "hạng tiêu chuẩn": DEFAULT_TIER,
+}
+
+/** Hạng hiển thị: trống → mặc định; hạng đã gộp → hạng đích. */
+export function normalizeTier(raw: string | undefined | null): string {
+  const t = (raw ?? "").normalize("NFC").trim()
+  if (!t) return DEFAULT_TIER
+  return MERGED_TIERS[t.toLowerCase()] ?? t
+}
 export const SURVEY_COLUMN_COUNT = 75
 /** Trần số dòng mỗi lần nhập — vòng lặp và bộ nhớ luôn có giới hạn. */
 export const MAX_IMPORT_ROWS = 5000
+/** Số ảnh khảo sát tối đa mỗi cửa hàng được tải và hiển thị. */
+export const MAX_PHOTOS_PER_STORE = 12
+
+/**
+ * Ảnh xem trước trực tiếp từ Drive (chỉ chạy với tệp chia sẻ công khai) — dùng khi
+ * ảnh chưa được tải vào kho, để hồ sơ luôn có ảnh.
+ */
+export function driveThumbnailUrl(driveId: string, width = 1000): string {
+  return `https://drive.google.com/thumbnail?id=${encodeURIComponent(driveId)}&sz=w${width}`
+}
 
 const EMPTY_LIST = new Set(["", "không", "không có"])
 
@@ -85,7 +108,7 @@ export function rowToProfile(row: readonly unknown[]): PartnerStoreProfile | nul
       skillAndCraftScore: opt(66), processFacilityScore: opt(67), supplyStorageScore: opt(68),
       productionDeliveryScore: opt(69), legalDigitalScore: opt(70), disciplineCooperationScore: opt(71),
       totalScore: opt(72),
-      suggestedTier: c(73) || DEFAULT_TIER,
+      suggestedTier: normalizeTier(c(73)),
       additionalNotes: opt(74),
     },
   }

@@ -3,7 +3,7 @@
  * Tập dữ liệu là hồ sơ khảo sát (trần MAX_IMPORT_ROWS dòng) nên lọc trong bộ nhớ.
  */
 import type { PartnerStoreMarketplaceEntity } from "./partner-marketplace.types"
-import { DEFAULT_TIER } from "./partner-marketplace-row-mapper"
+import { normalizeTier } from "./partner-marketplace-row-mapper"
 
 export interface ListMarketplaceStoresFilter {
   search?: string | undefined
@@ -42,7 +42,7 @@ function valueAt(store: PartnerStoreMarketplaceEntity, path: string): unknown {
 }
 
 export function tierOf(store: PartnerStoreMarketplaceEntity): string {
-  return store.scoreAndTier.suggestedTier || DEFAULT_TIER
+  return normalizeTier(store.scoreAndTier.suggestedTier)
 }
 
 export function filterMarketplaceStores(

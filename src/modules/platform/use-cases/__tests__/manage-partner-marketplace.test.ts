@@ -25,9 +25,9 @@ function sheetRow(name: string, drive = ""): string[] {
 }
 
 function makeDeps(over: Partial<MarketplaceDeps> = {}) {
-  const profile = { ...rowToProfile(sheetRow("Hoa A"))!, id: "s1" }
+  const profile = { ...rowToProfile(sheetRow("Hoa A", "x?id=storedfile01 x?id=publiconly02"))!, id: "s1" }
   const repo: IPartnerMarketplaceRepository = {
-    listAll: vi.fn(async () => [{ store: profile, searchText: searchTextOf(profile), photoKeys: ["platform/partner-stores/s1/a.jpg"] }]),
+    listAll: vi.fn(async () => [{ store: profile, searchText: searchTextOf(profile), photoKeys: ["platform/partner-stores/s1/storedfile01.jpg"] }]),
     upsertMany: vi.fn(async (p) => ({ added: p.length, updated: 0, total: p.length })),
     listPhotoPending: vi.fn(async () => ({
       items: [{ id: "s1", driveImageIds: ["goodfile0001", "badfile00002", "kept0000003"], photoKeys: ["platform/partner-stores/s1/kept0000003.jpg"], photoSourceIds: [] }],
@@ -61,11 +61,12 @@ describe("chợ đối tác — phân quyền", () => {
 })
 
 describe("listMarketplaceStores", () => {
-  it("trả ảnh qua URL ký có hạn (GET), không lộ khoá kho trần", async () => {
+  it("ảnh đã có trong kho → URL ký (GET); ảnh chưa tải → xem trước Drive công khai, giữ thứ tự phiếu", async () => {
     const d = makeDeps()
     const res = await listMarketplaceStores(pctx(["N1"]), {}, d)
-    expect(d.storage.signedUrl).toHaveBeenCalledWith("platform/partner-stores/s1/a.jpg", 3600, "GET")
+    expect(d.storage.signedUrl).toHaveBeenCalledWith("platform/partner-stores/s1/storedfile01.jpg", 3600, "GET")
     expect(res.stores[0]!.media.coverPhotoUrl).toContain("sig=")
+    expect(res.stores[0]!.media.photoGalleryUrls![1]).toBe("https://drive.google.com/thumbnail?id=publiconly02&sz=w1000")
   })
 })
 
@@ -104,7 +105,7 @@ describe("importMarketplaceExcel", () => {
 })
 
 describe("syncMarketplacePhotos", () => {
-  it("ghi ảnh hợp lệ vào kho khoá platform/, bỏ tệp không phải ảnh, giữ ảnh đã có, đánh dấu đã xử lý", async () => {
+  it("ghi ảnh hợp lệ vào kho khoá platform/, bỏ tệp không phải ảnh, giữ ảnh đã có; ảnh lỗi chưa đánh dấu để thử lại", async () => {
     const d = makeDeps()
     const res = await syncMarketplacePhotos(pctx(["N17"]), d)
     expect(res).toEqual({ stores: 1, downloaded: 1, failed: 1, remaining: 4 })
@@ -114,7 +115,7 @@ describe("syncMarketplacePhotos", () => {
     expect(d.repo.setPhotos).toHaveBeenCalledWith(
       "s1",
       ["platform/partner-stores/s1/goodfile0001.jpg", "platform/partner-stores/s1/kept0000003.jpg"],
-      ["goodfile0001", "badfile00002", "kept0000003"]
+      ["goodfile0001", "kept0000003"]
     )
     expect(d.audit).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ action: "platform.marketplace.sync_photos" }))
   })
