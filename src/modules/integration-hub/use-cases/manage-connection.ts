@@ -12,6 +12,7 @@ import { canTransition, statusAfterHealthCheck } from "../domain/connection-life
 import { openCredential, sealCredential } from "../infra/credential-vault"
 import { toView, type ConnectionRecord, type ConnectionView } from "../infra/connection-repository"
 import { defaultHubDeps, type HubDeps } from "./hub-deps"
+import { loadGovernanceView } from "./governance-mode"
 
 const AUDIT_ENTITY = "integration_connection"
 
@@ -42,14 +43,18 @@ export async function connectWithSecret(
 
   const profile = await deps.loadProfile(ctx)
   const existing = await deps.connections.list(ctx)
+  const governance = await loadGovernanceView(ctx.organizationId, deps)
   const availability = availabilityOf(manifest, {
     tier: profile.tier,
     planFeatures: profile.planFeatures,
     connectedKeys: new Set(existing.map((c) => c.connectorKey)),
     isProduction: deps.isProduction,
     isRouteLocked: deps.isRouteLocked,
+    modeOf: governance.modeOf,
   })
   if (availability === "HIDDEN") throw notFound()
+  if (availability === "LOCKED_BY_UPPER") throw new AppError("UNPROCESSABLE_ENTITY", "Cấp trên đã khoá tích hợp này", { violation: "LOCKED_BY_UPPER" })
+  if (availability === "INHERITED") throw new AppError("UNPROCESSABLE_ENTITY", "Tích hợp này dùng kết nối do cấp trên cấp sẵn", { violation: "INHERIT_ONLY" })
   if (availability === "NEEDS_UPGRADE") throw new AppError("ENTITLEMENT_REQUIRED", "Gói dịch vụ hiện tại chưa có tích hợp này")
   if (!canStartConnect(availability, manifest)) throw new AppError("UNPROCESSABLE_ENTITY", "Không thể kết nối thêm dịch vụ này")
 

@@ -1080,5 +1080,9 @@ Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`. Mọi route có p
 | POST | `/integrations/connections/:id/test` | `W3` | Kiểm tra kết nối ngay, cập nhật trạng thái |
 | GET | `/integrations/connections/:id/events` | `W1` | Nhật ký sự kiện, lọc `status`, `limit` tối đa 100 |
 | POST | `/integrations/events/:id/replay` | `W5` | Đưa sự kiện `FAILED`/`DEAD` về hàng chờ |
+| GET | `/integrations/governance` | `W4` | Chuỗi xem chế độ đặt cho cửa hàng thành viên theo từng đầu nối khoá được, kèm khoá tầng trên (`lockedByUpper`). Không phải chuỗi → 404 |
+| PUT | `/integrations/governance` | `W4` | `{ connectorKey, mode: FORBID \| INHERIT_ONLY \| ALLOW_OWN }`; phạm vi là chính chuỗi của phiên. Tầng trên đã khoá → 422 `violation: LOCKED_BY_UPPER`; cửa hàng → 422 `STORE_CANNOT_LOCK`; đầu nối chưa thực thi khoá → 422 `NOT_GOVERNABLE`. Báo cho cửa hàng thành viên, ghi audit |
+| GET | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | Tham số `scope` = `GLOBAL` hoặc `industry:<key>`; trả kèm danh sách ngành |
+| PUT | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | `{ scopeId, connectorKey, mode }`; ngành không đổi được khi Mẹ đã khoá (422). Ghi `platform_audit_logs` |
 | POST | `/public/integrations/:connector/:ref` | — *(chữ ký của đầu nối)* | Cổng webhook chung: giới hạn tần suất theo IP và theo `ref`, thân tối đa 256 KB, xác thực chữ ký → ghi nhật ký (chống trùng) → 200. Sai chữ ký/sai `ref`/kết nối đã ngắt đều trả cùng một 401 |
 | POST | `/internal/integrations-sweep` | — *(cron, header `x-cron-secret`)* | Xử lý tối đa 100 sự kiện đến hạn và kiểm sức khoẻ tối đa 50 kết nối mỗi lượt (mỗi kết nối tối đa 30 phút/lần). Gọi sau cùng trong cron `smeos-cron-dispatch-sweep` 5 phút/lần |

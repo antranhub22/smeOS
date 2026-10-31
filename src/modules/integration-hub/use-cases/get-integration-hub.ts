@@ -11,6 +11,7 @@ import type { ConnectorManifest, ManagedPanelKey } from "../domain/connector-man
 import { needsAttention } from "../domain/connection-lifecycle"
 import { toView, type ConnectionView } from "../infra/connection-repository"
 import { defaultHubDeps, type HubDeps } from "./hub-deps"
+import { loadGovernanceView } from "./governance-mode"
 
 export interface CatalogItem {
   readonly key: string
@@ -32,14 +33,17 @@ export interface IntegrationHubView {
   readonly managedConnected: string[]
   /** Dòng theo dõi webhook của tích hợp MANAGED, theo khoá đầu nối — để xem nhật ký. */
   readonly managedLogs: ConnectionView[]
+  /** Kết nối cấp trên (chuỗi) mà tổ chức đang dùng nhờ — chỉ tên, không có khoá. */
+  readonly inherited: Array<{ connectorKey: string; displayName: string }>
 }
 
 export async function getIntegrationHub(ctx: TenantContext, deps: HubDeps = defaultHubDeps()): Promise<IntegrationHubView> {
   requireCapability(ctx, "W1")
-  const [profile, records, managedConnected] = await Promise.all([
+  const [profile, records, managedConnected, governance] = await Promise.all([
     deps.loadProfile(ctx),
     deps.connections.list(ctx),
     deps.loadManagedConnected(ctx, deps.now()),
+    loadGovernanceView(ctx.organizationId, deps),
   ])
   const since = new Date(deps.now().getTime() - 24 * 3_600_000)
   const [failed, dead] = await Promise.all([
@@ -47,7 +51,7 @@ export async function getIntegrationHub(ctx: TenantContext, deps: HubDeps = defa
     deps.events.countByStatusSince(ctx, "DEAD", since),
   ])
   const connectedKeys = new Set([...records.map((r) => r.connectorKey), ...managedConnected])
-  const input = { tier: profile.tier, planFeatures: profile.planFeatures, connectedKeys, isProduction: deps.isProduction, isRouteLocked: deps.isRouteLocked }
+  const input = { tier: profile.tier, planFeatures: profile.planFeatures, connectedKeys, isProduction: deps.isProduction, isRouteLocked: deps.isRouteLocked, modeOf: governance.modeOf }
 
   const catalog = CONNECTOR_CATALOG.map((m) => ({ manifest: m, availability: availabilityOf(m, input) }))
     .filter(({ availability }) => availability !== "HIDDEN")
@@ -62,6 +66,14 @@ export async function getIntegrationHub(ctx: TenantContext, deps: HubDeps = defa
       legacyHref: availability === "COMING_SOON" ? null : (manifest.legacyHref ?? null),
       panel: availability === "COMING_SOON" ? null : (manifest.panel ?? null),
     }))
+  const chainId = governance.scope.parentChainOrgId
+  const inherited: Array<{ connectorKey: string; displayName: string }> = []
+  if (chainId) {
+    for (const item of catalog.filter((c) => c.availability === "INHERITED")) {
+      const conn = await deps.governance.chainConnection(chainId, item.key)
+      if (conn) inherited.push({ connectorKey: item.key, displayName: conn.displayName })
+    }
+  }
   const visibleManaged = catalog.filter((c) => c.panel && c.availability === "CONNECTED").map((c) => c.key)
 
   return {
@@ -73,6 +85,7 @@ export async function getIntegrationHub(ctx: TenantContext, deps: HubDeps = defa
     catalog,
     connections: records.filter((r) => !r.managed).map(toView),
     managedLogs: records.filter((r) => r.managed).map(toView),
+    inherited,
     managedConnected: visibleManaged,
   }
 }

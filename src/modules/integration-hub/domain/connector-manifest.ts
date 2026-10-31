@@ -64,6 +64,11 @@ export interface ConnectorManifest {
    * hiện "Sắp ra mắt" — Trung tâm Tích hợp không được mở lối tắt vào tính năng PO chưa mở.
    */
   readonly featureRoute?: string
+  /**
+   * Khoá/cấp sẵn theo tầng có được thực thi lúc chạy không. Chỉ bật khi đường dùng thật kiểm chế độ
+   * (cổng Hub, webhook Facebook/Zalo) — không cho đặt một khoá mà hệ thống không tôn trọng.
+   */
+  readonly governable?: boolean
   /** Chỉ bật ngoài production (đầu nối thử). */
   readonly devOnly?: boolean
 }

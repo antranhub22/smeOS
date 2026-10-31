@@ -135,6 +135,8 @@ Thứ tự từ rủi ro thấp đến cao. Mỗi connector là một WP, đi qu
 
 ## GĐ3 — Governance 4 tầng (dừng chờ PO duyệt D4)
 
+> **Xong 31/10/2026 (PO duyệt D4).** Khác kế hoạch ở hai điểm, có chủ đích: (1) WP 3.6 không chuyển trạng thái kết nối sang `DISABLED_BY_UPPER` — khoá được tính lúc dùng (cổng webhook, webhook Facebook/Zalo, kết nối mới), gỡ khoá là chạy lại ngay, không cần đồng bộ trạng thái hàng loạt; (2) chỉ đầu nối có điểm thực thi mới cho khoá (`governable`) — SePay/ZNS/eSMS/Telegram/token API chờ có điểm kiểm trong phân hệ của chúng. Tầng Mẹ/Ngành dùng quyền vận hành mới `N16`.
+
 | WP | Việc |
 |---|---|
 | 3.1 | `domain/integration-governance.ts`: `effectiveMode(connector, orgChain)` dùng `resolveLayered`, thứ tự Mẹ (GLOBAL) → Ngành (`industry:<key>`) → Chuỗi (qua `chain_partnerships` ACTIVE) → Cửa hàng |

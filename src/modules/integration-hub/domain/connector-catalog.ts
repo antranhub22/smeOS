@@ -22,6 +22,7 @@ const SALES_CHANNEL = (key: string, label: string, description: string): Connect
   planFeature: "integrations.sales_channels",
   multiAccount: true,
   status: "COMING_SOON",
+  governable: true,
 })
 
 export const CONNECTOR_CATALOG: readonly ConnectorManifest[] = [
@@ -54,6 +55,7 @@ export const CONNECTOR_CATALOG: readonly ConnectorManifest[] = [
     status: "MANAGED",
     panel: "chat_channels",
     featureRoute: "/hoi-thoai",
+    governable: true,
   },
   {
     key: "zalo_oa",
@@ -68,6 +70,7 @@ export const CONNECTOR_CATALOG: readonly ConnectorManifest[] = [
     status: "MANAGED",
     panel: "chat_channels",
     featureRoute: "/hoi-thoai",
+    governable: true,
   },
   {
     key: "sepay",
@@ -174,6 +177,7 @@ export const CONNECTOR_CATALOG: readonly ConnectorManifest[] = [
     multiAccount: true,
     status: "BETA",
     devOnly: true,
+    governable: true,
   },
 ]
 

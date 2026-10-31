@@ -4,6 +4,7 @@ import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-chann
 import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
 import { isFreshEvent, verifyZaloSignature } from "@/modules/greeting-card/use-cases/zalo-oa-link"
 import { recordManagedWebhook } from "@/modules/integration-hub/use-cases/record-managed-webhook"
+import { isOwnConnectionAllowed } from "@/modules/integration-hub/use-cases/governance-mode"
 
 export async function POST(req: NextRequest) {
   const rawBody = await req.text()
@@ -44,7 +45,9 @@ export async function POST(req: NextRequest) {
       (await claimIdempotencyKey(channelIntegration.organizationId, "webhook.zalo", messageId))
     if (body.event_name === "user_send_text" && senderId && messageText && firstTime) {
       let errorCode: string | undefined
-      try {
+      // Trung tâm Tích hợp GĐ3: cấp trên (nền tảng, ngành, chuỗi) đã khoá kênh này → không trả lời, ghi lý do vào nhật ký.
+      if (!(await isOwnConnectionAllowed(channelIntegration.organizationId, "zalo_oa"))) errorCode = "LOCKED_BY_UPPER"
+      else try {
         const result = await handleIncomingChannelMessage({
           organizationId: channelIntegration.organizationId,
           channel: "ZALO_OA",

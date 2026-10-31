@@ -6,6 +6,7 @@ import { getConnector } from "../../adapters/connectors"
 import type { ConnectionRecord, CreateConnectionInput } from "../../infra/connection-repository"
 import type { ClaimedEvent, EventStatus } from "../../infra/event-repository"
 import type { HubDeps } from "../hub-deps"
+import type { GovernanceRow, OrgGovernanceScope } from "../../domain/integration-governance"
 
 export const NOW = new Date("2026-10-30T10:00:00Z")
 
@@ -13,7 +14,32 @@ export function ctxOf(orgId: string, caps: string[] = ["W1", "W2", "W3", "W5"]):
   return { organizationId: orgId, workspaceId: "w", userId: "u", branchId: null, capabilities: new Set(caps) }
 }
 
-export function makeFakeDeps(planFeatures: string[] = [], managed: string[] = [], lockedRoutes: string[] = []) {
+/** Governance giả: dòng khoá + phạm vi theo tổ chức + kết nối của chuỗi. */
+export function makeFakeGovernance() {
+  const rows: GovernanceRow[] = []
+  const scopes = new Map<string, OrgGovernanceScope>()
+  const partners = new Map<string, string[]>()
+  const chainConnections = new Map<string, { id: string; displayName: string }>()
+  const repo: HubDeps["governance"] = {
+    listForScopes: async (ids) => rows.filter((r) => ids.includes(r.scopeId)),
+    set: async (input) => {
+      const i = rows.findIndex((r) => r.connectorKey === input.connectorKey && r.tier === input.tier && r.scopeId === input.scopeId)
+      if (i >= 0) rows.splice(i, 1)
+      if (input.mode !== "ALLOW_OWN") rows.push({ connectorKey: input.connectorKey, tier: input.tier, scopeId: input.scopeId, mode: input.mode })
+    },
+    scopeOf: async (orgId) => scopes.get(orgId) ?? { industryKey: null, parentChainOrgId: null },
+    partnerOrgIds: async (chainId) => partners.get(chainId) ?? [],
+    chainConnection: async (chainId, key) => chainConnections.get(`${chainId}|${key}`) ?? null,
+  }
+  return { repo, rows, scopes, partners, chainConnections }
+}
+
+export function makeFakeDeps(
+  planFeatures: string[] = [],
+  managed: string[] = [],
+  lockedRoutes: string[] = [],
+  governance = makeFakeGovernance()
+) {
   const connections: ConnectionRecord[] = []
   const events: ClaimedEvent[] = []
   let seq = 0
@@ -130,6 +156,7 @@ export function makeFakeDeps(planFeatures: string[] = [], managed: string[] = []
     },
     loadProfile: async () => ({ tier: "STORE", planFeatures: new Set(planFeatures) }),
     loadManagedConnected: async () => new Set(managed),
+    governance: governance.repo,
     getConnector,
     audit: vi.fn(async () => ({}) as never),
     notify: vi.fn(async () => 1),

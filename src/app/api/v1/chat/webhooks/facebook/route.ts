@@ -4,6 +4,7 @@ import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-chann
 import { handleIncomingChannelMessage } from "@/modules/chat-assistant/use-cases/handle-incoming-channel-message"
 import { matchesVerifyToken, verifyFacebookSignature } from "@/core/http/webhook-signature"
 import { recordManagedWebhook } from "@/modules/integration-hub/use-cases/record-managed-webhook"
+import { isOwnConnectionAllowed } from "@/modules/integration-hub/use-cases/governance-mode"
 
 // 1. Xác thực Webhook từ Facebook Developers
 export async function GET(req: NextRequest) {
@@ -52,7 +53,9 @@ export async function POST(req: NextRequest) {
           if (typeof messageId === "string" && !(await claimIdempotencyKey(channelIntegration.organizationId, "webhook.facebook", messageId))) continue
           // Mỗi tin xử lý riêng: một tin lỗi không chặn các tin sau; kết quả ghi vào nhật ký Trung tâm Tích hợp.
           let errorCode: string | undefined
-          try {
+          // Trung tâm Tích hợp GĐ3: cấp trên (nền tảng, ngành, chuỗi) đã khoá kênh này → không trả lời, ghi lý do vào nhật ký.
+          if (!(await isOwnConnectionAllowed(channelIntegration.organizationId, "facebook_messenger"))) errorCode = "LOCKED_BY_UPPER"
+          else try {
             const result = await handleIncomingChannelMessage({
               organizationId: channelIntegration.organizationId,
               channel: "FACEBOOK_MESSENGER",

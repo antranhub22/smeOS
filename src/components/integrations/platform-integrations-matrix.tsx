@@ -6,6 +6,7 @@ import { CONNECTOR_CATALOG } from "@/modules/integration-hub/domain/connector-ca
 import { GOVERNANCE_TIERS } from "@/core/governance/layered-resolver"
 import type { TierRole } from "@/modules/integration-hub/domain/connector-manifest"
 import { CATEGORY_LABEL } from "./integration-labels"
+import { PlatformGovernanceSection } from "./platform-governance-section"
 
 const TIER_LABEL = { MOTHER: "Nền tảng", INDUSTRY: "Ngành", CHAIN: "Chuỗi", STORE: "Cửa hàng" } as const
 const ROLE_LABEL: Record<TierRole, string> = {
@@ -17,7 +18,7 @@ const ROLE_LABEL: Record<TierRole, string> = {
 }
 const STATUS_TEXT = { GA: "Đang chạy", BETA: "Thử nghiệm", MANAGED: "Đang chạy", LEGACY: "Màn hình cũ", COMING_SOON: "Sắp ra mắt" } as const
 
-/** Tầng Mẹ (GĐ1): ma trận chỉ đọc — mỗi dịch vụ, mỗi tầng được làm gì. Khoá/cấp sẵn theo tầng ở GĐ3. */
+/** Tầng Mẹ: ma trận vai theo tầng (chỉ đọc) + khoá tích hợp cho toàn nền tảng và từng ngành (GĐ3). */
 export function PlatformIntegrationsMatrix() {
   const rows = CONNECTOR_CATALOG.filter((m) => !m.devOnly)
   return (
@@ -49,6 +50,7 @@ export function PlatformIntegrationsMatrix() {
           </tbody>
         </table>
       </div>
+      <PlatformGovernanceSection />
     </div>
   )
 }

@@ -9,6 +9,7 @@ import { isUsable } from "../domain/connection-lifecycle"
 import { redactPayload } from "../domain/redact-payload"
 import { openCredential } from "../infra/credential-vault"
 import { defaultHubDeps, type HubDeps } from "./hub-deps"
+import { isOwnConnectionAllowed } from "./governance-mode"
 
 export const MAX_WEBHOOK_BODY_BYTES = 256 * 1024
 export const MAX_EVENTS_PER_DELIVERY = 50
@@ -30,6 +31,8 @@ export async function handleInboundWebhook(
   const request = { rawBody: input.rawBody, headers: input.headers }
   const secret = openCredential(connection.connectorKey, connection.credentialEncrypted)
   if (!connector.verifyWebhook(request, { secret }, deps.now())) throw rejected()
+  // Cấp trên đã khoá / bắt dùng kết nối cấp trên → kết nối riêng không còn nhận dữ liệu (GĐ3).
+  if (!(await isOwnConnectionAllowed(connection.organizationId, connection.connectorKey, deps))) throw rejected()
 
   let parsed
   try {

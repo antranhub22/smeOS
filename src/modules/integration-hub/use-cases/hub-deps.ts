@@ -8,12 +8,14 @@ import { getConnectionRepository, type ConnectionRepository } from "../infra/con
 import { getEventRepository, type EventRepository } from "../infra/event-repository"
 import { loadOrgProfile } from "../infra/org-profile"
 import { loadManagedConnectedKeys } from "../infra/legacy-connection-status"
+import { getGovernanceRepository, type GovernanceRepository } from "../infra/governance-repository"
 
 export interface HubDeps {
   connections: Pick<ConnectionRepository, keyof ConnectionRepository>
   events: Pick<EventRepository, keyof EventRepository>
   loadProfile: typeof loadOrgProfile
   loadManagedConnected: typeof loadManagedConnectedKeys
+  governance: Pick<GovernanceRepository, keyof GovernanceRepository>
   getConnector: typeof getConnector
   audit: typeof recordAuditLog
   notify: typeof notifyOrganization
@@ -28,6 +30,7 @@ export function defaultHubDeps(): HubDeps {
     events: getEventRepository(),
     loadProfile: loadOrgProfile,
     loadManagedConnected: loadManagedConnectedKeys,
+    governance: getGovernanceRepository(),
     getConnector,
     audit: recordAuditLog,
     notify: notifyOrganization,

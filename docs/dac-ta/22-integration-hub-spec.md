@@ -24,7 +24,8 @@
 | `W1` | Xem danh mục, kết nối, nhật ký | — |
 | `W2` | Kết nối, ngắt kết nối | Điều hành |
 | `W3` | Đổi khoá, kiểm tra kết nối | Điều hành |
-| `W4` | Khoá/cấp sẵn cho tầng dưới (GĐ3) | Điều hành |
+| `W4` | Chuỗi khoá/cấp sẵn cho cửa hàng thành viên | Điều hành |
+| `N16` *(vận hành)* | Khoá/cấp sẵn cho toàn nền tảng hoặc một ngành | — |
 | `W5` | Thử lại sự kiện lỗi | — |
 
 ## 2b. Bốn loại đầu nối
@@ -41,6 +42,14 @@
 ## 3. Vòng đời kết nối
 
 `DRAFT → CONNECTING → ACTIVE ⇄ DEGRADED`; `ACTIVE/DEGRADED → EXPIRED | ERROR → CONNECTING`; `* → DISCONNECTED`; `* ⇄ DISABLED_BY_UPPER`. Luật ở `domain/connection-lifecycle.ts`. Chuyển sang `EXPIRED`/`ERROR` ở lượt kiểm sức khoẻ gửi `INTEGRATION_CONNECTION_DEGRADED` một lần.
+
+## 3b. Khoá theo tầng (GĐ3, PO 31/10/2026 — D4)
+
+- Dòng `integration_governance (connector_key, tier, scope_id, mode)` do tầng `tier` đặt, áp cho mọi tầng dưới trong phạm vi: Mẹ `GLOBAL` · Ngành `industry:<key>` (ngành là mã trong `organizations.settings.industry`, **không** phải tổ chức) · Chuỗi = id tổ chức chuỗi (cửa hàng thuộc chuỗi qua `chain_partnerships` ACTIVE).
+- Chế độ: `ALLOW_OWN` (mặc định — không lưu dòng) · `INHERIT_ONLY` (cửa hàng dùng kết nối của chuỗi, chỉ thấy tên, không đọc khoá) · `FORBID`.
+- Khoá tầng cao nhất thắng (`resolveLayered`); tầng dưới không đặt lại được khi tầng trên đã khoá; cửa hàng không khoá được.
+- **Chỉ đầu nối `governable`** (đường dùng thật có kiểm khoá) mới khoá được: kênh bán hàng, đầu nối khung Hub (cổng webhook từ chối), Facebook Messenger và Zalo OA (webhook riêng không trả lời, nhật ký ghi `LOCKED_BY_UPPER`). SePay, ZNS, eSMS, Telegram, token API chưa có điểm thực thi → không cho đặt khoá (422 `NOT_GOVERNABLE`).
+- Không đổi trạng thái kết nối đã lưu: khoá được tính lúc dùng, gỡ khoá là kết nối chạy lại ngay.
 
 ## 4. Vai theo tầng
 
@@ -60,6 +69,6 @@ Mỗi manifest khai vai của 4 tầng: `PROVIDE` (sở hữu app/khoá nền t�
 | GĐ0 — mã hoá token kênh chat, bỏ "thành công" giả | Xong 30/10/2026 |
 | GĐ1 — nền móng Hub | Xong 30/10/2026 (đầu nối thật đầu tiên đến ở GĐ2) |
 | GĐ2 — chuyển tích hợp hiện có | Xong 31/10/2026. GĐ2a: quản lý tại Hub. GĐ2b (PO chọn hướng A): webhook Facebook/Zalo **giữ route riêng** (trả lời tức thì, giữ dữ liệu chốt đơn) và ghi nhật ký vào Hub qua dòng theo dõi `config.source = "managed"` (không giữ khoá, không lưu nội dung tin); một client Telegram dùng chung |
-| GĐ3 — governance 4 tầng | Chưa làm |
+| GĐ3 — governance 4 tầng | Xong 31/10/2026 (mục 3b): chuỗi tại `/tich-hop`, nền tảng/ngành tại `/van-hanh/tich-hop` |
 | GĐ4 — kênh bán hàng | Chưa làm |
 | GĐ5 — mở rộng | Chưa làm |

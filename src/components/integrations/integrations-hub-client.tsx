@@ -16,6 +16,7 @@ import { ConnectorCard } from "./connector-card"
 import { ConnectDialog } from "./connect-dialog"
 import { ConnectionDetailDialog } from "./connection-detail-dialog"
 import { ManagedPanelDialog } from "./managed-panel"
+import { ChainGovernanceSection } from "./chain-governance-section"
 import { integrationApi } from "./integration-api"
 import { CATEGORY_LABEL, STATUS_LABEL } from "./integration-labels"
 
@@ -86,7 +87,7 @@ export function IntegrationsHubClient() {
         </section>
       )}
 
-      {hub && (hub.connections.length > 0 || hub.managedConnected.length > 0) && (
+      {hub && (hub.connections.length > 0 || hub.managedConnected.length > 0 || hub.inherited.length > 0) && (
         <section aria-label="Kết nối của bạn" className="space-y-3">
           <h2 className="text-title font-bold text-text">Kết nối của bạn</h2>
           <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
@@ -111,6 +112,15 @@ export function IntegrationsHubClient() {
                   </div>
                 </li>
               ))}
+            {hub.inherited.map((item) => (
+              <li key={`inherited-${item.connectorKey}`} className="flex flex-wrap items-center justify-between gap-3 p-4">
+                <div>
+                  <p className="font-semibold text-text">{item.displayName}</p>
+                  <p className="text-sm text-text-muted">{labelOf.get(item.connectorKey) ?? "Dịch vụ ngoài"}</p>
+                </div>
+                <Badge tone="neutral">Dùng kết nối của chuỗi</Badge>
+              </li>
+            ))}
             {hub.connections.map((c) => (
               <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div>
@@ -156,6 +166,8 @@ export function IntegrationsHubClient() {
           )}
         </section>
       )}
+
+      {hub && <ChainGovernanceSection />}
 
       <ConnectDialog
         item={connecting}
