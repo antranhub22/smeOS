@@ -35,8 +35,8 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | ✅ đầu trang (mô tả → (?)); tab và thanh K2 giữ nguyên |
 | 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | ✅ bộ ghép ngân sách dùng dữ liệu thật (màu, dịp, kiểu từ sản phẩm); sản phẩm chưa có giá không được gợi ý; câu gửi khách bỏ cam kết 'tươi lâu' |
 | 9 | `/noi-dung` | Viết nội dung marketing | P2 | ✅ tiêu đề rút còn 'Nội dung bán hàng' (6 từ → 2), mô tả → (?); bố cục chưa đổi |
-| 10 | `/video` | Tạo video | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 11 | `/tai-anh` | Phân tích ảnh bằng AI | P2 — có tải ảnh, hỏi PO chặng | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 10 | `/video` | Tạo video | P2 — có tải ảnh (PO cho phép) | ✅ thẻ K1 viết tiếng Việt, bỏ mã M04c (PO xác nhận nội dung) |
+| 11 | `/tai-anh` | Phân tích ảnh bằng AI | P2 — có tải ảnh (PO cho phép) | ✅ đầu trang: bỏ dòng phụ, tiêu đề ngắn; file 1.945 dòng — phần còn lại rà theo đợt |
 | 12 | `/creative-studio` | Chế tác tự động A-Z | P2 — có tải ảnh (PO cho phép) | ✅ bỏ khối mã nội bộ 'Context carry-forward (Chặng 1-5)' → dòng tiếng Việt; mô tả khu vực viết lại không mã |
 | 13 | `/gia` | Công thức BOM & Tính giá | P2 — bỏ "BOM" | ✅ đầu trang (mô tả → (?)); bố cục chưa đổi |
 | 14 | `/kho-du-lieu` | Kho & Nguyên liệu | P2 | ✅ đầu trang (mô tả dài → (?)); bố cục chưa đổi |
