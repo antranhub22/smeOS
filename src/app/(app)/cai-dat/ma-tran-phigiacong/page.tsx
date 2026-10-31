@@ -9,7 +9,7 @@ export default function CraftFeesPage() {
   return (
     <TierGovernanceMatrixClient
       systemKey="CRAFT_FEES"
-      title="Ma Trận Phí Gia Công & Thợ"
+      title="Phí gia công & thợ"
       description="Quản lý phương án tính phí gia công, phụ cấp đơn gấp và biểu phí khoán thợ chế tác trong chuỗi."
     />
   )

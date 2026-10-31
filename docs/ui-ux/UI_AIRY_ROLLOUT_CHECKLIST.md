@@ -53,7 +53,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 25 | `/tri-thuc` | Tri thức & Quy trình | P3 | ✅ bỏ dòng mã IN HOA, tiêu đề 'Cẩm nang tri thức', mô tả → (?) |
 | 26 | `/cong-cu/toi-uu-he-thong` | Trợ lý Tối ưu Tác nghiệp | P3 | 🟡 |
 | 27 | `/cai-dat` (+ `?tab=INFO`) | Cài đặt & Thiết lập tiệm | P2 | ✅ tiêu đề 'Hồ sơ & cài đặt', bỏ nhãn quảng cáo, mô tả → (?); bố cục chưa đổi |
-| 28 | `/cai-dat/ma-tran-*` (5 trang) + `/cai-dat/thong-bao` | Ma trận … | P3 — bảng dày, ưu tiên nhãn ngắn + (?) | 🟡 |
+| 28 | `/cai-dat/ma-tran-*` (5 trang) + `/cai-dat/thong-bao` | Ma trận … | P3 — bảng dày, ưu tiên nhãn ngắn + (?) | 🟡 5 trang ma trận: tiêu đề ngắn, mô tả → (?) qua `TierGovernanceMatrixClient` (**cũng áp dụng cho các trang Ma trận của Mother**); còn `thong-bao` và bảng dày |
 
 ## 2. ChainOS (chuỗi) — chỉ phần riêng
 | # | Trang | Nhãn menu | Ưu tiên | Trạng thái |
@@ -120,3 +120,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Điều phối (#16) — mô tả đầu trang → (?).
 - 31/10: Duyệt (#17) — tiêu đề đã ngắn. Giao hàng (#18) — 'Tiến trình Job của tôi' → 'Tiến trình của tôi'; PO quyết tên thống nhất với menu.
 - 31/10: Mức dùng (#23), Cẩm nang tri thức (#25), Hồ sơ & cài đặt (#27) — tiêu đề và mô tả đã chỉnh.
+- 31/10: Ma trận (#28): component chung `TierGovernanceMatrixClient` đưa mô tả vào (?); 5 trang rút tiêu đề (bỏ 'Ma Trận', chữ thường). Còn: `thong-bao` và bảng chi tiết.
