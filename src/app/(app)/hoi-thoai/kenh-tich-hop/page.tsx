@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { ChannelIntegrationCard } from "@/components/chat/channel-integration-card"
+import { PublicChatSurfaceSettings } from "@/components/chat/public-chat-surface-settings"
 import { ChannelConfigModal } from "@/components/chat/channel-config-modal"
 import type { Route } from "next"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"
@@ -190,6 +191,8 @@ export default function ChatChannelsIntegrationPage() {
             </div>
           )}
         </div>
+
+        {!loading && <PublicChatSurfaceSettings channels={channels} onChanged={loadChannels} />}
 
         {/* Khối lấy mã nhúng cho website riêng */}
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-3 shadow-xs">

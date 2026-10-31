@@ -7,6 +7,7 @@ import { configureChatChannel } from "@/modules/chat-assistant/use-cases/configu
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { buildEmbedSnippet } from "@/modules/chat-assistant/domain/embed-snippet"
 import { publicAppUrl } from "@/lib/public-url"
+import { PUBLIC_CHAT_SURFACES } from "@/modules/chat-assistant/domain/public-chat-policy"
 import type { SupportedChatChannel } from "@/modules/chat-assistant/domain/channel-integration-types"
 
 const configureSchema = z.object({
@@ -33,6 +34,7 @@ const configureSchema = z.object({
       zaloAccessToken: z.string().optional(),
       zaloRefreshToken: z.string().optional(),
       embedAllowedOrigins: z.array(z.string()).optional(),
+      publicSurfaces: z.array(z.enum(PUBLIC_CHAT_SURFACES)).optional(),
     })
     .optional(),
 })
