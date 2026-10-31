@@ -35,6 +35,10 @@ export interface ChannelConfig {
   zaloAccessToken?: string | undefined
   zaloRefreshToken?: string | undefined
   embedAllowedOrigins?: string[] | undefined
+  /** Trang công khai được hiện khung chat; không khai báo = mọi trang. */
+  publicSurfaces?: string[] | undefined
+  /** Hạn mức chat công khai đã được nền tảng phê duyệt nâng; chủ tiệm không tự ghi được. */
+  publicChatLimits?: { perVisitor: number; perIp: number; approvedAt: string } | undefined
 }
 
 export interface ChatChannelIntegration {
