@@ -10,10 +10,11 @@ import { AVAILABILITY_LABEL } from "./integration-labels"
 interface ConnectorCardProps {
   item: CatalogItem
   onConnect: (item: CatalogItem) => void
+  onManage: (item: CatalogItem) => void
 }
 
 /** Thẻ một dịch vụ trong danh mục: tên, mô tả một dòng, trạng thái và đúng một hành động. */
-export function ConnectorCard({ item, onConnect }: ConnectorCardProps) {
+export function ConnectorCard({ item, onConnect, onManage }: ConnectorCardProps) {
   const label = item.availability === "HIDDEN" ? null : AVAILABILITY_LABEL[item.availability]
   return (
     <div className="flex h-full flex-col gap-3 rounded-xl border border-border bg-surface p-4">
@@ -22,7 +23,16 @@ export function ConnectorCard({ item, onConnect }: ConnectorCardProps) {
         {label && <Badge tone={label.tone}>{label.text}</Badge>}
       </div>
       <p className="flex-1 text-sm text-text-muted">{item.description}</p>
-      {item.canConnect ? (
+      {item.panel ? (
+        <Button
+          size="sm"
+          variant={item.availability === "CONNECTED" ? "outline" : "primary"}
+          onClick={() => onManage(item)}
+          aria-label={`${item.availability === "CONNECTED" ? "Quản lý" : "Thiết lập"} ${item.label}`}
+        >
+          {item.availability === "CONNECTED" ? "Quản lý" : "Thiết lập"}
+        </Button>
+      ) : item.canConnect ? (
         <Button size="sm" onClick={() => onConnect(item)} aria-label={`Kết nối ${item.label}`}>
           Kết nối
         </Button>

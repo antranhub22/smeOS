@@ -15,7 +15,7 @@ const ROLE_LABEL: Record<TierRole, string> = {
   INHERIT: "Dùng của chuỗi",
   NONE: "—",
 }
-const STATUS_TEXT = { GA: "Đang chạy", BETA: "Thử nghiệm", LEGACY: "Màn hình cũ", COMING_SOON: "Sắp ra mắt" } as const
+const STATUS_TEXT = { GA: "Đang chạy", BETA: "Thử nghiệm", MANAGED: "Đang chạy", LEGACY: "Màn hình cũ", COMING_SOON: "Sắp ra mắt" } as const
 
 /** Tầng Mẹ (GĐ1): ma trận chỉ đọc — mỗi dịch vụ, mỗi tầng được làm gì. Khoá/cấp sẵn theo tầng ở GĐ3. */
 export function PlatformIntegrationsMatrix() {

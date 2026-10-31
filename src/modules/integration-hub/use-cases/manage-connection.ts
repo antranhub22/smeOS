@@ -46,6 +46,7 @@ export async function connectWithSecret(
     planFeatures: profile.planFeatures,
     connectedKeys: new Set(existing.map((c) => c.connectorKey)),
     isProduction: deps.isProduction,
+    isRouteLocked: deps.isRouteLocked,
   })
   if (availability === "HIDDEN") throw notFound()
   if (availability === "NEEDS_UPGRADE") throw new AppError("ENTITLEMENT_REQUIRED", "Gói dịch vụ hiện tại chưa có tích hợp này")

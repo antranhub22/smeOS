@@ -25,10 +25,13 @@ export type ConnectorAuthKind = "OAUTH2" | "API_KEY" | "BOT_TOKEN" | "WEBHOOK_KE
 export type TierRole = "PROVIDE" | "ENABLE" | "CONNECT" | "INHERIT" | "NONE"
 
 /**
- * GA/BETA: kết nối được tại Trung tâm Tích hợp · LEGACY: đang chạy, còn quản lý ở màn hình cũ
- * (chuyển ở GĐ2) · COMING_SOON: hiện trong danh mục, chưa kết nối được.
+ * GA/BETA: kết nối bằng khung Hub · MANAGED: đang chạy bằng phân hệ sẵn có, quản lý ngay trong
+ * Trung tâm Tích hợp qua panel nhúng (GĐ2) · LEGACY: còn quản lý ở màn hình cũ · COMING_SOON: chưa kết nối được.
  */
-export type ConnectorStatus = "GA" | "BETA" | "LEGACY" | "COMING_SOON"
+export type ConnectorStatus = "GA" | "BETA" | "MANAGED" | "LEGACY" | "COMING_SOON"
+
+/** Panel cấu hình sẵn có được nhúng vào Trung tâm Tích hợp cho đầu nối MANAGED. */
+export type ManagedPanelKey = "chat_channels" | "bank_sync" | "customer_notify" | "staff_telegram" | "api_tokens"
 
 export type ConnectorCapability =
   | "CATALOG_PUSH"
@@ -54,6 +57,13 @@ export interface ConnectorManifest {
   readonly status: ConnectorStatus
   /** Màn hình cũ đang quản lý đầu nối LEGACY. */
   readonly legacyHref?: string
+  /** Panel nhúng của đầu nối MANAGED. */
+  readonly panel?: ManagedPanelKey
+  /**
+   * Tuyến tính năng gốc. Tuyến đang bị khoá trên production (`src/lib/feature-lock.ts`) thì đầu nối
+   * hiện "Sắp ra mắt" — Trung tâm Tích hợp không được mở lối tắt vào tính năng PO chưa mở.
+   */
+  readonly featureRoute?: string
   /** Chỉ bật ngoài production (đầu nối thử). */
   readonly devOnly?: boolean
 }

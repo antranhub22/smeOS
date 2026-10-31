@@ -79,6 +79,23 @@ describe("cách ly tenant — Trung tâm Tích hợp (GĐ1)", () => {
     expect(replayA.status).toBe(200)
   })
 
+  it("trạng thái tích hợp sẵn có (SePay, API) chỉ hiện cho đúng tổ chức", async () => {
+    await prisma.greeting_integrations.create({
+      data: {
+        organization_id: a.ctx.organizationId,
+        payment_provider: "SEPAY",
+        payment_webhook_key_hash: "hash-alpha",
+        payment_webhook_key_hint: "abcd",
+        payment_webhook_enabled: true,
+      },
+    })
+    const hubA = (await readJson(await getHub(withSession(BASE, a.token)))) as { managedConnected: string[] }
+    const hubB = (await readJson(await getHub(withSession(BASE, b.token)))) as { managedConnected: string[] }
+    expect(hubA.managedConnected).toContain("sepay")
+    expect(hubB.managedConnected).not.toContain("sepay")
+    expect(JSON.stringify(hubA)).not.toContain("hash-alpha")
+  })
+
   it("chữ ký sai bị từ chối và không ghi gì", async () => {
     const conn = await connectEcho(a)
     const body = JSON.stringify({ id: "evt-x" })

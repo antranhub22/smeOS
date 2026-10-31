@@ -139,9 +139,12 @@ export class ConnectionRepository {
   }
 
   /** Lượt kiểm sức khoẻ (cron, xuyên tổ chức): kết nối lâu chưa kiểm nhất trước. */
-  async listForHealthCheck(limit: number): Promise<ConnectionRecord[]> {
+  async listForHealthCheck(limit: number, checkedBefore: Date): Promise<ConnectionRecord[]> {
     const rows = await prisma.integration_connections.findMany({
-      where: { status: { in: ["ACTIVE", "DEGRADED", "EXPIRED", "ERROR"] } },
+      where: {
+        status: { in: ["ACTIVE", "DEGRADED", "EXPIRED", "ERROR"] },
+        OR: [{ last_health_at: null }, { last_health_at: { lt: checkedBefore } }],
+      },
       orderBy: { last_health_at: { sort: "asc", nulls: "first" } },
       take: limit,
     })

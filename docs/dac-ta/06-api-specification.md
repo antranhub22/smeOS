@@ -1081,4 +1081,4 @@ Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`. Mọi route có p
 | GET | `/integrations/connections/:id/events` | `W1` | Nhật ký sự kiện, lọc `status`, `limit` tối đa 100 |
 | POST | `/integrations/events/:id/replay` | `W5` | Đưa sự kiện `FAILED`/`DEAD` về hàng chờ |
 | POST | `/public/integrations/:connector/:ref` | — *(chữ ký của đầu nối)* | Cổng webhook chung: giới hạn tần suất theo IP và theo `ref`, thân tối đa 256 KB, xác thực chữ ký → ghi nhật ký (chống trùng) → 200. Sai chữ ký/sai `ref`/kết nối đã ngắt đều trả cùng một 401 |
-| POST | `/internal/integrations-sweep` | — *(cron, header `x-cron-secret`)* | Xử lý tối đa 100 sự kiện đến hạn và kiểm sức khoẻ tối đa 50 kết nối mỗi lượt. Chưa có lịch cron trong `render.yaml` — chờ PO duyệt |
+| POST | `/internal/integrations-sweep` | — *(cron, header `x-cron-secret`)* | Xử lý tối đa 100 sự kiện đến hạn và kiểm sức khoẻ tối đa 50 kết nối mỗi lượt (mỗi kết nối tối đa 30 phút/lần). Gọi sau cùng trong cron `smeos-cron-dispatch-sweep` 5 phút/lần |

@@ -13,7 +13,7 @@ export function ctxOf(orgId: string, caps: string[] = ["W1", "W2", "W3", "W5"]):
   return { organizationId: orgId, workspaceId: "w", userId: "u", branchId: null, capabilities: new Set(caps) }
 }
 
-export function makeFakeDeps(planFeatures: string[] = []) {
+export function makeFakeDeps(planFeatures: string[] = [], managed: string[] = [], lockedRoutes: string[] = []) {
   const connections: ConnectionRecord[] = []
   const events: ClaimedEvent[] = []
   let seq = 0
@@ -52,10 +52,11 @@ export function makeFakeDeps(planFeatures: string[] = []) {
       },
       findByRef: async (key, ref) => connections.find((c) => c.connectionRef === ref && c.connectorKey === key) ?? null,
       findByIdSystem: async (id) => connections.find((c) => c.id === id) ?? null,
-      listForHealthCheck: async () => connections.filter((c) => c.status !== "DISCONNECTED"),
-      setHealthSystem: async (id, status, errorCode) => {
+      listForHealthCheck: async (_limit, before) =>
+        connections.filter((c) => c.status !== "DISCONNECTED" && (!c.lastHealthAt || new Date(c.lastHealthAt) < before)),
+      setHealthSystem: async (id, status, errorCode, at) => {
         const found = connections.find((c) => c.id === id)
-        if (found) Object.assign(found, { status, lastErrorCode: errorCode })
+        if (found) Object.assign(found, { status, lastErrorCode: errorCode, lastHealthAt: at.toISOString() })
       },
     },
     events: {
@@ -100,10 +101,12 @@ export function makeFakeDeps(planFeatures: string[] = []) {
       },
     },
     loadProfile: async () => ({ tier: "STORE", planFeatures: new Set(planFeatures) }),
+    loadManagedConnected: async () => new Set(managed),
     getConnector,
     audit: vi.fn(async () => ({}) as never),
     notify: vi.fn(async () => 1),
     isProduction: false,
+    isRouteLocked: (href) => lockedRoutes.includes(href),
     now: () => NOW,
   }
   return { deps, connections, events }

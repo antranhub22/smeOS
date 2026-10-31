@@ -15,6 +15,7 @@ import type { ConnectionView } from "@/modules/integration-hub/infra/connection-
 import { ConnectorCard } from "./connector-card"
 import { ConnectDialog } from "./connect-dialog"
 import { ConnectionDetailDialog } from "./connection-detail-dialog"
+import { ManagedPanelDialog } from "./managed-panel"
 import { integrationApi } from "./integration-api"
 import { CATEGORY_LABEL, STATUS_LABEL } from "./integration-labels"
 
@@ -28,6 +29,8 @@ export function IntegrationsHubClient() {
   const [category, setCategory] = useState<ConnectorCategory | "ALL">("ALL")
   const [connecting, setConnecting] = useState<CatalogItem | null>(null)
   const [selected, setSelected] = useState<ConnectionView | null>(null)
+  const [managing, setManaging] = useState<CatalogItem | null>(null)
+  const [deepLinkHandled, setDeepLinkHandled] = useState(false)
   const [confirm, confirmDialog] = useConfirmDialog()
 
   const load = useCallback(async () => {
@@ -44,6 +47,17 @@ export function IntegrationsHubClient() {
     void load()
   }, [load])
 
+  // Liên kết sâu `/tich-hop?connector=<khoá>` (vd. từ trang cũ đã chuyển hướng) mở thẳng dịch vụ đó.
+  useEffect(() => {
+    if (!hub || deepLinkHandled) return
+    const key = new URLSearchParams(window.location.search).get("connector")
+    const item = key ? hub.catalog.find((c) => c.key === key) : undefined
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mở hộp theo tham số URL một lần sau khi tải xong
+    setDeepLinkHandled(true)
+    if (item?.panel) setManaging(item)
+    else if (item?.canConnect) setConnecting(item)
+  }, [hub, deepLinkHandled])
+
   const labelOf = useMemo(() => new Map((hub?.catalog ?? []).map((c) => [c.key, c.label])), [hub])
   const categories = CATEGORY_ORDER.filter((c) => hub?.catalog.some((item) => item.category === c))
   const visible = (hub?.catalog ?? []).filter((item) => category === "ALL" || item.category === category)
@@ -58,7 +72,7 @@ export function IntegrationsHubClient() {
         badgeLabel="HƯỚNG DẪN"
         title="Chọn dịch vụ, kết nối, rồi theo dõi tại đây"
         description="Mỗi kết nối hiện trạng thái hoạt động và dữ liệu nhận về. Khi kết nối hết hạn hoặc lỗi, bạn sẽ nhận thông báo."
-        tips={["Dịch vụ ghi 'Đang dùng ở màn hình cũ' vẫn chạy bình thường — sẽ được chuyển dần về đây."]}
+        tips={["Facebook, Zalo, SePay, Telegram và tin báo khách đã quản lý được ngay tại đây — bấm Quản lý hoặc Thiết lập trên thẻ dịch vụ."]}
         guidanceId="integrations-hub"
       />
 
@@ -72,10 +86,26 @@ export function IntegrationsHubClient() {
         </section>
       )}
 
-      {hub && hub.connections.length > 0 && (
+      {hub && (hub.connections.length > 0 || hub.managedConnected.length > 0) && (
         <section aria-label="Kết nối của bạn" className="space-y-3">
           <h2 className="text-title font-bold text-text">Kết nối của bạn</h2>
           <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
+            {hub.catalog
+              .filter((item) => hub.managedConnected.includes(item.key))
+              .map((item) => (
+                <li key={item.key} className="flex flex-wrap items-center justify-between gap-3 p-4">
+                  <div>
+                    <p className="font-semibold text-text">{item.label}</p>
+                    <p className="text-sm text-text-muted">{CATEGORY_LABEL[item.category]}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge tone="success">Đang bật</Badge>
+                    <Button variant="outline" size="sm" onClick={() => setManaging(item)}>
+                      Quản lý
+                    </Button>
+                  </div>
+                </li>
+              ))}
             {hub.connections.map((c) => (
               <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div>
@@ -115,7 +145,7 @@ export function IntegrationsHubClient() {
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((item) => (
-                <ConnectorCard key={item.key} item={item} onConnect={setConnecting} />
+                <ConnectorCard key={item.key} item={item} onConnect={setConnecting} onManage={setManaging} />
               ))}
             </div>
           )}
@@ -138,6 +168,13 @@ export function IntegrationsHubClient() {
         onClose={() => setSelected(null)}
         onChanged={() => void load()}
         askConfirm={confirm}
+      />
+      <ManagedPanelDialog
+        item={managing}
+        onClose={() => {
+          setManaging(null)
+          void load()
+        }}
       />
       {confirmDialog}
     </div>

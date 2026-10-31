@@ -17,6 +17,10 @@ describe("Danh mục đầu nối", () => {
     for (const m of CONNECTOR_CATALOG.filter((x) => x.status === "LEGACY")) expect(m.legacyHref).toBeTruthy()
   })
 
+  it("đầu nối quản lý bằng phân hệ sẵn có luôn có panel nhúng", () => {
+    for (const m of CONNECTOR_CATALOG.filter((x) => x.status === "MANAGED")) expect(m.panel).toBeTruthy()
+  })
+
   it("kênh bán hàng cần gói có integrations.sales_channels", () => {
     const shopee = findManifest("shopee")!
     expect(availabilityOf(shopee, { ...base, tier: "STORE" })).toBe("NEEDS_UPGRADE")
@@ -26,7 +30,7 @@ describe("Danh mục đầu nối", () => {
 
   it("cửa hàng kế thừa đầu nối dùng chung của chuỗi", () => {
     expect(availabilityOf(findManifest("zalo_zns")!, { ...base, tier: "STORE" })).toBe("INHERITED")
-    expect(availabilityOf(findManifest("zalo_zns")!, { ...base, tier: "CHAIN" })).toBe("LEGACY")
+    expect(availabilityOf(findManifest("zalo_zns")!, { ...base, tier: "CHAIN" })).toBe("AVAILABLE")
   })
 
   it("đầu nối thử bị ẩn trên production", () => {

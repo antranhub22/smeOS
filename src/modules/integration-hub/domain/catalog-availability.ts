@@ -21,6 +21,8 @@ export interface AvailabilityInput {
   readonly planFeatures: ReadonlySet<string>
   readonly connectedKeys: ReadonlySet<string>
   readonly isProduction: boolean
+  /** Tuyến đang bị khoá tính năng (production). */
+  readonly isRouteLocked?: (href: string) => boolean
 }
 
 export function availabilityOf(manifest: ConnectorManifest, input: AvailabilityInput): ConnectorAvailability {
@@ -31,7 +33,9 @@ export function availabilityOf(manifest: ConnectorManifest, input: AvailabilityI
   if (role !== "CONNECT") return "NOT_FOR_TIER"
   if (manifest.planFeature && !input.planFeatures.has(manifest.planFeature)) return "NEEDS_UPGRADE"
   if (manifest.status === "COMING_SOON") return "COMING_SOON"
+  if (manifest.featureRoute && input.isRouteLocked?.(manifest.featureRoute)) return "COMING_SOON"
   if (manifest.status === "LEGACY") return "LEGACY"
+  // MANAGED: `connectedKeys` gồm cả trạng thái đọc từ phân hệ sẵn có (legacy-connection-status).
   return input.connectedKeys.has(manifest.key) ? "CONNECTED" : "AVAILABLE"
 }
 

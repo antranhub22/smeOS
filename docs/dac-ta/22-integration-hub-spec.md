@@ -13,8 +13,9 @@
 3. **Tenancy:** `organization_id` từ `requireTenantContext`; kết nối/sự kiện của tổ chức khác trả 404. Webhook công khai xác định kết nối qua `connection_ref` ngẫu nhiên, không qua id tổ chức.
 4. **Webhook:** giới hạn tần suất → xác thực chữ ký của đầu nối → ghi `integration_events` (chống trùng theo `external_event_id`) → 200. Xử lý ở lượt cron, tối đa 6 lần (30s → 6h), hết lượt `DEAD` + thông báo `INTEGRATION_EVENT_DEAD`.
 5. **Mọi vòng lặp có giới hạn:** 50 sự kiện mỗi lần gửi, 100 sự kiện và 50 lượt kiểm sức khoẻ mỗi lượt cron, thân webhook 256 KB.
-6. **Không báo thành công giả.** Đầu nối chưa có cài đặt thật hiện `Sắp ra mắt`, không nút kết nối.
-7. **Ba trục tách rời:** RBAC (`W1`–`W5`), gói dịch vụ (`integrations.sales_channels`, `integrations.api` — gói PRO trở lên), governance theo tầng (`integration_governance`, GĐ3).
+6. **Không mở lối tắt vào tính năng đang khoá.** Đầu nối có `featureRoute` bị khoá trên production (`src/lib/feature-lock.ts`) hiện "Sắp ra mắt" và không mở panel.
+7. **Không báo thành công giả.** Đầu nối chưa có cài đặt thật hiện `Sắp ra mắt`, không nút kết nối.
+8. **Ba trục tách rời:** RBAC (`W1`–`W5`), gói dịch vụ (`integrations.sales_channels`, `integrations.api` — gói PRO trở lên), governance theo tầng (`integration_governance`, GĐ3).
 
 ## 2. Quyền
 
@@ -25,6 +26,15 @@
 | `W3` | Đổi khoá, kiểm tra kết nối | Điều hành |
 | `W4` | Khoá/cấp sẵn cho tầng dưới (GĐ3) | Điều hành |
 | `W5` | Thử lại sự kiện lỗi | — |
+
+## 2b. Bốn loại đầu nối
+
+| Loại (`status`) | Cách chạy | Ở Trung tâm Tích hợp |
+|---|---|---|
+| `GA` / `BETA` | Khung Hub (bảng `integration_*`, cổng webhook chung) | Kết nối bằng khoá, chi tiết, nhật ký |
+| `MANAGED` | Phân hệ sẵn có (chat, thẻ chào, token máy-với-máy) | Trạng thái đọc từ bảng gốc (`infra/legacy-connection-status.ts`, chỉ đọc, không bí mật); quản lý bằng panel nhúng (`components/integrations/managed-panel.tsx`) |
+| `LEGACY` | Phân hệ sẵn có | Thẻ dẫn tới màn hình cũ |
+| `COMING_SOON` | Chưa có cài đặt | Hiện để người dùng biết lộ trình |
 
 ## 3. Vòng đời kết nối
 
@@ -38,7 +48,8 @@ Mỗi manifest khai vai của 4 tầng: `PROVIDE` (sở hữu app/khoá nền t�
 
 - Sidebar: mục "Tích hợp" chèn ngay sau mục cài đặt của tầng (`components/layout/nav/nav-integrations.ts`) — `/tich-hop` (Cửa hàng, Chuỗi, Ngành, cần `W1`), `/van-hanh/tich-hop` (Nền tảng).
 - API: đặc tả 06 mục 29. Lược đồ: đặc tả 07 mục 36.
-- Cron: `POST /api/v1/internal/integrations-sweep` (chưa có lịch trong `render.yaml` — chờ PO).
+- Cron: `POST /api/v1/internal/integrations-sweep`, gắn vào cron `smeos-cron-dispatch-sweep` 5 phút/lần (PO 31/10/2026); mỗi kết nối chỉ kiểm sức khoẻ tối đa 30 phút/lần.
+- `/hoi-thoai/kenh-tich-hop` chuyển hướng về `/tich-hop?connector=facebook_messenger`.
 
 ## 6. Trạng thái triển khai
 
@@ -46,7 +57,7 @@ Mỗi manifest khai vai của 4 tầng: `PROVIDE` (sở hữu app/khoá nền t�
 |---|---|
 | GĐ0 — mã hoá token kênh chat, bỏ "thành công" giả | Xong 30/10/2026 |
 | GĐ1 — nền móng Hub | Xong 30/10/2026 (đầu nối thật đầu tiên đến ở GĐ2) |
-| GĐ2 — chuyển tích hợp hiện có | Chưa làm |
+| GĐ2 — chuyển tích hợp hiện có | Phần quản lý xong 31/10/2026 (Facebook, Zalo OA, SePay, ZNS, eSMS, Telegram, token SocialFlow/LocalBudd quản lý tại Hub). Còn GĐ2b: chuyển webhook Facebook/Zalo sang cổng chung, gộp hai bản Telegram adapter, chuyển dữ liệu sang `integration_connections` |
 | GĐ3 — governance 4 tầng | Chưa làm |
 | GĐ4 — kênh bán hàng | Chưa làm |
 | GĐ5 — mở rộng | Chưa làm |

@@ -71,6 +71,31 @@ describe("Danh mục theo gói và tầng", () => {
   })
 })
 
+describe("Tích hợp chạy bằng phân hệ sẵn có", () => {
+  it("SePay đã bật hiện Đã kết nối, được tính vào tổng quan và mở bằng panel", async () => {
+    const { deps } = makeFakeDeps([], ["sepay"])
+    const hub = await getIntegrationHub(orgA, deps)
+    const sepay = hub.catalog.find((c) => c.key === "sepay")!
+    expect(sepay).toMatchObject({ availability: "CONNECTED", panel: "bank_sync", canConnect: false })
+    expect(hub.managedConnected).toEqual(["sepay"])
+    expect(hub.overview.active).toBe(1)
+  })
+
+  it("tính năng gốc đang bị khoá trên production thì Hub cũng hiện Sắp ra mắt, không mở panel", async () => {
+    const { deps } = makeFakeDeps([], ["facebook_messenger"], ["/hoi-thoai"])
+    const hub = await getIntegrationHub(orgA, deps)
+    expect(hub.catalog.find((c) => c.key === "facebook_messenger")).toMatchObject({ availability: "COMING_SOON", panel: null })
+    expect(hub.managedConnected).toEqual([])
+  })
+
+  it("API cần gói PRO: gói thường không thấy là đã kết nối", async () => {
+    const { deps } = makeFakeDeps([], ["api_tokens"])
+    const hub = await getIntegrationHub(orgA, deps)
+    expect(hub.catalog.find((c) => c.key === "api_tokens")?.availability).toBe("NEEDS_UPGRADE")
+    expect(hub.managedConnected).toEqual([])
+  })
+})
+
 describe("Cổng webhook", () => {
   it("nhận sự kiện có chữ ký đúng, bỏ qua sự kiện gửi lại", async () => {
     const { deps, connections, events } = makeFakeDeps()
