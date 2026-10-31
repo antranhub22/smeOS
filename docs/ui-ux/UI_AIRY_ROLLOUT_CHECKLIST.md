@@ -29,7 +29,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 1 | `/don-hang` | Đơn hàng | P1 — dùng hằng ngày | ✅ đầu trang, thẻ đơn, cột kanban (chờ PO duyệt ảnh); thẻ hướng dẫn K1 giữ nguyên |
 | 2 | `/khach-hang` | Khách hàng | P1 | ✅ đầu trang + bộ lọc hạng (nhãn tiếng Việt) + bảng trên điện thoại (cuộn ngang, ẩn cột phụ); thẻ hướng dẫn K1 đã đổi chữ (PO đồng ý: bỏ CRM/RFM/Consent) |
 | 3 | `/san-pham` | Danh mục sản phẩm | P1 | 🟡 đầu trang, lưới thẻ, thẻ `ProductCard`, khoảng giá (ví dụ → (?)) đã làm; **còn chế độ bảng quản trị** |
-| 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | 🟡 |
+| 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | ✅ đầu trang + 3 thẻ con (mô tả pháp lý → (?), emoji → icon) |
 | 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 |
 | 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 |
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | 🟡 |
@@ -106,3 +106,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Khách hàng — thẻ K1 đổi chữ theo PO (bỏ CRM, RFM, Consent Engine).
 - 31/10: Sản phẩm (#3) — đầu trang (dòng phụ → (?)), lưới thẻ giãn `sm:gap-6`. Chưa làm: thẻ `ProductCard`, thanh bộ lọc, chế độ bảng.
 - 31/10: Sản phẩm — thẻ `ProductCard` (bóng `shadow-sm`), hộp khoảng giá (bỏ dòng ví dụ, đưa vào (?)). Còn: chế độ bảng quản trị.
+- 31/10: Tạo sản phẩm (#4) — đầu trang (dòng phụ → (?)); thẻ Định mức / Đặc điểm niêm yết / Nội dung AI: mô tả dài → (?) trên dòng tiêu đề, emoji ✨ → icon. Badge cam kết vẫn hiện.
