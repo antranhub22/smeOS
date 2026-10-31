@@ -58,10 +58,10 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 ## 2. ChainOS (chuỗi) — chỉ phần riêng
 | # | Trang | Nhãn menu | Ưu tiên | Trạng thái |
 |---|---|---|---|---|
-| 1 | `/` Tổng quan chuỗi | Tổng quan chuỗi | P1 — số liệu chuỗi | ✅ thẻ việc · ⬜ khối số liệu |
-| 2 | `/dieu-phoi` | Tháp điều phối | P1 — giao diện riêng tầng chuỗi | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 3 | `/dieu-phoi/doi-tac` | Chi nhánh & Xưởng | P1 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 4 | `/du-lieu` | Đối soát & Công nợ | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 1 | `/` Tổng quan chuỗi | Tổng quan chuỗi | P1 — số liệu chuỗi | ✅ thẻ việc · ✅ khối số liệu (StatTile) |
+| 2 | `/dieu-phoi` | Tháp điều phối | P1 — giao diện riêng tầng chuỗi | ✅ tiêu đề, InfoTip, bo góc chuẩn |
+| 3 | `/dieu-phoi/doi-tac` | Chi nhánh & Xưởng | P1 | ✅ tiêu đề, InfoTip, thẻ đối tác bo `rounded-2xl`, bóng `shadow-xs` |
+| 4 | `/du-lieu` | Dữ liệu chuỗi | P2 | ✅ tiêu đề, InfoTip, bỏ tiếng Anh, bo nút chuẩn |
 | 5 | `/don-hang`, `/khach-hang`, `/san-pham`, `/gia`, `/so-lieu`, `/catalog`, `/duyet`, `/kho-du-lieu`, `/video`, `/cai-dat*`… | (nhãn riêng chuỗi) | P2 — kiểm nhãn/nội dung chuỗi | 🔁 |
 
 ## 3. SaaS ngành — chỉ phần riêng

@@ -15,9 +15,6 @@
     "components/catalog": {
       "R14": 3
     },
-    "components/coordinator": {
-      "R16": 7
-    },
     "components/creative-studio": {
       "R16": 44,
       "R13": 2,
@@ -54,6 +51,6 @@
       "R16": 1
     }
   },
-  "total": 129,
-  "updatedAt": "2026-10-31T03:09:41.240Z"
+  "total": 122,
+  "updatedAt": "2026-10-31T09:43:06.620Z"
 }
