@@ -22,6 +22,9 @@ export async function register(): Promise<void> {
   // Đơn quá hạn thanh toán → lead cứu đơn (Đơn hàng đa nguồn, PO 31/10/2026) — chỉ đọc sự kiện huỷ.
   const { startLeadRecoverySweep } = await import("@/modules/acquisition/use-cases/lead-recovery-scheduler")
   startLeadRecoverySweep()
+  // Chuyển khoản SePay còn "chưa khớp" sau bộ khớp Thẻ chào → khớp đơn ngoài Thẻ chào (P3b).
+  const { startOrdersBankMatchSweep } = await import("@/modules/orders/use-cases/orders-sweep-scheduler")
+  startOrdersBankMatchSweep()
 }
 
 /** Lỗi máy chủ không ai bắt → log có cấu trúc (rà soát 21/10/2026, giai đoạn 3 — quan trắc). */
