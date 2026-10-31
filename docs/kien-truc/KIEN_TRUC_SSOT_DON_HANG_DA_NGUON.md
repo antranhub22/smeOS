@@ -1,7 +1,7 @@
 # Kiến trúc SSOT Đơn hàng đa nguồn — Lead → Đơn → Điều phối theo quy trình Thẻ chào
 
 > **Mã:** `ARCH-2026-ORDER-SSOT-MULTI-SOURCE-01` · **Ngày:** 31/10/2026
-> **Trạng thái:** ✅ PO duyệt kiến trúc (31/10/2026) · **đang xây** — P0 xong, P1 một phần (xem §7).
+> **Trạng thái:** ✅ PO duyệt kiến trúc (31/10/2026) · **đang xây** — P0, P1 xong (xem §7).
 > **Căn cứ:** [`HIEN_TRANG_THE_CHAO.md`](HIEN_TRANG_THE_CHAO.md) (đường chuẩn) · [`KE_HOACH_MA_TRAN_QUY_TRINH_THE_CHAO.md`](KE_HOACH_MA_TRAN_QUY_TRINH_THE_CHAO.md) · `prisma/schema.prisma` (`orders`, `leads`, `greeting_sessions`, `order_coordinations`).
 
 ---
@@ -209,7 +209,8 @@ Mỗi pha ship kèm test + cập nhật tài liệu này và `TRANG_THAI.md` tro
 **Tiến độ (31/10/2026):**
 - **P0 xong.** `tests/unit/architecture/the-chao-freeze.test.ts` băm toàn bộ tệp Thẻ chào (miền, giao diện, `/the-chao`, trang khách `/b` `/g` `/bst` `/s` `/subcontract`, API `greeting-card` + công khai + SePay) và định nghĩa các mã năng lực Thẻ chào dùng (vai mặc định, trần cứng), so với `the-chao-freeze.manifest.txt`. Bất kỳ thay đổi nào → đỏ. Chỉ cập nhật mốc khi PO duyệt: `UPDATE_THE_CHAO_FREEZE=1 npm test -- tests/unit/architecture/the-chao-freeze.test.ts`. Test hành vi Thẻ chào sẵn có (~96 tệp) giữ nguyên, xanh.
 - **P1 (phần thuần) xong.** `src/modules/orders/domain/order-source.ts` (danh mục nguồn §2.2) · `src/modules/orders/domain/entry-actions.ts` (§3.2) + test.
-- **Còn lại P1:** migration `orders`/`leads` (§3.4, §4.1) — chờ PO duyệt schema; `ingestOrder` + adapter.
+- **P1 xong (PO duyệt schema 31/10).** Migration `20261031133749_orders_multi_source_lead_link`: `orders` + `owner_sale_id`, `lead_id` (FK `leads`, SET NULL), `workflow` (mặc định `LEGACY`); `leads` + `reason`, `next_follow_up_at`, `closed_reason`, `converted_order_id` (FK `orders`, SET NULL); dữ liệu `CONTACTED → IN_PROGRESS`. Cổng `src/modules/orders/use-cases/ingest-order.ts` (từ chối `BROCHURE` và mã lạ; kiểm sale phụ trách là thành viên đang hoạt động) + `infra/order-lead-link.ts` (lead → đơn cùng giao dịch: khác tổ chức 404, đã thành đơn 409). Adapter đã nối: nhập tay `POST /orders` (`MANUAL`), chat (`CHAT` — trước đây ghi nhầm `MANUAL`), kênh bán ngoài (`CHANNEL`). Gác: `tests/unit/architecture/order-ingestion-guard.test.ts`; cách ly: `tests/tenant/order-lead-link.test.ts`.
+- **Chưa làm (ghi rõ):** đơn nguồn mới vẫn `workflow = LEGACY` cho tới khi P3 có đường STANDARD; `NETWORK`/`CATALOG`/`LANDING` mới có mã, chưa có adapter tạo đơn (trang khách chưa có nút Đặt hàng — P2); Tháp điều phối (`coordinator-query-helper.ts`) còn ghi thẳng `orders.create` — chuyển ở P3 (có trong danh sách cho phép của test gác).
 
 ---
 

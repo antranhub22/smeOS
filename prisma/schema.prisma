@@ -1650,14 +1650,27 @@ model orders {
   info_requests     order_info_requests[]
   change_requests   order_change_requests[]
   bookings          product_bookings[]
-  source            String?                 @default("MANUAL") // MANUAL | CHAT | BROCHURE
+  source            String?                 @default("MANUAL") // mã ở src/modules/orders/domain/order-source.ts
   source_session_id String? // greeting_sessions.id
   greeting_sessions greeting_sessions[]
+
+  /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —
+  /// đơn Thẻ chào không đọc các cột này (sale phụ trách vẫn suy từ greeting_sessions.sale_id).
+  /// Sale phụ trách đơn nguồn mới (user thuộc memberships của tổ chức — kiểm ở use-case).
+  owner_sale_id   String?
+  /// Lead gốc khi đơn sinh từ lead (cổng nhận đơn `ingestOrder`).
+  lead_id         String?
+  lead            leads?  @relation("order_origin_lead", fields: [lead_id], references: [id], onDelete: SetNull)
+  converted_leads leads[] @relation("lead_converted_order")
+  /// `LEGACY` (kanban cũ, mặc định — mọi đơn hiện có) · `STANDARD` (quy trình chuẩn đa nguồn, P3).
+  workflow        String  @default("LEGACY")
 
   @@unique([organization_id, code])
   @@index([organization_id, status])
   @@index([organization_id, production_status])
   @@index([organization_id, source])
+  @@index([organization_id, owner_sale_id])
+  @@index([organization_id, lead_id])
 }
 
 model order_items {
@@ -3811,33 +3824,44 @@ model sales_channel_orders {
 // Khách tiềm năng để lại SĐT từ trang công khai. Trước đây nằm trong
 // catalog_links.filters.leads (JSON) — mất khi gửi đồng thời, không vào CRM.
 model leads {
-  id                String    @id @default(uuid())
-  organization_id   String
-  customer_id       String?
-  name              String
-  phone             String
-  message           String?
-  source            String // CATALOG_LINK | SHORT_LINK
-  source_ref        String? // slug catalog hoặc mã link
-  short_link_id     String?
-  utm_source        String?
-  utm_medium        String?
-  utm_campaign      String?
-  consent_at        DateTime
-  consent_version   String
-  status            String    @default("NEW") // NEW | CONTACTED | WON | LOST
-  assignee_user_id  String? // user thuộc memberships của tổ chức — kiểm ở use-case
-  status_changed_at DateTime?
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @updatedAt
+  id                 String    @id @default(uuid())
+  organization_id    String
+  customer_id        String?
+  name               String
+  phone              String
+  message            String?
+  source             String // CATALOG_LINK | SHORT_LINK | LANDING | CHAT | MANUAL
+  source_ref         String? // slug catalog hoặc mã link
+  short_link_id      String?
+  utm_source         String?
+  utm_medium         String?
+  utm_campaign       String?
+  consent_at         DateTime
+  consent_version    String
+  status             String    @default("NEW") // NEW | IN_PROGRESS | WON | LOST (CONTACTED cũ → IN_PROGRESS, 31/10/2026)
+  assignee_user_id   String? // user thuộc memberships của tổ chức — kiểm ở use-case
+  status_changed_at  DateTime?
+  /// Đơn hàng đa nguồn (PO 31/10/2026, §3.3–3.4): lý do vào, hạn gọi lại, lý do đóng, đơn đã chuyển thành.
+  /// CONTACT | QUOTE_REQUEST | ABANDONED | PAYMENT_TIMEOUT | WALK_IN | CHAT
+  reason             String?
+  next_follow_up_at  DateTime?
+  /// NO_NEED | UNREACHABLE | BOUGHT_ELSEWHERE | INVALID
+  closed_reason      String?
+  converted_order_id String?
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
 
-  organization organizations @relation(fields: [organization_id], references: [id])
-  customer     customers?    @relation(fields: [customer_id], references: [id], onDelete: SetNull)
-  short_link   short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
+  organization    organizations @relation(fields: [organization_id], references: [id])
+  customer        customers?    @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+  short_link      short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
+  converted_order orders?       @relation("lead_converted_order", fields: [converted_order_id], references: [id], onDelete: SetNull)
+  origin_orders   orders[]      @relation("order_origin_lead")
 
   @@index([organization_id])
   @@index([organization_id, status, created_at])
   @@index([organization_id, phone, created_at])
+  @@index([organization_id, next_follow_up_at])
+  @@index([organization_id, converted_order_id])
 }
 
 // Link/QR động: in một lần, đổi đích sau; mỗi điểm đặt (quầy, tờ rơi…) một mã để

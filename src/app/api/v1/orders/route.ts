@@ -2,7 +2,7 @@ import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { createOrder } from "@/modules/orders/use-cases/create-order"
+import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 import { listOrders } from "@/modules/orders/use-cases/list-orders"
 import type { OrderStatus, ProductionStatus, DeliveryStatus } from "@/modules/orders/domain/order-types"
 
@@ -78,6 +78,6 @@ export const POST = handle(async (request) => {
   const body = await request.json()
   const parsed = createOrderSchema.parse(body)
 
-  const order = await createOrder(ctx, parsed)
+  const order = await ingestOrder(ctx, { ...parsed, source: "MANUAL" })
   return jsonResponse({ order }, { status: 201 })
 })

@@ -5,12 +5,12 @@
  */
 
 import type { ChannelOrder } from "@/core/ports/sales-channel-order-provider"
-import type { CreateOrderInput } from "@/modules/orders/domain/order-types"
+import type { IngestOrderInput } from "@/modules/orders/domain/order-types"
 
 export const MAX_ITEMS_PER_CHANNEL_ORDER = 100
 
 export interface MappedChannelOrder {
-  readonly input: CreateOrderInput
+  readonly input: IngestOrderInput
   readonly unmatchedSkus: string[]
 }
 

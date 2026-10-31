@@ -11,7 +11,7 @@ import { formatDateTime } from "@/lib/i18n/formatters"
 import { LEAD_STATUS_LABELS } from "@/modules/acquisition/domain/lead-rules"
 import { acquisitionApi, type LeadItem, type LeadStatus } from "./acquisition-api"
 
-const STATUSES: LeadStatus[] = ["NEW", "CONTACTED", "WON", "LOST"]
+const STATUSES: LeadStatus[] = ["NEW", "IN_PROGRESS", "WON", "LOST"]
 
 function sourceLabel(lead: LeadItem): string {
   if (lead.short_link) return lead.short_link.placement_label ? `${lead.short_link.name} · ${lead.short_link.placement_label}` : lead.short_link.name

@@ -10,7 +10,7 @@ export async function listLeads(
   repo = new LeadRepository(),
 ) {
   if (opts.status !== undefined && !isLeadStatus(opts.status)) {
-    throw validationFailed({ status: "Phải là một trong: NEW, CONTACTED, WON, LOST" })
+    throw validationFailed({ status: "Phải là một trong: NEW, IN_PROGRESS, WON, LOST" })
   }
   const [page, counts] = await Promise.all([
     repo.list(ctx, { status: opts.status as LeadStatus | undefined, limit: opts.limit, cursor: opts.cursor }),
@@ -28,7 +28,7 @@ export async function updateLead(
   audit: (ctx: TenantContext, input: RecordAuditLogInput) => Promise<unknown> = recordAuditLog,
 ) {
   if (patch.status !== undefined && !isLeadStatus(patch.status)) {
-    throw validationFailed({ status: "Phải là một trong: NEW, CONTACTED, WON, LOST" })
+    throw validationFailed({ status: "Phải là một trong: NEW, IN_PROGRESS, WON, LOST" })
   }
   const existing = await repo.findById(ctx, id)
   if (!existing) throw notFound()
