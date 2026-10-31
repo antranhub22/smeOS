@@ -218,7 +218,7 @@ export default function ChatAssistantPage() {
         )}
 
         {/* Khung Chat 2 Cột */}
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[550px] rounded-xl border border-border bg-surface overflow-hidden shadow-xs">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[550px] rounded-2xl border border-border bg-surface overflow-hidden shadow-sm p-1">
           {/* CỘT TRÁI: DANH SÁCH HỘI THOẠI */}
           <div className={`border-r border-border flex flex-col bg-surface-alt/40 ${selectedConvId ? "hidden md:flex" : "flex"}`}>
             <div className="p-3.5 border-b border-border font-bold text-caption text-text-muted flex items-center justify-between">
@@ -351,7 +351,7 @@ export default function ChatAssistantPage() {
                               {suggestedFlowers.map((f) => (
                                 <div
                                   key={f.productId}
-                                  className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 p-2.5 shadow-xs"
+                                  className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-3 shadow-sm"
                                 >
                                   {f.sampleImageUrl ? (
                                     <img
