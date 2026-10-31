@@ -40,7 +40,7 @@ describe("cách ly tenant — đặt hàng trên catalog công khai", () => {
       customers: new BrochureCheckoutRepository(),
       isMember: isActiveOrgMember,
       ingest: ingestOrder,
-      verifier: { verify: async () => true },
+      verifier: { name: "test", verify: async () => true },
       now: () => new Date(),
     })
     const order = await prisma.orders.findFirstOrThrow({ where: { code: r.orderCode } })
