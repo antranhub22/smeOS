@@ -1,6 +1,22 @@
 # Screen Contract — Quản lý Đơn hàng & Vận hành Xưởng (`/don-hang`)
 
-**Tuyến:** `/don-hang` · **Tệp chính:** `src/app/(app)/don-hang/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.B2
+**Tuyến:** `/don-hang` · **Tệp chính:** `src/app/(app)/don-hang/page.tsx` · **Cập nhật:** 31/10/2026 (mục Đơn hàng theo vai — Đơn hàng đa nguồn P4) · **Thẻ:** T5.B2
+
+## 0. Cập nhật 31/10/2026 — mục Đơn hàng theo vai (Đơn hàng đa nguồn P4)
+SSOT: `docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §6. Archetype: bảng làm việc nhiều khu (tab nhóm nút `aria-pressed`, không `role="tab"`).
+
+| Tab | Hiện khi | Nội dung | Thẻ chào |
+|---|---|---|---|
+| Khách tiềm năng | `Q1` | `LeadQueueTab` — `GET /orders/lead-queue`; nút "Mở để chăm" sang `/thu-hut-khach` hoặc `/the-chao?tab=sales` | Phiên chưa đặt — chỉ xem |
+| Sale chăm sóc | `R2` | "Đơn từ nguồn khác": `WorkbenchList mode="sale"` (Báo giá `R15`, Giao trước thu sau `R2`) · "Thẻ chào": `SalesBrochureTab` | Nhúng nguyên vẹn |
+| Phê duyệt | `R11` hoặc `R16` | "Chờ duyệt giao trước, thu sau" (`R16`) · "Xác nhận tiền — đơn nguồn khác" (`R11`) · "Thẻ chào": `AdminBrochurePaymentTab` (`R11`) | Nhúng nguyên vẹn |
+| Điều phối | `R4` hoặc `R5` | "Thẻ chào": `CoordinatorBrochureTab` · "Đơn nguồn khác": lối tắt Tháp điều phối `/dieu-phoi` | Nhúng nguyên vẹn |
+| Tất cả | luôn | `AllOrdersTab` — kanban 4 cột / lọc trên điện thoại (tách nguyên từ trang cũ) | — |
+
+- Mở mặc định theo vai (`role-tabs.ts`): Điều hành → Phê duyệt · Điều phối → Điều phối · Sale → Khách tiềm năng; `?tab=` đè nếu người xem có tab đó.
+- Thay 3 tab cũ "Tất cả đơn hàng" / "Link đặt hoa" / "Duyệt thanh toán". Header (nút chính "Tạo đơn") giữ nguyên.
+- Trạng thái mỗi khu: khung xương khi tải · `InlineError` có thử lại · `EmptyState` · dòng `role="status"` báo kết quả thao tác.
+- Chưa kiểm: `npm run ux:audit` 390/1280px (cần dev server + database `_test`), bàn phím, đọc màn hình.
 
 ## 1. Vai và mục đích
 - **Vai chính (03b):** `florist`, `store_manager`, `sales`, `delivery_lead`.

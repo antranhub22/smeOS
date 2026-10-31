@@ -1,41 +1,64 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Plus, RefreshCw, MessageSquarePlus, ShoppingBag, Send, ShieldCheck } from "@/components/ui/icons"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { ArrowLeft, Plus, RefreshCw, MessageSquarePlus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { InfoTip } from "@/components/ui/info-tip"
-import { OrderGuidanceCard } from "@/components/templates/orders/order-guidance-card"
 import { CreateOrderModal } from "@/components/orders/create-order-modal"
 import { OrderDetailModal } from "@/components/orders/order-detail-modal"
 import { ChatOrderCheckoutModal } from "@/components/chat/chat-order-checkout-modal"
-import { OrderCard, type OrderItemCardProps } from "@/components/orders/order-card"
-import { EmptyState } from "@/components/ui/empty-state"
+import type { OrderItemCardProps } from "@/components/orders/order-card"
 import { SalesBrochureTab } from "@/components/greeting-card/sales/sales-brochure-tab"
 import { AdminBrochurePaymentTab } from "@/components/greeting-card/admin/admin-brochure-payment-tab"
+import { CoordinatorBrochureTab } from "@/components/greeting-card/coordinator/coordinator-brochure-tab"
 import { ExportOrdersButton } from "@/components/orders/export-orders-button"
+import { AllOrdersTab } from "@/components/orders/workspace/all-orders-tab"
+import { LeadQueueTab } from "@/components/orders/workspace/lead-queue-tab"
+import { WorkbenchList } from "@/components/orders/workspace/workbench-list"
+import { ApprovalRequestsList } from "@/components/orders/workspace/approval-requests-list"
+import {
+  WORKSPACE_TAB_LABELS,
+  defaultWorkspaceTab,
+  isWorkspaceTab,
+  visibleWorkspaceTabs,
+  type WorkspaceTab,
+} from "@/components/orders/workspace/role-tabs"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 
-type MobileFilter = "all" | "new" | "arranging" | "delivery" | "completed"
-type ActiveMainTab = "kanban" | "brochure_sales" | "brochure_payment"
+/** Một khối trong tab: tiêu đề ngắn + nội dung (đơn Thẻ chào nhúng nguyên vẹn, đơn nguồn khác dùng màn mới). */
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="space-y-3" aria-label={title}>
+      <h2 className="text-title-sm font-bold text-text">{title}</h2>
+      {children}
+    </section>
+  )
+}
 
+/**
+ * Mục Đơn hàng theo vai (Đơn hàng đa nguồn P4 — KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §6): Khách tiềm năng ·
+ * Sale chăm sóc · Phê duyệt · Điều phối · Tất cả. Thẻ chào được nhúng nguyên vẹn (B3).
+ */
 export default function DonHangPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const session = useSession()
-  const { t, ti, dict } = useI18n()
-  // Tab xác nhận tiền Thẻ chào chỉ dành cho Điều hành (R11 — PO 08/10/2026); máy chủ vẫn kiểm ở mọi endpoint
-  const canConfirmTransfer = session.can("R11")
+  const { can } = session
+  const { t } = useI18n()
   const canExport = session.can("R1")
-  const [activeTab, setActiveTab] = useState<ActiveMainTab>("kanban")
+  const tabs = visibleWorkspaceTabs(can)
+  const requested = searchParams.get("tab")
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>(() =>
+    isWorkspaceTab(requested) && visibleWorkspaceTabs(can).includes(requested) ? requested : defaultWorkspaceTab(can),
+  )
   const [orders, setOrders] = useState<OrderItemCardProps[]>([])
   const [loading, setLoading] = useState(true)
   const [createOpen, setCreateOpen] = useState(false)
   const [chatModalOpen, setChatModalOpen] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-  const [search, setSearch] = useState("")
-  const [mobileTab, setMobileTab] = useState<MobileFilter>("all")
 
   function loadOrders() {
     setLoading(true)
@@ -51,45 +74,6 @@ export default function DonHangPage() {
   useEffect(() => {
     loadOrders()
   }, [])
-
-  const filteredOrders = orders.filter((o) => {
-    if (!search.trim()) return true
-    const q = search.toLowerCase()
-    return (
-      o.code.toLowerCase().includes(q) ||
-      o.deliveryAddress?.recipientName?.toLowerCase().includes(q) ||
-      o.deliveryAddress?.phone?.includes(q) ||
-      o.items?.some((it) => it.description.toLowerCase().includes(q))
-    )
-  })
-
-  // Phân nhóm 4 cột Kanban
-  const colNew = filteredOrders.filter((o) => o.status === "DRAFT" || o.status === "CONFIRMED")
-  const colArranging = filteredOrders.filter(
-    (o) =>
-      o.status === "PROCESSING" &&
-      (o.productionStatus === "WAITING" || o.productionStatus === "ASSIGNED" || o.productionStatus === "ARRANGING")
-  )
-  const colDelivery = filteredOrders.filter(
-    (o) =>
-      (o.productionStatus === "READY" || o.deliveryStatus === "DISPATCHED" || o.deliveryStatus === "DELIVERING") &&
-      o.status !== "COMPLETED" &&
-      o.status !== "CANCELLED"
-  )
-  const colCompleted = filteredOrders.filter(
-    (o) => o.status === "COMPLETED" || o.status === "CANCELLED" || o.deliveryStatus === "DELIVERED"
-  )
-
-  const mobileOrders =
-    mobileTab === "new"
-      ? colNew
-      : mobileTab === "arranging"
-      ? colArranging
-      : mobileTab === "delivery"
-      ? colDelivery
-      : mobileTab === "completed"
-      ? colCompleted
-      : filteredOrders
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">
@@ -144,198 +128,49 @@ export default function DonHangPage() {
         </div>
       </header>
 
-      {/* Tabs Chuyên Biệt cho Sale & Điều Hành */}
-      <div className="flex items-center gap-2 border-b border-border bg-surface px-4 sm:px-6 pt-2 pb-0 overflow-x-auto scrollbar-none [scrollbar-width:none]">
-        <button
-          type="button"
-          onClick={() => setActiveTab("kanban")}
-          className={`shrink-0 flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === "kanban"
-              ? "border-primary text-primary"
-              : "border-transparent text-text-muted hover:text-foreground"
-          }`}
-        >
-          <ShoppingBag size={16} />
-          <span>{t("orders.tabs.allOrders")}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("brochure_sales")}
-          className={`shrink-0 flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
-            activeTab === "brochure_sales"
-              ? "border-primary text-primary"
-              : "border-transparent text-text-muted hover:text-foreground"
-          }`}
-        >
-          <Send size={16} />
-          <span>{ti("sampleProduct") ? `Link đặt ${ti("sampleProduct").toLowerCase()}` : t("orders.tabs.brochureLinks")}</span>
-        </button>
-
-        {canConfirmTransfer && (
+      {/* Tab theo vai — mở mặc định theo việc chính của người đang xem */}
+      <div role="group" aria-label="Khu làm việc" className="flex items-center gap-2 border-b border-border bg-surface px-4 sm:px-6 pt-2 pb-0 overflow-x-auto scrollbar-none [scrollbar-width:none]">
+        {tabs.map((tab) => (
           <button
+            key={tab}
             type="button"
-            onClick={() => setActiveTab("brochure_payment")}
-            className={`shrink-0 flex items-center gap-2 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === "brochure_payment"
-                ? "border-primary text-primary"
-                : "border-transparent text-text-muted hover:text-foreground"
+            aria-pressed={activeTab === tab}
+            onClick={() => setActiveTab(tab)}
+            className={`shrink-0 min-h-11 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === tab ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-foreground"
             }`}
           >
-            <ShieldCheck size={16} />
-            <span>{t("orders.tabs.paymentApproval")}</span>
+            {WORKSPACE_TAB_LABELS[tab]}
           </button>
-        )}
+        ))}
       </div>
 
-      {/* 2. Nội dung chính cuộn dọc */}
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
-        {activeTab === "brochure_sales" && <SalesBrochureTab />}
-        {activeTab === "brochure_payment" && canConfirmTransfer && <AdminBrochurePaymentTab />}
-
-        {activeTab === "kanban" && (
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-8">
+        {activeTab === "leads" && <LeadQueueTab />}
+        {activeTab === "sale" && (
           <>
-            <OrderGuidanceCard />
-
-            {/* Thanh tìm kiếm & bộ lọc */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-              <div className="w-full sm:w-80">
-                <input
-                  type="text"
-                  placeholder={t("orders.filters.searchPlaceholder")}
-                  className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-              <div className="text-caption text-text-muted">
-                <span className="font-bold text-foreground">{filteredOrders.length}</span> {t("common.terms.order").toLowerCase()}
-              </div>
-            </div>
-
-            {/* Bộ lọc trạng thái trên Mobile (< lg) */}
-            <div className="flex lg:hidden overflow-x-auto gap-2 pb-1 text-caption scrollbar-none [scrollbar-width:none]">
-              {[
-                { id: "all" as const, label: t("orders.filters.mobile.all"), count: filteredOrders.length },
-                { id: "new" as const, label: t("orders.filters.mobile.new"), count: colNew.length },
-                { id: "arranging" as const, label: ti("makerAction") ? `Đang ${ti("makerAction").toLowerCase()}` : t("orders.filters.mobile.arranging"), count: colArranging.length },
-                { id: "delivery" as const, label: t("orders.filters.mobile.delivering"), count: colDelivery.length },
-                { id: "completed" as const, label: t("orders.filters.mobile.completed"), count: colCompleted.length },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setMobileTab(tab.id)}
-                  className={`shrink-0 flex min-h-10 items-center gap-1.5 rounded-full px-3.5 py-1 font-semibold whitespace-nowrap transition-colors ${
-                    mobileTab === tab.id
-                      ? "bg-primary text-white"
-                      : "bg-surface border border-border text-text-muted hover:bg-surface-alt"
-                  }`}
-                >
-                  <span>{tab.label}</span>
-                  <span
-                    className={`text-caption rounded-full px-1.5 py-0.2 ${
-                      mobileTab === tab.id ? "bg-white/20 text-white" : "bg-surface-alt text-text"
-                    }`}
-                  >
-                    {tab.count}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {/* Chế độ danh sách đơn trên Mobile (< lg) */}
-            <div className="flex flex-col gap-3 lg:hidden">
-              {mobileOrders.length === 0 ? (
-                <EmptyState
-                  title={dict.orders.empty.title}
-                  reason={dict.orders.empty.reason}
-                  action={{
-                    label: dict.orders.empty.action,
-                    onClick: () => setCreateOpen(true),
-                  }}
-                />
-              ) : (
-                mobileOrders.map((ord) => (
-                  <OrderCard key={ord.id} order={ord} onSelect={() => setSelectedOrderId(ord.id)} />
-                ))
-              )}
-            </div>
-
-            {/* Chế độ Kanban Board 4 cột trên Desktop (lg+) */}
-            <div className="hidden lg:grid lg:grid-cols-4 gap-4">
-              <div className="flex flex-col rounded-2xl bg-surface-alt/50 p-3 ring-1 ring-inset ring-border/60">
-                <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-info" aria-hidden="true" />
-                    <span className="text-body-sm font-bold text-text">{t("orders.columns.newOrders")}</span>
-                  </div>
-                  <Badge tone="neutral" className="text-caption font-bold">
-                    {colNew.length}
-                  </Badge>
-                </div>
-                <div className="space-y-3 flex-1 overflow-y-auto">
-                  {colNew.map((ord) => (
-                    <OrderCard key={ord.id} order={ord} onSelect={() => setSelectedOrderId(ord.id)} />
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col rounded-2xl bg-surface-alt/50 p-3 ring-1 ring-inset ring-border/60">
-                <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden="true" />
-                    <span className="text-body-sm font-bold text-text">
-                      {ti("makerAction") ? `Đang ${ti("makerAction").toLowerCase()}` : t("orders.columns.inProduction")}
-                    </span>
-                  </div>
-                  <Badge tone="neutral" className="text-caption font-bold">
-                    {colArranging.length}
-                  </Badge>
-                </div>
-                <div className="space-y-3 flex-1 overflow-y-auto">
-                  {colArranging.map((ord) => (
-                    <OrderCard key={ord.id} order={ord} onSelect={() => setSelectedOrderId(ord.id)} />
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col rounded-2xl bg-surface-alt/50 p-3 ring-1 ring-inset ring-border/60">
-                <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-warning" aria-hidden="true" />
-                    <span className="text-body-sm font-bold text-text">{t("orders.columns.outForDelivery")}</span>
-                  </div>
-                  <Badge tone="neutral" className="text-caption font-bold">
-                    {colDelivery.length}
-                  </Badge>
-                </div>
-                <div className="space-y-3 flex-1 overflow-y-auto">
-                  {colDelivery.map((ord) => (
-                    <OrderCard key={ord.id} order={ord} onSelect={() => setSelectedOrderId(ord.id)} />
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col rounded-2xl bg-surface-alt/50 p-3 ring-1 ring-inset ring-border/60">
-                <div className="mb-3 flex items-center justify-between border-b border-border pb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-success" aria-hidden="true" />
-                    <span className="text-body-sm font-bold text-text">{t("orders.columns.delivered")}</span>
-                  </div>
-                  <Badge tone="neutral" className="text-caption font-bold">
-                    {colCompleted.length}
-                  </Badge>
-                </div>
-                <div className="space-y-3 flex-1 overflow-y-auto">
-                  {colCompleted.map((ord) => (
-                    <OrderCard key={ord.id} order={ord} onSelect={() => setSelectedOrderId(ord.id)} />
-                  ))}
-                </div>
-              </div>
-            </div>
+            <Section title="Đơn từ nguồn khác"><WorkbenchList mode="sale" /></Section>
+            <Section title="Thẻ chào"><SalesBrochureTab /></Section>
           </>
         )}
+        {activeTab === "approve" && (
+          <>
+            {can("R16") && <Section title="Chờ duyệt giao trước, thu sau"><ApprovalRequestsList /></Section>}
+            {can("R11") && <Section title="Xác nhận tiền — đơn nguồn khác"><WorkbenchList mode="approve" /></Section>}
+            {can("R11") && <Section title="Thẻ chào"><AdminBrochurePaymentTab /></Section>}
+          </>
+        )}
+        {activeTab === "coordinate" && (
+          <>
+            <Section title="Thẻ chào"><CoordinatorBrochureTab /></Section>
+            <Section title="Đơn nguồn khác">
+              <Link href="/dieu-phoi" className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-body-sm font-semibold text-text hover:bg-surface-alt">
+                Mở Tháp điều phối
+              </Link>
+            </Section>
+          </>
+        )}
+        {activeTab === "all" && <AllOrdersTab orders={orders} onSelect={setSelectedOrderId} onCreate={() => setCreateOpen(true)} />}
       </main>
 
       <CreateOrderModal isOpen={createOpen} onClose={() => setCreateOpen(false)} onSuccess={loadOrders} />

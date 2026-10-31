@@ -1,8 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
 import { POST as postPayment } from "@/app/api/v1/orders/[id]/payments/route"
+import { GET as getWorkbench } from "@/app/api/v1/orders/workbench/route"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 import { matchStandardBankTransfers } from "@/modules/orders/use-cases/match-standard-bank-transfers"
 
@@ -50,5 +51,12 @@ describe("cách ly tenant — thu tiền đơn ngoài Thẻ chào, khớp chuy�
     expect(await prisma.greeting_payment_events.findUniqueOrThrow({ where: { id: ea.id } })).toMatchObject({ status: "MATCHED", order_id: order.id })
     expect(await prisma.greeting_payment_events.findUniqueOrThrow({ where: { id: eb.id } })).toMatchObject({ status: "UNMATCHED", order_id: null })
     expect(await prisma.order_payments.count()).toBe(1)
+  })
+
+  it("bàn làm việc: A thấy đơn của mình, B không thấy", async () => {
+    const wa = (await readJson(await getWorkbench(withSession(`${BASE}/orders/workbench`, a.token)))) as { items: { id: string }[] }
+    const wb = (await readJson(await getWorkbench(withSession(`${BASE}/orders/workbench`, b.token)))) as { items: { id: string }[] }
+    expect(wa.items.map((i) => i.id)).toContain(order.id)
+    expect(wb.items).toEqual([])
   })
 })
