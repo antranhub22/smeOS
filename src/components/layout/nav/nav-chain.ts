@@ -10,7 +10,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 01 · ĐIỀU HÀNH
   {
     href: "/",
-    label: "Tổng quan chuỗi",
+    label: "Tổng quan",
     group: "dieu-hanh-chuoi",
     iconKey: "LayoutDashboard",
     navKey: "chain-command",
@@ -18,7 +18,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/don-hang",
-    label: "Đơn hàng chuỗi",
+    label: "Đơn hàng",
     group: "dieu-hanh-chuoi",
     iconKey: "ShoppingBag",
     navKey: "chain-orders",
@@ -47,7 +47,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 02 · CÔNG CỤ
   {
     href: "/cong-cu",
-    label: "Thư viện 51 công cụ (9 nhóm)",
+    label: "Công cụ",
     group: "cong-cu-chuoi",
     iconKey: "LayoutGrid",
     navKey: "chain-toolkit",
@@ -55,7 +55,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/creative-studio",
-    label: "Chế tác tự động A-Z",
+    label: "Chế tác tự động",
     group: "cong-cu-chuoi",
     iconKey: "Sparkles",
     navKey: "chain-auto-campaign",
@@ -64,7 +64,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/catalog",
-    label: "Catalog & Kênh bán",
+    label: "Catalog bán hàng",
     group: "cong-cu-chuoi",
     iconKey: "Globe",
     navKey: "chain-catalog",
@@ -82,7 +82,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/market-intelligence",
-    label: "Xu hướng & Cơ hội thị trường",
+    label: "Xu hướng thị trường",
     group: "cong-cu-chuoi",
     iconKey: "TrendingUp",
     navKey: "chain-market",
@@ -91,7 +91,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/video",
-    label: "Công cụ ảnh & Video",
+    label: "Ảnh & video",
     group: "cong-cu-chuoi",
     iconKey: "Video",
     navKey: "chain-video",
@@ -100,7 +100,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/kho-templates",
-    label: "Kho mẫu & Ấn phẩm",
+    label: "Mẫu ấn phẩm",
     group: "cong-cu-chuoi",
     iconKey: "LayoutTemplate",
     navKey: "chain-templates",
@@ -108,7 +108,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/san-pham",
-    label: "Quản lý bộ sưu tập & Giá",
+    label: "Bộ sưu tập & giá",
     group: "san-pham-kho-chuoi",
     iconKey: "Tag",
     navKey: "chain-collections",
@@ -119,7 +119,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 03 · KINH DOANH & KHÁCH HÀNG
   {
     href: "/khach-hang",
-    label: "Khách hàng & CSKH",
+    label: "Khách hàng",
     group: "kinh-doanh-chuoi",
     iconKey: "Users",
     navKey: "chain-customers",
@@ -137,7 +137,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/dieu-phoi/doi-tac",
-    label: "Chi nhánh & Xưởng",
+    label: "Chi nhánh & xưởng",
     group: "kinh-doanh-chuoi",
     iconKey: "Store",
     navKey: "chain-branches",
@@ -145,7 +145,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/san-pham/kha-dung",
-    label: "Khả dụng & Năng lực",
+    label: "Khả dụng & năng lực",
     group: "san-pham-kho-chuoi",
     iconKey: "CalendarCheck",
     navKey: "chain-availability",
@@ -156,7 +156,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // SẢN PHẨM & KHO CHUỘI (tiếp theo)
   {
     href: "/gia",
-    label: "Chính sách giá & Chiết khấu chuỗi",
+    label: "Giá & chiết khấu",
     group: "san-pham-kho-chuoi",
     iconKey: "WalletCards",
     navKey: "chain-pricing",
@@ -165,7 +165,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/kho-du-lieu",
-    label: "Kho nguyên liệu chuỗi",
+    label: "Kho nguyên liệu",
     group: "san-pham-kho-chuoi",
     iconKey: "Folder",
     navKey: "chain-storage",
@@ -185,7 +185,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/du-lieu",
-    label: "Đối soát & Công nợ",
+    label: "Đối soát & công nợ",
     group: "bao-cao-tai-chinh-chuoi",
     iconKey: "Database",
     navKey: "chain-clearing",
@@ -195,7 +195,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 05 · THIẾT LẬP
   {
     href: "/cai-dat?tab=INFO",
-    label: "Hồ sơ thương hiệu chuỗi",
+    label: "Hồ sơ thương hiệu",
     group: "thiet-lap-chuoi",
     iconKey: "Building2",
     navKey: "chain-brand-profile",
@@ -204,7 +204,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat",
-    label: "Chính sách & Cài đặt chuỗi",
+    label: "Cài đặt chuỗi",
     group: "thiet-lap-chuoi",
     iconKey: "Settings2",
     navKey: "chain-settings",
@@ -222,7 +222,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-uudai",
-    label: "Ma trận ưu đãi & voucher",
+    label: "Ma trận ưu đãi",
     group: "thiet-lap-chuoi",
     iconKey: "Tag",
     navKey: "chain-matrix-promotions",
@@ -231,7 +231,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-camket",
-    label: "Ma trận cam kết chất lượng",
+    label: "Ma trận cam kết",
     group: "thiet-lap-chuoi",
     iconKey: "ShieldCheck",
     navKey: "chain-matrix-commitments",
@@ -240,7 +240,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-chinhsach",
-    label: "Ma trận chính sách chuỗi",
+    label: "Ma trận chính sách",
     group: "thiet-lap-chuoi",
     iconKey: "FileText",
     navKey: "chain-matrix-policies",
@@ -249,7 +249,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-thanhtoan-datco",
-    label: "Ma trận thanh toán & đặt cọc",
+    label: "Ma trận thanh toán",
     group: "thiet-lap-chuoi",
     iconKey: "CreditCard",
     navKey: "chain-matrix-payments",
@@ -258,7 +258,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/cai-dat/ma-tran-phigiacong",
-    label: "Ma trận phí gia công & thợ",
+    label: "Ma trận phí gia công",
     group: "thiet-lap-chuoi",
     iconKey: "Wrench",
     navKey: "chain-matrix-craft-fees",

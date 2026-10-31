@@ -9,7 +9,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   // 1. TỔNG QUAN
   {
     href: "/van-hanh",
-    label: "Tổng quan nền tảng",
+    label: "Tổng quan",
     group: "tong-quan",
     iconKey: "LayoutDashboard",
     navKey: "platform-overview",
@@ -19,7 +19,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   // 2. TỔ CHỨC & DỊCH VỤ
   {
     href: "/van-hanh/to-chuc",
-    label: "Tổ chức & Tenant",
+    label: "Tổ chức",
     group: "to-chuc-dich-vu",
     iconKey: "Building2",
     navKey: "platform-organizations",
@@ -27,7 +27,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/dang-ky",
-    label: "Đăng ký & Phê duyệt",
+    label: "Đăng ký",
     group: "to-chuc-dich-vu",
     iconKey: "UserPlus",
     navKey: "platform-registrations",
@@ -35,7 +35,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/phe-duyet",
-    label: "Gói dịch vụ & Đăng ký",
+    label: "Gói dịch vụ",
     group: "to-chuc-dich-vu",
     iconKey: "CreditCard",
     navKey: "platform-subscriptions",
@@ -43,7 +43,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/nganh",
-    label: "Ngành hàng & Năng lực",
+    label: "Ngành hàng",
     group: "to-chuc-dich-vu",
     iconKey: "Layers",
     navKey: "platform-industry-matrix",
@@ -51,7 +51,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/nganh?tab=tools",
-    label: "Thư viện & Ma trận Công cụ",
+    label: "Ma trận công cụ",
     group: "to-chuc-dich-vu",
     iconKey: "LayoutGrid",
     navKey: "platform-toolkit-matrix",
@@ -61,7 +61,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   // 3. GIÁM SÁT SẢN PHẨM & KHO (toàn nền tảng)
   {
     href: "/van-hanh/san-pham",
-    label: "Catalog & Sản phẩm toàn hệ thống",
+    label: "Catalog toàn hệ thống",
     group: "san-pham-kho-platform",
     iconKey: "Package",
     navKey: "platform-products",
@@ -69,7 +69,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/truong-du-lieu",
-    label: "Schema & Taxonomy toàn cầu",
+    label: "Trường dữ liệu",
     group: "san-pham-kho-platform",
     iconKey: "Layers",
     navKey: "platform-taxonomy",
@@ -80,7 +80,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   // 3. HẠ TẦNG & TÀI NGUYÊN
   {
     href: "/cai-dat-ai",
-    label: "AI Providers & Models",
+    label: "Cấu hình AI",
     group: "ha-tang-tai-nguyen",
     iconKey: "Cpu",
     navKey: "platform-ai-providers",
@@ -88,7 +88,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/muc-dung",
-    label: "Mức dùng & Chi phí",
+    label: "Mức dùng",
     group: "ha-tang-tai-nguyen",
     iconKey: "WalletCards",
     navKey: "platform-usage",
@@ -96,7 +96,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/du-lieu",
-    label: "Dữ liệu & Lưu trữ",
+    label: "Dữ liệu & lưu trữ",
     group: "ha-tang-tai-nguyen",
     iconKey: "Database",
     navKey: "platform-org-data",
@@ -106,7 +106,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   // 4. ĐỘ TIN CẬY & BẢO MẬT
   {
     href: "/van-hanh/suc-khoe",
-    label: "Sức khỏe hệ thống",
+    label: "Sức khỏe",
     group: "do-tin-cay-bao-mat",
     iconKey: "Activity",
     navKey: "platform-health",
@@ -114,7 +114,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/nhat-ky",
-    label: "Bảo mật & Nhật ký kiểm toán",
+    label: "Nhật ký kiểm toán",
     group: "do-tin-cay-bao-mat",
     iconKey: "ShieldCheck",
     navKey: "platform-audit",
@@ -124,7 +124,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   // 5. THIẾT LẬP
   {
     href: "/van-hanh/cau-hinh",
-    label: "Cấu hình nền tảng",
+    label: "Cấu hình",
     group: "thiet-lap-platform",
     iconKey: "SlidersHorizontal",
     navKey: "platform-config",
@@ -142,7 +142,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/ma-tran-uudai",
-    label: "Ma trận ưu đãi & voucher",
+    label: "Ma trận ưu đãi",
     group: "ma-tran-governance",
     iconKey: "Tag",
     navKey: "platform-matrix-promotions",
@@ -150,7 +150,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/ma-tran-camket",
-    label: "Ma trận cam kết chất lượng",
+    label: "Ma trận cam kết",
     group: "ma-tran-governance",
     iconKey: "ShieldCheck",
     navKey: "platform-matrix-commitments",
@@ -158,7 +158,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/ma-tran-chinhsach",
-    label: "Ma trận chính sách & thỏa thuận",
+    label: "Ma trận chính sách",
     group: "ma-tran-governance",
     iconKey: "FileText",
     navKey: "platform-matrix-policies",
@@ -166,7 +166,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/ma-tran-thanhtoan-datco",
-    label: "Ma trận thanh toán & đặt cọc",
+    label: "Ma trận thanh toán",
     group: "ma-tran-governance",
     iconKey: "CreditCard",
     navKey: "platform-matrix-payments",
@@ -174,7 +174,7 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/van-hanh/ma-tran-phigiacong",
-    label: "Ma trận phí gia công & thợ",
+    label: "Ma trận phí gia công",
     group: "ma-tran-governance",
     iconKey: "Wrench",
     navKey: "platform-matrix-craft-fees",
@@ -187,8 +187,8 @@ export const MOTHER_GROUPS_CONFIG = [
   { key: "to-chuc-dich-vu", label: "TỔ CHỨC & DỊCH VỤ" },
   { key: "san-pham-kho-platform", label: "SẢN PHẨM & KHO" },
   { key: "ha-tang-tai-nguyen", label: "HẠ TẦNG & TÀI NGUYÊN" },
-  { key: "do-tin-cay-bao-mat", label: "ĐỘ TIN CẬY & BẢO MẬT" },
-  { key: "ma-tran-governance", label: "MA TRẬN QUẢN TRỊ 4 TẦNG" },
+  { key: "do-tin-cay-bao-mat", label: "Bảo mật" },
+  { key: "ma-tran-governance", label: "Ma trận 4 tầng" },
   { key: "thiet-lap-platform", label: "THIẾT LẬP" },
 ] as const
 

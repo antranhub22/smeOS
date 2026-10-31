@@ -29,7 +29,7 @@ describe("SSOT Đồng bộ Nhóm Công cụ trên các tầng (Toolkit Multi-Ti
       (e) => e.href === "/cong-cu" && (e.navKey === "toolkit" || e.iconKey === "LayoutGrid")
     )
     expect(libraryEntry).toBeDefined()
-    expect(libraryEntry?.label).toContain("Thư viện")
+    expect(libraryEntry?.label).toBe("Công cụ")
   })
 
   it("3. Tầng 3 (ChainOS) có đúng 1 nhóm công cụ chứa mục Thư viện trỏ đến /cong-cu", () => {
@@ -43,7 +43,7 @@ describe("SSOT Đồng bộ Nhóm Công cụ trên các tầng (Toolkit Multi-Ti
       (e) => e.href === "/cong-cu" && (e.navKey === "chain-toolkit" || e.iconKey === "LayoutGrid")
     )
     expect(libraryEntry).toBeDefined()
-    expect(libraryEntry?.label).toContain("Thư viện")
+    expect(libraryEntry?.label).toBe("Công cụ")
   })
 
   it("4. Tầng 2 (SaaS Ngành) có đúng 1 nhóm công cụ chứa mục Thư viện trỏ đến /cong-cu", () => {
@@ -57,6 +57,6 @@ describe("SSOT Đồng bộ Nhóm Công cụ trên các tầng (Toolkit Multi-Ti
       (e) => e.href === "/cong-cu" && (e.navKey === "industry-toolkit" || e.iconKey === "LayoutGrid")
     )
     expect(libraryEntry).toBeDefined()
-    expect(libraryEntry?.label).toContain("Thư viện")
+    expect(libraryEntry?.label).toBe("Công cụ")
   })
 })
