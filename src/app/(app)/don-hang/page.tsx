@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, Plus, RefreshCw, MessageSquarePlus, ShoppingBag, Send, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { InfoTip } from "@/components/ui/info-tip"
 import { OrderGuidanceCard } from "@/components/templates/orders/order-guidance-card"
 import { CreateOrderModal } from "@/components/orders/create-order-modal"
 import { OrderDetailModal } from "@/components/orders/order-detail-modal"
@@ -94,11 +95,12 @@ export default function DonHangPage() {
     <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* 1. Header chuẩn FloraOS */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4">
-        <div>
-          <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
-            {t("orders.header.category")}
-          </div>
+        <div className="flex items-center gap-2">
           <h1 className="text-title font-extrabold text-foreground">{t("orders.header.title")}</h1>
+          {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
+          <InfoTip label={t("orders.header.title")} side="bottom">
+            Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong.
+          </InfoTip>
         </div>
 
         {/* Top-Right Action Header: 1 primary + 2 secondary/ghost */}
