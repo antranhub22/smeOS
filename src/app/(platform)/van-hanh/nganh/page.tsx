@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { InfoTip } from "@/components/ui/info-tip"
 import { ShieldAlert, CheckCircle2 } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 import { MatrixToolbar } from "./_components/matrix-toolbar"
@@ -187,17 +188,17 @@ export default function NganhNavMatrixPage() {
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-text">Ma trận điều hướng ngành</h1>
-            <Badge tone="accent">Platform Admin Only</Badge>
+            <h1 className="text-xl font-bold text-text">Ma trận ngành</h1>
+            <Badge tone="accent">Platform Admin</Badge>
+            <InfoTip label="Ma trận ngành">
+              Thiết lập danh sách menu/tab hiển thị trên sidebar cho từng ngành. Các tổ chức trong ngành sẽ tự động nhận cấu hình này và không thể can thiệp.
+            </InfoTip>
           </div>
-          <p className="text-body-sm text-text-muted">
-            Thiết lập danh sách menu/tab hiển thị trên sidebar cho từng ngành. Các tổ chức trong ngành sẽ tự động nhận cấu hình này và không thể can thiệp.
-          </p>
         </div>
 
         <div className="flex items-center gap-2 text-xs text-text-muted">
           <ShieldAlert className="h-4 w-4 text-primary" />
-          <span>Bảo mật mức nền tảng — Thay đổi có hiệu lực ngay</span>
+          <span>Mức nền tảng — Có hiệu lực ngay</span>
         </div>
       </div>
 

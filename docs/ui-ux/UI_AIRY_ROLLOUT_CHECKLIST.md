@@ -67,11 +67,11 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 ## 3. SaaS ngành — chỉ phần riêng
 | # | Trang | Nhãn menu | Ưu tiên | Trạng thái |
 |---|---|---|---|---|
-| 1 | `/` Tổng quan ngành | Tổng quan ngành | P1 | ✅ thẻ việc · ⬜ khối số liệu |
-| 2 | `/van-hanh/nganh` | Taxonomy & Quy chuẩn | P1 — bỏ "Taxonomy" | 🟡 |
-| 3 | `/van-hanh/truong-du-lieu` | Trường dữ liệu ngành | P2 | 🟡 |
-| 4 | `/van-hanh/du-lieu` | Hoa hồng & Đối soát | P2 | 🟡 |
-| 5 | `/landing-page` | Landing Page & Kênh bán | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 1 | `/` Tổng quan ngành | Tổng quan ngành | P1 | ✅ thẻ việc · ✅ khối số liệu (StatTile) |
+| 2 | `/van-hanh/nganh` | Ma trận ngành | P1 — bỏ "Taxonomy" | ✅ tiêu đề, InfoTip, nhãn chuẩn |
+| 3 | `/van-hanh/truong-du-lieu` | Trường dữ liệu | P2 | ✅ tiêu đề, InfoTip, bỏ jargon |
+| 4 | `/van-hanh/du-lieu` | Dữ liệu nền tảng | P2 | ✅ tiêu đề, InfoTip, xem chi tiết CSV |
+| 5 | `/landing-page` | Landing Page & Kênh bán | P2 | ✅ tiêu đề, InfoTip, bo góc chuẩn |
 | 6 | `/don-hang` (Affiliate), `/dieu-phoi`, `/dieu-phoi/doi-tac`, `/san-pham`, `/gia`, `/so-lieu`, `/kho-templates`, `/cai-dat*`… | (nhãn riêng ngành) | P3 — kiểm nhãn/thuật ngữ ngành | 🔁 |
 
 ## 4. SaaS Mother (Console `/van-hanh`)
