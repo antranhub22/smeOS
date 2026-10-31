@@ -99,7 +99,12 @@ export function IntegrationsHubClient() {
                     <p className="text-sm text-text-muted">{CATEGORY_LABEL[item.category]}</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge tone="success">Đang bật</Badge>
+                    <ManagedStatus log={hub.managedLogs.find((l) => l.connectorKey === item.key)} />
+                    {hub.managedLogs.some((l) => l.connectorKey === item.key) && (
+                      <Button variant="ghost" size="sm" onClick={() => setSelected(hub.managedLogs.find((l) => l.connectorKey === item.key) ?? null)}>
+                        Nhật ký
+                      </Button>
+                    )}
                     <Button variant="outline" size="sm" onClick={() => setManaging(item)}>
                       Quản lý
                     </Button>
@@ -179,6 +184,12 @@ export function IntegrationsHubClient() {
       {confirmDialog}
     </div>
   )
+}
+
+/** Tích hợp sẵn có: "Đang bật" khi chưa có nhật ký; có nhật ký thì hiện trạng thái theo tin gần nhất. */
+function ManagedStatus({ log }: { log: ConnectionView | undefined }) {
+  const status = log ? STATUS_LABEL[log.status] : { text: "Đang bật", tone: "success" as const }
+  return <Badge tone={status.tone}>{status.text}</Badge>
 }
 
 function OverviewTile({ label, value, alert = false }: { label: string; value: number; alert?: boolean }) {

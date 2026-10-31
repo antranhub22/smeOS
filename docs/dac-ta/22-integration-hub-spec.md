@@ -36,6 +36,8 @@
 | `LEGACY` | Phân hệ sẵn có | Thẻ dẫn tới màn hình cũ |
 | `COMING_SOON` | Chưa có cài đặt | Hiện để người dùng biết lộ trình |
 
+**Nhật ký webhook MANAGED** (`use-cases/record-managed-webhook.ts`): route webhook riêng gọi sau khi xử lý mỗi tin; ghi thẳng `DONE`/`DEAD` (không vào hàng chờ, không "Thử lại" — tin lỗi do nhân viên trả lời ở Hội thoại); lỗi chuyển dòng theo dõi sang `DEGRADED` và báo `INTEGRATION_CONNECTION_DEGRADED` một lần; không bao giờ ném lỗi về route. Dòng theo dõi không ngắt/đổi khoá/kiểm tra được từ Hub.
+
 ## 3. Vòng đời kết nối
 
 `DRAFT → CONNECTING → ACTIVE ⇄ DEGRADED`; `ACTIVE/DEGRADED → EXPIRED | ERROR → CONNECTING`; `* → DISCONNECTED`; `* ⇄ DISABLED_BY_UPPER`. Luật ở `domain/connection-lifecycle.ts`. Chuyển sang `EXPIRED`/`ERROR` ở lượt kiểm sức khoẻ gửi `INTEGRATION_CONNECTION_DEGRADED` một lần.
@@ -57,7 +59,7 @@ Mỗi manifest khai vai của 4 tầng: `PROVIDE` (sở hữu app/khoá nền t�
 |---|---|
 | GĐ0 — mã hoá token kênh chat, bỏ "thành công" giả | Xong 30/10/2026 |
 | GĐ1 — nền móng Hub | Xong 30/10/2026 (đầu nối thật đầu tiên đến ở GĐ2) |
-| GĐ2 — chuyển tích hợp hiện có | Phần quản lý xong 31/10/2026 (Facebook, Zalo OA, SePay, ZNS, eSMS, Telegram, token SocialFlow/LocalBudd quản lý tại Hub). Còn GĐ2b: chuyển webhook Facebook/Zalo sang cổng chung, gộp hai bản Telegram adapter, chuyển dữ liệu sang `integration_connections` |
+| GĐ2 — chuyển tích hợp hiện có | Xong 31/10/2026. GĐ2a: quản lý tại Hub. GĐ2b (PO chọn hướng A): webhook Facebook/Zalo **giữ route riêng** (trả lời tức thì, giữ dữ liệu chốt đơn) và ghi nhật ký vào Hub qua dòng theo dõi `config.source = "managed"` (không giữ khoá, không lưu nội dung tin); một client Telegram dùng chung |
 | GĐ3 — governance 4 tầng | Chưa làm |
 | GĐ4 — kênh bán hàng | Chưa làm |
 | GĐ5 — mở rộng | Chưa làm |

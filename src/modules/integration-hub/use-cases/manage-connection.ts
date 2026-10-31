@@ -18,6 +18,7 @@ const AUDIT_ENTITY = "integration_connection"
 async function loadOwned(ctx: TenantContext, id: string, deps: HubDeps): Promise<ConnectionRecord> {
   const record = await deps.connections.get(ctx, id)
   if (!record || record.status === "DISCONNECTED") throw notFound()
+  if (record.managed) throw new AppError("UNPROCESSABLE_ENTITY", "Kết nối này quản lý ở mục Quản lý của dịch vụ")
   return record
 }
 

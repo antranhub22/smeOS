@@ -40,6 +40,32 @@ export function makeFakeDeps(planFeatures: string[] = [], managed: string[] = []
           lastHealthAt: null,
           lastErrorCode: null,
           createdAt: NOW.toISOString(),
+          managed: false,
+        }
+        connections.push(record)
+        return record
+      },
+      ensureManaged: async (input) => {
+        const found = connections.find(
+          (c) => c.organizationId === input.organizationId && c.connectorKey === input.connectorKey && c.externalAccountId === input.externalAccountId
+        )
+        if (found) return found
+        const record: ConnectionRecord = {
+          id: `c${++seq}`,
+          organizationId: input.organizationId,
+          connectorKey: input.connectorKey,
+          externalAccountId: input.externalAccountId,
+          displayName: input.displayName,
+          status: "ACTIVE",
+          config: { source: "managed" },
+          credentialHint: null,
+          credentialEncrypted: null,
+          connectionRef: `ref${seq}`,
+          expiresAt: null,
+          lastHealthAt: null,
+          lastErrorCode: null,
+          createdAt: NOW.toISOString(),
+          managed: true,
         }
         connections.push(record)
         return record
@@ -75,12 +101,14 @@ export function makeFakeDeps(planFeatures: string[] = [], managed: string[] = []
           nextRetryAt: null,
           errorCode: null,
           payload: input.payloadRedacted,
+          ...(input.finalStatus ? { status: input.finalStatus as EventStatus, attempts: 1 } : {}),
           createdAt: NOW.toISOString(),
           ext: input.externalEventId ?? undefined,
         }
         events.push(event)
         return { id: event.id, duplicate: false }
       },
+      connectionIdOf: async (ctx, id) => events.find((e) => e.id === id && e.organizationId === ctx.organizationId)?.connectionId ?? null,
       list: async (ctx, connectionId) => events.filter((e) => e.organizationId === ctx.organizationId && e.connectionId === connectionId),
       countByStatusSince: async (ctx, status) => events.filter((e) => e.organizationId === ctx.organizationId && e.status === status).length,
       listDue: async () => events.filter((e) => e.status === "PENDING" || e.status === "FAILED"),

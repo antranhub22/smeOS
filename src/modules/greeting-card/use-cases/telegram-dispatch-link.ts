@@ -3,7 +3,7 @@ import {
   getRecentTelegramMessages,
   TelegramUpdatesError,
   type TelegramChatMessage,
-} from "@/modules/greeting-card/adapters/staff-channels/telegram-bot-api"
+} from "@/modules/integration-hub/adapters/connectors/telegram/telegram-bot-api"
 import { telegramLinkCode } from "@/modules/greeting-card/infra/telegram-link-code"
 import { listLinkedTelegramChatIds, listUnlinkedTelegramChats, rememberLinkedTelegramChats } from "@/modules/greeting-card/infra/telegram-linked-chats"
 

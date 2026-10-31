@@ -30,6 +30,8 @@ export interface IntegrationHubView {
   readonly connections: ConnectionView[]
   /** Tích hợp chạy bằng phân hệ sẵn có đang bật (quản lý qua panel nhúng). */
   readonly managedConnected: string[]
+  /** Dòng theo dõi webhook của tích hợp MANAGED, theo khoá đầu nối — để xem nhật ký. */
+  readonly managedLogs: ConnectionView[]
 }
 
 export async function getIntegrationHub(ctx: TenantContext, deps: HubDeps = defaultHubDeps()): Promise<IntegrationHubView> {
@@ -64,12 +66,13 @@ export async function getIntegrationHub(ctx: TenantContext, deps: HubDeps = defa
 
   return {
     overview: {
-      active: records.filter((r) => r.status === "ACTIVE").length + visibleManaged.length,
+      active: records.filter((r) => !r.managed && r.status === "ACTIVE").length + visibleManaged.length,
       needsAttention: records.filter((r) => needsAttention(r.status)).length,
       failedEvents24h: failed + dead,
     },
     catalog,
-    connections: records.map(toView),
+    connections: records.filter((r) => !r.managed).map(toView),
+    managedLogs: records.filter((r) => r.managed).map(toView),
     managedConnected: visibleManaged,
   }
 }

@@ -9,6 +9,9 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { ConnectionStatus } from "../domain/connection-lifecycle"
 
+/** `config.source` của kết nối theo dõi tích hợp chạy bằng phân hệ sẵn có (không giữ khoá). */
+export const MANAGED_SOURCE = "managed"
+
 export interface ConnectionView {
   readonly id: string
   readonly connectorKey: string
@@ -22,6 +25,8 @@ export interface ConnectionView {
   readonly lastHealthAt: string | null
   readonly lastErrorCode: string | null
   readonly createdAt: string
+  /** true = dòng theo dõi của tích hợp MANAGED: chỉ xem nhật ký, quản lý qua panel sẵn có. */
+  readonly managed: boolean
 }
 
 /** Bản ghi nội bộ kèm bản mã — chỉ dùng trong use-case. */
@@ -46,6 +51,7 @@ function toRecord(row: integration_connections): ConnectionRecord {
     lastHealthAt: row.last_health_at?.toISOString() ?? null,
     lastErrorCode: row.last_error_code,
     createdAt: row.created_at.toISOString(),
+    managed: (row.config as Record<string, unknown> | null)?.["source"] === MANAGED_SOURCE,
   }
 }
 
@@ -130,6 +136,40 @@ export class ConnectionRepository {
   async findByRef(connectorKey: string, connectionRef: string): Promise<ConnectionRecord | null> {
     const row = await prisma.integration_connections.findUnique({ where: { connection_ref: connectionRef } })
     return row && row.connector_key === connectorKey ? toRecord(row) : null
+  }
+
+  /**
+   * Dòng theo dõi cho tích hợp MANAGED (webhook riêng, xuyên tổ chức — `organizationId` đến từ cấu hình
+   * kênh đã xác thực chữ ký, không từ client). Không lưu khoá. Tạo một lần, các lần sau dùng lại.
+   */
+  async ensureManaged(input: {
+    organizationId: string
+    connectorKey: string
+    externalAccountId: string
+    displayName: string
+  }): Promise<ConnectionRecord> {
+    const row = await prisma.integration_connections.upsert({
+      where: {
+        organization_id_connector_key_external_account_id: {
+          organization_id: input.organizationId,
+          connector_key: input.connectorKey,
+          external_account_id: input.externalAccountId,
+        },
+      },
+      create: {
+        organization_id: input.organizationId,
+        connector_key: input.connectorKey,
+        scope_tier: "MANAGED",
+        external_account_id: input.externalAccountId,
+        display_name: input.displayName,
+        status: "ACTIVE",
+        config: { source: MANAGED_SOURCE },
+        connection_ref: randomBytes(24).toString("base64url"),
+        created_by: "system",
+      },
+      update: {},
+    })
+    return toRecord(row)
   }
 
   /** Lượt xử lý sự kiện (cron, xuyên tổ chức) — id đến từ chính bản ghi sự kiện, không từ client. */

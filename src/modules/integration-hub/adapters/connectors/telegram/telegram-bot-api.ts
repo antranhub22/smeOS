@@ -30,7 +30,11 @@ function networkReason(err: unknown): string {
   return [e?.name ?? "Error", e?.cause?.code].filter(Boolean).join(":")
 }
 
-async function call<T>(botToken: string, method: string, body?: unknown): Promise<{ ok: boolean; result?: T; description?: string }> {
+/**
+ * Client Telegram Bot API dùng chung (Trung tâm Tích hợp — gộp nợ #200, 31/10/2026): timeout, thử lại một lần
+ * khi lỗi mạng với lệnh đọc, log không kèm URL. Lệnh ghi (có body) không thử lại để tránh gửi trùng.
+ */
+export async function callTelegramBotApi<T>(botToken: string, method: string, body?: unknown): Promise<{ ok: boolean; result?: T; description?: string }> {
   const init: RequestInit = body
     ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
     : { method: "GET" }
@@ -51,7 +55,7 @@ async function call<T>(botToken: string, method: string, body?: unknown): Promis
 }
 
 export async function getTelegramBotInfo(botToken: string): Promise<TelegramBotInfo | null> {
-  const data = await call<TelegramBotInfo>(botToken, "getMe")
+  const data = await callTelegramBotApi<TelegramBotInfo>(botToken, "getMe")
   return data.ok && data.result ? data.result : null
 }
 
@@ -80,7 +84,7 @@ function updatesError(code: number | undefined, description: string | undefined)
  * vừa gửi không bao giờ được đọc. Telegram từ chối (webhook / xung đột) → ném lỗi thay vì trả rỗng.
  */
 export async function getRecentTelegramMessages(botToken: string): Promise<TelegramChatMessage[]> {
-  const data = (await call<Array<Record<string, unknown>>>(botToken, "getUpdates?offset=-100&limit=100")) as {
+  const data = (await callTelegramBotApi<Array<Record<string, unknown>>>(botToken, "getUpdates?offset=-100&limit=100")) as {
     ok: boolean
     result?: Array<Record<string, unknown>>
     description?: string
@@ -105,9 +109,15 @@ export async function getRecentTelegramMessages(botToken: string): Promise<Teleg
 export async function sendTelegramText(
   botToken: string,
   chatId: string,
-  text: string
+  text: string,
+  replyMarkup?: unknown
 ): Promise<{ ok: boolean; messageId?: number; error?: string }> {
-  const data = await call<{ message_id: number }>(botToken, "sendMessage", { chat_id: chatId, text, parse_mode: "HTML" })
+  const data = await callTelegramBotApi<{ message_id: number }>(botToken, "sendMessage", {
+    chat_id: chatId,
+    text,
+    parse_mode: "HTML",
+    ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
+  })
   if (!data.ok) return { ok: false, error: data.description || "Lỗi khi gửi tin nhắn Telegram" }
   return { ok: true, ...(data.result ? { messageId: data.result.message_id } : {}) }
 }

@@ -112,7 +112,7 @@ Một migration `prisma migrate dev --name integration_hub_foundation`:
 ## GĐ2 — Chuyển tích hợp hiện có vào Hub
 
 > **Tiến độ 31/10/2026 — GĐ2a xong:** Facebook Messenger, Zalo OA, SePay, Zalo ZNS, eSMS, Telegram và token SocialFlow/LocalBudd quản lý ngay tại `/tich-hop` (loại `MANAGED`: trạng thái thật đọc từ bảng gốc + panel cấu hình sẵn có nhúng vào; panel token là màn mới — trước đây chưa có giao diện). `/hoi-thoai/kenh-tich-hop` chuyển hướng (D7). Gác khoá tính năng production: đầu nối có tuyến gốc đang khoá hiện "Sắp ra mắt". Cron gắn vào `smeos-cron-dispatch-sweep`.
-> **GĐ2b còn lại** (cần phối hợp lúc deploy): WP 2.1 gộp Telegram adapter, 2.3/2.4 chuyển webhook Facebook/Zalo sang cổng chung (đổi callback URL trong Meta App / Zalo OA), 2.5 chuyển khoá SePay, 2.9 bỏ `chat_channel_integrations`. `/ket-noi` và `/noi-bo/ket-noi` giữ trang riêng (đang khoá production, nằm ngoài phạm vi chuyển).
+> **GĐ2b xong 31/10/2026 — PO chọn hướng A (thay WP 2.3/2.4/2.5/2.9):** không chuyển webhook Facebook/Zalo/SePay sang cổng chung — cổng xử lý theo lượt cron và che số điện thoại nên làm chậm trả lời chat và mất dữ liệu chốt đơn; Meta chỉ cho một callback cho cả app. Thay vào đó route riêng ghi nhật ký vào Hub (`record-managed-webhook.ts`), không đổi callback URL, không đổi lược đồ. WP 2.1 xong: một client Telegram dùng chung (nợ #200). `/ket-noi` và `/noi-bo/ket-noi` giữ trang riêng (đang khoá production, nằm ngoài phạm vi chuyển).
 
 Thứ tự từ rủi ro thấp đến cao. Mỗi connector là một WP, đi qua checklist mục 7 của đề xuất.
 

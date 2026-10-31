@@ -7,6 +7,11 @@ import { GET as listEvents } from "@/app/api/v1/integrations/connections/[id]/ev
 import { POST as replay } from "@/app/api/v1/integrations/events/[id]/replay/route"
 import { POST as webhook } from "@/app/api/v1/public/integrations/[connector]/[ref]/route"
 import { signEcho } from "@/modules/integration-hub/adapters/connectors/test-echo-connector"
+import { POST as facebookWebhook } from "@/app/api/v1/chat/webhooks/facebook/route"
+import { sealChannelConfig } from "@/modules/chat-assistant/infra/channel-config-vault"
+import { createHmac } from "node:crypto"
+import type { Prisma } from "@/generated/prisma/client"
+import { NextRequest } from "next/server"
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
@@ -94,6 +99,46 @@ describe("cách ly tenant — Trung tâm Tích hợp (GĐ1)", () => {
     expect(hubA.managedConnected).toContain("sepay")
     expect(hubB.managedConnected).not.toContain("sepay")
     expect(JSON.stringify(hubA)).not.toContain("hash-alpha")
+  })
+
+  it("webhook Facebook ghi nhật ký vào đúng tổ chức của Trang, không lưu nội dung tin", async () => {
+    const appSecret = "fb-app-secret-for-tenant-test"
+    const previous = process.env["FB_APP_SECRET"]
+    process.env["FB_APP_SECRET"] = appSecret
+    try {
+      await prisma.chat_channel_integrations.create({
+        data: {
+          organization_id: a.ctx.organizationId,
+          channel: "FACEBOOK_MESSENGER",
+          is_enabled: true,
+          config: sealChannelConfig({ fbPageId: "page-alpha" }) as Prisma.InputJsonObject,
+        },
+      })
+      const body = JSON.stringify({
+        object: "page",
+        entry: [{ id: "page-alpha", messaging: [{ sender: { id: "khach-1" }, message: { mid: "mid-alpha-1", text: "Shop ơi, gọi 0901234567" } }] }],
+      })
+      const sig = `sha256=${createHmac("sha256", appSecret).update(body).digest("hex")}`
+      const res = await facebookWebhook(
+        new NextRequest("http://localhost/api/v1/chat/webhooks/facebook", { method: "POST", body, headers: { "x-hub-signature-256": sig } })
+      )
+      expect(res.status).toBe(200)
+
+      const logs = await prisma.integration_events.findMany()
+      expect(logs).toHaveLength(1)
+      expect(logs[0]!.organization_id).toBe(a.ctx.organizationId)
+      expect(logs[0]!.external_event_id).toBe("mid-alpha-1")
+      expect(JSON.stringify(logs[0]!.payload_redacted)).not.toContain("0901234567")
+
+      const hubA = (await readJson(await getHub(withSession(BASE, a.token)))) as { managedLogs: unknown[]; connections: unknown[] }
+      const hubB = (await readJson(await getHub(withSession(BASE, b.token)))) as { managedLogs: unknown[] }
+      expect(hubA.managedLogs).toHaveLength(1)
+      expect(hubA.connections).toHaveLength(0)
+      expect(hubB.managedLogs).toHaveLength(0)
+    } finally {
+      if (previous === undefined) delete process.env["FB_APP_SECRET"]
+      else process.env["FB_APP_SECRET"] = previous
+    }
   })
 
   it("chữ ký sai bị từ chối và không ghi gì", async () => {

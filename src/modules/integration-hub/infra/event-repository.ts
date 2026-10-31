@@ -54,6 +54,9 @@ export class EventRepository {
     externalEventId: string | null
     eventType: string
     payloadRedacted: unknown
+    /** Sự kiện đã xử lý ngay tại route riêng (đầu nối MANAGED): ghi thẳng kết quả, không vào hàng chờ. */
+    finalStatus?: "DONE" | "DEAD"
+    errorCode?: string | null
   }): Promise<{ id: string | null; duplicate: boolean }> {
     try {
       const row = await prisma.integration_events.create({
@@ -64,6 +67,7 @@ export class EventRepository {
           event_type: input.eventType,
           external_event_id: input.externalEventId,
           payload_redacted: (input.payloadRedacted ?? {}) as Prisma.InputJsonValue,
+          ...(input.finalStatus ? { status: input.finalStatus, attempts: 1, error_code: input.errorCode ?? null } : {}),
         },
       })
       return { id: row.id, duplicate: false }
@@ -117,6 +121,12 @@ export class EventRepository {
       where: { id },
       data: { status: outcome.status, next_retry_at: outcome.nextRetryAt ?? null, error_code: outcome.errorCode ?? null },
     })
+  }
+
+  /** Kết nối của sự kiện (để biết sự kiện có xử lý lại được không) — của chính tổ chức. */
+  async connectionIdOf(ctx: TenantContext, id: string): Promise<string | null> {
+    const row = await prisma.integration_events.findFirst({ where: scopedWhere(ctx, { id }), select: { connection_id: true } })
+    return row?.connection_id ?? null
   }
 
   /** Người dùng bấm "Thử lại": chỉ sự kiện lỗi/hết lượt, của chính tổ chức. */

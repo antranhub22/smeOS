@@ -76,9 +76,11 @@ export function ConnectionDetailDialog({ connection, connectorLabel, onClose, on
           <Badge tone={status.tone}>{status.text}</Badge>
           <span className="text-sm text-text-muted">Kiểm tra gần nhất: {formatDateTime(connection.lastHealthAt)}</span>
           {connection.credentialHint && <span className="text-sm text-text-muted">Khoá: ••••{connection.credentialHint}</span>}
-          <Button variant="outline" size="sm" disabled={busy} onClick={() => run(() => integrationApi.test(connection.id))}>
-            Kiểm tra ngay
-          </Button>
+          {!connection.managed && (
+            <Button variant="outline" size="sm" disabled={busy} onClick={() => run(() => integrationApi.test(connection.id))}>
+              Kiểm tra ngay
+            </Button>
+          )}
         </div>
         {error && <InlineError message={error} />}
 
@@ -96,7 +98,7 @@ export function ConnectionDetailDialog({ connection, connectorLabel, onClose, on
                   <span className={event.status === "DEAD" ? "font-semibold text-danger-text" : "text-text-muted"}>
                     {EVENT_STATUS_LABEL[event.status] ?? event.status}
                   </span>
-                  {(event.status === "DEAD" || event.status === "FAILED") && (
+                  {!connection.managed && (event.status === "DEAD" || event.status === "FAILED") && (
                     <Button variant="outline" size="xs" disabled={busy} onClick={() => run(() => integrationApi.replay(event.id))}>
                       Thử lại
                     </Button>
@@ -107,6 +109,11 @@ export function ConnectionDetailDialog({ connection, connectorLabel, onClose, on
           )}
         </section>
 
+        {connection.managed ? (
+          <p className="text-sm text-text-muted">
+            Tin lỗi không gửi lại được từ đây — nhân viên trả lời khách trong mục Hội thoại. Đổi cấu hình bằng nút Quản lý của dịch vụ.
+          </p>
+        ) : (
         <Disclosure label="Đổi khoá hoặc ngắt kết nối">
           <div className="space-y-4 pt-2">
             <label className="block space-y-1 text-sm font-semibold text-text">
@@ -128,6 +135,7 @@ export function ConnectionDetailDialog({ connection, connectorLabel, onClose, on
             </div>
           </div>
         </Disclosure>
+        )}
       </div>
     </Dialog>
   )
