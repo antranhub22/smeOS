@@ -53,7 +53,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 25 | `/tri-thuc` | Tri thức & Quy trình | P3 | ✅ bỏ dòng mã IN HOA, tiêu đề 'Cẩm nang tri thức', mô tả → (?) |
 | 26 | `/cong-cu/toi-uu-he-thong` | Trợ lý Tối ưu Tác nghiệp | P3 | ⏸️ **PO: giữ nguyên trạng** (liên kết không có trang, không tạo mới) |
 | 27 | `/cai-dat` (+ `?tab=INFO`) | Cài đặt & Thiết lập tiệm | P2 | ✅ tiêu đề 'Hồ sơ & cài đặt', bỏ nhãn quảng cáo, mô tả → (?); bố cục chưa đổi |
-| 28 | `/cai-dat/ma-tran-*` (5 trang) + `/cai-dat/thong-bao` | Ma trận … | P3 — bảng dày, ưu tiên nhãn ngắn + (?) | 🟡 6 trang đã làm đầu trang (tiêu đề ngắn, mô tả → (?)): `TierGovernanceMatrixClient` và `NotificationMatrixPage` dùng chung, **cũng áp dụng cho trang Ma trận của Mother**. Còn: bảng chi tiết (cần đợt riêng) |
+| 28 | `/cai-dat/ma-tran-*` (5 trang) + `/cai-dat/thong-bao` | Ma trận … | P3 — bảng dày, ưu tiên nhãn ngắn + (?) | ✅ tiêu đề và mô tả (→ (?)) của 6 trang; bảng ma trận bo `rounded-2xl`, bóng `shadow-sm`. **Trang Ma trận của Mother dùng chung component — áp dụng luôn** |
 
 ## 2. ChainOS (chuỗi) — chỉ phần riêng
 | # | Trang | Nhãn menu | Ưu tiên | Trạng thái |

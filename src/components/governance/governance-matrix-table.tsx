@@ -135,7 +135,7 @@ export function GovernanceMatrixTable({
         {filteredGroups.map((group) => (
           <div
             key={group.groupKey}
-            className="rounded-2xl border border-border bg-surface overflow-hidden shadow-xs"
+            className="rounded-2xl border border-border bg-surface overflow-hidden shadow-sm"
           >
             {/* Tiêu đề nhóm */}
             <div className="px-5 py-3.5 bg-surface-alt border-b border-border flex items-center justify-between">
