@@ -1,7 +1,7 @@
 /**
  * Mã nhúng trợ lý ảo lên website ngoài. Dựng từ slug thật của tiệm và địa chỉ
  * công khai của ứng dụng — không còn slug/tên miền mẫu. Trả `null` khi thiếu
- * một trong hai để giao diện ẩn khối mã và hướng người dùng hoàn thiện hồ sơ.
+ * một trong hai (thực tế: chưa cấu hình PUBLIC_APP_URL) để giao diện ẩn khối mã.
  */
 export interface EmbedSnippetInput {
   readonly shopSlug: string | null | undefined

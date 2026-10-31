@@ -226,11 +226,7 @@ export default function ChatChannelsIntegrationPage() {
           ) : (
             !loading && (
               <p className="text-caption text-text-muted">
-                Tiệm chưa có địa chỉ công khai nên chưa tạo được mã nhúng.{" "}
-                <Link href={"/cai-dat" as Route} className="font-semibold text-primary underline">
-                  Hoàn thiện hồ sơ cửa hàng
-                </Link>{" "}
-                để nhận mã.
+                Mã nhúng tạm thời chưa sẵn sàng. Vui lòng liên hệ bộ phận hỗ trợ để được kích hoạt.
               </p>
             )
           )}
