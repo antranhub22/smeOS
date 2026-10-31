@@ -1,5 +1,6 @@
 "use client"
 
+import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -229,12 +230,15 @@ export default function AnalyticsPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-4">
-        <div>
-          <div className="text-xs text-text-muted font-bold tracking-wider uppercase">Báo cáo & Phân tích</div>
-          <div className="text-title font-extrabold text-primary flex items-center gap-2">
-            <BarChart3 size={18} />
-            Analytics & Learning
-          </div>
+        <div className="flex items-center gap-2">
+          <h1 className="text-title font-extrabold text-primary flex items-center gap-2">
+            <BarChart3 size={18} aria-hidden="true" />
+            Báo cáo kinh doanh
+          </h1>
+          {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+          <InfoTip label="Báo cáo kinh doanh" side="bottom">
+            Số liệu bán hàng, mức dùng và hiệu quả quảng cáo của cửa hàng.
+          </InfoTip>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -243,7 +247,7 @@ export default function AnalyticsPage() {
             onClick={() => setAdModalOpen(true)}
             className="flex items-center gap-1.5 text-xs font-semibold text-primary border-primary/30 hover:bg-primary/5"
           >
-            <TrendingUp size={14} /> Hiệu quả Ads (MK-10)
+            <TrendingUp size={14} /> Hiệu quả quảng cáo
           </Button>
           <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5 text-xs">
             <ArrowLeft size={16} strokeWidth={2} /> Trang chủ

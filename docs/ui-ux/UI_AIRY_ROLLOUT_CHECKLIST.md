@@ -31,7 +31,7 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 | 3 | `/san-pham` | Danh mục sản phẩm | P1 | 🟡 đầu trang, lưới thẻ, thẻ `ProductCard`, khoảng giá (ví dụ → (?)) đã làm; **còn chế độ bảng quản trị** |
 | 4 | `/san-pham/tao-moi` | Tạo sản phẩm mới | P1 | ✅ đầu trang + 3 thẻ con (mô tả pháp lý → (?), emoji → icon) |
 | 5 | `/hoi-thoai` | Hội thoại | P1 | 🟡 đầu trang (tên tiếng Việt, (?)) + nhãn thẻ K1 bỏ tiếng Anh; **còn khung hội thoại 3 cột** |
-| 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 thẻ số liệu `StatTile` + chữ K1 bỏ mã quyền/tiếng Anh; **còn đầu trang và phần phân tích** |
+| 6 | `/so-lieu` | Báo cáo kinh doanh | P1 — thẻ số liệu kiểu SePay (dùng `StatTile`) | 🟡 đầu trang (tiêu đề tiếng Việt, bỏ 'Analytics & Learning', mô tả → (?), bỏ mã MK-10); thẻ `StatTile`; K1 đã sửa. **Còn phần phân tích và bảng chi tiết** |
 | 7 | `/the-chao` | Thẻ chào sản phẩm | P1 — tính năng nổi bật | ✅ đầu trang (mô tả → (?)); tab và thanh K2 giữ nguyên |
 | 8 | `/catalog` | Tạo Catalog & Link bán hàng | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
 | 9 | `/noi-dung` | Viết nội dung marketing | P2 | ✅ tiêu đề rút còn 'Nội dung bán hàng' (6 từ → 2), mô tả → (?); bố cục chưa đổi |
@@ -122,3 +122,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Mức dùng (#23), Cẩm nang tri thức (#25), Hồ sơ & cài đặt (#27) — tiêu đề và mô tả đã chỉnh.
 - 31/10: Ma trận (#28): component chung `TierGovernanceMatrixClient` đưa mô tả vào (?); 5 trang rút tiêu đề (bỏ 'Ma Trận', chữ thường). Còn: `thong-bao` và bảng chi tiết.
 - 31/10: Khả dụng (#20) — tiêu đề chữ thường, mô tả → (?).
+- 31/10: Báo cáo kinh doanh (#6) — đầu trang: 'Analytics & Learning' → 'Báo cáo kinh doanh', bỏ mã 'MK-10' trên nút.
