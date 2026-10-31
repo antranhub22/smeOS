@@ -14,6 +14,8 @@ export interface NewLeadRow {
   utm: Utm
   consentAt: Date
   consentVersion: string
+  /** Lý do vào (§3.1): CONTACT | QUOTE_REQUEST | ABANDONED | PAYMENT_TIMEOUT | WALK_IN | CHAT */
+  reason?: string | null | undefined
 }
 
 const LIST_SELECT = {
@@ -45,6 +47,7 @@ export class LeadRepository {
           utm_campaign: row.utm.campaign,
           consent_at: row.consentAt,
           consent_version: row.consentVersion,
+          reason: row.reason ?? null,
         },
         select: { id: true },
       })
@@ -54,6 +57,32 @@ export class LeadRepository {
         update: { granted: true, granted_at: row.consentAt, revoked_at: null },
       })
       return lead
+    })
+  }
+
+  /** Lead do nhân viên nhập (gọi điện, đến quầy). Tổ chức chỉ từ `ctx`. */
+  async createStaff(
+    ctx: TenantContext,
+    row: {
+      customerId: string; name: string; phone: string; message: string | null; reason: string
+      nextFollowUpAt: Date | null; assigneeUserId: string; consentAt: Date; consentVersion: string
+    },
+  ): Promise<{ id: string }> {
+    return prisma.leads.create({
+      data: {
+        organization_id: ctx.organizationId,
+        customer_id: row.customerId,
+        name: row.name,
+        phone: row.phone,
+        message: row.message,
+        source: "MANUAL",
+        reason: row.reason,
+        next_follow_up_at: row.nextFollowUpAt,
+        assignee_user_id: row.assigneeUserId,
+        consent_at: row.consentAt,
+        consent_version: row.consentVersion,
+      },
+      select: { id: true },
     })
   }
 

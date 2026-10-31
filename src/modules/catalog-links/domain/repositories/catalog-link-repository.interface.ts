@@ -43,7 +43,7 @@ export type PublicCatalogRawData =
   | {
       link: CatalogLinkRecord
       revoked: false
-      org: { name: string } | null
+      org: { name: string; settings?: unknown } | null
       bizProfile: {
         legal_name: string | null
         display_name: string | null

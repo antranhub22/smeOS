@@ -90,7 +90,7 @@ export class CatalogLinkRepository implements ICatalogLinkRepository {
     const [org, bizProfile, brandProfile] = await Promise.all([
       this.db.organizations.findUnique({
         where: { id: link.organization_id },
-        select: { name: true },
+        select: { name: true, settings: true },
       }),
       this.db.business_profiles.findUnique({
         where: { organization_id: link.organization_id },

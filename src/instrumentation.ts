@@ -19,6 +19,9 @@ export async function register(): Promise<void> {
   }
   const { startBackgroundSweep } = await import("@/modules/greeting-card/use-cases/background-sweep-scheduler")
   startBackgroundSweep()
+  // Đơn quá hạn thanh toán → lead cứu đơn (Đơn hàng đa nguồn, PO 31/10/2026) — chỉ đọc sự kiện huỷ.
+  const { startLeadRecoverySweep } = await import("@/modules/acquisition/use-cases/lead-recovery-scheduler")
+  startLeadRecoverySweep()
 }
 
 /** Lỗi máy chủ không ai bắt → log có cấu trúc (rà soát 21/10/2026, giai đoạn 3 — quan trắc). */

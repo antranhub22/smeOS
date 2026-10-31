@@ -489,7 +489,8 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | GET · POST | `/short-links` | `J1` | Bước 4 — công cụ 12/13/25 (30/10/2026): link/QR động. `?kind=QR\|SALES_LINK`, cursor + `limit` ≤ 100. POST `{ kind, name, targetPath, placementLabel?, utmSource?, utmMedium?, utmCampaign?, expiresAt? }`; `targetPath` chỉ nhận đường dẫn nội bộ bắt đầu bằng `/` (chặn open redirect) |
 | PATCH | `/short-links/:id` | `J1` | Đổi tên/đích/vị trí/UTM/hạn, `isActive`. Mã đã in giữ nguyên. Link tổ chức khác → 404 |
 | GET | `/short-links/:id/stats` | `J1` | `?days=1..90` (mặc định 30): tổng lượt quét, khách riêng (băm theo ngày), số lead, theo thiết bị, theo ngày (giờ VN) |
-| GET | `/leads` | `Q1` | Bước 4 — công cụ 21: khách để lại thông tin; `?status=NEW\|CONTACTED\|WON\|LOST`, cursor + `limit` ≤ 100; kèm `counts` theo trạng thái |
+| GET | `/leads` | `Q1` | Bước 4 — công cụ 21: khách để lại thông tin; `?status=NEW\|IN_PROGRESS\|WON\|LOST` (`CONTACTED` cũ → `IN_PROGRESS`, 31/10/2026), cursor + `limit` ≤ 100; kèm `counts` theo trạng thái |
+| POST | `/leads` | `Q2` | Đơn hàng đa nguồn §3.1 — Sale tự thêm khách tiềm năng `{ name, phone, message?, reason: WALK_IN\|QUOTE_REQUEST\|CONTACT, nextFollowUpAt? }`; nguồn `MANUAL`, người phụ trách = người nhập; tổ chức từ phiên → 201 `{ lead: { id } }` |
 | PATCH | `/leads/:id` | `Q3` | `{ status?, assigneeUserId? }` — người phụ trách phải là thành viên ACTIVE của tổ chức; lead tổ chức khác → 404; ghi `audit_logs` `lead.update` |
 
 **Chưa có:** `GET /catalog-links/:slug/qr` (ảnh PNG mã QR để in) ở core — `LocalBudd` tự sinh QR phía route của nó (`qrcode`, trỏ về `/c/:slug` của chính nó), core cũng có `src/core/media/qr-engine.ts` sinh QR phía giao diện, không qua endpoint. Xem **RS-7**.
@@ -566,6 +567,9 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/reminders/acknowledge` | `R3` | `{ orderId, milestone, action, snoozeMinutes?, note? }`; đơn của tổ chức khác → 404 |
 | GET · PUT | `/coordinator/settings/reminders` | `D1` (đọc) · `R12` (sửa) | Thời điểm nhắc việc cấp tổ chức (phút, 0–1440) (14/10/2026: sửa đòi `R12`) |
 | GET · PUT | `/coordinator/templates/:id/reminders` | `R1` (đọc) · `R12` (sửa) | Ghi đè thời điểm nhắc theo mẫu hoa; mẫu của tổ chức khác → 404 |
+| GET | `/orders/entry-actions` | `R1` | Đơn hàng đa nguồn §3.2 — nút Đặt hàng / Liên hệ trên trang khách: `{ settings, sources: [{ code, label, effective }] }` |
+| PUT | `/orders/entry-actions` | `F2` | `{ default?: { order?, contact? }, bySource?: { [nguồn]: { order?, contact? } } }` — mỗi nguồn còn ít nhất một nút (422); ghi `audit_logs` `orders.entry_actions_updated` |
+| GET | `/orders/lead-queue` | `Q1` | Đơn hàng đa nguồn §3.4 — hàng đợi "Khách tiềm năng": lead đang mở + phiên Thẻ chào chưa đặt (chỉ đọc), xếp quá hạn gọi lại → nóng → mới; phạm vi sale theo cài đặt "chỉ khách của mình" |
 | GET | `/orders/export` | `R13` (chỉ Điều hành; người khác cần Điều hành cấp quyền — PO 14/10/2026) | `?from_date` `?to_date` `?source=BROCHURE\|MANUAL\|CHAT` → tệp Excel đơn hàng của tổ chức |
 | POST | `/coordinator/orders/:id/exceptions` | `R3` | Đưa đơn về `EXCEPTION`, nhớ bước cũ |
 | POST | `/coordinator/exceptions/:id/resolve` | `R3` | Hết sự cố mở → đơn tự về bước cũ |
