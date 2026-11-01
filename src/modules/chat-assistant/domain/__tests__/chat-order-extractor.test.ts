@@ -99,7 +99,7 @@ describe("Chat Order Extractor & Checkout (DH-03, DH-04)", () => {
       expect(checkout.totalVnd).toBe(750_000)
       expect(checkout.vietqrPayload.bankCode).toBe("ICB")
       expect(checkout.vietqrPayload.amount).toBe(750_000)
-      expect(checkout.vietqrPayload.paymentTransferCode).toContain("FLO FLORAW")
+      expect(checkout.vietqrPayload.paymentTransferCode).toContain("SME FLORAW")
       expect(checkout.vietqrPayload.qrQuickLink).toContain("img.vietqr.io")
     })
   })
