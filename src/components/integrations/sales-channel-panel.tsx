@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { InlineError } from "@/components/ui/inline-error"
 import { EmptyState } from "@/components/ui/empty-state"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import type { ChannelOrderView, ListingView } from "@/modules/integration-hub/infra/sales-channel-repository"
+import type { ChannelOrderView, ListingView } from "@/modules/integration-hub/domain/integration-views"
 import { formatDateTime } from "./integration-labels"
 
 type Product = { id: string; code: string; name: string; price_vnd: number | null }

@@ -10,7 +10,7 @@ import {
   Check,
 } from "@/components/ui/icons"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
-import type { UpsertBrandProfileInput } from "@/modules/profiles/infra/brand-profile-repository"
+import type { UpsertBrandProfileInput } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
 import {
   BrandAssetsUploader,
   type BrandAssetsData,

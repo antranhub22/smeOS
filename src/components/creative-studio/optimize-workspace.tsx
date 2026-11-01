@@ -403,7 +403,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
 
               {Array.isArray((optimizationData?.identity_guard as { ly_do?: string[] } | undefined)?.ly_do) &&
                 ((optimizationData?.identity_guard as { ly_do?: string[] }).ly_do?.length ?? 0) > 0 && (
-                  <div className="rounded-lg bg-white/70 dark:bg-black/20 p-3 border border-danger/20 text-xs">
+                  <div className="rounded-lg bg-surface/70 p-3 border border-danger/20 text-xs">
                     <div className="font-bold text-danger mb-1.5 flex items-center gap-1.5">
                       <AlertTriangle size={14} /> Chi tiết các sai lệch được phát hiện:
                     </div>

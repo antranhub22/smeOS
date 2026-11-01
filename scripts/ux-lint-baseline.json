@@ -1,55 +1,339 @@
 {
   "summary": {
     "app/(app)": {
+      "R17": 64,
+      "R18": 91,
+      "R20": 34,
+      "R21": 259,
+      "R23": 31,
       "R13": 5,
+      "R19": 1,
       "R16": 5,
       "R14": 2
     },
+    "app/(auth)": {
+      "R18": 23,
+      "R21": 13
+    },
     "app/(platform)": {
-      "R13": 2
+      "R21": 123,
+      "R17": 33,
+      "R18": 36,
+      "R20": 10,
+      "R13": 2,
+      "R23": 4,
+      "R19": 2
+    },
+    "app/bg": {
+      "R17": 1,
+      "R20": 1
+    },
+    "app/c": {
+      "R17": 1,
+      "R20": 1,
+      "R21": 2
+    },
+    "app/ch": {
+      "R17": 2,
+      "R20": 2,
+      "R21": 4
+    },
+    "app/chia-se": {
+      "R20": 1,
+      "R21": 3
+    },
+    "app/chinh-sach-bao-mat": {
+      "R20": 1
+    },
+    "app/dang-ky-thanh-cong": {
+      "R20": 1,
+      "R21": 1
+    },
+    "app/global-error.tsx": {
+      "R18": 1,
+      "R20": 1
+    },
+    "app/not-found.tsx": {
+      "R21": 2
+    },
+    "app/subcontract": {
+      "R17": 5,
+      "R20": 1,
+      "R23": 1
+    },
+    "components/acquisition": {
+      "R17": 3,
+      "R18": 6,
+      "R23": 1
+    },
+    "components/ad-banner-poster": {
+      "R17": 9,
+      "R18": 29,
+      "R21": 48,
+      "R23": 3,
+      "R20": 1,
+      "R19": 2
     },
     "components/availability": {
-      "R13": 1
+      "R18": 19,
+      "R19": 2,
+      "R21": 43,
+      "R13": 1,
+      "R23": 1
+    },
+    "components/brand-library": {
+      "R18": 11,
+      "R21": 2
+    },
+    "components/business-card": {
+      "R18": 4,
+      "R23": 1
+    },
+    "components/care-cards": {
+      "R18": 7,
+      "R21": 3
     },
     "components/catalog": {
-      "R14": 3
+      "R18": 101,
+      "R21": 123,
+      "R20": 5,
+      "R17": 2,
+      "R14": 3,
+      "R23": 6,
+      "R19": 4
+    },
+    "components/chain-data": {
+      "R18": 18,
+      "R20": 1,
+      "R21": 3
+    },
+    "components/chat": {
+      "R17": 54,
+      "R18": 28,
+      "R23": 12,
+      "R21": 25,
+      "R19": 1
+    },
+    "components/content": {
+      "R17": 1,
+      "R18": 8,
+      "R21": 5,
+      "R23": 2
+    },
+    "components/coordinator": {
+      "R18": 28,
+      "R19": 2,
+      "R21": 38,
+      "R23": 7,
+      "R17": 2
+    },
+    "components/costing": {
+      "R18": 6
     },
     "components/creative-studio": {
+      "R17": 5,
+      "R18": 106,
+      "R21": 138,
+      "R23": 37,
       "R16": 44,
       "R13": 2,
       "R15": 1
     },
+    "components/crm": {
+      "R17": 25,
+      "R18": 19,
+      "R21": 22,
+      "R23": 3
+    },
     "components/dashboard": {
-      "R16": 5
+      "R16": 5,
+      "R18": 52,
+      "R19": 1,
+      "R17": 17,
+      "R21": 49,
+      "R20": 9,
+      "R23": 1
     },
     "components/flow": {
-      "R14": 2
+      "R14": 2,
+      "R18": 1,
+      "R23": 2
+    },
+    "components/governance": {
+      "R18": 7,
+      "R23": 2,
+      "R20": 2
     },
     "components/greeting-card": {
+      "R17": 689,
+      "R18": 478,
+      "R23": 95,
+      "R19": 27,
       "R15": 7,
       "R13": 9,
-      "R14": 6
+      "R21": 9,
+      "R20": 7,
+      "R14": 6,
+      "R1": 9
+    },
+    "components/integrations": {
+      "R21": 27,
+      "R18": 1
+    },
+    "components/internal-chat": {
+      "R18": 4,
+      "R21": 1,
+      "R23": 1
+    },
+    "components/journey": {
+      "R18": 20,
+      "R23": 2,
+      "R20": 1
+    },
+    "components/knowledge-base": {
+      "R17": 19,
+      "R18": 2,
+      "R21": 19
+    },
+    "components/landing-page": {
+      "R20": 1,
+      "R23": 1,
+      "R18": 1
+    },
+    "components/layout": {
+      "R1": 109,
+      "R18": 42,
+      "R19": 4,
+      "R21": 5,
+      "R20": 1,
+      "R23": 1
     },
     "components/market-intelligence": {
+      "R1": 1275,
+      "R21": 240,
+      "R18": 161,
+      "R19": 8,
+      "R23": 11,
       "R16": 1
     },
+    "components/marketing": {
+      "R17": 7,
+      "R18": 3,
+      "R19": 1
+    },
+    "components/marketing-center": {
+      "R18": 35,
+      "R19": 2,
+      "R20": 2,
+      "R17": 1,
+      "R23": 3,
+      "R21": 2
+    },
+    "components/media": {
+      "R18": 3
+    },
+    "components/notification": {
+      "R18": 8,
+      "R19": 1,
+      "R23": 1,
+      "R20": 1
+    },
+    "components/orders": {
+      "R18": 29,
+      "R23": 4,
+      "R17": 2
+    },
+    "components/organization": {
+      "R17": 5,
+      "R21": 47,
+      "R18": 14,
+      "R19": 2
+    },
+    "components/platform": {
+      "R18": 15,
+      "R1": 15,
+      "R20": 1,
+      "R21": 2,
+      "R23": 2
+    },
+    "components/product-image-set": {
+      "R18": 8,
+      "R21": 1,
+      "R23": 1
+    },
+    "components/product-photo-studio": {
+      "R18": 15,
+      "R21": 1,
+      "R23": 1
+    },
     "components/products": {
+      "R18": 98,
+      "R19": 1,
+      "R23": 17,
+      "R17": 26,
+      "R20": 1,
       "R14": 2
     },
     "components/profiles": {
+      "R18": 126,
+      "R23": 17,
+      "R21": 92,
       "R15": 2,
+      "R17": 45,
       "R13": 2
     },
+    "components/promotions": {
+      "R18": 7,
+      "R20": 3,
+      "R23": 2
+    },
+    "components/result": {
+      "R18": 10
+    },
+    "components/sales": {
+      "R18": 58,
+      "R21": 58,
+      "R17": 2
+    },
+    "components/storage": {
+      "R18": 19,
+      "R21": 32,
+      "R23": 8,
+      "R17": 9,
+      "R19": 1
+    },
+    "components/store-share": {
+      "R17": 1,
+      "R20": 1,
+      "R21": 1
+    },
     "components/templates": {
-      "R16": 16
+      "R21": 338,
+      "R18": 144,
+      "R1": 542,
+      "R23": 13,
+      "R16": 16,
+      "R19": 8
+    },
+    "components/ui": {
+      "R21": 33,
+      "R17": 15,
+      "R23": 3
     },
     "components/upload": {
-      "R14": 1
+      "R14": 1,
+      "R18": 14,
+      "R21": 5,
+      "R23": 1
     },
     "components/video-studio": {
-      "R16": 1
+      "R17": 5,
+      "R18": 10,
+      "R21": 35,
+      "R16": 1,
+      "R23": 2
     }
   },
-  "total": 119,
-  "updatedAt": "2026-11-01T10:07:47.614Z"
+  "total": 7359,
+  "updatedAt": "2026-11-01T14:50:05.094Z"
 }

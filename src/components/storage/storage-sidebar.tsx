@@ -307,7 +307,7 @@ export function StorageSidebar({
                   <div className="flex-1 min-w-0">
                     <div className="text-meta font-bold text-text truncate">{item.title}</div>
                     <div className="text-caption text-text-muted truncate mt-0.5">{item.subtitle}</div>
-                    <div className="mt-1 flex items-center gap-1 text-caption text-warning dark:text-warning font-semibold">
+                    <div className="mt-1 flex items-center gap-1 text-caption text-warning font-semibold">
                       <span>• Chưa phân tích cấu phần</span>
                     </div>
                   </div>
@@ -367,7 +367,7 @@ export function StorageSidebar({
                       </Badge>
                     </div>
                     <div className="text-caption text-text-muted truncate mt-0.5">{item.subtitle}</div>
-                    <div className="mt-0.5 text-caption text-info dark:text-info font-semibold">
+                    <div className="mt-0.5 text-caption text-info font-semibold">
                       Chờ sinh Copy bán hàng &amp; Thẻ chào
                     </div>
                   </div>
@@ -445,7 +445,7 @@ export function StorageSidebar({
                       </span>
                     </div>
                     <div className="text-caption text-text-muted truncate mt-0.5">{item.subtitle}</div>
-                    <div className="mt-0.5 text-caption text-success dark:text-success font-semibold flex items-center gap-1">
+                    <div className="mt-0.5 text-caption text-success font-semibold flex items-center gap-1">
                       <CheckCircle2 size={10} strokeWidth={2.5} /> Sẵn sàng tư vấn khách
                     </div>
                   </div>
@@ -486,7 +486,7 @@ export function StorageSidebar({
       {/* Sidebar Footer Stats */}
       <div className="p-2.5 border-t border-border bg-surface-alt/50 text-caption text-text-muted flex items-center justify-between">
         <span>Tổng cộng: {unifiedItems.length} sản phẩm</span>
-        <span className="text-success dark:text-success font-semibold">
+        <span className="text-success font-semibold">
           {finalizedPitches.length} đã xong Final
         </span>
       </div>

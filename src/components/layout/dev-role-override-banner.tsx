@@ -71,18 +71,18 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
         <div
           role="dialog"
           aria-label="Chọn vai dev"
-          className="flex w-64 flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-50 shadow-xl dark:border-sand-700 dark:bg-sand-950"
+          className="flex w-64 flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-50 shadow-xl"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-sand-200 px-3 py-2 dark:border-sand-800">
-            <span className="flex items-center gap-1.5 text-caption font-bold uppercase tracking-widest text-sand-700 dark:text-sand-300">
+          <div className="flex items-center justify-between border-b border-sand-200 px-3 py-2">
+            <span className="flex items-center gap-1.5 text-caption font-bold uppercase tracking-widest text-sand-700">
               <FlaskConical size={12} aria-hidden />
               Dev Role Override
             </span>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded p-0.5 text-sand-600 hover:bg-sand-100 dark:text-sand-400 dark:hover:bg-sand-900"
+              className="rounded p-0.5 text-sand-600 hover:bg-sand-100"
               aria-label="Đóng"
             >
               <X size={13} />
@@ -90,7 +90,7 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
           </div>
 
           {/* Presets */}
-          <ul className="divide-y divide-sand-100 dark:divide-sand-900">
+          <ul className="divide-y divide-sand-100">
             {DEV_ROLE_PRESETS.map((preset) => {
               const isActive = activeRoleKey === preset.roleKey
               const isLoading = loading === preset.roleKey
@@ -103,8 +103,8 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
                     className={cn(
                       "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors",
                       isActive
-                        ? "bg-sand-200 font-bold text-sand-900 dark:bg-sand-800 dark:text-sand-100"
-                        : "text-sand-800 hover:bg-sand-100 dark:text-sand-200 dark:hover:bg-sand-900",
+                        ? "bg-sand-200 font-bold text-sand-900"
+                        : "text-sand-800 hover:bg-sand-100",
                       isLoading && "opacity-50"
                     )}
                   >
@@ -129,12 +129,12 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
 
           {/* Clear override */}
           {activeRoleKey && (
-            <div className="border-t border-sand-200 p-2 dark:border-sand-800">
+            <div className="border-t border-sand-200 p-2">
               <button
                 type="button"
                 onClick={() => applyOverride(null)}
                 disabled={loading === "clear"}
-                className="w-full rounded-lg px-3 py-1.5 text-center text-caption font-semibold text-sand-700 hover:bg-sand-100 dark:text-sand-300 dark:hover:bg-sand-900"
+                className="w-full rounded-lg px-3 py-1.5 text-center text-caption font-semibold text-sand-700 hover:bg-sand-100"
               >
                 {loading === "clear" ? "Đang xoá…" : "✕ Xoá override — dùng session thật"}
               </button>
@@ -148,8 +148,8 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "flex items-center gap-1.5 rounded-full border border-sand-400 bg-sand-100 px-3 py-1.5 text-caption font-bold text-sand-800 shadow-md transition-all hover:bg-sand-200 dark:border-sand-600 dark:bg-sand-900 dark:text-sand-200 dark:hover:bg-sand-800",
-          open && "bg-sand-200 dark:bg-sand-800"
+          "flex items-center gap-1.5 rounded-full border border-sand-400 bg-sand-100 px-3 py-1.5 text-caption font-bold text-sand-800 shadow-md transition-all hover:bg-sand-200",
+          open && "bg-sand-200"
         )}
         aria-expanded={open}
         aria-haspopup="dialog"

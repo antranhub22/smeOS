@@ -23,6 +23,8 @@
     "audit:industry:json": "tsx scripts/industry-term-audit.ts --json",
     "check:industry": "tsx scripts/check-industry.ts --check",
     "check:layers": "tsx scripts/check-layer-boundaries.ts",
+    "gen:tokens-doc": "tsx scripts/gen-design-tokens-doc.ts",
+    "check:tokens-doc": "tsx scripts/gen-design-tokens-doc.ts --check",
     "new:industry": "tsx scripts/new-industry.ts",
     "setup:hooks": "tsx scripts/setup-hooks.ts",
     "typecheck": "tsc --noEmit",

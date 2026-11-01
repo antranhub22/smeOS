@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { Building2, Phone, Mail, MapPin, Globe, Clock, FileText, Check, Store, Lock, Unlock, Sparkles, Database } from "@/components/ui/icons"
 import type { BusinessProfileDetail } from "@/modules/profiles/use-cases/get-business-profile"
-import type { UpsertBusinessProfileInput } from "@/modules/profiles/infra/business-profile-repository"
+import type { UpsertBusinessProfileInput } from "@/modules/profiles/domain/repositories/business-profile-repository.interface"
 import { useSession } from "@/lib/session"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 import { AiRewriteInput } from "./ai-rewrite-input"

@@ -62,7 +62,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: "SaaS Mother",
         title: "Hệ điều hành Nền tảng Mẹ",
         badgeClass:
-          "bg-orchid-50 text-orchid-700 border-orchid-200/90 dark:bg-orchid-950/40 dark:text-orchid-300 dark:border-orchid-800/50",
+          "bg-orchid-50 text-orchid-700 border-orchid-200/90",
       }
     }
 
@@ -79,7 +79,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: `SaaS Ngành • ${industryShort}`,
         title: `Hệ điều hành Chuẩn hóa & Mạng lưới Ngành`,
         badgeClass:
-          "bg-lagoon-50 text-lagoon-700 border-lagoon-200/90 dark:bg-lagoon-950/40 dark:text-lagoon-300 dark:border-lagoon-800/50",
+          "bg-lagoon-50 text-lagoon-700 border-lagoon-200/90",
       }
     }
 
@@ -95,7 +95,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: `ChainOS • ${industryShort}`,
         title: `Hệ điều hành Mạng lưới Chuỗi`,
         badgeClass:
-          "bg-azure-50 text-azure-700 border-azure-200/90 dark:bg-azure-950/40 dark:text-azure-300 dark:border-azure-800/50",
+          "bg-azure-50 text-azure-700 border-azure-200/90",
       }
     }
 
@@ -104,7 +104,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
       label: `StoreOS • ${industryShort}`,
       title: `Hệ điều hành Cửa hàng Cơ sở`,
       badgeClass:
-        "bg-mint-50 text-mint-700 border-mint-200/90 dark:bg-mint-950/40 dark:text-mint-300 dark:border-mint-800/50",
+        "bg-mint-50 text-mint-700 border-mint-200/90",
     }
   }, [pathname, organizationType, roleKey, organization?.industry])
 
@@ -185,18 +185,18 @@ export function ArchitectureNametag({ isDev = false }: Props) {
           <div
             role="listbox"
             aria-label="Chọn vai dev"
-            className="absolute left-0 top-full z-[9999] mt-2 w-64 overflow-hidden rounded-xl border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-700 dark:bg-sand-950"
+            className="absolute left-0 top-full z-[9999] mt-2 w-64 overflow-hidden rounded-xl border border-sand-300 bg-sand-50 shadow-2xl"
           >
           {/* Header */}
-          <div className="flex items-center gap-1.5 border-b border-sand-200 px-3 py-2 dark:border-sand-800">
-            <FlaskConical size={11} className="text-sand-600 dark:text-sand-400" aria-hidden />
-            <span className="text-caption font-bold uppercase tracking-widest text-sand-700 dark:text-sand-300">
+          <div className="flex items-center gap-1.5 border-b border-sand-200 px-3 py-2">
+            <FlaskConical size={11} className="text-sand-600" aria-hidden />
+            <span className="text-caption font-bold uppercase tracking-widest text-sand-700">
               Dev Role Override
             </span>
           </div>
 
           {/* Presets */}
-          <ul className="divide-y divide-sand-100 dark:divide-sand-900">
+          <ul className="divide-y divide-sand-100">
             {DEV_ROLE_PRESETS.length === 0 ? (
               <li className="px-3 py-2 text-caption text-text-muted">Chưa có vai dev mẫu</li>
             ) : (
@@ -212,8 +212,8 @@ export function ArchitectureNametag({ isDev = false }: Props) {
                       className={cn(
                         "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors",
                         isActive
-                          ? "bg-sand-200 font-bold text-sand-900 dark:bg-sand-800 dark:text-sand-100"
-                          : "text-sand-800 hover:bg-sand-100 dark:text-sand-200 dark:hover:bg-sand-900",
+                          ? "bg-sand-200 font-bold text-sand-900"
+                          : "text-sand-800 hover:bg-sand-100",
                         isLoading && "opacity-50"
                       )}
                     >
@@ -234,12 +234,12 @@ export function ArchitectureNametag({ isDev = false }: Props) {
           </ul>
 
           {/* Clear override */}
-          <div className="border-t border-sand-200 p-2 dark:border-sand-800">
+          <div className="border-t border-sand-200 p-2">
             <button
               type="button"
               onClick={() => applyOverride(null)}
               disabled={loading === "clear"}
-              className="w-full rounded-lg px-3 py-1.5 text-center text-caption text-sand-700 hover:bg-sand-100 dark:text-sand-300 dark:hover:bg-sand-900"
+              className="w-full rounded-lg px-3 py-1.5 text-center text-caption text-sand-700 hover:bg-sand-100"
             >
               {loading === "clear" ? "Đang xoá…" : "↩ Xoá override — dùng session thật"}
             </button>

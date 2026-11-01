@@ -7,20 +7,16 @@ import {
   RotateCcw,
   Sparkles,
   Minimize2,
-  Maximize2,
   Eye,
-  SlidersHorizontal,
 } from "@/components/ui/icons"
 import { useUiSystem } from "@/lib/ui-system/ui-provider"
-import type { UiPresetId, UiDensity, UiLayoutMode } from "@/lib/ui-system/types"
+import type { UiPresetId, UiDensity } from "@/lib/ui-system/types"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { UiStudioPresetList } from "./ui-studio-preset-list"
-import { UiStudioFineTuneSection } from "./ui-studio-fine-tune-section"
 
 export function UiStudioDrawer() {
   const [isOpen, setIsOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<"presets" | "finetune">("presets")
 
   const {
     config,
@@ -28,14 +24,6 @@ export function UiStudioDrawer() {
     availablePresets,
     setPreset,
     setDensity,
-    setLayoutMode,
-    setColorMode,
-    setFontPairing,
-    setSurfaceEffect,
-    setBorderWidth,
-    setMotionSpeed,
-    setShadowStyle,
-    setBackgroundTexture,
     resetToDefault,
   } = useUiSystem()
 
@@ -84,7 +72,7 @@ export function UiStudioDrawer() {
                       smeOS UI Studio
                     </h2>
                     <p className="text-caption text-text-muted mt-0.5">
-                      Chuyển đổi phong cách & tinh chỉnh thông số giao diện
+                      Chuyển đổi phong cách & mật độ giao diện (ADR-011 D-UI-03)
                     </p>
                   </div>
                 </div>
@@ -99,138 +87,56 @@ export function UiStudioDrawer() {
                 </Button>
               </div>
 
-              {/* Navigation Tabs */}
-              <div className="flex border-b border-border bg-surface-muted/30 p-1 mx-4 mt-3 rounded-xl gap-1">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("presets")}
-                  className={`flex-1 py-1.5 text-caption font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                    activeTab === "presets"
-                      ? "bg-surface text-primary shadow-xs font-bold"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  <Palette className="w-3.5 h-3.5" />
-                  <span>Bộ phong cách ({availablePresets.length})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("finetune")}
-                  className={`flex-1 py-1.5 text-caption font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                    activeTab === "finetune"
-                      ? "bg-surface text-primary shadow-xs font-bold"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5" />
-                  <span>Tinh chỉnh thông số</span>
-                </button>
-              </div>
-
               {/* Drawer Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-5 space-y-6">
-                {activeTab === "presets" ? (
-                  <>
-                    <UiStudioPresetList
-                      availablePresets={availablePresets}
-                      selectedPresetId={config.preset}
-                      onSelectPreset={(id: UiPresetId) => setPreset(id)}
-                    />
+                <UiStudioPresetList
+                  availablePresets={availablePresets}
+                  selectedPresetId={config.preset}
+                  onSelectPreset={(id: UiPresetId) => setPreset(id)}
+                />
 
-                    {/* Density Control */}
-                    <div className="space-y-3 pt-2 border-t border-border">
-                      <label className="text-caption font-bold text-text uppercase tracking-wider block">
-                        Mật độ khoảng cách (Density)
-                      </label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[
-                          { id: "compact" as UiDensity, label: "Nhỏ gọn", desc: "Cao độ", icon: Minimize2 },
-                          { id: "comfortable" as UiDensity, label: "Tiêu chuẩn", desc: "Cân bằng", icon: Eye },
-                          { id: "spacious" as UiDensity, label: "Rộng rãi", desc: "Thoáng đãng", icon: Maximize2 },
-                        ].map((item) => {
-                          const isSelected = config.density === item.id
-                          const Icon = item.icon
-                          return (
-                            <button
-                              key={item.id}
-                              type="button"
-                              onClick={() => setDensity(item.id)}
-                              className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
-                                isSelected
-                                  ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
-                                  : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
-                              }`}
-                            >
-                              <Icon className="w-3.5 h-3.5" />
-                              <span className="text-caption font-semibold leading-tight">{item.label}</span>
-                              <span className="text-caption text-text-muted text-caption leading-tight">{item.desc}</span>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Navigation Mode */}
-                    <div className="space-y-3">
-                      <label className="text-caption font-bold text-text uppercase tracking-wider block">
-                        Kiểu điều hướng (Navigation Mode)
-                      </label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {[
-                          { id: "sidebar" as UiLayoutMode, label: "Thanh bên (Sidebar)", desc: "Tiêu chuẩn Desktop" },
-                          { id: "top-nav" as UiLayoutMode, label: "Thanh trên (Top-bar)", desc: "Không gian rộng" },
-                        ].map((item) => {
-                          const isSelected = config.layoutMode === item.id
-                          return (
-                            <button
-                              key={item.id}
-                              type="button"
-                              onClick={() => setLayoutMode(item.id)}
-                              className={`p-2.5 rounded-xl border text-left transition-all ${
-                                isSelected
-                                  ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
-                                  : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
-                              }`}
-                            >
-                              <div className="text-caption font-semibold leading-tight">{item.label}</div>
-                              <div className="text-caption text-text-muted text-caption mt-0.5">{item.desc}</div>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <UiStudioFineTuneSection
-                    fontPairing={config.fontPairing}
-                    surfaceEffect={config.surfaceEffect}
-                    borderWidth={config.borderWidth}
-                    motionSpeed={config.motionSpeed}
-                    shadowStyle={config.shadowStyle}
-                    backgroundTexture={config.backgroundTexture}
-                    colorMode={config.colorMode}
-                    onChangeFont={setFontPairing}
-                    onChangeSurface={setSurfaceEffect}
-                    onChangeBorder={setBorderWidth}
-                    onChangeMotion={setMotionSpeed}
-                    onChangeShadow={setShadowStyle}
-                    onChangeTexture={setBackgroundTexture}
-                    onChangeColorMode={setColorMode}
-                  />
-                )}
+                {/* Density Control (ADR-011 D-UI-03: compact vs comfortable) */}
+                <div className="space-y-3 pt-2 border-t border-border">
+                  <label className="text-caption font-bold text-text uppercase tracking-wider block">
+                    Mật độ khoảng cách (Density)
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: "compact" as UiDensity, label: "Nhỏ gọn (Compact)", desc: "Kho vận & kế toán", icon: Minimize2 },
+                      { id: "comfortable" as UiDensity, label: "Tiêu chuẩn (Comfortable)", desc: "Mặc định hệ thống", icon: Eye },
+                    ].map((item) => {
+                      const isSelected = config.density === item.id
+                      const Icon = item.icon
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => setDensity(item.id)}
+                          className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                            isSelected
+                              ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
+                              : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
+                          }`}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          <span className="text-caption font-semibold leading-tight">{item.label}</span>
+                          <span className="text-caption text-text-muted leading-tight">{item.desc}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
 
                 {/* Live Preview Specs */}
                 <Card className="p-3.5 space-y-2 bg-surface-muted/50" variant="default">
                   <div className="text-caption font-bold text-text uppercase tracking-wider">
                     Thông số hiển thị thực tế
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-caption font-mono text-text-muted text-caption">
+                  <div className="grid grid-cols-2 gap-2 text-caption font-mono text-text-muted">
                     <div>Preset: <span className="text-text font-bold">{config.preset}</span></div>
                     <div>Density: <span className="text-text font-bold">{config.density}</span></div>
-                    <div>Font: <span className="text-text font-bold">{config.fontPairing || "sans-clean"}</span></div>
-                    <div>Shadow: <span className="text-text font-bold">{config.shadowStyle || "soft"}</span></div>
-                    <div>Texture: <span className="text-text font-bold">{config.backgroundTexture || "none"}</span></div>
-                    <div>Material: <span className="text-text font-bold">{config.surfaceEffect || "flat"}</span></div>
+                    <div>Primary: <span className="text-text font-bold">{currentPreset.tokens.primary}</span></div>
+                    <div>Bo góc: <span className="text-text font-bold">{currentPreset.radius.card}</span></div>
                   </div>
                 </Card>
               </div>

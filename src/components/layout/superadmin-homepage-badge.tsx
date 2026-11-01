@@ -18,63 +18,63 @@ import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
 const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
   PLATFORM_JOURNEY_HOME: {
     label: "Platform Home",
-    color: "bg-purple-50 text-purple-700 border-purple-200/90 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/50",
+    color: "bg-purple-50 text-purple-700 border-purple-200/90",
   },
   INDUSTRY_JOURNEY_HOME: {
     label: "Industry Home",
-    color: "bg-indigo-50 text-indigo-700 border-indigo-200/90 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/50",
+    color: "bg-indigo-50 text-indigo-700 border-indigo-200/90",
   },
   TOOLKIT_HOME: {
     label: "🧰 Toolkit Hub",
-    color: "bg-amber-50 text-amber-700 border-amber-200/90 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/50",
+    color: "bg-amber-50 text-amber-700 border-amber-200/90",
   },
   NETWORK_JOURNEY_HOME: {
     label: "Network Home",
-    color: "bg-sky-50 text-sky-700 border-sky-200/90 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/50",
+    color: "bg-sky-50 text-sky-700 border-sky-200/90",
   },
   CONTROL_TOWER: {
     label: "Control Tower",
-    color: "bg-sky-50 text-sky-700 border-sky-200/90 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/50",
+    color: "bg-sky-50 text-sky-700 border-sky-200/90",
   },
   FLOWER_NETWORK_COMMAND_CENTER: {
     label: "Flower Network",
-    color: "bg-pink-50 text-pink-700 border-pink-200/90 dark:bg-pink-950/40 dark:text-pink-300 dark:border-pink-800/50",
+    color: "bg-pink-50 text-pink-700 border-pink-200/90",
   },
   STORE_JOURNEY_HOME: {
     label: "Store Home",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50",
+    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
   },
   STORE_GROWTH_CENTER: {
     label: "Growth Center",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50",
+    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
   },
   STORE_COMMAND_CENTER: {
     label: "Command Center",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50",
+    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
   },
   CONTROL_CENTER: {
     label: "Command Center",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50",
+    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
   },
   SALES_WORKSPACE: {
     label: "Sales Workspace",
-    color: "bg-orange-50 text-orange-700 border-orange-200/90 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/50",
+    color: "bg-orange-50 text-orange-700 border-orange-200/90",
   },
   PRODUCT_WORKSPACE: {
     label: "Product Workspace",
-    color: "bg-indigo-50 text-indigo-700 border-indigo-200/90 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/50",
+    color: "bg-indigo-50 text-indigo-700 border-indigo-200/90",
   },
   CREATIVE_WORKSPACE: {
     label: "Creative Workspace",
-    color: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200/90 dark:bg-fuchsia-950/40 dark:text-fuchsia-300 dark:border-fuchsia-800/50",
+    color: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200/90",
   },
   CRM_WORKSPACE: {
     label: "CRM Workspace",
-    color: "bg-teal-50 text-teal-700 border-teal-200/90 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-800/50",
+    color: "bg-teal-50 text-teal-700 border-teal-200/90",
   },
   CUSTOMER_SERVICE_WORKSPACE: {
     label: "CS Workspace",
-    color: "bg-cyan-50 text-cyan-700 border-cyan-200/90 dark:bg-cyan-950/40 dark:text-cyan-300 dark:border-cyan-800/50",
+    color: "bg-cyan-50 text-cyan-700 border-cyan-200/90",
   },
 }
 

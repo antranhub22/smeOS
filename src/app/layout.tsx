@@ -1,6 +1,14 @@
 import type { Metadata } from "next"
+import { Be_Vietnam_Pro } from "next/font/google"
 import "./globals.css"
 import { publicAppUrl } from "@/lib/public-url"
+
+const beVietnamPro = Be_Vietnam_Pro({
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin", "vietnamese"],
+  display: "swap",
+  variable: "--font-sans",
+})
 
 const appUrl = publicAppUrl()
 
@@ -9,7 +17,7 @@ export const metadata: Metadata = {
   // Next.js rơi về http://localhost:<PORT> ở mọi môi trường ngoài Vercel.
   ...(appUrl ? { metadataBase: new URL(appUrl) } : {}),
   title: "smeOS",
-  description: "Nền tảng cho cửa hàng hoa",
+  description: "Nền tảng quản trị kinh doanh đa ngành cho SME",
 }
 
 import { UiSystemProvider } from "@/lib/ui-system"
@@ -21,15 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Caveat:wght@600;700&display=swap"
-        />
-      </head>
-      <body className="min-h-dvh bg-bg text-text antialiased">
+      <body className={`min-h-dvh bg-bg text-text antialiased ${beVietnamPro.variable}`}>
         <UiSystemProvider>
           {children}
         </UiSystemProvider>

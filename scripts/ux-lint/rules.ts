@@ -18,9 +18,9 @@ export interface Violation {
 
 export type RuleFunction = (sourceFile: ts.SourceFile, context: RuleContext) => Violation[]
 
-// R1 Pattern
+// R1 Pattern (ADR-011 D-UI-01 & F1-10: bắt cả 12 thang màu alias và chuỗi lớp trong object literal/cva)
 const RAW_COLOR_REGEX =
-  /^(?:[a-zA-Z0-9:-]+:)*(?:bg|text|border|from|to|via|ring|fill|stroke|outline|divide|shadow)-(?:red|rose|pink|fuchsia|purple|violet|indigo|blue|sky|cyan|teal|emerald|green|lime|yellow|amber|orange|slate|gray|zinc|neutral|stone)-\d{2,3}(?:\/\d+)?$/
+  /^(?:[a-zA-Z0-9:-]+:)*(?:bg|text|border|from|to|via|ring|fill|stroke|outline|divide|shadow)-(?:red|rose|pink|fuchsia|purple|violet|indigo|blue|sky|cyan|teal|emerald|green|lime|yellow|amber|orange|slate|gray|zinc|neutral|stone|cool|blush|alert|mint|sand|orchid|ocean|azure|navy|petal|aqua|lagoon)-\d{2,3}(?:\/\d+)?$/
 
 // R2 Pattern
 const ARBITRARY_TEXT_SIZE_REGEX = /^(?:[a-zA-Z0-9:-]+:)*text-\[\d+(?:\.\d+)?px\]$/
@@ -68,6 +68,18 @@ function collectClassStrings(sourceFile: ts.SourceFile): { text: string; node: t
         } else if (ts.isJsxExpression(node.initializer) && node.initializer.expression) {
           collectExpressions(node.initializer.expression)
         }
+      }
+    } else if (ts.isCallExpression(node)) {
+      const calleeText = node.expression.getText(sourceFile)
+      if (calleeText === "cn" || calleeText === "clsx" || calleeText === "cva") {
+        for (const arg of node.arguments) {
+          collectExpressions(arg)
+        }
+      }
+    } else if (ts.isPropertyAssignment(node)) {
+      const propName = node.name.getText(sourceFile)
+      if (/class|className|style|badge|color|variant/i.test(propName) && node.initializer) {
+        collectExpressions(node.initializer)
       }
     }
     ts.forEachChild(node, visit)

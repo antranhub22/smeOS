@@ -116,11 +116,11 @@ export function TabActionHeader({
   const getBadgeStyles = (tone: TabItem["badgeTone"] = "neutral") => {
     switch (tone) {
       case "success":
-        return "bg-mint-500/15 text-mint-700 dark:text-mint-400 border-mint-500/30"
+        return "bg-mint-500/15 text-mint-700 border-mint-500/30"
       case "warning":
-        return "bg-sand-500/15 text-sand-700 dark:text-sand-400 border-sand-500/30"
+        return "bg-sand-500/15 text-sand-700 border-sand-500/30"
       case "danger":
-        return "bg-alert-500/15 text-alert-700 dark:text-alert-400 border-alert-500/30"
+        return "bg-alert-500/15 text-alert-700 border-alert-500/30"
       case "accent":
         // PD7 (PO 29/10/2026): chữ accent trên nền kem chỉ 2,25:1 — dùng cặp token `selected` (7,15:1, 03a §0.5).
         return "bg-selected text-selected-text border-primary/30"

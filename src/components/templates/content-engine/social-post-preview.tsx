@@ -100,7 +100,7 @@ function FacebookPreview({
   shopName,
 }: SocialPostPreviewProps) {
   return (
-    <div className="max-w-md mx-auto rounded-xl border border-cool-200 dark:border-cool-800 bg-white dark:bg-cool-900 shadow-md overflow-hidden text-cool-900 dark:text-cool-100 font-sans">
+    <div className="max-w-md mx-auto rounded-xl border border-cool-200 bg-white shadow-md overflow-hidden text-cool-900 font-sans">
       {/* Header */}
       <div className="p-3.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
@@ -125,19 +125,19 @@ function FacebookPreview({
 
       {/* Post Content */}
       <div className="px-3.5 pb-3 text-xs leading-relaxed space-y-2">
-        <div className="font-bold text-sm text-cool-900 dark:text-white">
+        <div className="font-bold text-sm text-cool-900">
           {post.headline}
         </div>
-        <div className="whitespace-pre-line text-cool-800 dark:text-cool-200">
+        <div className="whitespace-pre-line text-cool-800">
           {post.bodyText}
         </div>
         {post.cta && (
-          <div className="font-semibold text-ocean-600 dark:text-ocean-400 italic">
+          <div className="font-semibold text-ocean-600 italic">
             👉 {post.cta}
           </div>
         )}
         {post.hashtags.length > 0 && (
-          <div className="text-ocean-600 dark:text-ocean-400 font-medium flex flex-wrap gap-1">
+          <div className="text-ocean-600 font-medium flex flex-wrap gap-1">
             {post.hashtags.map((h, i) => (
               <span key={i}>{h.startsWith("#") ? h : `#${h}`}</span>
             ))}
@@ -146,7 +146,7 @@ function FacebookPreview({
       </div>
 
       {/* Media Mockup */}
-      <div className="w-full bg-gradient-to-br from-blush-100 via-petal-50 to-sand-50 dark:from-cool-800 dark:to-cool-950 aspect-[4/3] flex flex-col items-center justify-center relative p-6 text-center border-y border-cool-100 dark:border-cool-800">
+      <div className="w-full bg-gradient-to-br from-blush-100 via-petal-50 to-sand-50 aspect-[4/3] flex flex-col items-center justify-center relative p-6 text-center border-y border-cool-100">
         {productImageUrl ? (
           <img
             src={productImageUrl}
@@ -159,8 +159,8 @@ function FacebookPreview({
         ) : (
           <div className="flex flex-col items-center gap-2">
             <span className="text-5xl">💐</span>
-            <div className="font-extrabold text-sm text-blush-950 dark:text-blush-200">{productName}</div>
-            <span className="text-caption font-semibold text-primary bg-white/80 dark:bg-black/50 px-3 py-1 rounded-full backdrop-blur-xs border border-primary-muted/50">
+            <div className="font-extrabold text-sm text-blush-950">{productName}</div>
+            <span className="text-caption font-semibold text-primary bg-white/80 px-3 py-1 rounded-full backdrop-blur-xs border border-primary-muted/50">
               {shopName || "Cửa hàng chính hãng"}
             </span>
           </div>
@@ -168,16 +168,16 @@ function FacebookPreview({
       </div>
 
       {/* Action Buttons */}
-      <div className="px-1 py-1 grid grid-cols-3 text-cool-600 dark:text-cool-400 font-semibold text-xs text-center">
-        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" aria-hidden="true">
+      <div className="px-1 py-1 grid grid-cols-3 text-cool-600 font-semibold text-xs text-center">
+        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 transition" aria-hidden="true">
           <ThumbsUp size={15} />
           <span>Thích</span>
         </span>
-        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" aria-hidden="true">
+        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 transition" aria-hidden="true">
           <MessageCircle size={15} />
           <span>Bình luận</span>
         </span>
-        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 dark:hover:bg-cool-800 transition" aria-hidden="true">
+        <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 transition" aria-hidden="true">
           <Share2 size={15} />
           <span>Chia sẻ</span>
         </span>
@@ -194,12 +194,12 @@ function InstagramPreview({
   shopName,
 }: SocialPostPreviewProps) {
   return (
-    <div className="max-w-md mx-auto rounded-xl border border-cool-200 dark:border-cool-800 bg-white dark:bg-black shadow-md overflow-hidden text-cool-900 dark:text-white font-sans">
+    <div className="max-w-md mx-auto rounded-xl border border-cool-200 bg-white shadow-md overflow-hidden text-cool-900 font-sans">
       {/* Header */}
-      <div className="p-3 flex items-center justify-between border-b border-cool-100 dark:border-cool-800">
+      <div className="p-3 flex items-center justify-between border-b border-cool-100">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full p-[2px] bg-gradient-to-tr from-sand-500 via-blush-500 to-orchid-600">
-            <div className="w-full h-full rounded-full bg-white dark:bg-black flex items-center justify-center text-xs">
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-xs">
               🌸
             </div>
           </div>
@@ -214,7 +214,7 @@ function InstagramPreview({
       </div>
 
       {/* 1:1 Aspect Media */}
-      <div className="w-full aspect-square bg-gradient-to-tr from-orchid-100 via-petal-50 to-blush-100 dark:from-cool-900 dark:to-cool-950 flex flex-col items-center justify-center relative p-6 text-center">
+      <div className="w-full aspect-square bg-gradient-to-tr from-orchid-100 via-petal-50 to-blush-100 flex flex-col items-center justify-center relative p-6 text-center">
         {productImageUrl ? (
           <img
             src={productImageUrl}
@@ -227,7 +227,7 @@ function InstagramPreview({
         ) : (
           <div className="flex flex-col items-center gap-2">
             <span className="text-6xl">🌷</span>
-            <div className="font-extrabold text-sm text-cool-900 dark:text-white">{productName}</div>
+            <div className="font-extrabold text-sm text-cool-900">{productName}</div>
             <div className="text-caption text-text-muted">Instagram Aesthetic Grid</div>
           </div>
         )}
@@ -250,11 +250,11 @@ function InstagramPreview({
         <div className="text-xs leading-relaxed space-y-1">
           <span className="font-bold mr-1.5">cuahang.smeos</span>
           <span className="font-semibold">{post.headline}</span>
-          <div className="text-cool-800 dark:text-cool-300 whitespace-pre-line mt-1">
+          <div className="text-cool-800 whitespace-pre-line mt-1">
             {post.bodyText}
           </div>
           {post.cta && (
-            <div className="text-cool-600 dark:text-cool-400 italic pt-1">
+            <div className="text-cool-600 italic pt-1">
               ✨ {post.cta}
             </div>
           )}
@@ -402,7 +402,7 @@ function ZaloOAPreview({
   shopName,
 }: SocialPostPreviewProps) {
   return (
-    <div className="max-w-md mx-auto rounded-xl border border-cool-200 dark:border-cool-800 bg-[var(--color-zalo-bg)] dark:bg-cool-950 shadow-md overflow-hidden font-sans">
+    <div className="max-w-md mx-auto rounded-xl border border-cool-200 bg-[var(--color-zalo-bg)] shadow-md overflow-hidden font-sans">
       {/* Zalo Top Bar */}
       <div className="bg-[var(--color-zalo)] text-white p-3 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-2.5">
@@ -427,23 +427,23 @@ function ZaloOAPreview({
       {/* Message Area */}
       <div className="p-3.5 space-y-3">
         <div className="text-center">
-          <span className="text-caption text-text-muted bg-surface-alt/80 dark:bg-cool-800 px-2.5 py-0.5 rounded-full">
+          <span className="text-caption text-text-muted bg-surface-alt/80 px-2.5 py-0.5 rounded-full">
             Hôm nay 09:30
           </span>
         </div>
 
         {/* Message Bubble */}
-        <div className="bg-white dark:bg-cool-900 rounded-2xl rounded-tl-xs p-3.5 shadow-xs border border-cool-200/60 dark:border-cool-800 space-y-2 text-cool-900 dark:text-cool-100">
-          <div className="text-sm font-extrabold text-[var(--color-zalo)] dark:text-ocean-400">
+        <div className="bg-white rounded-2xl rounded-tl-xs p-3.5 shadow-xs border border-cool-200/60 space-y-2 text-cool-900">
+          <div className="text-sm font-extrabold text-[var(--color-zalo)]">
             {post.headline}
           </div>
 
-          <div className="text-xs text-cool-700 dark:text-cool-300 leading-relaxed whitespace-pre-line">
+          <div className="text-xs text-cool-700 leading-relaxed whitespace-pre-line">
             {post.bodyText}
           </div>
 
           {/* Media in Chat */}
-          <div className="rounded-xl overflow-hidden bg-gradient-to-tr from-ocean-50 to-petal-50 dark:from-cool-800 dark:to-cool-900 aspect-[16/9] flex items-center justify-center border border-cool-200/40 dark:border-cool-800 text-center p-3">
+          <div className="rounded-xl overflow-hidden bg-gradient-to-tr from-ocean-50 to-petal-50 aspect-[16/9] flex items-center justify-center border border-cool-200/40 text-center p-3">
             {productImageUrl ? (
               <img
                 src={productImageUrl}
@@ -456,24 +456,24 @@ function ZaloOAPreview({
             ) : (
               <div className="flex flex-col items-center gap-1">
                 <span className="text-3xl">💐</span>
-                <span className="text-xs font-bold text-cool-800 dark:text-cool-200">{productName}</span>
+                <span className="text-xs font-bold text-cool-800">{productName}</span>
                 <span className="text-caption text-text-muted">Mẫu sản phẩm mới nhất</span>
               </div>
             )}
           </div>
 
           {post.cta && (
-            <div className="text-xs font-bold text-warning bg-warning-bg dark:bg-sand-950/40 p-2.5 rounded-lg border border-warning-border/60">
+            <div className="text-xs font-bold text-warning bg-warning-bg p-2.5 rounded-lg border border-warning-border/60">
               💬 {post.cta}
             </div>
           )}
 
           {/* Interactive OA Quick Action Buttons */}
-          <div className="pt-2 border-t border-cool-100 dark:border-cool-800 grid grid-cols-2 gap-2">
+          <div className="pt-2 border-t border-cool-100 grid grid-cols-2 gap-2">
             <span className="py-2 px-3 rounded-lg bg-[var(--color-zalo)] text-white text-xs font-bold hover:bg-ocean-700 transition flex items-center justify-center gap-1" aria-hidden="true">
               <span>Nhắn tin tư vấn</span>
             </span>
-            <span className="py-2 px-3 rounded-lg bg-cool-100 dark:bg-cool-800 text-cool-800 dark:text-cool-200 text-xs font-bold hover:bg-cool-200 transition flex items-center justify-center gap-1" aria-hidden="true">
+            <span className="py-2 px-3 rounded-lg bg-cool-100 text-cool-800 text-xs font-bold hover:bg-cool-200 transition flex items-center justify-center gap-1" aria-hidden="true">
               <span>Xem album mẫu</span>
             </span>
           </div>

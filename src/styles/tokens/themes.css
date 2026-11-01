@@ -1,0 +1,74 @@
+/* ── Theme Presets (ADR-011 D-UI-03: Giữ 3 preset chuẩn; bỏ 5 preset thử nghiệm khỏi runtime) ── */
+
+/* Preset 1: Mộc Lan (chuẩn mặc định cho StoreOS hoa tươi) */
+[data-theme="moc-lan"] {
+  --color-primary: #7A2E42;
+  --color-primary-dark: #57202F;
+  --color-primary-muted: #F5E6EA;
+  --color-primary-border: #E0B4C0;
+  --color-secondary: #9CAF88;
+  --color-secondary-text: #52643F;
+  --color-accent: #C89B3C;
+  --color-accent-bg: #FBF5E9;
+  --color-accent-text: #6B4F1A;
+  --color-bg: #FBF6F2;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F5ECE4;
+  --color-border: #E7DCD0;
+  --color-text: #2A1E22;
+  --color-text-muted: #746364;
+  --color-selected: #F5ECE4;
+  --color-selected-text: #7A2E42;
+  --radius-card: 1rem;
+  --radius-button: 0.75rem;
+  --radius-dialog: 1rem;
+}
+
+/* Preset 2: Modern Slate (chuẩn cho SaaS Mother, SaaS Ngành, ChainOS) */
+[data-theme="modern-slate"] {
+  --color-primary: #2563EB;
+  --color-primary-dark: #1D4ED8;
+  --color-primary-muted: #EFF6FF;
+  --color-primary-border: #BFDBFE;
+  --color-secondary: #475569;
+  --color-secondary-text: #334155;
+  --color-accent: #EA580C;
+  --color-accent-bg: #FFF7ED;
+  --color-accent-text: #9A3412;
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F1F5F9;
+  --color-border: #E2E8F0;
+  --color-text: #0F172A;
+  --color-text-muted: #64748B;
+  --color-selected: #EFF6FF;
+  --color-selected-text: #2563EB;
+  --radius-card: 0.75rem;
+  --radius-button: 0.5rem;
+  --radius-dialog: 0.75rem;
+}
+
+/* Preset 3: Pure Swiss (chuẩn tối giản tinh tế) */
+[data-theme="pure-swiss"] {
+  --color-primary: #18181B;
+  --color-primary-dark: #09090B;
+  --color-primary-muted: #F4F4F5;
+  --color-primary-border: #E4E4E7;
+  --color-secondary: #71717A;
+  --color-secondary-text: #52525B;
+  --color-accent: #059669;
+  --color-accent-bg: #ECFDF5;
+  --color-accent-text: #047857;
+  --color-bg: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F4F4F5;
+  --color-border: #E4E4E7;
+  --color-text: #09090B;
+  --color-text-muted: #71717A;
+  --color-selected: #F4F4F5;
+  --color-selected-text: #18181B;
+  --radius-card: 0.25rem;
+  --radius-button: 0.25rem;
+  --radius-dialog: 0.375rem;
+}
+

@@ -22,6 +22,7 @@ import { LiveRegionProvider } from "@/components/ui/live-region"
 import { I18nProvider } from "@/lib/i18n"
 import { ToolLockGuard } from "@/components/layout/tool-lock-guard"
 import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
+import { resolveUiTheme } from "@/lib/ui-system/resolve-ui-theme"
 
 import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
 
@@ -42,6 +43,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect(lyDo === SESSION_SUPERSEDED ? "/dang-nhap?ly-do=thiet-bi-khac" : "/dang-nhap")
   }
 
+  const uiTheme = resolveUiTheme(session)
+
   return (
     <SessionProvider session={session}>
       <I18nProvider industryKey={session.organization?.industry}>
@@ -52,7 +55,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             >
               Bỏ qua tới nội dung
             </a>
-            <div className="mx-auto flex min-h-dvh w-full flex-col md:flex-row">
+            <div
+              data-theme={uiTheme.preset}
+              data-density={uiTheme.density}
+              style={uiTheme.brandStyle}
+              className="mx-auto flex min-h-dvh w-full flex-col md:flex-row"
+            >
               <MobileNavDrawer>
                 <DesktopNav isDev={process.env.NODE_ENV !== "production"} />
                 <div

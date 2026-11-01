@@ -5,24 +5,9 @@
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
+import type { ListingStatus, ListingView, ChannelOrderView } from "../domain/integration-views"
 
-export type ListingStatus = "PENDING" | "SYNCED" | "REJECTED" | "REMOVED"
-
-export interface ListingView {
-  readonly productId: string
-  readonly externalId: string | null
-  readonly status: ListingStatus
-  readonly lastError: string | null
-  readonly lastSyncedAt: string | null
-}
-
-export interface ChannelOrderView {
-  readonly externalOrderId: string
-  readonly orderId: string | null
-  readonly status: "IMPORTED" | "FAILED"
-  readonly errorCode: string | null
-  readonly createdAt: string
-}
+export type { ListingStatus, ListingView, ChannelOrderView }
 
 export class SalesChannelRepository {
   async listListings(ctx: TenantContext, connectionId: string, productIds?: readonly string[]): Promise<ListingView[]> {
