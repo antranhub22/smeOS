@@ -62,7 +62,7 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 
 ### ARC-002 — Thông tin đăng nhập đã lộ chưa xoay (P0)
 - **Bằng chứng:** `docs/kien-truc/HO_SO_BAN_GIAO.md` §6 "Việc làm tay còn lại": ô "Đổi mật khẩu… mật khẩu seed nằm trong lịch sử repo công khai" và "Xoay mật khẩu CSDL… đã lộ qua ảnh chụp màn hình" chưa tích. Repo được mô tả công khai (`ci.yml` job `security`).
-- **Trạng thái:** NV — không truy cập được production.
+- **Trạng thái:** NV — không truy cập được production. **Cập nhật 01/11/2026: PO xác nhận đã đổi mật khẩu (D-21) → đóng theo xác nhận của PO.**
 - **Khuyến nghị:** Xoay ngay, xác nhận bằng văn bản; kiểm `platform_audit_logs`/`audit_logs` tìm đăng nhập lạ; bật GitHub secret scanning + push protection.
 
 ### ARC-003 — Cửa hậu console nền tảng ngoài production (P1)

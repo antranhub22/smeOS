@@ -40,6 +40,13 @@ ARC-001 … ARC-039 trừ các mục ở 3.2. Toàn bộ danh sách ở `08`.
 | (ARC-011) | P1 | Dữ liệu cá nhân khách cuối nằm ở nhiều repo → đồng ý/xoá phải xuyên repo | tất cả |
 | (ARC-028) | P1 | Gói bàn giao chưa nói rõ khách nhận repo nào | tất cả |
 
+## 3b. Cập nhật sau quyết định D-36 (01/11/2026)
+
+PO chọn phạm vi chỉ `smeOS` và yêu cầu kiểm có bỏ được LocalBudd, SocialFlow không. Đã đọc mã `localbudd` (commit `9b55cb9`) và rà mọi tham chiếu trong `smeOS`. Kết luận (chi tiết ở `15_PO_DECISION_REGISTER.md` §3):
+- **LocalBudd: bỏ được** — app độc lập, không gọi `smeOS`; `smeOS` đã có landing/catalog/QR/content engine riêng; phần còn sót trong `smeOS` chỉ là mã chờ LocalBudd làm client.
+- **SocialFlow: chưa bỏ được** — đăng bài tự động, lịch đăng, kết nối tài khoản MXH vẫn gọi SocialFlow qua proxy; trên production đang lỗi vì thiếu `SOCIALFLOW_URL`. Cần quyết định D-46.
+- `floraos-core`: PO quyết archive (D-37).
+
 ## 4. Việc cần để hoàn tất audit hệ sinh thái
 
 1. PO xác nhận danh sách repo thuộc nền tảng và vị trí `SocialFlow`.
