@@ -8,6 +8,16 @@
 
 ## 1. Đang ở đâu
 
+**01/11 — Nâng cấp Trung tâm Tiếp thị & Bán hàng (Marketing & Sales Center): Hoàn thành PR-0 và PR-1.**
+- **PR-0 (Nền móng & Màn hình /cong-cu)**: Đóng băng Catalog & Thẻ chào; mô hình AssetType (92 asset, 24 READY); phân chia 67 công cụ thành 6 module nghiệp vụ + 5 nhóm vận hành; cấu trúc lại `/cong-cu` theo triết lý Mục tiêu kinh doanh (Purpose-First); Screen Contract `cong-cu.md`.
+- **PR-1 (Mọi đầu ra vào thư viện)**:
+  - Ánh xạ mục Kho dữ liệu sang AssetType (`library-asset-mapping.ts`);
+  - Use-case & API `POST /api/v1/ad-banner-poster/save` (quyền `G2`) lưu ảnh dựng vào Kho dữ liệu (`kind=MARKETING`, `approval_state=PENDING`, `metadata.asset_type_code`);
+  - Thêm nút "Lưu vào kho" và tách hook `usePosterActions` (đảm bảo SRP ≤ 350 dòng);
+  - Kho dữ liệu v2 hiển thị chip loại tư liệu trên mỗi thẻ và bổ sung bộ lọc theo 6 module nghiệp vụ;
+  - Cập nhật Screen Contract `cong-cu-poster-banner.md` và `kho-du-lieu.md`.
+
+
 **30/09 (Trưa) — Nâng cấp Kiến trúc Journey-First UX Architecture: Hoàn tất 100% Đạt Chuẩn Production Ready.**
 - **Lập & Phê duyệt Kế hoạch Thực thi**: PO phê duyệt `PLAN-2026-JOURNEY-UX-01` (`docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md`), đăng ký mã tài liệu `DOC-05-KE-HOACH-JOURNEY-FIRST-UX` vào `docs/00-DOCUMENTATION-REGISTRY.yaml`.
 - **Lõi Domain Journey Engine thuần**:

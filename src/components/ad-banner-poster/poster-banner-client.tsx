@@ -1,17 +1,15 @@
 "use client"
 
 import React, { useState, useRef, useCallback, useMemo } from "react"
-import { Download, RefreshCw, Share2, LayoutGrid } from "@/components/ui/icons"
+import { Download, FolderUp, RefreshCw, Share2, LayoutGrid } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
-import { POSTER_EXPORT_WIDTH } from "./scaled-frame"
 import { TabActionHeader, type TabItem, type TabAction, type TabOverflowAction } from "@/components/ui/tab-header"
 import {
   type BannerAspectRatio,
   type BannerCopyPayload,
   type BannerBrandInfo,
   type BannerStylePresetId,
-  BANNER_FORMATS,
 } from "@/modules/ad-banner-poster/domain/banner-types"
 import { getBannerPreset } from "@/modules/ad-banner-poster/domain/banner-presets"
 import {
@@ -27,7 +25,7 @@ import { PresetStyleSelector } from "./preset-style-selector"
 import { MultiSizeGrid } from "./multi-size-grid"
 import { SinglePreviewModal } from "./single-preview-modal"
 import { TemplateGalleryModal } from "./template-gallery-modal"
-import { useI18n } from "@/lib/i18n"
+import { usePosterActions } from "./use-poster-actions"
 import type { GenerationEngine } from "./auto-generate-panel"
 
 const FORMAT_TABS: TabItem[] = [
@@ -41,7 +39,6 @@ const FORMAT_TABS: TabItem[] = [
 
 export function PosterBannerClient() {
   const { orgName } = useSession()
-  const { t, dict } = useI18n()
 
   // ── State ──────────────────────────────────────────────────────────
   const [industryKey] = useState("FLORAL")
@@ -76,8 +73,6 @@ export function PosterBannerClient() {
   const [productImageUrl, setProductImageUrl] = useState<string | undefined>(undefined)
 
   const [isGenerating, setIsGenerating] = useState(false)
-  const [exportingFormat, setExportingFormat] = useState<string | null>(null)
-  const [isExportingAll, setIsExportingAll] = useState(false)
   const [statusMessage, setStatusMessage] = useState<string | null>(null)
 
   const cardRefs = useRef<Map<BannerAspectRatio, HTMLDivElement>>(new Map())
@@ -85,6 +80,23 @@ export function PosterBannerClient() {
     if (el) cardRefs.current.set(format, el)
     else cardRefs.current.delete(format)
   }, [])
+
+  const {
+    exportingFormat,
+    isExportingAll,
+    isSavingToLibrary,
+    handleDownloadFormat,
+    handleDownloadAll,
+    handleSaveToLibrary,
+  } = usePosterActions({
+    cardRefs,
+    copy,
+    occasionKey,
+    occasionLabel,
+    selectedPresetId,
+    activeFormatTab,
+    setStatusMessage,
+  })
 
   // ── Handlers ───────────────────────────────────────────────────────
   const handleCopyChange = (field: keyof BannerCopyPayload, value: string) => {
@@ -167,60 +179,15 @@ export function PosterBannerClient() {
     }
   }
 
-  /** Xuất PNG đúng bề rộng ghi trên nhãn (1080/1920 px…) thay vì 2× khung xem trước. */
-  const downloadElementAsImage = async (element: HTMLElement, filename: string, format: string) => {
-    const { toPng } = await import("html-to-image")
-    const pixelRatio = (POSTER_EXPORT_WIDTH[format] ?? 1080) / Math.max(1, element.offsetWidth)
-    const dataUrl = await toPng(element, { pixelRatio, cacheBust: true, skipFonts: true, fontEmbedCSS: "" })
-
-    const link = document.createElement("a")
-    link.download = filename
-    link.href = dataUrl
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
-  const handleDownloadFormat = async (
-    format: BannerAspectRatio,
-    customElement?: HTMLElement | null
-  ) => {
-    const targetEl = customElement || cardRefs.current.get(format)
-    if (!targetEl) return
-
-    setExportingFormat(format)
-    try {
-      const filename = `banner-${format.replace(":", "x")}-${Date.now()}.png`
-      await downloadElementAsImage(targetEl, filename, format)
-      setStatusMessage(`Đã xuất ảnh ${format} thành công!`)
-    } catch {
-      setStatusMessage(`Không thể xuất ảnh định dạng ${format}.`)
-    } finally {
-      setExportingFormat(null)
-    }
-  }
-
-  const handleDownloadAll = async () => {
-    setIsExportingAll(true)
-    setStatusMessage("Đang xuất trọn bộ 5 kích thước...")
-    try {
-      for (const spec of BANNER_FORMATS) {
-        const targetEl = cardRefs.current.get(spec.id)
-        if (targetEl) {
-          const filename = `banner-${spec.id.replace(":", "x")}.png`
-          await downloadElementAsImage(targetEl, filename, spec.id)
-          await new Promise((r) => setTimeout(r, 300))
-        }
-      }
-      setStatusMessage("Đã tải trọn bộ 5 kích thước quảng cáo thành công!")
-    } catch {
-      setStatusMessage("Có lỗi khi tải hàng loạt. Hãy thử tải từng kích thước.")
-    } finally {
-      setIsExportingAll(false)
-    }
-  }
-
   const primaryActions: TabAction[] = [
+    {
+      id: "save-to-library",
+      label: isSavingToLibrary ? "Đang lưu..." : "Lưu vào kho",
+      icon: FolderUp,
+      variant: "secondary",
+      onClick: handleSaveToLibrary,
+      disabled: isSavingToLibrary,
+    },
     {
       id: "download-all",
       label: isExportingAll ? "Đang xuất 5 file..." : "Tải trọn bộ (5 kích thước)",

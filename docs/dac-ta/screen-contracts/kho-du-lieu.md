@@ -95,6 +95,7 @@
 - Tìm theo tên: video, âm thanh, catalog, thẻ chào, landing page. Ảnh và nội dung chưa có trường tên.
 - Landing page (L-1): bảng `landing_pages`, migration `20261029180000_landing_pages`; chỉ landing page sinh từ 29/10/2026.
 - Tách `storage-hub-tabs.ts`, `library/*`: `account-storage-hub.tsx` giảm 914 → ~855 dòng.
+- **Gắn nhãn loại tư liệu & Bộ lọc module nghiệp vụ (01/11/2026, PR-1):** Mọi mục trong Kho dữ liệu được gắn nhãn loại asset chuẩn (`asset_type.code`, `asset_type.name`, `asset_type.module`) thông qua `metadata.asset_type_code` hoặc suy luận theo luật `library-asset-mapping.ts`. Trên thẻ hiển thị chip loại tư liệu (`text-caption`) và hỗ trợ bộ lọc theo 6 module nghiệp vụ.
 - **Chưa làm, cần PO:** L-2 (kịch bản tư vấn lên máy chủ — đụng luồng tải ảnh `/tai-anh`, CLAUDE.md yêu cầu hỏi PO các chặng hành trình); L-4 (thùng rác cho video/nội dung/catalog/thẻ chào/landing — mỗi loại có ràng buộc riêng, ví dụ thẻ chào đang gắn đơn).
 
 ## 14. Quyết định PO (duyệt 29/10/2026 — chọn phương án đề xuất)

@@ -107,11 +107,11 @@ Nghiệm thu: 24 asset Sẵn hiện đúng module; bấm Tạo mở đúng công
 
 Nhánh `feat/msc-p1-library-capture`
 
-- [ ] **Dừng hỏi PO trước khi code:** poster/banner có bước người dùng **tải ảnh lên** không? Nếu có → chốt chặng hành trình 14 chặng nào chạy (`CLAUDE.md`).
-- [ ] **1.1** `feat(marketing-center): tag library items with asset type` — quy ước `assets.metadata.asset_type_code` + hàm thuần `assetTypeOfLibraryItem(type, kind, metadata)`, ánh xạ 8 `LIBRARY_TYPES` sang loại asset (catalog → #18, greeting_catalog → #19/#26/#27, landing → #68/#69 theo `page_type`…). Test.
-- [ ] **1.2** `feat(ad-banner-poster): save rendered banner to library` — `POST /api/v1/ad-banner-poster/save` (quyền `G2`). Lưu PNG đã dựng qua cổng lưu trữ có sẵn (storage skill: khoá `org/<org>/…`, kiểm nội dung tải lên), `kind=MARKETING`, `approval_state=PENDING`, `metadata.asset_type_code`. Nút "Lưu vào kho" sau xem trước, không tự lưu. Test use-case + tenant.
-- [ ] **1.3** `feat(kho-du-lieu): show asset type and purpose` — Kho dữ liệu hiện tên loại asset + bộ lọc theo module. Cập nhật `kho-du-lieu.md`.
-- [ ] **1.4** `docs: …` — Screen Contract `cong-cu-poster-banner.md`, `TRANG_THAI`.
+- [x] **Dừng hỏi PO trước khi code:** poster/banner có bước người dùng **tải ảnh lên** không? Nếu có → chốt chặng hành trình 14 chặng nào chạy (`CLAUDE.md`).
+- [x] **1.1** `feat(marketing-center): tag library items with asset type` — quy ước `assets.metadata.asset_type_code` + hàm thuần `assetTypeOfLibraryItem(type, kind, metadata)`, ánh xạ 8 `LIBRARY_TYPES` sang loại asset (catalog → #18, greeting_catalog → #19/#26/#27, landing → #68/#69 theo `page_type`…). Test.
+- [x] **1.2** `feat(ad-banner-poster): save rendered banner to library` — `POST /api/v1/ad-banner-poster/save` (quyền `G2`). Lưu PNG đã dựng qua cổng lưu trữ có sẵn (storage skill: khoá `org/<org>/…`, kiểm nội dung tải lên), `kind=MARKETING`, `approval_state=PENDING`, `metadata.asset_type_code`. Nút "Lưu vào kho" sau xem trước, không tự lưu. Test use-case + tenant.
+- [x] **1.3** `feat(kho-du-lieu): show asset type and purpose` — Kho dữ liệu hiện tên loại asset + bộ lọc theo module. Cập nhật `kho-du-lieu.md`.
+- [x] **1.4** `docs: …` — Screen Contract `cong-cu-poster-banner.md`, `TRANG_THAI`.
 
 Nghiệm thu: poster vừa tạo xuất hiện ở Kho dữ liệu với tên "Poster khuyến mãi", có trạng thái Chờ duyệt.
 
