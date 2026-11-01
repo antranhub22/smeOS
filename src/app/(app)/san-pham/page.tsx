@@ -53,11 +53,7 @@ export default function SanPhamPage() {
     if (new URLSearchParams(window.location.search).get("duyet") === "1") setOnlyProposals(true)
   }, [])
 
-  const isExecutive =
-    session.roleKey === "dieu_hanh" ||
-    session.roleKey === "store_admin" ||
-    session.can("G3") ||
-    session.can("L4")
+  const isExecutive = session.can("G3") || session.can("L4")
 
   // Server tải dữ liệu (từ khoá debounce + danh mục nếu có)
   const {

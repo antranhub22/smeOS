@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import {
   Bot,
@@ -13,10 +13,10 @@ import {
 import { Button } from "@/components/ui/button"
 import { CopilotMessageItem } from "@/components/chat/copilot-message-item"
 import { errorText } from "@/lib/error-text"
+import { cn } from "@/lib/utils"
 import type { Route } from "next"
 import type { ChatMessageMetadata } from "@/modules/chat-assistant/domain/chat-types"
 
-/** Tin nhắn hiển thị trong Copilot — bản ghi `chat_messages` từ API hoặc tin tạm (optimistic). */
 interface CopilotMessage {
   id: string
   senderType: string
@@ -24,6 +24,13 @@ interface CopilotMessage {
   createdAt?: string
   metadata?: ChatMessageMetadata | undefined
 }
+
+const QUICK_PROMPTS = [
+  "Làm sao in phiếu chế tác giấu giá cho thợ xưởng?",
+  "Cách tạo link thẻ chào gửi Zalo và cọc VietQR?",
+  "Tải file Excel mẫu để nhập sản phẩm hàng loạt?",
+  "Cách cấp tài khoản nhân viên mới trong 10 giây?",
+]
 
 export function FloraOSGlobalCopilot() {
   const router = useRouter()
@@ -36,7 +43,6 @@ export function FloraOSGlobalCopilot() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Khởi tạo hoặc nạp hội thoại của Copilot
   useEffect(() => {
     if (!isOpen || conversationId) return
 
@@ -54,52 +60,16 @@ export function FloraOSGlobalCopilot() {
           setConversationId(res.conversation.id)
         }
       })
-      .catch((err) => console.error(err))
+      .catch(() => {})
   }, [isOpen, conversationId])
 
-  // Lắng nghe phím tắt Cmd+K hoặc Ctrl+K
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault()
-        setIsOpen((prev) => !prev)
-      }
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [])
-
-  // Lắng nghe sự kiện mở Copilot từ các trang trong hệ thống (như Knowledge Base)
-  useEffect(() => {
-    function handleCustomOpen(e: Event) {
-      const customEvent = e as CustomEvent<{ prompt?: string }>
-      setIsOpen(true)
-      if (customEvent.detail?.prompt) {
-        setTimeout(() => {
-          handleSendMessage(customEvent.detail.prompt)
-        }, 150)
-      }
-    }
-    window.addEventListener("smeos:open-copilot", handleCustomOpen)
-    window.addEventListener("floraos:open-copilot", handleCustomOpen)
-    return () => {
-      window.removeEventListener("smeos:open-copilot", handleCustomOpen)
-      window.removeEventListener("floraos:open-copilot", handleCustomOpen)
-    }
-  }, [conversationId])
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages, sending])
-
-  async function handleSendMessage(queryToSend?: string) {
+  const handleSendMessage = useCallback(async (queryToSend?: string) => {
     const text = (queryToSend || inputQuery).trim()
     if (!text || sending) return
 
     setInputQuery("")
     setSending(true)
 
-    // 1. Hiển thị tin nhắn người dùng ngay lập tức (Optimistic UI)
     const tempUserMsg: CopilotMessage = {
       id: `temp-user-${Date.now()}`,
       senderType: "USER",
@@ -109,7 +79,6 @@ export function FloraOSGlobalCopilot() {
     setMessages((prev) => [...prev, tempUserMsg])
 
     try {
-      // 2. Khởi tạo hội thoại nếu chưa có
       let currentConvId = conversationId
       if (!currentConvId) {
         const initRes = await fetch("/api/v1/chat/conversations", {
@@ -129,7 +98,6 @@ export function FloraOSGlobalCopilot() {
         }
       }
 
-      // 3. Gửi tin nhắn đến server (Định danh rõ loại trợ lý OPS_COPILOT)
       const res = await fetch(`/api/v1/chat/conversations/${currentConvId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -143,7 +111,6 @@ export function FloraOSGlobalCopilot() {
         throw new Error(data.error?.message || "Lỗi nhận phản hồi AI")
       }
     } catch (err: unknown) {
-      console.error("Lỗi gửi tin nhắn Copilot:", err)
       const errorAssistantMsg: CopilotMessage = {
         id: `err-${Date.now()}`,
         senderType: "ASSISTANT",
@@ -154,7 +121,44 @@ export function FloraOSGlobalCopilot() {
     } finally {
       setSending(false)
     }
-  }
+  }, [conversationId, inputQuery, sending])
+
+  // Lắng nghe phím tắt Cmd+K và Escape
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault()
+        setIsOpen((prev) => !prev)
+      } else if (e.key === "Escape" && isOpen) {
+        setIsOpen(false)
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [isOpen])
+
+  // Lắng nghe sự kiện mở Copilot từ các module
+  useEffect(() => {
+    function handleCustomOpen(e: Event) {
+      const customEvent = e as CustomEvent<{ prompt?: string }>
+      setIsOpen(true)
+      if (customEvent.detail?.prompt) {
+        setTimeout(() => {
+          handleSendMessage(customEvent.detail?.prompt)
+        }, 150)
+      }
+    }
+    window.addEventListener("smeos:open-copilot", handleCustomOpen)
+    window.addEventListener("floraos:open-copilot", handleCustomOpen)
+    return () => {
+      window.removeEventListener("smeos:open-copilot", handleCustomOpen)
+      window.removeEventListener("floraos:open-copilot", handleCustomOpen)
+    }
+  }, [handleSendMessage])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages, sending])
 
   async function handleQuickCreateOrder(productId: string) {
     if (!conversationId) return
@@ -177,25 +181,21 @@ export function FloraOSGlobalCopilot() {
 
   return (
     <>
-      {/* NÚT BONG BÓNG COPILOT TRÒN NHỎ GỌN — ĐẶT Ở MÉP GIỮA BÊN PHẢI (TOP-1/2) ĐỂ KHÔNG BAO GIỜ CHE NÚT BẤM Ở ĐÁY */}
-      <div className="fixed top-1/2 right-3 -translate-y-1/2 z-50 flex items-center gap-2">
+      {/* Nút bong bóng nổi — định vị tránh đụng BottomNav trên mobile */}
+      <div className="fixed top-1/2 right-3 -translate-y-1/2 z-40 flex items-center gap-2">
         {!isOpen && (
           <button
+            type="button"
             onClick={() => setIsOpen(true)}
             aria-label="Mở smeOS Copilot"
-            className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
+            className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl transition-all hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            {/* Chấm báo trạng thái AI trực tuyến */}
             <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
               <span className="relative inline-flex h-3 w-3 rounded-full border-2 border-white bg-success" />
             </span>
-
-            {/* Icon AI Bot */}
             <Bot className="h-5 w-5 transition-transform group-hover:rotate-6" />
-
-            {/* Tooltip bay sang trái khi hover — không chiếm chỗ cố định */}
-            <div className="pointer-events-none absolute right-full mr-2.5 hidden sm:flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-text/90 px-2.5 py-1 text-caption font-bold text-white shadow-md backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="pointer-events-none absolute right-full mr-2.5 hidden sm:flex items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-button)] bg-text/90 px-2.5 py-1 text-caption font-bold text-white shadow-md backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity">
               <span>smeOS Copilot</span>
               <kbd className="rounded bg-white/20 px-1 py-0.2 text-caption font-mono">⌘K</kbd>
             </div>
@@ -203,122 +203,141 @@ export function FloraOSGlobalCopilot() {
         )}
       </div>
 
-      {/* DRAWER / CỬA SỔ CHAT COPILOT */}
+      {/* Cửa sổ Chat Copilot: BottomSheet trên mobile (< sm), Floating Dialog trên desktop (>= sm) */}
       {isOpen && (
-        <div className="fixed bottom-5 right-5 z-50 flex h-[580px] w-[380px] sm:w-[420px] flex-col rounded-2xl border border-primary/20 bg-surface shadow-2xl overflow-hidden backdrop-blur-md">
-          {/* Header Copilot */}
-          <div className="flex items-center justify-between border-b border-border bg-gradient-to-r from-primary/5 via-primary/3 to-primary/8 px-4 py-3">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-white shadow-xs">
-                <Bot className="h-4 w-4" />
-              </span>
-              <div>
-                <div className="text-xs font-extrabold text-foreground flex items-center gap-1.5">
-                  smeOS Ops Copilot
-                  <span className="inline-block h-2 w-2 rounded-full bg-success animate-pulse" />
-                </div>
-                <div className="text-caption font-medium text-text-muted">Trợ lý Vận hành & Hướng dẫn SaaS cho cửa hàng</div>
-              </div>
-            </div>
-            <button
-              aria-label="Đóng"
-              onClick={() => setIsOpen(false)}
-              className="rounded-lg p-1.5 text-muted-foreground hover:bg-black/5 hover:text-foreground"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Vùng nội dung tin nhắn */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
-            {messages.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground p-2">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <Sparkles className="h-6 w-6" />
-                </div>
-                <div>
-                  <div className="font-bold text-foreground text-sm">Xin chào! Em có thể hỗ trợ gì về hệ thống?</div>
-                  <p className="text-caption text-muted-foreground mt-1 max-w-[280px] mx-auto">
-                    Anh/chị có thể hỏi về cách thao tác các tính năng: bóc tách ảnh hoa, cấu hình giá sàn, in phiếu xưởng ẩn giá, CRM khách hàng...
-                  </p>
-                </div>
-
-                <div className="space-y-1.5 w-full pt-2">
-                  <div className="text-caption font-bold text-muted-foreground text-left px-1">💡 Hướng dẫn thao tác nhanh:</div>
-                  {[
-                    "Làm sao in phiếu chế tác giấu giá cho thợ xưởng?",
-                    "Cách tạo link thẻ chào gửi Zalo và cọc VietQR?",
-                    "Tải file Excel mẫu để nhập sản phẩm hàng loạt?",
-                    "Cách cấp tài khoản nhân viên mới trong 10 giây?",
-                  ].map((q, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleSendMessage(q)}
-                      className="w-full text-left rounded-xl border border-primary/20 bg-primary/5 p-2 text-caption font-medium text-foreground hover:bg-primary/10 transition-colors flex items-center justify-between"
-                    >
-                      <span className="truncate">{q}</span>
-                      <ArrowRight className="h-3 w-3 text-primary shrink-0 ml-1" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <>
-                {messages.map((m, idx) => (
-                  <CopilotMessageItem
-                    key={m.id}
-                    message={m}
-                    isLatestAssistant={idx === messages.length - 1 && m.senderType === "ASSISTANT"}
-                    onTypingProgress={() => {
-                      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-                    }}
-                    creatingOrderFor={creatingOrderFor}
-                    onQuickCreateOrder={handleQuickCreateOrder}
-                    onNavigate={(route) => {
-                      router.push(route as Route)
-                      setIsOpen(false)
-                    }}
-                  />
-                ))}
-                {sending && (
-                  <div className="flex items-center gap-2 text-caption text-muted-foreground p-2 rounded-xl bg-muted/40 animate-pulse">
-                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                    <span>smeOS Copilot đang tra cứu và soạn câu trả lời...</span>
-                  </div>
-                )}
-              </>
+        <>
+          <div
+            className="fixed top-0 bottom-0 left-0 right-0 z-50 bg-black/40 backdrop-blur-xs sm:hidden"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="smeOS Ops Copilot"
+            className={cn(
+              "fixed z-50 flex flex-col bg-surface border border-border shadow-2xl overflow-hidden",
+              "inset-x-0 bottom-0 rounded-t-2xl max-h-[85dvh] h-[540px] pb-[env(safe-area-inset-bottom)]",
+              "sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[400px] sm:max-w-[calc(100vw-3rem)] sm:h-[580px] sm:max-h-[calc(100vh-5rem)] sm:rounded-2xl sm:pb-0"
             )}
-            <div ref={messagesEndRef} />
-          </div>
+          >
+            <div className="flex sm:hidden justify-center pt-2 pb-1 bg-surface">
+              <div className="w-10 h-1 rounded-full bg-border" />
+            </div>
 
-          {/* Khung nhập tin nhắn */}
-          <div className="border-t border-border p-2.5 bg-surface">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                handleSendMessage()
-              }}
-              className="flex items-center gap-1.5"
-            >
-              <input
-                type="text"
-                placeholder="Hỏi về cách dùng hệ thống hoặc tìm sản phẩm..."
-                className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs focus:ring-1 focus:ring-primary"
-                value={inputQuery}
-                onChange={(e) => setInputQuery(e.target.value)}
-                disabled={sending}
-              />
-              <Button
-                type="submit"
-                size="sm"
-                disabled={!inputQuery.trim() || sending}
-                className="h-8 w-8 p-0 rounded-xl bg-primary hover:bg-primary-dark text-white shrink-0"
+            {/* Header Copilot */}
+            <div className="flex items-center justify-between border-b border-border bg-surface-alt px-4 py-3">
+              <div className="flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-white shadow-xs">
+                  <Bot className="h-4 w-4" />
+                </span>
+                <div>
+                  <div className="text-caption font-extrabold text-text flex items-center gap-1.5">
+                    smeOS Ops Copilot
+                    <span className="inline-block h-2 w-2 rounded-full bg-success animate-pulse" />
+                  </div>
+                  <div className="text-caption font-medium text-text-muted">Trợ lý Vận hành & Hướng dẫn</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                aria-label="Đóng trợ lý"
+                onClick={() => setIsOpen(false)}
+                className="rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-text transition-colors"
               >
-                {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-              </Button>
-            </form>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Vùng nội dung tin nhắn */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
+              {messages.length === 0 ? (
+                <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-text-muted p-2">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <Sparkles className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-text text-sm">Xin chào! Em có thể hỗ trợ gì?</div>
+                    <p className="text-caption text-text-muted mt-1 max-w-[280px] mx-auto">
+                      Anh/chị có thể hỏi về cách thao tác: xuất đơn hàng, cấu hình giá, in phiếu xưởng, CRM khách hàng...
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5 w-full pt-2">
+                    <div className="text-caption font-bold text-text-muted text-left px-1">💡 Hướng dẫn thao tác nhanh:</div>
+                    {QUICK_PROMPTS.map((q, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSendMessage(q)}
+                        className="w-full text-left rounded-xl border border-border bg-surface-alt p-2 text-caption font-medium text-text hover:bg-border/30 transition-colors flex items-center justify-between"
+                      >
+                        <span className="truncate">{q}</span>
+                        <ArrowRight className="h-3 w-3 text-primary shrink-0 ml-1" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {messages.map((m, idx) => (
+                    <CopilotMessageItem
+                      key={m.id}
+                      message={m}
+                      isLatestAssistant={idx === messages.length - 1 && m.senderType === "ASSISTANT"}
+                      onTypingProgress={() => {
+                        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+                      }}
+                      creatingOrderFor={creatingOrderFor}
+                      onQuickCreateOrder={handleQuickCreateOrder}
+                      onNavigate={(route) => {
+                        router.push(route as Route)
+                        setIsOpen(false)
+                      }}
+                    />
+                  ))}
+                  {sending && (
+                    <div className="flex items-center gap-2 text-caption text-text-muted p-2 rounded-xl bg-surface-alt animate-pulse">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                      <span>smeOS Copilot đang tra cứu và soạn câu trả lời...</span>
+                    </div>
+                  )}
+                </>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Khung nhập tin nhắn */}
+            <div className="border-t border-border p-2.5 bg-surface">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  handleSendMessage()
+                }}
+                className="flex items-center gap-1.5"
+              >
+                <input
+                  type="text"
+                  placeholder="Hỏi về cách dùng hệ thống hoặc tìm sản phẩm..."
+                  className="flex-1 rounded-xl border border-border bg-bg px-3 py-2 text-caption text-text placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-primary"
+                  value={inputQuery}
+                  onChange={(e) => setInputQuery(e.target.value)}
+                  disabled={sending}
+                  aria-label="Câu hỏi cho Copilot"
+                />
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={!inputQuery.trim() || sending}
+                  className="h-8 w-8 p-0 rounded-xl shrink-0"
+                  aria-label="Gửi câu hỏi"
+                >
+                  {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                </Button>
+              </form>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   )

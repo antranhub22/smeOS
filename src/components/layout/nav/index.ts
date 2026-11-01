@@ -76,12 +76,12 @@ export function mobileSecondSlot(
   // Tầng 2: SaaS Ngành (tierOf kiểm trước Mẹ vì industry_admin có group="PLATFORM")
   if (tier === "INDUSTRY") {
     return {
-      href: "/van-hanh/nganh",
-      label: "Taxonomy & Quy chuẩn",
-      group: "chuan-hoa-nganh",
-      iconKey: "Layers",
-      navKey: "industry-taxonomy",
-      mobileLabel: "Ngành",
+      href: "/san-pham",
+      label: "Sản phẩm mẫu",
+      group: "san-pham-nganh",
+      iconKey: "Package",
+      navKey: "industry-products",
+      mobileLabel: "Sản phẩm",
     }
   }
 

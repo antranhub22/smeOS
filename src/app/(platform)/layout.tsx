@@ -14,10 +14,7 @@ import { redirect } from "next/navigation"
 import { resolvePlatformSession } from "@/modules/platform/use-cases/resolve-platform-session"
 import { SessionProvider } from "@/lib/session"
 import { I18nProvider } from "@/lib/i18n"
-import { DesktopNav } from "@/components/layout/desktop-nav"
-import { MobileNavDrawer } from "@/components/layout/mobile-nav-drawer"
-import { BottomNav } from "@/components/layout/bottom-nav"
-import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
+import { AppShell } from "@/components/layout/app-shell"
 import { resolveUiTheme } from "@/lib/ui-system/resolve-ui-theme"
 
 export default async function PlatformLayout({ children }: { children: React.ReactNode }) {
@@ -47,21 +44,13 @@ export default async function PlatformLayout({ children }: { children: React.Rea
   return (
     <SessionProvider session={platformSession}>
       <I18nProvider>
-        <div
-          data-theme={uiTheme.preset}
-          data-density={uiTheme.density}
-          style={uiTheme.brandStyle}
-          className="mx-auto flex min-h-dvh w-full max-w-md flex-col md:max-w-none md:flex-row"
+        <AppShell
+          theme={uiTheme}
+          isDev={isDev}
+          withUiStudio
         >
-          <MobileNavDrawer>
-            <DesktopNav isDev={isDev} />
-            <div id="noi-dung-chinh" tabIndex={-1} className="min-h-0 min-w-0 flex-1 overflow-hidden focus:outline-none">
-              <main className="h-full overflow-auto">{children}</main>
-            </div>
-          </MobileNavDrawer>
-          <BottomNav />
-          <UiStudioDrawer />
-        </div>
+          {children}
+        </AppShell>
       </I18nProvider>
     </SessionProvider>
   )

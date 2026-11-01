@@ -4,6 +4,47 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 
 ---
 
+## [1.1.0] - 2026-11-01
+
+### Milestone: Giai đoạn 3 — Enterprise Shell & Layout Architecture (S3-01 → S3-06)
+
+Đạt tiêu chuẩn **Commercial & Production Ready** toàn diện cho tầng Shell, Bố cục trang và Điều hướng của hệ thống smeOS theo quyết định kiến trúc `ADR-011` (D-UI-09, D-UI-10) và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
+
+### Đã thêm & Nâng cấp (Added & Upgraded)
+- **Unified `AppShell` (S3-01)**:
+  - Tệp: `src/components/layout/app-shell.tsx`.
+  - Tích hợp chuẩn hoá toàn hệ thống: Skip-link `#noi-dung-chinh` (focus ring chuẩn), `LiveRegionProvider`, `FloatingLayerProvider`, landmark chuẩn `<main id="noi-dung-chinh">`, và đệm đáy `pb-[calc(4.5rem+env(safe-area-inset-bottom))]` trên di động.
+  - Đồng bộ hóa hoàn toàn cho cả 2 layout: `src/app/(app)/layout.tsx` và `src/app/(platform)/layout.tsx` (đóng hoàn toàn phát hiện UI-A-02 và UI-F-03).
+- **`PageLayout` Archetypes A–F & `PageHeader` v2 (S3-02)**:
+  - Thư mục: `src/components/layout/page-layout/`.
+  - 6 archetypes chuẩn mực theo đặc tả UX-028:
+    - Archetype A (`DashboardLayout`): Khổ rộng (max-w-7xl), ưu tiên KPI và khối việc tiếp theo.
+    - Archetype B (`ListLayout`): Bộ lọc sát danh sách (UX-P09), thanh hành động chọn nhiều (UX-P10), phân trang.
+    - Archetype C (`DetailLayout`): Khổ vừa (max-w-6xl), thông tin đối tượng ở đầu kèm panel lề.
+    - Archetype D (`FormLayout`): Khổ hẹp (max-w-3xl / max-w-4xl), nhãn rõ ràng, nút lưu ở đáy.
+    - Archetype E (`BuilderLayout`): Bố cục chia 2 cột: điều khiển bên trái, xem trước trực tiếp bên phải.
+    - Archetype F (`SettingsLayout`): Cài đặt phân nhóm có danh mục điều hướng.
+  - Nâng cấp `PageHeader` v2 với semantic `<header>`, tiêu đề chuẩn 20px `h1` (`text-display`), breadcrumbs với `aria-label="Breadcrumb"`, nút quay lại (back button) có nhãn trợ năng, huy hiệu trạng thái, chú giải `InfoTip` và giới hạn hành động K2.
+  - Đóng hoàn toàn phát hiện UI-J-01 và UI-J-02.
+- **`FloatingLayer` (S3-03)**:
+  - Tệp: `src/components/layout/floating-layer.tsx`.
+  - Bộ điều phối các nút và widget nổi (Copilot, UI Studio Drawer, StageGateApprovalBar) theo độ ưu tiên (`priority`), tự động đệm cách đáy trên di động, triệt tiêu xung đột che khuất trên màn 360px - 430px (đóng phát hiện UI-F-02).
+- **Copilot Responsiveness & BottomSheet (S3-04)**:
+  - Tệp: `src/components/chat/floraos-global-copilot.tsx`.
+  - Trên màn hình nhỏ (`< sm`): hiển thị dạng `BottomSheet` toàn chiều rộng (`inset-x-0 bottom-0 rounded-t-2xl max-h-[85dvh]`) có tay cầm kéo và lớp nền mờ (backdrop), triệt tiêu hoàn toàn lỗi tràn 40px mép trái trên màn 360px (đóng phát hiện P1 UI-F-01).
+  - Trên desktop (`>= sm`): hiển thị dạng cửa sổ nổi co giãn linh hoạt theo viewport (`max-h-[calc(100vh-5rem)]`).
+  - Bổ sung `role="dialog"`, `aria-modal="true"`, phím tắt Escape để đóng, dọn sạch `console.error` và chuyển đổi 100% sang token ngữ nghĩa.
+- **Điều hướng & Tách tệp SRP (S3-05)**:
+  - Loại bỏ các mục trỏ tới `/van-hanh/*` khỏi `nav-industry.ts` theo quyết định kiến trúc D-UI-10, đảm bảo mọi `href` trong tầng Ngành đều mở được hợp lệ (đóng phát hiện UI-A-05).
+  - Tách `nav-store.ts` (458 dòng) thành `nav-store-entries.ts` (339 dòng) và `nav-store.ts` (123 dòng), tuân thủ 100% giới hạn SRP ≤ 350 dòng (đóng phát hiện P3 / K11).
+  - Bổ sung bộ kiểm thử `src/components/layout/nav-tier-accessibility.test.ts`.
+- **Triệt tiêu Hardcoded `roleKey` (S3-06)**:
+  - Thay thế kiểm tra `roleKey` trong `src/app/(app)/san-pham/page.tsx` bằng mã năng lực `session.can("G3") || session.can("L4")`.
+  - Tích hợp chuẩn hóa `cua_hang` vào `resolveRoleUx`, loại bỏ rẽ nhánh cứng trong `src/app/(app)/page.tsx`.
+  - Đảm bảo 0 vi phạm `roleKey ===` trong toàn bộ thư mục `src/app/` (đóng phát hiện UI-J-05).
+
+---
+
 ## [1.0.0] - 2026-11-01
 
 ### Milestone: Giai đoạn 2 — Enterprise Component Architecture (C2-00 → C2-17)

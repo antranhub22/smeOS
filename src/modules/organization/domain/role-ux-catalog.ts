@@ -118,7 +118,7 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     homepage: "INDUSTRY_JOURNEY_HOME",
     systemRoleKeys: [],
     entryHref: "/",
-    navPriority: ["/", "/van-hanh/nganh", "/kho-templates", "/san-pham", "/market-intelligence"],
+    navPriority: ["/", "/san-pham", "/kho-templates", "/market-intelligence"],
     debtRefs: [],
   },
   {
@@ -468,6 +468,7 @@ export function resolveRoleUx(
   // Khi là Quản trị cửa hàng cơ sở (StoreOS / SINGLE):
   if (
     systemRoleKey === "store_admin" ||
+    systemRoleKey === "cua_hang" ||
     (organizationType === "SINGLE" && systemRoleKey === "dieu_hanh")
   ) {
     const sAdmin = ROLE_UX_CATALOG.find((r) => r.key === "store_admin")

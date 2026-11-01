@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header"
 import { ToastProvider } from "@/components/ui/toast"
 import { LiveRegionProvider } from "@/components/ui/live-region"
 import { CatalogSections } from "./catalog-sections"
+import { CatalogLayoutSection } from "./catalog-layout-section"
 
 export const metadata = {
   title: "Thư viện Giao diện & Design System | Vận hành Nền tảng",
@@ -19,6 +20,7 @@ export default function ThuVienGiaoDienPage() {
             description="Không gian đối soát, xem trước và kiểm thử toàn bộ các thành phần Design System của smeOS theo tiêu chuẩn Enterprise."
           />
           <CatalogSections />
+          <CatalogLayoutSection />
         </div>
       </ToastProvider>
     </LiveRegionProvider>
