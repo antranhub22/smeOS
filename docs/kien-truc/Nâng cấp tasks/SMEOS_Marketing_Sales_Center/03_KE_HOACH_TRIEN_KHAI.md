@@ -73,33 +73,33 @@ Báo giá dùng lại `R15 order.quote` ("Báo giá đơn hàng ngoài Thẻ ch�
 
 Nhánh `feat/msc-p0-asset-registry` · Tiêu đề `feat(cong-cu): 6 business modules with asset-type registry`
 
-- [ ] **0.1** `test(architecture): freeze catalog tool files` — `tests/unit/architecture/catalog-freeze.test.ts` + `catalog-freeze.manifest.txt` (băm từng tệp vùng cấm Catalog, cùng cơ chế với `the-chao-freeze`). Chỉ thêm tệp test.
-- [ ] **0.2** `feat(marketing-center): asset type domain model` — `asset-type.ts`:
+- [x] **0.1** `test(architecture): freeze catalog tool files` — `tests/unit/architecture/catalog-freeze.test.ts` + `catalog-freeze.manifest.txt` (băm từng tệp vùng cấm Catalog, cùng cơ chế với `the-chao-freeze`). Chỉ thêm tệp test.
+- [x] **0.2** `feat(marketing-center): asset type domain model` — `asset-type.ts`:
   - `BusinessModuleKey` = `brand | content | promotion | sales | care | print`.
   - `UsageDestination` = `PROMOTION | SALES | CARE | PRINT | LIBRARY`.
   - `InputSource` = `STORE_PROFILE | BRAND_PROFILE | PRODUCT | PRODUCT_PHOTO | ACTIVE_PROMOTIONS | CUSTOMER | MANUAL_TEXT`.
   - `AssetTypeDefinition` = `{ code, name, purpose, module, destinations, toolId, fit: FULL|PARTIAL, inputs[{label, source, required}], outputs[] }`.
   - `readinessOf()` = Sẵn ⇔ công cụ `DONE` ∧ `FULL`.
   - Test thuần.
-- [ ] **0.3** `feat(marketing-center): register 77 assets and brand identity set` — 6 tệp `asset-types/*.ts` đúng bảng `02_DANH_MUC_ASSET.md` (A + B). Test:
+- [x] **0.3** `feat(marketing-center): register 77 assets and brand identity set` — 6 tệp `asset-types/*.ts` đúng bảng `02_DANH_MUC_ASSET.md` (A + B). Test:
   - 92 mã không trùng;
   - đúng 24 loại Sẵn khớp tài liệu;
   - Sẵn ⇒ có `href`;
   - tên/mục đích là tiếng Việt, không mã kỹ thuật (`/[A-Z]\d{1,2}\b/`, "Fallback"…), nhãn ≤ 5 từ;
   - mỗi loại có ≥1 nơi dùng và ≥1 đầu vào tự điền khi có thể.
-- [ ] **0.4** `feat(toolkit): business modules and store operations section` — `business-modules.ts` + `store-operations.ts` thay `growth-modules.ts`. Lộ trình AI chuyển sang khoá 6 module (`growth-module-roadmap.ts` → `business-module-roadmap.ts`). Viết lại `growth-modules.test.ts` → `business-modules.test.ts`:
+- [x] **0.4** `feat(toolkit): business modules and store operations section` — `business-modules.ts` + `store-operations.ts` thay `growth-modules.ts`. Lộ trình AI chuyển sang khoá 6 module (`growth-module-roadmap.ts` → `business-module-roadmap.ts`). Viết lại `growth-modules.test.ts` → `business-modules.test.ts`:
   - đúng 6 module + 1 khu Vận hành;
   - **mỗi công cụ trong 67 mã nằm đúng một chỗ**;
   - production chỉ hiện `DONE` và asset Sẵn, ẩn module rỗng.
-- [ ] **0.5** `feat(cong-cu): purpose-first module detail with asset cards` —
+- [x] **0.5** `feat(cong-cu): purpose-first module detail with asset cards` —
   - `toolkit-home.tsx` (giữ ≤350): lưới 6 thẻ + thẻ "Vận hành cửa hàng".
   - `toolkit-module-detail.tsx`: khu L0 **"Bạn muốn tạo gì?"** gồm các thẻ asset `asset-type-card.tsx`: tên ≤5 từ, mục đích trong `InfoTip`, chip nơi dùng, "Cần: …" chỉ liệt kê đầu vào phải nhập tay, nút **Tạo** → công cụ.
   - Khu L1 "Công cụ"; liên kết "Asset đã tạo" → `/kho-du-lieu`.
   - `store-operations-panel.tsx`.
   - Dev hiện cả Mở rộng/Mới kèm nhãn; production chỉ Sẵn.
   - Icon Phosphor qua `AppIcon`, tông `MODULE_TONES`.
-- [ ] **0.6** `docs(cong-cu): screen contract and SSOT sync` — tạo `docs/dac-ta/screen-contracts/cong-cu.md` (archetype, L0–L4, trạng thái). Sửa dẫn chiếu tới `DONG_BO_51_CONG_CU.md` (không tồn tại) trong `growth-modules`/`app-page-tools.ts` → trỏ `02_DANH_MUC_ASSET.md`. Thêm vào registry, `TRANG_THAI.md`, `tool-short-names.ts` nếu cần.
-- [ ] **0.7** `test(ux): cong-cu audit scenario` — `scripts/ux-audit/scenarios/cong-cu.mjs` (lưới, từng module, khu Vận hành, dev/prod). Cập nhật `tests/e2e/ux/a11y-done-tools.spec.ts` nếu bộ chọn đổi.
+- [x] **0.6** `docs(cong-cu): screen contract and SSOT sync` — tạo `docs/dac-ta/screen-contracts/cong-cu.md` (archetype, L0–L4, trạng thái). Sửa dẫn chiếu tới `DONG_BO_51_CONG_CU.md` (không tồn tại) trong `growth-modules`/`app-page-tools.ts` → trỏ `02_DANH_MUC_ASSET.md`. Thêm vào registry, `TRANG_THAI.md`, `tool-short-names.ts` nếu cần.
+- [x] **0.7** `test(ux): cong-cu audit scenario` — `scripts/ux-audit/scenarios/cong-cu.mjs` (lưới, từng module, khu Vận hành, dev/prod). Cập nhật `tests/e2e/ux/a11y-done-tools.spec.ts` nếu bộ chọn đổi.
 
 Nghiệm thu: 24 asset Sẵn hiện đúng module; bấm Tạo mở đúng công cụ; 0 lỗi axe critical/serious; không cuộn ngang 390px; hai test khoá xanh.
 
