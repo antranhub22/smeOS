@@ -2,17 +2,19 @@
 
 import { useEffect, useRef, useState } from "react"
 
-const PREFIX = "floraos:brochure:"
+const PREFIX = "smeos:brochure:"
+const LEGACY_PREFIX = "floraos:brochure:"
 const TTL_MS = 7 * 86_400_000
 
 /** Đọc/ghi localStorage an toàn (tab ẩn danh, bộ nhớ bị chặn → coi như không có). */
 function read<T>(key: string): T | null {
   try {
-    const raw = window.localStorage.getItem(PREFIX + key)
+    const raw = window.localStorage.getItem(PREFIX + key) ?? window.localStorage.getItem(LEGACY_PREFIX + key)
     if (!raw) return null
     const parsed = JSON.parse(raw) as { at: number; value: T }
     if (Date.now() - parsed.at > TTL_MS) {
       window.localStorage.removeItem(PREFIX + key)
+      window.localStorage.removeItem(LEGACY_PREFIX + key)
       return null
     }
     return parsed.value

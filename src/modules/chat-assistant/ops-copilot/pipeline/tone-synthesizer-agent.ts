@@ -51,8 +51,8 @@ function purifyDevJargon(text: string): string {
 // ---------------------------------------------------------------------------
 
 function buildSystemPrompt(): string {
-  return `Bạn là Trợ lý Vận hành FloraOS — nhân viên hỗ trợ nội bộ của cửa hàng.
-Nhiệm vụ: Trả lời câu hỏi của chủ tiệm / nhân viên về cách sử dụng phần mềm FloraOS.
+  return `Bạn là Trợ lý Vận hành smeOS — nhân viên hỗ trợ nội bộ của cửa hàng.
+Nhiệm vụ: Trả lời câu hỏi của chủ tiệm / nhân viên về cách sử dụng phần mềm smeOS.
 
 QUY TẮC BẮT BUỘC:
 - Viết hoàn toàn bằng tiếng Việt, ấm áp, lịch sự như đồng nghiệp thân thiện.
@@ -86,7 +86,7 @@ Hãy trả lời thân thiện, thừa nhận chưa rõ và gợi ý người d�
     : ""
 
   return `Người dùng hỏi: "${intent.rawQuery}"
-Tính năng: ${facts.topicTitle ?? facts.moduleTitle ?? "FloraOS"}
+Tính năng: ${facts.topicTitle ?? facts.moduleTitle ?? "smeOS"}
 Tóm tắt: ${facts.summary}
 
 Các bước thực hiện:
@@ -102,8 +102,8 @@ Hãy trả lời câu hỏi trên theo đúng thông tin trên bằng ngôn ng�
 function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): PolishedDraft {
   if (facts.isOverview && facts.overviewItems) {
     const greeting = intent.userRole !== "ALL"
-      ? `Dạ em là FloraOS Ops Copilot — Trợ lý vận hành đồng hành cùng anh/chị (${intent.userRole})!`
-      : "Dạ em là FloraOS Ops Copilot — Trợ lý vận hành nền tảng FloraOS của cửa hàng!"
+      ? `Dạ em là smeOS Ops Copilot — Trợ lý vận hành đồng hành cùng anh/chị (${intent.userRole})!`
+      : "Dạ em là smeOS Ops Copilot — Trợ lý vận hành nền tảng smeOS của cửa hàng!"
 
     const bodyText = `${greeting} Em có thể hướng dẫn anh/chị thao tác 10 chức năng chính của tiệm:\n\n` +
       `1. **Trang Chủ:** Xem việc cần làm đầu ngày, theo dõi đơn tồn và hạn mức AI.\n` +
@@ -182,7 +182,7 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
 
   switch (intent.style) {
     case "CONSULTANT": {
-      greeting = `**[Cố vấn Vận hành FloraOS]**`
+      greeting = `**[Cố vấn Vận hành smeOS]**`
       bodyText = `${greeting} Hướng dẫn **${facts.topicTitle}**:\n\n` +
         `${stepsText}${primaryCaveat}${crossModuleBlock}\n\n` +
         `💡 *Khuyến nghị quản trị:* Thực hiện đúng các bước trên để tối ưu thời gian và đối soát.`

@@ -1,6 +1,6 @@
 /**
- * FloraOS Ops Copilot Engine (Domain Service).
- * Trợ lý Vận hành SaaS FloraOS chuẩn Commercial & Production.
+ * smeOS Ops Copilot Engine (Domain Service).
+ * Trợ lý Vận hành SaaS smeOS chuẩn Commercial & Production.
  * Tích hợp Kiến trúc Multi-Agent Pipeline Đa Tầng (4 Chuyên Trách):
  * 1. Intent & Context Analyzer Agent
  * 2. Knowledge Researcher Agent (SSOT)
@@ -41,7 +41,7 @@ export class OpsCopilotEngine {
     const trimmed = input.query.trim()
     if (!trimmed) {
       return {
-        replyText: "Dạ, em là FloraOS Ops Copilot! Anh/chị cần hướng dẫn thao tác tính năng nào trên hệ thống ạ?",
+        replyText: "Dạ, em là smeOS Ops Copilot! Anh/chị cần hướng dẫn thao tác tính năng nào trên hệ thống ạ?",
       }
     }
 

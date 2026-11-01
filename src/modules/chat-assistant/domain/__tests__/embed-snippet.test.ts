@@ -4,7 +4,7 @@ import { buildEmbedSnippet } from "../embed-snippet"
 describe("buildEmbedSnippet", () => {
   it("dựng mã nhúng từ slug thật và địa chỉ công khai", () => {
     expect(buildEmbedSnippet({ shopSlug: "hoa-cuc-vang", appUrl: "https://app.example.com/" })).toBe(
-      `<script src="https://app.example.com/sdk/floraos-chat.js" data-shop-slug="hoa-cuc-vang" defer></script>`,
+      `<script src="https://app.example.com/sdk/smeos-chat.js" data-shop-slug="hoa-cuc-vang" defer></script>`,
     )
   })
 

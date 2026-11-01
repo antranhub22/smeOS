@@ -113,14 +113,18 @@ export function presetViews(industryKey?: string | null): SavedView[] {
   ]
 }
 
-const STORE_KEY_PREFIX = "floraos:tracking:saved-views"
+const STORE_KEY_PREFIX = "smeos:tracking:saved-views"
+const LEGACY_STORE_KEY_PREFIX = "floraos:tracking:saved-views"
 function getStoreKey(orgId?: string | null): string {
   return orgId ? `${STORE_KEY_PREFIX}__${orgId}` : STORE_KEY_PREFIX
+}
+function getLegacyStoreKey(orgId?: string | null): string {
+  return orgId ? `${LEGACY_STORE_KEY_PREFIX}__${orgId}` : LEGACY_STORE_KEY_PREFIX
 }
 
 export function loadSavedViews(orgId?: string | null): SavedView[] {
   try {
-    const raw = window.localStorage.getItem(getStoreKey(orgId))
+    const raw = window.localStorage.getItem(getStoreKey(orgId)) ?? window.localStorage.getItem(getLegacyStoreKey(orgId))
     const list = raw ? (JSON.parse(raw) as SavedView[]) : []
     return Array.isArray(list) ? list.filter((v) => v && typeof v.name === "string").slice(0, 30) : []
   } catch {

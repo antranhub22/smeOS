@@ -1,5 +1,5 @@
 /**
- * FloraOS Template Library — Danh mục & Báo giá (Catalog & Pricing M02/M03)
+ * smeOS Template Library — Danh mục & Báo giá (Catalog & Pricing M02/M03)
  */
 
 export * from "./catalog-guidance-card"

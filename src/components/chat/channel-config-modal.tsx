@@ -80,7 +80,7 @@ export function ChannelConfigModal({
                 />
               </div>
               <div className="rounded-lg bg-surface-alt p-2 text-caption text-text-muted">
-                Webhook Callback URL: <code className="text-primary font-mono">https://floraos.vn/api/v1/chat/webhooks/facebook</code>
+                Webhook Callback URL: <code className="text-primary font-mono">{typeof window !== "undefined" ? window.location.origin : "https://app.smeos.vn"}/api/v1/chat/webhooks/facebook</code>
               </div>
             </>
           )}
@@ -135,7 +135,7 @@ export function ChannelConfigModal({
                 />
               </div>
               <div className="rounded-lg bg-surface-alt p-2 text-caption text-text-muted">
-                Webhook Callback URL: <code className="text-primary font-mono">https://floraos.vn/api/v1/chat/webhooks/zalo</code>
+                Webhook Callback URL: <code className="text-primary font-mono">{typeof window !== "undefined" ? window.location.origin : "https://app.smeos.vn"}/api/v1/chat/webhooks/zalo</code>
               </div>
             </>
           )}

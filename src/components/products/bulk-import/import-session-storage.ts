@@ -2,7 +2,12 @@ import type { ParsedProductRow } from "./types"
 
 /** Lưu tạm dòng đã đọc vào sessionStorage — khoá gắn organization_id để không lộ giữa các tổ chức. */
 function keys(orgId: string) {
-  return { rowsKey: `floraos_bulk_import_rows_v1__${orgId}`, metaKey: `floraos_bulk_import_meta_v1__${orgId}` } as const
+  return {
+    rowsKey: `smeos_bulk_import_rows_v1__${orgId}`,
+    metaKey: `smeos_bulk_import_meta_v1__${orgId}`,
+    legacyRowsKey: `floraos_bulk_import_rows_v1__${orgId}`,
+    legacyMetaKey: `floraos_bulk_import_meta_v1__${orgId}`,
+  } as const
 }
 
 export function saveImportSession(rows: ParsedProductRow[], excelFileName: string, orgId: string): void {
@@ -18,11 +23,13 @@ export function saveImportSession(rows: ParsedProductRow[], excelFileName: strin
 }
 
 export function loadImportSession(orgId: string): { rows: ParsedProductRow[]; excelFileName: string } | null {
-  const { rowsKey, metaKey } = keys(orgId)
+  const { rowsKey, metaKey, legacyRowsKey, legacyMetaKey } = keys(orgId)
   try {
-    const rows = JSON.parse(sessionStorage.getItem(rowsKey) ?? "[]") as ParsedProductRow[]
+    const rawRows = sessionStorage.getItem(rowsKey) ?? sessionStorage.getItem(legacyRowsKey)
+    const rows = JSON.parse(rawRows ?? "[]") as ParsedProductRow[]
     if (!Array.isArray(rows) || rows.length === 0) return null
-    const meta = JSON.parse(sessionStorage.getItem(metaKey) ?? "{}") as { excelFileName?: string }
+    const rawMeta = sessionStorage.getItem(metaKey) ?? sessionStorage.getItem(legacyMetaKey)
+    const meta = JSON.parse(rawMeta ?? "{}") as { excelFileName?: string }
     return { rows, excelFileName: meta.excelFileName ?? "" }
   } catch {
     return null

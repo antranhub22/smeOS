@@ -118,7 +118,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     } catch {
       sampleImageUrl = undefined
     }
-  } else if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/"))) {
+  } else if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/") || sampleImageUrl.includes("smeos-core/org/"))) {
     sampleImageUrl = undefined
   } else if (sampleImageUrl && sampleImageUrl.startsWith("/")) {
     // File tĩnh trong public/ (vd. /mock-data/...) -> data URI. Chặn thoát thư mục và chỉ đọc ảnh:

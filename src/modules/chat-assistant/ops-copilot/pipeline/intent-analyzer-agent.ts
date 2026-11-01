@@ -40,7 +40,7 @@ export class IntentAnalyzerAgent {
     const overviewKeywords = [
       "chức năng gì", "tính năng gì", "hỗ trợ những gì", "tổng quan",
       "hệ thống có những gì", "danh sách phân hệ", "hướng dẫn chung",
-      "giới thiệu hệ thống", "floraos có gì", "bao nhiêu chức năng",
+      "giới thiệu hệ thống", "smeos có gì", "floraos có gì", "bao nhiêu chức năng",
       "danh sách các chức năng", "chức năng hệ thống", "tất cả chức năng",
       "các tính năng", "danh sách tính năng"
     ]

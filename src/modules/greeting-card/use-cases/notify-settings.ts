@@ -73,7 +73,7 @@ export async function sendTestNotification(
   const params: NotifyParams = {
     order_code: "DH000000-THUNGHIEM",
     customer_name: "Khách thử nghiệm",
-    shop_name: "Tin thử FloraOS",
+    shop_name: "Tin thử smeOS",
     status: "Tin thử nghiệm",
     amount: "0 đ",
     tracking_url: "",

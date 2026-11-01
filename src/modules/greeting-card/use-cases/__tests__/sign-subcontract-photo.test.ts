@@ -7,6 +7,7 @@ describe("ownStorageKey", () => {
   it("nhận khoá và URL cũ chứa khoá của chính tổ chức", () => {
     expect(ownStorageKey("org/o1/p/a.jpg", "o1")).toBe("org/o1/p/a.jpg")
     expect(ownStorageKey("https://s3.example/floraos-core/org/o1/p/a.jpg?x=1", "o1")).toBe("org/o1/p/a.jpg")
+    expect(ownStorageKey("https://s3.example/smeos-core/org/o1/p/a.jpg?x=1", "o1")).toBe("org/o1/p/a.jpg")
   })
 
   it("từ chối khoá của tổ chức khác, thoát thư mục, hoặc không phải khoá", () => {

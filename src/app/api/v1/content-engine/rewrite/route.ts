@@ -139,7 +139,7 @@ Chỉ trả về JSON thuần túy, không kèm giải thích ngoài lề.`
   const fallbackSuggestions = [
     `${text} (Được thiết kế thủ công tỉ mỉ)`,
     `Tặng kèm ${text.toLowerCase()} độc quyền từ nghệ nhân`,
-    `${text} — Cam kết chuẩn chất lượng FloraOS`,
+    `${text} — Cam kết chuẩn chất lượng uy tín`,
   ]
 
   return jsonResponse({

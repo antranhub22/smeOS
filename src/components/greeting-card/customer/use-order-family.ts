@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import { familyResumeTarget, type FamilyMember } from "@/modules/greeting-card/domain/order-family"
 
-const KEY = "floraos:order-family:"
+const KEY = "smeos:order-family:"
+const LEGACY_KEY = "floraos:order-family:"
 /** Khách chủ động mở trang này (Đặt thêm đơn / Lịch sử đơn hàng) → không tự chuyển đi nơi khác. */
 const CHOSEN_PARAM = "chon"
 
@@ -14,7 +15,7 @@ export function familyHref(sendCode: string): string {
 
 function readPosition(root: string): string | null {
   try {
-    return window.localStorage.getItem(KEY + root)
+    return window.localStorage.getItem(KEY + root) ?? window.localStorage.getItem(LEGACY_KEY + root)
   } catch {
     return null
   }

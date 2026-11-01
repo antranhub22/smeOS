@@ -15,7 +15,8 @@ import {
   type PlatformSystemHealth,
 } from "./platform-overview-metrics"
 
-const STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_platform"
+const STORAGE_KEY_EXPERT_MODE = "smeos_expert_mode_platform"
+const LEGACY_STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_platform"
 
 interface PlatformJourneyHomeProps {
   initialOrgs?: PlatformOrganizationSummary[] | null
@@ -39,7 +40,7 @@ export function PlatformJourneyHome({
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY_EXPERT_MODE)
+      const saved = localStorage.getItem(STORAGE_KEY_EXPERT_MODE) ?? localStorage.getItem(LEGACY_STORAGE_KEY_EXPERT_MODE)
       if (saved === "true") {
         setIsExpertMode(true)
       }

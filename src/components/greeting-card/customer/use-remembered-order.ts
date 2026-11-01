@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 
-const PREFIX = "floraos:catalog-order:"
+const PREFIX = "smeos:catalog-order:"
+const LEGACY_PREFIX = "floraos:catalog-order:"
 const TTL_MS = 30 * 86_400_000
 
 /**
@@ -20,11 +21,12 @@ export function rememberCatalogOrder(catalogId: string, sendCode: string): void 
 
 function readCatalogOrder(catalogId: string): string | null {
   try {
-    const raw = window.localStorage.getItem(PREFIX + catalogId)
+    const raw = window.localStorage.getItem(PREFIX + catalogId) ?? window.localStorage.getItem(LEGACY_PREFIX + catalogId)
     if (!raw) return null
     const saved = JSON.parse(raw) as { sendCode?: unknown; at?: unknown }
     if (typeof saved.sendCode !== "string" || typeof saved.at !== "number" || Date.now() - saved.at > TTL_MS) {
       window.localStorage.removeItem(PREFIX + catalogId)
+      window.localStorage.removeItem(LEGACY_PREFIX + catalogId)
       return null
     }
     return saved.sendCode

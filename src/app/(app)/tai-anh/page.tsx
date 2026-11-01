@@ -182,7 +182,7 @@ export default function TaiAnhPage() {
   useEffect(() => {
     try {
       const orgKey = session.organization?.id ?? "default"
-      const saved = localStorage.getItem(`floraos_finalized_pitches_${orgKey}`)
+      const saved = localStorage.getItem(`smeos_finalized_pitches_${orgKey}`) ?? localStorage.getItem(`floraos_finalized_pitches_${orgKey}`)
       if (saved) {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- đồng bộ state từ nguồn chỉ có ở trình duyệt (localStorage/URL), chủ đích
         setFinalizedPitches(JSON.parse(saved))
@@ -197,7 +197,7 @@ export default function TaiAnhPage() {
       const updated = [{ ...finalizedPitch, id }, ...filtered]
       try {
         const orgKey = session.organization?.id ?? "default"
-        localStorage.setItem(`floraos_finalized_pitches_${orgKey}`, JSON.stringify(updated))
+        localStorage.setItem(`smeos_finalized_pitches_${orgKey}`, JSON.stringify(updated))
       } catch { /* ignore */ }
       return updated
     })
@@ -799,7 +799,7 @@ export default function TaiAnhPage() {
     if (pitchIdParam) {
       try {
         const orgKey = session.organization?.id ?? "default"
-        const saved = localStorage.getItem(`floraos_finalized_pitches_${orgKey}`)
+        const saved = localStorage.getItem(`smeos_finalized_pitches_${orgKey}`) ?? localStorage.getItem(`floraos_finalized_pitches_${orgKey}`)
         if (saved) {
           const list: SalesPitchData[] = JSON.parse(saved)
           const found = list.find((p) => (p.id ?? p.productName) === pitchIdParam)

@@ -119,11 +119,11 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const samplePhotoUrl = await resolveSubcontractSamplePhoto(order)
   let sampleImageUrl = samplePhotoUrl || (snapshot.image_url || snapshot.imageUrl || itemMeta.imageUrl || itemMeta.image_url) as string | undefined
 
-  if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/"))) {
+  if (sampleImageUrl && (sampleImageUrl.startsWith("org/") || sampleImageUrl.includes("floraos-core/org/") || sampleImageUrl.includes("smeos-core/org/"))) {
     try {
       const key = sampleImageUrl.startsWith("org/")
         ? sampleImageUrl
-        : sampleImageUrl.match(/floraos-core\/(org\/[^?]+)/)?.[1]
+        : sampleImageUrl.match(/(?:floraos-core|smeos-core)\/(org\/[^?]+)/)?.[1]
       if (key) {
         sampleImageUrl = await storage.signedUrl(key, 604800, "GET").catch(() => sampleImageUrl)
       }

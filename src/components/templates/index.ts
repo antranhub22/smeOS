@@ -1,7 +1,7 @@
 /**
- * FloraOS Template Library (10 Chức Năng Cốt Lõi)
+ * smeOS Template Library (10 Chức Năng Cốt Lõi)
  *
- * Tổ chức chuẩn hóa toàn bộ templates của hệ thống FloraOS theo 10 phân hệ nghiệp vụ:
+ * Tổ chức chuẩn hóa toàn bộ templates của hệ thống smeOS theo 10 phân hệ nghiệp vụ:
  * 1. Product Analysis (M01a/M01b/M01c)
  * 2. Creative Studio (M04a/M04b)
  * 3. Video Studio (M05)

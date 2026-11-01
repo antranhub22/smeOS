@@ -13,7 +13,8 @@ import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { StoreGrowthCenter } from "./store-growth-center"
 
-const STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_store"
+const STORAGE_KEY_EXPERT_MODE = "smeos_expert_mode_store"
+const LEGACY_STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_store"
 
 export function StoreJourneyHome() {
   const router = useRouter()
@@ -32,7 +33,7 @@ export function StoreJourneyHome() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY_EXPERT_MODE)
+      const saved = localStorage.getItem(STORAGE_KEY_EXPERT_MODE) ?? localStorage.getItem(LEGACY_STORAGE_KEY_EXPERT_MODE)
       if (saved === "true") {
         setIsExpertMode(true)
       }
@@ -57,9 +58,9 @@ export function StoreJourneyHome() {
       return
     }
 
-    if (journey.id === "floraos-copilot-chat") {
+    if (journey.id === "floraos-copilot-chat" || journey.id === "smeos-copilot-chat") {
       if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("floraos:open-copilot"))
+        window.dispatchEvent(new CustomEvent("smeos:open-copilot"))
       }
       return
     }

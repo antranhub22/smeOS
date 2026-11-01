@@ -204,7 +204,7 @@ function InstagramPreview({
             </div>
           </div>
           <div>
-            <div className="text-xs font-bold leading-none">tiemhoa.floraos</div>
+            <div className="text-xs font-bold leading-none">cuahang.smeos</div>
             <div className="text-caption text-text-muted mt-0.5">{shopName}</div>
           </div>
         </div>
@@ -248,7 +248,7 @@ function InstagramPreview({
 
         {/* Caption */}
         <div className="text-xs leading-relaxed space-y-1">
-          <span className="font-bold mr-1.5">tiemhoa.floraos</span>
+          <span className="font-bold mr-1.5">cuahang.smeos</span>
           <span className="font-semibold">{post.headline}</span>
           <div className="text-cool-800 dark:text-cool-300 whitespace-pre-line mt-1">
             {post.bodyText}
@@ -363,7 +363,7 @@ function TikTokPreview({
       {/* Bottom Info Overlay */}
       <div className="p-3.5 z-10 bg-gradient-to-t from-black via-black/80 to-transparent pr-14 text-left">
         <div className="text-sm font-extrabold flex items-center gap-1.5">
-          <span>@tiemhoa_floraos</span>
+          <span>@cuahang_smeos</span>
           <CheckCircle2 size={13} className="text-ocean-400 fill-ocean-400 text-black" />
         </div>
 

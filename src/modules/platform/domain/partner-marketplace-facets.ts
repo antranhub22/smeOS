@@ -10,12 +10,8 @@
  *  - `score`    điểm chấm từng hạng mục (0–5)
  * Trường mỗi cửa hàng một khác (tên, SĐT, link, ghi chú) không thành tiêu chí.
  */
-import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 import type { PartnerStoreMarketplaceEntity } from "./partner-marketplace.types"
 import { normalizeTier } from "./partner-marketplace-row-mapper"
-
-/** Chợ đối tác là khảo sát cửa hàng ngành Hoa — chức danh thợ lấy từ plugin ngành, không viết cứng. */
-const MAKER_TITLE = getIndustryPlugin("FLORAL").terminology.makerTitle.toLowerCase()
 
 type Kind = "list" | "single" | "presence" | "score"
 export interface FacetDef {
@@ -40,7 +36,7 @@ export const FACET_DEFS: readonly FacetDef[] = [
   f("business.paymentMethods", "Phương thức thanh toán", "list"),
   f("production.productLines", "Danh mục sản phẩm", "list"),
   f("production.flowerSupply", "Nguồn cung hoa", "list"),
-  f("production.floristCount", `Số ${MAKER_TITLE}`, "single"),
+  f("production.floristCount", "Số lượng nhân sự chế tác", "single"),
   f("production.lossRateEstimate", "Tỷ lệ hao hụt", "single"),
   f("production.rareFlowerAbility", "Đáp ứng hoa hiếm", "presence"),
   f("identity.operatingYears", "Số năm hoạt động", "single"),

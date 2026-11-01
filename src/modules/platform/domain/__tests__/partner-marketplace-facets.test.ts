@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest"
 
-import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
-
 import { FACET_DEFS, buildFacetGroups, facetValues, matchesFacets } from "../partner-marketplace-facets"
 import { rowToProfile } from "../partner-marketplace-row-mapper"
 import type { PartnerStoreMarketplaceEntity } from "../partner-marketplace.types"
@@ -66,9 +64,8 @@ describe("matchesFacets / buildFacetGroups", () => {
 })
 
 describe("FACET_DEFS", () => {
-  it("nhãn số thợ lấy chức danh từ plugin ngành Hoa, không viết cứng thuật ngữ", () => {
-    const maker = getIndustryPlugin("FLORAL").terminology.makerTitle.toLowerCase()
-    expect(def("production.floristCount").label).toBe(`Số ${maker}`)
-    expect(FACET_DEFS.some((d) => /cắm hoa/i.test(d.label))).toBe(false)
+  it("nhãn số thợ trung tính theo ngành, không viết cứng thuật ngữ ngành Hoa (ratchet IT-F05/F06/F11)", () => {
+    expect(def("production.floristCount").label).toBe("Số lượng nhân sự chế tác")
+    expect(FACET_DEFS.some((d) => /cắm hoa|thợ hoa/i.test(d.label))).toBe(false)
   })
 })
