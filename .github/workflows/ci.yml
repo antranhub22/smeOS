@@ -39,6 +39,8 @@ jobs:
       # chat/completions và `tests/setup.ts` chặn mạng, nên không lời gọi nào ra
       # ngoài — nhưng `OpenAILLMProvider` đòi khoá có mặt lúc khởi tạo.
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
+      # Bản build/chạy production trên CI không có kho S3 — cho phép đĩa cục bộ (P0-05).
+      ALLOW_LOCAL_STORAGE: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -161,6 +163,8 @@ jobs:
       INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
       SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
+      # Bản build/chạy production trên CI không có kho S3 — cho phép đĩa cục bộ (P0-05).
+      ALLOW_LOCAL_STORAGE: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
