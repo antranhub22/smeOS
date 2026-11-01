@@ -7,24 +7,32 @@ import { createCipheriv, createDecipheriv, hkdfSync, randomBytes } from "node:cr
  * Định dạng: `v1.<iv>.<tag>.<ciphertext>` (base64url).
  */
 
-function keyFor(purpose: string): Buffer {
+function keyFor(purpose: string, salt: string = "smeos-secret-box"): Buffer {
   const master = process.env["INTEGRATION_TOKEN_SECRET"]
   if (!master || master.length < 16) throw new Error("Thiếu INTEGRATION_TOKEN_SECRET để mã hoá bí mật tích hợp")
-  return Buffer.from(hkdfSync("sha256", master, "floraos-secret-box", purpose, 32))
+  return Buffer.from(hkdfSync("sha256", master, salt, purpose, 32))
 }
 
 export function sealSecret(plaintext: string, purpose: string): string {
   const iv = randomBytes(12)
-  const cipher = createCipheriv("aes-256-gcm", keyFor(purpose), iv)
+  const cipher = createCipheriv("aes-256-gcm", keyFor(purpose, "smeos-secret-box"), iv)
   const body = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()])
   return ["v1", iv.toString("base64url"), cipher.getAuthTag().toString("base64url"), body.toString("base64url")].join(".")
 }
 
-/** Giải mã; bản mã hỏng/sai khoá/sai mục đích → ném lỗi (GCM xác thực toàn vẹn). */
+/** Giải mã; bản mã hỏng/sai khoá/sai mục đích → ném lỗi (GCM xác thực toàn vẹn). Thử khoá mới smeos trước, lùi về khoá legacy nếu cần. */
 export function openSecret(sealed: string, purpose: string): string {
   const [version, iv, tag, body] = sealed.split(".")
   if (version !== "v1" || !iv || !tag || !body) throw new Error("Bản mã bí mật không hợp lệ")
-  const decipher = createDecipheriv("aes-256-gcm", keyFor(purpose), Buffer.from(iv, "base64url"))
-  decipher.setAuthTag(Buffer.from(tag, "base64url"))
-  return Buffer.concat([decipher.update(Buffer.from(body, "base64url")), decipher.final()]).toString("utf8")
+
+  try {
+    const decipher = createDecipheriv("aes-256-gcm", keyFor(purpose, "smeos-secret-box"), Buffer.from(iv, "base64url"))
+    decipher.setAuthTag(Buffer.from(tag, "base64url"))
+    return Buffer.concat([decipher.update(Buffer.from(body, "base64url")), decipher.final()]).toString("utf8")
+  } catch (err) {
+    // Thử khoá tiền bối với salt cũ "floraos-secret-box"
+    const decipherLegacy = createDecipheriv("aes-256-gcm", keyFor(purpose, "floraos-secret-box"), Buffer.from(iv, "base64url"))
+    decipherLegacy.setAuthTag(Buffer.from(tag, "base64url"))
+    return Buffer.concat([decipherLegacy.update(Buffer.from(body, "base64url")), decipherLegacy.final()]).toString("utf8")
+  }
 }

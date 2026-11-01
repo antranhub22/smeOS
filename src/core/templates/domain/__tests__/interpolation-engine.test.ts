@@ -6,7 +6,7 @@ import {
 } from "../interpolation-engine"
 import { buildInterpolationContext } from "../variable-catalog"
 
-describe("FloraOS Template Interpolation Engine", () => {
+describe("smeOS Template Interpolation Engine", () => {
   it("resolves nested variables correctly with dot notation", () => {
     const ctx = buildInterpolationContext({
       productName: "Bó Hoa Tươi Thắm",

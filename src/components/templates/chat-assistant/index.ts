@@ -1,5 +1,5 @@
 /**
- * FloraOS Template Library — Trợ Lý AI Chat & Chốt Đơn (Chat Assistant M10)
+ * smeOS Template Library — Trợ Lý AI Chat & Chốt Đơn (Chat Assistant M10)
  */
 
 export * from "./chat-guidance-card"

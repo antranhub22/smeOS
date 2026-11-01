@@ -54,7 +54,7 @@ export const homeVi = {
   "actionCards": {
     "report": {
       "title": "Xem báo cáo",
-      "desc": "Xem doanh thu, số đơn hàng và hoạt động trên FloraOS của cửa hàng."
+      "desc": "Xem doanh thu, số đơn hàng và hoạt động trên smeOS của cửa hàng."
     },
     "trends": {
       "title": "Xu hướng thị trường",

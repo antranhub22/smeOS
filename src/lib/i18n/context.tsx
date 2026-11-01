@@ -19,7 +19,8 @@ import {
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 import { getTierTerminology } from "@/core/terminology"
 
-const STORAGE_KEY = "floraos_locale"
+const STORAGE_KEY = "smeos_locale"
+const LEGACY_STORAGE_KEY = "floraos_locale"
 
 const I18nContext = createContext<I18nContextValue | null>(null)
 
@@ -34,7 +35,7 @@ export function I18nProvider({ children, initialLocale = DEFAULT_LOCALE, industr
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY) as SupportedLocale | null
+      const saved = (localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY)) as SupportedLocale | null
       if (saved && SUPPORTED_LOCALES.includes(saved)) {
         // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc ngôn ngữ đã lưu sau hydrate để tránh lệch SSR, chủ đích
         setLocaleState(saved)

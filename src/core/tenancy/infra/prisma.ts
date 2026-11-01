@@ -15,23 +15,23 @@ import { env } from "@/lib/env"
  * xuất hiện ở đây và ở `prisma.config.ts`.
  */
 const globalForPrisma = globalThis as unknown as {
-  floraosPrisma?: PrismaClient
+  smeosPrisma?: PrismaClient
   schemaVersion?: string
 }
 
 const CURRENT_SCHEMA_VERSION = "2026-10-27-notification-matrix-v1"
 if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
-  globalForPrisma.floraosPrisma?.$disconnect?.().catch(() => {})
-  delete globalForPrisma.floraosPrisma
+  globalForPrisma.smeosPrisma?.$disconnect?.().catch(() => {})
+  delete globalForPrisma.smeosPrisma
   globalForPrisma.schemaVersion = CURRENT_SCHEMA_VERSION
 }
 
 export const prisma: PrismaClient =
-  globalForPrisma.floraosPrisma ??
+  globalForPrisma.smeosPrisma ??
   new PrismaClient({
     adapter: new PrismaPg({ connectionString: env.DATABASE_URL }),
   })
 
 if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.floraosPrisma = prisma
+  globalForPrisma.smeosPrisma = prisma
 }

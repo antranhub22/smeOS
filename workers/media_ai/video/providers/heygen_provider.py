@@ -51,7 +51,7 @@ class HeyGenProvider(BaseVideoProvider):
             "Content-Type": "application/json",
         }
         payload = {
-            "title": title[:50] if title else "FloraOS Flower Video",
+            "title": title[:50] if title else "smeOS Product Video",
             "video_inputs": [
                 {
                     "character": {
@@ -134,7 +134,7 @@ class HeyGenProvider(BaseVideoProvider):
                 for s in scenes
             ).strip()
 
-            title = payload.get("title") or "FloraOS Video"
+            title = payload.get("title") or "smeOS Video"
             video_id = self._submit_video(script_text=full_script, title=title)
 
             if progress_callback:

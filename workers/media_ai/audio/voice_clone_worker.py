@@ -67,10 +67,10 @@ def clone_voice_elevenlabs(name: str, sample: Path, mime: str) -> Dict[str, Any]
                 "https://api.elevenlabs.io/v1/voices/add",
                 headers={"xi-api-key": api_key},
                 data={
-                    "name": f"FloraOS · {name}"[:100],
-                    "description": "Giọng nhân bản của chủ tiệm (FloraOS Creative Studio)",
+                    "name": f"smeOS · {name}"[:100],
+                    "description": "Giọng nhân bản của chủ tiệm (smeOS Creative Studio)",
                     "remove_background_noise": "true",
-                    "labels": json.dumps({"source": "floraos"}),
+                    "labels": json.dumps({"source": "smeos"}),
                 },
                 files=[("files", (sample.name, fh, mime))],
                 timeout=120,

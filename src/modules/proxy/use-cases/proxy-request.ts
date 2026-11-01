@@ -14,7 +14,7 @@ import { resolveSession } from "@/modules/organization/use-cases/resolve-session
 import { ssoClaimsFor, SSO_TOKEN_TTL_SECONDS } from "@/modules/sso/domain/sso-claims"
 import { signSsoToken, verifySsoToken } from "@/modules/sso/infra/sso-jwt"
 import { proxyTimeoutSignal, proxyRequest, ProxyError, proxyErrorMessage } from "../infra/proxy-http-adapter"
-import { requireProxyUrl, isAllowedProxyPath, SSO_HEADER, AUTHORIZATION_HEADER, NO_BODY_METHODS, PROXY_TIMEOUT_MS, type ProxyClient } from "../domain/proxy-rules"
+import { requireProxyUrl, isAllowedProxyPath, SSO_HEADER, LEGACY_SSO_HEADER, AUTHORIZATION_HEADER, NO_BODY_METHODS, PROXY_TIMEOUT_MS, type ProxyClient } from "../domain/proxy-rules"
 
 export { ProxyClient }
 
@@ -49,10 +49,10 @@ export class ProxyRouteError extends AppError {
  * tự xác minh được.
  */
 export function readProxyIdentity(request: Request): ProxyIdentity {
-  const ssoHeader = request.headers.get(SSO_HEADER)?.trim()
+  const ssoHeader = request.headers.get(SSO_HEADER)?.trim() ?? request.headers.get(LEGACY_SSO_HEADER)?.trim()
   if (ssoHeader) return { kind: "sso", value: ssoHeader }
 
-  // Dashboard core không tự gửi JWT — core đọc cookie `floraos_sso` rồi forward.
+  // Dashboard core không tự gửi JWT — core đọc cookie `smeos_sso` (hoặc legacy) rồi forward.
   const ssoCookie = readSsoCookie(request)
   if (ssoCookie) return { kind: "sso", value: ssoCookie }
 
@@ -71,6 +71,7 @@ export function buildForwardHeaders(input: {
   const headers: Record<string, string> = {}
   if (input.identity.kind === "sso") {
     headers[SSO_HEADER] = input.identity.value
+    headers[LEGACY_SSO_HEADER] = input.identity.value
   } else if (input.identity.kind === "token") {
     headers[AUTHORIZATION_HEADER] = input.identity.value
   }

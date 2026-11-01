@@ -31,8 +31,10 @@ import { AppError } from "@/core/http/errors"
 
 export type ProxyClient = "SOCIALFLOW" | "LOCALBUDD"
 
-/** Tên header core forward JWT `floraos_sso` khi gọi server-to-server. */
-export const SSO_HEADER = "x-floraos-sso"
+/** Tên header core forward JWT `smeos_sso` khi gọi server-to-server. */
+export const SSO_HEADER = "x-smeos-sso"
+/** Tên header legacy tương thích ngược. */
+export const LEGACY_SSO_HEADER = "x-floraos-sso"
 
 /** Tên header core forward token máy-gọi-máy. */
 export const AUTHORIZATION_HEADER = "authorization"

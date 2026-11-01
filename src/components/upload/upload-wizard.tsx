@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
-import { jobStorageKeyFor } from "./job-storage-key"
+import { jobStorageKeyFor, legacyJobStorageKeyFor } from "./job-storage-key"
 
 type Step = "upload" | "confirm" | "running" | "result"
 
@@ -103,6 +103,7 @@ export function UploadWizard() {
   const { can, organization } = useSession()
   const orgId = organization?.id
   const jobStorageKey = jobStorageKeyFor(orgId)
+  const legacyJobStorageKey = legacyJobStorageKeyFor(orgId)
 
   const [step, setStep] = useState<Step>("upload")
   const [photos, setPhotos] = useState<Photo[]>([])
@@ -428,7 +429,9 @@ export function UploadWizard() {
       try {
         let jobId: string | null = null
         try {
-          jobId = jobStorageKey ? window.localStorage.getItem(jobStorageKey) : null
+          jobId = jobStorageKey
+            ? (window.localStorage.getItem(jobStorageKey) ?? (legacyJobStorageKey ? window.localStorage.getItem(legacyJobStorageKey) : null))
+            : null
         } catch {
           jobId = null
         }

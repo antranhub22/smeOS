@@ -23,7 +23,8 @@ export interface FeatureGuidanceCardProps extends React.HTMLAttributes<HTMLDivEl
   guidanceId?: string | undefined
 }
 
-const STORAGE_KEY_PREFIX = "floraos_guidance_seen_"
+const STORAGE_KEY_PREFIX = "smeos_guidance_seen_"
+const LEGACY_STORAGE_KEY_PREFIX = "floraos_guidance_seen_"
 
 /** Sinh kebab-case ID ổn định từ chuỗi tiếng Việt có dấu */
 function toStableId(text: string): string {
@@ -40,7 +41,10 @@ function toStableId(text: string): string {
 function hasBeenSeen(id: string): boolean {
   if (typeof window === "undefined") return false
   try {
-    return localStorage.getItem(STORAGE_KEY_PREFIX + id) === "1"
+    return (
+      localStorage.getItem(STORAGE_KEY_PREFIX + id) === "1" ||
+      localStorage.getItem(LEGACY_STORAGE_KEY_PREFIX + id) === "1"
+    )
   } catch {
     return false
   }
@@ -59,7 +63,7 @@ function markAsSeen(id: string): void {
 /**
  * Base Feature Guidance Card Component (Họ Guidance Templates)
  *
- * Khung chuẩn hiển thị hướng dẫn thao tác cho các Tab tính năng trong FloraOS:
+ * Khung chuẩn hiển thị hướng dẫn thao tác cho các Tab tính năng trong smeOS:
  * - Khung viền đứt nét màu đỏ: `border-2 border-dashed border-red-300`
  * - Nền đỏ pastel dịu mắt: `bg-red-50/70`
  * - Badge định danh chức năng: `bg-alert-100 text-red-700`

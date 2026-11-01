@@ -88,7 +88,7 @@ export async function resolveSubcontractSamplePhoto(
   }
 
   // Khoá kho -> URL ký 1 giờ, chỉ khi khoá nằm trong thư mục của chính tổ chức (rà soát cụm G)
-  if (rawImageUrl && (rawImageUrl.startsWith("org/") || rawImageUrl.includes("floraos-core/org/"))) {
+  if (rawImageUrl && (rawImageUrl.startsWith("org/") || rawImageUrl.includes("floraos-core/org/") || rawImageUrl.includes("smeos-core/org/"))) {
     const key = ownStorageKey(rawImageUrl, order.organization_id)
     rawImageUrl = key ? await getStorageProvider().signedUrl(key, SIGNED_URL_TTL_SECONDS, "GET").catch(() => null) : null
   }

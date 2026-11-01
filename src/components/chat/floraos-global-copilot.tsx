@@ -80,8 +80,12 @@ export function FloraOSGlobalCopilot() {
         }, 150)
       }
     }
+    window.addEventListener("smeos:open-copilot", handleCustomOpen)
     window.addEventListener("floraos:open-copilot", handleCustomOpen)
-    return () => window.removeEventListener("floraos:open-copilot", handleCustomOpen)
+    return () => {
+      window.removeEventListener("smeos:open-copilot", handleCustomOpen)
+      window.removeEventListener("floraos:open-copilot", handleCustomOpen)
+    }
   }, [conversationId])
 
   useEffect(() => {

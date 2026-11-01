@@ -53,7 +53,7 @@ export const homeEn = {
   actionCards: {
     report: {
       title: "View Reports",
-      desc: "Track revenue, orders, and FloraOS activity for your flower shop.",
+      desc: "Track revenue, orders, and smeOS activity for your shop.",
     },
     trends: {
       title: "Trending Bouquets",

@@ -258,11 +258,11 @@ export function generateChatOrderCheckout(
   const rand = Math.floor(1000 + Math.random() * 9000)
   const orderCode = `DH-${Date.now().toString().slice(-6)}-${rand}`
   const totalVnd = draft.budgetVnd || 550_000
-  const paymentTransferCode = `FLO ${orgCode.toUpperCase().slice(0, 6)} ${orderCode.replace(/-/g, "")}`
+  const paymentTransferCode = `SME ${orgCode.toUpperCase().slice(0, 6)} ${orderCode.replace(/-/g, "")}`
 
   const bankCode = "ICB" // VietinBank Napas 247
   const accountNumber = "102874629102"
-  const accountName = "FLORAOS STORE PAY"
+  const accountName = "SMEOS STORE PAY"
 
   const qrQuickLink = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-compact2.png?amount=${totalVnd}&addInfo=${encodeURIComponent(
     paymentTransferCode
