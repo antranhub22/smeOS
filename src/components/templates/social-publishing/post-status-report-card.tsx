@@ -44,35 +44,14 @@ export interface PostStatusReportProps {
 }
 
 /**
- * Trả về link trực tiếp đến bài viết hoặc trang nền tảng
+ * Link bài thật do nền tảng trả về, hoặc `null`. Không dựng link trang chung của nền tảng giả làm
+ * link bài — trước đây người dùng tưởng đã đăng thành công khi chưa có bài nào (P0-06).
  */
-function getChannelDirectUrl(channel: string, postUrl?: string | null): string {
-  const c = (channel || "").toLowerCase()
-  if (postUrl && postUrl.startsWith("http")) {
-    const isFake =
-      postUrl.includes("facebook_post_") ||
-      postUrl.includes("post_") ||
-      Boolean(postUrl.match(/\/posts\/\d+$/))
-    if (!isFake) return postUrl
-  }
-
-  if (c.includes("face")) {
-    // Dẫn đến trang cá nhân / timeline Facebook của tài khoản đang đăng nhập
-    return "https://www.facebook.com/me"
-  }
-  if (c.includes("insta")) {
-    return "https://www.instagram.com/"
-  }
-  if (c.includes("link")) {
-    return "https://www.linkedin.com/in/me/recent-activity/all/"
-  }
-  if (c.includes("tik")) {
-    return "https://www.tiktok.com/"
-  }
-  if (c.includes("zalo")) {
-    return "https://oa.zalo.me"
-  }
-  return "https://www.facebook.com/me"
+function realPostUrl(postUrl?: string | null): string | null {
+  if (!postUrl || !postUrl.startsWith("http")) return null
+  const isFake =
+    postUrl.includes("facebook_post_") || postUrl.includes("post_") || Boolean(postUrl.match(/\/posts\/\d+$/))
+  return isFake ? null : postUrl
 }
 
 /**
@@ -138,7 +117,8 @@ export function PostStatusReportCard({
             message: res.error,
           })
         } else {
-          const finalUrl = (res && res.url) || post.postUrl || getChannelDirectUrl(post.channel)
+          // Chỉ link bài thật do nền tảng trả về — không dựng link trang chung giả làm link bài (P0-06).
+          const finalUrl = realPostUrl(res ? res.url : null) ?? realPostUrl(post.postUrl)
           setFeedback({
             type: "success",
             message: `Đã phát sóng bài viết thành công lên ${post.channelLabel || post.channel}!`,
@@ -532,14 +512,16 @@ export function PostStatusReportCard({
             <CheckCircle2 size={13} className="text-success" />
             <span>Đã xuất bản thành công trên <strong>{post.channelLabel || post.channel}</strong></span>
           </div>
+          {realPostUrl(post.postUrl) && (
           <a
-            href={getChannelDirectUrl(post.channel, post.postUrl)}
+            href={realPostUrl(post.postUrl) ?? undefined}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-primary text-white hover:bg-primary/90 shadow-xs self-end sm:self-auto"
           >
             <ExternalLink size={12} /> Xem bài viết trên {post.channelLabel || post.channel}
           </a>
+          )}
         </div>
       )}
     </Card>

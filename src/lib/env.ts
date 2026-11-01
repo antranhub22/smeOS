@@ -50,6 +50,8 @@ const schema = z.object({
   STORAGE_BUCKET: z.string().optional(),
   STORAGE_ACCESS_KEY: z.string().optional(),
   STORAGE_SECRET_KEY: z.string().optional(),
+  /** "true" = cho production chạy bằng đĩa cục bộ (chỉ CI / máy thử) — xem modules/assets/domain/storage-config.ts. */
+  ALLOW_LOCAL_STORAGE: z.enum(["true", "false"]).optional(),
   // Redis dùng chung (giới hạn tần suất endpoint công khai). Trống → đếm
   // trong bộ nhớ từng instance (chỉ phù hợp dev/một instance).
   REDIS_URL: optionalUrl,

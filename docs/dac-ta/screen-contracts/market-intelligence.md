@@ -2,6 +2,8 @@
 
 **Tuyến:** `/market-intelligence` · **Tệp chính:** `src/app/(app)/market-intelligence/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.C1
 
+> **Trạng thái production (01/11/2026, P0-06, D-20b):** khoá "Sắp ra mắt" ở mọi bản build production (`UNAVAILABLE_ROUTE_PREFIXES`, `src/lib/feature-lock.ts`) — worker nghiên cứu thị trường chưa được triển khai trên Render. Trang chủ Marketing không gọi API cơ hội khi tuyến đang khoá.
+
 ## 1. Vai và mục đích
 - **Vai chính (03b):** `marketer`, `store_manager`, `content_creator`.
 - **Phạm vi:** organization (nghiên cứu cơ hội nội dung, xu hướng vĩ mô và chủ đề hoa ngách).

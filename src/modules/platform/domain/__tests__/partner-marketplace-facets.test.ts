@@ -62,3 +62,10 @@ describe("matchesFacets / buildFacetGroups", () => {
     expect(challenges.options.find((o) => o.value === "Marketing")?.count).toBe(2)
   })
 })
+
+describe("FACET_DEFS", () => {
+  it("nhãn số thợ trung tính theo ngành, không viết cứng thuật ngữ ngành Hoa (ratchet IT-F05/F06/F11)", () => {
+    expect(def("production.floristCount").label).toBe("Số lượng nhân sự chế tác")
+    expect(FACET_DEFS.some((d) => /cắm hoa|thợ hoa/i.test(d.label))).toBe(false)
+  })
+})

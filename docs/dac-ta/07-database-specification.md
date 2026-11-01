@@ -27,6 +27,7 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `platform_secrets` | Bí mật cấp nền tảng đã niêm phong (token Zalo OA chung) — xem mục `chain_branches` |
 | `platform_operators` · `platform_role_capabilities` · `platform_audit_logs` | Console Vận hành Nền tảng (P25, 19/09) — dữ liệu của người vận hành xuyên tổ chức, không thuộc một tổ chức nào. Từ vựng năng lực `N1`–`N8` TÁCH HẲN khỏi `roles`/`role_capabilities` của tenant (D-N6) — không dùng `capability_scope`, không thêm giá trị `PLATFORM` vào enum đó. Xem `../kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md` mục 4.1 |
 | `partner_marketplace_stores` | Chợ đối tác (PO 31/10/2026): hồ sơ khảo sát cửa hàng TIỀM NĂNG, chưa là tenant nên không thuộc tổ chức nào. Đọc `N1`, ghi `N17`. `match_key` (tên chuẩn hoá) duy nhất; `profile` JSONB giữ đủ 75 cột khảo sát; `photo_keys` là nguồn registry kho (`platform/…`) |
+| `partner_marketplace_share_links` | Link chia sẻ chợ đối tác (PO 01/11/2026): xem danh sách đã che không cần đăng nhập. Cấp nền tảng, không thuộc tổ chức. Tạo/huỷ `N17`. Chỉ lưu `token_hash` (SHA-256, duy nhất); `expires_at` do người tạo chọn (1–365 ngày); `revoked_at` khi huỷ; `view_count`/`last_viewed_at` |
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Xem mục 22b |
 | `integration_governance` | Trung tâm Tích hợp (30/10/2026) — khoá/cấp sẵn tích hợp theo tầng `(connector_key, tier, scope_id)`; `scope_id` là `GLOBAL` (Mẹ), `industry:<key>` (Ngành) hoặc id tổ chức chuỗi. Cùng mẫu với `notification_*`. Xem mục 36 |
@@ -1626,6 +1627,24 @@ model partner_marketplace_stores {
   updated_at       DateTime @updatedAt
 
   @@index([tier])
+}
+```
+
+### Link chia sẻ chợ đối tác — `partner_marketplace_share_links` (PO 01/11/2026)
+
+```prisma
+model partner_marketplace_share_links {
+  id             String    @id @default(uuid())
+  token_hash     String    @unique
+  label          String
+  expires_at     DateTime
+  revoked_at     DateTime?
+  created_by     String
+  view_count     Int       @default(0)
+  last_viewed_at DateTime?
+  created_at     DateTime  @default(now())
+
+  @@index([created_at])
 }
 ```
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { isFeatureLockEnabled, isJourneyLocked, isRouteLocked } from "./feature-lock"
+import { isFeatureLockEnabled, isJourneyLocked, isRouteLocked, isUnavailableLockEnabled } from "./feature-lock"
 import { STORE_JOURNEYS } from "@/modules/journey/domain/journey-catalog"
 
 describe("feature-lock", () => {
@@ -49,5 +49,15 @@ describe("feature-lock", () => {
       expect(isRouteLocked(href, true)).toBe(true)
     }
     expect(isRouteLocked("/the-chao", true)).toBe(false)
+  })
+
+  it("bản build production luôn khoá tuyến chưa vận hành được, kể cả khi tắt khoá chung (P0-06)", () => {
+    expect(isUnavailableLockEnabled("production")).toBe(true)
+    expect(isUnavailableLockEnabled("development")).toBe(false)
+    for (const href of ["/market-intelligence", "/lich-dang?tab=queue", "/ket-noi"]) {
+      expect(isRouteLocked(href, false, true)).toBe(true)
+      expect(isRouteLocked(href, false, false)).toBe(false)
+    }
+    expect(isRouteLocked("/don-hang", false, true)).toBe(false)
   })
 })

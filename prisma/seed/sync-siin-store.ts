@@ -17,6 +17,8 @@ import { hashPassword } from "../../src/modules/organization/infra/password-hash
 // 22/10/2026: trước đó mỗi lần deploy có SEED_DEV_DATA=true đều trả mật khẩu về giá trị công khai trong repo).
 import { ensureSystemRoles } from "../../src/modules/organization/use-cases/ensure-system-roles"
 import { FOUNDER_ROLE_KEY } from "../../src/modules/organization/domain/system-roles"
+import { ALL_PLATFORM_CAPABILITY_CODES } from "../../src/core/platform/platform-capability-catalog"
+import { PlatformOperatorRepository } from "../../src/modules/platform/infra/platform-operator-repository"
 import { MOCLAN_CONSTANTS } from "./dev-moclan-data"
 
 export async function syncSiinStoreAccount(): Promise<void> {
@@ -261,6 +263,11 @@ export async function syncSiinStoreAccount(): Promise<void> {
     })
     console.log(`  ✓ Membership SuperUser: Tạo mới ACTIVE (Role: ${FOUNDER_ROLE_KEY})`)
   }
+
+  // Quyền console nền tảng cho SuperUser dev — qua `platform_operators` thật (P0-04). Trước đây máy dev
+  // dựa vào cửa hậu "email đuôi @dev.com" trong `requirePlatformContext`, nay đã gỡ.
+  await new PlatformOperatorRepository().grant(userId3, [...ALL_PLATFORM_CAPABILITY_CODES], null)
+  console.log("  ✓ SuperUser: đủ mã năng lực nền tảng (platform_operators)")
 
   console.log("✅ [syncSiinStoreAccount] Hoàn tất đồng bộ! Giữ nguyên 100% hồ sơ và sản phẩm thực tế.")
 }

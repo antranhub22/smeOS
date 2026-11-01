@@ -17,9 +17,11 @@ import { MarketplaceScoreTab } from "./marketplace-score-tab"
 interface MarketplaceProfileModalProps {
   store: PartnerStoreMarketplaceEntity | null
   onClose: () => void
+  /** Link chia sẻ công khai: ẩn nút dẫn vào console. */
+  readOnly?: boolean
 }
 
-export function MarketplaceProfileModal({ store, onClose }: MarketplaceProfileModalProps) {
+export function MarketplaceProfileModal({ store, onClose, readOnly = false }: MarketplaceProfileModalProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "craft" | "facility" | "photos" | "score">("overview")
 
   useEffect(() => {
@@ -141,13 +143,15 @@ export function MarketplaceProfileModal({ store, onClose }: MarketplaceProfileMo
             Đóng lại
           </Button>
 
-          <div className="flex items-center gap-2">
-            <Link href={`/van-hanh/to-chuc` as never}>
-              <Button size="sm" className="font-semibold gap-1.5">
-                <User className="h-4 w-4" /> Quản trị tổ chức (Giai đoạn 2)
-              </Button>
-            </Link>
-          </div>
+          {!readOnly && (
+            <div className="flex items-center gap-2">
+              <Link href={`/van-hanh/to-chuc` as never}>
+                <Button size="sm" className="font-semibold gap-1.5">
+                  <User className="h-4 w-4" /> Quản trị tổ chức (Giai đoạn 2)
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -4,7 +4,6 @@ import {
   MapPin,
   Globe,
   Calendar,
-  ExternalLink,
   Users,
   Target,
   CreditCard,
@@ -121,14 +120,7 @@ export function MarketplaceOverviewTab({
             <span className="text-text-muted">Facebook:</span>
             <span className="font-medium truncate max-w-[220px]">
               {digital.facebook && digital.facebook !== "không" && digital.facebook !== "không có" ? (
-                <a
-                  href={digital.facebook}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-primary hover:underline inline-flex items-center gap-0.5 font-semibold"
-                >
-                  Xem fanpage <ExternalLink className="h-3 w-3" />
-                </a>
+                <span className="font-mono text-text-muted">{digital.facebook}</span>
               ) : (
                 "Chưa có"
               )}
@@ -142,14 +134,7 @@ export function MarketplaceOverviewTab({
             <span className="text-text-muted">Kênh TikTok:</span>
             <span className="font-medium truncate max-w-[220px]">
               {digital.tiktok && digital.tiktok !== "không" && digital.tiktok !== "không có" ? (
-                <a
-                  href={digital.tiktok}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-primary hover:underline inline-flex items-center gap-0.5"
-                >
-                  Xem TikTok <ExternalLink className="h-3 w-3" />
-                </a>
+                <span className="font-mono text-text-muted">{digital.tiktok}</span>
               ) : (
                 "Chưa có"
               )}
@@ -163,14 +148,7 @@ export function MarketplaceOverviewTab({
             <span className="text-text-muted">Website chính thức:</span>
             <span className="font-medium truncate max-w-[220px]">
               {digital.website && digital.website !== "không" && digital.website !== "không có" ? (
-                <a
-                  href={digital.website.startsWith("http") ? digital.website : `https://${digital.website}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-primary hover:underline inline-flex items-center gap-0.5"
-                >
-                  {digital.website} <ExternalLink className="h-3 w-3" />
-                </a>
+                <span className="font-mono text-text-muted">{digital.website}</span>
               ) : (
                 "Chưa có"
               )}
