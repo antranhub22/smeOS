@@ -169,14 +169,14 @@ Nhánh `feat/msc-p3-campaign-pipeline`
 
 Nhánh `feat/msc-p4-quotation`
 
-- [ ] **4.1** `feat(db): quotations and quotation_items` —
+- [x] **4.1** `feat(db): quotations and quotation_items` —
   - `quotations`: `organization_id`, `code` (BG-0001), `lead_id?`, `customer_id?`, `asset_usage_id?`, `status` (`DRAFT|SENT|ACCEPTED|REJECTED|EXPIRED|CONVERTED`), `valid_until`, các tổng tiền `Decimal`, `terms`, `converted_order_id?`, `created_by` + index.
   - `quotation_items`: `product_id?`, `name`, `qty`, `unit_price`, `note`.
-- [ ] **4.2** `feat(sales): quotation domain rules` — tính tiền phía máy chủ từ giá sản phẩm; ưu đãi chỉ từ `listActiveShopPromotions`; hết hạn; chuyển trạng thái. Lead → `QUOTATION_SENT` khi gửi. Test.
-- [ ] **4.3** `feat(api): /api/v1/quotations` (`R15` ghi, `Q1` đọc) + trang công khai xem báo giá `/bg/[code]` (chỉ đọc, khoá mã khó đoán). Test tenant.
-- [ ] **4.4** `feat(orders): QUOTATION order source` — thêm nguồn ở `ORDER_SOURCES` + chuyển báo giá → đơn qua `ingestOrder` (theo `KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md`). `order-ingestion-guard.test.ts` xanh.
-- [ ] **4.5** `refactor(bao-gia): persist quotations` — viết lại `/bao-gia` (587 dòng → tách tệp ≤350), bỏ 3 `alert()` giả. Asset #24 lên Sẵn. Cập nhật Screen Contract.
-- [ ] **4.6** `feat(cong-cu): sales module flow` — module Bán hàng hiện luồng Chọn khách → Tư vấn (Thẻ chào, link sang) → Báo giá → Chốt → Đơn.
+- [x] **4.2** `feat(sales): quotation domain rules` — tính tiền phía máy chủ từ giá sản phẩm; ưu đãi chỉ từ `listActiveShopPromotions`; hết hạn; chuyển trạng thái. Lead → `QUOTATION_SENT` khi gửi. Test.
+- [x] **4.3** `feat(api): /api/v1/quotations` (`R15` ghi, `Q1` đọc) + trang công khai xem báo giá `/bg/[code]` (chỉ đọc, khoá mã khó đoán). Test tenant.
+- [x] **4.4** `feat(orders): QUOTATION order source` — thêm nguồn ở `ORDER_SOURCES` + chuyển báo giá → đơn qua `ingestOrder` (theo `KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md`). `order-ingestion-guard.test.ts` xanh.
+- [x] **4.5** `refactor(bao-gia): persist quotations` — viết lại `/bao-gia` (587 dòng → tách tệp ≤350), bỏ 3 `alert()` giả. Asset #24 lên Sẵn. Cập nhật Screen Contract.
+- [x] **4.6** `feat(cong-cu): sales module flow` — module Bán hàng hiện luồng Chọn khách → Tư vấn (Thẻ chào, link sang) → Báo giá → Chốt → Đơn.
 
 ## PR-5 — Chăm sóc khách hàng
 

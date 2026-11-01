@@ -251,6 +251,7 @@ model organizations {
   link_events                   link_events[]
   asset_usages                  asset_usages[]
   campaigns                     campaigns[]
+  quotations                    quotations[]
 }
 
 model workspaces {
@@ -854,6 +855,7 @@ model products {
   change_requests           product_change_requests[]
   revisions                 product_revisions[]
   recipes                   product_recipes[]
+  quotation_items           quotation_items[]
 
   @@unique([organization_id, code])
   @@index([organization_id])
@@ -1665,6 +1667,7 @@ model orders {
   lead_id           String?
   lead              leads?                    @relation("order_origin_lead", fields: [lead_id], references: [id], onDelete: SetNull)
   converted_leads   leads[]                   @relation("lead_converted_order")
+  converted_quotations quotations[]            @relation("quotation_converted_order")
   /// `LEGACY` (kanban cũ, mặc định — mọi đơn hiện có) · `STANDARD` (quy trình chuẩn đa nguồn, P3).
   workflow          String                    @default("LEGACY")
   approval_requests order_approval_requests[]
@@ -1778,6 +1781,7 @@ model customers {
   vouchers      vouchers[]
   conversations chat_conversations[]
   leads         leads[]
+  quotations    quotations[]
 
   @@unique([organization_id, phone])
   @@unique([organization_id, code])
@@ -3861,6 +3865,7 @@ model leads {
   short_link      short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
   converted_order orders?       @relation("lead_converted_order", fields: [converted_order_id], references: [id], onDelete: SetNull)
   origin_orders   orders[]      @relation("order_origin_lead")
+  quotations      quotations[]
 
   @@index([organization_id])
   @@index([organization_id, status, created_at])
@@ -4027,6 +4032,7 @@ model asset_usages {
   organization organizations @relation(fields: [organization_id], references: [id])
   short_link   short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
   campaign     campaigns?    @relation(fields: [campaign_id], references: [id], onDelete: SetNull)
+  quotations   quotations[]
 
   @@index([organization_id])
   @@index([organization_id, source_type, source_id])
@@ -4070,4 +4076,69 @@ model campaigns {
   @@index([organization_id])
   @@index([organization_id, status])
   @@index([organization_id, created_at])
+}
+
+enum quotation_status {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CONVERTED
+}
+
+/// Báo giá bán hàng (Quotations) — Marketing & Sales Center (PO 01/11/2026, PR-4).
+/// Liên kết cơ hội từ Lead/Customer, tính toán sản phẩm & ưu đãi, chuyển đổi thành đơn hàng.
+model quotations {
+  id                 String           @id @default(uuid())
+  organization_id    String
+  code               String           // VD: BG-0001
+  lead_id            String?
+  customer_id        String?
+  asset_usage_id     String?
+  status             quotation_status @default(DRAFT)
+  valid_until        DateTime?
+  subtotal           Decimal          @default(0) @db.Decimal(12, 2)
+  discount_amount    Decimal          @default(0) @db.Decimal(12, 2)
+  total_amount       Decimal          @default(0) @db.Decimal(12, 2)
+  terms              String?          // Điều kiện & điều khoản báo giá
+  notes              String?          // Ghi chú nội bộ
+  converted_order_id String?
+  created_by         String
+  created_at         DateTime         @default(now())
+  updated_at         DateTime         @updatedAt
+
+  organization    organizations    @relation(fields: [organization_id], references: [id])
+  lead            leads?           @relation(fields: [lead_id], references: [id], onDelete: SetNull)
+  customer        customers?       @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+  asset_usage     asset_usages?    @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
+  converted_order orders?          @relation("quotation_converted_order", fields: [converted_order_id], references: [id], onDelete: SetNull)
+  items           quotation_items[]
+
+  @@unique([organization_id, code])
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, created_at])
+  @@index([lead_id])
+  @@index([customer_id])
+}
+
+/// Chi tiết từng dòng sản phẩm trong báo giá (Quotation Items).
+model quotation_items {
+  id           String      @id @default(uuid())
+  quotation_id String
+  product_id   String?
+  name         String
+  qty          Int         @default(1)
+  unit_price   Decimal     @default(0) @db.Decimal(12, 2)
+  total_price  Decimal     @default(0) @db.Decimal(12, 2)
+  note         String?
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
+
+  quotation quotations @relation(fields: [quotation_id], references: [id], onDelete: Cascade)
+  product   products?  @relation(fields: [product_id], references: [id], onDelete: SetNull)
+
+  @@index([quotation_id])
+  @@index([product_id])
 }

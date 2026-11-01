@@ -8,7 +8,7 @@
 
 ## 1. Đang ở đâu
 
-**01/11 — Nâng cấp Trung tâm Tiếp thị & Bán hàng (Marketing & Sales Center): Hoàn thành PR-0, PR-1, PR-2 và PR-3.**
+**01/11 — Nâng cấp Trung tâm Tiếp thị & Bán hàng (Marketing & Sales Center): Hoàn thành PR-0, PR-1, PR-2, PR-3 và PR-4.**
 - **PR-0 (Nền móng & Màn hình /cong-cu)**: Đóng băng Catalog & Thẻ chào; mô hình AssetType (92 asset, 24 READY); phân chia 67 công cụ thành 6 module nghiệp vụ + 5 nhóm vận hành; cấu trúc lại `/cong-cu` theo triết lý Mục tiêu kinh doanh (Purpose-First); Screen Contract `cong-cu.md`.
 - **PR-1 (Mọi đầu ra vào thư viện)**:
   - Ánh xạ mục Kho dữ liệu sang AssetType (`library-asset-mapping.ts`);
@@ -32,6 +32,16 @@
   - API `/api/v1/campaigns` (GET `M1`, POST `M3`) và `/api/v1/campaigns/[id]` (GET `M1`, PATCH `M3`);
   - Giao diện Workspace Chiến dịch tại `/quang-ba/chien-dich` (`CampaignWorkspace`, `CampaignList`, `CampaignCreateModal`, `CampaignDetailsView`) và cập nhật tab khách tiềm năng `leads-tab.tsx` theo 4 nhóm progressive disclosure;
   - Screen Contract mới `chien-dich.md`, cập nhật `thu-hut-khach.md`, kịch bản ux-audit `chien-dich.mjs`.
+- **PR-4 (Bán hàng: Báo giá lưu được & Cổng nhận đơn QUOTATION)**:
+  - CSDL & migration `20261101180000_quotations`: bảng `quotations`, `quotation_items`, enum `quotation_status` (`DRAFT`, `SENT`, `ACCEPTED`, `REJECTED`, `EXPIRED`, `CONVERTED`), quan hệ với `leads`, `customers`, `orders`, `asset_usages`, `products`;
+  - Domain & Clean Repository: Module `sales` (`domain/`, `use-cases/`, `infra/`, `adapters/`), tính toán tiền hàng, chiết khấu, tổng thanh toán phía máy chủ; kiểm tra hạn hiệu lực; ma trận chuyển đổi trạng thái hợp lệ `QUOTATION_TRANSITIONS`. Tự động cập nhật trạng thái Lead sang `QUOTATION_SENT` khi gửi báo giá;
+  - Cổng nhận đơn chuẩn SSOT: Bổ sung nguồn đơn `QUOTATION` vào `ORDER_SOURCES`, tích hợp chuyển đổi báo giá thành đơn hàng qua `ingestOrder` (tuân thủ `KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §4, `order-ingestion-guard` đạt);
+  - Quyền & API: API `/api/v1/quotations` (GET `Q1`/`R15`, POST `R15`), `/api/v1/quotations/[id]` (GET `Q1`/`R15`, PATCH `R15`), `/api/v1/quotations/[id]/send` (POST `R15`), `/api/v1/quotations/[id]/convert` (POST `R15`), API công khai `GET /api/v1/public/quotation/[code]` và trang công khai `/bg/[code]` (chỉ đọc, không yêu cầu đăng nhập, bảo vệ thông tin nội bộ);
+  - Refactor `/bao-gia`: Viết lại toàn diện từ 587 dòng xuống các module độc lập ≤ 350 dòng (`CustomerQuoteBuilder`, `QuotePreviewCard`, `PartnerQuoteBuilder`, `QuotationsListView`, `page.tsx` 168 dòng), triệt tiêu hoàn toàn 3 cuộc gọi `alert()` giả lập;
+  - Danh mục Asset: Nâng cấp Asset #24 (Bản báo giá chi tiết) lên trạng thái Sẵn (`READY`), nâng tổng số Asset Sẵn lên 25;
+  - Giao diện `/cong-cu`: Bổ sung quy trình 5 bước khép kín cho Module Bán hàng (Chọn khách → Tư vấn Thẻ chào → Lập báo giá → Chốt duyệt → Đơn hàng);
+  - Screen Contract mới `bao-gia.md`, cập nhật `README.md`;
+  - Kiểm thử: 100% test cách ly tenant (`quotation-isolation.test.ts`), 100% test freeze (`the-chao-freeze`, `catalog-freeze`), 100% test SSOT đa ngành (5 trụ cột đạt), UX Lint ratchet đạt 119 (giảm từ 120).
 
 
 **30/09 (Trưa) — Nâng cấp Kiến trúc Journey-First UX Architecture: Hoàn tất 100% Đạt Chuẩn Production Ready.**

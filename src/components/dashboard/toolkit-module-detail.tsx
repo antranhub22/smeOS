@@ -57,6 +57,45 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
         </div>
       </div>
 
+      {/* Quy trình bán hàng chuẩn cho module sales (PO 01/11/2026, PR-4) */}
+      {module.key === "sales" && (
+        <div className="p-4 rounded-xl border border-border bg-surface-alt/70 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-caption font-bold text-primary uppercase tracking-wide">
+              Quy trình bán hàng & chốt đơn chuẩn
+            </span>
+            <span className="text-caption text-text-muted">5 bước khép kín</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            {[
+              { step: 1, label: "Chọn khách", desc: "CRM & Khách tiềm năng", href: "/khach-hang" },
+              { step: 2, label: "Tư vấn mẫu", desc: "Thẻ chào & Bộ sưu tập", href: "/the-chao" },
+              { step: 3, label: "Lập báo giá", desc: "Bảng tính chi phí có số", href: "/bao-gia" },
+              { step: 4, label: "Chốt duyệt", desc: "Gửi link báo giá khách", href: "/bao-gia" },
+              { step: 5, label: "Đơn hàng", desc: "Tự động chuyển thành đơn", href: "/don-hang" },
+            ].map((s) => (
+              <a
+                key={s.step}
+                href={s.href}
+                className="p-3 rounded-lg bg-surface border border-border hover:border-primary transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center gap-1.5 text-caption font-bold text-text group-hover:text-primary">
+                    <span className="w-5 h-5 rounded-full bg-selected text-primary flex items-center justify-center text-caption font-extrabold">
+                      {s.step}
+                    </span>
+                    <span>{s.label}</span>
+                  </div>
+                  <div className="text-caption text-text-muted mt-1 leading-snug">
+                    {s.desc}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Khu L0: Bạn muốn tạo gì? (Asset Types) */}
       {module.assets.length > 0 && (
         <div className="space-y-4">

@@ -33,7 +33,12 @@ export const APP_PAGE_TOOLS: readonly ToolDefinition[] = [
   appPage(55, "Quản lý khách hàng", "Thông tin, ghi chú và lịch sử của từng khách", "Users", "/khach-hang"),
   appPage(56, "Hộp thư khách hàng", "Đọc và trả lời tin nhắn của khách ở một nơi", "Inbox", "/tin-nhan"),
   appPage(57, "Trợ lý tư vấn bán hàng AI", "Trợ lý gợi ý câu trả lời và tư vấn sản phẩm cho khách", "Bot", "/hoi-thoai"),
-  appPage(58, "Báo giá nhanh", "Lập báo giá từ sản phẩm có sẵn và gửi cho khách", "FileText", "/bao-gia"),
+  {
+    ...appPage(58, "Báo giá nhanh", "Lập báo giá từ sản phẩm có sẵn và gửi cho khách", "FileText", "/bao-gia"),
+    status: "DONE",
+    progress: 100,
+    statusNote: "Báo giá có số hiệu lực, tính tiền, gửi khách qua link công khai, chuyển đổi thành đơn hàng",
+  },
   appPage(59, "Quản lý đơn hàng", "Theo dõi đơn, xác nhận thanh toán và tạo đơn từ tin nhắn", "ShoppingBag", "/don-hang"),
   appPage(60, "Điều phối đơn hàng", "Chuyển đơn đến cửa hàng phù hợp để thực hiện", "Route", "/dieu-phoi"),
   // Cùng dữ liệu với Cài đặt → Ưu đãi (`/cai-dat/ma-tran-uudai`) — hai nơi hiển thị, một nguồn

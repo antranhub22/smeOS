@@ -53,7 +53,7 @@ export const SALES_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "sales",
     destinations: ["SALES", "LIBRARY"],
     toolId: 58,
-    fit: "PARTIAL",
+    fit: "FULL",
     inputs: [
       { label: "Sản phẩm yêu cầu", source: "PRODUCT", required: true },
       { label: "Thông tin người nhận", source: "CUSTOMER", required: true },
