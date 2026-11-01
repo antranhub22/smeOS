@@ -194,14 +194,14 @@ Nhánh `feat/msc-p5-customer-care`
 
 Nhánh `feat/msc-p6-print`
 
-- [ ] **6.1** `feat(print): presets and preflight rules` — `src/modules/print/domain/`:
+- [x] **6.1** `feat(print): presets and preflight rules` — `src/modules/print/domain/`:
   - preset A4, A5, A6, danh thiếp 90×54, standee 60×160, bảng để bàn, thẻ treo, tem;
   - quy cách: bleed 3mm, vùng an toàn, DPI tối thiểu 300, kích thước QR tối thiểu.
   - Test.
-- [ ] **6.2** `feat(db): print_renditions` — `source_type/source_id` hoặc `asset_usage_id`, `preset_code`, kích thước mm, `bleed_mm`, `dpi`, `storage_key`, `preflight Json`, `status`.
-- [ ] **6.3** `feat(print): PDF export via existing jspdf` (không thêm thư viện) + `M5` + API. Catalog in (#60) **đọc dữ liệu công khai, dựng bản in mới**, không dùng/sửa `catalog-pdf-export-button.tsx`.
-- [ ] **6.4** `feat(marketing-center): print workspace` — chọn asset → khổ/vật liệu/số lượng → kiểm lỗi (hiện rõ lỗi, không giấu) → xem trước → tải PDF in.
-- [ ] **6.5** `docs: …`.
+- [x] **6.2** `feat(db): print_renditions` — `source_type/source_id` hoặc `asset_usage_id`, `preset_code`, kích thước mm, `bleed_mm`, `dpi`, `storage_key`, `preflight Json`, `status`.
+- [x] **6.3** `feat(print): PDF export via existing jspdf` (không thêm thư viện) + `M5` + API. Catalog in (#60) **đọc dữ liệu công khai, dựng bản in mới**, không dùng/sửa `catalog-pdf-export-button.tsx`.
+- [x] **6.4** `feat(marketing-center): print workspace` — chọn asset → khổ/vật liệu/số lượng → kiểm lỗi (hiện rõ lỗi, không giấu) → xem trước → tải PDF in.
+- [x] **6.5** `docs: screen contract in-an.md`.
 
 ## PR-7 — KPI & quy thuộc
 

@@ -134,6 +134,44 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
         </div>
       )}
 
+      {/* Quy trình in ấn chuẩn xuất file PDF chất lượng cao cho module print (PO 01/11/2026, PR-6) */}
+      {module.key === "print" && (
+        <div className="p-4 rounded-xl border border-border bg-surface-alt/70 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-caption font-bold text-primary uppercase tracking-wide">
+              Quy trình xuất bản in chất lượng cao
+            </span>
+            <span className="text-caption text-text-muted">4 bước chuẩn nhà in</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            {[
+              { step: 1, label: "Khổ in & Vật liệu", desc: "A4, A5, A6, Standee, Danh thiếp", href: "/in-an" },
+              { step: 2, label: "Soạn nội dung", desc: "Tiêu đề, lời chào, mã QR", href: "/in-an" },
+              { step: 3, label: "Kiểm quy cách", desc: "Preflight: Bleed 3mm, 300 DPI, vùng an toàn", href: "/in-an" },
+              { step: 4, label: "Xuất file PDF", desc: "Bản in sắc nét kèm dấu xén thành phẩm", href: "/in-an" },
+            ].map((s) => (
+              <a
+                key={s.step}
+                href={s.href}
+                className="p-3 rounded-lg bg-surface border border-border hover:border-primary transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center gap-1.5 text-caption font-bold text-text group-hover:text-primary">
+                    <span className="w-5 h-5 rounded-full bg-selected text-primary flex items-center justify-center text-caption font-extrabold">
+                      {s.step}
+                    </span>
+                    <span>{s.label}</span>
+                  </div>
+                  <div className="text-caption text-text-muted mt-1 leading-snug">
+                    {s.desc}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Khu L0: Bạn muốn tạo gì? (Asset Types) */}
       {module.assets.length > 0 && (
         <div className="space-y-4">

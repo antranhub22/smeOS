@@ -254,6 +254,7 @@ model organizations {
   quotations                    quotations[]
   customer_segments             customer_segments[]
   customer_interactions         customer_interactions[]
+  print_renditions              print_renditions[]
 }
 
 model workspaces {
@@ -4037,6 +4038,7 @@ model asset_usages {
   campaign     campaigns?    @relation(fields: [campaign_id], references: [id], onDelete: SetNull)
   quotations   quotations[]
   customer_interactions customer_interactions[]
+  print_renditions      print_renditions[]
 
   @@index([organization_id])
   @@index([organization_id, source_type, source_id])
@@ -4210,3 +4212,41 @@ model customer_interactions {
   @@index([customer_id])
   @@index([asset_usage_id])
 }
+
+enum print_rendition_status {
+  PENDING
+  READY
+  FAILED
+}
+
+/// Bản in chuẩn quy cách kỹ thuật (Print Renditions) — Ấn phẩm & In ấn (PO 01/11/2026, PR-6).
+model print_renditions {
+  id              String                 @id @default(uuid())
+  organization_id String
+  asset_id        String?
+  asset_usage_id  String?
+  source_type     String
+  source_id       String?
+  preset_code     String
+  width_mm        Decimal                @db.Decimal(8, 2)
+  height_mm       Decimal                @db.Decimal(8, 2)
+  bleed_mm        Decimal                @default(3) @db.Decimal(5, 2)
+  dpi             Int                    @default(300)
+  storage_key     String?
+  file_url        String?
+  preflight       Json?
+  status          print_rendition_status @default(PENDING)
+  created_by      String
+  created_at      DateTime               @default(now())
+  updated_at      DateTime               @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  asset_usage  asset_usages? @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, preset_code])
+  @@index([organization_id, created_at])
+  @@index([asset_usage_id])
+}
+

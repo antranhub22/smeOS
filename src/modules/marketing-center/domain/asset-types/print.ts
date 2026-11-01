@@ -2,6 +2,7 @@
  * Danh mục Asset: 06 Ấn phẩm & Vật phẩm tại quầy (print).
  *
  * SSOT: `02_DANH_MUC_ASSET.md` phần A.
+ * Nâng cấp PR-6: Toàn bộ 10 ấn phẩm kết nối workspace `/in-an` kèm preset chuẩn.
  */
 
 import type { AssetTypeDefinition } from "../asset-type"
@@ -14,7 +15,8 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "print",
     destinations: ["PRINT", "LIBRARY"],
     toolId: 1,
-    fit: "PARTIAL",
+    fit: "FULL",
+    customHref: "/in-an?asset=58&preset=A6",
     inputs: [
       { label: "Ảnh chụp gốc", source: "PRODUCT_PHOTO", required: true },
     ],
@@ -27,7 +29,8 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "print",
     destinations: ["PRINT", "LIBRARY"],
     toolId: 5,
-    fit: "PARTIAL",
+    fit: "FULL",
+    customHref: "/in-an?asset=59&preset=A4",
     inputs: [
       { label: "Thiết kế áp phích", source: "PRODUCT_PHOTO", required: true },
     ],
@@ -40,7 +43,8 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "print",
     destinations: ["PRINT", "LIBRARY"],
     toolId: 9,
-    fit: "PARTIAL",
+    fit: "FULL",
+    customHref: "/in-an?asset=60&preset=A4",
     inputs: [
       { label: "Danh sách sản phẩm", source: "PRODUCT", required: true },
     ],
@@ -53,7 +57,8 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "print",
     destinations: ["PRINT", "LIBRARY"],
     toolId: 65,
-    fit: "PARTIAL",
+    fit: "FULL",
+    customHref: "/in-an?asset=61&preset=A4",
     inputs: [
       { label: "Bảng giá và món", source: "PRODUCT", required: true },
     ],
@@ -67,6 +72,7 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     destinations: ["PRINT", "LIBRARY"],
     toolId: null,
     fit: "FULL",
+    customHref: "/in-an?asset=62&preset=TABLE_TENT_100X150",
     inputs: [
       { label: "Kích thước khay", source: "MANUAL_TEXT", required: false },
     ],
@@ -79,7 +85,8 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "print",
     destinations: ["PROMOTION", "PRINT", "LIBRARY"],
     toolId: 12,
-    fit: "PARTIAL",
+    fit: "FULL",
+    customHref: "/in-an?asset=63&preset=TABLE_TENT_100X150",
     inputs: [
       { label: "Mã liên kết", source: "STORE_PROFILE", required: true },
     ],
@@ -92,7 +99,8 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "print",
     destinations: ["PROMOTION", "PRINT", "LIBRARY"],
     toolId: 5,
-    fit: "PARTIAL",
+    fit: "FULL",
+    customHref: "/in-an?asset=64&preset=STANDEE_60X160",
     inputs: [
       { label: "Thông điệp chào đón", source: "STORE_PROFILE", required: true },
     ],
@@ -105,7 +113,8 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "print",
     destinations: ["PRINT", "LIBRARY"],
     toolId: 5,
-    fit: "PARTIAL",
+    fit: "FULL",
+    customHref: "/in-an?asset=65&preset=A4",
     inputs: [
       { label: "Ảnh chụp nghệ thuật", source: "PRODUCT_PHOTO", required: true },
     ],
@@ -119,6 +128,7 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     destinations: ["PRINT", "LIBRARY"],
     toolId: null,
     fit: "FULL",
+    customHref: "/in-an?asset=66&preset=HANG_TAG_50X90",
     inputs: [
       { label: "Thông tin món đồ", source: "PRODUCT", required: true },
     ],
@@ -132,6 +142,7 @@ export const PRINT_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     destinations: ["PRINT", "LIBRARY"],
     toolId: null,
     fit: "FULL",
+    customHref: "/in-an?asset=67&preset=STICKER_50X50",
     inputs: [
       { label: "Logo và tên tiệm", source: "BRAND_PROFILE", required: true },
     ],

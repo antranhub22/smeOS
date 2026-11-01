@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { History, MessageSquare, Phone, Mail, Clock } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
+import { formatDateTime } from "@/lib/i18n/formatters"
 
 interface CustomerInteractionItem {
   id: string
@@ -76,12 +77,7 @@ export function RecentInteractionsList() {
           <div className="text-right shrink-0">
             <span className="text-caption text-text-muted flex items-center gap-1 justify-end">
               <Clock className="w-3 h-3" />
-              {new Date(item.occurredAt || item.createdAt).toLocaleDateString("vi-VN", {
-                day: "2-digit",
-                month: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              {formatDateTime(item.occurredAt || item.createdAt)}
             </span>
             <Badge tone="neutral" className="mt-1">
               {item.channel}

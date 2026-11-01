@@ -38,6 +38,7 @@ export type CapabilityGroup =
   | "market_intelligence"
   | "integration"
   | "marketing_usage"
+  | "print"
 
 export interface CapabilityDefinition {
   /** Mã chữ cái — định danh chính, ví dụ `B5`. */
@@ -280,6 +281,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   M2: { name: "marketing.usage.manage", group: "marketing_usage", label: "Tạo và cấu hình nơi dùng cho tư liệu (liên kết, QR)", defaultRoles: ["dieu_hanh", "marketing"] },
   M3: { name: "marketing.campaign.manage", group: "marketing_usage", label: "Tạo và quản lý chiến dịch quảng bá, kích hoạt và đo lường", defaultRoles: ["dieu_hanh", "marketing"] },
   M4: { name: "crm.segment.manage", group: "crm", label: "Quản lý nhóm khách và chăm sóc khách hàng", defaultRoles: ["dieu_hanh", "marketing"] },
+  M5: { name: "print.rendition.export", group: "print", label: "Kiểm quy cách và xuất ấn phẩm in ấn (PDF, 300 DPI)", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing"] },
 }
 
 const ALL: Record<string, Omit<CapabilityDefinition, "code">> = { ...HARVESTED, ...CORE_NEW }
