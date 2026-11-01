@@ -10,6 +10,7 @@ import { getAllTools, type ToolDefinition } from "@/modules/toolkit/domain/toolk
 import { AssetTypeCard } from "./asset-type-card"
 import { ToolCard } from "./toolkit-card"
 import { MODULE_TONES } from "./toolkit-module-grid"
+import { ModuleKpiStripComponent } from "./module-kpi-strip"
 
 interface ModuleDetailProps {
   module: BusinessModule
@@ -46,15 +47,20 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
         </a>
       </div>
 
-      <div className="flex items-center gap-4 p-5 sm:p-6 rounded-2xl bg-surface shadow-sm ring-1 ring-border/60">
-        <IconTile name={module.icon} tone={tone} variant="solid" />
-        <div className="min-w-0">
-          <span className="text-caption font-semibold text-text-muted">Mục tiêu {module.order}</span>
-          <div className="flex items-center gap-2">
-            <h2 className="text-display font-extrabold text-text tracking-tight">{module.name}</h2>
-            <InfoTip label={module.name} side="bottom">{module.purpose}</InfoTip>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-surface shadow-sm ring-1 ring-border/60">
+        <div className="flex items-center gap-4 min-w-0">
+          <IconTile name={module.icon} tone={tone} variant="solid" />
+          <div className="min-w-0">
+            <span className="text-caption font-semibold text-text-muted">Mục tiêu {module.order}</span>
+            <div className="flex items-center gap-2">
+              <h2 className="text-display font-extrabold text-text tracking-tight">{module.name}</h2>
+              <InfoTip label={module.name} side="bottom">{module.purpose}</InfoTip>
+            </div>
           </div>
         </div>
+
+        {/* Dải chỉ số KPI thực tế cho module (PO 01/11/2026, PR-7) */}
+        <ModuleKpiStripComponent moduleKey={module.key} />
       </div>
 
       {/* Quy trình bán hàng chuẩn cho module sales (PO 01/11/2026, PR-4) */}

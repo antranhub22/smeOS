@@ -207,9 +207,9 @@ Nhánh `feat/msc-p6-print`
 
 Nhánh `feat/msc-p7-kpi`
 
-- [ ] **7.1** `feat(marketing-center): KPI definitions` — `kpi-definitions.ts`: công thức, cửa sổ thời gian, nguồn. Quy thuộc **first-touch qua link ngắn**, một lead chỉ thuộc một Usage (không tính trùng). Test.
-- [ ] **7.2** `feat(api): /api/v1/marketing-center/kpis` — chỉ trả chỉ số có dữ liệu.
-- [ ] **7.3** `feat(cong-cu): module KPI strip` — mỗi module tối đa 3 số; ẩn chỉ số chưa có dữ liệu.
+- [x] **7.1** `feat(marketing-center): KPI definitions` — `kpi-definitions.ts`: công thức, cửa sổ thời gian, nguồn. Quy thuộc **first-touch qua link ngắn**, một lead chỉ thuộc một Usage (không tính trùng). Test.
+- [x] **7.2** `feat(api): /api/v1/marketing-center/kpis` — chỉ trả chỉ số có dữ liệu.
+- [x] **7.3** `feat(cong-cu): module KPI strip` — mỗi module tối đa 3 số; ẩn chỉ số chưa có dữ liệu.
 
 ## PR-B — Bộ nhận diện thương hiệu (làm sau — PO QĐ6)
 
