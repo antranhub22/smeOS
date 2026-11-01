@@ -160,6 +160,11 @@
       "rule": "R4",
       "path": "src/components/greeting-card/order-detail-footer.tsx",
       "reason": "Khối xác nhận cọc, lần 2, và tiếp nhận đơn là conditional blocks loại trừ nhau — không hiện đồng thời"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(platform)/van-hanh/thu-vien-giao-dien/catalog-sections.tsx",
+      "reason": "Showcase catalog hiển thị các biến thể nút bấm của Design System (C2-00)"
     }
   ]
 }

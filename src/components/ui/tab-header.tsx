@@ -1,7 +1,16 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from "react"
+import React, { useEffect } from "react"
 import { MoreHorizontal, Loader2 } from "@/components/ui/icons"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
 
 export interface TabItem {
   id: string
@@ -50,9 +59,6 @@ export function TabActionHeader({
   overflowActions = [],
   className = "",
 }: TabActionHeaderProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
-
   // K2 & 03a UX-010 validation in development
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") {
@@ -72,41 +78,16 @@ export function TabActionHeader({
     }
   }, [primaryActions, tabs])
 
-  // Close menu on click outside or Escape
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false)
-      }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsMenuOpen(false)
-      }
-    }
-
-    if (isMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-      document.addEventListener("keydown", handleKeyDown)
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-      document.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [isMenuOpen])
-
   const getVariantStyles = (variant: TabAction["variant"] = "primary") => {
     switch (variant) {
       case "primary":
-        return "bg-primary text-white hover:bg-primary/90 shadow-sm shadow-primary/20"
+        return "bg-primary text-white hover:bg-primary-dark shadow-sm shadow-primary/20"
       case "success":
-        return "bg-mint-600 text-white hover:bg-mint-700 shadow-sm shadow-mint-600/20"
+        return "bg-success text-white hover:opacity-90 shadow-sm"
       case "secondary":
         return "bg-surface-alt text-text hover:bg-border"
       case "danger":
-        return "bg-alert-600 text-white hover:bg-alert-700 shadow-sm shadow-alert-600/20"
+        return "bg-danger text-white hover:opacity-90 shadow-sm"
       case "outline":
       default:
         return "border border-border bg-surface text-text hover:bg-surface-alt hover:text-primary"
@@ -116,13 +97,12 @@ export function TabActionHeader({
   const getBadgeStyles = (tone: TabItem["badgeTone"] = "neutral") => {
     switch (tone) {
       case "success":
-        return "bg-mint-500/15 text-mint-700 border-mint-500/30"
+        return "bg-success-bg text-success-text border-success/30"
       case "warning":
-        return "bg-sand-500/15 text-sand-700 border-sand-500/30"
+        return "bg-warning-bg text-warning-text border-warning/30"
       case "danger":
-        return "bg-alert-500/15 text-alert-700 border-alert-500/30"
+        return "bg-danger-bg text-danger-text border-danger/30"
       case "accent":
-        // PD7 (PO 29/10/2026): chữ accent trên nền kem chỉ 2,25:1 — dùng cặp token `selected` (7,15:1, 03a §0.5).
         return "bg-selected text-selected-text border-primary/30"
       case "neutral":
       default:
@@ -132,10 +112,13 @@ export function TabActionHeader({
 
   return (
     <div
-      className={`flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 p-1.5 bg-surface-alt/90 rounded-2xl border border-border ${className}`}
+      className={cn(
+        "flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 p-1.5 bg-surface-alt/90 rounded-2xl border border-border",
+        className
+      )}
     >
-      {/* Left: Standard Tab List */}
-      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5 flex-1 min-w-0">
+      {/* Left: Tab List */}
+      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5 flex-1 min-w-0" role="tablist">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id
           const Icon = tab.icon
@@ -144,21 +127,33 @@ export function TabActionHeader({
             <button
               key={tab.id}
               type="button"
+              role="tab"
+              aria-selected={isActive}
               disabled={tab.disabled}
               onClick={() => onTabChange(tab.id)}
-              className={`flex items-center gap-2 py-2 px-3.5 rounded-xl text-xs sm:text-body-sm font-bold transition-all whitespace-nowrap flex-shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={cn(
+                "flex items-center gap-2 py-2 px-3.5 rounded-xl text-xs sm:text-body-sm font-bold transition-all whitespace-nowrap flex-shrink-0",
+                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 isActive
                   ? "bg-surface text-primary shadow-sm border border-border"
-                  : "text-text-muted hover:text-text hover:bg-surface/60"
-              } ${tab.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                  : "text-text-muted hover:text-text hover:bg-surface/60",
+                tab.disabled && "opacity-50 cursor-not-allowed"
+              )}
             >
-              {Icon && <Icon size={15} weight={isActive ? "fill" : "regular"} className={isActive ? "text-primary" : "text-text-muted"} />}
+              {Icon && (
+                <Icon
+                  size={15}
+                  weight={isActive ? "fill" : "regular"}
+                  className={isActive ? "text-primary" : "text-text-muted"}
+                />
+              )}
               <span>{tab.label}</span>
               {tab.badge !== undefined && (
                 <span
-                  className={`ml-0.5 text-caption font-extrabold px-1.5 py-0.2 rounded-full border ${getBadgeStyles(
-                    tab.badgeTone
-                  )}`}
+                  className={cn(
+                    "ml-0.5 text-caption font-extrabold px-1.5 py-0.5 rounded-full border",
+                    getBadgeStyles(tab.badgeTone)
+                  )}
                 >
                   {tab.badge}
                 </span>
@@ -168,10 +163,9 @@ export function TabActionHeader({
         })}
       </div>
 
-      {/* Right: Top-Right Standard Action Header */}
+      {/* Right: Action Buttons and Overflow Menu */}
       {(primaryActions.length > 0 || overflowActions.length > 0) && (
         <div className="flex items-center gap-2 justify-end flex-shrink-0 ml-auto pr-1">
-          {/* Primary 1-Click Action Buttons */}
           {primaryActions.map((action) => {
             const Icon = action.icon
             return (
@@ -181,12 +175,15 @@ export function TabActionHeader({
                 onClick={action.onClick}
                 disabled={action.disabled || action.loading}
                 title={action.tooltip || action.label}
-                className={`flex items-center gap-1.5 px-3.5 h-8 sm:h-8.5 rounded-xl text-xs font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${getVariantStyles(
-                  action.variant
-                )} ${action.disabled || action.loading ? "opacity-60 cursor-not-allowed" : ""}`}
+                className={cn(
+                  "flex items-center gap-1.5 px-3.5 h-8 sm:h-9 rounded-xl text-xs font-bold transition-all",
+                  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                  getVariantStyles(action.variant),
+                  (action.disabled || action.loading) && "opacity-60 cursor-not-allowed"
+                )}
               >
                 {action.loading ? (
-                  <Loader2 size={14} className="animate-spin" />
+                  <Loader2 size={14} className="animate-spin motion-reduce:hidden" />
                 ) : (
                   Icon && <Icon size={14} strokeWidth={2.2} />
                 )}
@@ -195,61 +192,41 @@ export function TabActionHeader({
             )
           })}
 
-          {/* Contextual Overflow Menu (...) */}
           {overflowActions.length > 0 && (
-            <div className="relative" ref={menuRef}>
-              <button
-                type="button"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+            <DropdownMenu>
+              <DropdownMenuTrigger
                 title="Thao tác khác"
                 aria-label="Thao tác khác"
-                className={`flex items-center justify-center h-8 w-8 sm:h-8.5 sm:w-8.5 rounded-xl border border-border bg-surface text-text hover:bg-surface-alt hover:text-primary transition-all shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                  isMenuOpen ? "border-primary text-primary ring-2 ring-primary/10" : ""
-                }`}
+                className="flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-xl border border-border bg-surface text-text hover:bg-surface-alt hover:text-primary transition-all shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <MoreHorizontal size={16} strokeWidth={2.2} />
-              </button>
-
-              {/* Overflow Dropdown Popup */}
-              {isMenuOpen && (
-                <div className="absolute right-0 top-full mt-1.5 z-50 min-w-[200px] overflow-hidden rounded-2xl border border-border bg-surface p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-2.5 py-1 text-caption font-extrabold uppercase tracking-wider text-text-muted">
-                    Thao tác tab
-                  </div>
-                  <div className="h-px bg-border my-1" />
-
-                  {overflowActions.map((item) => {
-                    const ItemIcon = item.icon
-                    return (
-                      <React.Fragment key={item.id}>
-                        {item.dividerAbove && <div className="h-px bg-border my-1" />}
-                        <button
-                          type="button"
-                          disabled={item.disabled}
-                          onClick={() => {
-                            setIsMenuOpen(false)
-                            item.onClick()
-                          }}
-                          className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-medium transition-colors text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                            item.destructive
-                              ? "text-danger hover:bg-danger/10"
-                              : "text-text hover:bg-surface-alt hover:text-primary"
-                          } ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                        >
-                          {ItemIcon && (
-                            <ItemIcon
-                              size={14}
-                              className={item.destructive ? "text-danger" : "text-text-muted"}
-                            />
-                          )}
-                          <span>{item.label}</span>
-                        </button>
-                      </React.Fragment>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[200px]">
+                <DropdownMenuLabel>Thao tác tab</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {overflowActions.map((item) => {
+                  const ItemIcon = item.icon
+                  return (
+                    <React.Fragment key={item.id}>
+                      {item.dividerAbove && <DropdownMenuSeparator />}
+                      <DropdownMenuItem
+                        destructive={item.destructive}
+                        disabled={item.disabled}
+                        onClick={() => void item.onClick()}
+                      >
+                        {ItemIcon && (
+                          <ItemIcon
+                            size={14}
+                            className={item.destructive ? "text-danger" : "text-text-muted"}
+                          />
+                        )}
+                        <span>{item.label}</span>
+                      </DropdownMenuItem>
+                    </React.Fragment>
+                  )
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       )}
