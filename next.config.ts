@@ -30,9 +30,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }]
   },
+  // Mặc định build KIỂM lỗi TypeScript (P0-08, ARC-004) — gồm build trên CI. Chỉ Render được bỏ qua bằng
+  // biến tường minh `SKIP_BUILD_TYPECHECK=true` (render.yaml): Render chỉ build đúng commit đã qua
+  // `npm run typecheck` trên CI (job `deploy`, P0-02), và kiểm kiểu toàn repo cần nhiều RAM hơn máy build.
   typescript: {
-    // Render builder typecheck fails on pending migrations (chain_partnerships, internal_chat)
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: process.env.SKIP_BUILD_TYPECHECK === "true",
   },
   // Next 16.3 đã chuyển khoá này ra khỏi `experimental` — giữ ở chỗ cũ chỉ
   // sinh cảnh báo lúc build hôm nay, và sẽ là lỗi ở bản sau.
