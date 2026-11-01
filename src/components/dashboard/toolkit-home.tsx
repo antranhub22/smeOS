@@ -1,31 +1,32 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Search, SlidersHorizontal, Sparkles } from "@/components/ui/icons"
+import { Search, Sparkles } from "@/components/ui/icons"
 import {
   countByStatus,
   STATUS_DISPLAY,
   type ToolStatus,
 } from "@/modules/toolkit/domain/toolkit-catalog"
 import {
-  getVisibleGrowthModules,
-  type GrowthModule,
+  getVisibleBusinessModules,
+  type BusinessModule,
   type ModuleTool,
-} from "@/modules/toolkit/domain/growth-modules"
+} from "@/modules/toolkit/domain/business-modules"
+import {
+  getStoreOperationsSection,
+  type StoreOperationsSection,
+} from "@/modules/toolkit/domain/store-operations"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { InfoTip } from "@/components/ui/info-tip"
 import { UserMenu } from "@/components/layout/user-menu"
 import { ModuleGrid } from "./toolkit-module-grid"
 import { ModuleDetail } from "./toolkit-module-detail"
-
-// ── Environment check ──────────────────────────────────────────────
+import { StoreOperationsPanel } from "./store-operations-panel"
 
 function useIsDev(): boolean {
   return process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
 }
-
-// ── Status filter tabs ─────────────────────────────────────────────
 
 type StatusFilter = "ALL" | ToolStatus
 
@@ -37,12 +38,9 @@ const FILTER_OPTIONS: { id: StatusFilter; label: string }[] = [
   { id: "PLANNED", label: "📋 Sẽ làm" },
 ]
 
-// ── Stats summary ──────────────────────────────────────────────────
-
 function ToolkitStats({ isDev }: { isDev: boolean }) {
   if (!isDev) return null
   const counts = countByStatus()
-  const total = counts.DONE + counts.IN_PROGRESS + counts.FOUNDATION + counts.PLANNED
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -65,152 +63,152 @@ function ToolkitStats({ isDev }: { isDev: boolean }) {
   )
 }
 
-// ── Lọc công cụ trong module ───────────────────────────────────────
-
 function filterModule(
-  module: GrowthModule,
-  keep: (tool: ModuleTool) => boolean,
-): GrowthModule {
+  module: BusinessModule,
+  query: string,
+  status: StatusFilter,
+): BusinessModule | null {
+  const q = query.trim().toLowerCase()
+
+  const matchTool = (t: ModuleTool) => {
+    const matchStatus = status === "ALL" || t.status === status
+    const matchQuery = !q || t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q)
+    return matchStatus && matchQuery
+  }
+
+  const matchAsset = (a: BusinessModule["assets"][number]) => {
+    if (status !== "ALL" && status !== "DONE") return false
+    return !q || a.name.toLowerCase().includes(q) || a.purpose.toLowerCase().includes(q)
+  }
+
+  const filteredTools = module.tools.filter(matchTool)
+  const filteredAssets = module.assets.filter(matchAsset)
+
+  if (filteredTools.length === 0 && filteredAssets.length === 0) return null
+
   return {
     ...module,
-    phases: module.phases
-      .map((p) => ({ ...p, tools: p.tools.filter(keep) }))
-      .filter((p) => p.tools.length > 0),
+    tools: filteredTools,
+    assets: filteredAssets,
   }
 }
-
-// ── Main component ─────────────────────────────────────────────────
 
 export function ToolkitHome() {
   const isDev = useIsDev()
   const { userInitials } = useSession()
-  const { dict } = useI18n()
+  const { t } = useI18n()
+
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
-  const [openKey, setOpenKey] = useState<string | null>(null)
+  const [selectedStatus, setSelectedStatus] = useState<StatusFilter>("ALL")
+  const [selectedKey, setSelectedKey] = useState<string | null>(null)
 
-  const modules = useMemo(() => getVisibleGrowthModules(isDev), [isDev])
-  const query = searchQuery.trim().toLowerCase()
-  const isFiltering = query !== "" || statusFilter !== "ALL"
+  const modules = useMemo(() => getVisibleBusinessModules(isDev), [isDev])
+  const storeOperations = useMemo(() => getStoreOperationsSection(isDev), [isDev])
 
-  // Tìm kiếm hoặc lọc trạng thái → hiện thẳng công cụ khớp, nhóm theo module
   const filteredModules = useMemo(() => {
-    const keep = (tool: ModuleTool) => {
-      const matchesSearch =
-        query === "" ||
-        tool.name.toLowerCase().includes(query) ||
-        tool.description.toLowerCase().includes(query)
-      const matchesStatus = statusFilter === "ALL" || tool.status === statusFilter
-      return matchesSearch && matchesStatus
-    }
-    return modules.map((m) => filterModule(m, keep)).filter((m) => m.phases.length > 0)
-  }, [modules, query, statusFilter])
+    if (!searchQuery && selectedStatus === "ALL") return modules
+    return modules
+      .map((m) => filterModule(m, searchQuery, selectedStatus))
+      .filter((m): m is BusinessModule => m !== null)
+  }, [modules, searchQuery, selectedStatus])
 
-  const openModule = modules.find((m) => m.key === openKey) ?? null
-  const totalTools = modules.reduce(
-    (sum, m) => sum + m.phases.reduce((s, p) => s + p.tools.length, 0),
-    0,
-  )
+  const currentModule = useMemo(() => {
+    if (!selectedKey || selectedKey === "store_operations") return null
+    return modules.find((m) => m.key === selectedKey) ?? null
+  }, [modules, selectedKey])
+
+  const isFiltering = searchQuery.trim().length > 0 || selectedStatus !== "ALL"
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-6 md:py-10 space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold mb-2">
-            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>{dict.toolkit.header.badge}</span>
-          </div>
           <div className="flex items-center gap-2">
             <h1 className="text-display font-extrabold text-text tracking-tight">
-              {isDev
-                ? dict.toolkit.header.titleDev
-                : dict.toolkit.header.titleProd}
+              Trung tâm Tiếp thị & Bán hàng
             </h1>
-            <InfoTip label={isDev ? dict.toolkit.header.titleDev : dict.toolkit.header.titleProd} side="bottom">
-              {isDev
-                ? dict.toolkit.header.descDev
-                : dict.toolkit.header.descProd}
+            <InfoTip label="Trung tâm Tiếp thị & Bán hàng" side="bottom">
+              Chuẩn bị các loại ấn phẩm, trang bán hàng và công cụ kinh doanh theo 6 mục tiêu phát triển.
             </InfoTip>
           </div>
+          <p className="mt-1 text-body-sm text-text-muted">
+            Chọn mục tiêu tăng trưởng để xem các ấn phẩm và công cụ chuyên trách
+          </p>
         </div>
 
-        <div className="flex items-center gap-3 self-start md:self-auto">
-          <UserMenu initials={userInitials || "U"} direction="down" />
+        <div className="flex items-center gap-3">
+          <UserMenu initials={userInitials} />
         </div>
       </div>
 
-      {/* Stats (dev only) */}
       <ToolkitStats isDev={isDev} />
 
-      {/* Filter + Search */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {isDev ? (
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none]">
-            {FILTER_OPTIONS.map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                aria-pressed={statusFilter === opt.id}
-                onClick={() => setStatusFilter(opt.id)}
-                className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
-                  statusFilter === opt.id
-                    ? "bg-primary text-surface font-semibold"
-                    : "bg-surface border border-border text-text hover:bg-surface-alt"
-                }`}
-              >
-                {opt.id === "ALL" ? `Tất cả (${totalTools})` : opt.label}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <span />
-        )}
-
-        <div className="relative w-full sm:w-64">
-          <Search
-            className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
-            aria-hidden="true"
-          />
+      {/* Tìm kiếm và bộ lọc */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={dict.toolkit.filters.searchPlaceholder}
-            aria-label={dict.toolkit.filters.searchPlaceholder}
-            className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border bg-surface text-body-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary transition-colors"
+            placeholder="Tìm kiếm ấn phẩm hoặc công cụ..."
+            className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-surface text-body-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
           />
         </div>
-      </div>
 
-      {isFiltering ? (
-        filteredModules.length > 0 ? (
-          <div className="space-y-10">
-            {filteredModules.map((m) => (
-              <ModuleDetail key={m.key} module={m} isDev={isDev} />
+        {isDev && (
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+            {FILTER_OPTIONS.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => setSelectedStatus(opt.id)}
+                className={`px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                  selectedStatus === opt.id
+                    ? "bg-primary text-primary-fg shadow-xs"
+                    : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface border border-border"
+                }`}
+              >
+                {opt.label}
+              </button>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-12 border border-dashed border-border rounded-xl bg-surface">
-            <p className="text-body text-text-muted">
-              Không tìm thấy công cụ nào khớp với &quot;{searchQuery}&quot;
-            </p>
-          </div>
-        )
-      ) : openModule ? (
-        <ModuleDetail module={openModule} isDev={isDev} onBack={() => setOpenKey(null)} />
-      ) : (
-        <ModuleGrid modules={modules} isDev={isDev} onOpen={setOpenKey} />
-      )}
+        )}
+      </div>
 
-      {/* Dev footer */}
-      {isDev && (
-        <div className="mt-8 pt-4 border-t border-border text-center">
-          <p className="text-caption text-text-muted">
-            🔧 Môi trường phát triển — hiện toàn bộ công cụ hiện có cùng các công cụ trong lộ trình, xếp theo 10 bước.
-            Trên production chỉ hiện công cụ đã hoàn thiện; bước chưa có công cụ nào sẽ ẩn.
-          </p>
+      {/* Hiển thị chi tiết hoặc lưới */}
+      {selectedKey === "store_operations" ? (
+        <StoreOperationsPanel
+          section={storeOperations}
+          isDev={isDev}
+          onBack={() => setSelectedKey(null)}
+        />
+      ) : currentModule ? (
+        <ModuleDetail
+          module={currentModule}
+          isDev={isDev}
+          onBack={() => setSelectedKey(null)}
+        />
+      ) : isFiltering ? (
+        <div className="space-y-8">
+          {filteredModules.length === 0 ? (
+            <div className="text-center py-12 rounded-2xl bg-surface border border-dashed border-border">
+              <p className="text-body text-text-muted">Không tìm thấy ấn phẩm hoặc công cụ phù hợp</p>
+            </div>
+          ) : (
+            filteredModules.map((m) => (
+              <ModuleDetail key={m.key} module={m} isDev={isDev} />
+            ))
+          )}
         </div>
+      ) : (
+        <ModuleGrid
+          modules={modules}
+          storeOperations={storeOperations}
+          isDev={isDev}
+          onOpen={(key) => setSelectedKey(key)}
+        />
       )}
     </div>
   )
