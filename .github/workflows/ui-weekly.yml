@@ -1,0 +1,80 @@
+name: UI Enterprise Weekly Quality & A11y Audit
+
+on:
+  schedule:
+    # Chạy tự động lúc 03:00 sáng Thứ Hai hàng tuần (UTC)
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+jobs:
+  ui-enterprise-audit:
+    name: Visual Regression & WCAG 2.2 AA (6 Viewports)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: floraos
+          POSTGRES_PASSWORD: floraos
+          POSTGRES_DB: floraos
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://floraos:floraos@localhost:5432/floraos
+      DATABASE_URL_TEST: postgresql://floraos:floraos@localhost:5432/floraos_test
+      SESSION_SECRET: ci-only-not-a-real-secret
+      INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
+      SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret
+      OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
+      ALLOW_LOCAL_STORAGE: "true"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Deploy database migrations
+        run: npm run db:deploy
+
+      - name: Seed database
+        run: npx prisma db seed
+
+      - name: Setup test database
+        run: |
+          npm run db:test:setup || true
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Kiểm tra độ bao phủ Screen Contract v2 (100% Target)
+        run: npm run check:screen-contracts
+
+      - name: Kiểm tra UX Lint Ratchet (Zero regressions)
+        run: npm run lint:ux -- --check
+
+      - name: Kiểm tra chuẩn Đa ngành SSOT (5 Trụ cột)
+        run: npm run check:industry
+
+      - name: Chạy kiểm thử Playwright UX E2E & WCAG 2.2 AA
+        run: npm run test:e2e:ux
+
+      - name: Lưu trữ Playwright Report nếu có lỗi
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
