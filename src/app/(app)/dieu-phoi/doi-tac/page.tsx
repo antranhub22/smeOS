@@ -18,8 +18,10 @@ import { PartnerToolMatrixModal } from "@/components/organization/partner-tool-m
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PageHeader } from "@/components/ui/page-header"
-import { PageContainer } from "@/components/ui/page-container"
+import { ListLayout } from "@/components/layout/page-layout"
+import { EmptyState } from "@/components/ui/empty-state"
 import { Card } from "@/components/ui/card"
+import { SkeletonBlock } from "@/components/ui/skeleton"
 import { ChainPartnerCreateModal } from "./chain-partner-create-modal"
 import { PartnerCredentialDialog, type PartnerCredential } from "@/components/organization/partner-credential-dialog"
 import { useChainPartners } from "@/components/organization/use-chain-partners"
@@ -39,56 +41,69 @@ export default function ChainPartnersPage() {
   )
 
   return (
-    <PageContainer className="space-y-6">
-      {/* Top Header */}
-      <PageHeader
-        title="Chi nhánh & Đối tác"
-        tip="Quản lý mạng lưới chi nhánh, xưởng gia công vệ tinh và liên kết trò chuyện trực tiếp trên nền tảng."
-        badge={
-          <span className="text-caption bg-primary-subtle text-primary font-semibold px-2.5 py-0.5 rounded-full border border-primary/20">
-            Mô hình chuỗi
-          </span>
-        }
-        actions={
-          <Button
-            type="button"
-            onClick={() => setShowModal(true)}
-            size="sm"
-          >
-            <Plus className="w-4 h-4 mr-1.5" /> Thêm đối tác
-          </Button>
-        }
-      />
-
-      {/* Filter / Search Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-          <Input
-            type="text"
-            placeholder="Tìm theo tên chi nhánh, mã đối tác, người liên hệ..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 rounded-xl"
-            inputSize="sm"
-          />
+    <ListLayout
+      header={
+        <PageHeader
+          title="Chi nhánh & Đối tác"
+          tip="Quản lý mạng lưới chi nhánh, xưởng gia công vệ tinh và liên kết trò chuyện trực tiếp trên nền tảng."
+          badge={
+            <span className="text-caption bg-primary-muted text-primary font-semibold px-2.5 py-0.5 rounded-full border border-primary/20">
+              Mô hình chuỗi
+            </span>
+          }
+          actions={
+            <Button
+              type="button"
+              onClick={() => setShowModal(true)}
+              size="sm"
+            >
+              <Plus className="w-4 h-4 mr-1.5" /> Thêm đối tác
+            </Button>
+          }
+        />
+      }
+      filters={
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Input
+              type="text"
+              placeholder="Tìm theo tên chi nhánh, mã đối tác, người liên hệ..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 rounded-xl"
+              inputSize="sm"
+            />
+          </div>
+          <div className="text-body-sm text-text-muted font-medium">
+            Tổng số: <span className="font-bold text-text tabular-nums">{partners.length}</span> chi nhánh
+          </div>
         </div>
-        <div className="text-body-sm text-text-muted font-medium">
-          Tổng số: <span className="font-bold text-text tabular-nums">{partners.length}</span> chi nhánh
-        </div>
-      </div>
-
+      }
+    >
       {/* Partner Cards Grid */}
       {loading ? (
-        <div className="text-center py-16 text-body-sm text-text-muted">Đang tải danh bạ chi nhánh chuỗi...</div>
+        <div className="p-6 rounded-2xl border border-border bg-surface">
+          <SkeletonBlock lines={4} label="Đang tải danh bạ chi nhánh chuỗi..." />
+        </div>
       ) : filtered.length === 0 ? (
-        <Card className="text-center py-16 p-8 space-y-3 rounded-2xl">
-          <Store className="w-12 h-12 text-text-muted/40 mx-auto" />
-          <h3 className="text-title-sm font-semibold text-text">Chưa có chi nhánh nào</h3>
-          <p className="text-body-sm text-text-muted max-w-sm mx-auto">
-            Bấm &quot;Thêm đối tác&quot; để cấp tài khoản hoặc kết nối cửa hàng thành viên trong chuỗi.
-          </p>
-        </Card>
+        <EmptyState
+          kind={searchQuery ? "filtered" : "none"}
+          title={searchQuery ? "Không tìm thấy chi nhánh phù hợp" : "Chưa có chi nhánh nào"}
+          reason={
+            searchQuery
+              ? "Thử thay đổi từ khoá tìm kiếm tên, mã đối tác hoặc người liên hệ."
+              : "Bắt đầu thêm đối tác hoặc cấp tài khoản chi nhánh thành viên trong chuỗi."
+          }
+          action={
+            !searchQuery
+              ? {
+                  label: "Thêm đối tác",
+                  onClick: () => setShowModal(true),
+                }
+              : undefined
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((p) => (
@@ -99,7 +114,7 @@ export default function ChainPartnersPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center font-bold text-sm">
+                  <div className="w-10 h-10 rounded-xl bg-primary-muted text-primary flex items-center justify-center font-bold text-body-sm">
                     <Store className="w-5 h-5" />
                   </div>
                   <div>
@@ -115,8 +130,8 @@ export default function ChainPartnersPage() {
                 <span
                   className={`text-caption font-semibold px-2.5 py-0.5 rounded-full ${
                     p.status === "ACTIVE"
-                      ? "bg-success-subtle text-success border border-success/20"
-                      : "bg-surface-muted text-text-muted"
+                      ? "bg-success-bg text-success border border-success/20"
+                      : "bg-surface-alt text-text-muted"
                   }`}
                 >
                   {p.status === "ACTIVE" ? "Đang hoạt động" : "Tạm ngưng"}
@@ -168,14 +183,14 @@ export default function ChainPartnersPage() {
                 </Button>
                 <Link
                   href={"/tin-nhan" as never}
-                  className="p-2 bg-primary-subtle hover:bg-primary-subtle/80 text-primary rounded-xl text-caption font-semibold flex items-center justify-center transition-colors"
+                  className="p-2 bg-primary-muted hover:bg-primary-muted/80 text-primary rounded-xl text-caption font-semibold flex items-center justify-center transition-colors"
                   title="Nhắn tin nội bộ"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                 </Link>
                 <Link
                   href="/dieu-phoi"
-                  className="px-3 py-2 border border-border hover:bg-surface-muted text-text rounded-xl text-caption font-medium transition-colors"
+                  className="px-3 py-2 border border-border hover:bg-surface-alt text-text rounded-xl text-caption font-medium transition-colors"
                 >
                   Bắn đơn
                 </Link>
@@ -216,6 +231,6 @@ export default function ChainPartnersPage() {
       />
 
       <PartnerCredentialDialog credential={credential} onClose={() => setCredential(null)} />
-    </PageContainer>
+    </ListLayout>
   )
 }

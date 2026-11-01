@@ -1,28 +1,11 @@
 "use client"
 
 import React, { useCallback, useEffect, useState } from "react"
-import { Radio, Search, CheckCircle2, AlertTriangle, AlertCircle, X, Plus, RefreshCw, Ban, Wallet } from "@/components/ui/icons"
-import { Card } from "@/components/ui/card"
+import { X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { CoordinatorOrderBriefCard } from "@/components/templates/coordinator/coordinator-order-brief-card"
-import { PartnerProductCard } from "@/components/templates/coordinator/partner-product-card"
-import { PartnerProductionCard } from "@/components/templates/coordinator/partner-production-card"
-import { FloristJobCard } from "@/components/templates/coordinator/florist-job-card"
-import { ConfirmCraftAcceptanceModal } from "@/components/templates/coordinator/confirm-craft-acceptance-modal"
-import { CancelFloristOrderModal } from "@/components/templates/coordinator/cancel-florist-order-modal"
-import { AIQCReportCard } from "@/components/templates/coordinator/ai-qc-report-card"
-import { DeliveryPODCard } from "@/components/templates/coordinator/delivery-pod-card"
-import { ExceptionResolutionCard } from "@/components/templates/coordinator/exception-resolution-card"
-import { PartnerAssignmentModal } from "@/components/templates/coordinator/partner-assignment-modal"
-import { ProductionUpdateModal } from "@/components/templates/coordinator/production-update-modal"
-import { OrderPlanningModal } from "@/components/templates/coordinator/order-planning-modal"
-import { AiQcInspectionModal } from "@/components/templates/coordinator/ai-qc-inspection-modal"
-import { DeliveryDispatchModal, type DeliveryEventInput } from "@/components/templates/coordinator/delivery-dispatch-modal"
-import { OrderClosureModal } from "@/components/templates/coordinator/order-closure-modal"
-import { SalesOrderIntakeCard } from "@/components/templates/coordinator/sales-order-intake-card"
 import { SalesOrderIntakeModal } from "./sales-order-intake-modal"
-import { PaymentLedgerModal } from "@/components/templates/coordinator/payment-ledger-modal"
 import {
   coordinatorApi,
   errorMessage,
@@ -30,76 +13,31 @@ import {
   type CreateOrderRequest,
 } from "./coordinator-api"
 import { useCustomFieldDefinitions, visibleCustomFieldsForAudience } from "./custom-fields-section"
-import type { FlowerBomItem, StructuredAddress } from "@/modules/products/domain/product-master-index"
 import { useCraftFeeSuggestion } from "@/components/greeting-card/subcontract/use-craft-fee-suggestion"
+import { CoordinatorKpiSummary } from "./coordinator-kpi-summary"
+import { CoordinatorToolbar } from "./coordinator-toolbar"
+import {
+  CoordinatorOrderDetailModal,
+  asAddress,
+  fmtVnd,
+  type DetailTab,
+} from "./coordinator-order-detail-modal"
+import { CoordinatorActionModals } from "./coordinator-action-modals"
+import { useCoordinatorActions } from "./use-coordinator-actions"
 
-/**
- * Control Tower — Chức năng 12 (Điều phối đơn hàng).
- *
- * CSDL là nguồn duy nhất. Bản trước khởi đầu bằng 5 đơn mẫu cứng, lưu toàn bộ
- * vào localStorage (khoá chung mọi tổ chức trên cùng trình duyệt) và gọi API
- * "ngầm" rồi nuốt lỗi — nên dữ liệu mỗi máy một khác và phần lớn thao tác
- * không bao giờ tới máy chủ. Nay mọi thao tác chờ máy chủ trả đơn đã cập nhật.
- */
-
-/** Tự làm mới để mức rủi ro trễ (F09/F12) — tính theo giờ hiện tại — không đứng yên. */
 const REFRESH_MS = 60_000
 
-const EXCEPTION_TYPE_LABELS: Record<string, string> = {
-  MISSING_INFORMATION: "Thiếu thông tin",
-  PARTNER_DECLINE: "Đối tác từ chối",
-  PARTNER_DELAY: "Đối tác trễ",
-  MATERIAL_SHORTAGE: "Thiếu vật liệu",
-  QC_FAILURE: "QC không đạt",
-  DELIVERY_FAILURE: "Giao thất bại",
-  CUSTOMER_CHANGE: "Khách đổi yêu cầu",
-  COMMERCIAL_ISSUE: "Vấn đề thương mại",
-}
-
-type DetailTab = "SALES_INTAKE" | "BRIEF" | "PRODUCTION" | "QC" | "DELIVERY" | "EXCEPTION" | "CLOSURE"
-
-function asAddress(value: unknown): StructuredAddress | string {
-  if (value && typeof value === "object") {
-    const a = value as Record<string, unknown>
-    if (typeof a.street === "string") return a as unknown as StructuredAddress
-    if (typeof a.formattedAddress === "string") return a.formattedAddress
-  }
-  return typeof value === "string" ? value : ""
-}
-
-function asFlowers(order: CoordinationOrder): FlowerBomItem[] {
-  return order.flowers as unknown as FlowerBomItem[]
-}
-
-/**
- * ĐP-2.12 (26/09/2026): BOM thành phần THẬT cho T07 — ưu tiên snapshot Master
- * Index (`order.product.bom.flowers`, có `shade`/`budCount`) khi đơn chọn mẫu
- * từ danh mục; đơn mẫu ngoài danh mục (không có `productId`) thì dùng BOM
- * nhập tay như cũ (`asFlowers`), không có `shade`/`budCount` vì chưa từng có
- * nguồn nào cho hai trường này ngoài Master Index.
- */
-function bomFlowersOf(order: CoordinationOrder): FlowerBomItem[] {
-  return order.product ? order.product.bom.flowers : asFlowers(order)
-}
-
-function priorityOf(order: CoordinationOrder): "STANDARD" | "RUSH" | "VIP" {
-  const note = order.internalNote ?? ""
-  if (note.startsWith("[Ưu tiên: RUSH]")) return "RUSH"
-  if (note.startsWith("[Ưu tiên: VIP]")) return "VIP"
-  return "STANDARD"
-}
-
-const fmtTime = (iso: string | null) => (iso ? new Date(iso).toLocaleString("vi-VN") : "—")
-/** ĐP-4a.4 (26/09/2026) — hiển thị Tổng/Đã thu/Còn phải thu (sổ thu §2.14). */
-const fmtVnd = (n: number) => `${n.toLocaleString("vi-VN")}đ`
-
 export interface ControlTowerDashboardProps {
+  isCreateOpen?: boolean | undefined
+  setIsCreateOpen?: ((open: boolean) => void) | undefined
   isCreateModalOpen?: boolean | undefined
   onOpenCreateModal?: (() => void) | undefined
   onCloseCreateModal?: (() => void) | undefined
 }
 
 export function ControlTowerDashboard({
+  isCreateOpen,
+  setIsCreateOpen,
   isCreateModalOpen,
   onOpenCreateModal,
   onCloseCreateModal,
@@ -126,40 +64,28 @@ export function ControlTowerDashboard({
   const [suggestedFeeForAccept, setSuggestedFeeForAccept] = useState(0)
   const craftFeeSuggestion = useCraftFeeSuggestion(selectedId)
   const [partners, setPartners] = useState<import("./coordinator-api").CoordinationPartner[]>([])
-  const [resolutionDrafts, setResolutionDrafts] = useState<Record<string, string>>({})
-  const [newException, setNewException] = useState({ type: "CUSTOMER_CHANGE", severity: "MEDIUM", description: "" })
-  const [cancelReason, setCancelReason] = useState("")
-  const [detailError, setDetailError] = useState<string | null>(null)
 
   const selectedOrder = orders.find((o) => o.id === selectedId) ?? null
-
-  // ĐP-3.16 (26/09/2026): trường tự tạo (entity ORDER) hiện cho thẻ đối tác
-  // (T02/T07) — lọc đúng một chỗ (`visibleCustomFieldsForAudience`, cùng
-  // nguyên tắc "cửa duy nhất" của `project-for-audience.ts`), không để hai
-  // thẻ tự quyết định ẩn/hiện theo cách khác nhau.
   const orderCustomFieldDefs = useCustomFieldDefinitions("ORDER")
   const partnerVisibleCustomFields = selectedOrder
     ? visibleCustomFieldsForAudience(selectedOrder.customFields, orderCustomFieldDefs ?? [], "PARTNER")
     : []
 
-  const refresh = useCallback(
-    () => {
-      coordinatorApi
-        .listOrders()
-        .then((list) => {
-          setOrders(list)
-          setLoadError(null)
-        })
-        .catch((error: unknown) => setLoadError(errorMessage(error)))
-        .finally(() => setLoading(false))
+  const refresh = useCallback(() => {
+    coordinatorApi
+      .listOrders()
+      .then((list) => {
+        setOrders(list)
+        setLoadError(null)
+      })
+      .catch((error: unknown) => setLoadError(errorMessage(error)))
+      .finally(() => setLoading(false))
 
-      coordinatorApi
-        .listPartners()
-        .then((partnerList) => setPartners(partnerList))
-        .catch(() => {})
-    },
-    []
-  )
+    coordinatorApi
+      .listPartners()
+      .then((partnerList) => setPartners(partnerList))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const first = setTimeout(() => void refresh(), 0)
@@ -181,9 +107,15 @@ export function ControlTowerDashboard({
     setSelectedId(order.id)
   }
 
-  const effectiveIsCreateOpen = isCreateModalOpen !== undefined ? isCreateModalOpen : internalIsCreateOpen
-  const handleOpenCreate = onOpenCreateModal || (() => setInternalIsCreateOpen(true))
+  const effectiveIsCreateOpen =
+    isCreateOpen !== undefined
+      ? isCreateOpen
+      : isCreateModalOpen !== undefined
+      ? isCreateModalOpen
+      : internalIsCreateOpen
+
   const handleCloseCreate = () => {
+    if (setIsCreateOpen) setIsCreateOpen(false)
     setInternalIsCreateOpen(false)
     onCloseCreateModal?.()
   }
@@ -191,15 +123,9 @@ export function ControlTowerDashboard({
   const openDetail = (order: CoordinationOrder, tab: DetailTab = "BRIEF") => {
     setSelectedId(order.id)
     setDetailModalTab(tab)
-    setDetailError(null)
     setIsDetailOpen(true)
   }
 
-  // ── Thao tác: mỗi hàm chờ máy chủ; lỗi ném lên modal để hiện đúng câu máy chủ trả ──
-
-  // ĐP-4a.3/4a.4 (26/09/2026, sổ thu §2.14): Sales ghi DEPOSIT ngay lúc nhận
-  // đơn nếu khách trả trước — một lượt gọi thứ hai SAU khi đơn đã tồn tại,
-  // không gộp vào `createOrder` (sổ thu có API/luật riêng, R9).
   const handleCreateOrder = async (body: CreateOrderRequest, depositVnd: number) => {
     let order = await coordinatorApi.createOrder(body)
     if (depositVnd > 0) {
@@ -215,174 +141,21 @@ export function ControlTowerDashboard({
     setNotice(depositVnd > 0 ? `Đã tạo đơn #${order.orderCode} và ghi cọc ${fmtVnd(depositVnd)}.` : `Đã tạo đơn #${order.orderCode}.`)
   }
 
-  const handleConfirmPlan = async (nextAction: string) => {
-    if (!selectedOrder) return
-    applyUpdate(await coordinatorApi.updateStage(selectedOrder.id, "PLANNING", nextAction))
-    setIsPlanningModalOpen(false)
-    setIsAssignModalOpen(true)
-  }
-
-  const handleAssignPartner = async (partnerId: string, notes: string, overrideCapacity: boolean) => {
-    if (!selectedOrder) return
-    applyUpdate(
-      await coordinatorApi.assignPartner(selectedOrder.id, {
-        partnerId,
-        ...(notes.trim() ? { notes: notes.trim() } : {}),
-        ...(overrideCapacity ? { overrideCapacity } : {}),
-      })
-    )
-    setIsAssignModalOpen(false)
-  }
-
-  const handleCraftAccept = async (data: { partnerId: string; agreedCraftFeeVnd: number; notes?: string | undefined }) => {
-    if (!selectedOrder) return
-    const updated = await coordinatorApi.assignPartner(selectedOrder.id, {
-      partnerId: data.partnerId,
-      agreedCraftFeeVnd: data.agreedCraftFeeVnd,
-      ...(data.notes ? { notes: data.notes } : {}),
-    })
-    applyUpdate(updated)
-    setNotice(`Đã chốt nhận đơn #${updated.orderCode} với giá gia công ${fmtVnd(data.agreedCraftFeeVnd)}.`)
-    setIsCraftAcceptModalOpen(false)
-  }
-
-  const handleCraftCancel = async (reason: string) => {
-    if (!selectedOrder) return
-    const updated = await coordinatorApi.cancel(selectedOrder.id, reason)
-    applyUpdate(updated)
-    setNotice(`Đã hủy nhận đơn gia công #${updated.orderCode}.`)
-    setIsCraftCancelModalOpen(false)
-  }
-
-  const handleProductionUpdate = async (params: {
-    progressPercent: number
-    action: "UPDATE_PROGRESS" | "REPORT_MATERIAL_ISSUE" | "MARK_READY"
-    finishedAssetIds?: string[] | undefined
-    issueNote?: string | undefined
-  }) => {
-    if (!selectedOrder) return
-    const order = await coordinatorApi.production(selectedOrder.id, {
-      action: params.action,
-      progressPercent: params.progressPercent,
-      ...(params.finishedAssetIds ? { finishedAssetIds: params.finishedAssetIds } : {}),
-      ...(params.issueNote ? { issueNote: params.issueNote } : {}),
-    })
-    applyUpdate(order)
-    setIsProductionUpdateModalOpen(false)
-    if (order.stage === "QUALITY_CHECK") setIsQcModalOpen(true)
-    if (order.stage === "EXCEPTION") openDetail(order, "EXCEPTION")
-  }
-
-  const handleQc = async (decision: "PASSED" | "REWORK_REQUESTED" | "REJECTED", notes: string, checklist: Record<string, boolean>) => {
-    if (!selectedOrder) return
-    const order = await coordinatorApi.qc(selectedOrder.id, { decision, ...(notes ? { notes } : {}), checklist })
-    applyUpdate(order)
-    setIsQcModalOpen(false)
-    if (order.stage === "DISPATCHING") setIsDispatchModalOpen(true)
-    if (order.stage === "EXCEPTION") openDetail(order, "EXCEPTION")
-  }
-
-  const handleDelivery = async (input: DeliveryEventInput) => {
-    if (!selectedOrder) return
-    const order = await coordinatorApi.delivery(selectedOrder.id, input)
-    applyUpdate(order)
-    if (order.stage === "DELIVERED") {
-      setIsDispatchModalOpen(false)
-      setIsClosureModalOpen(true)
-    } else if (order.stage === "EXCEPTION") {
-      setIsDispatchModalOpen(false)
-      openDetail(order, "EXCEPTION")
-    }
-  }
-
-  const handleCloseOrder = async (input: { partnerRating?: number; partnerPayoutVnd?: number; notes?: string }) => {
-    if (!selectedOrder) return
-    const order = await coordinatorApi.close(selectedOrder.id, input)
-    applyUpdate(order)
-    setIsClosureModalOpen(false)
-    setNotice(`Đơn #${order.orderCode} đã nghiệm thu và đóng.`)
-  }
-
-  const runDetailAction = async (fn: () => Promise<CoordinationOrder>) => {
-    setDetailError(null)
-    try {
-      applyUpdate(await fn())
-      return true
-    } catch (error) {
-      setDetailError(errorMessage(error))
-      return false
-    }
-  }
-
-  const handleResolveException = async (exceptionId: string) => {
-    const resolution = resolutionDrafts[exceptionId]?.trim()
-    if (!resolution) {
-      setDetailError("Ghi cách đã xử lý sự cố trước khi đóng.")
-      return
-    }
-    if (await runDetailAction(() => coordinatorApi.resolveException(exceptionId, resolution))) {
-      setResolutionDrafts((prev) => ({ ...prev, [exceptionId]: "" }))
-    }
-  }
-
-  const handleOpenException = async () => {
-    if (!selectedOrder) return
-    if (!newException.description.trim()) {
-      setDetailError("Mô tả sự cố trước khi mở.")
-      return
-    }
-    if (await runDetailAction(() => coordinatorApi.openException(selectedOrder.id, { ...newException, description: newException.description.trim() }))) {
-      setNewException({ type: "CUSTOMER_CHANGE", severity: "MEDIUM", description: "" })
-    }
-  }
-
-  const handleCancelOrder = async () => {
-    if (!selectedOrder) return
-    if (!cancelReason.trim()) {
-      setDetailError("Ghi lý do huỷ đơn.")
-      return
-    }
-    if (await runDetailAction(() => coordinatorApi.cancel(selectedOrder.id, cancelReason.trim()))) {
-      setCancelReason("")
-    }
-  }
-
-  // Nút "bước kế tiếp" mở đúng form nghiệp vụ của bước đó.
-  const handleAdvanceStage = (order: CoordinationOrder) => {
-    setSelectedId(order.id)
-    switch (order.stage) {
-      case "INTAKE":
-      case "VALIDATING":
-        setIsPlanningModalOpen(true)
-        break
-      case "PLANNING":
-      case "ASSIGNING":
-        setIsAssignModalOpen(true)
-        break
-      case "IN_PRODUCTION":
-        setIsProductionUpdateModalOpen(true)
-        break
-      case "QUALITY_CHECK":
-        setIsQcModalOpen(true)
-        break
-      case "DISPATCHING":
-        setIsDispatchModalOpen(true)
-        break
-      case "DELIVERED":
-        setIsClosureModalOpen(true)
-        break
-      case "EXCEPTION":
-        openDetail(order, "EXCEPTION")
-        break
-      default:
-        openDetail(order, "BRIEF")
-    }
-  }
-
-  const totalCount = orders.filter((o) => o.stage !== "COMPLETED" && o.stage !== "CANCELLED").length
-  const criticalCount = orders.filter((o) => o.riskLevel === "CRITICAL").length
-  const atRiskCount = orders.filter((o) => o.riskLevel === "AT_RISK").length
-  const onTrackCount = orders.filter((o) => o.riskLevel === "NORMAL" && o.stage !== "COMPLETED" && o.stage !== "CANCELLED").length
+  const actions = useCoordinatorActions({
+    selectedOrder,
+    setSelectedId,
+    applyUpdate,
+    openDetail,
+    setNotice,
+    setIsPlanningModalOpen,
+    setIsAssignModalOpen,
+    setIsProductionUpdateModalOpen,
+    setIsQcModalOpen,
+    setIsDispatchModalOpen,
+    setIsClosureModalOpen,
+    setIsCraftAcceptModalOpen,
+    setIsCraftCancelModalOpen,
+  })
 
   const filteredOrders = orders.filter((o) => {
     if (activeTab !== "ALL") {
@@ -409,24 +182,30 @@ export function ControlTowerDashboard({
     return true
   })
 
-  const tabButton = (tab: DetailTab, label: string, extra = "") => (
-    <button
-      onClick={() => setDetailModalTab(tab)}
-      className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap ${
-        detailModalTab === tab ? "bg-primary text-white" : `text-text-muted hover:text-text ${extra}`
-      }`}
-    >
-      {label}
-    </button>
-  )
-
-  const fieldClass = "px-3 py-2 rounded-xl border border-border bg-surface text-text text-xs focus:outline-none focus:border-primary"
-
   return (
     <div className="flex flex-col gap-6">
-      {/* 1. Feature Guidance Card */}
+      {notice && (
+        <div role="status" className="p-3 rounded-xl border border-primary/30 bg-primary/10 text-primary text-caption font-semibold flex items-center justify-between">
+          <span>{notice}</span>
+          <Button size="sm" variant="ghost" onClick={() => setNotice(null)} aria-label="Đóng thông báo" className="text-text-muted hover:text-text h-6 w-6 p-0">
+            <X size={14} />
+          </Button>
+        </div>
+      )}
+
+      {loadError && (
+        <div role="alert" className="p-3 rounded-xl border border-danger/30 bg-danger/10 text-danger text-caption font-semibold flex items-center justify-between">
+          <span>Lỗi tải đơn điều phối: {loadError}</span>
+          <Button size="sm" variant="outline" onClick={refresh} className="text-caption font-bold border-danger/40 h-7 px-2">
+            Thử lại
+          </Button>
+        </div>
+      )}
+
+      <CoordinatorKpiSummary orders={orders} />
+
       <FeatureGuidanceCard
-        badgeLabel="HƯỚNG DẪN ĐIỀU PHỐI ĐƠN HÀNG (M12)"
+        badgeLabel="SaaS Tầng 2 • ChainOS"
         title="Tháp Vận Hành Điều Phối & Giám Sát Đơn Hàng Vận Hành"
         description="Quản lý toàn bộ tiến trình từ thẩm định đơn, phân công đối tác xưởng ngoài, AI QC kiểm định chất lượng đến trao hàng tận tay người nhận (POD)."
         tips={[
@@ -437,150 +216,24 @@ export function ControlTowerDashboard({
         ]}
       />
 
-      {/* Khối Tôn Chỉ Vận Hành Sổ Tay Điều Phối (P10 & P12) */}
-      <div className="rounded-2xl border border-primary/20 bg-surface-alt p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
-            <Radio size={20} className="animate-pulse" />
-          </div>
-          <div>
-            <div className="text-caption font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
-              <span>SỔ TAY ĐIỀU PHỐI • MANTRA CỐT LÕI</span>
-            </div>
-            <div className="text-xs md:text-sm font-black text-text mt-0.5">
-              “Nhận đúng — Hiểu đúng — Chọn đúng — Làm đúng — Kiểm tra đúng — Giao đúng — Đóng đúng”
-            </div>
-          </div>
-        </div>
+      <CoordinatorToolbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        loading={loading}
+        onRefresh={refresh}
+        onOpenCreate={() => (setIsCreateOpen ? setIsCreateOpen(true) : setInternalIsCreateOpen(true))}
+      />
 
-        <div className="flex items-center gap-1.5 flex-wrap text-caption font-bold text-text-muted bg-surface/80 px-3 py-1.5 rounded-xl border border-border/80">
-          <span className="text-primary font-extrabold">5 Câu Hỏi Kiểm Tra:</span>
-          <span className="px-1.5 py-0.5 rounded bg-surface text-text-muted">1. Đơn ở đâu?</span>
-          <span className="px-1.5 py-0.5 rounded bg-surface text-text-muted">2. Tiếp theo làm gì?</span>
-          <span className="px-1.5 py-0.5 rounded bg-surface text-text-muted">3. Ai giữ bóng?</span>
-          <span className="px-1.5 py-0.5 rounded bg-surface text-text-muted">4. Có rủi ro gì?</span>
-          <span className="px-1.5 py-0.5 rounded bg-surface text-text-muted">5. Khi nào xong?</span>
-        </div>
-      </div>
-
-      {/* 2. Control Tower Counters - Chuẩn Thẻ Số Liệu */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="rounded-2xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
-          <span className="text-caption font-bold text-text-muted uppercase">Đang điều phối</span>
-          <div className="text-3xl font-extrabold text-text mt-1 tabular-nums">{totalCount}</div>
-          <span className="text-caption text-text-muted mt-2">Chưa đóng / chưa huỷ</span>
-        </Card>
-
-        <Card className="rounded-2xl border border-danger/30 bg-danger/10 p-4 flex flex-col justify-between shadow-xs">
-          <span className="text-caption font-bold text-danger flex items-center gap-1 uppercase">
-            <AlertCircle size={14} className="text-danger" />
-            Cần xử lý gấp
-          </span>
-          <div className="text-3xl font-extrabold text-danger mt-1 tabular-nums">{criticalCount}</div>
-          <span className="text-caption text-danger mt-2 font-medium">Sự cố hoặc lệch kiểm định</span>
-        </Card>
-
-        <Card className="rounded-2xl border border-warning/30 bg-warning/10 p-4 flex flex-col justify-between shadow-xs">
-          <span className="text-caption font-bold text-warning flex items-center gap-1 uppercase">
-            <AlertTriangle size={14} className="text-warning" />
-            Nguy cơ trễ
-          </span>
-          <div className="text-3xl font-extrabold text-warning mt-1 tabular-nums">{atRiskCount}</div>
-          <span className="text-caption text-warning mt-2 font-medium">Cần thúc đẩy tiến độ xưởng</span>
-        </Card>
-
-        <Card className="rounded-2xl border border-success/30 bg-success/10 p-4 flex flex-col justify-between shadow-xs">
-          <span className="text-caption font-bold text-success flex items-center gap-1 uppercase">
-            <CheckCircle2 size={14} className="text-success" />
-            Đúng hẹn
-          </span>
-          <div className="text-3xl font-extrabold text-success mt-1 tabular-nums">{onTrackCount}</div>
-          <span className="text-caption text-success mt-2 font-medium">Tiến độ an toàn</span>
-        </Card>
-      </div>
-
-      {/* 3. Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          {[
-            { id: "ALL", label: "Tất cả đơn" },
-            { id: "INTAKE", label: "Tiếp nhận" },
-            { id: "PLANNING", label: "Kế hoạch & Xưởng" },
-            { id: "IN_PRODUCTION", label: "Đang chế tác" },
-            { id: "QUALITY_CHECK", label: "Kiểm định QC" },
-            { id: "DISPATCHING", label: "Giao hàng" },
-            { id: "DELIVERED", label: "Đã hoàn thành" },
-            { id: "EXCEPTION", label: "Sự cố phát sinh" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap ${
-                activeTab === tab.id
-                  ? "bg-primary text-white shadow-sm"
-                  : tab.id === "EXCEPTION"
-                  ? "bg-danger/10 text-danger border border-danger/30 hover:bg-danger/15"
-                  : "bg-surface border border-border text-text-muted hover:text-text"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="relative w-full sm:w-72">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-            <input
-              type="text"
-              placeholder="Tìm theo mã đơn, khách hàng, sản phẩm..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-border bg-surface text-text focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            />
-          </div>
-
-          <Button
-            size="sm"
-            onClick={handleOpenCreate}
-            className="bg-primary hover:bg-primary-dark text-white text-xs gap-1.5 shrink-0 font-bold shadow-xs h-8 px-3"
-          >
-            <Plus size={13} />
-            <span>Tiếp nhận đơn (Sales T01)</span>
-          </Button>
-        </div>
-      </div>
-
-      {notice && (
-        <div role="status" className="p-3 rounded-xl border border-success/30 bg-success/10 text-success text-xs font-semibold flex items-center justify-between">
-          <span>{notice}</span>
-          <button onClick={() => setNotice(null)} aria-label="Ẩn thông báo">
-            <X size={14} />
-          </button>
-        </div>
-      )}
-      {loadError && (
-        <div role="alert" className="p-3 rounded-xl border border-danger/30 bg-danger/10 text-danger text-xs font-semibold flex items-center justify-between gap-2">
-          <span>Không tải được danh sách đơn: {loadError}</span>
-          <Button size="sm" variant="outline" onClick={() => void refresh()} className="gap-1 h-7">
-            <RefreshCw size={12} /> Thử lại
-          </Button>
-        </div>
-      )}
-
-      {/* 4. Order List */}
-      <div className="grid grid-cols-1 gap-4">
-        {loading ? (
-          <div className="p-12 text-center rounded-2xl border border-dashed border-border text-xs text-text-muted">Đang tải đơn…</div>
-        ) : filteredOrders.length > 0 ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredOrders.length > 0 ? (
           filteredOrders.map((ord) => (
             <CoordinatorOrderBriefCard
               key={ord.id}
               orderCode={ord.orderCode}
-              stage={ord.stage}
               stageLabel={ord.stageLabel}
-              riskLevel={ord.riskLevel}
-              riskReason={ord.riskReason}
+              stage={ord.stage}
               customerName={ord.customerName}
               customerTier={ord.customerTier}
               recipientName={ord.recipientName}
@@ -591,14 +244,17 @@ export function ControlTowerDashboard({
               productTitle={ord.productTitle}
               sampleImageUrl={ord.sampleImageUrl}
               partnerName={ord.partnerName ?? undefined}
+              riskLevel={ord.riskLevel}
+              riskReason={ord.riskReason}
               hasMissingItems={false}
-              onOpenDetail={() => openDetail(ord)}
-              {...(ord.stage === "COMPLETED" || ord.stage === "CANCELLED" ? {} : { onAdvanceStage: () => handleAdvanceStage(ord) })}
+              onOpenDetail={() => openDetail(ord, "BRIEF")}
+              {...(ord.stage === "COMPLETED" || ord.stage === "CANCELLED"
+                ? {}
+                : { onAdvanceStage: () => actions.handleAdvanceStage(ord) })}
               onOpenAssignModal={() => {
                 setSelectedId(ord.id)
                 setIsAssignModalOpen(true)
               }}
-              onOpenMissingInfo={() => openDetail(ord, "EXCEPTION")}
               onOpenProduction={() => {
                 setSelectedId(ord.id)
                 setIsProductionUpdateModalOpen(true)
@@ -618,366 +274,71 @@ export function ControlTowerDashboard({
             />
           ))
         ) : (
-          <div className="p-12 text-center rounded-2xl border border-dashed border-border text-xs text-text-muted">
+          <div className="p-12 text-center rounded-2xl border border-dashed border-border text-caption text-text-muted col-span-full">
             {orders.length === 0 ? "Chưa có đơn điều phối nào — bấm “Tiếp nhận đơn” để tạo đơn đầu tiên." : "Không có đơn nào khớp bộ lọc."}
           </div>
         )}
       </div>
 
-      {/* 5. Hồ sơ đơn */}
-      {isDetailOpen && selectedOrder && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface border border-border rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
-            <div className="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-surface z-10">
-              <div className="flex items-center gap-2">
-                <Radio size={18} className="text-primary" />
-                <h2 className="text-base font-extrabold text-text">
-                  Hồ Sơ Điều Phối Đơn #{selectedOrder.orderCode} · {selectedOrder.stageLabel}
-                </h2>
-              </div>
-              <button onClick={() => setIsDetailOpen(false)} aria-label="Đóng" className="p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="p-4 border-b border-border bg-surface-alt/40 flex items-center gap-2 overflow-x-auto">
-              {tabButton("SALES_INTAKE", "P1 • Tiếp nhận (T01)")}
-              {tabButton("BRIEF", "P2 • Thẻ sản phẩm (T02)")}
-              {tabButton("PRODUCTION", "P4 • Phiếu chế tác (T07)")}
-              {tabButton("QC", "P5 • Kiểm định QC (T14)")}
-              {tabButton("DELIVERY", "P6 • Giao hàng & POD (T21)")}
-              {tabButton("EXCEPTION", `Sự cố (${selectedOrder.exceptions.filter((e) => e.status === "OPEN" || e.status === "IN_PROGRESS").length})`, selectedOrder.hasException ? "text-danger bg-danger/10" : "")}
-              {tabButton("CLOSURE", "P7 • Nghiệm thu (T25)")}
-            </div>
-
-            <div className="px-4 py-2 flex items-center justify-between gap-2 bg-surface-alt/30 border-b border-border text-caption flex-wrap">
-              <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-text-muted">
-                  Tổng <strong className="text-text">{fmtVnd(selectedOrder.unitPriceVnd)}</strong>
-                </span>
-                <span className="text-text-muted">
-                  Đã thu <strong className="text-success">{fmtVnd(selectedOrder.paidVnd)}</strong>
-                </span>
-                <span className="text-text-muted">
-                  Còn phải thu{" "}
-                  <strong className={selectedOrder.balanceVnd > 0 ? "text-danger" : "text-success"}>{fmtVnd(selectedOrder.balanceVnd)}</strong>
-                </span>
-              </div>
-              <Button size="sm" variant="outline" onClick={() => setIsPaymentModalOpen(true)} className="h-7 px-2.5 text-caption font-bold gap-1">
-                <Wallet size={12} /> Sổ thu (T01/T02/T05)
-              </Button>
-            </div>
-
-            <div className="p-6 flex flex-col gap-4">
-              {detailError && (
-                <div role="alert" className="p-3 rounded-xl border border-danger/30 bg-danger/10 text-danger text-xs font-semibold">
-                  {detailError}
-                </div>
-              )}
-
-              {detailModalTab === "SALES_INTAKE" && (
-                <SalesOrderIntakeCard
-                  orderCode={selectedOrder.orderCode}
-                  source="Tiếp nhận tại Control Tower"
-                  customerName={selectedOrder.customerName}
-                  customerTier={selectedOrder.customerTier}
-                  recipientName={selectedOrder.recipientName}
-                  recipientPhone={selectedOrder.recipientPhone}
-                  deliveryAddress={asAddress(selectedOrder.deliveryAddress)}
-                  deliveryTargetTime={selectedOrder.deliveryTargetTime}
-                  productTitle={selectedOrder.productTitle}
-                  sampleImageUrl={selectedOrder.sampleImageUrl}
-                  unitPriceVnd={selectedOrder.unitPriceVnd}
-                  priority={priorityOf(selectedOrder)}
-                />
-              )}
-
-              {detailModalTab === "BRIEF" && (
-                <PartnerProductCard
-                  orderCode={selectedOrder.orderCode}
-                  productTitle={selectedOrder.productTitle}
-                  sampleImageUrl={selectedOrder.sampleImageUrl}
-                  flowers={bomFlowersOf(selectedOrder)}
-                  foliage={selectedOrder.foliage}
-                  wrapping={selectedOrder.wrapping}
-                  accessories={selectedOrder.accessories}
-                  unitPriceVnd={selectedOrder.unitPriceVnd}
-                  partnerPayoutVnd={selectedOrder.partnerPayoutVnd ?? undefined}
-                  deliveryTargetTime={selectedOrder.deliveryTargetTime}
-                  deliveryAddress={asAddress(selectedOrder.deliveryAddress)}
-                  recipientName={selectedOrder.recipientName}
-                  recipientPhone={selectedOrder.recipientPhone}
-                  cardMessage={selectedOrder.cardMessage}
-                  technicalNotes={selectedOrder.partnerInstruction ?? undefined}
-                  partnerName={selectedOrder.partnerName ?? undefined}
-                  riskLevel={selectedOrder.riskLevel}
-                  riskReason={selectedOrder.riskReason}
-                  customFields={partnerVisibleCustomFields}
-                  {...(selectedOrder.stage === "COMPLETED" || selectedOrder.stage === "CANCELLED"
-                    ? {}
-                    : { onAdvanceStage: () => handleAdvanceStage(selectedOrder) })}
-                />
-              )}
-
-              {detailModalTab === "PRODUCTION" && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between bg-surface-alt/50 p-3 rounded-xl border border-border text-xs">
-                    <span>
-                      Xưởng: <strong>{selectedOrder.partnerName ?? "Chưa phân công"}</strong> · Tiến độ{" "}
-                      <strong>{selectedOrder.productionProgress}%</strong>
-                      {typeof selectedOrder.partnerPayoutVnd === "number" && (
-                        <span className="ml-2 text-primary font-bold">
-                          · Giá chốt: {fmtVnd(selectedOrder.partnerPayoutVnd)}
-                        </span>
-                      )}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline" onClick={() => setIsAssignModalOpen(true)} className="text-xs h-7 px-2.5 font-bold">
-                        Phân công đối tác (T06)
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        disabled={selectedOrder.stage !== "IN_PRODUCTION"}
-                        onClick={() => setIsProductionUpdateModalOpen(true)}
-                        className="text-xs h-7 px-2.5 font-bold"
-                      >
-                        Cập nhật tiến độ / Thiếu hoa (T10)
-                      </Button>
-                    </div>
-                  </div>
-                  <FloristJobCard
-                    orderCode={selectedOrder.orderCode}
-                    recipeTitle={selectedOrder.productTitle}
-                    unitPriceVnd={selectedOrder.unitPriceVnd} suggestedFeeVnd={craftFeeSuggestion?.suggestedVnd}
-                    targetReadyTime={selectedOrder.deliveryTargetTime}
-                    deliveryTargetTime={selectedOrder.deliveryTargetTime}
-                    sampleImageUrl={selectedOrder.sampleImageUrl}
-                    flowers={bomFlowersOf(selectedOrder)}
-                    foliage={selectedOrder.foliage}
-                    wrapping={selectedOrder.wrapping}
-                    accessories={selectedOrder.accessories}
-                    cardMessage={selectedOrder.cardMessage}
-                    partnerInstruction={selectedOrder.partnerInstruction}
-                    partnerName={selectedOrder.partnerName ?? undefined}
-                    recipientName={selectedOrder.recipientName}
-                    recipientPhone={selectedOrder.recipientPhone}
-                    deliveryAddress={selectedOrder.deliveryAddress}
-                    customFields={partnerVisibleCustomFields}
-                    onConfirmAcceptance={(suggestedFee) => {
-                      setSuggestedFeeForAccept(suggestedFee)
-                      setIsCraftAcceptModalOpen(true)
-                    }}
-                    onCancelOrder={() => setIsCraftCancelModalOpen(true)}
-                    onPrint={() => window.print()}
-                  />
-                </div>
-              )}
-
-              {detailModalTab === "QC" && (
-                <AIQCReportCard
-                  orderCode={selectedOrder.orderCode}
-                  qcStatus={(selectedOrder.qc?.status as "PENDING" | "PASSED" | "REJECTED" | "REWORK_REQUESTED" | undefined) ?? "PENDING"}
-                  aiScore={selectedOrder.qc?.aiScore ?? null}
-                  aiCritique={selectedOrder.qc?.notes ?? null}
-                  finishedImageUrls={selectedOrder.finishedImageUrls}
-                  onApprove={() => setIsQcModalOpen(true)}
-                />
-              )}
-
-              {detailModalTab === "DELIVERY" && (
-                <DeliveryPODCard
-                  orderCode={selectedOrder.orderCode}
-                  shipperName={selectedOrder.delivery.shipperName ?? "Chưa bàn giao shipper"}
-                  shipperPhone={selectedOrder.delivery.shipperPhone ?? ""}
-                  deliveryAddress={asAddress(selectedOrder.deliveryAddress)}
-                  recipientName={selectedOrder.recipientName}
-                  recipientPhone={selectedOrder.recipientPhone}
-                  isDelivered={selectedOrder.stage === "DELIVERED" || selectedOrder.stage === "COMPLETED"}
-                  deliveredAt={selectedOrder.delivery.actualDeliveryAt ? fmtTime(selectedOrder.delivery.actualDeliveryAt) : null}
-                  podImageUrl={selectedOrder.delivery.podImageUrl}
-                  recipientSignatureName={selectedOrder.delivery.podRecipientName}
-                  onConfirmComplete={() => setIsDispatchModalOpen(true)}
-                />
-              )}
-
-              {detailModalTab === "EXCEPTION" && (
-                <div className="flex flex-col gap-4 text-xs">
-                  {selectedOrder.exceptions.length === 0 && <div className="text-text-muted">Đơn chưa có sự cố nào.</div>}
-                  {selectedOrder.exceptions.map((exc) => {
-                    const open = exc.status === "OPEN" || exc.status === "IN_PROGRESS"
-                    return (
-                      <div key={exc.id} className="flex flex-col gap-2">
-                        <ExceptionResolutionCard
-                          orderCode={selectedOrder.orderCode}
-                          exceptionCode={exc.code}
-                          type={EXCEPTION_TYPE_LABELS[exc.type] ?? exc.type}
-                          severity={exc.severity as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"}
-                          description={exc.description}
-                          resolutionPlan={exc.resolution}
-                          status={exc.status as "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CANCELLED"}
-                          reportedAt={fmtTime(exc.createdAt)}
-                        />
-                        {open && (
-                          <div className="flex items-center gap-2">
-                            <input
-                              className={`flex-1 ${fieldClass}`}
-                              placeholder="Đã xử lý thế nào (bắt buộc)"
-                              value={resolutionDrafts[exc.id] ?? ""}
-                              onChange={(e) => setResolutionDrafts((prev) => ({ ...prev, [exc.id]: e.target.value }))}
-                            />
-                            <Button size="sm" onClick={() => void handleResolveException(exc.id)} className="bg-success hover:bg-success-dark text-white">
-                              Đóng sự cố
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-
-                  {selectedOrder.stage !== "COMPLETED" && selectedOrder.stage !== "CANCELLED" && (
-                    <div className="p-3 rounded-xl border border-dashed border-danger/40 flex flex-col gap-2">
-                      <span className="font-bold text-text">Mở sự cố mới (T22)</span>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <select className={fieldClass} value={newException.type} onChange={(e) => setNewException({ ...newException, type: e.target.value })}>
-                          {Object.entries(EXCEPTION_TYPE_LABELS).map(([value, label]) => (
-                            <option key={value} value={value}>
-                              {label}
-                            </option>
-                          ))}
-                        </select>
-                        <select className={fieldClass} value={newException.severity} onChange={(e) => setNewException({ ...newException, severity: e.target.value })}>
-                          <option value="LOW">Thấp</option>
-                          <option value="MEDIUM">Trung bình</option>
-                          <option value="HIGH">Cao</option>
-                          <option value="CRITICAL">Khẩn cấp</option>
-                        </select>
-                      </div>
-                      <input
-                        className={fieldClass}
-                        placeholder="Mô tả sự cố"
-                        value={newException.description}
-                        onChange={(e) => setNewException({ ...newException, description: e.target.value })}
-                      />
-                      <Button size="sm" variant="outline" onClick={() => void handleOpenException()} className="w-fit text-danger border-danger/40 gap-1">
-                        <AlertCircle size={13} /> Mở sự cố
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {detailModalTab === "CLOSURE" && (
-                <div className="flex flex-col gap-3 text-xs">
-                  {selectedOrder.stage === "COMPLETED" ? (
-                    <div className="p-4 rounded-xl border border-success/30 bg-success/10 flex flex-col gap-1">
-                      <strong className="text-success">Đã đóng lúc {fmtTime(selectedOrder.closedAt)}</strong>
-                      <span>Đối tác: {selectedOrder.partnerName ?? "—"} · Điểm: {selectedOrder.partnerRating ?? "—"}/5</span>
-                      <span>
-                        Tiền công đối tác:{" "}
-                        {selectedOrder.partnerPayoutVnd === null ? "chưa chốt" : `${selectedOrder.partnerPayoutVnd.toLocaleString("vi-VN")} đ`}
-                      </span>
-                      {selectedOrder.closureNotes && <span>Ghi chú: {selectedOrder.closureNotes}</span>}
-                    </div>
-                  ) : selectedOrder.stage === "CANCELLED" ? (
-                    <div className="p-4 rounded-xl border border-border bg-surface-alt">Đơn đã huỷ: {selectedOrder.cancelledReason}</div>
-                  ) : (
-                    <Button
-                      size="sm"
-                      disabled={selectedOrder.stage !== "DELIVERED"}
-                      onClick={() => setIsClosureModalOpen(true)}
-                      className="w-fit bg-success hover:bg-success-dark text-white gap-1"
-                    >
-                      <CheckCircle2 size={13} /> Nghiệm thu & đóng đơn
-                    </Button>
-                  )}
-
-                  {!["COMPLETED", "CANCELLED", "DELIVERED"].includes(selectedOrder.stage) && (
-                    <div className="p-3 rounded-xl border border-dashed border-border flex flex-col gap-2">
-                      <span className="font-bold text-text">Huỷ đơn (cần quyền điều hành)</span>
-                      <input className={fieldClass} placeholder="Lý do huỷ" value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} />
-                      <Button size="sm" variant="outline" onClick={() => void handleCancelOrder()} className="w-fit gap-1 text-danger border-danger/40">
-                        <Ban size={13} /> Huỷ đơn
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      {selectedOrder && (
+        <CoordinatorOrderDetailModal
+          isOpen={isDetailOpen}
+          order={selectedOrder}
+          initialTab={detailModalTab}
+          partnerVisibleCustomFields={partnerVisibleCustomFields}
+          suggestedFeeVnd={craftFeeSuggestion?.suggestedVnd}
+          onClose={() => setIsDetailOpen(false)}
+          onUpdate={applyUpdate}
+          onAdvanceStage={actions.handleAdvanceStage}
+          onOpenAssignModal={() => setIsAssignModalOpen(true)}
+          onOpenProductionModal={() => setIsProductionUpdateModalOpen(true)}
+          onOpenQcModal={() => setIsQcModalOpen(true)}
+          onOpenDispatchModal={() => setIsDispatchModalOpen(true)}
+          onOpenClosureModal={() => setIsClosureModalOpen(true)}
+          onOpenPaymentModal={() => setIsPaymentModalOpen(true)}
+          onConfirmAcceptance={(fee) => {
+            setSuggestedFeeForAccept(fee)
+            setIsCraftAcceptModalOpen(true)
+          }}
+          onCancelFloristOrder={() => setIsCraftCancelModalOpen(true)}
+        />
       )}
 
-      {/* 6. Tiếp nhận đơn (T01 — P1) */}
       <SalesOrderIntakeModal isOpen={effectiveIsCreateOpen} onClose={handleCloseCreate} onSubmit={handleCreateOrder} />
 
-      {selectedOrder && (
-        <>
-          <OrderPlanningModal
-            isOpen={isPlanningModalOpen}
-            order={selectedOrder}
-            onClose={() => setIsPlanningModalOpen(false)}
-            onConfirmPlan={handleConfirmPlan}
-          />
-          <PartnerAssignmentModal
-            key={`assign-${selectedOrder.id}-${isAssignModalOpen}`}
-            isOpen={isAssignModalOpen}
-            orderCode={selectedOrder.orderCode}
-            recipeTitle={selectedOrder.productTitle}
-            deliveryAddress={selectedOrder.deliveryAddress}
-            deliveryTargetTime={selectedOrder.deliveryTargetTime}
-            currentPartnerId={selectedOrder.partner?.id ?? null}
-            onClose={() => setIsAssignModalOpen(false)}
-            onAssign={handleAssignPartner}
-          />
-          <ProductionUpdateModal
-            isOpen={isProductionUpdateModalOpen}
-            orderCode={selectedOrder.orderCode}
-            recipeTitle={selectedOrder.productTitle}
-            currentProgressPercent={selectedOrder.productionProgress}
-            onClose={() => setIsProductionUpdateModalOpen(false)}
-            onSubmitUpdate={handleProductionUpdate}
-          />
-          <AiQcInspectionModal isOpen={isQcModalOpen} order={selectedOrder} onClose={() => setIsQcModalOpen(false)} onSubmit={handleQc} />
-          <DeliveryDispatchModal
-            key={`dispatch-${selectedOrder.id}-${isDispatchModalOpen}`}
-            isOpen={isDispatchModalOpen}
-            order={selectedOrder}
-            onClose={() => setIsDispatchModalOpen(false)}
-            onSubmit={handleDelivery}
-          />
-          <OrderClosureModal
-            isOpen={isClosureModalOpen}
-            order={selectedOrder}
-            onClose={() => setIsClosureModalOpen(false)}
-            onSubmit={handleCloseOrder}
-          />
-          <PaymentLedgerModal
-            isOpen={isPaymentModalOpen}
-            order={selectedOrder}
-            onClose={() => setIsPaymentModalOpen(false)}
-            onRecorded={(order) => applyUpdate(order)}
-          />
-          <ConfirmCraftAcceptanceModal
-            open={isCraftAcceptModalOpen}
-            onOpenChange={setIsCraftAcceptModalOpen}
-            orderCode={selectedOrder.orderCode}
-            recipeTitle={selectedOrder.productTitle}
-            unitPriceVnd={selectedOrder.unitPriceVnd}
-            suggestedCraftFeeVnd={suggestedFeeForAccept || craftFeeSuggestion?.suggestedVnd || Math.round(selectedOrder.unitPriceVnd * 0.5)}
-            partners={partners}
-            currentPartnerId={selectedOrder.partner?.id ?? null}
-            onConfirm={handleCraftAccept}
-          />
-          <CancelFloristOrderModal
-            open={isCraftCancelModalOpen}
-            onOpenChange={setIsCraftCancelModalOpen}
-            orderCode={selectedOrder.orderCode}
-            recipeTitle={selectedOrder.productTitle}
-            onConfirmCancel={handleCraftCancel}
-          />
-        </>
-      )}
+      <CoordinatorActionModals
+        order={selectedOrder}
+        partners={partners}
+        suggestedFeeForAccept={suggestedFeeForAccept}
+        craftFeeSuggestionVnd={craftFeeSuggestion?.suggestedVnd}
+        isPlanningModalOpen={isPlanningModalOpen}
+        isAssignModalOpen={isAssignModalOpen}
+        isProductionUpdateModalOpen={isProductionUpdateModalOpen}
+        isQcModalOpen={isQcModalOpen}
+        isDispatchModalOpen={isDispatchModalOpen}
+        isClosureModalOpen={isClosureModalOpen}
+        isPaymentModalOpen={isPaymentModalOpen}
+        isCraftAcceptModalOpen={isCraftAcceptModalOpen}
+        isCraftCancelModalOpen={isCraftCancelModalOpen}
+        onClosePlanning={() => setIsPlanningModalOpen(false)}
+        onCloseAssign={() => setIsAssignModalOpen(false)}
+        onCloseProductionUpdate={() => setIsProductionUpdateModalOpen(false)}
+        onCloseQc={() => setIsQcModalOpen(false)}
+        onCloseDispatch={() => setIsDispatchModalOpen(false)}
+        onCloseClosure={() => setIsClosureModalOpen(false)}
+        onClosePayment={() => setIsPaymentModalOpen(false)}
+        setIsCraftAcceptModalOpen={setIsCraftAcceptModalOpen}
+        setIsCraftCancelModalOpen={setIsCraftCancelModalOpen}
+        onConfirmPlan={actions.onConfirmPlan}
+        onAssignPartner={actions.onAssignPartner}
+        onProductionUpdate={actions.onProductionUpdate}
+        onQc={actions.onQc}
+        onDelivery={actions.onDelivery}
+        onCloseOrder={actions.onCloseOrder}
+        onRecordPayment={applyUpdate}
+        onCraftAccept={actions.onCraftAccept}
+        onCraftCancel={actions.onCraftCancel}
+      />
     </div>
   )
 }
