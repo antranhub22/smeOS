@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
 
+import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
+
 import { FACET_DEFS, buildFacetGroups, facetValues, matchesFacets } from "../partner-marketplace-facets"
 import { rowToProfile } from "../partner-marketplace-row-mapper"
 import type { PartnerStoreMarketplaceEntity } from "../partner-marketplace.types"
@@ -60,5 +62,13 @@ describe("matchesFacets / buildFacetGroups", () => {
     ])
     const challenges = groups.find((g) => g.key === "business.challenges")!
     expect(challenges.options.find((o) => o.value === "Marketing")?.count).toBe(2)
+  })
+})
+
+describe("FACET_DEFS", () => {
+  it("nhãn số thợ lấy chức danh từ plugin ngành Hoa, không viết cứng thuật ngữ", () => {
+    const maker = getIndustryPlugin("FLORAL").terminology.makerTitle.toLowerCase()
+    expect(def("production.floristCount").label).toBe(`Số ${maker}`)
+    expect(FACET_DEFS.some((d) => /cắm hoa/i.test(d.label))).toBe(false)
   })
 })
