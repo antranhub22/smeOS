@@ -64,6 +64,62 @@ documents:
     dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
+  - id: "DOC-MSC-00-SOURCE"
+    path: "docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/00_TAI_LIEU_GOC.md"
+    title: "Marketing & Sales Center — tài liệu kiến trúc nghiệp vụ gốc (PO 01/11/2026)"
+    domain: "Marketing & Sales Center"
+    layer: "Level 2"
+    purpose: "6 Business Modules, 2 lớp giao diện, Asset → Usage/Deployment, 77 asset; bản chuyển nguyên văn từ docx PO"
+    status: "SUPPORTING"
+    authority: "Level 2"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    supersedes: []
+
+  - id: "DOC-MSC-01-ASSESSMENT"
+    path: "docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/01_DANH_GIA_DONG_BO.md"
+    title: "Đánh giá đồng bộ Marketing & Sales Center với hệ thống"
+    domain: "Marketing & Sales Center"
+    layer: "Level 2"
+    purpose: "Đối chiếu module, dữ liệu, Catalog/Thẻ chào và 7 quyết định PO 01/11/2026"
+    status: "APPROVED"
+    authority: "Level 2"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    supersedes: []
+
+  - id: "DOC-MSC-02-ASSET-CATALOG"
+    path: "docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/02_DANH_MUC_ASSET.md"
+    title: "Danh mục 77 asset + Bộ nhận diện thương hiệu"
+    domain: "Marketing & Sales Center"
+    layer: "Level 2"
+    purpose: "Ánh xạ từng asset vào công cụ thật, module, nơi dùng, mức Sẵn/Mở rộng/Mới; nguồn cho danh mục asset trong mã"
+    status: "SUPPORTING"
+    authority: "Level 2"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    supersedes: []
+
+  - id: "DOC-MSC-03-PLAN"
+    path: "docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/03_KE_HOACH_TRIEN_KHAI.md"
+    title: "Kế hoạch triển khai Marketing & Sales Center trên /cong-cu"
+    domain: "Marketing & Sales Center"
+    layer: "Level 2"
+    purpose: "PR-0…PR-7 + PR-B, từng commit, checklist, gate, vùng cấm Catalog/Thẻ chào"
+    status: "DRAFT"
+    authority: "Level 2"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    supersedes: []
+
   # =========================================================================
   # LEVEL 2: SYSTEM PRD, FOUNDATION & INTEGRATION
   # =========================================================================
