@@ -14,3 +14,5 @@ exemptions:
     reason: Tuyến redirect ngắn cho thiệp điện tử
   - route: /s/[code]
     reason: Tuyến redirect ngắn cho chia sẻ cửa hàng
+  - route: /chat
+    reason: Tuyến redirect đến /hoi-thoai (hộp thư hội thoại đa kênh)
