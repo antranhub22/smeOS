@@ -36,7 +36,7 @@ export const FACET_DEFS: readonly FacetDef[] = [
   f("business.paymentMethods", "Phương thức thanh toán", "list"),
   f("production.productLines", "Danh mục sản phẩm", "list"),
   f("production.flowerSupply", "Nguồn cung hoa", "list"),
-  f("production.floristCount", "Số thợ cắm hoa", "single"),
+  f("production.floristCount", "Số lượng nhân sự chế tác", "single"),
   f("production.lossRateEstimate", "Tỷ lệ hao hụt", "single"),
   f("production.rareFlowerAbility", "Đáp ứng hoa hiếm", "presence"),
   f("identity.operatingYears", "Số năm hoạt động", "single"),

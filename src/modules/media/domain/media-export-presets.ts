@@ -110,7 +110,7 @@ export function buildExportFileName(params: {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]/g, "-")
     .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "") || "floraos-asset"
+    .replace(/^-|-$/g, "") || "smeos-asset"
 
   const ratioSlug = params.ratio.replace(":", "-")
   const platformSlug = params.platform.toLowerCase().replace(/[^a-z0-9]/g, "-")

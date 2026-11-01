@@ -10,7 +10,7 @@ export const SIGNED_URL_TTL_SECONDS = 3600
  */
 export function ownStorageKey(photo: string | null | undefined, organizationId: string): string | null {
   if (!photo) return null
-  const key = photo.startsWith("org/") ? photo : photo.match(/floraos-core\/(org\/[^?]+)/)?.[1]
+  const key = photo.startsWith("org/") ? photo : photo.match(/(?:floraos-core|smeos-core)\/(org\/[^?]+)/)?.[1]
   if (!key || key.includes("..")) return null
   return key.startsWith(`org/${organizationId}/`) ? key : null
 }

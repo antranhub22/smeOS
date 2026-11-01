@@ -20,6 +20,6 @@ export function buildEmbedSnippet(input: EmbedSnippetInput): string | null {
   const slug = input.shopSlug?.trim()
   const base = input.appUrl?.trim().replace(/\/+$/, "")
   if (!slug || !base) return null
-  const src = `${base}/sdk/floraos-chat.js`
+  const src = `${base}/sdk/smeos-chat.js`
   return `<script src="${escapeAttr(src)}" data-shop-slug="${escapeAttr(slug)}" defer></script>`
 }

@@ -114,7 +114,7 @@ export const DEFAULT_PLATFORM_BANK: BankConfig = {
   bankBin: "970422",
   bankName: "MB Bank (Ngân hàng Quân Đội)",
   accountNumber: "0388889999",
-  accountHolder: "CONG TY CONG NGHE FLORAOS",
+  accountHolder: "CONG TY CONG NGHE SMEOS",
 }
 
 export interface GenerateVietQrInput {

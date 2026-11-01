@@ -1,5 +1,5 @@
 /**
- * FloraOS SaaS System Knowledge Base (Bộ Cẩm Nang Tri Thức Vận Hành SSOT).
+ * smeOS SaaS System Knowledge Base (Bộ Cẩm Nang Tri Thức Vận Hành SSOT).
  * Đóng gói toàn bộ tài liệu hướng dẫn và đặc tả các module vào từ điển tri thức.
  */
 
@@ -81,7 +81,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M09",
     title: "Quét và nhắc nhở ngày kỷ niệm của khách hàng",
     keywords: ["ngày kỷ niệm", "nhắc sinh nhật", "nhắc hẹn", "quét dịp", "ngày của mẹ", "kỷ niệm ngày cưới"],
-    summary: "FloraOS tự động quét các ngày kỷ niệm diễn ra trong 14 ngày tới của khách hàng và đưa ra gợi ý loài hoa, tone màu phù hợp nhất để nhân viên chủ động liên hệ tư vấn.",
+    summary: "smeOS tự động quét các ngày kỷ niệm diễn ra trong 14 ngày tới của khách hàng và đưa ra gợi ý sản phẩm, tone màu phù hợp nhất để nhân viên chủ động liên hệ tư vấn.",
     steps: [
       "Vào mục 'Khách hàng'",
       "Ở góc trên bên phải, bấm nút '⚡ Quét dịp sắp tới (14 ngày)'",
@@ -96,7 +96,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M09",
     title: "Bảo vệ quyền riêng tư và tiếp thị (Consent Engine)",
     keywords: ["quyền riêng tư", "consent", "đồng ý nhận tin", "chặn spam", "zalo zns", "sms brandname"],
-    summary: "FloraOS tuân thủ chính sách bảo vệ người tiêu dùng, chỉ cho phép gửi tin nhắn Zalo ZNS hoặc SMS tiếp thị khi khách hàng đã được cấp phép (Granted Consent).",
+    summary: "smeOS tuân thủ chính sách bảo vệ người tiêu dùng, chỉ cho phép gửi tin nhắn Zalo ZNS hoặc SMS tiếp thị khi khách hàng đã được cấp phép (Granted Consent).",
     steps: [
       "Vào mục 'Khách hàng'",
       "Chọn khách hàng cần kiểm tra -> Chọn tab 'Quyền riêng tư (Consent)'",
@@ -195,12 +195,12 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M03",
     title: "Nhập sản phẩm từ Excel & Bảo mật link Google Drive",
     keywords: ["google drive", "link drive", "quyền riêng tư", "bảo mật link", "drive thumbnail", "nhập excel", "công khai", "người xem", "kho ảnh", "lộ link"],
-    summary: "Hướng dẫn phân quyền thư mục Google Drive ở chế độ 'Người xem' (Viewer) cho kho ảnh sản phẩm, và giải pháp bảo mật tối đa bằng cách kéo thả folder ảnh trực tiếp từ máy tính lên FloraOS Native Storage có mã hóa HMAC.",
+    summary: "Hướng dẫn phân quyền thư mục Google Drive ở chế độ 'Người xem' (Viewer) cho kho ảnh sản phẩm, và giải pháp bảo mật tối đa bằng cách kéo thả folder ảnh trực tiếp từ máy tính lên smeOS Native Storage có mã hóa HMAC.",
     steps: [
-      "Trên Google Drive: Tạo riêng thư mục '[FloraOS] Kho Ảnh Mẫu', tuyệt đối không để chung với tài liệu tài chính hay hợp đồng",
+      "Trên Google Drive: Tạo riêng thư mục '[smeOS] Kho Ảnh Mẫu', tuyệt đối không để chung với tài liệu tài chính hay hợp đồng",
       "Cài đặt chia sẻ: Chọn 'Bất kỳ ai có đường liên kết' -> Đặt vai trò 'Người xem' (Viewer) để chỉ cho xem ảnh mẫu bán hàng, không thể sửa hay xóa",
       "Để bảo mật tuyệt đối và hiển thị ảnh tức thì: Tại màn hình '/san-pham/nhap-hang-loat', kéo thả cả folder ảnh từ máy tính vào ô '2. Thư mục ảnh sản phẩm'",
-      "Hệ thống FloraOS sẽ lưu ảnh vào Cloud Storage riêng của cửa hàng, bảo vệ bằng Signed URL có chữ ký HMAC tự hết hạn sau 24h",
+      "Hệ thống smeOS sẽ lưu ảnh vào Cloud Storage riêng của cửa hàng, bảo vệ bằng Signed URL có chữ ký HMAC tự hết hạn sau 24h",
     ],
     routePath: "/san-pham/nhap-hang-loat",
     actionLabel: "Mở Nhập Hàng Loạt & Ảnh",
@@ -293,8 +293,8 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
 
 /**
  * Nhận diện ý định câu hỏi:
- * - "SAAS_HELP": Câu hỏi về thao tác, cách dùng, in ấn, tính năng, quy trình FloraOS.
- * - "FLOWER_SALES": Câu hỏi về mua hoa, giá sản phẩm, tìm hoa theo dịp, ngân sách.
+ * - "SAAS_HELP": Câu hỏi về thao tác, cách dùng, in ấn, tính năng, quy trình smeOS.
+ * - "FLOWER_SALES": Câu hỏi về mua sản phẩm/hoa, giá sản phẩm, tìm theo dịp, ngân sách.
  */
 export function detectUserIntent(query: string): "SAAS_HELP" | "FLOWER_SALES" {
   const lower = query.toLowerCase()
@@ -312,6 +312,7 @@ export function detectUserIntent(query: string): "SAAS_HELP" | "FLOWER_SALES" {
     "đếm cành", "bóc tách", "tải ảnh", "cài đặt giá", "giá sàn", "chi phí",
     "google drive", "link drive", "bảo mật drive", "quyền riêng tư drive", "lộ link",
     "tích hợp đa kênh", "kết nối facebook", "kết nối zalo", "nhúng website", "biểu phí",
+    "smeos", "floraos",
   ]
 
   const matchesSaas = saasHelpKeywords.some((kw) => lower.includes(kw))
@@ -319,7 +320,7 @@ export function detectUserIntent(query: string): "SAAS_HELP" | "FLOWER_SALES" {
 }
 
 /**
- * Tra cứu tri thức vận hành hệ thống FloraOS dựa trên câu hỏi của người dùng
+ * Tra cứu tri thức vận hành hệ thống smeOS dựa trên câu hỏi của người dùng
  */
 export function querySaasKnowledge(query: string): SaasKnowledgeItem | null {
   const lower = query.toLowerCase()

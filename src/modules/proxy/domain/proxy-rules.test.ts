@@ -21,7 +21,7 @@ describe("proxy-rules", () => {
   })
 
   it("header constants đúng", () => {
-    expect(SSO_HEADER).toBe("x-floraos-sso")
+    expect(SSO_HEADER).toBe("x-smeos-sso")
     expect(AUTHORIZATION_HEADER).toBe("authorization")
   })
 

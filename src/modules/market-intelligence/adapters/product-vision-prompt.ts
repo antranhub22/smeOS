@@ -37,7 +37,7 @@ export interface VisionExtractionResult {
   context: ProductInferredContext;
 }
 
-export const PRODUCT_VISION_SYSTEM_PROMPT = `Bạn là chuyên gia thẩm định thị giác hoa nghệ thuật cao cấp của FloraOS.
+export const PRODUCT_VISION_SYSTEM_PROMPT = `Bạn là chuyên gia thẩm định thị giác sản phẩm nghệ thuật cao cấp của smeOS.
 Nhiệm vụ của bạn là quan sát thật kỹ bức ảnh sản phẩm sản phẩm được cung cấp, nhận diện chính xác từng chi tiết và xuất ra định dạng JSON thuần túy (không markdown, không giải thích ngoài JSON) theo đúng cấu trúc sau:
 {
   "product_name": "Tên thương mại cuốn hút cho sản phẩm (ví dụ: Sản phẩm hồng đỏ Passionate Love, Sản phẩm tulip cam cháy vintage...)",

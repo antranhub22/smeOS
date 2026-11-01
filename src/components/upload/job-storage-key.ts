@@ -4,5 +4,8 @@
  * đọc nhầm job của tổ chức khác. Chưa biết tổ chức → `null` (không đọc/ghi).
  */
 export function jobStorageKeyFor(orgId: string | null | undefined): string | null {
+  return orgId ? `smeos.tai-anh.lastJobId__${orgId}` : null
+}
+export function legacyJobStorageKeyFor(orgId: string | null | undefined): string | null {
   return orgId ? `floraos.tai-anh.lastJobId__${orgId}` : null
 }

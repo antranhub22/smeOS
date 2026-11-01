@@ -5,7 +5,7 @@ import { ChevronDown, Globe, Mail, MapPin, Phone, ShieldCheck, X } from "@/compo
 import { websiteLabel, type ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 
 /** Sự kiện mở khung từ nơi khác trên trang (vd. "Xem cam kết của cửa hàng" ở bước xác nhận đơn). */
-export const SHOP_INFO_EVENT = "floraos:shop-info"
+export const SHOP_INFO_EVENT = "smeos:shop-info"
 export type ShopInfoSection = "info" | "commitments"
 
 export function openShopInfo(section: ShopInfoSection = "info"): void {
