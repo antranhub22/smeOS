@@ -84,7 +84,7 @@ Content engine đã chuyển về `smeOS` (P27: `/noi-dung` gọi thẳng `conte
 
 | Mã | Câu hỏi | Phương án | Đề xuất |
 |---|---|---|---|
-| **D-46** | Đăng bài mạng xã hội (đang phụ thuộc SocialFlow) | a) Xây đăng bài ngay trong `smeOS`: bảng bài đăng, lịch, đầu nối Hub cho Facebook Page/Instagram/Zalo OA, kết nối tài khoản bằng OAuth (không lưu mật khẩu) → sau đó bỏ SocialFlow · b) Giữ SocialFlow làm dịch vụ ngoài: triển khai, cấu hình URL, làm lại SSO · c) Bỏ tính năng đăng bài (ẩn Lịch đăng, phần MXH ở Kết nối) | ★ **a** nếu đăng bài là tính năng bán hàng; trong lúc chờ, **ẩn** các chức năng đang lỗi trên production |
+| **D-46** | Đăng bài mạng xã hội (đang phụ thuộc SocialFlow) | a) Xây đăng bài ngay trong `smeOS` → bỏ SocialFlow · b) Giữ SocialFlow làm dịch vụ ngoài · c) Bỏ tính năng | **ĐÃ QUYẾT 01/11/2026: a** — phương án chi tiết ở `17_SOCIALFLOW_REPLACEMENT_PLAN.md` (Workstream S); câu hỏi phụ S-1…S-5 ở `17` §7 |
 | I-1 | Danh sách mã quyền mong muốn cho `product_manager`; nhãn mới cho `crm` và `customer_service` (D-06) | PO cung cấp | — |
 | I-2 | "3 tháng" áp cho loại dữ liệu nào? Dữ liệu đơn hàng/chứng từ thường phải lưu lâu hơn theo pháp luật kế toán, thuế | a) 3 tháng cho log, thông báo, hội thoại, dữ liệu marketing; dữ liệu đơn hàng giữ theo nghĩa vụ pháp lý nhưng ẩn danh hoá thông tin cá nhân sau 3 tháng kể từ khi hoàn tất đơn · b) 3 tháng cho mọi dữ liệu | ★ **a**; nên hỏi ý kiến pháp lý |
 | I-3 | Nội dung SLA: giờ hỗ trợ, thời gian phản hồi P1/P2/P3, kênh báo sự cố | PO cung cấp | — |

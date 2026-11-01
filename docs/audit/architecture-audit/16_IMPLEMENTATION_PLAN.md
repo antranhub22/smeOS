@@ -22,11 +22,12 @@ GĐ2-A            ████████████████████�
 GĐ2-B            ████████████████                                 Thương mại (gói, credit)
 GĐ2-C                  ████████████████████████████               Tích hợp (Hub, kênh)
 GĐ2-D/E/F              ████████████████                           AI, bảo mật, dữ liệu
-GĐ2-G      ████        ……… [CHỜ D-46] …………████████████              Hệ sinh thái (LocalBudd, SocialFlow)
+GĐ2-G      ████                                                   Gỡ LocalBudd
+GĐ2-S  ▲S-00 duyệt app ……… ████████████████████████████          Thay SocialFlow (`17`)
 GĐ3                                      ████████████████████     Bàn giao, tài liệu, chất lượng
 ```
 
-Tổng công ước lượng: khoảng 75–110 ngày công agent, chạy song song 2–3 luồng → 10–12 tuần lịch.
+Tổng công ước lượng: khoảng 100–145 ngày công agent (gồm Workstream S 25–35 ngày), chạy song song 2–3 luồng → 11–13 tuần lịch, phụ thuộc thời gian duyệt app Meta/Zalo.
 
 ---
 
@@ -39,7 +40,8 @@ Tổng công ước lượng: khoảng 75–110 ngày công agent, chạy song s
 | P0-03 | **[TAY]** Ruleset `main`: bắt buộc PR + 5 check, chặn force push; thêm secret deploy hook; chuyển repo sang riêng tư (D-22); archive `floraos-core` sau khi xác nhận Render deploy từ `smeOS` (D-37) | ARC-001, 042 | S | Hướng dẫn từng bước trong PR P0-02 | Ảnh chụp cấu hình lưu vào runbook |
 | P0-04 | Gỡ cửa hậu console | ARC-003, D-23a | S | `modules/platform/use-cases/resolve-platform-session.ts`: xoá nhánh cookie `smeos_dev_role` và nhánh email `@dev.com`; giữ cookie dev chỉ cho khuôn UI (`resolve-app-session.ts`, `NODE_ENV === "development"`) | Test platform mới: user `@dev.com` không phải operator → 403; cookie dev → 403 |
 | P0-05 | Kho tệp bắt buộc ở production | ARC-006 | S | `src/lib/env.ts`: `superRefine` — `NODE_ENV=production` thì 4 biến `STORAGE_*` bắt buộc; `/api/health/ready` báo loại kho | Unit test `env` |
-| P0-06 | Ẩn chức năng đang lỗi trên production: nghiên cứu thị trường (D-20b); Lịch đăng + kết nối MXH khi chưa cấu hình SocialFlow | ARC-030, D-20 | S | Dùng `ux-rollout-flags`/nav: ẩn mục; API MI trả `ENTITLEMENT_REQUIRED` với thông báo "chưa mở"; trang `/lich-dang`, phần MXH `/ket-noi` hiện trạng thái "chưa sẵn sàng" khi thiếu `SOCIALFLOW_URL` | E2E UX: không còn nút dẫn tới lỗi |
+| P0-06 | Ẩn chức năng đang lỗi trên production: nghiên cứu thị trường (D-20b); Lịch đăng + kết nối MXH khi chưa cấu hình SocialFlow; **sửa báo "xuất bản thành công" giả và link bài giả ở Lịch đăng** (`17` S-01) | ARC-030, D-20, D-46 | S | Dùng `ux-rollout-flags`/nav: ẩn mục; API MI trả `ENTITLEMENT_REQUIRED` với thông báo "chưa mở"; trang `/lich-dang`, phần MXH `/ket-noi` hiện trạng thái "chưa sẵn sàng" khi thiếu `SOCIALFLOW_URL` | E2E UX: không còn nút dẫn tới lỗi; lỗi mạng → báo lỗi thật |
+| P0-09 | **[TAY]** Nộp xét duyệt app Meta (đăng Trang + Instagram), xác minh doanh nghiệp, kiểm quyền API Zalo OA — đường găng của Workstream S | D-46 | — | `17` S-00 | App được duyệt |
 | P0-07 | Baseline xanh: chạy đủ bộ test trên `main`, sửa lỗi có sẵn trong PR riêng | D-43a | M–L | Không đổi hành vi nghiệp vụ; mỗi lỗi ghi nguyên nhân | `npm test`, `test:tenant`, `test:platform`, `build` xanh trên CI |
 | P0-08 | Bỏ `typescript.ignoreBuildErrors` | ARC-004 | S | `next.config.ts` | `npm run build` xanh không cờ |
 
@@ -128,8 +130,8 @@ Tổng công ước lượng: khoảng 75–110 ngày công agent, chạy song s
 |---|---|---|---|---|
 | P2-G1 | **[TAY]** Kiểm LocalBudd có đang chạy/có dữ liệu thật; xuất dữ liệu; archive repo | S | Theo `15` §3.1 | Biên bản |
 | P2-G2 | Gỡ phần chờ LocalBudd trong `smeOS` | S–M | Bỏ tiền tố proxy `LOCALBUDD`, client token `LOCALBUDD`, `integration/business-profile` (nếu không client nào khác), script `dev:all`, mục danh mục `api_tokens`; cập nhật đặc tả 06/08 | `check:docs`, route guard test |
-| P2-G3 | **[CHỜ D-46]** Đăng bài MXH | XL nếu D-46=a | a) Bảng `social_posts`, `social_accounts` (token OAuth trong vault), lịch đăng qua cron, đầu nối Facebook Page/Instagram/Zalo OA; chuyển `/lich-dang`, `/ket-noi`, trang chủ Marketing, chặng 10 sang API nội bộ · b) Cấu hình SocialFlow + làm lại SSO (`aud`/`iss`, khoá riêng) · c) Gỡ tính năng | Theo phương án |
-| P2-G4 | Gỡ proxy, SSO liên-app, token tích hợp khi cả hai app ngừng | M | Sau P2-G2 + P2-G3(a/c); giữ Integration API nếu có khách bên thứ ba cần (hỏi PO trong PR) | Route guard test |
+| P2-G3 | Thay SocialFlow (D-46 = a) — **Workstream S**, 16 hạng mục S-00…S-16 ở `17_SOCIALFLOW_REPLACEMENT_PLAN.md` §4 | XL (25–35 ngày) | Bài đăng trong `smeOS`, kết nối OAuth qua Integration Hub (không lưu mật khẩu MXH), đầu nối Facebook Page/Instagram/Zalo OA, lịch đăng qua cron, tự duyệt D11 (`O7`), số liệu Chặng 12; gỡ SocialFlow (S-14) | `17` §4 |
+| P2-G4 | Gỡ proxy, SSO liên-app, token tích hợp khi cả hai app ngừng | M | Sau P2-G2 + S-14; giữ Integration API nếu có khách bên thứ ba cần (hỏi PO trong PR) | Route guard test; `smeOS` không còn mã gọi LocalBudd/SocialFlow |
 
 ## 5. GĐ3 — Bàn giao, tài liệu, chất lượng (tuần 8–12)
 
@@ -166,9 +168,9 @@ P3-01, P3-02 ─► P3-04
 | Mốc | Điều kiện |
 |---|---|
 | **M1 — Production an toàn** | GĐ0 xong + P1-01…P1-05 |
-| **M2 — Commercial ready (cửa hàng)** | M1 + P1-06, P1-07 + Workstream B + P2-C1…C4 + P2-D1 + P2-F1, F2 + P2-E1 |
+| **M2 — Commercial ready (cửa hàng)** | M1 + P1-06, P1-07 + Workstream B + P2-C1…C4 + P2-D1 + P2-F1, F2 + P2-E1 + Workstream S v1 (nếu S-5 = a) |
 | **M3 — Commercial ready (chuỗi)** — D-40c | M2 + Workstream A đủ + P2-C5, C6 |
-| **M4 — Bàn giao khách** | M3 + GĐ3 + quyết định D-46 đã thực hiện |
+| **M4 — Bàn giao khách** | M3 + GĐ3 + S-14/S-15 (đã bỏ SocialFlow) + P2-G4 |
 
 ## 8. Rủi ro thực hiện
 
@@ -182,8 +184,8 @@ P3-01, P3-02 ─► P3-04
 
 ## 9. Cần PO trước khi bắt đầu
 
-1. Duyệt bản kế hoạch này (hoặc chỉnh).
-2. D-46 (đăng bài MXH) — quyết định workstream G3, ước lượng lớn nhất.
+1. Duyệt bản kế hoạch này (hoặc chỉnh), gồm Workstream S (`17`).
+2. Câu hỏi S-1…S-5 (`17` §7) và bắt đầu S-00 (duyệt app Meta/Zalo) ngay.
 3. I-1 … I-7, A-1 (`15` §4) — chỉ chặn các hạng mục gắn **[CHỜ]**.
 
 Sau khi duyệt, thực hiện từ P0-01; mỗi PR báo: thay đổi (`tệp:dòng`), gate đã chạy và kết quả, phần chưa kiểm chứng.
