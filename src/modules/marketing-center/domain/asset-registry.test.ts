@@ -15,13 +15,13 @@ describe("Marketing Center Asset Registry (PO 01/11/2026)", () => {
     expect(uniqueCodes.size).toBe(92)
   })
 
-  it("đúng 25 loại Sẵn khớp tài liệu và mỗi loại Sẵn đều có href", () => {
+  it("đúng 31 loại Sẵn khớp tài liệu và mỗi loại Sẵn đều có href", () => {
     const readyAssets = ALL_ASSET_TYPES.filter((asset) => {
       const tool = asset.toolId ? toolMap.get(asset.toolId) : null
       return readinessOf(asset, tool) === "READY"
     })
 
-    expect(readyAssets.length).toBe(25)
+    expect(readyAssets.length).toBe(31)
 
     for (const asset of readyAssets) {
       const tool = asset.toolId ? toolMap.get(asset.toolId) : null
@@ -34,7 +34,8 @@ describe("Marketing Center Asset Registry (PO 01/11/2026)", () => {
     const expectedReadyCodes = [
       "1", "2", "3", "4", "8", "9", "10", "11", "13",
       "18", "19", "21", "24", "25", "26", "27", "28", "29",
-      "31", "32", "33", "68", "69", "72", "74",
+      "31", "32", "33", "48", "49", "50", "51", "52", "55",
+      "68", "69", "72", "74",
     ]
     const actualReadyCodes = readyAssets.map((a) => a.code).sort((a, b) => Number(a) - Number(b))
     expect(actualReadyCodes).toEqual(expectedReadyCodes.sort((a, b) => Number(a) - Number(b)))

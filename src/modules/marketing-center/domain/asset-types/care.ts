@@ -14,7 +14,8 @@ export const CARE_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     module: "care",
     destinations: ["CARE", "PRINT", "LIBRARY"],
     toolId: 7,
-    fit: "PARTIAL",
+    fit: "FULL",
+    customHref: "/cham-soc?asset=48",
     inputs: [
       { label: "Lời chúc ý nghĩa", source: "MANUAL_TEXT", required: false },
     ],
@@ -28,6 +29,7 @@ export const CARE_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     destinations: ["CARE", "PRINT", "LIBRARY"],
     toolId: null,
     fit: "FULL",
+    customHref: "/cham-soc?asset=49",
     inputs: [
       { label: "Tên khách hàng", source: "CUSTOMER", required: true },
     ],
@@ -41,6 +43,7 @@ export const CARE_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     destinations: ["CARE", "LIBRARY"],
     toolId: null,
     fit: "FULL",
+    customHref: "/cham-soc?asset=50",
     inputs: [
       { label: "Ngày sinh của khách", source: "CUSTOMER", required: true },
     ],
@@ -54,6 +57,7 @@ export const CARE_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     destinations: ["CARE", "LIBRARY"],
     toolId: null,
     fit: "FULL",
+    customHref: "/cham-soc?asset=51",
     inputs: [
       { label: "Mốc thời gian gắn bó", source: "CUSTOMER", required: true },
     ],
@@ -67,6 +71,7 @@ export const CARE_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     destinations: ["CARE", "PRINT", "LIBRARY"],
     toolId: null,
     fit: "FULL",
+    customHref: "/cham-soc?asset=52",
     inputs: [
       { label: "Mệnh giá thẻ", source: "MANUAL_TEXT", required: true },
     ],
@@ -106,6 +111,7 @@ export const CARE_ASSET_TYPES: readonly AssetTypeDefinition[] = [
     destinations: ["CARE", "PRINT", "LIBRARY"],
     toolId: null,
     fit: "FULL",
+    customHref: "/cham-soc?asset=55",
     inputs: [
       { label: "Loại sản phẩm", source: "PRODUCT", required: true },
     ],

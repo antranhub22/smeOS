@@ -252,6 +252,8 @@ model organizations {
   asset_usages                  asset_usages[]
   campaigns                     campaigns[]
   quotations                    quotations[]
+  customer_segments             customer_segments[]
+  customer_interactions         customer_interactions[]
 }
 
 model workspaces {
@@ -1782,6 +1784,7 @@ model customers {
   conversations chat_conversations[]
   leads         leads[]
   quotations    quotations[]
+  interactions  customer_interactions[]
 
   @@unique([organization_id, phone])
   @@unique([organization_id, code])
@@ -4033,6 +4036,7 @@ model asset_usages {
   short_link   short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
   campaign     campaigns?    @relation(fields: [campaign_id], references: [id], onDelete: SetNull)
   quotations   quotations[]
+  customer_interactions customer_interactions[]
 
   @@index([organization_id])
   @@index([organization_id, source_type, source_id])
@@ -4141,4 +4145,68 @@ model quotation_items {
 
   @@index([quotation_id])
   @@index([product_id])
+}
+
+enum customer_segment_kind {
+  DYNAMIC
+  STATIC
+}
+
+enum customer_interaction_channel {
+  ZALO
+  PHONE
+  SMS
+  EMAIL
+  IN_PERSON
+  OTHER
+}
+
+enum customer_interaction_direction {
+  OUTBOUND
+  INBOUND
+}
+
+/// Phân khúc khách hàng (Customer Segments) — Chăm sóc khách hàng (PO 01/11/2026, PR-5).
+/// Hỗ trợ lọc động theo RFM, hạng khách, dịp đặc biệt, lần mua cuối, và đồng ý nhận tin.
+model customer_segments {
+  id              String                @id @default(uuid())
+  organization_id String
+  name            String
+  description     String?
+  kind            customer_segment_kind @default(DYNAMIC)
+  rules           Json?                 // Zod schema: tier, rfmMin, rfmMax, occasions, lastPurchaseDays, tags, consentChannel
+  created_by      String
+  created_at      DateTime              @default(now())
+  updated_at      DateTime              @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, kind])
+  @@index([organization_id, created_at])
+}
+
+/// Nhật ký tương tác & chăm sóc khách hàng (Customer Interactions) — Chăm sóc khách hàng (PO 01/11/2026, PR-5).
+model customer_interactions {
+  id              String                          @id @default(uuid())
+  organization_id String
+  customer_id     String
+  channel         customer_interaction_channel
+  direction       customer_interaction_direction  @default(OUTBOUND)
+  asset_usage_id  String?
+  summary         String
+  outcome         String?
+  occurred_at     DateTime                        @default(now())
+  created_by      String
+  created_at      DateTime                        @default(now())
+  updated_at      DateTime                        @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  customer     customers     @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  asset_usage  asset_usages? @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, customer_id, occurred_at])
+  @@index([customer_id])
+  @@index([asset_usage_id])
 }

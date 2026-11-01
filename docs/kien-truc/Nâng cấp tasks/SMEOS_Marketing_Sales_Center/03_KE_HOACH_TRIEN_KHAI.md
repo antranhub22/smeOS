@@ -182,13 +182,13 @@ Nhánh `feat/msc-p4-quotation`
 
 Nhánh `feat/msc-p5-customer-care`
 
-- [ ] **Dừng hỏi PO:** kênh gửi email/Zalo OA cho khách (nhà cung cấp mới?) — mặc định **chỉ gửi thủ công** (sao chép nội dung, mở Zalo/gọi), ghi nhận tay.
-- [ ] **5.1** `feat(db): customer_segments and customer_interactions` — segment: `rules Json` (zod: hạng, RFM, dịp, lần mua cuối, tag, đồng ý kênh), `kind DYNAMIC|STATIC`. Interaction: `customer_id`, `channel`, `direction`, `asset_usage_id?`, `summary`, `outcome`, `occurred_at`.
-- [ ] **5.2** `feat(crm): segment evaluator` — dùng lại RFM ở `crm-rules.ts`; **loại khách không đồng ý kênh** (`customer_consents`). Test.
-- [ ] **5.3** `feat(rbac): M4` + `feat(api): /api/v1/customer-segments`, `/api/v1/customers/[id]/interactions`.
-- [ ] **5.4** `feat(marketing-center): care workflow` — chọn nhóm → mục tiêu (sau mua, sinh nhật, quay lại, bán thêm, giới thiệu) → asset → gửi thủ công từng khách có nút "Đã gửi" → ghi interaction. Dùng nhắc dịp có sẵn (`scan-upcoming-reminders`).
-- [ ] **5.5** `feat(greeting-design): care cards #48–#52, #55` — **công cụ mới, tách hẳn module `greeting-card`** (tên `care-cards`), bố cục từ Hồ sơ + thương hiệu, ảnh sản phẩm thật. Nếu dùng AI → qua `callCapability`.
-- [ ] **5.6** `docs: …`.
+- [x] **Dừng hỏi PO:** kênh gửi email/Zalo OA cho khách (nhà cung cấp mới?) — mặc định **chỉ gửi thủ công** (sao chép nội dung, mở Zalo/gọi), ghi nhận tay.
+- [x] **5.1** `feat(db): customer_segments and customer_interactions` — segment: `rules Json` (zod: hạng, RFM, dịp, lần mua cuối, tag, đồng ý kênh), `kind DYNAMIC|STATIC`. Interaction: `customer_id`, `channel`, `direction`, `asset_usage_id?`, `summary`, `outcome`, `occurred_at`.
+- [x] **5.2** `feat(crm): segment evaluator` — dùng lại RFM ở `crm-rules.ts`; **loại khách không đồng ý kênh** (`customer_consents`). Test.
+- [x] **5.3** `feat(rbac): M4` + `feat(api): /api/v1/customer-segments`, `/api/v1/customers/[id]/interactions`.
+- [x] **5.4** `feat(marketing-center): care workflow` — chọn nhóm → mục tiêu (sau mua, sinh nhật, quay lại, bán thêm, giới thiệu) → asset → gửi thủ công từng khách có nút "Đã gửi" → ghi interaction. Dùng nhắc dịp có sẵn (`scan-upcoming-reminders`).
+- [x] **5.5** `feat(greeting-design): care cards #48–#52, #55` — **công cụ mới, tách hẳn module `greeting-card`** (tên `care-cards`), bố cục từ Hồ sơ + thương hiệu, ảnh sản phẩm thật. Nếu dùng AI → qua `callCapability`.
+- [x] **5.6** `docs: screen contract cham-soc.md`.
 
 ## PR-6 — Ấn phẩm & In
 

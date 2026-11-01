@@ -54,6 +54,9 @@ export function readinessOf(
   asset: AssetTypeDefinition,
   tool?: ToolDefinition | null,
 ): AssetReadiness {
+  if (asset.customHref) {
+    return "READY"
+  }
   if (asset.toolId === null || !tool) {
     return "NEW"
   }

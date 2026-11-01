@@ -279,6 +279,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   M1: { name: "marketing.usage.read", group: "marketing_usage", label: "Xem nơi dùng của tư liệu và thống kê quy thuộc", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
   M2: { name: "marketing.usage.manage", group: "marketing_usage", label: "Tạo và cấu hình nơi dùng cho tư liệu (liên kết, QR)", defaultRoles: ["dieu_hanh", "marketing"] },
   M3: { name: "marketing.campaign.manage", group: "marketing_usage", label: "Tạo và quản lý chiến dịch quảng bá, kích hoạt và đo lường", defaultRoles: ["dieu_hanh", "marketing"] },
+  M4: { name: "crm.segment.manage", group: "crm", label: "Quản lý nhóm khách và chăm sóc khách hàng", defaultRoles: ["dieu_hanh", "marketing"] },
 }
 
 const ALL: Record<string, Omit<CapabilityDefinition, "code">> = { ...HARVESTED, ...CORE_NEW }
