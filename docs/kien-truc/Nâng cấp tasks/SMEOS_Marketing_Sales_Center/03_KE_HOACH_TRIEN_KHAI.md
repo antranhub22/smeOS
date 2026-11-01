@@ -150,20 +150,20 @@ Nghiệm thu: một catalog có 2 Usage (Quảng bá "Nhận tư vấn", Bán h�
 
 Nhánh `feat/msc-p3-campaign-pipeline`
 
-- [ ] **3.1** `feat(db): campaigns table and lead pipeline data migration` —
+- [x] **3.1** `feat(db): campaigns table and lead pipeline data migration` —
   - `campaigns`: `organization_id`, `name`, `objective` (`AWARENESS|LEAD|SALE|RETENTION`), `occasion_code`, `starts_at`, `ends_at`, `status`, `created_by` + index.
   - Khoá ngoại `asset_usages.campaign_id`.
   - SQL dữ liệu `UPDATE leads SET status='CONTACTED' WHERE status='IN_PROGRESS'`; sửa chú thích cột.
-- [ ] **3.2** `feat(acquisition): expand lead pipeline` — `LEAD_STATUSES` = `NEW, QUALIFIED, CONTACTED, CONSULTING, RECOMMENDED, QUOTATION_SENT, FOLLOW_UP, WON, LOST, UNQUALIFIED`; luật chuyển trạng thái + nhãn tiếng Việt. **Gộp hằng `OPEN_LEAD_STATUSES` trùng** ở `orders/infra/lead-queue-repository.ts` về `acquisition/domain/lead-recovery.ts`.
+- [x] **3.2** `feat(acquisition): expand lead pipeline` — `LEAD_STATUSES` = `NEW, QUALIFIED, CONTACTED, CONSULTING, RECOMMENDED, QUOTATION_SENT, FOLLOW_UP, WON, LOST, UNQUALIFIED`; luật chuyển trạng thái + nhãn tiếng Việt. **Gộp hằng `OPEN_LEAD_STATUSES` trùng** ở `orders/infra/lead-queue-repository.ts` về `acquisition/domain/lead-recovery.ts`.
   - Lưu ý: đơn từ catalog công khai gắn lead "đang mở" → tập trạng thái mở rộng thì gắn được nhiều lead hơn, đúng ý tài liệu. Mã catalog không đổi.
   - Test luật chuyển + dữ liệu cũ.
-- [ ] **3.3** `feat(acquisition): leads board for 10-stage pipeline` — `leads-tab.tsx` lọc theo nhóm (Mới / Đang tư vấn / Đã báo giá / Kết thúc) để không bày 10 nút cùng lúc (Progressive Disclosure). Cập nhật `thu-hut-khach.md`, kịch bản `thu-hut-khach.mjs`.
-- [ ] **3.4** `feat(rbac): campaign capability M3` + `feat(api): /api/v1/campaigns` (+ tenant/platform test).
-- [ ] **3.5** `feat(marketing-center): campaign workspace` — trang `/quang-ba/chien-dich`:
+- [x] **3.3** `feat(acquisition): leads board for 10-stage pipeline` — `leads-tab.tsx` lọc theo nhóm (Mới / Đang tư vấn / Đã báo giá / Kết thúc) để không bày 10 nút cùng lúc (Progressive Disclosure). Cập nhật `thu-hut-khach.md`, kịch bản `thu-hut-khach.mjs`.
+- [x] **3.4** `feat(rbac): campaign capability M3` + `feat(api): /api/v1/campaigns` (+ tenant/platform test).
+- [x] **3.5** `feat(marketing-center): campaign workspace` — trang `/quang-ba/chien-dich`:
   - chọn mục tiêu + dịp → chọn asset từ kho (hoặc "Tạo mới" → `/cong-cu`) → Usage + link/QR → xem trước → kích hoạt;
   - kết quả: lượt quét, lead, lead → đơn. **Chỉ số thật**: không có tiếp cận/tương tác vì chưa có dữ liệu.
   - Screen Contract + kịch bản ux-audit.
-- [ ] **3.6** `docs: …` — đặc tả, `TRANG_THAI`, ghi quyết định QĐ4 thay QĐ 31/10/2026.
+- [x] **3.6** `docs: …` — đặc tả, `TRANG_THAI`, ghi quyết định QĐ4 thay QĐ 31/10/2026.
 
 ## PR-4 — Bán hàng: Báo giá
 

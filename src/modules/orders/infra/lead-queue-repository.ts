@@ -5,16 +5,16 @@
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy/tenant-context"
+import { OPEN_LEAD_STATUSES } from "@/modules/acquisition/domain/lead-recovery"
 
 export const LEAD_QUEUE_MAX_PER_KIND = 100
-const OPEN_LEAD_STATUSES = ["NEW", "IN_PROGRESS"]
 const PRE_ORDER_SESSION_STATUSES = ["CREATED", "OPENED", "BROWSING", "SELECTED"]
 
 export class LeadQueueRepository {
   async openLeads(ctx: TenantContext, assigneeUserId: string | null) {
     return prisma.leads.findMany({
       where: scopedWhere(ctx, {
-        status: { in: OPEN_LEAD_STATUSES },
+        status: { in: [...OPEN_LEAD_STATUSES] },
         ...(assigneeUserId ? { OR: [{ assignee_user_id: assigneeUserId }, { assignee_user_id: null }] } : {}),
       }),
       orderBy: { created_at: "desc" },

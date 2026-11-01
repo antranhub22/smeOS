@@ -250,6 +250,7 @@ model organizations {
   short_links                   short_links[]
   link_events                   link_events[]
   asset_usages                  asset_usages[]
+  campaigns                     campaigns[]
 }
 
 model workspaces {
@@ -3841,7 +3842,8 @@ model leads {
   utm_campaign       String?
   consent_at         DateTime
   consent_version    String
-  status             String    @default("NEW") // NEW | IN_PROGRESS | WON | LOST (CONTACTED cũ → IN_PROGRESS, 31/10/2026)
+  /// 10 trạng thái pipeline: NEW, QUALIFIED, CONTACTED, CONSULTING, RECOMMENDED, QUOTATION_SENT, FOLLOW_UP, WON, LOST, UNQUALIFIED (PO 01/11/2026, PR-3).
+  status             String    @default("NEW")
   assignee_user_id   String? // user thuộc memberships của tổ chức — kiểm ở use-case
   status_changed_at  DateTime?
   /// Đơn hàng đa nguồn (PO 31/10/2026, §3.3–3.4): lý do vào, hạn gọi lại, lý do đóng, đơn đã chuyển thành.
@@ -4024,8 +4026,48 @@ model asset_usages {
 
   organization organizations @relation(fields: [organization_id], references: [id])
   short_link   short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
+  campaign     campaigns?    @relation(fields: [campaign_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id])
   @@index([organization_id, source_type, source_id])
   @@index([organization_id, destination, status])
+  @@index([campaign_id])
+}
+
+enum campaign_objective {
+  AWARENESS
+  LEAD
+  SALE
+  RETENTION
+}
+
+enum campaign_status {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+/// Chiến dịch Quảng bá & Bán hàng — Marketing & Sales Center (PO 01/11/2026, PR-3).
+/// Quản lý mục tiêu, dịp/sự kiện, thời gian chạy và tập hợp Asset Usages.
+model campaigns {
+  id              String             @id @default(uuid())
+  organization_id String
+  name            String
+  objective       campaign_objective
+  occasion_code   String?
+  starts_at       DateTime?
+  ends_at         DateTime?
+  status          campaign_status    @default(DRAFT)
+  created_by      String
+  created_at      DateTime           @default(now())
+  updated_at      DateTime           @updatedAt
+
+  organization organizations  @relation(fields: [organization_id], references: [id])
+  usages       asset_usages[]
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, created_at])
 }

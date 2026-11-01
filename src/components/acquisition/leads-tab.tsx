@@ -8,35 +8,65 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatDateTime } from "@/lib/i18n/formatters"
-import { LEAD_STATUS_LABELS } from "@/modules/acquisition/domain/lead-rules"
+import {
+  canTransitionLeadStatus,
+  LEAD_STATUS_GROUPS,
+  LEAD_STATUS_LABELS,
+  type LeadStatus,
+} from "@/modules/acquisition/domain/lead-rules"
 import { leadSourceLabel } from "@/modules/orders/domain/lead-queue"
 import { EntryActionsSettingsPanel } from "@/components/orders/entry-actions-settings"
-import { acquisitionApi, type LeadItem, type LeadStatus } from "./acquisition-api"
+import { acquisitionApi, type LeadItem } from "./acquisition-api"
 
-const STATUSES: LeadStatus[] = ["NEW", "IN_PROGRESS", "WON", "LOST"]
+type GroupId = "ALL" | (typeof LEAD_STATUS_GROUPS)[number]["id"]
+
+const FILTER_GROUPS: { id: GroupId; label: string; statuses: readonly LeadStatus[] }[] = [
+  { id: "ALL", label: "Tất cả", statuses: [] },
+  ...LEAD_STATUS_GROUPS,
+]
 
 function sourceLabel(lead: LeadItem): string {
   if (lead.short_link) return lead.short_link.placement_label ? `${lead.short_link.name} · ${lead.short_link.placement_label}` : lead.short_link.name
   return lead.source === "CATALOG_LINK" ? "Trang catalog" : lead.source === "SHORT_LINK" ? "Link/QR" : leadSourceLabel(lead.source)
 }
 
-/** Khách để lại tên + SĐT trên trang công khai; nhân viên đổi trạng thái chăm sóc. */
+function getGroupCount(groupId: GroupId, counts: Record<string, number> | null): number {
+  if (!counts) return 0
+  if (groupId === "ALL") return Object.values(counts).reduce((a, b) => a + b, 0)
+  const group = LEAD_STATUS_GROUPS.find((g) => g.id === groupId)
+  if (!group) return 0
+  return group.statuses.reduce((sum, s) => sum + (counts[s] ?? 0), 0)
+}
+
+/** Khách để lại tên + SĐT trên trang công khai; nhân viên đổi trạng thái theo pipeline 10 bước. */
 export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<string, number>) => void }) {
-  const [filter, setFilter] = useState<LeadStatus | undefined>("NEW")
+  const [selectedGroupId, setSelectedGroupId] = useState<GroupId>("NEW_GROUP")
+  const [selectedStatus, setSelectedStatus] = useState<LeadStatus | undefined>(undefined)
   const [leads, setLeads] = useState<LeadItem[] | null>(null)
+  const [counts, setCounts] = useState<Record<string, number> | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const activeGroup = FILTER_GROUPS.find((g) => g.id === selectedGroupId)
+
+  // Xây dựng chuỗi lọc status cho API
+  const statusQuery = selectedStatus
+    ? selectedStatus
+    : activeGroup && activeGroup.statuses.length > 0
+      ? activeGroup.statuses.join(",")
+      : undefined
 
   const fetchLeads = useCallback(
     () =>
       acquisitionApi
-        .listLeads(filter)
+        .listLeads(statusQuery)
         .then((p) => {
           setLeads(p.items)
+          setCounts(p.counts)
           setError(null)
           onCountsChange(p.counts)
         })
         .catch((e: Error) => setError(e.message)),
-    [filter, onCountsChange],
+    [statusQuery, onCountsChange],
   )
 
   useEffect(() => {
@@ -49,45 +79,101 @@ export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<s
     void fetchLeads()
   }
 
-  const selectFilter = (s: LeadStatus | undefined) => {
+  const selectGroup = (gid: GroupId) => {
     setLeads(null)
-    setFilter(s)
+    setSelectedGroupId(gid)
+    setSelectedStatus(undefined)
   }
 
-  const changeStatus = async (lead: LeadItem, status: LeadStatus) => {
+  const selectSubStatus = (s: LeadStatus | undefined) => {
+    setLeads(null)
+    setSelectedStatus(s)
+  }
+
+  const changeStatus = async (lead: LeadItem, nextStatus: LeadStatus) => {
+    if (!canTransitionLeadStatus(lead.status, nextStatus)) {
+      setError(`Không thể chuyển trạng thái từ "${LEAD_STATUS_LABELS[lead.status] ?? lead.status}" sang "${LEAD_STATUS_LABELS[nextStatus]}"`)
+      return
+    }
     try {
-      await acquisitionApi.updateLead(lead.id, { status })
+      await acquisitionApi.updateLead(lead.id, { status: nextStatus })
       void fetchLeads()
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Không cập nhật được")
+      setError(e instanceof Error ? e.message : "Không cập nhật được trạng thái")
     }
   }
 
   return (
     <div className="space-y-4">
       <EntryActionsSettingsPanel />
-      <div role="group" aria-label="Lọc theo trạng thái" className="flex flex-wrap gap-1.5">
-        {[undefined, ...STATUSES].map((s) => (
-          <button
-            key={s ?? "ALL"}
-            type="button"
-            aria-pressed={filter === s}
-            onClick={() => selectFilter(s)}
-            className={`h-8 rounded-lg px-3 text-caption font-medium ${filter === s ? "bg-primary text-white" : "bg-surface text-text border border-border"}`}
-          >
-            {s ? LEAD_STATUS_LABELS[s] : "Tất cả"}
-          </button>
-        ))}
+
+      {/* Tầng 1 Progressive Disclosure: 4 nhóm trạng thái + Tất cả */}
+      <div role="group" aria-label="Lọc theo nhóm trạng thái" className="flex flex-wrap gap-1.5">
+        {FILTER_GROUPS.map((g) => {
+          const count = getGroupCount(g.id, counts)
+          const isSelected = selectedGroupId === g.id
+          return (
+            <button
+              key={g.id}
+              type="button"
+              aria-pressed={isSelected}
+              onClick={() => selectGroup(g.id)}
+              className={`flex h-8 items-center gap-1.5 rounded-lg px-3 text-caption font-medium transition-colors ${
+                isSelected ? "bg-primary text-white" : "border border-border bg-surface text-text hover:bg-surface-elevated"
+              }`}
+            >
+              <span>{g.label}</span>
+              {count > 0 && (
+                <span className={`rounded-full px-1.5 py-0.2 text-caption ${isSelected ? "bg-white/20 text-white" : "bg-muted text-text-muted"}`}>
+                  {count}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
+
+      {/* Tầng 2: Chip lọc chi tiết trong nhóm đã chọn (nếu có hơn 1 trạng thái) */}
+      {activeGroup && activeGroup.statuses.length > 1 && (
+        <div role="group" aria-label={`Chi tiết nhóm ${activeGroup.label}`} className="flex flex-wrap items-center gap-1.5 pt-1 text-caption">
+          <span className="text-text-muted">Chi tiết:</span>
+          <button
+            type="button"
+            aria-pressed={selectedStatus === undefined}
+            onClick={() => selectSubStatus(undefined)}
+            className={`rounded-md px-2 py-0.5 text-caption ${
+              selectedStatus === undefined ? "bg-primary text-white" : "bg-muted text-text-muted hover:text-text"
+            }`}
+          >
+            Tất cả {activeGroup.label.toLowerCase()}
+          </button>
+          {activeGroup.statuses.map((s) => (
+            <button
+              key={s}
+              type="button"
+              aria-pressed={selectedStatus === s}
+              onClick={() => selectSubStatus(s)}
+              className={`rounded-md px-2 py-0.5 text-caption ${
+                selectedStatus === s ? "bg-primary text-white" : "bg-muted text-text-muted hover:text-text"
+              }`}
+            >
+              {LEAD_STATUS_LABELS[s]}
+              {counts && counts[s] ? ` (${counts[s]})` : ""}
+            </button>
+          ))}
+        </div>
+      )}
+
       {error && <InlineError message={error} onRetry={load} />}
       {leads === null && !error && <SkeletonBlock lines={3} label="Đang tải khách để lại thông tin" />}
       {leads?.length === 0 && (
         <EmptyState
           icon={UserPlus}
-          title={filter ? `Không có khách ở trạng thái "${LEAD_STATUS_LABELS[filter]}"` : "Chưa có khách để lại thông tin"}
-          reason="Khách điền tên và số điện thoại ở cuối trang catalog công khai sẽ hiện ở đây."
+          title={selectedStatus ? `Không có khách ở trạng thái "${LEAD_STATUS_LABELS[selectedStatus]}"` : `Chưa có khách trong nhóm "${activeGroup?.label ?? "này"}"`}
+          reason="Khách điền tên và số điện thoại từ các trang công khai, mã QR hoặc chiến dịch sẽ hiện ở đây."
         />
       )}
+
       {leads && leads.length > 0 && (
         <ul className="space-y-2">
           {leads.map((lead) => (
@@ -103,14 +189,23 @@ export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<s
                 </p>
                 {lead.message && <p className="text-body-sm text-text">{lead.message}</p>}
               </div>
+
               <label className="flex shrink-0 items-center gap-2 text-caption text-text">
                 <span>Trạng thái</span>
                 <select
                   value={lead.status}
                   onChange={(e) => void changeStatus(lead, e.target.value as LeadStatus)}
-                  className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm text-text"
+                  className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
                 >
-                  {STATUSES.map((s) => <option key={s} value={s}>{LEAD_STATUS_LABELS[s]}</option>)}
+                  {LEAD_STATUS_GROUPS.map((group) => (
+                    <optgroup key={group.id} label={group.label}>
+                      {group.statuses.map((s) => (
+                        <option key={s} value={s}>
+                          {LEAD_STATUS_LABELS[s]}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
                 </select>
               </label>
             </li>

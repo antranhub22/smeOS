@@ -1,6 +1,6 @@
 # Screen Contract — Thu hút khách hàng
 
-**Tuyến:** `/thu-hut-khach` (`?tab=leads`) · **Tệp chính:** `src/app/(app)/thu-hut-khach/page.tsx` → `src/components/acquisition/acquisition-client.tsx` · **Cập nhật:** 30/10/2026 · **Thẻ:** Bước 4 (công cụ 12, 13, 21, 25)
+**Tuyến:** `/thu-hut-khach` (`?tab=leads`) · **Tệp chính:** `src/app/(app)/thu-hut-khach/page.tsx` → `src/components/acquisition/acquisition-client.tsx` · **Cập nhật:** 01/11/2026 (PO PR-3: pipeline lead 10 trạng thái, progressive disclosure 4 nhóm) · **Thẻ:** Bước 4 (công cụ 12, 13, 21, 25)
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `marketing_specialist` · Vai phụ: `sale`, `crm`
@@ -22,7 +22,7 @@
 | Lớp | Nội dung | Vị trí hiển thị |
 |---|---|---|
 | L0 Thiết yếu | Tên mã, lượt quét, số khách để lại thông tin; tên + SĐT + trạng thái khách | Hàng danh sách |
-| L1 Hành động | Tạo mã mới · Chép link · Tải QR có logo · Đổi trạng thái khách | Thanh tab + hàng |
+| L1 Hành động | Tạo mã mới · Chép link · Tải QR có logo · Đổi trạng thái khách (pipeline 10 bước qua 4 nhóm Progressive Disclosure) | Thanh tab + hàng |
 | L2 Ngữ cảnh | Nguồn (mã/vị trí), chiến dịch, thời điểm | Dòng phụ của hàng |
 | L3 Chi tiết | Thống kê theo ngày/thiết bị | Mở tại chỗ ("Thống kê") |
 | L4 Nâng cao | Vị trí đặt, tên chiến dịch, hạn dùng; bản in SVG | `Disclosure` trong form tạo |

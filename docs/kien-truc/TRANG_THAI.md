@@ -8,7 +8,7 @@
 
 ## 1. Đang ở đâu
 
-**01/11 — Nâng cấp Trung tâm Tiếp thị & Bán hàng (Marketing & Sales Center): Hoàn thành PR-0, PR-1 và PR-2.**
+**01/11 — Nâng cấp Trung tâm Tiếp thị & Bán hàng (Marketing & Sales Center): Hoàn thành PR-0, PR-1, PR-2 và PR-3.**
 - **PR-0 (Nền móng & Màn hình /cong-cu)**: Đóng băng Catalog & Thẻ chào; mô hình AssetType (92 asset, 24 READY); phân chia 67 công cụ thành 6 module nghiệp vụ + 5 nhóm vận hành; cấu trúc lại `/cong-cu` theo triết lý Mục tiêu kinh doanh (Purpose-First); Screen Contract `cong-cu.md`.
 - **PR-1 (Mọi đầu ra vào thư viện)**:
   - Ánh xạ mục Kho dữ liệu sang AssetType (`library-asset-mapping.ts`);
@@ -24,6 +24,14 @@
   - API `/api/v1/asset-usages` (GET `M1`, POST `M2`) và `/api/v1/asset-usages/[id]` (PATCH `M2`);
   - Giao diện `UseAssetSheet` (`use-asset-sheet.tsx`, `use-asset-form.tsx`, `use-asset-list.tsx`) tích hợp vào Kho dữ liệu v2 (`library-tab.tsx`), kèm `ConfirmDialog` cho liên kết công khai (R3);
   - Screen Contract mới `asset-usage.md`.
+- **PR-3 (Quảng bá: Chiến dịch + pipeline lead 10 trạng thái)**:
+  - CSDL & migration `20261101170000_campaigns`: bảng `campaigns`, enum `campaign_objective`, `campaign_status`, quan hệ `asset_usages.campaign_id`, dữ liệu `UPDATE leads SET status='CONTACTED' WHERE status='IN_PROGRESS'`;
+  - Domain & Pipeline: Mở rộng `LEAD_STATUSES` thành 10 trạng thái chuẩn (PO QĐ4 thay QĐ 31/10/2026) gồm `NEW, QUALIFIED, CONTACTED, CONSULTING, RECOMMENDED, QUOTATION_SENT, FOLLOW_UP, WON, LOST, UNQUALIFIED`, nhãn tiếng Việt, ma trận chuyển trạng thái hợp lệ `LEAD_TRANSITIONS`, 4 nhóm Progressive Disclosure (`LEAD_STATUS_GROUPS`), gộp `OPEN_LEAD_STATUSES` (7 trạng thái) dùng chung cho gắn đơn catalog và lead queue;
+  - Quyền RBAC `M3` (`marketing.campaign.manage`);
+  - Use-cases Clean Architecture: `create/list/update/getDetails` cho Campaign, tính toán 4 chỉ số hiệu quả thực tế (tư liệu, quét, lead, đơn chốt);
+  - API `/api/v1/campaigns` (GET `M1`, POST `M3`) và `/api/v1/campaigns/[id]` (GET `M1`, PATCH `M3`);
+  - Giao diện Workspace Chiến dịch tại `/quang-ba/chien-dich` (`CampaignWorkspace`, `CampaignList`, `CampaignCreateModal`, `CampaignDetailsView`) và cập nhật tab khách tiềm năng `leads-tab.tsx` theo 4 nhóm progressive disclosure;
+  - Screen Contract mới `chien-dich.md`, cập nhật `thu-hut-khach.md`, kịch bản ux-audit `chien-dich.mjs`.
 
 
 **30/09 (Trưa) — Nâng cấp Kiến trúc Journey-First UX Architecture: Hoàn tất 100% Đạt Chuẩn Production Ready.**

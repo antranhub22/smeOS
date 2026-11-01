@@ -22,12 +22,14 @@ export interface UpdateAssetUsageData {
   ctaCode?: CtaCode | undefined
   destination?: UsageDestination | undefined
   shortLinkId?: string | null | undefined
+  campaignId?: string | null | undefined
   config?: Record<string, unknown> | undefined
   status?: AssetUsageStatus | undefined
 }
 
 export interface AssetUsageFilter {
   destination?: UsageDestination | undefined
+  campaignId?: string | undefined
   status?: AssetUsageStatus | undefined
   take?: number | undefined
   skip?: number | undefined

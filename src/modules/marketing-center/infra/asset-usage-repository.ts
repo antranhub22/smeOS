@@ -88,6 +88,9 @@ export class AssetUsageRepository implements IAssetUsageRepository {
     if (filter?.destination) {
       where.destination = filter.destination as usage_destination
     }
+    if (filter?.campaignId) {
+      where.campaign_id = filter.campaignId
+    }
     if (filter?.status) {
       where.status = filter.status as usage_status
     }
@@ -109,6 +112,11 @@ export class AssetUsageRepository implements IAssetUsageRepository {
     if (data.shortLinkId !== undefined) {
       updateData.short_link = data.shortLinkId
         ? { connect: { id: data.shortLinkId } }
+        : { disconnect: true }
+    }
+    if (data.campaignId !== undefined) {
+      updateData.campaign = data.campaignId
+        ? { connect: { id: data.campaignId } }
         : { disconnect: true }
     }
     if (data.config !== undefined) updateData.config = data.config as Prisma.InputJsonValue
