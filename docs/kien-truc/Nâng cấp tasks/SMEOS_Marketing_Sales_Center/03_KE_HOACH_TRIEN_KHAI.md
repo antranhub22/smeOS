@@ -119,7 +119,7 @@ Nghiệm thu: poster vừa tạo xuất hiện ở Kho dữ liệu với tên "P
 
 Nhánh `feat/msc-p2-asset-usage`
 
-- [ ] **2.1** `feat(db): asset_usages table` — migration `prisma migrate dev`. Bảng gồm:
+- [x] **2.1** `feat(db): asset_usages table` — migration `prisma migrate dev`. Bảng gồm:
   - `id`, `organization_id`, `source_type` (8 `LIBRARY_TYPES`), `source_id`, `asset_type_code`;
   - `destination` (enum `usage_destination`), `cta_code`, `title`;
   - `short_link_id` (quan hệ với `short_links`, chỉ thêm trường quan hệ ảo phía `short_links`);
@@ -127,22 +127,22 @@ Nhánh `feat/msc-p2-asset-usage`
   - `status` (enum `DRAFT|ACTIVE|PAUSED|ARCHIVED`), `created_by`, thời điểm tạo/sửa;
   - `@@index([organization_id])`, `([organization_id, source_type, source_id])`, `([organization_id, destination, status])`.
   - Kiểm `echo "[$DATABASE_URL]"` trước lệnh Prisma.
-- [ ] **2.2** `feat(marketing-center): CTA registry and usage rules` — `cta-registry.ts`: `LEARN_MORE, CONTACT, REQUEST_INFO, REQUEST_QUOTE, ORDER, PAY, REVIEW, REFER` (nhãn tiếng Việt). `usage-rules.ts`:
+- [x] **2.2** `feat(marketing-center): CTA registry and usage rules` — `cta-registry.ts`: `LEARN_MORE, CONTACT, REQUEST_INFO, REQUEST_QUOTE, ORDER, PAY, REVIEW, REFER` (nhãn tiếng Việt). `usage-rules.ts`:
   - CTA hợp lệ theo nơi dùng (Quảng bá: không `ORDER/PAY`; Bán hàng: có `REQUEST_QUOTE/ORDER`);
   - nơi dùng hợp lệ theo loại asset;
   - bảng kênh **tự động / thủ công / chưa tích hợp** (Zalo, SMS, Push = thủ công).
   - Test đủ ma trận.
-- [ ] **2.3** `feat(rbac): marketing usage capabilities M1 M2` — thêm mã + test catalog quyền.
-- [ ] **2.4** `feat(marketing-center): usage repository and use-cases` — `create/list/update/pause` Usage. Kiểm nguồn thuộc tổ chức qua hàm đọc thư viện (không đọc thẳng bảng của Catalog/Thẻ chào ngoài cách thư viện đang làm). Khi nơi dùng cần link → gọi `manage-short-links` có sẵn (`target_path` = URL công khai, `utm_campaign` = mã Usage). Test use-case.
-- [ ] **2.5** `feat(api): /api/v1/asset-usages` — GET (`M1`), POST/PATCH (`M2`), zod. Khác tổ chức → 404. Thêm vào `route-capability-guard.test.ts` nếu cần. Test tenant + platform.
-- [ ] **2.6** `feat(marketing-center): "Dùng ở đâu?" sheet` — `use-asset-sheet.tsx` (Drawer):
+- [x] **2.3** `feat(rbac): marketing usage capabilities M1 M2` — thêm mã + test catalog quyền.
+- [x] **2.4** `feat(marketing-center): usage repository and use-cases` — `create/list/update/pause` Usage. Kiểm nguồn thuộc tổ chức qua hàm đọc thư viện (không đọc thẳng bảng của Catalog/Thẻ chào ngoài cách thư viện đang làm). Khi nơi dùng cần link → gọi `manage-short-links` có sẵn (`target_path` = URL công khai, `utm_campaign` = mã Usage). Test use-case.
+- [x] **2.5** `feat(api): /api/v1/asset-usages` — GET (`M1`), POST/PATCH (`M2`), zod. Khác tổ chức → 404. Thêm vào `route-capability-guard.test.ts` nếu cần. Test tenant + platform.
+- [x] **2.6** `feat(marketing-center): "Dùng ở đâu?" sheet` — `use-asset-sheet.tsx` (Drawer):
   - bước 1 chọn nơi dùng (nhiều);
   - bước 2 chỉ hiện cấu hình của nơi đó (UX-027): CTA, tên, hạn;
   - xem trước;
   - `ConfirmDialog` khi tạo link công khai (R3).
   - Mở từ Kho dữ liệu và từ thẻ "Asset đã tạo" trên `/cong-cu`.
-- [ ] **2.7** `feat(marketing-center): usage list per asset and attribution read` — danh sách Usage của một asset + số lượt quét/lead **thật** (nối `short_links` → `link_events`, `leads.short_link_id`).
-- [ ] **2.8** `docs: …` — Screen Contract mới `asset-usage.md`, đặc tả 06/07 (endpoint, bảng), registry.
+- [x] **2.7** `feat(marketing-center): usage list per asset and attribution read` — danh sách Usage của một asset + số lượt quét/lead **thật** (nối `short_links` → `link_events`, `leads.short_link_id`).
+- [x] **2.8** `docs: …` — Screen Contract mới `asset-usage.md`, đặc tả 06/07 (endpoint, bảng), registry.
 
 Nghiệm thu: một catalog có 2 Usage (Quảng bá "Nhận tư vấn", Bán hàng "Đặt hàng") với 2 link riêng, lead quy về đúng Usage; diff vùng cấm = `OK`.
 

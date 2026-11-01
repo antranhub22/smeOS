@@ -8,7 +8,7 @@
 
 ## 1. Đang ở đâu
 
-**01/11 — Nâng cấp Trung tâm Tiếp thị & Bán hàng (Marketing & Sales Center): Hoàn thành PR-0 và PR-1.**
+**01/11 — Nâng cấp Trung tâm Tiếp thị & Bán hàng (Marketing & Sales Center): Hoàn thành PR-0, PR-1 và PR-2.**
 - **PR-0 (Nền móng & Màn hình /cong-cu)**: Đóng băng Catalog & Thẻ chào; mô hình AssetType (92 asset, 24 READY); phân chia 67 công cụ thành 6 module nghiệp vụ + 5 nhóm vận hành; cấu trúc lại `/cong-cu` theo triết lý Mục tiêu kinh doanh (Purpose-First); Screen Contract `cong-cu.md`.
 - **PR-1 (Mọi đầu ra vào thư viện)**:
   - Ánh xạ mục Kho dữ liệu sang AssetType (`library-asset-mapping.ts`);
@@ -16,6 +16,14 @@
   - Thêm nút "Lưu vào kho" và tách hook `usePosterActions` (đảm bảo SRP ≤ 350 dòng);
   - Kho dữ liệu v2 hiển thị chip loại tư liệu trên mỗi thẻ và bổ sung bộ lọc theo 6 module nghiệp vụ;
   - Cập nhật Screen Contract `cong-cu-poster-banner.md` và `kho-du-lieu.md`.
+- **PR-2 ("Dùng ở đâu?" — Asset Usage)**:
+  - CSDL & migration `20261101160000_asset_usages`: bảng `asset_usages`, enum `usage_destination`, `usage_status`, quan hệ với `short_links` và `organizations`;
+  - Domain & Registry: Sổ đăng ký 8 mã CTA tiếng Việt (`cta-registry.ts`), ma trận quy tắc nơi dùng (`usage-rules.ts`), bảng trạng thái kênh phân phối;
+  - Quyền RBAC `M1` (`marketing.usage.read`) & `M2` (`marketing.usage.manage`);
+  - Use-cases Clean Architecture: `create/list/update` Asset Usage, tự động tạo link rút gọn theo dõi quy thuộc qua `manage-short-links`;
+  - API `/api/v1/asset-usages` (GET `M1`, POST `M2`) và `/api/v1/asset-usages/[id]` (PATCH `M2`);
+  - Giao diện `UseAssetSheet` (`use-asset-sheet.tsx`, `use-asset-form.tsx`, `use-asset-list.tsx`) tích hợp vào Kho dữ liệu v2 (`library-tab.tsx`), kèm `ConfirmDialog` cho liên kết công khai (R3);
+  - Screen Contract mới `asset-usage.md`.
 
 
 **30/09 (Trưa) — Nâng cấp Kiến trúc Journey-First UX Architecture: Hoàn tất 100% Đạt Chuẩn Production Ready.**

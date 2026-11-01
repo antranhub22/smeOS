@@ -249,6 +249,7 @@ model organizations {
   order_approval_requests       order_approval_requests[]
   short_links                   short_links[]
   link_events                   link_events[]
+  asset_usages                  asset_usages[]
 }
 
 model workspaces {
@@ -3889,6 +3890,7 @@ model short_links {
   organization organizations @relation(fields: [organization_id], references: [id])
   events       link_events[]
   leads        leads[]
+  usages       asset_usages[]
 
   @@index([organization_id])
   @@index([organization_id, created_at])
@@ -3982,4 +3984,48 @@ model order_approval_requests {
   @@index([organization_id])
   @@index([organization_id, status, created_at])
   @@index([organization_id, order_id])
+}
+
+enum usage_destination {
+  PROMOTION
+  SALES
+  CARE
+  PRINT
+  OTHER
+}
+
+enum usage_status {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+/// Nơi dùng tư liệu (Asset Usage) — Marketing & Sales Center (PO 01/11/2026, PR-2).
+/// Liên kết một tư liệu nguồn (từ 8 LIBRARY_TYPES) với đích sử dụng và CTA,
+/// gắn kèm link rút gọn để đo lường lượt quét/bấm và lead quy thuộc.
+model asset_usages {
+  id              String            @id @default(uuid())
+  organization_id String
+  /// 8 LIBRARY_TYPES (original, ai_image, video, audio, content, catalog, greeting_catalog, landing)
+  source_type     String
+  source_id       String
+  asset_type_code String
+  destination     usage_destination
+  cta_code        String
+  title           String
+  short_link_id   String?
+  campaign_id     String?
+  config          Json?             @default("{}")
+  status          usage_status      @default(ACTIVE)
+  created_by      String
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  short_link   short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, source_type, source_id])
+  @@index([organization_id, destination, status])
 }

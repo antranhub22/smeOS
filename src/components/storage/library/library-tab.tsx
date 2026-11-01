@@ -3,7 +3,7 @@
 import type { Route } from "next"
 import Link from "next/link"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { AlertCircle, ExternalLink, FileText, Music, Search, Trash2 } from "@/components/ui/icons"
+import { AlertCircle, ExternalLink, FileText, Music, Search, Share2, Trash2 } from "@/components/ui/icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatDate } from "@/lib/i18n/formatters"
 import type { LibraryType } from "@/modules/storage/domain/library"
 import { LIBRARY_TAB_LABEL, statusLabel, subtypeLabel } from "./library-labels"
+import { UseAssetSheet } from "@/components/marketing-center/use-asset-sheet"
 
 export type LibraryItemView = {
   id: string
@@ -67,6 +68,7 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
   const [q, setQ] = useState("")
   const [sinceDays, setSinceDays] = useState("")
   const [selectedModule, setSelectedModule] = useState("ALL")
+  const [selectedUsageItem, setSelectedUsageItem] = useState<LibraryItemView | null>(null)
 
   const load = useCallback(
     async (after: string | null) => {
@@ -208,6 +210,15 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
                     <ExternalLink size={12} aria-hidden />
                     Mở
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedUsageItem(item)}
+                    className="flex h-7 px-2 items-center justify-center gap-1 rounded-lg border border-border text-xs font-semibold text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                    title="Cấu hình nơi sử dụng và theo dõi hiệu quả"
+                  >
+                    <Share2 size={12} aria-hidden />
+                    Dùng
+                  </button>
                   {onTrash && (
                     <button
                       type="button"
@@ -231,6 +242,17 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
         <Button variant="outline" size="sm" className="mx-auto text-xs" onClick={() => void load(cursor)}>
           Xem thêm
         </Button>
+      )}
+
+      {selectedUsageItem && (
+        <UseAssetSheet
+          open={Boolean(selectedUsageItem)}
+          onOpenChange={(open) => !open && setSelectedUsageItem(null)}
+          sourceType={selectedUsageItem.type}
+          sourceId={selectedUsageItem.id}
+          assetTypeCode={selectedUsageItem.asset_type?.code ?? "8"}
+          assetTitle={selectedUsageItem.title || subtypeLabel(selectedUsageItem.subtype) || LIBRARY_TAB_LABEL[type]}
+        />
       )}
     </div>
   )
