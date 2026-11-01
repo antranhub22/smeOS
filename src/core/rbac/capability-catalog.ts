@@ -37,6 +37,7 @@ export type CapabilityGroup =
   | "ai_chat"
   | "market_intelligence"
   | "integration"
+  | "marketing_usage"
 
 export interface CapabilityDefinition {
   /** Mã chữ cái — định danh chính, ví dụ `B5`. */
@@ -274,6 +275,9 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   W3: { name: "integration.configure", group: "integration", label: "Sửa cấu hình và xoay khoá của kết nối", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   W4: { name: "integration.govern", group: "integration", label: "Khoá hoặc cấp sẵn tích hợp cho tầng dưới", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   W5: { name: "integration.events.replay", group: "integration", label: "Xử lý lại sự kiện tích hợp bị lỗi", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
+  // M — Marketing & Nơi dùng Asset (PR-2, 01/11/2026)
+  M1: { name: "marketing.usage.read", group: "marketing_usage", label: "Xem nơi dùng của tư liệu và thống kê quy thuộc", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
+  M2: { name: "marketing.usage.manage", group: "marketing_usage", label: "Tạo và cấu hình nơi dùng cho tư liệu (liên kết, QR)", defaultRoles: ["dieu_hanh", "marketing"] },
 }
 
 const ALL: Record<string, Omit<CapabilityDefinition, "code">> = { ...HARVESTED, ...CORE_NEW }
