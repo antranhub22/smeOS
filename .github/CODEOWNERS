@@ -1,0 +1,15 @@
+# CODEOWNERS — Phân quyền phê duyệt mã nguồn SMEOS (ADR-011 D-UI-07)
+# Mọi PR chạm vào các vùng kiến trúc UI cốt lõi bắt buộc phải có PO phê duyệt.
+
+# Design Tokens SSOT
+/src/styles/tokens/ @po
+/src/app/globals.css @po
+
+# Core Design System Primitives & Components
+/src/components/ui/ @po
+/src/components/layout/ @po
+
+# Design System Documentation SSOT
+/docs/design-system/ @po
+/docs/dac-ta/screen-contracts/ @po
+

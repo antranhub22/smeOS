@@ -13,7 +13,6 @@ export const metadata: Metadata = {
 }
 
 import { UiSystemProvider } from "@/lib/ui-system"
-import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
 
 export default function RootLayout({
   children,
@@ -33,7 +32,6 @@ export default function RootLayout({
       <body className="min-h-dvh bg-bg text-text antialiased">
         <UiSystemProvider>
           {children}
-          <UiStudioDrawer />
         </UiSystemProvider>
       </body>
     </html>

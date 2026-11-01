@@ -1,0 +1,1688 @@
+# SMEOS
+# BUSINESS GROWTH PLATFORM
+## System Architecture, Development Phases & Implementation Roadmap
+
+**Document Type:** Product & System Architecture Specification  
+**Project:** SMEOS  
+**Version:** 1.0  
+**Status:** Proposed – Pending Architecture Audit & Approval  
+**Target:** AI Coding Agent (Claude Code / Antigravity / Other Agents)
+
+---
+
+# 1. PURPOSE & OBJECTIVES
+
+## 1.1. Mục đích tài liệu
+
+Tài liệu này xác định kiến trúc mục tiêu cho SMEOS – nền tảng hỗ trợ cửa hàng và doanh nghiệp nhỏ quản lý, phát triển và tăng trưởng hoạt động kinh doanh.
+
+Tài liệu được sử dụng làm cơ sở để AI Coding Agent:
+
+1. Audit toàn bộ hiện trạng hệ thống SMEOS.
+2. Đối chiếu hiện trạng với kiến trúc mục tiêu.
+3. Xác định các module, tính năng và công cụ đã hoàn thiện, đang phát triển hoặc còn thiếu.
+4. Phân tích các vấn đề về kiến trúc, dữ liệu, UX, bảo mật và khả năng mở rộng.
+5. Xây dựng lộ trình triển khai theo ba giai đoạn phát triển.
+6. Đề xuất kế hoạch nâng cấp hệ thống theo tiêu chuẩn Production & Commercial Ready.
+
+**Lưu ý:** Đây là tài liệu kiến trúc mục tiêu, không phải xác nhận rằng các chức năng được mô tả đã tồn tại trong SMEOS.
+
+## 1.2. Product Vision
+
+SMEOS hướng đến trở thành:
+
+**The All-in-One Business Operating & Growth Platform for SMEs.**
+
+SMEOS giúp một cửa hàng hoặc doanh nghiệp nhỏ có thể thực hiện toàn bộ chu trình kinh doanh trên cùng một nền tảng:
+
+- Xây dựng thương hiệu.
+- Sản xuất nội dung.
+- Quảng bá sản phẩm.
+- Thu hút khách hàng.
+- Tư vấn khách hàng.
+- Báo giá.
+- Tiếp nhận và quản lý đơn hàng.
+- Quản lý thanh toán.
+- Chăm sóc khách hàng.
+- Phát triển doanh thu và khách hàng quay lại.
+
+SMEOS không đơn thuần là phần mềm quản lý vận hành. Đây là nền tảng cung cấp các công cụ thực tế để doanh nghiệp thực hiện hoạt động kinh doanh và tăng trưởng.
+
+## 1.3. Kiến trúc sản phẩm cốt lõi
+
+SMEOS áp dụng các nguyên tắc:
+
+1. 10 Business Modules hiển thị trực tiếp trên Dashboard.
+2. Mỗi module giải quyết một nhu cầu kinh doanh cụ thể của người dùng.
+3. Mỗi module bao gồm các chức năng và công cụ nghiệp vụ.
+4. Các module sử dụng chung dữ liệu và dịch vụ nền tảng khi phù hợp.
+5. Các module có thể phát triển và phát hành độc lập ở cấp tính năng.
+6. Toàn bộ hệ thống phát triển theo ba giai đoạn.
+7. Chỉ module hoặc công cụ vượt qua Release Gates và được Dev phê duyệt mới được hiển thị trên Production.
+
+Không sử dụng mô hình 6 Studio làm tầng điều hướng chính.
+
+---
+
+# 2. TARGET SYSTEM ARCHITECTURE
+
+## 2.1. Tổng quan kiến trúc
+
+SMEOS được tổ chức thành bốn lớp logic:
+
+**Layer 1 – User Experience Layer**
+
+Giao diện Dashboard và 10 Business Modules.
+
+**Layer 2 – Business Module Layer**
+
+Các module nghiệp vụ thực hiện những nhu cầu kinh doanh cụ thể.
+
+**Layer 3 – Shared Platform Services**
+
+Các dịch vụ dùng chung như xác thực, phân quyền, dữ liệu, tích hợp, workflow, AI và analytics.
+
+**Layer 4 – Data Layer**
+
+Cơ sở dữ liệu và hệ thống lưu trữ tập trung, có kiểm soát quyền sở hữu và truy cập dữ liệu.
+
+### Architecture Diagram
+
+```mermaid
+flowchart TB
+    USER["SMEOS Users"]
+
+    DASH["SMEOS Dashboard"]
+
+    USER --> DASH
+
+    subgraph MODULES["10 BUSINESS MODULES"]
+        M01["M01 Brand Management"]
+        M02["M02 Content Creation"]
+        M03["M03 Product Promotion"]
+        M04["M04 Customer Acquisition"]
+        M05["M05 Customer Consultation"]
+        M06["M06 Quotation Management"]
+        M07["M07 Order Management"]
+        M08["M08 Payment Management"]
+        M09["M09 Customer Care"]
+        M10["M10 Customer Growth"]
+    end
+
+    DASH --> MODULES
+
+    subgraph SERVICES["SHARED PLATFORM SERVICES"]
+        AUTH["Identity & Access"]
+        DATA["Shared Data Services"]
+        API["API & Integration"]
+        WF["Workflow & Automation"]
+        AI["AI Services"]
+        ANA["Analytics"]
+        RELEASE["Release Governance"]
+    end
+
+    MODULES --> SERVICES
+
+    subgraph STORAGE["DATA & STORAGE LAYER"]
+        DB["Shared Database"]
+        FILES["File & Artifact Storage"]
+        LOG["Audit Logs"]
+    end
+
+    SERVICES --> STORAGE
+```
+
+Đây là kiến trúc logic. Không yêu cầu phải triển khai mỗi module thành một microservice hoặc database riêng.
+
+## 2.2. Nguyên tắc tổ chức module
+
+Mỗi Business Module phải có:
+
+- Business Purpose: Mục đích nghiệp vụ.
+- User Needs: Nhu cầu người dùng.
+- Functional Scope: Phạm vi chức năng.
+- Tools: Danh sách công cụ.
+- Data Requirements: Dữ liệu cần sử dụng.
+- Dependencies: Module và dịch vụ phụ thuộc.
+- Permissions: Quyền truy cập.
+- Workflow: Quy trình nghiệp vụ.
+- Acceptance Criteria: Tiêu chí nghiệm thu.
+- Release Status: Trạng thái phát hành.
+
+Module là đơn vị tổ chức nghiệp vụ và quản lý phạm vi phát triển.
+
+Module không nhất thiết tương ứng với một database, một backend service hoặc một repository riêng.
+
+---
+
+# 3. TEN BUSINESS MODULES
+
+## M01. BRAND MANAGEMENT
+
+### Business Purpose
+
+Giúp cửa hàng xây dựng, quản lý và duy trì hình ảnh thương hiệu chuyên nghiệp.
+
+### User Needs
+
+"Tôi muốn cửa hàng của mình có hình ảnh thương hiệu rõ ràng, nhất quán và đáng tin cậy."
+
+### Tool Categories
+
+**Phase 1 – Business Foundation**
+- Store Profile.
+- Brand Information.
+- Logo Management.
+- Slogan Management.
+- Business Card.
+
+**Phase 2 – Marketing & Sales Growth**
+- Brand Kit.
+- Brand Guidelines.
+- Brand Templates.
+- Marketing Identity Assets.
+
+**Phase 3 – Automation & Intelligence**
+- AI Brand Assistant.
+- AI Brand Content Suggestions.
+- Brand Consistency Checker.
+
+### Expected Outcomes
+
+Cửa hàng có bộ thông tin thương hiệu và tài nguyên nhận diện có thể sử dụng xuyên suốt SMEOS.
+
+---
+
+## M02. CONTENT CREATION
+
+### Business Purpose
+
+Giúp cửa hàng sản xuất hình ảnh, video và nội dung phục vụ marketing và bán hàng.
+
+### User Needs
+
+"Tôi muốn tạo hình ảnh và nội dung sản phẩm đẹp, chuyên nghiệp mà không cần thuê đội ngũ thiết kế."
+
+### Tool Categories
+
+**Phase 1**
+- Product Image Management.
+- Product Image Editing.
+- Background Removal.
+- Greeting Card Generator.
+- Product Content Management.
+
+**Phase 2**
+- AI Image Generator.
+- Poster Generator.
+- Banner Generator.
+- Social Media Post Generator.
+- Video Template.
+- Product Presentation Generator.
+
+**Phase 3**
+- AI Content Studio.
+- AI Video Generator.
+- AI Copywriting Assistant.
+- AI Content Planner.
+- Multi-channel Content Adaptation.
+
+### Expected Outcomes
+
+Cửa hàng có thể chủ động tạo ra tài nguyên marketing từ dữ liệu sản phẩm và thương hiệu.
+
+---
+
+## M03. PRODUCT PROMOTION
+
+### Business Purpose
+
+Giúp cửa hàng chuẩn bị tài liệu và triển khai hoạt động quảng bá sản phẩm.
+
+### User Needs
+
+"Tôi muốn giới thiệu sản phẩm và chương trình khuyến mãi đến khách hàng một cách chuyên nghiệp."
+
+### Tool Categories
+
+**Phase 1**
+- Digital Catalog.
+- E-Catalog.
+- Product Collection.
+- Product Price List.
+- Voucher Generator.
+
+**Phase 2**
+- Poster.
+- Flyer.
+- Brochure.
+- Lookbook.
+- Promotional Campaign.
+- Social Media Publishing.
+- Campaign Landing Page.
+
+**Phase 3**
+- Marketing Campaign Automation.
+- AI Marketing Planner.
+- Social Media Scheduler.
+- Automated Content Distribution.
+- Campaign Optimization.
+
+### Expected Outcomes
+
+Cửa hàng có thể tạo, quản lý và phân phối tài liệu quảng bá sản phẩm trên nhiều kênh.
+
+---
+
+## M04. CUSTOMER ACQUISITION
+
+### Business Purpose
+
+Giúp cửa hàng tiếp cận khách hàng tiềm năng và thu hút khách hàng mới.
+
+### User Needs
+
+"Tôi muốn nhiều khách hàng biết đến cửa hàng và có thể dễ dàng tìm thấy sản phẩm của mình."
+
+### Tool Categories
+
+**Phase 1**
+- Store Website.
+- Store Landing Page.
+- Product Landing Page.
+- Sales Link.
+- QR Code Generator.
+- Google Business Profile Integration.
+
+**Phase 2**
+- Facebook Integration.
+- Instagram Integration.
+- TikTok Integration.
+- Zalo OA Integration.
+- Facebook Ads Integration.
+- Google Ads Integration.
+- SEO Tools.
+- Customer Lead Form.
+
+**Phase 3**
+- Marketing Automation.
+- Lead Tracking.
+- Multi-channel Integration.
+- AI Lead Generation.
+- Conversion Tracking.
+- Lead Scoring.
+
+### Expected Outcomes
+
+Cửa hàng có thể tiếp cận khách hàng từ nhiều nguồn và tập trung dữ liệu khách hàng tiềm năng.
+
+---
+
+## M05. CUSTOMER CONSULTATION
+
+### Business Purpose
+
+Hỗ trợ cửa hàng tiếp nhận yêu cầu, tư vấn sản phẩm và tương tác với khách hàng.
+
+### User Needs
+
+"Tôi muốn tư vấn khách hàng nhanh chóng, chính xác và không bỏ sót yêu cầu."
+
+### Tool Categories
+
+**Phase 1**
+- Customer Inquiry Form.
+- Product Catalog Access.
+- Customer Information.
+- Basic Chat/Inbox Management.
+- Customer Notes.
+
+**Phase 2**
+- CRM.
+- Customer Segmentation.
+- Multi-channel Inbox.
+- Product Recommendation.
+- Customer Interaction History.
+
+**Phase 3**
+- AI Sales Assistant.
+- AI Chatbot.
+- AI Product Recommendation.
+- Automated Follow-up.
+- AI Customer Intent Recognition.
+
+### Expected Outcomes
+
+Cửa hàng có thể quản lý toàn bộ quá trình tư vấn và lịch sử tương tác với khách hàng.
+
+---
+
+## M06. QUOTATION MANAGEMENT
+
+### Business Purpose
+
+Giúp cửa hàng tạo báo giá và đề xuất sản phẩm phù hợp với nhu cầu khách hàng.
+
+### User Needs
+
+"Tôi muốn tạo báo giá nhanh, chuyên nghiệp và chính xác theo yêu cầu của từng khách hàng."
+
+### Tool Categories
+
+**Phase 1**
+- Quotation Generator.
+- Product Price List.
+- Quotation Templates.
+- Basic Price Calculator.
+
+**Phase 2**
+- Custom Quotation.
+- Product Customizer.
+- Event Proposal Generator.
+- Promotion & Discount Management.
+- Quotation Sharing.
+
+**Phase 3**
+- AI Quotation Assistant.
+- Dynamic Pricing.
+- AI Product Configuration.
+- Automated Quotation Follow-up.
+- Quotation Analytics.
+
+### Expected Outcomes
+
+Cửa hàng có thể tạo, gửi, theo dõi và chuyển đổi báo giá thành đơn hàng.
+
+---
+
+## M07. ORDER MANAGEMENT
+
+### Business Purpose
+
+Giúp cửa hàng tiếp nhận, xác nhận và quản lý đơn hàng.
+
+### User Needs
+
+"Tôi muốn khách hàng đặt hàng dễ dàng và cửa hàng kiểm soát được toàn bộ quá trình xử lý đơn."
+
+### Tool Categories
+
+**Phase 1**
+- Online Order Form.
+- Sales Link.
+- QR Order.
+- Shopping Cart.
+- Order Management.
+- Order Confirmation.
+
+**Phase 2**
+- Product Customization.
+- Scheduled Delivery.
+- Order Tracking.
+- Order Status Notification.
+- Order Management Workflow.
+
+**Phase 3**
+- AI Order Assistant.
+- Automated Order Processing.
+- Multi-channel Order Integration.
+- Order Exception Detection.
+- Intelligent Order Routing.
+
+### Expected Outcomes
+
+Đơn hàng được quản lý tập trung, có trạng thái rõ ràng và có thể theo dõi xuyên suốt.
+
+---
+
+## M08. PAYMENT MANAGEMENT
+
+### Business Purpose
+
+Giúp cửa hàng quản lý thanh toán, xác nhận giao dịch và theo dõi công nợ.
+
+### User Needs
+
+"Tôi muốn khách hàng thanh toán thuận tiện và cửa hàng dễ dàng kiểm tra trạng thái thanh toán."
+
+### Tool Categories
+
+**Phase 1**
+- QR Payment.
+- Payment Instructions.
+- Payment Status Management.
+- Payment Records.
+
+**Phase 2**
+- Payment Gateway Integration.
+- Deposit Payment.
+- Partial Payment.
+- Payment Confirmation.
+- Refund Management.
+
+**Phase 3**
+- Automated Bank Reconciliation.
+- Automated Payment Reminder.
+- Automated Refund Workflow.
+- Payment Analytics.
+- Payment Exception Detection.
+
+### Expected Outcomes
+
+Các giao dịch được ghi nhận chính xác và liên kết với đơn hàng tương ứng.
+
+---
+
+## M09. CUSTOMER CARE
+
+### Business Purpose
+
+Giúp cửa hàng chăm sóc khách hàng trước, trong và sau khi mua hàng.
+
+### User Needs
+
+"Tôi muốn khách hàng có trải nghiệm tốt và luôn được hỗ trợ khi cần."
+
+### Tool Categories
+
+**Phase 1**
+- Customer Database.
+- Thank You Card.
+- Customer Feedback Form.
+- Order Status Notification.
+- Customer Support Information.
+
+**Phase 2**
+- CRM.
+- Review Collection.
+- Customer Support Inbox.
+- Loyalty Program.
+- Membership Management.
+- Customer Satisfaction Survey.
+
+**Phase 3**
+- Automated Customer Care.
+- AI Customer Support.
+- Customer Satisfaction Analytics.
+- Customer Retention Automation.
+- Complaint Classification.
+
+### Expected Outcomes
+
+Cửa hàng có thể duy trì mối quan hệ với khách hàng và nâng cao trải nghiệm sau mua.
+
+---
+
+## M10. CUSTOMER GROWTH
+
+### Business Purpose
+
+Giúp cửa hàng tăng tỷ lệ khách hàng quay lại, tăng giá trị vòng đời khách hàng và phát triển doanh thu.
+
+### User Needs
+
+"Tôi muốn khách hàng cũ tiếp tục mua hàng và giới thiệu thêm khách hàng mới."
+
+### Tool Categories
+
+**Phase 1**
+- Customer Purchase History.
+- Customer Birthday.
+- Customer Anniversary.
+- Customer Notes.
+- Basic Customer Reports.
+
+**Phase 2**
+- Referral Program.
+- Customer Loyalty Program.
+- Voucher Campaign.
+- Email Marketing.
+- SMS Marketing.
+- Zalo Marketing.
+- Customer Segmentation.
+
+**Phase 3**
+- AI Customer Insights.
+- Predictive Purchase.
+- Automated Re-engagement.
+- Personalized Marketing.
+- Customer Lifetime Value Analytics.
+- Churn Prediction.
+
+### Expected Outcomes
+
+Cửa hàng có thể khai thác dữ liệu khách hàng để phát triển doanh thu dài hạn.
+
+---
+
+# 4. THREE-PHASE DEVELOPMENT MODEL
+
+SMEOS được phát triển theo ba giai đoạn.
+
+Đây là lộ trình nâng cấp năng lực kinh doanh của người dùng, không đơn thuần là lộ trình bổ sung số lượng tính năng.
+
+## PHASE 1 – BUSINESS FOUNDATION
+
+### Objective
+
+Xây dựng nền tảng kinh doanh cơ bản, giúp cửa hàng số hóa các hoạt động thiết yếu và có thể sử dụng SMEOS trong vận hành thực tế.
+
+### Core Capabilities
+
+- Quản lý thông tin thương hiệu.
+- Quản lý sản phẩm và hình ảnh.
+- Tạo tài liệu giới thiệu sản phẩm.
+- Tạo link bán hàng.
+- Tiếp nhận đơn hàng.
+- Quản lý thanh toán cơ bản.
+- Quản lý thông tin khách hàng.
+
+### Completion Criteria
+
+Một cửa hàng có thể:
+
+1. Tạo và quản lý hồ sơ cửa hàng.
+2. Quản lý sản phẩm.
+3. Tạo hình ảnh giới thiệu sản phẩm.
+4. Tạo catalog.
+5. Tạo link bán hàng.
+6. Nhận đơn hàng trực tuyến.
+7. Quản lý trạng thái đơn hàng.
+8. Ghi nhận thanh toán.
+9. Lưu trữ thông tin khách hàng.
+
+**Phase 1 Outcome:** SMEOS trở thành nền tảng vận hành và bán hàng cơ bản.
+
+## PHASE 2 – MARKETING & SALES GROWTH
+
+### Objective
+
+Mở rộng năng lực marketing, tiếp cận khách hàng và tăng tỷ lệ chuyển đổi bán hàng.
+
+### Core Capabilities
+
+- Sản xuất nội dung marketing.
+- Tạo tài liệu quảng cáo.
+- Quản lý chiến dịch.
+- Tích hợp các kênh truyền thông.
+- Thu thập khách hàng tiềm năng.
+- CRM và quản lý tư vấn.
+- Báo giá nâng cao.
+- Chăm sóc khách hàng.
+- Loyalty và Referral.
+
+### Completion Criteria
+
+Một cửa hàng có thể:
+
+1. Chủ động tạo tài liệu marketing.
+2. Triển khai chiến dịch quảng bá.
+3. Thu hút khách hàng từ nhiều kênh.
+4. Quản lý khách hàng tiềm năng.
+5. Quản lý quá trình tư vấn.
+6. Tạo và theo dõi báo giá.
+7. Quản lý khách hàng thân thiết.
+8. Thực hiện hoạt động marketing đa kênh.
+
+**Phase 2 Outcome:** SMEOS trở thành nền tảng marketing và bán hàng toàn diện.
+
+## PHASE 3 – AUTOMATION & INTELLIGENCE
+
+### Objective
+
+Ứng dụng AI, dữ liệu và tự động hóa để giảm thao tác thủ công và tối ưu hiệu quả kinh doanh.
+
+### Core Capabilities
+
+- AI Content Generation.
+- AI Marketing Assistant.
+- AI Sales Assistant.
+- AI Customer Support.
+- Marketing Automation.
+- Sales Automation.
+- Payment Automation.
+- Customer Retention Automation.
+- Predictive Analytics.
+
+### Completion Criteria
+
+Một cửa hàng có thể:
+
+1. Tự động sản xuất một phần nội dung marketing.
+2. Tự động triển khai các quy trình marketing đã cấu hình.
+3. Tự động tiếp nhận và phân loại khách hàng tiềm năng.
+4. Hỗ trợ tư vấn bằng AI.
+5. Tự động hóa các bước xử lý đơn hàng phù hợp.
+6. Tự động hóa nhắc thanh toán và chăm sóc khách hàng.
+7. Phân tích hành vi khách hàng.
+8. Đưa ra gợi ý tăng trưởng dựa trên dữ liệu.
+
+**Phase 3 Outcome:** SMEOS trở thành nền tảng vận hành và tăng trưởng thông minh.
+
+---
+
+# 5. SHARED DATA & PLATFORM SERVICES ARCHITECTURE
+
+## 5.1. Nguyên tắc
+
+Các module phải khai thác dữ liệu dùng chung khi dữ liệu thuộc cùng một nghiệp vụ và có cùng nguồn quản lý chính thức.
+
+Không tạo dữ liệu trùng lặp chỉ vì các module có giao diện hoặc mục đích sử dụng khác nhau.
+
+## 5.2. Core Shared Data Domains
+
+| Data Domain | Mô tả | Module sử dụng |
+|---|---|---|
+| Store | Thông tin cửa hàng | M01–M10 |
+| Brand | Thông tin thương hiệu | M01–M04 |
+| Product | Danh mục sản phẩm | M02–M08 |
+| Media Asset | Ảnh, video, file | M01–M04, M06 |
+| Campaign | Chiến dịch marketing | M03, M04, M10 |
+| Lead | Khách hàng tiềm năng | M04, M05 |
+| Customer | Thông tin khách hàng | M05–M10 |
+| Quotation | Báo giá | M05, M06, M07 |
+| Order | Đơn hàng | M06, M07, M08, M09 |
+| Payment | Thanh toán | M07, M08 |
+| Interaction | Lịch sử tương tác | M04, M05, M09, M10 |
+| Loyalty | Điểm và quyền lợi khách hàng | M09, M10 |
+
+Bảng trên là danh mục miền dữ liệu mục tiêu, không phải yêu cầu phải tạo từng bảng database theo đúng tên.
+
+## 5.3. Data Ownership
+
+Mỗi domain phải có một module hoặc service chịu trách nhiệm quản lý nghiệp vụ chính.
+
+Ví dụ:
+
+- Product: nguồn dữ liệu chính do hệ thống quản lý sản phẩm sở hữu.
+- Customer: nguồn dữ liệu chính do hệ thống CRM hoặc Customer Management sở hữu.
+- Order: Order Management chịu trách nhiệm quản lý trạng thái đơn hàng.
+- Payment: Payment Management chịu trách nhiệm quản lý giao dịch.
+- Campaign: Product Promotion hoặc Marketing Campaign Service chịu trách nhiệm quản lý chiến dịch.
+
+Các module khác được phép sử dụng dữ liệu thông qua API hoặc các cơ chế truy cập được kiểm soát.
+
+Không tự ý sửa dữ liệu nghiệp vụ thuộc module khác nếu không thông qua cơ chế được thiết kế.
+
+## 5.4. Shared Platform Services
+
+Các dịch vụ nền tảng dùng chung:
+
+1. Identity & Authentication.
+2. Authorization & RBAC.
+3. Tenant Management.
+4. API Management.
+5. File & Artifact Storage.
+6. Notification Service.
+7. Workflow Engine.
+8. Integration Services.
+9. AI Services.
+10. Analytics & Reporting.
+11. Audit Logging.
+12. Feature & Release Management.
+
+## 5.5. Architectural Constraints
+
+AI Coding Agent phải kiểm tra kiến trúc hiện tại trước khi đề xuất thay đổi.
+
+Không mặc định rằng:
+
+- SMEOS phải chuyển sang microservices.
+- Mỗi module cần một database riêng.
+- Tất cả module phải có backend riêng.
+- Tất cả dữ liệu phải được tập trung vào một bảng hoặc một service.
+- Các module phải được triển khai đồng thời.
+
+Ưu tiên modular architecture, rõ ràng về trách nhiệm nghiệp vụ, có thể mở rộng và phù hợp với kiến trúc hiện tại.
+
+---
+
+# 6. END-TO-END BUSINESS WORKFLOW
+
+## 6.1. Primary Workflow
+
+```mermaid
+flowchart TD
+    A["M01 Brand Management"]
+    B["M02 Content Creation"]
+    C["M03 Product Promotion"]
+    D["M04 Customer Acquisition"]
+    E["M05 Customer Consultation"]
+    F["M06 Quotation Management"]
+    G["M07 Order Management"]
+    H["M08 Payment Management"]
+    I["M09 Customer Care"]
+    J["M10 Customer Growth"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+    I --> J
+    J --> C
+```
+
+## 6.2. Workflow Requirements
+
+Mỗi workflow cần xác định:
+
+- Trigger.
+- Input.
+- Processing.
+- Output.
+- Responsible Module.
+- Shared Data.
+- Integration Points.
+- Failure Handling.
+- Audit Requirements.
+
+Ví dụ:
+
+**Quotation to Order Workflow**
+
+1. Khách hàng gửi yêu cầu.
+2. Customer Consultation tiếp nhận yêu cầu.
+3. Quotation Management tạo báo giá.
+4. Khách hàng xem và xác nhận báo giá.
+5. Order Management chuyển báo giá thành đơn hàng.
+6. Payment Management tiếp nhận thanh toán.
+7. Customer Care tiếp tục chăm sóc khách hàng.
+
+Yêu cầu quan trọng:
+
+Không tạo lại thông tin sản phẩm, khách hàng hoặc báo giá khi chuyển tiếp giữa các module nếu dữ liệu gốc đã tồn tại.
+
+Phải duy trì liên kết tham chiếu và lịch sử giao dịch.
+
+---
+
+# 7. PRODUCTION RELEASE GOVERNANCE
+
+Đây là một trong những yêu cầu kiến trúc quan trọng nhất của SMEOS.
+
+## 7.1. Core Release Principle
+
+**A Module or Tool must only be visible and usable in Production after it has been completed, passed all required Dev Quality Gates, and received explicit Dev approval.**
+
+Không được hiển thị tính năng chưa hoàn thiện trên Production.
+
+Không được coi việc code xong là đồng nghĩa với việc đủ điều kiện phát hành.
+
+Không được coi việc merge code là đồng nghĩa với việc đã được phê duyệt phát hành.
+
+## 7.2. Independent Release at Tool Level
+
+Một module có thể chứa nhiều công cụ.
+
+Ví dụ:
+
+M02 Content Creation:
+
+- Product Image Editor.
+- Background Remover.
+- Greeting Card Generator.
+- Poster Generator.
+- AI Image Generator.
+- Video Generator.
+
+Không bắt buộc tất cả công cụ phải hoàn thành trước khi module được phát hành.
+
+Nếu Product Image Editor và Greeting Card Generator đã vượt qua Release Gates, hai công cụ này có thể được hiển thị trên Production dù các công cụ khác vẫn đang phát triển.
+
+Tương tự, một module chưa có công cụ nào được phê duyệt thì không hiển thị trên Dashboard Production.
+
+## 7.3. Development Lifecycle
+
+Mỗi module và tool phải có trạng thái vòng đời rõ ràng.
+
+| Status | Ý nghĩa | Production Visibility |
+|---|---|---|
+| PLANNED | Đã lên kế hoạch | Hidden |
+| SPECIFIED | Đã có đặc tả | Hidden |
+| IN_DEVELOPMENT | Đang phát triển | Hidden |
+| CODE_COMPLETE | Đã hoàn thành code | Hidden |
+| DEV_TESTING | Đang kiểm thử | Hidden |
+| QA_FAILED | Kiểm thử không đạt | Hidden |
+| QA_PASSED | Đã vượt qua kiểm thử | Hidden |
+| DEV_APPROVED | Đã được Dev phê duyệt | Có thể phát hành sau khi bật Release |
+| RELEASED | Đã phát hành Production | Visible nếu đủ điều kiện |
+| ROLLED_BACK | Đã rollback | Hidden hoặc Disabled |
+| DEPRECATED | Ngừng hỗ trợ | Hidden |
+
+Lưu ý:
+
+QA_PASSED không tự động chuyển thành RELEASED.
+
+DEV_APPROVED cũng không có nghĩa tính năng tự động xuất hiện trên Production.
+
+Phải có bước phát hành được kiểm soát.
+
+## 7.4. Quality Gates
+
+Mỗi tool phải vượt qua các Gate phù hợp trước khi được phê duyệt.
+
+### Gate 1 – Specification Review
+
+- Có mục đích nghiệp vụ rõ ràng.
+- Có yêu cầu chức năng.
+- Có user journey.
+- Có acceptance criteria.
+- Có UI/UX specification nếu cần.
+- Có định nghĩa dữ liệu đầu vào và đầu ra.
+
+### Gate 2 – Development Review
+
+- Hoàn thành chức năng theo đặc tả.
+- Không có chức năng giả hoặc placeholder.
+- Xử lý được các trường hợp lỗi.
+- Có loading, empty và error states.
+- Không tạo regression cho chức năng hiện tại.
+
+### Gate 3 – Code Quality Review
+
+- Code đúng cấu trúc kiến trúc.
+- Không có lỗi nghiêm trọng.
+- Không có secret hoặc credential bị lộ.
+- Không có dependency nguy hiểm chưa được đánh giá.
+- Có xử lý bảo mật phù hợp.
+- Có logging và error handling phù hợp.
+
+### Gate 4 – Functional Testing
+
+- Unit tests.
+- Integration tests.
+- End-to-end tests khi phù hợp.
+- Acceptance criteria tests.
+- Regression tests.
+- Negative test cases.
+
+### Gate 5 – Security Review
+
+- Authentication.
+- Authorization.
+- Tenant isolation.
+- Data access control.
+- Input validation.
+- API security.
+- File access security.
+- Sensitive data protection.
+
+### Gate 6 – UX Review
+
+- Đúng UX specification.
+- Điều hướng rõ ràng.
+- Không có broken interaction.
+- Responsive phù hợp.
+- Có feedback cho người dùng.
+- Có trạng thái loading, empty, success và error.
+
+### Gate 7 – Dev Approval
+
+Dev hoặc người được ủy quyền xác nhận:
+
+- Đã kiểm tra kết quả.
+- Đã xem xét các báo cáo kiểm thử.
+- Đã chấp nhận các rủi ro còn lại.
+- Đã xác nhận đủ điều kiện phát hành.
+
+### Gate 8 – Production Release
+
+- Có release record.
+- Có phiên bản được xác định.
+- Có kế hoạch rollback.
+- Có monitoring phù hợp.
+- Đã bật quyền hiển thị Production.
+- Có thể xác định người phê duyệt và thời điểm phát hành.
+
+Các Gate có thể được tinh chỉnh theo mức độ rủi ro của từng công cụ, nhưng không được bỏ qua các kiểm soát bắt buộc.
+
+## 7.5. Production Visibility Control
+
+SMEOS cần có cơ chế kiểm soát khả năng hiển thị và sử dụng từng module/tool.
+
+Có thể sử dụng:
+
+- Feature Flags.
+- Release Registry.
+- Module Registry.
+- Tool Registry.
+- Entitlement Management.
+- Environment Configuration.
+
+Cấu trúc logic tham khảo:
+
+```json
+{
+  "module_id": "M02",
+  "module_name": "Content Creation",
+  "environment": "production",
+  "status": "active",
+  "tools": [
+    {
+      "tool_id": "M02-T01",
+      "name": "Product Image Editor",
+      "release_status": "released",
+      "production_enabled": true
+    },
+    {
+      "tool_id": "M02-T02",
+      "name": "AI Image Generator",
+      "release_status": "in_development",
+      "production_enabled": false
+    }
+  ]
+}
+```
+
+Đây là ví dụ cấu trúc logic, không phải yêu cầu áp dụng nguyên trạng vào database hiện tại.
+
+### Visibility Rules
+
+1. Module chỉ hiển thị nếu có ít nhất một tool được phát hành và người dùng có quyền truy cập.
+2. Tool chỉ hiển thị nếu đã được release.
+3. Tool chưa release không được truy cập thông qua direct URL.
+4. API phải kiểm tra quyền và trạng thái release ở server-side.
+5. Không được chỉ ẩn nút hoặc menu ở frontend rồi coi là đã bảo vệ chức năng.
+6. User không được tự bật tính năng Production thông qua client-side request.
+7. Admin và Dev phải có quyền khác nhau.
+8. Mọi thao tác thay đổi trạng thái phát hành phải được ghi audit log.
+
+### Important Security Rule
+
+**Hidden UI is not a security boundary.**
+
+Ngay cả khi một công cụ không xuất hiện trên Dashboard, backend vẫn phải từ chối request nếu công cụ chưa được phát hành hoặc người dùng không đủ quyền.
+
+## 7.6. Rollback & Emergency Disable
+
+SMEOS cần hỗ trợ:
+
+- Disable một tool.
+- Disable toàn bộ module.
+- Rollback về release trước.
+- Ngắt integration gặp sự cố.
+- Thu hồi quyền truy cập.
+- Ghi nhận lý do và người thực hiện.
+
+Không được yêu cầu deploy lại toàn bộ hệ thống chỉ để tắt một công cụ nếu kiến trúc hiện tại cho phép xử lý bằng release configuration hoặc feature flag an toàn.
+
+---
+
+# 8. CURRENT-STATE AUDIT FRAMEWORK
+
+AI Coding Agent phải audit hiện trạng trước khi lập kế hoạch triển khai.
+
+## 8.1. Audit Scope
+
+Kiểm tra tối thiểu các thành phần sau:
+
+### A. Repository & Codebase
+
+- Repository structure.
+- Frontend architecture.
+- Backend architecture.
+- Routing.
+- Components.
+- Services.
+- State management.
+- API clients.
+- Existing modules.
+- Shared utilities.
+
+### B. Database & Data Architecture
+
+- Database schema.
+- Tables.
+- Relationships.
+- Indexes.
+- Migrations.
+- Data ownership.
+- Duplicate data.
+- Tenant isolation.
+- Data integrity.
+
+### C. Authentication & Authorization
+
+- Authentication flow.
+- User roles.
+- RBAC.
+- Tenant permissions.
+- API access control.
+- Admin permissions.
+
+### D. UX/UI
+
+- Dashboard.
+- Existing navigation.
+- Existing module screens.
+- Tool entry points.
+- Responsive design.
+- Loading states.
+- Empty states.
+- Error states.
+- Inconsistent components.
+
+### E. API & Integrations
+
+- Internal APIs.
+- External APIs.
+- Webhooks.
+- Third-party services.
+- Error handling.
+- Retry logic.
+- Rate limits.
+- Integration security.
+
+### F. Testing & Quality
+
+- Unit tests.
+- Integration tests.
+- E2E tests.
+- CI pipelines.
+- Lint.
+- Type checking.
+- Build validation.
+- Test coverage.
+
+### G. Deployment & Release
+
+- Development environment.
+- Staging environment.
+- Production environment.
+- Deployment configuration.
+- Environment variables.
+- Feature flags.
+- Release procedures.
+- Rollback procedures.
+
+### H. Documentation
+
+- PRD.
+- Technical specifications.
+- Architecture documents.
+- API documentation.
+- Database documentation.
+- UX specifications.
+- Testing documentation.
+- Existing handover documentation.
+
+## 8.2. Audit Evidence Requirements
+
+Mọi kết luận quan trọng phải có bằng chứng.
+
+Ví dụ:
+
+| Audit Finding | Evidence Required |
+|---|---|
+| Module đã tồn tại | Route, component, service, API |
+| Chức năng đã hoạt động | Code path, test result hoặc runtime evidence |
+| Dữ liệu đã được quản lý | Schema, migration, repository/service |
+| API đã được bảo vệ | Middleware, authorization policy, tests |
+| Tính năng đã được kiểm thử | Test files và kết quả chạy |
+| Tính năng đã phát hành | Release configuration và deployment evidence |
+
+Không được đánh giá một tính năng là hoàn thiện chỉ vì đã tìm thấy một component hoặc một route.
+
+Phải phân biệt:
+
+- Designed.
+- Implemented.
+- Tested.
+- Approved.
+- Released.
+- Verified in Production.
+
+## 8.3. Module Audit Matrix
+
+Tạo bảng audit cho toàn bộ 10 module:
+
+| Module | Existing Status | Implemented Tools | Missing Tools | Technical Issues | Target Phase | Recommendation |
+|---|---|---|---|---|---|---|
+| M01 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M02 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M03 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M04 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M05 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M06 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M07 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M08 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M09 | TBD | TBD | TBD | TBD | TBD | TBD |
+| M10 | TBD | TBD | TBD | TBD | TBD | TBD |
+
+## 8.4. Feature-Level Audit
+
+Mỗi công cụ cần được đánh giá theo các tiêu chí:
+
+1. Business Requirement.
+2. UI Implementation.
+3. Backend Implementation.
+4. Database Support.
+5. API Integration.
+6. Authentication.
+7. Authorization.
+8. Validation.
+9. Error Handling.
+10. Testing.
+11. UX Compliance.
+12. Security.
+13. Performance.
+14. Documentation.
+15. Release Readiness.
+
+Không sử dụng một điểm tổng hợp để che giấu lỗi nghiêm trọng.
+
+Một tính năng có thể hoàn thiện về giao diện nhưng chưa có backend hoặc chưa bảo vệ API. Trong trường hợp này, tính năng vẫn chưa đủ điều kiện Production.
+
+---
+
+# 9. GAP ANALYSIS & PRIORITIZATION
+
+Sau khi audit, Agent phải xác định khoảng cách giữa hiện trạng và kiến trúc mục tiêu.
+
+## 9.1. Gap Categories
+
+Phân loại vấn đề:
+
+- Missing Feature.
+- Incomplete Feature.
+- UX Gap.
+- Architecture Gap.
+- Data Gap.
+- API Gap.
+- Security Gap.
+- Performance Gap.
+- Testing Gap.
+- Documentation Gap.
+- Release Governance Gap.
+- Technical Debt.
+
+## 9.2. Priority Classification
+
+| Priority | Definition |
+|---|---|
+| P0 – Critical | Lỗi bảo mật, mất dữ liệu, lỗi nghiêm trọng hoặc rủi ro ảnh hưởng Production |
+| P1 – High | Chức năng cốt lõi thiếu hoặc chưa đáp ứng yêu cầu nghiệp vụ |
+| P2 – Medium | Cải tiến quan trọng về UX, kiến trúc, hiệu suất hoặc vận hành |
+| P3 – Low | Tối ưu bổ sung, nâng cao hoặc chưa cấp thiết |
+
+## 9.3. Gap Analysis Matrix
+
+| ID | Module | Gap | Category | Priority | Dependencies | Recommendation |
+|---|---|---|---|---|---|---|
+| GAP-001 | M01 | TBD | TBD | TBD | TBD | TBD |
+| GAP-002 | M02 | TBD | TBD | TBD | TBD | TBD |
+
+Mỗi Gap phải có:
+
+- Mô tả vấn đề.
+- Bằng chứng hiện trạng.
+- Tác động đến người dùng.
+- Tác động kỹ thuật.
+- Mức độ ưu tiên.
+- Phương án xử lý.
+- Dependencies.
+- Acceptance Criteria.
+
+---
+
+# 10. IMPLEMENTATION ROADMAP
+
+Roadmap phải được xây dựng dựa trên kết quả audit thực tế, không phải danh sách tính năng được triển khai máy móc theo thứ tự M01 đến M10.
+
+## 10.1. Phase 1 – Business Foundation
+
+Ưu tiên:
+
+- Các chức năng quản lý cửa hàng và sản phẩm.
+- Quản lý tài nguyên hình ảnh.
+- Tạo catalog và link bán hàng.
+- Tiếp nhận đơn hàng.
+- Quản lý thanh toán cơ bản.
+- Quản lý khách hàng cơ bản.
+- Chuẩn hóa Shared Data.
+- Thiết lập Release Governance.
+
+## 10.2. Phase 2 – Marketing & Sales Growth
+
+Ưu tiên:
+
+- Tăng năng lực tạo nội dung.
+- Công cụ quảng bá sản phẩm.
+- Landing Page và đa kênh.
+- Quản lý khách hàng tiềm năng.
+- CRM.
+- Tư vấn và báo giá nâng cao.
+- Loyalty và Referral.
+- Marketing Campaign Management.
+
+## 10.3. Phase 3 – Automation & Intelligence
+
+Ưu tiên:
+
+- AI Content.
+- AI Marketing.
+- AI Sales Assistant.
+- AI Customer Support.
+- Automation.
+- Predictive Analytics.
+- Intelligent Recommendation.
+- Customer Retention.
+
+## 10.4. Roadmap Requirements
+
+Với mỗi hạng mục, phải xác định:
+
+| Field | Description |
+|---|---|
+| Feature ID | Mã tính năng |
+| Module | Module sở hữu |
+| Current State | Hiện trạng |
+| Target State | Trạng thái mong muốn |
+| Phase | Giai đoạn |
+| Priority | Mức ưu tiên |
+| Dependencies | Phụ thuộc |
+| Effort Estimate | Ước lượng công sức |
+| Risk | Rủi ro |
+| Acceptance Criteria | Tiêu chí nghiệm thu |
+| Release Gate | Điều kiện phát hành |
+
+Không tự đặt thời gian hoàn thành nếu chưa có căn cứ về nguồn lực, độ phức tạp và dependencies.
+
+## 10.5. Recommended Implementation Order
+
+Agent cần phân biệt:
+
+- Technical Dependencies.
+- Business Priority.
+- User Value.
+- Risk Reduction.
+- Reuse Opportunities.
+
+Thứ tự triển khai không nhất thiết phải trùng với thứ tự module trên Dashboard.
+
+Ví dụ, Shared Data và Identity & Access có thể cần được chuẩn hóa trước khi mở rộng các module phụ thuộc.
+
+---
+
+# 11. ACCEPTANCE CRITERIA FOR TARGET ARCHITECTURE
+
+Kiến trúc mục tiêu chỉ được xem là đáp ứng khi đạt các tiêu chí sau.
+
+## 11.1. Product Architecture
+
+- Có đủ 10 Business Modules trong kiến trúc mục tiêu.
+- Mỗi module có business purpose rõ ràng.
+- Mỗi module có danh sách công cụ và phạm vi nghiệp vụ.
+- Không có sự chồng chéo trách nhiệm nghiêm trọng.
+- Dashboard trực tiếp hiển thị các module đủ điều kiện phát hành.
+
+## 11.2. Data Architecture
+
+- Có xác định nguồn dữ liệu chính cho từng domain.
+- Có cơ chế dùng chung dữ liệu.
+- Không phát sinh dữ liệu trùng lặp không cần thiết.
+- Có kiểm soát quyền truy cập.
+- Đảm bảo tenant isolation.
+- Có audit trail phù hợp.
+
+## 11.3. Cross-module Workflow
+
+- Dữ liệu có thể được chuyển tiếp giữa các module.
+- Không cần nhập lại dữ liệu đã tồn tại một cách không cần thiết.
+- Có xử lý lỗi khi tích hợp.
+- Có kiểm soát trạng thái nghiệp vụ.
+- Có khả năng theo dõi lịch sử giao dịch.
+
+## 11.4. Release Governance
+
+- Mỗi tool có release status.
+- Mỗi tool có production visibility status.
+- Có cơ chế kiểm soát từ backend.
+- Không thể truy cập trái phép qua direct URL.
+- Có cơ chế phê duyệt.
+- Có audit log.
+- Có rollback hoặc emergency disable.
+
+## 11.5. Production Quality
+
+- Build thành công.
+- Type check thành công nếu dự án sử dụng.
+- Lint đạt yêu cầu.
+- Automated tests đạt.
+- Security review đạt.
+- UX review đạt.
+- Không còn lỗi P0/P1 chưa được xử lý hoặc chấp thuận rõ ràng.
+- Có tài liệu cần thiết cho vận hành và bàn giao.
+
+---
+
+# 12. REQUIRED AUDIT DELIVERABLES
+
+AI Coding Agent phải tạo ra các tài liệu sau sau khi hoàn thành đợt audit.
+
+| STT | Deliverable | Nội dung |
+|---|---|---|
+| 01 | CURRENT_STATE_AUDIT.md | Báo cáo hiện trạng toàn hệ thống |
+| 02 | MODULE_INVENTORY.md | Danh sách 10 module và tính năng hiện có |
+| 03 | FEATURE_INVENTORY.md | Danh mục công cụ và trạng thái từng công cụ |
+| 04 | ARCHITECTURE_GAP_ANALYSIS.md | Phân tích khoảng cách kiến trúc |
+| 05 | DATA_ARCHITECTURE_AUDIT.md | Đánh giá database và data ownership |
+| 06 | UX_UI_AUDIT.md | Đánh giá giao diện và trải nghiệm |
+| 07 | SECURITY_AUDIT.md | Đánh giá bảo mật và phân quyền |
+| 08 | RELEASE_GOVERNANCE_AUDIT.md | Đánh giá quy trình phát hành |
+| 09 | DEPENDENCY_MAP.md | Bản đồ phụ thuộc giữa module |
+| 10 | RISK_REGISTER.md | Danh sách rủi ro |
+| 11 | IMPLEMENTATION_ROADMAP.md | Lộ trình triển khai ba giai đoạn |
+| 12 | ACCEPTANCE_CRITERIA.md | Tiêu chí nghiệm thu |
+| 13 | CODING_AGENT_HANDOFF.md | Kế hoạch bàn giao triển khai |
+
+Mỗi báo cáo phải có bằng chứng từ repository.
+
+Nếu một deliverable không có dữ liệu để kết luận, phải ghi rõ "Not Verified" thay vì tự suy đoán.
+
+---
+
+# 13. GOVERNANCE & CHANGE CONTROL
+
+## 13.1. Architecture Change
+
+Mọi thay đổi lớn đối với:
+
+- Module boundaries.
+- Data ownership.
+- Shared Services.
+- API contracts.
+- Authentication.
+- Authorization.
+- Release Governance.
+
+Phải được đánh giá tác động trước khi triển khai.
+
+## 13.2. Module Change
+
+Mỗi thay đổi chức năng cần xác định:
+
+- Module owner.
+- Business impact.
+- Data impact.
+- API impact.
+- UX impact.
+- Security impact.
+- Testing requirements.
+- Release requirements.
+
+## 13.3. Production Release Approval
+
+Không AI Agent nào được tự ý đưa tính năng lên Production chỉ vì đã hoàn thành code.
+
+Production release phải có phê duyệt rõ ràng theo quyền hạn được giao.
+
+---
+
+# 14. AI CODING AGENT MASTER PROMPT
+
+## ROLE
+
+Bạn là Senior Software Architect, Principal Engineer, Product Systems Analyst và Quality Assurance Lead.
+
+Bạn được giao nhiệm vụ audit hệ thống SMEOS hiện tại, đối chiếu với kiến trúc mục tiêu trong tài liệu này và xây dựng kế hoạch nâng cấp toàn hệ thống.
+
+Bạn phải làm việc dựa trên bằng chứng thực tế từ repository.
+
+Không được giả định rằng các chức năng đã được mô tả trong tài liệu này đã tồn tại trong mã nguồn.
+
+## MISSION
+
+Thực hiện theo ba nhiệm vụ lớn:
+
+**MISSION 1 – CURRENT STATE AUDIT**
+
+Kiểm tra toàn bộ hiện trạng SMEOS.
+
+**MISSION 2 – GAP ANALYSIS**
+
+So sánh hiện trạng với kiến trúc mục tiêu gồm 10 Business Modules và ba giai đoạn phát triển.
+
+**MISSION 3 – IMPLEMENTATION ROADMAP**
+
+Đề xuất lộ trình nâng cấp, ưu tiên, dependencies, acceptance criteria và release gates.
+
+## EXECUTION RULES
+
+### Rule 1 – Audit Before Planning
+
+Không lập roadmap dựa trên suy đoán.
+
+Phải kiểm tra repository và các bằng chứng liên quan trước.
+
+### Rule 2 – Evidence-Based Findings
+
+Mỗi kết luận quan trọng phải có:
+
+- File path.
+- Component/function/class.
+- API route nếu liên quan.
+- Database schema nếu liên quan.
+- Test evidence nếu có.
+
+### Rule 3 – Preserve Existing Architecture
+
+Không tự ý đề xuất viết lại toàn bộ hệ thống.
+
+Ưu tiên tái sử dụng những thành phần hiện có nếu chúng đáp ứng yêu cầu.
+
+### Rule 4 – No Unapproved Changes
+
+Trong giai đoạn audit:
+
+- Không sửa source code.
+- Không sửa database schema.
+- Không tạo migration.
+- Không thay đổi configuration.
+- Không thêm hoặc gỡ dependencies.
+- Không refactor.
+- Không xóa file.
+- Không deploy.
+
+Chỉ được đọc, phân tích và tạo tài liệu báo cáo.
+
+### Rule 5 – Separate Facts From Assumptions
+
+Mỗi finding phải phân loại:
+
+- VERIFIED: Đã có bằng chứng xác nhận.
+- PARTIALLY VERIFIED: Có bằng chứng một phần.
+- NOT VERIFIED: Chưa đủ dữ liệu xác nhận.
+- ASSUMPTION: Giả định cần xác nhận.
+
+### Rule 6 – Production Governance
+
+Phải đánh giá cơ chế kiểm soát phát hành ở cấp module và tool.
+
+Không được đề xuất hiển thị tính năng chưa qua Dev Approval trên Production.
+
+### Rule 7 – No Premature Microservices
+
+Không chuyển sang microservices nếu chưa có căn cứ kỹ thuật rõ ràng.
+
+Ưu tiên modular architecture phù hợp với quy mô và hiện trạng dự án.
+
+## AUDIT EXECUTION PLAN
+
+### STEP 1 – Repository Discovery
+
+- Xác định repository root.
+- Kiểm tra branch hiện tại.
+- Kiểm tra git status.
+- Kiểm tra cấu trúc dự án.
+- Kiểm tra các ứng dụng frontend/backend.
+- Kiểm tra package manifests.
+- Kiểm tra documentation.
+- Xác định các môi trường triển khai.
+
+Không thay đổi trạng thái repository.
+
+### STEP 2 – Architecture Audit
+
+Kiểm tra:
+
+- Frontend architecture.
+- Backend architecture.
+- Routing.
+- Shared components.
+- Business services.
+- API architecture.
+- Database.
+- Authentication.
+- Authorization.
+- Integrations.
+- Storage.
+- Deployment.
+
+### STEP 3 – Feature Inventory
+
+Tìm kiếm và phân loại các chức năng hiện có theo 10 module.
+
+Không chỉ dựa trên tên folder hoặc tên component.
+
+Phải xác định chức năng thực sự hoạt động đến đâu.
+
+### STEP 4 – Feature Maturity Assessment
+
+Đánh giá từng tool theo các trạng thái:
+
+- Planned.
+- Specified.
+- In Development.
+- Code Complete.
+- Testing.
+- QA Passed.
+- Dev Approved.
+- Released.
+- Verified in Production.
+
+Không tự động nâng trạng thái khi chưa có bằng chứng.
+
+### STEP 5 – Data Architecture Audit
+
+- Xác định các domain dữ liệu.
+- Xác định data ownership.
+- Xác định quan hệ dữ liệu.
+- Kiểm tra dữ liệu trùng lặp.
+- Kiểm tra tenant isolation.
+- Kiểm tra transaction integrity.
+- Kiểm tra các điểm tích hợp liên module.
+
+### STEP 6 – UX/UI Audit
+
+Đánh giá:
+
+- Dashboard.
+- Module navigation.
+- Feature discovery.
+- User journey.
+- UI consistency.
+- Responsive behavior.
+- Error handling.
+- Loading states.
+- Empty states.
+- Accessibility nếu có tiêu chuẩn dự án.
+
+### STEP 7 – Security & Release Audit
+
+Đặc biệt kiểm tra:
+
+- Feature flags.
+- Direct URL access.
+- Server-side authorization.
+- Environment separation.
+- Release approval.
+- Audit logging.
+- Rollback.
+- Emergency disable.
+
+### STEP 8 – Gap Analysis
+
+Đối chiếu toàn bộ findings với kiến trúc mục tiêu.
+
+Xác định:
+
+- Missing.
+- Incomplete.
+- Duplicate.
+- Overlapping.
+- Outdated.
+- High-risk.
+- Requires Refactoring.
+- Ready for Reuse.
+
+### STEP 9 – Roadmap
+
+Xây dựng roadmap theo:
+
+- Phase 1 – Business Foundation.
+- Phase 2 – Marketing & Sales Growth.
+- Phase 3 – Automation & Intelligence.
+
+Mỗi hạng mục phải có:
+
+- Priority.
+- Business Value.
+- Technical Dependencies.
+- Estimated Complexity.
+- Risk.
+- Acceptance Criteria.
+- Release Gate.
+
+### STEP 10 – Final Report
+
+Tạo đầy đủ các deliverables được liệt kê tại Section 12.
+
+## FINAL RESPONSE FORMAT
+
+Sau khi hoàn thành, báo cáo cho người dùng theo cấu trúc:
+
+1. Executive Summary.
+2. Overall Architecture Assessment.
+3. Current State of 10 Modules.
+4. Current State of Features and Tools.
+5. Critical Technical Issues.
+6. Data Architecture Findings.
+7. UX/UI Findings.
+8. Security Findings.
+9. Production Release Governance Findings.
+10. Gap Analysis.
+11. Recommended Implementation Roadmap.
+12. Critical Dependencies.
+13. Key Risks.
+14. Decisions Requiring Approval.
+
+Phải phân biệt rõ:
+
+- Những gì đã tồn tại.
+- Những gì đang hoạt động.
+- Những gì chưa hoàn thiện.
+- Những gì cần sửa.
+- Những gì cần phát triển mới.
+- Những gì cần được phê duyệt trước khi triển khai.
+
+## FINAL INSTRUCTION
+
+**Do not implement anything during this audit phase.**
+
+Your responsibility is to understand the actual SMEOS system, establish an evidence-based current-state assessment, identify the gaps, and propose a realistic implementation roadmap.
+
+Stop after delivering all audit reports and the recommended implementation plan.
+
+Wait for explicit approval before modifying source code, database, architecture, configurations, dependencies or deployment environments.
+
+---
+
+# END OF DOCUMENT
+
+**SMEOS – Business Growth Platform Architecture Specification**  
+Version 1.0 – Proposed Architecture

@@ -1,6 +1,6 @@
 # CLAUDE.md — FloraOS Core
 
-Multi-tenant SaaS for flower shops: Next.js 16 + Prisma 7/Postgres (`src/`), Python job workers (`workers/`).
+Multi-tenant SaaS for SMEs: Next.js 16 + Prisma 7/Postgres (`src/`), Python workers (`workers/`).
 Status `CANONICAL` · owner: Product Owner (PO) · changes need PO approval. Loaded every session — keep it short; detail lives in the files it points to.
 
 ## Non-negotiables
@@ -15,16 +15,16 @@ Status `CANONICAL` · owner: Product Owner (PO) · changes need PO approval. Loa
 8. **No secrets / customer data / `.env` content** in code, logs, commits or replies.
 9. **Never report done with a red gate**; never skip/disable a test.
 
-UI work: Progressive Disclosure is mandatory — read `docs/dac-ta/ux-patterns/OPERATING_PRINCIPLES.md` first.
+UI work: Design System SSOT is `docs/design-system/README.md`; Progressive Disclosure is mandatory — read `docs/dac-ta/ux-patterns/OPERATING_PRINCIPLES.md` first.
 
 Full rulebook (anti-patterns A1–A12, security, performance, Journey-First UX, known failures): `.agents/AGENT_RULES.md` — read the sections relevant to the task.
 
 ## Before coding
 
 - Domain skills in `.claude/skills/` load automatically by task (api, ui, ai, worker, db schema, testing, creative studio). Read every skill that applies.
-- Find the SSOT for the area in `docs/00-DOCUMENTATION-REGISTRY.yaml` **with `grep`**; for current state read only §4–6 of `docs/kien-truc/TRANG_THAI.md` and grep the rest. Never read either file whole (≈12k and ≈90k tokens).
+- Find SSOT in `docs/00-DOCUMENTATION-REGISTRY.yaml` with `grep`; current state: read §4–6 of `docs/kien-truc/TRANG_THAI.md` and grep the rest (never read whole).
 - Read the real code and its tests before changing them; a ticked checklist or a doc is not evidence.
-- Conflicts: user instruction → `AGENT_RULES.md` → `docs/00-DOCUMENTATION-CONSTITUTION.md` → architecture/`TRANG_THAI.md` → skill → `AGENTS.md` → existing code. Still unclear → ask.
+- Conflicts: user → `AGENT_RULES.md` → CONSTITUTION → `docs/design-system/` (UI SSOT) = architecture/`TRANG_THAI.md` → skill → `AGENTS.md` → code. Skill `ui-ux-pro-max` is reference only; cấm "Generate Design System" (ADR-011 D-UI-11).
 
 ## Stop and ask the PO first when the task would
 
@@ -52,7 +52,7 @@ Otherwise pick the conventional default, state it, and proceed.
 
 **Rule: no new failures versus `main`.** Known leftover: 78 old ESLint errors, ratcheted (`TECHNICAL_DEBT.md` #172). For anything else red, compare against it (`git worktree add /tmp/base origin/main`) and report "pre-existing" vs "new"; only new failures block. Never fix unrelated pre-existing failures under `[PROD]`.
 
-Also: a new business rule or bug fix ships with a test; a new unguarded route must be listed with a reason in `tests/unit/architecture/route-capability-guard.test.ts`; SSOT docs/Screen Contracts update in the same commit; a recurring failure gets a row in `AGENT_RULES.md` §14. Files already over 350 lines: don't grow them; split only when the task substantially rewrites them. If a gate cannot run here (no Postgres, Prisma binaries blocked), say so — never claim it passed.
+New rule/fix ships with a test; unguarded routes listed in `tests/unit/architecture/route-capability-guard.test.ts`; Screen Contracts update in same commit; recurring failures get a row in `AGENT_RULES.md` §14. Files > 350 lines: don't grow; split when rewriting. Never claim a gate passed if blocked.
 
 ## Safety traps
 
@@ -70,4 +70,4 @@ Also: a new business rule or bug fix ships with a test; a new unguarded route mu
 
 ## Commands
 
-Setup `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npm run db:seed` · dev `npm run dev` (port 3100) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.
+Setup `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npm run db:seed` · dev `npm run dev` (port 3200) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.

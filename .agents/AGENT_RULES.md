@@ -79,7 +79,7 @@ When rules conflict, resolve strictly in this order (lower numbers ALWAYS take p
 ## 9. TECH STACK SPECIFICATIONS
 | Layer | Technologies |
 |---|---|
-| Web & Framework | Next.js 16 (App Router), Port `3100`, React 19 (Server Components default) |
+| Web & Framework | Next.js 16 (App Router), Port `3200`, React 19 (Server Components default) |
 | Language & Styling | TypeScript 5.9 strict (alias `@/*`), Tailwind CSS 4, Radix UI / shadcn/ui |
 | Database & ORM | PostgreSQL (Docker), Prisma 7, English `snake_case` schema |
 | Background Worker | Python 3.10+ (`workers/`), `psycopg3` (SKIP LOCKED + LISTEN/NOTIFY) |
@@ -134,6 +134,7 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 | 13 | `storage-write-contract.test.ts` timed out locally (5 s) on 3 runs but passed alone and on CI (30/10/2026) | Repo walker skipped `node_modules`/`__pycache__` but not the local Python virtualenv under workers (`.venv`, 677 MB, ~7.6k `.py`), which exists only on dev machines | Every repo walker in architecture tests skips `.venv`; a test that passes alone but times out in the suite → look for an unexcluded local-only directory before rerunning |
 | 14 | CI `security` red on `main` with no secret in its own diff (31/10/2026: fake HMAC key `const SECRET = "…"` in Integration hub unit tests) | gitleaks scans every fetched branch, so a fake key in a test on any branch turns every PR red | Prefer an obviously fake value without a `key/secret/token = "…"` assignment shape; otherwise add `<commit>:<file>:generic-api-key:<line>` to `.gitleaksignore` with a comment |
 | 15 | E2E checks the old UI instead of the new flagged flow (31/10/2026: `/cong-cu/bo-anh-san-pham` "credit" not found) | Test waited for the flag cache by checking "Công cụ 0x" was absent; removing tool codes from the old UI made that wait a no-op | Wait for a landmark only the new flow renders (`ready` region in `a11y-done-tools.spec.ts`) |
+| 16 | Tạo alias palette Tailwind để né luật lint (01/11/2026, ADR-011 D-UI-02) | Tạo 12 thang màu alias trong `src/app/globals.css:189` (`stone→cool`, `rose→blush`...) để lách regex R1 khiến ux-lint báo xanh giả, màu không áp theo preset theme | TUYỆT ĐỐI CẤM tạo alias hoặc đổi tên palette Tailwind để né lint. Mọi màu sắc phải dùng token ngữ nghĩa (`bg-primary`, `bg-surface`, `text-text`...) hoặc token phân loại được chuẩn hóa (`--color-chart-1..8`, `--color-tone-*`). Thêm/sửa token chỉ qua PR chạm `src/styles/tokens/` được PO duyệt |
 
 ## 15. OPS COPILOT KNOWLEDGE SYNC & ZERO-LEAKAGE PERIMETER
 - **Mandatory Triad Sync**: Any modification to webapp UI, routes, action buttons, or business workflows (`src/app/(app)/`) MUST update both:

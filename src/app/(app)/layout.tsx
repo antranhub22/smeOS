@@ -21,6 +21,7 @@ import { SESSION_SUPERSEDED } from "@/core/http/errors"
 import { LiveRegionProvider } from "@/components/ui/live-region"
 import { I18nProvider } from "@/lib/i18n"
 import { ToolLockGuard } from "@/components/layout/tool-lock-guard"
+import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
 
 import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
 
@@ -67,6 +68,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <GlobalImageZoom />
             <SessionTakeoverWatcher />
             <FloraOSGlobalCopilot />
+            {process.env.NODE_ENV !== "production" && <UiStudioDrawer />}
         </LiveRegionProvider>
       </I18nProvider>
     </SessionProvider>

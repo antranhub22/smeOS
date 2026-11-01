@@ -17,6 +17,7 @@ import { I18nProvider } from "@/lib/i18n"
 import { DesktopNav } from "@/components/layout/desktop-nav"
 import { MobileNavDrawer } from "@/components/layout/mobile-nav-drawer"
 import { BottomNav } from "@/components/layout/bottom-nav"
+import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
 
 export default async function PlatformLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -52,6 +53,7 @@ export default async function PlatformLayout({ children }: { children: React.Rea
             </div>
           </MobileNavDrawer>
           <BottomNav />
+          <UiStudioDrawer />
         </div>
       </I18nProvider>
     </SessionProvider>

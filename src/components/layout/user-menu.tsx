@@ -137,25 +137,27 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
               </span>
             </button>
 
-            {/* Mở UI Studio (Theme & Style Switcher) */}
-            <button
-              type="button"
-              onClick={() => {
-                setMo(false)
-                window.dispatchEvent(new CustomEvent("open-ui-studio"))
-              }}
-              className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
-            >
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-fg text-caption font-bold">
-                🎨
-              </span>
-              <span className="min-w-0">
-                <span className="block">Giao diện (UI Studio)</span>
-                <span className="block truncate text-caption font-medium text-text-muted">
-                  Đổi Theme, Font, Mật độ
+            {/* Mở UI Studio (Theme & Style Switcher) — chỉ cho dev hoặc platform operator (ADR-011 D-UI-01) */}
+            {(process.env.NODE_ENV !== "production" || (platformCapabilities && platformCapabilities.length > 0)) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMo(false)
+                  window.dispatchEvent(new CustomEvent("open-ui-studio"))
+                }}
+                className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-fg text-caption font-bold">
+                  🎨
                 </span>
-              </span>
-            </button>
+                <span className="min-w-0">
+                  <span className="block">Giao diện (UI Studio)</span>
+                  <span className="block truncate text-caption font-medium text-text-muted">
+                    Đổi Theme, Font, Mật độ
+                  </span>
+                </span>
+              </button>
+            )}
 
             {can("A2") && (
               <button

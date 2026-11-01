@@ -563,6 +563,20 @@ documents:
     dependencies: ["docs/dac-ta/03a-ux-constitution.md"]
     supersedes: ["docs/archive/historical/SMEOS_UX_Progressive_Disclosure_Kit/README.md"]
 
+  - id: "DOC-03-DESIGN-SYSTEM-SSOT"
+    path: "docs/design-system/README.md"
+    title: "smeOS Design System — Single Source of Truth"
+    domain: "UX/UI"
+    layer: "Level 3"
+    purpose: "Chỉ mục SSOT và hợp đồng toàn diện về Design Tokens, Component Primitives, Layout Archetypes, Responsive, A11y và Gates"
+    status: "CANONICAL"
+    authority: "Level 3"
+    canonical: true
+    ssot: true
+    owner: "Product Owner / Lead UX Architect"
+    dependencies: ["docs/adr/ADR-011.md", "docs/dac-ta/03a-ux-constitution.md", "docs/dac-ta/03c-ux-progressive-disclosure.md"]
+    supersedes: ["docs/archive/historical/ui-ux-2026-10/DESIGN_TOKENS.md", "docs/archive/historical/ui-ux-2026-10/COMPONENT_CONTRACTS.md"]
+
   - id: "DOC-03-UX-PATTERNS"
     path: "docs/dac-ta/ux-patterns/README.md"
     title: "UX Patterns — Thư viện luồng chuẩn UX-P01…P12"
@@ -673,7 +687,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Lead UX Architect"
-    dependencies: ["docs/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/screen-contracts/_journey-home-store.md"]
+    dependencies: ["docs/kien-truc/Nâng cấp tasks/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/screen-contracts/_journey-home-store.md"]
     supersedes: []
 
   # =========================================================================
@@ -872,7 +886,7 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner / Chief Architect"
-    dependencies: ["docs/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md", "docs/kien-truc/KE_HOACH_THUC_THI_NANG_CAP_ROLE_CAPABILITY_ARCHITECTURE.md"]
+    dependencies: ["docs/kien-truc/Nâng cấp tasks/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md", "docs/kien-truc/KE_HOACH_THUC_THI_NANG_CAP_ROLE_CAPABILITY_ARCHITECTURE.md"]
     supersedes: []
 
   - id: "DOC-05-KE-HOACH-MA-TRAN-THE-CHAO"
@@ -914,7 +928,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Product Owner / UX Architect"
-    dependencies: ["docs/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md", "docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md"]
+    dependencies: ["docs/kien-truc/Nâng cấp tasks/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md", "docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md"]
     supersedes: []
 
   - id: "DOC-05-CHECKLIST-CREATIVE-STUDIO"
