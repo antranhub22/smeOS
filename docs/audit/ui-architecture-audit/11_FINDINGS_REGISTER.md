@@ -60,6 +60,8 @@ UI-F-04 (`min-w-[720px]` cố định), UI-F-05 (lưới ≥4 cột không break
 
 ## Cần PO quyết (không tự làm — theo `CLAUDE.md` “Stop and ask”)
 
+> **Cập nhật 01/11/2026:** cả 8 mục đã được quyết theo uỷ quyền của PO — xem `docs/adr/ADR-011.md`; kế hoạch thực thi: `docs/plan/ui-enterprise-upgrade.md`.
+
 1. **UI Studio**: giữ cho ai (chỉ dev? platform_admin? tắt ở production?) — UI-A-03.
 2. **Thang màu đổi tên** (`cool/blush/…`): coi là vi phạm R1 và lập kế hoạch thay bằng token ngữ nghĩa, hay hợp thức hoá có điều kiện? Đồng thời mở rộng R1 — UI-B-01, UI-G-03.
 3. **Mục tiêu theme**: preset theo người dùng, theo tổ chức (brand), hay theo tầng? Có cần dark mode? (quyết định này quyết định giữ hay bỏ 6 preset và các biến chết) — UI-B-03, UI-B-08.
