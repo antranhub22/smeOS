@@ -64,11 +64,33 @@ export function isFeatureLockEnabled(
   return appEnv === "production"
 }
 
+/**
+ * Tuyến CHƯA VẬN HÀNH ĐƯỢC trên production, khoá ở MỌI bản build production — không phụ thuộc
+ * `NEXT_PUBLIC_APP_ENV` (P0-06):
+ * - `/market-intelligence`: worker nghiên cứu thị trường chưa được triển khai (D-20b).
+ * - `/lich-dang`, `/ket-noi`: còn gọi SocialFlow qua proxy, production không cấu hình SocialFlow; mở lại
+ *   khi đăng bài chạy ngay trong SMEOS (Workstream S, `docs/audit/architecture-audit/17_…`).
+ */
+export const UNAVAILABLE_ROUTE_PREFIXES: readonly string[] = ["/market-intelligence", "/lich-dang", "/ket-noi"]
+
+export function isUnavailableLockEnabled(nodeEnv: string | undefined = process.env.NODE_ENV): boolean {
+  return nodeEnv === "production"
+}
+
+function matchesAny(path: string, prefixes: readonly string[]): boolean {
+  return prefixes.some((p) => path === p || path.startsWith(`${p}/`))
+}
+
 /** `href` có thể kèm query (`/creative-studio?tab=area-d`). */
-export function isRouteLocked(href: string, enabled = isFeatureLockEnabled()): boolean {
-  if (!enabled) return false
+export function isRouteLocked(
+  href: string,
+  enabled = isFeatureLockEnabled(),
+  unavailableEnabled = isUnavailableLockEnabled()
+): boolean {
   const path = href.split(/[?#]/)[0] ?? href
-  return LOCKED_ROUTE_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`))
+  if (unavailableEnabled && matchesAny(path, UNAVAILABLE_ROUTE_PREFIXES)) return true
+  if (!enabled) return false
+  return matchesAny(path, LOCKED_ROUTE_PREFIXES)
 }
 
 export function isJourneyLocked(journeyId: string, enabled = isFeatureLockEnabled()): boolean {

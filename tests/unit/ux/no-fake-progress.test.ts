@@ -136,3 +136,20 @@ describe("Nội dung #04 — đọc đúng hợp đồng /api/v1/products, xem t
     expect(read("src/components/templates/content-engine/multichannel-post-card.tsx")).not.toMatch(/Offline Fallback|Critic|GPU Metal/)
   })
 })
+
+describe("Lịch đăng — không báo đăng thành công giả, không link bài giả (P0-06)", () => {
+  it("lỗi mạng khi đăng trả lỗi, không đánh dấu đã đăng; không dựng link trang chung thay link bài", () => {
+    const page = read("src/app/(app)/lich-dang/page.tsx")
+    expect(page).not.toMatch(/mô phỏng phát sóng thành công/i)
+    expect(page).not.toContain("makeChannelUrl")
+    expect(page).not.toContain("facebook.com/me")
+    expect(page).toContain("Bài chưa được đăng lên")
+  })
+
+  it("thẻ trạng thái chỉ hiện link bài thật do nền tảng trả về", () => {
+    const card = read("src/components/templates/social-publishing/post-status-report-card.tsx")
+    expect(card).not.toContain("facebook.com/me")
+    expect(card).not.toContain("getChannelDirectUrl")
+    expect(card).toContain("realPostUrl(")
+  })
+})
