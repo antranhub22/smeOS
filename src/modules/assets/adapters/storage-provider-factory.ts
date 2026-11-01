@@ -3,6 +3,7 @@ import "server-only"
 import type { StorageProvider } from "@/core/ports"
 import { log } from "@/core/observability/log"
 
+import { localStorageAllowed, missingStorageVars } from "../domain/storage-config"
 import { LocalDiskStorageProvider } from "./local-disk-storage-provider"
 import { S3StorageProvider } from "./s3-storage-provider"
 
@@ -34,14 +35,18 @@ export function getStorageProvider(): StorageProvider {
     return daDung
   }
 
+  const thieu = missingStorageVars(process.env)
+  // Production thiếu kho dùng chung → hỏng to thay vì ghi tệp xuống đĩa sẽ mất khi deploy (P0-05).
+  if (!localStorageAllowed(process.env)) {
+    log.error("kho_tep.thieu_cau_hinh", { thieu })
+    throw new Error(
+      `Thiếu cấu hình kho tệp dùng chung (${thieu.join(", ")}). Production không được lưu tệp xuống đĩa cục bộ; ` +
+        "đặt các biến STORAGE_* hoặc ALLOW_LOCAL_STORAGE=true nếu đây là môi trường thử."
+    )
+  }
+
   if (!daCanhBao) {
     daCanhBao = true
-    const thieu = [
-      !endpoint && "STORAGE_ENDPOINT",
-      !bucket && "STORAGE_BUCKET",
-      !accessKey && "STORAGE_ACCESS_KEY",
-      !secretKey && "STORAGE_SECRET_KEY",
-    ].filter(Boolean)
     log.warn("kho_tep.dia_cuc_bo", {
       thieu,
       hau_qua:

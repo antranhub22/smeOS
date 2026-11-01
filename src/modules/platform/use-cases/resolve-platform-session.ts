@@ -37,34 +37,10 @@ export async function requirePlatformContext(request: Request): Promise<Platform
   const user = await getUserRepository().findById(session.user_id)
   if (!user) throw unauthenticated()
 
-  // Dev-only: hỗ trợ DevRoleOverride & SuperUser khi dev mà chưa chạy script gán quyền thủ công
-  if (process.env.NODE_ENV !== "production") {
-    const rawDev = readCookie(request, "smeos_dev_role")
-    if (rawDev) {
-      try {
-        const parsed = JSON.parse(decodeURIComponent(rawDev))
-        if (parsed?.roleKey === "platform_admin" || parsed?.organizationType === "PLATFORM") {
-          return {
-            userId: user.id,
-            capabilities: new Set(["N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N12"]),
-          }
-        }
-      } catch {
-        // ignore
-      }
-    }
-    if (user.email === "tuans2@dev.com" || Boolean(user.email?.endsWith("@dev.com"))) {
-      const operator = await getPlatformOperatorRepository().findActiveByUserId(user.id)
-      if (operator) {
-        return { userId: user.id, capabilities: new Set(operator.capabilityCodes) }
-      }
-      return {
-        userId: user.id,
-        capabilities: new Set(["N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N12"]),
-      }
-    }
-  }
-
+  // Quyền vận hành CHỈ đến từ `platform_operators` — ở mọi môi trường (P0-04, ARC-003). Trước đây
+  // ngoài production, email đuôi `@dev.com` hoặc cookie `smeos_dev_role` tự có mã N: môi trường thử
+  // nào mở ra Internet cũng thành console xuyên tổ chức cho người lạ. Máy dev cấp quyền bằng seed
+  // dev (`prisma/seed/sync-siin-store.ts`) hoặc `npm run gan-van-hanh-nen-tang`.
   const operator = await getPlatformOperatorRepository().findActiveByUserId(user.id)
   if (!operator) {
     throw new AppError("CAPABILITY_DENIED", "Không phải người vận hành nền tảng", {

@@ -35,9 +35,10 @@ Zalo OA của **từng tiệm** (chat bán hàng) không dùng biến môi trư�
 
 ## 3. Triển khai bản mới
 
-1. Mở PR vào `main`; CI (`.github/workflows/ci.yml`) phải xanh: typecheck, lint ratchet, UX lint, unit, tenant, platform, build, E2E, worker pytest, gitleaks, `npm audit` (high).
-2. Merge → Render tự build `smeos-web`. Bước build chạy `npm run db:deploy` (`prisma migrate deploy`) **trước** `build`; migration lỗi → build dừng, bản cũ vẫn chạy.
-3. Sau khi deploy: kiểm `/api/health`, đăng nhập một tài khoản Điều hành, mở trang chủ và một đơn hàng.
+1. Mở PR vào `main`; CI (`.github/workflows/ci.yml`) phải xanh: typecheck, lint ratchet, UX lint, unit, tenant, platform, build, E2E, worker pytest, gitleaks, `npm audit` (high), ratchet thuật ngữ ngành (job `industry-terms`).
+2. Merge → CI chạy lại trên `main`; **chỉ khi cả 5 job xanh**, job `deploy` gọi deploy hook của 4 dịch vụ Render (`smeos-web` + 3 worker) với đúng commit vừa qua CI. `render.yaml` đặt `autoDeploy: false` — merge khi CI đỏ không deploy. Deploy hook lấy ở *Render → dịch vụ → Settings → Deploy Hook*, lưu thành GitHub secret `RENDER_DEPLOY_HOOK_WEB`, `RENDER_DEPLOY_HOOK_WORKER_MEDIA`, `RENDER_DEPLOY_HOOK_WORKER_VIDEO`, `RENDER_DEPLOY_HOOK_WORKER_VISION`; thiếu secret → job `deploy` đỏ. Deploy tay khẩn cấp: nút *Manual Deploy* trên Render.
+3. Render build `smeos-web`. Bước build chạy `npm run db:deploy` (`prisma migrate deploy`) **trước** `build`; migration lỗi → build dừng, bản cũ vẫn chạy.
+4. Sau khi deploy: kiểm `/api/health`, đăng nhập một tài khoản Điều hành, mở trang chủ và một đơn hàng.
 
 Migration chỉ đi tiến. Migration mới phải idempotent hoặc an toàn khi chạy lại (mẫu: `prisma/migrations/20261028000000_notification_org_index_and_names`).
 

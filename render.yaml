@@ -13,7 +13,7 @@ services:
     buildCommand: npm ci --include=dev && npx prisma generate && npm run db:deploy && npm run db:seed && npm run build
     startCommand: npm run start
     healthCheckPath: /api/health
-    autoDeploy: true
+    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
     branch: main
     envVars:
       - key: DATABASE_URL
@@ -26,6 +26,10 @@ services:
         value: "false"
       - key: NODE_OPTIONS
         value: "--max-old-space-size=2048"
+      # Bỏ kiểm kiểu trong `next build` trên Render: commit được deploy đã qua `npm run typecheck` ở CI
+      # (job `deploy` chỉ chạy khi CI xanh — P0-02/P0-08). Build trên CI vẫn kiểm kiểu.
+      - key: SKIP_BUILD_TYPECHECK
+        value: "true"
       - key: SESSION_SECRET
         generateValue: true
       - key: SSO_SESSION_SECRET
@@ -129,7 +133,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m media_ai.jobs.worker
-    autoDeploy: true
+    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
     branch: main
     envVars:
       - key: DATABASE_URL
@@ -176,7 +180,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m media_ai.video.video_worker
-    autoDeploy: true
+    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
     branch: main
     envVars:
       - key: DATABASE_URL
@@ -211,7 +215,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m vision.jobs.worker
-    autoDeploy: true
+    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
     branch: main
     envVars:
       - key: DATABASE_URL

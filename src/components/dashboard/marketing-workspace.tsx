@@ -21,6 +21,7 @@ import { UserMenu } from "@/components/layout/user-menu"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
+import { isRouteLocked } from "@/lib/feature-lock"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 
 class ChuaDangNhap extends Error {}
@@ -63,9 +64,14 @@ export function MarketingWorkspace() {
   const napLai = useCallback(async () => {
     setLoi(null)
     try {
+      // Nguồn đang khoá trên production (P0-06) thì không gọi — tránh báo lỗi cả khối vì một nguồn chưa vận hành.
       const [postRes, oppRes] = await Promise.all([
-        layJson<{ data?: SocialPost[]; posts?: SocialPost[] }>("/api/v1/proxy/api/m07/posts?client=SOCIALFLOW"),
-        layJson<{ items?: OpportunityItem[]; data?: OpportunityItem[] }>("/api/v1/market-intelligence/opportunities?limit=6"),
+        isRouteLocked("/lich-dang")
+          ? Promise.resolve(null)
+          : layJson<{ data?: SocialPost[]; posts?: SocialPost[] }>("/api/v1/proxy/api/m07/posts?client=SOCIALFLOW"),
+        isRouteLocked("/market-intelligence")
+          ? Promise.resolve(null)
+          : layJson<{ items?: OpportunityItem[]; data?: OpportunityItem[] }>("/api/v1/market-intelligence/opportunities?limit=6"),
       ])
 
       const listPosts = postRes?.data ?? postRes?.posts ?? []

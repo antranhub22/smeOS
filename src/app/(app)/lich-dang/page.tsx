@@ -223,16 +223,6 @@ export default function SocialPublishingPage() {
     const found = posts.find((p) => String(p.id) === String(postId))
     const channel = found?.platform || "facebook"
 
-    function makeChannelUrl(ch: string) {
-      const c = ch.toLowerCase()
-      if (c.includes("face")) return "https://www.facebook.com/me"
-      if (c.includes("insta")) return "https://www.instagram.com/"
-      if (c.includes("link")) return "https://www.linkedin.com/in/me/recent-activity/all/"
-      if (c.includes("tik")) return "https://www.tiktok.com/"
-      if (c.includes("zalo")) return "https://oa.zalo.me"
-      return "https://www.facebook.com/me"
-    }
-
     try {
       let res = await fetch(`/api/v1/proxy/api/m07/posts/${postId}/publish?client=SOCIALFLOW`, {
         method: "POST",
@@ -244,7 +234,9 @@ export default function SocialPublishingPage() {
       }
 
       if (res.ok) {
-        const liveUrl = makeChannelUrl(channel)
+        // Chỉ hiện link do nền tảng trả về — không dựng link chung chung giả làm link bài (P0-06).
+        const okJson = (await res.json().catch(() => ({}))) as { post_url?: string | null; data?: { post_url?: string | null } }
+        const liveUrl = okJson.post_url ?? okJson.data?.post_url ?? null
         setPosts((prev) =>
           prev.map((p) =>
             String(p.id) === String(postId) ? { ...p, status: "published", post_url: liveUrl } : p
@@ -254,7 +246,7 @@ export default function SocialPublishingPage() {
           setSelectedPost((prev) => (prev ? { ...prev, status: "published", post_url: liveUrl } : null))
         }
         setNotice(`Đã xuất bản thành công bài viết lên ${found?.channel_label || channel}!`)
-        return { success: true, url: liveUrl }
+        return liveUrl ? { success: true, url: liveUrl } : { success: true }
       } else {
         const errJson = await res.json().catch(() => ({}))
         const errorDetail =
@@ -265,18 +257,11 @@ export default function SocialPublishingPage() {
         }
       }
     } catch {
-      // Demo / fallback mô phỏng phát sóng thành công
-      const demoUrl = makeChannelUrl(channel)
-      setPosts((prev) =>
-        prev.map((p) =>
-          String(p.id) === String(postId) ? { ...p, status: "published", post_url: demoUrl } : p
-        )
-      )
-      if (selectedPost && String(selectedPost.id) === String(postId)) {
-        setSelectedPost((prev) => (prev ? { ...prev, status: "published", post_url: demoUrl } : null))
+      // Lỗi mạng KHÔNG được coi là đã đăng (trước đây trang báo "xuất bản thành công" giả — P0-06).
+      return {
+        success: false,
+        error: `Không kết nối được dịch vụ đăng bài. Bài chưa được đăng lên ${found?.channel_label || channel}, hãy thử lại sau.`,
       }
-      setNotice(`Đã xuất bản thành công bài viết lên ${found?.channel_label || channel}!`)
-      return { success: true, url: demoUrl }
     } finally {
       setActionLoading(false)
       setTimeout(() => setNotice(null), 4000)

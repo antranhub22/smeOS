@@ -94,6 +94,7 @@ Việc làm tay còn lại trước khi đưa khách vào:
   - Lệnh: `MAT_KHAU_TEST01='…' MAT_KHAU_TEST02='…' npm run tao-tai-khoan-test -- --xac-nhan` (mỗi mật khẩu ≥ 12 ký tự, hai mật khẩu khác nhau). Bỏ `--xac-nhan` thì chỉ kiểm tra. Đổi vai `test02`: thêm `--vai=dieu_phoi`. Chạy xong: `history -c`.
   - Cách khác: thêm ở *Cài đặt → Thành viên* của Siin Store — nhanh hơn nhưng dữ liệu test lẫn vào cửa hàng thật.
 - [ ] Bật thông báo lỗi của Render, mức *Only failure notifications* (`VAN_HANH_SU_CO_VA_SAO_LUU.md` mục 2).
-- [ ] GitHub ruleset cho `main`: bắt buộc PR, check `web`, `worker`, `e2e-ux`, `security` xanh, chặn force push. Số người duyệt: 0 nếu chỉ một người làm repo, ≥ 1 khi có đội.
+- [ ] Thêm 4 secret deploy hook Render vào GitHub (`OPERATIONS_RUNBOOK.md` §3) — `render.yaml` đã tắt `autoDeploy`, thiếu secret thì `main` không deploy.
+- [ ] GitHub ruleset cho `main`: bắt buộc PR, check `web`, `worker`, `e2e-ux`, `security`, `industry-terms` xanh, chặn force push. Số người duyệt: 0 nếu chỉ một người làm repo, ≥ 1 khi có đội.
 - [ ] Bật secret scanning và push protection (*Settings → Advanced Security*).
 - Deploy đầu tiên theo `VAN_HANH_CAP_NHAT_CSDL.md` mục 4: export CSDL trước, rồi đọc log `db-deploy`.
