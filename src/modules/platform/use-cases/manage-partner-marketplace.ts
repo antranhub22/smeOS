@@ -12,6 +12,7 @@ import { getPartnerMarketplaceRepository } from "../infra/partner-marketplace-re
 import { parseMarketplaceWorkbook } from "../infra/parse-marketplace-excel"
 import { GoogleWorkspaceError, getGoogleWorkspaceClient, type GoogleWorkspaceClient } from "../adapters/google-workspace-client"
 import { filterMarketplaceStores, type ListMarketplaceStoresFilter, type ListMarketplaceStoresResult } from "../domain/partner-marketplace-filter"
+import { maskMarketplaceStore } from "../domain/partner-marketplace-mask"
 import { MAX_PHOTOS_PER_STORE, driveThumbnailUrl, rowsToProfiles } from "../domain/partner-marketplace-row-mapper"
 import type { IPartnerMarketplaceRepository, MarketplaceImportSource } from "../domain/repositories/partner-marketplace-repository.interface"
 import { downloadStorePhotos, partnerPhotoKeyPrefix } from "./partner-marketplace-photos"
@@ -43,13 +44,25 @@ export async function listMarketplaceStores(
   deps: Pick<MarketplaceDeps, "repo" | "storage"> = defaultDeps()
 ): Promise<ListMarketplaceStoresResult> {
   requirePlatformCapability(pctx, "N1")
+  return listMaskedStores(filter, deps)
+}
+
+/**
+ * Danh sách đã che một phần thông tin nhạy cảm (PO 01/11/2026) — dùng chung cho console
+ * và link chia sẻ công khai. Người gọi tự kiểm quyền.
+ */
+export async function listMaskedStores(
+  filter: ListMarketplaceStoresFilter,
+  deps: Pick<MarketplaceDeps, "repo" | "storage">
+): Promise<ListMarketplaceStoresResult> {
   const entries = await deps.repo.listAll()
   const keysById = new Map(entries.map((e) => [e.store.id, e.photoKeys]))
   const result = filterMarketplaceStores(entries, filter)
   const stores = await Promise.all(
     result.stores.map(async (store) => {
       const urls = await photoUrlsFor(store.id, store.media.driveImageIds ?? [], keysById.get(store.id) ?? [], deps.storage)
-      return { ...store, media: { ...store.media, photoGalleryUrls: urls, coverPhotoUrl: urls[0] } }
+      const masked = maskMarketplaceStore(store)
+      return { ...masked, media: { ...masked.media, photoGalleryUrls: urls, coverPhotoUrl: urls[0] } }
     })
   )
   return { ...result, stores }
