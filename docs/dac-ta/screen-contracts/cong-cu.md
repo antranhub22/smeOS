@@ -1,3 +1,18 @@
+---
+id: SCR-STORE-cong-cu
+tier: STORE
+module: toolkit
+route: /cong-cu
+archetype: A
+snapshots:
+  mobile: 390x844
+  desktop: 1280x800
+acceptance:
+  - Hiển thị danh mục mục tiêu tiếp thị & bán hàng
+  - Chuyển đổi giữa danh mục module và chi tiết loại ấn phẩm
+  - Bàn phím tab điều hướng được toàn bộ thẻ ấn phẩm và công cụ
+---
+
 # Screen Contract — Trung tâm Tiếp thị & Bán hàng (/cong-cu)
 
 **Tuyến:** `/cong-cu` · **Tệp chính:** `src/app/(app)/cong-cu/page.tsx`, `src/components/dashboard/toolkit-home.tsx` · **Cập nhật:** 01/11/2026 · **Thẻ:** PR-0

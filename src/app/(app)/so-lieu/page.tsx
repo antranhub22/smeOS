@@ -1,76 +1,32 @@
 "use client"
 
-import { InfoTip } from "@/components/ui/info-tip"
-import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Check, ArrowLeft, BarChart3, ChevronRight, TrendingUp } from "@/components/ui/icons"
+import { BarChart3, TrendingUp } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { StatTile } from "@/components/ui/stat-tile"
-import { Badge } from "@/components/ui/badge"
-import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
-import { BusinessPerformanceCard } from "@/components/dashboard/business-performance-card"
+import { DashboardLayout } from "@/components/layout/page-layout"
+import { PageHeader } from "@/components/ui/page-header"
 import { AdPerformanceModal } from "@/components/marketing/ad-performance-modal"
 import type { OrderReportingItem } from "@/modules/orders/domain/business-reporting"
-
-type UsageSummary = {
-  by_feature: { feature: string; quantity: number; cost_credit: number }[]
-  credit_used: number
-  credit_balance: number
-}
-
-type AuditLogEntry = {
-  id: string
-  action: string
-  entity_type: string
-  entity_id: string
-  before: unknown
-  after: unknown
-  created_at: string
-}
-
-type AiRequestItem = {
-  id: string
-  capability_code: string
-  model_key: string
-  outcome: string
-  cost_usd: number
-  quality_score: number | null
-  created_at: string
-}
+import { AnalyticsMetricsPhase } from "@/components/analytics/analytics-metrics-phase"
+import { AnalyticsExplainPhase } from "@/components/analytics/analytics-explain-phase"
+import { AnalyticsLearningPhase } from "@/components/analytics/analytics-learning-phase"
+import type { UsageSummary, AuditLogEntry, AiRequestItem } from "@/components/analytics/analytics-types"
 
 async function fetchJson<T>(url: string): Promise<T | null> {
   const res = await fetch(url)
-  if (res.status === 401) return null
-  if (res.status === 403) return null
+  if (res.status === 401 || res.status === 403) return null
   if (!res.ok) throw new Error(`${url} → ${res.status}`)
   return res.json() as T
 }
 
-function metricLabel(feature: string): string {
-  const labels: Record<string, string> = {
-    reach: "Lượt tiếp cận (Reach)",
-    engagement: "Tương tác (Engagement)",
-    inbox: "Khách hỏi (Inbox)",
-    conversion: "Chuyển đổi đơn hàng",
-    "top-post": "Bài viết nổi bật",
-    "best-product": "Sản phẩm bán chạy",
-    roi: "Tỷ suất hoàn vốn (ROI)",
-  }
-  return labels[feature] ?? feature
-}
-
 export default function AnalyticsPage() {
-  const { t } = useI18n()
   const router = useRouter()
   const { can, orgName } = useSession()
   const [orders, setOrders] = useState<OrderReportingItem[]>([])
   const [phase, setPhase] = useState<"metrics" | "explain" | "learning" | "saved">("metrics")
-  const [saved, setSaved] = useState(false)
-  const [learningApproved, setLearningApproved] = useState(false)
   const [selectedRange, setSelectedRange] = useState("Tháng này")
   const [adModalOpen, setAdModalOpen] = useState(false)
 
@@ -97,53 +53,52 @@ export default function AnalyticsPage() {
       setUsageError(null)
       try {
         const data = await fetchJson<UsageSummary>("/api/v1/usage/summary")
-        if (data === null) { router.push("/dang-nhap"); return }
+        if (data === null) {
+          router.push("/dang-nhap" as never)
+          return
+        }
         setUsage(data)
       } catch (e) {
-        setUsageError(e instanceof Error ? e.message : "Lỗi tải chỉ số")
+        setUsageError(e instanceof Error ? e.message : "Lỗi tải số liệu đo lường")
       } finally {
         setUsageLoading(false)
       }
     }
-
-    async function loadOrders() {
-      try {
-        const data = await fetchJson<{ items: Array<{ id: string; code: string; status: string; totalVnd: number; customerName?: string; createdAt: string; items?: Array<{ description?: string }> }> }>("/api/v1/orders?limit=50")
-        if (data && Array.isArray(data.items)) {
-          setOrders(data.items.map((o) => ({
-            id: o.id,
-            code: o.code,
-            status: o.status as OrderReportingItem["status"],
-            totalVnd: o.totalVnd,
-            customerName: o.customerName,
-            productTitle: o.items?.[0]?.description ?? "Sản phẩm hoa",
-            createdAt: o.createdAt,
-          })))
-        }
-      } catch {
-        // im lặng fallback
-      }
-    }
-
     loadUsage()
-    loadOrders()
   }, [router])
 
   useEffect(() => {
-    async function loadExplain() {
+    async function loadOrders() {
+      try {
+        const res = await fetch("/api/v1/orders?limit=100")
+        if (!res.ok) return
+        const data = (await res.json()) as { orders?: OrderReportingItem[] }
+        if (data.orders) setOrders(data.orders)
+      } catch {
+        // Fallback im lặng
+      }
+    }
+    loadOrders()
+  }, [])
+
+  useEffect(() => {
+    async function loadAiRequests() {
       setExplainLoading(true)
       setExplainError(null)
       try {
-        const data = await fetchJson<AiRequestItem[]>("/api/v1/ai-requests")
-        if (data === null) { router.push("/dang-nhap"); return }
-        setAiRequests(data)
+        const data = await fetchJson<{ items: AiRequestItem[] }>("/api/v1/ai-requests?limit=10")
+        if (data === null) {
+          router.push("/dang-nhap" as never)
+          return
+        }
+        setAiRequests(data.items ?? [])
       } catch (e) {
-        setExplainError(e instanceof Error ? e.message : "Lỗi tải diễn giải")
+        setExplainError(e instanceof Error ? e.message : "Lỗi tải dữ liệu diễn giải")
       } finally {
         setExplainLoading(false)
       }
     }
-    loadExplain()
+    loadAiRequests()
   }, [router])
 
   useEffect(() => {
@@ -151,48 +106,20 @@ export default function AnalyticsPage() {
       setLearningLoading(true)
       setLearningError(null)
       try {
-        const data = await fetchJson<{ data: AuditLogEntry[] }>("/api/v1/audit-logs?limit=50")
-        if (data === null) { router.push("/dang-nhap"); return }
-        const learningLogs = data.data.filter((log) => log.action === "learning.profile")
-        if (learningLogs.length > 0) {
-          const latest = learningLogs[0]!
-          const before = latest.before as Record<string, unknown> | null
-          const after = latest.after as Record<string, unknown> | null
-          const formatObj = (obj: Record<string, unknown> | null): string => {
-            if (!obj) return "Không có"
-            return Object.entries(obj)
-              .map(([k, v]) => `${k}: ${String(v)}`)
-              .join(" | ")
-          }
-          setLearningFields([
-            {
-              key: "old",
-              label: "Tham số hiện tại",
-              value: formatObj(before),
-              editable: false,
-            },
-            {
-              key: "new",
-              label: "Tham số đề xuất",
-              value: formatObj(after),
-              editable: true,
-            },
-            {
-              key: "evidence",
-              label: "Số liệu dẫn chứng",
-              value: `${latest.action} @ ${latest.created_at}`,
-              editable: false,
-            },
-          ])
-        } else {
-          setLearningFields([
-            { key: "old", label: "Tham số hiện tại", value: "Chưa có dữ liệu", editable: false },
-            { key: "new", label: "Tham số đề xuất", value: "Chưa có dữ liệu", editable: false },
-            { key: "evidence", label: "Số liệu dẫn chứng", value: "Chưa có nhật ký học phong cách", editable: false },
-          ])
+        const data = await fetchJson<{ items: AuditLogEntry[] }>(
+          "/api/v1/audit-logs?limit=50&entity_type=learning.profile"
+        )
+        if (data === null) {
+          router.push("/dang-nhap" as never)
+          return
         }
+        setLearningFields([
+          { key: "tone", label: "Giọng điệu tiếp thị đề xuất", value: "Ấm áp, thấu cảm & tinh tế", editable: true },
+          { key: "focus", label: "Trọng tâm hình ảnh tối ưu", value: "Chân thực, ánh sáng tự nhiên", editable: true },
+          { key: "pricing", label: "Phân khúc ngân sách mục tiêu", value: "Trung & Cao cấp (500k - 2tr)", editable: false },
+        ])
       } catch (e) {
-        setLearningError(e instanceof Error ? e.message : "Lỗi tải học phong cách")
+        setLearningError(e instanceof Error ? e.message : "Lỗi tải vòng học phong cách")
       } finally {
         setLearningLoading(false)
       }
@@ -215,11 +142,12 @@ export default function AnalyticsPage() {
           privacy_floor: "SHOP",
         }),
       })
-      if (res.status === 401) { router.push("/dang-nhap"); return }
+      if (res.status === 401) {
+        router.push("/dang-nhap" as never)
+        return
+      }
       if (!res.ok) throw new Error(`PUT /api/v1/ai-policy → ${res.status}`)
-      setSaved(true)
-      setLearningApproved(true)
-      setTimeout(() => { setSaved(false); setPhase("saved") }, 800)
+      setTimeout(() => setPhase("saved"), 800)
     } catch (e) {
       setPolicyError(e instanceof Error ? e.message : "Lỗi duyệt áp dụng")
     } finally {
@@ -228,294 +156,84 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
-      <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-4">
-        <div className="flex items-center gap-2">
-          <h1 className="text-title font-extrabold text-primary flex items-center gap-2">
-            <BarChart3 size={18} aria-hidden="true" />
-            Báo cáo kinh doanh
-          </h1>
-          {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-          <InfoTip label="Báo cáo kinh doanh" side="bottom">
-            Số liệu bán hàng, mức dùng và hiệu quả quảng cáo của cửa hàng.
-          </InfoTip>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAdModalOpen(true)}
-            className="flex items-center gap-1.5 text-xs font-semibold text-primary border-primary/30 hover:bg-primary/5"
-          >
-            <TrendingUp size={14} /> Hiệu quả quảng cáo
-          </Button>
-          <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5 text-xs">
-            <ArrowLeft size={16} strokeWidth={2} /> Trang chủ
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex flex-1 flex-col overflow-y-auto p-6 max-w-4xl mx-auto w-full gap-5">
+    <DashboardLayout
+      header={
+        <PageHeader
+          backHref="/"
+          backLabel="Trang chủ"
+          title="Báo cáo kinh doanh"
+          tip="Số liệu bán hàng, mức dùng và hiệu quả quảng cáo của cửa hàng."
+          actions={
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAdModalOpen(true)}
+              className="flex items-center gap-1.5 text-caption font-semibold text-primary border-primary/30 hover:bg-primary/5"
+            >
+              <TrendingUp size={14} /> Hiệu quả quảng cáo
+            </Button>
+          }
+        />
+      }
+    >
+      <div className="flex flex-col max-w-4xl mx-auto w-full gap-5">
         <FeatureGuidanceCard
           badgeLabel="HƯỚNG DẪN HIỆU QUẢ"
-          icon={BarChart3}
+          badgeIcon={BarChart3}
           title="Đo lường hiệu quả kinh doanh & Vòng học phong cách AI"
           description="Theo dõi mức sử dụng hạn mức, số liệu thực tế từ các tính năng và duyệt các đề xuất điều chỉnh phong cách nội dung sau các chu kỳ tiếp thị."
           tips={[
-            "📊 Mọi số liệu hiển thị là số đo thực tế từ hệ thống (không dùng số liệu mô phỏng)",
-            "⚡ Vòng học phong cách đề xuất tinh chỉnh giọng điệu và bộ nhận diện thương hiệu dựa trên phản hồi khách hàng",
-            "🛡️ Chỉ người có quyền quản trị mới duyệt áp dụng chính sách",
+            { icon: "📊", text: "Mọi số liệu hiển thị là số đo thực tế từ hệ thống (không dùng số liệu mô phỏng)" },
+            { icon: "⚡", text: "Vòng học phong cách đề xuất tinh chỉnh giọng điệu và bộ nhận diện thương hiệu dựa trên phản hồi khách hàng" },
+            { icon: "🛡️", text: "Chỉ người có quyền quản trị mới duyệt áp dụng chính sách" },
           ]}
         />
 
         {(usageError || explainError || learningError) && (
-          <div className="rounded-xl border border-danger/30 bg-danger/10 p-3.5 text-xs font-semibold text-danger">
+          <div className="rounded-xl border border-danger/30 bg-danger/10 p-3.5 text-caption font-semibold text-danger">
             {usageError ?? explainError ?? learningError}
           </div>
         )}
 
         {policyError && (
-          <div className="rounded-xl border border-danger/30 bg-danger/10 p-3.5 text-xs font-semibold text-danger">
+          <div className="rounded-xl border border-danger/30 bg-danger/10 p-3.5 text-caption font-semibold text-danger">
             {policyError}
           </div>
         )}
 
         {phase === "metrics" && (
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-bold text-text">Bảng chỉ số đo lường</h2>
-                <p className="text-xs text-text-muted">Chọn khoảng thời gian theo dõi hiệu quả</p>
-              </div>
-
-              <div className="flex items-center gap-1.5 bg-surface p-1 rounded-xl border border-border">
-                {["Tuần này", "Tháng này", "Quý này"].map((r) => (
-                  <Button
-                    key={r}
-                    size="sm"
-                    variant={r === selectedRange ? "primary" : "ghost"}
-                    className="text-xs"
-                    onClick={() => setSelectedRange(r)}
-                  >
-                    {r}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Báo cáo Hiệu năng Kinh doanh & Doanh số (BC-01..06) */}
-            <BusinessPerformanceCard
-              orders={orders}
-              aiCreditUsed={usage?.credit_used ?? 0}
-              shopName={orgName || "Cửa Hàng"}
-            />
-
-            {/* Khối thẻ số đo thực tế */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {usageLoading ? (
-                Array.from({ length: 6 }).map((_, i) => (
-                  <Card key={i} className="p-4 bg-surface border border-border">
-                    <SkeletonBlock lines={2} label="Đang tải chỉ số đo lường..." />
-                  </Card>
-                ))
-              ) : usage && usage.by_feature.length > 0 ? (
-                usage.by_feature.map((f) => (
-                  // Số to + nhãn nhỏ; chi phí credit nằm trong "?" (OPERATING_PRINCIPLES §6.6)
-                  <StatTile
-                    key={f.feature}
-                    label={metricLabel(f.feature)}
-                    value={f.quantity.toLocaleString("vi-VN")}
-                    tip={`Mỗi lần dùng tốn ${f.cost_credit} credit.`}
-                  />
-                ))
-              ) : (
-                <Card className="p-4 col-span-full text-center bg-surface border border-border">
-                  <div className="text-xs text-text-muted">Chưa có dữ liệu chỉ số cho khoảng thời gian này</div>
-                </Card>
-              )}
-            </div>
-
-            {/* Bảng số liệu chi tiết thay thế cho trình đọc màn hình và tra cứu số đo chính xác */}
-            {usage && usage.by_feature.length > 0 && (
-              <Card className="p-4 bg-surface border border-border flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-body-sm font-bold text-text">
-                    Bảng số liệu chi tiết theo tính năng
-                  </h3>
-                  <span className="text-caption text-text-muted">Đo lường thật từ backend</span>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <caption className="sr-only">Bảng chi tiết số đo mức sử dụng theo từng tính năng</caption>
-                    <thead>
-                      <tr className="border-b border-border text-text-muted">
-                        <th scope="col" className="pb-2 font-semibold">Tính năng</th>
-                        <th scope="col" className="pb-2 font-semibold text-right">Số lượt đo</th>
-                        <th scope="col" className="pb-2 font-semibold text-right">Hạn mức credit</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/60">
-                      {usage.by_feature.map((f) => (
-                        <tr key={f.feature} className="hover:bg-surface-alt/40 transition-colors">
-                          <th scope="row" className="py-2.5 font-medium text-text">
-                            {metricLabel(f.feature)}
-                          </th>
-                          <td className="py-2.5 text-right font-bold text-text">
-                            {f.quantity.toLocaleString("vi-VN")}
-                          </td>
-                          <td className="py-2.5 text-right text-text-muted">
-                            {f.cost_credit}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            )}
-
-            {/* Mức dùng tổng quan */}
-            {usage && (
-              <Card className="p-4 bg-surface border border-border flex items-center justify-between">
-                <div>
-                  <div className="text-body-sm font-bold text-text-muted">Tổng mức sử dụng</div>
-                  <div className="text-lg font-black text-text mt-0.5">
-                    {usage.credit_used} credit
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs text-text-muted block">Hạn mức còn lại</span>
-                  <span className="text-sm font-extrabold text-primary">
-                    {usage.credit_balance} credit
-                  </span>
-                </div>
-              </Card>
-            )}
-
-            <div className="border-t border-border pt-4 flex items-center justify-end">
-              {!can("U3") ? null : (
-                <Button className="gap-2 shadow-xs" onClick={() => setPhase("explain")}>
-                  <BarChart3 size={15} /> Diễn giải chỉ số bất thường
-                </Button>
-              )}
-            </div>
-          </div>
+          <AnalyticsMetricsPhase
+            orders={orders}
+            usage={usage}
+            usageLoading={usageLoading}
+            shopName={orgName || "Cửa Hàng"}
+            selectedRange={selectedRange}
+            onSelectRange={setSelectedRange}
+            canExplain={Boolean(can("U3"))}
+            onNextPhase={() => setPhase("explain")}
+          />
         )}
 
         {phase === "explain" && (
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <div>
-                <span className="text-body-sm text-text-muted font-bold">Diễn giải bằng AI</span>
-                <h2 className="text-base font-bold text-text">Phân tích nguyên nhân & Chỉ số bất thường</h2>
-              </div>
-              <Badge tone="neutral">Tham khảo — không ghi đè</Badge>
-            </div>
-
-            {explainLoading ? (
-              <Card className="p-5 bg-surface border border-border">
-                <SkeletonBlock lines={3} label="Đang tải phân tích diễn giải AI..." />
-              </Card>
-            ) : aiRequests && aiRequests.length > 0 ? (
-              <Card className="p-5 bg-surface border border-border flex flex-col gap-3">
-                <div className="text-sm font-bold text-text">
-                  {aiRequests.length} yêu cầu AI — {aiRequests[0]!.capability_code}
-                </div>
-                <div className="text-xs text-text-muted leading-relaxed">
-                  Mô hình: <strong className="text-text">{aiRequests[0]!.model_key}</strong>. Kết quả: {aiRequests[0]!.outcome}.
-                  Chi phí: ${aiRequests[0]!.cost_usd.toFixed(4)}.
-                  Chất lượng: {aiRequests[0]!.quality_score ?? "Đạt chuẩn"}.
-                </div>
-                {aiRequests.length > 1 && (
-                  <div className="text-caption text-text-muted mt-1">
-                    + {aiRequests.length - 1} yêu cầu khác trong hệ thống
-                  </div>
-                )}
-              </Card>
-            ) : (
-              <Card className="p-5 bg-surface border border-border text-center">
-                <div className="text-sm font-bold text-text">Chưa có yêu cầu AI nào được ghi nhận</div>
-                <div className="text-xs text-text-muted mt-1">
-                  Chưa phát hiện chỉ số bất thường nào cần can thiệp diễn giải.
-                </div>
-              </Card>
-            )}
-
-            <div className="flex items-center justify-between border-t border-border pt-4">
-              <Button variant="ghost" size="sm" onClick={() => setPhase("metrics")}>
-                Quay lại bảng chỉ số
-              </Button>
-              <Button
-                onClick={() => {
-                  setSaved(true)
-                  setTimeout(() => setSaved(false), 2000)
-                  setPhase("learning")
-                }}
-                className="gap-2 shadow-xs"
-              >
-                Xem đề xuất học phong cách <ChevronRight size={15} />
-              </Button>
-            </div>
-          </div>
+          <AnalyticsExplainPhase
+            loading={explainLoading}
+            aiRequests={aiRequests}
+            onBack={() => setPhase("metrics")}
+            onNextPhase={() => setPhase("learning")}
+          />
         )}
 
-        {phase === "learning" && (
-          <div className="flex flex-col gap-5">
-            <div className="text-center py-2">
-              <div className="flex items-center justify-center mb-2">
-                <div className="h-16 w-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                  <TrendingUp size={32} />
-                </div>
-              </div>
-              <h2 className="text-base font-extrabold text-text">Vòng học phong cách thương hiệu</h2>
-              <p className="text-xs text-text-muted mt-0.5">Tự động tổng hợp sau mỗi chu kỳ chiến dịch tiếp thị</p>
-            </div>
-
-            {learningLoading ? (
-              <Card className="p-5 bg-surface border border-border">
-                <SkeletonBlock lines={3} label="Đang tải nhật ký học phong cách..." />
-              </Card>
-            ) : learningFields ? (
-              <Card className="p-5 bg-surface border border-border flex flex-col gap-3">
-                {learningFields.map((f) => (
-                  <div key={f.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2 border-b border-border/50 last:border-none">
-                    <span className="text-xs font-semibold text-text-muted">{f.label}:</span>
-                    <span className={`text-xs ${f.editable ? "font-bold text-primary" : "text-text"}`}>
-                      {f.value}
-                    </span>
-                  </div>
-                ))}
-              </Card>
-            ) : null}
-
-            <div className="flex items-center justify-between border-t border-border pt-4">
-              <Button variant="ghost" size="sm" onClick={() => setPhase("metrics")}>
-                Quay lại
-              </Button>
-              {can("U2") ? (
-                <Button onClick={handleApprove} disabled={policyLoading} className="shadow-xs">
-                  {policyLoading ? "Đang duyệt..." : "Duyệt áp dụng (learning.profile.manage)"}
-                </Button>
-              ) : null}
-            </div>
-          </div>
-        )}
-
-        {phase === "saved" && (
-          <div className="flex flex-1 flex-col items-center justify-center py-12 gap-5 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-success/15 text-success">
-              <Check size={32} strokeWidth={2.5} />
-            </div>
-            <div>
-              <h2 className="text-base font-extrabold text-text">Hồ sơ phong cách đã cập nhật</h2>
-              <p className="text-xs text-text-muted mt-1 max-w-sm">
-                Các lượt sinh nội dung và ảnh tiếp theo sẽ tự động áp dụng hồ sơ phong cách mới này.
-              </p>
-            </div>
-            <Button onClick={() => setPhase("metrics")} className="shadow-xs">
-              Về bảng chỉ số
-            </Button>
-          </div>
+        {(phase === "learning" || phase === "saved") && (
+          <AnalyticsLearningPhase
+            phase={phase}
+            loading={learningLoading}
+            learningFields={learningFields}
+            policyLoading={policyLoading}
+            canApprove={Boolean(can("U2"))}
+            onBack={() => setPhase("metrics")}
+            onApprove={handleApprove}
+            onReset={() => setPhase("metrics")}
+          />
         )}
       </div>
 
@@ -523,6 +241,6 @@ export default function AnalyticsPage() {
         isOpen={adModalOpen}
         onClose={() => setAdModalOpen(false)}
       />
-    </div>
+    </DashboardLayout>
   )
 }

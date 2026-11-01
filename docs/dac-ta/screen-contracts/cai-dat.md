@@ -1,3 +1,18 @@
+---
+id: SCR-STORE-cai-dat
+tier: STORE
+module: organization
+route: /cai-dat
+archetype: F
+snapshots:
+  mobile: 390x844
+  desktop: 1280x800
+acceptance:
+  - Thông số cơ bản của tiệm lưu đúng và phản hồi thành công
+  - Lưới liên kết sâu 4 phân hệ chuyển hướng chính xác
+  - Có đầy đủ trạng thái loading skeleton, error, dirty validation
+---
+
 # Screen Contract — Cài Đặt Tiệm & Cấu Hình Hoạt Động
 
 **Tuyến:** `/cai-dat` · **Tệp chính:** `src/app/(app)/cai-dat/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D9

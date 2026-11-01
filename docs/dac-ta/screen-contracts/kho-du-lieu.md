@@ -1,3 +1,18 @@
+---
+id: SCR-STORE-kho-du-lieu
+tier: STORE
+module: storage
+route: /kho-du-lieu
+archetype: B
+snapshots:
+  mobile: 390x844
+  desktop: 1280x800
+acceptance:
+  - Hiển thị 11 tab tài nguyên theo quyền và huy hiệu số lượng
+  - Tìm kiếm, lọc và phân loại chi nhánh hoạt động mượt mà
+  - Hỗ trợ thùng rác 30 ngày và khôi phục tài nguyên
+---
+
 # Screen Contract — Kho Dữ Liệu (Thư viện tập trung) — v2
 
 **Tuyến:** `/kho-du-lieu` · **Tệp chính:** `src/app/(app)/kho-du-lieu/page.tsx` · **Thành phần:** `src/components/storage/account-storage-hub.tsx` · **Cập nhật:** 29/10/2026 · **Trạng thái:** v2 đã duyệt 29/10/2026 — đang dựng (§13a) · **v1:** 27/09/2026, thẻ T5.D6 (3 tab + thùng rác)
