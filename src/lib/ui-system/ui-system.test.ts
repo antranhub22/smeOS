@@ -18,6 +18,11 @@ describe("UI System Presets & Foundation", () => {
     expect(nullFallback.id).toBe("moc-lan")
   })
 
+  it("resolves clean-blue alias to modern-slate", () => {
+    const alias = getUiPreset("clean-blue")
+    expect(alias.id).toBe("modern-slate")
+  })
+
   it("registers exactly 3 official presets with complete token definitions", () => {
     const presetIds = ["moc-lan", "modern-slate", "pure-swiss"]
     expect(Object.keys(UI_PRESETS)).toEqual(presetIds)

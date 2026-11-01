@@ -164,6 +164,9 @@ export const UI_PRESETS: Record<UiPresetId, PresetDefinition> = {
 }
 
 export function getUiPreset(id?: string | null): PresetDefinition {
+  if (id === "clean-blue") {
+    return PRESET_MODERN_SLATE
+  }
   if (id && id in UI_PRESETS) {
     return UI_PRESETS[id as UiPresetId]
   }

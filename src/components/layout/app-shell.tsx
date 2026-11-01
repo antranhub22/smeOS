@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { BottomNav } from "@/components/layout/bottom-nav"
 import { DesktopNav } from "@/components/layout/desktop-nav"
@@ -9,6 +11,7 @@ import { FloatingLayerProvider } from "@/components/layout/floating-layer"
 import { ToolLockGuard } from "@/components/layout/tool-lock-guard"
 import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
 import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
+import { useUiSystem } from "@/lib/ui-system/ui-provider"
 import type { ResolvedUiTheme } from "@/lib/ui-system/resolve-ui-theme"
 
 export interface AppShellProps {
@@ -30,6 +33,10 @@ export function AppShell({
   withImageZoom = false,
   withUiStudio = true,
 }: AppShellProps) {
+  const { config } = useUiSystem()
+  const activePreset = config?.preset ?? theme.preset
+  const activeDensity = config?.density ?? theme.density
+
   const content = withToolGuard ? <ToolLockGuard>{children}</ToolLockGuard> : children
 
   return (
@@ -42,8 +49,8 @@ export function AppShell({
           Bỏ qua tới nội dung chính
         </a>
         <div
-          data-theme={theme.preset}
-          data-density={theme.density}
+          data-theme={activePreset}
+          data-density={activeDensity}
           style={theme.brandStyle}
           className="mx-auto flex min-h-dvh w-full flex-col md:flex-row"
         >

@@ -24,8 +24,9 @@
   --radius-dialog: 1rem;
 }
 
-/* Preset 2: Modern Slate (chuẩn cho SaaS Mother, SaaS Ngành, ChainOS) */
-[data-theme="modern-slate"] {
+/* Preset 2: Modern Slate (chuẩn cho SaaS Mother, SaaS Ngành, ChainOS; hỗ trợ alias clean-blue) */
+[data-theme="modern-slate"],
+[data-theme="clean-blue"] {
   --color-primary: #2563EB;
   --color-primary-dark: #1D4ED8;
   --color-primary-muted: #EFF6FF;

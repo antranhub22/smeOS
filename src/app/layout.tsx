@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="vi">
+    <html lang="vi" data-theme="moc-lan" data-density="comfortable">
       <body className={`min-h-dvh bg-bg text-text antialiased ${beVietnamPro.variable}`}>
         <UiSystemProvider>
           {children}

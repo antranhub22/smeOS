@@ -52,6 +52,33 @@ export function UiSystemProvider({
     }
   }, [config.preset, config.density])
 
+  // Listen to external DOM changes on document.documentElement (e.g. editing data-theme / data-density in Chrome DevTools)
+  useEffect(() => {
+    const root = document.documentElement
+    const handleMutation = () => {
+      const domTheme = root.getAttribute("data-theme")
+      const domDensity = root.getAttribute("data-density")
+
+      const normalizedTheme: UiPresetId | null =
+        domTheme === "clean-blue"
+          ? "modern-slate"
+          : domTheme && domTheme in UI_PRESETS
+            ? (domTheme as UiPresetId)
+            : null
+
+      if (normalizedTheme) {
+        setConfig((prev) => (prev.preset === normalizedTheme ? prev : { ...prev, preset: normalizedTheme }))
+      }
+      if (domDensity === "compact" || domDensity === "comfortable") {
+        setConfig((prev) => (prev.density === domDensity ? prev : { ...prev, density: domDensity }))
+      }
+    }
+
+    const observer = new MutationObserver(handleMutation)
+    observer.observe(root, { attributes: true, attributeFilter: ["data-theme", "data-density"] })
+    return () => observer.disconnect()
+  }, [])
+
   const setPreset = useCallback((preset: UiPresetId) => {
     if (preset in UI_PRESETS) {
       setConfig((prev) => ({ ...prev, preset }))
