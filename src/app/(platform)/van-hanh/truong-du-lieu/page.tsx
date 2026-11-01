@@ -10,6 +10,7 @@
 
 import { useState } from "react"
 import { useI18n } from "@/lib/i18n"
+import { InfoTip } from "@/components/ui/info-tip"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { TruongLoiTab } from "./_components/truong-loi-tab"
 import { TruongTuTaoTab } from "./_components/truong-tu-tao-tab"
@@ -29,12 +30,11 @@ export default function TruongDuLieuPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <p className="text-lg font-semibold">Trường dữ liệu</p>
-        <p className="text-body-sm text-text-muted">
-          Kiến trúc hai lớp mã/cấu hình, 5 mức sàn không cấu hình được (Đặc tả trường §16.2). Mọi thay đổi ghi vào nhật
-          ký nền tảng.
-        </p>
+      <div className="flex items-center gap-2">
+        <h1 className="text-xl font-bold text-text">Trường dữ liệu</h1>
+        <InfoTip label="Trường dữ liệu">
+          Kiến trúc hai lớp mã/cấu hình, 5 mức sàn không cấu hình được. Mọi thay đổi ghi vào nhật ký nền tảng.
+        </InfoTip>
       </div>
 
       <TabActionHeader tabs={TABS} activeTab={tab} onTabChange={setTab} />

@@ -58,39 +58,39 @@ Ký hiệu: ✅ xong · 🟡 mới đổi icon (Phosphor) · ⬜ chưa làm · �
 ## 2. ChainOS (chuỗi) — chỉ phần riêng
 | # | Trang | Nhãn menu | Ưu tiên | Trạng thái |
 |---|---|---|---|---|
-| 1 | `/` Tổng quan chuỗi | Tổng quan chuỗi | P1 — số liệu chuỗi | ✅ thẻ việc · ⬜ khối số liệu |
-| 2 | `/dieu-phoi` | Tháp điều phối | P1 — giao diện riêng tầng chuỗi | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 3 | `/dieu-phoi/doi-tac` | Chi nhánh & Xưởng | P1 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
-| 4 | `/du-lieu` | Đối soát & Công nợ | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 1 | `/` Tổng quan chuỗi | Tổng quan chuỗi | P1 — số liệu chuỗi | ✅ thẻ việc · ✅ khối số liệu (StatTile) |
+| 2 | `/dieu-phoi` | Tháp điều phối | P1 — giao diện riêng tầng chuỗi | ✅ tiêu đề, InfoTip, bo góc chuẩn |
+| 3 | `/dieu-phoi/doi-tac` | Chi nhánh & Xưởng | P1 | ✅ tiêu đề, InfoTip, thẻ đối tác bo `rounded-2xl`, bóng `shadow-xs` |
+| 4 | `/du-lieu` | Dữ liệu chuỗi | P2 | ✅ tiêu đề, InfoTip, bỏ tiếng Anh, bo nút chuẩn |
 | 5 | `/don-hang`, `/khach-hang`, `/san-pham`, `/gia`, `/so-lieu`, `/catalog`, `/duyet`, `/kho-du-lieu`, `/video`, `/cai-dat*`… | (nhãn riêng chuỗi) | P2 — kiểm nhãn/nội dung chuỗi | 🔁 |
 
 ## 3. SaaS ngành — chỉ phần riêng
 | # | Trang | Nhãn menu | Ưu tiên | Trạng thái |
 |---|---|---|---|---|
-| 1 | `/` Tổng quan ngành | Tổng quan ngành | P1 | ✅ thẻ việc · ⬜ khối số liệu |
-| 2 | `/van-hanh/nganh` | Taxonomy & Quy chuẩn | P1 — bỏ "Taxonomy" | 🟡 |
-| 3 | `/van-hanh/truong-du-lieu` | Trường dữ liệu ngành | P2 | 🟡 |
-| 4 | `/van-hanh/du-lieu` | Hoa hồng & Đối soát | P2 | 🟡 |
-| 5 | `/landing-page` | Landing Page & Kênh bán | P2 | 🔎 rà nhanh: nhãn/jargon đã kiểm, bố cục chưa đổi |
+| 1 | `/` Tổng quan ngành | Tổng quan ngành | P1 | ✅ thẻ việc · ✅ khối số liệu (StatTile) |
+| 2 | `/van-hanh/nganh` | Ma trận ngành | P1 — bỏ "Taxonomy" | ✅ tiêu đề, InfoTip, nhãn chuẩn |
+| 3 | `/van-hanh/truong-du-lieu` | Trường dữ liệu | P2 | ✅ tiêu đề, InfoTip, bỏ jargon |
+| 4 | `/van-hanh/du-lieu` | Dữ liệu nền tảng | P2 | ✅ tiêu đề, InfoTip, xem chi tiết CSV |
+| 5 | `/landing-page` | Landing Page & Kênh bán | P2 | ✅ tiêu đề, InfoTip, bo góc chuẩn |
 | 6 | `/don-hang` (Affiliate), `/dieu-phoi`, `/dieu-phoi/doi-tac`, `/san-pham`, `/gia`, `/so-lieu`, `/kho-templates`, `/cai-dat*`… | (nhãn riêng ngành) | P3 — kiểm nhãn/thuật ngữ ngành | 🔁 |
 
 ## 4. SaaS Mother (Console `/van-hanh`)
 | # | Trang | Nhãn menu | Ưu tiên | Trạng thái |
 |---|---|---|---|---|
-| 1 | `/van-hanh` | Tổng quan nền tảng | P1 — thẻ số liệu | 🟡 |
-| 2 | `/van-hanh/to-chuc` | Tổ chức & Tenant | P1 — bỏ "Tenant" | 🟡 |
-| 3 | `/van-hanh/dang-ky` | Đăng ký & Phê duyệt | P1 | 🟡 |
-| 4 | `/van-hanh/phe-duyet` | Gói dịch vụ & Đăng ký | P1 | 🟡 |
-| 5 | `/van-hanh/suc-khoe` | Sức khỏe hệ thống | P2 | 🟡 |
-| 6 | `/van-hanh/muc-dung` | Mức dùng & Chi phí | P2 | 🟡 |
+| 1 | `/van-hanh` | Tổng quan nền tảng | P1 — thẻ số liệu | ✅ StatTile (3 thẻ), danh sách tổ chức bo `rounded-2xl shadow-xs` |
+| 2 | `/van-hanh/to-chuc` | Tổ chức & Tenant | P1 — bỏ "Tenant" | ✅ tiêu đề "Tổ chức", InfoTip, bo `rounded-2xl shadow-xs` |
+| 3 | `/van-hanh/dang-ky` | Đăng ký & Phê duyệt | P1 | ✅ tiêu đề "Duyệt đăng ký", InfoTip, bo `rounded-2xl shadow-xs` |
+| 4 | `/van-hanh/phe-duyet` | Gói dịch vụ & Đăng ký | P1 | ✅ tiêu đề "Yêu cầu phê duyệt", InfoTip, bỏ subtitle dài |
+| 5 | `/van-hanh/suc-khoe` | Sức khỏe hệ thống | P2 | ✅ tiêu đề + InfoTip, bo 4 Card `rounded-2xl shadow-xs`, bỏ "Job treo" → "Tác vụ tồn đọng" |
+| 6 | `/van-hanh/muc-dung` | Mức dùng & Chi phí | P2 | ✅ tiêu đề "Mức dùng & Chi phí", InfoTip, bỏ badge IN HOA, thẻ KPI giữ layout icon có sẵn |
 | 7 | `/van-hanh/nganh` (+ `?tab=tools`) | Ngành hàng & Năng lực | P2 | 🔁 phần chung với SaaS ngành |
 | 8 | `/van-hanh/san-pham` | Catalog & Sản phẩm toàn hệ thống | P2 | 🟡 |
 | 9 | `/van-hanh/du-lieu` | Dữ liệu & Lưu trữ | P2 | 🔁 phần chung |
 | 10 | `/van-hanh/truong-du-lieu` | Schema & Taxonomy toàn cầu | P3 — bỏ jargon | 🔁 phần chung |
-| 11 | `/van-hanh/nhat-ky` | Bảo mật & Nhật ký kiểm toán | P3 | 🟡 |
-| 12 | `/van-hanh/cau-hinh` | Cấu hình nền tảng | P3 | 🟡 |
-| 13 | `/cai-dat-ai` | AI Providers & Models | P3 — bỏ tiếng Anh | 🟡 |
-| 14 | `/van-hanh/ma-tran-*` (5 trang) + `/van-hanh/thong-bao` | Ma trận … | P3 | 🟡 |
+| 11 | `/van-hanh/nhat-ky` | Bảo mật & Nhật ký kiểm toán | P3 | ✅ tiêu đề "Nhật ký kiểm toán", InfoTip, bo `rounded-2xl shadow-xs` |
+| 12 | `/van-hanh/cau-hinh` | Cấu hình nền tảng | P3 | ✅ tiêu đề + InfoTip, bỏ `<p>` mô tả riêng |
+| 13 | `/cai-dat-ai` | AI Providers & Models | P3 — bỏ tiếng Anh | ✅ tiêu đề "Cấu hình AI", K1 ngắn gọn, ẩn capability_code kỹ thuật |
+| 14 | `/van-hanh/ma-tran-*` (5 trang) + `/van-hanh/thong-bao` | Ma trận … | P3 | 🔁 component chung đã xử lý ở StoreOS |
 
 ## Cách làm mỗi đợt
 Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệt → commit + cập nhật bảng này (đổi ⬜/🟡 thành ✅). Trang có tải ảnh: hỏi PO chặng trước khi sửa (CLAUDE.md).
@@ -131,3 +131,4 @@ Mỗi đợt 3–5 trang cùng nhóm → ảnh 390/1280px gửi PO → PO duyệ
 - 31/10: Báo cáo (#6) — nhãn phân tích: bỏ IN HOA, 'AI Diễn giải' → 'Diễn giải bằng AI'.
 - 31/10 (PO): #26 giữ nguyên trạng. #18 tiêu đề 'Giao hàng & bàn giao'. #8 dùng dữ liệu thật, không báo giá bịa. Được phép làm #10–#12 (có tải ảnh).
 - 31/10 (PO): #10–#12 được phép làm. Chế tác A-Z: khối mã nội bộ → tiếng Việt. Phân tích ảnh: đầu trang.
+- 31/10: SaaS Mother — #1 Tổng quan (StatTile 3 thẻ, danh sách bo `rounded-2xl`); #2 Tổ chức (tiêu đề ngắn, InfoTip, bo chuẩn); #3 Duyệt đăng ký (InfoTip, bo `rounded-2xl shadow-xs`, mô tả → InfoTip); #4 Yêu cầu phê duyệt (InfoTip, bỏ subtitle dài); #5 Sức khoẻ (InfoTip, 4 Card bo chuẩn, bỏ jargon "Job treo"); #6 Mức dùng (InfoTip, bỏ badge IN HOA, tiêu đề ngắn); #11 Nhật ký kiểm toán (InfoTip, bo chuẩn); #12 Cấu hình nền tảng (InfoTip, bỏ `<p>` riêng); #13 Cấu hình AI (tiêu đề "Cấu hình AI", K1 tiếng Việt ngắn, ẩn capability_code kỹ thuật).

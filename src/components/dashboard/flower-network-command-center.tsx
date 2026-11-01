@@ -12,6 +12,8 @@ import {
   ShieldAlert,
   Sparkles,
 } from "@/components/ui/icons"
+import { StatTile } from "@/components/ui/stat-tile"
+import { InfoTip } from "@/components/ui/info-tip"
 import { useSession } from "@/lib/session"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -147,54 +149,48 @@ export function FlowerNetworkCommandCenter() {
         </div>
       </div>
 
-      {/* Tầng 4: Radar Điều hành & Cảnh báo khẩn cấp (Command Tier) */}
+      {/* Tầng 4: Radar Điều hành & Cảnh báo khẩn cấp (Command Tier) - Chuẩn StatTile */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="flex items-center gap-4 p-4">
-          <div className="rounded-lg bg-primary/10 p-3 text-primary">
-            <Radio className="h-6 w-6" />
-          </div>
-          <div>
-            <div className="text-caption font-medium text-text-muted">Đơn đang điều phối</div>
-            <div className="text-title font-extrabold text-text">{stats.inProductionOrders}</div>
-          </div>
-        </Card>
+        <StatTile
+          label="Đang điều phối"
+          value={stats.inProductionOrders}
+          tip="Số lượng đơn hàng đang trong luồng gia công hoặc phân xưởng chi nhánh"
+          icon={<Radio className="h-4 w-4 text-primary" />}
+        />
 
-        <Card className="flex items-center gap-4 p-4">
-          <div className="rounded-lg bg-info/10 p-3 text-info">
-            <Users className="h-6 w-6" />
-          </div>
-          <div>
-            <div className="text-caption font-medium text-text-muted">Xưởng đối tác hoạt động</div>
-            <div className="text-title font-extrabold text-text">{stats.activePartners}</div>
-          </div>
-        </Card>
+        <StatTile
+          label="Xưởng hoạt động"
+          value={stats.activePartners}
+          tip="Số chi nhánh và xưởng gia công vệ tinh đang trực tuyến và sẵn sàng nhận đơn"
+          icon={<Users className="h-4 w-4 text-info" />}
+        />
 
-        <Card className="flex items-center gap-4 p-4">
-          <div className="rounded-lg bg-success-bg p-3 text-success">
-            <CheckCircle className="h-6 w-6" />
-          </div>
-          <div>
-            <div className="text-caption font-medium text-text-muted">Đơn chờ phân bổ</div>
-            <div className="text-title font-extrabold text-text">{stats.pendingOrders}</div>
-          </div>
-        </Card>
+        <StatTile
+          label="Chờ phân bổ"
+          value={stats.pendingOrders}
+          tip="Đơn hàng mới tiếp nhận từ khách hoặc mạng lưới cần điều phối đến chi nhánh"
+          icon={<CheckCircle className="h-4 w-4 text-success" />}
+        />
 
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => setIsSlaModalOpen(true)}
-          className="flex items-center justify-between rounded-xl border border-border bg-surface p-4 text-left transition hover:border-danger/60 hover:shadow-xs"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              setIsSlaModalOpen(true)
+            }
+          }}
+          className="cursor-pointer transition-all hover:ring-2 hover:ring-danger/50"
         >
-          <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-danger-bg p-3 text-danger">
-              <AlertOctagon className="h-6 w-6" />
-            </div>
-            <div>
-              <div className="text-caption font-medium text-text-muted">Cảnh báo rủi ro SLA</div>
-              <div className="text-title font-extrabold text-danger">{stats.slaRiskOrders} đơn</div>
-            </div>
-          </div>
-          <span className="text-caption font-bold text-primary">Xem chi tiết →</span>
-        </button>
+          <StatTile
+            label="Rủi ro trễ hẹn"
+            value={<span className="text-danger">{stats.slaRiskOrders}</span>}
+            tip="Đơn có nguy cơ chậm tiến độ cam kết hoặc sự cố chế tác cần can thiệp"
+            icon={<AlertOctagon className="h-4 w-4 text-danger" />}
+          />
+        </div>
       </div>
 
       {/* Tầng 3: Quản lý Mạng lưới & Xưởng đối tác (Management Tier) */}
@@ -203,11 +199,11 @@ export function FlowerNetworkCommandCenter() {
           {/* Giám sát tiến trình điều phối (Supervision Tier) */}
           <Card className="p-5">
             <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-title-sm font-bold text-text">Luồng Điều hành Đơn hàng Mạng lưới</h2>
-                <p className="text-caption text-text-muted">
-                  5 chặng hoàn tất từ tiếp nhận đến giao hoa thành công
-                </p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-title-sm font-bold text-text">Luồng Điều hành Mạng lưới</h2>
+                <InfoTip label="Luồng Điều hành Mạng lưới">
+                  Theo dõi 5 chặng hoàn tất từ tiếp nhận đơn đến phân xưởng, chế tác, duyệt chất lượng và giao hàng thành công.
+                </InfoTip>
               </div>
               <Button
                 type="button"
@@ -222,21 +218,21 @@ export function FlowerNetworkCommandCenter() {
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
               {[
-                { step: "1. Tiếp nhận", count: stats.pendingOrders, icon: Radio },
-                { step: "2. Phân xưởng", count: stats.inProductionOrders, icon: Users },
-                { step: "3. Chế tác", count: Math.floor(stats.inProductionOrders * 0.7), icon: Sparkles },
-                { step: "4. Duyệt QC", count: Math.floor(stats.inProductionOrders * 0.2), icon: CheckCircle },
-                { step: "5. Giao hoa", count: Math.floor(stats.inProductionOrders * 0.1), icon: Truck },
-              ].map((s, idx) => (
+                { step: "Tiếp nhận", count: stats.pendingOrders, icon: Radio },
+                { step: "Phân xưởng", count: stats.inProductionOrders, icon: Users },
+                { step: "Chế tác", count: Math.floor(stats.inProductionOrders * 0.7), icon: Sparkles },
+                { step: "Duyệt QC", count: Math.floor(stats.inProductionOrders * 0.2), icon: CheckCircle },
+                { step: "Giao hàng", count: Math.floor(stats.inProductionOrders * 0.1), icon: Truck },
+              ].map((s) => (
                 <div
                   key={s.step}
-                  className="rounded-lg border border-border bg-surface-alt p-3 text-center"
+                  className="rounded-2xl border border-border/80 bg-surface p-3 text-center shadow-xs"
                 >
-                  <div className="mx-auto mb-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <s.icon className="h-3.5 w-3.5" />
+                  <div className="mx-auto mb-1.5 flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <s.icon className="h-4 w-4" />
                   </div>
                   <div className="text-caption font-bold text-text">{s.step}</div>
-                  <div className="mt-1 text-title-sm font-extrabold text-primary">{s.count}</div>
+                  <div className="mt-1 text-title font-extrabold text-primary tabular-nums">{s.count}</div>
                 </div>
               ))}
             </div>
@@ -249,15 +245,15 @@ export function FlowerNetworkCommandCenter() {
               <button
                 type="button"
                 onClick={() => router.push("/dieu-phoi" as never)}
-                className="flex items-start gap-3 rounded-lg border border-border bg-surface-alt p-3.5 text-left transition hover:border-primary/50"
+                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm"
               >
-                <div className="rounded-md bg-primary/10 p-2 text-primary">
+                <div className="rounded-xl bg-primary/10 p-2 text-primary">
                   <ShieldAlert className="h-5 w-5" />
                 </div>
                 <div>
                   <div className="text-body-sm font-bold text-text">Xử lý Ngoại lệ Đơn</div>
                   <div className="mt-0.5 text-caption text-text-muted">
-                    Xử lý nhanh các đơn bị trễ xưởng, hoa không đúng mẫu hoặc khách khiếu nại
+                    Xử lý nhanh các đơn bị trễ xưởng, sản phẩm chưa đạt chuẩn hoặc phát sinh khiếu nại
                   </div>
                 </div>
               </button>
@@ -265,15 +261,15 @@ export function FlowerNetworkCommandCenter() {
               <button
                 type="button"
                 onClick={() => router.push("/don-hang")}
-                className="flex items-start gap-3 rounded-lg border border-border bg-surface-alt p-3.5 text-left transition hover:border-primary/50"
+                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm"
               >
-                <div className="rounded-md bg-primary/10 p-2 text-primary">
+                <div className="rounded-xl bg-primary/10 p-2 text-primary">
                   <Truck className="h-5 w-5" />
                 </div>
                 <div>
                   <div className="text-body-sm font-bold text-text">Phân bổ Đơn Khẩn cấp</div>
                   <div className="mt-0.5 text-caption text-text-muted">
-                    Chỉ định xưởng đối tác hoặc đổi tuyến giao hoa cho đơn sự kiện
+                    Chỉ định chi nhánh đối tác hoặc điều chuyển tuyến phân bổ cho đơn ưu tiên
                   </div>
                 </div>
               </button>
@@ -286,8 +282,8 @@ export function FlowerNetworkCommandCenter() {
           <Card className="p-5">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h3 className="text-title-sm font-bold text-text">Xưởng Đối tác Mạng lưới</h3>
-                <span className="text-caption text-text-muted">{partners.length} đối tác trực tuyến</span>
+                <h3 className="text-title-sm font-bold text-text">Chi nhánh Mạng lưới</h3>
+                <span className="text-caption text-text-muted">{partners.length} chi nhánh trực tuyến</span>
               </div>
               <Button
                 type="button"
@@ -302,15 +298,15 @@ export function FlowerNetworkCommandCenter() {
             </div>
 
             {partners.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-border p-6 text-center text-caption text-text-muted">
-                Chưa có đối tác xưởng ngoài nào được kích hoạt trong mạng lưới
+              <div className="rounded-2xl border border-dashed border-border p-6 text-center text-caption text-text-muted">
+                Chưa có chi nhánh hoặc xưởng đối tác nào trong mạng lưới
               </div>
             ) : (
               <div className="space-y-3">
                 {partners.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-center justify-between rounded-lg border border-border bg-surface-alt p-3"
+                    className="flex items-center justify-between rounded-xl border border-border/80 bg-surface p-3 shadow-xs"
                   >
                     <div>
                       <div className="text-body-sm font-semibold text-text">{p.name}</div>

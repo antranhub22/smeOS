@@ -42,11 +42,11 @@ export default function ChainPartnersPage() {
     <PageContainer className="space-y-6">
       {/* Top Header */}
       <PageHeader
-        title="Cửa hàng & Đối tác trực thuộc Chuỗi"
-        description="Quản lý mạng lưới chi nhánh, xưởng gia công vệ tinh và liên kết trò chuyện trực tiếp trên nền tảng."
+        title="Chi nhánh & Đối tác"
+        tip="Quản lý mạng lưới chi nhánh, xưởng gia công vệ tinh và liên kết trò chuyện trực tiếp trên nền tảng."
         badge={
           <span className="text-caption bg-primary-subtle text-primary font-semibold px-2.5 py-0.5 rounded-full border border-primary/20">
-            Mô hình Phân Tầng
+            Mô hình chuỗi
           </span>
         }
         actions={
@@ -55,38 +55,38 @@ export default function ChainPartnersPage() {
             onClick={() => setShowModal(true)}
             size="sm"
           >
-            <Plus className="w-4 h-4 mr-1.5" /> Thêm / Liên kết đối tác
+            <Plus className="w-4 h-4 mr-1.5" /> Thêm đối tác
           </Button>
         }
       />
 
       {/* Filter / Search Bar */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
           <Input
             type="text"
-            placeholder="Tìm theo tên cửa hàng, mã đối tác, người liên hệ..."
+            placeholder="Tìm theo tên chi nhánh, mã đối tác, người liên hệ..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-9 rounded-xl"
             inputSize="sm"
           />
         </div>
-        <div className="text-meta text-text-muted font-medium">
-          Tổng số: <span className="font-bold text-text">{partners.length}</span> đối tác
+        <div className="text-body-sm text-text-muted font-medium">
+          Tổng số: <span className="font-bold text-text tabular-nums">{partners.length}</span> chi nhánh
         </div>
       </div>
 
       {/* Partner Cards Grid */}
       {loading ? (
-        <div className="text-center py-16 text-meta text-text-muted">Đang tải danh bạ đối tác chuỗi...</div>
+        <div className="text-center py-16 text-body-sm text-text-muted">Đang tải danh bạ chi nhánh chuỗi...</div>
       ) : filtered.length === 0 ? (
-        <Card className="text-center py-16 p-8 space-y-3">
+        <Card className="text-center py-16 p-8 space-y-3 rounded-2xl">
           <Store className="w-12 h-12 text-text-muted/40 mx-auto" />
-          <h3 className="text-sm font-semibold text-text">Chưa có cửa hàng/đối tác nào</h3>
-          <p className="text-meta text-text-muted max-w-sm mx-auto">
-            Bấm &quot;Thêm / Liên kết đối tác&quot; để cấp tài khoản hoặc kết nối cửa hàng đã có sẵn trên hệ thống.
+          <h3 className="text-title-sm font-semibold text-text">Chưa có chi nhánh nào</h3>
+          <p className="text-body-sm text-text-muted max-w-sm mx-auto">
+            Bấm &quot;Thêm đối tác&quot; để cấp tài khoản hoặc kết nối cửa hàng thành viên trong chuỗi.
           </p>
         </Card>
       ) : (
@@ -94,7 +94,7 @@ export default function ChainPartnersPage() {
           {filtered.map((p) => (
             <Card
               key={p.id}
-              className="p-5 hover:border-primary/40 transition-all space-y-4"
+              className="p-5 hover:border-primary/40 transition-all space-y-4 rounded-2xl shadow-xs"
               variant="interactive"
             >
               <div className="flex items-start justify-between">
@@ -103,8 +103,8 @@ export default function ChainPartnersPage() {
                     <Store className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-text leading-tight">
-                      {p.partnerOrgName || "Cửa hàng đối tác"}
+                    <h3 className="text-body font-bold text-text leading-tight">
+                      {p.partnerOrgName || "Chi nhánh thành viên"}
                     </h3>
                     <span className="text-caption text-text-muted font-mono mt-0.5 inline-block">
                       Mã: {p.partnerCode}
@@ -113,7 +113,7 @@ export default function ChainPartnersPage() {
                 </div>
 
                 <span
-                  className={`text-caption font-semibold px-2 py-0.5 rounded-full ${
+                  className={`text-caption font-semibold px-2.5 py-0.5 rounded-full ${
                     p.status === "ACTIVE"
                       ? "bg-success-subtle text-success border border-success/20"
                       : "bg-surface-muted text-text-muted"
@@ -123,7 +123,7 @@ export default function ChainPartnersPage() {
                 </span>
               </div>
 
-              <div className="text-meta space-y-1.5 text-text border-t border-b border-border py-3">
+              <div className="text-body-sm space-y-1.5 text-text border-t border-b border-border/80 py-3">
                 <div className="flex items-center gap-2">
                   <Users className="w-3.5 h-3.5 text-text-muted" />
                   <span>Đại diện: {p.contactName || "Chưa cập nhật"}</span>
@@ -143,7 +143,7 @@ export default function ChainPartnersPage() {
                   </div>
                 )}
                 {p.partnerOrgSlug && (
-                  <div className="flex items-center justify-between pt-1 border-t border-border mt-1">
+                  <div className="flex items-center justify-between pt-1 border-t border-border/80 mt-1">
                     <div className="flex items-center gap-1.5">
                       <ShieldCheck className="w-3.5 h-3.5 text-success" />
                       <span className="text-caption text-text-muted">Mã kết nối:</span>
@@ -161,10 +161,10 @@ export default function ChainPartnersPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedToolPartner(p)}
-                  className="flex-1"
+                  className="flex-1 rounded-xl text-caption"
                 >
                   <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-primary" />
-                  <span>Phân quyền công cụ</span>
+                  <span>Phân quyền</span>
                 </Button>
                 <Link
                   href={"/tin-nhan" as never}

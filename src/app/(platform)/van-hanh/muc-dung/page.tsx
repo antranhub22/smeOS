@@ -12,12 +12,11 @@ import {
   AlertTriangle,
   ArrowUpRight,
   Filter,
-  CheckCircle2,
 } from "@/components/ui/icons"
+import { InfoTip } from "@/components/ui/info-tip"
+import { StatTile } from "@/components/ui/stat-tile"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { Badge } from "@/components/ui/badge"
-import { useI18n } from "@/lib/i18n"
 import { formatNumber } from "@/lib/i18n/formatters"
 
 type PlatformUsageRow = {
@@ -35,7 +34,6 @@ async function layJson<T>(url: string): Promise<T | null> {
 }
 
 export default function MucDungPage() {
-  const { t, dict } = useI18n()
   const [rows, setRows] = useState<PlatformUsageRow[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [selectedFeature, setSelectedFeature] = useState<string>("ALL")
@@ -97,60 +95,39 @@ export default function MucDungPage() {
 
   return (
     <div className="space-y-6">
-      {/* 1. Header & Giới thiệu */}
+      {/* 1. Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold mb-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>QUẢN TRỊ TÀI NGUYÊN & HẠN MỨC AI</span>
-          </div>
-          <h1 className="text-title font-extrabold text-text tracking-tight">Mức Dùng &amp; Quota Toàn Hệ Thống</h1>
-          <p className="text-caption text-text-muted mt-0.5">
-            Theo dõi lưu lượng gọi mô hình AI, lượng Credit tiêu thụ và kiểm soát trần hạn mức các tổ chức.
-          </p>
+        <div className="flex items-center gap-2">
+          <h1 className="text-title font-bold text-text">Mức dùng & Chi phí</h1>
+          <InfoTip label="Mức dùng & Chi phí">
+            Theo dõi lưu lượng gọi AI, Credit tiêu thụ và kiểm soát hạn mức theo từng tổ chức.
+          </InfoTip>
         </div>
         <span className="self-start sm:self-auto rounded-lg bg-surface-alt px-3 py-1 text-caption font-semibold text-text-muted border border-border">
           Phạm vi: SuperAdmin Nền tảng
         </span>
       </div>
 
-      {/* 2. Thẻ KPI Tổng quan */}
+      {/* 2. Thẻ KPI */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="p-4 rounded-xl border border-border bg-surface flex items-center gap-3.5 shadow-xs">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-            <Coins size={22} />
-          </div>
-          <div>
-            <div className="text-caption font-medium text-text-muted">Tổng Credit Tiêu Thụ</div>
-            <div className="text-title font-extrabold text-text mt-0.5">
-              {formatNumber(metrics.totalCredits)}
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4 rounded-xl border border-border bg-surface flex items-center gap-3.5 shadow-xs">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-info-bg text-info shrink-0">
-            <Sparkles size={22} />
-          </div>
-          <div>
-            <div className="text-caption font-medium text-text-muted">Tổng Lượt Gọi AI</div>
-            <div className="text-title font-extrabold text-text mt-0.5">
-              {formatNumber(metrics.totalCalls)}
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-4 rounded-xl border border-border bg-surface flex items-center gap-3.5 shadow-xs">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success/10 text-success shrink-0">
-            <Building2 size={22} />
-          </div>
-          <div>
-            <div className="text-caption font-medium text-text-muted">Tổ Chức Hoạt Động</div>
-            <div className="text-title font-extrabold text-text mt-0.5">
-              {metrics.activeOrgs}
-            </div>
-          </div>
-        </Card>
+        <StatTile
+          label="Tổng Credit"
+          value={formatNumber(metrics.totalCredits)}
+          tip="Tổng lượng Credit AI đã tiêu thụ trên toàn nền tảng"
+          icon={<Coins className="w-4 h-4 text-primary" aria-hidden />}
+        />
+        <StatTile
+          label="Lượt gọi AI"
+          value={formatNumber(metrics.totalCalls)}
+          tip="Tổng số lần các tổ chức gọi mô hình AI"
+          icon={<Sparkles className="w-4 h-4 text-primary" aria-hidden />}
+        />
+        <StatTile
+          label="Tổ chức hoạt động"
+          value={metrics.activeOrgs}
+          tip="Số tổ chức đã sử dụng ít nhất 1 tính năng AI trong kỳ"
+          icon={<Building2 className="w-4 h-4 text-primary" aria-hidden />}
+        />
       </div>
 
       {/* 3. Cảnh báo trần hạn mức Quota (AI-05) */}

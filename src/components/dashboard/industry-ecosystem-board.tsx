@@ -2,6 +2,8 @@
 
 import React from "react"
 import Link from "next/link"
+import { StatTile } from "@/components/ui/stat-tile"
+import { InfoTip } from "@/components/ui/info-tip"
 import {
   Layers,
   Sparkles,
@@ -20,63 +22,47 @@ export function IndustryEcosystemBoard() {
 
   return (
     <div className="space-y-6">
-      {/* Thẻ tóm tắt tổng quan */}
+      {/* Thẻ tóm tắt tổng quan - Chuẩn StatTile */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-surface border border-border shadow-xs">
-          <div className="flex items-center gap-2 text-text-muted mb-1 text-caption font-medium">
-            <Layers className="w-4 h-4 text-primary" aria-hidden="true" />
-            <span>Ngành hàng kích hoạt</span>
-          </div>
-          <div className="text-2xl font-black text-text tracking-tight">
-            {industries.length} / 7
-          </div>
-          <p className="text-caption text-text-muted mt-1">100% chuẩn hóa Plugin</p>
-        </div>
+        <StatTile
+          label="Ngành kích hoạt"
+          value={`${industries.length} / 7`}
+          tip="Số lượng plugin ngành hàng đã được cấu hình và chuẩn hóa trên toàn hệ thống"
+          icon={<Layers className="w-4 h-4 text-primary" aria-hidden="true" />}
+        />
 
-        <div className="p-4 rounded-xl bg-surface border border-border shadow-xs">
-          <div className="flex items-center gap-2 text-text-muted mb-1 text-caption font-medium">
-            <Package className="w-4 h-4 text-success" aria-hidden="true" />
-            <span>Danh mục chuẩn hóa</span>
-          </div>
-          <div className="text-2xl font-black text-text tracking-tight">
-            {industries.reduce((acc, ind) => acc + ind.taxonomy.defaultCategories.length, 0)}
-          </div>
-          <p className="text-caption text-text-muted mt-1">Phân loại theo đặc thù ngành</p>
-        </div>
+        <StatTile
+          label="Danh mục chuẩn"
+          value={industries.reduce((acc, ind) => acc + ind.taxonomy.defaultCategories.length, 0)}
+          tip="Tổng số danh mục phân loại sản phẩm theo đặc thù từng ngành hàng"
+          icon={<Package className="w-4 h-4 text-success" aria-hidden="true" />}
+        />
 
-        <div className="p-4 rounded-xl bg-surface border border-border shadow-xs">
-          <div className="flex items-center gap-2 text-text-muted mb-1 text-caption font-medium">
-            <Printer className="w-4 h-4 text-info" aria-hidden="true" />
-            <span>Mẫu ấn phẩm A6</span>
-          </div>
-          <div className="text-2xl font-black text-text tracking-tight">
-            {industries.reduce((acc, ind) => acc + ind.templates.printables.length, 0)}
-          </div>
-          <p className="text-caption text-text-muted mt-1">Tag mác, thẻ, menu, bảo hành</p>
-        </div>
+        <StatTile
+          label="Mẫu ấn phẩm"
+          value={industries.reduce((acc, ind) => acc + ind.templates.printables.length, 0)}
+          tip="Mẫu in ấn tem nhãn, thẻ thông tin, menu, hướng dẫn và phiếu bảo hành"
+          icon={<Printer className="w-4 h-4 text-info" aria-hidden="true" />}
+        />
 
-        <div className="p-4 rounded-xl bg-surface border border-border shadow-xs">
-          <div className="flex items-center gap-2 text-text-muted mb-1 text-caption font-medium">
-            <Sparkles className="w-4 h-4 text-warning" aria-hidden="true" />
-            <span>Bối cảnh Studio AI</span>
-          </div>
-          <div className="text-2xl font-black text-text tracking-tight">
-            {industries.reduce((acc, ind) => acc + ind.aiConfig.studioBackgroundStyles.length, 0)}
-          </div>
-          <p className="text-caption text-text-muted mt-1">Phong cách ảnh thương phẩm</p>
-        </div>
+        <StatTile
+          label="Bối cảnh Studio"
+          value={industries.reduce((acc, ind) => acc + ind.aiConfig.studioBackgroundStyles.length, 0)}
+          tip="Phong cách bối cảnh hình ảnh thương phẩm phục vụ chế tác tự động bằng AI"
+          icon={<Sparkles className="w-4 h-4 text-warning" aria-hidden="true" />}
+        />
       </div>
 
       {/* Bảng so sánh ma trận 7 ngành */}
       <div className="rounded-2xl border border-border bg-surface overflow-hidden shadow-xs">
         <div className="px-5 py-4 border-b border-border flex items-center justify-between flex-wrap gap-3">
-          <div>
+          <div className="flex items-center gap-2">
             <h3 className="text-body font-bold text-text">
-              Ma trận 7 Ngành Hàng Độc Lập (Industry Plugin Registry)
+              Ma trận 7 Ngành Hàng
             </h3>
-            <p className="text-caption text-text-muted mt-0.5">
+            <InfoTip label="Ma trận 7 Ngành Hàng">
               Hệ thống tự động thích ứng terminology, định mức nguyên liệu, taxonomy và AI prompt theo từng ngành mà không cần sửa CSDL.
-            </p>
+            </InfoTip>
           </div>
           <div className="flex items-center gap-2">
             <Link

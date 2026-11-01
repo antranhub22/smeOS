@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
+import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -147,31 +148,33 @@ export function ChainDataHub() {
         {/* Title & Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-black text-text tracking-tight flex items-center gap-2.5">
-              {selectedFolder ? (
-                <>
-                  <Folder className="text-primary fill-current" size={26} />
-                  <span>{selectedFolder.domainNameVi}</span>
-                </>
-              ) : selectedStore ? (
-                <>
-                  <Store className="text-primary" size={26} />
-                  <span>Cửa hàng: {selectedStore.name}</span>
-                </>
-              ) : (
-                <>
-                  <Database className="text-primary" size={26} />
-                  <span>Trung Tâm Dữ Liệu Chuỗi (Consolidated Data Hub)</span>
-                </>
-              )}
-            </h1>
-            <p className="text-caption text-text-muted mt-1">
-              {selectedFolder
-                ? `Chi tiết tất cả trường dữ liệu thu thập thuộc nhóm ${selectedFolder.domainNameVi} của ${selectedStore?.name}.`
-                : selectedStore
-                ? `Thư mục dữ liệu hợp nhất thu thập từ ${selectedStore.name} theo Chain Collection Profile.`
-                : "Quản lý và hiển thị toàn bộ dữ liệu thu thập được từ các cửa hàng thành viên (mô hình Folder-in-Folder)."}
-            </p>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl font-extrabold text-text tracking-tight flex items-center gap-2">
+                {selectedFolder ? (
+                  <>
+                    <Folder className="text-primary fill-current" size={22} />
+                    <span>{selectedFolder.domainNameVi}</span>
+                  </>
+                ) : selectedStore ? (
+                  <>
+                    <Store className="text-primary" size={22} />
+                    <span>Chi nhánh: {selectedStore.name}</span>
+                  </>
+                ) : (
+                  <>
+                    <Database className="text-primary" size={22} />
+                    <span>Dữ liệu chuỗi</span>
+                  </>
+                )}
+              </h1>
+              <InfoTip label="Dữ liệu chuỗi">
+                {selectedFolder
+                  ? `Chi tiết tất cả trường dữ liệu thu thập thuộc nhóm ${selectedFolder.domainNameVi} của ${selectedStore?.name}.`
+                  : selectedStore
+                  ? `Thư mục dữ liệu hợp nhất thu thập từ ${selectedStore.name} theo cấu hình thu thập dữ liệu chuỗi.`
+                  : "Quản lý và hiển thị toàn bộ dữ liệu hợp nhất từ các chi nhánh và đối tác thành viên trong chuỗi."}
+              </InfoTip>
+            </div>
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
@@ -204,19 +207,19 @@ export function ChainDataHub() {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsAddBranchOpen(true)}
-                  className="gap-1.5 font-bold h-9 text-xs"
+                  className="gap-1.5 font-bold h-9 text-xs rounded-xl"
                 >
                   <Building2 size={14} className="text-primary" />
-                  <span>+ Thêm Chi Nhánh</span>
+                  <span>+ Thêm chi nhánh</span>
                 </Button>
 
                 <Button
                   size="sm"
                   onClick={() => setIsAddPartnerOpen(true)}
-                  className="gap-1.5 font-bold h-9 text-xs"
+                  className="gap-1.5 font-bold h-9 text-xs rounded-xl"
                 >
                   <Handshake size={14} />
-                  <span>+ Kết Nối Đối Tác (DSA)</span>
+                  <span>+ Kết nối đối tác</span>
                 </Button>
               </div>
             )}

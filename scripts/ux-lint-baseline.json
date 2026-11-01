@@ -6,17 +6,13 @@
       "R16": 5
     },
     "app/(platform)": {
-      "R13": 2,
-      "R16": 2
+      "R13": 2
     },
     "components/availability": {
       "R13": 1
     },
     "components/catalog": {
       "R14": 3
-    },
-    "components/coordinator": {
-      "R16": 7
     },
     "components/creative-studio": {
       "R16": 44,
@@ -54,6 +50,6 @@
       "R16": 1
     }
   },
-  "total": 129,
-  "updatedAt": "2026-10-31T03:09:41.240Z"
+  "total": 120,
+  "updatedAt": "2026-10-31T13:07:25.808Z"
 }

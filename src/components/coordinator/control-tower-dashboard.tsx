@@ -463,38 +463,38 @@ export function ControlTowerDashboard({
         </div>
       </div>
 
-      {/* 2. Control Tower Counters */}
+      {/* 2. Control Tower Counters - Chuẩn Thẻ Số Liệu */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="rounded-2xl border border-border bg-surface p-4 flex flex-col justify-between shadow-sm">
-          <span className="text-xs font-bold text-text-muted">TỔNG ĐƠN ĐANG ĐIỀU PHỐI</span>
-          <div className="text-3xl font-black text-text mt-1">{totalCount}</div>
+        <Card className="rounded-2xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <span className="text-caption font-bold text-text-muted uppercase">Đang điều phối</span>
+          <div className="text-3xl font-extrabold text-text mt-1 tabular-nums">{totalCount}</div>
           <span className="text-caption text-text-muted mt-2">Chưa đóng / chưa huỷ</span>
         </Card>
 
-        <Card className="rounded-2xl border border-danger/30 bg-danger/10 p-4 flex flex-col justify-between shadow-sm">
-          <span className="text-xs font-bold text-danger flex items-center gap-1">
+        <Card className="rounded-2xl border border-danger/30 bg-danger/10 p-4 flex flex-col justify-between shadow-xs">
+          <span className="text-caption font-bold text-danger flex items-center gap-1 uppercase">
             <AlertCircle size={14} className="text-danger" />
-            CẦN XỬ LÝ GẤP (CRITICAL)
+            Cần xử lý gấp
           </span>
-          <div className="text-3xl font-black text-danger mt-1">{criticalCount}</div>
-          <span className="text-caption text-danger mt-2 font-medium">Sự cố hoặc lệch QC</span>
+          <div className="text-3xl font-extrabold text-danger mt-1 tabular-nums">{criticalCount}</div>
+          <span className="text-caption text-danger mt-2 font-medium">Sự cố hoặc lệch kiểm định</span>
         </Card>
 
-        <Card className="rounded-2xl border border-warning/30 bg-warning/10 p-4 flex flex-col justify-between shadow-sm">
-          <span className="text-xs font-bold text-warning flex items-center gap-1">
+        <Card className="rounded-2xl border border-warning/30 bg-warning/10 p-4 flex flex-col justify-between shadow-xs">
+          <span className="text-caption font-bold text-warning flex items-center gap-1 uppercase">
             <AlertTriangle size={14} className="text-warning" />
-            CÓ NGUY CƠ TRỄ (AT RISK)
+            Nguy cơ trễ
           </span>
-          <div className="text-3xl font-black text-warning mt-1">{atRiskCount}</div>
-          <span className="text-caption text-warning mt-2 font-medium">Cần thúc đẩy thợ chế tác</span>
+          <div className="text-3xl font-extrabold text-warning mt-1 tabular-nums">{atRiskCount}</div>
+          <span className="text-caption text-warning mt-2 font-medium">Cần thúc đẩy tiến độ xưởng</span>
         </Card>
 
-        <Card className="rounded-2xl border border-success/30 bg-success/10 p-4 flex flex-col justify-between shadow-sm">
-          <span className="text-xs font-bold text-success flex items-center gap-1">
+        <Card className="rounded-2xl border border-success/30 bg-success/10 p-4 flex flex-col justify-between shadow-xs">
+          <span className="text-caption font-bold text-success flex items-center gap-1 uppercase">
             <CheckCircle2 size={14} className="text-success" />
-            ĐÚNG HẠN (ON TRACK)
+            Đúng hẹn
           </span>
-          <div className="text-3xl font-black text-success mt-1">{onTrackCount}</div>
+          <div className="text-3xl font-extrabold text-success mt-1 tabular-nums">{onTrackCount}</div>
           <span className="text-caption text-success mt-2 font-medium">Tiến độ an toàn</span>
         </Card>
       </div>
@@ -504,13 +504,13 @@ export function ControlTowerDashboard({
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
           {[
             { id: "ALL", label: "Tất cả đơn" },
-            { id: "INTAKE", label: "P1 • Nhận đơn (T01)" },
-            { id: "PLANNING", label: "P2-P3 • Kế hoạch & Xưởng (T02-T06)" },
-            { id: "IN_PRODUCTION", label: "P4 • Đang chế tác (T07-T11)" },
-            { id: "QUALITY_CHECK", label: "P5 • Kiểm định QC (T14-T15)" },
-            { id: "DISPATCHING", label: "P6 • Giao hàng (T20-T21)" },
-            { id: "DELIVERED", label: "P7 • Đóng đơn & SLA (T25-T27)" },
-            { id: "EXCEPTION", label: "P8 • Sự cố phát sinh (T22)" },
+            { id: "INTAKE", label: "Tiếp nhận" },
+            { id: "PLANNING", label: "Kế hoạch & Xưởng" },
+            { id: "IN_PRODUCTION", label: "Đang chế tác" },
+            { id: "QUALITY_CHECK", label: "Kiểm định QC" },
+            { id: "DISPATCHING", label: "Giao hàng" },
+            { id: "DELIVERED", label: "Đã hoàn thành" },
+            { id: "EXCEPTION", label: "Sự cố phát sinh" },
           ].map((tab) => (
             <button
               key={tab.id}

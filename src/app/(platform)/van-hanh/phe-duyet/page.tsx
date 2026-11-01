@@ -7,6 +7,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { CheckCircle2, XCircle, RefreshCw, InboxIcon } from "@/components/ui/icons"
+import { InfoTip } from "@/components/ui/info-tip"
 import {
   ApprovalCard,
   TYPE_META,
@@ -15,10 +16,8 @@ import {
   type PendingApprovalItem,
 } from "@/components/platform/approval-card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { useI18n } from "@/lib/i18n"
 
 export default function PheQuyetPage() {
-  const { t, dict } = useI18n()
   const [items, setItems] = useState<PendingApprovalItem[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [processing, setProcessing] = useState<string | null>(null)
@@ -116,11 +115,11 @@ export default function PheQuyetPage() {
     <div className="space-y-5 max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-title font-bold text-text">{dict.platform.approval.title}</h1>
-          <p className="text-body-sm text-text-muted mt-0.5">
-            {dict.platform.approval.subtitle}
-          </p>
+        <div className="flex items-center gap-2">
+          <h1 className="text-title font-bold text-text">Yêu cầu phê duyệt</h1>
+          <InfoTip label="Yêu cầu phê duyệt">
+            Tổng hợp các yêu cầu đang chờ Admin xem xét: mở khoá quốc tế, đổi mô hình cửa hàng, nâng hạn mức AI.
+          </InfoTip>
         </div>
         <button
           type="button"
