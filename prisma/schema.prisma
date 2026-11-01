@@ -3935,6 +3935,24 @@ model partner_marketplace_stores {
   @@index([tier])
 }
 
+/// Link chia sẻ chợ đối tác (PO 01/11/2026): xem danh sách (đã che một phần) không cần
+/// đăng nhập. Cấp nền tảng như partner_marketplace_stores — không có organization_id.
+/// Tạo / huỷ cần N17. Chỉ lưu SHA-256 của token, không lưu token gốc.
+model partner_marketplace_share_links {
+  id             String    @id @default(uuid())
+  token_hash     String    @unique
+  /// Ghi chú để nhớ link gửi cho ai (vd. "BOD quý 4")
+  label          String
+  expires_at     DateTime
+  revoked_at     DateTime?
+  created_by     String
+  view_count     Int       @default(0)
+  last_viewed_at DateTime?
+  created_at     DateTime  @default(now())
+
+  @@index([created_at])
+}
+
 /// Yêu cầu duyệt theo từng đơn — Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §5).
 /// Chỉ đơn NGOÀI Thẻ chào. `kind` hiện có: DELIVER_BEFORE_PAY (giao trước, thu sau cho đơn ngoài chính sách).
 model order_approval_requests {
