@@ -22,7 +22,23 @@ Commit được audit: `c27f39e1` (HEAD `main`, 31/10/2026). Mọi lệnh dướ
 | E14 | Đối chiếu tuyến ↔ Screen Contract | Tuyến cấp 1 không có hợp đồng: bao-gia, bst, ch, chat, chinh-sach-bao-mat, creative-studio, cua-hang, dang-ky-thanh-cong, dang-nhap, dieu-phoi, du-lieu, noi-bo, subcontract, tich-hop, tin-nhan, uu-dai, xem-truoc-trang |
 | E15 | Kiểm đường dẫn trong `00-DOCUMENTATION-REGISTRY.yaml` | 82 mục, 0 đường dẫn hỏng |
 
+| E16 | `grep` `requireFeatureAccess`/`hasPlanEntitlement`/`resolvePlanFromOrg` | Chỉ `integration-hub/infra/org-profile.ts` dùng (ARC-033) |
+| E17 | Đọc `resolve-session.ts`, `grep "\"BRANCH\""` | `capabilities: new Set(grants.map(g => g.code))`; `"BRANCH"` chỉ ở khai báo kiểu (ARC-035) |
+| E18 | Đối chiếu `href` trong `nav-{mother,industry,chain,store}.ts` với `page.tsx` | Hỏng: `/van-hanh/san-pham`, `/cong-cu/toi-uu-he-thong`; `nav-mother.ts` 0 trường `capability` (ARC-039) |
+| E19 | Quét 36 route `api/v1/platform` (route + use-case nhập trực tiếp) | 35 kiểm mã N; `notification/events` chỉ kiểm là người vận hành |
+| E20 | MCP `list_repos` | Truy cập được: smeOS, floraos-core, localbudd, floraos-v1, AVI-GIFT, ALG_Internal_Tool, LocalTrove…; không thấy SocialFlow |
+
 ## 2. Tệp nguồn được trích dẫn
+
+### Bổ sung cho giai đoạn 4 và hệ sinh thái
+- `src/core/entitlements/entitlement-service.ts`
+- `src/modules/organization/domain/tool-route-entitlement.ts`
+- `src/components/layout/nav/{index,nav-mother,nav-industry,nav-chain,nav-store}.ts`
+- `src/modules/organization/infra/governance-decisions-repository.ts`
+- `src/modules/integration-hub/{domain/integration-governance.ts, infra/governance-repository.ts, infra/org-profile.ts}`
+- `src/modules/notification/domain/{cascading-policy.ts, events/industry-events.ts}`
+- `prisma/schema.prisma` — `chain_partnerships`, `chain_branches`, `branches`, `memberships`, `integration_governance`, `notification_hard_locks`
+- `src/modules/{sso,proxy,integration}/**`, `src/app/api/v1/{integration,proxy,sso}/**`
 
 ### Tenancy, phiên, RBAC, nền tảng
 - `src/core/tenancy/tenant-context.ts` — `scopedWhere`, `scopedData`, `ownedByTenant`

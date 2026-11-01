@@ -82,7 +82,41 @@ Thực thi bằng mở rộng `npm run check:layers` + test kiến trúc hiện 
 | Trợ năng | WCAG 2.1 AA (đã có axe E2E) | Mở rộng cho mọi trang có hợp đồng |
 | Commit/phát hành | Conventional Commits (đã có) + SemVer | Tag phát hành |
 
-## 6. Điều KHÔNG khuyến nghị
+## 6. Kiến trúc đích 4 tầng (bổ sung sau giai đoạn 4 — xem `13`)
+
+### 6.1 Mô hình dữ liệu tầng (đề xuất, cần PO chọn — chạm schema)
+
+```
+platform (Mẹ)            platform_operators, platform_settings
+   │
+industry (Ngành)         PHƯƠNG ÁN 1: chỉ là plugin mã + khoá theo industry_key (bỏ khỏi RBAC/thông báo/nav)
+   │                     PHƯƠNG ÁN 2: bảng industries + vai quản trị ngành + scope_id thống nhất "industry:<key>"
+   │
+organization (Chuỗi)     organizations.type = CHAIN
+   │   tổ_chức_cha_id / organization_links (MỘT mô hình quan hệ, có loại: SUBCONTRACTOR | FRANCHISE | BRANCH)
+   ▼
+organization (Cửa hàng)  luôn là một tenant → nhận đủ khoá công cụ, ma trận, khoá thông báo/tích hợp
+   └── branches (đơn vị con nội bộ, phạm vi quyền BRANCH)
+```
+
+Hàm dùng chung duy nhất: `resolveTierChain(organizationId) → { tier, industryKey, parentChainId, branchId? }`, thay cho 3 bản `chain_partnerships.findFirst` hiện có; mọi hệ thống (ma trận, thông báo, tích hợp, khoá công cụ) dùng chung kết quả này.
+
+### 6.2 Cổng kiểm ở biên (đích)
+
+```
+requireTenantContext
+  ├─ TenantContext { organizationId, tierChain, branchId, grants: Map<code, scope>, plan }
+  ├─ assertToolUnlocked (phủ cả trang và API của công cụ)
+requireCapability(ctx, code)          → kiểm mã
+requireScope(ctx, code, resource)     → kiểm phạm vi (ORGANIZATION / BRANCH) ở repository, như organization_id
+requireFeatureAccess(ctx, feature)    → kiểm gói dịch vụ cho mọi tính năng trả phí
+```
+
+### 6.3 Bất biến cần test cho 4 tầng
+- Mỗi trục (RBAC, phạm vi, gói, khoá công cụ, ma trận, thông báo, tích hợp, nav) × mỗi tầng có ít nhất một ca thử trong `tests/tenant` hoặc `tests/platform`.
+- Không mã giao diện nào so khoá vai; khuôn UX suy từ `(tier, capabilities)`.
+
+## 7. Điều KHÔNG khuyến nghị
 
 - Không tách microservice, không thêm message broker mới (D19: không thêm hạ tầng cho nền AI; Postgres `LISTEN/NOTIFY` đủ ở quy mô hiện tại).
 - Không viết lại Thẻ chào trong thời gian đóng băng.

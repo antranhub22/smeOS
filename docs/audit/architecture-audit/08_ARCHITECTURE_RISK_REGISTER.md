@@ -39,6 +39,17 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 | ARC-030 | A/N | P2 | C | TB | V | — | Worker `market-intelligence` không có trong `render.yaml` → tính năng nghiên cứu thị trường không chạy trên production | 13 |
 | ARC-031 | F/B | P3 | T | TB | V | — | `xlsx` cài từ CDN, ngoài Dependabot | 29 |
 | ARC-032 | N | P3 | TB | TB | V | — | Gói hạ tầng nhỏ (starter, DB basic-256mb, Redis 256 MB); chưa kiểm tải | 30 |
+| ARC-033 | G/E | P1 | C | C | V | 2 | Gói dịch vụ không được thực thi (không route nào gọi `requireFeatureAccess`); tổ chức không có gói → `PRO` | 7 |
+| ARC-034 | A/C | P1 | C | C | V | 2 | Ba mô hình Chuỗi → Cửa hàng (`chain_partnerships`, `chain_branches`, `branches`); mô hình `chain_branches` nằm ngoài quản trị tầng | 10 |
+| ARC-035 | G | P1 | TB | C | V | 2 | Phạm vi quyền (`BRANCH`…) bị bỏ khi dựng `TenantContext`; giới hạn chi nhánh chỉ ad-hoc | 10 |
+| ARC-036 | A/G | P2 | TB | TB | V | 2 | Tầng Ngành biểu diễn ba cách (không có / `industry:<key>` / id tổ chức) | 15 |
+| ARC-037 | G/D | P2 | TB | TB | V | 3 | Khoá công cụ chỉ khoá trang với 4 công cụ; 1 công cụ trỏ trang không tồn tại | 18 |
+| ARC-038 | E | P2 | T | TB | V | 3 | Logic "chuỗi cha" chép 3 nơi, ngầm chọn chuỗi sớm nhất | 22 |
+| ARC-039 | H/G | P3 | TB | T | V | 3 | Nav Mẹ không lọc theo mã N; 2 liên kết nav hỏng | 28 |
+| ARC-040 | F (hệ sinh thái) | P2 | T | C | V | 3 | SSO HS256 khoá chung giữa các app, không `aud`/`iss` | 18 |
+| ARC-041 | A (hệ sinh thái) | P1 | C | TB | PV | 2 | Ranh giới sở hữu giữa core/LocalBudd/SocialFlow chưa chốt (hai bản Catalog, bảng trùng, D1) | 11 |
+| ARC-042 | B (hệ sinh thái) | P2 | TB | TB | NV | — | `smeOS` và `floraos-core` cùng tồn tại công khai; chưa rõ nguồn deploy | 12 |
+| ARC-043 | L (hệ sinh thái) | P2 | TB | TB | V | 2 | Proxy/SSO liên-app không cấu hình trên production, không test liên repo | 20 |
 
 ## 2. Chi tiết từng phát hiện
 
@@ -168,11 +179,27 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 
 ### ARC-032 — Dung lượng hạ tầng (P3) — kiểm tải theo SLO S1–S4 trước khi nhận khách lớn; kế hoạch nâng gói.
 
+### ARC-033 … ARC-039 — Nhất quán xuyên 4 tầng
+Chi tiết, bằng chứng và khuyến nghị ở `13_CROSS_TIER_CONSISTENCY_AUDIT.md` §3–§8. Bằng chứng chính:
+- ARC-033: `src/core/entitlements/entitlement-service.ts` (`requireFeatureAccess`, `resolvePlanFromOrg` → `"PRO"`); `grep` chỉ thấy `integration-hub/infra/org-profile.ts` dùng.
+- ARC-034: `prisma/schema.prisma` model `chain_partnerships`, `chain_branches`, `branches`, `memberships.chain_branch_code`; `governance-decisions-repository.ts` dòng 58, 74; `integration-hub/infra/governance-repository.ts` `scopeOf`.
+- ARC-035: `organization/use-cases/resolve-session.ts` (`new Set(grants.map((grant) => grant.code))`); `core/rbac/permission-resolver.ts` `CapabilityScope`.
+- ARC-036: `integration-hub/domain/integration-governance.ts` dòng 4–5, 31–35; `notification/domain/cascading-policy.ts` `isLockInScope`; `notification/domain/events/industry-events.ts`.
+- ARC-037: `organization/domain/tool-route-entitlement.ts` `TOOL_ROUTE_RULES`.
+- ARC-038: ba lời gọi `chain_partnerships.findFirst({ orderBy: { created_at: "asc" } })`.
+- ARC-039: `components/layout/nav/nav-mother.ts` (0 trường `capability`), `nav-store.ts` (`/cong-cu/toi-uu-he-thong`), `nav-mother.ts` (`/van-hanh/san-pham`).
+
+Khuyến nghị gộp: `13` §10.
+
+### ARC-040 … ARC-043 — Cấp hệ sinh thái
+Chi tiết ở `14_ECOSYSTEM_AUDIT.md` §2–§3. Lỗi cấp hệ sinh thái cần quyết định ở nhiều repo; không sửa được chỉ trong `smeOS`.
+
 ## 3. Phân bố
 
 | Mức | Số phát hiện |
 |---|---|
 | P0 | 2 |
-| P1 | 9 (ARC-003, 004, 005, 006, 007, 008, 009, 011, 028) |
-| P2 | 18 |
-| P3 | 3 |
+| P1 | 13 (ARC-003, 004, 005, 006, 007, 008, 009, 011, 028, 033, 034, 035, 041) |
+| P2 | 24 |
+| P3 | 4 |
+| **Tổng** | **43** (39 cấp repo `smeOS`, 4 cấp hệ sinh thái: ARC-040 … 043) |

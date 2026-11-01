@@ -49,6 +49,12 @@ SMEOS có **lõi kiến trúc đa tenant và phân quyền được thiết kế
 - **ARC-009** — Worker Python gọi thẳng OpenAI/fal/Stability/Replicate, tự ghi `ai_requests`; sàn riêng tư và lọc giấy phép của `callCapability` không áp ở đường này.
 - **ARC-011** — Bảo vệ dữ liệu cá nhân (Nghị định 13/2023): đồng ý, hạn lưu, xoá dữ liệu khách cuối vẫn là quyết định mở D13.
 - **ARC-028** — Gói bàn giao khách thiếu SLA, hướng dẫn quản trị, hướng dẫn người dùng chính thức, quy trình nâng cấp; runbook còn nhiều mục [CẦN XÁC NHẬN].
+- **ARC-033** *(giai đoạn 4)* — Gói dịch vụ không được thực thi: không route nào gọi `requireFeatureAccess`; tổ chức không có gói được coi là `PRO`.
+- **ARC-034** *(giai đoạn 4)* — Ba mô hình Chuỗi → Cửa hàng song song (`chain_partnerships`, `chain_branches`, `branches`); cửa hàng tạo theo mô hình `chain_branches` nằm ngoài khoá/ma trận của tầng trên.
+- **ARC-035** *(giai đoạn 4)* — Phạm vi quyền (`BRANCH`) bị bỏ khi dựng `TenantContext`; nhân viên chi nhánh có phạm vi toàn tổ chức ở mọi mô-đun không tự lọc.
+- **ARC-041** *(hệ sinh thái)* — Ranh giới sở hữu giữa core, LocalBudd, SocialFlow chưa chốt.
+
+Tổng: **43 phát hiện** — 2 P0, 13 P1, 24 P2, 4 P3 (39 cấp repo, 4 cấp hệ sinh thái).
 
 ## 5. Điểm mạnh đã kiểm chứng
 
@@ -81,7 +87,21 @@ SMEOS có **lõi kiến trúc đa tenant và phân quyền được thiết kế
 4. Bỏ `ignoreBuildErrors`, tạo môi trường staging, kiểm chứng sao lưu + diễn tập khôi phục — ARC-004/005.
 5. Bắt buộc `STORAGE_*` ở production (fail-fast) — ARC-006.
 
-## 8. Giới hạn của audit
+## 8. Tiến độ theo 7 giai đoạn audit
+
+| GĐ | Công việc | Trạng thái | Tài liệu |
+|---|---|---|---|
+| 1 | Repository Discovery | ✅ `smeOS` | `02`, `07` |
+| 2 | Architecture Inventory | ✅ `smeOS` | `02`, `12` (As-Is) |
+| 3 | Audit chi tiết 15 nhóm | ✅ | `03`, `05`, `06`, `07` |
+| 4 | Audit nhất quán xuyên 4 tầng | ✅ | `13` |
+| 5 | Gap & Risk | ✅ `smeOS` + điểm tiếp giáp hệ sinh thái | `04`, `08`, `14` |
+| 6 | Target Architecture | ✅ đề xuất, **chờ PO duyệt** | `09` |
+| 7 | Báo cáo tổng thể + roadmap | ✅ | `01`, `10`, `11` |
+
+Ba điều kiện trước khi nâng cấp: **As-Is** (`12`) và **Gap & Risk** (`04`, `08`, `13`) đủ cho `smeOS`; **To-Be** (`09`) chờ PO duyệt cùng 4 quyết định nêu ở `10` mục "Cổng quyết định". Audit mã bên trong các repo khác (LocalBudd, SocialFlow, floraos-core, floraos-v1) chưa làm theo chỉ đạo tập trung `smeOS` (`14` §4).
+
+## 9. Giới hạn của audit
 
 - Container audit **không có `node_modules` và `pytest`**; cài dependency bị cấm trong phạm vi audit → không chạy lại được typecheck/unit/tenant/platform/build/pytest cục bộ. Dùng kết quả CI thật trên GitHub (run #292) làm bằng chứng gate. Chỉ chạy được `node scripts/check-docs.mjs` (đạt) và `node scripts/handover-check.mjs` (đạt, 4 cảnh báo).
 - Không truy cập được Render, CSDL production, Sentry, kết quả CodeQL, cấu hình GitHub ruleset → các mục vận hành ghi **Not Verified**.

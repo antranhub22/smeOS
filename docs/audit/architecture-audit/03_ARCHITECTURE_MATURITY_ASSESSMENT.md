@@ -68,7 +68,8 @@ Phân loại bằng chứng: **V** Verified · **PV** Partially Verified · **NV
 - Ba lớp cắt có test: "bật ngoại lệ cho mã có trần cứng vẫn không mở được" (`permission-resolver.test.ts`). V.
 - Frontend vs backend: điều hướng/khuôn UI dùng khoá vai (`store_admin`, `chain_admin`, `industry_admin`, `flower_network_admin`, `platform_admin`) **không tồn tại** trong `SYSTEM_ROLES`; backend vẫn gác bằng mã năng lực nên không mở quyền, nhưng UI và quyền dùng hai bộ từ vựng (ARC-008, ARC-016). V.
 - Đường truy cập trái phép: không thấy ở production; ở môi trường không-production có (ARC-003). V.
-- Ma trận toàn cục: `05` §3.
+- Ma trận toàn cục: `05` §4.
+- **Bổ sung sau giai đoạn 4 (`13`):** phạm vi quyền (`BRANCH`) bị bỏ khi dựng `TenantContext` (ARC-035), gói dịch vụ không được thực thi (ARC-033), ba mô hình Chuỗi → Cửa hàng (ARC-034). Giữ điểm 3 cho RBAC theo mã năng lực ở cấp tổ chức; riêng **quản trị quyền 4 tầng xét tổng thể chỉ đạt 2**.
 
 ## H. UX/UI — **3**
 

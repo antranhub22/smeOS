@@ -36,6 +36,23 @@
 | 2.6 | Gác mã năng lực cho `content-engine/rewrite` | ARC-025 | **[PO]** chốt mã | Mục rời khỏi `NO_CAPABILITY_GUARD` | route guard test |
 | 2.7 | Kiểu domain riêng; cấm `import type` từ `infra/` trong domain/components | ARC-018 | — | `check:layers` đỏ khi vi phạm | `check:layers` |
 | 2.8 | **[PO]** Lược đồ: enum cho cột trạng thái mới, ràng buộc CHECK số dư; DB test dựng bằng migration | ARC-019 | 1.2 | Migration mới + `migrate diff` sạch | CI |
+| 2.9 | **[PO]** Thực thi gói dịch vụ: gọi `requireFeatureAccess` cho mọi tính năng trả phí; quyết định mặc định khi `credit_plan` trống (không để `PRO`) | ARC-033 | 0.1 | Tổ chức gói `STARTER` gọi API studio/video → 403 `ENTITLEMENT_REQUIRED` | `test:tenant` mới |
+| 2.10 | **[PO]** Chọn một mô hình Chuỗi → Cửa hàng; hàm `resolveTierChain` dùng chung thay 3 bản sao | ARC-034, ARC-038 | 2.4 | Cùng một cửa hàng nhận cùng khoá ở ma trận, thông báo, tích hợp, khoá công cụ | `test:tenant` đối chiếu tầng |
+| 2.11 | **[PO]** Mang phạm vi quyền vào `TenantContext`; lọc theo chi nhánh ở repository | ARC-035 | 2.10 | Nhân viên chi nhánh A không đọc được đơn/khách của chi nhánh B | `test:tenant` mới |
+| 2.12 | Thống nhất biểu diễn tầng Ngành (theo quyết định 2.4) cho ma trận, thông báo, tích hợp | ARC-036 | 2.4 | Một `scope_id` chung; sự kiện thông báo có người nhận thật | `npm test` |
+| 2.13 | Khoá công cụ phủ API (`greeting-card`, `vision/assets` cho quét ảnh, `template-overrides`); bỏ công cụ trỏ trang không tồn tại | ARC-037 | 0.1 | Chi nhánh bị khoá gọi API công cụ → 403 | `require-tenant-tool-lock.test.ts` mở rộng |
+| 2.14 | Nav Mẹ lọc theo mã N; sửa 2 liên kết hỏng | ARC-039 | — | Operator thiếu mã không thấy mục tương ứng | unit nav |
+| 2.15 | Bộ test đối chiếu tầng: trục × tầng (`13` §10.7) | ARC-033…039 | 2.9–2.13 | Ma trận ca thử đủ ô | `test:tenant`, `test:platform` |
+
+## Giai đoạn 2b — Hệ sinh thái (sau khi PO xác nhận phạm vi repo — `14` §4)
+
+| # | Hành động | ID | Tiêu chí |
+|---|---|---|---|
+| 2b.1 | **[PO]** Xác nhận danh sách repo, vị trí SocialFlow, trạng thái `floraos-core` (archive?) | ARC-041, ARC-042 | Danh sách thành văn |
+| 2b.2 | Audit giai đoạn 1–3 cho từng repo trong phạm vi | — | Báo cáo theo mẫu `01`–`11` |
+| 2b.3 | **[PO]** Chốt chủ sở hữu Landing/Catalog/QR; kế hoạch bỏ bảng trùng ở LocalBudd | ARC-041 | Quyết định ghi TRANG_THAI §4 |
+| 2b.4 | SSO: thêm `aud`/`iss`, khoá riêng mỗi app hoặc chữ ký bất đối xứng | ARC-040 | Token app A bị app B từ chối |
+| 2b.5 | Cấu hình hoặc tắt hẳn proxy/SSO liên-app trên production; test end-to-end liên repo | ARC-043 | Smoke test staging |
 
 ## Giai đoạn 3 — Thương mại & bàn giao (4–8 tuần, song song GĐ2)
 
@@ -81,6 +98,17 @@
 | Mốc | Phải xong |
 |---|---|
 | Production an toàn | Giai đoạn 0 + 1.1–1.4 |
-| Thương mại (khách trả tiền đầu tiên) | + 1.5–1.7, 2.1, 2.2, 3.1, 3.7, 3.8 |
-| Bàn giao khách | + 3.3–3.6 |
-| Enterprise | + 2.3–2.8, 3.9, Giai đoạn 4 (4.5, 4.6) |
+| Thương mại (khách trả tiền đầu tiên) | + 1.5–1.7, 2.1, 2.2, **2.9**, 3.1, 3.7, 3.8 |
+| Mở bán cho chuỗi | + 2.10, 2.11, 2.13, 2.15 |
+| Bàn giao khách | + 3.3–3.6, 2b.1 |
+| Enterprise | + 2.3–2.15, 2b.*, 3.9, Giai đoạn 4 (4.5, 4.6) |
+
+## Cổng quyết định trước khi triển khai (theo tiêu chí PO)
+
+| Kết quả cần có | Tài liệu | Trạng thái |
+|---|---|---|
+| As-Is Architecture | `12` (+ `02`, `03`) | Đủ cho `smeOS`; hệ sinh thái chưa |
+| Gap & Risk Assessment | `04`, `08`, `13`, `14` | Đủ cho `smeOS`; hệ sinh thái mới ở mức tiếp giáp |
+| To-Be Architecture | `09` | **Đề xuất — chờ PO duyệt**, đặc biệt 4 quyết định: tầng Ngành (2.4), mô hình Chuỗi → Cửa hàng (2.10), gói mặc định (2.9), phạm vi repo (2b.1) |
+
+Chỉ sau khi PO duyệt `09` và 4 quyết định trên mới lập kế hoạch implementation chi tiết và giao agent theo nhóm, đúng thứ tự phụ thuộc ở trên, mỗi nhóm có approval gate riêng.
