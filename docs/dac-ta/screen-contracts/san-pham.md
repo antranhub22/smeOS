@@ -1,3 +1,20 @@
+---
+id: SCR-STORE-san-pham
+tier: STORE
+module: products
+route: /san-pham
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 <h1> đúng 20px (text-display)
+  - Tối đa 1 nút chính (primary button) theo K2
+  - Thanh lọc và tìm kiếm sát danh sách sản phẩm (UX-P09)
+  - Đầy đủ 6 trạng thái UI
+  - Chuyển đổi mượt mà giữa thẻ (mobile) và bảng (desktop)
+---
+
 # Screen Contract — Danh sách & Chi tiết Sản phẩm (`/san-pham`, `/san-pham/[id]`)
 
 **Tuyến:** `/san-pham`, `/san-pham/[id]` · **Tệp chính:** `src/app/(app)/san-pham/page.tsx`, `src/app/(app)/san-pham/[id]/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.B1

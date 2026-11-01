@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-trang-chu
+tier: STORE
+module: dashboard
+route: /
+archetype: A
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 <h1> đúng 20px (text-display)
+  - Khởi động công việc theo định hướng hành trình tác vụ (ChoiceGrid)
+  - Đầy đủ 6 trạng thái UI
+  - Chuyển đổi mượt mà giữa hành trình và bảng điều khiển chuyên gia
+---
+
 # Screen Contract — Trang chủ Hành trình Quản trị Cửa hàng (Store Journey Home)
 
 **Tuyến:** `/` · **Tệp chính:** `src/components/dashboard/store-journey-home.tsx` · **Cập nhật:** 30/09/2026 · **Thẻ:** J1–J7
