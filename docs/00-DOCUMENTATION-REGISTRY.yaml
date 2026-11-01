@@ -112,7 +112,7 @@ documents:
     domain: "Marketing & Sales Center"
     layer: "Level 2"
     purpose: "PR-0…PR-7 + PR-B, từng commit, checklist, gate, vùng cấm Catalog/Thẻ chào"
-    status: "DRAFT"
+    status: "APPROVED"
     authority: "Level 2"
     canonical: false
     ssot: false

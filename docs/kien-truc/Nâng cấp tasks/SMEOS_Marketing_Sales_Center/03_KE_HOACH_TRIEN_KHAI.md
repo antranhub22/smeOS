@@ -1,6 +1,6 @@
 # Kế hoạch triển khai — Marketing & Sales Center trên `/cong-cu`
 
-> Trạng thái: **BẢN NHÁP CHỜ PO DUYỆT** · Dựa trên `01_DANH_GIA_DONG_BO.md` (7 quyết định PO 01/11/2026) và `02_DANH_MUC_ASSET.md`.
+> Trạng thái: **ĐÃ DUYỆT** (PO 01/11/2026) · Dựa trên `01_DANH_GIA_DONG_BO.md` (7 quyết định PO 01/11/2026) và `02_DANH_MUC_ASSET.md`.
 > Mục tiêu người dùng: chủ cửa hàng **biết rõ mục đích từng asset** → **nhập ít, phần còn lại tự điền** từ dữ liệu có sẵn → hệ thống **tạo asset chất lượng** → **chọn nơi dùng** (Quảng bá / Bán hàng / Chăm sóc / In / Lưu).
 
 ## 1. Tổng quan phase → PR
