@@ -13,7 +13,7 @@ services:
     buildCommand: npm ci --include=dev && npx prisma generate && npm run db:deploy && npm run db:seed && npm run build
     startCommand: npm run start
     healthCheckPath: /api/health
-    autoDeploy: true
+    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
     branch: main
     envVars:
       - key: DATABASE_URL
@@ -129,7 +129,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m media_ai.jobs.worker
-    autoDeploy: true
+    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
     branch: main
     envVars:
       - key: DATABASE_URL
@@ -176,7 +176,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m media_ai.video.video_worker
-    autoDeploy: true
+    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
     branch: main
     envVars:
       - key: DATABASE_URL
@@ -211,7 +211,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m vision.jobs.worker
-    autoDeploy: true
+    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
     branch: main
     envVars:
       - key: DATABASE_URL
