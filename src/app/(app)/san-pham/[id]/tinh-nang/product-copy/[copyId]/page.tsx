@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Save, CheckCircle2, XCircle, AlertCircle, Loader2, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useSession } from "@/lib/session"
@@ -324,18 +326,18 @@ export default function ProductCopyDetailPage() {
                       </div>
                       <div className="text-center">
                         {field === "suggested_price_segment" ? (
-                          <select
+                          <NativeSelect
                             value={String(getEffectiveValue(field))}
                             onChange={(e) => handleFieldChange(field, e.target.value)}
                             disabled={!canEdit || !isPending}
-                            className="w-full max-w-xs mx-auto h-9 rounded-xl border-[1.5px] border-border bg-surface pl-3 pr-8 text-sm outline-none focus:border-primary disabled:opacity-50"
+                            className="max-w-xs mx-auto"
                           >
                             {PRICE_SEGMENTS.map((seg) => (
                               <option key={seg} value={seg}>
                                 {seg.charAt(0).toUpperCase() + seg.slice(1)}
                               </option>
                             ))}
-                          </select>
+                          </NativeSelect>
                         ) : Array.isArray(getEffectiveValue(field)) ? (
                           <div className="flex flex-wrap justify-center gap-1">
                             {String(getEffectiveValue(field))
@@ -353,12 +355,12 @@ export default function ProductCopyDetailPage() {
                               ))}
                           </div>
                         ) : (
-                          <input
+                          <Input
                             type="text"
                             value={String(getEffectiveValue(field))}
                             onChange={(e) => handleFieldChange(field, e.target.value)}
                             disabled={!canEdit || !isPending}
-                            className="w-full max-w-xs mx-auto h-9 rounded-xl border-[1.5px] border-border bg-surface pl-3 pr-3 text-sm outline-none focus:border-primary disabled:opacity-50"
+                            className="max-w-xs mx-auto"
                           />
                         )}
                         {isEdited && (

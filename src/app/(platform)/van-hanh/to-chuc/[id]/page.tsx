@@ -5,6 +5,7 @@ import { useParams } from "next/navigation"
 import { useI18n } from "@/lib/i18n"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Building2, Store, Clock, CheckCircle2 } from "@/components/ui/icons"
 import { formatDateTime } from "@/lib/i18n/formatters"
@@ -42,7 +43,7 @@ async function layJson<T>(url: string): Promise<T | null> {
 
 function Dong({ nhan, giaTri }: { nhan: string; giaTri: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between border-b border-border py-2 text-xs last:border-0">
+    <div className="flex items-center justify-between border-b border-border py-2 text-caption last:border-0">
       <span className="text-text-muted">{nhan}</span>
       <span className="font-medium">{giaTri}</span>
     </div>
@@ -98,7 +99,7 @@ export default function ChiTietToChucPage() {
     }
   }
 
-  if (loi && !org) return <p role="alert" className="text-sm text-danger">{loi}</p>
+  if (loi && !org) return <p role="alert" className="text-body-sm text-danger">{loi}</p>
   if (!org) return <div className="py-4"><SkeletonBlock lines={4} /></div>
 
   const isChain = org.type === "CHAIN" || org.type === "FLOWER_NETWORK"
@@ -129,7 +130,7 @@ export default function ChiTietToChucPage() {
           <div className="text-caption text-text-muted space-y-1">
             <div>
               Chuyển sang:{" "}
-              <strong className="text-foreground">
+              <strong className="text-text">
                 {org.pendingModelChange.requested_type === "CHAIN" ? "Chuỗi cửa hàng (CHAIN)" : "1 Cửa hàng độc lập (SINGLE)"}
               </strong>
             </div>
@@ -165,7 +166,7 @@ export default function ChiTietToChucPage() {
           <div className="text-caption text-text-muted space-y-1">
             <div>
               Cửa hàng gửi yêu cầu mở khóa:{" "}
-              <strong className="text-foreground">
+              <strong className="text-text">
                 Tiếng Anh ({org.pendingLanguageUnlock.requested_locales.join(", ")})
               </strong>
             </div>
@@ -210,8 +211,8 @@ export default function ChiTietToChucPage() {
 
       <Card className="p-4 space-y-3">
         <div className="flex items-center justify-between mb-1 border-b border-border pb-2">
-          <p className="text-lg font-semibold">{org.name}</p>
-          <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Tổ chức cụ thể</span>
+          <p className="text-title-sm font-semibold">{org.name}</p>
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Tổ chức cụ thể</span>
         </div>
 
         <Dong nhan="Slug" giaTri={org.slug} />
@@ -220,7 +221,7 @@ export default function ChiTietToChucPage() {
           giaTri={
             <div className="flex items-center gap-2">
               <span
-                className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                className={`px-2 py-0.5 rounded text-caption font-semibold ${
                   isChain ? "bg-accent/15 text-accent-text" : "bg-primary/15 text-primary"
                 }`}
               >
@@ -229,14 +230,16 @@ export default function ChiTietToChucPage() {
 
               {/* Nút đổi nhanh của Admin nếu không có pending request */}
               {!org.pendingModelChange && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="xs"
                   disabled={dangDuyet}
                   onClick={() => handleApprove(isChain ? "SINGLE" : "CHAIN")}
-                  className="text-caption text-text-muted hover:text-primary underline ml-1"
+                  className="text-caption text-text-muted hover:text-primary underline ml-1 h-auto p-0"
                 >
                   {isChain ? "Chuyển về 1 Cửa hàng" : "Chuyển sang Chuỗi"}
-                </button>
+                </Button>
               )}
             </div>
           }
@@ -252,7 +255,7 @@ export default function ChiTietToChucPage() {
       <Card className="p-4 space-y-3">
         <div className="flex items-center justify-between border-b border-border pb-2">
           <div>
-            <p className="text-body-sm font-bold text-foreground">Gói Ngôn Ngữ & Quốc Tế (SaaS Unlock)</p>
+            <p className="text-body-sm font-bold text-text">Gói Ngôn Ngữ & Quốc Tế (SaaS Unlock)</p>
             <p className="text-caption text-text-muted">
               Admin SaaS cấp quyền cho cửa hàng này được phép sử dụng ngôn ngữ nào trên Thẻ Chào.
             </p>
@@ -262,9 +265,9 @@ export default function ChiTietToChucPage() {
         <div className="flex flex-col gap-2 pt-1">
           <label className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-surface-muted/40 cursor-not-allowed">
             <div className="flex items-center gap-2.5">
-              <span className="text-base">🇻🇳</span>
+              <span className="text-body">🇻🇳</span>
               <div>
-                <p className="text-caption font-bold text-foreground">Tiếng Việt (vi)</p>
+                <p className="text-caption font-bold text-text">Tiếng Việt (vi)</p>
                 <p className="text-caption text-text-muted">Mặc định cho toàn bộ cửa hàng nội địa</p>
               </div>
             </div>
@@ -275,18 +278,17 @@ export default function ChiTietToChucPage() {
 
           <label className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-surface hover:bg-surface-muted/50 transition-colors cursor-pointer">
             <div className="flex items-center gap-2.5">
-              <span className="text-base">🇬🇧</span>
+              <span className="text-body">🇬🇧</span>
               <div>
-                <p className="text-caption font-bold text-foreground">Tiếng Anh (en — Quốc tế / Kiều bào)</p>
+                <p className="text-caption font-bold text-text">Tiếng Anh (en — Quốc tế / Kiều bào)</p>
                 <p className="text-caption text-text-muted">Cho phép cửa hàng tạo Thẻ chào & nhận đơn từ nước ngoài</p>
               </div>
             </div>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={Boolean(org.unlockedLocales?.includes("en"))}
               disabled={dangDuyet}
-              onChange={async (e) => {
-                const enableEn = e.target.checked
+              onCheckedChange={async (checked) => {
+                const enableEn = Boolean(checked)
                 const newLocales = enableEn ? ["vi", "en"] : ["vi"]
                 setDangDuyet(true)
                 setLoi(null)

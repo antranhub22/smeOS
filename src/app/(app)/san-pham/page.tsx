@@ -119,14 +119,16 @@ export default function SanPhamPage() {
           </InfoTip>
         </div>
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={() => napLai()}
             aria-label={t("products.header.refresh")}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            className="h-9 w-9 rounded-xl"
           >
             <RefreshCw size={15} />
-          </button>
+          </Button>
           {/* Xuất Excel: quyền R13 như các màn khác (PO 14/10/2026) — máy chủ kiểm lại */}
           {session.can("R13") && <a
             href={`/api/v1/products/export?${new URLSearchParams({
@@ -140,24 +142,28 @@ export default function SanPhamPage() {
             <span className="hidden sm:inline">Xuất Excel</span>
           </a>}
           {/* Chỉ Điều hành nhập Excel (H3, PO 23/10/2026) — máy chủ kiểm lại */}
-          {session.can("H3") && <button
+          {session.can("H3") && <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => router.push("/san-pham/nhap-hang-loat" as never)}
-            className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 h-9 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            className="flex items-center gap-1.5 h-9"
             title="Nhập sản phẩm đồng loạt từ file Excel và folder ảnh"
           >
             <FileSpreadsheet size={14} className="text-success" />
             <span className="hidden sm:inline">{t("products.header.importExcel")}</span>
-          </button>}
-          <button
+          </Button>}
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => router.push("/tai-anh" as never)}
-            className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 h-9 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            className="flex items-center gap-1.5 h-9"
             title={`Tải ảnh ${ti("sampleProduct").toLowerCase()} → AI phân tích tự động`}
           >
             <Sparkles size={14} className="text-primary" />
             <span className="hidden sm:inline">{ti("scanButtonLabel")}</span>
-          </button>
+          </Button>
           <Button
             size="sm"
             onClick={() => router.push("/san-pham/tao-moi" as never)}
@@ -263,11 +269,13 @@ export default function SanPhamPage() {
         {rawProducts !== null && (
           <div className="mt-4 flex flex-col items-center gap-2">
             {nextCursor && (
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => void handleLoadMore()}
                 disabled={loadingMore}
-                className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60"
+                className="flex items-center gap-2"
               >
                 {loadingMore ? (
                   <>
@@ -277,7 +285,7 @@ export default function SanPhamPage() {
                 ) : (
                   `Xem thêm ${ti("sampleProduct").toLowerCase()}`
                 )}
-              </button>
+              </Button>
             )}
             {filteredProducts.length > 0 && (
               <div className="text-caption text-text-muted">

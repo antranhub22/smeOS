@@ -167,3 +167,29 @@ export const SelectSeparator = React.forwardRef<HTMLDivElement, SelectSeparatorP
   )
 )
 SelectSeparator.displayName = "SelectSeparator"
+
+export interface NativeSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  error?: boolean | undefined
+}
+
+export const NativeSelect = React.forwardRef<HTMLSelectElement, NativeSelectProps>(
+  ({ className, error, children, ...props }, ref) => (
+    <div className="relative w-full">
+      <select
+        ref={ref}
+        className={cn(
+          "flex h-11 w-full appearance-none items-center rounded-xl border border-border bg-surface px-3.5 py-2 pr-9 text-body-sm text-text transition-colors",
+          "hover:border-primary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          error && "border-danger focus:border-danger focus:ring-danger/20",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted opacity-70" />
+    </div>
+  )
+)
+NativeSelect.displayName = "NativeSelect"

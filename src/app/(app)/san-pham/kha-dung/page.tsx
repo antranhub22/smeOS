@@ -5,6 +5,7 @@ import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import useSWR from "swr"
 import { Calendar, LayoutGrid, Loader2, Sparkles, RefreshCw } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { AvailabilityBoardResult } from "@/modules/availability/use-cases/get-availability-board"
@@ -59,14 +60,14 @@ export default function AvailabilityPage() {
       {/* Page Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-text-muted mb-1">
+          <div className="flex items-center gap-2 text-caption font-semibold text-text-muted mb-1">
             <span>Sản phẩm</span>
             <span>/</span>
             <span className="text-primary font-bold">{pageTitle}</span>
           </div>
           {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
           <div className="flex items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-black text-text flex items-center gap-2">
+            <h2 className="text-title sm:text-display font-black text-text flex items-center gap-2">
               <span>{pageTitle}</span>
               <Sparkles size={18} className="text-primary" />
             </h2>
@@ -77,41 +78,47 @@ export default function AvailabilityPage() {
         {/* View mode toggle & Refresh */}
         <div className="flex items-center gap-2">
           <div className="flex items-center rounded-xl border border-border bg-surface-alt p-1">
-            <button
+            <Button
               type="button"
+              variant={activeTab === "calendar" ? "primary" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("calendar")}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-caption font-semibold transition-all ${
                 activeTab === "calendar"
-                  ? "bg-surface text-primary shadow-xs"
-                  : "text-text-muted hover:text-text"
+                  ? "bg-surface text-primary shadow-xs hover:bg-surface"
+                  : "text-text-muted hover:text-text hover:bg-transparent"
               }`}
             >
               <Calendar size={14} />
               <span>Chế độ Lịch</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={activeTab === "list" ? "primary" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("list")}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-caption font-semibold transition-all ${
                 activeTab === "list"
-                  ? "bg-surface text-primary shadow-xs"
-                  : "text-text-muted hover:text-text"
+                  ? "bg-surface text-primary shadow-xs hover:bg-surface"
+                  : "text-text-muted hover:text-text hover:bg-transparent"
               }`}
             >
               <LayoutGrid size={14} />
               <span>Danh sách sản phẩm</span>
-            </button>
+            </Button>
           </div>
 
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={() => mutate()}
             disabled={isLoading}
             aria-label="Tải lại dữ liệu"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+            className="h-9 w-9 rounded-xl"
           >
             <RefreshCw size={15} className={isLoading ? "animate-spin motion-reduce:animate-none" : ""} />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -119,23 +126,25 @@ export default function AvailabilityPage() {
       {isLoading ? (
         <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-surface">
           <Loader2 size={24} className="animate-spin motion-reduce:animate-none text-primary" />
-          <span className="text-xs text-text-muted">Đang tải dữ liệu khả dụng...</span>
+          <span className="text-caption text-text-muted">Đang tải dữ liệu khả dụng...</span>
         </div>
       ) : error || !data || !Array.isArray(data.days) || !Array.isArray(data.products) ? (
-        <div className="rounded-2xl border border-danger/20 bg-danger/10 p-6 text-center text-xs text-danger space-y-3">
+        <div className="rounded-2xl border border-danger/20 bg-danger/10 p-6 text-center text-caption text-danger space-y-3">
           <div className="font-semibold">
             {error instanceof Error
               ? error.message
               : "Không thể tải dữ liệu bảng điều khiển khả dụng. Vui lòng kiểm tra lại kết nối."}
           </div>
-          <button
+          <Button
             type="button"
+            variant="danger"
+            size="sm"
             onClick={() => mutate()}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-danger px-4 py-2 text-xs font-bold text-white shadow-xs hover:opacity-95 transition-opacity"
+            className="inline-flex items-center gap-1.5 rounded-xl font-bold"
           >
             <RefreshCw size={13} />
             <span>Thử lại</span>
-          </button>
+          </Button>
         </div>
       ) : activeTab === "list" ? (
         <QuickStockBoard products={data.products} />

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Users, UserPlus, Sparkles, Search, Calendar, ArrowRight } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { EmptyState } from "@/components/ui/empty-state"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
@@ -174,11 +175,11 @@ export default function CRMPage() {
               className="flex items-center gap-2 flex-1 max-w-md"
             >
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
-                <input
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted z-10" />
+                <Input
                   type="text"
                   placeholder="Tìm theo tên, số điện thoại hoặc mã KH..."
-                  className="w-full rounded-md border border-border bg-surface pl-9 pr-3 py-2 text-body-sm focus:ring-1 focus:ring-primary text-text placeholder:text-text-muted"
+                  className="pl-9"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -191,18 +192,16 @@ export default function CRMPage() {
             <div className="flex items-center gap-1.5 text-caption font-semibold">
               <span className="text-text-muted mr-1">Hạng:</span>
               {(["", "VIP", "GOLD", "SILVER", "BRONZE", "NEW"] as const).map((t) => (
-                <button
+                <Button
                   key={t}
                   type="button"
+                  variant={tierFilter === t ? "primary" : "outline"}
+                  size="xs"
                   onClick={() => setTierFilter(t)}
-                  className={`px-3 py-1 rounded-full text-caption transition-colors ${
-                    tierFilter === t
-                      ? "bg-primary text-white font-bold"
-                      : "bg-surface border border-border text-text-muted hover:bg-surface-alt hover:text-text"
-                  }`}
+                  className="rounded-full px-3 py-1 h-auto text-caption"
                 >
                   {TIER_LABEL[t] ?? "Tất cả"}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

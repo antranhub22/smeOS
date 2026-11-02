@@ -337,7 +337,7 @@ export default function SocialPublishingPage() {
   })
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* Top Header */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-3.5">
         <div>
@@ -357,7 +357,7 @@ export default function SocialPublishingPage() {
                 setActiveTab("queue")
               }
             }}
-            className="text-xs font-bold gap-1.5 shadow-xs"
+            className="text-caption font-bold gap-1.5 shadow-xs"
           >
             <Calendar size={13} />
             Lên lịch bài
@@ -367,12 +367,12 @@ export default function SocialPublishingPage() {
             size="sm"
             onClick={() => fetchPosts(true)}
             disabled={refreshing}
-            className="text-xs gap-1.5"
+            className="text-caption gap-1.5"
           >
             <RefreshCw size={13} className={refreshing ? "animate-spin motion-reduce:animate-none" : ""} />
             Làm mới
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => router.push("/")} className="text-xs gap-1.5">
+          <Button variant="ghost" size="sm" onClick={() => router.push("/")} className="text-caption gap-1.5">
             <ArrowLeft size={14} /> Quay về Trang chủ
           </Button>
         </div>
@@ -398,7 +398,7 @@ export default function SocialPublishingPage() {
               size="sm"
               variant={activeTab === tab.key ? "primary" : "ghost"}
               onClick={() => setActiveTab(tab.key)}
-              className="text-xs font-bold"
+              className="text-caption font-bold"
             >
               {tab.label}
             </Button>
@@ -454,7 +454,7 @@ export default function SocialPublishingPage() {
               <div className="text-body font-bold text-text mb-3 flex items-center justify-between">
                 <span>Xem trước nền tảng thực tế</span>
                 {selectedPost && (
-                  <span className="text-xs font-normal text-text-muted">
+                  <span className="text-caption font-normal text-text-muted">
                     Đang xem: <strong className="text-primary">{selectedPost.title}</strong>
                   </span>
                 )}

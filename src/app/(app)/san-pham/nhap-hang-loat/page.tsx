@@ -195,7 +195,7 @@ export default function BulkImportProductsPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-bg">
       <BulkImportHeader
         restoredCount={restoredFromSession ? parsedRows.length : 0}
         validCount={stats.total - stats.errors}

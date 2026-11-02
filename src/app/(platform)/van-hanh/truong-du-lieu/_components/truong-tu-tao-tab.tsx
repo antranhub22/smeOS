@@ -9,6 +9,8 @@ import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { DiffConfirmButton } from "./diff-confirm"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -60,7 +62,7 @@ export function TruongTuTaoTab() {
     })()
   }, [])
 
-  if (loi) return <p className="text-sm text-danger">{loi}</p>
+  if (loi) return <p className="text-body-sm text-danger">{loi}</p>
   if (!fields) return <SkeletonBlock lines={2} />
 
   return (
@@ -77,19 +79,17 @@ export function TruongTuTaoTab() {
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-body-sm">
               <span className="mb-1 block text-text-muted">Thực thể</span>
-              <select
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              <NativeSelect
                 value={form.entity}
                 onChange={(e) => setForm({ ...form, entity: e.target.value as FieldEntityKind })}
               >
                 <option value="ORDER">Đơn điều phối</option>
                 <option value="PARTNER">Đối tác</option>
-              </select>
+              </NativeSelect>
             </label>
             <label className="text-body-sm">
               <span className="mb-1 block text-text-muted">Kiểu dữ liệu</span>
-              <select
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              <NativeSelect
                 value={form.dataType}
                 onChange={(e) => setForm({ ...form, dataType: e.target.value as (typeof CUSTOM_FIELD_DATA_TYPES)[number] })}
               >
@@ -98,7 +98,7 @@ export function TruongTuTaoTab() {
                     {t}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
             <label className="text-body-sm sm:col-span-2">
               <span className="mb-1 block text-text-muted">Nhãn</span>
@@ -114,8 +114,7 @@ export function TruongTuTaoTab() {
             </label>
             <label className="text-body-sm">
               <span className="mb-1 block text-text-muted">Mức yêu cầu</span>
-              <select
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              <NativeSelect
                 value={form.requirement}
                 onChange={(e) => setForm({ ...form, requirement: e.target.value as FieldRequirementLevel })}
               >
@@ -124,7 +123,7 @@ export function TruongTuTaoTab() {
                     {r}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
             <label className="text-body-sm">
               <span className="mb-1 block text-text-muted">Bắt buộc phải có trước bước (mã bước, để trống nếu không chặn)</span>
@@ -136,8 +135,7 @@ export function TruongTuTaoTab() {
             </label>
             <label className="text-body-sm">
               <span className="mb-1 block text-text-muted">Độ nhạy</span>
-              <select
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              <NativeSelect
                 value={form.sensitivity}
                 onChange={(e) => setForm({ ...form, sensitivity: e.target.value as FieldSensitivity })}
               >
@@ -146,7 +144,7 @@ export function TruongTuTaoTab() {
                     {s}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
             <label className="text-body-sm">
               <span className="mb-1 block text-text-muted">Khoá danh mục (nếu kiểu SELECT/MULTI_SELECT)</span>
@@ -156,11 +154,10 @@ export function TruongTuTaoTab() {
               <span className="mb-1 block text-text-muted">Hiển thị theo đối tượng xem</span>
               <div className="flex flex-wrap gap-3">
                 {ALL_AUDIENCES.map((a) => (
-                  <label key={a} className="flex items-center gap-1.5">
-                    <input
-                      type="checkbox"
-                      checked={form.visibility[a]}
-                      onChange={(e) => setForm({ ...form, visibility: { ...form.visibility, [a]: e.target.checked } })}
+                  <label key={a} className="flex items-center gap-1.5 cursor-pointer">
+                    <Checkbox
+                      checked={Boolean(form.visibility[a])}
+                      onCheckedChange={(checked) => setForm({ ...form, visibility: { ...form.visibility, [a]: Boolean(checked) } })}
                     />
                     {a}
                   </label>

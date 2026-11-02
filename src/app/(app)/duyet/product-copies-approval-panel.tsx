@@ -63,10 +63,11 @@ export function ProductCopiesApprovalPanel({
           {productCopies.map((pc) => (
             <div key={pc.id} className="flex flex-col gap-1 py-2.5">
               <div className="flex min-h-11 items-center justify-between gap-3">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => onViewDetail(pc.product_id, pc.id)}
-                  className="flex min-w-0 flex-1 items-center gap-2.5 text-left hover:opacity-80 focus-visible:outline-2 focus-visible:outline-primary"
+                  className="flex min-w-0 flex-1 items-center justify-start gap-2.5 text-left h-auto p-1"
                 >
                   <CheckCircle2 size={18} strokeWidth={1.8} className="flex-shrink-0 text-secondary" />
                   <div className="min-w-0">
@@ -76,7 +77,7 @@ export function ProductCopiesApprovalPanel({
                       {pc.product_id && ` · SP: #${pc.product_id.slice(0, 8)}`}
                     </div>
                   </div>
-                </button>
+                </Button>
                 <div className="flex flex-shrink-0 items-center gap-2">
                   <Button
                     variant="ghost"

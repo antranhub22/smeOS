@@ -13,6 +13,7 @@ import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Lock, Loader2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { chuyenTang, veVaiThat } from "./chuyen-tang"
@@ -93,15 +94,17 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
         )}
       </div>
       {dungDuoc && (
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={handleOpenRole}
           disabled={opening}
-          className="flex min-h-11 flex-shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50 cursor-pointer"
+          className="flex min-h-11 flex-shrink-0 items-center gap-1.5"
         >
           {opening && <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />}
           {role.group === "PLATFORM" ? "Console" : "Mở"}
-        </button>
+        </Button>
       )}
     </li>
   )
@@ -136,15 +139,17 @@ export default function VaiTroPage() {
           </div>
         </div>
         {tierPreviewActive && (
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={handleVeVaiThat}
             disabled={dangVe}
-            className="ml-auto flex min-h-11 items-center gap-1.5 rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
+            className="ml-auto flex min-h-11 items-center gap-1.5"
           >
             {dangVe && <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />}
             Về vai thật của bạn
-          </button>
+          </Button>
         )}
       </header>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 
 export interface PricingRulesConfigCardProps {
@@ -88,16 +89,16 @@ export function PricingRulesConfigCard({
         <div className="text-caption font-semibold text-text-muted">Thưởng theo hạng đối tác xưởng</div>
         {tierRows.map((row, idx) => (
           <div key={idx} className="flex items-center gap-2">
-            <input
+            <Input
               value={row.name}
               disabled={!canEdit}
               onChange={(e) =>
                 setTierRows((cur) => cur.map((r, i) => (i === idx ? { ...r, name: e.target.value } : r)))
               }
               placeholder="Tên hạng đối tác"
-              className="h-10 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60"
+              className="flex-1"
             />
-            <input
+            <Input
               type="number"
               disabled={!canEdit}
               value={row.percent}
@@ -106,67 +107,68 @@ export function PricingRulesConfigCard({
                   cur.map((r, i) => (i === idx ? { ...r, percent: Number(e.target.value) } : r))
                 )
               }
-              className="h-10 w-20 rounded-xl border border-border bg-surface px-2 text-right text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60"
+              className="w-20 text-right"
             />
             <span className="text-caption text-text-muted">%</span>
             {canEdit && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setTierRows((cur) => cur.filter((_, i) => i !== idx))}
-                className="px-1 text-caption font-bold text-danger hover:underline"
+                className="px-1 text-caption font-bold text-danger hover:underline h-auto"
               >
                 Xoá
-              </button>
+              </Button>
             )}
           </div>
         ))}
         {canEdit && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setTierRows((cur) => [...cur, { name: "", percent: 0 }])}
-            className="w-fit text-caption font-bold text-primary hover:underline"
+            className="w-fit text-caption font-bold text-primary hover:underline h-auto px-0"
           >
             + Thêm hạng đối tác
-          </button>
+          </Button>
         )}
       </div>
 
       <label className="flex flex-col gap-1 text-caption font-medium text-text">
         <span>Tỷ lệ giá tối ưu / giá bán (%)</span>
-        <input
+        <Input
           type="number"
           min={0}
           max={100}
           disabled={!canEdit}
           value={optimalPercent}
           onChange={(e) => setOptimalPercent(Number(e.target.value))}
-          className="h-10 rounded-xl border border-border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60"
         />
       </label>
 
       <div className="grid grid-cols-2 gap-2">
         <label className="flex flex-col gap-1 text-caption font-medium text-text">
           <span>Hệ số Sàn (× giá vốn)</span>
-          <input
+          <Input
             type="number"
             min={0}
             step={0.1}
             disabled={!canEdit}
             value={floorRatio}
             onChange={(e) => setFloorRatio(Number(e.target.value))}
-            className="h-10 rounded-xl border border-border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60"
           />
         </label>
         <label className="flex flex-col gap-1 text-caption font-medium text-text">
           <span>Hệ số Trần (× giá vốn)</span>
-          <input
+          <Input
             type="number"
             min={0}
             step={0.1}
             disabled={!canEdit}
             value={ceilingRatio}
             onChange={(e) => setCeilingRatio(Number(e.target.value))}
-            className="h-10 rounded-xl border border-border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60"
           />
         </label>
       </div>

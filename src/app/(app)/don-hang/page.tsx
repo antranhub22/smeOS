@@ -77,11 +77,11 @@ export default function DonHangPage() {
   }, [])
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* 1. Header chuẩn FloraOS */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-title font-extrabold text-foreground">{t("orders.header.title")}</h2>
+          <h2 className="text-title font-extrabold text-text">{t("orders.header.title")}</h2>
           {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
           <InfoTip label={t("orders.header.title")} side="bottom">
             Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong.
@@ -132,17 +132,18 @@ export default function DonHangPage() {
       {/* Tab theo vai — mở mặc định theo việc chính của người đang xem */}
       <div role="group" aria-label="Khu làm việc" className="flex items-center gap-2 border-b border-border bg-surface px-4 sm:px-6 pt-2 pb-0 overflow-x-auto scrollbar-none [scrollbar-width:none]">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab}
             type="button"
+            variant="ghost"
             aria-pressed={activeTab === tab}
             onClick={() => setActiveTab(tab)}
-            className={`shrink-0 min-h-11 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-foreground"
+            className={`shrink-0 min-h-11 py-2.5 px-4 text-body-sm font-bold border-b-2 rounded-none transition-colors whitespace-nowrap h-auto ${
+              activeTab === tab ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             {WORKSPACE_TAB_LABELS[tab]}
-          </button>
+          </Button>
         ))}
       </div>
 

@@ -57,7 +57,7 @@ export default function BaoGiaPage() {
   }, [napDuLieu])
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* Top Header */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div className="flex items-center gap-3">
@@ -97,39 +97,33 @@ export default function BaoGiaPage() {
       {/* Mode Selector Tabs */}
       <div className="border-b border-border bg-surface px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant={activeTab === "CUSTOMER" ? "primary" : "outline"}
+            size="sm"
             onClick={() => setActiveTab("CUSTOMER")}
-            className={`px-3.5 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
-              activeTab === "CUSTOMER"
-                ? "bg-primary text-white font-semibold"
-                : "bg-surface border border-border text-text hover:bg-surface-alt"
-            }`}
+            className="h-9 px-3.5"
           >
             Gửi khách mua
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={activeTab === "PARTNER" ? "primary" : "outline"}
+            size="sm"
             onClick={() => setActiveTab("PARTNER")}
-            className={`px-3.5 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
-              activeTab === "PARTNER"
-                ? "bg-primary text-white font-semibold"
-                : "bg-surface border border-border text-text hover:bg-surface-alt"
-            }`}
+            className="h-9 px-3.5"
           >
             Báo giá đối tác
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={activeTab === "LIST" ? "primary" : "outline"}
+            size="sm"
             onClick={() => setActiveTab("LIST")}
-            className={`px-3.5 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer ${
-              activeTab === "LIST"
-                ? "bg-primary text-white font-semibold"
-                : "bg-surface border border-border text-text hover:bg-surface-alt"
-            }`}
+            className="h-9 px-3.5"
           >
             Danh sách báo giá
-          </button>
+          </Button>
         </div>
 
         <span className="text-caption text-text-muted hidden sm:inline-block">

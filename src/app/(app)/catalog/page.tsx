@@ -190,7 +190,7 @@ function PageHeader({
             variant="outline"
             size="sm"
             onClick={onOpenBudgetMatcher}
-            className="flex items-center gap-1.5 text-xs"
+            className="flex items-center gap-1.5 text-caption"
           >
             {budgetBtnLabel}
           </Button>

@@ -5,6 +5,7 @@ import { UserPlus, Mail, Shield, User } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import type { RoleOption } from "./invite-member-dialog"
 import { TemporaryPasswordNotice } from "./temporary-password-notice"
 
@@ -96,10 +97,10 @@ export function AddStaffDialog({
           </label>
           <label className="flex flex-col gap-1.5 text-body-sm font-semibold text-text">
             <span className="flex items-center gap-1.5"><Shield size={15} className="text-text-muted" />Vai trò</span>
-            <select value={roleId || defaultRole} onChange={(e) => setRoleId(e.target.value)} disabled={submitting} className={SELECT}>
+            <NativeSelect value={roleId || defaultRole} onChange={(e) => setRoleId(e.target.value)} disabled={submitting}>
               <option value="">-- Chọn vai trò --</option>
               {roles.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
-            </select>
+            </NativeSelect>
           </label>
           <div className="mt-2 flex items-center justify-end gap-2 border-t border-border pt-4">
             <Button type="button" variant="outline" size="sm" onClick={() => close(false)} disabled={submitting}>Hủy</Button>

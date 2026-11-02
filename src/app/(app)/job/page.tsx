@@ -129,7 +129,7 @@ export default function JobListPage() {
           </div>
         ) : jobs.length === 0 ? (
           <EmptyState
-            title="Chưa có job nào"
+            title="Chưa có tác vụ nào"
             reason="Các tác vụ xử lý ảnh, tạo danh mục hoặc sinh nội dung AI sẽ xuất hiện tại đây khi bạn chạy."
             action={{
               label: "Tải ảnh để phân tích",

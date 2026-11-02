@@ -16,6 +16,8 @@ import {
 import { InfoTip } from "@/components/ui/info-tip"
 import { StatTile } from "@/components/ui/stat-tile"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatNumber } from "@/lib/i18n/formatters"
 
@@ -165,23 +167,23 @@ export default function MucDungPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <input
+            <Input
               type="text"
               placeholder="Tìm theo tên tổ chức..."
               value={searchOrg}
               onChange={(e) => setSearchOrg(e.target.value)}
-              className="rounded-lg border border-border bg-surface-alt px-3 py-1.5 text-body-sm text-text placeholder:text-text-muted outline-none focus:border-primary"
+              className="w-48 sm:w-64"
             />
-            <select
+            <NativeSelect
               value={selectedFeature}
               onChange={(e) => setSelectedFeature(e.target.value)}
-              className="rounded-lg border border-border bg-surface-alt px-3 py-1.5 text-body-sm text-text outline-none focus:border-primary"
+              className="w-auto"
             >
               <option value="ALL">Tất cả tính năng ({featuresList.length})</option>
               {featuresList.map((f) => (
                 <option key={f} value={f}>{f}</option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
         </div>
 
@@ -204,7 +206,7 @@ export default function MucDungPage() {
                     </Link>
                   </td>
                   <td className="py-3 pr-4">
-                    <span className="rounded-md bg-muted px-2 py-0.5 text-caption font-medium text-text">
+                    <span className="rounded-md bg-surface-alt px-2 py-0.5 text-caption font-medium text-text">
                       {row.feature}
                     </span>
                   </td>

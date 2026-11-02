@@ -31,7 +31,7 @@ export default function TruongDuLieuPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <h2 className="text-xl font-bold text-text">Trường dữ liệu</h2>
+        <h2 className="text-title font-bold text-text">Trường dữ liệu</h2>
         <InfoTip label="Trường dữ liệu">
           Kiến trúc hai lớp mã/cấu hình, 5 mức sàn không cấu hình được. Mọi thay đổi ghi vào nhật ký nền tảng.
         </InfoTip>

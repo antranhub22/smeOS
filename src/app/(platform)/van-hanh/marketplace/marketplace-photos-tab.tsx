@@ -16,25 +16,25 @@ export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabPr
     <div className="space-y-5">
       <div className="rounded-xl border border-border p-4 bg-surface-alt/30">
         <div className="flex items-center justify-between mb-1">
-          <h4 className="font-bold text-xs uppercase tracking-wider text-primary">
+          <h4 className="font-bold text-caption uppercase tracking-wider text-primary">
             Bộ Ảnh Khảo Sát Hiện Trường & Mặt Bằng Cửa Hàng
           </h4>
           <span className="text-caption font-semibold text-success-text bg-success-bg px-2 py-0.5 rounded-full">
             {media.driveImageIds.length} ảnh gốc trên Drive
           </span>
         </div>
-        <p className="text-xs text-text-muted">
+        <p className="text-caption text-text-muted">
           Hạng mục khảo sát: {media.requiredPhotoTypes || "Mặt tiền, Biển hiệu, Không gian, Kho/khu bảo quản, Tủ mát"}
         </p>
       </div>
 
       {/* Grid of Storefront Photos */}
       <div>
-        <h5 className="text-xs font-bold text-text mb-3 flex items-center gap-1.5">
+        <h5 className="text-caption font-bold text-text mb-3 flex items-center gap-1.5">
           <Store className="h-4 w-4 text-primary" /> Ảnh chụp thực tế không gian & sản phẩm:
         </h5>
         {displayPhotos.length === 0 && (
-          <p className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-text-muted">
+          <p className="rounded-xl border border-dashed border-border p-6 text-center text-caption text-text-muted">
             {media.driveImageIds.length > 0
               ? "Chưa hiển thị được ảnh khảo sát."
               : "Cửa hàng này chưa có ảnh khảo sát."}
@@ -80,7 +80,7 @@ export function MarketplacePhotosTab({ media, shopName }: MarketplacePhotosTabPr
 
       {/* Google Drive links section */}
       {media.driveImageIds.length > 0 && (
-        <div className="rounded-xl border border-border p-4 bg-surface text-xs space-y-2">
+        <div className="rounded-xl border border-border p-4 bg-surface text-caption space-y-2">
           <span className="font-semibold text-text block">Liên kết Google Drive hồ sơ khảo sát gốc:</span>
           <div className="flex flex-wrap gap-2">
             {media.driveImageIds.map((driveId, idx) => (

@@ -25,7 +25,7 @@ export default function CustomerCarePage({ searchParams }: PageProps) {
   const [activeTab, setActiveTab] = useState<"workflow" | "history">("workflow")
 
   return (
-    <div className="min-h-screen bg-background pb-16">
+    <div className="min-h-screen bg-bg pb-16">
       {/* Top Header */}
       <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -51,30 +51,26 @@ export default function CustomerCarePage({ searchParams }: PageProps) {
 
           {/* Navigation Tabs */}
           <div className="flex items-center p-1 rounded-xl bg-surface-alt border border-border">
-            <button
+            <Button
               type="button"
+              variant={activeTab === "workflow" ? "secondary" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("workflow")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-semibold transition-all ${
-                activeTab === "workflow"
-                  ? "bg-surface text-primary shadow-xs"
-                  : "text-text-muted hover:text-text"
-              }`}
+              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
             >
               <Sparkles className="w-4 h-4" />
               <span>Gửi chăm sóc</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={activeTab === "history" ? "secondary" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("history")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-semibold transition-all ${
-                activeTab === "history"
-                  ? "bg-surface text-primary shadow-xs"
-                  : "text-text-muted hover:text-text"
-              }`}
+              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
             >
               <History className="w-4 h-4" />
               <span>Nhật ký tương tác</span>
-            </button>
+            </Button>
           </div>
         </div>
       </header>

@@ -7,6 +7,7 @@ import { useSWRConfig } from "swr"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Sparkles, Send, ShieldCheck, BookOpen, RefreshCw, GitMerge, Wand2, LayoutList } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { cn } from "@/lib/utils"
 import { useSession } from "@/lib/session"
@@ -167,14 +168,14 @@ export default function TheChaoPage() {
         <div className="min-w-0 xl:flex-1">
           <Link
             href="/don-hang"
-            className="mb-2 inline-flex items-center gap-1 text-body-sm font-medium text-text-muted hover:text-foreground"
+            className="mb-2 inline-flex items-center gap-1 text-body-sm font-medium text-text-muted hover:text-text"
           >
             <ArrowLeft size={14} aria-hidden="true" />
             {dict.greetingCard.header.breadcrumb}
           </Link>
           {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
           <div className="flex items-center gap-2">
-            <h2 className="text-title font-bold text-foreground">
+            <h2 className="text-title font-bold text-text">
             {ti("sampleProduct") ? `Thẻ chào & ${ti("sampleProduct")}` : dict.greetingCard.header.title}
             </h2>
             <InfoTip label={ti("sampleProduct") ? `Thẻ chào & ${ti("sampleProduct")}` : dict.greetingCard.header.title} side="bottom">
@@ -193,25 +194,26 @@ export default function TheChaoPage() {
               const active = viewMode === m.id
               const Icon = m.icon
               return (
-                <button
+                <Button
                   key={m.id}
                   type="button"
                   role="tab"
+                  variant={active ? "secondary" : "ghost"}
+                  size="sm"
                   aria-selected={active}
                   onClick={() => setViewMode(m.id)}
-                  className={cn(
-                    "inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-body-sm font-semibold transition-colors",
-                    active ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-foreground",
-                  )}
+                  className="inline-flex h-9 items-center gap-1.5 px-3.5 text-body-sm font-semibold"
                 >
                   <Icon size={16} aria-hidden="true" />
                   {m.label}
-                </button>
+                </Button>
               )
             })}
           </div>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={() => {
               refreshAll()
               setRefreshKey((k) => k + 1)
@@ -219,10 +221,9 @@ export default function TheChaoPage() {
             }}
             aria-label="Làm mới"
             title="Làm mới"
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-foreground active:bg-surface active:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <RefreshCw size={16} aria-hidden="true" />
-          </button>
+          </Button>
           {(can("R11") || can("R1")) && (
             <ExportOrdersButton
               apiPath="/api/v1/orders/export"

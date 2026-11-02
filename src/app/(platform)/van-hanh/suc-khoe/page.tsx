@@ -48,30 +48,30 @@ export default function SucKhoeHeThongPage() {
     })()
   }, [])
 
-  if (loi) return <p className="text-sm text-danger">{loi}</p>
+  if (loi) return <p className="text-body-sm text-danger">{loi}</p>
   if (!health) return <div className="py-4"><SkeletonBlock lines={4} /></div>
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-base font-bold text-text">Sức khoẻ hệ thống</h2>
+          <h2 className="text-body font-bold text-text">Sức khoẻ hệ thống</h2>
           <InfoTip label="Sức khoẻ hệ thống">
             Tình trạng các bộ xử lý nền, hàng đợi tác vụ AI và cảnh báo tác vụ tồn đọng.
           </InfoTip>
         </div>
-        <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hạ tầng</span>
+        <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Toàn hạ tầng</span>
       </div>
 
       <Card className="p-4 rounded-2xl shadow-xs">
-        <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
+        <p className="mb-3 flex items-center gap-2 text-body-sm font-semibold">
           <Server className="h-4 w-4 text-text-muted" aria-hidden /> Bộ xử lý nền
         </p>
         <ul className="flex flex-wrap gap-3">
           {health.workers.map((w) => (
             <li
               key={w.name}
-              className={`rounded-xl border px-3 py-2 text-xs ${w.connections > 0 ? "border-success-border bg-success-bg text-success-text" : "border-danger-border bg-danger-bg text-danger-text"}`}
+              className={`rounded-xl border px-3 py-2 text-caption ${w.connections > 0 ? "border-success-border bg-success-bg text-success-text" : "border-danger-border bg-danger-bg text-danger-text"}`}
             >
               <span className="font-semibold">{TEN_WORKER[w.name] ?? w.name}</span>
               {" · "}
@@ -83,13 +83,13 @@ export default function SucKhoeHeThongPage() {
 
       <Card className="p-4 rounded-2xl shadow-xs">
         <div className="mb-3 flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold">Hàng đợi theo loại việc</p>
+          <p className="text-body-sm font-semibold">Hàng đợi theo loại việc</p>
           <Link href="/van-hanh/hang-doi-loi" className="text-body-sm text-primary underline underline-offset-2">
             Xem việc bị lỗi
           </Link>
         </div>
         {health.queue.length === 0 ? (
-          <p className="text-xs text-text-muted">Không có việc đang chờ hay lỗi trong 24 giờ qua.</p>
+          <p className="text-caption text-text-muted">Không có việc đang chờ hay lỗi trong 24 giờ qua.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-body-sm">
@@ -117,21 +117,21 @@ export default function SucKhoeHeThongPage() {
       </Card>
 
       <Card className="p-4 rounded-2xl shadow-xs">
-        <p className="mb-3 text-sm font-semibold">Tác vụ theo trạng thái</p>
+        <p className="mb-3 text-body-sm font-semibold">Tác vụ theo trạng thái</p>
         <div className="flex flex-wrap gap-3">
           {Object.entries(health.jobCountsByStatus).map(([status, count]) => (
-            <div key={status} className="rounded-xl border border-border px-3 py-2 text-xs">
+            <div key={status} className="rounded-xl border border-border px-3 py-2 text-caption">
               <span className="font-semibold">{count}</span> <span className="text-text-muted">{status}</span>
             </div>
           ))}
           {Object.keys(health.jobCountsByStatus).length === 0 && (
-            <p className="text-xs text-text-muted">Chưa có tác vụ nào.</p>
+            <p className="text-caption text-text-muted">Chưa có tác vụ nào.</p>
           )}
         </div>
       </Card>
 
       <Card className="p-4 rounded-2xl shadow-xs">
-        <p className="mb-3 flex items-center gap-2 text-sm font-semibold">
+        <p className="mb-3 flex items-center gap-2 text-body-sm font-semibold">
           <AlertTriangle className="h-4 w-4 text-warning" /> Tác vụ tồn đọng (chỉ đọc)
         </p>
         <div className="flex flex-col divide-y divide-border">

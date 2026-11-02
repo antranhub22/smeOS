@@ -96,7 +96,7 @@ export function MarketplaceSyncActions({ loading, onRefresh }: MarketplaceSyncAc
       {notice && (
         <div
           role="status"
-          className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium ${
+          className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-caption font-medium ${
             notice.tone === "success" ? "border-success-border bg-success-bg text-success-text" : "border-danger-border bg-danger-bg text-danger-text"
           }`}
         >

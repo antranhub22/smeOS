@@ -43,30 +43,26 @@ export function MatrixToolbar({
         </div>
 
         <div className="flex flex-wrap gap-1">
-          <button
+          <Button
             type="button"
+            variant={selectedGroup === "ALL" ? "primary" : "secondary"}
+            size="sm"
             onClick={() => onGroupChange("ALL")}
-            className={`rounded-lg px-3 py-1.5 text-body-sm font-medium transition-colors ${
-              selectedGroup === "ALL"
-                ? "bg-primary text-primary-foreground"
-                : "bg-surface-alt text-text hover:bg-surface-alt/80"
-            }`}
+            className="rounded-lg px-3 py-1.5 h-auto text-body-sm font-medium"
           >
             Tất cả nhóm
-          </button>
+          </Button>
           {groups.map((group) => (
-            <button
+            <Button
               key={group.key}
               type="button"
+              variant={selectedGroup === group.key ? "primary" : "secondary"}
+              size="sm"
               onClick={() => onGroupChange(group.key)}
-              className={`rounded-lg px-3 py-1.5 text-body-sm font-medium transition-colors ${
-                selectedGroup === group.key
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-surface-alt text-text hover:bg-surface-alt/80"
-              }`}
+              className="rounded-lg px-3 py-1.5 h-auto text-body-sm font-medium"
             >
               {group.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

@@ -10,6 +10,8 @@ import { Fragment, useEffect, useMemo, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { DiffConfirmButton, buildDiffRows } from "./diff-confirm"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -81,7 +83,7 @@ export function TruongLoiTab() {
 
   const current = useMemo(() => fields?.find((f) => f.key === expandedKey) ?? null, [fields, expandedKey])
 
-  if (loi) return <p className="text-sm text-danger">{loi}</p>
+  if (loi) return <p className="text-body-sm text-danger">{loi}</p>
   if (!fields) return <SkeletonBlock lines={2} />
 
   return (
@@ -89,16 +91,16 @@ export function TruongLoiTab() {
       <div className="flex items-center gap-2 text-body-sm">
         <span className="text-text-muted">Thực thể:</span>
         {(["ALL", "ORDER", "PARTNER"] as const).map((e) => (
-          <button
+          <Button
             key={e}
             type="button"
+            variant={entityFilter === e ? "primary" : "secondary"}
+            size="xs"
             onClick={() => setEntityFilter(e)}
-            className={`rounded-lg px-2.5 py-1 font-medium ${
-              entityFilter === e ? "bg-primary text-white" : "bg-surface-alt text-text hover:bg-border"
-            }`}
+            className="rounded-lg px-2.5 py-1 h-auto font-medium"
           >
             {e === "ALL" ? "Tất cả" : e}
-          </button>
+          </Button>
         ))}
         <span className="ml-auto text-text-muted">{fields.length} trường lõi</span>
       </div>
@@ -183,8 +185,7 @@ export function TruongLoiTab() {
                           <span className="mb-1 block text-text-muted">
                             Mức yêu cầu {current.origin === "CORE" && <span className="text-text-muted">(không hạ được dưới mức sàn)</span>}
                           </span>
-                          <select
-                            className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                          <NativeSelect
                             value={edit.requirement}
                             onChange={(e) => setEdit({ ...edit, requirement: e.target.value as FieldRequirementLevel })}
                           >
@@ -193,7 +194,7 @@ export function TruongLoiTab() {
                                 {r}
                               </option>
                             ))}
-                          </select>
+                          </NativeSelect>
                         </label>
                         <label className="text-body-sm">
                           <span className="mb-1 block text-text-muted">Khoá danh mục (nếu là trường chọn)</span>
@@ -214,13 +215,12 @@ export function TruongLoiTab() {
                           </span>
                           <div className="flex flex-wrap gap-3">
                             {ALL_AUDIENCES.map((a) => (
-                              <label key={a} className="flex items-center gap-1.5">
-                                <input
-                                  type="checkbox"
-                                  checked={edit.visibility[a]}
-                                  disabled={current.floorInternalOnly && a !== "INTERNAL"}
-                                  onChange={(e) =>
-                                    setEdit({ ...edit, visibility: { ...edit.visibility, [a]: e.target.checked } })
+                              <label key={a} className="flex items-center gap-1.5 cursor-pointer">
+                                <Checkbox
+                                  checked={Boolean(edit.visibility[a])}
+                                  disabled={Boolean(current.floorInternalOnly && a !== "INTERNAL")}
+                                  onCheckedChange={(checked) =>
+                                    setEdit({ ...edit, visibility: { ...edit.visibility, [a]: Boolean(checked) } })
                                   }
                                 />
                                 {a}

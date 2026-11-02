@@ -89,10 +89,10 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
       <div className="flex flex-1 flex-col p-4 pt-7">
         {/* Name & Owner */}
         <div className="mb-2">
-          <h3 className="line-clamp-1 text-base font-bold text-text group-hover:text-primary transition-colors">
+          <h3 className="line-clamp-1 text-body font-bold text-text group-hover:text-primary transition-colors">
             {identity.shopName}
           </h3>
-          <div className="flex items-center gap-2 text-xs text-text-muted">
+          <div className="flex items-center gap-2 text-caption text-text-muted">
             <span className="flex items-center gap-1">
               <User className="h-3.5 w-3.5" />
               {identity.ownerName || "Chưa cập nhật"}
@@ -104,7 +104,7 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
         </div>
 
         {/* Address */}
-        <div className="mb-3 flex items-start gap-1.5 text-xs text-text-muted">
+        <div className="mb-3 flex items-start gap-1.5 text-caption text-text-muted">
           <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted/80" />
           <span className="line-clamp-2 leading-relaxed">{contact.address || "Chưa có địa chỉ"}</span>
         </div>
@@ -132,7 +132,7 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
 
         {/* Contact Hotline & Phone */}
         <div className="mt-auto border-t border-border/60 pt-3">
-          <div className="flex items-center justify-between text-xs text-text-muted">
+          <div className="flex items-center justify-between text-caption text-text-muted">
             <span className="flex items-center gap-1 font-mono font-medium text-text">
               <Phone className="h-3.5 w-3.5 text-primary" />
               {contact.phone || "---"}
@@ -149,14 +149,14 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
         <Button
           variant="outline"
           size="sm"
-          className="flex-1 text-xs font-semibold"
+          className="flex-1 text-caption font-semibold"
           onClick={() => onQuickView(store)}
         >
           Hồ sơ chi tiết
         </Button>
         <Button
           size="sm"
-          className="px-2.5 text-xs"
+          className="px-2.5 text-caption"
           onClick={() => onQuickView(store)}
           title="Xem hồ sơ chi tiết"
         >

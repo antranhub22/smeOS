@@ -9,6 +9,8 @@ import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { DiffConfirmButton } from "./diff-confirm"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import {
@@ -79,8 +81,7 @@ export function GhiDeToChucTab() {
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="text-body-sm">
             <span className="mb-1 block text-text-muted">Tổ chức</span>
-            <select
-              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+            <NativeSelect
               value={orgId}
               onChange={(e) => setOrgId(e.target.value)}
             >
@@ -90,18 +91,17 @@ export function GhiDeToChucTab() {
                   {o.name} ({o.slug})
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
           <label className="text-body-sm">
             <span className="mb-1 block text-text-muted">Thực thể xem trước</span>
-            <select
-              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+            <NativeSelect
               value={entity}
               onChange={(e) => setEntity(e.target.value as FieldEntityKind)}
             >
               <option value="ORDER">Đơn điều phối</option>
               <option value="PARTNER">Đối tác</option>
-            </select>
+            </NativeSelect>
           </label>
         </div>
       </Card>
@@ -111,7 +111,7 @@ export function GhiDeToChucTab() {
       {orgId && (
         <>
           <Card className="p-4">
-            <p className="mb-2 text-sm font-semibold">Ghi đè một trường cho tổ chức này</p>
+            <p className="mb-2 text-body-sm font-semibold">Ghi đè một trường cho tổ chức này</p>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="text-body-sm">
                 <span className="mb-1 block text-text-muted">Khoá trường</span>
@@ -123,8 +123,7 @@ export function GhiDeToChucTab() {
               </label>
               <label className="text-body-sm">
                 <span className="mb-1 block text-text-muted">Mức yêu cầu riêng (để trống nếu giữ mặc định)</span>
-                <select
-                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                <NativeSelect
                   value={overrideRequirement}
                   onChange={(e) => setOverrideRequirement(e.target.value as FieldRequirementLevel | "")}
                 >
@@ -134,17 +133,16 @@ export function GhiDeToChucTab() {
                       {r}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
               <div className="text-body-sm">
                 <span className="mb-1 block text-text-muted">Hiển thị riêng cho tổ chức này</span>
                 <div className="flex flex-wrap gap-3">
                   {ALL_AUDIENCES.map((a) => (
-                    <label key={a} className="flex items-center gap-1.5">
-                      <input
-                        type="checkbox"
-                        checked={overrideVisibility[a]}
-                        onChange={(e) => setOverrideVisibility({ ...overrideVisibility, [a]: e.target.checked })}
+                    <label key={a} className="flex items-center gap-1.5 cursor-pointer">
+                      <Checkbox
+                        checked={Boolean(overrideVisibility[a])}
+                        onCheckedChange={(checked) => setOverrideVisibility({ ...overrideVisibility, [a]: Boolean(checked) })}
                       />
                       {a}
                     </label>
@@ -182,7 +180,7 @@ export function GhiDeToChucTab() {
           </Card>
 
           <Card className="p-4">
-            <p className="mb-2 text-sm font-semibold">Ghi đè một giá trị danh mục cho tổ chức này</p>
+            <p className="mb-2 text-body-sm font-semibold">Ghi đè một giá trị danh mục cho tổ chức này</p>
             <div className="grid gap-3 sm:grid-cols-3">
               <label className="text-body-sm">
                 <span className="mb-1 block text-text-muted">Khoá danh mục</span>
@@ -196,8 +194,8 @@ export function GhiDeToChucTab() {
                 <span className="mb-1 block text-text-muted">Nhãn riêng (tuỳ chọn)</span>
                 <Input value={catalogLabel} onChange={(e) => setCatalogLabel(e.target.value)} />
               </label>
-              <label className="flex items-center gap-1.5 text-body-sm">
-                <input type="checkbox" checked={catalogEnabled} onChange={(e) => setCatalogEnabled(e.target.checked)} />
+              <label className="flex items-center gap-2 text-body-sm cursor-pointer">
+                <Checkbox checked={catalogEnabled} onCheckedChange={(checked) => setCatalogEnabled(Boolean(checked))} />
                 Bật cho tổ chức này (tắt = ẩn giá trị này chỉ với tổ chức này)
               </label>
             </div>
@@ -233,7 +231,7 @@ export function GhiDeToChucTab() {
             <div className="border-b border-border p-3 text-body-sm font-semibold">
               Xem trước — tổ chức này sẽ thấy gì (sau khi cộng ghi đè)
             </div>
-            {loi && <p className="p-3 text-sm text-danger">{loi}</p>}
+            {loi && <p className="p-3 text-body-sm text-danger">{loi}</p>}
             {!loi && !preview && <SkeletonBlock lines={2} />}
             {!loi && preview && (
               <table className="w-full text-left text-body-sm">

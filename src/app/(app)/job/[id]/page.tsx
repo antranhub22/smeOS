@@ -165,17 +165,19 @@ export default function JobDetailPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <header className="flex flex-shrink-0 items-center gap-3 border-b border-border bg-surface px-4 py-4">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           type="button"
           onClick={() => router.push("/job" as never)}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
-          aria-label="Quay lại danh sách job"
+          className="rounded-full"
+          aria-label="Quay lại danh sách tác vụ"
         >
           <ArrowLeft size={18} />
-        </button>
+        </Button>
         <div>
           <h2 className="text-title font-extrabold text-primary">
-            {job ? NHAN_TINH_NANG[job.feature] ?? job.feature : "Chi tiết job"}
+            {job ? NHAN_TINH_NANG[job.feature] ?? job.feature : "Chi tiết tác vụ"}
           </h2>
           <div className="text-caption text-text-muted">Mã tác vụ: #{jobId.slice(0, 8)}</div>
         </div>

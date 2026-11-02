@@ -125,8 +125,8 @@ export default function AiSettingsPage() {
     return (
       <div className="flex h-full flex-col items-center justify-center p-8 text-center">
         <Lock className="h-12 w-12 text-text-muted mb-3" />
-        <h2 className="text-base font-bold text-text">Không có quyền truy cập</h2>
-        <p className="text-xs text-text-muted max-w-sm mt-1">
+        <h2 className="text-body font-bold text-text">Không có quyền truy cập</h2>
+        <p className="text-caption text-text-muted max-w-sm mt-1">
           Tài khoản của bạn chưa được cấp mã năng lực U1 để xem cấu hình chính sách AI của tổ chức.
         </p>
       </div>
@@ -151,13 +151,13 @@ export default function AiSettingsPage() {
 
       {/* Thông báo trạng thái */}
       {error && (
-        <div className="flex items-center gap-2 p-3 text-xs bg-danger/10 text-danger border border-danger/30 rounded-xl">
+        <div className="flex items-center gap-2 p-3 text-caption bg-danger/10 text-danger border border-danger/30 rounded-xl">
           <AlertCircle size={15} />
           <span>{error}</span>
         </div>
       )}
       {successMsg && (
-        <div className="flex items-center gap-2 p-3 text-xs bg-success/10 text-success border border-success/30 rounded-xl">
+        <div className="flex items-center gap-2 p-3 text-caption bg-success/10 text-success border border-success/30 rounded-xl">
           <CheckCircle2 size={15} />
           <span>{successMsg}</span>
         </div>
@@ -166,8 +166,8 @@ export default function AiSettingsPage() {
       {/* Nhà cung cấp Creative Studio — PO 25/09/2026: nhà cung cấp trước, cục bộ là dự phòng */}
       <section className="flex flex-col gap-3">
         <div>
-          <h2 className="text-lg font-extrabold text-text">Nhà cung cấp AI cho Creative Studio</h2>
-          <p className="text-xs text-text-muted">
+          <h2 className="text-title-sm font-extrabold text-text">Nhà cung cấp AI cho Creative Studio</h2>
+          <p className="text-caption text-text-muted">
             Thứ tự ưu tiên của tiệm cho nội dung, ảnh, video, giọng đọc và nhạc nền. Bên đầu tiên được thử trước; mỗi lượt tạo vẫn chọn được bên khác.
           </p>
         </div>
@@ -177,8 +177,8 @@ export default function AiSettingsPage() {
       {/* Header hành động */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-extrabold text-text">Cấu hình AI</h2>
-          <p className="text-xs text-text-muted">
+          <h2 className="text-title-sm font-extrabold text-text">Cấu hình AI</h2>
+          <p className="text-caption text-text-muted">
             Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span> (Phạm vi áp dụng chỉ trong tổ chức hiện tại)
           </p>
         </div>
@@ -187,7 +187,7 @@ export default function AiSettingsPage() {
           size="sm"
           onClick={fetchPolicies}
           disabled={loading}
-          className="flex items-center gap-1.5 text-xs"
+          className="flex items-center gap-1.5 text-caption"
         >
           <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           Tải lại
@@ -200,7 +200,7 @@ export default function AiSettingsPage() {
           <SkeletonBlock lines={4} label="Đang tải dữ liệu chính sách AI của tổ chức..." />
         </div>
       ) : policies.length === 0 ? (
-        <div className="py-12 text-center text-xs text-text-muted border border-dashed rounded-xl">
+        <div className="py-12 text-center text-caption text-text-muted border border-dashed rounded-xl">
           Chưa có năng lực AI nào được cấu hình cho tổ chức.
         </div>
       ) : (
@@ -216,10 +216,10 @@ export default function AiSettingsPage() {
               >
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-text">{cap.capability_name}</span>
+                    <span className="text-body-sm font-bold text-text">{cap.capability_name}</span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted pt-1">
+                  <div className="flex flex-wrap items-center gap-3 text-caption text-text-muted pt-1">
                     <span className="flex items-center gap-1">
                       <Server size={12} />
                       Mô hình:{" "}
@@ -262,7 +262,7 @@ export default function AiSettingsPage() {
                       size="sm"
                       disabled={isSaving}
                       onClick={() => handleTogglePrivacy(cap.capability_code, cap.privacy_floor)}
-                      className="text-xs"
+                      className="text-caption"
                     >
                       {isSaving ? "Đang lưu..." : "Đổi sàn bảo mật"}
                     </Button>

@@ -16,6 +16,7 @@ import {
   type PendingApprovalItem,
 } from "@/components/platform/approval-card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
 export default function PheQuyetPage() {
@@ -127,15 +128,17 @@ export default function PheQuyetPage() {
             Tổng hợp các yêu cầu đang chờ Admin xem xét: mở khoá quốc tế, đổi mô hình cửa hàng, nâng hạn mức AI.
           </InfoTip>
         </div>
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           id="refresh-pending-approvals"
           onClick={() => void tai()}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface text-caption font-semibold text-text-muted hover:bg-surface-alt hover:text-text transition-colors cursor-pointer"
+          className="h-auto py-1.5 px-3 text-caption font-semibold"
         >
           <RefreshCw size={13} aria-hidden />
           Tải lại
-        </button>
+        </Button>
       </div>
 
       {/* Toast notification */}
@@ -168,16 +171,14 @@ export default function PheQuyetPage() {
         <>
           <div className="flex items-center gap-1.5 flex-wrap">
             {(["ALL", ...(Object.keys(TYPE_META) as PendingApprovalItem["type"][])] as const).map((t) => (
-              <button
+              <Button
                 key={t}
                 type="button"
+                variant={filter === t ? "primary" : "outline"}
+                size="xs"
                 id={`filter-${t.toLowerCase()}`}
                 onClick={() => setFilter(t)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-colors cursor-pointer ${
-                  filter === t
-                    ? "bg-primary text-surface"
-                    : "bg-surface border border-border text-text-muted hover:bg-surface-alt"
-                }`}
+                className="rounded-full px-3 py-1.5 h-auto text-caption font-semibold"
               >
                 {t === "ALL" ? "Tất cả" : (
                   <>
@@ -186,12 +187,12 @@ export default function PheQuyetPage() {
                 )}
                 <span
                   className={`ml-0.5 px-1.5 py-0.5 rounded-full text-caption font-bold ${
-                    filter === t ? "bg-white/20" : "bg-muted text-text"
+                    filter === t ? "bg-white/20" : "bg-surface-alt text-text"
                   }`}
                 >
                   {countOf(t)}
                 </span>
-              </button>
+              </Button>
             ))}
           </div>
 

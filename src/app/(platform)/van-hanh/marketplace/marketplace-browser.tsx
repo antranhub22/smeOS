@@ -98,13 +98,13 @@ export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHi
               placeholder="Tìm nhanh: tên cửa hàng, khu vực, sản phẩm, ghi chú…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 text-xs"
+              className="pl-9 text-caption"
               inputSize="sm"
             />
           </div>
           <MarketplaceFacetFilter groups={groups} selection={selection} onChange={setSelection} />
         </div>
-        <p className="text-xs text-text-muted">
+        <p className="text-caption text-text-muted">
           Hiển thị: <strong className="text-text">{filteredStores.length}</strong> / {stores.length} cửa hàng đối tác
           {Object.keys(selection).length > 1 && " · cửa hàng thoả MỌI nhóm tiêu chí đã chọn"}
           {" · thông tin liên hệ đã được che một phần"}
@@ -122,7 +122,7 @@ export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHi
       ) : filteredStores.length === 0 ? (
         <Card className="space-y-3 p-8 py-16 text-center">
           <Store className="mx-auto h-12 w-12 text-text-muted/40" />
-          <h3 className="text-sm font-semibold text-text">Không tìm thấy cửa hàng nào phù hợp</h3>
+          <h3 className="text-body-sm font-semibold text-text">Không tìm thấy cửa hàng nào phù hợp</h3>
           <p className="mx-auto max-w-sm text-meta text-text-muted">
             {hasFilter ? "Thử bỏ bớt tiêu chí hoặc đổi từ khoá tìm nhanh." : emptyHint}
           </p>

@@ -50,7 +50,7 @@ export function useContentGeneration({
   useEffect(() => {
     // Chạy sau lượt render (không setState đồng bộ trong effect)
     void Promise.resolve().then(() => {
-      if (uploadFlow.state.step === "done" && uploadFlow.state.posts.length > 0) {
+      if (uploadFlow.state.step === "succeeded" && uploadFlow.state.posts.length > 0) {
         setPosts(uploadFlow.state.posts)
         setGenerationId(uploadFlow.state.generationId)
         setCriticScore(uploadFlow.state.criticScore)

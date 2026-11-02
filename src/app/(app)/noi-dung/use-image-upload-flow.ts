@@ -21,7 +21,7 @@ export type UploadFlowStep =
   | "registering"
   | "analyzing"
   | "generating"
-  | "done"
+  | "succeeded"
   | "error"
 
 export interface UploadFlowState {
@@ -200,7 +200,7 @@ export function useImageUploadFlow() {
 
         setState((s) => ({
           ...s,
-          step: "done",
+          step: "succeeded",
           uploadProgress: 100,
           posts,
           generationId: data.generation_id || null,

@@ -35,6 +35,8 @@ import {
   X,
 } from "@/components/ui/icons"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { TemplatePreviewModal } from "./template-preview-modal"
 import { TEMPLATE_PREVIEW_REGISTRY, SELF_MODAL_TEMPLATE_FILES } from "./preview-registry"
 import { useI18n } from "@/lib/i18n/context"
@@ -291,7 +293,7 @@ export default function KhoTemplatesPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-extrabold text-text">Kho mẫu ấn phẩm</h2>
+                <h2 className="text-title-sm font-extrabold text-text">Kho mẫu ấn phẩm</h2>
                 {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
                 <InfoTip label="Kho mẫu ấn phẩm" side="bottom">
                   Xem trước {TOTAL_FILES} mẫu trên {CATEGORIES.length} nhóm chức năng.
@@ -305,11 +307,11 @@ export default function KhoTemplatesPage() {
               size={15}
               className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-text-muted"
             />
-            <input
+            <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Tìm template theo tên hoặc chức năng..."
-              className="w-full rounded-xl border border-border bg-surface py-2 pr-3 pl-9 text-body-sm text-text outline-none transition-colors focus:border-primary"
+              className="pl-9"
             />
           </div>
         </div>
@@ -366,15 +368,16 @@ export default function KhoTemplatesPage() {
                   {cat.files.map((f) => {
                     const hasPreview = f.file in TEMPLATE_PREVIEW_REGISTRY
                     return (
-                      <button
+                      <Button
                         key={f.file}
                         type="button"
+                        variant="ghost"
                         onClick={() => hasPreview && setSelectedFile({ file: f, category: cat })}
                         disabled={!hasPreview}
-                        className={`rounded-xl border border-border bg-surface p-3 text-left transition-colors ${
+                        className={`h-auto w-full rounded-xl border border-border bg-surface p-3 text-left justify-start items-stretch flex flex-col font-normal transition-colors ${
                           hasPreview
                             ? "cursor-pointer hover:border-primary/40 hover:bg-primary/[0.02]"
-                            : "cursor-default opacity-70"
+                            : "cursor-default opacity-70 hover:bg-surface"
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2">
@@ -390,7 +393,7 @@ export default function KhoTemplatesPage() {
                             Xem trước mẫu
                           </div>
                         )}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
@@ -403,14 +406,16 @@ export default function KhoTemplatesPage() {
       {selectedFile && SELF_MODAL_TEMPLATE_FILES.has(selectedFile.file.file) && (
         <>
           {TEMPLATE_PREVIEW_REGISTRY[selectedFile.file.file]}
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={() => setSelectedFile(null)}
             aria-label="Đóng xem trước"
             className="fixed right-5 top-5 z-[60] flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text shadow-lg transition-colors hover:bg-surface-alt"
           >
             <X size={18} />
-          </button>
+          </Button>
         </>
       )}
 

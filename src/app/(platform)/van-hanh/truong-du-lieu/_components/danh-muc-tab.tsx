@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { DiffConfirmButton } from "./diff-confirm"
 import { fieldPlatformApi, type CatalogApiView } from "../_lib/api"
@@ -56,8 +57,7 @@ function ThemGiaTriForm({ catalog, onDone }: { catalog: CatalogApiView; onDone: 
               Hành vi có sẵn trong code (nhóm <code>{catalog.behaviorKind}</code>) — bắt buộc
             </span>
             {behaviorCodes ? (
-              <select
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              <NativeSelect
                 value={behavior}
                 onChange={(e) => setBehavior(e.target.value)}
               >
@@ -67,7 +67,7 @@ function ThemGiaTriForm({ catalog, onDone }: { catalog: CatalogApiView; onDone: 
                     {c}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             ) : (
               <Input value={behavior} onChange={(e) => setBehavior(e.target.value)} placeholder="đang tải gợi ý…" />
             )}
@@ -124,7 +124,7 @@ export function DanhMucTab() {
     })()
   }, [])
 
-  if (loi) return <p className="text-sm text-danger">{loi}</p>
+  if (loi) return <p className="text-body-sm text-danger">{loi}</p>
   if (!catalogs) return <SkeletonBlock lines={2} />
 
   return (
@@ -185,7 +185,7 @@ export function DanhMucTab() {
           )}
         </Card>
       ))}
-      {catalogs.length === 0 && <p className="text-sm text-text-muted">Chưa có danh mục nào.</p>}
+      {catalogs.length === 0 && <p className="text-body-sm text-text-muted">Chưa có danh mục nào.</p>}
     </div>
   )
 }

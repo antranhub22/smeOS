@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react"
 import { Sparkles, Search, RefreshCw, Layers, Calendar, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/i18n/formatters"
 
@@ -97,12 +98,12 @@ export function ApprovedAnalysesSelector({
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
-          <input
+          <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm theo mã sản phẩm, thành phần, phong cách..."
-            className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-border bg-surface text-body-sm outline-none focus:border-primary transition-colors"
+            className="pl-9"
           />
         </div>
         <Button

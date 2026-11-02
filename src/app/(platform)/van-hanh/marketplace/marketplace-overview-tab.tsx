@@ -36,10 +36,10 @@ export function MarketplaceOverviewTab({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* 1. Identity & Legal */}
       <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary flex items-center gap-1.5">
           <ShieldCheck className="h-4 w-4" /> 1. Nhận diện & Pháp lý
         </h4>
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2 text-caption">
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">Tên thương hiệu:</span>
             <span className="font-bold text-text">{identity.shopName}</span>
@@ -85,10 +85,10 @@ export function MarketplaceOverviewTab({
 
       {/* 2. Contact & Location */}
       <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary flex items-center gap-1.5">
           <MapPin className="h-4 w-4" /> 2. Liên hệ & Địa bàn
         </h4>
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2 text-caption">
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">Hotline:</span>
             <span className="font-mono font-bold text-primary">{contact.phone || "---"}</span>
@@ -112,10 +112,10 @@ export function MarketplaceOverviewTab({
 
       {/* 3. Digital Presence & Marketing */}
       <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary flex items-center gap-1.5">
           <Globe className="h-4 w-4" /> 3. Hiện diện số & Marketing
         </h4>
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2 text-caption">
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">Facebook:</span>
             <span className="font-medium truncate max-w-[220px]">
@@ -175,10 +175,10 @@ export function MarketplaceOverviewTab({
 
       {/* 4. Business & Customers */}
       <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary flex items-center gap-1.5">
           <Calendar className="h-4 w-4" /> 4. Kinh doanh & Khách hàng
         </h4>
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2 text-caption">
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">Doanh thu TB/tháng:</span>
             <span className="font-bold text-success">{business.monthlyRevenue || "Chưa chia sẻ"}</span>

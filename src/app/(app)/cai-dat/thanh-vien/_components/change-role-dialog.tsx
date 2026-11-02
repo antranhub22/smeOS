@@ -4,6 +4,7 @@ import { useState, useEffect, type FormEvent } from "react"
 import { ShieldCheck, AlertTriangle, Trash2 } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
 import type { RoleOption } from "./invite-member-dialog"
 
 interface MemberTarget {
@@ -169,28 +170,26 @@ export function ChangeRoleDialog({
             <label className="text-body-sm font-semibold text-text">
               Chọn vai trò phân bổ mới
             </label>
-            <select
+            <NativeSelect
               value={selectedRoleId}
               onChange={(e) => setSelectedRoleId(e.target.value)}
               disabled={submitting || removing}
-              className="flex h-11 w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text transition-colors focus-visible:outline-2 focus-visible:outline-primary"
             >
               {roles.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.name} ({r.key})
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           {isStoreRole && (
             <div className="flex flex-col gap-1.5">
               <label className="text-body-sm font-semibold text-text">Chi nhánh của tài khoản</label>
-              <select
+              <NativeSelect
                 value={selectedBranchCode}
                 onChange={(e) => setSelectedBranchCode(e.target.value)}
                 disabled={submitting || removing}
-                className="flex h-11 w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text transition-colors focus-visible:outline-2 focus-visible:outline-primary"
               >
                 <option value="">— Chọn chi nhánh —</option>
                 {chainBranches.map((b) => (
@@ -198,7 +197,7 @@ export function ChangeRoleDialog({
                     {b.name}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
               <p className="text-caption text-text-muted">Tài khoản chỉ thấy và nhận đơn gia công của chi nhánh này.</p>
             </div>
           )}

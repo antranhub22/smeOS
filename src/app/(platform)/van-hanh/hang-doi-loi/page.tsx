@@ -83,8 +83,8 @@ export default function HangDoiLoiPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-base font-bold text-text">Hàng đợi lỗi</h2>
-        <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hạ tầng</span>
+        <h2 className="text-body font-bold text-text">Hàng đợi lỗi</h2>
+        <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Toàn hạ tầng</span>
       </div>
       <p className="text-body-sm text-text-muted">
         Việc đã thử hết lượt tự động hoặc gặp lỗi cần người xem. Hàng đợi đang chạy xem ở{" "}

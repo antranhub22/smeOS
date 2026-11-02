@@ -4,6 +4,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { ChevronDown, Filter, Search, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 import type { FacetGroup, FacetSelection } from "@/modules/platform/domain/partner-marketplace-facets"
 
 interface MarketplaceFacetFilterProps {
@@ -68,17 +70,17 @@ export function MarketplaceFacetFilter({ groups, selection, onChange }: Marketpl
             className="absolute left-0 z-40 mt-2 flex max-h-[70vh] w-[min(92vw,30rem)] flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-lg"
           >
             <div className="relative border-b border-border p-2">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-              <input
+              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted z-10" />
+              <Input
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Tìm tiêu chí: quận, tủ mát, marketing…"
-                className="w-full rounded-lg border border-border bg-surface py-1.5 pl-8 pr-2 text-xs text-text focus:border-primary focus:outline-none"
+                className="pl-8"
               />
             </div>
             <div className="flex-1 overflow-y-auto p-2">
-              {visible.length === 0 && <p className="p-4 text-center text-xs text-text-muted">Không có tiêu chí phù hợp.</p>}
+              {visible.length === 0 && <p className="p-4 text-center text-caption text-text-muted">Không có tiêu chí phù hợp.</p>}
               {visible.map((g) => (
                 <fieldset key={g.key} className="mb-3">
                   <legend className="px-1 pb-1 text-caption font-bold uppercase tracking-wide text-text-muted">{g.label}</legend>
@@ -88,11 +90,11 @@ export function MarketplaceFacetFilter({ groups, selection, onChange }: Marketpl
                       return (
                         <label
                           key={o.value}
-                          className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1 text-xs transition-colors ${
+                          className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1 text-caption transition-colors ${
                             active ? "border-primary bg-primary-muted font-semibold text-primary" : "border-border text-text hover:bg-surface-alt"
                           } ${o.count === 0 && !active ? "opacity-50" : ""}`}
                         >
-                          <input type="checkbox" className="accent-primary" checked={active} onChange={() => onChange(toggle(selection, g.key, o.value))} />
+                          <Checkbox checked={active} onCheckedChange={() => onChange(toggle(selection, g.key, o.value))} />
                           {o.value}
                           <span className="text-text-muted">({o.count})</span>
                         </label>
@@ -117,16 +119,29 @@ export function MarketplaceFacetFilter({ groups, selection, onChange }: Marketpl
       {chosen.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
           {chosen.map(({ key, value }) => (
-            <span key={`${key}:${value}`} className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary-muted px-2.5 py-0.5 text-xs text-primary">
+            <span key={`${key}:${value}`} className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary-muted px-2.5 py-0.5 text-caption text-primary">
               <span className="text-text-muted">{labelOf.get(key)}:</span> {value}
-              <button type="button" onClick={() => onChange(toggle(selection, key, value))} aria-label={`Bỏ tiêu chí ${value}`} className="rounded-full p-0.5 hover:bg-surface">
+              <Button
+                type="button"
+                variant="ghost"
+                size="xs"
+                onClick={() => onChange(toggle(selection, key, value))}
+                aria-label={`Bỏ tiêu chí ${value}`}
+                className="rounded-full p-0.5 hover:bg-surface h-auto w-auto"
+              >
                 <X className="h-3 w-3" />
-              </button>
+              </Button>
             </span>
           ))}
-          <button type="button" onClick={() => onChange({})} className="text-xs font-medium text-text-muted underline hover:text-text">
+          <Button
+            type="button"
+            variant="ghost"
+            size="xs"
+            onClick={() => onChange({})}
+            className="text-caption font-medium text-text-muted underline hover:text-text h-auto p-0"
+          >
             Xoá hết
-          </button>
+          </Button>
         </div>
       )}
     </div>

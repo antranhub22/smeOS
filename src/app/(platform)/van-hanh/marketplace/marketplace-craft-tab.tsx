@@ -18,7 +18,7 @@ export function MarketplaceCraftTab({ production }: MarketplaceCraftTabProps) {
               <div className="text-caption font-bold uppercase tracking-wider text-primary">
                 Dòng Sản Phẩm Chủ Lực / Thế Mạnh Nhất
               </div>
-              <div className="text-sm font-bold text-text mt-0.5">{production.mainProductLine}</div>
+              <div className="text-body-sm font-bold text-text mt-0.5">{production.mainProductLine}</div>
             </div>
           </div>
         </div>
@@ -26,7 +26,7 @@ export function MarketplaceCraftTab({ production }: MarketplaceCraftTabProps) {
 
       {/* Product Lines List */}
       <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary flex items-center gap-1.5">
           <Layers className="h-4 w-4" /> Các Dòng Sản Phẩm Hiện Đang Sản Xuất ({production.productLines.length})
         </h4>
         <div className="flex flex-wrap gap-2">
@@ -34,13 +34,13 @@ export function MarketplaceCraftTab({ production }: MarketplaceCraftTabProps) {
             production.productLines.map((line, idx) => (
               <span
                 key={idx}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface border border-border text-xs font-medium text-text shadow-2xs"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface border border-border text-caption font-medium text-text shadow-2xs"
               >
                 <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" /> {line}
               </span>
             ))
           ) : (
-            <span className="text-text-muted text-xs">Đang cập nhật danh mục sản phẩm</span>
+            <span className="text-text-muted text-caption">Đang cập nhật danh mục sản phẩm</span>
           )}
         </div>
       </div>
@@ -49,10 +49,10 @@ export function MarketplaceCraftTab({ production }: MarketplaceCraftTabProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left column: Florist Team & Production Capacity */}
         <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-          <h4 className="font-bold text-xs uppercase tracking-wider text-primary">
+          <h4 className="font-bold text-caption uppercase tracking-wider text-primary">
             Đội Ngũ Thợ Cắm & Năng Suất Sản Xuất
           </h4>
-          <div className="space-y-2 text-xs">
+          <div className="space-y-2 text-caption">
             <div className="flex justify-between py-1 border-b border-border/50">
               <span className="text-text-muted">Số lượng thợ / nhân sự:</span>
               <span className="font-bold text-text">{production.floristCount || "Chưa rõ"} người</span>
@@ -78,10 +78,10 @@ export function MarketplaceCraftTab({ production }: MarketplaceCraftTabProps) {
 
         {/* Right column: Flower Sourcing & Storage Quality */}
         <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-          <h4 className="font-bold text-xs uppercase tracking-wider text-primary">
+          <h4 className="font-bold text-caption uppercase tracking-wider text-primary">
             Nguồn Cung Ứng & Quy Trình Bảo Quản
           </h4>
-          <div className="space-y-2 text-xs">
+          <div className="space-y-2 text-caption">
             <div className="flex justify-between py-1 border-b border-border/50">
               <span className="text-text-muted">Nguồn cung cấp chính:</span>
               <span className="font-medium text-text">

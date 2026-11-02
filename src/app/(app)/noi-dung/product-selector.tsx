@@ -39,13 +39,13 @@ export function ProductSelector({
   onSelect,
 }: ProductSelectorProps) {
   return (
-    <Card className="border border-border bg-card p-5 shadow-sm flex flex-col gap-3">
+    <Card className="border border-border bg-surface p-5 shadow-sm flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Bước 1: Chọn sản phẩm</div>
+          <div className="text-caption font-semibold text-text-muted">Bước 1: Chọn sản phẩm</div>
           <div className="text-title-sm font-extrabold text-text">Sản phẩm trong kho</div>
         </div>
-        <Badge tone="accent" className="text-xs">
+        <Badge tone="accent" className="text-caption">
           {products.length} sản phẩm sẵn sàng
         </Badge>
       </div>
@@ -55,11 +55,11 @@ export function ProductSelector({
           <SkeletonBlock lines={3} label="Đang tải danh sách sản phẩm từ cơ sở dữ liệu..." />
         </div>
       ) : loadError ? (
-        <div className="py-6 text-center text-xs text-danger bg-danger/10 rounded-lg border border-danger/30 p-3">
+        <div className="py-6 text-center text-caption text-danger bg-danger/10 rounded-lg border border-danger/30 p-3">
           {loadError}
         </div>
       ) : products.length === 0 ? (
-        <div className="py-8 text-center text-xs text-text-muted bg-surface/50 rounded-lg p-4">
+        <div className="py-8 text-center text-caption text-text-muted bg-surface/50 rounded-lg p-4">
           Chưa có sản phẩm nào.{" "}
           <Link href="/san-pham/tao-moi" className="font-semibold text-primary underline">Thêm sản phẩm</Link> hoặc chọn &ldquo;Tải ảnh sản phẩm mới&rdquo;.
         </div>
@@ -68,15 +68,22 @@ export function ProductSelector({
           {products.map((prod) => {
             const isSelected = prod.id === selectedProductId
             return (
-              <button
+              <div
                 key={prod.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 aria-pressed={isSelected}
                 onClick={() => onSelect(prod.id)}
-                className={`text-left rounded-xl border p-3 transition flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                onKeyDown={(e) => {
+                  if (e.key === " " || e.key === "Enter") {
+                    e.preventDefault()
+                    onSelect(prod.id)
+                  }
+                }}
+                className={`text-left rounded-xl border p-3 transition flex items-center gap-3 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                   isSelected
                     ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
-                    : "border-border hover:border-text-muted bg-background"
+                    : "border-border hover:border-text-muted bg-bg"
                 }`}
               >
                 {prod.imageUrl ? (
@@ -87,7 +94,7 @@ export function ProductSelector({
                     className="w-12 h-12 rounded-lg object-cover border border-border flex-shrink-0"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-lg bg-surface border border-border flex items-center justify-center text-xl flex-shrink-0">
+                  <div className="w-12 h-12 rounded-lg bg-surface border border-border flex items-center justify-center text-title flex-shrink-0">
                     🌸
                   </div>
                 )}
@@ -100,12 +107,12 @@ export function ProductSelector({
                       {prod.price ? `${prod.price.toLocaleString("vi-VN")}đ` : "Giá liên hệ"}
                     </span>
                   </div>
-                  <div className="text-xs font-bold text-text line-clamp-1">{prod.name}</div>
+                  <div className="text-caption font-bold text-text line-clamp-1">{prod.name}</div>
                   <div className="text-caption text-text-muted line-clamp-1">
                     {prod.flowers || sampleProductLabel}
                   </div>
                 </div>
-              </button>
+              </div>
             )
           })}
         </div>

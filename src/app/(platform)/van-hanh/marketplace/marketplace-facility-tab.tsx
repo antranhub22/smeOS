@@ -11,10 +11,10 @@ export function MarketplaceFacilityTab({ facility }: MarketplaceFacilityTabProps
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* 1. Premises, Coolers & Equipment */}
       <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary flex items-center gap-1.5">
           <Home className="h-4 w-4" /> Cơ Sở Vật Chất & Thiết Bị
         </h4>
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2 text-caption">
           <div className="py-1 border-b border-border/50">
             <span className="text-text-muted block mb-0.5">Mặt bằng cửa hàng:</span>
             <span className="font-medium text-text">{facility.premises || "---"}</span>
@@ -44,10 +44,10 @@ export function MarketplaceFacilityTab({ facility }: MarketplaceFacilityTabProps
 
       {/* 2. Delivery & Logistics */}
       <div className="rounded-xl border border-border p-4 space-y-3 bg-surface-alt/30">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary flex items-center gap-1.5">
           <Truck className="h-4 w-4" /> Năng Lực Giao Vận (Delivery & Logistics)
         </h4>
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2 text-caption">
           <div className="flex justify-between py-1 border-b border-border/50">
             <span className="text-text-muted">Phương tiện giao vận:</span>
             <span className="font-medium text-text">{facility.deliveryVehicles || "Xe máy, Đội giao nội bộ"}</span>
