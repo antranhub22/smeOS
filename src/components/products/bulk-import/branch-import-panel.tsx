@@ -296,7 +296,7 @@ export function BranchImportPanel() {
               className="flex items-center gap-1.5 h-9"
             >
               {isImporting ? (
-                <><Loader2 size={14} className="animate-spin" /> Đang lưu...</>
+                <><Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> Đang lưu...</>
               ) : (
                 <><Store size={14} /> Lưu {validRows.length} cửa hàng vào hệ thống</>
               )}

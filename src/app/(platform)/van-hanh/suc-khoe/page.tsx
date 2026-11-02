@@ -55,7 +55,7 @@ export default function SucKhoeHeThongPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Sức khoẻ hệ thống</h1>
+          <h2 className="text-base font-bold text-text">Sức khoẻ hệ thống</h2>
           <InfoTip label="Sức khoẻ hệ thống">
             Tình trạng các bộ xử lý nền, hàng đợi tác vụ AI và cảnh báo tác vụ tồn đọng.
           </InfoTip>

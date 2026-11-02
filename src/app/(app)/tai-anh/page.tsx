@@ -1222,7 +1222,7 @@ export default function TaiAnhPage() {
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div>
           {/* Tiêu đề ngắn; dòng phụ bỏ (OPERATING_PRINCIPLES §6.1) */}
-          <h1 className="text-title font-extrabold text-primary">{ti("scanButtonLabel") || "Quét ảnh sản phẩm"}</h1>
+          <h2 className="text-title font-extrabold text-primary">{ti("scanButtonLabel") || "Quét ảnh sản phẩm"}</h2>
         </div>
         <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
           <ArrowLeft size={16} strokeWidth={2} />
@@ -1684,7 +1684,7 @@ export default function TaiAnhPage() {
           <>
             {copyLoading ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-4 py-16">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary animate-pulse">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary animate-pulse motion-reduce:animate-none">
                   <Sparkles size={32} />
                 </div>
                 <div className="text-title font-bold">Đang sinh dữ liệu bán hàng (AI)...</div>

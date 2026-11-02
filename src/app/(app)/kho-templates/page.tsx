@@ -291,7 +291,7 @@ export default function KhoTemplatesPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-extrabold text-text">Kho mẫu ấn phẩm</h1>
+                <h2 className="text-lg font-extrabold text-text">Kho mẫu ấn phẩm</h2>
                 {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
                 <InfoTip label="Kho mẫu ấn phẩm" side="bottom">
                   Xem trước {TOTAL_FILES} mẫu trên {CATEGORIES.length} nhóm chức năng.

@@ -112,7 +112,7 @@ export function ApprovedAnalysesSelector({
           disabled={loading}
           className="flex items-center gap-1.5 self-end sm:self-auto"
         >
-          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           Làm mới ({items.length})
         </Button>
       </div>
@@ -128,7 +128,7 @@ export function ApprovedAnalysesSelector({
       {/* Loading state */}
       {loading && items.length === 0 && (
         <div className="py-12 text-center text-text-muted text-body-sm flex flex-col items-center gap-2">
-          <RefreshCw size={24} className="animate-spin text-primary" />
+          <RefreshCw size={24} className="animate-spin motion-reduce:animate-none text-primary" />
           <span>Đang tải danh sách phân tích đã duyệt từ kho...</span>
         </div>
       )}

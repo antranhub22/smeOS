@@ -53,9 +53,9 @@ export default async function PublicQuotationPage({ params }: PageProps) {
                   {QUOTATION_STATUS_LABELS[displayStatus] ?? displayStatus}
                 </Badge>
               </div>
-              <h1 className="text-title font-extrabold text-primary mt-1">
+              <h2 className="text-title font-extrabold text-primary mt-1">
                 {quotation.code}
-              </h1>
+              </h2>
             </div>
 
             <div className="text-left sm:text-right space-y-1 text-caption text-text-muted">

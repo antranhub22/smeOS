@@ -369,7 +369,7 @@ export default function SocialPublishingPage() {
             disabled={refreshing}
             className="text-xs gap-1.5"
           >
-            <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
+            <RefreshCw size={13} className={refreshing ? "animate-spin motion-reduce:animate-none" : ""} />
             Làm mới
           </Button>
           <Button variant="ghost" size="sm" onClick={() => router.push("/")} className="text-xs gap-1.5">

@@ -18,6 +18,7 @@ import type {
   ProductSnapshot,
 } from "@/modules/greeting-card/domain/greeting-card-types"
 import { ShoppingBag } from "@/components/ui/icons"
+import { Disclosure } from "@/components/ui/disclosure"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { ProductContactActions } from "./product-contact-actions"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -226,12 +227,11 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
             )}
 
             {selected.priceMode === "RANGE" && (
-              <details className="rounded-xl border border-border px-3 py-2">
-                <summary className="cursor-pointer text-body-sm font-semibold text-foreground">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
+              <Disclosure label="Muốn phiên bản theo ý bạn? Nhắn cửa hàng" className="p-3 text-body-sm">
                 <div className="mt-2">
                   <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
                 </div>
-              </details>
+              </Disclosure>
             )}
 
             <button

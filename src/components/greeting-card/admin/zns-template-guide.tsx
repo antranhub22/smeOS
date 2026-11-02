@@ -1,3 +1,5 @@
+import { Disclosure } from "@/components/ui/disclosure"
+
 /**
  * Hướng dẫn đăng ký mẫu tin Zalo ZNS cho Thẻ chào (nợ #173c). Zalo chỉ gửi đúng mẫu đã duyệt,
  * và tên tham số trong mẫu phải TRÙNG tên máy chủ gửi kèm — sai một chữ là tin bị từ chối.
@@ -13,8 +15,7 @@ const PARAMS: Array<{ key: string; meaning: string }> = [
 
 export function ZnsTemplateGuide() {
   return (
-    <details className="text-body-sm">
-      <summary className="cursor-pointer font-bold">Hướng dẫn đăng ký mẫu tin với Zalo</summary>
+    <Disclosure label="Hướng dẫn đăng ký mẫu tin với Zalo" className="p-3 text-body-sm">
       <ol className="my-2 flex list-decimal flex-col gap-1 pl-5 text-caption text-text-muted">
         <li>Vào trang quản lý ZNS của Zalo Official Account, tạo mẫu tin mới (loại giao dịch / chăm sóc khách).</li>
         <li>Trong nội dung mẫu, đặt đúng tên các tham số bên dưới — viết thường, có dấu gạch dưới.</li>
@@ -37,6 +38,6 @@ export function ZnsTemplateGuide() {
           ))}
         </tbody>
       </table>
-    </details>
+    </Disclosure>
   )
 }

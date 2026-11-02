@@ -155,7 +155,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
 
         {loading ? (
           <div className="flex h-64 items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin motion-reduce:animate-none text-primary" />
           </div>
         ) : data ? (
           <div className="flex-1 overflow-y-auto p-6 space-y-5 text-sm">

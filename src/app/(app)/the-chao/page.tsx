@@ -174,9 +174,9 @@ export default function TheChaoPage() {
           </Link>
           {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
           <div className="flex items-center gap-2">
-            <h1 className="text-title font-bold text-foreground">
+            <h2 className="text-title font-bold text-foreground">
             {ti("sampleProduct") ? `Thẻ chào & ${ti("sampleProduct")}` : dict.greetingCard.header.title}
-            </h1>
+            </h2>
             <InfoTip label={ti("sampleProduct") ? `Thẻ chào & ${ti("sampleProduct")}` : dict.greetingCard.header.title} side="bottom">
               {ti("sampleProduct")
               ? `Gửi khách ${ti("catalogTitle").toLowerCase()} để xem, ${ti("makerAction").toLowerCase().includes("phòng") ? "chọn phòng, đặt phòng" : "chọn mẫu, đặt hàng"} và thanh toán ngay trên điện thoại.`

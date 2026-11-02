@@ -90,7 +90,7 @@ export function LandingPageStudioClient() {
     return (
       <div className="flex h-full flex-col p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-border pb-4">
-          <div className="h-8 w-48 bg-surface-alt rounded animate-pulse" />
+          <div className="h-8 w-48 bg-surface-alt rounded animate-pulse motion-reduce:animate-none" />
         </div>
         <SkeletonBlock lines={5} label="Đang mở công cụ tạo landing page" />
       </div>
@@ -112,7 +112,7 @@ export function LandingPageStudioClient() {
             <ArrowLeft className="h-4 w-4" aria-hidden="true" /> <span className="hidden sm:inline">Về Công cụ</span>
           </Button>
           <div className="hidden h-4 w-px bg-border sm:block" />
-          <h1 className="text-title font-extrabold text-text">Tạo landing page cửa hàng</h1>
+          <h2 className="text-title font-extrabold text-text">Tạo landing page cửa hàng</h2>
         </div>
 
         <div className="flex items-center gap-2">

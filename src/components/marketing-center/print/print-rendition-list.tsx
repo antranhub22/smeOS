@@ -79,7 +79,7 @@ export function PrintRenditionList() {
   if (isLoading) {
     return (
       <div className="p-8 text-center text-caption text-text-muted">
-        <Printer className="w-8 h-8 mx-auto mb-2 text-primary/40 animate-pulse" />
+        <Printer className="w-8 h-8 mx-auto mb-2 text-primary/40 animate-pulse motion-reduce:animate-none" />
         <p>Đang tải lịch sử các bản in...</p>
       </div>
     )

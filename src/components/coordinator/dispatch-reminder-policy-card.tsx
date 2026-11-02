@@ -145,7 +145,7 @@ export function DispatchReminderPolicySection({ canEdit }: DispatchReminderPolic
   if (isLoading) {
     return (
       <div className="py-8 flex items-center justify-center gap-2 text-text-muted">
-        <Clock size={16} className="animate-spin text-primary" />
+        <Clock size={16} className="animate-spin motion-reduce:animate-none text-primary" />
         <span className="text-body-sm">Đang tải cấu hình nhắc việc...</span>
       </div>
     )

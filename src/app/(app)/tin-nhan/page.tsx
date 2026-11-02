@@ -112,10 +112,10 @@ export default function InternalChatPage() {
         {/* Header danh sách */}
         <div className="p-4 border-b border-border space-y-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-body font-bold text-text flex items-center gap-2">
+            <h2 className="text-body font-bold text-text flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-primary" />
               Tin nhắn nội bộ
-            </h1>
+            </h2>
             <span className="text-caption font-medium text-primary bg-primary-subtle px-2.5 py-0.5 rounded-full border border-primary/20">
               Đa ngành SaaS
             </span>

@@ -145,8 +145,8 @@ export function ImageUploadTab({
       {isRunning && (
         <Card className="border border-border bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <Loader2 size={15} className="text-primary animate-spin" />
-            <span className="text-xs font-bold text-primary animate-pulse">
+            <Loader2 size={15} className="text-primary animate-spin motion-reduce:animate-none" />
+            <span className="text-xs font-bold text-primary animate-pulse motion-reduce:animate-none">
               {STEP_LABELS[state.step]}
             </span>
           </div>
@@ -171,7 +171,7 @@ export function ImageUploadTab({
                       isPast
                         ? "bg-success"
                         : isActive
-                        ? "bg-primary animate-pulse"
+                        ? "bg-primary animate-pulse motion-reduce:animate-none"
                         : "bg-border"
                     }`}
                   />

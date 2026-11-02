@@ -272,7 +272,7 @@ export function PlatformRecordsViewer({
             className="gap-1.5 font-bold bg-primary hover:bg-primary-dark text-white shrink-0"
           >
             {exporting ? (
-              <Loader2 size={14} className="animate-spin" />
+              <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />
             ) : (
               <Download size={14} />
             )}
@@ -288,7 +288,7 @@ export function PlatformRecordsViewer({
             title="Tải toàn bộ CSV của 6 mảng dữ liệu kèm toàn bộ ảnh sản phẩm dạng .ZIP"
           >
             {exportingZip ? (
-              <Loader2 size={14} className="animate-spin" />
+              <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />
             ) : (
               <Download size={14} />
             )}

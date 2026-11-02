@@ -224,7 +224,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
                     )}
                     <span className="flex-1 truncate">{preset.label}</span>
                     {isLoading && (
-                      <span className="text-caption text-primary animate-pulse">Đang nạp…</span>
+                      <span className="text-caption text-primary animate-pulse motion-reduce:animate-none">Đang nạp…</span>
                     )}
                   </button>
                 </li>

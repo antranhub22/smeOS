@@ -48,7 +48,7 @@ export default function NhatKyPage() {
     <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
         <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Nhật ký kiểm toán</h1>
+          <h2 className="text-base font-bold text-text">Nhật ký kiểm toán</h2>
           <InfoTip label="Nhật ký kiểm toán">
             Ghi chép mọi thao tác quan trọng của người dùng và hệ thống trên toàn nền tảng.
           </InfoTip>

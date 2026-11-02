@@ -81,7 +81,7 @@ export default function DonHangPage() {
       {/* 1. Header chuẩn FloraOS */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-title font-extrabold text-foreground">{t("orders.header.title")}</h1>
+          <h2 className="text-title font-extrabold text-foreground">{t("orders.header.title")}</h2>
           {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
           <InfoTip label={t("orders.header.title")} side="bottom">
             Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong.
@@ -110,7 +110,7 @@ export default function DonHangPage() {
             disabled={loading}
             className="hidden sm:inline-flex items-center gap-1.5"
           >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> {t("orders.header.refresh")}
+            <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} /> {t("orders.header.refresh")}
           </Button>
           <Button
             variant="ghost"

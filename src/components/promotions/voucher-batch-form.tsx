@@ -208,7 +208,7 @@ export function VoucherBatchForm({
         <div className="flex gap-2">
           <Button variant="outline" onClick={onCancel} disabled={saving}>Huỷ</Button>
           <Button onClick={submit} disabled={saving}>
-            {saving && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+            {saving && <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />}
             Phát hành
           </Button>
         </div>

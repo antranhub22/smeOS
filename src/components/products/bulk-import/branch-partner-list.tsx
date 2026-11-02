@@ -55,7 +55,7 @@ export function BranchPartnerList() {
 
       {isLoading ? (
         <div className="p-4 flex items-center gap-2 text-caption text-text-muted">
-          <Loader2 size={14} className="animate-spin" /> Đang tải danh sách…
+          <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> Đang tải danh sách…
         </div>
       ) : branches.length === 0 ? (
         <div className="p-4 text-center text-caption text-text-muted rounded-xl border border-dashed border-border">
@@ -102,7 +102,7 @@ export function BranchPartnerList() {
                   b.isActive ? "bg-success-bg text-success border-success-border" : "bg-surface text-text-muted border-border"
                 }`}
               >
-                {saving === b.branchCode ? <Loader2 size={12} className="animate-spin" /> : null}
+                {saving === b.branchCode ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none" /> : null}
                 {b.isActive ? "Hoạt động" : "Tạm dừng"}
               </button>
             </div>

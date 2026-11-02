@@ -49,7 +49,7 @@ export default function DanhSachToChucPage() {
     <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
         <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Tổ chức</h1>
+          <h2 className="text-base font-bold text-text">Tổ chức</h2>
           <InfoTip label="Tổ chức">
             Danh sách tất cả doanh nghiệp, chuỗi và cửa hàng đăng ký trên toàn nền tảng.
           </InfoTip>

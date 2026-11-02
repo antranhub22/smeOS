@@ -149,7 +149,7 @@ export function ChainDataHub() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl font-extrabold text-text tracking-tight flex items-center gap-2">
+              <h2 className="text-xl font-extrabold text-text tracking-tight flex items-center gap-2">
                 {selectedFolder ? (
                   <>
                     <Folder className="text-primary fill-current" size={22} />
@@ -166,7 +166,7 @@ export function ChainDataHub() {
                     <span>Dữ liệu chuỗi</span>
                   </>
                 )}
-              </h1>
+              </h2>
               <InfoTip label="Dữ liệu chuỗi">
                 {selectedFolder
                   ? `Chi tiết tất cả trường dữ liệu thu thập thuộc nhóm ${selectedFolder.domainNameVi} của ${selectedStore?.name}.`

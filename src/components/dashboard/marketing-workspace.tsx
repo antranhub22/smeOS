@@ -112,7 +112,7 @@ export function MarketingWorkspace() {
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div>
           <div className="text-xs text-text-muted">{roleUx?.label ?? "Marketing"}</div>
-          <h1 className="text-title font-extrabold text-primary">{orgName}</h1>
+          <h2 className="text-title font-extrabold text-primary">{orgName}</h2>
         </div>
         <UserMenu initials={userInitials} />
       </header>

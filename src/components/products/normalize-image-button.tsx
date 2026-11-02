@@ -61,7 +61,7 @@ export function NormalizeImageButton({
         >
           {isLoading ? (
             <>
-              <Loader2 size={14} className="animate-spin" />
+              <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />
               {status === "uploading" ? "Đang tải ảnh..." : "Đang xử lý..."}
             </>
           ) : (

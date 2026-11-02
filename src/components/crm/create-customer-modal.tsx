@@ -84,7 +84,7 @@ export function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustom
             form="create-customer-form"
             disabled={loading}
           >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />}
             Lưu khách hàng
           </Button>
         </>

@@ -459,7 +459,7 @@ export function AccountStorageHub({
               disabled={loadingRaw}
               className="text-xs gap-1.5"
             >
-              <RefreshCw size={13} className={loadingRaw ? "animate-spin" : ""} />
+              <RefreshCw size={13} className={loadingRaw ? "animate-spin motion-reduce:animate-none" : ""} />
               Làm mới kho ảnh
             </Button>
           </div>
@@ -560,7 +560,7 @@ export function AccountStorageHub({
               disabled={loadingApproved}
               className="text-xs gap-1.5"
             >
-              <RefreshCw size={13} className={loadingApproved ? "animate-spin" : ""} />
+              <RefreshCw size={13} className={loadingApproved ? "animate-spin motion-reduce:animate-none" : ""} />
               Làm mới danh sách
             </Button>
           </div>

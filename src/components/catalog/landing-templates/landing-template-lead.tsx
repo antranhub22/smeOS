@@ -128,7 +128,7 @@ export function LandingTemplateLead({
                 className={`h-10 text-xs shrink-0 flex items-center justify-center gap-1.5 shadow-xs ${buttonStyle}`}
               >
                 {submitting ? (
-                  <Loader2 size={13} className="animate-spin" />
+                  <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />
                 ) : (
                   <>
                     <span>Tư vấn ngay</span>

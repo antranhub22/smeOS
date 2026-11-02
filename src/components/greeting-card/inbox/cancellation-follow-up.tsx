@@ -62,7 +62,7 @@ export function CancellationFollowUp({ requestId, refundDueVnd, reason, onDone }
       />
       <div className="flex justify-end">
         <Button type="button" size="sm" disabled={busy} onClick={() => void confirm()} className="h-8 gap-1 text-caption font-bold">
-          {busy ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+          {busy ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={14} />}
           <span>{refundDueVnd > 0 ? "Đã hoàn tiền cho khách" : "Đã xử lý xong"}</span>
         </Button>
       </div>

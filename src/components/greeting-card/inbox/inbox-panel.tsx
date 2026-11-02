@@ -91,7 +91,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
           <button type="button" onClick={() => void inbox.mutate()} className="ml-2 font-bold underline">Thử lại</button>
         </div>
       ) : !data ? (
-        <div className="flex flex-col gap-2 p-4" aria-busy="true">{[0, 1, 2, 3].map((i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-surface-muted" />)}</div>
+        <div className="flex flex-col gap-2 p-4" aria-busy="true">{[0, 1, 2, 3].map((i) => <div key={i} className="h-16 animate-pulse motion-reduce:animate-none rounded-xl bg-surface-muted" />)}</div>
       ) : group === "actions" ? (
         data.actions.length === 0 ? <Empty text="Không có việc nào đang chờ bạn. Mọi đơn đều đúng tiến độ." /> : (
           <ul className="divide-y divide-border bg-surface">

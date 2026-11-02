@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Upload, X, CheckCircle2, AlertCircle, Play, ImagePlus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { MEDIA_LIMITS, mediaKindOf, mediaSelectionError } from "@/modules/greeting-card/domain/media-limits"
 
@@ -58,6 +59,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
   const [picked, setPicked] = useState<Picked[]>([])
   const [state, setState] = useState<UploadState>("idle")
   const [errorMsg, setErrorMsg] = useState("")
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   // Giải phóng URL xem trước khi đóng
   useEffect(() => () => picked.forEach((p) => URL.revokeObjectURL(p.url)), [picked])
@@ -198,7 +200,16 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
           type="button"
           disabled={state === "uploading"}
           onClick={async () => {
-            if (!window.confirm(`Xác nhận bỏ qua ${label} để giao gấp? Hệ thống sẽ ghi nhận trạng thái Skipped.`)) return
+            if (
+              !(await confirm({
+                title: `Bỏ qua ${label.toLowerCase()} để giao gấp?`,
+                consequence: "Hệ thống sẽ ghi nhận trạng thái Skipped cho ảnh này để ưu tiên tiến độ giao hàng.",
+                confirmLabel: "Bỏ qua ảnh",
+                tone: "default",
+              }))
+            ) {
+              return
+            }
             setState("uploading")
             setErrorMsg("")
             try {
@@ -233,6 +244,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
           </Button>
         </div>
       </div>
+      {confirmDialog}
     </div>
   )
 }

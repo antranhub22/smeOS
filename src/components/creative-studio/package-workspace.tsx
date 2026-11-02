@@ -527,7 +527,7 @@ export function PackageWorkspace() {
   if (resolving) {
     return (
       <div className="flex items-center justify-center gap-2 py-12 text-sm text-text-muted">
-        <Loader2 size={16} className="animate-spin" /> Đang tải gói chiến dịch...
+        <Loader2 size={16} className="animate-spin motion-reduce:animate-none" /> Đang tải gói chiến dịch...
       </div>
     )
   }
@@ -542,7 +542,7 @@ export function PackageWorkspace() {
         </p>
         {ctx?.assetId ? (
           <Button onClick={handlePromote} disabled={busy !== null} className="gap-2">
-            {busy === "promote" ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+            {busy === "promote" ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={14} />}
             Skip — Dùng ảnh gốc làm Master (I2)
           </Button>
         ) : (
@@ -619,7 +619,7 @@ export function PackageWorkspace() {
         </div>
 
         <Button onClick={handleCreate} disabled={busy !== null} className="gap-2">
-          {busy === "create" ? <Loader2 size={14} className="animate-spin" /> : <Package size={14} />}
+          {busy === "create" ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Package size={14} />}
           Tạo gói chiến dịch với các tài sản trên
         </Button>
         {error && <p className="text-meta text-danger">{error}</p>}
@@ -659,7 +659,7 @@ export function PackageWorkspace() {
           <h4 className="text-body font-bold text-text">Chặng 07 — Chọn tài sản & bài đăng</h4>
           {!approved && (
             <Button size="sm" onClick={handleSave} disabled={!dirty || busy !== null} className="gap-1.5">
-              {busy === "save" ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+              {busy === "save" ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <Save size={13} />}
               Lưu gói
             </Button>
           )}
@@ -785,7 +785,7 @@ export function PackageWorkspace() {
                             disabled={rewriteBusy !== null}
                             onClick={() => void rewritePost(c.id)}
                           >
-                            {rewriteBusy === c.id ? <Loader2 size={11} className="animate-spin" /> : <RefreshCw size={11} />}
+                            {rewriteBusy === c.id ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" /> : <RefreshCw size={11} />}
                             AI viết lại (1 credit)
                           </Button>
                         </div>
@@ -808,7 +808,7 @@ export function PackageWorkspace() {
           </h4>
           {!approved && (
             <Button size="sm" variant="outline" onClick={handleQa} disabled={dirty || busy !== null} className="gap-1.5">
-              {busy === "qa" ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />}
+              {busy === "qa" ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <RefreshCw size={13} />}
               {pkg.qa_report ? "Chạy lại QA" : "Chạy QA"}
             </Button>
           )}
@@ -845,7 +845,7 @@ export function PackageWorkspace() {
               }
               className="gap-2"
             >
-              {busy === "approve" ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+              {busy === "approve" ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={14} />}
               Duyệt chốt gói chiến dịch (J5)
             </Button>
             <p className="text-caption text-text-muted">

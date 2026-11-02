@@ -195,7 +195,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
       <div className="flex gap-3">
         <Button type="button" variant="outline" onClick={onClose} disabled={loading}>Hủy</Button>
         <Button form="create-order-form" type="submit" disabled={loading} className="font-semibold">
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />}
           Tạo đơn hàng
         </Button>
       </div>

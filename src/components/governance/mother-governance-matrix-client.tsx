@@ -76,9 +76,9 @@ export function MotherGovernanceMatrixClient({
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full p-6">
       {/* Page Header chuyên biệt cho từng ma trận */}
       <div>
-        <h1 className="text-display font-extrabold text-text">
+        <h2 className="text-display font-extrabold text-text">
           {currentInfo.title}
-        </h1>
+        </h2>
         <p className="text-body-sm text-text-muted mt-1">
           {currentInfo.desc}
         </p>

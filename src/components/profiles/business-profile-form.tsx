@@ -275,7 +275,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
                 className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors shrink-0 cursor-pointer shadow-xs disabled:opacity-60"
                 title={`Nạp đồng bộ toàn bộ tên shop, logo và sản phẩm mẫu cho ngành ${currentIndDef.name}`}
               >
-                <Database size={13} className={loadingMockKey === selectedIndustry ? "animate-spin" : ""} />
+                <Database size={13} className={loadingMockKey === selectedIndustry ? "animate-spin motion-reduce:animate-none" : ""} />
                 <span>
                   {loadingMockKey === selectedIndustry
                     ? "Đang đồng bộ..."
@@ -334,7 +334,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
                         className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-caption font-bold bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 transition-all cursor-pointer disabled:opacity-60"
                         title={`Nạp dữ liệu mẫu cho ngành ${ind.name}`}
                       >
-                        <Sparkles size={11} className={isLoadingThis ? "animate-spin" : "text-primary"} />
+                        <Sparkles size={11} className={isLoadingThis ? "animate-spin motion-reduce:animate-none" : "text-primary"} />
                         <span>{isLoadingThis ? "Đang nạp..." : "Nạp dữ liệu mẫu"}</span>
                       </button>
                     </div>

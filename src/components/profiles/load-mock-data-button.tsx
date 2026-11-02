@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Database, RefreshCw, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
 interface LoadMockDataButtonProps {
   currentIndustry?: string
@@ -12,9 +13,17 @@ interface LoadMockDataButtonProps {
 export function LoadMockDataButton({ currentIndustry, onApplied }: LoadMockDataButtonProps) {
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   const handleApply = async () => {
-    if (!confirm("Bạn có chắc chắn muốn nạp dữ liệu mẫu theo ngành cho cửa hàng này? Dữ liệu mẫu sẽ bao gồm: tên cửa hàng, hotline, địa chỉ, logo AI, mô tả và các sản phẩm mẫu.")) {
+    if (
+      !(await confirm({
+        title: "Nạp dữ liệu mẫu theo ngành?",
+        consequence: "Dữ liệu mẫu bao gồm: tên cửa hàng, hotline, địa chỉ, logo AI, mô tả và các sản phẩm mẫu.",
+        confirmLabel: "Nạp dữ liệu mẫu",
+        tone: "default",
+      }))
+    ) {
       return
     }
 
@@ -64,7 +73,7 @@ export function LoadMockDataButton({ currentIndustry, onApplied }: LoadMockDataB
         className="text-xs font-bold gap-1.5 border-dashed border-primary/40 hover:bg-primary/5 text-primary"
         title="Nạp dữ liệu mẫu theo ngành (Logo, Hồ sơ, Sản phẩm)"
       >
-        <Database size={13} className={loading ? "animate-spin" : ""} />
+        <Database size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
         <span>{loading ? "Đang nạp dữ liệu mẫu..." : "Nạp dữ liệu mẫu ngành"}</span>
       </Button>
 
@@ -80,6 +89,7 @@ export function LoadMockDataButton({ currentIndustry, onApplied }: LoadMockDataB
           <span>{msg.text}</span>
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

@@ -153,9 +153,9 @@ export function StoreGrowthCenter() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <h1 className="text-title sm:text-display font-extrabold text-text">
+            <h2 className="text-title sm:text-display font-extrabold text-text">
               {orgName || "Trung tâm Tăng trưởng Cửa hàng"}
-            </h1>
+            </h2>
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
               <Sparkles className="h-3 w-3" />
               {roleUx?.label ?? "Quản trị cửa hàng"}
@@ -246,7 +246,7 @@ export function StoreGrowthCenter() {
                     className="flex items-center justify-between rounded-lg border border-border bg-surface-alt px-3 py-2 text-caption"
                   >
                     <div className="flex items-center gap-2">
-                      <Cpu className="h-3.5 w-3.5 animate-spin text-primary" />
+                      <Cpu className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none text-primary" />
                       <span className="font-semibold text-text">{tenTinhNang(job.feature)}</span>
                     </div>
                     <span className="text-text-muted">{job.stage || "Đang xử lý..."}</span>

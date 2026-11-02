@@ -113,7 +113,7 @@ export function DirectProductUpload({
             />
             {isProcessing && (
               <div className="absolute inset-0 bg-background/80 backdrop-blur-xs flex items-center justify-center">
-                <RefreshCw size={20} className="animate-spin text-primary" />
+                <RefreshCw size={20} className="animate-spin motion-reduce:animate-none text-primary" />
               </div>
             )}
           </div>
@@ -161,7 +161,7 @@ export function DirectProductUpload({
                 </>
               ) : (
                 <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
-                  <Sparkles size={14} className="animate-spin" />
+                  <Sparkles size={14} className="animate-spin motion-reduce:animate-none" />
                   {processingStatusText}
                 </div>
               )}

@@ -76,7 +76,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-lg h-96 rounded-2xl bg-surface-muted animate-pulse border border-border" />
+        <div className="w-full max-w-lg h-96 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none border border-border" />
       </div>
     )
   }
@@ -103,9 +103,9 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-caption font-bold mb-2">
           <Shield size={14} /> Hệ Thống Điều Phối Chuỗi smeOS
         </div>
-        <h1 className="text-title-lg font-black text-foreground">
+        <h2 className="text-title-lg font-black text-foreground">
           Tiếp Nhận Đơn Hàng Gia Công
-        </h1>
+        </h2>
         <p className="text-caption text-text-muted mt-1">
           {orderData.branchName ? `Chi nhánh: ${orderData.branchName}` : "Vui lòng kiểm tra và tiếp nhận đơn hàng"}
         </p>

@@ -146,7 +146,7 @@ export function PriceListForm({
       <div className="flex justify-end gap-2 border-t border-border pt-3">
         <Button variant="outline" onClick={onCancel} disabled={saving}>Huỷ</Button>
         <Button onClick={submit} disabled={saving}>
-          {saving && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+          {saving && <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden />}
           Lưu bảng giá
         </Button>
       </div>

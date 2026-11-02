@@ -14,7 +14,7 @@ export function LinkUnavailable({ shop, title, message, action }: {
     <div className="min-h-dvh bg-background text-foreground">
       {shop && <ShopContactBar shop={shop} />}
       <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-16 text-center">
-        <h1 className="text-title font-bold">{title ?? "Bộ sưu tập này không còn mở"}</h1>
+        <h2 className="text-title font-bold">{title ?? "Bộ sưu tập này không còn mở"}</h2>
         <p className="text-body text-text-muted">
           {message ?? (shop
             ? `Link có thể đã hết hạn hoặc cửa hàng đã cập nhật mẫu mới. Liên hệ ${shop.name} để nhận bộ sưu tập mới nhất.`

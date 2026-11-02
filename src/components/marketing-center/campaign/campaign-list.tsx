@@ -61,7 +61,7 @@ export function CampaignList({ onSelectCampaign, onCreateCampaign }: CampaignLis
       {/* Action Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-h2 font-bold text-text">Chiến dịch quảng bá</h1>
+          <h2 className="text-h2 font-bold text-text">Chiến dịch quảng bá</h2>
           <p className="text-body-sm text-text-muted">
             Quản lý các chiến dịch theo dịp, gán tư liệu, thu hút khách tiềm năng và theo dõi chuyển đổi đơn hàng.
           </p>

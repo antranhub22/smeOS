@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { VOICE_CLONE_CONSENT_TEXT } from "@/modules/audio-studio/domain/audio-task-rules"
 import { createVoiceClone, fetchVoiceClones, removeVoiceClone, type VoiceCloneItem } from "./audio-library-client"
 
@@ -29,6 +30,7 @@ export function VoiceClonePanel({ value, onChange }: { value: string | null; onC
   const [error, setError] = useState<string | null>(null)
   const [showCreate, setShowCreate] = useState(false)
   const [reloadKey, setReloadKey] = useState(0)
+  const [confirm, confirmDialog] = useConfirmDialog()
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const onChangeRef = useRef(onChange)
   useEffect(() => {
@@ -87,7 +89,16 @@ export function VoiceClonePanel({ value, onChange }: { value: string | null; onC
                   type="button"
                   title="Xoá giọng (gỡ cả trên ElevenLabs)"
                   onClick={async () => {
-                    if (!window.confirm(`Xoá giọng "${c.name}"? Giọng sẽ bị gỡ khỏi ElevenLabs.`)) return
+                    if (
+                      !(await confirm({
+                        title: `Xoá giọng "${c.name}"?`,
+                        consequence: "Giọng sẽ bị gỡ khỏi thư viện và hệ thống ElevenLabs.",
+                        confirmLabel: "Xoá giọng",
+                        tone: "danger",
+                      }))
+                    ) {
+                      return
+                    }
                     await removeVoiceClone(c.id).catch((e: unknown) => setError(e instanceof Error ? e.message : "Không xoá được"))
                     if (value === c.id) onChange(null, null)
                     setReloadKey((k) => k + 1)
@@ -116,6 +127,7 @@ export function VoiceClonePanel({ value, onChange }: { value: string | null; onC
           />
         )}
       </div>
+      {confirmDialog}
     </Card>
   )
 }
@@ -155,7 +167,7 @@ function CreateCloneForm({ onDone }: { onDone: () => void }) {
       </label>
       {error && <p className="text-meta text-danger">{error}</p>}
       <Button size="sm" onClick={submit} disabled={busy || !consent || name.trim().length < 2} className="gap-1.5">
-        {busy ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />} Nhân bản giọng ({CLONE_CREDIT} credit)
+        {busy ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <Upload size={13} />} Nhân bản giọng ({CLONE_CREDIT} credit)
       </Button>
     </div>
   )

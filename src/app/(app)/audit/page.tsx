@@ -116,7 +116,7 @@ export default function AuditLogsPage() {
       {/* Top Header & Tải lại */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-extrabold text-text">Nhật Ký Kiểm Toán</h1>
+          <h2 className="text-xl font-extrabold text-text">Nhật Ký Kiểm Toán</h2>
           <p className="text-xs text-text-muted">
             Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span>
           </p>
@@ -139,7 +139,7 @@ export default function AuditLogsPage() {
             disabled={loading}
             className="text-xs flex items-center gap-1.5"
           >
-            <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+            <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
             Làm mới
           </Button>
         </div>

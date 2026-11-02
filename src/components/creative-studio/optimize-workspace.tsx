@@ -173,7 +173,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface shadow-xs text-primary">
                   {uploadingDirect ? (
-                    <Loader2 size={24} className="animate-spin text-primary" />
+                    <Loader2 size={24} className="animate-spin motion-reduce:animate-none text-primary" />
                   ) : (
                     <Upload size={22} strokeWidth={2} />
                   )}
@@ -316,7 +316,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
 
               {loadingAssets && (
                 <div className="text-center py-6 text-sm text-text-muted flex items-center justify-center gap-2">
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                   Đang tải danh sách ảnh từ kho...
                 </div>
               )}

@@ -198,7 +198,7 @@ function ExportOrdersButtonInner({
               disabled={loading}
             >
               {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" />
               ) : (
                 <Download className="h-4 w-4" />
               )}

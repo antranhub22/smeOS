@@ -110,7 +110,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
   if (loading && !data) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center text-text-muted">
-        <RefreshCw size={32} className="animate-spin text-primary mb-3" />
+        <RefreshCw size={32} className="animate-spin motion-reduce:animate-none text-primary mb-3" />
         <p className="text-body font-medium">Đang tải tiến trình đơn hoa của bạn...</p>
       </div>
     )
@@ -152,7 +152,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
           onClick={loadTracking}
           className="gap-1.5 text-caption h-8 shrink-0 whitespace-nowrap"
         >
-          <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           <span>Cập nhật</span>
         </Button>
       </div>

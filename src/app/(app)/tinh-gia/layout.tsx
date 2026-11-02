@@ -29,7 +29,7 @@ export default function TinhGiaLayout({ children }: { children: ReactNode }) {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6 sm:px-6">
       <header>
-        <h1 className="text-title font-bold text-text">Giá vốn & định giá</h1>
+        <h2 className="text-title font-bold text-text">Giá vốn & định giá</h2>
         <p className="mt-1 text-body-sm text-text-muted">
           Nhập đơn giá nguyên liệu, ghi công thức từng mẫu — hệ thống tính giá vốn, gợi ý giá bán và số nguyên liệu cần mua.
         </p>

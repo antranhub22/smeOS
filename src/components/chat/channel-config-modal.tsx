@@ -154,7 +154,7 @@ export function ChannelConfigModal({
               size="sm"
               disabled={isBusy}
             >
-              {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Lưu & Bật Kênh"}
+              {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : "Lưu & Bật Kênh"}
             </Button>
           </div>
         </form>

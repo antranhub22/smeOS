@@ -14,6 +14,7 @@ import {
   RotateCcw,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
   CHAIN_DISPATCH_POLICY_KEY,
@@ -28,6 +29,7 @@ export function ChainDispatchSettings() {
   const [draft, setDraft] = useState<ChainDispatchPolicy | null>(null)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   const policy = draft ?? (org.data ? parseChainDispatchPolicy(org.data.settings) : null)
 
@@ -55,8 +57,15 @@ export function ChainDispatchSettings() {
     setMessage(null)
   }
 
-  const handleResetDefaults = () => {
-    if (window.confirm("Khôi phục toàn bộ tiêu chuẩn bắn đơn chuỗi về mặc định của hệ thống?")) {
+  const handleResetDefaults = async () => {
+    if (
+      await confirm({
+        title: "Khôi phục mặc định hệ thống?",
+        consequence: "Toàn bộ tiêu chuẩn bắn đơn chuỗi sẽ được đặt lại theo cấu hình mặc định.",
+        confirmLabel: "Khôi phục",
+        tone: "default",
+      })
+    ) {
       setDraft({ ...DEFAULT_CHAIN_DISPATCH_POLICY })
       setMessage(null)
     }
@@ -89,7 +98,7 @@ export function ChainDispatchSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (
@@ -343,6 +352,7 @@ export function ChainDispatchSettings() {
           </div>
         </div>
       </div>
+      {confirmDialog}
     </form>
   )
 }

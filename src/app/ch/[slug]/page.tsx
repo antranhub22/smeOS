@@ -31,7 +31,7 @@ export default async function StoreSharePage({ params }: PageProps) {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-surface rounded-3xl p-8 border border-border text-center">
-          <h1 className="text-xl font-bold text-text mb-2">Cửa hàng đã ngừng chia sẻ trang này</h1>
+          <h2 className="text-xl font-bold text-text mb-2">Cửa hàng đã ngừng chia sẻ trang này</h2>
           <p className="text-sm text-text-muted">Vui lòng liên hệ cửa hàng để nhận đường dẫn mới.</p>
         </div>
       </main>

@@ -121,9 +121,9 @@ export function FlowerNetworkCommandCenter() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-display font-extrabold text-text">
+            <h2 className="text-display font-extrabold text-text">
               {orgName || "Trung tâm Điều hành Điện hoa"}
-            </h1>
+            </h2>
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
               <Radio className="h-3 w-3" />
               {roleUx?.label ?? "Điện hoa Admin"}

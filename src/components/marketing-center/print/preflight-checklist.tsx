@@ -23,7 +23,7 @@ export function PreflightChecklist({
 }: PreflightChecklistProps) {
   if (isLoading) {
     return (
-      <div className="p-4 rounded-xl border border-border bg-surface-alt/50 animate-pulse text-caption text-text-muted">
+      <div className="p-4 rounded-xl border border-border bg-surface-alt/50 animate-pulse motion-reduce:animate-none text-caption text-text-muted">
         Đang kiểm tra quy cách in ấn và an toàn xén tràn lề...
       </div>
     )

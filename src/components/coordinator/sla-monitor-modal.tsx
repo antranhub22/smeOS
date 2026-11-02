@@ -81,7 +81,7 @@ export function SlaMonitorModal({
         disabled={loading}
         className="h-8 text-caption gap-1.5"
       >
-        <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
+        <RefreshCw size={12} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
         Làm mới dữ liệu
       </Button>
       <Button

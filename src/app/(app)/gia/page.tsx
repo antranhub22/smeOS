@@ -71,7 +71,7 @@ export default function GiaPage() {
     return (
       <div className="flex h-full flex-col overflow-hidden">
         <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-          <h1 className="text-title font-extrabold text-primary">Tính giá sản phẩm</h1>
+          <h2 className="text-title font-extrabold text-primary">Tính giá sản phẩm</h2>
         </header>
         <div className="p-4">
           <SkeletonBlock lines={5} label="Đang tải cấu hình giá" />
@@ -97,7 +97,7 @@ export default function GiaPage() {
     <div className="flex h-full flex-col overflow-hidden">
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-title font-extrabold text-primary">Tính giá sản phẩm</h1>
+          <h2 className="text-title font-extrabold text-primary">Tính giá sản phẩm</h2>
           {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
           <InfoTip label="Tính giá sản phẩm" side="bottom">
             Đối soát giá bán, hoa hồng xưởng và quy tắc giá sàn, giá trần.

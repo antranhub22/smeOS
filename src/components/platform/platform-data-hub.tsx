@@ -424,7 +424,7 @@ export function PlatformDataHub() {
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-text tracking-tight flex items-center gap-2">
+              <h2 className="text-xl font-bold text-text tracking-tight flex items-center gap-2">
                 {selectedDomain && selectedDomainMeta ? (
                   <>
                     <selectedDomainMeta.icon className={selectedDomainMeta.color} size={20} />
@@ -441,7 +441,7 @@ export function PlatformDataHub() {
                     <span>Dữ liệu toàn nền tảng</span>
                   </>
                 )}
-              </h1>
+              </h2>
               <InfoTip label="Dữ liệu toàn nền tảng">
                 {selectedDomain
                   ? `Xem và tải toàn bộ bản ghi từ ${selectedOrg?.name}.`

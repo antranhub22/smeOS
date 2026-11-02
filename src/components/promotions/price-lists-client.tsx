@@ -92,7 +92,7 @@ export function PriceListsClient() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-display font-extrabold text-text">Bảng giá sản phẩm</h1>
+          <h2 className="text-display font-extrabold text-text">Bảng giá sản phẩm</h2>
           <p className="mt-1 text-body-sm text-text-muted">Bảng giá gọn gàng để gửi khách, in tại quầy hoặc lưu thành PDF.</p>
         </div>
         {canManage && (

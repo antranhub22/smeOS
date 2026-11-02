@@ -178,7 +178,7 @@ export function PartnerManagementModal({
               disabled={loading}
               className="text-xs gap-1 text-text-muted hover:text-text"
             >
-              <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+              <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
               Làm mới
             </Button>
           </div>

@@ -300,7 +300,7 @@ export function ProductAvailabilityCard({
             disabled={saving}
             className="flex items-center gap-1.5 h-9 px-4 font-bold text-caption rounded-lg bg-primary text-white"
           >
-            {saving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+            {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={14} />}
             <span>{saving ? "Đang lưu..." : "Lưu cấu hình khả dụng"}</span>
           </Button>
         </div>

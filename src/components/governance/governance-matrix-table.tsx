@@ -124,7 +124,7 @@ export function GovernanceMatrixTable({
               className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
               title="Làm mới"
             >
-              <RefreshCw size={14} className={state.loading ? "animate-spin" : ""} />
+              <RefreshCw size={14} className={state.loading ? "animate-spin motion-reduce:animate-none" : ""} />
             </button>
           )}
         </div>

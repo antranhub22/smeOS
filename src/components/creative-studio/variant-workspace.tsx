@@ -853,7 +853,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
               disabled={generatingAllScenes || generatingSceneIndex !== null}
               className="gap-2 bg-primary text-primary-foreground hover:bg-primary-hover font-bold shadow-md h-9 cursor-pointer"
             >
-              <Sparkles size={14} className={generatingAllScenes ? "animate-spin" : ""} />
+              <Sparkles size={14} className={generatingAllScenes ? "animate-spin motion-reduce:animate-none" : ""} />
               {generatingAllScenes
                 ? `Đang sinh phân cảnh...`
                 : `⚡ Sinh trọn bộ ${sceneCount} phân cảnh${planRatios.length > 1 ? ` khung ${viewRatio}` : ""} (${sceneCreditTotal} credit)`}
@@ -1282,7 +1282,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
                       }}
                       className="w-full mt-2 py-1.5 px-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-caption border border-primary/20 flex items-center justify-center gap-1.5 transition cursor-pointer disabled:opacity-60"
                     >
-                      <Sparkles size={12} className={generatingSceneIndex === scene.sceneIndex ? "animate-spin" : ""} />
+                      <Sparkles size={12} className={generatingSceneIndex === scene.sceneIndex ? "animate-spin motion-reduce:animate-none" : ""} />
                       {generatingSceneIndex === scene.sceneIndex
                         ? "Đang chờ worker dựng cảnh..."
                         : scene.hasGenerated
@@ -1532,7 +1532,7 @@ export function VariantWorkspace({ data }: VariantWorkspaceProps) {
                 disabled={planWriting || !planCtx}
                 className="gap-1.5"
               >
-                <Sparkles size={14} className={planWriting ? "animate-spin" : ""} />
+                <Sparkles size={14} className={planWriting ? "animate-spin motion-reduce:animate-none" : ""} />
                 {planWriting ? "AI đang viết kịch bản..." : "AI viết kịch bản bối cảnh (1 credit)"}
               </Button>
               <Button size="sm" variant="outline" onClick={handleUseRulePlan} disabled={planWriting || !planCtx}>

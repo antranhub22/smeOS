@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useSession } from "@/lib/session"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 type ProductCopy = {
@@ -70,6 +71,7 @@ export default function ProductCopyDetailPage() {
 
   // Local edit state
   const [localEdited, setLocalEdited] = useState<Partial<Record<ProductCopyField, string | string[]>>>({})
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   useEffect(() => {
     async function fetchCopy() {
@@ -129,7 +131,16 @@ export default function ProductCopyDetailPage() {
 
   async function handleApprove() {
     if (!canApprove) return
-    if (!window.confirm("Xác nhận duyệt dữ liệu bán hàng này? Sẽ tạo/cập nhật sản phẩm trong Product Master.")) return
+    if (
+      !(await confirm({
+        title: "Xác nhận duyệt dữ liệu bán hàng?",
+        consequence: "Dữ liệu này sẽ được dùng để tạo/cập nhật sản phẩm trong Product Master.",
+        confirmLabel: "Duyệt ngay",
+        tone: "default",
+      }))
+    ) {
+      return
+    }
     setActionLoading("approve")
     try {
       const res = await fetch(`/api/v1/product-copies/${copyId}/approve`, { method: "POST" })
@@ -177,7 +188,7 @@ export default function ProductCopyDetailPage() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 size={32} className="animate-spin text-primary" />
+          <Loader2 size={32} className="animate-spin motion-reduce:animate-none text-primary" />
           <p className="text-text-muted">Đang tải dữ liệu bán hàng…</p>
         </div>
       </div>
@@ -451,6 +462,7 @@ export default function ProductCopyDetailPage() {
           </Card>
         </div>
       </div>
+      {confirmDialog}
     </TooltipProvider>
   )
 }

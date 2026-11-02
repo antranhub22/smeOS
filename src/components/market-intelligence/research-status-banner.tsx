@@ -42,9 +42,9 @@ export function ResearchStatusBanner({
         <div className="flex items-start sm:items-center gap-3">
           {status.state === "running" ? (
             <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blush-600 text-white shadow-sm">
-              <Loader2 className="h-5 w-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" />
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blush-400 opacity-75"></span>
+                <span className="animate-ping motion-reduce:animate-none absolute inline-flex h-full w-full rounded-full bg-blush-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-blush-500"></span>
               </span>
             </div>
@@ -94,7 +94,7 @@ export function ResearchStatusBanner({
 
           {status.state === "running" && (
             <div className="inline-flex items-center gap-1.5 rounded-lg bg-blush-100/80 px-2.5 py-1 text-caption font-bold text-blush-800">
-              <span className="h-1.5 w-1.5 rounded-full bg-blush-600 animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-blush-600 animate-pulse motion-reduce:animate-none" />
               Đang thu thập dữ liệu...
             </div>
           )}
@@ -113,7 +113,7 @@ export function ResearchStatusBanner({
 
       {status.state === "running" && (
         <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-blush-100">
-          <div className="h-full w-full bg-blush-600 rounded-full animate-pulse" />
+          <div className="h-full w-full bg-blush-600 rounded-full animate-pulse motion-reduce:animate-none" />
         </div>
       )}
     </div>

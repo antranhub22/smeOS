@@ -97,7 +97,7 @@ export function InternalChatWidget() {
         >
           <MessageSquare className="w-6 h-6" />
           {unreadTotal > 0 && (
-            <span className="absolute -top-1 -right-1 bg-danger text-danger-fg text-caption font-bold px-2 py-0.5 rounded-full border-2 border-surface animate-pulse">
+            <span className="absolute -top-1 -right-1 bg-danger text-danger-fg text-caption font-bold px-2 py-0.5 rounded-full border-2 border-surface animate-pulse motion-reduce:animate-none">
               {unreadTotal}
             </span>
           )}

@@ -77,7 +77,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           <div className="w-16 h-16 rounded-2xl bg-warning-bg text-warning flex items-center justify-center mb-4">
             <AlertCircle size={32} />
           </div>
-          <h1 className="text-xl font-black text-text mb-2">Bộ sưu tập đã đóng</h1>
+          <h2 className="text-xl font-black text-text mb-2">Bộ sưu tập đã đóng</h2>
           <p className="text-sm text-text-muted leading-relaxed mb-6">
             Bộ sưu tập <span className="font-semibold text-text">&quot;{initialData.catalogName}&quot;</span> đã tạm ngừng chia sẻ.
           </p>
@@ -93,7 +93,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-surface rounded-3xl p-8 border border-border shadow-xl text-center">
-          <h1 className="text-xl font-black text-text mb-2">Không tìm thấy danh mục</h1>
+          <h2 className="text-xl font-black text-text mb-2">Không tìm thấy danh mục</h2>
           <p className="text-sm text-text-muted">Đường dẫn catalog này không tồn tại hoặc đã bị gỡ bỏ.</p>
         </div>
       </div>

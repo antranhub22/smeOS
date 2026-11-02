@@ -13,7 +13,7 @@ function LinkUnavailable() {
     <main className="flex min-h-dvh items-center justify-center p-4">
       <Card className="max-w-md space-y-3 p-8 text-center">
         <LinkIcon className="mx-auto h-10 w-10 text-text-muted/50" />
-        <h1 className="text-base font-semibold text-text">Link không còn hiệu lực</h1>
+        <h2 className="text-base font-semibold text-text">Link không còn hiệu lực</h2>
         <p className="text-xs text-text-muted">Link đã hết hạn hoặc đã bị huỷ. Vui lòng xin người gửi một link mới.</p>
       </Card>
     </main>

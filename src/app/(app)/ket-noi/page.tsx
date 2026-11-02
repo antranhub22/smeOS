@@ -102,7 +102,7 @@ export default function PlatformConnectionsPage() {
             <Share2 size={13} className="text-primary" aria-hidden="true" />
             Kênh mạng xã hội của cửa hàng
           </div>
-          <h1 className="text-xl font-black text-text mt-0.5">Kết nối kênh bán hàng</h1>
+          <h2 className="text-xl font-black text-text mt-0.5">Kết nối kênh bán hàng</h2>
           <p className="text-xs text-text-muted mt-1">Kết nối trang mạng xã hội và kênh nhắn tin để đăng bài sản phẩm từ smeOS</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -111,7 +111,7 @@ export default function PlatformConnectionsPage() {
             <strong className="mx-1">{health.healthy + health.stale}</strong> / {platforms.length} đang kết nối
           </Badge>
           <Button size="sm" variant="outline" onClick={() => void reload()} disabled={refreshing} className="text-xs gap-1">
-            <RefreshCw size={12} className={refreshing ? "animate-spin" : ""} aria-hidden="true" />
+            <RefreshCw size={12} className={refreshing ? "animate-spin motion-reduce:animate-none" : ""} aria-hidden="true" />
             Làm mới
           </Button>
           <Button size="sm" onClick={() => router.push("/lich-dang" as never)} className="text-xs font-bold gap-1">

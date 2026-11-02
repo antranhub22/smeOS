@@ -23,9 +23,9 @@ export default function DangKyThanhCongPage() {
 
           {/* Tiêu đề */}
           <div>
-            <h1 className="text-xl font-extrabold text-text mb-1.5">
+            <h2 className="text-xl font-extrabold text-text mb-1.5">
               Đăng ký thành công!
-            </h1>
+            </h2>
             <p className="text-body-sm text-text-muted leading-relaxed">
               Đơn đăng ký của bạn đã được ghi nhận. Chúng tôi đang xem xét và sẽ liên hệ
               qua email trong vòng <strong className="text-text">24–48 giờ</strong>.

@@ -127,7 +127,7 @@ export function VideoJobLifecycle({
   if (!job) {
     return (
       <Card className="p-5 text-xs text-text-muted flex items-center gap-2">
-        {error ? <span className="text-danger">{error}</span> : <><Loader2 size={14} className="animate-spin" /> Đang đọc video job...</>}
+        {error ? <span className="text-danger">{error}</span> : <><Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> Đang đọc video job...</>}
       </Card>
     )
   }
@@ -170,7 +170,7 @@ export function VideoJobLifecycle({
               ? "Lần render trước lỗi"
               : "Chạy sau khi duyệt kịch bản"}
           </div>
-          {job.stage === "RENDERING" && <Loader2 size={14} className="animate-spin mt-2 text-primary" />}
+          {job.stage === "RENDERING" && <Loader2 size={14} className="animate-spin motion-reduce:animate-none mt-2 text-primary" />}
           {canRender && (
             <div className="mt-2 space-y-1.5">
               <ProviderSelect kind="video" value={videoProvider === "local_cinematic" ? "" : videoProvider} onChange={setVideoProvider} label="Nhà cung cấp dựng clip" disabled={videoProvider === "local_cinematic"} />

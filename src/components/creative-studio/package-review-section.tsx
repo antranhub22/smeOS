@@ -347,7 +347,7 @@ export function PackageReviewSection(props: {
                       )}
                       {shown && shown.approval_state !== "APPROVED" && (
                         <Button size="sm" className="h-7 text-caption gap-1" disabled={busy !== null} onClick={() => void approveImage(shown)}>
-                          {busy === `img-${shown.id}` ? <Loader2 size={11} className="animate-spin" /> : <Check size={11} />} Duyệt ảnh
+                          {busy === `img-${shown.id}` ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" /> : <Check size={11} />} Duyệt ảnh
                         </Button>
                       )}
                       <Button
@@ -376,7 +376,7 @@ export function PackageReviewSection(props: {
                         disabled={!!sceneStage[sc.index]}
                         onClick={() => void runSceneRevise(sc.index, sc.plan as ScenePlanScene, shown?.aspect_ratio || "1:1")}
                       >
-                        {sceneStage[sc.index] ? <Loader2 size={11} className="animate-spin" /> : <Wand2 size={11} />}
+                        {sceneStage[sc.index] ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" /> : <Wand2 size={11} />}
                         Sửa cảnh ({sceneReviseCredit(sc.plan, scenePlan?.mode ?? mode)} credit)
                       </Button>
                       {sceneStage[sc.index] && <div className="text-caption text-primary">{sceneStage[sc.index]}</div>}
@@ -420,7 +420,7 @@ export function PackageReviewSection(props: {
           </button>
         )}
         {videoJobId && !video && !videoDetail.error && (
-          <p className="text-meta text-text-muted flex items-center gap-1.5"><Loader2 size={12} className="animate-spin" /> Đang đọc video...</p>
+          <p className="text-meta text-text-muted flex items-center gap-1.5"><Loader2 size={12} className="animate-spin motion-reduce:animate-none" /> Đang đọc video...</p>
         )}
         {videoDetail.error && <p className="text-meta text-danger">Không đọc được video: {videoDetail.error}</p>}
         {!videoJobId && <p className="text-meta text-text-muted">Chưa kèm video.</p>}
@@ -472,7 +472,7 @@ export function PackageReviewSection(props: {
                       })
                     }
                   >
-                    {busy === "video" ? <Loader2 size={11} className="animate-spin" /> : <ShieldCheck size={11} />} Duyệt video (P4)
+                    {busy === "video" ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" /> : <ShieldCheck size={11} />} Duyệt video (P4)
                   </Button>
                 )}
               </div>

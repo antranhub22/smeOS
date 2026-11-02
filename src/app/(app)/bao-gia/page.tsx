@@ -65,7 +65,7 @@ export default function BaoGiaPage() {
             <Receipt className="w-5 h-5" aria-hidden="true" />
           </div>
           <div>
-            <h1 className="text-title font-extrabold text-primary">Tạo Thẻ báo giá sản phẩm</h1>
+            <h2 className="text-title font-extrabold text-primary">Tạo Thẻ báo giá sản phẩm</h2>
             <p className="text-caption text-text-muted">
               Tạo bộ lựa chọn sản phẩm gửi khách hoặc xuất thẻ báo giá cho đối tác
             </p>

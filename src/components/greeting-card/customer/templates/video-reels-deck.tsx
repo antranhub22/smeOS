@@ -47,7 +47,7 @@ export function VideoReelsDeck({ products, catalogName, onSelectProduct }: Video
   return (
     <div className={`relative ${embedded ? "h-full" : "h-dvh"} w-full bg-black text-white`}>
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-4 pb-8 pt-4" style={{ background: "linear-gradient(180deg,rgba(0,0,0,0.55),rgba(0,0,0,0))" }}>
-        <h1 className="truncate text-body font-semibold">{catalogName}</h1>
+        <h2 className="truncate text-body font-semibold">{catalogName}</h2>
         <span className="text-caption tabular-nums text-white/80">
           {active + 1} / {products.length}
         </span>
@@ -88,7 +88,7 @@ export function VideoReelsDeck({ products, catalogName, onSelectProduct }: Video
               </button>
               {i === 0 && products.length > 1 && (
                 <p className="mt-3 flex items-center justify-center gap-1 text-caption text-white/70" aria-hidden="true">
-                  <ChevronUp size={14} className="animate-bounce" /> Vuốt lên để xem mẫu tiếp
+                  <ChevronUp size={14} className="animate-bounce motion-reduce:animate-none" /> Vuốt lên để xem mẫu tiếp
                 </p>
               )}
             </div>

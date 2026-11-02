@@ -195,7 +195,7 @@ export function StorageSidebar({
                 className="p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
                 title="Làm mới kho dữ liệu"
               >
-                <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+                <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
               </button>
             )}
             <button

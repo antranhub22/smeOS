@@ -61,7 +61,7 @@ export function TierGovernanceMatrixClient({ systemKey, title, description }: Ti
       <div>
         {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
         <div className="flex items-center gap-2">
-          <h1 className="text-display font-extrabold text-text">{title}</h1>
+          <h2 className="text-display font-extrabold text-text">{title}</h2>
           <InfoTip label={title} side="bottom">{description}</InfoTip>
         </div>
       </div>

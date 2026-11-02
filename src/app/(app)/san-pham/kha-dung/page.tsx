@@ -66,10 +66,10 @@ export default function AvailabilityPage() {
           </div>
           {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-black text-text flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black text-text flex items-center gap-2">
               <span>{pageTitle}</span>
               <Sparkles size={18} className="text-primary" />
-            </h1>
+            </h2>
             <InfoTip label={pageTitle} side="bottom">{pageDesc}</InfoTip>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function AvailabilityPage() {
             aria-label="Tải lại dữ liệu"
             className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
           >
-            <RefreshCw size={15} className={isLoading ? "animate-spin" : ""} />
+            <RefreshCw size={15} className={isLoading ? "animate-spin motion-reduce:animate-none" : ""} />
           </button>
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function AvailabilityPage() {
       {/* Content Area */}
       {isLoading ? (
         <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-surface">
-          <Loader2 size={24} className="animate-spin text-primary" />
+          <Loader2 size={24} className="animate-spin motion-reduce:animate-none text-primary" />
           <span className="text-xs text-text-muted">Đang tải dữ liệu khả dụng...</span>
         </div>
       ) : error || !data || !Array.isArray(data.days) || !Array.isArray(data.products) ? (

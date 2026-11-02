@@ -216,7 +216,7 @@ export function PackageDownstreamCard({ pkg, onUpdated }: PackageDownstreamCardP
         </div>
         <div className="flex gap-2">
           <Button size="sm" onClick={saveLaunch} disabled={saving || channels.length === 0} className="gap-1.5">
-            {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />} Lưu kế hoạch đăng
+            {saving ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <Save size={13} />} Lưu kế hoạch đăng
           </Button>
           <Button size="sm" variant="outline" onClick={() => router.push("/lich-dang" as never)}>
             Mở Lịch đăng
@@ -231,7 +231,7 @@ export function PackageDownstreamCard({ pkg, onUpdated }: PackageDownstreamCardP
             <BarChart3 size={16} /> Chặng 11–12 — Bán hàng & Đo lường (số liệu thật)
           </h4>
           <Button size="sm" variant="ghost" onClick={loadPerformance} disabled={loadingPerf}>
-            {loadingPerf ? <Loader2 size={13} className="animate-spin" /> : "Làm mới"}
+            {loadingPerf ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : "Làm mới"}
           </Button>
         </div>
         {m ? (

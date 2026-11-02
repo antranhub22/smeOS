@@ -74,7 +74,7 @@ export function ExecutiveSummaryCards({
           </button>
 
           <div className="flex items-center gap-1 text-caption font-bold text-text-muted bg-surface-alt/90 px-2.5 py-1 rounded-full border border-border/50">
-            <span className="h-1.5 w-1.5 rounded-full bg-mint-500 animate-pulse" />
+            <span className="h-1.5 w-1.5 rounded-full bg-mint-500 animate-pulse motion-reduce:animate-none" />
             Dữ liệu trực tiếp
           </div>
         </div>

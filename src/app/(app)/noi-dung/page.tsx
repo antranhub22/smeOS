@@ -78,10 +78,10 @@ function ContentEngineContent() {
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-3.5">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-title font-black text-primary flex items-center gap-2">
+            <h2 className="text-title font-black text-primary flex items-center gap-2">
               <Sparkles size={18} aria-hidden="true" />
               Nội dung bán hàng
-            </h1>
+            </h2>
             <InfoTip label="Nội dung bán hàng" side="bottom">
               Tạo nội dung bán hàng cho nhiều kênh từ một ý tưởng.
             </InfoTip>
@@ -238,7 +238,7 @@ function ContentEngineContent() {
           <div className="flex flex-col items-center justify-center py-12 gap-6">
             {inputMode === "product" && (
               <div className="text-center">
-                <div className="text-sm font-semibold text-primary animate-pulse">
+                <div className="text-sm font-semibold text-primary animate-pulse motion-reduce:animate-none">
                   Đang viết bài...
                 </div>
                 <div className="text-title font-black text-text mt-1">

@@ -282,7 +282,7 @@ export function AudioRevisePanel(props: {
           ))}
         </select>
         <Button size="sm" className="h-7 text-caption gap-1" disabled={stage !== null} onClick={() => void run()}>
-          {stage ? <Loader2 size={11} className="animate-spin" /> : <Wand2 size={11} />} Sửa & phối lại
+          {stage ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" /> : <Wand2 size={11} />} Sửa & phối lại
         </Button>
         <button type="button" className="text-text-muted underline" disabled={stage !== null} onClick={() => setOpen(false)}>
           Đóng
@@ -447,7 +447,7 @@ export function VideoRevisePanel(props: {
               ))}
             </select>
             <Button size="sm" className="h-7 text-caption gap-1" disabled={creating} onClick={() => void create()}>
-              {creating ? <Loader2 size={11} className="animate-spin" /> : <Wand2 size={11} />} Tạo bản sửa
+              {creating ? <Loader2 size={11} className="animate-spin motion-reduce:animate-none" /> : <Wand2 size={11} />} Tạo bản sửa
             </Button>
           </div>
         </>

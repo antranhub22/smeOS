@@ -177,7 +177,7 @@ export default function AiSettingsPage() {
       {/* Header hành động */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-extrabold text-text">Cấu hình AI</h1>
+          <h2 className="text-lg font-extrabold text-text">Cấu hình AI</h2>
           <p className="text-xs text-text-muted">
             Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span> (Phạm vi áp dụng chỉ trong tổ chức hiện tại)
           </p>
@@ -189,7 +189,7 @@ export default function AiSettingsPage() {
           disabled={loading}
           className="flex items-center gap-1.5 text-xs"
         >
-          <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           Tải lại
         </Button>
       </div>

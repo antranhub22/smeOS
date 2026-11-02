@@ -43,7 +43,7 @@ export function ManualEditPanel({
             className="inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline disabled:opacity-50"
           >
             {isAiLoading ? (
-              <Loader2 className="h-3 w-3 animate-spin" />
+              <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
             ) : (
               <Sparkles className="h-3 w-3 text-warning" />
             )}

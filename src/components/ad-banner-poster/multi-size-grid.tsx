@@ -91,7 +91,7 @@ export function MultiSizeGrid({
 
                 {isGenerating && (
                   <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-2 z-20 animate-in fade-in-50">
-                    <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                    <Loader2 className="h-6 w-6 text-primary animate-spin motion-reduce:animate-none" />
                     <span className="text-xs font-bold text-text flex items-center gap-1">
                       <Sparkles className="h-3.5 w-3.5 text-primary" /> Đang cập nhật {spec.name}...
                     </span>

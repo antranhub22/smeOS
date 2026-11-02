@@ -111,7 +111,7 @@ export function CampaignDetailsView({ campaignId, onBack }: CampaignDetailsViewP
             <ArrowLeft className="h-4 w-4" /> Danh sách chiến dịch
           </button>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-h2 font-bold text-text">{campaign.name}</h1>
+            <h2 className="text-h2 font-bold text-text">{campaign.name}</h2>
             <Badge tone={statusTone}>{CAMPAIGN_STATUS_LABELS[campaign.status]}</Badge>
             <span className="rounded-lg bg-surface-elevated px-2 py-0.5 text-caption text-text-muted border border-border">
               {CAMPAIGN_OBJECTIVE_LABELS[campaign.objective]}

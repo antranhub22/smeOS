@@ -61,7 +61,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
         {thread.error ? (
           <p role="alert" className="rounded-xl bg-danger-bg p-3 text-body-sm text-danger">{(thread.error as Error).message}</p>
         ) : thread.isLoading ? (
-          [0, 1, 2].map((i) => <div key={i} className={`h-16 w-3/4 animate-pulse rounded-2xl bg-surface-muted ${i % 2 ? "self-end" : ""}`} />)
+          [0, 1, 2].map((i) => <div key={i} className={`h-16 w-3/4 animate-pulse motion-reduce:animate-none rounded-2xl bg-surface-muted ${i % 2 ? "self-end" : ""}`} />)
         ) : messages.length === 0 ? (
           <p className="py-10 text-center text-body-sm text-text-muted">Chưa có trao đổi nào. Chọn người nhận và gửi tin đầu tiên bên dưới.</p>
         ) : (

@@ -155,7 +155,7 @@ export default function ChatAssistantPage() {
         <div className="flex items-start"><MobileMenuButton /><div>
           {/* Tiêu đề tiếng Việt, ngắn; giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
           <div className="flex items-center gap-2">
-            <h1 className="text-title font-extrabold text-foreground">Tư vấn bán hàng</h1>
+            <h2 className="text-title font-extrabold text-foreground">Tư vấn bán hàng</h2>
             <InfoTip label="Tư vấn bán hàng" side="bottom">
               Trợ lý AI tra cứu sản phẩm và lịch sử khách, trả lời khách và chốt đơn nháp chỉ với một chạm.
             </InfoTip>
@@ -282,7 +282,7 @@ export default function ChatAssistantPage() {
             <div className="flex-1 overflow-y-auto p-4 space-y-4 text-body-sm">
               {loading ? (
                 <div className="flex h-full items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <Loader2 className="h-6 w-6 animate-spin motion-reduce:animate-none text-primary" />
                 </div>
               ) : messages.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground">
@@ -384,7 +384,7 @@ export default function ChatAssistantPage() {
                                     className="text-xs shrink-0"
                                   >
                                     {creatingOrderFor === f.productId ? (
-                                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                      <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" />
                                     ) : (
                                       <>
                                         <ShoppingBag className="mr-1 h-3.5 w-3.5" /> Chốt đơn
@@ -432,7 +432,7 @@ export default function ChatAssistantPage() {
                   size="sm"
                   disabled={!inputQuery.trim() || sending}
                 >
-                  {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  {sending ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" /> : <Send className="h-4 w-4" />}
                 </Button>
               </form>
             </div>

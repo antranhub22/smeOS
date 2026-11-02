@@ -133,7 +133,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
           </p>
         </div>
         <Button type="button" size="sm" onClick={handleSave} disabled={saving} className="gap-1.5 font-bold h-9">
-          {saving ? <Loader2 size={14} className="animate-spin" /> : success ? <Check size={14} /> : null}
+          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : success ? <Check size={14} /> : null}
           <span>{saving ? "Đang lưu..." : success ? "Đã lưu!" : "Lưu cài đặt"}</span>
         </Button>
       </div>

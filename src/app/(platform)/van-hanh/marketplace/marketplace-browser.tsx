@@ -116,7 +116,7 @@ export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHi
       {loading ? (
         <div className="grid grid-cols-1 gap-5 py-8 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i} className="h-64 animate-pulse border border-border bg-surface-alt/40" />
+            <Card key={i} className="h-64 animate-pulse motion-reduce:animate-none border border-border bg-surface-alt/40" />
           ))}
         </div>
       ) : filteredStores.length === 0 ? (

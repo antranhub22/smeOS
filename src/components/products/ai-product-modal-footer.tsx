@@ -18,7 +18,7 @@ interface AiProductModalFooterProps {
  * không được ghi đè mẫu chính thức — bản đang bán giữ nguyên tới khi Điều hành duyệt).
  */
 export function AiProductModalFooter({ canOverwrite, submitting, onCancel, onSubmit }: AiProductModalFooterProps) {
-  const spin = (mode: SubmitMode) => submitting === mode && <Loader2 size={15} className="animate-spin" />
+  const spin = (mode: SubmitMode) => submitting === mode && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />
   const primary: SubmitMode = canOverwrite ? "save" : "propose"
   return (
     <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border px-5 py-3.5 bg-surface-alt/50">

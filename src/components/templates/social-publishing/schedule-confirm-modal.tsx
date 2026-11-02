@@ -106,7 +106,7 @@ export function ScheduleConfirmModal({
             disabled={isLoading || selectedPosts.length === 0}
             className="text-xs font-bold gap-1.5 shadow-xs"
           >
-            {isLoading && <RefreshCw size={13} className="animate-spin" />}
+            {isLoading && <RefreshCw size={13} className="animate-spin motion-reduce:animate-none" />}
             Xác nhận lên lịch ({selectedPosts.length})
           </Button>
         </div>

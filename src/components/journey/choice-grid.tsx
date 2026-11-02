@@ -81,9 +81,9 @@ export function ChoiceGrid({
             <span>{dict.home.header.badge}</span>
           </div>
           <div className="flex items-center gap-2">
-            <h1 className="text-display font-extrabold text-text tracking-tight">
+            <h2 className="text-display font-extrabold text-text tracking-tight">
               {title}
-            </h1>
+            </h2>
             <InfoTip label={title} side="bottom">{subtitle}</InfoTip>
           </div>
         </div>

@@ -268,7 +268,7 @@ export function ContentsWorkspace() {
       <div className="flex items-center justify-between">
         <p className="text-caption text-text-muted">Gọi <code className="bg-surface px-1.5 py-0.5 rounded text-xs">POST /api/v1/creative-production/produce</code></p>
         <Button onClick={handleProduce} disabled={loading || selectedTopics.length === 0} className="gap-2">
-          {loading ? <><Loader2 size={14} className="animate-spin" /> Đang sản xuất...</> : <><Send size={14} /> Sản xuất {mode}</>}
+          {loading ? <><Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> Đang sản xuất...</> : <><Send size={14} /> Sản xuất {mode}</>}
         </Button>
       </div>
       {error && <Card className="border-danger/30 bg-danger/10 p-4 flex items-center gap-3"><AlertCircle size={16} className="text-danger shrink-0" /><p className="text-xs text-danger">{error}</p></Card>}

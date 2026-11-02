@@ -112,7 +112,7 @@ export default function SanPhamPage() {
       {/* Header tác vụ */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-3.5 gap-3">
         <div className="flex items-center gap-2">
-          <h1 className="text-title font-extrabold text-primary">{ti("sampleProduct")}</h1>
+          <h2 className="text-title font-extrabold text-primary">{ti("sampleProduct")}</h2>
           {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
           <InfoTip label={ti("sampleProduct")} side="bottom">
             Kho {ti("catalogTitle").toLowerCase()}: thêm, sửa và ẩn {ti("sampleProduct").toLowerCase()} để hiện trên catalog bán hàng.
@@ -271,7 +271,7 @@ export default function SanPhamPage() {
               >
                 {loadingMore ? (
                   <>
-                    <RefreshCw size={14} className="animate-spin" />
+                    <RefreshCw size={14} className="animate-spin motion-reduce:animate-none" />
                     <span>Đang tải thêm...</span>
                   </>
                 ) : (

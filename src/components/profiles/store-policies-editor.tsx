@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { Gift, ShieldCheck, FileText, Plus, Trash2, Check, RotateCcw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { PromotionKindField } from "./promotion-kind-field"
 import {
   type StorePoliciesConfig,
@@ -41,6 +42,7 @@ export function StorePoliciesEditor({
   const [intakeCta, setIntakeCta] = useState(() => initialPolicies?.intakePromotionCta ?? { enabled: true, percent: 10 })
   const [activeSection, setActiveSection] = useState<"promo" | "commit" | "agree">(initialSection)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   // Đồng bộ activeSection khi initialSection đổi từ bên ngoài — điều chỉnh ngay lúc render, không dùng effect
   const [syncedInitial, setSyncedInitial] = useState(initialSection)
@@ -49,8 +51,17 @@ export function StorePoliciesEditor({
     setActiveSection(initialSection)
   }
 
-  const handleResetDefaults = () => {
-    if (!window.confirm("Khôi phục danh sách Ưu đãi, Cam kết và Thỏa thuận về mặc định theo ngành?")) return
+  const handleResetDefaults = async () => {
+    if (
+      !(await confirm({
+        title: "Khôi phục chính sách mặc định?",
+        consequence: "Danh sách Ưu đãi, Cam kết và Thỏa thuận sẽ được đặt lại theo tiêu chuẩn mặc định của ngành.",
+        confirmLabel: "Khôi phục",
+        tone: "default",
+      }))
+    ) {
+      return
+    }
     setPromotions(defaultPromos)
     setCommitments(defaultCommits)
     setAgreements(defaultAgrees)
@@ -336,6 +347,7 @@ export function StorePoliciesEditor({
           </div>
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

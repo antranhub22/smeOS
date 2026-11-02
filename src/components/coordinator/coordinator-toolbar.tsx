@@ -68,7 +68,7 @@ export function CoordinatorToolbar({
           aria-label="Làm mới"
           className="p-2 rounded-xl border border-border hover:bg-surface-alt text-text-muted"
         >
-          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
         </Button>
         <Button
           size="sm"

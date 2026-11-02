@@ -93,7 +93,7 @@ export function BrochureLanguageSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (
@@ -296,7 +296,7 @@ export function BrochureLanguageSettings() {
             disabled={saving || !draft}
             className="gap-2 font-bold shadow-xs"
           >
-            {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+            {saving ? <Loader2 size={15} className="animate-spin motion-reduce:animate-none" /> : <Save size={15} />}
             <span>Lưu Thiết Lập Ngôn Ngữ</span>
           </Button>
         </div>
@@ -391,7 +391,7 @@ export function BrochureLanguageSettings() {
                     disabled={requesting}
                     className="gap-2 font-bold shadow-xs"
                   >
-                    {requesting ? <Loader2 size={15} className="animate-spin" /> : <Send size={14} />}
+                    {requesting ? <Loader2 size={15} className="animate-spin motion-reduce:animate-none" /> : <Send size={14} />}
                     <span>Gửi Yêu Cầu Phê Duyệt</span>
                   </Button>
                 </div>

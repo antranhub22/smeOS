@@ -101,7 +101,7 @@ export function DirectResearchPanel({
           >
             {isSubmitting ? (
               <>
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />
                 Đang quét...
               </>
             ) : (

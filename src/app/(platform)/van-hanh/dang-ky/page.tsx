@@ -7,6 +7,7 @@ import { InfoTip } from "@/components/ui/info-tip"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useI18n } from "@/lib/i18n"
 import { formatDateTime } from "@/lib/i18n/formatters"
 
@@ -30,6 +31,7 @@ async function taiDanhSach(): Promise<{ data: PendingRegistration[] } | { loi: s
 
 export default function DuyetDangKyPage() {
   const { t, dict } = useI18n()
+  const [confirm, confirmDialog] = useConfirmDialog()
   const [items, setItems] = useState<PendingRegistration[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [dangXuLy, setDangXuLy] = useState<string | null>(null)
@@ -45,7 +47,17 @@ export default function DuyetDangKyPage() {
   }, [apDung])
 
   async function quyet(item: PendingRegistration, decision: "APPROVE" | "REJECT") {
-    if (decision === "REJECT" && !window.confirm(`Từ chối đăng ký của ${item.email}?`)) return
+    if (
+      decision === "REJECT" &&
+      !(await confirm({
+        title: `Từ chối đăng ký của ${item.email}?`,
+        consequence: "Yêu cầu đăng ký sẽ bị huỷ bỏ.",
+        confirmLabel: "Từ chối",
+        tone: "danger",
+      }))
+    ) {
+      return
+    }
     setDangXuLy(item.userId)
     setLoi(null)
     try {
@@ -74,7 +86,7 @@ export default function DuyetDangKyPage() {
     <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
         <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Duyệt đăng ký</h1>
+          <h2 className="text-base font-bold text-text">Duyệt đăng ký</h2>
           <InfoTip label="Duyệt đăng ký">
             Tài khoản tự đăng ký hoặc dùng thử chỉ đăng nhập được sau khi bạn duyệt.
           </InfoTip>
@@ -137,6 +149,7 @@ export default function DuyetDangKyPage() {
           </tbody>
         </table>
       )}
+      {confirmDialog}
     </Card>
   )
 }

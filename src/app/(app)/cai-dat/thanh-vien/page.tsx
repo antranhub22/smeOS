@@ -124,10 +124,10 @@ export default function QuanLyThanhVienPage() {
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-title font-extrabold text-text flex items-center gap-2">
+            <h2 className="text-title font-extrabold text-text flex items-center gap-2">
               <Users size={24} className="text-primary" />
               <span>Đội Ngũ & Phân Quyền</span>
-            </h1>
+            </h2>
             <p className="text-caption text-text-muted">
               Quản lý tài khoản nhân viên, phân bổ vai trò và chi nhánh hoạt động.
             </p>
@@ -143,7 +143,7 @@ export default function QuanLyThanhVienPage() {
             disabled={loading}
             aria-label={dict.common.actions.refresh}
           >
-            <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
+            <RefreshCw size={15} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
             <span>{dict.common.actions.refresh}</span>
           </Button>
 

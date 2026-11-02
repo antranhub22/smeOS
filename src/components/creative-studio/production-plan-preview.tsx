@@ -14,6 +14,7 @@ import { Clapperboard, Film, Loader2, Megaphone, Music, Save } from "@/component
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Disclosure } from "@/components/ui/disclosure"
 import { PLATFORM_SPECS } from "@/modules/creative-production/domain/publishing-rules"
 import { VOICE_CATALOG } from "@/modules/audio-studio/domain/voice-catalog"
 import { estimateSpeechSeconds } from "@/modules/audio-studio/domain/audio-task-rules"
@@ -205,7 +206,7 @@ export function ProductionPlanPreview({
           <div className="mt-2 flex items-center justify-between gap-2">
             <span className="text-text-muted">Tổng ~{Math.round(total)}s</span>
             <Button size="sm" variant="outline" className="h-8 gap-1 text-caption" disabled={!dirty || saving} onClick={() => void save()}>
-              {saving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />} Lưu thay đổi (miễn phí)
+              {saving ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none" /> : <Save size={12} />} Lưu thay đổi (miễn phí)
             </Button>
           </div>
         )}
@@ -218,11 +219,10 @@ export function ProductionPlanPreview({
           <p className="text-text-muted">Chưa có bài theo kịch bản — Nội dung sẽ viết theo khuôn dự phòng.</p>
         ) : (
           plan.content.posts.map((p) => (
-            <details key={p.channel} className="mb-1">
-              <summary className="cursor-pointer font-semibold">{CHANNEL_LABEL[p.channel] ?? p.channel}</summary>
+            <Disclosure key={p.channel} label={CHANNEL_LABEL[p.channel] ?? p.channel} className="mb-2 p-3">
               <p className="whitespace-pre-line text-text">{p.text}</p>
-              {p.hashtags.length > 0 && <p className="text-text-muted">{p.hashtags.join(" ")}</p>}
-            </details>
+              {p.hashtags.length > 0 && <p className="text-text-muted mt-1">{p.hashtags.join(" ")}</p>}
+            </Disclosure>
           ))
         )}
         {plan.content.videoCaption.text && (

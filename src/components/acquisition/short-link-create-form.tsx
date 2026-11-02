@@ -95,7 +95,7 @@ export function ShortLinkCreateForm({ onCreated, onCancel }: { onCreated: (link:
       <div className="flex flex-wrap justify-end gap-2">
         <Button type="button" variant="ghost" size="sm" onClick={onCancel} disabled={saving}>Huỷ</Button>
         <Button type="submit" size="sm" disabled={saving}>
-          {saving && <Loader2 size={14} className="mr-1 animate-spin" aria-hidden="true" />}
+          {saving && <Loader2 size={14} className="mr-1 animate-spin motion-reduce:animate-none" aria-hidden="true" />}
           {kind === "QR" ? "Tạo mã QR" : "Tạo link"}
         </Button>
       </div>

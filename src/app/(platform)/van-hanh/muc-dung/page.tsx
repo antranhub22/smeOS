@@ -98,7 +98,7 @@ export default function MucDungPage() {
       {/* 1. Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
         <div className="flex items-center gap-2">
-          <h1 className="text-title font-bold text-text">Mức dùng & Chi phí</h1>
+          <h2 className="text-title font-bold text-text">Mức dùng & Chi phí</h2>
           <InfoTip label="Mức dùng & Chi phí">
             Theo dõi lưu lượng gọi AI, Credit tiêu thụ và kiểm soát hạn mức theo từng tổ chức.
           </InfoTip>

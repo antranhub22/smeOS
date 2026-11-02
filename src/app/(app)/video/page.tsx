@@ -302,7 +302,7 @@ export default function VideoStudioPage() {
                 disabled={actionLoading}
                 className="gap-1.5"
               >
-                <RotateCcw size={14} className={actionLoading ? "animate-spin" : ""} />
+                <RotateCcw size={14} className={actionLoading ? "animate-spin motion-reduce:animate-none" : ""} />
                 Làm mới
               </Button>
             </>
@@ -328,7 +328,7 @@ export default function VideoStudioPage() {
 
         {/* Trạng thái xử lý toàn cục */}
         {actionMessage && (
-          <div className="bg-primary/10 border border-primary/20 text-primary rounded-xl p-3 text-xs font-semibold flex items-center justify-center gap-2 animate-pulse">
+          <div className="bg-primary/10 border border-primary/20 text-primary rounded-xl p-3 text-xs font-semibold flex items-center justify-center gap-2 animate-pulse motion-reduce:animate-none">
             <Clock size={16} /> {actionMessage}
           </div>
         )}

@@ -468,7 +468,7 @@ export function AudioWorkspace() {
           {firstProblem ? <span className="text-warning">{firstProblem}</span> : <>Tổng ~{Math.round(totalDuration)}s · {spec.label}</>}
         </p>
         <Button onClick={handleCreate} disabled={loading || polling || Boolean(firstProblem)} className="gap-2">
-          {loading ? <><Loader2 size={14} className="animate-spin" /> Đang tạo...</> : polling ? <><Loader2 size={14} className="animate-spin" /> Đang chờ kết quả...</> : <><Send size={14} /> Tạo {spec.label} · {credit === 0 ? "miễn phí" : `${credit} credit`}</>}
+          {loading ? <><Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> Đang tạo...</> : polling ? <><Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> Đang chờ kết quả...</> : <><Send size={14} /> Tạo {spec.label} · {credit === 0 ? "miễn phí" : `${credit} credit`}</>}
         </Button>
       </div>
       {spec.music !== "none" && effectiveMusic && musicLicenseOk === false && (
@@ -478,7 +478,7 @@ export function AudioWorkspace() {
       {currentJobId && (
         <Card className="p-5 border-success/30 bg-success/10">
           <h3 className="text-sm font-bold text-success mb-1 flex items-center gap-2">
-            {stage === "COMPLETED" ? <CheckCircle2 size={15} className="text-success" /> : stage === "FAILED" ? <AlertCircle size={15} className="text-danger" /> : <Loader2 size={15} className="animate-spin text-success" />}
+            {stage === "COMPLETED" ? <CheckCircle2 size={15} className="text-success" /> : stage === "FAILED" ? <AlertCircle size={15} className="text-danger" /> : <Loader2 size={15} className="animate-spin motion-reduce:animate-none text-success" />}
             {stage === "COMPLETED" ? "Đã xong — nghe thử bên dưới" : stage === "FAILED" ? "Thất bại" : stage === "GENERATING" ? "Worker đang xử lý âm thanh..." : "Đang xếp hàng chờ worker nhận việc..."}
             {polling && stage !== "COMPLETED" && stage !== "FAILED" && <span className="font-normal text-success">({waitSeconds}s)</span>}
           </h3>

@@ -30,7 +30,7 @@ export function AvailabilityIndicator({
   if (loading) {
     return (
       <div className="flex items-center gap-1.5 text-caption text-text-muted py-1" role="status">
-        <Loader2 size={13} className="animate-spin text-primary" />
+        <Loader2 size={13} className="animate-spin motion-reduce:animate-none text-primary" />
         <span>{isEn ? "Checking availability..." : "Đang kiểm tra tình trạng..."}</span>
       </div>
     )

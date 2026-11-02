@@ -48,7 +48,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
   if (loadingItems) {
     return (
       <div className="flex items-center justify-center py-8 text-text-muted gap-2">
-        <Loader2 size={18} className="animate-spin" />
+        <Loader2 size={18} className="animate-spin motion-reduce:animate-none" />
         <span className="text-body-sm">Đang tải danh sách sản phẩm...</span>
       </div>
     )
@@ -111,7 +111,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                 className="absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
               >
                 {removingId === item.product.id ? (
-                  <Loader2 size={11} className="animate-spin" />
+                  <Loader2 size={11} className="animate-spin motion-reduce:animate-none" />
                 ) : (
                   <Trash2 size={13} />
                 )}
@@ -311,7 +311,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
           <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
             {loadingProducts ? (
               <div className="flex items-center justify-center py-8 text-text-muted gap-2">
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                 <span className="text-body-sm">Đang tải danh sách {ti("sampleProduct").toLowerCase()}...</span>
               </div>
             ) : ci.available.length === 0 ? (
@@ -350,7 +350,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                     className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
                   >
                     {addingId === product.id ? (
-                      <Loader2 size={15} className="animate-spin" />
+                      <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />
                     ) : (
                       <Plus size={15} />
                     )}

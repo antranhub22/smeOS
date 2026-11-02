@@ -41,7 +41,7 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
       <ShopContactBar shop={shop} />
       <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-14 text-center">
         <LockKeyhole size={28} className="text-primary" aria-hidden="true" />
-        <h1 className="text-title font-bold">Xem lại đơn hàng của bạn</h1>
+        <h2 className="text-title font-bold">Xem lại đơn hàng của bạn</h2>
         <p className="text-body text-text-muted">Link này đã được mở trên thiết bị khác. Để bảo vệ đơn hàng, vui lòng nhập 4 số cuối số điện thoại người đặt hoa.</p>
         <form onSubmit={submit} className="mt-2 flex w-full flex-col gap-2">
           <label htmlFor="phone-last4" className="sr-only">4 số cuối số điện thoại người đặt</label>
@@ -57,7 +57,7 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
           />
           {error && <p role="alert" className="text-body-sm text-danger">{error}</p>}
           <button type="submit" disabled={busy} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-body font-bold text-surface disabled:opacity-60">
-            {busy && <Loader2 size={18} className="animate-spin" aria-hidden="true" />}
+            {busy && <Loader2 size={18} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />}
             Xem đơn hàng
           </button>
         </form>

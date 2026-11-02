@@ -187,7 +187,7 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
               title="Làm mới danh sách nhắc việc"
               aria-label="Làm mới danh sách nhắc việc"
             >
-              <RefreshCw size={12} className={isLoading ? "animate-spin" : ""} />
+              <RefreshCw size={12} className={isLoading ? "animate-spin motion-reduce:animate-none" : ""} />
             </Button>
 
             {hasReminders && (

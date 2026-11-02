@@ -195,7 +195,7 @@ export function PostStatusReportCard({
           <div className="flex items-center gap-2">
             {feedback.type === "success" && <CheckCircle2 size={16} className="text-success flex-shrink-0" />}
             {feedback.type === "error" && <AlertCircle size={16} className="text-danger flex-shrink-0" />}
-            {feedback.type === "info" && <RefreshCw size={16} className="animate-spin text-primary flex-shrink-0" />}
+            {feedback.type === "info" && <RefreshCw size={16} className="animate-spin motion-reduce:animate-none text-primary flex-shrink-0" />}
             <span className="font-semibold">{feedback.message}</span>
           </div>
 
@@ -231,7 +231,7 @@ export function PostStatusReportCard({
           </div>
           {isScheduled && !isPublished && (
             <div className="text-caption font-semibold text-text-muted flex items-center gap-1.5 bg-surface-alt px-2.5 py-1 rounded-full border border-border">
-              <Clock size={12} className="text-primary animate-pulse" />
+              <Clock size={12} className="text-primary animate-pulse motion-reduce:animate-none" />
               <span>Khung giờ hẹn: <strong>{post.scheduledTime || "Trong ngày"}</strong></span>
             </div>
           )}
@@ -244,7 +244,7 @@ export function PostStatusReportCard({
               isPublished
                 ? "bg-success w-full"
                 : publishing
-                ? "bg-primary w-[90%] animate-pulse"
+                ? "bg-primary w-[90%] animate-pulse motion-reduce:animate-none"
                 : isScheduled
                 ? "bg-primary w-[75%]"
                 : isFailed
@@ -258,7 +258,7 @@ export function PostStatusReportCard({
         {isScheduled && !isPublished && (
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 text-xs text-text-muted">
             <div className="flex items-center gap-1.5 text-text">
-              <span className="inline-block w-2 h-2 rounded-full bg-primary animate-ping" />
+              <span className="inline-block w-2 h-2 rounded-full bg-primary animate-ping motion-reduce:animate-none" />
               <span>
                 Hệ thống tự động quét và kích hoạt theo lịch hẹn. Nếu không muốn chờ, bạn có thể bấm <strong>Phát ngay</strong> bên dưới.
               </span>
@@ -270,7 +270,7 @@ export function PostStatusReportCard({
                 disabled={publishing}
                 className="text-xs font-bold gap-1 bg-primary text-white flex-shrink-0"
               >
-                {publishing ? <RefreshCw size={12} className="animate-spin" /> : <Send size={12} />}
+                {publishing ? <RefreshCw size={12} className="animate-spin motion-reduce:animate-none" /> : <Send size={12} />}
                 {publishing ? "Đang phát..." : "⚡ Phát ngay lập tức"}
               </Button>
             )}
@@ -330,7 +330,7 @@ export function PostStatusReportCard({
                 : isFailed
                 ? "bg-danger-bg text-danger border-danger/30"
                 : isScheduled
-                ? "bg-primary/10 text-primary border-primary/30 animate-pulse"
+                ? "bg-primary/10 text-primary border-primary/30 animate-pulse motion-reduce:animate-none"
                 : "bg-surface text-text-muted border-border"
             }`}
           >
@@ -492,7 +492,7 @@ export function PostStatusReportCard({
               >
                 {publishing ? (
                   <>
-                    <RefreshCw size={12} className="animate-spin" /> Đang đăng...
+                    <RefreshCw size={12} className="animate-spin motion-reduce:animate-none" /> Đang đăng...
                   </>
                 ) : (
                   <>

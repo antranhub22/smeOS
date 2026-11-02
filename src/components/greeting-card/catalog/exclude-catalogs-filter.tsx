@@ -51,7 +51,7 @@ export function ExcludeCatalogsFilter({ currentCatalogId, selected, onChange, lo
         </TooltipProvider>
         {active && (
           <span className="flex items-center gap-1 text-caption text-text-muted">
-            {loading ? <Loader2 size={12} className="animate-spin" aria-hidden="true" /> : null}
+            {loading ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : null}
             {loading ? "Đang lọc..." : `Đã ẩn ${hiddenCount} mẫu trùng`}
             <button type="button" onClick={() => onChange([])} className="ml-1 font-medium text-primary hover:underline">
               Bỏ chọn

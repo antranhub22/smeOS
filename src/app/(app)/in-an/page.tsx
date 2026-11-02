@@ -40,9 +40,9 @@ export default function PrintWorkspacePage({ searchParams }: PageProps) {
             <div>
               <div className="flex items-center gap-2">
                 <Printer className="w-5 h-5 text-primary" aria-hidden="true" />
-                <h1 className="text-title-sm font-bold text-text">
+                <h2 className="text-title-sm font-bold text-text">
                   Ấn phẩm & In ấn chất lượng cao
-                </h1>
+                </h2>
               </div>
               <p className="text-caption text-text-muted hidden sm:block">
                 Xuất file PDF chuẩn nhà in (300 DPI, tràn lề 3mm, dấu định vị xén)

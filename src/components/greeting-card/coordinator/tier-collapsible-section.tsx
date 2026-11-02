@@ -30,7 +30,7 @@ export function TierCollapsibleSection({
           aria-expanded={expanded}
         >
           <div className="flex items-center gap-1.5">
-            <AlertCircle size={14} className="shrink-0 text-danger animate-pulse" />
+            <AlertCircle size={14} className="shrink-0 text-danger animate-pulse motion-reduce:animate-none" />
             <span>{count} đơn quá hạn</span>
           </div>
           <div className="flex items-center gap-1 text-caption text-danger/80">

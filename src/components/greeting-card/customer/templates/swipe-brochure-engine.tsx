@@ -139,7 +139,7 @@ export function SwipeBrochureEngine({
     <div className={`flex ${embedded ? "h-full" : "min-h-dvh"} w-full flex-col items-center`} style={stageStyle}>
       <div className="flex w-full max-w-[440px] flex-1 flex-col px-3 pb-[max(env(safe-area-inset-bottom),12px)] pt-3">
         <header className="flex items-center justify-between px-1 pb-3">
-          <h1 className="truncate text-body font-semibold" style={{ fontFamily: theme.font }}>{catalogName}</h1>
+          <h2 className="truncate text-body font-semibold" style={{ fontFamily: theme.font }}>{catalogName}</h2>
           <span className="shrink-0 text-caption tabular-nums" style={{ color: theme.stageMuted }}>
             {Math.min(index + 1, visible.length)} / {visible.length}
           </span>

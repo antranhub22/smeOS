@@ -191,7 +191,7 @@ export function FloraOSGlobalCopilot() {
             className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl transition-all hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+              <span className="absolute inline-flex h-full w-full animate-ping motion-reduce:animate-none rounded-full bg-success opacity-75" />
               <span className="relative inline-flex h-3 w-3 rounded-full border-2 border-white bg-success" />
             </span>
             <Bot className="h-5 w-5 transition-transform group-hover:rotate-6" />
@@ -234,7 +234,7 @@ export function FloraOSGlobalCopilot() {
                 <div>
                   <div className="text-caption font-extrabold text-text flex items-center gap-1.5">
                     smeOS Ops Copilot
-                    <span className="inline-block h-2 w-2 rounded-full bg-success animate-pulse" />
+                    <span className="inline-block h-2 w-2 rounded-full bg-success animate-pulse motion-reduce:animate-none" />
                   </div>
                   <div className="text-caption font-medium text-text-muted">Trợ lý Vận hành & Hướng dẫn</div>
                 </div>
@@ -297,8 +297,8 @@ export function FloraOSGlobalCopilot() {
                     />
                   ))}
                   {sending && (
-                    <div className="flex items-center gap-2 text-caption text-text-muted p-2 rounded-xl bg-surface-alt animate-pulse">
-                      <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                    <div className="flex items-center gap-2 text-caption text-text-muted p-2 rounded-xl bg-surface-alt animate-pulse motion-reduce:animate-none">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none text-primary" />
                       <span>smeOS Copilot đang tra cứu và soạn câu trả lời...</span>
                     </div>
                   )}
@@ -332,7 +332,7 @@ export function FloraOSGlobalCopilot() {
                   className="h-8 w-8 p-0 rounded-xl shrink-0"
                   aria-label="Gửi câu hỏi"
                 >
-                  {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                  {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Send className="h-3.5 w-3.5" />}
                 </Button>
               </form>
             </div>

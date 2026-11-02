@@ -108,7 +108,7 @@ export function StepCustomer(props: StepCustomerProps) {
           Quay lại
         </Button>
         <Button type="submit" size="sm" disabled={submitting} className="gap-1.5">
-          {submitting ? <Loader2 size={16} className="animate-spin" aria-hidden="true" /> : <Send size={16} aria-hidden="true" />}
+          {submitting ? <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Send size={16} aria-hidden="true" />}
           {submitting ? "Đang tạo link…" : "Tạo link gửi khách"}
         </Button>
       </footer>

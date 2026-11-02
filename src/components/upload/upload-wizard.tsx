@@ -823,7 +823,7 @@ function RunningStep({
                     <Check size={12} strokeWidth={3} color="white" />
                   </div>
                 ) : isActive ? (
-                  <div className="h-[22px] w-[22px] flex-shrink-0 animate-pulse rounded-full bg-primary" />
+                  <div className="h-[22px] w-[22px] flex-shrink-0 animate-pulse motion-reduce:animate-none rounded-full bg-primary" />
                 ) : (
                   <div className="h-[22px] w-[22px] flex-shrink-0 rounded-full border-2 border-border" />
                 )}

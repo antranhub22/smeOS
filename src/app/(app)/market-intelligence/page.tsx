@@ -107,10 +107,10 @@ export default function MarketIntelligencePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border bg-surface px-6 py-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold tracking-tight text-text flex items-center gap-2">
+            <h2 className="text-xl font-bold tracking-tight text-text flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" />
               Xu hướng thị trường
-            </h1>
+            </h2>
             {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
             <InfoTip label="Xu hướng thị trường" side="bottom">
               Tìm dịp, xu hướng và chủ đề nên làm — theo thời gian, từ khóa hoặc ảnh mẫu.
@@ -165,7 +165,7 @@ export default function MarketIntelligencePage() {
               disabled={loading}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-alt transition"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin motion-reduce:animate-none" : ""}`} />
               Làm mới
             </button>
 

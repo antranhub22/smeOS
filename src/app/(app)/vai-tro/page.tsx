@@ -99,7 +99,7 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
           disabled={opening}
           className="flex min-h-11 flex-shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50 cursor-pointer"
         >
-          {opening && <Loader2 size={13} className="animate-spin" />}
+          {opening && <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />}
           {role.group === "PLATFORM" ? "Console" : "Mở"}
         </button>
       )}
@@ -130,7 +130,7 @@ export default function VaiTroPage() {
           <ArrowLeft size={18} />
         </Link>
         <div>
-          <h1 className="text-title font-extrabold text-primary">Vai trò</h1>
+          <h2 className="text-title font-extrabold text-primary">Vai trò</h2>
           <div className="text-caption text-text-muted">
             {soDungDuoc}/{ROLE_UX_CATALOG.length} vai đang dùng được
           </div>
@@ -142,7 +142,7 @@ export default function VaiTroPage() {
             disabled={dangVe}
             className="ml-auto flex min-h-11 items-center gap-1.5 rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
           >
-            {dangVe && <Loader2 size={13} className="animate-spin" />}
+            {dangVe && <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />}
             Về vai thật của bạn
           </button>
         )}

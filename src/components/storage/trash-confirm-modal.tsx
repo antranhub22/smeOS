@@ -135,7 +135,7 @@ export function TrashConfirmModal({ target, onClose, onConfirm }: TrashConfirmMo
           >
             {submitting ? (
               <>
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                 <span>Đang xử lý...</span>
               </>
             ) : (

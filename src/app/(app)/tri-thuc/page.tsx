@@ -64,7 +64,7 @@ export default function KnowledgeBasePage() {
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-6 py-4 backdrop-blur-sm">
         <div className="flex items-start"><MobileMenuButton /><div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-extrabold text-foreground">Cẩm nang tri thức</h1>
+            <h2 className="text-xl font-extrabold text-foreground">Cẩm nang tri thức</h2>
             {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
             <InfoTip label="Cẩm nang tri thức" side="bottom">
               Bảng tra cứu các trường bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS.

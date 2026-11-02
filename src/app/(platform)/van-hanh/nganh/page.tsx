@@ -188,7 +188,7 @@ export default function NganhNavMatrixPage() {
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-text">Ma trận ngành</h1>
+            <h2 className="text-xl font-bold text-text">Ma trận ngành</h2>
             <Badge tone="accent">Platform Admin</Badge>
             <InfoTip label="Ma trận ngành">
               Thiết lập danh sách menu/tab hiển thị trên sidebar cho từng ngành. Các tổ chức trong ngành sẽ tự động nhận cấu hình này và không thể can thiệp.

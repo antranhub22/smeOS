@@ -37,7 +37,7 @@ export function AssetPickerGrid({
   if (loading) {
     return (
       <div className="text-center py-6 text-sm text-text-muted flex items-center justify-center gap-2">
-        <Loader2 size={16} className="animate-spin" />
+        <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
         Đang tải danh sách ảnh từ kho...
       </div>
     )

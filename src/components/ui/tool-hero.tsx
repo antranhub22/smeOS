@@ -18,7 +18,7 @@ export function ToolHero({ icon, tone = "plum", title, detail }: ToolHeroProps) 
     <header className="flex items-center gap-4 p-5 sm:p-6 rounded-2xl bg-surface shadow-sm ring-1 ring-border/60">
       <IconTile name={icon} tone={tone} variant="solid" />
       <div className="flex items-center gap-2 min-w-0">
-        <h1 className="text-display font-extrabold text-text tracking-tight">{title}</h1>
+        <h2 className="text-display font-extrabold text-text tracking-tight">{title}</h2>
         <InfoTip label={title} side="bottom">{detail}</InfoTip>
       </div>
     </header>

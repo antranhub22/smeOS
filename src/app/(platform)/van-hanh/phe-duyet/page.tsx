@@ -16,6 +16,7 @@ import {
   type PendingApprovalItem,
 } from "@/components/platform/approval-card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
 export default function PheQuyetPage() {
   const [items, setItems] = useState<PendingApprovalItem[] | null>(null)
@@ -23,6 +24,7 @@ export default function PheQuyetPage() {
   const [processing, setProcessing] = useState<string | null>(null)
   const [toast, setToast] = useState<ApproveResult | null>(null)
   const [filter, setFilter] = useState<"ALL" | PendingApprovalItem["type"]>("ALL")
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   const tai = useCallback(async () => {
     setLoi(null)
@@ -72,11 +74,15 @@ export default function PheQuyetPage() {
 
   const handleReject = async (item: PendingApprovalItem) => {
     if (
-      !window.confirm(
-        `Xác nhận TỪ CHỐI yêu cầu "${TYPE_META[item.type].label}" từ cửa hàng "${item.organizationName}"?`
-      )
-    )
+      !(await confirm({
+        title: "Xác nhận từ chối yêu cầu?",
+        consequence: `Từ chối yêu cầu "${TYPE_META[item.type].label}" từ cửa hàng "${item.organizationName}".`,
+        confirmLabel: "Từ chối",
+        tone: "danger",
+      }))
+    ) {
       return
+    }
 
     setProcessing(item.id)
     try {
@@ -116,7 +122,7 @@ export default function PheQuyetPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
-          <h1 className="text-title font-bold text-text">Yêu cầu phê duyệt</h1>
+          <h2 className="text-title font-bold text-text">Yêu cầu phê duyệt</h2>
           <InfoTip label="Yêu cầu phê duyệt">
             Tổng hợp các yêu cầu đang chờ Admin xem xét: mở khoá quốc tế, đổi mô hình cửa hàng, nâng hạn mức AI.
           </InfoTip>
@@ -219,6 +225,7 @@ export default function PheQuyetPage() {
           )}
         </>
       )}
+      {confirmDialog}
     </div>
   )
 }

@@ -165,6 +165,11 @@
       "rule": "R4",
       "path": "src/app/(platform)/van-hanh/thu-vien-giao-dien/catalog-sections.tsx",
       "reason": "Showcase catalog hiển thị các biến thể nút bấm của Design System (C2-00)"
+    },
+    {
+      "rule": "R19",
+      "pathGlob": "src/components/layout/**",
+      "reason": "App shell navigation drawers và menu backdrops toàn cục (mobile drawer, ui studio, user menu)"
     }
   ]
 }

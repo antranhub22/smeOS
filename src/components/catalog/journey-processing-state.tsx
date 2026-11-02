@@ -27,7 +27,7 @@ export function JourneyProcessingState({
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-full bg-primary-muted flex items-center justify-center shrink-0">
-          <Loader2 className="h-5 w-5 text-primary animate-spin" />
+          <Loader2 className="h-5 w-5 text-primary animate-spin motion-reduce:animate-none" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-body font-bold text-text">⚡ {title}</div>
@@ -59,7 +59,7 @@ export function JourneyProcessingState({
               <CheckCircle2 className="h-4.5 w-4.5 text-success shrink-0" />
             )}
             {step.status === "running" && (
-              <Loader2 className="h-4.5 w-4.5 text-primary animate-spin shrink-0" />
+              <Loader2 className="h-4.5 w-4.5 text-primary animate-spin motion-reduce:animate-none shrink-0" />
             )}
             {step.status === "pending" && (
               <Circle className="h-4.5 w-4.5 text-text-muted/40 shrink-0" />

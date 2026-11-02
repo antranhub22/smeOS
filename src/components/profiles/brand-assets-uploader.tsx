@@ -128,13 +128,13 @@ export function BrandAssetsUploader({
                   className="h-full w-full object-contain p-1.5"
                 />
               ) : logoAssetId ? (
-                <Loader2 className="animate-spin text-primary" size={24} />
+                <Loader2 className="animate-spin motion-reduce:animate-none text-primary" size={24} />
               ) : (
                 <ImageIcon className="text-text-muted opacity-40" size={32} />
               )}
               {logoUploading && (
                 <div className="absolute inset-0 bg-surface/80 flex items-center justify-center">
-                  <Loader2 className="animate-spin text-primary" size={24} />
+                  <Loader2 className="animate-spin motion-reduce:animate-none text-primary" size={24} />
                 </div>
               )}
             </div>
@@ -169,7 +169,7 @@ export function BrandAssetsUploader({
               className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {logoUploading ? (
-                <Loader2 className="animate-spin" size={16} />
+                <Loader2 className="animate-spin motion-reduce:animate-none" size={16} />
               ) : (
                 <Upload size={16} />
               )}

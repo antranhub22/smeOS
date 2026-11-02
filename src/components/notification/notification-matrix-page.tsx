@@ -147,7 +147,7 @@ export function NotificationMatrixPage({
         <div>
           <div className="flex items-center gap-2">
             <BellRing size={20} className="text-primary" aria-hidden="true" />
-            <h1 className="text-title-sm font-extrabold text-text">{title}</h1>
+            <h2 className="text-title-sm font-extrabold text-text">{title}</h2>
             {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
             <InfoTip label={title} side="bottom">{description}</InfoTip>
           </div>

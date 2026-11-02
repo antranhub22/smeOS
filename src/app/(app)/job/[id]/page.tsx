@@ -174,9 +174,9 @@ export default function JobDetailPage() {
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h1 className="text-title font-extrabold text-primary">
+          <h2 className="text-title font-extrabold text-primary">
             {job ? NHAN_TINH_NANG[job.feature] ?? job.feature : "Chi tiết job"}
-          </h1>
+          </h2>
           <div className="text-caption text-text-muted">Mã tác vụ: #{jobId.slice(0, 8)}</div>
         </div>
       </header>

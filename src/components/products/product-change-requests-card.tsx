@@ -111,11 +111,11 @@ export function ProductChangeRequestsCard({ productId, current, onChanged }: { p
                 className="h-9 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm text-text"
               />
               <Button size="sm" variant="outline" disabled={dangGui !== null || !(lyDo[r.id] ?? "").trim()} onClick={() => gui(r.id, "reject")}>
-                {dangGui === `${r.id}:reject` && <Loader2 size={15} className="animate-spin" />}
+                {dangGui === `${r.id}:reject` && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />}
                 <span>Từ chối</span>
               </Button>
               <Button size="sm" className="font-bold" disabled={dangGui !== null || (chon[r.id] ?? []).length === 0} onClick={() => gui(r.id, "approve")}>
-                {dangGui === `${r.id}:approve` && <Loader2 size={15} className="animate-spin" />}
+                {dangGui === `${r.id}:approve` && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />}
                 <span>Duyệt thay đổi đã chọn</span>
               </Button>
             </div>

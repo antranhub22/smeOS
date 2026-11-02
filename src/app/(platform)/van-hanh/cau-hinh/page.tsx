@@ -114,7 +114,7 @@ export default function CauHinhNenTangPage() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-2 sm:px-0">
         <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Cấu hình nền tảng</h1>
+          <h2 className="text-base font-bold text-text">Cấu hình nền tảng</h2>
           <InfoTip label="Cấu hình nền tảng">
             Bật giao diện chuẩn mới cho từng công cụ, theo từng tổ chức. Tắt có hiệu lực trong khoảng 30 giây.
           </InfoTip>

@@ -114,7 +114,7 @@ export function VoucherBatchesClient() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-display font-extrabold text-text">Phát hành mã giảm giá</h1>
+          <h2 className="text-display font-extrabold text-text">Phát hành mã giảm giá</h2>
           <p className="mt-1 text-body-sm text-text-muted">Tạo mã để khách nhập khi đặt hàng qua Thẻ chào và Catalog.</p>
         </div>
         <Button onClick={openForm}>

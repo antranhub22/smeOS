@@ -355,7 +355,7 @@ function TikTokPreview({
         </div>
 
         {/* Spinning Vinyl */}
-        <div className="w-8 h-8 rounded-full bg-cool-800 border-2 border-cool-700 animate-spin flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-cool-800 border-2 border-cool-700 animate-spin motion-reduce:animate-none flex items-center justify-center">
           <Music size={14} className="text-white" />
         </div>
       </div>
@@ -384,7 +384,7 @@ function TikTokPreview({
         )}
 
         <div className="flex items-center gap-2 text-caption text-cool-300 mt-2">
-          <Music size={12} className="animate-pulse" />
+          <Music size={12} className="animate-pulse motion-reduce:animate-none" />
           <span className="truncate">
             {post.script?.audio_suggestion || "Nhạc nền thịnh hành - Trending Sound"}
           </span>

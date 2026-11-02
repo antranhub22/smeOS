@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { CheckCircle2, Copy, Trash2 } from "@/components/ui/icons"
 import { apiSend } from "@/components/greeting-card/greeting-api"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
 interface LinkedChat {
   id: string
@@ -23,9 +24,19 @@ export function TelegramLinkedChatCard({
   onRemoved: () => void
 }) {
   const [removing, setRemoving] = useState(false)
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   const handleRemove = async () => {
-    if (!window.confirm(`Gỡ "${chat.title}"? Bot sẽ không gửi tin tới đây nữa. Muốn dùng lại, gửi mã liên kết vào đó rồi quét lại.`)) return
+    if (
+      !(await confirm({
+        title: `Gỡ "${chat.title}"?`,
+        consequence: "Bot sẽ không gửi tin tới đây nữa. Muốn dùng lại, bạn cần gửi mã liên kết vào nhóm và quét lại.",
+        confirmLabel: "Gỡ nhóm",
+        tone: "danger",
+      }))
+    ) {
+      return
+    }
     setRemoving(true)
     try {
       await apiSend(`/api/v1/greeting-card/integrations/telegram-dispatch?chatId=${encodeURIComponent(chat.id)}`, "DELETE", undefined, "Không gỡ được")
@@ -71,6 +82,7 @@ export function TelegramLinkedChatCard({
           <Trash2 size={13} /> {removing ? "Đang gỡ…" : "Gỡ"}
         </button>
       </div>
+      {confirmDialog}
     </div>
   )
 }

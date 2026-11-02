@@ -117,7 +117,7 @@ export default function MucDungPage() {
       {/* Top Header & Tải lại */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-text">Mức dùng</h1>
+          <h2 className="text-xl font-extrabold text-text">Mức dùng</h2>
           <p className="text-xs text-text-muted">
             Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span>
           </p>
@@ -129,7 +129,7 @@ export default function MucDungPage() {
           disabled={loading}
           className="text-xs flex items-center gap-1.5"
         >
-          <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           Làm mới
         </Button>
       </div>

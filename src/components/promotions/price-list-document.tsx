@@ -79,7 +79,7 @@ export function PriceListDocument({ id }: { id: string }) {
       <article className="rounded-2xl border border-border bg-surface p-5 sm:p-8 print:border-0 print:p-0">
         <header className="border-b border-border pb-4 text-center">
           {organization?.name && <p className="text-body-sm font-semibold uppercase tracking-wide text-text-muted">{organization.name}</p>}
-          <h1 className="mt-1 text-display font-extrabold text-text">{p.heading || p.name}</h1>
+          <h2 className="mt-1 text-display font-extrabold text-text">{p.heading || p.name}</h2>
           {period && <p className="mt-1 text-body-sm text-text-muted">{period}</p>}
         </header>
 

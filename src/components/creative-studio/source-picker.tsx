@@ -276,7 +276,7 @@ export function SourcePicker({
           >
             {promoting ? (
               <>
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                 Đang tạo Master...
               </>
             ) : (
@@ -298,7 +298,7 @@ export function SourcePicker({
       {/* Loading states */}
       {(loadingMasters || loadingAssets) && (
         <div className="text-center py-3 text-sm text-text-muted flex items-center justify-center gap-2">
-          <Loader2 size={16} className="animate-spin" />
+          <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
           {loadingMasters ? "Đang tải Master Images..." : "Đang tải ảnh gốc..."}
         </div>
       )}

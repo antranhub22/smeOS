@@ -41,7 +41,7 @@ export default function CustomerCarePage({ searchParams }: PageProps) {
             <div>
               <div className="flex items-center gap-2">
                 <Heart className="w-5 h-5 text-primary" aria-hidden="true" />
-                <h1 className="text-title-sm font-bold text-text">Chăm sóc khách hàng</h1>
+                <h2 className="text-title-sm font-bold text-text">Chăm sóc khách hàng</h2>
               </div>
               <p className="text-caption text-text-muted hidden sm:block">
                 Gắn kết khách cũ, gửi thiệp tri ân và nhắc lịch chăm sóc

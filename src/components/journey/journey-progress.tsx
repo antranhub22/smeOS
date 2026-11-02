@@ -79,7 +79,7 @@ export function JourneyProgress({
                   {isCompleted ? (
                     <Check className="w-3 h-3" aria-hidden="true" />
                   ) : isProcessing ? (
-                    <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
+                    <Loader2 className="w-3 h-3 animate-spin motion-reduce:animate-none" aria-hidden="true" />
                   ) : isFailed ? (
                     <AlertCircle className="w-3 h-3" aria-hidden="true" />
                   ) : isLocked ? (

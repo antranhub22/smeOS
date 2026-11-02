@@ -11,6 +11,7 @@ import {
   Trash2,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { PhotoSourcePicker } from "./photo-source-picker"
 import { cn } from "@/lib/utils"
 import { SubcontractQcGallery } from "./subcontract-qc-gallery"
@@ -62,6 +63,7 @@ export function SubcontractStepQc({
   const [uploadingQc, setUploadingQc] = useState(false)
   const [qcSuccessMsg, setQcSuccessMsg] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [confirm, confirmDialog] = useConfirmDialog()
   const [currentQcPhotos, setCurrentQcPhotos] = useState<string[]>(qcPhotos)
   const [syncedQcPhotos, setSyncedQcPhotos] = useState<string[]>(qcPhotos) // máy chủ trả ảnh mới → đồng bộ lúc render
   if (syncedQcPhotos !== qcPhotos) { setSyncedQcPhotos(qcPhotos); setCurrentQcPhotos(qcPhotos) }
@@ -134,7 +136,16 @@ export function SubcontractStepQc({
   }
 
   async function handleDeleteQcPhoto(photoUrl: string) {
-    if (!confirm("Bạn có chắc chắn muốn xóa ảnh thành phẩm này không?")) return
+    if (
+      !(await confirm({
+        title: "Xóa ảnh thành phẩm này?",
+        consequence: "Ảnh thành phẩm sẽ bị gỡ khỏi báo cáo kiểm định chất lượng của đơn hàng.",
+        confirmLabel: "Xóa ảnh",
+        tone: "danger",
+      }))
+    ) {
+      return
+    }
     setErrorMsg(null)
     try {
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}`, {
@@ -320,6 +331,7 @@ export function SubcontractStepQc({
           </>
         )}
       </div>
+      {confirmDialog}
     </section>
   )
 }
