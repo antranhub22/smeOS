@@ -88,6 +88,10 @@ test.describe("Ảnh mốc màn chính 12 hành trình", () => {
         } catch (err) {
           // Artifact CI không phải lúc nào cũng tải được: in cấu trúc trang vào log để đối chiếu.
           console.log(`[visual] ${screen.name}-${vp.label}\n${await page.locator("body").ariaSnapshot().catch(() => "")}`)
+          // Ảnh mẫu `-linux` lấy từ ảnh runner CI chụp (ci.yml). Khi không tải được artifact, ảnh
+          // thực tế in ra log dạng base64 để lấy lại đúng ảnh CI.
+          const shot = await page.screenshot({ animations: "disabled" }).catch(() => null)
+          if (shot) console.log(`[visual-png] ${screen.name}-${vp.label} ${shot.toString("base64")}`)
           throw err
         }
         await context.close()
