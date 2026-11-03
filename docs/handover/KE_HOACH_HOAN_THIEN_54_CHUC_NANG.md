@@ -15,21 +15,21 @@ Căn cứ: `docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md` (mã nguồn tại `0
 
 ## 2. Điểm PO chốt trước khi thi công
 
-| Mã | Nội dung cần chốt | Chức năng chịu ảnh hưởng | Thời điểm cần chốt |
-|---|---|---|---|
-| Q1 | Mở khoá Thẻ Chào (`tests/unit/architecture/the-chao-freeze.test.ts`) cho từng PR được liệt kê; mốc băm cập nhật sau khi PO duyệt PR | 2.8, 3.1, 3.4, 3.6, 4.3, 4.9, 4.14, 4.18, 4.26, 5.4, 5.5, 5.9, 5.14, 5.15, 9.11 | Trước Đợt 1 |
-| Q2 | Thay đổi lược đồ CSDL theo danh sách mục 6 | 1.4, 2.3, 3.8, 3.10, 9.3, 10.3, 10.4, 10.6, 10.7, 10.8, 1.18 | Trước đợt chứa chức năng |
-| Q3 | Quyền thu tiền R9: (a) trần cứng Điều hành, hoặc (b) Sale/Điều phối chỉ "ghi nhận chờ xác nhận", Điều hành xác nhận mới vào sổ thu | 1.16 | Trước Đợt 1 |
-| Q4 | Tắt mặc định công tắc tự duyệt (`cho_phep_tu_duyet = false`) | 9.12 | Trước Đợt 1 |
-| Q5 | Ảnh giao hàng bắt buộc ở mọi gói chính sách; bỏ qua chỉ khi Điều hành duyệt từng đơn | 4.18 | Trước Đợt 1 |
-| Q6 | Vòng đời đơn: giao xong còn nợ ở trạng thái "Đã giao — chờ thu đủ", chỉ "Hoàn tất" khi số dư bằng 0 | 4.26 | Trước Đợt 1 |
-| Q7 | Bộ quyền mặc định cho ba vai mới: Thợ cắm hoa, Shipper, Kế toán | 1.12, 4.5, 4.13, 6.5, 6.6 | Trước Đợt 2 |
-| Q8 | Danh sách 6 kiểu dáng, đơn giá phí cắm từng kiểu, hệ số ngày lễ mặc định 1,3, phí cắm hiện thành dòng riêng trên báo giá | 3.6 | Trước Đợt 3 |
-| Q9 | Gói thuê bao: giá theo năm, chu kỳ gia hạn, kênh thu phí (VietQR + đối soát SePay), xử lý quá hạn | 10.7, 9.8, 9.10 | Trước Đợt 4 |
-| Q10 | Đơn vị hạn mức tháng cho AI (credit), SMS (tin), Zalo ZNS (tin) và giá vốn tham chiếu | 10.3, 10.4 | Trước Đợt 4 |
-| Q11 | Hạ tầng tên miền riêng: dịch vụ cấp chứng chỉ và cách thêm tên miền trên Render (thay đổi `render.yaml` hoặc API Render) | 10.8 | Trước Đợt 4 |
-| Q12 | Các chặng của hành trình 14 chặng được chạy khi người dùng tải ảnh | 5.14, 7.2 | Trước Đợt 6 |
-| Q13 | Phạm vi và lộ trình Row Level Security (bảng nào, chế độ `FORCE`, ngân sách hiệu năng) | 1.18 | Trước Đợt 7 |
+| Mã | Nội dung cần chốt | Chức năng chịu ảnh hưởng | Thời điểm cần chốt | Quyết định |
+|---|---|---|---|---|
+| Q1 | Mở khoá Thẻ Chào (`tests/unit/architecture/the-chao-freeze.test.ts`) cho từng PR được liệt kê; mốc băm cập nhật sau khi PO duyệt PR | 2.8, 3.1, 3.4, 3.6, 4.3, 4.9, 4.14, 4.18, 4.26, 5.4, 5.5, 5.9, 5.14, 5.15, 9.11 | Trước Đợt 1 | Mở khoá |
+| Q2 | Thay đổi lược đồ CSDL theo danh sách mục 6 | 1.4, 2.3, 3.8, 3.10, 9.3, 10.3, 10.4, 10.6, 10.7, 10.8, 1.18 | Trước đợt chứa chức năng | Chờ chốt |
+| Q3 | Quyền thu tiền R9: (a) trần cứng Điều hành, hoặc (b) Sale/Điều phối chỉ "ghi nhận chờ xác nhận", Điều hành xác nhận mới vào sổ thu | 1.16 | Trước Đợt 1 | Phương án (b): Sale/Điều phối ghi nhận chờ xác nhận, Điều hành xác nhận mới vào sổ thu |
+| Q4 | Tắt mặc định công tắc tự duyệt (`cho_phep_tu_duyet = false`) | 9.12 | Trước Đợt 1 | Tắt mặc định |
+| Q5 | Ảnh giao hàng bắt buộc ở mọi gói chính sách | 4.18 | Trước Đợt 1 | Bắt buộc mặc định; Điều hành cửa hàng được tắt yêu cầu ảnh giao trong Cài đặt |
+| Q6 | Vòng đời đơn: giao xong còn nợ ở trạng thái "Đã giao — chờ thu đủ", chỉ "Hoàn tất" khi số dư bằng 0 | 4.26 | Trước Đợt 1 | Áp dụng |
+| Q7 | Bộ quyền mặc định cho ba vai mới: Thợ cắm hoa, Shipper, Kế toán | 1.12, 4.5, 4.13, 6.5, 6.6 | Trước Đợt 2 | Chờ chốt |
+| Q8 | Danh sách 6 kiểu dáng, đơn giá phí cắm từng kiểu, hệ số ngày lễ mặc định 1,3, phí cắm hiện thành dòng riêng trên báo giá | 3.6 | Trước Đợt 3 | Chờ chốt |
+| Q9 | Gói thuê bao: giá theo năm, chu kỳ gia hạn, kênh thu phí (VietQR + đối soát SePay), xử lý quá hạn | 10.7, 9.8, 9.10 | Trước Đợt 4 | Chờ chốt |
+| Q10 | Đơn vị hạn mức tháng cho AI (credit), SMS (tin), Zalo ZNS (tin) và giá vốn tham chiếu | 10.3, 10.4 | Trước Đợt 4 | Chờ chốt |
+| Q11 | Hạ tầng tên miền riêng: dịch vụ cấp chứng chỉ và cách thêm tên miền trên Render (thay đổi `render.yaml` hoặc API Render) | 10.8 | Trước Đợt 4 | Chờ chốt |
+| Q12 | Các chặng của hành trình 14 chặng được chạy khi người dùng tải ảnh | 5.14, 7.2 | Trước Đợt 6 | Chờ chốt |
+| Q13 | Phạm vi và lộ trình Row Level Security (bảng nào, chế độ `FORCE`, ngân sách hiệu năng) | 1.18 | Trước Đợt 7 | Chờ chốt |
 
 ## 3. Lộ trình
 
@@ -62,7 +62,7 @@ Ký hiệu: `org/` = `src/modules/organization/`, `gc/` = `src/modules/greeting-
 | 1.17 | Mở rộng ngữ cảnh yêu cầu (`runWithRequestId`) mang IP và thiết bị; `recordAuditLog` tự điền. Ghi nhật ký mọi thao tác ghi (POST/PUT/PATCH/DELETE) qua `handle()`. API `audit-logs` lọc phía máy chủ theo người, hành động, đối tượng, khoảng ngày; giao diện lọc tương ứng | `src/core/observability`, `src/modules/audit`, `api/audit-logs/route.ts`, `src/app/(app)/audit/page.tsx` | — | `tt/audit-logs.test.ts`: thao tác ghi bất kỳ sinh dòng có IP/thiết bị; lọc đúng; tổ chức khác không thấy | 3 |
 | 3.4 | Tính giá sàn (giá vốn × hệ số sàn) khi báo giá, lưu đơn, duyệt giảm giá, chuyển báo giá thành đơn; dưới sàn → lưu bị chặn và tạo yêu cầu duyệt `BELOW_FLOOR` trong `order_approval_requests`; chỉ người có C10 duyệt; giao diện cảnh báo trước khi lưu | `src/modules/products/domain/price-guard.ts`, `src/modules/orders/use-cases/quote-order.ts`, `src/modules/sales/use-cases`, `gc/use-cases/discount-requests.ts` | TC | `price-guard.test.ts` đổi thành chặn; `tt/below-floor-approval.test.ts`: Sale lưu dưới sàn → 409 + yêu cầu duyệt, Điều hành duyệt → lưu được, tổ chức khác → 404 | 2,5 |
 | 4.10 | Áp phạm vi xem của người xuất (sale "chỉ khách của mình", chi nhánh được giao) vào truy vấn xuất | `src/modules/orders/use-cases/export-orders.ts` | — | `export-orders.test.ts` + `tt/order-export-scope.test.ts`: Sale được cấp R13 chỉ nhận đơn của mình | 1 |
-| 4.18 | Áp Q5: mọi gói chính sách bắt buộc ảnh giao; bỏ qua cần yêu cầu duyệt của Điều hành từng đơn; luồng điều phối bỏ phương án tên người ký thay ảnh | `gc/domain/brochure-workflow-policy.ts`, `gc/use-cases/update-brochure-order-status.ts`, `src/modules/coordinator/domain/operation-rules.ts` | TC | `tt/greeting-card-coordinator-rules.test.ts`: không ảnh → không đóng đơn; `tu/coordinator/operation-rules.test.ts` | 1 |
+| 4.18 | Áp Q5: ảnh giao bắt buộc ở mọi gói chính sách mặc định; Điều hành cửa hàng tắt được yêu cầu này trong Cài đặt (công tắc ảnh người nhận); khi công tắc bật, không đóng đơn nếu thiếu ảnh và luồng điều phối không nhận tên người ký thay ảnh | `gc/domain/brochure-workflow-policy.ts`, `gc/use-cases/update-brochure-order-status.ts`, `src/modules/coordinator/domain/operation-rules.ts` | TC | `tt/greeting-card-coordinator-rules.test.ts`: không ảnh → không đóng đơn; `tu/coordinator/operation-rules.test.ts` | 1 |
 | 4.26 | Áp Q6: giao xong còn nợ → `DELIVERED`, chỉ chuyển `COMPLETED` khi `balance_vnd = 0` (khi xác nhận thu nốt); `closeCoordinatorOrder` kiểm số dư | `gc/use-cases/update-brochure-order-status.ts`, `gc/use-cases/confirm-brochure-payment.ts`, `src/modules/coordinator/use-cases/operations.ts` | TC | `tt/greeting-card-payments.test.ts`: giao xong còn nợ không hoàn tất, thu đủ → hoàn tất; `tt/coordinator.test.ts` đóng đơn còn nợ → 422 | 2 |
 | 9.11 | Gom mọi thao tác nhạy cảm về một luồng phiếu duyệt: đổi giá niêm yết (kể cả của Điều hành khi tổ chức bật "duyệt 2 người"), huỷ đơn đã cọc, giảm dưới sàn (dùng 3.4) | `src/modules/products/use-cases/product-change-requests.ts`, `src/modules/orders` | TC | `tt/sensitive-approvals.test.ts`: ba loại thao tác chỉ có hiệu lực sau duyệt | 1,5 |
 | 9.12 | Áp Q4; chặn người tạo tự duyệt yêu cầu của chính mình ở mọi use-case duyệt (giảm giá, huỷ, đổi sản phẩm, giao trước thu sau); chặn gán vai Điều hành cho người khác khi người thao tác không phải chủ tổ chức | `org/domain/self-approval-policy.ts`, các use-case duyệt | TC | `tt/self-approval.test.ts`: tự duyệt → 422 ở từng luồng | 1 |
