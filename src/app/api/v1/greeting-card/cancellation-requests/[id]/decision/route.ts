@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { assertNotSelfApproval } from "@/modules/organization/use-cases/assert-not-self-approval"
 import { AppError, notFound, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -29,6 +30,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   if (!info) throw notFound()
   const denied = canDecideCancellation(info.type, ctx, { inTransit: isInTransit(info.deliveryStatus), requesterId: info.requesterId }, GREETING_CARD_CAPABILITY)
   if (denied) throw new AppError("CAPABILITY_DENIED", denied)
+  if (parsed.data.approve) await assertNotSelfApproval(ctx, info.requesterId)
 
   const result = await repo.decide(ctx, {
     requestId: id,

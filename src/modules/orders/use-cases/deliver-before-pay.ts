@@ -6,6 +6,7 @@
  */
 
 import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { assertNotSelfApproval } from "@/modules/organization/use-cases/assert-not-self-approval"
 import type { TenantContext } from "@/core/tenancy"
 import { isUrgentOrder } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 import { DELIVER_BEFORE_PAY, decideDeliverBeforePay as decide, defaultCollectDueAt } from "../workflow/deliver-before-pay"
@@ -96,6 +97,7 @@ export async function decideDeliverBeforePay(
   }
   const req = await repo.findRequest(ctx, requestId)
   if (!req || req.kind !== DELIVER_BEFORE_PAY || req.order.source === "BROCHURE") throw notFound()
+  if (input.approve) await assertNotSelfApproval(ctx, req.requested_by)
   const ok = await repo.decide(ctx, requestId, req.order, { approve: input.approve, note, collectDueAt },
     `Giao trước, thu sau — Điều hành duyệt${note ? `: ${note}` : ""}. Lý do Sale: ${req.reason}`)
   if (!ok) throw conflict("Yêu cầu đã được xử lý")

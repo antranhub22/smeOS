@@ -1,4 +1,5 @@
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
+import { assertNotSelfApproval } from "@/modules/organization/use-cases/assert-not-self-approval"
 import type { TenantContext } from "@/core/tenancy"
 import { getCurrentOrganization } from "@/modules/organization/use-cases/get-current-organization"
 import { DiscountRepository, getDiscountRepository } from "../infra/discount-repository"
@@ -59,6 +60,7 @@ export async function decideDiscount(
   if (!pending?.order_id) throw (await getGreetingMessageRepository().findById(ctx, input.requestId)) ? conflict("Yêu cầu này đã được xử lý") : notFound()
   const order = await repo.orderBase(ctx, pending.order_id)
   if (!order) throw notFound()
+  if (input.approve) await assertNotSelfApproval(ctx, pending.sender_id)
 
   const requested = pending.payload as unknown as DiscountAsk
   const ask: DiscountAsk = input.ask ?? (typeof requested.percent === "number" ? { percent: requested.percent } : { amountVnd: requested.amountVnd })
