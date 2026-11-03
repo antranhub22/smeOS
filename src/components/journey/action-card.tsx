@@ -31,7 +31,7 @@ export function ActionCard({ journey, onSelect, disabled = false }: ActionCardPr
           {badge}
         </span>
       )}
-      <InfoTip label={journey.goal} className="absolute top-1 right-1 sm:top-3 sm:right-3 m-0">
+      <InfoTip label={journey.goal} className="absolute top-1 right-1 z-10 sm:top-3 sm:right-3 m-0">
         {journey.description}
       </InfoTip>
 

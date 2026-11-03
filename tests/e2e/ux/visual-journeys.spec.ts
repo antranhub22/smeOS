@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import { expect, test, type Page } from "@playwright/test"
-import { approveAndLogin } from "./helpers"
+import { approveAndLogin, testClientHeaders } from "./helpers"
 import { grantPlatformOperator } from "./a11y-journeys.helpers"
 
 /**
@@ -43,12 +43,14 @@ test.describe("Ảnh mốc màn chính 12 hành trình", () => {
     const page = await context.newPage()
     const email = `e2e-visual-${randomUUID().slice(0, 8)}@floraos.test`
     const password = "MatKhau-E2E-2026!"
+    const headers = testClientHeaders()
     const res = await page.request.post("/api/v1/auth/signup", {
+      headers,
       data: { email, password, name: "Người kiểm giao diện", organization_name: "Tiệm Kiểm Giao Diện" },
     })
     if (!res.ok()) throw new Error(`Signup failed: ${res.status()}`)
     const body = (await res.json()) as { user_id: string }
-    await approveAndLogin(page.request, email, password)
+    await approveAndLogin(page.request, email, password, "", headers)
     await grantPlatformOperator(body.user_id)
     storage = test.info().outputPath("visual-state.json")
     await context.storageState({ path: storage })

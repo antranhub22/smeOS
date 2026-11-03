@@ -46,9 +46,10 @@ export async function keyboardIssues(page: Page): Promise<{ stops: number; issue
     const info = await page.evaluate(() => {
       const el = document.activeElement as HTMLElement | null
       if (!el || el === document.body) return null
-      const cs = getComputedStyle(el)
-      const outline = cs.outlineStyle !== "none" && parseFloat(cs.outlineWidth) > 0
-      const ring = cs.boxShadow !== "none"
+      // Vòng tiêu điểm có thể vẽ trên chính phần tử hoặc trên ::before/::after (mẫu "cả thẻ là nút").
+      const drawn = [getComputedStyle(el), getComputedStyle(el, "::before"), getComputedStyle(el, "::after")]
+      const outline = drawn.some((cs) => cs.outlineStyle !== "none" && parseFloat(cs.outlineWidth) > 0)
+      const ring = drawn.some((cs) => cs.boxShadow !== "none")
       const r = el.getBoundingClientRect()
       const pts: [number, number][] = [
         [r.left + r.width / 2, r.top + r.height / 2],
