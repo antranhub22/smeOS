@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react"
 import { Truck, CheckCircle2, Upload, PackageCheck, Navigation, AlertOctagon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { safeImageSrc } from "@/lib/safe-image-src"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import {
@@ -194,7 +195,7 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
             <div className="w-24 h-24 rounded-lg border border-border bg-surface overflow-hidden flex items-center justify-center shrink-0">
               {podPreview ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={podPreview} alt="Ảnh POD" className="w-full h-full object-cover" />
+                <img src={safeImageSrc(podPreview)} alt="Ảnh POD" className="w-full h-full object-cover" />
               ) : (
                 <span className="text-caption text-text-muted text-center p-1">Chưa có ảnh POD</span>
               )}

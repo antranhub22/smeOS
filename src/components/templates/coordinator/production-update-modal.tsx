@@ -12,6 +12,7 @@ import {
   ArrowRight,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { safeImageSrc } from "@/lib/safe-image-src"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -222,7 +223,7 @@ export function ProductionUpdateModal({
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={finishedImageUrl}
+                      src={safeImageSrc(finishedImageUrl)}
                       alt="Ảnh thành phẩm"
                       className="w-full h-full object-cover"
                     />
