@@ -5,6 +5,7 @@ import type { StorageProvider } from "@/core/ports/storage-provider"
 import {
   importMarketplaceExcel,
   listMarketplaceStores,
+  previewMarketplaceExcel,
   syncMarketplaceFromSheet,
   syncMarketplacePhotos,
   type MarketplaceDeps,
@@ -101,6 +102,53 @@ describe("importMarketplaceExcel", () => {
     const res = await importMarketplaceExcel(pctx(["N17"]), { name: "khao-sat.csv", bytes: new TextEncoder().encode(csv) }, d)
     expect(res.added).toBe(1)
     expect(d.repo.upsertMany).toHaveBeenCalledWith([expect.objectContaining({ identity: expect.objectContaining({ shopName: "Hoa CSV" }) })], "EXCEL")
+  })
+})
+
+describe("nhập tệp lệch cột", () => {
+  // BOM UTF-8 như Excel ghi khi lưu CSV — để chữ có dấu đọc đúng
+  const csv = (lines: string[][]) => new TextEncoder().encode("\uFEFF" + lines.map((r) => r.join(",")).join("\n"))
+  const shifted = csv([
+    ["Tên cửa hàng", "Chức vụ", "Địa chỉ", "Số điện thoại", "Quy mô"],
+    ["Hoa Lệch", "chủ cửa hàng", "49 Nguyễn Phong Sắc", "0912345682", "2 cửa hàng"],
+  ])
+
+  it("xem trước: tự ghép theo tên tiêu đề, giá trị mẫu che số điện thoại, không ghi dữ liệu", async () => {
+    const d = makeDeps()
+    const p = await previewMarketplaceExcel(pctx(["N17"]), { name: "moi.csv", bytes: shifted })
+    expect(p.headers).toEqual(["Tên cửa hàng", "Chức vụ", "Địa chỉ", "Số điện thoại", "Quy mô"])
+    expect(p.rowCount).toBe(1)
+    expect(p.mapping[5]).toBe(0)
+    expect(p.mapping[15]).toBe(2)
+    expect(p.mapping[13]).toBe(3)
+    expect(p.samples[3]).toBe("•••682")
+    expect(d.repo.upsertMany).not.toHaveBeenCalled()
+    await expect(previewMarketplaceExcel(pctx(["N1"]), { name: "moi.csv", bytes: shifted })).rejects.toMatchObject({ status: 403 })
+  })
+
+  it("nhập không gửi bảng ghép → tự ghép theo tên, dữ liệu vào đúng trường", async () => {
+    const d = makeDeps()
+    await importMarketplaceExcel(pctx(["N17"]), { name: "moi.csv", bytes: shifted }, d)
+    const [profiles] = vi.mocked(d.repo.upsertMany).mock.calls[0]!
+    expect(profiles[0]!.contact.address).toBe("49 Nguyễn Phong Sắc")
+    expect(profiles[0]!.contact.phone).toBe("0912345682")
+    expect(profiles[0]!.identity.scale).toBe("2 cửa hàng")
+  })
+
+  it("bảng ghép người nhập chọn được dùng; thiếu cột tên cửa hàng → 422, không ghi", async () => {
+    const d = makeDeps()
+    const mapping = Array.from({ length: 75 }, () => null as number | null)
+    mapping[5] = 0
+    mapping[16] = 2 // người nhập chủ động đưa cột Địa chỉ vào Google Maps
+    await importMarketplaceExcel(pctx(["N17"]), { name: "moi.csv", bytes: shifted }, d, mapping)
+    const [profiles] = vi.mocked(d.repo.upsertMany).mock.calls[0]!
+    expect(profiles[0]!.contact.googleMaps).toBe("49 Nguyễn Phong Sắc")
+    expect(profiles[0]!.contact.address).toBe("")
+
+    const d2 = makeDeps()
+    const noName = csv([["Chức vụ", "Địa chỉ"], ["chủ", "x"]])
+    await expect(importMarketplaceExcel(pctx(["N17"]), { name: "a.csv", bytes: noName }, d2)).rejects.toMatchObject({ status: 422 })
+    expect(d2.repo.upsertMany).not.toHaveBeenCalled()
   })
 })
 
