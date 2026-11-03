@@ -48,10 +48,10 @@ Bất kỳ thay đổi mã nguồn nào trong phân hệ Market Intelligence b�
   2. **YouTube**: Video định dạng ngang (16:9), có nhãn nền tảng `YT` đỏ, nút Play overlay, và tên kênh YouTube tương ứng.
 - **Tương tác trực tiếp & Trình phát Video tại chỗ (In-Place Video Preview)**:
   - Cả hai thumbnail đều là các phần tử tương tác độc lập (`cursor-pointer`), bắt sự kiện riêng biệt (`e.stopPropagation()`).
-  - **Bảng Vàng Quán Quân Chu Kỳ (`TopChampionsBlock`)**: Khi người dùng nhấp chuột vào hình ảnh/video thumbnail, hệ thống **hiển thị và phát luôn video trực tiếp tại chỗ** thông qua component chuyên dụng [`VideoPreviewModal`](file:///Users/tuan/Projects/floraos-core/src/components/market-intelligence/video-preview-modal.tsx) (nhúng iframe YouTube HD, `autoplay=1`, không tải lại trang, không chuyển tab ngoài gây đứt đoạn trải nghiệm).
+  - **Bảng Vàng Quán Quân Chu Kỳ (`TopChampionsBlock`)**: Khi người dùng nhấp chuột vào hình ảnh/video thumbnail, hệ thống **hiển thị và phát luôn video trực tiếp tại chỗ** thông qua component chuyên dụng [`VideoPreviewModal`](../../src/components/market-intelligence/video-preview-modal.tsx) (nhúng iframe YouTube HD, `autoplay=1`, không tải lại trang, không chuyển tab ngoài gây đứt đoạn trải nghiệm).
   - Modal hỗ trợ phím `Escape`, nút `X`, hoặc click ra vùng tối ngoài backdrop để đóng; đồng thời cung cấp link mở rộng sang YouTube/TikTok nếu cần.
   - Khi nhấp vào vùng nội dung hoặc nút **"Chi tiết →"**, hệ thống giữ nguyên hành vi mở Drawer kịch bản & câu chuyện thị trường.
-- **Triển khai SSOT**: Quản lý tập trung tại [`video-evidence-catalog.ts`](file:///Users/tuan/Projects/floraos-core/src/components/market-intelligence/video-evidence-catalog.ts), các mẫu video tuần mới nhất tại [`video-catalog-presets.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/market-intelligence/domain/video-catalog-presets.ts), và trích xuất qua `getDualOpportunityEvidencePreview(item)`.
+- **Triển khai SSOT**: Quản lý tập trung tại [`video-evidence-catalog.ts`](../../src/components/market-intelligence/video-evidence-catalog.ts), các mẫu video tuần mới nhất tại [`video-catalog-presets.ts`](../../src/modules/market-intelligence/domain/video-catalog-presets.ts), và trích xuất qua `getDualOpportunityEvidencePreview(item)`.
 
 
 ### 2.2. Quy Tắc Nghiêm Ngặt Chống Tràn Từ Khóa Thô (Strict Anti-Keyword-Dumping Rule)
@@ -60,7 +60,7 @@ Bất kỳ thay đổi mã nguồn nào trong phân hệ Market Intelligence b�
   1. **Tuyệt đối CẤM** render chuỗi từ khóa nối phẩy lên bất kỳ huy hiệu tag (`<Tag />`) hoặc thẻ nào trên UI.
   2. **Tuyệt đối CẤM** chèn chuỗi từ khóa thô vào trong tiêu đề cơ hội hoặc câu trích dẫn kịch bản (quotes/hooks).
   3. **Bộ lọc làm sạch (Sanitization Pipeline)**:
-     - **Tiêu đề**: Đi qua `getOpportunityHeadline(item)` tại [`opportunity-illustration.ts`](file:///Users/tuan/Projects/floraos-core/src/components/market-intelligence/opportunity-illustration.ts) để chuẩn hóa thành câu tiêu đề marketing tinh tế (vd: *"BST Hoa 20/10 thanh lịch dẫn đầu xu hướng năm nay"*).
+     - **Tiêu đề**: Đi qua `getOpportunityHeadline(item)` tại [`opportunity-illustration.ts`](../../src/components/market-intelligence/opportunity-illustration.ts) để chuẩn hóa thành câu tiêu đề marketing tinh tế (vd: *"BST Hoa 20/10 thanh lịch dẫn đầu xu hướng năm nay"*).
      - **Kịch bản (Hooks)**: Đi qua `formatCleanHook(hook)` để tạo thành câu thoại kịch bản tự nhiên, mượt mà và ấm áp chuẩn phong cách tiệm hoa cao cấp.
      - **Cơ sở dữ liệu (`topics`)**: Cơ sở dữ liệu phải được làm sạch, không lưu trữ các bản ghi chủ đề là chuỗi nối phẩy của nhiều từ khóa. Nếu phát hiện dữ liệu thô, phải tự động chuẩn hóa hoặc sáp nhập về chủ đề gốc.
 
@@ -68,15 +68,15 @@ Bất kỳ thay đổi mã nguồn nào trong phân hệ Market Intelligence b�
 - **Vấn đề cần triệt tiêu**: Tránh tuyệt đối việc trả về dữ liệu mẫu cố định (hardcoded data) như "Hoa hồng kem dâu" cho mọi hình ảnh tải lên, hoặc chỉ nhận diện hoa chính mà bỏ sót lá đệm, thiệp chúc mừng, nơ ruy băng và giấy gói.
 - **Luật bất biến**:
   1. **Multimodal Vision Thật**: Hệ thống bắt buộc phải quan sát trực tiếp dữ liệu nhị phân của bức ảnh thông qua mô hình đa phương thức (qua cổng AI — `product-vision-ai-adapter.ts` + `product-vision-prompt.ts`; nhà cung cấp theo thứ tự ưu tiên của tiệm: Claude / OpenAI / Gemini — 25/09/2026).
-  2. **Xử lý Ảnh Base64 Data URL**: Tại Frontend ([`product-upload-card.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/market-intelligence/product-upload-card.tsx)), khi người dùng kéo thả file, `FileReader` lập tức chuyển đổi thành Base64 Data URL (`data:image/...;base64,...`) để truyền an toàn sang server, khắc phục giới hạn không thể fetch `blob:` URL cục bộ của trình duyệt.
-  3. **Đồng Bộ Hai Chiều Props ↔ State**: Giao diện xác nhận ([`product-confirmation-card.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/market-intelligence/product-confirmation-card.tsx)) bắt buộc có hook phản ứng đồng bộ lại state nội bộ khi dữ liệu Vision AI trả về, bảo đảm người dùng luôn thấy đúng kết quả phân tích theo ảnh vừa tải lên.
+  2. **Xử lý Ảnh Base64 Data URL**: Tại Frontend ([`product-upload-card.tsx`](../../src/components/market-intelligence/product-upload-card.tsx)), khi người dùng kéo thả file, `FileReader` lập tức chuyển đổi thành Base64 Data URL (`data:image/...;base64,...`) để truyền an toàn sang server, khắc phục giới hạn không thể fetch `blob:` URL cục bộ của trình duyệt.
+  3. **Đồng Bộ Hai Chiều Props ↔ State**: Giao diện xác nhận ([`product-confirmation-card.tsx`](../../src/components/market-intelligence/product-confirmation-card.tsx)) bắt buộc có hook phản ứng đồng bộ lại state nội bộ khi dữ liệu Vision AI trả về, bảo đảm người dùng luôn thấy đúng kết quả phân tích theo ảnh vừa tải lên.
   4. **Tách Biệt Nguyên Tử (Atomic Disaggregated Fields) Cho Hoa & Phụ Liệu**:
      - **Hoa chính & hoa phụ**: Tên hoa, số lượng, đơn vị, màu sắc, vai trò (`dominant`/`supporting`).
      - **Lá & cành đệm (Foliage)**: Phân tách riêng khỏi hoa, bóc tách tên lá (Eucalyptus, lá chanh, lá đuôi chồn...), số cành, màu sắc, vai trò đệm.
      - **Thiệp & Biển chúc mừng (Card & Banner OCR)**: AI Vision quét chữ in/viết trên thiệp/banner (`printedText`), phân loại thiệp (thiệp gập, tag mini, biển mica, banner) làm căn cứ phân loại mục đích sử dụng (sinh nhật, kỷ niệm, 20/10, khai trương...).
      - **Nơ & Ruy băng**: Bóc tách chất liệu (satin, voan, thừng...), màu sắc, kiểu dáng thắt.
      - **Giấy gói & Bao bì**: Bóc tách lớp gói, chất liệu giấy (Kraft, lụa mờ...), màu sắc giấy.
-     - **Phụ kiện decor**: Quản lý nguyên tử đèn led, gấu bông, topper... có nút Thêm / Sửa / Xóa từng dòng qua component [`ProductPackagingCard`](file:///Users/tuan/Projects/floraos-core/src/components/market-intelligence/product-packaging-card.tsx).
+     - **Phụ kiện decor**: Quản lý nguyên tử đèn led, gấu bông, topper... có nút Thêm / Sửa / Xóa từng dòng qua component [`ProductPackagingCard`](../../src/components/market-intelligence/product-packaging-card.tsx).
   5. **Đồng bộ hóa toàn hệ thống**: Dữ liệu bóc tách được đồng bộ thống nhất giữa Chặng 02 Product Intelligence (`/thi-truong`), Tab M01a & Thẻ Chào Zalo (`/tai-anh`), và các tầng Domain Model.
 
 ### 2.4. Nghiên Cứu Tập Trung 1 Lần & Cá Nhân Hóa Theo Tenant (Shared Intelligence Core)
@@ -181,7 +181,7 @@ export interface OpportunityEvidencePreview {
   - **Chủ đề Giỏ Hoa Tặng Mẹ / Sinh Nhật**: Video giỏ hoa cúc mẫu đơn và hoa hồng kem pastel.
 
 ### 4.3. Trình Phát Video Trực Tiếp Tại Chỗ (`VideoPreviewModal`)
-- **Tệp nguồn**: [`src/components/market-intelligence/video-preview-modal.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/market-intelligence/video-preview-modal.tsx) (182 dòng, SRP chuẩn mực).
+- **Tệp nguồn**: [`src/components/market-intelligence/video-preview-modal.tsx`](../../src/components/market-intelligence/video-preview-modal.tsx) (182 dòng, SRP chuẩn mực).
 - **Trích xuất Video ID đa năng (`extractYouTubeVideoId`)**:
   - Tự động nhận diện và trích xuất YouTube Video ID từ mọi định dạng: `watch?v=`, `youtu.be/`, `embed/`, `shorts/`, hoặc cả đường dẫn CDN thumbnail `i.ytimg.com/vi/ID/...`.
 - **Trải nghiệm phát video**:

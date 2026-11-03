@@ -4,7 +4,7 @@
 > **Mã định danh:** `DOC-00-CONSTITUTION`  
 > **Trạng thái:** `CANONICAL` — Có hiệu lực vĩnh viễn và bắt buộc tuân thủ 100% đối với mọi Kỹ sư và AI Coding Agent (Claude Code, Google Antigravity, Copilot).  
 > **Ngày phê duyệt:** 23/09/2026 bởi Chủ sản phẩm (Product Owner).  
-> **Tài liệu máy đọc đi kèm:** [`docs/00-DOCUMENTATION-REGISTRY.yaml`](file:///Users/tuan/Projects/floraos-core/docs/00-DOCUMENTATION-REGISTRY.yaml)
+> **Tài liệu máy đọc đi kèm:** [`docs/00-DOCUMENTATION-REGISTRY.yaml`](00-DOCUMENTATION-REGISTRY.yaml)
 
 ---
 
@@ -57,7 +57,7 @@ Checklist_Thuc_Thi.md | TECHNICAL_DEBT.md | QUYET_DINH_RS_18_09.md
 
 ## 3. VÒNG ĐỜI TÀI LIỆU (DOCUMENT LIFECYCLE)
 
-Mọi tệp tài liệu trong repository bắt buộc phải mang một trong các trạng thái sau trong [`00-DOCUMENTATION-REGISTRY.yaml`](file:///Users/tuan/Projects/floraos-core/docs/00-DOCUMENTATION-REGISTRY.yaml):
+Mọi tệp tài liệu trong repository bắt buộc phải mang một trong các trạng thái sau trong [`00-DOCUMENTATION-REGISTRY.yaml`](00-DOCUMENTATION-REGISTRY.yaml):
 
 | Trạng thái | Định nghĩa | Quyền uy | Vị trí khuyến nghị |
 |---|---|---|---|

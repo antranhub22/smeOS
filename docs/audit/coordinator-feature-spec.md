@@ -2,9 +2,9 @@
 
 > **Mục đích**: Reverse-engineer 100% tính năng Nghiệp vụ Điều phối (Order Coordination / Tháp Vận hành Control Tower) từ mã nguồn TypeScript (Next.js), CSDL Postgres/Prisma và tài liệu thực tế của `floraos-core`.
 > **Phạm vi**: 
-> - Web Client: [`src/app/(app)/dieu-phoi/page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/dieu-phoi/page.tsx), [`src/components/coordinator/control-tower-dashboard.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/coordinator/control-tower-dashboard.tsx), [`src/components/coordinator/`](file:///Users/tuan/Projects/floraos-core/src/components/coordinator/), [`src/components/templates/coordinator/`](file:///Users/tuan/Projects/floraos-core/src/components/templates/coordinator/) (18 template/modal components).
-> - API Routes: [`src/app/api/v1/coordinator/`](file:///Users/tuan/Projects/floraos-core/src/app/api/v1/coordinator/) (15 routes bao gồm orders, stages, assign-partner, production, qc, delivery, exceptions, payments, partners).
-> - Domain & Use-Cases: [`src/modules/coordinator/`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/) (51 files bao gồm stage transitions, state mapper, SLA calculation & monitor, partner settlement, operations, exception management, connectors).
+> - Web Client: [`src/app/(app)/dieu-phoi/page.tsx`](../../src/app/%28app%29/dieu-phoi/page.tsx), [`src/components/coordinator/control-tower-dashboard.tsx`](../../src/components/coordinator/control-tower-dashboard.tsx), [`src/components/coordinator/`](../../src/components/coordinator), [`src/components/templates/coordinator/`](../../src/components/templates/coordinator) (18 template/modal components).
+> - API Routes: [`src/app/api/v1/coordinator/`](../../src/app/api/v1/coordinator) (15 routes bao gồm orders, stages, assign-partner, production, qc, delivery, exceptions, payments, partners).
+> - Domain & Use-Cases: [`src/modules/coordinator/`](../../src/modules/coordinator) (51 files bao gồm stage transitions, state mapper, SLA calculation & monitor, partner settlement, operations, exception management, connectors).
 > - Cơ sở dữ liệu: `orders`, `order_coordinations`, `partners`, `order_qc_records`, `order_exceptions`, `order_payments`, `order_events`, `field_definitions`, `field_catalogs`.
 > **Tiêu chuẩn phân loại**: ✅ Implemented · ⚠️ Partial · ❌ Missing · 🪦 Dead Code · ❓ Unclear
 
@@ -45,12 +45,12 @@ Nghiệp vụ Điều phối (**Chức năng 12 / Tháp Vận hành Control Towe
 
 | Tầng | Thư mục mã nguồn | Số file | Vai trò & Quy ước thiết kế | Trạng thái |
 |---|---|---|---|---|
-| **Domain** | [`src/modules/coordinator/domain/`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/domain/) | 16 file | Pure TypeScript, 0 import Prisma. Chứa ma trận chuyển bước nghiêm ngặt (`stage-transitions.ts`), ánh xạ 3 trục trạng thái (`state-mapper.ts`), công thức tính SLA (`sla-calculation.ts`), giám sát cảnh báo trễ (`sla-monitor.ts`), tính tiền công thợ (`partner-settlement.ts`), và gợi ý độ ưu tiên (`priority-suggestion.ts`). | ✅ Implemented |
-| **Use-Cases** | [`src/modules/coordinator/use-cases/`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/use-cases/) | 13 file | Điều phối nghiệp vụ: `create-coordinator-order`, `update-coordinator-stage`, `operations` (assign, production, qc, delivery, close), `manage-exceptions`, `record-payment`, `manage-partners`, `present-coordinator-order`. | ✅ Implemented |
-| **Infra** | [`src/modules/coordinator/infra/`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/infra/) | 2 file | `coordinator-repository.ts` và `transaction.ts`: Thực thi Prisma transactions đồng bộ 3 trục trạng thái và ghi nhận `order_events`. | ✅ Implemented |
-| **Connectors** | [`src/modules/coordinator/connectors/`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/connectors/) | 6 file | Cầu nối liên module: Order Ingestion, Master Index snapshot, CRM notification, Creative Studio, Analytics metrics. | ✅ Implemented |
-| **Contracts** | [`src/modules/coordinator/contracts/`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/contracts/) | 11 file | Zod schemas chuẩn hóa 7 chặng (Step 01 Intake $\rightarrow$ Step 07 Close), hỗ trợ xuất JSON Schema tự động vào `docs/dac-ta/schemas/coordinator/`. | ✅ Implemented |
-| **UI Components** | [`src/components/coordinator/`](file:///Users/tuan/Projects/floraos-core/src/components/coordinator/) + [`templates/coordinator/`](file:///Users/tuan/Projects/floraos-core/src/components/templates/coordinator/) | 25+ file | Bảng điều khiển tháp vận hành, bộ lọc rủi ro, 7 modal nghiệp vụ chặng, thẻ tóm tắt brief, thẻ POD, thẻ QC Report, thẻ đối soát thợ. | ✅ Implemented |
+| **Domain** | [`src/modules/coordinator/domain/`](../../src/modules/coordinator/domain) | 16 file | Pure TypeScript, 0 import Prisma. Chứa ma trận chuyển bước nghiêm ngặt (`stage-transitions.ts`), ánh xạ 3 trục trạng thái (`state-mapper.ts`), công thức tính SLA (`sla-calculation.ts`), giám sát cảnh báo trễ (`sla-monitor.ts`), tính tiền công thợ (`partner-settlement.ts`), và gợi ý độ ưu tiên (`priority-suggestion.ts`). | ✅ Implemented |
+| **Use-Cases** | [`src/modules/coordinator/use-cases/`](../../src/modules/coordinator/use-cases) | 13 file | Điều phối nghiệp vụ: `create-coordinator-order`, `update-coordinator-stage`, `operations` (assign, production, qc, delivery, close), `manage-exceptions`, `record-payment`, `manage-partners`, `present-coordinator-order`. | ✅ Implemented |
+| **Infra** | [`src/modules/coordinator/infra/`](../../src/modules/coordinator/infra) | 2 file | `coordinator-repository.ts` và `transaction.ts`: Thực thi Prisma transactions đồng bộ 3 trục trạng thái và ghi nhận `order_events`. | ✅ Implemented |
+| **Connectors** | [`src/modules/coordinator/connectors/`](../../src/modules/coordinator/connectors) | 6 file | Cầu nối liên module: Order Ingestion, Master Index snapshot, CRM notification, Creative Studio, Analytics metrics. | ✅ Implemented |
+| **Contracts** | [`src/modules/coordinator/contracts/`](../../src/modules/coordinator/contracts) | 11 file | Zod schemas chuẩn hóa 7 chặng (Step 01 Intake $\rightarrow$ Step 07 Close), hỗ trợ xuất JSON Schema tự động vào `docs/dac-ta/schemas/coordinator/`. | ✅ Implemented |
+| **UI Components** | [`src/components/coordinator/`](../../src/components/coordinator) + [`templates/coordinator/`](../../src/components/templates/coordinator) | 25+ file | Bảng điều khiển tháp vận hành, bộ lọc rủi ro, 7 modal nghiệp vụ chặng, thẻ tóm tắt brief, thẻ POD, thẻ QC Report, thẻ đối soát thợ. | ✅ Implemented |
 
 ---
 
@@ -135,7 +135,7 @@ Nghiệp vụ Điều phối được kiểm soát chặt chẽ bởi nhóm mã 
 
 ## 4. Vòng đời Điều phối 7 Chặng & Các Cổng Kiểm soát (Gating Rules)
 
-Ma trận chuyển bước tại [`stage-transitions.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/domain/stage-transitions.ts) quy định: **Server là nơi duy nhất quyết định chuyển bước** (ngăn chặn hoàn toàn việc client tự ý nhảy cóc trạng thái):
+Ma trận chuyển bước tại [`stage-transitions.ts`](../../src/modules/coordinator/domain/stage-transitions.ts) quy định: **Server là nơi duy nhất quyết định chuyển bước** (ngăn chặn hoàn toàn việc client tự ý nhảy cóc trạng thái):
 
 ```
 [INTAKE] ──► [VALIDATING] ──► [PLANNING] ──► [ASSIGNING] ──► [IN_PRODUCTION]
@@ -165,7 +165,7 @@ Ma trận chuyển bước tại [`stage-transitions.ts`](file:///Users/tuan/Pro
 ## 5. Các Động cơ Nghiệp vụ Tính toán Thông minh (Domain Engines)
 
 ### 5.1 Động cơ Giám sát Cam kết Thời gian Giao hàng (SLA Monitor Engine)
-Nằm tại [`sla-calculation.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/domain/sla-calculation.ts) và [`sla-monitor.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/domain/sla-monitor.ts):
+Nằm tại [`sla-calculation.ts`](../../src/modules/coordinator/domain/sla-calculation.ts) và [`sla-monitor.ts`](../../src/modules/coordinator/domain/sla-monitor.ts):
 - **Tính toán Hạn giao hàng mục tiêu (`deliveryTargetAt`)**:
   - Dựa trên hành vi của cấp độ dịch vụ (`serviceLevel`) từ bảng danh mục nền tảng:
     - `OFFSET`: Giao hỏa tốc (cộng thêm $X$ phút kể từ lúc chốt đơn, mặc định 120 phút).
@@ -182,7 +182,7 @@ Nằm tại [`sla-calculation.ts`](file:///Users/tuan/Projects/floraos-core/src/
   - Nếu `NEAR_BREACH` ở khâu `DISPATCHING`: Gợi ý *"Kiểm tra định vị shipper trên tuyến đường giao"*.
 
 ### 5.2 Động cơ Quyết toán Công nợ & Tiền công Thợ (Partner Settlement Engine)
-Nằm tại [`partner-settlement.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/domain/partner-settlement.ts):
+Nằm tại [`partner-settlement.ts`](../../src/modules/coordinator/domain/partner-settlement.ts):
 - **Biểu phí Gia công Chuẩn theo Dáng hoa (`DEFAULT_WORKMANSHIP_RATES`)**:
   - Bó hoa tiêu chuẩn (`BO_HOA`): 50.000đ.
   - Giỏ hoa / Hộp hoa (`GIO_HOA`): 70.000đ.
@@ -197,7 +197,7 @@ Nằm tại [`partner-settlement.ts`](file:///Users/tuan/Projects/floraos-core/s
   $$\text{Thực nhận} = \text{Tiền công cơ bản} + \text{Phụ cấp hỏa tốc} + \text{Phụ cấp Lễ} + \text{Phụ cấp vật tư phát sinh} + \text{Thưởng} - \text{Phạt vi phạm}$$
 
 ### 5.3 Động cơ So lệch BOM & Bảo vệ Định mức (Snapshot & Override Engine)
-Nằm tại [`order-overrides.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/coordinator/domain/order-overrides.ts):
+Nằm tại [`order-overrides.ts`](../../src/modules/coordinator/domain/order-overrides.ts):
 - Khi tiếp nhận đơn chọn sản phẩm từ Product Master: Hệ thống chụp lại nguyên bản định mức hoa (`order.product.bom`).
 - Nếu Sales hoặc Điều phối thay đổi loại hoa (ví dụ đổi hoa hồng ngoại thành hoa hồng nội địa), hàm `diffAgainstSnapshot` tự động phát hiện sai lệch và ghi nhận vào `order_items[0].metadata.overrides[]` để thợ hoa và kế toán đối soát giá vốn chính xác.
 

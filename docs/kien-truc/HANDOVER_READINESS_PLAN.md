@@ -2,7 +2,7 @@
 
 > Phạm vi: các việc thực hiện trước hoặc cùng lúc bàn giao repo smeOS cho khách hàng, sau khi PR #107 (khắc phục nhánh Enterprise UI/UX) đã hợp nhất vào `main`.
 > Chủ sở hữu: Product Owner. Nhánh thực thi: `claude/zen-carson-os8a8r`, kết thúc bằng một PR vào `main`.
-> Thời lượng: 5 ngày làm việc (mục 8). Cách dùng: mỗi commit tick đúng dòng của nó trong cùng commit và điền mã commit vào bảng mục 9.
+> Hạn bàn giao: 10/11/2026. Thời lượng: 5 ngày làm việc (mục 8). Cách dùng: mỗi commit tick đúng dòng của nó trong cùng commit và điền mã commit vào bảng mục 9.
 
 ## 1. Mục tiêu và tiêu chí hoàn tất
 
@@ -14,23 +14,23 @@
 
 Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, tách 87 tệp > 350 dòng, nâng giao diện Thẻ chào.
 
-## 2. Quyết định cần PO trước khi bắt đầu
+## 2. Quyết định của PO (03/11/2026)
 
-| # | Câu hỏi | Ảnh hưởng | Mặc định nếu không có trả lời |
+| # | Nội dung | Quyết định | Việc liên quan |
 |---|---|---|---|
-| Q1 | Tên pháp nhân sở hữu và loại giấy phép | H1-1 | Giấy phép độc quyền (proprietary, mọi quyền được bảo lưu) — chờ tên pháp nhân, không tự điền |
-| Q2 | Hạn bàn giao và hợp đồng có yêu cầu WCAG 2.2 AA hay enterprise grade không | Thứ tự ưu tiên H3/H4 | Làm đủ H1–H4 theo lịch mục 8 |
-| Q3 | Người kiểm trình đọc màn hình: một người có máy Mac (VoiceOver, macOS + iOS) và một máy Windows (NVDA) | H3-3 | Không thực hiện được H3-3; biên bản ghi rõ phần chưa kiểm |
-| Q4 | 4 tệp tên giống tài liệu agent mà `npm run handover:check` cảnh báo: giữ trong gói hay loại | H1-3 | Loại khỏi gói bằng `export-ignore` |
-| Q5 | Các tệp Excel tên `…_alg.xlsx` trong `docs/Nhập liệu/` có phải dữ liệu của khách hàng ALG không | H1-5 | Loại khỏi gói bằng `export-ignore` |
+| Q1 | Chủ sở hữu và giấy phép | Công ty Cổ phần Công nghệ Avi Lotus Group; giấy phép độc quyền, bảo lưu mọi quyền | H1-1 |
+| Q2 | Hạn bàn giao | 10/11/2026; làm đủ H1–H4 theo lịch mục 8 | Toàn bộ |
+| Q3 | Kiểm bằng trình đọc màn hình | Không thực hiện trong đợt này; biên bản ghi "Chưa kiểm" | H3-3 |
+| Q4 | 4 tài liệu hướng dẫn agent trong `docs/` | Loại khỏi gói bàn giao | H1-3 |
+| Q5 | Tệp Excel `*_ALG*.xlsx` trong `docs/Nhập liệu/` | Loại khỏi gói bàn giao | H1-5 |
 
 ## 3. H1 — Pháp lý và gói bàn giao (0,5 ngày)
 
-- [ ] **H1-1** Tệp `LICENSE` ở gốc repo theo Q1; `package.json` thêm `"license": "UNLICENSED"` (gói `private`, không phát hành npm).
-- [ ] **H1-2** Gói bàn giao dựng bằng `git archive` từ tag `handover-<yyyy-mm-dd>` trên `main`. Gói không kèm lịch sử git, nên tài liệu ALG/Avi Florist (đã gỡ khỏi cây thư mục, còn trong lịch sử) không có trong gói. Kiểm: `npm run handover:check` xanh; không có `.docx`/`.pptx`/`.xlsx` của khách, không có `.env`, quét bí mật bằng job `security` (gitleaks) của CI; ghi SHA-256 của gói.
-- [ ] **H1-3** Xử lý 4 tệp cảnh báo của `handover:check` theo Q4 (`.gitattributes` `export-ignore`).
-- [ ] **H1-4** 191 liên kết `file:///Users/…` trong `docs/`: đổi thành liên kết tương đối khi tệp đích có trong repo, bỏ phần đường dẫn khi không có. Kiểm: `grep -rn "file:///Users" docs` rỗng; `npm run check:docs` xanh.
-- [ ] **H1-5** Tệp Excel ALG trong `docs/Nhập liệu/` theo Q5.
+- [x] **H1-1** Tệp `LICENSE` ở gốc repo (song ngữ Việt–Anh) theo Q1; `package.json` có `"license": "UNLICENSED"` (gói `private`, không phát hành npm).
+- [ ] **H1-2** Gói bàn giao dựng bằng `git archive` từ tag `handover-<yyyy-mm-dd>` trên `main`. Gói không kèm lịch sử git, nên tài liệu ALG/Avi Florist (đã gỡ khỏi cây thư mục, còn trong lịch sử) không có trong gói. Kiểm: `npm run handover:check <tag>` xanh (chặn cấu hình và tài liệu agent, tệp mang tên khách hàng khác, đường dẫn `file://` tới máy cá nhân — luật ở `scripts/handover-rules.mjs`, test `scripts/handover-rules.test.ts`); không có `.env`; quét bí mật bằng job `security` (gitleaks) của CI; ghi SHA-256 của gói.
+- [x] **H1-3** 4 tài liệu agent loại khỏi gói theo Q4 (`.gitattributes` `export-ignore`); `handover:check` chặn thay vì cảnh báo.
+- [x] **H1-4** Liên kết `file://` tuyệt đối tới máy cá nhân trong `docs/` (215 liên kết, 22 tệp): 213 đổi thành liên kết tương đối, 2 liên kết tới tệp không còn trong repo giữ lại văn bản. Kiểm: `handover:check` không còn mục "đường dẫn máy cá nhân"; `npm run check:docs` xanh.
+- [x] **H1-5** 2 tệp Excel ALG trong `docs/Nhập liệu/` loại khỏi gói theo Q5 (`export-ignore`); không mã nào tham chiếu tới hai tệp này.
 
 ## 4. H2 — Hiệu năng tải trang (1 ngày)
 
@@ -67,27 +67,27 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 
 | Ngày | Việc |
 |---|---|
-| 1 | H1 (sau khi có Q1, Q4, Q5); H2-1, H2-2 |
-| 2 | H2-3; H3-1 |
-| 3 | H3-1 (tiếp), H4-1 |
-| 4 | H3-2, H4-2; gửi phiếu kiểm H3-3 cho người kiểm |
-| 5 | H3-3 (người kiểm), H3-4, H5 |
+| 03–04/11 | H1; H2-1, H2-2 |
+| 05/11 | H2-3; H3-1 |
+| 06/11 | H3-1 (tiếp), H4-1 |
+| 09/11 | H3-2, H4-2, H3-4; H5-1, H5-2 |
+| 10/11 | Hợp nhất PR; H5-3 dựng gói và bàn giao |
 
 ## 9. Bảng theo dõi
 
 | Việc | Trạng thái | Commit | Cổng đã chạy | Ghi chú |
 |---|---|---|---|---|
-| H1-1 | Chưa làm | | | Chờ Q1 |
+| H1-1 | Xong | `git log --grep "H1-1"` | `npm test`, `check:docs` | |
 | H1-2 | Chưa làm | | | |
-| H1-3 | Chưa làm | | | Chờ Q4 |
-| H1-4 | Chưa làm | | | |
-| H1-5 | Chưa làm | | | Chờ Q5 |
+| H1-3 | Xong | `git log --grep "H1-3"` | `handover:check`, `npm test` | |
+| H1-4 | Xong | `git log --grep "H1-3"` | `check:docs`, `handover:check` | Cùng commit với H1-3 |
+| H1-5 | Xong | `git log --grep "H1-3"` | `handover:check` | Cùng commit với H1-3 |
 | H2-1 | Chưa làm | | | |
 | H2-2 | Chưa làm | | | |
 | H2-3 | Chưa làm | | | |
 | H3-1 | Chưa làm | | | |
 | H3-2 | Chưa làm | | | |
-| H3-3 | Chưa làm | | | Chờ Q3 |
+| H3-3 | Không thực hiện | | | Theo Q3 |
 | H3-4 | Chưa làm | | | |
 | H4-1 | Chưa làm | | | |
 | H4-2 | Chưa làm | | | |
@@ -100,9 +100,9 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 
 | # | Rủi ro | Mức | Kiểm soát |
 |---|---|---|---|
-| R1 | Không có người kiểm VoiceOver/NVDA | Cao | Biên bản ghi rõ phần chưa kiểm; phần tự động (H3-1) vẫn đứng làm bằng chứng |
+| R1 | Không kiểm bằng trình đọc màn hình (Q3) | Cao | Biên bản ghi "Chưa kiểm"; phần tự động (H3-1) làm bằng chứng; phiếu kiểm để sẵn cho đợt sau |
 | R2 | Số đo hiệu năng trong môi trường sandbox khác thiết bị thật | Trung bình | Ghi rõ là số đo lab, nêu cấu hình mô phỏng; lặp lại trên máy chủ staging khi có |
 | R3 | Seed thiếu dữ liệu cho tuyến công khai cần mã/token | Trung bình | Bổ sung seed E2E; không thêm dữ liệu giả vào mã sản phẩm |
 | R4 | Ảnh mốc mới chập chờn do dữ liệu/thời gian | Trung bình | Dữ liệu và thời gian cố định, che vùng động, ngưỡng 5% như hiện hành |
 | R5 | H3-1 phát hiện nhiều lỗi hơn khung sửa 1 ngày | Trung bình | Sửa `critical` trước; phần còn lại ghi vào lộ trình kèm tuyến và mức độ, không che bằng allowlist |
-| R6 | 191 liên kết `file:///` trỏ tới tệp không còn | Thấp | Bỏ phần đường dẫn, giữ tên tệp làm văn bản |
+| R6 | Liên kết `file://` trỏ tới tệp không còn | Thấp | Bỏ phần đường dẫn, giữ văn bản liên kết; `handover:check` chặn tái phát |

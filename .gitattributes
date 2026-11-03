@@ -5,3 +5,11 @@ CLAUDE.md export-ignore
 .agents/ export-ignore
 AGENTS.md export-ignore
 .agent-studio/ export-ignore
+
+# Tài liệu hướng dẫn agent nội bộ và dữ liệu nhập mẫu của khách hàng — không bàn giao
+# (quyết định PO, docs/kien-truc/HANDOVER_READINESS_PLAN.md mục 2 Q4, Q5)
+docs/archive/guides/M01_FLORAOS_VISION_CODING_AGENT_GUIDE.md export-ignore
+docs/archive/historical/SMEOS_MEUX_Supplemental_Kit/08_AGENT_EXECUTION_PROTOCOL.md export-ignore
+docs/governance/sdagf/AI_AGENT_MASTER_PROMPT.md export-ignore
+docs/n*/nangcap*catalog/universal_catalog_studio_handoff/AI_CODING_AGENT_MASTER_PROMPT_VI.md export-ignore
+docs/Nh*/*_ALG*.xlsx export-ignore

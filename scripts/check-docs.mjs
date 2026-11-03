@@ -127,7 +127,7 @@ for (const t of tenant) if (!trunc.has(t)) bao(`bảng tenant "${t}" không nằ
 
 // ── 4. Tài liệu cho agent ─────────────────────────────────────────────────
 // CLAUDE.md nạp vào MỌI phiên — giữ nhỏ. Đường dẫn/lệnh trong tài liệu agent
-// phải có thật: link `file:///Users/...` hỏng và `HARVEST_MANIFEST.md` sai chỗ
+// phải có thật: link `file://` tuyệt đối tới máy cá nhân bị hỏng và `HARVEST_MANIFEST.md` sai chỗ
 // từng nằm đó mà không ai biết (05/10/2026).
 console.log("── Tài liệu cho agent")
 const CLAUDE_MD_MAX = 6144
