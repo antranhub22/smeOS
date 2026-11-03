@@ -63,6 +63,9 @@
   - Mục điều hướng cao 36px (mục con 32px), icon 18px; trên màn cảm ứng cao 44px. Đang chọn: nền `bg-primary-muted`, chữ `text-primary`, vạch nhấn trái — tách biệt với hover `bg-surface-alt`.
   - Khi thu gọn: ô icon 40px, tooltip định vị cố định theo viewport (không bị vùng cuộn cắt), có cả khi focus bàn phím.
   - Chân sidebar: một hàng Copilot (`⌘K`) và một hàng người dùng (ảnh đại diện, tên, vai, đăng xuất).
+  - Mặc định chỉ mở nhóm Việc hôm nay và nhóm chứa trang hiện tại; nhóm người dùng đã tự đóng/mở giữ theo lựa chọn (`nav-group-layout.ts` → `isNavGroupExpanded`).
+  - Mục đang chọn là mục có href khớp dài nhất với đường dẫn (`resolveActiveHref`): ở `/cai-dat/ma-tran-uudai` chỉ "Ưu đãi" sáng, "Cài đặt tiệm" (`/cai-dat`) không sáng.
+  - Từ 3 mục "Ma trận …" trở lên trong cùng một nhóm được gom vào mục con "Ma trận quản trị" (đóng mặc định, tự mở khi đang ở một trang ma trận; nhãn con bỏ tiền tố "Ma trận"). Nhóm chỉ gồm ma trận (SaaS Mother "Ma trận 4 tầng") giữ nguyên.
 - **Mobile BottomNav:**
   - Slot 1: Trang chủ (`/`).
   - Slot 2: Ô thứ hai động theo vai `mobileSecondSlot(can, roleUx)` (vd: sales → Khách hàng, coordinator → Điều phối).

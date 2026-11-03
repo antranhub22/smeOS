@@ -4,12 +4,19 @@
  * desktop-nav-group.tsx — Render một nhóm điều hướng trong Sidebar (SRP)
  */
 
-import { ChevronDown, BarChart3 } from "@/components/ui/icons"
-import { cn } from "@/lib/utils"
+import { BarChart3, LayoutGrid } from "@/components/ui/icons"
 import type { NavEntry, NavGroup as NavGroupType } from "./nav-model"
 import { isToolkitGroupKey } from "./nav/nav-types"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { NavSectionHeader } from "./nav-section-header"
+import { NavSubTree } from "./nav-sub-tree"
+import {
+  MATRIX_SUBTREE_LABEL,
+  isEntryActive,
+  matrixChildLabel,
+  matrixSubtreeKey,
+  splitMatrixEntries,
+} from "./nav-group-layout"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { ToolkitShortcutsGroup } from "./toolkit-shortcuts-group"
 import { getAllToolkitNavEntries } from "./nav-toolkit-shortcuts"
@@ -18,6 +25,7 @@ export interface DesktopNavGroupProps {
   group: NavGroupType
   collapsed: boolean
   expanded: boolean
+  /** href mục đang chọn (khớp dài nhất — xem resolveActiveHref) */
   pathname: string
   reportsOpen: boolean
   /** ID tổ chức hiện tại — dùng để lưu shortcuts per-org */
@@ -27,6 +35,8 @@ export interface DesktopNavGroupProps {
    * Chỉ cần khi nhóm là ToolkitGroupKey.
    */
   allNavEntries?: NavEntry[]
+  /** Trạng thái đóng/mở đã lưu của các mục con (vd: "quan-tri:ma-tran") */
+  subtreeOpen?: Record<string, boolean>
   onToggleGroup: (key: string, current: boolean) => void
   onToggleReports: (next: boolean) => void
   onNavigate: (href: string) => void
@@ -40,12 +50,12 @@ export function DesktopNavGroup({
   reportsOpen,
   orgId,
   allNavEntries,
+  subtreeOpen,
   onToggleGroup,
   onToggleReports,
   onNavigate,
 }: DesktopNavGroupProps) {
-  const isActive = (entry: NavEntry) =>
-    pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
+  const isActive = (entry: NavEntry) => isEntryActive(entry, pathname)
 
   // ── Nhóm Công cụ (StoreOS: "cong-cu", ChainOS: "cong-cu-chuoi", SaaS Ngành: "cong-cu-ban-hang") ───────
   if (isToolkitGroupKey(group.key)) {
@@ -103,8 +113,6 @@ export function DesktopNavGroup({
   if (group.key === "viec-chinh") {
     const homeEntry = group.entries.find((e) => e.href === "/")
     const reportEntries = group.entries.filter((e) => e.href !== "/")
-    const isReportActive = reportEntries.some((e) => isActive(e)) || pathname === "/so-lieu"
-    const highlightReports = isReportActive && !reportsOpen
 
     return (
       <div className="flex flex-col gap-px">
@@ -120,58 +128,27 @@ export function DesktopNavGroup({
         )}
 
         {reportEntries.length > 0 && (
-          <>
-            <button
-              type="button"
-              onClick={() => onToggleReports(!reportsOpen)}
-              aria-expanded={reportsOpen}
-              className={cn(
-                "group relative flex h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-body-sm font-medium",
-                "transition-colors duration-150 pointer-coarse:h-11",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-inset",
-                highlightReports
-                  ? "bg-primary-muted font-semibold text-primary"
-                  : "text-text-muted hover:bg-surface-alt hover:text-text"
-              )}
-            >
-              <BarChart3
-                size={18}
-                weight={isReportActive ? "fill" : "regular"}
-                aria-hidden
-                className={cn("shrink-0", isReportActive ? "text-primary" : "text-text-muted group-hover:text-text")}
-              />
-              <span className="min-w-0 flex-1 truncate">Báo cáo</span>
-              <ChevronDown
-                size={14}
-                aria-hidden
-                className={cn(
-                  "shrink-0 text-text-muted transition-transform duration-150 group-hover:text-text",
-                  !reportsOpen && "-rotate-90"
-                )}
-              />
-            </button>
-
-            {reportsOpen && (
-              <div className="ml-5 flex flex-col gap-px border-l border-border pl-2">
-                {reportEntries.map((item) => (
-                  <DesktopNavItem
-                    key={item.href}
-                    item={item}
-                    active={isActive(item)}
-                    isSubItem
-                    iconComponent={ICONS[item.iconKey]}
-                    onClick={() => onNavigate(item.href)}
-                  />
-                ))}
-              </div>
-            )}
-          </>
+          <NavSubTree
+            label="Báo cáo"
+            icon={BarChart3}
+            entries={reportEntries}
+            open={reportsOpen}
+            pathname={pathname}
+            extraActive={pathname === "/so-lieu"}
+            onToggle={() => onToggleReports(!reportsOpen)}
+            onNavigate={onNavigate}
+          />
         )}
       </div>
     )
   }
 
-  // ── Nhóm thông thường — đóng/mở được ────────────────────────
+  // ── Nhóm thông thường — đóng/mở được, gom mục "Ma trận …" ───
+  const { primary, matrix } = splitMatrixEntries(group.entries)
+  const matrixKey = matrixSubtreeKey(group.key)
+  const matrixOpen =
+    matrix.some((e) => isEntryActive(e, pathname)) || (subtreeOpen?.[matrixKey] ?? false)
+
   return (
     <div className="flex flex-col gap-px">
       <NavSectionHeader
@@ -181,16 +158,31 @@ export function DesktopNavGroup({
         onToggle={() => onToggleGroup(group.key, expanded)}
       />
 
-      {expanded &&
-        group.entries.map((entry) => (
-          <DesktopNavItem
-            key={entry.href}
-            item={entry}
-            active={isActive(entry)}
-            iconComponent={ICONS[entry.iconKey]}
-            onClick={() => onNavigate(entry.href)}
-          />
-        ))}
+      {expanded && (
+        <>
+          {primary.map((entry) => (
+            <DesktopNavItem
+              key={entry.href}
+              item={entry}
+              active={isActive(entry)}
+              iconComponent={ICONS[entry.iconKey]}
+              onClick={() => onNavigate(entry.href)}
+            />
+          ))}
+          {matrix.length > 0 && (
+            <NavSubTree
+              label={MATRIX_SUBTREE_LABEL}
+              icon={LayoutGrid}
+              entries={matrix}
+              open={matrixOpen}
+              pathname={pathname}
+              childLabel={matrixChildLabel}
+              onToggle={() => onToggleGroup(matrixKey, matrixOpen)}
+              onNavigate={onNavigate}
+            />
+          )}
+        </>
+      )}
     </div>
   )
 }

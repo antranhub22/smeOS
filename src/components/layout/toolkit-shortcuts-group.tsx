@@ -18,6 +18,7 @@ import { useI18n } from "@/lib/i18n"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { NavSectionHeader } from "./nav-section-header"
+import { isEntryActive } from "./nav-group-layout"
 import type { NavEntry } from "./nav-model"
 import {
   getEffectiveShortcutKeys,
@@ -170,8 +171,7 @@ export function ToolkitShortcutsGroup({
     })
   }, [allNavEntries, libraryEntry, validPinnedKeys])
 
-  const isActive = (entry: NavEntry) =>
-    pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
+  const isActive = (entry: NavEntry) => isEntryActive(entry, pathname)
 
   // ── Collapsed mode: chỉ icon ─────────────────────────────────
   if (collapsed) {

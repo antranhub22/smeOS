@@ -7,7 +7,7 @@
  * - Thu gọn (icon-only, 64px) / Mở rộng (256px) — lưu localStorage
  * - Header phân biệt tầng kiến trúc (SaaS Mother / Ngành / ChainOS / StoreOS)
  * - Tìm kiếm nhanh với phím tắt `/`
- * - Nhóm mục có thể đóng/mở — lưu trạng thái theo org
+ * - Nhóm mục có thể đóng/mở — mặc định chỉ mở nhóm chứa trang hiện tại, lưu trạng thái theo org
  * - Nav items với tooltip khi thu gọn, active indicator
  */
 
@@ -23,6 +23,8 @@ import { DesktopNavGroup } from "./desktop-nav-group"
 import { DesktopNavFooter } from "./desktop-nav-footer"
 import { DesktopNavSearch } from "./desktop-nav-search"
 import { NavSectionHeader } from "./nav-section-header"
+import { isEntryActive, isNavGroupExpanded, resolveActiveHref } from "./nav-group-layout"
+import { getAllToolkitNavEntries } from "./nav-toolkit-shortcuts"
 import {
   loadNavGroups,
   loadReportsOpen,
@@ -95,6 +97,16 @@ export function DesktopNav({
     [navView]
   )
 
+  // Mục đang chọn: href khớp dài nhất (kể cả lối tắt công cụ ghim từ danh mục đầy đủ)
+  const activeHref = useMemo(
+    () =>
+      resolveActiveHref(
+        [...allNavEntries, ...getAllToolkitNavEntries()].map((e) => e.href),
+        pathname
+      ),
+    [allNavEntries, pathname]
+  )
+
   // ── Hydrate from localStorage ──────────────────────────────────
   useEffect(() => {
     setOpenGroups(loadNavGroups(groupsKey))
@@ -143,19 +155,8 @@ export function DesktopNav({
 
   // ── Groups ─────────────────────────────────────────────────────
   function isGroupExpanded(group: NavGroup): boolean {
-    // Nhóm chứa trang hiện tại luôn luôn mở để người dùng định vị
-    const isCurrentActive = group.entries.some(
-      (e) => pathname === e.href || (e.href !== "/" && pathname.startsWith(`${e.href}/`))
-    )
-    if (isCurrentActive) return true
-
-    // Nếu người dùng đã chủ động toggle đóng/mở nhóm -> tôn trọng lựa chọn
-    if (openGroups[group.key] !== undefined) {
-      return openGroups[group.key]!
-    }
-
-    // Mặc định: Mở tất cả các nhóm để hiển thị trọn vẹn danh mục chức năng
-    return true
+    // Mặc định chỉ mở nhóm chứa trang hiện tại; nhóm đã tự đóng/mở giữ theo lựa chọn
+    return isNavGroupExpanded(group, activeHref, openGroups)
   }
 
   function toggleGroup(key: string, current: boolean) {
@@ -200,7 +201,7 @@ export function DesktopNav({
   }
 
   function isActive(entry: NavEntry): boolean {
-    return pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
+    return isEntryActive(entry, activeHref)
   }
 
   // ── Sidebar width ──────────────────────────────────────────────
@@ -277,10 +278,11 @@ export function DesktopNav({
               group={group}
               collapsed={collapsed && !drawer}
               expanded={isGroupExpanded(group)}
-              pathname={pathname}
+              pathname={activeHref}
               reportsOpen={reportsOpen}
               orgId={orgId}
               allNavEntries={allNavEntries}
+              subtreeOpen={openGroups}
               onToggleGroup={(key, current) => toggleGroup(key, current)}
               onToggleReports={toggleReports}
               onNavigate={navigateTo}
