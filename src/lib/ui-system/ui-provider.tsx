@@ -53,7 +53,9 @@ export function UiSystemProvider({
   }, [config.preset, config.density])
 
   // Listen to external DOM changes on document.documentElement (e.g. editing data-theme / data-density in Chrome DevTools)
+  // Chỉ phục vụ chỉnh tay thuộc tính trong DevTools — không theo dõi DOM ở production.
   useEffect(() => {
+    if (process.env.NODE_ENV === "production") return
     const root = document.documentElement
     const handleMutation = () => {
       const domTheme = root.getAttribute("data-theme")

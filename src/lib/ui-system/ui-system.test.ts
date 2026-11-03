@@ -47,3 +47,17 @@ describe("UI System Presets & Foundation", () => {
     expect("spacious" in DENSITY_CONFIG).toBe(false)
   })
 })
+
+describe("UiSystemProvider — theo dõi DOM chỉ ở môi trường dev", () => {
+  it("effect MutationObserver thoát sớm ở production", async () => {
+    const { readFileSync } = await import("node:fs")
+    const path = await import("node:path")
+    const src = readFileSync(path.resolve(__dirname, "ui-provider.tsx"), "utf-8")
+    const guard = src.indexOf('if (process.env.NODE_ENV === "production") return')
+    const observer = src.indexOf("new MutationObserver(")
+    expect(guard).toBeGreaterThan(-1)
+    expect(observer).toBeGreaterThan(guard)
+    // Chốt nằm trong cùng effect với observer, không phải một effect khác phía trên.
+    expect(src.slice(guard, observer)).not.toContain("useEffect(")
+  })
+})
