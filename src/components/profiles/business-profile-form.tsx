@@ -43,6 +43,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
 
   useEffect(() => {
     if (initialData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- đồng bộ lại form khi dữ liệu ban đầu (props) đổi, chủ đích
       setDisplayName(initialData.display_name || "")
       setLegalName(initialData.legal_name || "")
       setPhone(initialData.phone || "")
