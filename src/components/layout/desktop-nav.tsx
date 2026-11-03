@@ -247,7 +247,7 @@ export function DesktopNav({
       <nav
         className={cn(
           "flex flex-1 flex-col overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:thin]",
-          collapsed ? "gap-0.5 px-3 py-3" : "gap-4 px-3 pt-2 pb-4"
+          collapsed ? "gap-0.5 px-3 py-3" : "px-3 pt-1 pb-4"
         )}
         aria-label="Menu điều hướng"
       >
@@ -272,22 +272,36 @@ export function DesktopNav({
             )}
           </div>
         ) : (
-          navView.groups.map((group) => (
-            <DesktopNavGroup
-              key={group.key}
-              group={group}
-              collapsed={collapsed && !drawer}
-              expanded={isGroupExpanded(group)}
-              pathname={activeHref}
-              reportsOpen={reportsOpen}
-              orgId={orgId}
-              allNavEntries={allNavEntries}
-              subtreeOpen={openGroups}
-              onToggleGroup={(key, current) => toggleGroup(key, current)}
-              onToggleReports={toggleReports}
-              onNavigate={navigateTo}
-            />
-          ))
+          navView.groups.map((group) => {
+            const isCollapsed = collapsed && !drawer
+            const node = (
+              <DesktopNavGroup
+                key={group.key}
+                group={group}
+                collapsed={isCollapsed}
+                expanded={isGroupExpanded(group)}
+                pathname={activeHref}
+                reportsOpen={reportsOpen}
+                orgId={orgId}
+                allNavEntries={allNavEntries}
+                subtreeOpen={openGroups}
+                onToggleGroup={(key, current) => toggleGroup(key, current)}
+                onToggleReports={toggleReports}
+                onNavigate={navigateTo}
+              />
+            )
+            // Mở rộng: mỗi nhóm là một khối, ngăn bằng đường kẻ mảnh (thu gọn đã có vạch riêng)
+            return isCollapsed ? (
+              node
+            ) : (
+              <div
+                key={group.key}
+                className="border-t border-border py-2.5 first:border-t-0 first:pt-1.5 last:pb-0"
+              >
+                {node}
+              </div>
+            )
+          })
         )}
       </nav>
 

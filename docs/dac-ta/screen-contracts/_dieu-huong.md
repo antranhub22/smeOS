@@ -59,7 +59,7 @@
 - **Bố cục sidebar desktop (chung cho StoreOS, ChainOS, SaaS Ngành, SaaS Mother):**
   - Rộng `w-64` (256px); thu gọn `w-16` (64px), phím tắt `⌘B`, trạng thái lưu `localStorage`.
   - Đầu sidebar là thẻ không gian làm việc: logo mang màu nhận diện của tầng (`nav-tier-theme.ts`: Mother `orchid`, SaaS Ngành `tone-amber`, ChainOS `tone-blue`, StoreOS `primary`), dải nhấn 2px trên cùng cùng màu, tên tổ chức ở dòng chính, nhãn tầng ở dòng phụ.
-  - Tiêu đề nhóm (`nav-section-header.tsx`): chữ nhỏ viết hoa, bỏ số thứ tự đầu nhãn và phần vai trò sau dấu "·" (`formatNavGroupLabel`); mũi tên chỉ hiện khi rê chuột hoặc khi nhóm đóng; nhóm đóng hiện số mục bên trong.
+  - Tiêu đề nhóm (`nav-section-header.tsx`): chữ nhỏ viết hoa, bỏ số thứ tự đầu nhãn và phần vai trò sau dấu "·" (`formatNavGroupLabel`); mũi tên chỉ hiện khi rê chuột hoặc khi nhóm đóng; nhóm đóng hiện số mục bên trong. Ở chế độ mở rộng, các nhóm ngăn nhau bằng đường kẻ mảnh `border-border`; đường cây dọc chỉ dùng cho mục con lồng trong mục cha (Báo cáo, Ma trận quản trị).
   - Mục điều hướng cao 36px (mục con 32px), icon 18px; trên màn cảm ứng cao 44px. Đang chọn: nền `bg-primary-muted`, chữ `text-primary`, vạch nhấn trái — tách biệt với hover `bg-surface-alt`.
   - Khi thu gọn: ô icon 40px, tooltip định vị cố định theo viewport (không bị vùng cuộn cắt), có cả khi focus bàn phím.
   - Chân sidebar: một hàng Copilot (`⌘K`) và một hàng người dùng (ảnh đại diện, tên, vai, đăng xuất).
