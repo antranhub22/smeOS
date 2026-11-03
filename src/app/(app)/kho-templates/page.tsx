@@ -13,7 +13,6 @@
 
 "use client"
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import {
@@ -40,6 +39,7 @@ import { Input } from "@/components/ui/input"
 import { TemplatePreviewModal } from "./template-preview-modal"
 import { TEMPLATE_PREVIEW_REGISTRY, SELF_MODAL_TEMPLATE_FILES } from "./preview-registry"
 import { useI18n } from "@/lib/i18n/context"
+import { PageHeader } from "@/components/ui/page-header"
 
 type TemplateFile = {
   file: string
@@ -292,13 +292,10 @@ export default function KhoTemplatesPage() {
               <LayoutTemplate size={22} strokeWidth={2} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-title-sm font-extrabold text-text">Kho mẫu ấn phẩm</h2>
-                {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-                <InfoTip label="Kho mẫu ấn phẩm" side="bottom">
-                  Xem trước {TOTAL_FILES} mẫu trên {CATEGORIES.length} nhóm chức năng.
-                </InfoTip>
-              </div>
+              <PageHeader
+                title="Kho mẫu ấn phẩm"
+                tip={<>Xem trước {TOTAL_FILES} mẫu trên {CATEGORIES.length} nhóm chức năng.</>}
+              />
             </div>
           </div>
 

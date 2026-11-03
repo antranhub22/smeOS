@@ -1,6 +1,5 @@
 "use client"
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import useSWR from "swr"
@@ -12,6 +11,7 @@ import type { AvailabilityBoardResult } from "@/modules/availability/use-cases/g
 import { HomestayCalendarMatrix } from "@/components/availability/homestay-calendar-matrix"
 import { DailyCapacityBoard } from "@/components/availability/daily-capacity-board"
 import { QuickStockBoard } from "@/components/availability/quick-stock-board"
+import { PageHeader } from "@/components/ui/page-header"
 
 const fetcher = async (url: string): Promise<AvailabilityBoardResult> => {
   const res = await fetch(url)
@@ -66,13 +66,10 @@ export default function AvailabilityPage() {
             <span className="text-primary font-bold">{pageTitle}</span>
           </div>
           {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
-          <div className="flex items-center gap-2">
-            <h2 className="text-title sm:text-display font-black text-text flex items-center gap-2">
-              <span>{pageTitle}</span>
-              <Sparkles size={18} className="text-primary" />
-            </h2>
-            <InfoTip label={pageTitle} side="bottom">{pageDesc}</InfoTip>
-          </div>
+          <PageHeader
+            title={<><span>{pageTitle}</span> <Sparkles size={18} className="text-primary" /></>}
+            tip={<>{pageDesc}</>}
+          />
         </div>
 
         {/* View mode toggle & Refresh */}

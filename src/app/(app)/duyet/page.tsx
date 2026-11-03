@@ -18,6 +18,7 @@ import {
   type PendingOptimization,
   type PendingProductCopy,
 } from "./approval-tab-panels"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function DuyetPage() {
   const { t } = useI18n()
@@ -181,7 +182,9 @@ export default function DuyetPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center border-b border-border bg-surface px-4 py-4">
-        <h2 className="text-title font-extrabold text-primary">Hàng đợi duyệt</h2>
+        <PageHeader
+          title="Hàng đợi duyệt"
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto p-4">

@@ -23,6 +23,7 @@ import {
   type RoleUxDefinition,
   type RoleUxGroup,
 } from "@/modules/organization/domain/role-ux-catalog"
+import { PageHeader } from "@/components/ui/page-header"
 
 const NHOM: RoleUxGroup[] = ["PLATFORM", "STORE", "FLOWER_NETWORK"]
 
@@ -132,12 +133,10 @@ export default function VaiTroPage() {
         >
           <ArrowLeft size={18} />
         </Link>
-        <div>
-          <h2 className="text-title font-extrabold text-primary">Vai trò</h2>
-          <div className="text-caption text-text-muted">
-            {soDungDuoc}/{ROLE_UX_CATALOG.length} vai đang dùng được
-          </div>
-        </div>
+        <PageHeader
+          title="Vai trò"
+          description={<>{soDungDuoc}/{ROLE_UX_CATALOG.length} vai đang dùng được</>}
+        />
         {tierPreviewActive && (
           <Button
             type="button"

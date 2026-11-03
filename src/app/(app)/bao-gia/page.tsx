@@ -12,6 +12,7 @@ import { CustomerQuoteBuilder } from "@/components/sales/quotation/customer-quot
 import { PartnerQuoteBuilder } from "@/components/sales/quotation/partner-quote-builder"
 import { QuotationsListView } from "@/components/sales/quotation/quotations-list-view"
 import type { ProductItem } from "@/components/sales/quotation/quotation-types"
+import { PageHeader } from "@/components/ui/page-header"
 
 type ActiveTab = "CUSTOMER" | "PARTNER" | "LIST"
 
@@ -64,12 +65,10 @@ export default function BaoGiaPage() {
           <div className="p-2 rounded-xl bg-selected text-primary">
             <Receipt className="w-5 h-5" aria-hidden="true" />
           </div>
-          <div>
-            <h2 className="text-title font-extrabold text-primary">Tạo Thẻ báo giá sản phẩm</h2>
-            <p className="text-caption text-text-muted">
-              Tạo bộ lựa chọn sản phẩm gửi khách hoặc xuất thẻ báo giá cho đối tác
-            </p>
-          </div>
+          <PageHeader
+            title="Tạo Thẻ báo giá sản phẩm"
+            description="Tạo bộ lựa chọn sản phẩm gửi khách hoặc xuất thẻ báo giá cho đối tác"
+          />
         </div>
 
         <div className="flex items-center gap-2">

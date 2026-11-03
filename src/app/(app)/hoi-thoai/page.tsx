@@ -22,12 +22,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
-import { InfoTip } from "@/components/ui/info-tip"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { Route } from "next"
 import type { ChatConversation, ChatMessage } from "@/modules/chat-assistant/domain/chat-types"
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function ChatAssistantPage() {
   const { t } = useI18n()
@@ -155,12 +155,10 @@ export default function ChatAssistantPage() {
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-bg/95 px-4 sm:px-6 py-4 backdrop-blur-sm">
         <div className="flex items-start"><MobileMenuButton /><div>
           {/* Tiêu đề tiếng Việt, ngắn; giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-          <div className="flex items-center gap-2">
-            <h2 className="text-title font-extrabold text-text">Tư vấn bán hàng</h2>
-            <InfoTip label="Tư vấn bán hàng" side="bottom">
-              Trợ lý AI tra cứu sản phẩm và lịch sử khách, trả lời khách và chốt đơn nháp chỉ với một chạm.
-            </InfoTip>
-          </div>
+          <PageHeader
+            title="Tư vấn bán hàng"
+            tip="Trợ lý AI tra cứu sản phẩm và lịch sử khách, trả lời khách và chốt đơn nháp chỉ với một chạm."
+          />
         </div></div>
 
         {/* Top-Right Action Header */}

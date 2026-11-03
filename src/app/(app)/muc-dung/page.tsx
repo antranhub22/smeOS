@@ -9,7 +9,6 @@ import {
   Layers,
   RefreshCw,
   AlertCircle,
-  Lock,
   Calendar,
 } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
@@ -17,6 +16,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
+import { PageHeader } from "@/components/ui/page-header"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface UsageSummary {
   by_feature: Array<{
@@ -80,12 +81,9 @@ export default function MucDungPage() {
 
   if (!canView) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-        <Lock className="h-12 w-12 text-text-muted mb-3" />
-        <h2 className="text-body font-bold text-text">Không có quyền truy cập</h2>
-        <p className="text-caption text-text-muted max-w-sm mt-1">
-          Tài khoản của bạn chưa được cấp mã năng lực G8 để xem mức dùng và hạn mức credit của tổ chức.
-        </p>
+      <div className="flex h-full flex-col gap-4 p-4 sm:p-6">
+        <PageHeader title="Mức dùng" />
+        <EmptyState kind="forbidden" reason="Tài khoản của bạn chưa được cấp quyền xem mức dùng và hạn mức credit của tổ chức." />
       </div>
     )
   }
@@ -116,12 +114,10 @@ export default function MucDungPage() {
 
       {/* Top Header & Tải lại */}
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-title font-extrabold text-text">Mức dùng</h2>
-          <p className="text-caption text-text-muted">
-            Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span>
-          </p>
-        </div>
+        <PageHeader
+          title="Mức dùng"
+          description={<>Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span></>}
+        />
         <Button
           variant="outline"
           size="sm"

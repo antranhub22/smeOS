@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { ProviderOrderSettings } from "@/components/creative-studio/provider-order-settings"
+import { PageHeader } from "@/components/ui/page-header"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface AllowedModel {
   key: string
@@ -123,12 +125,9 @@ export default function AiSettingsPage() {
 
   if (!canView) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-        <Lock className="h-12 w-12 text-text-muted mb-3" />
-        <h2 className="text-body font-bold text-text">Không có quyền truy cập</h2>
-        <p className="text-caption text-text-muted max-w-sm mt-1">
-          Tài khoản của bạn chưa được cấp mã năng lực U1 để xem cấu hình chính sách AI của tổ chức.
-        </p>
+      <div className="flex h-full flex-col gap-4 p-4 sm:p-6">
+        <PageHeader title="Cấu hình AI" />
+        <EmptyState kind="forbidden" reason="Tài khoản của bạn chưa được cấp quyền xem cấu hình chính sách AI của tổ chức." />
       </div>
     )
   }
@@ -176,12 +175,10 @@ export default function AiSettingsPage() {
 
       {/* Header hành động */}
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-title-sm font-extrabold text-text">Cấu hình AI</h2>
-          <p className="text-caption text-text-muted">
-            Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span> (Phạm vi áp dụng chỉ trong tổ chức hiện tại)
-          </p>
-        </div>
+        <PageHeader
+          title="Cấu hình AI"
+          description={<>Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span> (Phạm vi áp dụng chỉ trong tổ chức hiện tại)</>}
+        />
         <Button
           variant="outline"
           size="sm"

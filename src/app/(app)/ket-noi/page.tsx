@@ -13,6 +13,7 @@ import { useChannelAccounts } from "@/components/channel-connections/use-channel
 import { summarizeChannelHealth, STALE_AFTER_DAYS } from "@/modules/integration/domain/channel-session-health"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology, type IndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { PageHeader } from "@/components/ui/page-header"
 
 function getSupportedPlatforms(ti: IndustryTerminology): PlatformConfig[] {
   return [
@@ -97,14 +98,16 @@ export default function PlatformConnectionsPage() {
   return (
     <div className="flex h-full flex-col overflow-y-auto bg-bg p-4 sm:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-        <div>
-          <div className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
-            <Share2 size={13} className="text-primary" aria-hidden="true" />
-            Kênh mạng xã hội của cửa hàng
-          </div>
-          <h2 className="text-title font-black text-text mt-0.5">Kết nối kênh bán hàng</h2>
-          <p className="text-caption text-text-muted mt-1">Kết nối trang mạng xã hội và kênh nhắn tin để đăng bài sản phẩm từ smeOS</p>
-        </div>
+        <PageHeader
+          breadcrumbs={
+            <span className="font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <Share2 size={13} className="text-primary" aria-hidden="true" />
+              Kênh mạng xã hội của cửa hàng
+            </span>
+          }
+          title="Kết nối kênh bán hàng"
+          description="Kết nối trang mạng xã hội và kênh nhắn tin để đăng bài sản phẩm từ smeOS"
+        />
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="success" className="text-caption px-2.5 py-1">
             <CheckCircle2 size={13} aria-hidden="true" />

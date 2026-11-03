@@ -1,6 +1,5 @@
 "use client";
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -30,6 +29,7 @@ import { useMarketIntelligenceData } from "@/components/market-intelligence/use-
 import { useSession } from "@/lib/session";
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile";
 import type { IndustryTerminology } from "@/modules/organization/domain/industry-profile";
+import { PageHeader } from "@/components/ui/page-header"
 
 function buildGuidanceMap(ti: IndustryTerminology): Record<FeatureKey, { badge: string; title: string; description: string; tips: string[] }> {
   return {
@@ -107,16 +107,10 @@ export default function MarketIntelligencePage() {
       {/* Header Chuẩn SSOT */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border bg-surface px-6 py-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-title font-bold tracking-tight text-text flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" />
-              Xu hướng thị trường
-            </h2>
-            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-            <InfoTip label="Xu hướng thị trường" side="bottom">
-              Tìm dịp, xu hướng và chủ đề nên làm — theo thời gian, từ khóa hoặc ảnh mẫu.
-            </InfoTip>
-          </div>
+          <PageHeader
+            title={<><TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" /> Xu hướng thị trường</>}
+            tip="Tìm dịp, xu hướng và chủ đề nên làm — theo thời gian, từ khóa hoặc ảnh mẫu."
+          />
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">

@@ -7,7 +7,6 @@ import {
   Search,
   RefreshCw,
   AlertCircle,
-  Lock,
   Eye,
   Calendar,
   FileCode,
@@ -19,6 +18,8 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog } from "@/components/ui/dialog"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
+import { PageHeader } from "@/components/ui/page-header"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface AuditLogRow {
   id: string
@@ -81,12 +82,9 @@ export default function AuditLogsPage() {
 
   if (!canView) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-        <Lock className="h-12 w-12 text-text-muted mb-3" />
-        <h2 className="text-body font-bold text-text">Không có quyền truy cập</h2>
-        <p className="text-caption text-text-muted max-w-sm mt-1">
-          Tài khoản của bạn chưa được cấp mã năng lực G9 để xem nhật ký kiểm toán hệ thống.
-        </p>
+      <div className="flex h-full flex-col gap-4 p-4 sm:p-6">
+        <PageHeader title="Nhật ký kiểm toán" />
+        <EmptyState kind="forbidden" reason="Tài khoản của bạn chưa được cấp quyền xem nhật ký kiểm toán hệ thống." />
       </div>
     )
   }
@@ -116,12 +114,10 @@ export default function AuditLogsPage() {
 
       {/* Top Header & Tải lại */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-title font-extrabold text-text">Nhật Ký Kiểm Toán</h2>
-          <p className="text-caption text-text-muted">
-            Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span>
-          </p>
-        </div>
+        <PageHeader
+          title="Nhật Ký Kiểm Toán"
+          description={<>Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span></>}
+        />
         <div className="flex items-center gap-2.5">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-muted z-10" />

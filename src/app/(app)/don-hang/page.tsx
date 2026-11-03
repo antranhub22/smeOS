@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Plus, RefreshCw, MessageSquarePlus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { InfoTip } from "@/components/ui/info-tip"
 import { CreateOrderModal } from "@/components/orders/create-order-modal"
 import { OrderDetailModal } from "@/components/orders/order-detail-modal"
 import { ChatOrderCheckoutModal } from "@/components/chat/chat-order-checkout-modal"
@@ -28,6 +27,7 @@ import {
 } from "@/components/orders/workspace/role-tabs"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
+import { PageHeader } from "@/components/ui/page-header"
 
 /** Một khối trong tab: tiêu đề ngắn + nội dung (đơn Thẻ chào nhúng nguyên vẹn, đơn nguồn khác dùng màn mới). */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -80,13 +80,10 @@ export default function DonHangPage() {
     <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* 1. Header chuẩn FloraOS */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-title font-extrabold text-text">{t("orders.header.title")}</h2>
-          {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
-          <InfoTip label={t("orders.header.title")} side="bottom">
-            Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong.
-          </InfoTip>
-        </div>
+        <PageHeader
+          title={t("orders.header.title")}
+          tip="Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong."
+        />
 
         {/* Top-Right Action Header: 1 primary + 2 secondary/ghost */}
         <div className="flex items-center gap-1.5 sm:gap-2">

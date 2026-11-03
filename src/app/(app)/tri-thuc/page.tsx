@@ -1,6 +1,5 @@
 "use client"
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react"
 import Link from "next/link"
@@ -25,6 +24,7 @@ import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { Route } from "next"
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function KnowledgeBasePage() {
   const { t } = useI18n()
@@ -64,13 +64,10 @@ export default function KnowledgeBasePage() {
       {/* 1. Standardized Top-Right Action Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-bg/95 px-6 py-4 backdrop-blur-sm">
         <div className="flex items-start"><MobileMenuButton /><div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-title font-extrabold text-text">Cẩm nang tri thức</h2>
-            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-            <InfoTip label="Cẩm nang tri thức" side="bottom">
-              Bảng tra cứu các trường bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS.
-            </InfoTip>
-          </div>
+          <PageHeader
+            title="Cẩm nang tri thức"
+            tip="Bảng tra cứu các trường bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS."
+          />
         </div></div>
 
         {/* Top-Right Action Toolbar (K2: 1 primary + 1 secondary) */}

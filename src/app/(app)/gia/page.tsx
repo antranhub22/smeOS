@@ -1,6 +1,5 @@
 "use client"
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -12,6 +11,7 @@ import { useSession } from "@/lib/session"
 import type { SurchargeGroup } from "@/modules/products/domain/pricing"
 import { PricingCalculatorCard } from "./pricing-calculator-card"
 import { PricingRulesConfigCard } from "./pricing-rules-config-card"
+import { PageHeader } from "@/components/ui/page-header"
 
 type FloorCeilingRatio = { floorRatio: number; ceilingRatio: number }
 
@@ -70,9 +70,7 @@ export default function GiaPage() {
   if (dangTai) {
     return (
       <div className="flex h-full flex-col overflow-hidden">
-        <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-          <h2 className="text-title font-extrabold text-primary">Tính giá sản phẩm</h2>
-        </header>
+        <PageHeader className="flex-shrink-0 border-b border-border bg-surface px-4 py-4" title="Tính giá sản phẩm" />
         <div className="p-4">
           <SkeletonBlock lines={5} label="Đang tải cấu hình giá" />
         </div>
@@ -95,18 +93,17 @@ export default function GiaPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-title font-extrabold text-primary">Tính giá sản phẩm</h2>
-          {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-          <InfoTip label="Tính giá sản phẩm" side="bottom">
-            Đối soát giá bán, hoa hồng xưởng và quy tắc giá sàn, giá trần.
-          </InfoTip>
-        </div>
-        <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
-          <ArrowLeft size={16} /> Quay về Trang chủ
-        </Button>
-      </header>
+      {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+      <PageHeader
+        className="flex-shrink-0 border-b border-border bg-surface px-4 py-4"
+        title="Tính giá sản phẩm"
+        tip="Đối soát giá bán, hoa hồng xưởng và quy tắc giá sàn, giá trần."
+        actions={
+          <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
+            <ArrowLeft size={16} /> Quay về Trang chủ
+          </Button>
+        }
+      />
 
       <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
         <p className="rounded-xl bg-surface-alt px-3.5 py-2.5 text-body-sm text-text">

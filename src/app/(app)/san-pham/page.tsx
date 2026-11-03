@@ -6,7 +6,6 @@ import { Plus, Sparkles, RefreshCw, FileSpreadsheet, Download } from "@/componen
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
-import { InfoTip } from "@/components/ui/info-tip"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import {
@@ -28,6 +27,7 @@ import {
 } from "@/components/products/product-filter-types"
 import { ProductBulkStatusBar } from "@/components/products/product-bulk-status-bar"
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
+import { PageHeader } from "@/components/ui/page-header"
 
 
 
@@ -111,13 +111,10 @@ export default function SanPhamPage() {
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header tác vụ */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-3.5 gap-3">
-        <div className="flex items-center gap-2">
-          <h2 className="text-title font-extrabold text-primary">{ti("sampleProduct")}</h2>
-          {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
-          <InfoTip label={ti("sampleProduct")} side="bottom">
-            Kho {ti("catalogTitle").toLowerCase()}: thêm, sửa và ẩn {ti("sampleProduct").toLowerCase()} để hiện trên catalog bán hàng.
-          </InfoTip>
-        </div>
+        <PageHeader
+          title={ti("sampleProduct")}
+          tip={<>Kho {ti("catalogTitle").toLowerCase()}: thêm, sửa và ẩn {ti("sampleProduct").toLowerCase()} để hiện trên catalog bán hàng.</>}
+        />
         <div className="flex items-center gap-2">
           <Button
             type="button"

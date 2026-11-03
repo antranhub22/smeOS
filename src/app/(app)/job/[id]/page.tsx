@@ -12,6 +12,7 @@ import { NHAN_TINH_NANG } from "@/lib/feature-labels"
 
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology, type IndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { PageHeader } from "@/components/ui/page-header"
 
 type JobDetail = {
   id: string
@@ -175,12 +176,10 @@ export default function JobDetailPage() {
         >
           <ArrowLeft size={18} />
         </Button>
-        <div>
-          <h2 className="text-title font-extrabold text-primary">
-            {job ? NHAN_TINH_NANG[job.feature] ?? job.feature : "Chi tiết tác vụ"}
-          </h2>
-          <div className="text-caption text-text-muted">Mã tác vụ: #{jobId.slice(0, 8)}</div>
-        </div>
+        <PageHeader
+          title={job ? NHAN_TINH_NANG[job.feature] ?? job.feature : "Chi tiết tác vụ"}
+          description={<>Mã tác vụ: #{jobId.slice(0, 8)}</>}
+        />
       </header>
 
       <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 max-w-3xl mx-auto w-full">

@@ -20,6 +20,7 @@ import { ActionCardOrder } from "@/components/internal-chat/action-card-order"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function InternalChatPage() {
   const { t } = useI18n()
@@ -112,10 +113,9 @@ export default function InternalChatPage() {
         {/* Header danh sách */}
         <div className="p-4 border-b border-border space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-body font-bold text-text flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-primary" />
-              Tin nhắn nội bộ
-            </h2>
+            <PageHeader
+              title={<><MessageSquare className="w-5 h-5 text-primary" /> Tin nhắn nội bộ</>}
+            />
             <span className="text-caption font-medium text-primary bg-primary-subtle px-2.5 py-0.5 rounded-full border border-primary/20">
               Đa ngành SaaS
             </span>

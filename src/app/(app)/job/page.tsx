@@ -8,6 +8,7 @@ import { AlertTriangle, CheckCircle2, Clock, Loader2, XCircle, ChevronRight } fr
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
 import { NHAN_TINH_NANG } from "@/lib/feature-labels"
+import { PageHeader } from "@/components/ui/page-header"
 
 type Job = {
   id: string
@@ -113,7 +114,9 @@ export default function JobListPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center border-b border-border bg-surface px-4 py-4">
-        <h2 className="text-title font-extrabold text-primary">Giao hàng & bàn giao</h2>
+        <PageHeader
+          title="Giao hàng & bàn giao"
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
