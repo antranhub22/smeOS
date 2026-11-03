@@ -65,7 +65,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 - [x] **P1-6** `src/modules/products/domain/sales-scripts-catalog.ts` dùng `formatters.ts` thay cho `Intl` trực tiếp (ratchet 173 tệp).
 - [x] **P1-7** `tests/unit/ux/feature-guidance-contrast.test.ts` đọc token từ `src/styles/tokens/color.css` — nơi token đã chuyển tới; giá trị `#FFFFFF` giữ nguyên.
 - [x] **P1-8** (B2) 18 lỗi ESLint mới: thay `as any` bằng enum Prisma có kiểu ở `crm/infra/*`, `print/infra/*`, các test; nạp dữ liệu trong `useEffect` ở `components/marketing-center/*`, `components/sales/quotation/*` theo quy ước hiện hành của dự án (chú thích `eslint-disable-next-line react-hooks/set-state-in-effect` kèm lý do, nợ #149 — dự án chưa có hook nạp dữ liệu chung); sửa `components/ui/form-field.tsx`. Kiểm: `npm run lint:ratchet` xanh, baseline ESLint không đổi.
-- [ ] **P1-9** (B3) 59 chỗ lệch `check:docs`: 33 endpoint vào đặc tả 06; 7 bảng + 9 enum vào đặc tả 07; 6 bảng (`asset_usages`, `campaigns`, `quotations`, `customer_segments`, `customer_interactions`, `print_renditions`) vào `TENANT_TABLES`; ca thử cách ly cho `asset_usages`, `customer_segments`, `customer_interactions`, `print_renditions`.
+- [x] **P1-9** (B3) 59 chỗ lệch `check:docs`: 33 endpoint vào đặc tả 06; 7 bảng + 9 enum vào đặc tả 07; 6 bảng (`asset_usages`, `campaigns`, `quotations`, `customer_segments`, `customer_interactions`, `print_renditions`) vào `TENANT_TABLES`; ca thử cách ly cho `asset_usages`, `customer_segments`, `customer_interactions`, `print_renditions`.
 - [ ] **P1-10** (E1) Migration đổi tên index `customer_interactions_organization_id_customer_id_occurred_at_i` cho khớp tên Prisma sinh. Kiểm: `prisma migrate diff` rỗng.
 - [ ] **P1-11** (Q4) `.github/workflows/ui-weekly.yml`: thay `npm run db:test:setup || true` bằng `prisma migrate deploy` trên `DATABASE_URL_TEST` của service Postgres; bỏ `|| true`.
 
@@ -110,7 +110,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P1-6 | Xong | xem `git log --grep "P1-6"` | i18n ratchet + products/domain 169/169 | toLocaleString → formatNumber (cùng định dạng vi-VN) |
 | P1-7 | Xong | xem `git log --grep "P1-7"` | feature-guidance-contrast 2/2 | Token chuyển sang src/styles/tokens/color.css; test kiểm cả việc globals.css nạp tệp đó; giá trị #FFFFFF giữ nguyên |
 | P1-8 | Xong | xem `git log --grep "P1-8"` | typecheck; lint:ratchet ĐẠT (58 lỗi cũ); lint:ux --check; unit 38 tệp 167/167 | 17 lỗi: `as any` → enum Prisma / Prisma.Decimal / kiểu cụ thể; 8 chỗ nạp dữ liệu theo quy ước nợ #149; leads-tab tách statusQueryFor() để React Compiler giữ memo; form-field interface rỗng → type |
-| P1-9 | Chưa làm | | |  |
+| P1-9 | Xong | xem `git log --grep "P1-9"` | check:docs ✓ Tài liệu khớp mã; tenant 8 tệp 23/23 | Đặc tả 06 mục 30 (33 endpoint, đối chiếu từng mã gác); đặc tả 07 mục 38 (7 bảng + 9 enum trích nguyên văn lược đồ); 7 bảng vào TENANT_TABLES; customer_segments/customer_interactions đã có ca thử ở customer-care-isolation.test.ts — ghi vào COVERED_VIA_ROUTE kèm chỉ dẫn; asset_usages/print_renditions có ca thử từ P0 |
 | P1-10 | Chưa làm | | |  |
 | P1-11 | Chưa làm | | |  |
 | P2-1 | Chưa làm | | |  |

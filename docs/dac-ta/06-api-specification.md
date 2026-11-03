@@ -1117,3 +1117,63 @@ Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`. Mọi route có p
 | POST | `/integrations/connections/:id/sales/availability` | `W3` | Đẩy còn/hết hàng (theo trạng thái mở bán — chưa có số tồn, nợ #95) cho mọi tin đã đăng, lô 100 |
 | POST | `/public/integrations/:connector/:ref` | — *(chữ ký của đầu nối)* | Cổng webhook chung: giới hạn tần suất theo IP và theo `ref`, thân tối đa 256 KB, xác thực chữ ký → ghi nhật ký (chống trùng) → 200. Sai chữ ký/sai `ref`/kết nối đã ngắt đều trả cùng một 401 |
 | POST | `/internal/integrations-sweep` | — *(cron, header `x-cron-secret`)* | Xử lý tối đa 100 sự kiện đến hạn (sự kiện `order.*` của kênh bán → lấy chi tiết đơn qua API rồi nhập vào Đơn hàng, chống trùng), kiểm sức khoẻ tối đa 50 kết nối và kéo đơn dự phòng cho tối đa 20 kết nối kênh bán mỗi lượt (mỗi kết nối tối đa 30 phút/lần). Gọi sau cùng trong cron `smeos-cron-dispatch-sweep` 5 phút/lần |
+
+## 30. Marketing & Sales Center (PO 01/11/2026)
+
+Kế hoạch: `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/03_KE_HOACH_TRIEN_KHAI.md`. Mọi route dưới đây giải tổ chức từ phiên; ID tham chiếu nhận từ body (khách, lead, sản phẩm, chiến dịch, nơi dùng tư liệu) phải thuộc cùng tổ chức, không thì 404. "`A` hoặc `B`" nghĩa là có một trong hai mã là đủ.
+
+### 30.1 Nơi dùng tư liệu và chiến dịch
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/asset-usages` | `M1` | Lọc `source_type`+`source_id`, `destination`, `status`; `limit` ≤ 100 |
+| POST | `/asset-usages` | `M2` | Kiểm CTA theo nơi dùng và nơi dùng theo loại tư liệu; kênh link/QR tạo short link; `campaignId` của tổ chức khác → 404 |
+| PATCH | `/asset-usages/:id` | `M2` | Đổi tiêu đề, CTA, nơi dùng, cấu hình, trạng thái |
+| GET | `/campaigns` | `M1` | Lọc `status`, `objective`; cursor + `limit` ≤ 100; kèm `counts` theo trạng thái |
+| POST | `/campaigns` | `M3` | |
+| GET | `/campaigns/:id` | `M1` | Kèm số liệu và danh sách nơi dùng gắn chiến dịch |
+| PATCH | `/campaigns/:id` | `M3` | |
+| GET | `/marketing-center/kpis` | `M1` hoặc `Q1` | `time_window` `7D`·`30D`·`90D`·`ALL` (mặc định `30D`); quy thuộc lần chạm đầu |
+| POST | `/ad-banner-poster/save` | `G2` | Lưu banner PNG đã dựng vào thư viện kèm mã loại tư liệu; kiểm nội dung tệp (chữ ký PNG, ≤ 20 MB) trước khi ghi kho |
+
+### 30.2 Báo giá
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/quotations` | `R15` hoặc `Q1` | Lọc `status`, `leadId`, `customerId`, `search`; cursor + `limit` ≤ 100; kèm `counts` |
+| POST | `/quotations` | `R15` | Tạo báo giá nháp, mã nội bộ `BG-xxxx`, token công khai ngẫu nhiên 256 bit |
+| GET | `/quotations/:id` | `R15` hoặc `Q1` | |
+| PATCH | `/quotations/:id` | `R15` | Báo giá đã chuyển thành đơn không sửa được |
+| POST | `/quotations/:id/send` | `R15` | Sang `SENT`; lead gắn kèm sang `QUOTATION_SENT` |
+| POST | `/quotations/:id/convert` | `R15` | Tạo đơn nguồn `QUOTATION` qua cổng nhận đơn chung; hai lệnh đồng thời chỉ một lệnh tạo đơn |
+| GET | `/public/quotation/:token` | — *(token ngẫu nhiên trong URL)* | Không đăng nhập; giới hạn 60 lượt/phút; báo giá nháp → 404; không trả số điện thoại, ghi chú nội bộ, mã tổ chức |
+
+### 30.3 Nhóm khách và chăm sóc
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/customer-segments` | `M4` hoặc `Q1` | Lọc `kind`, `search`; `limit` ≤ 100 |
+| POST | `/customer-segments` | `M4` | Nhóm `DYNAMIC` theo điều kiện hoặc `STATIC` |
+| GET | `/customer-segments/:id` | `M4` hoặc `Q1` | |
+| PATCH · DELETE | `/customer-segments/:id` | `M4` | |
+| GET | `/customer-segments/:id/customers` | `M4` hoặc `Q1` | Khách thoả điều kiện nhóm, phân trang |
+| GET | `/customer-interactions` | `Q1` | Nhật ký tương tác toàn tổ chức; lọc `customer_id`, `channel`, `direction` |
+| GET | `/customers/:id/interactions` | `Q1` | |
+| POST | `/customers/:id/interactions` | `M4` hoặc `Q1` | Ghi tương tác thủ công (Zalo, gọi, SMS…); khách của tổ chức khác → 404 |
+
+### 30.4 In ấn
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| POST | `/print/preflight` | `M5` hoặc `Q1` | Kiểm quy cách theo preset (kích thước, DPI, vùng an toàn, cỡ mã QR); không ghi |
+| GET | `/print/renditions` | `M5` hoặc `Q1` | Lọc `preset_code`, `status`, `source_type` |
+| POST | `/print/renditions` | `M5` | `assetUsageId` của tổ chức khác → 404 |
+| GET | `/print/renditions/:id` | `M5` hoặc `Q1` | |
+| POST | `/print/renditions/:id/export` | `M5` | Xuất PDF; ghi audit xuất dữ liệu |
+
+### 30.5 Bộ nhận diện thương hiệu
+
+| Method | Path | Năng lực | Ghi chú |
+|---|---|---|---|
+| GET | `/organization/brand` | `F1` | |
+| PUT · PATCH | `/organization/brand` | `F2` | |
