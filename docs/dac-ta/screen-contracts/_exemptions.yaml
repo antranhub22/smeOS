@@ -8,7 +8,7 @@ exemptions:
     reason: Trang thông báo tĩnh sau đăng ký thành công
   - route: /xem-truoc-trang
     reason: Tuyến redirect trung gian phục vụ xem trước landing page
-  - route: /bg/[code]
+  - route: /bg/[token]
     reason: Tuyến redirect ngắn cho báo giá công khai
   - route: /g/[id]
     reason: Tuyến redirect ngắn cho thiệp điện tử

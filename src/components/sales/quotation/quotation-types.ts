@@ -28,6 +28,8 @@ export interface QuotationRecordItem {
 
 export interface QuotationRecord {
   id: string
+  /** Token của link công khai `/bg/<publicToken>` — dùng để chia sẻ, không dùng mã BG-xxxx. */
+  publicToken: string
   organizationId: string
   code: string
   leadId?: string | null

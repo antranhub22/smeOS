@@ -37,6 +37,7 @@ function createInMemoryQuotationRepo(): IQuotationRepository {
         id,
         organizationId: _ctx.organizationId,
         code: dto.code,
+        publicToken: `token-${id}`,
         leadId: dto.leadId ?? null,
         customerId: dto.customerId ?? null,
         assetUsageId: dto.assetUsageId ?? null,
@@ -77,11 +78,23 @@ function createInMemoryQuotationRepo(): IQuotationRepository {
       }
       return null
     },
-    async findByPublicCode(code: string): Promise<Quotation | null> {
-      for (const q of store.values()) {
-        if (q.code === code) return q
-      }
+    async findPublicByToken() {
       return null
+    },
+    async findForeignReferences() {
+      return []
+    },
+    async claimConversion(_ctx: TenantContext, id: string, fromStatus: QuotationStatus) {
+      const existing = store.get(id)
+      if (!existing || existing.status !== fromStatus) return false
+      store.set(id, { ...existing, status: "CONVERTED" })
+      return true
+    },
+    async releaseConversion(_ctx: TenantContext, id: string, toStatus: QuotationStatus) {
+      const existing = store.get(id)
+      if (existing?.status === "CONVERTED" && !existing.convertedOrderId) {
+        store.set(id, { ...existing, status: toStatus })
+      }
     },
     async list(
       _ctx: TenantContext,

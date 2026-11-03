@@ -68,7 +68,7 @@ export function PartnerQuoteBuilder({
 
   const copyLink = () => {
     if (!createdQuote) return
-    const url = `${window.location.origin}/bg/${createdQuote.code.toLowerCase()}`
+    const url = `${window.location.origin}/bg/${createdQuote.publicToken}`
     navigator.clipboard.writeText(url)
     setCopiedLink(true)
     setTimeout(() => setCopiedLink(false), 2500)
@@ -208,25 +208,29 @@ export function PartnerQuoteBuilder({
               <span>Đã lưu phiếu báo giá: {createdQuote.code}</span>
               <span className="text-caption">{createdQuote.status}</span>
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyLink}
-                className="flex-1 flex items-center justify-center gap-1.5"
-              >
-                {copiedLink ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedLink ? "Đã sao chép link!" : "Sao chép link gửi đối tác"}</span>
-              </Button>
-              <Link
-                href={`/bg/${createdQuote.code.toLowerCase()}`}
-                target="_blank"
-                className="px-2.5 py-1.5 rounded-md border border-border bg-surface hover:bg-surface-alt flex items-center gap-1 text-caption text-text"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>Xem</span>
-              </Link>
-            </div>
+            {createdQuote.status === "DRAFT" ? (
+              <p className="text-text-muted">Báo giá đang là bản nháp. Gửi báo giá để có link chia sẻ cho đối tác.</p>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={copyLink}
+                  className="flex-1 flex items-center justify-center gap-1.5"
+                >
+                  {copiedLink ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedLink ? "Đã sao chép link!" : "Sao chép link gửi đối tác"}</span>
+                </Button>
+                <Link
+                  href={`/bg/${createdQuote.publicToken}`}
+                  target="_blank"
+                  className="px-2.5 py-1.5 rounded-md border border-border bg-surface hover:bg-surface-alt flex items-center gap-1 text-caption text-text"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Xem</span>
+                </Link>
+              </div>
+            )}
           </div>
         )}
 

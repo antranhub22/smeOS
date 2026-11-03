@@ -1,6 +1,6 @@
 # Screen Contract — Báo giá bán hàng (Quotations)
 
-**Tuyến:** `/bao-gia`, `/bg/[code]` · **Tệp chính:** `src/app/(app)/bao-gia/page.tsx`, `src/components/sales/quotation/` · **Cập nhật:** 01/11/2026 (PO 01/11/2026, PR-4) · **Thẻ:** công cụ #58 · **Asset:** #24 (Bản báo giá chi tiết — Sẵn)
+**Tuyến:** `/bao-gia`, `/bg/[token]` · **Tệp chính:** `src/app/(app)/bao-gia/page.tsx`, `src/components/sales/quotation/` · **Cập nhật:** 01/11/2026 (PO 01/11/2026, PR-4) · **Thẻ:** công cụ #58 · **Asset:** #24 (Bản báo giá chi tiết — Sẵn)
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `dieu_hanh`, `sale` · Vai phụ: `cua_hang` (đối tác nhận gia công)
@@ -17,7 +17,7 @@
    - Nhập mức giảm giá (nếu có), chọn thời hạn hiệu lực (3-30 ngày), ghi chú điều khoản.
    - Hệ thống tự động tính: Tiền hàng (`subtotal`), Giảm giá (`discountAmount`), Tổng thanh toán (`totalAmount`).
    - Bấm "Lưu báo giá & Lấy link": tạo bản ghi trong CSDL `quotations`, cập nhật trạng thái `SENT`.
-   - Sinh link công khai `/bg/[code]` không lộ thông tin nhạy cảm, sao chép gửi Zalo/tin nhắn.
+   - Sinh link công khai `/bg/[token]` (token ngẫu nhiên 256 bit, không phải mã BG-xxxx) khi báo giá đã gửi; bản nháp không có link. Sao chép gửi Zalo/tin nhắn.
    - Khi gắn với Lead: tự động cập nhật trạng thái Lead sang `QUOTATION_SENT`.
 2. **Báo giá đối tác (Gia công):**
    - Chọn nhanh sản phẩm từ kho hoặc nhập yêu cầu sản xuất.
@@ -41,5 +41,5 @@
 - Bảng CSDL: `quotations`, `quotation_items` (kết nối `leads`, `customers`, `orders`, `asset_usages`).
 - Nguồn đơn: `orders.source = 'QUOTATION'`.
 - Quyền: `R15` (tạo/sửa/chuyển đổi), `Q1` (xem danh sách/chi tiết).
-- Trang công khai: `/bg/[code]` — truy cập không cần đăng nhập, chỉ đọc các trường công khai.
+- Trang công khai: `/bg/[token]` — truy cập không cần đăng nhập, chỉ đọc các trường công khai (tên người nhận, dòng hàng, tổng tiền, điều khoản); không số điện thoại, ghi chú nội bộ; báo giá nháp trả 404; không lập chỉ mục.
 

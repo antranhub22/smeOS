@@ -9,7 +9,7 @@
  * - Nếu nơi dùng là kênh cần link/QR (WEB_LINK, QR_CODE), gọi tạo short_link để gắn UTM và đo lượt quét.
  */
 
-import { validationFailed } from "@/core/http/errors"
+import { notFound, validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { isLibraryType } from "@/modules/storage/domain/library"
@@ -18,8 +18,10 @@ import type { UsageDestination } from "../domain/asset-type"
 import type { AssetUsage } from "../domain/asset-usage"
 import type { CtaCode } from "../domain/cta-registry"
 import type { IAssetUsageRepository } from "../domain/repositories/asset-usage-repository.interface"
+import type { ICampaignRepository } from "../domain/repositories/campaign-repository.interface"
 import { isCtaAllowedForDestination, isDestinationAllowedForAsset } from "../domain/usage-rules"
 import { getAssetUsageRepository } from "../infra/asset-usage-repository"
+import { getCampaignRepository } from "../infra/campaign-repository"
 
 export interface CreateAssetUsageInput {
   sourceType: string
@@ -48,6 +50,7 @@ export async function createAssetUsageUseCase(
   input: CreateAssetUsageInput,
   deps: {
     repo?: IAssetUsageRepository
+    campaigns?: Pick<ICampaignRepository, "findById">
     createLink?: typeof createShortLink
   } = {}
 ): Promise<CreateAssetUsageResult> {
@@ -76,6 +79,14 @@ export async function createAssetUsageUseCase(
     throw validationFailed({
       destination: `Nơi dùng "${input.destination}" không áp dụng cho loại tư liệu #${input.assetTypeCode}`,
     })
+  }
+
+  // Chiến dịch nhận từ body phải thuộc tổ chức đang thao tác — không thì 404.
+  if (input.campaignId) {
+    const campaigns = deps.campaigns ?? getCampaignRepository()
+    if (!(await campaigns.findById(ctx, input.campaignId))) {
+      throw notFound()
+    }
   }
 
   let shortLinkId: string | null = null

@@ -83,6 +83,8 @@ const TENANT_TABLES = [
   "voucher_redemptions",
   "vouchers",
   "voucher_batches",
+  // Báo giá (REMEDIATION_ENTERPRISE_UI P0-4) — con trước cha
+  "quotation_items",
   // Sáu bảng dưới đây có `organization_id` nhưng thiếu ở TRUNCATE cho tới
   // RS-2 18/09 (`check-docs.mjs` bắt được) — dữ liệu thử của chúng có thể
   // sót lại giữa các ca thử. `occasions` và `product_copies` đã có ca thử

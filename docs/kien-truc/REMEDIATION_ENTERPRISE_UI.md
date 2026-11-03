@@ -39,20 +39,21 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 
 ## 5. Đợt P0 — Bảo mật dữ liệu (chặn bàn giao)
 
-- [ ] **P0-1** (A1) Link báo giá công khai dùng token bí mật.
+- [x] **P0-1** (A1) Link báo giá công khai dùng token bí mật.
   - Schema: `quotations.public_token String @unique` (≥ 128-bit, sinh bằng `crypto.randomBytes`), migration thêm cột nullable → backfill → `NOT NULL`.
   - `src/modules/sales/infra/quotation-repository.ts`: thay `findByPublicCode` bằng `findByPublicToken`; không trả báo giá trạng thái `DRAFT`.
-  - Route `src/app/api/v1/public/quotation/[token]/route.ts` và trang `src/app/bg/[token]/page.tsx`: `enforceRateLimit`, `robots: noindex`, bỏ số điện thoại khách khỏi dữ liệu công khai.
-  - UI tạo link: `src/components/sales/quotation/{partner-quote-builder,quote-preview-card,quotations-list-view}.tsx`.
+  - Route `src/app/api/v1/public/quotation/[token]/route.ts` (`enforceRateLimit` 60 lượt/phút) và trang `src/app/bg/[token]/page.tsx` (`robots: noindex`, tiêu đề không chứa mã); dữ liệu công khai là `PublicQuotationView` — không số điện thoại, ghi chú nội bộ, mã tổ chức. Trang không giới hạn tần suất: token 256 bit làm việc dò không khả thi.
+  - UI tạo link: `src/components/sales/quotation/{partner-quote-builder,quote-preview-card,quotations-list-view}.tsx` — dùng `publicToken`; nút "Link gửi"/"Xem" chỉ hiện khi báo giá đã rời trạng thái nháp.
   - Test tenant: truy cập bằng mã `BG-xxxx` → 404; token của tổ chức A không lộ dữ liệu tổ chức B; báo giá `DRAFT` → 404.
-- [ ] **P0-2** (A2) Kiểm quyền sở hữu mọi ID tham chiếu nhận từ body.
+- [x] **P0-2** (A2) Kiểm quyền sở hữu mọi ID tham chiếu nhận từ body.
   - `create-quotation.use-case.ts` (`leadId`, `customerId`, `assetUsageId`, `items[].productId`), `update-quotation` tương ứng, `create-asset-usage.use-case.ts` (`campaignId`), `create-print-rendition.use-case.ts` (`assetUsageId`).
-  - Kiểm qua phương thức repository có `scopedWhere(ctx, { id })`; không thuộc tổ chức → `notFound()` (404).
+  - Kiểm qua phương thức repository có `scopedWhere(ctx, { id })` (`src/modules/sales/infra/quotation-reference-guard.ts`); không thuộc tổ chức → `notFound()` (404).
+  - `QuotationRepository.update` ghi theo `scopedWhere(ctx, { id })` thay cho `{ id }` trần (phát hiện khi sửa).
   - Test tenant: mỗi loại ID của tổ chức B dùng từ tổ chức A → 404, không ghi bản ghi nào.
-- [ ] **P0-3** (A3) Chuyển báo giá thành đơn nguyên tử.
-  - `convert-quotation-to-order.use-case.ts`: chiếm quyền chuyển bằng cập nhật có điều kiện (`status != CONVERTED`) trước khi tạo đơn, trong cùng giao dịch với `ingestOrder`.
+- [x] **P0-3** (A3) Chuyển báo giá thành đơn nguyên tử.
+  - `convert-quotation-to-order.use-case.ts`: chiếm quyền chuyển bằng `updateMany` có điều kiện trạng thái (`claimConversion`) trước khi tạo đơn; `ingestOrder` lỗi → `releaseConversion` trả trạng thái cũ. `ingestOrder` không nhận client giao dịch nên không gói chung một giao dịch.
   - Test tenant: hai lệnh chuyển song song → đúng 1 đơn, lệnh còn lại nhận lỗi nghiệp vụ.
-- [ ] **P0-4** (C3) `quotation_items.organization_id` + `@@index([organization_id])`; migration backfill từ `quotations`; repository ghi cột khi tạo/cập nhật. Cập nhật đặc tả 07.
+- [x] **P0-4** (C3) `quotation_items.organization_id` + `@@index([organization_id])`; migration backfill từ `quotations`; repository ghi cột khi tạo/cập nhật. Cập nhật đặc tả 07.
 
 ## 6. Đợt P1 — Cổng CI xanh
 
@@ -97,10 +98,10 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 |---|---|---|---|---|
 | T0-1 | Xong | `72e4b0f5` | Thử merge không xung đột mã; gộp tay 1 xung đột registry | Cổng toàn bộ chạy ở cuối đợt P0 |
 | T0-2 | Xong | (commit `chore(deps)` ngay sau `72e4b0f5`) | `npm ls --package-lock-only --all` sạch | Lockfile chỉ xoá 77 mục thuộc cây phụ thuộc của 4 gói đã gỡ; không gói nào thêm hoặc đổi phiên bản |
-| P0-1 | Chưa làm | | |  |
-| P0-2 | Chưa làm | | |  |
-| P0-3 | Chưa làm | | |  |
-| P0-4 | Chưa làm | | |  |
+| P0-1 | Xong | commit `fix(sales)` sau `03befd0e` | typecheck; unit sales 22/22; tenant 692/692; platform 36/36; check:screen-contracts 100% | `tests/tenant/quotation-public-link.test.ts`; migration `20261103090000_quotation_public_token_and_item_tenant` thử trên DB có dữ liệu cũ |
+| P0-2 | Xong | commit `fix(sales)` sau `03befd0e` | typecheck; unit sales 22/22; tenant 692/692; platform 36/36; check:screen-contracts 100% | Thêm phát hiện: `QuotationRepository.update` không giới hạn tổ chức — đã sửa; `tests/tenant/asset-usage-isolation.test.ts`, `print-isolation.test.ts` |
+| P0-3 | Xong | commit `fix(sales)` sau `03befd0e` | typecheck; unit sales 22/22; tenant 692/692; platform 36/36; check:screen-contracts 100% | Chiếm quyền có điều kiện + hoàn tác; ca thử hai lệnh song song → 1 đơn |
+| P0-4 | Xong | commit `fix(sales)` sau `03befd0e` | typecheck; unit sales 22/22; tenant 692/692; platform 36/36; check:screen-contracts 100% | `quotation_items` vào `TENANT_TABLES`; đặc tả 07 cho bảng này làm cùng P1-9 |
 | P1-1 | Chưa làm | | |  |
 | P1-2 | Chưa làm | | |  |
 | P1-3 | Chưa làm | | |  |

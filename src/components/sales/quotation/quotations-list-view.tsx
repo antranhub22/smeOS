@@ -45,8 +45,8 @@ export function QuotationsListView({ onSelectQuotation }: QuotationsListViewProp
     loadQuotations()
   }, [statusFilter])
 
-  const handleCopyLink = (code: string, id: string) => {
-    const url = `${window.location.origin}/bg/${code.toLowerCase()}`
+  const handleCopyLink = (publicToken: string, id: string) => {
+    const url = `${window.location.origin}/bg/${publicToken}`
     navigator.clipboard.writeText(url)
     setCopiedId(id)
     setTimeout(() => setCopiedId(null), 2000)
@@ -156,33 +156,37 @@ export function QuotationsListView({ onSelectQuotation }: QuotationsListViewProp
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleCopyLink(q.code, q.id)}
-                      className="flex items-center gap-1 text-caption"
-                    >
-                      {copiedId === q.id ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 text-primary" />
-                          <span>Đã sao chép</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5 text-text-muted" />
-                          <span>Link gửi</span>
-                        </>
-                      )}
-                    </Button>
+                    {q.status !== "DRAFT" && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCopyLink(q.publicToken, q.id)}
+                          className="flex items-center gap-1 text-caption"
+                        >
+                          {copiedId === q.id ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-primary" />
+                              <span>Đã sao chép</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5 text-text-muted" />
+                              <span>Link gửi</span>
+                            </>
+                          )}
+                        </Button>
 
-                    <Link
-                      href={`/bg/${q.code.toLowerCase()}`}
-                      target="_blank"
-                      className="px-2.5 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-alt flex items-center gap-1 text-caption text-text font-medium"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5 text-text-muted" />
-                      <span>Xem</span>
-                    </Link>
+                        <Link
+                          href={`/bg/${q.publicToken}`}
+                          target="_blank"
+                          className="px-2.5 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-alt flex items-center gap-1 text-caption text-text font-medium"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 text-text-muted" />
+                          <span>Xem</span>
+                        </Link>
+                      </>
+                    )}
 
                     {!isConverted && (
                       <Button

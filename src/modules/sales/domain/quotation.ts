@@ -40,6 +40,8 @@ export interface Quotation {
   id: string
   organizationId: string
   code: string
+  /** Token ngẫu nhiên của link công khai `/bg/<publicToken>` — không đoán được, không trùng giữa tổ chức. */
+  publicToken: string
   leadId?: string | null | undefined
   customerId?: string | null | undefined
   assetUsageId?: string | null | undefined
@@ -57,6 +59,31 @@ export interface Quotation {
   items: QuotationItem[]
   lead?: { id: string; name: string; phone: string } | null | undefined
   customer?: { id: string; name: string; phone: string } | null | undefined
+}
+
+/**
+ * Dữ liệu báo giá hiển thị cho người nhận link công khai.
+ * Chỉ gồm thông tin người nhận cần đọc: không có số điện thoại, ghi chú nội bộ,
+ * mã khách hay mã tổ chức.
+ */
+export interface PublicQuotationView {
+  code: string
+  status: QuotationStatus
+  validUntil: Date | null
+  subtotal: number
+  discountAmount: number
+  totalAmount: number
+  terms: string | null
+  createdAt: Date
+  recipientName: string | null
+  items: Array<{
+    id: string
+    name: string
+    qty: number
+    unitPrice: number
+    totalPrice: number
+    note: string | null
+  }>
 }
 
 /** Ma trận chuyển trạng thái hợp lệ của báo giá */

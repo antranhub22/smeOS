@@ -6,21 +6,20 @@ import { isQuotationExpired, QUOTATION_STATUS_LABELS } from "@/modules/sales/dom
 import { getQuotationRepository } from "@/modules/sales/infra/quotation-repository"
 
 interface PageProps {
-  params: Promise<{ code: string }>
+  params: Promise<{ token: string }>
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { code } = await params
-  return {
-    title: `Báo giá ${code.toUpperCase()}`,
-    description: `Chi tiết bảng báo giá ${code.toUpperCase()}`,
-  }
+// Link báo giá là riêng tư của người nhận: không lập chỉ mục, tiêu đề không chứa mã.
+export const metadata: Metadata = {
+  title: "Bảng báo giá",
+  description: "Chi tiết bảng báo giá",
+  robots: { index: false, follow: false },
 }
 
 export default async function PublicQuotationPage({ params }: PageProps) {
-  const { code } = await params
-  const repo = getQuotationRepository()
-  const quotation = await repo.findByPublicCode(code.toUpperCase())
+  const { token } = await params
+  const quotation =
+    token.length <= 128 ? await getQuotationRepository().findPublicByToken(token) : null
 
   if (!quotation) {
     notFound()
@@ -75,16 +74,13 @@ export default async function PublicQuotationPage({ params }: PageProps) {
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Customer info if any */}
-          {(quotation.customer || quotation.lead) && (
+          {quotation.recipientName && (
             <div className="p-4 rounded-xl border border-border bg-surface-alt text-caption space-y-1">
               <span className="font-bold text-text-muted uppercase tracking-wider block mb-1">
                 Kính gửi quý khách
               </span>
               <div className="text-body-sm font-bold text-text">
-                {quotation.customer?.name ?? quotation.lead?.name}
-              </div>
-              <div className="text-text-muted">
-                {quotation.customer?.phone ?? quotation.lead?.phone}
+                {quotation.recipientName}
               </div>
             </div>
           )}

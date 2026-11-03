@@ -1,4 +1,4 @@
-import { validationFailed } from "@/core/http/errors"
+import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import {
   calculateQuotationTotals,
@@ -35,6 +35,17 @@ export async function createQuotationUseCase(
   const itemErr = validateQuotationItems(input.items)
   if (itemErr) {
     throw validationFailed({ items: itemErr })
+  }
+
+  // ID tham chiếu đến từ body: không thuộc tổ chức → 404, không tiết lộ bản ghi tồn tại ở nơi khác.
+  const foreign = await repo.findForeignReferences(ctx, {
+    leadId: input.leadId,
+    customerId: input.customerId,
+    assetUsageId: input.assetUsageId,
+    productIds: input.items.map((it) => it.productId),
+  })
+  if (foreign.length > 0) {
+    throw notFound()
   }
 
   const { subtotal, discountAmount, totalAmount } = calculateQuotationTotals(

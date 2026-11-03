@@ -1,59 +1,27 @@
+import { randomBytes } from "node:crypto"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma, quotation_status } from "@/generated/prisma/client"
-import type {
-  Quotation,
-  QuotationItem,
-  QuotationStatus,
-} from "../domain/quotation"
+import type { PublicQuotationView, Quotation, QuotationStatus } from "../domain/quotation"
 import type {
   CreateQuotationDTO,
   IQuotationRepository,
   QuotationFilter,
+  QuotationReferences,
   UpdateQuotationDTO,
 } from "../domain/repositories/quotation-repository.interface"
+import {
+  PUBLIC_QUOTATION_INCLUDE,
+  QUOTATION_INCLUDE,
+  type QuotationRowWithRelations,
+  toDomain,
+  toPublicView,
+} from "./quotation-mapper"
+import { findForeignQuotationReferences } from "./quotation-reference-guard"
 
-type QuotationRowWithRelations = Prisma.quotationsGetPayload<{
-  include: {
-    items: true
-    lead: { select: { id: true, name: true, phone: true } }
-    customer: { select: { id: true, name: true, phone: true } }
-  }
-}>
-
-function toDomain(row: QuotationRowWithRelations): Quotation {
-  return {
-    id: row.id,
-    organizationId: row.organization_id,
-    code: row.code,
-    leadId: row.lead_id,
-    customerId: row.customer_id,
-    assetUsageId: row.asset_usage_id,
-    status: row.status as QuotationStatus,
-    validUntil: row.valid_until,
-    subtotal: Number(row.subtotal),
-    discountAmount: Number(row.discount_amount),
-    totalAmount: Number(row.total_amount),
-    terms: row.terms,
-    notes: row.notes,
-    convertedOrderId: row.converted_order_id,
-    createdBy: row.created_by,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-    items: (row.items || []).map((it) => ({
-      id: it.id,
-      productId: it.product_id,
-      name: it.name,
-      qty: it.qty,
-      unitPrice: Number(it.unit_price),
-      totalPrice: Number(it.total_price),
-      note: it.note,
-    })),
-    lead: row.lead ? { id: row.lead.id, name: row.lead.name, phone: row.lead.phone } : null,
-    customer: row.customer
-      ? { id: row.customer.id, name: row.customer.name, phone: row.customer.phone }
-      : null,
-  }
+/** 32 byte ngẫu nhiên (256 bit), mã hoá base64url — 43 ký tự, an toàn trong URL. */
+function generatePublicToken(): string {
+  return randomBytes(32).toString("base64url")
 }
 
 export class QuotationRepository implements IQuotationRepository {
@@ -70,6 +38,7 @@ export class QuotationRepository implements IQuotationRepository {
       data: {
         organization_id: ctx.organizationId,
         code: dto.code,
+        public_token: generatePublicToken(),
         lead_id: dto.leadId ?? null,
         customer_id: dto.customerId ?? null,
         asset_usage_id: dto.assetUsageId ?? null,
@@ -83,6 +52,7 @@ export class QuotationRepository implements IQuotationRepository {
         created_by: dto.createdBy,
         items: {
           create: dto.items.map((it) => ({
+            organization_id: ctx.organizationId,
             product_id: it.productId ?? null,
             name: it.name,
             qty: it.qty,
@@ -92,11 +62,7 @@ export class QuotationRepository implements IQuotationRepository {
           })),
         },
       },
-      include: {
-        items: true,
-        lead: { select: { id: true, name: true, phone: true } },
-        customer: { select: { id: true, name: true, phone: true } },
-      },
+      include: QUOTATION_INCLUDE,
     })
     return toDomain(created)
   }
@@ -107,11 +73,7 @@ export class QuotationRepository implements IQuotationRepository {
         ...scopedWhere(ctx),
         id,
       },
-      include: {
-        items: true,
-        lead: { select: { id: true, name: true, phone: true } },
-        customer: { select: { id: true, name: true, phone: true } },
-      },
+      include: QUOTATION_INCLUDE,
     })
     return row ? toDomain(row) : null
   }
@@ -122,25 +84,37 @@ export class QuotationRepository implements IQuotationRepository {
         ...scopedWhere(ctx),
         code,
       },
-      include: {
-        items: true,
-        lead: { select: { id: true, name: true, phone: true } },
-        customer: { select: { id: true, name: true, phone: true } },
-      },
+      include: QUOTATION_INCLUDE,
     })
     return row ? toDomain(row) : null
   }
 
-  async findByPublicCode(code: string): Promise<Quotation | null> {
+  async findPublicByToken(token: string): Promise<PublicQuotationView | null> {
+    // Đọc không có TenantContext có chủ đích: token 256 bit là quyền xem duy nhất.
     const row = await prisma.quotations.findFirst({
-      where: { code },
-      include: {
-        items: true,
-        lead: { select: { id: true, name: true, phone: true } },
-        customer: { select: { id: true, name: true, phone: true } },
-      },
+      where: { public_token: token, status: { not: "DRAFT" } },
+      include: PUBLIC_QUOTATION_INCLUDE,
     })
-    return row ? toDomain(row) : null
+    return row ? toPublicView(row) : null
+  }
+
+  findForeignReferences(ctx: TenantContext, refs: QuotationReferences): Promise<string[]> {
+    return findForeignQuotationReferences(ctx, refs)
+  }
+
+  async claimConversion(ctx: TenantContext, id: string, fromStatus: QuotationStatus): Promise<boolean> {
+    const { count } = await prisma.quotations.updateMany({
+      where: scopedWhere(ctx, { id, status: fromStatus as quotation_status }),
+      data: { status: "CONVERTED" },
+    })
+    return count === 1
+  }
+
+  async releaseConversion(ctx: TenantContext, id: string, toStatus: QuotationStatus): Promise<void> {
+    await prisma.quotations.updateMany({
+      where: scopedWhere(ctx, { id, status: "CONVERTED" as quotation_status, converted_order_id: null }),
+      data: { status: toStatus as quotation_status },
+    })
   }
 
   async list(
@@ -178,11 +152,7 @@ export class QuotationRepository implements IQuotationRepository {
       where,
       take: limit + 1,
       orderBy: { created_at: "desc" },
-      include: {
-        items: true,
-        lead: { select: { id: true, name: true, phone: true } },
-        customer: { select: { id: true, name: true, phone: true } },
-      },
+      include: QUOTATION_INCLUDE,
       ...(filter?.cursor ? { cursor: { id: filter.cursor }, skip: 1 } : {}),
     }
 
@@ -228,6 +198,7 @@ export class QuotationRepository implements IQuotationRepository {
       updateData.items = {
         deleteMany: {},
         create: dto.items.map((it) => ({
+          organization_id: ctx.organizationId,
           product_id: it.productId ?? null,
           name: it.name,
           qty: it.qty,
@@ -239,15 +210,9 @@ export class QuotationRepository implements IQuotationRepository {
     }
 
     const updated = await prisma.quotations.update({
-      where: {
-        id,
-      },
+      where: scopedWhere(ctx, { id }),
       data: updateData,
-      include: {
-        items: true,
-        lead: { select: { id: true, name: true, phone: true } },
-        customer: { select: { id: true, name: true, phone: true } },
-      },
+      include: QUOTATION_INCLUDE,
     })
     return toDomain(updated)
   }

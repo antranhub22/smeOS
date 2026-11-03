@@ -1,5 +1,5 @@
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import type { Quotation, QuotationItem, QuotationStatus } from "../quotation"
+import type { PublicQuotationView, Quotation, QuotationItem, QuotationStatus } from "../quotation"
 
 export interface CreateQuotationDTO {
   code: string
@@ -52,11 +52,29 @@ export interface QuotationFilter {
   cursor?: string | undefined
 }
 
+/** ID tham chiếu nhận từ người dùng — phải thuộc đúng tổ chức đang thao tác. */
+export interface QuotationReferences {
+  leadId?: string | null | undefined
+  customerId?: string | null | undefined
+  assetUsageId?: string | null | undefined
+  productIds?: Array<string | null | undefined> | undefined
+}
+
 export interface IQuotationRepository {
   create(ctx: TenantContext, dto: CreateQuotationDTO): Promise<Quotation>
   findById(ctx: TenantContext, id: string): Promise<Quotation | null>
   findByCode(ctx: TenantContext, code: string): Promise<Quotation | null>
-  findByPublicCode(code: string): Promise<Quotation | null>
+  /** Tra cứu cho link công khai. Không trả báo giá ở trạng thái nháp. */
+  findPublicByToken(token: string): Promise<PublicQuotationView | null>
+  /** Trả về tên các trường có ID không thuộc tổ chức `ctx` (rỗng = hợp lệ). */
+  findForeignReferences(ctx: TenantContext, refs: QuotationReferences): Promise<string[]>
+  /**
+   * Chiếm quyền chuyển báo giá thành đơn: đổi trạng thái `fromStatus` → `CONVERTED`
+   * bằng một câu lệnh có điều kiện. Trả `false` nếu yêu cầu khác đã chiếm trước.
+   */
+  claimConversion(ctx: TenantContext, id: string, fromStatus: QuotationStatus): Promise<boolean>
+  /** Hoàn tác `claimConversion` khi tạo đơn thất bại. */
+  releaseConversion(ctx: TenantContext, id: string, toStatus: QuotationStatus): Promise<void>
   list(
     ctx: TenantContext,
     filter?: QuotationFilter,

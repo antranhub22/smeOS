@@ -5,6 +5,7 @@ import { createPrintRenditionUseCase } from "@/modules/print/use-cases/create-pr
 import { listPrintRenditionsUseCase } from "@/modules/print/use-cases/list-print-renditions.use-case"
 import { getPrintRenditionUseCase } from "@/modules/print/use-cases/get-print-rendition.use-case"
 import { exportPrintPdfUseCase } from "@/modules/print/use-cases/export-print-pdf.use-case"
+import { createAssetUsageUseCase } from "@/modules/marketing-center/use-cases/create-asset-usage.use-case"
 
 describe("Marketing & Sales Center — Cách ly tenant cho Ấn phẩm & In ấn (Print Renditions)", () => {
   let a: Tenant
@@ -77,5 +78,28 @@ describe("Marketing & Sales Center — Cách ly tenant cho Ấn phẩm & In ấn
     expect(exportA.base64).toContain("data:application/pdf")
     expect(exportA.widthMm).toBe(210 + 6)
     expect(exportA.heightMm).toBe(297 + 6)
+  })
+
+  it("không gắn được bản in vào nơi dùng tư liệu của tổ chức khác", async () => {
+    const bWithM2 = { ...b.ctx, capabilities: new Set([...b.ctx.capabilities, "M2"]) }
+    const { usage: usageB } = await createAssetUsageUseCase(bWithM2, {
+      sourceType: "ai_image",
+      sourceId: "asset-b",
+      assetTypeCode: "8",
+      destination: "PROMOTION",
+      ctaCode: "LEARN_MORE",
+      title: "Banner của Beta",
+    })
+
+    await expect(
+      createPrintRenditionUseCase(a.ctx, {
+        sourceType: "CARE_CARD",
+        presetCode: "A6",
+        imageWidthPx: 1400,
+        imageHeightPx: 1900,
+        assetUsageId: usageB.id,
+      }),
+    ).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(await prisma.print_renditions.count({ where: { organization_id: a.organizationId } })).toBe(0)
   })
 })

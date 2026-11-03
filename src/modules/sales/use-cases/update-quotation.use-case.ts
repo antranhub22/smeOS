@@ -39,6 +39,15 @@ export async function updateQuotationUseCase(
     })
   }
 
+  if (input.items !== undefined) {
+    const foreign = await repo.findForeignReferences(ctx, {
+      productIds: input.items.map((it) => it.productId),
+    })
+    if (foreign.length > 0) {
+      throw notFound()
+    }
+  }
+
   const dto: UpdateQuotationDTO = {}
 
   if (input.status !== undefined) {

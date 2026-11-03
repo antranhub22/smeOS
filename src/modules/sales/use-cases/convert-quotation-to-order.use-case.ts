@@ -50,14 +50,29 @@ export async function convertQuotationToOrderUseCase(
     metadata: it.note ? { note: it.note } : null,
   }))
 
+  // Chiếm quyền chuyển bằng cập nhật có điều kiện trước khi tạo đơn: hai yêu cầu
+  // song song (bấm hai lần, hai nhân viên) chỉ một yêu cầu thắng, không sinh đơn trùng.
+  const claimed = await repo.claimConversion(ctx, id, quotation.status)
+  if (!claimed) {
+    throw validationFailed({
+      status: `Báo giá ${quotation.code} vừa được chuyển đổi hoặc thay đổi trạng thái. Tải lại để xem trạng thái mới.`,
+    })
+  }
+
   const ingestFn = deps.ingestOrderFn ?? ingestOrder
-  const order = await ingestFn(ctx, {
-    source: "QUOTATION",
-    customerId: quotation.customerId ?? undefined,
-    leadId: quotation.leadId ?? undefined,
-    items: orderItems,
-    internalNote: `Tạo từ báo giá ${quotation.code}`,
-  })
+  let order: OrderRecord
+  try {
+    order = await ingestFn(ctx, {
+      source: "QUOTATION",
+      customerId: quotation.customerId ?? undefined,
+      leadId: quotation.leadId ?? undefined,
+      items: orderItems,
+      internalNote: `Tạo từ báo giá ${quotation.code}`,
+    })
+  } catch (err) {
+    await repo.releaseConversion(ctx, id, quotation.status)
+    throw err
+  }
 
   const updatedQuotation = await repo.update(ctx, id, {
     status: "CONVERTED",

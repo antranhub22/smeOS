@@ -252,6 +252,7 @@ model organizations {
   asset_usages                  asset_usages[]
   campaigns                     campaigns[]
   quotations                    quotations[]
+  quotation_items               quotation_items[]
   customer_segments             customer_segments[]
   customer_interactions         customer_interactions[]
   print_renditions              print_renditions[]
@@ -4098,7 +4099,8 @@ enum quotation_status {
 model quotations {
   id                 String           @id @default(uuid())
   organization_id    String
-  code               String           // VD: BG-0001
+  code               String           // VD: BG-0001 — mã nội bộ, không dùng cho link công khai
+  public_token       String           @unique // token ngẫu nhiên của link công khai /bg/<token>
   lead_id            String?
   customer_id        String?
   asset_usage_id     String?
@@ -4131,20 +4133,23 @@ model quotations {
 
 /// Chi tiết từng dòng sản phẩm trong báo giá (Quotation Items).
 model quotation_items {
-  id           String      @id @default(uuid())
-  quotation_id String
-  product_id   String?
-  name         String
-  qty          Int         @default(1)
-  unit_price   Decimal     @default(0) @db.Decimal(12, 2)
-  total_price  Decimal     @default(0) @db.Decimal(12, 2)
-  note         String?
-  created_at   DateTime    @default(now())
-  updated_at   DateTime    @updatedAt
+  id              String   @id @default(uuid())
+  organization_id String
+  quotation_id    String
+  product_id      String?
+  name            String
+  qty             Int      @default(1)
+  unit_price      Decimal  @default(0) @db.Decimal(12, 2)
+  total_price     Decimal  @default(0) @db.Decimal(12, 2)
+  note            String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 
-  quotation quotations @relation(fields: [quotation_id], references: [id], onDelete: Cascade)
-  product   products?  @relation(fields: [product_id], references: [id], onDelete: SetNull)
+  organization organizations @relation(fields: [organization_id], references: [id])
+  quotation    quotations    @relation(fields: [quotation_id], references: [id], onDelete: Cascade)
+  product      products?     @relation(fields: [product_id], references: [id], onDelete: SetNull)
 
+  @@index([organization_id])
   @@index([quotation_id])
   @@index([product_id])
 }
