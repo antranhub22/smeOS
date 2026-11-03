@@ -1030,7 +1030,7 @@ Ba quyết định dưới đây chặn go-live, không chặn việc dựng lư
 
 ## 6. Việc kế tiếp
 
-**Khắc phục nhánh Enterprise UI/UX trước bàn giao — ĐANG LÀM (PO duyệt 03/11/2026).** Review 32 commit của nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise`: chưa đạt chuẩn bàn giao (2 lỗ hổng rò rỉ dữ liệu giữa tenant ở báo giá, 3 cổng CI đỏ, báo cáo bàn giao có số liệu không có nguồn). Kế hoạch, checklist và trạng thái từng việc: `docs/kien-truc/REMEDIATION_ENTERPRISE_UI.md`.
+**Khắc phục nhánh Enterprise UI/UX trước bàn giao — XONG, chờ PR vào `main` (PO duyệt 03/11/2026).** Đã vá 2 lỗ hổng rò rỉ dữ liệu giữa tenant ở báo giá (link công khai dùng token 256 bit, kiểm ID tham chiếu cùng tổ chức), đưa CI về xanh (unit 3.861, tenant 693, platform 36, build, `test:e2e:ux` 22/22), viết lại báo cáo bàn giao theo số đo, khôi phục `<h1>` qua `PageHeader`/`ToolHero`. Còn mở: tệp `LICENSE` (chờ tên pháp nhân), bản bàn giao không kèm lịch sử chứa tài liệu khách ALG, nợ UX lint 5.491 và 87 tệp > 350 dòng theo lộ trình. Chi tiết và trạng thái từng việc: `docs/kien-truc/REMEDIATION_ENTERPRISE_UI.md`.
 
 **P5 M01 phân tích ảnh — HOÀN TẤT (09/12).** Bộ ảnh vàng đạt nghiệm thu (8/8 ảnh). Phần lõi đã nghiệm thu trên Postgres thật (09/10). Còn lại (không chặn): gọi `OpenAIStructuredProvider` với API OpenAI thật để đối chiếu kết quả với nhãn người (nợ #24 đã giải quyết).
 
