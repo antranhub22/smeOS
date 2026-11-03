@@ -62,7 +62,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 - [x] **P1-3** Danh mục năng lực 166 → 168 mã (M4, M5): bổ sung đặc tả 02 và ca thử `capability-catalog.test.ts` khớp danh mục thật.
 - [x] **P1-4** Module "In ấn" bị hiện ở production khi chưa có công cụ `DONE`: sửa registry toolkit để ẩn đúng luật (`business-modules.test.ts:82`), không sửa test.
 - [x] **P1-5** Route `src/app/api/v1/organizations/brand/route.ts` (bí danh re-export): gỡ nếu không có nơi gọi; còn nơi gọi thì chuyển nơi gọi sang `organization/brand` rồi gỡ.
-- [ ] **P1-6** `src/modules/products/domain/sales-scripts-catalog.ts` dùng `formatters.ts` thay cho `Intl` trực tiếp (ratchet 173 tệp).
+- [x] **P1-6** `src/modules/products/domain/sales-scripts-catalog.ts` dùng `formatters.ts` thay cho `Intl` trực tiếp (ratchet 173 tệp).
 - [ ] **P1-7** `tests/unit/ux/feature-guidance-contrast.test.ts` đọc token từ `src/styles/tokens/color.css` — nơi token đã chuyển tới; giá trị `#FFFFFF` giữ nguyên.
 - [ ] **P1-8** (B2) 18 lỗi ESLint mới: thay `as any` bằng enum Prisma có kiểu ở `crm/infra/*`, `print/infra/*`, các test; chuyển nạp dữ liệu trong `useEffect` sang hook nạp dữ liệu chuẩn của dự án ở `components/marketing-center/*`, `components/sales/quotation/*`; sửa `components/ui/form-field.tsx`. Kiểm: `npm run lint:ratchet` xanh, baseline ESLint không đổi.
 - [ ] **P1-9** (B3) 59 chỗ lệch `check:docs`: 33 endpoint vào đặc tả 06; 7 bảng + 9 enum vào đặc tả 07; 6 bảng (`asset_usages`, `campaigns`, `quotations`, `customer_segments`, `customer_interactions`, `print_renditions`) vào `TENANT_TABLES`; ca thử cách ly cho `asset_usages`, `customer_segments`, `customer_interactions`, `print_renditions`.
@@ -107,7 +107,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P1-3 | Xong | xem `git log --grep "P1-3"` | src/core/rbac 24/24 | Thêm nhóm M (M1–M5) vào đặc tả 02; R15/R16 thiếu trong đặc tả là nợ có sẵn trên main, không sửa |
 | P1-4 | Xong | xem `git log --grep "P1-4"` | src/modules/toolkit 12/12 | Không phải lỗi mã: PR-6 nối 10 ấn phẩm vào /in-an (asset Sẵn); test giữ giả định PR-0 — cập nhật assertion, vẫn khoá luật chỉ asset Sẵn, không công cụ chưa DONE |
 | P1-5 | Xong | xem `git log --grep "P1-5"` | route-capability-guard 2/2 | Không có nơi gọi nào (cả mã lẫn tài liệu) — gỡ |
-| P1-6 | Chưa làm | | |  |
+| P1-6 | Xong | xem `git log --grep "P1-6"` | i18n ratchet + products/domain 169/169 | toLocaleString → formatNumber (cùng định dạng vi-VN) |
 | P1-7 | Chưa làm | | |  |
 | P1-8 | Chưa làm | | |  |
 | P1-9 | Chưa làm | | |  |

@@ -5,6 +5,8 @@
  * Clean Architecture: Domain thuần TypeScript — Không import Prisma, không import React.
  */
 
+import { formatNumber } from "@/lib/i18n/formatters"
+
 export type SalesScriptCategory =
   | "CHAO_HOI"
   | "TU_VAN_DIP"
@@ -230,7 +232,7 @@ export function renderSalesScript(template: string, vars: ScriptVariables = {}):
     customerName: vars.customerName?.trim() || "anh/chị",
     productName: vars.productName?.trim() || "sản phẩm này",
     priceVnd: vars.priceVnd !== undefined && vars.priceVnd !== ""
-      ? Number(vars.priceVnd).toLocaleString("vi-VN")
+      ? formatNumber(Number(vars.priceVnd))
       : "550,000",
     substituteFlower: vars.substituteFlower?.trim() || "hoa hồng Ecuador cùng tone",
     deliveryTime: vars.deliveryTime?.trim() || "09:00 - 11:00 hôm nay",
