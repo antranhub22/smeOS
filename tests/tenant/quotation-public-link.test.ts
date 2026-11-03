@@ -136,4 +136,11 @@ describe("Báo giá — link công khai và tham chiếu chéo tổ chức", () 
     expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1)
     expect(await prisma.orders.count({ where: { organization_id: a.organizationId, source: "QUOTATION" } })).toBe(1)
   })
+
+  it("bốn yêu cầu tạo báo giá đồng thời đều thành công với mã khác nhau", async () => {
+    const created = await Promise.all(
+      [1, 2, 3, 4].map((n) => createQuotationUseCase(a.ctx, { items: [{ name: `Hoa ${n}`, qty: 1, unitPrice: 1 }] })),
+    )
+    expect(new Set(created.map((q) => q.code)).size).toBe(4)
+  })
 })

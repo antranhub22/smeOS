@@ -83,7 +83,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 - [ ] **P3-3** (D1) Tách `print-workflow.tsx` (434), `kpi-definitions.ts` (356), `chain-dispatch-settings.tsx` (358), `store-policies-editor.tsx` (353) về ≤ 350 dòng; 9 tệp vốn đã quá ngưỡng trở về ≤ số dòng trên `main`.
 - [ ] **P3-4** (D2) Kiểm giá trị enum từ query string bằng zod ở các route mới → 400 thay vì 500.
 - [ ] **P3-5** (D3) Thay so khớp chuỗi `err.message.includes(...)` bằng lỗi có kiểu (`notFound()`) ở `crm/use-cases/*`, `print/use-cases/*` và route tương ứng.
-- [ ] **P3-6** (D4) Sinh mã báo giá an toàn khi đồng thời: thử lại có giới hạn (≤ 3 lần) khi trùng `@@unique([organization_id, code])`. Test hai yêu cầu song song.
+- [x] **P3-6** (D4) Sinh mã báo giá an toàn khi đồng thời: thử lại có giới hạn (≤ 3 lần) khi trùng `@@unique([organization_id, code])`. Test hai yêu cầu song song.
 - [x] **P3-7** (E3) `MutationObserver` ở `src/lib/ui-system/ui-provider.tsx` chỉ chạy khi `NODE_ENV !== "production"`.
 - [x] **P3-8** Nút "Mở UI Studio" trong menu người dùng (`src/components/layout/user-menu.tsx`) hiện cho platform operator ở production nhưng ngăn UI Studio chỉ gắn khi dev (`app-shell.tsx`) — nút không có tác dụng. Hiện nút và ngăn theo cùng một điều kiện.
 - [x] **P3-9** Trạng thái báo giá hiện mã kỹ thuật (`SENT`, `DRAFT`, "ĐÃ GỬI" viết cứng) ở `partner-quote-builder.tsx`, `quote-preview-card.tsx` — dùng `QUOTATION_STATUS_LABELS`.
@@ -124,7 +124,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P3-3 | Chưa làm | | |  |
 | P3-4 | Chưa làm | | |  |
 | P3-5 | Chưa làm | | |  |
-| P3-6 | Chưa làm | | |  |
+| P3-6 | Xong | xem `git log --grep "P3-6"` | tenant báo giá 9/9; typecheck | Thử lại trong repository khi trùng mã (P2002), tối đa 5 lần — cùng mẫu ShortLinkRepository; ca thử 4 yêu cầu đồng thời đỏ trên bản cũ (unique quotations_organization_id_code_key), xanh trên bản mới |
 | P3-7 | Xong | xem `git log --grep "P3-7"` | ui-system 30/30 | Effect thoát sớm ở production; bộ test chạy môi trường node không có DOM nên kiểm bằng đọc mã (cùng cách feature-guidance-contrast.test.ts) |
 | P3-8 | Xong | xem `git log --grep "P3-8"` | components/layout 71/71 (thêm ca withUiStudio khi isDev=false) | Lỗi thật ở app-shell: isDev && withUiStudio ghi đè quyết định của layout, nên (platform) ở production không có ngăn UI Studio trái ADR-011 D-UI-01; nút trong menu giờ đọc ngữ cảnh UiStudioAvailability của shell |
 | P3-9 | Xong | xem `git log --grep "P3-9"` | components/sales 4/4; lint:ux --check | QUOTATION_STATUS_LABELS ở 2 thành phần; thông báo phân biệt đã lưu / đã gửi; test đọc mã đỏ trên bản cũ, xanh trên bản mới |

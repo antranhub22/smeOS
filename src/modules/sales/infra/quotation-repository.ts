@@ -19,6 +19,12 @@ import {
 } from "./quotation-mapper"
 import { findForeignQuotationReferences } from "./quotation-reference-guard"
 
+const CODE_ATTEMPTS = 5
+
+function isUniqueViolation(error: unknown): boolean {
+  return typeof error === "object" && error !== null && (error as { code?: string }).code === "P2002"
+}
+
 /** 32 byte ngẫu nhiên (256 bit), mã hoá base64url — 43 ký tự, an toàn trong URL. */
 function generatePublicToken(): string {
   return randomBytes(32).toString("base64url")
@@ -33,7 +39,23 @@ export class QuotationRepository implements IQuotationRepository {
     return `BG-${num}`
   }
 
+  /**
+   * Mã `BG-xxxx` đánh số theo tổ chức nên hai yêu cầu đồng thời có thể lấy cùng số:
+   * trùng mã → sinh lại số mới và thử lại, tối đa `CODE_ATTEMPTS` lần.
+   */
   async create(ctx: TenantContext, dto: CreateQuotationDTO): Promise<Quotation> {
+    let code = dto.code
+    for (let attempt = 1; ; attempt++) {
+      try {
+        return await this.insert(ctx, { ...dto, code })
+      } catch (err) {
+        if (!isUniqueViolation(err) || attempt >= CODE_ATTEMPTS) throw err
+        code = await this.generateNextCode(ctx)
+      }
+    }
+  }
+
+  private async insert(ctx: TenantContext, dto: CreateQuotationDTO): Promise<Quotation> {
     const created = await prisma.quotations.create({
       data: {
         organization_id: ctx.organizationId,
