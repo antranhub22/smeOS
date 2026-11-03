@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { InlineError } from "@/components/ui/inline-error"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import { QUOTATION_STATUS_LABELS } from "@/modules/sales/domain/quotation"
 import { quotationApi } from "./quotation-api"
 import type { ProductItem, QuotationRecord } from "./quotation-types"
 
@@ -186,7 +187,7 @@ export function PartnerQuoteBuilder({
           <div className="flex items-center justify-between text-body-sm font-bold text-primary">
             <span>PHIẾU GIAO VIỆC GIA CÔNG {createdQuote ? `— ${createdQuote.code}` : ""}</span>
             <Badge tone="neutral">
-              {createdQuote ? createdQuote.status : "Chờ gửi đối tác"}
+              {createdQuote ? QUOTATION_STATUS_LABELS[createdQuote.status] : "Chờ gửi đối tác"}
             </Badge>
           </div>
           <div className="text-caption text-text">
@@ -206,7 +207,7 @@ export function PartnerQuoteBuilder({
           <div className="p-3 rounded-xl bg-surface-alt border border-border text-caption space-y-2">
             <div className="flex items-center justify-between text-primary font-bold">
               <span>Đã lưu phiếu báo giá: {createdQuote.code}</span>
-              <span className="text-caption">{createdQuote.status}</span>
+              <span className="text-caption">{QUOTATION_STATUS_LABELS[createdQuote.status]}</span>
             </div>
             {createdQuote.status === "DRAFT" ? (
               <p className="text-text-muted">Báo giá đang là bản nháp. Gửi báo giá để có link chia sẻ cho đối tác.</p>

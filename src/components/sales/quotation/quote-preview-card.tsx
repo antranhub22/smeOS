@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { InlineError } from "@/components/ui/inline-error"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import { QUOTATION_STATUS_LABELS } from "@/modules/sales/domain/quotation"
 import type { ProductItem, QuotationRecord } from "./quotation-types"
 
 interface QuotePreviewCardProps {
@@ -186,8 +187,10 @@ export function QuotePreviewCard({
       {createdQuote && (
         <div className="p-3 rounded-xl bg-surface-alt border border-border text-caption space-y-2">
           <div className="flex items-center justify-between text-primary font-bold">
-            <span>Đã lưu & gửi báo giá: {createdQuote.code}</span>
-            <span className="text-caption">ĐÃ GỬI</span>
+            <span>
+              {createdQuote.status === "DRAFT" ? "Đã lưu báo giá" : "Đã lưu & gửi báo giá"}: {createdQuote.code}
+            </span>
+            <span className="text-caption">{QUOTATION_STATUS_LABELS[createdQuote.status]}</span>
           </div>
           {createdQuote.status === "DRAFT" ? (
             <p className="text-text-muted">Báo giá đang là bản nháp. Gửi báo giá để có link chia sẻ cho khách.</p>
