@@ -1,7 +1,7 @@
 /**
  * POST /api/v1/internal/integrations-sweep — cron: xử lý sự kiện tích hợp đến hạn, kiểm sức khoẻ kết nối và kéo đơn kênh bán dự phòng.
  * Gác bằng CRON_SECRET. Mỗi lượt có giới hạn (100 sự kiện, 50 lượt kiểm, 20 kết nối kênh bán).
- *   curl -X POST http://localhost:3100/api/v1/internal/integrations-sweep -H "x-cron-secret: dev"
+ *   curl -X POST http://localhost:3200/api/v1/internal/integrations-sweep -H "x-cron-secret: dev"
  */
 
 import { handle, jsonResponse } from "@/core/http/response"
