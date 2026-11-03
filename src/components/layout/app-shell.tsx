@@ -48,7 +48,7 @@ export function AppShell({
             href="#noi-dung-chinh"
             className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-[var(--radius-button)] focus:bg-primary focus:px-4 focus:py-2.5 focus:text-body-sm focus:font-bold focus:text-white focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            Bỏ qua tới nội dung chính
+            Bỏ qua tới nội dung
           </a>
           <div
             data-theme={activePreset}

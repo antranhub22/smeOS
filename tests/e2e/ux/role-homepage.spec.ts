@@ -9,13 +9,11 @@ test.describe("UX Role-based Homepage (03b Role UX §4)", () => {
     })
     await page.goto("/")
 
-    // Trang chủ chủ tiệm: "Bạn muốn làm gì?" (Journey-First 30/09/2026); lưới lựa chọn là Thư viện công cụ
-    // (role-ux-catalog: TOOLKIT_HOME), từ 30/10/2026 chia theo 10 module quy trình thay cho "Nhóm 1…".
-    // Module Thương hiệu có công cụ hoàn thiện nên luôn hiện ở production.
-    await expect(page.getByRole("heading", { level: 1, name: /Bạn muốn làm gì/i })).toBeVisible({ timeout: 15_000 })
-    const steps = page.getByRole("region", { name: "Các bước phát triển cửa hàng" })
-    await expect(steps).toBeVisible()
-    await expect(steps.getByRole("heading", { level: 3, name: "Thương hiệu" })).toBeVisible()
+    // Trang chủ chủ tiệm là Trung tâm Tiếp thị & Bán hàng (role-ux-catalog: TOOLKIT_HOME;
+    // Screen Contract docs/dac-ta/screen-contracts/cong-cu.md, PO 01/11/2026): 6 thẻ mục tiêu kinh doanh.
+    // Mục tiêu "Hồ sơ & Thương hiệu" có công cụ hoàn thiện nên luôn hiện ở production.
+    await expect(page.getByRole("heading", { level: 1, name: "Trung tâm Tiếp thị & Bán hàng" })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole("heading", { level: 3, name: "Hồ sơ & Thương hiệu" })).toBeVisible()
   })
 
   test("vai Bán hàng (sale, PRODUCTION) vào trang chủ Pipeline Workspace", async ({ page }) => {

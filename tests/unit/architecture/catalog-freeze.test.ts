@@ -19,6 +19,8 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  * Lần cập nhật mốc đã duyệt:
  * - PO 03/11/2026 (REMEDIATION_ENTERPRISE_UI P1-2): đổi token ngữ nghĩa ở 11 tệp; trang công khai
  *   /c/[slug] giữ <h1>, màn quản trị và trang dựng ấn phẩm dùng <h2>.
+ * - PO 03/11/2026 (REMEDIATION_ENTERPRISE_UI P3-10, phương án b): đầu trang /catalog dùng PageHeader chuẩn
+ *   (tiêu đề <h1>).
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")

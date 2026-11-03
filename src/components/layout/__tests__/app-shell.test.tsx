@@ -43,7 +43,7 @@ describe("AppShell (S3-01)", () => {
     )
 
     expect(html).toContain('href="#noi-dung-chinh"')
-    expect(html).toContain("Bỏ qua tới nội dung chính")
+    expect(html).toContain("Bỏ qua tới nội dung")
     expect(html).toContain("sr-only")
   })
 

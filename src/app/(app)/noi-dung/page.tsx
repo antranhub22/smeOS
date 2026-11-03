@@ -12,7 +12,6 @@
  *  - useImageUploadFlow  → use-image-upload-flow.ts
  */
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import React, { useState, Suspense } from "react"
 import { useRouter } from "next/navigation"
@@ -32,6 +31,7 @@ import { GenerationResults } from "./generation-results"
 import { useImageUploadFlow } from "./use-image-upload-flow"
 import { useProductData } from "./use-product-data"
 import { useContentGeneration } from "./use-content-generation"
+import { PageHeader } from "@/components/ui/page-header"
 
 const FLOW_STEPS_PRODUCT = [
   { key: "analyze", label: "Đọc thông số sản phẩm & Brand Kit" },
@@ -75,48 +75,47 @@ function ContentEngineContent() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* ─── Header ─── */}
-      <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-3.5">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-title font-black text-primary flex items-center gap-2">
-              <Sparkles size={18} aria-hidden="true" />
-              Nội dung bán hàng
-            </h2>
-            <InfoTip label="Nội dung bán hàng" side="bottom">
-              Tạo nội dung bán hàng cho nhiều kênh từ một ý tưởng.
-            </InfoTip>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsStudioModalOpen(true)}
-            className="text-caption gap-1.5"
-          >
-            <Sparkles size={14} />
-            Giọng văn
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/lich-dang" as never)}
-            className="text-caption gap-1.5"
-          >
-            <Calendar size={14} />
-            Lịch đăng bài
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/")}
-            className="text-caption gap-1.5"
-          >
-            <ArrowLeft size={14} />
-            Trang chủ
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        className="flex-shrink-0 border-b border-border bg-surface px-6 py-3.5"
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Sparkles size={18} aria-hidden="true" />
+            Nội dung bán hàng
+          </span>
+        }
+        tip="Tạo nội dung bán hàng cho nhiều kênh từ một ý tưởng."
+        actions={
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsStudioModalOpen(true)}
+              className="text-caption gap-1.5"
+            >
+              <Sparkles size={14} />
+              Giọng văn
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/lich-dang" as never)}
+              className="text-caption gap-1.5"
+            >
+              <Calendar size={14} />
+              Lịch đăng bài
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/")}
+              className="text-caption gap-1.5"
+            >
+              <ArrowLeft size={14} />
+              Trang chủ
+            </Button>
+          </>
+        }
+      />
 
       {/* ─── Main ─── */}
       <div className="flex flex-1 flex-col overflow-y-auto p-6 max-w-5xl mx-auto w-full gap-5">

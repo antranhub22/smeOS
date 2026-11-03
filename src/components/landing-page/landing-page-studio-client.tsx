@@ -15,6 +15,7 @@ import type { CatalogProduct } from "@/components/catalog/catalog-management-tab
 import type { LandingPageType } from "@/modules/landing-page/domain/preset-catalog"
 import { Disclosure } from "@/components/ui/disclosure"
 import { ShopReviewsManager } from "@/components/catalog/reviews/shop-reviews-manager"
+import { PageHeader } from "@/components/ui/page-header"
 
 export function LandingPageStudioClient() {
   const router = useRouter()
@@ -100,33 +101,23 @@ export function LandingPageStudioClient() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Top Header */}
-      <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-3.5">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/cong-cu" as never)}
-            aria-label="Về thư viện công cụ"
-            className="flex items-center gap-1.5 text-text-muted hover:text-text"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> <span className="hidden sm:inline">Về Công cụ</span>
-          </Button>
-          <div className="hidden h-4 w-px bg-border sm:block" />
-          <h2 className="text-title font-extrabold text-text">Tạo landing page cửa hàng</h2>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/the-chao" as never)}
-            aria-label="Thẻ chào và mã QR"
-            className="flex items-center gap-1.5 text-caption font-semibold"
-          >
-            <QrCode className="h-3.5 w-3.5" aria-hidden="true" /> <span className="hidden sm:inline">Thẻ chào & QR</span>
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        className="flex-shrink-0 border-b border-border bg-surface px-4 sm:px-6 py-3.5"
+        title="Tạo landing page cửa hàng"
+        backHref="/cong-cu"
+        backLabel="Về thư viện công cụ"
+        actions={
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => router.push("/the-chao" as never)}
+          aria-label="Thẻ chào và mã QR"
+          className="flex items-center gap-1.5 text-caption font-semibold"
+        >
+          <QrCode className="h-3.5 w-3.5" aria-hidden="true" /> <span className="hidden sm:inline">Thẻ chào & QR</span>
+        </Button>
+        }
+      />
 
       {/* Main Workspace */}
       <div className="flex flex-1 flex-col overflow-y-auto p-4 sm:p-6 space-y-5">

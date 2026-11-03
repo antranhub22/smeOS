@@ -30,6 +30,7 @@ import {
   CommercialContentCard,
 } from "@/components/templates/product-analysis"
 import type { Route } from "next"
+import { PageHeader } from "@/components/ui/page-header"
 
 // ============================================================
 // API HELPERS
@@ -1219,17 +1220,17 @@ export default function TaiAnhPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* Header */}
-      <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-        <div>
-          {/* Tiêu đề ngắn; dòng phụ bỏ (OPERATING_PRINCIPLES §6.1) */}
-          <h2 className="text-title font-extrabold text-primary">{ti("scanButtonLabel") || "Quét ảnh sản phẩm"}</h2>
-        </div>
-        <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
-          <ArrowLeft size={16} strokeWidth={2} />
-          Quay về Trang chủ
-        </Button>
-      </div>
+      {/* Header — tiêu đề ngắn; dòng phụ bỏ (OPERATING_PRINCIPLES §6.1) */}
+      <PageHeader
+        className="flex-shrink-0 border-b border-border bg-surface px-4 py-4"
+        title={ti("scanButtonLabel") || "Quét ảnh sản phẩm"}
+        actions={
+          <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
+            <ArrowLeft size={16} strokeWidth={2} />
+            Quay về Trang chủ
+          </Button>
+        }
+      />
 
       {/* Mode / Tab Switcher (Standardized TabActionHeader) */}
       <div className="px-4 pt-2 pb-1 border-b border-border bg-surface">

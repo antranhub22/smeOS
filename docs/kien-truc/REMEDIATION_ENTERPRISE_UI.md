@@ -87,6 +87,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 - [x] **P3-7** (E3) `MutationObserver` ở `src/lib/ui-system/ui-provider.tsx` chỉ chạy khi `NODE_ENV !== "production"`.
 - [x] **P3-8** Nút "Mở UI Studio" trong menu người dùng (`src/components/layout/user-menu.tsx`) hiện cho platform operator ở production nhưng ngăn UI Studio chỉ gắn khi dev (`app-shell.tsx`) — nút không có tác dụng. Hiện nút và ngăn theo cùng một điều kiện.
 - [x] **P3-9** Trạng thái báo giá hiện mã kỹ thuật (`SENT`, `DRAFT`, "ĐÃ GỬI" viết cứng) ở `partner-quote-builder.tsx`, `quote-preview-card.tsx` — dùng `QUOTATION_STATUS_LABELS`.
+- [ ] **P3-10** (PO 03/11/2026, phương án b) Trang mất `<h1>` sau luật R20 chuyển sang component đầu trang chuẩn: trang công cụ dùng `ToolHero` (OPERATING_PRINCIPLES §10, giữ nguyên K1/K2), trang chủ theo vai trò và trang nội bộ dùng `PageHeader`, trang công khai và màn trạng thái toàn trang giữ `<h1>` kèm miễn trừ R20 có lý do. Làm theo đợt; kiểm bằng `test:e2e:ux`.
 
 ## 9. Đóng nhánh
 
@@ -128,6 +129,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P3-7 | Xong | xem `git log --grep "P3-7"` | ui-system 30/30 | Effect thoát sớm ở production; bộ test chạy môi trường node không có DOM nên kiểm bằng đọc mã (cùng cách feature-guidance-contrast.test.ts) |
 | P3-8 | Xong | xem `git log --grep "P3-8"` | components/layout 71/71 (thêm ca withUiStudio khi isDev=false) | Lỗi thật ở app-shell: isDev && withUiStudio ghi đè quyết định của layout, nên (platform) ở production không có ngăn UI Studio trái ADR-011 D-UI-01; nút trong menu giờ đọc ngữ cảnh UiStudioAvailability của shell |
 | P3-9 | Xong | xem `git log --grep "P3-9"` | components/sales 4/4; lint:ux --check | QUOTATION_STATUS_LABELS ở 2 thành phần; thông báo phân biệt đã lưu / đã gửi; test đọc mã đỏ trên bản cũ, xanh trên bản mới |
+| P3-10 | Đang làm | `46279112` (đợt 1), đợt 2 xem `git log --grep "P3-10"` | unit 3.861/3.861; lint:ux (5.498 → 5.493) | Đợt 1: ToolHero, 6 workspace thanh đầu trang, 2 trung tâm điều hành, lưới chọn việc trang chủ, màn "Sắp ra mắt". Đợt 2: /tai-anh, /noi-dung, /landing-page, /tinh-gia, /catalog sang PageHeader; /cong-cu/poster-banner giữ `<h1>` ẩn (K2 khoá); liên kết bỏ qua về khoá i18n `skipToContent`; ca E2E trang chủ cập nhật theo Screen Contract `cong-cu.md` |
 | Z-1 | Đang làm | — | Cổng CI toàn bộ xanh (unit 3.861, tenant 693, platform 36, build); `test:e2e:ux` trên bản build production, DB đã seed: nhánh 10 đạt / 12 lỗi, `main` 21 đạt / 1 lỗi (ảnh mốc /vai-tro, có sẵn) | 12 lỗi mới: 11 trang không có `<h1>` (luật R20 đổi `<h1>`→`<h2>` ở ~40 tệp không dùng PageHeader — trang chủ, công cụ, /van-hanh/*, trang công khai), 1 ca chữ liên kết bỏ qua đổi thành "Bỏ qua tới nội dung chính". Chờ PO quyết phương án |
 | Z-2 | Chưa làm | | |  |
 | Z-3 | Chưa làm | | |  |

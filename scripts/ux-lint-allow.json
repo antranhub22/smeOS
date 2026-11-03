@@ -205,6 +205,11 @@
       "rule": "R20",
       "path": "src/components/layout/feature-locked-guard.tsx",
       "reason": "Màn \"Sắp ra mắt\" thay toàn bộ trang bị khóa, bố cục căn giữa kiểu EmptyState — không có PageHeader nên tiêu đề phải là <h1>"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/ad-banner-poster/poster-banner-client.tsx",
+      "reason": "Tiêu đề trang <h1> ẩn (sr-only) để giữ nguyên K2 TabActionHeader — UX PO khoá, không thêm PageHeader hiển thị"
     }
   ]
 }
