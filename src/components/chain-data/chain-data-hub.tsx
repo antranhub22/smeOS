@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -25,6 +24,7 @@ import { FieldDataTable } from "./field-data-table"
 import { AddBranchModal } from "./add-branch-modal"
 import { AddPartnerStoreModal } from "./add-partner-store-modal"
 import { Plus, Handshake, Building2 } from "@/components/ui/icons"
+import { PageHeader } from "@/components/ui/page-header"
 
 export function ChainDataHub() {
   const [stores, setStores] = useState<readonly ChainStoreSummary[]>([])
@@ -147,9 +147,9 @@ export function ChainDataHub() {
 
         {/* Title & Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-xl font-extrabold text-text tracking-tight flex items-center gap-2">
+          <PageHeader
+            title={
+              <span className="inline-flex items-center gap-2">
                 {selectedFolder ? (
                   <>
                     <Folder className="text-primary fill-current" size={22} />
@@ -166,16 +166,16 @@ export function ChainDataHub() {
                     <span>Dữ liệu chuỗi</span>
                   </>
                 )}
-              </h2>
-              <InfoTip label="Dữ liệu chuỗi">
-                {selectedFolder
-                  ? `Chi tiết tất cả trường dữ liệu thu thập thuộc nhóm ${selectedFolder.domainNameVi} của ${selectedStore?.name}.`
-                  : selectedStore
-                  ? `Thư mục dữ liệu hợp nhất thu thập từ ${selectedStore.name} theo cấu hình thu thập dữ liệu chuỗi.`
-                  : "Quản lý và hiển thị toàn bộ dữ liệu hợp nhất từ các chi nhánh và đối tác thành viên trong chuỗi."}
-              </InfoTip>
-            </div>
-          </div>
+              </span>
+            }
+            tip={
+              selectedFolder
+                ? `Chi tiết tất cả trường dữ liệu thu thập thuộc nhóm ${selectedFolder.domainNameVi} của ${selectedStore?.name}.`
+                : selectedStore
+                ? `Thư mục dữ liệu hợp nhất thu thập từ ${selectedStore.name} theo cấu hình thu thập dữ liệu chuỗi.`
+                : "Quản lý và hiển thị toàn bộ dữ liệu hợp nhất từ các chi nhánh và đối tác thành viên trong chuỗi."
+            }
+          />
 
           <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
             {selectedStore && (

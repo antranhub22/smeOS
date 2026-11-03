@@ -15,6 +15,7 @@ import { InlineError } from "@/components/ui/inline-error"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSession } from "@/lib/session"
 import { PRICE_LIST_STATUS_LABEL, type PriceListStatus } from "@/modules/products/domain/price-list"
+import { PageHeader } from "@/components/ui/page-header"
 
 type PriceListRow = PriceListFormValue & { id: string; status: PriceListStatus; updatedAt: string }
 
@@ -91,10 +92,10 @@ export function PriceListsClient() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-display font-extrabold text-text">Bảng giá sản phẩm</h2>
-          <p className="mt-1 text-body-sm text-text-muted">Bảng giá gọn gàng để gửi khách, in tại quầy hoặc lưu thành PDF.</p>
-        </div>
+        <PageHeader
+          title="Bảng giá sản phẩm"
+          description="Bảng giá gọn gàng để gửi khách, in tại quầy hoặc lưu thành PDF."
+        />
         {canManage && (
           <Button onClick={() => openForm(EMPTY_PRICE_LIST)}>
             <Plus className="h-4 w-4" aria-hidden />

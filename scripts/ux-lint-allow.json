@@ -210,6 +210,11 @@
       "rule": "R20",
       "path": "src/components/ad-banner-poster/poster-banner-client.tsx",
       "reason": "Tiêu đề trang <h1> ẩn (sr-only) để giữ nguyên K2 TabActionHeader — UX PO khoá, không thêm PageHeader hiển thị"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/promotions/price-list-document.tsx",
+      "reason": "Nội dung trang /bang-gia/[id] là bản bảng giá căn giữa để in hoặc gửi khách — tiêu đề tài liệu là <h1>, không dùng PageHeader để giữ bố cục bản in"
     }
   ]
 }

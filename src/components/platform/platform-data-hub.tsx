@@ -9,7 +9,6 @@
  */
 
 import React, { useState, useEffect } from "react"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -37,6 +36,7 @@ import type { PlatformOrgDataSummary } from "@/modules/platform/use-cases/get-pl
 import type { RecordDomain } from "@/modules/platform/use-cases/get-platform-org-records"
 import { useI18n } from "@/lib/i18n"
 import { PlatformRecordsViewer } from "./platform-records-viewer"
+import { PageHeader } from "@/components/ui/page-header"
 
 // ─── Domain Definitions ───────────────────────────────────────────────────
 
@@ -422,9 +422,9 @@ export function PlatformDataHub() {
 
         {/* Title + Actions */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-text tracking-tight flex items-center gap-2">
+          <PageHeader
+            title={
+              <span className="inline-flex items-center gap-2">
                 {selectedDomain && selectedDomainMeta ? (
                   <>
                     <selectedDomainMeta.icon className={selectedDomainMeta.color} size={20} />
@@ -441,16 +441,16 @@ export function PlatformDataHub() {
                     <span>Dữ liệu toàn nền tảng</span>
                   </>
                 )}
-              </h2>
-              <InfoTip label="Dữ liệu toàn nền tảng">
-                {selectedDomain
-                  ? `Xem và tải toàn bộ bản ghi từ ${selectedOrg?.name}.`
-                  : selectedOrg
-                  ? "Chọn loại dữ liệu để xem chi tiết từng bản ghi và xuất file."
-                  : `Xuyên tổ chức — ${orgs.length} tổ chức đã đăng ký.`}
-              </InfoTip>
-            </div>
-          </div>
+              </span>
+            }
+            tip={
+              selectedDomain
+                ? `Xem và tải toàn bộ bản ghi từ ${selectedOrg?.name}.`
+                : selectedOrg
+                ? "Chọn loại dữ liệu để xem chi tiết từng bản ghi và xuất file."
+                : `Xuyên tổ chức — ${orgs.length} tổ chức đã đăng ký.`
+            }
+          />
 
           <div className="flex items-center gap-2 shrink-0">
             {selectedOrg ? (

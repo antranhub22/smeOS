@@ -14,7 +14,6 @@
  */
 "use client"
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useMemo } from "react"
 import { GovernanceMatrixTable } from "@/components/governance/governance-matrix-table"
 import type { GovernanceMatrixState, GovernanceViewerTier } from "@/components/governance/governance-matrix-types"
@@ -22,6 +21,7 @@ import { buildSSOTGovernanceGroups, type GovernanceSystemKey } from "./governanc
 import { useGovernanceMatrix } from "./use-governance-matrix"
 import { GovernanceScopeNote } from "./governance-scope-note"
 import { useSession } from "@/lib/session"
+import { PageHeader } from "@/components/ui/page-header"
 
 interface TierGovernanceMatrixClientProps {
   systemKey: GovernanceSystemKey
@@ -60,10 +60,10 @@ export function TierGovernanceMatrixClient({ systemKey, title, description }: Ti
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full p-6">
       <div>
         {/* Tiêu đề ngắn; mô tả trong "?" (OPERATING_PRINCIPLES §6.1) */}
-        <div className="flex items-center gap-2">
-          <h2 className="text-display font-extrabold text-text">{title}</h2>
-          <InfoTip label={title} side="bottom">{description}</InfoTip>
-        </div>
+        <PageHeader
+          title={title}
+          tip={<>{description}</>}
+        />
       </div>
 
       <GovernanceScopeNote system={systemKey} />

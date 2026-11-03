@@ -2,6 +2,7 @@
 
 import { ArrowLeft, CheckCircle2, Download, Store, FileSpreadsheet } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/ui/page-header"
 
 type ActiveTab = "products" | "branches"
 
@@ -33,25 +34,25 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
           >
             <ArrowLeft size={16} />
           </button>
-          <div>
-            <h2 className="text-title font-extrabold text-primary">
-              {activeTab === "branches" ? "Nhập danh sách chi nhánh" : "Nhập từ Excel & ảnh"}
-            </h2>
-            {restoredCount > 0 && activeTab === "products" && (
-              <div className="mt-0.5 flex items-center gap-1.5 text-caption font-semibold text-success">
-                <CheckCircle2 size={12} />
-                <span>Đã khôi phục {restoredCount} sản phẩm từ phiên trước</span>
-                <button
-                  type="button"
-                  onClick={onClearRestored}
-                  className="ml-1 text-danger hover:underline focus-visible:outline-2 focus-visible:outline-primary"
-                  aria-label="Xóa dữ liệu đã khôi phục"
-                >
-                  (Xóa)
-                </button>
-              </div>
-            )}
-          </div>
+          <PageHeader
+            title={activeTab === "branches" ? "Nhập danh sách chi nhánh" : "Nhập từ Excel & ảnh"}
+            description={
+              restoredCount > 0 && activeTab === "products" ? (
+                <span className="mt-0.5 inline-flex items-center gap-1.5 text-caption font-semibold text-success">
+                  <CheckCircle2 size={12} />
+                  <span>Đã khôi phục {restoredCount} sản phẩm từ phiên trước</span>
+                  <button
+                    type="button"
+                    onClick={onClearRestored}
+                    className="ml-1 text-danger hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+                    aria-label="Xóa dữ liệu đã khôi phục"
+                  >
+                    (Xóa)
+                  </button>
+                </span>
+              ) : undefined
+            }
+          />
         </div>
 
         {activeTab === "products" && (

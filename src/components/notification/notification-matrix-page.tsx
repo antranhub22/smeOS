@@ -8,7 +8,6 @@
  */
 "use client"
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useState, useMemo } from "react"
 import {
   BellRing,
@@ -32,6 +31,7 @@ import {
   EVENT_GROUP_LABELS,
 } from "./notification-matrix-types"
 import type { NotificationEventGroup } from "@/modules/notification/domain/events/_contract"
+import { PageHeader } from "@/components/ui/page-header"
 
 export function NotificationMatrixPage({
   viewerTier,
@@ -144,14 +144,16 @@ export function NotificationMatrixPage({
       </p>
       {/* ── HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-2xl border border-border bg-surface shadow-xs">
-        <div>
-          <div className="flex items-center gap-2">
-            <BellRing size={20} className="text-primary" aria-hidden="true" />
-            <h2 className="text-title-sm font-extrabold text-text">{title}</h2>
-            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-            <InfoTip label={title} side="bottom">{description}</InfoTip>
-          </div>
-        </div>
+        {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
+        <PageHeader
+          title={
+            <span className="inline-flex items-center gap-2">
+              <BellRing size={20} className="text-primary" aria-hidden="true" />
+              {title}
+            </span>
+          }
+          tip={description}
+        />
 
         {/* Stats Pill */}
         <div className="flex items-center gap-4 shrink-0">
