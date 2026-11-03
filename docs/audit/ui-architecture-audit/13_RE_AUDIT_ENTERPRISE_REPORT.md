@@ -8,8 +8,8 @@
 
 - **Khung kiến trúc UI đạt mức có cổng kiểm tự động.** Token ngữ nghĩa có một nguồn (`src/styles/tokens/`), shell dùng chung (`AppShell`, `LiveRegionProvider`), 48 primitive trong `src/components/ui/` có test, Screen Contract phủ 111/111 trang, và các cổng ratchet trong CI (ESLint, UX lint, thuật ngữ ngành, gọi `Intl` trực tiếp) chặn nợ tăng thêm.
 - **Độ phủ trên màn hình thật còn thấp.** Baseline UX lint còn 5.498 vi phạm; 1.009 `<button>` và 636 `<input>` thô ngoài `src/components/ui/`; 12/111 trang gọi trực tiếp `PageLayout`/`PageHeader`; 90 tệp nguồn vượt 350 dòng.
-- **Trợ năng và hiệu năng chưa kiểm chứng.** Bộ E2E UX (`npm run test:e2e:ux`) và đo Web Vitals chưa có kết quả chạy lưu trong repo.
-- **Kết luận bàn giao:** đạt điều kiện bàn giao thương mại với nợ UX được kiểm soát bằng ratchet và có lộ trình (mục 6). Chưa đạt mức "enterprise grade toàn diện" ở các miền D, F, G, J.
+- **Trợ năng có lỗi mới, hiệu năng chưa đo.** `test:e2e:ux` có 12 lỗi mới so với `main`: luật R20 ("`<h1>` chỉ trong PageHeader") đổi `<h1>` thành `<h2>` ở khoảng 40 tệp không dùng PageHeader, để lại trang chủ, các công cụ, `/van-hanh/*` và một số trang công khai không có tiêu đề cấp 1. Web Vitals chưa đo.
+- **Kết luận bàn giao:** đạt điều kiện bàn giao thương mại với nợ UX được kiểm soát bằng ratchet và có lộ trình (mục 6). Chưa đạt mức "enterprise grade toàn diện" ở các miền D, F, G, J; lỗi `<h1>` ở miền F phải xử lý trước khi hợp nhất vào `main`.
 
 ## 2. Cổng CI
 
@@ -21,7 +21,7 @@ Chạy trên nhánh khắc phục, Postgres 16 cục bộ, ngày 03/11/2026.
 | `test:tenant` · `test:platform` | Đạt — 692/692 · 36/36 |
 | `npm test` | Đạt — 3.847 ca thử |
 | `check:schemas:coordinator` · `check:schemas:content-engine` | Đỏ trên cả `main` — lỗi có sẵn, theo phiên bản `zod` của môi trường đo |
-| `test:e2e:ux` (Playwright + axe) | Chưa kiểm chứng |
+| `test:e2e:ux` (Playwright + axe), bản build production, DB đã seed | 10 đạt / 12 lỗi; `main` cùng điều kiện 21 đạt / 1 lỗi. 11 lỗi mới do trang không có `<h1>`, 1 do chữ liên kết bỏ qua đổi |
 
 ## 3. Theo miền kiến trúc
 
@@ -32,7 +32,7 @@ Chạy trên nhánh khắc phục, Postgres 16 cục bộ, ngày 03/11/2026.
 | C. Component | Đạt một phần | 48 primitive, 17 tệp test trong `src/components/ui/__tests__/`; chưa có `date-picker` (có `date-field`); R18 (điều khiển thô) còn 1.797 trong baseline |
 | D. Chuẩn UX | Đạt một phần | Luật R13–R23 trong `scripts/ux-lint/`; 12/111 trang gọi trực tiếp `PageLayout`/`PageHeader` |
 | E. Screen Contract | Đạt | `check:screen-contracts`: 32 v2 · 72 v1 · 7 miễn trừ · 0 thiếu (111 trang) |
-| F. Responsive & trợ năng | Chưa kiểm chứng | Copilot là BottomSheet dưới `sm` (`floraos-global-copilot.tsx:206`); không có kết quả axe, bàn phím hay trình đọc màn hình được lưu |
+| F. Responsive & trợ năng | Chưa đạt | Copilot là BottomSheet dưới `sm` (`floraos-global-copilot.tsx:206`); không có kết quả axe, bàn phím hay trình đọc màn hình được lưu |
 | G. Kiểm thử giao diện | Đạt một phần | `tests/e2e/ux/` có 8 tệp (a11y, visual); ảnh mốc visual chỉ ở vài màn (404, vai trò); `ui-weekly.yml` chạy hằng tuần |
 | H. Quản trị agent | Đạt | Tài liệu SSOT trong `00-DOCUMENTATION-REGISTRY.yaml`, `check:docs` xanh |
 | I. Quản trị Design System | Đạt | `docs/design-system/CHANGELOG.md` theo SemVer; `check:tokens-doc` giữ tài liệu token khớp mã |
@@ -49,7 +49,7 @@ Chạy trên nhánh khắc phục, Postgres 16 cục bộ, ngày 03/11/2026.
 | K5 | Trang gọi trực tiếp `PageLayout`/`PageHeader` | 12/111 | `grep -l "PageLayout\|PageHeader"` trên `src/app/**/page.tsx` |
 | K6 | Bao phủ Screen Contract | 111/111 (32 v2, 72 v1, 7 miễn trừ) | `npm run check:screen-contracts` |
 | K7 | Ảnh mốc visual | Vài màn trong `tests/e2e/ux/visual.spec.ts` | đọc mã |
-| K8 | Quét axe critical/serious = 0 | Chưa kiểm chứng | `npm run test:e2e:ux` |
+| K8 | Quét axe critical/serious = 0 | Đạt ở `a11y.spec.ts`; 9 tuyến công cụ dừng ở bước kiểm `<h1>` trước khi quét axe | `npm run test:e2e:ux` |
 | K9 | Kiểm thủ công WCAG 2.2 AA | Chưa kiểm chứng | `docs/design-system/accessibility-audit-12-journeys.md` là quy trình kiểm, chưa có kết quả |
 | K10 | Token không dùng | Chưa đo | — |
 | K11 | Tệp nguồn > 350 dòng | 90 | `wc -l` trên `src/**/*.{ts,tsx}` trừ test |

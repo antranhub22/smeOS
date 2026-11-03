@@ -128,7 +128,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P3-7 | Xong | xem `git log --grep "P3-7"` | ui-system 30/30 | Effect thoát sớm ở production; bộ test chạy môi trường node không có DOM nên kiểm bằng đọc mã (cùng cách feature-guidance-contrast.test.ts) |
 | P3-8 | Xong | xem `git log --grep "P3-8"` | components/layout 71/71 (thêm ca withUiStudio khi isDev=false) | Lỗi thật ở app-shell: isDev && withUiStudio ghi đè quyết định của layout, nên (platform) ở production không có ngăn UI Studio trái ADR-011 D-UI-01; nút trong menu giờ đọc ngữ cảnh UiStudioAvailability của shell |
 | P3-9 | Xong | xem `git log --grep "P3-9"` | components/sales 4/4; lint:ux --check | QUOTATION_STATUS_LABELS ở 2 thành phần; thông báo phân biệt đã lưu / đã gửi; test đọc mã đỏ trên bản cũ, xanh trên bản mới |
-| Z-1 | Chưa làm | | |  |
+| Z-1 | Đang làm | — | Cổng CI toàn bộ xanh (unit 3.861, tenant 693, platform 36, build); `test:e2e:ux` trên bản build production, DB đã seed: nhánh 10 đạt / 12 lỗi, `main` 21 đạt / 1 lỗi (ảnh mốc /vai-tro, có sẵn) | 12 lỗi mới: 11 trang không có `<h1>` (luật R20 đổi `<h1>`→`<h2>` ở ~40 tệp không dùng PageHeader — trang chủ, công cụ, /van-hanh/*, trang công khai), 1 ca chữ liên kết bỏ qua đổi thành "Bỏ qua tới nội dung chính". Chờ PO quyết phương án |
 | Z-2 | Chưa làm | | |  |
 | Z-3 | Chưa làm | | |  |
 
