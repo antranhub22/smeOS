@@ -266,3 +266,38 @@ describe("Customer Care Use Cases", () => {
     )
   })
 })
+
+describe("getSegmentCustomersUseCase — duyệt hết khách theo trang", () => {
+  it("tổ chức 1.200 khách: đánh giá đủ 1.200 khách, không dừng ở 500", async () => {
+    const all = Array.from({ length: 1200 }, (_, i) => ({
+      id: `cust-${i}`,
+      organizationId: "org-test-1",
+      code: `KH-${i}`,
+      name: `Khách ${i}`,
+      phone: `09${String(i).padStart(8, "0")}`,
+      tags: [],
+      metrics: { tier: "VIP", totalSpentVnd: 1_000_000, orderCount: 1, aovVnd: 1_000_000 },
+      preferences: { preferredFlowers: [], preferredColors: [] },
+      occasions: [],
+      consents: [],
+      availableVouchers: [],
+      updatedAt: "2026-01-01",
+    })) as unknown as CustomerMasterIndex[]
+    const list = vi.fn(
+      async (_ctx: unknown, _f: unknown, p?: { limit?: number | undefined; offset?: number | undefined }) => {
+        const offset = p?.offset ?? 0
+        return { items: all.slice(offset, offset + (p?.limit ?? 50)), total: all.length }
+      },
+    )
+    const segmentRepo = {
+      findById: vi.fn().mockResolvedValue({ id: "seg", name: "VIP", kind: "DYNAMIC", rules: { tiers: ["VIP"] } }),
+    } as unknown as ICustomerSegmentRepository
+    const customerRepo = { list } as unknown as ICustomerRepository
+
+    const result = await getSegmentCustomersUseCase(fakeCtx, { segmentId: "seg", limit: 10, offset: 1190 }, segmentRepo, customerRepo)
+
+    expect(result.totalMatched).toBe(1200)
+    expect(result.items.map((c) => c.id)).toEqual(Array.from({ length: 10 }, (_, i) => `cust-${1190 + i}`))
+    expect(list).toHaveBeenCalledTimes(3)
+  })
+})
