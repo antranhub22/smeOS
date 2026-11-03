@@ -72,10 +72,16 @@ test.describe("Ảnh mốc màn chính 12 hành trình", () => {
         const page = await context.newPage()
         await page.clock.setFixedTime(FIXED_TIME)
         await settle(page, screen.path)
-        await expect(page).toHaveScreenshot(`${screen.name}-${vp.label}.png`, {
-          maxDiffPixelRatio: 0.05,
-          animations: "disabled",
-        })
+        try {
+          await expect(page).toHaveScreenshot(`${screen.name}-${vp.label}.png`, {
+            maxDiffPixelRatio: 0.05,
+            animations: "disabled",
+          })
+        } catch (err) {
+          // Artifact CI không phải lúc nào cũng tải được: in cấu trúc trang vào log để đối chiếu.
+          console.log(`[visual] ${screen.name}-${vp.label}\n${await page.locator("body").ariaSnapshot().catch(() => "")}`)
+          throw err
+        }
         await context.close()
       }
     })
