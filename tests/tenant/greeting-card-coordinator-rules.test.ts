@@ -96,6 +96,20 @@ describe("greeting-card: luật Điều phối (PO 15/10/2026)", () => {
     expect(await codeOf(uploadBrochureRecipientPhoto(a.ctx, strict.orderId, { skipPhoto: true }))).toBe("CONFLICT")
   })
 
+  it("ảnh giao bắt buộc ở mọi gói; Điều hành tắt công tắc ảnh người nhận thì bỏ qua được (PO 04/11/2026, ALG 4.18)", async () => {
+    await usePolicy(LEAN_WORKFLOW_POLICY)
+    const order = await placeOrder()
+    await assignBrochureFlorist(a.ctx, order.orderId, { floristNote: "Thợ A" })
+    await uploadBrochureProductPhoto(a.ctx, order.orderId, { skipPhoto: true })
+    await dispatchBrochureShipping(a.ctx, order.orderId, { trackingNote: "Ship" })
+    expect(await codeOf(uploadBrochureRecipientPhoto(a.ctx, order.orderId, { skipPhoto: true }))).toBe("CONFLICT")
+    expect((await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId } })).delivery_status).toBe("DELIVERING")
+
+    await usePolicy({ ...LEAN_WORKFLOW_POLICY, preset: "CUSTOM", requireDeliveryProofPhoto: false })
+    await uploadBrochureRecipientPhoto(a.ctx, order.orderId, { skipPhoto: true, skipReason: "Khách nhận trực tiếp" })
+    expect((await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId } })).delivery_status).toBe("DELIVERED")
+  })
+
   it("chờ khách duyệt ảnh thì chưa giao ship được, Điều phối thấy đếm ngược; gói Tinh gọn không chờ", async () => {
     const order = await placeOrder()
     await assignBrochureFlorist(a.ctx, order.orderId, { floristNote: "Thợ A" })

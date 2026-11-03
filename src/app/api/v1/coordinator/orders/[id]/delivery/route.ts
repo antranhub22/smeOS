@@ -2,7 +2,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { parseBody, deliveryUpdateSchema } from "@/modules/coordinator/adapters/http-schemas"
-import { recordDeliveryUpdate } from "@/modules/coordinator/use-cases/operations"
+import { recordDeliveryUpdate } from "@/modules/coordinator/use-cases/record-delivery-update"
 
 type Params = { params: Promise<{ id: string }> }
 
