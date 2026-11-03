@@ -1,4 +1,5 @@
 import { validationFailed } from "@/core/http/errors"
+import { enumParam } from "@/core/http/query-params"
 import { handle, jsonResponse } from "@/core/http/response"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -10,7 +11,9 @@ import {
   createPrintRenditionSchema,
   type PrintRenditionStatus,
 } from "@/modules/print/domain/print-rendition"
-import type { PrintPresetCode } from "@/modules/print/domain/print-preset"
+import { PRINT_PRESETS, type PrintPresetCode } from "@/modules/print/domain/print-preset"
+
+const PRINT_RENDITION_STATUS_VALUES = ["PENDING", "READY", "FAILED"] as const satisfies readonly PrintRenditionStatus[]
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -19,8 +22,8 @@ export const GET = handle(async (request) => {
   }
 
   const url = new URL(request.url)
-  const presetCode = (url.searchParams.get("preset_code") as PrintPresetCode) ?? undefined
-  const status = (url.searchParams.get("status") as PrintRenditionStatus) ?? undefined
+  const presetCode = enumParam(url, "preset_code", Object.keys(PRINT_PRESETS) as PrintPresetCode[])
+  const status = enumParam(url, "status", PRINT_RENDITION_STATUS_VALUES)
   const sourceType = url.searchParams.get("source_type") ?? undefined
 
   const limit = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : 50

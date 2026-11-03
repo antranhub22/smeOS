@@ -1,4 +1,6 @@
 import { validationFailed } from "@/core/http/errors"
+import { enumParam } from "@/core/http/query-params"
+import { CUSTOMER_SEGMENT_KINDS } from "@/modules/crm/domain/customer-segment"
 import { handle, jsonResponse } from "@/core/http/response"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -7,7 +9,6 @@ import {
   createCustomerSegmentInputSchema,
 } from "@/modules/crm/use-cases/create-customer-segment.use-case"
 import { listCustomerSegmentsUseCase } from "@/modules/crm/use-cases/list-customer-segments.use-case"
-import type { CustomerSegmentKind } from "@/modules/crm/domain/customer-segment"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -16,7 +17,7 @@ export const GET = handle(async (request) => {
   }
 
   const url = new URL(request.url)
-  const kind = (url.searchParams.get("kind") as CustomerSegmentKind) ?? undefined
+  const kind = enumParam(url, "kind", CUSTOMER_SEGMENT_KINDS)
   const search = url.searchParams.get("search") ?? undefined
 
   const limit = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : 50

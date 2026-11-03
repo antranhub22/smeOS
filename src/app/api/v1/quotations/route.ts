@@ -1,9 +1,10 @@
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
+import { enumParam } from "@/core/http/query-params"
+import { QUOTATION_STATUSES } from "@/modules/sales/domain/quotation"
 import { handle, jsonResponse } from "@/core/http/response"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import type { QuotationStatus } from "@/modules/sales/domain/quotation"
 import { createQuotationUseCase } from "@/modules/sales/use-cases/create-quotation.use-case"
 import { listQuotationsUseCase } from "@/modules/sales/use-cases/list-quotations.use-case"
 
@@ -40,7 +41,7 @@ export const GET = handle(async (request) => {
   }
 
   const url = new URL(request.url)
-  const status = (url.searchParams.get("status") as QuotationStatus) ?? undefined
+  const status = enumParam(url, "status", QUOTATION_STATUSES)
   const leadId = url.searchParams.get("leadId") ?? url.searchParams.get("lead_id") ?? undefined
   const customerId =
     url.searchParams.get("customerId") ?? url.searchParams.get("customer_id") ?? undefined

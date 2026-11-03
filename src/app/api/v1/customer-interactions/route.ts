@@ -1,12 +1,10 @@
 import { validationFailed } from "@/core/http/errors"
+import { enumParam } from "@/core/http/query-params"
+import { CUSTOMER_INTERACTION_CHANNELS, CUSTOMER_INTERACTION_DIRECTIONS } from "@/modules/crm/domain/customer-segment"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { listCustomerInteractionsUseCase } from "@/modules/crm/use-cases/list-customer-interactions.use-case"
-import type {
-  CustomerInteractionChannel,
-  CustomerInteractionDirection,
-} from "@/modules/crm/domain/customer-segment"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -14,8 +12,8 @@ export const GET = handle(async (request) => {
 
   const url = new URL(request.url)
   const customerId = url.searchParams.get("customer_id") ?? undefined
-  const channel = (url.searchParams.get("channel") as CustomerInteractionChannel) ?? undefined
-  const direction = (url.searchParams.get("direction") as CustomerInteractionDirection) ?? undefined
+  const channel = enumParam(url, "channel", CUSTOMER_INTERACTION_CHANNELS)
+  const direction = enumParam(url, "direction", CUSTOMER_INTERACTION_DIRECTIONS)
 
   const limit = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : 50
   const offset = url.searchParams.has("offset") ? Number(url.searchParams.get("offset")) : 0

@@ -81,7 +81,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 - [ ] **P3-1** (C1) `get-segment-customers.use-case.ts`: bỏ trần 500 khách; duyệt toàn bộ khách theo trang có giới hạn số vòng, hoặc đẩy điều kiện lọc xuống truy vấn. Test: tổ chức 1.200 khách cho kết quả đúng.
 - [ ] **P3-2** (C2) Xuất PDF in ấn: giới hạn kích thước `imageDataUrl`, kiểm MIME bằng bộ kiểm nội dung tải lên hiện có, ghi tệp qua `StorageProvider`, trả URL ký thay cho base64.
 - [ ] **P3-3** (D1) Tách `print-workflow.tsx` (434), `kpi-definitions.ts` (356), `chain-dispatch-settings.tsx` (358), `store-policies-editor.tsx` (353) về ≤ 350 dòng; 9 tệp vốn đã quá ngưỡng trở về ≤ số dòng trên `main`.
-- [ ] **P3-4** (D2) Kiểm giá trị enum từ query string bằng zod ở các route mới → 400 thay vì 500.
+- [x] **P3-4** (D2) Kiểm giá trị enum từ query string bằng zod ở các route mới → 400 thay vì 500.
 - [x] **P3-5** (D3) Thay so khớp chuỗi `err.message.includes(...)` bằng lỗi có kiểu (`notFound()`) ở `crm/use-cases/*`, `print/use-cases/*` và route tương ứng.
 - [x] **P3-6** (D4) Sinh mã báo giá an toàn khi đồng thời: thử lại có giới hạn (≤ 3 lần) khi trùng `@@unique([organization_id, code])`. Test hai yêu cầu song song.
 - [x] **P3-7** (E3) `MutationObserver` ở `src/lib/ui-system/ui-provider.tsx` chỉ chạy khi `NODE_ENV !== "production"`.
@@ -122,7 +122,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P3-1 | Chưa làm | | |  |
 | P3-2 | Chưa làm | | |  |
 | P3-3 | Chưa làm | | |  |
-| P3-4 | Chưa làm | | |  |
+| P3-4 | Xong | xem `git log --grep "P3-4"` | typecheck; eslint 0 cảnh báo; unit 22 tệp 121/121 | Helper enumParam() (src/core/http/query-params.ts) cho 12 tham số ở 8 route; giá trị ngoài danh sách → 400 kèm danh sách cho phép; lược đồ zod POST campaigns/asset-usages dùng chung hằng số. Ghi nhận ngoài phạm vi: kiểu domain UsageDestination có LIBRARY, enum DB có OTHER |
 | P3-5 | Xong | xem `git log --grep "P3-5"` | unit crm+print 52/52; tenant 6/6; typecheck | 3 use-case ném notFound(); 3 route bỏ khối try/catch dò chuỗi; 2 ca thử tenant kiểm code NOT_FOUND thay cho nội dung chuỗi |
 | P3-6 | Xong | xem `git log --grep "P3-6"` | tenant báo giá 9/9; typecheck | Thử lại trong repository khi trùng mã (P2002), tối đa 5 lần — cùng mẫu ShortLinkRepository; ca thử 4 yêu cầu đồng thời đỏ trên bản cũ (unique quotations_organization_id_code_key), xanh trên bản mới |
 | P3-7 | Xong | xem `git log --grep "P3-7"` | ui-system 30/30 | Effect thoát sớm ở production; bộ test chạy môi trường node không có DOM nên kiểm bằng đọc mã (cùng cách feature-guidance-contrast.test.ts) |

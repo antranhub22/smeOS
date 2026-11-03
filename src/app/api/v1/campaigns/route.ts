@@ -1,19 +1,20 @@
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
+import { enumParam } from "@/core/http/query-params"
+import { CAMPAIGN_OBJECTIVES, CAMPAIGN_STATUSES } from "@/modules/marketing-center/domain/campaign"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import type { CampaignObjective, CampaignStatus } from "@/modules/marketing-center/domain/campaign"
 import { createCampaignUseCase } from "@/modules/marketing-center/use-cases/create-campaign.use-case"
 import { listCampaignsUseCase } from "@/modules/marketing-center/use-cases/list-campaigns.use-case"
 
 const createCampaignSchema = z.object({
   name: z.string().min(1, "Tên chiến dịch không được để trống").max(150),
-  objective: z.enum(["AWARENESS", "LEAD", "SALE", "RETENTION"]),
+  objective: z.enum(CAMPAIGN_OBJECTIVES),
   occasion_code: z.string().nullable().optional(),
   starts_at: z.string().nullable().optional(),
   ends_at: z.string().nullable().optional(),
-  status: z.enum(["DRAFT", "ACTIVE", "PAUSED", "COMPLETED", "ARCHIVED"]).optional(),
+  status: z.enum(CAMPAIGN_STATUSES).optional(),
 })
 
 export const GET = handle(async (request) => {
@@ -21,8 +22,8 @@ export const GET = handle(async (request) => {
   requireCapability(ctx, "M1")
 
   const url = new URL(request.url)
-  const status = (url.searchParams.get("status") as CampaignStatus) ?? undefined
-  const objective = (url.searchParams.get("objective") as CampaignObjective) ?? undefined
+  const status = enumParam(url, "status", CAMPAIGN_STATUSES)
+  const objective = enumParam(url, "objective", CAMPAIGN_OBJECTIVES)
   const cursor = url.searchParams.get("cursor") ?? undefined
 
   const limit = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : 50
