@@ -92,7 +92,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 ## 9. Đóng nhánh
 
 - [ ] **Z-1** Chạy toàn bộ cổng mục "Definition of done" của `CLAUDE.md`, gồm `test:e2e:ux`.
-- [ ] **Z-2** Mở PR vào `main`; CI xanh trên PR là bằng chứng cuối.
+- [x] **Z-2** Mở PR vào `main`; CI xanh trên PR là bằng chứng cuối.
 - [x] **Z-3** Cập nhật §4–6 `TRANG_THAI.md`; ghi lỗi tái diễn (báo cáo tự khai không có nguồn đo, sửa khu vực đóng băng trong commit dọn nợ) vào `AGENT_RULES.md` §14.
 
 ### Bảng theo dõi
@@ -131,7 +131,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P3-9 | Xong | xem `git log --grep "P3-9"` | components/sales 4/4; lint:ux --check | QUOTATION_STATUS_LABELS ở 2 thành phần; thông báo phân biệt đã lưu / đã gửi; test đọc mã đỏ trên bản cũ, xanh trên bản mới |
 | P3-10 | Xong | xem `git log --grep "P3-10"` (6 commit, đợt 1 → 3d) | unit 3.861/3.861; lint:ratchet; lint:ux (5.498 → 5.491); `test:e2e:ux` 22/22 sau đợt 2 | 71 tệp mất `<h1>`: trang công cụ qua `ToolHero` (giữ K1/K2); trang chủ theo vai, 10 trang /van-hanh, 19 trang (app), 9 thành phần cấp trang qua `PageHeader`; 7 trang công khai + màn "Sắp ra mắt" + bản in /bang-gia giữ `<h1>` (miễn trừ R20 có lý do); /cong-cu/poster-banner giữ `<h1>` ẩn (K2 khoá); màn không có quyền ở audit/muc-dung/cai-dat-ai thành PageHeader + EmptyState, bỏ mã năng lực khỏi màn hình. Ngoại lệ có chủ đích: catalog-page-renderer (khung dựng trang trong Catalog Studio, không phải trang) |
 | Z-1 | Xong (môi trường cục bộ) | `4a0f0fd0` + commit ảnh mốc | typecheck, lint:ratchet, lint:ux, check:docs, layers, tokens-doc, template-ssot, screen-contracts, industry, schemas:creative, build: đạt; unit 3.861/3.861; tenant 693/693; platform 36/36; `test:e2e:ux` 22/22 (`main` 21/22) | `check:schemas:coordinator/content-engine` đỏ cả trên `main` (phiên bản zod của môi trường). Ảnh mốc /vai-tro mobile Linux cập nhật theo PageHeader; ảnh mốc `-darwin` chưa tạo lại được trong môi trường Linux. CI trên PR là xác nhận cuối |
-| Z-2 | Đang làm | PR [antranhub22/smeOS#107](https://github.com/antranhub22/smeOS/pull/107) | CI lượt 1 trên `2362229c`: web, security, worker, industry-terms, analyze đạt; e2e-ux 21/22 (ảnh mốc desktop /vai-tro — cập nhật ở `e40c2bb1`); CodeQL 11 cảnh báo — đã sửa (7 do nhánh: thoát `\` trong gen-design-tokens-doc, ReDoS ở 5 regex ux-lint; 4 có sẵn trên main: 3 `<img src>` qua `safeImageSrc`, ID ghép vào đường dẫn API ở /tai-anh qua `encodeURIComponent`) | Chờ CI lượt 2 |
+| Z-2 | Xong | PR [antranhub22/smeOS#107](https://github.com/antranhub22/smeOS/pull/107), commit `4d140336` | CI trên PR: web, e2e-ux, CodeQL, security, worker, industry-terms, analyze (JS/TS, Python) — tất cả đạt | Lượt 1: e2e-ux 21/22 (ảnh mốc desktop /vai-tro) và CodeQL 11 cảnh báo — đã sửa ở `e40c2bb1`, `4d140336`. Chờ PO duyệt merge |
 | Z-3 | Xong | commit `docs(status)` | check:docs ✓ | `TRANG_THAI.md` §6 cập nhật; `AGENT_RULES.md` §14 thêm #17 (báo cáo không có nguồn đo), #18 (dọn nợ sửa vùng khoá), #19 (luật lint làm mất `<h1>`) |
 
 ## 10. Rủi ro và kiểm soát
