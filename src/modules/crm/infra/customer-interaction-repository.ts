@@ -1,5 +1,9 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import type { Prisma } from "@/generated/prisma/client"
+import type {
+  customer_interaction_channel,
+  customer_interaction_direction,
+  Prisma,
+} from "@/generated/prisma/client"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type {
   CustomerInteraction,
@@ -48,8 +52,8 @@ export class CustomerInteractionRepository implements ICustomerInteractionReposi
       data: {
         organization_id: ctx.organizationId,
         customer_id: data.customerId,
-        channel: data.channel as any,
-        direction: (data.direction ?? "OUTBOUND") as any,
+        channel: data.channel as customer_interaction_channel,
+        direction: (data.direction ?? "OUTBOUND") as customer_interaction_direction,
         asset_usage_id: data.assetUsageId ?? null,
         summary: data.summary,
         outcome: data.outcome ?? null,
@@ -77,8 +81,8 @@ export class CustomerInteractionRepository implements ICustomerInteractionReposi
     const where: Prisma.customer_interactionsWhereInput = {
       organization_id: ctx.organizationId,
       ...(filter?.customerId ? { customer_id: filter.customerId } : {}),
-      ...(filter?.channel ? { channel: filter.channel as any } : {}),
-      ...(filter?.direction ? { direction: filter.direction as any } : {}),
+      ...(filter?.channel ? { channel: filter.channel as customer_interaction_channel } : {}),
+      ...(filter?.direction ? { direction: filter.direction as customer_interaction_direction } : {}),
       ...(filter?.assetUsageId ? { asset_usage_id: filter.assetUsageId } : {}),
     }
 

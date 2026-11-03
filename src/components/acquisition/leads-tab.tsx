@@ -38,6 +38,13 @@ function getGroupCount(groupId: GroupId, counts: Record<string, number> | null):
   return group.statuses.reduce((sum, s) => sum + (counts[s] ?? 0), 0)
 }
 
+/** Chuỗi lọc trạng thái gửi API: trạng thái đang chọn, hoặc mọi trạng thái của nhóm. */
+function statusQueryFor(selectedStatus: LeadStatus | undefined, groupId: GroupId): string | undefined {
+  if (selectedStatus) return selectedStatus
+  const group = FILTER_GROUPS.find((g) => g.id === groupId)
+  return group && group.statuses.length > 0 ? group.statuses.join(",") : undefined
+}
+
 /** Khách để lại tên + SĐT trên trang công khai; nhân viên đổi trạng thái theo pipeline 10 bước. */
 export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<string, number>) => void }) {
   const [selectedGroupId, setSelectedGroupId] = useState<GroupId>("NEW_GROUP")
@@ -48,12 +55,7 @@ export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<s
 
   const activeGroup = FILTER_GROUPS.find((g) => g.id === selectedGroupId)
 
-  // Xây dựng chuỗi lọc status cho API
-  const statusQuery = selectedStatus
-    ? selectedStatus
-    : activeGroup && activeGroup.statuses.length > 0
-      ? activeGroup.statuses.join(",")
-      : undefined
+  const statusQuery = statusQueryFor(selectedStatus, selectedGroupId)
 
   const fetchLeads = useCallback(
     () =>

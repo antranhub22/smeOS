@@ -6,17 +6,20 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { buildCareCardShareText, type CareCardContent } from "@/modules/care-cards/domain/care-card"
 
-interface CareCustomerRowProps {
-  customer: {
-    id: string
-    code: string
-    name: string
-    phone: string
-    metrics?: {
-      tier: string
-    }
-    tier?: string
+/** Khách hàng như dòng chăm sóc cần để hiển thị. */
+export interface CareCustomer {
+  id: string
+  code: string
+  name: string
+  phone: string
+  metrics?: {
+    tier: string
   }
+  tier?: string
+}
+
+interface CareCustomerRowProps {
+  customer: CareCustomer
   cardContent: CareCardContent
   storeName: string
   isSent: boolean

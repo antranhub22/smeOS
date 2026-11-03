@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { getCareCardTemplate, type CareCardAssetCode, type CareCardContent } from "@/modules/care-cards/domain/care-card"
 import { CareCardDesigner } from "@/components/care-cards/care-card-designer"
-import { CreateSegmentModal } from "./create-segment-modal"
-import { CareCustomerRow } from "./care-customer-row"
+import { type CareSegmentOption, CreateSegmentModal } from "./create-segment-modal"
+import { type CareCustomer, CareCustomerRow } from "./care-customer-row"
 
 interface CareGoal {
   id: string
@@ -79,9 +79,9 @@ export function CareWorkflow({
   })
 
   // Segments & Customers
-  const [segments, setSegments] = useState<any[]>([])
+  const [segments, setSegments] = useState<CareSegmentOption[]>([])
   const [selectedSegmentId, setSelectedSegmentId] = useState<string>("ALL")
-  const [customers, setCustomers] = useState<any[]>([])
+  const [customers, setCustomers] = useState<CareCustomer[]>([])
   const [loadingCustomers, setLoadingCustomers] = useState(false)
   const [sentCustomerIds, setSentCustomerIds] = useState<Set<string>>(new Set())
   const [isCreateSegmentOpen, setIsCreateSegmentOpen] = useState(false)
@@ -100,6 +100,7 @@ export function CareWorkflow({
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- tải dữ liệu từ API khi mount/đổi tham số; setState nằm trong hàm tải (nợ #149)
     loadSegments()
   }, [loadSegments])
 
@@ -128,6 +129,7 @@ export function CareWorkflow({
   }, [selectedSegmentId])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- tải dữ liệu từ API khi mount/đổi tham số; setState nằm trong hàm tải (nợ #149)
     loadCustomers()
   }, [loadCustomers])
 

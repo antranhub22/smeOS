@@ -4,6 +4,8 @@ import type { AssetUsage } from "../domain/asset-usage"
 import type { IAssetUsageRepository } from "../domain/repositories/asset-usage-repository.interface"
 import { createAssetUsageUseCase } from "./create-asset-usage.use-case"
 import { listAssetUsagesUseCase } from "./list-asset-usages.use-case"
+
+type CreateLink = NonNullable<NonNullable<Parameters<typeof createAssetUsageUseCase>[2]>["createLink"]>
 import { updateAssetUsageUseCase } from "./update-asset-usage.use-case"
 
 const makeCtx = (capabilities: string[] = ["M1", "M2"]): TenantContext => ({
@@ -106,7 +108,7 @@ describe("Asset Usage Use-Cases (PR-2)", () => {
         channelId: "WEB_LINK",
         targetPath: "/c/bo-suu-tap-moi",
       },
-      { repo, createLink: mockCreateLink as any }
+      { repo, createLink: mockCreateLink as unknown as CreateLink }
     )
 
     expect(mockCreateLink).toHaveBeenCalledOnce()

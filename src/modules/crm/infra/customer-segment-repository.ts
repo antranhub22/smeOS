@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { Prisma } from "@/generated/prisma/client"
+import { type customer_segment_kind, Prisma } from "@/generated/prisma/client"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type {
   CustomerSegment,
@@ -53,7 +53,7 @@ export class CustomerSegmentRepository implements ICustomerSegmentRepository {
         organization_id: ctx.organizationId,
         name: data.name,
         description: data.description ?? null,
-        kind: (data.kind ?? "DYNAMIC") as any,
+        kind: (data.kind ?? "DYNAMIC") as customer_segment_kind,
         rules: data.rules ? (data.rules as unknown as Prisma.InputJsonValue) : Prisma.DbNull,
         created_by: data.createdBy,
       },
@@ -77,7 +77,7 @@ export class CustomerSegmentRepository implements ICustomerSegmentRepository {
   ): Promise<{ items: CustomerSegment[]; total: number }> {
     const where: Prisma.customer_segmentsWhereInput = {
       organization_id: ctx.organizationId,
-      ...(filter?.kind ? { kind: filter.kind as any } : {}),
+      ...(filter?.kind ? { kind: filter.kind as customer_segment_kind } : {}),
       ...(filter?.search
         ? {
             OR: [
@@ -117,7 +117,7 @@ export class CustomerSegmentRepository implements ICustomerSegmentRepository {
     const updateData: Prisma.customer_segmentsUpdateInput = {
       ...(data.name !== undefined ? { name: data.name } : {}),
       ...(data.description !== undefined ? { description: data.description } : {}),
-      ...(data.kind !== undefined ? { kind: data.kind as any } : {}),
+      ...(data.kind !== undefined ? { kind: data.kind as customer_segment_kind } : {}),
       ...(data.rules !== undefined
         ? { rules: data.rules ? (data.rules as unknown as Prisma.InputJsonValue) : Prisma.DbNull }
         : {}),

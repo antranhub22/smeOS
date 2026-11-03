@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { Prisma } from "@/generated/prisma/client"
+import { Prisma, type print_rendition_status } from "@/generated/prisma/client"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { PrintRendition, PrintRenditionStatus } from "../domain/print-rendition"
 import type { PrintPresetCode, PreflightReport } from "../domain/print-preset"
@@ -18,9 +18,9 @@ function toDomain(row: {
   source_type: string
   source_id: string | null
   preset_code: string
-  width_mm: any
-  height_mm: any
-  bleed_mm: any
+  width_mm: Prisma.Decimal
+  height_mm: Prisma.Decimal
+  bleed_mm: Prisma.Decimal
   dpi: number
   storage_key: string | null
   file_url: string | null
@@ -69,7 +69,7 @@ export class PrintRenditionRepository implements IPrintRenditionRepository {
         storage_key: data.storageKey ?? null,
         file_url: data.fileUrl ?? null,
         preflight: data.preflight ? (data.preflight as unknown as Prisma.InputJsonValue) : Prisma.DbNull,
-        status: (data.status ?? "PENDING") as any,
+        status: (data.status ?? "PENDING") as print_rendition_status,
         created_by: data.createdBy,
       },
     })
@@ -93,7 +93,7 @@ export class PrintRenditionRepository implements IPrintRenditionRepository {
     const where: Prisma.print_renditionsWhereInput = {
       organization_id: ctx.organizationId,
       ...(filter?.presetCode ? { preset_code: filter.presetCode } : {}),
-      ...(filter?.status ? { status: filter.status as any } : {}),
+      ...(filter?.status ? { status: filter.status as print_rendition_status } : {}),
       ...(filter?.sourceType ? { source_type: filter.sourceType } : {}),
     }
 
@@ -129,7 +129,7 @@ export class PrintRenditionRepository implements IPrintRenditionRepository {
       ...(data.preflight !== undefined
         ? { preflight: data.preflight ? (data.preflight as unknown as Prisma.InputJsonValue) : Prisma.DbNull }
         : {}),
-      ...(data.status !== undefined ? { status: data.status as any } : {}),
+      ...(data.status !== undefined ? { status: data.status as print_rendition_status } : {}),
     }
 
     const updated = await prisma.print_renditions.update({

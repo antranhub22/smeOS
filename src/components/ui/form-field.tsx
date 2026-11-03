@@ -106,7 +106,7 @@ export const FormLabel = React.forwardRef<HTMLLabelElement, FormLabelProps>(
 )
 FormLabel.displayName = "FormLabel"
 
-export interface FormDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
+export type FormDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>
 
 export const FormDescription = React.forwardRef<HTMLParagraphElement, FormDescriptionProps>(
   ({ className, id: explicitId, ...props }, ref) => {

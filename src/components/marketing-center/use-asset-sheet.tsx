@@ -52,6 +52,7 @@ export function UseAssetSheet({
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- tải dữ liệu từ API khi mount/đổi tham số; setState nằm trong hàm tải (nợ #149)
       void loadUsages()
     }
   }, [open, loadUsages])

@@ -7,6 +7,7 @@ import {
   type CampaignStats,
 } from "../domain/campaign"
 import type { ICampaignRepository } from "../domain/repositories/campaign-repository.interface"
+import type { AssetUsage } from "../domain/asset-usage"
 import type { IAssetUsageRepository } from "../domain/repositories/asset-usage-repository.interface"
 import { createCampaignUseCase } from "./create-campaign.use-case"
 import { updateCampaignUseCase } from "./update-campaign.use-case"
@@ -75,7 +76,7 @@ class FakeCampaignRepo implements ICampaignRepository {
 }
 
 class FakeUsageRepo implements Partial<IAssetUsageRepository> {
-  async list(): Promise<readonly any[]> {
+  async list(): Promise<readonly AssetUsage[]> {
     return []
   }
 }
@@ -83,7 +84,7 @@ class FakeUsageRepo implements Partial<IAssetUsageRepository> {
 describe("Campaign Domain & Use Cases", () => {
   it("validateCampaignInput kiểm tra hợp lệ và bắt lỗi", () => {
     expect(validateCampaignInput({ name: "  ", objective: "LEAD" })).toHaveProperty("name")
-    expect(validateCampaignInput({ name: "Hợp lệ", objective: "INVALID" as any })).toHaveProperty("objective")
+    expect(validateCampaignInput({ name: "Hợp lệ", objective: "INVALID" as unknown as Parameters<typeof validateCampaignInput>[0]["objective"] })).toHaveProperty("objective")
     expect(
       validateCampaignInput({
         name: "Hợp lệ",
@@ -194,7 +195,7 @@ describe("Campaign Domain & Use Cases", () => {
       createdBy: "u1",
     })
 
-    const details = await getCampaignDetailsUseCase(fakeCtx, created.id, repo, new FakeUsageRepo() as any)
+    const details = await getCampaignDetailsUseCase(fakeCtx, created.id, repo, new FakeUsageRepo() as unknown as IAssetUsageRepository)
     expect(details.campaign.id).toBe(created.id)
     expect(details.stats.totalScans).toBe(150)
     expect(details.stats.totalLeads).toBe(25)

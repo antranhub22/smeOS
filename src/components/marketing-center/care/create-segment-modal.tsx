@@ -4,10 +4,17 @@ import React, { useState } from "react"
 import { X, Users, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
+/** Nhóm khách như màn Chăm sóc cần để hiển thị và chọn. */
+export interface CareSegmentOption {
+  id: string
+  name: string
+  kind: "DYNAMIC" | "STATIC"
+}
+
 interface CreateSegmentModalProps {
   isOpen: boolean
   onClose: () => void
-  onSuccess: (segment: any) => void
+  onSuccess: (segment: CareSegmentOption) => void
 }
 
 const TIERS = [
@@ -47,7 +54,7 @@ export function CreateSegmentModal({ isOpen, onClose, onSuccess }: CreateSegment
     setLoading(true)
     setError(null)
 
-    const rules: Record<string, any> = {}
+    const rules: Record<string, unknown> = {}
     if (selectedTiers.length > 0) rules.tiers = selectedTiers
     if (minSpentVnd.trim()) rules.minSpentVnd = Number(minSpentVnd.replace(/\D/g, ""))
     if (minOrderCount.trim()) rules.minOrderCount = Number(minOrderCount)
@@ -73,8 +80,8 @@ export function CreateSegmentModal({ isOpen, onClose, onSuccess }: CreateSegment
 
       onSuccess(data.data)
       onClose()
-    } catch (err: any) {
-      setError(err.message || "Đã xảy ra lỗi khi tạo nhóm")
+    } catch (err: unknown) {
+      setError((err instanceof Error && err.message) || "Đã xảy ra lỗi khi tạo nhóm")
     } finally {
       setLoading(false)
     }

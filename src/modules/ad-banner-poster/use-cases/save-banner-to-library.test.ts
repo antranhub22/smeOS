@@ -32,7 +32,7 @@ describe("saveBannerToLibraryUseCase (PR-1)", () => {
       list: vi.fn(),
     }
 
-    let createdAssetInput: any = null
+    let createdAssetInput: Parameters<IAssetRepository["create"]>[1] | null = null
     const mockAssetRepo: Partial<IAssetRepository> = {
       create: vi.fn(async (_c, input) => {
         createdAssetInput = input
@@ -61,7 +61,7 @@ describe("saveBannerToLibraryUseCase (PR-1)", () => {
           cost_usd: null,
           thumb_key: null,
           state: "READY",
-        } as any
+        } as unknown as Awaited<ReturnType<IAssetRepository["create"]>>
       }),
     }
 
@@ -88,10 +88,11 @@ describe("saveBannerToLibraryUseCase (PR-1)", () => {
     expect(savedStorageKey.endsWith(".png")).toBe(true)
     expect(savedContentType).toBe("image/png")
 
-    expect(createdAssetInput.kind).toBe("MARKETING")
-    expect(createdAssetInput.metadata.asset_type_code).toBe("9")
-    expect(createdAssetInput.metadata.title).toBe("Poster khuyến mãi mùa hè")
-    expect(createdAssetInput.createdBy).toBe(ctx.userId)
+    expect(createdAssetInput).toMatchObject({
+      kind: "MARKETING",
+      metadata: { asset_type_code: "9", title: "Poster khuyến mãi mùa hè" },
+      createdBy: ctx.userId,
+    })
   })
 
   it("từ chối khi ảnh không đúng định dạng PNG", async () => {

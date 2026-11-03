@@ -37,6 +37,7 @@ export function PrintRenditionList() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- tải dữ liệu từ API khi mount/đổi tham số; setState nằm trong hàm tải (nợ #149)
     fetchRenditions()
   }, [])
 
