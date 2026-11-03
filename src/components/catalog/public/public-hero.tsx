@@ -46,11 +46,11 @@ export function PublicHero({
           <span aria-hidden="true"> · </span>
           {productCount} mẫu
         </p>
-        <h2
+        <h1
           className={`mt-3 max-w-2xl text-balance text-[clamp(2.25rem,7vw,4rem)] font-medium leading-[1.05] tracking-tight text-white ${style.typography.fontDisplay}`}
         >
           {headline}
-        </h2>
+        </h1>
         {subHeadline && (
           <p className="mt-4 max-w-xl text-pretty text-body leading-relaxed text-white">{subHeadline}</p>
         )}

@@ -74,12 +74,12 @@ export function CatalogStorefrontHero({
         </div>
 
         {/* Catalog Title */}
-        <h2
+        <h1
           className={`text-title sm:text-display font-black tracking-tight leading-snug ${style.typography.fontDisplay}`}
           style={{ color: style.tokens.textPrimary }}
         >
           {catalogName}
-        </h2>
+        </h1>
 
         {/* Catalog Description */}
         {catalogDescription && (

@@ -58,7 +58,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 ## 6. Đợt P1 — Cổng CI xanh
 
 - [x] **P1-1** (Q1) Khôi phục 91 tệp trong `FROZEN_ROOTS` của Thẻ chào về bản `main` (chỉ hai commit `ff4206cb`, `f146b67c` chạm vào). Ghi lại baseline UX lint riêng cho `components/greeting-card` và các tuyến Thẻ chào, ghi lý do trong commit. Kiểm: `the-chao-freeze.test.ts` xanh, typecheck xanh.
-- [ ] **P1-2** (Q1) Cập nhật mốc Catalog theo duyệt PO 03/11/2026: `UPDATE_CATALOG_FREEZE=1` cho `catalog-freeze.test.ts`, ghi ngày duyệt ở đầu tệp test.
+- [x] **P1-2** (Q1) Cập nhật mốc Catalog theo duyệt PO 03/11/2026: `UPDATE_CATALOG_FREEZE=1` cho `catalog-freeze.test.ts`, ghi ngày duyệt ở đầu tệp test.
 - [x] **P1-3** Danh mục năng lực 166 → 168 mã (M4, M5): bổ sung đặc tả 02 và ca thử `capability-catalog.test.ts` khớp danh mục thật.
 - [x] **P1-4** Module "In ấn" bị hiện ở production khi chưa có công cụ `DONE`: sửa registry toolkit để ẩn đúng luật (`business-modules.test.ts:82`), không sửa test.
 - [x] **P1-5** Route `src/app/api/v1/organizations/brand/route.ts` (bí danh re-export): gỡ nếu không có nơi gọi; còn nơi gọi thì chuyển nơi gọi sang `organization/brand` rồi gỡ.
@@ -103,7 +103,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P0-3 | Xong | commit `fix(sales)` sau `03befd0e` | typecheck; unit sales 22/22; tenant 692/692; platform 36/36; check:screen-contracts 100% | Chiếm quyền có điều kiện + hoàn tác; ca thử hai lệnh song song → 1 đơn |
 | P0-4 | Xong | commit `fix(sales)` sau `03befd0e` | typecheck; unit sales 22/22; tenant 692/692; platform 36/36; check:screen-contracts 100% | `quotation_items` vào `TENANT_TABLES`; đặc tả 07 cho bảng này làm cùng P1-9 |
 | P1-1 | Xong | commit `revert(greeting-card)` sau `8663f1a8` | typecheck; `the-chao-freeze` xanh; unit Thẻ chào 1013/1013; `lint:ux --check` | 90 tệp về bản `cbd8763f`; không token màu nào bị xoá trên nhánh (236/236 còn) nên giao diện cũ hiển thị đúng; baseline UX lint 5.367 → 5.498 (+131, toàn bộ trong vùng Thẻ chào) |
-| P1-2 | Chưa làm | | |  |
+| P1-2 | Xong | xem `git log --grep "P1-2"` | catalog-freeze ✓; catalog 14 tệp 69/69; lint:ux --check | PO 03/11/2026 chọn phương án (a): trang công khai /c/[slug] giữ <h1> (5 chỗ, 4 tệp, miễn trừ R20 có lý do); giữ đổi token và <h2> ở màn quản trị / dựng ấn phẩm; cập nhật mốc đóng băng |
 | P1-3 | Xong | xem `git log --grep "P1-3"` | src/core/rbac 24/24 | Thêm nhóm M (M1–M5) vào đặc tả 02; R15/R16 thiếu trong đặc tả là nợ có sẵn trên main, không sửa |
 | P1-4 | Xong | xem `git log --grep "P1-4"` | src/modules/toolkit 12/12 | Không phải lỗi mã: PR-6 nối 10 ấn phẩm vào /in-an (asset Sẵn); test giữ giả định PR-0 — cập nhật assertion, vẫn khoá luật chỉ asset Sẵn, không công cụ chưa DONE |
 | P1-5 | Xong | xem `git log --grep "P1-5"` | route-capability-guard 2/2 | Không có nơi gọi nào (cả mã lẫn tài liệu) — gỡ |
