@@ -53,8 +53,8 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 
 ## 6. H4 — Ảnh mốc giao diện (2–3 ngày)
 
-- [ ] **H4-1** Mở rộng `tests/e2e/ux/visual.spec.ts` cho màn chính của 12 hành trình, khổ 390 và 1280. Dữ liệu cố định từ seed, thời gian cố định, che vùng động (thời gian tương đối, ảnh tải ngoài).
-- [ ] **H4-2** Sinh ảnh mốc Linux (khớp runner CI — đã xác nhận ở PR #107); CI xác nhận trên PR.
+- [x] **H4-1** `tests/e2e/ux/visual-journeys.spec.ts`: 11 màn chính của 12 hành trình (`/dang-nhap`, `/`, `/san-pham`, `/san-pham/tao-moi`, `/don-hang`, `/khach-hang`, `/dieu-phoi`, `/so-lieu`, `/cai-dat`, `/uu-dai`, `/van-hanh`), khổ 390 và 1280. Ổn định bằng tổ chức và người dùng tên cố định, dữ liệu rỗng, đồng hồ trình duyệt cố định, tắt chuyển động. Trang công khai có dữ liệu chờ seed như H3-1.
+- [x] **H4-2** Sinh ảnh mốc Linux (khớp runner CI — đã xác nhận ở PR #107); CI xác nhận trên PR.
 - [ ] **H4-3** Ảnh mốc `-darwin` (gồm `/vai-tro`): người dùng máy Mac chạy `npx playwright test tests/e2e/ux/visual.spec.ts --update-snapshots` và commit.
 
 ## 7. H5 — Đóng đợt
@@ -71,7 +71,7 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 - [x] **I-2** Không nhận thay đổi ở vùng PO khoá khi chưa có biên bản duyệt: 53 tệp Catalog, 1 tệp Thẻ chào (`subcontract/[orderCode]`), `FeatureGuidanceCard` (K1).
 - [x] **I-3** 191 chỗ `<div role="button|menuitem…" tabIndex onKeyDown>` trả về `<button type="button">` (giữ `disabled` khi `tabIndex` có điều kiện); 6 tệp đổi radio thành nút bấm: 5 tệp giữ bản `main`, `campaign-create-modal.tsx` dùng `RadioGroup`. R18 bắt cả phần tử gắn `role` điều khiển (test trong `rules-enterprise.test.ts`); `AGENT_RULES.md` §14 #20.
 - [x] **I-4** 8 tệp > 350 dòng bị phình giữ bản `main`. Baseline UX lint 5.491 → 3.945 (gồm 45 điểm R18 mới bắt trên mã có sẵn).
-- [ ] **I-5** Còn lại: 5 vùng kéo-thả ảnh dùng `div role="button"` chứa ô chọn tệp ẩn (`auto-generate-panel`, `photo-upload-panel`, `industry-select-section`, `optimization-mode-selector`, `schedule-post-item-card`) — xử lý cùng lộ trình nợ UX.
+- [ ] **I-5** Còn lại: hàng nút đầu trang `/san-pham` bị cắt ở khổ 390 (ảnh mốc `san-pham-mobile`); 5 vùng kéo-thả ảnh dùng `div role="button"` chứa ô chọn tệp ẩn (`auto-generate-panel`, `photo-upload-panel`, `industry-select-section`, `optimization-mode-selector`, `schedule-post-item-card`) — xử lý cùng lộ trình nợ UX.
 
 ## 8. Lịch thực hiện
 
@@ -99,8 +99,8 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 | H3-2 | Xong | `git log --grep "H3-2"` | `test:e2e:ux`, typecheck, lint | 6 tuyến có lỗi đã sửa hết |
 | H3-3 | Không thực hiện | | | Theo Q3 |
 | H3-4 | Xong | `git log --grep "H3-4"` | `check:docs` | Trình đọc màn hình: Chưa kiểm |
-| H4-1 | Chưa làm | | | |
-| H4-2 | Chưa làm | | | |
+| H4-1 | Xong | `git log --grep "H4-1"` | `test:e2e:ux` | Ổn định qua 3 lần chạy |
+| H4-2 | Xong | `git log --grep "H4-1"` | `test:e2e:ux` | 22 ảnh `-linux` |
 | H4-3 | Chưa làm | | | Cần máy Mac |
 | H5-1 | Chưa làm | | | |
 | H5-2 | Chưa làm | | | |
