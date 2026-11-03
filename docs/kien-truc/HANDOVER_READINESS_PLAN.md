@@ -60,7 +60,7 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 ## 7. H5 — Đóng đợt
 
 - [ ] **H5-1** Chạy đủ cổng của `CLAUDE.md`, gồm `test:e2e:ux`; mở PR vào `main`; CI xanh.
-- [ ] **H5-2** Cập nhật `13_RE_AUDIT_ENTERPRISE_REPORT.md` (miền F, G; chỉ số K7–K9), `12_PERFORMANCE_REPORT.md`, `TRANG_THAI.md` §6.
+- [x] **H5-2** Cập nhật `13_RE_AUDIT_ENTERPRISE_REPORT.md` (miền F, G; chỉ số K7–K9), `12_PERFORMANCE_REPORT.md`, `TRANG_THAI.md` §6.
 - [ ] **H5-3** Dựng gói bàn giao cuối theo H1-2 từ `main` sau khi PR hợp nhất; bàn giao kèm SHA-256 và danh sách phần còn trong lộ trình.
 
 ## 7a. Tích hợp đợt giảm nợ UI của nhánh Enterprise (04/11/2026)
@@ -102,8 +102,8 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 | H4-1 | Xong | `git log --grep "H4-1"` | `test:e2e:ux` | Ổn định qua 3 lần chạy |
 | H4-2 | Xong | `git log --grep "H4-1"` | `test:e2e:ux` | 22 ảnh `-linux` |
 | H4-3 | Chưa làm | | | Cần máy Mac |
-| H5-1 | Chưa làm | | | |
-| H5-2 | Chưa làm | | | |
+| H5-1 | Đang làm | | typecheck, lint:ratchet, lint:ux, check:docs/layers/industry/screen-contracts/template-ssot/tokens-doc/schemas:creative, npm test 3.887, test:tenant 693, test:platform 36, build, test:e2e:ux 34/34, handover:check | Chờ CI trên PR |
+| H5-2 | Xong | `git log --grep "H5-2"` | `check:docs` | |
 | H5-3 | Chưa làm | | | |
 
 ## 10. Rủi ro và kiểm soát

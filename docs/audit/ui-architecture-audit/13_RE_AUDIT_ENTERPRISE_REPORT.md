@@ -19,7 +19,7 @@ Chạy trên nhánh `claude/zen-carson-os8a8r` (đợt sẵn sàng bàn giao), P
 |---|---|
 | `typecheck`, `lint:ratchet`, `lint:ux -- --check`, `check:docs`, `check:layers`, `check:tokens-doc`, `check:template-ssot`, `check:screen-contracts`, `check:industry`, `check:schemas:creative`, `build` | Đạt |
 | `test:tenant` · `test:platform` | Đạt — 693/693 · 36/36 |
-| `npm test` | Đạt — 3.861 ca thử |
+| `npm test` | Đạt — 639 tệp, 3.887 ca thử |
 | `check:schemas:coordinator` · `check:schemas:content-engine` | Đỏ trên cả `main` — lỗi có sẵn, theo phiên bản `zod` của môi trường đo |
 | `test:e2e:ux` (Playwright + axe, ảnh mốc), bản build production, DB đã seed | Đạt — 34/34 |
 

@@ -1030,6 +1030,8 @@ Ba quyết định dưới đây chặn go-live, không chặn việc dựng lư
 
 ## 6. Việc kế tiếp
 
+**Sẵn sàng bàn giao — mã và kiểm thử XONG, chờ PR vào `main` (hạn bàn giao 10/11/2026, `docs/kien-truc/HANDOVER_READINESS_PLAN.md`).** `LICENSE` độc quyền (Công ty Cổ phần Công nghệ Avi Lotus Group); gói `git archive` loại tài liệu agent, tệp khách hàng khác và đường dẫn máy cá nhân (`npm run handover:check` chặn). Đợt giảm nợ UI của nhánh Enterprise đã tích hợp có chỉnh sửa (baseline UX lint 3.945; R18 bắt `div role="button"`). Web Vitals lab: CLS, INP đạt 5/5 tuyến, LCP di động 4/5 (`/san-pham` 5,3 s). Kiểm trợ năng tự động 12 hành trình đạt; ảnh mốc 13 màn × 2 khổ; `test:e2e:ux` 34/34. Còn lại: kiểm bằng trình đọc màn hình, ảnh mốc `-darwin`, LCP `/san-pham`, dữ liệu seed cho trang công khai có dữ liệu.
+
 **Khắc phục nhánh Enterprise UI/UX trước bàn giao — XONG, chờ PR vào `main` (PO duyệt 03/11/2026).** Đã vá 2 lỗ hổng rò rỉ dữ liệu giữa tenant ở báo giá (link công khai dùng token 256 bit, kiểm ID tham chiếu cùng tổ chức), đưa CI về xanh (unit 3.861, tenant 693, platform 36, build, `test:e2e:ux` 22/22), viết lại báo cáo bàn giao theo số đo, khôi phục `<h1>` qua `PageHeader`/`ToolHero`. Còn mở: tệp `LICENSE` (chờ tên pháp nhân), bản bàn giao không kèm lịch sử chứa tài liệu khách ALG, nợ UX lint 5.491 và 87 tệp > 350 dòng theo lộ trình. Chi tiết và trạng thái từng việc: `docs/kien-truc/REMEDIATION_ENTERPRISE_UI.md`.
 
 **P5 M01 phân tích ảnh — HOÀN TẤT (09/12).** Bộ ảnh vàng đạt nghiệm thu (8/8 ảnh). Phần lõi đã nghiệm thu trên Postgres thật (09/10). Còn lại (không chặn): gọi `OpenAIStructuredProvider` với API OpenAI thật để đối chiếu kết quả với nhãn người (nợ #24 đã giải quyết).
