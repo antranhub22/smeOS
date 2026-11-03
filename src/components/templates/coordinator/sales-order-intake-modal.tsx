@@ -4,7 +4,6 @@ import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState, useEffect } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
 import {
-  X,
   Plus,
   Trash2,
   Sparkles,
@@ -21,6 +20,11 @@ import {
   Eye,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import type {
   AccessoryBomItem,
   FlowerBomItem,
@@ -386,109 +390,122 @@ export function SalesOrderIntakeModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-surface border border-border rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-surface z-10">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-alert-100 text-alert-700 flex items-center justify-center">
-              <Flower2 size={18} />
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      size="lg"
+      className="max-w-3xl"
+      title={
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-alert-100 text-alert-700 flex items-center justify-center">
+            <Flower2 size={18} />
+          </div>
+          <div>
+            <h2 className="text-base font-extrabold text-text">
+              Tiếp Nhận Đơn Hàng Mới (Sales Order Intake — T01)
+            </h2>
+          </div>
+        </div>
+      }
+      description="Tạo đơn hàng từ Sales & Đưa ngay vào Tháp Điều Phối Control Tower"
+    >
+      <form onSubmit={handleSubmit} className="p-1 flex flex-col gap-6 text-xs">
+        {/* Quick Select from Master Index */}
+        {masterProducts.length > 0 && (
+          <div className="p-4 rounded-xl border border-alert-200 bg-alert-50/50 flex flex-col gap-2">
+            <div className="font-bold text-alert-950 flex items-center gap-1.5">
+              <Sparkles size={14} className="text-alert-600" />
+              <span>⚡ Chọn mẫu nhanh từ Danh Mục Sản Phẩm Mẫu:</span>
             </div>
-            <div>
-              <h2 className="text-base font-extrabold text-text">
-                Tiếp Nhận Đơn Hàng Mới (Sales Order Intake — T01)
-              </h2>
-              <p className="text-caption text-text-muted">
-                Tạo đơn hàng từ Sales & Đưa ngay vào Tháp Điều Phối Control Tower
-              </p>
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {masterProducts.slice(0, 5).map((p) => (
+                <div
+                  key={p.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleSelectMasterProduct(p)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      handleSelectMasterProduct(p)
+                    }
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg border border-alert-200 bg-surface hover:border-alert-500 text-left shrink-0 transition-colors cursor-pointer"
+                >
+                  <div className="font-bold text-text truncate max-w-[140px]">{p.name}</div>
+                  <div className="text-caption text-text-muted">{p.code}</div>
+                </div>
+              ))}
             </div>
           </div>
-          <button
-              aria-label="Đóng" onClick={onClose} className="p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
-            <X size={18} />
-          </button>
-        </div>
+        )}
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-6 text-xs">
-          {/* Quick Select from Master Index */}
-          {masterProducts.length > 0 && (
-            <div className="p-4 rounded-xl border border-alert-200 bg-alert-50/50 flex flex-col gap-2">
-              <div className="font-bold text-alert-950 flex items-center gap-1.5">
-                <Sparkles size={14} className="text-alert-600" />
-                <span>⚡ Chọn mẫu nhanh từ Danh Mục Sản Phẩm Mẫu:</span>
+        {/* Section 1: Customer & Recipient */}
+        <div className="flex flex-col gap-3">
+          <span className="font-extrabold text-text text-sm flex items-center gap-1.5 border-b border-border pb-1">
+            <User size={15} className="text-alert-600" />
+            1. Khách Hàng & Người Nhận Hoa
+          </span>
+
+          {/* ĐP-2.9: tìm khách đã có trong Customer Master Index trước khi cho nhập
+              tay — chọn được thì tên/SĐT/hạng bên dưới khoá lại, máy chủ lấy từ CMI. */}
+          <div className="relative">
+            <label className="font-bold text-text block mb-1">Tìm khách đã có (tên hoặc SĐT)</label>
+            {customerId ? (
+              <div className="flex items-center justify-between px-3 py-2 rounded-xl border border-mint-300 bg-mint-50 text-mint-900">
+                <span className="font-bold truncate">
+                  ✓ {customerName} {customerPhone && `— ${customerPhone}`} ({customerTier})
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearCustomer}
+                  className="text-caption font-bold text-mint-700 hover:text-mint-900 shrink-0 ml-2 p-0 h-auto"
+                >
+                  Đổi thành khách lẻ
+                </Button>
               </div>
-              <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                {masterProducts.slice(0, 5).map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => handleSelectMasterProduct(p)}
-                    className="px-2.5 py-1.5 rounded-lg border border-alert-200 bg-surface hover:border-alert-500 text-left shrink-0 transition-colors"
-                  >
-                    <div className="font-bold text-text truncate max-w-[140px]">{p.name}</div>
-                    <div className="text-caption text-text-muted">{p.code}</div>
-                  </button>
-                ))}
+            ) : (
+              <Input
+                type="text"
+                placeholder="Gõ tên hoặc SĐT để tìm trong hồ sơ khách…"
+                value={customerQuery}
+                onChange={(e) => setCustomerQuery(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+              />
+            )}
+            {!customerId && (customerSearching || customerMatches.length > 0) && (
+              <div className="absolute z-10 mt-1 w-full rounded-xl border border-border bg-surface shadow-lg overflow-hidden">
+                {customerSearching && (
+                  <div className="px-3 py-2 text-text-muted">Đang tìm…</div>
+                )}
+                {!customerSearching &&
+                  customerMatches.map((c) => (
+                    <div
+                      key={c.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handleSelectCustomer(c)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault()
+                          handleSelectCustomer(c)
+                        }
+                      }}
+                      className="w-full text-left px-3 py-2 hover:bg-surface-alt border-b border-border/60 last:border-0 cursor-pointer"
+                    >
+                      <div className="font-bold text-text">{c.name}</div>
+                      <div className="text-caption text-text-muted">
+                        {c.phone} {c.metrics?.tier ? `· ${c.metrics.tier}` : ""}
+                      </div>
+                    </div>
+                  ))}
               </div>
-            </div>
-          )}
-
-          {/* Section 1: Customer & Recipient */}
-          <div className="flex flex-col gap-3">
-            <span className="font-extrabold text-text text-sm flex items-center gap-1.5 border-b border-border pb-1">
-              <User size={15} className="text-alert-600" />
-              1. Khách Hàng & Người Nhận Hoa
-            </span>
-
-            {/* ĐP-2.9: tìm khách đã có trong Customer Master Index trước khi cho nhập
-                tay — chọn được thì tên/SĐT/hạng bên dưới khoá lại, máy chủ lấy từ CMI. */}
-            <div className="relative">
-              <label className="font-bold text-text block mb-1">Tìm khách đã có (tên hoặc SĐT)</label>
-              {customerId ? (
-                <div className="flex items-center justify-between px-3 py-2 rounded-xl border border-mint-300 bg-mint-50 text-mint-900">
-                  <span className="font-bold truncate">
-                    ✓ {customerName} {customerPhone && `— ${customerPhone}`} ({customerTier})
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleClearCustomer}
-                    className="text-caption font-bold text-mint-700 hover:text-mint-900 shrink-0 ml-2"
-                  >
-                    Đổi thành khách lẻ
-                  </button>
-                </div>
-              ) : (
-                <input
-                  type="text"
-                  placeholder="Gõ tên hoặc SĐT để tìm trong hồ sơ khách…"
-                  value={customerQuery}
-                  onChange={(e) => setCustomerQuery(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
-                />
-              )}
-              {!customerId && (customerSearching || customerMatches.length > 0) && (
-                <div className="absolute z-10 mt-1 w-full rounded-xl border border-border bg-surface shadow-lg overflow-hidden">
-                  {customerSearching && (
-                    <div className="px-3 py-2 text-text-muted">Đang tìm…</div>
-                  )}
-                  {!customerSearching &&
-                    customerMatches.map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        onClick={() => handleSelectCustomer(c)}
-                        className="w-full text-left px-3 py-2 hover:bg-surface-alt border-b border-border/60 last:border-0"
-                      >
-                        <div className="font-bold text-text">{c.name}</div>
-                        <div className="text-caption text-text-muted">
-                          {c.phone} {c.metrics?.tier ? `· ${c.metrics.tier}` : ""}
-                        </div>
-                      </button>
-                    ))}
-                </div>
-              )}
-              {!customerId && (
+            )}
+            {!customerId && (
                 <p className="text-caption text-text-muted mt-1">
                   Không tìm thấy? Điền thẳng bên dưới — sẽ lưu là khách lẻ.
                 </p>
@@ -498,7 +515,7 @@ export function SalesOrderIntakeModal({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="font-bold text-text block mb-1">Tên khách đặt *</label>
-                <input
+                <Input
                   type="text"
                   required
                   disabled={Boolean(customerId)}
@@ -511,7 +528,7 @@ export function SalesOrderIntakeModal({
 
               <div>
                 <label className="font-bold text-text block mb-1">Số điện thoại khách</label>
-                <input
+                <Input
                   type="text"
                   disabled={Boolean(customerId)}
                   placeholder="0901234567"
@@ -523,25 +540,29 @@ export function SalesOrderIntakeModal({
 
               <div>
                 <label className="font-bold text-text block mb-1">Phân hạng khách hàng</label>
-                <select
+                <Select
                   disabled={Boolean(customerId)}
                   value={customerTier}
-                  onChange={(e) => setCustomerTier(e.target.value as typeof customerTier)}
-                  className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500 disabled:opacity-60"
+                  onValueChange={(val) => setCustomerTier(val as typeof customerTier)}
                 >
-                  <option value="NEW">Mới (NEW)</option>
-                  <option value="BRONZE">Đồng (BRONZE)</option>
-                  <option value="SILVER">Bạc (SILVER)</option>
-                  <option value="GOLD">Vàng (GOLD)</option>
-                  <option value="VIP">VIP Đặc Biệt</option>
-                </select>
+                  <SelectTrigger className="w-full h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="NEW">Mới (NEW)</SelectItem>
+                    <SelectItem value="BRONZE">Đồng (BRONZE)</SelectItem>
+                    <SelectItem value="SILVER">Bạc (SILVER)</SelectItem>
+                    <SelectItem value="GOLD">Vàng (GOLD)</SelectItem>
+                    <SelectItem value="VIP">VIP Đặc Biệt</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="font-bold text-text block mb-1">Tên người nhận hàng *</label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="Ví dụ: Trần Thị Bình"
@@ -553,7 +574,7 @@ export function SalesOrderIntakeModal({
 
               <div>
                 <label className="font-bold text-text block mb-1">Số điện thoại người nhận *</label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="0912345678"
@@ -572,28 +593,49 @@ export function SalesOrderIntakeModal({
                   ĐỊA CHỈ GIAO HÀNG PHÂN CẤP (ATOMIC STRUCTURED ADDRESS) *
                 </span>
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <button
-                    type="button"
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={handlePrefillSampleAddressHN}
-                    className="text-caption text-cool-700 bg-white border border-border hover:bg-cool-50 px-2 py-0.5 rounded-md font-bold transition-colors"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        handlePrefillSampleAddressHN()
+                      }
+                    }}
+                    className="text-caption text-cool-700 bg-white border border-border hover:bg-cool-50 px-2 py-0.5 rounded-md font-bold transition-colors cursor-pointer"
                   >
                     ⚡ Mẫu HN
-                  </button>
-                  <button
-                    type="button"
+                  </div>
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={handlePrefillSampleAddressHCM}
-                    className="text-caption text-cool-700 bg-white border border-border hover:bg-cool-50 px-2 py-0.5 rounded-md font-bold transition-colors"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        handlePrefillSampleAddressHCM()
+                      }
+                    }}
+                    className="text-caption text-cool-700 bg-white border border-border hover:bg-cool-50 px-2 py-0.5 rounded-md font-bold transition-colors cursor-pointer"
                   >
                     ⚡ Mẫu HCM
-                  </button>
+                  </div>
                   {addressStreet && (
-                    <button
-                      type="button"
+                    <div
+                      role="button"
+                      tabIndex={0}
                       onClick={handleClearAddress}
-                      className="text-caption text-alert-700 hover:text-alert-800 font-bold px-1"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault()
+                          handleClearAddress()
+                        }
+                      }}
+                      className="text-caption text-alert-700 hover:text-alert-800 font-bold px-1 cursor-pointer"
                     >
                       Xóa
-                    </button>
+                    </div>
                   )}
                   <span className="text-caption text-alert-700 bg-alert-100 px-2 py-0.5 rounded-full font-bold">
                     Chuẩn 5 Tầng
@@ -606,7 +648,7 @@ export function SalesOrderIntakeModal({
                 <label className="font-bold text-text block mb-1">
                   1. Số nhà, ngõ / hẻm / ngách, tên đường (Số phòng / Tòa nhà nếu có) *
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="Ví dụ: 195 Lương Thế Vinh (hoặc P.802 Toà Lotte Center, 54 Liễu Giai)"
@@ -620,7 +662,7 @@ export function SalesOrderIntakeModal({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <div>
                   <label className="font-bold text-text block mb-1">2. Phường / Xã / Thị trấn *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="Ví dụ: Phường Trung Văn"
@@ -632,7 +674,7 @@ export function SalesOrderIntakeModal({
 
                 <div>
                   <label className="font-bold text-text block mb-1">3. Quận / Huyện / Thị xã *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="Ví dụ: Quận Nam Từ Liêm"
@@ -644,7 +686,7 @@ export function SalesOrderIntakeModal({
 
                 <div>
                   <label className="font-bold text-text block mb-1">4. Tỉnh / Thành phố *</label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="Ví dụ: Hà Nội"
@@ -659,7 +701,7 @@ export function SalesOrderIntakeModal({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <div>
                   <label className="font-bold text-text block mb-1">5. Quốc gia</label>
-                  <input
+                  <Input
                     type="text"
                     value={addressCountry}
                     onChange={(e) => setAddressCountry(e.target.value)}
@@ -686,7 +728,7 @@ export function SalesOrderIntakeModal({
 
               <div>
                 <label className="font-bold text-text block mb-1">Giờ giao hẹn *</label>
-                <input
+                <Input
                   type="time"
                   required
                   value={deliveryTime}
@@ -723,22 +765,36 @@ export function SalesOrderIntakeModal({
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <button
-                          type="button"
+                        <div
+                          role="button"
+                          tabIndex={0}
                           onClick={() => window.open(sampleImageUrl, "_blank")}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault()
+                              window.open(sampleImageUrl, "_blank")
+                            }
+                          }}
                           title="Xem ảnh gốc toàn màn hình"
                           className="p-1.5 rounded-lg bg-surface/90 text-text hover:bg-white text-xs font-bold shadow cursor-pointer"
                         >
                           <Eye size={14} />
-                        </button>
-                        <button
-                          type="button"
+                        </div>
+                        <div
+                          role="button"
+                          tabIndex={0}
                           onClick={() => setSampleImageUrl("")}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault()
+                              setSampleImageUrl("")
+                            }
+                          }}
                           title="Xóa ảnh mẫu"
                           className="p-1.5 rounded-lg bg-alert-600 text-white hover:bg-alert-700 text-xs font-bold shadow cursor-pointer"
                         >
                           <Trash2 size={14} />
-                        </button>
+                        </div>
                       </div>
                       <span className="absolute bottom-1.5 left-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/70 text-caption font-bold text-white text-center backdrop-blur-xs truncate">
                         Ảnh mẫu cắm đối chiếu
@@ -773,7 +829,7 @@ export function SalesOrderIntakeModal({
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <input
+                    <Input
                       type="text"
                       placeholder="Dán URL link ảnh mẫu sản phẩm (Zalo, Facebook, Web...)..."
                       value={sampleAssetId ? "(ảnh đã tải lên kho của tiệm)" : sampleImageUrl}
@@ -813,10 +869,17 @@ export function SalesOrderIntakeModal({
                   </span>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {masterProducts.filter((p) => p.masterImageUrl).slice(0, 6).map((prod) => (
-                      <button
+                      <div
                         key={prod.id}
-                        type="button"
+                        role="button"
+                        tabIndex={0}
                         onClick={() => handleSelectMasterProduct(prod)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault()
+                            handleSelectMasterProduct(prod)
+                          }
+                        }}
                         className={`px-2 py-1 rounded-lg border text-caption font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                           sampleImageUrl === prod.masterImageUrl
                             ? "border-alert-500 bg-alert-100/80 text-alert-900 font-bold"
@@ -830,7 +893,7 @@ export function SalesOrderIntakeModal({
                           className="w-4 h-4 rounded-full object-cover shrink-0"
                         />
                         <span className="truncate max-w-[120px]">{prod.name}</span>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -844,7 +907,7 @@ export function SalesOrderIntakeModal({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="sm:col-span-2">
                 <label className="font-bold text-text block mb-1">Tên mẫu sản phẩm *</label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="Ví dụ: Sản phẩm thiết kế nghệ thuật cao cấp"
@@ -856,7 +919,7 @@ export function SalesOrderIntakeModal({
 
               <div>
                 <label className="font-bold text-text block mb-1">Giá bán báo khách (VNĐ)</label>
-                <input
+                <Input
                   type="number"
                   value={unitPriceVnd}
                   onChange={(e) => setUnitPriceVnd(Number(e.target.value))}
@@ -869,7 +932,7 @@ export function SalesOrderIntakeModal({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
               <div>
                 <label className="font-bold text-text block mb-1">Khách trả trước (cọc, VNĐ)</label>
-                <input
+                <Input
                   type="number"
                   min={0}
                   value={depositVnd || ""}
@@ -920,7 +983,7 @@ export function SalesOrderIntakeModal({
                     {flowers.map((fl, idx) => (
                       <tr key={idx}>
                         <td className="p-1.5">
-                          <input
+                          <Input
                             type="text"
                             required
                             placeholder="Tên nguyên vật liệu / thành phần..."
@@ -930,7 +993,7 @@ export function SalesOrderIntakeModal({
                           />
                         </td>
                         <td className="p-1.5">
-                          <input
+                          <Input
                             type="number"
                             min="1"
                             value={fl.quantity}
@@ -939,19 +1002,23 @@ export function SalesOrderIntakeModal({
                           />
                         </td>
                         <td className="p-1.5">
-                          <select
+                          <Select
                             value={fl.unit}
-                            onChange={(e) => handleFlowerChange(idx, "unit", e.target.value)}
-                            className="w-full px-2 py-1 rounded-lg border border-border bg-surface text-text"
+                            onValueChange={(val) => handleFlowerChange(idx, "unit", val)}
                           >
-                            <option value="cành">cành</option>
-                            <option value="bông">bông</option>
-                            <option value="lá">lá</option>
-                            <option value="cây">cây</option>
-                          </select>
+                            <SelectTrigger className="w-full h-8 px-2 py-1 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="cành">cành</SelectItem>
+                              <SelectItem value="bông">bông</SelectItem>
+                              <SelectItem value="lá">lá</SelectItem>
+                              <SelectItem value="cây">cây</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </td>
                         <td className="p-1.5">
-                          <input
+                          <Input
                             type="text"
                             placeholder="Màu sắc..."
                             value={fl.color}
@@ -960,27 +1027,38 @@ export function SalesOrderIntakeModal({
                           />
                         </td>
                         <td className="p-1.5">
-                          <select
+                          <Select
                             value={fl.role}
-                            onChange={(e) => handleFlowerChange(idx, "role", e.target.value)}
-                            className="w-full px-2 py-1 rounded-lg border border-border bg-surface text-text font-bold"
+                            onValueChange={(val) => handleFlowerChange(idx, "role", val)}
                           >
-                            <option value="Chủ đạo">Chủ đạo</option>
-                            <option value="Phụ">Phụ</option>
-                            <option value="Điểm xuyến">Điểm xuyến</option>
-                            <option value="Lấp đầy">Lấp đầy</option>
-                          </select>
+                            <SelectTrigger className="w-full h-8 px-2 py-1 text-xs font-bold">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Chủ đạo">Chủ đạo</SelectItem>
+                              <SelectItem value="Phụ">Phụ</SelectItem>
+                              <SelectItem value="Điểm xuyến">Điểm xuyến</SelectItem>
+                              <SelectItem value="Lấp đầy">Lấp đầy</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </td>
                         <td className="p-1.5 text-center">
                           {flowers.length > 1 && (
-                            <button
-              aria-label="Xóa"
-                              type="button"
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              aria-label="Xóa"
                               onClick={() => handleRemoveFlower(idx)}
-                              className="text-text-muted hover:text-alert-600 p-1"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault()
+                                  handleRemoveFlower(idx)
+                                }
+                              }}
+                              className="text-text-muted hover:text-alert-600 p-1 inline-flex cursor-pointer"
                             >
                               <Trash2 size={13} />
-                            </button>
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -1053,81 +1131,99 @@ export function SalesOrderIntakeModal({
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div>
                 <label className="font-bold text-text block mb-1">Kênh tiếp nhận</label>
-                <select
-                  value={channel}
-                  onChange={(e) => setChannel(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-xl border border-border bg-surface text-text"
+                <Select
+                  value={channel || undefined}
+                  onValueChange={(val) => setChannel(val)}
                 >
-                  <option value="">— Chọn —</option>
-                  {(catalogs.channel ?? []).map((v) => (
-                    <option key={v.code} value={v.code}>{v.label}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full h-9">
+                    <SelectValue placeholder="— Chọn —" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(catalogs.channel ?? []).map((v) => (
+                      <SelectItem key={v.code} value={v.code}>{v.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="font-bold text-text block mb-1">Loại đơn</label>
-                <select
-                  value={orderType}
-                  onChange={(e) => setOrderType(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-xl border border-border bg-surface text-text"
+                <Select
+                  value={orderType || undefined}
+                  onValueChange={(val) => setOrderType(val)}
                 >
-                  <option value="">— Chọn —</option>
-                  {(catalogs.orderType ?? []).map((v) => (
-                    <option key={v.code} value={v.code}>{v.label}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full h-9">
+                    <SelectValue placeholder="— Chọn —" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(catalogs.orderType ?? []).map((v) => (
+                      <SelectItem key={v.code} value={v.code}>{v.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="font-bold text-text block mb-1">Cam kết thời gian giao</label>
-                <select
-                  value={serviceLevel}
-                  onChange={(e) => setServiceLevel(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-xl border border-border bg-surface text-text"
+                <Select
+                  value={serviceLevel || undefined}
+                  onValueChange={(val) => setServiceLevel(val)}
                 >
-                  <option value="">— Chọn —</option>
-                  {(catalogs.serviceLevel ?? []).map((v) => (
-                    <option key={v.code} value={v.code}>{v.label}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full h-9">
+                    <SelectValue placeholder="— Chọn —" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(catalogs.serviceLevel ?? []).map((v) => (
+                      <SelectItem key={v.code} value={v.code}>{v.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="font-bold text-text block mb-1">Hình thức giao</label>
-                <select
-                  value={deliveryType}
-                  onChange={(e) => setDeliveryType(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-xl border border-border bg-surface text-text"
+                <Select
+                  value={deliveryType || undefined}
+                  onValueChange={(val) => setDeliveryType(val)}
                 >
-                  <option value="">— Chọn —</option>
-                  {(catalogs.deliveryType ?? []).map((v) => (
-                    <option key={v.code} value={v.code}>{v.label}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full h-9">
+                    <SelectValue placeholder="— Chọn —" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(catalogs.deliveryType ?? []).map((v) => (
+                      <SelectItem key={v.code} value={v.code}>{v.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="font-bold text-text block mb-1">Loại địa điểm giao</label>
-                <select
-                  value={deliveryLocationType}
-                  onChange={(e) => setDeliveryLocationType(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-xl border border-border bg-surface text-text"
+                <Select
+                  value={deliveryLocationType || undefined}
+                  onValueChange={(val) => setDeliveryLocationType(val)}
                 >
-                  <option value="">— Chọn —</option>
-                  {(catalogs.deliveryLocationType ?? []).map((v) => (
-                    <option key={v.code} value={v.code}>{v.label}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full h-9">
+                    <SelectValue placeholder="— Chọn —" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(catalogs.deliveryLocationType ?? []).map((v) => (
+                      <SelectItem key={v.code} value={v.code}>{v.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="font-bold text-text block mb-1">Mức ưu tiên</label>
-                <select
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-xl border border-border bg-surface text-text"
+                <Select
+                  value={priority || undefined}
+                  onValueChange={(val) => setPriority(val)}
                 >
-                  <option value="">— Để máy tự gợi ý —</option>
-                  {(catalogs.priority ?? []).map((v) => (
-                    <option key={v.code} value={v.code}>{v.label}</option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full h-9">
+                    <SelectValue placeholder="— Để máy tự gợi ý —" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(catalogs.priority ?? []).map((v) => (
+                      <SelectItem key={v.code} value={v.code}>{v.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
@@ -1140,19 +1236,18 @@ export function SalesOrderIntakeModal({
             </span>
 
             <div>
-              <label className="flex items-center gap-2 font-bold text-text mb-1.5">
-                <input
-                  type="checkbox"
+              <label className="flex items-center gap-2 font-bold text-text mb-1.5 cursor-pointer">
+                <Checkbox
                   checked={cardRequired}
-                  onChange={(e) => setCardRequired(e.target.checked)}
-                  className="h-3.5 w-3.5"
+                  onCheckedChange={(checked) => setCardRequired(Boolean(checked))}
+                  aria-label="Đơn có thiệp/băng rôn"
                 />
-                Đơn có thiệp/băng rôn
+                <span>Đơn có thiệp/băng rôn</span>
               </label>
               <label className="font-bold text-text block mb-1">
                 Lời nhắn thiệp chúc mừng (In nguyên văn){cardRequired ? " — bắt buộc:" : ":"}
               </label>
-              <textarea
+              <Textarea
                 rows={2}
                 placeholder="Ví dụ: Chúc mừng sinh nhật em yêu, luôn vui vẻ và hạnh phúc nhé!"
                 value={cardMessage}
@@ -1168,7 +1263,7 @@ export function SalesOrderIntakeModal({
 
             <div>
               <label className="font-bold text-text block mb-1">Ghi chú nội bộ cho thợ gia công:</label>
-              <input
+              <Input
                 type="text"
                 placeholder="Ví dụ: Gói cẩn thận chống trầy xước, thắt nơ tinh tế, kiểm tra kỹ thành phẩm..."
                 value={internalNote}
@@ -1187,15 +1282,15 @@ export function SalesOrderIntakeModal({
             onChange={setCustomFields}
           />
 
-          {/* Section 4: Checklist Tiêu Chuẩn Đầu Vào P1 (Sổ Tay Điều Phối) */}
+          {/* Section 4: Checklist Tiêu Chuẩn Đầu Vào Bước 1 (Sổ Tay Điều Phối) */}
           <div className="p-3.5 rounded-xl border border-alert-200 bg-alert-50/50 flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <span className="font-extrabold text-alert-950 text-xs flex items-center gap-1.5">
                 <CheckCircle2 size={14} className="text-alert-600" />
-                Kiểm Định Tiêu Chuẩn Đầu Vào P1 (Điều 4 Quy chế & Sổ Tay Điều Phối):
+                Kiểm Định Tiêu Chuẩn Đầu Vào Bước 1 (Điều 4 Quy chế & Sổ Tay Điều Phối):
               </span>
               <span className="text-caption font-bold text-alert-700 bg-alert-100 px-2 py-0.5 rounded-full">
-                Mục tiêu P1: Đủ thông tin trước khi lập KH P2
+                Mục tiêu Bước 1: Đủ thông tin trước khi lập KH Bước 2
               </span>
             </div>
 
@@ -1288,7 +1383,6 @@ export function SalesOrderIntakeModal({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }

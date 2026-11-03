@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, Cpu, Cloud, Zap } from "@/components/ui/icons"
+import { cn } from "@/lib/utils"
 import { optimizationPriceKey } from "@/modules/media/domain/optimization-rules"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 
@@ -109,9 +110,18 @@ export function EnhancerProviderSelector({
           const Icon = provider.icon
 
           return (
-            <label
+            <div
               key={provider.id}
+              role="radio"
+              aria-checked={isSelected}
+              tabIndex={disabled ? -1 : 0}
               onClick={() => !disabled && onChange(provider.id)}
+              onKeyDown={(e) => {
+                if (!disabled && (e.key === "Enter" || e.key === " ")) {
+                  e.preventDefault()
+                  onChange(provider.id)
+                }
+              }}
               className={`relative flex flex-col justify-between p-3 rounded-xl border-2 transition cursor-pointer select-none ${
                 isSelected
                   ? "border-primary bg-primary/5 shadow-xs"
@@ -120,14 +130,15 @@ export function EnhancerProviderSelector({
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <input
-                    type="radio"
-                    name="enhancer-provider-radio"
-                    checked={isSelected}
-                    disabled={disabled}
-                    onChange={() => onChange(provider.id)}
-                    className="accent-primary h-3.5 w-3.5 flex-shrink-0"
-                  />
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center rounded-full border border-border transition-colors",
+                      isSelected && "border-primary bg-primary"
+                    )}
+                  >
+                    {isSelected && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                  </span>
                   <Icon size={16} className={isSelected ? "text-primary flex-shrink-0" : "text-text-muted flex-shrink-0"} />
                   <span className="text-body-sm font-bold text-text truncate">
                     {provider.name}
@@ -146,7 +157,7 @@ export function EnhancerProviderSelector({
                 {optimizationPriceKey({ enhancer_provider: provider.id }) === "media.optimize.cloud" &&
                   " · nhà cung cấp lỗi thì hoàn phần chênh"}
               </div>
-            </label>
+            </div>
           )
         })}
       </div>

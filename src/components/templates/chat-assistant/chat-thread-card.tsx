@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Bot, User, Send, Sparkles } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 
 export interface ChatMessage {
@@ -103,13 +104,13 @@ export function ChatThreadCard({
       </div>
 
       <div className="flex items-center gap-2 border-t border-border pt-3">
-        <input
+        <Input
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder="Nhập tin nhắn hoặc kịch bản trả lời..."
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-xs text-text focus:outline-none focus:ring-1 focus:ring-primary"
+          className="flex-1 text-caption"
         />
         <Button size="sm" onClick={handleSend} className="gap-1.5">
           <Send size={14} />

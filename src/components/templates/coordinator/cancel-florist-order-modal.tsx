@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Ban, AlertCircle } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
@@ -101,14 +102,21 @@ export function CancelFloristOrderModal({
           <label className="font-bold text-text block">Chọn nhanh lý do từ chối</label>
           <div className="flex flex-wrap gap-1.5">
             {QUICK_REASONS.map((tag) => (
-              <button
+              <div
                 key={tag}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => handleSelectQuickReason(tag)}
-                className="px-2.5 py-1 rounded-lg border border-border bg-surface-alt hover:bg-surface text-text font-medium text-caption transition-colors"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    handleSelectQuickReason(tag)
+                  }
+                }}
+                className="cursor-pointer px-2.5 py-1 rounded-lg border border-border bg-surface-alt hover:bg-surface text-text font-medium text-caption transition-colors"
               >
                 + {tag}
-              </button>
+              </div>
             ))}
           </div>
         </div>
@@ -117,12 +125,12 @@ export function CancelFloristOrderModal({
           <label className="font-bold text-text block">
             Lý do chi tiết <span className="text-danger">*</span>
           </label>
-          <textarea
+          <Textarea
             rows={3}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Nhập lý do cụ thể vì sao không nhận đơn (được lưu vào lịch sử kiểm toán)..."
-            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-body-sm focus:outline-none focus:ring-1 focus:ring-danger"
+            className="w-full text-body-sm"
           />
         </div>
 

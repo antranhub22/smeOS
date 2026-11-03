@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import type { PlatformFeedPost } from "./platform-feed-preview"
 
 export interface ScheduleConfirmModalProps {
@@ -150,11 +151,18 @@ export function ScheduleConfirmModal({
 
           <div className="grid grid-cols-1 gap-2">
             {/* Option 1: Đăng ngay */}
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               aria-pressed={mode === "now"}
               onClick={() => setMode("now")}
-              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setMode("now")
+                }
+              }}
+              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "now"
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
                   : "border-border bg-surface hover:border-border-hover"
@@ -170,14 +178,21 @@ export function ScheduleConfirmModal({
                 </div>
               </div>
               {mode === "now" && <CheckCircle2 size={16} className="text-primary" />}
-            </button>
+            </div>
 
             {/* Option 2: Giờ trưa vàng */}
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               aria-pressed={mode === "lunch"}
               onClick={() => setMode("lunch")}
-              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setMode("lunch")
+                }
+              }}
+              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "lunch"
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
                   : "border-border bg-surface hover:border-border-hover"
@@ -193,14 +208,21 @@ export function ScheduleConfirmModal({
                 </div>
               </div>
               {mode === "lunch" && <CheckCircle2 size={16} className="text-primary" />}
-            </button>
+            </div>
 
             {/* Option 3: Giờ tối vàng */}
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               aria-pressed={mode === "evening"}
               onClick={() => setMode("evening")}
-              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setMode("evening")
+                }
+              }}
+              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "evening"
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
                   : "border-border bg-surface hover:border-border-hover"
@@ -216,14 +238,21 @@ export function ScheduleConfirmModal({
                 </div>
               </div>
               {mode === "evening" && <CheckCircle2 size={16} className="text-primary" />}
-            </button>
+            </div>
 
             {/* Option 4: Tùy chỉnh ngày & giờ */}
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               aria-pressed={mode === "custom"}
               onClick={() => setMode("custom")}
-              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setMode("custom")
+                }
+              }}
+              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "custom"
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
                   : "border-border bg-surface hover:border-border-hover"
@@ -239,18 +268,18 @@ export function ScheduleConfirmModal({
                 </div>
               </div>
               {mode === "custom" && <CheckCircle2 size={16} className="text-primary" />}
-            </button>
+            </div>
           </div>
 
           {/* Input ngày giờ tùy chỉnh */}
           {mode === "custom" && (
             <div className="mt-3 p-3 rounded-xl border border-primary/30 bg-primary/5 flex items-center justify-between gap-3">
               <label className="text-xs font-semibold text-text">Thời gian phát bài:</label>
-              <input
+              <Input
                 type="datetime-local"
                 value={customTime}
                 onChange={(e) => setCustomTime(e.target.value)}
-                className="px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-bold text-text focus:outline-none focus:ring-1 focus:ring-primary"
+                className="px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-bold text-text focus:outline-none focus:ring-1 focus:ring-primary w-auto"
               />
             </div>
           )}

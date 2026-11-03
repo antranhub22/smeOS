@@ -165,15 +165,25 @@ export function PlatformFeedPreview({
         ].map((item) => {
           const isSelected = activePlatform === item.key
           return (
-            <button
+            <div
               key={item.key}
-              type="button"
+              role="button"
+              tabIndex={0}
               onClick={() =>
                 setPlatformOverride({
                   postId: post.id,
                   platform: item.key as PlatformKey,
                 })
               }
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setPlatformOverride({
+                    postId: post.id,
+                    platform: item.key as PlatformKey,
+                  })
+                }
+              }}
               className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                 isSelected
                   ? "border-primary bg-primary/5 shadow-xs text-primary font-bold"
@@ -185,7 +195,7 @@ export function PlatformFeedPreview({
                 {isSelected && <Badge tone="success" className="text-caption px-1 py-0">Đang xem</Badge>}
               </div>
               <div className="mt-0.5 text-caption text-text-muted">{item.desc}</div>
-            </button>
+            </div>
           )
         })}
       </div>

@@ -98,10 +98,17 @@ export function ScheduleCalendarCard({
           { key: "zalo", label: "Zalo OA" },
           { key: "linkedin", label: "LinkedIn" },
         ].map((c) => (
-          <button
+          <div
             key={c.key}
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => setSelectedChannel(c.key)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setSelectedChannel(c.key)
+              }
+            }}
             className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               selectedChannel === c.key
                 ? "bg-primary text-white shadow-2xs"
@@ -109,7 +116,7 @@ export function ScheduleCalendarCard({
             }`}
           >
             {c.label}
-          </button>
+          </div>
         ))}
       </div>
 

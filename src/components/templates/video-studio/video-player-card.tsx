@@ -45,8 +45,8 @@ export function VideoPlayerCard({
     return videoUrl
   }, [videoUrl])
 
-  const handleToggleMute = (e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleToggleMute = (e?: React.SyntheticEvent) => {
+    e?.stopPropagation()
     if (!videoRef.current) return
     const nextMuted = !videoRef.current.muted
     videoRef.current.muted = nextMuted
@@ -137,14 +137,21 @@ export function VideoPlayerCard({
           <div className="flex items-center justify-between">
             <div className="text-xs font-bold text-white/90">@smeOS Studio</div>
             {normalizedVideoUrl && (
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={handleToggleMute}
-                className="pointer-events-auto flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 transition"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    handleToggleMute()
+                  }
+                }}
+                className="pointer-events-auto flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 transition cursor-pointer"
                 aria-label={isMuted ? "Bật âm thanh" : "Tắt âm thanh"}
               >
                 {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-              </button>
+              </div>
             )}
           </div>
 
@@ -152,14 +159,21 @@ export function VideoPlayerCard({
             <div className="text-sm font-extrabold text-white">{productName}</div>
             <div className="text-xs font-semibold text-accent-text">{price}</div>
             <div className="mt-1 flex items-center justify-center">
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={handleTogglePlay}
-                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-md hover:bg-white/40 transition hover:scale-105 active:scale-95 shadow-md"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    handleTogglePlay()
+                  }
+                }}
+                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-md hover:bg-white/40 transition hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                 aria-label={isPlaying ? "Tạm dừng video" : "Phát video"}
               >
                 {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
-              </button>
+              </div>
             </div>
           </div>
         </div>

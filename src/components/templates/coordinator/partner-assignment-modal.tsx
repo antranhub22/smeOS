@@ -1,9 +1,11 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { X, Users, CheckCircle2, MapPin, Star, Plus, AlertTriangle } from "@/components/ui/icons"
+import { Users, CheckCircle2, MapPin, Star, Plus, AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import type { StructuredAddress } from "@/modules/products/domain/product-master-index"
 import {
   coordinatorApi,
@@ -121,134 +123,26 @@ export function PartnerAssignmentModal({
   const input = "px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-surface border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
-        <div className="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-surface z-10">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-alert-100 text-alert-700 flex items-center justify-center">
-              <Users size={18} />
-            </div>
-            <div>
-              <h2 className="text-base font-extrabold text-text">Phân Công Đối Tác / Thợ Chế Tác (Template T06)</h2>
-              <p className="text-caption text-text-muted">
-                Đơn #{orderCode}: {recipeTitle} · Hẹn giao: {deliveryTargetTime}
-              </p>
-            </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      size="lg"
+      className="max-w-2xl"
+      title={
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-alert-100 text-alert-700 flex items-center justify-center">
+            <Users size={18} />
           </div>
-          <button onClick={onClose} aria-label="Đóng" className="p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="p-6 flex flex-col gap-4 text-xs">
-          <div className="p-3.5 rounded-xl bg-surface-alt border border-border flex items-start gap-2.5">
-            <MapPin size={15} className="text-alert-600 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-bold text-text block">Địa chỉ giao:</span>
-              <span className="text-text font-semibold">{addressText(deliveryAddress) || "—"}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-text text-xs">Đối tác đang nhận đơn của tiệm:</span>
-            <Button type="button" size="sm" variant="outline" onClick={() => setShowAdd((v) => !v)} className="gap-1">
-              <Plus size={13} /> Thêm đối tác
-            </Button>
-          </div>
-
-          {showAdd && (
-            <div className="p-3 rounded-xl border border-dashed border-alert-300 bg-alert-50/40 grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input className={input} placeholder="Mã (vd XUONG-BD)" value={draft.code} onChange={(e) => setDraft({ ...draft, code: e.target.value })} />
-              <input className={input} placeholder="Tên xưởng / thợ" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
-              <input className={input} placeholder="Số điện thoại" value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} />
-              <input className={input} placeholder="Quận/Huyện" value={draft.district} onChange={(e) => setDraft({ ...draft, district: e.target.value })} />
-              <input className={input} placeholder="Tỉnh/Thành phố" value={draft.province} onChange={(e) => setDraft({ ...draft, province: e.target.value })} />
-              <input
-                className={input}
-                type="number"
-                min={1}
-                placeholder="Công suất đơn/ngày"
-                value={draft.capacityDaily}
-                onChange={(e) => setDraft({ ...draft, capacityDaily: Number(e.target.value) })}
-              />
-              <div className="sm:col-span-2 flex justify-end">
-                <Button type="button" variant="secondary" size="sm" onClick={handleCreatePartner} className="bg-alert-600 hover:bg-alert-700 text-white">
-                  Lưu đối tác
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {loading ? (
-            <div className="text-text-muted">Đang tải danh sách đối tác…</div>
-          ) : partners.length === 0 ? (
-            <div className="text-text-muted">Tiệm chưa có đối tác nào đang nhận đơn — thêm đối tác ở trên.</div>
-          ) : (
-            <div className="space-y-2.5">
-              {partners.map((p) => {
-                const isSelected = p.id === selectedPartnerId
-                return (
-                  <label
-                    key={p.id}
-                    className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col gap-1.5 ${
-                      isSelected ? "border-alert-500 bg-alert-50/40 ring-2 ring-alert-500/20" : "border-border bg-surface hover:border-alert-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="partner"
-                        checked={isSelected}
-                        onChange={() => setSelectedPartnerId(p.id)}
-                        className="text-alert-600 focus:ring-alert-500"
-                      />
-                      <span className="font-extrabold text-text text-sm">{p.name}</span>
-                      <Badge tone={p.tier === "STANDARD" ? "neutral" : "warning"} className="text-caption">
-                        {p.tier}
-                      </Badge>
-                      {p.id === currentPartnerId && <Badge tone="success" className="text-caption">Đang giữ đơn</Badge>}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-muted text-caption pl-6">
-                      <span>{p.code}</span>
-                      <span>{p.phone}</span>
-                      {(p.district || p.province) && (
-                        <span className="flex items-center gap-1">
-                          <MapPin size={12} />
-                          {[p.district, p.province].filter(Boolean).join(", ")}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Star size={12} className="text-sand-500 fill-sand-500" />
-                        {p.rating.toFixed(1)}/5
-                      </span>
-                      <span>Công suất {p.capacityDaily} đơn/ngày</span>
-                    </div>
-                  </label>
-                )
-              })}
-            </div>
-          )}
-
           <div>
-            <label className="font-bold text-text block mb-1">Lời nhắn giao việc cho đối tác:</label>
-            <input
-              type="text"
-              placeholder="Ví dụ: kiểm tra kỹ chất lượng nguyên vật liệu, gửi ảnh thành phẩm trước 16:15"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className={`w-full ${input}`}
-            />
+            <h2 className="text-base font-extrabold text-text">Phân Công Đối Tác / Thợ Chế Tác (Template T06)</h2>
           </div>
-
-          {error && (
-            <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold flex items-start gap-2">
-              <AlertTriangle size={14} className="shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
         </div>
-
-        <div className="p-4 border-t border-border flex items-center justify-end gap-3 sticky bottom-0 bg-surface">
+      }
+      description={`Đơn #${orderCode}: ${recipeTitle} · Hẹn giao: ${deliveryTargetTime}`}
+      footer={
+        <div className="flex items-center justify-end gap-3 w-full">
           <Button variant="outline" size="sm" onClick={onClose}>
             Hủy bỏ
           </Button>
@@ -267,7 +161,125 @@ export function PartnerAssignmentModal({
             <span>{submitting ? "Đang giao việc…" : "Xác Nhận Giao Việc & Phát Hành Phiếu T07"}</span>
           </Button>
         </div>
+      }
+    >
+      <div className="p-1 flex flex-col gap-4 text-xs">
+        <div className="p-3.5 rounded-xl bg-surface-alt border border-border flex items-start gap-2.5">
+          <MapPin size={15} className="text-alert-600 shrink-0 mt-0.5" />
+          <div>
+            <span className="font-bold text-text block">Địa chỉ giao:</span>
+            <span className="text-text font-semibold">{addressText(deliveryAddress) || "—"}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="font-bold text-text text-xs">Đối tác đang nhận đơn của tiệm:</span>
+          <Button type="button" size="sm" variant="outline" onClick={() => setShowAdd((v) => !v)} className="gap-1">
+            <Plus size={13} /> Thêm đối tác
+          </Button>
+        </div>
+
+        {showAdd && (
+          <div className="p-3 rounded-xl border border-dashed border-alert-300 bg-alert-50/40 grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <Input className={input} placeholder="Mã (vd XUONG-BD)" value={draft.code} onChange={(e) => setDraft({ ...draft, code: e.target.value })} />
+            <Input className={input} placeholder="Tên xưởng / thợ" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+            <Input className={input} placeholder="Số điện thoại" value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} />
+            <Input className={input} placeholder="Quận/Huyện" value={draft.district} onChange={(e) => setDraft({ ...draft, district: e.target.value })} />
+            <Input className={input} placeholder="Tỉnh/Thành phố" value={draft.province} onChange={(e) => setDraft({ ...draft, province: e.target.value })} />
+            <Input
+              className={input}
+              type="number"
+              min={1}
+              placeholder="Công suất đơn/ngày"
+              value={draft.capacityDaily}
+              onChange={(e) => setDraft({ ...draft, capacityDaily: Number(e.target.value) })}
+            />
+            <div className="sm:col-span-2 flex justify-end">
+              <Button type="button" variant="secondary" size="sm" onClick={handleCreatePartner} className="bg-alert-600 hover:bg-alert-700 text-white">
+                Lưu đối tác
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="text-text-muted">Đang tải danh sách đối tác…</div>
+        ) : partners.length === 0 ? (
+          <div className="text-text-muted">Tiệm chưa có đối tác nào đang nhận đơn — thêm đối tác ở trên.</div>
+        ) : (
+          <div className="space-y-2.5">
+            {partners.map((p) => {
+              const isSelected = p.id === selectedPartnerId
+              return (
+                <div
+                  key={p.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedPartnerId(p.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      setSelectedPartnerId(p.id)
+                    }
+                  }}
+                  className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col gap-1.5 ${
+                    isSelected ? "border-alert-500 bg-alert-50/40 ring-2 ring-alert-500/20" : "border-border bg-surface hover:border-alert-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      role="radio"
+                      aria-checked={isSelected}
+                      tabIndex={-1}
+                      className="h-4 w-4 rounded-full border border-alert-600 flex items-center justify-center shrink-0"
+                    >
+                      {isSelected && <span className="h-2 w-2 rounded-full bg-alert-600" />}
+                    </div>
+                    <span className="font-extrabold text-text text-sm">{p.name}</span>
+                    <Badge tone={p.tier === "STANDARD" ? "neutral" : "warning"} className="text-caption">
+                      {p.tier}
+                    </Badge>
+                    {p.id === currentPartnerId && <Badge tone="success" className="text-caption">Đang giữ đơn</Badge>}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-muted text-caption pl-6">
+                    <span>{p.code}</span>
+                    <span>{p.phone}</span>
+                    {(p.district || p.province) && (
+                      <span className="flex items-center gap-1">
+                        <MapPin size={12} />
+                        {[p.district, p.province].filter(Boolean).join(", ")}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <Star size={12} className="text-sand-500 fill-sand-500" />
+                      {p.rating.toFixed(1)}/5
+                    </span>
+                    <span>Công suất {p.capacityDaily} đơn/ngày</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        <div>
+          <label className="font-bold text-text block mb-1">Lời nhắn giao việc cho đối tác:</label>
+          <Input
+            type="text"
+            placeholder="Ví dụ: kiểm tra kỹ chất lượng nguyên vật liệu, gửi ảnh thành phẩm trước 16:15"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className={`w-full ${input}`}
+          />
+        </div>
+
+        {error && (
+          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold flex items-start gap-2">
+            <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+            <span>{error}</span>
+          </div>
+        )}
       </div>
-    </div>
+    </Dialog>
   )
 }

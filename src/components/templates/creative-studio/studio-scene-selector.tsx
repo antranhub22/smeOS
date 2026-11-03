@@ -83,11 +83,18 @@ export function StudioSceneSelector({
           const Icon = preset.icon
 
           return (
-            <button
+            <div
               key={preset.id}
-              type="button"
-              disabled={disabled}
-              onClick={() => onChange(preset.id)}
+              role="button"
+              tabIndex={disabled ? -1 : 0}
+              aria-disabled={disabled}
+              onClick={() => !disabled && onChange(preset.id)}
+              onKeyDown={(e) => {
+                if (!disabled && (e.key === "Enter" || e.key === " ")) {
+                  e.preventDefault()
+                  onChange(preset.id)
+                }
+              }}
               className={`group relative flex flex-col items-start p-3 rounded-xl border text-left transition-all duration-200 ${
                 isSelected
                   ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20"
@@ -101,7 +108,7 @@ export function StudioSceneSelector({
                     style={{ background: preset.colorPreview }}
                   />
                   <span
-                    className={`text-xs font-bold ${
+                    className={`text-caption font-bold ${
                       isSelected ? "text-primary" : "text-text"
                     }`}
                   >
@@ -119,7 +126,7 @@ export function StudioSceneSelector({
               <p className="text-caption leading-relaxed text-text-muted">
                 {preset.desc}
               </p>
-            </button>
+            </div>
           )
         })}
       </div>

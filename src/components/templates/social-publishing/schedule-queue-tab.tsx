@@ -91,13 +91,15 @@ export function ScheduleQueueTab({
         )}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={onToggleSelectAll}
-              className="text-xs font-semibold text-primary hover:underline cursor-pointer"
+              className="h-auto p-0 text-xs font-semibold text-primary hover:underline cursor-pointer"
             >
               {selectedIds.length === calendarPosts.length ? "Bỏ chọn tất cả" : "Chọn tất cả"}
-            </button>
+            </Button>
             <div className="text-meta text-text-muted font-medium">
               {selectedIds.length > 0 ? (
                 <span><strong>{selectedIds.length}</strong> bài đã chọn để lên lịch</span>

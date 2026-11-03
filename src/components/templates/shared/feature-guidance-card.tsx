@@ -129,9 +129,16 @@ export function FeatureGuidanceCard({
         )}
         {...props}
       >
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={handleToggle}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              handleToggle()
+            }
+          }}
           className={cn(
             "w-full group flex items-center justify-center gap-2",
             "rounded-2xl border-2 border-dashed border-guidance-border/80 bg-guidance-bg/40",
@@ -152,7 +159,7 @@ export function FeatureGuidanceCard({
             size={14}
             className="text-guidance-border group-hover:text-guidance transition-all duration-200 group-hover:translate-y-0.5"
           />
-        </button>
+        </div>
       </div>
     )
   }
@@ -170,15 +177,22 @@ export function FeatureGuidanceCard({
       {/* Nút thu gọn ở góc trên phải (chỉ hiện khi đã mount) */}
       {hasMounted && (
         <div className="flex justify-end -mt-1 -mr-1 mb-1">
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={handleToggle}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                handleToggle()
+              }
+            }}
             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-semibold text-guidance hover:bg-guidance-tag-bg/60 transition-all duration-200 cursor-pointer"
             title="Thu gọn hướng dẫn"
           >
             <ChevronDown size={12} className="rotate-180" />
             <span>Thu gọn</span>
-          </button>
+          </div>
         </div>
       )}
 

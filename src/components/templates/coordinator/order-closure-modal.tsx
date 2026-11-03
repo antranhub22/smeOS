@@ -1,8 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { X, Award, CheckCircle2, Clock, Star, FileCheck, XCircle } from "@/components/ui/icons"
+import { Award, CheckCircle2, Clock, Star, FileCheck, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { errorMessage, type CoordinationOrder } from "@/components/coordinator/coordinator-api"
 
 /**
@@ -71,104 +74,31 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-surface border border-border rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
-        <div className="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-surface z-10">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-mint-100 text-mint-800 flex items-center justify-center">
-              <Award size={18} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
-                  CHẶNG P7 • HOÀN TẤT ĐƠN
-                </span>
-                <h3 className="text-base font-extrabold text-text">Nghiệm Thu & Đóng Đơn (T25/T26)</h3>
-              </div>
-              <p className="text-caption text-text-muted">Đơn #{order.orderCode}</p>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      size="md"
+      className="max-w-xl"
+      title={
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-mint-100 text-mint-800 flex items-center justify-center">
+            <Award size={18} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
+                BƯỚC 7 • HOÀN TẤT ĐƠN
+              </span>
+              <h3 className="text-base font-extrabold text-text">Nghiệm Thu & Đóng Đơn (T25/T26)</h3>
             </div>
           </div>
-          <button onClick={onClose} aria-label="Đóng" className="p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
-            <X size={18} />
-          </button>
         </div>
-
-        <div className="p-5 flex flex-col gap-4 text-xs">
-          <div
-            className={`p-4 rounded-xl border flex flex-col gap-2 ${
-              sla.tone === "ok" ? "border-mint-200 bg-mint-50/50" : sla.tone === "late" ? "border-sand-200 bg-sand-50/50" : "border-border bg-surface-alt"
-            }`}
-          >
-            <span className="font-extrabold text-text flex items-center gap-1.5">
-              <Clock size={14} /> SLA giao hàng: {sla.label}
-            </span>
-            <div className="grid grid-cols-2 gap-2 text-caption">
-              <div>
-                <span className="text-text-muted block">Hẹn với khách:</span>
-                <strong className="text-text">{order.deliveryTargetAt ? fmt(order.deliveryTargetAt) : order.deliveryTargetTime}</strong>
-              </div>
-              <div>
-                <span className="text-text-muted block">Giao thực tế:</span>
-                <strong className="text-text">{fmt(order.delivery.actualDeliveryAt)}</strong>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl border border-border bg-surface-alt flex flex-col gap-2">
-            <span className="font-bold text-text flex items-center gap-1.5">
-              <FileCheck size={14} className="text-alert-600" /> Điều kiện đóng đơn:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-caption">
-              {checks.map((c) => (
-                <div key={c.label} className={`flex items-center gap-1.5 font-semibold ${c.ok ? "text-mint-800" : "text-alert-700"}`}>
-                  {c.ok ? <CheckCircle2 size={13} className="shrink-0" /> : <XCircle size={13} className="shrink-0" />}
-                  <span>{c.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl border border-border bg-surface flex flex-col gap-3">
-            {order.partner && (
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-text">Chấm đối tác {order.partnerName}:</span>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button key={star} type="button" aria-label={`${star} sao`} onClick={() => setPartnerRating(star)} className="p-0.5">
-                    <Star size={20} className={star <= partnerRating ? "fill-sand-400 text-sand-500" : "text-cool-300"} />
-                  </button>
-                ))}
-              </div>
-            )}
-            <div>
-              <label className="font-bold text-text block mb-1">Tiền công trả đối tác (VNĐ):</label>
-              <input
-                type="number"
-                min={0}
-                value={payout}
-                onChange={(e) => setPayout(e.target.value)}
-                placeholder="Để trống nếu chưa chốt"
-                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
-              />
-            </div>
-            <div>
-              <label className="font-bold text-text block mb-1">Ghi chú nghiệm thu:</label>
-              <textarea
-                rows={2}
-                value={closureNotes}
-                onChange={(e) => setClosureNotes(e.target.value)}
-                className="w-full p-2.5 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
-              />
-            </div>
-          </div>
-
-          {error && (
-            <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold">
-              {error}
-            </div>
-          )}
-        </div>
-
-        <div className="p-4 border-t border-border flex items-center justify-between gap-3 sticky bottom-0 bg-surface">
+      }
+      description={`Đơn #${order.orderCode}`}
+      footer={
+        <div className="flex items-center justify-between gap-3 w-full">
           <Button variant="outline" size="sm" onClick={onClose}>
             Đóng
           </Button>
@@ -182,7 +112,95 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
             <span>{busy ? "Đang đóng đơn…" : "Hoàn tất & đóng đơn"}</span>
           </Button>
         </div>
+      }
+    >
+      <div className="p-1 flex flex-col gap-4 text-xs">
+        <div
+          className={`p-4 rounded-xl border flex flex-col gap-2 ${
+            sla.tone === "ok" ? "border-mint-200 bg-mint-50/50" : sla.tone === "late" ? "border-sand-200 bg-sand-50/50" : "border-border bg-surface-alt"
+          }`}
+        >
+          <span className="font-extrabold text-text flex items-center gap-1.5">
+            <Clock size={14} /> SLA giao hàng: {sla.label}
+          </span>
+          <div className="grid grid-cols-2 gap-2 text-caption">
+            <div>
+              <span className="text-text-muted block">Hẹn với khách:</span>
+              <strong className="text-text">{order.deliveryTargetAt ? fmt(order.deliveryTargetAt) : order.deliveryTargetTime}</strong>
+            </div>
+            <div>
+              <span className="text-text-muted block">Giao thực tế:</span>
+              <strong className="text-text">{fmt(order.delivery.actualDeliveryAt)}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-xl border border-border bg-surface-alt flex flex-col gap-2">
+          <span className="font-bold text-text flex items-center gap-1.5">
+            <FileCheck size={14} className="text-alert-600" /> Điều kiện đóng đơn:
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-caption">
+            {checks.map((c) => (
+              <div key={c.label} className={`flex items-center gap-1.5 font-semibold ${c.ok ? "text-mint-800" : "text-alert-700"}`}>
+                {c.ok ? <CheckCircle2 size={13} className="shrink-0" /> : <XCircle size={13} className="shrink-0" />}
+                <span>{c.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-xl border border-border bg-surface flex flex-col gap-3">
+          {order.partner && (
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-text">Chấm đối tác {order.partnerName}:</span>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <div
+                  key={star}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${star} sao`}
+                  onClick={() => setPartnerRating(star)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      setPartnerRating(star)
+                    }
+                  }}
+                  className="p-0.5 cursor-pointer"
+                >
+                  <Star size={20} className={star <= partnerRating ? "fill-sand-400 text-sand-500" : "text-cool-300"} />
+                </div>
+              ))}
+            </div>
+          )}
+          <div>
+            <label className="font-bold text-text block mb-1">Tiền công trả đối tác (VNĐ):</label>
+            <Input
+              type="number"
+              min={0}
+              value={payout}
+              onChange={(e) => setPayout(e.target.value)}
+              placeholder="Để trống nếu chưa chốt"
+              className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+            />
+          </div>
+          <div>
+            <label className="font-bold text-text block mb-1">Ghi chú nghiệm thu:</label>
+            <Textarea
+              rows={2}
+              value={closureNotes}
+              onChange={(e) => setClosureNotes(e.target.value)}
+              className="w-full p-2.5 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold">
+            {error}
+          </div>
+        )}
       </div>
-    </div>
+    </Dialog>
   )
 }

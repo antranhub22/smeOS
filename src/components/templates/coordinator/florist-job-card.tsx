@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import type { FlowerBomItem, FoliageBomItem, WrappingLayer, AccessoryBomItem, StructuredAddress } from "@/modules/products/domain/product-master-index"
 import type { VisibleCustomField } from "@/components/coordinator/custom-fields-section"
@@ -234,15 +235,15 @@ export function FloristJobCard({
                 <span className="text-caption font-bold text-text">Giá gia công trên thẻ:</span>
               </div>
               <div className="relative">
-                <input
+                <Input
                   type="number"
                   step={10000}
                   value={suggestedCraftFee || ""}
                   onChange={(e) => setSuggestedCraftFee(Number(e.target.value))}
                   placeholder={`${defaultFee.toLocaleString("vi-VN")}đ`}
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-surface text-text font-bold text-body-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full pr-12 font-bold text-body-sm"
                 />
-                <span className="absolute right-2.5 top-1.5 text-caption font-bold text-text-muted">VNĐ</span>
+                <span className="absolute right-2.5 top-2 text-caption font-bold text-text-muted">VNĐ</span>
               </div>
             </div>
           </div>
@@ -269,14 +270,21 @@ export function FloristJobCard({
                 <MapPin size={13} className="text-primary" />
                 <span>Thông tin giao nhận cho bộ phận {ti.makerTitle}:</span>
               </span>
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => setMaskPhone(!maskPhone)}
-                className="inline-flex items-center gap-1 text-caption text-text-muted hover:text-text font-medium"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setMaskPhone(!maskPhone)
+                  }
+                }}
+                className="inline-flex cursor-pointer items-center gap-1 text-caption text-text-muted hover:text-text font-medium"
               >
                 {maskPhone ? <Eye size={12} /> : <EyeOff size={12} />}
                 <span>{maskPhone ? "Hiện số đầy đủ" : "Che số ĐT"}</span>
-              </button>
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-text">
               <div>

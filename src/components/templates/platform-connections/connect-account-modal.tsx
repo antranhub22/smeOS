@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react"
 import { Lock, ShieldCheck, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 
 export interface ConnectAccountModalProps {
   platformId: string | null
@@ -128,7 +129,7 @@ export function ConnectAccountModal({
               ? "Số điện thoại / Email đăng nhập Zalo"
               : "Email / Tên đăng nhập"}
           </label>
-          <input
+          <Input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -149,7 +150,7 @@ export function ConnectAccountModal({
           <label className="block text-caption font-bold text-text mb-1">
             {initialUsername ? "Mật khẩu mới của tài khoản" : "Mật khẩu tài khoản"}
           </label>
-          <input
+          <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -174,7 +175,7 @@ export function ConnectAccountModal({
               <label className="block text-caption font-semibold text-text-muted mb-0.5">
                 Facebook Fanpage ID
               </label>
-              <input
+              <Input
                 type="text"
                 value={pageId}
                 onChange={(e) => setPageId(e.target.value)}
@@ -186,7 +187,7 @@ export function ConnectAccountModal({
               <label className="block text-caption font-semibold text-text-muted mb-0.5">
                 Page Access Token (Tùy chọn)
               </label>
-              <input
+              <Input
                 type="password"
                 value={pageAccessToken}
                 onChange={(e) => setPageAccessToken(e.target.value)}

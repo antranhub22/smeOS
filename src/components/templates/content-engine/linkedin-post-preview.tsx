@@ -50,13 +50,16 @@ export function LinkedInPreview({
         </div>
 
         <div className="flex items-center gap-1">
-          <button
-              aria-label="Thêm tùy chọn"
-            type="button"
-            className="text-cool-400 hover:text-cool-600 p-1 transition-colors"
-           onClick={() => undefined}>
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Thêm tùy chọn"
+            className="text-cool-400 hover:text-cool-600 p-1 transition-colors cursor-pointer"
+            onClick={() => undefined}
+            onKeyDown={() => undefined}
+          >
             <MoreHorizontal size={18} />
-          </button>
+          </div>
         </div>
       </div>
 
@@ -141,34 +144,46 @@ export function LinkedInPreview({
 
       {/* Thanh hành động LinkedIn (Like, Comment, Repost, Send) */}
       <div className="px-2 py-1.5 grid grid-cols-4 gap-1 text-caption font-semibold text-cool-600">
-        <button
-          type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors"
-         onClick={() => undefined}>
+        <div
+          role="button"
+          tabIndex={0}
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          onClick={() => undefined}
+          onKeyDown={() => undefined}
+        >
           <ThumbsUp size={15} />
           <span>Thích</span>
-        </button>
-        <button
-          type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors"
-         onClick={() => undefined}>
+        </div>
+        <div
+          role="button"
+          tabIndex={0}
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          onClick={() => undefined}
+          onKeyDown={() => undefined}
+        >
           <MessageSquare size={15} />
           <span>Bình luận</span>
-        </button>
-        <button
-          type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors"
-         onClick={() => undefined}>
+        </div>
+        <div
+          role="button"
+          tabIndex={0}
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          onClick={() => undefined}
+          onKeyDown={() => undefined}
+        >
           <Repeat size={15} />
           <span>Đăng lại</span>
-        </button>
-        <button
-          type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors"
-         onClick={() => undefined}>
+        </div>
+        <div
+          role="button"
+          tabIndex={0}
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          onClick={() => undefined}
+          onKeyDown={() => undefined}
+        >
           <Send size={15} />
           <span>Gửi</span>
-        </button>
+        </div>
       </div>
     </div>
   )
