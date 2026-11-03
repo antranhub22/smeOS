@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Package,
   Camera,
+  Check,
 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -18,9 +19,11 @@ import type { PartnerStoreMarketplaceEntity } from "@/modules/platform/domain/pa
 interface MarketplaceStoreCardProps {
   store: PartnerStoreMarketplaceEntity
   onQuickView: (store: PartnerStoreMarketplaceEntity) => void
+  /** Chế độ chọn để xoá: bấm cả thẻ để chọn/bỏ chọn thay vì mở hồ sơ. */
+  selection?: { selected: boolean; onToggle: () => void }
 }
 
-export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCardProps) {
+export function MarketplaceStoreCard({ store, onQuickView, selection }: MarketplaceStoreCardProps) {
   const { identity, contact, business, production, scoreAndTier, media } = store
   // Ảnh lỗi (vd. Drive chưa chia sẻ công khai) → thử ảnh kế tiếp của cửa hàng
   const [photoIndex, setPhotoIndex] = useState(0)
@@ -37,6 +40,23 @@ export function MarketplaceStoreCard({ store, onQuickView }: MarketplaceStoreCar
       variant="interactive"
       className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/80 bg-surface transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg"
     >
+      {selection && (
+        <button
+          type="button"
+          aria-pressed={selection.selected}
+          aria-label={`${selection.selected ? "Bỏ chọn" : "Chọn"} ${identity.shopName}`}
+          onClick={selection.onToggle}
+          className={`absolute inset-0 z-30 rounded-2xl ${selection.selected ? "bg-danger-bg/40 ring-2 ring-inset ring-danger" : "hover:bg-surface-alt/30"}`}
+        >
+          <span
+            className={`absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center rounded-lg border-2 ${
+              selection.selected ? "border-danger bg-danger text-white" : "border-border bg-surface"
+            }`}
+          >
+            {selection.selected && <Check className="h-5 w-5" aria-hidden />}
+          </span>
+        </button>
+      )}
       <div className="relative h-40 w-full overflow-hidden bg-surface-alt">
         {coverUrl ? (
           <img
