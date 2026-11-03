@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react"
 import { Copy, Check, Sparkles, Video, Share2, FileText, ShoppingBag } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
   generateFlowerContent,
@@ -119,19 +120,19 @@ export function FlowerContentStudioModal({
             <label className="block text-caption font-semibold text-text mb-1.5">Kênh đăng bài / Định dạng</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
               {FORMAT_OPTIONS.map((f) => (
-                <button
+                <Button
                   type="button"
                   key={f.value}
+                  variant={format === f.value ? "secondary" : "outline"}
+                  size="sm"
                   onClick={() => setFormat(f.value)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-caption font-medium transition ${
-                    format === f.value
-                      ? "border-primary bg-primary/10 text-primary font-semibold"
-                      : "border-border bg-surface text-muted hover:border-primary/40"
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-caption font-medium justify-start h-auto ${
+                    format === f.value ? "border-primary bg-primary/10 text-primary font-semibold" : ""
                   }`}
                 >
                   {f.icon}
                   <span className="truncate">{f.label}</span>
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -141,11 +142,18 @@ export function FlowerContentStudioModal({
             <label className="block text-caption font-semibold text-text mb-1.5">Sắc thái giọng văn (Tone of Voice)</label>
             <div className="grid grid-cols-1 gap-1.5">
               {(Object.keys(TONE_LABELS) as ToneOfVoice[]).map((t) => (
-                <button
-                  type="button"
+                <div
+                  role="button"
+                  tabIndex={0}
                   key={t}
                   onClick={() => setTone(t)}
-                  className={`text-left px-3 py-2 rounded-lg border transition ${
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      setTone(t)
+                    }
+                  }}
+                  className={`cursor-pointer text-left px-3 py-2 rounded-lg border transition focus:outline-none focus:ring-2 focus:ring-primary ${
                     tone === t
                       ? "border-primary bg-primary/10"
                       : "border-border bg-surface hover:border-primary/40"
@@ -157,8 +165,8 @@ export function FlowerContentStudioModal({
                     </span>
                     {tone === t && <Badge tone="accent" className="text-caption">Đang chọn</Badge>}
                   </div>
-                  <p className="text-caption text-muted mt-0.5">{TONE_LABELS[t].desc}</p>
-                </button>
+                  <p className="text-caption text-text-muted mt-0.5">{TONE_LABELS[t].desc}</p>
+                </div>
               ))}
             </div>
           </div>
@@ -166,22 +174,20 @@ export function FlowerContentStudioModal({
           {/* Nhập liệu chi tiết hoa */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-caption font-medium text-muted mb-1">Tên sản phẩm hoa</label>
-              <input
+              <label className="block text-caption font-medium text-text-muted mb-1">Tên sản phẩm hoa</label>
+              <Input
                 type="text"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                className="w-full h-8 px-2.5 rounded-md border border-border bg-surface text-body-sm text-text"
                 placeholder="vd: Sản Phẩm Juliet"
               />
             </div>
             <div>
-              <label className="block text-caption font-medium text-muted mb-1">Dịp tặng</label>
-              <input
+              <label className="block text-caption font-medium text-text-muted mb-1">Dịp tặng</label>
+              <Input
                 type="text"
                 value={occasion}
                 onChange={(e) => setOccasion(e.target.value)}
-                className="w-full h-8 px-2.5 rounded-md border border-border bg-surface text-body-sm text-text"
                 placeholder="vd: Sinh nhật, Kỷ niệm..."
               />
             </div>
@@ -189,22 +195,20 @@ export function FlowerContentStudioModal({
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-caption font-medium text-muted mb-1">Tông màu chủ đạo</label>
-              <input
+              <label className="block text-caption font-medium text-text-muted mb-1">Tông màu chủ đạo</label>
+              <Input
                 type="text"
                 value={colorTheme}
                 onChange={(e) => setColorTheme(e.target.value)}
-                className="w-full h-8 px-2.5 rounded-md border border-border bg-surface text-body-sm text-text"
                 placeholder="vd: Hồng phấn, Cam pastel..."
               />
             </div>
             <div>
-              <label className="block text-caption font-medium text-muted mb-1">Các nguyên liệu chính</label>
-              <input
+              <label className="block text-caption font-medium text-text-muted mb-1">Các nguyên liệu chính</label>
+              <Input
                 type="text"
                 value={flowerTypesText}
                 onChange={(e) => setFlowerTypesText(e.target.value)}
-                className="w-full h-8 px-2.5 rounded-md border border-border bg-surface text-body-sm text-text"
                 placeholder="Phân cách bằng dấu phẩy"
               />
             </div>
@@ -218,14 +222,16 @@ export function FlowerContentStudioModal({
               <span className="font-semibold text-caption text-text">Xem trước trực tiếp</span>
               <Badge tone="neutral" className="text-caption">{contentResult.recommendedPlatform}</Badge>
             </div>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={handleCopy}
-              className="text-caption text-primary hover:underline flex items-center gap-1 font-medium"
+              className="text-caption text-primary hover:underline flex items-center gap-1 font-medium p-0 h-auto hover:bg-transparent"
             >
               {copied ? <Check size={12} className="text-success" /> : <Copy size={12} />}
               {copied ? "Đã chép" : "Sao chép"}
-            </button>
+            </Button>
           </div>
 
           <div tabIndex={0} aria-label="Nội dung giọng văn" className="flex-1 overflow-y-auto max-h-[380px] space-y-3 pr-1 text-body-sm focus-visible:outline-2 focus-visible:outline-primary">

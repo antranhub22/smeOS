@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { Disclosure } from "@/components/ui/disclosure"
 import { InlineError } from "@/components/ui/inline-error"
 import { costingFetch } from "./use-costing-api"
@@ -76,13 +77,13 @@ export function MaterialForm({ onCreated }: { onCreated: () => void }) {
         </label>
         <label className="flex flex-col gap-1 text-body-sm text-text">
           Nhóm
-          <select className={selectClass} value={categoryKey} onChange={(e) => changeCategory(e.target.value)}>
+          <NativeSelect className={selectClass} value={categoryKey} onChange={(e) => changeCategory(e.target.value)}>
             {spec.materialCategories.map((c) => (
               <option key={c.key} value={c.key}>
                 {c.label}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </label>
         <label className="flex flex-col gap-1 text-body-sm text-text">
           Đơn vị

@@ -132,18 +132,25 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
         { key: "florist", label: `${makerTitle} (Ẩn giá)`, icon: <Flower2 className="h-3.5 w-3.5" /> },
         { key: "delivery", label: "Giao vận & Ấn phẩm A6", icon: <Truck className="h-3.5 w-3.5" /> },
       ] as const).map(({ key, label, icon }) => (
-        <button
+        <div
           key={key}
-          type="button"
+          role="button"
+          tabIndex={0}
           onClick={() => setActiveTab(key)}
-          className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-colors ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              setActiveTab(key)
+            }
+          }}
+          className={`cursor-pointer pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-colors ${
             activeTab === key
               ? "border-primary text-primary font-bold"
               : "border-transparent text-text-muted hover:text-text"
           }`}
         >
           {icon} {label}
-        </button>
+        </div>
       ))}
     </div>
   )

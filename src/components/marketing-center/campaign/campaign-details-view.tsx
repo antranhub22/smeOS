@@ -61,13 +61,15 @@ export function CampaignDetailsView({ campaignId, onBack }: CampaignDetailsViewP
   if (loading && !data) {
     return (
       <div className="space-y-4">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onBack}
-          className="flex items-center gap-2 text-body-sm text-text-muted hover:text-text"
+          className="h-auto p-0 flex items-center gap-2 text-body-sm text-text-muted hover:text-text"
         >
           <ArrowLeft className="h-4 w-4" /> Quay lại danh sách
-        </button>
+        </Button>
         <SkeletonBlock lines={4} label="Đang tải chiến dịch..." />
       </div>
     )
@@ -76,13 +78,15 @@ export function CampaignDetailsView({ campaignId, onBack }: CampaignDetailsViewP
   if (!data) {
     return (
       <div className="space-y-4">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onBack}
-          className="flex items-center gap-2 text-body-sm text-text-muted hover:text-text"
+          className="h-auto p-0 flex items-center gap-2 text-body-sm text-text-muted hover:text-text"
         >
           <ArrowLeft className="h-4 w-4" /> Quay lại danh sách
-        </button>
+        </Button>
         {error && <InlineError message={error} onRetry={loadData} />}
       </div>
     )
@@ -103,13 +107,15 @@ export function CampaignDetailsView({ campaignId, onBack }: CampaignDetailsViewP
       {/* Top bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onBack}
-            className="flex items-center gap-1.5 text-caption font-medium text-text-muted hover:text-text"
+            className="h-auto p-0 flex items-center gap-1.5 text-caption font-medium text-text-muted hover:text-text"
           >
             <ArrowLeft className="h-4 w-4" /> Danh sách chiến dịch
-          </button>
+          </Button>
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-h2 font-bold text-text">{campaign.name}</h2>
             <Badge tone={statusTone}>{CAMPAIGN_STATUS_LABELS[campaign.status]}</Badge>

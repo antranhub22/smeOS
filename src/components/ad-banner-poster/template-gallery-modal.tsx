@@ -2,6 +2,8 @@
 
 import React, { useState } from "react"
 import { X, Sparkles, Check, LayoutGrid, ImageIcon } from "@/components/ui/icons"
+import { Dialog } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import {
   BANNER_TEMPLATE_CATEGORIES,
   BANNER_TEMPLATE_CATALOG,
@@ -33,61 +35,68 @@ export function TemplateGalleryModal({
   const filteredTemplates = getTemplatesByCategory(activeCategory)
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in-50 duration-200"
-    >
-      <div className="relative w-full max-w-4xl rounded-2xl bg-surface border border-border p-5 shadow-2xl flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-border">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white shadow-sm">
-              <LayoutGrid className="h-4 w-4" />
-            </div>
-            <div>
-              <h2 className="text-sm sm:text-base font-bold text-text">
-                Kho Template Poster & Banner Quảng Cáo
-              </h2>
-              <p className="text-xs text-text-muted mt-0.5">
-                Chọn mẫu bố cục chuẩn sàn theo mục đích chiến dịch để tự động tạo ấn phẩm
-              </p>
-            </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      title={
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white shadow-sm">
+            <LayoutGrid className="h-4 w-4" />
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng cửa sổ"
-            className="rounded-lg p-1.5 text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <span>Kho Template Poster & Banner Quảng Cáo</span>
         </div>
-
+      }
+      description="Chọn mẫu bố cục chuẩn sàn theo mục đích chiến dịch để tự động tạo ấn phẩm"
+      size="lg"
+      footer={
+        <div className="flex items-center justify-between w-full">
+          <span className="text-caption text-text-muted">
+            Hiển thị {filteredTemplates.length} mẫu thiết kế trong kho
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+          >
+            Đóng
+          </Button>
+        </div>
+      }
+    >
+      <div className="p-1 space-y-4">
         {/* Categories Bar */}
-        <div className="flex items-center gap-1.5 py-3 overflow-x-auto no-scrollbar border-b border-border">
+        <div className="flex items-center gap-1.5 pb-3 overflow-x-auto no-scrollbar border-b border-border">
           {BANNER_TEMPLATE_CATEGORIES.map((cat) => {
             const isActive = cat.id === activeCategory
             return (
-              <button
+              <div
                 key={cat.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setActiveCategory(cat.id)
+                  }
+                }}
+                className={`px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-surface-alt text-text-muted hover:text-text hover:bg-border/60"
                 }`}
               >
                 {cat.label}
-              </button>
+              </div>
             )
           })}
         </div>
 
         {/* Template Cards Grid */}
-        <div className="flex-1 overflow-y-auto py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="max-h-[60vh] overflow-y-auto py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {filteredTemplates.map((tpl) => {
             const isSelected = tpl.id === selectedTemplateId
 
@@ -113,7 +122,7 @@ export function TemplateGalleryModal({
                     )}
                   </div>
 
-                  <h3 className="text-xs font-bold text-text truncate">
+                  <h3 className="text-caption font-bold text-text truncate">
                     {tpl.name}
                   </h3>
 
@@ -156,17 +165,15 @@ export function TemplateGalleryModal({
 
                 {/* Apply Button */}
                 <div className="mt-3.5 pt-2 border-t border-border">
-                  <button
+                  <Button
                     type="button"
+                    variant={isSelected ? "primary" : "outline"}
+                    size="sm"
                     onClick={() => {
                       onSelectTemplate(tpl)
                       onClose()
                     }}
-                    className={`w-full py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
-                      isSelected
-                        ? "bg-primary text-white"
-                        : "bg-surface-alt hover:bg-primary hover:text-white text-text border border-border"
-                    }`}
+                    className="w-full gap-1.5 text-caption font-semibold"
                   >
                     {isSelected ? (
                       <>
@@ -179,27 +186,13 @@ export function TemplateGalleryModal({
                         <span>Áp dụng mẫu này</span>
                       </>
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )
           })}
         </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-border">
-          <span className="text-xs text-text-muted">
-            Hiển thị {filteredTemplates.length} mẫu thiết kế trong kho
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-1.5 rounded-lg border border-border text-xs font-medium text-text hover:bg-surface-alt"
-          >
-            Đóng
-          </button>
-        </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

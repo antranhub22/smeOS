@@ -15,6 +15,7 @@ import {
   ShieldCheck,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { TrashItem } from "@/modules/storage/domain/trash-types"
 import { readApiError } from "@/components/greeting-card/api-error"
@@ -123,11 +124,11 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
       {/* Header notice */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-warning-bg border border-warning/30">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-warning text-foreground flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-warning text-text flex items-center justify-center shrink-0">
             <Clock size={18} />
           </div>
           <div>
-            <h4 className="text-body-sm font-extrabold text-foreground">
+            <h4 className="text-body-sm font-extrabold text-text">
               Thùng Rác Lưu Trữ Tạm 30 Ngày (Quyền Điều Hành)
             </h4>
             <p className="text-caption text-text-muted mt-0.5">
@@ -168,13 +169,13 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
 
       {/* Search Input */}
       <div className="relative">
-        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
-        <input
+        <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none" />
+        <Input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Tìm trong thùng rác theo tên hoặc mã..."
-          className="w-full h-9 pl-9 pr-3.5 rounded-xl border border-border bg-surface text-body-sm text-foreground placeholder:text-text-muted focus:outline-hidden focus:ring-1 focus:ring-primary shadow-xs"
+          className="pl-9"
         />
       </div>
 
@@ -187,7 +188,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
       ) : filteredItems.length === 0 ? (
         <div className="p-12 text-center rounded-2xl bg-surface border border-dashed border-border text-text-muted flex flex-col items-center">
           <Trash2 size={36} className="text-text-muted/40 mb-2" />
-          <p className="text-body-sm font-bold text-foreground">Thùng rác hiện đang trống</p>
+          <p className="text-body-sm font-bold text-text">Thùng rác hiện đang trống</p>
           <p className="text-caption text-text-muted mt-1">
             Không có ảnh hoặc sản phẩm nào bị xóa trong vòng 30 ngày qua.
           </p>
@@ -237,7 +238,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
                       </span>
                     </div>
 
-                    <p className="text-body-sm font-bold text-foreground truncate mt-1.5" title={item.name}>
+                    <p className="text-body-sm font-bold text-text truncate mt-1.5" title={item.name}>
                       {item.name}
                     </p>
 

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Plus, Trash2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { Disclosure } from "@/components/ui/disclosure"
 import { InlineError } from "@/components/ui/inline-error"
 import type { DraftRecipeLine } from "@/modules/costing/domain/bom-adapters"
@@ -118,20 +119,20 @@ export function RecipeEditor({ data, materials, onSaved, onMaterialsChanged }: {
                   Ảnh gợi ý: <strong>{l.draftName}</strong> ({categoryLabel(spec, l.draftCategory)}) — chưa có trong danh sách
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  <select aria-label={`Chọn nguyên liệu cho dòng ${i + 1}`} className={selectClass} value="" onChange={(e) => update(l.key, { materialId: e.target.value, draftName: null })}>
+                  <NativeSelect aria-label={`Chọn nguyên liệu cho dòng ${i + 1}`} className={selectClass} value="" onChange={(e) => update(l.key, { materialId: e.target.value, draftName: null })}>
                     <option value="">Ghép với nguyên liệu có sẵn…</option>
                     {active.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-                  </select>
+                  </NativeSelect>
                   <Button size="sm" variant="secondary" onClick={() => void createFromDraft(l)}>Tạo nguyên liệu mới</Button>
                 </div>
               </div>
             ) : (
               <label className="flex min-w-56 flex-[2] flex-col gap-1 text-body-sm text-text">
                 Nguyên liệu {i + 1}
-                <select className={selectClass} value={l.materialId ?? ""} onChange={(e) => update(l.key, { materialId: e.target.value || null })}>
+                <NativeSelect className={selectClass} value={l.materialId ?? ""} onChange={(e) => update(l.key, { materialId: e.target.value || null })}>
                   <option value="">Chọn nguyên liệu…</option>
                   {active.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-                </select>
+                </NativeSelect>
               </label>
             )}
             <label className="flex w-36 flex-col gap-1 text-body-sm text-text">

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Sparkles, Loader2, RefreshCw } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { BundleSelector } from "@/components/product-image-set/bundle-selector"
@@ -135,14 +136,14 @@ export function ProductImageSetClient() {
               />
 
               <div className="flex items-center justify-end gap-3 pt-2">
-                <button
+                <Button
                   type="button"
                   disabled={isUploading || isProcessing}
                   onClick={handleStartGenerateSet}
-                  className="px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold text-body-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="px-6 py-3 h-auto rounded-xl bg-primary hover:bg-primary-dark text-white font-bold text-body-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" /> Tạo trọn bộ ảnh ngay ✨
-                </button>
+                </Button>
               </div>
             </>
           )}
@@ -153,7 +154,7 @@ export function ProductImageSetClient() {
         <div className="p-12 rounded-2xl border border-primary/20 bg-primary-subtle/30 text-center space-y-4 max-w-md mx-auto my-6 shadow-xs">
           <Loader2 className="w-10 h-10 mx-auto text-primary animate-spin motion-reduce:animate-none" />
           <div>
-            <div className="font-bold text-text text-base">
+            <div className="font-bold text-text text-body">
               AI đang sinh bộ ảnh đa kênh & kiểm định nhất quán...
             </div>
             <div className="text-caption text-text-muted mt-1">
@@ -167,17 +168,19 @@ export function ProductImageSetClient() {
       {jobResult && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 setJobResult(null)
                 setSelectedFile(null)
                 setPreviewUrl(null)
               }}
-              className="text-caption font-semibold text-text-muted hover:text-text flex items-center gap-1.5 cursor-pointer"
+              className="h-auto p-0 text-caption font-semibold text-text-muted hover:text-text flex items-center gap-1.5 cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Tạo bộ ảnh sản phẩm khác
-            </button>
+            </Button>
           </div>
 
           <ImageSetViewer

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   type SalesPitchData,
   generateZaloPitchScript,
@@ -150,15 +151,17 @@ export function StorageSidebar({
   if (isCollapsed) {
     return (
       <div className="flex flex-col items-center py-4 px-2 border-r border-border bg-surface w-14 flex-shrink-0 h-full">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => setIsCollapsed(false)}
           className="p-2 rounded-xl bg-surface-alt hover:bg-primary/10 hover:text-primary transition-colors text-text-muted mb-4"
           title="Mở rộng Kho Dữ Liệu"
         >
           <ChevronRight size={18} />
-        </button>
-        <div className="writing-vertical text-xs font-bold text-text-muted tracking-wider uppercase mt-4 flex items-center gap-2">
+        </Button>
+        <div className="writing-vertical text-caption font-bold text-text-muted tracking-wider uppercase mt-4 flex items-center gap-2">
           <Folder size={14} className="rotate-90 text-primary" />
           <span>Kho Dữ Liệu</span>
         </div>
@@ -189,83 +192,115 @@ export function StorageSidebar({
           </div>
           <div className="flex items-center gap-1">
             {onRefresh && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={onRefresh}
-                className="p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+                className="h-7 w-7 p-0 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
                 title="Làm mới kho dữ liệu"
               >
                 <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
-              </button>
+              </Button>
             )}
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setIsCollapsed(true)}
-              className="p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+              className="h-7 w-7 p-0 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
               title="Thu gọn sidebar"
             >
               <ChevronLeft size={16} />
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Search input */}
         <div className="relative">
-          <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
-          <input
+          <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none" />
+          <Input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Tìm theo tên, nguyên liệu..."
-            className="w-full pl-7 pr-2.5 py-1.5 rounded-xl border border-border bg-surface-alt text-xs outline-none focus:border-primary transition-colors"
+            className="pl-7 pr-2.5 h-8 text-caption bg-surface-alt"
           />
         </div>
 
         {/* Filter Pills */}
         <div className="flex items-center gap-1 overflow-x-auto pb-0.5 text-caption no-scrollbar">
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setFilter("all")}
-            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setFilter("all")
+              }
+            }}
+            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap cursor-pointer transition-colors ${
               filter === "all" ? "bg-primary text-white font-bold" : "bg-surface-alt text-text-muted hover:text-text"
             }`}
           >
             Tất cả ({unifiedItems.length})
-          </button>
-          <button
-            type="button"
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setFilter("raw")}
-            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setFilter("raw")
+              }
+            }}
+            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap cursor-pointer transition-colors ${
               filter === "raw" ? "bg-warning text-white font-bold" : "bg-surface-alt text-text-muted hover:text-text"
             }`}
           >
             Ảnh gốc ({rawAssets.length})
-          </button>
-          <button
-            type="button"
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setFilter("approved")}
-            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setFilter("approved")
+              }
+            }}
+            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap cursor-pointer transition-colors ${
               filter === "approved" ? "bg-info text-white font-bold" : "bg-surface-alt text-text-muted hover:text-text"
             }`}
           >
             Đã duyệt định lượng ({approvedAnalyses.length})
-          </button>
-          <button
-            type="button"
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setFilter("finalized")}
-            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setFilter("finalized")
+              }
+            }}
+            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap cursor-pointer transition-colors ${
               filter === "finalized" ? "bg-success text-white font-bold" : "bg-surface-alt text-text-muted hover:text-text"
             }`}
           >
             Sale Pitch ({finalizedPitches.length})
-          </button>
+          </div>
         </div>
       </div>
 
       {/* Cards Scrollable List */}
       <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-2">
         {filteredItems.length === 0 && (
-          <div className="py-12 text-center text-xs text-text-muted flex flex-col items-center gap-2 px-4">
+          <div className="py-12 text-center text-caption text-text-muted flex flex-col items-center gap-2 px-4">
             <ImageIcon size={24} className="opacity-40" />
             <span>Không tìm thấy thẻ sản phẩm phù hợp</span>
           </div>
@@ -320,7 +355,7 @@ export function StorageSidebar({
                     e.stopPropagation()
                     onSelectRawPhoto(rawAsset)
                   }}
-                  className="w-full text-xs h-7 gap-1 bg-primary hover:bg-primary/90 text-white font-bold"
+                  className="w-full text-caption h-7 gap-1 bg-primary hover:bg-primary/90 text-white font-bold"
                 >
                   <Sparkles size={12} />
                   Kích hoạt phân tích AI (Nhận diện sản phẩm) →

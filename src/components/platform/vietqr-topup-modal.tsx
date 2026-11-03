@@ -132,28 +132,42 @@ export function VietQrTopupModal({
       <div className="space-y-4 py-2">
         {/* Tab Switcher: Nạp Credit vs Nâng gói */}
         <div className="flex rounded-lg border border-border bg-surface p-1">
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setActiveTab("CREDITS")}
-            className={`flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setActiveTab("CREDITS")
+              }
+            }}
+            className={`cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
               activeTab === "CREDITS"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-text-muted hover:text-text"
             }`}
           >
             ⚡ Nạp thêm Credit AI (Sinh ảnh / Video)
-          </button>
-          <button
-            type="button"
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setActiveTab("PLANS")}
-            className={`flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setActiveTab("PLANS")
+              }
+            }}
+            className={`cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
               activeTab === "PLANS"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-text-muted hover:text-text"
             }`}
           >
             👑 Gói cước phần mềm cửa hàng hoa
-          </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -163,11 +177,18 @@ export function VietQrTopupModal({
               <div className="space-y-2">
                 <div className="text-caption font-semibold text-text">Chọn mức nạp Credit AI:</div>
                 {CREDIT_TOPUP_OPTIONS.map((opt) => (
-                  <button
-                    type="button"
+                  <div
+                    role="button"
+                    tabIndex={0}
                     key={opt.id}
                     onClick={() => setSelectedTopup(opt)}
-                    className={`w-full text-left p-3 rounded-lg border transition ${
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        setSelectedTopup(opt)
+                      }
+                    }}
+                    className={`cursor-pointer w-full text-left p-3 rounded-lg border transition ${
                       selectedTopup.id === opt.id
                         ? "border-primary bg-primary/10"
                         : "border-border bg-surface hover:border-primary/40"
@@ -184,18 +205,25 @@ export function VietQrTopupModal({
                       {opt.totalCredits} Credit AI
                       <span className="text-success font-medium">(Tặng thêm {opt.bonusCredits} cr)</span>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             ) : (
               <div className="space-y-2">
                 <div className="text-caption font-semibold text-text">Chọn gói cước phần mềm:</div>
                 {SUBSCRIPTION_PLANS.map((plan) => (
-                  <button
-                    type="button"
+                  <div
+                    role="button"
+                    tabIndex={0}
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan)}
-                    className={`w-full text-left p-3 rounded-lg border transition ${
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        setSelectedPlan(plan)
+                      }
+                    }}
+                    className={`cursor-pointer w-full text-left p-3 rounded-lg border transition ${
                       selectedPlan.id === plan.id
                         ? "border-primary bg-primary/10"
                         : "border-border bg-surface hover:border-primary/40"
@@ -209,7 +237,7 @@ export function VietQrTopupModal({
                       {plan.priceMonthlyVnd.toLocaleString("vi-VN")} đ / tháng
                     </div>
                     <div className="text-caption text-text-muted mt-1">{plan.description}</div>
-                  </button>
+                  </div>
                 ))}
               </div>
             )}
@@ -243,14 +271,16 @@ export function VietQrTopupModal({
                   <span className="text-text-muted">Số tài khoản: </span>
                   <span className="font-mono font-bold text-primary">{qrData.accountNumber}</span>
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy(qrData.accountNumber, "acc")}
-                  className="text-primary hover:underline font-medium flex items-center gap-1"
+                  className="h-auto p-0 text-primary hover:underline font-medium flex items-center gap-1"
                 >
                   {copiedField === "acc" ? <Check size={12} className="text-success" /> : <Copy size={12} />}
                   {copiedField === "acc" ? "Đã chép" : "Chép"}
-                </button>
+                </Button>
               </div>
 
               <div className="flex items-center justify-between p-2 rounded bg-surface-alt border border-border">
@@ -258,14 +288,16 @@ export function VietQrTopupModal({
                   <span className="text-text-muted">Số tiền: </span>
                   <span className="font-bold text-text">{qrData.amountVnd.toLocaleString("vi-VN")} đ</span>
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy(String(qrData.amountVnd), "amount")}
-                  className="text-primary hover:underline font-medium flex items-center gap-1"
+                  className="h-auto p-0 text-primary hover:underline font-medium flex items-center gap-1"
                 >
                   {copiedField === "amount" ? <Check size={12} className="text-success" /> : <Copy size={12} />}
                   {copiedField === "amount" ? "Đã chép" : "Chép"}
-                </button>
+                </Button>
               </div>
 
               <div className="flex items-center justify-between p-2 rounded bg-primary/10 border border-primary/30">
@@ -273,14 +305,16 @@ export function VietQrTopupModal({
                   <span className="text-text-muted">Nội dung CK: </span>
                   <span className="font-mono font-bold text-primary">{qrData.transferSyntax}</span>
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy(qrData.transferSyntax, "syntax")}
-                  className="text-primary hover:underline font-bold flex items-center gap-1"
+                  className="h-auto p-0 text-primary hover:underline font-bold flex items-center gap-1"
                 >
                   {copiedField === "syntax" ? <Check size={12} className="text-success" /> : <Copy size={12} />}
                   {copiedField === "syntax" ? "Đã chép" : "Chép mã"}
-                </button>
+                </Button>
               </div>
             </div>
           </div>

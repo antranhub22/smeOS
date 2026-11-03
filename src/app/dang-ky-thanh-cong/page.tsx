@@ -23,7 +23,7 @@ export default function DangKyThanhCongPage() {
 
           {/* Tiêu đề */}
           <div>
-            <h2 className="text-xl font-extrabold text-text mb-1.5">
+            <h2 className="text-title font-extrabold text-text mb-1.5">
               Đăng ký thành công!
             </h2>
             <p className="text-body-sm text-text-muted leading-relaxed">

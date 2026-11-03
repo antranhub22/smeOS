@@ -8,6 +8,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { IdCard, FileDown, ImageDown, Contact, Loader2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { toPng } from "html-to-image"
 import jsPDF from "jspdf"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
@@ -160,18 +161,18 @@ export function BusinessCardStudio() {
           )}
 
           <section aria-label="Tải danh thiếp" className="flex flex-col sm:flex-row flex-wrap gap-2">
-            <button type="button" disabled={busy !== null} onClick={() => void runExport("PDF")} className={`${btn} bg-primary text-primary-foreground`}>
+            <Button type="button" disabled={busy !== null} onClick={() => void runExport("PDF")} className={`${btn} bg-primary text-primary-foreground`}>
               {busy === "PDF" ? <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden /> : <FileDown size={16} aria-hidden />} Tải bản in PDF
-            </button>
-            <button type="button" disabled={busy !== null} onClick={() => void runExport("FRONT")} className={`${btn} border border-border text-text`}>
+            </Button>
+            <Button type="button" variant="outline" disabled={busy !== null} onClick={() => void runExport("FRONT")} className={`${btn} border border-border text-text`}>
               <ImageDown size={16} aria-hidden /> Ảnh mặt trước
-            </button>
-            <button type="button" disabled={busy !== null} onClick={() => void runExport("BACK")} className={`${btn} border border-border text-text`}>
+            </Button>
+            <Button type="button" variant="outline" disabled={busy !== null} onClick={() => void runExport("BACK")} className={`${btn} border border-border text-text`}>
               <ImageDown size={16} aria-hidden /> Ảnh mặt sau
-            </button>
-            <button type="button" disabled={busy !== null} onClick={() => void runExport("VCF")} className={`${btn} border border-border text-text`}>
+            </Button>
+            <Button type="button" variant="outline" disabled={busy !== null} onClick={() => void runExport("VCF")} className={`${btn} border border-border text-text`}>
               <Contact size={16} aria-hidden /> Danh bạ điện tử (.vcf)
-            </button>
+            </Button>
           </section>
           {exportError && <InlineError message={exportError} onRetry={() => setExportError(null)} retryLabel="Đóng" />}
           <p className="flex items-center gap-2 text-caption text-text-muted">

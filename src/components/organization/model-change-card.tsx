@@ -5,6 +5,8 @@ import { Store, Building2, Clock, Send, ShieldAlert, CheckCircle2 } from "@/comp
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Dialog } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 
 export function ModelChangeCard() {
   const { organizationType, pendingModelChange, can } = useSession()
@@ -96,12 +98,12 @@ export function ModelChangeCard() {
         <div className="rounded-xl border border-warning/30 bg-warning-bg p-3.5 flex items-start gap-3">
           <Clock className="text-warning shrink-0 mt-0.5" size={18} />
           <div className="text-body-sm space-y-1">
-            <div className="font-bold text-foreground">
+            <div className="font-bold text-text">
               Đang có yêu cầu chuyển sang {pendingModelChange.requested_type === "CHAIN" ? "Chuỗi cửa hàng" : "1 Cửa hàng độc lập"}
             </div>
             <div className="text-caption text-text-muted leading-relaxed">
               Yêu cầu được gửi lúc {new Date(pendingModelChange.requested_at).toLocaleString("vi-VN")}. Đang chờ{" "}
-              <strong className="text-foreground">Quản trị viên SaaS thẩm định và phê duyệt</strong>.
+              <strong className="text-text">Quản trị viên SaaS thẩm định và phê duyệt</strong>.
             </div>
             {pendingModelChange.note && (
               <div className="text-caption text-text-muted italic">Ghi chú: &ldquo;{pendingModelChange.note}&rdquo;</div>
@@ -121,7 +123,7 @@ export function ModelChangeCard() {
               variant="outline"
               size="sm"
               onClick={() => setOpenModal(true)}
-              className="gap-1.5 font-semibold text-xs"
+              className="gap-1.5 font-semibold text-caption"
             >
               {isChain ? <Store size={14} /> : <Building2 size={14} />}
               <span>Yêu cầu chuyển sang {targetLabel}</span>
@@ -131,77 +133,71 @@ export function ModelChangeCard() {
       )}
 
       {/* Modal gửi yêu cầu chuyển đổi mô hình */}
-      {openModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-5 shadow-lg space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-xl bg-accent/10 text-accent">
-                {isChain ? <Store size={20} /> : <Building2 size={20} />}
-              </div>
-              <div>
-                <div className="text-title-sm font-bold text-text">Xin chuyển sang {targetLabel}</div>
-                <div className="text-caption text-text-muted">
-                  Gửi yêu cầu tới Ban Quản Trị SaaS để phê duyệt thay đổi quy trình
-                </div>
-              </div>
+      <Dialog
+        open={openModal}
+        onOpenChange={(open) => {
+          if (!open) setOpenModal(false)
+        }}
+        title={`Xin chuyển sang ${targetLabel}`}
+        description="Gửi yêu cầu tới Ban Quản Trị SaaS để phê duyệt thay đổi quy trình"
+        size="sm"
+      >
+        <div className="space-y-4 p-1">
+          {error && (
+            <div className="rounded-xl border border-danger/30 bg-danger/10 p-2.5 text-caption font-medium text-danger">
+              {error}
             </div>
+          )}
 
-            {error && (
-              <div className="rounded-xl border border-danger/30 bg-danger/10 p-2.5 text-caption font-medium text-danger">
-                {error}
+          {success ? (
+            <div className="rounded-xl border border-primary/30 bg-primary/10 p-4 text-center space-y-1">
+              <CheckCircle2 size={28} className="mx-auto text-primary" />
+              <div className="text-body-sm font-bold text-primary">Đã gửi yêu cầu thành công!</div>
+              <div className="text-caption text-text-muted">Đang cập nhật trạng thái hồ sơ…</div>
+            </div>
+          ) : (
+            <form onSubmit={handleSendRequest} className="space-y-3.5">
+              <div>
+                <div className="mb-1 text-caption font-semibold text-text">
+                  Lý do / Kế hoạch điều chỉnh quy mô <span className="text-danger">*</span>
+                </div>
+                <Textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder={
+                    isChain
+                      ? "Ví dụ: Chúng tôi tinh gọn lại hoạt động tại 1 cơ sở chính…"
+                      : "Ví dụ: Chúng tôi chuẩn bị khai trương thêm 2 chi nhánh mới tại Quận 1…"
+                  }
+                  rows={3}
+                  required
+                  className="w-full text-body-sm resize-none"
+                />
               </div>
-            )}
 
-            {success ? (
-              <div className="rounded-xl border border-primary/30 bg-primary/10 p-4 text-center space-y-1">
-                <CheckCircle2 size={28} className="mx-auto text-primary" />
-                <div className="text-body-sm font-bold text-primary">Đã gửi yêu cầu thành công!</div>
-                <div className="text-caption text-text-muted">Đang cập nhật trạng thái hồ sơ…</div>
+              <div className="rounded-xl bg-surface-alt/60 p-2.5 border border-border text-caption text-text-muted">
+                ⚠️ Lưu ý: Sau khi được Admin SaaS duyệt, toàn bộ cơ chế phân phối đơn hàng và quyền điều phối sẽ tự động chuyển sang mô hình mới.
               </div>
-            ) : (
-              <form onSubmit={handleSendRequest} className="space-y-3.5">
-                <div>
-                  <div className="mb-1 text-caption font-semibold text-text">
-                    Lý do / Kế hoạch điều chỉnh quy mô <span className="text-danger">*</span>
-                  </div>
-                  <textarea
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder={
-                      isChain
-                        ? "Ví dụ: Chúng tôi tinh gọn lại hoạt động tại 1 cơ sở chính…"
-                        : "Ví dụ: Chúng tôi chuẩn bị khai trương thêm 2 chi nhánh mới tại Quận 1…"
-                    }
-                    rows={3}
-                    required
-                    className="w-full rounded-xl border border-border bg-surface-alt/40 p-2.5 text-body-sm outline-none focus:border-primary resize-none"
-                  />
-                </div>
 
-                <div className="rounded-xl bg-surface-alt/60 p-2.5 border border-border text-caption text-text-muted">
-                  ⚠️ Lưu ý: Sau khi được Admin SaaS duyệt, toàn bộ cơ chế phân phối đơn hàng và quyền điều phối sẽ tự động chuyển sang mô hình mới.
-                </div>
-
-                <div className="flex items-center justify-end gap-2 pt-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setOpenModal(false)}
-                    disabled={submitting}
-                  >
-                    Hủy bỏ
-                  </Button>
-                  <Button type="submit" size="sm" disabled={submitting} className="gap-1.5 font-bold">
-                    <Send size={14} />
-                    <span>{submitting ? "Đang gửi…" : "Gửi yêu cầu phê duyệt"}</span>
-                  </Button>
-                </div>
-              </form>
-            )}
-          </div>
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setOpenModal(false)}
+                  disabled={submitting}
+                >
+                  Hủy bỏ
+                </Button>
+                <Button type="submit" size="sm" disabled={submitting} className="gap-1.5 font-bold">
+                  <Send size={14} />
+                  <span>{submitting ? "Đang gửi…" : "Gửi yêu cầu phê duyệt"}</span>
+                </Button>
+              </div>
+            </form>
+          )}
         </div>
-      )}
+      </Dialog>
     </Card>
   )
 }

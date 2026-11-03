@@ -57,34 +57,55 @@ export default function DangNhapPage() {
 
         {/* Tab 3 chế độ trực quan */}
         <div className="grid grid-cols-3 rounded-2xl border border-border bg-surface-alt/80 p-1 shadow-xs">
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setCheDo("dang-nhap")}
-            className={`py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setCheDo("dang-nhap")
+              }
+            }}
+            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-nhap"
                 ? "bg-surface text-primary shadow-xs border border-border/60"
                 : "text-text-muted hover:text-text"
             }`}
           >
             Đăng nhập
-          </button>
+          </div>
 
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setCheDo("dang-ky")}
-            className={`py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setCheDo("dang-ky")
+              }
+            }}
+            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-ky"
                 ? "bg-surface text-primary shadow-xs border border-border/60"
                 : "text-text-muted hover:text-text"
             }`}
           >
             Đăng ký mới
-          </button>
+          </div>
 
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setCheDo("dung-thu")}
-            className={`py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setCheDo("dung-thu")
+              }
+            }}
+            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               cheDo === "dung-thu"
                 ? "bg-primary text-text-inverse shadow-xs font-extrabold"
                 : "text-primary hover:text-primary-hover font-semibold"
@@ -92,7 +113,7 @@ export default function DangNhapPage() {
           >
             <Zap size={14} className={cheDo === "dung-thu" ? "text-text-inverse" : "text-primary"} />
             <span>Dùng thử</span>
-          </button>
+          </div>
         </div>
 
         <Suspense fallback={null}>

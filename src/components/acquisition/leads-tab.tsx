@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
 import type { Route } from "next"
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
 import { UserPlus } from "@/components/ui/icons"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
@@ -113,22 +115,24 @@ export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<s
           const count = getGroupCount(g.id, counts)
           const isSelected = selectedGroupId === g.id
           return (
-            <button
+            <Button
               key={g.id}
               type="button"
+              variant={isSelected ? "primary" : "outline"}
+              size="sm"
               aria-pressed={isSelected}
               onClick={() => selectGroup(g.id)}
-              className={`flex h-8 items-center gap-1.5 rounded-lg px-3 text-caption font-medium transition-colors ${
-                isSelected ? "bg-primary text-white" : "border border-border bg-surface text-text hover:bg-surface-elevated"
+              className={`flex h-8 items-center gap-1.5 rounded-lg px-3 text-caption font-medium ${
+                isSelected ? "bg-primary text-white" : ""
               }`}
             >
               <span>{g.label}</span>
               {count > 0 && (
-                <span className={`rounded-full px-1.5 py-0.2 text-caption ${isSelected ? "bg-white/20 text-white" : "bg-muted text-text-muted"}`}>
+                <span className={`rounded-full px-1.5 py-0.2 text-caption ${isSelected ? "bg-white/20 text-white" : "bg-surface-alt text-text-muted"}`}>
                   {count}
                 </span>
               )}
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -137,29 +141,29 @@ export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<s
       {activeGroup && activeGroup.statuses.length > 1 && (
         <div role="group" aria-label={`Chi tiết nhóm ${activeGroup.label}`} className="flex flex-wrap items-center gap-1.5 pt-1 text-caption">
           <span className="text-text-muted">Chi tiết:</span>
-          <button
+          <Button
             type="button"
+            variant={selectedStatus === undefined ? "secondary" : "ghost"}
+            size="sm"
             aria-pressed={selectedStatus === undefined}
             onClick={() => selectSubStatus(undefined)}
-            className={`rounded-md px-2 py-0.5 text-caption ${
-              selectedStatus === undefined ? "bg-primary text-white" : "bg-muted text-text-muted hover:text-text"
-            }`}
+            className="h-7 rounded-md px-2 py-0.5 text-caption"
           >
             Tất cả {activeGroup.label.toLowerCase()}
-          </button>
+          </Button>
           {activeGroup.statuses.map((s) => (
-            <button
+            <Button
               key={s}
               type="button"
+              variant={selectedStatus === s ? "secondary" : "ghost"}
+              size="sm"
               aria-pressed={selectedStatus === s}
               onClick={() => selectSubStatus(s)}
-              className={`rounded-md px-2 py-0.5 text-caption ${
-                selectedStatus === s ? "bg-primary text-white" : "bg-muted text-text-muted hover:text-text"
-              }`}
+              className="h-7 rounded-md px-2 py-0.5 text-caption"
             >
               {LEAD_STATUS_LABELS[s]}
               {counts && counts[s] ? ` (${counts[s]})` : ""}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -192,10 +196,10 @@ export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<s
 
               <label className="flex shrink-0 items-center gap-2 text-caption text-text">
                 <span>Trạng thái</span>
-                <select
+                <NativeSelect
                   value={lead.status}
                   onChange={(e) => void changeStatus(lead, e.target.value as LeadStatus)}
-                  className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="h-9 px-2 text-body-sm"
                 >
                   {LEAD_STATUS_GROUPS.map((group) => (
                     <optgroup key={group.id} label={group.label}>
@@ -206,7 +210,7 @@ export function LeadsTab({ onCountsChange }: { onCountsChange: (counts: Record<s
                       ))}
                     </optgroup>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
             </li>
           ))}

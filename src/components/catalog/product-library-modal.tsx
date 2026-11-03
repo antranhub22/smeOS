@@ -4,6 +4,8 @@ import React, { useState, useMemo } from "react"
 import { Search, CheckCircle2, Store, Plus } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
+import { NativeSelect } from "@/components/ui/select"
 import { ProductThumb } from "@/components/products/product-thumb"
 import type { CatalogProduct } from "./catalog-management-tab"
 
@@ -57,123 +59,15 @@ export function ProductLibraryModal({
     onClose()
   }
 
-  if (!open) return null
-
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4"
-    >
-      <div className="w-full max-w-3xl rounded-2xl bg-surface border border-border shadow-xl flex flex-col max-h-[85vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border p-4 bg-surface-alt/40">
-          <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-primary-muted text-primary flex items-center justify-center">
-              <Store className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="text-title-sm font-bold text-text">
-                Chọn sản phẩm từ Kho cửa hàng
-              </h3>
-              <p className="text-caption text-text-muted">
-                Tái sử dụng sản phẩm và ảnh chất lượng cao đã có sẵn trong shop ({products.length} sản phẩm)
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-text-muted hover:text-text p-1.5 rounded-lg hover:bg-surface-alt transition-colors"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Filter Toolbar */}
-        <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-2.5 bg-surface">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
-            <Input
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Tìm kiếm theo tên sản phẩm, mã SKU..."
-              className="pl-9 text-body-sm h-9"
-            />
-          </div>
-          {categories.length > 0 && (
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="h-9 rounded-md border border-border bg-surface px-3 text-caption font-medium text-text focus:outline-none focus:ring-1 focus:ring-primary"
-            >
-              <option value="ALL">Tất cả danh mục ({products.length})</option>
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-
-        {/* Products Grid */}
-        <div className="flex-1 overflow-y-auto p-4">
-          {filteredProducts.length === 0 ? (
-            <div className="py-12 text-center text-text-muted space-y-2">
-              <p className="text-body-sm font-medium">Không tìm thấy sản phẩm nào phù hợp.</p>
-              <p className="text-caption">Hãy thử đổi từ khóa tìm kiếm hoặc lọc theo danh mục khác.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {filteredProducts.map((p) => {
-                const isSelected = selectedIds.includes(p.id)
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => handleToggle(p.id)}
-                    className={`relative rounded-xl border text-left p-2 transition-all flex flex-col gap-2 group cursor-pointer ${
-                      isSelected
-                        ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30"
-                        : "border-border bg-surface hover:border-primary-border hover:bg-surface-alt/50"
-                    }`}
-                  >
-                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-surface-alt">
-                      <ProductThumb
-                        name={p.name}
-                        masterImageUrl={p.imageUrl ?? undefined}
-                        driveLink={p.driveLink ?? undefined}
-                        size="card"
-                      />
-                      {isSelected && (
-                        <div className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-primary text-surface flex items-center justify-center shadow-xs">
-                          <CheckCircle2 className="h-4 w-4" />
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="text-caption font-bold text-text line-clamp-1 group-hover:text-primary transition-colors">
-                        {p.name}
-                      </h4>
-                      <div className="flex items-center justify-between text-meta mt-0.5">
-                        <span className="text-text-muted">{p.code}</span>
-                        {p.price && (
-                          <span className="font-semibold text-primary">
-                            {p.price.toLocaleString("vi-VN")} đ
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-border bg-surface-alt/40 flex items-center justify-between">
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => !isOpen && onClose()}
+      title="Chọn sản phẩm từ Kho cửa hàng"
+      description={`Tái sử dụng sản phẩm và ảnh chất lượng cao đã có sẵn trong shop (${products.length} sản phẩm)`}
+      size="lg"
+      footer={
+        <div className="flex items-center justify-between w-full">
           <span className="text-caption text-text-muted">
             Đã chọn <strong className="text-primary">{selectedIds.length}</strong> sản phẩm từ kho
           </span>
@@ -193,7 +87,92 @@ export function ProductLibraryModal({
             </Button>
           </div>
         </div>
+      }
+    >
+      <div className="flex flex-col gap-4">
+        {/* Filter Toolbar */}
+        <div className="flex flex-col sm:flex-row gap-2.5">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Tìm kiếm theo tên sản phẩm, mã SKU..."
+              className="pl-9 text-body-sm h-9"
+            />
+          </div>
+          {categories.length > 0 && (
+            <NativeSelect
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="h-9 rounded-md border border-border bg-surface px-3 text-caption font-medium text-text focus:outline-none focus:ring-1 focus:ring-primary"
+            >
+              <option value="ALL">Tất cả danh mục ({products.length})</option>
+              {categories.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </NativeSelect>
+          )}
+        </div>
+
+        {/* Products Grid */}
+        <div className="max-h-[50vh] overflow-y-auto pr-1">
+          {filteredProducts.length === 0 ? (
+            <div className="py-12 text-center text-text-muted space-y-2">
+              <p className="text-body-sm font-medium">Không tìm thấy sản phẩm nào phù hợp.</p>
+              <p className="text-caption">Hãy thử đổi từ khóa tìm kiếm hoặc lọc theo danh mục khác.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {filteredProducts.map((p) => {
+                const isSelected = selectedIds.includes(p.id)
+                return (
+                  <Button
+                    key={p.id}
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleToggle(p.id)}
+                    className={`relative h-auto rounded-xl border text-left p-2 transition-all flex flex-col items-start gap-2 group cursor-pointer ${
+                      isSelected
+                        ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30"
+                        : "border-border bg-surface hover:border-primary-border hover:bg-surface-alt/50"
+                    }`}
+                  >
+                    <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-surface-alt">
+                      <ProductThumb
+                        name={p.name}
+                        masterImageUrl={p.imageUrl ?? undefined}
+                        driveLink={p.driveLink ?? undefined}
+                        size="card"
+                      />
+                      {isSelected && (
+                        <div className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-primary text-surface flex items-center justify-center shadow-xs">
+                          <CheckCircle2 className="h-4 w-4" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="w-full">
+                      <h4 className="text-caption font-bold text-text line-clamp-1 group-hover:text-primary transition-colors">
+                        {p.name}
+                      </h4>
+                      <div className="flex items-center justify-between text-meta mt-0.5 font-normal">
+                        <span className="text-text-muted">{p.code}</span>
+                        {p.price && (
+                          <span className="font-semibold text-primary">
+                            {p.price.toLocaleString("vi-VN")} đ
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Button>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

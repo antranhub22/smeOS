@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import { Check, Copy, ExternalLink, Share2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 /** Kết quả "Tạo nhanh bộ sưu tập": chép link, chép tin nhắn mẫu, gửi qua Zalo. */
 export function QuickCollectionShare({
@@ -63,7 +65,7 @@ export function QuickCollectionShare({
           1. Link xem bộ sưu tập
         </label>
         <div className="flex items-center gap-2">
-          <input
+          <Input
             readOnly
             aria-label="Link xem bộ sưu tập"
             value={publishedUrl || ""}
@@ -101,10 +103,12 @@ export function QuickCollectionShare({
           <label className="text-caption font-bold text-text">
             2. Tin nhắn mẫu gửi khách
           </label>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="xs"
             onClick={handleCopyCustomerMessage}
-            className={`text-caption font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg border transition-all ${
+            className={`text-caption font-bold flex items-center gap-1 px-2.5 py-1 h-auto rounded-lg border transition-all ${
               copiedMessage
                 ? "border-success text-success bg-success-bg"
                 : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 shadow-2xs"
@@ -112,9 +116,9 @@ export function QuickCollectionShare({
           >
             {copiedMessage ? <Check size={12} className="text-success" /> : <Copy size={12} />}
             {copiedMessage ? "Đã chép tin!" : "Sao chép tin nhắn"}
-          </button>
+          </Button>
         </div>
-        <textarea
+        <Textarea
           readOnly
           aria-label="Tin nhắn mẫu gửi khách"
           rows={3}
@@ -125,14 +129,14 @@ export function QuickCollectionShare({
 
       {/* Nút gửi trực tiếp qua Zalo */}
       <div className="pt-2">
-        <button
+        <Button
           type="button"
           onClick={handleOpenZaloWeb}
           className="w-full py-2.5 px-4 rounded-xl bg-primary text-surface font-bold text-body-sm flex items-center justify-center gap-2 hover:bg-primary-dark transition-colors"
         >
           <Share2 size={16} />
           <span>Gửi qua Zalo</span>
-        </button>
+        </Button>
       </div>
     </div>
   )

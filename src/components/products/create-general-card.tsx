@@ -3,6 +3,9 @@
 import React from "react"
 import { Upload, Image as ImageIcon, X } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import type { TerminologyGetter } from "./create-product-types"
 import { SingleSelectCustom } from "./single-select-custom"
@@ -90,14 +93,16 @@ export function CreateGeneralCard({
                 alt={`Preview ${ti("sampleProduct").toLowerCase()}`}
                 className="h-full w-full object-cover"
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={onRemoveImage}
                 aria-label="Xoá ảnh đã chọn"
-                className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
+                className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-white p-0"
               >
                 <X size={16} />
-              </button>
+              </Button>
             </div>
           ) : driveLink ? (
             <div className="relative aspect-square w-full rounded-2xl border border-border bg-surface-alt overflow-hidden group">
@@ -106,20 +111,23 @@ export function CreateGeneralCard({
                 alt={`Preview ${ti("sampleProduct").toLowerCase()}`}
                 className="h-full w-full object-cover"
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={onRemoveImage}
                 aria-label="Xoá ảnh đã chọn"
-                className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
+                className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/60 text-white hover:bg-black/80 hover:text-white p-0"
               >
                 <X size={16} />
-              </button>
+              </Button>
             </div>
           ) : (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => effectiveRef.current?.click()}
-              className="flex aspect-square w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface-alt/50 p-4 text-center transition-colors hover:border-primary/50 hover:bg-surface-alt"
+              className="flex aspect-square w-full h-auto cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface-alt/50 p-4 text-center hover:border-primary/50 hover:bg-surface-alt font-normal"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Upload size={20} />
@@ -130,7 +138,7 @@ export function CreateGeneralCard({
               <div className="text-caption text-text-muted">
                 Hỗ trợ JPG, PNG, WebP, tối đa 15 MB
               </div>
-            </button>
+            </Button>
           )}
           <input
             ref={effectiveRef}
@@ -153,13 +161,13 @@ export function CreateGeneralCard({
             <label className="block text-caption font-semibold text-text mb-1">
               Tên {ti("sampleProduct").toLowerCase()} <span className="text-danger">*</span>
             </label>
-            <input
+            <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={`Ví dụ: ${sampleName}`}
               required
-              className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
+              className="h-10 text-body-sm"
             />
           </div>
 
@@ -168,13 +176,13 @@ export function CreateGeneralCard({
               <label className="block text-caption font-semibold text-text mb-1">
                 Mã {ti("sampleProduct").toLowerCase()} (SKU) <span className="text-danger">*</span>
               </label>
-              <input
+              <Input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder={`Để trống tự tạo (hoặc nhập ${industryPrefix}-001)`}
                 required
-                className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary uppercase"
+                className="h-10 text-body-sm uppercase"
               />
             </div>
 
@@ -200,14 +208,14 @@ export function CreateGeneralCard({
               <label className="block text-caption font-semibold text-text mb-1">
                 Trạng thái bán
               </label>
-              <select
+              <NativeSelect
                 value={status}
                 onChange={(e) => setStatus(e.target.value as "ACTIVE" | "DRAFT")}
-                className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
+                className="h-10 text-body-sm"
               >
                 <option value="ACTIVE">Đang bán</option>
                 <option value="DRAFT">Bản nháp</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
         </div>

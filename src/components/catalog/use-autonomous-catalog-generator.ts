@@ -87,7 +87,7 @@ export function useAutonomousCatalogGenerator({
       // Bước 1 xong ngay khi đọc xong yêu cầu — không chờ giả lập.
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
-          s.id === "analyze" ? { ...s, status: "done" } : s.id === "select" ? { ...s, status: "running" } : s
+          s.id === "analyze" ? { ...s, status: "succeeded" } : s.id === "select" ? { ...s, status: "running" } : s
         )
       )
 
@@ -105,7 +105,7 @@ export function useAutonomousCatalogGenerator({
 
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
-          s.id === "select" ? { ...s, status: "done" } : s.id === "intro" ? { ...s, status: "running" } : s
+          s.id === "select" ? { ...s, status: "succeeded" } : s.id === "intro" ? { ...s, status: "running" } : s
         )
       )
 
@@ -146,7 +146,7 @@ export function useAutonomousCatalogGenerator({
 
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
-          s.id === "intro" ? { ...s, status: "done" } : s.id === "layout" ? { ...s, status: "running" } : s
+          s.id === "intro" ? { ...s, status: "succeeded" } : s.id === "layout" ? { ...s, status: "running" } : s
         )
       )
 
@@ -200,7 +200,7 @@ export function useAutonomousCatalogGenerator({
         studioProducts
       )
 
-      setCatalogAiSteps((prev) => prev.map((s) => (s.id === "layout" ? { ...s, status: "done" } : s)))
+      setCatalogAiSteps((prev) => prev.map((s) => (s.id === "layout" ? { ...s, status: "succeeded" } : s)))
 
       setAutonomousResult({
         publishedUrl: null,

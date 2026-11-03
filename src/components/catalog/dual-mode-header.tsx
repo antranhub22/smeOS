@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Sparkles, SlidersHorizontal } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 
 interface DualModeHeaderProps {
   mode: "auto" | "manual"
@@ -28,10 +29,11 @@ export function DualModeHeader({
       {/* 2 Lựa chọn cân bằng (Balanced Segmented Cards) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Lựa chọn 1: Tự động bằng AI */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => onModeChange("auto")}
-          className={`flex items-start gap-3 p-4 rounded-xl border text-left transition-all cursor-pointer ${
+          className={`h-auto flex items-start gap-3 p-4 rounded-xl border text-left transition-all cursor-pointer w-full whitespace-normal ${
             mode === "auto"
               ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
               : "border-border bg-surface hover:bg-surface-alt/60 hover:border-border-hover"
@@ -53,17 +55,18 @@ export function DualModeHeader({
                 </span>
               )}
             </div>
-            <p className="text-caption text-text-muted mt-1 leading-relaxed">
+            <p className="text-caption text-text-muted mt-1 leading-relaxed font-normal">
               Chỉ cần đưa ảnh hoa, link video hoặc ghi chú text. AI sẽ phân tích và tự động điền sẵn toàn bộ các bước cho bạn.
             </p>
           </div>
-        </button>
+        </Button>
 
         {/* Lựa chọn 2: Tự thiết kế từng bước */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => onModeChange("manual")}
-          className={`flex items-start gap-3 p-4 rounded-xl border text-left transition-all cursor-pointer ${
+          className={`h-auto flex items-start gap-3 p-4 rounded-xl border text-left transition-all cursor-pointer w-full whitespace-normal ${
             mode === "manual"
               ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
               : "border-border bg-surface hover:bg-surface-alt/60 hover:border-border-hover"
@@ -85,11 +88,11 @@ export function DualModeHeader({
                 </span>
               )}
             </div>
-            <p className="text-caption text-text-muted mt-1 leading-relaxed">
+            <p className="text-caption text-text-muted mt-1 leading-relaxed font-normal">
               Chủ động chọn dịp lễ, lọc hoa từ kho, tự viết tiêu đề và cấu hình các section theo ý thích cá nhân.
             </p>
           </div>
-        </button>
+        </Button>
       </div>
     </div>
   )

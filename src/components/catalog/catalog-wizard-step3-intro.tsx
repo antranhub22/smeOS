@@ -4,6 +4,7 @@ import React from "react"
 import { Wand2, Check } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 interface CatalogWizardStep3IntroProps {
   name: string
@@ -65,12 +66,12 @@ export function CatalogWizardStep3Intro({
               <span>{isAiGenerating ? "AI đang viết..." : "✨ AI Viết Lời Chào"}</span>
             </Button>
           </div>
-          <textarea
+          <Textarea
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
             rows={3}
             placeholder="Nhập lời chào khách khi mở link catalog..."
-            className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full text-body-sm"
           />
         </div>
 

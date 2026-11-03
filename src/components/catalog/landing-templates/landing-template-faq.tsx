@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { HelpCircle, ChevronDown, ChevronUp } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type { LandingSectionFaq } from "@/modules/content-engine/domain/landing-content-generator"
 
 interface LandingTemplateFaqProps {
@@ -75,18 +76,19 @@ export function LandingTemplateFaq({
                   : "border-border bg-surface hover:border-border-hover"
               }`}
             >
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => toggleFaq(idx)}
-                className="w-full p-4 flex items-center justify-between text-left gap-3 focus:outline-none"
+                className="h-auto w-full p-4 flex items-center justify-between text-left gap-3 focus:outline-none whitespace-normal"
               >
-                <span className={`text-xs font-bold text-text ${isLuxury ? "font-display text-body-sm" : ""}`}>
+                <span className={`text-caption font-bold text-text ${isLuxury ? "font-display text-body-sm" : ""}`}>
                   {item.question}
                 </span>
                 <span className={`${isLuxury ? "text-primary" : "text-text-muted"} shrink-0`}>
                   {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </span>
-              </button>
+              </Button>
 
               {isOpen && (
                 <div className={`px-4 pb-4 pt-1 text-caption leading-relaxed border-t animate-in fade-in duration-150 ${

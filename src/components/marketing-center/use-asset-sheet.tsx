@@ -114,32 +114,46 @@ export function UseAssetSheet({
     >
       {/* Tab Switcher */}
       <div className="flex border-b border-border mb-4">
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => setActiveTab("NEW")}
-          className={`px-4 py-2 text-body-sm font-semibold border-b-2 transition-colors ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              setActiveTab("NEW")
+            }
+          }}
+          className={`px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
             activeTab === "NEW"
               ? "border-primary text-primary"
               : "border-transparent text-text-muted hover:text-text"
           }`}
         >
           Tạo nơi dùng mới
-        </button>
-        <button
-          type="button"
+        </div>
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => setActiveTab("LIST")}
-          className={`px-4 py-2 text-body-sm font-semibold border-b-2 transition-colors ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              setActiveTab("LIST")
+            }
+          }}
+          className={`px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
             activeTab === "LIST"
               ? "border-primary text-primary"
               : "border-transparent text-text-muted hover:text-text"
           }`}
         >
           Nơi dùng đã tạo ({usages.length})
-        </button>
+        </div>
       </div>
 
       {statusMessage && (
-        <div className="mb-4 p-3 rounded-xl bg-selected border border-primary/20 text-xs font-semibold text-primary">
+        <div className="mb-4 p-3 rounded-xl bg-selected border border-primary/20 text-caption font-semibold text-primary">
           {statusMessage}
         </div>
       )}

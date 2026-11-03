@@ -38,14 +38,16 @@ export function ImportDropzones({ excelFile, excelFileName, imageCount, isImport
           <p className="mt-1 text-body-sm text-text-muted">
             File cần có các cột: mã sản phẩm, tên, danh mục, giá bán và tên file ảnh.
           </p>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onDownloadTemplate}
-            className="mt-2 inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+            className="mt-2 inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline h-auto p-0 hover:bg-transparent"
           >
             <Download size={12} />
             Tải file Excel mẫu về
-          </button>
+          </Button>
         </div>
 
         <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">

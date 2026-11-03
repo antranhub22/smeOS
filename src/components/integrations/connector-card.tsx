@@ -22,7 +22,7 @@ export function ConnectorCard({ item, onConnect, onManage }: ConnectorCardProps)
         <h3 className="text-title-sm font-bold text-text">{item.label}</h3>
         {label && <Badge tone={label.tone}>{label.text}</Badge>}
       </div>
-      <p className="flex-1 text-sm text-text-muted">{item.description}</p>
+      <p className="flex-1 text-body-sm text-text-muted">{item.description}</p>
       {item.panel ? (
         <Button
           size="sm"
@@ -39,12 +39,12 @@ export function ConnectorCard({ item, onConnect, onManage }: ConnectorCardProps)
       ) : item.availability === "LEGACY" && item.legacyHref ? (
         <Link
           href={item.legacyHref as Route}
-          className="inline-flex h-11 items-center justify-center rounded-xl border border-border px-4 text-sm font-semibold text-text hover:bg-surface-alt"
+          className="inline-flex h-11 items-center justify-center rounded-xl border border-border px-4 text-body-sm font-semibold text-text hover:bg-surface-alt"
         >
           Mở trang quản lý
         </Link>
       ) : item.availability === "NEEDS_UPGRADE" ? (
-        <p className="text-sm text-warning-text">Có ở gói Chuyên nghiệp trở lên.</p>
+        <p className="text-body-sm text-warning-text">Có ở gói Chuyên nghiệp trở lên.</p>
       ) : null}
     </div>
   )

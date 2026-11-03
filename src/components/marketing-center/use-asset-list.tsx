@@ -78,7 +78,7 @@ export function UseAssetList({ usages, onToggleStatus, onOpenQr }: UseAssetListP
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-xs text-text-muted"
+                  className="h-7 px-2 text-caption text-text-muted"
                   onClick={() => onToggleStatus(u.id, isPaused ? "ACTIVE" : "PAUSED")}
                 >
                   {isPaused ? <Play size={13} className="mr-1" /> : <Pause size={13} className="mr-1" />}

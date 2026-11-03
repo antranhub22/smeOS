@@ -267,13 +267,15 @@ export function CatalogWizardFlow({
             <span>AI đã phân tích và chuẩn bị sẵn các lựa chọn tối ưu cho Catalog. Bạn có thể kiểm tra từng bước!</span>
           </div>
           {onBackToModeSelection && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={onBackToModeSelection}
-              className="text-caption text-primary hover:underline font-bold shrink-0 cursor-pointer"
+              className="h-auto p-0 text-caption text-primary hover:underline font-bold shrink-0 cursor-pointer"
             >
               Chọn lại phương thức
-            </button>
+            </Button>
           )}
         </div>
       )}

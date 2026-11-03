@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import type { CatalogProduct } from "./catalog-management-tab"
 import { ProductLibraryModal } from "./product-library-modal"
 import { SmartInputStyleSelector, type PreferredStyleChoice } from "./smart-input-style-selector"
@@ -151,10 +152,11 @@ export function SmartInputDropzone({
 
           {/* Toggle 2 nguồn */}
           <div className="grid grid-cols-2 gap-3 p-1 rounded-xl bg-surface-alt border border-border">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setInputSource("store")}
-              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-body-sm font-bold transition-all cursor-pointer ${
+              className={`h-auto flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-body-sm font-bold transition-all cursor-pointer ${
                 inputSource === "store"
                   ? "bg-surface text-primary shadow-xs border border-primary/20"
                   : "text-text-muted hover:text-text"
@@ -162,11 +164,12 @@ export function SmartInputDropzone({
             >
               <Store className="h-4 w-4" />
               <span>Chọn từ kho tiệm ({selectedProducts.length > 0 ? `Đã chọn ${selectedProducts.length}` : `${availableProducts.length} mẫu`})</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setInputSource("upload")}
-              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-body-sm font-bold transition-all cursor-pointer ${
+              className={`h-auto flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-body-sm font-bold transition-all cursor-pointer ${
                 inputSource === "upload"
                   ? "bg-surface text-primary shadow-xs border border-primary/20"
                   : "text-text-muted hover:text-text"
@@ -174,7 +177,7 @@ export function SmartInputDropzone({
             >
               <UploadCloud className="h-4 w-4" />
               <span>Tải từ máy ({imageFiles.length > 0 ? `${imageFiles.length} ảnh` : "Kéo thả"})</span>
-            </button>
+            </Button>
           </div>
 
           {/* Nguồn 1: Chọn từ Kho sản phẩm */}
@@ -230,12 +233,12 @@ export function SmartInputDropzone({
             <FileText className="h-4 w-4 text-primary" />
             <span>3. Ghi chú yêu cầu / Định hướng nội dung (Tùy chọn)</span>
           </label>
-          <textarea
+          <Textarea
             value={userDirectives}
             onChange={(e) => setUserDirectives(e.target.value)}
             rows={2}
             placeholder="VD: Hoa hồng đỏ 20/10 tặng mẹ hoặc vợ, tầm giá 800k - 1.2 triệu, lời văn ấm áp tri ân..."
-            className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full text-body-sm"
           />
           <p className="text-caption text-text-muted">
             AI sẽ lồng ghép yêu cầu này vào tiêu đề, câu chuyện thương hiệu và bảng giá sản phẩm.

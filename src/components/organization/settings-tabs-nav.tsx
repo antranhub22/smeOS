@@ -62,19 +62,26 @@ export function SettingsTabsNav({
         const Icon = tab.icon
         const isActive = activeTab === tab.key
         return (
-          <button
+          <div
             key={tab.key}
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => onSelectTab(tab.key)}
-            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                onSelectTab(tab.key)
+              }
+            }}
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-caption font-bold transition-all whitespace-nowrap cursor-pointer ${
               isActive
                 ? "bg-primary text-primary-foreground shadow-xs"
-                : "text-text-muted hover:text-text hover:bg-background"
+                : "text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             <Icon size={15} />
             <span>{tab.label}</span>
-          </button>
+          </div>
         )
       })}
     </div>

@@ -2,6 +2,8 @@
 
 import React, { useState } from "react"
 import { Camera, Sparkles, Image as ImageIcon, ZoomIn, X } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { SmartFlowerImage } from "../smart-flower-image"
 
 const GALLERY_SLOT_COUNT = 6
@@ -41,7 +43,7 @@ export function LandingTemplateGallery({
     <section className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-text uppercase tracking-wider">
+        <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
           <Camera size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-primary" : "text-warning"} />
           <span className={isLuxury ? "font-display" : ""}>
             {"Ảnh mẫu thật"}
@@ -52,11 +54,12 @@ export function LandingTemplateGallery({
       {/* Photo Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
         {displayPhotos.map((photo, idx) => (
-          <button
+          <Button
             type="button"
+            variant="ghost"
             key={photo.src}
             onClick={() => setActivePhoto(photo)}
-            className={`group relative rounded-2xl overflow-hidden border shadow-xs transition-all text-left block w-full focus:outline-hidden focus:ring-2 focus:ring-primary/40 ${
+            className={`group relative h-auto p-0 rounded-2xl overflow-hidden border shadow-xs transition-all text-left block w-full focus:outline-hidden focus:ring-2 focus:ring-primary/40 ${
               isLuxury
                 ? "border-primary/20 bg-surface-alt/40 hover:border-primary/60"
                 : isFestive
@@ -86,35 +89,19 @@ export function LandingTemplateGallery({
                 {photo.caption}
               </p>
             </div>
-          </button>
+          </Button>
         ))}
       </div>
 
       {/* Lightbox Modal */}
-      {activePhoto && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        >
-          {/* Backdrop Button */}
-          <button
-            type="button"
-            aria-label="Đóng ảnh xem chi tiết"
-            onClick={() => setActivePhoto(null)}
-            className="fixed inset-0 bg-black/80 backdrop-blur-xs w-full h-full cursor-default"
-          />
-
-          <div className="relative z-10 max-w-lg w-full bg-surface rounded-3xl overflow-hidden shadow-2xl border border-border pointer-events-auto">
-            <button
-              type="button"
-              onClick={() => setActivePhoto(null)}
-              className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition-colors"
-              aria-label="Đóng"
-            >
-              <X size={16} />
-            </button>
-
+      <Dialog
+        open={Boolean(activePhoto)}
+        onOpenChange={(open) => !open && setActivePhoto(null)}
+        title={activePhoto?.title ?? "Chi tiết ảnh mẫu"}
+        size="md"
+      >
+        {activePhoto && (
+          <div className="overflow-hidden rounded-2xl">
             <div className="aspect-4/3 w-full bg-black">
               <SmartFlowerImage
                 src={activePhoto.src}
@@ -124,12 +111,12 @@ export function LandingTemplateGallery({
             </div>
 
             <div className="p-4 bg-surface space-y-1">
-              <h4 className="text-sm font-bold text-text">{activePhoto.title}</h4>
-              <p className="text-xs text-text-muted">{activePhoto.caption}</p>
+              <h4 className="text-body font-bold text-text">{activePhoto.title}</h4>
+              <p className="text-caption text-text-muted">{activePhoto.caption}</p>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Dialog>
     </section>
   )
 }

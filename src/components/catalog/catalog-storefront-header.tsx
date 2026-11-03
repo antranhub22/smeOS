@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react"
 import { Phone, Share2, MapPin, Flower2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { CatalogPdfExportButton } from "./studio/catalog-pdf-export-button"
 import type {
   CatalogTemplateId,
@@ -122,7 +123,7 @@ export function CatalogStorefrontHeader({
           )}
           <div>
             <div
-              className="text-sm font-extrabold leading-tight"
+              className="text-body font-extrabold leading-tight"
               style={{ color: style?.tokens.textPrimary }}
             >
               {shop.name}
@@ -148,13 +149,16 @@ export function CatalogStorefrontHeader({
             catalogTitle={catalog.name}
             variant="outline"
             size="sm"
-            className="text-xs rounded-full h-8 px-3"
+            className="text-caption rounded-full h-8 px-3"
           />
 
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={onOpenShareModal}
             aria-label="Chia sẻ"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 h-auto rounded-full text-caption font-semibold transition-colors"
             style={{
               backgroundColor: style?.tokens.badgeBg || "rgba(154, 52, 18, 0.1)",
               color: style?.tokens.badgeText || "#9A3412",
@@ -162,13 +166,13 @@ export function CatalogStorefrontHeader({
           >
             <Share2 size={14} />
             <span className="hidden sm:inline">Chia sẻ</span>
-          </button>
+          </Button>
 
           {shop.phone && (
             <a
               href={`tel:${shop.phone}`}
               aria-label={`Gọi ${shop.phone}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-bold text-white shadow-sm transition-colors"
               style={{
                 backgroundColor: style?.tokens.accent || "#9A3412",
               }}

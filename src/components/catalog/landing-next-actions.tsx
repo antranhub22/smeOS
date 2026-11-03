@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface LandingNextActionsProps {
   publishedUrl: string
@@ -82,12 +83,12 @@ export function LandingNextActions({
             Đường dẫn công khai
           </div>
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="text"
               readOnly
               aria-label="Đường dẫn công khai của trang"
               value={publishedUrl}
-              className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-body-sm text-text font-mono truncate select-all"
+              className="flex-1 h-9 text-body-sm text-text font-mono truncate select-all"
             />
             <Button
               type="button"
@@ -144,33 +145,35 @@ export function LandingNextActions({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={handleShareZalo}
-            className="flex flex-col items-start p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 hover:border-primary-border text-left transition-colors cursor-pointer group"
+            className="h-auto flex flex-col items-start p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 hover:border-primary-border text-left transition-colors cursor-pointer group w-full whitespace-normal"
           >
             <div className="h-8 w-8 rounded-lg bg-info-bg text-info flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <Share2 className="h-4 w-4" />
             </div>
             <span className="text-body-sm font-bold text-text">Gửi link qua Zalo chào khách</span>
-            <span className="text-caption text-text-muted mt-1">
+            <span className="text-caption text-text-muted mt-1 font-normal">
               Gửi trực tiếp cho khách quen qua tin nhắn Zalo kèm lời mời xem hoa.
             </span>
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={onDownloadQR}
-            className="flex flex-col items-start p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 hover:border-primary-border text-left transition-colors cursor-pointer group"
+            className="h-auto flex flex-col items-start p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 hover:border-primary-border text-left transition-colors cursor-pointer group w-full whitespace-normal"
           >
             <div className="h-8 w-8 rounded-lg bg-success-bg text-success flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
               <Download className="h-4 w-4" />
             </div>
             <span className="text-body-sm font-bold text-text">In QR dán lên thiệp tặng</span>
-            <span className="text-caption text-text-muted mt-1">
+            <span className="text-caption text-text-muted mt-1 font-normal">
               In mã QR dán thiệp để người nhận hoa quét xem thông điệp và câu chuyện hoa.
             </span>
-          </button>
+          </Button>
 
         </div>
       </div>

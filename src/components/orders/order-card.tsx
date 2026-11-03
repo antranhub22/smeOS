@@ -28,9 +28,16 @@ export function OrderCard({
   const { dict, formatCurrency, formatTime } = useI18n()
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
       className="w-full text-left cursor-pointer rounded-2xl border border-border bg-surface p-4 shadow-sm transition-all hover:border-primary hover:shadow-md space-y-2 text-body-sm focus-visible:outline-2 focus-visible:outline-primary min-h-11"
     >
       <div className="flex items-center justify-between">
@@ -74,7 +81,7 @@ export function OrderCard({
           <Eye size={13} aria-hidden="true" /> {dict.orders.actions.viewDetails}
         </span>
       </div>
-    </button>
+    </div>
   )
 }
 

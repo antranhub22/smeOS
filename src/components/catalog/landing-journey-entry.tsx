@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Sparkles, SlidersHorizontal, ArrowRight } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 
 export type LandingExecutionMode = "autonomous" | "guided"
 
@@ -17,10 +18,11 @@ export function LandingJourneyEntry({ onSelectMode }: LandingJourneyEntryProps) 
       {/* 2 Mode Cards — cân bằng, rõ ràng */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-3xl">
         {/* Card ⚡ Autonomous */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => onSelectMode("autonomous")}
-          className="group flex flex-col gap-3 p-5 rounded-2xl border-2 border-primary bg-primary-muted/10 text-left transition-all hover:bg-primary-muted/25 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
+          className="h-auto group flex flex-col items-stretch gap-3 p-5 rounded-2xl border-2 border-primary bg-primary-muted/10 text-left transition-all hover:bg-primary-muted/25 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary cursor-pointer w-full whitespace-normal"
         >
           <div className="flex items-center justify-between">
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-surface shrink-0">
@@ -31,7 +33,7 @@ export function LandingJourneyEntry({ onSelectMode }: LandingJourneyEntryProps) 
 
           <div className="space-y-1.5">
             <div className="text-title font-extrabold text-text">AI làm cho tôi</div>
-            <p className="text-body-sm text-text-muted leading-relaxed">
+            <p className="text-body-sm text-text-muted leading-relaxed font-normal">
               Bạn chỉ cần đưa ảnh hoa, link video hoặc ghi chú ngắn.
               smeOS phân tích, tạo tiêu đề, chọn sản phẩm và xuất bản toàn bộ.
             </p>
@@ -51,13 +53,14 @@ export function LandingJourneyEntry({ onSelectMode }: LandingJourneyEntryProps) 
           <div className="w-full py-2.5 rounded-lg bg-primary text-surface text-body-sm font-semibold text-center group-hover:bg-primary-dark transition-colors">
             Chọn chế độ này
           </div>
-        </button>
+        </Button>
 
         {/* Card 🛠️ Guided */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => onSelectMode("guided")}
-          className="group flex flex-col gap-3 p-5 rounded-2xl border-2 border-border bg-surface text-left transition-all hover:border-border-hover hover:bg-surface-alt/60 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
+          className="h-auto group flex flex-col items-stretch gap-3 p-5 rounded-2xl border-2 border-border bg-surface text-left transition-all hover:border-border-hover hover:bg-surface-alt/60 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary cursor-pointer w-full whitespace-normal"
         >
           <div className="flex items-center justify-between">
             <div className="h-10 w-10 rounded-xl bg-surface-alt flex items-center justify-center text-text shrink-0">
@@ -68,7 +71,7 @@ export function LandingJourneyEntry({ onSelectMode }: LandingJourneyEntryProps) 
 
           <div className="space-y-1.5">
             <div className="text-title font-extrabold text-text">Tôi muốn tự chọn từng bước</div>
-            <p className="text-body-sm text-text-muted leading-relaxed">
+            <p className="text-body-sm text-text-muted leading-relaxed font-normal">
               Bạn tự chọn dịp lễ, lọc sản phẩm, tự viết tiêu đề và cấu hình
               từng section theo ý thích cá nhân.
             </p>
@@ -88,7 +91,7 @@ export function LandingJourneyEntry({ onSelectMode }: LandingJourneyEntryProps) 
           <div className="w-full py-2.5 rounded-lg border border-border bg-surface text-text text-body-sm font-semibold text-center group-hover:bg-surface-alt transition-colors">
             Chọn chế độ này
           </div>
-        </button>
+        </Button>
       </div>
 
       <p className="text-caption text-text-muted">

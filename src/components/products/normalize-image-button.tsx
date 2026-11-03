@@ -45,7 +45,7 @@ export function NormalizeImageButton({
   return (
     <div className={`flex flex-col gap-2 ${className ?? ""}`}>
       {/* Nút chính */}
-      {status !== "done" && (
+      {status !== "succeeded" && (
         <Button
           type="button"
           variant="outline"
@@ -78,19 +78,21 @@ export function NormalizeImageButton({
         <div className="flex items-start gap-2 rounded-lg border border-danger/30 bg-danger-bg px-3 py-2 text-caption text-danger">
           <AlertCircle size={13} className="mt-0.5 flex-shrink-0" />
           <span className="flex-1">{errorMsg}</span>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={reset}
             aria-label="Thử lại"
-            className="flex-shrink-0 hover:text-danger/80 transition-colors"
+            className="h-6 w-6 flex-shrink-0 hover:text-danger/80 transition-colors"
           >
             <RefreshCw size={12} />
-          </button>
+          </Button>
         </div>
       )}
 
       {/* Preview ảnh kết quả — so sánh & chọn */}
-      {status === "done" && resultUrl && (
+      {status === "succeeded" && resultUrl && (
         <div className="rounded-xl border border-success/30 bg-success/5 p-3 space-y-2.5">
           <div className="flex items-center gap-1.5 text-caption font-semibold text-success">
             <CheckCircle2 size={13} />
@@ -115,14 +117,16 @@ export function NormalizeImageButton({
               <CheckCircle2 size={13} />
               Dùng ảnh này
             </Button>
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="icon"
               onClick={reset}
               aria-label="Bỏ qua ảnh đã chuẩn hóa"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+              className="h-9 w-9 rounded-lg"
             >
               <X size={14} />
-            </button>
+            </Button>
           </div>
         </div>
       )}

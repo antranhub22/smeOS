@@ -6,6 +6,8 @@ import {
   type PrintPresetCode,
 } from "@/modules/print/domain/print-preset"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Check, Layers } from "@/components/ui/icons"
 import { formatNumber } from "@/lib/i18n/formatters"
 
@@ -75,11 +77,18 @@ export function PresetSelector({
           {presetsList.map((preset) => {
             const isSelected = selectedPresetCode === preset.code
             return (
-              <button
+              <div
                 key={preset.code}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectPreset(preset.code)}
-                className={`p-3 rounded-xl border text-left transition-all relative flex flex-col justify-between ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    onSelectPreset(preset.code)
+                  }
+                }}
+                className={`p-3 rounded-xl border text-left cursor-pointer transition-all relative flex flex-col justify-between ${
                   isSelected
                     ? "border-primary bg-selected/20 shadow-xs"
                     : "border-border bg-surface hover:border-primary/50"
@@ -107,7 +116,7 @@ export function PresetSelector({
                     {preset.minDpi} DPI
                   </Badge>
                 </div>
-              </button>
+              </div>
             )
           })}
         </div>
@@ -129,11 +138,18 @@ export function PresetSelector({
           {PRINT_MATERIALS.map((mat) => {
             const isSelected = selectedMaterial === mat.id
             return (
-              <button
+              <div
                 key={mat.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectMaterial(mat.id)}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    onSelectMaterial(mat.id)
+                  }
+                }}
+                className={`p-3 rounded-xl border text-left cursor-pointer transition-all ${
                   isSelected
                     ? "border-primary bg-selected/20"
                     : "border-border bg-surface hover:border-primary/50"
@@ -148,7 +164,7 @@ export function PresetSelector({
                 <p className="text-caption text-text-muted mt-1 leading-snug">
                   {mat.desc}
                 </p>
-              </button>
+              </div>
             )
           })}
         </div>
@@ -161,28 +177,26 @@ export function PresetSelector({
         </label>
         <div className="flex flex-wrap items-center gap-2">
           {QUANTITY_PRESETS.map((q) => (
-            <button
+            <Button
               key={q}
               type="button"
+              size="sm"
+              variant={quantity === q ? "primary" : "outline"}
               onClick={() => onChangeQuantity(q)}
-              className={`px-3 py-1.5 rounded-lg text-caption font-semibold transition-all border ${
-                quantity === q
-                  ? "bg-primary text-white border-primary"
-                  : "bg-surface text-text border-border hover:bg-surface-alt"
-              }`}
+              className="h-8 text-caption"
             >
               {formatNumber(q)} bản
-            </button>
+            </Button>
           ))}
           <div className="flex items-center gap-2 ml-2">
-            <input
+            <Input
               type="number"
               min={1}
               max={100000}
               value={quantity}
               onChange={(e) => onChangeQuantity(Math.max(1, Number(e.target.value) || 1))}
               aria-label="Số lượng in tùy chỉnh"
-              className="w-24 px-2 py-1.5 rounded-lg border border-border bg-surface text-caption text-text text-center focus:outline-hidden focus:border-primary"
+              className="w-24 text-center text-caption"
             />
             <span className="text-caption text-text-muted">bản</span>
           </div>

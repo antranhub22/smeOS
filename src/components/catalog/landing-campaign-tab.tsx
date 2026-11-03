@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Sparkles } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { LandingJourneyEntry, type LandingExecutionMode } from "./landing-journey-entry"
 import { DualModeHeader } from "./dual-mode-header"
 import type { CatalogProduct } from "./catalog-management-tab"
@@ -144,12 +145,12 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
       // Content done
       setAiSteps((prev) =>
         prev.map((s) =>
-          s.id === "content" ? { ...s, status: "done" } : s.id === "layout" ? { ...s, status: "running" } : s
+          s.id === "content" ? { ...s, status: "succeeded" } : s.id === "layout" ? { ...s, status: "running" } : s
         )
       )
 
       setAiSteps((prev) =>
-        prev.map((s) => (s.id === "layout" ? { ...s, status: "done" } : s))
+        prev.map((s) => (s.id === "layout" ? { ...s, status: "succeeded" } : s))
       )
 
       setCampaignSlug(`campaign-${matchedOccasion}-${Math.random().toString(36).substring(2, 6)}`)
@@ -282,13 +283,15 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
                 <Sparkles className="h-4 w-4 shrink-0" />
                 <span>{fallbackReason === "quyen" ? "Tài khoản của bạn chưa được cấp quyền tạo nội dung bằng AI nên đang dùng nội dung mẫu — nhờ Điều hành bật quyền, hoặc chỉnh lại ở từng bước." : fallbackReason ? "AI chưa soạn được nội dung nên đang dùng nội dung mẫu — hãy chỉnh lại ở từng bước trước khi xuất bản." : "AI đã soạn nội dung và điền sẵn các lựa chọn. Bạn có thể kiểm tra từng bước trước khi xuất bản."}</span>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setEntryMode("auto-input")}
-                className="text-caption font-bold text-primary underline hover:text-primary-dark shrink-0 cursor-pointer"
+                className="text-caption font-bold text-primary underline hover:text-primary-dark shrink-0 cursor-pointer h-auto p-0"
               >
                 Tải lại nguyên liệu khác
-              </button>
+              </Button>
             </div>
           )}
 

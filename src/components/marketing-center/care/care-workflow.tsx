@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Users, Sparkles, Plus, Heart, Gift, ShieldCheck, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { getCareCardTemplate, type CareCardAssetCode, type CareCardContent } from "@/modules/care-cards/domain/care-card"
 import { CareCardDesigner } from "@/components/care-cards/care-card-designer"
@@ -186,11 +187,18 @@ export function CareWorkflow({
             {CARE_GOALS.map((goal) => {
               const isSelected = selectedGoal === goal.id
               return (
-                <button
+                <div
                   key={goal.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleSelectGoal(goal)}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      handleSelectGoal(goal)
+                    }
+                  }}
+                  className={`p-3 rounded-xl border text-left cursor-pointer transition-all ${
                     isSelected
                       ? "border-primary bg-primary/5 text-primary ring-2 ring-primary/20 shadow-xs"
                       : "border-border hover:border-border-hover bg-surface-alt/40 text-text"
@@ -198,7 +206,7 @@ export function CareWorkflow({
                 >
                   <div className="font-semibold text-body-sm">{goal.name}</div>
                   <div className="text-caption text-text-muted mt-0.5">{goal.description}</div>
-                </button>
+                </div>
               )
             })}
           </div>
@@ -228,10 +236,10 @@ export function CareWorkflow({
               <label className="block text-caption font-medium text-text-muted mb-1.5">
                 Chọn phân nhóm gửi tin
               </label>
-              <select
+              <NativeSelect
                 value={selectedSegmentId}
                 onChange={(e) => setSelectedSegmentId(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-border bg-surface text-text text-body-sm focus:outline-hidden focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full"
               >
                 <option value="ALL">Tất cả khách hàng ({customers.length})</option>
                 {segments.map((seg) => (
@@ -239,7 +247,7 @@ export function CareWorkflow({
                     {seg.name} ({seg.kind === "DYNAMIC" ? "Tự động" : "Tĩnh"})
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
           </div>
 

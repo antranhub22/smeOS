@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react"
 import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import {
   Database,
@@ -109,28 +110,32 @@ export function ChainDataHub() {
       <div className="border-b border-border/80 pb-5 space-y-3">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-caption font-bold text-text-muted flex-wrap">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={handleBackToStores}
-            className="flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
+            className="h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
           >
             <Database size={15} className="text-primary" />
             <span>Trung Tâm Dữ Liệu Chuỗi</span>
-          </button>
+          </Button>
 
           {selectedStore && (
             <>
               <ChevronRight size={13} className="text-text-muted/60" />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleBackToStoreFolders}
-                className={`flex items-center gap-1.5 transition-colors ${
+                className={`h-auto p-0 flex items-center gap-1.5 transition-colors ${
                   selectedFolder ? "hover:text-primary text-text-muted" : "text-primary font-extrabold"
                 }`}
               >
                 <Store size={14} />
                 <span>{selectedStore.name}</span>
-              </button>
+              </Button>
             </>
           )}
 
@@ -149,7 +154,7 @@ export function ChainDataHub() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <h2 className="text-xl font-extrabold text-text tracking-tight flex items-center gap-2">
+              <h2 className="text-title font-extrabold text-text tracking-tight flex items-center gap-2">
                 {selectedFolder ? (
                   <>
                     <Folder className="text-primary fill-current" size={22} />
@@ -194,7 +199,7 @@ export function ChainDataHub() {
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="relative w-48 sm:w-56">
                   <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Tìm kiếm cửa hàng…"
                     value={searchQuery}
@@ -207,7 +212,7 @@ export function ChainDataHub() {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsAddBranchOpen(true)}
-                  className="gap-1.5 font-bold h-9 text-xs rounded-xl"
+                  className="gap-1.5 font-bold h-9 text-caption rounded-xl"
                 >
                   <Building2 size={14} className="text-primary" />
                   <span>+ Thêm chi nhánh</span>
@@ -216,7 +221,7 @@ export function ChainDataHub() {
                 <Button
                   size="sm"
                   onClick={() => setIsAddPartnerOpen(true)}
-                  className="gap-1.5 font-bold h-9 text-xs rounded-xl"
+                  className="gap-1.5 font-bold h-9 text-caption rounded-xl"
                 >
                   <Handshake size={14} />
                   <span>+ Kết nối đối tác</span>
@@ -275,39 +280,60 @@ export function ChainDataHub() {
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => setFilterType("ALL")}
-                className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setFilterType("ALL")
+                  }
+                }}
+                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "ALL"
                     ? "bg-primary text-white"
                     : "bg-surface border border-border text-text-muted hover:text-text"
                 }`}
               >
                 Tất cả ({stores.length})
-              </button>
-              <button
-                type="button"
+              </div>
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => setFilterType("DIRECT")}
-                className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setFilterType("DIRECT")
+                  }
+                }}
+                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "DIRECT"
                     ? "bg-primary text-white"
                     : "bg-surface border border-border text-text-muted hover:text-text"
                 }`}
               >
                 Trực thuộc ({directCount})
-              </button>
-              <button
-                type="button"
+              </div>
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => setFilterType("PARTNER")}
-                className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setFilterType("PARTNER")
+                  }
+                }}
+                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "PARTNER"
                     ? "bg-primary text-white"
                     : "bg-surface border border-border text-text-muted hover:text-text"
                 }`}
               >
                 Đối tác nhượng quyền ({partnerCount})
-              </button>
+              </div>
             </div>
 
             <span className="text-caption text-text-muted font-medium">

@@ -5,6 +5,8 @@ import { ListFilter, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { PublishedCatalogLinks, type CatalogLinkItem } from "./catalog-link-widgets"
 import type { CatalogProduct } from "./catalog-management-tab"
 import { Disclosure } from "@/components/ui/disclosure"
@@ -105,10 +107,10 @@ export function CatalogExpertManager({
         </div>
         <div>
           <label className="block text-caption font-semibold text-text-muted mb-1">Dịp tặng</label>
-          <select
+          <NativeSelect
             value={filterOccasion}
             onChange={(e) => setFilterOccasion(e.target.value)}
-            className="w-full h-9 rounded-md border border-border bg-surface px-3 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full h-9 text-body-sm"
           >
             <option value="">Tất cả dịp</option>
             {availableOccasions.map((occ) => (
@@ -116,7 +118,7 @@ export function CatalogExpertManager({
                 {occ}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
         <div>
           <label className="block text-caption font-semibold text-text-muted mb-1">Giá từ (VNĐ)</label>
@@ -158,24 +160,29 @@ export function CatalogExpertManager({
           {filteredProducts.map((p) => {
             const isSelected = selectedIds.includes(p.id)
             return (
-              <button
+              <div
                 key={p.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 aria-pressed={isSelected}
                 onClick={() => toggleSelect(p.id)}
-                className={`rounded-2xl border p-3.5 flex items-center gap-3 w-full text-left transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    toggleSelect(p.id)
+                  }
+                }}
+                className={`rounded-2xl border p-3.5 flex items-center gap-3 w-full text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                   isSelected
                     ? "border-primary bg-primary-muted/20 shadow-xs"
                     : "border-border bg-surface hover:border-border-hover"
                 }`}
               >
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={isSelected}
-                  readOnly
-                  tabIndex={-1}
                   aria-hidden="true"
-                  className="h-4 w-4 accent-primary rounded pointer-events-none"
+                  tabIndex={-1}
+                  className="h-4 w-4 pointer-events-none"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -192,7 +199,7 @@ export function CatalogExpertManager({
                     {formatCurrency(p.price)}
                   </div>
                 )}
-              </button>
+              </div>
             )
           })}
         </div>

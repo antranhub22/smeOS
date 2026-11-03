@@ -89,10 +89,11 @@ export function InternalChatWidget() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {!isOpen && (
-        <button
+        <Button
           type="button"
+          variant="secondary"
           onClick={() => setIsOpen(true)}
-          className="relative flex items-center justify-center w-14 h-14 rounded-full bg-primary hover:bg-primary-hover text-primary-fg shadow-xl transition-all duration-200 hover:scale-105"
+          className="relative flex items-center justify-center w-14 h-14 rounded-full bg-primary hover:bg-primary-hover text-primary-fg shadow-xl transition-all duration-200 hover:scale-105 p-0 border-0"
           title="Mở Chat nội bộ"
         >
           <MessageSquare className="w-6 h-6" />
@@ -101,7 +102,7 @@ export function InternalChatWidget() {
               {unreadTotal}
             </span>
           )}
-        </button>
+        </Button>
       )}
 
       {isOpen && (
@@ -110,20 +111,22 @@ export function InternalChatWidget() {
           <div className="bg-primary text-primary-fg p-3.5 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2">
               {activeConv && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   aria-label="Quay lại danh sách hội thoại"
                   onClick={() => {
                     setActiveConv(null)
                     fetchConversations()
                   }}
-                  className="p-1 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+                  className="p-1 hover:bg-white/20 rounded-full transition-colors cursor-pointer text-primary-fg h-8 w-8"
                 >
                   <ChevronLeft className="w-5 h-5" />
-                </button>
+                </Button>
               )}
               <div>
-                <h3 className="font-semibold text-sm leading-tight">
+                <h3 className="font-semibold text-body-sm leading-tight">
                   {activeConv ? activeConv.title || "Cuộc trò chuyện" : "Chat nội bộ smeOS"}
                 </h3>
                 <span className="text-caption text-primary-fg/80 flex items-center gap-1">
@@ -131,14 +134,16 @@ export function InternalChatWidget() {
                 </span>
               </div>
             </div>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               aria-label="Đóng cửa sổ trò chuyện"
               onClick={() => setIsOpen(false)}
-              className="p-1 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+              className="p-1 hover:bg-white/20 rounded-full transition-colors cursor-pointer text-primary-fg h-8 w-8"
             >
               <X className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
 
           {/* Body */}
@@ -155,33 +160,36 @@ export function InternalChatWidget() {
                   </div>
                 ) : (
                   conversations.map((conv) => (
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       key={conv.id}
                       onClick={() => setActiveConv(conv)}
-                      className="w-full text-left p-3 bg-surface rounded-xl border border-border hover:border-primary/40 hover:shadow-xs cursor-pointer transition-all flex items-start gap-3"
+                      className="w-full text-left p-3 h-auto bg-surface rounded-xl border border-border hover:border-primary/40 hover:shadow-xs cursor-pointer transition-all flex items-start gap-3 whitespace-normal block"
                     >
-                      <div className="w-9 h-9 rounded-full bg-primary-subtle text-primary flex items-center justify-center shrink-0">
-                        {conv.conversationType === "PLATFORM_TENANT" ? (
-                          <Building className="w-4 h-4" />
-                        ) : (
-                          <Store className="w-4 h-4" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-meta font-semibold text-text truncate">
-                            {conv.title || (conv.conversationType === "PLATFORM_TENANT" ? "Hỗ trợ SaaS" : "Trao đổi đối tác")}
-                          </h4>
-                          {Boolean(conv.unreadCount) && (
-                            <span className="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+                      <div className="flex items-start gap-3 w-full">
+                        <div className="w-9 h-9 rounded-full bg-primary-subtle text-primary flex items-center justify-center shrink-0">
+                          {conv.conversationType === "PLATFORM_TENANT" ? (
+                            <Building className="w-4 h-4" />
+                          ) : (
+                            <Store className="w-4 h-4" />
                           )}
                         </div>
-                        <p className="text-caption text-text-muted truncate mt-0.5">
-                          {conv.lastMessageSnippet || "Chưa có tin nhắn mới"}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-meta font-semibold text-text truncate">
+                              {conv.title || (conv.conversationType === "PLATFORM_TENANT" ? "Hỗ trợ SaaS" : "Trao đổi đối tác")}
+                            </h4>
+                            {Boolean(conv.unreadCount) && (
+                              <span className="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+                            )}
+                          </div>
+                          <p className="text-caption text-text-muted truncate mt-0.5 font-normal">
+                            {conv.lastMessageSnippet || "Chưa có tin nhắn mới"}
+                          </p>
+                        </div>
                       </div>
-                    </button>
+                    </Button>
                   ))
                 )}
               </div>

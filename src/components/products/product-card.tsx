@@ -4,6 +4,7 @@ import { parsePricing, priceLabel, summarizePricing } from "@/modules/products/d
 import React from "react"
 import Link from "next/link"
 import { Trash2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { readProposal, type ProposalStatus } from "@/modules/products/domain/product-proposal"
 import { formatCurrency } from "@/lib/i18n/formatters"
@@ -93,11 +94,12 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-surface shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
       {/* Vùng ảnh sản phẩm: Bấm để mở Bảng thông số sản phẩm & Phân tích AI */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => onImageClick?.(product)}
         aria-label={`Xem bảng thông số và phân tích AI cho ${product.name}`}
-        className="relative aspect-square w-full bg-surface-alt overflow-hidden text-left focus-visible:outline-2 focus-visible:outline-primary cursor-pointer group/img"
+        className="relative aspect-square w-full h-auto p-0 rounded-none bg-surface-alt overflow-hidden text-left focus-visible:outline-2 focus-visible:outline-primary cursor-pointer group/img block"
       >
         <ProductThumb
           name={product.name}
@@ -109,7 +111,7 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
           <StatusBadge status={product.status} />
           <ProposalBadge attributes={product.attributes} />
         </div>
-      </button>
+      </Button>
 
       {/* Thông tin sản phẩm: Bấm vào tên để chuyển sang trang chi tiết */}
       <Link
@@ -130,18 +132,20 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
 
       {/* Nút xóa – chỉ Điều hành */}
       {isExecutive && onTrash && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={(e) => {
             e.preventDefault()
             onTrash(product)
           }}
           aria-label={`Chuyển "${product.name}" vào thùng rác`}
-          className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-lg bg-black/55 text-white hover:bg-danger hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-danger"
+          className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-black/55 text-white hover:bg-danger hover:text-white p-0"
           title="Chuyển vào thùng rác"
         >
           <Trash2 size={13} />
-        </button>
+        </Button>
       )}
     </div>
   )

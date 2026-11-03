@@ -4,6 +4,7 @@ import React, { useMemo } from "react"
 import { Sparkles, Check } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { ProductThumb } from "@/components/products/product-thumb"
 import type { CatalogProduct } from "./catalog-management-tab"
 
@@ -103,10 +104,10 @@ export function CatalogWizardStep1Products({
             className="text-body-sm h-9"
           />
           {availableOccasions.length > 0 && (
-            <select
+            <NativeSelect
               value={filterOccasion}
               onChange={(e) => setFilterOccasion(e.target.value)}
-              className="h-9 rounded-md border border-border bg-surface px-2.5 text-body-sm text-text"
+              className="h-9 text-body-sm text-text"
             >
               <option value="">Tất cả dịp</option>
               {availableOccasions.map((occ) => (
@@ -114,7 +115,7 @@ export function CatalogWizardStep1Products({
                   {occ}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           )}
         </div>
 
@@ -150,11 +151,12 @@ export function CatalogWizardStep1Products({
         {filteredProducts.map((p) => {
           const isSelected = selectedIds.includes(p.id)
           return (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               key={p.id}
               onClick={() => onToggleProduct(p.id)}
-              className={`rounded-xl border p-2.5 flex flex-col justify-between cursor-pointer transition-all text-left w-full ${
+              className={`h-auto p-2.5 rounded-xl border flex flex-col justify-between cursor-pointer transition-all text-left w-full whitespace-normal items-stretch ${
                 isSelected
                   ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
                   : "border-border bg-surface hover:border-border-hover"
@@ -179,7 +181,7 @@ export function CatalogWizardStep1Products({
                   {p.price ? `${p.price.toLocaleString("vi-VN")} đ` : "Liên hệ"}
                 </div>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>

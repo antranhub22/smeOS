@@ -92,13 +92,20 @@ export function CoordinatorReminderCard({
           >
             {reminder.title}
           </span>
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => onViewOrder?.(reminder.orderId)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                onViewOrder?.(reminder.orderId)
+              }
+            }}
             className="text-body-sm font-bold text-text hover:text-primary transition-colors cursor-pointer"
           >
             Đơn #{reminder.orderCode}
-          </button>
+          </div>
         </div>
 
         {/* Trạng thái quá hạn / sắp đến */}

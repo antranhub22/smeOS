@@ -23,6 +23,10 @@ import {
   type SortOptionId,
 } from "./product-filter-types"
 import { useI18n } from "@/lib/i18n"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
+import { ProductActiveFilterChips } from "./product-active-filter-chips"
 
 export interface ProductSearchFilterBarProps {
   filters: ProductFilterState
@@ -84,10 +88,10 @@ export function ProductSearchFilterBar({
           <Search
             size={16}
             strokeWidth={1.8}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted z-10"
             aria-hidden="true"
           />
-          <input
+          <Input
             type="text"
             value={filters.search}
             onChange={(e) => {
@@ -96,67 +100,75 @@ export function ProductSearchFilterBar({
             }}
             placeholder={`Tìm theo tên hoặc mã ${sampleProductLower}…`}
             aria-label={`Tìm kiếm ${sampleProductLower}`}
-            className="h-10 w-full rounded-xl border border-border bg-surface pl-10 pr-9 text-body-sm text-text outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
+            className="h-10 pl-10 pr-9 text-body-sm"
           />
           {filters.search && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => onChange((prev) => ({ ...prev, search: "" }))}
               aria-label="Xóa nội dung tìm kiếm"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text p-0.5 rounded-md"
+              className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-text-muted hover:text-text p-0 hover:bg-transparent"
             >
               <X size={15} />
-            </button>
+            </Button>
           )}
         </div>
 
         {/* Toggle Grid / Bảng */}
         <div className="flex rounded-xl border border-border overflow-hidden shrink-0">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => onViewModeChange("grid")}
             aria-label="Xem dạng lưới"
             aria-pressed={viewMode === "grid"}
-            className={`flex h-10 w-10 items-center justify-center transition-colors ${
+            className={`flex h-10 w-10 items-center justify-center rounded-none transition-colors ${
               viewMode === "grid"
-                ? "bg-primary text-white"
+                ? "bg-primary text-white hover:bg-primary hover:text-white"
                 : "bg-surface text-text-muted hover:bg-surface-alt"
             }`}
           >
             <LayoutGrid size={16} />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => onViewModeChange("table")}
             aria-label="Xem dạng bảng"
             aria-pressed={viewMode === "table"}
-            className={`flex h-10 w-10 items-center justify-center border-l border-border transition-colors ${
+            className={`flex h-10 w-10 items-center justify-center rounded-none border-l border-border transition-colors ${
               viewMode === "table"
-                ? "bg-primary text-white"
+                ? "bg-primary text-white hover:bg-primary hover:text-white"
                 : "bg-surface text-text-muted hover:bg-surface-alt"
             }`}
           >
             <LayoutList size={16} />
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Hàng 2: Bộ lọc nhanh Danh mục (Category Chips) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-none" role="group" aria-label="Lọc theo danh mục">
         {availableCategories.map((cat) => (
-          <button
+          <Button
             key={cat}
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => onChange((prev) => ({ ...prev, category: cat }))}
             aria-pressed={filters.category === cat}
-            className={`flex-shrink-0 rounded-full border px-3.5 py-1 text-caption font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-primary ${
+            className={`flex-shrink-0 rounded-full border px-3.5 py-1 text-caption font-semibold transition-colors h-auto ${
               filters.category === cat
-                ? "border-primary bg-primary text-white"
+                ? "border-primary bg-primary text-white hover:bg-primary hover:text-white"
                 : "border-border bg-surface text-text-muted hover:border-primary/50 hover:text-text"
             }`}
           >
             {cat}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -164,82 +176,84 @@ export function ProductSearchFilterBar({
       <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-border/60">
         <div className="flex flex-wrap items-center gap-2">
           {/* Lọc theo Dịp */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-alt/70 px-2.5 py-1.5 text-body-sm">
+          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-alt/70 px-2.5 py-1 text-body-sm">
             <Sparkles size={14} className="text-primary shrink-0" aria-hidden="true" />
             <span className="text-caption font-bold text-text-muted">Dịp:</span>
-            <select
+            <NativeSelect
               value={filters.occasion}
               onChange={(e) => {
                 const occ = e.target.value as OccasionId
                 onChange((prev) => ({ ...prev, occasion: occ }))
               }}
               aria-label="Chọn dịp phù hợp"
-              className="bg-transparent text-caption font-semibold text-text outline-none cursor-pointer pr-1"
+              className="h-8 border-none bg-transparent text-caption font-semibold pr-1"
             >
               {OCCASIONS.map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           {/* Lọc theo Khoảng giá */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-alt/70 px-2.5 py-1.5 text-body-sm">
+          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-alt/70 px-2.5 py-1 text-body-sm">
             <CircleDollarSign size={14} className="text-primary shrink-0" aria-hidden="true" />
             <span className="text-caption font-bold text-text-muted">Giá:</span>
-            <select
+            <NativeSelect
               value={filters.priceRange}
               onChange={(e) => handlePriceChange(e.target.value as PriceRangeId)}
               aria-label="Chọn mức giá"
-              className="bg-transparent text-caption font-semibold text-text outline-none cursor-pointer pr-1"
+              className="h-8 border-none bg-transparent text-caption font-semibold pr-1"
             >
               {PRICE_RANGES.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           {/* Sắp xếp */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-alt/70 px-2.5 py-1.5 text-body-sm">
+          <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-alt/70 px-2.5 py-1 text-body-sm">
             <ArrowUpDown size={14} className="text-text-muted shrink-0" aria-hidden="true" />
             <span className="text-caption font-bold text-text-muted">Xếp:</span>
-            <select
+            <NativeSelect
               value={filters.sortBy}
               onChange={(e) => {
                 const s = e.target.value as SortOptionId
                 onChange((prev) => ({ ...prev, sortBy: s }))
               }}
               aria-label="Sắp xếp sản phẩm"
-              className="bg-transparent text-caption font-semibold text-text outline-none cursor-pointer pr-1"
+              className="h-8 border-none bg-transparent text-caption font-semibold pr-1"
             >
               {SORT_OPTIONS.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           {/* Nút Đặt lại bộ lọc */}
           {hasActiveFilters && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={onReset}
-              className="inline-flex items-center gap-1 text-caption font-semibold text-danger hover:underline px-2 py-1.5 rounded-lg hover:bg-danger-bg transition-colors"
+              className="inline-flex items-center gap-1 text-caption font-semibold text-danger hover:underline px-2 py-1.5 h-auto rounded-lg hover:bg-danger-bg hover:text-danger"
               title="Khôi phục tất cả bộ lọc về mặc định"
             >
               <RotateCcw size={12} />
               <span>Đặt lại</span>
-            </button>
+            </Button>
           )}
         </div>
 
         {/* Tổng số sản phẩm hiển thị */}
         <div className="text-caption text-text-muted">
-          Tìm thấy <span className="font-extrabold text-foreground">{totalCount}</span> {sampleProductLower}
+          Tìm thấy <span className="font-extrabold text-text">{totalCount}</span> {sampleProductLower}
         </div>
       </div>
 
@@ -249,7 +263,7 @@ export function ProductSearchFilterBar({
           <span className="text-caption font-bold text-text">Khoảng giá:</span>
           <InfoTip label="Khoảng giá">Ví dụ: từ 300.000 đến 1.500.000 ₫</InfoTip>
           <div className="flex items-center gap-1.5">
-            <input
+            <Input
               type="number"
               min={0}
               step={50000}
@@ -260,10 +274,10 @@ export function ProductSearchFilterBar({
               }}
               placeholder="Từ (VNĐ)"
               aria-label="Giá tối thiểu"
-              className="h-8 w-28 rounded-lg border border-border bg-surface px-2 text-caption text-text outline-none focus:border-primary"
+              className="h-8 w-28 text-caption"
             />
             <span className="text-text-muted text-caption">—</span>
-            <input
+            <Input
               type="number"
               min={0}
               step={50000}
@@ -274,7 +288,7 @@ export function ProductSearchFilterBar({
               }}
               placeholder="Đến (VNĐ)"
               aria-label="Giá tối đa"
-              className="h-8 w-28 rounded-lg border border-border bg-surface px-2 text-caption text-text outline-none focus:border-primary"
+              className="h-8 w-28 text-caption"
             />
           </div>
         </div>
@@ -282,92 +296,21 @@ export function ProductSearchFilterBar({
 
       {/* Hàng 4: Active Filter Chips tóm tắt */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-          <span className="text-caption text-text-muted flex items-center gap-1 mr-1">
-            <SlidersHorizontal size={12} />
-            Đang lọc:
-          </span>
-
-          {filters.search && (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-surface-alt border border-border px-2 py-0.5 text-caption font-medium text-text">
-              Từ khoá: &quot;{filters.search}&quot;
-              <button
-                type="button"
-                onClick={() => onChange((prev) => ({ ...prev, search: "" }))}
-                aria-label="Bỏ lọc từ khoá"
-                className="text-text-muted hover:text-text"
-              >
-                <X size={12} />
-              </button>
-            </span>
-          )}
-
-          {filters.category !== "Tất cả" && (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-primary/10 border border-primary/20 px-2 py-0.5 text-caption font-bold text-primary">
-              {filters.category}
-              <button
-                type="button"
-                onClick={() => onChange((prev) => ({ ...prev, category: "Tất cả" }))}
-                aria-label="Bỏ lọc danh mục"
-                className="text-primary hover:text-primary-dark"
-              >
-                <X size={12} />
-              </button>
-            </span>
-          )}
-
-          {filters.occasion !== "all" && activeOccasionDef && (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-primary/10 border border-primary/20 px-2 py-0.5 text-caption font-bold text-primary">
-              Dịp: {activeOccasionDef.shortLabel}
-              <button
-                type="button"
-                onClick={() => onChange((prev) => ({ ...prev, occasion: "all" }))}
-                aria-label="Bỏ lọc dịp"
-                className="text-primary hover:text-primary-dark"
-              >
-                <X size={12} />
-              </button>
-            </span>
-          )}
-
-          {filters.priceRange !== "all" && activePriceDef && (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-primary/10 border border-primary/20 px-2 py-0.5 text-caption font-bold text-primary">
-              Giá: {filters.priceRange === "custom"
-                ? `${(filters.customMinPrice ?? 0).toLocaleString("vi-VN")}đ - ${filters.customMaxPrice ? `${filters.customMaxPrice.toLocaleString("vi-VN")}đ` : "..."}`
-                : activePriceDef.shortLabel}
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCustomPrice(false)
-                  onChange((prev) => ({
-                    ...prev,
-                    priceRange: "all",
-                    customMinPrice: null,
-                    customMaxPrice: null,
-                  }))
-                }}
-                aria-label="Bỏ lọc giá"
-                className="text-primary hover:text-primary-dark"
-              >
-                <X size={12} />
-              </button>
-            </span>
-          )}
-
-          {filters.sortBy !== "default" && (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-surface-alt border border-border px-2 py-0.5 text-caption font-medium text-text">
-              Xếp: {SORT_OPTIONS.find((s) => s.id === filters.sortBy)?.label}
-              <button
-                type="button"
-                onClick={() => onChange((prev) => ({ ...prev, sortBy: "default" }))}
-                aria-label="Bỏ sắp xếp"
-                className="text-text-muted hover:text-text"
-              >
-                <X size={12} />
-              </button>
-            </span>
-          )}
-        </div>
+        <ProductActiveFilterChips
+          filters={filters}
+          onChange={onChange}
+          onClearCustomPrice={() => {
+            setShowCustomPrice(false)
+            onChange((prev) => ({
+              ...prev,
+              priceRange: "all",
+              customMinPrice: null,
+              customMaxPrice: null,
+            }))
+          }}
+          activeOccasionDef={activeOccasionDef}
+          activePriceDef={activePriceDef}
+        />
       )}
     </div>
   )

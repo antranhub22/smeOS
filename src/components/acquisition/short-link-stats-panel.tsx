@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import { InlineError } from "@/components/ui/inline-error"
 import { acquisitionApi, type ShortLinkStats } from "./acquisition-api"
 
@@ -48,15 +49,17 @@ export function ShortLinkStatsPanel({ linkId }: { linkId: string }) {
     <div className="space-y-3 rounded-xl bg-surface-alt p-3 sm:p-4">
       <div role="group" aria-label="Khoảng thời gian" className="flex flex-wrap gap-1.5">
         {RANGES.map((r) => (
-          <button
+          <Button
             key={r}
             type="button"
+            variant={days === r ? "secondary" : "outline"}
+            size="sm"
             aria-pressed={days === r}
             onClick={() => selectRange(r)}
-            className={`h-8 rounded-lg px-3 text-caption font-medium ${days === r ? "bg-primary text-white" : "bg-surface text-text border border-border"}`}
+            className="h-8 rounded-lg px-3 text-caption font-medium"
           >
             {r} ngày
-          </button>
+          </Button>
         ))}
       </div>
       {error && <InlineError message={error} onRetry={load} />}

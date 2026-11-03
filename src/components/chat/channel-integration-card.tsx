@@ -35,8 +35,8 @@ export function ChannelIntegrationCard({
         {/* Header Kênh */}
         <div className="flex items-start justify-between gap-2">
           <div>
-            <div className="font-bold text-sm text-foreground">{pricing.name}</div>
-            <div className="text-caption text-muted-foreground mt-0.5 leading-relaxed">
+            <div className="font-bold text-body-sm text-text">{pricing.name}</div>
+            <div className="text-caption text-text-muted mt-0.5 leading-relaxed">
               {pricing.description}
             </div>
           </div>
@@ -44,7 +44,7 @@ export function ChannelIntegrationCard({
             className={`text-caption shrink-0 font-bold ${
               isEnabled
                 ? "bg-success-bg text-success border-success/30"
-                : "bg-muted text-muted-foreground"
+                : "bg-surface-alt text-text-muted"
             }`}
           >
             {isEnabled ? "Đang Bật" : "Đang Tắt"}
@@ -52,23 +52,23 @@ export function ChannelIntegrationCard({
         </div>
 
         {/* Thông tin biểu phí */}
-        <div className="rounded-xl bg-surface-raised border border-border/70 p-3 space-y-1.5 text-xs">
+        <div className="rounded-xl bg-surface-raised border border-border/70 p-3 space-y-1.5 text-caption">
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-caption">Phí kích hoạt kênh:</span>
+            <span className="text-text-muted text-caption">Phí kích hoạt kênh:</span>
             <span className="font-bold text-primary">
               {isFree ? "Miễn Phí" : `${pricing.monthlyCreditCost} Credit / tháng`}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground text-caption">Phí tin nhắn tư vấn:</span>
-            <span className="font-medium text-foreground">
+            <span className="text-text-muted text-caption">Phí tin nhắn tư vấn:</span>
+            <span className="font-medium text-text">
               {pricing.messageCreditCost} Credit / 10 tin
             </span>
           </div>
           {!isFree && subscriptionExpiresAt && (
             <div className="flex items-center justify-between border-t border-border pt-1.5 text-caption">
-              <span className="text-muted-foreground">Hạn thuê bao:</span>
-              <span className="text-muted-foreground font-mono">
+              <span className="text-text-muted">Hạn thuê bao:</span>
+              <span className="text-text-muted font-mono">
                 {formatDate(subscriptionExpiresAt)}
               </span>
             </div>
@@ -83,7 +83,7 @@ export function ChannelIntegrationCard({
             variant="outline"
             size="sm"
             onClick={onOpenConfig}
-            className="flex-1 text-xs h-8 gap-1"
+            className="flex-1 text-caption h-8 gap-1"
           >
             <Settings className="h-3.5 w-3.5" />
             Cài đặt API
@@ -95,7 +95,7 @@ export function ChannelIntegrationCard({
           disabled={isBusy}
           variant={isEnabled ? "outline" : "primary"}
           onClick={onToggle}
-          className={`text-xs h-8 ${pricing.requiresSetup ? "flex-1" : "w-full"} ${
+          className={`text-caption h-8 ${pricing.requiresSetup ? "flex-1" : "w-full"} ${
             !isEnabled ? "bg-primary hover:bg-primary-dark text-white" : "border-primary/30 text-primary hover:bg-primary/5"
           }`}
         >

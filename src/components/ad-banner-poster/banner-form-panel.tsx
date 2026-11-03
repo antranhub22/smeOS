@@ -56,10 +56,17 @@ export function BannerFormPanel({
     <div className="rounded-xl border border-border bg-surface p-4 sm:p-5 shadow-sm space-y-4">
       {/* ── Mode Switcher Tabs ───────────────────────────────────────── */}
       <div className="flex items-center p-1 rounded-xl bg-surface-alt border border-border">
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => setFormMode("AUTO")}
-          className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              setFormMode("AUTO")
+            }
+          }}
+          className={`flex-1 py-1.5 px-3 rounded-lg text-caption font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             formMode === "AUTO"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-text-muted hover:text-text"
@@ -67,12 +74,19 @@ export function BannerFormPanel({
         >
           <Zap className="h-3.5 w-3.5" />
           <span>Tạo tự động</span>
-        </button>
+        </div>
 
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => setFormMode("MANUAL")}
-          className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              setFormMode("MANUAL")
+            }
+          }}
+          className={`flex-1 py-1.5 px-3 rounded-lg text-caption font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             formMode === "MANUAL"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-text-muted hover:text-text"
@@ -80,7 +94,7 @@ export function BannerFormPanel({
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
           <span>Tùy biến chi tiết</span>
-        </button>
+        </div>
       </div>
 
       {/* ── Active Panel Render ──────────────────────────────────────── */}

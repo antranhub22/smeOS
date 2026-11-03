@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Shield, X, Check } from "@/components/ui/icons"
 import { STORE_NAV_ENTRIES } from "@/components/layout/nav/nav-store"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 
 interface PartnerToolMatrixModalProps {
   partnerId: string
@@ -86,70 +87,81 @@ export function PartnerToolMatrixModal({
   }
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="partner-tool-matrix-title"
-      onKeyDown={(e) => {
-        if (e.key === "Escape") onClose()
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose()
       }}
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
-    >
-      <div className="bg-surface rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-border animate-in fade-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="flex items-start justify-between pb-3 border-b border-border">
-          <div>
-            <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-primary" />
-              <h3 id="partner-tool-matrix-title" className="font-bold text-title text-text">
-                Phân quyền Công cụ Chi nhánh
-              </h3>
-            </div>
-            <p className="text-body-sm text-text-muted mt-1">
-              Cửa hàng: <span className="font-semibold text-text">{partnerName}</span> ({partnerCode})
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng"
-            className="text-text-muted hover:text-text p-1 rounded-lg"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      title={
+        <div className="flex items-center gap-2">
+          <Shield className="w-5 h-5 text-primary" />
+          <span>Phân quyền Công cụ Chi nhánh</span>
         </div>
-
+      }
+      description={
+        <span>
+          Cửa hàng: <span className="font-semibold text-text">{partnerName}</span> ({partnerCode})
+        </span>
+      }
+      size="lg"
+      footer={
+        <div className="flex items-center justify-end gap-2 w-full">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+          >
+            Hủy
+          </Button>
+          <Button
+            type="button"
+            variant="primary"
+            size="sm"
+            disabled={saving}
+            onClick={handleSave}
+          >
+            {saving ? "Đang lưu..." : "Lưu phân quyền"}
+          </Button>
+        </div>
+      }
+    >
+      <div className="p-1 space-y-3">
         {errorMsg && (
-          <div className="p-3 my-3 text-xs bg-primary-muted text-primary rounded-xl border border-primary-border">
+          <div className="p-3 text-caption bg-primary-muted text-primary rounded-xl border border-primary-border">
             {errorMsg}
           </div>
         )}
 
-        <div className="mt-3">
-          <p className="text-caption text-text-muted mt-2">Công cụ bị khoá sẽ ẩn khỏi menu và không mở được kể cả khi gõ thẳng địa chỉ.</p>
+        <div>
+          <p className="text-caption text-text-muted">Công cụ bị khoá sẽ ẩn khỏi menu và không mở được kể cả khi gõ thẳng địa chỉ.</p>
         </div>
 
         {/* Quick action bar */}
-        <div className="flex items-center justify-between py-3 border-b border-border text-meta">
+        <div className="flex items-center justify-between py-2 border-b border-border text-caption">
           <span className="text-text-muted">
             Đã mở khóa: <b className="text-text">{selectedKeys.size}/{availableTools.length}</b> công cụ
           </span>
-          <div className="flex gap-2">
-            <button
+          <div className="flex items-center gap-2">
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={selectAll}
-              className="text-primary hover:text-primary-dark font-medium"
+              className="text-primary hover:text-primary-dark font-medium h-auto p-0 hover:bg-transparent"
             >
               Chọn tất cả
-            </button>
+            </Button>
             <span className="text-text-muted">|</span>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={deselectAll}
-              className="text-text-muted hover:text-text font-medium"
+              className="text-text-muted hover:text-text font-medium h-auto p-0 hover:bg-transparent"
             >
               Bỏ chọn tất cả
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -205,28 +217,7 @@ export function PartnerToolMatrixModal({
             )
           })}
         </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-2 pt-4 border-t border-border mt-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onClose}
-          >
-            Hủy
-          </Button>
-          <Button
-            type="button"
-            variant="primary"
-            size="sm"
-            disabled={saving}
-            onClick={handleSave}
-          >
-            {saving ? "Đang lưu..." : "Lưu phân quyền"}
-          </Button>
-        </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

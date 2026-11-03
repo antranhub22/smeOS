@@ -97,7 +97,7 @@ export function IntegrationsHubClient() {
                 <li key={item.key} className="flex flex-wrap items-center justify-between gap-3 p-4">
                   <div>
                     <p className="font-semibold text-text">{item.label}</p>
-                    <p className="text-sm text-text-muted">{CATEGORY_LABEL[item.category]}</p>
+                    <p className="text-body-sm text-text-muted">{CATEGORY_LABEL[item.category]}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <ManagedStatus log={hub.managedLogs.find((l) => l.connectorKey === item.key)} />
@@ -116,7 +116,7 @@ export function IntegrationsHubClient() {
               <li key={`inherited-${item.connectorKey}`} className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div>
                   <p className="font-semibold text-text">{item.displayName}</p>
-                  <p className="text-sm text-text-muted">{labelOf.get(item.connectorKey) ?? "Dịch vụ ngoài"}</p>
+                  <p className="text-body-sm text-text-muted">{labelOf.get(item.connectorKey) ?? "Dịch vụ ngoài"}</p>
                 </div>
                 <Badge tone="neutral">Dùng kết nối của chuỗi</Badge>
               </li>
@@ -125,7 +125,7 @@ export function IntegrationsHubClient() {
               <li key={c.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div>
                   <p className="font-semibold text-text">{c.displayName}</p>
-                  <p className="text-sm text-text-muted">{labelOf.get(c.connectorKey) ?? "Dịch vụ ngoài"}</p>
+                  <p className="text-body-sm text-text-muted">{labelOf.get(c.connectorKey) ?? "Dịch vụ ngoài"}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge tone={STATUS_LABEL[c.status].tone}>{STATUS_LABEL[c.status].text}</Badge>
@@ -208,8 +208,8 @@ function ManagedStatus({ log }: { log: ConnectionView | undefined }) {
 function OverviewTile({ label, value, alert = false }: { label: string; value: number; alert?: boolean }) {
   return (
     <div className="rounded-xl border border-border bg-surface p-4">
-      <p className="text-sm text-text-muted">{label}</p>
-      <p className={alert ? "text-2xl font-bold text-danger-text" : "text-2xl font-bold text-text"}>{value}</p>
+      <p className="text-body-sm text-text-muted">{label}</p>
+      <p className={alert ? "text-display font-bold text-danger-text" : "text-display font-bold text-text"}>{value}</p>
     </div>
   )
 }

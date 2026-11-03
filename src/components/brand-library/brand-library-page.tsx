@@ -8,6 +8,7 @@
  */
 import { useState } from "react"
 import { Library, Plus } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { isChainTier } from "@/core/governance/tier-of"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
@@ -95,9 +96,9 @@ export function BrandLibraryPage() {
           ? "Lưu logo, màu, phông chữ, mẫu và câu chữ chuẩn; chia sẻ cho cửa hàng thành viên dùng thống nhất."
           : "Lưu logo, màu, phông chữ, mẫu và câu chữ chuẩn của cửa hàng ở một nơi, có lưu các phiên bản."}
         actions={
-          <button type="button" onClick={() => setEditor({ open: true, item: null })} className="inline-flex items-center gap-2 min-h-10 px-4 rounded-lg bg-primary text-primary-foreground text-body-sm font-semibold">
+          <Button type="button" onClick={() => setEditor({ open: true, item: null })} className="gap-2">
             <Plus size={16} aria-hidden /> Thêm tài nguyên
-          </button>
+          </Button>
         }
       />
 
@@ -105,7 +106,7 @@ export function BrandLibraryPage() {
 
       {!isChain && chain.data?.data && (
         <section aria-labelledby="tu-chuoi" className="flex flex-col gap-3">
-          <h2 id="tu-chuoi" className="text-base font-bold text-text">Từ chuỗi {chain.data.data.chain_name}</h2>
+          <h2 id="tu-chuoi" className="text-body font-bold text-text">Từ chuỗi {chain.data.data.chain_name}</h2>
           {chain.data.data.items.length === 0
             ? <p className="text-body-sm text-text-muted">Chuỗi chưa chia sẻ tài nguyên nào.</p>
             : <Grid>{chain.data.data.items.map((i) => <BrandLibraryItemCard key={i.id} item={i} readOnly />)}</Grid>}
@@ -114,7 +115,7 @@ export function BrandLibraryPage() {
       {chain.error && <InlineError message="Không tải được tài nguyên của chuỗi" onRetry={() => void chain.mutate()} />}
 
       <section aria-labelledby="cua-ban" className="flex flex-col gap-3">
-        {!isChain && chain.data?.data && <h2 id="cua-ban" className="text-base font-bold text-text">Của cửa hàng</h2>}
+        {!isChain && chain.data?.data && <h2 id="cua-ban" className="text-body font-bold text-text">Của cửa hàng</h2>}
         {own.isLoading ? (
           <SkeletonBlock lines={4} label="Đang tải thư viện..." />
         ) : own.error ? (

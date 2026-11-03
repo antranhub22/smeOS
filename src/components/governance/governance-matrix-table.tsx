@@ -9,6 +9,9 @@
 
 import { useState, useMemo } from "react"
 import { Search, Lock, AlertTriangle, RefreshCw } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import type { GovernanceMatrixState, GovernanceViewerTier } from "./governance-matrix-types"
 import { GovernanceMatrixCell } from "./governance-matrix-cell"
 
@@ -66,13 +69,15 @@ export function GovernanceMatrixTable({
         </div>
         <p className="text-body-sm text-text-muted">{state.error}</p>
         {onRefresh && (
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={onRefresh}
-            className="self-start px-3 py-1.5 rounded-xl bg-surface border border-border text-caption hover:bg-surface-alt transition-colors"
+            className="self-start"
           >
             Thử lại
-          </button>
+          </Button>
         )}
       </div>
     )
@@ -86,20 +91,20 @@ export function GovernanceMatrixTable({
           {/* Ô tìm kiếm */}
           <div className="relative flex-1 sm:w-72">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-            <input
+            <Input
               type="text"
               placeholder="Tìm kiếm quy tắc..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-surface border border-border text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="pl-9 pr-4"
             />
           </div>
 
           {/* Lọc theo nhóm */}
-          <select
+          <NativeSelect
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-surface border border-border text-body-sm text-text focus:outline-none"
+            className="w-auto"
           >
             <option value="ALL">Tất cả nhóm</option>
             {state.groups.map((g) => (
@@ -107,7 +112,7 @@ export function GovernanceMatrixTable({
                 {g.groupTitle}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
 
         {/* Thống kê nhanh */}
@@ -118,14 +123,16 @@ export function GovernanceMatrixTable({
             <Lock size={12} /> {state.lockedCount} Đã khóa cứng
           </span>
           {onRefresh && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={onRefresh}
-              className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
+              className="h-8 w-8 p-0 text-text-muted hover:text-text"
               title="Làm mới"
             >
               <RefreshCw size={14} className={state.loading ? "animate-spin motion-reduce:animate-none" : ""} />
-            </button>
+            </Button>
           )}
         </div>
       </div>

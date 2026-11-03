@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Calendar, Palette } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { CAMPAIGN_OCCASIONS, CAMPAIGN_ARCHETYPES } from "./landing-campaign-constants"
 
 interface CampaignOccasionStylePickerProps {
@@ -21,49 +22,51 @@ export function CampaignOccasionStylePicker({
     <div className="space-y-4">
       {/* 1. Chọn dịp */}
       <div>
-        <label className="block text-xs font-bold text-text mb-2 flex items-center gap-1.5">
+        <label className="block text-caption font-bold text-text mb-2 flex items-center gap-1.5">
           <Calendar size={14} className="text-primary" />
           <span>1. Chọn dịp sự kiện</span>
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {CAMPAIGN_OCCASIONS.map((occ) => (
-            <button
+            <Button
               key={occ.id}
               type="button"
+              variant="outline"
               onClick={() => onOccasionChange(occ.id)}
-              className={`p-3 rounded-xl border text-left transition-all ${
+              className={`p-3 h-auto rounded-xl border text-left justify-start transition-all ${
                 selectedOccasion === occ.id
                   ? "border-primary bg-primary-bg/30 text-primary font-bold shadow-xs"
-                  : "border-border bg-surface text-text hover:border-border-hover text-xs font-medium"
+                  : "border-border bg-surface text-text hover:border-border-hover text-caption font-medium"
               }`}
             >
-              <div className="text-xs">{occ.label}</div>
-            </button>
+              <div className="text-caption">{occ.label}</div>
+            </Button>
           ))}
         </div>
       </div>
 
       {/* 2. Chọn phong cách */}
       <div>
-        <label className="block text-xs font-bold text-text mb-2 flex items-center gap-1.5">
+        <label className="block text-caption font-bold text-text mb-2 flex items-center gap-1.5">
           <Palette size={14} className="text-primary" />
           <span>2. Phong cách thiết kế trang</span>
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {CAMPAIGN_ARCHETYPES.map((arch) => (
-            <button
+            <Button
               key={arch.id}
               type="button"
+              variant="outline"
               onClick={() => onArchetypeChange(arch.id)}
-              className={`p-3 rounded-xl border text-left transition-all ${
+              className={`p-3 h-auto rounded-xl border text-left flex-col items-start justify-start transition-all ${
                 selectedArchetype === arch.id
                   ? "border-primary bg-primary-bg/30 shadow-xs"
                   : "border-border bg-surface hover:border-border-hover"
               }`}
             >
-              <div className="text-xs font-bold text-text">{arch.name}</div>
-              <div className="text-caption text-text-muted mt-0.5">{arch.desc}</div>
-            </button>
+              <div className="text-caption font-bold text-text">{arch.name}</div>
+              <div className="text-caption text-text-muted mt-0.5 font-normal">{arch.desc}</div>
+            </Button>
           ))}
         </div>
       </div>

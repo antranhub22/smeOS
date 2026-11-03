@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { Check, Copy, ExternalLink, Download, Share2, Sparkles, ImageDown } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { CatalogPdfExportButton } from "./studio/catalog-pdf-export-button"
 import { CatalogImageExportButton } from "./studio/catalog-image-export-button"
 import type {
@@ -67,12 +68,12 @@ export function CatalogWizardStep4Success({
         <div className="rounded-xl border border-border bg-surface-alt/60 p-4 space-y-2">
           <div className="text-caption font-bold text-text-muted uppercase">Link xem trực tiếp</div>
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="text"
               readOnly
               aria-label="Đường dẫn công khai của catalog"
               value={publishedUrl}
-              className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-body-sm font-mono truncate"
+              className="flex-1 h-9 text-body-sm font-mono truncate"
             />
             <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="text-caption">
               {copied ? "Đã chép" : "Sao chép"}
@@ -160,18 +161,19 @@ export function CatalogWizardStep4Success({
           <span>Việc nên làm tiếp</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => {
               const text = encodeURIComponent(`Gửi bạn xem catalog sản phẩm mới của tiệm: ${publishedUrl}`)
               window.open(`https://zalo.me/share?url=${encodeURIComponent(publishedUrl)}&title=${text}`, "_blank")
             }}
-            className="p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 text-left transition-colors cursor-pointer"
+            className="h-auto p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 text-left transition-colors cursor-pointer flex-col items-start block whitespace-normal"
           >
             <Share2 className="h-4 w-4 text-info mb-1.5" />
             <div className="text-body-sm font-bold text-text">Gửi link qua Zalo</div>
             <div className="text-caption text-text-muted mt-0.5">Chia sẻ link cho khách xem trực tiếp trên điện thoại.</div>
-          </button>
+          </Button>
 
           {imageExportProps && (
             <div className="p-3.5 rounded-xl border border-primary-border bg-primary-muted/5 text-left">
@@ -183,15 +185,16 @@ export function CatalogWizardStep4Success({
             </div>
           )}
 
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={onDownloadQR}
-            className="p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 text-left transition-colors cursor-pointer"
+            className="h-auto p-3.5 rounded-xl border border-border bg-surface hover:bg-primary-muted/10 text-left transition-colors cursor-pointer flex-col items-start block whitespace-normal"
           >
             <Download className="h-4 w-4 text-success mb-1.5" />
             <div className="text-body-sm font-bold text-text">In tem QR để bàn</div>
             <div className="text-caption text-text-muted mt-0.5">Đặt tại quầy để khách quét xem menu sản phẩm.</div>
-          </button>
+          </Button>
 
         </div>
       </div>

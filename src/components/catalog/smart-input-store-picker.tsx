@@ -49,11 +49,12 @@ export function SmartInputStorePicker({
             {availableProducts.map((p) => {
               const isSelected = selectedProducts.some((sp) => sp.id === p.id)
               return (
-                <button
+                <Button
                   key={p.id}
                   type="button"
+                  variant="ghost"
                   onClick={() => onToggleProduct(p)}
-                  className={`relative rounded-xl border text-left p-1.5 transition-all flex flex-col gap-1.5 group cursor-pointer ${
+                  className={`h-auto relative rounded-xl border text-left p-1.5 transition-all flex flex-col items-stretch gap-1.5 group cursor-pointer w-full whitespace-normal ${
                     isSelected
                       ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30"
                       : "border-border bg-surface hover:border-primary-border hover:bg-surface-alt/50"
@@ -86,7 +87,7 @@ export function SmartInputStorePicker({
                       {p.price ? `${p.price.toLocaleString("vi-VN")} đ` : p.code}
                     </p>
                   </div>
-                </button>
+                </Button>
               )
             })}
           </div>

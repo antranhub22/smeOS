@@ -77,14 +77,14 @@ function layTrangThaiCacBuoc(steps: FlowStep[], job: JobDetail): FlowStepStatus[
   const activeIdx = currentIndex >= 0 ? currentIndex : 0
 
   return steps.map((s, idx) => {
-    if (job.status === "COMPLETED") return { key: s.key, status: "done" }
-    if (job.status === "CANCELLED") return { key: s.key, status: idx <= activeIdx ? "cancelled" : "pending" }
+    if (job.status === "COMPLETED") return { key: s.key, status: "succeeded" }
+    if (job.status === "CANCELLED") return { key: s.key, status: idx <= activeIdx ? "canceled" : "pending" }
     if (job.status === "FAILED") {
-      if (idx < activeIdx) return { key: s.key, status: "done" }
+      if (idx < activeIdx) return { key: s.key, status: "succeeded" }
       if (idx === activeIdx) return { key: s.key, status: "error" }
       return { key: s.key, status: "pending" }
     }
-    if (idx < activeIdx) return { key: s.key, status: "done" }
+    if (idx < activeIdx) return { key: s.key, status: "succeeded" }
     if (idx === activeIdx) return { key: s.key, status: "active" }
     return { key: s.key, status: "pending" }
   })

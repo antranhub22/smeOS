@@ -1,4 +1,5 @@
 import React from "react"
+import { Button } from "@/components/ui/button"
 import {
   LANDING_TYPE_OPTIONS,
   type LandingPageType,
@@ -23,22 +24,19 @@ export function LandingTypeSelector({ selectedType, onSelectType }: LandingTypeS
         {LANDING_TYPE_OPTIONS.map((opt) => {
           const isSelected = selectedType === opt.type
           return (
-            <label
+            <Button
               key={opt.type}
-              className={`cursor-pointer rounded-full border px-3.5 py-2 text-body-sm transition-colors focus-within:ring-2 focus-within:ring-primary ${
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => onSelectType(opt.type)}
+              aria-pressed={isSelected}
+              className={`h-auto rounded-full border px-3.5 py-2 text-body-sm transition-colors cursor-pointer ${
                 isSelected ? "border-primary bg-selected font-semibold text-selected-text" : "border-border bg-surface text-text hover:bg-surface-alt"
               }`}
             >
-              <input
-                type="radio"
-                name="landing-page-type"
-                value={opt.type}
-                checked={isSelected}
-                onChange={() => onSelectType(opt.type)}
-                className="sr-only"
-              />
               {opt.title}
-            </label>
+            </Button>
           )
         })}
       </div>

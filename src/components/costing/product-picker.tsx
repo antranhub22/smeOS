@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -56,14 +57,14 @@ export function ProductPicker() {
       )}
       <label className="flex min-w-60 flex-[2] flex-col gap-1 text-body-sm text-text">
         Mẫu sản phẩm
-        <select className={selectClass} value={productId} onChange={(e) => setProductId(e.target.value)}>
+        <NativeSelect className={selectClass} value={productId} onChange={(e) => setProductId(e.target.value)}>
           <option value="">Chọn một mẫu…</option>
           {options.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </label>
       <Link href="/san-pham" className="pb-3 text-body-sm font-medium text-primary underline-offset-2 hover:underline">
         Quản lý sản phẩm

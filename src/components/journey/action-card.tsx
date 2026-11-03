@@ -5,6 +5,7 @@ import { COMING_SOON_LABEL } from "@/lib/feature-lock"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { IconTile, toneFor } from "@/components/ui/app-icon"
 import { InfoTip } from "@/components/ui/info-tip"
+import { Button } from "@/components/ui/button"
 
 interface ActionCardProps {
   journey: JourneyDefinition
@@ -42,15 +43,16 @@ export function ActionCard({ journey, onSelect, disabled = false }: ActionCardPr
       />
 
       <h3 className={`text-body-sm sm:text-title-sm font-bold leading-snug ${disabled ? "text-text-muted" : "text-text group-hover:text-primary"}`}>
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => onSelect(journey)}
           disabled={disabled}
           aria-disabled={disabled || undefined}
-          className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring cursor-pointer disabled:cursor-not-allowed transition-colors"
+          className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring cursor-pointer disabled:cursor-not-allowed transition-colors p-0 h-auto font-inherit text-inherit hover:bg-transparent"
         >
           {journey.goal}
-        </button>
+        </Button>
       </h3>
       {journey.category === "COMBO" && (
         <span className="mt-1 text-caption text-text-muted">{journey.steps.length} bước</span>

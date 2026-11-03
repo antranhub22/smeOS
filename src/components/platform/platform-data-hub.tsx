@@ -12,6 +12,7 @@ import React, { useState, useEffect } from "react"
 import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import {
   Globe,
@@ -55,7 +56,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Sản phẩm / Dịch vụ",
     description: "Toàn bộ sản phẩm trong catalog — tên, giá, danh mục, trạng thái",
     icon: Package,
-    color: "text-emerald-600",
+    color: "text-success",
     countKey: "productCount",
   },
   {
@@ -63,7 +64,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Đơn hàng",
     description: "Lịch sử đơn hàng — khách hàng, tổng tiền, trạng thái giao hàng",
     icon: ShoppingCart,
-    color: "text-blue-600",
+    color: "text-info",
     countKey: "orderCount",
   },
   {
@@ -71,7 +72,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Thành viên",
     description: "Danh sách nhân sự đang hoạt động trong tổ chức",
     icon: Users,
-    color: "text-violet-600",
+    color: "text-accent",
     countKey: "memberCount",
   },
   {
@@ -79,7 +80,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Chi nhánh",
     description: "Các cơ sở / địa điểm kinh doanh với tồn kho",
     icon: Building2,
-    color: "text-amber-600",
+    color: "text-warning",
     countKey: "branchCount",
   },
   {
@@ -87,7 +88,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Khách hàng",
     description: "Danh bạ khách hàng — liên hệ, lịch sử, ghi chú",
     icon: UserCircle,
-    color: "text-rose-600",
+    color: "text-danger",
     countKey: "memberCount", // fallback
   },
   {
@@ -103,7 +104,7 @@ const DOMAINS: DomainEntry[] = [
     label: "File Excel đã tải lên",
     description: "Kho lưu trữ các file Excel (.xlsx, .xls, .csv) do cửa hàng tải lên kèm chứng chỉ quét mã độc",
     icon: FileSpreadsheet,
-    color: "text-teal-600",
+    color: "text-success",
     countKey: "spreadsheetCount",
   },
 ]
@@ -135,10 +136,17 @@ function OrgCard({
     org.productCount + org.orderCount + org.memberCount + org.generationJobCount
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => onOpen(org)}
-      className="group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onOpen(org)
+        }
+      }}
+      className="group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary cursor-pointer"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -218,7 +226,7 @@ function OrgCard({
         </span>
         <span className="ml-auto text-text-muted">{org.industryKey ?? "Chưa phân ngành"}</span>
       </div>
-    </button>
+    </div>
   )
 }
 
@@ -236,9 +244,9 @@ function DomainPicker({
       {/* Org summary bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { icon: Package, label: "Sản phẩm", value: org.productCount, color: "text-emerald-600" },
-          { icon: ShoppingCart, label: "Đơn hàng", value: org.orderCount, color: "text-blue-600" },
-          { icon: Users, label: "Thành viên", value: org.memberCount, color: "text-violet-600" },
+          { icon: Package, label: "Sản phẩm", value: org.productCount, color: "text-success" },
+          { icon: ShoppingCart, label: "Đơn hàng", value: org.orderCount, color: "text-info" },
+          { icon: Users, label: "Thành viên", value: org.memberCount, color: "text-accent" },
           { icon: BarChart3, label: "Credit", value: org.creditBalance.toLocaleString("vi-VN"), color: "text-primary" },
         ].map((s) => (
           <Card key={s.label} className="p-3 flex items-center gap-2.5">
@@ -286,11 +294,18 @@ function DomainPicker({
           const count = org[d.countKey]
           const Icon = d.icon
           return (
-            <button
+            <div
               key={d.key}
-              type="button"
+              role="button"
+              tabIndex={0}
               onClick={() => onSelect(d.key)}
-              className="group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-2.5 focus:outline-primary"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  onSelect(d.key)
+                }
+              }}
+              className="group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-2.5 focus:outline-primary cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -313,7 +328,7 @@ function DomainPicker({
                 <FileDown size={11} />
                 Xem chi tiết + Tải CSV
               </div>
-            </button>
+            </div>
           )
         })}
       </div>
@@ -388,25 +403,29 @@ export function PlatformDataHub() {
       {/* Breadcrumb */}
       <div className="space-y-1">
         <nav className="flex items-center gap-2 text-caption font-bold text-text-muted flex-wrap">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={handleBackToOrgs}
-            className="flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
+            className="h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
           >
             <Globe size={15} className="text-primary" />
             <span>Dữ Liệu Nền Tảng</span>
-          </button>
+          </Button>
           {selectedOrg && (
             <>
               <ChevronRight size={13} className="text-text-muted/60" />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleBackToDomains}
-                className={`flex items-center gap-1.5 transition-colors ${selectedDomain ? "hover:text-primary text-text-muted" : "text-primary font-extrabold"}`}
+                className={`h-auto p-0 flex items-center gap-1.5 transition-colors ${selectedDomain ? "hover:text-primary text-text-muted" : "text-primary font-extrabold"}`}
               >
                 <Building2 size={14} />
                 <span>{selectedOrg.name}</span>
-              </button>
+              </Button>
             </>
           )}
           {selectedDomain && selectedDomainMeta && (
@@ -424,7 +443,7 @@ export function PlatformDataHub() {
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-text tracking-tight flex items-center gap-2">
+              <h2 className="text-title font-bold text-text tracking-tight flex items-center gap-2">
                 {selectedDomain && selectedDomainMeta ? (
                   <>
                     <selectedDomainMeta.icon className={selectedDomainMeta.color} size={20} />
@@ -467,7 +486,7 @@ export function PlatformDataHub() {
               <>
                 <div className="relative w-44 sm:w-52">
                   <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Tìm tổ chức…"
                     value={search}
@@ -517,18 +536,25 @@ export function PlatformDataHub() {
                 ENTERPRISE: `DN (${typeCounts.ENTERPRISE})`,
               }
               return (
-                <button
+                <div
                   key={t}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setFilterType(t)}
-                  className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      setFilterType(t)
+                    }
+                  }}
+                  className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                     filterType === t
                       ? "bg-primary text-white"
                       : "bg-surface border border-border text-text-muted hover:text-text"
                   }`}
                 >
                   {labels[t]}
-                </button>
+                </div>
               )
             })}
             <span className="ml-auto text-caption text-text-muted flex items-center gap-1">

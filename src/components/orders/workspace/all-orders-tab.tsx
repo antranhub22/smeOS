@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { EmptyState } from "@/components/ui/empty-state"
 import { OrderGuidanceCard } from "@/components/templates/orders/order-guidance-card"
 import { OrderCard, type OrderItemCardProps } from "@/components/orders/order-card"
@@ -72,7 +73,7 @@ export function AllOrdersTab({
       {/* Thanh tìm kiếm & bộ lọc */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="w-full sm:w-80">
-          <input
+          <Input
             type="text"
             placeholder={t("orders.filters.searchPlaceholder")}
             className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
@@ -81,7 +82,7 @@ export function AllOrdersTab({
           />
         </div>
         <div className="text-caption text-text-muted">
-          <span className="font-bold text-foreground">{filteredOrders.length}</span> {t("common.terms.order").toLowerCase()}
+          <span className="font-bold text-text">{filteredOrders.length}</span> {t("common.terms.order").toLowerCase()}
         </div>
       </div>
 
@@ -94,11 +95,18 @@ export function AllOrdersTab({
           { id: "delivery" as const, label: t("orders.filters.mobile.delivering"), count: colDelivery.length },
           { id: "finished" as const, label: t("orders.filters.mobile.completed"), count: colCompleted.length },
         ].map((tab) => (
-          <button
+          <div
             key={tab.id}
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => setMobileTab(tab.id)}
-            className={`shrink-0 flex min-h-10 items-center gap-1.5 rounded-full px-3.5 py-1 font-semibold whitespace-nowrap transition-colors ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setMobileTab(tab.id)
+              }
+            }}
+            className={`cursor-pointer shrink-0 flex min-h-10 items-center gap-1.5 rounded-full px-3.5 py-1 font-semibold whitespace-nowrap transition-colors ${
               mobileTab === tab.id
                 ? "bg-primary text-white"
                 : "bg-surface border border-border text-text-muted hover:bg-surface-alt"
@@ -112,7 +120,7 @@ export function AllOrdersTab({
             >
               {tab.count}
             </span>
-          </button>
+          </div>
         ))}
       </div>
 

@@ -5,6 +5,8 @@ import { Sparkles, Clock, Coins, Film, Music, Mic, Type } from "@/components/ui/
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/select";
 import {
   VideoFormat,
   VIDEO_FORMAT_SPECS,
@@ -97,11 +99,11 @@ export function VideoCreateModal({
       <form
         id="video-create-form"
         onSubmit={handleSubmit}
-        className="flex flex-col gap-5 text-xs"
+        className="flex flex-col gap-5 text-caption"
       >
         {/* 1. Chọn khuôn video */}
         <div>
-          <label className="text-xs font-bold text-text block mb-2">
+          <label className="text-caption font-bold text-text block mb-2">
             1. Chọn khuôn định dạng video (6 chuẩn thương mại)
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -109,19 +111,26 @@ export function VideoCreateModal({
               const spec = VIDEO_FORMAT_SPECS[fmtKey];
               const isSelected = format === fmtKey;
               return (
-                <button
+                <div
                   key={fmtKey}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   aria-pressed={isSelected}
                   onClick={() => setFormat(fmtKey)}
-                  className={`text-left rounded-xl border p-3 transition-all flex flex-col justify-between gap-1.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setFormat(fmtKey);
+                    }
+                  }}
+                  className={`text-left rounded-xl border p-3 transition-all flex flex-col justify-between gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                     isSelected
                       ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
                       : "border-border bg-surface hover:border-border-hover"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-1 w-full">
-                    <span className="text-xs font-bold text-text">{spec.label}</span>
+                    <span className="text-caption font-bold text-text">{spec.label}</span>
                     <Badge tone={isSelected ? "success" : "neutral"} className="text-caption px-1.5 py-0">
                       {spec.aspectRatio}
                     </Badge>
@@ -134,7 +143,7 @@ export function VideoCreateModal({
                       <Coins size={11} /> {spec.defaultCreditCost} credits
                     </span>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -142,58 +151,57 @@ export function VideoCreateModal({
 
         {/* 2. Tiêu đề video */}
         <div>
-          <label className="text-xs font-bold text-text block mb-1.5">
+          <label className="text-caption font-bold text-text block mb-1.5">
             2. Tên chiến dịch / Tiêu đề video
           </label>
-          <input
-            type="text"
+          <Input
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="VD: Video giới thiệu sản phẩm hồng Valentine..."
-            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-xs focus:border-primary focus:outline-none"
+            className="text-caption"
           />
         </div>
 
         {/* 3. Âm nhạc & Lồng tiếng */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-semibold text-text-muted flex items-center gap-1 mb-1.5">
+            <label className="text-caption font-semibold text-text-muted flex items-center gap-1 mb-1.5">
               <Music size={13} /> Nhạc nền (Bản quyền miễn phí)
             </label>
-            <select
+            <NativeSelect
               value={musicTrack}
               onChange={(e) => setMusicTrack(e.target.value)}
-              className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-xs focus:border-primary focus:outline-none"
+              className="w-full text-caption"
             >
               <option value="Acoustic Warm Guitar">Acoustic Warm Guitar</option>
               <option value="Upbeat Cheerful Pop">Upbeat Cheerful Pop</option>
               <option value="Lo-Fi Chill Beats">Lo-Fi Chill Beats</option>
               <option value="Romantic Piano Melody">Romantic Piano Melody</option>
               <option value="">Không sử dụng nhạc nền</option>
-            </select>
+            </NativeSelect>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-text-muted flex items-center gap-1 mb-1.5">
+            <label className="text-caption font-semibold text-text-muted flex items-center gap-1 mb-1.5">
               <Mic size={13} /> Giọng đọc lồng tiếng AI
             </label>
-            <select
+            <NativeSelect
               value={voiceCode}
               onChange={(e) => setVoiceCode(e.target.value)}
-              className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-xs focus:border-primary focus:outline-none"
+              className="w-full text-caption"
             >
               <option value="vi-VN-Standard-A">Tiếng Việt - Nữ truyền cảm</option>
               <option value="vi-VN-Standard-B">Tiếng Việt - Nam ấm áp</option>
               <option value="vi-VN-Standard-C">Tiếng Việt - Nữ trẻ trung</option>
               <option value="">Không sử dụng giọng đọc</option>
-            </select>
+            </NativeSelect>
           </div>
         </div>
 
         {/* 4. Phong cách Phụ đề (Caption Styles) */}
         <div>
-          <label className="text-xs font-semibold text-text-muted flex items-center gap-1 mb-2">
+          <label className="text-caption font-semibold text-text-muted flex items-center gap-1 mb-2">
             <Type size={13} /> Phong cách Phụ đề chữ trên Video (Caption Styles)
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -201,12 +209,19 @@ export function VideoCreateModal({
               const spec = CAPTION_STYLE_SPECS[stKey];
               const isSel = captionStyle === stKey;
               return (
-                <button
+                <div
                   key={stKey}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   aria-pressed={isSel}
                   onClick={() => setCaptionStyle(stKey)}
-                  className={`text-left rounded-xl p-2.5 border transition-all text-xs flex flex-col justify-between gap-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setCaptionStyle(stKey);
+                    }
+                  }}
+                  className={`text-left rounded-xl p-2.5 border transition-all text-caption flex flex-col justify-between gap-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                     isSel
                       ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary"
                       : "border-border bg-surface hover:border-border-hover"
@@ -221,21 +236,21 @@ export function VideoCreateModal({
                   <span className="text-caption text-text-muted leading-tight line-clamp-2">
                     {spec.description}
                   </span>
-                </button>
+                </div>
               );
             })}
           </div>
         </div>
 
         {/* Chi phí ước tính */}
-        <div className="rounded-xl bg-surface-alt border border-border p-3.5 flex items-center justify-between text-xs">
+        <div className="rounded-xl bg-surface-alt border border-border p-3.5 flex items-center justify-between text-caption">
           <div className="flex flex-col">
             <span className="font-bold text-text">Dự toán hạn mức:</span>
             <span className="text-text-muted text-caption">
-              {format === "SLIDESHOW" ? "Slideshow cục bộ chi phí $0 API" : "Bao gồm chi phí AI Render & Giọng đọc"}
+              {format === "SLIDESHOW" ? "Slideshow cục bộ chi phí $0 API" : "Bao gồm chi phí AI Dựng hình & Giọng đọc"}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-sm font-extrabold text-warning">
+          <div className="flex items-center gap-1.5 text-body-sm font-extrabold text-warning">
             <Coins size={15} />
             {currentSpec?.defaultCreditCost} Credits
           </div>

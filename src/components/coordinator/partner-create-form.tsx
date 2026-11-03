@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 
 export interface PartnerCreateFormProps {
   onSuccess: () => void
@@ -73,7 +74,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
             placeholder="VD: XUONG-Q1-01"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            className="h-8 text-xs font-mono uppercase"
+            className="h-8 text-caption font-mono uppercase"
             required
           />
         </div>
@@ -83,7 +84,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
             placeholder="Cửa Hàng Nắng Ban Mai"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="h-8 text-xs"
+            className="h-8 text-caption"
             required
           />
         </div>
@@ -93,7 +94,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
             placeholder="0901234567"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="h-8 text-xs"
+            className="h-8 text-caption"
             required
           />
         </div>
@@ -106,7 +107,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
             placeholder="TP. Hồ Chí Minh"
             value={province}
             onChange={(e) => setProvince(e.target.value)}
-            className="h-8 text-xs"
+            className="h-8 text-caption"
           />
         </div>
         <div>
@@ -115,20 +116,20 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
             placeholder="Quận 1, Bình Thạnh..."
             value={district}
             onChange={(e) => setDistrict(e.target.value)}
-            className="h-8 text-xs"
+            className="h-8 text-caption"
           />
         </div>
         <div>
           <label className="text-caption text-text-muted font-semibold block mb-1">Cấp bậc</label>
-          <select
+          <NativeSelect
             value={tier}
             onChange={(e) => setTier(e.target.value as "STANDARD" | "PREFERRED" | "VIP")}
-            className="h-8 w-full rounded-md border border-border bg-surface px-2 text-caption text-text"
+            className="h-8 text-caption"
           >
             <option value="STANDARD">Tiêu chuẩn</option>
             <option value="PREFERRED">Ưu tiên</option>
             <option value="VIP">VIP</option>
-          </select>
+          </NativeSelect>
         </div>
         <div>
           <label className="text-caption text-text-muted font-semibold block mb-1">Định mức đơn/ngày</label>
@@ -138,7 +139,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
             max={500}
             value={capacity}
             onChange={(e) => setCapacity(Number(e.target.value))}
-            className="h-8 text-xs"
+            className="h-8 text-caption"
           />
         </div>
       </div>
@@ -149,7 +150,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
           placeholder="123 Nguyễn Huệ, Phường Bến Nghé"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="h-8 text-xs"
+          className="h-8 text-caption"
         />
       </div>
 
@@ -159,7 +160,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
           variant="outline"
           size="sm"
           onClick={onCancel}
-          className="text-xs"
+          className="text-caption"
         >
           Hủy
         </Button>
@@ -168,7 +169,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
           variant="outline"
           size="sm"
           disabled={submitting}
-          className="text-xs font-bold text-primary border-primary/40 hover:bg-primary/5"
+          className="text-caption font-bold text-primary border-primary/40 hover:bg-primary/5"
         >
           {submitting ? "Đang lưu..." : "Lưu đối tác mới"}
         </Button>

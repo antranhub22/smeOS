@@ -46,10 +46,17 @@ export function NotificationMatrixGroupTable({
   return (
     <div className="rounded-xl border border-border bg-surface overflow-hidden">
       {/* Group Header — Click to expand/collapse */}
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-surface-alt hover:bg-surface-alt/80 transition-colors"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            setExpanded(!expanded)
+          }
+        }}
+        className="w-full flex cursor-pointer items-center justify-between px-4 py-3 bg-surface-alt hover:bg-surface-alt/80 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
       >
         <div className="flex items-center gap-2">
           {expanded ? (
@@ -62,7 +69,7 @@ export function NotificationMatrixGroupTable({
             ({section.events.length} sự kiện)
           </span>
         </div>
-      </button>
+      </div>
 
       {/* Matrix Table */}
       {expanded && (

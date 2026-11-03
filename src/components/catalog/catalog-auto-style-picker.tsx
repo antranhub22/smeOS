@@ -111,11 +111,12 @@ export function CatalogAutoStylePicker({
             "bg-surface-alt text-text-muted border-border"
 
           return (
-            <button
+            <Button
               key={`${suggestion.templateId}-${suggestion.styleId}`}
               type="button"
+              variant="ghost"
               onClick={() => onSelect(suggestion.templateId, suggestion.styleId)}
-              className={`w-full text-left rounded-xl border-2 transition-all duration-200 overflow-hidden cursor-pointer ${
+              className={`h-auto w-full p-0 text-left rounded-xl border-2 transition-all duration-200 overflow-hidden cursor-pointer whitespace-normal block ${
                 isSelected
                   ? "border-primary shadow-md ring-2 ring-primary/20"
                   : "border-border hover:border-primary/40 hover:shadow-xs"
@@ -187,7 +188,7 @@ export function CatalogAutoStylePicker({
                   </div>
                 </div>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>

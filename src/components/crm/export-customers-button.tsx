@@ -138,12 +138,19 @@ function ExportCustomersButtonInner({
             </div>
           )}
 
-          <button
-            type="button"
+          <div
             role="menuitem"
-            className="w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors hover:bg-surface-elevated text-text"
-            onClick={() => handleDownload("xlsx")}
-            disabled={isLoading}
+            tabIndex={isLoading ? -1 : 0}
+            className={`w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-elevated cursor-pointer"
+            }`}
+            onClick={() => !isLoading && handleDownload("xlsx")}
+            onKeyDown={(e) => {
+              if (!isLoading && (e.key === "Enter" || e.key === " ")) {
+                e.preventDefault()
+                handleDownload("xlsx")
+              }
+            }}
           >
             <div className="p-2 rounded-md bg-primary-bg text-primary shrink-0 mt-0.5">
               <FileSpreadsheet className="h-4 w-4" />
@@ -154,14 +161,21 @@ function ExportCustomersButtonInner({
                 Bảng tính 2 sheet gồm danh sách khách hàng và lịch kỷ niệm.
               </p>
             </div>
-          </button>
+          </div>
 
-          <button
-            type="button"
+          <div
             role="menuitem"
-            className="w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors hover:bg-surface-elevated text-text"
-            onClick={() => handleDownload("json")}
-            disabled={isLoading}
+            tabIndex={isLoading ? -1 : 0}
+            className={`w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-elevated cursor-pointer"
+            }`}
+            onClick={() => !isLoading && handleDownload("json")}
+            onKeyDown={(e) => {
+              if (!isLoading && (e.key === "Enter" || e.key === " ")) {
+                e.preventDefault()
+                handleDownload("json")
+              }
+            }}
           >
             <div className="p-2 rounded-md bg-info-bg text-info shrink-0 mt-0.5">
               <Database className="h-4 w-4" />
@@ -172,7 +186,7 @@ function ExportCustomersButtonInner({
                 File backup cấu trúc gốc kèm sở thích, tag, lịch kỷ niệm phục vụ lưu trữ an toàn.
               </p>
             </div>
-          </button>
+          </div>
         </div>
       )}
     </div>

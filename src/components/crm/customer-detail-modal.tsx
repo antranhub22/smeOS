@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import type { CustomerMasterIndex } from "@/modules/crm/domain/customer-master-index"
 
 interface CustomerDetailModalProps {
@@ -103,11 +104,11 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
       size="lg"
       title={
         <div className="flex items-center gap-3">
-          <span className="rounded bg-primary/10 px-2.5 py-1 text-xs font-mono font-bold text-primary flex items-center min-w-14 justify-center">
+          <span className="rounded bg-primary/10 px-2.5 py-1 text-caption font-mono font-bold text-primary flex items-center min-w-14 justify-center">
             {data?.code ?? <Skeleton className="h-3 w-12" />}
           </span>
           <div>
-            <div className="text-base font-bold text-foreground">{data?.name ?? "Chi tiết khách hàng"}</div>
+            <div className="text-title-sm font-bold text-text">{data?.name ?? "Chi tiết khách hàng"}</div>
             <div className="text-caption text-text-muted">{data?.phone}</div>
           </div>
         </div>
@@ -115,42 +116,63 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
     >
       <div className="-mx-5 -mt-5 sm:-mx-6 sm:-mt-6">
         {/* Tab Navigation */}
-        <div className="flex border-b border-border bg-muted/30 px-5 sm:px-6 gap-3 pt-2 text-xs font-semibold">
-          <button
-            type="button"
+        <div className="flex border-b border-border bg-surface-alt/30 px-5 sm:px-6 gap-3 pt-2 text-caption font-semibold">
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setActiveTab("profile")}
-            className={`pb-2.5 px-2 border-b-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setActiveTab("profile")
+              }
+            }}
+            className={`pb-2.5 px-2 border-b-2 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
               activeTab === "profile"
                 ? "border-primary text-primary font-bold"
-                : "border-transparent text-text-muted hover:text-foreground"
+                : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             Hồ sơ Master & RFM
-          </button>
-          <button
-            type="button"
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setActiveTab("occasions")}
-            className={`pb-2.5 px-2 border-b-2 flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setActiveTab("occasions")
+              }
+            }}
+            className={`pb-2.5 px-2 border-b-2 flex items-center gap-1.5 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
               activeTab === "occasions"
                 ? "border-primary text-primary font-bold"
-                : "border-transparent text-text-muted hover:text-foreground"
+                : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             <Calendar className="h-3.5 w-3.5" />
             Dịp kỷ niệm ({data?.occasions?.length ?? 0})
-          </button>
-          <button
-            type="button"
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setActiveTab("privacy")}
-            className={`pb-2.5 px-2 border-b-2 flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                setActiveTab("privacy")
+              }
+            }}
+            className={`pb-2.5 px-2 border-b-2 flex items-center gap-1.5 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
               activeTab === "privacy"
                 ? "border-primary text-primary font-bold"
-                : "border-transparent text-text-muted hover:text-foreground"
+                : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             <Shield className="h-3.5 w-3.5" />
             Quyền riêng tư (Consent)
-          </button>
+          </div>
         </div>
 
         {loading ? (
@@ -158,7 +180,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
             <Loader2 className="h-8 w-8 animate-spin motion-reduce:animate-none text-primary" />
           </div>
         ) : data ? (
-          <div className="flex-1 overflow-y-auto p-6 space-y-5 text-sm">
+          <div className="flex-1 overflow-y-auto p-6 space-y-5 text-body-sm">
             {activeTab === "profile" && (
               <>
                 {/* Dịp kỷ niệm sắp tới (L1 - Nâng lên theo chuẩn 03a UX) */}
@@ -208,23 +230,23 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
 
                 {/* Thông tin liên hệ & Sở thích */}
                 <div className="space-y-3">
-                  <div className="rounded-lg border border-border p-4 space-y-2 text-xs">
-                    <div className="font-bold text-text-main text-sm">Thông tin cá nhân & Địa chỉ</div>
-                    <div className="text-text-muted">SĐT: <span className="font-semibold text-foreground">{data.phone}</span></div>
-                    <div className="text-text-muted">Email: <span className="font-semibold text-foreground">{data.email || "—"}</span></div>
-                    <div className="text-text-muted">Địa chỉ: <span className="font-semibold text-foreground">{data.address || "—"}</span></div>
-                    {data.notes && <div className="text-text-muted">Ghi chú: <span className="italic text-foreground">{data.notes}</span></div>}
+                  <div className="rounded-lg border border-border p-4 space-y-2 text-caption">
+                    <div className="font-bold text-text-main text-body-sm">Thông tin cá nhân & Địa chỉ</div>
+                    <div className="text-text-muted">SĐT: <span className="font-semibold text-text">{data.phone}</span></div>
+                    <div className="text-text-muted">Email: <span className="font-semibold text-text">{data.email || "—"}</span></div>
+                    <div className="text-text-muted">Địa chỉ: <span className="font-semibold text-text">{data.address || "—"}</span></div>
+                    {data.notes && <div className="text-text-muted">Ghi chú: <span className="italic text-text">{data.notes}</span></div>}
                   </div>
 
-                  <div className="rounded-lg border border-border p-4 space-y-2 text-xs">
-                    <div className="font-bold text-text-main text-sm">Gu thẩm mỹ & Sở thích ngành hoa</div>
+                  <div className="rounded-lg border border-border p-4 space-y-2 text-caption">
+                    <div className="font-bold text-text-main text-body-sm">Gu thẩm mỹ & Sở thích ngành hoa</div>
                     <div className="flex items-center gap-2">
                       <span className="text-text-muted">Hoa yêu thích:</span>
-                      <span className="font-semibold text-foreground">{data.preferences.preferredFlowers.join(", ") || "Chưa ghi nhận"}</span>
+                      <span className="font-semibold text-text">{data.preferences.preferredFlowers.join(", ") || "Chưa ghi nhận"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-text-muted">Tone màu chuộng:</span>
-                      <span className="font-semibold text-foreground">{data.preferences.preferredColors.join(", ") || "Chưa ghi nhận"}</span>
+                      <span className="font-semibold text-text">{data.preferences.preferredColors.join(", ") || "Chưa ghi nhận"}</span>
                     </div>
                   </div>
                 </div>
@@ -234,39 +256,39 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
             {activeTab === "occasions" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-text-muted">Các ngày kỷ niệm để hệ thống nhắc gửi thiệp & hoa</span>
+                  <span className="text-caption text-text-muted">Các ngày kỷ niệm để hệ thống nhắc gửi thiệp & hoa</span>
                   <Button size="sm" variant="outline" onClick={() => setShowAddOccasion(!showAddOccasion)}>
                     <Plus className="mr-1 h-3.5 w-3.5" /> Thêm ngày kỷ niệm
                   </Button>
                 </div>
 
                 {showAddOccasion && (
-                  <form onSubmit={handleAddOccasion} className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-4 space-y-3 text-xs">
-                    <div className="font-bold text-foreground">Thêm ngày kỷ niệm mới</div>
+                  <form onSubmit={handleAddOccasion} className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-4 space-y-3 text-caption">
+                    <div className="font-bold text-text">Thêm ngày kỷ niệm mới</div>
                     <div className="grid grid-cols-2 gap-3">
-                      <input
+                      <Input
                         type="text"
                         placeholder="Tên dịp (Sinh nhật vợ, Kỷ niệm...)"
-                        className="rounded border border-border bg-background p-2"
                         value={occName}
                         onChange={(e) => setOccName(e.target.value)}
                         required
+                        className="text-caption"
                       />
-                      <input
+                      <Input
                         type="text"
                         placeholder="Ngày (MM-DD, vd: 10-20 hoặc 03-08)"
-                        className="rounded border border-border bg-background p-2"
                         value={occDate}
                         onChange={(e) => setOccDate(e.target.value)}
                         required
+                        className="text-caption"
                       />
                     </div>
-                    <input
+                    <Input
                       type="text"
                       placeholder="Tên người nhận hoa (nếu khác khách hàng)"
-                      className="w-full rounded border border-border bg-background p-2"
                       value={occRecipient}
                       onChange={(e) => setOccRecipient(e.target.value)}
+                      className="text-caption"
                     />
                     <div className="flex justify-end gap-2">
                       <Button type="button" variant="outline" size="sm" onClick={() => setShowAddOccasion(false)}>Hủy</Button>
@@ -277,18 +299,18 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
 
                 <div className="space-y-2">
                   {data.occasions.length === 0 ? (
-                    <div className="rounded-lg border border-border p-6 text-center text-xs text-text-muted">
+                    <div className="rounded-lg border border-border p-6 text-center text-caption text-text-muted">
                       Chưa có ngày kỷ niệm nào được lưu.
                     </div>
                   ) : (
                     data.occasions.map((o) => (
-                      <div key={o.id} className="flex items-center justify-between rounded-lg border border-border p-3 text-xs">
+                      <div key={o.id} className="flex items-center justify-between rounded-lg border border-border p-3 text-caption">
                         <div className="flex items-center gap-2.5">
                           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-subtle text-primary">
                             <Gift className="h-3.5 w-3.5" />
                           </span>
                           <div>
-                            <div className="font-bold text-foreground">{o.name}</div>
+                            <div className="font-bold text-text">{o.name}</div>
                             <div className="text-text-muted">Người nhận: {o.recipientName || data.name}</div>
                           </div>
                         </div>
@@ -302,7 +324,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
 
             {activeTab === "privacy" && (
               <div className="space-y-4">
-                <div className="rounded-lg bg-info-bg border border-info/30 p-3 text-xs text-info">
+                <div className="rounded-lg bg-info-bg border border-info/30 p-3 text-caption text-info">
                   🛡️ <strong>Chính sách bảo vệ người tiêu dùng:</strong> smeOS chỉ gửi tin nhắn nhắc nhở hoặc tiếp thị qua các kênh khách hàng đã đồng ý (Consent).
                 </div>
 
@@ -315,21 +337,29 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
                   ].map((c) => {
                     const isGranted = data.consents.find((it) => it.channel === c.channel)?.granted ?? false
                     return (
-                      <div key={c.channel} className="flex items-center justify-between p-3.5 text-xs">
+                      <div key={c.channel} className="flex items-center justify-between p-3.5 text-caption">
                         <div>
-                          <div className="font-semibold text-foreground">{c.label}</div>
+                          <div className="font-semibold text-text">{c.label}</div>
                           <div className="text-text-muted">Kênh: {c.channel}</div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleToggleConsent(c.channel, isGranted)}
-                          disabled={actionLoading}
-                          className={`px-3 py-1.5 rounded-full font-bold transition-colors ${
-                            isGranted ? "bg-success-bg text-success hover:opacity-85" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => !actionLoading && handleToggleConsent(c.channel, isGranted)}
+                          onKeyDown={(e) => {
+                            if (!actionLoading && (e.key === "Enter" || e.key === " ")) {
+                              e.preventDefault()
+                              handleToggleConsent(c.channel, isGranted)
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-full font-bold transition-colors cursor-pointer ${
+                            actionLoading ? "opacity-50 cursor-not-allowed" : ""
+                          } ${
+                            isGranted ? "bg-success-bg text-success hover:opacity-85" : "bg-surface-alt text-text-muted hover:bg-surface-alt/80"
                           }`}
                         >
                           {isGranted ? "✓ Đã đồng ý" : "✕ Chưa cấp phép"}
-                        </button>
+                        </div>
                       </div>
                     )
                   })}

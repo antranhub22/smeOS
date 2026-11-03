@@ -3,6 +3,8 @@
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef } from "react"
 import { UploadCloud, X } from "@/components/ui/icons"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
 
 interface SmartInputFileUploaderProps {
   imageFiles: File[]
@@ -74,11 +76,9 @@ export function SmartInputFileUploader({
       </div>
 
       <label className="flex items-center gap-2 text-caption text-text-muted cursor-pointer hover:text-text">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={saveToStore}
-          onChange={(e) => onToggleSaveToStore(e.target.checked)}
-          className="rounded border-border text-primary focus:ring-primary"
+          onCheckedChange={(checked) => onToggleSaveToStore(!!checked)}
         />
         <span>Tự động lưu các ảnh mới này vào Kho sản phẩm tiệm để tái sử dụng</span>
       </label>
@@ -95,17 +95,19 @@ export function SmartInputFileUploader({
                 alt={`Ảnh sản phẩm ${idx + 1}`}
                 className="h-full w-full object-cover"
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={(e) => {
                   e.stopPropagation()
                   onRemoveImage(idx)
                 }}
-                className="absolute top-1 right-1 h-5 w-5 rounded-full bg-danger text-surface flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 h-5 w-5 p-0 rounded-full bg-danger text-surface flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
                 aria-label="Xóa ảnh này"
               >
                 <X className="h-3 w-3" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>

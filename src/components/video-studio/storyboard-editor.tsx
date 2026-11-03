@@ -5,6 +5,9 @@ import { Clock, Plus, Trash2, AlertTriangle, Sparkles, Check, Image as ImageIcon
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { VideoSceneItem, VideoFormat, VIDEO_FORMAT_SPECS, VideoMotionEffect, VIDEO_MOTION_SPECS } from "@/modules/video-studio/domain/video-types";
 import { validateStoryboard } from "@/modules/video-studio/domain/video-storyboard";
 
@@ -138,8 +141,8 @@ export function StoryboardEditor({
       {/* Header trạng thái kịch bản */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-surface p-4 rounded-xl border border-border">
         <div>
-          <h3 className="text-sm font-bold text-text">Kịch bản phân cảnh chi tiết (Storyboard)</h3>
-          <p className="text-xs text-text-muted mt-0.5">
+          <h3 className="text-title-sm font-bold text-text">Kịch bản phân cảnh chi tiết (Storyboard)</h3>
+          <p className="text-caption text-text-muted mt-0.5">
             Phân rã trường nguyên tử: chỉnh sửa độc lập văn bản, phụ đề, thời lượng và hiệu ứng từng cảnh.
           </p>
         </div>
@@ -154,7 +157,7 @@ export function StoryboardEditor({
 
       {/* Cảnh báo nếu kịch bản chưa hợp lệ */}
       {!validation.isValid && (
-        <div className="flex items-start gap-2 bg-warning/10 border border-warning/30 text-text rounded-lg p-3 text-xs">
+        <div className="flex items-start gap-2 bg-warning/10 border border-warning/30 text-text rounded-lg p-3 text-caption">
           <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning" />
           <div className="flex flex-col gap-0.5">
             <span className="font-semibold">Cần điều chỉnh kịch bản:</span>
@@ -168,18 +171,18 @@ export function StoryboardEditor({
       {/* Danh sách các cảnh */}
       <div className="flex flex-col gap-3">
         {scenes.map((scene, idx) => (
-          <Card key={idx} className="border border-border p-4 bg-background flex flex-col gap-3 shadow-xs">
+          <Card key={idx} className="border border-border p-4 bg-surface flex flex-col gap-3 shadow-xs">
             <div className="flex items-center justify-between border-b border-border/50 pb-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-caption font-bold text-primary">
                   #{idx + 1}
                 </span>
-                <span className="text-xs font-bold text-text">Phân cảnh {idx + 1}</span>
+                <span className="text-caption font-bold text-text">Phân cảnh {idx + 1}</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 text-xs">
+                <div className="flex items-center gap-1 text-caption">
                   <Clock size={12} className="text-text-muted" />
-                  <input
+                  <Input
                     type="number"
                     step="0.5"
                     min="1"
@@ -187,20 +190,22 @@ export function StoryboardEditor({
                     disabled={isLocked}
                     value={scene.durationSeconds}
                     onChange={(e) => handleUpdateScene(idx, "durationSeconds", parseFloat(e.target.value) || 1.0)}
-                    className="w-14 rounded border border-border px-1.5 py-0.5 text-xs text-center font-bold focus:border-primary focus:outline-none disabled:bg-muted"
+                    className="w-16 h-7 text-caption text-center font-bold"
                   />
                   <span className="text-text-muted">giây</span>
                 </div>
                 {!isLocked && scenes.length > 1 && (
-                  <button
+                  <Button
                     type="button"
+                    variant="danger"
+                    size="sm"
                     onClick={() => handleRemoveScene(idx)}
-                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-danger bg-danger/10 hover:bg-danger/20 border border-danger/30 transition-colors cursor-pointer shrink-0"
+                    className="h-7 px-2 text-caption gap-1"
                     title={`Xóa phân cảnh #${idx + 1}`}
                   >
                     <Trash2 size={13} />
                     <span>Xóa cảnh</span>
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -245,18 +250,18 @@ export function StoryboardEditor({
                 <label className="text-caption font-semibold text-text-muted block mb-1">
                   Chuyển động máy quay (Camera)
                 </label>
-                <select
+                <NativeSelect
                   disabled={isLocked}
                   value={scene.motionEffect || "ZOOM_IN"}
                   onChange={(e) => handleUpdateScene(idx, "motionEffect", e.target.value as VideoMotionEffect)}
-                  className="w-full rounded-md border border-success/30 bg-success/10 text-success px-2.5 py-1.5 text-xs font-semibold focus:border-primary focus:outline-none disabled:bg-muted"
+                  className="w-full text-caption font-semibold"
                 >
                   {Object.values(VIDEO_MOTION_SPECS).map((m) => (
                     <option key={m.motion} value={m.motion}>
                       🎬 {m.label}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               </div>
 
               {/* Hiệu ứng chuyển cảnh */}
@@ -264,11 +269,11 @@ export function StoryboardEditor({
                 <label className="text-caption font-semibold text-text-muted block mb-1">
                   Chuyển cảnh (Transition)
                 </label>
-                <select
+                <NativeSelect
                   disabled={isLocked}
                   value={scene.transitionEffect || "fade"}
                   onChange={(e) => handleUpdateScene(idx, "transitionEffect", e.target.value as VideoSceneItem["transitionEffect"])}
-                  className="w-full rounded-md border border-border px-2.5 py-1.5 text-xs focus:border-primary focus:outline-none disabled:bg-muted"
+                  className="w-full text-caption"
                 >
                   <option value="fade">Mờ dần (Fade)</option>
                   <option value="slide_left">Trượt trái (Slide Left)</option>
@@ -276,7 +281,7 @@ export function StoryboardEditor({
                   <option value="zoom_in">Phóng to (Zoom In)</option>
                   <option value="zoom_out">Thu nhỏ (Zoom Out)</option>
                   <option value="dissolve">Hòa tan (Dissolve)</option>
-                </select>
+                </NativeSelect>
               </div>
 
               {/* Lời thoại đọc voiceover */}
@@ -284,13 +289,13 @@ export function StoryboardEditor({
                 <label className="text-caption font-semibold text-text-muted block mb-1">
                   Lời thoại lồng tiếng AI (Voiceover Script)
                 </label>
-                <textarea
+                <Textarea
                   rows={2}
                   disabled={isLocked}
                   value={scene.voiceScript || ""}
                   onChange={(e) => handleUpdateScene(idx, "voiceScript", e.target.value)}
                   placeholder="Nhập kịch bản cho giọng đọc AI..."
-                  className="w-full rounded-md border border-border px-3 py-1.5 text-xs focus:border-primary focus:outline-none disabled:bg-muted resize-none leading-relaxed"
+                  className="text-caption resize-none leading-relaxed"
                 />
               </div>
             </div>
@@ -307,7 +312,7 @@ export function StoryboardEditor({
         )}
         <div className="flex items-center gap-2 ml-auto">
           {savedSuccess && (
-            <span className="text-xs font-semibold text-success flex items-center gap-1">
+            <span className="text-caption font-semibold text-success flex items-center gap-1">
               <Check size={14} /> Đã lưu kịch bản
             </span>
           )}

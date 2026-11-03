@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 
 type ChangeRequest = {
   id: string
@@ -85,11 +87,10 @@ export function ProductChangeRequestsCard({ productId, current, onChanged }: { p
             <ul className="flex flex-col gap-2">
               {r.fields.map((f) => (
                 <li key={f.key} className="flex items-start gap-2 text-body-sm">
-                  <input
+                  <Checkbox
                     id={`cr-${r.id}-${f.key}`}
-                    type="checkbox"
                     checked={(chon[r.id] ?? []).includes(f.key)}
-                    onChange={(e) => doi(r.id, f.key, e.target.checked)}
+                    onCheckedChange={(checked) => doi(r.id, f.key, !!checked)}
                     className="mt-1"
                   />
                   <label htmlFor={`cr-${r.id}-${f.key}`} className="min-w-0 flex-1">
@@ -102,13 +103,13 @@ export function ProductChangeRequestsCard({ productId, current, onChanged }: { p
             </ul>
             <div className="flex flex-wrap items-center gap-2">
               <label htmlFor={`cr-ly-do-${r.id}`} className="sr-only">Lý do từ chối</label>
-              <input
+              <Input
                 id={`cr-ly-do-${r.id}`}
                 value={lyDo[r.id] ?? ""}
                 onChange={(e) => setLyDo((prev) => ({ ...prev, [r.id]: e.target.value }))}
                 maxLength={500}
                 placeholder="Lý do nếu từ chối"
-                className="h-9 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm text-text"
+                className="h-9 min-w-0 flex-1 text-body-sm"
               />
               <Button size="sm" variant="outline" disabled={dangGui !== null || !(lyDo[r.id] ?? "").trim()} onClick={() => gui(r.id, "reject")}>
                 {dangGui === `${r.id}:reject` && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />}

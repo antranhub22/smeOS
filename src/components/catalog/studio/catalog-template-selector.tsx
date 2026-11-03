@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react"
 import { Check, Sparkles, BookOpen, Layers, Eye, Smartphone, FileText } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type {
   CatalogTemplateId,
   CatalogStyleId,
@@ -101,24 +102,28 @@ export function CatalogTemplateSelector({
 
         {/* Tab switcher: Mẫu Prototype vs Phong cách Styles */}
         <div className="inline-flex p-1 rounded-xl bg-surface-alt border border-border">
-          <button
+          <Button
             type="button"
+            variant={activeTab === "templates" ? "secondary" : "ghost"}
+            size="xs"
             onClick={() => setActiveTab("templates")}
-            className={`px-3 py-1.5 rounded-lg text-caption font-bold transition-all ${
+            className={`px-3 py-1.5 h-auto rounded-lg text-caption font-bold transition-all ${
               activeTab === "templates" ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-text"
             }`}
           >
             5 Template Bố Cục
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={activeTab === "styles" ? "secondary" : "ghost"}
+            size="xs"
             onClick={() => setActiveTab("styles")}
-            className={`px-3 py-1.5 rounded-lg text-caption font-bold transition-all ${
+            className={`px-3 py-1.5 h-auto rounded-lg text-caption font-bold transition-all ${
               activeTab === "styles" ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-text"
             }`}
           >
             12 Thư Viện Style 2026
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -131,11 +136,12 @@ export function CatalogTemplateSelector({
               {CATALOG_TEMPLATE_LIST.map((tpl) => {
                 const isSelected = selectedTemplateId === tpl.id
                 return (
-                  <button
+                  <Button
                     key={tpl.id}
                     type="button"
+                    variant="outline"
                     onClick={() => onSelectTemplate(tpl.id, tpl.defaultStyleId)}
-                    className={`w-full p-4 rounded-2xl border text-left transition-all flex flex-col justify-between gap-3 cursor-pointer ${
+                    className={`w-full h-auto p-4 rounded-2xl border text-left transition-all flex flex-col justify-between items-start gap-3 cursor-pointer ${
                       isSelected
                         ? "border-primary bg-primary-muted/20 ring-2 ring-primary shadow-xs"
                         : "border-border bg-surface hover:bg-surface-alt/60"
@@ -156,13 +162,13 @@ export function CatalogTemplateSelector({
                       </div>
                     </div>
 
-                    <p className="text-caption text-text-muted leading-relaxed">{tpl.description}</p>
+                    <p className="text-caption text-text-muted leading-relaxed font-normal whitespace-normal">{tpl.description}</p>
 
-                    <div className="pt-2 border-t border-border/60 flex items-center justify-between text-caption text-text-muted">
+                    <div className="pt-2 border-t border-border/60 flex items-center justify-between text-caption text-text-muted w-full font-normal">
                       <span>Gồm <strong>{tpl.structure.length} loại trang</strong></span>
                       <span className="italic text-primary font-medium">{tpl.recommendedFor.slice(0, 45)}...</span>
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -171,18 +177,20 @@ export function CatalogTemplateSelector({
               {/* Category Filter Chips */}
               <div className="flex items-center gap-1.5 flex-wrap">
                 {CATEGORY_TABS.map((cat) => (
-                  <button
+                  <Button
                     key={cat.id}
                     type="button"
+                    variant={styleCategory === cat.id ? "primary" : "outline"}
+                    size="xs"
                     onClick={() => setStyleCategory(cat.id)}
-                    className={`px-2.5 py-1 rounded-lg text-caption font-bold transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 h-auto rounded-lg text-caption font-bold transition-all cursor-pointer ${
                       styleCategory === cat.id
                         ? "bg-primary text-surface shadow-xs"
                         : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface-alt"
                     }`}
                   >
                     {cat.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
@@ -192,11 +200,12 @@ export function CatalogTemplateSelector({
                   .map((s) => {
                     const isSelected = selectedStyleId === s.id
                     return (
-                      <button
+                      <Button
                         key={s.id}
                         type="button"
+                        variant="outline"
                         onClick={() => onSelectStyle(s.id)}
-                        className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
+                        className={`p-3 h-auto rounded-xl border text-left transition-all flex flex-col justify-between items-stretch cursor-pointer ${
                           isSelected
                             ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
                             : "border-border bg-surface hover:bg-surface-alt/60"
@@ -209,15 +218,15 @@ export function CatalogTemplateSelector({
                           {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
                         </div>
 
-                        <p className="text-caption text-text-muted line-clamp-2 leading-relaxed mb-2">{s.description}</p>
+                        <p className="text-caption text-text-muted line-clamp-2 leading-relaxed mb-2 font-normal whitespace-normal">{s.description}</p>
 
                         <div className="flex items-center gap-1.5 mt-auto">
                           <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.background }} />
                           <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.accent }} />
                           <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.textPrimary }} />
-                          <span className="text-caption text-text-muted font-mono ml-auto">{s.typography.fontDisplay.replace("font-", "")}</span>
+                          <span className="text-caption text-text-muted font-mono ml-auto font-normal">{s.typography.fontDisplay.replace("font-", "")}</span>
                         </div>
-                      </button>
+                      </Button>
                     )
                   })}
               </div>
@@ -255,17 +264,19 @@ export function CatalogTemplateSelector({
             {/* Page navigation dots */}
             <div className="flex items-center gap-1.5 mt-4">
               {resolved.pages.map((p, idx) => (
-                <button
+                <Button
                   key={p.pageNumber}
                   type="button"
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={() => setPreviewPageIdx(idx)}
-                  className="flex h-6 min-w-6 cursor-pointer items-center justify-center"
+                  className="flex h-6 w-6 min-w-6 cursor-pointer items-center justify-center p-0 rounded-full"
                   aria-label={`Trang ${idx + 1}`}
                   aria-current={previewPageIdx === idx ? "page" : undefined}
                 >
                   {/* Vùng nhấn 24px (WCAG 2.5.8), chấm hiển thị giữ kích thước cũ */}
                   <span className={`h-2 rounded-full transition-all ${previewPageIdx === idx ? "w-6 bg-primary" : "w-2 bg-border"}`} />
-                </button>
+                </Button>
               ))}
             </div>
           </div>

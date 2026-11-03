@@ -2,6 +2,7 @@
 
 import React from "react"
 import { MessageCircle } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { SmartFlowerImage } from "../smart-flower-image"
@@ -91,11 +92,12 @@ export function CatalogCardOverlay({
           }}
         />
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => onSelectProduct(product)}
           aria-label={`Xem chi tiết ${product.name}`}
-          className="absolute inset-0 z-[15] cursor-pointer"
+          className="absolute inset-0 z-[15] cursor-pointer rounded-none p-0"
         />
 
         {/* Overlay Content */}
@@ -109,14 +111,14 @@ export function CatalogCardOverlay({
             </span>
           )}
           <h4
-            className={`text-lg font-bold leading-snug line-clamp-2 ${fontDisplay}`}
+            className={`text-title-sm font-bold leading-snug line-clamp-2 ${fontDisplay}`}
             style={{ color: textPrimary }}
           >
             {product.name}
           </h4>
           <div className="flex items-center justify-between pt-2">
             <div>
-              <div className="text-base font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
+              <div className="text-body font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
                 {formatVnd(product.price)}
               </div>
             </div>
@@ -125,7 +127,7 @@ export function CatalogCardOverlay({
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Đặt ngay qua Zalo"
-              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-md active:scale-95"
+              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-caption font-bold transition-all shadow-md active:scale-95"
               style={{ backgroundColor: ctaBg, color: ctaText }}
             >
               <MessageCircle size={14} aria-hidden="true" />

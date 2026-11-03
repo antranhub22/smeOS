@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation"
 import { Camera, X, Check, Pencil, Info, AlertTriangle, RotateCcw } from "@/components/ui/icons"
 import { FlowTopBar } from "@/components/layout/flow-top-bar"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
@@ -66,12 +67,12 @@ type AnalysisRow = {
   approval_state: "PENDING" | "APPROVED" | "REJECTED"
 }
 
-type RunPhase = "uploading" | "queuing" | "waiting" | "processing"
+type RunPhase = "uploading" | "queuing" | "waiting" | "running"
 const RUN_PHASES: { key: RunPhase; label: string }[] = [
   { key: "uploading", label: "Tải ảnh lên" },
   { key: "queuing", label: "Tạo lượt phân tích" },
   { key: "waiting", label: "Xếp hàng chờ xử lý" },
-  { key: "processing", label: "Phân tích ảnh (AI)" },
+  { key: "running", label: "Phân tích ảnh (AI)" },
 ]
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -319,7 +320,7 @@ export function UploadWizard() {
     }
     const { job: row } = (await res.json()) as { job: JobState }
     setJob(row)
-    if (row.status === "PROCESSING") setRunPhase("processing")
+    if (row.status === "PROCESSING") setRunPhase("running")
 
     if (row.status === "COMPLETED") {
       await loadAnalyses(jobId, assets)
@@ -457,7 +458,7 @@ export function UploadWizard() {
           await loadAnalyses(jobId, [])
         } else if (row.status === "PENDING" || row.status === "PROCESSING") {
           setStep("running")
-          setRunPhase(row.status === "PROCESSING" ? "processing" : "waiting")
+          setRunPhase(row.status === "PROCESSING" ? "running" : "waiting")
           soLuotHoiRef.current = 0
           await pollJob(jobId, [])
         }
@@ -632,19 +633,26 @@ function UploadStep({
             e.target.value = ""
           }}
         />
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={onPick}
-          className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-border bg-surface px-5 py-8"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              onPick()
+            }
+          }}
+          className="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-border bg-surface px-5 py-8 focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-alt">
             <Camera size={26} strokeWidth={1.8} className="text-primary" />
           </div>
           <div className="text-title-sm font-bold">Chụp ảnh hoặc chọn từ thư viện</div>
-          <div className="text-center text-xs text-text-muted">
+          <div className="text-center text-caption text-text-muted">
             Nhiều ảnh cùng lúc được — mỗi ảnh một lượt nhận diện. Tối đa {MAX_PHOTOS} ảnh, jpg/png/webp/gif.
           </div>
-        </button>
+        </div>
 
         {note && (
           <div className="flex items-start gap-1.5 rounded-lg bg-warning-bg px-2.5 py-2 text-caption text-warning">
@@ -661,14 +669,16 @@ function UploadStep({
                 <div key={p.id} className="relative aspect-square overflow-hidden rounded-xl bg-surface-alt">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={p.previewUrl} alt={p.name} className="h-full w-full object-cover" />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => onRemove(p.id)}
-                    className="absolute right-0.5 top-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-black/60"
+                    className="absolute right-0.5 top-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 p-0 hover:bg-black/80"
                     aria-label="Bỏ ảnh"
                   >
                     <X size={13} strokeWidth={2.6} color="white" />
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -716,21 +726,23 @@ function ConfirmStep({
                 <img src={p.previewUrl} alt={p.name} className="h-full w-full object-cover" />
               </div>
               <div className="min-w-0 flex-1">
-                <input
+                <Input
                   value={p.name}
                   onChange={(e) => onRename(p.id, e.target.value)}
-                  className="w-full border-none bg-transparent text-body font-semibold text-text outline-none"
+                  className="border-none bg-transparent text-body font-semibold text-text shadow-none p-0 h-auto focus-visible:ring-0"
                 />
                 <div className="mt-0.5 truncate text-caption text-text-muted">{p.file.name}</div>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => onRemove(p.id)}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
+                className="flex h-9 w-9 items-center justify-center rounded-full p-0 text-text-muted hover:bg-surface-alt"
                 aria-label="Bỏ ảnh"
               >
                 <X size={17} strokeWidth={2} />
-              </button>
+              </Button>
             </Card>
           ))}
           {photos.length === 0 && (
@@ -830,11 +842,11 @@ function RunningStep({
                 <div className={cn("min-h-[22px] w-0.5 flex-1", isDone ? "bg-secondary" : "bg-border")} />
               </div>
               <div className="pb-[22px]">
-                <div className={cn("text-sm", i > phaseIndex ? "text-text-muted" : "font-bold")}>{p.label}</div>
+                <div className={cn("text-body-sm", i > phaseIndex ? "text-text-muted" : "font-bold")}>{p.label}</div>
                 {isActive && p.key === "waiting" && job?.status === "PENDING" && (
                   <div className="mt-0.5 text-caption text-text-muted">Chờ tới lượt trong hàng đợi worker...</div>
                 )}
-                {isActive && p.key === "processing" && (
+                {isActive && p.key === "running" && (
                   <div className="mt-0.5 text-caption text-text-muted">
                     {job?.stage === "DETECTING" ? "Đang nhận diện cấu phần trong ảnh..." : "Đang xử lý..."}
                   </div>
@@ -848,7 +860,7 @@ function RunningStep({
       {choLau && (
         <div className="flex items-start gap-2.5 rounded-xl bg-warning-bg p-3.5">
           <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning" />
-          <div className="text-xs leading-relaxed text-warning">
+          <div className="text-caption leading-relaxed text-warning">
             Lượt chạy đã xếp hàng hơn hai phút mà chưa có tiến trình nào nhận. Thường là tiến trình
             phân tích ảnh chưa được bật. Báo người vận hành, hoặc huỷ lượt này rồi chạy lại sau.
           </div>
@@ -857,7 +869,7 @@ function RunningStep({
 
       <div className="flex items-start gap-2.5 rounded-xl bg-surface-alt p-3.5">
         <Info size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-primary" />
-        <div className="text-xs leading-relaxed text-text-muted">
+        <div className="text-caption leading-relaxed text-text-muted">
           Job chạy ở máy chủ và không mất khi rời màn hình — mở lại ở mục Lượt chạy để xem kết quả.
         </div>
       </div>
@@ -1025,22 +1037,26 @@ function ResultStep({
             Ảnh {index + 1}/{analyses.length}
           </span>
           <div className="flex gap-2">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               disabled={index === 0}
               onClick={() => setIndex(index - 1)}
               className="rounded-full px-2.5 py-1 font-bold text-primary disabled:opacity-30"
             >
               ← Trước
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               disabled={index === analyses.length - 1}
               onClick={() => setIndex(index + 1)}
               className="rounded-full px-2.5 py-1 font-bold text-primary disabled:opacity-30"
             >
               Sau →
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -1127,61 +1143,67 @@ function ResultStep({
                         <div className="text-body font-bold">× {qty}</div>
                       )}
                       {canEdit && !isEditingRow && (
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="sm"
                           onClick={() => {
                             setEditing({ section, rowIndex })
                             setEditName(rowLabel(section, row))
                             setEditValue(qty != null ? String(qty) : "")
                             setRowError(null)
                           }}
-                          className="flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
+                          className="flex h-9 w-9 items-center justify-center rounded-full p-0 text-text-muted hover:bg-surface-alt"
                           aria-label="Sửa cấu phần"
                         >
                           <Pencil size={16} strokeWidth={1.8} />
-                        </button>
+                        </Button>
                       )}
                     </div>
 
                     {isEditingRow && (
                       <div className="flex items-center gap-2 rounded-xl bg-surface-alt p-2.5">
-                        <input
+                        <Input
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
                           placeholder="Tên cấu phần"
                           aria-label="Tên cấu phần"
-                          className="h-[34px] min-w-0 flex-1 rounded-lg border-[1.5px] border-primary bg-surface px-2 text-body outline-none"
+                          className="h-[34px] min-w-0 flex-1 border-[1.5px] border-primary bg-surface px-2 text-body"
                         />
                         {qty != null && (
-                          <input
+                          <Input
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             inputMode="numeric"
                             aria-label="Số lượng"
-                            className="h-[34px] w-14 flex-shrink-0 rounded-lg border-[1.5px] border-primary bg-surface text-center text-body font-bold outline-none"
+                            className="h-[34px] w-14 flex-shrink-0 border-[1.5px] border-primary bg-surface text-center text-body font-bold"
                           />
                         )}
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="sm"
                           disabled={busy}
                           onClick={() => handleSaveEdit(section)}
-                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-secondary-text hover:bg-surface disabled:opacity-40"
+                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full p-0 text-secondary-text hover:bg-surface disabled:opacity-40"
                           aria-label="Lưu"
                         >
                           <Check size={17} strokeWidth={2.4} />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="sm"
                           disabled={busy}
                           onClick={() => {
                             setEditing(null)
                             setRowError(null)
                           }}
-                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface disabled:opacity-40"
+                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full p-0 text-text-muted hover:bg-surface disabled:opacity-40"
                           aria-label="Bỏ sửa"
                         >
                           <X size={17} strokeWidth={2.2} />
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -1315,19 +1337,33 @@ function XacNhanDialog({
       aria-modal="true"
       aria-label="Xác nhận kết quả phân tích"
     >
-      <button type="button" className="flex-1" aria-label="Đóng" onClick={onDong} />
+      <div
+        role="button"
+        tabIndex={-1}
+        className="flex-1 cursor-pointer"
+        aria-label="Đóng"
+        onClick={onDong}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            onDong()
+          }
+        }}
+      />
 
       <div className="flex max-h-[86%] flex-col rounded-t-2xl bg-surface">
         <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
           <div className="text-title-sm font-extrabold">Xác nhận trước khi ghi</div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onDong}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
+            className="flex h-9 w-9 items-center justify-center rounded-full p-0 text-text-muted hover:bg-surface-alt"
             aria-label="Đóng"
           >
             <X size={18} strokeWidth={2} />
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto p-5">
@@ -1390,12 +1426,11 @@ function XacNhanDialog({
               <label htmlFor="ly-do-tu-choi" className="text-meta font-bold">
                 Vì sao bỏ kết quả này
               </label>
-              <input
+              <Input
                 id="ly-do-tu-choi"
                 value={lyDo}
                 onChange={(e) => setLyDo(e.target.value)}
                 placeholder="Nhận sai loài, ảnh chụp thiếu sản phẩm..."
-                className="h-[38px] rounded-lg border-[1.5px] border-border bg-surface px-2.5 text-body-sm outline-none focus:border-primary"
               />
               <div className="text-caption text-text-muted">
                 Câu này vào nhật ký kiểm toán — chỗ duy nhất còn giữ được lý do sau này.

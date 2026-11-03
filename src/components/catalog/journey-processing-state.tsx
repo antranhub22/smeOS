@@ -6,7 +6,7 @@ import { Loader2, CheckCircle2, Circle } from "@/components/ui/icons"
 export interface ProcessingStep {
   id: string
   label: string
-  status: "pending" | "running" | "done" | "skipped"
+  status: "pending" | "running" | "succeeded" | "skipped"
 }
 
 interface JourneyProcessingStateProps {
@@ -18,7 +18,7 @@ export function JourneyProcessingState({
   title = "AI đang xử lý...",
   steps,
 }: JourneyProcessingStateProps) {
-  const doneCount = steps.filter((s) => s.status === "done").length
+  const doneCount = steps.filter((s) => s.status === "succeeded").length
   const total = steps.filter((s) => s.status !== "skipped").length
   const progress = total > 0 ? Math.round((doneCount / total) * 100) : 0
 
@@ -55,7 +55,7 @@ export function JourneyProcessingState({
       <div className="space-y-2">
         {steps.map((step) => (
           <div key={step.id} className="flex items-center gap-3">
-            {step.status === "done" && (
+            {step.status === "succeeded" && (
               <CheckCircle2 className="h-4.5 w-4.5 text-success shrink-0" />
             )}
             {step.status === "running" && (
@@ -69,7 +69,7 @@ export function JourneyProcessingState({
             )}
             <span
               className={`text-body-sm ${
-                step.status === "done"
+                step.status === "succeeded"
                   ? "text-text font-semibold"
                   : step.status === "running"
                     ? "text-primary font-bold"

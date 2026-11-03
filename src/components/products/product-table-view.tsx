@@ -3,6 +3,8 @@
 import React from "react"
 import Link from "next/link"
 import { Eye, Sparkles, Trash2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { PriceLabel, type ProductItem, StatusBadge } from "@/components/products/product-card"
 import { useI18n } from "@/lib/i18n"
@@ -31,12 +33,14 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
             className="rounded-2xl border border-border bg-surface p-4 shadow-sm transition-colors hover:border-primary/40 space-y-3"
           >
             <div className="flex items-start gap-3">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => onImageClick?.(p)}
                 title={`Xem bảng thông số & phân tích AI cho ${p.name}`}
                 aria-label={`Xem bảng thông số & phân tích AI cho ${p.name}`}
-                className="h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden bg-surface-alt border border-border cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-primary"
+                className="h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden bg-surface-alt border border-border p-0 text-left"
               >
                 <ProductThumb
                   name={p.name}
@@ -44,7 +48,7 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
                   driveLink={p.driveLink}
                   size="row"
                 />
-              </button>
+              </Button>
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div className="truncate font-bold text-body text-text">{p.name}</div>
@@ -77,15 +81,17 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
                 <span>{dict.products.card.openStudio}</span>
               </Link>
               {isExecutive && onTrash && (
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="icon"
                   onClick={() => onTrash(p)}
                   aria-label={`Xóa ${p.name}`}
-                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-danger/30 text-danger hover:bg-danger-bg transition-colors focus-visible:outline-2 focus-visible:outline-danger"
+                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border-danger/30 text-danger hover:bg-danger-bg hover:text-danger"
                   title="Chuyển vào thùng rác"
                 >
                   <Trash2 size={16} />
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -99,11 +105,10 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
             <tr>
               {selectable && (
                 <th scope="col" className="w-10 px-4 py-3">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     aria-label="Chọn tất cả sản phẩm đang hiển thị"
                     checked={allSelected}
-                    onChange={(e) => onToggleSelect?.(products.map((p) => p.id), e.target.checked)}
+                    onCheckedChange={(checked) => onToggleSelect?.(products.map((p) => p.id), !!checked)}
                   />
                 </th>
               )}
@@ -119,22 +124,23 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
               <tr key={p.id} className="transition-colors hover:bg-surface-alt/50">
                 {selectable && (
                   <td className="px-4 py-3">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       aria-label={`Chọn ${p.name}`}
                       checked={selectedIds?.has(p.id) ?? false}
-                      onChange={(e) => onToggleSelect?.([p.id], e.target.checked)}
+                      onCheckedChange={(checked) => onToggleSelect?.([p.id], !!checked)}
                     />
                   </td>
                 )}
                 <td className="px-4 py-3 font-semibold text-text">
                   <div className="flex items-center gap-3">
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="icon"
                       onClick={() => onImageClick?.(p)}
                       title={`Xem bảng thông số & phân tích AI cho ${p.name}`}
                       aria-label={`Xem bảng thông số & phân tích AI cho ${p.name}`}
-                      className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden bg-surface-alt border border-border hover:border-primary/50 transition-colors focus-visible:outline-2 focus-visible:outline-primary cursor-pointer text-left"
+                      className="h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden bg-surface-alt border border-border p-0 text-left"
                     >
                       <ProductThumb
                         name={p.name}
@@ -142,7 +148,7 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
                         driveLink={p.driveLink}
                         size="row"
                       />
-                    </button>
+                    </Button>
                     <div className="min-w-0">
                       <div className="truncate font-semibold text-text">{p.name}</div>
                       <div className="text-caption text-text-muted font-mono">#{p.code}</div>
@@ -175,15 +181,17 @@ export function ProductTableView({ products, isExecutive, onTrash, onImageClick,
                       <span>{dict.products.card.openStudio}</span>
                     </Link>
                     {isExecutive && onTrash && (
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         onClick={() => onTrash(p)}
                         aria-label={`Xóa ${p.name}`}
-                        className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-caption font-semibold text-text-muted hover:bg-danger-bg hover:text-danger transition-colors focus-visible:outline-2 focus-visible:outline-danger"
+                        className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-caption font-semibold text-text-muted hover:bg-danger-bg hover:text-danger h-auto"
                         title={dict.products.card.moveToTrashConfirm}
                       >
                         <Trash2 size={13} />
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </td>

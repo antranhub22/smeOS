@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Star } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 export interface ReviewDraft {
   authorName: string
@@ -50,27 +51,29 @@ export function ShopReviewForm({ initial = EMPTY_REVIEW, submitLabel, busy, onSu
         <legend className="text-body-sm font-medium text-text">Số sao</legend>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
-            <button
+            <Button
               key={n}
               type="button"
+              variant="ghost"
+              size="sm"
               aria-label={`${n} sao`}
               aria-pressed={draft.rating === n}
               onClick={() => set("rating", n)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-surface-alt"
+              className="flex h-9 w-9 p-0 items-center justify-center rounded-lg hover:bg-surface-alt"
             >
               <Star size={18} className={n <= draft.rating ? "text-warning-text" : "text-text-muted"} fill={n <= draft.rating ? "currentColor" : "none"} />
-            </button>
+            </Button>
           ))}
         </div>
       </fieldset>
       <label className="block space-y-1 text-body-sm font-medium text-text">
         <span>Lời nhận xét của khách</span>
-        <textarea
+        <Textarea
           value={draft.comment}
           maxLength={500}
           rows={3}
           onChange={(e) => set("comment", e.target.value)}
-          className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-primary"
+          className="w-full text-body-sm"
           placeholder="Chép đúng lời khách gửi (tin nhắn, bình luận)…"
           required
         />

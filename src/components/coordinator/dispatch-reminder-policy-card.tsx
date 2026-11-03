@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import type { DispatchReminderPolicyConfig } from "@/modules/coordinator/domain/dispatch-reminder-types"
 
 interface DispatchReminderPolicySectionProps {
@@ -199,14 +200,14 @@ export function DispatchReminderPolicySection({ canEdit }: DispatchReminderPolic
             </div>
 
             <div className="flex items-center gap-2 shrink-0 ml-13 sm:ml-0">
-              <input
+              <Input
                 type="number"
                 min={m.min}
                 max={m.max}
                 value={config[m.key]}
                 disabled={!canEdit || isSaving}
                 onChange={(e) => handleChange(m.key, Number(e.target.value))}
-                className="w-20 h-9 text-center text-body-sm font-bold rounded-lg border border-border bg-background text-text focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:bg-surface-alt"
+                className="w-20 text-center font-bold"
                 aria-label={`Cấu hình ${m.label}`}
               />
               <span className="text-caption text-text-muted whitespace-nowrap">
@@ -244,7 +245,7 @@ export function DispatchReminderPolicyCard({ canEdit }: DispatchReminderPolicySe
           <Bell size={20} />
         </div>
         <div>
-          <h2 className="text-base font-extrabold text-text">
+          <h2 className="text-title-sm font-extrabold text-text">
             Nhắc Nghiệp Vụ Điều Phối
           </h2>
           <p className="text-caption text-text-muted mt-0.5">

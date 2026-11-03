@@ -4,6 +4,9 @@ import React, { useState, useEffect } from "react"
 import { Plus, Trash2, Loader2, Sparkles, Flower2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { NativeSelect } from "@/components/ui/select"
 import { errorText } from "@/lib/error-text"
 import type { ProductMasterIndex } from "@/modules/products/domain/product-master-index"
 
@@ -227,7 +230,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
               </span>
               <span className="text-caption font-medium text-guidance">{masterProducts.length} mẫu sẵn sàng</span>
             </div>
-            <select
+            <NativeSelect
               className="w-full rounded-md border border-guidance-border bg-surface px-3 py-2 text-caption font-medium text-text focus:outline-none focus:ring-1 focus:ring-guidance"
               value={selectedProductId}
               onChange={(e) => handleSelectMasterProduct(e.target.value)}
@@ -238,61 +241,61 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
                   {p.name} [{p.code}] — {p.pricing?.quotePriceVnd ? `${Number(p.pricing.quotePriceVnd).toLocaleString("vi-VN")} đ` : "Chưa có giá"} ({p.category})
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
         )}
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block font-semibold text-text">Người nhận *</label>
-            <input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Họ và tên người nhận hoa" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} required />
+            <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Họ và tên người nhận hoa" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} required />
           </div>
           <div>
             <label className="mb-1 block font-semibold text-text">Số điện thoại người nhận *</label>
-            <input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Ví dụ: 0909xxxxxx" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+            <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Ví dụ: 0909xxxxxx" value={phone} onChange={(e) => setPhone(e.target.value)} required />
           </div>
         </div>
 
         <div>
           <label className="mb-1 block font-semibold text-text">Địa chỉ giao hoa *</label>
-          <input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Số nhà, tên đường, phường/xã, tỉnh/thành phố" value={street} onChange={(e) => setStreet(e.target.value)} required />
+          <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Số nhà, tên đường, phường/xã, tỉnh/thành phố" value={street} onChange={(e) => setStreet(e.target.value)} required />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block font-semibold text-text">Ngày hẹn giao</label>
-            <input type="date" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} />
+            <Input type="date" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} />
           </div>
           <div>
             <label className="mb-1 block font-semibold text-text">Khung giờ giao</label>
-            <select className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" value={timeSlot} onChange={(e) => setTimeSlot(e.target.value)}>
+            <NativeSelect className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" value={timeSlot} onChange={(e) => setTimeSlot(e.target.value)}>
               <option value="07:30 - 09:30">Sáng sớm (07:30–09:30)</option>
               <option value="09:30 - 11:30">Sáng (09:30–11:30)</option>
               <option value="13:30 - 15:30">Chiều (13:30–15:30)</option>
               <option value="15:30 - 17:30">Chiều muộn (15:30–17:30)</option>
               <option value="18:00 - 20:00">Tối (18:00–20:00)</option>
               <option value="Giao gấp hỏa tốc">Giao gấp trong 60 phút</option>
-            </select>
+            </NativeSelect>
           </div>
         </div>
 
         <div>
           <div className="mb-2 flex items-center justify-between">
             <label className="font-semibold text-text">Sản phẩm và phụ kiện *</label>
-            <button type="button" onClick={addItem} className="inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline">
+            <Button type="button" variant="ghost" size="sm" onClick={addItem} className="h-auto p-0 inline-flex items-center gap-1 text-caption font-semibold text-primary hover:underline">
               <Plus className="h-3.5 w-3.5" /> Thêm sản phẩm
-            </button>
+            </Button>
           </div>
           <div className="space-y-2">
             {items.map((it, idx) => (
               <div key={idx} className="flex items-center gap-2">
-                <input type="text" className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-body-sm" placeholder="Tên sản phẩm hoặc mô tả yêu cầu" value={it.description} onChange={(e) => updateItem(idx, "description", e.target.value)} required />
-                <input type="number" min="1" className="w-16 rounded-md border border-border bg-surface px-2 py-1.5 text-center text-body-sm" value={it.quantity} onChange={(e) => updateItem(idx, "quantity", Math.max(1, parseInt(e.target.value) || 1))} />
-                <input type="number" step="10000" min="0" className="w-32 rounded-md border border-border bg-surface px-2 py-1.5 text-right text-body-sm" placeholder="Đơn giá (₫)" value={it.unitPriceVnd} onChange={(e) => updateItem(idx, "unitPriceVnd", parseInt(e.target.value) || 0)} />
+                <Input type="text" className="flex-1 rounded-md border border-border bg-surface px-3 py-1.5 text-body-sm" placeholder="Tên sản phẩm hoặc mô tả yêu cầu" value={it.description} onChange={(e) => updateItem(idx, "description", e.target.value)} required />
+                <Input type="number" min="1" className="w-16 rounded-md border border-border bg-surface px-2 py-1.5 text-center text-body-sm" value={it.quantity} onChange={(e) => updateItem(idx, "quantity", Math.max(1, parseInt(e.target.value) || 1))} />
+                <Input type="number" step="10000" min="0" className="w-32 rounded-md border border-border bg-surface px-2 py-1.5 text-right text-body-sm" placeholder="Đơn giá (₫)" value={it.unitPriceVnd} onChange={(e) => updateItem(idx, "unitPriceVnd", parseInt(e.target.value) || 0)} />
                 {items.length > 1 && (
-                  <button type="button" onClick={() => removeItem(idx)} aria-label="Xóa dòng" className="flex h-9 w-9 items-center justify-center rounded-md text-text-muted hover:bg-surface-raised hover:text-danger">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(idx)} aria-label="Xóa dòng" className="flex h-9 w-9 p-0 items-center justify-center rounded-md text-text-muted hover:bg-surface-raised hover:text-danger">
                     <Trash2 className="h-4 w-4" />
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
@@ -301,12 +304,12 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
 
         <div>
           <label className="mb-1 block font-semibold text-text">Lời nhắn trên thiệp</label>
-          <textarea rows={2} className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Nội dung in hoặc viết lên thiệp…" value={cardMessage} onChange={(e) => setCardMessage(e.target.value)} />
+          <Textarea rows={2} className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Nội dung in hoặc viết lên thiệp…" value={cardMessage} onChange={(e) => setCardMessage(e.target.value)} />
         </div>
 
         <div>
           <label className="mb-1 block font-semibold text-text">Ghi chú cho thợ chế tác hoa</label>
-          <input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Tông màu, giấy gói, hoa chính…" value={internalNote} onChange={(e) => setInternalNote(e.target.value)} />
+          <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Tông màu, giấy gói, hoa chính…" value={internalNote} onChange={(e) => setInternalNote(e.target.value)} />
         </div>
       </form>
     </Dialog>

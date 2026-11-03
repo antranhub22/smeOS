@@ -10,6 +10,7 @@ import {
   Flower2,
 } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { SmartFlowerImage } from "./smart-flower-image"
 import { formatCurrency } from "@/lib/i18n/formatters"
@@ -61,23 +62,23 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, onClose
           {shop.phone && (
             <a
               href={`tel:${shop.phone}`}
-              className="flex min-h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-4 py-2 text-xs font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              className="flex min-h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-4 py-2 text-caption font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
             >
               <Phone size={15} /> Gọi Hotline
             </a>
           )}
           {orderSlug && !ordering && (
-            <button type="button" onClick={() => setOrdering(true)} className="flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-white hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-primary">
+            <Button type="button" onClick={() => setOrdering(true)} className="flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-body-sm font-extrabold text-white hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-primary">
               Đặt hàng
-            </button>
+            </Button>
           )}
           <a
             href={getZaloUrl(product, shop, customer)}
             target="_blank"
             rel="noopener noreferrer"
             className={orderSlug
-              ? "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-              : "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-white shadow-xs hover:bg-primary-dark transition-colors focus-visible:outline-2 focus-visible:outline-primary"}
+              ? "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-body-sm font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              : "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-body-sm font-extrabold text-white shadow-xs hover:bg-primary-dark transition-colors focus-visible:outline-2 focus-visible:outline-primary"}
           >
             <MessageCircle size={18} /> {orderSlug ? "Nhắn Zalo" : "Nhắn tin Zalo đặt mẫu này"}
           </a>
@@ -100,18 +101,18 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, onClose
 
         {/* Pricing */}
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-black text-primary">{formatVnd(product.price)}</span>
-          <span className="text-xs text-text-muted">Đã bao gồm thuế & thiệp chúc mừng</span>
+          <span className="text-title-lg font-black text-primary">{formatVnd(product.price)}</span>
+          <span className="text-caption text-text-muted">Đã bao gồm thuế & thiệp chúc mừng</span>
         </div>
 
         {product.description && (
-          <p className="rounded-xl border border-border bg-surface-alt p-3.5 text-sm text-text-muted leading-relaxed">
+          <p className="rounded-xl border border-border bg-surface-alt p-3.5 text-body-sm text-text-muted leading-relaxed">
             {product.description}
           </p>
         )}
 
         {/* Attributes */}
-        <div className="grid grid-cols-2 gap-2.5 text-xs">
+        <div className="grid grid-cols-2 gap-2.5 text-caption">
           {product.category && (
             <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-3">
               <Tag size={15} className="text-primary" />
@@ -133,7 +134,7 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, onClose
         </div>
 
         {/* Guarantees */}
-        <div className="space-y-2 text-xs text-text-muted">
+        <div className="space-y-2 text-caption text-text-muted">
           <div className="flex items-center gap-2">
             <Check size={14} className="text-success shrink-0" />
             Cam kết sản phẩm từ 3 – 5 ngày khi cắm xốp chuyên dụng

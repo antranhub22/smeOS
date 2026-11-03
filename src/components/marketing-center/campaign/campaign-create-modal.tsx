@@ -2,9 +2,10 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { InlineError } from "@/components/ui/inline-error"
 import { Input } from "@/components/ui/input"
-import { X } from "@/components/ui/icons"
+import { NativeSelect } from "@/components/ui/select"
 import {
   CAMPAIGN_OBJECTIVE_LABELS,
   CAMPAIGN_OBJECTIVES,
@@ -72,149 +73,138 @@ export function CampaignCreateModal({ isOpen, onClose, onSuccess }: CampaignCrea
   }
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="campaign-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      title="Tạo chiến dịch mới"
+      size="md"
     >
-      <div className="relative w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-xl">
-        <div className="flex items-center justify-between border-b border-border pb-4">
-          <h2 id="campaign-modal-title" className="text-h3 font-semibold text-text">
-            Tạo chiến dịch mới
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1 text-text-muted hover:bg-surface-elevated hover:text-text"
-            aria-label="Đóng"
-          >
-            <X className="h-5 w-5" />
-          </button>
+      {error && (
+        <div className="mb-4">
+          <InlineError message={error} />
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="camp-name" className="block text-caption font-medium text-text mb-1">
+            Tên chiến dịch *
+          </label>
+          <Input
+            id="camp-name"
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="VD: Chiến dịch Hoa Tết 2026, Quà tặng 20/10..."
+            className="w-full"
+          />
         </div>
 
-        {error && (
-          <div className="mt-4">
-            <InlineError message={error} />
+        <div>
+          <label className="block text-caption font-medium text-text mb-1">Mục tiêu chiến dịch *</label>
+          <div className="grid grid-cols-2 gap-2">
+            {CAMPAIGN_OBJECTIVES.map((obj) => (
+              <div
+                key={obj}
+                role="button"
+                tabIndex={0}
+                aria-pressed={objective === obj}
+                onClick={() => setObjective(obj)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setObjective(obj)
+                  }
+                }}
+                className={`cursor-pointer rounded-xl border p-3 text-left transition-colors ${
+                  objective === obj
+                    ? "border-primary bg-primary/10 text-primary font-medium"
+                    : "border-border bg-surface text-text hover:bg-surface-elevated"
+                }`}
+              >
+                <div className="text-body-sm font-semibold">{CAMPAIGN_OBJECTIVE_LABELS[obj]}</div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <div>
+          <label htmlFor="camp-occasion" className="block text-caption font-medium text-text mb-1">
+            Dịp / Sự kiện kích cầu
+          </label>
+          <NativeSelect
+            id="camp-occasion"
+            value={occasionCode}
+            onChange={(e) => setOccasionCode(e.target.value)}
+            className="w-full"
+          >
+            {COMMON_OCCASIONS.map((occ) => (
+              <option key={occ.code} value={occ.code}>
+                {occ.label}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="camp-name" className="block text-caption font-medium text-text mb-1">
-              Tên chiến dịch *
+            <label htmlFor="camp-start" className="block text-caption font-medium text-text mb-1">
+              Bắt đầu từ
             </label>
             <Input
-              id="camp-name"
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="VD: Chiến dịch Hoa Tết 2026, Quà tặng 20/10..."
-              className="w-full"
+              id="camp-start"
+              type="date"
+              value={startsAt}
+              onChange={(e) => setStartsAt(e.target.value)}
             />
           </div>
-
           <div>
-            <label className="block text-caption font-medium text-text mb-1">Mục tiêu chiến dịch *</label>
-            <div className="grid grid-cols-2 gap-2">
-              {CAMPAIGN_OBJECTIVES.map((obj) => (
-                <button
-                  key={obj}
-                  type="button"
-                  aria-pressed={objective === obj}
-                  onClick={() => setObjective(obj)}
-                  className={`rounded-xl border p-3 text-left transition-colors ${
-                    objective === obj
-                      ? "border-primary bg-primary/10 text-primary font-medium"
-                      : "border-border bg-surface text-text hover:bg-surface-elevated"
-                  }`}
-                >
-                  <div className="text-body-sm font-semibold">{CAMPAIGN_OBJECTIVE_LABELS[obj]}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="camp-occasion" className="block text-caption font-medium text-text mb-1">
-              Dịp / Sự kiện kích cầu
+            <label htmlFor="camp-end" className="block text-caption font-medium text-text mb-1">
+              Kết thúc vào
             </label>
-            <select
-              id="camp-occasion"
-              value={occasionCode}
-              onChange={(e) => setOccasionCode(e.target.value)}
-              className="w-full h-10 rounded-xl border border-border bg-surface px-3 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+            <Input
+              id="camp-end"
+              type="date"
+              value={endsAt}
+              onChange={(e) => setEndsAt(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-caption font-medium text-text mb-1">Trạng thái ban đầu</label>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant={status === "DRAFT" ? "secondary" : "outline"}
+              onClick={() => setStatus("DRAFT")}
             >
-              {COMMON_OCCASIONS.map((occ) => (
-                <option key={occ.code} value={occ.code}>
-                  {occ.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="camp-start" className="block text-caption font-medium text-text mb-1">
-                Bắt đầu từ
-              </label>
-              <Input
-                id="camp-start"
-                type="date"
-                value={startsAt}
-                onChange={(e) => setStartsAt(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="camp-end" className="block text-caption font-medium text-text mb-1">
-                Kết thúc vào
-              </label>
-              <Input
-                id="camp-end"
-                type="date"
-                value={endsAt}
-                onChange={(e) => setEndsAt(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-caption font-medium text-text mb-1">Trạng thái ban đầu</label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 text-body-sm text-text cursor-pointer">
-                <input
-                  type="radio"
-                  name="status"
-                  checked={status === "DRAFT"}
-                  onChange={() => setStatus("DRAFT")}
-                  className="text-primary focus:ring-primary"
-                />
-                <span>Lưu bản nháp</span>
-              </label>
-              <label className="flex items-center gap-2 text-body-sm text-text cursor-pointer">
-                <input
-                  type="radio"
-                  name="status"
-                  checked={status === "ACTIVE"}
-                  onChange={() => setStatus("ACTIVE")}
-                  className="text-primary focus:ring-primary"
-                />
-                <span>Kích hoạt ngay</span>
-              </label>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4 border-t border-border">
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
-              Huỷ
+              Lưu bản nháp
             </Button>
-            <Button type="submit" variant="primary" disabled={loading}>
-              {loading ? "Đang tạo..." : "Tạo chiến dịch"}
+            <Button
+              type="button"
+              size="sm"
+              variant={status === "ACTIVE" ? "primary" : "outline"}
+              onClick={() => setStatus("ACTIVE")}
+            >
+              Kích hoạt ngay
             </Button>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-4 border-t border-border">
+          <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+            Huỷ
+          </Button>
+          <Button type="submit" variant="primary" disabled={loading}>
+            {loading ? "Đang tạo..." : "Tạo chiến dịch"}
+          </Button>
+        </div>
+      </form>
+    </Dialog>
   )
 }

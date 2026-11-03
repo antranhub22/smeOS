@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Play, Check, ChevronRight, X } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 
 interface WorkflowPreviewProps {
@@ -43,14 +44,16 @@ export function WorkflowPreview({
             {journey.description}
           </p>
         </div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onCancel}
-          className="p-1.5 rounded-lg text-text-muted hover:bg-surface-alt transition-colors cursor-pointer"
+          className="h-8 w-8 p-0 text-text-muted hover:bg-surface-alt"
           title="Đóng xem trước"
         >
           <X className="w-5 h-5" aria-hidden="true" />
-        </button>
+        </Button>
       </div>
 
       {/* Step Pipeline List */}
@@ -90,17 +93,15 @@ export function WorkflowPreview({
 
                 <div className="flex items-center gap-2">
                   {step.isOptional ? (
-                    <button
+                    <Button
                       type="button"
+                      variant={isExcluded ? "outline" : "secondary"}
+                      size="sm"
                       onClick={() => toggleStep(step.id, true)}
-                      className={`px-2.5 py-1 rounded-md text-caption font-semibold transition-colors cursor-pointer ${
-                        isExcluded
-                          ? "bg-surface-alt border border-border text-text-muted"
-                          : "bg-selected text-primary border border-primary/30"
-                      }`}
+                      className="h-7 text-caption font-semibold"
                     >
                       {isExcluded ? "Đã tắt" : "Tùy chọn (Bật)"}
-                    </button>
+                    </Button>
                   ) : (
                     <span className="inline-flex items-center gap-1 text-caption text-text-muted font-medium px-2 py-0.5 rounded bg-surface-alt">
                       <Check className="w-3 h-3 text-success" aria-hidden="true" />
@@ -116,22 +117,23 @@ export function WorkflowPreview({
 
       {/* Action Footer */}
       <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={onCancel}
-          className="px-4 py-2 rounded-lg border border-border text-body-sm font-medium text-text hover:bg-surface-alt transition-colors cursor-pointer"
         >
           Hủy bỏ
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="primary"
           onClick={handleStart}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-primary text-surface text-body-sm font-bold hover:bg-primary-dark transition-colors shadow-xs cursor-pointer"
+          className="gap-2"
         >
           <Play className="w-4 h-4 fill-current" aria-hidden="true" />
           <span>Bắt đầu quy trình ngay</span>
           <ChevronRight className="w-4 h-4" aria-hidden="true" />
-        </button>
+        </Button>
       </div>
     </div>
   )
