@@ -4,25 +4,35 @@
  * DesktopNavItem — Mục điều hướng đơn trong Sidebar
  *
  * Hỗ trợ 2 chế độ:
- *  - Mở rộng (collapsed=false): icon + nhãn đầy đủ
- *  - Thu gọn (collapsed=true): icon duy nhất + tooltip khi hover
+ *  - Mở rộng (collapsed=false): icon + nhãn đầy đủ, cao 36px (44px trên màn cảm ứng)
+ *  - Thu gọn (collapsed=true): ô icon vuông 40px + tooltip khi hover/focus
  *
- * Active state: dải chỉ báo bên trái + nền selected + màu primary.
- * Coming Soon: badge "Sắp ra mắt" + mờ + không click.
+ * Trạng thái đang chọn: nền thương hiệu nhạt + chữ thương hiệu + vạch nhấn trái,
+ * tách biệt rõ với trạng thái hover (nền phụ trung tính).
+ * Sắp ra mắt: nhãn "Sắp ra mắt" + không bấm được.
  */
 
-import type { ComponentType } from "react"
+import { useState, type ComponentType, type ReactNode } from "react"
 import { Tag } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { COMING_SOON_LABEL, isRouteLocked } from "@/lib/feature-lock"
 import type { NavEntry } from "./nav-model"
+
+type NavIcon = ComponentType<{
+  size?: number
+  className?: string
+  strokeWidth?: number
+  weight?: "regular" | "fill" | "duotone"
+}>
 
 interface DesktopNavItemProps {
   item: NavEntry
   active: boolean
   isSubItem?: boolean
   collapsed?: boolean
-  iconComponent?: ComponentType<{ size?: number; className?: string; strokeWidth?: number; weight?: "regular" | "fill" | "duotone" }> | undefined
+  iconComponent?: NavIcon | undefined
+  /** Phần tử phụ bên phải (vd: phím tắt, số đếm) */
+  trailing?: ReactNode
   onClick: () => void
 }
 
@@ -31,18 +41,23 @@ interface DesktopNavItemProps {
 // ────────────────────────────────────────────────────────────────
 function itemBaseClass(isSubItem: boolean, collapsed: boolean) {
   return cn(
-    "group relative flex w-full items-center font-medium transition-all duration-150 text-left",
+    "group relative flex w-full items-center rounded-lg text-left font-medium transition-colors duration-150",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-inset",
     collapsed
-      ? "h-10 justify-center rounded-xl px-0"
+      ? "h-10 justify-center px-0"
       : isSubItem
-      ? "h-9 rounded-xl px-3 text-body-sm"
-      : "h-10 rounded-xl px-3 text-body-sm"
+        ? "h-8 gap-2.5 px-2.5 text-body-sm pointer-coarse:h-11"
+        : "h-9 gap-2.5 px-2.5 text-body-sm pointer-coarse:h-11"
   )
 }
 
+function iconSize(collapsed: boolean, isSubItem: boolean) {
+  if (collapsed) return 20
+  return isSubItem ? 16 : 18
+}
+
 // ────────────────────────────────────────────────────────────────
-// Tooltip wrapper — chỉ hiện khi collapsed
+// Tooltip — chỉ hiện khi thu gọn
 // ────────────────────────────────────────────────────────────────
 function NavTooltip({
   label,
@@ -51,34 +66,46 @@ function NavTooltip({
 }: {
   label: string
   collapsed: boolean
-  children: React.ReactNode
+  children: ReactNode
 }) {
+  // Vị trí cố định theo viewport: vùng cuộn của sidebar có overflow-hidden nên tooltip
+  // định vị tuyệt đối sẽ bị cắt mất.
+  const [anchor, setAnchor] = useState<{ top: number; left: number } | null>(null)
+
   if (!collapsed) return <>{children}</>
 
+  const show = (el: HTMLElement) => {
+    const rect = el.getBoundingClientRect()
+    setAnchor({ top: rect.top + rect.height / 2, left: rect.right + 12 })
+  }
+
   return (
-    <div className="group relative flex w-full justify-center">
+    <div
+      className="relative flex w-full justify-center"
+      onMouseEnter={(e) => show(e.currentTarget)}
+      onMouseLeave={() => setAnchor(null)}
+      onFocus={(e) => show(e.currentTarget)}
+      onBlur={() => setAnchor(null)}
+    >
       {children}
-      {/* Tooltip */}
-      <div
-        role="tooltip"
-        className={cn(
-          "pointer-events-none absolute left-full ml-2 z-50",
-          "flex items-center gap-1.5 whitespace-nowrap rounded-lg",
-          "bg-text px-2.5 py-1.5 text-body-sm font-medium text-white",
-          "shadow-lg opacity-0 transition-opacity duration-150",
-          "group-hover:opacity-100",
-          "-translate-y-1/2 top-1/2"
-        )}
-      >
-        <span>{label}</span>
-        <span className="h-0 w-0 border-y-4 border-y-transparent border-r-4 border-r-text absolute -left-1" />
-      </div>
+      {anchor && (
+        <div
+          role="tooltip"
+          style={{ top: anchor.top, left: anchor.left }}
+          className={cn(
+            "pointer-events-none fixed z-50 -translate-y-1/2 whitespace-nowrap rounded-md",
+            "bg-text px-2.5 py-1.5 text-meta font-medium text-surface shadow-lg"
+          )}
+        >
+          {label}
+        </div>
+      )}
     </div>
   )
 }
 
 // ────────────────────────────────────────────────────────────────
-// Coming Soon (disabled)
+// Sắp ra mắt (không bấm được)
 // ────────────────────────────────────────────────────────────────
 function NavItemDisabled({
   item,
@@ -89,24 +116,20 @@ function NavItemDisabled({
   item: NavEntry
   isSubItem: boolean
   collapsed: boolean
-  Icon: ComponentType<{ size?: number; className?: string; strokeWidth?: number; weight?: "regular" | "fill" | "duotone" }>
+  Icon: NavIcon
 }) {
   return (
-    <NavTooltip label={item.label} collapsed={collapsed}>
+    <NavTooltip label={`${item.label} · ${COMING_SOON_LABEL}`} collapsed={collapsed}>
       <div
         aria-disabled="true"
-        title={!collapsed ? COMING_SOON_LABEL : item.label}
-        className={cn(itemBaseClass(isSubItem, collapsed), "cursor-not-allowed opacity-50")}
+        title={collapsed ? undefined : COMING_SOON_LABEL}
+        className={cn(itemBaseClass(isSubItem, collapsed), "cursor-not-allowed text-text-muted")}
       >
-        <Icon
-          size={collapsed ? 22 : isSubItem ? 18 : 20}
-          className="shrink-0 text-text-muted"
-          aria-hidden
-        />
+        <Icon size={iconSize(collapsed, isSubItem)} className="shrink-0 text-border" aria-hidden />
         {!collapsed && (
           <>
-            <span className="ml-3 flex-1 truncate text-text-muted">{item.label}</span>
-            <span className="ml-1 shrink-0 rounded-full bg-surface-alt px-1.5 py-0.5 text-caption font-extrabold uppercase tracking-wide text-text-muted">
+            <span className="flex-1 truncate">{item.label}</span>
+            <span className="shrink-0 rounded-md border border-border px-1.5 py-px text-caption font-medium text-text-muted">
               {COMING_SOON_LABEL}
             </span>
           </>
@@ -125,19 +148,13 @@ export function DesktopNavItem({
   isSubItem = false,
   collapsed = false,
   iconComponent,
+  trailing,
   onClick,
 }: DesktopNavItemProps) {
   const Icon = iconComponent || Tag
 
   if (item.status === "COMING_SOON" || isRouteLocked(item.href)) {
-    return (
-      <NavItemDisabled
-        item={item}
-        isSubItem={isSubItem}
-        collapsed={collapsed}
-        Icon={Icon}
-      />
-    )
+    return <NavItemDisabled item={item} isSubItem={isSubItem} collapsed={collapsed} Icon={Icon} />
   }
 
   return (
@@ -146,25 +163,22 @@ export function DesktopNavItem({
         type="button"
         onClick={onClick}
         aria-current={active ? "page" : undefined}
+        aria-label={collapsed ? item.label : undefined}
+        title={collapsed ? undefined : item.label}
         className={cn(
           "cursor-pointer",
           itemBaseClass(isSubItem, collapsed),
           active
-            ? "bg-selected text-primary font-semibold border border-transparent"
-            : "text-text-muted border border-transparent hover:bg-surface-alt hover:text-text"
+            ? "bg-primary-muted font-semibold text-primary"
+            : "text-text-muted hover:bg-surface-alt hover:text-text"
         )}
       >
-        {/* Dải chỉ báo trái khi active */}
-        {active && !collapsed && (
-          <span
-            className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary"
-            aria-hidden="true"
-          />
+        {active && !collapsed && !isSubItem && (
+          <span className="absolute -left-3 top-1.5 bottom-1.5 w-1 rounded-r-full bg-primary" aria-hidden />
         )}
 
-        {/* Icon */}
         <Icon
-          size={collapsed ? 22 : isSubItem ? 18 : 20}
+          size={iconSize(collapsed, isSubItem)}
           weight={active ? "fill" : "regular"}
           aria-hidden
           className={cn(
@@ -173,17 +187,8 @@ export function DesktopNavItem({
           )}
         />
 
-        {/* Label + glow dot khi active collapsed */}
-        {collapsed ? (
-          active && (
-            <span
-              className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-primary ring-2 ring-surface"
-              aria-hidden
-            />
-          )
-        ) : (
-          <span className="ml-3 flex-1 truncate">{item.label}</span>
-        )}
+        {!collapsed && <span className="min-w-0 flex-1 truncate">{item.label}</span>}
+        {!collapsed && trailing}
       </button>
     </NavTooltip>
   )

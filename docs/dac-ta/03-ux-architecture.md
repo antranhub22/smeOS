@@ -31,7 +31,7 @@ Phạm vi chi nhánh không có bộ chọn ở bản đầu. RBAC vẫn đỡ s
 
 Hệ thống điều hướng toàn cục của FloraOS được chuẩn hóa tập trung qua mô hình một nguồn (`src/components/layout/nav-model.ts`, Screen Contract `docs/dac-ta/screen-contracts/_dieu-huong.md`).
 
-### Sơ đồ điều hướng máy tính (Desktop Sidebar w-60 — 6 nhóm K5)
+### Sơ đồ điều hướng máy tính (Desktop Sidebar w-64 — 6 nhóm K5)
 
 1. **Việc chính · `<vai>`** (Tự sinh): `/` (Trang chủ) + danh sách ưu tiên `navPriority` của vai (03b §5). Luôn mở sẵn, không thu gọn.
 2. **Bán hàng & Khách** (`ban-hang`): `/khach-hang` (Q1), `/don-hang` (R1), `/hoi-thoai` (T1), `/catalog` (J1).

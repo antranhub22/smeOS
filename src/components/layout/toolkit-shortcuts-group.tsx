@@ -12,12 +12,13 @@
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from "react"
-import { Plus, X, Pin, RotateCcw, ChevronDown } from "@/components/ui/icons"
-import { Button } from "@/components/ui/button"
+import { Plus, X, Pin, RotateCcw } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { DesktopNavItem } from "./desktop-nav-item"
+import { NavSectionHeader } from "./nav-section-header"
+import { isEntryActive } from "./nav-group-layout"
 import type { NavEntry } from "./nav-model"
 import {
   getEffectiveShortcutKeys,
@@ -170,13 +171,12 @@ export function ToolkitShortcutsGroup({
     })
   }, [allNavEntries, libraryEntry, validPinnedKeys])
 
-  const isActive = (entry: NavEntry) =>
-    pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
+  const isActive = (entry: NavEntry) => isEntryActive(entry, pathname)
 
   // ── Collapsed mode: chỉ icon ─────────────────────────────────
   if (collapsed) {
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0.5">
         {/* Thư viện */}
         <DesktopNavItem
           item={displayLibraryEntry}
@@ -196,38 +196,23 @@ export function ToolkitShortcutsGroup({
             onClick={() => onNavigate(entry.href)}
           />
         ))}
-        <div className="my-1 h-px w-full rounded-full bg-border/60" aria-hidden />
+        <div className="mx-auto my-1.5 h-px w-6 bg-border" aria-hidden />
       </div>
     )
   }
 
   // ── Expanded mode ─────────────────────────────────────────────
   return (
-    <div className="space-y-0.5">
-      {/* Header nhóm — collapsible */}
-      <button
-        type="button"
-        aria-expanded={expanded}
-        onClick={() => onToggleGroup(groupKey, expanded)}
-        className={cn(
-          "group flex w-full items-center justify-between gap-1.5 rounded-lg px-2 py-1 text-left select-none cursor-pointer",
-          "text-caption font-bold uppercase tracking-wider text-text-muted hover:text-text hover:bg-surface-alt/50 transition-colors duration-150",
-          "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
-        )}
-      >
-        <span className="truncate text-left flex-1">{groupLabel}</span>
-        <ChevronDown
-          size={12}
-          aria-hidden
-          className={cn(
-            "shrink-0 transition-transform duration-200 text-text-muted group-hover:text-text",
-            expanded ? "rotate-0" : "-rotate-90"
-          )}
-        />
-      </button>
+    <div className="flex flex-col gap-px">
+      <NavSectionHeader
+        label={groupLabel}
+        expanded={expanded}
+        count={shortcutEntries.length + 1}
+        onToggle={() => onToggleGroup(groupKey, expanded)}
+      />
 
       {expanded && (
-        <div className="space-y-0.5">
+        <>
           {/* 1. Thư viện cố định */}
           <DesktopNavItem
             item={displayLibraryEntry}
@@ -236,15 +221,11 @@ export function ToolkitShortcutsGroup({
             onClick={() => onNavigate(displayLibraryEntry.href)}
           />
 
-          {/* 2. Divider */}
+          {/* 2. Nhãn lối tắt */}
           {shortcutEntries.length > 0 && (
-            <div className="flex items-center gap-2 px-2.5 pt-1 pb-0.5">
-              <div className="flex-1 h-px bg-border/50" />
-              <span className="text-caption font-semibold uppercase tracking-widest text-text-muted flex items-center gap-1">
-                <Pin size={8} aria-hidden />
-                Lối tắt
-              </span>
-              <div className="flex-1 h-px bg-border/50" />
+            <div className="flex h-6 items-center gap-1.5 px-2.5 pt-1 text-caption font-medium text-text-muted">
+              <Pin size={11} aria-hidden />
+              <span>Lối tắt đã ghim</span>
             </div>
           )}
 
@@ -258,23 +239,21 @@ export function ToolkitShortcutsGroup({
                 onClick={() => onNavigate(entry.href)}
               />
               {/* Nút bỏ pin — hiện khi hover */}
-              <Button
+              <button
                 type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={`Bỏ pin "${entry.label}"`}
+                aria-label={`Bỏ ghim "${entry.label}"`}
                 onClick={(e) => {
                   e.stopPropagation()
                   handleUnpin(entry.navKey)
                 }}
                 className={cn(
-                  "absolute right-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-md",
-                  "text-text-muted hover:text-destructive hover:bg-destructive/10 transition-all duration-150",
-                  "opacity-0 group-hover/shortcut:opacity-100"
+                  "absolute right-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-md bg-surface",
+                  "text-text-muted transition-opacity duration-150 hover:bg-danger-bg hover:text-danger",
+                  "opacity-0 group-hover/shortcut:opacity-100 focus-visible:opacity-100"
                 )}
               >
                 <X size={11} />
-              </Button>
+              </button>
             </div>
           ))}
 
@@ -288,15 +267,17 @@ export function ToolkitShortcutsGroup({
                 aria-expanded={pickerOpen}
                 onClick={() => setPickerOpen((v) => !v)}
                 className={cn(
-                  "flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-meta text-left",
-                  "border border-dashed border-border/60 hover:border-primary/40",
-                  "text-text-muted hover:text-primary hover:bg-primary/5 transition-all duration-150",
-                  pickerOpen && "border-primary/40 text-primary bg-primary/5"
+                  "flex h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-body-sm pointer-coarse:h-11",
+                  "text-text-muted transition-colors duration-150 hover:bg-surface-alt hover:text-text",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-inset",
+                  pickerOpen && "bg-surface-alt text-text"
                 )}
               >
-                <Plus size={13} strokeWidth={2.5} aria-hidden />
-                <span>Thêm lối tắt</span>
-                <span className="ml-auto text-caption text-text-muted/60">
+                <span className="flex size-4.5 shrink-0 items-center justify-center rounded-md border border-dashed border-border">
+                  <Plus size={12} strokeWidth={2.5} aria-hidden />
+                </span>
+                <span className="flex-1">Thêm lối tắt</span>
+                <span className="text-caption tabular-nums text-text-muted">
                   {shortcutEntries.length}/{MAX_SHORTCUTS}
                 </span>
               </button>
@@ -317,18 +298,16 @@ export function ToolkitShortcutsGroup({
 
           {/* Khi đã đủ MAX: chỉ hiện nút reset nếu đã tùy chỉnh */}
           {mounted && shortcutEntries.length >= MAX_SHORTCUTS && hasCustomShortcuts(orgId) && (
-            <Button
+            <button
               type="button"
-              variant="ghost"
-              size="sm"
               onClick={handleReset}
-              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1 text-caption text-text-muted hover:text-text hover:bg-surface-alt/50 transition-colors"
+              className="flex h-8 w-full items-center gap-2.5 rounded-lg px-2.5 text-meta text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
             >
               <RotateCcw size={11} aria-hidden />
               <span>Đặt lại mặc định</span>
-            </Button>
+            </button>
           )}
-        </div>
+        </>
       )}
     </div>
   )

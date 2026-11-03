@@ -81,7 +81,7 @@
       "R18": 1
     },
     "components/layout": {
-      "R18": 28
+      "R18": 32
     },
     "components/market-intelligence": {
       "R1": 1275,
@@ -141,6 +141,6 @@
       "R18": 2
     }
   },
-  "total": 3945,
-  "updatedAt": "2026-11-03T17:48:43.909Z"
+  "total": 3949,
+  "updatedAt": "2026-11-03T22:29:24.566Z"
 }

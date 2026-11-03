@@ -4,18 +4,15 @@
  * DesktopNav — Sidebar điều hướng chính (Desktop)
  *
  * Chức năng enterprise:
- * - Thu gọn (icon-only, 56px) / Mở rộng (240px) — lưu localStorage
+ * - Thu gọn (icon-only, 64px) / Mở rộng (256px) — lưu localStorage
  * - Header phân biệt tầng kiến trúc (SaaS Mother / Ngành / ChainOS / StoreOS)
  * - Tìm kiếm nhanh với phím tắt `/`
- * - Nhóm mục có thể đóng/mở — lưu trạng thái theo org
+ * - Nhóm mục có thể đóng/mở — mặc định chỉ mở nhóm chứa trang hiện tại, lưu trạng thái theo org
  * - Nav items với tooltip khi thu gọn, active indicator
  */
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { Search, X, ChevronDown, BarChart3 } from "@/components/ui/icons"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { isRouteLocked } from "@/lib/feature-lock"
 import { cn, stripVietnamese } from "@/lib/utils"
@@ -24,6 +21,10 @@ import { DesktopNavHeader } from "./desktop-nav-header"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { DesktopNavGroup } from "./desktop-nav-group"
 import { DesktopNavFooter } from "./desktop-nav-footer"
+import { DesktopNavSearch } from "./desktop-nav-search"
+import { NavSectionHeader } from "./nav-section-header"
+import { isEntryActive, isNavGroupExpanded, resolveActiveHref } from "./nav-group-layout"
+import { getAllToolkitNavEntries } from "./nav-toolkit-shortcuts"
 import {
   loadNavGroups,
   loadReportsOpen,
@@ -96,6 +97,16 @@ export function DesktopNav({
     [navView]
   )
 
+  // Mục đang chọn: href khớp dài nhất (kể cả lối tắt công cụ ghim từ danh mục đầy đủ)
+  const activeHref = useMemo(
+    () =>
+      resolveActiveHref(
+        [...allNavEntries, ...getAllToolkitNavEntries()].map((e) => e.href),
+        pathname
+      ),
+    [allNavEntries, pathname]
+  )
+
   // ── Hydrate from localStorage ──────────────────────────────────
   useEffect(() => {
     setOpenGroups(loadNavGroups(groupsKey))
@@ -144,19 +155,8 @@ export function DesktopNav({
 
   // ── Groups ─────────────────────────────────────────────────────
   function isGroupExpanded(group: NavGroup): boolean {
-    // Nhóm chứa trang hiện tại luôn luôn mở để người dùng định vị
-    const isCurrentActive = group.entries.some(
-      (e) => pathname === e.href || (e.href !== "/" && pathname.startsWith(`${e.href}/`))
-    )
-    if (isCurrentActive) return true
-
-    // Nếu người dùng đã chủ động toggle đóng/mở nhóm -> tôn trọng lựa chọn
-    if (openGroups[group.key] !== undefined) {
-      return openGroups[group.key]!
-    }
-
-    // Mặc định: Mở tất cả các nhóm để hiển thị trọn vẹn danh mục chức năng
-    return true
+    // Mặc định chỉ mở nhóm chứa trang hiện tại; nhóm đã tự đóng/mở giữ theo lựa chọn
+    return isNavGroupExpanded(group, activeHref, openGroups)
   }
 
   function toggleGroup(key: string, current: boolean) {
@@ -201,15 +201,15 @@ export function DesktopNav({
   }
 
   function isActive(entry: NavEntry): boolean {
-    return pathname === entry.href || (entry.href !== "/" && pathname.startsWith(`${entry.href}/`))
+    return isEntryActive(entry, activeHref)
   }
 
   // ── Sidebar width ──────────────────────────────────────────────
   const sidebarWidth = drawer
     ? "w-72 max-w-[85vw]"
     : collapsed
-    ? "w-14"
-    : "w-60"
+    ? "w-16"
+    : "w-64"
 
   // ────────────────────────────────────────────────────────────────
   // Render
@@ -235,58 +235,26 @@ export function DesktopNav({
 
       {/* ── Search — ẩn khi thu gọn ────────────────────────────── */}
       {!collapsed && (
-        <div className="border-b border-border px-3 py-2">
-          <div className="relative flex items-center">
-            <Search size={14} className="absolute left-2.5 text-text-muted pointer-events-none z-10" aria-hidden />
-            <Input
-              ref={searchInputRef}
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleSearchKeyDown}
-              placeholder="Tìm chức năng…"
-              aria-label="Tìm kiếm chức năng"
-              className={cn(
-                "h-8 w-full rounded-lg border border-border bg-surface-alt",
-                "pl-8 pr-16 text-meta text-text placeholder:text-text-muted",
-                "focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/40",
-                "transition-[border-color,box-shadow] duration-150"
-              )}
-            />
-            {searchQuery ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2 h-5 w-5 text-text-muted hover:text-text transition-colors"
-                aria-label="Xóa tìm kiếm"
-              >
-                <X size={13} />
-              </Button>
-            ) : (
-              <kbd className="absolute right-2 rounded border border-border bg-surface px-1 py-0.5 text-caption font-mono text-text-muted leading-none pointer-events-none">
-                /
-              </kbd>
-            )}
-          </div>
-        </div>
+        <DesktopNavSearch
+          inputRef={searchInputRef}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onKeyDown={handleSearchKeyDown}
+        />
       )}
 
       {/* ── Navigation Scroll Area ───────────────────────────────── */}
       <nav
         className={cn(
-          "flex flex-1 flex-col overflow-y-auto overflow-x-hidden",
-          collapsed ? "gap-1 px-1.5 py-2" : "gap-3 px-3 py-3"
+          "flex flex-1 flex-col overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:thin]",
+          collapsed ? "gap-0.5 px-3 py-3" : "px-3 pt-1 pb-4"
         )}
         aria-label="Menu điều hướng"
       >
         {/* Search results */}
         {searchQuery && !collapsed ? (
-          <div className="space-y-1">
-            <div className="px-2 pb-1 text-caption font-bold uppercase tracking-wider text-text-muted">
-              Kết quả ({searchResults.length})
-            </div>
+          <div className="flex flex-col gap-px">
+            <NavSectionHeader label={`Kết quả (${searchResults.length})`} expanded />
             {searchResults.length === 0 ? (
               <p className="px-2.5 py-4 text-center text-meta text-text-muted">
                 Không tìm thấy chức năng phù hợp
@@ -304,21 +272,36 @@ export function DesktopNav({
             )}
           </div>
         ) : (
-          navView.groups.map((group) => (
-            <DesktopNavGroup
-              key={group.key}
-              group={group}
-              collapsed={collapsed && !drawer}
-              expanded={isGroupExpanded(group)}
-              pathname={pathname}
-              reportsOpen={reportsOpen}
-              orgId={orgId}
-              allNavEntries={allNavEntries}
-              onToggleGroup={(key, current) => toggleGroup(key, current)}
-              onToggleReports={toggleReports}
-              onNavigate={navigateTo}
-            />
-          ))
+          navView.groups.map((group) => {
+            const isCollapsed = collapsed && !drawer
+            const node = (
+              <DesktopNavGroup
+                key={group.key}
+                group={group}
+                collapsed={isCollapsed}
+                expanded={isGroupExpanded(group)}
+                pathname={activeHref}
+                reportsOpen={reportsOpen}
+                orgId={orgId}
+                allNavEntries={allNavEntries}
+                subtreeOpen={openGroups}
+                onToggleGroup={(key, current) => toggleGroup(key, current)}
+                onToggleReports={toggleReports}
+                onNavigate={navigateTo}
+              />
+            )
+            // Mở rộng: mỗi nhóm là một khối, ngăn bằng đường kẻ mảnh (thu gọn đã có vạch riêng)
+            return isCollapsed ? (
+              node
+            ) : (
+              <div
+                key={group.key}
+                className="border-t border-border py-2.5 first:border-t-0 first:pt-1.5 last:pb-0"
+              >
+                {node}
+              </div>
+            )
+          })
         )}
       </nav>
 
