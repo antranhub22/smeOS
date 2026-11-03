@@ -21,6 +21,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
+import { PageHeader } from "@/components/ui/page-header"
 
 class ChuaDangNhap extends Error {}
 
@@ -115,13 +116,12 @@ export function CustomerServiceWorkspace() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header */}
-      <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-        <div>
-          <div className="text-caption text-text-muted">{roleUx?.label ?? "Chăm sóc khách hàng (CSKH)"}</div>
-          <h2 className="text-title font-extrabold text-primary">{orgName}</h2>
-        </div>
-        <UserMenu initials={userInitials} />
-      </header>
+      <PageHeader
+        className="flex-shrink-0 border-b border-border bg-surface px-4 py-4"
+        breadcrumbs={roleUx?.label ?? "Chăm sóc khách hàng (CSKH)"}
+        title={orgName}
+        actions=<UserMenu initials={userInitials} />
+      />
 
       {/* Main Body */}
       <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">

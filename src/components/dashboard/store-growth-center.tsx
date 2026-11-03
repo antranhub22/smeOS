@@ -15,6 +15,7 @@ import { InlineError } from "@/components/ui/inline-error"
 import { useAnnounce } from "@/components/ui/live-region"
 import { tenTinhNang } from "@/lib/feature-labels"
 import { StoreManagerActionItemsCard, type DraftOrder } from "./store-manager-action-items-card"
+import { PageHeader } from "@/components/ui/page-header"
 
 type Job = {
   id: string
@@ -150,35 +151,31 @@ export function StoreGrowthCenter() {
   return (
     <div className="mx-auto max-w-6xl space-y-5 sm:space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <h2 className="text-title sm:text-display font-extrabold text-text">
-              {orgName || "Trung tâm Tăng trưởng Cửa hàng"}
-            </h2>
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
-              <Sparkles className="h-3 w-3" />
-              {roleUx?.label ?? "Quản trị cửa hàng"}
-            </span>
-          </div>
-          <p className="mt-1 text-body-sm text-text-muted">
-            {roleUx?.primaryQuestion ?? "Hôm nay tôi cần làm gì để cửa hàng phát triển?"}
-          </p>
-        </div>
-        <div className="flex items-center justify-between sm:justify-end gap-2.5">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/market-intelligence" as never)}
-            className="flex items-center gap-1.5"
-          >
-            <TrendingUp className="h-4 w-4 text-primary" />
-            <span className="text-caption sm:text-body-sm">Xu hướng thị trường</span>
-          </Button>
-          <UserMenu initials={userInitials || "CH"} />
-        </div>
-      </div>
+      <PageHeader
+        title={orgName || "Trung tâm Tăng trưởng Cửa hàng"}
+        badge={
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
+            <Sparkles className="h-3 w-3" />
+            {roleUx?.label ?? "Quản trị cửa hàng"}
+          </span>
+        }
+        description={roleUx?.primaryQuestion ?? "Hôm nay tôi cần làm gì để cửa hàng phát triển?"}
+        actions={
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/market-intelligence" as never)}
+              className="flex items-center gap-1.5"
+            >
+              <TrendingUp className="h-4 w-4 text-primary" />
+              <span className="text-caption sm:text-body-sm">Xu hướng thị trường</span>
+            </Button>
+            <UserMenu initials={userInitials || "CH"} />
+          </>
+        }
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Cột trái: Tác vụ can thiệp & Đòn bẩy Tăng trưởng */}

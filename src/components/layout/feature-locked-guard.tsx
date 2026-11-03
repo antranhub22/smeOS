@@ -15,7 +15,7 @@ export function FeatureLockedGuard({ route, children }: { route: string; childre
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-selected text-primary">
         <Clock className="h-6 w-6" aria-hidden="true" />
       </div>
-      <h2 className="text-title font-bold text-text">{COMING_SOON_LABEL}</h2>
+      <h1 className="text-title font-bold text-text">{COMING_SOON_LABEL}</h1>
       <p className="max-w-md text-body text-text-muted">
         Tính năng này đang được hoàn thiện và sẽ sớm mở cho cửa hàng của bạn.
       </p>
