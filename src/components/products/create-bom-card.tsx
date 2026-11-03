@@ -40,7 +40,7 @@ export function CreateBomCard({
           <div className="flex items-center gap-2 text-title-sm font-bold text-text">
             <FileText size={18} className="text-primary" />
             <span>{ti("productRecipe")}</span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger border border-danger/30">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger-text border border-danger/30">
               Định mức bàn giao cam kết *
             </span>
             <InfoTip label="Định mức công thức">Dữ liệu trọng yếu ràng buộc nghĩa vụ giữa cửa hàng và người mua. Không để xảy ra sai lệch khi bàn giao.</InfoTip>
@@ -91,6 +91,7 @@ export function CreateBomCard({
                 <Input
                   type="number"
                   min="1"
+                  aria-label={`Số lượng ${cfg.materialLabel.toLowerCase()} ${idx + 1}`}
                   value={item.quantity}
                   onChange={(e) =>
                     onUpdateBomItem(
@@ -150,6 +151,7 @@ export function CreateBomCard({
               {/* Vai trò */}
               <div className="w-28">
                 <NativeSelect
+                  aria-label={`Vai trò ${cfg.materialLabel.toLowerCase()} ${idx + 1}`}
                   value={item.role}
                   onChange={(e) => onUpdateBomItem(item.id, "role", e.target.value)}
                   className="h-9 text-caption font-medium"

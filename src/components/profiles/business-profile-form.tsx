@@ -300,6 +300,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             </label>
             <Input
               type="time"
+              aria-label="Giờ mở cửa buổi sáng"
               value={openTime}
               onChange={(e) => setOpenTime(e.target.value)}
             />
@@ -310,6 +311,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             </label>
             <Input
               type="time"
+              aria-label="Giờ đóng cửa buổi tối"
               value={closeTime}
               onChange={(e) => setCloseTime(e.target.value)}
             />

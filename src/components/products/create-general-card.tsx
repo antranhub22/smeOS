@@ -75,7 +75,7 @@ export function CreateGeneralCard({
           <ImageIcon size={18} className="text-primary" />
           <span>Ảnh đại diện & Thông tin cam kết niêm yết</span>
         </div>
-        <span className="inline-flex items-center gap-1 self-start sm:self-auto px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger border border-danger/30">
+        <span className="inline-flex items-center gap-1 self-start sm:self-auto px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger-text border border-danger/30">
           Cam kết giao kèo bắt buộc *
         </span>
       </div>
@@ -196,6 +196,7 @@ export function CreateGeneralCard({
                 Danh mục
               </label>
               <SingleSelectCustom
+                ariaLabel="Danh mục"
                 options={categories}
                 value={category}
                 onChange={setCategory}
@@ -209,6 +210,7 @@ export function CreateGeneralCard({
                 Trạng thái bán
               </label>
               <NativeSelect
+                aria-label="Trạng thái bán"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as "ACTIVE" | "DRAFT")}
                 className="h-10 text-body-sm"

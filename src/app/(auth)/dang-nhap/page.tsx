@@ -115,7 +115,7 @@ export default function DangNhapPage() {
         )}
       </div>
 
-      <div className="pb-1 pt-9 text-center text-caption text-text-muted/70">
+      <div className="pb-1 pt-9 text-center text-caption text-text-muted">
         © smeOS — Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ
       </div>
     </div>

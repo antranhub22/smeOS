@@ -28,7 +28,7 @@ const results: Result[] = []
 
 async function newPage(browser: Browser, opts: { auth: boolean; storage: string | undefined; reducedMotion?: boolean; viewport?: { width: number; height: number } }) {
   const context = await browser.newContext({
-    storageState: opts.auth ? opts.storage : undefined,
+    ...(opts.auth && opts.storage ? { storageState: opts.storage } : {}),
     reducedMotion: opts.reducedMotion ? "reduce" : "no-preference",
     viewport: opts.viewport ?? { width: 1280, height: 800 },
   })

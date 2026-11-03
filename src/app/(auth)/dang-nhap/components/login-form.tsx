@@ -63,7 +63,7 @@ export function LoginForm({ onSwitchToSignup, onSwitchToInstantTrial }: LoginFor
           placeholder="ban@cuahang.vn"
           required
           autoComplete="username"
-          className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary"
+          className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
         />
       </div>
 
@@ -79,13 +79,15 @@ export function LoginForm({ onSwitchToSignup, onSwitchToInstantTrial }: LoginFor
             placeholder="Nhập mật khẩu"
             required
             autoComplete="current-password"
-            className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 pr-11 text-body-sm outline-none focus:border-primary"
+            className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 pr-11 text-body-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
           />
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setShowPw((v) => !v)}
+            aria-label={showPw ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+            aria-pressed={showPw}
             className="absolute right-1.5 top-1.5 flex h-[34px] w-[34px] p-0 items-center justify-center text-text-muted"
           >
             {showPw ? <EyeOff size={19} strokeWidth={1.8} /> : <Eye size={19} strokeWidth={1.8} />}

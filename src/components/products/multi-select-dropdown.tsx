@@ -14,6 +14,8 @@ interface MultiSelectDropdownProps {
   customPlaceholder?: string
   className?: string
   id?: string
+  /** Tên đọc cho trình đọc màn hình (nhãn hiển thị của trường) */
+  ariaLabel?: string
 }
 
 export function MultiSelectDropdown({
@@ -24,6 +26,7 @@ export function MultiSelectDropdown({
   customPlaceholder = "Nhập thêm lựa chọn khác...",
   className,
   id,
+  ariaLabel,
 }: MultiSelectDropdownProps) {
   const [open, setOpen] = useState(false)
   const [customInput, setCustomInput] = useState("")
@@ -72,6 +75,7 @@ export function MultiSelectDropdown({
       {/* Trigger */}
       <div
         role="combobox"
+        aria-label={ariaLabel}
         aria-expanded={open}
         aria-haspopup="listbox"
         tabIndex={0}

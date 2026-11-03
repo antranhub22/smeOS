@@ -57,6 +57,7 @@ export function CreateDesignCard({
             {cfg.shapeLabel}
           </label>
           <SingleSelectCustom
+            ariaLabel={cfg.shapeLabel}
             options={cfg.shapeOptions}
             value={shape}
             onChange={setShape}
@@ -75,6 +76,7 @@ export function CreateDesignCard({
           </label>
           {cfg.facingMultiple ? (
             <MultiSelectDropdown
+              ariaLabel={cfg.facingLabel}
               options={cfg.facingOptions}
               value={facing}
               onChange={setFacing}
@@ -83,6 +85,7 @@ export function CreateDesignCard({
             />
           ) : (
             <SingleSelectCustom
+              ariaLabel={cfg.facingLabel}
               options={cfg.facingOptions}
               value={facing}
               onChange={setFacing}
@@ -102,6 +105,7 @@ export function CreateDesignCard({
           </label>
           {cfg.containerOptions && cfg.containerMultiple ? (
             <MultiSelectDropdown
+              ariaLabel={cfg.containerLabel}
               options={cfg.containerOptions}
               value={container}
               onChange={setContainer}
@@ -110,6 +114,7 @@ export function CreateDesignCard({
             />
           ) : cfg.containerOptions ? (
             <SingleSelectCustom
+              ariaLabel={cfg.containerLabel}
               options={cfg.containerOptions}
               value={container}
               onChange={setContainer}

@@ -13,6 +13,8 @@ interface SingleSelectCustomProps {
   customPlaceholder?: string
   className?: string
   id?: string
+  /** Tên đọc cho trình đọc màn hình (nhãn hiển thị của trường) */
+  ariaLabel?: string
 }
 
 export function SingleSelectCustom({
@@ -23,6 +25,7 @@ export function SingleSelectCustom({
   customPlaceholder = "Nhập lựa chọn khác...",
   className,
   id,
+  ariaLabel,
 }: SingleSelectCustomProps) {
   const [open, setOpen] = useState(false)
   const [customInput, setCustomInput] = useState("")
@@ -58,6 +61,7 @@ export function SingleSelectCustom({
     <div ref={ref} className={`relative ${className ?? ""}`} id={id}>
       <div
         role="combobox"
+        aria-label={ariaLabel}
         aria-expanded={open}
         aria-haspopup="listbox"
         tabIndex={0}

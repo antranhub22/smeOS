@@ -72,7 +72,7 @@ export function GovernanceMatrixCell({
       <span
         className={`inline-flex items-center px-2 py-0.5 rounded-md text-caption font-medium border ${
           item.isLocked
-            ? "bg-danger-bg text-danger border-border-danger/30"
+            ? "bg-danger-bg text-danger-text border-border-danger/30"
             : item.hasLocalOverride
             ? "bg-primary/10 text-primary border-primary/20"
             : "bg-surface-alt text-text-muted border-border"

@@ -86,10 +86,10 @@ export function GovernanceMatrixTable({
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div className="flex items-center gap-3 w-full lg:w-auto">
           {/* Ô tìm kiếm */}
-          <div className="relative flex-1 sm:w-72">
+          <div className="relative min-w-0 flex-1 lg:w-72">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <Input
               type="text"
@@ -101,22 +101,24 @@ export function GovernanceMatrixTable({
           </div>
 
           {/* Lọc theo nhóm */}
-          <NativeSelect
-            value={selectedGroup}
-            onChange={(e) => setSelectedGroup(e.target.value)}
-            className="w-auto"
-          >
-            <option value="ALL">Tất cả nhóm</option>
-            {state.groups.map((g) => (
-              <option key={g.groupKey} value={g.groupKey}>
-                {g.groupTitle}
-              </option>
-            ))}
-          </NativeSelect>
+          <div className="w-40 shrink-0 sm:w-56">
+            <NativeSelect
+              aria-label="Lọc theo nhóm"
+              value={selectedGroup}
+              onChange={(e) => setSelectedGroup(e.target.value)}
+            >
+              <option value="ALL">Tất cả nhóm</option>
+              {state.groups.map((g) => (
+                <option key={g.groupKey} value={g.groupKey}>
+                  {g.groupTitle}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
         </div>
 
         {/* Thống kê nhanh */}
-        <div className="flex items-center gap-3 text-caption text-text-muted">
+        <div className="flex flex-wrap items-center gap-3 text-caption text-text-muted">
           <span>Tổng số: {state.totalItems}</span>
           <span>•</span>
           <span className="flex items-center gap-1 text-danger">

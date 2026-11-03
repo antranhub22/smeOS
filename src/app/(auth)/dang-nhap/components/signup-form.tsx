@@ -214,7 +214,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
               onChange={(e) => setTenToChuc(e.target.value)}
               placeholder={getIndustryPlaceholder(industryKey)}
               required
-              className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary"
+              className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
             />
           </div>
 
@@ -225,7 +225,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
               value={ten}
               onChange={(e) => setTen(e.target.value)}
               placeholder="Ví dụ: Nguyễn Văn A"
-              className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary"
+              className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
             />
           </div>
         </div>
@@ -242,7 +242,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
           placeholder="ban@cuahang.vn"
           required
           autoComplete="username"
-          className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary"
+          className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
         />
       </div>
 
@@ -258,13 +258,15 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             placeholder="Nhập mật khẩu (tối thiểu 8 ký tự)"
             required
             autoComplete="new-password"
-            className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 pr-11 text-body-sm outline-none focus:border-primary"
+            className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 pr-11 text-body-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
           />
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setShowPw((v) => !v)}
+            aria-label={showPw ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+            aria-pressed={showPw}
             className="absolute right-1.5 top-1.5 flex h-[34px] w-[34px] p-0 items-center justify-center text-text-muted"
           >
             {showPw ? <EyeOff size={19} strokeWidth={1.8} /> : <Eye size={19} strokeWidth={1.8} />}

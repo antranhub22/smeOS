@@ -173,7 +173,7 @@ export function IndustrySelectSection({
                 className={`flex flex-col justify-between p-3 rounded-xl border text-left transition-all ${
                   isSelected
                     ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
-                    : "border-border bg-surface hover:border-primary/40 opacity-80"
+                    : "border-border bg-surface hover:border-primary/40"
                 } ${!isUnlocked ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
               >
                 <div>
