@@ -78,10 +78,17 @@ export function QuotationsListView({ onSelectQuotation }: QuotationsListViewProp
             { id: "CONVERTED", label: "Đã tạo đơn" },
             { id: "EXPIRED", label: "Hết hạn" },
           ].map((tab) => (
-            <button
+            <div
               key={tab.id}
-              type="button"
+              role="button"
+              tabIndex={0}
               onClick={() => setStatusFilter(tab.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setStatusFilter(tab.id)
+                }
+              }}
               className={`px-3 py-1.5 rounded-lg text-caption font-medium transition-colors cursor-pointer ${
                 statusFilter === tab.id
                   ? "bg-primary text-white font-semibold"
@@ -89,7 +96,7 @@ export function QuotationsListView({ onSelectQuotation }: QuotationsListViewProp
               }`}
             >
               {tab.label}
-            </button>
+            </div>
           ))}
         </div>
 

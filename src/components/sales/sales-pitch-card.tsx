@@ -43,6 +43,8 @@ import {
 import { SalesPitchCardA6, ZaloScriptBox } from "@/components/templates/product-analysis"
 import { CreateOrderModal, type CreateOrderInitialData } from "@/components/orders/create-order-modal"
 import { SalesScriptLibraryModal } from "./sales-script-library-modal"
+import { PitchInlineEditor } from "./pitch/pitch-inline-editor"
+import { PitchCardTab } from "./pitch/pitch-card-tab"
 import {
   type SalesPitchData,
   type SalesPitchOverrides,
@@ -618,8 +620,8 @@ export function SalesPitchCard({
             <CheckCircle2 size={22} strokeWidth={2.5} />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold">Lưu thẻ chào sản phẩm thành công!</h4>
-            <p className="text-xs opacity-90">
+            <h4 className="text-body-sm font-bold">Lưu thẻ chào sản phẩm thành công!</h4>
+            <p className="text-caption opacity-90">
               Thẻ đã được duyệt và lưu vào <strong>Kho ảnh & nội dung</strong>.
             </p>
           </div>
@@ -633,8 +635,8 @@ export function SalesPitchCard({
             <CheckCircle2 size={22} strokeWidth={2.5} />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold">Tạo đơn hàng thành công!</h4>
-            <p className="text-xs opacity-90">
+            <h4 className="text-body-sm font-bold">Tạo đơn hàng thành công!</h4>
+            <p className="text-caption opacity-90">
               Đơn hàng đã được chuyển sang mục <strong>Đơn hàng</strong> với đầy đủ thành phần hoa để chuẩn bị chế tác.
             </p>
           </div>
@@ -657,8 +659,8 @@ export function SalesPitchCard({
               </Badge>
             )}
           </div>
-          <h2 className="mt-0.5 text-lg sm:text-xl font-extrabold text-text tracking-tight">Thẻ chào sản phẩm và kịch bản tư vấn</h2>
-          <p className="text-xs text-text-muted mt-0.5">
+          <h2 className="mt-0.5 text-title sm:text-title-lg font-extrabold text-text tracking-tight">Thẻ chào sản phẩm và kịch bản tư vấn</h2>
+          <p className="text-caption text-text-muted mt-0.5">
             Chỉnh sửa thông tin hoa, giá bán và quà tặng trước khi sử dụng.
           </p>
         </div>
@@ -673,668 +675,88 @@ export function SalesPitchCard({
         overflowActions={currentTabActions.overflow}
       />
 
-      {/* TAB 1: FULL INLINE EDITOR (Hiển thị khi activeTab = 'edit') */}
+      {/* TAB 1: FULL INLINE EDITOR */}
       {activeTab === "edit" && (
-        <Card className="rounded-2xl border-2 border-primary/30 bg-surface p-5 shadow-md">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 mb-4">
-            <div className="flex items-center gap-2">
-              <Pencil size={18} className="text-primary" />
-              <h3 className="text-sm font-bold text-text">Chỉnh sửa thông tin thẻ chào</h3>
-            </div>
-            <div className="flex items-center gap-1 bg-surface-alt p-1 rounded-xl border border-border">
-              <button
-                type="button"
-                onClick={() => setEditTab("general")}
-                className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
-                  editTab === "general" ? "bg-surface shadow-sm text-primary font-bold" : "text-text-muted hover:text-text"
-                }`}
-              >
-                1. Thông tin chung và giá
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditTab("bom")}
-                className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
-                  editTab === "bom" ? "bg-surface shadow-sm text-primary font-bold" : "text-text-muted hover:text-text"
-                }`}
-              >
-                2. Thành phần hoa
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditTab("gifts")}
-                className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
-                  editTab === "gifts" ? "bg-surface shadow-sm text-primary font-bold" : "text-text-muted hover:text-text"
-                }`}
-              >
-                3. Quà tặng và cam kết
-              </button>
-            </div>
-          </div>
-
-          {/* Tab 1: Thông tin chung & Báo giá */}
-          {editTab === "general" && (
-            <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="sm:col-span-2">
-                  <label className="text-caption font-bold text-text-muted block mb-1">Tên sản phẩm</label>
-                  <input
-                    type="text"
-                    value={productName}
-                    onChange={(e) => setProductName(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm font-bold text-text outline-none focus:border-primary"
-                    placeholder="Ví dụ: Bó Tulip Vàng Nắng Hoàng Kim..."
-                  />
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Mã SKU / Tham chiếu</label>
-                  <input
-                    type="text"
-                    value={sku}
-                    onChange={(e) => setSku(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary font-mono"
-                    placeholder="TL-001"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Phong cách thiết kế</label>
-                  <input
-                    type="text"
-                    value={style}
-                    onChange={(e) => setStyle(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="Hiện đại, Cổ điển, Hàn Quốc..."
-                  />
-                </div>
-              </div>
-
-              {/* Pricing & Hotline */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 bg-primary/[0.03] p-3.5 rounded-xl border border-primary/20">
-                <div>
-                  <label className="text-caption font-bold text-primary block mb-1">Giá chào ưu đãi (VND) *</label>
-                  <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="w-full rounded-lg border-2 border-primary/60 bg-surface px-3 py-2 text-body font-bold text-primary outline-none focus:border-primary"
-                    placeholder="850000"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Giá gốc niêm yết (nếu có)</label>
-                  <input
-                    type="number"
-                    value={originalPrice}
-                    onChange={(e) => setOriginalPrice(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="1000000"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Hotline tư vấn</label>
-                  <input
-                    type="text"
-                    value={shopHotline}
-                    onChange={(e) => setShopHotline(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="1900 xxxx hoặc 090..."
-                  />
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Tên cửa hàng / Thương hiệu</label>
-                  <input
-                    type="text"
-                    value={shopName}
-                    onChange={(e) => setShopName(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="smeOS Boutique"
-                  />
-                </div>
-              </div>
-
-              {/* Dịp sử dụng (Tag pills) */}
-              <div>
-                <label className="text-caption font-bold text-text-muted block mb-1.5">Dịp phù hợp tặng hoa</label>
-                <div className="flex flex-wrap items-center gap-2">
-                  {occasions.map((occ, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-surface-alt px-2.5 py-1 text-xs font-semibold text-text border border-border"
-                    >
-                      {occ}
-                      <button
-                        type="button"
-                        onClick={() => removeOccasion(idx)}
-                        className="text-text-muted hover:text-danger"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                  <div className="inline-flex items-center gap-1">
-                    <input
-                      type="text"
-                      value={newOccasion}
-                      onChange={(e) => setNewOccasion(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault()
-                          addOccasion()
-                        }
-                      }}
-                      placeholder="+ Thêm dịp..."
-                      className="h-7 w-28 rounded-lg border border-border bg-surface px-2 text-xs outline-none focus:border-primary"
-                    />
-                    <button
-                      type="button"
-                      onClick={addOccasion}
-                      className="h-7 px-2 rounded-lg bg-surface-alt border border-border text-xs hover:bg-surface"
-                    >
-                      Thêm
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Mô tả cảm xúc */}
-              <div>
-                <label className="text-caption font-bold text-text-muted block mb-1">Mô tả cảm xúc & thông điệp chào hàng</label>
-                <textarea
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary resize-none leading-relaxed"
-                  placeholder="Nhập thông điệp ý nghĩa dành cho khách hàng..."
-                />
-              </div>
-
-              {/* Ghi chú riêng */}
-              <div>
-                <label className="text-caption font-bold text-text-muted block mb-1">Ghi chú riêng / Ưu đãi đặc biệt cho đợt chào này</label>
-                <input
-                  type="text"
-                  value={customNote}
-                  onChange={(e) => setCustomNote(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                  placeholder="Ví dụ: Giảm thêm 50k khi đặt trước 12h trưa nay..."
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Tab 2: Thành phần hoa */}
-          {editTab === "bom" && (
-            <div className="flex flex-col gap-5">
-              {/* Hoa chính */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-text flex items-center gap-1.5">
-                    🌺 Hoa chính ({mainFlowers.length} loại)
-                  </span>
-                  <Button variant="outline" size="sm" onClick={addFlower} className="h-7 text-xs gap-1">
-                    <Plus size={13} /> Thêm nguyên liệu
-                  </Button>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  {mainFlowers.map((flower, idx) => (
-                    <div
-                      key={flower.id ?? idx}
-                      className="grid grid-cols-12 gap-2 items-center bg-surface-alt p-2.5 rounded-xl border border-border text-xs"
-                    >
-                      <div className="col-span-4">
-                        <input
-                          type="text"
-                          value={flower.name}
-                          onChange={(e) => updateFlower(idx, "name", e.target.value)}
-                          placeholder="Tên hoa (VD: Tulip)"
-                          className="w-full rounded-md border border-border bg-surface px-2 py-1.5 text-xs font-semibold text-text outline-none focus:border-primary"
-                        />
-                      </div>
-                      <div className="col-span-2">
-                        <input
-                          type="number"
-                          value={flower.quantity ?? ""}
-                          onChange={(e) => updateFlower(idx, "quantity", e.target.value === "" ? "" : Number(e.target.value))}
-                          placeholder="Số lượng"
-                          className="w-full rounded-md border border-border bg-surface px-2 py-1.5 text-xs text-text outline-none focus:border-primary font-bold text-center"
-                        />
-                      </div>
-                      <div className="col-span-2">
-                        <input
-                          type="text"
-                          value={flower.unit}
-                          onChange={(e) => updateFlower(idx, "unit", e.target.value)}
-                          placeholder="ĐVT (cành/bông)"
-                          className="w-full rounded-md border border-border bg-surface px-2 py-1.5 text-xs text-text outline-none focus:border-primary"
-                        />
-                      </div>
-                      <div className="col-span-3">
-                        <input
-                          type="text"
-                          value={flower.color ?? ""}
-                          onChange={(e) => updateFlower(idx, "color", e.target.value)}
-                          placeholder="Tone màu (Vàng/Đỏ...)"
-                          className="w-full rounded-md border border-border bg-surface px-2 py-1.5 text-xs text-text outline-none focus:border-primary"
-                        />
-                      </div>
-                      <div className="col-span-1 flex justify-center">
-                        <button
-                          type="button"
-                          onClick={() => removeFlower(idx)}
-                          className="p-1 text-text-muted hover:text-danger transition-colors"
-                          title="Xóa dòng này"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Lá phụ & đệm */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-text flex items-center gap-1.5">
-                    🌿 Lá đệm ({foliageItems.length} loại)
-                  </span>
-                  <Button variant="outline" size="sm" onClick={addFoliage} className="h-7 text-xs gap-1">
-                    <Plus size={13} /> Thêm lá đệm
-                  </Button>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  {foliageItems.map((foliage, idx) => (
-                    <div
-                      key={foliage.id ?? idx}
-                      className="grid grid-cols-12 gap-2 items-center bg-surface-alt p-2 rounded-xl border border-border text-xs"
-                    >
-                      <div className="col-span-5">
-                        <input
-                          type="text"
-                          value={foliage.name}
-                          onChange={(e) => updateFoliage(idx, "name", e.target.value)}
-                          placeholder="Tên lá (Lá chanh, lá bạc...)"
-                          className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs font-medium text-text outline-none focus:border-primary"
-                        />
-                      </div>
-                      <div className="col-span-3">
-                        <input
-                          type="number"
-                          value={foliage.quantity ?? ""}
-                          onChange={(e) => updateFoliage(idx, "quantity", e.target.value === "" ? "" : Number(e.target.value))}
-                          placeholder="Số lượng"
-                          className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs text-text outline-none focus:border-primary text-center"
-                        />
-                      </div>
-                      <div className="col-span-3">
-                        <input
-                          type="text"
-                          value={foliage.unit}
-                          onChange={(e) => updateFoliage(idx, "unit", e.target.value)}
-                          placeholder="Đơn vị"
-                          className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs text-text outline-none focus:border-primary"
-                        />
-                      </div>
-                      <div className="col-span-1 flex justify-center">
-                        <button
-              aria-label="Xóa"
-                          type="button"
-                          onClick={() => removeFoliage(idx)}
-                          className="p-1 text-text-muted hover:text-danger"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Vật chứa, Giấy gói & Kích thước */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 pt-3 border-t border-border">
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Vật chứa (Bình/Giỏ/Bó)</label>
-                  <input
-                    type="text"
-                    value={container}
-                    onChange={(e) => setContainer(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="Bình gốm, Giỏ mây, Sản phẩm..."
-                  />
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Chất liệu giấy gói / Nơ</label>
-                  <input
-                    type="text"
-                    value={wrapping}
-                    onChange={(e) => setWrapping(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="Giấy lụa, Giấy xi măng..."
-                  />
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Chiều cao ước tính (cm)</label>
-                  <input
-                    type="number"
-                    value={heightCm}
-                    onChange={(e) => setHeightCm(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="55"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-caption font-bold text-text-muted block mb-1">Chiều rộng ước tính (cm)</label>
-                  <input
-                    type="number"
-                    value={widthCm}
-                    onChange={(e) => setWidthCm(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-body-sm text-text outline-none focus:border-primary"
-                    placeholder="40"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 3: Quà tặng & Cam kết dịch vụ */}
-          {editTab === "gifts" && (
-            <div className="flex flex-col gap-5">
-              {/* Quà tặng */}
-              <div>
-                <span className="text-xs font-bold text-text block mb-2">🎁 Quà tặng kèm theo cho khách</span>
-                <div className="flex flex-col gap-2 mb-2">
-                  {freeGifts.map((gift, idx) => (
-                    <div key={idx} className="flex items-center gap-2 bg-surface-alt px-3 py-2 rounded-xl border border-border text-xs">
-                      <Gift size={14} className="text-primary flex-shrink-0" />
-                      <input
-                        type="text"
-                        value={gift}
-                        onChange={(e) => {
-                          const val = e.target.value
-                          setFreeGifts((prev) => prev.map((g, i) => (i === idx ? val : g)))
-                        }}
-                        className="flex-1 bg-transparent border-none outline-none font-medium text-text text-xs"
-                      />
-                      <button
-              aria-label="Xóa"
-                        type="button"
-                        onClick={() => removeGiftItem(idx)}
-                        className="text-text-muted hover:text-danger"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={newGift}
-                    onChange={(e) => setNewGift(e.target.value)}
-                    placeholder="+ Thêm quà tặng (VD: Tặng thiệp viết tay...)"
-                    className="flex-1 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-primary"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault()
-                        addGiftItem()
-                      }
-                    }}
-                  />
-                  <Button size="sm" variant="outline" onClick={addGiftItem} className="text-xs">
-                    Thêm
-                  </Button>
-                </div>
-              </div>
-
-              {/* Cam kết */}
-              <div>
-                <span className="text-xs font-bold text-text block mb-2">🛡️ Cam kết dịch vụ từ Shop</span>
-                <div className="flex flex-col gap-2 mb-2">
-                  {guarantees.map((gua, idx) => (
-                    <div key={idx} className="flex items-center gap-2 bg-surface-alt px-3 py-2 rounded-xl border border-border text-xs">
-                      <ShieldCheck size={14} className="text-success flex-shrink-0" />
-                      <input
-                        type="text"
-                        value={gua}
-                        onChange={(e) => {
-                          const val = e.target.value
-                          setGuarantees((prev) => prev.map((g, i) => (i === idx ? val : g)))
-                        }}
-                        className="flex-1 bg-transparent border-none outline-none font-medium text-text text-xs"
-                      />
-                      <button
-                        aria-label="Xóa"
-                        type="button"
-                        onClick={() => removeGuaranteeItem(idx)}
-                        className="text-text-muted hover:text-danger"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={newGuarantee}
-                    onChange={(e) => setNewGuarantee(e.target.value)}
-                    placeholder="+ Thêm cam kết (VD: Chụp hình trước khi giao...)"
-                    className="flex-1 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-primary"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault()
-                        addGuaranteeItem()
-                      }
-                    }}
-                  />
-                  <Button size="sm" variant="outline" onClick={addGuaranteeItem} className="text-xs">
-                    Thêm
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Bottom actions of the editor */}
-          <div className="mt-5 flex items-center justify-between border-t border-border pt-3">
-            <span className="text-xs text-text-muted">
-              Chỉnh sửa hoàn tất? Chuyển sang xem Thẻ Chào Khách hoặc xuất bản.
-            </span>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveTab("card")}
-                className="text-xs font-semibold gap-1 text-primary hover:bg-primary/5 border-primary/30"
-              >
-                <Eye size={13} />
-                Xem Thẻ chào khách →
-              </Button>
-              {status !== "FINALIZED" && (
-                <Button
-                  size="sm"
-                  onClick={handleFinalize}
-                  className="text-xs bg-success hover:bg-success/90 text-white font-bold"
-                >
-                  <CheckCircle2 size={14} className="mr-1" />
-                  Chốt duyệt & Xuất bản Final
-                </Button>
-              )}
-            </div>
-          </div>
-        </Card>
+        <PitchInlineEditor
+          generalProps={{
+            productName,
+            setProductName,
+            sku,
+            setSku,
+            style,
+            setStyle,
+            price,
+            setPrice,
+            originalPrice,
+            setOriginalPrice,
+            shopHotline,
+            setShopHotline,
+            shopName,
+            setShopName,
+            occasions,
+            removeOccasion,
+            newOccasion,
+            setNewOccasion,
+            addOccasion,
+            description,
+            setDescription,
+            customNote,
+            setCustomNote,
+          }}
+          bomProps={{
+            mainFlowers,
+            addFlower,
+            updateFlower,
+            removeFlower,
+            foliageItems,
+            addFoliage,
+            updateFoliage,
+            removeFoliage,
+            container,
+            setContainer,
+            wrapping,
+            setWrapping,
+            heightCm,
+            setHeightCm,
+            widthCm,
+            setWidthCm,
+          }}
+          giftsProps={{
+            freeGifts,
+            setFreeGifts,
+            removeGiftItem,
+            newGift,
+            setNewGift,
+            addGiftItem,
+            guarantees,
+            setGuarantees,
+            removeGuaranteeItem,
+            newGuarantee,
+            setNewGuarantee,
+            addGuaranteeItem,
+          }}
+          status={status}
+          onViewCard={() => setActiveTab("card")}
+          onFinalize={handleFinalize}
+        />
       )}
 
       {/* TAB 2: THẺ CHÀO KHÁCH (VISUAL CARD KHỔ A6 & XUẤT ẢNH / PDF) */}
       {activeTab === "card" && (
-        <div className="flex flex-col gap-4 max-w-xl mx-auto w-full">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-1.5">
-              <Eye size={14} className="text-primary" />
-              Bản xem trước Thẻ Chào Khách (Khổ A6 / Share Card)
-            </span>
-            {status === "FINALIZED" && (
-              <span className="text-caption font-semibold text-success">
-                Đã chốt duyệt Final
-              </span>
-            )}
-          </div>
-
-          {/* Notification messages */}
-          {exportSuccess && (
-            <div className="rounded-xl bg-success/10 border border-success/25 p-3 text-xs font-medium text-success flex items-center gap-2 animate-in fade-in duration-200">
-              <CheckCircle2 size={16} className="text-success flex-shrink-0" />
-              <span>{exportSuccess}</span>
-            </div>
-          )}
-          {exportError && (
-            <div className="rounded-xl bg-danger/10 border border-danger/25 p-3 text-xs font-medium text-danger flex items-center gap-2 animate-in fade-in duration-200">
-              <AlertCircle size={16} className="text-danger flex-shrink-0" />
-              <span>{exportError}</span>
-            </div>
-          )}
-
-          {/* Thanh lựa chọn Kích thước & Phong cách thiết kế thẻ (Công cụ 03) */}
-          <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-2xl bg-surface border border-border p-2.5 shadow-xs">
-            {/* Bộ chọn Tỷ lệ / Kích thước */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-caption font-bold text-text-muted uppercase tracking-wider pl-1">
-                Kích thước:
-              </span>
-              <div className="flex items-center gap-1 bg-surface-alt p-1 rounded-xl border border-border">
-                <button
-                  type="button"
-                  onClick={() => setCardFormat("a6")}
-                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
-                    cardFormat === "a6"
-                      ? "bg-surface text-primary shadow-xs font-bold"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                  title="Khổ bưu thiếp chuẩn A6 (105x148mm)"
-                >
-                  Bưu thiếp A6
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCardFormat("square")}
-                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
-                    cardFormat === "square"
-                      ? "bg-surface text-primary shadow-xs font-bold"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                  title="Khổ vuông 1:1 - tối ưu gửi chat Zalo / Messenger"
-                >
-                  Vuông 1:1
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCardFormat("story")}
-                  className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
-                    cardFormat === "story"
-                      ? "bg-surface text-primary shadow-xs font-bold"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                  title="Khổ dọc dạng Story / Nhật ký Zalo"
-                >
-                  Story
-                </button>
-              </div>
-            </div>
-
-            {/* Bộ chọn Phong cách màu sắc */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-caption font-bold text-text-muted uppercase tracking-wider pl-1">
-                Giao diện:
-              </span>
-              <div className="flex items-center gap-1 bg-surface-alt p-1 rounded-xl border border-border">
-                <button
-                  type="button"
-                  onClick={() => setCardTheme("classic")}
-                  className={`px-2 py-1 text-xs font-semibold rounded-lg transition-all ${
-                    cardTheme === "classic"
-                      ? "bg-surface text-primary shadow-xs font-bold"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  Tiêu chuẩn
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCardTheme("minimal")}
-                  className={`px-2 py-1 text-xs font-semibold rounded-lg transition-all ${
-                    cardTheme === "minimal"
-                      ? "bg-surface text-primary shadow-xs font-bold"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  Tối giản
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCardTheme("festive")}
-                  className={`px-2 py-1 text-xs font-semibold rounded-lg transition-all ${
-                    cardTheme === "festive"
-                      ? "bg-surface text-primary shadow-xs font-bold"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  Lễ hội
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <SalesPitchCardA6
-            ref={cardRef}
-            activePitch={activePitch}
-            status={status}
-            cardFormat={cardFormat}
-            theme={cardTheme}
-          />
-
-          {/* Quick navigation at bottom of card */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setActiveTab("edit")}
-              className="text-xs font-semibold gap-1 text-text hover:text-primary"
-            >
-              <Pencil size={13} />
-              Chỉnh sửa thông tin
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsOrderModalOpen(true)}
-              className="text-xs font-semibold gap-1.5 text-primary border-primary/40 hover:bg-primary/5"
-            >
-              <ShoppingBag size={14} />
-              Tạo đơn hàng từ mẫu này
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setActiveTab("script")}
-              className="text-xs font-semibold gap-1 text-text hover:text-primary"
-            >
-              <FileText size={13} />
-              Xem Kịch bản Zalo →
-            </Button>
-          </div>
-        </div>
+        <PitchCardTab
+          cardRef={cardRef}
+          activePitch={activePitch}
+          status={status}
+          cardFormat={cardFormat}
+          setCardFormat={setCardFormat}
+          cardTheme={cardTheme}
+          setCardTheme={setCardTheme}
+          exportSuccess={exportSuccess}
+          exportError={exportError}
+          onOpenEdit={() => setActiveTab("edit")}
+          onOpenOrderModal={() => setIsOrderModalOpen(true)}
+          onOpenScript={() => setActiveTab("script")}
+        />
       )}
 
       {/* TAB 3: KỊCH BẢN ZALO (HIỂN THỊ KHI activeTab = 'script') */}
@@ -1350,7 +772,7 @@ export function SalesPitchCard({
               variant="outline"
               size="sm"
               onClick={() => setActiveTab("card")}
-              className="text-xs font-semibold gap-1 text-text hover:text-primary"
+              className="text-caption font-semibold gap-1 text-text hover:text-primary"
             >
               <Eye size={13} />
               ← Xem Thẻ chào khách A6
@@ -1361,7 +783,7 @@ export function SalesPitchCard({
                 variant="outline"
                 size="sm"
                 onClick={() => setIsScriptLibraryOpen(true)}
-                className="text-xs font-semibold gap-1.5 text-text hover:text-primary"
+                className="text-caption font-semibold gap-1.5 text-text hover:text-primary"
               >
                 <BookOpen size={14} />
                 Thư viện 14 kịch bản chốt sale
@@ -1371,7 +793,7 @@ export function SalesPitchCard({
                 variant="outline"
                 size="sm"
                 onClick={() => setIsOrderModalOpen(true)}
-                className="text-xs font-semibold gap-1.5 text-primary border-primary/40 hover:bg-primary/5"
+                className="text-caption font-semibold gap-1.5 text-primary border-primary/40 hover:bg-primary/5"
               >
                 <ShoppingBag size={14} />
                 Chốt đơn hàng ngay

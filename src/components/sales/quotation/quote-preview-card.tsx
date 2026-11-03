@@ -6,6 +6,8 @@ import { Check, Copy, ExternalLink, Receipt, Send, Sparkles } from "@/components
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { InlineError } from "@/components/ui/inline-error"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import type { ProductItem, QuotationRecord } from "./quotation-types"
@@ -145,36 +147,36 @@ export function QuotePreviewCard({
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="font-semibold text-text block mb-1">Giảm giá (VNĐ):</label>
-              <input
+              <Input
                 type="number"
                 value={discountAmount || ""}
                 onChange={(e) => onDiscountChange(Number(e.target.value) || 0)}
                 placeholder="0"
-                className="w-full px-2.5 py-1.5 rounded-md border border-border bg-surface text-body-sm text-text"
+                className="w-full"
               />
             </div>
             <div>
               <label className="font-semibold text-text block mb-1">Hạn hiệu lực:</label>
-              <select
+              <NativeSelect
                 value={validDays}
                 onChange={(e) => onValidDaysChange(Number(e.target.value))}
-                className="w-full px-2.5 py-1.5 rounded-md border border-border bg-surface text-body-sm text-text"
+                className="w-full"
               >
                 <option value={3}>3 ngày</option>
                 <option value={7}>7 ngày</option>
                 <option value={14}>14 ngày</option>
                 <option value={30}>30 ngày</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
 
           <div>
             <label className="font-semibold text-text block mb-1">Điều khoản / Ghi chú:</label>
-            <input
+            <Input
               type="text"
               value={terms}
               onChange={(e) => onTermsChange(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded-md border border-border bg-surface text-body-sm text-text"
+              className="w-full"
             />
           </div>
         </div>

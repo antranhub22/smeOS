@@ -132,10 +132,17 @@ export function CustomerQuoteBuilder({
                 { id: "700_1000", label: "700K – 1 Triệu" },
                 { id: "ABOVE_1000", label: "Trên 1 Triệu" },
               ].map((b) => (
-                <button
+                <div
                   key={b.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setBudgetFilter(b.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      setBudgetFilter(b.id)
+                    }
+                  }}
                   className={`px-2.5 py-1 rounded-md text-caption font-medium transition-colors cursor-pointer ${
                     budgetFilter === b.id
                       ? "bg-primary text-white font-semibold"
@@ -143,7 +150,7 @@ export function CustomerQuoteBuilder({
                   }`}
                 >
                   {b.label}
-                </button>
+                </div>
               ))}
             </div>
           </div>
