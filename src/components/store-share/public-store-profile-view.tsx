@@ -23,7 +23,7 @@ export function PublicStoreProfileView({ profile }: { profile: PublicStoreProfil
             // eslint-disable-next-line @next/next/no-img-element -- URL ký có hạn từ kho lưu trữ, không qua tối ưu ảnh
             <img src={profile.logoUrl} alt={`Logo ${profile.name}`} className="w-20 h-20 mx-auto -mt-16 rounded-full object-cover border-4 border-surface bg-surface" />
           ) : null}
-          <h2 className="mt-3 text-2xl font-bold text-text">{profile.name}</h2>
+          <h1 className="mt-3 text-2xl font-bold text-text">{profile.name}</h1>
           {profile.description && <p className="mt-2 text-body-sm text-text-muted whitespace-pre-line">{profile.description}</p>}
 
           {primary && (

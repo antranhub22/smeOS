@@ -215,6 +215,41 @@
       "rule": "R20",
       "path": "src/components/promotions/price-list-document.tsx",
       "reason": "Nội dung trang /bang-gia/[id] là bản bảng giá căn giữa để in hoặc gửi khách — tiêu đề tài liệu là <h1>, không dùng PageHeader để giữ bố cục bản in"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/ch/[slug]/page.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/ch/not-found.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/chia-se/cho-doi-tac/[token]/shared-marketplace-view.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/chinh-sach-bao-mat/page.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/dang-ky-thanh-cong/page.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/global-error.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/store-share/public-store-profile-view.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
     }
   ]
 }

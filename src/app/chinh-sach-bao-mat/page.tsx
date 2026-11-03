@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
   if (!isPrivacyNoticeEnabled()) notFound()
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-5 px-4 py-8 text-text">
-      <h2 className="text-display font-bold">Chính sách bảo mật thông tin khách hàng</h2>
+      <h1 className="text-display font-bold">Chính sách bảo mật thông tin khách hàng</h1>
       {SECTIONS.map((s) => (
         <section key={s.title} className="flex flex-col gap-2">
           <h2 className="text-title-sm font-bold">{s.title}</h2>
