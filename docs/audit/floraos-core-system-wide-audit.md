@@ -57,7 +57,7 @@ Dưới đây là đánh giá line-by-line hiện trạng 10 phân hệ nghiệp
 ---
 
 ### TRỤ CỘT 1: NHẬN DIỆN THỊ GIÁC & BÓC TÁCH DỮ LIỆU SẢN PHẨM (M01 & M04a)
-- **Tài liệu đặc tả chi tiết**: [`docs/Audit/product-analysis-feature-spec.md`](file:///Users/tuan/Projects/floraos-core/docs/Audit/product-analysis-feature-spec.md)
+- **Tài liệu đặc tả chi tiết**: [`docs/audit/product-analysis-feature-spec.md`](./product-analysis-feature-spec.md)
 - **Phạm vi code**: `src/modules/products/`, `workers/vision/`, `src/app/(app)/tai-anh/`
 
 | Khối tính năng | Trạng thái | Đánh giá hiện trạng & Bằng chứng mã nguồn |
@@ -71,7 +71,7 @@ Dưới đây là đánh giá line-by-line hiện trạng 10 phân hệ nghiệp
 ---
 
 ### TRỤ CỘT 2: KÊNH BÁN HÀNG THẺ CHÀO & SWIPE BROCHURE (GREETING CARD)
-- **Tài liệu đặc tả chi tiết**: [`docs/Audit/greeting-card-feature-spec.md`](file:///Users/tuan/Projects/floraos-core/docs/Audit/greeting-card-feature-spec.md)
+- **Tài liệu đặc tả chi tiết**: [`docs/audit/greeting-card-feature-spec.md`](./greeting-card-feature-spec.md)
 - **Phạm vi code**: `src/modules/greeting-card/`, `src/app/(app)/the-chao/`, `src/app/b/[sendCode]/`
 
 | Khối tính năng | Trạng thái | Đánh giá hiện trạng & Bằng chứng mã nguồn |
@@ -85,7 +85,7 @@ Dưới đây là đánh giá line-by-line hiện trạng 10 phân hệ nghiệp
 ---
 
 ### TRỤ CỘT 3: THỰC HIỆN NGHIỆP VỤ ĐIỀU PHỐI (CHỨC NĂNG 12 / CONTROL TOWER)
-- **Tài liệu đặc tả chi tiết**: [`docs/Audit/coordinator-feature-spec.md`](file:///Users/tuan/Projects/floraos-core/docs/Audit/coordinator-feature-spec.md)
+- **Tài liệu đặc tả chi tiết**: [`docs/audit/coordinator-feature-spec.md`](./coordinator-feature-spec.md)
 - **Phạm vi code**: `src/modules/coordinator/`, `src/app/(app)/dieu-phoi/`, `src/components/coordinator/`
 
 | Khối tính năng | Trạng thái | Đánh giá hiện trạng & Bằng chứng mã nguồn |

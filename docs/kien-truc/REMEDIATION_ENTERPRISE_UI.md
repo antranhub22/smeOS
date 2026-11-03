@@ -71,9 +71,9 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 
 ## 7. Đợt P2 — Tài liệu bàn giao trung thực
 
-- [ ] **P2-1** (Q3) Viết lại `12_PERFORMANCE_REPORT.md`: bỏ bảng LCP/CLS không có nguồn và các mốc "Tuần 1–12", sửa phiên bản Next.js 16; trạng thái "Chưa đo" kèm phương pháp đo (Lighthouse trên bản build, 6 tuyến).
-- [ ] **P2-2** (Q3) Viết lại `13_RE_AUDIT_ENTERPRISE_REPORT.md` theo số thật: kết quả cổng, baseline UX lint (5.367 điểm, lý do tăng do siết luật R1/R17–R21, phần giảm do allowlist), số tệp > 350 dòng. Rà `docs/design-system/CHANGELOG.md` và biên bản `accessibility-audit-12-journeys.md` — nhận định nào chưa có bằng chứng chạy thì ghi "chưa kiểm chứng".
-- [ ] **P2-3** (E2) Gộp `docs/Audit/` vào `docs/audit/` (`git mv`), sửa liên kết và registry; kiểm không còn đường dẫn trùng chỉ khác hoa thường.
+- [x] **P2-1** (Q3) Viết lại `12_PERFORMANCE_REPORT.md`: bỏ bảng LCP/CLS không có nguồn và các mốc "Tuần 1–12", sửa phiên bản Next.js 16; trạng thái "Chưa đo" kèm phương pháp đo (Lighthouse trên bản build, 6 tuyến).
+- [x] **P2-2** (Q3) Viết lại `13_RE_AUDIT_ENTERPRISE_REPORT.md` theo số thật: kết quả cổng, baseline UX lint (5.367 điểm, lý do tăng do siết luật R1/R17–R21, phần giảm do allowlist), số tệp > 350 dòng. Rà `docs/design-system/CHANGELOG.md` và biên bản `accessibility-audit-12-journeys.md` — nhận định nào chưa có bằng chứng chạy thì ghi "chưa kiểm chứng".
+- [x] **P2-3** (E2) Gộp `docs/Audit/` vào `docs/audit/` (`git mv`), sửa liên kết và registry; kiểm không còn đường dẫn trùng chỉ khác hoa thường.
 - [ ] **P2-4** (E4) Thêm tệp `LICENSE` (giấy phép độc quyền) với tên pháp nhân sở hữu do PO cung cấp.
 
 ## 8. Đợt P3 — Chất lượng
@@ -113,9 +113,9 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P1-9 | Xong | xem `git log --grep "P1-9"` | check:docs ✓ Tài liệu khớp mã; tenant 8 tệp 23/23 | Đặc tả 06 mục 30 (33 endpoint, đối chiếu từng mã gác); đặc tả 07 mục 38 (7 bảng + 9 enum trích nguyên văn lược đồ); 7 bảng vào TENANT_TABLES; customer_segments/customer_interactions đã có ca thử ở customer-care-isolation.test.ts — ghi vào COVERED_VIA_ROUTE kèm chỉ dẫn; asset_usages/print_renditions có ca thử từ P0 |
 | P1-10 | Xong | xem `git log --grep "P1-10"` | prisma migrate diff rỗng trên DB cũ và DB dựng mới từ toàn bộ migration | Migration 20261103100000 đổi tên index |
 | P1-11 | Xong | xem `git log --grep "P1-11"` | YAML hợp lệ; chưa chạy trên GitHub (lịch chạy thứ Hai hoặc chạy tay) | Dùng đúng bước dựng floraos_test của ci.yml; bỏ || true (PO duyệt Q4) |
-| P2-1 | Chưa làm | | |  |
-| P2-2 | Chưa làm | | |  |
-| P2-3 | Chưa làm | | |  |
+| P2-1 | Xong | xem `git log --grep "P2-1"` | check:docs ✓ | Viết lại: trạng thái Chưa đo, chỉ tiêu và phương pháp; sửa nhận định sai (tách modal không có, skeleton theo archetype không có, data-theme cố định moc-lan) |
+| P2-2 | Xong | xem `git log --grep "P2-2"` | check:docs ✓ | 13_RE_AUDIT viết lại theo số đo (lệnh kèm từng số); CHANGELOG 1.2.0 viết lại; biên bản trợ năng chuyển thành quy trình kiểm — bỏ dòng ký duyệt và CERTIFIED không có bằng chứng, bỏ preset không tồn tại (warm-amber, organic-teal), bỏ scroll-padding không có trong mã |
+| P2-3 | Xong | xem `git log --grep "P2-3"` | Không còn đường dẫn trùng hoa/thường; check:docs ✓ | 6 tệp nội bộ chuyển sang docs/audit/; gỡ 7 tệp tài liệu khách ALG và Avi Florist theo quyết định PO 03/11/2026 — lấy lại được từ commit 26c0b29a; lịch sử git vẫn chứa các tệp này; sửa 3 liên kết file:///Users/… trong floraos-core-system-wide-audit.md |
 | P2-4 | Chưa làm | | | Chờ tên pháp nhân |
 | P3-1 | Chưa làm | | |  |
 | P3-2 | Chưa làm | | |  |
