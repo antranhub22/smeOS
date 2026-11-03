@@ -71,6 +71,14 @@ test.describe("Ảnh mốc màn chính 12 hành trình", () => {
         })
         const page = await context.newPage()
         await page.clock.setFixedTime(FIXED_TIME)
+        // Trạng thái người dùng quay lại: thẻ hướng dẫn đã thu gọn. Nội dung thẻ có emoji, mà phông
+        // emoji khác nhau giữa máy chụp mốc và runner CI làm dòng chữ xuống khác nhau.
+        await page.addInitScript(() => {
+          const get = Storage.prototype.getItem
+          Storage.prototype.getItem = function (key: string) {
+            return key.startsWith("smeos_guidance_seen_") ? "1" : get.call(this, key)
+          }
+        })
         await settle(page, screen.path)
         try {
           await expect(page).toHaveScreenshot(`${screen.name}-${vp.label}.png`, {
