@@ -2,7 +2,7 @@
 
 /**
  * DesktopNavFooter — Footer thanh điều hướng bên trái
- * Bao gồm: Nút Copilot (⌘K) + Thẻ người dùng + Đăng xuất
+ * Bao gồm: Nút Copilot (⌘K) + Thẻ người dùng + Đăng xuất (một hàng gọn, không khung lồng khung)
  *
  * Hỗ trợ collapsed mode: chỉ hiển thị icon.
  */
@@ -39,89 +39,62 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
 
   const displayRole = roleUx?.label ?? (orgName || "").replace(/\s*\(\s*dev\s*\)/gi, "").trim()
 
+  const openCopilot = () =>
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
+
   // ─── Collapsed: icon-only stack ───────────────────────────────
   if (collapsed) {
     return (
-      <div className="flex flex-col items-center gap-1.5 border-t border-border px-1.5 py-3">
-        {/* Copilot icon */}
+      <div className="flex flex-col items-center gap-2 border-t border-border px-2 py-3">
         <button
           type="button"
           title="smeOS Copilot (⌘K)"
           aria-label="Mở smeOS Copilot"
-          onClick={() =>
-            window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
-          }
+          onClick={openCopilot}
           className={cn(
-            "group flex h-9 w-9 items-center justify-center rounded-xl",
-            "bg-primary text-white shadow-sm",
-            "hover:bg-primary-dark transition-colors duration-150"
+            "flex h-10 w-10 items-center justify-center rounded-lg text-primary",
+            "transition-colors duration-150 hover:bg-primary-muted",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           )}
         >
-          <Bot size={16} aria-hidden />
+          <Bot size={20} aria-hidden />
         </button>
-
-        {/* Avatar + logout */}
-        <div className="relative">
-          <UserMenu initials={userInitials || "U"} direction="up" size="sm" />
-        </div>
+        <UserMenu initials={userInitials || "U"} direction="up" size="sm" />
       </div>
     )
   }
 
-  // ─── Expanded: full footer ─────────────────────────────────────
+  // ─── Expanded: Copilot + thẻ người dùng ────────────────────────
   return (
-    <div className="flex flex-col gap-2 border-t border-border p-3">
-      {/* Copilot shortcut button */}
+    <div className="flex flex-col gap-1 border-t border-border p-3">
       <button
         type="button"
-        onClick={() =>
-          window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
-        }
+        onClick={openCopilot}
         className={cn(
-          "group flex w-full items-center justify-between rounded-xl border border-border",
-          "bg-surface-alt p-2.5 text-left transition-all duration-150",
-          "hover:border-primary/30 hover:bg-primary-muted hover:shadow-xs"
+          "group flex h-10 w-full items-center gap-2.5 rounded-lg border border-border bg-surface px-2.5 text-left shadow-xs",
+          "transition-colors duration-150 hover:border-primary-border hover:bg-primary-muted",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         )}
       >
-        <div className="flex items-center gap-2.5">
-          <span
-            className={cn(
-              "flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-white",
-              "shadow-xs group-hover:shadow-sm transition-shadow duration-150"
-            )}
-          >
-            <Bot size={14} aria-hidden />
-          </span>
-          <div>
-            <div className="text-caption font-bold text-text leading-tight">smeOS Copilot</div>
-            <div className="text-caption text-text-muted font-medium leading-tight">Trợ lý AI 24/7</div>
-          </div>
-        </div>
-        <kbd className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-caption font-mono text-text-muted">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <Bot size={14} aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1 truncate text-body-sm font-semibold text-text" title="Trợ lý AI 24/7">
+          smeOS Copilot
+        </span>
+        <kbd className="shrink-0 rounded border border-border bg-surface-alt px-1.5 py-px font-mono text-caption text-text-muted">
           ⌘K
         </kbd>
       </button>
 
-      {/* User card */}
-      <div
-        className={cn(
-          "flex items-center gap-2 rounded-xl border border-border bg-surface-alt/60 p-2",
-          "transition-colors duration-150 hover:border-border"
-        )}
-      >
+      <div className="flex items-center gap-2.5 rounded-lg p-1.5 transition-colors duration-150 hover:bg-surface-alt">
         <UserMenu initials={userInitials || "U"} direction="up" size="sm" />
 
         <div className="min-w-0 flex-1">
-          <div
-            className="truncate text-caption font-bold text-text leading-tight"
-            title={userName}
-          >
+          <div className="truncate text-body-sm font-semibold leading-tight text-text" title={userName}>
             {userName || "Người dùng"}
           </div>
-          <div
-            className="truncate text-caption text-text-muted leading-tight"
-            title={displayRole}
-          >
+          <div className="truncate text-caption leading-tight text-text-muted" title={displayRole}>
             {displayRole}
           </div>
         </div>
@@ -133,12 +106,12 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
           title={t("layout.userMenu.logout")}
           aria-label={t("layout.userMenu.logout")}
           className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-            "text-text-muted hover:bg-danger-bg hover:text-danger",
-            "transition-colors duration-150 disabled:opacity-50"
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-text-muted",
+            "transition-colors duration-150 hover:bg-danger-bg hover:text-danger disabled:cursor-wait",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           )}
         >
-          <LogOut size={15} aria-hidden />
+          <LogOut size={16} aria-hidden />
         </button>
       </div>
     </div>

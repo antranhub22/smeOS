@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import type { NavEntry, NavGroup as NavGroupType } from "./nav-model"
 import { isToolkitGroupKey } from "./nav/nav-types"
 import { DesktopNavItem } from "./desktop-nav-item"
+import { NavSectionHeader } from "./nav-section-header"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { ToolkitShortcutsGroup } from "./toolkit-shortcuts-group"
 import { getAllToolkitNavEntries } from "./nav-toolkit-shortcuts"
@@ -82,7 +83,7 @@ export function DesktopNavGroup({
   // ── Collapsed: chỉ hiện icon stack ──────────────────────────
   if (collapsed) {
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0.5">
         {group.entries.map((entry) => (
           <DesktopNavItem
             key={entry.href}
@@ -93,21 +94,21 @@ export function DesktopNavGroup({
             onClick={() => onNavigate(entry.href)}
           />
         ))}
-        {/* Divider sau mỗi nhóm */}
-        <div className="my-1 h-px w-full rounded-full bg-border/60" aria-hidden />
+        <div className="mx-auto my-1.5 h-px w-6 bg-border" aria-hidden />
       </div>
     )
   }
 
-  // ── Nhóm "viec-chinh" — luôn mở, có sub-accordion Báo cáo ───
+  // ── Nhóm "viec-chinh" — luôn mở, có mục con Báo cáo ─────────
   if (group.key === "viec-chinh") {
     const homeEntry = group.entries.find((e) => e.href === "/")
     const reportEntries = group.entries.filter((e) => e.href !== "/")
     const isReportActive = reportEntries.some((e) => isActive(e)) || pathname === "/so-lieu"
+    const highlightReports = isReportActive && !reportsOpen
 
     return (
-      <div className="space-y-0.5">
-        <SectionLabel label={group.label} />
+      <div className="flex flex-col gap-px">
+        <NavSectionHeader label={group.label} expanded />
 
         {homeEntry && (
           <DesktopNavItem
@@ -119,43 +120,39 @@ export function DesktopNavGroup({
         )}
 
         {reportEntries.length > 0 && (
-          <div className="pt-0.5">
-            {/* Báo cáo accordion */}
+          <>
             <button
               type="button"
               onClick={() => onToggleReports(!reportsOpen)}
               aria-expanded={reportsOpen}
               className={cn(
-                "group relative flex h-9 w-full items-center justify-between rounded-lg px-2.5 text-meta font-medium transition-all text-left cursor-pointer",
-                isReportActive && !reportsOpen
-                  ? "bg-selected border border-primary/20 shadow-xs text-primary"
-                  : "border border-transparent text-text-muted hover:bg-surface-alt hover:text-text"
+                "group relative flex h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-body-sm font-medium",
+                "transition-colors duration-150 pointer-coarse:h-11",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-inset",
+                highlightReports
+                  ? "bg-primary-muted font-semibold text-primary"
+                  : "text-text-muted hover:bg-surface-alt hover:text-text"
               )}
             >
-              {isReportActive && !reportsOpen && (
-                <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary" aria-hidden />
-              )}
-              <div className="flex items-center gap-2.5">
-                <BarChart3
-                  size={20}
-                  weight={isReportActive ? "fill" : "regular"}
-                  aria-hidden
-                  className={isReportActive ? "text-primary" : "text-text-muted group-hover:text-text"}
-                />
-                <span>Báo cáo</span>
-              </div>
+              <BarChart3
+                size={18}
+                weight={isReportActive ? "fill" : "regular"}
+                aria-hidden
+                className={cn("shrink-0", isReportActive ? "text-primary" : "text-text-muted group-hover:text-text")}
+              />
+              <span className="min-w-0 flex-1 truncate">Báo cáo</span>
               <ChevronDown
-                size={13}
+                size={14}
                 aria-hidden
                 className={cn(
-                  "transition-transform duration-200 text-text-muted group-hover:text-text",
-                  reportsOpen ? "rotate-0" : "-rotate-90"
+                  "shrink-0 text-text-muted transition-transform duration-150 group-hover:text-text",
+                  !reportsOpen && "-rotate-90"
                 )}
               />
             </button>
 
             {reportsOpen && (
-              <div className="ml-3.5 mt-0.5 space-y-0.5 border-l border-border pl-2">
+              <div className="ml-5 flex flex-col gap-px border-l border-border pl-2">
                 {reportEntries.map((item) => (
                   <DesktopNavItem
                     key={item.href}
@@ -168,54 +165,32 @@ export function DesktopNavGroup({
                 ))}
               </div>
             )}
-          </div>
+          </>
         )}
       </div>
     )
   }
 
-  // ── Nhóm thông thường — collapsible ─────────────────────────
+  // ── Nhóm thông thường — đóng/mở được ────────────────────────
   return (
-    <div className="space-y-0.5">
-      <button
-        type="button"
-        aria-expanded={expanded}
-        onClick={() => onToggleGroup(group.key, expanded)}
-        className={cn(
-          "group flex w-full items-center justify-between gap-1.5 rounded-lg px-2 py-1 text-left select-none cursor-pointer",
-          "text-caption font-bold uppercase tracking-wider text-text-muted hover:text-text hover:bg-surface-alt/50 transition-colors duration-150",
-          "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
-        )}
-      >
-        <span className="truncate text-left flex-1">{group.label}</span>
-        <ChevronDown
-          size={12}
-          aria-hidden
-          className={cn("shrink-0 transition-transform duration-200 text-text-muted group-hover:text-text", expanded ? "rotate-0" : "-rotate-90")}
-        />
-      </button>
+    <div className="flex flex-col gap-px">
+      <NavSectionHeader
+        label={group.label}
+        expanded={expanded}
+        count={group.entries.length}
+        onToggle={() => onToggleGroup(group.key, expanded)}
+      />
 
-      {expanded && (
-        <div className="space-y-0.5">
-          {group.entries.map((entry) => (
-            <DesktopNavItem
-              key={entry.href}
-              item={entry}
-              active={isActive(entry)}
-              iconComponent={ICONS[entry.iconKey]}
-              onClick={() => onNavigate(entry.href)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function SectionLabel({ label }: { label: string }) {
-  return (
-    <div className="px-2 pb-1 text-caption font-bold uppercase tracking-wider text-text-muted">
-      {label}
+      {expanded &&
+        group.entries.map((entry) => (
+          <DesktopNavItem
+            key={entry.href}
+            item={entry}
+            active={isActive(entry)}
+            iconComponent={ICONS[entry.iconKey]}
+            onClick={() => onNavigate(entry.href)}
+          />
+        ))}
     </div>
   )
 }

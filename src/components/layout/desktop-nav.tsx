@@ -4,7 +4,7 @@
  * DesktopNav — Sidebar điều hướng chính (Desktop)
  *
  * Chức năng enterprise:
- * - Thu gọn (icon-only, 56px) / Mở rộng (240px) — lưu localStorage
+ * - Thu gọn (icon-only, 64px) / Mở rộng (256px) — lưu localStorage
  * - Header phân biệt tầng kiến trúc (SaaS Mother / Ngành / ChainOS / StoreOS)
  * - Tìm kiếm nhanh với phím tắt `/`
  * - Nhóm mục có thể đóng/mở — lưu trạng thái theo org
@@ -13,7 +13,6 @@
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { Search, X, ChevronDown, BarChart3 } from "@/components/ui/icons"
 import { useSession } from "@/lib/session"
 import { isRouteLocked } from "@/lib/feature-lock"
 import { cn, stripVietnamese } from "@/lib/utils"
@@ -22,6 +21,8 @@ import { DesktopNavHeader } from "./desktop-nav-header"
 import { DesktopNavItem } from "./desktop-nav-item"
 import { DesktopNavGroup } from "./desktop-nav-group"
 import { DesktopNavFooter } from "./desktop-nav-footer"
+import { DesktopNavSearch } from "./desktop-nav-search"
+import { NavSectionHeader } from "./nav-section-header"
 import {
   loadNavGroups,
   loadReportsOpen,
@@ -206,8 +207,8 @@ export function DesktopNav({
   const sidebarWidth = drawer
     ? "w-72 max-w-[85vw]"
     : collapsed
-    ? "w-14"
-    : "w-60"
+    ? "w-16"
+    : "w-64"
 
   // ────────────────────────────────────────────────────────────────
   // Render
@@ -233,56 +234,26 @@ export function DesktopNav({
 
       {/* ── Search — ẩn khi thu gọn ────────────────────────────── */}
       {!collapsed && (
-        <div className="border-b border-border px-3 py-2">
-          <div className="relative flex items-center">
-            <Search size={14} className="absolute left-2.5 text-text-muted pointer-events-none" aria-hidden />
-            <input
-              ref={searchInputRef}
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleSearchKeyDown}
-              placeholder="Tìm chức năng…"
-              aria-label="Tìm kiếm chức năng"
-              className={cn(
-                "h-8 w-full rounded-lg border border-border bg-surface-alt",
-                "pl-8 pr-16 text-meta text-text placeholder:text-text-muted",
-                "focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/40",
-                "transition-[border-color,box-shadow] duration-150"
-              )}
-            />
-            {searchQuery ? (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2 text-text-muted hover:text-text transition-colors"
-                aria-label="Xóa tìm kiếm"
-              >
-                <X size={13} />
-              </button>
-            ) : (
-              <kbd className="absolute right-2 rounded border border-border bg-surface px-1 py-0.5 text-caption font-mono text-text-muted leading-none pointer-events-none">
-                /
-              </kbd>
-            )}
-          </div>
-        </div>
+        <DesktopNavSearch
+          inputRef={searchInputRef}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          onKeyDown={handleSearchKeyDown}
+        />
       )}
 
       {/* ── Navigation Scroll Area ───────────────────────────────── */}
       <nav
         className={cn(
-          "flex flex-1 flex-col overflow-y-auto overflow-x-hidden",
-          collapsed ? "gap-1 px-1.5 py-2" : "gap-3 px-3 py-3"
+          "flex flex-1 flex-col overflow-y-auto overflow-x-hidden overscroll-contain [scrollbar-width:thin]",
+          collapsed ? "gap-0.5 px-3 py-3" : "gap-4 px-3 pt-2 pb-4"
         )}
         aria-label="Menu điều hướng"
       >
         {/* Search results */}
         {searchQuery && !collapsed ? (
-          <div className="space-y-1">
-            <div className="px-2 pb-1 text-caption font-bold uppercase tracking-wider text-text-muted">
-              Kết quả ({searchResults.length})
-            </div>
+          <div className="flex flex-col gap-px">
+            <NavSectionHeader label={`Kết quả (${searchResults.length})`} expanded />
             {searchResults.length === 0 ? (
               <p className="px-2.5 py-4 text-center text-meta text-text-muted">
                 Không tìm thấy chức năng phù hợp

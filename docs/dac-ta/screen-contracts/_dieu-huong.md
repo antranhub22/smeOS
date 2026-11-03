@@ -56,6 +56,13 @@
   - Các nhóm chức năng có nút thu gọn/mở rộng `aria-expanded`, lưu vào `localStorage` (`floraos_nav_groups_v1`).
   - Tìm kiếm nhanh: gõ `/` focus vào ô tìm kiếm, lọc tức thì không phân biệt dấu tiếng Việt (`stripVietnamese`). Enter chọn kết quả đầu tiên; Esc xóa và thoát.
   - Copilot: nút kích hoạt `⌘K` ở chân thanh điều hướng.
+- **Bố cục sidebar desktop (chung cho StoreOS, ChainOS, SaaS Ngành, SaaS Mother):**
+  - Rộng `w-64` (256px); thu gọn `w-16` (64px), phím tắt `⌘B`, trạng thái lưu `localStorage`.
+  - Đầu sidebar là thẻ không gian làm việc: logo mang màu nhận diện của tầng (`nav-tier-theme.ts`: Mother `orchid`, SaaS Ngành `tone-amber`, ChainOS `tone-blue`, StoreOS `primary`), dải nhấn 2px trên cùng cùng màu, tên tổ chức ở dòng chính, nhãn tầng ở dòng phụ.
+  - Tiêu đề nhóm (`nav-section-header.tsx`): chữ nhỏ viết hoa, bỏ số thứ tự đầu nhãn và phần vai trò sau dấu "·" (`formatNavGroupLabel`); mũi tên chỉ hiện khi rê chuột hoặc khi nhóm đóng; nhóm đóng hiện số mục bên trong.
+  - Mục điều hướng cao 36px (mục con 32px), icon 18px; trên màn cảm ứng cao 44px. Đang chọn: nền `bg-primary-muted`, chữ `text-primary`, vạch nhấn trái — tách biệt với hover `bg-surface-alt`.
+  - Khi thu gọn: ô icon 40px, tooltip định vị cố định theo viewport (không bị vùng cuộn cắt), có cả khi focus bàn phím.
+  - Chân sidebar: một hàng Copilot (`⌘K`) và một hàng người dùng (ảnh đại diện, tên, vai, đăng xuất).
 - **Mobile BottomNav:**
   - Slot 1: Trang chủ (`/`).
   - Slot 2: Ô thứ hai động theo vai `mobileSecondSlot(can, roleUx)` (vd: sales → Khách hàng, coordinator → Điều phối).
@@ -80,7 +87,7 @@
 | CTA | PASS | Phím tắt `/`, `⌘K`, nút giữa mobile nổi bật |
 | Luồng | PASS | Nhảy trực tiếp, không phụ thuộc trang 404 |
 | Trạng thái | PASS | Sắp có hiển thị vô hiệu rõ ràng |
-| Responsive | PASS | Desktop w-60 sidebar, Mobile h-16 bottom nav + /them |
+| Responsive | PASS | Desktop w-64 sidebar (thu gọn w-16), Mobile h-16 bottom nav + /them |
 | Trợ năng | PASS | Đủ nhãn, aria attributes, focus-visible chuẩn |
 | Dữ liệu | PASS | Không chứa mã kỹ thuật R8 (M01b, SSOT, Tháp Vận Hành) |
 | Quyền | PASS | Gác theo mã năng lực RBAC kết hợp server verification |
