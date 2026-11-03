@@ -118,7 +118,7 @@ export function ChatChannelsPanel() {
     <div className="space-y-6">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-body-sm font-extrabold text-foreground flex items-center gap-2">
+          <h2 className="text-body-sm font-extrabold text-text flex items-center gap-2">
             <Globe className="h-4 w-4 text-primary" />
             Danh Sách Kênh Tiếp Xúc Khách Hàng
           </h2>
@@ -160,7 +160,7 @@ export function ChatChannelsPanel() {
               <Globe className="h-4 w-4" />
             </span>
             <div>
-              <h3 className="text-xs font-bold text-foreground">
+              <h3 className="text-caption font-bold text-text">
                 Mã Nhúng Trợ Lý Ảo Lên Website Ngoài (WordPress, Haravan, Shopify)
               </h3>
               <p className="text-caption text-text-muted">
@@ -172,7 +172,7 @@ export function ChatChannelsPanel() {
           <Button
             size="sm"
             onClick={copyEmbedScript}
-            className="text-xs h-8 gap-1.5 shadow-xs"
+            className="text-caption h-8 gap-1.5 shadow-xs"
           >
             {copiedScript ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             {copiedScript ? "Đã chép mã" : "Sao chép mã nhúng"}

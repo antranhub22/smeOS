@@ -3,8 +3,8 @@
 > [!NOTE]
 > **NGUỒN SỰ THẬT DUY NHẤT (OSOT) CHO TIẾN ĐỘ THỰC THI & TÍCH HỢP UI/UX**  
 > Tệp này là tài liệu hợp nhất chính thức giữa **Checklist tính năng giao diện** và **Checklist tích hợp Backend API** cho toàn bộ 10 chức năng lõi FloraOS (thay thế và chuẩn hóa từ `UIUX-Feature-Checklist.md` và `UIUX-Integrate-Checklist.md`).  
-> **Đặc tả thiết kế & tương tác chi tiết:** [`docs/FloraOS-UIUX-10-chuc-nang.md`](file:///Users/tuan/Projects/floraos-core/docs/FloraOS-UIUX-10-chuc-nang.md).  
-> **Lộ trình kiến trúc tổng thể:** [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](file:///Users/tuan/Projects/floraos-core/docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md#15-kế-hoạch-thực-thi-tổng-thể).
+> **Đặc tả thiết kế & tương tác chi tiết:** [`docs/FloraOS-UIUX-10-chuc-nang.md`](FloraOS-UIUX-10-chuc-nang.md).  
+> **Lộ trình kiến trúc tổng thể:** [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md#15-kế-hoạch-thực-thi-tổng-thể).
 
 **Quy ước trạng thái tính năng:**
 - ✅ **Đã code & kết nối** — Giao diện hoàn thiện, gọi API thật hoặc xử lý trọn vẹn, có error handling.

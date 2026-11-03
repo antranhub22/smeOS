@@ -21,7 +21,7 @@
 
 | # | Nguyên Tắc | Quy Định Cốt Lõi |
 |---|---|---|
-| **T1** | **SSOT Tài Liệu** | SSOT gốc là [`FloraOS_48_cong_cu_v3.md`](file:///Users/tuan/Projects/smeOS/docs/n%C3%A2ng%20c%E1%BA%A5p%20ch%E1%BB%A9c%20n%C4%83ng%20cho%20c%E1%BB%ADa%20h%C3%A0ng/FloraOS_48_cong_cu_v3.md). Mọi tiêu chuẩn đầu ra, prompt mẫu, tiêu chí QC, hành động người dùng phải bám sát đặc tả này. |
+| **T1** | **SSOT Tài Liệu** | SSOT gốc là [`FloraOS_48_cong_cu_v3.md`](nâng%20cấp%20chức%20năng%20cho%20cửa%20hàng/FloraOS_48_cong_cu_v3.md). Mọi tiêu chuẩn đầu ra, prompt mẫu, tiêu chí QC, hành động người dùng phải bám sát đặc tả này. |
 | **T2** | **Provider Single-Call** | Mọi tác vụ AI mặc định gọi **MỘT LẦN DUY NHẤT** (Single-Call) tới AI Provider (Gemini, OpenAI, Fal, Photoroom...) với prompt đầy đủ. **Tuyệt đối cấm** dựng pipeline phức tạp nhiều bước cục bộ (như cắt ghép nối SAM2/rembg) trừ trường hợp fallback khẩn cấp khi mất mạng/hết credit. |
 | **T3** | **Zero Friction UX (Mặc định tự động)** | Luôn có chế độ **Mặc định Tự động (AUTO ✨)**. Người dùng chỉ cần cung cấp đầu vào cơ bản (ảnh/văn bản/link) và bấm 1 nút là xong. Bảng tùy chọn preset nâng cao chỉ mở khi bấm mở rộng (Collapsible). |
 | **T4** | **1 Tool = 1 Module Riêng** | Mỗi công cụ nằm trong 1 module độc lập dưới `src/modules/<tool-slug>/` theo chuẩn 4 lớp Clean Architecture: `domain/` → `use-cases/` → `infra/` → `adapters/`. |
@@ -70,7 +70,7 @@ Bản User Journey phải tuân theo cấu trúc đã áp dụng thành công �
 
 1. **Khẳng định kiến trúc**: Minh họa bằng sơ đồ Mermaid luồng **Provider Single-Call** + cơ chế QC.
 2. **Bước 1 — Tải đầu vào & Lựa chọn**:
-   - Khối hướng dẫn chuẩn hóa [`FeatureGuidanceCard`](file:///Users/tuan/Projects/smeOS/src/components/templates/shared/feature-guidance-card.tsx) (viền đỏ pastel, mẹo thao tác nhanh).
+   - Khối hướng dẫn chuẩn hóa [`FeatureGuidanceCard`](../src/components/templates/shared/feature-guidance-card.tsx) (viền đỏ pastel, mẹo thao tác nhanh).
    - Vùng nhập liệu trực quan (drag & drop ảnh / paste text / chọn catalog).
    - **Nút hành động chính (Primary Call-to-Action)**: Nổi bật, to, cam kết xử lý tự động ngay lập tức (vd: *"Tạo ảnh chuyên nghiệp ✨"*).
    - **Tùy chọn mở rộng (Collapsible)**: Thu gọn danh sách preset, mặc định luôn là `Tự động ✨`.
@@ -149,7 +149,7 @@ npx tsc --noEmit
 ```
 
 ### 3. Cập nhật Toolkit Catalog (SSOT cho Trang Chủ /cong-cu)
-Mở [toolkit-catalog.ts](file:///Users/tuan/Projects/smeOS/src/modules/toolkit/domain/toolkit-catalog.ts), tìm đúng ID của công cụ và cập nhật:
+Mở [toolkit-catalog.ts](../src/modules/toolkit/domain/toolkit-catalog.ts), tìm đúng ID của công cụ và cập nhật:
 ```typescript
 {
   id: <tool_id>,
@@ -178,4 +178,4 @@ Trước khi bàn giao bất kỳ chức năng nào cho người dùng nghiệm 
 - [ ] **Giới hạn số dòng**: Không có file nào vượt quá 350 dòng?
 - [ ] **Unit Test xanh**: Toàn bộ unit test nghiệp vụ pass 100%?
 - [ ] **Typecheck xanh**: `npx tsc --noEmit` không báo lỗi?
-- [ ] **Catalog đồng bộ**: [toolkit-catalog.ts](file:///Users/tuan/Projects/smeOS/src/modules/toolkit/domain/toolkit-catalog.ts) đã đổi sang `status: "DONE"`, `progress: 100`, `href: "/cong-cu/..."`?
+- [ ] **Catalog đồng bộ**: [toolkit-catalog.ts](../src/modules/toolkit/domain/toolkit-catalog.ts) đã đổi sang `status: "DONE"`, `progress: 100`, `href: "/cong-cu/..."`?

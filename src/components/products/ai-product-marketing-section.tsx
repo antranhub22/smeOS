@@ -4,6 +4,7 @@ import React from "react"
 import { Sparkles, Loader2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 
 interface AiProductMarketingSectionProps {
   description: string
@@ -50,12 +51,12 @@ export function AiProductMarketingSection({
         </div>
       </div>
 
-      <textarea
+      <Textarea
         rows={3}
         value={description}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Mô tả ý nghĩa sản phẩm, cảm xúc gửi gắm hoặc hướng dẫn chăm sóc giúp sản phẩm lâu..."
-        className="w-full rounded-xl border border-border bg-surface p-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary resize-y"
+        className="text-body-sm"
       />
 
       {contentSuggestions.length > 0 && (
@@ -63,14 +64,15 @@ export function AiProductMarketingSection({
           <span className="text-caption font-bold text-text-muted">Gợi ý từ Content Engine (bấm để chọn):</span>
           <div className="grid grid-cols-1 gap-2">
             {contentSuggestions.map((sug, i) => (
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 key={i}
                 onClick={() => onSelectSuggestion(sug)}
-                className="text-left rounded-xl border border-border bg-surface-alt/60 p-2.5 text-body-sm text-text hover:border-primary hover:bg-primary-muted/20 transition-colors"
+                className="h-auto w-full justify-start text-left font-normal rounded-xl border border-border bg-surface-alt/60 p-2.5 text-body-sm text-text hover:border-primary hover:bg-primary-muted/20 transition-colors whitespace-normal"
               >
                 &ldquo;{sug}&rdquo;
-              </button>
+              </Button>
             ))}
           </div>
         </div>

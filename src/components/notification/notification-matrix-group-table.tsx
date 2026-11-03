@@ -49,7 +49,7 @@ export function NotificationMatrixGroupTable({
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-surface-alt hover:bg-surface-alt/80 transition-colors"
+        className="w-full flex cursor-pointer items-center justify-between px-4 py-3 bg-surface-alt hover:bg-surface-alt/80 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
       >
         <div className="flex items-center gap-2">
           {expanded ? (

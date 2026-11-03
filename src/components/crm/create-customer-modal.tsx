@@ -4,6 +4,8 @@ import React, { useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { InlineError } from "@/components/ui/inline-error"
 import { errorText } from "@/lib/error-text"
 
@@ -90,14 +92,14 @@ export function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustom
         </>
       }
     >
-      <form id="create-customer-form" onSubmit={handleSubmit} className="space-y-4 text-sm">
+      <form id="create-customer-form" onSubmit={handleSubmit} className="space-y-4 text-body-sm">
         {error && <InlineError message={error} />}
 
         <div>
           <label className="mb-1 block font-semibold text-text">Họ và tên khách hàng *</label>
-          <input
+          <Input
             type="text"
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="w-full text-body-sm"
             placeholder="Nguyễn Văn A"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -108,9 +110,9 @@ export function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustom
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block font-semibold text-text">Số điện thoại *</label>
-            <input
+            <Input
               type="text"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="w-full text-body-sm"
               placeholder="0909xxxxxx"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -119,9 +121,9 @@ export function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustom
           </div>
           <div>
             <label className="mb-1 block font-semibold text-text">Email (tùy chọn)</label>
-            <input
+            <Input
               type="email"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="w-full text-body-sm"
               placeholder="khachhang@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -131,9 +133,9 @@ export function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustom
 
         <div>
           <label className="mb-1 block font-semibold text-text">Địa chỉ thường nhận hoa</label>
-          <input
+          <Input
             type="text"
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="w-full text-body-sm"
             placeholder="Số nhà, đường, phường, quận..."
             value={address}
             onChange={(e) => setAddress(e.target.value)}
@@ -143,9 +145,9 @@ export function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustom
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block font-semibold text-text">Hoa yêu thích (phân cách bằng dấu phẩy)</label>
-            <input
+            <Input
               type="text"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="w-full text-body-sm"
               placeholder="Hồng đỏ, Baby, Tulip"
               value={preferredFlowers}
               onChange={(e) => setPreferredFlowers(e.target.value)}
@@ -153,9 +155,9 @@ export function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustom
           </div>
           <div>
             <label className="mb-1 block font-semibold text-text">Gu màu ưa thích</label>
-            <input
+            <Input
               type="text"
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="w-full text-body-sm"
               placeholder="Pastel, Đỏ rực rỡ, Trắng kem"
               value={preferredColors}
               onChange={(e) => setPreferredColors(e.target.value)}
@@ -165,9 +167,9 @@ export function CreateCustomerModal({ isOpen, onClose, onSuccess }: CreateCustom
 
         <div>
           <label className="mb-1 block font-semibold text-text">Ghi chú chăm sóc / Đặc điểm khách hàng</label>
-          <textarea
+          <Textarea
             rows={2}
-            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="w-full text-body-sm"
             placeholder="Khách thích hoa sang trọng, hay tặng đối tác..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}

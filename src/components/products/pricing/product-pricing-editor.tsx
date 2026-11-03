@@ -7,6 +7,8 @@ import { formatVndInput, parseVndInput } from "./pricing-form"
 import { MoneyInput } from "./money-input"
 import { PricingDimensionsPicker } from "./pricing-dimensions-picker"
 import { PricingVariantTable } from "./pricing-variant-table"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const MODES: Array<{ key: PriceMode; label: string; hint: string }> = [
   { key: "FIXED", label: "Giá xác định", hint: "Một mức giá cho sản phẩm" },
@@ -44,19 +46,21 @@ export function ProductPricingEditor({ industry, priceVnd, setPriceVnd, pricing,
         </span>
         <div role="radiogroup" aria-label="Kiểu giá" className="grid grid-cols-3 gap-2">
           {MODES.map((m) => (
-            <button
+            <Button
               key={m.key}
               type="button"
+              variant="outline"
+              size="sm"
               role="radio"
               aria-checked={pricing.mode === m.key}
               onClick={() => setMode(m.key)}
               title={m.hint}
-              className={`min-h-10 rounded-xl border px-2 text-body-sm font-semibold transition-colors ${
-                pricing.mode === m.key ? "border-primary bg-primary/10 text-primary" : "border-border bg-surface text-text hover:bg-surface-alt"
+              className={`min-h-10 text-body-sm font-semibold transition-colors ${
+                pricing.mode === m.key ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border bg-surface text-text hover:bg-surface-alt"
               }`}
             >
               {m.label}
-            </button>
+            </Button>
           ))}
         </div>
         <p className="mt-1 text-caption text-text-muted">{MODES.find((m) => m.key === pricing.mode)?.hint}</p>
@@ -100,13 +104,12 @@ export function ProductPricingEditor({ industry, priceVnd, setPriceVnd, pricing,
       {pricing.mode !== "CONTACT" && (
         <div className="rounded-xl bg-surface-alt px-3 py-2 text-caption text-text-muted space-y-1">
           <p>Ngày cao điểm là các ngày lễ cửa hàng đã khai trong Chính sách cửa hàng. Khách đặt giao vào ngày đó sẽ trả giá cao điểm.</p>
-          <label className="flex items-center gap-2 text-body-sm text-text">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-body-sm text-text cursor-pointer">
+            <Checkbox
               checked={pricing.weekendIsPeak}
-              onChange={(e) => setPricing({ ...pricing, weekendIsPeak: e.target.checked })}
+              onCheckedChange={(checked) => setPricing({ ...pricing, weekendIsPeak: !!checked })}
             />
-            Tính Thứ 7 và Chủ nhật là ngày cao điểm
+            <span>Tính Thứ 7 và Chủ nhật là ngày cao điểm</span>
           </label>
         </div>
       )}

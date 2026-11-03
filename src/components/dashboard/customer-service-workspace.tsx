@@ -208,8 +208,8 @@ export function CustomerServiceWorkspace() {
             <div className="flex flex-col gap-2">
               {activeConvs.slice(0, 5).map((conv) => (
                 <button
-                  key={conv.id}
                   type="button"
+                  key={conv.id}
                   aria-label={`Mở hội thoại với ${conv.customer_name ?? "khách"}`}
                   onClick={() => router.push(`/hoi-thoai?id=${conv.id}` as Route)}
                   className="w-full text-left"

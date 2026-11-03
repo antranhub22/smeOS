@@ -106,7 +106,7 @@ export const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
           )}
         </div>
         {actions && (
-          <div className="flex flex-wrap items-center gap-2 pt-1 sm:pt-0 shrink-0">
+          <div className="flex min-w-0 flex-wrap items-center gap-2 pt-1 sm:pt-0">
             {actions}
           </div>
         )}

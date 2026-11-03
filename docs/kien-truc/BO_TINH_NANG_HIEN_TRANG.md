@@ -3,7 +3,7 @@
 > [!NOTE]
 > **TÀI LIỆU KHẢO SÁT LỊCH SỬ (HISTORICAL AUDIT SNAPSHOT — 11/09/2026)**  
 > Tệp này ghi nhận ảnh chụp hiện trạng đối chiếu tính năng tại thời điểm ngày 11/09/2026 khi tiến hành rà soát 3 repo và mở rộng Tuyến B & Tuyến C.  
-> **Nguồn sự thật duy nhất (OSOT)** cho hiện trạng đang chạy thực tế của toàn bộ nền tảng FloraOS core nằm tại: [`docs/kien-truc/TRANG_THAI.md`](file:///Users/tuan/Projects/floraos-core/docs/kien-truc/TRANG_THAI.md).
+> **Nguồn sự thật duy nhất (OSOT)** cho hiện trạng đang chạy thực tế của toàn bộ nền tảng FloraOS core nằm tại: [`docs/kien-truc/TRANG_THAI.md`](TRANG_THAI.md).
 
 **Cấp:** hồ sơ đối chiếu, phụ trợ cho Level 1. Không thắng về nội dung kỹ thuật.
 **Ngày soát:** 2026-09-11

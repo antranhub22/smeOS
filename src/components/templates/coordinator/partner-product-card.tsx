@@ -401,7 +401,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                           </span>
                         )}
                         {typeof fl.budCount === "number" && fl.budCount > 0 && (
-                          <span className="px-1 py-0 rounded bg-warning-bg text-warning text-caption font-bold">
+                          <span className="px-1 py-0 rounded bg-warning-bg text-warning-text text-caption font-bold">
                             {fl.budCount} nụ chưa nở
                           </span>
                         )}

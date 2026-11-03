@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react"
 import { Search } from "@/components/ui/icons"
+import { Input } from "@/components/ui/input"
 import {
   countByStatus,
   STATUS_DISPLAY,
@@ -130,13 +131,13 @@ export function ToolkitHome() {
         {/* Tìm kiếm và bộ lọc */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
-            <input
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none z-10" />
+            <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Tìm kiếm ấn phẩm hoặc công cụ..."
-              className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-surface text-body-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4"
             />
           </div>
 
@@ -144,8 +145,8 @@ export function ToolkitHome() {
             <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
               {FILTER_OPTIONS.map((opt) => (
                 <button
-                  key={opt.id}
                   type="button"
+                  key={opt.id}
                   onClick={() => setSelectedStatus(opt.id)}
                   className={`px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                     selectedStatus === opt.id

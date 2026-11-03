@@ -154,16 +154,18 @@ export function ApprovalCard({
 
       {/* Action buttons */}
       <div className="flex items-center justify-end gap-2 pt-1">
-        <button
+        <Button
           type="button"
           id={`reject-${item.id}`}
+          variant="danger"
+          size="sm"
           disabled={processing}
           onClick={() => onReject(item)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-danger/30 bg-danger/5 text-caption font-semibold text-danger hover:bg-danger/10 transition-colors disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-caption"
         >
           <XCircle size={13} aria-hidden />
           Từ chối
-        </button>
+        </Button>
         <Button
           type="button"
           id={`approve-${item.id}`}

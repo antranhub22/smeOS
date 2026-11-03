@@ -7,6 +7,10 @@
  */
 import { useState } from "react"
 import { Dialog } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { NativeSelect } from "@/components/ui/select"
 import { InlineError } from "@/components/ui/inline-error"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import {
@@ -80,10 +84,10 @@ export function BrandLibraryEditorDialog({
       description={isNewVersion ? `Phiên bản ${item.current_version} vẫn được giữ để xem lại.` : undefined}
       footer={
         <div className="flex justify-end gap-2">
-          <button type="button" onClick={() => onOpenChange(false)} className="min-h-10 px-4 rounded-lg border border-border text-body-sm font-semibold text-text">Huỷ</button>
-          <button type="submit" form="brand-library-form" disabled={busy} className="min-h-10 px-4 rounded-lg bg-primary text-primary-foreground text-body-sm font-semibold disabled:opacity-50">
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Huỷ</Button>
+          <Button type="submit" form="brand-library-form" disabled={busy}>
             {busy ? "Đang lưu..." : isNewVersion ? "Lưu phiên bản" : "Thêm vào thư viện"}
-          </button>
+          </Button>
         </div>
       }
     >
@@ -92,13 +96,13 @@ export function BrandLibraryEditorDialog({
           <>
             <div className="flex flex-col gap-1">
               <label htmlFor="bl-category" className="text-caption font-semibold text-text">Loại tài nguyên</label>
-              <select id="bl-category" value={category} onChange={(e) => setCategory(e.target.value as BrandLibraryCategory)} className={field}>
+              <NativeSelect id="bl-category" value={category} onChange={(e) => setCategory(e.target.value as BrandLibraryCategory)}>
                 {BRAND_LIBRARY_CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_LABEL[c]}</option>)}
-              </select>
+              </NativeSelect>
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="bl-title" className="text-caption font-semibold text-text">Tên</label>
-              <input id="bl-title" required maxLength={LIMITS.title} value={title} onChange={(e) => setTitle(e.target.value)} className={field} />
+              <Input id="bl-title" required maxLength={LIMITS.title} value={title} onChange={(e) => setTitle(e.target.value)} />
             </div>
           </>
         )}
@@ -118,7 +122,7 @@ export function BrandLibraryEditorDialog({
         ) : (
           <div className="flex flex-col gap-1">
             <label htmlFor="bl-text" className="text-caption font-semibold text-text">Nội dung</label>
-            <textarea id="bl-text" required rows={4} maxLength={LIMITS.text} value={text} onChange={(e) => setText(e.target.value)} className={`${field} py-2`} aria-describedby="bl-text-hint" />
+            <Textarea id="bl-text" required rows={4} maxLength={LIMITS.text} value={text} onChange={(e) => setText(e.target.value)} aria-describedby="bl-text-hint" />
             {TEXT_HINT[category] && <p id="bl-text-hint" className="text-caption text-text-muted">{TEXT_HINT[category]}</p>}
           </div>
         )}
@@ -126,12 +130,12 @@ export function BrandLibraryEditorDialog({
         {!isNewVersion && (
           <div className="flex flex-col gap-1">
             <label htmlFor="bl-desc" className="text-caption font-semibold text-text">Mô tả cách dùng (không bắt buộc)</label>
-            <input id="bl-desc" maxLength={LIMITS.description} value={description} onChange={(e) => setDescription(e.target.value)} className={field} />
+            <Input id="bl-desc" maxLength={LIMITS.description} value={description} onChange={(e) => setDescription(e.target.value)} />
           </div>
         )}
         <div className="flex flex-col gap-1">
           <label htmlFor="bl-note" className="text-caption font-semibold text-text">Ghi chú thay đổi (không bắt buộc)</label>
-          <input id="bl-note" maxLength={LIMITS.note} value={note} onChange={(e) => setNote(e.target.value)} className={field} />
+          <Input id="bl-note" maxLength={LIMITS.note} value={note} onChange={(e) => setNote(e.target.value)} />
         </div>
         {error && <InlineError message={error} />}
       </form>

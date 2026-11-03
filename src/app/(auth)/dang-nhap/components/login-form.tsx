@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Info } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface LoginFormProps {
   onSwitchToSignup: () => void
@@ -55,14 +56,14 @@ export function LoginForm({ onSwitchToSignup, onSwitchToInstantTrial }: LoginFor
         <div className="mb-1.5 text-body-sm font-semibold">
           Email đăng nhập <span className="text-danger">*</span>
         </div>
-        <input
+        <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="ban@cuahang.vn"
           required
           autoComplete="username"
-          className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
+          className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
         />
       </div>
 
@@ -71,32 +72,38 @@ export function LoginForm({ onSwitchToSignup, onSwitchToInstantTrial }: LoginFor
           Mật khẩu <span className="text-danger">*</span>
         </div>
         <div className="relative">
-          <input
+          <Input
             type={showPw ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Nhập mật khẩu"
             required
             autoComplete="current-password"
-            className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 pr-11 text-sm outline-none focus:border-primary"
+            className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 pr-11 text-body-sm outline-none focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setShowPw((v) => !v)}
-            className="absolute right-1.5 top-1.5 flex h-[34px] w-[34px] items-center justify-center text-text-muted"
+            aria-label={showPw ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+            aria-pressed={showPw}
+            className="absolute right-1.5 top-1.5 flex h-[34px] w-[34px] p-0 items-center justify-center text-text-muted"
           >
             {showPw ? <EyeOff size={19} strokeWidth={1.8} /> : <Eye size={19} strokeWidth={1.8} />}
-          </button>
+          </Button>
         </div>
 
         <div className="mt-2 flex justify-end">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setHienThongBaoQuenMatKhau((v) => !v)}
-            className="text-body-sm font-semibold text-primary hover:underline"
+            className="h-auto p-0 text-body-sm font-semibold text-primary hover:underline"
           >
             Quên mật khẩu?
-          </button>
+          </Button>
         </div>
 
         {hienThongBaoQuenMatKhau && (
@@ -115,30 +122,34 @@ export function LoginForm({ onSwitchToSignup, onSwitchToInstantTrial }: LoginFor
 
       <div className="my-1 flex items-center gap-2.5">
         <div className="h-px flex-1 bg-border" />
-        <div className="text-xs text-text-muted">hoặc</div>
+        <div className="text-caption text-text-muted">hoặc</div>
         <div className="h-px flex-1 bg-border" />
       </div>
 
       <div className="flex flex-col items-center gap-2 text-center text-body-sm text-text-muted">
         <div>
           Muốn thử trước?{" "}
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onSwitchToInstantTrial}
-            className="font-bold text-primary hover:underline"
+            className="h-auto p-0 font-bold text-primary hover:underline inline"
           >
             ⚡ Trải nghiệm ngay (Không cần mật khẩu)
-          </button>
+          </Button>
         </div>
         <div>
           Chưa có tài khoản?{" "}
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onSwitchToSignup}
-            className="font-bold text-accent-text hover:underline"
+            className="h-auto p-0 font-bold text-accent-text hover:underline inline"
           >
             Đăng ký tài khoản mới
-          </button>
+          </Button>
         </div>
       </div>
     </form>

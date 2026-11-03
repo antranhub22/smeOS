@@ -5,11 +5,11 @@
 > **Ngày phê duyệt đề xuất:** 30/09/2026  
 > **Hệ thống áp dụng:** `floraos-core` (Next.js 15, PostgreSQL, Prisma ORM, Clean Architecture)  
 > **Căn cứ kiến trúc cốt lõi:**  
-> - Đặc tả nâng cấp: [`docs/FLORAOS_CORE_ROLE_CAPABILITY_ARCHITECTURE_UPGRADE.md`](file:///Users/tuan/Projects/floraos-core/docs/FLORAOS_CORE_ROLE_CAPABILITY_ARCHITECTURE_UPGRADE.md)  
-> - Báo cáo layout & chức năng Admin: [`docs/dac-ta/BAO_CAO_LAYOUT_VA_CHUC_NANG_ADMIN.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/BAO_CAO_LAYOUT_VA_CHUC_NANG_ADMIN.md)  
-> - Hiến pháp Role UX: [`docs/dac-ta/03b-role-ux.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/03b-role-ux.md)  
-> - Danh mục năng lực & RBAC: [`docs/dac-ta/02-function-catalog.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/02-function-catalog.md) & [`src/core/rbac/capability-catalog.ts`](file:///Users/tuan/Projects/floraos-core/src/core/rbac/capability-catalog.ts)  
-> - Kiến trúc mục tiêu FloraOS SaaS V2: [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](file:///Users/tuan/Projects/floraos-core/docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md)  
+> - Đặc tả nâng cấp: `docs/FLORAOS_CORE_ROLE_CAPABILITY_ARCHITECTURE_UPGRADE.md`  
+> - Báo cáo layout & chức năng Admin: [`docs/dac-ta/BAO_CAO_LAYOUT_VA_CHUC_NANG_ADMIN.md`](../dac-ta/BAO_CAO_LAYOUT_VA_CHUC_NANG_ADMIN.md)  
+> - Hiến pháp Role UX: [`docs/dac-ta/03b-role-ux.md`](../dac-ta/03b-role-ux.md)  
+> - Danh mục năng lực & RBAC: [`docs/dac-ta/02-function-catalog.md`](../dac-ta/02-function-catalog.md) & [`src/core/rbac/capability-catalog.ts`](../../src/core/rbac/capability-catalog.ts)  
+> - Kiến trúc mục tiêu FloraOS SaaS V2: [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md)  
 
 ---
 
@@ -94,7 +94,7 @@ gantt
 #### Các nhiệm vụ chi tiết:
 1. **Rà soát toàn bộ điểm xuất hiện của các định danh cũ:**
    - Scan toàn bộ `store_manager`, `ONE_STORE`, `CHAIN` trong `src/` và `tests/`.
-   - Xác định danh sách các tệp phụ thuộc: [`role-ux-catalog.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/organization/domain/role-ux-catalog.ts), [`nav-model.ts`](file:///Users/tuan/Projects/floraos-core/src/components/layout/nav-model.ts), [`session.tsx`](file:///Users/tuan/Projects/floraos-core/src/lib/session.tsx), [`page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/page.tsx).
+   - Xác định danh sách các tệp phụ thuộc: [`role-ux-catalog.ts`](../../src/modules/organization/domain/role-ux-catalog.ts), [`nav-model.ts`](../../src/components/layout/nav-model.ts), [`session.tsx`](../../src/lib/session.tsx), [`page.tsx`](../../src/app/%28app%29/page.tsx).
 2. **Xây dựng Adapter Tương thích Ngược (Backward-Compatibility Bridge):**
    - Viết hàm chuẩn hóa `normalizeRoleUxKey(key: string): RoleUxKey` tự động chuyển đổi `store_manager` ➔ `store_admin`.
    - Viết hàm chuẩn hóa `normalizeRoleUxGroup(group: string): RoleUxGroup` tự động ánh xạ `ONE_STORE` ➔ `STORE`, `CHAIN` ➔ `FLOWER_NETWORK`.
@@ -107,7 +107,7 @@ gantt
 > **Mục tiêu:** Mở rộng các enum và bảng dữ liệu trong PostgreSQL qua Prisma Migration mà không khóa bảng và không làm mất bất kỳ bản ghi nào.
 
 #### Các nhiệm vụ chi tiết:
-1. **Cập nhật [`prisma/schema.prisma`](file:///Users/tuan/Projects/floraos-core/prisma/schema.prisma):**
+1. **Cập nhật [`prisma/schema.prisma`](../../prisma/schema.prisma):**
    - Mở rộng enum `organization_type`:
      ```prisma
      enum organization_type {
@@ -146,7 +146,7 @@ gantt
 > **Mục tiêu:** Hoàn thiện 4 tầng năng lực (*Execution, Supervision, Management, Command*) và phân định rạch ròi giữa Quyền (Role) và Gói cước (Entitlement).
 
 #### Các nhiệm vụ chi tiết:
-1. **Bổ sung Danh mục Mã Năng lực Mạng lưới Điện hoa ([`src/core/rbac/capability-catalog.ts`](file:///Users/tuan/Projects/floraos-core/src/core/rbac/capability-catalog.ts)):**
+1. **Bổ sung Danh mục Mã Năng lực Mạng lưới Điện hoa ([`src/core/rbac/capability-catalog.ts`](../../src/core/rbac/capability-catalog.ts)):**
    - **Nhóm W — Quản trị Đối tác Mạng lưới (Partner Network):**
      - `W1` (`partner.onboard`): Tiếp nhận và kích hoạt đối tác xưởng ngoài mới.
      - `W2` (`partner.tier.manage`): Phân hạng đối tác, định mức năng lực cắm hoa/ngày.
@@ -165,7 +165,7 @@ gantt
      - `N2` (`network.priority.override`): Đổi thứ tự ưu tiên sản xuất trên toàn hệ thống.
 2. **Cập nhật Lớp Trần cứng (Hard Cap Layer - Lớp 3):**
    - Đảm bảo các quyền nhạy cảm mạng lưới (`Y2`, `Y3`, `N1`, `N2`) được gác cứng vào `hardCap: ["flower_network_admin", "dieu_hanh"]`.
-3. **Xây dựng Cổng Kiểm soát Feature Entitlement ([`src/core/entitlements/entitlement-service.ts`](file:///Users/tuan/Projects/floraos-core/src/core/entitlements/)):**
+3. **Xây dựng Cổng Kiểm soát Feature Entitlement ([`src/core/entitlements/entitlement-service.ts`](../../src/core/entitlements)):**
    - Tạo hàm chuẩn `checkFeatureEntitlement(org: Organization, featureKey: string): boolean`.
    - Kết hợp kiểm tra 2 lớp tại API Gateways:
      ```typescript
@@ -184,7 +184,7 @@ gantt
 > **Mục tiêu:** Cập nhật khuôn trải nghiệm của 3 vai cấp cao và đồng bộ toàn bộ logic điều hướng đa nền tảng.
 
 #### Các nhiệm vụ chi tiết:
-1. **Cập nhật [`src/modules/organization/domain/role-ux-catalog.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/organization/domain/role-ux-catalog.ts):**
+1. **Cập nhật [`src/modules/organization/domain/role-ux-catalog.ts`](../../src/modules/organization/domain/role-ux-catalog.ts):**
    - Định nghĩa chính thức vai `store_admin`:
      - `key: "store_admin"` (hỗ trợ đọc alias `store_manager`).
      - `label: "Quản trị cửa hàng"` (ngữ cảnh: "Chủ cửa hàng").
@@ -201,12 +201,12 @@ gantt
      - `primaryQuestion: "Toàn bộ hệ thống điện hoa đang hoạt động thế nào và tôi cần can thiệp ở đâu?"`.
      - `homepage: "FLOWER_NETWORK_COMMAND_CENTER"`.
      - `status: "AVAILABLE"`.
-2. **Cập nhật Mô hình Điều hướng [`src/components/layout/nav-model.ts`](file:///Users/tuan/Projects/floraos-core/src/components/layout/nav-model.ts):**
+2. **Cập nhật Mô hình Điều hướng [`src/components/layout/nav-model.ts`](../../src/components/layout/nav-model.ts):**
    - Xây dựng thanh điều hướng ưu tiên riêng cho `Store Admin` (§19):
      `navPriority: ["/market-intelligence", "/san-pham", "/creative-studio", "/hoi-thoai", "/don-hang"]`.
    - Xây dựng thanh điều hướng ưu tiên riêng cho `Điện hoa Admin` (§19):
      `navPriority: ["/dieu-phoi", "/don-hang", "/san-pham", "/khach-hang", "/so-lieu"]`.
-3. **Cập nhật Giao diện Danh mục Vai [`src/app/(app)/vai-tro/page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/vai-tro/page.tsx):**
+3. **Cập nhật Giao diện Danh mục Vai [`src/app/(app)/vai-tro/page.tsx`](../../src/app/%28app%29/vai-tro/page.tsx):**
    - Nhóm lại giao diện thành 3 cột/khối thương mại:
      1. **Quản trị Nền tảng (Platform SaaS)**: `platform_admin`.
      2. **Quản trị & Phát triển Cửa hàng (Store Business)**: `store_admin`, `sales`, `crm`, `lead_marketing`, `florist`.
@@ -222,19 +222,19 @@ gantt
 
 #### Các nhiệm vụ chi tiết:
 1. **Xây dựng Dashboard Store Admin: `Store Growth Center`:**
-   - **Tệp component:** [`src/components/dashboard/store-growth-center.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/dashboard/store-growth-center.tsx).
+   - **Tệp component:** [`src/components/dashboard/store-growth-center.tsx`](../../src/components/dashboard/store-growth-center.tsx).
    - **Bố cục 3 khối tăng trưởng:**
      - **Khối 1 — Cơ hội Kinh doanh & Thị trường (P0 Growth Opportunities):** Tích hợp Market Intelligence, hiển thị các mẫu hoa đang bắt trend tuần này, gợi ý giá bán và nút tạo chiến dịch 1-click.
      - **Khối 2 — Chỉ số Sẵn sàng Sản phẩm & Chiến dịch (P1 Readiness):** Thống kê số lượng sản phẩm chưa có ảnh chuẩn, bài viết chờ duyệt, trạng thái credit AI còn lại.
      - **Khối 3 — AI Sales & Phễu Chuyển đổi Khách hàng (P1 Conversion):** Tỷ lệ chốt đơn tự động của AI chatbot, danh sách khách hàng có ngày kỷ niệm trong 7 ngày tới cần gửi tin nhắn tri ân.
 2. **Xây dựng Dashboard Điện hoa Admin: `Flower Network Command Center`:**
-   - **Tệp component:** [`src/components/dashboard/flower-network-command-center.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/dashboard/flower-network-command-center.tsx).
+   - **Tệp component:** [`src/components/dashboard/flower-network-command-center.tsx`](../../src/components/dashboard/flower-network-command-center.tsx).
    - **Bố cục 4 tầng năng lực chuẩn hóa:**
      - **Tầng 4 — Điều hành Khẩn cấp (Command):** Thanh radar đỏ cảnh báo đơn hàng quá hạn SLA, rủi ro thiếu hoa cục bộ tại các tỉnh/thành, nút điều chuyển xưởng khẩn cấp.
      - **Tầng 3 — Quản lý Mạng lưới (Management):** Thống kê năng lực tiếp nhận đơn của các xưởng đối tác (`partners.capacity_daily`), đánh giá chất lượng (`rating`), cảnh báo quá tải.
      - **Tầng 2 — Giám sát Tiến trình (Supervision):** Luồng trạng thái đơn 5 chặng (Tiếp nhận ➔ Phân bổ ➔ Cắm hoa ➔ Duyệt QC ➔ Giao hàng).
      - **Tầng 1 — Thực thi Tác vụ (Execution):** Bảng danh sách đơn hàng chờ phân công, nút duyệt ảnh thành phẩm do thợ gửi lên.
-3. **Cập nhật Định tuyến Tuyến Trang chủ ([`src/app/(app)/page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/page.tsx)):**
+3. **Cập nhật Định tuyến Tuyến Trang chủ ([`src/app/(app)/page.tsx`](../../src/app/%28app%29/page.tsx)):**
    - Nhận diện `roleUx.homepage`:
      - `STORE_GROWTH_CENTER` ➔ Trả về `<StoreGrowthCenter />`.
      - `FLOWER_NETWORK_COMMAND_CENTER` ➔ Trả về `<FlowerNetworkCommandCenter />`.
@@ -258,9 +258,9 @@ gantt
    - **UX Lint (`npm run lint:ux -- --check`):** Xác nhận 0 vi phạm R1 (Tailwind color), R2 (arbitrary font size), R5 (interactive onClick), R8 (technical codes).
    - **Typecheck (`npx tsc --noEmit`):** Sạch 100% lỗi TypeScript.
 3. **Cập nhật Toàn diện Hệ thống Tài liệu SSOT:**
-   - Cập nhật [`docs/dac-ta/03b-role-ux.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/03b-role-ux.md) ghi nhận chính thức mô hình 3 Top-Level Roles.
-   - Cập nhật [`docs/dac-ta/02-function-catalog.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/02-function-catalog.md) bổ sung mã năng lực nhóm W, X, Y, N.
-   - Cập nhật [`docs/kien-truc/TRANG_THAI.md`](file:///Users/tuan/Projects/floraos-core/docs/kien-truc/TRANG_THAI.md) và đóng các nợ kỹ thuật liên quan đến phân vai chuỗi (#163, #165).
+   - Cập nhật [`docs/dac-ta/03b-role-ux.md`](../dac-ta/03b-role-ux.md) ghi nhận chính thức mô hình 3 Top-Level Roles.
+   - Cập nhật [`docs/dac-ta/02-function-catalog.md`](../dac-ta/02-function-catalog.md) bổ sung mã năng lực nhóm W, X, Y, N.
+   - Cập nhật [`docs/kien-truc/TRANG_THAI.md`](TRANG_THAI.md) và đóng các nợ kỹ thuật liên quan đến phân vai chuỗi (#163, #165).
 4. **Tiêu chuẩn hoàn thành Giai đoạn 5:**
    - [ ] Toàn bộ 820+ bài test tự động của hệ thống chạy xanh.
    - [ ] Hệ thống tài liệu khớp 100% với mã nguồn thực tế.

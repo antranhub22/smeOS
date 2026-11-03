@@ -1,32 +1,55 @@
 # Hiệu năng tải trang — Web Vitals
 
-> **Phạm vi:** giao diện smeOS (Next.js 16, App Router) · **Ngày lập:** 03/11/2026
-> **Trạng thái:** Chưa đo. Tài liệu này mô tả phương pháp và chỉ tiêu; số liệu chỉ được ghi khi có tệp kết quả đo lưu trong repo.
+> **Phạm vi:** giao diện smeOS (Next.js 16, App Router) · **Lần đo:** 04/11/2026, commit `7ef1b830`
+> **Tệp kết quả:** [`perf/2026-11-04/web-vitals.json`](perf/2026-11-04/web-vitals.json) — từng lần đo, trung vị, cấu hình mô phỏng.
+> **Loại số liệu:** số đo phòng thí nghiệm (lab) trên bản build production chạy cục bộ; không phải số đo người dùng thật.
 
-## 1. Tình trạng số liệu
+## 1. Kết quả
 
-Repo chưa có kết quả đo Web Vitals nào (Lighthouse, `web-vitals` hay trace Playwright). Mọi giá trị LCP, CLS, INP và dung lượng bundle cho các tuyến dưới đây đều **chưa xác định**.
+Trung vị 3 lần đo mỗi tuyến, bộ đệm trình duyệt tắt, tài khoản cửa hàng có dữ liệu seed (6 sản phẩm có ảnh). `/van-hanh` đo bằng tài khoản có quyền vận hành nền tảng.
 
-Những thay đổi kiến trúc có khả năng ảnh hưởng tới hiệu năng, cần được đo để xác nhận:
+**Di động** — 390×844, CPU chậm 4×, mạng 4G mô phỏng (RTT 150 ms, 1,6 Mbps xuống, 750 kbps lên):
 
-| Thay đổi | Ảnh hưởng dự kiến | Cách xác nhận |
+| Tuyến | LCP | CLS | TBT | INP | JS tải |
+|---|---|---|---|---|---|
+| `/` | 1.824 ms | 0 | 633 ms | 32 ms | 527 KB |
+| `/san-pham` | **5.264 ms** | 0 | 619 ms | 32 ms | 509 KB |
+| `/dieu-phoi` | 1.908 ms | 0 | 612 ms | 40 ms | 591 KB |
+| `/so-lieu` | 1.956 ms | 0,015 | 623 ms | 48 ms | 462 KB |
+| `/van-hanh` | 1.908 ms | 0 | 677 ms | 40 ms | 494 KB |
+| `/b/[sendCode]` | Chưa đo — dữ liệu seed chưa có link gửi bộ sưu tập | | | | |
+
+**Máy tính** — 1280×800, không giới hạn CPU và mạng:
+
+| Tuyến | LCP | CLS | TBT | INP | JS tải |
+|---|---|---|---|---|---|
+| `/` | 412 ms | 0 | 0 ms | < 16 ms | 527 KB |
+| `/san-pham` | 796 ms | 0 | 0 ms | < 16 ms | 509 KB |
+| `/dieu-phoi` | 408 ms | 0,003 | 12 ms | < 16 ms | 591 KB |
+| `/so-lieu` | 504 ms | 0,008 | 3 ms | < 16 ms | 462 KB |
+| `/van-hanh` | 544 ms | 0 | 13 ms | < 16 ms | 468 KB |
+
+INP ghi "< 16 ms" khi tương tác chuẩn không sinh mục Event Timing nào vượt ngưỡng ghi nhận 16 ms của trình duyệt (trường `inpMs: null` trong tệp JSON).
+
+## 2. Đối chiếu chỉ tiêu
+
+| Chỉ số | Chỉ tiêu | Kết quả |
 |---|---|---|
-| `data-theme="moc-lan"` gắn sẵn từ server (`src/app/layout.tsx:31`); preset khác áp phía client | Không nháy với preset mặc định; preset khác có thể nháy khi nạp | So CLS giữa preset mặc định và preset khác |
-| Skeleton dùng chung `src/components/ui/skeleton.tsx` (chưa có skeleton riêng theo archetype trang) | Giảm dịch chuyển bố cục khi dữ liệu về, ở màn có dùng | CLS trên tuyến có danh sách dài |
-| Gỡ `lucide-react` và 3 gói `@radix-ui` | Không đổi bundle phía client — các gói này đã không còn được import trước khi gỡ | Không cần đo; chỉ ảnh hưởng `node_modules` |
-| Modal nặng chưa tách chunk — `next/dynamic` chỉ dùng ở `src/components/integrations/managed-panel.tsx` | Chưa có giảm JS tải ban đầu từ tách modal | Đo kích thước chunk từng tuyến từ `npm run build` |
+| LCP | ≤ 2,5 s ở 4G mô phỏng | Đạt 4/5 tuyến; `/san-pham` 5,3 s |
+| CLS | ≤ 0,1 | Đạt 5/5 tuyến (cao nhất 0,015) |
+| INP | ≤ 200 ms | Đạt 5/5 tuyến (cao nhất 48 ms, một tương tác chuẩn) |
 
-## 2. Chỉ tiêu
+**`/san-pham` trên di động.** Trang là client component: danh sách sản phẩm gọi `/api/v1/products` sau khi JS tải và chạy xong (yêu cầu bắt đầu ở ~4,7 s), ảnh sản phẩm bắt đầu tải ở ~5,2 s và mất ~0,2 s. LCP là ảnh sản phẩm đầu tiên trong lưới. Hướng xử lý: render trang đầu danh sách phía server (đặc tả 04 §3 — server component mặc định) và tải ảnh trong khung nhìn đầu tiên với độ ưu tiên cao thay vì `loading="lazy"`.
 
-| Chỉ số | Ngưỡng "Tốt" (Google) | Chỉ tiêu smeOS |
-|---|---|---|
-| LCP | ≤ 2,5 s | ≤ 2,5 s ở mạng 4G mô phỏng |
-| CLS | ≤ 0,1 | ≤ 0,1 |
-| INP | ≤ 200 ms | ≤ 200 ms trên thiết bị tầm trung mô phỏng |
+**TBT trên di động 612–677 ms ở mọi tuyến**, tương ứng 460–590 KB JS tải ban đầu ở CPU chậm 4×. Phần chung lớn nhất là shell và chunk dùng chung (một chunk 174 KB). Tách modal nặng bằng `next/dynamic` và giảm client component ở shell là hướng giảm.
 
 ## 3. Phương pháp đo
 
-1. Dựng bản production: `npm run build && npm start` trên database đã seed (`npm run db:seed`).
-2. Đo bằng Lighthouse CI (preset mobile, 3 lần mỗi tuyến, lấy trung vị) cho 6 tuyến đại diện: `/`, `/san-pham`, `/dieu-phoi`, `/so-lieu`, `/b/[sendCode]`, `/van-hanh`.
-3. Lưu tệp kết quả JSON vào `docs/audit/ui-architecture-audit/perf/<ngày>/` và chỉ ghi số vào tài liệu này kèm đường dẫn tới tệp đó.
-4. Lặp lại sau mỗi thay đổi lớn ở shell, theme hoặc tuyến công khai.
+1. Dựng bản production: `npm run build && npm run start` trên database đã chạy `npm run db:seed`.
+2. Đo: `npx tsx scripts/measure-web-vitals.ts --runs 3 --grant-platform --out docs/audit/ui-architecture-audit/perf/<ngày>`, với `PERF_EMAIL`/`PERF_PASSWORD` của tài khoản có dữ liệu. Script dùng Playwright và `PerformanceObserver` của Chromium, không cần thư viện thêm:
+   - LCP: mục `largest-contentful-paint` cuối cùng trước tương tác đầu tiên;
+   - CLS: cửa sổ phiên lớn nhất (khoảng cách ≤ 1 s, độ dài ≤ 5 s);
+   - TBT: tổng phần vượt 50 ms của long task sau FCP;
+   - INP: thời lượng lớn nhất của các tương tác có `interactionId`; tương tác chuẩn là một lần nhấp vào `<h1>` sau khi trang tải xong.
+3. Lưu tệp JSON vào `perf/<ngày>/`; tài liệu này chỉ ghi số có trong tệp đó.
+4. Đo lại sau mỗi thay đổi lớn ở shell, theme hoặc tuyến công khai, và trên máy chủ staging khi có.

@@ -15,10 +15,10 @@
 
 | Tầng | Thư mục | Số file | Ghi chú |
 |---|---|---|---|
-| **Domain** | [`domain/`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain) | 31 file + 17 test | Pure TypeScript, không import Prisma |
-| **Use-Cases** | [`use-cases/`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/use-cases) | 33 file + tests | Orchestration nghiệp vụ |
-| **Infra** | [`infra/`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/infra) | 14 repository | Prisma queries |
-| **Adapters** | [`adapters/`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/adapters) | 3 file | VietQR, Zalo ZNS, eSMS |
+| **Domain** | [`domain/`](../../src/modules/greeting-card/domain) | 31 file + 17 test | Pure TypeScript, không import Prisma |
+| **Use-Cases** | [`use-cases/`](../../src/modules/greeting-card/use-cases) | 33 file + tests | Orchestration nghiệp vụ |
+| **Infra** | [`infra/`](../../src/modules/greeting-card/infra) | 14 repository | Prisma queries |
+| **Adapters** | [`adapters/`](../../src/modules/greeting-card/adapters) | 3 file | VietQR, Zalo ZNS, eSMS |
 
 ### 1.3 Mô hình dữ liệu (12 bảng)
 
@@ -44,26 +44,26 @@
 ### 2.1 Luồng Nhân viên Sale (Nội bộ FloraOS)
 
 #### Flow A: Gửi nhanh 3 bước (Journey Wizard) ✅
-[`journey-wizard.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/journey/journey-wizard.tsx)
+[`journey-wizard.tsx`](../../src/components/greeting-card/journey/journey-wizard.tsx)
 1. **Chọn/tạo bộ sưu tập** → Chọn mẫu template → Chọn sản phẩm từ Product Master
 2. **Nhập thông tin khách** → Tên, SĐT (tuỳ chọn), ghi chú
 3. **Sinh link & sao chép** → Link `/b/<sendCode>` sẵn sàng gửi qua Zalo/Facebook
 
 #### Flow B: Quản lý chi tiết (5 tab) ✅
-[`page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/the-chao/page.tsx)
+[`page.tsx`](../../src/app/%28app%29/the-chao/page.tsx)
 
 | Tab | Component | Mô tả |
 |---|---|---|
-| **Bộ sưu tập** | [`catalog-list-tab.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/catalog/catalog-list-tab.tsx) + [`catalog-detail-panel.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/catalog/catalog-detail-panel.tsx) | CRUD catalog, gán sản phẩm, chọn template, xem trước |
-| **Theo dõi tiến độ** | [`brochure-order-tracking-tab.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/tracking/brochure-order-tracking-tab.tsx) | Pipeline 9 bước, lọc category/sale/kênh, phát hiện đơn kẹt |
-| **Bán hàng** | [`sales-brochure-tab.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/sales/sales-brochure-tab.tsx) | Danh sách link đã gửi, phễu bán hàng, phễu theo kênh |
-| **Điều hành** | [`admin-brochure-payment-tab.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/admin/admin-brochure-payment-tab.tsx) | Xác nhận thanh toán, báo giá, cài đặt chính sách |
-| **Điều phối** | [`coordinator-brochure-tab.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/coordinator/coordinator-brochure-tab.tsx) | Phân công thợ, ảnh thành phẩm, giao ship, ảnh người nhận |
+| **Bộ sưu tập** | [`catalog-list-tab.tsx`](../../src/components/greeting-card/catalog/catalog-list-tab.tsx) + [`catalog-detail-panel.tsx`](../../src/components/greeting-card/catalog/catalog-detail-panel.tsx) | CRUD catalog, gán sản phẩm, chọn template, xem trước |
+| **Theo dõi tiến độ** | [`brochure-order-tracking-tab.tsx`](../../src/components/greeting-card/tracking/brochure-order-tracking-tab.tsx) | Pipeline 9 bước, lọc category/sale/kênh, phát hiện đơn kẹt |
+| **Bán hàng** | [`sales-brochure-tab.tsx`](../../src/components/greeting-card/sales/sales-brochure-tab.tsx) | Danh sách link đã gửi, phễu bán hàng, phễu theo kênh |
+| **Điều hành** | [`admin-brochure-payment-tab.tsx`](../../src/components/greeting-card/admin/admin-brochure-payment-tab.tsx) | Xác nhận thanh toán, báo giá, cài đặt chính sách |
+| **Điều phối** | [`coordinator-brochure-tab.tsx`](../../src/components/greeting-card/coordinator/coordinator-brochure-tab.tsx) | Phân công thợ, ảnh thành phẩm, giao ship, ảnh người nhận |
 
 ### 2.2 Luồng Khách hàng (Trang công khai)
 
 #### Flow C: Link gửi riêng (`/b/<sendCode>`) ✅
-[`page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/b/[sendCode]/page.tsx) → [`brochure-customer-experience.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer/brochure-customer-experience.tsx)
+[`page.tsx`](../../src/app/b/[sendCode]/page.tsx) → [`brochure-customer-experience.tsx`](../../src/components/greeting-card/customer/brochure-customer-experience.tsx)
 1. **Mở link** → Lướt/vuốt mẫu hoa (Swipe Brochure engine)
 2. **Chọn mẫu** → Bấm "Đặt ngay" trên thẻ sản phẩm
 3. **Chọn tuỳ chọn** → Size/biến thể, số lượng, khu vực giao, mã giảm giá → Báo giá tức thì
@@ -78,7 +78,7 @@
 - OpenGraph image sinh động
 
 #### Flow E: Link chia sẻ có truy vết (`/s/<code>`) ✅
-[`page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/s/[code]/page.tsx)
+[`page.tsx`](../../src/app/s/[code]/page.tsx)
 - Nhân viên bấm "Sao chép" → sinh link `/s/<code>` → redirect `/s/<code>/mo` → mở phiên riêng tính cho nhân viên đó
 - Gắn kênh `?kenh=zalo|facebook|instagram|tiktok|website|khac`
 
@@ -87,7 +87,7 @@
 ## 3. Business Logic & Rules (Domain Layer)
 
 ### 3.1 Mã gửi (Send Code) ✅
-[`greeting-card-rules.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/greeting-card-rules.ts)
+[`greeting-card-rules.ts`](../../src/modules/greeting-card/domain/greeting-card-rules.ts)
 - Format: `<PREFIX>-<8 ký tự ngẫu nhiên>` (Crockford base32 — bỏ I, L, O, U)
 - Prefix: 2–6 ký tự, mặc định `T01`
 - Regex: `^[A-Z0-9]{2,6}-[A-Z0-9]{3,12}$` (tương thích mã cũ)
@@ -102,32 +102,32 @@ CREATED → OPENED → BROWSING ⇄ SELECTED → ORDER_SUBMITTED → PAYMENT_REP
 - Self-transition `BROWSING → BROWSING` cho phép (swipe nhiều lần)
 
 ### 3.3 Hết hạn & Thu hồi link ✅
-[`greeting-card-rules.ts#L250-L274`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/greeting-card-rules.ts#L250-L274)
+[`greeting-card-rules.ts#L250-L274`](../../src/modules/greeting-card/domain/greeting-card-rules.ts#L250-L274)
 - Mặc định **30 ngày**, tối đa **365 ngày**
 - Thu hồi link (`revokedAt`) = vô hiệu ngay
 - **Link đã có đơn luôn mở được** (khách cần xem thanh toán/theo dõi) — dù hết hạn hay bị thu hồi
 
 ### 3.4 Giá sản phẩm ✅
-[`brochure-commerce-rules.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/brochure-commerce-rules.ts)
+[`brochure-commerce-rules.ts`](../../src/modules/greeting-card/domain/brochure-commerce-rules.ts)
 - Ưu tiên: `attributes.price` → `attributes.price_vnd` → biến thể đầu `attributes.price`
 - **Không bịa giá mặc định** (bản cũ gán cứng 500.000đ — đã sửa)
 - `null` = "Liên hệ" trên giao diện, đơn được nhận với tổng 0, cửa hàng báo giá sau
 
 ### 3.5 Biến thể / Size ✅
-[`brochure-pricing.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/brochure-pricing.ts)
+[`brochure-pricing.ts`](../../src/modules/greeting-card/domain/brochure-pricing.ts)
 - Giá biến thể: `variant.attributes.price` nếu có, hoặc `base × multiplier`
 - Biến thể không suy ra được giá → bị bỏ (không bán online)
 - Số lượng: 1–20
 
 ### 3.6 Phí giao theo khu vực ✅
-[`brochure-pricing.ts#L48-L91`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/brochure-pricing.ts#L48-L91)
+[`brochure-pricing.ts#L48-L91`](../../src/modules/greeting-card/domain/brochure-pricing.ts#L48-L91)
 - Tối đa 30 khu vực giao
 - Miễn phí giao khi tạm tính (sau giảm giá) vượt mức cấu hình
 - Giờ chốt giao trong ngày (`sameDayCutoffHour`)
 - Thời gian chuẩn bị (`prepHours`)
 
 ### 3.7 Mã giảm giá (Voucher) ✅
-[`brochure-pricing.ts#L93-L128`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/brochure-pricing.ts#L93-L128)
+[`brochure-pricing.ts#L93-L128`](../../src/modules/greeting-card/domain/brochure-pricing.ts#L93-L128)
 - Hai loại: `PERCENTAGE` / `FIXED_AMOUNT`
 - Trần giảm tối đa (`maxDiscountVnd`)
 - Đơn tối thiểu (`minOrderVnd`)
@@ -135,7 +135,7 @@ CREATED → OPENED → BROWSING ⇄ SELECTED → ORDER_SUBMITTED → PAYMENT_REP
 - **Business value**: Công cụ marketing cá nhân hoá
 
 ### 3.8 Xin giảm giá theo đơn (Discount Request) ✅
-[`discount-request.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/discount-request.ts)
+[`discount-request.ts`](../../src/modules/greeting-card/domain/discount-request.ts)
 - Sale xin (theo % hoặc số tiền cụ thể), Điều hành duyệt/từ chối
 - Trần mặc định **25%** (cấu hình được)
 - Mức duyệt có thể sửa khác mức xin
@@ -143,7 +143,7 @@ CREATED → OPENED → BROWSING ⇄ SELECTED → ORDER_SUBMITTED → PAYMENT_REP
 - Trạng thái: `PENDING → APPROVED / REJECTED`
 
 ### 3.9 Chính sách thanh toán ✅
-[`brochure-payment-policy.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/brochure-payment-policy.ts)
+[`brochure-payment-policy.ts`](../../src/modules/greeting-card/domain/brochure-payment-policy.ts)
 
 | Chính sách | Mặc định | Mô tả |
 |---|---|---|
@@ -157,7 +157,7 @@ CREATED → OPENED → BROWSING ⇄ SELECTED → ORDER_SUBMITTED → PAYMENT_REP
 - **Huỷ đơn**: chỉ khi chưa giao xong/chưa huỷ trước đó
 
 ### 3.10 Tính tiền & Báo giá (Quote Engine) ✅
-[`brochure-pricing.ts#L130-L189`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/brochure-pricing.ts#L130-L189)
+[`brochure-pricing.ts#L130-L189`](../../src/modules/greeting-card/domain/brochure-pricing.ts#L130-L189)
 ```
 Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 ```
@@ -166,13 +166,13 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 - Cùng hàm `computeQuote()` dùng cho cả báo giá preview và tạo đơn → **số liệu không lệch**
 
 ### 3.11 Đối chiếu chuyển khoản tự động ✅
-[`bank-transfer-matching.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/bank-transfer-matching.ts)
+[`bank-transfer-matching.ts`](../../src/modules/greeting-card/domain/bank-transfer-matching.ts)
 - Dò mã đơn `DHyymmdd-XXXXXXXX` trong nội dung CK (regex nới lỏng: chịu khoảng trắng, thiếu gạch ngang)
 - Chuyển thừa → chỉ ghi đúng phần còn phải thu + cảnh báo hoàn
 - Đơn đã huỷ / đã thu đủ → `UNMATCHED`
 
 ### 3.12 Quy trình điều phối xưởng ✅
-[`brochure-commerce-rules.ts#L62-L97`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/brochure-commerce-rules.ts#L62-L97)
+[`brochure-commerce-rules.ts#L62-L97`](../../src/modules/greeting-card/domain/brochure-commerce-rules.ts#L62-L97)
 
 4 tác vụ tuần tự (có blocker nếu sai thứ tự):
 1. **Phân công thợ** → Chỉ khi hoa chưa cắm xong
@@ -181,7 +181,7 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 4. **Ảnh người nhận** → Cần giao ship trước
 
 ### 3.13 Pipeline theo dõi 9 bước ✅
-[`tracking-pipeline-types.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/tracking-pipeline-types.ts)
+[`tracking-pipeline-types.ts`](../../src/modules/greeting-card/domain/tracking-pipeline-types.ts)
 
 | Bước | Tiêu đề | Vai trách nhiệm |
 |---|---|---|
@@ -196,20 +196,20 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 | STEP_9 | Giao thành công & Hoàn tất | Toàn bộ |
 
 ### 3.14 SLA & Phát hiện đơn kẹt ✅
-[`step-sla.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/step-sla.ts)
+[`step-sla.ts`](../../src/modules/greeting-card/domain/step-sla.ts)
 - Mỗi bước có thời gian chuẩn (cấu hình được, mặc định 5–120 phút)
 - Quá thời gian → đơn "kẹt" + gợi ý hành động + báo cho vai phụ trách
 - Hiển thị `quá X phút / X giờ / X ngày`
 - Tối đa 7 ngày SLA
 
 ### 3.15 Lịch giao & Khung giờ ✅
-[`delivery-schedule.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/delivery-schedule.ts)
+[`delivery-schedule.ts`](../../src/modules/greeting-card/domain/delivery-schedule.ts)
 - 4 khung giờ: Sáng (8–12h), Chiều (13–17h), Tối (18–21h), Giờ cụ thể
 - Giờ chốt giao trong ngày → hôm nay hết slot → tự chuyển ngày mai
 - Thời gian chuẩn bị (`prepHours`) → loại khung giờ không kịp
 
 ### 3.16 Địa chỉ giao 5 ô ✅
-[`delivery-address.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/delivery-address.ts)
+[`delivery-address.ts`](../../src/modules/greeting-card/domain/delivery-address.ts)
 - 5 ô: Số nhà → Đường → Phường/Xã → Quận/Huyện (tuỳ chọn, VN bỏ cấp 01/07/2025) → Tỉnh/TP
 - Máy chủ tự ghép dòng đầy đủ, không tin client
 
@@ -218,7 +218,7 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 ## 4. Hệ thống Template (Mẫu Thẻ Chào)
 
 ### 4.1 Registry ✅
-[`greeting-template-catalog.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/greeting-template-catalog.ts) — 20 mẫu, 2 nhóm:
+[`greeting-template-catalog.ts`](../../src/modules/greeting-card/domain/greeting-template-catalog.ts) — 20 mẫu, 2 nhóm:
 
 #### 12 Swipe Styles (cốt lõi)
 | # | ID | Tên | Phong cách |
@@ -241,53 +241,53 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 |---|---|---|
 | `enterprise-luxury` | Enterprise Luxury Deck | ⚠️ Có định nghĩa, renderer tồn tại |
 | `swipe-classic` | Classic Swipe Brochure | ⚠️ Có định nghĩa |
-| `lookbook-grid` | Commercial Lookbook Grid | ⚠️ Có renderer [`lookbook-grid-deck.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer/templates/lookbook-grid-deck.tsx) |
-| `editorial-story` | Editorial Magazine & Story | ⚠️ Có renderer [`editorial-story-deck.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer/templates/editorial-story-deck.tsx) |
-| `video-reels` | Video-First Reels | ⚠️ Có renderer [`video-reels-deck.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer/templates/video-reels-deck.tsx) |
-| `occasion-budget-quiz` | Smart Matcher | ⚠️ Có renderer [`occasion-budget-deck.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer/templates/occasion-budget-deck.tsx) |
-| `event-moodboard` | Color Moodboard | ⚠️ Có renderer [`color-moodboard-deck.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer/templates/color-moodboard-deck.tsx) |
-| `split-compare` | Split-Screen Lens | ⚠️ Có renderer [`split-compare-deck.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer/templates/split-compare-deck.tsx) |
+| `lookbook-grid` | Commercial Lookbook Grid | ⚠️ Có renderer [`lookbook-grid-deck.tsx`](../../src/components/greeting-card/customer/templates/lookbook-grid-deck.tsx) |
+| `editorial-story` | Editorial Magazine & Story | ⚠️ Có renderer [`editorial-story-deck.tsx`](../../src/components/greeting-card/customer/templates/editorial-story-deck.tsx) |
+| `video-reels` | Video-First Reels | ⚠️ Có renderer [`video-reels-deck.tsx`](../../src/components/greeting-card/customer/templates/video-reels-deck.tsx) |
+| `occasion-budget-quiz` | Smart Matcher | ⚠️ Có renderer [`occasion-budget-deck.tsx`](../../src/components/greeting-card/customer/templates/occasion-budget-deck.tsx) |
+| `event-moodboard` | Color Moodboard | ⚠️ Có renderer [`color-moodboard-deck.tsx`](../../src/components/greeting-card/customer/templates/color-moodboard-deck.tsx) |
+| `split-compare` | Split-Screen Lens | ⚠️ Có renderer [`split-compare-deck.tsx`](../../src/components/greeting-card/customer/templates/split-compare-deck.tsx) |
 
 ### 4.2 Cấu hình hiển thị trường thông tin ✅
-[`display-fields.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/display-fields.ts)
+[`display-fields.ts`](../../src/modules/greeting-card/domain/display-fields.ts)
 - **Luôn hiển thị** (không tắt được): `code`, `name`, `price`
 - **Tuỳ chọn** (7 trường): flowers, color, style, dimensions, wrapStyle, category, description
 - Cấu hình theo template, lưu `organizations.settings.greetingCardDisplay`
 
 ### 4.3 Template Selector ✅
-[`template-selector-split-pane.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer/templates/template-selector-split-pane.tsx) — Cho phép cửa hàng xem trước và chọn mẫu.
+[`template-selector-split-pane.tsx`](../../src/components/greeting-card/customer/templates/template-selector-split-pane.tsx) — Cho phép cửa hàng xem trước và chọn mẫu.
 
 ---
 
 ## 5. Tích hợp bên ngoài
 
 ### 5.1 VietQR (Thanh toán chuyển khoản) ✅
-[`vietqr-helper.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/adapters/vietqr-helper.ts)
+[`vietqr-helper.ts`](../../src/modules/greeting-card/adapters/vietqr-helper.ts)
 - Sinh mã QR qua `img.vietqr.io` (tiêu chuẩn Napas)
 - Hỗ trợ cọc/trả đủ/phần còn lại theo chính sách tiệm
 - Tài khoản nhận tiền từ `organizations.settings.brochure_payment`
 
 ### 5.2 Zalo ZNS (Thông báo khách) ✅
-[`zalo-zns-adapter.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/adapters/zalo-zns-adapter.ts)
+[`zalo-zns-adapter.ts`](../../src/modules/greeting-card/adapters/zalo-zns-adapter.ts)
 - Gửi tin theo mẫu đã duyệt trên Zalo Official Account
 - Access token tự làm mới (refresh token dùng một lần)
 - Có circuit breaker (`withCircuitBreaker("zalo-zns")`)
 - Credentials mã hoá AES-256-GCM, không bao giờ trả ra client
 
 ### 5.3 eSMS (SMS Brandname) ✅
-[`esms-adapter.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/adapters/esms-adapter.ts)
+[`esms-adapter.ts`](../../src/modules/greeting-card/adapters/esms-adapter.ts)
 - SMS không dấu (tiết kiệm phí, tránh lỗi mã hoá)
 - Giữ dưới 160 ký tự khi có thể
 - Có circuit breaker
 
 ### 5.4 SePay (Webhook đối soát ngân hàng) ✅
-[`payment-webhook.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/use-cases/payment-webhook.ts)
+[`payment-webhook.ts`](../../src/modules/greeting-card/use-cases/payment-webhook.ts)
 - Xác thực webhook bằng SHA-256 hash (key chỉ lưu băm, hint 4 ký tự cuối)
 - Tự dò mã đơn trong nội dung CK → ghi thu tự động
 - Idempotent: `unique(org, provider, external_id)` → không ghi thu hai lần
 
 ### 5.5 Thông báo khách theo mốc đơn ✅
-[`customer-notifications.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/customer-notifications.ts)
+[`customer-notifications.ts`](../../src/modules/greeting-card/domain/customer-notifications.ts)
 
 7 sự kiện thông báo:
 | Event | Nhãn |
@@ -308,7 +308,7 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 ## 6. RBAC & Permissions
 
 ### 6.1 Capability Map ✅
-[`greeting-card-capabilities.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/greeting-card-capabilities.ts)
+[`greeting-card-capabilities.ts`](../../src/modules/greeting-card/domain/greeting-card-capabilities.ts)
 
 | Mã | Quyền | Gác cổng |
 |---|---|---|
@@ -324,14 +324,14 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 | `R10` | Hoàn tiền (trần cứng điều hành) | `order.payment.refund` |
 
 ### 6.2 Phạm vi xem đơn (Visibility) ✅
-[`order-visibility.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/order-visibility.ts)
+[`order-visibility.ts`](../../src/modules/greeting-card/domain/order-visibility.ts)
 - Mode `ALL` (mặc định): mọi sale thấy mọi đơn
 - Mode `OWN`: sale chỉ thấy link/đơn mình gửi
 - Điều hành chọn riêng cho từng sale
 - Người có `R4/R5/F2` (điều phối, giao hàng, điều hành) luôn thấy tất cả
 
 ### 6.3 Vai Tin nhắn nội bộ ✅
-[`internal-message.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/internal-message.ts)
+[`internal-message.ts`](../../src/modules/greeting-card/domain/internal-message.ts)
 - Vai chính: `ADMIN` (F2) > `COORDINATOR` (R4/R5) > `SALE` (R2)
 - Gửi cho vai hoặc gửi cho người cụ thể
 - `OWNER_SALE` = sale phụ trách đơn (server tự tìm)
@@ -414,19 +414,19 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 
 | Nhóm | Số component | Thư mục |
 |---|---|---|
-| Admin (Điều hành) | 16 file | [`admin/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/admin) |
-| Catalog (Bộ sưu tập) | 5 file | [`catalog/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/catalog) |
-| Coordinator (Điều phối) | 5 file | [`coordinator/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/coordinator) |
-| Customer (Trang khách) | 19 file + templates | [`customer/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/customer) |
-| Inbox (Hộp việc) | 6 file | [`inbox/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/inbox) |
-| Journey (Gửi nhanh) | 12 file | [`journey/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/journey) |
-| Sales (Bán hàng) | 6 file | [`sales/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/sales) |
-| Share (Chia sẻ) | 2 file | [`share/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/share) |
-| Tracking (Theo dõi) | 5 file | [`tracking/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/tracking) |
-| Work (Danh sách việc) | 3 file | [`work/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/work) |
+| Admin (Điều hành) | 16 file | [`admin/`](../../src/components/greeting-card/admin) |
+| Catalog (Bộ sưu tập) | 5 file | [`catalog/`](../../src/components/greeting-card/catalog) |
+| Coordinator (Điều phối) | 5 file | [`coordinator/`](../../src/components/greeting-card/coordinator) |
+| Customer (Trang khách) | 19 file + templates | [`customer/`](../../src/components/greeting-card/customer) |
+| Inbox (Hộp việc) | 6 file | [`inbox/`](../../src/components/greeting-card/inbox) |
+| Journey (Gửi nhanh) | 12 file | [`journey/`](../../src/components/greeting-card/journey) |
+| Sales (Bán hàng) | 6 file | [`sales/`](../../src/components/greeting-card/sales) |
+| Share (Chia sẻ) | 2 file | [`share/`](../../src/components/greeting-card/share) |
+| Tracking (Theo dõi) | 5 file | [`tracking/`](../../src/components/greeting-card/tracking) |
+| Work (Danh sách việc) | 3 file | [`work/`](../../src/components/greeting-card/work) |
 
 ### 8.2 Cài đặt Điều hành (Admin Settings) ✅
-[`admin/`](file:///Users/tuan/Projects/floraos-core/src/components/greeting-card/admin)
+[`admin/`](../../src/components/greeting-card/admin)
 
 | Setting | Component | Mô tả |
 |---|---|---|
@@ -443,7 +443,7 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 ---
 
 ## 9. Hệ thống Hộp việc (Inbox) ✅
-[`inbox.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/inbox.ts)
+[`inbox.ts`](../../src/modules/greeting-card/domain/inbox.ts)
 
 6 loại hành động, sắp xếp theo urgency:
 
@@ -464,7 +464,7 @@ Tổng = (đơn giá × số lượng) − giảm giá + phí giao
 ## 10. Analytics & Phễu bán hàng
 
 ### 10.1 Phễu theo Sale ✅
-[`sales-funnel.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/sales-funnel.ts)
+[`sales-funnel.ts`](../../src/modules/greeting-card/domain/sales-funnel.ts)
 ```
 Gửi → Mở → Chọn mẫu → Đặt → Thu tiền → Doanh thu
 ```
@@ -473,7 +473,7 @@ Gửi → Mở → Chọn mẫu → Đặt → Thu tiền → Doanh thu
 - Link công khai = "Link bộ sưu tập công khai"
 
 ### 10.2 Phễu theo kênh chia sẻ ✅
-[`catalog-channel.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/catalog-channel.ts)
+[`catalog-channel.ts`](../../src/modules/greeting-card/domain/catalog-channel.ts)
 ```
 VIEW → DETAIL → FORM_OPEN → ORDER
 ```
@@ -488,7 +488,7 @@ VIEW → DETAIL → FORM_OPEN → ORDER
 | Điểm | Trạng thái | Chi tiết |
 |---|---|---|
 | Tenant isolation | ✅ | Mọi bảng có `organization_id`, lọc ở infra |
-| Input validation | ✅ | Zod schema ([`public-order-schema.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/contracts/public-order-schema.ts)) + domain validation |
+| Input validation | ✅ | Zod schema ([`public-order-schema.ts`](../../src/modules/greeting-card/contracts/public-order-schema.ts)) + domain validation |
 | Giá server-side | ✅ | Giá tính ở server, không nhận giá từ client |
 | Webhook auth | ✅ | SHA-256 hash, key chỉ lưu băm |
 | Credentials encryption | ✅ | AES-256-GCM cho Zalo/eSMS, không trả ra client |
@@ -504,7 +504,7 @@ VIEW → DETAIL → FORM_OPEN → ORDER
 ## 12. Testing
 
 ### 12.1 Domain Tests (Pure unit) ✅
-[`domain/__tests__/`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/domain/__tests__) — **17 test file**:
+[`domain/__tests__/`](../../src/modules/greeting-card/domain/__tests__) — **17 test file**:
 - `greeting-card-rules.test.ts` (5.9KB)
 - `brochure-pricing.test.ts` (4.1KB)
 - `brochure-payment-policy.test.ts` (3.2KB)
@@ -520,7 +520,7 @@ VIEW → DETAIL → FORM_OPEN → ORDER
 - `customer-notifications.test.ts`, `discount-request.test.ts`
 
 ### 12.2 Tenant Isolation Tests ✅
-12 test file trong [`tests/tenant/`](file:///Users/tuan/Projects/floraos-core/tests/tenant):
+12 test file trong [`tests/tenant/`](../../tests/tenant):
 - `greeting-card.test.ts` — Core flow
 - `greeting-card-checkout.test.ts`
 - `greeting-card-payments.test.ts`
@@ -534,12 +534,12 @@ VIEW → DETAIL → FORM_OPEN → ORDER
 - `greeting-catalog-products-events.test.ts`
 
 ### 12.3 E2E Tests ⚠️
-- [`tests/e2e/brochure-swipe.spec.ts`](file:///Users/tuan/Projects/floraos-core/tests/e2e/brochure-swipe.spec.ts) — 1 file, chưa rõ phạm vi
+- [`tests/e2e/brochure-swipe.spec.ts`](../../tests/e2e/brochure-swipe.spec.ts) — 1 file, chưa rõ phạm vi
 
 ---
 
 ## 13. Feature Flags ✅
-[`feature-flags.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/greeting-card/feature-flags.ts)
+[`feature-flags.ts`](../../src/modules/greeting-card/feature-flags.ts)
 - `GREETING_CARD_ENABLED` env var — mặc định **bật**
 - Chỉ gọi server-side
 

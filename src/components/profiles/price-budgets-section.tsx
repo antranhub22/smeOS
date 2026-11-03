@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { DollarSign, Loader2, Plus, RotateCcw, Save, Trash2, Wand2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Disclosure } from "@/components/ui/disclosure"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
@@ -81,7 +82,7 @@ export function PriceBudgetsSection() {
     <form onSubmit={save} className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <DollarSign size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Khoảng giá lọc nhanh sản phẩm</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Khoảng giá lọc nhanh sản phẩm</h3>
       </div>
       <p className="text-body-sm text-text-muted">
         Các nút khoảng giá khi tìm sản phẩm, tạo bộ sưu tập nhanh và tư vấn theo ngân sách. Mỗi khoảng tính từ giá “Từ” đến
@@ -94,13 +95,13 @@ export function PriceBudgetsSection() {
           {budgets.map((b, i) => (
             <div key={i} className="flex flex-wrap items-center gap-2 rounded-lg border border-border p-2">
               <label className="flex items-center gap-1">Từ
-                <input inputMode="numeric" aria-label={`Giá từ, khoảng ${i + 1}`} value={fmt(b.min)} onChange={(e) => setRow(i, { min: toNum(e.target.value) ?? 0 })} className={`${FIELD} w-28`} />đ
+                <Input inputMode="numeric" aria-label={`Giá từ, khoảng ${i + 1}`} value={fmt(b.min)} onChange={(e) => setRow(i, { min: toNum(e.target.value) ?? 0 })} className="h-8 rounded-lg border border-border bg-surface px-2 text-body-sm w-28" />đ
               </label>
               <label className="flex items-center gap-1">đến dưới
-                <input inputMode="numeric" aria-label={`Giá đến, khoảng ${i + 1}`} value={fmt(b.max)} placeholder="Không giới hạn" onChange={(e) => setRow(i, { max: toNum(e.target.value) })} className={`${FIELD} w-32`} />đ
+                <Input inputMode="numeric" aria-label={`Giá đến, khoảng ${i + 1}`} value={fmt(b.max)} placeholder="Không giới hạn" onChange={(e) => setRow(i, { max: toNum(e.target.value) })} className="h-8 rounded-lg border border-border bg-surface px-2 text-body-sm w-32" />đ
               </label>
               <label className="flex items-center gap-1 flex-1 min-w-40">Tên nút
-                <input aria-label={`Tên nút, khoảng ${i + 1}`} value={b.label} placeholder={defaultBudgetLabel(b.min, b.max)} onChange={(e) => setRow(i, { label: e.target.value })} className={`${FIELD} flex-1`} />
+                <Input aria-label={`Tên nút, khoảng ${i + 1}`} value={b.label} placeholder={defaultBudgetLabel(b.min, b.max)} onChange={(e) => setRow(i, { label: e.target.value })} className="h-8 rounded-lg border border-border bg-surface px-2 text-body-sm flex-1" />
               </label>
               <Button type="button" size="sm" variant="ghost" aria-label={`Xoá khoảng ${i + 1}`} onClick={() => edit(budgets.filter((_, j) => j !== i))}>
                 <Trash2 size={14} />
@@ -117,9 +118,9 @@ export function PriceBudgetsSection() {
           </div>
           <Disclosure label="Tạo nhanh các khoảng đều nhau" className="p-3 text-caption">
             <div className="mt-2 flex flex-wrap items-center gap-2">
-              <label className="flex items-center gap-1">Từ <input inputMode="numeric" value={fmt(toNum(gen.from))} onChange={(e) => setGen({ ...gen, from: e.target.value })} className={`${FIELD} w-28`} />đ</label>
-              <label className="flex items-center gap-1">đến <input inputMode="numeric" value={fmt(toNum(gen.to))} onChange={(e) => setGen({ ...gen, to: e.target.value })} className={`${FIELD} w-28`} />đ</label>
-              <label className="flex items-center gap-1">mỗi khoảng <input inputMode="numeric" value={fmt(toNum(gen.step))} onChange={(e) => setGen({ ...gen, step: e.target.value })} className={`${FIELD} w-28`} />đ</label>
+              <label className="flex items-center gap-1">Từ <Input inputMode="numeric" value={fmt(toNum(gen.from))} onChange={(e) => setGen({ ...gen, from: e.target.value })} className="h-8 rounded-lg border border-border bg-surface px-2 text-body-sm w-28" />đ</label>
+              <label className="flex items-center gap-1">đến <Input inputMode="numeric" value={fmt(toNum(gen.to))} onChange={(e) => setGen({ ...gen, to: e.target.value })} className="h-8 rounded-lg border border-border bg-surface px-2 text-body-sm w-28" />đ</label>
+              <label className="flex items-center gap-1">mỗi khoảng <Input inputMode="numeric" value={fmt(toNum(gen.step))} onChange={(e) => setGen({ ...gen, step: e.target.value })} className="h-8 rounded-lg border border-border bg-surface px-2 text-body-sm w-28" />đ</label>
               <Button type="button" size="sm" variant="outline" className="gap-1" onClick={generate}>
                 <Wand2 size={14} /> Tạo
               </Button>

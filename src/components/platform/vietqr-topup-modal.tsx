@@ -135,7 +135,7 @@ export function VietQrTopupModal({
           <button
             type="button"
             onClick={() => setActiveTab("CREDITS")}
-            className={`flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
+            className={`cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
               activeTab === "CREDITS"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-text-muted hover:text-text"
@@ -146,7 +146,7 @@ export function VietQrTopupModal({
           <button
             type="button"
             onClick={() => setActiveTab("PLANS")}
-            className={`flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
+            className={`cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
               activeTab === "PLANS"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-text-muted hover:text-text"
@@ -167,7 +167,7 @@ export function VietQrTopupModal({
                     type="button"
                     key={opt.id}
                     onClick={() => setSelectedTopup(opt)}
-                    className={`w-full text-left p-3 rounded-lg border transition ${
+                    className={`cursor-pointer w-full text-left p-3 rounded-lg border transition ${
                       selectedTopup.id === opt.id
                         ? "border-primary bg-primary/10"
                         : "border-border bg-surface hover:border-primary/40"
@@ -195,7 +195,7 @@ export function VietQrTopupModal({
                     type="button"
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan)}
-                    className={`w-full text-left p-3 rounded-lg border transition ${
+                    className={`cursor-pointer w-full text-left p-3 rounded-lg border transition ${
                       selectedPlan.id === plan.id
                         ? "border-primary bg-primary/10"
                         : "border-border bg-surface hover:border-primary/40"
@@ -243,14 +243,16 @@ export function VietQrTopupModal({
                   <span className="text-text-muted">Số tài khoản: </span>
                   <span className="font-mono font-bold text-primary">{qrData.accountNumber}</span>
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy(qrData.accountNumber, "acc")}
-                  className="text-primary hover:underline font-medium flex items-center gap-1"
+                  className="h-auto p-0 text-primary hover:underline font-medium flex items-center gap-1"
                 >
                   {copiedField === "acc" ? <Check size={12} className="text-success" /> : <Copy size={12} />}
                   {copiedField === "acc" ? "Đã chép" : "Chép"}
-                </button>
+                </Button>
               </div>
 
               <div className="flex items-center justify-between p-2 rounded bg-surface-alt border border-border">
@@ -258,14 +260,16 @@ export function VietQrTopupModal({
                   <span className="text-text-muted">Số tiền: </span>
                   <span className="font-bold text-text">{qrData.amountVnd.toLocaleString("vi-VN")} đ</span>
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy(String(qrData.amountVnd), "amount")}
-                  className="text-primary hover:underline font-medium flex items-center gap-1"
+                  className="h-auto p-0 text-primary hover:underline font-medium flex items-center gap-1"
                 >
                   {copiedField === "amount" ? <Check size={12} className="text-success" /> : <Copy size={12} />}
                   {copiedField === "amount" ? "Đã chép" : "Chép"}
-                </button>
+                </Button>
               </div>
 
               <div className="flex items-center justify-between p-2 rounded bg-primary/10 border border-primary/30">
@@ -273,14 +277,16 @@ export function VietQrTopupModal({
                   <span className="text-text-muted">Nội dung CK: </span>
                   <span className="font-mono font-bold text-primary">{qrData.transferSyntax}</span>
                 </div>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy(qrData.transferSyntax, "syntax")}
-                  className="text-primary hover:underline font-bold flex items-center gap-1"
+                  className="h-auto p-0 text-primary hover:underline font-bold flex items-center gap-1"
                 >
                   {copiedField === "syntax" ? <Check size={12} className="text-success" /> : <Copy size={12} />}
                   {copiedField === "syntax" ? "Đã chép" : "Chép mã"}
-                </button>
+                </Button>
               </div>
             </div>
           </div>

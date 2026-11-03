@@ -2,6 +2,7 @@
 
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
+import { Input } from "@/components/ui/input"
 
 export interface EnhanceComparisonProps {
   originalUrl: string
@@ -54,13 +55,13 @@ export function EnhanceComparison({ originalUrl, enhancedUrl }: EnhanceCompariso
       </div>
 
       {/* Transparent Range Input for Interaction */}
-      <input
+      <Input
         type="range"
         min={0}
         max={100}
         value={sliderPos}
         onChange={(e) => setSliderPos(Number(e.target.value))}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-10"
+        className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-10 p-0 border-0 bg-transparent"
         aria-label="Thanh trượt so sánh ảnh trước và sau khi xử lý"
       />
     </div>

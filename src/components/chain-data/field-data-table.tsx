@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Copy, Check, Lock, ShieldCheck } from "@/components/ui/icons"
 import type { StoreFieldRecord } from "@/modules/field-platform/use-cases/get-store-folder-data"
 
@@ -106,10 +107,12 @@ export function FieldDataTable({ fields }: FieldDataTableProps) {
               <td className="py-3.5 px-4">{getFormatBadge(field.effectiveTarget)}</td>
 
               <td className="py-3.5 px-4 text-right">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy(field.fieldKey, field.displayValue)}
-                  className="p-1.5 rounded-lg border border-border hover:bg-surface-alt text-text-muted hover:text-text transition-colors"
+                  className="h-8 w-8 p-0 rounded-lg border border-border hover:bg-surface-alt text-text-muted hover:text-text transition-colors inline-flex items-center justify-center"
                   title="Sao chép giá trị"
                 >
                   {copiedKey === field.fieldKey ? (
@@ -117,7 +120,7 @@ export function FieldDataTable({ fields }: FieldDataTableProps) {
                   ) : (
                     <Copy size={14} />
                   )}
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

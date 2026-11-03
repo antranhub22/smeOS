@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react"
 import { Video, QrCode, Trash2, Loader2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { PhotoUploadGuidance, VIDEO_GUIDANCE, QR_GUIDANCE } from "./photo-upload-guidance"
 import { uploadBrandAsset } from "./upload-brand-asset"
 
@@ -75,14 +76,16 @@ export function BrandVideoQrSection({
             className="hidden"
             disabled={disabled || videoUploading}
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             disabled={disabled || videoUploading}
             onClick={() => videoInputRef.current?.click()}
-            className="text-caption font-bold text-primary hover:underline disabled:opacity-50"
+            className="text-caption font-bold text-primary hover:underline disabled:opacity-50 h-auto p-0 hover:bg-transparent"
           >
             {videoUploading ? "Đang tải..." : introVideo ? "Thay đổi" : "Tải lên"}
-          </button>
+          </Button>
         </div>
         <p className="text-caption text-text-muted mb-3">
           Tự động ghép vào đầu hoặc cuối các video quay sản phẩm hoa trên TikTok/Reels.
@@ -97,15 +100,17 @@ export function BrandVideoQrSection({
         {introVideo ? (
           <div className="relative rounded-xl overflow-hidden border border-border bg-black aspect-16/9">
             <video src={introVideo} controls className="h-full w-full object-contain" />
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               aria-label="Xóa video nhận diện"
               title="Xóa video nhận diện"
               onClick={() => onVideoChange("")}
-              className="absolute top-2 right-2 rounded-lg bg-surface/80 p-1 text-danger hover:bg-surface transition-colors"
+              className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-surface/80 p-1 text-danger hover:bg-surface transition-colors"
             >
               <Trash2 size={14} />
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="aspect-16/9 rounded-xl border border-dashed border-border flex items-center justify-center text-caption text-text-muted">
@@ -129,14 +134,16 @@ export function BrandVideoQrSection({
             className="hidden"
             disabled={disabled || qrUploading}
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             disabled={disabled || qrUploading}
             onClick={() => qrInputRef.current?.click()}
-            className="text-caption font-bold text-primary hover:underline disabled:opacity-50"
+            className="text-caption font-bold text-primary hover:underline disabled:opacity-50 h-auto p-0 hover:bg-transparent"
           >
             {qrUploading ? "Đang tải..." : qrCode ? "Thay đổi" : "Tải lên"}
-          </button>
+          </Button>
         </div>
         <p className="text-caption text-text-muted mb-3">
           Khách bấm &quot;Mã QR&quot; trên trang đặt hoa sẽ thấy mã này để kết nối Zalo với tiệm. Không tải mã QR ngân hàng vào đây.
@@ -151,15 +158,17 @@ export function BrandVideoQrSection({
         {qrCode ? (
           <div className="relative rounded-xl overflow-hidden border border-border bg-surface aspect-16/9 flex items-center justify-center p-2">
             <img src={qrCode} alt="Mã QR Zalo" className="max-h-full max-w-full object-contain" />
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               aria-label="Xóa mã QR"
               title="Xóa mã QR"
               onClick={() => onQrChange("")}
-              className="absolute top-2 right-2 rounded-lg bg-surface/80 p-1 text-danger hover:bg-surface transition-colors"
+              className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-surface/80 p-1 text-danger hover:bg-surface transition-colors"
             >
               <Trash2 size={14} />
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="aspect-16/9 rounded-xl border border-dashed border-border flex items-center justify-center text-caption text-text-muted">

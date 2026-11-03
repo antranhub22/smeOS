@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { Copy, Check, MessageSquareText, Sparkles, RefreshCw } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 
 export interface ZaloScriptBoxProps {
   script: string
@@ -92,7 +93,7 @@ export function ZaloScriptBox({
         </div>
 
         <div className="p-4">
-          <textarea
+          <Textarea
             value={script}
             onChange={(e) => onScriptChange?.(e.target.value)}
             rows={18}

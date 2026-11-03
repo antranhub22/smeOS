@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from "react"
 import { ImagePlus, X } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { uploadImageFile } from "../ai-product-helpers"
 
 interface Props {
@@ -37,21 +38,30 @@ export function VariantImageCell({ label, assetId, onChange }: Props) {
         <>
           {/* Không dựng ảnh từ file vừa chọn trên máy (CodeQL: DOM text → HTML); khách thấy ảnh đã ký từ kho */}
           <span className="text-caption font-semibold text-success">Đã có ảnh</span>
-          <button type="button" aria-label={`Bỏ ảnh ${label}`} onClick={() => onChange(null)} className="rounded-full p-1 text-text-muted hover:text-danger">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={`Bỏ ảnh ${label}`}
+            onClick={() => onChange(null)}
+            className="h-6 w-6 rounded-full p-1 text-text-muted hover:text-danger hover:bg-transparent"
+          >
             <X className="h-4 w-4" aria-hidden />
-          </button>
+          </Button>
         </>
       ) : (
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           disabled={busy}
           onClick={() => ref.current?.click()}
           aria-label={`Thêm ảnh ${label}`}
-          className="inline-flex h-9 items-center gap-1 rounded-lg border border-border bg-surface px-2 text-caption font-semibold text-text disabled:opacity-50"
+          className="inline-flex h-9 items-center gap-1 px-2 text-caption font-semibold"
         >
           <ImagePlus className="h-4 w-4" aria-hidden />
           {busy ? "Đang tải…" : "Ảnh"}
-        </button>
+        </Button>
       )}
       <input ref={ref} type="file" accept="image/*" className="hidden" onChange={(e) => void onFile(e.target.files?.[0])} />
       {error && <span className="text-caption text-danger">{error}</span>}

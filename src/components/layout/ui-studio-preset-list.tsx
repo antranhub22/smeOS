@@ -22,8 +22,8 @@ export function UiStudioPresetList({
 
         return (
           <button
-            key={preset.id}
             type="button"
+            key={preset.id}
             onClick={() => onSelectPreset(preset.id as UiPresetId)}
             className={`w-full text-left p-3.5 rounded-2xl cursor-pointer transition-all border ${
               isSelected

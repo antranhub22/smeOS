@@ -128,18 +128,18 @@ Mọi tệp mã nguồn đều được thiết kế dưới ngưỡng **350 dò
 
 | Phân hệ | Tệp thành phần | Dòng code | Trách nhiệm chính |
 |---|---|---|---|
-| **Landing Page** | [`smart-input-dropzone.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/smart-input-dropzone.tsx) | ~215 | Hộp nạp nguyên liệu đầu vào đa năng (Ảnh, Video, Text) cho Automatic Flow |
-| | [`landing-step-indicator.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/landing-step-indicator.tsx) | ~80 | Thanh tiến trình 5 bước trực quan theo chuẩn Journey UX |
-| | [`landing-step-setup.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/landing-step-setup.tsx) | ~70 | Render Bước 1 (Dịp, Phong cách) và Bước 2 (Chọn hoa) |
-| | [`landing-step-content-settings.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/landing-step-content-settings.tsx) | ~80 | Render Bước 3 (Tiêu đề, Chỉ thị AI, Media, Section Toggles) |
-| | [`landing-step-preview-pane.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/landing-step-preview-pane.tsx) | ~70 | Render Bước 4 (Xem trước trực tiếp & Nút xuất bản) |
-| | [`landing-wizard-nav.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/landing-wizard-nav.tsx) | ~60 | Nút điều hướng tuần tự giữa các bước (Quay lại, Tiếp tục, Xuất bản) |
-| | [`landing-next-actions.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/landing-next-actions.tsx) | ~150 | Bước 5 — Khối Next Best Actions (J3) sau khi xuất bản Landing Page |
-| | [`landing-campaign-tab.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/landing-campaign-tab.tsx) | **347** | Orchestrator điều phối trạng thái, chế độ Automatic vs Manually |
-| **Catalog Số** | [`catalog-wizard-step1-products.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/catalog-wizard-step1-products.tsx) | ~185 | Bước 1 — Lựa chọn nhanh Preset, tìm kiếm và chọn sản phẩm |
-| | [`catalog-wizard-step4-success.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/catalog-wizard-step4-success.tsx) | ~110 | Bước 4 — Hiển thị Link, mã QR và Khối Next Best Actions (J3) |
-| | [`catalog-wizard-flow.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/catalog-wizard-flow.tsx) | **348** | Orchestrator 4 bước tạo Catalog số |
-| | [`catalog-management-tab.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/catalog/catalog-management-tab.tsx) | **175** | Orchestrator Tab Catalog, toggle giữa Wizard và Chế độ Chuyên gia |
+| **Landing Page** | [`smart-input-dropzone.tsx`](../../src/components/catalog/smart-input-dropzone.tsx) | ~215 | Hộp nạp nguyên liệu đầu vào đa năng (Ảnh, Video, Text) cho Automatic Flow |
+| | [`landing-step-indicator.tsx`](../../src/components/catalog/landing-step-indicator.tsx) | ~80 | Thanh tiến trình 5 bước trực quan theo chuẩn Journey UX |
+| | [`landing-step-setup.tsx`](../../src/components/catalog/landing-step-setup.tsx) | ~70 | Render Bước 1 (Dịp, Phong cách) và Bước 2 (Chọn hoa) |
+| | [`landing-step-content-settings.tsx`](../../src/components/catalog/landing-step-content-settings.tsx) | ~80 | Render Bước 3 (Tiêu đề, Chỉ thị AI, Media, Section Toggles) |
+| | [`landing-step-preview-pane.tsx`](../../src/components/catalog/landing-step-preview-pane.tsx) | ~70 | Render Bước 4 (Xem trước trực tiếp & Nút xuất bản) |
+| | [`landing-wizard-nav.tsx`](../../src/components/catalog/landing-wizard-nav.tsx) | ~60 | Nút điều hướng tuần tự giữa các bước (Quay lại, Tiếp tục, Xuất bản) |
+| | [`landing-next-actions.tsx`](../../src/components/catalog/landing-next-actions.tsx) | ~150 | Bước 5 — Khối Next Best Actions (J3) sau khi xuất bản Landing Page |
+| | [`landing-campaign-tab.tsx`](../../src/components/catalog/landing-campaign-tab.tsx) | **347** | Orchestrator điều phối trạng thái, chế độ Automatic vs Manually |
+| **Catalog Số** | [`catalog-wizard-step1-products.tsx`](../../src/components/catalog/catalog-wizard-step1-products.tsx) | ~185 | Bước 1 — Lựa chọn nhanh Preset, tìm kiếm và chọn sản phẩm |
+| | [`catalog-wizard-step4-success.tsx`](../../src/components/catalog/catalog-wizard-step4-success.tsx) | ~110 | Bước 4 — Hiển thị Link, mã QR và Khối Next Best Actions (J3) |
+| | [`catalog-wizard-flow.tsx`](../../src/components/catalog/catalog-wizard-flow.tsx) | **348** | Orchestrator 4 bước tạo Catalog số |
+| | [`catalog-management-tab.tsx`](../../src/components/catalog/catalog-management-tab.tsx) | **175** | Orchestrator Tab Catalog, toggle giữa Wizard và Chế độ Chuyên gia |
 
 ---
 

@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import { AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { ExceptionResolutionCard } from "@/components/templates/coordinator/exception-resolution-card"
 import {
   coordinatorApi,
@@ -87,8 +89,8 @@ export function CoordinatorExceptionTab({
             />
             {open && (
               <div className="flex items-center gap-2">
-                <input
-                  className={`flex-1 ${fieldClass}`}
+                <Input
+                  className="flex-1"
                   placeholder="Đã xử lý thế nào (bắt buộc)"
                   value={resolutionDrafts[exc.id] ?? ""}
                   onChange={(e) =>
@@ -113,8 +115,7 @@ export function CoordinatorExceptionTab({
         <div className="p-3 rounded-xl border border-dashed border-danger/40 flex flex-col gap-2">
           <span className="font-bold text-text">Mở sự cố mới (T22)</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <select
-              className={fieldClass}
+            <NativeSelect
               value={newException.type}
               onChange={(e) => setNewException({ ...newException, type: e.target.value })}
             >
@@ -123,9 +124,8 @@ export function CoordinatorExceptionTab({
                   {label}
                 </option>
               ))}
-            </select>
-            <select
-              className={fieldClass}
+            </NativeSelect>
+            <NativeSelect
               value={newException.severity}
               onChange={(e) => setNewException({ ...newException, severity: e.target.value })}
             >
@@ -133,10 +133,9 @@ export function CoordinatorExceptionTab({
               <option value="MEDIUM">Trung bình</option>
               <option value="HIGH">Cao</option>
               <option value="CRITICAL">Khẩn cấp</option>
-            </select>
+            </NativeSelect>
           </div>
-          <input
-            className={fieldClass}
+          <Input
             placeholder="Mô tả sự cố"
             value={newException.description}
             onChange={(e) => setNewException({ ...newException, description: e.target.value })}

@@ -5,6 +5,7 @@
 // (Chuyển từ nhánh fix/app-shell-states; các màn 404/lỗi/đang tải đã có trên main.)
 
 import "./globals.css"
+import { Button } from "@/components/ui/button"
 
 export default function GlobalError({
   error,
@@ -20,13 +21,13 @@ export default function GlobalError({
           <p className="text-caption font-semibold uppercase tracking-wider text-danger">Lỗi hệ thống</p>
           <h1 className="text-title font-bold">smeOS tạm thời không tải được</h1>
           <p className="text-body-sm text-text-muted">Vui lòng thử lại sau ít phút. Dữ liệu của tiệm không bị ảnh hưởng.</p>
-          <button
+          <Button
             type="button"
             onClick={() => reset()}
             className="mt-2 inline-flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-body-sm font-semibold text-surface hover:bg-primary-dark"
           >
             Thử lại
-          </button>
+          </Button>
           {error.digest && <p className="text-caption text-text-muted">Mã lỗi: {error.digest}</p>}
         </main>
       </body>

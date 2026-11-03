@@ -3,6 +3,7 @@
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
 import { Download, CheckCircle2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type { ProductSetVariantResult, ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
 
 export interface ImageSetViewerProps {
@@ -51,20 +52,23 @@ export function ImageSetViewer({
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={handleDownloadAll}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border text-caption font-semibold text-text hover:bg-surface-alt transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 h-auto rounded-xl border border-border text-caption font-semibold text-text hover:bg-surface-alt transition-colors shadow-2xs cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" /> Tải trọn bộ
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            size="sm"
             onClick={onUseInCatalog}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-white text-caption font-semibold hover:bg-primary-dark transition-colors shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 h-auto rounded-xl bg-primary text-white text-caption font-semibold hover:bg-primary-dark transition-colors shadow-xs cursor-pointer"
           >
             <CheckCircle2 className="w-3.5 h-3.5" /> Dùng cho Catalog
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -101,12 +105,13 @@ export function ImageSetViewer({
             {result.variants.map((v) => {
               const isSelected = selectedVariant.id === v.id
               return (
-                <button
+                <Button
                   key={v.id}
                   type="button"
+                  variant="ghost"
                   onClick={() => setSelectedVariant(v)}
                   aria-pressed={isSelected}
-                  className={`p-2 rounded-xl border text-left transition-all relative group overflow-hidden cursor-pointer ${
+                  className={`p-2 h-auto rounded-xl border text-left transition-all relative group overflow-hidden cursor-pointer block whitespace-normal w-full ${
                     isSelected
                       ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"
                       : "border-border bg-surface hover:border-primary/40"
@@ -117,11 +122,11 @@ export function ImageSetViewer({
                     <img src={v.url} alt={v.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="text-caption font-bold text-text line-clamp-1">{v.name}</div>
-                  <div className="text-caption text-text-muted flex items-center justify-between mt-0.5">
+                  <div className="text-caption text-text-muted flex items-center justify-between mt-0.5 font-normal">
                     <span>{v.channelTarget}</span>
                     <span className="font-semibold text-success-text">✅ Đạt</span>
                   </div>
-                </button>
+                </Button>
               )
             })}
           </div>

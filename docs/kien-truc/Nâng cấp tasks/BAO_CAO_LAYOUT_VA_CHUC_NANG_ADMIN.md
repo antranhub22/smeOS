@@ -4,11 +4,11 @@
 > **Ngày lập:** 30/09/2026  
 > **Hệ thống áp dụng:** FloraOS Core (`floraos-core`)  
 > **Tài liệu tham chiếu SSOT:**  
-> - Hiến pháp Role UX: [`docs/dac-ta/03b-role-ux.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/03b-role-ux.md)  
-> - Hợp đồng thực thi Role UX: [`docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md`](file:///Users/tuan/Projects/floraos-core/docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md)  
-> - Danh mục vai trong mã nguồn: [`src/modules/organization/domain/role-ux-catalog.ts`](file:///Users/tuan/Projects/floraos-core/src/modules/organization/domain/role-ux-catalog.ts)  
-> - Kế hoạch Console Vận hành: [`docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md`](file:///Users/tuan/Projects/floraos-core/docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md)  
-> - Kiến trúc mục tiêu FloraOS SaaS V2: [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](file:///Users/tuan/Projects/floraos-core/docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md)  
+> - Hiến pháp Role UX: [`docs/dac-ta/03b-role-ux.md`](../../dac-ta/03b-role-ux.md)  
+> - Hợp đồng thực thi Role UX: [`docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md`](../FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md)  
+> - Danh mục vai trong mã nguồn: [`src/modules/organization/domain/role-ux-catalog.ts`](../../../src/modules/organization/domain/role-ux-catalog.ts)  
+> - Kế hoạch Console Vận hành: [`docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md`](../KE_HOACH_CONSOLE_VAN_HANH.md)  
+> - Kiến trúc mục tiêu FloraOS SaaS V2: [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](../FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md)  
 
 ---
 
@@ -32,7 +32,7 @@ Trong hệ sinh thái FloraOS, quản trị được thiết kế theo 3 nguyên
 ### 2.1. Bản chất & Triết lý UX
 - **Mã định danh vai trải nghiệm:** `platform_admin`.
 - **Cơ chế cấp quyền:** Cấp độc lập qua bảng `platform_operators` (không thông qua bảng `memberships` của bất kỳ cửa hàng nào để đảm bảo tính khách quan và an toàn dữ liệu).
-- **Tuyến truy cập:** [`/van-hanh`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh) (Console Vận hành Nền tảng).
+- **Tuyến truy cập:** [`/van-hanh`](../../../src/app/%28platform%29/van-hanh) (Console Vận hành Nền tảng).
 - **Triết lý UX:** *Governance & Control* (Control Tower).
 - **Câu hỏi nghiệp vụ chính:** *"Cấu hình nào đang lệch hoặc cần áp dụng trên toàn hệ thống?"*
 - **Thứ bậc thông tin (Information Hierarchy):**
@@ -40,19 +40,19 @@ Trong hệ sinh thái FloraOS, quản trị được thiết kế theo 3 nguyên
   - **P1 (Thấy khi cần):** Đối tượng cấu hình, phân tích tác động thay đổi, quan hệ phụ thuộc module, nhật ký kiểm toán.
   - **P2 (Xem sâu):** Báo cáo mức dùng tài nguyên (credit/quota), hiệu suất tối ưu hóa toàn sàn.
 
-### 2.2. Bố cục Layout ([`src/app/(platform)/layout.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/layout.tsx))
+### 2.2. Bố cục Layout ([`src/app/(platform)/layout.tsx`](../../../src/app/%28platform%29/layout.tsx))
 - **Khung giao diện (Platform Shell):** Độc lập hoàn toàn với giao diện cửa hàng thông thường, độ rộng tối đa chuẩn `max-w-6xl` căn giữa.
 - **Thanh Header trên cùng:**
   - Nhãn hệ thống: `VẬN HÀNH NỀN TẢNG — Xuyên tổ chức (không phải màn của một tổ chức nào)`.
   - Hệ thống Menu 6 phân hệ cốt lõi:
-    1. **Tổng quan** ([`/van-hanh`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh/page.tsx)): Bảng điều khiển trung tâm (Dashboard).
-    2. **Tổ chức** ([`/van-hanh/to-chuc`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh/to-chuc/page.tsx)): Danh sách mọi tenant, loại hình tổ chức, cấp duyệt nâng hạng gói (`EXPERIENCE` → `SINGLE` / `CHAIN`).
-    3. **Trường dữ liệu** ([`/van-hanh/truong-du-lieu`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh/truong-du-lieu)): Quản trị danh mục trường tùy biến toàn hệ thống (N12).
-    4. **Mức dùng** ([`/van-hanh/muc-dung`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh/muc-dung)): Giám sát mức tiêu thụ AI Credit xuyên suốt các tổ chức.
-    5. **Sức khoẻ hệ thống** ([`/van-hanh/suc-khoe`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh/suc-khoe)): Tình trạng hàng đợi, worker Python và kiểm soát job nghẽn.
-    6. **Nhật ký** ([`/van-hanh/nhat-ky`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh/nhat-ky)): Nhật ký kiểm toán bảo mật và các thao tác quản trị nền tảng.
+    1. **Tổng quan** ([`/van-hanh`](../../../src/app/%28platform%29/van-hanh/page.tsx)): Bảng điều khiển trung tâm (Dashboard).
+    2. **Tổ chức** ([`/van-hanh/to-chuc`](../../../src/app/%28platform%29/van-hanh/to-chuc/page.tsx)): Danh sách mọi tenant, loại hình tổ chức, cấp duyệt nâng hạng gói (`EXPERIENCE` → `SINGLE` / `CHAIN`).
+    3. **Trường dữ liệu** ([`/van-hanh/truong-du-lieu`](../../../src/app/%28platform%29/van-hanh/truong-du-lieu)): Quản trị danh mục trường tùy biến toàn hệ thống (N12).
+    4. **Mức dùng** ([`/van-hanh/muc-dung`](../../../src/app/%28platform%29/van-hanh/muc-dung)): Giám sát mức tiêu thụ AI Credit xuyên suốt các tổ chức.
+    5. **Sức khoẻ hệ thống** ([`/van-hanh/suc-khoe`](../../../src/app/%28platform%29/van-hanh/suc-khoe)): Tình trạng hàng đợi, worker Python và kiểm soát job nghẽn.
+    6. **Nhật ký** ([`/van-hanh/nhat-ky`](../../../src/app/%28platform%29/van-hanh/nhat-ky)): Nhật ký kiểm toán bảo mật và các thao tác quản trị nền tảng.
 
-### 2.3. Bố cục Trang Tổng quan ([`/van-hanh/page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh/page.tsx))
+### 2.3. Bố cục Trang Tổng quan ([`/van-hanh/page.tsx`](../../../src/app/%28platform%29/van-hanh/page.tsx))
 1. **Header:** Tiêu đề "Tổng quan vận hành" kèm huy hiệu phạm vi `Phạm vi: Toàn hệ thống`.
 2. **Khối thẻ chỉ số nhịp đập hệ thống (System Metrics Grid - 3 cột):**
    - *Thẻ 1 (Tổ chức):* Tổng số tổ chức trên toàn nền tảng.
@@ -68,7 +68,7 @@ Trong hệ sinh thái FloraOS, quản trị được thiết kế theo 3 nguyên
 - **Mã vai trải nghiệm:** `store_manager`.
 - **Mã vai phân quyền trong CSDL:** `dieu_hanh` (thuộc bảng `roles`).
 - **Phạm vi tác quyền:** Cấp tổ chức một cửa hàng (`ONE_STORE`).
-- **Tuyến truy cập:** Tuyến trang chủ [`/`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/page.tsx).
+- **Tuyến truy cập:** Tuyến trang chủ [`/`](../../../src/app/%28app%29/page.tsx).
 - **Triết lý UX:** *Business & Operations Command Center* (Executive Dashboard).
 - **Câu hỏi nghiệp vụ chính:** *"Hôm nay cửa hàng cần tôi can thiệp ở đâu?"*
 - **Thứ bậc thông tin (Information Hierarchy):**
@@ -76,7 +76,7 @@ Trong hệ sinh thái FloraOS, quản trị được thiết kế theo 3 nguyên
   - **P1 - Tình hình vận hành (Thấy khi cuộn/quan sát):** Job nền AI đang chạy, sản phẩm mới cập nhật, hạn mức credit còn lại và mức tiêu thụ.
   - **P2 - Xem sâu & Khám phá:** Lối tắt nghiên cứu thị trường, quản trị catalog hoa, bộ máy phân tích ảnh.
 
-### 3.2. Bố cục Layout ([`src/components/dashboard/store-manager-dashboard.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/dashboard/store-manager-dashboard.tsx))
+### 3.2. Bố cục Layout ([`src/components/dashboard/store-manager-dashboard.tsx`](../../../src/components/dashboard/store-manager-dashboard.tsx))
 Bố cục bất đối xứng 2 cột chuẩn Responsive (`lg:grid lg:grid-cols-3`):
 
 ```text
@@ -117,7 +117,7 @@ Bố cục bất đối xứng 2 cột chuẩn Responsive (`lg:grid lg:grid-cols
 ## 4. CHI TIẾT CHAIN_ADMIN (QUẢN TRỊ CHUỖI & MẠNG LƯỚI GIAO HOA)
 
 ### 4.1. Bản chất Kiến trúc & Hiện trạng trong FloraOS
-Trong mô hình Chuỗi cửa hàng ([`FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` §11.3](file:///Users/tuan/Projects/floraos-core/docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md#L395-L403)), cơ cấu tổ chức gồm:
+Trong mô hình Chuỗi cửa hàng ([`FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` §11.3](../FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md#L395-L403)), cơ cấu tổ chức gồm:
 ```text
 Tổ chức Chuỗi (Chain Organization)
 ├── Trung tâm Vận hành Điều hành (Central Operations)
@@ -128,7 +128,7 @@ Tổ chức Chuỗi (Chain Organization)
   - Về mặt kiến trúc Role UX, quyền quản trị chuỗi ("Chain Admin") được phân rã thành **2 vai trải nghiệm chuyên trách**:
     1. **`ceo` (Giám đốc điều hành Chuỗi):** Quản trị chiến lược và tổng thể mạng lưới.
     2. **`manager` (Quản lý vận hành Chuỗi):** Quản trị nguồn lực, phân bổ đơn và điều phối liên chi nhánh.
-    3. Hỗ trợ song hành bởi vai **`coordinator` (`dieu_phoi` - đã AVAILABLE)**: Trực ban điều phối đơn rủi ro tại tháp điều khiển [`/dieu-phoi`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/dieu-phoi).
+    3. Hỗ trợ song hành bởi vai **`coordinator` (`dieu_phoi` - đã AVAILABLE)**: Trực ban điều phối đơn rủi ro tại tháp điều khiển [`/dieu-phoi`](../../../src/app/%28app%29/dieu-phoi).
 
 ### 4.2. Đặc tả Triết lý & Thứ bậc Thông tin Cấp Chuỗi
 #### Vai `ceo` (Giám đốc điều hành Chuỗi):
@@ -168,7 +168,7 @@ Theo thiết kế chuẩn hóa cho tổ chức CHAIN, layout trung tâm gồm 4 
 | :--- | :--- | :--- | :--- |
 | **Phạm vi tác quyền (Scope)** | Toàn bộ nền tảng (Toàn bộ các tổ chức SaaS) | 1 Cửa hàng độc lập (`ONE_STORE`) | Mạng lưới nhiều chi nhánh (`CHAIN`) |
 | **Bản ghi cấp quyền** | Bảng `platform_operators` | Bảng `memberships` + role `dieu_hanh` | Bảng `memberships` + role chuỗi (`ceo`/`manager`) |
-| **Tuyến màn hình chính** | [`/van-hanh`](file:///Users/tuan/Projects/floraos-core/src/app/(platform)/van-hanh) | Trang chủ [`/`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/page.tsx) | Trang chủ [`/`] kèm bộ lọc chi nhánh |
+| **Tuyến màn hình chính** | [`/van-hanh`](../../../src/app/%28platform%29/van-hanh) | Trang chủ [`/`](../../../src/app/%28app%29/page.tsx) | Trang chủ [`/`] kèm bộ lọc chi nhánh |
 | **Triết lý giao diện (Philosophy)** | Governance & Control Tower | Business & Operations Command Center | Strategic / Operations Command Center |
 | **Câu hỏi trọng tâm** | *"Cấu hình nào đang lệch hoặc cần áp dụng?"* | *"Hôm nay cửa hàng cần tôi can thiệp ở đâu?"* | *"Chi nhánh nào đang nghẽn? Rủi ro toàn chuỗi ở đâu?"* |
 | **Thông tin P0 hiển thị ngay** | Job AI bị treo toàn sàn, sức khoẻ worker, tổ chức mới | Job AI lỗi tiệm mình, ảnh chờ duyệt, đơn nháp tồn | KPI chuỗi, chi nhánh quá tải, rủi ro giao hàng |

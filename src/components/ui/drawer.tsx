@@ -61,7 +61,7 @@ export function Drawer({
                 {title}
               </BaseDialog.Title>
               {description && (
-                <BaseDialog.Description className="mt-0.5 text-xs text-text-muted">
+                <BaseDialog.Description className="mt-0.5 text-caption text-text-muted">
                   {description}
                 </BaseDialog.Description>
               )}
@@ -77,7 +77,7 @@ export function Drawer({
           </div>
 
           {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto p-5 text-sm min-h-0">
+          <div className="flex-1 overflow-y-auto p-5 text-body-sm min-h-0">
             {children}
           </div>
 

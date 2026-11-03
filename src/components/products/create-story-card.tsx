@@ -4,6 +4,7 @@ import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
 import { Sparkles } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import type { TerminologyGetter } from "./create-product-types"
 
@@ -54,12 +55,12 @@ export function CreateStoryCard({
         </div>
       </div>
       <div>
-        <textarea
+        <Textarea
           rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-xl border border-border bg-surface p-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
+          className="text-body-sm"
         />
       </div>
     </Card>

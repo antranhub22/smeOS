@@ -59,7 +59,7 @@ export function BannerFormPanel({
         <button
           type="button"
           onClick={() => setFormMode("AUTO")}
-          className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+          className={`flex-1 py-1.5 px-3 rounded-lg text-caption font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             formMode === "AUTO"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-text-muted hover:text-text"
@@ -72,7 +72,7 @@ export function BannerFormPanel({
         <button
           type="button"
           onClick={() => setFormMode("MANUAL")}
-          className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+          className={`flex-1 py-1.5 px-3 rounded-lg text-caption font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             formMode === "MANUAL"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-text-muted hover:text-text"

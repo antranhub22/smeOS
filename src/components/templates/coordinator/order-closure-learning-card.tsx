@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 
 export interface OrderClosureLearningCardProps {
@@ -92,11 +93,11 @@ export function OrderClosureLearningCard({
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
-              aria-label="Đánh dấu yêu thích"
-                key={star}
                 type="button"
+                aria-label="Đánh dấu yêu thích"
+                key={star}
                 onClick={() => setRating(star)}
-                className="p-1 hover:scale-110 transition-transform"
+                className="cursor-pointer p-1 hover:scale-110 transition-transform"
               >
                 <Star
                   size={16}
@@ -107,12 +108,12 @@ export function OrderClosureLearningCard({
           </div>
         </div>
 
-        <input
+        <Input
           type="text"
           value={reviewNote}
           onChange={(e) => setReviewNote(e.target.value)}
           placeholder="Nhận xét vận hành (ghi nhận vào hồ sơ đối tác Tín dụng AI)..."
-          className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-mint-500"
+          className="w-full"
         />
       </div>
 

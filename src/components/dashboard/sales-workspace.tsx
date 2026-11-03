@@ -135,18 +135,18 @@ export function SalesWorkspace() {
                       <button
                         type="button"
                         onClick={() => router.push("/khach-hang" as never)}
-                        className="flex min-h-11 w-full items-center gap-3 rounded-lg px-1 py-1.5 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                        className="flex min-h-11 w-full items-center gap-3 rounded-lg px-1 py-1.5 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
                       >
                         <CalendarHeart size={17} className="flex-shrink-0 text-primary" aria-hidden="true" />
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-body font-semibold">{r.customerName}</span>
-                          <span className="block truncate text-xs text-text-muted">
+                          <span className="block truncate text-caption text-text-muted">
                             {r.occasionName}
                             {r.recipientName && r.recipientName !== r.customerName ? ` · tặng ${r.recipientName}` : ""}
                             {r.isZaloAllowed ? " · nhắn Zalo được" : ""}
                           </span>
                         </span>
-                        <span className={r.daysLeft <= 2 ? "text-xs font-bold text-danger" : "text-xs font-bold text-text-muted"}>
+                        <span className={r.daysLeft <= 2 ? "text-caption font-bold text-danger" : "text-caption font-bold text-text-muted"}>
                           {nhanNgayConLai(r.daysLeft)}
                         </span>
                       </button>
@@ -177,7 +177,7 @@ export function SalesWorkspace() {
                       <button
                         type="button"
                         onClick={() => router.push("/don-hang" as never)}
-                        className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                        className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
                       >
                         <span className="text-body font-semibold">{o.code}</span>
                         <span className="flex items-center gap-1 text-body-sm font-bold text-text">
@@ -198,7 +198,7 @@ export function SalesWorkspace() {
           </p>
         )}
 
-        <p className="text-xs text-text-muted">
+        <p className="text-caption text-text-muted">
           Pipeline cơ hội (tiềm năng → cơ hội → chốt) đang phát triển.
         </p>
       </main>

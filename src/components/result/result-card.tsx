@@ -1,12 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { Pencil, Plus, X, AlertTriangle, ShieldCheck, ChevronDown, ChevronUp } from "@/components/ui/icons"
+import { AlertTriangle, ShieldCheck, ChevronDown, ChevronUp } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { FieldCard, type ResultField, type ResultFieldItem } from "./field-card"
 
+export type { ResultField, ResultFieldItem }
 export type JudgmentState = "safe" | "warning" | "blocked"
 
 export interface ResultImage {
@@ -14,27 +16,6 @@ export interface ResultImage {
   alt: string
   isBefore?: boolean
   isAfter?: boolean
-}
-
-export interface ResultFieldItem {
-  id: string
-  value?: string
-  name?: string | null | undefined
-  unit?: string | null | undefined
-  quantity?: number | string | null | undefined
-  role?: string | null | undefined
-  color?: string | null | undefined
-  extra?: string | null | undefined
-}
-
-export interface ResultField {
-  key: string
-  label: string
-  type: "text" | "textarea" | "number" | "list" | "readonly"
-  value: string | string[] | number | ResultFieldItem[]
-  editable: boolean
-  confidence?: number | null
-  placeholder?: string
 }
 
 export interface QualityIndicator {
@@ -59,245 +40,6 @@ export interface ResultCardProps {
   onFieldRemove?: ((key: string, itemId: string) => void) | undefined
   onItemChange?: ((key: string, itemId: string, item: ResultFieldItem) => void) | undefined
   disabled?: boolean | undefined
-}
-
-function ConfidenceBadge({ value }: { value: number | null | undefined }) {
-  if (value == null) return null
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-caption font-bold",
-        value >= 80 ? "bg-success-bg text-secondary"
-          : value >= 60 ? "bg-warning-bg text-warning"
-          : "bg-danger-bg text-danger"
-      )}
-    >
-      Tin cậy {value}%
-    </span>
-  )
-}
-
-function FieldCard({
-  field,
-  onFieldChange,
-  onFieldAdd,
-  onFieldRemove,
-  onItemChange,
-  editable,
-}: {
-  field: ResultField
-  onFieldChange?: ((key: string, value: string | number | string[]) => void)
-  onFieldAdd?: (key: string, item: ResultFieldItem) => void
-  onFieldRemove?: (key: string, itemId: string) => void
-  onItemChange?: (key: string, itemId: string, item: ResultFieldItem) => void
-  editable: boolean
-}) {
-  const [localValue, setLocalValue] = useState<string>(
-    typeof field.value === "string" ? field.value : String(field.value ?? "")
-  )
-
-  if (field.type === "readonly") {
-    return (
-      <div className="flex items-center justify-between gap-2 py-2">
-        <span className="text-body-sm text-text-muted">{field.label}</span>
-        <span className="text-body-sm font-semibold text-text">
-          {field.value != null && String(field.value).trim() !== "" && String(field.value) !== "—"
-            ? String(field.value)
-            : "N/A"}
-        </span>
-      </div>
-    )
-  }
-
-  if (field.type === "list") {
-    const items = field.value as ResultFieldItem[]
-    return (
-      <div className="flex flex-col gap-2 py-2">
-        <div className="flex items-center justify-between">
-          <span className="text-body-sm font-semibold text-text">{field.label}</span>
-          <ConfidenceBadge value={field.confidence ?? null} />
-        </div>
-        {items.length === 0 && (
-          <div className="rounded-lg bg-surface-alt/50 px-3 py-2 text-meta text-text-muted italic border border-dashed border-border/80">
-            N/A (Chưa có dữ liệu)
-          </div>
-        )}
-        {items.map((item) => {
-          const isStructured = item.quantity !== undefined || item.unit !== undefined || item.name !== undefined
-
-          if (isStructured) {
-            return (
-              <div
-                key={item.id}
-                className="flex flex-wrap items-center gap-2.5 rounded-xl bg-surface-alt/70 p-2.5 border border-border hover:border-primary/40 transition-colors"
-              >
-                {/* Tên thành phần */}
-                <div className="flex-1 min-w-[150px]">
-                  {editable ? (
-                    <input
-                      type="text"
-                      value={item.name ?? ""}
-                      onChange={(e) =>
-                        onItemChange?.(field.key, item.id, { ...item, name: e.target.value })
-                      }
-                      placeholder="Tên thành phần"
-                      className="w-full rounded-lg border border-border bg-surface px-2.5 py-1.5 text-body-sm font-medium text-text outline-none focus:border-primary"
-                    />
-                  ) : (
-                    <span className="text-body-sm font-semibold text-text">{item.name || "N/A"}</span>
-                  )}
-                </div>
-
-                {/* Đơn vị */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-caption font-medium text-text-muted">Đơn vị:</span>
-                  {editable ? (
-                    <input
-                      type="text"
-                      value={item.unit ?? "cành"}
-                      onChange={(e) =>
-                        onItemChange?.(field.key, item.id, { ...item, unit: e.target.value })
-                      }
-                      placeholder="ĐVT"
-                      className="w-20 rounded-lg border border-border bg-surface px-2 py-1.5 text-meta font-medium text-text outline-none focus:border-primary"
-                    />
-                  ) : (
-                    <span className="rounded-md bg-surface px-2 py-0.5 text-meta font-medium text-text border border-border/60">
-                      {item.unit ?? "cành"}
-                    </span>
-                  )}
-                </div>
-
-                {/* Số lượng */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-caption font-semibold text-primary">Số lượng:</span>
-                  {editable ? (
-                    <input
-                      type="number"
-                      min="0"
-                      value={item.quantity ?? ""}
-                      onChange={(e) => {
-                        const val = e.target.value === "" ? null : Number(e.target.value)
-                        onItemChange?.(field.key, item.id, { ...item, quantity: val })
-                      }}
-                      placeholder="SL"
-                      className="w-20 rounded-lg border-2 border-primary/40 bg-surface px-2 py-1.5 text-body-sm font-bold text-center text-primary outline-none focus:border-primary"
-                    />
-                  ) : (
-                    <span className="font-bold text-body-sm text-primary bg-primary/10 px-2.5 py-0.5 rounded-md">
-                      {item.quantity != null ? item.quantity : "N/A"}
-                    </span>
-                  )}
-                </div>
-
-                {/* Badges / Extras */}
-                {(item.role || item.color || item.extra) && (
-                  <div className="flex flex-wrap items-center gap-1.5 text-caption text-text-muted">
-                    {item.role && (
-                      <span className="bg-surface px-2 py-0.5 rounded-full border border-border/60 font-medium text-text">
-                        {item.role}
-                      </span>
-                    )}
-                    {item.color && (
-                      <span className="bg-surface px-2 py-0.5 rounded-full border border-border/60 text-text">
-                        {item.color}
-                      </span>
-                    )}
-                    {item.extra && <span className="text-text-muted italic">{item.extra}</span>}
-                  </div>
-                )}
-
-                {/* Nút xoá */}
-                {editable && (
-                  <button
-                    type="button"
-                    onClick={() => onFieldRemove?.(field.key, item.id)}
-                    className="ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-danger-bg hover:text-danger transition-colors"
-                    aria-label="Xoá mục này"
-                  >
-                    <X size={13} strokeWidth={2} />
-                  </button>
-                )}
-              </div>
-            )
-          }
-
-          // Simple string item fallback
-          return (
-            <div key={item.id} className="flex items-center gap-2 rounded-lg bg-surface-alt px-2.5 py-1.5">
-              <span className="flex-1 text-body-sm text-text">{item.value}</span>
-              {editable && (
-                <button
-                  type="button"
-                  onClick={() => onFieldRemove?.(field.key, item.id)}
-                  className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface"
-                  aria-label={`Bỏ ${item.value}`}
-                >
-                  <X size={13} strokeWidth={2} />
-                </button>
-              )}
-            </div>
-          )
-        })}
-        {editable && (
-          <button
-            type="button"
-            onClick={() => {
-              const defaultUnit = field.key === "flowers" ? "bông" : field.key === "accessories" ? "cái" : "cành"
-              onFieldAdd?.(field.key, { id: crypto.randomUUID(), name: "", unit: defaultUnit, quantity: 1, value: "" })
-            }}
-            className="mt-0.5 flex items-center gap-1.5 text-meta font-bold text-accent-text"
-          >
-            <Plus size={14} strokeWidth={2.4} /> Thêm dòng
-          </button>
-        )}
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col gap-1 py-1.5">
-      <div className="flex items-center justify-between">
-        <span className="text-body-sm font-semibold text-text">{field.label}</span>
-        <ConfidenceBadge value={field.confidence ?? null} />
-      </div>
-      {field.type === "textarea" ? (
-        editable ? (
-          <textarea
-            value={localValue}
-            onChange={(e) => {
-              setLocalValue(e.target.value)
-              onFieldChange?.(field.key, e.target.value)
-            }}
-            className="min-h-[60px] w-full rounded-lg border-[1.5px] border-border bg-surface px-2.5 py-2 text-body-sm text-text outline-none focus:border-primary"
-            placeholder={field.placeholder}
-          />
-        ) : (
-          <div className="text-body-sm text-text leading-relaxed">{localValue && localValue !== "—" ? localValue : "N/A"}</div>
-        )
-      ) : (
-        <div className="flex items-center gap-2">
-          {editable ? (
-            <input
-              type={field.type === "number" ? "number" : "text"}
-              value={localValue}
-              onChange={(e) => {
-                setLocalValue(e.target.value)
-                onFieldChange?.(field.key, e.target.value)
-              }}
-              className="flex-1 rounded-lg border-[1.5px] border-border bg-surface px-2.5 py-1.5 text-body-sm text-text outline-none focus:border-primary"
-              placeholder={field.placeholder}
-            />
-          ) : (
-            <span className="text-body-sm text-text">{localValue && localValue !== "—" ? localValue : "N/A"}</span>
-          )}
-          {editable && (
-            <Pencil size={14} strokeWidth={1.8} className="text-text-muted" />
-          )}
-        </div>
-      )}
-    </div>
-  )
 }
 
 const L0_FIELD_KEYS = new Set([
@@ -431,10 +173,12 @@ export function ResultCard({
         ))}
         {l0Fields.length > 0 && detailFields.length > 0 && (
           <div className="pt-2 pb-1 text-center">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setShowDetails(!showDetails)}
-              className="inline-flex min-h-11 items-center gap-1.5 px-3 py-1.5 text-body-sm font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+              className="inline-flex min-h-11 items-center gap-1.5 px-3 py-1.5 text-body-sm font-semibold text-primary hover:underline"
             >
               {showDetails ? (
                 <>
@@ -447,7 +191,7 @@ export function ResultCard({
                   <ChevronDown size={15} aria-hidden="true" />
                 </>
               )}
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -458,7 +202,7 @@ export function ResultCard({
           <button
             type="button"
             onClick={() => setExpandedQuality(!expandedQuality)}
-            className="flex w-full items-center justify-between rounded-lg bg-surface-alt px-3 py-2"
+            className="flex w-full cursor-pointer items-center justify-between rounded-lg bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <span className="flex items-center gap-2 text-body-sm font-bold text-text">
               <span className={cn("h-2 w-2 flex-shrink-0 rounded-full", meta.dot)} />

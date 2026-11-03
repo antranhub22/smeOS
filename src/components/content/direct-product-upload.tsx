@@ -80,17 +80,18 @@ export function DirectProductUpload({
               fileInputRef.current?.click()
             }
           }}
-          className={`w-full border-2 border-dashed rounded-2xl p-6 transition-all text-center flex flex-col items-center justify-center gap-3 cursor-pointer ${
+          className={`w-full border-2 border-dashed rounded-2xl p-6 transition-all text-center flex flex-col items-center justify-center gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
             isDragOver
               ? "border-primary bg-primary/10 scale-[0.99]"
               : "border-border hover:border-primary/50 hover:bg-surface-alt/60 bg-surface/40"
           }`}
+          aria-label="Tải ảnh sản phẩm"
         >
           <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
             <UploadCloud size={24} />
           </div>
           <div>
-            <div className="text-sm font-bold text-text">
+            <div className="text-body-sm font-bold text-text">
               Kéo thả ảnh sản phẩm chụp thô vào đây hoặc{" "}
               <span className="text-primary hover:underline">tải từ máy</span>
             </div>
@@ -105,14 +106,14 @@ export function DirectProductUpload({
         </button>
       ) : (
         <div className="relative rounded-2xl border border-border bg-surface p-4 flex flex-col sm:flex-row items-center gap-4">
-          <div className="relative w-28 h-28 rounded-xl overflow-hidden border border-border shrink-0 bg-background">
+          <div className="relative w-28 h-28 rounded-xl overflow-hidden border border-border shrink-0 bg-surface-alt">
             <img
               src={previewUrl}
               alt="Ảnh sản phẩm tải lên"
               className="w-full h-full object-cover"
             />
             {isProcessing && (
-              <div className="absolute inset-0 bg-background/80 backdrop-blur-xs flex items-center justify-center">
+              <div className="absolute inset-0 bg-surface/80 backdrop-blur-xs flex items-center justify-center">
                 <RefreshCw size={20} className="animate-spin motion-reduce:animate-none text-primary" />
               </div>
             )}
@@ -120,7 +121,7 @@ export function DirectProductUpload({
 
           <div className="flex-1 min-w-0 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-2">
-              <span className="text-xs font-bold text-text truncate max-w-[260px]">
+              <span className="text-caption font-bold text-text truncate max-w-[260px]">
                 {selectedFile.name}
               </span>
               <span className="text-caption text-text-muted">
@@ -142,7 +143,7 @@ export function DirectProductUpload({
                     variant="outline"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-xs h-7 px-2.5"
+                    className="text-caption h-7 px-2.5"
                     disabled={disabled}
                   >
                     Đổi ảnh khác
@@ -152,7 +153,7 @@ export function DirectProductUpload({
                     variant="ghost"
                     size="sm"
                     onClick={onClear}
-                    className="text-xs h-7 px-2.5 text-danger hover:text-danger hover:bg-danger/10"
+                    className="text-caption h-7 px-2.5 text-danger hover:text-danger hover:bg-danger/10"
                     disabled={disabled}
                   >
                     <X size={13} className="mr-1" />
@@ -160,7 +161,7 @@ export function DirectProductUpload({
                   </Button>
                 </>
               ) : (
-                <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
+                <div className="flex items-center gap-1.5 text-caption text-primary font-semibold">
                   <Sparkles size={14} className="animate-spin motion-reduce:animate-none" />
                   {processingStatusText}
                 </div>

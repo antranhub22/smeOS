@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Disclosure } from "@/components/ui/disclosure"
+import { Checkbox } from "@/components/ui/checkbox"
 import { InlineError } from "@/components/ui/inline-error"
 import { useSession } from "@/lib/session"
 import type { EntryActions, EntryActionsSettings } from "@/modules/orders/domain/entry-actions"
@@ -73,13 +74,11 @@ export function EntryActionsSettingsPanel() {
               <span className="text-body text-text">{s.label}</span>
               <div className="flex gap-4">
                 {(["order", "contact"] as const).map((key) => (
-                  <label key={key} className="flex items-center gap-2 text-body-sm text-text">
-                    <input
-                      type="checkbox"
+                  <label key={key} className="flex items-center gap-2 text-body-sm text-text cursor-pointer">
+                    <Checkbox
                       checked={s.effective[key]}
                       disabled={saving}
-                      onChange={(e) => void toggle(s.code, key, e.target.checked)}
-                      className="h-4 w-4 accent-primary"
+                      onCheckedChange={(checked) => void toggle(s.code, key, Boolean(checked))}
                     />
                     {key === "order" ? "Đặt hàng" : "Liên hệ / Cần tư vấn"}
                   </label>

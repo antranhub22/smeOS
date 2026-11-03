@@ -3,6 +3,8 @@ import { Copy, Check, Send, Sparkles, Edit3, MessageCircle, Eye } from "@/compon
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { SocialPostPreview } from "./social-post-preview"
 import { useI18n } from "@/lib/i18n"
 
@@ -115,10 +117,10 @@ export function MultichannelPostCard({
         <div className="flex items-center gap-2 overflow-x-auto">
           {posts.map((post) => (
             <button
-              key={post.channel}
               type="button"
+              key={post.channel}
               onClick={() => setSelectedChannel(post.channel)}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 selectedChannel === post.channel
                   ? "bg-primary text-white shadow-sm"
                   : "bg-surface text-text-muted hover:text-text hover:bg-surface-alt border border-border/50"
@@ -135,7 +137,7 @@ export function MultichannelPostCard({
           <button
             type="button"
             onClick={() => setViewMode("preview")}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
               viewMode === "preview"
                 ? "bg-primary text-white shadow-xs"
                 : "text-text-muted hover:text-text"
@@ -147,7 +149,7 @@ export function MultichannelPostCard({
           <button
             type="button"
             onClick={() => setViewMode("edit")}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
               viewMode === "edit"
                 ? "bg-primary text-white shadow-xs"
                 : "text-text-muted hover:text-text"
@@ -193,7 +195,7 @@ export function MultichannelPostCard({
               {currentPost.channel === "tiktok" ? "Hook mở đầu (0-3s)" : "Tiêu đề bài viết"}
             </label>
           {isEditing ? (
-            <input
+            <Input
               type="text"
               value={currentPost.headline}
               onChange={(e) =>
@@ -212,7 +214,7 @@ export function MultichannelPostCard({
             Nội dung chi tiết
           </label>
           {isEditing ? (
-            <textarea
+            <Textarea
               rows={6}
               value={currentPost.bodyText}
               onChange={(e) =>
@@ -254,7 +256,7 @@ export function MultichannelPostCard({
             Lời kêu gọi hành động (CTA)
           </label>
           {isEditing ? (
-            <input
+            <Input
               type="text"
               value={currentPost.cta || ""}
               onChange={(e) =>
@@ -275,7 +277,7 @@ export function MultichannelPostCard({
             Hashtags ({currentPost.hashtags?.length || 0})
           </label>
           {isEditing ? (
-            <input
+            <Input
               type="text"
               value={currentPost.hashtags?.join(" ") || ""}
               onChange={(e) =>

@@ -102,8 +102,8 @@ export function VideoRenderingProgress({
           <AlertCircle size={28} />
         </div>
         <div>
-          <h3 className="text-base font-bold text-text">Dựng video thất bại</h3>
-          <p className="mt-1 text-xs text-text-muted leading-relaxed max-w-sm">
+          <h3 className="text-title-sm font-bold text-text">Dựng video thất bại</h3>
+          <p className="mt-1 text-caption text-text-muted leading-relaxed max-w-sm">
             {errorMessage || "Hệ thống gặp sự cố trong quá trình mã hóa video. Hạn mức credit chưa bị trừ."}
           </p>
         </div>
@@ -123,8 +123,8 @@ export function VideoRenderingProgress({
           <Film size={20} aria-hidden="true" />
         </div>
         <div>
-          <h3 className="text-base font-extrabold text-text">Đang dựng video marketing</h3>
-          <p className="text-xs text-text-muted mt-0.5">
+          <h3 className="text-title-sm font-extrabold text-text">Đang dựng video marketing</h3>
+          <p className="text-caption text-text-muted mt-0.5">
             Video được dựng ngầm — bạn có thể rời trang và quay lại sau, kết quả vẫn được giữ.
           </p>
         </div>

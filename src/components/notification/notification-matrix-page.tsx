@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { NotificationMatrixGroupTable } from "./notification-matrix-group-table"
 import type {
   NotificationMatrixProps,
@@ -116,13 +119,16 @@ export function NotificationMatrixPage({
             <p className="text-body font-semibold text-text">Không tải được ma trận thông báo</p>
             <p className="text-caption text-text-muted mt-1">{error}</p>
           </div>
-          <button
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={() => window.location.reload()}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-border text-caption text-text hover:bg-surface-alt transition-colors"
+            className="flex items-center gap-1.5"
           >
             <RefreshCw size={12} />
             Thử lại
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -198,27 +204,23 @@ export function NotificationMatrixPage({
             size={14}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
           />
-          <input
+          <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm kiếm sự kiện..."
-            className="w-full pl-9 pr-3 py-2 rounded-xl border border-border bg-surface text-body-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="pl-9 pr-3"
           />
         </div>
 
         {/* Group Filter */}
         <div className="relative">
-          <Filter
-            size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
-          />
-          <select
+          <NativeSelect
             value={selectedGroup}
             onChange={(e) =>
               setSelectedGroup(e.target.value as NotificationEventGroup | "ALL")
             }
-            className="pl-9 pr-8 py-2 rounded-xl border border-border bg-surface text-body-sm text-text appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-auto"
           >
             <option value="ALL">Tất cả nhóm</option>
             {availableGroups.map((g) => (
@@ -226,7 +228,7 @@ export function NotificationMatrixPage({
                 {EVENT_GROUP_LABELS[g] ?? g}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
 
         {/* Hard Lock Legend */}

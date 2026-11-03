@@ -4,6 +4,7 @@ import React from "react"
 import { Settings, AlertCircle, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import type { ChannelConfig } from "@/modules/chat-assistant/domain/channel-integration-types"
 
@@ -36,7 +37,7 @@ export function ChannelConfigModal({
       }}
       size="md"
       title={
-        <div className="flex items-center gap-2 text-body font-bold text-foreground">
+        <div className="flex items-center gap-2 text-body font-bold text-text">
           <Settings className="h-4 w-4 text-primary" aria-hidden="true" />
           Cài Đặt {channelItem.pricing.name}
         </div>
@@ -55,11 +56,11 @@ export function ChannelConfigModal({
             <>
               <div>
                 <label className="mb-1 block font-bold text-text-muted">Facebook Page ID</label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="VD: 1048291048102"
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-body-sm focus-visible:outline-2 focus-visible:outline-primary"
+                  className="w-full"
                   value={configForm.fbPageId || ""}
                   onChange={(e) =>
                     onChangeForm({ ...configForm, fbPageId: e.target.value })
@@ -68,11 +69,11 @@ export function ChannelConfigModal({
               </div>
               <div>
                 <label className="mb-1 block font-bold text-text-muted">Page Access Token</label>
-                <input
+                <Input
                   type="password"
                   required
                   placeholder="EAAG..."
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 font-mono text-caption focus-visible:outline-2 focus-visible:outline-primary"
+                  className="w-full font-mono"
                   value={configForm.fbPageAccessToken || ""}
                   onChange={(e) =>
                     onChangeForm({ ...configForm, fbPageAccessToken: e.target.value })
@@ -89,11 +90,11 @@ export function ChannelConfigModal({
             <>
               <div>
                 <label className="mb-1 block font-bold text-text-muted">Zalo OA ID</label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="VD: 394810294810"
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-body-sm focus-visible:outline-2 focus-visible:outline-primary"
+                  className="w-full"
                   value={configForm.zaloOaId || ""}
                   onChange={(e) =>
                     onChangeForm({ ...configForm, zaloOaId: e.target.value })
@@ -102,10 +103,10 @@ export function ChannelConfigModal({
               </div>
               <div>
                 <label className="mb-1 block font-bold text-text-muted">Zalo OA Access Token</label>
-                <input
+                <Input
                   type="password"
                   placeholder="OA Access Token..."
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 font-mono text-caption focus-visible:outline-2 focus-visible:outline-primary"
+                  className="w-full font-mono"
                   value={configForm.zaloAccessToken || ""}
                   onChange={(e) =>
                     onChangeForm({ ...configForm, zaloAccessToken: e.target.value })
@@ -114,22 +115,22 @@ export function ChannelConfigModal({
               </div>
               <div>
                 <label className="mb-1 block font-bold text-text-muted">Zalo App ID</label>
-                <input
+                <Input
                   type="text"
                   required
                   placeholder="App ID trong Zalo for Developers"
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-body-sm focus-visible:outline-2 focus-visible:outline-primary"
+                  className="w-full"
                   value={configForm.zaloAppId || ""}
                   onChange={(e) => onChangeForm({ ...configForm, zaloAppId: e.target.value })}
                 />
               </div>
               <div>
                 <label className="mb-1 block font-bold text-text-muted">Zalo Secret Key (OA)</label>
-                <input
+                <Input
                   type="password"
                   required
                   placeholder="Dùng để xác thực tin nhắn Zalo gửi về"
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 font-mono text-caption focus-visible:outline-2 focus-visible:outline-primary"
+                  className="w-full font-mono"
                   value={configForm.zaloSecretKey || ""}
                   onChange={(e) => onChangeForm({ ...configForm, zaloSecretKey: e.target.value })}
                 />

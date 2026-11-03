@@ -6,6 +6,8 @@
  */
 import { useState } from "react"
 import { Share2, Copy, Check, ExternalLink, Eye } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { InlineError } from "@/components/ui/inline-error"
@@ -67,7 +69,7 @@ export function StoreShareLinkCard({ readyToShare, missingEssentials }: { readyT
 
   return (
     <section aria-labelledby="trang-chia-se" className="p-5 rounded-2xl border border-border bg-surface">
-      <h2 id="trang-chia-se" className="text-base font-bold text-text flex items-center gap-2">
+      <h2 id="trang-chia-se" className="text-title-sm font-bold text-text flex items-center gap-2">
         <Share2 size={18} aria-hidden className="text-primary" /> Trang chia sẻ cửa hàng
       </h2>
       <p className="mt-1 text-caption text-text-muted">
@@ -83,12 +85,12 @@ export function StoreShareLinkCard({ readyToShare, missingEssentials }: { readyT
           <div className="flex flex-col gap-3">
             <label htmlFor="link-chia-se" className="text-caption font-semibold text-text">Link của cửa hàng</label>
             <div className="flex flex-col sm:flex-row gap-2">
-              <input id="link-chia-se" readOnly value={fullUrl} onFocus={(e) => e.currentTarget.select()}
+              <Input id="link-chia-se" readOnly value={fullUrl} onFocus={(e) => e.currentTarget.select()}
                 className="flex-1 min-w-0 min-h-10 px-3 rounded-lg border border-border bg-surface-alt text-body-sm text-text" />
               <div className="flex gap-2">
-                <button type="button" onClick={() => void copy()} className="inline-flex items-center gap-1 min-h-10 px-3 rounded-lg bg-primary text-primary-foreground text-body-sm font-semibold">
+                <Button type="button" variant="outline" onClick={() => void copy()} className="inline-flex items-center gap-1 min-h-10 px-3 rounded-lg text-body-sm font-semibold">
                   {copied ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />} {copied ? "Đã chép" : "Sao chép"}
-                </button>
+                </Button>
                 <a href={current.path} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 min-h-10 px-3 rounded-lg border border-border text-body-sm font-semibold text-text">
                   <ExternalLink size={16} aria-hidden /> Xem trang
                 </a>
@@ -97,14 +99,14 @@ export function StoreShareLinkCard({ readyToShare, missingEssentials }: { readyT
             <p className="flex items-center gap-1 text-caption text-text-muted">
               <Eye size={14} aria-hidden /> {formatNumber(current.view_count)} lượt xem
             </p>
-            <button type="button" disabled={busy} onClick={() => void revoke()} className="self-start min-h-8 px-2 rounded-lg text-caption font-semibold text-danger-text hover:bg-danger/10 disabled:opacity-50">
+            <Button type="button" variant="ghost" size="sm" disabled={busy} onClick={() => void revoke()} className="self-start min-h-8 px-2 rounded-lg text-caption font-semibold text-danger-text hover:bg-danger/10 disabled:opacity-50 h-auto">
               Ngừng chia sẻ
-            </button>
+            </Button>
           </div>
         ) : readyToShare ? (
-          <button type="button" disabled={busy} onClick={() => void publish()} className="inline-flex items-center gap-2 min-h-10 px-4 rounded-lg bg-primary text-primary-foreground text-body-sm font-semibold disabled:opacity-50">
+          <Button type="button" disabled={busy} onClick={() => void publish()} className="inline-flex items-center gap-2 min-h-10 px-4 rounded-lg bg-primary text-primary-foreground text-body-sm font-semibold disabled:opacity-50">
             <Share2 size={16} aria-hidden /> {busy ? "Đang tạo..." : "Tạo link chia sẻ"}
-          </button>
+          </Button>
         ) : (
           <p role="status" className="text-body-sm text-warning-text">
             Cần điền {missingEssentials.join(", ").toLowerCase()} trước khi tạo trang chia sẻ.

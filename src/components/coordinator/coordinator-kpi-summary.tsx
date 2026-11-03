@@ -73,18 +73,18 @@ export function CoordinatorKpiSummary({
           <div className="text-title-lg font-black text-text mt-2">{total}</div>
         </Card>
         <Card className="rounded-2xl border border-danger/30 bg-danger/5 p-4 flex flex-col justify-between shadow-xs">
-          <div className="flex items-center justify-between text-danger text-caption font-bold">
+          <div className="flex items-center justify-between text-danger-text text-caption font-bold">
             <span>Nguy Cấp (Critical)</span>
             <AlertCircle size={16} className="text-danger" />
           </div>
           <div className="text-title-lg font-black text-danger mt-2">{critical}</div>
         </Card>
         <Card className="rounded-2xl border border-warning/30 bg-warning/5 p-4 flex flex-col justify-between shadow-xs">
-          <div className="flex items-center justify-between text-warning text-caption font-bold">
+          <div className="flex items-center justify-between text-warning-text text-caption font-bold">
             <span>Có Rủi Ro (At-Risk)</span>
             <AlertTriangle size={16} className="text-warning" />
           </div>
-          <div className="text-title-lg font-black text-warning mt-2">{atRisk}</div>
+          <div className="text-title-lg font-black text-warning-text mt-2">{atRisk}</div>
         </Card>
         <Card className="rounded-2xl border border-success/30 bg-success/5 p-4 flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between text-success text-caption font-bold">

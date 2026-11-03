@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Calendar, ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 
@@ -65,28 +66,32 @@ export function DailyCapacityBoard({
       {/* Month Selector */}
       <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-4 shadow-xs">
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={handlePrevMonth}
             aria-label="Tháng trước"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+            className="h-9 w-9 p-0"
           >
             <ChevronLeft size={16} />
-          </button>
+          </Button>
           <div className="flex items-center gap-2 px-2">
             <Calendar size={18} className="text-primary" />
-            <span className="text-base font-bold text-text">
+            <span className="text-title-sm font-bold text-text">
               Tháng {currentMonth.split("-")[1]}/{currentMonth.split("-")[0]}
             </span>
           </div>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={handleNextMonth}
             aria-label="Tháng sau"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+            className="h-9 w-9 p-0"
           >
             <ChevronRight size={16} />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -94,7 +99,7 @@ export function DailyCapacityBoard({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Day selection strip */}
         <div className="lg:col-span-1 rounded-2xl border border-border bg-surface p-4 shadow-xs space-y-3">
-          <h3 className="text-sm font-bold text-text">Lịch các ngày trong tháng</h3>
+          <h3 className="text-body-sm font-bold text-text">Lịch các ngày trong tháng</h3>
           <div className="max-h-[500px] overflow-y-auto space-y-1.5 pr-1">
             {safeDays.map((day) => {
               const count = safeBookings.filter((b) => day >= b.checkInDate && day < b.checkOutDate).length
@@ -103,10 +108,10 @@ export function DailyCapacityBoard({
 
               return (
                 <button
-                  key={day}
                   type="button"
+                  key={day}
                   onClick={() => setSelectedDay(day)}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs transition-all ${
+                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-caption transition-all cursor-pointer ${
                     isSelected
                       ? "bg-primary text-white font-bold shadow-xs"
                       : "bg-surface-alt hover:bg-surface-alt/80 text-text"
@@ -141,14 +146,14 @@ export function DailyCapacityBoard({
         <div className="lg:col-span-2 rounded-2xl border border-border bg-surface p-5 shadow-xs space-y-5">
           <div className="flex items-center justify-between border-b border-border pb-4">
             <div>
-              <div className="text-xs font-semibold text-text-muted uppercase tracking-wider">
+              <div className="text-caption font-semibold text-text-muted uppercase tracking-wider">
                 {getDayOfWeek(selectedDay)}
               </div>
-              <h2 className="text-lg font-bold text-text mt-0.5">Ngày {selectedDay}</h2>
+              <h2 className="text-title-sm font-bold text-text mt-0.5">Ngày {selectedDay}</h2>
             </div>
             <div className="text-right">
               <span
-                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold ${
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-caption font-bold ${
                   percentFilled >= 100
                     ? "bg-danger/15 text-danger"
                     : percentFilled >= 75
@@ -168,7 +173,7 @@ export function DailyCapacityBoard({
 
           {/* Capacity Progress Bar */}
           <div className="space-y-2 rounded-xl border border-border bg-surface-alt/50 p-4">
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between text-caption">
               <span className="font-semibold text-text">Năng lực phục vụ ngày:</span>
               <span className="font-bold text-text">
                 {currentCount} / {maxCapacity} đơn ({percentFilled}%)
@@ -186,11 +191,11 @@ export function DailyCapacityBoard({
 
           {/* Bookings / Orders list for the selected day */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-text">
+            <h3 className="text-body-sm font-bold text-text">
               Danh sách đơn đã đặt trong ngày ({dayBookings.length})
             </h3>
             {dayBookings.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border p-8 text-center text-xs text-text-muted">
+              <div className="rounded-xl border border-dashed border-border p-8 text-center text-caption text-text-muted">
                 Chưa có đơn đặt trước nào cho ngày này. Khả năng nhận đơn tối đa {maxCapacity} đơn.
               </div>
             ) : (
@@ -198,7 +203,7 @@ export function DailyCapacityBoard({
                 {dayBookings.map((b) => (
                   <div
                     key={b.id}
-                    className="flex items-center justify-between rounded-xl border border-border bg-surface p-3 text-xs"
+                    className="flex items-center justify-between rounded-xl border border-border bg-surface p-3 text-caption"
                   >
                     <div>
                       <div className="font-bold text-text">{b.customerName || "Khách đặt Online"}</div>

@@ -2,6 +2,8 @@
 
 import React, { useState } from "react"
 import { Sparkles, Loader2, Check, ArrowRight, Wand2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export interface AiRewriteInputProps {
   value: string
@@ -80,15 +82,17 @@ export function AiRewriteInput({
 
       <div className="flex gap-2 relative">
         <div className="relative flex-1">
-          <input
+          <Input
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             className="w-full rounded-xl border border-border bg-surface pl-3.5 pr-10 py-2 text-body-sm text-text focus:border-primary focus:outline-none transition-colors"
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => handleRewrite()}
             disabled={loading || !value.trim()}
             title="Nhờ AI trau chuốt câu từ"
@@ -100,19 +104,20 @@ export function AiRewriteInput({
             ) : (
               <Sparkles size={15} className="text-primary" />
             )}
-          </button>
+          </Button>
         </div>
 
         {onAddCustom && (
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onAddCustom}
             disabled={!value.trim()}
             className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface px-4 py-2 text-body-sm font-bold text-text hover:border-primary transition-colors disabled:opacity-40"
           >
             <Check size={15} />
             <span>{addButtonText}</span>
-          </button>
+          </Button>
         )}
       </div>
 
@@ -139,13 +144,13 @@ export function AiRewriteInput({
                 ] as const
               ).map((s) => (
                 <button
-                  key={s.id}
                   type="button"
+                  key={s.id}
                   onClick={() => {
                     setSelectedStyle(s.id)
                     handleRewrite(s.id)
                   }}
-                  className={`px-2 py-0.5 rounded-md text-caption transition-colors ${
+                  className={`px-2 py-0.5 rounded-md text-caption transition-colors cursor-pointer ${
                     selectedStyle === s.id
                       ? "bg-primary text-white font-semibold"
                       : "bg-surface-alt text-text-muted hover:text-text"
@@ -166,10 +171,10 @@ export function AiRewriteInput({
             <div className="space-y-1.5">
               {suggestions.map((sug, i) => (
                 <button
-                  key={i}
                   type="button"
+                  key={i}
                   onClick={() => applySuggestion(sug)}
-                  className="w-full text-left rounded-lg p-2.5 border border-border bg-surface-alt/40 hover:border-primary hover:bg-primary/5 transition-all group flex items-start justify-between gap-2"
+                  className="w-full text-left rounded-lg p-2.5 border border-border bg-surface-alt/40 hover:border-primary hover:bg-primary/5 transition-all group flex items-start justify-between gap-2 cursor-pointer"
                 >
                   <span className="text-body-sm text-text leading-snug">{sug}</span>
                   <span className="shrink-0 text-caption font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 pt-0.5">
@@ -180,13 +185,15 @@ export function AiRewriteInput({
               ))}
 
               <div className="flex justify-end pt-1">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowDropdown(false)}
-                  className="text-caption font-medium text-text-muted hover:text-text"
+                  className="text-caption font-medium text-text-muted hover:text-text h-auto p-0 hover:bg-transparent"
                 >
                   Đóng gợi ý
-                </button>
+                </Button>
               </div>
             </div>
           )}

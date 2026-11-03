@@ -144,14 +144,14 @@ export function BeforeAfterPreviewCard({
             setActiveMode("studio")
             onSelectVariant?.("studio")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
             activeMode === "studio"
               ? "bg-surface text-primary border border-primary/25 shadow-sm"
               : "text-text-muted hover:text-text hover:bg-surface/60"
           }`}
         >
           <Sparkles size={13} className={activeMode === "studio" ? "text-primary" : "text-text-muted"} />
-          ✨ P1: Studio
+          ✨ Studio
         </button>
         <button
           type="button"
@@ -159,14 +159,14 @@ export function BeforeAfterPreviewCard({
             setActiveMode("lifestyle")
             onSelectVariant?.("lifestyle")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
             activeMode === "lifestyle"
               ? "bg-surface text-secondary-text border border-secondary/30 shadow-sm"
               : "text-text-muted hover:text-text hover:bg-surface/60"
           }`}
         >
           <Camera size={13} className={activeMode === "lifestyle" ? "text-secondary-text" : "text-text-muted"} />
-          🌿 P2: Ảnh Mộc
+          🌿 Ảnh Mộc
         </button>
         <button
           type="button"
@@ -174,19 +174,19 @@ export function BeforeAfterPreviewCard({
             setActiveMode("bokeh")
             onSelectVariant?.("bokeh")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
             activeMode === "bokeh"
               ? "bg-surface text-warning border border-warning/30 shadow-sm"
               : "text-text-muted hover:text-text hover:bg-surface/60"
           }`}
         >
           <Coffee size={13} className={activeMode === "bokeh" ? "text-warning" : "text-text-muted"} />
-          ☕ P3: Bokeh
+          ☕ Bokeh
         </button>
         <button
           type="button"
           onClick={() => setActiveMode("original")}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
             activeMode === "original"
               ? "bg-surface text-text border border-border shadow-sm"
               : "text-text-muted hover:text-text hover:bg-surface/60"
@@ -241,10 +241,10 @@ export function BeforeAfterPreviewCard({
           <div className="flex gap-1">
             {(["1:1", "4:5", "9:16", "16:9"] as const).map((r) => (
               <button
-                key={r}
                 type="button"
+                key={r}
                 onClick={() => onRatioChange(r)}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition ${
+                className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition cursor-pointer ${
                   aspectRatio === r
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border text-text-muted hover:border-text-muted"

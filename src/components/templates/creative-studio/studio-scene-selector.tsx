@@ -84,10 +84,11 @@ export function StudioSceneSelector({
 
           return (
             <button
-              key={preset.id}
               type="button"
               disabled={disabled}
-              onClick={() => onChange(preset.id)}
+              key={preset.id}
+              aria-disabled={disabled}
+              onClick={() => !disabled && onChange(preset.id)}
               className={`group relative flex flex-col items-start p-3 rounded-xl border text-left transition-all duration-200 ${
                 isSelected
                   ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20"
@@ -101,7 +102,7 @@ export function StudioSceneSelector({
                     style={{ background: preset.colorPreview }}
                   />
                   <span
-                    className={`text-xs font-bold ${
+                    className={`text-caption font-bold ${
                       isSelected ? "text-primary" : "text-text"
                     }`}
                   >

@@ -109,6 +109,17 @@ export const checkR17: RuleFunction = (sourceFile, context) => {
 }
 
 const RAW_CONTROL_TAGS = new Set(["button", "input", "select", "textarea"])
+/** Vai trò điều khiển gắn lên phần tử không phải điều khiển (vd `<div role="button">`) — né R18 và mất hành vi gốc. */
+const WIDGET_ROLES = new Set(["button", "checkbox", "radio", "switch", "menuitem", "menuitemradio", "menuitemcheckbox", "option", "tab"])
+
+function widgetRoleOf(node: ts.JsxOpeningElement | ts.JsxSelfClosingElement, sourceFile: ts.SourceFile): string | null {
+  for (const attr of node.attributes.properties) {
+    if (ts.isJsxAttribute(attr) && attr.name.getText(sourceFile) === "role" && attr.initializer && ts.isStringLiteral(attr.initializer)) {
+      return WIDGET_ROLES.has(attr.initializer.text) ? attr.initializer.text : null
+    }
+  }
+  return null
+}
 
 /** R18 — Thẻ điều khiển HTML thô ngoài src/components/ui/ */
 export const checkR18: RuleFunction = (sourceFile, context) => {
@@ -118,6 +129,19 @@ export const checkR18: RuleFunction = (sourceFile, context) => {
   function visit(node: ts.Node) {
     if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
       const tag = node.tagName.getText(sourceFile)
+      const role = /^[a-z]/.test(tag) && !RAW_CONTROL_TAGS.has(tag) ? widgetRoleOf(node, sourceFile) : null
+      if (role) {
+        out.push(
+          violation(
+            "R18",
+            sourceFile,
+            context,
+            node,
+            `<${tag} role="${role}">`,
+            `<${tag} role="${role}"> giả lập điều khiển — dùng component hệ thống (Button, Checkbox, RadioGroup, Switch…) từ src/components/ui/ theo ADR-011 D-UI-07.`
+          )
+        )
+      }
       if (RAW_CONTROL_TAGS.has(tag)) {
         // Bỏ qua input type="hidden" hoặc type="file"
         let isHiddenOrFile = false

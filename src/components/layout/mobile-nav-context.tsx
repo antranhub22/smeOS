@@ -5,6 +5,7 @@
 
 import { createContext, useContext, useEffect } from "react"
 import { Menu } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 
 type MobileNavApi = {
   openMenu: () => void
@@ -21,14 +22,16 @@ export function MobileMenuButton() {
   useEffect(() => register?.(), [register])
   if (!api) return null
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon"
       onClick={api.openMenu}
       aria-label="Mở menu"
       aria-expanded={api.open}
       className="-ml-2 mr-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:hidden"
     >
       <Menu size={22} />
-    </button>
+    </Button>
   )
 }

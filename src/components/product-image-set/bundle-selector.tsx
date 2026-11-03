@@ -2,6 +2,8 @@
 
 import React, { useState } from "react"
 import { Layers, ChevronDown, Check } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { IMAGE_SET_BUNDLES } from "@/modules/product-image-set/domain/bundle-catalog"
 
 export interface BundleSelectorProps {
@@ -23,11 +25,12 @@ export function BundleSelector({
 
   return (
     <div className="border border-border rounded-2xl bg-surface shadow-xs overflow-hidden transition-all">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
-        className="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-surface-alt/60 transition-colors cursor-pointer"
+        className="w-full px-5 py-3.5 h-auto flex items-center justify-between text-left hover:bg-surface-alt/60 transition-colors cursor-pointer rounded-none"
       >
         <div className="flex items-center gap-2.5">
           <Layers className="w-4 h-4 text-text-muted" />
@@ -42,7 +45,7 @@ export function BundleSelector({
         <ChevronDown
           className={`w-4 h-4 text-text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
         />
-      </button>
+      </Button>
 
       {isOpen && (
         <div className="p-5 border-t border-border space-y-4 bg-surface-alt/20">
@@ -50,12 +53,13 @@ export function BundleSelector({
             {IMAGE_SET_BUNDLES.map((b) => {
               const isSelected = selectedBundleId === b.id
               return (
-                <button
+                <Button
                   key={b.id}
                   type="button"
+                  variant="ghost"
                   onClick={() => onBundleChange(b.id)}
                   aria-pressed={isSelected}
-                  className={`p-3.5 rounded-xl border text-left transition-all relative cursor-pointer ${
+                  className={`p-3.5 h-auto rounded-xl border text-left transition-all relative cursor-pointer block whitespace-normal w-full ${
                     isSelected
                       ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"
                       : "border-border bg-surface hover:border-primary/40"
@@ -65,7 +69,7 @@ export function BundleSelector({
                     <div className="text-body-sm font-bold text-text">{b.name}</div>
                     {isSelected && <Check className="w-4 h-4 text-primary" />}
                   </div>
-                  <div className="text-caption text-text-muted mb-2">{b.description}</div>
+                  <div className="text-caption text-text-muted mb-2 font-normal">{b.description}</div>
                   <div className="flex flex-wrap gap-1.5">
                     {b.variants.map((v) => (
                       <span
@@ -76,7 +80,7 @@ export function BundleSelector({
                       </span>
                     ))}
                   </div>
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -85,12 +89,12 @@ export function BundleSelector({
             <label className="block text-caption font-bold text-text mb-1.5 uppercase tracking-wider">
               Ghi chú yêu cầu cho AI (Tùy chọn)
             </label>
-            <input
+            <Input
               type="text"
               value={customNote}
               onChange={(e) => onCustomNoteChange(e.target.value)}
               placeholder="Ví dụ: Giữ nguyên ánh sáng tự nhiên, góc nghiêng nhẹ làm nổi bật ruy băng..."
-              className="w-full text-caption rounded-xl border border-border px-3.5 py-2.5 bg-surface focus:outline-hidden focus:ring-1 focus:ring-primary text-text"
+              className="w-full text-caption h-10"
             />
           </div>
         </div>

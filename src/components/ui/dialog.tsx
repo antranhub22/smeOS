@@ -52,11 +52,11 @@ export function Dialog({
             {/* Header */}
             <div className="flex items-center justify-between border-b border-border px-5 py-3.5 sm:px-6 sm:py-4 flex-shrink-0">
               <div className="min-w-0 flex-1 pr-2">
-                <BaseDialog.Title className="text-title-sm sm:text-base font-bold text-text truncate">
+                <BaseDialog.Title className="text-title-sm sm:text-body font-bold text-text truncate">
                   {title}
                 </BaseDialog.Title>
                 {description && (
-                  <BaseDialog.Description className="mt-0.5 text-xs text-text-muted">
+                  <BaseDialog.Description className="mt-0.5 text-caption text-text-muted">
                     {description}
                   </BaseDialog.Description>
                 )}
@@ -79,7 +79,7 @@ export function Dialog({
             )}
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-6 text-sm min-h-0">
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 text-body-sm min-h-0">
               {children}
             </div>
 

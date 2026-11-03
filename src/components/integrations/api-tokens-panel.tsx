@@ -75,10 +75,10 @@ export function ApiTokensPanel() {
     <div className="space-y-4">
       {issued && (
         <div role="status" className="space-y-2 rounded-xl border border-border bg-warning-bg p-4">
-          <p className="text-sm font-semibold text-warning-text">
+          <p className="text-body-sm font-semibold text-warning-text">
             Chép khoá này ngay — sau khi đóng sẽ không xem lại được.
           </p>
-          <code className="block break-all rounded-lg bg-surface p-3 text-sm text-text">{issued.token}</code>
+          <code className="block break-all rounded-lg bg-surface p-3 text-body-sm text-text">{issued.token}</code>
           <Button variant="outline" size="xs" onClick={() => setIssued(null)}>
             Tôi đã chép khoá
           </Button>
@@ -107,7 +107,7 @@ export function ApiTokensPanel() {
           {rows.map((row) => {
             const expired = row.expired === true
             return (
-              <li key={row.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+              <li key={row.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-body-sm">
                 <div>
                   <p className="font-semibold text-text">{CLIENT_LABEL[row.client] ?? "Ứng dụng"}</p>
                   <p className="text-text-muted">Hết hạn: {formatDateTime(row.expires_at)}</p>

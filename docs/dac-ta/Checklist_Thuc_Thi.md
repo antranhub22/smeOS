@@ -743,7 +743,7 @@ FFmpeg trong sổ đăng ký.
 - [x] **#8 — Đơn hàng & Vận hành** — hoàn tất P22 (M10, 09/16)
 - [x] **#9 — AI Chat Assistant** — hoàn tất P23 (M08, 09/16)
 
-**Checklist chi tiết hợp nhất:** [`docs/UIUX-Execution-Checklist.md`](file:///Users/tuan/Projects/floraos-core/docs/UIUX-Execution-Checklist.md) (tổng hợp feature-level và API integration của toàn bộ 10 chức năng)
+**Checklist chi tiết hợp nhất:** [`docs/UIUX-Execution-Checklist.md`](../UIUX-Execution-Checklist.md) (tổng hợp feature-level và API integration của toàn bộ 10 chức năng)
 
 
 ## CS-23/09 — Creative Studio 14 chặng: rà soát đồng bộ & sửa production

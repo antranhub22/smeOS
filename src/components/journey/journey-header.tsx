@@ -2,6 +2,7 @@
 
 import React from "react"
 import { ArrowLeft } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 
 interface JourneyHeaderProps {
   goal: string
@@ -21,14 +22,16 @@ export function JourneyHeader({
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border bg-surface px-4 py-3 rounded-xl">
       <div className="flex items-center gap-3">
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={onBackToHome}
-          className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-border bg-surface hover:bg-surface-alt text-text transition-colors cursor-pointer"
+          className="w-9 h-9 p-0"
           title="Quay lại danh sách tác vụ"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-        </button>
+        </Button>
 
         <div>
           <h2 className="text-title font-bold text-text leading-tight">

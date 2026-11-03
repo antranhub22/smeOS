@@ -3,6 +3,7 @@
 import React from "react"
 import { Search, Plus, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 export interface CoordinatorToolbarProps {
   activeTab: string
@@ -52,13 +53,13 @@ export function CoordinatorToolbar({
 
       <div className="flex items-center gap-2">
         <div className="relative flex-1 sm:w-64">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-          <input
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none" />
+          <Input
             type="text"
             placeholder="Tìm mã, khách, địa chỉ..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-border bg-surface text-caption text-text focus:outline-none focus:border-primary"
+            className="pl-8 text-caption"
           />
         </div>
         <Button

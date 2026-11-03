@@ -244,7 +244,7 @@ export function FlowerNetworkCommandCenter() {
               <button
                 type="button"
                 onClick={() => router.push("/dieu-phoi" as never)}
-                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm"
+                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm cursor-pointer"
               >
                 <div className="rounded-xl bg-primary/10 p-2 text-primary">
                   <ShieldAlert className="h-5 w-5" />
@@ -260,7 +260,7 @@ export function FlowerNetworkCommandCenter() {
               <button
                 type="button"
                 onClick={() => router.push("/don-hang")}
-                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm"
+                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm cursor-pointer"
               >
                 <div className="rounded-xl bg-primary/10 p-2 text-primary">
                   <Truck className="h-5 w-5" />

@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   OPTIMIZATION_CAPABILITIES,
   isCapabilitySupported,
@@ -82,7 +83,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
         <button
           type="button"
           onClick={() => onModeChange("auto")}
-          className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
+          className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
             mode === "auto"
               ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20"
               : "border-border bg-surface hover:bg-surface-alt/60"
@@ -109,7 +110,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
         <button
           type="button"
           onClick={() => onModeChange("custom")}
-          className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
+          className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
             mode === "custom"
               ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20"
               : "border-border bg-surface hover:bg-surface-alt/60"
@@ -160,7 +161,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
               <button
                 type="button"
                 onClick={selectAllSupported}
-                className="text-primary hover:underline font-medium"
+                className="text-primary hover:underline font-medium cursor-pointer"
               >
                 Chọn tất cả khả dụng
               </button>
@@ -168,7 +169,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
               <button
                 type="button"
                 onClick={clearAll}
-                className="text-text-muted hover:text-text"
+                className="text-text-muted hover:text-text cursor-pointer"
               >
                 Bỏ chọn
               </button>
@@ -183,10 +184,16 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
 
               return (
                 <div
-              role="button"
-              tabIndex={0}
+                  role="button"
+                  tabIndex={supported ? 0 : -1}
                   key={cap.id}
                   onClick={() => toggleCapability(cap.id, supported)}
+                  onKeyDown={(e) => {
+                    if (supported && (e.key === "Enter" || e.key === " ")) {
+                      e.preventDefault()
+                      toggleCapability(cap.id, supported)
+                    }
+                  }}
                   className={`flex items-start gap-3 rounded-xl border p-3 transition-all ${
                     !supported
                       ? "opacity-60 bg-surface-alt/40 border-dashed border-border cursor-not-allowed select-none"
@@ -196,12 +203,11 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
                   }`}
                 >
                   <div className="pt-0.5">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={isSelected}
                       disabled={!supported}
-                      onChange={() => toggleCapability(cap.id, supported)}
-                      className="h-4 w-4 rounded accent-primary border-border cursor-pointer disabled:cursor-not-allowed"
+                      onCheckedChange={() => toggleCapability(cap.id, supported)}
+                      aria-label={cap.name}
                     />
                   </div>
 

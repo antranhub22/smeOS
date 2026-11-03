@@ -77,8 +77,9 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
 
   return (
     <div className="space-y-4">
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
         onDragOver={(e) => {
           e.preventDefault()
           if (!disabled) setDragOver(true)
@@ -86,7 +87,13 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => !disabled && fileInputRef.current?.click()}
-        disabled={disabled}
+        onKeyDown={(e) => {
+          if (!disabled && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault()
+            fileInputRef.current?.click()
+          }
+        }}
+        aria-disabled={disabled}
         className={`w-full relative border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center transition-all cursor-pointer ${
           dragOver
             ? "border-primary bg-primary/10 scale-[1.01]"
@@ -146,7 +153,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
             </div>
           </div>
         )}
-      </button>
+      </div>
     </div>
   )
 }

@@ -134,14 +134,16 @@ export function ProductBomCard({
           Định mức vật tư & Thành phần cấu thành
         </div>
         {flowers.length === 0 && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onOpenModal}
-            className="text-caption font-bold text-primary hover:underline flex items-center gap-1"
+            className="text-caption font-bold text-primary hover:underline flex items-center gap-1 h-auto p-0 hover:bg-transparent"
           >
             <Sparkles size={12} />
             Dùng AI nhận diện
-          </button>
+          </Button>
         )}
       </div>
 
@@ -198,14 +200,16 @@ export function ProductStoryCard({
           Câu chuyện và thông điệp sản phẩm
         </div>
         {!description && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onOpenModal}
-            className="text-caption font-bold text-primary hover:underline flex items-center gap-1"
+            className="text-caption font-bold text-primary hover:underline flex items-center gap-1 h-auto p-0 hover:bg-transparent"
           >
             <Sparkles size={12} />
             Viết bằng Content Engine
-          </button>
+          </Button>
         )}
       </div>
 

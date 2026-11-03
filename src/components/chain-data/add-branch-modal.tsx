@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Store, AlertCircle, CheckCircle2 } from "@/components/ui/icons"
 
 interface AddBranchModalProps {
@@ -77,7 +78,7 @@ export function AddBranchModal({ isOpen, onClose, onSuccess }: AddBranchModalPro
 
         <div className="space-y-1.5">
           <label className="text-caption font-bold text-text">Tên cửa hàng / Chi nhánh *</label>
-          <input
+          <Input
             type="text"
             required
             placeholder="Ví dụ: Chi nhánh Cầu Giấy, Chi nhánh Q1…"
@@ -89,7 +90,7 @@ export function AddBranchModal({ isOpen, onClose, onSuccess }: AddBranchModalPro
 
         <div className="space-y-1.5">
           <label className="text-caption font-bold text-text">Mã chi nhánh *</label>
-          <input
+          <Input
             type="text"
             required
             placeholder="Ví dụ: CG-01, SG-02…"
@@ -102,7 +103,7 @@ export function AddBranchModal({ isOpen, onClose, onSuccess }: AddBranchModalPro
 
         <div className="space-y-1.5">
           <label className="text-caption font-bold text-text">Địa chỉ cửa hàng</label>
-          <input
+          <Input
             type="text"
             placeholder="Ví dụ: Số 88 Đường Cầu Giấy, Hà Nội"
             value={address}

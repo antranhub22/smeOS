@@ -149,10 +149,10 @@ export function GlobalImageZoom() {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 text-white">
-          <div className="text-sm font-semibold truncate max-w-xs sm:max-w-md">
+          <div className="text-body-sm font-semibold truncate max-w-xs sm:max-w-md">
             {zoomState.title || zoomState.alt || "Chi tiết ảnh"}
           </div>
-          <span className="text-xs text-white/50 bg-white/10 px-2 py-0.5 rounded-full">
+          <span className="text-caption text-white/50 bg-white/10 px-2 py-0.5 rounded-full">
             {Math.round(scale * 100)}%
           </span>
         </div>
@@ -164,7 +164,7 @@ export function GlobalImageZoom() {
             type="button"
             onClick={() => setShowCheckerboard((v) => !v)}
             title="Bật/Tắt nền trong suốt (Alpha)"
-            className={`px-2.5 py-1.5 text-xs font-medium rounded-lg transition ${
+            className={`px-2.5 py-1.5 text-caption font-medium rounded-lg transition ${
               showCheckerboard
                 ? "bg-white/20 text-white"
                 : "bg-white/5 text-white/70 hover:bg-white/10"
@@ -279,7 +279,7 @@ export function GlobalImageZoom() {
       {/* Bottom Hint Footer */}
       <div
         role="presentation"
-        className="w-full text-center py-2 text-xs text-white/50 bg-black/30 select-none"
+        className="w-full text-center py-2 text-caption text-white/50 bg-black/30 select-none"
         onClick={(e) => e.stopPropagation()}
       >
         <span>Lăn chuột để phóng to / thu nhỏ • Kéo chuột để di chuyển • Nhấn ESC hoặc click ra ngoài để đóng</span>

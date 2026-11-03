@@ -26,14 +26,16 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3.5">
         <div className="flex items-center gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={onBack}
             aria-label="Quay lại"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            className="h-9 w-9 rounded-xl"
           >
             <ArrowLeft size={16} />
-          </button>
+          </Button>
           <PageHeader
             title={activeTab === "branches" ? "Nhập danh sách chi nhánh" : "Nhập từ Excel & ảnh"}
             description={
@@ -41,14 +43,16 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
                 <span className="mt-0.5 inline-flex items-center gap-1.5 text-caption font-semibold text-success">
                   <CheckCircle2 size={12} />
                   <span>Đã khôi phục {restoredCount} sản phẩm từ phiên trước</span>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={onClearRestored}
-                    className="ml-1 text-danger hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+                    className="ml-1 h-auto p-0 font-normal text-danger hover:bg-transparent hover:underline"
                     aria-label="Xóa dữ liệu đã khôi phục"
                   >
                     (Xóa)
-                  </button>
+                  </Button>
                 </span>
               ) : undefined
             }
@@ -84,30 +88,34 @@ export function BulkImportHeader({ restoredCount, validCount, isImporting, activ
       {/* Tab switcher */}
       {showBranchesTab && (
       <div className="flex items-center gap-0 px-4 pb-0 -mb-px">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => onTabChange("products")}
-          className={`flex items-center gap-1.5 px-4 py-2.5 text-body-sm font-bold border-b-2 transition-colors ${
+          className={`flex items-center gap-1.5 px-4 py-2.5 text-body-sm font-bold border-b-2 rounded-none h-auto transition-colors ${
             activeTab === "products"
-              ? "border-primary text-primary"
-              : "border-transparent text-text-muted hover:text-foreground"
+              ? "border-primary text-primary hover:bg-transparent"
+              : "border-transparent text-text-muted hover:text-text hover:bg-transparent"
           }`}
         >
           <FileSpreadsheet size={15} />
           Kho Sản Phẩm &amp; Ảnh
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => onTabChange("branches")}
-          className={`flex items-center gap-1.5 px-4 py-2.5 text-body-sm font-bold border-b-2 transition-colors ${
+          className={`flex items-center gap-1.5 px-4 py-2.5 text-body-sm font-bold border-b-2 rounded-none h-auto transition-colors ${
             activeTab === "branches"
-              ? "border-primary text-primary"
-              : "border-transparent text-text-muted hover:text-foreground"
+              ? "border-primary text-primary hover:bg-transparent"
+              : "border-transparent text-text-muted hover:text-text hover:bg-transparent"
           }`}
         >
           <Store size={15} />
           🏪 Cửa Hàng Chuỗi
-        </button>
+        </Button>
       </div>
       )}
     </header>

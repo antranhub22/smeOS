@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useSession } from "@/lib/session"
 import { proposalExpiresAt, readProposal } from "@/modules/products/domain/product-proposal"
 
@@ -78,13 +79,13 @@ export function ProductProposalBanner({ productId, attributes, onChanged }: Prod
       {moTuChoi && (
         <div className="flex w-full flex-wrap items-center gap-2">
           <label htmlFor="ly-do-tu-choi" className="sr-only">Lý do từ chối</label>
-          <input
+          <Input
             id="ly-do-tu-choi"
             value={lyDo}
             onChange={(e) => setLyDo(e.target.value)}
             maxLength={500}
             placeholder="Lý do từ chối, người đề xuất sẽ nhận được"
-            className="h-9 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-text"
+            className="h-9 min-w-0 flex-1"
           />
           <Button size="sm" variant="outline" onClick={() => setMoTuChoi(false)} disabled={dangGui !== null}>
             Huỷ
