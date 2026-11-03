@@ -83,6 +83,12 @@ describe("detectColumnMapping — tệp lệch cột so với Sheet gốc", () =
     expect(p.scoreAndTier.suggestedTier).toBe("Hạng Đạt Chứng nhận")
   })
 
+  it("tiêu đề kiểu khác vẫn vào đúng trường nhờ cụm ngắn hơn", () => {
+    const m = detectColumnMapping(["Tên tiệm hoa", "Số thợ cắm hoa"]).mapping
+    expect(m[field("identity.shopName")]).toBe(0)
+    expect(m[field("production.floristCount")]).toBe(1)
+  })
+
   it("tiêu đề gõ không dấu vẫn nhận ra", () => {
     const m = detectColumnMapping(["Ten cua hang", "So dien thoai", "Dia chi"]).mapping
     expect(m[field("identity.shopName")]).toBe(0)
