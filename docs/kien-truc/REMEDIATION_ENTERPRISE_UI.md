@@ -59,7 +59,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 
 - [x] **P1-1** (Q1) Khôi phục 91 tệp trong `FROZEN_ROOTS` của Thẻ chào về bản `main` (chỉ hai commit `ff4206cb`, `f146b67c` chạm vào). Ghi lại baseline UX lint riêng cho `components/greeting-card` và các tuyến Thẻ chào, ghi lý do trong commit. Kiểm: `the-chao-freeze.test.ts` xanh, typecheck xanh.
 - [ ] **P1-2** (Q1) Cập nhật mốc Catalog theo duyệt PO 03/11/2026: `UPDATE_CATALOG_FREEZE=1` cho `catalog-freeze.test.ts`, ghi ngày duyệt ở đầu tệp test.
-- [ ] **P1-3** Danh mục năng lực 166 → 168 mã (M4, M5): bổ sung đặc tả 02 và ca thử `capability-catalog.test.ts` khớp danh mục thật.
+- [x] **P1-3** Danh mục năng lực 166 → 168 mã (M4, M5): bổ sung đặc tả 02 và ca thử `capability-catalog.test.ts` khớp danh mục thật.
 - [ ] **P1-4** Module "In ấn" bị hiện ở production khi chưa có công cụ `DONE`: sửa registry toolkit để ẩn đúng luật (`business-modules.test.ts:82`), không sửa test.
 - [ ] **P1-5** Route `src/app/api/v1/organizations/brand/route.ts` (bí danh re-export): gỡ nếu không có nơi gọi; còn nơi gọi thì chuyển nơi gọi sang `organization/brand` rồi gỡ.
 - [ ] **P1-6** `src/modules/products/domain/sales-scripts-catalog.ts` dùng `formatters.ts` thay cho `Intl` trực tiếp (ratchet 173 tệp).
@@ -104,7 +104,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P0-4 | Xong | commit `fix(sales)` sau `03befd0e` | typecheck; unit sales 22/22; tenant 692/692; platform 36/36; check:screen-contracts 100% | `quotation_items` vào `TENANT_TABLES`; đặc tả 07 cho bảng này làm cùng P1-9 |
 | P1-1 | Xong | commit `revert(greeting-card)` sau `8663f1a8` | typecheck; `the-chao-freeze` xanh; unit Thẻ chào 1013/1013; `lint:ux --check` | 90 tệp về bản `cbd8763f`; không token màu nào bị xoá trên nhánh (236/236 còn) nên giao diện cũ hiển thị đúng; baseline UX lint 5.367 → 5.498 (+131, toàn bộ trong vùng Thẻ chào) |
 | P1-2 | Chưa làm | | |  |
-| P1-3 | Chưa làm | | |  |
+| P1-3 | Xong | xem `git log --grep "P1-3"` | src/core/rbac 24/24 | Thêm nhóm M (M1–M5) vào đặc tả 02; R15/R16 thiếu trong đặc tả là nợ có sẵn trên main, không sửa |
 | P1-4 | Chưa làm | | |  |
 | P1-5 | Chưa làm | | |  |
 | P1-6 | Chưa làm | | |  |

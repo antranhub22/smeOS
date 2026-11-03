@@ -216,6 +216,18 @@ Các nhóm dưới đây không tồn tại ở FloraOS v1. Chúng nhận nhóm 
 
 `J6` là năng lực cấp kênh — mở kênh, nối tài khoản, đặt cấu hình. Năng lực thao tác trong một hội thoại cụ thể nằm ở nhóm `T`.
 
+### Marketing, chăm sóc khách và in ấn — nhóm M
+
+| Mã | Tên đọc được | Năng lực | Mặc định | Trần cứng |
+|---|---|---|---|---|
+| `M1` | `marketing.usage.read` | Xem nơi dùng của tư liệu và thống kê quy thuộc | Điều hành · Điều phối · Sale · Marketing | — |
+| `M2` | `marketing.usage.manage` | Tạo và cấu hình nơi dùng cho tư liệu (liên kết, QR) | Điều hành · Marketing | — |
+| `M3` | `marketing.campaign.manage` | Tạo và quản lý chiến dịch quảng bá, kích hoạt và đo lường | Điều hành · Marketing | — |
+| `M4` | `crm.segment.manage` | Quản lý nhóm khách và chăm sóc khách hàng | Điều hành · Marketing | — |
+| `M5` | `print.rendition.export` | Kiểm quy cách và xuất ấn phẩm in ấn | Điều hành · Điều phối · Marketing | — |
+
+Nhóm M vào cùng Marketing & Sales Center (PO 01/11/2026, `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/03_KE_HOACH_TRIEN_KHAI.md`).
+
 ### Sản phẩm và giá — nhóm L
 
 76 mã thu hoạch bao phủ màn hình của FloraOS v1, nơi sản phẩm và giá gắn chặt vào luồng dựng thẻ chào giá. Core tách chúng thành năng lực riêng.
