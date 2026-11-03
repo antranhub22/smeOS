@@ -36,6 +36,20 @@ documents:
     dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
+  - id: "DOC-01-REMEDIATION-ENTERPRISE-UI"
+    path: "docs/kien-truc/REMEDIATION_ENTERPRISE_UI.md"
+    title: "Kế hoạch khắc phục nhánh Enterprise UI/UX trước bàn giao"
+    domain: "Governance"
+    layer: "Level 1"
+    purpose: "Quyết định PO 03/11/2026, danh sách việc khắc phục có checklist và bảng theo dõi trạng thái cho nhánh Enterprise UI/UX trước khi merge vào main và bàn giao"
+    status: "APPROVED"
+    authority: "Level 1"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/TRANG_THAI.md"]
+    supersedes: []
+
   - id: "DOC-01-QUYET-DINH-RS"
     path: "docs/kien-truc/QUYET_DINH_RS_18_09.md"
     title: "Biên bản Phán quyết Kiến trúc RS-1 đến RS-11 (18/09)"

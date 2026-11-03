@@ -1,0 +1,118 @@
+# Kế hoạch khắc phục nhánh Enterprise UI/UX trước bàn giao
+
+> Nhánh nguồn: `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` (32 commit trên `main` tại `cbd8763f`).
+> Nhánh thực thi: `claude/zen-carson-os8a8r` — dựng từ nhánh nguồn, kết thúc bằng một PR vào `main`.
+> Chủ sở hữu: Product Owner. Quyết định PO chốt ngày 03/11/2026 (mục 2).
+> Cách dùng: mỗi commit khắc phục tick đúng dòng của nó **trong cùng commit** và điền mã commit vào bảng mục 9.
+
+## 1. Mục tiêu và tiêu chí hoàn tất
+
+Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
+
+1. Không còn lỗ hổng rò rỉ dữ liệu giữa tenant; mỗi lỗ hổng đã vá có ca thử tenant chứng minh.
+2. Mọi cổng CI ở `.github/workflows/ci.yml` xanh trên PR vào `main` — không skip, không nới test, không nâng baseline để che lỗi mới.
+3. Tài liệu bàn giao chỉ chứa số liệu có nguồn đo lưu trong repo.
+4. Đặc tả 06/07, Screen Contract và `TRANG_THAI.md` khớp mã.
+
+## 2. Quyết định PO (03/11/2026)
+
+| # | Vấn đề | Quyết định |
+|---|---|---|
+| Q1 | Khu vực đóng băng bị sửa bởi commit dọn nợ UX | Catalog (11 tệp, chỉ đổi token): duyệt, cập nhật mốc. Thẻ chào (91 tệp, có 17 hộp xác nhận đổi hành vi): khôi phục về `main`; nâng giao diện Thẻ chào làm ở PR riêng có E2E |
+| Q2 | Link báo giá công khai đoán được (`BG-0001`) | Thêm cột `public_token` ngẫu nhiên bằng migration mới chồng lên; link công khai chỉ dùng token |
+| Q3 | Báo cáo hiệu năng / re-audit chứa số liệu không có nguồn | Gỡ số liệu không có nguồn, viết lại theo trạng thái thật; đo hiệu năng thật là việc riêng sau bàn giao |
+| Q4 | Gỡ 4 dependency, thêm workflow `ui-weekly` | Giữ cả hai; đồng bộ lockfile; sửa bước dựng DB test của workflow |
+| Q5 | Cách theo dõi | Tệp này trong repo, cập nhật theo từng commit; tóm tắt ở `TRANG_THAI.md`; kết thúc bằng PR có CI xanh |
+
+## 3. Nguyên tắc thực thi
+
+- Thứ tự: T0 → P0 → P1 → P2 → P3 → Z. Không bắt đầu đợt sau khi đợt trước còn cổng đỏ do chính nó gây ra.
+- Mỗi việc một commit Conventional Commits, gồm mã + test + tài liệu.
+- Mọi thay đổi `prisma/schema.prisma` đi kèm migration sinh bằng `prisma migrate dev`; không sửa migration đã commit.
+- Cổng tenant/platform chỉ chạy trên database tên `*_test`.
+- Việc nào môi trường không kiểm chứng được thì ghi rõ "chưa kiểm chứng" ở cột Ghi chú, không tick.
+
+## 4. Đợt T0 — Đồng bộ nền
+
+- [ ] **T0-1** Merge `origin/main` (6 commit: cổng dev 3200, `CONTEXT.md`) vào nhánh thực thi. Thử merge không xung đột. Chạy toàn bộ cổng, ghi kết quả làm mốc ở mục 9.
+- [ ] **T0-2** (D6) Đồng bộ `package-lock.json` với `package.json` sau khi gỡ `lucide-react`, `@radix-ui/react-select`, `@radix-ui/react-separator`, `@radix-ui/react-tooltip`. Kiểm: `npm ci` chạy sạch, không còn 4 gói trong `packages[""]`.
+
+## 5. Đợt P0 — Bảo mật dữ liệu (chặn bàn giao)
+
+- [ ] **P0-1** (A1) Link báo giá công khai dùng token bí mật.
+  - Schema: `quotations.public_token String @unique` (≥ 128-bit, sinh bằng `crypto.randomBytes`), migration thêm cột nullable → backfill → `NOT NULL`.
+  - `src/modules/sales/infra/quotation-repository.ts`: thay `findByPublicCode` bằng `findByPublicToken`; không trả báo giá trạng thái `DRAFT`.
+  - Route `src/app/api/v1/public/quotation/[token]/route.ts` và trang `src/app/bg/[token]/page.tsx`: `enforceRateLimit`, `robots: noindex`, bỏ số điện thoại khách khỏi dữ liệu công khai.
+  - UI tạo link: `src/components/sales/quotation/{partner-quote-builder,quote-preview-card,quotations-list-view}.tsx`.
+  - Test tenant: truy cập bằng mã `BG-xxxx` → 404; token của tổ chức A không lộ dữ liệu tổ chức B; báo giá `DRAFT` → 404.
+- [ ] **P0-2** (A2) Kiểm quyền sở hữu mọi ID tham chiếu nhận từ body.
+  - `create-quotation.use-case.ts` (`leadId`, `customerId`, `assetUsageId`, `items[].productId`), `update-quotation` tương ứng, `create-asset-usage.use-case.ts` (`campaignId`), `create-print-rendition.use-case.ts` (`assetUsageId`).
+  - Kiểm qua phương thức repository có `scopedWhere(ctx, { id })`; không thuộc tổ chức → `notFound()` (404).
+  - Test tenant: mỗi loại ID của tổ chức B dùng từ tổ chức A → 404, không ghi bản ghi nào.
+- [ ] **P0-3** (A3) Chuyển báo giá thành đơn nguyên tử.
+  - `convert-quotation-to-order.use-case.ts`: chiếm quyền chuyển bằng cập nhật có điều kiện (`status != CONVERTED`) trước khi tạo đơn, trong cùng giao dịch với `ingestOrder`.
+  - Test tenant: hai lệnh chuyển song song → đúng 1 đơn, lệnh còn lại nhận lỗi nghiệp vụ.
+- [ ] **P0-4** (C3) `quotation_items.organization_id` + `@@index([organization_id])`; migration backfill từ `quotations`; repository ghi cột khi tạo/cập nhật. Cập nhật đặc tả 07.
+
+## 6. Đợt P1 — Cổng CI xanh
+
+- [ ] **P1-1** (Q1) Khôi phục 91 tệp trong `FROZEN_ROOTS` của Thẻ chào về bản `main` (chỉ hai commit `ff4206cb`, `f146b67c` chạm vào). Ghi lại baseline UX lint riêng cho `components/greeting-card` và các tuyến Thẻ chào, ghi lý do trong commit. Kiểm: `the-chao-freeze.test.ts` xanh, typecheck xanh.
+- [ ] **P1-2** (Q1) Cập nhật mốc Catalog theo duyệt PO 03/11/2026: `UPDATE_CATALOG_FREEZE=1` cho `catalog-freeze.test.ts`, ghi ngày duyệt ở đầu tệp test.
+- [ ] **P1-3** Danh mục năng lực 166 → 168 mã (M4, M5): bổ sung đặc tả 02 và ca thử `capability-catalog.test.ts` khớp danh mục thật.
+- [ ] **P1-4** Module "In ấn" bị hiện ở production khi chưa có công cụ `DONE`: sửa registry toolkit để ẩn đúng luật (`business-modules.test.ts:82`), không sửa test.
+- [ ] **P1-5** Route `src/app/api/v1/organizations/brand/route.ts` (bí danh re-export): gỡ nếu không có nơi gọi; còn nơi gọi thì chuyển nơi gọi sang `organization/brand` rồi gỡ.
+- [ ] **P1-6** `src/modules/products/domain/sales-scripts-catalog.ts` dùng `formatters.ts` thay cho `Intl` trực tiếp (ratchet 173 tệp).
+- [ ] **P1-7** `tests/unit/ux/feature-guidance-contrast.test.ts` đọc token từ `src/styles/tokens/color.css` — nơi token đã chuyển tới; giá trị `#FFFFFF` giữ nguyên.
+- [ ] **P1-8** (B2) 18 lỗi ESLint mới: thay `as any` bằng enum Prisma có kiểu ở `crm/infra/*`, `print/infra/*`, các test; chuyển nạp dữ liệu trong `useEffect` sang hook nạp dữ liệu chuẩn của dự án ở `components/marketing-center/*`, `components/sales/quotation/*`; sửa `components/ui/form-field.tsx`. Kiểm: `npm run lint:ratchet` xanh, baseline ESLint không đổi.
+- [ ] **P1-9** (B3) 59 chỗ lệch `check:docs`: 33 endpoint vào đặc tả 06; 7 bảng + 9 enum vào đặc tả 07; 6 bảng (`asset_usages`, `campaigns`, `quotations`, `customer_segments`, `customer_interactions`, `print_renditions`) vào `TENANT_TABLES`; ca thử cách ly cho `asset_usages`, `customer_segments`, `customer_interactions`, `print_renditions`.
+- [ ] **P1-10** (E1) Migration đổi tên index `customer_interactions_organization_id_customer_id_occurred_at_i` cho khớp tên Prisma sinh. Kiểm: `prisma migrate diff` rỗng.
+- [ ] **P1-11** (Q4) `.github/workflows/ui-weekly.yml`: thay `npm run db:test:setup || true` bằng `prisma migrate deploy` trên `DATABASE_URL_TEST` của service Postgres; bỏ `|| true`.
+
+## 7. Đợt P2 — Tài liệu bàn giao trung thực
+
+- [ ] **P2-1** (Q3) Viết lại `12_PERFORMANCE_REPORT.md`: bỏ bảng LCP/CLS không có nguồn và các mốc "Tuần 1–12", sửa phiên bản Next.js 16; trạng thái "Chưa đo" kèm phương pháp đo (Lighthouse trên bản build, 6 tuyến).
+- [ ] **P2-2** (Q3) Viết lại `13_RE_AUDIT_ENTERPRISE_REPORT.md` theo số thật: kết quả cổng, baseline UX lint (5.367 điểm, lý do tăng do siết luật R1/R17–R21, phần giảm do allowlist), số tệp > 350 dòng. Rà `docs/design-system/CHANGELOG.md` và biên bản `accessibility-audit-12-journeys.md` — nhận định nào chưa có bằng chứng chạy thì ghi "chưa kiểm chứng".
+- [ ] **P2-3** (E2) Gộp `docs/Audit/` vào `docs/audit/` (`git mv`), sửa liên kết và registry; kiểm không còn đường dẫn trùng chỉ khác hoa thường.
+- [ ] **P2-4** (E4) Thêm tệp `LICENSE` (giấy phép độc quyền) với tên pháp nhân sở hữu do PO cung cấp.
+
+## 8. Đợt P3 — Chất lượng
+
+- [ ] **P3-1** (C1) `get-segment-customers.use-case.ts`: bỏ trần 500 khách; duyệt toàn bộ khách theo trang có giới hạn số vòng, hoặc đẩy điều kiện lọc xuống truy vấn. Test: tổ chức 1.200 khách cho kết quả đúng.
+- [ ] **P3-2** (C2) Xuất PDF in ấn: giới hạn kích thước `imageDataUrl`, kiểm MIME bằng bộ kiểm nội dung tải lên hiện có, ghi tệp qua `StorageProvider`, trả URL ký thay cho base64.
+- [ ] **P3-3** (D1) Tách `print-workflow.tsx` (434), `kpi-definitions.ts` (356), `chain-dispatch-settings.tsx` (358), `store-policies-editor.tsx` (353) về ≤ 350 dòng; 9 tệp vốn đã quá ngưỡng trở về ≤ số dòng trên `main`.
+- [ ] **P3-4** (D2) Kiểm giá trị enum từ query string bằng zod ở các route mới → 400 thay vì 500.
+- [ ] **P3-5** (D3) Thay so khớp chuỗi `err.message.includes(...)` bằng lỗi có kiểu (`notFound()`) ở `crm/use-cases/*`, `print/use-cases/*` và route tương ứng.
+- [ ] **P3-6** (D4) Sinh mã báo giá an toàn khi đồng thời: thử lại có giới hạn (≤ 3 lần) khi trùng `@@unique([organization_id, code])`. Test hai yêu cầu song song.
+- [ ] **P3-7** (E3) `MutationObserver` ở `src/lib/ui-system/ui-provider.tsx` chỉ chạy khi `NODE_ENV !== "production"`.
+
+## 9. Đóng nhánh
+
+- [ ] **Z-1** Chạy toàn bộ cổng mục "Definition of done" của `CLAUDE.md`, gồm `test:e2e:ux`.
+- [ ] **Z-2** Mở PR vào `main`; CI xanh trên PR là bằng chứng cuối.
+- [ ] **Z-3** Cập nhật §4–6 `TRANG_THAI.md`; ghi lỗi tái diễn (báo cáo tự khai không có nguồn đo, sửa khu vực đóng băng trong commit dọn nợ) vào `AGENT_RULES.md` §14.
+
+### Bảng theo dõi
+
+| Việc | Trạng thái | Commit | Cổng đã chạy | Ghi chú |
+|---|---|---|---|---|
+| T0-1 | Chưa làm | | | |
+| T0-2 | Chưa làm | | | |
+| P0-1 … P0-4 | Chưa làm | | | |
+| P1-1 … P1-11 | Chưa làm | | | |
+| P2-1 … P2-4 | Chưa làm | | | P2-4 chờ tên pháp nhân |
+| P3-1 … P3-7 | Chưa làm | | | |
+| Z-1 … Z-3 | Chưa làm | | | |
+
+## 10. Rủi ro và kiểm soát
+
+| # | Rủi ro | Mức | Kiểm soát |
+|---|---|---|---|
+| R1 | Khôi phục Thẻ chào làm gãy import vì nhánh đã đổi component dùng chung | Thấp | Chỉ 2 commit dọn UX chạm khu vực này; typecheck + unit + tenant sau P1-1 |
+| R2 | Ba migration mới chạy sai thứ tự hoặc backfill lỗi | Thấp | Bảng báo giá chưa có trên production (production chỉ deploy từ `main`); chạy `migrate deploy` trên DB sạch và DB có dữ liệu mẫu; `migrate diff` rỗng |
+| R3 | Sửa `useEffect` nạp dữ liệu (P1-8) gây lỗi giao diện không test nào bắt | Trung bình | Kiểm tay từng màn chạm tới; `test:e2e:ux` ở Z-1 |
+| R4 | Môi trường cloud chặn `cdn.sheetjs.com` (`xlsx`) nên `npm ci` và tái sinh lockfile cần máy có mạng tới CDN | Trung bình | Tái sinh lockfile trên máy dev hoặc CI; CI trên PR là nơi xác nhận |
+| R5 | `test:e2e:ux` cần DB đã seed và trình duyệt; có thể không chạy đủ trong môi trường cloud | Trung bình | Ghi "chưa kiểm chứng" nếu không chạy được; CI trên PR chạy lại |
+| R6 | Baseline UX lint tăng lại sau P1-1 | Thấp | Là nợ thật của Thẻ chào, ghi lý do trong commit và báo cáo P2-2 |
+| R7 | Lịch sử commit giữ các thông điệp "100%" đã sai | Thấp | Không viết lại lịch sử nhánh chung; báo cáo P2-2 là nguồn đúng |
+| R8 | Đổi hành vi với người dùng: link báo giá đổi dạng, module In ấn ẩn trên production | Thấp | Chưa có link thật nào được gửi; In ấn hiện lại khi có công cụ `DONE` |
+| R9 | Ước lượng 3,5 ngày trượt do P1-9 (đặc tả 06/07) và P3-2 | Trung bình | Đợt P0–P2 đủ điều kiện bàn giao; P3 có thể tách PR riêng nếu cần |
