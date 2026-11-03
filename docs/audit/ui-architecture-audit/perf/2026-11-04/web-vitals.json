@@ -1,0 +1,587 @@
+{
+  "measuredAt": "2026-11-03T18:31:15.685Z",
+  "commit": "7ef1b830",
+  "base": "http://localhost:3200",
+  "runsPerRoute": 3,
+  "account": {
+    "kind": "env",
+    "platformOperator": true
+  },
+  "method": "Playwright + Chromium PerformanceObserver (lab); bộ đệm tắt; trung vị các lần đo",
+  "profiles": [
+    {
+      "name": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "deviceScaleFactor": 3,
+      "isMobile": true,
+      "hasTouch": true,
+      "cpuThrottle": 4,
+      "network": {
+        "offline": false,
+        "latency": 150,
+        "downloadThroughput": 209715.2,
+        "uploadThroughput": 96000
+      }
+    },
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "cpuThrottle": 1,
+      "network": "không giới hạn"
+    }
+  ],
+  "thresholds": {
+    "lcpMs": 2500,
+    "cls": 0.1,
+    "inpMs": 200
+  },
+  "interaction": "Nhấp vào <h1> đầu tiên sau khi trang tải xong",
+  "results": [
+    {
+      "route": "/",
+      "profile": "mobile",
+      "finalPath": "/",
+      "median": {
+        "ttfbMs": 99,
+        "fcpMs": 1444,
+        "lcpMs": 1824,
+        "cls": 0,
+        "tbtMs": 633,
+        "inpMs": 32,
+        "scriptKb": 527,
+        "totalKb": 703
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/",
+          "ttfbMs": 591,
+          "fcpMs": 1864,
+          "lcpMs": 2312,
+          "cls": 0,
+          "tbtMs": 678,
+          "inpMs": 64,
+          "scriptKb": 527,
+          "totalKb": 703
+        },
+        {
+          "status": 200,
+          "finalPath": "/",
+          "ttfbMs": 99,
+          "fcpMs": 1444,
+          "lcpMs": 1824,
+          "cls": 0,
+          "tbtMs": 633,
+          "inpMs": 24,
+          "scriptKb": 527,
+          "totalKb": 703
+        },
+        {
+          "status": 200,
+          "finalPath": "/",
+          "ttfbMs": 51,
+          "fcpMs": 1428,
+          "lcpMs": 1796,
+          "cls": 0,
+          "tbtMs": 600,
+          "inpMs": 32,
+          "scriptKb": 527,
+          "totalKb": 703
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "profile": "desktop",
+      "finalPath": "/",
+      "median": {
+        "ttfbMs": 79,
+        "fcpMs": 412,
+        "lcpMs": 412,
+        "cls": 0,
+        "tbtMs": 0,
+        "inpMs": null,
+        "scriptKb": 527,
+        "totalKb": 705
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/",
+          "ttfbMs": 79,
+          "fcpMs": 412,
+          "lcpMs": 412,
+          "cls": 0,
+          "tbtMs": 0,
+          "inpMs": null,
+          "scriptKb": 527,
+          "totalKb": 705
+        },
+        {
+          "status": 200,
+          "finalPath": "/",
+          "ttfbMs": 144,
+          "fcpMs": 468,
+          "lcpMs": 468,
+          "cls": 0,
+          "tbtMs": 0,
+          "inpMs": null,
+          "scriptKb": 527,
+          "totalKb": 705
+        },
+        {
+          "status": 200,
+          "finalPath": "/",
+          "ttfbMs": 45,
+          "fcpMs": 404,
+          "lcpMs": 404,
+          "cls": 0,
+          "tbtMs": 1,
+          "inpMs": null,
+          "scriptKb": 527,
+          "totalKb": 705
+        }
+      ]
+    },
+    {
+      "route": "/san-pham",
+      "profile": "mobile",
+      "finalPath": "/san-pham",
+      "median": {
+        "ttfbMs": 66,
+        "fcpMs": 1512,
+        "lcpMs": 5264,
+        "cls": 0,
+        "tbtMs": 619,
+        "inpMs": 32,
+        "scriptKb": 509,
+        "totalKb": 711
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/san-pham",
+          "ttfbMs": 66,
+          "fcpMs": 1484,
+          "lcpMs": 5264,
+          "cls": 0,
+          "tbtMs": 776,
+          "inpMs": 24,
+          "scriptKb": 509,
+          "totalKb": 711
+        },
+        {
+          "status": 200,
+          "finalPath": "/san-pham",
+          "ttfbMs": 67,
+          "fcpMs": 1512,
+          "lcpMs": 5424,
+          "cls": 0,
+          "tbtMs": 619,
+          "inpMs": 32,
+          "scriptKb": 509,
+          "totalKb": 711
+        },
+        {
+          "status": 200,
+          "finalPath": "/san-pham",
+          "ttfbMs": 62,
+          "fcpMs": 1528,
+          "lcpMs": 5240,
+          "cls": 0,
+          "tbtMs": 579,
+          "inpMs": 40,
+          "scriptKb": 509,
+          "totalKb": 711
+        }
+      ]
+    },
+    {
+      "route": "/san-pham",
+      "profile": "desktop",
+      "finalPath": "/san-pham",
+      "median": {
+        "ttfbMs": 51,
+        "fcpMs": 356,
+        "lcpMs": 796,
+        "cls": 0,
+        "tbtMs": 0,
+        "inpMs": null,
+        "scriptKb": 509,
+        "totalKb": 713
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/san-pham",
+          "ttfbMs": 53,
+          "fcpMs": 388,
+          "lcpMs": 840,
+          "cls": 0,
+          "tbtMs": 0,
+          "inpMs": null,
+          "scriptKb": 509,
+          "totalKb": 713
+        },
+        {
+          "status": 200,
+          "finalPath": "/san-pham",
+          "ttfbMs": 51,
+          "fcpMs": 320,
+          "lcpMs": 696,
+          "cls": 0,
+          "tbtMs": 0,
+          "inpMs": null,
+          "scriptKb": 509,
+          "totalKb": 713
+        },
+        {
+          "status": 200,
+          "finalPath": "/san-pham",
+          "ttfbMs": 33,
+          "fcpMs": 356,
+          "lcpMs": 796,
+          "cls": 0,
+          "tbtMs": 19,
+          "inpMs": null,
+          "scriptKb": 509,
+          "totalKb": 713
+        }
+      ]
+    },
+    {
+      "route": "/dieu-phoi",
+      "profile": "mobile",
+      "finalPath": "/dieu-phoi",
+      "median": {
+        "ttfbMs": 50,
+        "fcpMs": 1444,
+        "lcpMs": 1908,
+        "cls": 0,
+        "tbtMs": 612,
+        "inpMs": 40,
+        "scriptKb": 591,
+        "totalKb": 785
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/dieu-phoi",
+          "ttfbMs": 77,
+          "fcpMs": 1464,
+          "lcpMs": 2016,
+          "cls": 0,
+          "tbtMs": 612,
+          "inpMs": 32,
+          "scriptKb": 591,
+          "totalKb": 785
+        },
+        {
+          "status": 200,
+          "finalPath": "/dieu-phoi",
+          "ttfbMs": 44,
+          "fcpMs": 1440,
+          "lcpMs": 1908,
+          "cls": 0,
+          "tbtMs": 817,
+          "inpMs": 40,
+          "scriptKb": 591,
+          "totalKb": 785
+        },
+        {
+          "status": 200,
+          "finalPath": "/dieu-phoi",
+          "ttfbMs": 50,
+          "fcpMs": 1444,
+          "lcpMs": 1908,
+          "cls": 0,
+          "tbtMs": 580,
+          "inpMs": 48,
+          "scriptKb": 591,
+          "totalKb": 785
+        }
+      ]
+    },
+    {
+      "route": "/dieu-phoi",
+      "profile": "desktop",
+      "finalPath": "/dieu-phoi",
+      "median": {
+        "ttfbMs": 39,
+        "fcpMs": 408,
+        "lcpMs": 408,
+        "cls": 0.003,
+        "tbtMs": 12,
+        "inpMs": null,
+        "scriptKb": 591,
+        "totalKb": 785
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/dieu-phoi",
+          "ttfbMs": 38,
+          "fcpMs": 408,
+          "lcpMs": 408,
+          "cls": 0.003,
+          "tbtMs": 12,
+          "inpMs": null,
+          "scriptKb": 591,
+          "totalKb": 785
+        },
+        {
+          "status": 200,
+          "finalPath": "/dieu-phoi",
+          "ttfbMs": 39,
+          "fcpMs": 388,
+          "lcpMs": 388,
+          "cls": 0.003,
+          "tbtMs": 10,
+          "inpMs": null,
+          "scriptKb": 591,
+          "totalKb": 785
+        },
+        {
+          "status": 200,
+          "finalPath": "/dieu-phoi",
+          "ttfbMs": 42,
+          "fcpMs": 420,
+          "lcpMs": 420,
+          "cls": 0.003,
+          "tbtMs": 23,
+          "inpMs": null,
+          "scriptKb": 591,
+          "totalKb": 785
+        }
+      ]
+    },
+    {
+      "route": "/so-lieu",
+      "profile": "mobile",
+      "finalPath": "/so-lieu",
+      "median": {
+        "ttfbMs": 48,
+        "fcpMs": 1472,
+        "lcpMs": 1956,
+        "cls": 0.015,
+        "tbtMs": 623,
+        "inpMs": 48,
+        "scriptKb": 462,
+        "totalKb": 662
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/so-lieu",
+          "ttfbMs": 66,
+          "fcpMs": 1472,
+          "lcpMs": 1956,
+          "cls": 0.015,
+          "tbtMs": 562,
+          "inpMs": 24,
+          "scriptKb": 462,
+          "totalKb": 662
+        },
+        {
+          "status": 200,
+          "finalPath": "/so-lieu",
+          "ttfbMs": 46,
+          "fcpMs": 1400,
+          "lcpMs": 1896,
+          "cls": 0.015,
+          "tbtMs": 623,
+          "inpMs": 48,
+          "scriptKb": 462,
+          "totalKb": 662
+        },
+        {
+          "status": 200,
+          "finalPath": "/so-lieu",
+          "ttfbMs": 48,
+          "fcpMs": 1504,
+          "lcpMs": 1988,
+          "cls": 0.015,
+          "tbtMs": 840,
+          "inpMs": 48,
+          "scriptKb": 462,
+          "totalKb": 662
+        }
+      ]
+    },
+    {
+      "route": "/so-lieu",
+      "profile": "desktop",
+      "finalPath": "/so-lieu",
+      "median": {
+        "ttfbMs": 53,
+        "fcpMs": 368,
+        "lcpMs": 504,
+        "cls": 0.008,
+        "tbtMs": 3,
+        "inpMs": null,
+        "scriptKb": 462,
+        "totalKb": 657
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/so-lieu",
+          "ttfbMs": 61,
+          "fcpMs": 504,
+          "lcpMs": 504,
+          "cls": 0.008,
+          "tbtMs": 3,
+          "inpMs": null,
+          "scriptKb": 462,
+          "totalKb": 657
+        },
+        {
+          "status": 200,
+          "finalPath": "/so-lieu",
+          "ttfbMs": 53,
+          "fcpMs": 368,
+          "lcpMs": 692,
+          "cls": 0.008,
+          "tbtMs": 58,
+          "inpMs": null,
+          "scriptKb": 462,
+          "totalKb": 657
+        },
+        {
+          "status": 200,
+          "finalPath": "/so-lieu",
+          "ttfbMs": 45,
+          "fcpMs": 344,
+          "lcpMs": 344,
+          "cls": 0.008,
+          "tbtMs": 0,
+          "inpMs": null,
+          "scriptKb": 462,
+          "totalKb": 657
+        }
+      ]
+    },
+    {
+      "route": "/b/[sendCode]",
+      "profile": "mobile",
+      "skipped": "Database không có phiên gửi đang mở"
+    },
+    {
+      "route": "/b/[sendCode]",
+      "profile": "desktop",
+      "skipped": "Database không có phiên gửi đang mở"
+    },
+    {
+      "route": "/van-hanh",
+      "profile": "mobile",
+      "finalPath": "/van-hanh",
+      "median": {
+        "ttfbMs": 35,
+        "fcpMs": 1492,
+        "lcpMs": 1908,
+        "cls": 0,
+        "tbtMs": 677,
+        "inpMs": 40,
+        "scriptKb": 494,
+        "totalKb": 672
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/van-hanh",
+          "ttfbMs": 65,
+          "fcpMs": 1360,
+          "lcpMs": 1792,
+          "cls": 0,
+          "tbtMs": 382,
+          "inpMs": 48,
+          "scriptKb": 494,
+          "totalKb": 672
+        },
+        {
+          "status": 200,
+          "finalPath": "/van-hanh",
+          "ttfbMs": 35,
+          "fcpMs": 1492,
+          "lcpMs": 1908,
+          "cls": 0,
+          "tbtMs": 677,
+          "inpMs": 40,
+          "scriptKb": 494,
+          "totalKb": 672
+        },
+        {
+          "status": 200,
+          "finalPath": "/van-hanh",
+          "ttfbMs": 33,
+          "fcpMs": 1548,
+          "lcpMs": 1968,
+          "cls": 0,
+          "tbtMs": 706,
+          "inpMs": 24,
+          "scriptKb": 494,
+          "totalKb": 672
+        }
+      ]
+    },
+    {
+      "route": "/van-hanh",
+      "profile": "desktop",
+      "finalPath": "/van-hanh",
+      "median": {
+        "ttfbMs": 46,
+        "fcpMs": 272,
+        "lcpMs": 544,
+        "cls": 0,
+        "tbtMs": 13,
+        "inpMs": null,
+        "scriptKb": 468,
+        "totalKb": 645
+      },
+      "samples": [
+        {
+          "status": 200,
+          "finalPath": "/van-hanh",
+          "ttfbMs": 46,
+          "fcpMs": 272,
+          "lcpMs": 556,
+          "cls": 0,
+          "tbtMs": 16,
+          "inpMs": null,
+          "scriptKb": 468,
+          "totalKb": 645
+        },
+        {
+          "status": 200,
+          "finalPath": "/van-hanh",
+          "ttfbMs": 53,
+          "fcpMs": 312,
+          "lcpMs": 312,
+          "cls": 0,
+          "tbtMs": 0,
+          "inpMs": null,
+          "scriptKb": 468,
+          "totalKb": 645
+        },
+        {
+          "status": 200,
+          "finalPath": "/van-hanh",
+          "ttfbMs": 26,
+          "fcpMs": 220,
+          "lcpMs": 544,
+          "cls": 0,
+          "tbtMs": 13,
+          "inpMs": null,
+          "scriptKb": 468,
+          "totalKb": 645
+        }
+      ]
+    }
+  ]
+}

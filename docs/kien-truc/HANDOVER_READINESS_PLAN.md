@@ -34,9 +34,9 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 
 ## 4. H2 — Hiệu năng tải trang (1 ngày)
 
-- [ ] **H2-1** Script `scripts/measure-web-vitals.ts` đo bằng Playwright và `PerformanceObserver` của Chromium — không thêm thư viện. Đo LCP, CLS, TBT; INP qua Event Timing với một tương tác chuẩn mỗi tuyến. Hai cấu hình: di động (390×844, CPU chậm 4×, mạng 4G mô phỏng qua CDP) và máy tính (1280×800). Mỗi tuyến 3 lần, lấy trung vị.
-- [ ] **H2-2** Đo 6 tuyến của `12_PERFORMANCE_REPORT.md` (`/`, `/san-pham`, `/dieu-phoi`, `/so-lieu`, `/b/[sendCode]`, `/van-hanh`) trên bản build production, database đã seed. Lưu JSON vào `docs/audit/ui-architecture-audit/perf/<ngày>/`; cập nhật báo cáo với số đo và đường dẫn tệp. Số liệu ghi là số đo phòng thí nghiệm (lab), không phải số đo người dùng thật.
-- [ ] **H2-3** Tuyến vượt ngưỡng (LCP > 2,5 s, CLS > 0,1, INP > 200 ms): sửa trong đợt này nếu nguyên nhân rõ và sửa ≤ 0,5 ngày; còn lại ghi vào lộ trình kèm số đo.
+- [x] **H2-1** Script `scripts/measure-web-vitals.ts` đo bằng Playwright và `PerformanceObserver` của Chromium — không thêm thư viện. Đo LCP, CLS, TBT; INP qua Event Timing với một tương tác chuẩn mỗi tuyến. Hai cấu hình: di động (390×844, CPU chậm 4×, mạng 4G mô phỏng qua CDP) và máy tính (1280×800). Mỗi tuyến 3 lần, lấy trung vị.
+- [x] **H2-2** Đo 6 tuyến của `12_PERFORMANCE_REPORT.md` (`/`, `/san-pham`, `/dieu-phoi`, `/so-lieu`, `/b/[sendCode]`, `/van-hanh`) trên bản build production, database đã seed. Lưu JSON vào `docs/audit/ui-architecture-audit/perf/<ngày>/`; cập nhật báo cáo với số đo và đường dẫn tệp. Số liệu ghi là số đo phòng thí nghiệm (lab), không phải số đo người dùng thật.
+- [x] **H2-3** Tuyến vượt ngưỡng (LCP > 2,5 s, CLS > 0,1, INP > 200 ms): sửa trong đợt này nếu nguyên nhân rõ và sửa ≤ 0,5 ngày; còn lại ghi vào lộ trình kèm số đo. Kết quả 04/11: 5/5 tuyến đạt CLS và INP; LCP di động đạt 4/5, `/san-pham` 5,3 s do tải danh sách phía client sau hydrate — cần render phía server, vượt khung 0,5 ngày, ghi trong `12_PERFORMANCE_REPORT.md` §2. `/b/[sendCode]` đo sau khi seed E2E có link gửi (H3-1).
 
 ## 5. H3 — Trợ năng 12 hành trình (2–4 ngày)
 
@@ -92,9 +92,9 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 | H1-3 | Xong | `git log --grep "H1-3"` | `handover:check`, `npm test` | |
 | H1-4 | Xong | `git log --grep "H1-3"` | `check:docs`, `handover:check` | Cùng commit với H1-3 |
 | H1-5 | Xong | `git log --grep "H1-3"` | `handover:check` | Cùng commit với H1-3 |
-| H2-1 | Chưa làm | | | |
-| H2-2 | Chưa làm | | | |
-| H2-3 | Chưa làm | | | |
+| H2-1 | Xong | `git log --grep "H2-1"` | typecheck, ESLint | |
+| H2-2 | Xong | `git log --grep "H2-2"` | build | 5/6 tuyến; `/b/[sendCode]` chờ seed |
+| H2-3 | Xong | `git log --grep "H2-2"` | — | `/san-pham` LCP vào lộ trình |
 | H3-1 | Chưa làm | | | |
 | H3-2 | Chưa làm | | | |
 | H3-3 | Không thực hiện | | | Theo Q3 |
