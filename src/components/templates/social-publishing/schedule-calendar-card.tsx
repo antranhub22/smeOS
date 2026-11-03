@@ -205,7 +205,7 @@ export function ScheduleCalendarCard({
                       title="Phát sóng ngay bài viết này"
                     >
                       {publishingId === item.id ? (
-                        <RefreshCw size={11} className="animate-spin" />
+                        <RefreshCw size={11} className="animate-spin motion-reduce:animate-none" />
                       ) : (
                         <Send size={11} />
                       )}

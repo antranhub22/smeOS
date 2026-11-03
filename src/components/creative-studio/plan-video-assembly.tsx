@@ -195,10 +195,10 @@ export function PlanVideoAssembly({
 
       <div className="flex flex-wrap items-center gap-2">
         <Button variant="outline" size="sm" className="gap-1.5" disabled={busy !== null} onClick={() => void check()}>
-          {busy === "check" ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />} Kiểm tra lại
+          {busy === "check" ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <RefreshCw size={13} />} Kiểm tra lại
         </Button>
         <Button size="sm" className="gap-1.5" disabled={busy !== null || !report?.ready} onClick={() => void build()}>
-          {busy === "build" ? <Loader2 size={13} className="animate-spin" /> : <Clapperboard size={13} />} Dựng video {ratio}
+          {busy === "build" ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <Clapperboard size={13} />} Dựng video {ratio}
         </Button>
         <span className="text-caption text-text-muted">Tạo bản nháp miễn phí → duyệt kịch bản (P3) → render 5 credit → duyệt video (P4).</span>
       </div>

@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { Loader2, Plus, Save, Trash2, Wallet } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Disclosure } from "@/components/ui/disclosure"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
   depositPercentOf,
@@ -74,7 +75,7 @@ export function DepositLevelsSection() {
         phần còn lại trả sau khi hoa hoàn thành và cửa hàng gửi ảnh. Mã thanh toán không giảm giá — tổng đơn không đổi.
       </p>
       {!config ? (
-        <div className="h-20 rounded-lg bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-20 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <div className="flex flex-col gap-5 text-body-sm">
           <section className="flex flex-col gap-2">
@@ -93,8 +94,7 @@ export function DepositLevelsSection() {
                     <Trash2 size={14} />
                   </Button>
                 </div>
-                <details className="text-caption">
-                  <summary className="cursor-pointer text-primary">Điều kiện áp dụng</summary>
+                <Disclosure label="Điều kiện áp dụng" className="p-3 text-caption">
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <label className="flex items-center gap-1">Từ ngày <input type="date" value={c.startsOn ?? ""} onChange={(e) => setCode(i, { startsOn: e.target.value || null })} className={FIELD} /></label>
                     <label className="flex items-center gap-1">đến <input type="date" value={c.endsOn ?? ""} onChange={(e) => setCode(i, { endsOn: e.target.value || null })} className={FIELD} /></label>
@@ -118,7 +118,7 @@ export function DepositLevelsSection() {
                     ))}
                     {catalogs.error && <span role="alert" className="text-danger">Không tải được danh sách bộ sưu tập</span>}
                   </fieldset>
-                </details>
+                </Disclosure>
               </div>
             ))}
             <div className="flex flex-wrap items-center gap-2">
@@ -143,7 +143,7 @@ export function DepositLevelsSection() {
           {message?.text ?? "Khách chỉ nhập mã do cửa hàng cấp, không tự chọn phần trăm."}
         </p>
         <Button type="submit" size="sm" disabled={saving || !draft || errors.length > 0} className="gap-1.5 shrink-0">
-          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />}
           <span>Lưu mức đặt cọc</span>
         </Button>
       </div>

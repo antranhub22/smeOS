@@ -1,0 +1,32 @@
+import { notFound } from "@/core/http/errors"
+import { enforceRateLimit } from "@/core/http/rate-limit"
+import { handle, jsonResponse } from "@/core/http/response"
+import { isQuotationExpired } from "@/modules/sales/domain/quotation"
+import { getQuotationRepository } from "@/modules/sales/infra/quotation-repository"
+
+/**
+ * Xem báo giá qua link công khai. Không có phiên đăng nhập: quyền xem là token
+ * ngẫu nhiên 256 bit trong URL. Báo giá nháp không xem được; dữ liệu trả về không
+ * có số điện thoại, ghi chú nội bộ hay mã tổ chức.
+ */
+export const GET = handle(async (request, context) => {
+  await enforceRateLimit(request, { scope: "public-quotation", limit: 60, windowMs: 60_000 })
+
+  const { token } = await (context as { params: Promise<{ token: string }> }).params
+  if (!token || typeof token !== "string" || token.length > 128) {
+    throw notFound()
+  }
+
+  const quotation = await getQuotationRepository().findPublicByToken(token)
+  if (!quotation) {
+    throw notFound()
+  }
+
+  const isExpired = isQuotationExpired(quotation)
+  return jsonResponse({
+    data: {
+      ...quotation,
+      status: isExpired && quotation.status !== "CONVERTED" ? "EXPIRED" : quotation.status,
+    },
+  })
+})

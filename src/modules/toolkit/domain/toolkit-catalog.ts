@@ -15,7 +15,7 @@ export type ToolStatus = "DONE" | "IN_PROGRESS" | "FOUNDATION" | "PLANNED"
 export type ToolLabel = "STORE" | "BOTH" | "CHAIN"
 
 export interface ToolDefinition {
-  /** Số thứ tự 00-50; số âm là công cụ trong lộ trình (growth-modules.ts) */
+  /** Số thứ tự 00-50; số âm là công cụ trong lộ trình (business-modules.ts) */
   readonly id: number
   /** Tên chức năng tiếng Việt */
   readonly name: string

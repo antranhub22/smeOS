@@ -4,6 +4,8 @@ import { useMemo, useState } from "react"
 import { Package } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -110,17 +112,17 @@ export default function NguyenLieuPage() {
             </label>
             <label className="flex flex-col gap-1 text-body-sm text-text">
               Nhóm
-              <select className={selectClass} value={category} onChange={(e) => setCategory(e.target.value)}>
+              <NativeSelect value={category} onChange={(e) => setCategory(e.target.value)}>
                 <option value="">Tất cả nhóm</option>
                 {spec.materialCategories.map((c) => (
                   <option key={c.key} value={c.key}>
                     {c.label}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
-            <label className="flex h-11 items-center gap-2 text-body-sm text-text">
-              <input type="checkbox" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} />
+            <label className="flex h-11 items-center gap-2 text-body-sm text-text cursor-pointer">
+              <Checkbox checked={showInactive} onCheckedChange={(checked) => setShowInactive(Boolean(checked))} />
               Hiện cả nguyên liệu đã ngừng dùng
             </label>
           </div>

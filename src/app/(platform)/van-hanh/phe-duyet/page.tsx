@@ -7,7 +7,6 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { CheckCircle2, XCircle, RefreshCw, InboxIcon } from "@/components/ui/icons"
-import { InfoTip } from "@/components/ui/info-tip"
 import {
   ApprovalCard,
   TYPE_META,
@@ -16,6 +15,9 @@ import {
   type PendingApprovalItem,
 } from "@/components/platform/approval-card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function PheQuyetPage() {
   const [items, setItems] = useState<PendingApprovalItem[] | null>(null)
@@ -23,6 +25,7 @@ export default function PheQuyetPage() {
   const [processing, setProcessing] = useState<string | null>(null)
   const [toast, setToast] = useState<ApproveResult | null>(null)
   const [filter, setFilter] = useState<"ALL" | PendingApprovalItem["type"]>("ALL")
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   const tai = useCallback(async () => {
     setLoi(null)
@@ -72,11 +75,15 @@ export default function PheQuyetPage() {
 
   const handleReject = async (item: PendingApprovalItem) => {
     if (
-      !window.confirm(
-        `Xác nhận TỪ CHỐI yêu cầu "${TYPE_META[item.type].label}" từ cửa hàng "${item.organizationName}"?`
-      )
-    )
+      !(await confirm({
+        title: "Xác nhận từ chối yêu cầu?",
+        consequence: `Từ chối yêu cầu "${TYPE_META[item.type].label}" từ cửa hàng "${item.organizationName}".`,
+        confirmLabel: "Từ chối",
+        tone: "danger",
+      }))
+    ) {
       return
+    }
 
     setProcessing(item.id)
     try {
@@ -114,23 +121,23 @@ export default function PheQuyetPage() {
   return (
     <div className="space-y-5 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <h1 className="text-title font-bold text-text">Yêu cầu phê duyệt</h1>
-          <InfoTip label="Yêu cầu phê duyệt">
-            Tổng hợp các yêu cầu đang chờ Admin xem xét: mở khoá quốc tế, đổi mô hình cửa hàng, nâng hạn mức AI.
-          </InfoTip>
-        </div>
-        <button
-          type="button"
-          id="refresh-pending-approvals"
-          onClick={() => void tai()}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface text-caption font-semibold text-text-muted hover:bg-surface-alt hover:text-text transition-colors cursor-pointer"
-        >
-          <RefreshCw size={13} aria-hidden />
-          Tải lại
-        </button>
-      </div>
+      <PageHeader
+        title="Yêu cầu phê duyệt"
+        tip="Tổng hợp các yêu cầu đang chờ Admin xem xét: mở khoá quốc tế, đổi mô hình cửa hàng, nâng hạn mức AI."
+        actions={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            id="refresh-pending-approvals"
+            onClick={() => void tai()}
+            className="h-auto py-1.5 px-3 text-caption font-semibold"
+          >
+            <RefreshCw size={13} aria-hidden />
+            Tải lại
+          </Button>
+        }
+      />
 
       {/* Toast notification */}
       {toast && (
@@ -162,16 +169,14 @@ export default function PheQuyetPage() {
         <>
           <div className="flex items-center gap-1.5 flex-wrap">
             {(["ALL", ...(Object.keys(TYPE_META) as PendingApprovalItem["type"][])] as const).map((t) => (
-              <button
+              <Button
                 key={t}
                 type="button"
+                variant={filter === t ? "primary" : "outline"}
+                size="xs"
                 id={`filter-${t.toLowerCase()}`}
                 onClick={() => setFilter(t)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-colors cursor-pointer ${
-                  filter === t
-                    ? "bg-primary text-surface"
-                    : "bg-surface border border-border text-text-muted hover:bg-surface-alt"
-                }`}
+                className="rounded-full px-3 py-1.5 h-auto text-caption font-semibold"
               >
                 {t === "ALL" ? "Tất cả" : (
                   <>
@@ -180,12 +185,12 @@ export default function PheQuyetPage() {
                 )}
                 <span
                   className={`ml-0.5 px-1.5 py-0.5 rounded-full text-caption font-bold ${
-                    filter === t ? "bg-white/20" : "bg-muted text-text"
+                    filter === t ? "bg-white/20" : "bg-surface-alt text-text"
                   }`}
                 >
                   {countOf(t)}
                 </span>
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -219,6 +224,7 @@ export default function PheQuyetPage() {
           )}
         </>
       )}
+      {confirmDialog}
     </div>
   )
 }

@@ -10,6 +10,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useCostingResource, type CostingProfile } from "@/components/costing/use-costing-api"
 import { CostingProfileProvider } from "@/components/costing/costing-profile-context"
 import { SelectedProductProvider } from "@/components/costing/product-picker"
+import { PageHeader } from "@/components/ui/page-header"
 
 /** Nhóm công cụ 6 — một không gian, 5 công cụ theo đúng thứ tự dữ liệu (#32 → #31 → #33 → #34 → #35). */
 const TABS: (TabItem & { href: string })[] = [
@@ -28,12 +29,10 @@ export default function TinhGiaLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6 sm:px-6">
-      <header>
-        <h1 className="text-title font-bold text-text">Giá vốn & định giá</h1>
-        <p className="mt-1 text-body-sm text-text-muted">
-          Nhập đơn giá nguyên liệu, ghi công thức từng mẫu — hệ thống tính giá vốn, gợi ý giá bán và số nguyên liệu cần mua.
-        </p>
-      </header>
+      <PageHeader
+        title="Giá vốn & định giá"
+        description="Nhập đơn giá nguyên liệu, ghi công thức từng mẫu — hệ thống tính giá vốn, gợi ý giá bán và số nguyên liệu cần mua."
+      />
       {state.status === "loading" && <SkeletonBlock lines={4} label="Đang tải cấu hình tính giá" />}
       {state.status === "error" && <InlineError message={state.message} onRetry={reload} />}
       {state.status === "ready" && (

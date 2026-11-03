@@ -78,7 +78,7 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
   if (!kinds) {
     return (
       <p className="flex items-center gap-2 text-xs text-text-muted">
-        <Loader2 size={13} className="animate-spin" /> Đang tải danh mục nhà cung cấp...
+        <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> Đang tải danh mục nhà cung cấp...
       </p>
     )
   }

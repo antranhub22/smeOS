@@ -61,7 +61,7 @@ export function RecentImportBatches() {
                 <>
                   <Button size="sm" variant="outline" disabled={dangGui} onClick={() => setXacNhan(null)}>Huỷ</Button>
                   <Button size="sm" className="font-bold" disabled={dangGui} onClick={() => hoanTac(b.id)}>
-                    {dangGui && <Loader2 size={15} className="animate-spin" />}
+                    {dangGui && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />}
                     <span>Xác nhận hoàn tác</span>
                   </Button>
                 </>

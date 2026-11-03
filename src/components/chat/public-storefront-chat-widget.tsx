@@ -129,7 +129,7 @@ export function PublicStorefrontChatWidget({
             className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-primary/95 to-primary-dark p-3.5 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105"
             aria-label="Tư vấn đặt hoa"
           >
-            <MessageCircle className="h-6 w-6 animate-pulse" />
+            <MessageCircle className="h-6 w-6 animate-pulse motion-reduce:animate-none" />
             <span className="hidden sm:inline-block pr-1 text-xs font-bold tracking-wide">
               Tư vấn đặt hoa
             </span>
@@ -308,7 +308,7 @@ export function PublicStorefrontChatWidget({
                 disabled={!inputQuery.trim() || sending}
                 className="h-8 w-8 p-0 rounded-xl bg-primary hover:bg-primary-dark text-white shrink-0"
               >
-                {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" /> : <Send className="h-3.5 w-3.5" />}
               </Button>
             </form>
           </div>

@@ -2,7 +2,7 @@
 
 > Level 3 SUPPORTING · `CANONICAL` cho agent (PO 29/10/2026, PD8) · nạp qua `CLAUDE.md`.
  Mọi màn/công cụ mới hoặc sửa giao diện **phải** theo cơ chế dưới đây. Đây là bản tóm tắt bắt buộc; luật đầy đủ ở SSOT, khi lệch thì SSOT thắng:
-`docs/dac-ta/03a-ux-constitution.md` · `docs/dac-ta/03c-ux-progressive-disclosure.md` (PD1–PD8, UX-015…UX-028, DoD §9) · `docs/dac-ta/ux-patterns/` (UX-P01…P12, `page-archetypes.md`, `visual-review.md`) · nhật ký audit `docs/ui-ux/MEUX_DEEP_AUDIT.md`.
+`docs/dac-ta/03a-ux-constitution.md` · `docs/dac-ta/03c-ux-progressive-disclosure.md` (PD1–PD8, UX-015…UX-028, DoD §9) · `docs/dac-ta/ux-patterns/` (UX-P01…P12, `page-archetypes.md`, `visual-review.md`) · nhật ký audit `docs/design-system/audit-log.md`.
 
 ## 1. Cơ chế (làm theo thứ tự)
 1. **Phân loại trang** theo archetype A–F (`page-archetypes.md`) và khai trong Screen Contract.
@@ -40,9 +40,9 @@ Làm đủ, đúng thứ tự; báo cáo theo mẫu ở cuối.
 2. **Kiểm kê trạng thái**: liệt kê mọi trạng thái người dùng gặp — rỗng, có dữ liệu, đang chạy, kết quả, lỗi, từng bước wizard, hộp thoại mở/đóng, chế độ AI/thủ công, trang khách xem (link công khai).
 3. **Kịch bản audit**: viết/cập nhật `scripts/ux-audit/scenarios/<trang>.mjs` đi qua đủ các trạng thái ở bước 2 (xem kịch bản mẫu `the-chao`, `landing-page`, `poster-banner`, `tinh-gia`).
 4. **Audit trước khi sửa**: chạy dev server với database `*_test`, rồi
-   `DATABASE_URL=…_test UX_AUDIT_BASE_URL=http://localhost:3100 npm run ux:audit -- <trang>`
+   `DATABASE_URL=…_test UX_AUDIT_BASE_URL=http://localhost:3200 npm run ux:audit -- <trang>`
    (thiếu kịch bản thì `npm run ux:audit -- /đường-dẫn` để có điểm khởi đầu). Đọc **từng ảnh** trong `ux-audit-output/` — công cụ chỉ bắt axe, cuộn ngang và dấu hiệu nội dung; bố cục, phân tầng, dữ liệu giả, ưu đãi, chữ tiếng Anh/mã kỹ thuật phải soát bằng mắt theo §1–§3 và `visual-review.md`.
-5. **Ghi findings** vào `docs/ui-ux/MEUX_DEEP_AUDIT.md` (bảng ID · mức P0–P3 · finding · đã làm) — mức theo `visual-review.md` §2.
+5. **Ghi findings** vào `docs/design-system/audit-log.md` (bảng ID · mức P0–P3 · finding · đã làm) — mức theo `visual-review.md` §2.
 6. **Phân loại**: P0/P1 và lỗi trợ năng → sửa ngay. Đụng UX khoá (K1, K2, shell, Spotlight), token, quy tắc nghiệp vụ, schema, dependency → **dừng, hỏi PO** (liệt kê ở mục "Cần PO quyết"). Ngoài phạm vi trang → chỉ ghi lại.
 7. **Sửa** theo §1–§3, giữ ≤ 350 dòng/tệp (tệp đã vượt thì không làm dài thêm); quy tắc nghiệp vụ hoặc bug mới kèm test; cập nhật Screen Contract/đặc tả trong cùng commit.
 8. **Audit lại** cùng kịch bản đến khi không còn ✗ (hoặc ✗ còn lại đã ghi là cần PO); kiểm gate: `typecheck`, `lint:ratchet`, `lint:ux -- --check`, `npm test`, `check:docs` (+ gate khác theo `CLAUDE.md`).
@@ -53,7 +53,7 @@ Mẫu báo cáo cho PO (tiếng Việt): trang · các trạng thái đã kiểm
 ## 6. Phong cách hiển thị "Thoáng – Ít chữ – Icon lớn" (PO duyệt 30/10/2026, mẫu chuẩn `/cong-cu`)
 Áp dụng cho màn tổng quan, lưới thẻ, trang chủ công cụ; không thay §1–§3 (khi lệch, §1–§3 thắng).
 1. **Nhãn ≤ 5 từ** (tiêu đề thẻ, nút, chỉ số). Câu giải thích, mục đích, cách tính → đưa vào `InfoTip` (`src/components/ui/info-tip.tsx`, icon "?" cạnh nhãn). **Ngoại lệ:** lỗi, chi phí, điều kiện, rủi ro, quyền vẫn phải hiện trực tiếp (UX-017) — không giấu vào "?".
-2. **Icon lớn làm điểm nhìn**: thẻ điều hướng dùng ô icon 64px trên máy tính, 48px trên điện thoại (`w-12 h-12 sm:w-16 sm:h-16`) trên nền `bg-primary-muted`; mỗi thẻ đúng 1 icon, cùng một bộ icon (lucide), icon chỉ trang trí thì `aria-hidden`.
+2. **Icon lớn làm điểm nhìn**: thẻ điều hướng dùng ô icon 64px trên máy tính, 48px trên điện thoại (`w-12 h-12 sm:w-16 sm:h-16`) trên nền `bg-primary-muted`; mỗi thẻ đúng 1 icon, cùng một bộ icon chuẩn Phosphor (bọc trong `@/components/ui/icons`), icon chỉ trang trí thì `aria-hidden`.
 3. **Nổi khối nội dung chính**: nền trang `bg-bg`, khối chính `bg-surface` + `shadow-sm` + `rounded-2xl`; không kẻ viền dày, không nhiều lớp khung lồng nhau. Mỗi màn chỉ 1 khối nhấn mạnh (màu `bg-primary`) cho việc chính L0.
 4. **Khoảng trống**: padding thẻ ≥ 20px (`p-5`, desktop `p-6`), khoảng cách lưới ≥ 16px (desktop 24px), giữa các khu ≥ 32px. Một khu = một ý.
 5. **Tooltip dùng được trên điện thoại**: chạm mở/đóng, vùng bấm ≥ 32px, có nhãn truy cập "Giải thích: …"; không lồng `InfoTip` trong nút — thẻ bấm được dùng nút phủ `after:absolute after:inset-0`.

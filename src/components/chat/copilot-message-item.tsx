@@ -100,7 +100,7 @@ export function CopilotMessageItem({
         >
           {displayedText}
           {isTyping && (
-            <span className="inline-block w-1.5 h-3.5 ml-0.5 bg-primary rounded-xs animate-pulse align-middle" />
+            <span className="inline-block w-1.5 h-3.5 ml-0.5 bg-primary rounded-xs animate-pulse motion-reduce:animate-none align-middle" />
           )}
         </div>
 
@@ -155,7 +155,7 @@ export function CopilotMessageItem({
                   className="h-7 px-2.5 bg-primary hover:bg-primary-dark text-white text-caption shrink-0"
                 >
                   {creatingOrderFor === f.productId ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
+                    <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
                   ) : (
                     <>
                       <ShoppingBag className="mr-1 h-3 w-3" /> Chốt đơn

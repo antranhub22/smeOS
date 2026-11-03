@@ -17,6 +17,7 @@ export const ORDER_SOURCE_CODES = [
   "MANUAL",
   "CHANNEL",
   "NETWORK",
+  "QUOTATION",
 ] as const
 
 export type OrderSourceCode = (typeof ORDER_SOURCE_CODES)[number]
@@ -51,6 +52,7 @@ export const ORDER_SOURCES: Readonly<Record<OrderSourceCode, OrderSourceDefiniti
   MANUAL: { code: "MANUAL", label: "Nhập tay", entryStage: "AWAITING_PAYMENT", hasLead: false, hasCustomerEntryActions: false },
   CHANNEL: { code: "CHANNEL", label: "Kênh bán ngoài", entryStage: "COORDINATION", hasLead: false, hasCustomerEntryActions: false },
   NETWORK: { code: "NETWORK", label: "Đơn từ mạng lưới", entryStage: "COORDINATION", hasLead: false, hasCustomerEntryActions: false },
+  QUOTATION: { code: "QUOTATION", label: "Báo giá", entryStage: "AWAITING_PAYMENT", hasLead: true, hasCustomerEntryActions: false },
 }
 
 export function isOrderSourceCode(value: unknown): value is OrderSourceCode {

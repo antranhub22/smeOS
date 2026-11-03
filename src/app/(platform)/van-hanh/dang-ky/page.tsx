@@ -3,12 +3,13 @@
 // Duyệt tài khoản tự đăng ký (`N13`, PO 22/10/2026). Xem đặc tả 06 mục 21.
 
 import { useCallback, useEffect, useState } from "react"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useI18n } from "@/lib/i18n"
 import { formatDateTime } from "@/lib/i18n/formatters"
+import { PageHeader } from "@/components/ui/page-header"
 
 type PendingRegistration = {
   userId: string
@@ -30,6 +31,7 @@ async function taiDanhSach(): Promise<{ data: PendingRegistration[] } | { loi: s
 
 export default function DuyetDangKyPage() {
   const { t, dict } = useI18n()
+  const [confirm, confirmDialog] = useConfirmDialog()
   const [items, setItems] = useState<PendingRegistration[] | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [dangXuLy, setDangXuLy] = useState<string | null>(null)
@@ -45,7 +47,17 @@ export default function DuyetDangKyPage() {
   }, [apDung])
 
   async function quyet(item: PendingRegistration, decision: "APPROVE" | "REJECT") {
-    if (decision === "REJECT" && !window.confirm(`Từ chối đăng ký của ${item.email}?`)) return
+    if (
+      decision === "REJECT" &&
+      !(await confirm({
+        title: `Từ chối đăng ký của ${item.email}?`,
+        consequence: "Yêu cầu đăng ký sẽ bị huỷ bỏ.",
+        confirmLabel: "Từ chối",
+        tone: "danger",
+      }))
+    ) {
+      return
+    }
     setDangXuLy(item.userId)
     setLoi(null)
     try {
@@ -72,23 +84,22 @@ export default function DuyetDangKyPage() {
 
   return (
     <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
-      <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Duyệt đăng ký</h1>
-          <InfoTip label="Duyệt đăng ký">
-            Tài khoản tự đăng ký hoặc dùng thử chỉ đăng nhập được sau khi bạn duyệt.
-          </InfoTip>
-        </div>
-        <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">{items?.length ?? 0} đang chờ</span>
-      </div>
+      <PageHeader
+        className="mb-3 border-b border-border pb-2"
+        title="Duyệt đăng ký"
+        tip="Tài khoản tự đăng ký hoặc dùng thử chỉ đăng nhập được sau khi bạn duyệt."
+        actions={
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">{items?.length ?? 0} đang chờ</span>
+        }
+      />
 
-      {loi && <p className="mb-3 text-sm text-danger">{loi}</p>}
+      {loi && <p className="mb-3 text-body-sm text-danger">{loi}</p>}
 
       {matKhauTam && (
-        <div className="mb-3 rounded-lg border border-warning/30 bg-warning/10 p-3 text-sm" role="status">
+        <div className="mb-3 rounded-lg border border-warning/30 bg-warning/10 p-3 text-body-sm" role="status">
           <div className="font-semibold text-text">Mật khẩu tạm cho {matKhauTam.email}</div>
-          <div className="mt-1 font-mono text-base text-text select-all">{matKhauTam.password}</div>
-          <div className="mt-1 text-xs text-text-muted">
+          <div className="mt-1 font-mono text-body text-text select-all">{matKhauTam.password}</div>
+          <div className="mt-1 text-caption text-text-muted">
             Chỉ hiện một lần. Gửi cho khách{matKhauTam.phone ? ` qua số ${matKhauTam.phone}` : ""} rồi đóng thông báo này.
           </div>
           <Button type="button" variant="outline" className="mt-2" onClick={() => setMatKhauTam(null)}>
@@ -98,9 +109,9 @@ export default function DuyetDangKyPage() {
       )}
 
       {items && items.length === 0 ? (
-        <p className="py-6 text-center text-sm text-text-muted">Không có đăng ký nào đang chờ.</p>
+        <p className="py-6 text-center text-body-sm text-text-muted">Không có đăng ký nào đang chờ.</p>
       ) : (
-        <table className="w-full text-left text-xs">
+        <table className="w-full text-left text-caption">
           <thead>
             <tr className="border-b border-border text-text-muted">
               <th className="py-2 pr-3">Tài khoản</th>
@@ -137,6 +148,7 @@ export default function DuyetDangKyPage() {
           </tbody>
         </table>
       )}
+      {confirmDialog}
     </Card>
   )
 }

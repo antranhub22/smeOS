@@ -70,7 +70,7 @@ export function ProductRevisionsCard({ productId, onChanged }: { productId: stri
               <>
                 <Button size="sm" variant="outline" disabled={dangGui} onClick={() => setXacNhan(null)}>Huỷ</Button>
                 <Button size="sm" className="font-bold" disabled={dangGui} onClick={() => khoiPhuc(r.id)}>
-                  {dangGui && <Loader2 size={15} className="animate-spin" />}
+                  {dangGui && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />}
                   <span>Xác nhận khôi phục</span>
                 </Button>
               </>

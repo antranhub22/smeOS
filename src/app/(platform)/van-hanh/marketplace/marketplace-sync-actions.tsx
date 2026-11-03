@@ -131,7 +131,7 @@ export function MarketplaceSyncActions({ loading, onRefresh }: MarketplaceSyncAc
       {notice && (
         <div
           role="status"
-          className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium ${
+          className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-caption font-medium ${
             notice.tone === "success" ? "border-success-border bg-success-bg text-success-text" : "border-danger-border bg-danger-bg text-danger-text"
           }`}
         >
@@ -147,15 +147,15 @@ export function MarketplaceSyncActions({ loading, onRefresh }: MarketplaceSyncAc
         {busy === "excel" ? (pending ? "Đang nhập tệp..." : "Đang đọc tệp...") : "Nhập tệp Excel"}
       </Button>
       <Button type="button" variant="outline" size="sm" onClick={() => void syncSheet()} disabled={disabled} title="Lấy dữ liệu khảo sát mới nhất từ Google Sheet">
-        <Download className={`mr-1.5 h-4 w-4 text-primary ${busy === "sheet" ? "animate-pulse" : ""}`} />
+        <Download className={`mr-1.5 h-4 w-4 text-primary ${busy === "sheet" ? "animate-pulse motion-reduce:animate-none" : ""}`} />
         {busy === "sheet" ? "Đang đồng bộ..." : "Đồng bộ từ Sheet"}
       </Button>
       <Button type="button" variant="outline" size="sm" onClick={() => void syncPhotos()} disabled={disabled} title="Tải ảnh khảo sát từ Google Drive vào kho lưu trữ">
-        <Images className={`mr-1.5 h-4 w-4 text-info ${busy === "photos" ? "animate-pulse" : ""}`} />
+        <Images className={`mr-1.5 h-4 w-4 text-info ${busy === "photos" ? "animate-pulse motion-reduce:animate-none" : ""}`} />
         {busy === "photos" ? "Đang tải ảnh..." : "Tải ảnh khảo sát"}
       </Button>
       <Button type="button" variant="ghost" size="sm" onClick={() => void onRefresh()} disabled={disabled} title="Làm mới danh sách" aria-label="Làm mới danh sách">
-        <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+        <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin motion-reduce:animate-none" : ""}`} />
       </Button>
     </div>
   )

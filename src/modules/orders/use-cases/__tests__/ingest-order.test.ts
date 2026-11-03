@@ -47,4 +47,12 @@ describe("ingestOrder — cổng nhận đơn chung", () => {
     expect(d.isActiveMember).not.toHaveBeenCalled()
     expect(d.create).toHaveBeenCalledOnce()
   })
+
+  it("nhận đơn từ nguồn QUOTATION (Báo giá)", async () => {
+    const d = deps()
+    const input: IngestOrderInput = { source: "QUOTATION", items, leadId: "lead-q1" }
+    const result = await ingestOrder(ctx, input, d)
+    expect(d.create).toHaveBeenCalledWith(ctx, input)
+    expect(result.source).toBe("QUOTATION")
+  })
 })

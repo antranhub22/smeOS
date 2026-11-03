@@ -5,6 +5,7 @@ import { UserPlus, Mail, Shield, Building } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 
 export interface RoleOption {
   id: string
@@ -118,12 +119,11 @@ export function InviteMemberDialog({
             <Shield size={15} className="text-text-muted" />
             <span>Vai trò phụ trách</span>
           </label>
-          <select
+          <NativeSelect
             value={roleId}
             onChange={(e) => setRoleId(e.target.value)}
             disabled={submitting}
             required
-            className="flex h-11 w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text transition-colors focus-visible:outline-2 focus-visible:outline-primary"
           >
             <option value="">-- Chọn vai trò cho nhân viên --</option>
             {roles.map((r) => (
@@ -131,7 +131,7 @@ export function InviteMemberDialog({
                 {r.name} ({r.key})
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
 
         {/* Chi nhánh (tùy chọn) */}
@@ -141,11 +141,10 @@ export function InviteMemberDialog({
               <Building size={15} className="text-text-muted" />
               <span>Chi nhánh làm việc (tùy chọn)</span>
             </label>
-            <select
+            <NativeSelect
               value={branchId}
               onChange={(e) => setBranchId(e.target.value)}
               disabled={submitting}
-              className="flex h-11 w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text transition-colors focus-visible:outline-2 focus-visible:outline-primary"
             >
               <option value="">Toàn bộ cửa hàng (Không giới hạn chi nhánh)</option>
               {branches.map((b) => (
@@ -153,7 +152,7 @@ export function InviteMemberDialog({
                   {b.name} ({b.code})
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
         )}
 

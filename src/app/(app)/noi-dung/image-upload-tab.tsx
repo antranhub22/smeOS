@@ -17,11 +17,11 @@ const STEP_LABELS: Record<string, string> = {
   registering: "Đang đăng ký ảnh vào hệ thống...",
   analyzing: "AI đang phân tích thị giác sản phẩm...",
   generating: "Đang soạn bài cho các kênh đã chọn...",
-  done: "Hoàn tất — kéo xuống xem kết quả!",
+  succeeded: "Hoàn tất — kéo xuống xem kết quả!",
   error: "Đã có lỗi xảy ra",
 }
 
-const STEP_FLOW = ["uploading", "registering", "analyzing", "generating", "done"] as const
+const STEP_FLOW = ["uploading", "registering", "analyzing", "generating", "succeeded"] as const
 
 interface ImageUploadTabProps {
   state: UploadFlowState
@@ -76,14 +76,14 @@ export function ImageUploadTab({
   }
 
   const isRunning = ["uploading", "registering", "analyzing", "generating"].includes(state.step)
-  const isDone = state.step === "done"
+  const isDone = state.step === "succeeded"
   const isError = state.step === "error"
   const currentStepIndex = STEP_FLOW.indexOf(state.step as (typeof STEP_FLOW)[number])
 
   return (
     <div className="flex flex-col gap-4">
       {/* ─── Drag & Drop Zone ─── */}
-      <Card className="border border-dashed border-primary/40 bg-card p-5 shadow-sm">
+      <Card className="border border-dashed border-primary/40 bg-surface p-5 shadow-sm">
         <div
           role="button"
           tabIndex={0}
@@ -104,7 +104,7 @@ export function ImageUploadTab({
               />
               {!isRunning && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity rounded-xl">
-                  <span className="text-white text-xs font-bold">Đổi ảnh khác</span>
+                  <span className="text-white text-caption font-bold">Đổi ảnh khác</span>
                 </div>
               )}
             </div>
@@ -114,12 +114,12 @@ export function ImageUploadTab({
                 <ImageIcon size={32} className="text-primary" />
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-text">Kéo thả ảnh sản phẩm vào đây</div>
+                <div className="text-body-sm font-bold text-text">Kéo thả ảnh sản phẩm vào đây</div>
                 <div className="text-caption text-text-muted mt-0.5">
                   hoặc nhấp để chọn từ thiết bị · JPG, PNG, WEBP · Tối đa 10MB
                 </div>
               </div>
-              <span className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-text" aria-hidden="true">
+              <span className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-caption font-semibold text-text" aria-hidden="true">
                 <Upload size={13} />
                 Chọn ảnh từ máy
               </span>
@@ -143,10 +143,10 @@ export function ImageUploadTab({
 
       {/* ─── Thanh tiến trình luồng 5 bước ─── */}
       {isRunning && (
-        <Card className="border border-border bg-card p-4 shadow-sm">
+        <Card className="border border-border bg-surface p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <Loader2 size={15} className="text-primary animate-spin" />
-            <span className="text-xs font-bold text-primary animate-pulse">
+            <Loader2 size={15} className="text-primary animate-spin motion-reduce:animate-none" />
+            <span className="text-caption font-bold text-primary animate-pulse motion-reduce:animate-none">
               {STEP_LABELS[state.step]}
             </span>
           </div>
@@ -161,7 +161,7 @@ export function ImageUploadTab({
 
           {/* Step indicators */}
           <div className="flex items-center justify-between mt-3">
-            {STEP_FLOW.filter((s) => s !== "done").map((s, idx) => {
+            {STEP_FLOW.filter((s) => s !== "succeeded").map((s, idx) => {
               const isActive = idx === currentStepIndex
               const isPast = idx < currentStepIndex
               return (
@@ -171,7 +171,7 @@ export function ImageUploadTab({
                       isPast
                         ? "bg-success"
                         : isActive
-                        ? "bg-primary animate-pulse"
+                        ? "bg-primary animate-pulse motion-reduce:animate-none"
                         : "bg-border"
                     }`}
                   />
@@ -193,18 +193,18 @@ export function ImageUploadTab({
 
       {/* ─── Trạng thái Xong / Lỗi ─── */}
       {isDone && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-success/10 border border-success/30 text-xs font-semibold text-success">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-success/10 border border-success/30 text-caption font-semibold text-success">
           <CheckCircle2 size={15} />
           AI đã hoàn tất phân tích ảnh và sinh bài viết đa kênh. Kéo xuống để xem kết quả!
         </div>
       )}
       {isError && (
-        <div className="flex flex-col gap-2 p-3 rounded-xl bg-danger/10 border border-danger/30 text-xs text-danger">
+        <div className="flex flex-col gap-2 p-3 rounded-xl bg-danger/10 border border-danger/30 text-caption text-danger">
           <div className="flex items-center gap-2 font-semibold">
             <AlertCircle size={15} />
             {state.errorMessage || "Đã có lỗi trong quá trình xử lý."}
           </div>
-          <Button variant="outline" size="sm" className="text-xs gap-1.5 self-start" onClick={handleReset}>
+          <Button variant="outline" size="sm" className="text-caption gap-1.5 self-start" onClick={handleReset}>
             <RefreshCw size={12} />
             Thử lại
           </Button>
@@ -214,7 +214,7 @@ export function ImageUploadTab({
       {/* ─── CTA: Kích hoạt luồng ─── */}
       {!isRunning && !isDone && (
         <div className="flex items-center justify-between gap-3 p-4 rounded-2xl border border-border bg-surface shadow-sm">
-          <div className="text-xs text-text-muted">
+          <div className="text-caption text-text-muted">
             {!selectedFile ? (
               <span className="text-warning-text font-semibold">Hãy chọn ảnh sản phẩm ở trên.</span>
             ) : selectedChannels.length === 0 ? (
@@ -244,7 +244,7 @@ export function ImageUploadTab({
           variant="outline"
           size="sm"
           onClick={handleReset}
-          className="text-xs gap-1.5 self-start"
+          className="text-caption gap-1.5 self-start"
         >
           <RefreshCw size={12} />
           Tải ảnh mới

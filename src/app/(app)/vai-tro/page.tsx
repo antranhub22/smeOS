@@ -13,6 +13,7 @@ import { useI18n } from "@/lib/i18n"
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Lock, Loader2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { chuyenTang, veVaiThat } from "./chuyen-tang"
@@ -22,6 +23,7 @@ import {
   type RoleUxDefinition,
   type RoleUxGroup,
 } from "@/modules/organization/domain/role-ux-catalog"
+import { PageHeader } from "@/components/ui/page-header"
 
 const NHOM: RoleUxGroup[] = ["PLATFORM", "STORE", "FLOWER_NETWORK"]
 
@@ -93,15 +95,17 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
         )}
       </div>
       {dungDuoc && (
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={handleOpenRole}
           disabled={opening}
-          className="flex min-h-11 flex-shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50 cursor-pointer"
+          className="flex min-h-11 flex-shrink-0 items-center gap-1.5"
         >
-          {opening && <Loader2 size={13} className="animate-spin" />}
+          {opening && <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />}
           {role.group === "PLATFORM" ? "Console" : "Mở"}
-        </button>
+        </Button>
       )}
     </li>
   )
@@ -129,22 +133,22 @@ export default function VaiTroPage() {
         >
           <ArrowLeft size={18} />
         </Link>
-        <div>
-          <h1 className="text-title font-extrabold text-primary">Vai trò</h1>
-          <div className="text-caption text-text-muted">
-            {soDungDuoc}/{ROLE_UX_CATALOG.length} vai đang dùng được
-          </div>
-        </div>
+        <PageHeader
+          title="Vai trò"
+          description={<>{soDungDuoc}/{ROLE_UX_CATALOG.length} vai đang dùng được</>}
+        />
         {tierPreviewActive && (
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={handleVeVaiThat}
             disabled={dangVe}
-            className="ml-auto flex min-h-11 items-center gap-1.5 rounded-xl border border-border px-3 text-body-sm font-semibold text-primary hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
+            className="ml-auto flex min-h-11 items-center gap-1.5"
           >
-            {dangVe && <Loader2 size={13} className="animate-spin" />}
+            {dangVe && <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />}
             Về vai thật của bạn
-          </button>
+          </Button>
         )}
       </header>
 

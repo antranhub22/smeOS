@@ -113,7 +113,7 @@ export function ScheduleQueueTab({
             disabled={actionLoading || calendarPosts.length === 0}
             className="font-bold gap-1.5"
           >
-            {actionLoading && <RefreshCw size={13} className="animate-spin" />}
+            {actionLoading && <RefreshCw size={13} className="animate-spin motion-reduce:animate-none" />}
             <Calendar size={14} />
             Xác nhận lịch đăng
           </Button>

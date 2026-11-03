@@ -96,7 +96,7 @@ export function AiRewriteInput({
             className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-7 w-7 rounded-lg text-primary hover:bg-primary/10 transition-colors disabled:opacity-40 disabled:hover:bg-transparent"
           >
             {loading ? (
-              <Loader2 size={15} className="animate-spin text-primary" />
+              <Loader2 size={15} className="animate-spin motion-reduce:animate-none text-primary" />
             ) : (
               <Sparkles size={15} className="text-primary" />
             )}
@@ -159,7 +159,7 @@ export function AiRewriteInput({
 
           {loading ? (
             <div className="py-4 text-center space-y-2">
-              <Loader2 size={18} className="animate-spin text-primary mx-auto" />
+              <Loader2 size={18} className="animate-spin motion-reduce:animate-none text-primary mx-auto" />
               <p className="text-caption text-text-muted">AI đang phân tích & trau chuốt theo tông giọng cửa hàng...</p>
             </div>
           ) : (

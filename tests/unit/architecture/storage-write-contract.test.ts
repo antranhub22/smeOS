@@ -13,6 +13,7 @@ import { STORAGE_REFERENCE_SOURCES } from "@/modules/assets/infra/storage-regist
  */
 const WRITERS: Record<string, (typeof STORAGE_REFERENCE_SOURCES)[number]> = {
   "src/app/api/v1/storage/[...key]/route.ts": "assets.storage_key",
+  "src/modules/ad-banner-poster/use-cases/save-banner-to-library.use-case.ts": "assets.storage_key",
   "src/modules/audio-studio/use-cases/music-tracks.ts": "music_tracks.storage_key",
   "src/modules/audio-studio/use-cases/voice-clones.ts": "voice_clones.sample_storage_key",
   "src/modules/avi-gift-import/use-cases/import-analyses.ts": "assets.storage_key",

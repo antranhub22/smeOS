@@ -48,8 +48,6 @@ export default async function DashboardPage() {
   // sang /dang-nhap trước khi tới đây — nhánh này chỉ để tsc yên tâm về kiểu.
   if (!session) return null
 
-  if (session.roleKey === "cua_hang") return <StoreJourneyHome />
-
   const roleUx = resolveRoleUx(session.roleKey, session.organizationType)
 
   switch (roleUx?.homepage) {

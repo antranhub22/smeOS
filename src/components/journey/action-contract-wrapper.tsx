@@ -147,7 +147,7 @@ export function ActionContractWrapper({
 
         {currentPhase === "PROCESSING" && (
           <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-            <Loader2 className="w-10 h-10 text-primary animate-spin" aria-hidden="true" />
+            <Loader2 className="w-10 h-10 text-primary animate-spin motion-reduce:animate-none" aria-hidden="true" />
             <div>
               <h3 className="text-title-sm font-bold text-text">
                 Đang xử lý dữ liệu

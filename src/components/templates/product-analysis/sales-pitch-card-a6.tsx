@@ -54,13 +54,13 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
       },
       minimal: {
         cardBorder: "border-border/60 shadow-md",
-        badgeBg: "bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300",
+        badgeBg: "bg-surface-alt text-text",
         priceGradient: "from-stone-950/90 via-stone-900/50 to-transparent",
-        accentDot: "bg-stone-600 dark:bg-stone-400",
+        accentDot: "bg-text-muted",
       },
       festive: {
-        cardBorder: "border-rose-300/80 shadow-rose-100 dark:shadow-none",
-        badgeBg: "bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
+        cardBorder: "border-rose-300/80 shadow-rose-100",
+        badgeBg: "bg-rose-50 text-rose-700",
         priceGradient: "from-rose-950/90 via-rose-900/40 to-transparent",
         accentDot: "bg-rose-500",
       },

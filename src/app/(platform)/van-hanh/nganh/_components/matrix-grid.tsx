@@ -2,6 +2,7 @@
 
 import { Check, X, RotateCcw, CheckSquare, Square } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import type { MatrixIndustry, MatrixNavItem, MatrixGroup } from "../_lib/types"
 
 interface MatrixGridProps {
@@ -57,32 +58,38 @@ export function MatrixGrid({
                       </Badge>
                     </div>
                     <div className="flex items-center justify-center gap-1 pt-1 text-caption text-text-muted">
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="xs"
                         onClick={() => onSetColumnAll(industry.key, true)}
-                        className="rounded px-1.5 py-0.5 hover:bg-surface hover:text-text"
+                        className="h-6 px-1.5 py-0 text-caption"
                         title="Hiện tất cả cho ngành này"
                       >
                         Bật hết
-                      </button>
+                      </Button>
                       <span>·</span>
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="xs"
                         onClick={() => onSetColumnAll(industry.key, false)}
-                        className="rounded px-1.5 py-0.5 hover:bg-surface hover:text-text"
+                        className="h-6 px-1.5 py-0 text-caption"
                         title="Ẩn tất cả cho ngành này"
                       >
                         Tắt hết
-                      </button>
+                      </Button>
                       <span>·</span>
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="xs"
                         onClick={() => onResetColumnToDefault(industry.key)}
-                        className="rounded p-0.5 hover:bg-surface hover:text-text"
+                        className="h-6 w-6 p-0"
                         title="Khôi phục mặc định ngành"
                       >
                         <RotateCcw className="h-3 w-3" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </th>
@@ -112,22 +119,26 @@ export function MatrixGrid({
                       <p className="text-caption text-text-muted font-mono">{item.href}</p>
                     </div>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 sm:opacity-70">
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="xs"
                         onClick={() => onSetRowAll(item.navKey, true)}
-                        className="p-1 text-text-muted hover:text-primary rounded hover:bg-surface-alt"
+                        className="h-7 w-7 p-0 text-text-muted hover:text-primary"
                         title="Hiện cho tất cả ngành"
                       >
                         <CheckSquare className="h-3.5 w-3.5" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="xs"
                         onClick={() => onSetRowAll(item.navKey, false)}
-                        className="p-1 text-text-muted hover:text-danger rounded hover:bg-surface-alt"
+                        className="h-7 w-7 p-0 text-text-muted hover:text-danger"
                         title="Ẩn cho tất cả ngành"
                       >
                         <Square className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </td>
@@ -142,10 +153,12 @@ export function MatrixGrid({
                       key={industry.key}
                       className="border-l border-border p-2 text-center"
                     >
-                      <button
+                      <Button
                         type="button"
+                        variant={isVisible ? "secondary" : "subtle"}
+                        size="xs"
                         onClick={() => onToggleCell(industry.key, item.navKey)}
-                        className={`inline-flex h-8 w-16 items-center justify-center rounded-lg border text-xs font-semibold transition-all ${
+                        className={`inline-flex h-8 w-16 items-center justify-center rounded-lg border text-caption font-semibold ${
                           isVisible
                             ? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20"
                             : "border-border bg-surface-alt text-text-muted hover:bg-surface-alt/80 line-through opacity-60"
@@ -161,7 +174,7 @@ export function MatrixGrid({
                             <X className="h-3.5 w-3.5" /> Ẩn
                           </span>
                         )}
-                      </button>
+                      </Button>
                     </td>
                   )
                 })}

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ClipboardList } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -114,8 +115,8 @@ export default function DuToanPage() {
                 const p = picked[n.materialId]
                 return (
                   <li key={n.materialId} className="flex flex-wrap items-center gap-3 border-t border-border py-2.5 first:border-t-0">
-                    <label className="flex min-w-56 flex-1 items-center gap-2 text-body text-text">
-                      <input type="checkbox" checked={!!p} onChange={(e) => toggle(n.materialId, n.toBuyQty, e.target.checked)} />
+                    <label className="flex min-w-56 flex-1 items-center gap-2 text-body text-text cursor-pointer">
+                      <Checkbox checked={!!p} onCheckedChange={(checked) => toggle(n.materialId, n.toBuyQty, Boolean(checked))} />
                       <span>
                         <strong>{n.name}</strong>: mua {n.toBuyQty.toLocaleString("vi-VN")} {n.unit}
                         <span className="block text-body-sm text-text-muted">

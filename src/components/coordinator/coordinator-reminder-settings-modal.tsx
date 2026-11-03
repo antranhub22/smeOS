@@ -133,7 +133,7 @@ export function CoordinatorReminderSettingsModal({
 
           {isLoading ? (
             <div className="py-12 flex flex-col items-center justify-center gap-2 text-text-muted">
-              <RefreshCw size={24} className="animate-spin text-primary" />
+              <RefreshCw size={24} className="animate-spin motion-reduce:animate-none text-primary" />
               <span className="text-body-sm">Đang tải cài đặt chính sách...</span>
             </div>
           ) : (

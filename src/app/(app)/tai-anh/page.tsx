@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Dialog } from "@/components/ui/dialog"
+import { Checkbox } from "@/components/ui/checkbox"
 import { useSession } from "@/lib/session"
 import { ApprovedAnalysesSelector } from "./ApprovedAnalysesSelector"
 import { AccountStorageHub, type RawAssetItem, type ApprovedAnalysisItem } from "@/components/storage/account-storage-hub"
@@ -29,6 +30,7 @@ import {
   CommercialContentCard,
 } from "@/components/templates/product-analysis"
 import type { Route } from "next"
+import { PageHeader } from "@/components/ui/page-header"
 
 // ============================================================
 // API HELPERS
@@ -424,7 +426,7 @@ export default function TaiAnhPage() {
   // --- Load analysis ---
   const loadAnalysis = async (id: string) => {
     try {
-      const res = await apiFetchWithAuth(`/api/v1/vision/analyses/${id}`)
+      const res = await apiFetchWithAuth(`/api/v1/vision/analyses/${encodeURIComponent(id)}`)
       if (!res.ok || !res.data) {
         setErrorMsg(res.message ?? "Không tải được kết quả phân tích")
         return
@@ -454,7 +456,7 @@ export default function TaiAnhPage() {
   // --- Poll job status & load result ---
   const pollJob = async (jobId: string): Promise<boolean> => {
     try {
-      const res = await apiFetchWithAuth(`/api/v1/jobs/${jobId}`)
+      const res = await apiFetchWithAuth(`/api/v1/jobs/${encodeURIComponent(jobId)}`)
       if (!res.ok || !res.data) return false
       const data = res.data as {
         job: {
@@ -1035,7 +1037,7 @@ export default function TaiAnhPage() {
       if (editedFields) {
         Object.assign(payloadEdited, editedFields)
       }
-      const res = await apiFetch(`/api/v1/vision/analyses/${analysisId}`, {
+      const res = await apiFetch(`/api/v1/vision/analyses/${encodeURIComponent(analysisId)}`, {
         method: "PATCH",
         body: JSON.stringify({ edited: payloadEdited }),
       })
@@ -1062,7 +1064,7 @@ export default function TaiAnhPage() {
       return
     }
     try {
-      const res = await apiFetch(`/api/v1/vision/analyses/${analysisId}/reject`, {
+      const res = await apiFetch(`/api/v1/vision/analyses/${encodeURIComponent(analysisId)}/reject`, {
         method: "POST",
         body: JSON.stringify({ ly_do: null }),
       })
@@ -1099,7 +1101,7 @@ export default function TaiAnhPage() {
     setApprovingAnalysis(true)
     setErrorMsg(null)
     try {
-      const res = await apiFetch(`/api/v1/vision/analyses/${analysisId}/approve`, {
+      const res = await apiFetch(`/api/v1/vision/analyses/${encodeURIComponent(analysisId)}/approve`, {
         method: "POST",
         body: JSON.stringify({ create_product: createProduct }),
       })
@@ -1218,17 +1220,17 @@ export default function TaiAnhPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* Header */}
-      <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-        <div>
-          {/* Tiêu đề ngắn; dòng phụ bỏ (OPERATING_PRINCIPLES §6.1) */}
-          <h1 className="text-title font-extrabold text-primary">{ti("scanButtonLabel") || "Quét ảnh sản phẩm"}</h1>
-        </div>
-        <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
-          <ArrowLeft size={16} strokeWidth={2} />
-          Quay về Trang chủ
-        </Button>
-      </div>
+      {/* Header — tiêu đề ngắn; dòng phụ bỏ (OPERATING_PRINCIPLES §6.1) */}
+      <PageHeader
+        className="flex-shrink-0 border-b border-border bg-surface px-4 py-4"
+        title={ti("scanButtonLabel") || "Quét ảnh sản phẩm"}
+        actions={
+          <Button variant="ghost" onClick={() => router.push("/")} className="flex items-center gap-1.5">
+            <ArrowLeft size={16} strokeWidth={2} />
+            Quay về Trang chủ
+          </Button>
+        }
+      />
 
       {/* Mode / Tab Switcher (Standardized TabActionHeader) */}
       <div className="px-4 pt-2 pb-1 border-b border-border bg-surface">
@@ -1333,7 +1335,7 @@ export default function TaiAnhPage() {
             {/* Local photos preview */}
             {localPhotos.length > 0 && (
               <div className="w-full max-w-md">
-                <div className="text-xs font-semibold text-text-muted mb-2">
+                <div className="text-caption font-semibold text-text-muted mb-2">
                   Ảnh đã chọn từ thiết bị ({localPhotos.length})
                 </div>
                 <div className="grid grid-cols-3 gap-2.5">
@@ -1341,17 +1343,19 @@ export default function TaiAnhPage() {
                     <div key={p.id} className="relative aspect-square overflow-hidden rounded-xl bg-surface-alt border border-border">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={p.previewUrl} alt={p.name} className="h-full w-full object-cover" />
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon"
                         onClick={(e) => {
                           e.stopPropagation()
                           removeLocalPhoto(p.id)
                         }}
-                        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/65 text-white hover:bg-black/80 transition-colors"
+                        className="absolute right-1 top-1 h-6 w-6 rounded-full bg-black/65 text-white hover:bg-black/80 hover:text-white p-0"
                         aria-label="Bỏ ảnh"
                       >
                         <X size={13} strokeWidth={2.4} />
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>
@@ -1360,28 +1364,26 @@ export default function TaiAnhPage() {
 
             {/* Server assets */}
             {libraryLoaded && assets.length === 0 && (
-              <div className="w-full max-w-md rounded-xl bg-surface-alt p-3.5 text-center text-xs text-text-muted">
+              <div className="w-full max-w-md rounded-xl bg-surface-alt p-3.5 text-center text-caption text-text-muted">
                 Kho ảnh trên máy chủ chưa có ảnh nào. Vui lòng bấm <strong>Chọn ảnh từ máy</strong> ở trên để tải ảnh lên.
               </div>
             )}
 
             {assets.length > 0 && (
               <div className="w-full max-w-md">
-                <div className="text-xs font-semibold text-text-muted mb-2">
+                <div className="text-caption font-semibold text-text-muted mb-2">
                   Ảnh trong kho máy chủ ({assets.length})
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {assets.map((a) => (
                     <label key={a.id} className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 cursor-pointer text-body-sm">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={selectedAssetIds.includes(a.id)}
-                        onChange={() => {
+                        onCheckedChange={() => {
                           setSelectedAssetIds((prev) =>
                             prev.includes(a.id) ? prev.filter((i) => i !== a.id) : [...prev, a.id]
                           )
                         }}
-                        className="accent-primary"
                       />
                       <span>{a.name}</span>
                     </label>
@@ -1423,14 +1425,16 @@ export default function TaiAnhPage() {
                     <div className="text-body-sm font-medium truncate">{p.name}</div>
                     <div className="text-caption text-text-muted">Tải từ máy</div>
                   </div>
-                  <button
-              aria-label="Chụp ảnh"
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Xoá ảnh"
                     onClick={() => removeLocalPhoto(p.id)}
-                    className="p-1 text-text-muted hover:text-danger transition-colors"
+                    className="h-7 w-7 p-1 text-text-muted hover:text-danger"
                   >
                     <X size={15} strokeWidth={2} />
-                  </button>
+                  </Button>
                 </div>
               ))}
               {assets
@@ -1490,7 +1494,7 @@ export default function TaiAnhPage() {
             </div>
             <div className="flex items-start gap-2.5 rounded-xl bg-surface-alt p-3.5">
               <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-primary" />
-              <div className="text-xs leading-relaxed text-text-muted">
+              <div className="text-caption leading-relaxed text-text-muted">
                 Job chạy ở máy chủ và không mất khi rời màn hình — mở lại ở mục Lượt chạy để xem kết quả.
               </div>
             </div>
@@ -1684,7 +1688,7 @@ export default function TaiAnhPage() {
           <>
             {copyLoading ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-4 py-16">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary animate-pulse">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary animate-pulse motion-reduce:animate-none">
                   <Sparkles size={32} />
                 </div>
                 <div className="text-title font-bold">Đang sinh dữ liệu bán hàng (AI)...</div>

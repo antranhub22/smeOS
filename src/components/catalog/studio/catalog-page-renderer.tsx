@@ -92,9 +92,9 @@ export function CatalogPageRenderer({
             </div>
 
             <div className="space-y-3 max-w-[440px]">
-              <h1 className={`${typography.scale.cover} ${typography.fontDisplay}`} style={{ color: tokens.textPrimary }}>
+              <h2 className={`${typography.scale.cover} ${typography.fontDisplay}`} style={{ color: tokens.textPrimary }}>
                 {page.title}
-              </h1>
+              </h2>
               {page.subtitle && (
                 <p className={`${typography.scale.subheading}`} style={{ color: tokens.textSecondary }}>
                   {page.subtitle}

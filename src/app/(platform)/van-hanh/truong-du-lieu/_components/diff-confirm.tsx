@@ -67,7 +67,7 @@ export function DiffConfirmButton({
 
   return (
     <div className="rounded-xl border border-border bg-surface-alt p-3">
-      <p className="mb-2 text-xs font-semibold text-text-muted">Xác nhận thay đổi</p>
+      <p className="mb-2 text-caption font-semibold text-text-muted">Xác nhận thay đổi</p>
       {diff.length === 0 ? (
         <p className="mb-2 text-body-sm text-text-muted">Không có gì thay đổi so với hiện tại.</p>
       ) : (

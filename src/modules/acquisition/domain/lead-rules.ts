@@ -15,15 +15,79 @@ export const LEAD_PHONE_LIMIT_PER_HOUR = 3
 export const LEAD_CONSENT_VERSION = "2026-10-30"
 export const LEAD_CONSENT_TEXT = "Tôi đồng ý để cửa hàng dùng tên và số điện thoại này để liên hệ tư vấn."
 
-/** `IN_PROGRESS` thay `CONTACTED` từ 31/10/2026 (migration `orders_multi_source_lead_link`). */
-export const LEAD_STATUSES = ["NEW", "IN_PROGRESS", "WON", "LOST"] as const
+/** 10 trạng thái pipeline — Marketing & Sales Center (PO 01/11/2026, PR-3). */
+export const LEAD_STATUSES = [
+  "NEW",
+  "QUALIFIED",
+  "CONTACTED",
+  "CONSULTING",
+  "RECOMMENDED",
+  "QUOTATION_SENT",
+  "FOLLOW_UP",
+  "WON",
+  "LOST",
+  "UNQUALIFIED",
+] as const
 export type LeadStatus = (typeof LEAD_STATUSES)[number]
 
 export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   NEW: "Mới",
-  IN_PROGRESS: "Đang chăm",
+  QUALIFIED: "Tiềm năng",
+  CONTACTED: "Đã liên hệ",
+  CONSULTING: "Đang tư vấn",
+  RECOMMENDED: "Đã gợi ý",
+  QUOTATION_SENT: "Đã báo giá",
+  FOLLOW_UP: "Theo dõi",
   WON: "Đã chốt",
   LOST: "Không thành",
+  UNQUALIFIED: "Không phù hợp",
+}
+
+/** Tập trạng thái đang mở — áp dụng gắn đơn hàng và tính lead queue. */
+export const OPEN_LEAD_STATUSES = [
+  "NEW",
+  "QUALIFIED",
+  "CONTACTED",
+  "CONSULTING",
+  "RECOMMENDED",
+  "QUOTATION_SENT",
+  "FOLLOW_UP",
+] as const
+
+/** Tập trạng thái kết thúc. */
+export const CLOSED_LEAD_STATUSES = ["WON", "LOST", "UNQUALIFIED"] as const
+
+/** 4 nhóm hiển thị Progressive Disclosure cho UI (tránh bày 10 nút cùng lúc). */
+export const LEAD_STATUS_GROUPS = [
+  { id: "NEW_GROUP", label: "Mới", statuses: ["NEW", "QUALIFIED"] as const },
+  { id: "CONSULTING_GROUP", label: "Đang tư vấn", statuses: ["CONTACTED", "CONSULTING", "RECOMMENDED"] as const },
+  { id: "QUOTATION_GROUP", label: "Báo giá & Theo dõi", statuses: ["QUOTATION_SENT", "FOLLOW_UP"] as const },
+  { id: "CLOSED_GROUP", label: "Kết thúc", statuses: ["WON", "LOST", "UNQUALIFIED"] as const },
+] as const
+
+export type LeadStatusGroupId = (typeof LEAD_STATUS_GROUPS)[number]["id"]
+
+/** Ma trận chuyển trạng thái hợp lệ trong pipeline 10 bước. */
+export const LEAD_TRANSITIONS: Record<LeadStatus, readonly LeadStatus[]> = {
+  NEW: ["QUALIFIED", "CONTACTED", "CONSULTING", "LOST", "UNQUALIFIED"],
+  QUALIFIED: ["CONTACTED", "CONSULTING", "RECOMMENDED", "LOST", "UNQUALIFIED"],
+  CONTACTED: ["CONSULTING", "RECOMMENDED", "QUOTATION_SENT", "FOLLOW_UP", "WON", "LOST", "UNQUALIFIED"],
+  CONSULTING: ["RECOMMENDED", "QUOTATION_SENT", "FOLLOW_UP", "WON", "LOST", "UNQUALIFIED"],
+  RECOMMENDED: ["CONSULTING", "QUOTATION_SENT", "FOLLOW_UP", "WON", "LOST", "UNQUALIFIED"],
+  QUOTATION_SENT: ["CONSULTING", "FOLLOW_UP", "WON", "LOST", "UNQUALIFIED"],
+  FOLLOW_UP: ["CONSULTING", "RECOMMENDED", "QUOTATION_SENT", "WON", "LOST", "UNQUALIFIED"],
+  WON: ["FOLLOW_UP"],
+  LOST: ["NEW", "CONTACTED"],
+  UNQUALIFIED: ["NEW", "QUALIFIED"],
+}
+
+export function canTransitionLeadStatus(current: string, next: LeadStatus): boolean {
+  if (current === next) return true
+  // Hỗ trợ chuyển đổi từ trạng thái cũ IN_PROGRESS
+  const effectiveCurrent: LeadStatus = current === "IN_PROGRESS" ? "CONTACTED" : (current as LeadStatus)
+  if (!isLeadStatus(effectiveCurrent)) return false
+  const allowed = LEAD_TRANSITIONS[effectiveCurrent]
+  return allowed ? allowed.includes(next) : false
 }
 
 export type LeadSource = "CATALOG_LINK" | "SHORT_LINK" | "LANDING" | "CHAT" | "MANUAL"

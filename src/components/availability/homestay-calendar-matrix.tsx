@@ -6,6 +6,7 @@ import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 import { ManualBlockModal } from "./manual-block-modal"
 import { BookingDetailModal } from "./booking-detail-modal"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
 export interface HomestayCalendarMatrixProps {
   products: AvailabilityBoardProduct[]
@@ -33,6 +34,7 @@ export function HomestayCalendarMatrix({
   const safeDays = Array.isArray(days) ? days : []
   const safeProducts = Array.isArray(products) ? products : []
   const safeBookings = Array.isArray(bookings) ? bookings : []
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState<string | undefined>()
@@ -47,7 +49,16 @@ export function HomestayCalendarMatrix({
   }
 
   async function handleRemoveBlock(bookingId: string) {
-    if (!confirm("Bạn có chắc chắn muốn mở khóa ngày này?")) return
+    if (
+      !(await confirm({
+        title: "Xác nhận mở khóa ngày này?",
+        consequence: "Ngày này sẽ chuyển sang trạng thái khả dụng để đón khách mới.",
+        confirmLabel: "Mở khóa",
+        tone: "default",
+      }))
+    ) {
+      return
+    }
     try {
       setDeletingId(bookingId)
       const res = await fetch(`/api/v1/availability/blocks/${bookingId}`, {
@@ -270,6 +281,7 @@ export function HomestayCalendarMatrix({
         }}
         isRemoving={deletingId === selectedBooking?.id}
       />
+      {confirmDialog}
     </div>
   )
 }

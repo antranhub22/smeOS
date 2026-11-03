@@ -73,33 +73,33 @@ Báo giá dùng lại `R15 order.quote` ("Báo giá đơn hàng ngoài Thẻ ch�
 
 Nhánh `feat/msc-p0-asset-registry` · Tiêu đề `feat(cong-cu): 6 business modules with asset-type registry`
 
-- [ ] **0.1** `test(architecture): freeze catalog tool files` — `tests/unit/architecture/catalog-freeze.test.ts` + `catalog-freeze.manifest.txt` (băm từng tệp vùng cấm Catalog, cùng cơ chế với `the-chao-freeze`). Chỉ thêm tệp test.
-- [ ] **0.2** `feat(marketing-center): asset type domain model` — `asset-type.ts`:
+- [x] **0.1** `test(architecture): freeze catalog tool files` — `tests/unit/architecture/catalog-freeze.test.ts` + `catalog-freeze.manifest.txt` (băm từng tệp vùng cấm Catalog, cùng cơ chế với `the-chao-freeze`). Chỉ thêm tệp test.
+- [x] **0.2** `feat(marketing-center): asset type domain model` — `asset-type.ts`:
   - `BusinessModuleKey` = `brand | content | promotion | sales | care | print`.
   - `UsageDestination` = `PROMOTION | SALES | CARE | PRINT | LIBRARY`.
   - `InputSource` = `STORE_PROFILE | BRAND_PROFILE | PRODUCT | PRODUCT_PHOTO | ACTIVE_PROMOTIONS | CUSTOMER | MANUAL_TEXT`.
   - `AssetTypeDefinition` = `{ code, name, purpose, module, destinations, toolId, fit: FULL|PARTIAL, inputs[{label, source, required}], outputs[] }`.
   - `readinessOf()` = Sẵn ⇔ công cụ `DONE` ∧ `FULL`.
   - Test thuần.
-- [ ] **0.3** `feat(marketing-center): register 77 assets and brand identity set` — 6 tệp `asset-types/*.ts` đúng bảng `02_DANH_MUC_ASSET.md` (A + B). Test:
+- [x] **0.3** `feat(marketing-center): register 77 assets and brand identity set` — 6 tệp `asset-types/*.ts` đúng bảng `02_DANH_MUC_ASSET.md` (A + B). Test:
   - 92 mã không trùng;
   - đúng 24 loại Sẵn khớp tài liệu;
   - Sẵn ⇒ có `href`;
   - tên/mục đích là tiếng Việt, không mã kỹ thuật (`/[A-Z]\d{1,2}\b/`, "Fallback"…), nhãn ≤ 5 từ;
   - mỗi loại có ≥1 nơi dùng và ≥1 đầu vào tự điền khi có thể.
-- [ ] **0.4** `feat(toolkit): business modules and store operations section` — `business-modules.ts` + `store-operations.ts` thay `growth-modules.ts`. Lộ trình AI chuyển sang khoá 6 module (`growth-module-roadmap.ts` → `business-module-roadmap.ts`). Viết lại `growth-modules.test.ts` → `business-modules.test.ts`:
+- [x] **0.4** `feat(toolkit): business modules and store operations section` — `business-modules.ts` + `store-operations.ts` thay `growth-modules.ts`. Lộ trình AI chuyển sang khoá 6 module (`growth-module-roadmap.ts` → `business-module-roadmap.ts`). Viết lại `growth-modules.test.ts` → `business-modules.test.ts`:
   - đúng 6 module + 1 khu Vận hành;
   - **mỗi công cụ trong 67 mã nằm đúng một chỗ**;
   - production chỉ hiện `DONE` và asset Sẵn, ẩn module rỗng.
-- [ ] **0.5** `feat(cong-cu): purpose-first module detail with asset cards` —
+- [x] **0.5** `feat(cong-cu): purpose-first module detail with asset cards` —
   - `toolkit-home.tsx` (giữ ≤350): lưới 6 thẻ + thẻ "Vận hành cửa hàng".
   - `toolkit-module-detail.tsx`: khu L0 **"Bạn muốn tạo gì?"** gồm các thẻ asset `asset-type-card.tsx`: tên ≤5 từ, mục đích trong `InfoTip`, chip nơi dùng, "Cần: …" chỉ liệt kê đầu vào phải nhập tay, nút **Tạo** → công cụ.
   - Khu L1 "Công cụ"; liên kết "Asset đã tạo" → `/kho-du-lieu`.
   - `store-operations-panel.tsx`.
   - Dev hiện cả Mở rộng/Mới kèm nhãn; production chỉ Sẵn.
   - Icon Phosphor qua `AppIcon`, tông `MODULE_TONES`.
-- [ ] **0.6** `docs(cong-cu): screen contract and SSOT sync` — tạo `docs/dac-ta/screen-contracts/cong-cu.md` (archetype, L0–L4, trạng thái). Sửa dẫn chiếu tới `DONG_BO_51_CONG_CU.md` (không tồn tại) trong `growth-modules`/`app-page-tools.ts` → trỏ `02_DANH_MUC_ASSET.md`. Thêm vào registry, `TRANG_THAI.md`, `tool-short-names.ts` nếu cần.
-- [ ] **0.7** `test(ux): cong-cu audit scenario` — `scripts/ux-audit/scenarios/cong-cu.mjs` (lưới, từng module, khu Vận hành, dev/prod). Cập nhật `tests/e2e/ux/a11y-done-tools.spec.ts` nếu bộ chọn đổi.
+- [x] **0.6** `docs(cong-cu): screen contract and SSOT sync` — tạo `docs/dac-ta/screen-contracts/cong-cu.md` (archetype, L0–L4, trạng thái). Sửa dẫn chiếu tới `DONG_BO_51_CONG_CU.md` (không tồn tại) trong `growth-modules`/`app-page-tools.ts` → trỏ `02_DANH_MUC_ASSET.md`. Thêm vào registry, `TRANG_THAI.md`, `tool-short-names.ts` nếu cần.
+- [x] **0.7** `test(ux): cong-cu audit scenario` — `scripts/ux-audit/scenarios/cong-cu.mjs` (lưới, từng module, khu Vận hành, dev/prod). Cập nhật `tests/e2e/ux/a11y-done-tools.spec.ts` nếu bộ chọn đổi.
 
 Nghiệm thu: 24 asset Sẵn hiện đúng module; bấm Tạo mở đúng công cụ; 0 lỗi axe critical/serious; không cuộn ngang 390px; hai test khoá xanh.
 
@@ -107,11 +107,11 @@ Nghiệm thu: 24 asset Sẵn hiện đúng module; bấm Tạo mở đúng công
 
 Nhánh `feat/msc-p1-library-capture`
 
-- [ ] **Dừng hỏi PO trước khi code:** poster/banner có bước người dùng **tải ảnh lên** không? Nếu có → chốt chặng hành trình 14 chặng nào chạy (`CLAUDE.md`).
-- [ ] **1.1** `feat(marketing-center): tag library items with asset type` — quy ước `assets.metadata.asset_type_code` + hàm thuần `assetTypeOfLibraryItem(type, kind, metadata)`, ánh xạ 8 `LIBRARY_TYPES` sang loại asset (catalog → #18, greeting_catalog → #19/#26/#27, landing → #68/#69 theo `page_type`…). Test.
-- [ ] **1.2** `feat(ad-banner-poster): save rendered banner to library` — `POST /api/v1/ad-banner-poster/save` (quyền `G2`). Lưu PNG đã dựng qua cổng lưu trữ có sẵn (storage skill: khoá `org/<org>/…`, kiểm nội dung tải lên), `kind=MARKETING`, `approval_state=PENDING`, `metadata.asset_type_code`. Nút "Lưu vào kho" sau xem trước, không tự lưu. Test use-case + tenant.
-- [ ] **1.3** `feat(kho-du-lieu): show asset type and purpose` — Kho dữ liệu hiện tên loại asset + bộ lọc theo module. Cập nhật `kho-du-lieu.md`.
-- [ ] **1.4** `docs: …` — Screen Contract `cong-cu-poster-banner.md`, `TRANG_THAI`.
+- [x] **Dừng hỏi PO trước khi code:** poster/banner có bước người dùng **tải ảnh lên** không? Nếu có → chốt chặng hành trình 14 chặng nào chạy (`CLAUDE.md`).
+- [x] **1.1** `feat(marketing-center): tag library items with asset type` — quy ước `assets.metadata.asset_type_code` + hàm thuần `assetTypeOfLibraryItem(type, kind, metadata)`, ánh xạ 8 `LIBRARY_TYPES` sang loại asset (catalog → #18, greeting_catalog → #19/#26/#27, landing → #68/#69 theo `page_type`…). Test.
+- [x] **1.2** `feat(ad-banner-poster): save rendered banner to library` — `POST /api/v1/ad-banner-poster/save` (quyền `G2`). Lưu PNG đã dựng qua cổng lưu trữ có sẵn (storage skill: khoá `org/<org>/…`, kiểm nội dung tải lên), `kind=MARKETING`, `approval_state=PENDING`, `metadata.asset_type_code`. Nút "Lưu vào kho" sau xem trước, không tự lưu. Test use-case + tenant.
+- [x] **1.3** `feat(kho-du-lieu): show asset type and purpose` — Kho dữ liệu hiện tên loại asset + bộ lọc theo module. Cập nhật `kho-du-lieu.md`.
+- [x] **1.4** `docs: …` — Screen Contract `cong-cu-poster-banner.md`, `TRANG_THAI`.
 
 Nghiệm thu: poster vừa tạo xuất hiện ở Kho dữ liệu với tên "Poster khuyến mãi", có trạng thái Chờ duyệt.
 
@@ -119,7 +119,7 @@ Nghiệm thu: poster vừa tạo xuất hiện ở Kho dữ liệu với tên "P
 
 Nhánh `feat/msc-p2-asset-usage`
 
-- [ ] **2.1** `feat(db): asset_usages table` — migration `prisma migrate dev`. Bảng gồm:
+- [x] **2.1** `feat(db): asset_usages table` — migration `prisma migrate dev`. Bảng gồm:
   - `id`, `organization_id`, `source_type` (8 `LIBRARY_TYPES`), `source_id`, `asset_type_code`;
   - `destination` (enum `usage_destination`), `cta_code`, `title`;
   - `short_link_id` (quan hệ với `short_links`, chỉ thêm trường quan hệ ảo phía `short_links`);
@@ -127,22 +127,22 @@ Nhánh `feat/msc-p2-asset-usage`
   - `status` (enum `DRAFT|ACTIVE|PAUSED|ARCHIVED`), `created_by`, thời điểm tạo/sửa;
   - `@@index([organization_id])`, `([organization_id, source_type, source_id])`, `([organization_id, destination, status])`.
   - Kiểm `echo "[$DATABASE_URL]"` trước lệnh Prisma.
-- [ ] **2.2** `feat(marketing-center): CTA registry and usage rules` — `cta-registry.ts`: `LEARN_MORE, CONTACT, REQUEST_INFO, REQUEST_QUOTE, ORDER, PAY, REVIEW, REFER` (nhãn tiếng Việt). `usage-rules.ts`:
+- [x] **2.2** `feat(marketing-center): CTA registry and usage rules` — `cta-registry.ts`: `LEARN_MORE, CONTACT, REQUEST_INFO, REQUEST_QUOTE, ORDER, PAY, REVIEW, REFER` (nhãn tiếng Việt). `usage-rules.ts`:
   - CTA hợp lệ theo nơi dùng (Quảng bá: không `ORDER/PAY`; Bán hàng: có `REQUEST_QUOTE/ORDER`);
   - nơi dùng hợp lệ theo loại asset;
   - bảng kênh **tự động / thủ công / chưa tích hợp** (Zalo, SMS, Push = thủ công).
   - Test đủ ma trận.
-- [ ] **2.3** `feat(rbac): marketing usage capabilities M1 M2` — thêm mã + test catalog quyền.
-- [ ] **2.4** `feat(marketing-center): usage repository and use-cases` — `create/list/update/pause` Usage. Kiểm nguồn thuộc tổ chức qua hàm đọc thư viện (không đọc thẳng bảng của Catalog/Thẻ chào ngoài cách thư viện đang làm). Khi nơi dùng cần link → gọi `manage-short-links` có sẵn (`target_path` = URL công khai, `utm_campaign` = mã Usage). Test use-case.
-- [ ] **2.5** `feat(api): /api/v1/asset-usages` — GET (`M1`), POST/PATCH (`M2`), zod. Khác tổ chức → 404. Thêm vào `route-capability-guard.test.ts` nếu cần. Test tenant + platform.
-- [ ] **2.6** `feat(marketing-center): "Dùng ở đâu?" sheet` — `use-asset-sheet.tsx` (Drawer):
+- [x] **2.3** `feat(rbac): marketing usage capabilities M1 M2` — thêm mã + test catalog quyền.
+- [x] **2.4** `feat(marketing-center): usage repository and use-cases` — `create/list/update/pause` Usage. Kiểm nguồn thuộc tổ chức qua hàm đọc thư viện (không đọc thẳng bảng của Catalog/Thẻ chào ngoài cách thư viện đang làm). Khi nơi dùng cần link → gọi `manage-short-links` có sẵn (`target_path` = URL công khai, `utm_campaign` = mã Usage). Test use-case.
+- [x] **2.5** `feat(api): /api/v1/asset-usages` — GET (`M1`), POST/PATCH (`M2`), zod. Khác tổ chức → 404. Thêm vào `route-capability-guard.test.ts` nếu cần. Test tenant + platform.
+- [x] **2.6** `feat(marketing-center): "Dùng ở đâu?" sheet` — `use-asset-sheet.tsx` (Drawer):
   - bước 1 chọn nơi dùng (nhiều);
   - bước 2 chỉ hiện cấu hình của nơi đó (UX-027): CTA, tên, hạn;
   - xem trước;
   - `ConfirmDialog` khi tạo link công khai (R3).
   - Mở từ Kho dữ liệu và từ thẻ "Asset đã tạo" trên `/cong-cu`.
-- [ ] **2.7** `feat(marketing-center): usage list per asset and attribution read` — danh sách Usage của một asset + số lượt quét/lead **thật** (nối `short_links` → `link_events`, `leads.short_link_id`).
-- [ ] **2.8** `docs: …` — Screen Contract mới `asset-usage.md`, đặc tả 06/07 (endpoint, bảng), registry.
+- [x] **2.7** `feat(marketing-center): usage list per asset and attribution read` — danh sách Usage của một asset + số lượt quét/lead **thật** (nối `short_links` → `link_events`, `leads.short_link_id`).
+- [x] **2.8** `docs: …` — Screen Contract mới `asset-usage.md`, đặc tả 06/07 (endpoint, bảng), registry.
 
 Nghiệm thu: một catalog có 2 Usage (Quảng bá "Nhận tư vấn", Bán hàng "Đặt hàng") với 2 link riêng, lead quy về đúng Usage; diff vùng cấm = `OK`.
 
@@ -150,66 +150,66 @@ Nghiệm thu: một catalog có 2 Usage (Quảng bá "Nhận tư vấn", Bán h�
 
 Nhánh `feat/msc-p3-campaign-pipeline`
 
-- [ ] **3.1** `feat(db): campaigns table and lead pipeline data migration` —
+- [x] **3.1** `feat(db): campaigns table and lead pipeline data migration` —
   - `campaigns`: `organization_id`, `name`, `objective` (`AWARENESS|LEAD|SALE|RETENTION`), `occasion_code`, `starts_at`, `ends_at`, `status`, `created_by` + index.
   - Khoá ngoại `asset_usages.campaign_id`.
   - SQL dữ liệu `UPDATE leads SET status='CONTACTED' WHERE status='IN_PROGRESS'`; sửa chú thích cột.
-- [ ] **3.2** `feat(acquisition): expand lead pipeline` — `LEAD_STATUSES` = `NEW, QUALIFIED, CONTACTED, CONSULTING, RECOMMENDED, QUOTATION_SENT, FOLLOW_UP, WON, LOST, UNQUALIFIED`; luật chuyển trạng thái + nhãn tiếng Việt. **Gộp hằng `OPEN_LEAD_STATUSES` trùng** ở `orders/infra/lead-queue-repository.ts` về `acquisition/domain/lead-recovery.ts`.
+- [x] **3.2** `feat(acquisition): expand lead pipeline` — `LEAD_STATUSES` = `NEW, QUALIFIED, CONTACTED, CONSULTING, RECOMMENDED, QUOTATION_SENT, FOLLOW_UP, WON, LOST, UNQUALIFIED`; luật chuyển trạng thái + nhãn tiếng Việt. **Gộp hằng `OPEN_LEAD_STATUSES` trùng** ở `orders/infra/lead-queue-repository.ts` về `acquisition/domain/lead-recovery.ts`.
   - Lưu ý: đơn từ catalog công khai gắn lead "đang mở" → tập trạng thái mở rộng thì gắn được nhiều lead hơn, đúng ý tài liệu. Mã catalog không đổi.
   - Test luật chuyển + dữ liệu cũ.
-- [ ] **3.3** `feat(acquisition): leads board for 10-stage pipeline` — `leads-tab.tsx` lọc theo nhóm (Mới / Đang tư vấn / Đã báo giá / Kết thúc) để không bày 10 nút cùng lúc (Progressive Disclosure). Cập nhật `thu-hut-khach.md`, kịch bản `thu-hut-khach.mjs`.
-- [ ] **3.4** `feat(rbac): campaign capability M3` + `feat(api): /api/v1/campaigns` (+ tenant/platform test).
-- [ ] **3.5** `feat(marketing-center): campaign workspace` — trang `/quang-ba/chien-dich`:
+- [x] **3.3** `feat(acquisition): leads board for 10-stage pipeline` — `leads-tab.tsx` lọc theo nhóm (Mới / Đang tư vấn / Đã báo giá / Kết thúc) để không bày 10 nút cùng lúc (Progressive Disclosure). Cập nhật `thu-hut-khach.md`, kịch bản `thu-hut-khach.mjs`.
+- [x] **3.4** `feat(rbac): campaign capability M3` + `feat(api): /api/v1/campaigns` (+ tenant/platform test).
+- [x] **3.5** `feat(marketing-center): campaign workspace` — trang `/quang-ba/chien-dich`:
   - chọn mục tiêu + dịp → chọn asset từ kho (hoặc "Tạo mới" → `/cong-cu`) → Usage + link/QR → xem trước → kích hoạt;
   - kết quả: lượt quét, lead, lead → đơn. **Chỉ số thật**: không có tiếp cận/tương tác vì chưa có dữ liệu.
   - Screen Contract + kịch bản ux-audit.
-- [ ] **3.6** `docs: …` — đặc tả, `TRANG_THAI`, ghi quyết định QĐ4 thay QĐ 31/10/2026.
+- [x] **3.6** `docs: …` — đặc tả, `TRANG_THAI`, ghi quyết định QĐ4 thay QĐ 31/10/2026.
 
 ## PR-4 — Bán hàng: Báo giá
 
 Nhánh `feat/msc-p4-quotation`
 
-- [ ] **4.1** `feat(db): quotations and quotation_items` —
+- [x] **4.1** `feat(db): quotations and quotation_items` —
   - `quotations`: `organization_id`, `code` (BG-0001), `lead_id?`, `customer_id?`, `asset_usage_id?`, `status` (`DRAFT|SENT|ACCEPTED|REJECTED|EXPIRED|CONVERTED`), `valid_until`, các tổng tiền `Decimal`, `terms`, `converted_order_id?`, `created_by` + index.
   - `quotation_items`: `product_id?`, `name`, `qty`, `unit_price`, `note`.
-- [ ] **4.2** `feat(sales): quotation domain rules` — tính tiền phía máy chủ từ giá sản phẩm; ưu đãi chỉ từ `listActiveShopPromotions`; hết hạn; chuyển trạng thái. Lead → `QUOTATION_SENT` khi gửi. Test.
-- [ ] **4.3** `feat(api): /api/v1/quotations` (`R15` ghi, `Q1` đọc) + trang công khai xem báo giá `/bg/[code]` (chỉ đọc, khoá mã khó đoán). Test tenant.
-- [ ] **4.4** `feat(orders): QUOTATION order source` — thêm nguồn ở `ORDER_SOURCES` + chuyển báo giá → đơn qua `ingestOrder` (theo `KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md`). `order-ingestion-guard.test.ts` xanh.
-- [ ] **4.5** `refactor(bao-gia): persist quotations` — viết lại `/bao-gia` (587 dòng → tách tệp ≤350), bỏ 3 `alert()` giả. Asset #24 lên Sẵn. Cập nhật Screen Contract.
-- [ ] **4.6** `feat(cong-cu): sales module flow` — module Bán hàng hiện luồng Chọn khách → Tư vấn (Thẻ chào, link sang) → Báo giá → Chốt → Đơn.
+- [x] **4.2** `feat(sales): quotation domain rules` — tính tiền phía máy chủ từ giá sản phẩm; ưu đãi chỉ từ `listActiveShopPromotions`; hết hạn; chuyển trạng thái. Lead → `QUOTATION_SENT` khi gửi. Test.
+- [x] **4.3** `feat(api): /api/v1/quotations` (`R15` ghi, `Q1` đọc) + trang công khai xem báo giá `/bg/[code]` (chỉ đọc, khoá mã khó đoán). Test tenant.
+- [x] **4.4** `feat(orders): QUOTATION order source` — thêm nguồn ở `ORDER_SOURCES` + chuyển báo giá → đơn qua `ingestOrder` (theo `KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md`). `order-ingestion-guard.test.ts` xanh.
+- [x] **4.5** `refactor(bao-gia): persist quotations` — viết lại `/bao-gia` (587 dòng → tách tệp ≤350), bỏ 3 `alert()` giả. Asset #24 lên Sẵn. Cập nhật Screen Contract.
+- [x] **4.6** `feat(cong-cu): sales module flow` — module Bán hàng hiện luồng Chọn khách → Tư vấn (Thẻ chào, link sang) → Báo giá → Chốt → Đơn.
 
 ## PR-5 — Chăm sóc khách hàng
 
 Nhánh `feat/msc-p5-customer-care`
 
-- [ ] **Dừng hỏi PO:** kênh gửi email/Zalo OA cho khách (nhà cung cấp mới?) — mặc định **chỉ gửi thủ công** (sao chép nội dung, mở Zalo/gọi), ghi nhận tay.
-- [ ] **5.1** `feat(db): customer_segments and customer_interactions` — segment: `rules Json` (zod: hạng, RFM, dịp, lần mua cuối, tag, đồng ý kênh), `kind DYNAMIC|STATIC`. Interaction: `customer_id`, `channel`, `direction`, `asset_usage_id?`, `summary`, `outcome`, `occurred_at`.
-- [ ] **5.2** `feat(crm): segment evaluator` — dùng lại RFM ở `crm-rules.ts`; **loại khách không đồng ý kênh** (`customer_consents`). Test.
-- [ ] **5.3** `feat(rbac): M4` + `feat(api): /api/v1/customer-segments`, `/api/v1/customers/[id]/interactions`.
-- [ ] **5.4** `feat(marketing-center): care workflow` — chọn nhóm → mục tiêu (sau mua, sinh nhật, quay lại, bán thêm, giới thiệu) → asset → gửi thủ công từng khách có nút "Đã gửi" → ghi interaction. Dùng nhắc dịp có sẵn (`scan-upcoming-reminders`).
-- [ ] **5.5** `feat(greeting-design): care cards #48–#52, #55` — **công cụ mới, tách hẳn module `greeting-card`** (tên `care-cards`), bố cục từ Hồ sơ + thương hiệu, ảnh sản phẩm thật. Nếu dùng AI → qua `callCapability`.
-- [ ] **5.6** `docs: …`.
+- [x] **Dừng hỏi PO:** kênh gửi email/Zalo OA cho khách (nhà cung cấp mới?) — mặc định **chỉ gửi thủ công** (sao chép nội dung, mở Zalo/gọi), ghi nhận tay.
+- [x] **5.1** `feat(db): customer_segments and customer_interactions` — segment: `rules Json` (zod: hạng, RFM, dịp, lần mua cuối, tag, đồng ý kênh), `kind DYNAMIC|STATIC`. Interaction: `customer_id`, `channel`, `direction`, `asset_usage_id?`, `summary`, `outcome`, `occurred_at`.
+- [x] **5.2** `feat(crm): segment evaluator` — dùng lại RFM ở `crm-rules.ts`; **loại khách không đồng ý kênh** (`customer_consents`). Test.
+- [x] **5.3** `feat(rbac): M4` + `feat(api): /api/v1/customer-segments`, `/api/v1/customers/[id]/interactions`.
+- [x] **5.4** `feat(marketing-center): care workflow` — chọn nhóm → mục tiêu (sau mua, sinh nhật, quay lại, bán thêm, giới thiệu) → asset → gửi thủ công từng khách có nút "Đã gửi" → ghi interaction. Dùng nhắc dịp có sẵn (`scan-upcoming-reminders`).
+- [x] **5.5** `feat(greeting-design): care cards #48–#52, #55` — **công cụ mới, tách hẳn module `greeting-card`** (tên `care-cards`), bố cục từ Hồ sơ + thương hiệu, ảnh sản phẩm thật. Nếu dùng AI → qua `callCapability`.
+- [x] **5.6** `docs: screen contract cham-soc.md`.
 
 ## PR-6 — Ấn phẩm & In
 
 Nhánh `feat/msc-p6-print`
 
-- [ ] **6.1** `feat(print): presets and preflight rules` — `src/modules/print/domain/`:
+- [x] **6.1** `feat(print): presets and preflight rules` — `src/modules/print/domain/`:
   - preset A4, A5, A6, danh thiếp 90×54, standee 60×160, bảng để bàn, thẻ treo, tem;
   - quy cách: bleed 3mm, vùng an toàn, DPI tối thiểu 300, kích thước QR tối thiểu.
   - Test.
-- [ ] **6.2** `feat(db): print_renditions` — `source_type/source_id` hoặc `asset_usage_id`, `preset_code`, kích thước mm, `bleed_mm`, `dpi`, `storage_key`, `preflight Json`, `status`.
-- [ ] **6.3** `feat(print): PDF export via existing jspdf` (không thêm thư viện) + `M5` + API. Catalog in (#60) **đọc dữ liệu công khai, dựng bản in mới**, không dùng/sửa `catalog-pdf-export-button.tsx`.
-- [ ] **6.4** `feat(marketing-center): print workspace` — chọn asset → khổ/vật liệu/số lượng → kiểm lỗi (hiện rõ lỗi, không giấu) → xem trước → tải PDF in.
-- [ ] **6.5** `docs: …`.
+- [x] **6.2** `feat(db): print_renditions` — `source_type/source_id` hoặc `asset_usage_id`, `preset_code`, kích thước mm, `bleed_mm`, `dpi`, `storage_key`, `preflight Json`, `status`.
+- [x] **6.3** `feat(print): PDF export via existing jspdf` (không thêm thư viện) + `M5` + API. Catalog in (#60) **đọc dữ liệu công khai, dựng bản in mới**, không dùng/sửa `catalog-pdf-export-button.tsx`.
+- [x] **6.4** `feat(marketing-center): print workspace` — chọn asset → khổ/vật liệu/số lượng → kiểm lỗi (hiện rõ lỗi, không giấu) → xem trước → tải PDF in.
+- [x] **6.5** `docs: screen contract in-an.md`.
 
 ## PR-7 — KPI & quy thuộc
 
 Nhánh `feat/msc-p7-kpi`
 
-- [ ] **7.1** `feat(marketing-center): KPI definitions` — `kpi-definitions.ts`: công thức, cửa sổ thời gian, nguồn. Quy thuộc **first-touch qua link ngắn**, một lead chỉ thuộc một Usage (không tính trùng). Test.
-- [ ] **7.2** `feat(api): /api/v1/marketing-center/kpis` — chỉ trả chỉ số có dữ liệu.
-- [ ] **7.3** `feat(cong-cu): module KPI strip` — mỗi module tối đa 3 số; ẩn chỉ số chưa có dữ liệu.
+- [x] **7.1** `feat(marketing-center): KPI definitions` — `kpi-definitions.ts`: công thức, cửa sổ thời gian, nguồn. Quy thuộc **first-touch qua link ngắn**, một lead chỉ thuộc một Usage (không tính trùng). Test.
+- [x] **7.2** `feat(api): /api/v1/marketing-center/kpis` — chỉ trả chỉ số có dữ liệu.
+- [x] **7.3** `feat(cong-cu): module KPI strip` — mỗi module tối đa 3 số; ẩn chỉ số chưa có dữ liệu.
 
 ## PR-B — Bộ nhận diện thương hiệu (làm sau — PO QĐ6)
 

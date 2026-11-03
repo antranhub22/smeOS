@@ -51,7 +51,7 @@ export function ChainPartnersTab({
                     <Building2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-text">{r.chainName}</div>
+                    <div className="text-body-sm font-bold text-text">{r.chainName}</div>
                     <div className="text-caption text-text-muted mt-0.5">
                       Mã chuỗi: <span className="font-mono font-semibold">{r.chainConnectCode?.toUpperCase()}</span>
                       {" · "}
@@ -94,7 +94,7 @@ export function ChainPartnersTab({
                     <Store className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-text">{r.partnerName}</div>
+                    <div className="text-body-sm font-bold text-text">{r.partnerName}</div>
                     <div className="text-caption text-text-muted mt-0.5">
                       Mã đối tác: <span className="font-mono font-semibold">{r.partnerCode}</span>
                       {" · "}
@@ -132,7 +132,7 @@ export function ChainPartnersTab({
       {asPartnerOf.length === 0 && asChainOf.length === 0 && (
         <Card className="text-center py-16 space-y-3">
           <Layers className="w-12 h-12 text-text-muted/40 mx-auto" />
-          <h3 className="text-sm font-semibold text-text">Chưa có quan hệ chuỗi</h3>
+          <h3 className="text-body-sm font-semibold text-text">Chưa có quan hệ chuỗi</h3>
           <p className="text-meta text-text-muted max-w-sm mx-auto">
             Chia sẻ Mã Kết Nối của bạn để tham gia chuỗi, hoặc vào{" "}
             <Link href="/dieu-phoi/doi-tac" className="text-primary font-semibold hover:underline">

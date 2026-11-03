@@ -26,7 +26,7 @@ export function MarketplaceScoreTab({ scoreAndTier, audit, business }: Marketpla
     <div className="space-y-6">
       {/* 6 Dimension Score Grid */}
       <div>
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary mb-3 flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary mb-3 flex items-center gap-1.5">
           <Award className="h-4 w-4" /> Bảng Điểm Đánh Giá Năng Lực 6 Tiêu Chí
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -35,7 +35,7 @@ export function MarketplaceScoreTab({ scoreAndTier, audit, business }: Marketpla
               <div className="text-caption text-text-muted font-medium mb-1 line-clamp-2 min-h-[32px]">
                 {item.label}
               </div>
-              <div className="text-base font-black text-primary">
+              <div className="text-body font-black text-primary">
                 {item.score && item.score.trim().length > 0 ? item.score : "---"}
               </div>
             </div>
@@ -53,7 +53,7 @@ export function MarketplaceScoreTab({ scoreAndTier, audit, business }: Marketpla
             <div className="text-caption font-bold uppercase tracking-wider text-warning-text">
               Phân Hạng Đề Xuất
             </div>
-            <div className="text-base font-black text-warning-text">
+            <div className="text-body font-black text-warning-text">
               {scoreAndTier.suggestedTier || "Hạng Tiêu Chuẩn"}
             </div>
           </div>
@@ -61,17 +61,17 @@ export function MarketplaceScoreTab({ scoreAndTier, audit, business }: Marketpla
         {scoreAndTier.totalScore && (
           <div className="text-right">
             <div className="text-caption text-text-muted">Tổng điểm đánh giá</div>
-            <div className="text-xl font-black text-primary leading-none">{scoreAndTier.totalScore}</div>
+            <div className="text-title font-black text-primary leading-none">{scoreAndTier.totalScore}</div>
           </div>
         )}
       </div>
 
       {/* Partnership Expectations & Wishes */}
       <div className="rounded-xl border border-border p-4 bg-surface-alt/30 space-y-3">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+        <h4 className="font-bold text-caption uppercase tracking-wider text-primary flex items-center gap-1.5">
           <FileText className="h-4 w-4" /> Kỳ Vọng & Mong Muốn Hợp Tác Với Hệ Thống
         </h4>
-        <div className="space-y-2 text-xs">
+        <div className="space-y-2 text-caption">
           {business.cooperationWishes && (
             <div className="py-1 border-b border-border/50">
               <span className="text-text-muted block mb-0.5 font-medium">Nguyện vọng hợp tác cụ thể:</span>
@@ -94,7 +94,7 @@ export function MarketplaceScoreTab({ scoreAndTier, audit, business }: Marketpla
       </div>
 
       {/* Audit Meta & Field Surveyor */}
-      <div className="rounded-xl border border-border p-4 bg-surface-alt/20 text-xs text-text-muted flex flex-col sm:flex-row justify-between gap-2">
+      <div className="rounded-xl border border-border p-4 bg-surface-alt/20 text-caption text-text-muted flex flex-col sm:flex-row justify-between gap-2">
         <div className="flex items-center gap-2">
           <UserCheck className="h-4 w-4 text-primary" />
           <span>

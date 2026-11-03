@@ -459,7 +459,7 @@ export function AccountStorageHub({
               disabled={loadingRaw}
               className="text-xs gap-1.5"
             >
-              <RefreshCw size={13} className={loadingRaw ? "animate-spin" : ""} />
+              <RefreshCw size={13} className={loadingRaw ? "animate-spin motion-reduce:animate-none" : ""} />
               Làm mới kho ảnh
             </Button>
           </div>
@@ -560,7 +560,7 @@ export function AccountStorageHub({
               disabled={loadingApproved}
               className="text-xs gap-1.5"
             >
-              <RefreshCw size={13} className={loadingApproved ? "animate-spin" : ""} />
+              <RefreshCw size={13} className={loadingApproved ? "animate-spin motion-reduce:animate-none" : ""} />
               Làm mới danh sách
             </Button>
           </div>
@@ -758,7 +758,7 @@ export function AccountStorageHub({
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between gap-1 mb-1">
-                          <Badge className="bg-success/15 text-success dark:text-success font-bold text-caption py-0 px-1.5 border border-success/30 gap-0.5">
+                          <Badge className="bg-success/15 text-success font-bold text-caption py-0 px-1.5 border border-success/30 gap-0.5">
                             <CheckCircle2 size={10} strokeWidth={2.5} /> ĐÃ DUYỆT
                           </Badge>
                           <span className="text-meta font-extrabold text-primary">

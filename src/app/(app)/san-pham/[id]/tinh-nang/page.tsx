@@ -128,7 +128,7 @@ const handleMonitorJobs = () => {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 size={32} className="animate-spin text-primary" />
+          <Loader2 size={32} className="animate-spin motion-reduce:animate-none text-primary" />
           <p className="text-text-muted">Đang tải sản phẩm…</p>
         </div>
       </div>
@@ -222,7 +222,7 @@ const handleMonitorJobs = () => {
         <div className="flex items-center gap-2">
           <Button
               aria-label="Làm mới" variant="ghost" size="icon" onClick={() => router.refresh()}>
-            <RefreshCw size={18} strokeWidth={2} className={cn("text-text-muted", loading && "animate-spin")} />
+            <RefreshCw size={18} strokeWidth={2} className={cn("text-text-muted", loading && "animate-spin motion-reduce:animate-none")} />
           </Button>
         </div>
       </div>

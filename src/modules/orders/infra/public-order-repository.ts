@@ -4,6 +4,7 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { OPEN_LEAD_STATUSES } from "@/modules/acquisition/domain/lead-recovery"
 
 export class PublicOrderRepository {
   async orgSettings(organizationId: string): Promise<unknown> {
@@ -20,7 +21,7 @@ export class PublicOrderRepository {
   /** Lead đang mở của cùng SĐT — đơn gắn vào lead đó (§3.1: "khách bấm Đặt hàng → gắn vào lead đang mở"). */
   async openLeadId(organizationId: string, phone: string): Promise<string | null> {
     const lead = await prisma.leads.findFirst({
-      where: { organization_id: organizationId, phone, status: { in: ["NEW", "IN_PROGRESS"] }, converted_order_id: null },
+      where: { organization_id: organizationId, phone, status: { in: [...OPEN_LEAD_STATUSES] }, converted_order_id: null },
       orderBy: { created_at: "desc" },
       select: { id: true },
     })

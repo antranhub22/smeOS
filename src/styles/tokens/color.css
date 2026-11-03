@@ -1,0 +1,262 @@
+@theme {
+  /*
+   * Đã đối chiếu tỉ lệ tương phản WCAG thật (luminance chuẩn):
+   * primary/#FFFFFF = 9.14:1 (đạt AAA cho chữ trắng trên nút primary);
+   * primary-dark/#FFFFFF = 12.70:1; secondary-text/#FFFFFF = 6.45:1 (đạt AA);
+   * text/bg = 14.97:1; text-muted/bg = 4.68:1 (đạt AA);
+   * text-muted/surface = 5.03:1.
+   */
+  --color-primary: #7A2E42;
+  --color-primary-dark: #57202F;
+  --color-primary-foreground: #FFFFFF;
+  --color-primary-fg: #FFFFFF; /* Alias tương thích (ADR-011 D-UI-07, F1-07) */
+  --color-secondary: #9CAF88;
+  --color-secondary-text: #52643F;
+  --color-accent: #C89B3C;
+  --color-accent-text: #6B4F1A;
+
+  --color-bg: #FBF6F2;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F5ECE4;
+  --color-border: #E7DCD0;
+
+  --color-text: #2A1E22;
+  --color-text-muted: #746364;
+
+  /* Token mục đang chọn (Selected Item) */
+  --color-selected: #F5ECE4;
+  --color-selected-text: #7A2E42;
+
+  /* Màu chức năng (cảnh báo/nguy hiểm/thành công/thông tin) */
+  --color-warning: #C97A2E;
+  --color-warning-bg: #FBF1E4;
+  --color-warning-text: #8A4807;
+  --color-warning-border: #F0D9B5;
+
+  --color-danger: #C4463D;
+  --color-danger-bg: #FBEBE9;
+  --color-danger-text: #7A2420;
+  --color-danger-border: #F5C6C2;
+
+  --color-success: #52643F;
+  --color-success-bg: #EAF0E6;
+  --color-success-text: #3A4A2C;
+  --color-success-border: #C6D9BC;
+
+  --color-info: #1D4ED8;
+  --color-info-bg: #EFF6FF;
+  --color-info-text: #1E3A5F;
+  --color-info-border: #BFDBFE;
+
+  /* Token khối hướng dẫn FeatureGuidanceCard (K1) */
+  --color-guidance: #B91C1C;
+  --color-guidance-text: #450A0A;
+  --color-guidance-bg: #FEF2F2;
+  --color-guidance-border: #FCA5A5;
+  --color-guidance-tag-bg: #FEE2E2;
+
+  /* Sub-token phụ */
+  --color-primary-muted: #F5E6EA;
+  --color-primary-border: #E0B4C0;
+  --color-accent-bg: #FBF5E9;
+  --color-accent-border: #E8D5A8;
+
+  /* Màu nhóm cho ô icon điều hướng (IconTile / MODULE_TONES) */
+  --color-tone-plum: #7A2E42;
+  --color-tone-rose: #A8445D;
+  --color-tone-orange: #B93B0B;
+  --color-tone-amber: #A04A06;
+  --color-tone-teal: #0F766E;
+  --color-tone-blue: #1D4ED8;
+  --color-tone-indigo: #4338CA;
+  --color-tone-green: #15803D;
+  --color-tone-pink: #BE185D;
+  --color-tone-emerald: #047857;
+
+  /* Token biểu đồ chuẩn (ADR-011 D-UI-02, F1-02) */
+  --color-chart-1: #2563EB;
+  --color-chart-2: #059669;
+  --color-chart-3: #EA580C;
+  --color-chart-4: #7C3AED;
+  --color-chart-5: #E11D48;
+  --color-chart-6: #0891B2;
+  --color-chart-7: #D97706;
+  --color-chart-8: #4F46E5;
+
+  /* Màu nhận diện nền tảng đối tác */
+  --color-linkedin: #0A66C2;
+  --color-facebook: #1877F2;
+  --color-zalo: #0068FF;
+  --color-zalo-bg: #EEF2F8;
+  --color-tiktok-grad: #00f2fe;
+
+  /* Màu minh hoạ thực vật (Botanical Illustration) */
+  --color-flora-green: #174C3C;
+  --color-flora-sage: #5F9670;
+  --color-flora-petal: #E48692;
+  --color-flora-leaf: #EEF4EE;
+  --color-gold: #C89B3C;
+  --color-sage-bg: #F4F7F2;
+
+  /* Tương thích ngược Shadcn Tokens */
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-input: var(--color-border);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-text);
+  --color-destructive: var(--color-danger);
+  --color-destructive-foreground: #FFFFFF;
+  --color-ring: var(--color-primary);
+
+  /*
+   * 12 Palette aliases cũ (ADR-011 D-UI-02):
+   * Tạm giữ ở chế độ ratchet đo lường; sẽ bị xoá khỏi CSS khi số lượng vi phạm về 0.
+   */
+  --color-cool-50: #FAFAF9;
+  --color-cool-100: #F5F5F4;
+  --color-cool-200: #E7E5E4;
+  --color-cool-300: #D6D3D1;
+  --color-cool-400: #A8A29E;
+  --color-cool-500: #78716C;
+  --color-cool-600: #57534E;
+  --color-cool-700: #44403C;
+  --color-cool-800: #292524;
+  --color-cool-900: #1C1917;
+  --color-cool-950: #0C0A09;
+
+  --color-blush-50: #FFF1F2;
+  --color-blush-100: #FFE4E6;
+  --color-blush-200: #FECDD3;
+  --color-blush-300: #FDA4AF;
+  --color-blush-400: #FB7185;
+  --color-blush-500: #F43F5E;
+  --color-blush-600: #E11D48;
+  --color-blush-700: #BE123C;
+  --color-blush-800: #9F1239;
+  --color-blush-900: #881337;
+  --color-blush-950: #4C0519;
+
+  --color-alert-50: #FEF2F2;
+  --color-alert-100: #FEE2E2;
+  --color-alert-200: #FECACA;
+  --color-alert-300: #FCA5A5;
+  --color-alert-400: #F87171;
+  --color-alert-500: #EF4444;
+  --color-alert-600: #DC2626;
+  --color-alert-700: #B91C1C;
+  --color-alert-800: #991B1B;
+  --color-alert-900: #7F1D1D;
+  --color-alert-950: #450A0A;
+
+  --color-mint-50: #ECFDF5;
+  --color-mint-100: #D1FAE5;
+  --color-mint-200: #A7F3D0;
+  --color-mint-300: #6EE7B7;
+  --color-mint-400: #34D399;
+  --color-mint-500: #10B981;
+  --color-mint-600: #059669;
+  --color-mint-700: #047857;
+  --color-mint-800: #065F46;
+  --color-mint-900: #064E3B;
+  --color-mint-950: #022C22;
+
+  --color-sand-50: #FFFBEB;
+  --color-sand-100: #FEF3C7;
+  --color-sand-200: #FDE68A;
+  --color-sand-300: #FCD34D;
+  --color-sand-400: #FBBF24;
+  --color-sand-500: #F59E0B;
+  --color-sand-600: #D97706;
+  --color-sand-700: #B45309;
+  --color-sand-800: #92400E;
+  --color-sand-900: #78350F;
+  --color-sand-950: #451A03;
+
+  --color-orchid-50: #FAF5FF;
+  --color-orchid-100: #F3E8FF;
+  --color-orchid-200: #E9D5FF;
+  --color-orchid-300: #D8B4FE;
+  --color-orchid-400: #C084FC;
+  --color-orchid-500: #A855F7;
+  --color-orchid-600: #9333EA;
+  --color-orchid-700: #7E22CE;
+  --color-orchid-800: #6B21A8;
+  --color-orchid-900: #581C87;
+  --color-orchid-950: #3B0764;
+
+  --color-ocean-50: #EFF6FF;
+  --color-ocean-100: #DBEAFE;
+  --color-ocean-200: #BFDBFE;
+  --color-ocean-300: #93C5FD;
+  --color-ocean-400: #60A5FA;
+  --color-ocean-500: #3B82F6;
+  --color-ocean-600: #2563EB;
+  --color-ocean-700: #1D4ED8;
+  --color-ocean-800: #1E40AF;
+  --color-ocean-900: #1E3A8A;
+  --color-ocean-950: #172554;
+
+  --color-azure-50: #F0F9FF;
+  --color-azure-100: #E0F2FE;
+  --color-azure-200: #BAE6FD;
+  --color-azure-300: #7DD3FC;
+  --color-azure-400: #38BDF8;
+  --color-azure-500: #0EA5E9;
+  --color-azure-600: #0284C7;
+  --color-azure-700: #0369A1;
+  --color-azure-800: #075985;
+  --color-azure-900: #0C4A6E;
+  --color-azure-950: #082F49;
+
+  --color-navy-50: #EEF2FF;
+  --color-navy-100: #E0E7FF;
+  --color-navy-200: #C7D2FE;
+  --color-navy-300: #A5B4FC;
+  --color-navy-400: #818CF8;
+  --color-navy-500: #6366F1;
+  --color-navy-600: #4F46E5;
+  --color-navy-700: #4338CA;
+  --color-navy-800: #3730A3;
+  --color-navy-900: #312E81;
+  --color-navy-950: #1E1B4B;
+
+  --color-petal-50: #FDF2F8;
+  --color-petal-100: #FCE7F3;
+  --color-petal-200: #FBCFE8;
+  --color-petal-300: #F9A8D4;
+  --color-petal-400: #F472B6;
+  --color-petal-500: #EC4899;
+  --color-petal-600: #DB2777;
+  --color-petal-700: #BE185D;
+  --color-petal-800: #9D174D;
+  --color-petal-900: #831843;
+  --color-petal-950: #500724;
+
+  --color-aqua-50: #ECFEFF;
+  --color-aqua-100: #CFFAFE;
+  --color-aqua-200: #A5F3FC;
+  --color-aqua-300: #67E8F9;
+  --color-aqua-400: #22D3EE;
+  --color-aqua-500: #06B6D4;
+  --color-aqua-600: #0891B2;
+  --color-aqua-700: #0E7490;
+  --color-aqua-800: #155E75;
+  --color-aqua-900: #164E63;
+  --color-aqua-950: #083344;
+
+  --color-lagoon-50: #F0FDFA;
+  --color-lagoon-100: #CCFBF1;
+  --color-lagoon-200: #99F6E4;
+  --color-lagoon-300: #5EEAD4;
+  --color-lagoon-400: #2DD4BF;
+  --color-lagoon-500: #14B8A6;
+  --color-lagoon-600: #0D9488;
+  --color-lagoon-700: #0F766E;
+  --color-lagoon-800: #115E59;
+  --color-lagoon-900: #134E4A;
+  --color-lagoon-950: #042F2E;
+}
+

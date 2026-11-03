@@ -2,10 +2,12 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, Sparkles, Tag } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { DetailLayout } from "@/components/layout/page-layout"
+import { PageHeader } from "@/components/ui/page-header"
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
 import { ProductReminderOverrideCard } from "@/components/coordinator/product-reminder-override-card"
@@ -53,9 +55,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<ProductDetail | null>(null)
   const [loi, setLoi] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  /** Vừa "Lưu thành mẫu mới" (`?moi=1`): mở sẵn hộp sửa trên mẫu mới. */
   const [vuaTaoMoi, setVuaTaoMoi] = useState(false)
-  /** URL ảnh sau khi chuẩn hóa (user chấp nhận) — ghi đè displayImageUrl tạm thời */
   const [normalizedDisplayUrl, setNormalizedDisplayUrl] = useState<string | null>(null)
   const { industry: industryFromSession } = useI18n()
   const activeIndustry = industryFromSession || getIndustryPlugin()
@@ -78,23 +78,23 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("moi") !== "1") return
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc cờ trên URL một lần sau khi mount
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc cờ URL
     setVuaTaoMoi(true)
     setIsModalOpen(true)
   }, [])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- tải dữ liệu sản phẩm khi mount/đổi id; setState nằm trong hàm tải
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- nạp chi tiết khi mount
     napLai()
   }, [napLai])
 
   const attrs = (product?.attributes as Record<string, unknown> | null) ?? {}
   const rawBom = (attrs.bom as Record<string, unknown> | undefined) ?? {}
-  const rawFlowers = Array.isArray(rawBom.materials)
+  const rawFlowers = (Array.isArray(rawBom.materials)
     ? rawBom.materials
     : Array.isArray(rawBom.flowers)
     ? rawBom.flowers
-    : []
+    : []) as Parameters<typeof ProductBomCard>[0]["flowers"]
   const primaryColor = (attrs.color as string) || null
   const description = (attrs.description as string) || null
   const priceVnd =
@@ -109,55 +109,43 @@ export default function ProductDetailPage() {
     product?.masterImageUrl ||
     (typeof attrs.imageUrl === "string" ? attrs.imageUrl : null) ||
     (driveLink ? driveThumbProxySrc(driveLink) : null)
-  // Ảnh hiển thị: ưu tiên ảnh đã chuẩn hóa nếu user vừa chấp nhận
   const displayImageUrl = normalizedDisplayUrl ?? rawDisplayImageUrl
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
-      {/* Header */}
-      <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-3.5">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => router.push("/san-pham" as never)}
-            aria-label="Về danh sách sản phẩm"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-          >
-            <ArrowLeft size={16} />
-          </button>
-          <div>
-            <div className="text-caption text-text-muted">Chi tiết sản phẩm</div>
-            <h1 className="text-title font-extrabold text-primary">
-              {product ? product.name : ""}
-            </h1>
-          </div>
-        </div>
-
-        {product && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.push(`/san-pham/${productId}/tinh-nang` as never)}
-              className="flex items-center gap-1.5"
-            >
-              <Sparkles size={14} className="text-primary" />
-              <span className="hidden sm:inline">Mở Studio Tính Năng</span>
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-1.5 font-bold"
-            >
-              <Sparkles size={14} />
-              <span>Phân tích AI & Chỉnh sửa</span>
-            </Button>
-          </div>
-        )}
-      </header>
-
-      {/* Main content */}
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 sm:p-6 max-w-4xl mx-auto w-full">
+    <DetailLayout
+      header={
+        <PageHeader
+          backHref="/san-pham"
+          backLabel="Danh sách sản phẩm"
+          title={product ? product.name : "Chi tiết sản phẩm"}
+          breadcrumbs="Chi tiết sản phẩm"
+          actions={
+            product ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push(`/san-pham/${productId}/tinh-nang` as never)}
+                  className="flex items-center gap-1.5"
+                >
+                  <Sparkles size={14} className="text-primary" />
+                  <span className="hidden sm:inline">Mở Studio Tính Năng</span>
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setIsModalOpen(true)}
+                  className="flex items-center gap-1.5 font-bold"
+                >
+                  <Sparkles size={14} />
+                  <span>Phân tích AI & Chỉnh sửa</span>
+                </Button>
+              </div>
+            ) : undefined
+          }
+        />
+      }
+    >
+      <div className="flex flex-col gap-4 max-w-4xl mx-auto w-full">
         {loi && (
           <div className="rounded-xl border border-danger/30 bg-danger-bg px-3.5 py-2.5 text-body-sm font-medium text-danger">
             {loi}
@@ -177,7 +165,7 @@ export default function ProductDetailPage() {
           <div className="flex flex-col gap-4">
             <ProductProposalBanner productId={product.id} attributes={attrs} onChanged={napLai} />
             {can("H3") && <ProductChangeRequestsCard productId={product.id} current={{ ...product, attributes: attrs }} onChanged={napLai} />}
-            {/* Nhóm 1: Thẻ tổng quan */}
+            
             <ProductOverviewCard
               name={product.name}
               code={product.code}
@@ -187,7 +175,6 @@ export default function ProductDetailPage() {
               displayImageUrl={displayImageUrl}
             />
 
-            {/* Chuẩn hóa ảnh studio — chỉ hiện khi có ảnh và có quyền sửa */}
             {rawDisplayImageUrl && canEdit && (
               <Card className="p-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -200,59 +187,42 @@ export default function ProductDetailPage() {
                   <NormalizeImageButton
                     imageUrl={rawDisplayImageUrl}
                     industry={activeIndustry}
-                    onAccept={(url) => setNormalizedDisplayUrl(url)}
+                    onAccept={(newUrl: string) => setNormalizedDisplayUrl(newUrl)}
                   />
                 </div>
               </Card>
             )}
 
-            {/* Nhóm 2: Định dạng thiết kế */}
             <ProductDesignCard
               shape={product.shape}
               facing={product.facing}
               container={product.container}
             />
 
-            {/* Nhóm 3: Thành phần & Định mức cấu thành */}
             <ProductBomCard
               flowers={rawFlowers}
               onOpenModal={() => setIsModalOpen(true)}
             />
 
-            {/* Nhóm 4: Câu chuyện và thông điệp sản phẩm (Tiếp thị) */}
             <ProductStoryCard
               description={description}
               onOpenModal={() => setIsModalOpen(true)}
             />
 
-            {/* Nhóm 5: Phân loại & Danh mục */}
-            <Card className="flex flex-col gap-3 p-5">
-              <div className="flex items-center gap-2 text-caption font-bold uppercase tracking-wider text-text-muted">
-                <Tag size={14} aria-hidden="true" />
-                Phân loại & Danh mục
-              </div>
-              <div className="flex items-center justify-between py-2 text-body-sm border-b border-border">
-                <span className="text-text-muted">Danh mục sản phẩm</span>
-                <span className="font-semibold text-text">{product.category ?? "Chưa phân loại"}</span>
-              </div>
-              <div className="flex items-center justify-between py-2 text-body-sm">
-                <span className="text-text-muted">Trạng thái kinh doanh</span>
-                <span className="font-semibold text-text">{product.status}</span>
-              </div>
-            </Card>
-
-            {/* Nhóm 6: Cấu hình mốc nhắc việc Điều phối riêng cho sản phẩm này */}
             <ProductReminderOverrideCard
               productId={productId}
               canEdit={can("R12")}
             />
 
-            {/* Phí làm thay của mẫu — phí là giá vốn nội bộ nên cần quyền xem giá (L5) */}
             {activeIndustry?.craftFee && can("L3") && can("L5") && (
-              <ProductCraftFeeCard productId={productId} attributes={attrs} spec={activeIndustry.craftFee} onUpdated={napLai} />
+              <ProductCraftFeeCard
+                productId={productId}
+                attributes={attrs}
+                spec={activeIndustry.craftFee}
+                onUpdated={napLai}
+              />
             )}
 
-            {/* Nhóm 7: Cấu hình Khả dụng & Cơ chế Đặt hàng theo ngành */}
             <ProductAvailabilityCard
               productId={productId}
               initialConfig={product.availability_config}
@@ -260,42 +230,12 @@ export default function ProductDetailPage() {
               canEdit={canEdit}
               onUpdated={napLai}
             />
-            {can("H3") && <ProductRevisionsCard productId={productId} onChanged={napLai} />}
 
-            {/* Nhóm 6: Lối tắt tác vụ AI */}
-            <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-primary/5 border-primary/20">
-              <div>
-                <div className="text-body-sm font-bold text-primary">Bộ máy tính năng AI sản phẩm</div>
-                <div className="text-caption text-text-muted mt-0.5">
-                  Phân tích cấu phần, sinh ảnh bối cảnh marketing, tạo dữ liệu bán hàng đa kênh.
-                </div>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsModalOpen(true)}
-                  className="flex items-center gap-1.5"
-                >
-                  <Sparkles size={14} className="text-primary" />
-                  <span>Phân tích AI</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => router.push(`/san-pham/${productId}/tinh-nang` as never)}
-                  className="flex items-center gap-1.5"
-                >
-                  <Sparkles size={14} />
-                  <span>Mở Studio Tính Năng</span>
-                </Button>
-              </div>
-            </Card>
+            {can("H3") && <ProductRevisionsCard productId={productId} onChanged={napLai} />}
           </div>
         )}
-      </main>
+      </div>
 
-      {/* Modal làm giàu dữ liệu bằng AI */}
       {product && (
         <AiProductEnrichmentModal
           isOpen={isModalOpen}
@@ -306,6 +246,6 @@ export default function ProductDetailPage() {
           onSavedAsNew={(created) => router.push(`/san-pham/${created.id}?moi=1` as never)}
         />
       )}
-    </div>
+    </DetailLayout>
   )
 }

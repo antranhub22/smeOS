@@ -28,6 +28,7 @@ import {
   type ProductReadinessInput,
   type ProductReadinessResult,
 } from "@/modules/products/domain/product-readiness"
+import { PageHeader } from "@/components/ui/page-header"
 
 class ChuaDangNhap extends Error {}
 
@@ -93,13 +94,12 @@ export function ProductManagerWorkspace() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header */}
-      <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-        <div>
-          <div className="text-xs text-text-muted">{roleUx?.label ?? "Quản lý sản phẩm"}</div>
-          <h1 className="text-title font-extrabold text-primary">{orgName}</h1>
-        </div>
-        <UserMenu initials={userInitials} />
-      </header>
+      <PageHeader
+        className="flex-shrink-0 border-b border-border bg-surface px-4 py-4"
+        breadcrumbs={roleUx?.label ?? "Quản lý sản phẩm"}
+        title={orgName}
+        actions=<UserMenu initials={userInitials} />
+      />
 
       {/* Main Body */}
       <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">

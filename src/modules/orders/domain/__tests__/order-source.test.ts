@@ -28,6 +28,7 @@ describe("danh mục nguồn đơn (SSOT)", () => {
     expect(ORDER_SOURCES.CATALOG.entryStage).toBe("LEAD")
     expect(ORDER_SOURCES.CHAT.entryStage).toBe("LEAD")
     expect(ORDER_SOURCES.MANUAL.entryStage).toBe("AWAITING_PAYMENT")
+    expect(ORDER_SOURCES.QUOTATION.entryStage).toBe("AWAITING_PAYMENT")
   })
 
   it("giá trị DB lạ/rỗng đọc về MANUAL (mặc định cột orders.source)", () => {

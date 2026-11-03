@@ -1,3 +1,18 @@
+---
+id: SCR-STORE-the-chao
+tier: STORE
+module: greeting-card
+route: /the-chao
+archetype: E
+snapshots:
+  mobile: 390x844
+  desktop: 1280x800
+acceptance:
+  - 5 tab chính: Bộ sưu tập, Theo dõi, Bán hàng, Điều hành, Điều phối
+  - Hộp việc tự động làm mới và thông báo việc cần xử lý
+  - Đáp ứng chuẩn responsive 390px và desktop 1280px
+---
+
 # Screen Contract — Thẻ chào mẫu hoa (5 tab + Hộp việc)
 
 **Tuyến:** `/the-chao` · **Tệp chính:** `src/app/(app)/the-chao/page.tsx` · **Cập nhật:** 08/10/2026 (chuẩn bị 20/10: chỉ Điều hành xác nhận tiền, ưu đãi tính tiền, trần đơn mỗi khung giờ) · 06/10/2026 (đợt commercial-ready) · **Thẻ:** Thẻ chào

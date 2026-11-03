@@ -1,8 +1,7 @@
 /** Gọi API Trung tâm Tích hợp từ trình duyệt; lỗi trả về thông điệp tiếng Việt của máy chủ. */
 
 import type { IntegrationHubView } from "@/modules/integration-hub/use-cases/get-integration-hub"
-import type { ConnectionView } from "@/modules/integration-hub/infra/connection-repository"
-import type { EventView } from "@/modules/integration-hub/infra/event-repository"
+import type { ConnectionView, EventView } from "@/modules/integration-hub/domain/integration-views"
 
 async function call<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, { ...init, headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) } })

@@ -294,7 +294,7 @@ return <div>{items.map(item => <Card key={item.id} />)}</div>
 </div>
 ```
 
-**Thiếu token?** → Đăng ký vào `src/app/globals.css` @theme TRƯỚC → dùng SAU.
+**Thiếu token?** → Thêm/sửa token CHỈ qua PR chạm `src/styles/tokens/` và được PO duyệt theo `docs/design-system/README.md` (ADR-011 D-UI-04). CẤM tự ý thêm token.
 Kiểm: `npm run lint:ux -- --check` — cấm tăng vi phạm.
 
 ## 7. Quy chuẩn Thiết Kế Trực Quan Cao Cấp (High-Fidelity Storefront Standard)

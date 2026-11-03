@@ -3,7 +3,9 @@
 import React, { useState } from "react"
 import { Gift, ShieldCheck, FileText, Plus, Trash2, Check, RotateCcw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { PromotionKindField } from "./promotion-kind-field"
+import { AgreementsSection } from "./store-policies-agreements-section"
 import {
   type StorePoliciesConfig,
   type PromotionItem,
@@ -41,6 +43,7 @@ export function StorePoliciesEditor({
   const [intakeCta, setIntakeCta] = useState(() => initialPolicies?.intakePromotionCta ?? { enabled: true, percent: 10 })
   const [activeSection, setActiveSection] = useState<"promo" | "commit" | "agree">(initialSection)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   // Đồng bộ activeSection khi initialSection đổi từ bên ngoài — điều chỉnh ngay lúc render, không dùng effect
   const [syncedInitial, setSyncedInitial] = useState(initialSection)
@@ -49,8 +52,17 @@ export function StorePoliciesEditor({
     setActiveSection(initialSection)
   }
 
-  const handleResetDefaults = () => {
-    if (!window.confirm("Khôi phục danh sách Ưu đãi, Cam kết và Thỏa thuận về mặc định theo ngành?")) return
+  const handleResetDefaults = async () => {
+    if (
+      !(await confirm({
+        title: "Khôi phục chính sách mặc định?",
+        consequence: "Danh sách Ưu đãi, Cam kết và Thỏa thuận sẽ được đặt lại theo tiêu chuẩn mặc định của ngành.",
+        confirmLabel: "Khôi phục",
+        tone: "default",
+      }))
+    ) {
+      return
+    }
     setPromotions(defaultPromos)
     setCommitments(defaultCommits)
     setAgreements(defaultAgrees)
@@ -289,53 +301,9 @@ export function StorePoliciesEditor({
 
       {/* SECTION C: THỎA THUẬN */}
       {activeSection === "agree" && (
-        <div className="rounded-2xl border border-border bg-surface p-5 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-border">
-            <div>
-              <h3 className="text-title-sm font-extrabold text-foreground">Thỏa thuận với Khách hàng (Hiển thị khi Review Đơn)</h3>
-              <p className="text-caption text-text-muted">Các tình huống phát sinh có thể xảy ra mà khách bắt buộc phải xác nhận hiểu trước khi gửi đơn.</p>
-            </div>
-            <Button type="button" size="sm" variant="outline" onClick={addAgree} className="gap-1 h-8 text-caption font-bold">
-              <Plus size={14} /> Thêm thỏa thuận
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {agreements.map((a) => (
-              <div key={a.id} className="p-3.5 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-2 relative group">
-                <button
-                  type="button"
-                  onClick={() => removeAgree(a.id)}
-                  aria-label="Xóa thỏa thuận"
-                  className="absolute top-3 right-3 text-text-muted hover:text-danger p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <Trash2 size={14} />
-                </button>
-                <input
-                  type="text"
-                  value={a.title}
-                  onChange={(e) => updateAgree(a.id, { title: e.target.value })}
-                  placeholder="Tiêu đề thỏa thuận..."
-                  className="font-bold text-body-sm text-foreground bg-transparent border-b border-transparent focus:border-primary focus:outline-none"
-                />
-                <textarea
-                  rows={2}
-                  value={a.customerText}
-                  onChange={(e) => updateAgree(a.id, { customerText: e.target.value })}
-                  placeholder="Nội dung khách cần đọc và hiểu..."
-                  className="text-caption text-text-muted bg-transparent border-none focus:ring-0 focus:outline-none resize-none p-0"
-                />
-                <input
-                  type="text"
-                  value={a.internalText || ""}
-                  onChange={(e) => updateAgree(a.id, { internalText: e.target.value })}
-                  placeholder="Quy chuẩn xử lý nội bộ..."
-                  className="text-caption text-text-muted/70 italic bg-transparent border-t border-border/40 pt-1 focus:outline-none"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        <AgreementsSection agreements={agreements} onAdd={addAgree} onRemove={removeAgree} onUpdate={updateAgree} />
       )}
+      {confirmDialog}
     </div>
   )
 }

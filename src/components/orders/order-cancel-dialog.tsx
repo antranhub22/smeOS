@@ -53,7 +53,7 @@ export function OrderCancelDialog({
         disabled={!reason.trim() || loading}
         onClick={handleConfirm}
       >
-        {loading && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
+        {loading && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin motion-reduce:animate-none" />}
         {dict.orders.actions.confirmCancel}
       </Button>
     </div>

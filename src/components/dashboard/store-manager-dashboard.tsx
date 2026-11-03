@@ -15,6 +15,7 @@ import { InlineError } from "@/components/ui/inline-error"
 import { useAnnounce } from "@/components/ui/live-region"
 import { tenTinhNang } from "@/lib/feature-labels"
 import { StoreManagerActionItemsCard, type DraftOrder } from "./store-manager-action-items-card"
+import { PageHeader } from "@/components/ui/page-header"
 
 type Job = {
   id: string
@@ -138,13 +139,12 @@ export function StoreManagerDashboard() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
-        <div>
-          <div className="text-xs text-text-muted">{roleUx?.label ?? "Điều hành"}</div>
-          <h1 className="text-title font-extrabold text-primary">{orgName}</h1>
-        </div>
-        <UserMenu initials={userInitials} />
-      </header>
+      <PageHeader
+        className="flex-shrink-0 border-b border-border bg-surface px-4 py-4"
+        breadcrumbs={roleUx?.label ?? "Điều hành"}
+        title={orgName}
+        actions=<UserMenu initials={userInitials} />
+      />
 
       <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 lg:grid lg:grid-cols-3 lg:items-start lg:gap-5">
         {loi && (

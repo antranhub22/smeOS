@@ -10,6 +10,7 @@ import { useI18n } from "@/lib/i18n"
 import { InfoTip } from "@/components/ui/info-tip"
 import { ActionCard } from "./action-card"
 import { FeaturedSpotlightCard } from "./featured-spotlight-card"
+import { PageHeader } from "@/components/ui/page-header"
 
 interface ChoiceGridProps {
   title: string
@@ -74,21 +75,18 @@ export function ChoiceGrid({
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 md:py-10 space-y-8">
       {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold mb-2">
+      <PageHeader
+        className="pb-4 border-b border-border"
+        breadcrumbs={
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-selected text-primary text-caption font-semibold">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
             <span>{dict.home.header.badge}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-display font-extrabold text-text tracking-tight">
-              {title}
-            </h1>
-            <InfoTip label={title} side="bottom">{subtitle}</InfoTip>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 self-start md:self-auto">
+          </span>
+        }
+        title={title}
+        tip={subtitle}
+        actions={
+          <>
           {onSwitchToExpertMode && (
             <button
               type="button"
@@ -100,8 +98,9 @@ export function ChoiceGrid({
             </button>
           )}
           <UserMenu initials={userInitials || "U"} direction="down" />
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">

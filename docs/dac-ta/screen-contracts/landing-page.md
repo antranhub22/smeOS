@@ -29,7 +29,7 @@ Trường theo ngữ cảnh (03c §5c, pilot MEUX 29/10/2026):
 |---|---|---|---|---|
 | Mục đích trang (radio) | Luôn | — | Trang giới thiệu cửa hàng | Đổi bất kỳ lúc nào trước khi soạn; giá trị gửi kèm lần soạn kế tiếp (`pageType`) |
 | Đầu vào AI (ảnh, video, ghi chú) | Chế độ "AI làm cho tôi" | Đang soạn | Trống | Chuyển sang "Tự chọn từng bước": ghi chú/video giữ nguyên — hai chế độ dùng chung state của `LandingCampaignTab`, không có lệnh xóa (đọc mã; chưa có E2E) |
-Review thị giác: `docs/ui-ux/MEUX_PILOT_LANDING_PAGE.md` §7.
+Review thị giác: `docs/archive/historical/ui-ux-2026-10/MEUX_PILOT_LANDING_PAGE.md` §7.
 
 ### Nội dung AI — prompt v2 trong content engine (30/10/2026)
 - Landing (08) và Catalog (09) viết qua content engine với prompt `prompts/landing/v2.ts`, `prompts/catalog/v2.ts`, đăng ký ở `prompts/active.ts` (`landingWriter`, `catalogWriter`). Quay về v1: đổi một dòng ở `active.ts`. Hình dạng JSON giữ nguyên v1.

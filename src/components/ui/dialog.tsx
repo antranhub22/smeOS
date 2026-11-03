@@ -40,11 +40,11 @@ export function Dialog({
   return (
     <BaseDialog.Root open={open} onOpenChange={onOpenChange}>
       <BaseDialog.Portal>
-        <BaseDialog.Backdrop className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <BaseDialog.Backdrop className="fixed inset-0 z-[var(--z-overlay)] bg-black/50 backdrop-blur-xs transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
+        <div className="fixed inset-0 z-[var(--z-overlay)] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
           <BaseDialog.Popup
             className={cn(
-              "relative flex max-h-[90dvh] w-full flex-col rounded-2xl border border-border bg-surface shadow-2xl transition-all duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
+              "relative flex max-h-[90dvh] w-full flex-col rounded-[var(--radius-dialog)] border border-border bg-surface shadow-[var(--shadow-dialog)] transition-all duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
               sizeClasses[size],
               className
             )}

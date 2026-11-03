@@ -348,7 +348,7 @@ export function VideoWorkspace() {
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={loadJobs} className="gap-2"><Play size={14} /> Danh sách</Button>
           <Button onClick={handleCreate} disabled={loading || !title.trim()} className="gap-2">
-            {loading ? <><Loader2 size={14} className="animate-spin" /> Đang tạo...</> : <><Sparkles size={14} /> Tạo video</>}
+            {loading ? <><Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> Đang tạo...</> : <><Sparkles size={14} /> Tạo video</>}
           </Button>
         </div>
       </div>

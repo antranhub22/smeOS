@@ -1,9 +1,9 @@
 "use client";
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
   TrendingUp,
   RefreshCw,
@@ -29,6 +29,7 @@ import { useMarketIntelligenceData } from "@/components/market-intelligence/use-
 import { useSession } from "@/lib/session";
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile";
 import type { IndustryTerminology } from "@/modules/organization/domain/industry-profile";
+import { PageHeader } from "@/components/ui/page-header"
 
 function buildGuidanceMap(ti: IndustryTerminology): Record<FeatureKey, { badge: string; title: string; description: string; tips: string[] }> {
   return {
@@ -102,94 +103,94 @@ export default function MarketIntelligencePage() {
   };
 
   return (
-    <div className="flex h-full flex-col bg-background">
+    <div className="flex h-full flex-col bg-bg">
       {/* Header Chuẩn SSOT */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border bg-surface px-6 py-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold tracking-tight text-text flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" />
-              Xu hướng thị trường
-            </h1>
-            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-            <InfoTip label="Xu hướng thị trường" side="bottom">
-              Tìm dịp, xu hướng và chủ đề nên làm — theo thời gian, từ khóa hoặc ảnh mẫu.
-            </InfoTip>
-          </div>
+          <PageHeader
+            title={<><TrendingUp className="h-5 w-5 text-primary" aria-hidden="true" /> Xu hướng thị trường</>}
+            tip="Tìm dịp, xu hướng và chủ đề nên làm — theo thời gian, từ khóa hoặc ảnh mẫu."
+          />
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           {/* 2 Tính Năng Cốt Lõi Switcher */}
           <div className="flex items-center bg-surface-alt p-1 rounded-xl gap-1">
-            <button
+            <Button
               type="button"
+              variant={activeTab === "market" ? "primary" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("market")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                activeTab === "market"
-                  ? "bg-surface text-primary shadow-sm"
-                  : "text-text-muted hover:text-text"
-              }`}
+              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-bold"
             >
               <TrendingUp size={13} />
               1. Xu Hướng Thị Trường
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={activeTab === "keyword" ? "primary" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("keyword")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                activeTab === "keyword"
-                  ? "bg-surface text-primary shadow-sm"
-                  : "text-text-muted hover:text-text"
-              }`}
+              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-bold"
             >
               <Search size={13} />
               2. Quét Theo Từ Khóa
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => router.push("/creative-studio?tab=area-a")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-muted hover:text-primary hover:bg-surface/60 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-medium text-text-muted hover:text-primary"
               title="Quét xu hướng dựa theo ảnh sản phẩm từ Creative Studio"
             >
               <Camera size={13} />
               Quét Theo Ảnh Mẫu (Creative Studio) →
-            </button>
+            </Button>
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={() => {
                 fetchOpportunities();
                 fetchRuns();
               }}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border bg-surface text-text hover:bg-surface-alt transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin motion-reduce:animate-none" : ""}`} />
               Làm mới
-            </button>
+            </Button>
 
             {/* Nút Cài Đặt & Biểu Mẫu Input/Output riêng cho từng tính năng */}
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={() => setIsSettingsModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border border-primary/20 bg-primary/10 text-primary hover:bg-primary/15 shadow-2xs transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-bold"
               title="Cài đặt lịch quét tự động, biểu mẫu đầu vào & đầu ra của tính năng hiện tại"
             >
               <Settings className="h-3.5 w-3.5 text-primary" />
               Cài Đặt & Biểu Mẫu
-            </button>
+            </Button>
 
             {/* Nút thiết lập tiêu chí vĩ mô — Dành riêng SaaS Admin */}
             {isSaaSAdmin && (
-              <button
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
                 onClick={() => setIsAdminModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 shadow-2xs transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-bold"
                 title="Quản trị nền tảng: đặt tiêu chí xu hướng toàn quốc cho mọi cửa hàng"
               >
                 <Shield className="h-3.5 w-3.5 text-primary" />
                 Tiêu Chí Vĩ Mô
-              </button>
+              </Button>
             )}
           </div>
         </div>

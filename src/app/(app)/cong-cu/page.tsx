@@ -1,12 +1,10 @@
 /**
- * Trang công cụ smeOS — 10 bước phát triển cửa hàng (growth-modules.ts).
+ * Trang công cụ smeOS — 6 Business Modules & Khu Vận hành cửa hàng (business-modules.ts).
  *
  * Route: /cong-cu
  *
- * - Dev: hiển thị toàn bộ công cụ theo 10 bước kèm trạng thái và lộ trình
- * - Production: chỉ hiển thị các chức năng đã hoàn thiện
- *
- * Branch: Nangcap_hethongchucnang (KHÔNG PR/merge)
+ * - Dev: hiển thị toàn bộ ấn phẩm và công cụ kèm trạng thái và lộ trình
+ * - Production: chỉ hiển thị các ấn phẩm Sẵn và chức năng đã hoàn thiện
  */
 
 import { getDictionary, translate } from "@/lib/i18n/server"

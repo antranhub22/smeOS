@@ -8,6 +8,7 @@ import { AlertTriangle, CheckCircle2, Clock, Loader2, XCircle, ChevronRight } fr
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
 import { NHAN_TINH_NANG } from "@/lib/feature-labels"
+import { PageHeader } from "@/components/ui/page-header"
 
 type Job = {
   id: string
@@ -59,7 +60,7 @@ function JobCard({ job }: { job: Job }) {
           size={18}
           strokeWidth={1.9}
           className={`flex-shrink-0 ${TRANG_THAI_MAU[job.status]} ${
-            job.status === "PROCESSING" ? "animate-spin" : ""
+            job.status === "PROCESSING" ? "animate-spin motion-reduce:animate-none" : ""
           }`}
         />
         <div className="min-w-0">
@@ -113,7 +114,9 @@ export default function JobListPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center border-b border-border bg-surface px-4 py-4">
-        <h1 className="text-title font-extrabold text-primary">Giao hàng & bàn giao</h1>
+        <PageHeader
+          title="Giao hàng & bàn giao"
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -129,7 +132,7 @@ export default function JobListPage() {
           </div>
         ) : jobs.length === 0 ? (
           <EmptyState
-            title="Chưa có job nào"
+            title="Chưa có tác vụ nào"
             reason="Các tác vụ xử lý ảnh, tạo danh mục hoặc sinh nội dung AI sẽ xuất hiện tại đây khi bạn chạy."
             action={{
               label: "Tải ảnh để phân tích",
@@ -159,7 +162,7 @@ export default function JobListPage() {
             {runningJobs.length > 0 && (
               <section aria-labelledby="heading-running-jobs" className="flex flex-col gap-2">
                 <div className="flex items-center gap-1.5 px-1">
-                  <Loader2 size={15} className="animate-spin text-primary" aria-hidden="true" />
+                  <Loader2 size={15} className="animate-spin motion-reduce:animate-none text-primary" aria-hidden="true" />
                   <h2 id="heading-running-jobs" className="text-caption font-bold uppercase tracking-wider text-primary">
                     Đang xử lý ({runningJobs.length})
                   </h2>

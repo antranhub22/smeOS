@@ -173,7 +173,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface shadow-xs text-primary">
                   {uploadingDirect ? (
-                    <Loader2 size={24} className="animate-spin text-primary" />
+                    <Loader2 size={24} className="animate-spin motion-reduce:animate-none text-primary" />
                   ) : (
                     <Upload size={22} strokeWidth={2} />
                   )}
@@ -316,7 +316,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
 
               {loadingAssets && (
                 <div className="text-center py-6 text-sm text-text-muted flex items-center justify-center gap-2">
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                   Đang tải danh sách ảnh từ kho...
                 </div>
               )}
@@ -403,7 +403,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
 
               {Array.isArray((optimizationData?.identity_guard as { ly_do?: string[] } | undefined)?.ly_do) &&
                 ((optimizationData?.identity_guard as { ly_do?: string[] }).ly_do?.length ?? 0) > 0 && (
-                  <div className="rounded-lg bg-white/70 dark:bg-black/20 p-3 border border-danger/20 text-xs">
+                  <div className="rounded-lg bg-surface/70 p-3 border border-danger/20 text-xs">
                     <div className="font-bold text-danger mb-1.5 flex items-center gap-1.5">
                       <AlertTriangle size={14} /> Chi tiết các sai lệch được phát hiện:
                     </div>

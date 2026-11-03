@@ -55,6 +55,7 @@ import type {
   ProductIntelligenceReport,
   TopicAngleCategory,
 } from "@/modules/market-intelligence/domain/product-intelligence-types";
+import { safeImageSrc } from "@/lib/safe-image-src"
 
 export type ProductionMode = "CREATIVE" | "AUTHENTIC";
 export type SourceType = "image" | "video" | "both";
@@ -440,7 +441,7 @@ export function CreativeHandoffModal({
             {sourceImageUrl ? (
               <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-cool-200 bg-white">
                 <img
-                  src={sourceImageUrl}
+                  src={safeImageSrc(sourceImageUrl)}
                   alt={productName}
                   className="h-full w-full object-cover"
                 />

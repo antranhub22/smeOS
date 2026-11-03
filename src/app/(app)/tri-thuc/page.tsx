@@ -1,6 +1,5 @@
 "use client"
 
-import { InfoTip } from "@/components/ui/info-tip"
 import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react"
 import Link from "next/link"
@@ -15,6 +14,7 @@ import {
   HelpCircle,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { KNOWLEDGE_MODULES } from "@/components/knowledge-base/knowledge-data"
@@ -24,6 +24,7 @@ import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import type { Route } from "next"
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function KnowledgeBasePage() {
   const { t } = useI18n()
@@ -59,17 +60,14 @@ export default function KnowledgeBasePage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-bg">
       {/* 1. Standardized Top-Right Action Header */}
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-background/95 px-6 py-4 backdrop-blur-sm">
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-bg/95 px-6 py-4 backdrop-blur-sm">
         <div className="flex items-start"><MobileMenuButton /><div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-extrabold text-foreground">Cẩm nang tri thức</h1>
-            {/* Giải thích trong "?" (OPERATING_PRINCIPLES §6.1) */}
-            <InfoTip label="Cẩm nang tri thức" side="bottom">
-              Bảng tra cứu các trường bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS.
-            </InfoTip>
-          </div>
+          <PageHeader
+            title="Cẩm nang tri thức"
+            tip="Bảng tra cứu các trường bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS."
+          />
         </div></div>
 
         {/* Top-Right Action Toolbar (K2: 1 primary + 1 secondary) */}
@@ -78,7 +76,7 @@ export default function KnowledgeBasePage() {
             <Button
               variant="outline"
               size="sm"
-              className="text-xs font-bold gap-1.5 border-border hover:bg-muted"
+              className="text-caption font-bold gap-1.5 border-border hover:bg-surface-alt"
             >
               <Bot className="h-3.5 w-3.5 text-primary" />
               <span>Kênh hội thoại đa kênh</span>
@@ -89,7 +87,7 @@ export default function KnowledgeBasePage() {
             variant="primary"
             size="sm"
             onClick={() => handleAskCopilot("Hỏi Copilot")}
-            className="font-bold text-xs gap-1.5 shadow-xs"
+            className="font-bold text-caption gap-1.5 shadow-xs"
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Mở smeOS Copilot (⌘K)</span>
@@ -117,16 +115,16 @@ export default function KnowledgeBasePage() {
         <OnboardingProgressBar />
 
         {/* Thanh Tìm Kiếm & Bộ Lọc Phân Hệ */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card p-3 rounded-2xl border border-border shadow-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface p-3 rounded-2xl border border-border shadow-xs">
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted z-10" />
+            <Input
               type="text"
               placeholder="Tìm kiếm trường nhập liệu, quy chuẩn, mẹo thao tác (vd: đếm cành, giá sàn, ẩn giá, zalo)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-border bg-background focus:outline-hidden focus:ring-1 focus:ring-primary"
+              className="pl-9"
             />
           </div>
 
@@ -142,18 +140,16 @@ export default function KnowledgeBasePage() {
               { code: "M09", label: "Khách hàng CRM" },
               { code: "M10", label: "Quản lý đơn hàng" },
             ].map((tab) => (
-              <button
+              <Button
                 key={tab.code}
                 type="button"
+                variant={selectedModuleFilter === tab.code ? "primary" : "ghost"}
+                size="sm"
                 onClick={() => setSelectedModuleFilter(tab.code)}
-                className={`px-3 py-1.5 text-xs font-bold rounded-xl whitespace-nowrap transition-colors ${
-                  selectedModuleFilter === tab.code
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
+                className="px-3 py-1.5 text-caption font-bold rounded-xl whitespace-nowrap h-auto"
               >
                 {tab.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -161,10 +157,10 @@ export default function KnowledgeBasePage() {
         {/* Danh Sách Các Phân Hệ Cẩm Nang Nhập Liệu */}
         <div className="space-y-6">
           {filteredModules.length === 0 ? (
-            <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-card">
-              <HelpCircle className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-              <div className="text-sm font-bold text-foreground">Không tìm thấy hướng dẫn phù hợp</div>
-              <p className="text-xs text-muted-foreground mt-1">
+            <div className="p-12 text-center rounded-2xl border border-dashed border-border bg-surface">
+              <HelpCircle className="mx-auto h-8 w-8 text-text-muted mb-2" />
+              <div className="text-body-sm font-bold text-text">Không tìm thấy hướng dẫn phù hợp</div>
+              <p className="text-caption text-text-muted mt-1">
                 Thử thay đổi từ khóa tìm kiếm hoặc chọn bộ lọc &apos;Tất cả&apos;
               </p>
             </div>

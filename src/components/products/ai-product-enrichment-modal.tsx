@@ -282,7 +282,7 @@ export function AiProductEnrichmentModal({
               className="flex items-center gap-1.5 border-primary/40 text-primary hover:bg-primary-muted font-bold"
             >
               {isAnalyzing ? (
-                <Loader2 size={15} className="animate-spin text-primary" />
+                <Loader2 size={15} className="animate-spin motion-reduce:animate-none text-primary" />
               ) : (
                 <Sparkles size={15} className="text-primary" />
               )}

@@ -113,6 +113,8 @@ const COVERED_VIA_ROUTE = {
   order_exceptions: "tests/tenant/coordinator.test.ts — resolve sự cố của tổ chức khác → 404",
   order_payments: "tests/tenant/coordinator.test.ts — sổ thu: cách ly tổ chức — tổ chức khác không đọc/ghi được (404)",
   internal_chat_conversations: "tests/tenant/internal-chat-isolation.test.ts — đọc/gửi/tham gia hội thoại tổ chức khác → 404",
+  customer_segments: "tests/tenant/customer-care-isolation.test.ts — xem/sửa/xoá nhóm khách của tổ chức khác → 404",
+  customer_interactions: "tests/tenant/customer-care-isolation.test.ts — nhật ký tương tác cách ly, không ghi được cho khách tổ chức khác",
 }
 for (const t of tenant) {
   if (t in COVERED_VIA_ROUTE) continue

@@ -7,6 +7,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react"
 import { Sparkles, ArrowLeft, Wand2, FileText, Headphones, Film, Package, AlertTriangle, Camera } from "@/components/ui/icons"
 import { useSearchParams, useRouter } from "next/navigation"
 import { TabActionHeader, type TabItem, type TabOverflowAction } from "@/components/ui/tab-header"
+import { Button } from "@/components/ui/button"
 import { CreativeGuidanceCard } from "@/components/templates/creative-studio/creative-guidance-card"
 import { ProductIntelligenceWorkspace } from "@/components/market-intelligence/product-intelligence-workspace"
 import { VariantWorkspace } from "@/components/creative-studio/variant-workspace"
@@ -396,11 +397,11 @@ export default function CreativeStudioPage() {
   // --- Render ---
   return (
     <CreativeStudioContext.Provider value={context}>
-      <div className="flex h-full flex-col overflow-hidden bg-background">
+      <div className="flex h-full flex-col overflow-hidden bg-bg">
         {/* Top Header */}
         <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-3">
           <div>
-            <div className="text-xs text-text-muted">
+            <div className="text-caption text-text-muted">
               {context.mode} mode · Chặng 01–14 · Studio Sáng tạo Đa phương tiện
             </div>
             <div className="text-title font-extrabold text-primary">AI Creative Studio</div>
@@ -465,13 +466,14 @@ export default function CreativeStudioPage() {
                   <span className="text-text">
                     Đang làm lại tài sản cho <strong>gói chiến dịch</strong>. Xong thì quay lại — tài sản mới sẽ được đề xuất thay vào gói.
                   </span>
-                  <button
+                  <Button
                     type="button"
+                    size="sm"
                     onClick={backToPackage}
-                    className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-meta font-bold text-white cursor-pointer"
+                    className="shrink-0"
                   >
                     ← Quay lại gói (Chặng 07)
-                  </button>
+                  </Button>
                 </div>
               )}
               {renderWorkspace()}

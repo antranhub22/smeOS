@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { DollarSign, Loader2, Plus, RotateCcw, Save, Trash2, Wand2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Disclosure } from "@/components/ui/disclosure"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
   DEFAULT_PRICE_BUDGETS,
@@ -87,7 +88,7 @@ export function PriceBudgetsSection() {
         dưới giá “Đến”; để trống “Đến” nghĩa là không giới hạn.
       </p>
       {!budgets ? (
-        <div className="h-20 rounded-lg bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-20 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <div className="flex flex-col gap-3 text-body-sm">
           {budgets.map((b, i) => (
@@ -114,8 +115,7 @@ export function PriceBudgetsSection() {
               <RotateCcw size={14} /> Dùng bộ mặc định
             </Button>
           </div>
-          <details className="text-caption">
-            <summary className="cursor-pointer text-primary">Tạo nhanh các khoảng đều nhau</summary>
+          <Disclosure label="Tạo nhanh các khoảng đều nhau" className="p-3 text-caption">
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <label className="flex items-center gap-1">Từ <input inputMode="numeric" value={fmt(toNum(gen.from))} onChange={(e) => setGen({ ...gen, from: e.target.value })} className={`${FIELD} w-28`} />đ</label>
               <label className="flex items-center gap-1">đến <input inputMode="numeric" value={fmt(toNum(gen.to))} onChange={(e) => setGen({ ...gen, to: e.target.value })} className={`${FIELD} w-28`} />đ</label>
@@ -124,7 +124,7 @@ export function PriceBudgetsSection() {
                 <Wand2 size={14} /> Tạo
               </Button>
             </div>
-          </details>
+          </Disclosure>
         </div>
       )}
       {errors.length > 0 && (
@@ -137,7 +137,7 @@ export function PriceBudgetsSection() {
           {message?.text ?? `Tối đa ${MAX_PRICE_BUDGETS} khoảng, không được chồng lên nhau.`}
         </p>
         <Button type="submit" size="sm" disabled={saving || !draft || errors.length > 0} className="gap-1.5 shrink-0">
-          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />}
           <span>Lưu khoảng giá</span>
         </Button>
       </div>

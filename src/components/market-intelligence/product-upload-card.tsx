@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Upload, Image as ImageIcon, Sparkles, Check, Flower2, Library, Loader2, X } from "@/components/ui/icons";
 import { useI18n } from "@/lib/i18n/context";
+import { safeImageSrc } from "@/lib/safe-image-src"
 
 interface ProductUploadCardProps {
   selectedImage: string;
@@ -257,7 +258,7 @@ export function ProductUploadCard({
             />
             <div className="flex flex-col items-center justify-center gap-2">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-xs text-blush-600 group-hover:scale-110 transition">
-                {isUploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
+                {isUploading ? <Loader2 size={18} className="animate-spin motion-reduce:animate-none" /> : <Upload size={18} />}
               </span>
               <p className="text-xs font-bold text-cool-700">
                 {isUploading ? (
@@ -322,7 +323,7 @@ export function ProductUploadCard({
           <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white border border-cool-200">
             {selectedImage ? (
               <img
-                src={selectedImage}
+                src={safeImageSrc(selectedImage)}
                 alt="Selected"
                 className="h-full w-full object-cover"
               />
@@ -345,7 +346,7 @@ export function ProductUploadCard({
           >
             {isAnalyzing ? (
               <>
-                <Loader2 size={15} className="animate-spin" />
+                <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />
                 <span>Vision AI đang bóc tách cấu trúc...</span>
               </>
             ) : (
@@ -380,7 +381,7 @@ export function ProductUploadCard({
             <div className="flex-1 overflow-y-auto space-y-2 pr-1">
               {loadingCatalog ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-2 text-cool-500 text-xs">
-                  <Loader2 size={20} className="animate-spin text-blush-600" />
+                  <Loader2 size={20} className="animate-spin motion-reduce:animate-none text-blush-600" />
                   <span>Đang tải danh sách sản phẩm tiệm...</span>
                 </div>
               ) : catalogProducts.length === 0 ? (

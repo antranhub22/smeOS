@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { formatCurrency, formatDate } from "@/lib/i18n/formatters"
 import { useSession } from "@/lib/session"
 import { discountLabel, VOUCHER_BATCH_STATUS_LABEL, type VoucherBatchStatus, type VoucherDiscountType } from "@/modules/promotions/domain/voucher-batch"
+import { PageHeader } from "@/components/ui/page-header"
 
 interface BatchRow {
   id: string
@@ -113,10 +114,10 @@ export function VoucherBatchesClient() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-display font-extrabold text-text">Phát hành mã giảm giá</h1>
-          <p className="mt-1 text-body-sm text-text-muted">Tạo mã để khách nhập khi đặt hàng qua Thẻ chào và Catalog.</p>
-        </div>
+        <PageHeader
+          title="Phát hành mã giảm giá"
+          description="Tạo mã để khách nhập khi đặt hàng qua Thẻ chào và Catalog."
+        />
         <Button onClick={openForm}>
           <Plus className="h-4 w-4" aria-hidden />
           Phát hành đợt mới

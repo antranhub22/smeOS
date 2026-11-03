@@ -23,6 +23,7 @@ import { InlineError } from "@/components/ui/inline-error"
 import { useAnnounce } from "@/components/ui/live-region"
 import { PartnerManagementModal } from "@/components/coordinator/partner-management-modal"
 import { SlaMonitorModal } from "@/components/coordinator/sla-monitor-modal"
+import { PageHeader } from "@/components/ui/page-header"
 
 type Partner = { id: string; code: string; name: string; phone?: string; district: string | null; province: string | null; capacityDaily: number; tier: string; isActive: boolean }
 
@@ -118,36 +119,34 @@ export function FlowerNetworkCommandCenter() {
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-display font-extrabold text-text">
-              {orgName || "Trung tâm Điều hành Điện hoa"}
-            </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
-              <Radio className="h-3 w-3" />
-              {roleUx?.label ?? "Điện hoa Admin"}
-            </span>
-          </div>
-          <p className="mt-1 text-body-sm text-text-muted">
-            {roleUx?.primaryQuestion ??
-              "Toàn bộ hệ thống điện hoa đang hoạt động thế nào và tôi cần can thiệp ở đâu?"}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => router.push("/dieu-phoi" as never)}
-            className="flex items-center gap-1.5"
-          >
-            <Radio className="h-4 w-4 text-primary" />
-            <span>Tháp điều phối</span>
-          </Button>
-          <UserMenu initials={userInitials || "ĐH"} />
-        </div>
-      </div>
+      <PageHeader
+        title={orgName || "Trung tâm Điều hành Điện hoa"}
+        badge={
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
+            <Radio className="h-3 w-3" />
+            {roleUx?.label ?? "Điện hoa Admin"}
+          </span>
+        }
+        description={
+          roleUx?.primaryQuestion ??
+          "Toàn bộ hệ thống điện hoa đang hoạt động thế nào và tôi cần can thiệp ở đâu?"
+        }
+        actions={
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/dieu-phoi" as never)}
+              className="flex items-center gap-1.5"
+            >
+              <Radio className="h-4 w-4 text-primary" />
+              <span>Tháp điều phối</span>
+            </Button>
+            <UserMenu initials={userInitials || "ĐH"} />
+          </>
+        }
+      />
 
       {/* Tầng 4: Radar Điều hành & Cảnh báo khẩn cấp (Command Tier) - Chuẩn StatTile */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

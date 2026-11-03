@@ -89,22 +89,6 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Sản phẩm",
   },
   {
-    href: "/van-hanh/nganh",
-    label: "Quy chuẩn ngành",
-    group: "san-pham-nganh",
-    iconKey: "Layers",
-    navKey: "industry-taxonomy",
-    mobileLabel: "Quy chuẩn",
-  },
-  {
-    href: "/van-hanh/truong-du-lieu",
-    label: "Trường dữ liệu",
-    group: "san-pham-nganh",
-    iconKey: "SlidersHorizontal",
-    navKey: "industry-fields",
-    mobileLabel: "Trường",
-  },
-  {
     href: "/gia",
     label: "Giá & chiết khấu",
     group: "san-pham-nganh",
@@ -160,14 +144,6 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "industry-channel-performance",
     capability: "U3",
     mobileLabel: "Hiệu suất",
-  },
-  {
-    href: "/van-hanh/du-lieu",
-    label: "Hoa hồng & đối soát",
-    group: "hieu-qua-thuong-mai",
-    iconKey: "DollarSign",
-    navKey: "industry-clearing",
-    mobileLabel: "Đối soát",
   },
 
   // 6. THIẾT LẬP

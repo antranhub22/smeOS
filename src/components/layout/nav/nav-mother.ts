@@ -15,6 +15,22 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "platform-overview",
     mobileLabel: "Tổng quan",
   },
+  {
+    href: "/van-hanh/thu-vien-man-hinh",
+    label: "Thư viện màn hình",
+    group: "tong-quan",
+    iconKey: "Monitor",
+    navKey: "platform-screen-library",
+    mobileLabel: "Màn hình",
+  },
+  {
+    href: "/van-hanh/thu-vien-giao-dien",
+    label: "Thư viện giao diện",
+    group: "tong-quan",
+    iconKey: "Layers",
+    navKey: "platform-ui-catalog",
+    mobileLabel: "UI Catalog",
+  },
 
   // 2. TỔ CHỨC & DỊCH VỤ
   {

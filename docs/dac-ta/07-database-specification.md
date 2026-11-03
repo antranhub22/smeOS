@@ -3505,3 +3505,275 @@ model sales_channel_orders {
 }
 ```
 
+
+## 38. Marketing & Sales Center (PO 01/11/2026)
+
+Bảy bảng thuộc tenant, mỗi bảng có `organization_id` và index dẫn đầu bằng `organization_id`. Khoá ngoại chỉ bảo đảm bản ghi tồn tại; use-case kiểm thêm ID tham chiếu cùng tổ chức trước khi ghi (`quotation-reference-guard.ts`, `create-asset-usage.use-case.ts`, `create-print-rendition.use-case.ts`). Ca thử cách ly trong `tests/tenant/`: `asset-usage-isolation`, `campaign-isolation`, `quotation-isolation`, `quotation-public-link`, `customer-care-isolation`, `print-isolation`, `marketing-kpi-isolation` (`.test.ts`).
+
+- `quotations.public_token` — token ngẫu nhiên 256 bit, duy nhất toàn hệ thống, là quyền xem duy nhất của link công khai `/bg/<token>`. Mã `code` (`BG-xxxx`) chỉ duy nhất trong một tổ chức và không dùng cho link công khai.
+- `quotation_items.organization_id` lấy theo báo giá cha khi ghi (migration `20261103090000` backfill dữ liệu cũ).
+
+### 38.1 Bảng
+
+```prisma
+/// Nơi dùng tư liệu (Asset Usage) — Marketing & Sales Center (PO 01/11/2026, PR-2).
+/// Liên kết một tư liệu nguồn (từ 8 LIBRARY_TYPES) với đích sử dụng và CTA,
+/// gắn kèm link rút gọn để đo lường lượt quét/bấm và lead quy thuộc.
+model asset_usages {
+  id              String            @id @default(uuid())
+  organization_id String
+  /// 8 LIBRARY_TYPES (original, ai_image, video, audio, content, catalog, greeting_catalog, landing)
+  source_type     String
+  source_id       String
+  asset_type_code String
+  destination     usage_destination
+  cta_code        String
+  title           String
+  short_link_id   String?
+  campaign_id     String?
+  config          Json?             @default("{}")
+  status          usage_status      @default(ACTIVE)
+  created_by      String
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  short_link   short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
+  campaign     campaigns?    @relation(fields: [campaign_id], references: [id], onDelete: SetNull)
+  quotations   quotations[]
+  customer_interactions customer_interactions[]
+  print_renditions      print_renditions[]
+
+  @@index([organization_id])
+  @@index([organization_id, source_type, source_id])
+  @@index([organization_id, destination, status])
+  @@index([campaign_id])
+}
+
+/// Chiến dịch Quảng bá & Bán hàng — Marketing & Sales Center (PO 01/11/2026, PR-3).
+/// Quản lý mục tiêu, dịp/sự kiện, thời gian chạy và tập hợp Asset Usages.
+model campaigns {
+  id              String             @id @default(uuid())
+  organization_id String
+  name            String
+  objective       campaign_objective
+  occasion_code   String?
+  starts_at       DateTime?
+  ends_at         DateTime?
+  status          campaign_status    @default(DRAFT)
+  created_by      String
+  created_at      DateTime           @default(now())
+  updated_at      DateTime           @updatedAt
+
+  organization organizations  @relation(fields: [organization_id], references: [id])
+  usages       asset_usages[]
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, created_at])
+}
+
+/// Báo giá bán hàng (Quotations) — Marketing & Sales Center (PO 01/11/2026, PR-4).
+/// Liên kết cơ hội từ Lead/Customer, tính toán sản phẩm & ưu đãi, chuyển đổi thành đơn hàng.
+model quotations {
+  id                 String           @id @default(uuid())
+  organization_id    String
+  code               String           // VD: BG-0001 — mã nội bộ, không dùng cho link công khai
+  public_token       String           @unique // token ngẫu nhiên của link công khai /bg/<token>
+  lead_id            String?
+  customer_id        String?
+  asset_usage_id     String?
+  status             quotation_status @default(DRAFT)
+  valid_until        DateTime?
+  subtotal           Decimal          @default(0) @db.Decimal(12, 2)
+  discount_amount    Decimal          @default(0) @db.Decimal(12, 2)
+  total_amount       Decimal          @default(0) @db.Decimal(12, 2)
+  terms              String?          // Điều kiện & điều khoản báo giá
+  notes              String?          // Ghi chú nội bộ
+  converted_order_id String?
+  created_by         String
+  created_at         DateTime         @default(now())
+  updated_at         DateTime         @updatedAt
+
+  organization    organizations    @relation(fields: [organization_id], references: [id])
+  lead            leads?           @relation(fields: [lead_id], references: [id], onDelete: SetNull)
+  customer        customers?       @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+  asset_usage     asset_usages?    @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
+  converted_order orders?          @relation("quotation_converted_order", fields: [converted_order_id], references: [id], onDelete: SetNull)
+  items           quotation_items[]
+
+  @@unique([organization_id, code])
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, created_at])
+  @@index([lead_id])
+  @@index([customer_id])
+}
+
+/// Chi tiết từng dòng sản phẩm trong báo giá (Quotation Items).
+model quotation_items {
+  id              String   @id @default(uuid())
+  organization_id String
+  quotation_id    String
+  product_id      String?
+  name            String
+  qty             Int      @default(1)
+  unit_price      Decimal  @default(0) @db.Decimal(12, 2)
+  total_price     Decimal  @default(0) @db.Decimal(12, 2)
+  note            String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  quotation    quotations    @relation(fields: [quotation_id], references: [id], onDelete: Cascade)
+  product      products?     @relation(fields: [product_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([quotation_id])
+  @@index([product_id])
+}
+
+/// Phân khúc khách hàng (Customer Segments) — Chăm sóc khách hàng (PO 01/11/2026, PR-5).
+/// Hỗ trợ lọc động theo RFM, hạng khách, dịp đặc biệt, lần mua cuối, và đồng ý nhận tin.
+model customer_segments {
+  id              String                @id @default(uuid())
+  organization_id String
+  name            String
+  description     String?
+  kind            customer_segment_kind @default(DYNAMIC)
+  rules           Json?                 // Zod schema: tier, rfmMin, rfmMax, occasions, lastPurchaseDays, tags, consentChannel
+  created_by      String
+  created_at      DateTime              @default(now())
+  updated_at      DateTime              @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@index([organization_id, kind])
+  @@index([organization_id, created_at])
+}
+
+/// Nhật ký tương tác & chăm sóc khách hàng (Customer Interactions) — Chăm sóc khách hàng (PO 01/11/2026, PR-5).
+model customer_interactions {
+  id              String                          @id @default(uuid())
+  organization_id String
+  customer_id     String
+  channel         customer_interaction_channel
+  direction       customer_interaction_direction  @default(OUTBOUND)
+  asset_usage_id  String?
+  summary         String
+  outcome         String?
+  occurred_at     DateTime                        @default(now())
+  created_by      String
+  created_at      DateTime                        @default(now())
+  updated_at      DateTime                        @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  customer     customers     @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  asset_usage  asset_usages? @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, customer_id, occurred_at])
+  @@index([customer_id])
+  @@index([asset_usage_id])
+}
+
+/// Bản in chuẩn quy cách kỹ thuật (Print Renditions) — Ấn phẩm & In ấn (PO 01/11/2026, PR-6).
+model print_renditions {
+  id              String                 @id @default(uuid())
+  organization_id String
+  asset_id        String?
+  asset_usage_id  String?
+  source_type     String
+  source_id       String?
+  preset_code     String
+  width_mm        Decimal                @db.Decimal(8, 2)
+  height_mm       Decimal                @db.Decimal(8, 2)
+  bleed_mm        Decimal                @default(3) @db.Decimal(5, 2)
+  dpi             Int                    @default(300)
+  storage_key     String?
+  file_url        String?
+  preflight       Json?
+  status          print_rendition_status @default(PENDING)
+  created_by      String
+  created_at      DateTime               @default(now())
+  updated_at      DateTime               @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  asset_usage  asset_usages? @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([organization_id, preset_code])
+  @@index([organization_id, created_at])
+  @@index([asset_usage_id])
+}
+```
+
+### 38.2 Enum
+
+```prisma
+enum usage_destination {
+  PROMOTION
+  SALES
+  CARE
+  PRINT
+  OTHER
+}
+
+enum usage_status {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum campaign_objective {
+  AWARENESS
+  LEAD
+  SALE
+  RETENTION
+}
+
+enum campaign_status {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+
+enum quotation_status {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CONVERTED
+}
+
+enum customer_segment_kind {
+  DYNAMIC
+  STATIC
+}
+
+enum customer_interaction_channel {
+  ZALO
+  PHONE
+  SMS
+  EMAIL
+  IN_PERSON
+  OTHER
+}
+
+enum customer_interaction_direction {
+  OUTBOUND
+  INBOUND
+}
+
+enum print_rendition_status {
+  PENDING
+  READY
+  FAILED
+}
+```

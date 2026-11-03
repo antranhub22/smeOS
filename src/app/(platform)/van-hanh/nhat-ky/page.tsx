@@ -4,10 +4,10 @@
 // `platform_audit_logs`. Xem đặc tả 06 mục 21.
 
 import { useEffect, useState } from "react"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatDateTime } from "@/lib/i18n/formatters"
+import { PageHeader } from "@/components/ui/page-header"
 
 type PlatformAuditRow = {
   id: string
@@ -41,21 +41,20 @@ export default function NhatKyPage() {
     })()
   }, [])
 
-  if (loi) return <p className="text-sm text-danger">{loi}</p>
+  if (loi) return <p className="text-body-sm text-danger">{loi}</p>
   if (!rows) return <div className="py-4"><SkeletonBlock lines={4} /></div>
 
   return (
     <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
-      <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Nhật ký kiểm toán</h1>
-          <InfoTip label="Nhật ký kiểm toán">
-            Ghi chép mọi thao tác quan trọng của người dùng và hệ thống trên toàn nền tảng.
-          </InfoTip>
-        </div>
-        <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hệ thống</span>
-      </div>
-      <table className="w-full text-left text-xs">
+      <PageHeader
+        className="mb-3 border-b border-border pb-2"
+        title="Nhật ký kiểm toán"
+        tip="Ghi chép mọi thao tác quan trọng của người dùng và hệ thống trên toàn nền tảng."
+        actions={
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Toàn hệ thống</span>
+        }
+      />
+      <table className="w-full text-left text-caption">
         <thead>
           <tr className="border-b border-border text-text-muted">
             <th className="py-2 pr-3">Lúc</th>

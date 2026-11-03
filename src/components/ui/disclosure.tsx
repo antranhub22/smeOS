@@ -8,12 +8,12 @@ export interface DisclosureProps {
   /** Nhãn nói rõ bên trong có gì: "Tùy chỉnh phong cách và tỷ lệ" — không dùng "Khác". */
   label: string
   /** Tóm tắt khi đang đóng mà có giá trị khác mặc định: "Đã tùy chỉnh 2 mục". */
-  appliedSummary?: string
-  defaultOpen?: boolean
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  appliedSummary?: string | undefined
+  defaultOpen?: boolean | undefined
+  open?: boolean | undefined
+  onOpenChange?: ((open: boolean) => void) | undefined
   children: React.ReactNode
-  className?: string
+  className?: string | undefined
 }
 
 /**

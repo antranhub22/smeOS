@@ -613,7 +613,7 @@ export function SalesPitchCard({
     <div className="flex flex-col gap-5 w-full max-w-5xl mx-auto">
       {/* Celebration Banner when finalized */}
       {justFinalized && (
-        <div className="flex items-center gap-3 rounded-2xl bg-success/10 border-2 border-success/30 p-4 text-success dark:text-success animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="flex items-center gap-3 rounded-2xl bg-success/10 border-2 border-success/30 p-4 text-success animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success text-white flex-shrink-0">
             <CheckCircle2 size={22} strokeWidth={2.5} />
           </div>
@@ -628,7 +628,7 @@ export function SalesPitchCard({
 
       {/* Banner khi tạo đơn hàng thành công từ Thẻ chào */}
       {orderCreatedSuccess && (
-        <div className="flex items-center gap-3 rounded-2xl bg-success/10 border-2 border-success/30 p-4 text-success dark:text-success animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="flex items-center gap-3 rounded-2xl bg-success/10 border-2 border-success/30 p-4 text-success animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success text-white flex-shrink-0">
             <CheckCircle2 size={22} strokeWidth={2.5} />
           </div>
@@ -647,7 +647,7 @@ export function SalesPitchCard({
           <div className="flex items-center gap-2">
             <span className="text-caption font-bold text-accent-text uppercase tracking-wider">Tư vấn bán hàng</span>
             {status === "FINALIZED" ? (
-              <Badge className="bg-success/15 text-success dark:text-success border border-success/30 font-bold text-caption gap-1 py-0.5">
+              <Badge className="bg-success/15 text-success border border-success/30 font-bold text-caption gap-1 py-0.5">
                 <CheckCircle2 size={12} strokeWidth={2.5} />
                 ĐÃ DUYỆT
               </Badge>
@@ -1184,7 +1184,7 @@ export function SalesPitchCard({
               Bản xem trước Thẻ Chào Khách (Khổ A6 / Share Card)
             </span>
             {status === "FINALIZED" && (
-              <span className="text-caption font-semibold text-success dark:text-success">
+              <span className="text-caption font-semibold text-success">
                 Đã chốt duyệt Final
               </span>
             )}
@@ -1192,13 +1192,13 @@ export function SalesPitchCard({
 
           {/* Notification messages */}
           {exportSuccess && (
-            <div className="rounded-xl bg-success/10 border border-success/25 p-3 text-xs font-medium text-success dark:text-success flex items-center gap-2 animate-in fade-in duration-200">
+            <div className="rounded-xl bg-success/10 border border-success/25 p-3 text-xs font-medium text-success flex items-center gap-2 animate-in fade-in duration-200">
               <CheckCircle2 size={16} className="text-success flex-shrink-0" />
               <span>{exportSuccess}</span>
             </div>
           )}
           {exportError && (
-            <div className="rounded-xl bg-danger/10 border border-danger/25 p-3 text-xs font-medium text-danger dark:text-danger flex items-center gap-2 animate-in fade-in duration-200">
+            <div className="rounded-xl bg-danger/10 border border-danger/25 p-3 text-xs font-medium text-danger flex items-center gap-2 animate-in fade-in duration-200">
               <AlertCircle size={16} className="text-danger flex-shrink-0" />
               <span>{exportError}</span>
             </div>

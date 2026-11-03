@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Plus, RefreshCw, MessageSquarePlus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { InfoTip } from "@/components/ui/info-tip"
 import { CreateOrderModal } from "@/components/orders/create-order-modal"
 import { OrderDetailModal } from "@/components/orders/order-detail-modal"
 import { ChatOrderCheckoutModal } from "@/components/chat/chat-order-checkout-modal"
@@ -28,6 +27,7 @@ import {
 } from "@/components/orders/workspace/role-tabs"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
+import { PageHeader } from "@/components/ui/page-header"
 
 /** Một khối trong tab: tiêu đề ngắn + nội dung (đơn Thẻ chào nhúng nguyên vẹn, đơn nguồn khác dùng màn mới). */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -77,16 +77,13 @@ export default function DonHangPage() {
   }, [])
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* 1. Header chuẩn FloraOS */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4">
-        <div className="flex items-center gap-2">
-          <h1 className="text-title font-extrabold text-foreground">{t("orders.header.title")}</h1>
-          {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
-          <InfoTip label={t("orders.header.title")} side="bottom">
-            Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong.
-          </InfoTip>
-        </div>
+        <PageHeader
+          title={t("orders.header.title")}
+          tip="Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong."
+        />
 
         {/* Top-Right Action Header: 1 primary + 2 secondary/ghost */}
         <div className="flex items-center gap-1.5 sm:gap-2">
@@ -110,7 +107,7 @@ export default function DonHangPage() {
             disabled={loading}
             className="hidden sm:inline-flex items-center gap-1.5"
           >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> {t("orders.header.refresh")}
+            <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} /> {t("orders.header.refresh")}
           </Button>
           <Button
             variant="ghost"
@@ -132,17 +129,18 @@ export default function DonHangPage() {
       {/* Tab theo vai — mở mặc định theo việc chính của người đang xem */}
       <div role="group" aria-label="Khu làm việc" className="flex items-center gap-2 border-b border-border bg-surface px-4 sm:px-6 pt-2 pb-0 overflow-x-auto scrollbar-none [scrollbar-width:none]">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab}
             type="button"
+            variant="ghost"
             aria-pressed={activeTab === tab}
             onClick={() => setActiveTab(tab)}
-            className={`shrink-0 min-h-11 py-2.5 px-4 text-body-sm font-bold border-b-2 transition-colors whitespace-nowrap ${
-              activeTab === tab ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-foreground"
+            className={`shrink-0 min-h-11 py-2.5 px-4 text-body-sm font-bold border-b-2 rounded-none transition-colors whitespace-nowrap h-auto ${
+              activeTab === tab ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             {WORKSPACE_TAB_LABELS[tab]}
-          </button>
+          </Button>
         ))}
       </div>
 

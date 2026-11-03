@@ -37,6 +37,14 @@ describe("UX Lint Rules (R1–R11)", () => {
       expect(violations[0]!.snippet).toBe("bg-red-500")
     })
 
+    it("detects alias scale colors (R1 extended)", () => {
+      const { sourceFile, context } = createTsxSource(
+        `<div className="bg-cool-100 text-blush-700 border-sand-300" />`
+      )
+      const violations = checkR1(sourceFile, context)
+      expect(violations.length).toBe(3)
+    })
+
     it("allows semantic token colors", () => {
       const { sourceFile, context } = createTsxSource(
         `<div className="bg-primary text-danger border-border bg-surface text-text" />`

@@ -4,13 +4,15 @@
 // Đọc: phiên nền tảng · Ghi: `N12`, có nhật ký kiểm toán. Xem đặc tả 06.
 
 import { useEffect, useState } from "react"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { UxRolloutFlagKey, UxRolloutFlags, UxRolloutMode } from "@/modules/platform/domain/ux-rollout-flags"
+import { PageHeader } from "@/components/ui/page-header"
 
 const FLAG_LABEL: Record<UxRolloutFlagKey, string> = {
   ux_pd_anh_san_pham: "Tạo ảnh sản phẩm chuyên nghiệp",
@@ -112,15 +114,14 @@ export default function CauHinhNenTangPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-2 sm:px-0">
-        <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Cấu hình nền tảng</h1>
-          <InfoTip label="Cấu hình nền tảng">
-            Bật giao diện chuẩn mới cho từng công cụ, theo từng tổ chức. Tắt có hiệu lực trong khoảng 30 giây.
-          </InfoTip>
-        </div>
-        <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">Phạm vi: Toàn hệ thống</span>
-      </div>
+      <PageHeader
+        className="px-4 pt-2 sm:px-0"
+        title="Cấu hình nền tảng"
+        tip="Bật giao diện chuẩn mới cho từng công cụ, theo từng tổ chức. Tắt có hiệu lực trong khoảng 30 giây."
+        actions={
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Toàn hệ thống</span>
+        }
+      />
 
       {keys.map((key) => {
         const rule = flags[key]
@@ -131,18 +132,18 @@ export default function CauHinhNenTangPage() {
               <label htmlFor={selectId} className="text-body font-semibold text-text">
                 {FLAG_LABEL[key]}
               </label>
-              <select
+              <NativeSelect
                 id={selectId}
                 value={rule.mode}
                 onChange={(e) => setMode(key, e.target.value as UxRolloutMode)}
-                className="h-11 rounded-xl border border-border bg-surface px-3 text-body-sm text-text"
+                className="w-auto"
               >
                 {(Object.keys(MODE_LABEL) as UxRolloutMode[]).map((m) => (
                   <option key={m} value={m}>
                     {MODE_LABEL[m]}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             {rule.mode === "allowlist" && (
               <fieldset className="flex flex-col gap-1.5">
@@ -152,12 +153,10 @@ export default function CauHinhNenTangPage() {
                 {orgs.length === 0 && <p className="text-body-sm text-text-muted">Chưa tải được danh sách tổ chức.</p>}
                 <div className="grid max-h-56 grid-cols-1 gap-1 overflow-y-auto sm:grid-cols-2">
                   {orgs.map((o) => (
-                    <label key={o.id} className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-body-sm text-text hover:bg-surface-alt">
-                      <input
-                        type="checkbox"
+                    <label key={o.id} className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-body-sm text-text hover:bg-surface-alt cursor-pointer">
+                      <Checkbox
                         checked={rule.organizationIds.includes(o.id)}
-                        onChange={() => toggleOrg(key, o.id)}
-                        className="h-4 w-4"
+                        onCheckedChange={() => toggleOrg(key, o.id)}
                       />
                       <span>
                         {o.name} <span className="text-meta text-text-muted">· {o.slug}</span>

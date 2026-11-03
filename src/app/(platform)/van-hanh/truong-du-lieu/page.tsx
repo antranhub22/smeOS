@@ -10,12 +10,12 @@
 
 import { useState } from "react"
 import { useI18n } from "@/lib/i18n"
-import { InfoTip } from "@/components/ui/info-tip"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { TruongLoiTab } from "./_components/truong-loi-tab"
 import { TruongTuTaoTab } from "./_components/truong-tu-tao-tab"
 import { DanhMucTab } from "./_components/danh-muc-tab"
 import { GhiDeToChucTab } from "./_components/ghi-de-to-chuc-tab"
+import { PageHeader } from "@/components/ui/page-header"
 
 const TABS: TabItem[] = [
   { id: "loi", label: "Trường lõi" },
@@ -30,12 +30,10 @@ export default function TruongDuLieuPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <h1 className="text-xl font-bold text-text">Trường dữ liệu</h1>
-        <InfoTip label="Trường dữ liệu">
-          Kiến trúc hai lớp mã/cấu hình, 5 mức sàn không cấu hình được. Mọi thay đổi ghi vào nhật ký nền tảng.
-        </InfoTip>
-      </div>
+      <PageHeader
+        title="Trường dữ liệu"
+        tip="Kiến trúc hai lớp mã/cấu hình, 5 mức sàn không cấu hình được. Mọi thay đổi ghi vào nhật ký nền tảng."
+      />
 
       <TabActionHeader tabs={TABS} activeTab={tab} onTabChange={setTab} />
 

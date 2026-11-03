@@ -51,6 +51,17 @@ walkDir(chainOsDir, (filePath) => {
   }
 })
 
+// 3. Quét src/components: Tuyệt đối cấm import từ tầng infra (UI-A-06 / F1-12)
+const componentsDir = path.join(ROOT, "src", "components")
+walkDir(componentsDir, (filePath) => {
+  const content = fs.readFileSync(filePath, "utf-8")
+  const infraImportRegex = /from\s+["'][^"']*(?:modules\/[^/]+\/infra|layers\/[^/]+\/infra)[^"']*["']/g
+  if (infraImportRegex.test(content)) {
+    console.error(`❌ VI PHẠM UI PURITY: Component ${path.relative(ROOT, filePath)} đang import trực tiếp từ tầng infra!`)
+    totalErrors++
+  }
+})
+
 if (totalErrors === 0) {
   console.log("✅ HOÀN TOÀN HỢP LỆ! 0 vi phạm ranh giới tầng kiến trúc. Sẵn sàng bóc tách repo.")
   process.exit(0)

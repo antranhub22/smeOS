@@ -41,14 +41,14 @@ export function GenerationResults({
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-xs font-semibold text-text-muted">Bài đã soạn</span>
-          <h2 className="text-lg font-black text-text">Xem trước & Biên tập nội dung</h2>
+          <span className="text-caption font-semibold text-text-muted">Bài đã soạn</span>
+          <h2 className="text-title-sm font-black text-text">Xem trước & Biên tập nội dung</h2>
         </div>
         <Button
           variant="outline"
           size="sm"
           onClick={onReset}
-          className="text-xs gap-1.5 shadow-xs"
+          className="text-caption gap-1.5 shadow-xs"
         >
           <RefreshCw size={13} />
           Viết bài mới
@@ -68,17 +68,17 @@ export function GenerationResults({
 
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div>
-          <div className="text-xs font-bold text-primary flex items-center gap-1.5">
+          <div className="text-caption font-bold text-primary flex items-center gap-1.5">
             <span>🚀</span> Bước tiếp theo: Xuất bản đa nền tảng
           </div>
-          <div className="text-xs text-text-muted mt-0.5">
+          <div className="text-caption text-text-muted mt-0.5">
             Sau khi duyệt, bài viết chuyển vào lịch đăng bài.
           </div>
         </div>
         <Button
           size="sm"
           onClick={() => router.push("/lich-dang" as never)}
-          className="text-xs gap-1.5 font-bold whitespace-nowrap"
+          className="text-caption gap-1.5 font-bold whitespace-nowrap"
         >
           Đến Lịch đăng bài
           <Send size={13} />

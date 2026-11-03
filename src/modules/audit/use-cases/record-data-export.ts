@@ -1,7 +1,7 @@
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "./record-audit-log"
 
-export type ExportDataset = "orders" | "crm_customers" | "vision_analyses" | "products" | "voucher_codes"
+export type ExportDataset = "orders" | "crm_customers" | "vision_analyses" | "products" | "voucher_codes" | "print_renditions"
 
 /**
  * SDAGF-018: mọi lần xuất dữ liệu tổ chức ra tệp đều để lại dấu vết — ai,

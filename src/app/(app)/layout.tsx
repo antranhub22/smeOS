@@ -10,19 +10,12 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
 import { SessionProvider } from "@/lib/session"
-import { BottomNav } from "@/components/layout/bottom-nav"
-import { DesktopNav } from "@/components/layout/desktop-nav"
-import { MobileNavDrawer } from "@/components/layout/mobile-nav-drawer"
-import { GlobalImageZoom } from "@/components/ui/global-image-zoom"
+import { AppShell } from "@/components/layout/app-shell"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
-import { SessionTakeoverWatcher } from "@/components/layout/session-takeover-watcher"
 import { checkSession } from "@/modules/organization/use-cases/check-session"
 import { SESSION_SUPERSEDED } from "@/core/http/errors"
-import { LiveRegionProvider } from "@/components/ui/live-region"
 import { I18nProvider } from "@/lib/i18n"
-import { ToolLockGuard } from "@/components/layout/tool-lock-guard"
-
-import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
+import { resolveUiTheme } from "@/lib/ui-system/resolve-ui-theme"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -41,33 +34,20 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect(lyDo === SESSION_SUPERSEDED ? "/dang-nhap?ly-do=thiet-bi-khac" : "/dang-nhap")
   }
 
+  const uiTheme = resolveUiTheme(session)
+
   return (
     <SessionProvider session={session}>
       <I18nProvider industryKey={session.organization?.industry}>
-        <LiveRegionProvider>
-            <a
-              href="#noi-dung-chinh"
-              className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-xl focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              Bỏ qua tới nội dung
-            </a>
-            <div className="mx-auto flex min-h-dvh w-full flex-col md:flex-row">
-              <MobileNavDrawer>
-                <DesktopNav isDev={process.env.NODE_ENV !== "production"} />
-                <div
-                  id="noi-dung-chinh"
-                  tabIndex={-1}
-                  className="min-h-0 min-w-0 flex-1 focus:outline-none pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0"
-                >
-                  <ToolLockGuard>{children}</ToolLockGuard>
-                </div>
-              </MobileNavDrawer>
-              <BottomNav />
-            </div>
-            <GlobalImageZoom />
-            <SessionTakeoverWatcher />
-            <FloraOSGlobalCopilot />
-        </LiveRegionProvider>
+        <AppShell
+          theme={uiTheme}
+          withToolGuard
+          withCopilot
+          withImageZoom
+          withUiStudio={process.env.NODE_ENV !== "production"}
+        >
+          {children}
+        </AppShell>
       </I18nProvider>
     </SessionProvider>
   )

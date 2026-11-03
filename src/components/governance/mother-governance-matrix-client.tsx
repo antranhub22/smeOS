@@ -14,6 +14,7 @@ import {
   buildSSOTGovernanceGroups,
   type GovernanceSystemKey,
 } from "./governance-catalog-registry"
+import { PageHeader } from "@/components/ui/page-header"
 
 type MatrixTab = "PROMOTIONS" | "COMMITMENTS" | "POLICIES" | "PAYMENTS" | "CRAFT_FEES"
 
@@ -75,14 +76,10 @@ export function MotherGovernanceMatrixClient({
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full p-6">
       {/* Page Header chuyên biệt cho từng ma trận */}
-      <div>
-        <h1 className="text-display font-extrabold text-text">
-          {currentInfo.title}
-        </h1>
-        <p className="text-body-sm text-text-muted mt-1">
-          {currentInfo.desc}
-        </p>
-      </div>
+      <PageHeader
+        title={currentInfo.title}
+        description={<>{currentInfo.desc}</>}
+      />
 
       <GovernanceScopeNote system={activeTab} />
 

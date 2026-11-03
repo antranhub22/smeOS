@@ -174,7 +174,7 @@ export function PlatformAccountCard({
                 className="text-xs gap-1"
                 title="Kiểm tra lại tính hợp lệ của phiên đăng nhập"
               >
-                <RefreshCw size={12} className={isCurrentLoading ? "animate-spin" : ""} />
+                <RefreshCw size={12} className={isCurrentLoading ? "animate-spin motion-reduce:animate-none" : ""} />
                 Kiểm tra phiên
               </Button>
 

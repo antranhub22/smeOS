@@ -81,7 +81,7 @@ export function ProductCraftFeeCard({ productId, attributes, spec, onUpdated }: 
       <div className="flex items-center justify-end gap-3">
         {message && <span className={`text-caption ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</span>}
         <Button type="button" variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-          {saving ? <Loader2 size={14} className="animate-spin" /> : "Lưu"}
+          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : "Lưu"}
         </Button>
       </div>
     </Card>

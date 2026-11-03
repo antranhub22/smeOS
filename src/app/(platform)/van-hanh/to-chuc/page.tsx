@@ -4,11 +4,11 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useI18n } from "@/lib/i18n"
 import { formatDate } from "@/lib/i18n/formatters"
+import { PageHeader } from "@/components/ui/page-header"
 
 type PlatformOrganizationSummary = {
   id: string
@@ -42,21 +42,20 @@ export default function DanhSachToChucPage() {
     })()
   }, [dict.platform.organizations.loadError])
 
-  if (loi) return <p className="text-sm text-danger">{loi}</p>
+  if (loi) return <p className="text-body-sm text-danger">{loi}</p>
   if (!orgs) return <div className="py-4"><SkeletonBlock lines={4} /></div>
 
   return (
     <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
-      <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-text">Tổ chức</h1>
-          <InfoTip label="Tổ chức">
-            Danh sách tất cả doanh nghiệp, chuỗi và cửa hàng đăng ký trên toàn nền tảng.
-          </InfoTip>
-        </div>
-        <span className="rounded bg-muted px-2 py-0.5 text-xs text-text-muted">{dict.platform.organizations.scopeSystem}</span>
-      </div>
-      <table className="w-full text-left text-xs">
+      <PageHeader
+        className="mb-3 border-b border-border pb-2"
+        title="Tổ chức"
+        tip="Danh sách tất cả doanh nghiệp, chuỗi và cửa hàng đăng ký trên toàn nền tảng."
+        actions={
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">{dict.platform.organizations.scopeSystem}</span>
+        }
+      />
+      <table className="w-full text-left text-caption">
         <thead>
           <tr className="border-b border-border text-text-muted">
             <th className="py-2 pr-3">{dict.platform.organizations.table.org}</th>
@@ -76,7 +75,7 @@ export default function DanhSachToChucPage() {
                 <span className="ml-1 text-text-muted">({org.slug})</span>
               </td>
               <td className="py-2 pr-3">
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-caption font-medium bg-muted text-text">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-caption font-medium bg-surface-alt text-text">
                   {org.type === "STORE" || org.type === "SINGLE" ? dict.platform.organizations.types.store :
                    org.type === "FLOWER_NETWORK" || org.type === "CHAIN" ? dict.platform.organizations.types.network :
                    org.type === "PLATFORM" ? dict.platform.organizations.types.platform :

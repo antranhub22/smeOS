@@ -8,6 +8,42 @@
 
 ## 1. Đang ở đâu
 
+**01/11 — Nâng cấp Trung tâm Tiếp thị & Bán hàng (Marketing & Sales Center): Hoàn thành PR-0, PR-1, PR-2, PR-3 và PR-4.**
+- **PR-0 (Nền móng & Màn hình /cong-cu)**: Đóng băng Catalog & Thẻ chào; mô hình AssetType (92 asset, 24 READY); phân chia 67 công cụ thành 6 module nghiệp vụ + 5 nhóm vận hành; cấu trúc lại `/cong-cu` theo triết lý Mục tiêu kinh doanh (Purpose-First); Screen Contract `cong-cu.md`.
+- **PR-1 (Mọi đầu ra vào thư viện)**:
+  - Ánh xạ mục Kho dữ liệu sang AssetType (`library-asset-mapping.ts`);
+  - Use-case & API `POST /api/v1/ad-banner-poster/save` (quyền `G2`) lưu ảnh dựng vào Kho dữ liệu (`kind=MARKETING`, `approval_state=PENDING`, `metadata.asset_type_code`);
+  - Thêm nút "Lưu vào kho" và tách hook `usePosterActions` (đảm bảo SRP ≤ 350 dòng);
+  - Kho dữ liệu v2 hiển thị chip loại tư liệu trên mỗi thẻ và bổ sung bộ lọc theo 6 module nghiệp vụ;
+  - Cập nhật Screen Contract `cong-cu-poster-banner.md` và `kho-du-lieu.md`.
+- **PR-2 ("Dùng ở đâu?" — Asset Usage)**:
+  - CSDL & migration `20261101160000_asset_usages`: bảng `asset_usages`, enum `usage_destination`, `usage_status`, quan hệ với `short_links` và `organizations`;
+  - Domain & Registry: Sổ đăng ký 8 mã CTA tiếng Việt (`cta-registry.ts`), ma trận quy tắc nơi dùng (`usage-rules.ts`), bảng trạng thái kênh phân phối;
+  - Quyền RBAC `M1` (`marketing.usage.read`) & `M2` (`marketing.usage.manage`);
+  - Use-cases Clean Architecture: `create/list/update` Asset Usage, tự động tạo link rút gọn theo dõi quy thuộc qua `manage-short-links`;
+  - API `/api/v1/asset-usages` (GET `M1`, POST `M2`) và `/api/v1/asset-usages/[id]` (PATCH `M2`);
+  - Giao diện `UseAssetSheet` (`use-asset-sheet.tsx`, `use-asset-form.tsx`, `use-asset-list.tsx`) tích hợp vào Kho dữ liệu v2 (`library-tab.tsx`), kèm `ConfirmDialog` cho liên kết công khai (R3);
+  - Screen Contract mới `asset-usage.md`.
+- **PR-3 (Quảng bá: Chiến dịch + pipeline lead 10 trạng thái)**:
+  - CSDL & migration `20261101170000_campaigns`: bảng `campaigns`, enum `campaign_objective`, `campaign_status`, quan hệ `asset_usages.campaign_id`, dữ liệu `UPDATE leads SET status='CONTACTED' WHERE status='IN_PROGRESS'`;
+  - Domain & Pipeline: Mở rộng `LEAD_STATUSES` thành 10 trạng thái chuẩn (PO QĐ4 thay QĐ 31/10/2026) gồm `NEW, QUALIFIED, CONTACTED, CONSULTING, RECOMMENDED, QUOTATION_SENT, FOLLOW_UP, WON, LOST, UNQUALIFIED`, nhãn tiếng Việt, ma trận chuyển trạng thái hợp lệ `LEAD_TRANSITIONS`, 4 nhóm Progressive Disclosure (`LEAD_STATUS_GROUPS`), gộp `OPEN_LEAD_STATUSES` (7 trạng thái) dùng chung cho gắn đơn catalog và lead queue;
+  - Quyền RBAC `M3` (`marketing.campaign.manage`);
+  - Use-cases Clean Architecture: `create/list/update/getDetails` cho Campaign, tính toán 4 chỉ số hiệu quả thực tế (tư liệu, quét, lead, đơn chốt);
+  - API `/api/v1/campaigns` (GET `M1`, POST `M3`) và `/api/v1/campaigns/[id]` (GET `M1`, PATCH `M3`);
+  - Giao diện Workspace Chiến dịch tại `/quang-ba/chien-dich` (`CampaignWorkspace`, `CampaignList`, `CampaignCreateModal`, `CampaignDetailsView`) và cập nhật tab khách tiềm năng `leads-tab.tsx` theo 4 nhóm progressive disclosure;
+  - Screen Contract mới `chien-dich.md`, cập nhật `thu-hut-khach.md`, kịch bản ux-audit `chien-dich.mjs`.
+- **PR-4 (Bán hàng: Báo giá lưu được & Cổng nhận đơn QUOTATION)**:
+  - CSDL & migration `20261101180000_quotations`: bảng `quotations`, `quotation_items`, enum `quotation_status` (`DRAFT`, `SENT`, `ACCEPTED`, `REJECTED`, `EXPIRED`, `CONVERTED`), quan hệ với `leads`, `customers`, `orders`, `asset_usages`, `products`;
+  - Domain & Clean Repository: Module `sales` (`domain/`, `use-cases/`, `infra/`, `adapters/`), tính toán tiền hàng, chiết khấu, tổng thanh toán phía máy chủ; kiểm tra hạn hiệu lực; ma trận chuyển đổi trạng thái hợp lệ `QUOTATION_TRANSITIONS`. Tự động cập nhật trạng thái Lead sang `QUOTATION_SENT` khi gửi báo giá;
+  - Cổng nhận đơn chuẩn SSOT: Bổ sung nguồn đơn `QUOTATION` vào `ORDER_SOURCES`, tích hợp chuyển đổi báo giá thành đơn hàng qua `ingestOrder` (tuân thủ `KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §4, `order-ingestion-guard` đạt);
+  - Quyền & API: API `/api/v1/quotations` (GET `Q1`/`R15`, POST `R15`), `/api/v1/quotations/[id]` (GET `Q1`/`R15`, PATCH `R15`), `/api/v1/quotations/[id]/send` (POST `R15`), `/api/v1/quotations/[id]/convert` (POST `R15`), API công khai `GET /api/v1/public/quotation/[token]` và trang công khai `/bg/[token]` (token ngẫu nhiên 256 bit, chỉ báo giá đã gửi, không số điện thoại/ghi chú nội bộ, giới hạn tần suất);
+  - Refactor `/bao-gia`: Viết lại toàn diện từ 587 dòng xuống các module độc lập ≤ 350 dòng (`CustomerQuoteBuilder`, `QuotePreviewCard`, `PartnerQuoteBuilder`, `QuotationsListView`, `page.tsx` 168 dòng), triệt tiêu hoàn toàn 3 cuộc gọi `alert()` giả lập;
+  - Danh mục Asset: Nâng cấp Asset #24 (Bản báo giá chi tiết) lên trạng thái Sẵn (`READY`), nâng tổng số Asset Sẵn lên 25;
+  - Giao diện `/cong-cu`: Bổ sung quy trình 5 bước khép kín cho Module Bán hàng (Chọn khách → Tư vấn Thẻ chào → Lập báo giá → Chốt duyệt → Đơn hàng);
+  - Screen Contract mới `bao-gia.md`, cập nhật `README.md`;
+  - Kiểm thử: 100% test cách ly tenant (`quotation-isolation.test.ts`), 100% test freeze (`the-chao-freeze`, `catalog-freeze`), 100% test SSOT đa ngành (5 trụ cột đạt), UX Lint ratchet đạt 119 (giảm từ 120).
+
+
 **30/09 (Trưa) — Nâng cấp Kiến trúc Journey-First UX Architecture: Hoàn tất 100% Đạt Chuẩn Production Ready.**
 - **Lập & Phê duyệt Kế hoạch Thực thi**: PO phê duyệt `PLAN-2026-JOURNEY-UX-01` (`docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md`), đăng ký mã tài liệu `DOC-05-KE-HOACH-JOURNEY-FIRST-UX` vào `docs/00-DOCUMENTATION-REGISTRY.yaml`.
 - **Lõi Domain Journey Engine thuần**:
@@ -993,6 +1029,8 @@ Ba quyết định dưới đây chặn go-live, không chặn việc dựng lư
 | D20 | Ngưỡng chấp nhận của từng năng lực ngoài `AIC-10`. Ngưỡng Identity Guard đã chốt (0,95 · 0,90); các năng lực còn lại chưa có dữ liệu có đáp án, nên chúng chạy bằng giá trị tạm có ghi nợ (nợ #72) | AI-2 |
 
 ## 6. Việc kế tiếp
+
+**Khắc phục nhánh Enterprise UI/UX trước bàn giao — XONG, chờ PR vào `main` (PO duyệt 03/11/2026).** Đã vá 2 lỗ hổng rò rỉ dữ liệu giữa tenant ở báo giá (link công khai dùng token 256 bit, kiểm ID tham chiếu cùng tổ chức), đưa CI về xanh (unit 3.861, tenant 693, platform 36, build, `test:e2e:ux` 22/22), viết lại báo cáo bàn giao theo số đo, khôi phục `<h1>` qua `PageHeader`/`ToolHero`. Còn mở: tệp `LICENSE` (chờ tên pháp nhân), bản bàn giao không kèm lịch sử chứa tài liệu khách ALG, nợ UX lint 5.491 và 87 tệp > 350 dòng theo lộ trình. Chi tiết và trạng thái từng việc: `docs/kien-truc/REMEDIATION_ENTERPRISE_UI.md`.
 
 **P5 M01 phân tích ảnh — HOÀN TẤT (09/12).** Bộ ảnh vàng đạt nghiệm thu (8/8 ảnh). Phần lõi đã nghiệm thu trên Postgres thật (09/10). Còn lại (không chặn): gọi `OpenAIStructuredProvider` với API OpenAI thật để đối chiếu kết quả với nhãn người (nợ #24 đã giải quyết).
 

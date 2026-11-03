@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react"
 import { Sparkles, Search, RefreshCw, Layers, Calendar, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/i18n/formatters"
 
@@ -97,12 +98,12 @@ export function ApprovedAnalysesSelector({
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
-          <input
+          <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm theo mã sản phẩm, thành phần, phong cách..."
-            className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-border bg-surface text-body-sm outline-none focus:border-primary transition-colors"
+            className="pl-9"
           />
         </div>
         <Button
@@ -112,7 +113,7 @@ export function ApprovedAnalysesSelector({
           disabled={loading}
           className="flex items-center gap-1.5 self-end sm:self-auto"
         >
-          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           Làm mới ({items.length})
         </Button>
       </div>
@@ -128,7 +129,7 @@ export function ApprovedAnalysesSelector({
       {/* Loading state */}
       {loading && items.length === 0 && (
         <div className="py-12 text-center text-text-muted text-body-sm flex flex-col items-center gap-2">
-          <RefreshCw size={24} className="animate-spin text-primary" />
+          <RefreshCw size={24} className="animate-spin motion-reduce:animate-none text-primary" />
           <span>Đang tải danh sách phân tích đã duyệt từ kho...</span>
         </div>
       )}

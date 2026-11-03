@@ -145,7 +145,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
             disabled={loading}
             className="h-8 gap-1.5 text-caption font-bold"
           >
-            <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+            <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
             <span>Làm mới</span>
           </Button>
         </div>
@@ -181,7 +181,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
       {/* Items Grid */}
       {loading ? (
         <div className="py-12 flex items-center justify-center gap-2 text-text-muted">
-          <Loader2 size={20} className="animate-spin" />
+          <Loader2 size={20} className="animate-spin motion-reduce:animate-none" />
           <span className="text-body-sm">Đang kiểm tra thùng rác...</span>
         </div>
       ) : filteredItems.length === 0 ? (
@@ -258,7 +258,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
                     className="h-8 px-3 text-caption font-bold gap-1 text-primary hover:bg-selected"
                   >
                     {restoringId === item.id ? (
-                      <Loader2 size={13} className="animate-spin" />
+                      <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />
                     ) : (
                       <RotateCcw size={13} />
                     )}
@@ -275,7 +275,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
                     title="Xóa vĩnh viễn ngay lập tức"
                   >
                     {purgingId === item.id ? (
-                      <Loader2 size={13} className="animate-spin" />
+                      <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />
                     ) : (
                       <Trash2 size={13} />
                     )}

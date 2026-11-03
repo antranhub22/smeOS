@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { TabActionHeader } from "@/components/ui/tab-header"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useAnnounce } from "@/components/ui/live-region"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { Route } from "next"
 import {
   AnalysesApprovalPanel,
@@ -17,11 +18,13 @@ import {
   type PendingOptimization,
   type PendingProductCopy,
 } from "./approval-tab-panels"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function DuyetPage() {
   const { t } = useI18n()
   const router = useRouter()
   const { announce } = useAnnounce()
+  const [confirm, confirmDialog] = useConfirmDialog()
   const [analyses, setAnalyses] = useState<PendingAnalysis[] | null>(null)
   const [optimizations, setOptimizations] = useState<PendingOptimization[] | null>(null)
   const [productCopies, setProductCopies] = useState<PendingProductCopy[] | null>(null)
@@ -98,7 +101,15 @@ export default function DuyetPage() {
   }
 
   async function duyetToiUu(jobId: string, canhBaoTruoc: boolean) {
-    if (canhBaoTruoc && !window.confirm("Ảnh này ở mức CẢNH BÁO — xác nhận vẫn muốn duyệt?")) {
+    if (
+      canhBaoTruoc &&
+      !(await confirm({
+        title: "Xác nhận duyệt ảnh cảnh báo?",
+        consequence: "Ảnh này ở mức CẢNH BÁO về chất lượng hoặc tiêu chuẩn, bạn có chắc chắn muốn duyệt?",
+        confirmLabel: "Vẫn duyệt",
+        tone: "danger",
+      }))
+    ) {
       return
     }
     setDangDuyet(jobId)
@@ -171,7 +182,9 @@ export default function DuyetPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center border-b border-border bg-surface px-4 py-4">
-        <h1 className="text-title font-extrabold text-primary">Hàng đợi duyệt</h1>
+        <PageHeader
+          title="Hàng đợi duyệt"
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto p-4">
@@ -285,6 +298,7 @@ export default function DuyetPage() {
           />
         )}
       </div>
+      {confirmDialog}
     </div>
   )
 }

@@ -69,6 +69,7 @@ Claude outputs/
 !.claude/settings.json
 !.claude/skills
 .kilo/
+.codex/
 
 # ╔══════════════════════════════════════════════════════╗
 # ║  AGENT CONFIG — INTERNAL IP, KHÔNG GIAO CHO KHÁCH  ║

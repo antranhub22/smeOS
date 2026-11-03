@@ -15,7 +15,8 @@ export const RECOVERY_CONSENT_VERSION = "ORDER_PLACED"
 /** Chỉ quét đơn huỷ trong khoảng này — lượt quét lỡ (máy chủ khởi động lại) vẫn bắt lại được. */
 export const RECOVERY_LOOKBACK_MS = 24 * 60 * 60 * 1000
 export const RECOVERY_BATCH = 100
-export const OPEN_LEAD_STATUSES = ["NEW", "IN_PROGRESS"] as const
+import { OPEN_LEAD_STATUSES } from "./lead-rules"
+export { OPEN_LEAD_STATUSES }
 
 export interface CancelledOrderCandidate {
   organizationId: string

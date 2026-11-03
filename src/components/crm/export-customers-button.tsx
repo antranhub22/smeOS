@@ -111,7 +111,7 @@ function ExportCustomersButtonInner({
         disabled={isLoading}
       >
         {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none text-primary" />
         ) : (
           <Download className="h-4 w-4 text-primary" />
         )}

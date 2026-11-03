@@ -6,21 +6,9 @@
 import type { Prisma, integration_events } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
+import type { EventStatus, EventView } from "../domain/integration-views"
 
-export type EventStatus = "PENDING" | "DONE" | "FAILED" | "DEAD"
-
-export interface EventView {
-  readonly id: string
-  readonly connectionId: string
-  readonly direction: "IN" | "OUT"
-  readonly eventType: string
-  readonly status: EventStatus
-  readonly attempts: number
-  readonly nextRetryAt: string | null
-  readonly errorCode: string | null
-  readonly payload: unknown
-  readonly createdAt: string
-}
+export type { EventStatus, EventView }
 
 export interface ClaimedEvent extends EventView {
   readonly organizationId: string

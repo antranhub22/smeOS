@@ -14,6 +14,7 @@ import {
 } from "../domain/library"
 import { loadLibraryCovers } from "../infra/library-covers"
 import { countLibraryRows, listLibraryRows, loadBranchDirectory } from "../infra/library-repository"
+import { resolveAssetDefinitionForLibraryItem } from "@/modules/marketing-center/domain/library-asset-mapping"
 
 const THUMBNAIL_TTL_SECONDS = 3600
 
@@ -29,6 +30,11 @@ export type LibraryItem = {
   /** Ảnh dự phòng trên Google Drive (như `ProductThumb`). */
   drive_link: string | null
   open_href: string
+  asset_type?: {
+    code: string
+    name: string
+    module: string
+  } | null
 }
 
 export type LibraryDeps = {
@@ -75,6 +81,7 @@ export async function listLibrary(
       const isImage = row.storageKey && row.mimeType?.startsWith("image/")
       const cover = covers.get(row.id)
       const coverKey = isImage ? row.storageKey! : cover?.storageKey
+      const assetDef = resolveAssetDefinitionForLibraryItem(type, row.subtype, row.metadata)
       return {
         id: row.id,
         type,
@@ -86,6 +93,7 @@ export async function listLibrary(
         thumbnail_url: coverKey ? await deps.signUrl(coverKey).catch(() => null) : (cover?.imageUrl ?? null),
         drive_link: cover?.driveLink ?? null,
         open_href: libraryOpenHref(type, row.id, row.subtype),
+        asset_type: assetDef ? { code: assetDef.code, name: assetDef.name, module: assetDef.module } : null,
       }
     })
   )

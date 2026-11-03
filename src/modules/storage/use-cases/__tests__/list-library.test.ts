@@ -45,8 +45,26 @@ describe("listLibrary", () => {
       branch: { id: "branch-a", name: "Chi nhánh Quận 1" },
       thumbnail_url: "/signed/org/org-a/p/r1.jpg",
       open_href: "/creative-studio?area=d&assetId=r1",
+      asset_type: { code: "1", name: "Ảnh bìa sản phẩm", module: "content" },
     })
     expect(result.next_cursor).toBeNull()
+  })
+
+  it("ưu tiên asset_type_code từ metadata nếu có", async () => {
+    const bannerRow = row({
+      id: "b1",
+      type: "ai_image",
+      title: "Poster khuyến mãi lớn",
+      subtype: "MARKETING",
+      metadata: { asset_type_code: "9" },
+    })
+    const result = await listLibrary(ctx(["G1"]), { type: "ai_image", scope: "all", q: null, from: null, cursor: null }, deps([bannerRow]))
+    expect(result.items[0]?.asset_type).toEqual({
+      code: "9",
+      name: "Áp phích ưu đãi",
+      module: "promotion",
+    })
+    expect(result.items[0]?.title).toBe("Poster khuyến mãi lớn")
   })
 
   it("thiếu quyền đọc của công cụ gốc → từ chối; loại lạ → 400; chi nhánh không thuộc tổ chức → 404", async () => {

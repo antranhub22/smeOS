@@ -3,7 +3,7 @@
 > Phần mở rộng bắt buộc của `docs/dac-ta/03a-ux-constitution.md`. Hai tệp là **một chuẩn duy nhất**; khi khác biệt, 03a thắng trừ các mục 03a được tệp này sửa đổi rõ ràng (§1).
 > Hợp nhất từ bộ kit `docs/archive/historical/SMEOS_UX_Progressive_Disclosure_Kit/` (lưu trữ, không còn hiệu lực riêng).
 > **Quyết định phê duyệt của Product Owner:** 29/10/2026 (PD1–PD4, toàn bộ đề xuất E1–E16).
-> Đặc tả luồng: `docs/dac-ta/ux-patterns/`. Kế hoạch thực thi: `docs/ui-ux/PROGRESSIVE_DISCLOSURE_EXECUTION_PLAN.md`.
+> Đặc tả luồng: `docs/dac-ta/ux-patterns/`. Kế hoạch thực thi: `docs/archive/historical/ui-ux-2026-10/PROGRESSIVE_DISCLOSURE_EXECUTION_PLAN.md`.
 
 # 03c — Progressive Disclosure & Enterprise UX
 

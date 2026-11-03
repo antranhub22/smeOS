@@ -2,8 +2,8 @@
 
 import type { Route } from "next"
 import Link from "next/link"
-import { useCallback, useEffect, useState } from "react"
-import { AlertCircle, ExternalLink, FileText, Music, Search, Trash2 } from "@/components/ui/icons"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { AlertCircle, ExternalLink, FileText, Music, Search, Share2, Trash2 } from "@/components/ui/icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatDate } from "@/lib/i18n/formatters"
 import type { LibraryType } from "@/modules/storage/domain/library"
 import { LIBRARY_TAB_LABEL, statusLabel, subtypeLabel } from "./library-labels"
+import { UseAssetSheet } from "@/components/marketing-center/use-asset-sheet"
 
 export type LibraryItemView = {
   id: string
@@ -25,6 +26,11 @@ export type LibraryItemView = {
   thumbnail_url: string | null
   drive_link: string | null
   open_href: string
+  asset_type?: {
+    code: string
+    name: string
+    module: string
+  } | null
 }
 
 const SINCE_OPTIONS = [
@@ -32,6 +38,16 @@ const SINCE_OPTIONS = [
   { value: "7", label: "7 ngày qua" },
   { value: "30", label: "30 ngày qua" },
   { value: "90", label: "90 ngày qua" },
+]
+
+const MODULE_OPTIONS = [
+  { value: "ALL", label: "Tất cả nghiệp vụ" },
+  { value: "brand", label: "Thương hiệu" },
+  { value: "content", label: "Nội dung" },
+  { value: "promotion", label: "Quảng bá" },
+  { value: "sales", label: "Bán hàng" },
+  { value: "care", label: "Chăm sóc" },
+  { value: "print", label: "Ấn phẩm & In" },
 ]
 
 type Props = {
@@ -51,6 +67,8 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
   const [error, setError] = useState<string | null>(null)
   const [q, setQ] = useState("")
   const [sinceDays, setSinceDays] = useState("")
+  const [selectedModule, setSelectedModule] = useState("ALL")
+  const [selectedUsageItem, setSelectedUsageItem] = useState<LibraryItemView | null>(null)
 
   const load = useCallback(
     async (after: string | null) => {
@@ -79,6 +97,11 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
     const timer = setTimeout(() => void load(null), q ? 300 : 0)
     return () => clearTimeout(timer)
   }, [load, q, refreshKey])
+
+  const filteredItems = useMemo(() => {
+    if (selectedModule === "ALL") return items
+    return items.filter((item) => item.asset_type?.module === selectedModule)
+  }, [items, selectedModule])
 
   const label = LIBRARY_TAB_LABEL[type].toLowerCase()
 
@@ -110,6 +133,20 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
             ))}
           </select>
         </label>
+        <label className="sm:w-44">
+          <span className="sr-only">Nghiệp vụ</span>
+          <select
+            value={selectedModule}
+            onChange={(e) => setSelectedModule(e.target.value)}
+            className="w-full rounded-xl border border-border bg-surface-alt px-3 py-2 text-body-sm outline-none focus:border-primary"
+          >
+            {MODULE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       {error && (
@@ -122,7 +159,7 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
         </div>
       )}
 
-      {!loading && !error && items.length === 0 && (
+      {!loading && !error && filteredItems.length === 0 && (
         <Card className="border-dashed bg-surface-alt p-8 text-center">
           <FileText size={32} className="mx-auto mb-2 text-text-muted opacity-50" aria-hidden />
           <div className="text-sm font-bold text-text">Chưa có {label} nào</div>
@@ -131,7 +168,7 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
       )}
 
       <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {items.map((item) => {
+        {filteredItems.map((item) => {
           const name = item.title || subtypeLabel(item.subtype) || LIBRARY_TAB_LABEL[type]
           const status = statusLabel(item.status)
           return (
@@ -154,6 +191,13 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
                 <div className="truncate text-meta font-semibold text-text" title={name}>
                   {name}
                 </div>
+                {item.asset_type && (
+                  <div className="flex">
+                    <span className="inline-block rounded-md bg-surface-alt px-1.5 py-0.5 text-caption font-semibold text-text-muted">
+                      {item.asset_type.name}
+                    </span>
+                  </div>
+                )}
                 <div className="text-caption text-text-muted">
                   {formatDate(item.created_at)}
                   {status ? ` · ${status}` : ""}
@@ -166,6 +210,15 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
                     <ExternalLink size={12} aria-hidden />
                     Mở
                   </Link>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedUsageItem(item)}
+                    className="flex h-7 px-2 items-center justify-center gap-1 rounded-lg border border-border text-xs font-semibold text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                    title="Cấu hình nơi sử dụng và theo dõi hiệu quả"
+                  >
+                    <Share2 size={12} aria-hidden />
+                    Dùng
+                  </button>
                   {onTrash && (
                     <button
                       type="button"
@@ -189,6 +242,17 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
         <Button variant="outline" size="sm" className="mx-auto text-xs" onClick={() => void load(cursor)}>
           Xem thêm
         </Button>
+      )}
+
+      {selectedUsageItem && (
+        <UseAssetSheet
+          open={Boolean(selectedUsageItem)}
+          onOpenChange={(open) => !open && setSelectedUsageItem(null)}
+          sourceType={selectedUsageItem.type}
+          sourceId={selectedUsageItem.id}
+          assetTypeCode={selectedUsageItem.asset_type?.code ?? "8"}
+          assetTitle={selectedUsageItem.title || subtypeLabel(selectedUsageItem.subtype) || LIBRARY_TAB_LABEL[type]}
+        />
       )}
     </div>
   )

@@ -65,8 +65,8 @@ describe("Bước 4 — cách ly tenant cho lead và link/QR động", () => {
   it("giao lead cho người ngoài tổ chức → từ chối", async () => {
     const { leadId } = await captureCatalogLead("catalog-a", lead, undefined)
     await expect(updateLead(a.ctx, leadId, { assigneeUserId: b.userId })).rejects.toMatchObject({ code: "VALIDATION_FAILED" })
-    const updated = await updateLead(a.ctx, leadId, { status: "IN_PROGRESS", assigneeUserId: a.userId })
-    expect(updated?.status).toBe("IN_PROGRESS")
+    const updated = await updateLead(a.ctx, leadId, { status: "CONTACTED", assigneeUserId: a.userId })
+    expect(updated?.status).toBe("CONTACTED")
   })
 
   it("link/QR: B không thấy, không sửa, không xem thống kê của A", async () => {

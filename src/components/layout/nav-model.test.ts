@@ -178,7 +178,6 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     expect(allHrefs).toContain("/kho-templates")
     expect(allHrefs).toContain("/creative-studio")
     expect(allHrefs).toContain("/san-pham")
-    expect(allHrefs).toContain("/van-hanh/nganh")
     expect(allHrefs).toContain("/dieu-phoi/doi-tac")
     expect(allHrefs).toContain("/don-hang")
     expect(allHrefs).toContain("/dieu-phoi")
@@ -189,7 +188,7 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
 
     // Ô thứ hai mobile cho industry_admin
     const slot2 = mobileSecondSlot(() => true, roleIndustry)
-    expect(slot2.href).toBe("/van-hanh/nganh")
+    expect(slot2.href).toBe("/san-pham")
   })
 
   it("11. Vai ChainOS (flower_network_admin hoặc organizationType=CHAIN) → đủ 6 nhóm điều hành chuỗi theo chuẩn", () => {

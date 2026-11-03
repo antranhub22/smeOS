@@ -1,7 +1,8 @@
 /**
- * Design Tokens Registry & Mapping — smeOS (Phase 2)
+ * Design Tokens Registry & Mapping — smeOS Architecture (Phase 1)
  *
  * Ánh xạ giữa các Design Tokens trừu tượng và CSS Custom Properties.
+ * Density: compact và comfortable (ADR-011 D-UI-03: loại bỏ spacious).
  */
 
 export const CSS_VARIABLE_MAP = {
@@ -47,13 +48,5 @@ export const DENSITY_CONFIG = {
     formGap: "1rem",
     buttonHeightSm: "2.75rem", // 44px
     buttonHeightDef: "3rem", // 48px
-  },
-  spacious: {
-    tableRowHeight: "3.75rem", // 60px
-    tableCellPadding: "1rem 1.25rem",
-    cardPadding: "1.75rem",
-    formGap: "1.5rem",
-    buttonHeightSm: "3rem", // 48px
-    buttonHeightDef: "3.5rem", // 56px
   },
 } as const

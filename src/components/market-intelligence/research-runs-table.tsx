@@ -44,7 +44,7 @@ export function ResearchRunsTable({ runs }: ResearchRunsTableProps) {
                     r.status === "COMPLETED"
                       ? "bg-mint-50 text-mint-700"
                       : r.status === "RUNNING"
-                      ? "bg-azure-50 text-azure-700 animate-pulse"
+                      ? "bg-azure-50 text-azure-700 animate-pulse motion-reduce:animate-none"
                       : r.status === "FAILED"
                       ? "bg-alert-50 text-alert-700"
                       : "bg-sand-50 text-sand-700"

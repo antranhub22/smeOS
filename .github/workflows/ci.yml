@@ -74,6 +74,10 @@ jobs:
         run: npm run lint:ratchet
       - name: Đối chiếu tài liệu với mã (đặc tả 06/07, cách ly tenant, tài liệu agent)
         run: npm run check:docs
+      - name: Kiểm tra ranh giới tầng kiến trúc (F1-12)
+        run: npm run check:layers
+      - name: Kiểm tra đồng bộ Design Tokens Specification (F1-14)
+        run: npm run check:tokens-doc
       - run: npm run lint:ux -- --check
       # Ratchet thuật ngữ ngành chạy ở job `industry-terms` riêng (P0-02, D-19): trước đây nó đứng
       # trước `npm test` nên một vi phạm thuật ngữ làm SKIP cả cổng tenant/platform/build (CI #286–#292).

@@ -49,7 +49,7 @@ export function ImportPreview({ rows, stats, isImporting, progressPhase, driveTh
           </div>
           {isImporting && (
             <div className="flex items-center gap-2 text-caption text-primary font-medium">
-              <RefreshCw size={13} className="animate-spin" />
+              <RefreshCw size={13} className="animate-spin motion-reduce:animate-none" />
               <span>{progressPhase}</span>
             </div>
           )}
@@ -127,7 +127,7 @@ export function ImportPreview({ rows, stats, isImporting, progressPhase, driveTh
                               ? "Không xem được ảnh: link Drive không đúng dạng thư mục/tệp, thư mục trống hoặc chưa chia sẻ công khai (Nhấp để mở)"
                               : "Đang tải ảnh Google Drive (Nhấp để mở thư mục gốc)"}
                           >
-                            <ImageIcon size={16} className={unavailable ? undefined : "animate-pulse"} />
+                            <ImageIcon size={16} className={unavailable ? undefined : "animate-pulse motion-reduce:animate-none"} />
                             <span className="text-caption font-semibold">Drive ↗</span>
                           </a>
                         )

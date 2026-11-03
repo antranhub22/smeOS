@@ -60,11 +60,13 @@ function CopyButton({ value, label }: { value: string; label?: string }) {
   }, [value])
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="xs"
       onClick={handleCopy}
       title={`Sao chép ${label ?? value}`}
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-surface-muted hover:bg-surface-elevated text-text-muted text-caption font-medium transition-all"
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-surface-muted hover:bg-surface-elevated text-text-muted text-caption font-medium h-auto"
     >
       {copied ? (
         <>
@@ -77,7 +79,7 @@ function CopyButton({ value, label }: { value: string; label?: string }) {
           <span>Sao chép</span>
         </>
       )}
-    </button>
+    </Button>
   )
 }
 
@@ -187,11 +189,13 @@ export default function KetNoiPage() {
             { key: "members", label: `Thành viên (${members.length})`, icon: Users },
           ] as const
         ).map(({ key, label, icon: Icon }) => (
-          <button
+          <Button
             key={key}
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab(key)}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-b-2 transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-caption font-semibold border-b-2 rounded-none transition-all h-auto ${
               activeTab === key
                 ? "border-primary text-primary"
                 : "border-transparent text-text-muted hover:text-text"
@@ -199,7 +203,7 @@ export default function KetNoiPage() {
           >
             <Icon className="w-3.5 h-3.5" />
             {label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -210,11 +214,11 @@ export default function KetNoiPage() {
           <Card className="overflow-hidden">
             <div className="bg-primary p-5 text-primary-fg">
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-primary-fg font-black text-xl">
+                <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-primary-fg font-black text-title">
                   {isChain ? <Building2 className="w-7 h-7" /> : <Store className="w-7 h-7" />}
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold leading-tight">{org.displayName}</h2>
+                  <h2 className="text-title-sm font-bold leading-tight">{org.displayName}</h2>
                   <div className="flex items-center gap-2 mt-1">
                     <OrgTypeBadge type={org.type} />
                     {isPartner && (
@@ -236,7 +240,7 @@ export default function KetNoiPage() {
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="font-mono text-2xl font-black text-text tracking-wider">
+                    <div className="font-mono text-display font-black text-text tracking-wider">
                       {org.connectCode.toUpperCase()}
                     </div>
                     <div className="text-caption text-text-muted mt-1">
@@ -292,7 +296,7 @@ export default function KetNoiPage() {
 
           {/* Hướng dẫn kết nối */}
           <Card className="p-5 space-y-3">
-            <h3 className="text-sm font-bold text-text flex items-center gap-2">
+            <h3 className="text-body-sm font-bold text-text flex items-center gap-2">
               <QrCode className="w-4 h-4 text-primary" />
               Cách Kết Nối Với Chuỗi
             </h3>
@@ -338,7 +342,7 @@ export default function KetNoiPage() {
       {activeTab === "members" && (
         <div className="space-y-2">
           {members.length === 0 ? (
-            <Card className="text-center py-16 text-text-muted text-sm">
+            <Card className="text-center py-16 text-text-muted text-body-sm">
               Chưa có thành viên nào
             </Card>
           ) : (
@@ -349,7 +353,7 @@ export default function KetNoiPage() {
                 variant="interactive"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-bold text-sm">
+                  <div className="w-9 h-9 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-bold text-body-sm">
                     {(m.name || m.email).charAt(0).toUpperCase()}
                   </div>
                   <div>

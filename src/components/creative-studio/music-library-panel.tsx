@@ -6,6 +6,7 @@ import { Loader2, Music, Trash2, Upload } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import {
   fetchMusicTracks,
   removeMusicTrack,
@@ -48,6 +49,7 @@ export function MusicLibraryPanel({
   const [mood, setMood] = useState<string>("all")
   const [showUpload, setShowUpload] = useState(false)
   const [reloadKey, setReloadKey] = useState(0)
+  const [confirm, confirmDialog] = useConfirmDialog()
 
   useEffect(() => {
     let cancelled = false
@@ -100,7 +102,7 @@ export function MusicLibraryPanel({
       {error && <p className="mb-2 text-meta text-danger">{error}</p>}
       {!tracks && !error && (
         <p className="flex items-center gap-2 text-meta text-text-muted">
-          <Loader2 size={12} className="animate-spin" /> Đang tải thư viện nhạc…
+          <Loader2 size={12} className="animate-spin motion-reduce:animate-none" /> Đang tải thư viện nhạc…
         </p>
       )}
 
@@ -135,7 +137,16 @@ export function MusicLibraryPanel({
                     type="button"
                     title="Gỡ bài này"
                     onClick={async () => {
-                      if (!window.confirm(`Gỡ "${t.title}" khỏi thư viện của tiệm?`)) return
+                      if (
+                        !(await confirm({
+                          title: `Gỡ "${t.title}"?`,
+                          consequence: "Bài nhạc này sẽ bị xoá khỏi thư viện của tiệm.",
+                          confirmLabel: "Gỡ bài",
+                          tone: "danger",
+                        }))
+                      ) {
+                        return
+                      }
                       await removeMusicTrack(t.track_id).catch((e: unknown) =>
                         setError(e instanceof Error ? e.message : "Không gỡ được")
                       )
@@ -179,6 +190,7 @@ export function MusicLibraryPanel({
           />
         )}
       </div>
+      {confirmDialog}
     </Card>
   )
 }
@@ -229,7 +241,7 @@ function MusicUploadForm({ onDone }: { onDone: (t: MusicTrackItem) => void }) {
       </label>
       {error && <p className="text-meta text-danger sm:col-span-2">{error}</p>}
       <Button size="sm" onClick={submit} disabled={busy || !attest} className="gap-1.5 sm:col-span-2">
-        {busy ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />} Tải lên thư viện của tiệm
+        {busy ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <Upload size={13} />} Tải lên thư viện của tiệm
       </Button>
     </div>
   )

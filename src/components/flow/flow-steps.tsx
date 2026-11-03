@@ -65,7 +65,7 @@ export function FlowSteps({
                 className={cn(
                   "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full",
                   isDone && "bg-secondary",
-                  isActive && "bg-primary animate-pulse",
+                  isActive && "bg-primary animate-pulse motion-reduce:animate-none",
                   isError && "bg-danger",
                   status === "pending" && "border-2 border-border",
                   isCancelled && "bg-text-muted"

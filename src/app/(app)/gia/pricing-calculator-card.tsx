@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { Info, AlertCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import {
   quotePrice,
@@ -132,25 +134,23 @@ export function PricingCalculatorCard({
           <span className="text-caption font-semibold text-text">Kích thước sản phẩm (Size S - M - L - XL)</span>
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface border border-border">
             {(Object.keys(SIZE_VARIANT_CONFIGS) as ProductSizeKey[]).map((key) => (
-              <button
+              <Button
                 key={key}
                 type="button"
+                variant={selectedSize === key ? "primary" : "ghost"}
+                size="sm"
                 onClick={() => handleSelectSize(key)}
-                className={`flex-1 py-1.5 rounded-lg text-caption font-semibold transition ${
-                  selectedSize === key
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "text-text-muted hover:text-text"
-                }`}
+                className="flex-1 py-1.5 h-auto text-caption font-semibold"
               >
                 {SIZE_VARIANT_CONFIGS[key].shortLabel}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         <label className="flex flex-col gap-1 text-caption font-medium text-text">
           <span>Giá vốn (VNĐ) *</span>
-          <input
+          <Input
             type="number"
             min={0}
             placeholder="VD: 250000"
@@ -159,9 +159,7 @@ export function PricingCalculatorCard({
               setCostVnd(e.target.value === "" ? "" : Number(e.target.value))
               if (fieldErrors.costVnd) setFieldErrors((prev) => ({ ...prev, costVnd: "" }))
             }}
-            className={`h-10 rounded-xl border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary ${
-              fieldErrors.costVnd ? "border-danger" : "border-border"
-            }`}
+            hasError={Boolean(fieldErrors.costVnd)}
           />
           {fieldErrors.costVnd && (
             <span className="flex items-center gap-1 text-caption text-danger">
@@ -172,41 +170,39 @@ export function PricingCalculatorCard({
 
         <label className="flex flex-col gap-1 text-caption font-medium text-text">
           <span>Hạng đối tác xưởng</span>
-          <select
+          <NativeSelect
             value={partnerTier}
             onChange={(e) => setPartnerTier(e.target.value)}
-            className="h-10 rounded-xl border border-border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
           >
             {Object.keys(partnerTierBonus).map((tier) => (
               <option key={tier} value={tier}>
                 {tier} (+{Math.round((partnerTierBonus[tier] ?? 0) * 100)}%)
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </label>
 
         {surchargeGroups.map((group) => (
           <label key={group.id} className="flex flex-col gap-1 text-caption font-medium text-text">
             <span>{group.name}</span>
-            <select
+            <NativeSelect
               value={selectedSurcharges[group.id] ?? 0}
               onChange={(e) =>
                 setSelectedSurcharges((cur) => ({ ...cur, [group.id]: Number(e.target.value) }))
               }
-              className="h-10 rounded-xl border border-border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
             >
               {group.options.map((opt) => (
                 <option key={opt.label} value={opt.value}>
                   {opt.label} ({opt.value > 0 ? `+${formatVnd(opt.value)}` : "0 đ"})
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </label>
         ))}
 
         <label className="flex flex-col gap-1 text-caption font-medium text-text">
           <span>Phụ phí khác (VNĐ, không bắt buộc)</span>
-          <input
+          <Input
             type="number"
             min={0}
             placeholder="0"
@@ -215,9 +211,7 @@ export function PricingCalculatorCard({
               setOtherSurchargeVnd(e.target.value === "" ? "" : Number(e.target.value))
               if (fieldErrors.otherSurchargeVnd) setFieldErrors((prev) => ({ ...prev, otherSurchargeVnd: "" }))
             }}
-            className={`h-10 rounded-xl border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary ${
-              fieldErrors.otherSurchargeVnd ? "border-danger" : "border-border"
-            }`}
+            hasError={Boolean(fieldErrors.otherSurchargeVnd)}
           />
           {fieldErrors.otherSurchargeVnd && (
             <span className="flex items-center gap-1 text-caption text-danger">
@@ -228,7 +222,7 @@ export function PricingCalculatorCard({
 
         <label className="flex flex-col gap-1 text-caption font-medium text-text">
           <span>Giá niêm yết dự kiến (VNĐ) *</span>
-          <input
+          <Input
             type="number"
             min={0}
             placeholder="VD: 550000"
@@ -237,9 +231,7 @@ export function PricingCalculatorCard({
               setListPriceVnd(e.target.value === "" ? "" : Number(e.target.value))
               if (fieldErrors.listPriceVnd) setFieldErrors((prev) => ({ ...prev, listPriceVnd: "" }))
             }}
-            className={`h-10 rounded-xl border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary ${
-              fieldErrors.listPriceVnd ? "border-danger" : "border-border"
-            }`}
+            hasError={Boolean(fieldErrors.listPriceVnd)}
           />
           {fieldErrors.listPriceVnd && (
             <span className="flex items-center gap-1 text-caption text-danger">
@@ -250,7 +242,7 @@ export function PricingCalculatorCard({
 
         <label className="flex flex-col gap-1 text-caption font-medium text-text">
           <span>Giá chốt tay cho khách (VNĐ, tuỳ chọn — thay thế giá niêm yết khi chốt đơn)</span>
-          <input
+          <Input
             type="number"
             min={0}
             placeholder="Để trống nếu áp dụng giá niêm yết"
@@ -259,9 +251,7 @@ export function PricingCalculatorCard({
               setClosedPriceVnd(e.target.value === "" ? "" : Number(e.target.value))
               if (fieldErrors.closedPriceVnd) setFieldErrors((prev) => ({ ...prev, closedPriceVnd: "" }))
             }}
-            className={`h-10 rounded-xl border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary ${
-              fieldErrors.closedPriceVnd ? "border-danger" : "border-border"
-            }`}
+            hasError={Boolean(fieldErrors.closedPriceVnd)}
           />
           {fieldErrors.closedPriceVnd && (
             <span className="flex items-center gap-1 text-caption text-danger">
@@ -272,7 +262,7 @@ export function PricingCalculatorCard({
 
         <label className="flex flex-col gap-1 text-caption font-medium text-text">
           <span>Tỷ lệ đặt cọc yêu cầu (%)</span>
-          <input
+          <Input
             type="number"
             min={0}
             max={100}
@@ -281,9 +271,7 @@ export function PricingCalculatorCard({
               setDepositPercent(Number(e.target.value))
               if (fieldErrors.depositPercent) setFieldErrors((prev) => ({ ...prev, depositPercent: "" }))
             }}
-            className={`h-10 rounded-xl border bg-surface px-3 text-body-sm outline-none transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-primary ${
-              fieldErrors.depositPercent ? "border-danger" : "border-border"
-            }`}
+            hasError={Boolean(fieldErrors.depositPercent)}
           />
           {fieldErrors.depositPercent && (
             <span className="flex items-center gap-1 text-caption text-danger">

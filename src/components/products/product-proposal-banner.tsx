@@ -70,7 +70,7 @@ export function ProductProposalBanner({ productId, attributes, onChanged }: Prod
             Từ chối
           </Button>
           <Button size="sm" onClick={() => gui("approve")} disabled={dangGui !== null} className="font-bold">
-            {dangGui === "approve" && <Loader2 size={15} className="animate-spin" />}
+            {dangGui === "approve" && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />}
             <span>Duyệt mẫu</span>
           </Button>
         </>
@@ -90,7 +90,7 @@ export function ProductProposalBanner({ productId, attributes, onChanged }: Prod
             Huỷ
           </Button>
           <Button size="sm" variant="outline" onClick={() => gui("reject")} disabled={dangGui !== null || !lyDo.trim()} className="font-bold">
-            {dangGui === "reject" && <Loader2 size={15} className="animate-spin" />}
+            {dangGui === "reject" && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />}
             <span>Xác nhận từ chối</span>
           </Button>
         </div>

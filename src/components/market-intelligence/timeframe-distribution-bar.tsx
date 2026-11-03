@@ -197,7 +197,7 @@ export function TimeframeDistributionBar({
                     : "text-cool-600 hover:text-cool-900 hover:bg-white/80"
                 }`}
               >
-                <Icon size={13} className={isSelected ? "animate-pulse" : "text-text-muted"} />
+                <Icon size={13} className={isSelected ? "animate-pulse motion-reduce:animate-none" : "text-text-muted"} />
                 <span>{btn.label}</span>
                 <span
                   className={`ml-0.5 px-1.5 py-0.2 rounded-full text-caption font-black ${

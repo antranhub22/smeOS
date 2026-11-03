@@ -7,6 +7,7 @@ import { AlertCircle, CheckCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Disclosure } from "@/components/ui/disclosure"
+import { NativeSelect } from "@/components/ui/select"
 import { SHOP_NAME_FIELD, SURVEY_COLUMNS } from "@/modules/platform/domain/partner-marketplace-columns"
 import type { ColumnMapping, MatchSource } from "@/modules/platform/domain/partner-marketplace-column-match"
 
@@ -68,16 +69,16 @@ export function MarketplaceColumnMappingDialog({ fileName, preview, busy, error,
     const selectId = `map-field-${field}`
     return (
       <div key={def.key} className="grid gap-1 border-b border-border/60 py-2 sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] sm:items-start sm:gap-3">
-        <label htmlFor={selectId} className="pt-1.5 text-sm font-medium text-text">
+        <label htmlFor={selectId} className="pt-1.5 text-body-sm font-medium text-text">
           {def.label}
           {field === SHOP_NAME_FIELD && <span className="text-danger-text"> *</span>}
         </label>
         <div className="min-w-0">
-          <select
+          <NativeSelect
             id={selectId}
             value={col === null ? "" : String(col)}
             onChange={(e) => assign(field, e.target.value === "" ? null : Number(e.target.value))}
-            className={`h-9 w-full rounded-lg border bg-surface px-2 text-sm text-text ${col === null ? "border-warning-border" : "border-border"}`}
+            className={col === null ? "h-9 rounded-lg border-warning-border" : "h-9 rounded-lg"}
           >
             <option value="">— Không lấy —</option>
             {preview.headers.map((h, i) => (
@@ -86,7 +87,7 @@ export function MarketplaceColumnMappingDialog({ fileName, preview, busy, error,
                 {usedBy.has(i) && usedBy.get(i) !== field ? ` — đang dùng cho ${SURVEY_COLUMNS[usedBy.get(i)!]!.label}` : ""}
               </option>
             ))}
-          </select>
+          </NativeSelect>
           <p className="mt-1 truncate text-caption text-text-muted">
             {col === null
               ? "Chưa ghép — trường này sẽ để trống"
@@ -118,7 +119,7 @@ export function MarketplaceColumnMappingDialog({ fileName, preview, busy, error,
       <div className="space-y-4">
         <div
           role="status"
-          className={`flex items-start gap-2 rounded-xl border px-3 py-2 text-sm ${
+          className={`flex items-start gap-2 rounded-xl border px-3 py-2 text-body-sm ${
             missingShopName ? "border-danger-border bg-danger-bg text-danger-text" : "border-success-border bg-success-bg text-success-text"
           }`}
         >
@@ -131,13 +132,13 @@ export function MarketplaceColumnMappingDialog({ fileName, preview, busy, error,
         </div>
 
         {error && (
-          <p role="alert" className="flex items-start gap-2 rounded-xl border border-danger-border bg-danger-bg px-3 py-2 text-sm text-danger-text">
+          <p role="alert" className="flex items-start gap-2 rounded-xl border border-danger-border bg-danger-bg px-3 py-2 text-body-sm text-danger-text">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{error}</span>
           </p>
         )}
 
-        <p className="text-sm text-text-muted">
+        <p className="text-body-sm text-text-muted">
           Hồ sơ cửa hàng trùng tên sẽ được ghi đè bằng dữ liệu trong tệp. Ảnh đã tải được giữ nguyên.
         </p>
 

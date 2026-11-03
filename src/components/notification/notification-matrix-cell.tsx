@@ -90,7 +90,7 @@ export function NotificationMatrixCell({
         />
         {toggling && (
           <span className="absolute inset-0 flex items-center justify-center">
-            <Loader2 size={10} className="animate-spin text-white" />
+            <Loader2 size={10} className="animate-spin motion-reduce:animate-none text-white" />
           </span>
         )}
       </button>

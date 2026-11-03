@@ -3,8 +3,8 @@ import Link from "next/link"
 export default function PlatformNotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] p-6 text-center max-w-md mx-auto">
-      <h2 className="text-xl font-bold text-text mb-2">Không tìm thấy trang Console</h2>
-      <p className="text-sm text-text-muted mb-6">
+      <h2 className="text-title font-bold text-text mb-2">Không tìm thấy trang Console</h2>
+      <p className="text-body-sm text-text-muted mb-6">
         Tuyến vận hành nền tảng bạn yêu cầu không tồn tại hoặc đã được chuyển vị trí.
       </p>
       <Link

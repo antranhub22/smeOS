@@ -1,6 +1,6 @@
 # Screen Contract — Giá vốn & định giá (Nhóm công cụ 6, #31–#35)
 
-**Tuyến:** `/tinh-gia/{nguyen-lieu,cong-thuc,gia-von,gia-ban,du-toan}` · **Tệp chính:** `src/app/(app)/tinh-gia/layout.tsx`, `src/components/costing/*` · **Cập nhật:** 29/10/2026 · **Kế hoạch:** `docs/ui-ux/NHOM6_TINH_GIA_KE_HOACH.md`
+**Tuyến:** `/tinh-gia/{nguyen-lieu,cong-thuc,gia-von,gia-ban,du-toan}` · **Tệp chính:** `src/app/(app)/tinh-gia/layout.tsx`, `src/components/costing/*` · **Cập nhật:** 29/10/2026 · **Kế hoạch:** `docs/archive/historical/ui-ux-2026-10/NHOM6_TINH_GIA_KE_HOACH.md`
 
 ## 1. Vai và mục đích
 - Vai chính: chủ tiệm, quản lý sản phẩm · Phạm vi: organization · Mật độ: MEDIUM

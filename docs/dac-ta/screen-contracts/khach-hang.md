@@ -1,3 +1,18 @@
+---
+id: SCR-STORE-khach-hang
+tier: STORE
+module: crm
+route: /khach-hang
+archetype: B
+snapshots:
+  mobile: 390x844
+  desktop: 1280x800
+acceptance:
+  - Tất cả bộ lọc hạng khách và tìm kiếm phản hồi trong 300ms
+  - Có đủ 6 trạng thái UI: loading, empty, error, forbidden, partial, success
+  - Bàn phím tab điều hướng được toàn bộ bảng và các nút hành động
+---
+
 # Screen Contract — Quản lý Khách hàng & CRM (`/khach-hang`)
 
 **Tuyến:** `/khach-hang` · **Tệp chính:** `src/app/(app)/khach-hang/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.B3

@@ -185,7 +185,7 @@ export function ManualBlockModal({
               disabled={loading}
               className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-xs hover:opacity-95 disabled:opacity-50 transition-all"
             >
-              {loading && <Loader2 size={15} className="animate-spin" />}
+              {loading && <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />}
               <span>Xác nhận khóa</span>
             </button>
           </div>

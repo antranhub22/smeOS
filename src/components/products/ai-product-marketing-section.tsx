@@ -41,7 +41,7 @@ export function AiProductMarketingSection({
             className="flex items-center gap-1.5 text-primary border-primary/30 hover:bg-primary-muted font-semibold"
           >
             {isGeneratingContent ? (
-              <Loader2 size={14} className="animate-spin text-primary" />
+              <Loader2 size={14} className="animate-spin motion-reduce:animate-none text-primary" />
             ) : (
               <Sparkles size={14} className="text-primary" />
             )}

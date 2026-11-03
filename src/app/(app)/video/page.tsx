@@ -224,7 +224,7 @@ export default function VideoStudioPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* ── Standardized Header & Top-Right Action Header ───────────────── */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-4">
         <div className="flex items-center gap-3">
@@ -242,7 +242,7 @@ export default function VideoStudioPage() {
             </Button>
           ) : (
             <div>
-              <div className="text-xs text-text-muted font-bold tracking-wider uppercase">Studio Tiếp thị & Video</div>
+              <div className="text-caption text-text-muted font-bold tracking-wider uppercase">Studio Tiếp thị & Video</div>
               <div className="text-title font-extrabold text-primary flex items-center gap-2">
                 <Film size={20} /> AI Video Studio
               </div>
@@ -290,7 +290,7 @@ export default function VideoStudioPage() {
               )}
 
               {activeJob?.video_approval === "APPROVED" && (
-                <Badge tone="success" className="gap-1 px-3 py-1 text-xs">
+                <Badge tone="success" className="gap-1 px-3 py-1 text-caption">
                   <Check size={14} /> Video đã chốt duyệt
                 </Badge>
               )}
@@ -302,7 +302,7 @@ export default function VideoStudioPage() {
                 disabled={actionLoading}
                 className="gap-1.5"
               >
-                <RotateCcw size={14} className={actionLoading ? "animate-spin" : ""} />
+                <RotateCcw size={14} className={actionLoading ? "animate-spin motion-reduce:animate-none" : ""} />
                 Làm mới
               </Button>
             </>
@@ -328,7 +328,7 @@ export default function VideoStudioPage() {
 
         {/* Trạng thái xử lý toàn cục */}
         {actionMessage && (
-          <div className="bg-primary/10 border border-primary/20 text-primary rounded-xl p-3 text-xs font-semibold flex items-center justify-center gap-2 animate-pulse">
+          <div className="bg-primary/10 border border-primary/20 text-primary rounded-xl p-3 text-caption font-semibold flex items-center justify-center gap-2 animate-pulse motion-reduce:animate-none">
             <Clock size={16} /> {actionMessage}
           </div>
         )}
@@ -337,8 +337,8 @@ export default function VideoStudioPage() {
         {!activeJobId && (
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-text">Dự án Video của cửa hàng</h2>
-              <span className="text-xs text-text-muted">{jobs.length} video đã tạo</span>
+              <h2 className="text-body font-bold text-text">Dự án Video của cửa hàng</h2>
+              <span className="text-caption text-text-muted">{jobs.length} video đã tạo</span>
             </div>
             <VideoJobList
               jobs={jobs}
@@ -356,17 +356,17 @@ export default function VideoStudioPage() {
             <div className="lg:col-span-2 flex flex-col gap-5">
               <Card className="p-4 bg-surface border border-border flex items-center justify-between">
                 <div>
-                  <h2 className="text-base font-bold text-text">{activeJob.title}</h2>
+                  <h2 className="text-body font-bold text-text">{activeJob.title}</h2>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge tone="neutral">{activeJob.format}</Badge>
-                    <span className="text-xs text-text-muted">
+                    <span className="text-caption text-text-muted">
                       Tỉ lệ: {activeJob.aspect_ratio} • {activeJob.duration_seconds}s
                     </span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs text-text-muted block">Hạn mức dự toán</span>
-                  <span className="text-sm font-extrabold text-warning">{activeJob.cost_credits} credits</span>
+                  <span className="text-caption text-text-muted block">Hạn mức dự toán</span>
+                  <span className="text-body-sm font-extrabold text-warning">{activeJob.cost_credits} credits</span>
                 </div>
               </Card>
 
@@ -435,7 +435,7 @@ export default function VideoStudioPage() {
               />
 
               {/* Hộp thông tin tiến độ render */}
-              <Card className="p-4 bg-surface border border-border flex flex-col gap-3 text-xs">
+              <Card className="p-4 bg-surface border border-border flex flex-col gap-3 text-caption">
                 <span className="font-bold text-text">Tiến độ quy trình 2 cổng duyệt:</span>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
@@ -445,7 +445,7 @@ export default function VideoStudioPage() {
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-text-muted">Trạng thái Render:</span>
+                    <span className="text-text-muted">Trạng thái dựng:</span>
                     <Badge tone={activeJob.stage === "RENDER_COMPLETED" || activeJob.stage === "APPROVED" ? "success" : "neutral"}>
                       {activeJob.stage}
                     </Badge>

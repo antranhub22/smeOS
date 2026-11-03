@@ -182,7 +182,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
       >
         {loading ? (
           <div className="flex h-64 items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin motion-reduce:animate-none text-primary" />
           </div>
         ) : order ? (
           <div className="space-y-6">

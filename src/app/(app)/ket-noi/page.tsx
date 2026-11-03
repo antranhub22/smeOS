@@ -13,6 +13,7 @@ import { useChannelAccounts } from "@/components/channel-connections/use-channel
 import { summarizeChannelHealth, STALE_AFTER_DAYS } from "@/modules/integration/domain/channel-session-health"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology, type IndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { PageHeader } from "@/components/ui/page-header"
 
 function getSupportedPlatforms(ti: IndustryTerminology): PlatformConfig[] {
   return [
@@ -95,26 +96,28 @@ export default function PlatformConnectionsPage() {
   const health = summarizeChannelHealth(accounts, new Date())
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto bg-background p-4 sm:p-6 space-y-6">
+    <div className="flex h-full flex-col overflow-y-auto bg-bg p-4 sm:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-        <div>
-          <div className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
-            <Share2 size={13} className="text-primary" aria-hidden="true" />
-            Kênh mạng xã hội của cửa hàng
-          </div>
-          <h1 className="text-xl font-black text-text mt-0.5">Kết nối kênh bán hàng</h1>
-          <p className="text-xs text-text-muted mt-1">Kết nối trang mạng xã hội và kênh nhắn tin để đăng bài sản phẩm từ smeOS</p>
-        </div>
+        <PageHeader
+          breadcrumbs={
+            <span className="font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <Share2 size={13} className="text-primary" aria-hidden="true" />
+              Kênh mạng xã hội của cửa hàng
+            </span>
+          }
+          title="Kết nối kênh bán hàng"
+          description="Kết nối trang mạng xã hội và kênh nhắn tin để đăng bài sản phẩm từ smeOS"
+        />
         <div className="flex flex-wrap items-center gap-2">
-          <Badge tone="success" className="text-xs px-2.5 py-1">
+          <Badge tone="success" className="text-caption px-2.5 py-1">
             <CheckCircle2 size={13} aria-hidden="true" />
             <strong className="mx-1">{health.healthy + health.stale}</strong> / {platforms.length} đang kết nối
           </Badge>
-          <Button size="sm" variant="outline" onClick={() => void reload()} disabled={refreshing} className="text-xs gap-1">
-            <RefreshCw size={12} className={refreshing ? "animate-spin" : ""} aria-hidden="true" />
+          <Button size="sm" variant="outline" onClick={() => void reload()} disabled={refreshing} className="text-caption gap-1">
+            <RefreshCw size={12} className={refreshing ? "animate-spin motion-reduce:animate-none" : ""} aria-hidden="true" />
             Làm mới
           </Button>
-          <Button size="sm" onClick={() => router.push("/lich-dang" as never)} className="text-xs font-bold gap-1">
+          <Button size="sm" onClick={() => router.push("/lich-dang" as never)} className="text-caption font-bold gap-1">
             <Calendar size={13} aria-hidden="true" />
             Bảng lịch đăng
             <ArrowRight size={13} aria-hidden="true" />
@@ -125,7 +128,7 @@ export default function PlatformConnectionsPage() {
       {notice && (
         <div
           role={notice.type === "error" ? "alert" : "status"}
-          className={`p-3.5 rounded-xl border text-xs font-semibold flex items-center gap-2.5 ${
+          className={`p-3.5 rounded-xl border text-caption font-semibold flex items-center gap-2.5 ${
             notice.type === "success" ? "bg-success-bg border-success/30 text-text" : "bg-danger-bg border-danger/30 text-danger-text"
           }`}
         >

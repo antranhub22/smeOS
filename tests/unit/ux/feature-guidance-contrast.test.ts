@@ -17,8 +17,12 @@ describe("FeatureGuidanceCard — tương phản chữ (WCAG 1.4.3)", () => {
 })
 
 describe("Token màu chữ trên nền primary (audit A16)", () => {
-  it("globals.css khai báo --color-primary-foreground cho lớp text-primary-foreground", () => {
-    const css = readFileSync(path.resolve(__dirname, "../../../src/app/globals.css"), "utf-8")
-    expect(css).toMatch(/--color-primary-foreground:\s*#FFFFFF/i)
+  // Token màu chuyển về SSOT `src/styles/tokens/color.css` (ADR-011 D-UI-04); globals.css nạp tệp đó.
+  it("color.css khai báo --color-primary-foreground trắng và globals.css nạp color.css", () => {
+    const root = path.resolve(__dirname, "../../..")
+    const globals = readFileSync(path.join(root, "src/app/globals.css"), "utf-8")
+    const tokens = readFileSync(path.join(root, "src/styles/tokens/color.css"), "utf-8")
+    expect(globals).toMatch(/@import\s+"\.\.\/styles\/tokens\/color\.css"/)
+    expect(tokens).toMatch(/--color-primary-foreground:\s*#FFFFFF/i)
   })
 })

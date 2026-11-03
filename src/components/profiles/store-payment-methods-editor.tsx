@@ -133,7 +133,7 @@ export function StorePaymentMethodsEditor() {
           disabled={saving || loading}
           className="text-xs font-bold gap-1.5 shadow-xs"
         >
-          {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+          {saving ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <Save size={13} />}
           {saving ? "Đang lưu cấu hình..." : "Lưu cơ chế thanh toán"}
         </Button>
       </div>

@@ -33,6 +33,7 @@ import {
 import { useSession } from "@/lib/session"
 import { COMING_SOON_LABEL, isRouteLocked } from "@/lib/feature-lock"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import {
   buildNav,
@@ -174,9 +175,9 @@ export default function ThemPage() {
         >
           <div className="flex items-center gap-3">
             <Icon size={18} strokeWidth={1.8} className="text-text-muted" />
-            <span className="text-sm font-medium">{item.label}</span>
+            <span className="text-body-sm font-medium">{item.label}</span>
           </div>
-          <span className="rounded-full bg-surface-alt px-2 py-0.5 text-xs font-extrabold uppercase tracking-wide">
+          <span className="rounded-full bg-surface-alt px-2 py-0.5 text-caption font-extrabold uppercase tracking-wide">
             {COMING_SOON_LABEL}
           </span>
         </div>
@@ -184,25 +185,24 @@ export default function ThemPage() {
     }
 
     return (
-      <button
+      <Link
         key={item.href}
-        type="button"
-        onClick={() => router.push(item.href as never)}
+        href={item.href as never}
         className="flex min-h-[44px] w-full items-center justify-between rounded-xl border border-border bg-surface px-3.5 py-2.5 text-left transition-colors hover:bg-surface-alt active:bg-surface-alt/80"
       >
         <div className="flex items-center gap-3">
           <Icon size={18} strokeWidth={1.8} className="text-primary" />
-          <span className="text-sm font-medium text-text">{item.label}</span>
+          <span className="text-body-sm font-medium text-text">{item.label}</span>
         </div>
         <ChevronRight size={18} strokeWidth={2} className="text-text-muted" />
-      </button>
+      </Link>
     )
   }
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center border-b border-border bg-surface px-4 py-4">
-        <div className="text-lg font-extrabold text-primary">Thêm & Điều hướng</div>
+        <div className="text-title-sm font-extrabold text-primary">Thêm & Điều hướng</div>
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pb-20">
@@ -250,32 +250,29 @@ export default function ThemPage() {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <div>
-                <div className="mb-1.5 text-sm font-semibold">Mã sản phẩm</div>
-                <input
+                <div className="mb-1.5 text-body-sm font-semibold">Mã sản phẩm</div>
+                <Input
                   required
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   placeholder="VD: BHC-001"
-                  className="h-11 w-full rounded-xl border border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
                 />
               </div>
               <div>
-                <div className="mb-1.5 text-sm font-semibold">Tên sản phẩm</div>
-                <input
+                <div className="mb-1.5 text-body-sm font-semibold">Tên sản phẩm</div>
+                <Input
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="VD: Bó hồng đỏ 20 cành"
-                  className="h-11 w-full rounded-xl border border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
                 />
               </div>
               <div>
-                <div className="mb-1.5 text-sm font-semibold">Danh mục (tuỳ chọn)</div>
-                <input
+                <div className="mb-1.5 text-body-sm font-semibold">Danh mục (tuỳ chọn)</div>
+                <Input
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   placeholder={`VD: ${ti.sampleProduct}`}
-                  className="h-11 w-full rounded-xl border border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
                 />
               </div>
               <Button type="submit" disabled={dangGui}>
@@ -284,17 +281,17 @@ export default function ThemPage() {
             </form>
           </Card>
         ) : (
-          <Card className="p-4 text-sm text-text-muted">
+          <Card className="p-4 text-body-sm text-text-muted">
             Tài khoản này chưa có quyền tạo sản phẩm thủ công (cần năng lực L2).
           </Card>
         )}
 
         {/* Danh sách các chức năng còn lại theo chuỗi giá trị */}
         <div className="mt-2 space-y-4">
-          <div className="text-sm font-bold text-text">Tất cả chức năng hệ thống</div>
+          <div className="text-body-sm font-bold text-text">Tất cả chức năng hệ thống</div>
           {additionalGroups.map((group) => (
             <div key={group.key} className="space-y-1.5">
-              <div className="text-xs font-bold uppercase tracking-wider text-text-muted">
+              <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
                 {group.label}
               </div>
               <div className="space-y-1">

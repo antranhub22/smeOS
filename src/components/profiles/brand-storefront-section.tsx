@@ -79,7 +79,7 @@ export function BrandStorefrontSection({
               onClick={() => storefrontInputRef.current?.click()}
               className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-1.5 text-body-sm font-semibold text-text hover:border-primary transition-colors disabled:opacity-50"
             >
-              {photoUploading ? <Loader2 className="animate-spin" size={14} /> : <Plus size={14} />}
+              {photoUploading ? <Loader2 className="animate-spin motion-reduce:animate-none" size={14} /> : <Plus size={14} />}
               <span>Thêm ảnh</span>
             </button>
           </div>

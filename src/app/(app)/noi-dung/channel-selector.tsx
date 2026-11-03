@@ -8,6 +8,7 @@
 import React from "react"
 import { Check } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 export const CHANNELS_CONFIG = [
   {
@@ -54,10 +55,10 @@ export function ChannelSelector({
   onClearAll,
 }: ChannelSelectorProps) {
   return (
-    <Card className="border border-border bg-card p-5 shadow-sm flex flex-col gap-4">
+    <Card className="border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <div className="text-xs font-semibold text-text-muted">
+          <div className="text-caption font-semibold text-text-muted">
             Bước 2: Chọn kênh phân phối bài đăng
           </div>
           <div className="text-title font-extrabold text-text">
@@ -66,28 +67,32 @@ export function ChannelSelector({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-text-muted">
+          <span className="text-caption font-medium text-text-muted">
             Đã chọn:{" "}
             <strong className="text-primary font-bold">
               {selectedChannels.length}/{CHANNELS_CONFIG.length} kênh
             </strong>
           </span>
           <div className="h-4 w-px bg-border hidden sm:block" />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="xs"
             onClick={onSelectAll}
-            className="text-xs text-primary hover:underline font-semibold"
+            className="text-caption text-primary hover:underline font-semibold h-auto p-0"
           >
             Chọn tất cả
-          </button>
-          <span className="text-xs text-text-muted">•</span>
-          <button
+          </Button>
+          <span className="text-caption text-text-muted">•</span>
+          <Button
             type="button"
+            variant="ghost"
+            size="xs"
             onClick={onClearAll}
-            className="text-xs text-text-muted hover:text-text font-semibold"
+            className="text-caption text-text-muted hover:text-text font-semibold h-auto p-0"
           >
             Bỏ chọn hết
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -96,19 +101,26 @@ export function ChannelSelector({
         {CHANNELS_CONFIG.map((ch) => {
           const isChecked = selectedChannels.includes(ch.id)
           return (
-            <button
+            <div
               key={ch.id}
-              type="button"
+              role="button"
+              tabIndex={0}
               aria-pressed={isChecked}
               onClick={() => onToggle(ch.id)}
-              className={`text-left rounded-xl border p-4 transition-all flex flex-col justify-between gap-2 relative select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              onKeyDown={(e) => {
+                if (e.key === " " || e.key === "Enter") {
+                  e.preventDefault()
+                  onToggle(ch.id)
+                }
+              }}
+              className={`text-left rounded-xl border p-4 transition-all flex flex-col justify-between gap-2 relative select-none cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 isChecked
                   ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
-                  : "border-border hover:border-text-muted bg-background opacity-70 hover:opacity-100"
+                  : "border-border hover:border-text-muted bg-bg opacity-70 hover:opacity-100"
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-2xl">{ch.icon}</span>
+                <span className="text-display">{ch.icon}</span>
                 <div
                   className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
                     isChecked
@@ -121,7 +133,7 @@ export function ChannelSelector({
               </div>
 
               <div>
-                <div className="text-xs font-bold text-text flex items-center gap-1.5">
+                <div className="text-caption font-bold text-text flex items-center gap-1.5">
                   {ch.label}
                 </div>
                 <div className="text-caption text-text-muted line-clamp-2 mt-0.5 leading-snug">
@@ -141,7 +153,7 @@ export function ChannelSelector({
                   {isChecked ? "Sẽ tạo & đăng" : "Bỏ qua"}
                 </span>
               </div>
-            </button>
+            </div>
           )
         })}
       </div>

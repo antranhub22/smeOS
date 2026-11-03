@@ -23,7 +23,7 @@ export default async function LandingPageStudioRoute() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-bg">
       <LandingPageStudioClient />
     </div>
   )

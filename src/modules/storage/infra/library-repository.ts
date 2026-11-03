@@ -15,6 +15,7 @@ export type LibraryRow = {
   subtype: string | null
   storageKey: string | null
   mimeType: string | null
+  metadata?: Record<string, unknown> | null
 }
 
 export type LibraryFilter = { creator: CreatorFilter; q: string | null; from: Date | null }
@@ -62,6 +63,7 @@ const row = (r: Omit<LibraryRow, "status" | "subtype" | "storageKey" | "mimeType
   subtype: null,
   storageKey: null,
   mimeType: null,
+  metadata: null,
   ...r,
 })
 
@@ -76,9 +78,15 @@ export async function listLibraryRows(ctx: TenantContext, type: LibraryType, que
       })
       return rows.map((r) => {
         const meta = (r.metadata as Record<string, unknown> | null) ?? {}
+        const title = typeof meta.title === "string" && meta.title.trim()
+          ? meta.title.trim()
+          : typeof meta.filename === "string"
+          ? meta.filename
+          : ""
         return row({
-          id: r.id, type, title: typeof meta.filename === "string" ? meta.filename : "", createdAt: r.created_at, createdBy: r.created_by,
+          id: r.id, type, title, createdAt: r.created_at, createdBy: r.created_by,
           status: r.state, subtype: r.kind, storageKey: r.thumb_key ?? r.storage_key, mimeType: r.mime_type,
+          metadata: meta,
         })
       })
     }

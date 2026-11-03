@@ -37,7 +37,7 @@ export function VideoJobList({
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="flex flex-col items-center gap-2 text-text-muted">
-          <Clock className="h-6 w-6 animate-spin text-primary" />
+          <Clock className="h-6 w-6 animate-spin motion-reduce:animate-none text-primary" />
           <span className="text-sm">Đang tải danh sách video...</span>
         </div>
       </div>
@@ -72,7 +72,7 @@ export function VideoJobList({
       case "SCRIPT_APPROVED":
         return <Badge tone="accent">Kịch bản đã duyệt</Badge>;
       case "RENDERING":
-        return <Badge tone="warning" className="animate-pulse">Đang dựng video...</Badge>;
+        return <Badge tone="warning" className="animate-pulse motion-reduce:animate-none">Đang dựng video...</Badge>;
       case "RENDER_COMPLETED":
         return <Badge tone="success">Chờ duyệt video</Badge>;
       case "APPROVED":

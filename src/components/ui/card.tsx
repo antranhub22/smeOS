@@ -8,16 +8,16 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   function Card({ className, variant = "default", ...props }, ref) {
     const variantClasses = {
-      default: "border border-border bg-surface shadow-sm",
-      flat: "border border-border/60 bg-surface-alt",
-      elevated: "border border-border bg-surface shadow-md",
-      interactive: "border border-border bg-surface hover:border-primary/50 hover:shadow-md transition-all cursor-pointer",
+      default: "border border-border bg-surface shadow-[var(--shadow-card)]",
+      flat: "border border-border/60 bg-surface-alt shadow-[var(--shadow-subtle)]",
+      elevated: "border border-border bg-surface shadow-[var(--shadow-dialog)]",
+      interactive: "border border-border bg-surface hover:border-primary/50 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-dialog)] transition-all cursor-pointer",
     }
 
     return (
       <div
         ref={ref}
-        className={cn("rounded-2xl", variantClasses[variant], className)}
+        className={cn("rounded-[var(--radius-card)]", variantClasses[variant], className)}
         {...props}
       />
     )

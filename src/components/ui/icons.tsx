@@ -37,7 +37,7 @@ export const Activity = w(Ph.Pulse), AlertCircle = w(Ph.WarningCircle), AlertOct
 export const AlertTriangle = w(Ph.Warning), Archive = w(Ph.Archive), ArrowDown = w(Ph.ArrowDown)
 export const ArrowDownCircle = w(Ph.ArrowCircleDown), ArrowDownLeft = w(Ph.ArrowDownLeft), ArrowLeft = w(Ph.ArrowLeft)
 export const ArrowLeftRight = w(Ph.ArrowsLeftRight), ArrowRight = w(Ph.ArrowRight), ArrowUp = w(Ph.ArrowUp)
-export const ArrowUpDown = w(Ph.ArrowsDownUp), ArrowUpRight = w(Ph.ArrowUpRight), Award = w(Ph.Medal)
+export const ArrowUpDown = w(Ph.ArrowsDownUp), ArrowUpRight = w(Ph.ArrowUpRight), ArrowDownRight = w(Ph.ArrowDownRight), Award = w(Ph.Medal)
 export const BadgeCheck = w(Ph.SealCheck), BadgePercent = w(Ph.SealPercent), Ban = w(Ph.Prohibit)
 export const Banknote = w(Ph.Money), BarChart3 = w(Ph.ChartBar), Bed = w(Ph.Bed)
 export const Bell = w(Ph.Bell), BellRing = w(Ph.BellRinging), Bike = w(Ph.Bicycle)

@@ -90,9 +90,14 @@ export class LeadRepository {
     return prisma.leads.count({ where: { organization_id: organizationId, phone, created_at: { gte: since } } })
   }
 
-  async list(ctx: TenantContext, opts: { status?: LeadStatus | undefined; limit: number; cursor?: string | undefined }) {
+  async list(ctx: TenantContext, opts: { status?: LeadStatus | readonly LeadStatus[] | undefined; limit: number; cursor?: string | undefined }) {
+    const statusFilter = opts.status
+      ? typeof opts.status === "string"
+        ? opts.status
+        : { in: [...opts.status] }
+      : undefined
     const rows = await prisma.leads.findMany({
-      where: scopedWhere(ctx, opts.status ? { status: opts.status } : {}),
+      where: scopedWhere(ctx, statusFilter ? { status: statusFilter } : {}),
       orderBy: [{ created_at: "desc" }, { id: "desc" }],
       take: opts.limit + 1,
       ...(opts.cursor ? { cursor: { id: opts.cursor }, skip: 1 } : {}),

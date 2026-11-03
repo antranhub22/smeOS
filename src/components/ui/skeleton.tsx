@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div aria-hidden="true" className={cn("animate-pulse rounded-lg bg-surface-alt", className)} />
+  return <div aria-hidden="true" className={cn("animate-pulse motion-reduce:animate-none rounded-lg bg-surface-alt", className)} />
 }
 
 /** Khối nhiều dòng giữ chỗ + một nhãn cho trình đọc màn hình. */

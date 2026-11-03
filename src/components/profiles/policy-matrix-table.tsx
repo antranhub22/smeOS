@@ -41,7 +41,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
       {isHoliday && (
         <div className="p-3.5 rounded-2xl border border-primary/30 bg-primary/10 flex items-center justify-between gap-3 text-body-sm">
           <div className="flex items-center gap-2">
-            <Sparkles size={18} className="text-primary shrink-0 animate-pulse" />
+            <Sparkles size={18} className="text-primary shrink-0 animate-pulse motion-reduce:animate-none" />
             <div>
               <span className="font-extrabold text-foreground">ĐANG BẬT: CHẾ ĐỘ AUTO NGÀY LỄ / CAO ĐIỂM</span>
               <p className="text-caption text-text-muted mt-0.5">

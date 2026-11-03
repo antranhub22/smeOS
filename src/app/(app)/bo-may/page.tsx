@@ -105,25 +105,27 @@ export default function BoMayPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center gap-2 border-b border-border bg-surface px-[18px] py-4">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={() => router.push("/")}
-          className="flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="rounded-full"
           aria-label="Quay lại"
         >
           <ArrowLeft size={18} strokeWidth={2} />
-        </button>
-        <div className="text-base font-extrabold text-primary">Bộ máy phân tích ảnh</div>
+        </Button>
+        <div className="text-body font-extrabold text-primary">Bộ máy phân tích ảnh</div>
       </div>
 
       <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto p-4">
-        <div className="text-xs leading-relaxed text-text-muted">
+        <div className="text-caption leading-relaxed text-text-muted">
           Cả ba bộ trả về cùng một cấu trúc kết quả, nên luồng duyệt và dữ liệu sản phẩm không đổi khi
           bạn chuyển. Thứ đổi là độ chính xác, chi phí mỗi lượt, và ảnh có rời khỏi hệ thống hay không.
         </div>
 
         {loi && (
-          <div className="rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-xs font-medium text-warning">
+          <div className="rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-caption font-medium text-warning">
             {loi}
           </div>
         )}
@@ -138,13 +140,19 @@ export default function BoMayPage() {
               const dangChon = chon === bo.key
               const nhan = NHAN_TRANG_THAI[bo.trang_thai]
               return (
-                <button
+                <div
                   key={bo.key}
-                  type="button"
                   role="radio"
                   aria-checked={dangChon}
-                  disabled={!doiDuoc}
+                  aria-disabled={!doiDuoc}
+                  tabIndex={doiDuoc ? 0 : -1}
                   onClick={() => doiDuoc && setChon(bo.key)}
+                  onKeyDown={(e) => {
+                    if (doiDuoc && (e.key === " " || e.key === "Enter")) {
+                      e.preventDefault()
+                      setChon(bo.key)
+                    }
+                  }}
                   className={cn(
                     "flex flex-col gap-2.5 p-4 rounded-2xl border text-left transition-all duration-150 bg-surface",
                     dangChon
@@ -162,21 +170,21 @@ export default function BoMayPage() {
                     >
                       {dangChon && <Check size={13} strokeWidth={3} />}
                     </div>
-                    <div className="flex-1 text-sm font-bold text-text">{bo.ten}</div>
+                    <div className="flex-1 text-body-sm font-bold text-text">{bo.ten}</div>
                     {bo.key === dangDung && (
-                      <span className="rounded-full bg-success-bg px-2.5 py-1 text-xs font-bold text-primary">
+                      <span className="rounded-full bg-success-bg px-2.5 py-1 text-caption font-bold text-primary">
                         Đang dùng
                       </span>
                     )}
                   </div>
 
-                  <div className="text-xs leading-relaxed text-text-muted">{bo.mo_ta}</div>
+                  <div className="text-caption leading-relaxed text-text-muted">{bo.mo_ta}</div>
 
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className={cn("rounded-full px-2 py-0.5 text-xs font-bold", nhan.lop)}>
+                    <span className={cn("rounded-full px-2 py-0.5 text-caption font-bold", nhan.lop)}>
                       {nhan.chu}
                     </span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-xs font-semibold text-text-muted">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-caption font-semibold text-text-muted">
                       {bo.gui_anh_ra_ngoai ? (
                         <>
                           <Cloud size={11} strokeWidth={2} /> Ảnh gửi ra nhà cung cấp
@@ -188,7 +196,7 @@ export default function BoMayPage() {
                       )}
                     </span>
                   </div>
-                </button>
+                </div>
               )
             })}
           </div>
@@ -197,7 +205,7 @@ export default function BoMayPage() {
         {danhSach && (
           <div className="flex items-start gap-2 rounded-xl bg-warning-bg p-3.5">
             <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning" />
-            <div className="text-xs leading-relaxed text-warning">
+            <div className="text-caption leading-relaxed text-warning">
               Chỉ bộ &quot;Đầy đủ&quot; đã chạy trên ảnh thật. Hai bộ còn lại chưa được chấm điểm trên
               bộ ảnh chuẩn, nên chưa có căn cứ nói bộ nào đếm đúng hơn. Đổi bộ máy được ghi vào nhật ký
               kiểm toán để về sau đối chiếu được kết quả của từng giai đoạn.
@@ -219,13 +227,13 @@ export default function BoMayPage() {
                 {chon === dangDung ? "Đang dùng bộ này" : "Chuyển sang bộ đã chọn"}
               </Button>
               {daLuu && (
-                <div className="mt-2 text-center text-xs text-text-muted">
+                <div className="mt-2 text-center text-caption text-text-muted">
                   Đã lưu. Lượt phân tích đang chạy dở vẫn dùng bộ cũ.
                 </div>
               )}
             </>
           ) : (
-            <div className="rounded-xl bg-surface-alt px-3.5 py-3 text-center text-xs text-text-muted">
+            <div className="rounded-xl bg-surface-alt px-3.5 py-3 text-center text-caption text-text-muted">
               Chỉ Điều hành mới đổi được bộ máy phân tích.
             </div>
           )}
@@ -260,7 +268,7 @@ export default function BoMayPage() {
           </>
         }
       >
-        <div className="space-y-3.5 text-xs text-text">
+        <div className="space-y-3.5 text-caption text-text">
           <div className="p-3 rounded-xl bg-surface-alt border border-border flex flex-col gap-1.5">
             <div className="flex justify-between">
               <span className="text-text-muted">Bộ máy hiện tại:</span>
@@ -276,7 +284,7 @@ export default function BoMayPage() {
             <div className="font-bold flex items-center gap-1.5">
               <AlertTriangle size={14} /> Lưu ý trước khi đổi:
             </div>
-            <ul className="list-disc pl-4 space-y-1 text-xs leading-relaxed">
+            <ul className="list-disc pl-4 space-y-1 text-caption leading-relaxed">
               <li>Lượt nhận diện ảnh đang chạy dở vẫn tiếp tục dùng bộ máy cũ.</li>
               <li>Bộ máy mới sẽ áp dụng ngay cho tất cả lượt tải ảnh tiếp theo của toàn tổ chức.</li>
               <li>Quyền riêng tư dữ liệu: {boChonMoTa?.gui_anh_ra_ngoai ? "Ảnh sẽ gửi ra nhà cung cấp AI bên ngoài." : "Ảnh xử lý nội bộ, không rời khỏi hệ thống."}</li>

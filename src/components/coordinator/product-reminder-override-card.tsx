@@ -205,7 +205,7 @@ export function ProductReminderOverrideCard({
       {/* Bảng cấu hình */}
       {isLoading ? (
         <div className="py-4 flex items-center justify-center gap-2 text-text-muted">
-          <RefreshCw size={14} className="animate-spin text-primary" />
+          <RefreshCw size={14} className="animate-spin motion-reduce:animate-none text-primary" />
           <span className="text-caption">Đang tải cấu hình...</span>
         </div>
       ) : (

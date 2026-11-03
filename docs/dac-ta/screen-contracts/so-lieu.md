@@ -1,3 +1,18 @@
+---
+id: SCR-STORE-so-lieu
+tier: STORE
+module: analytics
+route: /so-lieu
+archetype: A
+snapshots:
+  mobile: 390x844
+  desktop: 1280x800
+acceptance:
+  - Hiển thị đầy đủ số đo lượt sử dụng, credit và học phong cách AI
+  - Chuyển tiếp 4 giai đoạn mượt mà: Bảng chỉ số -> Diễn giải -> Học phong cách -> Cập nhật
+  - Gác quyền U2 và U3 chính xác
+---
+
 # Screen Contract — Báo Cáo Số Liệu & Học Phong Cách (Analytics & Learning)
 
 **Tuyến:** `/so-lieu` · **Tệp chính:** `src/app/(app)/so-lieu/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D1

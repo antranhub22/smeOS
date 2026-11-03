@@ -1,3 +1,20 @@
+---
+id: SCR-STORE-don-hang
+tier: STORE
+module: orders
+route: /don-hang
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 <h1> đúng 20px (text-display)
+  - Tối đa 1 nút chính (primary button) theo K2
+  - Quản lý đơn hàng đa nguồn theo vai (Lead, Sale, Duyệt, Điều phối, Tất cả)
+  - Đầy đủ 6 trạng thái UI
+  - Chuyển đổi linh hoạt giữa Kanban (desktop) và danh sách lọc (mobile)
+---
+
 # Screen Contract — Quản lý Đơn hàng & Vận hành Xưởng (`/don-hang`)
 
 **Tuyến:** `/don-hang` · **Tệp chính:** `src/app/(app)/don-hang/page.tsx` · **Cập nhật:** 31/10/2026 (mục Đơn hàng theo vai — Đơn hàng đa nguồn P4) · **Thẻ:** T5.B2

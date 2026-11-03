@@ -108,11 +108,11 @@ export function MarketplaceShareDialog() {
       >
         <div className="space-y-5">
           <div className="space-y-3 rounded-xl border border-border p-4">
-            <label className="block space-y-1 text-xs">
+            <label className="block space-y-1 text-caption">
               <span className="font-medium text-text">Gửi cho ai?</span>
               <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Vd. BOD quý 4, nhóm kinh doanh" inputSize="sm" maxLength={120} />
             </label>
-            <div className="space-y-1 text-xs">
+            <div className="space-y-1 text-caption">
               <span className="font-medium text-text">Link dùng được trong</span>
               <div className="flex flex-wrap items-center gap-2">
                 {DAY_OPTIONS.map((d) => (
@@ -136,7 +136,7 @@ export function MarketplaceShareDialog() {
               {busy ? "Đang tạo..." : "Tạo link"}
             </Button>
             {created && (
-              <div className="space-y-2 rounded-lg border border-success-border bg-success-bg p-3 text-xs">
+              <div className="space-y-2 rounded-lg border border-success-border bg-success-bg p-3 text-caption">
                 <p className="font-medium text-success-text">Đã tạo link. Sao chép ngay — vì lý do bảo mật, link chỉ hiện một lần.</p>
                 <div className="flex gap-2">
                   <Input readOnly value={created} inputSize="sm" onFocus={(e) => e.currentTarget.select()} />
@@ -152,13 +152,13 @@ export function MarketplaceShareDialog() {
           {error && <InlineError message={error} />}
 
           <div className="space-y-2">
-            <h4 className="text-xs font-semibold text-text">Link đã tạo</h4>
+            <h4 className="text-caption font-semibold text-text">Link đã tạo</h4>
             {links.length === 0 ? (
-              <p className="text-xs text-text-muted">Chưa có link nào.</p>
+              <p className="text-caption text-text-muted">Chưa có link nào.</p>
             ) : (
               <ul className="divide-y divide-border rounded-xl border border-border">
                 {links.map((l) => (
-                  <li key={l.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-xs">
+                  <li key={l.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-caption">
                     <div className="min-w-0 space-y-0.5">
                       <p className="truncate font-medium text-text">{l.label}</p>
                       <p className="text-text-muted">

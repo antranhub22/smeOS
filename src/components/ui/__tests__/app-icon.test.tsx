@@ -1,12 +1,17 @@
 import { describe, expect, it } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 import { getAllTools } from "@/modules/toolkit/domain/toolkit-catalog"
-import { getAllGrowthModules } from "@/modules/toolkit/domain/growth-modules"
+import { getAllBusinessModules } from "@/modules/toolkit/domain/business-modules"
+import { getStoreOperationsSection } from "@/modules/toolkit/domain/store-operations"
 import { IconTile, hasAppIcon } from "../app-icon"
 
 describe("AppIcon / IconTile", () => {
-  it("mọi icon trong danh mục công cụ và 10 bước đều có icon Phosphor", () => {
-    const names = [...getAllTools().map((t) => t.icon), ...getAllGrowthModules().map((m) => m.icon)]
+  it("mọi icon trong danh mục công cụ, 6 module và khu vận hành đều có icon Phosphor", () => {
+    const names = [
+      ...getAllTools().map((t) => t.icon),
+      ...getAllBusinessModules().map((m) => m.icon),
+      ...getStoreOperationsSection(true).groups.map((g) => g.icon),
+    ]
     expect(names.filter((n) => !hasAppIcon(n))).toEqual([])
   })
 

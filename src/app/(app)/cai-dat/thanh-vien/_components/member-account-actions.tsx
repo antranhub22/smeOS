@@ -4,6 +4,7 @@ import { useState } from "react"
 import { KeyRound, Lock, Trash2, Unlock } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { TemporaryPasswordNotice } from "./temporary-password-notice"
 
 async function send(url: string, method: string, body: unknown, fallback: string) {
@@ -30,11 +31,21 @@ export function MemberAccountActions({
   const [busy, setBusy] = useState(false)
   const [reset, setReset] = useState<{ email: string; temporaryPassword: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [confirm, confirmDialog] = useConfirmDialog()
   const who = member.name || member.email
   const suspended = member.status === "SUSPENDED"
 
   const doReset = async () => {
-    if (!window.confirm(`Đặt lại mật khẩu cho ${who}? Người này sẽ bị đăng xuất ở mọi máy.`)) return
+    if (
+      !(await confirm({
+        title: `Đặt lại mật khẩu cho ${who}?`,
+        consequence: "Người này sẽ bị đăng xuất ở mọi thiết bị và nhận mật khẩu tạm.",
+        confirmLabel: "Đặt lại mật khẩu",
+        tone: "danger",
+      }))
+    ) {
+      return
+    }
     setBusy(true)
     setError(null)
     try {
@@ -47,8 +58,20 @@ export function MemberAccountActions({
   }
 
   const doToggle = async () => {
-    const question = suspended ? `Mở khoá tài khoản ${who}?` : `Tạm khoá tài khoản ${who}? Người này bị đăng xuất ngay, dữ liệu và đơn vẫn giữ nguyên.`
-    if (!window.confirm(question)) return
+    const question = suspended ? `Mở khoá tài khoản ${who}?` : `Tạm khoá tài khoản ${who}?`
+    const consequence = suspended
+      ? "Người này sẽ có thể đăng nhập lại vào tiệm."
+      : "Người này bị đăng xuất ngay, dữ liệu và đơn vẫn giữ nguyên."
+    if (
+      !(await confirm({
+        title: question,
+        consequence,
+        confirmLabel: suspended ? "Mở khoá" : "Tạm khoá",
+        tone: suspended ? "default" : "danger",
+      }))
+    ) {
+      return
+    }
     setBusy(true)
     setError(null)
     try {
@@ -62,7 +85,16 @@ export function MemberAccountActions({
   }
 
   const doRemove = async () => {
-    if (!window.confirm(`Xoá tài khoản ${who} khỏi tiệm? Người này bị đăng xuất ngay và không vào tiệm được nữa. Đơn hàng, dữ liệu cũ vẫn giữ nguyên.`)) return
+    if (
+      !(await confirm({
+        title: `Xoá tài khoản ${who} khỏi tiệm?`,
+        consequence: "Người này bị đăng xuất ngay và không vào tiệm được nữa. Đơn hàng, dữ liệu cũ vẫn giữ nguyên.",
+        confirmLabel: "Xoá tài khoản",
+        tone: "danger",
+      }))
+    ) {
+      return
+    }
     setBusy(true)
     setError(null)
     try {
@@ -103,6 +135,7 @@ export function MemberAccountActions({
       <Dialog open={reset !== null} onOpenChange={(open) => !open && setReset(null)} title="Mật khẩu tạm mới" size="md">
         {reset && <TemporaryPasswordNotice email={reset.email} password={reset.temporaryPassword} />}
       </Dialog>
+      {confirmDialog}
     </>
   )
 }

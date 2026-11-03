@@ -21,9 +21,25 @@ const VAI_TO_KEY: Record<string, "dieu_hanh" | "dieu_phoi" | "sale"> = {
 const HARVESTED_CODES = MOI_MA.filter((ma) => /^[A-E]\d+$/.test(ma))
 
 describe("danh mục năng lực — đặc tả 02", () => {
-  it("154 mã: 76 thu hoạch (A–E) cộng 78 mã mới (F–L, U1–U4, H5–H6, R1–R13, Q1–Q9, T1–T4, I4–I5, P3–P4, V1–V3) — ĐP-4a thêm R9/R10 (sổ thu), PO 08/10 thêm R11, PO 14/10 thêm R12 (cấu hình nhắc việc Điều phối), R13 (xuất dữ liệu), PO 30/10 thêm J7 (nội dung AI landing/catalog), PO 31/10 thêm R15 (báo giá) + R16 (duyệt giao trước thu sau)", () => {
+  it("154 mã: 76 thu hoạch (A–E) cộng 78 mã mới (F–L, U1–U4, H5–H6, R1–R13, Q1–Q9, T1–T4, I4–I5, P3–P4, V1–V3) — ĐP-4a thêm R9/R10 (sổ thu), PO 08/10 thêm R11, PO 14/10 thêm R12 (cấu hình nhắc việc Điều phối), R13 (xuất dữ liệu), PO 30/10 thêm J7 (nội dung AI landing/catalog), PO 31/10 thêm R15 (báo giá) + R16 (duyệt giao trước thu sau), PO 01/11 thêm M1/M2/M3 (marketing usage + campaign), M4 (nhóm khách & chăm sóc), M5 (in ấn)", () => {
     expect(HARVESTED_CODES.length).toBe(76)
-    expect(ALL_CAPABILITY_CODES.length).toBe(163)
+    expect(ALL_CAPABILITY_CODES.length).toBe(168)
+  })
+
+  it("M1, M2 và M3 cho Marketing & Sales Center (PR-2, PR-3)", () => {
+    expect(capability("M1").name).toBe("marketing.usage.read")
+    expect(capability("M2").name).toBe("marketing.usage.manage")
+    expect(capability("M3").name).toBe("marketing.campaign.manage")
+    expect(capability("M1").defaultRoles).toContain("dieu_hanh")
+    expect(capability("M2").defaultRoles).toContain("marketing")
+    expect(capability("M3").defaultRoles).toContain("marketing")
+  })
+
+  it("M4 cho nhóm khách & chăm sóc (PR-5), M5 cho in ấn (PR-6)", () => {
+    expect(capability("M4").name).toBe("crm.segment.manage")
+    expect(capability("M4").defaultRoles).toEqual(["dieu_hanh", "marketing"])
+    expect(capability("M5").name).toBe("print.rendition.export")
+    expect(capability("M5").defaultRoles).toEqual(["dieu_hanh", "dieu_phoi", "marketing"])
   })
 
   it("18 mã thu hoạch có trần cứng, tổng cả catalog là 44 — ĐP-4a thêm R10 (hoàn tiền), PO 08/10 thêm R11", () => {

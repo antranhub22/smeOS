@@ -6,7 +6,6 @@ import { Plus, Sparkles, RefreshCw, FileSpreadsheet, Download } from "@/componen
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"
-import { InfoTip } from "@/components/ui/info-tip"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import {
@@ -28,6 +27,7 @@ import {
 } from "@/components/products/product-filter-types"
 import { ProductBulkStatusBar } from "@/components/products/product-bulk-status-bar"
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
+import { PageHeader } from "@/components/ui/page-header"
 
 
 
@@ -53,11 +53,7 @@ export default function SanPhamPage() {
     if (new URLSearchParams(window.location.search).get("duyet") === "1") setOnlyProposals(true)
   }, [])
 
-  const isExecutive =
-    session.roleKey === "dieu_hanh" ||
-    session.roleKey === "store_admin" ||
-    session.can("G3") ||
-    session.can("L4")
+  const isExecutive = session.can("G3") || session.can("L4")
 
   // Server tải dữ liệu (từ khoá debounce + danh mục nếu có)
   const {
@@ -115,22 +111,21 @@ export default function SanPhamPage() {
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header tác vụ */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-3.5 gap-3">
+        <PageHeader
+          title={ti("sampleProduct")}
+          tip={<>Kho {ti("catalogTitle").toLowerCase()}: thêm, sửa và ẩn {ti("sampleProduct").toLowerCase()} để hiện trên catalog bán hàng.</>}
+        />
         <div className="flex items-center gap-2">
-          <h1 className="text-title font-extrabold text-primary">{ti("sampleProduct")}</h1>
-          {/* Giải thích trong "?" thay vì dòng phụ (OPERATING_PRINCIPLES §6.1) */}
-          <InfoTip label={ti("sampleProduct")} side="bottom">
-            Kho {ti("catalogTitle").toLowerCase()}: thêm, sửa và ẩn {ti("sampleProduct").toLowerCase()} để hiện trên catalog bán hàng.
-          </InfoTip>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={() => napLai()}
             aria-label={t("products.header.refresh")}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            className="h-9 w-9 rounded-xl"
           >
             <RefreshCw size={15} />
-          </button>
+          </Button>
           {/* Xuất Excel: quyền R13 như các màn khác (PO 14/10/2026) — máy chủ kiểm lại */}
           {session.can("R13") && <a
             href={`/api/v1/products/export?${new URLSearchParams({
@@ -144,24 +139,28 @@ export default function SanPhamPage() {
             <span className="hidden sm:inline">Xuất Excel</span>
           </a>}
           {/* Chỉ Điều hành nhập Excel (H3, PO 23/10/2026) — máy chủ kiểm lại */}
-          {session.can("H3") && <button
+          {session.can("H3") && <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => router.push("/san-pham/nhap-hang-loat" as never)}
-            className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 h-9 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            className="flex items-center gap-1.5 h-9"
             title="Nhập sản phẩm đồng loạt từ file Excel và folder ảnh"
           >
             <FileSpreadsheet size={14} className="text-success" />
             <span className="hidden sm:inline">{t("products.header.importExcel")}</span>
-          </button>}
-          <button
+          </Button>}
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => router.push("/tai-anh" as never)}
-            className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 h-9 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+            className="flex items-center gap-1.5 h-9"
             title={`Tải ảnh ${ti("sampleProduct").toLowerCase()} → AI phân tích tự động`}
           >
             <Sparkles size={14} className="text-primary" />
             <span className="hidden sm:inline">{ti("scanButtonLabel")}</span>
-          </button>
+          </Button>
           <Button
             size="sm"
             onClick={() => router.push("/san-pham/tao-moi" as never)}
@@ -267,21 +266,23 @@ export default function SanPhamPage() {
         {rawProducts !== null && (
           <div className="mt-4 flex flex-col items-center gap-2">
             {nextCursor && (
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => void handleLoadMore()}
                 disabled={loadingMore}
-                className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-60"
+                className="flex items-center gap-2"
               >
                 {loadingMore ? (
                   <>
-                    <RefreshCw size={14} className="animate-spin" />
+                    <RefreshCw size={14} className="animate-spin motion-reduce:animate-none" />
                     <span>Đang tải thêm...</span>
                   </>
                 ) : (
                   `Xem thêm ${ti("sampleProduct").toLowerCase()}`
                 )}
-              </button>
+              </Button>
             )}
             {filteredProducts.length > 0 && (
               <div className="text-caption text-text-muted">

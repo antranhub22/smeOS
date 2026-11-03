@@ -21,6 +21,7 @@ import type { ChainPartnershipEntity } from "@/modules/chain-partnership/domain/
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Dialog } from "@/components/ui/dialog"
 import type { PartnerCredential } from "@/components/organization/partner-credential-dialog"
 
 interface ChainPartnerModalProps {
@@ -120,67 +121,66 @@ export function ChainPartnerCreateModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-      <div className="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-border animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between pb-3 border-b border-border">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-sm text-text">Thêm Cửa hàng Đối tác vào Chuỗi</h3>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng"
-            className="text-text-muted hover:text-text cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    <Dialog
+      open={showModal}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      title={
+        <div className="flex items-center gap-2">
+          <Building2 className="w-5 h-5 text-primary" />
+          <span className="font-bold text-body-sm text-text">Thêm Cửa hàng Đối tác vào Chuỗi</span>
         </div>
-
-        {/* Tabs chuyển đổi giữa Tạo mới vs Đã có tài khoản */}
-        <div className="flex border-b border-border mt-3">
-          <button
+      }
+      subHeader={
+        <div className="flex border-b border-border px-6">
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => {
               setActiveTab("NEW")
               setErrorMsg("")
             }}
-            className={`flex-1 py-2 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2 text-caption font-bold border-b-2 rounded-none transition-all flex items-center justify-center gap-1.5 h-auto ${
               activeTab === "NEW"
                 ? "border-primary text-primary"
                 : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             <Plus className="w-3.5 h-3.5" /> Cấp tài khoản mới
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => {
               setActiveTab("EXISTING")
               setErrorMsg("")
             }}
-            className={`flex-1 py-2 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-2 text-caption font-bold border-b-2 rounded-none transition-all flex items-center justify-center gap-1.5 h-auto ${
               activeTab === "EXISTING"
                 ? "border-primary text-primary"
                 : "border-transparent text-text-muted hover:text-text"
             }`}
           >
             <Link2 className="w-3.5 h-3.5" /> Mời tiệm đã có tài khoản
-          </button>
+          </Button>
         </div>
-
+      }
+      size="md"
+    >
+      <div className="p-6">
         {errorMsg && (
-          <div className="mt-3 p-3 bg-danger-subtle text-danger rounded-xl text-xs flex items-center gap-2 border border-danger/20">
+          <div className="mb-4 p-3 bg-danger-subtle text-danger rounded-xl text-caption flex items-center gap-2 border border-danger/20">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
-        <form onSubmit={handleCreatePartner} className="mt-4 space-y-3">
+        <form onSubmit={handleCreatePartner} className="space-y-3">
           {activeTab === "NEW" ? (
             <>
               <div>
-                <label className="text-xs font-semibold text-text block mb-1">
+                <label className="text-caption font-semibold text-text block mb-1">
                   Tên cửa hàng / Chi nhánh đối tác *
                 </label>
                 <Input
@@ -194,7 +194,7 @@ export function ChainPartnerCreateModal({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-text block mb-1">
+                  <label className="text-caption font-semibold text-text block mb-1">
                     Mã đối tác (Mã định danh) *
                   </label>
                   <Input
@@ -206,7 +206,7 @@ export function ChainPartnerCreateModal({
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-text block mb-1">
+                  <label className="text-caption font-semibold text-text block mb-1">
                     Khu vực (Tỉnh / Thành phố)
                   </label>
                   <Input
@@ -219,7 +219,7 @@ export function ChainPartnerCreateModal({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-text block mb-1">
+                <label className="text-caption font-semibold text-text block mb-1">
                   Người đại diện / Quản lý *
                 </label>
                 <Input
@@ -233,7 +233,7 @@ export function ChainPartnerCreateModal({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-text block mb-1">
+                  <label className="text-caption font-semibold text-text block mb-1">
                     Email đăng nhập *
                   </label>
                   <Input
@@ -245,7 +245,7 @@ export function ChainPartnerCreateModal({
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-text block mb-1">
+                  <label className="text-caption font-semibold text-text block mb-1">
                     Số điện thoại liên hệ *
                   </label>
                   <Input
@@ -259,7 +259,7 @@ export function ChainPartnerCreateModal({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-text block mb-1">
+                <label className="text-caption font-semibold text-text block mb-1">
                   Địa chỉ tiệm
                 </label>
                 <Input
@@ -280,7 +280,7 @@ export function ChainPartnerCreateModal({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-text block mb-1">
+                <label className="text-caption font-semibold text-text block mb-1">
                   Email đại diện hoặc Mã / Slug cửa hàng *
                 </label>
                 <Input
@@ -293,7 +293,7 @@ export function ChainPartnerCreateModal({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-text block mb-1">
+                <label className="text-caption font-semibold text-text block mb-1">
                   Mã đối tác gán trong Chuỗi *
                 </label>
                 <Input
@@ -336,6 +336,6 @@ export function ChainPartnerCreateModal({
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   )
 }

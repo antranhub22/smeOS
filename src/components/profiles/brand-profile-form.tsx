@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { Type, Sparkles, ShieldAlert, Check, MessageSquareQuote, CheckCircle2 } from "@/components/ui/icons"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
-import type { UpsertBrandProfileInput } from "@/modules/profiles/infra/brand-profile-repository"
+import type { UpsertBrandProfileInput } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
 import { isValidHexColor } from "@/modules/profiles/domain/profile-rules"
 import {
   BrandColorsSection,

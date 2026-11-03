@@ -1,0 +1,279 @@
+# FLOWER SHOP – MARKETING & SALES ASSET CATALOG
+
+**Danh mục vật phẩm Marketing & Sales dành cho cửa hàng hoa**
+
+Version: 1.0  
+Target Platform: SMEOS / FloraOS  
+Document Type: Functional Asset Catalog
+
+---
+
+# 1. PRODUCT IDENTITY – VẬT PHẨM NHẬN DIỆN VÀ GIỚI THIỆU SẢN PHẨM
+
+Mục đích: Chuẩn hóa hình ảnh và thông tin sản phẩm để cửa hàng có thể sử dụng nhất quán trên website, mạng xã hội, catalog và các kênh bán hàng.
+
+| STT | Vật phẩm | Nguồn đầu vào | Mục đích | Tình huống áp dụng thực tế |
+|---|---|---|---|---|
+| 1 | Product Cover | 1 ảnh | Ảnh đại diện sản phẩm | Đăng một mẫu hoa mới lên website hoặc cập nhật ảnh đại diện sản phẩm trong cửa hàng trực tuyến. |
+| 2 | Product Thumbnail | 1 ảnh | Ảnh thu nhỏ sản phẩm | Hiển thị danh sách hàng trăm mẫu hoa trên trang bán hàng để khách dễ tìm kiếm. |
+| 3 | Product Image Gallery | Chuỗi ảnh | Bộ ảnh chi tiết sản phẩm | Khách muốn xem nhiều góc chụp của một bó hoa trước khi quyết định mua. |
+| 4 | Product Information Card | 1 ảnh + thông tin | Thẻ thông tin sản phẩm | Giới thiệu mẫu hoa kèm tên, giá, kích thước, loại hoa và mô tả. |
+| 5 | Product Showcase | Chuỗi ảnh | Trình bày sản phẩm chuyên nghiệp | Giới thiệu một mẫu hoa cao cấp cho khách hàng VIP. |
+| 6 | Product Comparison Sheet | Nhiều ảnh | So sánh sản phẩm | Khách phân vân giữa ba mẫu hoa trong cùng ngân sách và muốn xem sự khác biệt. |
+| 7 | Product Collection Sheet | Chuỗi ảnh | Giới thiệu bộ sưu tập | Cửa hàng ra mắt bộ sưu tập hoa hồng, hoa hướng dương hoặc hoa theo mùa. |
+
+# 2. ADVERTISING MATERIALS – VẬT PHẨM QUẢNG CÁO
+
+Mục đích: Tạo tài liệu quảng cáo trực quan nhằm thu hút sự chú ý, giới thiệu sản phẩm và thúc đẩy hành động mua hàng.
+
+| STT | Vật phẩm | Nguồn đầu vào | Mục đích | Tình huống áp dụng thực tế |
+|---|---|---|---|---|
+| 1 | Poster | 1 ảnh | Quảng cáo sản phẩm | Cửa hàng muốn giới thiệu một mẫu hoa mới hoặc sản phẩm bán chạy. |
+| 2 | Promotional Poster | 1 ảnh | Quảng cáo khuyến mãi | Chạy chương trình giảm giá 10% trong ba ngày cuối tuần. |
+| 3 | Sale Banner | 1 ảnh | Thông báo giảm giá | Thông báo chương trình Flash Sale hoặc ưu đãi đặc biệt. |
+| 4 | Website Banner | 1 ảnh | Quảng cáo trên website | Giới thiệu bộ sưu tập Valentine ngay trên trang chủ. |
+| 5 | Facebook Banner | 1 ảnh | Ảnh bìa Facebook | Cập nhật ảnh bìa Facebook theo mùa hoặc chiến dịch 8/3. |
+| 6 | Social Media Banner | 1 ảnh | Quảng cáo mạng xã hội | Quảng bá chương trình tặng hoa trên Facebook và Instagram. |
+| 7 | Flyer | 1–3 ảnh | Tờ rơi quảng cáo | Phát tờ rơi tại khu dân cư hoặc văn phòng gần cửa hàng. |
+| 8 | Brochure | Chuỗi ảnh | Giới thiệu sản phẩm và dịch vụ | Giới thiệu dịch vụ hoa cưới, hoa sự kiện cho khách hàng doanh nghiệp. |
+| 9 | Standee | 1 ảnh | Quảng cáo tại cửa hàng | Đặt trước cửa hàng để giới thiệu chương trình ưu đãi. |
+| 10 | Digital Billboard | 1 ảnh | Quảng cáo màn hình điện tử | Hiển thị chương trình khuyến mãi trên màn hình tại trung tâm thương mại. |
+
+# 3. SALES MATERIALS – VẬT PHẨM BÁN HÀNG
+
+Mục đích: Hỗ trợ nhân viên giới thiệu sản phẩm, tư vấn, báo giá và giúp khách hàng đưa ra quyết định mua hàng.
+
+| STT | Vật phẩm | Nguồn đầu vào | Mục đích | Tình huống áp dụng thực tế |
+|---|---|---|---|---|
+| 1 | Product Catalog | Chuỗi ảnh | Danh mục sản phẩm | Gửi khách hàng danh sách các mẫu hoa hiện có để lựa chọn. |
+| 2 | Mini Catalog | 3–5 ảnh | Catalog chọn lọc | Gửi nhanh 5 mẫu hoa hồng phù hợp với ngân sách khách hàng. |
+| 3 | Digital Lookbook | Chuỗi ảnh | Giới thiệu phong cách hoa | Giới thiệu các phong cách hoa Hàn Quốc, châu Âu hoặc tối giản. |
+| 4 | Price List | Ảnh + giá | Danh sách sản phẩm và giá | Gửi bảng giá hoa khai trương cho khách hàng doanh nghiệp. |
+| 5 | Product Menu | Chuỗi ảnh | Menu sản phẩm | Đặt tại quầy để khách xem và lựa chọn mẫu hoa. |
+| 6 | Product Presentation | Chuỗi ảnh | Trình bày sản phẩm | Nhân viên sử dụng khi tư vấn khách hàng đặt hoa cao cấp. |
+| 7 | Product Quotation | Ảnh + giá + thông tin | Báo giá sản phẩm | Khách yêu cầu báo giá 20 kệ hoa khai trương. |
+| 8 | Product Selection Sheet | Chuỗi ảnh | Giúp khách lựa chọn | Gửi một bảng gồm các mẫu hoa theo ba mức ngân sách. |
+| 9 | Gift Collection | Chuỗi ảnh | Bộ sưu tập hoa quà tặng | Giới thiệu các mẫu hoa sinh nhật, kỷ niệm, tặng người thân. |
+| 10 | Event Collection | Chuỗi ảnh | Bộ sưu tập hoa sự kiện | Giới thiệu các mẫu hoa khai trương, hội nghị, lễ cưới. |
+
+# 4. SOCIAL MEDIA CONTENT – VẬT PHẨM MẠNG XÃ HỘI
+
+Mục đích: Tạo nội dung thường xuyên trên các nền tảng mạng xã hội để duy trì tương tác, xây dựng thương hiệu và thu hút khách hàng.
+
+| STT | Vật phẩm | Nguồn đầu vào | Mục đích | Tình huống áp dụng thực tế |
+|---|---|---|---|---|
+| 1 | Facebook Post Image | 1 ảnh | Bài đăng Facebook | Đăng giới thiệu một mẫu hoa mới mỗi ngày. |
+| 2 | Instagram Post | 1 ảnh | Bài đăng Instagram | Đăng ảnh một bó hoa nghệ thuật để xây dựng hình ảnh thương hiệu. |
+| 3 | Instagram Carousel | Chuỗi ảnh | Bài đăng nhiều ảnh | Giới thiệu 5 mẫu hoa trong bộ sưu tập mới. |
+| 4 | Instagram Story | 1 ảnh | Story Instagram | Thông báo cửa hàng còn một số mẫu hoa sẵn sàng giao trong ngày. |
+| 5 | Facebook Story | 1 ảnh | Story Facebook | Cập nhật chương trình ưu đãi trong ngày. |
+| 6 | TikTok Photo Post | Chuỗi ảnh | Bài đăng ảnh TikTok | Giới thiệu các mẫu hoa đẹp theo chủ đề đang thịnh hành. |
+| 7 | Pinterest Pin | 1 ảnh | Chia sẻ hình ảnh | Chia sẻ mẫu hoa cưới để thu hút khách hàng đang tìm ý tưởng trang trí. |
+| 8 | Social Media Carousel | Chuỗi ảnh | Nội dung nhiều trang | Hướng dẫn khách chọn hoa sinh nhật theo từng ngân sách. |
+| 9 | Social Media Album | Chuỗi ảnh | Album sản phẩm | Đăng toàn bộ các mẫu hoa đã thực hiện trong một tuần. |
+| 10 | Social Media Cover | 1 ảnh | Ảnh bìa mạng xã hội | Cập nhật hình ảnh cửa hàng theo chiến dịch Tết. |
+
+# 5. VIDEO & MOTION CONTENT – VẬT PHẨM VIDEO VÀ CHUYỂN ĐỘNG
+
+Mục đích: Chuyển đổi ảnh tĩnh thành nội dung chuyển động để tăng khả năng thu hút và tương tác trên các kênh truyền thông.
+
+| STT | Vật phẩm | Nguồn đầu vào | Mục đích | Tình huống áp dụng thực tế |
+|---|---|---|---|---|
+| 1 | Product Slideshow | Chuỗi ảnh | Video trình chiếu | Tạo video từ 10 mẫu hoa mới để đăng Facebook. |
+| 2 | Product Reel | Chuỗi ảnh | Video ngắn quảng cáo | Tạo Reel giới thiệu một bó hoa nổi bật trong 15 giây. |
+| 3 | TikTok Product Video | Chuỗi ảnh | Video TikTok | Tạo video giới thiệu bộ sưu tập hoa Valentine. |
+| 4 | Product Showcase Video | Chuỗi ảnh | Video giới thiệu sản phẩm | Trình chiếu nhiều góc ảnh của một sản phẩm cao cấp. |
+| 5 | Promotional Video | Ảnh + nội dung | Video khuyến mãi | Tạo video quảng cáo chương trình mua hoa tặng thiệp. |
+| 6 | Animated Product Poster | 1 ảnh | Poster chuyển động | Tạo poster động để đăng Story. |
+| 7 | Product Story Video | Chuỗi ảnh | Kể câu chuyện sản phẩm | Giới thiệu ý nghĩa của một bó hoa hồng dành tặng người yêu. |
+| 8 | Video Catalog | Chuỗi ảnh | Catalog dạng video | Tạo video tổng hợp các mẫu hoa để gửi khách qua Zalo. |
+| 9 | Before & After Video | 2 ảnh trở lên | So sánh trước và sau | Trình bày quá trình biến một bó hoa nguyên liệu thành sản phẩm hoàn thiện, nếu có ảnh thực tế tương ứng. |
+| 10 | Seasonal Collection Video | Chuỗi ảnh | Video bộ sưu tập theo mùa | Tạo video giới thiệu bộ sưu tập hoa Tết hoặc 20/10. |
+
+# 6. CUSTOMER ENGAGEMENT MATERIALS – VẬT PHẨM CHĂM SÓC KHÁCH HÀNG
+
+Mục đích: Tăng trải nghiệm khách hàng, tạo sự kết nối cảm xúc và thúc đẩy quan hệ lâu dài.
+
+| STT | Vật phẩm | Nguồn đầu vào | Mục đích | Tình huống áp dụng thực tế |
+|---|---|---|---|---|
+| 1 | Greeting Card | 1 ảnh | Thiệp chúc mừng | Khách mua hoa sinh nhật và muốn gửi lời chúc riêng cho người nhận. |
+| 2 | Thank You Card | 1 ảnh | Thiệp cảm ơn | Đính kèm đơn hàng để cảm ơn khách đã mua hoa. |
+| 3 | Birthday Card | 1 ảnh | Thiệp sinh nhật | Tặng khách hàng thân thiết trong dịp sinh nhật. |
+| 4 | Anniversary Card | 1 ảnh | Thiệp kỷ niệm | Tạo thiệp cho khách đặt hoa kỷ niệm ngày cưới. |
+| 5 | Gift Card | 1 ảnh | Thẻ quà tặng | Khách mua một thẻ quà tặng trị giá 500.000 đồng để tặng người khác. |
+| 6 | Voucher | 1 ảnh | Phiếu ưu đãi | Tặng khách voucher giảm giá cho lần mua tiếp theo. |
+| 7 | Discount Coupon | 1 ảnh | Phiếu giảm giá | Phát mã giảm giá trong chiến dịch 8/3. |
+| 8 | Care Instruction Card | 1 ảnh | Hướng dẫn chăm sóc hoa | Đính kèm hướng dẫn thay nước, cắt gốc và bảo quản hoa. |
+| 9 | Delivery Confirmation Card | 1 ảnh | Thông báo giao hàng | Gửi khách xác nhận đơn hoa đã được giao thành công. |
+| 10 | Review Request Card | 1 ảnh | Yêu cầu đánh giá | Gửi kèm đường dẫn Google Review sau khi khách nhận hoa. |
+
+# 7. PRINT & DISPLAY MATERIALS – VẬT PHẨM IN ẤN VÀ TRƯNG BÀY
+
+Mục đích: Chuyển đổi tài nguyên hình ảnh số thành các vật phẩm vật lý phục vụ quảng cáo, trưng bày và bán hàng tại cửa hàng.
+
+| STT | Vật phẩm | Nguồn đầu vào | Mục đích | Tình huống áp dụng thực tế |
+|---|---|---|---|---|
+| 1 | Product Photo Print | 1 ảnh | In ảnh sản phẩm | In ảnh mẫu hoa để khách tham khảo tại quầy. |
+| 2 | Product Poster Print | 1 ảnh | In poster | In poster quảng cáo sản phẩm mới và treo trong cửa hàng. |
+| 3 | Product Catalog Print | Chuỗi ảnh | In catalog | In catalog để nhân viên sử dụng khi tư vấn khách. |
+| 4 | Product Menu Print | Chuỗi ảnh | In menu | Đặt menu hoa tại quầy tiếp khách. |
+| 5 | Counter Display | 1 ảnh | Trưng bày quầy | Đặt bảng giới thiệu sản phẩm bán chạy trên quầy thanh toán. |
+| 6 | Table Tent | 1 ảnh | Quảng cáo để bàn | Đặt bảng QR để khách quét và xem catalog. |
+| 7 | Window Display Poster | 1 ảnh | Trưng bày cửa kính | Dán poster chương trình Valentine trên cửa kính. |
+| 8 | Wall Poster | 1 ảnh | Trang trí và quảng cáo | Trang trí khu vực trưng bày bằng ảnh các mẫu hoa đặc trưng. |
+| 9 | Product Tag | 1 ảnh | Thẻ sản phẩm | Gắn thẻ tên và giá vào sản phẩm trưng bày. |
+| 10 | Packaging Sticker | 1 ảnh | Tem bao bì | In tem logo cửa hàng để dán lên hộp hoa và bao bì. |
+
+# 8. DIGITAL COMMERCE ASSETS – VẬT PHẨM BÁN HÀNG TRỰC TUYẾN
+
+Mục đích: Chuyển đổi hình ảnh sản phẩm thành tài nguyên số giúp khách hàng tìm hiểu, lựa chọn và đặt mua trực tuyến.
+
+| STT | Vật phẩm | Nguồn đầu vào | Mục đích | Tình huống áp dụng thực tế |
+|---|---|---|---|---|
+| 1 | Product Landing Page | 1 ảnh hoặc chuỗi ảnh | Trang bán sản phẩm | Chạy quảng cáo một mẫu hoa sinh nhật và dẫn khách đến trang đặt mua. |
+| 2 | Collection Landing Page | Chuỗi ảnh | Trang bộ sưu tập | Tạo trang giới thiệu 20 mẫu hoa Valentine. |
+| 3 | Digital Product Page | Ảnh + thông tin | Trang chi tiết sản phẩm | Khách nhấn vào một mẫu hoa để xem ảnh, giá, mô tả và đặt hàng. |
+| 4 | Facebook Product Album | Chuỗi ảnh | Album bán hàng | Tạo album các mẫu hoa khai trương để gửi khách qua Facebook. |
+| 5 | Online Catalog Link | Chuỗi ảnh | Link catalog trực tuyến | Gửi một đường link catalog thay vì gửi từng ảnh qua Zalo. |
+| 6 | QR Product Page | Ảnh + URL | QR dẫn đến sản phẩm | In QR trên bảng trưng bày để khách quét và xem thông tin sản phẩm. |
+| 7 | Zalo Product Card | 1 ảnh | Chia sẻ sản phẩm qua Zalo | Nhân viên gửi một mẫu hoa kèm giá và thông tin đặt hàng cho khách. |
+| 8 | Email Product Newsletter | Chuỗi ảnh | Email giới thiệu sản phẩm | Gửi bộ sưu tập hoa mới đến danh sách khách hàng doanh nghiệp. |
+| 9 | Digital Product Collection | Chuỗi ảnh | Bộ sưu tập trực tuyến | Tạo một trang tổng hợp các mẫu hoa cưới để khách dễ lựa chọn. |
+| 10 | Social Commerce Creative | Ảnh + thông tin | Tài nguyên bán hàng mạng xã hội | Tạo nội dung quảng cáo có ảnh, giá và lời kêu gọi đặt hàng. |
+
+---
+
+# 9. TỔNG HỢP DANH MỤC
+
+| Nhóm | Số lượng vật phẩm | Mục tiêu chính |
+|---|---:|---|
+| 1. Product Identity | 7 | Chuẩn hóa và giới thiệu sản phẩm |
+| 2. Advertising Materials | 10 | Quảng cáo |
+| 3. Sales Materials | 10 | Tư vấn và bán hàng |
+| 4. Social Media Content | 10 | Truyền thông mạng xã hội |
+| 5. Video & Motion Content | 10 | Nội dung video |
+| 6. Customer Engagement | 10 | Chăm sóc khách hàng |
+| 7. Print & Display Materials | 10 | In ấn và trưng bày |
+| 8. Digital Commerce Assets | 10 | Bán hàng trực tuyến |
+| **Tổng cộng** | **77** | |
+
+---
+
+# 10. YÊU CẦU ĐỊNH HƯỚNG PHÁT TRIỂN TRÊN SMEOS
+
+## 10.1. Core Concept
+
+Xây dựng hệ thống Product-to-Marketing Asset Generator.
+
+Nguyên tắc:
+
+**One Product Image / Image Collection → Multiple Marketing & Sales Assets.**
+
+Người dùng chỉ cần chọn ảnh sản phẩm hoặc bộ sưu tập, sau đó chọn loại vật phẩm cần tạo.
+
+## 10.2. Input
+
+Hệ thống cần hỗ trợ:
+
+- Single Product Image.
+- Multiple Product Images.
+- Product Image Collection.
+- Product Information.
+- Product Price.
+- Brand Assets.
+- Campaign Information.
+- Customer-specific Information.
+
+## 10.3. Output
+
+Hỗ trợ tạo và xuất:
+
+- JPG.
+- PNG.
+- PDF.
+- MP4.
+- Digital Web Page.
+- Shareable Link.
+- QR Code.
+
+Định dạng đầu ra phải phù hợp với từng loại vật phẩm.
+
+## 10.4. Design Template Library
+
+Mỗi loại vật phẩm cần có thư viện template.
+
+Ví dụ:
+
+Poster:
+- Minimalist.
+- Luxury.
+- Modern.
+- Romantic.
+- Seasonal.
+- Promotional.
+
+Catalog:
+- Minimal Catalog.
+- Premium Catalog.
+- Product Grid.
+- Editorial Lookbook.
+
+Template phải hỗ trợ tùy chỉnh:
+
+- Logo.
+- Brand Color.
+- Font.
+- Product Image.
+- Product Name.
+- Product Description.
+- Price.
+- Promotion.
+- Contact Information.
+- QR Code.
+
+## 10.5. User Workflow
+
+```mermaid
+flowchart TD
+    A["Chọn ảnh sản phẩm"]
+    B["Chọn một hoặc nhiều vật phẩm"]
+    C["Chọn template"]
+    D["Tự động tạo nội dung và thiết kế"]
+    E["Người dùng xem trước"]
+    F["Chỉnh sửa"]
+    G["Xuất file / Chia sẻ / Xuất bản"]
+
+    A --> B --> C --> D --> E --> F --> G
+```
+
+## 10.6. Product Requirements
+
+- Tái sử dụng ảnh sản phẩm gốc.
+- Không làm thay đổi thông tin sản phẩm gốc.
+- Hỗ trợ nhiều định dạng và kích thước.
+- Có thể tạo nhiều vật phẩm trong một lần.
+- Có thể chỉnh sửa sau khi tạo.
+- Lưu lịch sử các phiên bản.
+- Quản lý quyền sử dụng và chia sẻ.
+- Hỗ trợ xuất file chất lượng phù hợp với in ấn và nền tảng số.
+- Có khả năng tái sử dụng template.
+- Hỗ trợ nhiều ngôn ngữ khi cần.
+
+## 10.7. Important Quality Requirement
+
+Không được tạo ra thông tin giả về sản phẩm.
+
+Ví dụ:
+
+- Không tự tạo thêm loại hoa không có trong ảnh.
+- Không tự thay đổi màu sắc hoa.
+- Không tự thay đổi số lượng hoa.
+- Không tự tạo ảnh giao hàng thực tế.
+- Không tự tạo đánh giá khách hàng.
+- Không tự thay đổi giá sản phẩm.
+
+AI có thể hỗ trợ sáng tạo bố cục và bối cảnh, nhưng phải phân biệt rõ ảnh minh họa và ảnh sản phẩm thực tế.
+
+---
+
+**END OF DOCUMENT**

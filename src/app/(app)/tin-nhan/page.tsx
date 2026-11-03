@@ -20,6 +20,7 @@ import { ActionCardOrder } from "@/components/internal-chat/action-card-order"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function InternalChatPage() {
   const { t } = useI18n()
@@ -112,10 +113,9 @@ export default function InternalChatPage() {
         {/* Header danh sách */}
         <div className="p-4 border-b border-border space-y-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-body font-bold text-text flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-primary" />
-              Tin nhắn nội bộ
-            </h1>
+            <PageHeader
+              title={<><MessageSquare className="w-5 h-5 text-primary" /> Tin nhắn nội bộ</>}
+            />
             <span className="text-caption font-medium text-primary bg-primary-subtle px-2.5 py-0.5 rounded-full border border-primary/20">
               Đa ngành SaaS
             </span>
@@ -144,11 +144,18 @@ export default function InternalChatPage() {
             filteredConversations.map((conv) => {
               const isSelected = activeConv?.id === conv.id
               return (
-                <button
-                  type="button"
+                <div
+                  role="button"
+                  tabIndex={0}
                   key={conv.id}
                   onClick={() => setActiveConv(conv)}
-                  className={`w-full text-left p-3 rounded-xl cursor-pointer transition-all flex items-start gap-3 border ${
+                  onKeyDown={(e) => {
+                    if (e.key === " " || e.key === "Enter") {
+                      e.preventDefault()
+                      setActiveConv(conv)
+                    }
+                  }}
+                  className={`w-full text-left p-3 rounded-xl cursor-pointer transition-all flex items-start gap-3 border focus-visible:outline-2 focus-visible:outline-primary ${
                     isSelected
                       ? "bg-primary-subtle border-primary/30 shadow-xs"
                       : "bg-surface border-transparent hover:bg-surface-muted hover:border-border"
@@ -187,7 +194,7 @@ export default function InternalChatPage() {
                       {conv.lastMessageSnippet || "Chưa có tin nhắn"}
                     </p>
                   </div>
-                </button>
+                </div>
               )
             })
           )}
@@ -201,7 +208,7 @@ export default function InternalChatPage() {
             {/* Header khung chat */}
             <div className="p-4 border-b border-border flex items-center justify-between bg-surface shadow-xs">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-bold text-sm">
+                <div className="w-10 h-10 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-bold text-body-sm">
                   {activeConv.title ? activeConv.title.charAt(0).toUpperCase() : "C"}
                 </div>
                 <div>

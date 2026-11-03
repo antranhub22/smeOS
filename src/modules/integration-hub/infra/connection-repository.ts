@@ -8,26 +8,12 @@ import type { Prisma, integration_connections } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { ConnectionStatus } from "../domain/connection-lifecycle"
+import type { ConnectionView } from "../domain/integration-views"
+
+export type { ConnectionView }
 
 /** `config.source` của kết nối theo dõi tích hợp chạy bằng phân hệ sẵn có (không giữ khoá). */
 export const MANAGED_SOURCE = "managed"
-
-export interface ConnectionView {
-  readonly id: string
-  readonly connectorKey: string
-  readonly externalAccountId: string
-  readonly displayName: string
-  readonly status: ConnectionStatus
-  readonly config: Record<string, unknown>
-  readonly credentialHint: string | null
-  readonly connectionRef: string
-  readonly expiresAt: string | null
-  readonly lastHealthAt: string | null
-  readonly lastErrorCode: string | null
-  readonly createdAt: string
-  /** true = dòng theo dõi của tích hợp MANAGED: chỉ xem nhật ký, quản lý qua panel sẵn có. */
-  readonly managed: boolean
-}
 
 /** Bản ghi nội bộ kèm bản mã — chỉ dùng trong use-case. */
 export interface ConnectionRecord extends ConnectionView {

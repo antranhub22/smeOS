@@ -6,14 +6,14 @@ Theo `LocalBudd`, để hai repo dùng chung được component và người là
 
 | Lớp | Chọn | Vì sao |
 |---|---|---|
-| Khung | Next.js 16, App Router | Cả `LocalBudd` và `FloraOS` đang dùng |
-| Giao diện | React 19 | |
-| Kiểu dáng | Tailwind CSS 4 | |
-| Component | shadcn trên `@base-ui/react` | Mã nằm trong repo, sửa được, không bị khoá vào một thư viện |
-| Biểu tượng | `lucide-react` | |
+| Khung | Next.js 16, App Router | Cả `LocalBudd` và `smeOS` đang dùng |
+| Giao diện | React 19 | Server Components mặc định |
+| Kiểu dáng | Tailwind CSS 4 | Token ngữ nghĩa tập trung |
+| Component | Base UI (`@base-ui/react` 1.9.0) | Chuẩn hoá theo ADR-011, không phụ thuộc Radix |
+| Biểu tượng | Phosphor Icons (`@phosphor-icons/react`) | Bọc qua `@/components/ui/icons`; cấm import `lucide-react` (ADR-011 D-UI-06) |
 | Kiểm dữ liệu | `zod` | Dùng chung một lược đồ cho cả client và máy chủ |
-| ORM | **Prisma 7** | `LocalBudd` đang ở Prisma 5, `FloraOS` ở Prisma 7. Core theo bản mới |
-| Test đầu cuối | Playwright | Theo `LocalBudd` |
+| ORM | **Prisma 7** | Bản mới, chuẩn snake_case CSDL |
+| Test đầu cuối | Playwright | E2E, Visual Regression 390/1280px, Axe-core a11y |
 
 Prisma là điểm duy nhất core cố tình lệch khỏi `LocalBudd`. Ghi lại ở đây để khi P7 nối hai repo thì biết chỗ nào cần nâng.
 
@@ -25,46 +25,44 @@ Không thêm thư viện quản lý trạng thái toàn cục. Lý do ở mục 
 src/
 ├── app/
 │   ├── (auth)/                  đăng nhập, đăng ký
-│   ├── (app)/                   mọi màn hình sau đăng nhập
-│   │   ├── layout.tsx           giải phiên, nạp năng lực, dựng khung điều hướng
+│   ├── (app)/                   StoreOS & ChainOS (sau đăng nhập)
+│   │   ├── layout.tsx           giải phiên app, nạp năng lực, dựng AppShell
 │   │   ├── page.tsx             dashboard theo vai
-│   │   ├── san-pham/
-│   │   ├── tai-anh/            M01 phân tích ảnh
-│   │   ├── gia/                M02 tính giá
-│   │   ├── bo-may/             chọn bộ máy phân tích
-│   │   ├── cai-dat-ai/         chính sách AI của tổ chức, sổ chi phí lời gọi
-│   │   ├── anh-marketing/      M04b soạn biến thể
-│   │   ├── video/              M04c
-│   │   ├── noi-dung/           M07 soạn nội dung
-│   │   ├── lich-dang/          M07 lịch đăng
-│   │   ├── catalog/            M06 catalog và liên kết QR
-│   │   ├── khach-hang/         M09
-│   │   ├── don-hang/           M10
-│   │   ├── so-lieu/            M11
-│   │   ├── hoi-thoai/          M08
-│   │   ├── duyet/
-│   │   └── job/[id]/
-│   └── api/v1/                  route handler — xem tài liệu 06
+│   │   ├── don-hang/            quản lý đơn hàng
+│   │   ├── san-pham/            quản lý sản phẩm, định lượng BOM
+│   │   ├── khach-hang/          CRM, chăm sóc khách hàng
+│   │   ├── dieu-phoi/           ChainOS — trung tâm điều phối chuỗi & đối tác
+│   │   ├── cong-cu/             10 công cụ kinh doanh (ảnh, video, thiệp, in ấn...)
+│   │   ├── the-chao/            thẻ chào & bộ sưu tập mẫu
+│   │   ├── cai-dat/             hồ sơ cửa hàng, chính sách, nhận diện
+│   │   └── job/[id]/            tiến trình xử lý bất đồng bộ
+│   ├── (platform)/              SaaS Mother Console (/van-hanh) — chỉ platform_operators
+│   │   ├── layout.tsx           giải phiên platform, UI Studio xem trước
+│   │   └── van-hanh/            vận hành nền tảng, tổ chức, hạ tầng AI
+│   ├── (public)/                các tuyến khách xem (/b, /s, /c, /chia-se...)
+│   └── api/v1/                  route handlers (API RESTful)
 ├── components/
-│   ├── ui/                      component nền của shadcn
-│   ├── job/                     checklist tiến trình, nhật ký, thẻ job
-│   ├── product/
-│   └── layout/                  thanh điều hướng, khung màn hình
+│   ├── ui/                      Design System primitives (@base-ui/react, icons Phosphor)
+│   ├── layout/                  AppShell, DesktopNav, MobileNav, PageHeader, PageLayout
+│   └── <module>/                components nghiệp vụ chuyên biệt
+├── styles/
+│   └── tokens/                  CSS Design Tokens SSOT (color, typography, radius, shadow...)
 └── lib/
-    ├── capabilities.ts          kiểm năng lực phía client
-    ├── api-client.ts
-    └── use-job-stream.ts        đọc SSE
+    ├── ui-system/               Theme resolver máy chủ & metadata preset
+    ├── session.ts               Context phiên & kiểm tra năng lực
+    └── i18n/                    từ điển đa ngôn ngữ SSOT
 ```
 
 Đường dẫn URL tiếng Việt không dấu, khớp cách người dùng gọi tên màn hình. Mã nguồn bên trong vẫn tiếng Anh.
-
-Bốn tuyến `anh-marketing`, `video`, `noi-dung`, `lich-dang` render trong shell của core nhưng gọi API của `SocialFlow` qua proxy theo đường dẫn — người dùng không rời shell, và ranh giới sở hữu dữ liệu không đổi vì điều đó. Tuyến nào thuộc engine ngoài thì ghi rõ trong chính tệp route, để không ai thêm một lời gọi Prisma vào đó.
 
 ## 3. Lấy dữ liệu
 
 **Server Component là mặc định.** Màn hình đọc dữ liệu ngay ở phía máy chủ, qua use-case, cùng đường mã mà API dùng. Không gọi vòng qua HTTP để lấy dữ liệu của chính mình.
 
 Client Component chỉ dùng cho ba việc: nhận thao tác người dùng, giữ trạng thái tạm của một màn hình, và đọc luồng sự kiện job.
+
+> [!NOTE] Nợ kỹ thuật (UI-A-01, audit 01/11/2026)
+> Hiện có 76/105 `page.tsx` đang dùng `"use client"` do lịch sử phát triển nhanh. Kế hoạch `ui-enterprise-upgrade.md` (Giai đoạn 4) sẽ đưa các trang này dần trở lại chuẩn Server Component khi di trú sang Screen Contract v2.
 
 Ghi dữ liệu đi qua Server Action hoặc `fetch` tới `/api/v1/`. Chọn cái nào thì nhất quán trong một module, không trộn.
 

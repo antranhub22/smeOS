@@ -11,6 +11,7 @@ import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
 import { BudgetMatchingModal } from "@/components/sales/budget-matching-modal"
 import type { ProductMatchCandidate } from "@/modules/products/domain/budget-flower-matcher"
 import { useI18n } from "@/lib/i18n"
+import { PageHeader } from "@/components/ui/page-header"
 
 /**
  * Trang Chức năng 09: Tạo catalog và bộ sưu tập.
@@ -106,7 +107,7 @@ export default function CatalogWebsitePage() {
   if (loading) {
     return (
       <div className="flex h-full flex-col overflow-hidden">
-        <PageHeader onBack={() => router.push("/")} />
+        <CatalogHeader onBack={() => router.push("/")} />
         <div className="p-[18px]">
           <SkeletonBlock lines={4} label="Đang tải danh mục sản phẩm" />
         </div>
@@ -133,7 +134,7 @@ export default function CatalogWebsitePage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <PageHeader
+      <CatalogHeader
         onBack={() => router.push("/cong-cu" as never)}
         onOpenBudgetMatcher={() => setIsBudgetModalOpen(true)}
       />
@@ -166,9 +167,9 @@ export default function CatalogWebsitePage() {
   )
 }
 
-/* ── Micro-component Header ──────────────────────────────────────────── */
+/* ── Đầu trang Catalog (PageHeader chuẩn) ──────────────────────────────────────────── */
 
-function PageHeader({
+function CatalogHeader({
   onBack,
   onOpenQuickCollection,
   onOpenBudgetMatcher,
@@ -182,23 +183,26 @@ function PageHeader({
   const budgetBtnLabel = sampleProd ? `Tìm ${sampleProd.toLowerCase()} theo ngân sách` : "Tìm theo ngân sách"
 
   return (
-    <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-[18px] py-4">
-      <h1 className="text-title font-extrabold text-primary">Tạo catalog & bộ sưu tập</h1>
-      <div className="flex items-center gap-2">
-        {onOpenBudgetMatcher && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onOpenBudgetMatcher}
-            className="flex items-center gap-1.5 text-xs"
-          >
-            {budgetBtnLabel}
+    <PageHeader
+      className="flex-shrink-0 border-b border-border bg-surface px-[18px] py-4"
+      title="Tạo catalog & bộ sưu tập"
+      actions={
+        <>
+          {onOpenBudgetMatcher && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onOpenBudgetMatcher}
+              className="flex items-center gap-1.5 text-caption"
+            >
+              {budgetBtnLabel}
+            </Button>
+          )}
+          <Button variant="ghost" onClick={onBack} className="flex items-center gap-1.5">
+            <ArrowLeft size={16} strokeWidth={2} /> Quay về Công cụ
           </Button>
-        )}
-        <Button variant="ghost" onClick={onBack} className="flex items-center gap-1.5">
-          <ArrowLeft size={16} strokeWidth={2} /> Quay về Công cụ
-        </Button>
-      </div>
-    </div>
+        </>
+      }
+    />
   )
 }
